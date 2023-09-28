@@ -1,28 +1,34 @@
 services: 
 
-  app-dev:
-    build: ./client/
-    # command: vite dev --host
-    container_name: app-dev
-    # restart: unless-stopped
-    ports:
-      - "5173:5173"
-    expose:
-      - "5173"
-    networks:
-      - caddy
-    working_dir: /app
-    volumes:
-      - /app/node_modules
-    labels:
-      caddy: app.${DOMAIN}
-      caddy.reverse_proxy: "{{upstreams 5173}}"
+  # app-dev:
+  #   build: ./client/
+  #   # command: vite dev --host
+  #   container_name: app-dev
+  #   restart: unless-stopped
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "1"
+  #         memory: "512M"
+  #   ports:
+  #     - "5173:5173"
+  #   expose:
+  #     - "5173"
+  #   networks:
+  #     - caddy
+  #   working_dir: /app
+  #   volumes:
+  #     - /app/node_modules
+  #   labels:
+  #     caddy: app.${DOMAIN}
+  #     caddy.reverse_proxy: "{{upstreams 5173}}"
 
   
 
   # Caddy - proxy server router for containers
   caddy:  
     image: lucaslorentz/caddy-docker-proxy:ci-alpine
+    container_name: caddy
     ports:
       - 80:80
       - 443:443
@@ -49,7 +55,7 @@ services:
     volumes:
       - ./pb_data:/pb_data
     labels:
-      caddy: db.${DOMAIN}
+      caddy: api.${DOMAIN}
       caddy.reverse_proxy: "{{upstreams 8090}}"
 
       

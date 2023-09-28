@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { currentUser, pb, getImageURL } from '../../../pocketbase';
+	import { currentUser, pb, getImageURL } from '$lib/pocketbase';
 	import { page } from '$app/stores';
 	import { onMount, beforeUpdate } from 'svelte';
 	import EditModal from '$lib/EditModal.svelte';

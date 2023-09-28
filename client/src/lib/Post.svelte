@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { currentUser } from '../pocketbase';
+	import { currentUser } from '$lib/pocketbase';
 	import Tag from '$lib/Tag.svelte';
 	import Comment from '$lib/Comment.svelte';
 	import SmallDropdown from '$lib/SmallDropdown.svelte';
@@ -47,8 +47,8 @@
 	}
 
 	onMount(() => {
-		tagArr = tags.split(' ');
-		if (tagArr[0] === '') tagArr = [];
+		//tagArr = tags.split(' ');
+		//if (tagArr[0] === '') tagArr = [];
 	});
 
 	beforeUpdate(() => {

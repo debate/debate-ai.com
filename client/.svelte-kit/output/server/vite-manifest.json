@@ -1,0 +1,168 @@
+{
+  ".svelte-kit/generated/server/internal.js": {
+    "file": "internal.js",
+    "imports": [
+      "_internal.js"
+    ],
+    "isEntry": true,
+    "src": ".svelte-kit/generated/server/internal.js"
+  },
+  "_Button.js": {
+    "file": "chunks/Button.js",
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "_MediumDropdown.js": {
+    "file": "chunks/MediumDropdown.js",
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "_index.js": {
+    "file": "chunks/index.js",
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "_index2.js": {
+    "file": "chunks/index2.js"
+  },
+  "_internal.js": {
+    "file": "chunks/internal.js",
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "_pocketbase.js": {
+    "file": "chunks/pocketbase.js",
+    "imports": [
+      "_index.js"
+    ]
+  },
+  "_stores.js": {
+    "file": "chunks/stores.js",
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "app.css": {
+    "file": "_app/immutable/assets/app.d8abaefd.css",
+    "src": "app.css"
+  },
+  "node_modules/@sveltejs/kit/src/runtime/components/error.svelte": {
+    "file": "entries/fallbacks/error.svelte.js",
+    "imports": [
+      "_index2.js",
+      "_stores.js"
+    ],
+    "isEntry": true,
+    "src": "node_modules/@sveltejs/kit/src/runtime/components/error.svelte"
+  },
+  "node_modules/@sveltejs/kit/src/runtime/components/layout.svelte": {
+    "file": "entries/fallbacks/layout.svelte.js",
+    "imports": [
+      "_index2.js"
+    ],
+    "isEntry": true,
+    "src": "node_modules/@sveltejs/kit/src/runtime/components/layout.svelte"
+  },
+  "node_modules/@sveltejs/kit/src/runtime/server/index.js": {
+    "file": "index.js",
+    "imports": [
+      "_internal.js",
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "node_modules/@sveltejs/kit/src/runtime/server/index.js"
+  },
+  "src/routes/auth/+layout.css": {
+    "file": "_app/immutable/assets/_layout.46708551.css",
+    "src": "src/routes/auth/+layout.css"
+  },
+  "src/routes/auth/+layout.svelte": {
+    "css": [
+      "_app/immutable/assets/_layout.46708551.css",
+      "_app/immutable/assets/app.d8abaefd.css"
+    ],
+    "file": "entries/pages/auth/_layout.svelte.js",
+    "imports": [
+      "_index2.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/auth/+layout.svelte"
+  },
+  "src/routes/auth/+page.svelte": {
+    "file": "entries/pages/auth/_page.svelte.js",
+    "imports": [
+      "_index2.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/auth/+page.svelte"
+  },
+  "src/routes/auth/login/+page.svelte": {
+    "file": "entries/pages/auth/login/_page.svelte.js",
+    "imports": [
+      "_index2.js",
+      "_pocketbase.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/auth/login/+page.svelte"
+  },
+  "src/routes/auth/register/+page.svelte": {
+    "file": "entries/pages/auth/register/_page.svelte.js",
+    "imports": [
+      "_index2.js",
+      "_pocketbase.js",
+      "_Button.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/auth/register/+page.svelte"
+  },
+  "src/routes/home/+layout.svelte": {
+    "css": [
+      "_app/immutable/assets/app.d8abaefd.css"
+    ],
+    "file": "entries/pages/home/_layout.svelte.js",
+    "imports": [
+      "_index2.js",
+      "_pocketbase.js",
+      "_MediumDropdown.js",
+      "_Button.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/home/+layout.svelte"
+  },
+  "src/routes/home/+page.svelte": {
+    "file": "entries/pages/home/_page.svelte.js",
+    "imports": [
+      "_index2.js",
+      "_pocketbase.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/home/+page.svelte"
+  },
+  "src/routes/user/+layout.svelte": {
+    "css": [
+      "_app/immutable/assets/app.d8abaefd.css"
+    ],
+    "file": "entries/pages/user/_layout.svelte.js",
+    "imports": [
+      "_index2.js",
+      "_pocketbase.js",
+      "_MediumDropdown.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/user/+layout.svelte"
+  },
+  "src/routes/user/[userid]/+page.svelte": {
+    "file": "entries/pages/user/_userid_/_page.svelte.js",
+    "imports": [
+      "_index2.js",
+      "_pocketbase.js",
+      "_stores.js"
+    ],
+    "isEntry": true,
+    "src": "src/routes/user/[userid]/+page.svelte"
+  }
+}

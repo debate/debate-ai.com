@@ -1,33 +1,18 @@
-# Pocketbase SvelteKit Demo
 
-**Works best on desktop**
 
-This is a [demo](https://pocket.montana.icu/auth/register) to show off the capabilities of Pocketbase and Sveltekit in a real time social media app.
+## Spock Dev Stack
 
-![Profile Page](https://i.imgur.com/KzwpVDE.png)
 
-## Run Project
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Tech Stack Docs
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-To start the database, in a separate terminal run
-
-```bash
-./pocketbase serve
-```
-
-## Building
-
-To create a production version of the app:
-
-```bash
-npm run build
-```
+- [Svelte](https://svelte.dev/examples/hello-world) simplified reactive interface components structure
+- [Pocketbase](https://pocketbase.io/docs/js-overview/) sqlite db toolkit, admin panel, auth, api docs, ORM rules, migrations, files, js extensions 
+- [OAuth2](https://developers.google.com/identity/protocols/oauth2) Google Signin user authentication
+- [Caddy](https://caddyserver.com/docs/) https server routing to containers with [caddy-docker-proxy](https://github.com/lucaslorentz/caddy-docker-proxy) in one file
+- [Svelte Kit](https://kit.svelte.dev) streamlined api server 
+- [docker compose](https://docs.docker.com/compose/gettingstarted/) manage containers in one file
+- [DaisyUI](https://daisyui.com/docs/install/)  style themes based on [Tailwind](https://tailwindcss.com) class names 
+- [ESLint](https://github.com/dustinspecker/awesome-eslint)/[Prettier](https://prettier.io) code formatting 
+- [Vite](https://vitejs.dev) bundle compiler
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { currentUser } from '../pocketbase';
+	import { currentUser } from '$lib/pocketbase';
 	import Tag from '$lib/Tag.svelte';
 	import SmallDropdown from '$lib/SmallDropdown.svelte';
 	import HoverDropdown from '$lib/HoverDropdown.svelte';
