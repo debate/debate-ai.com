@@ -12,7 +12,7 @@
 	beforeUpdate(async () => {
 		if (!$currentUser) return;
 		followIds = $currentUser.following;
-		followList = $currentUser.expand.following || [];
+		followList = $currentUser.expand?.following || [];
 	});
 
 	onMount(async () => {

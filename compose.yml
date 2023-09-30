@@ -26,20 +26,20 @@ services:
   
 
   # Caddy - proxy server router for containers
-  caddy:  
-    image: lucaslorentz/caddy-docker-proxy:ci-alpine
-    container_name: caddy
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/caddy/data:/data
-    restart: unless-stopped
-    environment:
-      - CADDY_INGRESS_NETWORKS=caddy
-    networks:
-      - caddy
+  # caddy:  
+  #   image: lucaslorentz/caddy-docker-proxy:ci-alpine
+  #   container_name: caddy
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /var/lib/caddy/data:/data
+  #   restart: unless-stopped
+  #   environment:
+  #     - CADDY_INGRESS_NETWORKS=caddy
+  #   networks:
+  #     - caddy
 
   # Pocketbase - sqlite, auth, api, admin ui
   db-admin:
@@ -59,20 +59,20 @@ services:
       caddy.reverse_proxy: "{{upstreams 8090}}"
 
       
-  # Dozzle - docker logs viewer
-  dozzle:
-    container_name: dozzle
-    image: amir20/dozzle:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - 9999:8080
+  # # Dozzle - docker logs viewer
+  # dozzle:
+  #   container_name: dozzle
+  #   image: amir20/dozzle:latest
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   ports:
+  #     - 9999:8080
       
-    networks:
-      - caddy
-    labels:
-      caddy: logs.${DOMAIN}
-      caddy.reverse_proxy: "{{upstreams 8080}}"
+  #   networks:
+  #     - caddy
+  #   labels:
+  #     caddy: logs.${DOMAIN}
+  #     caddy.reverse_proxy: "{{upstreams 8080}}"
 
 networks:
   caddy:

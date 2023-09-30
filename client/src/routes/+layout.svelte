@@ -1,3 +1,4 @@
+
 <script lang="ts">
 	import '../app.css';
 	import { currentUser, pb, getImageURL } from '$lib/pocketbase';
@@ -28,7 +29,6 @@
 
 	function logout() {
 		pb.authStore.clear();
-		window.location.assign(`http://${window.location.host}/auth`);
 	}
 
 	function dropDownClicked(dropdown: number) {
@@ -64,12 +64,7 @@
 			<!-- This is a mock social media site for testing -->
 		</p>
 		<div class="relative flex space-x-3 items-center group">
-			<CircleIcon
-				icon="message"
-				onClick={() => {
-					toggleChatsDropdown();
-				}}
-			/>
+			
 			<CircleIcon
 				icon="bell"
 				notifications={$currentUser?.alerts ? 1 : 0}
@@ -114,11 +109,6 @@
 						{/if}
 					</MediumDropdown>
 				{/if}
-				{#if showChatsDropdown}
-					<MediumDropdown label="Chats">
-						<p class="text-center text-neutral-300 font-semibold mb-4">Coming Soon&#8482;</p>
-					</MediumDropdown>
-				{/if}
 				{#if showProfileDropdown}
 					<Dropdown
 						username={$currentUser.username}
@@ -135,11 +125,40 @@
 			</div>
 		</div>
 	{:else}
-			
-			<Button label="Sign in" onClick={login}/>
+					
+
+		<button on:click={login} 
+			class="bg-[#378E8B] p-3 rounded-[4px] font-semibold mt-5 mb-3">
+			Sign in
+		</button>
 	{/if}
 
+	
+<div id="g_id_onload"
+data-client_id="140048034662-4qpof7rqqbhvshf1uvsm1vreko6n5na9.apps.googleusercontent.com"
+data-login_uri="https://app.debate.com.co"
+data-auto_prompt="false"
+>
+</div>  
+
+<div class="g_id_signin"
+data-type="standard"
+data-size="large"
+data-theme="outline"
+data-text="sign_in_with"
+data-shape="rectangular"
+data-logo_alignment="left">
+</div>
+
 </header>
+
+<svelte:head>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+	<script src="https://accounts.google.com/gsi/client" async></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+</svelte:head>
+
 <main class="relative pt-14">
 		<slot />
 </main>

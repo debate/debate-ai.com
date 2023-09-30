@@ -38,12 +38,12 @@
 	async function getFollowing() {
 		if ($currentUser == null) return;
 
-		let user = await pb.collection('users').getOne($currentUser.id, {
-			expand: 'following'
-		});
+		let user = await pb.collection('users').getOne($currentUser.id);
 
 		followIds = user.following;
-		followList = user.expand.following || [];
+		
+		followList = followIds.length>0 ? 
+			user.expand.following : [];
 	}
 
 	async function createPost() {
@@ -92,6 +92,9 @@
 
 		await pb.collection('posts').update(id, data);
 	}
+
+	let canvas: any; //Created a variable to optain a reference to rendered div element
+
 
 	async function unlikePost(id: string) {
 		if ($currentUser == null) return;
@@ -171,7 +174,7 @@
 		});
 
 		followIds = following;
-		followList = newUser.expand.following;
+		followList = followIds.length>0? newUser.expand.following : [];
 
 		//other user receives follow (CURRENTLY NOT PROTECTED AT ALL, super dumb and not safe***)
 
@@ -192,8 +195,35 @@
 		recommendedList = userList.filter((u:any)=>!followIds.includes(u.id));
 	}
 
+	function googleLoad(){
+    google.accounts.id.initialize({
+                client_id: "140048034662-4qpof7rqqbhvshf1uvsm1vreko6n5na9.apps.googleusercontent.com",
+                ux_mode: "redirect",
+                context: "use",
+                login_uri: "https://api.debate.com.co/api/oauth2-redirect"
+            });
+            google.accounts.id.renderButton(canvas, {
+                width: '220',      
+                theme: 'outline',
+                size: 'large',
+                type: 'standard',
+                text: '',
+                shape: 'rectangular',
+                logo_alignment: 'right',
+                  
+            });
+
+    };
+
+	function launchSignin(){
+
+
+
+	}
+
 	onMount(async () => {
 		getRecentUsers();
+		googleLoad();
 		getFollowing();
 		getRecentPosts();
 	});
@@ -258,6 +288,9 @@
 	</div>
 	<div class="flex-1 text-white max-w-md">
 		<div class="">
+			
+			<div class="g_id_signin" on:click={launchSignin}
+			bind:this={canvas}/> 
 			<div class="flex justify-between items-center mb-4">
 				<h3 class="font-semibold text-neutral-300">Following</h3>
 				<img src="/dots.svg" alt="Dot Dot Dot" class="w-4 hover:cursor-pointer" />

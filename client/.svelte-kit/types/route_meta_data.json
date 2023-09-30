@@ -1,4 +1,7 @@
 {
 	"/": [],
+	"/user/callback": [
+		"src/routes/user/callback/+server.js"
+	],
 	"/user/[userid]": []
 }

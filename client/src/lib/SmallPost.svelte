@@ -32,8 +32,6 @@
 	}
 
 	onMount(() => {
-		tagArr = tags.split(' ');
-		if (tagArr[0] === '') tagArr = [];
 	});
 
 	beforeUpdate(() => {

@@ -1,10 +1,11 @@
 import PocketBase from 'pocketbase';
+import { PUBLIC_API } from '$env/static/public'
 
 import { writable } from 'svelte/store';
 
 
 // export const pb = new PocketBase(prodDatabase);
-export const pb = new PocketBase('https://api.debate.com.co');
+export const pb = new PocketBase(PUBLIC_API);
 
 export const currentUser = writable(pb.authStore.model);
 

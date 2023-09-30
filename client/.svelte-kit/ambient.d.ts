@@ -26,6 +26,7 @@
  * ```
  */
 declare module '$env/static/private' {
+	export const DOMAIN: string;
 	export const npm_package_devDependencies_autoprefixer: string;
 	export const npm_package_dependencies__sveltejs_adapter_node: string;
 	export const npm_package_scripts_check_watch: string;
@@ -39,25 +40,29 @@ declare module '$env/static/private' {
 	export const SSH_CLIENT: string;
 	export const npm_config_registry: string;
 	export const BUN_INSTALL: string;
+	export const TERM_PROGRAM_VERSION: string;
 	export const LANG: string;
-	export const npm_execpath: string;
 	export const NVM_BIN: string;
-	export const npm_package_json: string;
+	export const GIT_ASKPASS: string;
 	export const SHELL: string;
-	export const SSH_CONNECTION: string;
+	export const TERM_PROGRAM: string;
 	export const npm_package_dependencies_pocketbase: string;
-	export const npm_package_devDependencies_prettier_plugin_svelte: string;
+	export const npm_execpath: string;
 	export const npm_package_private: string;
 	export const LOGNAME: string;
+	export const SSH_CONNECTION: string;
+	export const npm_package_devDependencies_prettier_plugin_svelte: string;
 	export const STARSHIP_SHELL: string;
+	export const BROWSER: string;
 	export const npm_package_devDependencies__sveltejs_adapter_auto: string;
-	export const npm_command: string;
 	export const XDG_SESSION_ID: string;
 	export const npm_package_name: string;
 	export const XDG_SESSION_TYPE: string;
 	export const MOTD_SHOWN: string;
 	export const NVM_DIR: string;
 	export const npm_package_devDependencies_svelte: string;
+	export const npm_command: string;
+	export const npm_package_json: string;
 	export const npm_node_execpath: string;
 	export const npm_package_scripts_check: string;
 	export const npm_package_devDependencies_typescript: string;
@@ -67,12 +72,15 @@ declare module '$env/static/private' {
 	export const npm_config_node_gyp: string;
 	export const npm_package_devDependencies__typescript_eslint_eslint_plugin: string;
 	export const npm_package_scripts_dev: string;
+	export const VSCODE_INJECTION: string;
 	export const XDG_DATA_DIRS: string;
 	export const npm_config_local_prefix: string;
 	export const npm_package_devDependencies__sveltejs_kit: string;
+	export const VSCODE_GIT_ASKPASS_MAIN: string;
 	export const npm_package_devDependencies_svelte_check: string;
 	export const ip: string;
 	export const npm_package_devDependencies_tslib: string;
+	export const VSCODE_GIT_IPC_HANDLE: string;
 	export const PWD: string;
 	export const npm_package_scripts_format: string;
 	export const XDG_SESSION_CLASS: string;
@@ -80,6 +88,7 @@ declare module '$env/static/private' {
 	export const npm_package_devDependencies_postcss: string;
 	export const npm_package_devDependencies_eslint_plugin_svelte3: string;
 	export const HOME: string;
+	export const VSCODE_IPC_HOOK_CLI: string;
 	export const PNPM_SCRIPT_SRC_DIR: string;
 	export const npm_package_dependencies_vite: string;
 	export const USER: string;
@@ -88,12 +97,13 @@ declare module '$env/static/private' {
 	export const SHLVL: string;
 	export const NVM_INC: string;
 	export const STARSHIP_SESSION_KEY: string;
+	export const VSCODE_GIT_ASKPASS_NODE: string;
 	export const npm_package_devDependencies_tailwindcss: string;
 	export const npm_package_scripts_preview: string;
+	export const COLORTERM: string;
 	export const DBUS_SESSION_BUS_ADDRESS: string;
 	export const OMF_PATH: string;
 	export const npm_package_scripts_build: string;
-	export const SSH_TTY: string;
 	export const XDG_RUNTIME_DIR: string;
 	export const npm_package_devDependencies__typescript_eslint_parser: string;
 	export const npm_package_version: string;
@@ -111,7 +121,7 @@ declare module '$env/static/private' {
  * ```
  */
 declare module '$env/static/public' {
-	
+	export const PUBLIC_API: string;
 }
 
 /**
@@ -128,6 +138,7 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
+		DOMAIN: string;
 		npm_package_devDependencies_autoprefixer: string;
 		npm_package_dependencies__sveltejs_adapter_node: string;
 		npm_package_scripts_check_watch: string;
@@ -141,25 +152,29 @@ declare module '$env/dynamic/private' {
 		SSH_CLIENT: string;
 		npm_config_registry: string;
 		BUN_INSTALL: string;
+		TERM_PROGRAM_VERSION: string;
 		LANG: string;
-		npm_execpath: string;
 		NVM_BIN: string;
-		npm_package_json: string;
+		GIT_ASKPASS: string;
 		SHELL: string;
-		SSH_CONNECTION: string;
+		TERM_PROGRAM: string;
 		npm_package_dependencies_pocketbase: string;
-		npm_package_devDependencies_prettier_plugin_svelte: string;
+		npm_execpath: string;
 		npm_package_private: string;
 		LOGNAME: string;
+		SSH_CONNECTION: string;
+		npm_package_devDependencies_prettier_plugin_svelte: string;
 		STARSHIP_SHELL: string;
+		BROWSER: string;
 		npm_package_devDependencies__sveltejs_adapter_auto: string;
-		npm_command: string;
 		XDG_SESSION_ID: string;
 		npm_package_name: string;
 		XDG_SESSION_TYPE: string;
 		MOTD_SHOWN: string;
 		NVM_DIR: string;
 		npm_package_devDependencies_svelte: string;
+		npm_command: string;
+		npm_package_json: string;
 		npm_node_execpath: string;
 		npm_package_scripts_check: string;
 		npm_package_devDependencies_typescript: string;
@@ -169,12 +184,15 @@ declare module '$env/dynamic/private' {
 		npm_config_node_gyp: string;
 		npm_package_devDependencies__typescript_eslint_eslint_plugin: string;
 		npm_package_scripts_dev: string;
+		VSCODE_INJECTION: string;
 		XDG_DATA_DIRS: string;
 		npm_config_local_prefix: string;
 		npm_package_devDependencies__sveltejs_kit: string;
+		VSCODE_GIT_ASKPASS_MAIN: string;
 		npm_package_devDependencies_svelte_check: string;
 		ip: string;
 		npm_package_devDependencies_tslib: string;
+		VSCODE_GIT_IPC_HANDLE: string;
 		PWD: string;
 		npm_package_scripts_format: string;
 		XDG_SESSION_CLASS: string;
@@ -182,6 +200,7 @@ declare module '$env/dynamic/private' {
 		npm_package_devDependencies_postcss: string;
 		npm_package_devDependencies_eslint_plugin_svelte3: string;
 		HOME: string;
+		VSCODE_IPC_HOOK_CLI: string;
 		PNPM_SCRIPT_SRC_DIR: string;
 		npm_package_dependencies_vite: string;
 		USER: string;
@@ -190,12 +209,13 @@ declare module '$env/dynamic/private' {
 		SHLVL: string;
 		NVM_INC: string;
 		STARSHIP_SESSION_KEY: string;
+		VSCODE_GIT_ASKPASS_NODE: string;
 		npm_package_devDependencies_tailwindcss: string;
 		npm_package_scripts_preview: string;
+		COLORTERM: string;
 		DBUS_SESSION_BUS_ADDRESS: string;
 		OMF_PATH: string;
 		npm_package_scripts_build: string;
-		SSH_TTY: string;
 		XDG_RUNTIME_DIR: string;
 		npm_package_devDependencies__typescript_eslint_parser: string;
 		npm_package_version: string;
@@ -218,6 +238,7 @@ declare module '$env/dynamic/private' {
  */
 declare module '$env/dynamic/public' {
 	export const env: {
+		PUBLIC_API: string;
 		[key: `PUBLIC_${string}`]: string | undefined;
 	}
 }
