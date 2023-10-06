@@ -1,27 +1,24 @@
 services: 
 
-  # app-dev:
-  #   build: ./client/
-  #   # command: vite dev --host
-  #   container_name: app-dev
-  #   restart: unless-stopped
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "1"
-  #         memory: "512M"
-  #   ports:
-  #     - "5173:5173"
-  #   expose:
-  #     - "5173"
-  #   networks:
-  #     - caddy
-  #   working_dir: /app
-  #   volumes:
-  #     - /app/node_modules
-  #   labels:
-  #     caddy: app.${DOMAIN}
-  #     caddy.reverse_proxy: "{{upstreams 5173}}"
+  app-dev:
+    build: ./client/
+    # command: vite dev --host
+    container_name: app-dev
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    expose:
+      - "5173"
+    networks:
+      - caddy
+    working_dir: /app
+    volumes:
+      - /app/node_modules
+    environment:
+      - PUBLIC_API=http://localhost:8090
+    labels:
+      caddy: app.${DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 5173}}"
 
   
 
@@ -60,19 +57,19 @@ services:
 
       
   # # Dozzle - docker logs viewer
-  # dozzle:
-  #   container_name: dozzle
-  #   image: amir20/dozzle:latest
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   ports:
-  #     - 9999:8080
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9999:8080
       
-  #   networks:
-  #     - caddy
-  #   labels:
-  #     caddy: logs.${DOMAIN}
-  #     caddy.reverse_proxy: "{{upstreams 8080}}"
+    networks:
+      - caddy
+    labels:
+      caddy: logs.${DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 8080}}"
 
 networks:
   caddy:

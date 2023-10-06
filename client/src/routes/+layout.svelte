@@ -56,14 +56,11 @@
 </script>
 
 <header
-	class="fixed w-full bg-[#2E2E2E] text-white h-14 flex justify-between items-center px-6 drop-shadow-md z-20"
+	class="fixed w-full bg-[#2E2E2E] text-white  items-center align-center place-content-end  px-6 drop-shadow-md z-20"
 >
 	{#if $currentUser}
-		<!-- <img src="/placeholder-logo.svg" alt="Placeholder logo" class="h-8" /> -->
-		<p class="text-neutral-500 text-sm text-center">
-			<!-- This is a mock social media site for testing -->
-		</p>
-		<div class="relative flex space-x-3 items-center group">
+		
+		<div class="relative flex space-x-3 items-right place-content-end  group">
 			
 			<CircleIcon
 				icon="bell"
@@ -82,7 +79,7 @@
 					<div
 						class="absolute -right-[2px] -bottom-[2px] border-[#2E2E2E] border-2 w-4 h-4 bg-neutral-700 rounded-full flex justify-center items-center group-hover:bg-neutral-600"
 					>
-						<img src="chevron.svg" alt="chevron down" class="w-2" />
+						<img src="/chevron.svg" alt="chevron down" class="w-2" />
 					</div>
 				</button>
 
@@ -125,30 +122,15 @@
 			</div>
 		</div>
 	{:else}
-					
-
-		<button on:click={login} 
-			class="bg-[#378E8B] p-3 rounded-[4px] font-semibold mt-5 mb-3">
-			Sign in
-		</button>
+	<div class="relative flex space-x-3 items-right place-content-end group  ">
+				
+			<button class="btn btn-primary" on:click={login}>
+				Google Signin
+			</button>
+		</div>	
 	{/if}
 
 	
-<div id="g_id_onload"
-data-client_id="140048034662-4qpof7rqqbhvshf1uvsm1vreko6n5na9.apps.googleusercontent.com"
-data-login_uri="https://app.debate.com.co"
-data-auto_prompt="false"
->
-</div>  
-
-<div class="g_id_signin"
-data-type="standard"
-data-size="large"
-data-theme="outline"
-data-text="sign_in_with"
-data-shape="rectangular"
-data-logo_alignment="left">
-</div>
 
 </header>
 

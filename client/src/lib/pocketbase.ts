@@ -14,6 +14,6 @@ export const getImageURL = (collectionId: string, recordId: string, fileName:str
 }
 
 pb.authStore.onChange((auth) => {
-    console.log('authStore changed', auth)
+    // console.log('Google auth token', auth)
     currentUser.set(pb.authStore.model);
 })
