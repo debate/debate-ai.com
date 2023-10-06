@@ -17,5 +17,14 @@
         "tslib": "^2.6.2",
         "typescript": "^4.9.5",
         "vite": "5.0.0-beta.2"
+    },
+    "dependencies": {
+        "debug": "^4.3.4",
+        "esbuild": "^0.19.4",
+        "kleur": "^4.1.5",
+        "magic-string": "^0.30.4",
+        "rollup": "^4.0.0",
+        "svelte-hmr": "^0.15.3",
+        "vitefu": "^0.2.4"
     }
 }

@@ -1,0 +1,34 @@
+{
+  "name": "Debate-AI.com Colab Research AI ",
+  "description": "Critical times call for critical thinkers to create the decentralized AI hive mind",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "/icons/appicon16.png",
+    "48": "/icons/appicon48.png",
+    "128": "/icons/appicon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/pages/content/index.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "src/pages/background/index.js"
+  },
+  "options_page": "src/pages/options/index.html",
+  "action": {
+    "default_popup": "src/pages/popup/index.html",
+    "default_icon": {
+      "16": "/icons/appicon16.png",
+      "48": "/icons/appicon48.png",
+      "128": "/icons/appicon128.png"
+    }
+  },
+  "permissions": ["sidePanel", "storage", "system.display", "tabs", "unlimitedStorage"],
+  "host_permissions": [
+    "https://api.debate-ai.com/*",
+    "https://api.debate-ai.com/*/*"
+  ]
+}

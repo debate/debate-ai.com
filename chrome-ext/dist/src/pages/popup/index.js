@@ -1,0 +1,1 @@
+import"../../../assets/index-26db7552.js";import{M as t}from"../../../assets/Main-229782ab.js";function o(){new t({target:document.body,props:{context:"popup"}})}document.addEventListener("DOMContentLoaded",o);
