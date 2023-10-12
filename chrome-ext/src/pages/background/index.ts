@@ -23,7 +23,6 @@ async function handleResponse(
 }
 
 
-const GOOGLE_ORIGIN = 'https://www.google.com';
 
 // Allows users to open the side panel by clicking on the action toolbar icon
 chrome.sidePanel
@@ -31,21 +30,11 @@ chrome.sidePanel
   .catch((error) => console.error(error));
 
 chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
-  console.log(tab.url)
-
-  // if (!tab.url) return;
-  // Enables the side panel on google.com
-
-
-     setTimeout(async () => {
 
       await chrome.sidePanel.setOptions({
         tabId,
         path: "src/pages/sidepanel/index.html",
         enabled: true
       });
-    }, 1000);
-
-
 
 });

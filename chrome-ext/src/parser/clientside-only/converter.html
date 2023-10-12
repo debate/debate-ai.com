@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head> 
+<body>
+
+<input id="selectFile" type="file">
+<div id="result" contenteditable></div>
+<style>
+    #result  {
+        color: white;
+        /* line-height: 10pt; */
+        font-size: 6pt;
+        /* visibility: hidden; */
+    }
+    u, b, h1, h2, h3, h4 {
+        /* visibility: visible; */
+        color: black;
+        font-size: 12pt;
+    }
+</style>
+<script src="./unzipit.min.js">   </script>
+<script src="./clientside-converter.js">   </script>
+<script>
+
+selectFile.addEventListener("change", async function() {
+    var startTime = new Date().getTime();
+   // var size =  (this.files[0].size/1000).toFixed(0);
+    var data = await docx2html(this.files[0]);
+    var timeElapsed = ((new Date().getTime() - startTime)/1000).toFixed(1);
+
+    result.innerHTML =  data;
+});
+</script>
+</body>
+</html>

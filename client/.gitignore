@@ -1,6 +1,6 @@
 .DS_Store
 node_modules
-build
+/build
 /.svelte-kit
 /package
 .env
@@ -10,4 +10,3 @@ vite.config.ts.timestamp-*
 pb_data
 /pb_data
 .vscode
-.svelte-kit
