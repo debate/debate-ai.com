@@ -1,34 +1,27 @@
+import { crx } from "@crxjs/vite-plugin";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { resolve } from "path";
 import { defineConfig } from "vite";
-
-const srcDir = resolve(__dirname, "src");
-const pagesDir = resolve(srcDir, "pages");
+import manifest from "./src/manifest.config";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [svelte()],
-    resolve: {
-        alias: {
-            src: srcDir,
+    plugins: [svelte(), crx({ manifest })],
+    // HACK: https://github.com/crxjs/chrome-extension-tools/issues/696
+    // https://github.com/crxjs/chrome-extension-tools/issues/746
+    server: {
+        port: 5173,
+        strictPort: true,
+        hmr: {
+            clientPort: 5173,
         },
     },
     build: {
-        rollupOptions: {
-            input: {
-                background: resolve(pagesDir, "background", "index.ts"),
-                content: resolve(pagesDir, "content", "index.ts"),
-
-                
-                flow: resolve(pagesDir, "flow", "index.html"),
-                options: resolve(pagesDir, "options", "index.html"),
-                popup: resolve(pagesDir, "popup", "index.html"),
-                sidepanel: resolve(pagesDir, "sidepanel", "index.html"),
-                
-            },
-            output: {
-                entryFileNames: (chunk) => `src/pages/${chunk.name}/index.js`,
-            },
+      rollupOptions: {
+        input: {
+          flow: 'src/pages/flow/index.html',
+          sidepanel: 'src/pages/sidepanel/index.html',
+          editor: 'src/pages/editor/index.html',
         },
-    },
+      },
+    }
 });

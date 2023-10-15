@@ -1,5 +1,4 @@
-import Main from 'src/flow/components/Main.svelte';
-import type { IStorage } from 'src/types';
+import Main from '../../flow/components/Main.svelte';
 
 function restoreMain() {
   const app = new Main({

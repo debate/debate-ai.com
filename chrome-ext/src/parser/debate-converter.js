@@ -1,23 +1,58 @@
-/* Converts docx debate file to html with u b i h1 mark tags
-
-git clone <this repo>
-cd <this repo>
-pnpm i
-node .\debate-converter.js "D:\\Debate\\Demo"
-*/
-
 const jsdom = require('jsdom');
 const fs = require('fs');
 const path = require('path');
-const AdmZip = require('adm-zip');
-
+const AdmZip = require('adm-zip');  
+const shell = require('child_process');
+const { setTimeout } = require('timers/promises');
 const { JSDOM } = jsdom;
-// const { document } = (new JSDOM('')).window;
-// global.document = document;
+
+/* Converts docx debate file to html with u b i h1 mark tags*/
+
+// set to true to include any pdf files found (may be slow if many pdfs)
+// pip install pdf2docx
+const INCLUDE_PDF = false;
+
+var  INPUT_FOLDER = "";
+var filesFinished = 0;
+var totalFileCount = 0;
+
+const main = () => {
+  if (process.argv.length !== 3) {
+    console.log("Usage: node converter.js <FOLDER>");
+    return;
+  }
+  
+  INPUT_FOLDER =  process.argv[2] 
+OUTPUT_FOLDER = path.dirname(INPUT_FOLDER) + " HTML"
+
+  
+//run conversion
+//single file
+if (INPUT_FOLDER.endsWith(".docx") ) {
+  convertFile(INPUT_FOLDER, 1);
+
+} else if (INPUT_FOLDER.endsWith(".html") ) {
+
+  //convert html to json
+  const fileContents = fs.readFileSync(INPUT_FOLDER);
+  if (!fileContents || fileContents.length === 0) {
+    process.exit(1);
+  }
+  const cards = extractCardsFromHtml(fileContents.toString());
+  console.log(JSON.stringify(cards));
+}  else {  
+  var allFiles = getFilesInFolder(INPUT_FOLDER)
+  totalFileCount = allFiles.length;
+  
+  allFiles.forEach(convertFile);
+} 
+
+};
 
 
 //convert docx by unzipping it and regex to simple html u,b,p,h1,h2,h3,h4,span
-function docx2html(docXML) {
+
+const docx2html = (docXML) => {
 
     //create DOM with document elements and formatting
     var output = "";
@@ -54,23 +89,10 @@ function docx2html(docXML) {
     
   
         //add bold, underline, highlight
+   
         if (
-          inNodeChild.getElementsByTagName("b").length ||
-          style.includes("bold") ||
-          style.includes("emphasis")
-        )
-          val = "<b>" + val + "</b>";
-
-        if (
-          inNodeChild.getElementsByTagName("i").length ||
-          style.includes("italic") 
-        )
-          val = "<i>" + val + "</i>";
-  
-        if (
-          inNodeChild.getElementsByTagName("u").length ||
-          style.includes("underline") ||
-          style.includes("emphasis")
+          inNodeChild.getElementsByTagName("u").length 
+        
         )
           val = "<u>" + val + "</u>";
   
@@ -108,26 +130,39 @@ const getFilesInFolder = (dir, files = []) => {
 
 //convert file by unzipping it and regex to simple html then write to output folder
 
-function convertFile(filepath, indexConversion){
-  const filename = path.basename(filepath);
+async function  convertFile(filepath, singleFileOnly){
+
+  // pdf conversion requires 
+  // pip install pdf2docx
+  if (filepath.endsWith(".pdf") && INCLUDE_PDF){
+    console.log(filepath)
+    shell.execSync('python pdf.py ' + filepath , { stdio: [] });
+    filepath = filepath.replace(".pdf", ".docx");
+    await setTimeout(200); 
+  }
+
+  
+  if (!filepath.endsWith(".docx") )
+    return;
+
   try{
     var zip = new AdmZip(filepath);
-
   }
   catch (e) {
+    console.error("Error reading file: " + filepath);
     return;
   }
+
 
   zip.readAsTextAsync( zip.getEntry('word/document.xml'), function(unzipContents){
     var startTime = new Date().getTime();
 
     var htmlDoc = docx2html(unzipContents);
 
-    var outputPath = filepath
-      .replace(INPUT_FOLDER, OUTPUT_FOLDER)
-      .replace(".docx", ".html");
+    var outputPath=filepath.replace(".docx", ".html")
+    outputPath = outputPath.replace(INPUT_FOLDER.replace(/\\+$/g, ''), INPUT_FOLDER.replace(/\\+$/g, '') + " HTML")
 
-    //create output dir if not exists
+    // create output dir if not exists
     const dir = path.dirname(outputPath)
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, {recursive:true});
@@ -143,25 +178,6 @@ function convertFile(filepath, indexConversion){
 
 }
 
-if (process.argv.length === 2) {
-  console.error('Script requires input folder as argument');
-  process.exit(1);
-}
 
-const INPUT_FOLDER =  process.argv[2] 
-var  OUTPUT_FOLDER = INPUT_FOLDER + " HTML";
-var filesFinished = 0;
-  
-//run conversion
-//single file
-if (INPUT_FOLDER.endsWith(".docx") ) {
-  OUTPUT_FOLDER = path.dirname(INPUT_FOLDER)
 
-  convertFile(INPUT_FOLDER, 1);
-
-} else {  
-  var allFiles = getFilesInFolder(INPUT_FOLDER)
-  var totalFileCount = allFiles.length;
-  
-  allFiles.forEach(convertFile);
-} 
+main();

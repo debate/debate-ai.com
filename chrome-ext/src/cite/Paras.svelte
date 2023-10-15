@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { getContext } from 'svelte';
   import type { Writable } from 'svelte/store';
-  import type { ICard, IPara, IRun } from '../types';
+  import type { ICard, IPara, IRun } from './types';
   import type { EditHistory } from './history';
 
   export let shrunk: boolean;

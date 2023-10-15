@@ -1,4 +1,4 @@
-import type { ICard } from 'src/types';
+import type { ICard } from 'src/cite/types';
 import { Readability } from './readability';
 
 // stolen from https://github.com/flickz/newspaperjs/blob/master/lib/extractor.js

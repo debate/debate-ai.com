@@ -1,1 +1,0 @@
-import"../../../assets/index-3b0806a3.js";import{M as t}from"../../../assets/Main-79f7c5b5.js";function o(){new t({target:document.body,props:{context:"popup"}})}document.addEventListener("DOMContentLoaded",o);

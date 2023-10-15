@@ -2,6 +2,7 @@ import type EditorJS from '@editorjs/editorjs';
 import type { EditorConfig, OutputData } from '@editorjs/editorjs';
 import { writable } from 'svelte/store';
 import type { Readable, Writable } from 'svelte/store';
+import Underline from '@editorjs/underline';
 
 export type EditorStore = {
   instance?: EditorJS;

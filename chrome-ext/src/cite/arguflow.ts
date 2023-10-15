@@ -1,4 +1,4 @@
-import type { IPara, IRun } from 'src/types';
+import type { IPara, IRun } from 'src/cite/types';
 import { get, writable } from 'svelte/store';
 
 export let auth = writable({

@@ -1,4 +1,4 @@
-import type { ICard, IFormatter } from '../types';
+import type { ICard, IFormatter } from './types';
 // if (date instanceof Date && !isNaN(date.valueOf())) {
 
 export function validateDate(date: {

@@ -1,10 +1,15 @@
 <p align="center">
 <img src="https://i.imgur.com/QbMPFrk.png"  > 
 </p>
+<p align="center">
+<a href="https://matrix.to/#/#arguflow-general:matrix.zerodao.gg">
+    <img src="https://img.shields.io/badge/matrix-join-purple?style=flat&logo=matrix&logocolor=white" />
+</a>
+
+</p>
 
 
-
-Critical times call for critical thinkers — seize the means of decentralized knowledge production  — for a crowdsourced research dataset for ChatGPT to recommend arguments and evolve chain-of-though reasoning on a complex debate topic.
+Critical times call for critical thinkers to create the decentralized AI Knowledge Graph — a crowdsourced hive mind dataset for ChatGPT to recommend arguments and evolve tree-of-though reasoning on a topic as a public service.
 
 _Being_ is Becoming: Whatever things can be, that is what they must become.
 
@@ -12,8 +17,7 @@ _Being_ is Becoming: Whatever things can be, that is what they must become.
 
 ## Ideas  
 
-[IN DEVELOPMENT NOW] Chrome Extension - cite maker, flow with timer, editor, colab Research Sidebar
-
+ Chrome Extension - cite maker, flow with timer, editor, Colab Research Sidebar
 
 Colab Research Sidebar - see if anyone else has ever tagged this article  and put in shared hive mind. Highlight keywords as the first step before underlining. 
 
@@ -40,8 +44,9 @@ Round format - 8 speech full rounds instead of speechdocs, record last 3 rebutta
 
 ### Tech Stack Docs
 
+- [Spock Dev Stack](https://github.com/vtempest/spock-stack-starter) Elegantly Simple, Functionally Brilliant
 - [Svelte](https://svelte.dev/examples/hello-world) simplified reactive interface components structure
-- [Pocketbase](https://pocketbase.io/docs/js-overview/) sqlite db toolkit, admin panel, auth, api docs, ORM rules, migrations, files, js extensions 
+- [Pocketbase](https://pocketbase.io/docs/js-overview/) sqlite, admin, auth, api docs, ORM rules, migrations, files, js extensions 
 - [OAuth2](https://developers.google.com/identity/protocols/oauth2) Google Signin user authentication
 - [Caddy](https://caddyserver.com/docs/) https server routing to containers with [caddy-docker-proxy](https://github.com/lucaslorentz/caddy-docker-proxy) in one file
 - [Svelte Kit](https://kit.svelte.dev) streamlined api server 

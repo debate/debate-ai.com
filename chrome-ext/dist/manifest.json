@@ -1,34 +1,55 @@
 {
-  "name": "Debate-AI.com Colab Research AI ",
-  "description": "Critical times call for critical thinkers to create the decentralized AI hive mind",
-  "version": "1.0.0",
   "manifest_version": 3,
+  "name": "Debate Research AI",
+  "description": "Critical times call for critical thinkers to create the decentralized AI Knowledge Graph",
+  "version": "6.0.0",
+  "version_name": "6.0.0",
   "icons": {
-    "16": "/icons/appicon16.png",
-    "48": "/icons/appicon48.png",
-    "128": "/icons/appicon128.png"
+    "32": "src/icons/icon-32.png",
+    "48": "src/icons/icon-48.png",
+    "128": "src/icons/icon-128.png"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["src/pages/content/index.js"]
+      "js": [
+        "assets/content-script-loader.index.ts-1e768ade-a06d68aa.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
+  "side_panel": {
+    "default_path": "src/pages/sidepanel/index.html"
+  },
   "background": {
-    "service_worker": "src/pages/background/index.js"
+    "service_worker": "service-worker-loader.js",
+    "type": "module"
   },
   "options_page": "src/pages/options/index.html",
   "action": {
-    "default_popup": "src/pages/popup/index.html",
-    "default_icon": {
-      "16": "/icons/appicon16.png",
-      "48": "/icons/appicon48.png",
-      "128": "/icons/appicon128.png"
-    }
+    "default_popup": "src/pages/popup/index.html"
   },
-  "permissions": ["sidePanel", "storage", "system.display", "tabs", "unlimitedStorage"],
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "system.display",
+    "tabs",
+    "unlimitedStorage"
+  ],
   "host_permissions": [
     "https://api.debate-ai.com/*",
     "https://api.debate-ai.com/*/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "assets/index.ts-1e768ade.js"
+      ],
+      "use_dynamic_url": true
+    }
   ]
 }

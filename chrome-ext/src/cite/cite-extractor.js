@@ -5,33 +5,22 @@ v. 1.1.1 3-25-2016
 ashtarcommunications@gmail.com
 http://paperlessdebate.com
 Creates debate cites from meta tags or page info and copies to clipboard
-
-Cite Creator is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License 3.0 as published by
-the Free Software Foundation.
-
-Cite Creator is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License 3 for more details.
-
-For a copy of the GNU General Public License 3 see:
-http://www.gnu.org/licenses/gpl-3.0.txt
+GPL 3.0
 
 Ideas for future improvements:
 * Better handling for middle initials/3 word names
 * Split name into first/last
-* Make cite box minimize-able
 * PDF handling
 * Lexis-specific handling
-* Immediately update/close box on settings change or disabling, without page reload
 * Allow slashes in date instead of dashes
 * Modularize code
 ******************************** */
 
+///stores settings in chrome.storage sync
+
+
 //Save settings for later use
 var objSettings = new Object();
-setSettings(runComputeCite);
 
 function setSettings(callback) {
 	chrome.storage.sync.get(null, function (settings) {
@@ -51,6 +40,9 @@ function runComputeCite() {
 	//If enabled, run automatically the first time
 	if(objSettings.enabled != 0) {computeCite();}
 }	
+
+//passing in variables is optional
+
 
 function computeCite(strNewName, strNewQuals, strNewDate, strNewTitle, strNewPublication){
 
@@ -558,95 +550,3 @@ function nth_occurrence (string, char, nth){
 function toTitleCase(str){
     return str.replace(/\w*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-
-function closeCite(){
-	//Add cite_closed class to the container div, which makes it invisible
-	document.getElementById('cite_container').className += ' cite_closed';
-}
-
-//Keyboard shortcut functions
-Mousetrap.bind('ctrl+alt+c', function(e) {
-	
-	var copyDiv = document.getElementById('cite_content');
-	
-	//Flash the cite text for 300ms to show it's being copied
-	copyDiv.style.color = "blue";
-	setTimeout(function(){copyDiv.style.color = "white";}, 300);
-
-	//If option set, get selected text
-	if(objSettings.copyselected == 1) {
-		if (window.getSelection) {
-			var sel = "\n" + window.getSelection().toString();
-			//Send message to the background page with text to copy - tack selection onto cite
-			chrome.extension.sendMessage({"text" : copyDiv.innerHTML + sel});
-		}
-		else {
-			chrome.extension.sendMessage({"text" : copyDiv.innerHTML});
-		}
-	}
-	else {
-		chrome.extension.sendMessage({"text" : copyDiv.innerHTML});
-	}		
-	
-    return false;
-});
-
-Mousetrap.bind('ctrl+alt+1', function(e) {
-	
-	//Get selection
-	if (window.getSelection) {
-		var strNewName = window.getSelection().toString();
-	}
-	
-	computeCite(strNewName, undefined, undefined, undefined, undefined);
-	
-    return false;
-});
-
-Mousetrap.bind('ctrl+alt+2', function(e) {
-	
-	//Get selection
-	if (window.getSelection) {
-		var strNewQuals = window.getSelection().toString();
-	}
-	
-	computeCite(undefined, strNewQuals, undefined, undefined, undefined);
-	
-    return false;
-});
-
-Mousetrap.bind('ctrl+alt+3', function(e) {
-	
-	//Get selection
-	if (window.getSelection) {
-		var strNewDate = window.getSelection().toString();
-	}
-	
-	computeCite(undefined, undefined, strNewDate, undefined, undefined);
-	
-    return false;
-});
-
-Mousetrap.bind('ctrl+alt+4', function(e) {
-	
-	//Get selection
-	if (window.getSelection) {
-		var strNewTitle = window.getSelection().toString();
-	}
-	
-	computeCite(undefined, undefined, undefined, strNewTitle, undefined);
-	
-    return false;
-});
-
-Mousetrap.bind('ctrl+alt+5', function(e) {
-	
-	//Get selection
-	if (window.getSelection) {
-		var strNewPublication = window.getSelection().toString();
-	}
-	
-	computeCite(undefined, undefined, undefined, undefined, strNewPublication);
-	
-    return false;
-});

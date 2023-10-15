@@ -1,6 +1,7 @@
 {
-    "name": "debate-ai-cite-maker",
-    "version": "2.0.0",
+    "name": "debate-ai.com-chrome-ext",
+    "description": "Critical times call for critical thinkers to create the decentralized AI Knowledge Graph",
+    "version": "6.0.0",
     "type": "module",
     "scripts": {
         "dev": "vite build -w",
@@ -19,7 +20,9 @@
         "vite": "^5.0.0-beta.2"
     },
     "dependencies": {
+        "@crxjs/vite-plugin": "^1.0.14",
         "@editorjs/editorjs": "^2.28.0",
+        "@editorjs/underline": "^1.1.0",
         "debug": "^4.3.4",
         "esbuild": "^0.19.4",
         "kleur": "^4.1.5",

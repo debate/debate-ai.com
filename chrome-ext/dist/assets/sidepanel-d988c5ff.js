@@ -1,0 +1,1 @@
+import"./modulepreload-polyfill-3cfb730f.js";import{M as t}from"./Main-a3b75714.js";import"./index-8aa16f0e.js";function e(){new t({target:document.body})}document.addEventListener("DOMContentLoaded",e);

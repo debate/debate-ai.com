@@ -1,4 +1,4 @@
-import type { IStorage, ICard } from 'src/types';
+import type { IStorage, ICard } from 'src/cite/types';
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   handleResponse(request, sender, sendResponse);
   return true;

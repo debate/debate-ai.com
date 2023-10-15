@@ -1,1 +1,0 @@
-import"../../../assets/index-3b0806a3.js";import{M as e}from"../../../assets/Main-79f7c5b5.js";function t(){new e({target:document.body,props:{context:"sidepanel"}})}document.addEventListener("DOMContentLoaded",t);

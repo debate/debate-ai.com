@@ -4,7 +4,7 @@
   import ButtonGroup from './ButtonGroup.svelte';
   import { getContext } from 'svelte';
   import type { Readable, Writable } from 'svelte/store';
-  import type { IPara } from '../types';
+  import type { IPara } from './types';
   import type { EditHistory } from './history';
   import { createTransition } from './transition';
   import { messenger, popups } from './stores';
@@ -149,26 +149,21 @@
   {:else}
     <div class="subbar" transition:transition|local>
       <ButtonGroup {floating}>
-        <Button
-          on:click={() => ($currentTool = null)}
-          selected={$currentTool == null}
-          tooltip="Mouse"
-        >
-          <Icon name="cursor" />
-        </Button>
-        <Button
-          on:click={() => ($currentTool = 'highlight')}
-          selected={$currentTool == 'highlight'}
-          tooltip="Highlight"
-        >
-          <Icon name="highlight" />
-        </Button>
+      
         <Button
           on:click={() => ($currentTool = 'underline')}
           selected={$currentTool == 'underline'}
           tooltip="Underline"
         >
           <Icon name="underline" />
+        </Button>
+        
+        <Button
+          on:click={() => ($currentTool = 'highlight')}
+          selected={$currentTool == 'highlight'}
+          tooltip="Highlight"
+        >
+          <Icon name="highlight" />
         </Button>
         <Button
           on:click={() => ($currentTool = 'eraser')}
@@ -179,13 +174,13 @@
         </Button>
       </ButtonGroup>
       <ButtonGroup {floating}>
-        <Button
+        <!-- <Button
           on:click={condenseParas}
           disabled={paras.length <= 1}
           tooltip={paras.length <= 1 ? 'Paragraphs merged' : 'Merge paragraphs'}
         >
           <Icon name="merge" />
-        </Button>
+        </Button> -->
         <Button
           on:click={() => (shrunk = !shrunk)}
           selected={shrunk}

@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store';
-import type { IMessage, IPopupKeys } from '../types';
+import type { IMessage, IPopupKeys } from './types';
 
 export let tooltipState = writable({
   open: false,

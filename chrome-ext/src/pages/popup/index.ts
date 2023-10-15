@@ -1,5 +1,4 @@
-import Main from 'src/cite/Main.svelte';
-import type { IStorage } from 'src/types';
+import Main from '../../cite/Main.svelte';
 
 function restoreMain() {
   const app = new Main({

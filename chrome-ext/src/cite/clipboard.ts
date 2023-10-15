@@ -1,4 +1,4 @@
-import type { ICard } from '../types';
+import type { ICard } from './types';
 import { formatters } from './citeFormatters';
 
 export function cardToHtml(
