@@ -1,8 +1,8 @@
 .DS_Store
 node_modules
 build
-/.svelte-kit
-/package
+dist
+.svelte-kit
 .env
 !.env.example
 vite.config.js.timestamp-*
@@ -12,3 +12,6 @@ pb_data
 .vscode
 .svelte-kit
 *.lockb
+*lock.yaml
+__pycache__
+*.bin

@@ -18,8 +18,8 @@ export default defineConfig({
     build: {
       rollupOptions: {
         input: {
-          flow: 'src/pages/flow/index.html',
           sidepanel: 'src/pages/sidepanel/index.html',
+          flow: 'src/pages/flow/index.html',
           editor: 'src/pages/editor/index.html',
         },
       },

@@ -21,7 +21,7 @@ _Being_ is Becoming: Whatever things can be, that is what they must become.
 
 Colab Research Sidebar - see if anyone else has ever tagged this article  and put in shared hive mind. Highlight keywords as the first step before underlining. 
 
-ChatGPT - write extensions per card, generate keywords before reading article to help skim, write response to card using vector search of cards read in round, explain a chain-of-though reasoning to summarize topic as public service of debaters
+[ChatGPT 4.0 Plugin](https://github.com/openai/chatgpt-retrieval-plugin) - write extensions per card, generate keywords before reading article to help skim, write response to card using vector search of cards read in round, explain a chain-of-though reasoning to summarize topic as public service of debaters
 
 Crowdsourced Research - github shows people iterate faster and go deeper, deduplication, and card video games show cards can have scores and answer others
 

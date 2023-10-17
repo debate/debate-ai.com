@@ -1,34 +1,29 @@
 {
     "name": "debate-ai.com-chrome-ext",
-    "description": "Critical times call for critical thinkers to create the decentralized AI Knowledge Graph",
+    "description": "Critical times call for critical thinkers to create the Decentralized AI Knowledge Graph",
     "version": "6.0.0",
     "type": "module",
     "scripts": {
-        "dev": "vite build -w",
+        "dev": "vite",
         "build": "vite build",
         "check": "svelte-check --tsconfig ./tsconfig.json"
     },
     "devDependencies": {
-        "@sveltejs/vite-plugin-svelte": "^1.4.0",
-        "@tsconfig/svelte": "^3.0.0",
+        "@crxjs/vite-plugin": "^1.0.14",
+        "@editorjs/marker": "^1.3.0",
+        "@sveltejs/vite-plugin-svelte": "^2.4.6",
+        "@tsconfig/svelte": "^5.0.2",
         "@types/chrome": "^0.0.191",
         "svelte": "^3.59.2",
         "svelte-check": "^2.10.3",
+        "svelte-hmr": "^0.15.3",
         "svelte-preprocess": "^4.10.7",
         "tslib": "^2.6.2",
         "typescript": "^4.9.5",
-        "vite": "^5.0.0-beta.2"
+        "vite": "5.0.0-beta.8"
     },
     "dependencies": {
-        "@crxjs/vite-plugin": "^1.0.14",
-        "@editorjs/editorjs": "^2.28.0",
-        "@editorjs/underline": "^1.1.0",
-        "debug": "^4.3.4",
-        "esbuild": "^0.19.4",
-        "kleur": "^4.1.5",
-        "magic-string": "^0.30.4",
-        "rollup": "^4.0.0",
-        "svelte-hmr": "^0.15.3",
-        "vitefu": "^0.2.4"
+        "@editorjs/editorjs": "^2.28.1",
+        "@editorjs/underline": "^1.1.0"
     }
 }
