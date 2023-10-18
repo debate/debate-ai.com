@@ -23,7 +23,7 @@ sudo docker-compose up -d
 
 ## Similar Words Nearest Embeddings
 
-Search Autocomplete for Debate - helps researchers discover related keywords to search for in t
+Search Autocomplete for Debate - helps researchers discover related keywords to search for in the literature base
 
 ```
 
@@ -88,3 +88,45 @@ Docx to CARDS Parser converts docx debate file to JSON with CARDS metadata and c
 - 300 dimensions, trained for 100 epochs with lr set to 0.10 using FastText
 - No uppercase, subword, or conjugations
 
+
+
+## Permutation Tree of Thought Prompting 
+
+- [Tree of Thought Prompting Tips ](https://www.promptingguide.ai/techniques/tot)
+- [Tree of Thought LLM](https://github.com/princeton-nlp/tree-of-thought-llm)
+
+
+```
+Imagine three different experts are answering this question. All experts will write down 1 step of their thinking, then share it with the group. Then all experts will go on to the next step,  trying to solve it step by step, and make sure the result is correct and avoid penalty. Expert 1 answers affirmatively, Expert 2 disagrees, and Expert 3 reaches a permutation combining the best arguments from both sides.
+
+climate change causes poverty
+the plan solves oil dependence 
+the plan will harm economy and cause job loss
+oil dependence is the root cause of climate change
+is the plan a good idea to solve poverty?
+
+Expert 1 (Affirmative):
+
+Climate change causes poverty.
+This is true as climate change can lead to various environmental issues, such as natural disasters and resource scarcity, which can contribute to poverty.
+Expert 2 (Disagrees):
+
+Climate change causes poverty.
+While climate change can exacerbate poverty in certain regions, it is not the sole or primary cause of poverty. Poverty has many complex factors, and climate change is just one of them.
+Expert 3 (Combines Arguments):
+2. The plan solves oil dependence.
+
+If the plan involves transitioning to renewable energy sources and reducing reliance on oil, it could help solve oil dependence, which is an important step in mitigating climate change.
+The plan will harm the economy and cause job loss.
+
+This is a valid concern as rapid shifts away from certain industries (e.g., fossil fuels) can lead to economic challenges and job displacement in affected sectors.
+Oil dependence is the root cause of climate change.
+
+While oil dependence is a significant contributor to greenhouse gas emissions and thus a factor in climate change, it's not the sole root cause. Climate change is a complex issue influenced by various factors, including deforestation, industrial processes, and more.
+So, is the plan a good idea to solve poverty?
+
+Expert 1 argues that addressing climate change can alleviate poverty.
+Expert 2 is skeptical of the direct link between the plan and poverty reduction.
+Expert 3 concludes that the plan may help reduce poverty indirectly by addressing oil dependence and climate change, but it must be implemented carefully to avoid harming the economy and causing job losses. The effectiveness of the plan in reducing poverty will depend on various factors and the specific details of the plan.
+
+```

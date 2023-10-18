@@ -49,6 +49,7 @@ Round format - 8 speech full rounds instead of speechdocs, record last 3 rebutta
 - [OpenAI Vectors](https://openai.com/blog/introducing-text-and-code-embeddings)
 - [BERTopic](https://github.com/MaartenGr/BERTopic)
 - [Autogen AI & Human Colab](https://github.com/microsoft/autogen/blob/main/notebook/agentchat_two_users.ipynb)
+- [Tree-of-Thought Prompt](https://github.com/princeton-nlp/tree-of-thought-llm)
 - [Transformers.js in browser](https://github.com/xenova/transformers.js)
 - [Gensim Topic](https://radimrehurek.com/gensim/auto_examples/core/run_topics_and_transformations.html)
 - [SetFit Topic](https://github.com/huggingface/setfit)
