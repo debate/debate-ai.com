@@ -42,16 +42,26 @@ Round format - 8 speech full rounds instead of speechdocs, record last 3 rebutta
 
 
 
-### Tech Stack Docs
+## Further Research
 
-- [Spock Dev Stack](https://github.com/vtempest/spock-stack-starter) Elegantly Simple, Functionally Brilliant
-- [Svelte](https://svelte.dev/examples/hello-world) simplified reactive interface components structure
-- [Pocketbase](https://pocketbase.io/docs/js-overview/) sqlite, admin, auth, api docs, ORM rules, migrations, files, js extensions 
-- [OAuth2](https://developers.google.com/identity/protocols/oauth2) Google Signin user authentication
-- [Caddy](https://caddyserver.com/docs/) https server routing to containers with [caddy-docker-proxy](https://github.com/lucaslorentz/caddy-docker-proxy) in one file
-- [Svelte Kit](https://kit.svelte.dev) streamlined api server 
-- [docker compose](https://docs.docker.com/compose/gettingstarted/) manage containers in one file
-- [DaisyUI](https://daisyui.com/docs/install/)  style themes based on [Tailwind](https://tailwindcss.com) class names 
-- [ESLint](https://github.com/dustinspecker/awesome-eslint)/[Prettier](https://prettier.io) code formatting 
-- [Vite](https://vitejs.dev) bundle compiler
+- [ChatGPT RAG Search Plugin](https://github.com/openai/chatgpt-retrieval-plugin)
+- [Debate2vec](https://github.com/Hellisotherpeople/debate2vec)
+- [OpenAI Vectors](https://openai.com/blog/introducing-text-and-code-embeddings)
+- [BERTopic](https://github.com/MaartenGr/BERTopic)
+- [Autogen AI & Human Colab](https://github.com/microsoft/autogen/blob/main/notebook/agentchat_two_users.ipynb)
+- [Transformers.js in browser](https://github.com/xenova/transformers.js)
+- [Gensim Topic](https://radimrehurek.com/gensim/auto_examples/core/run_topics_and_transformations.html)
+- [SetFit Topic](https://github.com/huggingface/setfit)
+
+- [Embedding Top Models](https://huggingface.co/spaces/mteb/leaderboard): 
+[Beijing bge-large-en ](https://huggingface.co/BAAI/bge-large-en-v1.5#model-list), 
+[Hong Kong instructor ](https://huggingface.co/hkunlp/instructor-large), 
+[Google Vertex AI ](https://cloud.google.com/vertex-ai/docs/generative-ai/learn-resources), 
+[Supabase gte](https://huggingface.co/Supabase/gte-small),  [FastText](https://github.com/facebookresearch/fastText/tree/master)
+- [scattertext visualization](https://github.com/JasonKessler/scattertext)
+- [HNSW Vector Visualization](https://colab.research.google.com/drive/12L_oJPR-yFDlORpPondsqGNTPVsSsUwi?usp=sharing#scrollTo=QhHqESI-Yc3j)
+- [OpenKG Blockchain](https://direct.mit.edu/dint/article/3/2/205/101024/OpenKG-Chain-A-Blockchain-Infrastructure-for-Open)
+- [ChatGPT Prompt Over 4000 Word Limit](https://docs.llamaindex.ai/en/stable/examples/low_level/response_synthesis.html)
+- [KG Embedding Papers](https://github.com/shaoxiongji/knowledge-graphs/blob/master/papers/KG-embedding.md)
+
 

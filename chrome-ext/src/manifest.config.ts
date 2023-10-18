@@ -28,7 +28,7 @@ export default defineManifest(async (env) => ({
       } 
     ],
     "side_panel": {
-        "default_path": "src/pages/sidepanel/index.html",
+        "default_path": "src/pages/sidepanel/index.html"
     },
     "background": {
       "service_worker": "src/pages/background/index.ts"

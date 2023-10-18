@@ -28,6 +28,12 @@ devDependencies:
   '@types/chrome':
     specifier: ^0.0.191
     version: 0.0.191
+  editorjs-drag-drop:
+    specifier: ^1.1.13
+    version: 1.1.13
+  editorjs-undo:
+    specifier: ^2.0.24
+    version: 2.0.24
   svelte:
     specifier: ^3.59.2
     version: 3.59.2
@@ -47,7 +53,7 @@ devDependencies:
     specifier: ^4.9.5
     version: 4.9.5
   vite:
-    specifier: 5.0.0-beta.8
+    specifier: ^5.0.0-beta.8
     version: 5.0.0-beta.8
 
 packages:
@@ -976,6 +982,16 @@ packages:
       domhandler: 5.0.3
     dev: true
 
+  /editorjs-drag-drop@1.1.13:
+    resolution: {integrity: sha512-/82RIXP8/zix6Y8/Mnonk1z7XljFvKmsIFbCrP6JTbdWztqoApyUCsnouHTZ4tF51/BTszYV3Z9ennQrXrHCzA==}
+    dev: true
+
+  /editorjs-undo@2.0.24:
+    resolution: {integrity: sha512-b4UjTZfBKVJlHYy7iVS44FMvDN/K59EAKcW5cF8ncWPLFsEeJXL+r40fWv7bHoQDcmoDNdpoChcjXPdkQIDdmQ==}
+    dependencies:
+      vanilla-caret-js: 1.1.0
+    dev: true
+
   /electron-to-chromium@1.4.556:
     resolution: {integrity: sha512-6RPN0hHfzDU8D56E72YkDvnLw5Cj2NMXZGg3UkgyoHxjVhG99KZpsKgBWMmTy0Ei89xwan+rbRsVB9yzATmYzQ==}
     requiresBuild: true
@@ -1640,6 +1656,10 @@ packages:
       browserslist: 4.22.1
       escalade: 3.1.1
       picocolors: 1.0.0
+    dev: true
+
+  /vanilla-caret-js@1.1.0:
+    resolution: {integrity: sha512-vl3R4Xjqb+xnM0gYyg+wcqWGYwKKnkz58Yj29/FQB+w+yP7R8IR1DGoJnDIs05moEZiGlQUTabPMoEtnQNcrpQ==}
     dev: true
 
   /vite@5.0.0-beta.8:

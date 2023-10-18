@@ -3,24 +3,21 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-model = fasttext.load_model("debate2vec.bin")
+model = fasttext.load_model("/var/opt/debate2vec.bin")
 
 
 @app.get("/similar")
-async def similar(word: str, count: int = 30):
-    
+async def similar(word: str, count: int = 50):
     similar = model.get_nearest_neighbors(word, k=count)
     similar = list(map(lambda x: x[1], similar))
 
-    return {"word": word, "similar": str(similar)}
+    return {"query": word, "similar": similar}
 
 
-@app.get("/tag")
+@app.get("/vector")
 async def tag(tag: str):
-    
-    arr = model.get_sentence_vector(tag)
-
-    return {"tag": tag, "vector": str(arr)}
+    vector = model.get_sentence_vector(tag).tolist()
+    return vector
 
 
 

@@ -5,9 +5,6 @@
 **[ChatGPT 4.0 Plugin](https://platform.openai.com/docs/plugins/introduction)** - vectorized cards API usable via the ChatGPT Plugins platform to make debate research available as a service and to evolve tree-of-thought reasoning. 
 
 
-
-## DebateAI Vector API
-
 Text classification by vectorized tagline summaries creates a knowledge graph where file names and H1 H2 H3 H4 tags serve as labels and able to map any future articles on a topic to the Argument Node label.
 
 
@@ -26,14 +23,17 @@ sudo docker-compose up -d
 
 ## Similar Words Nearest Embeddings
 
+Search Autocomplete for Debate - helps researchers discover related keywords to search for in t
+
 ```
 
 http://localhost:8000/similar?word=ontology&count=30
 
-{"word":"ontology","similar":"['ontological', 'epistemology', 'ontologies', 'metaphysics', 'blackness', 'subjectivity', 'metaphysical', 'philosophical', 'ontologically', 'ontic', 'epistemological', 'relationality', 'heidegger’s', 'philosophy', 'conception', 'heidegger', 'humanism', 'transcendental', 'materiality', 'phenomenological', 'essentialist', 'ethical', 'materialist', 'deleuze’s', 'heideggerian', 'constitutive', 'ethics', 'sociality', 'levinas', 'relational']"}
 
 
 {"word":"alterity","similar":"['otherness', 'subjectivity', 'levinas', 'self', 'levinas’s', 'irreducible', 'undecidability', 'singularity', 'ontological', 'transcendence', 'derrida', 'levinasian', 'relationality', 'identity', 'exteriority', 'modernity', 'ethics', 'selfhood', 'transgression', 'poetics', 'seduction', 'finitude', 'ontology', 'dialectics', 'binaries', 'postmodern', 'transcendent', 'blackness', 'subjectivities', 'deconstruction', \"lovecraft's\", \"derrida's\", 'hybridity', 'baudrillard’s', 'negation', 'hostis', 'transcendental', 'stranger', 'oneself', 'constitutive', 'phenomenological', 'radical', 'historicity', 'ethical', 'indigeneity', 'difference', 'post-structuralist', 'nihilism', 'aporia', 'essentialised']"}
+
+{"word":"counterplan","similar":"['counterplans', 'resolutional', 'affirmative', 'kritiks', 'kritik', 'affirmative’s', 'non-topical', 'in-round', 'fiat', 'topicality', 'permutation', 'affs', 'nontopical', 'argument', 'solvency', 'guesstimate', 'conditionality', 'eb-7', 'reviewability', 'competition.”', 'inherency', 'topical', 'paraontology', 'disad', '1ac', 'advocacies', 'arguments', 'affirmatives', 'deontological', 'cybermad', 'rule-consequentialism', 'consequentialism', 'actor”', 'testing”', 'one-voice', '2ac', 'negative’s', 'tournament', 'solt', 'grisez', 'germaneness', 'politeia', 'interjurisdictional', 'purusha', 'disadvantages', 'textually', 'neg', '“laboratory”', 'incapacitates', 'consequentialist', 'weakens', 'aff', 'fsia', '“backpack', 'corporate-tax', 'cispa', '“predictions', 'disadvantage', 'critique’s', 'lre', 'competitive', 'textual', 'nullification', 'harman’s', 'sunnah', 'hatab', 'debater', 'contractarian', 'prong', 'correlationist', '7/9/2018', 'eliminates', 'morales-santana', 'credibility.¶', 'experimentalism', \"rule's\", 'defensible', 'benjamin’s', 'catchphrases', 'evasion', 'debaters', 'fg', 'argument—that', 'statutory', 'pascal’s', 'nuclearmad', 'morality', 'competitors', '9-0', 'reasoned', 'neo-isolationism', 'debate', 'it', 'advan', 'vagueness', 'outweigh', 'proposal', 'text', 'prevention’s', 'lipitor']"}
 
 {"word":"government","similar":"['federal', 'government’s', 'governments', 'authorities', \"government's\", 'officials', 'agencies', 'government.¶', 'congress', 'state', 'governmental', 'government¶', 'u.s', 'branches', 'branch', 'companies', 'legislature', 'president', 'administration', 'sector', 'private', 'public', 'citizens', 'elected', 'businesses', 'government,”', 'judiciary', 'company', 'private-sector', 'local', 'courts', 'ministries', 'government.”', 'department', 'politicians', 'state-owned', 'foreign', 'government”', 'contractors', 'country', 'subsidies', 'parliament', 'oversight', 'gao', 'firms', '“commandeer”', 'military', 'revenue', 'regulators', 'legislators']"}
 
@@ -52,9 +52,9 @@ http://localhost:8000/tag?tag=US%20leadership%20is%20key%20to%20solve%20nuclear%
 
 
 
-## DebateAI CARDS API 2023 Specification
+## DebateAI CARDS API Specification
 
-Docx to CARDS Parser- Converts docx debate file to JSON with CARDS metadata and content: html with u b i p mark
+Docx to CARDS Parser converts docx debate file to JSON with CARDS metadata and content: html with u b i p mark
 
 
 ```
@@ -80,43 +80,11 @@ Docx to CARDS Parser- Converts docx debate file to JSON with CARDS metadata and 
 
 ```
 
-## About
+## debate2vec Model Statistics 
 
-Stats about this corpus:
-
-222485 unique documents larger than 200 words (DebateSum plus some additional debate docs that weren't well-formed enough for inclusion into DebateSum)
-107555 unique words (showing up more than 10 times in the corpus)
-101 million total words
-Stats about debate2vec vectors:
-
-300 dimensions, minimum number of appearances of a word was 10, trained for 100 epochs with lr set to 0.10 using FastText
-lowercased (will release cased)
-No subword information
-The corpus includes the following topics
-
-2013-2014 Cuba/Mexico/Venezuela Economic Engagement
-2014-2015 Oceans
-2015-2016 Domestic Surveillance
-2016-2017 China
-2017-2018 Education
-2018-2019 Immigration
-2019-2020 Reducing Arms Sales
-Other topics that this word vector model will handle extremely well
-
-Philosophy (Especially Left-Wing / Post-modernist)
-Law
-Government
-Politics
-
-
-## Tech Stack Docs
-
-[Debate2vec](https://github.com/Hellisotherpeople/debate2vec)
-
-[OpenAI Vectors](https://openai.com/blog/introducing-text-and-code-embeddings)
-
-[FastText](https://github.com/facebookresearch/fastText/tree/master)
-
-[HNSW Vector Visualization](https://colab.research.google.com/drive/12L_oJPR-yFDlORpPondsqGNTPVsSsUwi?usp=sharing#scrollTo=QhHqESI-Yc3j)
-
+- 107555 Word Vectors showing up more than 10 times
+- Philosophy and Politics academic publications scraped in 2020 from opencaselist.com research by debate students
+- 222485 unique documents larger than 200 words totalling 101 million words
+- 300 dimensions, trained for 100 epochs with lr set to 0.10 using FastText
+- No uppercase, subword, or conjugations
 
