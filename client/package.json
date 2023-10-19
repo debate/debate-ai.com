@@ -34,5 +34,18 @@
     "typescript": "^4.9.5",
     "vite": "^5.0.0-beta.2"
   },
-  "type": "module"
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "svelte": "dist/index.js",
+  "type": "module",
+  "dependencies": {
+    "@babel/preset-env": "^7.23.2",
+    "@skeleton-elements/svelte": "^2.0.0",
+    "esm": "^3.2.25",
+    "framework7": "^8.3.0",
+    "framework7-svelte": "^8.3.0",
+    "skeleton-elements": "^4.0.1",
+    "svelte-particles": "^2.12.0",
+    "vite-plugin-commonjs": "^0.10.0"
+  }
 }

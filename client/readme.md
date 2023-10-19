@@ -1,5 +1,4 @@
-## Crowdsourced Argument Research Database Server (CARDS)
-
+## News Feed for Crowdsourced Argument Research Database as a Service
 
 
 

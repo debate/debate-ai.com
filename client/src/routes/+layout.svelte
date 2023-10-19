@@ -123,7 +123,6 @@
 		</div>
 	{:else}
 	<div class="relative flex space-x-3 items-right place-content-end group  ">
-				
 			<button class="btn btn-primary" on:click={login}>
 				Google Signin
 			</button>

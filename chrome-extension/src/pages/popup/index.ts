@@ -1,4 +1,4 @@
-import Main from '../../cite/Main.svelte';
+import Main from '../../../cite/Main.svelte';
 
 function restoreMain() {
   const app = new Main({

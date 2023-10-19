@@ -5,6 +5,11 @@
 	import BigToggle from '$lib/BigToggle.svelte';
 	import { onMount, afterUpdate } from 'svelte';
 
+
+	let toolbarPosition = 'bottom';
+	
+	
+	
 	let creatingPost: boolean = true;
 	let postFollowing: boolean = false;
 	let postText: string;
@@ -216,6 +221,9 @@
 <div class="flex justify-between mt-8 space-x-8 px-8 w-full">
 	<div class="flex-1 max-w-md">
 		<div class="bg-[#2e2e2e] rounded-md drop-shadow-md text-white p-5">
+
+			
+			  
 			<div class="flex justify-between mb-6 items-center">
 				<p class="text-neutral-300">People you may know</p>
 				<p class="font-semibold text-sm hover:underline hover:cursor-pointer">See All</p>

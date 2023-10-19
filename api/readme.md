@@ -1,23 +1,30 @@
 
 
-## ChatGPT Argument Research Dataset as a Service (CARDS)
+## Debate Word Vectors
 
-**[ChatGPT 4.0 Plugin](https://platform.openai.com/docs/plugins/introduction)** - vectorized cards API usable via the ChatGPT Plugins platform to make debate research available as a service and to evolve tree-of-thought reasoning. 
-
-
-Text classification by vectorized tagline summaries creates a knowledge graph where file names and H1 H2 H3 H4 tags serve as labels and able to map any future articles on a topic to the Argument Node label.
-
-
-ChatGPT hive mind recommends articles for human researchers working alongside AI to develop a summarized topic outline as a public service.
-
-
-## Install
-
-Download debate2vec 250MB model and dockerized FastText server 
+Download [debate2vec](https://github.com/Hellisotherpeople/debate2vec) 250MB model and dockerized FastText server 
 
 ```
 wget https://huggingface.co/Hellisotherpeople/debate2vec/resolve/main/debate2vec.bin  
 sudo docker-compose up -d
+
+```
+
+
+
+## Lamma  Alternative to ChatGPT 
+
+Facebook's open sources Llama 2 pre-trained models are trained on 2 trillion tokens and 1 million human annotations.
+
+
+```
+git clone https://github.com/ggerganov/llama.cpp
+cd lamma.cpp
+make -j
+
+ipull https://huggingface.co/TheBloke/Llama-2-7b-Chat-GGUF/resolve/main/llama-2-7b-chat.Q4_K_M.gguf
+
+./main -m llama-2-7b-chat.Q4_K_M.gguf -p "what are the key steps to building a website?" -n 400 -e
 
 ```
 
@@ -35,10 +42,6 @@ http://localhost:8000/similar?word=ontology&count=30
 
 {"word":"counterplan","similar":"['counterplans', 'resolutional', 'affirmative', 'kritiks', 'kritik', 'affirmative’s', 'non-topical', 'in-round', 'fiat', 'topicality', 'permutation', 'affs', 'nontopical', 'argument', 'solvency', 'guesstimate', 'conditionality', 'eb-7', 'reviewability', 'competition.”', 'inherency', 'topical', 'paraontology', 'disad', '1ac', 'advocacies', 'arguments', 'affirmatives', 'deontological', 'cybermad', 'rule-consequentialism', 'consequentialism', 'actor”', 'testing”', 'one-voice', '2ac', 'negative’s', 'tournament', 'solt', 'grisez', 'germaneness', 'politeia', 'interjurisdictional', 'purusha', 'disadvantages', 'textually', 'neg', '“laboratory”', 'incapacitates', 'consequentialist', 'weakens', 'aff', 'fsia', '“backpack', 'corporate-tax', 'cispa', '“predictions', 'disadvantage', 'critique’s', 'lre', 'competitive', 'textual', 'nullification', 'harman’s', 'sunnah', 'hatab', 'debater', 'contractarian', 'prong', 'correlationist', '7/9/2018', 'eliminates', 'morales-santana', 'credibility.¶', 'experimentalism', \"rule's\", 'defensible', 'benjamin’s', 'catchphrases', 'evasion', 'debaters', 'fg', 'argument—that', 'statutory', 'pascal’s', 'nuclearmad', 'morality', 'competitors', '9-0', 'reasoned', 'neo-isolationism', 'debate', 'it', 'advan', 'vagueness', 'outweigh', 'proposal', 'text', 'prevention’s', 'lipitor']"}
 
-{"word":"government","similar":"['federal', 'government’s', 'governments', 'authorities', \"government's\", 'officials', 'agencies', 'government.¶', 'congress', 'state', 'governmental', 'government¶', 'u.s', 'branches', 'branch', 'companies', 'legislature', 'president', 'administration', 'sector', 'private', 'public', 'citizens', 'elected', 'businesses', 'government,”', 'judiciary', 'company', 'private-sector', 'local', 'courts', 'ministries', 'government.”', 'department', 'politicians', 'state-owned', 'foreign', 'government”', 'contractors', 'country', 'subsidies', 'parliament', 'oversight', 'gao', 'firms', '“commandeer”', 'military', 'revenue', 'regulators', 'legislators']"}
-
-
-
 ```
 
 ### Sentence Vectorization for Label Classification
@@ -46,7 +49,7 @@ http://localhost:8000/similar?word=ontology&count=30
 ```
 http://localhost:8000/tag?tag=US%20leadership%20is%20key%20to%20solve%20nuclear%20war
 
-{"tag":"US leadership is key to solve nuclear war","vector":"[-5.04156016e-02 -4.51882258e-02  6.15538582e-02 -3.25404033e-02\n -3.95872295e-02  1.49529381e-03 -2.22511422e-02 -1.28549131e-04\n -1.69664230e-02  1.46853570e-02  5.47307637e-03  3.09228189e-02\n  6.31309524e-02  3.65858078e-02  4.09929827e-03  3.05035934e-02\n  7.49424323e-02  1.13440035e-02  5.75941289e-03 -2.66412515e-02\n  2.73259152e-02  2.82688383e-02  2.72666402e-02  6.69146189e-03\n  2.35522334e-02 -1.04393903e-02 -2.19721235e-02 -3.43610719e-02\n -2.74175662e-03 -1.62662808e-02 -1.93347223e-02 -2.64913253e-02\n -9.75430384e-03 -1.08995596e-02  4.08687443e-02 -3.64937633e-02\n -1.56447513e-03  1.91920772e-02 ........]"}
+{"tag":"US leadership is key to solve nuclear war","vector":"[-5.04156016e-02 -4.51882258e-02  6.15538582e-02 -3.25404033e-02\n -3.95872295e-02  1.49529381e-03 -2.22511422e-02 -1.28549131e-04\n -1.69664230e-02  1.46853570e-02  5.47307637e-03  3.09228189e-02\n  6.31309524e-02   ........]"}
 
 ```
 
@@ -96,25 +99,27 @@ Docx to CARDS Parser converts docx debate file to JSON with CARDS metadata and c
 - [Tree of Thought LLM](https://github.com/princeton-nlp/tree-of-thought-llm)
 
 
-```
-Imagine three different experts are answering this question. All experts will write down 1 step of their thinking, then share it with the group. Then all experts will go on to the next step,  trying to solve it step by step, and make sure the result is correct and avoid penalty. Expert 1 answers affirmatively, Expert 2 disagrees, and Expert 3 reaches a permutation combining the best arguments from both sides.
+**Prompt:** Imagine three different experts are answering this question. All experts will write down 1 step of their thinking, then share it with the group. Then all experts will go on to the next step,  trying to solve it step by step, and make sure the result is correct and avoid penalty. Expert 1 answers affirmatively, Expert 2 disagrees, and Expert 3 reaches a permutation combining the best arguments from both sides.
 
-climate change causes poverty
-the plan solves oil dependence 
-the plan will harm economy and cause job loss
-oil dependence is the root cause of climate change
-is the plan a good idea to solve poverty?
+- climate change causes poverty.
+- the plan solves oil dependence.
+- the plan will harm economy and cause job loss.
+- oil dependence is the root cause of climate change.
 
-Expert 1 (Affirmative):
+Is the plan a good idea to solve poverty?
+
+**CHATGPT:** Expert 1 (Affirmative):
 
 Climate change causes poverty.
 This is true as climate change can lead to various environmental issues, such as natural disasters and resource scarcity, which can contribute to poverty.
+
 Expert 2 (Disagrees):
 
 Climate change causes poverty.
 While climate change can exacerbate poverty in certain regions, it is not the sole or primary cause of poverty. Poverty has many complex factors, and climate change is just one of them.
+
 Expert 3 (Combines Arguments):
-2. The plan solves oil dependence.
+1. The plan solves oil dependence.
 
 If the plan involves transitioning to renewable energy sources and reducing reliance on oil, it could help solve oil dependence, which is an important step in mitigating climate change.
 The plan will harm the economy and cause job loss.
@@ -129,4 +134,3 @@ Expert 1 argues that addressing climate change can alleviate poverty.
 Expert 2 is skeptical of the direct link between the plan and poverty reduction.
 Expert 3 concludes that the plan may help reduce poverty indirectly by addressing oil dependence and climate change, but it must be implemented carefully to avoid harming the economy and causing job losses. The effectiveness of the plan in reducing poverty will depend on various factors and the specific details of the plan.
 
-```

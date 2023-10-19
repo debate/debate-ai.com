@@ -15,3 +15,5 @@ pb_data
 *lock.yaml
 __pycache__
 *.bin
+*.gguf
+*.safetensors
