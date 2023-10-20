@@ -1,0 +1,6 @@
+{
+	"type": "module",
+	"dependencies": {
+		"node-llama-cpp": "^2.7.3"
+	}
+}
