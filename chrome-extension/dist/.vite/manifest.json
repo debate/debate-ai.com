@@ -1,0 +1,85 @@
+{
+  "../../../@crx/manifest": {
+    "file": "assets/crx-manifest.js-DazpulUr.js",
+    "name": "crx-manifest.js",
+    "src": "../../../@crx/manifest",
+    "isEntry": true
+  },
+  "_index-!~{006}~.js": {
+    "file": "assets/index-CUt907f2.css",
+    "src": "_index-!~{006}~.js"
+  },
+  "_index-CpIVvtS8.js": {
+    "file": "assets/index-CpIVvtS8.js",
+    "name": "index",
+    "imports": [
+      "_index-Cqd5pjsu.js"
+    ]
+  },
+  "_index-Cqd5pjsu.js": {
+    "file": "assets/index-Cqd5pjsu.js",
+    "name": "index"
+  },
+  "_index-D1hIP_ya.js": {
+    "file": "assets/index-D1hIP_ya.js",
+    "name": "index",
+    "imports": [
+      "_index-Cqd5pjsu.js"
+    ],
+    "css": [
+      "assets/index-CUt907f2.css"
+    ]
+  },
+  "index.ts-loader.js": {
+    "file": "assets/index.ts-loader-C3mzWBAU.js",
+    "src": "index.ts-loader.js"
+  },
+  "src/background/index.ts": {
+    "file": "assets/index.ts-ul1MgOm4.js",
+    "name": "index.ts",
+    "src": "src/background/index.ts",
+    "isEntry": true
+  },
+  "src/content/index.ts": {
+    "file": "assets/index.ts-C3UaJPJ8.js",
+    "name": "index.ts",
+    "src": "src/content/index.ts",
+    "isEntry": true
+  },
+  "src/pages/editor/index.html": {
+    "file": "assets/editor-Jlq_CXrK.js",
+    "name": "editor",
+    "src": "src/pages/editor/index.html",
+    "isEntry": true,
+    "imports": [
+      "_index-Cqd5pjsu.js",
+      "_index-CpIVvtS8.js"
+    ],
+    "css": [
+      "assets/editor-B-GKf2QS.css"
+    ]
+  },
+  "src/pages/flow/index.html": {
+    "file": "assets/flow-B6thRbNP.js",
+    "name": "flow",
+    "src": "src/pages/flow/index.html",
+    "isEntry": true,
+    "imports": [
+      "_index-Cqd5pjsu.js",
+      "_index-CpIVvtS8.js"
+    ],
+    "css": [
+      "assets/flow-CWsi9UoT.css"
+    ]
+  },
+  "src/pages/sidepanel/index.html": {
+    "file": "assets/sidepanel-7Th55viz.js",
+    "name": "sidepanel",
+    "src": "src/pages/sidepanel/index.html",
+    "isEntry": true,
+    "imports": [
+      "_index-Cqd5pjsu.js",
+      "_index-D1hIP_ya.js"
+    ]
+  }
+}

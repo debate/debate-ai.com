@@ -47,6 +47,7 @@
       );
     });
   }
+  let show_access_date = false;
   let cardElement: HTMLElement;
   let buttonsFloating = false;
   let paraToolsFloating = false;
@@ -73,6 +74,7 @@
     citeElement != null && citeObserver.observe(citeElement);
   }
   $: citeElement, startObserve();
+  
 
   let colorThemeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
   let updateDarkLightTheme = function () {
@@ -149,20 +151,20 @@
     let animateTime = new Promise((resolve, reject) => {
       setTimeout(resolve, transitionDuration * 2);
     });
-    cardElement.classList.remove('animateEndReload');
-    cardElement.classList.add('animateStartReload');
+    //cardElement.classList.remove('animateEndReload');
+    //cardElement.classList.add('animateStartReload');
     // trigger reflow
     cardElement.offsetWidth;
     Promise.all([animateTime, requestCardData()]).then(
       ([_, cardData]: [any, ICard]) => {
-        messenger.addMessage('Card reset!');
+     //   messenger.addMessage('Card reset!');
 
         card.set(cardData);
         // scroll to top
         cardElement.scrollTop = 0;
 
-        cardElement.classList.remove('animateStartReload');
-        cardElement.classList.add('animateEndReload');
+       // cardElement.classList.remove('animateStartReload');
+       // cardElement.classList.add('animateEndReload');
         // trigger reflow
         cardElement.offsetWidth;
       }
@@ -199,22 +201,32 @@
         <Text
           bind:this={tagText}
           bind:text={$card.tag}
-          placeholder="Type tag here..."
+          placeholder="Type a one sentence summary..."
         />
       </div>
       <div class="cite" bind:this={citeElement}>
         <span class="bigCite">
-          <Cite formatter={formatters.bigAuthors} />, <Cite
+          <Cite formatter={formatters.bigAuthors} /> <Cite
             formatter={formatters.bigDate}
           />
         </span>
-        [<Cite formatter={formatters.authors} />. <Cite
+        <br />
+        <!-- 
+          MLA Citation Standard
+          Author's Last Name, First Name. "Title of Article." Publisher, Date of Publication, URL . Access date.
+          (leave space after url to prevent it from breaking url loading later)
+          
+       -->
+        <Cite formatter={formatters.authors} />.
+         "<Cite formatter={formatters.title} />." <i><Cite
+          formatter={formatters.siteName}/>,</i>  <Cite
           formatter={formatters.date}
-        />. "<Cite formatter={formatters.title} />". <Cite
-          formatter={formatters.siteName}
-        />. <Cite formatter={formatters.url} />. <Cite
+        />, <Cite formatter={formatters.url} />&nbsp;. 
+        {#if show_access_date}
+        <Cite
           formatter={formatters.accessDate}
-        />.]
+        />.
+        {/if}
       </div>
       <div class="paras">
         <ParaTools

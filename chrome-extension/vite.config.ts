@@ -2,6 +2,7 @@ import { crx } from "@crxjs/vite-plugin";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { defineConfig } from "vite";
 import manifest from "./src/manifest.config";
+import path from "path"
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,8 +19,15 @@ export default defineConfig({
     build: {
       rollupOptions: {
         input: {
-          sidepanel: 'src/pages/sidepanel/index.html'
+          sidepanel: 'src/pages/sidepanel/index.html',
+          flow: 'src/pages/flow/index.html',
+          editor: 'src/pages/editor/index.html'
         }
       }
-    }
+    },
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
 });

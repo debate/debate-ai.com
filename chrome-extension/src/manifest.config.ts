@@ -9,10 +9,11 @@ const [major, minor, patch] = version
 
 export default defineManifest(async (env) => ({
   manifest_version: 3,
-  name: "Debate Research AI",
+  name: "BRO.AI Browser Research Organizer",
   description: description,
   version: `${major}.${minor}.${patch}`,
   version_name: version,
+ 
   background: {
     service_worker: "src/background/index.ts",
   },
@@ -23,8 +24,14 @@ export default defineManifest(async (env) => ({
     },
   ],
   side_panel: {
-    default_path: "src/pages/sidepanel/index.html",
+    default_path: "src/pages/sidepanel/index.html"
   },
+  "options_ui": "src/pages/flow/index.html",
+
+  "web_accessible_resources": [{
+    "resources": ["src/pages/flow/index.html", "src/pages/editor/index.html"],
+    "matches": ["<all_urls>"]
+  }],
   permissions: [
     "sidePanel",
     "storage",
@@ -33,6 +40,9 @@ export default defineManifest(async (env) => ({
     "identity",
     "identity.email",
   ],
+  action: {
+    "default_title": "Research Knowledge Base AI",
+ },
   host_permissions: ["https://api.debate.com.co/*"],
   icons: {
     "32": "src/assets/icons/icon-32.png",

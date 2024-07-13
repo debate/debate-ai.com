@@ -257,15 +257,22 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     siteName = siteName[0].toUpperCase() + siteName.slice(1);
   }
   let paraStrings: string[] = [];
-  // get selection
-  let selectedText = window.getSelection().toString();
+
+
+  var optionExtractOnlySelection = false;
+
   // if user is selecting something get range
-  if (selectedText.trim().length > 0) {
-    // split by newlines and remove empty strings
-    paraStrings = selectedText
-      .split(/\r|\n/)
-      .map((para) => para.trim())
-      .filter((para) => para.length > 0);
+  if (optionExtractOnlySelection ){
+         
+      // get selection
+      let selectedText = window.getSelection().toString();
+      if(selectedText.trim().length > 0) {
+        // split by newlines and remove empty strings
+        paraStrings = selectedText
+          .split(/\r|\n/)
+          .map((para) => para.trim())
+          .filter((para) => para.length > 0);
+      }
   } else {
     // if no selection get all paragraphs
     paraStrings = Array.from(articleNode.querySelectorAll('p'))

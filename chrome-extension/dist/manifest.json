@@ -1,0 +1,65 @@
+{
+  "manifest_version": 3,
+  "name": "BRO.AI Browser Research Organizer",
+  "description": "Critical times call for critical thinkers to create the Decentralized AI Knowledge Graph",
+  "version": "6.0.0",
+  "version_name": "6.0.0",
+  "background": {
+    "service_worker": "service-worker-loader.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "assets/index.ts-loader-C3mzWBAU.js"
+      ],
+      "matches": [
+        "https://*/*"
+      ]
+    }
+  ],
+  "side_panel": {
+    "default_path": "src/pages/sidepanel/index.html"
+  },
+  "options_ui": "src/pages/flow/index.html",
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "src/pages/flow/index.html",
+        "src/pages/editor/index.html"
+      ],
+      "use_dynamic_url": false
+    },
+    {
+      "matches": [
+        "https://*/*"
+      ],
+      "resources": [
+        "assets/index.ts-C3UaJPJ8.js"
+      ],
+      "use_dynamic_url": true
+    }
+  ],
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "unlimitedStorage",
+    "tabs",
+    "identity",
+    "identity.email"
+  ],
+  "action": {
+    "default_title": "Research Knowledge Base AI"
+  },
+  "host_permissions": [
+    "https://api.debate.com.co/*"
+  ],
+  "icons": {
+    "32": "src/assets/icons/icon-32.png",
+    "48": "src/assets/icons/icon-48.png",
+    "128": "src/assets/icons/icon-128.png"
+  }
+}

@@ -81,6 +81,12 @@ export let formatters: { [key: string]: IFormatter } = {
         parseInt(card.date.day)
       );
       const currentDate = new Date();
+
+      
+      //swap year with M/D if its the same year
+      const DEBATE_SWAP_YEAR = false;
+      /*
+      if (DEBATE_SWAP_YEAR)
       if (currentDate.getFullYear() == date.getFullYear()) {
         ret = `${date.getMonth() + 1}/${date.getDate()}`;
       } else {
@@ -90,10 +96,13 @@ export let formatters: { [key: string]: IFormatter } = {
           ret = fullYear;
         } else {
           // get last two chars
-          ret = `'${fullYear.slice(fullYear.length - 2)}`;
+          // ret = `'${fullYear.slice(fullYear.length - 2)}`;
         }
-      }
-      return ret;
+      }*/
+      let fullYear = date.getFullYear();
+
+      
+      return fullYear;
     },
   },
   date: {
@@ -110,7 +119,11 @@ export let formatters: { [key: string]: IFormatter } = {
         parseInt(card.date.month) - 1,
         parseInt(card.date.day)
       );
-      ret = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+
+
+      ret = date.getDate() + " " +  
+        date.toLocaleString('en-us',{month:'short'}) + 
+        " " + date.getFullYear();
 
       return ret;
     },
@@ -129,9 +142,9 @@ export let formatters: { [key: string]: IFormatter } = {
         parseInt(card.accessDate.day)
       );
       if (date instanceof Date && !isNaN(date.valueOf())) {
-        ret = `Accessed on ${
-          date.getMonth() + 1
-        }/${date.getDate()}/${date.getFullYear()}`;
+        ret = "Accessed " + date.getDate() + " " +  
+        date.toLocaleString('en-us',{month:'short'}) + 
+        " " + date.getFullYear();
       }
       return ret;
     },

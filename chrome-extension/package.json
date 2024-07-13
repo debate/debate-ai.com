@@ -1,29 +1,30 @@
 {
-    "name": "debate-ai-chrome-extension",
-    "description": "Critical times call for critical thinkers to create the Decentralized AI Knowledge Graph",
-    "version": "6.0.0",
-    "type": "module",
-    "scripts": {
-        "dev": "vite",
-        "build": "vite build",
-        "check": "svelte-check --tsconfig ./tsconfig.json"
-    },
-    "devDependencies": {
-        "@crxjs/vite-plugin": "2.0.0-beta.19",
-        "@sveltejs/vite-plugin-svelte": "^2.4.6",
-        "@tsconfig/svelte": "^5.0.2",
-        "@types/chrome": "^0.0.243",
-        "svelte": "^4.2.2",
-        "svelte-check": "^3.5.2",
-        "svelte-preprocess": "^5.0.4",
-        "tslib": "^2.6.2",
-        "typescript": "^5.2.2",
-        "vite": "^4.5.0"
-    },
-    "dependencies": {
-        "@editorjs/editorjs": "^2.28.2",
-        "@editorjs/underline": "^1.1.0",
-        "editorjs-drag-drop": "^1.1.13",
-        "editorjs-undo": "^2.0.24"
-    }
+  "name": "research-ai-chrome-extension",
+  "description": "Critical times call for critical thinkers to create the Debate Annotated Research Knowledge (DARK) Graph",
+  "version": "6.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "2.0.0-beta.23",
+    "@sveltejs/vite-plugin-svelte": "^3.1.0",
+    "@tsconfig/svelte": "^5.0.4",
+    "@types/chrome": "^0.0.267",
+    "svelte": "^4.2.15",
+    "svelte-check": "^3.7.0",
+    "svelte-preprocess": "^5.1.4",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.10"
+  },
+  "dependencies": {
+    "animejs": "^3.2.2",
+    "compromise": "^14.13.0",
+    "exceljs": "^4.4.0",
+    "ts-results": "^3.3.0",
+    "wink-nlp": "^2.2.0"
+  }
 }
