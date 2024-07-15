@@ -4,6 +4,9 @@
 @tailwind utilities;
 
 
+:global(.select-content) {
+  background-color: white;
+}
 .editor-wrapper {
     background-color: white;
     color: black;

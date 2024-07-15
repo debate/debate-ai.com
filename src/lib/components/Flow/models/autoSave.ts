@@ -9,7 +9,7 @@ const savedFlowsDatasMut: Writable<SavedFlowsDatas> = writable(getSavedFlowsData
 // export read-only version
 export const savedFlowsDatas = derived(savedFlowsDatasMut, (value) => value);
 
-export const MAX_SAVED_FLOWS = 20;
+export const MAX_SAVED_FLOWS = 100;
 
 export type FlowKey = string;
 

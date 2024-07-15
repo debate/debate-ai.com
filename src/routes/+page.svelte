@@ -3,10 +3,10 @@
   import TextEditor from "$lib/components/Editor/Editor.svelte";
   import FileSystem from "$lib/components/FileSystem/FileSystem.svelte";
   import Flow from "$lib/components/Flow/Main.svelte";
-
-
+  import Canvas from "$lib/components/Canvas/Main.svelte";
+  import Videos from "$lib/components/Videos/Videos.svelte";
+  import Home from "$lib/components/Home/Home.svelte";
   import {
-    Home,
     BookOpen,
     Search,
     User,
@@ -14,10 +14,13 @@
     FileText,
     BarChart,
     Code,
-    Folders
+    Folders,
+    VideoIcon
   } from "lucide-svelte";
 
-  let currentView = 'documents';
+  let currentView = 'home';
+  let fileNameId = null;
+
   let items = [
     {
       id: "1",
@@ -46,59 +49,85 @@
     { id: "7", name: "movie.mp4", type: "video", parentId: "6" },
   ];
 
-  const mainContent = { 
+  const mainContent = {
     title: "Example Title",
-    content: 
-  "<h1>Main</h1><h2>Subtitle</h2><p>This outline will provide you with a clear structure and guide you through the various sections and chapters.</p><h2>Intro</h2><p>Welcome to our comprehensive document outlining the key topics and insights covered in this project. This outline will provide you with a clear structure and guide you through the various sections and chapters.</p><p><u><mark>Assembly Bill 168</mark>, now in effect</u>, <u>adds</u> new <u><mark>require</mark>ments to</u> the <u><mark>streamlined</u></mark> ministerial <u><mark>approval</mark> process <mark>for</u></mark> multi-family <u><mark>housing</u></mark> mandated in Senate Bill 35, which passed in 2017. <u>AB 168 requires developers to submit a notice of intent to local agencies via a preliminary application before they may be able to proceed</u> under SB 35. Next, <u>AB 168 requires <mark>local agencies</mark> receiving preliminary applications to <b><mark>invite California Native American Tribes to consult</b></mark> with them <b><mark>regarding</b></mark> a <b><mark>proposed development’s potential effects</b> on</mark> any <mark>tribal</mark> cultural <mark>resources</u></mark>. Significantly, AB 168 provides that this tribal consultation process is not subject to the California Environmental Quality Act.  Specifically, <u><mark>within 30</mark> calendar <mark>days</mark> of receiving a preliminary application, a local agency must provide notice to those California Native American Tribes that are “traditionally and culturally affiliated with the geographic area” of the proposed development</u>. AB 168 provides that the local agency may “contact the Native American Heritage Commission for assistance in identifying any California Native American Tribe.” <u>Tribes receiving this notice have 30 calendar days to accept the invitation to engage in consultation</u>.  After acceptance, a local agency must initiate consultation with each requesting tribe within 30 calendar days. The developer may attend the consultation(s) if they agree to respect the principles of AB 168 and if the consulting tribe approves the developer’s participation. However, <u><mark>a</mark> consulting <mark>tribe may <b>revoke this approval at any time</b> during the consultation</mark> process</u>.  After consultation, a developer may submit an SB 35 ministerial application to a local agency only if  No noticed Tribe seeks, or fails to engage in, consultation, No potential tribal cultural resource impact is identified or If a potential tribal cultural resource impact is identified and the parties expressly agree to protect the resource. <u>A developer may not submit an SB 35 ministerial application if the proposed development site contains a tribal cultural resource</u> that is listed on a national, tribal, state or local historic register <u>and the parties to the consultation do not agree on whether the development will impact these resources, or a potential tribal cultural resource would be affected by the proposed developmentand</u> the <u>parties</u> to the consultation <u>are unable to document an enforceable agreement</u> regarding their treatment. </p>W"
+    content: "Example content",
   }
-    
-
+   
   const navItems = [
-    { id: 'home', icon: Home },
-    { id: 'reader', icon: BookOpen },
-    { id: 'documents', icon: Folders },
-    { id: 'search', icon: Search },
-    { id: 'flow', icon: Code },
-    { id: 'user', icon: User },
-    { id: 'settings', icon: Settings },
+    { id: 'home', icon: "/assets/icon-logo.svg", name: 'Home' },
+    { id: 'videos', icon: '/assets/icon-youtube.svg', name: 'Watch'  },
+    { id: 'editor', icon: '/assets/icon-read.svg', name: 'Read' },
+    { id: 'documents', icon: '/assets/icon-graph.svg', name: 'Organize' },
+    { id: 'search', icon: '/assets/icon-search.svg', name: 'Search' },
+    { id: 'flow', icon: '/assets/icon-flow.svg', name: 'Flow' },
+    { id: 'user', icon: '/assets/icon-chat.svg', name: 'Chat' },
+    { id: 'settings', icon: '/assets/icon-configure.svg', name: 'Configure'  },
   ];
 
   function handleNavClick(id) {
     currentView = id;
-    history.pushState(null, '', `/#${id}`);
+    fileNameId = null;
+    updateURL();
+  }
+
+  function updateURL() {
+    const url = fileNameId ? `/#${currentView}/${fileNameId}` : `/#${currentView}`;
+    history.pushState(null, '', url);
+  }
+
+  function parseURL() {
+    const hash = window.location.hash.slice(1); // Remove the '#'
+    const [view, id] = hash.split('/');
+    currentView = view || 'home';
+    fileNameId = id || null;
   }
 
   onMount(() => {
-    const path = window.location.pathname.slice(1) || 'home';
-    currentView = path;
+    parseURL();
+    window.addEventListener('popstate', parseURL);
+
+    return () => {
+      window.removeEventListener('popstate', parseURL);
+    };
   });
 </script>
 
-<div class="flex h-[100dvh] w-full">
+<div class="flex h-[100dvh] w-full overflow-hidden">
   <!-- Sidebar Navbar -->
   <div
-    class="bg-[#DED8C4] text-gray-700 min-w-16 flex flex-col items-center py-4 space-y-8"
+    class="bg-[#DED8C4] w-[75px] max-w-[75px] min-w-[75px] flex flex-col items-center py-4 space-y-4 rounded-tr-[15px] rounded-br-[15px] h-full overflow-y-auto"
   >
     {#each navItems as item}
-      <button
-        on:click={() => handleNavClick(item.id)}
-        class="hover:text-blue-400 transition-colors duration-200 {currentView === item.id ? 'text-blue-600' : ''}"
-      >
-        <svelte:component this={item.icon} size={24} />
-      </button>
+    <button
+      on:click={() => handleNavClick(item.id)}
+      class="flex flex-col items-center justify-center w-full transition-colors duration-200"
+    >
+        <img
+          src={item.icon}
+          alt="Home"
+          class="w-8 h-8 mb-2 transition-opacity duration-200 {currentView === item.id ? 'opacity-100' : 'opacity-60 hover:opacity-100'}"
+        />
+      <span class="text-xs text-center transition-colors duration-200 {currentView === item.id ? 'text-[#D2691E] font-semibold' : 'text-gray-700 hover:text-[#D2691E]'}">
+        {item.name}
+      </span>
+    </button>
     {/each}
   </div>
-
   <!-- Main Content Area -->
-  <div class="flex-1">
-    {#if currentView === 'documents'}
+  <div class="flex-1 overflow-y-auto">
+    {#if currentView === 'home'}
+    <Home />
+    {:else if currentView === 'documents'}
       <FileSystem {items} />
-    {:else if currentView === 'reader'}
-      <TextEditor {mainContent} />
-      
+    {:else if currentView === 'editor'}
+      <TextEditor {mainContent} {fileNameId} />
     {:else if currentView === 'flow'}
-        <Flow />
-
+      <Flow />
+    {:else if currentView === 'search'}
+      <Canvas />
+    {:else if currentView === 'videos'}
+      <Videos />
     {:else}
       <div class="p-4">
         <h1 class="text-2xl font-bold">{currentView.charAt(0).toUpperCase() + currentView.slice(1)}</h1>

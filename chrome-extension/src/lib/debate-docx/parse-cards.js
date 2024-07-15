@@ -1,183 +1,93 @@
 import tokens from "./docx-tokens";
 import { parseDate } from "chrono-node";
 
-const extractCards = (doc) => {
-  //TODO not all are in tag format
-  const anchors = exports.getIndexesWith(doc, ["tag"]);
+export const extractCards = (doc) => {
+  const anchors = getIndexesWith(doc, ["tag"]);
   return anchors.map(anchor => parseCard(doc, anchor));
 };
-exports.extractCards = extractCards;
 
-/**
- *
- * @param {document} doc
- * @param {number} anchor
- * @returns
- */
-const parseCard = (doc, anchor = 0) => {
+export const parseCard = (doc, anchor = 0) => {
   const blockStyles = tokens.getHeadingStyles();
-  const card = (0, exports.getBlocksUntil)(doc, anchor, blockStyles);
-  /*
-      first block element is the tag,
-      assume second block element is the cite,
-      everything left is the card body 
-     */
-  var tag = card.slice(0, 1);
-  var cite = card.slice(1, 2);
-  var body = card.slice(2);
-  var extractHeading = (name) =>
-    extractText([getAboveBlockWith(doc, anchor, [name])]);
-  var shortCite = extractText(cite, ["strong"]);
+  const card = getBlocksUntil(doc, anchor, blockStyles);
 
-  /* //TODO
-      Quite a few documents have the bolded part of cite in seperate block than rest of cite
-      The cite in seperate block usually contains the author's name at the start, 
-      if that is detected move the first block of the body to the cite
-    */
+  let tag = card.slice(0, 1);
+  let cite = card.slice(1, 2);
+  let body = card.slice(2);
+  const extractHeading = (name) =>
+    extractText([getAboveBlockWith(doc, anchor, [name])]);
+  const shortCite = extractText(cite, ["strong"]);
+
   if (body.length > 1) {
     const start = extractText([body[0]]).slice(0, 50);
     if (shortCite.split(" ").find((word) => start.includes(word)))
       cite.push(...body.splice(0, 1));
   }
 
-  // If card has no body, move anything detected as cite to tag -- its an analytic
+  let type;
   if (!body.length && cite) {
     tag.push(...cite.splice(0, 1));
-    var type = "analytic";
+    type = "analytic";
   }
 
   let fullcite = extractText(cite),
-    url = exports.extractURL(fullcite),
+    url = extractURL(fullcite),
     block = extractHeading("block"),
     summary = extractText(tag),
     underlined = extractText(body, ["underline"]),
     marked = extractText(body, ["mark"]);
 
-  //title
-  var title = fullcite?.match(/["“]([^"”“]*)["”“]/);
+  let title = fullcite?.match(/[""]([^"""]*)["""]/);
   title = title ? title[1]?.replace(/[\.,]$/, "") : null;
 
-  //year
+  let currrentYear = new Date().getFullYear();
+  let yearMatch = fullcite
+    ?.replace(/[0-9]{1,2}[-\/][0-9]{1,2}/g, "")
+    .match(/([ ''][0-9][, —-]|[0-9]{2,4})/);
 
-  var currrentYear = new Date().getFullYear();
-  var yearMatch = fullcite
-    ?.replace(/[0-9]{1,2}[-\/][0-9]{1,2}/g, "") // exclude m/d
-    .match(/([ '‘][0-9][, —-]|[0-9]{2,4})/);
-
+  let year;
   if (yearMatch) {
-    var year = yearMatch ? parseInt(yearMatch[0].replace(/[^0-9]/, "")) : null;
+    year = yearMatch ? parseInt(yearMatch[0].replace(/[^0-9]/, "")) : null;
     year = year < 26 ? year + 2000 : year <= 99 ? year + 1900 : year;
   }
 
-  //use chrono-node to extract any dates in string
   if (!year && fullcite) {
-    var date = parseDate(fullcite);
-    // chrono mistakes MM dd in cite as current year
+    const date = parseDate(fullcite);
     if (date && date.year != currrentYear) year = date.year;
   }
 
-  if (year > currrentYear) year = null; //cannot be future
-  if (year < 1900) year = null; //if too old likely an error
+  if (year > currrentYear) year = null;
+  if (year < 1900) year = null;
 
-  //some cites have "No Date"
-  if (fullcite?.match(/(‘ND|No Date|no date)/gi)) year = "ND";
+  if (fullcite?.match(/('ND|No Date|no date)/gi)) year = "ND";
 
-  var author = shortCite?.replace(/[ ',’0-9]+.+/g, "");
+  let author = shortCite?.replace(/[ ','0-9]+.+/g, "");
   if (author?.split(" ").length > 3)
     author = author.split(" ").slice(0, 3).join(" ").trim(" ");
 
-  var content = tokens.tokensToMarkup(body, true);
+  const content = tokens.tokensToMarkup(body, true);
 
-  var html = tokens.tokensToMarkup(body, false);
+  const html = tokens.tokensToMarkup(body, false);
 
-  var section =
+  const section =
     (extractHeading("pocket") ? extractHeading("pocket") + " - " : "") +
     (extractHeading("hat") || "");
 
-  /**
-   * Strips markup-html to plain text with array or indexes of tags removed
-   *  {text: "", tags: []}
-   * @param {string} html
-   * @returns {text: "", tags: []}
-   */
-  function htmlToRanges(html) {
-    var text = "",
-      marked = "",
-      underlined = "",
-      isUnderline = 0,
-      isHighlight = 0;
-    var htmltags = html
-      .split("<")
-      .map((tagNode) => {
-        var [name, content] = tagNode.split(">");
+  const ranges = htmlToRanges(html);
 
-        if (!name) return;
+  const contentWithRanges = rangesToHTML(content, ranges.htmltags);
 
-        var index = text.length;
-
-        text += content || "";
-
-        if (name == "u") isUnderline = 1;
-        if (name == "/u") isUnderline = 0;
-        if (name == "mark") isHighlight = 1;
-        if (name == "/mark") isHighlight = 0;
-
-        if (isHighlight && content) marked += content.trim() + "…" || "";
-        if (isUnderline && content) underlined += content.trim() + "…" || "";
-
-        return [index, name];
-      })
-      .filter(Boolean);
-
-    var lengthMarked = marked.length;
-    var lengthUnderlined = underlined.length;
-
-    return { marked, underlined, lengthUnderlined, lengthMarked, htmltags };
-  }
-
-  /**
-   * Applies HTML tags from range array to plain text to output HTML
-   * @param {string} text
-   * @param {array} ranges [...[index,htmlTag]]
-   * @returns html
-   */
-  function rangesToHTML(text, ranges) {
-    ranges = ranges.sort((a, b) => a[0] - b[0]);
-
-    var offset = 0;
-    for (var i in ranges) {
-      text =
-        text.slice(0, ranges[i][0] + offset) +
-        "<" +
-        ranges[i][1] +
-        ">" +
-        text.slice(ranges[i][0] + offset);
-
-      offset += ranges[i][1].length + 2;
-    }
-
-    return text;
-  }
-
-  var ranges = htmlToRanges(html);
-
-  content = rangesToHTML(content, ranges.htmltags);
-
-  var rangesOut = ranges;
-
-  marked = rangesOut.marked;
+  marked = ranges.marked;
 
   if (type == "analytic") {
-    var cardObject = {
+    return {
       analytic: summary,
       type,
       section,
       block,
     };
-  } else
-    var cardObject = {
+  } else {
+    return {
       summary,
-
       author,
       year,
       marked,
@@ -185,37 +95,22 @@ const parseCard = (doc, anchor = 0) => {
       cite: fullcite,
       url,
       title,
-      // section,
-      // block,
-      // content,
-      // rangesOut,
       html,
     };
-
-  return cardObject;
+  }
 };
 
-//extract url and remove ending char ) ] } ; : , . | > < -
-const extractURL = (textWithURL) => {
+export const extractURL = (textWithURL) => {
   if (!textWithURL) return null;
   const regexPattern =
     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g;
   const match = textWithURL.match(regexPattern);
   if (match) {
     let firstMatch = match[0];
-    if (
-      firstMatch.endsWith(")") ||
-      firstMatch.endsWith("]") ||
-      firstMatch.endsWith("}") ||
-      firstMatch.endsWith(";") ||
-      firstMatch.endsWith(":") ||
-      firstMatch.endsWith(",") ||
-      firstMatch.endsWith(".") ||
-      firstMatch.endsWith("|") ||
-      firstMatch.endsWith(">") ||
-      firstMatch.endsWith("<") ||
-      firstMatch.endsWith("-")
-    ) {
+    if (firstMatch.endsWith(")") || firstMatch.endsWith("]") || firstMatch.endsWith("}") ||
+        firstMatch.endsWith(";") || firstMatch.endsWith(":") || firstMatch.endsWith(",") ||
+        firstMatch.endsWith(".") || firstMatch.endsWith("|") || firstMatch.endsWith(">") ||
+        firstMatch.endsWith("<") || firstMatch.endsWith("-")) {
       firstMatch = firstMatch.slice(0, -1);
     }
     return firstMatch;
@@ -223,13 +118,11 @@ const extractURL = (textWithURL) => {
     return null;
   }
 };
-exports.extractURL = extractURL;
 
-const extractText = (blocks, styles) => {
+export const extractText = (blocks, styles) => {
   if (!blocks[0]) return;
   return blocks
     .reduce((acc, block) => {
-      // join text and add spacing if skipping tokens
       const text = block.tokens?.reduce((str, token) => {
         if (!styles || styles.every((style) => token.format[style]))
           return str + token.text;
@@ -239,22 +132,75 @@ const extractText = (blocks, styles) => {
     }, "")
     .trim();
 };
-const getIndexesWith = (blocks, styles) => {
-  const indexes = blocks.reduce((arr, block, index) => {
+
+export const getIndexesWith = (blocks, styles) => {
+  return blocks.reduce((arr, block, index) => {
     const isMatch = styles.includes(block.format);
     return isMatch ? [...arr, index] : arr;
   }, []);
-  return indexes;
 };
-exports.getIndexesWith = getIndexesWith;
-const getAboveBlockWith = (blocks, anchor, styles) => {
+
+export const getAboveBlockWith = (blocks, anchor, styles) => {
   for (let i = anchor; i >= 0; i--)
     if (styles.includes(blocks[i].format)) return blocks[i];
 };
-const getBlocksUntil = (blocks, anchor, styles) => {
+
+export const getBlocksUntil = (blocks, anchor, styles) => {
   const subDoc = blocks.slice(anchor, blocks.length);
   const endIdx =
     subDoc.slice(1).findIndex((block) => styles.includes(block.format)) + 1;
   return subDoc.slice(0, endIdx > 0 ? endIdx : blocks.length);
 };
-exports.getBlocksUntil = getBlocksUntil;
+
+function htmlToRanges(html) {
+  let text = "",
+      marked = "",
+      underlined = "",
+      isUnderline = 0,
+      isHighlight = 0;
+  const htmltags = html
+    .split("<")
+    .map((tagNode) => {
+      const [name, content] = tagNode.split(">");
+
+      if (!name) return;
+
+      const index = text.length;
+
+      text += content || "";
+
+      if (name == "u") isUnderline = 1;
+      if (name == "/u") isUnderline = 0;
+      if (name == "mark") isHighlight = 1;
+      if (name == "/mark") isHighlight = 0;
+
+      if (isHighlight && content) marked += content.trim() + "…" || "";
+      if (isUnderline && content) underlined += content.trim() + "…" || "";
+
+      return [index, name];
+    })
+    .filter(Boolean);
+
+  const lengthMarked = marked.length;
+  const lengthUnderlined = underlined.length;
+
+  return { marked, underlined, lengthUnderlined, lengthMarked, htmltags };
+}
+
+function rangesToHTML(text, ranges) {
+  ranges = ranges.sort((a, b) => a[0] - b[0]);
+
+  let offset = 0;
+  for (const range of ranges) {
+    text =
+      text.slice(0, range[0] + offset) +
+      "<" +
+      range[1] +
+      ">" +
+      text.slice(range[0] + offset);
+
+    offset += range[1].length + 2;
+  }
+
+  return text;
+}

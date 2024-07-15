@@ -31,9 +31,9 @@ export async function documentToTokens(docxPath, options) {
     return;
   }
 
-  const styleData = await exports.createStyleParser(styleXML);
+  const styleData = await createStyleParser(styleXML);
 
-  var blocks = await exports.createTokenizer(docXML, styleData);
+  var blocks = await createTokenizer(docXML, styleData);
 
   if (options === null || options === void 0 ? void 0 : options.simplified) {
     const simplifiedBlocks = blocks.map(tokens.simplifyTokens);
@@ -48,7 +48,7 @@ export async function documentToTokens(docxPath, options) {
   3 - reconstruct cleaned html
 */
 export async function  documentToMarkup  (filepath) {
-  const docTokens = await exports.documentToTokens(filepath);
+  const docTokens = await documentToTokens(filepath);
   return tokens.tokensToMarkup(docTokens);
 };
 
@@ -151,4 +151,4 @@ export async function createTokenizer (docXML, styleData) {
   });
 };
 
-exports.createTokenizer = createTokenizer;
+createTokenizer = createTokenizer;

@@ -99,7 +99,7 @@
 	{#if item.type === 'folder'}
 		<button on:click={handleToggleFolder} class="-none">
 			{#if item.expanded}
-				<ChevronDown class="h-4 w-4 text-gray-600" />focus:outline
+				<ChevronDown class="h-4 w-4 text-gray-600 focus:outline" />
 			{:else}
 				<ChevronRight class="h-4 w-4 text-gray-600" />
 			{/if}

@@ -1,106 +1,74 @@
-
-const getStyleNameByXml = (elXmlName) => {
-  var _a;
+export const getStyleNameByXml = (elXmlName) => {
   const predicate = ({ xmlName = null }) => elXmlName === xmlName;
-  return (_a = findKey(exports.styleMap, predicate)) !== null && _a !== void 0
-    ? _a
-    : "text";
+  return findKey(styleMap, predicate) ?? "text";
 };
-exports.getStyleNameByXml = getStyleNameByXml;
-const getOutlineLvlName = (outlineLvl) => {
-  var _a;
+
+export const getOutlineLvlName = (outlineLvl) => {
   const predicate = ({ docxStyles = null }) =>
-    outlineLvl ===
-    (docxStyles === null || docxStyles === void 0
-      ? void 0
-      : docxStyles.outlineLevel);
-  return (_a = findKey(exports.styleMap, predicate)) !== null && _a !== void 0
-    ? _a
-    : "text";
+    outlineLvl === docxStyles?.outlineLevel;
+  return findKey(styleMap, predicate) ?? "text";
 };
-exports.getOutlineLvlName = getOutlineLvlName;
-const getStyles = () => {
-  return Object.keys(exports.styleMap);
+
+export const getStyles = () => {
+  return Object.keys(styleMap);
 };
-exports.getStyles = getStyles;
-const getHeadingStyles = () => {
-  return Object.keys(exports.styleMap).filter(
-    (key) => exports.styleMap[key].heading
+
+export const getHeadingStyles = () => {
+  return Object.keys(styleMap).filter(
+    (key) => styleMap[key].heading
   );
-  // .map((key) => exports.styleMap[key]);
 };
-exports.getHeadingStyles = getHeadingStyles;
-const getDocxStyles = (styles) => {
-  const mergedStyles = Object.keys(styles).reduce((acc, key) => {
-    var _a;
-    return {
-      ...acc,
-      ...((_a = exports.styleMap[key]) === null || _a === void 0
-        ? void 0
-        : _a.docxStyles),
-    };
-  }, {});
-  return mergedStyles;
+
+export const getDocxStyles = (styles) => {
+  return Object.keys(styles).reduce((acc, key) => ({
+    ...acc,
+    ...styleMap[key]?.docxStyles,
+  }), {});
 };
-exports.getDocxStyles = getDocxStyles;
 
-const tokensToMarkup = (textBlocks, plainTextOnly = false) => {
-  let _a, dom = "";
-
+export const tokensToMarkup = (textBlocks, plainTextOnly = false) => {
+  let dom = "";
   const state = { underline: false, strong: false, mark: false };
 
   textBlocks.forEach(({ format, tokens }) => {
     if (!tokens.length) return;
-    const { domElement } = exports.styleMap[format];
+    const { domElement } = styleMap[format];
 
     if (!plainTextOnly) 
       dom += `<${domElement}>`;
     tokens.forEach(({ text, format }) => {
-      var _a;
       if (!text || text.trim().length < 1) return;
       let tags = "";
       for (const style in state) {
         if (state[style] !== format[style]) {
-          const elName =
-            (_a = exports.styleMap[style]) === null || _a === void 0
-              ? void 0
-              : _a.domElement;
+          const elName = styleMap[style]?.domElement;
           tags += `<${format[style] ? "" : "/"}${elName}>`;
           state[style] = format[style];
-
         }
       }
 
-
-      if (plainTextOnly) dom += text;
-      else dom += tags + text;
+      dom += plainTextOnly ? text : tags + text;
     });
 
-    if (plainTextOnly) dom += " \n";
-    else dom += `</${domElement}>`;
+    dom += plainTextOnly ? " \n" : `</${domElement}>`;
   });
-  // // Make sure to close tags
-  if (!plainTextOnly)
-  for (const style in state)
-    if (state[style])
-      dom += `</${
-        (_a = exports.styleMap[style]) === null || _a === void 0
-          ? void 0
-          : _a.domElement
-      }>`;
-  dom = dom.replace(/ \n$/, "");
 
-  return dom;
+  if (!plainTextOnly) {
+    for (const style in state) {
+      if (state[style]) {
+        dom += `</${styleMap[style]?.domElement}>`;
+      }
+    }
+  }
+  
+  return dom.replace(/ \n$/, "");
 };
-exports.tokensToMarkup = tokensToMarkup;
-const isSameFormat = (a, b) =>
-  a.mark === b.mark && a.strong === b.strong && a.underline === b.underline;
-const simplifyTokens = (block) => {
+
+export const simplifyTokens = (block) => {
   const simplifiedTokens = block.tokens.reduce((acc, { format, text }) => {
     if (!acc.length) return [{ format, text }];
     const prev = acc[acc.length - 1];
     const { format: prevFormat, text: prevText } = prev;
-    // If same format just combine text
     isSameFormat(format, prevFormat)
       ? (prev.text = prevText + text)
       : acc.push({ text, format });
@@ -108,9 +76,8 @@ const simplifyTokens = (block) => {
   }, []);
   return { format: block.format, tokens: simplifiedTokens };
 };
-exports.simplifyTokens = simplifyTokens;
 
-function findKey(object, predicate) {
+export const findKey = (object, predicate) => {
   if (object == null) {
     return undefined;
   }
@@ -123,8 +90,12 @@ function findKey(object, predicate) {
     }
   }
   return undefined;
-}
-exports.styleMap = {
+};
+
+export const isSameFormat = (a, b) =>
+  a.mark === b.mark && a.strong === b.strong && a.underline === b.underline;
+
+export const styleMap = {
   pocket: {
     block: true,
     heading: true,

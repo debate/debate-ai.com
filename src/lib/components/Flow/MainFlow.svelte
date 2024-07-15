@@ -3,7 +3,7 @@
   import Title from "./Title.svelte";
   import BoxControl from "./BoxControl.svelte";
   import ButtonBar from "./ButtonBar.svelte";
-  import DownloadUpload from "./DownloadUpload.svelte";
+  import DebateDictionary from "./DebateDictionary.svelte";
   import Error from "./Error.svelte";
   import Settings from "./Settings.svelte";
   import SortableList from "./SortableList.svelte";
@@ -317,9 +317,9 @@
               tutorialHighlight: 2,
             },
             {
-              icon: "file",
-              onclick: () => openPopup(DownloadUpload, "File"),
-              tooltip: "download & upload file",
+              icon: "question-circle",
+              onclick: () => openPopup(DebateDictionary, ""),
+              tooltip: "Debate Terms Dictionary",
               tutorialHighlight: 3,
             }
           ]}
