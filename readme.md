@@ -38,23 +38,12 @@ Vectorized tagline summaries and headings are classification labels to map any f
 
 **Crowdsourced Argument Map**: GitHub-style reusable argument outlines on established issues with truth proximity weights and peer-review scores enables deeper  research into specific issues. Card video game mechanics where arguments are scoreable with hierarchical responses gamify democratic research, and each debate's outcome impacts the graph weights which can scale to better group decisions.
 
-**Implementation**: Using real-world OpenParliament API, event prediction markets like Kalshi, and games like _Cities: Skylines_ as world sims with AI virtual citizen perspectives to model impacts of group decisions while considering relevant  ethical concerns.
+**Implementation**: Using Decidim.org digital democracy for self-organization,  real governments' OpenParliament API, event prediction markets like Kalshi, DAO blockchain consensus,  and games like _Cities: Skylines_ as world sims with AI virtual citizen perspectives to model impacts of group decisions while considering relevant  ethical concerns.
 Deploy in virtual environments to test AI reasoning with synthetic scenarios. Introduce real humans alongside AI agents to test hybrid decision-making. Public deployment with sentence-level transparency of why values and choices are made.
 
-**Solving Alignment**: Complete sentence-by-sentence breakdown of AI reasoning with citation tracking and public auditing to verify alignment with values and interests voted by group members is needed to reduce harm of inevitable AI misuse by rogue actors. This poses the greatest existential risk to humanity's future survival, considering the need for collective intelligence  to resolve group disputes from leading to war and issues like climate change.
+**Solving Alignment**: Complete sentence-by-sentence breakdown of AI reasoning with citation tracking and public auditing to verify alignment with values and interests voted by group members is needed to reduce harm of inevitable AI misuse by rogue actors. This poses the greatest existential risk to humanity's future survival, considering the need for collective intelligence  to resolve group disputes from leading to war and on issues like climate change and pandemic. The root problems will continue if we cannot reconceive our own ontological representation by thinking outside of central human-led hierarchies, where collective intelligences can collaborate intra-group with more dynamic flexibility by adjusting constant conversations, learning what is persuasive in different perspectives, and aligning collective goals.
 
-
-
-
-
-
-
-
-
-
-
-
-#### Summary 
+#### Step-by-Step Evolution
 1. Crowdsourced arguments (CARDS) feed AI Language Models.
 2. These models create a vector space of ideas with weighted values.
 3. This forms the training dataset for AI Collective Consciousness.
@@ -63,7 +52,7 @@ Deploy in virtual environments to test AI reasoning with synthetic scenarios. In
 6. These agents create topic outlines and monitor literature, which continuously updates the knowledge base.
 7. Clear sentences with cites and human peer review ensures interpretability of every possible AI hypothetical ethical or policy decision.
 8. Public safety testing and AI training ensure alignment with human interests for AI collective mind to organize global society.
-9. The purpose of life and the universe is to evolve into the next level of complexity, via self-organization from simple rules, and for now that is the collective consciousness.
+9. The purpose of life and the universe is to evolve into the next system of complexity, via self-organizing patterns emergent from simple rules, and for now that means creating Collective Consciousness.
 
 
 #### Online Format
