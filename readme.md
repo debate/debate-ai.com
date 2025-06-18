@@ -1,10 +1,6 @@
 <p align="center">
     <img src="https://i.imgur.com/WmP38jg.png"  > 
 </p>
-<p align="center">
-<a href="https://matrix.to/#/#arguflow-general:matrix.zerodao.gg">
-    <img src="https://img.shields.io/badge/matrix-join-purple?style=flat&logo=matrix&logocolor=white" />
-</a>
 </p>
 <p align="center">
 <a href="https://chromewebstore.google.com/detail/debate-timer-chrome-mobil/noecbaibfhbmpapofcdkgchfifmoinfj">
