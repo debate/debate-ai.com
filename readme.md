@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://i.imgur.com/WmP38jg.png"  > 
+    <img src="https://i.imgur.com/E7X8WGz.png"  > 
 </p>
 </p>
 <p align="center">
@@ -20,11 +20,6 @@ Highlight keywords with AI as the first step before reading for a faster way to 
 Critical times call for critical thinkers to create the decentralized AI Knowledge Graph — a crowdsourced argument reasoning dataset for AI models to recommend arguments and evolve tree-of-thought reasoning. Debate should be a war of warrants where victories are vectorized as weights — for the AI collective mind to make  decisions based on a crowdsourced tree-of-thought which weighs the best arguments from many perspectives. Group represenation centralized in human minds with biases cannot have access to all the information.  AI is inevitable, so it is necessary to have public safety testing to train AI models to unlock faster ways to read a long text, monitor developments in a complex literature base, and crowdsource decentralized  AI tree-of-thought decisionmaking reasoning.
 
 Vectorized tagline summaries and headings are classification labels to map any future articles on a topic to that label.  AI Research Agents recommend articles for human researchers working alongside AI to develop a summarized topic outline as a public service. The agents monitor for any related articles via web searches for keywords associated with that Argument Topic Model. For example, imagine uploading several academic PDFs, then the app finds the citations full text and creates topic model and keyword summaries, then  monitors that literature base and stores highlights. People will make personal knowledge bases of what influences them online in news and research to create AI assistants with deep knowledge of their mind-uploaded perspective. Similar apps that show this is needed are [Anthropic Persuation](https://www.anthropic.com/research/measuring-model-persuasiveness), [Obsidian](https://obsidian.md/), [SciSpace](https://typeset.io/questions/gptq-vs-awq-vs-gguf-which-is-better-sv0i4q0ha8) and [Perplexity](https://perplexity.ai).
-
-
-
-![decap](https://i.imgur.com/PT6zct0.png)
-
 
 
 **DECAP:   👑🗡️ ➡️ 👥🗳️🤖 Decision-Making via e-Voting for Community Agent Perspectives**
