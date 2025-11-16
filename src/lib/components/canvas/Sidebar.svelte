@@ -1,8 +1,20 @@
 <script lang="ts">
     import { Brain, Grid, Calendar, Settings, ChevronRight } from 'lucide-svelte';
-  
+    import {
+      Sidebar,
+      SidebarContent,
+      SidebarHeader,
+      SidebarFooter,
+      SidebarGroup,
+      SidebarGroupContent,
+      SidebarMenu,
+      SidebarMenuItem,
+      SidebarMenuButton,
+      SidebarMenuSub
+    } from '$lib/components/ui/sidebar';
+
     let expandedItems = new Set();
-  
+
     function toggleExpand(item) {
       if (expandedItems.has(item)) {
         expandedItems.delete(item);
@@ -13,68 +25,93 @@
     }
   </script>
   
-  <aside class="w-64 bg-gray-100 p-4 overflow-y-auto">
-    <div class="flex items-center mb-4">
-      <Brain class="w-6 h-6 mr-2 text-blue-500" />
+<Sidebar class="w-64 bg-gray-100">
+  <SidebarHeader>
+    <div class="flex items-center gap-2">
+      <Brain class="w-6 h-6 text-blue-500" />
       <span class="text-lg font-semibold">KnowledgeCanvas</span>
     </div>
-    
-    <nav>
-      <ul>
-        <li class="mb-2">
-          <button class="flex items-center w-full text-left p-2 rounded hover:bg-gray-200" on:click={() => toggleExpand('Design')}>
-            <ChevronRight class="w-4 h-4 mr-2 {expandedItems.has('Design') ? 'rotate-90' : ''}" />
-            Design
-          </button>
-        </li>
-        <li class="mb-2">
-          <button class="flex items-center w-full text-left p-2 rounded hover:bg-gray-200" on:click={() => toggleExpand('AI/ML')}>
-            <ChevronRight class="w-4 h-4 mr-2 {expandedItems.has('AI/ML') ? 'rotate-90' : ''}" />
-            AI/ML
-          </button>
-        </li>
-        <li class="mb-2">
-          <button class="flex items-center w-full text-left p-2 rounded hover:bg-gray-200" on:click={() => toggleExpand('JPL')}>
-            <ChevronRight class="w-4 h-4 mr-2 {expandedItems.has('JPL') ? 'rotate-90' : ''}" />
-            JPL
-          </button>
-        </li>
-        <li class="mb-2">
-          <button class="flex items-center w-full text-left p-2 rounded hover:bg-gray-200" on:click={() => toggleExpand('UCLA')}>
-            <ChevronRight class="w-4 h-4 mr-2 {expandedItems.has('UCLA') ? 'rotate-90' : ''}" />
-            UCLA
-          </button>
-        </li>
-        <li class="mb-2">
-          <button class="flex items-center w-full text-left p-2 rounded bg-blue-100 hover:bg-blue-200" on:click={() => toggleExpand('Knowledge')}>
-            <ChevronRight class="w-4 h-4 mr-2 rotate-90" />
-            Knowledge
-          </button>
-          {#if expandedItems.has('Knowledge')}
-            <ul class="ml-4 mt-2">
-              <li class="mb-1"><a href="#" class="block p-2 rounded hover:bg-gray-200">Dependencies</a></li>
-              <li class="mb-1"><a href="#" class="block p-2 rounded hover:bg-gray-200">Sources</a></li>
-              <li class="mb-1"><a href="#" class="block p-2 rounded hover:bg-gray-200">Inspiration</a></li>
-              <li class="mb-1"><a href="#" class="block p-2 rounded hover:bg-gray-200">Development</a></li>
-            </ul>
-          {/if}
-        </li>
-        <!-- Add more sidebar items here -->
-      </ul>
-    </nav>
-    
-    <div class="mt-auto pt-4">
-      <button class="flex items-center w-full text-left p-2 rounded hover:bg-gray-200">
-        <Grid class="w-4 h-4 mr-2" />
-        Projects
-      </button>
-      <button class="flex items-center w-full text-left p-2 rounded hover:bg-gray-200">
-        <Calendar class="w-4 h-4 mr-2" />
-        Calendar
-      </button>
-      <button class="flex items-center w-full text-left p-2 rounded hover:bg-gray-200">
-        <Settings class="w-4 h-4 mr-2" />
-        Settings
-      </button>
-    </div>
-  </aside>
+  </SidebarHeader>
+
+  <SidebarContent>
+    <SidebarGroup>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton on:click={() => toggleExpand('Design')}>
+              <ChevronRight class="w-4 h-4 {expandedItems.has('Design') ? 'rotate-90' : ''} transition-transform" />
+              Design
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <SidebarMenuButton on:click={() => toggleExpand('AI/ML')}>
+              <ChevronRight class="w-4 h-4 {expandedItems.has('AI/ML') ? 'rotate-90' : ''} transition-transform" />
+              AI/ML
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <SidebarMenuButton on:click={() => toggleExpand('JPL')}>
+              <ChevronRight class="w-4 h-4 {expandedItems.has('JPL') ? 'rotate-90' : ''} transition-transform" />
+              JPL
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <SidebarMenuButton on:click={() => toggleExpand('UCLA')}>
+              <ChevronRight class="w-4 h-4 {expandedItems.has('UCLA') ? 'rotate-90' : ''} transition-transform" />
+              UCLA
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <SidebarMenuButton isActive={true} on:click={() => toggleExpand('Knowledge')}>
+              <ChevronRight class="w-4 h-4 rotate-90 transition-transform" />
+              Knowledge
+            </SidebarMenuButton>
+            {#if expandedItems.has('Knowledge')}
+              <SidebarMenuSub>
+                <SidebarMenuItem>
+                  <SidebarMenuButton size="sm">Dependencies</SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton size="sm">Sources</SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton size="sm">Inspiration</SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton size="sm">Development</SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenuSub>
+            {/if}
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  </SidebarContent>
+
+  <SidebarFooter>
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <SidebarMenuButton>
+          <Grid class="w-4 h-4" />
+          Projects
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <SidebarMenuItem>
+        <SidebarMenuButton>
+          <Calendar class="w-4 h-4" />
+          Calendar
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <SidebarMenuItem>
+        <SidebarMenuButton>
+          <Settings class="w-4 h-4" />
+          Settings
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  </SidebarFooter>
+</Sidebar>

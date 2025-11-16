@@ -1,9 +1,16 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { Search } from 'lucide-svelte';
-  import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "$lib/components/ui/select";
+  import { FileText } from 'lucide-svelte';
   import TableOfContents from './TableOfContents.svelte';
   import SearchBox from './SearchBox.svelte';
+  import {
+    Sidebar,
+    SidebarContent,
+    SidebarHeader,
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarGroupContent
+  } from '$lib/components/ui/sidebar';
 
   export let mainContent;
   export let headings;
@@ -25,34 +32,38 @@
 
 </script>
 
-<div class="bg-[#F3F3EE] h-full p-6 flex flex-col">
-  <div class="space-y-4 overflow-y-auto flex-grow">
-    <div class="sticky top-0 bg-[#F3F3EE] pt-2 z-10">
-      <SearchBox {headings} {editor} on:headingsFiltered={handleHeadingsFiltered} />
-    </div>
+<Sidebar class="bg-[#F3F3EE]">
+  <SidebarHeader class="sticky top-0 bg-[#F3F3EE] z-10">
+    <SearchBox {headings} {editor} on:headingsFiltered={handleHeadingsFiltered} />
 
-    <div class="text-md font-semibold  tracking-tight text-gray-900">
-      {mainContent.title}
-    </div>
-    <div class="space-y-2">
-      <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400">Document Info</h3>
-      <p class="text-sm text-gray-600">Last edited: {lastEdited}</p>
-      <div class="text-sm text-gray-500">Word count: {mainContent.wordCount}</div>
-    </div>
-
-
-    <!-- Outline -->
-    <div class="space-y-2">
-      <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400">Outline</h3>
-      <div class="space-y-2">
-        <TableOfContents 
-          headings={displayHeadings}
-          {handleLoadBlock}
-          {mainContent} 
-          {editor} 
-          {currentHeading}
-        />
+    <div class="flex items-center gap-2 pt-2">
+      <FileText class="h-4 w-4 text-gray-600" />
+      <div class="text-md font-semibold tracking-tight text-gray-900">
+        {mainContent.title}
       </div>
     </div>
-  </div>
-</div>
+  </SidebarHeader>
+
+  <SidebarContent>
+    <SidebarGroup>
+      <SidebarGroupLabel>Document Info</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <p class="text-sm text-gray-600">Last edited: {lastEdited}</p>
+        <div class="text-sm text-gray-500">Word count: {mainContent.wordCount}</div>
+      </SidebarGroupContent>
+    </SidebarGroup>
+
+    <SidebarGroup>
+      <SidebarGroupLabel>Outline</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <TableOfContents
+          headings={displayHeadings}
+          {handleLoadBlock}
+          {mainContent}
+          {editor}
+          {currentHeading}
+        />
+      </SidebarGroupContent>
+    </SidebarGroup>
+  </SidebarContent>
+</Sidebar>
