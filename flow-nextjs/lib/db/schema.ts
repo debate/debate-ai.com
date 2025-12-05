@@ -105,10 +105,42 @@ export const cardCollections = sqliteTable("card_collections", {
   pk: primaryKey({ columns: [table.cardId, table.collectionId] }),
 }));
 
+// Flows table (debate flows)
+export const flows = sqliteTable("flows", {
+  id: text("id").primaryKey().$default(() => crypto.randomUUID()),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  debateStyle: text("debate_style"), // e.g., "Policy", "LD", "PF"
+  data: text("data", { mode: "json" }).$type<{
+    columns: string[];
+    invert: boolean;
+    children: any[]; // Box tree structure
+  }>().notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+// Saved timer presets
+export const timerPresets = sqliteTable("timer_presets", {
+  id: text("id").primaryKey().$default(() => crypto.randomUUID()),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  speeches: text("speeches", { mode: "json" }).$type<Array<{
+    name: string;
+    time: number;
+    secondary: boolean;
+  }>>().notNull(),
+  isDefault: integer("is_default", { mode: "boolean" }).default(false),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   cards: many(cards),
   collections: many(collections),
+  flows: many(flows),
+  timerPresets: many(timerPresets),
   sessions: many(sessions),
   accounts: many(accounts),
 }));
@@ -170,6 +202,20 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
   }),
 }));
 
+export const flowsRelations = relations(flows, ({ one }) => ({
+  user: one(users, {
+    fields: [flows.userId],
+    references: [users.id],
+  }),
+}));
+
+export const timerPresetsRelations = relations(timerPresets, ({ one }) => ({
+  user: one(users, {
+    fields: [timerPresets.userId],
+    references: [users.id],
+  }),
+}));
+
 // Types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -179,6 +225,10 @@ export type Author = typeof authors.$inferSelect;
 export type NewAuthor = typeof authors.$inferInsert;
 export type Collection = typeof collections.$inferSelect;
 export type NewCollection = typeof collections.$inferInsert;
+export type FlowDb = typeof flows.$inferSelect;
+export type NewFlowDb = typeof flows.$inferInsert;
+export type TimerPreset = typeof timerPresets.$inferSelect;
+export type NewTimerPreset = typeof timerPresets.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
 export type Account = typeof accounts.$inferSelect;
 export type Verification = typeof verifications.$inferSelect;
