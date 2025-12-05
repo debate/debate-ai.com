@@ -5,6 +5,9 @@ import { useFlowContext } from "@/contexts/flow-context";
 import { useSettings } from "@/contexts/settings-context";
 import { FlowTab } from "./flow-tab";
 import { FlowDisplay } from "./flow-display";
+import { SettingsDialog } from "./settings-dialog";
+import { TimerDialog } from "./timer-dialog";
+import { HistoryButtons } from "./history-buttons";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, Upload, Settings as SettingsIcon } from "lucide-react";
 import {
@@ -84,6 +87,8 @@ export function MainFlow() {
         </div>
 
         <div className="flex items-center gap-2">
+          <HistoryButtons />
+          <TimerDialog />
           <Button variant="outline" size="sm" onClick={handleImport}>
             <Upload className="h-4 w-4 mr-2" />
             Import
@@ -92,9 +97,7 @@ export function MainFlow() {
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button variant="outline" size="icon">
-            <SettingsIcon className="h-4 w-4" />
-          </Button>
+          <SettingsDialog />
         </div>
       </div>
 

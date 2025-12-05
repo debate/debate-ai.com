@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useCallback } from "react";
 import { TextInput, TextInputRef } from "./text-input";
+import { BoxControl } from "./box-control";
 import type { Box as BoxType } from "@/lib/flow/types";
 import { newBox } from "@/lib/flow/helpers";
 import { Button } from "@/components/ui/button";
@@ -129,8 +130,40 @@ export function Box({
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const textarea = e.currentTarget;
+    const cursorAtStart = textarea.selectionStart === 0;
+    const cursorAtEnd = textarea.selectionStart === textarea.value.length;
+
+    // Arrow Up: Focus previous sibling (only if cursor at start)
+    if (e.key === "ArrowUp" && cursorAtStart && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+      // This would require parent to handle sibling navigation
+      // For now, just prevent default
+      e.preventDefault();
+    }
+    // Arrow Down: Focus next sibling (only if cursor at end)
+    else if (e.key === "ArrowDown" && cursorAtEnd && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+      // This would require parent to handle sibling navigation
+      // For now, just prevent default
+      e.preventDefault();
+    }
+    // Arrow Right: Focus first child (only if cursor at end)
+    else if (e.key === "ArrowRight" && cursorAtEnd && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+      if (box.children.length > 0) {
+        e.preventDefault();
+        // Focus first child by updating it
+        const updatedChildren = [...box.children];
+        updatedChildren[0] = { ...updatedChildren[0], focus: true };
+        onUpdate({ ...box, focus: false, children: updatedChildren });
+      }
+    }
+    // Arrow Left: Focus parent (only if cursor at start)
+    else if (e.key === "ArrowLeft" && cursorAtStart && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+      // Signal to parent that we want to focus it
+      // For now, just prevent default
+      e.preventDefault();
+    }
     // Enter: Add sibling below
-    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    else if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
       e.preventDefault();
       addSibling("below");
     }
@@ -183,19 +216,35 @@ export function Box({
               onClick={() => addSibling("above")}
             />
 
-            {/* Text content */}
-            <div className={cn("p-2", box.crossed && "line-through")}>
-              <TextInput
-                ref={textRef}
-                value={box.content}
-                onChange={handleContentChange}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                onKeyDown={handleKeyDown}
-                placeholder={box.placeholder}
-                strikethrough={box.crossed}
-                autoFocus={box.focus}
-              />
+            {/* Text content with BoxControl */}
+            <div className="relative">
+              <div className={cn("p-2", box.crossed && "line-through")}>
+                <TextInput
+                  ref={textRef}
+                  value={box.content}
+                  onChange={handleContentChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  onKeyDown={handleKeyDown}
+                  placeholder={box.placeholder}
+                  strikethrough={box.crossed}
+                  autoFocus={box.focus}
+                />
+              </div>
+
+              {/* Box Control Buttons */}
+              <div className="absolute top-1 right-1">
+                <BoxControl
+                  onAddAbove={() => addSibling("above")}
+                  onAddBelow={() => addSibling("below")}
+                  onAddChild={level < columnCount ? addChild : undefined}
+                  onDelete={handleDelete}
+                  onCrossOut={() => onUpdate({ ...box, crossed: !box.crossed })}
+                  isCrossedOut={box.crossed}
+                  canAddChild={level < columnCount}
+                  canDelete={box.content.length === 0 && box.children.length === 0}
+                />
+              </div>
             </div>
 
             {/* Add line below */}
