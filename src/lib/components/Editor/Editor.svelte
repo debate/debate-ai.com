@@ -8,10 +8,12 @@
   import * as storageAPI from '$lib/api/local-storage-api.js';
   import Sidebar from './Sidebar.svelte';
   import TopBar from './TopBar.svelte';
+  import QuoteView from './QuoteView.svelte';
   import { parseDebateDocx } from "$lib/docx/parse-debate-docx";
   import { documentToMarkup } from "$lib/docx/docx-to-html";
-  
+
   import './view-modes.css';
+  import './quote-view.css';
  
   export let mainContent;
   export let fileNameId: string = null;
@@ -217,8 +219,23 @@
         case 'underlined':
           contentDom.classList.add('only-highlighted', 'only-underlined');
           break;
+        case 'quotes':
+          // Quote view will be rendered separately, hide editor content
+          break;
       }
     }
+  }
+
+  function handleAiAnalyze(event) {
+    const { detail } = event;
+    console.log('AI Analyze requested for quote card:', detail);
+    // TODO: Implement AI analysis integration
+    // This could call an API endpoint to analyze the quote
+    // Example:
+    // await fetch('/api/ai-analyze', {
+    //   method: 'POST',
+    //   body: JSON.stringify(detail)
+    // });
   }
 
   function triggerFileUpload() {
@@ -317,7 +334,14 @@
       />
 
       <div class="flex-grow overflow-y-auto p-4" on:scroll={handleScroll}>
-        {#if browser && isEditorReady && EditorContent && editor}
+        {#if viewMode === 'quotes'}
+          <QuoteView
+            {editor}
+            fileName={fileNameId}
+            active={true}
+            on:aiAnalyze={handleAiAnalyze}
+          />
+        {:else if browser && isEditorReady && EditorContent && editor}
           <div class="editor-wrapper">
             <svelte:component this={EditorContent} {editor} />
           </div>

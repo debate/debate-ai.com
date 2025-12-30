@@ -17,7 +17,8 @@
     { value: "edit", label: "Edit" },
     { value: "read", label: "Read" },
     { value: "highlighted", label: ENLARGE_TERM + "Highlighted" },
-    { value: "underlined", label: ENLARGE_TERM + "Underlined" }
+    { value: "underlined", label: ENLARGE_TERM + "Underlined" },
+    { value: "quotes", label: "Quotes" }
   ];
 
   function handleViewModeChange(selectedValue: string) {

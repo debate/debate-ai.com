@@ -47,6 +47,7 @@
     "drizzle-orm": "^0.32.0",
     "gsap": "^3.12.5",
     "htmlparser2": "^9.1.0",
+    "isomorphic-dompurify": "^2.35.0",
     "jszip": "^3.10.1",
     "lucide-svelte": "^0.407.0",
     "nanoid": "^5.0.7",
