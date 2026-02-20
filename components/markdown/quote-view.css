@@ -1,0 +1,728 @@
+/**
+ * Quote View Mode CSS
+ * Styles for displaying quote cards with embossed effect and interactive buttons
+ */
+
+/* Main quote view container */
+.quote-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+}
+
+/* Individual quote card section */
+.quote-card {
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.quote-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Quote card toolbar (copy, AI analyze buttons) */
+.quote-card-toolbar {
+  position: absolute;
+  top: -0.75rem;
+  right: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+  z-index: 10;
+}
+
+.quote-card:hover .quote-card-toolbar {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Toolbar buttons */
+.quote-card-btn {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.95);
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.quote-card-btn:hover {
+  background: rgba(30, 64, 175, 0.95);
+  border-color: rgba(59, 130, 246, 0.8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.quote-card-btn:active {
+  transform: translateY(0);
+}
+
+.quote-card-btn.copied {
+  background: rgba(16, 185, 129, 0.95);
+  border-color: rgba(16, 185, 129, 0.8);
+}
+
+/* Fancy embossed blockquote */
+.tiptap-fancy-blockquote {
+  position: relative;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 0.5rem 0;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(15, 23, 42, 0.5);
+  background: #020617;
+  color: #e5e7eb;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 -1px 0 rgba(15, 23, 42, 0.95) inset,
+    0 18px 30px rgba(15, 23, 42, 0.85);
+  background-image: linear-gradient(145deg, rgba(148, 163, 184, 0.15), rgba(15, 23, 42, 0.98));
+  transition: box-shadow 0.3s ease;
+}
+
+.quote-card:hover .tiptap-fancy-blockquote {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 -1px 0 rgba(15, 23, 42, 0.95) inset,
+    0 20px 40px rgba(15, 23, 42, 0.95);
+}
+
+/* Colored left border accent - REMOVED */
+
+/* Quote card header */
+.quote-card-header {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+/* Quote summary (title) */
+.quote-summary {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  line-height: 1.4;
+}
+
+/* Quote metadata (author, year, cite) */
+.quote-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.quote-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.quote-author {
+  color: #60a5fa;
+  font-weight: 500;
+}
+
+.quote-year {
+  color: #ffffff;
+  font-weight: 600;
+  background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+  letter-spacing: 0.025em;
+}
+
+.quote-cite {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Quote body content */
+.quote-body {
+  margin: 0.75rem 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #e5e7eb;
+}
+
+.quote-body p {
+  margin: 0.5rem 0;
+}
+
+.quote-body p:first-child {
+  margin-top: 0;
+}
+
+.quote-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* Preserve formatting in quote body */
+.quote-body strong,
+.quote-body b {
+  color: #f1f5f9;
+  font-weight: 600;
+  font-size: 1.05em;
+}
+
+.quote-body em,
+.quote-body i {
+  color: #cbd5e1;
+  font-style: italic;
+}
+
+.quote-body mark {
+  background-color: rgba(251, 191, 36, 0.3);
+  color: #fbbf24;
+  padding: 0.1em 0.2em;
+  border-radius: 0.2em;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.quote-body u {
+  text-decoration: underline;
+  text-decoration-color: rgba(59, 130, 246, 0.5);
+  text-underline-offset: 2px;
+  font-size: 1.05em;
+}
+
+/* Quote footer (word count, source link) */
+.quote-footer {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.quote-stats {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.quote-stat-item {
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.quote-stat-separator {
+  color: rgba(148, 163, 184, 0.5);
+}
+
+.quote-words {
+  font-weight: 500;
+}
+
+.quote-link {
+  color: #60a5fa;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.quote-link:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+/* Key Points Mode - Show only bold and highlighted text */
+.quote-card.key-points-mode .quote-body {
+  font-size: 0;
+}
+
+.quote-card.key-points-mode .quote-body * {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  display: none;
+}
+
+.quote-card.key-points-mode .quote-body strong,
+.quote-card.key-points-mode .quote-body b,
+.quote-card.key-points-mode .quote-body mark {
+  display: inline;
+  font-size: 1.05em;
+}
+
+.quote-card.key-points-mode .quote-body mark {
+  font-size: 1.15em;
+}
+
+/* Hide citation in key points mode */
+.quote-card.key-points-mode .quote-cite {
+  display: none;
+}
+
+/* Highlight the active toggle button */
+.quote-card.key-points-mode .toggle-key-points-btn {
+  background: rgba(251, 191, 36, 0.2);
+  border-color: rgba(251, 191, 36, 0.6);
+  color: #fbbf24;
+}
+
+/* Editable quote body styles */
+.editable-quote-body {
+  cursor: text;
+  min-height: 50px;
+}
+
+.editable-quote-body .ProseMirror {
+  outline: none;
+}
+
+.editable-quote-body .ProseMirror:focus {
+  outline: none;
+}
+
+/* Embiggen underlined mode - shows only underlined/marked text at normal size */
+.quote-body.underlined *:is(strong, b, u, mark, h1, h2, h3, h4) {
+  font-size: initial;
+  letter-spacing: normal;
+  line-height: 150%;
+}
+
+.quote-body.underlined {
+  font-size: 1pt;
+  line-height: 50%;
+  letter-spacing: -1px;
+}
+
+/* Embiggen highlighted mode - shows only marked/strong text at normal size */
+.quote-body.highlighted *:is(strong, mark, h1, h2, h3, h4) {
+  line-height: 150%;
+  font-size: initial;
+  padding: 0 2px;
+  letter-spacing: normal;
+}
+
+.quote-body.highlighted,
+.quote-body.highlighted u strong,
+.quote-body.highlighted strong>u {
+  font-size: 1pt;
+  line-height: 50%;
+  letter-spacing: -1px;
+}
+
+.quote-body.highlighted p:not(:has(mark)) u {
+  font-size: initial;
+  letter-spacing: normal;
+  line-height: 150%;
+}
+
+/* Show all mode - readable size for everything */
+.quote-body.show-all {
+  font-size: 8pt !important;
+}
+
+.quote-body.show-all *:is(strong, b, u, mark, h1, h2, h3, h4) {
+  font-size: initial !important;
+}
+
+/* Headings Only mode - show only h1-h4, hide everything else */
+.quote-body.headings * {
+  display: none !important;
+}
+
+.quote-body.headings h1,
+.quote-body.headings h2,
+.quote-body.headings h3,
+.quote-body.headings h4 {
+  display: block !important;
+  font-size: 18pt !important;
+  line-height: 1.5 !important;
+  letter-spacing: normal !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  font-weight: 700 !important;
+  margin: 10px 5px !important;
+  padding: 4px !important;
+}
+
+/* Summaries Only mode - hide quote body, show only summaries */
+.quote-body.summaries-only {
+  display: none !important;
+}
+
+.quote-footer.summaries-only {
+  display: none !important;
+}
+
+/* H1 Only mode - hide quote bodies in h1-only view */
+.quote-body.h1-only {
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* H2 Only mode */
+.quote-body.h2-only {
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* H3 Only mode */
+.quote-body.h3-only {
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* Add smooth transitions for view mode changes in quote cards */
+.quote-body,
+.quote-body *:is(strong, b, u, mark, h1, h2, h3, h4) {
+  transition: font-size 0.5s ease-in-out, line-height 0.5s ease-in-out, letter-spacing 0.3s ease-in-out;
+}
+
+/* Apply embiggen styles to summary as well */
+.quote-summary.underlined *:is(strong, b, u, mark) {
+  font-size: initial;
+  letter-spacing: normal;
+  line-height: 150%;
+}
+
+.quote-summary.underlined {
+  font-size: 1pt;
+  line-height: 50%;
+  letter-spacing: -1px;
+}
+
+.quote-summary.highlighted *:is(strong, mark) {
+  line-height: 150%;
+  font-size: initial;
+  padding: 0 2px;
+  letter-spacing: normal;
+}
+
+.quote-summary.highlighted {
+  font-size: 1pt;
+  line-height: 50%;
+  letter-spacing: -1px;
+}
+
+/* Edit button styles */
+.toggle-edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.toggle-edit-btn svg {
+  display: inline;
+}
+
+/* Collapse button styles */
+.quote-collapse-btn {
+  flex-shrink: 0;
+  padding: 0.25rem;
+  margin-top: 0.125rem;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quote-collapse-btn:hover {
+  background: rgba(148, 163, 184, 0.2);
+  color: #e5e7eb;
+}
+
+.quote-collapse-btn:active {
+  transform: scale(0.95);
+}
+
+.quote-collapse-btn svg {
+  display: block;
+}
+
+/* Editable mode indicator */
+.quote-body.editable-quote-body::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #10b981, #3b82f6);
+  border-radius: 9999px;
+}
+
+/* Quote section styles */
+.quote-section {
+  margin-bottom: 1.5rem;
+}
+
+.quote-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid rgba(148, 163, 184, 0.3);
+}
+
+.quote-section-collapse-btn {
+  flex-shrink: 0;
+  padding: 0.25rem;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quote-section-collapse-btn:hover {
+  background: rgba(148, 163, 184, 0.2);
+  color: #e5e7eb;
+}
+
+.quote-section-collapse-btn:active {
+  transform: scale(0.95);
+}
+
+.quote-section-collapse-btn svg {
+  display: block;
+}
+
+.quote-section-heading {
+  margin: 0;
+  flex: 1;
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.quote-section h1.quote-section-heading {
+  font-size: 1.5rem;
+  color: #60a5fa;
+  font-weight: 800;
+  text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+}
+
+.quote-section h2.quote-section-heading {
+  font-size: 1.25rem;
+  color: #93c5fd;
+  font-weight: 800;
+  text-shadow: 0 0 15px rgba(147, 197, 253, 0.25);
+}
+
+.quote-section h3.quote-section-heading {
+  font-size: 1.1rem;
+  color: #bfdbfe;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(191, 219, 254, 0.2);
+}
+
+.quote-section-content {
+  padding-left: 0;
+}
+
+.quote-section-depth-1 .quote-section-content {
+  padding-left: 0;
+}
+
+.quote-section-depth-2 .quote-section-content {
+  padding-left: 0;
+}
+
+/* Quote view wrapper */
+.quote-view-wrapper {
+  padding: 1rem;
+  width: 100%;
+}
+
+.quote-view-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.quote-view-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.stat-item strong {
+  color: #e5e7eb;
+  font-weight: 600;
+}
+
+.stat-separator {
+  color: rgba(148, 163, 184, 0.5);
+}
+
+.quote-view-container {
+  min-height: 200px;
+}
+
+.quote-view-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #9ca3af;
+}
+
+/* Quote view empty state */
+.quote-view-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #9ca3af;
+  text-align: center;
+  padding: 2rem;
+}
+
+.quote-view-empty p {
+  margin: 0.5rem 0;
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .tiptap-fancy-blockquote {
+    background: #0f172a;
+    border-color: rgba(30, 41, 59, 0.7);
+  }
+
+  .quote-card-btn {
+    background: rgba(15, 23, 42, 0.98);
+  }
+}
+
+/* Light theme adjustments */
+@media (prefers-color-scheme: light) {
+  .tiptap-fancy-blockquote {
+    background: #f8fafc;
+    color: #1e293b;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.8) inset,
+      0 -1px 0 rgba(203, 213, 225, 0.5) inset,
+      0 10px 25px rgba(15, 23, 42, 0.1);
+    background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(241, 245, 249, 0.95));
+  }
+
+  .quote-summary {
+    color: #0f172a;
+  }
+
+  .quote-body {
+    color: #334155;
+  }
+
+  .quote-body strong,
+  .quote-body b {
+    color: #1e293b;
+  }
+
+  .quote-card-btn {
+    background: rgba(255, 255, 255, 0.95);
+    color: #1e293b;
+    border-color: rgba(148, 163, 184, 0.4);
+  }
+
+  .quote-card-btn:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.6);
+  }
+
+  .quote-section-heading {
+    color: #000000;
+    font-weight: 800;
+  }
+
+  .quote-section h1.quote-section-heading {
+    color: #000000;
+    font-weight: 900;
+  }
+
+  .quote-section h2.quote-section-heading {
+    color: #0a0a0a;
+    font-weight: 800;
+  }
+
+  .quote-section h3.quote-section-heading {
+    color: #1a1a1a;
+    font-weight: 700;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .quote-view {
+    gap: 1rem;
+  }
+
+  .tiptap-fancy-blockquote {
+    padding: 1rem 1.25rem;
+    margin: 1rem 0 0.5rem 0;
+  }
+
+  .quote-card-toolbar {
+    position: static;
+    opacity: 1;
+    transform: none;
+    margin-bottom: 0.5rem;
+    justify-content: flex-end;
+  }
+
+  .quote-summary {
+    font-size: 0.95rem;
+  }
+
+  .quote-body {
+    font-size: 0.9rem;
+  }
+
+  .quote-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .quote-card-toolbar {
+    display: none;
+  }
+
+  .tiptap-fancy-blockquote {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+
+  .quote-view {
+    gap: 1rem;
+  }
+}
