@@ -262,19 +262,19 @@ export function ChampionsPanel({ onYearSelect }: ChampionsPanelProps) {
                 className="group overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg"
               >
                 <CardHeader className="pb-3">
-                  <div className="flex items-center gap-3">
-                    {/* Category icon/logo with color coding */}
-                    <div className={cn("flex items-center justify-center w-10 h-10 rounded-lg shadow-sm", cat.color)}>
+                  {/* Category logo centered at top */}
+                  <div className="flex justify-center mb-4">
+                    <div className={cn("flex items-center justify-center w-[200px] h-[200px] rounded-2xl shadow-md", cat.color)}>
                       {cat.logoSrc ? (
-                        <Image src={cat.logoSrc} alt={cat.logoAlt} width={28} height={28} className="h-7 w-7 object-contain" />
+                        <Image src={cat.logoSrc} alt={cat.logoAlt} width={200} height={200} className="w-full h-full object-contain p-5" />
                       ) : (
-                        <Trophy className="w-5 h-5 text-white" />
+                        <Trophy className="w-20 h-20 text-white" />
                       )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base font-semibold">{cat.label} Champions</CardTitle>
-                      <p className="text-sm font-medium text-primary truncate">{champion || "TBA"}</p>
-                    </div>
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold">{cat.label} Champions</CardTitle>
+                    <p className="text-base font-semibold text-primary">{champion || "TBA"}</p>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">

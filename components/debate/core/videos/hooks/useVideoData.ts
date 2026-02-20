@@ -54,9 +54,9 @@ export function useVideoFiltering() {
 
         filtered = allCategoryVideos.filter(
           (video) =>
-            video[1].toLowerCase().includes(searchLower) ||
-            video[3].toLowerCase().includes(searchLower) ||
-            video[5].toLowerCase().includes(searchLower),
+            (video[1] || "").toLowerCase().includes(searchLower) ||
+            (video[3] || "").toLowerCase().includes(searchLower) ||
+            (video[5] || "").toLowerCase().includes(searchLower),
         )
       } else {
         filtered = [...videos]

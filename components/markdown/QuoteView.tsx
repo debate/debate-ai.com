@@ -3,20 +3,19 @@
 import type React from "react"
 
 import { useEffect, useState, useCallback, useRef } from "react"
-import type { Editor } from "@tiptap/core"
-import { buildQuoteCardsHtml, htmlToCards, type QuoteCard, type HeadingSection } from "./quote-view-utils"
+import { htmlToCards, type HeadingSection } from "./quote-view-utils"
 import { EditableQuoteCard } from "./EditableQuoteCard"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import "./quote-view.css"
 
 interface QuoteViewProps {
-  editor: Editor | null
+  html: string
   fileName?: string
   active?: boolean
   viewMode?: "read" | "highlighted" | "underlined" | "headings" | "h1-only" | "h2-only" | "h3-only" | "summaries-only"
 }
 
-export function QuoteView({ editor, fileName, active = true, viewMode = "read" }: QuoteViewProps) {
+export function QuoteView({ html, fileName, active = true, viewMode = "read" }: QuoteViewProps) {
   const [sections, setSections] = useState<HeadingSection[]>([])
   const [cardCount, setCardCount] = useState<number>(0)
   const [totalWords, setTotalWords] = useState<number>(0)
@@ -25,53 +24,25 @@ export function QuoteView({ editor, fileName, active = true, viewMode = "read" }
   const prevFileNameRef = useRef<string | undefined>(fileName)
 
   useEffect(() => {
-    if (editor && active) {
-      updateContent()
+    if (!active) return
 
-      // Listen to editor updates to refresh quotes when content changes
-      const handleUpdate = () => {
-        updateContent()
-      }
+    const result = htmlToCards(html, fileName)
+    setSections(result.sections)
+    setCardCount(result.metadata.cardCount)
+    setTotalWords(result.metadata.totalWords)
+  }, [active, html, fileName])
 
-      editor.on('update', handleUpdate)
-
-      return () => {
-        editor.off('update', handleUpdate)
-      }
-    }
-  }, [editor, active])
-
-  // Scroll to top when speech (fileName) changes
   useEffect(() => {
     if (fileName !== prevFileNameRef.current && containerRef.current) {
-      containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      containerRef.current.scrollIntoView({ behavior: "smooth", block: "start" })
       prevFileNameRef.current = fileName
     }
   }, [fileName])
 
-  function updateContent() {
-    if (!editor) return
-
-    const html = editor.getHTML()
-    console.log("[QuoteView] ===== QUOTES VIEW MODE ACTIVATED =====")
-    console.log("[QuoteView] Editor HTML length:", html?.length || 0)
-    console.log("[QuoteView] Editor HTML:", html)
-
-    const result = htmlToCards(html, fileName)
-    console.log("[QuoteView] htmlToCards result:", result)
-
-    setSections(result.sections)
-    setCardCount(result.metadata.cardCount)
-    setTotalWords(result.metadata.totalWords)
-  }
-
   const handleCardUpdate = useCallback((cardId: string, newHtml: string) => {
-    // Update the card in sections
     setSections((prevSections) => {
       function updateCardInSection(section: HeadingSection): HeadingSection {
-        const updatedCards = section.cards.map((card) =>
-          card.id === cardId ? { ...card, html: newHtml } : card
-        )
+        const updatedCards = section.cards.map((card) => (card.id === cardId ? { ...card, html: newHtml } : card))
         const updatedSubsections = section.subsections?.map(updateCardInSection)
         return {
           ...section,
@@ -81,9 +52,6 @@ export function QuoteView({ editor, fileName, active = true, viewMode = "read" }
       }
       return prevSections.map(updateCardInSection)
     })
-
-    // TODO: Sync back to main editor if needed
-    console.log("[QuoteView] Card updated:", cardId, newHtml)
   }, [])
 
   const toggleSectionCollapse = useCallback((sectionId: string) => {
@@ -98,8 +66,7 @@ export function QuoteView({ editor, fileName, active = true, viewMode = "read" }
     })
   }, [])
 
-
-  if (!active || !editor) {
+  if (!active) {
     return (
       <div className="quote-view-loading">
         <p>Loading editor...</p>
@@ -125,7 +92,6 @@ export function QuoteView({ editor, fileName, active = true, viewMode = "read" }
     )
   }
 
-  // Determine if a section should be rendered based on viewMode
   const shouldRenderSection = (section: HeadingSection): boolean => {
     if (!section.heading) return true
 
@@ -143,13 +109,11 @@ export function QuoteView({ editor, fileName, active = true, viewMode = "read" }
     }
   }
 
-  // Filter subsections based on viewMode
   const filterSubsections = (subsections: HeadingSection[] | undefined): HeadingSection[] => {
     if (!subsections) return []
     return subsections.filter(shouldRenderSection)
   }
 
-  // Recursive component to render a section and its subsections
   const renderSection = (section: HeadingSection, depth: number = 0, index: number = 0): React.ReactElement => {
     const sectionId = section.heading?.id ? `${section.heading.id}-${depth}-${index}` : `section-${depth}-${index}`
     const isCollapsed = collapsedSections.has(sectionId)
@@ -201,7 +165,6 @@ export function QuoteView({ editor, fileName, active = true, viewMode = "read" }
     )
   }
 
-  // Filter top-level sections based on viewMode
   const filteredSections = sections.filter(shouldRenderSection)
 
   return (
@@ -219,9 +182,7 @@ export function QuoteView({ editor, fileName, active = true, viewMode = "read" }
       </div>
 
       <div className="quote-view-container">
-        <div className="quote-view">
-          {filteredSections.map((section, index) => renderSection(section, 0, index))}
-        </div>
+        <div className="quote-view">{filteredSections.map((section, index) => renderSection(section, 0, index))}</div>
       </div>
     </div>
   )
