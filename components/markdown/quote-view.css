@@ -72,7 +72,7 @@
 }
 
 /* Fancy embossed blockquote */
-.tiptap-fancy-blockquote {
+.lexical-fancy-blockquote {
   position: relative;
   padding: 1.25rem 1.5rem;
   margin: 1.5rem 0 0.5rem 0;
@@ -88,7 +88,7 @@
   transition: box-shadow 0.3s ease;
 }
 
-.quote-card:hover .tiptap-fancy-blockquote {
+.quote-card:hover .lexical-fancy-blockquote {
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.08) inset,
     0 -1px 0 rgba(15, 23, 42, 0.95) inset,
@@ -285,11 +285,11 @@
   min-height: 50px;
 }
 
-.editable-quote-body .ProseMirror {
+.editable-quote-body [contenteditable] {
   outline: none;
 }
 
-.editable-quote-body .ProseMirror:focus {
+.editable-quote-body [contenteditable]:focus {
   outline: none;
 }
 
@@ -608,7 +608,7 @@
 
 /* Dark theme adjustments */
 @media (prefers-color-scheme: dark) {
-  .tiptap-fancy-blockquote {
+  .lexical-fancy-blockquote {
     background: #0f172a;
     border-color: rgba(30, 41, 59, 0.7);
   }
@@ -620,7 +620,7 @@
 
 /* Light theme adjustments */
 @media (prefers-color-scheme: light) {
-  .tiptap-fancy-blockquote {
+  .lexical-fancy-blockquote {
     background: #f8fafc;
     color: #1e293b;
     border: 1px solid rgba(148, 163, 184, 0.3);
@@ -682,7 +682,7 @@
     gap: 1rem;
   }
 
-  .tiptap-fancy-blockquote {
+  .lexical-fancy-blockquote {
     padding: 1rem 1.25rem;
     margin: 1rem 0 0.5rem 0;
   }
@@ -716,7 +716,7 @@
     display: none;
   }
 
-  .tiptap-fancy-blockquote {
+  .lexical-fancy-blockquote {
     page-break-inside: avoid;
     box-shadow: none;
     border: 1px solid #000;

@@ -239,7 +239,7 @@ export function EditableQuoteCard({
       </div>
 
       <blockquote
-        className="tiptap-fancy-blockquote"
+        className="lexical-fancy-blockquote"
         data-type="custom-blockquote"
         data-summary={summaryText}
         data-author={author || ""}

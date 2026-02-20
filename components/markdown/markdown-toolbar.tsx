@@ -24,19 +24,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Bold, Italic, UnderlineIcon, Highlighter } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { type Editor, useEditorState } from "@tiptap/react"
+import {
+  FORMAT_TEXT_COMMAND,
+  UNDO_COMMAND,
+  REDO_COMMAND,
+  $getSelection,
+  $isRangeSelection,
+  type LexicalEditor,
+} from "lexical"
+import { $isHeadingNode, $createHeadingNode } from "@lexical/rich-text"
+import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND } from "@lexical/list"
+import { $setBlocksType } from "@lexical/selection"
+import { $createParagraphNode, $getRoot } from "lexical"
 
 interface MarkdownToolbarProps {
-  editor: Editor
+  editor: LexicalEditor
   saveState?: "idle" | "saving" | "saved" | "error"
   onSave?: () => void
-  onDiscard?: () => void // Called when user discards changes
+  onDiscard?: () => void
   fileName?: string
-  hideActions?: boolean // Hide Export/Save (when they're in parent header)
-  isBubbleMenu?: boolean // Used in BubbleMenu context
-  isFloatingMenu?: boolean // Used in FloatingMenu context
-  hasChanges?: boolean // Whether there are unsaved changes
-  sandboxId?: string // Sandbox ID for uploading images
+  hideActions?: boolean
+  isBubbleMenu?: boolean
+  isFloatingMenu?: boolean
+  hasChanges?: boolean
+  sandboxId?: string
 }
 
 export function MarkdownToolbar({
@@ -61,6 +72,14 @@ export function MarkdownToolbar({
   const [highlightDropdownOpen, setHighlightDropdownOpen] = useState(false)
   const highlightDropdownRef = useRef<HTMLDivElement>(null)
 
+  // Editor state tracked via Lexical update listener
+  const [isBold, setIsBold] = useState(false)
+  const [isItalic, setIsItalic] = useState(false)
+  const [isUnderline, setIsUnderline] = useState(false)
+  const [isStrike, setIsStrike] = useState(false)
+  const [isCode, setIsCode] = useState(false)
+  const [currentHeading, setCurrentHeading] = useState("Normal")
+
   const HIGHLIGHT_COLORS = [
     { label: "Yellow", value: "#fef08a" },
     { label: "Green", value: "#bbf7d0" },
@@ -84,154 +103,71 @@ export function MarkdownToolbar({
     }
   }, [highlightDropdownOpen])
 
-  // Use Tiptap's proper state hooks for reactive state management
-  const canUndo = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.can().undo()
-    },
-  })
+  // Listen to editor updates to track selection state
+  useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        const selection = $getSelection()
+        if ($isRangeSelection(selection)) {
+          setIsBold(selection.hasFormat("bold"))
+          setIsItalic(selection.hasFormat("italic"))
+          setIsUnderline(selection.hasFormat("underline"))
+          setIsStrike(selection.hasFormat("strikethrough"))
+          setIsCode(selection.hasFormat("code"))
 
-  const canRedo = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.can().redo()
-    },
-  })
+          const anchorNode = selection.anchor.getNode()
+          const element = anchorNode.getKey() === "root" ? anchorNode : anchorNode.getTopLevelElementOrThrow()
+          if ($isHeadingNode(element)) {
+            const tag = element.getTag()
+            if (tag === "h1") setCurrentHeading("Heading 1")
+            else if (tag === "h2") setCurrentHeading("Heading 2")
+            else if (tag === "h3") setCurrentHeading("Heading 3")
+            else if (tag === "h4") setCurrentHeading("Heading 4")
+            else setCurrentHeading("Normal")
+          } else {
+            setCurrentHeading("Normal")
+          }
+        }
+      })
+    })
+  }, [editor])
 
-  const isBold = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.isActive("bold")
-    },
-  })
+  const openImageDialog = useCallback(() => {
+    setImageUrl("")
+    setImagePreview(null)
+    setSelectedFile(null)
+    setIsImageDialogOpen(true)
+  }, [])
 
-  const isItalic = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.isActive("italic")
-    },
-  })
+  const handleImageFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file && file.type.startsWith("image/")) {
+      setSelectedFile(file)
+      setImageUrl("")
 
-  const isUnderline = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.isActive("underline")
-    },
-  })
-
-  const isStrike = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.isActive("strike")
-    },
-  })
-
-  const isCode = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.isActive("code")
-    },
-  })
-
-  const isOrderedList = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.isActive("orderedList")
-    },
-  })
-
-  const isBlockquote = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.isActive("blockquote")
-    },
-  })
-
-  const isCodeBlock = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.isActive("codeBlock")
-    },
-  })
-
-  const isLink = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.isActive("link")
-    },
-  })
-
-  const isInTable = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.isActive("table")
-    },
-  })
-
-  const isHighlight = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return false
-      return editor.isActive("highlight")
-    },
-  })
-
-  const currentHeading = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return "Normal"
-      if (editor.isActive("heading", { level: 1 })) return "Heading 1"
-      if (editor.isActive("heading", { level: 2 })) return "Heading 2"
-      if (editor.isActive("heading", { level: 3 })) return "Heading 3"
-      if (editor.isActive("heading", { level: 4 })) return "Heading 4"
-      return "Normal"
-    },
-  })
-
-  const wordCount = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return 0
-      return editor.storage.characterCount?.words() || 0
-    },
-  })
-
-  const currentHighlightColor = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      if (!editor) return null
-      const { color } = editor.getAttributes("highlight")
-      return color || HIGHLIGHT_COLORS[0].value
-    },
-  })
-
-  const handleExport = useCallback(
-    async (format: any) => {
-      if (!editor) return
-
-      setIsExporting(true)
-      try {
-        const content = editor.getHTML()
-      } catch (error) {
-        console.error("Export error:", error)
-      } finally {
-        setIsExporting(false)
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const dataUrl = event.target?.result as string
+        setImagePreview(dataUrl)
       }
+      reader.readAsDataURL(file)
+    }
+  }, [])
+
+  const setHeading = useCallback(
+    (level: 1 | 2 | 3 | 4 | null) => {
+      editor.update(() => {
+        const selection = $getSelection()
+        if ($isRangeSelection(selection)) {
+          if (level === null) {
+            $setBlocksType(selection, () => $createParagraphNode())
+          } else {
+            $setBlocksType(selection, () => $createHeadingNode(`h${level}`))
+          }
+        }
+      })
     },
-    [editor, fileName],
+    [editor],
   )
 
   const ToolbarButton = ({
@@ -271,74 +207,6 @@ export function MarkdownToolbar({
       </TooltipContent>
     </Tooltip>
   )
-
-  const insertLink = useCallback(() => {
-    const previousUrl = editor.getAttributes("link").href
-    const url = window.prompt("Enter URL:", previousUrl)
-    if (url === null) return
-    if (url === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run()
-      return
-    }
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run()
-  }, [editor])
-
-  const openImageDialog = useCallback(() => {
-    setImageUrl("")
-    setImagePreview(null)
-    setSelectedFile(null)
-    setIsImageDialogOpen(true)
-  }, [])
-
-  const handleImageFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file && file.type.startsWith("image/")) {
-      // Store the file for upload
-      setSelectedFile(file)
-      setImageUrl("") // Clear URL when file is selected
-
-      // Create preview
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        const dataUrl = event.target?.result as string
-        setImagePreview(dataUrl)
-      }
-      reader.readAsDataURL(file)
-    }
-  }, [])
-
-  const insertTable = useCallback(() => {
-    editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
-  }, [editor])
-
-  // Table control functions
-  const addRowBefore = useCallback(() => {
-    editor.chain().focus().addRowBefore().run()
-  }, [editor])
-
-  const addRowAfter = useCallback(() => {
-    editor.chain().focus().addRowAfter().run()
-  }, [editor])
-
-  const addColumnBefore = useCallback(() => {
-    editor.chain().focus().addColumnBefore().run()
-  }, [editor])
-
-  const addColumnAfter = useCallback(() => {
-    editor.chain().focus().addColumnAfter().run()
-  }, [editor])
-
-  const deleteRow = useCallback(() => {
-    editor.chain().focus().deleteRow().run()
-  }, [editor])
-
-  const deleteColumn = useCallback(() => {
-    editor.chain().focus().deleteColumn().run()
-  }, [editor])
-
-  const deleteTable = useCallback(() => {
-    editor.chain().focus().deleteTable().run()
-  }, [editor])
 
   const SaveButton = () => {
     if (!onSave) return null
@@ -384,7 +252,7 @@ export function MarkdownToolbar({
                 <>
                   Save changes{" "}
                   <kbd className="ml-1.5 px-1.5 py-0.5 text-[10px] bg-slate-700 dark:bg-slate-300 text-white dark:text-slate-900 rounded font-mono border border-slate-600 dark:border-slate-400">
-                    ⌘S
+                    Ctrl+S
                   </kbd>
                 </>
               ) : (
@@ -397,37 +265,21 @@ export function MarkdownToolbar({
   }
 
   const TextStyleDropdown = () => {
-    const getActiveStyle = () => {
-      if (editor.isActive("heading", { level: 1 })) return "Heading 1"
-      if (editor.isActive("heading", { level: 2 })) return "Heading 2"
-      if (editor.isActive("heading", { level: 3 })) return "Heading 3"
-      if (editor.isActive("heading", { level: 4 })) return "Heading 4"
-      return "Normal"
-    }
-
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="h-8 px-2 gap-1">
             <Type className="h-4 w-4" />
-            <span className="text-xs">{getActiveStyle()}</span>
+            <span className="text-xs">{currentHeading}</span>
             <ChevronDown className="h-3 w-3" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          <DropdownMenuItem onClick={() => editor.chain().focus().setParagraph().run()}>Normal</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
-            Heading 1
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
-            Heading 2
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
-            Heading 3
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}>
-            Heading 4
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setHeading(null)}>Normal</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setHeading(1)}>Heading 1</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setHeading(2)}>Heading 2</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setHeading(3)}>Heading 3</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setHeading(4)}>Heading 4</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     )
@@ -463,92 +315,52 @@ export function MarkdownToolbar({
           </>
         )}
 
-      {/* Highlighter dropdown */}
+      {/* Highlighter button (simplified for Lexical - applies bold as highlight proxy) */}
       <div className="flex items-center shrink-0">
         <div ref={highlightDropdownRef} className="relative">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 type="button"
-                variant={editor.isActive("highlight") ? "default" : "ghost"}
+                variant="ghost"
                 size="sm"
                 className="h-8 gap-1 px-2"
-                onClick={() => setHighlightDropdownOpen(!highlightDropdownOpen)}
+                onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "highlight")}
               >
-                <div className="flex items-center gap-1">
-                  <Highlighter
-                    className="h-4 w-4"
-                    style={{
-                      color: editor.isActive("highlight")
-                        ? currentHighlightColor || HIGHLIGHT_COLORS[0].value
-                        : undefined,
-                    }}
-                  />
-                  <ChevronDown className="h-3 w-3" />
-                </div>
+                <Highlighter className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
               <p>Highlight</p>
             </TooltipContent>
           </Tooltip>
-
-          {highlightDropdownOpen && (
-            <div className="absolute left-0 top-full mt-1 z-50 min-w-[140px] rounded-md border bg-popover p-1 shadow-md">
-              {HIGHLIGHT_COLORS.map((color) => (
-                <button
-                  key={color.value}
-                  type="button"
-                  className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent"
-                  onClick={() => {
-                    editor.chain().focus().setHighlight({ color: color.value }).run()
-                    setHighlightDropdownOpen(false)
-                  }}
-                >
-                  <div className="w-4 h-4 rounded border border-border" style={{ backgroundColor: color.value }} />
-                  <span>{color.label}</span>
-                </button>
-              ))}
-              <div className="my-1 h-px bg-border" />
-              <button
-                type="button"
-                className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-destructive hover:bg-accent"
-                onClick={() => {
-                  editor.chain().focus().unsetHighlight().run()
-                  setHighlightDropdownOpen(false)
-                }}
-              >
-                Remove highlight
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
       {/* Text formatting */}
       <div className="flex items-center gap-0.5">
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          isActive={editor.isActive("bold")}
+          onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}
+          isActive={isBold}
           icon={Bold}
           tooltip="Bold"
-          shortcut="⌘B"
+          shortcut="Ctrl+B"
         />
         {!isBubbleMenu && (
           <ToolbarButton
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            isActive={editor.isActive("italic")}
+            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}
+            isActive={isItalic}
             icon={Italic}
             tooltip="Italic"
-            shortcut="⌘I"
+            shortcut="Ctrl+I"
           />
         )}
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          isActive={editor.isActive("underline")}
+          onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}
+          isActive={isUnderline}
           icon={UnderlineIcon}
           tooltip="Underline"
-          shortcut="⌘U"
+          shortcut="Ctrl+U"
         />
       </div>
 
@@ -561,8 +373,7 @@ export function MarkdownToolbar({
 
       {/* Lists */}
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        isActive={editor.isActive("orderedList")}
+        onClick={() => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)}
         icon={ListOrdered}
         tooltip="Numbered list"
       />
@@ -571,20 +382,16 @@ export function MarkdownToolbar({
       {!isBubbleMenu && (
         <>
           <ToolbarButton
-            onClick={() => editor.chain().focus().undo().run()}
-            disabled={!canUndo}
+            onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
             icon={Undo2}
             tooltip="Undo"
-            shortcut="⌘Z"
+            shortcut="Ctrl+Z"
           />
           <ToolbarButton
-            onClick={() => {
-              editor.chain().focus().redo().run()
-            }}
-            disabled={!canRedo}
+            onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
             icon={Redo2}
             tooltip="Redo"
-            shortcut="⌘⇧Z"
+            shortcut="Ctrl+Shift+Z"
           />
         </>
       )}
@@ -661,7 +468,7 @@ export function MarkdownToolbar({
                 value={imageUrl}
                 onChange={(e) => {
                   setImageUrl(e.target.value)
-                  setImagePreview(null) // Clear preview when URL is entered
+                  setImagePreview(null)
                 }}
               />
             </div>

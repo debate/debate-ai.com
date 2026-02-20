@@ -1,5 +1,5 @@
 /**
- * Quote View Helper - converts Tiptap documents to quote cards HTML
+ * Quote View Helper - converts Lexical documents to quote cards HTML
  * Uses the robust html-to-cards parser from lib/card-parser
  */
 
@@ -325,7 +325,7 @@ function escapeHtml(value: string): string {
 }
 
 /**
- * Build quote cards HTML from a Tiptap JSON document
+ * Build quote cards HTML from a Lexical JSON document
  */
 export function buildQuoteCardsHtml(
   html: string,
@@ -370,7 +370,7 @@ export function buildQuoteCardsHtml(
                 🤖 AI analyze
               </button>
             </div>
-            <blockquote class="tiptap-fancy-blockquote" data-type="custom-blockquote"
+            <blockquote class="lexical-fancy-blockquote" data-type="custom-blockquote"
               data-summary="${encodeHtmlAttr(card.summary || "")}"
               data-author="${encodeHtmlAttr(card.author || "")}"
               data-year="${encodeHtmlAttr(String(card.year || ""))}"
