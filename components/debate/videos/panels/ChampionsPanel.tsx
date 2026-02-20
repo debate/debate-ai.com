@@ -14,6 +14,7 @@
  */
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { Trophy, ExternalLink } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -84,6 +85,8 @@ const categoryConfig = [
     topicKey: "ndt_topic",
     championKey: "ndt_champion",
     color: "bg-blue-500",
+    logoSrc: null,
+    logoAlt: "NDT format",
   },
   {
     key: "policy",
@@ -91,6 +94,8 @@ const categoryConfig = [
     topicKey: "policy_topic",
     championKey: "policy_champion",
     color: "bg-emerald-500",
+    logoSrc: "/images/logo-policy-format.png",
+    logoAlt: "Policy format",
   },
   {
     key: "ld",
@@ -98,6 +103,8 @@ const categoryConfig = [
     topicKey: "ld_topic",
     championKey: "ld_champion",
     color: "bg-purple-500",
+    logoSrc: "/images/logo-lincoln-douglas-format.png",
+    logoAlt: "Lincoln-Douglas format",
   },
   {
     key: "pf",
@@ -105,6 +112,8 @@ const categoryConfig = [
     topicKey: "pf_topic",
     championKey: "pf_champion",
     color: "bg-orange-500",
+    logoSrc: "/images/logo-public-forum-format.png",
+    logoAlt: "Public Forum format",
   },
 ]
 
@@ -254,9 +263,13 @@ export function ChampionsPanel({ onYearSelect }: ChampionsPanelProps) {
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-3">
-                    {/* Category icon with color coding */}
+                    {/* Category icon/logo with color coding */}
                     <div className={cn("flex items-center justify-center w-10 h-10 rounded-lg shadow-sm", cat.color)}>
-                      <Trophy className="w-5 h-5 text-white" />
+                      {cat.logoSrc ? (
+                        <Image src={cat.logoSrc} alt={cat.logoAlt} width={28} height={28} className="h-7 w-7 object-contain" />
+                      ) : (
+                        <Trophy className="w-5 h-5 text-white" />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-base font-semibold">{cat.label} Champions</CardTitle>
