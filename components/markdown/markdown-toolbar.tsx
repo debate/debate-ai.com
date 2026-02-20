@@ -508,7 +508,7 @@ export function MarkdownToolbar({
   return (
     <TooltipProvider delayDuration={300}>
       <div className="border-b bg-background sticky top-0 z-10">
-        <div className="px-2 py-1.5 flex items-center gap-0.5 overflow-visible scrollbar-none">{toolbarContent}</div>
+        <div className="px-2 py-1.5 flex items-center gap-0.5 overflow-x-auto flex-nowrap scrollbar-none">{toolbarContent}</div>
       </div>
       {imageDialog}
     </TooltipProvider>
