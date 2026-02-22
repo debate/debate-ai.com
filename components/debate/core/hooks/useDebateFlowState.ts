@@ -3,7 +3,7 @@
  * @module components/debate/core/hooks/useDebateFlowState
  */
 
-import { useState, useRef } from "react"
+import { useState, useRef } from "react";
 
 /**
  * Hook for managing all debate flow page state
@@ -13,30 +13,33 @@ import { useState, useRef } from "react"
  */
 export function useDebateFlowState(): DebateFlowState & DebateFlowActions {
   // Dialog visibility states
-  const [settingsOpen, setSettingsOpen] = useState(false)
-  const [historyDialogOpen, setHistoryDialogOpen] = useState(false)
-  const [roundDialogOpen, setRoundDialogOpen] = useState(false)
-  const [editingRoundId, setEditingRoundId] = useState<number | undefined>(undefined)
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
+  const [roundDialogOpen, setRoundDialogOpen] = useState(false);
+  const [editingRoundId, setEditingRoundId] = useState<number | undefined>(
+    undefined,
+  );
 
   // Speech panel states
-  const [speechPanelOpen, setSpeechPanelOpen] = useState(false)
-  const [selectedSpeech, setSelectedSpeech] = useState<string>("")
-  const [speechPanelViewMode, setSpeechPanelViewMode] = useState<ViewMode>("read")
-  const [speechPanelQuoteView, setSpeechPanelQuoteView] = useState(false)
+  const [speechPanelOpen, setSpeechPanelOpen] = useState(false);
+  const [selectedSpeech, setSelectedSpeech] = useState<string>("");
+  const [speechPanelViewMode, setSpeechPanelViewMode] =
+    useState<ViewMode>("read");
+  const [speechPanelQuoteView, setSpeechPanelQuoteView] = useState(false);
 
   // Mobile navigation state
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Split mode states
-  const [splitMode, setSplitMode] = useState(false)
-  const [splitSpeech1, setSplitSpeech1] = useState<string>("")
-  const [splitSpeech2, setSplitSpeech2] = useState<string>("")
-  const [splitViewMode1, setSplitViewMode1] = useState<ViewMode>("read")
-  const [splitViewMode2, setSplitViewMode2] = useState<ViewMode>("read")
-  const [splitQuoteView1, setSplitQuoteView1] = useState(false)
-  const [splitQuoteView2, setSplitQuoteView2] = useState(false)
-  const [splitWidth, setSplitWidth] = useState(50)
+  const [splitMode, setSplitMode] = useState(true);
+  const [splitSpeech1, setSplitSpeech1] = useState<string>("");
+  const [splitSpeech2, setSplitSpeech2] = useState<string>("");
+  const [splitViewMode1, setSplitViewMode1] = useState<ViewMode>("read");
+  const [splitViewMode2, setSplitViewMode2] = useState<ViewMode>("read");
+  const [splitQuoteView1, setSplitQuoteView1] = useState(false);
+  const [splitQuoteView2, setSplitQuoteView2] = useState(false);
+  const [splitWidth, setSplitWidth] = useState(50);
 
   return {
     // State
@@ -78,7 +81,7 @@ export function useDebateFlowState(): DebateFlowState & DebateFlowActions {
     setSplitQuoteView1,
     setSplitQuoteView2,
     setSplitWidth,
-  }
+  };
 }
 
 /**
@@ -88,5 +91,5 @@ export function useDebateFlowState(): DebateFlowState & DebateFlowActions {
  * @returns Grid API ref
  */
 export function useGridApiRef() {
-  return useRef<any>(null)
+  return useRef<any>(null);
 }

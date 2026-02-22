@@ -1,6 +1,6 @@
 "use client"
 
-import { memo, useCallback, useEffect, useRef, useState, type ReactNode } from "react"
+import { memo, useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from "react"
 import { LexicalComposer } from "@lexical/react/LexicalComposer"
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
 import { ContentEditable } from "@lexical/react/LexicalContentEditable"
@@ -98,6 +98,57 @@ interface MarkdownEditorProps {
   viewMode?: "read" | "highlighted" | "underlined" | "headings" | "quotes" | "h1-only" | "h2-only" | "h3-only" | "summaries-only"
 }
 
+interface EditorSyncState {
+  currentHtml: string
+  pendingMarkdown: string
+  hasChanges: boolean
+  totalWords: number
+  boldWords: number
+  highlightedWords: number
+}
+
+type EditorSyncAction =
+  | {
+    type: "sync_from_editor"
+    html: string
+    markdown: string
+    hasChanges: boolean
+  }
+  | {
+    type: "set_has_changes"
+    hasChanges: boolean
+  }
+
+const initialEditorSyncState: EditorSyncState = {
+  currentHtml: "",
+  pendingMarkdown: "",
+  hasChanges: false,
+  totalWords: 0,
+  boldWords: 0,
+  highlightedWords: 0,
+}
+
+function editorSyncReducer(state: EditorSyncState, action: EditorSyncAction): EditorSyncState {
+  switch (action.type) {
+    case "sync_from_editor":
+      return {
+        currentHtml: action.html,
+        pendingMarkdown: action.markdown,
+        hasChanges: action.hasChanges,
+        totalWords: countWords(action.markdown),
+        boldWords: countWordsInTag(action.html, "strong") + countWordsInTag(action.html, "b"),
+        highlightedWords: countWordsInTag(action.html, "mark"),
+      }
+    case "set_has_changes":
+      return {
+        ...state,
+        hasChanges: action.hasChanges,
+      }
+    default:
+      return state
+  }
+}
+
 function countWords(text: string): number {
   return text
     .trim()
@@ -125,6 +176,10 @@ function ToolbarButton({ onClick, title, children }: { onClick: () => void; titl
   return (
     <button
       type="button"
+      onMouseDown={(e) => {
+        // Keep editor selection active so Lexical formatting commands apply to current range.
+        e.preventDefault()
+      }}
       onClick={onClick}
       title={title}
       className="inline-flex h-8 w-8 items-center justify-center rounded border border-border bg-background hover:bg-accent"
@@ -138,7 +193,7 @@ function LexicalToolbar() {
   const [editor] = useLexicalComposerContext()
 
   return (
-    <div className="border-b bg-muted/30 px-3 py-2 flex items-center gap-2 flex-wrap">
+    <div className="border-b bg-muted/30  flex items-center flex-wrap">
       <ToolbarButton onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)} title="Undo">
         <Undo2 className="h-4 w-4" />
       </ToolbarButton>
@@ -208,11 +263,10 @@ export const MarkdownEditor = memo(function MarkdownEditor({
 }: MarkdownEditorProps) {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle")
   const [editorInstance, setEditorInstance] = useState<LexicalEditor | null>(null)
-  const [hasChanges, setHasChanges] = useState(false)
-  const [currentHtml, setCurrentHtml] = useState<string>("")
-  const [totalWords, setTotalWords] = useState(0)
-  const [boldWords, setBoldWords] = useState(0)
-  const [highlightedWords, setHighlightedWords] = useState(0)
+  const [editorSyncState, dispatchEditorSync] = useReducer(editorSyncReducer, {
+    ...initialEditorSyncState,
+    pendingMarkdown: content,
+  })
 
   const savedContent = useRef<string>(originalContent ?? content)
   const normalizedContent = useRef<string | null>(null)
@@ -221,6 +275,8 @@ export const MarkdownEditor = memo(function MarkdownEditor({
   const isInitializing = useRef<boolean>(true)
   const suppressOnChangeRef = useRef(false)
   const currentHtmlRef = useRef("")
+  const latestMarkdownRef = useRef<string>(content)
+  const lastEmittedMarkdownRef = useRef<string>(content)
 
   const htmlToMarkdown = useCallback((html: string): string => {
     try {
@@ -238,13 +294,13 @@ export const MarkdownEditor = memo(function MarkdownEditor({
   }, [originalContent])
 
   useEffect(() => {
-    onUnsavedChange?.(hasChanges)
-  }, [hasChanges, onUnsavedChange])
+    onUnsavedChange?.(editorSyncState.hasChanges)
+  }, [editorSyncState.hasChanges, onUnsavedChange])
 
   const handleSave = useCallback(async () => {
     if (!onSave || !editorInstance) return
 
-    const markdown = htmlToMarkdown(currentHtmlRef.current)
+    const markdown = latestMarkdownRef.current
     if (markdown === savedContent.current) return
 
     try {
@@ -252,7 +308,7 @@ export const MarkdownEditor = memo(function MarkdownEditor({
       await onSave()
       savedContent.current = markdown
       normalizedContent.current = markdown
-      setHasChanges(false)
+      dispatchEditorSync({ type: "set_has_changes", hasChanges: false })
       setSaveState("saved")
       setTimeout(() => setSaveState("idle"), 2000)
     } catch (error) {
@@ -269,9 +325,15 @@ export const MarkdownEditor = memo(function MarkdownEditor({
     suppressOnChangeRef.current = true
     setEditorHtml(editorInstance, newHtml)
     currentHtmlRef.current = newHtml
-    setCurrentHtml(newHtml)
+    latestMarkdownRef.current = savedContent.current
+    lastEmittedMarkdownRef.current = savedContent.current
+    dispatchEditorSync({
+      type: "sync_from_editor",
+      html: newHtml,
+      markdown: savedContent.current,
+      hasChanges: false,
+    })
     normalizedContent.current = htmlToMarkdown(newHtml)
-    setHasChanges(false)
 
     if (onChange) {
       onChange(savedContent.current)
@@ -284,34 +346,23 @@ export const MarkdownEditor = memo(function MarkdownEditor({
   }, [editorInstance, htmlToMarkdown, onChange, onDiscard])
 
   useEffect(() => {
-    if (!hasChanges || readOnly || !editorInstance) return
+    if (!onChange || readOnly) return
 
-    const saveImmediately = async () => {
-      const markdown = htmlToMarkdown(currentHtmlRef.current)
-      if (markdown === lastSavedContent.current) return
+    const syncIntervalMs = Math.max(autoSaveInterval, 1000)
+    const intervalId = window.setInterval(() => {
+      const markdown = latestMarkdownRef.current
+      if (markdown === lastEmittedMarkdownRef.current) return
 
-      try {
-        if (localStorageKey) {
-          localStorage.setItem(localStorageKey, markdown)
-        }
+      onChange(markdown)
+      lastEmittedMarkdownRef.current = markdown
 
-        if (onSave) {
-          await onSave()
-        }
-
-        lastSavedContent.current = markdown
-        savedContent.current = markdown
-        normalizedContent.current = markdown
-        setHasChanges(false)
-      } catch (error) {
-        console.error("Save error:", error)
-        setSaveState("error")
-        setTimeout(() => setSaveState("idle"), 3000)
+      if (localStorageKey) {
+        localStorage.setItem(localStorageKey, markdown)
       }
-    }
+    }, syncIntervalMs)
 
-    saveImmediately()
-  }, [editorInstance, hasChanges, htmlToMarkdown, localStorageKey, onSave, readOnly])
+    return () => window.clearInterval(intervalId)
+  }, [autoSaveInterval, localStorageKey, onChange, readOnly])
 
   useEffect(() => {
     if (!editorInstance) return
@@ -319,15 +370,30 @@ export const MarkdownEditor = memo(function MarkdownEditor({
     const isNewDocument = content !== prevContentProp.current
     if (!isNewDocument) return
 
+    prevContentProp.current = content
+
+    // Parent prop can be an echo of our local interval sync; avoid re-hydrating editor in that case.
+    if (content === latestMarkdownRef.current) {
+      savedContent.current = content
+      lastSavedContent.current = content
+      dispatchEditorSync({ type: "set_has_changes", hasChanges: false })
+      return
+    }
+
     const newHtml = marked.parse(content || "", { async: false }) as string
     suppressOnChangeRef.current = true
     setEditorHtml(editorInstance, newHtml)
     currentHtmlRef.current = newHtml
-    setCurrentHtml(newHtml)
-    setHasChanges(false)
+    latestMarkdownRef.current = content
+    lastEmittedMarkdownRef.current = content
+    dispatchEditorSync({
+      type: "sync_from_editor",
+      html: newHtml,
+      markdown: content,
+      hasChanges: false,
+    })
     savedContent.current = content
     lastSavedContent.current = content
-    prevContentProp.current = content
     normalizedContent.current = null
     isInitializing.current = true
 
@@ -344,13 +410,13 @@ export const MarkdownEditor = memo(function MarkdownEditor({
         getHtml: () => currentHtmlRef.current,
         save: handleSave,
         saveState,
-        hasChanges,
+        hasChanges: editorSyncState.hasChanges,
       })
       return
     }
 
     onEditorReady(null)
-  }, [editorInstance, handleSave, hasChanges, onEditorReady, saveState])
+  }, [editorInstance, editorSyncState.hasChanges, handleSave, onEditorReady, saveState])
 
   useEffect(() => {
     if (!editorInstance) return
@@ -364,10 +430,13 @@ export const MarkdownEditor = memo(function MarkdownEditor({
     })
 
     currentHtmlRef.current = html
-    setCurrentHtml(html)
-    setTotalWords(countWords(markdown))
-    setBoldWords(countWordsInTag(html, "strong") + countWordsInTag(html, "b"))
-    setHighlightedWords(countWordsInTag(html, "mark"))
+    latestMarkdownRef.current = markdown
+    dispatchEditorSync({
+      type: "sync_from_editor",
+      html,
+      markdown,
+      hasChanges: false,
+    })
   }, [editorInstance])
 
   if (readOnly) {
@@ -409,19 +478,25 @@ export const MarkdownEditor = memo(function MarkdownEditor({
             })
 
             currentHtmlRef.current = html
-            setCurrentHtml(html)
-            onChange(markdown)
+            latestMarkdownRef.current = markdown
 
             if (!isInitializing.current) {
-              setHasChanges(markdown !== savedContent.current)
+              dispatchEditorSync({
+                type: "sync_from_editor",
+                html,
+                markdown,
+                hasChanges: markdown !== savedContent.current,
+              })
             } else {
               isInitializing.current = false
               normalizedContent.current = markdown
+              dispatchEditorSync({
+                type: "sync_from_editor",
+                html,
+                markdown,
+                hasChanges: false,
+              })
             }
-
-            setTotalWords(countWords(markdown))
-            setBoldWords(countWordsInTag(html, "strong") + countWordsInTag(html, "b"))
-            setHighlightedWords(countWordsInTag(html, "mark"))
           }}
         />
         <HistoryPlugin />
@@ -432,7 +507,7 @@ export const MarkdownEditor = memo(function MarkdownEditor({
         <div className="flex-1 overflow-auto">
           <div className={cn("mx-auto px-6 pb-12 max-w-4xl", `mode-${viewMode}`)}>
             {viewMode === "quotes" ? (
-              <QuoteView html={currentHtml} fileName={fileName} active={true} />
+              <QuoteView html={editorSyncState.currentHtml} fileName={fileName} active={true} />
             ) : (
               <div
                 className={cn(
@@ -461,9 +536,9 @@ export const MarkdownEditor = memo(function MarkdownEditor({
       </LexicalComposer>
 
       <div className="border-t bg-muted/30 px-4 py-2 flex items-center gap-4 text-xs text-muted-foreground">
-        <span className="tabular-nums">{totalWords} words</span>
-        <span className="tabular-nums">{boldWords} bold</span>
-        <span className="tabular-nums">{highlightedWords} highlighted</span>
+        <span className="tabular-nums">{editorSyncState.totalWords} words</span>
+        <span className="tabular-nums">{editorSyncState.boldWords} bold</span>
+        <span className="tabular-nums">{editorSyncState.highlightedWords} highlighted</span>
       </div>
     </div>
   )

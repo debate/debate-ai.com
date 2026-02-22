@@ -157,6 +157,96 @@ export function DebateFlowPage() {
   const leftContent = currentFlow?.speechDocs?.[leftSpeech] || ""
   const rightContent = currentFlow?.speechDocs?.[rightSpeech] || ""
 
+  const mainContentArea = (
+    <div className="h-full flex flex-col overflow-hidden p-2">
+      {/* Split Mode Toolbar */}
+      {state.splitMode && currentFlow && (
+        <SplitModeToolbar
+          leftSpeech={leftSpeech}
+          rightSpeech={rightSpeech}
+          canNavigatePrev={splitHandlers.canNavigatePrev}
+          canNavigateNext={splitHandlers.canNavigateNext}
+          onNavigatePrev={splitHandlers.handlePreviousSpeeches}
+          onNavigateNext={splitHandlers.handleNextSpeeches}
+          leftViewMode={state.splitViewMode1}
+          rightViewMode={state.splitViewMode2}
+          leftQuoteView={state.splitQuoteView1}
+          rightQuoteView={state.splitQuoteView2}
+          onLeftViewModeChange={state.setSplitViewMode1}
+          onRightViewModeChange={state.setSplitViewMode2}
+          onLeftQuoteViewToggle={() => state.setSplitQuoteView1(!state.splitQuoteView1)}
+          onRightQuoteViewToggle={() => state.setSplitQuoteView2(!state.splitQuoteView2)}
+        />
+      )}
+
+      {/* Resizable Panels */}
+      <ResizablePanelGroup
+        orientation="horizontal"
+        className="flex-1 rounded-lg border border-border overflow-hidden"
+      >
+        {/* Main Flow/Split Panel */}
+        <ResizablePanel defaultSize={state.speechPanelOpen ? 60 : 100} minSize={30}>
+          <FlowMainContent
+            currentFlow={currentFlow}
+            splitMode={state.splitMode}
+            gridApiRef={gridApiRef}
+            leftSpeech={leftSpeech}
+            rightSpeech={rightSpeech}
+            leftViewMode={state.splitViewMode1}
+            rightViewMode={state.splitViewMode2}
+            leftQuoteView={state.splitQuoteView1}
+            rightQuoteView={state.splitQuoteView2}
+            splitWidth={state.splitWidth}
+            leftContent={leftContent}
+            rightContent={rightContent}
+            onOpenSpeechPanel={handleOpenSpeechPanel}
+            onUpdateLeftSpeech={splitHandlers.handleUpdateLeftSpeech}
+            onUpdateRightSpeech={splitHandlers.handleUpdateRightSpeech}
+            onUpdate={updateFlow.bind(null, selected)}
+            onMouseDown={() => {
+              const handleMouseMove = (e: MouseEvent) => {
+                const container = (e.target as HTMLElement).closest(".split-container")
+                if (!container) return
+                const rect = container.getBoundingClientRect()
+                const newWidth = ((e.clientX - rect.left) / rect.width) * 100
+                state.setSplitWidth(Math.max(20, Math.min(80, newWidth)))
+              }
+
+              const handleMouseUp = () => {
+                document.removeEventListener("mousemove", handleMouseMove)
+                document.removeEventListener("mouseup", handleMouseUp)
+              }
+
+              document.addEventListener("mousemove", handleMouseMove)
+              document.addEventListener("mouseup", handleMouseUp)
+            }}
+          />
+        </ResizablePanel>
+
+        {/* Speech Document Panel */}
+        {state.speechPanelOpen && !state.splitMode && (
+          <>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={40} minSize={20}>
+              <SpeechDocPanel
+                selectedSpeech={state.selectedSpeech}
+                viewMode={state.speechPanelViewMode}
+                quoteView={state.speechPanelQuoteView}
+                content={speechContent}
+                currentFlow={currentFlow}
+                onClose={handleCloseSpeechPanel}
+                onUpdateContent={speechHandlers.handleUpdateSpeechDoc}
+                onViewModeChange={state.setSpeechPanelViewMode}
+                onQuoteViewToggle={() => state.setSpeechPanelQuoteView(!state.speechPanelQuoteView)}
+                onShareSpeech={speechHandlers.handleShareSpeech}
+              />
+            </ResizablePanel>
+          </>
+        )}
+      </ResizablePanelGroup>
+    </div>
+  )
+
   // ============================================================================
   // Render
   // ============================================================================
@@ -174,40 +264,17 @@ export function DebateFlowPage() {
       )}
 
       {/* Main Layout */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Desktop Sidebar */}
-        {!state.isMobile && (
-          <div className="w-64 flex-shrink-0">
-            <FlowPageSidebar
-              flows={flows}
-              selected={selected}
-              rounds={rounds}
-              currentFlow={currentFlow}
-              splitMode={state.splitMode}
-              isMobile={false}
-              onSelectFlow={setSelected}
-              onAddFlow={handleAddFlow}
-              onRenameFlow={handleRenameFlow}
-              onArchiveFlow={handleArchiveFlow}
-              onDeleteFlow={handleDeleteFlow}
-              onToggleSplitMode={handleToggleSplit}
-              onOpenHistory={handleOpenHistory}
-              onEditRound={handleEditRound}
-            />
-          </div>
-        )}
-
-        {/* Mobile Sidebar (Sheet) */}
-        {state.isMobile && (
-          <Sheet open={state.mobileMenuOpen} onOpenChange={state.setMobileMenuOpen}>
-            <SheetContent side="left" className="w-64 p-0">
+      <div className="flex-1 overflow-hidden">
+        {!state.isMobile ? (
+          <ResizablePanelGroup orientation="horizontal" className="h-full w-full">
+            <ResizablePanel defaultSize={25} minSize={5}>
               <FlowPageSidebar
                 flows={flows}
                 selected={selected}
                 rounds={rounds}
                 currentFlow={currentFlow}
                 splitMode={state.splitMode}
-                isMobile={true}
+                isMobile={false}
                 onSelectFlow={setSelected}
                 onAddFlow={handleAddFlow}
                 onRenameFlow={handleRenameFlow}
@@ -216,100 +283,40 @@ export function DebateFlowPage() {
                 onToggleSplitMode={handleToggleSplit}
                 onOpenHistory={handleOpenHistory}
                 onEditRound={handleEditRound}
-                onCloseMobileMenu={() => state.setMobileMenuOpen(false)}
-              />
-            </SheetContent>
-          </Sheet>
-        )}
-
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col overflow-hidden p-2">
-          {/* Split Mode Toolbar */}
-          {state.splitMode && currentFlow && (
-            <SplitModeToolbar
-              leftSpeech={leftSpeech}
-              rightSpeech={rightSpeech}
-              canNavigatePrev={splitHandlers.canNavigatePrev}
-              canNavigateNext={splitHandlers.canNavigateNext}
-              onNavigatePrev={splitHandlers.handlePreviousSpeeches}
-              onNavigateNext={splitHandlers.handleNextSpeeches}
-              leftViewMode={state.splitViewMode1}
-              rightViewMode={state.splitViewMode2}
-              leftQuoteView={state.splitQuoteView1}
-              rightQuoteView={state.splitQuoteView2}
-              onLeftViewModeChange={state.setSplitViewMode1}
-              onRightViewModeChange={state.setSplitViewMode2}
-              onLeftQuoteViewToggle={() => state.setSplitQuoteView1(!state.splitQuoteView1)}
-              onRightQuoteViewToggle={() => state.setSplitQuoteView2(!state.splitQuoteView2)}
-            />
-          )}
-
-          {/* Resizable Panels */}
-          <ResizablePanelGroup
-            orientation="horizontal"
-            className="flex-1 rounded-lg border border-border overflow-hidden"
-          >
-            {/* Main Flow/Split Panel */}
-            <ResizablePanel defaultSize={state.speechPanelOpen ? 60 : 100} minSize={30}>
-              <FlowMainContent
-                currentFlow={currentFlow}
-                splitMode={state.splitMode}
-                gridApiRef={gridApiRef}
-                leftSpeech={leftSpeech}
-                rightSpeech={rightSpeech}
-                leftViewMode={state.splitViewMode1}
-                rightViewMode={state.splitViewMode2}
-                leftQuoteView={state.splitQuoteView1}
-                rightQuoteView={state.splitQuoteView2}
-                splitWidth={state.splitWidth}
-                leftContent={leftContent}
-                rightContent={rightContent}
-                onOpenSpeechPanel={handleOpenSpeechPanel}
-                onUpdateLeftSpeech={splitHandlers.handleUpdateLeftSpeech}
-                onUpdateRightSpeech={splitHandlers.handleUpdateRightSpeech}
-                onUpdate={updateFlow.bind(null, selected)}
-                onMouseDown={() => {
-                  const handleMouseMove = (e: MouseEvent) => {
-                    const container = (e.target as HTMLElement).closest(".split-container")
-                    if (!container) return
-                    const rect = container.getBoundingClientRect()
-                    const newWidth = ((e.clientX - rect.left) / rect.width) * 100
-                    state.setSplitWidth(Math.max(20, Math.min(80, newWidth)))
-                  }
-
-                  const handleMouseUp = () => {
-                    document.removeEventListener("mousemove", handleMouseMove)
-                    document.removeEventListener("mouseup", handleMouseUp)
-                  }
-
-                  document.addEventListener("mousemove", handleMouseMove)
-                  document.addEventListener("mouseup", handleMouseUp)
-                }}
               />
             </ResizablePanel>
-
-            {/* Speech Document Panel */}
-            {state.speechPanelOpen && !state.splitMode && (
-              <>
-                <ResizableHandle withHandle />
-                <ResizablePanel defaultSize={40} minSize={20}>
-                  <SpeechDocPanel
-                    selectedSpeech={state.selectedSpeech}
-                    viewMode={state.speechPanelViewMode}
-                    quoteView={state.speechPanelQuoteView}
-                    content={speechContent}
-                    currentFlow={currentFlow}
-                    onClose={handleCloseSpeechPanel}
-                    onUpdateContent={speechHandlers.handleUpdateSpeechDoc}
-                    onViewModeChange={state.setSpeechPanelViewMode}
-                    onQuoteViewToggle={() => state.setSpeechPanelQuoteView(!state.speechPanelQuoteView)}
-                    onShareSpeech={speechHandlers.handleShareSpeech}
-                  />
-                </ResizablePanel>
-              </>
-            )}
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={75}>
+              {mainContentArea}
+            </ResizablePanel>
           </ResizablePanelGroup>
-        </div>
+        ) : (
+          <>
+            {/* Mobile Sidebar (Sheet) */}
+            <Sheet open={state.mobileMenuOpen} onOpenChange={state.setMobileMenuOpen}>
+              <SheetContent side="left" className="w-64 p-0">
+                <FlowPageSidebar
+                  flows={flows}
+                  selected={selected}
+                  rounds={rounds}
+                  currentFlow={currentFlow}
+                  splitMode={state.splitMode}
+                  isMobile={true}
+                  onSelectFlow={setSelected}
+                  onAddFlow={handleAddFlow}
+                  onRenameFlow={handleRenameFlow}
+                  onArchiveFlow={handleArchiveFlow}
+                  onDeleteFlow={handleDeleteFlow}
+                  onToggleSplitMode={handleToggleSplit}
+                  onOpenHistory={handleOpenHistory}
+                  onEditRound={handleEditRound}
+                  onCloseMobileMenu={() => state.setMobileMenuOpen(false)}
+                />
+              </SheetContent>
+            </Sheet>
+            {mainContentArea}
+          </>
+        )}
       </div>
 
       {/* Dialogs */}
