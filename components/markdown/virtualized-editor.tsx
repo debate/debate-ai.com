@@ -1,19 +1,31 @@
 "use client"
 
-import { memo, useMemo } from "react"
-import { EditorContent, useEditor, type Editor as TiptapEditor } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
+import { memo, useMemo, useCallback, useRef, useState, useEffect } from "react"
+import { LexicalComposer } from "@lexical/react/LexicalComposer"
+import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
+import { ContentEditable } from "@lexical/react/LexicalContentEditable"
+import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin"
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin"
+import { ListPlugin } from "@lexical/react/LexicalListPlugin"
+import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin"
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin"
+import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary"
+import { HeadingNode, QuoteNode } from "@lexical/rich-text"
+import { ListItemNode, ListNode } from "@lexical/list"
+import { LinkNode } from "@lexical/link"
+import { CodeHighlightNode, CodeNode } from "@lexical/code"
+import { $generateHtmlFromNodes } from "@lexical/html"
+import { TRANSFORMERS, $convertFromMarkdownString } from "@lexical/markdown"
+import type { LexicalEditor } from "lexical"
 import { cn } from "@/lib/utils"
-import { useEditorVirtualization, type VirtualizationConfig } from "./use-editor-virtualization"
 
 /**
- * VirtualizedEditor - An optimized Tiptap editor wrapper with virtualization support
+ * VirtualizedEditor - An optimized Lexical editor wrapper with virtualization support
  *
- * This component demonstrates best practices for handling large documents:
+ * This component handles large documents with:
  * - Automatic virtualization for documents > threshold
  * - Viewport-based rendering optimization
  * - Minimal re-renders through React.memo
- * - Tiptap 2.5+ performance features
  *
  * @example
  * ```tsx
@@ -25,41 +37,20 @@ import { useEditorVirtualization, type VirtualizationConfig } from "./use-editor
  * ```
  */
 
+export interface VirtualizationConfig {
+  enabled: boolean
+  threshold: number
+  chunkSize: number
+  overscan: number
+}
+
 interface VirtualizedEditorProps {
-  /**
-   * Document content (markdown or HTML)
-   */
   content: string
-
-  /**
-   * Callback when content changes
-   */
   onChange?: (content: string) => void
-
-  /**
-   * Whether editor is read-only
-   */
   readOnly?: boolean
-
-  /**
-   * Custom class name
-   */
   className?: string
-
-  /**
-   * Placeholder text
-   */
   placeholder?: string
-
-  /**
-   * Virtualization configuration
-   */
   virtualization?: Partial<VirtualizationConfig>
-
-  /**
-   * Custom Tiptap extensions (will be merged with defaults)
-   */
-  extensions?: any[]
 }
 
 export const VirtualizedEditor = memo(function VirtualizedEditor({
@@ -69,45 +60,56 @@ export const VirtualizedEditor = memo(function VirtualizedEditor({
   className,
   placeholder = "Start writing...",
   virtualization,
-  extensions: customExtensions = [],
 }: VirtualizedEditorProps) {
-  // Prepare Tiptap extensions
-  const extensions = useMemo(
-    () => [
-      StarterKit.configure({
-        // Use default history settings
-      }) as any,
-      ...customExtensions,
-    ],
-    [customExtensions],
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [shouldVirtualize, setShouldVirtualize] = useState(false)
+  const [visibleRange, setVisibleRange] = useState({ start: 0, end: Infinity })
+
+  const config = useMemo(
+    () => ({
+      enabled: false,
+      threshold: 50000,
+      chunkSize: 10000,
+      overscan: 1,
+      ...virtualization,
+    }),
+    [virtualization],
   )
 
-  // Create editor instance with performance optimizations
-  const editor = useEditor({
-    extensions,
-    content,
-    editable: !readOnly,
-    // Tiptap 2.5+ performance features
-    immediatelyRender: false, // Skip initial render, load on mount
-    shouldRerenderOnTransaction: false, // Prevent re-render on every keystroke
-    editorProps: {
-      attributes: {
-        class: "prose prose-sm max-w-none focus:outline-none min-h-full",
-        spellCheck: "true",
+  const initialConfig = useMemo(
+    () => ({
+      namespace: "VirtualizedEditor",
+      editable: !readOnly,
+      onError: (error: Error) => console.error(error),
+      nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, LinkNode, CodeNode, CodeHighlightNode],
+      editorState: () => {
+        $convertFromMarkdownString(content || "", TRANSFORMERS)
       },
-    },
-    onUpdate: ({ editor }) => {
-      if (onChange) {
-        const html = editor.getHTML()
-        onChange(html)
+    }),
+    // Only use content for initial config
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  )
+
+  const handleChange = useCallback(
+    (editorState: any, editor: LexicalEditor) => {
+      if (!onChange) return
+      let html = ""
+      editorState.read(() => {
+        html = $generateHtmlFromNodes(editor, null)
+      })
+      onChange(html)
+
+      // Check document size for virtualization
+      if (config.enabled) {
+        const docSize = editorState.read(() => {
+          return editor.getEditorState().toJSON()
+        })
+        const sizeEstimate = JSON.stringify(docSize).length
+        setShouldVirtualize(sizeEstimate > config.threshold)
       }
     },
-  })
-
-  // Set up virtualization for large documents
-  const { shouldVirtualize, scrollContainerRef, visibleRange } = useEditorVirtualization(
-    editor,
-    virtualization,
+    [onChange, config.enabled, config.threshold],
   )
 
   return (
@@ -115,16 +117,28 @@ export const VirtualizedEditor = memo(function VirtualizedEditor({
       {/* Performance indicator (dev mode only) */}
       {process.env.NODE_ENV === "development" && shouldVirtualize && (
         <div className="bg-blue-500/10 border-b border-blue-500/20 px-4 py-1 text-xs text-blue-600 dark:text-blue-400">
-          ⚡ Virtualization active (range: {visibleRange.start}-{visibleRange.end})
+          Virtualization active (range: {visibleRange.start}-{visibleRange.end})
         </div>
       )}
 
-      {/* Editor container with scroll tracking */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-auto">
-        <div className="mx-auto px-6 py-8 max-w-4xl">
-          <EditorContent editor={editor} />
+      <LexicalComposer initialConfig={initialConfig}>
+        <div ref={scrollContainerRef} className="flex-1 overflow-auto">
+          <div className="mx-auto px-6 py-8 max-w-4xl">
+            <RichTextPlugin
+              contentEditable={
+                <ContentEditable className="min-h-full outline-none prose prose-sm max-w-none focus:outline-none" />
+              }
+              placeholder={<div className="text-muted-foreground/50">{placeholder}</div>}
+              ErrorBoundary={LexicalErrorBoundary}
+            />
+          </div>
         </div>
-      </div>
+        <HistoryPlugin />
+        <ListPlugin />
+        <LinkPlugin />
+        <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+        <OnChangePlugin ignoreSelectionChange onChange={handleChange} />
+      </LexicalComposer>
     </div>
   )
 })
@@ -132,44 +146,15 @@ export const VirtualizedEditor = memo(function VirtualizedEditor({
 /**
  * ChunkedEditor - Alternative approach using multiple editor instances
  *
- * This component demonstrates the pagination/chunking strategy for extremely
- * large documents (e.g., books) where content is split into separate editor
- * instances. This provides better performance than a single massive document.
- *
- * @example
- * ```tsx
- * <ChunkedEditor
- *   content={bookContent}
- *   chunkSize={15000}
- *   readOnly
- * />
- * ```
+ * Splits extremely large documents into separate editor instances for
+ * better performance.
  */
 
 interface ChunkedEditorProps {
-  /**
-   * Full document content
-   */
   content: string
-
-  /**
-   * Size of each chunk in characters
-   */
   chunkSize?: number
-
-  /**
-   * Whether editors are read-only
-   */
   readOnly?: boolean
-
-  /**
-   * Custom class name
-   */
   className?: string
-
-  /**
-   * Callback when any chunk changes
-   */
   onChange?: (fullContent: string) => void
 }
 
@@ -180,7 +165,6 @@ export const ChunkedEditor = memo(function ChunkedEditor({
   className,
   onChange,
 }: ChunkedEditorProps) {
-  // Split content into chunks at paragraph boundaries
   const chunks = useMemo(() => {
     if (content.length <= chunkSize) {
       return [content]
@@ -192,7 +176,6 @@ export const ChunkedEditor = memo(function ChunkedEditor({
     while (start < content.length) {
       let end = Math.min(start + chunkSize, content.length)
 
-      // Find paragraph boundary
       if (end < content.length) {
         const paragraphBreak = content.lastIndexOf("\n\n", end)
         if (paragraphBreak > start + chunkSize * 0.7) {
@@ -216,11 +199,7 @@ export const ChunkedEditor = memo(function ChunkedEditor({
       )}
 
       {chunks.map((chunk, index) => (
-        <section
-          key={index}
-          className="border-b last:border-0 pb-8 last:pb-0"
-          data-chunk-index={index}
-        >
+        <section key={index} className="border-b last:border-0 pb-8 last:pb-0" data-chunk-index={index}>
           {chunks.length > 1 && (
             <div className="text-xs text-muted-foreground mb-4 font-mono">
               Section {index + 1} of {chunks.length}

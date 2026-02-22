@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import type { Editor } from "@tiptap/react"
+import type { LexicalEditor } from "lexical"
 
 /**
  * Configuration options for editor virtualization
@@ -39,23 +39,14 @@ const DEFAULT_CONFIG: VirtualizationConfig = {
 }
 
 /**
- * Custom hook for virtualizing large documents in Tiptap editor
+ * Custom hook for virtualizing large documents in Lexical editor
  *
  * This hook provides viewport-based rendering optimizations for large documents
  * by chunking content and only rendering visible portions. For documents under
  * the threshold, virtualization is skipped for optimal simple-case performance.
- *
- * @example
- * ```tsx
- * const { shouldVirtualize, getVisibleRange } = useEditorVirtualization(editor, {
- *   enabled: true,
- *   threshold: 50000,
- *   chunkSize: 10000,
- * })
- * ```
  */
 export function useEditorVirtualization(
-  editor: Editor | null,
+  editor: LexicalEditor | null,
   config: Partial<VirtualizationConfig> = {},
 ) {
   const finalConfig = { ...DEFAULT_CONFIG, ...config }
@@ -72,13 +63,13 @@ export function useEditorVirtualization(
       return
     }
 
-    const docSize = editor.state.doc.content.size
+    const editorState = editor.getEditorState()
+    const docSize = JSON.stringify(editorState.toJSON()).length
     const shouldEnable = docSize > finalConfig.threshold
 
     setShouldVirtualize(shouldEnable)
 
     if (!shouldEnable) {
-      // Reset to full document rendering
       setVisibleRange({ start: 0, end: Infinity })
     }
   }, [editor, finalConfig.enabled, finalConfig.threshold])
@@ -95,14 +86,11 @@ export function useEditorVirtualization(
     const scrollTop = container.scrollTop
     const containerHeight = container.clientHeight
 
-    // Calculate approximate character position based on scroll
-    // This is a simplified heuristic - real implementation would need
-    // to map DOM positions to ProseMirror document positions
-    const docSize = editor.state.doc.content.size
+    const editorState = editor.getEditorState()
+    const docSize = JSON.stringify(editorState.toJSON()).length
     const scrollRatio = scrollTop / (container.scrollHeight - containerHeight)
     const centerPos = Math.floor(docSize * scrollRatio)
 
-    // Calculate visible range with overscan
     const halfViewport = Math.floor((finalConfig.chunkSize * (finalConfig.overscan + 1)) / 2)
     const start = Math.max(0, centerPos - halfViewport)
     const end = Math.min(docSize, centerPos + halfViewport)
@@ -142,75 +130,33 @@ export function useEditorVirtualization(
   useEffect(() => {
     if (!editor) return
 
-    // Check size on initial load
     checkDocumentSize()
 
-    // Subscribe to transaction updates to detect size changes
-    editor.on("update", checkDocumentSize)
-    return () => {
-      editor.off("update", checkDocumentSize)
-    }
+    return editor.registerUpdateListener(() => {
+      checkDocumentSize()
+    })
   }, [editor, checkDocumentSize])
 
-  /**
-   * Get the current visible range for rendering optimization
-   */
   const getVisibleRange = useCallback(() => {
     return visibleRange
   }, [visibleRange])
 
-  /**
-   * Manually trigger a viewport update (useful after programmatic scrolls)
-   */
   const forceUpdate = useCallback(() => {
     updateVisibleRange()
   }, [updateVisibleRange])
 
   return {
-    /**
-     * Whether virtualization is currently active
-     */
     shouldVirtualize,
-
-    /**
-     * Current visible range { start, end } in document positions
-     */
     visibleRange,
-
-    /**
-     * Get the current visible range
-     */
     getVisibleRange,
-
-    /**
-     * Ref to attach to scroll container for viewport tracking
-     */
     scrollContainerRef,
-
-    /**
-     * Force an update of the visible range
-     */
     forceUpdate,
-
-    /**
-     * Current virtualization configuration
-     */
     config: finalConfig,
   }
 }
 
 /**
  * Utility: Split document content into chunks for lazy loading
- *
- * @param content - Full document content (markdown string)
- * @param chunkSize - Size of each chunk in characters
- * @returns Array of content chunks
- *
- * @example
- * ```tsx
- * const chunks = splitIntoChunks(largeContent, 10000)
- * const visibleChunk = chunks[currentChunkIndex]
- * ```
  */
 export function splitIntoChunks(content: string, chunkSize: number): string[] {
   if (content.length <= chunkSize) {
@@ -221,16 +167,13 @@ export function splitIntoChunks(content: string, chunkSize: number): string[] {
   let start = 0
 
   while (start < content.length) {
-    // Try to find a good break point (paragraph or section boundary)
     let end = Math.min(start + chunkSize, content.length)
 
     if (end < content.length) {
-      // Look for paragraph break
       const paragraphBreak = content.lastIndexOf("\n\n", end)
       if (paragraphBreak > start + chunkSize * 0.7) {
         end = paragraphBreak + 2
       } else {
-        // Look for line break
         const lineBreak = content.lastIndexOf("\n", end)
         if (lineBreak > start + chunkSize * 0.8) {
           end = lineBreak + 1
@@ -247,19 +190,6 @@ export function splitIntoChunks(content: string, chunkSize: number): string[] {
 
 /**
  * Utility: Create multiple editor instances for chunk-based rendering
- * This is useful for implementing pagination-style rendering where each
- * "page" or section is a separate editor instance.
- *
- * Note: This approach is recommended for books or very long documents
- * where you want clear section boundaries.
- *
- * @example
- * ```tsx
- * const chunks = splitIntoChunks(bookContent, 15000)
- * return chunks.map((chunk, index) => (
- *   <MarkdownEditor key={index} content={chunk} readOnly />
- * ))
- * ```
  */
 export function useChunkedEditors(
   content: string,
@@ -280,29 +210,10 @@ export function useChunkedEditors(
   }, [content, finalConfig.enabled, finalConfig.threshold, finalConfig.chunkSize])
 
   return {
-    /**
-     * Array of content chunks
-     */
     chunks,
-
-    /**
-     * Currently active chunk index
-     */
     activeChunkIndex,
-
-    /**
-     * Set the active chunk (for navigation)
-     */
     setActiveChunkIndex,
-
-    /**
-     * Total number of chunks
-     */
     totalChunks: chunks.length,
-
-    /**
-     * Whether content is chunked
-     */
     isChunked: chunks.length > 1,
   }
 }

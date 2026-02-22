@@ -29,7 +29,7 @@ import { gfm } from "turndown-plugin-gfm"
 import { TRANSFORMERS, $convertFromMarkdownString, $convertToMarkdownString } from "@lexical/markdown"
 import { cn } from "@/lib/utils"
 import { UnifiedMarkdown } from "./unified-markdown"
-import { QuoteView } from "./QuoteView"
+import { LexicalQuotesPlugin } from "./LexicalQuotesPlugin"
 import { Bold, Italic, Underline, Strikethrough, Code, Undo2, Redo2, List, ListOrdered } from "lucide-react"
 
 marked.setOptions({
@@ -504,7 +504,13 @@ export const MarkdownEditor = memo(function MarkdownEditor({
         <LinkPlugin />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
 
-        <div className="flex-1 overflow-auto">
+        <LexicalQuotesPlugin
+          fileName={fileName}
+          active={viewMode === "quotes"}
+          viewMode={viewMode}
+        />
+
+        <div className="flex-1 overflow-auto" style={{ display: viewMode === "quotes" ? "none" : undefined }}>
           <div className={cn("mx-auto px-6 pb-12 max-w-4xl", `mode-${viewMode}`)}>
             {viewMode === "quotes" ? (
               <QuoteView html={editorSyncState.currentHtml} fileName={fileName} active={true} />
