@@ -8,10 +8,11 @@ import { settings } from "@/lib/state/settings"
 import { cleanupOldSpeechDocs, getStorageInfo } from "@/lib/utils/storage-utils"
 
 /**
- * Initialize settings and load saved data from localStorage
+ * Hook that initializes user settings and loads saved flows and rounds from localStorage.
+ * Runs once on mount. Also cleans up orphaned speech documents for removed flows.
  *
- * @param setFlows - Function to set flows state
- * @param setRounds - Function to set rounds state
+ * @param setFlows - State setter for the flows array
+ * @param setRounds - State setter for the rounds array
  */
 export function useInitialLoad(setFlows: (flows: Flow[]) => void, setRounds: (rounds: Round[]) => void) {
   useEffect(() => {
@@ -52,7 +53,8 @@ export function useInitialLoad(setFlows: (flows: Flow[]) => void, setRounds: (ro
 }
 
 /**
- * Apply font size settings from user preferences
+ * Hook that reads the `fontSize` setting and applies it as a CSS custom property.
+ * Subscribes to settings changes so the font size updates reactively.
  */
 export function useFontSizeSettings() {
   useEffect(() => {
@@ -75,10 +77,12 @@ export function useFontSizeSettings() {
 }
 
 /**
- * Persist flows to localStorage with quota management
+ * Hook that persists the flows array to localStorage whenever it changes.
+ * Automatically trims archived flows beyond the maximum limit to avoid quota errors.
+ * Triggers emergency cleanup via {@link handleQuotaExceeded} if quota is exceeded.
  *
- * @param flows - Current flows array
- * @param setFlows - Function to update flows
+ * @param flows - Current flows array to persist
+ * @param setFlows - State setter used when the array is trimmed during cleanup
  */
 export function useFlowPersistence(flows: Flow[], setFlows: (flows: Flow[]) => void) {
   useEffect(() => {
@@ -122,7 +126,12 @@ export function useFlowPersistence(flows: Flow[], setFlows: (flows: Flow[]) => v
 }
 
 /**
- * Handle localStorage quota exceeded error
+ * Handle localStorage quota exceeded error by progressively removing data.
+ * First attempts to drop archived flows, then orphaned speech documents,
+ * and finally alerts the user if neither frees enough space.
+ *
+ * @param flows - The flows array that failed to save
+ * @param setFlows - State setter used to update flows after trimming archived entries
  */
 function handleQuotaExceeded(flows: Flow[], setFlows: (flows: Flow[]) => void) {
   console.error("localStorage quota exceeded. Attempting cleanup...")

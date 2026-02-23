@@ -20,11 +20,11 @@ import type { SearchResult } from "@/lib/data/demo-data"
  * Props for the SearchResultCard component
  */
 interface SearchResultCardProps {
-  /** The search  result  data to display */
+  /** The search result data to display */
   result: SearchResult
   /** Whether this card is currently selected */
   isSelected: boolean
-  /** Callback when the card is clicked */
+  /** Callback invoked when the card is clicked */
   onClick: () => void
 }
 
@@ -35,6 +35,9 @@ interface SearchResultCardProps {
  * Uses color-coded badges for read count and word count metrics.
  *
  * @param props - Component props
+ * @param props.result - The search result data to display
+ * @param props.isSelected - Whether this card is currently selected
+ * @param props.onClick - Callback invoked when the card is clicked
  * @returns The search result card component
  *
  * @example

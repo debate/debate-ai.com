@@ -58,23 +58,23 @@ type SearchResult = {
  * Props for the AiAnalysisSidebar component
  */
 interface AiAnalysisSidebarProps {
-  /** Currently selected research result */
+  /** Currently selected research result to analyze */
   selectedResult: SearchResult | null
-  /** Custom prompt for AI analysis */
+  /** Custom prompt text for AI analysis */
   customPrompt: string
-  /** Callback to update custom prompt */
+  /** Callback to update the custom prompt text */
   setCustomPrompt: (prompt: string) => void
-  /** AI-generated analysis result */
+  /** AI-generated analysis result text */
   aiResult: string
-  /** Whether AI is currently generating */
+  /** Whether the AI is currently generating a response */
   generating: boolean
-  /** Callback to trigger AI generation */
+  /** Callback to trigger AI analysis generation */
   handleGenerate: () => void
-  /** Callback to copy content */
+  /** Callback to copy the card content to clipboard */
   handleCopy: () => void
-  /** Optional callback to close sidebar (mobile) */
+  /** Optional callback to close the sidebar on mobile */
   onClose?: () => void
-  /** Optional callback to collapse sidebar (desktop) */
+  /** Optional callback to collapse the sidebar on desktop */
   onCollapse?: () => void
 }
 
@@ -86,6 +86,15 @@ interface AiAnalysisSidebarProps {
  * and result display.
  *
  * @param props - Component props
+ * @param props.selectedResult - Currently selected research result to analyze
+ * @param props.customPrompt - Custom prompt text for AI analysis
+ * @param props.setCustomPrompt - Callback to update the custom prompt text
+ * @param props.aiResult - AI-generated analysis result text
+ * @param props.generating - Whether the AI is currently generating a response
+ * @param props.handleGenerate - Callback to trigger AI analysis generation
+ * @param props.handleCopy - Callback to copy the card content to clipboard
+ * @param props.onClose - Optional callback to close the sidebar on mobile
+ * @param props.onCollapse - Optional callback to collapse the sidebar on desktop
  * @returns The AI analysis sidebar component
  *
  * @example
@@ -113,10 +122,10 @@ export function AiAnalysisSidebar({
   onCollapse,
 }: AiAnalysisSidebarProps) {
   /**
-   * Open content in external LLM platform
-   * Copies content to clipboard and opens the platform URL
+   * Open card content in an external LLM platform.
+   * Copies the full prompt + evidence to clipboard and opens the platform URL.
    *
-   * @param platform - Platform identifier
+   * @param platform - Platform identifier key (e.g. "perplexity", "chatgpt", "claude")
    */
   const handleOpenInLLM = (platform: string) => {
     if (!selectedResult) return

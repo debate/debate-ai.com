@@ -7,45 +7,66 @@ import type React from "react"
 import { FlowSpreadsheet } from "../../flow/editor/FlowSpreadsheet"
 import { MarkdownEditor } from "../../../markdown/markdown-editor"
 
+/** Props for the FlowMainContent component. */
 interface FlowMainContentProps {
-  /** Current active flow */
+  /** The currently active flow, or null if none is selected. */
   currentFlow: Flow | null
-  /** Whether split mode is active */
+  /** Whether split mode is active; shows two markdown editors side-by-side instead of the spreadsheet. */
   splitMode: boolean
-  /** AG Grid API ref */
+  /** Ref that receives the AG Grid API instance once the grid is ready. */
   gridApiRef: React.RefObject<any>
-  /** Split mode: left speech name */
+  /** Name of the speech shown in the left split panel. */
   leftSpeech?: string
-  /** Split mode: right speech name */
+  /** Name of the speech shown in the right split panel. */
   rightSpeech?: string
-  /** Split mode: left view mode */
+  /** Active view mode for the left split panel. */
   leftViewMode?: ViewMode
-  /** Split mode: right view mode */
+  /** Active view mode for the right split panel. */
   rightViewMode?: ViewMode
-  /** Split mode: left quote view */
+  /** Whether the left split panel is in quote view. */
   leftQuoteView?: boolean
-  /** Split mode: right quote view */
+  /** Whether the right split panel is in quote view. */
   rightQuoteView?: boolean
-  /** Split mode: width percentage */
+  /** Width percentage occupied by the left panel in split mode. */
   splitWidth?: number
-  /** Split mode: left content */
+  /** Markdown content for the left split panel. */
   leftContent?: string
-  /** Split mode: right content */
+  /** Markdown content for the right split panel. */
   rightContent?: string
-  /** Handler to open speech panel */
+  /** Handler called when a speech panel should be opened from the spreadsheet. */
   onOpenSpeechPanel?: (speech: string) => void
-  /** Handler to update left speech */
+  /** Handler called when the left panel content changes. */
   onUpdateLeftSpeech?: (content: string) => void
-  /** Handler to update right speech */
+  /** Handler called when the right panel content changes. */
   onUpdateRightSpeech?: (content: string) => void
-  /** Handler for mouse down on divider */
+  /** Handler called when the user begins dragging the split divider. */
   onMouseDown?: (e: React.MouseEvent) => void
-  /** Handler to update flow */
+  /** Handler called when the current flow's data should be updated. */
   onUpdate?: (updates: Partial<Flow>) => void
 }
 
 /**
- * Main content area - spreadsheet or split markdown editors
+ * Main content area that renders either a split markdown editor view or the flow spreadsheet.
+ *
+ * @param props - Component props.
+ * @param props.currentFlow - The active flow; renders an empty state when null.
+ * @param props.splitMode - When true, renders two side-by-side markdown editors.
+ * @param props.gridApiRef - Mutable ref assigned the AG Grid API after the grid mounts.
+ * @param props.leftSpeech - Speech name for the left editor panel (split mode only).
+ * @param props.rightSpeech - Speech name for the right editor panel (split mode only).
+ * @param props.leftViewMode - View mode applied to the left editor (defaults to `"read"`).
+ * @param props.rightViewMode - View mode applied to the right editor (defaults to `"read"`).
+ * @param props.leftQuoteView - When true, left editor switches to `"quotes"` view mode.
+ * @param props.rightQuoteView - When true, right editor switches to `"quotes"` view mode.
+ * @param props.splitWidth - Percentage width of the left panel (defaults to 50).
+ * @param props.leftContent - Initial markdown content for the left editor.
+ * @param props.rightContent - Initial markdown content for the right editor.
+ * @param props.onOpenSpeechPanel - Callback invoked with a speech name when a cell is opened.
+ * @param props.onUpdateLeftSpeech - Callback invoked with new content when the left editor changes.
+ * @param props.onUpdateRightSpeech - Callback invoked with new content when the right editor changes.
+ * @param props.onMouseDown - Callback for the draggable divider `mousedown` event.
+ * @param props.onUpdate - Callback invoked with partial flow updates from the spreadsheet.
+ * @returns The appropriate content view for the current state.
  */
 export function FlowMainContent({
   currentFlow,

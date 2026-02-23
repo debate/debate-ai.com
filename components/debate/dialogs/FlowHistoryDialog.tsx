@@ -23,8 +23,8 @@ import { useFlowStore, type FlowHistory } from "@/lib/state/store"
 import { Clock, FileText, Users, Edit, Gavel, Search } from "lucide-react"
 
 /**
- * Round level ordering for sorting
- * Higher index = more important round (Finals = highest)
+ * Round level ordering for sorting.
+ * Higher index = more important round (Finals = highest).
  */
 const ROUND_LEVELS = [
   "Prelim 1",
@@ -44,9 +44,10 @@ const ROUND_LEVELS = [
 ]
 
 /**
- * Get the rank of a round level for sorting purposes
- * @param roundLevel - The round level string
- * @returns The rank index, or -1 if not found
+ * Get the rank of a round level for sorting purposes.
+ *
+ * @param roundLevel - The round level string to look up
+ * @returns The rank index within ROUND_LEVELS, or -1 if not found
  */
 function getRoundLevelRank(roundLevel: string): number {
   const index = ROUND_LEVELS.indexOf(roundLevel)
@@ -71,8 +72,11 @@ interface FlowHistoryDialogProps {
  * Structure for grouping history entries by date
  */
 interface DateGroup {
+  /** Formatted date string used as group key */
   dateKey: string
+  /** History entries belonging to this date */
   entries: FlowHistory[]
+  /** Whether this group is currently expanded */
   expanded: boolean
 }
 
@@ -86,6 +90,10 @@ interface DateGroup {
  * - Direct editing of round details
  *
  * @param props - Component props
+ * @param props.open - Whether the dialog is open
+ * @param props.onOpenChange - Callback to change dialog open state
+ * @param props.onEditRound - Optional callback when user wants to edit a round
+ * @param props.onCreateRound - Optional callback when user wants to create a new round
  * @returns The flow history dialog component
  *
  * @example
@@ -120,7 +128,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const [searchQuery, setSearchQuery] = useState("")
 
   /**
-   * Load history and rounds when dialog opens
+   * Load history and rounds when dialog opens.
    */
   useEffect(() => {
     if (open) {
@@ -131,8 +139,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }, [open, getFlowHistory, getRounds])
 
   /**
-   * Filter rounds based on search query
-   * Searches in: tournament name, round level, debaters, schools, judges, flow names
+   * Filter rounds based on search query.
+   * Searches in: tournament name, round level, debaters, schools, judges, flow names.
    */
   const filteredRounds = useMemo(() => {
     if (!searchQuery.trim()) return rounds
@@ -164,7 +172,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }, [rounds, searchQuery, flows])
 
   /**
-   * Group history entries by date for organized display
+   * Group history entries by date for organized display.
    */
   const dateGroups = useMemo(() => {
     const groups: Record<string, FlowHistory[]> = {}
@@ -191,7 +199,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }, [history, expandedDates])
 
   /**
-   * Expand all date groups when dialog opens
+   * Expand all date groups when dialog opens.
    */
   useEffect(() => {
     if (open && dateGroups.length > 0) {
@@ -200,7 +208,9 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }, [open, dateGroups.length])
 
   /**
-   * Toggle expansion of a date group
+   * Toggle expansion of a date group.
+   *
+   * @param dateKey - The date string key identifying the group to toggle
    */
   const toggleDate = (dateKey: string) => {
     setExpandedDates((prev) => {
@@ -215,7 +225,9 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }
 
   /**
-   * Toggle expansion of a round's flows
+   * Toggle expansion of a round's flows.
+   *
+   * @param roundId - The numeric ID of the round to toggle
    */
   const toggleRound = (roundId: number) => {
     setExpandedRounds((prev) => {
@@ -230,8 +242,10 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }
 
   /**
-   * Load all flows from a specific round
-   * Archives other flows and shows only this round's flows
+   * Load all flows from a specific round.
+   * Archives other flows and shows only this round's flows.
+   *
+   * @param round - The round whose flows should be loaded
    */
   const handleLoadRoundFlows = (round: Round) => {
     const roundFlowIds = round.flowIds
@@ -260,7 +274,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }
 
   /**
-   * Load a specific flow from history
+   * Load a specific flow from history by the currently selected ID.
    */
   const handleLoadFlow = () => {
     if (selectedId) {
@@ -270,7 +284,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }
 
   /**
-   * Clear all flow history
+   * Clear all flow history after user confirmation.
    */
   const handleClearHistory = () => {
     if (confirm("Are you sure you want to clear all flow history?")) {
@@ -281,7 +295,11 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }
 
   /**
-   * Format debater display with optional school name
+   * Format a debater's display name with optional school.
+   *
+   * @param email - The debater's email address
+   * @param school - Optional school name to include in parentheses
+   * @returns Formatted display string, or empty string if email is falsy
    */
   const formatDebater = (email: string, school?: string) => {
     if (!email) return ""

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Application sidebar component providing primary navigation.
+ * Renders a vertical icon sidebar on desktop and a macOS-style dock on mobile,
+ * including links to all major app sections, a theme toggle, and a user menu.
+ */
+
 "use client"
 
 import Link from "next/link"
@@ -17,6 +23,12 @@ import { ThemeDropdown } from "@/components/theme-dropdown"
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
 import { cn } from "@/lib/utils"
 
+/**
+ * Primary application navigation sidebar.
+ * On desktop (md+) renders a fixed 16-unit wide vertical sidebar.
+ * On mobile renders a bottom dock with magnification animation.
+ * @returns The sidebar/dock navigation element.
+ */
 export function AppSidebar() {
   const pathname = usePathname()
 

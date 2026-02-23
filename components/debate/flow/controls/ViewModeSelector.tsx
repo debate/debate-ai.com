@@ -7,17 +7,24 @@ import { Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
+/** Props for the ViewModeSelector component. */
 interface ViewModeSelectorProps {
-  /** Current view mode */
+  /** The currently active view mode. */
   value: ViewMode
-  /** Handler for view mode change */
+  /** Handler called when the user selects a different view mode. */
   onChange: (mode: ViewMode) => void
-  /** Icon size (sm or default) */
+  /** Visual size variant; affects icon and button dimensions. */
   size?: "sm" | "default"
 }
 
 /**
- * Dropdown for selecting content view mode
+ * Dropdown for selecting the content view mode of a markdown editor panel.
+ *
+ * @param props - Component props.
+ * @param props.value - The currently selected view mode, used to bold the active menu item.
+ * @param props.onChange - Callback invoked with the newly selected {@link ViewMode}.
+ * @param props.size - Optional size variant (`"sm"` or `"default"`); defaults to `"default"`.
+ * @returns A dropdown menu button that lists all available view modes.
  */
 export function ViewModeSelector({ value, onChange, size = "default" }: ViewModeSelectorProps) {
   const iconClass = size === "sm" ? "h-3 w-3" : "h-4 w-4"

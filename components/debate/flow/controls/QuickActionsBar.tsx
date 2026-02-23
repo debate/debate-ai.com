@@ -3,31 +3,43 @@
  * @module components/debate/flow/controls/QuickActionsBar
  */
 
-import { Plus, Clock, Users, Columns2, X, Settings } from "lucide-react"
+import { Plus, Clock, Users, Columns2, Grid3x3, FileSpreadsheet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
+/** Props for the QuickActionsBar component. */
 interface QuickActionsBarProps {
-  /** Handler for new flow */
+  /** Handler called when the user requests a new flow. */
   onNewFlow: () => void
-  /** Handler for settings */
+  /** Optional handler called when the user opens settings. */
   onSettings?: () => void
-  /** Handler for history */
+  /** Handler called when the user opens flow history. */
   onHistory: () => void
-  /** Handler for clear history */
+  /** Optional handler called when the user clears flow history. */
   onClearHistory?: () => void
-  /** Handler for toggle split */
+  /** Handler called when the user toggles split mode. */
   onToggleSplit: () => void
-  /** Handler for edit round */
+  /** Optional handler called when the user opens the round editor. */
   onEditRound?: () => void
-  /** Whether split mode is active */
+  /** Whether split mode is currently active. */
   splitMode: boolean
-  /** Whether round editing is enabled */
+  /** Whether the edit-round action is available. */
   canEditRound?: boolean
 }
 
 /**
- * Quick action buttons for common operations
+ * Quick action buttons for common flow operations.
+ *
+ * @param props - Component props.
+ * @param props.onNewFlow - Callback invoked when the Add Flow button is clicked.
+ * @param props.onSettings - Optional callback invoked when the settings button is clicked.
+ * @param props.onHistory - Callback invoked when the Flow History button is clicked.
+ * @param props.onClearHistory - Optional callback invoked when history is cleared.
+ * @param props.onToggleSplit - Callback invoked when the split-mode toggle is clicked.
+ * @param props.onEditRound - Optional callback invoked when the Edit Round button is clicked.
+ * @param props.splitMode - Whether split mode is currently active; controls the toggle icon.
+ * @param props.canEditRound - Whether the Edit Round button should be enabled.
+ * @returns A grid of icon buttons with tooltips for quick flow actions.
  */
 export function QuickActionsBar({
   onNewFlow,
@@ -45,7 +57,7 @@ export function QuickActionsBar({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button onClick={onToggleSplit} size="icon" variant="ghost" className="h-7 w-7">
-              {splitMode ? <X className="h-4 w-4" /> : <Columns2 className="h-4 w-4" />}
+              {splitMode ? <Grid3x3 className="h-4 w-4" /> : <Columns2 className="h-4 w-4" />}
             </Button>
           </TooltipTrigger>
           <TooltipContent>

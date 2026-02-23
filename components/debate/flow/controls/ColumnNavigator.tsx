@@ -6,15 +6,21 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+/** Props for the ColumnNavigator component. */
 interface ColumnNavigatorProps {
-  /** Handler for previous column */
+  /** Handler called when the user navigates to the previous column. */
   onPrevious: () => void
-  /** Handler for next column */
+  /** Handler called when the user navigates to the next column. */
   onNext: () => void
 }
 
 /**
- * Previous/Next column navigation buttons
+ * Previous/Next column navigation buttons.
+ *
+ * @param props - Component props.
+ * @param props.onPrevious - Callback invoked when the left chevron button is clicked.
+ * @param props.onNext - Callback invoked when the right chevron button is clicked.
+ * @returns A pair of icon buttons for navigating between columns.
  */
 export function ColumnNavigator({ onPrevious, onNext }: ColumnNavigatorProps) {
   return (

@@ -7,21 +7,30 @@ import type React from "react"
 import { Menu, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+/** Props for the FlowPageHeader component. */
 interface FlowPageHeaderProps {
-  /** Current active flow */
+  /** The currently active flow, or null if none is selected. */
   currentFlow: Flow | null
-  /** Whether split mode is active */
+  /** Whether split mode is active; hides the column navigation buttons when true. */
   splitMode: boolean
-  /** Handler to open mobile menu */
+  /** Handler called when the user taps the hamburger menu button. */
   onMenuClick: () => void
-  /** Handler to navigate to previous column */
+  /** Handler called when the user taps the previous-column chevron. */
   onNavigatePrev: () => void
-  /** Handler to navigate to next column */
+  /** Handler called when the user taps the next-column chevron. */
   onNavigateNext: () => void
 }
 
 /**
- * Mobile header with menu button and column navigation
+ * Mobile header bar with a menu toggle, flow title, and optional column navigation.
+ *
+ * @param props - Component props.
+ * @param props.currentFlow - Active flow whose `content` is shown as the header title.
+ * @param props.splitMode - When true, the column navigation buttons are hidden.
+ * @param props.onMenuClick - Callback invoked when the hamburger icon button is clicked.
+ * @param props.onNavigatePrev - Callback invoked when the left chevron is clicked.
+ * @param props.onNavigateNext - Callback invoked when the right chevron is clicked.
+ * @returns A fixed mobile header row with contextual navigation controls.
  */
 export function FlowPageHeader({
   currentFlow,

@@ -134,7 +134,28 @@ declare global {
     | "h1-only"
     | "h2-only"
     | "h3-only"
-    | "summaries-only";
+    | "summaries-only"
+    | "quotes";
+
+  /** Video data tuple: [videoId, title, date, channel, viewCount, description] */
+  type VideoType = [string, string, string, string, number, string];
+
+  /** Structure of video data returned from the videos API endpoint. */
+  type DebateVideosData = {
+    rounds: VideoType[];
+    lectures: VideoType[];
+    topPicks: VideoType[];
+  };
+
+  /** Union of all val * DebateFlowPage 
+id video page category identifiers. */
+  type CategoryType =
+    | "rounds"
+    | "lectures"
+    | "topPicks"
+    | "champions"
+    | "dictionary"
+    | "leaderboard";
 
   /**
    * State for the debate flow page

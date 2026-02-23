@@ -21,10 +21,23 @@ import type { LeaderboardEntry } from "@/lib/third-party-sync/sync-debate-leader
 import grab from "grab-url"
 
 /**
- * Column configuration for the leaderboard table
- * Each column has a label, tooltip, and index into the values array
+ * Configuration for a single leaderboard table column.
+ * Each column maps a display label and tooltip to an index into the values array.
  */
-const COLUMNS = [
+type ColumnConfig = {
+  /** Short label shown in the table header */
+  label: string
+  /** Tooltip text explaining the metric */
+  tooltip: string
+  /** Index into the LeaderboardEntry values array for this column */
+  index: number
+}
+
+/**
+ * Column configuration for the leaderboard table.
+ * Each entry has a label, tooltip, and index into the values array.
+ */
+const COLUMNS: ColumnConfig[] = [
   { label: "OTR", tooltip: "Overall Team Rating - aggregate rating across all tournaments", index: 0 },
   { label: "BIDS", tooltip: "Tournament of Champions bids earned", index: 1 },
   { label: "PRELIM W-L", tooltip: "Prelim win-loss record", index: 3 },
@@ -47,31 +60,31 @@ const COLUMNS = [
  * ```
  */
 export function LeaderboardPanel() {
-  // Leaderboard data from API
+  /** Leaderboard data from API */
   const [data, setData] = useState<any>([])
 
-  // Loading state for API requests
+  /** Whether an API request is in progress */
   const [loading, setLoading] = useState(true)
 
-  // Error message if API request fails
+  /** Error message if the API request fails, or null */
   const [error, setError] = useState<string | null>(null)
 
-  // Selected year for filtering
+  /** Selected year used to filter leaderboard results */
   const [year, setYear] = useState("2026")
 
-  // Selected division (VPF = Public Forum, VLD = Lincoln-Douglas)
+  /** Selected division - VPF (Public Forum) or VLD (Lincoln-Douglas) */
   const [division, setDivision] = useState<"VPF" | "VLD">("VPF")
 
   /**
-   * Calculate available years for dropdown
-   * From 2024 to current year (or 2026 if future)
+   * Calculate available years for the dropdown.
+   * Spans from 2024 to the current year (or 2026 if in the future).
    */
   const currentYear = new Date().getFullYear()
   const maxYear = Math.max(currentYear, 2026)
   const years = Array.from({ length: maxYear - 2023 }, (_, i) => String(2024 + i))
 
   /**
-   * Fetch leaderboard data when year or division changes
+   * Fetch leaderboard data whenever year or division changes.
    */
   useEffect(() => {
     const fetchData = async () => {

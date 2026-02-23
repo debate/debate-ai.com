@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Full-featured formatting toolbar for the Lexical markdown editor.
+ * Supports text formatting, heading selection, lists, undo/redo, image insertion,
+ * save/discard actions, and bubble/floating menu variants.
+ */
+
 "use client"
 
 import { Input } from "@/components/ui/input"
@@ -37,19 +43,45 @@ import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST
 import { $setBlocksType } from "@lexical/selection"
 import { $createParagraphNode, $getRoot } from "lexical"
 
+/** Props for the MarkdownToolbar component. */
 interface MarkdownToolbarProps {
+  /** The Lexical editor instance whose commands the toolbar dispatches to. */
   editor: LexicalEditor
+  /** Current persistence status shown in the save button. */
   saveState?: "idle" | "saving" | "saved" | "error"
+  /** Called when the user clicks the save button. */
   onSave?: () => void
+  /** Called when the user clicks the discard button. */
   onDiscard?: () => void
+  /** Name of the current document, used as a label. */
   fileName?: string
+  /** Hides save/discard action buttons when true. */
   hideActions?: boolean
+  /** Renders the toolbar in a compact bubble-menu style when true. */
   isBubbleMenu?: boolean
+  /** Renders the toolbar in a floating-menu style when true. */
   isFloatingMenu?: boolean
+  /** Whether the editor has unsaved changes; controls save-button enabled state. */
   hasChanges?: boolean
+  /** Optional sandbox identifier forwarded to file-upload logic. */
   sandboxId?: string
 }
 
+/**
+ * Rich formatting toolbar for the markdown editor. Adapts its layout for
+ * main, bubble-menu, and floating-menu contexts.
+ * @param editor - Lexical editor instance to dispatch commands to.
+ * @param saveState - Current save lifecycle state.
+ * @param onSave - Save action callback.
+ * @param onDiscard - Discard action callback.
+ * @param fileName - Document label shown in the toolbar.
+ * @param hideActions - Suppresses save/discard buttons when true.
+ * @param isBubbleMenu - Compact inline selection toolbar mode.
+ * @param isFloatingMenu - Floating toolbar mode.
+ * @param hasChanges - Enables the save button when true.
+ * @param sandboxId - Sandbox identifier for uploads.
+ * @returns The toolbar element.
+ */
 export function MarkdownToolbar({
   editor,
   saveState = "idle",
@@ -132,6 +164,7 @@ export function MarkdownToolbar({
     })
   }, [editor])
 
+  /** Opens the image insertion dialog and resets its form state. */
   const openImageDialog = useCallback(() => {
     setImageUrl("")
     setImagePreview(null)
@@ -139,6 +172,10 @@ export function MarkdownToolbar({
     setIsImageDialogOpen(true)
   }, [])
 
+  /**
+   * Handles image file selection from the file input, generating a preview data URL.
+   * @param e - Change event from the file input element.
+   */
   const handleImageFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file && file.type.startsWith("image/")) {
@@ -154,6 +191,10 @@ export function MarkdownToolbar({
     }
   }, [])
 
+  /**
+   * Applies a heading or paragraph block type to the current selection.
+   * @param level - Heading level (1–4), or null for normal paragraph.
+   */
   const setHeading = useCallback(
     (level: 1 | 2 | 3 | 4 | null) => {
       editor.update(() => {
@@ -170,6 +211,15 @@ export function MarkdownToolbar({
     [editor],
   )
 
+  /**
+   * Reusable icon button with tooltip, active state, and optional keyboard shortcut.
+   * @param onClick - Click handler.
+   * @param isActive - Highlights the button when the format is active.
+   * @param disabled - Disables the button.
+   * @param icon - Lucide icon component to render.
+   * @param tooltip - Tooltip label text.
+   * @param shortcut - Optional keyboard shortcut displayed in the tooltip.
+   */
   const ToolbarButton = ({
     onClick,
     isActive,
@@ -208,6 +258,10 @@ export function MarkdownToolbar({
     </Tooltip>
   )
 
+  /**
+   * Save button that adapts its appearance to the current saveState.
+   * @returns Save button element, or null when onSave is not provided.
+   */
   const SaveButton = () => {
     if (!onSave) return null
 
@@ -264,6 +318,7 @@ export function MarkdownToolbar({
     }
   }
 
+  /** Dropdown for selecting paragraph or heading block styles. */
   const TextStyleDropdown = () => {
     return (
       <DropdownMenu>

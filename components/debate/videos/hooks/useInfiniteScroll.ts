@@ -6,7 +6,15 @@
 import { useEffect } from "react";
 
 /**
- * Hook for implementing infinite scroll pagination
+ * Observes a sentinel element and increments the current page when it enters
+ * the viewport, implementing infinite scroll pagination.
+ *
+ * @param loadMoreTriggerRef - Ref attached to the sentinel element at the bottom of the list.
+ * @param currentPage - The currently displayed page number.
+ * @param totalPages - The total number of available pages.
+ * @param isLoadingMore - Whether a page increment is already in progress.
+ * @param setCurrentPage - Setter to advance to the next page.
+ * @param setIsLoadingMore - Setter to toggle the loading-more flag.
  */
 export function useInfiniteScroll(
   loadMoreTriggerRef: React.RefObject<HTMLDivElement | null>,

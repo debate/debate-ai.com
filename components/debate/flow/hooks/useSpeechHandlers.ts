@@ -7,13 +7,13 @@ import { useCallback } from "react"
 import { shareSpeech } from "@/app/actions"
 
 /**
- * Hook for speech document handlers
+ * Hook that provides memoized handlers for editing and sharing speech documents.
  *
  * @param flows - Current flows array
- * @param selected - Selected flow index
- * @param selectedSpeech - Selected speech name
- * @param updateFlow - Function to update a flow
- * @returns Speech handler functions
+ * @param selected - Index of the currently selected flow within the flows array
+ * @param selectedSpeech - Name of the currently selected speech document
+ * @param updateFlow - Callback to apply partial updates to a flow at a given index
+ * @returns Object containing `handleUpdateSpeechDoc` and `handleShareSpeech` handlers
  */
 export function useSpeechHandlers(
   flows: Flow[],
@@ -22,7 +22,9 @@ export function useSpeechHandlers(
   updateFlow: (index: number, updates: Partial<Flow>) => void,
 ) {
   /**
-   * Update speech document content
+   * Persist new markdown content for the currently selected speech document.
+   *
+   * @param content - Updated markdown string for the speech document
    */
   const handleUpdateSpeechDoc = useCallback(
     (content: string) => {
@@ -35,7 +37,9 @@ export function useSpeechHandlers(
   )
 
   /**
-   * Share or unshare speech with round participants
+   * Toggle the shared state of the currently selected speech document.
+   * If already shared, removes it from `sharedSpeeches`.
+   * If not shared, calls the server action to distribute it and records the share metadata.
    */
   const handleShareSpeech = useCallback(async () => {
     if (!flows[selected]) return

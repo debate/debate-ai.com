@@ -1,39 +1,62 @@
 /**
- * Quote View Helper - converts Lexical documents to quote cards HTML
- * Uses the robust html-to-cards parser from lib/card-parser
+ * @fileoverview Quote View Helper - converts Lexical documents to quote cards HTML.
+ * Uses the robust html-to-cards parser from lib/card-parser.
  */
 
 import DOMPurify from "isomorphic-dompurify"
 import { htmlToCards as parseHtmlToCards } from "../../lib/card-parser/html-to-cards"
 
+/** Represents a single parsed evidence/quote card. */
 export interface QuoteCard {
+  /** Optional unique identifier for the card. */
   id?: string
+  /** Short summary or tag line for the card. */
   summary: string | null
+  /** Author name, or null. */
   author: string | null
+  /** Publication year, or null. */
   year: string | number | null
+  /** Full citation string, or null. */
   cite: string | null
+  /** Source URL, or null. */
   url: string | null
+  /** HTML markup containing the card body. */
   html: string
+  /** Total word count of the card body. */
   words: number
+  /** Count of bold words in the card body. */
   boldWords?: number
+  /** Count of highlighted/mark words in the card body. */
   highlightedWords?: number
+  /** Words considered "read" (summary + author + bold + highlighted). */
   wordsRead?: number
 }
 
+/** Represents a document heading node. */
 export interface Heading {
+  /** Heading level: 1 = h1, 2 = h2, 3 = h3. */
   type: 1 | 2 | 3 // h1, h2, h3
+  /** Visible text content of the heading. */
   text: string
+  /** Optional unique identifier for the heading element. */
   id?: string
 }
 
+/** A heading together with the cards and nested subsections that follow it. */
 export interface HeadingSection {
+  /** The heading node, or null for the top-level anonymous section. */
   heading: Heading | null
+  /** Quote cards that belong directly to this section. */
   cards: QuoteCard[]
+  /** Nested subsections under this heading. */
   subsections?: HeadingSection[]
 }
 
 /**
- * Count words in HTML elements with specific tags
+ * Count words in HTML elements with specific tags.
+ * @param html - Raw HTML string to scan.
+ * @param tags - Array of tag names whose text content should be counted.
+ * @returns Total word count across all matching elements.
  */
 function countWordsByTag(html: string, tags: string[]): number {
   if (!html) return 0
@@ -73,7 +96,9 @@ function countWordsByTag(html: string, tags: string[]): number {
 }
 
 /**
- * Count words in a plain text string
+ * Count words in a plain text string.
+ * @param text - Input text to count.
+ * @returns Number of whitespace-separated words.
  */
 function countWords(text: string): number {
   if (!text) return 0
@@ -82,7 +107,11 @@ function countWords(text: string): number {
 }
 
 /**
- * Calculate word statistics for a card's HTML content
+ * Calculate word statistics for a card's HTML content.
+ * @param html - Card body HTML.
+ * @param summary - Card summary text used in wordsRead calculation.
+ * @param author - Author name used in wordsRead calculation.
+ * @returns Object with boldWords, highlightedWords, and wordsRead counts.
  */
 function calculateWordStats(
   html: string,
@@ -109,7 +138,9 @@ function calculateWordStats(
 }
 
 /**
- * Organize outline items into hierarchical sections with headings
+ * Organise outline items into hierarchical sections with headings.
+ * @param outlineItems - Flat array of parsed outline items (headings and cards).
+ * @returns Array of top-level HeadingSection objects with nested subsections.
  */
 function organizeIntoSections(outlineItems: any[]): HeadingSection[] {
   const sections: HeadingSection[] = []
@@ -210,7 +241,11 @@ function organizeIntoSections(outlineItems: any[]): HeadingSection[] {
 }
 
 /**
- * Parse HTML content to extract quote cards using the robust parser
+ * Parse HTML content to extract quote cards using the robust parser.
+ * @param html - Raw HTML string to parse.
+ * @param fileName - Optional file name attached to the result metadata.
+ * @returns Object containing hierarchical sections, a flat outline array for
+ *   backward compatibility, and summary metadata.
  */
 export function htmlToCards(
   html: string,
@@ -311,21 +346,29 @@ export function htmlToCards(
 }
 
 /**
- * Encode HTML attribute values
+ * Encode HTML attribute values to prevent injection.
+ * @param value - Raw string value to encode.
+ * @returns HTML-attribute-safe encoded string.
  */
 function encodeHtmlAttr(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 }
 
 /**
- * Escape HTML for safe display
+ * Escape HTML for safe display in element text content.
+ * @param value - Raw string to escape.
+ * @returns HTML-escaped string.
  */
 function escapeHtml(value: string): string {
   return encodeHtmlAttr(value)
 }
 
 /**
- * Build quote cards HTML from a Lexical JSON document
+ * Build quote cards HTML from a Lexical JSON document.
+ * @param html - Raw HTML source to parse into cards.
+ * @param fileName - Optional file name attached to the result metadata.
+ * @returns Object with a sanitised HTML string of all rendered cards and summary
+ *   metadata.
  */
 export function buildQuoteCardsHtml(
   html: string,

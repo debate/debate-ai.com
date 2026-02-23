@@ -7,31 +7,45 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MarkdownEditor } from "@/components/markdown/markdown-editor"
 
+/** Props for the SpeechDocPanel component. */
 interface SpeechDocPanelProps {
-  /** Selected speech name */
+  /** Name of the currently selected speech (e.g. "1A", "2N"). */
   selectedSpeech: string
-  /** View mode for rendering */
+  /** Active view mode applied to the markdown editor. */
   viewMode: ViewMode
-  /** Whether quote view is active */
+  /** Whether the quote view overlay is currently active. */
   quoteView: boolean
-  /** Speech content */
+  /** Current markdown content of the speech document. */
   content: string
-  /** Current flow */
+  /** The flow that owns this speech, used to determine shared status. */
   currentFlow: Flow | null
-  /** Handler to close panel */
+  /** Handler called when the panel close button is clicked. */
   onClose: () => void
-  /** Handler to update content */
+  /** Handler called when the editor content changes. */
   onUpdateContent: (content: string) => void
-  /** Handler to change view mode */
+  /** Handler called when the user selects a different view mode. */
   onViewModeChange: (mode: ViewMode) => void
-  /** Handler to toggle quote view */
+  /** Handler called when the quote view toggle button is clicked. */
   onQuoteViewToggle: () => void
-  /** Handler to share speech */
+  /** Handler called when the share/unshare button is clicked. */
   onShareSpeech: () => void
 }
 
 /**
- * Speech document editor panel with controls
+ * Full-height panel for editing a speech document with view controls and share functionality.
+ *
+ * @param props - Component props.
+ * @param props.selectedSpeech - Speech name shown in the panel header and passed to the editor as `fileName`.
+ * @param props.viewMode - The editor view mode; overridden by `"quotes"` when `quoteView` is true.
+ * @param props.quoteView - When true, forces the editor into `"quotes"` view mode regardless of `viewMode`.
+ * @param props.content - Markdown string rendered and edited by the embedded markdown editor.
+ * @param props.currentFlow - Used to look up `sharedSpeeches` and determine the share button state.
+ * @param props.onClose - Callback invoked when the X button in the header is clicked.
+ * @param props.onUpdateContent - Callback invoked with the new markdown string on every editor change.
+ * @param props.onViewModeChange - Callback invoked with the selected {@link ViewMode} from the dropdown.
+ * @param props.onQuoteViewToggle - Callback invoked when the Quotes toggle button is clicked.
+ * @param props.onShareSpeech - Callback invoked when the Private/Shared button is clicked.
+ * @returns A flex column panel with a sticky header toolbar and a scrollable markdown editor.
  */
 export function SpeechDocPanel({
   selectedSpeech,

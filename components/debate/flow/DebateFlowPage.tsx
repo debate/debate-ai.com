@@ -38,12 +38,12 @@ import { useSplitModeHandlers } from "./hooks/useSplitModeHandlers"
 import { useColumnNavigation } from "./hooks/useColumnNavigation"
 
 /**
- * DebateFlowPage - Main debate flow interface component (Refactored)
- *
  * Manages the entire debate flow experience with a modular, maintainable architecture:
  * - Custom hooks for state management and business logic
  * - Layout components for UI structure
  * - Control components for reusable UI elements
+ *
+ * @returns The full-screen debate flow page
  */
 export function DebateFlowPage() {
   // ============================================================================
@@ -60,6 +60,7 @@ export function DebateFlowPage() {
   // ============================================================================
   // Refs
   // ============================================================================
+  /** Reference to the AG Grid API for programmatic column navigation. */
   const gridApiRef = useRef<any>(null)
 
   // ============================================================================
@@ -76,7 +77,12 @@ export function DebateFlowPage() {
   const flowHandlers = useFlowHandlers(flows, setFlows, setSelected)
   const columnNav = useColumnNavigation(gridApiRef)
 
-  // Update flow helper
+  /**
+   * Apply partial updates to a flow at the given index.
+   *
+   * @param index - Index of the flow to update in the flows array
+   * @param updates - Partial flow properties to merge
+   */
   const updateFlow = (index: number, updates: Partial<Flow>) => {
     const newFlows = [...flows]
     newFlows[index] = { ...newFlows[index], ...updates }
@@ -90,6 +96,10 @@ export function DebateFlowPage() {
   // ============================================================================
   // Flow Management Handlers
   // ============================================================================
+
+  /**
+   * Create a new flow using the current debate style and append it to the list.
+   */
   const handleAddFlow = () => {
     const debateStyleIndex = settings.data.debateStyle.value as number
     const flow = newFlow(flows.length, "primary", false, debateStyleIndex)
@@ -100,14 +110,30 @@ export function DebateFlowPage() {
     setSelected(flow.id)
   }
 
+  /**
+   * Rename a flow at the given index.
+   *
+   * @param index - Index of the flow to rename
+   * @param newName - New display name for the flow
+   */
   const handleRenameFlow = (index: number, newName: string) => {
     updateFlow(index, { content: newName })
   }
 
+  /**
+   * Toggle the archived state of a flow.
+   *
+   * @param index - Index of the flow to archive or unarchive
+   */
   const handleArchiveFlow = (index: number) => {
     updateFlow(index, { archived: !flows[index].archived })
   }
 
+  /**
+   * Delete a flow by index, delegating to the flow handlers.
+   *
+   * @param index - Index of the flow to delete
+   */
   const handleDeleteFlow = (index: number) => {
     flowHandlers.deleteFlow(flows[index].id)
   }
@@ -115,10 +141,19 @@ export function DebateFlowPage() {
   // ============================================================================
   // Dialog Handlers
   // ============================================================================
+
+  /**
+   * Open the flow history dialog.
+   */
   const handleOpenHistory = () => {
     state.setHistoryDialogOpen(true)
   }
 
+  /**
+   * Open the round editor dialog for the specified round.
+   *
+   * @param roundId - ID of the round to edit
+   */
   const handleEditRound = (roundId: number) => {
     state.setEditingRoundId(roundId)
     state.setRoundDialogOpen(true)
@@ -128,10 +163,19 @@ export function DebateFlowPage() {
   // ============================================================================
   // Speech Panel Handlers
   // ============================================================================
+
+  /**
+   * Open the speech document panel for the given speech name.
+   *
+   * @param speech - Name of the speech whose document should be shown
+   */
   const handleOpenSpeechPanel = (speech: string) => {
     flowHandlers.selectSpeech(speech, state.setSpeechPanelOpen, state.setSelectedSpeech)
   }
 
+  /**
+   * Close the speech document panel.
+   */
   const handleCloseSpeechPanel = () => {
     state.setSpeechPanelOpen(false)
   }
@@ -139,6 +183,10 @@ export function DebateFlowPage() {
   // ============================================================================
   // Split Mode Handlers
   // ============================================================================
+
+  /**
+   * Toggle split mode on or off, initializing column state when enabling.
+   */
   const handleToggleSplit = () => {
     if (!state.splitMode && flows[selected]?.columns) {
       splitHandlers.initializeSplitMode()
@@ -149,14 +197,29 @@ export function DebateFlowPage() {
   // ============================================================================
   // Computed Values
   // ============================================================================
+
+  /** Currently selected flow, or null if none is selected. */
   const currentFlow = flows[selected] || null
+
+  /** Markdown content of the currently open speech document. */
   const speechContent = currentFlow?.speechDocs?.[state.selectedSpeech] || ""
 
+  /** Speech name displayed in the left split pane. */
   const leftSpeech = splitHandlers.getLeftSpeech()
+
+  /** Speech name displayed in the right split pane. */
   const rightSpeech = splitHandlers.getRightSpeech()
+
+  /** Content of the left split pane's speech document. */
   const leftContent = currentFlow?.speechDocs?.[leftSpeech] || ""
+
+  /** Content of the right split pane's speech document. */
   const rightContent = currentFlow?.speechDocs?.[rightSpeech] || ""
 
+  /**
+   * The main content area containing the resizable flow and speech panels.
+   * Rendered for both desktop and mobile layouts.
+   */
   const mainContentArea = (
     <div className="h-full flex flex-col overflow-hidden p-2">
       {/* Split Mode Toolbar */}
@@ -267,7 +330,7 @@ export function DebateFlowPage() {
       <div className="flex-1 overflow-hidden">
         {!state.isMobile ? (
           <ResizablePanelGroup orientation="horizontal" className="h-full w-full">
-            <ResizablePanel defaultSize={25} minSize={5}>
+            <ResizablePanel defaultSize={15} minSize={5}>
               <FlowPageSidebar
                 flows={flows}
                 selected={selected}
@@ -286,7 +349,7 @@ export function DebateFlowPage() {
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={75}>
+            <ResizablePanel defaultSize={85}>
               {mainContentArea}
             </ResizablePanel>
           </ResizablePanelGroup>

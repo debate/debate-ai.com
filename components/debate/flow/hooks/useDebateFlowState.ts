@@ -6,10 +6,11 @@
 import { useState, useRef } from "react";
 
 /**
- * Hook for managing all debate flow page state
- * Centralizes state management for the entire flow page
+ * Hook for managing all debate flow page state.
+ * Centralizes state management for the entire flow page, including dialogs,
+ * speech panel, mobile navigation, and split mode.
  *
- * @returns State and actions for the debate flow page
+ * @returns Combined state and action setters for the debate flow page
  */
 export function useDebateFlowState(): DebateFlowState & DebateFlowActions {
   // Dialog visibility states
@@ -85,10 +86,10 @@ export function useDebateFlowState(): DebateFlowState & DebateFlowActions {
 }
 
 /**
- * Hook for managing grid API reference
- * Provides access to AG Grid API for programmatic control
+ * Hook for managing a mutable reference to the AG Grid API instance.
+ * Provides access to AG Grid API for programmatic control of the spreadsheet.
  *
- * @returns Grid API ref
+ * @returns A React ref object whose `.current` holds the AG Grid API or null
  */
 export function useGridApiRef() {
   return useRef<any>(null);

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Editable quote card component powered by a Lexical rich-text editor.
+ * Renders a single evidence card with inline editing, collapse/expand, key-points mode,
+ * clipboard copy, and AI-analyze hooks.
+ */
+
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
@@ -25,21 +31,38 @@ import {
 import { Edit, Eye, ChevronDown, ChevronRight, Bold, Italic, Underline, Strikethrough, Undo2, Redo2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+/** Props for the EditableQuoteCard component. */
 interface EditableQuoteCardProps {
+  /** Unique identifier for the card. */
   cardId: string
+  /** Short summary / tag line displayed in the card header. */
   summary: string
+  /** Author name, or null if unknown. */
   author: string | null
+  /** Publication year, or null if unknown. */
   year: string | null
+  /** Full citation string, or null if absent. */
   cite: string | null
+  /** Source URL, or null if absent. */
   url: string | null
+  /** HTML string containing the card body content. */
   html: string
+  /** Total word count of the card body. */
   words: number
+  /** Number of bold words in the card body. */
   boldWords: number
+  /** Number of highlighted words in the card body. */
   highlightedWords: number
+  /** Callback fired when the card HTML is updated by the user. */
   onUpdate?: (cardId: string, html: string) => void
-  viewMode?: "read" | "highlighted" | "underlined" | "headings" | "h1-only" | "h2-only" | "h3-only" | "summaries-only"
+  /** Display mode controlling which parts of the card are visible. */
+  viewMode?: ViewMode
 }
 
+/**
+ * Lexical plugin that initialises the editor content from an HTML string.
+ * @param html - HTML markup to parse and load into the editor root.
+ */
 function HtmlInitializerPlugin({ html }: { html: string }) {
   const [editor] = useLexicalComposerContext()
 
@@ -59,6 +82,10 @@ function HtmlInitializerPlugin({ html }: { html: string }) {
   return null
 }
 
+/**
+ * Lexical plugin that synchronises the editor's editable state with a boolean prop.
+ * @param editable - Whether the editor should accept input.
+ */
 function EditablePlugin({ editable }: { editable: boolean }) {
   const [editor] = useLexicalComposerContext()
 
@@ -69,6 +96,10 @@ function EditablePlugin({ editable }: { editable: boolean }) {
   return null
 }
 
+/**
+ * Minimal formatting toolbar rendered inside an editing card.
+ * @param editor - The Lexical editor instance to dispatch commands to.
+ */
 function CardToolbar({ editor }: { editor: LexicalEditor }) {
   return (
     <div className="flex items-center gap-1 mb-2 flex-wrap">
@@ -94,6 +125,13 @@ function CardToolbar({ editor }: { editor: LexicalEditor }) {
   )
 }
 
+/**
+ * Lexical-powered rich-text editor for the quote card body.
+ * @param html - Initial HTML content for the editor.
+ * @param editable - Whether the editor accepts user input.
+ * @param className - Additional CSS classes applied to the content-editable element.
+ * @param onChange - Callback invoked with the serialised HTML on every content change.
+ */
 function QuoteBodyEditor({
   html,
   editable,
@@ -143,6 +181,10 @@ function QuoteBodyEditor({
   )
 }
 
+/**
+ * Lexical plugin that exposes the editor instance to a parent via a callback.
+ * @param onReady - Called once with the editor instance after the first render.
+ */
 function EditorRefPlugin({ onReady }: { onReady: (editor: LexicalEditor) => void }) {
   const [editor] = useLexicalComposerContext()
 
@@ -153,6 +195,22 @@ function EditorRefPlugin({ onReady }: { onReady: (editor: LexicalEditor) => void
   return null
 }
 
+/**
+ * Interactive evidence card with inline Lexical editing, collapse/expand,
+ * key-points mode, clipboard copy, and an AI-analyze stub.
+ * @param cardId - Unique identifier for the card.
+ * @param summary - Short tag-line displayed in the header.
+ * @param author - Author name, or null.
+ * @param year - Publication year, or null.
+ * @param cite - Full citation string, or null.
+ * @param url - Source URL, or null.
+ * @param html - HTML body content.
+ * @param words - Total word count.
+ * @param boldWords - Count of bold words.
+ * @param highlightedWords - Count of highlighted words.
+ * @param onUpdate - Called with (cardId, newHtml) when the body is edited.
+ * @param viewMode - Rendering mode that controls visible card elements.
+ */
 export function EditableQuoteCard({
   cardId,
   summary,

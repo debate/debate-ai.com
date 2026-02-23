@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Unified markdown renderer — single source of truth for all markdown
+ * rendering across the application. Renders via Streamdown with custom styled
+ * components for headings, paragraphs, links, code blocks, tables, images, and more.
+ */
+
 "use client";
 
 import React, { useState, useCallback, useRef, useEffect } from "react";
@@ -5,7 +11,12 @@ import Link from "next/link";
 import { Streamdown } from "streamdown";
 import { Check, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
-// Helper to check if a URL is internal (same origin)
+
+/**
+ * Returns true when the given href is an internal application URL.
+ * @param href - The href string to evaluate.
+ * @returns Whether the URL is internal (starts with "/" or "#").
+ */
 function isInternalUrl(href: string | undefined): boolean {
   if (!href) return false;
 
@@ -23,7 +34,11 @@ function isInternalUrl(href: string | undefined): boolean {
   return href.startsWith("/") || href.startsWith("#");
 }
 
-// Helper to handle hash link clicks for smooth scrolling
+/**
+ * Handles anchor click events for hash links, performing smooth scroll navigation.
+ * @param e - The mouse event from the anchor element.
+ * @param href - The href value of the anchor.
+ */
 function handleHashClick(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
   if (href.startsWith("#")) {
     e.preventDefault();
@@ -36,10 +51,15 @@ function handleHashClick(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
   }
 }
 
-// Copy button component for code blocks
+/**
+ * Copy button component rendered inside code blocks.
+ * Shows a checkmark briefly after a successful copy.
+ * @param code - The code string to copy to the clipboard.
+ */
 function CopyButton({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
 
+  /** Copies the code to the clipboard and shows the success state temporarily. */
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(code);
@@ -71,7 +91,11 @@ function CopyButton({ code }: { code: string }) {
   );
 }
 
-// Code block component with copy functionality
+/**
+ * Wrapper around a `<pre>` element that extracts the code text and overlays a
+ * CopyButton. Reads the text from the DOM after render to handle any nested nodes.
+ * @param children - The pre element's children (expected to contain a code element).
+ */
 function CodeBlock({ children }: { children: React.ReactNode }) {
   const preRef = useRef<HTMLPreElement>(null);
   const [codeText, setCodeText] = useState("");
@@ -106,10 +130,14 @@ function CodeBlock({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Props for the UnifiedMarkdown component. */
 export interface UnifiedMarkdownProps {
+  /** Markdown content string to render. */
   content: string;
+  /** Additional CSS classes applied to the root element. */
   className?: string;
-  isStreaming?: boolean; // Enable streaming animation for incomplete markdown
+  /** Enable streaming animation for incomplete markdown. */
+  isStreaming?: boolean;
 }
 
 /**
@@ -123,6 +151,10 @@ export interface UnifiedMarkdownProps {
  * - Consistent spacing rhythm
  * - Excellent readability in light & dark modes
  * - Brand-aligned colors and border radius
+ * @param content - Markdown content string to render.
+ * @param className - Extra classes on the root wrapper.
+ * @param isStreaming - Enables Streamdown streaming animation when true.
+ * @returns Rendered markdown element, or a "No content" placeholder.
  */
 export const UnifiedMarkdown = React.memo<UnifiedMarkdownProps>(
   ({ content, className, isStreaming = false }) => {

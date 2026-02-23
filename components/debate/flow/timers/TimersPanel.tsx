@@ -22,10 +22,10 @@ import { debateStyles, debateStyleMap } from "@/lib/debate-data/debate-styles"
 import { useFlowStore } from "@/lib/state/store"
 
 /**
- * Generate participant data from email address
- * Creates a display name and random avatar
+ * Generate participant data from email address.
+ * Creates a display name and random avatar.
  *
- * @param email - Email address
+ * @param email - Email address of the participant
  * @param index - Participant index (first is speaking by default)
  * @returns Participant object with id, name, avatar, and speaking status
  */
@@ -43,7 +43,7 @@ function getParticipantFromEmail(email: string, index: number) {
 }
 
 /**
- * TimersPanel - Container for all debate timers
+ * TimersPanel - Container for all debate timers.
  *
  * Manages speech timer, prep timers, and voice chat based on the
  * current debate style and round participants.
@@ -95,7 +95,7 @@ export function TimersPanel() {
   )
 
   /**
-   * Subscribe to debate style changes and reset timers accordingly
+   * Subscribe to debate style changes and reset timers accordingly.
    */
   useEffect(() => {
     const unsubscribe = settings.subscribe(["debateStyle"], (key: string) => {
@@ -134,8 +134,8 @@ export function TimersPanel() {
   }, [debateStyleIndex])
 
   /**
-   * Generate participants list from current round
-   * Includes debaters and judges with unique IDs
+   * Participants list derived from the current round.
+   * Includes debaters and judges with unique composite IDs.
    */
   const participants = currentRound
     ? [

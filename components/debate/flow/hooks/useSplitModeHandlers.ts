@@ -6,23 +6,27 @@
 import { useCallback, useState } from "react"
 
 /**
- * Hook for split mode handlers and state
+ * Hook that manages split-view state and provides handlers for navigating
+ * and editing two speech documents side-by-side.
  *
  * @param flows - Current flows array
- * @param selected - Selected flow index
- * @param updateFlow - Function to update a flow
- * @returns Split mode handlers and state
+ * @param selected - Index of the currently selected flow within the flows array
+ * @param updateFlow - Callback to apply partial updates to a flow at a given index
+ * @returns Split mode indices, navigation handlers, content updaters, name getters, and boundary flags
  */
 export function useSplitModeHandlers(
   flows: Flow[],
   selected: number,
   updateFlow: (index: number, updates: Partial<Flow>) => void,
 ) {
+  /** Zero-based column index displayed in the left panel. */
   const [leftSpeechIndex, setLeftSpeechIndex] = useState(0)
+  /** Zero-based column index displayed in the right panel. */
   const [rightSpeechIndex, setRightSpeechIndex] = useState(1)
 
   /**
-   * Initialize speech indices when entering split mode
+   * Reset panel indices to the first two columns of the selected flow.
+   * Should be called when the user first enters split mode.
    */
   const initializeSplitMode = useCallback(() => {
     if (flows[selected]?.columns) {
@@ -32,7 +36,7 @@ export function useSplitModeHandlers(
   }, [flows, selected])
 
   /**
-   * Navigate to previous speech pair
+   * Shift both panels one column to the left, if the left panel is not already at index 0.
    */
   const handlePreviousSpeeches = useCallback(() => {
     if (leftSpeechIndex > 0) {
@@ -42,7 +46,7 @@ export function useSplitModeHandlers(
   }, [leftSpeechIndex])
 
   /**
-   * Navigate to next speech pair
+   * Shift both panels one column to the right, if the right panel has not reached the last column.
    */
   const handleNextSpeeches = useCallback(() => {
     if (flows[selected] && rightSpeechIndex < flows[selected].columns.length - 1) {
@@ -52,7 +56,9 @@ export function useSplitModeHandlers(
   }, [flows, selected, rightSpeechIndex])
 
   /**
-   * Update left panel speech content
+   * Persist updated markdown content for the speech shown in the left panel.
+   *
+   * @param content - Updated markdown string for the left panel speech document
    */
   const handleUpdateLeftSpeech = useCallback(
     (content: string) => {
@@ -66,7 +72,9 @@ export function useSplitModeHandlers(
   )
 
   /**
-   * Update right panel speech content
+   * Persist updated markdown content for the speech shown in the right panel.
+   *
+   * @param content - Updated markdown string for the right panel speech document
    */
   const handleUpdateRightSpeech = useCallback(
     (content: string) => {
@@ -80,20 +88,26 @@ export function useSplitModeHandlers(
   )
 
   /**
-   * Get speech names for current indices
+   * Return the column name for the speech currently shown in the left panel.
+   *
+   * @returns The column name string, or an empty string if no flow is selected
    */
   const getLeftSpeech = useCallback(() => {
     return flows[selected]?.columns[leftSpeechIndex] || ""
   }, [flows, selected, leftSpeechIndex])
 
+  /**
+   * Return the column name for the speech currently shown in the right panel.
+   *
+   * @returns The column name string, or an empty string if no flow is selected
+   */
   const getRightSpeech = useCallback(() => {
     return flows[selected]?.columns[rightSpeechIndex] || ""
   }, [flows, selected, rightSpeechIndex])
 
-  /**
-   * Check if navigation is possible
-   */
+  /** Whether the left panel can move further left (i.e. is not at the first column). */
   const canNavigatePrev = leftSpeechIndex > 0
+  /** Whether the right panel can move further right (i.e. is not at the last column). */
   const canNavigateNext = flows[selected] ? rightSpeechIndex < flows[selected].columns.length - 1 : false
 
   return {

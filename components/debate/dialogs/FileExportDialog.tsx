@@ -37,6 +37,8 @@ interface FileExportDialogProps {
  * or restore flows by uploading a previously exported file.
  *
  * @param props - Component props
+ * @param props.open - Whether the dialog is open
+ * @param props.onOpenChange - Callback to change dialog open state
  * @returns The file dialog component
  *
  * @example
@@ -52,8 +54,8 @@ export function FileExportDialog({ open, onOpenChange }: FileExportDialogProps) 
   const [uploadError, setUploadError] = useState<string | null>(null)
 
   /**
-   * Download all flows as a JSON file
-   * Creates a blob and triggers browser download
+   * Download all flows as a JSON file.
+   * Creates a blob and triggers browser download.
    */
   const handleDownload = () => {
     const dataStr = JSON.stringify(flows, null, 2)
@@ -70,10 +72,10 @@ export function FileExportDialog({ open, onOpenChange }: FileExportDialogProps) 
   }
 
   /**
-   * Handle file upload for importing flows
-   * Validates JSON structure and prompts for overwrite confirmation
+   * Handle file upload for importing flows.
+   * Validates JSON structure and prompts for overwrite confirmation.
    *
-   * @param event - File input change event
+   * @param event - File input change event containing the selected file
    */
   const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]

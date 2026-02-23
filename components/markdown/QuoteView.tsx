@@ -1,3 +1,8 @@
+/**
+ * @fileoverview QuoteView component that parses HTML into structured quote cards
+ * organised by headings and renders them using EditableQuoteCard.
+ */
+
 "use client"
 
 import type React from "react"
@@ -8,13 +13,28 @@ import { EditableQuoteCard } from "./EditableQuoteCard"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import "./quote-view.css"
 
+/** Props for the QuoteView component. */
 interface QuoteViewProps {
+  /** Raw HTML string to parse into quote cards. */
   html: string
+  /** Optional file name displayed in the view header. */
   fileName?: string
+  /** When false the component renders a loading placeholder instead of cards. */
   active?: boolean
-  viewMode?: "read" | "highlighted" | "underlined" | "headings" | "h1-only" | "h2-only" | "h3-only" | "summaries-only"
+  /** Display mode controlling which heading levels and card parts are visible. */
+  viewMode?: ViewMode
 }
 
+/**
+ * Renders parsed HTML as a hierarchical list of collapsible quote cards.
+ * Cards are grouped under their nearest heading section and support inline
+ * editing via EditableQuoteCard.
+ * @param html - HTML markup to parse and display as cards.
+ * @param fileName - Optional label forwarded to the parser.
+ * @param active - Activates parsing and rendering when true.
+ * @param viewMode - Controls which heading levels and card elements are shown.
+ * @returns The card view element, or an empty/loading placeholder.
+ */
 export function QuoteView({ html, fileName, active = true, viewMode = "read" }: QuoteViewProps) {
   const [sections, setSections] = useState<HeadingSection[]>([])
   const [cardCount, setCardCount] = useState<number>(0)
@@ -39,6 +59,11 @@ export function QuoteView({ html, fileName, active = true, viewMode = "read" }: 
     }
   }, [fileName])
 
+  /**
+   * Updates the HTML of a specific card identified by its id within the section tree.
+   * @param cardId - The id of the card to update.
+   * @param newHtml - The replacement HTML string for the card body.
+   */
   const handleCardUpdate = useCallback((cardId: string, newHtml: string) => {
     setSections((prevSections) => {
       function updateCardInSection(section: HeadingSection): HeadingSection {
@@ -54,6 +79,10 @@ export function QuoteView({ html, fileName, active = true, viewMode = "read" }: 
     })
   }, [])
 
+  /**
+   * Toggles the collapsed state of a heading section.
+   * @param sectionId - The unique identifier of the section to toggle.
+   */
   const toggleSectionCollapse = useCallback((sectionId: string) => {
     setCollapsedSections((prev) => {
       const newSet = new Set(prev)
@@ -92,6 +121,11 @@ export function QuoteView({ html, fileName, active = true, viewMode = "read" }: 
     )
   }
 
+  /**
+   * Determines whether a section should be rendered given the current viewMode.
+   * @param section - The section to evaluate.
+   * @returns True if the section should be rendered.
+   */
   const shouldRenderSection = (section: HeadingSection): boolean => {
     if (!section.heading) return true
 
@@ -109,11 +143,23 @@ export function QuoteView({ html, fileName, active = true, viewMode = "read" }: 
     }
   }
 
+  /**
+   * Filters a list of subsections to only those visible under the current viewMode.
+   * @param subsections - Array of subsections to filter, or undefined.
+   * @returns Filtered array of HeadingSection items.
+   */
   const filterSubsections = (subsections: HeadingSection[] | undefined): HeadingSection[] => {
     if (!subsections) return []
     return subsections.filter(shouldRenderSection)
   }
 
+  /**
+   * Recursively renders a heading section and its cards/subsections.
+   * @param section - The section data to render.
+   * @param depth - Current nesting depth, used for CSS class naming.
+   * @param index - Positional index within the parent list.
+   * @returns A React element representing the section.
+   */
   const renderSection = (section: HeadingSection, depth: number = 0, index: number = 0): React.ReactElement => {
     const sectionId = section.heading?.id ? `${section.heading.id}-${depth}-${index}` : `section-${depth}-${index}`
     const isCollapsed = collapsedSections.has(sectionId)

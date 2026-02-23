@@ -8,12 +8,12 @@ import { newFlow } from "@/lib/utils/flow-utils";
 import { settings } from "@/lib/state/settings";
 
 /**
- * Hook for flow manipulation handlers
+ * Hook that provides memoized handlers for creating, deleting, and selecting flows.
  *
  * @param flows - Current flows array
- * @param setFlows - Function to update flows
- * @param setSelected - Function to update selected flow
- * @returns Handler functions
+ * @param setFlows - State setter for the flows array
+ * @param setSelected - Callback to set the currently selected flow by id
+ * @returns Object containing `addFlow`, `deleteFlow`, and `selectSpeech` handlers
  */
 export function useFlowHandlers(
   flows: Flow[],
@@ -21,7 +21,8 @@ export function useFlowHandlers(
   setSelected: (id: number) => void,
 ) {
   /**
-   * Handler to add a new flow
+   * Create a new flow using the current debate style setting and append it to the list.
+   * Automatically selects the newly created flow and persists the updated list.
    */
   const addFlow = useCallback(() => {
     const debateStyleIndex = settings.data.debateStyle.value as number;
@@ -39,7 +40,10 @@ export function useFlowHandlers(
   }, [flows, setFlows, setSelected]);
 
   /**
-   * Handler to delete a flow
+   * Remove the flow with the given id and select an adjacent flow if one exists.
+   * Persists the updated list to localStorage.
+   *
+   * @param id - The id of the flow to delete
    */
   const deleteFlow = useCallback(
     (id: number) => {
@@ -64,7 +68,11 @@ export function useFlowHandlers(
   );
 
   /**
-   * Handler to select a speech doc
+   * Set the given speech as the active selection and open the speech panel.
+   *
+   * @param speech - Name of the speech document to open
+   * @param setSpeechPanelOpen - State setter to control speech panel visibility
+   * @param setSelectedSpeech - State setter to update the selected speech name
    */
   const selectSpeech = useCallback(
     (

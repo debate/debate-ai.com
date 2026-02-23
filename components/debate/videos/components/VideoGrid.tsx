@@ -6,17 +6,27 @@
 import { Card, CardDescription } from "@/components/ui/card"
 import Image from "next/image"
 import { Calendar, Eye } from "lucide-react"
-import { cn } from "@/lib/utils"
-import type { VideoType } from "../hooks/useVideoState"
 
+/**
+ * Props for the VideoGrid component.
+ */
 interface VideoGridProps {
+  /** Ordered list of video tuples to render. */
   videos: VideoType[]
+  /** Whether thumbnail images should be displayed on each card. */
   showThumbnails: boolean
+  /** Ref attached to the grid wrapper element for scroll targeting. */
   videoContainerRef: React.RefObject<HTMLDivElement | null>
 }
 
 /**
- * Grid layout for video cards
+ * Renders a responsive grid of video cards.
+ *
+ * @param props - Grid configuration and video data.
+ * @param props.videos - The list of videos to display.
+ * @param props.showThumbnails - Whether to show thumbnail images.
+ * @param props.videoContainerRef - Ref forwarded to the grid container element.
+ * @returns A grid element containing one VideoCard per video.
  */
 export function VideoGrid({ videos, showThumbnails, videoContainerRef }: VideoGridProps) {
   return (
@@ -31,13 +41,23 @@ export function VideoGrid({ videos, showThumbnails, videoContainerRef }: VideoGr
   )
 }
 
+/**
+ * Props for the VideoCard component.
+ */
 interface VideoCardProps {
+  /** Video data tuple to display. */
   video: VideoType
+  /** Whether to render the YouTube thumbnail image. */
   showThumbnails: boolean
 }
 
 /**
- * Individual video card
+ * Renders a single linked video card with thumbnail, title, channel, and metadata.
+ *
+ * @param props - Card data and display options.
+ * @param props.video - The video tuple to render.
+ * @param props.showThumbnails - Whether to show the thumbnail image.
+ * @returns An anchor element wrapping a Card with video details.
  */
 function VideoCard({ video, showThumbnails }: VideoCardProps) {
   const [videoId, title, date, channel, viewCount, description] = video

@@ -6,14 +6,17 @@
 import { useCallback } from "react"
 
 /**
- * Hook for column navigation in AG Grid
+ * Hook that provides keyboard-style column navigation for an AG Grid instance.
+ * Uses the grid API to move focus one column at a time, scrolling the column
+ * into view if necessary.
  *
- * @param gridApiRef - Reference to AG Grid API
- * @returns Navigation handler functions
+ * @param gridApiRef - React ref whose `.current` holds the AG Grid API instance
+ * @returns Object containing `navigatePreviousColumn` and `navigateNextColumn` handlers
  */
 export function useColumnNavigation(gridApiRef: React.RefObject<any>) {
   /**
-   * Navigate to previous column
+   * Move grid focus to the column immediately to the left of the currently focused cell.
+   * Does nothing if no cell is focused or the focused cell is already in the first column.
    */
   const navigatePreviousColumn = useCallback(() => {
     const gridApi = gridApiRef.current
@@ -33,7 +36,8 @@ export function useColumnNavigation(gridApiRef: React.RefObject<any>) {
   }, [gridApiRef])
 
   /**
-   * Navigate to next column
+   * Move grid focus to the column immediately to the right of the currently focused cell.
+   * Does nothing if no cell is focused or the focused cell is already in the last column.
    */
   const navigateNextColumn = useCallback(() => {
     const gridApi = gridApiRef.current

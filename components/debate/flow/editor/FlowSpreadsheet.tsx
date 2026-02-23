@@ -222,7 +222,7 @@ export function FlowSpreadsheet({
         editable: true,
         rowDrag: idx === 0, // Only first column has row drag handle
         flex: 1,
-        minWidth: 40,
+        minWidth: 200,
         cellEditor: "agTextCellEditor",
         cellEditorParams: {
           maxLength: 1000,

@@ -34,10 +34,10 @@ import { settings } from "@/lib/state/settings"
 import { debateStyles, debateStyleMap } from "@/lib/debate-data/debate-styles"
 
 /**
- * Fetch tournament names from Tabroom for autocomplete
- * Scrapes the Tabroom homepage for current tournament links
+ * Fetch tournament names from Tabroom for autocomplete.
+ * Scrapes the Tabroom homepage for current tournament links.
  *
- * @returns Promise resolving to array of tournament names
+ * @returns Promise resolving to an array of tournament name strings
  */
 async function getTournamentNames(): Promise<string[]> {
   try {
@@ -111,7 +111,7 @@ interface RoundEditorDialogProps {
   open: boolean
   /** Callback to change dialog open state */
   onOpenChange: (open: boolean) => void
-  /** Optional round ID for editing existing rounds */
+  /** Optional round ID for editing existing rounds; omit to create a new round */
   roundId?: number
 }
 
@@ -123,6 +123,9 @@ interface RoundEditorDialogProps {
  * the selected debate style and archives existing flows.
  *
  * @param props - Component props
+ * @param props.open - Whether the dialog is open
+ * @param props.onOpenChange - Callback to change dialog open state
+ * @param props.roundId - Optional round ID for editing an existing round
  * @returns The round editor dialog component
  *
  * @example
@@ -175,7 +178,7 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
   // ============================================================================
 
   /**
-   * Load existing round data when editing, or reset form when dialog closes
+   * Load existing round data when editing, or reset form when dialog closes.
    */
   useEffect(() => {
     if (roundId && open) {
@@ -213,7 +216,7 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
   }, [roundId, open, rounds])
 
   /**
-   * Initialize debate style and fetch tournament suggestions when dialog opens
+   * Initialize debate style and fetch tournament suggestions when dialog opens.
    */
   useEffect(() => {
     if (open) {
@@ -228,7 +231,7 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
   }, [open])
 
   /**
-   * Filter tournament suggestions based on input
+   * Filter tournament suggestions based on current input value.
    */
   useEffect(() => {
     if (tournamentName && tournamentSuggestions.length > 0) {
@@ -248,9 +251,10 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
   // ============================================================================
 
   /**
-   * Validate email format
-   * @param email - Email to validate
-   * @returns True if valid or empty
+   * Validate email format.
+   *
+   * @param email - Email string to validate
+   * @returns True if the email is valid or empty, false otherwise
    */
   const validateEmail = (email: string): boolean => {
     if (!email) return true
@@ -262,8 +266,8 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
   // ============================================================================
 
   /**
-   * Handle form submission for creating or updating a round
-   * Validates input, creates flows for new rounds, and persists data
+   * Handle form submission for creating or updating a round.
+   * Validates input, creates flows for new rounds, and persists data.
    */
   const handleCreateRound = () => {
     // Validate required fields

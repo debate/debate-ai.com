@@ -30,8 +30,6 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import grab from "grab-url"
 
-/** API origin for fetching data */
-const ORIGIN = ""
 
 /** Minimum year with available champion data */
 const MIN_YEAR = 2002
@@ -59,7 +57,7 @@ type YearData = {
 }
 
 /**
- * Complete debate history indexed by year
+ * Complete debate history indexed by year string
  */
 type DebateHistory = Record<string, YearData>
 
@@ -75,18 +73,39 @@ interface ChampionsPanelProps {
 }
 
 /**
- * Configuration for each debate category display
- * Maps category keys to display labels and colors
+ * Configuration entry for a single debate category display.
+ * Maps category keys to display labels and visual styling.
  */
-const categoryConfig = [
+type CategoryConfig = {
+  /** Short identifier key for the category */
+  key: string
+  /** Human-readable label shown in the UI */
+  label: string
+  /** Key into YearData for the topic field */
+  topicKey: string
+  /** Key into YearData for the champion field */
+  championKey: string
+  /** Tailwind background color class for the logo container */
+  color: string
+  /** Path to the category logo image */
+  logoSrc: string
+  /** Alt text for the category logo image */
+  logoAlt: string
+}
+
+/**
+ * Display configuration for each of the four debate categories
+ */
+const categoryConfig: CategoryConfig[] = [
+
   {
-    key: "ndt",
-    label: "College NDT",
-    topicKey: "ndt_topic",
-    championKey: "ndt_champion",
-    color: "bg-blue-500",
-    logoSrc: null,
-    logoAlt: "NDT format",
+    key: "pf",
+    label: "TOC PF",
+    topicKey: "pf_topic",
+    championKey: "pf_champion",
+    color: "bg-orange-500",
+    logoSrc: "/images/logo-public-forum-format.png",
+    logoAlt: "Public Forum format",
   },
   {
     key: "policy",
@@ -107,13 +126,13 @@ const categoryConfig = [
     logoAlt: "Lincoln-Douglas format",
   },
   {
-    key: "pf",
-    label: "TOC PF",
-    topicKey: "pf_topic",
-    championKey: "pf_champion",
-    color: "bg-orange-500",
-    logoSrc: "/images/logo-public-forum-format.png",
-    logoAlt: "Public Forum format",
+    key: "ndt",
+    label: "College NDT",
+    topicKey: "ndt_topic",
+    championKey: "ndt_champion",
+    color: "bg-blue-500",
+    logoSrc: "/images/logo-college-policy-format.png",
+    logoAlt: "NDT format",
   },
 ]
 
@@ -124,6 +143,7 @@ const categoryConfig = [
  * multiple debate formats (NDT, Policy, LD, PF).
  *
  * @param props - Component props
+ * @param props.onYearSelect - Callback when user clicks to view videos for a year
  * @returns The champions panel component
  *
  * @example
@@ -140,8 +160,14 @@ export function ChampionsPanel({ onYearSelect }: ChampionsPanelProps) {
   // State for debate history data from API
   const [debateHistory, setDebateHistory] = useState<DebateHistory | null>(null)
 
+
+  // get current year plus 6 months 
+  const currentYear = new Date().getFullYear()
+  const currentMonth = new Date().getMonth()
+  const currentSeason = currentMonth >= 6 ? currentYear + 1 : currentYear
+
   // Currently selected year in dropdown
-  const [selectedYear, setSelectedYear] = useState("2025")
+  const [selectedYear, setSelectedYear] = useState(currentSeason.toString())
 
   // Data for the selected year
   const [yearData, setYearData] = useState<YearData | null>(null)
@@ -150,23 +176,23 @@ export function ChampionsPanel({ onYearSelect }: ChampionsPanelProps) {
   const [isLoading, setIsLoading] = useState(true)
 
   /**
-   * Generate array of available years
-   * From current year + 1 down to MIN_YEAR
+   * Generate array of available years.
+   * Spans from current year + 1 down to MIN_YEAR.
    */
   const years = Array.from({ length: new Date().getFullYear() - MIN_YEAR + 2 }, (_, i) =>
     (new Date().getFullYear() - i + 1).toString()
   )
 
   /**
-   * Fetch debate history on component mount
+   * Fetch debate history on component mount.
    */
   useEffect(() => {
     fetchHistory()
   }, [])
 
   /**
-   * Fetches debate history data from the API
-   * Uses grab-url for consistent API calls
+   * Fetches debate history data from the API.
+   * Uses grab-url for consistent API calls.
    */
   const fetchHistory = async () => {
     const result = await grab<DebateHistory, { type: "history" | "debates" }>("videos", { type: "history" })
@@ -179,11 +205,11 @@ export function ChampionsPanel({ onYearSelect }: ChampionsPanelProps) {
   }
 
   /**
-   * Handle year selection change
-   * Updates selected year and retrieves data for that year
+   * Handle year selection change.
+   * Updates the selected year state and retrieves data for that year.
    *
-   * @param year - The year to select
-   * @param history - Optional history data (used on initial load)
+   * @param year - The year string to select (e.g. "2025")
+   * @param history - Optional history data object; falls back to component state if omitted
    */
   function handleSelect(year: string, history?: DebateHistory | null) {
     const data = history || debateHistory
@@ -198,9 +224,9 @@ export function ChampionsPanel({ onYearSelect }: ChampionsPanelProps) {
   }
 
   /**
-   * Navigate to view videos for the selected year
+   * Navigate to view videos for the selected year by invoking the parent callback.
    *
-   * @param year - The year to view videos for
+   * @param year - The year string to view videos for
    */
   function handleViewVideos(year: string) {
     onYearSelect(year)
@@ -262,30 +288,50 @@ export function ChampionsPanel({ onYearSelect }: ChampionsPanelProps) {
                 className="group overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg"
               >
                 <CardHeader className="pb-3">
-                  {/* Category logo centered at top */}
-                  <div className="flex justify-center mb-4">
-                    <div className={cn("flex items-center justify-center w-[200px] h-[200px] rounded-2xl shadow-md", cat.color)}>
+                  <div className="flex items-center gap-4">
+                    {/* Category logo – 3D tilt on hover */}
+                    <article
+                      className="w-[200px] h-[200px] shrink-0 rounded-xl shadow-md overflow-hidden cursor-pointer will-change-transform"
+                      onMouseMove={(e) => {
+                        const el = e.currentTarget
+                        el.style.transition = "transform 0.1s ease-out"
+                        const rect = el.getBoundingClientRect()
+                        const x = (e.clientX - rect.left) / rect.width
+                        const y = (e.clientY - rect.top) / rect.height
+                        const rotateX = (y - 0.5) * -22
+                        const rotateY = (x - 0.5) * 22
+                        el.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.06)`
+                      }}
+                      onMouseLeave={(e) => {
+                        const el = e.currentTarget
+                        el.style.transition = "transform 0.45s ease-out"
+                        el.style.transform = "perspective(600px) rotateX(0deg) rotateY(0deg) scale(1)"
+                      }}
+                    >
                       {cat.logoSrc ? (
-                        <Image src={cat.logoSrc} alt={cat.logoAlt} width={200} height={200} className="w-full h-full object-contain p-5" />
+                        <Image src={cat.logoSrc} alt={cat.logoAlt} width={200} height={200} className="w-full h-full object-contain p-2" />
                       ) : (
-                        <Trophy className="w-20 h-20 text-white" />
+                        <div className={cn("w-full h-full flex items-center justify-center", cat.color)}>
+                          <Trophy className="w-16 h-16 text-white" />
+                        </div>
                       )}
+                    </article>
+                    <div>
+                      {/* Topic display box */}
+                      <div className="p-3 rounded-lg bg-muted/50 border border-border/50">
+                        <p className="text-xs font-medium text-muted-foreground mb-1">Topic</p>
+                        <p
+                          className="text-sm text-foreground leading-relaxed"
+                          dangerouslySetInnerHTML={{ __html: topic || "TBA" }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl font-bold">{cat.label} Champions</CardTitle>
-                    <p className="text-base font-semibold text-primary">{champion || "TBA"}</p>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  {/* Topic display box */}
-                  <div className="p-3 rounded-lg bg-muted/50 border border-border/50">
-                    <p className="text-xs font-medium text-muted-foreground mb-1">Topic</p>
-                    <p
-                      className="text-sm text-foreground leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: topic || "TBA" }}
-                    />
-                  </div>
+                  <CardTitle className="text-xl font-bold">{cat.label} Champions</CardTitle>
+                  <p className="text-base font-semibold text-primary">{champion || "TBA"}</p>
+
                 </CardContent>
               </Card>
             )

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Optimised Lexical editor wrappers with virtualization support.
+ * Provides VirtualizedEditor for single-instance viewport-based rendering and
+ * ChunkedEditor for splitting very large documents across multiple editor instances.
+ */
+
 "use client"
 
 import { memo, useMemo, useCallback, useRef, useState, useEffect } from "react"
@@ -20,7 +26,7 @@ import type { LexicalEditor } from "lexical"
 import { cn } from "@/lib/utils"
 
 /**
- * VirtualizedEditor - An optimized Lexical editor wrapper with virtualization support
+ * VirtualizedEditor - An optimized Lexical editor wrapper with virtualization support.
  *
  * This component handles large documents with:
  * - Automatic virtualization for documents > threshold
@@ -37,22 +43,44 @@ import { cn } from "@/lib/utils"
  * ```
  */
 
+/** Configuration options for the VirtualizedEditor virtualization feature. */
 export interface VirtualizationConfig {
+  /** Whether viewport-based virtualization is enabled. */
   enabled: boolean
+  /** Character count threshold above which virtualization activates. */
   threshold: number
+  /** Character count per rendered chunk. */
   chunkSize: number
+  /** Number of extra chunks rendered outside the viewport. */
   overscan: number
 }
 
+/** Props for the VirtualizedEditor component. */
 interface VirtualizedEditorProps {
+  /** Initial markdown content to load into the editor. */
   content: string
+  /** Called with the current HTML on every content change. */
   onChange?: (content: string) => void
+  /** Renders the editor in read-only mode when true. */
   readOnly?: boolean
+  /** Additional CSS classes applied to the root element. */
   className?: string
+  /** Placeholder text shown when the editor is empty. */
   placeholder?: string
+  /** Partial virtualization configuration merged with defaults. */
   virtualization?: Partial<VirtualizationConfig>
 }
 
+/**
+ * Optimised single-instance Lexical editor with optional viewport virtualization.
+ * Memoised to avoid unnecessary re-renders on unchanged props.
+ * @param content - Markdown content to initialise the editor with.
+ * @param onChange - Emitted with current HTML on each content change.
+ * @param readOnly - Disables editing when true.
+ * @param className - Extra classes on the root wrapper.
+ * @param placeholder - Empty-state hint text.
+ * @param virtualization - Virtualization configuration overrides.
+ */
 export const VirtualizedEditor = memo(function VirtualizedEditor({
   content,
   onChange,
@@ -91,6 +119,12 @@ export const VirtualizedEditor = memo(function VirtualizedEditor({
     [],
   )
 
+  /**
+   * Handles Lexical editor state changes, serialises to HTML, and optionally
+   * checks document size to toggle virtualization.
+   * @param editorState - The new Lexical editor state.
+   * @param editor - The Lexical editor instance.
+   */
   const handleChange = useCallback(
     (editorState: any, editor: LexicalEditor) => {
       if (!onChange) return
@@ -144,20 +178,36 @@ export const VirtualizedEditor = memo(function VirtualizedEditor({
 })
 
 /**
- * ChunkedEditor - Alternative approach using multiple editor instances
+ * ChunkedEditor - Alternative approach using multiple editor instances.
  *
  * Splits extremely large documents into separate editor instances for
  * better performance.
  */
 
+/** Props for the ChunkedEditor component. */
 interface ChunkedEditorProps {
+  /** Full document content string to split and render. */
   content: string
+  /** Maximum character length per chunk (defaults to 15000). */
   chunkSize?: number
+  /** Renders all chunk editors in read-only mode when true. */
   readOnly?: boolean
+  /** Additional CSS classes applied to the root wrapper. */
   className?: string
+  /** Called with the full document content on any chunk change. */
   onChange?: (fullContent: string) => void
 }
 
+/**
+ * Splits large documents into multiple VirtualizedEditor instances for performance.
+ * Displays a header banner and per-section labels when chunking is active.
+ * Memoised to avoid unnecessary re-renders.
+ * @param content - Full document content.
+ * @param chunkSize - Maximum characters per chunk.
+ * @param readOnly - Whether chunk editors are editable.
+ * @param className - Extra classes on the root wrapper.
+ * @param onChange - Emitted with the full content on changes.
+ */
 export const ChunkedEditor = memo(function ChunkedEditor({
   content,
   chunkSize = 15000,

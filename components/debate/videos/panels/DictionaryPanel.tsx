@@ -34,16 +34,18 @@ import { dictionaryDebate } from "@/lib/debate-data/dictionary-debate"
  * ```
  */
 export function DictionaryPanel() {
-  // Current search input value
+  /** Current search input value */
   const [searchTerm, setSearchTerm] = useState("")
 
   /**
-   * Filtered and sorted debate terms based on search
+   * Filtered and sorted debate terms based on the current search input.
    *
    * Filtering logic:
    * 1. All search words must appear in term OR definition
-   * 2. Results matching term name are prioritized
-   * 3. Other matches follow
+   * 2. Results matching the term name are prioritized
+   * 3. Definition-only matches follow
+   *
+   * @returns Filtered array of debate dictionary entries sorted by relevance
    */
   const filteredDebateTerms = useMemo(() => {
     // Return all terms if no search

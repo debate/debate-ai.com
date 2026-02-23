@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Theme dropdown component for selecting colour themes and toggling
+ * light/dark mode. Persists selections to localStorage and a cookie, and applies
+ * theme CSS classes to the document root.
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -14,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useTheme } from "next-themes"
 
+/** Registry of all available colour theme names. */
 const themeNames = [
   "modern-minimal",
   "elegant-luxury",
@@ -42,6 +49,10 @@ const themeNames = [
   "pastel-dreams",
 ]
 
+/**
+ * Map of theme names to their representative primary and secondary colour swatches
+ * used in the dropdown preview dots.
+ */
 const themeColors: Record<string, { primary: string; secondary: string }> = {
   "modern-minimal": { primary: "#3b82f6", secondary: "#f3f4f6" },
   "elegant-luxury": { primary: "#9b2c2c", secondary: "#fdf2d6" },
@@ -70,6 +81,13 @@ const themeColors: Record<string, { primary: string; secondary: string }> = {
   "pastel-dreams": { primary: "#a78bfa", secondary: "#e9d8fd" },
 }
 
+/**
+ * Dropdown component for selecting a colour theme and toggling light/dark mode.
+ * Applies the chosen theme as a CSS class on `document.documentElement` and
+ * persists the selection to localStorage and a one-year cookie.
+ * Returns null before the component has mounted (SSR hydration guard).
+ * @returns The theme dropdown element, or null while unmounted.
+ */
 export function ThemeDropdown() {
   const { theme, setTheme, resolvedTheme } = useTheme()
   const [colorTheme, setColorTheme] = useState("modern-minimal")
@@ -90,6 +108,10 @@ export function ThemeDropdown() {
     }
   }, [])
 
+  /**
+   * Persists and applies a new colour theme selection.
+   * @param newTheme - The theme name to activate.
+   */
   const handleThemeChange = (newTheme: string) => {
     setColorTheme(newTheme)
     localStorage.setItem("color-theme", newTheme)
@@ -103,6 +125,10 @@ export function ThemeDropdown() {
     setPreviewTheme(null)
   }
 
+  /**
+   * Temporarily applies a theme for hover preview without persisting it.
+   * @param themeName - The theme name to preview.
+   */
   const handleThemePreview = (themeName: string) => {
     setPreviewTheme(themeName)
     themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
@@ -110,6 +136,7 @@ export function ThemeDropdown() {
     console.log("[v0] Theme preview:", { themeName, classList: document.documentElement.className })
   }
 
+  /** Restores the persisted theme after a preview ends (mouse leave or dropdown close). */
   const handlePreviewEnd = () => {
     if (previewTheme) {
       themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
@@ -119,6 +146,11 @@ export function ThemeDropdown() {
     }
   }
 
+  /**
+   * Converts a kebab-case theme name to Title Case for display.
+   * @param name - Kebab-case theme name string.
+   * @returns Title-cased display name.
+   */
   const formatThemeName = (name: string) => {
     return name
       .split("-")
@@ -126,6 +158,7 @@ export function ThemeDropdown() {
       .join(" ")
   }
 
+  /** Toggles between light and dark mode using next-themes. */
   const toggleLightDark = () => {
     const currentTheme = resolvedTheme || theme || "light"
     const newTheme = currentTheme === "dark" ? "light" : "dark"

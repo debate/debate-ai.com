@@ -56,11 +56,11 @@ type SearchResult = {
 }
 
 /**
- * Get color shade class based on year
- * Newer years get more prominent yellow shades
+ * Get a Tailwind color shade class based on a two-digit year string.
+ * Newer years receive more prominent yellow shades.
  *
- * @param year - Two-digit year string
- * @returns Tailwind color classes
+ * @param year - Two-digit year string (e.g. "24" for 2024)
+ * @returns Tailwind background and text color class string
  */
 const getYearShade = (year: string) => {
   const yearNum = Number.parseInt(year)
@@ -73,20 +73,20 @@ const getYearShade = (year: string) => {
 }
 
 /**
- * Extract author name from short citation
+ * Extract the author name from a short citation string.
  *
- * @param citeShort - Short citation in "Author Year" format
- * @returns Author name without year
+ * @param citeShort - Short citation in "Author Year" format (e.g. "Smith 2023")
+ * @returns Author name with the trailing year removed
  */
 const extractAuthor = (citeShort: string) => {
   return citeShort.replace(/\s+\d{4}$/, "")
 }
 
 /**
- * Extract year from short citation
+ * Extract the four-digit year from a short citation string.
  *
- * @param citeShort - Short citation in "Author Year" format
- * @returns Four-digit year string
+ * @param citeShort - Short citation in "Author Year" format (e.g. "Smith 2023")
+ * @returns Four-digit year string, or empty string if not found
  */
 const extractYear = (citeShort: string) => {
   const match = citeShort.match(/\d{4}/)
@@ -97,13 +97,13 @@ const extractYear = (citeShort: string) => {
  * Props for the CardContentViewer component
  */
 interface CardContentViewerProps {
-  /** Currently selected research result */
+  /** Currently selected research result to display, or null for empty state */
   selectedResult: SearchResult | null
-  /** Current view mode for content display */
+  /** Current view mode controlling how card content is rendered */
   viewMode: "read" | "highlight" | "underline"
-  /** Callback to change view mode */
+  /** Callback to change the active view mode */
   setViewMode: (mode: "read" | "highlight" | "underline") => void
-  /** Word count for display */
+  /** Word count of the selected card for display */
   wordCount: number
 }
 
@@ -112,8 +112,13 @@ interface CardContentViewerProps {
  *
  * Shows the complete content of a selected research card with
  * citation information, view mode controls, and formatted content.
+ * Renders a product information page when no card is selected.
  *
  * @param props - Component props
+ * @param props.selectedResult - Currently selected research result, or null for empty state
+ * @param props.viewMode - Current view mode controlling how card content is rendered
+ * @param props.setViewMode - Callback to change the active view mode
+ * @param props.wordCount - Word count of the selected card for display
  * @returns The card content viewer component
  *
  * @example

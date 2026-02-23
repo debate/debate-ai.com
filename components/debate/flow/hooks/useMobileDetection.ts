@@ -6,10 +6,11 @@
 import { useEffect } from "react"
 
 /**
- * Hook to detect mobile viewport and update state
- * Monitors window resize and updates isMobile state
+ * Hook that detects whether the current viewport is mobile-sized and keeps
+ * the provided state setter in sync as the window is resized.
+ * A viewport width below 768 px is considered mobile.
  *
- * @param setIsMobile - State setter for mobile detection
+ * @param setIsMobile - State setter that receives `true` when the viewport is mobile-width
  */
 export function useMobileDetection(setIsMobile: (mobile: boolean) => void) {
   useEffect(() => {

@@ -60,23 +60,23 @@ type SearchResult = {
  * Props for the ResearchSearchSidebar component
  */
 interface ResearchSearchSidebarProps {
-  /** Current search term */
+  /** Current search term entered by the user */
   searchTerm: string
-  /** Callback to update search term */
+  /** Callback to update the search term */
   setSearchTerm: (term: string) => void
-  /** Current sort option */
+  /** Current sort option value (e.g. "readCount:desc") */
   sortBy: string
-  /** Callback to update sort option */
+  /** Callback to update the sort option */
   setSortBy: (sort: string) => void
-  /** Array of search results */
+  /** Array of search results to display */
   searchResults: SearchResult[]
-  /** Index of currently selected result */
+  /** Zero-based index of the currently selected result */
   selectedIndex: number
-  /** Callback when a result is selected */
+  /** Callback invoked when the user selects a result */
   selectResult: (result: SearchResult, index: number) => void
-  /** Whether results are loading */
+  /** Whether results are currently loading */
   isLoading: boolean
-  /** Optional callback to close sidebar (mobile) */
+  /** Optional callback to close the sidebar on mobile */
   onClose?: () => void
 }
 
@@ -87,6 +87,15 @@ interface ResearchSearchSidebarProps {
  * with filtering, sorting, and result selection.
  *
  * @param props - Component props
+ * @param props.searchTerm - Current search term entered by the user
+ * @param props.setSearchTerm - Callback to update the search term
+ * @param props.sortBy - Current sort option value
+ * @param props.setSortBy - Callback to update the sort option
+ * @param props.searchResults - Array of search results to display
+ * @param props.selectedIndex - Zero-based index of the currently selected result
+ * @param props.selectResult - Callback invoked when the user selects a result
+ * @param props.isLoading - Whether results are currently loading
+ * @param props.onClose - Optional callback to close the sidebar on mobile
  * @returns The research search sidebar component
  *
  * @example

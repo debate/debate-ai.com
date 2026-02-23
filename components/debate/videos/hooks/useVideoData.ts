@@ -4,12 +4,16 @@
  */
 
 import { useEffect, useCallback } from "react"
-import type { VideoType, DebateVideosData, CategoryType } from "./useVideoState"
-
 const ORIGIN = ""
 
 /**
- * Hook for fetching video data
+ * Fetches video data from the API on mount and invokes the initial category change.
+ *
+ * @param setDebateVideos - Setter for the raw API video data.
+ * @param setIsLoading - Setter for the loading flag.
+ * @param setErrorMessage - Setter for the error message string.
+ * @param changeCategory - Callback invoked with the fetched data to activate the default category.
+ * @returns An object containing the memoised `fetchVideos` function.
  */
 export function useVideoDataFetch(
   setDebateVideos: (data: DebateVideosData | null) => void,
@@ -41,9 +45,20 @@ export function useVideoDataFetch(
 }
 
 /**
- * Hook for filtering and sorting videos
+ * Provides a memoised function for filtering and sorting a video list.
+ *
+ * @returns An object containing the `filterAndSortVideos` callback.
  */
 export function useVideoFiltering() {
+  /**
+   * Filters videos by search term and sorts them by the given order.
+   *
+   * @param videos - The baseline list of videos to operate on.
+   * @param search - The current search string; an empty string disables filtering.
+   * @param sort - Sort mode: "Views" for descending view count, anything else for recency.
+   * @param data - Full API data used when a search spans all categories.
+   * @returns A new sorted (and optionally filtered) array of videos.
+   */
   const filterAndSortVideos = useCallback(
     (videos: VideoType[], search: string, sort: string, data: DebateVideosData | null) => {
       let filtered: VideoType[]
@@ -77,7 +92,10 @@ export function useVideoFiltering() {
 }
 
 /**
- * Hook for responsive videos per page
+ * Adjusts the videos-per-page count based on the current viewport width.
+ * Listens to window resize events and cleans up on unmount.
+ *
+ * @param setVideosPerPage - Setter for the videos-per-page count.
  */
 export function useResponsiveVideosPerPage(setVideosPerPage: (count: number) => void) {
   useEffect(() => {

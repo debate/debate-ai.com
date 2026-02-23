@@ -10,41 +10,59 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { FlowTab } from "../../flow/navigation/FlowTab"
 import { TimersPanel } from "../timers/TimersPanel"
 
+/** Props for the FlowPageSidebar component. */
 interface FlowPageSidebarProps {
-  /** Array of flows */
+  /** Full list of flows to display as tabs. */
   flows: Flow[]
-  /** Selected flow index */
+  /** Index of the currently selected flow. */
   selected: number
-  /** Array of rounds */
+  /** All rounds available for the current session. */
   rounds: Round[]
-  /** Current active flow */
+  /** The currently active flow, or null if none is selected. */
   currentFlow: Flow | null
-  /** Whether split mode is active */
+  /** Whether split mode is currently active. */
   splitMode: boolean
-  /** Whether on mobile device */
+  /** Whether the sidebar is being rendered on a mobile device. */
   isMobile: boolean
-  /** Handler to select a flow */
+  /** Handler called when the user selects a flow tab. */
   onSelectFlow: (index: number) => void
-  /** Handler to add new flow */
+  /** Handler called when the user adds a new flow. */
   onAddFlow: () => void
-  /** Handler to rename flow */
+  /** Handler called when the user renames a flow. */
   onRenameFlow: (index: number, newName: string) => void
-  /** Handler to archive flow */
+  /** Handler called when the user archives a flow. */
   onArchiveFlow: (index: number) => void
-  /** Handler to delete flow */
+  /** Handler called when the user deletes a flow. */
   onDeleteFlow: (index: number) => void
-  /** Handler to toggle split mode */
+  /** Handler called when the user toggles split mode. */
   onToggleSplitMode: () => void
-  /** Handler to open history dialog */
+  /** Handler called when the user opens the flow history dialog. */
   onOpenHistory: () => void
-  /** Handler to edit round */
+  /** Handler called when the user opens the round editor for a given round. */
   onEditRound: (roundId: number) => void
-  /** Handler to close mobile menu */
+  /** Optional handler called when the mobile menu overlay should be dismissed. */
   onCloseMobileMenu?: () => void
 }
 
 /**
- * Sidebar with flow navigation, quick actions, and timers
+ * Sidebar panel containing quick action buttons, a scrollable list of flow tabs, and a timers section.
+ *
+ * @param props - Component props.
+ * @param props.flows - Array of all flows; sorted internally (active first, then archived).
+ * @param props.selected - Index of the currently active flow, used to highlight the matching tab.
+ * @param props.currentFlow - Active flow; used to determine whether Edit Round is available.
+ * @param props.splitMode - Controls the icon shown on the split-mode toggle button.
+ * @param props.isMobile - When true, selecting a flow also closes the mobile menu overlay.
+ * @param props.onSelectFlow - Callback invoked with the flow index when a tab is clicked.
+ * @param props.onAddFlow - Callback invoked when the Add Flow button is clicked.
+ * @param props.onRenameFlow - Callback invoked with the flow index and new name when a tab is renamed.
+ * @param props.onArchiveFlow - Callback invoked with the flow index when a tab is archived.
+ * @param props.onDeleteFlow - Callback invoked with the flow index when a tab is deleted.
+ * @param props.onToggleSplitMode - Callback invoked when the split-mode toggle button is clicked.
+ * @param props.onOpenHistory - Callback invoked when the Flow History button is clicked.
+ * @param props.onEditRound - Callback invoked with the round ID when the Edit Round button is clicked.
+ * @param props.onCloseMobileMenu - Optional callback to close the mobile menu after a flow is selected.
+ * @returns A sidebar with quick actions, flow tabs, and the timers panel.
  */
 export function FlowPageSidebar({
   flows,

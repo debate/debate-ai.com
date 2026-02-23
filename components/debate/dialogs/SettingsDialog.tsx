@@ -44,6 +44,8 @@ interface SettingsDialogProps {
  * updates and localStorage persistence.
  *
  * @param props - Component props
+ * @param props.open - Whether the dialog is open
+ * @param props.onOpenChange - Callback to change dialog open state
  * @returns The settings dialog component
  *
  * @example
@@ -58,7 +60,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   const [settingsData, setSettingsData] = useState(settings.data)
 
   /**
-   * Subscribe to settings changes to keep UI in sync
+   * Subscribe to settings changes to keep UI in sync.
    */
   useEffect(() => {
     const unsubscribe = settings.subscribe(Object.keys(settings.data), () => {
@@ -68,10 +70,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   }, [])
 
   /**
-   * Handle slider value changes
+   * Handle slider value changes and persist to localStorage.
    *
-   * @param key - Setting key
-   * @param value - New value array from slider
+   * @param key - Setting key identifying which setting to update
+   * @param value - New value array from the slider component
    */
   const handleSliderChange = (key: string, value: number[]) => {
     settings.setValue(key, value[0])
@@ -79,10 +81,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   }
 
   /**
-   * Handle toggle switch changes
+   * Handle toggle switch changes and persist to localStorage.
    *
-   * @param key - Setting key
-   * @param checked - New boolean value
+   * @param key - Setting key identifying which setting to update
+   * @param checked - New boolean value from the switch component
    */
   const handleToggleChange = (key: string, checked: boolean) => {
     settings.setValue(key, checked)
@@ -90,10 +92,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   }
 
   /**
-   * Handle radio button/select changes
+   * Handle radio button or select changes and persist to localStorage.
    *
-   * @param key - Setting key
-   * @param value - New option index as string
+   * @param key - Setting key identifying which setting to update
+   * @param value - New option index as a string from the radio/select component
    */
   const handleRadioChange = (key: string, value: string) => {
     const index = Number.parseInt(value)
@@ -102,10 +104,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   }
 
   /**
-   * Handle custom option text changes for radio settings
+   * Handle custom option text changes for radio settings that support free-form input.
    *
-   * @param key - Setting key
-   * @param value - Custom text value
+   * @param key - Setting key identifying which radio setting to update
+   * @param value - Custom text value entered by the user
    */
   const handleCustomOptionChange = (key: string, value: string) => {
     const setting = settings.data[key] as RadioSetting
@@ -117,7 +119,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   }
 
   /**
-   * Reset all settings to their default values
+   * Reset all settings to their default values and persist to localStorage.
    */
   const resetToDefaults = () => {
     settings.resetToAuto()

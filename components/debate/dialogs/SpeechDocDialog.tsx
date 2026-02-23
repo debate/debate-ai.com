@@ -25,7 +25,7 @@ interface SpeechDocDialogProps {
   speechName: string
   /** Current content of the speech document */
   content: string
-  /** Callback when content is saved */
+  /** Callback invoked with the updated content when the user saves */
   onUpdate: (content: string) => void
 }
 
@@ -36,6 +36,11 @@ interface SpeechDocDialogProps {
  * markdown support and save/cancel actions.
  *
  * @param props - Component props
+ * @param props.open - Whether the dialog is open
+ * @param props.onOpenChange - Callback to change dialog open state
+ * @param props.speechName - Name of the speech being edited
+ * @param props.content - Current content of the speech document
+ * @param props.onUpdate - Callback invoked with updated content when the user saves
  * @returns The speech document dialog component
  *
  * @example
@@ -54,14 +59,14 @@ export function SpeechDocDialog({ open, onOpenChange, speechName, content, onUpd
   const [localContent, setLocalContent] = useState(content)
 
   /**
-   * Sync local content with prop changes
+   * Sync local content with prop changes.
    */
   useEffect(() => {
     setLocalContent(content)
   }, [content])
 
   /**
-   * Save content and close dialog
+   * Save the current local content and close the dialog.
    */
   const handleSave = () => {
     onUpdate(localContent)

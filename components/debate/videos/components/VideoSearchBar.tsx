@@ -9,26 +9,53 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { GlowingEffect } from "@/components/ui/glowing-effect"
 
+/**
+ * Props for the VideoSearchBar component.
+ */
 interface VideoSearchBarProps {
+  /** Current value of the search input. */
   searchTerm: string
+  /** Currently active sort order (e.g. "Recency" or "Views"). */
   sortOrder: string
+  /** Whether the search input is focused; controls the glowing effect. */
   isSearchFocused: boolean
+  /** Whether video thumbnails are currently visible in the grid. */
   showThumbnails: boolean
+  /** Callback invoked with the new search string on every input change. */
   onSearchChange: (value: string) => void
+  /** Callback invoked when the search input receives focus. */
   onSearchFocus: () => void
+  /** Callback invoked when the search input loses focus. */
   onSearchBlur: () => void
+  /** Callback invoked when the clear-search button is clicked. */
   onClearSearch: () => void
+  /** Callback invoked with the newly selected sort option value. */
   onSortChange: (value: string) => void
+  /** Callback invoked to toggle thumbnail visibility. */
   onToggleThumbnails: () => void
 }
 
+/** Available sort options shown in the sort dropdown. */
 const sortOptions = [
   { value: "Recency", label: "Recency" },
   { value: "Views", label: "Views" },
 ]
 
 /**
- * Search and filter controls for video list
+ * Renders a search input, sort order selector, and thumbnail toggle button.
+ *
+ * @param props - Search bar state and event handlers.
+ * @param props.searchTerm - Current search input value.
+ * @param props.sortOrder - Currently selected sort order.
+ * @param props.isSearchFocused - Whether the search input is focused.
+ * @param props.showThumbnails - Whether thumbnails are currently shown.
+ * @param props.onSearchChange - Handler for search input changes.
+ * @param props.onSearchFocus - Handler for search input focus.
+ * @param props.onSearchBlur - Handler for search input blur.
+ * @param props.onClearSearch - Handler for the clear-search action.
+ * @param props.onSortChange - Handler for sort order changes.
+ * @param props.onToggleThumbnails - Handler to toggle thumbnail display.
+ * @returns A toolbar row containing the search field, sort selector, and thumbnail toggle.
  */
 export function VideoSearchBar({
   searchTerm,

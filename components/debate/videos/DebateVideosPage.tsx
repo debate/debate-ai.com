@@ -15,7 +15,7 @@ import { DictionaryPanel } from "./panels/DictionaryPanel"
 import { LeaderboardPanel } from "./panels/LeaderboardPanel"
 
 // Hooks
-import { useVideoState, type CategoryType, type DebateVideosData } from "./hooks/useVideoState"
+import { useVideoState } from "./hooks/useVideoState"
 import { useVideoDataFetch, useVideoFiltering, useResponsiveVideosPerPage } from "./hooks/useVideoData"
 import { useInfiniteScroll } from "./hooks/useInfiniteScroll"
 
@@ -26,12 +26,15 @@ import { VideoGrid } from "./components/VideoGrid"
 import { VideoPagination } from "./components/VideoPagination"
 
 /**
- * DebateVideosPage - Main video browsing interface (Refactored)
+ * Main video browsing page that composes state, data-fetching, and UI sub-components.
  *
  * Manages video browsing with a clean, modular architecture:
  * - Custom hooks for state, data fetching, and filtering
  * - Reusable UI components
  * - Special panels for champions, dictionary, and leaderboard
+ *
+ * @returns The complete video browsing interface, or a special-panel view for
+ *   the "champions", "dictionary", and "leaderboard" categories.
  */
 export function DebateVideosPage() {
   // ============================================================================
@@ -42,14 +45,27 @@ export function DebateVideosPage() {
   // ============================================================================
   // Computed Values
   // ============================================================================
+  /** Total number of pagination pages for the current filtered list. */
   const totalPages = Math.ceil(state.filteredVideos.length / state.videosPerPage)
+  /** Slice start index; always 0 because infinite scroll accumulates videos. */
   const startIndex = 0
+  /** Slice end index based on how many pages have been loaded. */
   const endIndex = state.currentPage * state.videosPerPage
+  /** The subset of filtered videos visible in the current infinite-scroll window. */
   const currentVideos = state.filteredVideos.slice(startIndex, endIndex)
 
   // ============================================================================
   // Category Management
   // ============================================================================
+
+  /**
+   * Switches the active category and resets pagination.
+   * Loads video list from the provided data for video categories; clears it
+   * for special categories (champions, dictionary, leaderboard).
+   *
+   * @param category - The category to activate.
+   * @param data - The full API video data to source videos from.
+   */
   const changeCategory = useCallback(
     (category: CategoryType, data: DebateVideosData) => {
       actions.setCurrentCategory(category)
@@ -68,6 +84,11 @@ export function DebateVideosPage() {
     [actions.setCurrentCategory, actions.setCurrentPage, actions.setAllVideos, actions.setFilteredVideos, actions.setIsLoading],
   )
 
+  /**
+   * Handles a category change triggered by the UI when data is already available.
+   *
+   * @param category - The category selected by the user.
+   */
   const handleCategoryChange = useCallback(
     (category: CategoryType) => {
       if (state.debateVideos) {
@@ -96,6 +117,12 @@ export function DebateVideosPage() {
   // ============================================================================
   // Search & Filter Handlers
   // ============================================================================
+
+  /**
+   * Updates the search term state as the user types.
+   *
+   * @param value - The new search input value.
+   */
   const handleSearchChange = useCallback(
     (value: string) => {
       actions.setSearchTerm(value)
@@ -103,10 +130,16 @@ export function DebateVideosPage() {
     [actions.setSearchTerm],
   )
 
+  /** Clears the current search term. */
   const handleClearSearch = useCallback(() => {
     actions.setSearchTerm("")
   }, [actions.setSearchTerm])
 
+  /**
+   * Updates the active sort order.
+   *
+   * @param value - The sort option value selected by the user.
+   */
   const handleSortChange = useCallback(
     (value: string) => {
       actions.setSortOrder(value)
@@ -114,6 +147,7 @@ export function DebateVideosPage() {
     [actions.setSortOrder],
   )
 
+  /** Toggles thumbnail visibility in the video grid. */
   const handleToggleThumbnails = useCallback(() => {
     actions.setShowThumbnails(!state.showThumbnails)
   }, [actions.setShowThumbnails, state.showThumbnails])
@@ -121,6 +155,11 @@ export function DebateVideosPage() {
   // ============================================================================
   // Pagination Handlers
   // ============================================================================
+
+  /**
+   * Decrements the current page and scrolls the grid into view.
+   * No-ops if already on the first page.
+   */
   const handlePrevPage = useCallback(() => {
     if (state.currentPage > 1) {
       actions.setCurrentPage(state.currentPage - 1)
@@ -128,6 +167,10 @@ export function DebateVideosPage() {
     }
   }, [state.currentPage, state.videoContainerRef, actions.setCurrentPage])
 
+  /**
+   * Increments the current page and scrolls the grid into view.
+   * No-ops if already on the last page.
+   */
   const handleNextPage = useCallback(() => {
     if (state.currentPage < totalPages) {
       actions.setCurrentPage(state.currentPage + 1)

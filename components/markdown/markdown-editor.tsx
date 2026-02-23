@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Primary markdown editor component built on Lexical.
+ * Handles bidirectional markdown <-> HTML conversion, auto-save, unsaved-change
+ * tracking, and multiple view modes including a structured quote-card view.
+ */
+
 "use client"
 
 import { memo, useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from "react"
@@ -30,6 +36,7 @@ import { TRANSFORMERS, $convertFromMarkdownString, $convertToMarkdownString } fr
 import { cn } from "@/lib/utils"
 import { UnifiedMarkdown } from "./unified-markdown"
 import { LexicalQuotesPlugin } from "./LexicalQuotesPlugin"
+import { QuoteView } from "./QuoteView"
 import { Bold, Italic, Underline, Strikethrough, Code, Undo2, Redo2, List, ListOrdered } from "lucide-react"
 
 marked.setOptions({
@@ -70,43 +77,75 @@ turndownService.addRule("fencedCodeBlock", {
   },
 })
 
+/** Imperative controls exposed to parent components via onEditorReady. */
 export interface MarkdownEditorControls {
+  /** Returns the current editor HTML as a string. */
   getHtml: () => string
+  /** Triggers a manual save. */
   save: () => void
+  /** Current persistence state of the editor. */
   saveState: "idle" | "saving" | "saved" | "error"
+  /** Whether the editor content differs from the last saved version. */
   hasChanges: boolean
 }
 
+/** Props accepted by the MarkdownEditor component. */
 interface MarkdownEditorProps {
+  /** Current markdown content string. */
   content: string
+  /** Baseline content used to compute unsaved-change status. */
   originalContent?: string
+  /** Externally controlled unsaved-change flag. */
   hasUnsavedChanges?: boolean
+  /** Called when the unsaved-change status changes. */
   onUnsavedChange?: (hasChanges: boolean) => void
+  /** Called with the latest markdown on each debounced content change. */
   onChange: (content: string) => void
+  /** Called when the user triggers a save action. */
   onSave?: () => void
+  /** Called when the user discards unsaved changes. */
   onDiscard?: () => void
+  /** Renders the editor in read-only mode when true. */
   readOnly?: boolean
+  /** Additional CSS class names applied to the root element. */
   className?: string
+  /** Placeholder text shown when the editor is empty. */
   placeholder?: string
+  /** Whether to show the inline formatting toolbar. */
   showToolbar?: boolean
+  /** File name used as the document identifier. */
   fileName?: string
+  /** Hides save/discard action buttons from the toolbar. */
   hideToolbarActions?: boolean
+  /** Called with imperative controls once the editor is ready, or null on unmount. */
   onEditorReady?: (controls: MarkdownEditorControls | null) => void
+  /** Optional sandbox identifier forwarded to toolbar actions. */
   sandboxId?: string
+  /** Milliseconds between onChange emissions (minimum 1000). */
   autoSaveInterval?: number
+  /** localStorage key for persisting draft content between sessions. */
   localStorageKey?: string
+  /** Current view mode controlling how content is rendered. */
   viewMode?: "read" | "highlighted" | "underlined" | "headings" | "quotes" | "h1-only" | "h2-only" | "h3-only" | "summaries-only"
 }
 
+/** Internal reducer state tracking the editor's synchronisation status. */
 interface EditorSyncState {
+  /** Latest serialised HTML from the Lexical editor. */
   currentHtml: string
+  /** Latest serialised markdown pending emission. */
   pendingMarkdown: string
+  /** Whether the current content differs from the saved baseline. */
   hasChanges: boolean
+  /** Estimated total word count. */
   totalWords: number
+  /** Count of words wrapped in bold tags. */
   boldWords: number
+  /** Count of words wrapped in highlight/mark tags. */
   highlightedWords: number
 }
 
+/** Discriminated union of actions handled by editorSyncReducer. */
 type EditorSyncAction =
   | {
     type: "sync_from_editor"
@@ -128,6 +167,12 @@ const initialEditorSyncState: EditorSyncState = {
   highlightedWords: 0,
 }
 
+/**
+ * Reducer for EditorSyncState that handles content synchronisation actions.
+ * @param state - Current synchronisation state.
+ * @param action - Action describing the state transition.
+ * @returns Updated synchronisation state.
+ */
 function editorSyncReducer(state: EditorSyncState, action: EditorSyncAction): EditorSyncState {
   switch (action.type) {
     case "sync_from_editor":
@@ -149,6 +194,11 @@ function editorSyncReducer(state: EditorSyncState, action: EditorSyncAction): Ed
   }
 }
 
+/**
+ * Counts the number of whitespace-separated words in a plain-text string.
+ * @param text - Input string to count words in.
+ * @returns Number of words found.
+ */
 function countWords(text: string): number {
   return text
     .trim()
@@ -156,12 +206,22 @@ function countWords(text: string): number {
     .filter((w) => w.length > 0).length
 }
 
+/**
+ * Counts the words contained within a specific HTML tag throughout a document.
+ * @param html - Raw HTML string to search.
+ * @param tag - Tag name to match (e.g. "strong", "mark").
+ * @returns Total word count across all matching tag instances.
+ */
 function countWordsInTag(html: string, tag: string): number {
   const regex = new RegExp(`<${tag}[^>]*>(.*?)<\/${tag}>`, "gi")
   const matches = html.match(regex) || []
   return countWords(matches.map((m) => m.replace(/<[^>]*>/g, "")).join(" "))
 }
 
+/**
+ * Lexical plugin that exposes the editor instance to a parent component.
+ * @param onReady - Callback invoked with the editor instance once mounted.
+ */
 function EditorRefPlugin({ onReady }: { onReady: (editor: LexicalEditor) => void }) {
   const [editor] = useLexicalComposerContext()
 
@@ -172,6 +232,12 @@ function EditorRefPlugin({ onReady }: { onReady: (editor: LexicalEditor) => void
   return null
 }
 
+/**
+ * Generic icon button used inside the inline Lexical toolbar.
+ * @param onClick - Click handler for the button.
+ * @param title - Tooltip / accessible title text.
+ * @param children - Icon or other content rendered inside the button.
+ */
 function ToolbarButton({ onClick, title, children }: { onClick: () => void; title: string; children: ReactNode }) {
   return (
     <button
@@ -189,6 +255,7 @@ function ToolbarButton({ onClick, title, children }: { onClick: () => void; titl
   )
 }
 
+/** Inline formatting toolbar rendered within the Lexical composer context. */
 function LexicalToolbar() {
   const [editor] = useLexicalComposerContext()
 
@@ -228,6 +295,11 @@ function LexicalToolbar() {
   )
 }
 
+/**
+ * Replaces the entire content of a Lexical editor with the provided HTML string.
+ * @param editor - The Lexical editor instance to update.
+ * @param html - HTML markup to parse and set as the new editor content.
+ */
 function setEditorHtml(editor: LexicalEditor, html: string) {
   editor.update(() => {
     const parser = new DOMParser()
@@ -241,6 +313,28 @@ function setEditorHtml(editor: LexicalEditor, html: string) {
   })
 }
 
+/**
+ * Full-featured markdown editor built on Lexical with auto-save, unsaved-change
+ * tracking, and multiple view modes. Memoised to prevent unnecessary re-renders.
+ * @param content - Current markdown content.
+ * @param originalContent - Baseline content for change detection.
+ * @param hasUnsavedChanges - Externally controlled unsaved flag.
+ * @param onUnsavedChange - Notified when unsaved status changes.
+ * @param onChange - Emits the latest markdown on a debounced interval.
+ * @param onSave - Triggered on explicit save.
+ * @param onDiscard - Triggered when the user discards changes.
+ * @param readOnly - Renders a static view when true.
+ * @param className - Extra classes on the root element.
+ * @param placeholder - Empty-state hint text.
+ * @param showToolbar - Whether to mount the formatting toolbar.
+ * @param fileName - Document identifier forwarded to plugins.
+ * @param hideToolbarActions - Hides save/discard buttons.
+ * @param onEditorReady - Receives imperative controls once the editor mounts.
+ * @param sandboxId - Sandbox identifier forwarded to toolbar.
+ * @param autoSaveInterval - Debounce delay for onChange in ms.
+ * @param localStorageKey - localStorage key for draft persistence.
+ * @param viewMode - Active rendering mode.
+ */
 export const MarkdownEditor = memo(function MarkdownEditor({
   content,
   originalContent,
@@ -278,6 +372,11 @@ export const MarkdownEditor = memo(function MarkdownEditor({
   const latestMarkdownRef = useRef<string>(content)
   const lastEmittedMarkdownRef = useRef<string>(content)
 
+  /**
+   * Converts an HTML string to markdown using TurndownService.
+   * @param html - HTML markup to convert.
+   * @returns Markdown string, or empty string on failure.
+   */
   const htmlToMarkdown = useCallback((html: string): string => {
     try {
       return turndownService.turndown(html)
@@ -297,6 +396,10 @@ export const MarkdownEditor = memo(function MarkdownEditor({
     onUnsavedChange?.(editorSyncState.hasChanges)
   }, [editorSyncState.hasChanges, onUnsavedChange])
 
+  /**
+   * Persists the current editor content by invoking onSave and updating internal
+   * saved-content references.
+   */
   const handleSave = useCallback(async () => {
     if (!onSave || !editorInstance) return
 
@@ -318,6 +421,9 @@ export const MarkdownEditor = memo(function MarkdownEditor({
     }
   }, [editorInstance, htmlToMarkdown, onSave])
 
+  /**
+   * Reverts the editor to the last saved content and notifies onChange and onDiscard.
+   */
   const handleDiscard = useCallback(() => {
     if (!editorInstance) return
 
