@@ -1,6 +1,6 @@
 /**
  * @fileoverview State management hook for videos page
- * @module components/debate/core/videos/hooks/useVideoState
+ * @module components/debate/videos/hooks/useVideoState
  */
 
 import { useState, useRef } from "react"

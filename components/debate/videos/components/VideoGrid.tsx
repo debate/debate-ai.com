@@ -1,6 +1,6 @@
 /**
  * @fileoverview Video grid display component
- * @module components/debate/core/videos/components/VideoGrid
+ * @module components/debate/videos/components/VideoGrid
  */
 
 import { Card, CardDescription } from "@/components/ui/card"

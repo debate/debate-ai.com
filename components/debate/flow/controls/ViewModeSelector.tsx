@@ -1,6 +1,6 @@
 /**
  * @fileoverview View mode selector dropdown
- * @module components/debate/core/controls/ViewModeSelector
+ * @module components/debate/flow/controls/ViewModeSelector
  */
 
 import { Eye } from "lucide-react"

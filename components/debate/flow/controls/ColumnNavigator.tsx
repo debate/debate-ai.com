@@ -1,6 +1,6 @@
 /**
  * @fileoverview Column navigation buttons
- * @module components/debate/core/controls/ColumnNavigator
+ * @module components/debate/flow/controls/ColumnNavigator
  */
 
 import { ChevronLeft, ChevronRight } from "lucide-react"

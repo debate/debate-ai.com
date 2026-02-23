@@ -1,6 +1,6 @@
 /**
  * @fileoverview Toolbar for split mode controls
- * @module components/debate/core/controls/SplitModeToolbar
+ * @module components/debate/flow/controls/SplitModeToolbar
  */
 
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react"

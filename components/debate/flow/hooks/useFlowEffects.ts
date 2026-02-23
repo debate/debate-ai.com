@@ -1,6 +1,6 @@
 /**
  * @fileoverview Side effects for flow page initialization and persistence
- * @module components/debate/core/hooks/useFlowEffects
+ * @module components/debate/flow/hooks/useFlowEffects
  */
 
 import { useEffect } from "react"

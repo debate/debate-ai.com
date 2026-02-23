@@ -1,6 +1,6 @@
 /**
  * @fileoverview Pagination controls for video list
- * @module components/debate/core/videos/components/VideoPagination
+ * @module components/debate/videos/components/VideoPagination
  */
 
 import { ChevronLeft, ChevronRight } from "lucide-react"

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Mobile header for flow page
- * @module components/debate/core/layout/FlowPageHeader
+ * @module components/debate/flow/layout/FlowPageHeader
  */
 
 import type React from "react"

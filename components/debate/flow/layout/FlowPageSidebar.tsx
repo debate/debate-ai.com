@@ -1,6 +1,6 @@
 /**
  * @fileoverview Sidebar for flow navigation and controls
- * @module components/debate/core/layout/FlowPageSidebar
+ * @module components/debate/flow/layout/FlowPageSidebar
  */
 
 import type React from "react"
@@ -8,7 +8,7 @@ import { Plus, Clock, Users, Columns2, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { FlowTab } from "../../flow/navigation/FlowTab"
-import { TimersPanel } from "../../timers/TimersPanel"
+import { TimersPanel } from "../timers/TimersPanel"
 
 interface FlowPageSidebarProps {
   /** Array of flows */

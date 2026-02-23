@@ -1,6 +1,6 @@
 /**
  * @fileoverview Search bar with filters for videos
- * @module components/debate/core/videos/components/VideoSearchBar
+ * @module components/debate/videos/components/VideoSearchBar
  */
 
 import { Search, X, Video, VideoOff } from "lucide-react"

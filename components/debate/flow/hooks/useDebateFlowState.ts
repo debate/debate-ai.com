@@ -1,6 +1,6 @@
 /**
  * @fileoverview Custom hook for managing debate flow page state
- * @module components/debate/core/hooks/useDebateFlowState
+ * @module components/debate/flow/hooks/useDebateFlowState
  */
 
 import { useState, useRef } from "react";

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Column navigation for spreadsheet view
- * @module components/debate/core/hooks/useColumnNavigation
+ * @module components/debate/flow/hooks/useColumnNavigation
  */
 
 import { useCallback } from "react"

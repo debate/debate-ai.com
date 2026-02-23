@@ -1,6 +1,6 @@
 /**
  * @fileoverview Handlers for flow page interactions
- * @module components/debate/core/hooks/useFlowHandlers
+ * @module components/debate/flow/hooks/useFlowHandlers
  */
 
 import { useCallback } from "react";

@@ -13,7 +13,7 @@ Debate AI enables competitive debaters in PF, LD & Policy to streamline AI-power
 - **Timer Management**: Built-in debate timers for structured discussions
 
 
-### Crowdsourced Argument, Reasoning, Decisionmaking & Summarization (CARDS)
+## Crowdsourced Annotated Research Dataset as a Service (CARDS)
 
 <p align="center">
     <img src="./public/images/logo-decap-plan.png" width="300" height="300"  > 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Quick action buttons toolbar
- * @module components/debate/core/controls/QuickActionsBar
+ * @module components/debate/flow/controls/QuickActionsBar
  */
 
 import { Plus, Clock, Users, Columns2, X, Settings } from "lucide-react"

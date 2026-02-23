@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { DebateVideosPage } from "@/components/debate/core/DebateVideosPage"
+import { DebateVideosPage } from "@/components/debate/videos/DebateVideosPage"
 
 export const metadata: Metadata = {
   title: "DEARLY Videos",

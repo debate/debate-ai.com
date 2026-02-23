@@ -6,24 +6,24 @@
  * Refactored video browsing interface with modular architecture.
  * Features category navigation, search, filtering, and infinite scroll.
  *
- * @module components/debate/core/DebateVideosPage
+ * @module components/debate/videos/DebateVideosPage
  */
 
 import { useCallback, useEffect } from "react"
-import { ChampionsPanel } from "../videos/panels/ChampionsPanel"
-import { DictionaryPanel } from "../videos/panels/DictionaryPanel"
-import { LeaderboardPanel } from "../videos/panels/LeaderboardPanel"
+import { ChampionsPanel } from "./panels/ChampionsPanel"
+import { DictionaryPanel } from "./panels/DictionaryPanel"
+import { LeaderboardPanel } from "./panels/LeaderboardPanel"
 
 // Hooks
-import { useVideoState, type CategoryType, type DebateVideosData } from "./videos/hooks/useVideoState"
-import { useVideoDataFetch, useVideoFiltering, useResponsiveVideosPerPage } from "./videos/hooks/useVideoData"
-import { useInfiniteScroll } from "./videos/hooks/useInfiniteScroll"
+import { useVideoState, type CategoryType, type DebateVideosData } from "./hooks/useVideoState"
+import { useVideoDataFetch, useVideoFiltering, useResponsiveVideosPerPage } from "./hooks/useVideoData"
+import { useInfiniteScroll } from "./hooks/useInfiniteScroll"
 
 // Components
-import { CategoryDock } from "./videos/components/CategoryDock"
-import { VideoSearchBar } from "./videos/components/VideoSearchBar"
-import { VideoGrid } from "./videos/components/VideoGrid"
-import { VideoPagination } from "./videos/components/VideoPagination"
+import { CategoryDock } from "./components/CategoryDock"
+import { VideoSearchBar } from "./components/VideoSearchBar"
+import { VideoGrid } from "./components/VideoGrid"
+import { VideoPagination } from "./components/VideoPagination"
 
 /**
  * DebateVideosPage - Main video browsing interface (Refactored)

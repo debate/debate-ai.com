@@ -1,6 +1,6 @@
 /**
  * @fileoverview Data fetching and filtering hooks for videos
- * @module components/debate/core/videos/hooks/useVideoData
+ * @module components/debate/videos/hooks/useVideoData
  */
 
 import { useEffect, useCallback } from "react"

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Infinite scroll hook for videos
- * @module components/debate/core/videos/hooks/useInfiniteScroll
+ * @module components/debate/videos/hooks/useInfiniteScroll
  */
 
 import { useEffect } from "react";

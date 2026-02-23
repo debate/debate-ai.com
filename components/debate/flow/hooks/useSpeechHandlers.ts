@@ -1,6 +1,6 @@
 /**
  * @fileoverview Handlers for speech document operations
- * @module components/debate/core/hooks/useSpeechHandlers
+ * @module components/debate/flow/hooks/useSpeechHandlers
  */
 
 import { useCallback } from "react"

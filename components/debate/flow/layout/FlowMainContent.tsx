@@ -1,6 +1,6 @@
 /**
  * @fileoverview Main content area for flow page
- * @module components/debate/core/layout/FlowMainContent
+ * @module components/debate/flow/layout/FlowMainContent
  */
 
 import type React from "react"

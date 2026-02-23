@@ -1,6 +1,6 @@
 /**
  * @fileoverview Speech document editor panel
- * @module components/debate/core/layout/SpeechDocPanel
+ * @module components/debate/flow/layout/SpeechDocPanel
  */
 import { X, Quote, Eye, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"

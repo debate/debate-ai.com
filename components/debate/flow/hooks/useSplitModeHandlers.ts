@@ -1,6 +1,6 @@
 /**
  * @fileoverview Handlers for split view mode
- * @module components/debate/core/hooks/useSplitModeHandlers
+ * @module components/debate/flow/hooks/useSplitModeHandlers
  */
 
 import { useCallback, useState } from "react"

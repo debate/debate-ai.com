@@ -1,10 +1,6 @@
 <p align="center">
-    <img src="https://i.imgur.com/E7X8WGz.png"  > 
-</p>
-</p>
-<p align="center">
 <a href="https://chromewebstore.google.com/detail/debate-timer-chrome-mobil/noecbaibfhbmpapofcdkgchfifmoinfj">
-<img src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/tbyBjqi7Zu733AAKA5n4.png" />
+Chrome Extension
 </a>
 </p>
 
@@ -62,15 +58,10 @@ Online Format - online games show matchmaking works for longer practices like se
 
 
 ## References & External Links
-- [OpenDebateEvidence: A Massive-Scale Argument Mining and Summarization Dataset](https://arxiv.org/abs/2406.14657)
-- https://huggingface.co/datasets/Yusuf5/OpenCaselist
-
-- [Storm - LLM-powered Knowledge Curation System - Install Locally](https://www.youtube.com/watch?v=11tq0DvIVcE)
-- [Knowledge Graph Organizer WebUI](https://github.com/KnowledgeCanvas/knowledge?tab=readme-ov-file)
+- [OpenCaselist Dataset](https://huggingface.co/datasets/Yusuf5/OpenCaselist)
+- [OpenDebateEvidence paper](https://arxiv.org/abs/2406.14657)
+- [MMLU Leaderboard](https://artificialanalysis.ai/evaluations/mmlu-pro)
 - [Anthropic Persuation Overview](https://www.anthropic.com/research/measuring-model-persuasiveness)
 - [Anthropic Persuation Dataset](https://huggingface.co/datasets/Anthropic/persuasion)
-- [Tree-of-Thought Prompt](https://github.com/princeton-nlp/tree-of-thought-llm)
-- [HF Model Leaderboard](https://huggingface.co/spaces/mteb/leaderboard)
-- [KG Embedding Papers](https://github.com/shaoxiongji/knowledge-graphs/blob/master/papers/KG-embedding.md)
-- [Fusing Knowledge Graphs and Large Language Models](https://www.youtube.com/watch?v=RBKHLt3n9rM)
 - [NLP Research Progress](https://github.com/sebastianruder/NLP-progress/)
+- [Prompts.chat](https://prompts.chat/prompts?category=cmj1yryr7000pt5aljkv1cmah)

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Hook for detecting mobile viewport
- * @module components/debate/core/hooks/useMobileDetection
+ * @module components/debate/flow/hooks/useMobileDetection
  */
 
 import { useEffect } from "react"
