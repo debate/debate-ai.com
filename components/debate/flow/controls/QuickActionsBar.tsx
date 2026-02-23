@@ -61,7 +61,7 @@ export function QuickActionsBar({
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{splitMode ? "Exit Split Mode" : "Split Mode"}</p>
+            <p>{splitMode ? "Go to Spreadsheet Flow" : "Speech Side-by-Side View"}</p>
           </TooltipContent>
         </Tooltip>
 

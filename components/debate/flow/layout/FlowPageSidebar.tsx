@@ -3,8 +3,7 @@
  * @module components/debate/flow/layout/FlowPageSidebar
  */
 
-import type React from "react"
-import { Plus, Clock, Users, Columns2, X } from "lucide-react"
+import { Plus, Clock, Users, Columns2, Grid3x3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { FlowTab } from "../../flow/navigation/FlowTab"
@@ -103,11 +102,11 @@ export function FlowPageSidebar({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button onClick={onToggleSplitMode} size="icon" variant="ghost" className="h-7 w-7">
-                {splitMode ? <X className="h-4 w-4" /> : <Columns2 className="h-4 w-4" />}
+                {splitMode ? <Grid3x3 className="h-4 w-4" /> : <Columns2 className="h-4 w-4" />}
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{splitMode ? "Exit Split Mode" : "Split Mode"}</p>
+              <p>{splitMode ? "Go to Spreadsheet Flow" : "Speech Side-by-Side View"}</p>
             </TooltipContent>
           </Tooltip>
 

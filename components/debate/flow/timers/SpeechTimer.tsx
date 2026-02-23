@@ -310,6 +310,7 @@ export function SpeechTimer({
   }
 
   // Visual state flags
+  const isEarlyWarning = time <= 120000 && time > 30000
   const isWarning = time <= 30000 && time > 0
   const isDone = state.name === "done" || time <= 0
   const palette = currentSpeech.secondary ? "accent-secondary" : "accent"
@@ -376,6 +377,7 @@ export function SpeechTimer({
               "text-3xl font-bold tabular-nums flex items-center",
               isDone && "text-[var(--text-error)] animate-pulse",
               isWarning && "text-yellow-600 dark:text-yellow-400",
+              isEarlyWarning && "text-orange-500 dark:text-orange-400",
             )}
           >
             <input

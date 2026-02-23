@@ -291,7 +291,7 @@ export function ChampionsPanel({ onYearSelect }: ChampionsPanelProps) {
                   <div className="flex items-center gap-4">
                     {/* Category logo – 3D tilt on hover */}
                     <article
-                      className="w-[200px] h-[200px] shrink-0 rounded-xl shadow-md overflow-hidden cursor-pointer will-change-transform"
+                      className="w-[200px] h-[200px] shrink-0 rounded-xl overflow-hidden cursor-pointer will-change-transform"
                       onMouseMove={(e) => {
                         const el = e.currentTarget
                         el.style.transition = "transform 0.1s ease-out"

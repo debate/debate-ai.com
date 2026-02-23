@@ -5,7 +5,7 @@
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "scripts": {
-    "dev": "concurrently \"NODE_NO_WARNINGS=1 next dev\" \"wait-on http://localhost:3000 && opener http://localhost:3000\"",
+    "dev": "concurrently \"next dev\" \"wait-on http://localhost:3000 && opener http://localhost:3000\"",
     "build": "next build",
     "start": "next start"
   },

@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { Search, GripVertical, Bot } from "lucide-react"
-import { ResearchSearchSidebar } from "@/components/debate/research/ResearchSearchSidebar"
-import { CardContentViewer } from "@/components/debate/research/CardContentViewer"
-import { AiAnalysisSidebar } from "@/components/debate/research/AiAnalysisSidebar"
+import { ResearchSearchSidebar } from "@/components/debate/shared-cards/ResearchSearchSidebar"
+import { CardContentViewer } from "@/components/debate/shared-cards/CardContentViewer"
+import { AiAnalysisSidebar } from "@/components/debate/shared-cards/AiAnalysisSidebar"
 
 export function SearchInterface() {
   const [searchTerm, setSearchTerm] = useState("")
