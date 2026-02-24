@@ -1,10 +1,14 @@
-![logo](https://i.imgur.com/qLOedzW.png)
+<p align="center">
+    <img src="https://i.imgur.com/GBvtyCV.png"  > 
+</p>
 
 # Reimagining the Internet as Argument Mind Map is Key to Collective Consciousness Governance
 
-The vision: every policy debate, scientific controversy, and ethical question mapped in a living graph. Decisions made not by representatives serving four-year terms with imperfect information, but by AI agents serving continuous mandates with complete information, full transparency, and real-time accountability to every affected person. The debate community can treat "argument graphs for the whole internet" as an infrastructure project that feeds into next-generation AI collective intelligence systems. By agreeing on shared formats, workflows, and incentives, we can iterate tools that surface genuinely new arguments while building the foundation for transparent, accountable AI reasoning.
+**Last Updated Feb 20, 2026**
 
----
+The vision: every policy debate, social controversy, and ethical question mapped in a living graph. Decisions made not by representatives serving four-year terms with imperfect information, but by AI agents serving continuous mandates with complete information, full transparency, and real-time accountability to every affected person. The debate community can treat "argument graphs for the whole internet" as an infrastructure project that feeds into next-generation AI collective intelligence systems. By agreeing on shared formats, workflows, and incentives, we can iterate tools that surface genuinely new arguments while building the foundation for transparent, accountable AI reasoning. 
+
+## DECAP: Decision-Making via e-Voting for Community Agent Perspectives
 
 ## 1. Define a Minimal Argument Schema
 
@@ -156,23 +160,20 @@ Partner with schools, universities, citizen assemblies, and media literacy progr
 
 🌌 **The Ultimate Purpose**: Evolving into the next system of complexity through self-organizing patterns emergent from simple rules. Individual humans contribute values and arguments; AI synthesizes collective will; governance emerges from the interaction. A true Collective Consciousness for humanity's future—not replacing human agency but amplifying it to civilizational scale.
 
-
-![ai_mind](./public/images/icon-collective-mind.png)
-
 ---
 
 ## Collective Consciousness Replaces Traditional Governance
 
-| **Traditional Government System**    | **Collective Consciousness System**           |
-| ------------------------------------ | --------------------------------------------- |
-| Vote every 2-4 years                 | Continuous value expression                   |
-| Representatives as imperfect proxies | AI agents with perfect preference aggregation |
-| Lobbying corrupts outcomes           | Transparent, auditable reasoning              |
-| Cognitive biases distort decisions   | Bias-aware systems with correction            |
-| Information asymmetry                | Full simulation access for all citizens       |
-| Nation-state boundaries              | Planetary stakeholder aggregation             |
-| Opaque budget allocation             | Direct democratic resource voting             |
-| Corporate shareholder primacy        | Multi-stakeholder optimization                |
+| **Traditional Government System** | **Collective Consciousness System**     |
+| --------------------------------------- | --------------------------------------------- |
+| Vote every 2-4 years                    | Continuous value expression                   |
+| Representatives as imperfect proxies    | AI agents with perfect preference aggregation |
+| Lobbying corrupts outcomes              | Transparent, auditable reasoning              |
+| Cognitive biases distort decisions      | Bias-aware systems with correction            |
+| Information asymmetry                   | Full simulation access for all citizens       |
+| Nation-state boundaries                 | Planetary stakeholder aggregation             |
+| Opaque budget allocation                | Direct democratic resource voting             |
+| Corporate shareholder primacy           | Multi-stakeholder optimization                |
 
 ---
 
@@ -207,18 +208,33 @@ Partner with schools, universities, citizen assemblies, and media literacy progr
 ## References
 
 [^1]: https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2023.1124045/full
+    
 [^2]: https://cacm.acm.org/research/implementing-the-argument-web/
+    
 [^3]: https://pmc.ncbi.nlm.nih.gov/articles/PMC9956294/
+    
 [^4]: https://pmc.ncbi.nlm.nih.gov/articles/PMC10313200/
+    
 [^5]: https://aaai.org/ojs/index.php/AAAI/article/view/6231
+    
 [^6]: https://publications.ics.forth.gr/tech-reports/2013/2013.TR438_The_Vision_of_the_Persuasive_Web.pdf
+    
 [^7]: https://researchrepository.universityofgalway.ie/bitstreams/bc5b0601-a7c3-470e-bad3-3ab53fc9d0b0/download
+    
 [^8]: https://homepages.abdn.ac.uk/n.oren/pages/TAFA-15/TAFA-15_submission_18.pdf
+    
 [^9]: https://asistdl.onlinelibrary.wiley.com/doi/10.1002/pra2.205
+    
 [^10]: https://aclanthology.org/2025.argmining-1.13.pdf
+    
 [^11]: https://aclanthology.org/2023.argmining-1.pdf
+    
 [^12]: https://oro.open.ac.uk/38003/1/DeLiddo-DC8-2013.pdf
+    
 [^13]: https://www.visual-mapping.com/2008/12/debate-graph-wiki-debate-mind-mapping.html
+    
 [^14]: https://www.asc.upenn.edu/research/centers/blog/collective-consciousness-and-quest-strong-independent-media
+    
 [^15]: https://homerdixon.com/resource/graphical-argument-analysis-a-new-approach-to-understanding-arguments-applied-to-a-debate-about-the-window-of-vulnerability/
+    
 [^16]: https://pubsonline.informs.org/doi/10.1287/isre.2021.0615

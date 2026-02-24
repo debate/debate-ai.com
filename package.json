@@ -1,7 +1,7 @@
 {
   "name": "debate-ai",
-  "description": "Debate AI enables competitive debaters in PF, LD & Policy to streamline AI-powered debate research management, flow tracking, and evidence debate analysis",
-  "version": "0.2.0",
+  "description": "Debate AI enables competitive debaters in PF, LD & Policy to streamline AI research management, live speech sharing, and evidence analysis",
+  "version": "0.3.0",
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "scripts": {
