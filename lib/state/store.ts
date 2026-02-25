@@ -156,6 +156,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
   },
   getRounds: () => {
     try {
+      if (typeof window === "undefined") return []
       const storedRounds = localStorage.getItem("rounds")
       return storedRounds ? JSON.parse(storedRounds) : []
     } catch (error) {

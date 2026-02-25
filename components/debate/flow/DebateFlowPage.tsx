@@ -25,7 +25,7 @@ import { SplitModeToolbar } from "./controls/SplitModeToolbar"
 
 // Dialogs
 import { FlowHistoryDialog } from "../dialogs/FlowHistoryDialog"
-import { RoundEditorDialog } from "../dialogs/RoundEditorDialog"
+import { RoundEditorDialog } from "../dialogs/round-editor"
 import { SettingsDialog } from "../dialogs/SettingsDialog"
 
 // Custom hooks
@@ -154,7 +154,7 @@ export function DebateFlowPage() {
    *
    * @param roundId - ID of the round to edit
    */
-  const handleEditRound = (roundId: number) => {
+  const handleEditRound = (roundId?: number) => {
     state.setEditingRoundId(roundId)
     state.setRoundDialogOpen(true)
   }
@@ -314,7 +314,7 @@ export function DebateFlowPage() {
   // Render
   // ============================================================================
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden">
+    <div className="h-screen w-full flex flex-col overflow-hidden">
       {/* Mobile Header */}
       {state.isMobile && (
         <FlowPageHeader

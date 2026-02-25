@@ -38,7 +38,7 @@ interface FlowPageSidebarProps {
   /** Handler called when the user opens the flow history dialog. */
   onOpenHistory: () => void
   /** Handler called when the user opens the round editor for a given round. */
-  onEditRound: (roundId: number) => void
+  onEditRound: (roundId?: number) => void
   /** Optional handler called when the mobile menu overlay should be dismissed. */
   onCloseMobileMenu?: () => void
 }
@@ -138,14 +138,14 @@ export function FlowPageSidebar({
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7"
-                onClick={() => currentFlow?.roundId && onEditRound(currentFlow.roundId)}
-                disabled={!currentFlow || !currentFlow.roundId}
+                onClick={() => onEditRound(currentFlow?.roundId)}
+                disabled={!currentFlow}
               >
                 <Users className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Edit Round</p>
+              <p>{currentFlow?.roundId ? "Edit Round" : "New Round"}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

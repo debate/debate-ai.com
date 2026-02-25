@@ -165,47 +165,75 @@ export function TimersPanel() {
           state={speechState.state}
           onResetTimeIndexChange={(index) => setSpeechState((prev) => ({ ...prev, resetTimeIndex: index }))}
           onTimeChange={(time) => setSpeechState((prev) => ({ ...prev, time }))}
-          onStateChange={(state) => setSpeechState((prev) => ({ ...prev, state }))}
+          onStateChange={(state) => {
+            setSpeechState((prev) => ({ ...prev, state }))
+            if (state.name === "running") {
+              // Pause prep timers when speech starts
+              setPrepState((prev) => prev && prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
+              setPrepSecondaryState((prev) => prev && prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
+            }
+          }}
+          onFinish={() => {
+            // Auto-advance to next speech when timer finishes
+            setSpeechState((prev) => {
+              const nextIndex = prev.resetTimeIndex + 1
+              if (nextIndex < debateStyle.timerSpeeches.length) {
+                return {
+                  resetTimeIndex: nextIndex,
+                  time: debateStyle.timerSpeeches[nextIndex].time,
+                  state: { name: "paused" },
+                }
+              }
+              return { ...prev, time: 0, state: { name: "done" } }
+            })
+          }}
           currentRound={currentRound}
-        />
+        >
+          {/* Prep Timers inside the ring */}
+          {(prepState || prepSecondaryState) && (
+            <div className="flex flex-col gap-0 w-full">
+              {prepState && (
+                <PrepTimer
+                  resetTime={prepState.resetTime}
+                  time={prepState.time}
+                  state={prepState.state}
+                  palette="accent-secondary"
+                  color="blue"
+                  compact
+                  onTimeChange={(time) => setPrepState((prev) => prev && { ...prev, time })}
+                  onStateChange={(state) => {
+                    setPrepState((prev) => prev && { ...prev, state })
+                    if (state.name === "running") {
+                      // Pause speech and other prep timer
+                      setSpeechState((prev) => prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
+                      setPrepSecondaryState((prev) => prev && prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
+                    }
+                  }}
+                />
+              )}
+              {prepSecondaryState && (
+                <PrepTimer
+                  resetTime={prepSecondaryState.resetTime}
+                  time={prepSecondaryState.time}
+                  state={prepSecondaryState.state}
+                  palette="accent-secondary"
+                  color="red"
+                  compact
+                  onTimeChange={(time) => setPrepSecondaryState((prev) => prev && { ...prev, time })}
+                  onStateChange={(state) => {
+                    setPrepSecondaryState((prev) => prev && { ...prev, state })
+                    if (state.name === "running") {
+                      // Pause speech and other prep timer
+                      setSpeechState((prev) => prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
+                      setPrepState((prev) => prev && prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
+                    }
+                  }}
+                />
+              )}
+            </div>
+          )}
+        </SpeechTimer>
       </div>
-
-      {/* Prep Timers (if debate style has prep time) */}
-      {(prepState || prepSecondaryState) && (
-        <div className="flex flex-col gap-1 w-full">
-          {/* Aff prep timer (blue) */}
-          {prepState && (
-            <div className="w-full">
-              <PrepTimer
-                resetTime={prepState.resetTime}
-                time={prepState.time}
-                state={prepState.state}
-                palette="accent-secondary"
-                color="blue"
-                compact
-                onTimeChange={(time) => setPrepState((prev) => prev && { ...prev, time })}
-                onStateChange={(state) => setPrepState((prev) => prev && { ...prev, state })}
-              />
-            </div>
-          )}
-
-          {/* Neg prep timer (red) */}
-          {prepSecondaryState && (
-            <div className="w-full">
-              <PrepTimer
-                resetTime={prepSecondaryState.resetTime}
-                time={prepSecondaryState.time}
-                state={prepSecondaryState.state}
-                palette="accent-secondary"
-                color="red"
-                compact
-                onTimeChange={(time) => setPrepSecondaryState((prev) => prev && { ...prev, time })}
-                onStateChange={(state) => setPrepSecondaryState((prev) => prev && { ...prev, state })}
-              />
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Voice Chat (if participants available) */}
       {participants.length > 0 && (

@@ -95,13 +95,12 @@ export function QuickActionsBar({
                 size="icon"
                 className="h-7 w-7"
                 onClick={onEditRound}
-                disabled={!canEditRound}
               >
                 <Users className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Edit Round</p>
+              <p>{canEditRound ? "Edit Round" : "New Round"}</p>
             </TooltipContent>
           </Tooltip>
         )}

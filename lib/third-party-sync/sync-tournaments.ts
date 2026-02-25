@@ -14,28 +14,20 @@ export async function getTournamentNames(): Promise<string[]> {
 
     const html = await res.text();
 
-    // Look for links that contain tournament names (typically in <a> tags with tourn_id)
     const linkMatches =
-      html.match(/<a[^>]*href="[^"]*tourn_id=[^"]*"[^>]*>([^<]+)<\/a>/gi) || [];
+      html.match(/<a[^>]*href="[^"]*tourn_id=[^"]*"[^>]*>[\s\S]*?<\/a>/gi) || [];
 
     const names = linkMatches
       .map((link) => {
-        // Extract the text between <a> tags
-        const match = link.match(/>([^<]+)<\/a>/i);
+        const match = link.match(/>([^<]*(?:<[^a/][^<]*)*)<\/a>/i);
         if (!match) return "";
-        const text = match[1].trim();
-        // Filter out obvious non-tournament text
-        return text;
+        return match[1].replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
       })
       .filter((n) => {
-        // Filter out dates (contains numbers like 2024, 01/15), navigation links, and short text
         return (
-          n.length > 5 &&
-          !n.match(/^\d{1,2}\/\d{1,2}/) && // No dates like 01/15
-          !n.match(/^\d{4}/) && // No years like 2024
-          !n.match(/\d{4}$/) && // No years at end
+          n.length > 3 &&
           !n.includes("http") &&
-          !n.match(/^(Home|Login|Help|About|Contact)$/i) // No nav links
+          !n.match(/^(Home|Login|Help|About|Contact|Sign Up|Register)$/i)
         );
       });
 

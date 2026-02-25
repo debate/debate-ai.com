@@ -7,13 +7,13 @@ export const debateStyleMap = [
   "worldSchools",
   "bigQuestions",
   "nofSpar",
-  "parli",
-] as const
+  "parlimentary",
+] as const;
 
-export type DebateStyleKey = (typeof debateStyleMap)[number]
+export type DebateStyleKey = (typeof debateStyleMap)[number];
 
 export const debateStyles: {
-  [key in DebateStyleKey]: DebateStyle
+  [key in DebateStyleKey]: DebateStyle;
 } = {
   policy: {
     primary: {
@@ -97,7 +97,18 @@ export const debateStyles: {
   congress: {
     primary: {
       name: "bill",
-      columns: ["1A", "Q/1N", "Q/2A", "Q/2N", "Q/3A", "Q/3N", "Q/4A", "Q/4N", "Q/5A", "Q/5N"],
+      columns: [
+        "1A",
+        "Q/1N",
+        "Q/2A",
+        "Q/2N",
+        "Q/3A",
+        "Q/3N",
+        "Q/4A",
+        "Q/4N",
+        "Q/5A",
+        "Q/5N",
+      ],
       invert: false,
     },
     timerSpeeches: [{ name: "speech", time: 3 * 60 * 1000, secondary: false }],
@@ -169,7 +180,7 @@ export const debateStyles: {
       { name: "CR", time: 2 * 60 * 1000, secondary: true },
     ],
   },
-  parli: {
+  parlimentary: {
     primary: {
       name: "pro",
       columns: ["1PC", "1OC", "2PC", "2OC/OR", "PR"],
@@ -216,4 +227,4 @@ export const debateStyles: {
     ],
     prepTime: 10 * 60 * 1000,
   },
-}
+};

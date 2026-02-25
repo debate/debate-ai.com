@@ -47,6 +47,8 @@ interface SpeechTimerProps {
   onFinish?: () => void
   /** Optional round data for debater names */
   currentRound?: Round
+  /** Optional content to render inside the ring below controls */
+  children?: React.ReactNode
 }
 
 /**
@@ -81,6 +83,7 @@ export function SpeechTimer({
   onStateChange,
   onFinish,
   currentRound,
+  children,
 }: SpeechTimerProps) {
   // Refs
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -154,9 +157,10 @@ export function SpeechTimer({
 
         if (newTime <= 0) {
           playSoundEffect("finalBeep")
-          onStateChange({ name: "done" })
           if (onFinish) {
             onFinish()
+          } else {
+            onStateChange({ name: "done" })
           }
         }
       }, 100)
@@ -322,117 +326,164 @@ export function SpeechTimer({
         `palette-${palette}`,
       )}
     >
-      <div className="flex flex-col gap-1">
-        {/* Speech Navigation Row */}
-        <div className="flex items-center gap-1">
-          {/* Previous speech button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 flex-shrink-0"
-            onClick={prevSpeech}
-            disabled={resetTimeIndex === 0}
-          >
-            <ChevronLeft className="h-3 w-3" />
-          </Button>
+      {/* Circular progress ring containing all controls */}
+      {(() => {
+        const size = children ? 200 : 160
+        const strokeWidth = 5
+        const radius = (size - strokeWidth) / 2
+        const circumference = 2 * Math.PI * radius
+        const progress = currentSpeech.time > 0 ? time / currentSpeech.time : 0
+        const strokeDashoffset = circumference * (1 - progress)
 
-          {/* Speech dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex-1 justify-between h-6 px-2 min-w-0">
-                <span className="text-xs font-medium text-[var(--this-text)] truncate">{currentSpeech.name}</span>
-                <ChevronDown className="h-3 w-3 ml-1 flex-shrink-0" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="w-56">
-              {speechMenuItems.map((item) => (
-                <DropdownMenuItem
-                  key={item.index}
-                  onClick={() => selectSpeech(item.index)}
-                  className={cn("cursor-pointer", item.index === resetTimeIndex && "bg-accent")}
-                >
-                  {item.label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Next speech button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 flex-shrink-0"
-            onClick={nextSpeech}
-            disabled={resetTimeIndex === speeches.length - 1}
-          >
-            <ChevronRight className="h-3 w-3" />
-          </Button>
-        </div>
-
-        {/* Timer Display Row */}
-        <div className="flex items-center justify-center gap-2">
-          {/* Editable time display */}
-          <div
-            className={cn(
-              "text-3xl font-bold tabular-nums flex items-center",
-              isDone && "text-[var(--text-error)] animate-pulse",
-              isWarning && "text-yellow-600 dark:text-yellow-400",
-              isEarlyWarning && "text-orange-500 dark:text-orange-400",
-            )}
-          >
-            <input
-              ref={minutesRef}
-              type="text"
-              value={minutes}
-              onChange={(e) => setMinutes(e.target.value)}
-              onFocus={handleFocus}
-              onKeyDown={handleMinutesKeyDown}
-              onBlur={handleBlur}
-              disabled={state.name === "running"}
-              className="w-[2ch] bg-transparent border-none text-right outline-none disabled:cursor-not-allowed p-0 m-0"
-            />
-            <span>:</span>
-            <input
-              ref={secondsRef}
-              type="text"
-              value={seconds}
-              onChange={(e) => setSeconds(e.target.value)}
-              onFocus={handleFocus}
-              onKeyDown={handleSecondsKeyDown}
-              onBlur={handleBlur}
-              disabled={state.name === "running"}
-              className="w-[2ch] bg-transparent border-none text-left outline-none disabled:cursor-not-allowed p-0 m-0"
-            />
-          </div>
-
-          {/* Control buttons */}
-          <div className="flex gap-1">
-            {/* Play/Pause button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                "h-8 w-8",
-                state.name === "running"
-                  ? "bg-red-500 hover:bg-red-600 text-white"
-                  : "bg-blue-500 hover:bg-blue-600 text-white",
-              )}
-              onClick={toggleTimer}
-              onMouseDown={() => playActive()}
-              onMouseUp={() => {
-                state.name === "running" ? playOff() : playOn()
-              }}
+        return (
+          <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+            <svg
+              className="absolute inset-0 -rotate-90"
+              width={size}
+              height={size}
+              viewBox={`0 0 ${size} ${size}`}
             >
-              {state.name === "running" ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-            </Button>
+              {/* Background track */}
+              <circle
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={strokeWidth}
+                className="opacity-10"
+              />
+              {/* Progress arc */}
+              <circle
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                strokeWidth={strokeWidth}
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
+                className={cn(
+                  "transition-[stroke-dashoffset] duration-200",
+                  isDone && "stroke-[var(--text-error)]",
+                  isWarning && !isDone && "stroke-yellow-500",
+                  isEarlyWarning && !isWarning && !isDone && "stroke-orange-500",
+                  !isDone && !isWarning && !isEarlyWarning && "stroke-blue-500",
+                )}
+              />
+            </svg>
 
-            {/* Reset button */}
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={reset}>
-              <RotateCcw className="h-4 w-4" />
-            </Button>
+            {/* Content inside ring */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
+              {/* Speech Navigation Row */}
+              <div className="flex items-center gap-0">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-4 w-3 flex-shrink-0 px-0"
+                  onClick={prevSpeech}
+                  disabled={resetTimeIndex === 0}
+                >
+                  <ChevronLeft className="h-2.5 w-2.5" />
+                </Button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="justify-between h-5 px-1 min-w-0">
+                      <span className="text-[10px] font-medium text-[var(--this-text)] truncate">{currentSpeech.name}</span>
+                      <ChevronDown className="h-2.5 w-2.5 ml-0.5 flex-shrink-0" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="center" className="w-56">
+                    {speechMenuItems.map((item) => (
+                      <DropdownMenuItem
+                        key={item.index}
+                        onClick={() => selectSpeech(item.index)}
+                        className={cn("cursor-pointer", item.index === resetTimeIndex && "bg-accent")}
+                      >
+                        {item.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-4 w-3 flex-shrink-0 px-0"
+                  onClick={nextSpeech}
+                  disabled={resetTimeIndex === speeches.length - 1}
+                >
+                  <ChevronRight className="h-2.5 w-2.5" />
+                </Button>
+              </div>
+
+              {/* Time display with controls on sides */}
+              <div className="flex items-center gap-0.5">
+                {/* Reset button (left) */}
+                <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full" onClick={reset}>
+                  <RotateCcw className="h-3 w-3" />
+                </Button>
+
+                {/* Time */}
+                <div
+                  className={cn(
+                    "flex items-center text-4xl font-bold tabular-nums",
+                    isDone && "text-[var(--text-error)] animate-pulse",
+                    isWarning && !isDone && "text-yellow-600 dark:text-yellow-400",
+                    isEarlyWarning && !isWarning && !isDone && "text-orange-500 dark:text-orange-400",
+                  )}
+                >
+                  <input
+                    ref={minutesRef}
+                    type="text"
+                    value={minutes}
+                    onChange={(e) => setMinutes(e.target.value)}
+                    onFocus={handleFocus}
+                    onKeyDown={handleMinutesKeyDown}
+                    onBlur={handleBlur}
+                    disabled={state.name === "running"}
+                    className="w-[2ch] bg-transparent border-none text-right outline-none disabled:cursor-not-allowed p-0 m-0"
+                  />
+                  <span>:</span>
+                  <input
+                    ref={secondsRef}
+                    type="text"
+                    value={seconds}
+                    onChange={(e) => setSeconds(e.target.value)}
+                    onFocus={handleFocus}
+                    onKeyDown={handleSecondsKeyDown}
+                    onBlur={handleBlur}
+                    disabled={state.name === "running"}
+                    className="w-[2ch] bg-transparent border-none text-left outline-none disabled:cursor-not-allowed p-0 m-0"
+                  />
+                </div>
+
+                {/* Play/Pause button (right) */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    "h-7 w-7 rounded-full",
+                    state.name === "running"
+                      ? "bg-red-500 hover:bg-red-600 text-white"
+                      : "bg-blue-500 hover:bg-blue-600 text-white",
+                  )}
+                  onClick={toggleTimer}
+                  onMouseDown={() => playActive()}
+                  onMouseUp={() => {
+                    state.name === "running" ? playOff() : playOn()
+                  }}
+                >
+                  {state.name === "running" ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+                </Button>
+              </div>
+
+              {children}
+            </div>
           </div>
-        </div>
-      </div>
+        )
+      })()}
     </div>
   )
 }

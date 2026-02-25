@@ -34,7 +34,7 @@ declare global {
     flowIds: number[];
     timestamp: number;
     status: "pending" | "active" | "completed";
-    isPublic?: boolean;
+    isPrivate?: boolean;
     winner?: "aff" | "neg";
   };
 

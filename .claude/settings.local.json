@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git mv:*)",
+      "Bash(echo:*)",
+      "Bash(npx tsc:*)",
+      "Bash(python3:*)",
+      "WebFetch(domain:www.tabroom.com)"
+    ]
+  }
+}

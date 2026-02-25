@@ -254,18 +254,23 @@ export function PrepTimer({
       className={cn(
         "rounded-[var(--border-radius)] p-[var(--padding)] transition-colors",
         `palette-${palette}`,
-        compact && "py-2 px-3",
+        compact && "py-0.5 px-2",
       )}
     >
       {/* Optional label */}
       {label && <div className="text-xs font-medium text-muted-foreground mb-1">{label}</div>}
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center gap-0.5">
+        {/* Reset button (left) */}
+        <Button variant="ghost" size="icon" className={compact ? "h-5 w-5" : "h-8 w-8"} onClick={reset}>
+          <RotateCcw className={compact ? "h-2.5 w-2.5" : "h-4 w-4"} />
+        </Button>
+
         {/* Editable time display */}
         <div
           className={cn(
             compact ? "text-lg" : "text-2xl",
-            "font-bold tabular-nums min-w-[80px] flex items-center justify-center",
+            "font-bold tabular-nums flex items-center justify-center",
             isDone && "text-[var(--text-error)] animate-pulse",
             isWarning && "text-yellow-600 dark:text-yellow-400",
             !isDone && !isWarning && digitColorClasses,
@@ -296,29 +301,21 @@ export function PrepTimer({
           />
         </div>
 
-        {/* Control buttons */}
-        <div className="flex gap-1">
-          {/* Play/Pause button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className={compact ? "h-6 w-6" : "h-8 w-8"}
-            onClick={toggleTimer}
-            onMouseDown={() => playActive()}
-            onMouseUp={() => (state.name === "running" ? playOff() : playOn())}
-          >
-            {state.name === "running" ? (
-              <Pause className={compact ? "h-3 w-3" : "h-4 w-4"} />
-            ) : (
-              <Play className={compact ? "h-3 w-3" : "h-4 w-4"} />
-            )}
-          </Button>
-
-          {/* Reset button */}
-          <Button variant="ghost" size="icon" className={compact ? "h-6 w-6" : "h-8 w-8"} onClick={reset}>
-            <RotateCcw className={compact ? "h-3 w-3" : "h-4 w-4"} />
-          </Button>
-        </div>
+        {/* Play/Pause button (right) */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className={compact ? "h-5 w-5" : "h-8 w-8"}
+          onClick={toggleTimer}
+          onMouseDown={() => playActive()}
+          onMouseUp={() => (state.name === "running" ? playOff() : playOn())}
+        >
+          {state.name === "running" ? (
+            <Pause className={compact ? "h-2.5 w-2.5" : "h-4 w-4"} />
+          ) : (
+            <Play className={compact ? "h-2.5 w-2.5" : "h-4 w-4"} />
+          )}
+        </Button>
       </div>
     </div>
   )
