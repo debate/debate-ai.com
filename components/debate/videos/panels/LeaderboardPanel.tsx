@@ -17,8 +17,7 @@ import { useState, useEffect } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
-import type { LeaderboardEntry } from "@/lib/third-party-sync/sync-debate-leaderboard"
-import grab from "grab-url"
+import type { LeaderboardEntry } from "@/lib/third-party-sync/sync-team-rank-debatedrills"
 
 /**
  * Configuration for a single leaderboard table column.
@@ -38,12 +37,7 @@ type ColumnConfig = {
  * Each entry has a label, tooltip, and index into the values array.
  */
 const COLUMNS: ColumnConfig[] = [
-  { label: "OTR", tooltip: "Overall Team Rating - aggregate rating across all tournaments", index: 0 },
-  { label: "BIDS", tooltip: "Tournament of Champions bids earned", index: 1 },
-  { label: "PRELIM W-L", tooltip: "Prelim win-loss record", index: 3 },
-  { label: "ELIM W-L", tooltip: "Elimination round win-loss record", index: 6 },
-  { label: "STD DEV", tooltip: "Standard deviation of speaker points", index: 4 },
-  { label: "AVG SPK", tooltip: "Average speaker points", index: 5 },
+  { label: "ELO", tooltip: "Debate Elo rating", index: 0 },
 ]
 
 /**
@@ -61,7 +55,7 @@ const COLUMNS: ColumnConfig[] = [
  */
 export function LeaderboardPanel() {
   /** Leaderboard data from API */
-  const [data, setData] = useState<any>([])
+  const [data, setData] = useState<LeaderboardEntry[]>([])
 
   /** Whether an API request is in progress */
   const [loading, setLoading] = useState(true)
@@ -87,30 +81,47 @@ export function LeaderboardPanel() {
    * Fetch leaderboard data whenever year or division changes.
    */
   useEffect(() => {
+    const controller = new AbortController()
+
     const fetchData = async () => {
-      setLoading(true)
-      setError(null)
+      try {
+        setLoading(true)
+        setError(null)
 
-      const response = await grab("leaderboard", {
-        response: (result: any) => {
-          setData(Array.isArray(result) ? result : [])
+        const params = new URLSearchParams({ division, year })
+        const response = await fetch(`/api/leaderboard?${params.toString()}`, {
+          signal: controller.signal,
+          cache: "no-store",
+        })
+
+        const payload = await response.json()
+
+        if (!response.ok) {
+          const message =
+            typeof payload?.error === "string" ? payload.error : "Failed to fetch leaderboard data"
+          throw new Error(message)
+        }
+
+        setData(Array.isArray(payload) ? payload : [])
+      } catch (err) {
+        if (controller.signal.aborted) return
+        const message = err instanceof Error ? err.message : "Failed to fetch leaderboard data"
+        setError(message)
+        setData([])
+      } finally {
+        if (!controller.signal.aborted) {
           setLoading(false)
-        },
-        division,
-        year,
-      })
-
-      if (response.error) {
-        setError(response.error)
-        setLoading(false)
+        }
       }
     }
 
     fetchData()
+
+    return () => controller.abort()
   }, [year, division])
 
   // Data is already filtered by API based on division
-  const filteredData = data;
+  const filteredData = data
 
   return (
     <TooltipProvider>
@@ -181,7 +192,7 @@ export function LeaderboardPanel() {
               // Leaderboard table
               <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
                 {/* Table header */}
-                <div className="grid grid-cols-[60px_minmax(300px,1fr)_repeat(6,90px)] gap-2 px-4 py-3 bg-gray-50 border-b text-sm font-medium text-muted-foreground">
+                <div className="grid grid-cols-[60px_minmax(300px,1fr)_90px] gap-2 px-4 py-3 bg-gray-50 border-b text-sm font-medium text-muted-foreground">
                   <div className="text-left">Rank</div>
                   <div className="text-left">Team</div>
                   {COLUMNS.map((col) => (
@@ -200,7 +211,7 @@ export function LeaderboardPanel() {
                 {filteredData.map((entry: LeaderboardEntry, index: number) => (
                   <div
                     key={index}
-                    className="grid grid-cols-[60px_minmax(300px,1fr)_repeat(6,90px)] gap-2 items-center px-4 py-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors"
+                    className="grid grid-cols-[60px_minmax(300px,1fr)_90px] gap-2 items-center px-4 py-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors"
                   >
                     {/* Rank column */}
                     <div className="text-left font-bold text-lg">
@@ -210,16 +221,16 @@ export function LeaderboardPanel() {
                     {/* Team name column */}
                     <div className="text-left min-w-0">
                       <div className="font-semibold text-base break-words">
-                        {entry.teamSchool && entry.teamSchool !== "Unknown Team" ? entry.teamSchool : "Unknown Team"}
+                        {entry.teamName && entry.teamName !== "Unknown Team" ? entry.teamName : "Unknown Team"}
                       </div>
                     </div>
 
                     {/* Stats columns */}
                     {COLUMNS.map((col, i) => {
-                      const val = entry.values[col.index]
+                      const val = entry.debateElo
                       return (
                         <div key={i} className="text-right text-sm">
-                          {val !== null ? val : "--"}
+                          {val !== undefined && val !== null ? val : "--"}
                         </div>
                       )
                     })}

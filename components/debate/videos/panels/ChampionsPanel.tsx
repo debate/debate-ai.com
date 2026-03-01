@@ -288,10 +288,10 @@ export function ChampionsPanel({ onYearSelect }: ChampionsPanelProps) {
                 className="group overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg"
               >
                 <CardHeader className="pb-3">
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col items-center sm:flex-row sm:items-center gap-4">
                     {/* Category logo – 3D tilt on hover */}
                     <article
-                      className="w-[200px] h-[200px] shrink-0 rounded-xl overflow-hidden cursor-pointer will-change-transform"
+                      className="w-[120px] h-[120px] sm:w-[200px] sm:h-[200px] shrink-0 rounded-xl overflow-hidden cursor-pointer will-change-transform"
                       onMouseMove={(e) => {
                         const el = e.currentTarget
                         el.style.transition = "transform 0.1s ease-out"
@@ -309,7 +309,7 @@ export function ChampionsPanel({ onYearSelect }: ChampionsPanelProps) {
                       }}
                     >
                       {cat.logoSrc ? (
-                        <Image src={cat.logoSrc} alt={cat.logoAlt} width={200} height={200} className="w-full h-full object-contain p-2" />
+                        <Image src={cat.logoSrc} alt={cat.logoAlt} width={200} height={200} className="w-full h-full object-contain p-1 sm:p-2" />
                       ) : (
                         <div className={cn("w-full h-full flex items-center justify-center", cat.color)}>
                           <Trophy className="w-16 h-16 text-white" />

@@ -1,9 +1,9 @@
 export const debateStyleMap = [
-  "policy",
   "publicForum",
   "lincolnDouglas",
-  "congress",
+  "policy",
   "collegePolicy",
+  "congress",
   "worldSchools",
   "bigQuestions",
   "nofSpar",

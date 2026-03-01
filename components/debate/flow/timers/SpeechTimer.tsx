@@ -445,7 +445,7 @@ export function SpeechTimer({
                     disabled={state.name === "running"}
                     className="w-[2ch] bg-transparent border-none text-right outline-none disabled:cursor-not-allowed p-0 m-0"
                   />
-                  <span>:</span>
+                  <span className="text-md">:</span>
                   <input
                     ref={secondsRef}
                     type="text"

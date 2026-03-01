@@ -1,7 +1,12 @@
+/** @fileoverview DOCX conversion pipeline with style-aware HTML normalization for card parsing. */
 import JSZip from "jszip";
 import { Parser } from "htmlparser2";
 import { parseAsync, renderDocument } from "docx-preview";
-import { parseHTML } from "linkedom";
+import { parseHTML } from "linkedom"
+
+type HeadingStyles = Record<string, any>
+type AnyMap = Record<string, any>
+
 
 /**
  * Node.js tool for converting DOCX files to HTML while preserving formatting and
@@ -18,30 +23,37 @@ import { parseHTML } from "linkedom";
  * const fileInput = fs.readFile('demo.docx');
  * const html = await convertDocxToHTML(fileInput);
  */
-export async function convertDocxToHTML(docxBufferOrURL, options = {}) {
+export async function convertDocxToHTML(docxBufferOrURL: string | File | Blob | ArrayBuffer | Buffer, options: { plainTextOnly?: boolean; useDocxPreview?: boolean } = {}): Promise<string> {
   const { plainTextOnly = false, useDocxPreview = true } = options;
 
   if (!docxBufferOrURL) return "";
 
   // Process input into ArrayBuffer
-  let arrayBuffer;
+  let arrayBuffer: ArrayBuffer | undefined;
   try {
     if (typeof docxBufferOrURL === "string") {
+      // URL input is fetched and converted to ArrayBuffer.
       if (docxBufferOrURL.startsWith("http")) {
         const response = await fetch(docxBufferOrURL);
         arrayBuffer = await response.arrayBuffer();
       }
     } else if (docxBufferOrURL instanceof File || docxBufferOrURL instanceof Blob) {
+      // Browser/File API inputs expose arrayBuffer directly.
       arrayBuffer = await docxBufferOrURL.arrayBuffer();
     } else if (docxBufferOrURL instanceof ArrayBuffer) {
       arrayBuffer = docxBufferOrURL;
     } else if (typeof Buffer !== 'undefined' && Buffer.isBuffer(docxBufferOrURL)) {
+      // Node.js Buffer must be sliced to the exact byte window.
       arrayBuffer = docxBufferOrURL.buffer.slice(
         docxBufferOrURL.byteOffset,
         docxBufferOrURL.byteOffset + docxBufferOrURL.byteLength
-      );
+      ) as ArrayBuffer;
     } else {
       throw new Error("Unsupported input type");
+    }
+
+    if (!arrayBuffer) {
+      throw new Error("Could not read DOCX input")
     }
 
     // Extract styles.xml for heading information
@@ -49,7 +61,7 @@ export async function convertDocxToHTML(docxBufferOrURL, options = {}) {
     await zip.loadAsync(arrayBuffer);
     const styleXML = await zip.file("word/styles.xml")?.async("string") || "";
 
-    // Parse styles.xml to extract heading definitions and formatting
+    // Parse styles.xml once so both render paths share heading metadata.
     const headingStyles = await parseStylesXML(styleXML);
 
     if (useDocxPreview) {
@@ -58,7 +70,9 @@ export async function convertDocxToHTML(docxBufferOrURL, options = {}) {
       return html;
     } else {
       // Fallback to manual parsing
-      const docXML = await zip.file("word/document.xml").async("string");
+      const docFile = zip.file("word/document.xml")
+      if (!docFile) throw new Error("Missing word/document.xml")
+      const docXML = await docFile.async("string");
       const html = await parseDocumentManually(docXML, styleXML, plainTextOnly);
       return html;
     }
@@ -74,13 +88,13 @@ export async function convertDocxToHTML(docxBufferOrURL, options = {}) {
  * @param {string} styleXML - Raw XML content of styles.xml
  * @returns {Promise<Object>} Parsed heading styles with outline levels
  */
-async function parseStylesXML(styleXML) {
-  const headingStyles = {};
-  let currentStyle = null;
+async function parseStylesXML(styleXML: string): Promise<HeadingStyles> {
+  const headingStyles: HeadingStyles = {};
+  let currentStyle: AnyMap | null = null;
 
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     const parser = new Parser({
-      onopentag(name, attributes) {
+      onopentag(name: string, attributes: AnyMap) {
         // Start of a style definition
         if (name === "w:style") {
           const styleId = attributes["w:styleId"];
@@ -114,6 +128,7 @@ async function parseStylesXML(styleXML) {
 
         // Outline level (determines heading level h1-h6)
         if (name === "w:outlineLvl") {
+          // DOCX outline levels are zero-based; HTML headings are one-based.
           currentStyle.outlineLevel = parseInt(attributes["w:val"], 10) + 1;
         }
 
@@ -134,15 +149,15 @@ async function parseStylesXML(styleXML) {
         }
       },
 
-      onclosetag(name) {
+      onclosetag(name: string) {
         if (name === "w:style" && currentStyle) {
           headingStyles[currentStyle.id] = currentStyle;
           currentStyle = null;
         }
       },
 
-      onend: resolve,
-      onerror: reject
+      onend: () => resolve(),
+      onerror: (err: Error) => reject(err)
     }, { xmlMode: true });
 
     parser.write(styleXML);
@@ -159,7 +174,7 @@ async function parseStylesXML(styleXML) {
  * @param {boolean} plainTextOnly - Whether to return plain text
  * @returns {Promise<string>} Rendered HTML string
  */
-async function renderWithDocxPreview(arrayBuffer, headingStyles, plainTextOnly) {
+async function renderWithDocxPreview(arrayBuffer: ArrayBuffer, headingStyles: HeadingStyles, plainTextOnly: boolean): Promise<string> {
   // Create virtual DOM using linkedom for server-side rendering
   const { document } = parseHTML('<!DOCTYPE html><html><head></head><body></body></html>');
 
@@ -179,7 +194,7 @@ async function renderWithDocxPreview(arrayBuffer, headingStyles, plainTextOnly) 
     useBase64URL: true
   });
 
-  // Render to virtual DOM
+  // Render to virtual DOM so this works in server-side environments too.
   await renderDocument(wordDocument, bodyContainer, styleContainer, {
     className: "docx",
     ignoreWidth: true,
@@ -194,6 +209,7 @@ async function renderWithDocxPreview(arrayBuffer, headingStyles, plainTextOnly) 
   });
 
   if (plainTextOnly) {
+    // Collapse whitespace for stable downstream plain-text parsing.
     return bodyContainer.textContent?.replace(/\s+/g, " ").trim() || "";
   }
 
@@ -215,7 +231,7 @@ async function renderWithDocxPreview(arrayBuffer, headingStyles, plainTextOnly) 
  * @param {Object} headingStyles - Parsed heading styles
  * @returns {string} HTML with proper heading tags
  */
-function applyHeadingStyles(html, headingStyles) {
+function applyHeadingStyles(html: string, headingStyles: HeadingStyles): string {
   // Map docx-preview class names to proper heading elements based on outline levels
   for (const [styleId, style] of Object.entries(headingStyles)) {
     if (style.outlineLevel && style.outlineLevel >= 1 && style.outlineLevel <= 6) {
@@ -223,6 +239,7 @@ function applyHeadingStyles(html, headingStyles) {
       // Replace paragraphs with this style class to proper heading elements
       const classPattern = new RegExp(`<p([^>]*class="[^"]*${styleId}[^"]*"[^>]*)>`, 'gi');
       html = html.replace(classPattern, `<${headingTag}$1>`);
+      // NOTE: this replacement is intentionally conservative to avoid breaking mixed markup.
       html = html.replace(new RegExp(`</p>`, 'gi'), (match, offset) => {
         // This is a simplified replacement - in practice you'd need proper tracking
         return match;
@@ -249,7 +266,7 @@ function applyHeadingStyles(html, headingStyles) {
  * @param {string} html - Raw HTML
  * @returns {string} Cleaned HTML
  */
-function cleanupHtml(html) {
+function cleanupHtml(html: string): string {
   // Remove wrapper divs with docx classes while keeping content
   html = html.replace(/<div[^>]*class="[^"]*docx-wrapper[^"]*"[^>]*>/gi, '');
   html = html.replace(/<\/div>/gi, '');
@@ -270,14 +287,14 @@ function cleanupHtml(html) {
  * @param {boolean} plainTextOnly - Whether to return plain text
  * @returns {Promise<string>} Parsed HTML
  */
-async function parseDocumentManually(docXML, styleXML, plainTextOnly) {
+async function parseDocumentManually(docXML: string, styleXML: string, plainTextOnly: boolean): Promise<string> {
   // Parse styles.xml for formatting information
-  const parsedStyles = {};
+  const parsedStyles: AnyMap = {};
   let currentStyleName = "";
 
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     const parser = new Parser({
-      onopentag(name, attributes) {
+      onopentag(name: string, attributes: AnyMap) {
         if (name === "w:style") {
           currentStyleName = attributes["w:styleId"];
           parsedStyles[currentStyleName] = {
@@ -307,8 +324,8 @@ async function parseDocumentManually(docXML, styleXML, plainTextOnly) {
           styles.mark = true;
         }
       },
-      onend: resolve,
-      onerror: reject
+      onend: () => resolve(),
+      onerror: (err: Error) => reject(err)
     }, { xmlMode: true });
 
     parser.write(styleXML);
@@ -316,13 +333,13 @@ async function parseDocumentManually(docXML, styleXML, plainTextOnly) {
   });
 
   // Tokenize document.xml into structured blocks
-  const blocks = [];
-  let currentBlock = null;
-  let currentToken = null;
+  const blocks: any[] = [];
+  let currentBlock: any = null;
+  let currentToken: any = null;
 
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     const parser = new Parser({
-      onopentag(name, attributes) {
+      onopentag(name: string, attributes: AnyMap) {
         switch (name) {
           case "w:p":
             currentBlock = { format: "text", tokens: [] };
@@ -378,13 +395,13 @@ async function parseDocumentManually(docXML, styleXML, plainTextOnly) {
         }
       },
 
-      ontext(data) {
+      ontext(data: string) {
         if (currentToken) {
           currentToken.text += data;
         }
       },
 
-      onclosetag(name) {
+      onclosetag(name: string) {
         switch (name) {
           case "w:p":
             if (currentBlock && currentBlock.tokens.length) {
@@ -402,8 +419,8 @@ async function parseDocumentManually(docXML, styleXML, plainTextOnly) {
         }
       },
 
-      onend: resolve,
-      onerror: reject
+      onend: () => resolve(),
+      onerror: (err: Error) => reject(err)
     }, { xmlMode: true });
 
     parser.write(docXML);
@@ -411,8 +428,8 @@ async function parseDocumentManually(docXML, styleXML, plainTextOnly) {
   });
 
   // Merge same format blocks
-  blocks.forEach(block => {
-    block.tokens = block.tokens.reduce((acc, { format, text }) => {
+  blocks.forEach((block: any) => {
+    block.tokens = block.tokens.reduce((acc: any[], { format, text }: any) => {
       if (!acc.length) return [{ format, text }];
 
       const prev = acc[acc.length - 1];
@@ -431,15 +448,15 @@ async function parseDocumentManually(docXML, styleXML, plainTextOnly) {
 
   // Convert tokens to HTML
   let html = "";
-  const state = { underline: false, strong: false, mark: false };
+  const state: Record<string, boolean> = { underline: false, strong: false, mark: false };
 
-  blocks.forEach(({ format, tokens }) => {
+  blocks.forEach(({ format, tokens }: any) => {
     if (!tokens.length) return;
 
     const { domElement } = styleMap[format];
     if (!plainTextOnly) html += `<${domElement}>`;
 
-    tokens.forEach(({ text, format }) => {
+    tokens.forEach(({ text, format }: any) => {
       if (!text || text.trim().length < 1) return;
 
       let tags = "";
@@ -475,7 +492,7 @@ async function parseDocumentManually(docXML, styleXML, plainTextOnly) {
  * Style mapping configuration for DOCX to HTML conversion
  * Maps internal style names to HTML elements and DOCX properties
  */
-export const styleMap = {
+export const styleMap: Record<string, any> = {
   pocket: {
     block: true,
     heading: true,

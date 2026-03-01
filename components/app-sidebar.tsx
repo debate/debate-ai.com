@@ -23,6 +23,41 @@ import { ThemeDropdown } from "@/components/theme-dropdown"
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
 import { cn } from "@/lib/utils"
 
+const NAV_ITEMS = [
+  {
+    href: "/cards",
+    desktopLabel: "Shared",
+    mobileLabel: "Search",
+    icon: (
+      <Image
+        src="/icons/icon-collective-mind.png"
+        alt="Search"
+        width={24}
+        height={24}
+      />
+    ),
+    mobileIcon: <Brain className="h-6 w-6" />,
+  },
+  {
+    href: "/edit",
+    desktopLabel: "Organize",
+    mobileLabel: "Organize",
+    icon: <Image src="/icons/icon-read.svg" alt="Organize" width={24} height={24} className="h-6 w-6" />,
+  },
+  {
+    href: "/debate",
+    desktopLabel: "Debate",
+    mobileLabel: "Debate",
+    icon: <Image src="/icons/icon-rounds.svg" alt="Debate" width={24} height={24} className="h-6 w-6" />,
+  },
+  {
+    href: "/videos",
+    desktopLabel: "Watch",
+    mobileLabel: "Watch",
+    icon: <Image src="/icons/icon-lectures.svg" alt="Watch" width={24} height={24} className="h-6 w-6" />,
+  },
+]
+
 /**
  * Primary application navigation sidebar.
  * On desktop (md+) renders a fixed 16-unit wide vertical sidebar.
@@ -37,62 +72,20 @@ export function AppSidebar() {
       {/* Desktop sidebar - hidden on mobile */}
       <div className="hidden md:flex flex-col w-16 bg-muted/30 border-r border-border items-center py-4 gap-3 justify-between">
         <div className="flex flex-col gap-3">
-          <Link href="/cards" className="w-full">
-            <Button
-              variant="ghost"
-              className={`h-auto w-full flex flex-col gap-1 p-2 ${pathname === "/cards"
-                ? "shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-2px_4px_rgba(0,0,0,0.2)] bg-gradient-to-b from-white/20 to-transparent dark:from-white/10 border border-white/20"
-                : ""
-                }`}
-            >
-              <Image
-                src="/icons/icon-collective-mind.png"
-                alt="Search"
-                width={24}
-                height={24}
-              />
-              <span className="text-[10px]">Shared</span>
-            </Button>
-          </Link>
-
-          <Link href="/edit" className="w-full">
-            <Button
-              variant="ghost"
-              className={`h-auto w-full flex flex-col gap-1 p-2 ${pathname === "/edit"
-                ? "shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-2px_4px_rgba(0,0,0,0.2)] bg-gradient-to-b from-white/20 to-transparent dark:from-white/10 border border-white/20"
-                : ""
-                }`}
-            >
-              <Image src="/icons/icon-read.svg" alt="Organize" width={24} height={24} className="h-6 w-6" />
-              <span className="text-[10px]">Organize</span>
-            </Button>
-          </Link>
-
-          <Link href="/debate" className="w-full">
-            <Button
-              variant="ghost"
-              className={`h-auto w-full flex flex-col gap-1 p-2 ${pathname === "/debate"
-                ? "shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-2px_4px_rgba(0,0,0,0.2)] bg-gradient-to-b from-white/20 to-transparent dark:from-white/10 border border-white/20"
-                : ""
-                }`}
-            >
-              <Image src="/icons/icon-rounds.svg" alt="Debate" width={24} height={24} className="h-6 w-6" />
-              <span className="text-[10px]">Debate</span>
-            </Button>
-          </Link>
-
-          <Link href="/videos" className="w-full">
-            <Button
-              variant="ghost"
-              className={`h-auto w-full flex flex-col gap-1 p-2 ${pathname === "/videos"
-                ? "shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-2px_4px_rgba(0,0,0,0.2)] bg-gradient-to-b from-white/20 to-transparent dark:from-white/10 border border-white/20"
-                : ""
-                }`}
-            >
-              <Image src="/icons/icon-lectures.svg" alt="Watch" width={24} height={24} className="h-6 w-6" />
-              <span className="text-[10px]">Watch</span>
-            </Button>
-          </Link>
+          {NAV_ITEMS.map((item) => (
+            <Link key={item.href} href={item.href} className="w-full">
+              <Button
+                variant="ghost"
+                className={`h-auto w-full flex flex-col gap-1 p-2 ${pathname === item.href
+                  ? "shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-2px_4px_rgba(0,0,0,0.2)] bg-gradient-to-b from-white/20 to-transparent dark:from-white/10 border border-white/20"
+                  : ""
+                  }`}
+              >
+                {item.icon}
+                <span className="text-[10px]">{item.desktopLabel}</span>
+              </Button>
+            </Link>
+          ))}
         </div>
 
         <div className="flex flex-col gap-3 items-center">
@@ -132,61 +125,19 @@ export function AppSidebar() {
 
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
         <Dock className="mx-auto w-max mb-2" magnification={60} distance={120}>
-          <Link href="/cards">
-            <DockItem
-              className={cn(
-                "aspect-square rounded-full transition-colors",
-                pathname === "/cards" ? "bg-primary/20 ring-2 ring-primary" : "bg-gray-200 dark:bg-neutral-800",
-              )}
-            >
-              <DockLabel>Search</DockLabel>
-              <DockIcon>
-                <Brain className="h-6 w-6" />
-              </DockIcon>
-            </DockItem>
-          </Link>
-
-          <Link href="/edit">
-            <DockItem
-              className={cn(
-                "aspect-square rounded-full transition-colors",
-                pathname === "/edit" ? "bg-primary/20 ring-2 ring-primary" : "bg-gray-200 dark:bg-neutral-800",
-              )}
-            >
-              <DockLabel>Organize</DockLabel>
-              <DockIcon>
-                <Image src="/icons/icon-read.svg" alt="Organize" width={24} height={24} className="h-6 w-6" />
-              </DockIcon>
-            </DockItem>
-          </Link>
-
-          <Link href="/debate">
-            <DockItem
-              className={cn(
-                "aspect-square rounded-full transition-colors",
-                pathname === "/debate" ? "bg-primary/20 ring-2 ring-primary" : "bg-gray-200 dark:bg-neutral-800",
-              )}
-            >
-              <DockLabel>Debate</DockLabel>
-              <DockIcon>
-                <Image src="/icons/icon-rounds.svg" alt="Debate" width={24} height={24} className="h-6 w-6" />
-              </DockIcon>
-            </DockItem>
-          </Link>
-
-          <Link href="/videos">
-            <DockItem
-              className={cn(
-                "aspect-square rounded-full transition-colors",
-                pathname === "/videos" ? "bg-primary/20 ring-2 ring-primary" : "bg-gray-200 dark:bg-neutral-800",
-              )}
-            >
-              <DockLabel>Watch</DockLabel>
-              <DockIcon>
-                <Image src="/icons/icon-lectures.svg" alt="Watch" width={24} height={24} className="h-6 w-6" />
-              </DockIcon>
-            </DockItem>
-          </Link>
+          {NAV_ITEMS.map((item) => (
+            <Link key={item.href} href={item.href}>
+              <DockItem
+                className={cn(
+                  "aspect-square rounded-full transition-colors",
+                  pathname === item.href ? "bg-primary/20 ring-2 ring-primary" : "bg-gray-200 dark:bg-neutral-800",
+                )}
+              >
+                <DockLabel>{item.mobileLabel}</DockLabel>
+                <DockIcon>{item.mobileIcon || item.icon}</DockIcon>
+              </DockItem>
+            </Link>
+          ))}
 
           <DockItem className="aspect-square rounded-full bg-gray-200 dark:bg-neutral-800">
             <DockLabel>Theme</DockLabel>

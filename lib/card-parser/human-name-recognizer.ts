@@ -1,4 +1,7 @@
-const dataHumanNames = {}
+/** @fileoverview Human-name normalization and organization-detection heuristics. */
+import type { HumanNameOptions, HumanNameResult } from "./types"
+import dataHumanNames from "./human-names-92k.json"
+
 // JSON database not loaded in browser - using pattern-based name detection
 
 /**
@@ -6,7 +9,7 @@ const dataHumanNames = {}
  * @param {string} authorName - The author name to clean
  * @returns {string} Cleaned author name without qualifications
  */
-function cleanProfessionalQualifications(authorName) {
+function cleanProfessionalQualifications(authorName: string) {
   if (!authorName || typeof authorName !== "string") {
     return authorName
   }
@@ -35,9 +38,9 @@ function cleanProfessionalQualifications(authorName) {
  * @param {string} input - The full name to parse.
  * @returns {Object}
  */
-const extractHumanNameParts = (input) => {
+const extractHumanNameParts = (input: string) => {
   // Initialize the result object
-  const result = {
+  const result: Record<string, string> = {
     prefix: "", //van der von de
     firstname: "",
     middle: "",
@@ -65,6 +68,7 @@ const extractHumanNameParts = (input) => {
   const aliasRegex = /\s(['']([^'']+)['']|[""]([^""]+)[""]|\[([^\]]+)\]|$$([^$$]+)\)),?\s/g
   const aliasMatch = input.match(aliasRegex)
   if (aliasMatch) {
+    // Strip aliases/nicknames before structural parsing.
     input = input.replace(aliasRegex, " ")
   }
 
@@ -72,13 +76,13 @@ const extractHumanNameParts = (input) => {
   const parts = input.split(/\s+/)
 
   // Extract honorific
-  const honorificIndex = parts.findIndex((part) => lists.honorific.includes(part.toLowerCase().replace(/\.$/, "")))
+  const honorificIndex = parts.findIndex((part: string) => lists.honorific.includes(part.toLowerCase().replace(/\.$/, "")))
   if (honorificIndex !== -1) {
     result.honorific = parts.splice(honorificIndex).join(", ")
   }
 
   // Extract title
-  const titleIndex = parts.findIndex((part) => lists.title.includes(part.toLowerCase().replace(/\.$/, "")))
+  const titleIndex = parts.findIndex((part: string) => lists.title.includes(part.toLowerCase().replace(/\.$/, "")))
   if (titleIndex !== -1) {
     result.prefix = parts.splice(titleIndex, 1)[0]
   }
@@ -92,19 +96,19 @@ const extractHumanNameParts = (input) => {
   }
 
   // Extract lastname name (if comma present)
-  const commaIndex = parts.findIndex((part) => part.endsWith(","))
+  const commaIndex = parts.findIndex((part: string) => part.endsWith(","))
   if (commaIndex !== -1) {
     result.lastname = parts
       .splice(0, commaIndex + 1)
       .join(" ")
       .replace(/,$/, "")
   } else {
-    result.lastname = parts.pop()
+    result.lastname = parts.pop() ?? ""
   }
 
   // Assign remaining parts to firstname and middle names
   if (parts.length > 0) {
-    result.firstname = parts.shift()
+    result.firstname = parts.shift() ?? ""
     if (parts.length > 0) {
       result.middle = parts.join(" ")
     }
@@ -112,11 +116,11 @@ const extractHumanNameParts = (input) => {
 
   // Fix case if needed
   if (shouldFixCase) {
-    Object.keys(result).forEach((key) => {
+    Object.keys(result).forEach((key: string) => {
       if (result[key]) {
         result[key] = result[key]
           .split(" ")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1)?.toLowerCase())
+          .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)?.toLowerCase())
           .join(" ")
       }
     })
@@ -132,7 +136,7 @@ const extractHumanNameParts = (input) => {
  * @param {Object} options - Configuration options
  * @returns {Object} Formatted author information for citation
  */
-export function extractHumanName(author, options = {}) {
+export function extractHumanName(author: string, options: HumanNameOptions = {}): HumanNameResult {
   const { formatCiteShortenAuthor = false, maxAuthorsBeforeEtAl = 2 } = options
 
   if (!author || !author.split) {
@@ -153,7 +157,7 @@ export function extractHumanName(author, options = {}) {
   }
 
   // Process each author
-  const processedAuthors = authorNames.map((authorName) => {
+  const processedAuthors = authorNames.map((authorName: string) => {
     // Clean professional qualifications from the author name first
     const cleanedAuthorName = cleanProfessionalQualifications(authorName)
 
@@ -219,9 +223,10 @@ export function extractHumanName(author, options = {}) {
 
       // Shorten first name if option is set
       if (formatCiteShortenAuthor && formattedFirstName) {
+        // APA-like shortening: convert given/middle names to initials.
         formattedFirstName = formattedFirstName
           .split(/\s+/)
-          .map((part) => part[0] + ".")
+          .map((part: string) => part[0] + ".")
           .join(" ")
       }
 
@@ -254,7 +259,7 @@ export function extractHumanName(author, options = {}) {
     if (processedAuthors.length <= maxAuthorsBeforeEtAl) {
       // List all authors with commas and "and" before the last one
       const lastAuthor = formattedAuthors.pop()
-      authorCite = formattedAuthors.map((a) => a.cite).join(", ")
+      authorCite = formattedAuthors.map((a: { cite: string }) => a.cite).join(", ")
       if (lastAuthor) {
         authorCite += ` & ${lastAuthor.cite}`
       }
@@ -284,7 +289,7 @@ export function extractHumanName(author, options = {}) {
  * @param {string} authorString - String potentially containing multiple authors
  * @returns {string[]} Array of individual author names
  */
-function splitMultipleAuthors(authorString) {
+function splitMultipleAuthors(authorString: string): string[] {
   if (!authorString) return []
 
   // Remove "et al." since we're parsing actual authors
@@ -301,27 +306,28 @@ function splitMultipleAuthors(authorString) {
   if (/\w+,\s*\w+,\s*\w+,\s*\w+/.test(authorString)) {
     // Replace the last comma+and with a standard separator
     authorString = authorString.replace(/,\s*(and|&)\s*(?=[^,]*$)/, " & ")
-    return authorString.split(/\s*,\s*(?=[^,]*(?:,|$))/).map((s) => s.trim())
+    return authorString.split(/\s*,\s*(?=[^,]*(?:,|$))/).map((s: string) => s.trim())
   }
 
   // Pattern 3: First Last, First Last, and First Last
   if (/\w+\s\w+,\s\w+\s\w+/.test(authorString)) {
     // Replace the last comma+and with a standard separator
     authorString = authorString.replace(/,\s*(and|&)\s*(?=[^,]*$)/, " & ")
-    return authorString.split(/\s*,\s*/).map((s) => s.trim())
+    return authorString.split(/\s*,\s*/).map((s: string) => s.trim())
   }
 
   // Pattern 4: First Last and First Last
   if (/\w+\s\w+\s(and|&)\s\w+\s\w+/.test(authorString)) {
-    return authorString.split(/\s+(and|&)\s+/).map((s) => s.trim())
+    return authorString.split(/\s+(and|&)\s+/).map((s: string) => s.trim())
   }
 
   // Default pattern - try to split by various separators
-  // Replace common author separators with a standard one for easier processing
+  // Replace common author separators with a standard one for easier processing.
+  // The negative lookahead avoids splitting commas inside parenthetical qualifiers.
   authorString = authorString.replace(/\s+and\s+/gi, " & ").replace(/\s*[,;]\s*(?!(?:[^(]*\)))/g, " & ") // Replace commas/semicolons outside parentheses
 
   // Split by the standard separator
-  return authorString.split(/\s*&\s*/).filter((author) => author.trim().length > 0)
+  return authorString.split(/\s*&\s*/).filter((author: string) => author.trim().length > 0)
 }
 
 /**
@@ -330,7 +336,7 @@ function splitMultipleAuthors(authorString) {
  * @param {string} nameString - The name to analyze
  * @returns {boolean} True if the name appears to be an organization
  */
-function isOrganization(nameString) {
+function isOrganization(nameString: string): boolean {
   if (!nameString) return false
 
   // Convert organization terms to array
@@ -384,7 +390,8 @@ function isOrganization(nameString) {
     return true
   }
 
-  // Check if the name contains any human name parts according to our database
+  // Check if the name contains any human name parts according to our database.
+  // If none are found, multi-word strings are more likely organizations.
   let hasHumanNamePart = false
   for (const word of words) {
     const nameTitle = word[0]?.toUpperCase() + word.slice(1)?.toLowerCase()

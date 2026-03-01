@@ -1,27 +1,9 @@
-/**
- * @fileoverview Format profiles for parsing debate cards from HTML.
- * Each profile defines parsing behavior for different document formats.
- * @module card-parser/format-profiles
- */
+/** @fileoverview Built-in parsing profiles used to tune card-boundary heuristics. */
+import type { FormatProfile } from "./types"
 
-/**
- * @typedef {Object} FormatProfile
- * @property {string[]} headingTags - HTML tags to treat as headings
- * @property {string[]} cardStartHeadings - Heading tags that can start a new card
- * @property {number} minBlankLinesForBoundary - Minimum blank lines to create card boundary
- * @property {boolean} trustParagraphTags - Whether to trust paragraph tags for structure
- * @property {RegExp[]} summaryPatterns - Patterns that indicate card summary lines
- */
-
-/**
- * Predefined format profiles for different document types.
- * @type {Object.<string, FormatProfile>}
- */
-export const FORMAT_PROFILES = {
-  /**
-   * Standard format for well-structured debate documents.
-   * Uses h4 tags for card starts and trusts paragraph structure.
-   */
+/** Built-in parser presets for different source formatting quality levels. */
+export const FORMAT_PROFILES: Record<string, FormatProfile> = {
+  // Baseline profile for reasonably clean exports with h4 card tags.
   standard: {
     headingTags: ["h1", "h2", "h3", "h4"],
     cardStartHeadings: ["h4"],
@@ -42,11 +24,7 @@ export const FORMAT_PROFILES = {
       /^[A-Z][a-z]+\s+\d{2,4}/,
     ],
   },
-
-  /**
-   * Flexible format for documents with varied heading structures.
-   * Accepts h3-h5 as card starts and includes more summary patterns.
-   */
+  // Broader pattern set for mixed formatting and varied debate tag conventions.
   flexible: {
     headingTags: ["h1", "h2", "h3", "h4", "h5", "h6"],
     cardStartHeadings: ["h3", "h4", "h5"],
@@ -78,7 +56,7 @@ export const FORMAT_PROFILES = {
       /^[A-Z][a-z]+\s+and\s+[A-Z][a-z]+\s+\d{2,4}/,
       /^[A-Z][A-Z\s]+\d{2,4}/,
       /^[A-Z][a-z]+\s+et\s+al\.?\s+\d{2,4}/,
-      /^['""][^'"]{10,}['""]/,
+      /^['""][^'"]{10,}['""]/, 
       /^['""][A-Z]/,
       /^\*\*[^*]+\*\*/,
       /^__[^_]+__/,
@@ -87,11 +65,7 @@ export const FORMAT_PROFILES = {
       /^<[A-Z][^>]+>/,
     ],
   },
-
-  /**
-   * Ultra-flexible format for poorly structured documents.
-   * Treats paragraphs as potential card starters and requires no blank lines.
-   */
+  // Most permissive profile for messy pasted documents where paragraphs may start cards.
   ultraFlexible: {
     headingTags: ["h1", "h2", "h3", "h4", "h5", "h6", "p"],
     cardStartHeadings: ["h3", "h4", "h5", "h6", "p"],
@@ -123,7 +97,7 @@ export const FORMAT_PROFILES = {
       /^[A-Z][a-z]+\s+and\s+[A-Z][a-z]+\s+\d{2,4}/,
       /^[A-Z][A-Z\s]+\d{2,4}/,
       /^[A-Z][a-z]+\s+et\s+al\.?\s+\d{2,4}/,
-      /^['""][^'"]{10,}['""]/,
+      /^['""][^'"]{10,}['""]/, 
       /^['""][A-Z]/,
       /^\*\*[^*]+\*\*/,
       /^__[^_]+__/,
@@ -132,11 +106,7 @@ export const FORMAT_PROFILES = {
       /^<[A-Z][^>]+>/,
     ],
   },
-
-  /**
-   * Legacy Word format for older Microsoft Word documents.
-   * Uses h4 and p tags for cards, requires 2 blank lines for boundaries.
-   */
+  // Legacy Word export profile where blank lines are more meaningful than tags.
   legacyWord: {
     headingTags: ["h1", "h2", "h3", "h4", "p"],
     cardStartHeadings: ["h4", "p"],
@@ -144,11 +114,7 @@ export const FORMAT_PROFILES = {
     trustParagraphTags: false,
     summaryPatterns: [/^Aff\s*[-–]/i, /^Neg\s*[-–]/i, /^Impact:/i, /^Analysis:/i, /^Card:/i],
   },
-
-  /**
-   * Clean HTML format for well-formatted HTML documents.
-   * Minimal summary patterns, relies on proper heading structure.
-   */
+  // Clean HTML profile minimizes pattern assumptions and trusts headings.
   cleanHtml: {
     headingTags: ["h1", "h2", "h3", "h4"],
     cardStartHeadings: ["h4"],
@@ -156,11 +122,7 @@ export const FORMAT_PROFILES = {
     trustParagraphTags: true,
     summaryPatterns: [],
   },
-
-  /**
-   * Pasted PDF format for content copied from PDF documents.
-   * Handles inconsistent structure typical of PDF conversions.
-   */
+  // Copy-pasted PDF text often flattens structure, so paragraph tags can start cards.
   pastedPDF: {
     headingTags: ["h1", "h2", "h3", "h4", "p"],
     cardStartHeadings: ["h4", "h3", "p"],

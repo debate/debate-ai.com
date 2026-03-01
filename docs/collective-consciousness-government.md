@@ -4,11 +4,13 @@
 
 # Reimagining the Internet as Argument Mind Map is Key to Collective Consciousness Governance
 
-**Last Updated Feb 20, 2026**
 
 The vision: every policy debate, social controversy, and ethical question mapped in a living graph. Decisions made not by representatives serving four-year terms with imperfect information, but by AI agents serving continuous mandates with complete information, full transparency, and real-time accountability to every affected person. The debate community can treat "argument graphs for the whole internet" as an infrastructure project that feeds into next-generation AI collective intelligence systems. By agreeing on shared formats, workflows, and incentives, we can iterate tools that surface genuinely new arguments while building the foundation for transparent, accountable AI reasoning. 
 
-## DECAP: Decision-Making via e-Voting for Community Agent Perspectives
+
+## DECAP: Decision-Making via Elected Community Agent Personas
+
+**Plan:**  Collective Conciousness Language Model agents for group  democratic decision-making should supersede human political representatives for governments, organizations, and worker-led businesses with language models that synergize collective intelligence to make decisions based on group members' value votes, research monitoring, and  policy impact simulations.
 
 ## 1. Define a Minimal Argument Schema
 
@@ -203,7 +205,11 @@ Partner with schools, universities, citizen assemblies, and media literacy progr
 
 **Emergence (31–32):** Planetary governance infrastructure → self-organizing collective consciousness
 
+
+
 ---
+**Last Updated Feb 20, 2026**
+
 
 ## References
 

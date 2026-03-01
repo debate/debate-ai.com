@@ -387,6 +387,7 @@ export function DebateFlowPage() {
         open={state.historyDialogOpen}
         onOpenChange={state.setHistoryDialogOpen}
         onEditRound={handleEditRound}
+        onCreateRound={() => handleEditRound()}
       />
 
       <RoundEditorDialog

@@ -6,6 +6,7 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
 const categories = {
   rounds: [
+    "su.debate",
     "ResolvedDebate",
     "PolicyDebateCentral-gv1nl",
     "pfvideos9234",
@@ -13,6 +14,7 @@ const categories = {
     "DebateStreamDB8",
   ],
   lectures: [
+    "thatdebatekid5313",
     "NSD_DebateCamp",
     "ddidebate4071",
     "pfvideos9234",

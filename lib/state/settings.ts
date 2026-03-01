@@ -93,11 +93,11 @@ export const settings = new Settings({
     auto: 0,
     detail: {
       options: [
-        "Policy",
         "Public Forum",
         "Lincoln Douglas", //1
-        "Congress",
+        "Policy",
         "College Policy",
+        "Congress",
         "World Schools", //3
         "Big Questions",
         "NOF SPAR", //1
