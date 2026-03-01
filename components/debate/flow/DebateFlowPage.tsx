@@ -36,6 +36,7 @@ import { useFlowHandlers } from "./hooks/useFlowHandlers"
 import { useSpeechHandlers } from "./hooks/useSpeechHandlers"
 import { useSplitModeHandlers } from "./hooks/useSplitModeHandlers"
 import { useColumnNavigation } from "./hooks/useColumnNavigation"
+import { useTimerState } from "./hooks/useTimerState"
 
 /**
  * Manages the entire debate flow experience with a modular, maintainable architecture:
@@ -56,6 +57,11 @@ export function DebateFlowPage() {
   // Local State (Custom Hook)
   // ============================================================================
   const state = useDebateFlowState()
+
+  // ============================================================================
+  // Timer State (lifted here so it survives mobile sidebar unmount)
+  // ============================================================================
+  const timerState = useTimerState()
 
   // ============================================================================
   // Refs
@@ -323,6 +329,7 @@ export function DebateFlowPage() {
           onMenuClick={() => state.setMobileMenuOpen(true)}
           onNavigatePrev={columnNav.navigatePreviousColumn}
           onNavigateNext={columnNav.navigateNextColumn}
+          activeTimer={timerState.activeTimer}
         />
       )}
 
@@ -346,6 +353,7 @@ export function DebateFlowPage() {
                 onToggleSplitMode={handleToggleSplit}
                 onOpenHistory={handleOpenHistory}
                 onEditRound={handleEditRound}
+                timerState={timerState}
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -374,6 +382,7 @@ export function DebateFlowPage() {
                   onOpenHistory={handleOpenHistory}
                   onEditRound={handleEditRound}
                   onCloseMobileMenu={() => state.setMobileMenuOpen(false)}
+                  timerState={timerState}
                 />
               </SheetContent>
             </Sheet>
