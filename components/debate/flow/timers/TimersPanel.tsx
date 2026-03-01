@@ -3,22 +3,21 @@
 /**
  * @fileoverview Timers Panel Component
  *
- * Container component that manages all debate timers including:
+ * Container component that renders all debate timers including:
  * - Speech timer with speech selection
  * - Prep time timers for each team
  * - Voice chat integration when participants are available
  *
- * Automatically adapts to the selected debate style's timer configuration.
+ * Timer state is owned by the parent (via useTimerState hook) so it
+ * persists when the mobile sidebar unmounts.
  *
  * @module components/debate/timers/TimersPanel
  */
 
-import { useState, useEffect } from "react"
+import type React from "react"
 import { PrepTimer } from "./PrepTimer"
 import { SpeechTimer } from "./SpeechTimer"
 import { VoiceChat } from "@/components/ui/voice-chat"
-import { settings } from "@/lib/state/settings"
-import { debateStyles, debateStyleMap } from "@/lib/debate-data/debate-styles"
 import { useFlowStore } from "@/lib/state/store"
 
 /**
@@ -42,96 +41,46 @@ function getParticipantFromEmail(email: string, index: number) {
   }
 }
 
+/** Props for the TimersPanel component. */
+interface TimersPanelProps {
+  /** The current debate style configuration. */
+  debateStyle: DebateStyle
+  /** Current speech timer state. */
+  speechState: SpeechTimerState
+  /** Setter for speech timer state. */
+  setSpeechState: React.Dispatch<React.SetStateAction<SpeechTimerState>>
+  /** Current primary prep timer state (null if no prep time). */
+  prepState: TimerState | null
+  /** Setter for primary prep timer state. */
+  setPrepState: React.Dispatch<React.SetStateAction<TimerState | null>>
+  /** Current secondary prep timer state (null if no prep time). */
+  prepSecondaryState: TimerState | null
+  /** Setter for secondary prep timer state. */
+  setPrepSecondaryState: React.Dispatch<React.SetStateAction<TimerState | null>>
+}
+
 /**
  * TimersPanel - Container for all debate timers.
  *
- * Manages speech timer, prep timers, and voice chat based on the
- * current debate style and round participants.
+ * Renders speech timer, prep timers, and voice chat based on the
+ * current debate style and round participants. Timer state is
+ * controlled via props from the page-level useTimerState hook.
  *
  * @returns The timers panel component
- *
- * @example
- * ```tsx
- * // Used in the sidebar
- * <TimersPanel />
- * ```
  */
-export function TimersPanel() {
-  // Get current debate style from settings
-  const [debateStyleIndex, setDebateStyleIndex] = useState(settings.data.debateStyle.value as number)
-  const [debateStyle, setDebateStyle] = useState<DebateStyle>(debateStyles[debateStyleMap[debateStyleIndex]])
-
+export function TimersPanel({
+  debateStyle,
+  speechState,
+  setSpeechState,
+  prepState,
+  setPrepState,
+  prepSecondaryState,
+  setPrepSecondaryState,
+}: TimersPanelProps) {
   // Get current round for participant info
   const { rounds, flows, selected } = useFlowStore()
   const currentFlow = flows[selected]
   const currentRound = currentFlow?.roundId ? rounds.find((r) => r.id === currentFlow.roundId) : undefined
-
-  // Speech timer state
-  const [speechState, setSpeechState] = useState<SpeechTimerState>({
-    resetTimeIndex: 0,
-    time: debateStyle.timerSpeeches[0].time,
-    state: { name: "paused" },
-  })
-
-  // Prep timer states (one per team for 2-team formats)
-  const [prepState, setPrepState] = useState<TimerState | null>(
-    debateStyle.prepTime
-      ? {
-          resetTime: debateStyle.prepTime,
-          time: debateStyle.prepTime,
-          state: { name: "paused" },
-        }
-      : null,
-  )
-
-  const [prepSecondaryState, setPrepSecondaryState] = useState<TimerState | null>(
-    debateStyle.prepTime
-      ? {
-          resetTime: debateStyle.prepTime,
-          time: debateStyle.prepTime,
-          state: { name: "paused" },
-        }
-      : null,
-  )
-
-  /**
-   * Subscribe to debate style changes and reset timers accordingly.
-   */
-  useEffect(() => {
-    const unsubscribe = settings.subscribe(["debateStyle"], (key: string) => {
-      const newIndex = settings.data[key].value as number
-      if (newIndex !== debateStyleIndex) {
-        setDebateStyleIndex(newIndex)
-        const newStyle = debateStyles[debateStyleMap[newIndex]]
-        setDebateStyle(newStyle)
-
-        // Reset all timers for new style
-        setSpeechState({
-          resetTimeIndex: 0,
-          time: newStyle.timerSpeeches[0].time,
-          state: { name: "paused" },
-        })
-
-        if (newStyle.prepTime) {
-          setPrepState({
-            resetTime: newStyle.prepTime,
-            time: newStyle.prepTime,
-            state: { name: "paused" },
-          })
-          setPrepSecondaryState({
-            resetTime: newStyle.prepTime,
-            time: newStyle.prepTime,
-            state: { name: "paused" },
-          })
-        } else {
-          setPrepState(null)
-          setPrepSecondaryState(null)
-        }
-      }
-    })
-
-    return unsubscribe
-  }, [debateStyleIndex])
 
   /**
    * Participants list derived from the current round.

@@ -3,6 +3,7 @@
  * @module components/debate/flow/layout/FlowPageSidebar
  */
 
+import type React from "react"
 import { Plus, Clock, Users, Columns2, Grid3x3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -41,6 +42,16 @@ interface FlowPageSidebarProps {
   onEditRound: (roundId?: number) => void
   /** Optional handler called when the mobile menu overlay should be dismissed. */
   onCloseMobileMenu?: () => void
+  /** Timer state props passed through to TimersPanel. */
+  timerState: {
+    debateStyle: DebateStyle
+    speechState: SpeechTimerState
+    setSpeechState: React.Dispatch<React.SetStateAction<SpeechTimerState>>
+    prepState: TimerState | null
+    setPrepState: React.Dispatch<React.SetStateAction<TimerState | null>>
+    prepSecondaryState: TimerState | null
+    setPrepSecondaryState: React.Dispatch<React.SetStateAction<TimerState | null>>
+  }
 }
 
 /**
@@ -78,6 +89,7 @@ export function FlowPageSidebar({
   onOpenHistory,
   onEditRound,
   onCloseMobileMenu,
+  timerState,
 }: FlowPageSidebarProps) {
   // Sort flows: active first, then archived by most recent
   const sortedFlows = [...flows].sort((a, b) => {
@@ -170,7 +182,15 @@ export function FlowPageSidebar({
 
       {/* Timers section */}
       <div className="mt-auto pt-[var(--padding)]">
-        <TimersPanel />
+        <TimersPanel
+          debateStyle={timerState.debateStyle}
+          speechState={timerState.speechState}
+          setSpeechState={timerState.setSpeechState}
+          prepState={timerState.prepState}
+          setPrepState={timerState.setPrepState}
+          prepSecondaryState={timerState.prepSecondaryState}
+          setPrepSecondaryState={timerState.setPrepSecondaryState}
+        />
       </div>
     </div>
   )
