@@ -18,7 +18,7 @@ const DEFAULT_MAGNIFICATION = 60
 const DEFAULT_DISTANCE = 140
 
 const dockVariants = cva(
-  "mx-auto w-max mt-8 h-[48px] sm:h-[58px] p-1 sm:p-2 flex gap-1 sm:gap-2 rounded-2xl border supports-backdrop-blur:bg-white/10 supports-backdrop-blur:dark:bg-black/10 backdrop-blur-md",
+  "mx-auto w-max mt-4 sm:mt-8 h-[36px] sm:h-[58px] p-0.5 sm:p-2 flex gap-0.5 sm:gap-2 rounded-2xl border supports-backdrop-blur:bg-white/10 supports-backdrop-blur:dark:bg-black/10 backdrop-blur-md",
 )
 
 const Dock = React.forwardRef<HTMLDivElement, DockProps>(
@@ -43,7 +43,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
         ref={ref}
         onMouseMove={(e) => mousex.set(e.pageX)}
         onMouseLeave={() => mousex.set(Number.POSITIVE_INFINITY)}
-        className={cn(dockVariants({ className }), {
+        className={cn(dockVariants({ className }), "overflow-visible", {
           "items-start": direction === "top",
           "items-center": direction === "middle",
           "items-end": direction === "bottom",
@@ -82,7 +82,10 @@ const DockIcon = ({
     return val - bounds.x - bounds.width / 2
   })
 
-  const widthSync = useTransform(distanceCalc, [-distance, 0, distance], [40, magnification, 40])
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 640
+  const baseSize = isMobile ? 28 : 40
+  const mag = isMobile ? Math.min(magnification, 40) : magnification
+  const widthSync = useTransform(distanceCalc, [-distance, 0, distance], [baseSize, mag, baseSize])
   const width = useSpring(widthSync, {
     mass: 0.1,
     stiffness: 150,
