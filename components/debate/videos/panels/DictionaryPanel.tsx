@@ -77,7 +77,6 @@ export function DictionaryPanel() {
     <div className="w-full h-[calc(100vh-200px)] flex flex-col">
       {/* Search input */}
       <div className="relative mb-4 px-4 sm:px-6 pt-6">
-        <Search className="absolute left-7 sm:left-9 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
         <Input
           type="text"
           value={searchTerm}

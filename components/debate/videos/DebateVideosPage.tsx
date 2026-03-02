@@ -9,10 +9,9 @@
  * @module components/debate/videos/DebateVideosPage
  */
 
-import { useCallback, useEffect } from "react"
-import { ChampionsPanel } from "./panels/ChampionsPanel"
+import { useCallback, useEffect, useMemo } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
 import { DictionaryPanel } from "./panels/DictionaryPanel"
-import { LeaderboardPanel } from "./panels/LeaderboardPanel"
 
 // Hooks
 import { useVideoState } from "./hooks/useVideoState"
@@ -40,7 +39,19 @@ export function DebateVideosPage() {
   // ============================================================================
   // State Management
   // ============================================================================
-  const { state, actions } = useVideoState()
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  const VALID_VIEWS: Set<string> = new Set(["rounds", "lectures", "topPicks", "dictionary"])
+
+  const initialCategory = useMemo(() => {
+    const view = searchParams.get("view")
+    if (view && VALID_VIEWS.has(view as CategoryType)) return view as CategoryType
+    return "rounds"
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const { state, actions } = useVideoState(initialCategory)
 
   // ============================================================================
   // Computed Values
@@ -94,8 +105,11 @@ export function DebateVideosPage() {
       if (state.debateVideos) {
         changeCategory(category, state.debateVideos)
       }
+      const params = new URLSearchParams(searchParams.toString())
+      params.set("view", category)
+      router.replace(`?${params.toString()}`, { scroll: false })
     },
-    [state.debateVideos, changeCategory],
+    [state.debateVideos, changeCategory, searchParams, router],
   )
 
   // ============================================================================
@@ -103,7 +117,7 @@ export function DebateVideosPage() {
   // ============================================================================
   const { filterAndSortVideos } = useVideoFiltering()
 
-  useVideoDataFetch(actions.setDebateVideos, actions.setIsLoading, actions.setErrorMessage, changeCategory)
+  useVideoDataFetch(actions.setDebateVideos, actions.setIsLoading, actions.setErrorMessage, changeCategory, initialCategory)
 
   useResponsiveVideosPerPage(actions.setVideosPerPage)
 
@@ -193,15 +207,6 @@ export function DebateVideosPage() {
   // ============================================================================
   // Render Special Panels
   // ============================================================================
-  if (state.currentCategory === "champions") {
-    return (
-      <div className="min-h-screen bg-background p-3 sm:p-6">
-        <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
-        <ChampionsPanel onYearSelect={() => { }} />
-      </div>
-    )
-  }
-
   if (state.currentCategory === "dictionary") {
     return (
       <div className="min-h-screen bg-background p-3 sm:p-6">
@@ -211,14 +216,6 @@ export function DebateVideosPage() {
     )
   }
 
-  if (state.currentCategory === "leaderboard") {
-    return (
-      <div className="min-h-screen bg-background p-3 sm:p-6">
-        <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
-        <LeaderboardPanel />
-      </div>
-    )
-  }
 
   // ============================================================================
   // Render Main Video Grid

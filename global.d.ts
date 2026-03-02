@@ -153,9 +153,7 @@ id video page category identifiers. */
     | "rounds"
     | "lectures"
     | "topPicks"
-    | "champions"
-    | "dictionary"
-    | "leaderboard";
+    | "dictionary";
 
   /**
    * State for the debate flow page

@@ -13,12 +13,10 @@ interface CategoryDockProps {
 }
 
 const DOCK_ITEMS: { category: CategoryType; label: string; icon: string }[] = [
-  { category: "rounds",      label: "Debates",     icon: "/icons/icon-rounds.svg" },
-  { category: "lectures",    label: "Lectures",    icon: "/icons/icon-lectures.svg" },
-  { category: "topPicks",    label: "Top Picks",   icon: "/icons/icon-top-rounds.svg" },
-  { category: "champions",   label: "Champions",   icon: "/icons/icon-trophy.svg" },
-  { category: "dictionary",  label: "Dictionary",  icon: "/icons/icon-book.svg" },
-  { category: "leaderboard", label: "Leaderboard", icon: "/icons/icon-leaderboard.png" },
+  { category: "rounds", label: "Debates", icon: "/icons/icon-rounds.svg" },
+  { category: "lectures", label: "Lectures", icon: "/icons/icon-lectures.svg" },
+  { category: "topPicks", label: "Top Picks", icon: "/icons/icon-top-rounds.svg" },
+  { category: "dictionary", label: "Dictionary", icon: "/icons/icon-book.svg" },
 ]
 
 /**
@@ -28,19 +26,19 @@ const DOCK_ITEMS: { category: CategoryType; label: string; icon: string }[] = [
  */
 export function CategoryDock({ currentCategory, onCategoryChange }: CategoryDockProps) {
   return (
-    <Dock direction="middle" className="mb-4 sm:mb-8 h-[68px] sm:h-[58px]">
+    <Dock direction="middle" className="mb-4  h-[64px] ">
       {DOCK_ITEMS.map(({ category, label, icon }) => (
         <DockItem
           key={category}
           onClick={() => onCategoryChange(category)}
           className={cn(
-            "flex flex-col items-center gap-0.5 sm:aspect-square rounded-full transition-colors group",
+            "flex flex-col items-center gap-0.5  rounded-full transition-colors group",
             currentCategory === category
               ? "bg-primary/20 ring-2 ring-primary"
               : "bg-gray-200 dark:bg-neutral-800",
           )}
         >
-          <DockLabel className="sm:block hidden">{label}</DockLabel>
+          <DockLabel className="hidden sm:block">{label}</DockLabel>
           <DockIcon className={currentCategory === category ? "text-blue-500" : ""}>
             <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" />
           </DockIcon>

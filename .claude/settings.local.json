@@ -5,7 +5,8 @@
       "Bash(echo:*)",
       "Bash(npx tsc:*)",
       "Bash(python3:*)",
-      "WebFetch(domain:www.tabroom.com)"
+      "WebFetch(domain:www.tabroom.com)",
+      "Bash(npm install fuse.js)"
     ]
   }
 }

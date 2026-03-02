@@ -20,11 +20,25 @@ export interface LeaderboardEntry {
   rank: number | string;
   /** The school or name of the team */
   teamName: string;
-  /** The statistical values associated with the team's performance */
-  debateElo: number | string;
+  /** DebateDrills Elo rating */
+  debateElo?: number | string;
+  /** TOC bid list placement score (totalScore from tocbidlist) */
+  tocScore?: number;
+  /** The number of TOC bids the team received */
+  bids?: number;
+  /** Student names (e.g. "Jack Liu & Shangyu Wu") */
+  students?: string;
+  /** US state abbreviation */
+  state?: string;
+  /** Tournament detail breakdown */
+  details?: {
+    tournament: string;
+    placement: string;
+    placementNormalized: string;
+    bidTier: string;
+    score: number;
+  }[];
 }
-
-const ELO_PERCISION = 0;
 
 /**
  * Gets the dataset configurations for debate divisions from Debate Drills rankings

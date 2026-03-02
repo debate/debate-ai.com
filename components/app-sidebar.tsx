@@ -52,9 +52,15 @@ const NAV_ITEMS = [
   },
   {
     href: "/videos",
-    desktopLabel: "Watch",
-    mobileLabel: "Watch",
+    desktopLabel: "Videos",
+    mobileLabel: "Videos",
     icon: <Image src="/icons/icon-lectures.svg" alt="Watch" width={24} height={24} className="h-6 w-6" />,
+  },
+  {
+    href: "/rank",
+    desktopLabel: "Rankings",
+    mobileLabel: "Rankings",
+    icon: <Image src="/icons/icon-leaderboard.png" alt="Rankings" width={24} height={24} className="h-6 w-6" />,
   },
 ]
 
@@ -133,7 +139,7 @@ export function AppSidebar() {
                   pathname === item.href ? "bg-primary/20 ring-2 ring-primary" : "bg-gray-200 dark:bg-neutral-800",
                 )}
               >
-                <DockLabel>{item.mobileLabel}</DockLabel>
+                {/* <DockLabel>{item.mobileLabel}</DockLabel> */}
                 <DockIcon>{item.mobileIcon || item.icon}</DockIcon>
               </DockItem>
             </Link>

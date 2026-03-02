@@ -20,6 +20,7 @@ export function useVideoDataFetch(
   setIsLoading: (loading: boolean) => void,
   setErrorMessage: (msg: string) => void,
   changeCategory: (category: CategoryType, data: DebateVideosData) => void,
+  initialCategory: CategoryType = "rounds",
 ) {
   const fetchVideos = useCallback(async () => {
     try {
@@ -29,13 +30,13 @@ export function useVideoDataFetch(
       }
       const data = await response.json()
       setDebateVideos(data)
-      changeCategory("rounds", data)
+      changeCategory(initialCategory, data)
     } catch (error) {
       console.error("Error fetching videos:", error)
       setErrorMessage("Error loading videos. Please try again.")
       setIsLoading(false)
     }
-  }, [setDebateVideos, setErrorMessage, setIsLoading, changeCategory])
+  }, [setDebateVideos, setErrorMessage, setIsLoading, changeCategory, initialCategory])
 
   useEffect(() => {
     fetchVideos()

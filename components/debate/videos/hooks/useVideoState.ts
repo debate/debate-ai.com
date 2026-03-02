@@ -10,13 +10,13 @@ import { useState, useRef } from "react"
  *
  * @returns An object containing `state` (current values and refs) and `actions` (setter functions).
  */
-export function useVideoState() {
+export function useVideoState(initialCategory: CategoryType = "rounds") {
   const [debateVideos, setDebateVideos] = useState<DebateVideosData | null>(null)
   const [allVideos, setAllVideos] = useState<VideoType[]>([])
   const [filteredVideos, setFilteredVideos] = useState<VideoType[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [videosPerPage, setVideosPerPage] = useState(8)
-  const [currentCategory, setCurrentCategory] = useState<CategoryType>("rounds")
+  const [currentCategory, setCurrentCategory] = useState<CategoryType>(initialCategory)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [searchTerm, setSearchTerm] = useState("")

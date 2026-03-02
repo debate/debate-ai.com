@@ -2,7 +2,7 @@
 
 Version 1.0
 
-Copyright © 2025 Debate AI All rights reserved.
+Copyright © 2024-2026 Debate AI. All rights reserved.
 
 ## 1. Acceptance
 
@@ -50,7 +50,7 @@ You may redistribute the Software or derivative works free of charge, for non-co
 
 ## 4. Prohibited Uses
 
-Unless you hold a separate commercial agreement from Debate AI AI Corp, you may not:
+Unless you hold a separate commercial agreement from Debate AI, you may not:
 
 **4.1** Offer network-accessible access to the Software (SaaS, managed services, hosted/shared instances, API access, multiplayer or centralized deployments for external users, etc.)
 
@@ -58,7 +58,7 @@ Unless you hold a separate commercial agreement from Debate AI AI Corp, you may 
 
 **4.3** Commercialize, sell, sublicense, or bundle the Software into any paid product, service, offering, or distribution
 
-**4.4** Use the Software to develop a competing product or commercial alternative to Debate AI AI Corp services or Software
+**4.4** Use the Software to develop a competing product or commercial alternative to Debate AI services or Software
 
 **4.5** Embed the Software inside any distributed extension, integration, or client project in a way that provides end-user access without direct issuance of this License
 
