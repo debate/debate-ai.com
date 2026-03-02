@@ -124,32 +124,31 @@ export function AppSidebar() {
       </div>
 
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
-        <Dock className="mx-auto w-max mb-2" magnification={60} distance={120}>
+        <Dock className="mx-auto w-max mb-2 h-[68px]" magnification={60} distance={120}>
           {NAV_ITEMS.map((item) => (
             <Link key={item.href} href={item.href}>
               <DockItem
                 className={cn(
-                  "aspect-square rounded-full transition-colors",
+                  "flex flex-col items-center gap-0.5 rounded-full transition-colors",
                   pathname === item.href ? "bg-primary/20 ring-2 ring-primary" : "bg-gray-200 dark:bg-neutral-800",
                 )}
               >
-                <DockLabel>{item.mobileLabel}</DockLabel>
                 <DockIcon>{item.mobileIcon || item.icon}</DockIcon>
+                <span className="text-[9px] leading-none font-medium">{item.mobileLabel}</span>
               </DockItem>
             </Link>
           ))}
 
-          <DockItem className="aspect-square rounded-full bg-gray-200 dark:bg-neutral-800">
-            <DockLabel>Theme</DockLabel>
+          <DockItem className="flex flex-col items-center gap-0.5 rounded-full bg-gray-200 dark:bg-neutral-800">
             <DockIcon>
               <ThemeDropdown />
             </DockIcon>
+            <span className="text-[9px] leading-none font-medium">Theme</span>
           </DockItem>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <DockItem className="aspect-square rounded-full bg-gray-200 dark:bg-neutral-800">
-                <DockLabel>Profile</DockLabel>
+              <DockItem className="flex flex-col items-center gap-0.5 rounded-full bg-gray-200 dark:bg-neutral-800">
                 <DockIcon>
                   <Avatar className="h-8 w-8">
                     <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
@@ -158,6 +157,7 @@ export function AppSidebar() {
                     </AvatarFallback>
                   </Avatar>
                 </DockIcon>
+                <span className="text-[9px] leading-none font-medium">Profile</span>
               </DockItem>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="end" className="w-48 mb-2">

@@ -28,22 +28,26 @@ const DOCK_ITEMS: { category: CategoryType; label: string; icon: string }[] = [
  */
 export function CategoryDock({ currentCategory, onCategoryChange }: CategoryDockProps) {
   return (
-    <Dock direction="middle" className="mb-4 sm:mb-8">
+    <Dock direction="middle" className="mb-4 sm:mb-8 h-[68px] sm:h-[58px]">
       {DOCK_ITEMS.map(({ category, label, icon }) => (
         <DockItem
           key={category}
           onClick={() => onCategoryChange(category)}
           className={cn(
-            "aspect-square rounded-full transition-colors group",
+            "flex flex-col items-center gap-0.5 sm:aspect-square rounded-full transition-colors group",
             currentCategory === category
               ? "bg-primary/20 ring-2 ring-primary"
               : "bg-gray-200 dark:bg-neutral-800",
           )}
         >
-          <DockLabel>{label}</DockLabel>
+          <DockLabel className="sm:block hidden">{label}</DockLabel>
           <DockIcon className={currentCategory === category ? "text-blue-500" : ""}>
             <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" />
           </DockIcon>
+          <span className={cn(
+            "text-[9px] leading-none font-medium sm:hidden",
+            currentCategory === category ? "text-blue-500" : "",
+          )}>{label}</span>
         </DockItem>
       ))}
     </Dock>
