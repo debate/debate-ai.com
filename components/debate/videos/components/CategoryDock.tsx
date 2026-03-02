@@ -4,7 +4,8 @@
  */
 
 import Image from "next/image"
-import { Dock, DockIcon, DockItem } from "@/components/ui/dock"
+import { cn } from "@/lib/utils"
+import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
 
 interface CategoryDockProps {
   currentCategory: CategoryType
@@ -21,19 +22,28 @@ const DOCK_ITEMS: { category: CategoryType; label: string; icon: string }[] = [
 ]
 
 /**
- * Navigation dock with category icons
+ * Navigation dock with category icons.
+ * On mobile: circular icon-only buttons matching the bottom app dock style.
+ * On desktop: icons with visible text labels below.
  */
 export function CategoryDock({ currentCategory, onCategoryChange }: CategoryDockProps) {
   return (
     <Dock direction="middle" className="mb-4 sm:mb-8">
       {DOCK_ITEMS.map(({ category, label, icon }) => (
-        <DockItem key={category} onClick={() => onCategoryChange(category)} className="flex flex-col items-center gap-0.5 sm:gap-2 min-w-[36px] sm:min-w-[70px] group">
+        <DockItem
+          key={category}
+          onClick={() => onCategoryChange(category)}
+          className={cn(
+            "aspect-square rounded-full transition-colors group",
+            currentCategory === category
+              ? "bg-primary/20 ring-2 ring-primary"
+              : "bg-gray-200 dark:bg-neutral-800",
+          )}
+        >
+          <DockLabel>{label}</DockLabel>
           <DockIcon className={currentCategory === category ? "text-blue-500" : ""}>
-            <Image src={icon} alt={label} width={32} height={32} className="w-full h-full" />
+            <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" />
           </DockIcon>
-          <span className={`text-[8px] sm:text-xs font-medium whitespace-nowrap transition-colors ${currentCategory === category ? "text-blue-500 font-semibold" : "text-muted-foreground group-hover:text-foreground"}`}>
-            {label}
-          </span>
         </DockItem>
       ))}
     </Dock>

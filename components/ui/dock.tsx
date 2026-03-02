@@ -43,7 +43,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
         ref={ref}
         onMouseMove={(e) => mousex.set(e.pageX)}
         onMouseLeave={() => mousex.set(Number.POSITIVE_INFINITY)}
-        className={cn(dockVariants({ className }), {
+        className={cn(dockVariants({ className }), "overflow-visible", {
           "items-start": direction === "top",
           "items-center": direction === "middle",
           "items-end": direction === "bottom",
