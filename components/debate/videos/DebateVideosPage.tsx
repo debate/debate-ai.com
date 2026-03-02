@@ -195,7 +195,7 @@ export function DebateVideosPage() {
   // ============================================================================
   if (state.currentCategory === "champions") {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <div className="min-h-screen bg-background p-3 sm:p-6">
         <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
         <ChampionsPanel onYearSelect={() => { }} />
       </div>
@@ -204,7 +204,7 @@ export function DebateVideosPage() {
 
   if (state.currentCategory === "dictionary") {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <div className="min-h-screen bg-background p-3 sm:p-6">
         <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
         <DictionaryPanel />
       </div>
@@ -213,7 +213,7 @@ export function DebateVideosPage() {
 
   if (state.currentCategory === "leaderboard") {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <div className="min-h-screen bg-background p-3 sm:p-6">
         <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
         <LeaderboardPanel />
       </div>
@@ -224,7 +224,7 @@ export function DebateVideosPage() {
   // Render Main Video Grid
   // ============================================================================
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-background p-3 sm:p-6">
       <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
 
       <VideoSearchBar

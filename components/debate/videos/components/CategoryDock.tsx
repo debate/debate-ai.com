@@ -25,13 +25,13 @@ const DOCK_ITEMS: { category: CategoryType; label: string; icon: string }[] = [
  */
 export function CategoryDock({ currentCategory, onCategoryChange }: CategoryDockProps) {
   return (
-    <Dock direction="middle" className="mb-8">
+    <Dock direction="middle" className="mb-4 sm:mb-8">
       {DOCK_ITEMS.map(({ category, label, icon }) => (
-        <DockItem key={category} onClick={() => onCategoryChange(category)} className="flex flex-col items-center gap-1 sm:gap-2 min-w-[48px] sm:min-w-[70px] group">
+        <DockItem key={category} onClick={() => onCategoryChange(category)} className="flex flex-col items-center gap-0.5 sm:gap-2 min-w-[36px] sm:min-w-[70px] group">
           <DockIcon className={currentCategory === category ? "text-blue-500" : ""}>
             <Image src={icon} alt={label} width={32} height={32} className="w-full h-full" />
           </DockIcon>
-          <span className={`text-[10px] sm:text-xs font-medium whitespace-nowrap transition-colors ${currentCategory === category ? "text-blue-500 font-semibold" : "text-muted-foreground group-hover:text-foreground"}`}>
+          <span className={`text-[8px] sm:text-xs font-medium whitespace-nowrap transition-colors ${currentCategory === category ? "text-blue-500 font-semibold" : "text-muted-foreground group-hover:text-foreground"}`}>
             {label}
           </span>
         </DockItem>

@@ -192,7 +192,7 @@ export function LeaderboardPanel() {
               // Leaderboard table
               <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
                 {/* Table header */}
-                <div className="grid grid-cols-[60px_minmax(300px,1fr)_90px] gap-2 px-4 py-3 bg-gray-50 border-b text-sm font-medium text-muted-foreground">
+                <div className="grid grid-cols-[40px_1fr_50px] sm:grid-cols-[60px_minmax(300px,1fr)_90px] gap-1 sm:gap-2 px-2 sm:px-4 py-3 bg-gray-50 border-b text-sm font-medium text-muted-foreground">
                   <div className="text-left">Rank</div>
                   <div className="text-left">Team</div>
                   {COLUMNS.map((col) => (
@@ -211,16 +211,16 @@ export function LeaderboardPanel() {
                 {filteredData.map((entry: LeaderboardEntry, index: number) => (
                   <div
                     key={index}
-                    className="grid grid-cols-[60px_minmax(300px,1fr)_90px] gap-2 items-center px-4 py-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors"
+                    className="grid grid-cols-[40px_1fr_50px] sm:grid-cols-[60px_minmax(300px,1fr)_90px] gap-1 sm:gap-2 items-center px-2 sm:px-4 py-3 sm:py-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors"
                   >
                     {/* Rank column */}
-                    <div className="text-left font-bold text-lg">
+                    <div className="text-left font-bold text-sm sm:text-lg">
                       #{typeof entry.rank === "number" ? entry.rank : entry.rank}
                     </div>
 
                     {/* Team name column */}
                     <div className="text-left min-w-0">
-                      <div className="font-semibold text-base break-words">
+                      <div className="font-semibold text-xs sm:text-base break-words">
                         {entry.teamName && entry.teamName !== "Unknown Team" ? entry.teamName : "Unknown Team"}
                       </div>
                     </div>
