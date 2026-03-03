@@ -3,7 +3,7 @@
  * @module components/debate/videos/components/VideoSearchBar
  */
 
-import { Search, X, Video, VideoOff, Star } from "lucide-react"
+import { Search, X, Video, VideoOff, Star, ChevronLeft, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
@@ -21,6 +21,8 @@ interface VideoSearchBarProps {
   isSearchFocused: boolean
   /** Whether video thumbnails are currently visible in the grid. */
   showThumbnails: boolean
+  /** Currently selected season year. */
+  selectedYear: string
   /** Callback invoked with the new search string on every input change. */
   onSearchChange: (value: string) => void
   /** Callback invoked when the search input receives focus. */
@@ -31,12 +33,22 @@ interface VideoSearchBarProps {
   onClearSearch: () => void
   /** Callback invoked with the newly selected sort option value. */
   onSortChange: (value: string) => void
+  /** Callback invoked with the newly selected season year. */
+  onYearChange: (value: string) => void
   /** Callback invoked to toggle thumbnail visibility. */
   onToggleThumbnails: () => void
   /** Whether to show only favorite videos. */
   showFavoritesOnly: boolean
   /** Callback invoked to toggle favorite visualization filter. */
   onToggleFavoritesOnly: () => void
+  /** Current page number for pagination. */
+  currentPage?: number
+  /** Total number of pages for pagination. */
+  totalPages?: number
+  /** Callback for previous page action. */
+  onPrevPage?: () => void
+  /** Callback for next page action. */
+  onNextPage?: () => void
 }
 
 /** Available sort options shown in the sort dropdown. */
@@ -66,15 +78,25 @@ export function VideoSearchBar({
   sortOrder,
   isSearchFocused,
   showThumbnails,
+  selectedYear,
   onSearchChange,
   onSearchFocus,
   onSearchBlur,
   onClearSearch,
   onSortChange,
+  onYearChange,
   onToggleThumbnails,
   showFavoritesOnly,
   onToggleFavoritesOnly,
+  currentPage,
+  totalPages,
+  onPrevPage,
+  onNextPage,
 }: VideoSearchBarProps) {
+  const currentYear = new Date().getFullYear()
+  const maxYear = Math.max(currentYear, 2026)
+  const years = Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
+
   return (
     <div className="flex flex-row gap-2 sm:gap-3 mb-6">
       <div className="relative flex-1 min-w-0">
@@ -102,13 +124,26 @@ export function VideoSearchBar({
       </div>
 
       <Select value={sortOrder} onValueChange={onSortChange}>
-        <SelectTrigger className="w-[110px] sm:w-[140px] shrink-0">
+        <SelectTrigger className="w-[100px] sm:w-[120px] shrink-0">
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent>
           {sortOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Select value={selectedYear} onValueChange={onYearChange}>
+        <SelectTrigger className="w-[110px] sm:w-[130px] shrink-0">
+          <SelectValue placeholder="Year" />
+        </SelectTrigger>
+        <SelectContent>
+          {years.map((y) => (
+            <SelectItem key={y} value={y}>
+              {Number(y) - 1}-{y}
             </SelectItem>
           ))}
         </SelectContent>
@@ -126,6 +161,35 @@ export function VideoSearchBar({
       >
         <Star className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`} />
       </Button>
+
+      {/* Compact Pagination */}
+      {totalPages && totalPages > 1 && currentPage && onPrevPage && onNextPage && (
+        <div className="flex items-center gap-2 ml-auto pl-2 border-l border-border/50 shrink-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={onPrevPage}
+            disabled={currentPage === 1}
+            title="Previous Page"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="text-[10px] sm:text-xs font-medium tabular-nums whitespace-nowrap text-muted-foreground min-w-[3rem] text-center">
+            {currentPage} / {totalPages}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={onNextPage}
+            disabled={currentPage >= totalPages}
+            title="Next Page"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

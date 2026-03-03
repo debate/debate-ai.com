@@ -14,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Users, Clock } from "lucide-react"
 import { getBlueShade, getGreenShade } from "@/lib/card-parser/card-utils"
-import type { SearchResult } from "@/lib/data/demo-data"
+import type { SearchResult } from "@/components/debate/SharedResearch/types"
 
 /**
  * Props for the SearchResultCard component

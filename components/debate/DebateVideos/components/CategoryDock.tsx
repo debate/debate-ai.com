@@ -6,18 +6,25 @@
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
+import {
+  IconRoundsYoutube,
+  IconLectures,
+  IconTopRounds,
+  IconBook,
+  IconLeaderboard,
+} from "@/components/icons"
 
 interface CategoryDockProps {
   currentCategory: CategoryType
   onCategoryChange: (category: CategoryType) => void
 }
 
-const DOCK_ITEMS: { category: CategoryType; label: string; icon: string }[] = [
-  { category: "rounds", label: "Debates", icon: "/icons/icon-rounds-youtube.svg" },
-  { category: "lectures", label: "Lectures", icon: "/icons/icon-lectures.svg" },
-  { category: "topPicks", label: "Top Picks", icon: "/icons/icon-top-rounds.svg" },
-  { category: "dictionary", label: "Dictionary", icon: "/icons/icon-book.svg" },
-  { category: "leaderboard", label: "Leaderboard", icon: "/icons/icon-leaderboard.png" },
+const DOCK_ITEMS: { category: CategoryType; label: string; icon: any }[] = [
+  { category: "rounds", label: "Debates", icon: IconRoundsYoutube },
+  { category: "lectures", label: "Lectures", icon: IconLectures },
+  { category: "topPicks", label: "Top Picks", icon: IconTopRounds },
+  { category: "dictionary", label: "Dictionary", icon: IconBook },
+  { category: "leaderboard", label: "Leaderboard", icon: IconLeaderboard },
 ]
 
 /**

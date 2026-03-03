@@ -122,16 +122,6 @@ export function FlowPageSidebar({
             </TooltipContent>
           </Tooltip>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button onClick={onAddFlow} size="icon" variant="ghost" className="h-7 w-7">
-                <Plus className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Add Flow</p>
-            </TooltipContent>
-          </Tooltip>
 
           <Tooltip>
             <TooltipTrigger asChild>
@@ -176,6 +166,17 @@ export function FlowPageSidebar({
               onDelete={() => onDeleteFlow(flow.index)}
             />
           ))}
+        </div>
+        <div className="flex justify-center ">
+          <Button
+            onClick={onAddFlow}
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground flex items-center "
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add Flow</span>
+          </Button>
         </div>
       </div>
 

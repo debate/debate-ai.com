@@ -6,6 +6,8 @@ word counts only format
 
 online format vs AI
 
-AI v AI
+calc dead time
+
+ai will chart out outcomes via model councel
 
 options for judge decision via AI

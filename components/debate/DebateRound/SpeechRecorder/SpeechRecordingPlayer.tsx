@@ -109,7 +109,7 @@ export function SpeechRecordingPlayer({
                 return (
                     <AudioPlayerProvider key={rec.key} initialPlaybackRate={0.75}>
                         {/* Player row */}
-                        <div className="flex items-center gap-1.5 rounded-md bg-muted/50 px-2 py-1.5 text-xs">
+                        <div className="flex items-center gap-1.5 rounded-md bg-muted/50 px-2 py-1.5 text-xs group">
                             <span
                                 className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider truncate max-w-[80px]"
                                 title={label}
@@ -148,7 +148,7 @@ export function SpeechRecordingPlayer({
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-5 w-5 flex-shrink-0 text-muted-foreground hover:text-destructive"
+                                className="h-5 w-5 flex-shrink-0 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
                                 onClick={() => handleDelete(rec.key)}
                             >
                                 <Trash2 className="h-3 w-3" />

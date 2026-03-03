@@ -23,6 +23,7 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedYear, setSelectedYear] = useState("2026");
   const [sortOrder, setSortOrder] = useState("Recency");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showThumbnails, setShowThumbnails] = useState(true);
@@ -93,6 +94,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       errorMessage,
       /** Current value of the search input field. */
       searchTerm,
+      /** Currently selected season year. */
+      selectedYear,
       /** Active sort order; either "Recency" or "Views". */
       sortOrder,
       /** Whether the search input currently has keyboard focus. */
@@ -134,6 +137,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       setSearchTerm,
       /** Sets the active sort order. */
       setSortOrder,
+      /** Sets the selected season year. */
+      setSelectedYear,
       /** Sets whether the search field is focused. */
       setIsSearchFocused,
       /** Sets whether thumbnails are shown. */

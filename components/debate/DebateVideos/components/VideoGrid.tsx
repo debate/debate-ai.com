@@ -4,6 +4,7 @@
  */
 
 import { Card, CardDescription } from "@/components/ui/card"
+import { useState } from "react"
 import Image from "next/image"
 import { Calendar, Eye, Star } from "lucide-react"
 
@@ -75,13 +76,12 @@ interface VideoCardProps {
  */
 function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite }: VideoCardProps) {
   const [videoId, title, date, channel, viewCount, description] = video
+  const [isPlaying, setIsPlaying] = useState(false)
 
   return (
-    <a
-      href={`https://www.youtube.com/watch?v=${videoId}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block h-full relative group/card"
+    <div
+      onClick={() => !isPlaying && setIsPlaying(true)}
+      className="block h-full relative group/card cursor-pointer"
     >
       <button
         onClick={(e) => {
@@ -94,16 +94,26 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite }: Vide
       >
         <Star className={`h-5 w-5 ${isFavorite ? "fill-current text-amber-400" : ""}`} />
       </button>
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full cursor-pointer relative">
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full relative">
         {showThumbnails && (
           <div className="relative w-full pt-[56.25%] bg-muted">
-            <Image
-              src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
-              alt={title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            />
+            {isPlaying ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                title={title}
+                className="absolute inset-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <Image
+                src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
+                alt={title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              />
+            )}
           </div>
         )}
 
@@ -128,6 +138,6 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite }: Vide
           </div>
         </div>
       </Card>
-    </a>
+    </div>
   )
 }

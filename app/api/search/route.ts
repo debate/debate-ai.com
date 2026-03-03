@@ -1,4 +1,4 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server";
 
 const DEMO_DATA = [
   {
@@ -289,102 +289,151 @@ const DEMO_DATA = [
     round: "round-3",
     event: "LD",
   },
-]
+];
 
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams
-  const sortBy = searchParams.get("sort") || "_text_match:desc"
-  const query = searchParams.get("q") || ""
+  const searchParams = request.nextUrl.searchParams;
+  const sortBy = searchParams.get("sort") || "_text_match:desc";
+  const query = searchParams.get("q") || "";
 
   // Filter parameters
-  const yearFilter = searchParams.get("year") || ""
-  const schoolFilter = searchParams.get("school") || ""
-  const teamFilter = searchParams.get("team") || ""
-  const sideFilter = searchParams.get("side") || ""
-  const tournamentFilter = searchParams.get("tournament") || ""
-  const roundFilter = searchParams.get("round") || ""
-  const eventFilter = searchParams.get("event") || ""
+  const yearFilter = searchParams.get("year") || "";
+  const schoolFilter = searchParams.get("school") || "";
+  const teamFilter = searchParams.get("team") || "";
+  const tournamentFilter = searchParams.get("tournament") || "";
+  const eventFilter = searchParams.get("event") || "";
+
+  // Search scope flags
+  const searchHighlighted = searchParams.get("searchHighlighted") === "1";
+  const searchUnderlined = searchParams.get("searchUnderlined") === "1";
+  const searchSummaries = searchParams.get("searchSummaries") === "1";
+  const searchBlockAndFileTitles =
+    searchParams.get("searchBlockAndFileTitles") === "1";
+  const searchAllText = searchParams.get("searchAllText") === "1";
+  const hasSearchScope =
+    searchHighlighted ||
+    searchUnderlined ||
+    searchSummaries ||
+    searchBlockAndFileTitles ||
+    searchAllText;
 
   // Clone the data to avoid mutation
-  let results = [...DEMO_DATA]
+  let results = [...DEMO_DATA];
 
   // Apply text search filter
   if (query) {
-    const lowerQuery = query.toLowerCase()
-    results = results.filter(
-      (item) =>
+    const lowerQuery = query.toLowerCase();
+
+    // Extract text from HTML tags
+    const extractTagText = (html: string, tag: string) => {
+      const regex = new RegExp(`<${tag}>(.*?)</${tag}>`, "gi");
+      const matches: string[] = [];
+      let match;
+      while ((match = regex.exec(html)) !== null) {
+        matches.push(match[1].replace(/<[^>]*>/g, ""));
+      }
+      return matches.join(" ").toLowerCase();
+    };
+
+    results = results.filter((item) => {
+      // When specific scopes are selected, only search in those fields
+      if (hasSearchScope && !searchAllText) {
+        if (
+          searchHighlighted &&
+          extractTagText(item.html, "mark").includes(lowerQuery)
+        )
+          return true;
+        if (
+          searchUnderlined &&
+          extractTagText(item.html, "u").includes(lowerQuery)
+        )
+          return true;
+        if (searchSummaries && item.summary.toLowerCase().includes(lowerQuery))
+          return true;
+        if (
+          searchBlockAndFileTitles &&
+          (item.argBlock.toLowerCase().includes(lowerQuery) ||
+            item.researchField.toLowerCase().includes(lowerQuery))
+        )
+          return true;
+        return false;
+      }
+
+      // Default: search all fields
+      return (
         item.summary.toLowerCase().includes(lowerQuery) ||
         item.researchField.toLowerCase().includes(lowerQuery) ||
         item.tag.toLowerCase().includes(lowerQuery) ||
         item.argBlock.toLowerCase().includes(lowerQuery) ||
         item.cite.toLowerCase().includes(lowerQuery) ||
         item.cite_short.toLowerCase().includes(lowerQuery) ||
-        item.html.toLowerCase().includes(lowerQuery),
-    )
+        item.html.toLowerCase().includes(lowerQuery)
+      );
+    });
   }
 
   // Apply field filters (case-insensitive partial match)
   if (yearFilter) {
-    const y = yearFilter.replace(/^20/, "")
-    results = results.filter((item) => item.year === y || `20${item.year}` === yearFilter)
+    const y = yearFilter.replace(/^20/, "");
+    results = results.filter(
+      (item) => item.year === y || `20${item.year}` === yearFilter,
+    );
   }
   if (schoolFilter) {
-    const lower = schoolFilter.toLowerCase()
-    results = results.filter((item) => item.school?.toLowerCase().includes(lower))
+    const lower = schoolFilter.toLowerCase();
+    results = results.filter((item) =>
+      item.school?.toLowerCase().includes(lower),
+    );
   }
   if (teamFilter) {
-    const lower = teamFilter.toLowerCase()
-    results = results.filter((item) => item.team?.toLowerCase().includes(lower))
-  }
-  if (sideFilter) {
-    const lower = sideFilter.toLowerCase()
-    results = results.filter((item) => item.side?.toLowerCase().startsWith(lower))
+    const lower = teamFilter.toLowerCase();
+    results = results.filter((item) =>
+      item.team?.toLowerCase().includes(lower),
+    );
   }
   if (tournamentFilter) {
-    const lower = tournamentFilter.toLowerCase()
-    results = results.filter((item) => item.tournament?.toLowerCase().includes(lower))
-  }
-  if (roundFilter) {
-    const lower = roundFilter.toLowerCase()
-    results = results.filter((item) => item.round?.toLowerCase().includes(lower))
+    const lower = tournamentFilter.toLowerCase();
+    results = results.filter((item) =>
+      item.tournament?.toLowerCase().includes(lower),
+    );
   }
   if (eventFilter && eventFilter !== "all") {
-    const lower = eventFilter.toLowerCase()
-    results = results.filter((item) => item.event?.toLowerCase() === lower)
+    const lower = eventFilter.toLowerCase();
+    results = results.filter((item) => item.event?.toLowerCase() === lower);
   }
 
   // Apply sorting
-  const [field, order] = sortBy.split(":")
+  const [field, order] = sortBy.split(":");
 
   results.sort((a, b) => {
-    let aVal: any
-    let bVal: any
+    let aVal: any;
+    let bVal: any;
 
     switch (field) {
       case "readCount":
-        aVal = a.readCount
-        bVal = b.readCount
-        break
+        aVal = a.readCount;
+        bVal = b.readCount;
+        break;
       case "year":
-        aVal = Number.parseInt(a.year)
-        bVal = Number.parseInt(b.year)
-        break
+        aVal = Number.parseInt(a.year);
+        bVal = Number.parseInt(b.year);
+        break;
       case "highlightLength":
-        aVal = a.highlightLength
-        bVal = b.highlightLength
-        break
+        aVal = a.highlightLength;
+        bVal = b.highlightLength;
+        break;
       case "_text_match":
       default:
         // For relevance, maintain original order
-        return 0
+        return 0;
     }
 
     if (order === "asc") {
-      return aVal - bVal
+      return aVal - bVal;
     } else {
-      return bVal - aVal
+      return bVal - aVal;
     }
-  })
+  });
 
-  return NextResponse.json({ results, total: results.length })
+  return NextResponse.json({ results, total: results.length });
 }

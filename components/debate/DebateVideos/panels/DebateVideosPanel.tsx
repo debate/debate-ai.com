@@ -124,10 +124,10 @@ export function DebateVideosPage() {
 
   // Filter and sort when dependencies change
   useEffect(() => {
-    const filtered = filterAndSortVideos(state.allVideos, state.searchTerm, state.sortOrder, state.debateVideos, state.showFavoritesOnly, state.favorites)
+    const filtered = filterAndSortVideos(state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites)
     actions.setFilteredVideos(filtered)
     actions.setCurrentPage(1)
-  }, [state.allVideos, state.searchTerm, state.sortOrder, state.debateVideos, state.showFavoritesOnly, state.favorites, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
+  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
 
   // ============================================================================
   // Search & Filter Handlers
@@ -236,6 +236,7 @@ export function DebateVideosPage() {
       <VideoSearchBar
         searchTerm={state.searchTerm}
         sortOrder={state.sortOrder}
+        selectedYear={state.selectedYear}
         isSearchFocused={state.isSearchFocused}
         showThumbnails={state.showThumbnails}
         showFavoritesOnly={state.showFavoritesOnly}
@@ -244,8 +245,13 @@ export function DebateVideosPage() {
         onSearchBlur={() => actions.setIsSearchFocused(false)}
         onClearSearch={handleClearSearch}
         onSortChange={handleSortChange}
+        onYearChange={(year) => actions.setSelectedYear(year)}
         onToggleThumbnails={handleToggleThumbnails}
         onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
+        currentPage={state.currentPage}
+        totalPages={totalPages}
+        onPrevPage={handlePrevPage}
+        onNextPage={handleNextPage}
       />
 
       {state.isLoading ? (
@@ -279,12 +285,6 @@ export function DebateVideosPage() {
             </div>
           )}
 
-          <VideoPagination
-            currentPage={state.currentPage}
-            totalPages={totalPages}
-            onPrevPage={handlePrevPage}
-            onNextPage={handleNextPage}
-          />
         </>
       )}
     </div>

@@ -10,10 +10,13 @@ const EMPTY_FILTERS: SearchFilters = {
   year: "",
   school: "",
   team: "",
-  side: "",
   tournament: "",
-  round: "",
   event: "",
+  searchHighlighted: false,
+  searchUnderlined: false,
+  searchSummaries: false,
+  searchBlockAndFileTitles: false,
+  searchAllText: false,
 }
 
 export function SearchInterface() {
@@ -63,10 +66,13 @@ export function SearchInterface() {
       if (filters.year) params.set("year", filters.year)
       if (filters.school) params.set("school", filters.school)
       if (filters.team) params.set("team", filters.team)
-      if (filters.side) params.set("side", filters.side)
       if (filters.tournament) params.set("tournament", filters.tournament)
-      if (filters.round) params.set("round", filters.round)
       if (filters.event && filters.event !== "all") params.set("event", filters.event)
+      if (filters.searchHighlighted) params.set("searchHighlighted", "1")
+      if (filters.searchUnderlined) params.set("searchUnderlined", "1")
+      if (filters.searchSummaries) params.set("searchSummaries", "1")
+      if (filters.searchBlockAndFileTitles) params.set("searchBlockAndFileTitles", "1")
+      if (filters.searchAllText) params.set("searchAllText", "1")
 
       const response = await fetch(`/api/search?${params.toString()}`)
       const data = await response.json()

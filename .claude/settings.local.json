@@ -6,7 +6,8 @@
       "Bash(npx tsc:*)",
       "Bash(python3:*)",
       "WebFetch(domain:www.tabroom.com)",
-      "Bash(npm install fuse.js)"
+      "Bash(npm install fuse.js)",
+      "Bash(ls -la /mnt/data/Projects/debate-ai.com/lib/debate-data/debate-dictionary*)"
     ]
   }
 }

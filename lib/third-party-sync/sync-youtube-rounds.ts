@@ -145,21 +145,24 @@ export async function syncYouTubeVideos() {
     }
   }
 
-  const dataPath = path.join(process.cwd(), "data", "debate-videos.json");
-  const existingData = JSON.parse(await fs.readFile(dataPath, "utf-8"));
+  const dataDir = path.join(process.cwd(), "lib", "debate-data");
+  const filePaths: Record<string, string> = {
+    rounds: path.join(dataDir, "debate-rounds.json"),
+    topPicks: path.join(dataDir, "debate-top-picks.json"),
+    lectures: path.join(dataDir, "debate-lectures.json"),
+  };
 
   const mergedData: Record<string, any[]> = {};
   for (const category of ["rounds", "lectures", "topPicks"]) {
-    const existing = existingData[category] || [];
+    const existing = JSON.parse(await fs.readFile(filePaths[category], "utf-8"));
     const newVids = newVideos[category] || [];
 
     const existingIds = new Set(existing.map((v: any[]) => v[0]));
     const uniqueNewVids = newVids.filter((v: any[]) => !existingIds.has(v[0]));
 
     mergedData[category] = [...uniqueNewVids, ...existing];
+    await fs.writeFile(filePaths[category], JSON.stringify(mergedData[category], null, 2));
   }
-
-  await fs.writeFile(dataPath, JSON.stringify(mergedData, null, 2));
 
   const stats = {
     rounds: {

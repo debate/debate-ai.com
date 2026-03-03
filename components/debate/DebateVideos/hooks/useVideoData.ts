@@ -24,7 +24,7 @@ export function useVideoDataFetch(
 ) {
   const fetchVideos = useCallback(async () => {
     try {
-      const response = await fetch(ORIGIN + "/api/videos?type=videos");
+      const response = await fetch(ORIGIN + "/api/videos");
       if (!response.ok) {
         throw new Error("Failed to fetch videos");
       }
@@ -71,6 +71,7 @@ export function useVideoFiltering() {
       videos: VideoType[],
       search: string,
       sort: string,
+      year: string,
       data: DebateVideosData | null,
       showFavoritesOnly: boolean,
       favorites: Set<string>,
@@ -95,11 +96,23 @@ export function useVideoFiltering() {
         // Filter by search if provided
         if (search.trim()) {
           const searchLower = search.toLowerCase();
-          return (
+          const matchesSearch =
             (video[1] || "").toLowerCase().includes(searchLower) ||
             (video[3] || "").toLowerCase().includes(searchLower) ||
-            (video[5] || "").toLowerCase().includes(searchLower)
-          );
+            (video[5] || "").toLowerCase().includes(searchLower);
+          if (!matchesSearch) return false;
+        }
+
+        // Filter by season year
+        if (year) {
+          const videoDate = new Date(video[2]);
+          const seasonYear = parseInt(year);
+          // Season runs from June 1st of (year-1) to June 1st of year
+          const startDate = new Date(`${seasonYear - 1}-06-01`);
+          const endDate = new Date(`${seasonYear}-06-01`);
+          if (videoDate < startDate || videoDate >= endDate) {
+            return false;
+          }
         }
 
         return true;

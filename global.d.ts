@@ -31,6 +31,7 @@ declare global {
       neg: [string, string];
     };
     judges: string[];
+    spectators?: string[];
     flowIds: number[];
     timestamp: number;
     status: "pending" | "active" | "completed";

@@ -1,0 +1,12 @@
+export { default as IconAffBubble } from "./icon-aff-bubble.png";
+export { default as IconBook } from "./icon-book.svg";
+export { default as IconCollectiveMind } from "./icon-collective-mind.png";
+export { default as IconLeaderboard } from "./icon-leaderboard.png";
+export { default as IconLectures } from "./icon-lectures.svg";
+export { default as IconNegBubble } from "./icon-neg-bubble.png";
+export { default as IconRead } from "./icon-read.svg";
+export { default as IconRoundsYoutube } from "./icon-rounds-youtube.svg";
+export { default as IconRounds } from "./icon-rounds.svg";
+export { default as IconThemePantone } from "./icon-theme-pantone.svg";
+export { default as IconTopRounds } from "./icon-top-rounds.svg";
+export { default as IconTrophy } from "./icon-trophy.svg";

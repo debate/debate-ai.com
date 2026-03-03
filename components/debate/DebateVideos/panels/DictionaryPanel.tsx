@@ -13,11 +13,10 @@
  * @module components/debate/videos/panels/DictionaryPanel
  */
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Search, ArrowRight } from "lucide-react"
-import { dictionaryDebate } from "@/lib/debate-data/debate-dictionary"
 
 /**
  * DictionaryPanel - Searchable debate terminology glossary
@@ -33,45 +32,40 @@ import { dictionaryDebate } from "@/lib/debate-data/debate-dictionary"
  * <DictionaryPanel />
  * ```
  */
-export function DictionaryPanel() {
-  /** Current search input value */
-  const [searchTerm, setSearchTerm] = useState("")
+interface DictionaryEntry {
+  term: string
+  definition: string
+}
 
-  /**
-   * Filtered and sorted debate terms based on the current search input.
-   *
-   * Filtering logic:
-   * 1. All search words must appear in term OR definition
-   * 2. Results matching the term name are prioritized
-   * 3. Definition-only matches follow
-   *
-   * @returns Filtered array of debate dictionary entries sorted by relevance
-   */
+export function DictionaryPanel() {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [dictionary, setDictionary] = useState<DictionaryEntry[]>([])
+
+  useEffect(() => {
+    fetch("/api/dictionary")
+      .then((res) => res.json())
+      .then(setDictionary)
+  }, [])
+
   const filteredDebateTerms = useMemo(() => {
-    // Return all terms if no search
     if (searchTerm.trim().length === 0) {
-      return dictionaryDebate
+      return dictionary
     }
 
-    // Split search into individual words
     const words = searchTerm
       .toLowerCase()
       .split(" ")
       .filter((word) => word.trim() !== "")
 
-    // Find entries matching all search words
-    const matchingTerms = dictionaryDebate.filter((entry) =>
+    const matchingTerms = dictionary.filter((entry) =>
       words.every((word) => entry.term.toLowerCase().includes(word) || entry.definition.toLowerCase().includes(word))
     )
 
-    // Separate matches in term name vs. definition only
     const termNameMatches = matchingTerms.filter((entry) => entry.term.toLowerCase().includes(words[0]))
-
     const otherMatches = matchingTerms.filter((entry) => !entry.term.toLowerCase().includes(words[0]))
 
-    // Return term name matches first, then other matches
     return [...termNameMatches, ...otherMatches]
-  }, [searchTerm])
+  }, [searchTerm, dictionary])
 
   return (
     <div className="w-full h-[calc(100vh-200px)] flex flex-col">

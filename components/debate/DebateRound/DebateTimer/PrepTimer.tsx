@@ -50,6 +50,8 @@ interface PrepTimerProps {
   onTimeChange: (time: number) => void
   /** Callback when state changes */
   onStateChange: (state: TimerState["state"]) => void
+  /** Whether to hide controls by default (shown on hover of parent group/timer) */
+  hideControlsByDefault?: boolean
 }
 
 /**
@@ -84,6 +86,7 @@ export function PrepTimer({
   compact = false,
   onTimeChange,
   onStateChange,
+  hideControlsByDefault = false,
 }: PrepTimerProps) {
   // Refs
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -280,7 +283,15 @@ export function PrepTimer({
 
       <div className="flex items-center justify-center gap-0.5">
         {/* Reset button (left) */}
-        <Button variant="ghost" size="icon" className={compact ? "h-5 w-5" : "h-8 w-8"} onClick={reset}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            compact ? "h-5 w-5" : "h-8 w-8",
+            hideControlsByDefault && "opacity-0 group-hover/timer:opacity-100 transition-opacity"
+          )}
+          onClick={reset}
+        >
           <RotateCcw className={compact ? "h-2.5 w-2.5" : "h-4 w-4"} />
         </Button>
 
@@ -323,7 +334,10 @@ export function PrepTimer({
         <Button
           variant="ghost"
           size="icon"
-          className={compact ? "h-5 w-5" : "h-8 w-8"}
+          className={cn(
+            compact ? "h-5 w-5" : "h-8 w-8",
+            hideControlsByDefault && "opacity-0 group-hover/timer:opacity-100 transition-opacity"
+          )}
           onClick={toggleTimer}
           onMouseDown={() => playActive()}
           onMouseUp={() => (state.name === "running" ? playOff() : playOn())}

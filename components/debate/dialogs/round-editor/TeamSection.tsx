@@ -13,6 +13,7 @@ import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { debateStyles, debateStyleMap } from "@/components/debate/DebateRound/DebateTimer/debate-format-times"
+import { IconAffBubble, IconNegBubble } from "@/components/icons"
 
 /** Props for {@link TeamSection}. */
 interface TeamSectionProps {
@@ -80,41 +81,32 @@ export function TeamSection({
       {/* Affirmative Team */}
       <div className="space-y-2">
         <h3 className="text-sm font-semibold text-blue-500 flex items-center gap-1.5">
-          <Image src="/icons/icon-aff-bubble.png" alt="" width={20} height={20} />
+          <Image src={IconAffBubble} alt="" width={20} height={20} />
           {affName}
         </h3>
         <div className="space-y-2">
-          <div>
-            <Label htmlFor="aff-school">School (Optional)</Label>
-            <Input
-              id="aff-school"
-              type="text"
-              placeholder="School Name"
-              value={affSchool}
-              onChange={(e) => setAffSchool(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="aff-debater-1">1A Email</Label>
-            <Input
-              id="aff-debater-1"
-              type="email"
-              placeholder="debater1@example.com"
-              value={affDebater1}
-              onChange={(e) => setAffDebater1(e.target.value)}
-            />
-          </div>
+          <Input
+            id="aff-school"
+            type="text"
+            placeholder="School (Optional)"
+            value={affSchool}
+            onChange={(e) => setAffSchool(e.target.value)}
+          />
+          <Input
+            id="aff-debater-1"
+            type="email"
+            placeholder="1A Email"
+            value={affDebater1}
+            onChange={(e) => setAffDebater1(e.target.value)}
+          />
           {!isOnePerson && (
-            <div>
-              <Label htmlFor="aff-debater-2">2A Email (Optional)</Label>
-              <Input
-                id="aff-debater-2"
-                type="email"
-                placeholder="debater2@example.com"
-                value={affDebater2}
-                onChange={(e) => setAffDebater2(e.target.value)}
-              />
-            </div>
+            <Input
+              id="aff-debater-2"
+              type="email"
+              placeholder="2A Email (Optional)"
+              value={affDebater2}
+              onChange={(e) => setAffDebater2(e.target.value)}
+            />
           )}
         </div>
       </div>
@@ -122,41 +114,32 @@ export function TeamSection({
       {/* Negative Team */}
       <div className="space-y-2">
         <h3 className="text-sm font-semibold text-red-500 flex items-center gap-1.5">
-          <Image src="/icons/icon-neg-bubble.png" alt="" width={20} height={20} />
+          <Image src={IconNegBubble} alt="" width={20} height={20} />
           {negName}
         </h3>
         <div className="space-y-2">
-          <div>
-            <Label htmlFor="neg-school">School (Optional)</Label>
-            <Input
-              id="neg-school"
-              type="text"
-              placeholder="School Name"
-              value={negSchool}
-              onChange={(e) => setNegSchool(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="neg-debater-1">1N Email</Label>
-            <Input
-              id="neg-debater-1"
-              type="email"
-              placeholder="debater3@example.com"
-              value={negDebater1}
-              onChange={(e) => setNegDebater1(e.target.value)}
-            />
-          </div>
+          <Input
+            id="neg-school"
+            type="text"
+            placeholder="School (Optional)"
+            value={negSchool}
+            onChange={(e) => setNegSchool(e.target.value)}
+          />
+          <Input
+            id="neg-debater-1"
+            type="email"
+            placeholder="1N Email"
+            value={negDebater1}
+            onChange={(e) => setNegDebater1(e.target.value)}
+          />
           {!isOnePerson && (
-            <div>
-              <Label htmlFor="neg-debater-2">2N Email (Optional)</Label>
-              <Input
-                id="neg-debater-2"
-                type="email"
-                placeholder="debater4@example.com"
-                value={negDebater2}
-                onChange={(e) => setNegDebater2(e.target.value)}
-              />
-            </div>
+            <Input
+              id="neg-debater-2"
+              type="email"
+              placeholder="2N Email (Optional)"
+              value={negDebater2}
+              onChange={(e) => setNegDebater2(e.target.value)}
+            />
           )}
         </div>
       </div>

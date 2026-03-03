@@ -3,19 +3,27 @@
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
 import { Search, X, ChevronDown, ChevronUp } from "lucide-react"
 import { SearchResultCard } from "./SearchResultCard"
 import { Button } from "@/components/ui/button"
-import type { SearchResult } from "@/lib/data/demo-data"
+import type { SearchResult } from "@/components/debate/SharedResearch/types"
+import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
 
 export interface SearchFilters {
   year: string
   school: string
   team: string
-  side: string
   tournament: string
-  round: string
   event: string
+  searchHighlighted: boolean
+  searchUnderlined: boolean
+  searchSummaries: boolean
+  searchBlockTitles: boolean
+  searchFileTitles: boolean
+  searchOutlines: boolean
+  searchRoundSpeeches: boolean
+  searchAllText: boolean
 }
 
 interface ResearchSearchSidebarProps {
@@ -49,9 +57,13 @@ export function ResearchSearchSidebar({
 }: ResearchSearchSidebarProps) {
   const [showMoreFilters, setShowMoreFilters] = useState(false)
 
-  const updateFilter = (key: keyof SearchFilters, value: string) => {
+  const updateFilter = (key: keyof SearchFilters, value: string | boolean) => {
     setFilters({ ...filters, [key]: value })
   }
+
+  const currentYear = new Date().getFullYear()
+  const maxYear = Math.max(currentYear, 2026)
+  const years = Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
 
   const activeFilterCount = Object.values(filters).filter((v) => v && v !== "all").length
 
@@ -114,12 +126,19 @@ export function ResearchSearchSidebar({
         {showMoreFilters && (
           <div className="space-y-2">
             <div className="grid grid-cols-2 gap-2">
-              <Input
-                placeholder="Year (ex. 2024)"
-                value={filters.year}
-                onChange={(e) => updateFilter("year", e.target.value)}
-                className="h-8 text-xs"
-              />
+              <Select value={filters.year || "all"} onValueChange={(v) => updateFilter("year", v === "all" ? "" : v)}>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue placeholder="Season" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Seasons</SelectItem>
+                  {years.map((y) => (
+                    <SelectItem key={y} value={y}>
+                      {Number(y) - 1}-{y}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Select value={filters.event || "all"} onValueChange={(v) => updateFilter("event", v)}>
                 <SelectTrigger className="h-8 text-xs">
                   <SelectValue placeholder="All events" />
@@ -146,26 +165,54 @@ export function ResearchSearchSidebar({
                 className="h-8 text-xs"
               />
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <Input
-                placeholder="Side (Aff/Neg)"
-                value={filters.side}
-                onChange={(e) => updateFilter("side", e.target.value)}
-                className="h-8 text-xs"
-              />
-              <Input
-                placeholder="Tournament"
-                value={filters.tournament}
-                onChange={(e) => updateFilter("tournament", e.target.value)}
-                className="h-8 text-xs"
-              />
-            </div>
             <Input
-              placeholder="Round (ex. round-1)"
-              value={filters.round}
-              onChange={(e) => updateFilter("round", e.target.value)}
+              placeholder="Tournament"
+              value={filters.tournament}
+              onChange={(e) => updateFilter("tournament", e.target.value)}
               className="h-8 text-xs"
             />
+            <div className="pt-1">
+              <MultiSelect
+                label="Search in"
+                placeholder="Search in"
+                options={[
+                  { value: "searchHighlighted", label: "Highlighted" },
+                  { value: "searchUnderlined", label: "Underlined" },
+                  { value: "searchSummaries", label: "Summaries" },
+                  { value: "searchBlockTitles", label: "Block Titles" },
+                  { value: "searchFileTitles", label: "File Titles" },
+                  { value: "searchOutlines", label: "Outlines" },
+                  { value: "searchRoundSpeeches", label: "Round Speeches" },
+                  { value: "searchAllText", label: "Search All Text" },
+                ]}
+                selected={Object.entries(filters)
+                  .filter(([key, value]) => key.startsWith("search") && value === true)
+                  .map(([key]) => key)}
+                onChange={(selectedKeys) => {
+                  const newFilters = { ...filters }
+                    // Reset all search flags first
+                    ; ([
+                      "searchHighlighted",
+                      "searchUnderlined",
+                      "searchSummaries",
+                      "searchBlockTitles",
+                      "searchFileTitles",
+                      "searchOutlines",
+                      "searchRoundSpeeches",
+                      "searchAllText",
+                    ] as const).forEach((key) => {
+                      newFilters[key] = false
+                    })
+                  // Set selected flags
+                  selectedKeys.forEach((key) => {
+                    if (key in newFilters) {
+                      ; (newFilters as any)[key] = true
+                    }
+                  })
+                  setFilters(newFilters)
+                }}
+              />
+            </div>
           </div>
         )}
       </div>

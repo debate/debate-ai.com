@@ -54,6 +54,8 @@ export interface RoundEditorFormState {
   // Judges
   judgeEmails: string[];
   setJudgeEmails: (v: string[]) => void;
+  spectatorEmails: string[];
+  setSpectatorEmails: (v: string[]) => void;
 
   // Settings
   isPrivate: boolean;
@@ -98,6 +100,7 @@ export function useRoundEditorForm(
   const [negSchool, setNegSchool] = useState("");
 
   const [judgeEmails, setJudgeEmails] = useState<string[]>([""]);
+  const [spectatorEmails, setSpectatorEmails] = useState<string[]>([]);
   const [isPrivate, setIsPrivate] = useState(false);
   const [winner, setWinner] = useState<"aff" | "neg" | "none">("none");
 
@@ -144,6 +147,7 @@ export function useRoundEditorForm(
         setAffSchool(round.schools?.aff[0] || "");
         setNegSchool(round.schools?.neg[0] || "");
         setJudgeEmails(round.judges.length > 0 ? round.judges : [""]);
+        setSpectatorEmails(round.spectators || []);
         setIsPrivate(round.isPrivate || false);
         setWinner(round.winner || "none");
       }
@@ -197,6 +201,7 @@ export function useRoundEditorForm(
     setAffSchool("");
     setNegSchool("");
     setJudgeEmails([""]);
+    setSpectatorEmails([]);
     setIsPrivate(false);
     setWinner("none");
   }
@@ -265,6 +270,7 @@ export function useRoundEditorForm(
         },
         schools: { aff: [affSchool, affSchool], neg: [negSchool, negSchool] },
         judges,
+        spectators: spectatorEmails.filter((s) => s.trim()),
         isPrivate,
         winner: winner === "none" ? undefined : winner,
       });
@@ -353,6 +359,7 @@ export function useRoundEditorForm(
       },
       schools: { aff: [affSchool, affSchool], neg: [negSchool, negSchool] },
       judges,
+      spectators: spectatorEmails.filter((s) => s.trim()),
       flowIds: newFlowIds,
       status: "active",
       isPrivate,
@@ -396,6 +403,8 @@ export function useRoundEditorForm(
     setNegSchool,
     judgeEmails,
     setJudgeEmails,
+    spectatorEmails,
+    setSpectatorEmails,
     isPrivate,
     setIsPrivate,
     winner,

@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useTheme } from "next-themes"
+import { IconThemePantone } from "@/components/icons"
 
 /** Registry of all available colour theme names. */
 const themeNames = [
@@ -174,7 +175,7 @@ export function ThemeDropdown() {
     <DropdownMenu onOpenChange={(open) => !open && handlePreviewEnd()}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
-          <Image src="/icons/icon-theme-pantone.svg" alt="Theme" width={20} height={20} className="h-5 w-5" />
+          <Image src={IconThemePantone} alt="Theme" width={20} height={20} className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 max-h-[400px] overflow-y-auto">

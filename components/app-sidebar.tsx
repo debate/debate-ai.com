@@ -22,6 +22,13 @@ import {
 import { ThemeDropdown } from "@/components/theme-dropdown"
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
 import { cn } from "@/lib/utils"
+import {
+  IconCollectiveMind,
+  IconRounds,
+  IconRead,
+  IconLectures,
+  IconLeaderboard,
+} from "@/components/icons"
 
 const NAV_ITEMS = [
   {
@@ -30,7 +37,7 @@ const NAV_ITEMS = [
     mobileLabel: "Search",
     icon: (
       <Image
-        src="/icons/icon-collective-mind.png"
+        src={IconCollectiveMind}
         alt="Search"
         width={24}
         height={24}
@@ -42,26 +49,26 @@ const NAV_ITEMS = [
     href: "/debate",
     desktopLabel: "Debate",
     mobileLabel: "Debate",
-    icon: <Image src="/icons/icon-rounds.svg" alt="Debate" width={24} height={24} className="h-6 w-6" />,
+    icon: <Image src={IconRounds} alt="Debate" width={24} height={24} className="h-6 w-6" />,
   },
 
   {
     href: "/edit",
     desktopLabel: "Docs",
     mobileLabel: "Docs",
-    icon: <Image src="/icons/icon-read.svg" alt="Organize" width={24} height={24} className="h-6 w-6" />,
+    icon: <Image src={IconRead} alt="Organize" width={24} height={24} className="h-6 w-6" />,
   },
   {
     href: "/videos",
     desktopLabel: "Videos",
     mobileLabel: "Videos",
-    icon: <Image src="/icons/icon-lectures.svg" alt="Watch" width={24} height={24} className="h-6 w-6" />,
+    icon: <Image src={IconLectures} alt="Watch" width={24} height={24} className="h-6 w-6" />,
   },
   // {
   //   href: "/rank",
   //   desktopLabel: "Rankings",
   //   mobileLabel: "Rankings",
-  //   icon: <Image src="/icons/icon-leaderboard.png" alt="Rankings" width={24} height={24} className="h-6 w-6" />,
+  //   icon: <Image src={IconLeaderboard} alt="Rankings" width={24} height={24} className="h-6 w-6" />,
   //   hideOnMobile: true,
   // },
 ]

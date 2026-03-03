@@ -19,6 +19,11 @@ import { DebateStyleSection } from "./DebateStyleSection"
 import { TeamSection } from "./TeamSection"
 import { JudgesSection } from "./JudgesSection"
 import { WinnerSection } from "./WinnerSection"
+import { SpectatorsSection } from "./SpectatorsSection"
+import { IconRounds } from "@/components/icons"
+import { Lock } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 
 /**
  * Props for the {@link RoundEditorDialog} component.
@@ -59,7 +64,7 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Image src="/icons/icon-rounds.svg" alt="Rounds" width={64} height={64} />
+            <Image src={IconRounds} alt="Rounds" width={64} height={64} />
             {roundId ? "Edit Round" : "Create New Round"}
           </DialogTitle>
         </DialogHeader>
@@ -74,11 +79,6 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
             setShowAutocomplete={form.setShowAutocomplete}
             roundLevel={form.roundLevel}
             setRoundLevel={form.setRoundLevel}
-            isPrivate={form.isPrivate}
-            setIsPrivate={form.setIsPrivate}
-          />
-
-          <DebateStyleSection
             debateStyleIndex={form.debateStyleIndex}
             setDebateStyleIndex={form.setDebateStyleIndex}
           />
@@ -99,10 +99,35 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
             debateStyleIndex={form.debateStyleIndex}
           />
 
-          <JudgesSection
-            judgeEmails={form.judgeEmails}
-            setJudgeEmails={form.setJudgeEmails}
-          />
+          <div className="grid grid-cols-2 gap-6 items-start">
+            <JudgesSection
+              judgeEmails={form.judgeEmails}
+              setJudgeEmails={form.setJudgeEmails}
+            />
+
+            <div className="space-y-6">
+              <SpectatorsSection
+                spectatorEmails={form.spectatorEmails}
+                setSpectatorEmails={form.setSpectatorEmails}
+              />
+
+              {/* Visibility Toggle */}
+              <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                <Label htmlFor="visibility-toggle" className="text-sm font-semibold">
+                  {form.isPrivate ? "Private" : "Public"}
+                </Label>
+                <div className="ml-auto flex items-center gap-2">
+                  <Lock className={`h-4 w-4 ${!form.isPrivate ? "text-primary" : "text-muted-foreground"}`} />
+                  <Switch
+                    id="visibility-toggle"
+                    checked={form.isPrivate}
+                    onCheckedChange={form.setIsPrivate}
+                    className="data-[state=checked]:bg-primary"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
 
           {roundId && (
             <WinnerSection

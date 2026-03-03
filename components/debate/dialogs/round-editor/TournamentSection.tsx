@@ -9,12 +9,10 @@
  * @module components/debate/dialogs/round-editor/TournamentSection
  */
 
-import { Lock } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
 import { ROUND_LEVELS } from "./constants"
+import { settings } from "@/lib/state/settings"
 
 /** Props for {@link TournamentSection}. */
 interface TournamentSectionProps {
@@ -34,10 +32,10 @@ interface TournamentSectionProps {
   roundLevel: string
   /** Update the round level */
   setRoundLevel: (v: string) => void
-  /** Whether the round is private */
-  isPrivate: boolean
-  /** Toggle private/public visibility */
-  setIsPrivate: (v: boolean) => void
+  /** Index of the currently selected debate style */
+  debateStyleIndex: number
+  /** Update the selected debate style index */
+  setDebateStyleIndex: (v: number) => void
 }
 
 /**
@@ -55,8 +53,8 @@ export function TournamentSection({
   setShowAutocomplete,
   roundLevel,
   setRoundLevel,
-  isPrivate,
-  setIsPrivate,
+  debateStyleIndex,
+  setDebateStyleIndex,
 }: TournamentSectionProps) {
   return (
     <div className="grid grid-cols-4 gap-4 items-end">
@@ -64,7 +62,7 @@ export function TournamentSection({
       <div className="col-span-2 space-y-2 relative">
         <Input
           id="tournament-name"
-          placeholder="e.g., Harvard Invitational"
+          placeholder="Tournament Name (e.g., Harvard Invitational)"
           value={tournamentName}
           onChange={(e) => setTournamentName(e.target.value)}
           onFocus={() => {
@@ -94,38 +92,35 @@ export function TournamentSection({
           </div>
         )}
       </div>
-
       {/* Round Level */}
-      <div className="space-y-2">
-        <Select value={roundLevel} onValueChange={setRoundLevel}>
-          <SelectTrigger id="round-level">
-            <SelectValue placeholder="Select round level" />
-          </SelectTrigger>
-          <SelectContent>
-            {ROUND_LEVELS.map((level) => (
-              <SelectItem key={level} value={level}>
-                {level}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Visibility Toggle */}
-      <div className="space-y-3 flex flex-col items-center pb-2">
-        <Label htmlFor="visibility-toggle" className="text-xs text-muted-foreground mb-1">
-          {isPrivate ? "Private" : "Public"}
-        </Label>
-        <div className="flex items-center gap-2">
-          <Lock className={`h-4 w-4 ${!isPrivate ? "text-primary" : "text-muted-foreground"}`} />
-          <Switch
-            id="visibility-toggle"
-            checked={isPrivate}
-            onCheckedChange={setIsPrivate}
-            className="data-[state=checked]:bg-primary"
-          />
-        </div>
-      </div>
+      <Select value={roundLevel} onValueChange={setRoundLevel}>
+        <SelectTrigger id="round-level">
+          <SelectValue placeholder="Round" />
+        </SelectTrigger>
+        <SelectContent>
+          {ROUND_LEVELS.map((level) => (
+            <SelectItem key={level} value={level}>
+              {level}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {/* Debate Style */}
+      <Select
+        value={debateStyleIndex.toString()}
+        onValueChange={(value) => setDebateStyleIndex(Number.parseInt(value))}
+      >
+        <SelectTrigger id="debate-style">
+          <SelectValue placeholder="Style" />
+        </SelectTrigger>
+        <SelectContent>
+          {(settings.data.debateStyle as RadioSetting).detail.options.map((option: string, index: number) => (
+            <SelectItem key={index} value={index.toString()}>
+              {option}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   )
 }

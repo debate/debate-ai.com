@@ -551,7 +551,7 @@ export function SpeechTimer({
         const strokeDashoffset = circumference * (1 - progress)
 
         return (
-          <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+          <div className="relative flex items-center justify-center group/timer" style={{ width: size, height: size }}>
             <svg
               className="absolute inset-0 -rotate-90"
               width={size}
@@ -592,15 +592,6 @@ export function SpeechTimer({
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
               {/* Speech Navigation Row */}
               <div className="flex items-center gap-0.5">
-                {/* Mic recording toggle */}
-                <MicSelector
-                  value={selectedMicDeviceId}
-                  onValueChange={setSelectedMicDeviceId}
-                  muted={!isRecordingEnabled}
-                  onMutedChange={(m) => setIsRecordingEnabled(!m)}
-                  disabled={false}
-                  className="flex-shrink-0"
-                />
 
                 <Button
                   variant="ghost"
@@ -646,7 +637,12 @@ export function SpeechTimer({
               {/* Time display with controls on sides */}
               <div className="flex items-center gap-0.5">
                 {/* Reset button (left) */}
-                <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full" onClick={reset}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 rounded-full opacity-0 group-hover/timer:opacity-100 transition-opacity"
+                  onClick={reset}
+                >
                   <RotateCcw className="h-3 w-3" />
                 </Button>
 
@@ -702,7 +698,19 @@ export function SpeechTimer({
                 </Button>
               </div>
 
-              {children}
+              <div className="relative flex items-center justify-center w-full">
+                {children}
+                <div className="absolute right-[1rem] top-[-0.75rem]">
+                  <MicSelector
+                    value={selectedMicDeviceId}
+                    onValueChange={setSelectedMicDeviceId}
+                    muted={!isRecordingEnabled}
+                    onMutedChange={(m) => setIsRecordingEnabled(!m)}
+                    disabled={false}
+                    className="flex-shrink-0 scale-90"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )

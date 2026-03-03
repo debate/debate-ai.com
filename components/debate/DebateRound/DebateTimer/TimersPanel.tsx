@@ -178,6 +178,7 @@ export function TimersPanel({
                   palette="accent-secondary"
                   color="blue"
                   compact
+                  hideControlsByDefault={true}
                   onTimeChange={(time) => setPrepState((prev) => prev && { ...prev, time })}
                   onStateChange={(state) => {
                     setPrepState((prev) => prev && { ...prev, state })
@@ -197,6 +198,7 @@ export function TimersPanel({
                   palette="accent-secondary"
                   color="red"
                   compact
+                  hideControlsByDefault={true}
                   onTimeChange={(time) => setPrepSecondaryState((prev) => prev && { ...prev, time })}
                   onStateChange={(state) => {
                     setPrepSecondaryState((prev) => prev && { ...prev, state })
