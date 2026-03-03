@@ -3,12 +3,19 @@
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
 import { Search, X, ChevronDown, ChevronUp } from "lucide-react"
 import { SearchResultCard } from "./SearchResultCard"
 import { Button } from "@/components/ui/button"
 import type { SearchResult } from "@/components/debate/SharedResearch/types"
-import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
+import { MultiSelect } from "@/components/ui/multi-select"
+import { Autocomplete } from "@/components/ui/autocomplete"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+
+async function fetchSchools(q: string): Promise<string[]> {
+  const res = await fetch(`/api/schools?q=${encodeURIComponent(q)}&limit=10`)
+  const data = await res.json()
+  return data.results ?? []
+}
 
 export interface SearchFilters {
   year: string
@@ -19,10 +26,9 @@ export interface SearchFilters {
   searchHighlighted: boolean
   searchUnderlined: boolean
   searchSummaries: boolean
-  searchBlockTitles: boolean
-  searchFileTitles: boolean
   searchOutlines: boolean
   searchRoundSpeeches: boolean
+  searchQuotes: boolean
   searchAllText: boolean
 }
 
@@ -40,6 +46,20 @@ interface ResearchSearchSidebarProps {
   isLoading: boolean
   onClose?: () => void
 }
+
+const MULTISELECT_SEARCH_KEYS = ["searchHighlighted", "searchUnderlined", "searchSummaries", "searchAllText"] as const
+
+const TOGGLE_BAR_ITEMS = [
+  { key: "searchRoundSpeeches" as const, label: "Rounds", tooltip: "Show recent rounds" },
+  { key: "searchOutlines" as const, label: "Outlines", tooltip: "Show recent outlines" },
+  { key: "searchQuotes" as const, label: "Quotes", tooltip: "Show recent quotes" },
+]
+
+const RECENT_CHIPS = [
+  { key: "searchQuotes" as const, label: "Recent Quotes" },
+  { key: "searchOutlines" as const, label: "Recent Outlines" },
+  { key: "searchRoundSpeeches" as const, label: "Recent Rounds" },
+]
 
 export function ResearchSearchSidebar({
   searchTerm,
@@ -63,7 +83,7 @@ export function ResearchSearchSidebar({
 
   const currentYear = new Date().getFullYear()
   const maxYear = Math.max(currentYear, 2026)
-  const years = Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
+  const years = Array.from({ length: maxYear - 2012 }, (_, i) => String(maxYear - i))
 
   const activeFilterCount = Object.values(filters).filter((v) => v && v !== "all").length
 
@@ -84,48 +104,81 @@ export function ResearchSearchSidebar({
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search cards..."
+            placeholder="Search quotes, outlines, debates..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-8"
           />
         </div>
 
-        {/* Sort + Advanced toggle */}
-        <div className="flex items-center gap-2">
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="h-7 text-xs flex-1">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="_text_match:desc">Relevance</SelectItem>
-              <SelectItem value="readCount:desc">Most Read</SelectItem>
-              <SelectItem value="year:asc">Oldest</SelectItem>
-              <SelectItem value="year:desc">Newest</SelectItem>
-              <SelectItem value="highlightLength:asc">Shortest</SelectItem>
-              <SelectItem value="highlightLength:desc">Longest</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 text-xs px-2 shrink-0"
-            onClick={() => setShowMoreFilters(!showMoreFilters)}
-          >
-            {showMoreFilters ? <ChevronUp className="h-3 w-3 mr-1" /> : <ChevronDown className="h-3 w-3 mr-1" />}
-            Advanced
-            {activeFilterCount > 0 && (
-              <span className="ml-1 bg-primary text-primary-foreground rounded-full px-1.5 text-[10px]">
-                {activeFilterCount}
-              </span>
-            )}
-          </Button>
-        </div>
+        {/* Toggle bar: Outlines | Speeches | Quotes */}
+        <TooltipProvider>
+          <div className="flex rounded-md border overflow-hidden">
+            {TOGGLE_BAR_ITEMS.map(({ key, label, tooltip }) => {
+              const isActive = filters[key]
+              return (
+                <Tooltip key={key}>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => {
+                        const newActive = !isActive
+                        const newFilters = { ...filters }
+                        TOGGLE_BAR_ITEMS.forEach((item) => { newFilters[item.key] = false })
+                        newFilters[key] = newActive
+                        setFilters(newFilters)
+                      }}
+                      className={`flex-1 h-7 text-xs border-r last:border-r-0 transition-colors ${isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        }`}
+                    >
+                      {label}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>{tooltip}</TooltipContent>
+                </Tooltip>
+              )
+            })}
+          </div>
+        </TooltipProvider>
+
+
+        {/* Advanced toggle */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 text-xs px-2 w-full justify-start"
+          onClick={() => setShowMoreFilters(!showMoreFilters)}
+        >
+          {showMoreFilters ? <ChevronUp className="h-3 w-3 mr-1" /> : <ChevronDown className="h-3 w-3 mr-1" />}
+          Advanced
+          {activeFilterCount > 0 && (
+            <span className="ml-1 bg-primary text-primary-foreground rounded-full px-1.5 text-[10px]">
+              {activeFilterCount}
+            </span>
+          )}
+        </Button>
 
         {/* Advanced filters (hidden by default) */}
         {showMoreFilters && (
           <div className="space-y-2">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-row gap-1">
+
+              {/* Sort — moved into advanced */}
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="_text_match:desc">Relevance</SelectItem>
+                  <SelectItem value="readCount:desc">Most Read</SelectItem>
+                  <SelectItem value="year:asc">Oldest</SelectItem>
+                  <SelectItem value="year:desc">Newest</SelectItem>
+                  <SelectItem value="highlightLength:asc">Shortest</SelectItem>
+                  <SelectItem value="highlightLength:desc">Longest</SelectItem>
+                </SelectContent>
+              </Select>
+
               <Select value={filters.year || "all"} onValueChange={(v) => updateFilter("year", v === "all" ? "" : v)}>
                 <SelectTrigger className="h-8 text-xs">
                   <SelectValue placeholder="Season" />
@@ -141,78 +194,68 @@ export function ResearchSearchSidebar({
               </Select>
               <Select value={filters.event || "all"} onValueChange={(v) => updateFilter("event", v)}>
                 <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="All events" />
+                  <SelectValue placeholder="All" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All events</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                   <SelectItem value="CX">CX</SelectItem>
-                  <SelectItem value="LD">LD</SelectItem>
                   <SelectItem value="PF">PF</SelectItem>
+                  <SelectItem value="LD">LD</SelectItem>
+                  <SelectItem value="NDT">NDT</SelectItem>
+                  <SelectItem value="NFA">NFA</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <Input
+
+            <div className="grid grid-cols-3 gap-1">
+              <Autocomplete
                 placeholder="School"
                 value={filters.school}
-                onChange={(e) => updateFilter("school", e.target.value)}
+                onChange={(v) => updateFilter("school", v)}
+                fetchOptions={fetchSchools}
                 className="h-8 text-xs"
               />
               <Input
-                placeholder="Team (ex. HaDa)"
+                placeholder="Debater"
                 value={filters.team}
                 onChange={(e) => updateFilter("team", e.target.value)}
                 className="h-8 text-xs"
               />
-            </div>
-            <Input
-              placeholder="Tournament"
-              value={filters.tournament}
-              onChange={(e) => updateFilter("tournament", e.target.value)}
-              className="h-8 text-xs"
-            />
-            <div className="pt-1">
-              <MultiSelect
-                label="Search in"
-                placeholder="Search in"
-                options={[
-                  { value: "searchHighlighted", label: "Highlighted" },
-                  { value: "searchUnderlined", label: "Underlined" },
-                  { value: "searchSummaries", label: "Summaries" },
-                  { value: "searchBlockTitles", label: "Block Titles" },
-                  { value: "searchFileTitles", label: "File Titles" },
-                  { value: "searchOutlines", label: "Outlines" },
-                  { value: "searchRoundSpeeches", label: "Round Speeches" },
-                  { value: "searchAllText", label: "Search All Text" },
-                ]}
-                selected={Object.entries(filters)
-                  .filter(([key, value]) => key.startsWith("search") && value === true)
-                  .map(([key]) => key)}
-                onChange={(selectedKeys) => {
-                  const newFilters = { ...filters }
-                    // Reset all search flags first
-                    ; ([
-                      "searchHighlighted",
-                      "searchUnderlined",
-                      "searchSummaries",
-                      "searchBlockTitles",
-                      "searchFileTitles",
-                      "searchOutlines",
-                      "searchRoundSpeeches",
-                      "searchAllText",
-                    ] as const).forEach((key) => {
-                      newFilters[key] = false
-                    })
-                  // Set selected flags
-                  selectedKeys.forEach((key) => {
-                    if (key in newFilters) {
-                      ; (newFilters as any)[key] = true
-                    }
-                  })
-                  setFilters(newFilters)
-                }}
+              <Input
+                placeholder="Tournament"
+                value={filters.tournament}
+                onChange={(e) => updateFilter("tournament", e.target.value)}
+                className="h-8 text-xs"
               />
             </div>
+
+            {/* Search in: Highlighted / Underlined / Summaries / All Text */}
+            <MultiSelect
+              label="Search in"
+              placeholder="Search in"
+              options={[
+                { value: "searchHighlighted", label: "Highlighted" },
+                { value: "searchUnderlined", label: "Underlined" },
+                { value: "searchSummaries", label: "Summaries" },
+                { value: "searchTitles", label: "Block & Filename" },
+                { value: "searchAllText", label: "All Text" },
+              ]}
+              selected={MULTISELECT_SEARCH_KEYS.filter((k) => filters[k] === true)}
+              onChange={(selectedKeys) => {
+                const newFilters = { ...filters }
+                MULTISELECT_SEARCH_KEYS.forEach((key) => {
+                  newFilters[key] = false
+                })
+                selectedKeys.forEach((key) => {
+                  if (key in newFilters) {
+                    ; (newFilters as any)[key] = true
+                  }
+                })
+                setFilters(newFilters)
+              }}
+            />
+
+
           </div>
         )}
       </div>

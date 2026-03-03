@@ -15,6 +15,7 @@
  */
 
 import { useState, useEffect, useMemo } from "react"
+import Image from "next/image"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -314,7 +315,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              Rounds & History
+              Debate Round History
             </DialogTitle>
             {onCreateRound && (
               <Button
@@ -345,7 +346,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
           </div>
 
           {/* Rounds list */}
-          <ScrollArea className="h-[500px] border rounded-md">
+          <ScrollArea className="h-[440px] border rounded-md">
             {filteredRounds.length > 0 ? (
               <div className="p-2 space-y-2">
                 {filteredRounds
@@ -467,6 +468,18 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
               </div>
             )}
           </ScrollArea>
+
+          {/* Debate timer illustration */}
+          <div className="flex justify-center">
+            <Image
+              src="/images/debater-timer.gif"
+              alt="Debate timer"
+              width={320}
+              height={80}
+              unoptimized
+              className="rounded-md opacity-80"
+            />
+          </div>
         </div>
       </DialogContent>
     </Dialog>

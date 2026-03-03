@@ -57,12 +57,12 @@ export function TournamentSection({
   setDebateStyleIndex,
 }: TournamentSectionProps) {
   return (
-    <div className="grid grid-cols-4 gap-4 items-end">
+    <div className="grid grid-cols-3 gap-4 items-end">
       {/* Tournament Name with Autocomplete */}
-      <div className="col-span-2 space-y-2 relative">
+      <div className="col-span-1 space-y-2 relative">
         <Input
           id="tournament-name"
-          placeholder="Tournament Name (e.g., Harvard Invitational)"
+          placeholder="Tournament Name"
           value={tournamentName}
           onChange={(e) => setTournamentName(e.target.value)}
           onFocus={() => {

@@ -15,7 +15,9 @@ const EMPTY_FILTERS: SearchFilters = {
   searchHighlighted: false,
   searchUnderlined: false,
   searchSummaries: false,
-  searchBlockAndFileTitles: false,
+  searchOutlines: false,
+  searchRoundSpeeches: false,
+  searchQuotes: false,
   searchAllText: false,
 }
 
@@ -71,7 +73,9 @@ export function SearchInterface() {
       if (filters.searchHighlighted) params.set("searchHighlighted", "1")
       if (filters.searchUnderlined) params.set("searchUnderlined", "1")
       if (filters.searchSummaries) params.set("searchSummaries", "1")
-      if (filters.searchBlockAndFileTitles) params.set("searchBlockAndFileTitles", "1")
+      if (filters.searchOutlines) params.set("searchOutlines", "1")
+      if (filters.searchRoundSpeeches) params.set("searchRoundSpeeches", "1")
+      if (filters.searchQuotes) params.set("searchQuotes", "1")
       if (filters.searchAllText) params.set("searchAllText", "1")
 
       const response = await fetch(`/api/search?${params.toString()}`)

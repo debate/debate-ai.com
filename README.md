@@ -14,11 +14,6 @@ Debate AI enables competitive debaters in PF, LD & Policy to streamline AI-power
 - **Rich Text Editing**: Format your arguments with full markdown support
 - **Timer Management**: Built-in debate timers for structured discussions
 
-[AI Government Plan](docs/collective-consciousness-government.md)
-
-[Development Version](https://debate-ai.com/) [Earlier Prototype Version](https://alpha.debate-ai.com/)
-
-
 ## Crowdsourced Annotated Research Dataset as a Service (CARDS)
 
 
@@ -34,3 +29,12 @@ Critical times call for critical thinkers to create the decentralized AI Knowled
 
 Chrome Sidebar for Crowdsourced Research - Social sharing of top research on current news, format into evidence on the page in sidebar, cite maker, flow, editor, discover news feed of latest, see if others have tagged this article before, highlight keywords with AI as the first step before reading, write response to card using vector search of cards read in round.
 
+
+
+## External Links
+
+- [AI Government Plan](docs/collective-consciousness-government.md)
+
+- [Development Version](https://debate-ai.com/) 
+
+- [Earlier Prototype Version](https://alpha.debate-ai.com/)

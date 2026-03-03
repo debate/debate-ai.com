@@ -24,8 +24,8 @@ import { SpeechDocPanel } from "./layout/SpeechDocPanel"
 import { SplitModeToolbar } from "./controls/SplitModeToolbar"
 
 // Dialogs
-import { FlowHistoryDialog } from "../dialogs/FlowHistoryDialog"
-import { RoundEditorDialog } from "../dialogs/round-editor"
+import { FlowHistoryDialog } from "./dialogs/FlowHistoryDialog"
+import { RoundEditorDialog } from "./dialogs/round-editor"
 
 // Custom hooks
 import { useDebateFlowState } from "./hooks/useDebateFlowState"

@@ -143,8 +143,7 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
             alt="Building Blocks Icon"
           />
           <div className="flex flex-col">
-            <h1 className="text-xl font-bold ml-2">CARDS</h1>
-            <h2 className="text-xl font-bold">Crowdsourced Annotated Research Dataset as a Service</h2>
+            <h2 className="text-xl font-bold">CARDS: Crowdsourced Annotated Research Dataset as a Service</h2>
             <a
               className="download-chrome download-btn text-center justify-center mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
               target="_blank"

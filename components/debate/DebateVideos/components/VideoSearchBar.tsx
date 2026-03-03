@@ -138,9 +138,10 @@ export function VideoSearchBar({
 
       <Select value={selectedYear} onValueChange={onYearChange}>
         <SelectTrigger className="w-[110px] sm:w-[130px] shrink-0">
-          <SelectValue placeholder="Year" />
+          <SelectValue placeholder="All Seasons" />
         </SelectTrigger>
         <SelectContent>
+          <SelectItem value="">All Seasons</SelectItem>
           {years.map((y) => (
             <SelectItem key={y} value={y}>
               {Number(y) - 1}-{y}

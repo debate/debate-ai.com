@@ -79,6 +79,7 @@
     "expo": "latest",
     "expo-sqlite": "latest",
     "framer-motion": "^12.29.0",
+    "fuse.js": "^7.1.0",
     "gel": "latest",
     "grab-url": "1.0.20",
     "highlight.js": "latest",
