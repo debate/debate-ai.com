@@ -12,6 +12,7 @@
 import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { debateStyles, debateStyleMap } from "@/components/debate/DebateRound/DebateTimer/debate-format-times"
 
 /** Props for {@link TeamSection}. */
 interface TeamSectionProps {
@@ -27,6 +28,7 @@ interface TeamSectionProps {
   setAffSchool: (v: string) => void
   negSchool: string
   setNegSchool: (v: string) => void
+  debateStyleIndex: number
 }
 
 /**
@@ -48,14 +50,38 @@ export function TeamSection({
   setAffSchool,
   negSchool,
   setNegSchool,
+  debateStyleIndex,
 }: TeamSectionProps) {
+  const styleKey = debateStyleMap[debateStyleIndex]
+  const styleConfig = debateStyles[styleKey]
+  const affNameRaw = styleConfig.primary.name
+  const negNameRaw = styleConfig.secondary?.name || "neg"
+  const isOnePerson = styleKey === "lincolnDouglas" || styleKey === "nofSpar"
+
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+
+  // Custom names for specific roles
+  const getTeamName = (rawName: string) => {
+    if (rawName === "aff") return "Affirmative"
+    if (rawName === "neg") return "Negative"
+    if (rawName === "prop") return "Proposition"
+    if (rawName === "opp") return "Opposition"
+    if (rawName === "pro") return "Pro"
+    if (rawName === "con") return "Con"
+    if (rawName === "bill") return "Bill Sponsor"
+    return capitalize(rawName)
+  }
+
+  const affName = getTeamName(affNameRaw)
+  const negName = getTeamName(negNameRaw)
+
   return (
     <div className="grid grid-cols-2 gap-4">
       {/* Affirmative Team */}
       <div className="space-y-2">
         <h3 className="text-sm font-semibold text-blue-500 flex items-center gap-1.5">
           <Image src="/icons/icon-aff-bubble.png" alt="" width={20} height={20} />
-          Affirmative Team
+          {affName}
         </h3>
         <div className="space-y-2">
           <div>
@@ -78,16 +104,18 @@ export function TeamSection({
               onChange={(e) => setAffDebater1(e.target.value)}
             />
           </div>
-          <div>
-            <Label htmlFor="aff-debater-2">2A Email (Optional)</Label>
-            <Input
-              id="aff-debater-2"
-              type="email"
-              placeholder="debater2@example.com"
-              value={affDebater2}
-              onChange={(e) => setAffDebater2(e.target.value)}
-            />
-          </div>
+          {!isOnePerson && (
+            <div>
+              <Label htmlFor="aff-debater-2">2A Email (Optional)</Label>
+              <Input
+                id="aff-debater-2"
+                type="email"
+                placeholder="debater2@example.com"
+                value={affDebater2}
+                onChange={(e) => setAffDebater2(e.target.value)}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -95,7 +123,7 @@ export function TeamSection({
       <div className="space-y-2">
         <h3 className="text-sm font-semibold text-red-500 flex items-center gap-1.5">
           <Image src="/icons/icon-neg-bubble.png" alt="" width={20} height={20} />
-          Negative Team
+          {negName}
         </h3>
         <div className="space-y-2">
           <div>
@@ -118,16 +146,18 @@ export function TeamSection({
               onChange={(e) => setNegDebater1(e.target.value)}
             />
           </div>
-          <div>
-            <Label htmlFor="neg-debater-2">2N Email (Optional)</Label>
-            <Input
-              id="neg-debater-2"
-              type="email"
-              placeholder="debater4@example.com"
-              value={negDebater2}
-              onChange={(e) => setNegDebater2(e.target.value)}
-            />
-          </div>
+          {!isOnePerson && (
+            <div>
+              <Label htmlFor="neg-debater-2">2N Email (Optional)</Label>
+              <Input
+                id="neg-debater-2"
+                type="email"
+                placeholder="debater4@example.com"
+                value={negDebater2}
+                onChange={(e) => setNegDebater2(e.target.value)}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

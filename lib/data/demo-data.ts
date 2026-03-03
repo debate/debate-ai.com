@@ -13,7 +13,7 @@
 export interface SearchResult {
   /** Unique identifier */
   id: number
-  /** Category of the evidence (e.g., "Affirmative", "Negative") */
+  /** Category of the evidence (e.g., "DA", "CP", "K", "T", "I") */
   category: string
   /** Research field or topic area */
   researchField: string
@@ -27,10 +27,32 @@ export interface SearchResult {
   summary: string
   /** Tag line for the evidence */
   tag: string
-  /** Full content of the evidence */
-  content?: string
-  /** Source citation */
-  citation?: string
+  /** Short citation (author year) */
+  cite_short: string
+  /** Full citation */
+  cite: string
+  /** Length of highlighted text in characters */
+  highlightLength: number
+  /** Total text length */
+  textLength: number
+  /** HTML content of the card */
+  html: string
+  /** Publication year (2-digit) */
+  year: string
+  /** Page reference */
+  page: string
+  /** School name */
+  school?: string
+  /** Team code */
+  team?: string
+  /** Side: Aff or Neg */
+  side?: string
+  /** Tournament name */
+  tournament?: string
+  /** Round identifier */
+  round?: string
+  /** Event type (e.g., "CX", "LD", "PF") */
+  event?: string
 }
 
 /**

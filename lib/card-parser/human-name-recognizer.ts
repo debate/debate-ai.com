@@ -1,6 +1,6 @@
 /** @fileoverview Human-name normalization and organization-detection heuristics. */
-import type { HumanNameOptions, HumanNameResult } from "./types"
-import dataHumanNames from "./human-names-92k.json"
+import type { HumanNameOptions, HumanNameResult } from "./types";
+import dataHumanNames from "./human-names-92k.json";
 
 // JSON database not loaded in browser - using pattern-based name detection
 
@@ -11,14 +11,14 @@ import dataHumanNames from "./human-names-92k.json"
  */
 function cleanProfessionalQualifications(authorName: string) {
   if (!authorName || typeof authorName !== "string") {
-    return authorName
+    return authorName;
   }
 
-  let cleaned = authorName.trim()
+  let cleaned = authorName.trim();
 
   // Apply each professional pattern to remove qualifications
   for (const pattern of PROFESSIONAL_PATTERNS) {
-    cleaned = cleaned.replace(pattern, " ").trim()
+    cleaned = cleaned.replace(pattern, " ").trim();
   }
 
   // Clean up extra spaces and punctuation
@@ -26,9 +26,9 @@ function cleanProfessionalQualifications(authorName: string) {
     .replace(/\s+/g, " ")
     .replace(/^[,;.\s]+/, "")
     .replace(/[,;.\s]+$/, "")
-    .trim()
+    .trim();
 
-  return cleaned
+  return cleaned;
 }
 
 /**
@@ -46,71 +46,92 @@ const extractHumanNameParts = (input: string) => {
     middle: "",
     lastname: "",
     honorific: "", //Jr Phd II
-  }
+  };
 
   // Input validation
   if (!input || typeof input !== "string") {
-    return result
+    return result;
   }
 
   // Trim input and determine case fixing mode
-  input = input.trim()
-  const shouldFixCase = input === input.toUpperCase() || input === input.toLowerCase()
+  input = input.trim();
+  const shouldFixCase =
+    input === input.toUpperCase() || input === input.toLowerCase();
 
   // Define lists for parsing
   const lists = {
-    honorific: ["esq", "esquire", "jr", "sr", "ii", "iii", "iv", "phd", "md", "ms", "mrs", "mr", "miss", "dr"],
+    honorific: [
+      "esq",
+      "esquire",
+      "jr",
+      "sr",
+      "ii",
+      "iii",
+      "iv",
+      "phd",
+      "md",
+      "ms",
+      "mrs",
+      "mr",
+      "miss",
+      "dr",
+    ],
     prefix: ["de", "van", "von", "der", "den", "vel", "le", "la", "da"],
     title: ["mr", "mrs", "ms", "miss", "dr", "rev", "prof"],
-  }
+  };
 
   // Extract alias
-  const aliasRegex = /\s(['']([^'']+)['']|[""]([^""]+)[""]|\[([^\]]+)\]|$$([^$$]+)\)),?\s/g
-  const aliasMatch = input.match(aliasRegex)
+  const aliasRegex =
+    /\s(['']([^'']+)['']|[""]([^""]+)[""]|\[([^\]]+)\]|$$([^$$]+)\)),?\s/g;
+  const aliasMatch = input.match(aliasRegex);
   if (aliasMatch) {
     // Strip aliases/nicknames before structural parsing.
-    input = input.replace(aliasRegex, " ")
+    input = input.replace(aliasRegex, " ");
   }
 
   // Split the name into parts
-  const parts = input.split(/\s+/)
+  const parts = input.split(/\s+/);
 
   // Extract honorific
-  const honorificIndex = parts.findIndex((part: string) => lists.honorific.includes(part.toLowerCase().replace(/\.$/, "")))
+  const honorificIndex = parts.findIndex((part: string) =>
+    lists.honorific.includes(part.toLowerCase().replace(/\.$/, "")),
+  );
   if (honorificIndex !== -1) {
-    result.honorific = parts.splice(honorificIndex).join(", ")
+    result.honorific = parts.splice(honorificIndex).join(", ");
   }
 
   // Extract title
-  const titleIndex = parts.findIndex((part: string) => lists.title.includes(part.toLowerCase().replace(/\.$/, "")))
+  const titleIndex = parts.findIndex((part: string) =>
+    lists.title.includes(part.toLowerCase().replace(/\.$/, "")),
+  );
   if (titleIndex !== -1) {
-    result.prefix = parts.splice(titleIndex, 1)[0]
+    result.prefix = parts.splice(titleIndex, 1)[0];
   }
 
   // Join prefixes to following name parts
   for (let i = parts.length - 2; i >= 0; i--) {
     if (lists.prefix.includes(parts[i]?.toLowerCase())) {
-      parts[i] += " " + parts[i + 1]
-      parts.splice(i + 1, 1)
+      parts[i] += " " + parts[i + 1];
+      parts.splice(i + 1, 1);
     }
   }
 
   // Extract lastname name (if comma present)
-  const commaIndex = parts.findIndex((part: string) => part.endsWith(","))
+  const commaIndex = parts.findIndex((part: string) => part.endsWith(","));
   if (commaIndex !== -1) {
     result.lastname = parts
       .splice(0, commaIndex + 1)
       .join(" ")
-      .replace(/,$/, "")
+      .replace(/,$/, "");
   } else {
-    result.lastname = parts.pop() ?? ""
+    result.lastname = parts.pop() ?? "";
   }
 
   // Assign remaining parts to firstname and middle names
   if (parts.length > 0) {
-    result.firstname = parts.shift() ?? ""
+    result.firstname = parts.shift() ?? "";
     if (parts.length > 0) {
-      result.middle = parts.join(" ")
+      result.middle = parts.join(" ");
     }
   }
 
@@ -120,14 +141,17 @@ const extractHumanNameParts = (input: string) => {
       if (result[key]) {
         result[key] = result[key]
           .split(" ")
-          .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)?.toLowerCase())
-          .join(" ")
+          .map(
+            (word: string) =>
+              word.charAt(0).toUpperCase() + word.slice(1)?.toLowerCase(),
+          )
+          .join(" ");
       }
-    })
+    });
   }
 
-  return result
-}
+  return result;
+};
 
 /**
  * Validates and formats author names properly handling multiple authors and multi-word names
@@ -136,89 +160,98 @@ const extractHumanNameParts = (input: string) => {
  * @param {Object} options - Configuration options
  * @returns {Object} Formatted author information for citation
  */
-export function extractHumanName(author: string, options: HumanNameOptions = {}): HumanNameResult {
-  const { formatCiteShortenAuthor = false, maxAuthorsBeforeEtAl = 2 } = options
+export function extractHumanName(
+  author: string,
+  options: HumanNameOptions = {},
+): HumanNameResult {
+  const { formatCiteShortenAuthor = false, maxAuthorsBeforeEtAl = 2 } = options;
 
   if (!author || !author.split) {
-    return { author_cite: "", author_short: "", author_type: 4 }
+    return { author_cite: "", author_short: "", author_type: 4 };
   }
 
   // Clean up the input string
   author = author
     .trim()
     .replace(/^by:?\s*/i, "") // Remove "by:" prefix
-    .replace(/\s{2,}/g, " ") // Normalize spaces
+    .replace(/\s{2,}/g, " "); // Normalize spaces
 
   // Split into multiple authors if present
-  const authorNames = splitMultipleAuthors(author)
+  const authorNames = splitMultipleAuthors(author);
 
   if (authorNames.length === 0) {
-    return { author_cite: "", author_short: "", author_type: 4 }
+    return { author_cite: "", author_short: "", author_type: 4 };
   }
 
   // Process each author
   const processedAuthors = authorNames.map((authorName: string) => {
     // Clean professional qualifications from the author name first
-    const cleanedAuthorName = cleanProfessionalQualifications(authorName)
+    const cleanedAuthorName = cleanProfessionalQualifications(authorName);
 
     // Check if name is likely an organization
-    const isOrg = isOrganization(cleanedAuthorName)
+    const isOrg = isOrganization(cleanedAuthorName);
 
     // Extract name parts using the cleaned name
-    const nameParts = extractHumanNameParts(cleanedAuthorName)
+    const nameParts = extractHumanNameParts(cleanedAuthorName);
 
     return {
       original: authorName,
       cleaned: cleanedAuthorName,
       nameParts,
       isOrg,
-    }
-  })
+    };
+  });
 
   // Determine overall author type
-  let authorType = 0 // Default to unknown/error
+  let authorType = 0; // Default to unknown/error
 
   if (processedAuthors.length === 1) {
-    authorType = processedAuthors[0].isOrg ? 4 : 1 // 4 = org, 1 = single
+    authorType = processedAuthors[0].isOrg ? 4 : 1; // 4 = org, 1 = single
   } else if (processedAuthors.length === 2) {
-    authorType = 2 // two-author
+    authorType = 2; // two-author
   } else if (processedAuthors.length > 2) {
-    authorType = 3 // more-than-two
+    authorType = 3; // more-than-two
   }
 
   // Format authors for citation
   const formattedAuthors = processedAuthors.map((author) => {
     if (author.isOrg) {
       // Don't reverse organization names
-      const maxOrgNameLength = 60
-      let orgName = author.cleaned || author.original
+      const maxOrgNameLength = 60;
+      let orgName = author.cleaned || author.original;
       if (orgName.length > maxOrgNameLength) {
-        orgName = orgName.substring(0, orgName.slice(0, maxOrgNameLength).lastIndexOf(" "))
+        orgName = orgName.substring(
+          0,
+          orgName.slice(0, maxOrgNameLength).lastIndexOf(" "),
+        );
       }
       return {
         cite: orgName,
         short: orgName,
-      }
+      };
     } else {
       // Format human name using name parts
-      const nameParts = author.nameParts
+      const nameParts = author.nameParts;
 
       // Handle empty or malformed name parts
       if (!nameParts || !nameParts.lastname) {
-        return { cite: author.cleaned || author.original, short: author.cleaned || author.original }
+        return {
+          cite: author.cleaned || author.original,
+          short: author.cleaned || author.original,
+        };
       }
 
-      let formattedFirstName = nameParts.firstname
+      let formattedFirstName = nameParts.firstname;
 
       // Include middle name with first name if present
       if (nameParts.middle) {
-        formattedFirstName += " " + nameParts.middle
+        formattedFirstName += " " + nameParts.middle;
       }
 
       // Add prefix to last name if present
-      let lastName = nameParts.lastname
+      let lastName = nameParts.lastname;
       if (nameParts.prefix) {
-        lastName = `${nameParts.prefix} ${lastName}`
+        lastName = `${nameParts.prefix} ${lastName}`;
       }
 
       // Shorten first name if option is set
@@ -227,60 +260,62 @@ export function extractHumanName(author: string, options: HumanNameOptions = {})
         formattedFirstName = formattedFirstName
           .split(/\s+/)
           .map((part: string) => part[0] + ".")
-          .join(" ")
+          .join(" ");
       }
 
       // Add honorific if present
-      let cite = `${lastName}, ${formattedFirstName}`.trim()
+      let cite = `${lastName}, ${formattedFirstName}`.trim();
       if (nameParts.honorific) {
-        cite += `, ${nameParts.honorific}`
+        cite += `, ${nameParts.honorific}`;
       }
 
       return {
         cite: cite.replace(/,\s*$/, ""),
         short: lastName,
-      }
+      };
     }
-  })
+  });
 
   // Generate citation strings
-  let authorCite, authorShort
+  let authorCite, authorShort;
 
   if (authorType === 1 || authorType === 4) {
     // Single author or organization
-    authorCite = formattedAuthors[0].cite
-    authorShort = formattedAuthors[0].short
+    authorCite = formattedAuthors[0].cite;
+    authorShort = formattedAuthors[0].short;
   } else if (authorType === 2) {
     // Two authors
-    authorCite = `${formattedAuthors[0].cite} & ${formattedAuthors[1].cite}`
-    authorShort = `${formattedAuthors[0].short} & ${formattedAuthors[1].short}`
+    authorCite = `${formattedAuthors[0].cite} & ${formattedAuthors[1].cite}`;
+    authorShort = `${formattedAuthors[0].short} & ${formattedAuthors[1].short}`;
   } else if (authorType === 3) {
     // More than two authors
     if (processedAuthors.length <= maxAuthorsBeforeEtAl) {
       // List all authors with commas and "and" before the last one
-      const lastAuthor = formattedAuthors.pop()
-      authorCite = formattedAuthors.map((a: { cite: string }) => a.cite).join(", ")
+      const lastAuthor = formattedAuthors.pop();
+      authorCite = formattedAuthors
+        .map((a: { cite: string }) => a.cite)
+        .join(", ");
       if (lastAuthor) {
-        authorCite += ` & ${lastAuthor.cite}`
+        authorCite += ` & ${lastAuthor.cite}`;
       }
-      authorShort = `${formattedAuthors[0].short} et al.`
+      authorShort = `${formattedAuthors[0].short} et al.`;
     } else {
       // Use et al. format
-      authorCite = `${formattedAuthors[0].cite} et al.`
-      authorShort = `${formattedAuthors[0].short} et al.`
+      authorCite = `${formattedAuthors[0].cite} et al.`;
+      authorShort = `${formattedAuthors[0].short} et al.`;
     }
   } else {
     // Unknown/error case (authorType === 0) - use cleaned version if available
-    const cleanedAuthor = cleanProfessionalQualifications(author)
-    authorCite = cleanedAuthor || author
-    authorShort = cleanedAuthor || author
+    const cleanedAuthor = cleanProfessionalQualifications(author);
+    authorCite = cleanedAuthor || author;
+    authorShort = cleanedAuthor || author;
   }
 
   return {
     author_cite: authorCite,
     author_short: authorShort,
     author_type: authorType,
-  }
+  };
 }
 
 /**
@@ -290,44 +325,50 @@ export function extractHumanName(author: string, options: HumanNameOptions = {})
  * @returns {string[]} Array of individual author names
  */
 function splitMultipleAuthors(authorString: string): string[] {
-  if (!authorString) return []
+  if (!authorString) return [];
 
   // Remove "et al." since we're parsing actual authors
-  authorString = authorString.replace(/\s+et\s+al\.?/gi, "")
+  authorString = authorString.replace(/\s+et\s+al\.?/gi, "");
 
   // Handle common formatting patterns for multiple authors
 
   // Pattern 1: Last, First & Last, First
   if (/\w+,\s*\w+\s*&\s*\w+,\s*\w+/.test(authorString)) {
-    return authorString.split(/\s*&\s*/)
+    return authorString.split(/\s*&\s*/);
   }
 
   // Pattern 2: Last, First, Last, First, and Last, First
   if (/\w+,\s*\w+,\s*\w+,\s*\w+/.test(authorString)) {
     // Replace the last comma+and with a standard separator
-    authorString = authorString.replace(/,\s*(and|&)\s*(?=[^,]*$)/, " & ")
-    return authorString.split(/\s*,\s*(?=[^,]*(?:,|$))/).map((s: string) => s.trim())
+    authorString = authorString.replace(/,\s*(and|&)\s*(?=[^,]*$)/, " & ");
+    return authorString
+      .split(/\s*,\s*(?=[^,]*(?:,|$))/)
+      .map((s: string) => s.trim());
   }
 
   // Pattern 3: First Last, First Last, and First Last
   if (/\w+\s\w+,\s\w+\s\w+/.test(authorString)) {
     // Replace the last comma+and with a standard separator
-    authorString = authorString.replace(/,\s*(and|&)\s*(?=[^,]*$)/, " & ")
-    return authorString.split(/\s*,\s*/).map((s: string) => s.trim())
+    authorString = authorString.replace(/,\s*(and|&)\s*(?=[^,]*$)/, " & ");
+    return authorString.split(/\s*,\s*/).map((s: string) => s.trim());
   }
 
   // Pattern 4: First Last and First Last
   if (/\w+\s\w+\s(and|&)\s\w+\s\w+/.test(authorString)) {
-    return authorString.split(/\s+(and|&)\s+/).map((s: string) => s.trim())
+    return authorString.split(/\s+(and|&)\s+/).map((s: string) => s.trim());
   }
 
   // Default pattern - try to split by various separators
   // Replace common author separators with a standard one for easier processing.
   // The negative lookahead avoids splitting commas inside parenthetical qualifiers.
-  authorString = authorString.replace(/\s+and\s+/gi, " & ").replace(/\s*[,;]\s*(?!(?:[^(]*\)))/g, " & ") // Replace commas/semicolons outside parentheses
+  authorString = authorString
+    .replace(/\s+and\s+/gi, " & ")
+    .replace(/\s*[,;]\s*(?!(?:[^(]*\)))/g, " & "); // Replace commas/semicolons outside parentheses
 
   // Split by the standard separator
-  return authorString.split(/\s*&\s*/).filter((author: string) => author.trim().length > 0)
+  return authorString
+    .split(/\s*&\s*/)
+    .filter((author: string) => author.trim().length > 0);
 }
 
 /**
@@ -337,39 +378,39 @@ function splitMultipleAuthors(authorString: string): string[] {
  * @returns {boolean} True if the name appears to be an organization
  */
 function isOrganization(nameString: string): boolean {
-  if (!nameString) return false
+  if (!nameString) return false;
 
   // Convert organization terms to array
-  const orgTerms = TERMS_ORG.split(",")
-  const qualTerms = TERMS_QUALIFICATIONS.split(",")
+  const orgTerms = TERMS_ORG.split(",");
+  const qualTerms = TERMS_QUALIFICATIONS.split(",");
 
   // Clean and normalize the name string
-  const nameLower = nameString.toLowerCase().replace(/[^\w\s]/g, " ")
-  const words = nameLower.split(/\s+/)
+  const nameLower = nameString.toLowerCase().replace(/[^\w\s]/g, " ");
+  const words = nameLower.split(/\s+/);
 
   // Check for common organizational acronyms (all caps, 2-6 characters)
   if (/^[A-Z]{2,6}$/.test(nameString.trim())) {
-    return true
+    return true;
   }
 
   // Check for organization terms
   for (const word of words) {
     if (orgTerms.includes(word)) {
-      return true
+      return true;
     }
   }
 
   // Check for qualification terms that suggest it's a person
   for (const word of words) {
     if (qualTerms.includes(word)) {
-      return false
+      return false;
     }
   }
 
   // Look for name patterns that suggest it's a person
   if (/,\s*\w+/.test(nameString)) {
     // Has comma format like "Smith, John"
-    return false
+    return false;
   }
 
   // Check for common organizational patterns
@@ -377,32 +418,33 @@ function isOrganization(nameString: string): boolean {
     /\b(inc|ltd|llc|corp|corporation|company|co\.?|group|associates|partners|consulting|services|solutions|systems|technologies|international|global|worldwide|national|federal|state|local|department|ministry|agency|bureau|office|commission|committee|council|board|institute|foundation|center|centre|organization|association|society|union|federation|alliance|coalition)\b/i,
     /\b(united|american|british|canadian|european|international|world|global|national|federal|state|local)\s+(states|kingdom|nations|organization|union|federation|government|department|ministry|agency|bureau|office|commission|committee|council|board|institute|foundation|center|centre|association|society)\b/i,
     /\b(intergovernmental|governmental|non-governmental|nonprofit|non-profit|charitable|philanthropic|educational|academic|research|scientific|technical|professional|commercial|business|corporate|industrial|financial|economic|political|social|cultural|environmental|climate|energy|security|military|defense|foreign|international|public|health|medical|legal|data|computer|software|artificial|intelligence|ai)\s+(panel|committee|commission|council|board|institute|foundation|center|centre|organization|association|society|union|federation|alliance|coalition|partnership|collaboration|cooperation|joint|shared|common|public|private|ngo|charity|philanthropic|educational|academic|scholarly|scientific|technical|professional|commercial|business|corporate|industrial|financial|economic|political|social|cultural|environmental|climate|energy|security|military|defense|foreign|international|public|health|medical|legal|data|computer|software|artificial|intelligence|ai)\b/i,
-  ]
+  ];
 
   for (const pattern of orgPatterns) {
     if (pattern.test(nameString)) {
-      return true
+      return true;
     }
   }
 
   // If there are more than 4 words and no commas, it's likely an organization
   if (words.length > 4 && !nameString.includes(",")) {
-    return true
+    return true;
   }
 
   // Check if the name contains any human name parts according to our database.
   // If none are found, multi-word strings are more likely organizations.
-  let hasHumanNamePart = false
+  let hasHumanNamePart = false;
   for (const word of words) {
-    const nameTitle = word[0]?.toUpperCase() + word.slice(1)?.toLowerCase()
-    if (dataHumanNames[nameTitle] === 1 || dataHumanNames[nameTitle] === 2) {
-      hasHumanNamePart = true
-      break
+    const nameTitle = word[0]?.toUpperCase() + word.slice(1)?.toLowerCase();
+    const record = dataHumanNames as Record<string, number>;
+    if (record[nameTitle] === 1 || record[nameTitle] === 2) {
+      hasHumanNamePart = true;
+      break;
     }
   }
 
   // If no human name parts found and more than 2 words, likely an organization
-  return !hasHumanNamePart && words.length > 2
+  return !hasHumanNamePart && words.length > 2;
 }
 
 // Common organization terms for detection - extended list from provided code
@@ -439,7 +481,7 @@ const TERMS_ORG =
   "scientific,cultural,organization,international,telecommunication,union,itu,world,meteorological,organization,wmo," +
   "international,maritime,organization,imo,international,civil,aviation,organization,icao," +
   "international,atomic,energy,agency,iaea,organization,prohibition,chemical,weapons,opcw," +
-  "comprehensive,nuclear,test,ban,treaty,organization,ctbto,preparatory,commission"
+  "comprehensive,nuclear,test,ban,treaty,organization,ctbto,preparatory,commission";
 
 // Qualification terms that might suggest the name belongs to a person rather than an organization
 const TERMS_QUALIFICATIONS =
@@ -448,7 +490,7 @@ const TERMS_QUALIFICATIONS =
   "institute,economist,reporter,head,heads,newspaper,deputy,advocate,colonel,officer,founder,founded,visiting," +
   "journalist,former,retired,expert,executive,manager,doctoral,candidate,chief,contributor,student,blogger," +
   "chair,chairman,major,general,ambassador,phd,secretary,physicist,engineer,research,office,school,department," +
-  "writer,teacher,advisor,award,center,commentator,rand,brookings,heritage,cato,un,aei,forbes,nyt,cbo"
+  "writer,teacher,advisor,award,center,commentator,rand,brookings,heritage,cato,un,aei,forbes,nyt,cbo";
 
 // Professional qualification patterns to remove from author names
 const PROFESSIONAL_PATTERNS = [
@@ -469,4 +511,4 @@ const PROFESSIONAL_PATTERNS = [
   /,\s*[^,]*$/,
   // Pattern for "Name Qualification" format (no separator)
   /\s+(political|economic|social|environmental|climate|energy|security|military|defense|foreign|international|public|health|medical|legal|business|financial|data|computer|software|artificial|intelligence|ai)\s+(scientist|analyst|expert|specialist|researcher|scholar|fellow|consultant|advisor|director|manager|officer|correspondent|reporter|journalist|writer|author|editor|commentator|blogger)\b.*$/gi,
-]
+];

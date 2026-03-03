@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
-import { LeaderboardPanel } from "@/components/debate/videos/panels/LeaderboardPanel"
+import { Suspense } from "react"
+import { LeaderboardPanel } from "@/components/debate/DebateVideos/panels/RankingsLeaderboardPanel"
 
 export const metadata: Metadata = {
   title: "Rankings",
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
 export default function RankPage() {
   return (
     <div className="min-h-screen bg-background">
-      <LeaderboardPanel />
+      <Suspense>
+        <LeaderboardPanel />
+      </Suspense>
     </div>
   )
 }

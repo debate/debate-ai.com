@@ -39,16 +39,17 @@ const NAV_ITEMS = [
     mobileIcon: <Brain className="h-6 w-6" />,
   },
   {
-    href: "/edit",
-    desktopLabel: "Organize",
-    mobileLabel: "Organize",
-    icon: <Image src="/icons/icon-read.svg" alt="Organize" width={24} height={24} className="h-6 w-6" />,
-  },
-  {
     href: "/debate",
     desktopLabel: "Debate",
     mobileLabel: "Debate",
     icon: <Image src="/icons/icon-rounds.svg" alt="Debate" width={24} height={24} className="h-6 w-6" />,
+  },
+
+  {
+    href: "/edit",
+    desktopLabel: "Docs",
+    mobileLabel: "Docs",
+    icon: <Image src="/icons/icon-read.svg" alt="Organize" width={24} height={24} className="h-6 w-6" />,
   },
   {
     href: "/videos",
@@ -56,12 +57,13 @@ const NAV_ITEMS = [
     mobileLabel: "Videos",
     icon: <Image src="/icons/icon-lectures.svg" alt="Watch" width={24} height={24} className="h-6 w-6" />,
   },
-  {
-    href: "/rank",
-    desktopLabel: "Rankings",
-    mobileLabel: "Rankings",
-    icon: <Image src="/icons/icon-leaderboard.png" alt="Rankings" width={24} height={24} className="h-6 w-6" />,
-  },
+  // {
+  //   href: "/rank",
+  //   desktopLabel: "Rankings",
+  //   mobileLabel: "Rankings",
+  //   icon: <Image src="/icons/icon-leaderboard.png" alt="Rankings" width={24} height={24} className="h-6 w-6" />,
+  //   hideOnMobile: true,
+  // },
 ]
 
 /**

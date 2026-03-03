@@ -1,4 +1,7 @@
-import { debateStyles, debateStyleMap } from "../debate-data/debate-styles"
+import {
+  debateStyles,
+  debateStyleMap,
+} from "../../components/debate/DebateRound/DebateTimer/debate-format-times";
 
 export function newBox(index: number, level: number, focus = false): Box {
   return {
@@ -8,7 +11,7 @@ export function newBox(index: number, level: number, focus = false): Box {
     level,
     focus,
     empty: false,
-  }
+  };
 }
 
 export function newFlow(
@@ -17,23 +20,27 @@ export function newFlow(
   switchSpeakers: boolean,
   debateStyleIndex: number,
 ): Flow | null {
-  const debateStyle = debateStyles[debateStyleMap[debateStyleIndex]]
+  const debateStyle = debateStyles[debateStyleMap[debateStyleIndex]];
 
   if (type === "secondary" && !debateStyle.secondary) {
-    return null
+    return null;
   }
 
-  const flowConfig = type === "primary" ? debateStyle.primary : debateStyle.secondary!
-  const columns = switchSpeakers && flowConfig.columnsSwitch ? flowConfig.columnsSwitch : flowConfig.columns
+  const flowConfig =
+    type === "primary" ? debateStyle.primary : debateStyle.secondary!;
+  const columns =
+    switchSpeakers && flowConfig.columnsSwitch
+      ? flowConfig.columnsSwitch
+      : flowConfig.columns;
 
-  const starterBoxes: Box[] = []
+  const starterBoxes: Box[] = [];
 
   // Create 100 chains of empty boxes, one for each "row"
-  const INITIAL_ROWS = 100
+  const INITIAL_ROWS = 100;
   if (columns.length > 0) {
     for (let r = 0; r < INITIAL_ROWS; r++) {
-      const currentChildren = starterBoxes
-      const rootIndex = r
+      const currentChildren = starterBoxes;
+      const rootIndex = r;
 
       // Create the root box for this row (Column 1)
       const rootBox: Box = {
@@ -43,13 +50,13 @@ export function newFlow(
         level: 1,
         focus: false,
         empty: columns.length > 1, // Empty if it has children
-      }
-      starterBoxes.push(rootBox)
+      };
+      starterBoxes.push(rootBox);
 
       // If there are more columns, chain them
-      let currentBox = rootBox
+      let currentBox = rootBox;
       for (let c = 1; c < columns.length; c++) {
-        const isLast = c === columns.length - 1
+        const isLast = c === columns.length - 1;
         const childBox: Box = {
           content: "",
           children: [],
@@ -57,9 +64,9 @@ export function newFlow(
           level: c + 1,
           focus: false,
           empty: !isLast,
-        }
-        currentBox.children.push(childBox)
-        currentBox = childBox
+        };
+        currentBox.children.push(childBox);
+        currentBox = childBox;
       }
     }
   }
@@ -74,9 +81,9 @@ export function newFlow(
     lastFocus: [],
     children: starterBoxes,
     id: Date.now() + Math.floor(Math.random() * 1000),
-  }
+  };
 
-  return flow
+  return flow;
 }
 
 export function boxFromPath<T extends { children: Box[] }, B extends Box>(
@@ -85,15 +92,15 @@ export function boxFromPath<T extends { children: Box[] }, B extends Box>(
   scope = 0,
 ): B | T | null {
   if (path.length === 0 && scope >= 1) {
-    return null
+    return null;
   }
 
-  let current: T | Box = root
+  let current: T | Box = root;
   for (let i = 0; i < path.length - scope; i++) {
     if (!current.children || !current.children[path[i]]) {
-      return null
+      return null;
     }
-    current = current.children[path[i]]
+    current = current.children[path[i]];
   }
-  return current as B | T
+  return current as B | T;
 }

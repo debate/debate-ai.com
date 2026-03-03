@@ -1,8 +1,7 @@
+
 <p align="center">
-    <img src="https://i.imgur.com/GBvtyCV.png"  > 
+    <img src="./public/images/logo-collective-mind.png" width="300" height="300"  > 
 </p>
-
-
 
 
 ## Debate AI 
@@ -22,9 +21,12 @@ Debate AI enables competitive debaters in PF, LD & Policy to streamline AI-power
 
 ## Crowdsourced Annotated Research Dataset as a Service (CARDS)
 
+
+
 <p align="center">
-    <img src="./public/images/logo-collective-mind.png" width="300" height="300"  > 
+    <img src="https://i.imgur.com/GBvtyCV.png"  > 
 </p>
+
 
 Critical times call for critical thinkers to create the decentralized AI Knowledge Graph — a crowdsourced argument reasoning dataset for AI models to recommend arguments and evolve tree-of-thought reasoning. Debate should be a war of warrants where victories are vectorized as weights — for the AI collective mind to make  decisions based on a crowdsourced tree-of-thought which weighs the best arguments from many perspectives. Group represenation centralized in human minds with biases cannot have access to all the information.  AI is inevitable, so it is necessary to have public safety testing to train AI models to unlock faster ways to read a long text, monitor developments in a complex literature base, and crowdsource decentralized  AI tree-of-thought decisionmaking reasoning.
 

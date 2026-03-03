@@ -1,17 +1,29 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Search, GripVertical, Bot } from "lucide-react"
-import { ResearchSearchSidebar } from "@/components/debate/shared-cards/ResearchSearchSidebar"
-import { CardContentViewer } from "@/components/debate/shared-cards/CardContentViewer"
-import { AiAnalysisSidebar } from "@/components/debate/shared-cards/AiAnalysisSidebar"
+import { ResearchSearchSidebar, type SearchFilters } from "@/components/debate/SharedResearch/ResearchSearchSidebar"
+import { CardContentViewer } from "@/components/debate/SharedResearch/CardContentViewer"
+import { AiAnalysisSidebar } from "@/components/debate/SharedResearch/AiAnalysisSidebar"
+
+const EMPTY_FILTERS: SearchFilters = {
+  year: "",
+  school: "",
+  team: "",
+  side: "",
+  tournament: "",
+  round: "",
+  event: "",
+}
 
 export function SearchInterface() {
   const [searchTerm, setSearchTerm] = useState("")
   const [searchResults, setSearchResults] = useState<any[]>([])
+  const [totalResults, setTotalResults] = useState(0)
   const [selectedResult, setSelectedResult] = useState<any | null>(null)
   const [selectedIndex, setSelectedIndex] = useState<number>(-1)
   const [sortBy, setSortBy] = useState("_text_match:desc")
+  const [filters, setFilters] = useState<SearchFilters>(EMPTY_FILTERS)
   const [viewMode, setViewMode] = useState<"read" | "highlight" | "underline">("read")
   const [loading, setLoading] = useState(true)
   const [customPrompt, setCustomPrompt] = useState("")
@@ -36,54 +48,48 @@ export function SearchInterface() {
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [selectedIndex, searchResults])
 
-  const performSearch = () => {
-    if (!searchTerm.trim()) return
-
-    setLoading(true)
-
-    // Simulate search with demo data
-    setTimeout(() => {
-      const filtered = searchResults.filter(
-        (result) =>
-          result.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          result.cite.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-      setSearchResults(filtered.length > 0 ? filtered : searchResults)
-      if (filtered.length > 0) {
-        setSelectedResult(filtered[0])
-        setSelectedIndex(0)
-      }
-      setLoading(false)
-    }, 500)
-  }
-
   const selectResult = (result: any, index: number) => {
     setSelectedResult(result)
     setSelectedIndex(index)
     setShowResearchSearchSidebar(false)
   }
 
-  useEffect(() => {
-    const fetchResults = async () => {
-      setLoading(true)
-      try {
-        const response = await fetch(`/api/search?sort=${sortBy}`)
-        const data = await response.json()
-        setSearchResults(data.results)
-        setSelectedResult(null)
-        setSelectedIndex(-1)
-      } catch (error) {
-        console.error("Failed to fetch search results:", error)
-        setSearchResults([])
-        setSelectedResult(null)
-        setSelectedIndex(-1)
-      } finally {
-        setLoading(false)
-      }
-    }
+  const fetchResults = useCallback(async () => {
+    setLoading(true)
+    try {
+      const params = new URLSearchParams()
+      params.set("sort", sortBy)
+      if (searchTerm.trim()) params.set("q", searchTerm.trim())
+      if (filters.year) params.set("year", filters.year)
+      if (filters.school) params.set("school", filters.school)
+      if (filters.team) params.set("team", filters.team)
+      if (filters.side) params.set("side", filters.side)
+      if (filters.tournament) params.set("tournament", filters.tournament)
+      if (filters.round) params.set("round", filters.round)
+      if (filters.event && filters.event !== "all") params.set("event", filters.event)
 
-    fetchResults()
-  }, [sortBy])
+      const response = await fetch(`/api/search?${params.toString()}`)
+      const data = await response.json()
+      setSearchResults(data.results)
+      setTotalResults(data.total)
+      setSelectedResult(null)
+      setSelectedIndex(-1)
+    } catch (error) {
+      console.error("Failed to fetch search results:", error)
+      setSearchResults([])
+      setTotalResults(0)
+      setSelectedResult(null)
+      setSelectedIndex(-1)
+    } finally {
+      setLoading(false)
+    }
+  }, [sortBy, searchTerm, filters])
+
+  // Debounced search: re-fetch when search term, sort, or filters change
+  useEffect(() => {
+    const timer = setTimeout(fetchResults, 300)
+    return () => clearTimeout(timer)
+  }, [fetchResults])
 
   const handleGenerate = async () => {
     if (!selectedResult) return
@@ -121,7 +127,10 @@ export function SearchInterface() {
               setSearchTerm={setSearchTerm}
               sortBy={sortBy}
               setSortBy={setSortBy}
+              filters={filters}
+              setFilters={setFilters}
               searchResults={searchResults}
+              totalResults={totalResults}
               selectedIndex={selectedIndex}
               selectResult={selectResult}
               isLoading={loading}

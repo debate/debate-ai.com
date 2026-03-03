@@ -18,6 +18,12 @@ const DEMO_DATA = [
     tag: "climate change, food security",
     year: "23",
     page: "234",
+    school: "Georgetown",
+    team: "SmJo",
+    side: "Neg",
+    tournament: "Wake Forest",
+    round: "round-3",
+    event: "CX",
   },
   {
     id: 2,
@@ -36,6 +42,12 @@ const DEMO_DATA = [
     tag: "artificial intelligence, ethics",
     year: "24",
     page: "112",
+    school: "Iowa",
+    team: "RaCo",
+    side: "Neg",
+    tournament: "Iowa City",
+    round: "round-5",
+    event: "CX",
   },
   {
     id: 3,
@@ -54,6 +66,12 @@ const DEMO_DATA = [
     tag: "renewable energy, economics",
     year: "23",
     page: "445",
+    school: "Michigan",
+    team: "ThBr",
+    side: "Aff",
+    tournament: "Michigan Classic",
+    round: "round-1",
+    event: "CX",
   },
   {
     id: 4,
@@ -72,6 +90,12 @@ const DEMO_DATA = [
     tag: "capitalism, critique, labor",
     year: "22",
     page: "78",
+    school: "Northwestern",
+    team: "MaLi",
+    side: "Neg",
+    tournament: "Northwestern",
+    round: "round-6",
+    event: "CX",
   },
   {
     id: 5,
@@ -90,6 +114,12 @@ const DEMO_DATA = [
     tag: "nuclear weapons, extinction, security",
     year: "23",
     page: "567",
+    school: "Harvard",
+    team: "PaWi",
+    side: "Aff",
+    tournament: "Harvard",
+    round: "elim-quarters",
+    event: "CX",
   },
   {
     id: 6,
@@ -108,6 +138,12 @@ const DEMO_DATA = [
     tag: "topicality, standards, definitions",
     year: "24",
     page: "452",
+    school: "Emory",
+    team: "WeJo",
+    side: "Neg",
+    tournament: "Emory",
+    round: "round-2",
+    event: "CX",
   },
   {
     id: 7,
@@ -126,6 +162,12 @@ const DEMO_DATA = [
     tag: "courts, litigation, politics",
     year: "23",
     page: "1823",
+    school: "Georgetown",
+    team: "AnBe",
+    side: "Neg",
+    tournament: "Wake Forest",
+    round: "round-4",
+    event: "CX",
   },
   {
     id: 8,
@@ -144,6 +186,12 @@ const DEMO_DATA = [
     tag: "economy, debt, fiscal policy",
     year: "24",
     page: "445",
+    school: "Michigan",
+    team: "RoLe",
+    side: "Neg",
+    tournament: "NDT",
+    round: "elim-finals",
+    event: "CX",
   },
   {
     id: 9,
@@ -162,6 +210,12 @@ const DEMO_DATA = [
     tag: "biopower, Foucault, resistance",
     year: "21",
     page: "234",
+    school: "Northwestern",
+    team: "KiPa",
+    side: "Neg",
+    tournament: "CEDA",
+    round: "round-7",
+    event: "CX",
   },
   {
     id: 10,
@@ -180,6 +234,12 @@ const DEMO_DATA = [
     tag: "climate change, tipping points, extinction",
     year: "23",
     page: "89",
+    school: "Harvard",
+    team: "HaDa",
+    side: "Aff",
+    tournament: "Harvard",
+    round: "round-2",
+    event: "CX",
   },
   {
     id: 11,
@@ -198,6 +258,12 @@ const DEMO_DATA = [
     tag: "federalism, states, policy",
     year: "22",
     page: "1234",
+    school: "Emory",
+    team: "BrKi",
+    side: "Neg",
+    tournament: "Emory",
+    round: "elim-semis",
+    event: "CX",
   },
   {
     id: 12,
@@ -216,6 +282,12 @@ const DEMO_DATA = [
     tag: "topicality, definitions, increase",
     year: "24",
     page: "789",
+    school: "Iowa",
+    team: "BlJo",
+    side: "Neg",
+    tournament: "Iowa City",
+    round: "round-3",
+    event: "LD",
   },
 ]
 
@@ -224,10 +296,19 @@ export async function GET(request: NextRequest) {
   const sortBy = searchParams.get("sort") || "_text_match:desc"
   const query = searchParams.get("q") || ""
 
+  // Filter parameters
+  const yearFilter = searchParams.get("year") || ""
+  const schoolFilter = searchParams.get("school") || ""
+  const teamFilter = searchParams.get("team") || ""
+  const sideFilter = searchParams.get("side") || ""
+  const tournamentFilter = searchParams.get("tournament") || ""
+  const roundFilter = searchParams.get("round") || ""
+  const eventFilter = searchParams.get("event") || ""
+
   // Clone the data to avoid mutation
   let results = [...DEMO_DATA]
 
-  // Apply search filter if query exists
+  // Apply text search filter
   if (query) {
     const lowerQuery = query.toLowerCase()
     results = results.filter(
@@ -235,8 +316,41 @@ export async function GET(request: NextRequest) {
         item.summary.toLowerCase().includes(lowerQuery) ||
         item.researchField.toLowerCase().includes(lowerQuery) ||
         item.tag.toLowerCase().includes(lowerQuery) ||
-        item.argBlock.toLowerCase().includes(lowerQuery),
+        item.argBlock.toLowerCase().includes(lowerQuery) ||
+        item.cite.toLowerCase().includes(lowerQuery) ||
+        item.cite_short.toLowerCase().includes(lowerQuery) ||
+        item.html.toLowerCase().includes(lowerQuery),
     )
+  }
+
+  // Apply field filters (case-insensitive partial match)
+  if (yearFilter) {
+    const y = yearFilter.replace(/^20/, "")
+    results = results.filter((item) => item.year === y || `20${item.year}` === yearFilter)
+  }
+  if (schoolFilter) {
+    const lower = schoolFilter.toLowerCase()
+    results = results.filter((item) => item.school?.toLowerCase().includes(lower))
+  }
+  if (teamFilter) {
+    const lower = teamFilter.toLowerCase()
+    results = results.filter((item) => item.team?.toLowerCase().includes(lower))
+  }
+  if (sideFilter) {
+    const lower = sideFilter.toLowerCase()
+    results = results.filter((item) => item.side?.toLowerCase().startsWith(lower))
+  }
+  if (tournamentFilter) {
+    const lower = tournamentFilter.toLowerCase()
+    results = results.filter((item) => item.tournament?.toLowerCase().includes(lower))
+  }
+  if (roundFilter) {
+    const lower = roundFilter.toLowerCase()
+    results = results.filter((item) => item.round?.toLowerCase().includes(lower))
+  }
+  if (eventFilter && eventFilter !== "all") {
+    const lower = eventFilter.toLowerCase()
+    results = results.filter((item) => item.event?.toLowerCase() === lower)
   }
 
   // Apply sorting

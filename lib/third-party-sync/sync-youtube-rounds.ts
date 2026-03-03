@@ -18,7 +18,6 @@ const categories = {
     "NSD_DebateCamp",
     "ddidebate4071",
     "pfvideos9234",
-    "PolicyDebateCentral-gv1nl",
     "lasadebate",
     "DebateStreamDB8",
     "CEDADebate",

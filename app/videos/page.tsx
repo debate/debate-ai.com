@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { DebateVideosPage } from "@/components/debate/videos/DebateVideosPage"
+import { DebateVideosPage } from "@/components/debate/DebateVideos/panels/DebateVideosPanel"
 
 export const metadata: Metadata = {
   title: "DEARLY Videos",

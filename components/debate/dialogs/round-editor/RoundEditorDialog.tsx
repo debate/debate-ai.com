@@ -96,6 +96,7 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
             setAffSchool={form.setAffSchool}
             negSchool={form.negSchool}
             setNegSchool={form.setNegSchool}
+            debateStyleIndex={form.debateStyleIndex}
           />
 
           <JudgesSection
