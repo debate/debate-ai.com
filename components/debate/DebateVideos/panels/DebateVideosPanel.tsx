@@ -250,6 +250,7 @@ export function DebateVideosPage() {
         onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
         currentPage={state.currentPage}
         totalPages={totalPages}
+        totalVideos={state.filteredVideos.length}
         onPrevPage={handlePrevPage}
         onNextPage={handleNextPage}
       />

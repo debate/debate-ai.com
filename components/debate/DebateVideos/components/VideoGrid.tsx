@@ -78,11 +78,10 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite }: Vide
   const [videoId, title, date, channel, viewCount, description] = video
   const [isPlaying, setIsPlaying] = useState(false)
 
+  const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
+
   return (
-    <div
-      onClick={() => !isPlaying && setIsPlaying(true)}
-      className="block h-full relative group/card cursor-pointer"
-    >
+    <div className="block h-full relative group/card">
       <button
         onClick={(e) => {
           e.preventDefault()
@@ -96,7 +95,10 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite }: Vide
       </button>
       <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full relative">
         {showThumbnails && (
-          <div className="relative w-full pt-[56.25%] bg-muted">
+          <div
+            className="relative w-full pt-[56.25%] bg-muted cursor-pointer"
+            onClick={() => !isPlaying && setIsPlaying(true)}
+          >
             {isPlaying ? (
               <iframe
                 src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
@@ -118,9 +120,15 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite }: Vide
         )}
 
         <div className="p-4 flex-1 flex flex-col">
-          <h3 className="text-lg font-semibold text-primary hover:underline line-clamp-2 mb-2">
+          <a
+            href={youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="text-lg font-semibold text-primary hover:underline line-clamp-2 mb-2"
+          >
             {title}
-          </h3>
+          </a>
 
           <CardDescription className="text-sm text-muted-foreground mb-2">{channel}</CardDescription>
 

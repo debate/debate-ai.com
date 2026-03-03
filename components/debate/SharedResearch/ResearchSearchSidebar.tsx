@@ -50,7 +50,7 @@ interface ResearchSearchSidebarProps {
 const MULTISELECT_SEARCH_KEYS = ["searchHighlighted", "searchUnderlined", "searchSummaries", "searchAllText"] as const
 
 const TOGGLE_BAR_ITEMS = [
-  { key: "searchRoundSpeeches" as const, label: "Rounds", tooltip: "Show recent rounds" },
+  { key: "searchRoundSpeeches" as const, label: "Debates", tooltip: "Show recent rounds" },
   { key: "searchOutlines" as const, label: "Outlines", tooltip: "Show recent outlines" },
   { key: "searchQuotes" as const, label: "Quotes", tooltip: "Show recent quotes" },
 ]
@@ -104,7 +104,7 @@ export function ResearchSearchSidebar({
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search quotes, outlines, debates..."
+            placeholder="Search debates, outlines, quotes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-8"

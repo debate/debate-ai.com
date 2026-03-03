@@ -3,8 +3,8 @@ import { Suspense } from "react"
 import { DebateVideosPage } from "@/components/debate/DebateVideos/panels/DebateVideosPanel"
 
 export const metadata: Metadata = {
-  title: "DEARLY Videos",
-  description: "Debate Education And Research Library YouTube",
+  title: "DEARLY: Debate Educational Archive of Rounds & Lectures on YouTube",
+  description: "Debate Education Archive of Rounds & Lectures on YouTube",
 }
 
 export default function Home() {

@@ -9,7 +9,8 @@
       "Bash(npm install fuse.js)",
       "Bash(ls -la /mnt/data/Projects/debate-ai.com/lib/debate-data/debate-dictionary*)",
       "Bash(bun add:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(npm install:*)"
     ]
   }
 }

@@ -138,7 +138,7 @@ const DockLabel = ({ children, className }: { children: React.ReactNode; classNa
   return (
     <div
       className={cn(
-        "absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-800 dark:bg-gray-200 px-2 py-0.5 text-xs text-white dark:text-black opacity-0 transition-opacity duration-200 pointer-events-none group-hover:opacity-100",
+        "absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-800 dark:bg-gray-200 px-2 py-0.5 text-xs text-white dark:text-black opacity-0 transition-opacity duration-200 pointer-events-none group-hover:opacity-100",
         className,
       )}
     >

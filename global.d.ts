@@ -148,7 +148,7 @@ declare global {
     topPicks: VideoType[];
   };
 
-  /** Union of all val * DebateFlowPage 
+  /** Union of all val * DebateFlowPage
 id video page category identifiers. */
   type CategoryType =
     | "rounds"

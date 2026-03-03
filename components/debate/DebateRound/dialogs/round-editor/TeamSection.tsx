@@ -14,6 +14,13 @@ import Image from "next/image"
 import { Settings2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Autocomplete } from "@/components/ui/autocomplete"
+
+async function fetchSchools(q: string): Promise<string[]> {
+  const res = await fetch(`/api/schools?q=${encodeURIComponent(q)}&limit=10`)
+  const data = await res.json()
+  return data.results ?? []
+}
 import { debateStyles, debateStyleMap } from "@/components/debate/DebateRound/DebateTimer/debate-format-times"
 import { IconAffBubble, IconNegBubble } from "@/components/icons"
 import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "@/lib/state/myTeamProfile"
@@ -89,11 +96,11 @@ function ConfigPanel({ profile, onSave, onClose, isOnePerson }: ConfigPanelProps
   return (
     <div className="mt-2 p-2.5 rounded-md border border-border/60 bg-muted/40 space-y-2">
       <p className="text-xs font-medium text-muted-foreground">My Team Profile</p>
-      <Input
-        type="text"
+      <Autocomplete
         placeholder="School"
         value={school}
-        onChange={(e) => setSchool(e.target.value)}
+        onChange={setSchool}
+        fetchOptions={fetchSchools}
         className="h-7 text-xs"
       />
       <Input
@@ -234,12 +241,11 @@ export function TeamSection({
           />
         )}
         <div className="space-y-2">
-          <Input
-            id="aff-school"
-            type="text"
+          <Autocomplete
             placeholder="School (Optional)"
             value={affSchool}
-            onChange={(e) => setAffSchool(e.target.value)}
+            onChange={setAffSchool}
+            fetchOptions={fetchSchools}
           />
           <Input
             id="aff-debater-1"
@@ -281,12 +287,11 @@ export function TeamSection({
           />
         )}
         <div className="space-y-2">
-          <Input
-            id="neg-school"
-            type="text"
+          <Autocomplete
             placeholder="School (Optional)"
             value={negSchool}
-            onChange={(e) => setNegSchool(e.target.value)}
+            onChange={setNegSchool}
+            fetchOptions={fetchSchools}
           />
           <Input
             id="neg-debater-1"

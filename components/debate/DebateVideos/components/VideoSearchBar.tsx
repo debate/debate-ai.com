@@ -45,6 +45,8 @@ interface VideoSearchBarProps {
   currentPage?: number
   /** Total number of pages for pagination. */
   totalPages?: number
+  /** Total number of videos matching the current filter. */
+  totalVideos?: number
   /** Callback for previous page action. */
   onPrevPage?: () => void
   /** Callback for next page action. */
@@ -90,6 +92,7 @@ export function VideoSearchBar({
   onToggleFavoritesOnly,
   currentPage,
   totalPages,
+  totalVideos,
   onPrevPage,
   onNextPage,
 }: VideoSearchBarProps) {
@@ -136,12 +139,12 @@ export function VideoSearchBar({
         </SelectContent>
       </Select>
 
-      <Select value={selectedYear} onValueChange={onYearChange}>
+      <Select value={selectedYear || "all"} onValueChange={(v) => onYearChange(v === "all" ? "" : v)}>
         <SelectTrigger className="w-[110px] sm:w-[130px] shrink-0">
           <SelectValue placeholder="All Seasons" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Seasons</SelectItem>
+          <SelectItem value="all">All Seasons</SelectItem>
           {years.map((y) => (
             <SelectItem key={y} value={y}>
               {Number(y) - 1}-{y}
@@ -166,6 +169,11 @@ export function VideoSearchBar({
       {/* Compact Pagination */}
       {totalPages && totalPages > 1 && currentPage && onPrevPage && onNextPage && (
         <div className="flex items-center gap-2 ml-auto pl-2 border-l border-border/50 shrink-0">
+          {totalVideos !== undefined && (
+            <span className="text-[10px] sm:text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+              {totalVideos} videos
+            </span>
+          )}
           <Button
             variant="ghost"
             size="icon"
