@@ -16,7 +16,6 @@
  * @module components/debate/flow/editor/FlowSpreadsheet
  */
 
-import type React from "react"
 import { useMemo, useCallback, useRef, useState, useEffect } from "react"
 import { AgGridReact } from "ag-grid-react"
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from "ag-grid-community"
@@ -28,7 +27,7 @@ import type {
   RowDragEndEvent,
   IHeaderParams,
 } from "ag-grid-community"
-import { FileText } from "lucide-react"
+import { SpeechHeaderBar } from "../layout/SpeechHeaderBar"
 
 // Register AG Grid community modules
 ModuleRegistry.registerModules([AllCommunityModule])
@@ -48,36 +47,15 @@ interface FlowSpreadsheetProps {
 }
 
 /**
- * Custom header component with speech document icon
- * Displays column name with team color coding (Aff=blue, Neg=red)
+ * AG Grid custom header — delegates to SpeechHeaderBar for full controls.
  */
 const CustomHeader = (props: IHeaderParams & { onOpenSpeechPanel?: (speechName: string) => void }) => {
-  /**
-   * Handle click on speech document icon
-   */
-  const handleSpeechClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (props.onOpenSpeechPanel && props.displayName) {
-      props.onOpenSpeechPanel(props.displayName)
-    }
-  }
-
-  // Determine team color based on column name
-  const hasN = props.displayName?.toUpperCase().includes("N")
-  const hasA = props.displayName?.toUpperCase().includes("A")
-  const textColorClass = hasN ? "text-red-600 dark:text-red-400" : hasA ? "text-blue-600 dark:text-blue-400" : ""
-
+  if (!props.displayName) return null
   return (
-    <div className="flex items-center justify-between w-full h-full">
-      <span className={`flex-1 truncate ${textColorClass}`}>{props.displayName}</span>
-      <button
-        onClick={handleSpeechClick}
-        className="ml-1 p-0.5 hover:bg-accent rounded transition-colors flex-shrink-0"
-        title={`Open ${props.displayName} speech document`}
-      >
-        <FileText className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
-      </button>
-    </div>
+    <SpeechHeaderBar
+      speechName={props.displayName}
+      onOpenSpeechPanel={props.onOpenSpeechPanel}
+    />
   )
 }
 
@@ -440,7 +418,7 @@ export function FlowSpreadsheet({
           onGridReady={onGridReady}
           onCellKeyDown={onCellKeyDown}
           rowHeight={40}
-          headerHeight={40}
+          headerHeight={72}
           rowDragManaged={true}
           suppressMoveWhenRowDragging={true}
           enterNavigatesVertically={true}

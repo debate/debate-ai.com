@@ -250,7 +250,7 @@ export function TeamSection({
           <Input
             id="aff-debater-1"
             type="email"
-            placeholder="1A Email"
+            placeholder="1A name or email"
             value={affDebater1}
             onChange={(e) => setAffDebater1(e.target.value)}
           />
@@ -258,7 +258,7 @@ export function TeamSection({
             <Input
               id="aff-debater-2"
               type="email"
-              placeholder="2A Email (Optional)"
+              placeholder="2A name or email"
               value={affDebater2}
               onChange={(e) => setAffDebater2(e.target.value)}
             />
@@ -296,7 +296,7 @@ export function TeamSection({
           <Input
             id="neg-debater-1"
             type="email"
-            placeholder="1N Email"
+            placeholder="1N name or email"
             value={negDebater1}
             onChange={(e) => setNegDebater1(e.target.value)}
           />
@@ -304,7 +304,7 @@ export function TeamSection({
             <Input
               id="neg-debater-2"
               type="email"
-              placeholder="2N Email (Optional)"
+              placeholder="2N name or email"
               value={negDebater2}
               onChange={(e) => setNegDebater2(e.target.value)}
             />

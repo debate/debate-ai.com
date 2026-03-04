@@ -34,7 +34,7 @@ const DOCK_ITEMS: { category: CategoryType; label: string; icon: any }[] = [
  */
 export function CategoryDock({ currentCategory, onCategoryChange }: CategoryDockProps) {
   return (
-    <Dock direction="middle" className="mb-4  h-[64px] ">
+    <Dock direction="middle" className="h-[52px] shrink-0">
       {DOCK_ITEMS.map(({ category, label, icon }) => (
         <DockItem
           key={category}

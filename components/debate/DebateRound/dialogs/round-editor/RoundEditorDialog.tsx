@@ -73,10 +73,6 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
           <TournamentSection
             tournamentName={form.tournamentName}
             setTournamentName={form.setTournamentName}
-            filteredSuggestions={form.filteredSuggestions}
-            tournamentSuggestions={form.tournamentSuggestions}
-            showAutocomplete={form.showAutocomplete}
-            setShowAutocomplete={form.setShowAutocomplete}
             roundLevel={form.roundLevel}
             setRoundLevel={form.setRoundLevel}
             debateStyleIndex={form.debateStyleIndex}

@@ -19,14 +19,12 @@ import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { Play, Pause, RotateCcw } from "lucide-react"
 import useSound from "use-sound"
+import soundPopDown from "@/lib/audio/sound-pop-down.mp3"
+import soundPopUpOn from "@/lib/audio/sound-pop-up-on.mp3"
+import soundPopUpOff from "@/lib/audio/sound-pop-up-off.mp3"
+import { playSoundEffect } from "@/lib/audio/sound-effects"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { playSoundEffect } from "@/lib/audio/sound-effects"
-
-// Sound effect paths
-const soundPopDown = "/audio/sound-pop-down.mp3"
-const soundPopUpOn = "/audio/sound-pop-up-on.mp3"
-const soundPopUpOff = "/audio/sound-pop-up-off.mp3"
 
 /**
  * Props for the PrepTimer component
@@ -273,9 +271,9 @@ export function PrepTimer({
   return (
     <div
       className={cn(
-        "rounded-[var(--border-radius)] p-[var(--padding)] transition-colors",
+        "rounded-[var(--border-radius)] p-[var(--padding)] transition-colors group/timer",
         `palette-${palette}`,
-        compact && "py-0.5 px-2",
+        compact && "py-0.5 px-1",
       )}
     >
       {/* Optional label */}

@@ -18,14 +18,15 @@
 import type React from "react"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react"
+import { Play, Pause, RotateCcw } from "lucide-react"
 import useSound from "use-sound"
+import soundPopDown from "@/lib/audio/sound-pop-down.mp3"
+import soundPopUpOn from "@/lib/audio/sound-pop-up-on.mp3"
+import soundPopUpOff from "@/lib/audio/sound-pop-up-off.mp3"
+import { playSoundEffect } from "@/lib/audio/sound-effects"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { MicSelector } from "@/components/debate/DebateRound/SpeechRecorder/mic-selector"
 import { cn } from "@/lib/utils"
-import { playSoundEffect } from "@/lib/audio/sound-effects"
 
 /**
  * Props for the SpeechTimer component
@@ -53,6 +54,16 @@ interface SpeechTimerProps {
   children?: React.ReactNode
   /** Full display label for the current speech (name + debater), used when saving recordings */
   speechLabel?: string
+  /** Controlled mic device ID — when provided, overrides internal mic state */
+  micDeviceId?: string
+  /** Callback when mic device changes (used with controlled micDeviceId) */
+  onMicDeviceIdChange?: (id: string | undefined) => void
+  /** Controlled recording-enabled state — when provided, overrides internal state */
+  recordingEnabled?: boolean
+  /** Callback when recording-enabled changes (used with controlled recordingEnabled) */
+  onRecordingEnabledChange?: (enabled: boolean) => void
+  /** When true, hides the built-in MicSelector inside the timer ring */
+  hideMicSelector?: boolean
 }
 
 /**
@@ -82,13 +93,16 @@ export function SpeechTimer({
   resetTimeIndex,
   time,
   state,
-  onResetTimeIndexChange,
   onTimeChange,
   onStateChange,
   onFinish,
-  currentRound,
   children,
   speechLabel,
+  micDeviceId: controlledMicDeviceId,
+  onMicDeviceIdChange,
+  recordingEnabled: controlledRecordingEnabled,
+  onRecordingEnabledChange,
+  hideMicSelector = false,
 }: SpeechTimerProps) {
   // Refs
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -97,7 +111,6 @@ export function SpeechTimer({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const recordedChunksRef = useRef<Blob[]>([])
   // Tracks which speech index owns the current accumulated chunks
-  const recordingIndexRef = useRef<number>(resetTimeIndex)
 
   // Current speech data
   const currentSpeech = speeches[resetTimeIndex]
@@ -106,47 +119,28 @@ export function SpeechTimer({
   const [minutes, setMinutes] = useState("0")
   const [seconds, setSeconds] = useState("00")
 
-  // Recording state
-  const [isRecordingEnabled, setIsRecordingEnabled] = useState(false)
-  const [isActivelyRecording, setIsActivelyRecording] = useState(false)
-  const [selectedMicDeviceId, setSelectedMicDeviceId] = useState<string | undefined>(undefined)
+  // Internal recording state (used when not controlled externally)
+  const [internalRecordingEnabled, setInternalRecordingEnabled] = useState(false)
+  const [, setIsActivelyRecording] = useState(false)
+  const [internalMicDeviceId, setInternalMicDeviceId] = useState<string | undefined>(undefined)
 
-  // Sound effects
-  const [playActive] = useSound("/audio/sound-pop-down.mp3")
-  const [playOn] = useSound("/audio/sound-pop-up-on.mp3")
-  const [playOff] = useSound("/audio/sound-pop-up-off.mp3")
+  // Effective values: use controlled props if provided, otherwise fall back to internal state
+  const isRecordingEnabled = controlledRecordingEnabled !== undefined ? controlledRecordingEnabled : internalRecordingEnabled
+  const selectedMicDeviceId = controlledMicDeviceId !== undefined ? controlledMicDeviceId : internalMicDeviceId
 
-  /**
-   * Extract debater name from email
-   */
-  const getDebaterName = (email: string) => {
-    if (!email) return ""
-    return email.split("@")[0]
+  const setIsRecordingEnabled = (val: boolean) => {
+    if (controlledRecordingEnabled === undefined) setInternalRecordingEnabled(val)
+    onRecordingEnabledChange?.(val)
+  }
+  const setSelectedMicDeviceId = (id: string | undefined) => {
+    if (controlledMicDeviceId === undefined) setInternalMicDeviceId(id)
+    onMicDeviceIdChange?.(id)
   }
 
-  /**
-   * Build speech menu items with debater names
-   */
-  const speechMenuItems = speeches.map((speech, index) => {
-    let debaterInfo = ""
-    if (currentRound) {
-      const speechName = speech.name.toLowerCase()
-      if (speechName.includes("1a") || speechName.includes("aff")) {
-        debaterInfo = getDebaterName(currentRound.debaters.aff[0])
-      } else if (speechName.includes("2a")) {
-        debaterInfo = getDebaterName(currentRound.debaters.aff[1])
-      } else if (speechName.includes("1n") || speechName.includes("neg")) {
-        debaterInfo = getDebaterName(currentRound.debaters.neg[0])
-      } else if (speechName.includes("2n")) {
-        debaterInfo = getDebaterName(currentRound.debaters.neg[1])
-      }
-    }
-    return {
-      speech,
-      index,
-      label: debaterInfo ? `${speech.name} - ${debaterInfo}` : speech.name,
-    }
-  })
+  // Sound effects
+  const [playActive] = useSound(soundPopDown)
+  const [playOn] = useSound(soundPopUpOn)
+  const [playOff] = useSound(soundPopUpOff)
 
   /**
    * Sync display with time prop
@@ -398,39 +392,6 @@ export function SpeechTimer({
   }
 
   /**
-   * Navigate to next speech
-   */
-  const nextSpeech = () => {
-    if (resetTimeIndex < speeches.length - 1) {
-      const newIndex = resetTimeIndex + 1
-      onResetTimeIndexChange(newIndex)
-      onTimeChange(speeches[newIndex].time * 60 * 1000)
-      onStateChange({ name: "paused" })
-    }
-  }
-
-  /**
-   * Navigate to previous speech
-   */
-  const prevSpeech = () => {
-    if (resetTimeIndex > 0) {
-      const newIndex = resetTimeIndex - 1
-      onResetTimeIndexChange(newIndex)
-      onTimeChange(speeches[newIndex].time * 60 * 1000)
-      onStateChange({ name: "paused" })
-    }
-  }
-
-  /**
-   * Select a specific speech from dropdown
-   */
-  const selectSpeech = (index: number) => {
-    onResetTimeIndexChange(index)
-    onTimeChange(speeches[index].time * 60 * 1000)
-    onStateChange({ name: "paused" })
-  }
-
-  /**
    * Format seconds value with padding
    */
   const formatTimeValue = (val: string) => {
@@ -541,180 +502,87 @@ export function SpeechTimer({
         `palette-${palette}`,
       )}
     >
-      {/* Circular progress ring containing all controls */}
-      {(() => {
-        const size = children ? 200 : 160
-        const strokeWidth = 5
-        const radius = (size - strokeWidth) / 2
-        const circumference = 2 * Math.PI * radius
-        const progress = currentSpeech.time > 0 ? time / (currentSpeech.time * 60 * 1000) : 0
-        const strokeDashoffset = circumference * (1 - progress)
+      <div className="flex flex-col items-center gap-0.5 group/timer">
+        {/* Time display with controls on sides */}
+        <div className="flex items-center gap-0.5">
+          {/* Reset button (left) */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 rounded-full opacity-0 group-hover/timer:opacity-100 transition-opacity"
+            onClick={reset}
+          >
+            <RotateCcw className="h-3 w-3" />
+          </Button>
 
-        return (
-          <div className="relative flex items-center justify-center group/timer" style={{ width: size, height: size }}>
-            <svg
-              className="absolute inset-0 -rotate-90"
-              width={size}
-              height={size}
-              viewBox={`0 0 ${size} ${size}`}
-            >
-              {/* Background track */}
-              <circle
-                cx={size / 2}
-                cy={size / 2}
-                r={radius}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={strokeWidth}
-                className="opacity-10"
-              />
-              {/* Progress arc */}
-              <circle
-                cx={size / 2}
-                cy={size / 2}
-                r={radius}
-                fill="none"
-                strokeWidth={strokeWidth}
-                strokeLinecap="round"
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                className={cn(
-                  "transition-[stroke-dashoffset] duration-200",
-                  isDone && "stroke-[var(--text-error)]",
-                  isWarning && !isDone && "stroke-yellow-500",
-                  isEarlyWarning && !isWarning && !isDone && "stroke-orange-500",
-                  !isDone && !isWarning && !isEarlyWarning && "stroke-blue-500",
-                )}
-              />
-            </svg>
-
-            {/* Content inside ring */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
-              {/* Speech Navigation Row */}
-              <div className="flex items-center gap-0.5">
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-4 w-3 flex-shrink-0 px-0"
-                  onClick={prevSpeech}
-                  disabled={resetTimeIndex === 0}
-                >
-                  <ChevronLeft className="h-2.5 w-2.5" />
-                </Button>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="justify-between h-5 px-1 min-w-0">
-                      <span className="text-[10px] font-medium text-[var(--this-text)] truncate">{currentSpeech.name}</span>
-                      <ChevronDown className="h-2.5 w-2.5 ml-0.5 flex-shrink-0" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="center" className="w-56">
-                    {speechMenuItems.map((item) => (
-                      <DropdownMenuItem
-                        key={item.index}
-                        onClick={() => selectSpeech(item.index)}
-                        className={cn("cursor-pointer", item.index === resetTimeIndex && "bg-accent")}
-                      >
-                        {item.label}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-4 w-3 flex-shrink-0 px-0"
-                  onClick={nextSpeech}
-                  disabled={resetTimeIndex === speeches.length - 1}
-                >
-                  <ChevronRight className="h-2.5 w-2.5" />
-                </Button>
-              </div>
-
-              {/* Time display with controls on sides */}
-              <div className="flex items-center gap-0.5">
-                {/* Reset button (left) */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 rounded-full opacity-0 group-hover/timer:opacity-100 transition-opacity"
-                  onClick={reset}
-                >
-                  <RotateCcw className="h-3 w-3" />
-                </Button>
-
-                {/* Time */}
-                <div
-                  className={cn(
-                    "flex items-center text-4xl font-bold tabular-nums",
-                    isDone && "text-[var(--text-error)] animate-pulse",
-                    isWarning && !isDone && "text-yellow-600 dark:text-yellow-400",
-                    isEarlyWarning && !isWarning && !isDone && "text-orange-500 dark:text-orange-400",
-                  )}
-                >
-                  <input
-                    ref={minutesRef}
-                    type="text"
-                    value={minutes}
-                    onChange={(e) => setMinutes(e.target.value)}
-                    onFocus={handleFocus}
-                    onKeyDown={handleMinutesKeyDown}
-                    onBlur={handleBlur}
-                    disabled={state.name === "running"}
-                    className="w-[2ch] bg-transparent border-none text-right outline-none disabled:cursor-not-allowed p-0 m-0"
-                  />
-                  <span className="text-md">:</span>
-                  <input
-                    ref={secondsRef}
-                    type="text"
-                    value={seconds}
-                    onChange={(e) => setSeconds(e.target.value)}
-                    onFocus={handleFocus}
-                    onKeyDown={handleSecondsKeyDown}
-                    onBlur={handleBlur}
-                    disabled={state.name === "running"}
-                    className="w-[2ch] bg-transparent border-none text-left outline-none disabled:cursor-not-allowed p-0 m-0"
-                  />
-                </div>
-
-                {/* Play/Pause button (right) */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    "h-7 w-7 rounded-full",
-                    state.name === "running" && "bg-red-500 hover:bg-red-600 text-white"
-                  )}
-                  onClick={toggleTimer}
-                  onMouseDown={() => playActive()}
-                  onMouseUp={() => {
-                    state.name === "running" ? playOff() : playOn()
-                  }}
-                >
-                  {state.name === "running" ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
-                </Button>
-              </div>
-
-              <div className="relative flex items-center justify-center w-full">
-                {children}
-                <div className="absolute right-[1rem] top-[-0.75rem]">
-                  <MicSelector
-                    value={selectedMicDeviceId}
-                    onValueChange={setSelectedMicDeviceId}
-                    muted={!isRecordingEnabled}
-                    onMutedChange={(m) => setIsRecordingEnabled(!m)}
-                    disabled={false}
-                    className="flex-shrink-0 scale-90"
-                  />
-                </div>
-              </div>
-            </div>
+          {/* Time */}
+          <div
+            className={cn(
+              "flex items-center text-4xl font-bold tabular-nums",
+              isDone && "text-[var(--text-error)] animate-pulse",
+              isWarning && !isDone && "text-yellow-600 dark:text-yellow-400",
+              isEarlyWarning && !isWarning && !isDone && "text-orange-500 dark:text-orange-400",
+            )}
+          >
+            <input
+              ref={minutesRef}
+              type="text"
+              value={minutes}
+              onChange={(e) => setMinutes(e.target.value)}
+              onFocus={handleFocus}
+              onKeyDown={handleMinutesKeyDown}
+              onBlur={handleBlur}
+              disabled={state.name === "running"}
+              className="w-[2ch] bg-transparent border-none text-right outline-none disabled:cursor-not-allowed p-0 m-0"
+            />
+            <span className="text-md">:</span>
+            <input
+              ref={secondsRef}
+              type="text"
+              value={seconds}
+              onChange={(e) => setSeconds(e.target.value)}
+              onFocus={handleFocus}
+              onKeyDown={handleSecondsKeyDown}
+              onBlur={handleBlur}
+              disabled={state.name === "running"}
+              className="w-[2ch] bg-transparent border-none text-left outline-none disabled:cursor-not-allowed p-0 m-0"
+            />
           </div>
-        )
-      })()}
+
+          {/* Play/Pause button (right) */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "h-7 w-7 rounded-full",
+              state.name === "running" && "bg-red-500 hover:bg-red-600 text-white"
+            )}
+            onClick={toggleTimer}
+            onMouseDown={() => playActive()}
+            onMouseUp={() => {
+              state.name === "running" ? playOff() : playOn()
+            }}
+          >
+            {state.name === "running" ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+          </Button>
+        </div>
+
+        <div className="relative flex items-center justify-center w-full">
+          {children}
+          {!hideMicSelector && (
+            <div className="absolute right-[1rem] top-[-0.75rem]">
+              <MicSelector
+                value={selectedMicDeviceId}
+                onValueChange={setSelectedMicDeviceId}
+                muted={!isRecordingEnabled}
+                onMutedChange={(m) => setIsRecordingEnabled(!m)}
+                disabled={false}
+                className="flex-shrink-0 scale-90"
+              />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

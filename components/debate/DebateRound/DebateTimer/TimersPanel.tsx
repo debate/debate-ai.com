@@ -15,7 +15,6 @@
  */
 
 import type React from "react"
-import { PrepTimer } from "./PrepTimer"
 import { SpeechTimer } from "./SpeechTimer"
 import { SpeechRecordingPlayer } from "../SpeechRecorder/SpeechRecordingPlayer"
 import { VoiceChat } from "@/components/ui/voice-chat"
@@ -50,13 +49,9 @@ interface TimersPanelProps {
   speechState: SpeechTimerState
   /** Setter for speech timer state. */
   setSpeechState: React.Dispatch<React.SetStateAction<SpeechTimerState>>
-  /** Current primary prep timer state (null if no prep time). */
-  prepState: TimerState | null
-  /** Setter for primary prep timer state. */
+  /** Setter for primary prep timer state (used to pause when speech starts). */
   setPrepState: React.Dispatch<React.SetStateAction<TimerState | null>>
-  /** Current secondary prep timer state (null if no prep time). */
-  prepSecondaryState: TimerState | null
-  /** Setter for secondary prep timer state. */
+  /** Setter for secondary prep timer state (used to pause when speech starts). */
   setPrepSecondaryState: React.Dispatch<React.SetStateAction<TimerState | null>>
 }
 
@@ -73,9 +68,7 @@ export function TimersPanel({
   debateStyle,
   speechState,
   setSpeechState,
-  prepState,
   setPrepState,
-  prepSecondaryState,
   setPrepSecondaryState,
 }: TimersPanelProps) {
   // Get current round for participant info
@@ -166,61 +159,15 @@ export function TimersPanel({
           }}
           currentRound={currentRound}
           speechLabel={currentSpeechLabel}
-        >
-          {/* Prep Timers inside the ring */}
-          {(prepState || prepSecondaryState) && (
-            <div className="flex flex-col gap-0 w-full">
-              {prepState && (
-                <PrepTimer
-                  resetTime={prepState.resetTime}
-                  time={prepState.time}
-                  state={prepState.state}
-                  palette="accent-secondary"
-                  color="blue"
-                  compact
-                  hideControlsByDefault={true}
-                  onTimeChange={(time) => setPrepState((prev) => prev && { ...prev, time })}
-                  onStateChange={(state) => {
-                    setPrepState((prev) => prev && { ...prev, state })
-                    if (state.name === "running") {
-                      // Pause speech and other prep timer
-                      setSpeechState((prev) => prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
-                      setPrepSecondaryState((prev) => prev && prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
-                    }
-                  }}
-                />
-              )}
-              {prepSecondaryState && (
-                <PrepTimer
-                  resetTime={prepSecondaryState.resetTime}
-                  time={prepSecondaryState.time}
-                  state={prepSecondaryState.state}
-                  palette="accent-secondary"
-                  color="red"
-                  compact
-                  hideControlsByDefault={true}
-                  onTimeChange={(time) => setPrepSecondaryState((prev) => prev && { ...prev, time })}
-                  onStateChange={(state) => {
-                    setPrepSecondaryState((prev) => prev && { ...prev, state })
-                    if (state.name === "running") {
-                      // Pause speech and other prep timer
-                      setSpeechState((prev) => prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
-                      setPrepState((prev) => prev && prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
-                    }
-                  }}
-                />
-              )}
-            </div>
-          )}
-        </SpeechTimer>
+        />
       </div>
 
       {/* Voice Chat (if participants available) */}
-      {participants.length > 0 && (
+      {/* {participants.length > 0 && (
         <div className="flex justify-center w-full">
           <VoiceChat participants={participants} />
         </div>
-      )}
+      )} */}
     </div>
   )
 }

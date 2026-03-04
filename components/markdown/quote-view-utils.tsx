@@ -3,8 +3,14 @@
  * Uses the robust html-to-cards parser from lib/card-parser.
  */
 
-import DOMPurify from "isomorphic-dompurify"
 import { htmlToCards as parseHtmlToCards } from "../../lib/card-parser/html-to-cards"
+
+function sanitizeHtml(html: string): string {
+  if (typeof window === "undefined") return html
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const DOMPurify = require("dompurify")
+  return DOMPurify.sanitize(html)
+}
 
 /** Represents a single parsed evidence/quote card. */
 export interface QuoteCard {
@@ -450,7 +456,7 @@ export function buildQuoteCardsHtml(
       })
       .join("\n")
 
-    const sanitizedHtml = DOMPurify.sanitize(`<div class="quote-view">${cardsHtml}</div>`)
+    const sanitizedHtml = sanitizeHtml(`<div class="quote-view">${cardsHtml}</div>`)
 
     return {
       html: sanitizedHtml,

@@ -3,12 +3,26 @@ export const debateStyleMap = [
   "lincolnDouglas",
   "policy",
   "collegePolicy",
+  "collegeLD",
   "congress",
   "worldSchools",
   "bigQuestions",
   "nofSpar",
   "parlimentary",
 ] as const;
+
+export const debateStyleNames = [
+  "Public Forum",
+  "Lincoln Douglas", //1
+  "Policy",
+  "College Policy",
+  "College LD",
+  "Congress",
+  "World Schools", //3
+  "Big Questions",
+  "NOF SPAR", //1
+  "Parlimentary",
+];
 
 export type DebateStyleKey = (typeof debateStyleMap)[number];
 
@@ -46,12 +60,12 @@ export const debateStyles: {
   policy: {
     primary: {
       name: "aff",
-      columns: ["1AC", "1NC", "2AC", "2NC/1NR", "1AR", "2NR", "2AR"],
+      columns: ["1AC", "1NC", "2AC", "2NC", "1NR", "1AR", "2NR", "2AR"],
       invert: false,
     },
     secondary: {
       name: "neg",
-      columns: ["1NC", "2AC", "2NC/1NR", "1AR", "2NR", "2AR"],
+      columns: ["1NC", "2AC", "2NC", "1NR", "1AR", "2NR", "2AR"],
       invert: true,
     },
     timerSpeeches: [
@@ -166,6 +180,42 @@ export const debateStyles: {
         cxRoles: { questioner: "A", answerer: "N" },
       },
       { name: "1AR", time: 4, secondary: false, speaker: "A" },
+      { name: "NR", time: 6, secondary: true, speaker: "N" },
+      { name: "2AR", time: 3, secondary: false, speaker: "A" },
+    ],
+    prepTime: 4,
+  },
+  collegeLD: {
+    primary: {
+      name: "aff",
+      columns: ["AC", "NC", "1AR", "NR", "2AR"],
+      starterBoxes: ["value", "criterion"],
+      invert: false,
+    },
+    secondary: {
+      name: "neg",
+      columns: ["NC", "1AR", "NR", "2AR"],
+      starterBoxes: ["value", "criterion"],
+      invert: true,
+    },
+    timerSpeeches: [
+      { name: "AC", time: 6, secondary: false, speaker: "A" },
+      {
+        name: "CX",
+        time: 3,
+        secondary: false,
+        speaker: "A",
+        cxRoles: { questioner: "N", answerer: "A" },
+      },
+      { name: "NC", time: 7, secondary: true, speaker: "N" },
+      {
+        name: "CX",
+        time: 3,
+        secondary: false,
+        speaker: "N",
+        cxRoles: { questioner: "A", answerer: "N" },
+      },
+      { name: "1AR", time: 6, secondary: false, speaker: "A" },
       { name: "NR", time: 6, secondary: true, speaker: "N" },
       { name: "2AR", time: 3, secondary: false, speaker: "A" },
     ],
@@ -300,12 +350,12 @@ export const debateStyles: {
   collegePolicy: {
     primary: {
       name: "aff",
-      columns: ["1AC", "1NC", "2AC", "2NC/1NR", "1AR", "2NR", "2AR"],
+      columns: ["1AC", "1NC", "2AC", "2NC", "1NR", "1AR", "2NR", "2AR"],
       invert: false,
     },
     secondary: {
       name: "neg",
-      columns: ["1NC", "2AC", "2NC/1NR", "1AR", "2NR", "2AR"],
+      columns: ["1NC", "2AC", "2NC", "1NR", "1AR", "2NR", "2AR"],
       invert: true,
     },
     timerSpeeches: [

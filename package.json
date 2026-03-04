@@ -5,8 +5,8 @@
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "scripts": {
-    "dev": "concurrently \"next dev\" \"wait-on http://localhost:3000 && opener http://localhost:3000\"",
-    "build": "next build",
+    "dev": "concurrently \"next dev --webpack\" \"wait-on http://localhost:3000 && opener http://localhost:3000\"",
+    "build": "next build --webpack",
     "start": "next start"
   },
   "dependencies": {
@@ -87,6 +87,7 @@
     "immer": "latest",
     "input-otp": "1.4.2",
     "isomorphic-dompurify": "2.35.0",
+    "jsdom": "^28.1.0",
     "jszip": "3.10.1",
     "katex": "0.16.27",
     "knex": "latest",
@@ -101,6 +102,7 @@
     "next-themes": "^0.4.6",
     "node-fetch": "^3.3.2",
     "qwksearch-api-client": "0.0.12",
+    "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-complex-tree": "^2.6.1",
     "react-datasheet-grid": "^4.11.5",

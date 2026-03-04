@@ -8,7 +8,7 @@ import { Plus, Clock, Users, Columns2, Grid3x3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { FlowTab } from "../navigation/FlowTab"
-import { TimersPanel } from "../DebateTimer/TimersPanel"
+import { PrepTimer } from "../DebateTimer/PrepTimer"
 
 /** Props for the FlowPageSidebar component. */
 interface FlowPageSidebarProps {
@@ -152,6 +152,66 @@ export function FlowPageSidebar({
         </TooltipProvider>
       </div>
 
+      {/* Prep timers row */}
+      {(timerState.prepState || timerState.prepSecondaryState) && (
+        <TooltipProvider>
+          <div className="flex flex-row gap-0 pb-[var(--padding)]">
+            {timerState.prepState && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex-1">
+                    <PrepTimer
+                      resetTime={timerState.prepState.resetTime}
+                      time={timerState.prepState.time}
+                      state={timerState.prepState.state}
+                      palette="accent-secondary"
+                      color="blue"
+                      compact
+                      hideControlsByDefault={true}
+                      onTimeChange={(time) => timerState.setPrepState((prev) => prev && { ...prev, time })}
+                      onStateChange={(state) => {
+                        timerState.setPrepState((prev) => prev && { ...prev, state })
+                        if (state.name === "running") {
+                          timerState.setSpeechState((prev) => prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
+                          timerState.setPrepSecondaryState((prev) => prev && prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
+                        }
+                      }}
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent><p>Prep Timers</p></TooltipContent>
+              </Tooltip>
+            )}
+            {timerState.prepSecondaryState && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex-1">
+                    <PrepTimer
+                      resetTime={timerState.prepSecondaryState.resetTime}
+                      time={timerState.prepSecondaryState.time}
+                      state={timerState.prepSecondaryState.state}
+                      palette="accent-secondary"
+                      color="red"
+                      compact
+                      hideControlsByDefault={true}
+                      onTimeChange={(time) => timerState.setPrepSecondaryState((prev) => prev && { ...prev, time })}
+                      onStateChange={(state) => {
+                        timerState.setPrepSecondaryState((prev) => prev && { ...prev, state })
+                        if (state.name === "running") {
+                          timerState.setSpeechState((prev) => prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
+                          timerState.setPrepState((prev) => prev && prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
+                        }
+                      }}
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent><p>Prep Timers</p></TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+        </TooltipProvider>
+      )}
+
       {/* Flow tabs list */}
       <div className="overflow-y-auto flex-grow box-border">
         <div className="p-0 m-0">
@@ -180,18 +240,6 @@ export function FlowPageSidebar({
         </div>
       </div>
 
-      {/* Timers section */}
-      <div className="mt-auto pt-[var(--padding)]">
-        <TimersPanel
-          debateStyle={timerState.debateStyle}
-          speechState={timerState.speechState}
-          setSpeechState={timerState.setSpeechState}
-          prepState={timerState.prepState}
-          setPrepState={timerState.setPrepState}
-          prepSecondaryState={timerState.prepSecondaryState}
-          setPrepSecondaryState={timerState.setPrepSecondaryState}
-        />
-      </div>
     </div>
   )
 }

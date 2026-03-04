@@ -6,6 +6,7 @@
 import type React from "react"
 import { FlowSpreadsheet } from "../Flow/FlowSpreadsheet"
 import { MarkdownEditor } from "../../../markdown/markdown-editor"
+import { SpeechHeaderBar } from "./SpeechHeaderBar"
 
 /** Props for the FlowMainContent component. */
 interface FlowMainContentProps {
@@ -103,19 +104,8 @@ export function FlowMainContent({
           className="flex flex-col border-r border-border bg-[var(--background)] rounded-l-[var(--border-radius)]"
           style={{ width: `${splitWidth}%` }}
         >
-          <div className="p-2 border-b border-border bg-muted/50 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <h2
-                className={`text-sm font-semibold ${leftSpeech.includes("A")
-                  ? "text-blue-600 dark:text-blue-400"
-                  : leftSpeech.includes("N")
-                    ? "text-red-600 dark:text-red-400"
-                    : ""
-                  }`}
-              >
-                {leftSpeech}
-              </h2>
-            </div>
+          <div className="border-b border-border bg-muted/50">
+            <SpeechHeaderBar speechName={leftSpeech} />
           </div>
           <div className="flex-1 overflow-hidden">
             <MarkdownEditor
@@ -143,19 +133,8 @@ export function FlowMainContent({
           className="flex flex-col bg-[var(--background)] rounded-r-[var(--border-radius)]"
           style={{ width: `${100 - splitWidth}%` }}
         >
-          <div className="p-2 border-b border-border bg-muted/50 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <h2
-                className={`text-sm font-semibold ${rightSpeech.includes("A")
-                  ? "text-blue-600 dark:text-blue-400"
-                  : rightSpeech.includes("N")
-                    ? "text-red-600 dark:text-red-400"
-                    : ""
-                  }`}
-              >
-                {rightSpeech}
-              </h2>
-            </div>
+          <div className="border-b border-border bg-muted/50">
+            <SpeechHeaderBar speechName={rightSpeech} />
           </div>
           <div className="flex-1 overflow-hidden">
             <MarkdownEditor

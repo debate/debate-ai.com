@@ -9,7 +9,7 @@
  * @module components/debate/videos/DebateVideosPage
  */
 
-import { useCallback, useEffect, useMemo } from "react"
+import React, { useCallback, useEffect, useMemo } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { DictionaryPanel } from "./DictionaryPanel"
 import { LeaderboardPanel } from "./RankingsLeaderboardPanel"
@@ -208,10 +208,17 @@ export function DebateVideosPage() {
   // ============================================================================
   // Render Special Panels
   // ============================================================================
+  const stickyHeader = (searchBar?: React.ReactNode) => (
+    <div className="sm:sticky top-0 z-40 bg-background border-b border-border/30 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+      <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
+      {searchBar && <div className="w-full sm:flex-1 sm:min-w-0">{searchBar}</div>}
+    </div>
+  )
+
   if (state.currentCategory === "dictionary") {
     return (
       <div className="min-h-screen bg-background p-3 sm:p-6">
-        <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
+        {stickyHeader()}
         <DictionaryPanel />
       </div>
     )
@@ -220,7 +227,7 @@ export function DebateVideosPage() {
   if (state.currentCategory === "leaderboard") {
     return (
       <div className="min-h-screen bg-background p-3 sm:p-6">
-        <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
+        {stickyHeader()}
         <LeaderboardPanel />
       </div>
     )
@@ -231,9 +238,8 @@ export function DebateVideosPage() {
   // ============================================================================
   return (
     <div className="min-h-screen bg-background p-3 sm:p-6">
-      <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
-
-      <VideoSearchBar
+      {stickyHeader(
+        <VideoSearchBar
         searchTerm={state.searchTerm}
         sortOrder={state.sortOrder}
         selectedYear={state.selectedYear}
@@ -254,6 +260,7 @@ export function DebateVideosPage() {
         onPrevPage={handlePrevPage}
         onNextPage={handleNextPage}
       />
+      )}
 
       {state.isLoading ? (
         <div className="text-center py-12">

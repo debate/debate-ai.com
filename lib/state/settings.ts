@@ -97,6 +97,7 @@ export const settings = new Settings({
         "Lincoln Douglas", //1
         "Policy",
         "College Policy",
+        "College LD",
         "Congress",
         "World Schools", //3
         "Big Questions",

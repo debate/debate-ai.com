@@ -101,8 +101,9 @@ export function VideoSearchBar({
   const years = Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
 
   return (
-    <div className="flex flex-row gap-2 sm:gap-3 mb-6">
-      <div className="relative flex-1 min-w-0">
+    <div className="flex flex-col gap-2 flex-1 min-w-0">
+      {/* Row 1: Search input */}
+      <div className="relative min-w-0">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
@@ -126,79 +127,82 @@ export function VideoSearchBar({
         </div>
       </div>
 
-      <Select value={sortOrder} onValueChange={onSortChange}>
-        <SelectTrigger className="w-[100px] sm:w-[120px] shrink-0">
-          <SelectValue placeholder="Sort by" />
-        </SelectTrigger>
-        <SelectContent>
-          {sortOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {/* Row 2: Controls — wrap on small screens */}
+      <div className="flex flex-wrap items-center gap-2">
+        <Select value={sortOrder} onValueChange={onSortChange}>
+          <SelectTrigger className="w-[100px] sm:w-[120px] shrink-0">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            {sortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      <Select value={selectedYear || "all"} onValueChange={(v) => onYearChange(v === "all" ? "" : v)}>
-        <SelectTrigger className="w-[110px] sm:w-[130px] shrink-0">
-          <SelectValue placeholder="All Seasons" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Seasons</SelectItem>
-          {years.map((y) => (
-            <SelectItem key={y} value={y}>
-              {Number(y) - 1}-{y}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        <Select value={selectedYear || "all"} onValueChange={(v) => onYearChange(v === "all" ? "" : v)}>
+          <SelectTrigger className="w-[110px] sm:w-[130px] shrink-0">
+            <SelectValue placeholder="All Seasons" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Seasons</SelectItem>
+            {years.map((y) => (
+              <SelectItem key={y} value={y}>
+                {Number(y) - 1}-{y}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      <Button className="shrink-0" variant="outline" size="icon" onClick={onToggleThumbnails} title="Toggle thumbnails">
-        {showThumbnails ? <VideoOff className="h-4 w-4" /> : <Video className="h-4 w-4" />}
-      </Button>
-      <Button
-        className={`shrink-0 ${showFavoritesOnly ? "bg-amber-100 text-amber-600 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 border-amber-200 dark:border-amber-800" : ""}`}
-        variant="outline"
-        size="icon"
-        onClick={onToggleFavoritesOnly}
-        title={showFavoritesOnly ? "Show all videos" : "Show favorites only"}
-      >
-        <Star className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`} />
-      </Button>
+        <Button className="shrink-0" variant="outline" size="icon" onClick={onToggleThumbnails} title="Toggle thumbnails">
+          {showThumbnails ? <VideoOff className="h-4 w-4" /> : <Video className="h-4 w-4" />}
+        </Button>
+        <Button
+          className={`shrink-0 ${showFavoritesOnly ? "bg-amber-100 text-amber-600 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 border-amber-200 dark:border-amber-800" : ""}`}
+          variant="outline"
+          size="icon"
+          onClick={onToggleFavoritesOnly}
+          title={showFavoritesOnly ? "Show all videos" : "Show favorites only"}
+        >
+          <Star className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`} />
+        </Button>
 
-      {/* Compact Pagination */}
-      {totalPages && totalPages > 1 && currentPage && onPrevPage && onNextPage && (
-        <div className="flex items-center gap-2 ml-auto pl-2 border-l border-border/50 shrink-0">
-          {totalVideos !== undefined && (
-            <span className="text-[10px] sm:text-xs text-muted-foreground tabular-nums whitespace-nowrap">
-              {totalVideos} videos
+        {/* Compact Pagination */}
+        {totalPages && totalPages > 1 && currentPage && onPrevPage && onNextPage && (
+          <div className="flex items-center gap-2 ml-auto pl-2 border-l border-border/50 shrink-0">
+            {totalVideos !== undefined && (
+              <span className="text-[10px] sm:text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                {totalVideos} videos
+              </span>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={onPrevPage}
+              disabled={currentPage === 1}
+              title="Previous Page"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-[10px] sm:text-xs font-medium tabular-nums whitespace-nowrap text-muted-foreground min-w-[3rem] text-center">
+              {currentPage} / {totalPages}
             </span>
-          )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={onPrevPage}
-            disabled={currentPage === 1}
-            title="Previous Page"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-[10px] sm:text-xs font-medium tabular-nums whitespace-nowrap text-muted-foreground min-w-[3rem] text-center">
-            {currentPage} / {totalPages}
-          </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={onNextPage}
-            disabled={currentPage >= totalPages}
-            title="Next Page"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={onNextPage}
+              disabled={currentPage >= totalPages}
+              title="Next Page"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

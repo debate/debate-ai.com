@@ -21,17 +21,12 @@ import {
   debateStyles,
   debateStyleMap,
 } from "@/components/debate/DebateRound/DebateTimer/debate-format-times";
-import { fetchTournamentNames } from "@/app/actions";
 
 /** Return type of the {@link useRoundEditorForm} hook. */
 export interface RoundEditorFormState {
   // Tournament
   tournamentName: string;
   setTournamentName: (v: string) => void;
-  tournamentSuggestions: string[];
-  showAutocomplete: boolean;
-  setShowAutocomplete: (v: boolean) => void;
-  filteredSuggestions: string[];
   roundLevel: string;
   setRoundLevel: (v: string) => void;
   debateStyleIndex: number;
@@ -84,11 +79,6 @@ export function useRoundEditorForm(
   // Form state
   // --------------------------------------------------------------------------
   const [tournamentName, setTournamentName] = useState("");
-  const [tournamentSuggestions, setTournamentSuggestions] = useState<string[]>(
-    [],
-  );
-  const [showAutocomplete, setShowAutocomplete] = useState(false);
-  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [roundLevel, setRoundLevel] = useState("Prelim 1");
   const [debateStyleIndex, setDebateStyleIndex] = useState(0);
 
@@ -162,27 +152,10 @@ export function useRoundEditorForm(
       const debateStyleSetting = settings.data.debateStyle;
       setDebateStyleIndex(debateStyleSetting.value as number);
 
-      fetchTournamentNames().then((names) => {
-        setTournamentSuggestions(names);
-      });
     }
   }, [open]);
 
-  /** Filter tournament suggestions as the user types. */
-  useEffect(() => {
-    if (tournamentSuggestions.length > 0) {
-      if (tournamentName) {
-        const filtered = tournamentSuggestions.filter((name) =>
-          name.toLowerCase().includes(tournamentName.toLowerCase()),
-        );
-        setFilteredSuggestions(filtered.slice(0, 10));
-      } else {
-        setFilteredSuggestions(tournamentSuggestions.slice(0, 10));
-      }
-    } else {
-      setFilteredSuggestions([]);
-    }
-  }, [tournamentName, tournamentSuggestions]);
+
 
   // --------------------------------------------------------------------------
   // Helpers
@@ -381,10 +354,6 @@ export function useRoundEditorForm(
   return {
     tournamentName,
     setTournamentName,
-    tournamentSuggestions,
-    showAutocomplete,
-    setShowAutocomplete,
-    filteredSuggestions,
     roundLevel,
     setRoundLevel: handleSetRoundLevel,
     debateStyleIndex,
