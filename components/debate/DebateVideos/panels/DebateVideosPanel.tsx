@@ -9,8 +9,12 @@
  * @module components/debate/videos/DebateVideosPage
  */
 
-import React, { useCallback, useEffect, useMemo } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
+import { Search, X } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DictionaryPanel } from "./DictionaryPanel"
 import { LeaderboardPanel } from "./RankingsLeaderboardPanel"
 
@@ -53,6 +57,12 @@ export function DebateVideosPage() {
   }, [])
 
   const { state, actions } = useVideoState(initialCategory)
+
+  // Lifted state for special panels
+  const [dictSearchTerm, setDictSearchTerm] = useState("")
+  const [lbDivision, setLbDivision] = useState<"VPF" | "VLD" | "VCX" | "NDT">("VPF")
+  const [lbYear, setLbYear] = useState("2026")
+  const lbYears = Array.from({ length: Math.max(new Date().getFullYear(), 2026) - 2001 }, (_, i) => String(Math.max(new Date().getFullYear(), 2026) - i))
 
   // ============================================================================
   // Computed Values
@@ -208,27 +218,81 @@ export function DebateVideosPage() {
   // ============================================================================
   // Render Special Panels
   // ============================================================================
-  const stickyHeader = (searchBar?: React.ReactNode) => (
-    <div className="sm:sticky top-0 z-40 bg-background border-b border-border/30 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+  // Sticky header: CategoryDock + optional right-side controls
+  // Desktop: single row (flex-nowrap). Mobile: wraps to multiple rows.
+  const stickyHeader = (controls?: React.ReactNode) => (
+    <div className="sm:sticky top-0 z-40 bg-background border-b border-border/30 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 mb-4 flex flex-wrap md:flex-nowrap items-center gap-2">
       <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
-      {searchBar && <div className="w-full sm:flex-1 sm:min-w-0">{searchBar}</div>}
+      {controls && <div className="flex-1 min-w-0 flex flex-wrap items-center gap-2">{controls}</div>}
     </div>
   )
 
   if (state.currentCategory === "dictionary") {
+    const dictControls = (
+      <div className="relative w-full md:w-[240px]">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Search terms..."
+          value={dictSearchTerm}
+          onChange={(e) => setDictSearchTerm(e.target.value)}
+          className="pl-9 pr-8 h-9"
+        />
+        {dictSearchTerm && (
+          <button onClick={() => setDictSearchTerm("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+    )
     return (
       <div className="min-h-screen bg-background p-3 sm:p-6">
-        {stickyHeader()}
-        <DictionaryPanel />
+        {stickyHeader(dictControls)}
+        <DictionaryPanel controlledSearchTerm={dictSearchTerm} onControlledSearchChange={setDictSearchTerm} />
       </div>
     )
   }
 
   if (state.currentCategory === "leaderboard") {
+    const DIVISION_LABELS: { value: "VPF" | "VLD" | "VCX" | "NDT"; label: string }[] = [
+      { value: "VPF", label: "PF" },
+      { value: "VLD", label: "LD" },
+      { value: "VCX", label: "Policy" },
+      { value: "NDT", label: "NDT" },
+    ]
+    const lbControls = (
+      <>
+        <Tabs value={lbDivision} onValueChange={(v) => setLbDivision(v as typeof lbDivision)}>
+          <TabsList className="h-8">
+            {DIVISION_LABELS.map((d) => (
+              <TabsTrigger key={d.value} value={d.value} className="text-xs px-2 py-1">{d.label}</TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+        <Select value={lbYear} onValueChange={setLbYear}>
+          <SelectTrigger className="w-[120px] h-8 text-xs">
+            <SelectValue placeholder="Year" />
+          </SelectTrigger>
+          <SelectContent>
+            {lbYears.map((y) => (
+              <SelectItem key={y} value={y} className="text-xs">
+                {Number(y) - 1}-{y}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </>
+    )
     return (
       <div className="min-h-screen bg-background p-3 sm:p-6">
-        {stickyHeader()}
-        <LeaderboardPanel />
+        {stickyHeader(lbControls)}
+        <LeaderboardPanel
+          controlledDivision={lbDivision}
+          controlledYear={lbYear}
+          onControlledDivisionChange={setLbDivision}
+          onControlledYearChange={setLbYear}
+        />
       </div>
     )
   }
@@ -240,26 +304,26 @@ export function DebateVideosPage() {
     <div className="min-h-screen bg-background p-3 sm:p-6">
       {stickyHeader(
         <VideoSearchBar
-        searchTerm={state.searchTerm}
-        sortOrder={state.sortOrder}
-        selectedYear={state.selectedYear}
-        isSearchFocused={state.isSearchFocused}
-        showThumbnails={state.showThumbnails}
-        showFavoritesOnly={state.showFavoritesOnly}
-        onSearchChange={handleSearchChange}
-        onSearchFocus={() => actions.setIsSearchFocused(true)}
-        onSearchBlur={() => actions.setIsSearchFocused(false)}
-        onClearSearch={handleClearSearch}
-        onSortChange={handleSortChange}
-        onYearChange={(year) => actions.setSelectedYear(year)}
-        onToggleThumbnails={handleToggleThumbnails}
-        onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
-        currentPage={state.currentPage}
-        totalPages={totalPages}
-        totalVideos={state.filteredVideos.length}
-        onPrevPage={handlePrevPage}
-        onNextPage={handleNextPage}
-      />
+          searchTerm={state.searchTerm}
+          sortOrder={state.sortOrder}
+          selectedYear={state.selectedYear}
+          isSearchFocused={state.isSearchFocused}
+          showThumbnails={state.showThumbnails}
+          showFavoritesOnly={state.showFavoritesOnly}
+          onSearchChange={handleSearchChange}
+          onSearchFocus={() => actions.setIsSearchFocused(true)}
+          onSearchBlur={() => actions.setIsSearchFocused(false)}
+          onClearSearch={handleClearSearch}
+          onSortChange={handleSortChange}
+          onYearChange={(year) => actions.setSelectedYear(year)}
+          onToggleThumbnails={handleToggleThumbnails}
+          onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
+          currentPage={state.currentPage}
+          totalPages={totalPages}
+          totalVideos={state.filteredVideos.length}
+          onPrevPage={handlePrevPage}
+          onNextPage={handleNextPage}
+        />
       )}
 
       {state.isLoading ? (

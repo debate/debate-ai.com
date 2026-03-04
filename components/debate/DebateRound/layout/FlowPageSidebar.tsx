@@ -91,7 +91,12 @@ export function FlowPageSidebar({
   onCloseMobileMenu,
   timerState,
 }: FlowPageSidebarProps) {
-  // Sort flows: active first, then archived by most recent
+  /**
+   * Sort flows for rendering:
+   * - active flows first
+   * - archived flows last, newest archive first
+   * - active flows in their configured index order
+   */
   const sortedFlows = [...flows].sort((a, b) => {
     if (a.archived && !b.archived) return 1
     if (!a.archived && b.archived) return -1
@@ -99,6 +104,11 @@ export function FlowPageSidebar({
     return a.index - b.index
   })
 
+  /**
+   * Select a flow tab and close the mobile menu when applicable.
+   *
+   * @param index - Index of the selected flow.
+   */
   const handleSelectFlow = (index: number) => {
     onSelectFlow(index)
     if (isMobile && onCloseMobileMenu) {

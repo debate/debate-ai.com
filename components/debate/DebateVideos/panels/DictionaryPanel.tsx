@@ -37,8 +37,16 @@ interface DictionaryEntry {
   definition: string
 }
 
-export function DictionaryPanel() {
-  const [searchTerm, setSearchTerm] = useState("")
+interface DictionaryPanelProps {
+  /** When provided, the parent controls the search instead of internal state */
+  controlledSearchTerm?: string
+  onControlledSearchChange?: (val: string) => void
+}
+
+export function DictionaryPanel({ controlledSearchTerm, onControlledSearchChange }: DictionaryPanelProps = {}) {
+  const [internalSearchTerm, setInternalSearchTerm] = useState("")
+  const searchTerm = controlledSearchTerm !== undefined ? controlledSearchTerm : internalSearchTerm
+  const setSearchTerm = onControlledSearchChange ?? setInternalSearchTerm
   const [dictionary, setDictionary] = useState<DictionaryEntry[]>([])
 
   useEffect(() => {
@@ -69,16 +77,18 @@ export function DictionaryPanel() {
 
   return (
     <div className="w-full h-[calc(100vh-200px)] flex flex-col">
-      {/* Search input */}
-      <div className="relative mb-4 px-4 sm:px-6 pt-6">
-        <Input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search 200+ debate terms..."
-          className="pl-10 w-full h-12 text-base border-2 focus:border-indigo-500 rounded-lg"
-        />
-      </div>
+      {/* Search input — only shown if not controlled from parent */}
+      {controlledSearchTerm === undefined && (
+        <div className="relative mb-4 px-4 sm:px-6 pt-6">
+          <Input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search 200+ debate terms..."
+            className="pl-10 w-full h-12 text-base border-2 focus:border-indigo-500 rounded-lg"
+          />
+        </div>
+      )}
 
       {/* Results list */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 pb-6">

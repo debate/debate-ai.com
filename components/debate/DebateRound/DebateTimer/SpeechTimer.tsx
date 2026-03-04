@@ -64,6 +64,8 @@ interface SpeechTimerProps {
   onRecordingEnabledChange?: (enabled: boolean) => void
   /** When true, hides the built-in MicSelector inside the timer ring */
   hideMicSelector?: boolean
+  /** When true, uses a tighter layout with smaller text for use in headers */
+  compact?: boolean
 }
 
 /**
@@ -103,6 +105,7 @@ export function SpeechTimer({
   recordingEnabled: controlledRecordingEnabled,
   onRecordingEnabledChange,
   hideMicSelector = false,
+  compact = false,
 }: SpeechTimerProps) {
   // Refs
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -509,7 +512,10 @@ export function SpeechTimer({
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 rounded-full opacity-0 group-hover/timer:opacity-100 transition-opacity"
+            className={cn(
+              "rounded-full opacity-0 group-hover/timer:opacity-100 transition-opacity",
+              compact ? "h-5 w-5" : "h-6 w-6"
+            )}
             onClick={reset}
           >
             <RotateCcw className="h-3 w-3" />
@@ -518,7 +524,8 @@ export function SpeechTimer({
           {/* Time */}
           <div
             className={cn(
-              "flex items-center text-4xl font-bold tabular-nums",
+              "flex items-center font-bold tabular-nums",
+              compact ? "text-2xl" : "text-4xl",
               isDone && "text-[var(--text-error)] animate-pulse",
               isWarning && !isDone && "text-yellow-600 dark:text-yellow-400",
               isEarlyWarning && !isWarning && !isDone && "text-orange-500 dark:text-orange-400",
@@ -554,7 +561,8 @@ export function SpeechTimer({
             variant="ghost"
             size="icon"
             className={cn(
-              "h-7 w-7 rounded-full",
+              "rounded-full",
+              compact ? "h-7 w-7" : "h-9 w-9",
               state.name === "running" && "bg-red-500 hover:bg-red-600 text-white"
             )}
             onClick={toggleTimer}
@@ -563,7 +571,11 @@ export function SpeechTimer({
               state.name === "running" ? playOff() : playOn()
             }}
           >
-            {state.name === "running" ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+            {state.name === "running" ? (
+              <Pause className={cn(compact ? "h-4 w-4" : "h-5 w-5")} />
+            ) : (
+              <Play className={cn(compact ? "h-4 w-4" : "h-5 w-5")} />
+            )}
           </Button>
         </div>
 
@@ -583,6 +595,6 @@ export function SpeechTimer({
           )}
         </div>
       </div>
-    </div>
+    </div >
   )
 }

@@ -72,10 +72,10 @@ export function Component({
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         style={{
-          background: `linear-gradient(135deg, ${shatterColor}22 0%, ${shatterColor}44 100%)`,
-          border: `1px solid ${shatterColor}66`,
-          color: shatterColor,
-          boxShadow: `0 0 20px ${shatterColor}33, inset 0 0 20px ${shatterColor}11`,
+          background: `linear-gradient(135deg, ${shatterColor}88 0%, ${shatterColor}bb 100%)`,
+          border: `1px solid ${shatterColor}cc`,
+          color: "#ffffff",
+          boxShadow: `0 0 20px ${shatterColor}55, inset 0 0 20px ${shatterColor}22`,
         }}
       >
         {/* Glowing background effect */}

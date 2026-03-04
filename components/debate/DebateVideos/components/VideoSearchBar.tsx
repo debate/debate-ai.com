@@ -101,19 +101,19 @@ export function VideoSearchBar({
   const years = Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
 
   return (
-    <div className="flex flex-col gap-2 flex-1 min-w-0">
-      {/* Row 1: Search input */}
-      <div className="relative min-w-0">
+    <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
+      {/* Search input — compact on desktop */}
+      <div className="relative w-full md:w-[160px] shrink-0">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             type="text"
-            placeholder="Search videos..."
+            placeholder="Search..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             onFocus={onSearchFocus}
             onBlur={onSearchBlur}
-            className="pl-10 pr-10"
+            className="pl-9 pr-8 h-9"
           />
           {searchTerm && (
             <button
@@ -127,8 +127,8 @@ export function VideoSearchBar({
         </div>
       </div>
 
-      {/* Row 2: Controls — wrap on small screens */}
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Rest of controls — same row */}
+      <div className="flex flex-wrap items-center gap-2 flex-1">
         <Select value={sortOrder} onValueChange={onSortChange}>
           <SelectTrigger className="w-[100px] sm:w-[120px] shrink-0">
             <SelectValue placeholder="Sort by" />

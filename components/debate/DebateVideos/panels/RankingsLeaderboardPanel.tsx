@@ -63,7 +63,20 @@ function sortEntries(entries: LeaderboardEntry[], sort: SortState): LeaderboardE
 
 const ELO_TOOLTIP = `Debate Elo rating updates a team's skill score after each round using an Elo-style formula. The change in Elo for the winner is S = K \u00b7 mv \u00b7 (1 - wp), where S is the points gained (the loser loses roughly S). Here K is a scaling "drift factor" based on tournament bid level, mv is the margin of victory from judge ballots, and wp is the win probability implied by the pre-round Elo difference. Upsets against higher-rated opponents and larger margins give bigger Elo gains, while expected results change Elo only slightly. Debate Elo also adds a small outround bonus: e = b/2, where b is the number of bids, awarded to each team that wins an elimination round.`
 
-export function LeaderboardPanel() {
+interface LeaderboardPanelProps {
+  /** When provided, the parent controls division/year filters */
+  controlledDivision?: Division
+  controlledYear?: string
+  onControlledDivisionChange?: (v: Division) => void
+  onControlledYearChange?: (v: string) => void
+}
+
+export function LeaderboardPanel({
+  controlledDivision,
+  controlledYear,
+  onControlledDivisionChange,
+  onControlledYearChange,
+}: LeaderboardPanelProps = {}) {
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -76,12 +89,16 @@ export function LeaderboardPanel() {
   const [data, setData] = useState<LeaderboardEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [year, setYear] = useState("2026")
-  const [division, setDivision] = useState<Division>(initialDivision)
+  const [internalYear, setInternalYear] = useState("2026")
+  const year = controlledYear ?? internalYear
+  const setYear = onControlledYearChange ?? setInternalYear
+  const [internalDivision, setInternalDivision] = useState<Division>(initialDivision)
+  const division = controlledDivision ?? internalDivision
+  const setDivisionRaw = onControlledDivisionChange ?? setInternalDivision
 
   const changeDivision = (val: Division) => {
-    setDivision(val)
-    setExpandedRow(null)
+    setDivisionRaw(val)
+    if (!controlledDivision) setExpandedRow?.(null)
     setSort(null)
     const params = new URLSearchParams(searchParams.toString())
     params.set("format", val)
@@ -159,6 +176,9 @@ export function LeaderboardPanel() {
   const [expandedRow, setExpandedRow] = useState<number | null>(null)
   const [sort, setSort] = useState<SortState>(null)
 
+  const isControlled = controlledDivision !== undefined
+  const showInternalFilters = !isControlled
+
   const toggleSort = (key: SortKey) => {
     setSort((prev) => {
       if (prev?.key === key) {
@@ -197,33 +217,35 @@ export function LeaderboardPanel() {
   return (
     <TooltipProvider>
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Filter controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 p-4 border-b">
-          <Tabs
-            value={division}
-            onValueChange={(val) => changeDivision(val as Division)}
-            className="w-full sm:w-auto"
-          >
-            <TabsList>
-              {DIVISION_CONFIG.map((d) => (
-                <TabsTrigger key={d.value} value={d.value}>{d.label}</TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+        {/* Filter controls — hidden when parent controls filters */}
+        {showInternalFilters && (
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 p-4 border-b">
+            <Tabs
+              value={division}
+              onValueChange={(val) => changeDivision(val as Division)}
+              className="w-full sm:w-auto"
+            >
+              <TabsList>
+                {DIVISION_CONFIG.map((d) => (
+                  <TabsTrigger key={d.value} value={d.value}>{d.label}</TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
 
-          <Select value={year} onValueChange={setYear}>
-            <SelectTrigger className="w-full sm:w-[160px]">
-              <SelectValue placeholder="Select year" />
-            </SelectTrigger>
-            <SelectContent>
-              {years.map((y) => (
-                <SelectItem key={y} value={y}>
-                  {Number(y) - 1}-{y}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+            <Select value={year} onValueChange={setYear}>
+              <SelectTrigger className="w-full sm:w-[160px]">
+                <SelectValue placeholder="Select year" />
+              </SelectTrigger>
+              <SelectContent>
+                {years.map((y) => (
+                  <SelectItem key={y} value={y}>
+                    {Number(y) - 1}-{y}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         {/* Main content */}
         <div className="flex-1 overflow-y-auto p-4">

@@ -136,7 +136,7 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
             <ShatterButton
               onClick={form.handleSubmit}
               className="w-full text-lg"
-              shatterColor={roundId ? "#3b82f6" : "#00ffff"}
+              shatterColor={roundId ? "#3b82f6" : "#4f46e5"}
               shardCount={25}
             >
               {roundId ? "Update Round" : "Create Round & Invite"}
