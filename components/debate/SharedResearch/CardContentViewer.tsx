@@ -1,18 +1,10 @@
+/**
+ * @fileoverview Full content viewer for research evidence cards.
+ * Supports view modes (read, highlight, underline) and year-based color coding.
+ */
+
 "use client"
 
-/**
- * @fileoverview Card Content Viewer Component
- *
- * Displays the full content of a selected research evidence card.
- * Features:
- * - View mode switching (read, highlight, underline)
- * - Author and year extraction from citations
- * - Year-based color coding (newer = more prominent)
- * - HTML content rendering with prose styling
- * - Default empty state with product information
- *
- * @module components/debate/research/CardContentViewer
- */
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -143,7 +135,7 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
             alt="Building Blocks Icon"
           />
           <div className="flex flex-col items-end">
-            <h2 className="text-xl font-bold text-right">CARDS: Crowdsourced Annotated Research Dataset as a Service</h2>
+            <h2 className="text-xl font-bold text-right">CARDS: Crowdsourced Annotated Research for Debates Search</h2>
             <a
               className="mt-2 px-6 py-3 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
               target="_blank"
@@ -229,7 +221,16 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
 
               AI will show its reasoning based on what
               sentences and cites it used from the collective evidence, so that people can see it is aligned with our
-              interests via sentence-by-sentence interpretability.
+              interests via sentence-by-sentence interpretability. People can have many practice rounds via AI to simulate
+              a tree of possible outcomes and responses, so that we can surface the most persuasive arguments to all.
+
+
+            </p>
+            <p className="text-base text-muted-foreground leading-relaxed">
+
+              Key metadata is extracted for LLM analysis, enabling LLMs to review the full text, identify logic flaws or unsupported claims, and flag overstatements. LLMs also extend warrants, summarize support, and suggest where each card fits within the Topic Research Unified Tree Hierarchy (TRUTH). The system is built for intersubjective, consensus-driven research claim to find ground truth on issues and evaluate any claim's proximity to accepted truths and human values. This can reduce LLM hallucination and steer alignment with common social values as AI gains capacity to replace human leaders of organizations.
+
+
             </p>
           </CardContent>
         </Card>

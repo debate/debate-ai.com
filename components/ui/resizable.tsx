@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Resizable panel components for creating flexible layouts.
+ * Built on top of the 'react-resizable-panels' library.
+ */
+
 'use client'
+
 
 import * as React from 'react'
 import { GripVerticalIcon } from 'lucide-react'

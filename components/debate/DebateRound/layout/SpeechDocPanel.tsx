@@ -6,6 +6,8 @@ import { X, Quote, Eye, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MarkdownEditor } from "@/components/markdown/markdown-editor"
+import type { Flow } from "@/lib/types/debate"
+import type { ViewMode } from "@/lib/types/debate-flow"
 
 /** Props for the SpeechDocPanel component. */
 interface SpeechDocPanelProps {
@@ -67,16 +69,16 @@ export function SpeechDocPanel({
       <div className="border-b border-border">
         <div className="overflow-x-auto">
           <div className="flex min-w-max items-center gap-2 px-3 py-2">
-          <h2
-            className={`shrink-0 text-base font-semibold ${selectedSpeech.includes("A")
-              ? "text-blue-600 dark:text-blue-400"
-              : selectedSpeech.includes("N")
-                ? "text-red-600 dark:text-red-400"
-                : ""
-              }`}
-          >
-            {selectedSpeech}
-          </h2>
+            <h2
+              className={`shrink-0 text-base font-semibold ${selectedSpeech.includes("A")
+                ? "text-blue-600 dark:text-blue-400"
+                : selectedSpeech.includes("N")
+                  ? "text-red-600 dark:text-red-400"
+                  : ""
+                }`}
+            >
+              {selectedSpeech}
+            </h2>
 
             <div className="ml-1 flex items-center -space-x-px">
               {/* Quote view toggle */}

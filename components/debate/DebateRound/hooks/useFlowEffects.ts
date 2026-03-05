@@ -6,6 +6,7 @@
 import { useEffect } from "react"
 import { settings } from "@/lib/state/settings"
 import { cleanupOldSpeechDocs, getStorageInfo } from "@/lib/utils/storage-utils"
+import type { Flow, Round } from "@/lib/types/debate"
 
 /**
  * Hook that initializes user settings and loads saved flows and rounds from localStorage.
@@ -151,8 +152,8 @@ function handleQuotaExceeded(flows: Flow[], setFlows: (flows: Flow[]) => void) {
     } catch (retryError) {
       alert(
         `Storage quota exceeded! (${storageInfo.totalFormatted} used)\n\n` +
-          `Please delete some older flows or speech documents.\n` +
-          `Currently storing ${onlyActiveFlows.length} active flows.`,
+        `Please delete some older flows or speech documents.\n` +
+        `Currently storing ${onlyActiveFlows.length} active flows.`,
       )
     }
   } else {
@@ -166,15 +167,15 @@ function handleQuotaExceeded(flows: Flow[], setFlows: (flows: Flow[]) => void) {
       } catch {
         alert(
           `Storage quota exceeded! (${storageInfo.totalFormatted} used)\n\n` +
-            `Please delete some flows to free up space.\n` +
-            `Currently storing ${flows.length} flows.`,
+          `Please delete some flows to free up space.\n` +
+          `Currently storing ${flows.length} flows.`,
         )
       }
     } else {
       alert(
         `Storage quota exceeded! (${storageInfo.totalFormatted} used)\n\n` +
-          `Please delete some flows to free up space.\n` +
-          `Currently storing ${flows.length} flows.`,
+        `Please delete some flows to free up space.\n` +
+        `Currently storing ${flows.length} flows.`,
       )
     }
   }

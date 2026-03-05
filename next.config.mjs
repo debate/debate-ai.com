@@ -10,8 +10,6 @@ const nextConfig = {
   turbopack: {
     rules: {
       '*.mp3': { loaders: ['file-loader'], as: '*.js' },
-      '*.wav': { loaders: ['file-loader'], as: '*.js' },
-      '*.ogg': { loaders: ['file-loader'], as: '*.js' },
     },
   },
   webpack(config) {

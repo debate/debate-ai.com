@@ -1,12 +1,9 @@
+/**
+ * @fileoverview Component for managing and playing speech recordings stored in local storage.
+ */
+
 "use client"
 
-/**
- * @fileoverview SpeechRecordingPlayer Component
- *
- * Displays a list of audio recordings stored in localStorage for the
- * currently selected speech. Recordings are stored by the SpeechTimer
- * mic recording feature and keyed as `debate-recording-{speechName}`.
- */
 
 import { useEffect, useState } from "react"
 import { Trash2 } from "lucide-react"

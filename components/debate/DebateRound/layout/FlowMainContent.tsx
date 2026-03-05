@@ -7,6 +7,8 @@ import type React from "react"
 import { FlowSpreadsheet } from "../Flow/FlowSpreadsheet"
 import { MarkdownEditor } from "../../../markdown/markdown-editor"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
+import type { Flow } from "@/lib/types/debate"
+import type { ViewMode } from "@/lib/types/debate-flow"
 
 /** Props for the FlowMainContent component. */
 interface FlowMainContentProps {

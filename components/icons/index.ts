@@ -1,4 +1,9 @@
+/**
+ * @fileoverview Index of custom SVG and PNG icons used across the application.
+ */
+
 export { default as IconAffBubble } from "./icon-aff-bubble.png";
+
 export { default as IconBook } from "./icon-book.svg";
 export { default as IconCollectiveMind } from "./icon-collective-mind.png";
 export { default as IconLeaderboard } from "./icon-leaderboard.png";

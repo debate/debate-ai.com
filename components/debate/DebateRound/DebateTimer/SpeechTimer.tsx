@@ -16,6 +16,7 @@
  */
 
 import type React from "react"
+import type { TimerSpeech, SpeechTimerState, Round } from "@/lib/types/debate"
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Play, Pause, RotateCcw } from "lucide-react"

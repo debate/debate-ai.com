@@ -1,11 +1,19 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { FileText } from "lucide-react"
+import type { Round } from "@/lib/types/debate"
+import { FileText, Share2, Lock, Users, Radio } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { SpeechRecordingPlayer } from "../SpeechRecorder/SpeechRecordingPlayer"
 import { useFlowStore } from "@/lib/state/store"
 import { SpeechTimer } from "../DebateTimer/SpeechTimer"
+import { MicSelector } from "../SpeechRecorder/mic-selector"
 import { debateStyles, debateStyleMap } from "../DebateTimer/debate-format-times"
 import { settings } from "@/lib/state/settings"
 
@@ -145,6 +153,44 @@ export function SpeechHeaderBar({ speechName, onOpenSpeechPanel }: SpeechHeaderB
               />
             </div>
           )}
+
+          {/* Mic selector — to the right of the timer */}
+          <MicSelector
+            value={micDeviceId}
+            onValueChange={setMicDeviceId}
+            muted={!recordingEnabled}
+            onMutedChange={(m) => setRecordingEnabled(!m)}
+            disabled={false}
+            className="shrink-0 scale-[0.8]"
+          />
+
+          {/* Share speech dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 shrink-0"
+                title={`Share ${speechName}`}
+              >
+                <Share2 className="h-3.5 w-3.5 text-muted-foreground" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => { /* TODO */ }}>
+                <Lock className="h-4 w-4 mr-2" />
+                Keep Private
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { /* TODO */ }}>
+                <Users className="h-4 w-4 mr-2" />
+                Share with Team
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { /* TODO */ }}>
+                <Radio className="h-4 w-4 mr-2" />
+                Share with Debate Room
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Open speech-doc button */}
           {onOpenSpeechPanel && (

@@ -1,6 +1,18 @@
+/**
+ * @fileoverview Alert Dialog component for important user confirmations.
+ * Built on top of Radix UI AlertDialog primitive.
+ */
+
 'use client'
 
+
+/**
+ * @fileoverview Badge component for small status indicators or labels.
+ * Provides multiple variants like default, secondary, and destructive.
+ */
+
 import * as React from 'react'
+
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 
 import { cn } from '@/lib/utils'

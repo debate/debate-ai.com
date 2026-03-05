@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Modal dialog components for overlays and user input.
+ * Built on top of Radix UI Dialog primitive.
+ */
+
 'use client'
+
 
 import * as React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'

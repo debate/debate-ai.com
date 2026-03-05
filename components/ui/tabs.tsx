@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Tabbed navigation components for organizing content.
+ * Built on top of Radix UI Tabs primitive.
+ */
+
 "use client"
+
 
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"

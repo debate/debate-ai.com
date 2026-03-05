@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Voice chat UI component showing participants and status.
+ * Supports collapsed and expanded views with animated transitions.
+ */
+
 "use client"
+
 
 import { useState } from "react"
 import { ChevronDown, X } from "lucide-react"

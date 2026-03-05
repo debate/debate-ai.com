@@ -3,7 +3,10 @@
  * @module components/debate/videos/hooks/useVideoData
  */
 
-import { useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react"
+import type { CategoryType, DebateVideosData, VideoType } from "@/lib/types/videos"
+import Fuse from "fuse.js";
+;
 const ORIGIN = "";
 
 /**
@@ -76,8 +79,6 @@ export function useVideoFiltering() {
       showFavoritesOnly: boolean,
       favorites: Set<string>,
     ) => {
-      let filtered: VideoType[];
-
       let allCategoryVideos = videos;
       if (search.trim() && data) {
         allCategoryVideos = [
@@ -87,36 +88,41 @@ export function useVideoFiltering() {
         ];
       }
 
-      filtered = allCategoryVideos.filter((video) => {
-        // Filter by favorites if enabled
-        if (showFavoritesOnly && !favorites.has(video[0])) {
-          return false;
-        }
+      let filtered: VideoType[] = allCategoryVideos;
 
-        // Filter by search if provided
-        if (search.trim()) {
-          const searchLower = search.toLowerCase();
-          const matchesSearch =
-            (video[1] || "").toLowerCase().includes(searchLower) ||
-            (video[3] || "").toLowerCase().includes(searchLower) ||
-            (video[5] || "").toLowerCase().includes(searchLower);
-          if (!matchesSearch) return false;
-        }
+      // Filter by favorites if enabled
+      if (showFavoritesOnly) {
+        filtered = filtered.filter((video) => favorites.has(video[0]));
+      }
 
-        // Filter by season year
-        if (year) {
+      // Filter by season year
+      if (year) {
+        const seasonYear = parseInt(year);
+        // Season runs from June 1st of (year-1) to June 1st of year
+        const startDate = new Date(`${seasonYear - 1}-06-01`);
+        const endDate = new Date(`${seasonYear}-06-01`);
+
+        filtered = filtered.filter((video) => {
           const videoDate = new Date(video[2]);
-          const seasonYear = parseInt(year);
-          // Season runs from June 1st of (year-1) to June 1st of year
-          const startDate = new Date(`${seasonYear - 1}-06-01`);
-          const endDate = new Date(`${seasonYear}-06-01`);
-          if (videoDate < startDate || videoDate >= endDate) {
-            return false;
-          }
-        }
+          return videoDate >= startDate && videoDate < endDate;
+        });
+      }
 
-        return true;
-      });
+      // Filter by search if provided using Fuse.js
+      if (search.trim()) {
+        const fuse = new Fuse(filtered, {
+          keys: [
+            { name: "1", weight: 0.5 }, // title
+            { name: "3", weight: 0.3 }, // channel
+            { name: "5", weight: 0.2 }, // description
+          ],
+          threshold: 0.3, // low tolerance
+          ignoreLocation: true,
+        });
+
+        const results = fuse.search(search);
+        filtered = results.map((result) => result.item);
+      }
 
       if (sort === "Views") {
         filtered.sort((a, b) => b[4] - a[4]);

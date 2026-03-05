@@ -1,6 +1,12 @@
+/**
+ * @fileoverview Search sidebar for research evidence with advanced filtering.
+ */
+
 "use client"
 
+
 import { useState } from "react"
+import grab from "grab-url"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, X, ChevronDown, ChevronUp } from "lucide-react"
@@ -12,8 +18,12 @@ import { Autocomplete } from "@/components/ui/autocomplete"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 async function fetchSchools(q: string): Promise<string[]> {
-  const res = await fetch(`/api/schools?q=${encodeURIComponent(q)}&limit=10`)
-  const data = await res.json()
+  const data = await grab(`/api/schools?q=${encodeURIComponent(q)}&limit=10`)
+  return data.results ?? []
+}
+
+async function fetchTournaments(q: string): Promise<string[]> {
+  const data = await grab(`/api/tournaments?q=${encodeURIComponent(q)}&limit=10`)
   return data.results ?? []
 }
 
@@ -207,7 +217,7 @@ export function ResearchSearchSidebar({
               </Select>
             </div>
 
-            <div className="grid grid-cols-3 gap-1">
+            <div className="flex flex-row gap-1">
               <Autocomplete
                 placeholder="School"
                 value={filters.school}
@@ -221,10 +231,11 @@ export function ResearchSearchSidebar({
                 onChange={(e) => updateFilter("team", e.target.value)}
                 className="h-8 text-xs"
               />
-              <Input
+              <Autocomplete
                 placeholder="Tournament"
                 value={filters.tournament}
-                onChange={(e) => updateFilter("tournament", e.target.value)}
+                onChange={(v) => updateFilter("tournament", v)}
+                fetchOptions={fetchTournaments}
                 className="h-8 text-xs"
               />
             </div>

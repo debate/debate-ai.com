@@ -1,17 +1,15 @@
+/**
+ * @fileoverview Main panel for the debate videos browsing interface.
+ * Coordinates video data fetching, filtering, and special category views.
+ */
+
 "use client"
 
-/**
- * @fileoverview Debate Videos Page Component (Refactored)
- *
- * Refactored video browsing interface with modular architecture.
- * Features category navigation, search, filtering, and infinite scroll.
- *
- * @module components/debate/videos/DebateVideosPage
- */
 
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Search, X } from "lucide-react"
+import type { CategoryType, DebateVideosData } from "@/lib/types/videos"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"

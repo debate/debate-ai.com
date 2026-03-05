@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Special button component that "shatters" into pieces when clicked.
+ * Uses framer-motion for the explosion animation.
+ */
+
 "use client"
+
 
 import { useState, useCallback, type ReactNode } from "react"
 import { motion, AnimatePresence } from "framer-motion"

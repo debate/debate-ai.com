@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Form label component for accessible input descriptions.
+ * Built on top of Radix UI Label primitive.
+ */
+
 'use client'
+
 
 import * as React from 'react'
 import * as LabelPrimitive from '@radix-ui/react-label'

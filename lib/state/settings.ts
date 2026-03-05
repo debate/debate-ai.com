@@ -1,3 +1,5 @@
+import type { Setting, RadioSetting } from "@/lib/types/settings";
+
 export class Settings {
   data: { [key: string]: Setting };
   callbacks: { [key: string]: ((key: string) => void)[] } = { any: [] };

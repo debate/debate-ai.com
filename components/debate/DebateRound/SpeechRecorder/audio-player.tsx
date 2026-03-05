@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Robust audio player engine and UI components for debate recordings.
+ * Features include playback rate control, seeking, and shared audio state via context.
+ */
+
 "use client"
+
 
 import {
     ComponentProps,

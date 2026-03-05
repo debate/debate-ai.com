@@ -1,3 +1,12 @@
+/**
+ * @fileoverview Configuration and metadata for various debate styles.
+ * Defines timing, column structures, and roles for formats like Policy,
+ * Public Forum, Lincoln Douglas, and others.
+ */
+
+import type { DebateStyle, TimerSpeech } from "@/lib/types/debate";
+
+
 export const debateStyleMap = [
   "publicForum",
   "lincolnDouglas",
@@ -26,36 +35,8 @@ export const debateStyleNames = [
 
 export type DebateStyleKey = (typeof debateStyleMap)[number];
 
-interface TimerSpeech {
-  name: string;
-  time: number;
-  secondary: boolean;
-  speaker: string;
-  cxRoles?: {
-    questioner: string;
-    answerer: string;
-  };
-}
-
 export const debateStyles: {
-  [key in DebateStyleKey]: {
-    primary: {
-      name: string;
-      columns: string[];
-      columnsSwitch?: string[];
-      starterBoxes?: string[];
-      invert: boolean;
-    };
-    secondary?: {
-      name: string;
-      columns: string[];
-      columnsSwitch?: string[];
-      starterBoxes?: string[];
-      invert: boolean;
-    };
-    timerSpeeches: TimerSpeech[];
-    prepTime?: number;
-  };
+  [key in DebateStyleKey]: DebateStyle;
 } = {
   policy: {
     primary: {

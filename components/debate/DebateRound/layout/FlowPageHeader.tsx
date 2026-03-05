@@ -9,6 +9,7 @@ import { useState, useEffect } from "react"
 import { Menu, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { ActiveTimerInfo } from "../hooks/useTimerState"
+import type { Flow } from "@/lib/types/debate"
 
 /** Props for the FlowPageHeader component. */
 interface FlowPageHeaderProps {

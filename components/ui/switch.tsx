@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Toggle switch component for boolean state selection.
+ * Built on top of Radix UI Switch primitive.
+ */
+
 'use client'
+
 
 import * as React from 'react'
 import * as SwitchPrimitive from '@radix-ui/react-switch'

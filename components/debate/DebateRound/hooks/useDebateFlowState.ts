@@ -4,6 +4,7 @@
  */
 
 import { useState, useRef } from "react";
+import type { DebateFlowState, DebateFlowActions, ViewMode } from "@/lib/types/debate-flow";
 
 /**
  * Hook for managing all debate flow page state.

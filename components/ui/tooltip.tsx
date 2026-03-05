@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Tooltip components for contextual informational overlays.
+ * Built on top of Radix UI Tooltip primitive.
+ */
+
 "use client"
+
 
 import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"

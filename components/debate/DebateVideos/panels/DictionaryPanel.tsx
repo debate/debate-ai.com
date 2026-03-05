@@ -1,17 +1,9 @@
+/**
+ * @fileoverview Searchable glossary of debate terminology.
+ */
+
 "use client"
 
-/**
- * @fileoverview Dictionary Panel Component
- *
- * Searchable glossary of debate terminology.
- * Features:
- * - Full-text search across terms and definitions
- * - 200+ debate terms and definitions
- * - Prioritized results (term matches before definition matches)
- * - Responsive scrollable list
- *
- * @module components/debate/videos/panels/DictionaryPanel
- */
 
 import { useState, useMemo, useEffect } from "react"
 import { Card } from "@/components/ui/card"

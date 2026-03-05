@@ -5,6 +5,8 @@
 
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { Trophy, BookOpen, BarChart3, Presentation, Radio } from "lucide-react"
+import type { CategoryType } from "@/lib/types/videos"
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
 import {
   IconRoundsYoutube,

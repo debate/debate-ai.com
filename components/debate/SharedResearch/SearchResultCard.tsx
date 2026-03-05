@@ -1,14 +1,9 @@
+/**
+ * @fileoverview Compact card component for displaying individual research search results.
+ */
+
 "use client"
 
-/**
- * @fileoverview Search Result Card Component
- *
- * Displays a single search result in a compact card format.
- * Shows category, research field, read count, word count,
- * argument block, summary, and tag in a condensed view.
- *
- * @module components/debate/research/SearchResultCard
- */
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"

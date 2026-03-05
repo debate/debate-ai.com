@@ -13,6 +13,7 @@ import { useRef } from "react"
 import { useFlowStore } from "@/lib/state/store"
 import { newFlow } from "@/lib/utils/flow-utils"
 import { settings } from "@/lib/state/settings"
+import type { Flow } from "@/lib/types/debate"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 
@@ -25,7 +26,7 @@ import { SplitModeToolbar } from "./controls/SplitModeToolbar"
 
 // Dialogs
 import { FlowHistoryDialog } from "./dialogs/FlowHistoryDialog"
-import { RoundEditorDialog } from "./dialogs/round-editor"
+import { RoundEditorDialog } from "./dialogs/CreateRoundDialog"
 
 // Custom hooks
 import { useDebateFlowState } from "./hooks/useDebateFlowState"

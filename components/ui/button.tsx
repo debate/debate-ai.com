@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Versatile button component with multiple variants and sizes.
+ * Built with class-variance-authority for flexible styling.
+ */
+
 import * as React from 'react'
+
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 

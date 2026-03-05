@@ -16,6 +16,7 @@ import {
   debateStyles,
   debateStyleMap,
 } from "@/components/debate/DebateRound/DebateTimer/debate-format-times";
+import type { DebateStyle, SpeechTimerState, TimerState } from "@/lib/types/debate";
 
 /** Describes the currently running timer (if any) for the header display. */
 export type ActiveTimerInfo = {
@@ -49,10 +50,10 @@ export function useTimerState() {
   const [prepState, setPrepState] = useState<TimerState | null>(
     debateStyle.prepTime
       ? {
-          resetTime: debateStyle.prepTime * 60 * 1000,
-          time: debateStyle.prepTime * 60 * 1000,
-          state: { name: "paused" },
-        }
+        resetTime: debateStyle.prepTime * 60 * 1000,
+        time: debateStyle.prepTime * 60 * 1000,
+        state: { name: "paused" },
+      }
       : null,
   );
 
@@ -60,10 +61,10 @@ export function useTimerState() {
     useState<TimerState | null>(
       debateStyle.prepTime
         ? {
-            resetTime: debateStyle.prepTime * 60 * 1000,
-            time: debateStyle.prepTime * 60 * 1000,
-            state: { name: "paused" },
-          }
+          resetTime: debateStyle.prepTime * 60 * 1000,
+          time: debateStyle.prepTime * 60 * 1000,
+          state: { name: "paused" },
+        }
         : null,
     );
 

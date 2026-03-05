@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Avatar component for displaying user profile pictures or fallbacks.
+ * Built on top of Radix UI Avatar primitive.
+ */
+
 'use client'
+
 
 import * as React from 'react'
 import * as AvatarPrimitive from '@radix-ui/react-avatar'

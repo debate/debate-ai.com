@@ -10,6 +10,8 @@ import type React from "react"
 import { useEffect, useState, useCallback, useRef } from "react"
 import { htmlToCards, type HeadingSection } from "./quote-view-utils"
 import { EditableQuoteCard } from "./EditableQuoteCard"
+import { useTimerState } from "../debate/DebateRound/hooks/useTimerState"
+import type { ViewMode } from "@/lib/types/debate-flow"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import "./quote-view.css"
 

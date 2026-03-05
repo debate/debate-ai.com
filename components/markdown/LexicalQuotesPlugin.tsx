@@ -8,6 +8,8 @@
 import { useEffect, useState } from "react"
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
 import { $generateHtmlFromNodes } from "@lexical/html"
+import { useTimerState } from "../debate/DebateRound/hooks/useTimerState"
+import type { ViewMode } from "@/lib/types/debate-flow"
 import { QuoteView } from "./QuoteView"
 
 /** Props for the LexicalQuotesPlugin component. */

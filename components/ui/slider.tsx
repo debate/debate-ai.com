@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Range slider component for numeric input.
+ * Built on top of Radix UI Slider primitive.
+ */
+
 'use client'
+
 
 import * as React from 'react'
 import * as SliderPrimitive from '@radix-ui/react-slider'

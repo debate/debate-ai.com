@@ -12,6 +12,7 @@
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { settings } from "@/lib/state/settings"
+import type { RadioSetting } from "@/lib/types/settings"
 
 /** Props for {@link DebateStyleSection}. */
 interface DebateStyleSectionProps {

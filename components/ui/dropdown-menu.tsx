@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Dropdown menu components for contextual actions.
+ * Built on top of Radix UI Dropdown Menu primitive.
+ */
+
 "use client"
+
 
 import * as React from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"

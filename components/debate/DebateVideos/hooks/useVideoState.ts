@@ -4,6 +4,7 @@
  */
 
 import { useState, useRef, useEffect } from "react";
+import type { CategoryType, DebateVideosData, VideoType } from "@/lib/types/videos";
 
 /**
  * Initialises and returns all state and refs needed by the videos page.

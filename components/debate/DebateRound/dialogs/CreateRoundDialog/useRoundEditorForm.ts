@@ -15,6 +15,7 @@
  */
 
 import { useState, useEffect } from "react";
+import type { Flow, Box, Round } from "@/lib/types/debate";
 import { useFlowStore } from "@/lib/state/store";
 import { settings } from "@/lib/state/settings";
 import {

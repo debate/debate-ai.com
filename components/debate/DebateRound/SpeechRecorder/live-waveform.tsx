@@ -1,15 +1,10 @@
+/**
+ * @fileoverview Real-time canvas-based audio waveform visualizer.
+ * Supports static frequency bands and scrolling RMS volume history.
+ */
+
 "use client"
 
-/**
- * @fileoverview LiveWaveform Component
- *
- * Real-time canvas-based audio waveform visualizer with microphone input.
- * Matches the ElevenLabs LiveWaveform documented API.
- *
- * Modes:
- *  - "static"    : Symmetric frequency-band bars mirrored vertically
- *  - "scrolling" : Historical RMS volume bars scrolling left
- */
 
 import {
     forwardRef,

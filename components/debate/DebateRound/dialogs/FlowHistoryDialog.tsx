@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { useFlowStore, type FlowHistory } from "@/lib/state/store"
+import type { Round } from "@/lib/types/debate"
 import { Clock, FileText, Users, Edit, Gavel, Search } from "lucide-react"
 
 /**

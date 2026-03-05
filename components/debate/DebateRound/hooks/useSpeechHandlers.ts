@@ -4,6 +4,7 @@
  */
 
 import { useCallback } from "react"
+import type { Flow } from "@/lib/types/debate"
 import { shareSpeech } from "@/app/actions"
 
 /**

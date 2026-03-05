@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Card components for structured content display.
+ * Includes Header, Title, Description, Content, and Footer sub-components.
+ */
+
 import * as React from 'react'
+
 
 import { cn } from '@/lib/utils'
 

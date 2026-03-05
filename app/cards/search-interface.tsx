@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { Search, GripVertical, Bot } from "lucide-react"
+import grab from "grab-url"
 import { ResearchSearchSidebar, type SearchFilters } from "@/components/debate/SharedResearch/ResearchSearchSidebar"
 import { CardContentViewer } from "@/components/debate/SharedResearch/CardContentViewer"
 import { AiAnalysisSidebar } from "@/components/debate/SharedResearch/AiAnalysisSidebar"
@@ -78,8 +79,7 @@ export function SearchInterface() {
       if (filters.searchQuotes) params.set("searchQuotes", "1")
       if (filters.searchAllText) params.set("searchAllText", "1")
 
-      const response = await fetch(`/api/search?${params.toString()}`)
-      const data = await response.json()
+      const data = await grab(`/api/search?${params.toString()}`)
       setSearchResults(data.results)
       setTotalResults(data.total)
       setSelectedResult(null)

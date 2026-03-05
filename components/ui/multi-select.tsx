@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Multi-select dropdown component for selecting multiple options.
+ * Wraps functional logic around the DropdownMenu component.
+ */
+
 "use client"
+
 
 import * as React from "react"
 import { Check, ChevronDown } from "lucide-react"

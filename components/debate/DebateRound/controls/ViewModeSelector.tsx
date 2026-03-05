@@ -2,6 +2,7 @@
  * @fileoverview View mode selector dropdown
  * @module components/debate/flow/controls/ViewModeSelector
  */
+import type { ViewMode } from "@/lib/types/debate-flow"
 
 import { Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"

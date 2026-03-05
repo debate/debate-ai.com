@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Searchable input with dropdown suggestions.
+ * Supports both fixed options and asynchronous fetching.
+ */
+
 "use client"
+
 
 import { useState, useRef, useCallback, useEffect } from "react"
 import { Check } from "lucide-react"
@@ -73,12 +79,12 @@ export function Autocomplete({ value, onChange, options = [], fetchOptions, plac
         value={query}
         onChange={(e) => handleInput(e.target.value)}
         onFocus={async () => {
-        setOpen(true)
-        if (fetchOptions && asyncOptions.length === 0) {
-          const results = await fetchOptions(query)
-          setAsyncOptions(results)
-        }
-      }}
+          setOpen(true)
+          if (fetchOptions && asyncOptions.length === 0) {
+            const results = await fetchOptions(query)
+            setAsyncOptions(results)
+          }
+        }}
         onBlur={handleBlur}
         disabled={disabled}
         className={className}

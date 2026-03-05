@@ -14,8 +14,10 @@
  */
 
 import type React from "react"
+import type { Flow } from "@/lib/types/debate"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import type { Round } from "@/lib/types/debate"
 import { cn } from "@/lib/utils"
 import { Edit2, Archive, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"

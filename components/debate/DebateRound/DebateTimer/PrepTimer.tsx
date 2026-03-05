@@ -15,6 +15,7 @@
  */
 
 import type React from "react"
+import type { TimerState } from "@/lib/types/debate"
 
 import { useEffect, useRef, useState } from "react"
 import { Play, Pause, RotateCcw } from "lucide-react"

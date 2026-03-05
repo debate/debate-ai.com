@@ -1,12 +1,9 @@
+/**
+ * @fileoverview Microphone input selector with device management and live waveform preview.
+ */
+
 "use client"
 
-/**
- * @fileoverview MicSelector component
- *
- * Microphone input selector with device management and live waveform preview.
- * Matches the ElevenLabs MicSelector API:
- *   <MicSelector value={deviceId} onValueChange={setDeviceId} muted={muted} onMutedChange={setMuted} />
- */
 
 import {
     useCallback,

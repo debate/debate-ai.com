@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Visual effect component that adds a mouse-tracking glow to its parent.
+ * Ideal for card borders and highlighting interactive elements.
+ */
+
 "use client"
+
 
 import { useEffect, useRef } from "react"
 

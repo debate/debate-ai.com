@@ -2,6 +2,7 @@
 
 import { create } from "zustand"
 import { History } from "./history"
+import type { Flow, Round } from "@/lib/types/debate"
 
 const historyMap = new Map<number, History>()
 

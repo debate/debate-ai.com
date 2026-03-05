@@ -12,18 +12,19 @@
 import { useState } from "react"
 import Image from "next/image"
 import { Settings2 } from "lucide-react"
+import grab from "grab-url"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Autocomplete } from "@/components/ui/autocomplete"
 
 async function fetchSchools(q: string): Promise<string[]> {
-  const res = await fetch(`/api/schools?q=${encodeURIComponent(q)}&limit=10`)
-  const data = await res.json()
+  const data = await grab(`/api/schools?q=${encodeURIComponent(q)}&limit=10`)
   return data.results ?? []
 }
 import { debateStyles, debateStyleMap } from "@/components/debate/DebateRound/DebateTimer/debate-format-times"
 import { IconAffBubble, IconNegBubble } from "@/components/icons"
 import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "@/lib/state/myTeamProfile"
+import type { Round } from "@/lib/types/debate"
 
 /** Props for {@link TeamSection}. */
 interface TeamSectionProps {

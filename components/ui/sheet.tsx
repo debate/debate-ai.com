@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Side panel (drawer) component for supplemental content.
+ * Built on top of Radix UI Dialog primitive.
+ */
+
 "use client"
+
 
 import * as React from "react"
 import * as SheetPrimitive from "@radix-ui/react-dialog"

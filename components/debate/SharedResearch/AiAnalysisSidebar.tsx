@@ -1,17 +1,10 @@
+/**
+ * @fileoverview AI-powered analysis tools for research evidence cards.
+ * Provides custom prompt input and integration with external LLM platforms.
+ */
+
 "use client"
 
-/**
- * @fileoverview AI Analysis Sidebar Component
- *
- * Provides AI-powered analysis tools for research evidence cards.
- * Features:
- * - Custom prompt input for AI analysis
- * - Copy to clipboard functionality
- * - Open in external LLM platforms (Perplexity, ChatGPT, Claude, etc.)
- * - Display of AI-generated analysis results
- *
- * @module components/debate/research/AiAnalysisSidebar
- */
 
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"

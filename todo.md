@@ -13,3 +13,5 @@ ai will chart out outcomes via model councel
 options for judge decision via AI
 
 cross-school teams - form comrades runnign the cap k etc
+
+ai should summarize the speech trasncritp and suggest answers

@@ -1,4 +1,10 @@
+/**
+ * @fileoverview macOS-style Dock component with magnification effects.
+ * Uses framer-motion for smooth animations and scaling.
+ */
+
 "use client"
+
 
 import React, { type PropsWithChildren, useRef } from "react"
 import { cva, type VariantProps } from "class-variance-authority"

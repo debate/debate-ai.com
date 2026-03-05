@@ -28,6 +28,7 @@ import type {
   IHeaderParams,
 } from "ag-grid-community"
 import { SpeechHeaderBar } from "../layout/SpeechHeaderBar"
+import type { Flow, Box } from "@/lib/types/debate"
 
 // Register AG Grid community modules
 ModuleRegistry.registerModules([AllCommunityModule])

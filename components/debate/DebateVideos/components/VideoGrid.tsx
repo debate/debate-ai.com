@@ -5,8 +5,10 @@
 
 import { Card, CardDescription } from "@/components/ui/card"
 import { useState } from "react"
+import React from "react"
 import Image from "next/image"
-import { Calendar, Eye, Star } from "lucide-react"
+import { Play, Star, Calendar, Eye, Share2 } from "lucide-react"
+import type { VideoType } from "@/lib/types/videos"
 
 /**
  * Props for the VideoGrid component.

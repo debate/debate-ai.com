@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Radio group components for single-choice selection.
+ * Built on top of Radix UI Radio Group primitive.
+ */
+
 'use client'
+
 
 import * as React from 'react'
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group'

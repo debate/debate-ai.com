@@ -2,6 +2,7 @@
  * @fileoverview Toolbar for split mode controls
  * @module components/debate/flow/controls/SplitModeToolbar
  */
+import type { ViewMode } from "@/lib/types/debate-flow"
 
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react"
 import { Button } from "@/components/ui/button"

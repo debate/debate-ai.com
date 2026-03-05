@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Ranking and leaderboard interface for debate teams.
+ * Supports multiple divisions (PF, LD, Policy, NDT) and historical data.
+ */
+
 "use client"
+
 
 import { useState, useEffect, useMemo, Fragment } from "react"
 import { useSearchParams, useRouter } from "next/navigation"

@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Popover component for context-sensitive overlays.
+ * Built on top of Radix UI Popover primitive.
+ */
+
 "use client"
+
 
 import * as React from "react"
 import { Popover as PopoverPrimitive } from "radix-ui"

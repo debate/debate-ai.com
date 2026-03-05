@@ -1,4 +1,10 @@
+/**
+ * @fileoverview Badge component for small status indicators or labels.
+ * Provides multiple variants like default, secondary, and destructive.
+ */
+
 import * as React from 'react'
+
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { FlowTab } from "../navigation/FlowTab"
 import { PrepTimer } from "../DebateTimer/PrepTimer"
+import type { Flow, Round, TimerState, SpeechTimerState, DebateStyle } from "@/lib/types/debate"
 
 /** Props for the FlowPageSidebar component. */
 interface FlowPageSidebarProps {

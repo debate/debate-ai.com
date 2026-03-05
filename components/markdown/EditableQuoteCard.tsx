@@ -28,7 +28,9 @@ import {
   $getRoot,
   type LexicalEditor,
 } from "lexical"
-import { Edit, Eye, ChevronDown, ChevronRight, Bold, Italic, Underline, Strikethrough, Undo2, Redo2 } from "lucide-react"
+import { Edit, Eye, ChevronDown, ChevronRight, Bold, Italic, Underline, Strikethrough, Undo2, Redo2, Share2 } from "lucide-react"
+import { useFlowStore } from "@/lib/state/store"
+import type { ViewMode } from "@/lib/types/debate-flow"
 import { cn } from "@/lib/utils"
 
 /** Props for the EditableQuoteCard component. */

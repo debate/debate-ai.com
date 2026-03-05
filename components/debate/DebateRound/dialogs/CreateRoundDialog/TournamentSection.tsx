@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Autocomplete } from "@/components/ui/autocomplete"
 import { ROUND_LEVELS } from "./constants"
 import { settings } from "@/lib/state/settings"
+import type { RadioSetting } from "@/lib/types/settings"
 
 async function fetchTournaments(q: string): Promise<string[]> {
   const res = await fetch(`/api/tournaments?q=${encodeURIComponent(q)}&limit=10`)
