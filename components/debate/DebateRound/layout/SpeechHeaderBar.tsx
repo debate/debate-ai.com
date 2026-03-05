@@ -1,4 +1,9 @@
+/**
+ * @fileoverview Header bar for debate speeches, providing timer controls and recording management.
+ */
+
 "use client"
+
 
 import { useState, useEffect } from "react"
 import type { Round } from "@/lib/types/debate"

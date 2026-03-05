@@ -1,17 +1,9 @@
+/**
+ * @fileoverview Flow Tab component for sidebar navigation of debate flows.
+ */
+
 "use client"
 
-/**
- * @fileoverview Flow Tab Component
- *
- * Represents a single flow tab in the sidebar navigation.
- * Provides:
- * - Selection highlighting
- * - Inline renaming with keyboard support
- * - Archive toggle
- * - Delete with confirmation dialog
- *
- * @module components/debate/flow/navigation/FlowTab
- */
 
 import type React from "react"
 import type { Flow } from "@/lib/types/debate"

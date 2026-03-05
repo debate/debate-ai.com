@@ -1,13 +1,9 @@
-"use client"
-
 /**
  * @fileoverview Tournament info section of the Round Editor dialog.
- *
- * Renders the tournament name input with autocomplete suggestions,
- * the round level selector, and the public/private visibility toggle.
- *
- * @module components/debate/dialogs/round-editor/TournamentSection
  */
+
+"use client"
+
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Autocomplete } from "@/components/ui/autocomplete"

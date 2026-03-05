@@ -1,14 +1,9 @@
+/**
+ * @fileoverview Custom hook for managing debate timer state at the page level.
+ */
+
 "use client";
 
-/**
- * @fileoverview Custom hook for managing timer state at the page level.
- *
- * Lifts timer state out of TimersPanel so it persists when the mobile
- * sidebar (Sheet) unmounts. Also exposes an `activeTimer` summary for
- * rendering a compact timer in the mobile header bar.
- *
- * @module components/debate/flow/hooks/useTimerState
- */
 
 import { useState, useEffect } from "react";
 import { settings } from "@/lib/state/settings";

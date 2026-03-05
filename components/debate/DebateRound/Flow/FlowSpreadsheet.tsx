@@ -1,20 +1,9 @@
+/**
+ * @fileoverview AG Grid-powered spreadsheet interface for debate flowing.
+ */
+
 "use client"
 
-/**
- * @fileoverview Flow Spreadsheet Component
- *
- * An AG Grid-powered spreadsheet interface for debate flowing.
- * Provides a familiar Excel-like experience for taking notes during debates.
- *
- * Features:
- * - Column-based layout matching speech structure
- * - Row dragging for reordering arguments
- * - Excel-style arrow key navigation while editing
- * - Auto-sizing columns
- * - Speech document quick access via column headers
- *
- * @module components/debate/flow/editor/FlowSpreadsheet
- */
 
 import { useMemo, useCallback, useRef, useState, useEffect } from "react"
 import { AgGridReact } from "ag-grid-react"

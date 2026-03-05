@@ -1,13 +1,9 @@
-"use client"
-
 /**
  * @fileoverview Winner selection section of the Round Editor dialog.
- *
- * Only rendered when editing an existing round (i.e. `roundId` is provided).
- * Allows setting the round outcome to Aff, Neg, or Undecided.
- *
- * @module components/debate/dialogs/round-editor/WinnerSection
  */
+
+"use client"
+
 
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"

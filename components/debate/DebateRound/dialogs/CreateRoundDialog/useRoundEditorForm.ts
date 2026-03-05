@@ -1,18 +1,9 @@
+/**
+ * @fileoverview Custom hook managing form state and submission logic for the Round Editor dialog.
+ */
+
 "use client";
 
-/**
- * @fileoverview Custom hook that manages all form state and submission logic
- * for the Round Editor dialog.
- *
- * Encapsulates:
- * - Form field state (tournament, debaters, judges, etc.)
- * - Tournament name autocomplete with Tabroom suggestions
- * - Round data loading for edit mode
- * - Form validation and submission (create/update)
- * - Flow generation for new rounds
- *
- * @module components/debate/dialogs/round-editor/useRoundEditorForm
- */
 
 import { useState, useEffect } from "react";
 import type { Flow, Box, Round } from "@/lib/types/debate";

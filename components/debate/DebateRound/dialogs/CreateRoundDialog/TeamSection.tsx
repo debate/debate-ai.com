@@ -1,13 +1,9 @@
-"use client"
-
 /**
  * @fileoverview Team information section of the Round Editor dialog.
- *
- * Renders side-by-side columns for the Affirmative and Negative teams,
- * each with school name and debater email inputs.
- *
- * @module components/debate/dialogs/round-editor/TeamSection
  */
+
+"use client"
+
 
 import { useState } from "react"
 import Image from "next/image"
