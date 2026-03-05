@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import { DebateFlowPage } from "@/components/debate/DebateRound/DebateRoundPanel"
 
 export const metadata: Metadata = {
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 }
 
 export default function Home() {
-  return <DebateFlowPage />
+  return (
+    <Suspense>
+      <DebateFlowPage />
+    </Suspense>
+  )
 }

@@ -16,5 +16,8 @@
       "Bash(bun run build:*)",
       "Bash(npx next build:*)"
     ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
   }
 }

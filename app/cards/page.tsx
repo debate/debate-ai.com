@@ -1,5 +1,10 @@
-import { SearchInterface } from "@/app/cards/search-interface"
+import { Suspense } from "react"
+import { SearchInterface } from "@/components/debate/SharedResearch/SearchInterface"
 
 export default function SearchPage() {
-  return <SearchInterface />
+  return (
+    <Suspense>
+      <SearchInterface />
+    </Suspense>
+  )
 }

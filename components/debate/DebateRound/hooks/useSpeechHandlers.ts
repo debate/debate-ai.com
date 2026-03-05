@@ -5,7 +5,19 @@
 
 import { useCallback } from "react"
 import type { Flow } from "@/lib/types/debate"
-import { shareSpeech } from "@/app/actions"
+
+
+
+
+export async function shareSpeech(emails: string[], speechName: string, content: string) {
+
+  // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, 500))
+
+  return { success: true, message: `Shared with ${emails.length} participants` }
+}
+
+
 
 /**
  * Hook that provides memoized handlers for editing and sharing speech documents.
