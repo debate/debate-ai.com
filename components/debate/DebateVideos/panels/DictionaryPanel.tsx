@@ -6,6 +6,7 @@
 
 
 import { useState, useMemo, useEffect } from "react"
+import grab from "grab-url"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Search, ArrowRight } from "lucide-react"
@@ -42,9 +43,7 @@ export function DictionaryPanel({ controlledSearchTerm, onControlledSearchChange
   const [dictionary, setDictionary] = useState<DictionaryEntry[]>([])
 
   useEffect(() => {
-    fetch("/api/dictionary")
-      .then((res) => res.json())
-      .then(setDictionary)
+    grab("dictionary").then(res => setDictionary(res.data || []))
   }, [])
 
   const filteredDebateTerms = useMemo(() => {

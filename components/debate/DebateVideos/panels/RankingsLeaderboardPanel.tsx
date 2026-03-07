@@ -148,20 +148,12 @@ export function LeaderboardPanel({
         setError(null)
 
         const params = new URLSearchParams({ division, year })
-        const response = await fetch(`/api/leaderboard?${params.toString()}`, {
-          signal: controller.signal,
-          cache: "no-store",
+        const payload = await grab(`leaderboard?${params.toString()}`, {
+          cache: false,
         })
 
-        const payload = await response.json()
-
-        if (!response.ok) {
-          const message =
-            typeof payload?.error === "string" ? payload.error : "Failed to fetch leaderboard data"
-          throw new Error(message)
-        }
-
-        setData(Array.isArray(payload) ? payload : [])
+        const leaderboardData = payload.data || []
+        setData(Array.isArray(leaderboardData) ? leaderboardData : [])
       } catch (err) {
         if (controller.signal.aborted) return
         const message = err instanceof Error ? err.message : "Failed to fetch leaderboard data"

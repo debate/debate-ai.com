@@ -1,10 +1,14 @@
 /** @fileoverview Public export surface for the card parser module. */
-export { htmlToCards } from "./html-to-cards"
-export { FORMAT_PROFILES } from "./format-profiles"
-export { extractCiteInfo, recalculateAuthor, cleanUrl } from "./citation-extractor"
-export { extractMarked, extractUnderlined } from "./text-extractor"
-export { finalizeCard, repairCards } from "./card-utils"
-export { parseFileNameParts } from "./file-name-parser"
+export { htmlToCards } from "./parsers/html-to-cards";
+export { FORMAT_PROFILES } from "./utils/format-profiles";
+export {
+  extractCiteInfo,
+  recalculateAuthor,
+  cleanUrl,
+} from "./extractors/citation-extractor";
+export { extractMarked, extractUnderlined } from "./extractors/text-extractor";
+export { finalizeCard, repairCards } from "./utils/card-utils";
+export { parseFileNameParts } from "./extractors/file-name-parser";
 
 export type {
   Card,
@@ -15,4 +19,4 @@ export type {
   ParseMetadata,
   ParseOptions,
   ParseResult,
-} from "./types"
+} from "./types/types";

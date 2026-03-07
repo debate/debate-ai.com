@@ -1,29 +1,31 @@
+import grab from "grab-url";
+
 /**
  * Fetches the list of tournament names from Tabroom
  * @returns Array of unique tournament names
  */
 export async function getTournamentNames(): Promise<string[]> {
   try {
-    const res = await fetch("https://www.tabroom.com/index/index.mhtml", {
-      cache: "no-store",
+    const data = await grab("https://www.tabroom.com/index/index.mhtml", {
+      cache: false,
     });
 
-    if (!res.ok) {
-      throw new Error(`Failed to  fetch tabroom: ${res.status}`);
-    }
-
-    const html = await res.text();
+    const html = await data.text();
 
     const linkMatches =
-      html.match(/<a[^>]*href="[^"]*tourn_id=[^"]*"[^>]*>[\s\S]*?<\/a>/gi) || [];
+      html.match(/<a[^>]*href="[^"]*tourn_id=[^"]*"[^>]*>[\s\S]*?<\/a>/gi) ||
+      [];
 
     const names = linkMatches
-      .map((link) => {
+      .map((link: string) => {
         const match = link.match(/>([^<]*(?:<[^a/][^<]*)*)<\/a>/i);
         if (!match) return "";
-        return match[1].replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+        return match[1]
+          .replace(/<[^>]*>/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
       })
-      .filter((n) => {
+      .filter((n: string) => {
         return (
           n.length > 3 &&
           !n.includes("http") &&
@@ -32,7 +34,7 @@ export async function getTournamentNames(): Promise<string[]> {
       });
 
     // Remove duplicates
-    const uniqueNames = Array.from(new Set(names));
+    const uniqueNames = Array.from(new Set(names)) as string[];
     return uniqueNames.slice(0, 100); // Limit results
   } catch (error) {
     return [];

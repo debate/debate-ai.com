@@ -1,3 +1,5 @@
+import grab from "grab-url";
+
 /**
  * Precision to use for debate Elo calculations
  */
@@ -96,36 +98,19 @@ export async function scrapeDivision({
   fallbackUrl,
 }: DatasetConfig): Promise<LeaderboardEntry[]> {
   try {
-    const fetchOptions = {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-      },
-      next: {
-        revalidate: 3600, // Cache for 1 hour
-      },
-    };
+    let csvText = await grab(url);
 
-    let response = await fetch(url, fetchOptions);
-
-    if (!response.ok && fallbackUrl && response.status === 404) {
-      console.log(
-        `[v0] No dataset found at ${url} (404), trying fallback: ${fallbackUrl}`,
-      );
-      response = await fetch(fallbackUrl, fetchOptions);
+    if (csvText.error && fallbackUrl) {
+      csvText = await grab(fallbackUrl);
     }
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        return [];
-      }
-      throw new Error(`HTTP error! status: ${response.status} for ${url}`);
+    if (csvText.error) {
+      return [];
     }
 
-    const csvText = await response.text();
     const lines = csvText
       .split(/\r?\n/)
-      .filter((line) => line.trim().length > 0);
+      .filter((line: string) => line.trim().length > 0);
 
     // Check if we have headers + at least one row
     if (lines.length <= 1) return [];

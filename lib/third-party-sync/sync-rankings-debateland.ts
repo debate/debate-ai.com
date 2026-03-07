@@ -1,3 +1,6 @@
+import grab from "grab-url";
+import { parseHTML } from "linkedom";
+
 /**
  * Configuration for a debate division dataset
  */
@@ -101,70 +104,51 @@ async function scrapeDivision({
   division,
   url,
 }: DatasetConfig): Promise<LeaderboardEntry[]> {
-  try {
-    console.log("[v0] Scraping division:", division, "from:", url);
+  // Use grab instead of fetch
+  const html = await grab(url);
 
-    // Use native fetch instead of grab-url
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-      },
-    });
+  // Dynamic import of linkedom
+  const { document } = parseHTML(html);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+  const rows = document.querySelectorAll("tbody tr.group");
 
-    const html = await response.text();
-    console.log("[v0] Fetched HTML length:", html.length);
+  const out = Array.from(rows)
+    .map((tr: Element) => {
+      const tds = Array.from(tr.querySelectorAll("td"));
+      if (tds.length === 0) return null;
 
-    // Dynamic import of linkedom
-    const { parseHTML } = await import("linkedom");
-    const { document } = parseHTML(html);
+      const firstTd = tds[0];
+      const { rank, rankRaw, teamSchool } = extractRankAndTeam(firstTd);
 
-    const rows = document.querySelectorAll("tbody tr.group");
-    console.log("[v0] Found rows:", rows.length);
+      const valueTds = tds.slice(1);
+      const values = valueTds
+        .map((td) => {
+          const txt = td.textContent?.trim() || "";
+          if (!txt || txt === "--") return null;
 
-    const out = Array.from(rows)
-      .map((tr: Element) => {
-        const tds = Array.from(tr.querySelectorAll("td"));
-        if (tds.length === 0) return null;
+          const numericCandidate = txt.replace(/[^\d.-]/g, "");
+          const num = Number(numericCandidate);
 
-        const firstTd = tds[0];
-        const { rank, rankRaw, teamSchool } = extractRankAndTeam(firstTd);
+          if (txt.includes("%") || txt.includes("-") || Number.isNaN(num)) {
+            return txt;
+          }
+          return num;
+        })
+        .filter((v): v is number | string => v !== null);
 
-        const valueTds = tds.slice(1);
-        const values = valueTds
-          .map((td) => {
-            const txt = td.textContent?.trim() || "";
-            if (!txt || txt === "--") return null;
+      return {
+        rank: rank ?? rankRaw,
+        teamSchool: teamSchool || "Unknown Team",
+        division,
+        values,
+      };
+    })
+    .filter(
+      (entry): entry is NonNullable<typeof entry> =>
+        entry !== null && entry.values.length > 0,
+    ) as LeaderboardEntry[];
 
-            const numericCandidate = txt.replace(/[^\d.-]/g, "");
-            const num = Number(numericCandidate);
-
-            if (txt.includes("%") || txt.includes("-") || Number.isNaN(num)) {
-              return txt;
-            }
-            return num;
-          })
-          .filter((v): v is number | string => v !== null);
-
-        return {
-          rank: rank ?? rankRaw,
-          teamSchool: teamSchool || "Unknown Team",
-          division,
-          values,
-        };
-      })
-      .filter((entry): entry is NonNullable<typeof entry> => entry !== null && entry.values.length > 0) as LeaderboardEntry[];
-
-    console.log("[v0] Scraped entries:", out.length);
-    return out;
-  } catch (error) {
-    console.error("[v0] Error scraping division:", division, error);
-    throw error;
-  }
+  return out;
 }
 
 /**
@@ -179,7 +163,6 @@ export async function scrapeAll(year = "2026"): Promise<LeaderboardEntry[]> {
       const entries = await scrapeDivision(cfg);
       all.push(...entries);
     } catch (error) {
-      console.error(`[v0] Error scraping ${cfg.division}:`, error);
       // Continue with other divisions even if one fails
     }
   }

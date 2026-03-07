@@ -79,7 +79,7 @@ export function SearchInterface() {
       if (filters.searchQuotes) params.set("searchQuotes", "1")
       if (filters.searchAllText) params.set("searchAllText", "1")
 
-      const data = await grab(`/api/search?${params.toString()}`)
+      const data = await grab(`search?${params.toString()}`)
       setSearchResults(data?.results ?? [])
       setTotalResults(data?.total ?? 0)
       setSelectedResult(null)

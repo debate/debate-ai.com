@@ -3,7 +3,7 @@
  * Uses the robust html-to-cards parser from lib/card-parser.
  */
 
-import { htmlToCards as parseHtmlToCards } from "../../lib/card-parser/html-to-cards"
+import { htmlToCards as parseHtmlToCards } from "../../lib/card-parser/parsers/html-to-cards"
 
 function sanitizeHtml(html: string): string {
   if (typeof window === "undefined") return html
@@ -431,15 +431,14 @@ export function buildQuoteCardsHtml(
               data-words-read="${card.wordsRead || 0}">
               <header class="quote-card-header">
                 <h4 class="quote-summary">${escapeHtml(card.summary || "")}</h4>
-                ${
-                  card.author || card.year || card.cite
-                    ? `<div class="quote-meta">
+                ${card.author || card.year || card.cite
+            ? `<div class="quote-meta">
                   ${card.author ? `<span class="quote-author">${escapeHtml(card.author)}</span>` : ""}
                   ${card.year ? `<span class="quote-year">${escapeHtml(String(card.year))}</span>` : ""}
                   ${card.cite && card.cite !== card.author ? `<span class="quote-cite">${escapeHtml(card.cite)}</span>` : ""}
                 </div>`
-                    : ""
-                }
+            : ""
+          }
               </header>
               <div class="quote-body">
                 ${card.html}

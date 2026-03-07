@@ -62,7 +62,7 @@ export interface FormatProfile {
 
 /** Optional parser overrides with a named profile selector. */
 export interface ParseOptions extends Partial<FormatProfile> {
-  profile?: keyof typeof import("./format-profiles").FORMAT_PROFILES | string
+  profile?: keyof typeof import("../utils/format-profiles").FORMAT_PROFILES | string
 }
 
 /** Extracted citation fields from a citation paragraph. */

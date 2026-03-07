@@ -17,14 +17,23 @@ import { MultiSelect } from "@/components/ui/multi-select"
 import { Autocomplete } from "@/components/ui/autocomplete"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
+//how many results to show for suggestions
+const limit = 20;
+
 async function fetchSchools(q: string): Promise<string[]> {
-  const data = await grab(`/api/schools?q=${encodeURIComponent(q)}&limit=10`)
-  return data.results ?? []
+  const { results } = await grab('schools', {
+    q,
+    limit
+  })
+  return results ?? []
 }
 
 async function fetchTournaments(q: string): Promise<string[]> {
-  const data = await grab(`/api/tournaments?q=${encodeURIComponent(q)}&limit=10`)
-  return data.results ?? []
+  const { results } = await grab('tournaments', {
+    q,
+    limit
+  })
+  return results ?? []
 }
 
 export interface SearchFilters {

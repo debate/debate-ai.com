@@ -18,16 +18,16 @@ import { Card, CardContent } from "@/components/ui/card"
 export function IntroTextOverview() {
   return (
     <div className="h-full overflow-y-auto p-4 bg-background max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between mb-2">
-        <img
-          width="128"
-          src="/images/logo-collective-mind.png"
-          alt="Building Blocks Icon"
-        />
-        <div className="flex flex-col items-end">
-          <h2 className="text-xl font-bold text-right">CARDS: Crowdsourced Annotated Research for Debates Search</h2>
+      <div className="flex flex-col items-center gap-6 mb-12">
+        <div className="flex items-center justify-center gap-8">
+          <img
+            width="128"
+            src="/images/logo-collective-mind.png"
+            alt="Building Blocks Icon"
+            className="drop-shadow-sm"
+          />
           <a
-            className="mt-2 px-6 py-3 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+            className="hover:scale-105 transition-transform duration-200"
             target="_blank"
             href="https://chromewebstore.google.com/detail/debate-timer-chrome-mobil/noecbaibfhbmpapofcdkgchfifmoinfj"
             rel="noopener noreferrer"
@@ -35,9 +35,18 @@ export function IntroTextOverview() {
             <img
               src="/images/download-extension.png"
               alt="Install Chrome Extension"
-              className="h-14"
+              className="h-16"
             />
           </a>
+        </div>
+
+        <div className="text-center space-y-2 max-w-2xl">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight lg:text-5xl bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+            CARDS
+          </h2>
+          <p className="text-muted-foreground font-medium tracking-wide uppercase text-sm md:text-base">
+            Crowdsourced Annotated Research Database Search
+          </p>
         </div>
       </div>
 
@@ -117,8 +126,8 @@ export function IntroTextOverview() {
             a tree of possible outcomes and responses, so that we can surface the most persuasive arguments to all.
 
 
-          </p>
-          <p className="text-base text-muted-foreground leading-relaxed">
+            <br />
+            <br />
 
             Key metadata is extracted for LLM analysis, enabling LLMs to review the full text, identify logic flaws or
             unsupported claims, and flag overstatements. LLMs also extend warrants, summarize support, and suggest where

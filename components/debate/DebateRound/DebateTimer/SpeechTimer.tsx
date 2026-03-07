@@ -19,6 +19,7 @@ import type React from "react"
 import type { TimerSpeech, SpeechTimerState, Round } from "@/lib/types/debate"
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import grab from "grab-url"
 import { Play, Pause, RotateCcw } from "lucide-react"
 import useSound from "use-sound"
 import soundPopDown from "@/lib/audio/sound-pop-down.mp3"
@@ -292,8 +293,8 @@ export function SpeechTimer({
     if (existingRaw) {
       try {
         const existing = JSON.parse(existingRaw) as { audio: string }
-        fetch(existing.audio)
-          .then((r) => r.blob())
+        grab(existing.audio)
+          .then((result) => result.blob())
           .then((existingBlob) => mergeAudioBlobs(existingBlob, newSegmentBlob))
           .then(({ blob, durationSeconds }) => persist(blob, durationSeconds))
           .catch((err) => {

@@ -1,5 +1,5 @@
 /** @fileoverview Built-in parsing profiles used to tune card-boundary heuristics. */
-import type { FormatProfile } from "./types"
+import type { FormatProfile } from "../types/types";
 
 /** Built-in parser presets for different source formatting quality levels. */
 export const FORMAT_PROFILES: Record<string, FormatProfile> = {
@@ -56,7 +56,7 @@ export const FORMAT_PROFILES: Record<string, FormatProfile> = {
       /^[A-Z][a-z]+\s+and\s+[A-Z][a-z]+\s+\d{2,4}/,
       /^[A-Z][A-Z\s]+\d{2,4}/,
       /^[A-Z][a-z]+\s+et\s+al\.?\s+\d{2,4}/,
-      /^['""][^'"]{10,}['""]/, 
+      /^['""][^'"]{10,}['""]/,
       /^['""][A-Z]/,
       /^\*\*[^*]+\*\*/,
       /^__[^_]+__/,
@@ -97,7 +97,7 @@ export const FORMAT_PROFILES: Record<string, FormatProfile> = {
       /^[A-Z][a-z]+\s+and\s+[A-Z][a-z]+\s+\d{2,4}/,
       /^[A-Z][A-Z\s]+\d{2,4}/,
       /^[A-Z][a-z]+\s+et\s+al\.?\s+\d{2,4}/,
-      /^['""][^'"]{10,}['""]/, 
+      /^['""][^'"]{10,}['""]/,
       /^['""][A-Z]/,
       /^\*\*[^*]+\*\*/,
       /^__[^_]+__/,
@@ -112,7 +112,13 @@ export const FORMAT_PROFILES: Record<string, FormatProfile> = {
     cardStartHeadings: ["h4", "p"],
     minBlankLinesForBoundary: 2,
     trustParagraphTags: false,
-    summaryPatterns: [/^Aff\s*[-–]/i, /^Neg\s*[-–]/i, /^Impact:/i, /^Analysis:/i, /^Card:/i],
+    summaryPatterns: [
+      /^Aff\s*[-–]/i,
+      /^Neg\s*[-–]/i,
+      /^Impact:/i,
+      /^Analysis:/i,
+      /^Card:/i,
+    ],
   },
   // Clean HTML profile minimizes pattern assumptions and trusts headings.
   cleanHtml: {
@@ -130,4 +136,4 @@ export const FORMAT_PROFILES: Record<string, FormatProfile> = {
     trustParagraphTags: false,
     summaryPatterns: [/^Aff\s*[-–]/i, /^Neg\s*[-–]/i, /^Impact:/i, /^\d+\./],
   },
-}
+};

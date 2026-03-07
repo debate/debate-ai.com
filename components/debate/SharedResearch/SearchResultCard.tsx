@@ -8,7 +8,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Users, Clock } from "lucide-react"
-import { getBlueShade, getGreenShade } from "@/lib/card-parser/card-utils"
+import { getBlueShade, getGreenShade } from "@/lib/card-parser/utils/card-utils"
 import type { SearchResult } from "@/components/debate/SharedResearch/types"
 
 /**

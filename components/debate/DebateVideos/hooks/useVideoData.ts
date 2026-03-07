@@ -3,10 +3,14 @@
  * @module components/debate/videos/hooks/useVideoData
  */
 
-import { useState, useEffect, useCallback, useMemo } from "react"
-import type { CategoryType, DebateVideosData, VideoType } from "@/lib/types/videos"
+import { useState, useEffect, useCallback, useMemo } from "react";
+import grab from "grab-url";
+import type {
+  CategoryType,
+  DebateVideosData,
+  VideoType,
+} from "@/lib/types/videos";
 import Fuse from "fuse.js";
-;
 const ORIGIN = "";
 
 /**
@@ -26,17 +30,15 @@ export function useVideoDataFetch(
   initialCategory: CategoryType = "rounds",
 ) {
   const fetchVideos = useCallback(async () => {
+    setIsLoading(true);
     try {
-      const response = await fetch(ORIGIN + "/api/videos");
-      if (!response.ok) {
-        throw new Error("Failed to fetch videos");
-      }
-      const data = await response.json();
-      setDebateVideos(data);
-      changeCategory(initialCategory, data);
-    } catch (error) {
-      console.error("Error fetching videos:", error);
-      setErrorMessage("Error loading videos. Please try again.");
+      const data = await grab(ORIGIN + "videos");
+      const videosData = data.data || data;
+      setDebateVideos(videosData);
+      changeCategory(initialCategory, videosData);
+    } catch (err) {
+      setErrorMessage("Failed to load videos");
+    } finally {
       setIsLoading(false);
     }
   }, [
@@ -80,11 +82,11 @@ export function useVideoFiltering() {
       favorites: Set<string>,
     ) => {
       let allCategoryVideos = videos;
-      if (search.trim() && data) {
+      if (search.trim() && data && Array.isArray(data.rounds)) {
         allCategoryVideos = [
           ...data.rounds,
-          ...data.lectures,
-          ...data.topPicks,
+          ...(data.lectures || []),
+          ...(data.topPicks || []),
         ];
       }
 
