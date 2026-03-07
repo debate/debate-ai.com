@@ -38,6 +38,8 @@ interface SplitModeToolbarProps {
   onLeftQuoteViewToggle: () => void
   /** Handler called when the right panel quote view is toggled. */
   onRightQuoteViewToggle: () => void
+  /** Whether the viewport is mobile-sized. */
+  isMobile?: boolean
 }
 
 /**
@@ -75,6 +77,7 @@ export function SplitModeToolbar({
   onRightViewModeChange,
   onLeftQuoteViewToggle,
   onRightQuoteViewToggle,
+  isMobile = false,
 }: SplitModeToolbarProps) {
   return (
     <div className="flex items-center justify-between p-2 border-b border-border bg-muted/30">
@@ -90,7 +93,7 @@ export function SplitModeToolbar({
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <span className="text-sm text-muted-foreground">
-          {leftSpeech} / {rightSpeech}
+          {isMobile ? leftSpeech : `${leftSpeech} / ${rightSpeech}`}
         </span>
         <Button variant="ghost" size="icon" onClick={onNavigateNext} disabled={!canNavigateNext} className="h-7 w-7">
           <ChevronRight className="h-4 w-4" />
@@ -101,7 +104,7 @@ export function SplitModeToolbar({
       <div className="flex items-center gap-4">
         {/* Left panel controls */}
         <div className="flex items-center gap-1">
-          <span className="text-xs text-muted-foreground">Left:</span>
+          {!isMobile && <span className="text-xs text-muted-foreground">Left:</span>}
           <Button
             variant={leftQuoteView ? "default" : "ghost"}
             size="sm"
@@ -113,19 +116,21 @@ export function SplitModeToolbar({
           <ViewModeSelector value={leftViewMode} onChange={onLeftViewModeChange} size="sm" />
         </div>
 
-        {/* Right panel controls */}
-        <div className="flex items-center gap-1">
-          <span className="text-xs text-muted-foreground">Right:</span>
-          <Button
-            variant={rightQuoteView ? "default" : "ghost"}
-            size="sm"
-            onClick={onRightQuoteViewToggle}
-            className="h-7 px-2 gap-1"
-          >
-            <Quote className="h-3 w-3" />
-          </Button>
-          <ViewModeSelector value={rightViewMode} onChange={onRightViewModeChange} size="sm" />
-        </div>
+        {/* Right panel controls - hidden on mobile */}
+        {!isMobile && (
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-muted-foreground">Right:</span>
+            <Button
+              variant={rightQuoteView ? "default" : "ghost"}
+              size="sm"
+              onClick={onRightQuoteViewToggle}
+              className="h-7 px-2 gap-1"
+            >
+              <Quote className="h-3 w-3" />
+            </Button>
+            <ViewModeSelector value={rightViewMode} onChange={onRightViewModeChange} size="sm" />
+          </div>
+        )}
       </div>
     </div>
   )

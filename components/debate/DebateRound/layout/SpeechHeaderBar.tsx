@@ -130,12 +130,6 @@ export function SpeechHeaderBar({ speechName, onOpenSpeechPanel }: SpeechHeaderB
           )}
         </div>
 
-        {/* ── Controls ── */}
-        {/* Recording player — now in the middle space */}
-        <div className="flex-1 min-w-0 mx-1">
-          <SpeechRecordingPlayer speechName={speechName} className="w-full" />
-        </div>
-
         {/* ── Timer & Doc ── */}
         <div className="flex items-center gap-1 shrink-0">
           {!hideTimer && (
@@ -214,6 +208,9 @@ export function SpeechHeaderBar({ speechName, onOpenSpeechPanel }: SpeechHeaderB
           )}
         </div>
       </div>
+
+      {/* Row 2: Recording playback bar — full width below controls */}
+      <SpeechRecordingPlayer speechName={speechName} className="w-full" />
     </div>
   )
 }

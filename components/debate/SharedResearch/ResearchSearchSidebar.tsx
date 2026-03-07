@@ -273,7 +273,7 @@ export function ResearchSearchSidebar({
 
       {/* Results count + list */}
       <div className="px-3 py-1.5 text-xs text-muted-foreground flex justify-between border-b">
-        <span>{searchResults.length} shown</span>
+        <span>{(searchResults?.length || 0)} shown</span>
         <span>{totalResults} total</span>
       </div>
 
@@ -282,7 +282,7 @@ export function ResearchSearchSidebar({
           <div className="flex items-center justify-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
-        ) : searchResults.length === 0 ? (
+        ) : (!searchResults || searchResults.length === 0) ? (
           <div className="flex items-center justify-center h-32 text-sm text-muted-foreground">No results found</div>
         ) : (
           searchResults.map((result, index) => (

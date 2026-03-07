@@ -46,6 +46,8 @@ interface FlowMainContentProps {
   onMouseDown?: (e: React.MouseEvent) => void
   /** Handler called when the current flow's data should be updated. */
   onUpdate?: (updates: Partial<Flow>) => void
+  /** Whether the viewport is mobile-sized; shows only one speech panel in split mode. */
+  isMobile?: boolean
 }
 
 /**
@@ -89,6 +91,7 @@ export function FlowMainContent({
   onUpdateRightSpeech,
   onMouseDown,
   onUpdate,
+  isMobile = false,
 }: FlowMainContentProps) {
   if (!currentFlow) {
     return (
@@ -99,6 +102,28 @@ export function FlowMainContent({
   }
 
   if (splitMode && leftSpeech && rightSpeech) {
+    // Mobile: show only the left (active) speech at full width
+    if (isMobile) {
+      return (
+        <div className="flex flex-col h-full bg-[var(--background)] rounded-[var(--border-radius)]">
+          <div className="border-b border-border bg-muted/50">
+            <SpeechHeaderBar speechName={leftSpeech} />
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <MarkdownEditor
+              key={`mobile-${leftSpeech}`}
+              content={leftContent}
+              onChange={onUpdateLeftSpeech || ((_content: string) => { })}
+              fileName={leftSpeech}
+              className="h-full"
+              showToolbar={true}
+              viewMode={leftQuoteView ? "quotes" : leftViewMode}
+            />
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div className="flex h-full split-container relative">
         {/* Left panel */}

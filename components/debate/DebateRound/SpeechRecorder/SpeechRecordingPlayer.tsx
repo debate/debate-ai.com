@@ -106,40 +106,35 @@ export function SpeechRecordingPlayer({
                 return (
                     <AudioPlayerProvider key={rec.key} initialPlaybackRate={0.75}>
                         {/* Player row */}
-                        <div className="flex items-center gap-1.5 rounded-md bg-muted/50 px-2 py-1.5 text-xs group">
-                            <span
-                                className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider truncate max-w-[80px]"
-                                title={label}
-                            >
-                                {label}
-                            </span>
+                        <div className="flex items-center gap-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs group">
                             {/* Play / Pause */}
                             <AudioPlayerButton
                                 item={track}
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6 flex-shrink-0"
+                                className="h-7 w-7 flex-shrink-0"
                             />
 
-                            {/* Scrubber + times */}
-                            <div className="flex flex-1 items-center gap-1 min-w-0">
-                                <div className="flex items-center gap-0.5 text-[9px] tabular-nums text-muted-foreground min-w-max">
-                                    <AudioPlayerTime className="text-[9px] tabular-nums text-foreground" />
-                                    <span>/</span>
-                                    {rec.durationSeconds != null ? (
-                                        <span>{formatDuration(rec.durationSeconds)}</span>
-                                    ) : (
-                                        <AudioPlayerDuration className="text-[9px] tabular-nums text-muted-foreground" />
-                                    )}
-                                </div>
-                                <AudioPlayerProgress className="flex-1 h-3" />
-                                <AudioPlayerSpeed
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-5 w-5 flex-shrink-0"
-                                    speeds={[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
-                                />
+                            {/* Times */}
+                            <div className="flex items-center gap-0.5 text-[10px] tabular-nums text-muted-foreground min-w-max">
+                                <AudioPlayerTime className="text-[10px] tabular-nums text-foreground" />
+                                <span>/</span>
+                                {rec.durationSeconds != null ? (
+                                    <span>{formatDuration(rec.durationSeconds)}</span>
+                                ) : (
+                                    <AudioPlayerDuration className="text-[10px] tabular-nums text-muted-foreground" />
+                                )}
                             </div>
+
+                            {/* Scrubber */}
+                            <AudioPlayerProgress className="flex-1 h-5" />
+
+                            <AudioPlayerSpeed
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 flex-shrink-0"
+                                speeds={[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
+                            />
 
                             {/* Delete */}
                             <Button

@@ -57,6 +57,24 @@ export function useSplitModeHandlers(
   }, [flows, selected, rightSpeechIndex])
 
   /**
+   * Move the left panel one column back (mobile single-speech navigation).
+   */
+  const handlePreviousSingle = useCallback(() => {
+    if (leftSpeechIndex > 0) {
+      setLeftSpeechIndex((prev) => prev - 1)
+    }
+  }, [leftSpeechIndex])
+
+  /**
+   * Move the left panel one column forward (mobile single-speech navigation).
+   */
+  const handleNextSingle = useCallback(() => {
+    if (flows[selected] && leftSpeechIndex < flows[selected].columns.length - 1) {
+      setLeftSpeechIndex((prev) => prev + 1)
+    }
+  }, [flows, selected, leftSpeechIndex])
+
+  /**
    * Persist updated markdown content for the speech shown in the left panel.
    *
    * @param content - Updated markdown string for the left panel speech document
@@ -110,6 +128,8 @@ export function useSplitModeHandlers(
   const canNavigatePrev = leftSpeechIndex > 0
   /** Whether the right panel can move further right (i.e. is not at the last column). */
   const canNavigateNext = flows[selected] ? rightSpeechIndex < flows[selected].columns.length - 1 : false
+  /** Whether single-speech navigation can go forward (mobile). */
+  const canNavigateNextSingle = flows[selected] ? leftSpeechIndex < flows[selected].columns.length - 1 : false
 
   return {
     leftSpeechIndex,
@@ -117,11 +137,14 @@ export function useSplitModeHandlers(
     initializeSplitMode,
     handlePreviousSpeeches,
     handleNextSpeeches,
+    handlePreviousSingle,
+    handleNextSingle,
     handleUpdateLeftSpeech,
     handleUpdateRightSpeech,
     getLeftSpeech,
     getRightSpeech,
     canNavigatePrev,
     canNavigateNext,
+    canNavigateNextSingle,
   }
 }

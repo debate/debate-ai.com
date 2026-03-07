@@ -234,9 +234,10 @@ export function DebateFlowPage() {
           leftSpeech={leftSpeech}
           rightSpeech={rightSpeech}
           canNavigatePrev={splitHandlers.canNavigatePrev}
-          canNavigateNext={splitHandlers.canNavigateNext}
-          onNavigatePrev={splitHandlers.handlePreviousSpeeches}
-          onNavigateNext={splitHandlers.handleNextSpeeches}
+          canNavigateNext={state.isMobile ? splitHandlers.canNavigateNextSingle : splitHandlers.canNavigateNext}
+          onNavigatePrev={state.isMobile ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches}
+          onNavigateNext={state.isMobile ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches}
+          isMobile={state.isMobile}
           leftViewMode={state.splitViewMode1}
           rightViewMode={state.splitViewMode2}
           leftQuoteView={state.splitQuoteView1}
@@ -259,6 +260,7 @@ export function DebateFlowPage() {
             currentFlow={currentFlow}
             splitMode={state.splitMode}
             gridApiRef={gridApiRef}
+            isMobile={state.isMobile}
             leftSpeech={leftSpeech}
             rightSpeech={rightSpeech}
             leftViewMode={state.splitViewMode1}
