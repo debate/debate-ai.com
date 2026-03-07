@@ -6,11 +6,11 @@ import grab from "grab-url";
  */
 export async function getTournamentNames(): Promise<string[]> {
   try {
-    const data = await grab("https://www.tabroom.com/index/index.mhtml", {
+    const result = await grab("https://www.tabroom.com/index/index.mhtml", {
       cache: false,
     });
 
-    const html = await data.text();
+    const html = result.data || "";
 
     const linkMatches =
       html.match(/<a[^>]*href="[^"]*tourn_id=[^"]*"[^>]*>[\s\S]*?<\/a>/gi) ||

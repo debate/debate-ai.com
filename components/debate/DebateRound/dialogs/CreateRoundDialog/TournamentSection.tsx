@@ -13,8 +13,8 @@ import { settings } from "@/lib/state/settings"
 import type { RadioSetting } from "@/lib/types/settings"
 
 async function fetchTournaments(q: string): Promise<string[]> {
-  const data = await grab(`tournaments?q=${encodeURIComponent(q)}&limit=10`)
-  return data.results ?? []
+  const result = await grab(`tournaments?q=${encodeURIComponent(q)}&limit=10`)
+  return result?.data?.results ?? []
 }
 
 /** Props for {@link TournamentSection}. */

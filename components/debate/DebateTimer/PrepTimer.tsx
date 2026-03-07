@@ -23,7 +23,7 @@ import useSound from "use-sound"
 import soundPopDown from "@/lib/audio/sound-pop-down.mp3"
 import soundPopUpOn from "@/lib/audio/sound-pop-up-on.mp3"
 import soundPopUpOff from "@/lib/audio/sound-pop-up-off.mp3"
-import { playSoundEffect } from "@/lib/audio/sound-effects"
+import { playSoundEffect } from "@/components/debate/DebateTimer/timer-sounds/sound-effects"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 

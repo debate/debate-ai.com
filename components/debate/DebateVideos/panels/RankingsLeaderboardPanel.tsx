@@ -15,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/comp
 import { Info, ChevronUp, ChevronDown, Trophy } from "lucide-react"
 import grab from "grab-url"
 import type { LeaderboardEntry } from "@/lib/third-party-sync/sync-rankings-debatedrills"
+import type { TopicType, ChampionType } from "@/lib/types/videos"
 
 type Division = "VPF" | "VLD" | "VCX" | "NDT"
 const VALID_DIVISIONS = new Set<string>(["VPF", "VLD", "VCX", "NDT"])
@@ -75,6 +76,7 @@ interface LeaderboardPanelProps {
   controlledYear?: string
   onControlledDivisionChange?: (v: Division) => void
   onControlledYearChange?: (v: string) => void
+  history?: DebateHistory | null
 }
 
 export function LeaderboardPanel({
@@ -82,6 +84,7 @@ export function LeaderboardPanel({
   controlledYear,
   onControlledDivisionChange,
   onControlledYearChange,
+  history,
 }: LeaderboardPanelProps = {}) {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -112,25 +115,32 @@ export function LeaderboardPanel({
   }
 
   // Champions data
-  const [debateHistory, setDebateHistory] = useState<DebateHistory | null>(null)
+  const [internalDebateHistory, setInternalDebateHistory] = useState<DebateHistory | null>(null)
   const [championsLoading, setChampionsLoading] = useState(true)
+
+  const debateHistory = history ?? internalDebateHistory
 
   const currentYear = new Date().getFullYear()
   const maxYear = Math.max(currentYear, 2026)
   const years = Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
   const isCurrentYear = year === String(maxYear)
 
-  // Fetch champions history on mount
+  // Fetch champions history on mount only if not provided via props
   useEffect(() => {
+    if (history) {
+      setChampionsLoading(false)
+      return
+    }
+
     const fetchHistory = async () => {
-      const result = await grab<DebateHistory, { type: "history" | "debates" }>("videos", { type: "history" })
-      if (result && !result.error) {
-        setDebateHistory(result as DebateHistory)
+      const result = await grab<DebateHistory>("history", { cache: true })
+      if (result && !result.error && result.data) {
+        setInternalDebateHistory(result.data as DebateHistory)
       }
       setChampionsLoading(false)
     }
     fetchHistory()
-  }, [])
+  }, [history])
 
   // Fetch leaderboard data (skip for NDT — champions-only view)
   useEffect(() => {
@@ -249,8 +259,8 @@ export function LeaderboardPanel({
         <div className="flex-1 overflow-y-auto p-4">
           <div className="max-w-[1600px] mx-auto">
             {/* Champion banner */}
-            {!championsLoading && (
-              <div className=" flex items-center gap-4 rounded-lg border bg-card">
+            {!championsLoading && (topic || champion) && (
+              <div className="flex items-center gap-4 rounded-lg border bg-card mb-4">
                 <article
                   className="p-6 w-[120px] h-[120px] sm:w-[250px] sm:h-[250px] shrink-0 rounded-lg overflow-hidden will-change-transform"
                   onMouseMove={(e) => {
@@ -277,16 +287,19 @@ export function LeaderboardPanel({
                     className="w-[180px] h-[180px] object-contain"
                   />
                 </article>
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 py-4 pr-4">
+                  <div className="text-xs text-muted-foreground mb-1">
+                    {divConfig.label} {Number(year) - 1}-{year}
+                  </div>
                   {champion && (
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-2">
                       <Trophy className="h-4 w-4 text-yellow-500 shrink-0" />
                       <span className="font-bold text-sm sm:text-base">{champion}</span>
                     </div>
                   )}
                   {topic && (
                     <p
-                      className="text-xs sm:text-sm text-muted-foreground leading-relaxed"
+                      className="text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-4"
                       dangerouslySetInnerHTML={{ __html: topic }}
                     />
                   )}
@@ -388,10 +401,14 @@ export function LeaderboardPanel({
                               </div>
                             )}
                           </div>
-                          <div className="text-center text-xs text-muted-foreground">{entry.state || "--"}</div>
-                          <div className="text-right font-medium text-sm">{entry.bids ?? "--"}</div>
-                          <div className="text-right text-sm">{entry.tocScore ?? "--"}</div>
-                          {showElo && (
+                          {showTocColumns && (
+                            <>
+                              <div className="text-center text-xs text-muted-foreground">{entry.state || "--"}</div>
+                              <div className="text-right font-medium text-sm">{entry.bids ?? "--"}</div>
+                              <div className="text-right text-sm">{entry.tocScore ?? "--"}</div>
+                            </>
+                          )}
+                          {(showElo || !showTocColumns) && (
                             <div className="text-right text-sm">{entry.debateElo ?? "--"}</div>
                           )}
                         </div>

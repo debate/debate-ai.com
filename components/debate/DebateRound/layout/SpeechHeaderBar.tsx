@@ -15,11 +15,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { SpeechRecordingPlayer } from "../SpeechRecorder/SpeechRecordingPlayer"
+import { SpeechRecordingPlayer } from "../../DebateTimer/SpeechRecorder/SpeechRecordingPlayer"
 import { useFlowStore } from "@/lib/state/store"
-import { SpeechTimer } from "../DebateTimer/SpeechTimer"
-import { MicSelector } from "../SpeechRecorder/mic-selector"
-import { debateStyles, debateStyleMap } from "../DebateTimer/debate-format-times"
+import { SpeechTimer } from "../../DebateTimer/SpeechTimer"
+import { MicSelector } from "../../DebateTimer/SpeechRecorder/mic-selector"
+import { debateStyles, debateStyleMap } from "../../DebateTimer/debate-format-times"
 import { settings } from "@/lib/state/settings"
 
 /** Resolve which debater email corresponds to a given speech column name. */

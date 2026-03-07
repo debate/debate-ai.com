@@ -1,0 +1,491 @@
+openapi: 3.1.0
+info:
+  title: Debate AI API
+  description: API for the Debate AI platform — debate research, video archives, leaderboards, AI analysis, and reference data.
+  version: 1.0.0
+
+servers:
+  - url: /api
+    description: Next.js API routes
+
+paths:
+  /analyze:
+    post:
+      operationId: analyzeContent
+      summary: AI-powered debate card analysis
+      description: |
+        Sends debate card content to an LLM (Groq LLaMA 3.3 70B) for analysis.
+        By default, it identifies the main claim, summarizes warrants, assigns a
+        support score (0–10), lists flaws, and suggests a cross-examination question.
+        A custom prompt can override the default analysis.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  description: The debate card / research quote text to analyze.
+                customPrompt:
+                  type: string
+                  description: Optional custom prompt to replace the default flaw-finding analysis. The content is appended after the prompt.
+      responses:
+        "200":
+          description: Analysis result (structured JSON or raw text).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    oneOf:
+                      - type: object
+                        properties:
+                          summary:
+                            type: string
+                          warrants:
+                            type: string
+                          score:
+                            type: integer
+                            minimum: 0
+                            maximum: 10
+                          question:
+                            type: string
+                          flaws:
+                            type: array
+                            items:
+                              type: string
+                      - type: string
+                        description: Raw text response when JSON parsing fails.
+        "400":
+          description: Missing GROQ_API_KEY environment variable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error during analysis.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /dictionary:
+    get:
+      operationId: getDictionary
+      summary: Get the debate terminology dictionary
+      description: Returns the full debate dictionary — a JSON object of debate terms and their definitions.
+      responses:
+        "200":
+          description: Dictionary of debate terms.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /history:
+    get:
+      operationId: getDebateHistory
+      summary: Get historical debate topics and champions
+      description: |
+        Returns a merged object of debate topics and national champions keyed by year.
+        Combines data from `debate-topics.json` and `debate-champions.json`.
+      responses:
+        "200":
+          description: History keyed by year with topic and champion fields.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  additionalProperties:
+                    type: string
+
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      summary: Get debate team rankings and leaderboard
+      description: |
+        Returns ranked leaderboard data for a given division and year.
+        For the current year (2026), merges TOC bid list data with DebateDrills Elo ratings.
+        For prior years (2021–2025), returns DebateDrills Elo data only (VPF/VLD).
+      parameters:
+        - name: year
+          in: query
+          schema:
+            type: string
+            default: "2026"
+          description: The competition year to query.
+        - name: division
+          in: query
+          schema:
+            type: string
+            default: VPF
+            enum: [VCX, VPF, VLD]
+          description: The debate division (Varsity CX, Varsity PF, Varsity LD).
+      responses:
+        "200":
+          description: Array of leaderboard entries, optionally with Elo ratings merged in.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+        "400":
+          description: Invalid division specified.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error fetching leaderboard data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorWithDetails"
+
+  /schools:
+    get:
+      operationId: searchSchools
+      summary: Search debate schools by name
+      description: |
+        Fuzzy-searches school names across debate formats (NDT, VLD, NFA, VPF, VCX).
+        Uses Fuse.js for fuzzy matching. Without a query, returns the first N schools alphabetically.
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Search query string for fuzzy matching school names.
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [ndt, vld, nfa, vpf, vcx]
+          description: Filter results to a specific debate format. Omit to search all formats.
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+          description: Maximum number of results to return (capped at 100).
+      responses:
+        "200":
+          description: List of matching school names.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResults"
+
+  /search:
+    get:
+      operationId: searchCards
+      summary: Search debate research cards
+      description: |
+        Full-text search across debate evidence cards with filtering by year, school,
+        team, tournament, and event. Supports scoped search (highlighted text only,
+        underlined text only, summaries, block/file titles, or all text). Results
+        can be sorted by relevance, read count, year, or highlight length.
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Full-text search query.
+        - name: sort
+          in: query
+          schema:
+            type: string
+            default: "_text_match:desc"
+          description: "Sort field and direction, colon-separated. Fields: `_text_match`, `readCount`, `year`, `highlightLength`. Directions: `asc`, `desc`."
+        - name: year
+          in: query
+          schema:
+            type: string
+          description: Filter by publication year (2-digit or 4-digit).
+        - name: school
+          in: query
+          schema:
+            type: string
+          description: Filter by school name (case-insensitive partial match).
+        - name: team
+          in: query
+          schema:
+            type: string
+          description: Filter by team code (case-insensitive partial match).
+        - name: tournament
+          in: query
+          schema:
+            type: string
+          description: Filter by tournament name (case-insensitive partial match).
+        - name: event
+          in: query
+          schema:
+            type: string
+          description: "Filter by event type (e.g., CX, LD, PF). Use `all` for no filter."
+        - name: searchHighlighted
+          in: query
+          schema:
+            type: string
+            enum: ["0", "1"]
+          description: "When `1`, restrict search to highlighted (`<mark>`) text only."
+        - name: searchUnderlined
+          in: query
+          schema:
+            type: string
+            enum: ["0", "1"]
+          description: "When `1`, restrict search to underlined (`<u>`) text only."
+        - name: searchSummaries
+          in: query
+          schema:
+            type: string
+            enum: ["0", "1"]
+          description: "When `1`, restrict search to card summaries only."
+        - name: searchBlockAndFileTitles
+          in: query
+          schema:
+            type: string
+            enum: ["0", "1"]
+          description: "When `1`, restrict search to argument block and research field titles."
+        - name: searchAllText
+          in: query
+          schema:
+            type: string
+            enum: ["0", "1"]
+          description: "When `1`, search all text fields (overrides other scope flags)."
+      responses:
+        "200":
+          description: Search results with total count.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DebateCard"
+                  total:
+                    type: integer
+
+  /sync-videos:
+    get:
+      operationId: syncVideos
+      summary: Sync debate videos from YouTube
+      description: |
+        Triggers a synchronization of debate round videos from YouTube channels.
+        Scrapes and imports new videos into the local dataset.
+      responses:
+        "200":
+          description: Sync result with counts of new/updated videos.
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Sync failed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: string
+
+  /tournaments:
+    get:
+      operationId: searchTournaments
+      summary: Search debate tournaments by name
+      description: |
+        Fuzzy-searches tournament names using Fuse.js.
+        Without a query, returns the first N tournaments from the dataset.
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Search query for fuzzy matching tournament names.
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+          description: Maximum number of results to return (capped at 100).
+      responses:
+        "200":
+          description: List of matching tournament names.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResults"
+
+  /videos:
+    get:
+      operationId: getVideos
+      summary: Get all debate video data
+      description: |
+        Returns the complete debate video dataset including round recordings,
+        top picks, lecture videos, topic history, and national champions.
+      responses:
+        "200":
+          description: Full video dataset.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rounds:
+                    type: array
+                    description: Debate round video recordings.
+                    items:
+                      type: object
+                  topPicks:
+                    type: array
+                    description: Editorially selected top debate videos.
+                    items:
+                      type: object
+                  lectures:
+                    type: array
+                    description: Instructional debate lecture videos.
+                    items:
+                      type: object
+                  topics:
+                    type: array
+                    description: Historical debate resolution topics by year.
+                    items:
+                      type: object
+                  champions:
+                    type: array
+                    description: National championship winners by year.
+                    items:
+                      type: object
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    ErrorWithDetails:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: string
+      required:
+        - error
+
+    SearchResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: string
+        total:
+          type: integer
+      required:
+        - results
+        - total
+
+    LeaderboardEntry:
+      type: object
+      properties:
+        teamName:
+          type: string
+          description: School and team code (e.g., "Strake Jesuit MS").
+        bids:
+          type: integer
+          description: Number of TOC qualifying bids earned.
+        students:
+          type: string
+          description: Student name(s) on the team.
+        debateElo:
+          type: number
+          description: DebateDrills Elo rating (when available).
+      required:
+        - teamName
+
+    DebateCard:
+      type: object
+      properties:
+        id:
+          type: integer
+        category:
+          type: string
+          description: "Argument category: DA (Disadvantage), CP (Counterplan), K (Kritik), T (Topicality), I (Impact)."
+          enum: [DA, CP, K, T, I]
+        researchField:
+          type: string
+          description: Broad research area or topic.
+        argBlock:
+          type: string
+        summary:
+          type: string
+          description: One-sentence summary of the card's main claim.
+        cite_short:
+          type: string
+          description: Short citation (author and year).
+        cite:
+          type: string
+          description: Full citation with journal, volume, and page numbers.
+        readCount:
+          type: integer
+          description: Number of times this card has been read in rounds.
+        highlightLength:
+          type: integer
+          description: Character length of highlighted (marked) text.
+        textLength:
+          type: integer
+          description: Total character length of the card body.
+        word_count:
+          type: integer
+          description: Word count of the card body.
+        html:
+          type: string
+          description: "Card body as HTML with `<mark>` for highlighting and `<u>` for underlining."
+        tag:
+          type: string
+          description: Comma-separated keyword tags.
+        year:
+          type: string
+          description: 2-digit publication year.
+        page:
+          type: string
+          description: Starting page number in the source.
+        school:
+          type: string
+          description: School that produced the card.
+        team:
+          type: string
+          description: Team code (initials of debaters).
+        side:
+          type: string
+          description: Which side read the card.
+          enum: [Aff, Neg]
+        tournament:
+          type: string
+          description: Tournament where the card was read.
+        round:
+          type: string
+          description: "Round identifier (e.g., round-3, elim-quarters)."
+        event:
+          type: string
+          description: Debate event type.
+          enum: [CX, LD, PF]

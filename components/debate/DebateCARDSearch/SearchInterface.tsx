@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from "react"
 import { Search, GripVertical, Bot } from "lucide-react"
 import grab from "grab-url"
-import { ResearchSearchSidebar, type SearchFilters } from "@/components/debate/SharedResearch/ResearchSearchSidebar"
-import { CardContentViewer } from "@/components/debate/SharedResearch/CardContentViewer"
-import { AiAnalysisSidebar } from "@/components/debate/SharedResearch/AiAnalysisSidebar"
+import { ResearchSearchSidebar, type SearchFilters } from "@/components/debate/DebateCARDSearch/ResearchSearchSidebar"
+import { CardContentViewer } from "@/components/debate/DebateCARDSearch/CardContentViewer"
+import { AiAnalysisSidebar } from "@/components/debate/DebateCARDSearch/AiAnalysisSidebar"
 
 const EMPTY_FILTERS: SearchFilters = {
   year: "",
@@ -37,7 +37,7 @@ export function SearchInterface() {
   const [generating, setGenerating] = useState(false)
   const [showResearchSearchSidebar, setShowResearchSearchSidebar] = useState(false)
   const [showAiAnalysisSidebar, setShowAiAnalysisSidebar] = useState(false)
-  const [isAiAnalysisSidebarCollapsed, setIsAiAnalysisSidebarCollapsed] = useState(false)
+  const [isAiAnalysisSidebarCollapsed, setIsAiAnalysisSidebarCollapsed] = useState(true)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -79,7 +79,8 @@ export function SearchInterface() {
       if (filters.searchQuotes) params.set("searchQuotes", "1")
       if (filters.searchAllText) params.set("searchAllText", "1")
 
-      const data = await grab(`search?${params.toString()}`)
+      const response = await grab(`search?${params.toString()}`)
+      const data = response.data
       setSearchResults(data?.results ?? [])
       setTotalResults(data?.total ?? 0)
       setSelectedResult(null)

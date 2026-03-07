@@ -105,7 +105,8 @@ async function scrapeDivision({
   url,
 }: DatasetConfig): Promise<LeaderboardEntry[]> {
   // Use grab instead of fetch
-  const html = await grab(url);
+  const { data: html, error } = await grab(url);
+  if (error || !html) return [];
 
   // Dynamic import of linkedom
   const { document } = parseHTML(html);

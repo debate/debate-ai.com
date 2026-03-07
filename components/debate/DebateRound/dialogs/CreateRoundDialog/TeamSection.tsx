@@ -14,10 +14,10 @@ import { Label } from "@/components/ui/label"
 import { Autocomplete } from "@/components/ui/autocomplete"
 
 async function fetchSchools(q: string): Promise<string[]> {
-  const data = await grab(`/api/schools?q=${encodeURIComponent(q)}&limit=10`)
-  return data.results ?? []
+  const result = await grab(`/api/schools?q=${encodeURIComponent(q)}&limit=10`)
+  return result?.data?.results ?? []
 }
-import { debateStyles, debateStyleMap } from "@/components/debate/DebateRound/DebateTimer/debate-format-times"
+import { debateStyles, debateStyleMap } from "@/components/debate/DebateTimer/debate-format-times"
 import { IconAffBubble, IconNegBubble } from "@/components/icons"
 import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "@/lib/state/myTeamProfile"
 import type { Round } from "@/lib/types/debate"

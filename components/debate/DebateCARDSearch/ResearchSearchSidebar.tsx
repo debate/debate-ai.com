@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, X, ChevronDown, ChevronUp } from "lucide-react"
 import { SearchResultCard } from "./SearchResultCard"
 import { Button } from "@/components/ui/button"
-import type { SearchResult } from "@/components/debate/SharedResearch/types"
+import type { SearchResult } from "@/components/debate/DebateCARDSearch/types"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { Autocomplete } from "@/components/ui/autocomplete"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -21,19 +21,19 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 const limit = 20;
 
 async function fetchSchools(q: string): Promise<string[]> {
-  const { results } = await grab('schools', {
+  const result = await grab('schools', {
     q,
     limit
   })
-  return results ?? []
+  return result?.data?.results ?? []
 }
 
 async function fetchTournaments(q: string): Promise<string[]> {
-  const { results } = await grab('tournaments', {
+  const result = await grab('tournaments', {
     q,
     limit
   })
-  return results ?? []
+  return result?.data?.results ?? []
 }
 
 export interface SearchFilters {

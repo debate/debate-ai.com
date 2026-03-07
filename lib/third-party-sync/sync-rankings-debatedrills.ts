@@ -98,13 +98,15 @@ export async function scrapeDivision({
   fallbackUrl,
 }: DatasetConfig): Promise<LeaderboardEntry[]> {
   try {
-    let csvText = await grab(url);
+    const result = await grab(url);
+    let csvText = result.data;
 
-    if (csvText.error && fallbackUrl) {
-      csvText = await grab(fallbackUrl);
+    if (result.error && fallbackUrl) {
+      const fallbackResult = await grab(fallbackUrl);
+      csvText = fallbackResult.data;
     }
 
-    if (csvText.error) {
+    if (!csvText) {
       return [];
     }
 

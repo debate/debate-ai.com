@@ -290,6 +290,7 @@ export function DebateVideosPage() {
           controlledYear={lbYear}
           onControlledDivisionChange={setLbDivision}
           onControlledYearChange={setLbYear}
+          history={state.debateVideos?.history}
         />
       </div>
     )

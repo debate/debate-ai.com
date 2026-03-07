@@ -1,7 +1,7 @@
 import {
   debateStyles,
   debateStyleMap,
-} from "../../components/debate/DebateRound/DebateTimer/debate-format-times";
+} from "../../components/debate/DebateTimer/debate-format-times";
 import type { Flow, Box } from "@/lib/types/debate";
 
 export function newBox(index: number, level: number, focus = false): Box {

@@ -36,7 +36,6 @@ import { TRANSFORMERS, $convertFromMarkdownString, $convertToMarkdownString } fr
 import { cn } from "@/lib/utils"
 import { UnifiedMarkdown } from "./unified-markdown"
 import { LexicalQuotesPlugin } from "./LexicalQuotesPlugin"
-import { QuoteView } from "./QuoteView"
 import { Bold, Italic, Underline, Strikethrough, Code, Undo2, Redo2, List, ListOrdered } from "lucide-react"
 
 marked.setOptions({
@@ -610,39 +609,39 @@ export const MarkdownEditor = memo(function MarkdownEditor({
         <LinkPlugin />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
 
-        <LexicalQuotesPlugin
-          fileName={fileName}
-          active={viewMode === "quotes"}
-          viewMode={viewMode}
-        />
+        {viewMode === "quotes" && (
+          <div className="flex-1 overflow-auto">
+            <LexicalQuotesPlugin
+              fileName={fileName}
+              active={true}
+              viewMode={viewMode}
+            />
+          </div>
+        )}
 
         <div className="flex-1 overflow-auto" style={{ display: viewMode === "quotes" ? "none" : undefined }}>
           <div className={cn("mx-auto px-6 pb-12 max-w-4xl", `mode-${viewMode}`)}>
-            {viewMode === "quotes" ? (
-              <QuoteView html={editorSyncState.currentHtml} fileName={fileName} active={true} />
-            ) : (
-              <div
-                className={cn(
-                  "tiptap-editor editor pt-6 relative min-h-[300px]",
-                  viewMode === "highlighted" && "highlighted",
-                  viewMode === "underlined" && "underlined",
-                  viewMode === "headings" && "headings",
-                )}
-              >
-                <RichTextPlugin
-                  contentEditable={
-                    <ContentEditable
-                      className={cn(
-                        "min-h-[300px] outline-none prose prose-sm max-w-none focus:outline-none",
-                        viewMode !== "read" && viewMode,
-                      )}
-                    />
-                  }
-                  placeholder={<div className="text-muted-foreground/50">{placeholder}</div>}
-                  ErrorBoundary={LexicalErrorBoundary}
-                />
-              </div>
-            )}
+            <div
+              className={cn(
+                "tiptap-editor editor pt-6 relative min-h-[300px]",
+                viewMode === "highlighted" && "highlighted",
+                viewMode === "underlined" && "underlined",
+                viewMode === "headings" && "headings",
+              )}
+            >
+              <RichTextPlugin
+                contentEditable={
+                  <ContentEditable
+                    className={cn(
+                      "min-h-[300px] outline-none prose prose-sm max-w-none focus:outline-none",
+                      viewMode !== "read" && viewMode,
+                    )}
+                  />
+                }
+                placeholder={<div className="text-muted-foreground/50">{placeholder}</div>}
+                ErrorBoundary={LexicalErrorBoundary}
+              />
+            </div>
           </div>
         </div>
       </LexicalComposer>

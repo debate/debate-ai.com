@@ -20,7 +20,7 @@ import {
     useState,
 } from "react"
 import * as SliderPrimitive from "@radix-ui/react-slider"
-import { Check, Gauge, PauseIcon, PlayIcon, Snail } from "lucide-react"
+import { Check, Gauge, PauseIcon, PlayIcon, AlarmClockMinus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -578,7 +578,7 @@ export function AudioPlayerSpeed({
                     aria-label="Playback speed"
                     {...props}
                 >
-                    <Snail className="size-4" />
+                    <AlarmClockMinus className="size-4" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-[120px]">

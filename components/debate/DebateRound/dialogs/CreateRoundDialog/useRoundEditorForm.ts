@@ -12,7 +12,7 @@ import { settings } from "@/lib/state/settings";
 import {
   debateStyles,
   debateStyleMap,
-} from "@/components/debate/DebateRound/DebateTimer/debate-format-times";
+} from "@/components/debate/DebateTimer/debate-format-times";
 
 /** Return type of the {@link useRoundEditorForm} hook. */
 export interface RoundEditorFormState {

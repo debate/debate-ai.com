@@ -10,7 +10,7 @@ import { settings } from "@/lib/state/settings";
 import {
   debateStyles,
   debateStyleMap,
-} from "@/components/debate/DebateRound/DebateTimer/debate-format-times";
+} from "@/components/debate/DebateTimer/debate-format-times";
 import type { DebateStyle, SpeechTimerState, TimerState } from "@/lib/types/debate";
 
 /** Describes the currently running timer (if any) for the header display. */

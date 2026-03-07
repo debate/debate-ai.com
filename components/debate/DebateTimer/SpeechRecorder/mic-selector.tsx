@@ -28,7 +28,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { LiveWaveform } from "@/components/debate/DebateRound/SpeechRecorder/live-waveform"
+import { LiveWaveform } from "@/components/debate/DebateTimer/SpeechRecorder/live-waveform"
 
 // ---------------------------------------------------------------------------
 // Types
