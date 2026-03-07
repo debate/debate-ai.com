@@ -10,9 +10,11 @@ import { Autocomplete } from "@/components/ui/autocomplete"
 import { ROUND_LEVELS } from "./constants"
 import { settings } from "@/lib/state/settings"
 import type { RadioSetting } from "@/lib/types/settings"
-import { searchTournaments } from "@/lib/debate-data/client-cache"
+import { searchTournaments } from "@/lib/state/client-cache"
 
 const TOURNAMENT_SUGGESTION_LIMIT = 10
+const TOURNAMENT_DROPDOWN_CLASS = "right-auto w-[12rem]"
+const TOURNAMENT_OPTION_CLASS = "!px-0"
 
 /** Props for {@link TournamentSection}. */
 interface TournamentSectionProps {
@@ -53,6 +55,8 @@ export function TournamentSection({
           value={tournamentName}
           onChange={setTournamentName}
           fetchOptions={(q) => searchTournaments(q, TOURNAMENT_SUGGESTION_LIMIT)}
+          dropdownClassName={TOURNAMENT_DROPDOWN_CLASS}
+          optionClassName={TOURNAMENT_OPTION_CLASS}
         />
       </div>
       {/* Round Level */}

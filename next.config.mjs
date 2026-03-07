@@ -6,22 +6,22 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  transpilePackages: ['react-resizable-panels'],
+  transpilePackages: ["react-resizable-panels"],
   turbopack: {
     rules: {
-      '*.mp3': { loaders: ['file-loader'], as: '*.js' },
+      "*.mp3": { loaders: ["file-loader"], as: "*.js" },
     },
   },
   webpack(config) {
     config.module.rules.push({
       test: /\.(ogg|mp3|wav|mpe?g)$/i,
-      type: 'asset/resource',
+      type: "asset/resource",
       generator: {
-        filename: 'static/chunks/[path][name].[hash][ext]',
+        filename: "static/chunks/[path][name].[hash][ext]",
       },
-    })
-    return config
+    });
+    return config;
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

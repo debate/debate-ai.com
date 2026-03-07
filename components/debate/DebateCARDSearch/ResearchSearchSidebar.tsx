@@ -8,16 +8,18 @@
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, X, ChevronDown, ChevronUp } from "lucide-react"
+import { Search, X, ChevronDown, ChevronUp, Scale, ListTree, Quote } from "lucide-react"
 import { SearchResultCard } from "./SearchResultCard"
 import { Button } from "@/components/ui/button"
 import type { SearchResult } from "@/components/debate/DebateCARDSearch/types"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { Autocomplete } from "@/components/ui/autocomplete"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { searchSchools, searchTournaments } from "@/lib/debate-data/client-cache"
+import { searchSchools, searchTournaments } from "@/lib/state/client-cache"
 
 const SUGGESTION_LIMIT = 20
+const SEARCH_DROPDOWN_CLASS = "right-auto w-[14rem]"
+const SEARCH_OPTION_CLASS = "!px-0"
 
 export interface SearchFilters {
   year: string
@@ -52,9 +54,9 @@ interface ResearchSearchSidebarProps {
 const MULTISELECT_SEARCH_KEYS = ["searchHighlighted", "searchUnderlined", "searchSummaries", "searchAllText"] as const
 
 const TOGGLE_BAR_ITEMS = [
-  { key: "searchRoundSpeeches" as const, label: "Debates", tooltip: "Show recent rounds" },
-  { key: "searchOutlines" as const, label: "Outlines", tooltip: "Show recent outlines" },
-  { key: "searchQuotes" as const, label: "Quotes", tooltip: "Show recent quotes" },
+  { key: "searchRoundSpeeches" as const, label: "Debates", tooltip: "Show recent rounds", icon: Scale },
+  { key: "searchOutlines" as const, label: "Outlines", tooltip: "Show recent outlines", icon: ListTree },
+  { key: "searchQuotes" as const, label: "Quotes", tooltip: "Show recent quotes", icon: Quote },
 ]
 
 const RECENT_CHIPS = [
@@ -77,7 +79,7 @@ export function ResearchSearchSidebar({
   isLoading,
   onClose,
 }: ResearchSearchSidebarProps) {
-  const [showMoreFilters, setShowMoreFilters] = useState(false)
+  const [showMoreFilters, setShowMoreFilters] = useState(true)
 
   const updateFilter = (key: keyof SearchFilters, value: string | boolean) => {
     setFilters({ ...filters, [key]: value })
@@ -90,33 +92,33 @@ export function ResearchSearchSidebar({
   const activeFilterCount = Object.values(filters).filter((v) => v && v !== "all").length
 
   return (
-    <div className="w-full md:w-80 h-full flex flex-col border-r bg-background">
-      <div className="p-3 border-b space-y-2">
-        {/* Mobile header */}
-        <div className="flex items-center justify-between md:hidden mb-2">
-          <h2 className="font-semibold text-lg">Search</h2>
-          {onClose && (
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-5 w-5" />
-            </Button>
-          )}
-        </div>
+    <div className="w-full h-full flex flex-col border-r bg-background overflow-hidden min-w-0">
+      <TooltipProvider>
+        <div className="p-3 border-b space-y-2">
+          {/* Mobile header */}
+          <div className="flex items-center justify-between md:hidden mb-2">
+            <h2 className="font-semibold text-lg">Search</h2>
+            {onClose && (
+              <Button variant="ghost" size="icon" onClick={onClose}>
+                <X className="h-5 w-5" />
+              </Button>
+            )}
+          </div>
 
-        {/* Search input */}
-        <div className="relative">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search debates, outlines, quotes..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
-        </div>
+          {/* Search input */}
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search debates, outlines, and quotes..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8"
+            />
+          </div>
 
-        {/* Toggle bar: Outlines | Speeches | Quotes */}
-        <TooltipProvider>
+          {/* Toggle bar: Outlines | Speeches | Quotes */}
           <div className="flex rounded-md border overflow-hidden">
-            {TOGGLE_BAR_ITEMS.map(({ key, label, tooltip }) => {
+            {TOGGLE_BAR_ITEMS.map(({ key, label, tooltip, icon: Icon }) => {
               const isActive = filters[key]
               return (
                 <Tooltip key={key}>
@@ -129,11 +131,12 @@ export function ResearchSearchSidebar({
                         newFilters[key] = newActive
                         setFilters(newFilters)
                       }}
-                      className={`flex-1 h-7 text-xs border-r last:border-r-0 transition-colors ${isActive
+                      className={`flex-1 h-7 text-xs border-r last:border-r-0 transition-colors flex items-center justify-center ${isActive
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                         }`}
                     >
+                      <Icon className="h-3.5 w-3.5 mr-1" />
                       {label}
                     </button>
                   </TooltipTrigger>
@@ -142,11 +145,9 @@ export function ResearchSearchSidebar({
               )
             })}
           </div>
-        </TooltipProvider>
 
-
-        {/* Advanced toggle */}
-        <Button
+          {/* Advanced toggle */}
+          {/* <Button
           variant="ghost"
           size="sm"
           className="h-7 text-xs px-2 w-full justify-start"
@@ -159,115 +160,172 @@ export function ResearchSearchSidebar({
               {activeFilterCount}
             </span>
           )}
-        </Button>
+        </Button> */}
 
-        {/* Advanced filters (hidden by default) */}
-        {showMoreFilters && (
-          <div className="space-y-2">
-            <div className="flex flex-row gap-1">
+          {/* Advanced filters (hidden by default) */}
+          {showMoreFilters && (
+            <div className="space-y-2">
+              <div className="flex flex-row flex-wrap gap-1">
 
-              {/* Sort — moved into advanced */}
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="_text_match:desc">Relevance</SelectItem>
-                  <SelectItem value="readCount:desc">Most Read</SelectItem>
-                  <SelectItem value="year:asc">Oldest</SelectItem>
-                  <SelectItem value="year:desc">Newest</SelectItem>
-                  <SelectItem value="highlightLength:asc">Shortest</SelectItem>
-                  <SelectItem value="highlightLength:desc">Longest</SelectItem>
-                </SelectContent>
-              </Select>
+                {/* Sort — moved into advanced */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger className="h-8 text-xs">
+                          <SelectValue placeholder="Sort by" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="_text_match:desc">Relevance</SelectItem>
+                          <SelectItem value="readCount:desc">Most Read</SelectItem>
+                          <SelectItem value="year:asc">Oldest</SelectItem>
+                          <SelectItem value="year:desc">Newest</SelectItem>
+                          <SelectItem value="highlightLength:asc">Shortest</SelectItem>
+                          <SelectItem value="highlightLength:desc">Longest</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Sort results by relevance, popularity, date, or length</TooltipContent>
+                </Tooltip>
 
-              <Select value={filters.year || "all"} onValueChange={(v) => updateFilter("year", v === "all" ? "" : v)}>
-                <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="Season" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Seasons</SelectItem>
-                  {years.map((y) => (
-                    <SelectItem key={y} value={y}>
-                      {Number(y) - 1}-{y}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={filters.event || "all"} onValueChange={(v) => updateFilter("event", v)}>
-                <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="CX">CX</SelectItem>
-                  <SelectItem value="PF">PF</SelectItem>
-                  <SelectItem value="LD">LD</SelectItem>
-                  <SelectItem value="NDT">NDT</SelectItem>
-                  <SelectItem value="NFA">NFA</SelectItem>
-                </SelectContent>
-              </Select>
+                {/* Search in: Highlighted / Underlined / Summaries / All Text */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="w-[120px]">
+                      <MultiSelect
+                        label="Search in"
+                        className="w-full"
+                        placeholder="Search in"
+                        options={[
+                          { value: "searchHighlighted", label: "Highlight" },
+                          { value: "searchUnderlined", label: "Underlined" },
+                          { value: "searchSummaries", label: "Summaries" },
+                          { value: "searchTitles", label: "Blocks" },
+                          { value: "searchAllText", label: "All" },
+                        ]}
+                        selected={MULTISELECT_SEARCH_KEYS.filter((k) => filters[k] === true)}
+                        onChange={(selectedKeys) => {
+                          const newFilters = { ...filters }
+                          MULTISELECT_SEARCH_KEYS.forEach((key) => {
+                            newFilters[key] = false
+                          })
+                          selectedKeys.forEach((key) => {
+                            if (key in newFilters) {
+                              ; (newFilters as any)[key] = true
+                            }
+                          })
+                          setFilters(newFilters)
+                        }}
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Choose which parts of evidence to search</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <Select value={filters.year || "all"} onValueChange={(v) => updateFilter("year", v === "all" ? "" : v)}>
+                        <SelectTrigger className="h-8 w-[65px] text-xs">
+                          <SelectValue placeholder="Season" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Seasons</SelectItem>
+                          {years.map((y) => (
+                            <SelectItem key={y} value={y}>
+                              {Number(y) - 1}-{y}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Filter by debate season year</TooltipContent>
+                </Tooltip>
+
+              </div>
+
+              <div className="flex flex-row flex-wrap gap-1">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="w-[70px]">
+                      <Autocomplete
+                        placeholder="School"
+                        value={filters.school}
+                        onChange={(v) => updateFilter("school", v)}
+                        fetchOptions={(q) => searchSchools(q, SUGGESTION_LIMIT)}
+                        className="h-8 w-full text-xs"
+                        dropdownClassName={SEARCH_DROPDOWN_CLASS}
+                        optionClassName={SEARCH_OPTION_CLASS}
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Search by school or university name</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Input
+                      placeholder="Name"
+                      value={filters.team}
+                      onChange={(e) => updateFilter("team", e.target.value)}
+                      className="h-8 w-[70px] text-xs"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Search by debater&apos;s first or last name</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex-1">
+                      <Autocomplete
+                        placeholder="Tourney"
+                        value={filters.tournament}
+                        onChange={(v) => updateFilter("tournament", v)}
+                        fetchOptions={(q) => searchTournaments(q, SUGGESTION_LIMIT)}
+                        className="h-8 w-full text-xs"
+                        dropdownClassName={SEARCH_DROPDOWN_CLASS}
+                        optionClassName={SEARCH_OPTION_CLASS}
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Filter by tournament name</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <Select value={filters.event || "all"} onValueChange={(v) => updateFilter("event", v)}>
+                        <SelectTrigger className="h-8 text-xs">
+                          <SelectValue placeholder="Format" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All</SelectItem>
+                          <SelectItem value="CX">CX</SelectItem>
+                          <SelectItem value="PF">PF</SelectItem>
+                          <SelectItem value="LD">LD</SelectItem>
+                          <SelectItem value="NDT">NDT</SelectItem>
+                          <SelectItem value="NFA">NFA</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Filter by debate format (CX, PF, LD, etc.)</TooltipContent>
+                </Tooltip>
+              </div>
+
+
+
+
             </div>
-
-            <div className="flex flex-row gap-1">
-              <Autocomplete
-                placeholder="School"
-                value={filters.school}
-                onChange={(v) => updateFilter("school", v)}
-                fetchOptions={(q) => searchSchools(q, SUGGESTION_LIMIT)}
-                className="h-8 text-xs"
-              />
-              <Input
-                placeholder="Debater"
-                value={filters.team}
-                onChange={(e) => updateFilter("team", e.target.value)}
-                className="h-8 text-xs"
-              />
-              <Autocomplete
-                placeholder="Tournament"
-                value={filters.tournament}
-                onChange={(v) => updateFilter("tournament", v)}
-                fetchOptions={(q) => searchTournaments(q, SUGGESTION_LIMIT)}
-                className="h-8 text-xs"
-              />
-            </div>
-
-            {/* Search in: Highlighted / Underlined / Summaries / All Text */}
-            <MultiSelect
-              label="Search in"
-              placeholder="Search in"
-              options={[
-                { value: "searchHighlighted", label: "Highlighted" },
-                { value: "searchUnderlined", label: "Underlined" },
-                { value: "searchSummaries", label: "Summaries" },
-                { value: "searchTitles", label: "Block & Filename" },
-                { value: "searchAllText", label: "All Text" },
-              ]}
-              selected={MULTISELECT_SEARCH_KEYS.filter((k) => filters[k] === true)}
-              onChange={(selectedKeys) => {
-                const newFilters = { ...filters }
-                MULTISELECT_SEARCH_KEYS.forEach((key) => {
-                  newFilters[key] = false
-                })
-                selectedKeys.forEach((key) => {
-                  if (key in newFilters) {
-                    ; (newFilters as any)[key] = true
-                  }
-                })
-                setFilters(newFilters)
-              }}
-            />
-
-
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </TooltipProvider>
 
       {/* Results count + list */}
-      <div className="px-3 py-1.5 text-xs text-muted-foreground flex justify-between border-b">
+      {/* <div className="px-3 py-1.5 text-xs text-muted-foreground flex justify-between border-b">
         <span>{(searchResults?.length || 0)} shown</span>
         <span>{totalResults} total</span>
-      </div>
+      </div> */}
 
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {isLoading ? (

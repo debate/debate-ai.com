@@ -19,6 +19,8 @@ interface AutocompleteProps {
   placeholder?: string
   className?: string
   disabled?: boolean
+  dropdownClassName?: string
+  optionClassName?: string
 }
 
 /**
@@ -26,7 +28,17 @@ interface AutocompleteProps {
  * Selecting a suggestion fills the input; typing anything not in the list is kept as-is on blur.
  * Pass `fetchOptions` for async/server-side searching (skips client-side filtering).
  */
-export function Autocomplete({ value, onChange, options = [], fetchOptions, placeholder, className, disabled }: AutocompleteProps) {
+export function Autocomplete({
+  value,
+  onChange,
+  options = [],
+  fetchOptions,
+  placeholder,
+  className,
+  disabled,
+  dropdownClassName,
+  optionClassName,
+}: AutocompleteProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState(value)
   const [asyncOptions, setAsyncOptions] = useState<string[]>([])
@@ -90,20 +102,26 @@ export function Autocomplete({ value, onChange, options = [], fetchOptions, plac
         className={className}
       />
       {open && filtered.length > 0 && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 rounded-md border bg-popover shadow-md overflow-hidden">
-          {filtered.map((school) => {
-            const isSelected = value === school
-            return (
-              <button
-                key={school}
-                type="button"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => handleSelect(school)}
-                className={cn(
-                  "flex w-full items-center gap-1.5 px-2 py-1 text-xs text-left hover:bg-accent hover:text-accent-foreground transition-colors",
-                  isSelected && "bg-accent/50",
-                )}
-              >
+      <div
+        className={cn(
+          "absolute top-full left-0 right-0 z-50 mt-1 rounded-md border bg-popover shadow-md overflow-hidden",
+          dropdownClassName,
+        )}
+      >
+        {filtered.map((school) => {
+          const isSelected = value === school
+          return (
+            <button
+              key={school}
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => handleSelect(school)}
+              className={cn(
+                "flex w-full items-center gap-1.5 px-2 py-1 text-xs text-left hover:bg-accent hover:text-accent-foreground transition-colors",
+                optionClassName,
+                isSelected && "bg-accent/50",
+              )}
+            >
                 {isSelected ? (
                   <Check className="h-3 w-3 shrink-0 text-primary" />
                 ) : (

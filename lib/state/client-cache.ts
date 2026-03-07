@@ -53,7 +53,7 @@ async function loadSchools(): Promise<SchoolsPayload> {
   return cachedSchools;
 }
 
-function buildFuse(list: string[], existing?: Fuse<string>): Fuse<string> {
+function buildFuse(list: string[], existing: Fuse<string> | null | undefined): Fuse<string> {
   if (existing) return existing;
   return new Fuse(list, {
     threshold: 0.4,

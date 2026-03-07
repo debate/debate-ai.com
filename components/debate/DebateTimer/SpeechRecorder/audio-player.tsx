@@ -589,7 +589,7 @@ export function AudioPlayerSpeed({
                         className="flex items-center justify-between"
                     >
                         <span className={speed === 1 ? "" : "font-mono"}>
-                            {speed === 1 ? "Normal" : `${speed}x`}
+                            {speed === 1 ? "Normal" : `${speed*100}% Speed  `}
                         </span>
                         {currentSpeed === speed && <Check className="size-4" />}
                     </DropdownMenuItem>

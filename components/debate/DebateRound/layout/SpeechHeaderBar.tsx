@@ -21,6 +21,7 @@ import { SpeechTimer } from "../../DebateTimer/SpeechTimer"
 import { MicSelector } from "../../DebateTimer/SpeechRecorder/mic-selector"
 import { debateStyles, debateStyleMap } from "../../DebateTimer/debate-format-times"
 import { settings } from "@/lib/state/settings"
+import { cn } from "@/lib/utils"
 
 /** Resolve which debater email corresponds to a given speech column name. */
 function getSpeakerEmail(speechName: string, round: Round): string {
@@ -105,8 +106,30 @@ export function SpeechHeaderBar({ speechName, onOpenSpeechPanel }: SpeechHeaderB
   const timerDone = timerState.name === "done" || time <= 0
   const hideTimer = hasLongRecording && timerDone
 
+  const speechTeamColor = hasN
+    ? "bg-red-500 dark:bg-red-400"
+    : hasA
+      ? "bg-blue-500 dark:bg-blue-400"
+      : "bg-blue-500 dark:bg-blue-400"
+
+  const totalSpeechTimeMs = defaultTimeMs
+  const progressPercent = totalSpeechTimeMs > 0
+    ? Math.min(1, Math.max(0, (totalSpeechTimeMs - time) / totalSpeechTimeMs))
+    : 0
+  const progressActive = timerState.name === "running" && totalSpeechTimeMs > 0
+  const indicatorWidthPercent = progressActive
+    ? Math.min(Math.max(progressPercent * 100, 2), 100)
+    : 0
+
   return (
     <div className="flex flex-col w-full h-full overflow-hidden py-1 px-2 gap-0.5">
+      <div className="w-full h-[5px] rounded-full bg-border/40 overflow-hidden">
+        <div
+          className={cn("h-full rounded-full transition-all duration-200 ease-linear", speechTeamColor)}
+          style={{ width: `${indicatorWidthPercent}%`, opacity: indicatorWidthPercent === 0 ? 0 : 1 }}
+          aria-hidden="true"
+        />
+      </div>
       {/* Row 1: name · email · controls */}
       <div className="flex items-center gap-1 w-full overflow-hidden min-w-0">
         {/* Speech name */}

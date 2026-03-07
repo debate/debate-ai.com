@@ -15,9 +15,11 @@ import { debateStyles, debateStyleMap } from "@/components/debate/DebateTimer/de
 import { IconAffBubble, IconNegBubble } from "@/components/icons"
 import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "@/lib/state/myTeamProfile"
 import type { Round } from "@/components/debate/DebateRound/types"
-import { searchSchools } from "@/lib/debate-data/client-cache"
+import { searchSchools } from "@/lib/state/client-cache"
 
 const SCHOOL_SUGGESTION_LIMIT = 10
+const SCHOOL_DROPDOWN_CLASS = "right-auto w-[14rem]"
+const SCHOOL_OPTION_CLASS = "!px-0"
 
 /** Props for {@link TeamSection}. */
 interface TeamSectionProps {
@@ -96,6 +98,8 @@ function ConfigPanel({ profile, onSave, onClose, isOnePerson }: ConfigPanelProps
         onChange={setSchool}
         fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
         className="h-7 text-xs"
+        dropdownClassName={SCHOOL_DROPDOWN_CLASS}
+        optionClassName={SCHOOL_OPTION_CLASS}
       />
       <Input
         type="email"
@@ -240,6 +244,8 @@ export function TeamSection({
             value={affSchool}
             onChange={setAffSchool}
             fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
+            dropdownClassName={SCHOOL_DROPDOWN_CLASS}
+            optionClassName={SCHOOL_OPTION_CLASS}
           />
           <Input
             id="aff-debater-1"
@@ -286,6 +292,8 @@ export function TeamSection({
             value={negSchool}
             onChange={setNegSchool}
             fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
+            dropdownClassName={SCHOOL_DROPDOWN_CLASS}
+            optionClassName={SCHOOL_OPTION_CLASS}
           />
           <Input
             id="neg-debater-1"

@@ -7,7 +7,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import grab from "grab-url"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronDown, ChevronUp, Trophy, BookOpen } from "lucide-react"
 
@@ -56,7 +55,7 @@ export function IntroTextOverview() {
         </div>
 
         <div className="text-center space-y-2 max-w-2xl">
-          <p className="text-muted-foreground font-medium tracking-wide text-sm md:text-gray-400 [font-variant:small-caps]">
+          <p className="text-muted-foreground font-bold tracking-wide text-lg md:text-gray-400 [font-variant:small-caps]">
             Crowdsourced Annotated Research for Debates - Search
           </p>
         </div>
@@ -114,13 +113,13 @@ export function IntroTextOverview() {
 
       <Card className="shadow-sm border-l-4 border-l-blue-500">
         <CardContent className="p-6">
-          <p className="text-gray-400 text-muted-foreground leading-relaxed">
+          <div className="text-gray-400 text-muted-foreground leading-relaxed">
             <div className="space-y-8 text-gray-100 leading-relaxed">
-              <ol className="list-decimal list-inside space-y-6">
+              <ol className="list-decimal list-inside space-y-2">
                 <li>
-                  <div className="font-bold text-lg text-blue-400 mb-3  [font-variant:small-caps] tracking-wider text-sm">1. The Debate Singularity</div>
+                  <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">1. The Debate Singularity is Happening</div>
                   <p className="text-gray-400 leading-relaxed">
-                    The Debate Singularity has arrived: AI now researches topics in depth, highlights key quotes, frames both sides
+                    AI now researches topics in depth, highlights key quotes, frames both sides
                     of arguments, coaches preparation, exposes flaws in evidence cards, and crafts strategic closing speeches that
                     compare competing claims. Integrating AI into debate unlocks the next stage of emergent complexity in
                     socio-political governance.
@@ -128,7 +127,7 @@ export function IntroTextOverview() {
                 </li>
 
                 <li>
-                  <div className="font-bold text-lg text-blue-400 mb-3  [font-variant:small-caps] tracking-wider text-sm">2. Collective Thought Engine</div>
+                  <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">2. Collective Thought Engine</div>
                   <p className="text-gray-400 leading-relaxed">
                     Language Models can distill collective thought into a vector space where every point carries a weighted value,
                     reflecting its contribution to decision-making. This collective AI consciousness can synthesize complex
@@ -143,7 +142,7 @@ export function IntroTextOverview() {
                 </li>
 
                 <li>
-                  <div className="font-bold text-lg text-blue-400 mb-3  [font-variant:small-caps] tracking-wider text-sm">3. Transparent Reasoning</div>
+                  <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">3. Transparent Reasoning</div>
                   <p className="text-gray-400 leading-relaxed">
                     AI reveals the exact sentences and citations behind its reasoning, allowing users to verify alignment with
                     collective interests through sentence-by-sentence interpretability.
@@ -151,7 +150,7 @@ export function IntroTextOverview() {
                 </li>
 
                 <li>
-                  <div className="font-bold text-lg text-blue-400 mb-3  [font-variant:small-caps] tracking-wider text-sm">4. Outcome Simulation Trees</div>
+                  <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">4. Outcome Simulation Trees</div>
                   <p className="text-gray-400 leading-relaxed">
                     Users can engage in multiple AI-powered practice rounds that map trees of possible outcomes and responses,
                     surfacing the most persuasive strategies across diverse contexts.
@@ -159,7 +158,7 @@ export function IntroTextOverview() {
                 </li>
 
                 <li>
-                  <div className="font-bold text-lg text-blue-400 mb-3  [font-variant:small-caps] tracking-wider text-sm">5. Outlines of Current News Issues</div>
+                  <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">5. Outlines of Current News Issues</div>
                   <p className="text-gray-400 leading-relaxed">
                     Each debate card fits into a broader narrative—a topic tree linking evidence, assumptions, and values within a
                     collective framework. This transformation shifts debate from isolated rounds to a shared model of
@@ -168,18 +167,20 @@ export function IntroTextOverview() {
                 </li>
 
                 <li>
-                  <div className="font-bold text-lg text-blue-400 mb-3  [font-variant:small-caps] tracking-wider text-sm">6. Solving AI Alignment</div>
+                  <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">6. Solving Post-Self Alignment</div>
                   <p className="text-gray-400 leading-relaxed">
-                    Recognizing the interconnectedness of arguments mirrors how we should relate to global citizens as part of an emergent collective
+                    Recognizing the interconnectedness of research articles mirrors how we should relate to global citizens as part of an emergent collective
                     consciousness. Losing sight of that bigger picture fuels bias, tribalism, and division at the root of modern conflicts
-                    between two isolated groups on a news issue. Only by mapping the whole
-                    and seeing how each idea fits can we set a socio-polical model to  build empathy, inclusion, and ethical awareness across both discourse and
-                    society.
+                    between isolated social news bubbles. Only by mapping the whole internet as a debate outline
+                    enables seeing how each idea fits into a whole greater than the sum of its parts.  This  set a socio-polical model to  build synergistic
+                    consciousness ethical awareness across both discourse and institutional governance.  This can reduce LLM hallucination and steer alignment with common social values as AI gains capacity to replace human leaders of organizations.
+
+
                   </p>
                 </li>
 
                 <li>
-                  <div className="font-bold text-lg text-blue-400 mb-3  [font-variant:small-caps] tracking-wider text-sm">7. Topic Research Unified Tree Hierarchy (TRUTH) </div>
+                  <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">7. Topic Research Unified Tree Hierarchy (TRUTH)</div>
                   <p className="text-gray-400 leading-relaxed">
                     Key metadata extracted for LLM analysis allows models to detect logic flaws, flag overstatements, strengthen
                     warrants, and place each claim within the Topic Research Unified Tree Hierarchy (TRUTH). This consensus-driven
@@ -190,7 +191,7 @@ export function IntroTextOverview() {
               </ol>
             </div>
 
-          </p>
+          </div>
         </CardContent>
       </Card>
     </div>
