@@ -13,7 +13,7 @@ import { useRef } from "react"
 import { useFlowStore } from "@/lib/state/store"
 import { newFlow } from "@/lib/utils/flow-utils"
 import { settings } from "@/lib/state/settings"
-import type { Flow } from "@/lib/types/debate"
+import type { Flow } from "@/components/debate/DebateRound/types"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 

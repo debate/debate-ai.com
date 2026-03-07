@@ -6,7 +6,6 @@
 
 
 import { useState } from "react"
-import grab from "grab-url"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, X, ChevronDown, ChevronUp } from "lucide-react"
@@ -16,25 +15,9 @@ import type { SearchResult } from "@/components/debate/DebateCARDSearch/types"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { Autocomplete } from "@/components/ui/autocomplete"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { searchSchools, searchTournaments } from "@/lib/debate-data/client-cache"
 
-//how many results to show for suggestions
-const limit = 20;
-
-async function fetchSchools(q: string): Promise<string[]> {
-  const result = await grab('schools', {
-    q,
-    limit
-  })
-  return result?.data?.results ?? []
-}
-
-async function fetchTournaments(q: string): Promise<string[]> {
-  const result = await grab('tournaments', {
-    q,
-    limit
-  })
-  return result?.data?.results ?? []
-}
+const SUGGESTION_LIMIT = 20
 
 export interface SearchFilters {
   year: string
@@ -231,7 +214,7 @@ export function ResearchSearchSidebar({
                 placeholder="School"
                 value={filters.school}
                 onChange={(v) => updateFilter("school", v)}
-                fetchOptions={fetchSchools}
+                fetchOptions={(q) => searchSchools(q, SUGGESTION_LIMIT)}
                 className="h-8 text-xs"
               />
               <Input
@@ -244,7 +227,7 @@ export function ResearchSearchSidebar({
                 placeholder="Tournament"
                 value={filters.tournament}
                 onChange={(v) => updateFilter("tournament", v)}
-                fetchOptions={fetchTournaments}
+                fetchOptions={(q) => searchTournaments(q, SUGGESTION_LIMIT)}
                 className="h-8 text-xs"
               />
             </div>

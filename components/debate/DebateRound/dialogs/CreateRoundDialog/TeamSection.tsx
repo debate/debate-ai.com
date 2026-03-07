@@ -8,19 +8,16 @@
 import { useState } from "react"
 import Image from "next/image"
 import { Settings2 } from "lucide-react"
-import grab from "grab-url"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Autocomplete } from "@/components/ui/autocomplete"
-
-async function fetchSchools(q: string): Promise<string[]> {
-  const result = await grab(`/api/schools?q=${encodeURIComponent(q)}&limit=10`)
-  return result?.data?.results ?? []
-}
 import { debateStyles, debateStyleMap } from "@/components/debate/DebateTimer/debate-format-times"
 import { IconAffBubble, IconNegBubble } from "@/components/icons"
 import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "@/lib/state/myTeamProfile"
-import type { Round } from "@/lib/types/debate"
+import type { Round } from "@/components/debate/DebateRound/types"
+import { searchSchools } from "@/lib/debate-data/client-cache"
+
+const SCHOOL_SUGGESTION_LIMIT = 10
 
 /** Props for {@link TeamSection}. */
 interface TeamSectionProps {
@@ -97,7 +94,7 @@ function ConfigPanel({ profile, onSave, onClose, isOnePerson }: ConfigPanelProps
         placeholder="School"
         value={school}
         onChange={setSchool}
-        fetchOptions={fetchSchools}
+        fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
         className="h-7 text-xs"
       />
       <Input
@@ -242,7 +239,7 @@ export function TeamSection({
             placeholder="School (Optional)"
             value={affSchool}
             onChange={setAffSchool}
-            fetchOptions={fetchSchools}
+            fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
           />
           <Input
             id="aff-debater-1"
@@ -288,7 +285,7 @@ export function TeamSection({
             placeholder="School (Optional)"
             value={negSchool}
             onChange={setNegSchool}
-            fetchOptions={fetchSchools}
+            fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
           />
           <Input
             id="neg-debater-1"

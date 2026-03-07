@@ -7,15 +7,12 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Autocomplete } from "@/components/ui/autocomplete"
-import grab from "grab-url"
 import { ROUND_LEVELS } from "./constants"
 import { settings } from "@/lib/state/settings"
 import type { RadioSetting } from "@/lib/types/settings"
+import { searchTournaments } from "@/lib/debate-data/client-cache"
 
-async function fetchTournaments(q: string): Promise<string[]> {
-  const result = await grab(`tournaments?q=${encodeURIComponent(q)}&limit=10`)
-  return result?.data?.results ?? []
-}
+const TOURNAMENT_SUGGESTION_LIMIT = 10
 
 /** Props for {@link TournamentSection}. */
 interface TournamentSectionProps {
@@ -55,7 +52,7 @@ export function TournamentSection({
           placeholder="Tournament Name"
           value={tournamentName}
           onChange={setTournamentName}
-          fetchOptions={fetchTournaments}
+          fetchOptions={(q) => searchTournaments(q, TOURNAMENT_SUGGESTION_LIMIT)}
         />
       </div>
       {/* Round Level */}

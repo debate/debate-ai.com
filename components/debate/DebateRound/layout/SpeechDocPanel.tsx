@@ -6,7 +6,7 @@ import { X, Quote, Eye, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MarkdownEditor } from "@/components/markdown/markdown-editor"
-import type { Flow } from "@/lib/types/debate"
+import type { Flow } from "@/components/debate/DebateRound/types"
 import type { ViewMode } from "@/lib/types/debate-flow"
 
 /** Props for the SpeechDocPanel component. */

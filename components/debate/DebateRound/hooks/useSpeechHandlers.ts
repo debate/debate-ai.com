@@ -4,7 +4,7 @@
  */
 
 import { useCallback } from "react"
-import type { Flow } from "@/lib/types/debate"
+import type { Flow } from "@/components/debate/DebateRound/types"
 
 
 

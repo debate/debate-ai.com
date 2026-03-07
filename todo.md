@@ -13,3 +13,15 @@ cross-school teams
 ai should summarize the speech trasncritp and suggest answers
 
 see if anyone has cut this card in ext
+
+
+
+DebateOutlineTree - should have two rows and narrow and open to 3 and when hovered over show tags. show info wc and copy to spech
+
+SHORTCUTs keys
+
+
+have the expander toggle thu h1 h2 3h
+
+
+filter outline and tree

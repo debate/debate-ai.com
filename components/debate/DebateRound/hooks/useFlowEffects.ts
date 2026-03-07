@@ -6,7 +6,7 @@
 import { useEffect } from "react"
 import { settings } from "@/lib/state/settings"
 import { cleanupOldSpeechDocs, getStorageInfo } from "@/lib/utils/storage-utils"
-import type { Flow, Round } from "@/lib/types/debate"
+import type { Flow, Round } from "@/components/debate/DebateRound/types"
 
 /**
  * Hook that initializes user settings and loads saved flows and rounds from localStorage.

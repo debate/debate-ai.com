@@ -6,7 +6,7 @@
 
 
 import { useState, useEffect } from "react"
-import type { Round } from "@/lib/types/debate"
+import type { Round } from "@/components/debate/DebateRound/types"
 import { FileText, Share2, Lock, Users, Radio } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {

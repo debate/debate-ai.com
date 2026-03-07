@@ -4,7 +4,7 @@
  * Public Forum, Lincoln Douglas, and others.
  */
 
-import type { DebateStyle, TimerSpeech } from "@/lib/types/debate";
+import type { DebateStyle, TimerSpeech } from "@/components/debate/DebateTimer/types";
 
 
 export const debateStyleMap = [

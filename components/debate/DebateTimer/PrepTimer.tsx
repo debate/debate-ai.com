@@ -15,14 +15,14 @@
  */
 
 import type React from "react"
-import type { TimerState } from "@/lib/types/debate"
+import type { TimerState } from "@/components/debate/DebateTimer/types"
 
 import { useEffect, useRef, useState } from "react"
 import { Play, Pause, RotateCcw } from "lucide-react"
 import useSound from "use-sound"
-import soundPopDown from "@/lib/audio/sound-pop-down.mp3"
-import soundPopUpOn from "@/lib/audio/sound-pop-up-on.mp3"
-import soundPopUpOff from "@/lib/audio/sound-pop-up-off.mp3"
+import soundPopDown from "./timer-sounds/sound-pop-down.mp3"
+import soundPopUpOn from "./timer-sounds/sound-pop-up-on.mp3"
+import soundPopUpOff from "./timer-sounds/sound-pop-up-off.mp3"
 import { playSoundEffect } from "@/components/debate/DebateTimer/timer-sounds/sound-effects"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"

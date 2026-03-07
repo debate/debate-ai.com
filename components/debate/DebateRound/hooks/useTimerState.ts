@@ -11,7 +11,7 @@ import {
   debateStyles,
   debateStyleMap,
 } from "@/components/debate/DebateTimer/debate-format-times";
-import type { DebateStyle, SpeechTimerState, TimerState } from "@/lib/types/debate";
+import type { DebateStyle, SpeechTimerState, TimerState } from "@/components/debate/DebateTimer/types";
 
 /** Describes the currently running timer (if any) for the header display. */
 export type ActiveTimerInfo = {

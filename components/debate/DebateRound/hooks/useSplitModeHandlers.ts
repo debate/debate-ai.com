@@ -4,7 +4,7 @@
  */
 
 import { useCallback, useState } from "react"
-import type { Flow } from "@/lib/types/debate"
+import type { Flow } from "@/components/debate/DebateRound/types"
 
 /**
  * Hook that manages split-view state and provides handlers for navigating

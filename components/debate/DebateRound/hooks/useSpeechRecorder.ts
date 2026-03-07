@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import grab from "grab-url"
-import type { SpeechTimerState } from "@/lib/types/debate"
+import type { SpeechTimerState } from "@/components/debate/DebateTimer/types"
 
 interface UseSpeechRecorderOptions {
   /** Timer state — recording starts/stops in sync with this */

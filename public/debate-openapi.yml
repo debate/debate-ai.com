@@ -153,37 +153,30 @@ paths:
 
   /schools:
     get:
-      operationId: searchSchools
-      summary: Search debate schools by name
+      operationId: listSchools
+      summary: Retrieve the cached list of debate schools
       description: |
-        Fuzzy-searches school names across debate formats (NDT, VLD, NFA, VPF, VCX).
-        Uses Fuse.js for fuzzy matching. Without a query, returns the first N schools alphabetically.
-      parameters:
-        - name: q
-          in: query
-          schema:
-            type: string
-          description: Search query string for fuzzy matching school names.
-        - name: format
-          in: query
-          schema:
-            type: string
-            enum: [ndt, vld, nfa, vpf, vcx]
-          description: Filter results to a specific debate format. Omit to search all formats.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 20
-            maximum: 100
-          description: Maximum number of results to return (capped at 100).
+        Returns the complete school list (plus optional per-format groupings) so clients can cache and localize fuzzy searches.
       responses:
         "200":
-          description: List of matching school names.
+          description: School name dataset for client-side caching.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SearchResults"
+                type: object
+                properties:
+                  all:
+                    type: array
+                    items:
+                      type: string
+                  byFormat:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                  total:
+                    type: integer
 
   /search:
     get:
@@ -304,31 +297,24 @@ paths:
 
   /tournaments:
     get:
-      operationId: searchTournaments
-      summary: Search debate tournaments by name
+      operationId: listTournaments
+      summary: Retrieve the cached list of tournament names
       description: |
-        Fuzzy-searches tournament names using Fuse.js.
-        Without a query, returns the first N tournaments from the dataset.
-      parameters:
-        - name: q
-          in: query
-          schema:
-            type: string
-          description: Search query for fuzzy matching tournament names.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 20
-            maximum: 100
-          description: Maximum number of results to return (capped at 100).
+        Returns the full tournament name dataset so clients can cache it and run local fuzzy searches.
       responses:
         "200":
-          description: List of matching tournament names.
+          description: Tournament name dataset for client-side caching.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SearchResults"
+                type: object
+                properties:
+                  tournaments:
+                    type: array
+                    items:
+                      type: string
+                  total:
+                    type: integer
 
   /videos:
     get:
