@@ -5,11 +5,11 @@
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "scripts": {
-    "dev": "/mnt/data/Projects/grab-url/packages/open-when-ready/open-when-ready.mjs next dev --webpack ",
+    "dev": "open-ready next dev --webpack ",
     "dev:cli": "rm -f .next/port.log; next dev --webpack > .next/port.log 2>&1 & pid=\\$!; sleep 12; if grep -qi 'error|failed|syntaxerror|⨯' .next/port.log; then err=\\$(grep -i -B3 -A10 'error|failed|syntaxerror|⨯' .next/port.log | head -20 | tr '\\\\n' ' ' | sed 's/  */ /g;s/[^a-zA-Z0-9 :.]//g;s/ /%20/g' | cut -c1-100); opener \\\"https://perplexity.ai?q=fix+next.js+\\$err\\\"; else port=\\$(grep -o '[0-9]\\\\+' .next/port.log | tail -1); wait-on \\\"http://localhost:\\$port\\\" && opener http://localhost:\\$port; fi; rm .next/port.log; kill \\$pid 2>/dev/null",
     "build": "next build --webpack",
     "dev:open": "concurrently \"next dev --webpack | tee .next/port.log\" \"bash -c 'sleep 5; PORT=\\$(grep -io \\\"localhost:[0-9]*\\\" .next/port.log | grep -o [0-9]* | tail -1); wait-on \\\"http://127.0.0.1:\\$PORT\\\" && opener http://localhost:\\$PORT || rm .next/port.log; rm -f .next/port.log '\" ",
-    "start": "next start",
+    "start": "npx open-ready next start",
     "test": "vitest"
   },
   "dependencies": {
@@ -59,6 +59,8 @@
     "clsx": "^2.1.1",
     "cmdk": "1.1.1",
     "docx-preview": "^0.3.7",
+    "dompurify": "^3.0.8",
+    "file-loader": "^6.2.0",
     "framer-motion": "^12.29.0",
     "fuse.js": "^7.1.0",
     "grab-url": "1.0.20",
@@ -92,7 +94,7 @@
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
     "concurrently": "^9.2.1",
-    "file-loader": "^6.2.0",
+    "open-ready": "^0.1.2",
     "opener": "^1.5.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",

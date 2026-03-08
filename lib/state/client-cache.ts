@@ -2,6 +2,7 @@ import Fuse from "fuse.js";
 
 const TOURNAMENTS_ENDPOINT = "/api/tournaments";
 const SCHOOLS_ENDPOINT = "/api/schools";
+const NAMES_ENDPOINT = "/api/names";
 
 type SchoolsPayload = {
   all: string[];
@@ -17,6 +18,9 @@ let tournamentsFuse: Fuse<string> | null = null;
 
 let cachedSchools: SchoolsPayload | null = null;
 let schoolsFuse: Fuse<string> | null = null;
+
+let cachedNames: string[] | null = null;
+let namesFuse: Fuse<string> | null = null;
 
 async function loadTournaments(): Promise<string[]> {
   if (cachedTournaments) return cachedTournaments;
@@ -78,6 +82,29 @@ export async function searchSchools(query = "", limit = 10): Promise<string[]> {
   }
   schoolsFuse = buildFuse(all, schoolsFuse);
   return schoolsFuse.search(query, { limit }).map((result) => result.item);
+}
+
+async function loadNames(): Promise<string[]> {
+  if (cachedNames) return cachedNames;
+  try {
+    const res = await fetch(NAMES_ENDPOINT);
+    if (!res.ok) throw new Error(`Names API returned ${res.status}`);
+    const data = await res.json();
+    cachedNames = data.names ?? [];
+  } catch (error) {
+    console.error("Unable to load names list:", error);
+    cachedNames = [];
+  }
+  return cachedNames!;
+}
+
+export async function searchNames(query = "", limit = 20): Promise<string[]> {
+  const list = await loadNames();
+  if (!query) {
+    return list.slice(0, limit);
+  }
+  namesFuse = buildFuse(list, namesFuse);
+  return namesFuse.search(query, { limit }).map((result) => result.item);
 }
 
 export async function getSchoolsByFormat(): Promise<Record<string, string[]>> {

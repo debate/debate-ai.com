@@ -7,11 +7,7 @@ const nextConfig = {
     unoptimized: true,
   },
   transpilePackages: ["react-resizable-panels"],
-  turbopack: {
-    rules: {
-      "*.mp3": { loaders: ["file-loader"], as: "*.js" },
-    },
-  },
+  turbopack: {},
   webpack(config) {
     config.module.rules.push({
       test: /\.(ogg|mp3|wav|mpe?g)$/i,

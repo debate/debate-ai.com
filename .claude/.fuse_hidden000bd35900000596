@@ -14,10 +14,7 @@
       "Bash(npx shadcn@latest add:*)",
       "Bash(npm run build:*)",
       "Bash(bun run build:*)",
-      "Bash(npx next build:*)",
-      "Bash(base64 -w0 components/debate/DebateTimer/timer-sounds/sound-pop-up-on.mp3)",
-      "Bash(base64 -w0 components/debate/DebateTimer/timer-sounds/sound-pop-up-off.mp3)",
-      "Bash(ls -la /mnt/data/Projects/debate-ai.com/next.config.* /mnt/data/Projects/debate-ai.com/vite.config.*)"
+      "Bash(npx next build:*)"
     ]
   },
   "enabledPlugins": {

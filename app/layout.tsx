@@ -35,7 +35,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <div className="flex w-screen h-screen overflow-hidden">
             <AppSidebar />
-            <div className="flex-1 overflow-hidden">{children}</div>
+            <div className="flex-1 overflow-auto">{children}</div>
           </div>
         </ThemeProvider>
       </body>

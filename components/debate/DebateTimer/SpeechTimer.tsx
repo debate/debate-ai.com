@@ -22,9 +22,6 @@ import type { Round } from "@/components/debate/DebateRound/types"
 import { useEffect, useRef, useState } from "react"
 import { Play, Pause, RotateCcw } from "lucide-react"
 import useSound from "use-sound"
-import soundPopDown from "./timer-sounds/sound-pop-down.mp3"
-import soundPopUpOn from "./timer-sounds/sound-pop-up-on.mp3"
-import soundPopUpOff from "./timer-sounds/sound-pop-up-off.mp3"
 import { playSoundEffect } from "@/components/debate/DebateTimer/timer-sounds/sound-effects"
 import { Button } from "@/components/ui/button"
 import { MicSelector } from "@/components/debate/DebateTimer/SpeechRecorder/mic-selector"
@@ -134,9 +131,9 @@ export function SpeechTimer({
   })
 
   // Sound effects
-  const [playActive] = useSound(soundPopDown)
-  const [playOn] = useSound(soundPopUpOn)
-  const [playOff] = useSound(soundPopUpOff)
+  const [playActive] = useSound("/audio/sound-pop-down.mp3")
+  const [playOn] = useSound("/audio/sound-pop-up-on.mp3")
+  const [playOff] = useSound("/audio/sound-pop-up-off.mp3")
 
   /**
    * Sync display with time prop

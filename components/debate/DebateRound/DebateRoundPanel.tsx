@@ -9,7 +9,7 @@
  * @module components/debate/DebateRound/DebateRoundPanel
  */
 
-import { useRef } from "react"
+import { useRef, useEffect } from "react"
 import { useFlowStore } from "@/lib/state/store"
 import { newFlow } from "@/lib/utils/flow-utils"
 import { settings } from "@/lib/state/settings"
@@ -176,7 +176,11 @@ export function DebateFlowPage() {
    * @param speech - Name of the speech whose document should be shown
    */
   const handleOpenSpeechPanel = (speech: string) => {
-    flowHandlers.selectSpeech(speech, state.setSpeechPanelOpen, state.setSelectedSpeech)
+    if (state.speechPanelOpen && state.selectedSpeech === speech) {
+      state.setSpeechPanelOpen(false)
+    } else {
+      flowHandlers.selectSpeech(speech, state.setSpeechPanelOpen, state.setSelectedSpeech)
+    }
   }
 
   /**
@@ -221,6 +225,65 @@ export function DebateFlowPage() {
 
   /** Content of the right split pane's speech document. */
   const rightContent = currentFlow?.speechDocs?.[rightSpeech] || ""
+
+  // Update document.title with timer countdown while a timer is running
+  useEffect(() => {
+    if (!timerState.activeTimer) {
+      document.title = "Debate AI"
+      return
+    }
+
+    const { label, totalTime, startTime } = timerState.activeTimer
+
+    const update = () => {
+      const elapsed = Date.now() - startTime
+      const remaining = Math.max(0, totalTime - elapsed)
+      const m = Math.floor(remaining / 60000)
+      const s = Math.floor((remaining % 60000) / 1000)
+      const timeStr = `${m}:${s.toString().padStart(2, "0")}`
+
+      let title = `${timeStr} ${label}`
+
+      const round = currentFlow?.roundId
+        ? rounds.find((r) => r.id === currentFlow.roundId)
+        : undefined
+
+      if (round) {
+        const parts: string[] = []
+        if (round.tournamentName || round.roundLevel) {
+          parts.push([round.tournamentName, round.roundLevel].filter(Boolean).join(" "))
+        }
+        const formatTeam = (debaters: [string, string], schools?: [string, string]) => {
+          const initials = debaters
+            .filter(Boolean)
+            .map((d) => {
+              const tokens = d.trim().split(/\s+/)
+              return tokens[tokens.length - 1]?.[0]?.toUpperCase() || ""
+            })
+            .join("")
+          const school = schools?.[0] || ""
+          return [school, initials].filter(Boolean).join(" ")
+        }
+        const affTeam = formatTeam(round.debaters.aff, round.schools?.aff)
+        const negTeam = formatTeam(round.debaters.neg, round.schools?.neg)
+        if (affTeam || negTeam) {
+          parts.push(`${affTeam} v ${negTeam}`)
+        }
+        if (parts.length) {
+          title += ` - ${parts.join(" - ")}`
+        }
+      }
+
+      document.title = title
+    }
+
+    update()
+    const id = setInterval(update, 1000)
+    return () => {
+      clearInterval(id)
+      document.title = "Debate AI"
+    }
+  }, [timerState.activeTimer, currentFlow?.roundId, rounds])
 
   /**
    * The main content area containing the resizable flow and speech panels.

@@ -15,7 +15,7 @@ import type { SearchResult } from "@/components/debate/DebateCARDSearch/types"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { Autocomplete } from "@/components/ui/autocomplete"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { searchSchools, searchTournaments } from "@/lib/state/client-cache"
+import { searchSchools, searchTournaments, searchNames } from "@/lib/state/client-cache"
 
 const SUGGESTION_LIMIT = 20
 const SEARCH_DROPDOWN_CLASS = "right-auto w-[14rem]"
@@ -265,12 +265,17 @@ export function ResearchSearchSidebar({
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Input
-                      placeholder="Name"
-                      value={filters.team}
-                      onChange={(e) => updateFilter("team", e.target.value)}
-                      className="h-8 w-[70px] text-xs"
-                    />
+                    <div className="w-[70px]">
+                      <Autocomplete
+                        placeholder="Name"
+                        value={filters.team}
+                        onChange={(v) => updateFilter("team", v)}
+                        fetchOptions={(q) => searchNames(q, SUGGESTION_LIMIT)}
+                        className="h-8 w-full text-xs"
+                        dropdownClassName={SEARCH_DROPDOWN_CLASS}
+                        optionClassName={SEARCH_OPTION_CLASS}
+                      />
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent>Search by debater&apos;s first or last name</TooltipContent>
                 </Tooltip>

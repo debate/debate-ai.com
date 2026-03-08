@@ -16,7 +16,8 @@ import type {
   RowDragEndEvent,
   IHeaderParams,
 } from "ag-grid-community"
-import { SpeechHeaderBar } from "../layout/SpeechHeaderBar"
+import { FileText } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import type { Flow, Box } from "@/components/debate/DebateRound/types"
 
 // Register AG Grid community modules
@@ -37,15 +38,37 @@ interface FlowSpreadsheetProps {
 }
 
 /**
- * AG Grid custom header — delegates to SpeechHeaderBar for full controls.
+ * Simplified AG Grid column header — speech name + speech-doc icon only.
  */
-const CustomHeader = (props: IHeaderParams & { onOpenSpeechPanel?: (speechName: string) => void }) => {
+const FlowColumnHeader = (props: IHeaderParams & { onOpenSpeechPanel?: (speechName: string) => void }) => {
   if (!props.displayName) return null
+  const name = props.displayName
+  const hasN = name.toUpperCase().includes("N")
+  const hasA = name.toUpperCase().includes("A")
+  const textColor = hasN
+    ? "text-red-600 dark:text-red-400"
+    : hasA
+      ? "text-blue-600 dark:text-blue-400"
+      : ""
+
   return (
-    <SpeechHeaderBar
-      speechName={props.displayName}
-      onOpenSpeechPanel={props.onOpenSpeechPanel}
-    />
+    <div className="flex items-center justify-between w-full px-2">
+      <span className={`text-sm font-semibold ${textColor}`}>{name}</span>
+      {props.onOpenSpeechPanel && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 shrink-0"
+          onClick={(e) => {
+            e.stopPropagation()
+            props.onOpenSpeechPanel!(name)
+          }}
+          title={`Open ${name} speech document`}
+        >
+          <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+        </Button>
+      )}
+    </div>
   )
 }
 
@@ -198,7 +221,7 @@ export function FlowSpreadsheet({
         wrapText: true,
         autoHeight: false,
         cellClass: hasN ? "text-red-500 dark:text-red-400" : hasA ? "text-blue-500 dark:text-blue-400" : "",
-        headerComponent: CustomHeader,
+        headerComponent: FlowColumnHeader,
         headerComponentParams: {
           onOpenSpeechPanel,
         },
@@ -408,7 +431,7 @@ export function FlowSpreadsheet({
           onGridReady={onGridReady}
           onCellKeyDown={onCellKeyDown}
           rowHeight={40}
-          headerHeight={72}
+          headerHeight={36}
           rowDragManaged={true}
           suppressMoveWhenRowDragging={true}
           enterNavigatesVertically={true}
