@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function EditorPage() {
   return (
-    <div className="fixed inset-0 lg:left-[72px] flex flex-col pb-20 lg:pb-0">
+    <div className="fixed inset-0 flex flex-col pb-20 lg:pb-0">
       <iframe
         src="https://qwksearch.com/docs"
         className="w-full h-full border-0"

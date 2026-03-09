@@ -36,11 +36,12 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
 
     const renderChildren = () => {
       return React.Children.map(children, (child: any) => {
+        if (!React.isValidElement(child)) return child
         return React.cloneElement(child, {
           mousex: mousex,
           magnification: magnification,
           distance: distance,
-        })
+        } as any)
       })
     }
 
@@ -123,7 +124,7 @@ export interface DockItemProps extends VariantProps<typeof dockVariants> {
 
 const DockItem = ({ className, children, magnification, distance, mousex, onClick, ...props }: DockItemProps) => {
   return (
-    <div onClick={onClick} className={cn("relative", className)} {...props}>
+    <div onClick={onClick} className={cn("relative group", className)} {...props}>
       {React.Children.map(children, (child: any) => {
         if (child?.type === DockIcon) {
           return React.cloneElement(child, {

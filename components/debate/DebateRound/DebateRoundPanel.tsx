@@ -402,7 +402,7 @@ export function DebateFlowPage() {
       <div className="flex-1 overflow-hidden">
         {!state.isMobile ? (
           <ResizablePanelGroup orientation="horizontal" className="h-full w-full">
-            <ResizablePanel defaultSize={18} minSize={8}>
+            <ResizablePanel defaultSize={22} minSize={8}>
               <FlowPageSidebar
                 flows={flows}
                 selected={selected}

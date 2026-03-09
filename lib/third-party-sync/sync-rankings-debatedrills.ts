@@ -106,7 +106,7 @@ export async function scrapeDivision({
       csvText = fallbackResult.data;
     }
 
-    if (!csvText) {
+    if (!csvText || typeof csvText !== "string") {
       return [];
     }
 

@@ -21,7 +21,6 @@ import type { Round } from "@/components/debate/DebateRound/types"
 
 import { useEffect, useRef, useState } from "react"
 import { Play, Pause, RotateCcw } from "lucide-react"
-import useSound from "use-sound"
 import { playSoundEffect } from "@/components/debate/DebateTimer/timer-sounds/sound-effects"
 import { Button } from "@/components/ui/button"
 import { MicSelector } from "@/components/debate/DebateTimer/SpeechRecorder/mic-selector"
@@ -130,10 +129,7 @@ export function SpeechTimer({
     onRecordingEnabledChange,
   })
 
-  // Sound effects
-  const [playActive] = useSound("/audio/sound-pop-down.mp3")
-  const [playOn] = useSound("/audio/sound-pop-up-on.mp3")
-  const [playOff] = useSound("/audio/sound-pop-up-off.mp3")
+  // Sound effects imported via playSoundEffect
 
   /**
    * Sync display with time prop
@@ -157,7 +153,7 @@ export function SpeechTimer({
         onTimeChange(newTime)
 
         if (newTime <= 0) {
-          playSoundEffect("finalBeep")
+          playSoundEffect("finalBwong")
           if (onFinish) {
             onFinish()
           } else {
@@ -249,8 +245,8 @@ export function SpeechTimer({
     } else if (e.key === "Enter") {
       e.preventDefault()
       e.currentTarget.blur()
-      playActive()
-      playOn()
+      playSoundEffect("popDown")
+      playSoundEffect("popUpOn")
       const mVal = Number.parseInt(minutes) || 0
       const sVal = Number.parseInt(seconds) || 0
       const newTime = mVal * 60000 + sVal * 1000
@@ -279,8 +275,8 @@ export function SpeechTimer({
     } else if (e.key === "Enter") {
       e.preventDefault()
       e.currentTarget.blur()
-      playActive()
-      playOn()
+      playSoundEffect("popDown")
+      playSoundEffect("popUpOn")
       const mVal = Number.parseInt(minutes) || 0
       const sVal = Number.parseInt(seconds) || 0
       const newTime = mVal * 60000 + sVal * 1000
@@ -373,9 +369,9 @@ export function SpeechTimer({
               state.name === "running" && "bg-red-500 hover:bg-red-600 text-white"
             )}
             onClick={toggleTimer}
-            onMouseDown={() => playActive()}
+            onMouseDown={() => playSoundEffect("popDown")}
             onMouseUp={() => {
-              state.name === "running" ? playOff() : playOn()
+              state.name === "running" ? playSoundEffect("popUpOff") : playSoundEffect("popUpOn")
             }}
           >
             {state.name === "running" ? (

@@ -22,7 +22,7 @@ import { useVideoDataFetch, useVideoFiltering, useResponsiveVideosPerPage } from
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 
 // Components
-import { CategoryDock } from "../components/CategoryDock"
+import { useCategoryDock } from "@/components/category-dock-context"
 import { VideoSearchBar } from "../components/VideoSearchBar"
 import { VideoGrid } from "../components/VideoGrid"
 import { VideoPagination } from "../components/VideoPagination"
@@ -120,6 +120,9 @@ export function DebateVideosPage() {
     },
     [state.debateVideos, changeCategory, searchParams, router],
   )
+
+  // Register video category state into the global dock
+  useCategoryDock(state.currentCategory, handleCategoryChange)
 
   // ============================================================================
   // Data Fetching & Filtering
@@ -220,7 +223,6 @@ export function DebateVideosPage() {
   // Desktop: single row (flex-nowrap). Mobile: wraps to multiple rows.
   const stickyHeader = (controls?: React.ReactNode) => (
     <div className="sm:sticky top-0 z-40 bg-background border-b border-border/30 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 mb-4 flex flex-wrap md:flex-nowrap items-center gap-2">
-      <CategoryDock currentCategory={state.currentCategory} onCategoryChange={handleCategoryChange} />
       {controls && <div className="flex-1 min-w-0 flex flex-wrap items-center gap-2">{controls}</div>}
     </div>
   )

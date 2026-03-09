@@ -2,7 +2,8 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { AppSidebar } from "@/components/app-sidebar"
+import { CategoryDockProvider } from "@/components/category-dock-context"
+import { CategoryDock } from "@/components/debate/DebateVideos/components/CategoryDock"
 
 export const metadata: Metadata = {
   title: "Debate AI",
@@ -33,10 +34,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="theme-root">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          <div className="flex w-screen h-screen overflow-hidden">
-            <AppSidebar />
-            <div className="flex-1 overflow-auto">{children}</div>
-          </div>
+          <CategoryDockProvider>
+            <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
+              <CategoryDock />
+              {children}
+            </div>
+          </CategoryDockProvider>
         </ThemeProvider>
       </body>
     </html>

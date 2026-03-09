@@ -22,7 +22,7 @@ import { useTheme } from "next-themes"
 import { IconThemePantone } from "@/components/icons"
 
 /** Registry of all available colour theme names. */
-const themeNames = [
+export const themeNames = [
   "modern-minimal",
   "elegant-luxury",
   "cyberpunk",
@@ -54,7 +54,7 @@ const themeNames = [
  * Map of theme names to their representative primary and secondary colour swatches
  * used in the dropdown preview dots.
  */
-const themeColors: Record<string, { primary: string; secondary: string }> = {
+export const themeColors: Record<string, { primary: string; secondary: string }> = {
   "modern-minimal": { primary: "#3b82f6", secondary: "#f3f4f6" },
   "elegant-luxury": { primary: "#9b2c2c", secondary: "#fdf2d6" },
   cyberpunk: { primary: "#ff00c8", secondary: "#f0f0ff" },
@@ -82,12 +82,69 @@ const themeColors: Record<string, { primary: string; secondary: string }> = {
   "pastel-dreams": { primary: "#a78bfa", secondary: "#e9d8fd" },
 }
 
+export function formatThemeName(name: string) {
+  return name
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+}
+
+/**
+ * Hook that provides theme state and handlers for use in custom UI.
+ */
+export function useThemeState() {
+  const { theme, setTheme, resolvedTheme } = useTheme()
+  const [colorTheme, setColorTheme] = useState("modern-minimal")
+  const [mounted, setMounted] = useState(false)
+  const [previewTheme, setPreviewTheme] = useState<string | null>(null)
+
+  useEffect(() => {
+    setMounted(true)
+    const saved = localStorage.getItem("color-theme")
+    if (saved && themeNames.includes(saved)) {
+      setColorTheme(saved)
+      themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
+      document.documentElement.classList.add(`theme-${saved}`)
+    } else {
+      document.documentElement.classList.add("theme-modern-minimal")
+    }
+  }, [])
+
+  const handleThemeChange = (newTheme: string) => {
+    setColorTheme(newTheme)
+    localStorage.setItem("color-theme", newTheme)
+    document.cookie = `color-theme=${newTheme}; path=/; max-age=31536000`
+    themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
+    document.documentElement.classList.add(`theme-${newTheme}`)
+    setPreviewTheme(null)
+  }
+
+  const handleThemePreview = (themeName: string) => {
+    setPreviewTheme(themeName)
+    themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
+    document.documentElement.classList.add(`theme-${themeName}`)
+  }
+
+  const handlePreviewEnd = () => {
+    if (previewTheme) {
+      themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
+      document.documentElement.classList.add(`theme-${colorTheme}`)
+      setPreviewTheme(null)
+    }
+  }
+
+  const toggleLightDark = () => {
+    const currentTheme = resolvedTheme || theme || "light"
+    setTheme(currentTheme === "dark" ? "light" : "dark")
+  }
+
+  const isDark = (resolvedTheme || theme) === "dark"
+
+  return { colorTheme, mounted, isDark, handleThemeChange, handleThemePreview, handlePreviewEnd, toggleLightDark }
+}
+
 /**
  * Dropdown component for selecting a colour theme and toggling light/dark mode.
- * Applies the chosen theme as a CSS class on `document.documentElement` and
- * persists the selection to localStorage and a one-year cookie.
- * Returns null before the component has mounted (SSR hydration guard).
- * @returns The theme dropdown element, or null while unmounted.
  */
 export function ThemeDropdown() {
   const { theme, setTheme, resolvedTheme } = useTheme()

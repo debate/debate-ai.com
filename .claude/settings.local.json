@@ -17,7 +17,8 @@
       "Bash(npx next build:*)",
       "Bash(base64 -w0 components/debate/DebateTimer/timer-sounds/sound-pop-up-on.mp3)",
       "Bash(base64 -w0 components/debate/DebateTimer/timer-sounds/sound-pop-up-off.mp3)",
-      "Bash(ls -la /mnt/data/Projects/debate-ai.com/next.config.* /mnt/data/Projects/debate-ai.com/vite.config.*)"
+      "Bash(ls -la /mnt/data/Projects/debate-ai.com/next.config.* /mnt/data/Projects/debate-ai.com/vite.config.*)",
+      "Bash(grep -E \"\\\\.\\(tsx|ts\\)$\")"
     ]
   },
   "enabledPlugins": {

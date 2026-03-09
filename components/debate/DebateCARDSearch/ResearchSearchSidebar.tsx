@@ -92,7 +92,7 @@ export function ResearchSearchSidebar({
   const activeFilterCount = Object.values(filters).filter((v) => v && v !== "all").length
 
   return (
-    <div className="w-full h-full flex flex-col border-r bg-background overflow-hidden min-w-0">
+    <div className="mt-[50px] w-full h-full flex flex-col border-r bg-background overflow-hidden min-w-0">
       <TooltipProvider>
         <div className="p-3 border-b space-y-2">
           {/* Mobile header */}
@@ -283,7 +283,7 @@ export function ResearchSearchSidebar({
                   <TooltipTrigger asChild>
                     <div className="flex-1">
                       <Autocomplete
-                        placeholder="Tourney"
+                        placeholder="Tournament"
                         value={filters.tournament}
                         onChange={(v) => updateFilter("tournament", v)}
                         fetchOptions={(q) => searchTournaments(q, SUGGESTION_LIMIT)}

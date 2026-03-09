@@ -55,7 +55,7 @@ export function IntroTextOverview() {
         </div>
 
         <div className="text-center space-y-2 max-w-2xl">
-          <p className="text-muted-foreground font-bold tracking-wide text-lg md:text-gray-400 [font-variant:small-caps]">
+          <p className="text-muted-foreground font-bold tracking-wide text-lg md:text-black-400 [font-variant:small-caps]">
             Crowdsourced Annotated Research for Debates - Search
           </p>
         </div>
@@ -113,12 +113,12 @@ export function IntroTextOverview() {
 
       <Card className="shadow-sm border-l-4 border-l-blue-500">
         <CardContent className="p-6">
-          <div className="text-gray-400 text-muted-foreground leading-relaxed">
-            <div className="space-y-8 text-gray-100 leading-relaxed">
+          <div className="text-black-400 text-muted-foreground leading-relaxed">
+            <div className="space-y-8 text-black-100 leading-relaxed">
               <ol className="list-decimal list-inside space-y-2">
                 <li>
                   <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">1. The Debate Singularity is Happening</div>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-black-400 leading-relaxed">
                     AI now researches topics in depth, highlights key quotes, frames both sides
                     of arguments, coaches preparation, exposes flaws in evidence cards, and crafts strategic closing speeches that
                     compare competing claims. Integrating AI into debate unlocks the next stage of emergent complexity in
@@ -128,13 +128,13 @@ export function IntroTextOverview() {
 
                 <li>
                   <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">2. Collective Thought Engine</div>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-black-400 leading-relaxed">
                     Language Models can distill collective thought into a vector space where every point carries a weighted value,
                     reflecting its contribution to decision-making. This collective AI consciousness can synthesize complex
                     arguments, judge their validity and relevance, and support a democratic, AI-mediated economy where public votes
                     reward influence and insight.
                   </p>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-black-400 leading-relaxed">
                     AI agents learn which arguments and sources persuade different audiences. Crowdsourced automation enables AI to
                     organize argument outlines—much like GitHub's reusable code model—helping it evaluate complex decisions with
                     greater depth and consistency.
@@ -143,7 +143,7 @@ export function IntroTextOverview() {
 
                 <li>
                   <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">3. Transparent Reasoning</div>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-black-400 leading-relaxed">
                     AI reveals the exact sentences and citations behind its reasoning, allowing users to verify alignment with
                     collective interests through sentence-by-sentence interpretability.
                   </p>
@@ -151,7 +151,7 @@ export function IntroTextOverview() {
 
                 <li>
                   <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">4. Outcome Simulation Trees</div>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-black-400 leading-relaxed">
                     Users can engage in multiple AI-powered practice rounds that map trees of possible outcomes and responses,
                     surfacing the most persuasive strategies across diverse contexts.
                   </p>
@@ -159,7 +159,7 @@ export function IntroTextOverview() {
 
                 <li>
                   <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">5. Outlines of Current News Issues</div>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-black-400 leading-relaxed">
                     Each debate card fits into a broader narrative—a topic tree linking evidence, assumptions, and values within a
                     collective framework. This transformation shifts debate from isolated rounds to a shared model of
                     research crowdsourced to the public by a few thousand editors, like Wikipedia or Github.
@@ -168,7 +168,7 @@ export function IntroTextOverview() {
 
                 <li>
                   <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">6. Solving Post-Self Alignment</div>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-black-400 leading-relaxed">
                     Recognizing the interconnectedness of research articles mirrors how we should relate to global citizens as part of an emergent collective
                     consciousness. Losing sight of that bigger picture fuels bias, tribalism, and division at the root of modern conflicts
                     between isolated social news bubbles. Only by mapping the whole internet as a debate outline
@@ -181,7 +181,7 @@ export function IntroTextOverview() {
 
                 <li>
                   <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">7. Topic Research Unified Tree Hierarchy (TRUTH)</div>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-black-400 leading-relaxed">
                     Key metadata extracted for LLM analysis allows models to detect logic flaws, flag overstatements, strengthen
                     warrants, and place each claim within the Topic Research Unified Tree Hierarchy (TRUTH). This consensus-driven
                     system seeks grounded truth, reduces hallucination, and aligns AI reasoning with shared human values—laying
