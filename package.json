@@ -63,7 +63,7 @@
     "file-loader": "^6.2.0",
     "framer-motion": "^12.35.2",
     "fuse.js": "^7.1.0",
-    "grab-url": "^1.6.2",
+    "grab-url": "^1.6.4",
     "htmlparser2": "10.1.0",
     "immer": "latest",
     "jszip": "3.10.1",

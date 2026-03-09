@@ -55,7 +55,7 @@
         "file-loader": "^6.2.0",
         "framer-motion": "^12.35.2",
         "fuse.js": "^7.1.0",
-        "grab-url": "^1.6.2",
+        "grab-url": "^1.6.4",
         "htmlparser2": "10.1.0",
         "immer": "latest",
         "jszip": "3.10.1",
@@ -850,7 +850,7 @@
 
     "gopd": ["gopd@1.2.0", "", {}, "sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg=="],
 
-    "grab-url": ["grab-url@1.6.2", "", { "bin": { "grab-url": "dist/grab-url-cli.es.js", "grab": "dist/grab-url-cli.es.js", "g": "dist/grab-url-cli.es.js" } }, "sha512-hA8wcJ4RS55V/vaEXqA/+hYnf6luhy94/fbo6WOxZuFspo+LrHRPOSBKooztf2Xf7TmAoI0/RYzxU8gSR2Yi/A=="],
+    "grab-url": ["grab-url@1.6.4", "", { "bin": { "grab-url": "dist/grab-url-cli.es.js", "grab": "dist/grab-url-cli.es.js", "g": "dist/grab-url-cli.es.js" } }, "sha512-ufN8KqfM7X1420R0uB9k9JSL34pGV1G7W/fMhzgISyVBwkUuKZfKd9EdretTRkg5IB/LrsnrB9UZX8Nmj4czpg=="],
 
     "graceful-fs": ["graceful-fs@4.2.11", "", {}, "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ=="],
 
