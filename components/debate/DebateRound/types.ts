@@ -7,6 +7,8 @@ export type Box = {
   empty?: boolean
   placeholder?: string
   crossed?: boolean
+  /** Marks this row as a collapsible section heading in the flow grid */
+  isHeading?: boolean
 }
 
 export type Flow = {

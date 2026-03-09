@@ -26,6 +26,7 @@ import { useCategoryDock } from "@/components/category-dock-context"
 import { VideoSearchBar } from "../components/VideoSearchBar"
 import { VideoGrid } from "../components/VideoGrid"
 import { VideoPagination } from "../components/VideoPagination"
+import { Footer } from "@/components/debate/Footer"
 
 /**
  * Main video browsing page that composes state, data-fetching, and UI sub-components.
@@ -222,8 +223,8 @@ export function DebateVideosPage() {
   // Sticky header: CategoryDock + optional right-side controls
   // Desktop: single row (flex-nowrap). Mobile: wraps to multiple rows.
   const stickyHeader = (controls?: React.ReactNode) => (
-    <div className="sm:sticky top-0 z-40 bg-background border-b border-border/30 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 mb-4 flex flex-wrap md:flex-nowrap items-center gap-2">
-      {controls && <div className="flex-1 min-w-0 flex flex-wrap items-center gap-2">{controls}</div>}
+    <div className="sm:sticky top-0 z-40 bg-background border-b border-border/30 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 mb-4 flex flex-wrap md:flex-nowrap items-center gap-2 md:justify-end">
+      {controls && <div className="min-w-0 flex flex-wrap items-center gap-2">{controls}</div>}
     </div>
   )
 
@@ -250,6 +251,7 @@ export function DebateVideosPage() {
       <div className="min-h-screen bg-background p-3 sm:p-6">
         {stickyHeader(dictControls)}
         <DictionaryPanel controlledSearchTerm={dictSearchTerm} onControlledSearchChange={setDictSearchTerm} />
+        <Footer />
       </div>
     )
   }
@@ -294,6 +296,7 @@ export function DebateVideosPage() {
           onControlledYearChange={setLbYear}
           history={state.debateVideos?.history}
         />
+        <Footer />
       </div>
     )
   }
@@ -360,6 +363,7 @@ export function DebateVideosPage() {
 
         </>
       )}
+      <Footer />
     </div>
   )
 }

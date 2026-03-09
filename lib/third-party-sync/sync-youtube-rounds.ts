@@ -154,14 +154,19 @@ export async function syncYouTubeVideos() {
 
   const mergedData: Record<string, any[]> = {};
   for (const category of ["rounds", "lectures", "topPicks"]) {
-    const existing = JSON.parse(await fs.readFile(filePaths[category], "utf-8"));
+    const existing = JSON.parse(
+      await fs.readFile(filePaths[category], "utf-8"),
+    );
     const newVids = newVideos[category] || [];
 
     const existingIds = new Set(existing.map((v: any[]) => v[0]));
     const uniqueNewVids = newVids.filter((v: any[]) => !existingIds.has(v[0]));
 
     mergedData[category] = [...uniqueNewVids, ...existing];
-    await fs.writeFile(filePaths[category], JSON.stringify(mergedData[category], null, 2));
+    await fs.writeFile(
+      filePaths[category],
+      JSON.stringify(mergedData[category], null, 2),
+    );
   }
 
   const stats = {
@@ -186,4 +191,10 @@ export async function syncYouTubeVideos() {
     message: "Videos synced successfully",
     stats,
   };
+}
+
+if (require.main === module) {
+  console.log("Syncing YouTube videos...");
+  let vids = syncYouTubeVideos();
+  console.log(JSON.stringify(vids, null, 2));
 }

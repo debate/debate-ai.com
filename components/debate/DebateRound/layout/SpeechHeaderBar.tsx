@@ -7,7 +7,9 @@
 
 import { useState, useEffect } from "react"
 import type { Round } from "@/components/debate/DebateRound/types"
-import { FileText, Share2, Lock, Users, Radio } from "lucide-react"
+import { FileText, Share2, Lock, Users, Radio, Quote } from "lucide-react"
+import type { ViewMode } from "@/lib/types/debate-flow"
+import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -45,16 +47,32 @@ function getRecordingDurationSeconds(speechName: string): number | null {
   }
 }
 
-const LONG_RECORDING_THRESHOLD_SECONDS = 5 * 60 // 5 minutes
+/** A recording is "near" the speech length if it's at least 60% of the allocated time. */
+const NEAR_SPEECH_RATIO = 0.6
 
 export interface SpeechHeaderBarProps {
   /** The speech/column name, e.g. "1AR", "2NC". */
   speechName: string
   /** If provided, renders a speech-doc icon button. */
   onOpenSpeechPanel?: (speechName: string) => void
+  /** Active view mode applied to the markdown editor. */
+  viewMode?: ViewMode
+  /** Whether the quote view overlay is currently active. */
+  quoteView?: boolean
+  /** Handler called when the user selects a different view mode. */
+  onViewModeChange?: (mode: ViewMode) => void
+  /** Handler called when the quote view toggle button is clicked. */
+  onQuoteViewToggle?: () => void
 }
 
-export function SpeechHeaderBar({ speechName, onOpenSpeechPanel }: SpeechHeaderBarProps) {
+export function SpeechHeaderBar({ 
+  speechName, 
+  onOpenSpeechPanel,
+  viewMode = "read",
+  quoteView = false,
+  onViewModeChange,
+  onQuoteViewToggle
+}: SpeechHeaderBarProps) {
   const { rounds, flows, selected } = useFlowStore()
   const currentFlow = flows[selected]
   const currentRound = currentFlow?.roundId
@@ -101,10 +119,11 @@ export function SpeechHeaderBar({ speechName, onOpenSpeechPanel }: SpeechHeaderB
   const hasN = speechName.includes("N")
   const hasA = speechName.includes("A")
 
-  // Hide the timer when: there's a recording >= 5 min AND the timer is at 0 / done
-  const hasLongRecording = recordingDurationSec !== null && recordingDurationSec >= LONG_RECORDING_THRESHOLD_SECONDS
+  // Hide the timer when: timer is done AND recording duration is near the speech's allocated time
+  const speechTimeSec = (debateStyle?.timerSpeeches[safeSpeechIndex]?.time ?? 0) * 60
+  const hasNearFullRecording = recordingDurationSec !== null && speechTimeSec > 0 && recordingDurationSec >= speechTimeSec * NEAR_SPEECH_RATIO
   const timerDone = timerState.name === "done" || time <= 0
-  const hideTimer = hasLongRecording && timerDone
+  const hideTimer = hasNearFullRecording && timerDone
 
   const speechTeamColor = hasN
     ? "bg-red-500 dark:bg-red-400"
@@ -130,7 +149,7 @@ export function SpeechHeaderBar({ speechName, onOpenSpeechPanel }: SpeechHeaderB
           aria-hidden="true"
         />
       </div>
-      {/* Row 1: name · email · controls */}
+      {/* Single row: name · recording playback · timer & controls */}
       <div className="flex items-center gap-1 w-full overflow-hidden min-w-0">
         {/* Speech name */}
         <span
@@ -144,16 +163,12 @@ export function SpeechHeaderBar({ speechName, onOpenSpeechPanel }: SpeechHeaderB
           {speechName}
         </span>
 
-        {/* Speaker email */}
-        <div className="min-w-0 flex-1 truncate ml-1">
-          {speakerEmail && (
-            <span className="text-[10px] text-muted-foreground truncate">
-              {speakerEmail}
-            </span>
-          )}
+        {/* Recording playback — fills middle space */}
+        <div className="min-w-0 flex-1">
+          <SpeechRecordingPlayer speechName={speechName} className="w-full" />
         </div>
 
-        {/* ── Timer & Doc ── */}
+        {/* ── Timer & Controls ── */}
         <div className="flex items-center gap-1 shrink-0">
           {!hideTimer && (
             <div className="scale-[0.8] origin-right translate-x-1">
@@ -173,6 +188,24 @@ export function SpeechHeaderBar({ speechName, onOpenSpeechPanel }: SpeechHeaderB
                 onRecordingEnabledChange={setRecordingEnabled}
                 speechLabel={speechName}
               />
+            </div>
+          )}
+
+          {/* Quote and View Mode Toggles */}
+          {onQuoteViewToggle && onViewModeChange && (
+            <div className="flex items-center gap-0.5 ml-0 shrink-0">
+              <Button
+                variant={quoteView ? "default" : "ghost"}
+                size="icon"
+                onClick={onQuoteViewToggle}
+                className="h-6 w-6 shrink-0"
+                title={quoteView ? "Disable Quote View" : "Enable Quote View"}
+              >
+                <Quote className="h-3.5 w-3.5" />
+              </Button>
+              <div className="shrink-0 scale-[0.85] origin-left ml-0.5">
+                <ViewModeSelector value={viewMode} onChange={onViewModeChange} size="sm" />
+              </div>
             </div>
           )}
 
@@ -231,9 +264,6 @@ export function SpeechHeaderBar({ speechName, onOpenSpeechPanel }: SpeechHeaderB
           )}
         </div>
       </div>
-
-      {/* Row 2: Recording playback bar — full width below controls */}
-      <SpeechRecordingPlayer speechName={speechName} className="w-full" />
     </div>
   )
 }

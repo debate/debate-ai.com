@@ -15,8 +15,10 @@ import type {
   CellKeyDownEvent,
   RowDragEndEvent,
   IHeaderParams,
+  CellContextMenuEvent,
+  ICellRendererParams,
 } from "ag-grid-community"
-import { FileText } from "lucide-react"
+import { ChevronDown, ChevronRight, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Flow, Box } from "@/components/debate/DebateRound/types"
 
@@ -73,6 +75,138 @@ const FlowColumnHeader = (props: IHeaderParams & { onOpenSpeechPanel?: (speechNa
 }
 
 /**
+ * Custom cell renderer for first column cells that are section headings.
+ * Shows a chevron toggle and bold text for heading rows.
+ */
+const FirstColumnCellRenderer = (props: ICellRendererParams & {
+  collapsedHeadings: Set<string>
+  onToggleCollapse: (rowId: string) => void
+}) => {
+  const { data, value, collapsedHeadings, onToggleCollapse } = props
+  if (!data) return <span>{value}</span>
+
+  if (data.isHeading) {
+    const isCollapsed = collapsedHeadings.has(data.id)
+    return (
+      <div className="flex items-center gap-1 w-full h-full">
+        <button
+          className="flex items-center justify-center w-5 h-5 rounded hover:bg-muted shrink-0"
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleCollapse(data.id)
+          }}
+        >
+          {isCollapsed ? (
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+          )}
+        </button>
+        <span className="font-bold">{value}</span>
+      </div>
+    )
+  }
+
+  // Indent child rows under headings
+  if (data.parentHeadingId) {
+    return (
+      <div className="flex items-center w-full h-full" style={{ paddingLeft: 24 }}>
+        <span>{value}</span>
+      </div>
+    )
+  }
+
+  return <span>{value}</span>
+}
+
+/**
+ * A single item in the context menu
+ */
+interface ContextMenuItem {
+  label: string
+  onClick: () => void
+  disabled?: boolean
+  separator?: false
+}
+
+interface ContextMenuSeparator {
+  separator: true
+}
+
+type ContextMenuEntry = ContextMenuItem | ContextMenuSeparator
+
+/**
+ * Custom right-click context menu for the grid
+ */
+const GridContextMenu = ({
+  x,
+  y,
+  items,
+  onClose,
+}: {
+  x: number
+  y: number
+  items: ContextMenuEntry[]
+  onClose: () => void
+}) => {
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        onClose()
+      }
+    }
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("keydown", handleEsc)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("keydown", handleEsc)
+    }
+  }, [onClose])
+
+  // Clamp menu position to viewport
+  const style = useMemo(() => {
+    const menuWidth = 220
+    const menuHeight = items.length * 32
+    return {
+      left: Math.min(x, window.innerWidth - menuWidth - 8),
+      top: Math.min(y, window.innerHeight - menuHeight - 8),
+    }
+  }, [x, y, items.length])
+
+  return (
+    <div
+      ref={menuRef}
+      className="fixed z-50 min-w-[200px] rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
+      style={style}
+    >
+      {items.map((item, i) => {
+        if (item.separator) {
+          return <div key={i} className="my-1 h-px bg-border" />
+        }
+        return (
+          <button
+            key={i}
+            disabled={item.disabled}
+            className="relative flex w-full cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
+            onClick={() => {
+              item.onClick()
+              onClose()
+            }}
+          >
+            {item.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/**
  * Convert flow children (nested Box structure) to flat row data for AG Grid
  *
  * @param boxes - Array of root-level boxes
@@ -87,6 +221,7 @@ function buildRowData(boxes: Box[], columns: string[]): any[] {
     const row: any = {
       id: `row-${index}`,
       originalIndex: index,
+      isHeading: box.isHeading ?? false,
     }
 
     // Flatten box chain into column values
@@ -98,6 +233,16 @@ function buildRowData(boxes: Box[], columns: string[]): any[] {
 
     rows.push(row)
   })
+
+  // Reconstruct parentHeadingId from heading flags
+  let currentHeadingId: string | undefined
+  for (const row of rows) {
+    if (row.isHeading) {
+      currentHeadingId = row.id
+    } else if (currentHeadingId) {
+      row.parentHeadingId = currentHeadingId
+    }
+  }
 
   return rows
 }
@@ -140,6 +285,11 @@ function rowDataToBoxes(rows: any[], columns: string[]): Box[] {
       }
     }
 
+    // Persist heading state on the root box
+    if (row.isHeading) {
+      box.isHeading = true
+    }
+
     boxes.push(box)
   })
 
@@ -176,14 +326,22 @@ export function FlowSpreadsheet({
   const [isMobile, setIsMobile] = useState(false)
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0)
 
+  // Section heading & collapse state
+  const [collapsedHeadings, setCollapsedHeadings] = useState<Set<string>>(new Set())
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; rowId: string } | null>(null)
+
   // Initialize row data from flow
   const [rowData, setRowData] = useState<any[]>(() => buildRowData(flow.children, flow.columns))
 
   /**
-   * Update row data when flow children change externally
+   * Update row data when flow children change externally.
+   * Rebuilds rows from boxes (which now carry isHeading), preserving tree structure.
    */
   useEffect(() => {
-    setRowData(buildRowData(flow.children, flow.columns))
+    const newRows = buildRowData(flow.children, flow.columns)
+    setRowData(newRows)
+    // Trigger filter re-eval in case collapsed state applies to new rows
+    setTimeout(() => gridRef.current?.api?.onFilterChanged(), 0)
   }, [flow.children, flow.columns])
 
   /**
@@ -199,6 +357,325 @@ export function FlowSpreadsheet({
   }, [])
 
   /**
+   * Toggle a row as a section heading.
+   * When toggling ON, all subsequent non-heading rows get parentHeadingId set.
+   * When toggling OFF, children lose their parentHeadingId.
+   */
+  const toggleHeading = useCallback(
+    (rowId: string) => {
+      setRowData((prev) => {
+        const rows = prev.map((r) => ({ ...r }))
+        const idx = rows.findIndex((r) => r.id === rowId)
+        if (idx === -1) return prev
+
+        const row = rows[idx]
+        const wasHeading = row.isHeading
+
+        if (wasHeading) {
+          // Remove heading status and unparent children
+          row.isHeading = false
+          for (let i = idx + 1; i < rows.length; i++) {
+            if (rows[i].parentHeadingId === rowId) {
+              rows[i].parentHeadingId = undefined
+            } else {
+              break
+            }
+          }
+          // Remove from collapsed set
+          setCollapsedHeadings((s) => {
+            const next = new Set(s)
+            next.delete(rowId)
+            return next
+          })
+        } else {
+          // Make it a heading and assign children until next heading
+          row.isHeading = true
+          row.parentHeadingId = undefined
+          for (let i = idx + 1; i < rows.length; i++) {
+            if (rows[i].isHeading) break
+            rows[i].parentHeadingId = rowId
+          }
+        }
+
+        // Sync to flow
+        const newChildren = rowDataToBoxes(rows, flow.columns)
+        onUpdate({ children: newChildren })
+
+        return rows
+      })
+    },
+    [flow.columns, onUpdate],
+  )
+
+  /**
+   * Toggle collapse/expand for a heading row
+   */
+  const toggleCollapse = useCallback(
+    (rowId: string) => {
+      setCollapsedHeadings((prev) => {
+        const next = new Set(prev)
+        if (next.has(rowId)) {
+          next.delete(rowId)
+        } else {
+          next.add(rowId)
+        }
+        return next
+      })
+      // Trigger external filter re-evaluation
+      setTimeout(() => {
+        gridRef.current?.api?.onFilterChanged()
+      }, 0)
+    },
+    [],
+  )
+
+  /**
+   * Indent a row — make it a child of the nearest heading above it
+   */
+  const indentRow = useCallback(
+    (rowId: string) => {
+      setRowData((prev) => {
+        const rows = prev.map((r) => ({ ...r }))
+        const idx = rows.findIndex((r) => r.id === rowId)
+        if (idx <= 0 || rows[idx].isHeading) return prev
+
+        // Find the nearest heading above
+        let headingId: string | undefined
+        for (let i = idx - 1; i >= 0; i--) {
+          if (rows[i].isHeading) {
+            headingId = rows[i].id
+            break
+          }
+        }
+        if (!headingId || rows[idx].parentHeadingId === headingId) return prev
+
+        rows[idx].parentHeadingId = headingId
+        const newChildren = rowDataToBoxes(rows, flow.columns)
+        onUpdate({ children: newChildren })
+        return rows
+      })
+    },
+    [flow.columns, onUpdate],
+  )
+
+  /**
+   * Outdent a row — remove it from its parent heading
+   */
+  const outdentRow = useCallback(
+    (rowId: string) => {
+      setRowData((prev) => {
+        const rows = prev.map((r) => ({ ...r }))
+        const idx = rows.findIndex((r) => r.id === rowId)
+        if (idx === -1 || !rows[idx].parentHeadingId) return prev
+
+        rows[idx].parentHeadingId = undefined
+        const newChildren = rowDataToBoxes(rows, flow.columns)
+        onUpdate({ children: newChildren })
+        return rows
+      })
+    },
+    [flow.columns, onUpdate],
+  )
+
+  /**
+   * Insert a new empty row above or below the target row
+   */
+  const insertRow = useCallback(
+    (rowId: string, position: "above" | "below") => {
+      setRowData((prev) => {
+        const rows = prev.map((r) => ({ ...r }))
+        const idx = rows.findIndex((r) => r.id === rowId)
+        if (idx === -1) return prev
+
+        const newRow: any = {
+          id: `row-${Date.now()}`,
+          originalIndex: 0,
+        }
+        for (let i = 0; i < flow.columns.length; i++) {
+          newRow[`col_${i}`] = ""
+        }
+
+        // Inherit parent heading if inserting among children
+        const targetRow = rows[idx]
+        if (targetRow.parentHeadingId) {
+          newRow.parentHeadingId = targetRow.parentHeadingId
+        }
+
+        const insertIdx = position === "above" ? idx : idx + 1
+        rows.splice(insertIdx, 0, newRow)
+
+        // Re-index
+        rows.forEach((r, i) => (r.originalIndex = i))
+
+        const newChildren = rowDataToBoxes(rows, flow.columns)
+        onUpdate({ children: newChildren })
+        return rows
+      })
+    },
+    [flow.columns, onUpdate],
+  )
+
+  /**
+   * Delete a row (and unparent its children if it's a heading)
+   */
+  const deleteRow = useCallback(
+    (rowId: string) => {
+      setRowData((prev) => {
+        const rows = prev.map((r) => ({ ...r }))
+        const idx = rows.findIndex((r) => r.id === rowId)
+        if (idx === -1) return prev
+
+        // If deleting a heading, unparent its children
+        if (rows[idx].isHeading) {
+          for (let i = idx + 1; i < rows.length; i++) {
+            if (rows[i].parentHeadingId === rowId) {
+              rows[i].parentHeadingId = undefined
+            } else if (rows[i].isHeading) {
+              break
+            }
+          }
+          setCollapsedHeadings((s) => {
+            const next = new Set(s)
+            next.delete(rowId)
+            return next
+          })
+        }
+
+        rows.splice(idx, 1)
+        rows.forEach((r, i) => (r.originalIndex = i))
+
+        const newChildren = rowDataToBoxes(rows, flow.columns)
+        onUpdate({ children: newChildren })
+        return rows
+      })
+    },
+    [flow.columns, onUpdate],
+  )
+
+  /**
+   * Collapse or expand all headings at once
+   */
+  const collapseAll = useCallback(() => {
+    const headingIds = new Set(rowData.filter((r) => r.isHeading).map((r) => r.id))
+    setCollapsedHeadings(headingIds)
+    setTimeout(() => gridRef.current?.api?.onFilterChanged(), 0)
+  }, [rowData])
+
+  const expandAll = useCallback(() => {
+    setCollapsedHeadings(new Set())
+    setTimeout(() => gridRef.current?.api?.onFilterChanged(), 0)
+  }, [])
+
+  /**
+   * Handle right-click context menu on cells
+   */
+  const onCellContextMenu = useCallback(
+    (event: CellContextMenuEvent) => {
+      const browserEvent = event.event as MouseEvent
+      if (!browserEvent || !event.data) return
+      browserEvent.preventDefault()
+      setContextMenu({
+        x: browserEvent.clientX,
+        y: browserEvent.clientY,
+        rowId: event.data.id,
+      })
+    },
+    [],
+  )
+
+  /**
+   * Build context menu items for a given row
+   */
+  const getContextMenuItems = useCallback(
+    (rowId: string): ContextMenuEntry[] => {
+      const row = rowData.find((r) => r.id === rowId)
+      if (!row) return []
+
+      const isHeading = row.isHeading
+      const hasParent = !!row.parentHeadingId
+      const hasAnyHeadings = rowData.some((r) => r.isHeading)
+
+      // Can indent if not already a heading and there's a heading above
+      const rowIdx = rowData.findIndex((r) => r.id === rowId)
+      let canIndent = !isHeading && rowIdx > 0
+      if (canIndent) {
+        let foundHeading = false
+        for (let i = rowIdx - 1; i >= 0; i--) {
+          if (rowData[i].isHeading) { foundHeading = true; break }
+        }
+        canIndent = foundHeading && !hasParent
+      }
+
+      return [
+        // Tree structure
+        {
+          label: isHeading ? "Remove Section Heading" : "Make Section Heading",
+          onClick: () => toggleHeading(rowId),
+        },
+        {
+          label: "Indent (Make Child)",
+          onClick: () => indentRow(rowId),
+          disabled: !canIndent,
+        },
+        {
+          label: "Outdent (Make Top-Level)",
+          onClick: () => outdentRow(rowId),
+          disabled: !hasParent,
+        },
+        { separator: true as const },
+        // Collapse/Expand
+        {
+          label: isHeading
+            ? (collapsedHeadings.has(rowId) ? "Expand Section" : "Collapse Section")
+            : "Collapse Section",
+          onClick: () => isHeading && toggleCollapse(rowId),
+          disabled: !isHeading,
+        },
+        {
+          label: "Collapse All Sections",
+          onClick: collapseAll,
+          disabled: !hasAnyHeadings,
+        },
+        {
+          label: "Expand All Sections",
+          onClick: expandAll,
+          disabled: !hasAnyHeadings || collapsedHeadings.size === 0,
+        },
+        { separator: true as const },
+        // Row operations
+        {
+          label: "Insert Row Above",
+          onClick: () => insertRow(rowId, "above"),
+        },
+        {
+          label: "Insert Row Below",
+          onClick: () => insertRow(rowId, "below"),
+        },
+        {
+          label: "Delete Row",
+          onClick: () => deleteRow(rowId),
+          disabled: rowData.length <= 1,
+        },
+      ]
+    },
+    [rowData, collapsedHeadings, toggleHeading, indentRow, outdentRow, toggleCollapse, collapseAll, expandAll, insertRow, deleteRow],
+  )
+
+  /**
+   * External filter: hide children of collapsed headings
+   */
+  const isExternalFilterPresent = useCallback(() => collapsedHeadings.size > 0, [collapsedHeadings])
+
+  const doesExternalFilterPass = useCallback(
+    (node: any) => {
+      const data = node.data
+      if (!data?.parentHeadingId) return true
+      return !collapsedHeadings.has(data.parentHeadingId)
+    },
+    [collapsedHeadings],
+  )
+
+  /**
    * Generate column definitions for AG Grid
    * Includes team color coding and custom headers with speech icons
    */
@@ -207,11 +684,11 @@ export function FlowSpreadsheet({
       const hasN = colName.toUpperCase().includes("N")
       const hasA = colName.toUpperCase().includes("A")
 
-      return {
+      const colDef: ColDef = {
         field: `col_${idx}`,
         headerName: colName,
         editable: true,
-        rowDrag: idx === 0, // Only first column has row drag handle
+        rowDrag: idx === 0,
         flex: 1,
         minWidth: 150,
         cellEditor: "agTextCellEditor",
@@ -226,8 +703,19 @@ export function FlowSpreadsheet({
           onOpenSpeechPanel,
         },
       }
+
+      // First column gets the tree cell renderer
+      if (idx === 0) {
+        colDef.cellRenderer = FirstColumnCellRenderer
+        colDef.cellRendererParams = {
+          collapsedHeadings,
+          onToggleCollapse: toggleCollapse,
+        }
+      }
+
+      return colDef
     })
-  }, [flow.columns, onOpenSpeechPanel])
+  }, [flow.columns, onOpenSpeechPanel, collapsedHeadings, toggleCollapse])
 
   /**
    * Default column settings
@@ -430,6 +918,9 @@ export function FlowSpreadsheet({
           onRowDragEnd={onRowDragEnd}
           onGridReady={onGridReady}
           onCellKeyDown={onCellKeyDown}
+          onCellContextMenu={onCellContextMenu}
+          isExternalFilterPresent={isExternalFilterPresent}
+          doesExternalFilterPass={doesExternalFilterPass}
           rowHeight={40}
           headerHeight={36}
           rowDragManaged={true}
@@ -445,8 +936,19 @@ export function FlowSpreadsheet({
           rowSelection="single"
           undoRedoCellEditing={true}
           undoRedoCellEditingLimit={50}
+          preventDefaultOnContextMenu={true}
         />
       </div>
+
+      {/* Custom right-click context menu */}
+      {contextMenu && (
+        <GridContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          items={getContextMenuItems(contextMenu.rowId)}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
     </div>
   )
 }

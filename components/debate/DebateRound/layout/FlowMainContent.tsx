@@ -30,6 +30,14 @@ interface FlowMainContentProps {
   leftQuoteView?: boolean
   /** Whether the right split panel is in quote view. */
   rightQuoteView?: boolean
+  /** Handler called when the left panel view mode changes. */
+  onLeftViewModeChange?: (mode: ViewMode) => void
+  /** Handler called when the right panel view mode changes. */
+  onRightViewModeChange?: (mode: ViewMode) => void
+  /** Handler called when the left panel quote view is toggled. */
+  onLeftQuoteViewToggle?: () => void
+  /** Handler called when the right panel quote view is toggled. */
+  onRightQuoteViewToggle?: () => void
   /** Width percentage occupied by the left panel in split mode. */
   splitWidth?: number
   /** Markdown content for the left split panel. */
@@ -83,6 +91,10 @@ export function FlowMainContent({
   rightViewMode = "read",
   leftQuoteView = false,
   rightQuoteView = false,
+  onLeftViewModeChange,
+  onRightViewModeChange,
+  onLeftQuoteViewToggle,
+  onRightQuoteViewToggle,
   splitWidth = 50,
   leftContent = "",
   rightContent = "",
@@ -107,7 +119,13 @@ export function FlowMainContent({
       return (
         <div className="flex flex-col h-full bg-[var(--background)] rounded-[var(--border-radius)]">
           <div className="border-b border-border bg-muted/50">
-            <SpeechHeaderBar speechName={leftSpeech} />
+            <SpeechHeaderBar 
+              speechName={leftSpeech}
+              viewMode={leftViewMode}
+              quoteView={leftQuoteView}
+              onViewModeChange={onLeftViewModeChange}
+              onQuoteViewToggle={onLeftQuoteViewToggle}
+            />
           </div>
           <div className="flex-1 overflow-hidden">
             <MarkdownEditor
@@ -132,7 +150,13 @@ export function FlowMainContent({
           style={{ width: `${splitWidth}%` }}
         >
           <div className="border-b border-border bg-muted/50">
-            <SpeechHeaderBar speechName={leftSpeech} />
+            <SpeechHeaderBar 
+              speechName={leftSpeech}
+              viewMode={leftViewMode}
+              quoteView={leftQuoteView}
+              onViewModeChange={onLeftViewModeChange}
+              onQuoteViewToggle={onLeftQuoteViewToggle}
+            />
           </div>
           <div className="flex-1 overflow-hidden">
             <MarkdownEditor
@@ -161,7 +185,13 @@ export function FlowMainContent({
           style={{ width: `${100 - splitWidth}%` }}
         >
           <div className="border-b border-border bg-muted/50">
-            <SpeechHeaderBar speechName={rightSpeech} />
+            <SpeechHeaderBar 
+              speechName={rightSpeech}
+              viewMode={rightViewMode}
+              quoteView={rightQuoteView}
+              onViewModeChange={onRightViewModeChange}
+              onQuoteViewToggle={onRightQuoteViewToggle}
+            />
           </div>
           <div className="flex-1 overflow-hidden">
             <MarkdownEditor

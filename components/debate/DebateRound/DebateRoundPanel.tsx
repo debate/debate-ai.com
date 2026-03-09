@@ -27,6 +27,7 @@ import { SplitModeToolbar } from "./controls/SplitModeToolbar"
 // Dialogs
 import { FlowHistoryDialog } from "./dialogs/FlowHistoryDialog"
 import { RoundEditorDialog } from "./dialogs/CreateRoundDialog"
+import { Footer } from "@/components/debate/Footer"
 
 // Custom hooks
 import { useDebateFlowState } from "./hooks/useDebateFlowState"
@@ -301,14 +302,6 @@ export function DebateFlowPage() {
           onNavigatePrev={state.isMobile ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches}
           onNavigateNext={state.isMobile ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches}
           isMobile={state.isMobile}
-          leftViewMode={state.splitViewMode1}
-          rightViewMode={state.splitViewMode2}
-          leftQuoteView={state.splitQuoteView1}
-          rightQuoteView={state.splitQuoteView2}
-          onLeftViewModeChange={state.setSplitViewMode1}
-          onRightViewModeChange={state.setSplitViewMode2}
-          onLeftQuoteViewToggle={() => state.setSplitQuoteView1(!state.splitQuoteView1)}
-          onRightQuoteViewToggle={() => state.setSplitQuoteView2(!state.splitQuoteView2)}
         />
       )}
 
@@ -330,6 +323,10 @@ export function DebateFlowPage() {
             rightViewMode={state.splitViewMode2}
             leftQuoteView={state.splitQuoteView1}
             rightQuoteView={state.splitQuoteView2}
+            onLeftViewModeChange={state.setSplitViewMode1}
+            onRightViewModeChange={state.setSplitViewMode2}
+            onLeftQuoteViewToggle={() => state.setSplitQuoteView1(!state.splitQuoteView1)}
+            onRightQuoteViewToggle={() => state.setSplitQuoteView2(!state.splitQuoteView2)}
             splitWidth={state.splitWidth}
             leftContent={leftContent}
             rightContent={rightContent}
@@ -402,7 +399,7 @@ export function DebateFlowPage() {
       <div className="flex-1 overflow-hidden">
         {!state.isMobile ? (
           <ResizablePanelGroup orientation="horizontal" className="h-full w-full">
-            <ResizablePanel defaultSize={22} minSize={8}>
+            <ResizablePanel defaultSize={20} minSize={8}>
               <FlowPageSidebar
                 flows={flows}
                 selected={selected}
@@ -422,7 +419,7 @@ export function DebateFlowPage() {
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={82}>
+            <ResizablePanel defaultSize={80}>
               {mainContentArea}
             </ResizablePanel>
           </ResizablePanelGroup>
@@ -470,6 +467,7 @@ export function DebateFlowPage() {
         roundId={state.editingRoundId}
       />
 
+      <Footer />
     </div>
   )
 }
