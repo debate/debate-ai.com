@@ -11,7 +11,7 @@ permissions:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
-    if: github.actor == 'claude[bot]' || github.actor == 'anthropic-claude[bot]' || github.actor == 'claude-devin[bot]'
+    if: github.actor == 'claude[bot]' || github.actor == 'anthropic-claude[bot]' || github.actor == 'vtempest'
     steps:
       - name: Enable auto-merge
         uses: peter-evans/enable-pull-request-automerge@v3
