@@ -131,10 +131,10 @@ export function DebateVideosPage() {
 
   // Filter and sort when dependencies change
   useEffect(() => {
-    const filtered = filterAndSortVideos(state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites)
+    const filtered = filterAndSortVideos(state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos)
     actions.setFilteredVideos(filtered)
     actions.setCurrentPage(1)
-  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
+  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
 
   // ============================================================================
   // Search & Filter Handlers
@@ -295,6 +295,8 @@ export function DebateVideosPage() {
           totalVideos={state.filteredVideos.length}
           onPrevPage={handlePrevPage}
           onNextPage={handleNextPage}
+          selectedStyle={state.selectedStyle}
+          onStyleChange={(style) => actions.setSelectedStyle(style)}
         />
       )}
 
@@ -319,6 +321,9 @@ export function DebateVideosPage() {
             favorites={state.favorites}
             onToggleFavorite={actions.toggleFavorite}
             onChannelClick={handleSearchChange}
+            onHideVideo={actions.hideVideo}
+            onUnhideVideo={actions.unhideVideo}
+            hiddenVideos={state.hiddenVideos}
           />
 
           {/* Infinite scroll trigger */}
