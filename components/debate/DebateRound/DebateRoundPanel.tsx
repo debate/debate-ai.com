@@ -333,6 +333,8 @@ export function DebateFlowPage() {
             onUpdateLeftSpeech={splitHandlers.handleUpdateLeftSpeech}
             onUpdateRightSpeech={splitHandlers.handleUpdateRightSpeech}
             onUpdate={updateFlow.bind(null, selected)}
+            speechTimerStates={timerState.perSpeechTimerStates}
+            onSpeechTimerStateChange={timerState.setSpeechTimerState}
             onMouseDown={() => {
               const handleMouseMove = (e: MouseEvent) => {
                 const container = (e.target as HTMLElement).closest(".split-container")

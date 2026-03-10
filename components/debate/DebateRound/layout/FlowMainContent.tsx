@@ -9,6 +9,7 @@ import { MarkdownEditor } from "../../../markdown/markdown-editor"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
 import type { Flow } from "@/components/debate/DebateRound/types"
 import type { ViewMode } from "@/lib/types/debate-flow"
+import type { SpeechTimerEntry } from "../hooks/useTimerState"
 
 /** Props for the FlowMainContent component. */
 interface FlowMainContentProps {
@@ -56,6 +57,10 @@ interface FlowMainContentProps {
   onUpdate?: (updates: Partial<Flow>) => void
   /** Whether the viewport is mobile-sized; shows only one speech panel in split mode. */
   isMobile?: boolean
+  /** Per-speech timer state map for persisting timers across navigation. */
+  speechTimerStates?: Record<string, SpeechTimerEntry>
+  /** Callback to update a per-speech timer state entry. */
+  onSpeechTimerStateChange?: (speechName: string, updates: Partial<SpeechTimerEntry>) => void
 }
 
 /**
@@ -104,6 +109,8 @@ export function FlowMainContent({
   onMouseDown,
   onUpdate,
   isMobile = false,
+  speechTimerStates,
+  onSpeechTimerStateChange,
 }: FlowMainContentProps) {
   if (!currentFlow) {
     return (
@@ -119,12 +126,16 @@ export function FlowMainContent({
       return (
         <div className="flex flex-col h-full bg-[var(--background)] rounded-[var(--border-radius)]">
           <div className="border-b border-border bg-muted/50">
-            <SpeechHeaderBar 
+            <SpeechHeaderBar
               speechName={leftSpeech}
               viewMode={leftViewMode}
               quoteView={leftQuoteView}
               onViewModeChange={onLeftViewModeChange}
               onQuoteViewToggle={onLeftQuoteViewToggle}
+              controlledTime={speechTimerStates?.[leftSpeech]?.time}
+              controlledTimerRunState={speechTimerStates?.[leftSpeech]?.state}
+              onControlledTimeChange={(t) => onSpeechTimerStateChange?.(leftSpeech, { time: t })}
+              onControlledTimerRunStateChange={(s) => onSpeechTimerStateChange?.(leftSpeech, { state: s })}
             />
           </div>
           <div className="flex-1 overflow-hidden">
@@ -150,12 +161,16 @@ export function FlowMainContent({
           style={{ width: `${splitWidth}%` }}
         >
           <div className="border-b border-border bg-muted/50">
-            <SpeechHeaderBar 
+            <SpeechHeaderBar
               speechName={leftSpeech}
               viewMode={leftViewMode}
               quoteView={leftQuoteView}
               onViewModeChange={onLeftViewModeChange}
               onQuoteViewToggle={onLeftQuoteViewToggle}
+              controlledTime={speechTimerStates?.[leftSpeech]?.time}
+              controlledTimerRunState={speechTimerStates?.[leftSpeech]?.state}
+              onControlledTimeChange={(t) => onSpeechTimerStateChange?.(leftSpeech, { time: t })}
+              onControlledTimerRunStateChange={(s) => onSpeechTimerStateChange?.(leftSpeech, { state: s })}
             />
           </div>
           <div className="flex-1 overflow-hidden">
@@ -185,12 +200,16 @@ export function FlowMainContent({
           style={{ width: `${100 - splitWidth}%` }}
         >
           <div className="border-b border-border bg-muted/50">
-            <SpeechHeaderBar 
+            <SpeechHeaderBar
               speechName={rightSpeech}
               viewMode={rightViewMode}
               quoteView={rightQuoteView}
               onViewModeChange={onRightViewModeChange}
               onQuoteViewToggle={onRightQuoteViewToggle}
+              controlledTime={speechTimerStates?.[rightSpeech]?.time}
+              controlledTimerRunState={speechTimerStates?.[rightSpeech]?.state}
+              onControlledTimeChange={(t) => onSpeechTimerStateChange?.(rightSpeech, { time: t })}
+              onControlledTimerRunStateChange={(s) => onSpeechTimerStateChange?.(rightSpeech, { state: s })}
             />
           </div>
           <div className="flex-1 overflow-hidden">

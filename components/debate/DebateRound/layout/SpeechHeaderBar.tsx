@@ -5,7 +5,7 @@
 "use client"
 
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import type { Round } from "@/components/debate/DebateRound/types"
 import { FileText, Share2, Lock, Users, Radio, Quote } from "lucide-react"
 import type { ViewMode } from "@/lib/types/debate-flow"
@@ -63,15 +63,27 @@ export interface SpeechHeaderBarProps {
   onViewModeChange?: (mode: ViewMode) => void
   /** Handler called when the quote view toggle button is clicked. */
   onQuoteViewToggle?: () => void
+  /** Controlled timer time in ms. When provided, persists state across navigation. */
+  controlledTime?: number
+  /** Controlled timer run state. When provided, persists state across navigation. */
+  controlledTimerRunState?: { name: "paused" } | { name: "running"; startTime: number } | { name: "done" }
+  /** Callback when controlled time changes. */
+  onControlledTimeChange?: (time: number) => void
+  /** Callback when controlled timer run state changes. */
+  onControlledTimerRunStateChange?: (state: { name: "paused" } | { name: "running"; startTime: number } | { name: "done" }) => void
 }
 
-export function SpeechHeaderBar({ 
-  speechName, 
+export function SpeechHeaderBar({
+  speechName,
   onOpenSpeechPanel,
   viewMode = "read",
   quoteView = false,
   onViewModeChange,
-  onQuoteViewToggle
+  onQuoteViewToggle,
+  controlledTime,
+  controlledTimerRunState,
+  onControlledTimeChange,
+  onControlledTimerRunStateChange,
 }: SpeechHeaderBarProps) {
   const { rounds, flows, selected } = useFlowStore()
   const currentFlow = flows[selected]
@@ -91,10 +103,33 @@ export function SpeechHeaderBar({
   const safeSpeechIndex = speechIndex !== -1 ? speechIndex : 0
   const defaultTimeMs = debateStyle?.timerSpeeches[safeSpeechIndex]?.time * 60 * 1000 || 0
 
-  const [time, setTime] = useState(defaultTimeMs)
-  const [timerState, setTimerState] = useState<
-    { name: "paused" } | { name: "running", startTime: number } | { name: "done" }
-  >({ name: "paused" })
+  type RunState = { name: "paused" } | { name: "running"; startTime: number } | { name: "done" }
+
+  // Local fallback state (used when no controlled callbacks are provided)
+  const [localTime, setLocalTime] = useState(defaultTimeMs)
+  const [localTimerState, setLocalTimerState] = useState<RunState>({ name: "paused" })
+
+  // Controlled mode: use callbacks when provided so state persists outside this component
+  const isControlled = onControlledTimeChange !== undefined && onControlledTimerRunStateChange !== undefined
+
+  // Effective time and run-state: prefer controlled values (falling back to defaults) when controlled
+  const time = isControlled ? (controlledTime ?? defaultTimeMs) : localTime
+  const timerState: RunState = isControlled ? (controlledTimerRunState ?? { name: "paused" }) : localTimerState
+
+  const setTime = (t: number) => {
+    if (isControlled) {
+      onControlledTimeChange!(t)
+    } else {
+      setLocalTime(t)
+    }
+  }
+  const setTimerState = (s: RunState) => {
+    if (isControlled) {
+      onControlledTimerRunStateChange!(s)
+    } else {
+      setLocalTimerState(s)
+    }
+  }
 
   // Track recording duration — re-read when a recording is saved
   const [recordingDurationSec, setRecordingDurationSec] = useState<number | null>(() =>

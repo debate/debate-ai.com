@@ -90,7 +90,7 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite }: Vide
           e.stopPropagation()
           onToggleFavorite(videoId)
         }}
-        className={`absolute top-2 right-2 z-10 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors opacity-0 group-hover/card:opacity-100 focus:opacity-100 ${isFavorite ? "opacity-100 text-amber-400" : "text-white"}`}
+        className={`absolute top-2 right-2 z-10 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors ${isFavorite ? "opacity-100 text-amber-400" : "text-white sm:opacity-0 sm:group-hover/card:opacity-100 focus:opacity-100"}`}
         title={isFavorite ? "Remove from favorites" : "Save to favorites"}
       >
         <Star className={`h-5 w-5 ${isFavorite ? "fill-current text-amber-400" : ""}`} />

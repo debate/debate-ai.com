@@ -108,35 +108,79 @@ export function VideoSearchBar({
   const maxYear = Math.max(currentYear, 2026)
   const years = Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
 
+  const pagination = totalPages && totalPages > 1 && currentPage && onPrevPage && onNextPage ? (
+    <div className="flex items-center gap-1 shrink-0">
+      {totalVideos !== undefined && (
+        <span className="text-[10px] sm:text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+          {totalVideos} videos
+        </span>
+      )}
+      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onPrevPage} disabled={currentPage === 1} title="Previous Page">
+        <ChevronLeft className="h-4 w-4" />
+      </Button>
+      <span className="text-[10px] sm:text-xs font-medium tabular-nums whitespace-nowrap text-muted-foreground min-w-[3rem] text-center">
+        {currentPage} / {totalPages}
+      </span>
+      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onNextPage} disabled={currentPage >= totalPages} title="Next Page">
+        <ChevronRight className="h-4 w-4" />
+      </Button>
+    </div>
+  ) : null
+
   return (
-    <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
-      {/* Search input — compact on desktop */}
-      <div className="relative w-full md:w-[160px] shrink-0">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            onFocus={onSearchFocus}
-            onBlur={onSearchBlur}
-            className="pl-9 pr-8 h-9"
-          />
-          {searchTerm && (
-            <button
-              onClick={onClearSearch}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-          {isSearchFocused && <GlowingEffect />}
+    <div className="flex flex-col gap-2 flex-1 min-w-0">
+      {/* Row 1: Search + icon buttons */}
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1 min-w-0">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+              onFocus={onSearchFocus}
+              onBlur={onSearchBlur}
+              className="pl-9 pr-8 h-9"
+            />
+            {searchTerm && (
+              <button
+                onClick={onClearSearch}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+            {isSearchFocused && <GlowingEffect />}
+          </div>
         </div>
+        <Button className="shrink-0" variant="outline" size="icon" onClick={onToggleThumbnails} title="Toggle thumbnails">
+          {showThumbnails ? <VideoOff className="h-4 w-4" /> : <Video className="h-4 w-4" />}
+        </Button>
+        <Button
+          className={`shrink-0 ${showFavoritesOnly ? "bg-amber-100 text-amber-600 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 border-amber-200 dark:border-amber-800" : ""}`}
+          variant="outline"
+          size="icon"
+          onClick={onToggleFavoritesOnly}
+          title={showFavoritesOnly ? "Show all videos" : "Show favorites only"}
+        >
+          <Star className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`} />
+        </Button>
+        {onToggleTopPicks && (
+          <Button
+            className={`shrink-0 ${showTopPicksActive ? "bg-primary/20 ring-2 ring-primary" : ""}`}
+            variant="outline"
+            size="icon"
+            onClick={onToggleTopPicks}
+            title={showTopPicksActive ? "Show all debates" : "Show top picks"}
+          >
+            <Image src={IconTopRounds} alt="Top Picks" width={16} height={16} className="h-4 w-4" />
+          </Button>
+        )}
       </div>
 
-      {/* Rest of controls — same row */}
-      <div className="flex flex-wrap items-center gap-2 flex-1">
+      {/* Row 2: Sort + Season + Pagination */}
+      <div className="flex items-center gap-2">
         <Select value={sortOrder} onValueChange={onSortChange}>
           <SelectTrigger className="w-[100px] sm:w-[120px] shrink-0">
             <SelectValue placeholder="Sort by" />
@@ -164,63 +208,7 @@ export function VideoSearchBar({
           </SelectContent>
         </Select>
 
-        <Button className="shrink-0" variant="outline" size="icon" onClick={onToggleThumbnails} title="Toggle thumbnails">
-          {showThumbnails ? <VideoOff className="h-4 w-4" /> : <Video className="h-4 w-4" />}
-        </Button>
-        <Button
-          className={`shrink-0 ${showFavoritesOnly ? "bg-amber-100 text-amber-600 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 border-amber-200 dark:border-amber-800" : ""}`}
-          variant="outline"
-          size="icon"
-          onClick={onToggleFavoritesOnly}
-          title={showFavoritesOnly ? "Show all videos" : "Show favorites only"}
-        >
-          <Star className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`} />
-        </Button>
-        {onToggleTopPicks && (
-          <Button
-            className={`shrink-0 ${showTopPicksActive ? "bg-primary/20 ring-2 ring-primary" : ""}`}
-            variant="outline"
-            size="icon"
-            onClick={onToggleTopPicks}
-            title={showTopPicksActive ? "Show all debates" : "Show top picks"}
-          >
-            <Image src={IconTopRounds} alt="Top Picks" width={16} height={16} className="h-4 w-4" />
-          </Button>
-        )}
-
-        {/* Compact Pagination */}
-        {totalPages && totalPages > 1 && currentPage && onPrevPage && onNextPage && (
-          <div className="flex items-center gap-2 ml-auto pl-2 border-l border-border/50 shrink-0">
-            {totalVideos !== undefined && (
-              <span className="text-[10px] sm:text-xs text-muted-foreground tabular-nums whitespace-nowrap">
-                {totalVideos} videos
-              </span>
-            )}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={onPrevPage}
-              disabled={currentPage === 1}
-              title="Previous Page"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="text-[10px] sm:text-xs font-medium tabular-nums whitespace-nowrap text-muted-foreground min-w-[3rem] text-center">
-              {currentPage} / {totalPages}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={onNextPage}
-              disabled={currentPage >= totalPages}
-              title="Next Page"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
+        {pagination && <div className="ml-auto">{pagination}</div>}
       </div>
     </div>
   )
