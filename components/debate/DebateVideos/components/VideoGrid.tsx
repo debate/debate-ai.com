@@ -9,6 +9,7 @@ import React from "react"
 import Image from "next/image"
 import { Play, Star, Calendar, Eye, Share2 } from "lucide-react"
 import type { VideoType } from "@/lib/types/videos"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 
 /**
  * Props for the VideoGrid component.
@@ -88,18 +89,25 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
 
   return (
-    <div className="block h-full relative group/card">
-      <button
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          onToggleFavorite(videoId)
-        }}
-        className={`absolute top-2 right-2 z-10 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors ${isFavorite ? "opacity-100 text-amber-400" : "text-white sm:opacity-0 sm:group-hover/card:opacity-100 focus:opacity-100"}`}
-        title={isFavorite ? "Remove from favorites" : "Save to favorites"}
-      >
-        <Star className={`h-5 w-5 ${isFavorite ? "fill-current text-amber-400" : ""}`} />
-      </button>
+    <TooltipProvider>
+      <div className="block h-full relative group/card">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                onToggleFavorite(videoId)
+              }}
+              className={`absolute top-2 right-2 z-10 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors ${isFavorite ? "opacity-100 text-amber-400" : "text-white sm:opacity-0 sm:group-hover/card:opacity-100 focus:opacity-100"}`}
+            >
+              <Star className={`h-5 w-5 ${isFavorite ? "fill-current text-amber-400" : ""}`} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {isFavorite ? "Remove from favorites" : "Save to favorites"}
+          </TooltipContent>
+        </Tooltip>
       <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full relative">
         {showThumbnails && (
           <div
@@ -159,5 +167,6 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
         </div>
       </Card>
     </div>
+    </TooltipProvider>
   )
 }

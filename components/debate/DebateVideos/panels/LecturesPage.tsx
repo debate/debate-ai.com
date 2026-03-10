@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { IconBook } from "@/components/icons"
 import { DictionaryPanel } from "./DictionaryPanel"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
@@ -135,15 +136,23 @@ export function LecturesPage() {
   const isDictionary = state.currentCategory === "dictionary"
 
   const dictToggleButton = (
-    <Button
-      className={`shrink-0 ${isDictionary ? "bg-primary/20 ring-2 ring-primary" : ""}`}
-      variant="outline"
-      size="icon"
-      onClick={() => handleCategoryChange(isDictionary ? "lectures" : "dictionary")}
-      title={isDictionary ? "Back to Lectures" : "Show Dictionary"}
-    >
-      <Image src={IconBook} alt="Dictionary" width={16} height={16} className="h-4 w-4" />
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            className={`shrink-0 ${isDictionary ? "bg-primary/20 ring-2 ring-primary" : ""}`}
+            variant="outline"
+            size="icon"
+            onClick={() => handleCategoryChange(isDictionary ? "lectures" : "dictionary")}
+          >
+            <Image src={IconBook} alt="Dictionary" width={16} height={16} className="h-4 w-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          {isDictionary ? "Back to lectures" : "Show dictionary"}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 
   const stickyHeader = (controls?: React.ReactNode) => (
@@ -178,7 +187,35 @@ export function LecturesPage() {
     )
     return (
       <div className="min-h-screen bg-background p-3 sm:p-6">
-        {stickyHeader(dictControls)}
+        {stickyHeader(
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="relative w-full md:w-[240px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search terms..."
+                value={dictSearchTerm}
+                onChange={(e) => setDictSearchTerm(e.target.value)}
+                className="pl-9 pr-8 h-9"
+              />
+              {dictSearchTerm && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => setDictSearchTerm("")}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">Clear search</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </div>
+          </div>
+        )}
         <DictionaryPanel controlledSearchTerm={dictSearchTerm} onControlledSearchChange={setDictSearchTerm} />
       </div>
     )

@@ -4,6 +4,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CategoryDockProvider } from "@/components/category-dock-context"
 import { CategoryDock } from "@/components/debate/DebateVideos/components/CategoryDock"
+import Template from "./template"
 
 export const metadata: Metadata = {
   title: "Debate AI",
@@ -37,7 +38,7 @@ export default function RootLayout({
           <CategoryDockProvider>
             <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
               <CategoryDock />
-              {children}
+              <Template>{children}</Template>
             </div>
           </CategoryDockProvider>
         </ThemeProvider>

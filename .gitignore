@@ -29,3 +29,8 @@ bun.lock
 *lock.json
 
 .dev.vars
+
+# Service Worker generated files
+src/sw/app-file-list.ts
+src/sw/version.ts
+public/service-worker.js

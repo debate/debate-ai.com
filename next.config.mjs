@@ -8,7 +8,12 @@ const nextConfig = {
   },
   transpilePackages: ["react-resizable-panels"],
   turbopack: {},
-  webpack(config) {
+  webpack(config, { isServer }) {
+    // Skip Service Worker bundling on server side
+    if (isServer) {
+      return config;
+    }
+
     config.module.rules.push({
       test: /\.(ogg|mp3|wav|mpe?g)$/i,
       type: "asset/resource",

@@ -284,7 +284,7 @@ export function LeaderboardPanel({
                     alt={divConfig.label}
                     width={100}
                     height={100}
-                    className="w-[180px] h-[180px] object-contain"
+                    className="w-[108px] h-[108px] sm:w-[238px] sm:h-[238px] object-contain"
                   />
                 </article>
                 <div className="min-w-0 flex-1 py-4 pr-4">
