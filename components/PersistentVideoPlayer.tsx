@@ -15,6 +15,9 @@ import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "@
  * video to play after the current one finishes (or when the user presses
  * SkipForward). The play/pause button sends commands to the YouTube iframe
  * via the IFrame API postMessage interface.
+ *
+ * The title bar is a draggable handle — supports both mouse and touch drag
+ * so the popout can be repositioned on desktop and mobile.
  */
 function VideoPlayerUI() {
   const {
@@ -32,6 +35,13 @@ function VideoPlayerUI() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   // Track the last videoId we loaded to avoid re-creating the iframe src
   const loadedVideoIdRef = useRef<string | null>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+
+  // Drag state — null means "use default CSS bottom/right positioning"
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const isDraggingRef = useRef(false)
+  const dragOffsetRef = useRef({ x: 0, y: 0 })
 
   // Register iframe ref globally so other components can send commands
   const setIframeRef = useCallback((el: HTMLIFrameElement | null) => {
@@ -66,20 +76,108 @@ function VideoPlayerUI() {
     setIsPlaying(!isPlaying)
   }, [isPlaying, setIsPlaying])
 
+  // Begin drag — capture pointer offset within the element
+  const startDrag = useCallback((clientX: number, clientY: number) => {
+    const el = containerRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    dragOffsetRef.current = {
+      x: clientX - rect.left,
+      y: clientY - rect.top,
+    }
+    // Snapshot the current rendered position as absolute coords so the
+    // element doesn't jump when we switch from bottom/right to top/left.
+    setPosition({ x: rect.left, y: rect.top })
+    isDraggingRef.current = true
+    setIsDragging(true)
+  }, [])
+
+  // Clamp a proposed position so the element stays fully on-screen
+  const clampPosition = useCallback((x: number, y: number) => {
+    const el = containerRef.current
+    if (!el) return { x, y }
+    return {
+      x: Math.max(0, Math.min(window.innerWidth - el.offsetWidth, x)),
+      y: Math.max(0, Math.min(window.innerHeight - el.offsetHeight, y)),
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return
+      setPosition(clampPosition(
+        e.clientX - dragOffsetRef.current.x,
+        e.clientY - dragOffsetRef.current.y,
+      ))
+    }
+    const handleMouseUp = () => {
+      if (!isDraggingRef.current) return
+      isDraggingRef.current = false
+      setIsDragging(false)
+    }
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDraggingRef.current) return
+      const touch = e.touches[0]
+      setPosition(clampPosition(
+        touch.clientX - dragOffsetRef.current.x,
+        touch.clientY - dragOffsetRef.current.y,
+      ))
+      // Prevent the page from scrolling while dragging the popout
+      e.preventDefault()
+    }
+    const handleTouchEnd = () => {
+      if (!isDraggingRef.current) return
+      isDraggingRef.current = false
+      setIsDragging(false)
+    }
+
+    document.addEventListener("mousemove", handleMouseMove)
+    document.addEventListener("mouseup", handleMouseUp)
+    document.addEventListener("touchmove", handleTouchMove, { passive: false })
+    document.addEventListener("touchend", handleTouchEnd)
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove)
+      document.removeEventListener("mouseup", handleMouseUp)
+      document.removeEventListener("touchmove", handleTouchMove)
+      document.removeEventListener("touchend", handleTouchEnd)
+    }
+  }, [clampPosition])
+
   if (!activeVideoId) return null
 
   // Build iframe src — only rebuild when videoId changes
   const iframeSrc = `https://www.youtube.com/embed/${activeVideoId}?autoplay=1&enablejsapi=1`
 
+  // When a drag has started we override the default bottom/right CSS classes
+  // with explicit top/left inline styles so the element is freely positionable.
+  const positionStyle: React.CSSProperties = position
+    ? { left: position.x, top: position.y, bottom: "auto", right: "auto" }
+    : {}
+
   return (
     <div
-      className={`fixed bottom-20 right-4 md:bottom-6 z-[9999] shadow-2xl rounded-xl overflow-hidden border border-border bg-background transition-all duration-300 ${
+      ref={containerRef}
+      className={`fixed bottom-20 right-4 md:bottom-6 z-[9999] shadow-2xl rounded-xl overflow-hidden border border-border bg-background transition-[width,height] duration-300 ${
         isMinimized ? "w-64 h-10" : "w-72 sm:w-80"
       }`}
-      style={{ maxWidth: "calc(100vw - 2rem)" }}
+      style={{ maxWidth: "calc(100vw - 2rem)", ...positionStyle }}
     >
-      {/* Title bar */}
-      <div className="flex items-center justify-between px-3 py-2 bg-muted/80 backdrop-blur-sm gap-2">
+      {/* Title bar — drag handle */}
+      <div
+        className={`flex items-center justify-between px-3 py-2 bg-muted/80 backdrop-blur-sm gap-2 select-none touch-none ${
+          isDragging ? "cursor-grabbing" : "cursor-grab"
+        }`}
+        onMouseDown={(e) => {
+          // Don't start drag when clicking a button
+          if ((e.target as HTMLElement).closest("button")) return
+          e.preventDefault()
+          startDrag(e.clientX, e.clientY)
+        }}
+        onTouchStart={(e) => {
+          if ((e.target as HTMLElement).closest("button")) return
+          startDrag(e.touches[0].clientX, e.touches[0].clientY)
+        }}
+      >
         <span className="text-xs font-medium text-foreground truncate flex-1 min-w-0">
           {activeVideoTitle ?? "Playing video"}
         </span>
