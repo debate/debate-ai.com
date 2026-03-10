@@ -148,8 +148,7 @@ export function LecturesPage() {
 
   const stickyHeader = (controls?: React.ReactNode) => (
     <div className="sm:sticky top-0 z-40 bg-background border-b border-border/30 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 mb-4 flex flex-wrap md:flex-nowrap items-center gap-2 md:justify-end">
-      {controls && <div className="min-w-0 flex flex-wrap items-center gap-2">{controls}</div>}
-      <div className="ml-auto">{dictToggleButton}</div>
+      {controls && <div className="min-w-0 flex flex-wrap items-center gap-2">{controls}{dictToggleButton}</div>}
     </div>
   )
 
@@ -234,6 +233,7 @@ export function LecturesPage() {
             videoContainerRef={state.videoContainerRef}
             favorites={state.favorites}
             onToggleFavorite={actions.toggleFavorite}
+            onChannelClick={handleSearchChange}
           />
 
           <div ref={state.loadMoreTriggerRef} className="h-10" />

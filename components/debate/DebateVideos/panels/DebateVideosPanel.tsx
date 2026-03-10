@@ -318,6 +318,7 @@ export function DebateVideosPage() {
             videoContainerRef={state.videoContainerRef}
             favorites={state.favorites}
             onToggleFavorite={actions.toggleFavorite}
+            onChannelClick={handleSearchChange}
           />
 
           {/* Infinite scroll trigger */}

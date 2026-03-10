@@ -37,7 +37,6 @@ const NAV_ITEMS = [
 ]
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = [
-  { category: "rounds", label: "Debates", icon: IconRoundsYoutube },
   { category: "leaderboard", label: "Leaderboard", icon: IconLeaderboard },
 ]
 

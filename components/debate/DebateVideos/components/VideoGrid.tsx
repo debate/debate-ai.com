@@ -24,6 +24,8 @@ interface VideoGridProps {
   favorites: Set<string>
   /** Callback to toggle a video as favorite. */
   onToggleFavorite: (videoId: string) => void
+  /** Callback when a channel name is clicked to filter by channel. */
+  onChannelClick: (channel: string) => void
 }
 
 /**
@@ -35,7 +37,7 @@ interface VideoGridProps {
  * @param props.videoContainerRef - Ref forwarded to the grid container element.
  * @returns A grid element containing one VideoCard per video.
  */
-export function VideoGrid({ videos, showThumbnails, videoContainerRef, favorites, onToggleFavorite }: VideoGridProps) {
+export function VideoGrid({ videos, showThumbnails, videoContainerRef, favorites, onToggleFavorite, onChannelClick }: VideoGridProps) {
   return (
     <div
       ref={videoContainerRef}
@@ -48,6 +50,7 @@ export function VideoGrid({ videos, showThumbnails, videoContainerRef, favorites
           showThumbnails={showThumbnails}
           isFavorite={favorites.has(video[0])}
           onToggleFavorite={onToggleFavorite}
+          onChannelClick={onChannelClick}
         />
       ))}
     </div>
@@ -66,6 +69,8 @@ interface VideoCardProps {
   isFavorite: boolean
   /** Callback to toggle this video as favorite. */
   onToggleFavorite: (videoId: string) => void
+  /** Callback when channel name is clicked to filter by channel. */
+  onChannelClick: (channel: string) => void
 }
 
 /**
@@ -76,7 +81,7 @@ interface VideoCardProps {
  * @param props.showThumbnails - Whether to show the thumbnail image.
  * @returns An anchor element wrapping a Card with video details.
  */
-function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite }: VideoCardProps) {
+function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChannelClick }: VideoCardProps) {
   const [videoId, title, date, channel, viewCount, description] = video
   const [isPlaying, setIsPlaying] = useState(false)
 
@@ -132,16 +137,21 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite }: Vide
             {title}
           </a>
 
-          <CardDescription className="text-sm text-muted-foreground mb-2">{channel}</CardDescription>
-
           <CardDescription className="text-xs line-clamp-2 mb-3 flex-1">{description}</CardDescription>
 
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+            <button
+              onClick={() => onChannelClick(channel)}
+              className="font-medium text-foreground hover:text-primary hover:underline truncate max-w-[140px] text-left"
+              title={`Filter by ${channel}`}
+            >
+              {channel}
+            </button>
+            <div className="flex items-center gap-1 shrink-0">
               <Calendar className="h-3 w-3" />
               <span>{new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 shrink-0">
               <Eye className="h-3 w-3" />
               <span>{viewCount.toLocaleString()}</span>
             </div>
