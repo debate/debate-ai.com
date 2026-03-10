@@ -5,7 +5,7 @@
 "use client";
 
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { settings } from "@/lib/state/settings";
 import {
   debateStyles,
@@ -19,6 +19,12 @@ export type ActiveTimerInfo = {
   totalTime: number;
   startTime: number;
 } | null;
+
+/** Per-speech timer state stored in the map. */
+export type SpeechTimerEntry = {
+  time: number;
+  state: SpeechTimerState["state"];
+};
 
 /**
  * Hook that owns all debate timer state (speech + prep timers).
@@ -40,6 +46,9 @@ export function useTimerState() {
     time: debateStyle.timerSpeeches[0].time * 60 * 1000,
     state: { name: "paused" },
   });
+
+  // Per-speech timer states keyed by speech name (for SpeechHeaderBar tabs)
+  const [perSpeechTimerStates, setPerSpeechTimerStates] = useState<Record<string, SpeechTimerEntry>>({});
 
   // Prep timer states (one per team)
   const [prepState, setPrepState] = useState<TimerState | null>(
@@ -78,6 +87,9 @@ export function useTimerState() {
           state: { name: "paused" },
         });
 
+        // Reset per-speech timer states when debate style changes
+        setPerSpeechTimerStates({});
+
         if (newStyle.prepTime) {
           setPrepState({
             resetTime: newStyle.prepTime * 60 * 1000,
@@ -98,6 +110,36 @@ export function useTimerState() {
 
     return unsubscribe;
   }, [debateStyleIndex]);
+
+  /**
+   * Get timer state for a specific speech by name.
+   * Initializes to the speech's default time if not yet set.
+   */
+  const getSpeechTimerState = useCallback(
+    (speechName: string): SpeechTimerEntry => {
+      if (perSpeechTimerStates[speechName]) return perSpeechTimerStates[speechName];
+      const idx = debateStyle.timerSpeeches.findIndex(
+        (s) => s.name.toUpperCase() === speechName.toUpperCase()
+      );
+      const safeIdx = idx !== -1 ? idx : 0;
+      const defaultTime = (debateStyle.timerSpeeches[safeIdx]?.time ?? 0) * 60 * 1000;
+      return { time: defaultTime, state: { name: "paused" } };
+    },
+    [perSpeechTimerStates, debateStyle]
+  );
+
+  /**
+   * Update timer state for a specific speech by name.
+   */
+  const setSpeechTimerState = useCallback(
+    (speechName: string, updates: Partial<SpeechTimerEntry>) => {
+      setPerSpeechTimerStates((prev) => ({
+        ...prev,
+        [speechName]: { ...getSpeechTimerState(speechName), ...updates },
+      }));
+    },
+    [getSpeechTimerState]
+  );
 
   // Compute which timer is currently running (for header display)
   let activeTimer: ActiveTimerInfo = null;
@@ -131,5 +173,8 @@ export function useTimerState() {
     prepSecondaryState,
     setPrepSecondaryState,
     activeTimer,
+    perSpeechTimerStates,
+    getSpeechTimerState,
+    setSpeechTimerState,
   };
 }

@@ -55,7 +55,7 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
           <Palette className="mr-2 h-4 w-4" />
           Theme
         </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className="w-56 max-h-[400px] overflow-y-auto">
+        <DropdownMenuSubContent className="w-56 max-h-[min(400px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
           <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
             {themeState.isDark ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}
             {themeState.isDark ? "Switch to Light" : "Switch to Dark"}
