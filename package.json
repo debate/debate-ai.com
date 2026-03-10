@@ -5,7 +5,7 @@
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "scripts": {
-    "dev": "open-ready next dev --webpack",
+    "dev": "rm -rf .next; open-ready next dev --webpack",
     "build": "next build --webpack && npm run build:sw:generate && npm run build:sw",
     "build:sw:generate": "node scripts/generate.js",
     "build:sw": "webpack",

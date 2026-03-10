@@ -5,9 +5,9 @@
 "use client"
 
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { Round } from "@/components/debate/DebateRound/types"
-import { FileText, Share2, Lock, Users, Radio, Quote } from "lucide-react"
+import { FileText, Share2, Lock, Users, Radio, Quote, ChevronLeft, ChevronRight } from "lucide-react"
 import type { ViewMode } from "@/lib/types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "@/components/ui/button"
@@ -71,6 +71,14 @@ export interface SpeechHeaderBarProps {
   onControlledTimeChange?: (time: number) => void
   /** Callback when controlled timer run state changes. */
   onControlledTimerRunStateChange?: (state: { name: "paused" } | { name: "running"; startTime: number } | { name: "done" }) => void
+  /** Whether backward speech navigation is available. */
+  canNavigatePrev?: boolean
+  /** Whether forward speech navigation is available. */
+  canNavigateNext?: boolean
+  /** Handler called when the user navigates to the previous speech. */
+  onNavigatePrev?: () => void
+  /** Handler called when the user navigates to the next speech. */
+  onNavigateNext?: () => void
 }
 
 export function SpeechHeaderBar({
@@ -84,6 +92,10 @@ export function SpeechHeaderBar({
   controlledTimerRunState,
   onControlledTimeChange,
   onControlledTimerRunStateChange,
+  canNavigatePrev,
+  canNavigateNext,
+  onNavigatePrev,
+  onNavigateNext,
 }: SpeechHeaderBarProps) {
   const { rounds, flows, selected } = useFlowStore()
   const currentFlow = flows[selected]
@@ -93,6 +105,13 @@ export function SpeechHeaderBar({
 
   const [micDeviceId, setMicDeviceId] = useState<string | undefined>()
   const [recordingEnabled, setRecordingEnabled] = useState(false)
+
+  // Portal ref for recording seekable progress bar in top edge
+  const progressBarPortalRef = useRef<HTMLDivElement>(null)
+  const [isRecordingPlaying, setIsRecordingPlaying] = useState(false)
+  const handleRecordingPlayingChange = useCallback((playing: boolean) => {
+    setIsRecordingPlaying(playing)
+  }, [])
 
   // -- Timer State --
   const currentDebateStyleIndex = (settings.data.debateStyle?.value as number) ?? 0
@@ -177,30 +196,67 @@ export function SpeechHeaderBar({
 
   return (
     <div className="flex flex-col w-full h-full overflow-hidden py-1 px-2 gap-0.5">
-      <div className="w-full h-[5px] rounded-full bg-border/40 overflow-hidden">
+      {/* Top edge bar: seekable recording progress when playing, timer progress otherwise */}
+      {isRecordingPlaying ? (
         <div
-          className={cn("h-full rounded-full transition-all duration-200 ease-linear", speechTeamColor)}
-          style={{ width: `${indicatorWidthPercent}%`, opacity: indicatorWidthPercent === 0 ? 0 : 1 }}
-          aria-hidden="true"
+          ref={progressBarPortalRef}
+          className="relative w-full h-[5px] rounded-full bg-border/40 overflow-hidden cursor-pointer"
         />
-      </div>
+      ) : (
+        <div className="w-full h-[5px] rounded-full bg-border/40 overflow-hidden">
+          <div
+            className={cn("h-full rounded-full transition-all duration-200 ease-linear", speechTeamColor)}
+            style={{ width: `${indicatorWidthPercent}%`, opacity: indicatorWidthPercent === 0 ? 0 : 1 }}
+            aria-hidden="true"
+          />
+        </div>
+      )}
       {/* Single row: name · recording playback · timer & controls */}
       <div className="flex items-center gap-1 w-full overflow-hidden min-w-0">
-        {/* Speech name */}
-        <span
-          className={`text-sm font-semibold shrink-0 ${hasN
-            ? "text-red-600 dark:text-red-400"
-            : hasA
-              ? "text-blue-600 dark:text-blue-400"
-              : ""
-            }`}
-        >
-          {speechName}
-        </span>
+        {/* Speech name with navigation */}
+        <div className="flex items-center shrink-0">
+          {onNavigatePrev && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onNavigatePrev}
+              disabled={!canNavigatePrev}
+              className="h-6 w-6"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </Button>
+          )}
+          <span
+            className={`text-sm font-semibold ${hasN
+              ? "text-red-600 dark:text-red-400"
+              : hasA
+                ? "text-blue-600 dark:text-blue-400"
+                : ""
+              }`}
+          >
+            {speechName}
+          </span>
+          {onNavigateNext && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onNavigateNext}
+              disabled={!canNavigateNext}
+              className="h-6 w-6"
+            >
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Button>
+          )}
+        </div>
 
         {/* Recording playback — fills middle space */}
         <div className="min-w-0 flex-1">
-          <SpeechRecordingPlayer speechName={speechName} className="w-full" />
+          <SpeechRecordingPlayer
+            speechName={speechName}
+            className="w-full"
+            progressBarPortalRef={progressBarPortalRef}
+            onPlayingChange={handleRecordingPlayingChange}
+          />
         </div>
 
         {/* ── Timer & Controls ── */}

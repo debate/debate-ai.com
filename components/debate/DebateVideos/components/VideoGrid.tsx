@@ -142,25 +142,6 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
   return (
     <TooltipProvider>
       <div className="block h-full relative group/card">
-        {/* Favorite button */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                onToggleFavorite(videoId)
-              }}
-              className={`absolute top-2 right-10 z-10 p-2 rounded-full transition-colors ${isFavorite ? "opacity-100 bg-amber-500/90 text-white hover:bg-amber-600/90" : "bg-black/50 text-white hover:bg-black/70 sm:opacity-0 sm:group-hover/card:opacity-100 focus:opacity-100"}`}
-            >
-              <Star className={`h-5 w-5 ${isFavorite ? "fill-current" : ""}`} />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            {isFavorite ? "Remove from favorites" : "Save to favorites"}
-          </TooltipContent>
-        </Tooltip>
-
         {/* Ellipsis menu */}
         <div className="absolute top-2 right-2 z-10">
           <DropdownMenu>
@@ -174,6 +155,13 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem
+                onClick={() => onToggleFavorite(videoId)}
+                className={`gap-2 ${isFavorite ? "text-amber-600 dark:text-amber-400" : ""}`}
+              >
+                <Star className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
+                {isFavorite ? "Remove from favorites" : "Save to favorites"}
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => addToQueue(videoId, title)}
                 disabled={isInQueue}

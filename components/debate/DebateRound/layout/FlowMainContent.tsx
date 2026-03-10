@@ -61,6 +61,14 @@ interface FlowMainContentProps {
   speechTimerStates?: Record<string, SpeechTimerEntry>
   /** Callback to update a per-speech timer state entry. */
   onSpeechTimerStateChange?: (speechName: string, updates: Partial<SpeechTimerEntry>) => void
+  /** Whether backward speech navigation is available. */
+  canNavigatePrev?: boolean
+  /** Whether forward speech navigation is available. */
+  canNavigateNext?: boolean
+  /** Handler called when the user navigates to the previous pair of speeches. */
+  onNavigatePrev?: () => void
+  /** Handler called when the user navigates to the next pair of speeches. */
+  onNavigateNext?: () => void
 }
 
 /**
@@ -111,6 +119,10 @@ export function FlowMainContent({
   isMobile = false,
   speechTimerStates,
   onSpeechTimerStateChange,
+  canNavigatePrev,
+  canNavigateNext,
+  onNavigatePrev,
+  onNavigateNext,
 }: FlowMainContentProps) {
   if (!currentFlow) {
     return (
@@ -136,6 +148,10 @@ export function FlowMainContent({
               controlledTimerRunState={speechTimerStates?.[leftSpeech]?.state}
               onControlledTimeChange={(t) => onSpeechTimerStateChange?.(leftSpeech, { time: t })}
               onControlledTimerRunStateChange={(s) => onSpeechTimerStateChange?.(leftSpeech, { state: s })}
+              canNavigatePrev={canNavigatePrev}
+              canNavigateNext={canNavigateNext}
+              onNavigatePrev={onNavigatePrev}
+              onNavigateNext={onNavigateNext}
             />
           </div>
           <div className="flex-1 overflow-hidden">
@@ -171,6 +187,10 @@ export function FlowMainContent({
               controlledTimerRunState={speechTimerStates?.[leftSpeech]?.state}
               onControlledTimeChange={(t) => onSpeechTimerStateChange?.(leftSpeech, { time: t })}
               onControlledTimerRunStateChange={(s) => onSpeechTimerStateChange?.(leftSpeech, { state: s })}
+              canNavigatePrev={canNavigatePrev}
+              canNavigateNext={canNavigateNext}
+              onNavigatePrev={onNavigatePrev}
+              onNavigateNext={onNavigateNext}
             />
           </div>
           <div className="flex-1 overflow-hidden">
@@ -210,6 +230,10 @@ export function FlowMainContent({
               controlledTimerRunState={speechTimerStates?.[rightSpeech]?.state}
               onControlledTimeChange={(t) => onSpeechTimerStateChange?.(rightSpeech, { time: t })}
               onControlledTimerRunStateChange={(s) => onSpeechTimerStateChange?.(rightSpeech, { state: s })}
+              canNavigatePrev={canNavigatePrev}
+              canNavigateNext={canNavigateNext}
+              onNavigatePrev={onNavigatePrev}
+              onNavigateNext={onNavigateNext}
             />
           </div>
           <div className="flex-1 overflow-hidden">

@@ -35,3 +35,5 @@ src/sw/app-file-list.ts
 src/sw/version.ts
 public/service-worker.js
 .claude
+pnpm-lock.yaml
+bun.lockzz

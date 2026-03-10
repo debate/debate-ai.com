@@ -107,16 +107,22 @@ export function LecturesPage() {
   const handlePrevPage = useCallback(() => {
     if (state.currentPage > 1) {
       actions.setCurrentPage(state.currentPage - 1)
-      state.videoContainerRef.current?.scrollIntoView({ behavior: "smooth" })
+      requestAnimationFrame(() => {
+        state.videoContainerRef.current?.scrollIntoView({ behavior: "smooth" })
+      })
     }
   }, [state.currentPage, state.videoContainerRef, actions.setCurrentPage])
 
   const handleNextPage = useCallback(() => {
     if (state.currentPage < totalPages) {
       actions.setCurrentPage(state.currentPage + 1)
-      state.videoContainerRef.current?.scrollIntoView({ behavior: "smooth" })
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" })
+        })
+      })
     }
-  }, [state.currentPage, totalPages, state.videoContainerRef, actions.setCurrentPage])
+  }, [state.currentPage, totalPages, actions.setCurrentPage])
 
   // ============================================================================
   // Infinite Scroll
@@ -157,7 +163,7 @@ export function LecturesPage() {
 
   const stickyHeader = (controls?: React.ReactNode) => (
     <div className="sm:sticky top-0 z-40 bg-background border-b border-border/30 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 mb-4 flex flex-wrap md:flex-nowrap items-center gap-2 md:justify-end">
-      {controls && <div className="min-w-0 flex flex-wrap items-center gap-2">{controls}{dictToggleButton}</div>}
+      {controls && <div className="min-w-0 flex flex-wrap items-center gap-2">{controls}</div>}
     </div>
   )
 
@@ -189,7 +195,7 @@ export function LecturesPage() {
       <div className="min-h-screen bg-background p-3 sm:p-6">
         {stickyHeader(
           <div className="flex items-center gap-2 w-full md:w-auto">
-            <div className="relative w-full md:w-[240px]">
+            <div className="relative flex-1 min-w-0 md:w-[240px] md:flex-none">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
@@ -214,6 +220,7 @@ export function LecturesPage() {
                 </TooltipProvider>
               )}
             </div>
+            {dictToggleButton}
           </div>
         )}
         <DictionaryPanel controlledSearchTerm={dictSearchTerm} onControlledSearchChange={setDictSearchTerm} />
@@ -247,6 +254,7 @@ export function LecturesPage() {
           totalVideos={state.filteredVideos.length}
           onPrevPage={handlePrevPage}
           onNextPage={handleNextPage}
+          extraButtons={dictToggleButton}
         />
       )}
 

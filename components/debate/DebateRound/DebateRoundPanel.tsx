@@ -22,7 +22,6 @@ import { FlowPageHeader } from "./layout/FlowPageHeader"
 import { FlowPageSidebar } from "./layout/FlowPageSidebar"
 import { FlowMainContent } from "./layout/FlowMainContent"
 import { SpeechDocPanel } from "./layout/SpeechDocPanel"
-import { SplitModeToolbar } from "./controls/SplitModeToolbar"
 
 // Dialogs
 import { FlowHistoryDialog } from "./dialogs/FlowHistoryDialog"
@@ -291,19 +290,6 @@ export function DebateFlowPage() {
    */
   const mainContentArea = (
     <div className="h-full flex flex-col overflow-hidden p-2">
-      {/* Split Mode Toolbar */}
-      {state.splitMode && currentFlow && (
-        <SplitModeToolbar
-          leftSpeech={leftSpeech}
-          rightSpeech={rightSpeech}
-          canNavigatePrev={splitHandlers.canNavigatePrev}
-          canNavigateNext={state.isMobile ? splitHandlers.canNavigateNextSingle : splitHandlers.canNavigateNext}
-          onNavigatePrev={state.isMobile ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches}
-          onNavigateNext={state.isMobile ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches}
-          isMobile={state.isMobile}
-        />
-      )}
-
       {/* Resizable Panels */}
       <ResizablePanelGroup
         orientation="horizontal"
@@ -335,6 +321,10 @@ export function DebateFlowPage() {
             onUpdate={updateFlow.bind(null, selected)}
             speechTimerStates={timerState.perSpeechTimerStates}
             onSpeechTimerStateChange={timerState.setSpeechTimerState}
+            canNavigatePrev={splitHandlers.canNavigatePrev}
+            canNavigateNext={state.isMobile ? splitHandlers.canNavigateNextSingle : splitHandlers.canNavigateNext}
+            onNavigatePrev={state.isMobile ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches}
+            onNavigateNext={state.isMobile ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches}
             onMouseDown={() => {
               const handleMouseMove = (e: MouseEvent) => {
                 const container = (e.target as HTMLElement).closest(".split-container")

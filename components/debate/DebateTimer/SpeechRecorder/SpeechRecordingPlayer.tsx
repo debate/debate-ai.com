@@ -5,7 +5,8 @@
 "use client"
 
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, type RefObject } from "react"
+import { createPortal } from "react-dom"
 import { Trash2 } from "lucide-react"
 import {
     AudioPlayerButton,
@@ -14,6 +15,7 @@ import {
     AudioPlayerSpeed,
     AudioPlayerTime,
     AudioPlayerDuration,
+    useAudioPlayer,
 } from "./audio-player"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -34,12 +36,43 @@ function formatDuration(s: number): string {
     return `${m}:${sec.toString().padStart(2, "0")}`
 }
 
+/** Shows inline progress scrubber only when audio is not playing (paused state). */
+function InlineProgressWhenPaused({ className }: { className?: string }) {
+    const player = useAudioPlayer()
+    if (player.isPlaying) return <div className={className} />
+    return <AudioPlayerProgress className={className} />
+}
+
+/** Renders the seekable progress bar into an external container via portal when playing. */
+function PortaledProgress({
+    portalRef,
+    onPlayingChange,
+}: {
+    portalRef: RefObject<HTMLDivElement | null>
+    onPlayingChange?: (playing: boolean) => void
+}) {
+    const player = useAudioPlayer()
+    useEffect(() => {
+        onPlayingChange?.(player.isPlaying)
+    }, [player.isPlaying, onPlayingChange])
+
+    if (!player.isPlaying || !portalRef.current) return null
+    return createPortal(
+        <AudioPlayerProgress className="absolute inset-0 w-full h-full [&_[data-slot=slider-thumb]]:opacity-100 [&_[data-slot=slider-thumb]>div]:size-2.5" />,
+        portalRef.current,
+    )
+}
+
 interface SpeechRecordingPlayerProps {
     /** Name of the currently selected speech — used as localStorage key suffix */
     speechName: string
     /** Full display label (e.g. "1AC — johnsmith") */
     speechLabel?: string
     className?: string
+    /** Ref to an external container where the seekable progress bar is portaled when playing. */
+    progressBarPortalRef?: RefObject<HTMLDivElement | null>
+    /** Callback fired when audio playing state changes. */
+    onPlayingChange?: (playing: boolean) => void
 }
 
 /**
@@ -62,6 +95,8 @@ export function SpeechRecordingPlayer({
     speechName,
     speechLabel,
     className,
+    progressBarPortalRef,
+    onPlayingChange,
 }: SpeechRecordingPlayerProps) {
     const [recordings, setRecordings] = useState<StoredRecording[]>([])
 
@@ -105,6 +140,13 @@ export function SpeechRecordingPlayer({
                 const label = rec.speechLabel || speechLabel || speechName
                 return (
                     <AudioPlayerProvider key={rec.key} initialPlaybackRate={0.75}>
+                        {/* Portal seekable progress to top bar when playing */}
+                        {progressBarPortalRef && (
+                            <PortaledProgress
+                                portalRef={progressBarPortalRef}
+                                onPlayingChange={onPlayingChange}
+                            />
+                        )}
                         {/* Player row */}
                         <div className="flex items-center gap-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs group">
                             {/* Play / Pause */}
@@ -126,8 +168,13 @@ export function SpeechRecordingPlayer({
                                 )}
                             </div>
 
-                            {/* Scrubber */}
-                            <AudioPlayerProgress className="flex-1 h-5" />
+                            {/* Scrubber — hidden when portaled to top bar */}
+                            {!progressBarPortalRef && (
+                                <AudioPlayerProgress className="flex-1 h-5" />
+                            )}
+                            {progressBarPortalRef && (
+                                <InlineProgressWhenPaused className="flex-1 h-5" />
+                            )}
 
                             <AudioPlayerSpeed
                                 variant="ghost"

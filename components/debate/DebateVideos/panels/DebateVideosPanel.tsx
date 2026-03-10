@@ -185,7 +185,9 @@ export function DebateVideosPage() {
   const handlePrevPage = useCallback(() => {
     if (state.currentPage > 1) {
       actions.setCurrentPage(state.currentPage - 1)
-      state.videoContainerRef.current?.scrollIntoView({ behavior: "smooth" })
+      requestAnimationFrame(() => {
+        state.videoContainerRef.current?.scrollIntoView({ behavior: "smooth" })
+      })
     }
   }, [state.currentPage, state.videoContainerRef, actions.setCurrentPage])
 
@@ -196,9 +198,13 @@ export function DebateVideosPage() {
   const handleNextPage = useCallback(() => {
     if (state.currentPage < totalPages) {
       actions.setCurrentPage(state.currentPage + 1)
-      state.videoContainerRef.current?.scrollIntoView({ behavior: "smooth" })
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" })
+        })
+      })
     }
-  }, [state.currentPage, totalPages, state.videoContainerRef, actions.setCurrentPage])
+  }, [state.currentPage, totalPages, actions.setCurrentPage])
 
   // ============================================================================
   // Infinite Scroll

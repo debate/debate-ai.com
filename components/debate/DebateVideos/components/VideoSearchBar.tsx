@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { GlowingEffect } from "@/components/ui/glowing-effect"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { DebateStyle } from "@/lib/types/videos"
 import { DEBATE_STYLE_LABELS } from "@/lib/types/videos"
 
@@ -65,6 +64,8 @@ interface VideoSearchBarProps {
   selectedStyle?: DebateStyle | ""
   /** Callback invoked when the style filter changes. */
   onStyleChange?: (style: DebateStyle | "") => void
+  /** Extra icon buttons rendered alongside the built-in icon buttons. */
+  extraButtons?: React.ReactNode
 }
 
 /** Available sort options shown in the sort dropdown. */
@@ -113,6 +114,7 @@ export function VideoSearchBar({
   onNextPage,
   selectedStyle,
   onStyleChange,
+  extraButtons,
 }: VideoSearchBarProps) {
   const currentYear = new Date().getFullYear()
   const maxYear = Math.max(currentYear, 2026)
@@ -151,37 +153,89 @@ export function VideoSearchBar({
 
   return (
     <TooltipProvider>
-      <div className="flex flex-col gap-2 flex-1 min-w-0">
-        {/* Row 1: Search + icon buttons */}
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1 min-w-0">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                type="text"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => onSearchChange(e.target.value)}
-                onFocus={onSearchFocus}
-                onBlur={onSearchBlur}
-                className="pl-9 pr-8 h-9"
-              />
-              {searchTerm && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={onClearSearch}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">Clear search</TooltipContent>
-                </Tooltip>
-              )}
-              {isSearchFocused && <GlowingEffect />}
-            </div>
+      <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
+        {/* Search input */}
+        <div className="relative min-w-0 flex-1 basis-[140px] md:basis-[180px] md:max-w-[280px]">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+              onFocus={onSearchFocus}
+              onBlur={onSearchBlur}
+              className="pl-9 pr-8 h-9"
+            />
+            {searchTerm && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={onClearSearch}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Clear search</TooltipContent>
+              </Tooltip>
+            )}
+            {isSearchFocused && <GlowingEffect />}
           </div>
+        </div>
+
+        {/* Style dropdown */}
+        {onStyleChange && (
+          <div className="w-[80px] shrink-0">
+            <Select value={selectedStyle || "all"} onValueChange={(v) => onStyleChange(v === "all" ? "" : v as DebateStyle)}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Style" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                {(Object.entries(DEBATE_STYLE_LABELS) as [DebateStyle, string][]).map(([style, label]) => (
+                  <SelectItem key={style} value={style}>{label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {/* Sort dropdown */}
+        <div className="w-[95px] sm:w-[110px] shrink-0">
+          <Select value={sortOrder} onValueChange={onSortChange}>
+            <SelectTrigger className="h-9">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Season dropdown */}
+        <div className="w-[110px] sm:w-[130px] shrink-0">
+          <Select value={selectedYear || "all"} onValueChange={(v) => onYearChange(v === "all" ? "" : v)}>
+            <SelectTrigger className="h-9">
+              <SelectValue placeholder="All Seasons" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Seasons</SelectItem>
+              {years.map((y) => (
+                <SelectItem key={y} value={y}>
+                  {Number(y) - 1}-{y}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Icon buttons */}
+        <div className="flex items-center gap-1 shrink-0">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button className="shrink-0" variant="outline" size="icon" onClick={onToggleThumbnails}>
@@ -224,65 +278,11 @@ export function VideoSearchBar({
               </TooltipContent>
             </Tooltip>
           )}
+          {extraButtons}
         </div>
 
-        {/* Row 2: Style tabs */}
-        {onStyleChange && (
-          <Tabs value={selectedStyle || "all"} onValueChange={(v) => onStyleChange(v === "all" ? "" : v as DebateStyle)}>
-            <TabsList className="h-8">
-              <TabsTrigger value="all" className="text-xs px-2 py-1">All</TabsTrigger>
-              {(Object.entries(DEBATE_STYLE_LABELS) as [DebateStyle, string][]).map(([style, label]) => (
-                <TabsTrigger key={style} value={style} className="text-xs px-2 py-1">{label}</TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        )}
-
-        {/* Row 3: Sort + Season + Pagination */}
-        <div className="flex items-center gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="w-[100px] sm:w-[120px] shrink-0">
-                <Select value={sortOrder} onValueChange={onSortChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sortOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Sort videos by recency or views</TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="w-[110px] sm:w-[130px] shrink-0">
-                <Select value={selectedYear || "all"} onValueChange={(v) => onYearChange(v === "all" ? "" : v)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Seasons" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Seasons</SelectItem>
-                    {years.map((y) => (
-                      <SelectItem key={y} value={y}>
-                        {Number(y) - 1}-{y}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Filter by debate season</TooltipContent>
-          </Tooltip>
-
-          {pagination && <div className="ml-auto">{pagination}</div>}
-        </div>
+        {/* Pagination */}
+        {pagination && <div className="ml-auto shrink-0">{pagination}</div>}
       </div>
     </TooltipProvider>
   )
