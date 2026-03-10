@@ -299,7 +299,7 @@ export function LeaderboardPanel({
                   )}
                   {topic && (
                     <p
-                      className="text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-4"
+                      className="text-xs sm:text-sm text-muted-foreground leading-relaxed"
                       dangerouslySetInnerHTML={{ __html: topic }}
                     />
                   )}

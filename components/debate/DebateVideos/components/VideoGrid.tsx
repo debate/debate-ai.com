@@ -148,12 +148,12 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
               {channel}
             </button>
             <div className="flex items-center gap-1 shrink-0">
-              <Calendar className="h-3 w-3" />
-              <span>{new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-            </div>
-            <div className="flex items-center gap-1 shrink-0">
               <Eye className="h-3 w-3" />
               <span>{viewCount.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              <Calendar className="h-3 w-3" />
+              <span>{new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
             </div>
           </div>
         </div>
