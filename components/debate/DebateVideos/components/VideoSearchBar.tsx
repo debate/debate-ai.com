@@ -4,6 +4,8 @@
  */
 
 import { Search, X, Video, VideoOff, Star, ChevronLeft, ChevronRight } from "lucide-react"
+import Image from "next/image"
+import { IconTopRounds } from "@/components/icons"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
@@ -41,6 +43,10 @@ interface VideoSearchBarProps {
   showFavoritesOnly: boolean
   /** Callback invoked to toggle favorite visualization filter. */
   onToggleFavoritesOnly: () => void
+  /** Whether the Top Picks view is currently active. */
+  showTopPicksActive?: boolean
+  /** Callback invoked to toggle the Top Picks view. */
+  onToggleTopPicks?: () => void
   /** Current page number for pagination. */
   currentPage?: number
   /** Total number of pages for pagination. */
@@ -90,6 +96,8 @@ export function VideoSearchBar({
   onToggleThumbnails,
   showFavoritesOnly,
   onToggleFavoritesOnly,
+  showTopPicksActive,
+  onToggleTopPicks,
   currentPage,
   totalPages,
   totalVideos,
@@ -168,6 +176,17 @@ export function VideoSearchBar({
         >
           <Star className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`} />
         </Button>
+        {onToggleTopPicks && (
+          <Button
+            className={`shrink-0 ${showTopPicksActive ? "bg-primary/20 ring-2 ring-primary" : ""}`}
+            variant="outline"
+            size="icon"
+            onClick={onToggleTopPicks}
+            title={showTopPicksActive ? "Show all debates" : "Show top picks"}
+          >
+            <Image src={IconTopRounds} alt="Top Picks" width={16} height={16} className="h-4 w-4" />
+          </Button>
+        )}
 
         {/* Compact Pagination */}
         {totalPages && totalPages > 1 && currentPage && onPrevPage && onNextPage && (
