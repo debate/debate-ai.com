@@ -1,10 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-vi.mock("grab-url", () => {
-  const stub = vi.fn()
-  ;(stub as any).instance = vi.fn(() => stub)
-  return { default: stub }
-})
+vi.stubGlobal('fetch', vi.fn())
 
 describe("sync-youtube-rounds", () => {
   afterEach(() => {

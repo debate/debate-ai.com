@@ -27,7 +27,6 @@ import { SplitModeToolbar } from "./controls/SplitModeToolbar"
 // Dialogs
 import { FlowHistoryDialog } from "./dialogs/FlowHistoryDialog"
 import { RoundEditorDialog } from "./dialogs/CreateRoundDialog"
-import { Footer } from "@/components/debate/Footer"
 
 // Custom hooks
 import { useDebateFlowState } from "./hooks/useDebateFlowState"
@@ -466,8 +465,6 @@ export function DebateFlowPage() {
         onOpenChange={state.setRoundDialogOpen}
         roundId={state.editingRoundId}
       />
-
-      <Footer />
     </div>
   )
 }

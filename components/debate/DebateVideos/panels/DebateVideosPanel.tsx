@@ -26,7 +26,6 @@ import { useCategoryDock } from "@/components/category-dock-context"
 import { VideoSearchBar } from "../components/VideoSearchBar"
 import { VideoGrid } from "../components/VideoGrid"
 import { VideoPagination } from "../components/VideoPagination"
-import { Footer } from "@/components/debate/Footer"
 
 /**
  * Main video browsing page that composes state, data-fetching, and UI sub-components.
@@ -251,7 +250,6 @@ export function DebateVideosPage() {
       <div className="min-h-screen bg-background p-3 sm:p-6">
         {stickyHeader(dictControls)}
         <DictionaryPanel controlledSearchTerm={dictSearchTerm} onControlledSearchChange={setDictSearchTerm} />
-        <Footer />
       </div>
     )
   }
@@ -296,7 +294,6 @@ export function DebateVideosPage() {
           onControlledYearChange={setLbYear}
           history={state.debateVideos?.history}
         />
-        <Footer />
       </div>
     )
   }
@@ -363,7 +360,6 @@ export function DebateVideosPage() {
 
         </>
       )}
-      <Footer />
     </div>
   )
 }

@@ -1,6 +1,5 @@
 import React from "react"
 import type { Metadata } from "next"
-import { Footer } from "@/components/debate/Footer"
 
 export const metadata: Metadata = {
   title: "REASON Docs",
@@ -19,7 +18,6 @@ export default function EditorPage() {
           allowFullScreen
         />
       </div>
-      <Footer />
     </div>
   )
 }

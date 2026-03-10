@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
 import { LeaderboardPanel } from "@/components/debate/DebateVideos/panels/RankingsLeaderboardPanel"
-import { Footer } from "@/components/debate/Footer"
 
 export const metadata: Metadata = {
   title: "Rankings",
@@ -14,7 +13,6 @@ export default function RankPage() {
       <Suspense>
         <LeaderboardPanel />
       </Suspense>
-      <Footer />
     </div>
   )
 }

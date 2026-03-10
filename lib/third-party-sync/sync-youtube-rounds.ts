@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
-
+import grab from "grab-url";
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
@@ -28,7 +28,7 @@ const categories = {
     "SolvencyAdvocate",
     "northbrowardmr4523",
     "TexasDebate",
-    "jacob_wilkus",
+    "jacobwilkus8697",
     "arvindshankar2481",
     "NDT-jl6oi",
     "atrujillo9",
@@ -43,28 +43,27 @@ const categories = {
   ],
 };
 
-const publishedAfter = "2025-11-21T00:00:00Z";
+const publishedAfter = "2025-08-21T00:00:00Z";
 
-
+const YoutubeAPI = grab.instance({
+  baseURL: "https://www.googleapis.com/youtube/v3",
+  key: YOUTUBE_API_KEY,
+});
 
 async function getChannelId(channelName: string): Promise<string | null> {
   try {
-    // Use the correct endpoint path for the YouTube API search
-    const data = await youtubeFetch("/search", {
-      params: {
-        part: "snippet",
-        type: "channel",
-        q: channelName,
-      },
+    const data = await YoutubeAPI("/search", {
+      part: "snippet",
+      type: "channel",
+      q: channelName,
     });
+
     if (data.items && data.items.length > 0) {
       return data.items[0].id.channelId;
     }
     return null;
-  } catch (err: any) {
-    console.warn(
-      `Skipping ${channelName}: ${err?.response?.status ?? err?.message}`,
-    );
+  } catch (error) {
+    console.warn(`Error fetching channel ID for ${channelName}:`, error);
     return null;
   }
 }
@@ -77,43 +76,25 @@ async function getVideosForChannel(
   let nextPageToken: string | null = null;
 
   do {
-    let searchData: any;
-    try {
-      const data = await youtubeFetch("/search", {
-        part: "snippet",
-        channelId,
-        order: "date",
-        type: "video",
-        maxResults: 50,
-        publishedAfter,
-        ...(nextPageToken ? { pageToken: nextPageToken } : {}),
-      });
-      searchData = data;
-    } catch (err: any) {
-      console.warn(
-        `Skipping videos for ${channelName}: ${err?.response?.status ?? err?.message}`,
-      );
-      break;
-    }
-
+    const searchData = await YoutubeAPI("/search", {
+      part: "snippet",
+      channelId,
+      order: "date",
+      type: "video",
+      maxResults: "50",
+      publishedAfter,
+      pageToken: nextPageToken ? nextPageToken : undefined,
+    });
     if (!searchData.items || searchData.items.length === 0) break;
 
     const videoIds = searchData.items
       .map((item: any) => item.id.videoId)
       .join(",");
 
-    let statsData: any = { items: [] };
-    try {
-      const data = await youtubeFetch("/videos", {
-        part: "statistics",
-        id: videoIds,
-      });
-      statsData = data;
-    } catch (err: any) {
-      console.warn(
-        `Could not fetch stats for ${channelName}: ${err?.response?.status ?? err?.message}`,
-      );
-    }
+    const statsData = await YoutubeAPI("/videos", {
+      part: "statistics",
+      id: videoIds,
+    });
 
     const videoStatistics: Record<string, any> = {};
     statsData.items?.forEach((item: any) => {
@@ -160,37 +141,71 @@ export async function syncYouTubeVideos() {
       if (channelId) {
         const videos = await getVideosForChannel(channelId, channelName);
         newVideos[category].push(...videos);
-        console.log(`Fetched ${videos.length} videos from ${channelName}`);
+        console.log(`Fetched ${videos.length} videos from ${channelName} `);
       } else {
         console.log(`Could not find channel ID for ${channelName}`);
       }
     }
   }
 
-  return newVideos;
+  const dataDir = path.join(process.cwd(), "lib", "debate-data");
+  const filePaths: Record<string, string> = {
+    rounds: path.join(dataDir, "debate-rounds.json"),
+    topPicks: path.join(dataDir, "debate-top-picks.json"),
+    lectures: path.join(dataDir, "debate-lectures.json"),
+  };
+
+  const mergedData: Record<string, any[]> = {};
+  for (const category of ["rounds", "lectures", "topPicks"]) {
+    let existing = [];
+    try {
+      if (await fs.stat(filePaths[category]).catch(() => null)) {
+        existing = JSON.parse(await fs.readFile(filePaths[category], "utf-8"));
+      }
+    } catch (e) {
+      console.warn(`Could not read existing data for ${category}, starting fresh.`);
+    }
+    const newVids = newVideos[category] || [];
+
+    const existingIds = new Set(existing.map((v: any[]) => v[0]));
+    const uniqueNewVids = newVids.filter((v: any[]) => !existingIds.has(v[0]));
+
+    mergedData[category] = [...uniqueNewVids, ...existing];
+    await fs.mkdir(dataDir, { recursive: true });
+    await fs.writeFile(
+      filePaths[category],
+      JSON.stringify(mergedData[category], null, 2),
+    );
+  }
+
+  const stats = {
+    rounds: {
+      new: newVideos.rounds.length,
+      total: mergedData.rounds.length,
+    },
+    lectures: {
+      new: newVideos.lectures.length,
+      total: mergedData.lectures.length,
+    },
+    topPicks: {
+      new: newVideos.topPicks.length,
+      total: mergedData.topPicks.length,
+    },
+  };
+
+  console.log("Video sync completed:", stats);
+
+  return {
+    success: true,
+    message: "Videos synced successfully",
+    stats,
+  };
 }
 
-if (require.main === module) {
+if (import.meta.main || (require.main === module)) {
   console.log("Syncing YouTube videos...");
-  syncYouTubeVideos().then(async (videos) => {
-    const outputDir = path.join(process.cwd(), "output");
-    await fs.mkdir(outputDir, { recursive: true });
-
-    await fs.writeFile(
-      path.join(outputDir, "debate-rounds.json"),
-      JSON.stringify(videos.rounds, null, 2),
-    );
-    await fs.writeFile(
-      path.join(outputDir, "debate-lectures.json"),
-      JSON.stringify(videos.lectures, null, 2),
-    );
-    await fs.writeFile(
-      path.join(outputDir, "debate-top-picks.json"),
-      JSON.stringify(videos.topPicks, null, 2),
-    );
-
-    console.log(
-      `Written: ${videos.rounds.length} rounds, ${videos.lectures.length} lectures, ${videos.topPicks.length} top picks`,
-    );
+  syncYouTubeVideos().catch((err) => {
+    console.error("Sync failed:", err);
+    process.exit(1);
   });
 }
