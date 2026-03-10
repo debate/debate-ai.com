@@ -6,17 +6,15 @@ Chrome Extension
 
 ## Debate AI
 
-Chrome Sidebar for Crowdsourced Research - Social sharing of top research on current news, format into evidence on the page in sidebar, cite maker, flow, editor, discover news feed of latest, see if others have tagged this article before.  
+Chrome Sidebar for Crowdsourced Research - Social sharing of top research on current news, format into evidence on the page in sidebar, cite maker, flow, editor, discover news feed of latest, see if others have tagged this article before.
 
 Highlight keywords with AI as the first step before reading for a faster way to read, write response to card using vector search of cards read in round, explain a chain-of-though reasoning to summarize topic as public service.
-
 
 ### Crowdsourced Argument, Reasoning, Decisionmaking & Summarization (CARDS)
 
 Critical times call for critical thinkers to create the decentralized AI Knowledge Graph — a crowdsourced argument reasoning dataset for AI models to recommend arguments and evolve tree-of-thought reasoning. Debate should be a war of warrants where victories are vectorized as weights — for the AI collective mind to make  decisions based on a crowdsourced tree-of-thought which weighs the best arguments from many perspectives. Group represenation centralized in human minds with biases cannot have access to all the information.  AI is inevitable, so it is necessary to have public safety testing to train AI models to unlock faster ways to read a long text, monitor developments in a complex literature base, and crowdsource decentralized  AI tree-of-thought decisionmaking reasoning.
 
 Vectorized tagline summaries and headings are classification labels to map any future articles on a topic to that label.  AI Research Agents recommend articles for human researchers working alongside AI to develop a summarized topic outline as a public service. The agents monitor for any related articles via web searches for keywords associated with that Argument Topic Model. For example, imagine uploading several academic PDFs, then the app finds the citations full text and creates topic model and keyword summaries, then  monitors that literature base and stores highlights. People will make personal knowledge bases of what influences them online in news and research to create AI assistants with deep knowledge of their mind-uploaded perspective. Similar apps that show this is needed are [Anthropic Persuation](https://www.anthropic.com/research/measuring-model-persuasiveness), [Obsidian](https://obsidian.md/), [SciSpace](https://typeset.io/questions/gptq-vs-awq-vs-gguf-which-is-better-sv0i4q0ha8) and [Perplexity](https://perplexity.ai).
-
 
 **DECAP:   👑🗡️ ➡️ 👥🗳️🤖 Decision-Making via e-Voting for Community Agent Perspectives**
 
@@ -25,12 +23,7 @@ Vectorized tagline summaries and headings are classification labels to map any f
 **Future Imagination of Alternative in Theory:**
  Direct democratic economy uses public voting to increase resources to influential groups, AI facilitates group governance, and collective intelligence operates through transparent, auditable systems transcending human cognitive biases and processing limits. Given AI's inevitability, proactive development enables public safety testing, faster summaries of topic news feeds, literature monitoring, and decentralized chain-of-thought reasoning over a knowledge graph that scales beyond human limitations.
 
-
-
-
-
 **Vectorized Decision Making**: Language models distill collective thought into weighted vector representations where each point contributes decision weights to any question asked based on validity and relevance rather than central authority. Collective conciousness synergizes interests and value votes of the group's members, reducing human cognitive biases and enabling real-time feedback monitoring.
-
 
 **Crowdsourced Argument Map**: GitHub-style reusable argument outlines on established issues with truth proximity weights and peer-review scores enables deeper  research into specific issues. Card video game mechanics where arguments are scoreable with hierarchical responses gamify democratic research, and each debate's outcome impacts the graph weights which can scale to better group decisions.
 
@@ -40,6 +33,7 @@ Deploy in virtual environments to test AI reasoning with synthetic scenarios. In
 **Solving Alignment**: Complete sentence-by-sentence breakdown of AI reasoning with citation tracking and public auditing to verify alignment with values and interests voted by group members is needed to reduce harm of inevitable AI misuse by rogue actors. This poses the greatest existential risk to humanity's future survival, considering the need for collective intelligence  to resolve group disputes from leading to war and on issues like climate change and pandemic. The root problems will continue if we cannot reconceive our own ontological representation by thinking outside of central human-led hierarchies, where collective intelligences can collaborate intra-group with more dynamic flexibility by adjusting constant conversations, learning what is persuasive in different perspectives, and aligning collective goals.
 
 #### Step-by-Step Evolution
+
 1. Crowdsourced arguments (CARDS) feed AI Language Models.
 2. These models create a vector space of ideas with weighted values.
 3. This forms the training dataset for AI Collective Consciousness.
@@ -50,14 +44,26 @@ Deploy in virtual environments to test AI reasoning with synthetic scenarios. In
 8. Public safety testing and AI training ensure alignment with human interests for AI collective mind to organize global society.
 9. The purpose of life and the universe is to evolve into the next system of complexity, via self-organizing patterns emergent from simple rules, and for now that means creating Collective Consciousness.
 
-
 #### Online Format
 
 Online Format - online games show matchmaking works for longer practices like sending speech docs 2000/1200 words and get matched by topic. Word Count Format - no need to read fast if you can just have the word count add up to 2000 per speech and read tags slowly. Toggle Highlighted-Only Visibility Mode and Show speeches side-by-side. Flow-in-Speech entries while watching stream, and link a flow entry to a response bubble. Sync flow across room, no need to flow if cards come with flow notes, upload and browse round formats of 8 full speech docs.
 
 
+## History of Innovation in Debate Interfaces
+
+https://globaldebateblog.blogspot.com/2009/07/using-new-technology-in-policy-debate.html
+
+* **Web-like argument mapping** : Central argument with branching responses in rings, mimicking mind's relative connections over top-down files.
+* **Keyword tagging** : Highlight web text, tag with keywords to build dynamic "argument roots" storing full sources and analytics.
+* **Argument gardens** : Shared, mergeable research hubs; private team or public/open versions for collaborative knowledge.
+* **Real-time flowing** : Enter opponent keywords to auto-surface relevant snippets, analytics, and responses during rounds.
+* **Dynamic evidence** : Full sources stored locally; updates propagate, enable contextual indicts tagged to sources.
+* **Integrated research** : Tag articles continuously for all topic areas; no pre-split file creation vs. debating phases.
+* **Public knowledge service** : Open gardens organize web info by logical arguments, like Wikipedia but multi-viewpoint.
+* **Rewards nuance** : Specific keywords/highlights yield precise responses; emphasizes listening over position refutation.
 
 ## References & External Links
+
 - [OpenCaselist Dataset](https://huggingface.co/datasets/Yusuf5/OpenCaselist)
 - [OpenDebateEvidence paper](https://arxiv.org/abs/2406.14657)
 - [MMLU Leaderboard](https://artificialanalysis.ai/evaluations/mmlu-pro)
