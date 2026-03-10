@@ -8,12 +8,9 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { Search, X } from "lucide-react"
 import type { CategoryType, DebateVideosData } from "@/lib/types/videos"
-import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { DictionaryPanel } from "./DictionaryPanel"
 import { LeaderboardPanel } from "./RankingsLeaderboardPanel"
 
 // Hooks
@@ -45,7 +42,7 @@ export function DebateVideosPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  const VALID_VIEWS: Set<string> = new Set(["rounds", "lectures", "topPicks", "dictionary", "leaderboard"])
+  const VALID_VIEWS: Set<string> = new Set(["rounds", "topPicks", "leaderboard"])
 
   const initialCategory = useMemo(() => {
     const view = searchParams.get("view")
@@ -57,7 +54,6 @@ export function DebateVideosPage() {
   const { state, actions } = useVideoState(initialCategory)
 
   // Lifted state for special panels
-  const [dictSearchTerm, setDictSearchTerm] = useState("")
   const [lbDivision, setLbDivision] = useState<"VPF" | "VLD" | "VCX" | "NDT">("VPF")
   const [lbYear, setLbYear] = useState("2026")
   const lbYears = Array.from({ length: Math.max(new Date().getFullYear(), 2026) - 2001 }, (_, i) => String(Math.max(new Date().getFullYear(), 2026) - i))
@@ -91,7 +87,7 @@ export function DebateVideosPage() {
       actions.setCurrentCategory(category)
       actions.setCurrentPage(1)
 
-      if (category === "rounds" || category === "lectures" || category === "topPicks") {
+      if (category === "rounds" || category === "topPicks") {
         const videos = data[category] || []
         actions.setAllVideos(videos)
         actions.setIsLoading(false)
@@ -227,33 +223,6 @@ export function DebateVideosPage() {
     </div>
   )
 
-  if (state.currentCategory === "dictionary") {
-    const dictControls = (
-      <div className="relative w-full md:w-[240px]">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder="Search terms..."
-          value={dictSearchTerm}
-          onChange={(e) => setDictSearchTerm(e.target.value)}
-          className="pl-9 pr-8 h-9"
-        />
-        {dictSearchTerm && (
-          <button onClick={() => setDictSearchTerm("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-            <X className="h-4 w-4" />
-          </button>
-        )}
-      </div>
-    )
-    return (
-      <div className="min-h-screen bg-background p-3 sm:p-6">
-        {stickyHeader(dictControls)}
-        <DictionaryPanel controlledSearchTerm={dictSearchTerm} onControlledSearchChange={setDictSearchTerm} />
-      </div>
-    )
-  }
-
   if (state.currentCategory === "leaderboard") {
     const DIVISION_LABELS: { value: "VPF" | "VLD" | "VCX" | "NDT"; label: string }[] = [
       { value: "VPF", label: "PF" },
@@ -319,6 +288,8 @@ export function DebateVideosPage() {
           onYearChange={(year) => actions.setSelectedYear(year)}
           onToggleThumbnails={handleToggleThumbnails}
           onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
+          showTopPicksActive={state.currentCategory === "topPicks"}
+          onToggleTopPicks={() => handleCategoryChange(state.currentCategory === "topPicks" ? "rounds" : "topPicks")}
           currentPage={state.currentPage}
           totalPages={totalPages}
           totalVideos={state.filteredVideos.length}

@@ -25,8 +25,6 @@ import {
   IconRead,
   IconLectures,
   IconRoundsYoutube,
-  IconTopRounds,
-  IconBook,
   IconLeaderboard,
 } from "@/components/icons"
 
@@ -34,14 +32,12 @@ const NAV_ITEMS = [
   { href: "/cards", label: "Shared", icon: IconCollectiveMind },
   { href: "/debate", label: "Debate", icon: IconRounds },
   { href: "/edit", label: "Docs", icon: IconRead },
-  { href: "/videos", label: "Videos", icon: IconLectures },
+  { href: "/videos", label: "Videos", icon: IconRoundsYoutube },
+  { href: "/lectures", label: "Lectures", icon: IconLectures },
 ]
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = [
   { category: "rounds", label: "Debates", icon: IconRoundsYoutube },
-  { category: "lectures", label: "Lectures", icon: IconLectures },
-  { category: "topPicks", label: "Top Picks", icon: IconTopRounds },
-  { category: "dictionary", label: "Dictionary", icon: IconBook },
   { category: "leaderboard", label: "Leaderboard", icon: IconLeaderboard },
 ]
 
