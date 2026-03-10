@@ -9,6 +9,7 @@ import type {
   CategoryType,
   DebateVideosData,
   VideoType,
+  DebateStyle,
 } from "@/lib/types/videos";
 import Fuse from "fuse.js";
 const ORIGIN = "";
@@ -80,6 +81,8 @@ export function useVideoFiltering() {
       data: DebateVideosData | null,
       showFavoritesOnly: boolean,
       favorites: Set<string>,
+      selectedStyle: DebateStyle | "",
+      hiddenVideos: Set<string>,
     ) => {
       let allCategoryVideos = videos;
       if (search.trim() && data && Array.isArray(data.rounds)) {
@@ -92,9 +95,19 @@ export function useVideoFiltering() {
 
       let filtered: VideoType[] = allCategoryVideos;
 
+      // Filter out hidden videos (unless explicitly searching)
+      if (!search.trim()) {
+        filtered = filtered.filter((video) => !hiddenVideos.has(video[0]));
+      }
+
       // Filter by favorites if enabled
       if (showFavoritesOnly) {
         filtered = filtered.filter((video) => favorites.has(video[0]));
+      }
+
+      // Filter by debate style
+      if (selectedStyle) {
+        filtered = filtered.filter((video) => video[6] === selectedStyle);
       }
 
       // Filter by season year

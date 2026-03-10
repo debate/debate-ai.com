@@ -4,7 +4,7 @@
  */
 
 import { useState, useRef, useEffect } from "react";
-import type { CategoryType, DebateVideosData, VideoType } from "@/lib/types/videos";
+import type { CategoryType, DebateVideosData, VideoType, DebateStyle } from "@/lib/types/videos";
 
 /**
  * Initialises and returns all state and refs needed by the videos page.
@@ -31,18 +31,47 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [selectedStyle, setSelectedStyle] = useState<DebateStyle | "">("");
+  const [hiddenVideos, setHiddenVideos] = useState<Set<string>>(new Set());
 
-  // Load favorites from local storage on mount
+  // Load favorites and hidden videos from local storage on mount
   useEffect(() => {
     try {
       const stored = localStorage.getItem("debateVideosFavorites");
       if (stored) {
         setFavorites(new Set(JSON.parse(stored)));
       }
+      const storedHidden = localStorage.getItem("debateVideosHidden");
+      if (storedHidden) {
+        setHiddenVideos(new Set(JSON.parse(storedHidden)));
+      }
     } catch (error) {
-      console.error("Failed to load favorites from localStorage", error);
+      console.error("Failed to load data from localStorage", error);
     }
   }, []);
+
+  // Action to hide/unhide a video
+  const hideVideo = (videoId: string) => {
+    setHiddenVideos((prev) => {
+      const next = new Set(prev);
+      next.add(videoId);
+      try {
+        localStorage.setItem("debateVideosHidden", JSON.stringify(Array.from(next)));
+      } catch {}
+      return next;
+    });
+  };
+
+  const unhideVideo = (videoId: string) => {
+    setHiddenVideos((prev) => {
+      const next = new Set(prev);
+      next.delete(videoId);
+      try {
+        localStorage.setItem("debateVideosHidden", JSON.stringify(Array.from(next)));
+      } catch {}
+      return next;
+    });
+  };
 
   // Action to toggle a favorite
   const toggleFavorite = (videoId: string) => {
@@ -109,6 +138,10 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       showFavoritesOnly,
       /** Set of favorite video IDs. */
       favorites,
+      /** Currently active debate style filter. */
+      selectedStyle,
+      /** Set of hidden video IDs. */
+      hiddenVideos,
       /** Ref for the video grid container element. */
       videoContainerRef,
       /** Ref for the infinite-scroll sentinel element. */
@@ -150,6 +183,12 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       setShowFavoritesOnly,
       /** Toggles a video in the favorites set. */
       toggleFavorite,
+      /** Sets the active debate style filter. */
+      setSelectedStyle,
+      /** Hides a video. */
+      hideVideo,
+      /** Unhides a video. */
+      unhideVideo,
     },
   };
 }

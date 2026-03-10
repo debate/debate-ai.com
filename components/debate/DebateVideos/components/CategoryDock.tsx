@@ -3,10 +3,11 @@
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Settings, UserCircle2, Moon, Sun, Palette } from "lucide-react"
+import { Settings, UserCircle2, Moon, Sun, Palette, Pause, Play } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { CategoryType } from "@/lib/types/videos"
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
+import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -153,6 +154,7 @@ export function CategoryDock() {
   const pathname = usePathname()
   const router = useRouter()
   const categoryState = useCategoryDockState()
+  const { activeVideoId, activeVideoTitle, isMinimized, setMinimized } = useVideoPlayerStore()
 
   const allItems = [
     ...NAV_ITEMS.map(({ href, label, icon }) => ({
@@ -173,6 +175,22 @@ export function CategoryDock() {
       : []),
   ]
 
+  // Playing indicator item for mobile dock — shows when a video is active
+  const playingItem = activeVideoId
+    ? {
+        key: "playing",
+        label: isMinimized ? "Expand" : "Playing",
+        icon: null as any,
+        active: false,
+        isPlayingIndicator: true,
+        onClick: () => setMinimized(!isMinimized),
+      }
+    : null
+
+  const mobileItems = playingItem
+    ? [...allItems, playingItem]
+    : allItems
+
   return (
     <>
       {/* Desktop: top-left corner */}
@@ -186,11 +204,49 @@ export function CategoryDock() {
 
       {/* Mobile: fixed bottom bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
-        <DockInstance
-          dockClassName="h-[52px] shrink-0 !mt-0 mx-auto w-max mb-2"
-          side="top"
-          allItems={allItems}
-        />
+        <DropdownMenu>
+          <Dock direction="middle" className="h-[52px] shrink-0 !mt-0 mx-auto w-max mb-2">
+            {mobileItems.map(({ key, label, icon, active, onClick, ...rest }) => {
+              const isPlayingIndicator = (rest as any).isPlayingIndicator
+              return (
+                <DockItem
+                  key={key}
+                  onClick={onClick}
+                  className={cn(
+                    "flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer",
+                    active
+                      ? "bg-primary/20 ring-2 ring-primary"
+                      : isPlayingIndicator
+                      ? "bg-primary/10 ring-1 ring-primary/50 animate-pulse"
+                      : "bg-gray-200 dark:bg-neutral-800",
+                  )}
+                >
+                  <DockLabel>{label}</DockLabel>
+                  <DockIcon>
+                    {isPlayingIndicator ? (
+                      isMinimized ? (
+                        <Play className="w-5 h-5 text-primary" />
+                      ) : (
+                        <Pause className="w-5 h-5 text-primary" />
+                      )
+                    ) : (
+                      <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" />
+                    )}
+                  </DockIcon>
+                </DockItem>
+              )
+            })}
+            <DropdownMenuTrigger asChild>
+              <DockItem className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
+                <DockLabel>Settings</DockLabel>
+                <DockIcon>
+                  <Settings className="w-5 h-5" />
+                </DockIcon>
+              </DockItem>
+            </DropdownMenuTrigger>
+          </Dock>
+          <SettingsMenu side="top" />
+        </DropdownMenu>
       </div>
     </>
   )
