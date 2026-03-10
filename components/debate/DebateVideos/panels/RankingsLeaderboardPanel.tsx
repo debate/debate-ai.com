@@ -379,63 +379,95 @@ export function LeaderboardPanel({
                     </div>
 
                     {/* Table rows */}
-                    {filteredData.map((entry: LeaderboardEntry, index: number) => (
-                      <Fragment key={index}>
-                        <div
-                          className={`grid ${gridCols} gap-1 sm:gap-2 items-center px-2 sm:px-4 py-3 border-b hover:bg-gray-50 transition-colors cursor-pointer`}
-                          onClick={() => setExpandedRow(expandedRow === index ? null : index)}
-                        >
-                          <div className="font-bold text-sm sm:text-base">{entry.rank}</div>
-                          <div className="min-w-0">
-                            <div className="font-semibold text-xs sm:text-sm break-words">
-                              {division === "VLD" && entry.students
-                                ? `${entry.teamName} ${entry.students.split(/\s+/).filter(Boolean).map(w => w[0].toUpperCase()).join("")}`
-                                : entry.teamName}
-                            </div>
-                            {entry.students && (
-                              <div className="text-xs text-muted-foreground truncate">{entry.students}</div>
-                            )}
-                            {entry.details && entry.details.length > 0 && (
-                              <div className="text-xs text-muted-foreground mt-0.5 truncate">
-                                {entry.details.map((d) => `${d.tournament} ${d.placementNormalized}`).join(", ")}
+                    {filteredData.map((entry: LeaderboardEntry, index: number) => {
+                      const hasMobileExtra = !!(entry.students || (entry.details && entry.details.length > 0))
+                      return (
+                        <Fragment key={index}>
+                          {/* Wrap main row + mobile sub-row so border-b stays at the bottom */}
+                          <div className="border-b">
+                            <div
+                              className={`grid ${gridCols} gap-1 sm:gap-2 items-center px-2 sm:px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer`}
+                              onClick={() => setExpandedRow(expandedRow === index ? null : index)}
+                            >
+                              <div className="font-bold text-sm sm:text-base">{entry.rank}</div>
+                              <div className="min-w-0">
+                                <div className="font-semibold text-xs sm:text-sm break-words">
+                                  {division === "VLD" && entry.students
+                                    ? `${entry.teamName} ${entry.students.split(/\s+/).filter(Boolean).map(w => w[0].toUpperCase()).join("")}`
+                                    : entry.teamName}
+                                </div>
+                                {/* Desktop: show students + details inline (truncated) */}
+                                {entry.students && (
+                                  <div className="hidden sm:block text-xs text-muted-foreground truncate">{entry.students}</div>
+                                )}
+                                {entry.details && entry.details.length > 0 && (
+                                  <div className="hidden sm:block text-xs text-muted-foreground mt-0.5 truncate">
+                                    {entry.details.map((d) => `${d.tournament} ${d.placementNormalized}`).join(", ")}
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
-                          {showTocColumns && (
-                            <>
-                              <div className="text-center text-xs text-muted-foreground">{entry.state || "--"}</div>
-                              <div className="text-right font-medium text-sm">{entry.bids ?? "--"}</div>
-                              <div className="text-right text-sm">{entry.tocScore ?? "--"}</div>
-                            </>
-                          )}
-                          {(showElo || !showTocColumns) && (
-                            <div className="text-right text-sm">{entry.debateElo ?? "--"}</div>
-                          )}
-                        </div>
+                              {showTocColumns && (
+                                <>
+                                  <div className="text-center text-xs text-muted-foreground">{entry.state || "--"}</div>
+                                  <div className="text-right font-medium text-sm">{entry.bids ?? "--"}</div>
+                                  <div className="text-right text-sm">{entry.tocScore ?? "--"}</div>
+                                </>
+                              )}
+                              {(showElo || !showTocColumns) && (
+                                <div className="text-right text-sm">{entry.debateElo ?? "--"}</div>
+                              )}
+                            </div>
 
-                        {expandedRow === index && entry.details && entry.details.length > 0 && (
-                          <div className="bg-gray-50 border-b px-4 sm:px-8 py-3">
-                            <div className="grid grid-cols-[1fr_80px_60px] sm:grid-cols-[1fr_100px_80px_60px] gap-1 text-xs font-medium text-muted-foreground mb-1">
-                              <div>Tournament</div>
-                              <div className="hidden sm:block">Bid Tier</div>
-                              <div>Placement</div>
-                              <div className="text-right">Pts</div>
-                            </div>
-                            {entry.details.map((d, di) => (
+                            {/* Mobile-only extra info row: full debater names + tournament pills */}
+                            {hasMobileExtra && (
                               <div
-                                key={di}
-                                className="grid grid-cols-[1fr_80px_60px] sm:grid-cols-[1fr_100px_80px_60px] gap-1 text-xs py-1 border-t border-gray-100"
+                                className="sm:hidden px-4 pb-3 cursor-pointer hover:bg-gray-50"
+                                onClick={() => setExpandedRow(expandedRow === index ? null : index)}
                               >
-                                <div className="font-medium">{d.tournament}</div>
-                                <div className="hidden sm:block text-muted-foreground">{d.bidTier}</div>
-                                <div>{d.placementNormalized}</div>
-                                <div className="text-right">{d.score}</div>
+                                {entry.students && (
+                                  <div className="text-sm font-medium text-foreground mb-1.5">{entry.students}</div>
+                                )}
+                                {entry.details && entry.details.length > 0 && (
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {entry.details.map((d, di) => (
+                                      <span
+                                        key={di}
+                                        className="inline-flex items-center gap-1 text-xs bg-muted text-muted-foreground rounded-full px-2 py-0.5"
+                                      >
+                                        <Trophy className="h-2.5 w-2.5 text-yellow-500 shrink-0" />
+                                        {d.tournament} · {d.placementNormalized}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
-                            ))}
+                            )}
                           </div>
-                        )}
-                      </Fragment>
-                    ))}
+
+                          {expandedRow === index && entry.details && entry.details.length > 0 && (
+                            <div className="bg-gray-50 border-b px-4 sm:px-8 py-3">
+                              <div className="grid grid-cols-[1fr_80px_60px] sm:grid-cols-[1fr_100px_80px_60px] gap-1 text-xs font-medium text-muted-foreground mb-1">
+                                <div>Tournament</div>
+                                <div className="hidden sm:block">Bid Tier</div>
+                                <div>Placement</div>
+                                <div className="text-right">Pts</div>
+                              </div>
+                              {entry.details.map((d, di) => (
+                                <div
+                                  key={di}
+                                  className="grid grid-cols-[1fr_80px_60px] sm:grid-cols-[1fr_100px_80px_60px] gap-1 text-xs py-1 border-t border-gray-100"
+                                >
+                                  <div className="font-medium">{d.tournament}</div>
+                                  <div className="hidden sm:block text-muted-foreground">{d.bidTier}</div>
+                                  <div>{d.placementNormalized}</div>
+                                  <div className="text-right">{d.score}</div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </Fragment>
+                      )
+                    })}
                   </div>
                 )}
               </>
