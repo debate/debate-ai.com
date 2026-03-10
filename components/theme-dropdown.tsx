@@ -235,7 +235,7 @@ export function ThemeDropdown() {
           <Image src={IconThemePantone} alt="Theme" width={20} height={20} className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 max-h-[400px] overflow-y-auto">
+      <DropdownMenuContent align="start" side="bottom" className="w-56 max-h-[400px] overflow-y-auto">
         <DropdownMenuLabel className="flex items-center justify-between">
           <span>Theme</span>
           <Button
