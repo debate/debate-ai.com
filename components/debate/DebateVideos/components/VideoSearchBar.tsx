@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { GlowingEffect } from "@/components/ui/glowing-effect"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type { DebateStyle } from "@/lib/types/videos"
+import { DEBATE_STYLE_LABELS } from "@/lib/types/videos"
 
 /**
  * Props for the VideoSearchBar component.
@@ -58,6 +61,10 @@ interface VideoSearchBarProps {
   onPrevPage?: () => void
   /** Callback for next page action. */
   onNextPage?: () => void
+  /** Currently selected debate style filter. */
+  selectedStyle?: DebateStyle | ""
+  /** Callback invoked when the style filter changes. */
+  onStyleChange?: (style: DebateStyle | "") => void
 }
 
 /** Available sort options shown in the sort dropdown. */
@@ -104,6 +111,8 @@ export function VideoSearchBar({
   totalVideos,
   onPrevPage,
   onNextPage,
+  selectedStyle,
+  onStyleChange,
 }: VideoSearchBarProps) {
   const currentYear = new Date().getFullYear()
   const maxYear = Math.max(currentYear, 2026)
@@ -217,7 +226,19 @@ export function VideoSearchBar({
           )}
         </div>
 
-        {/* Row 2: Sort + Season + Pagination */}
+        {/* Row 2: Style tabs */}
+        {onStyleChange && (
+          <Tabs value={selectedStyle || "all"} onValueChange={(v) => onStyleChange(v === "all" ? "" : v as DebateStyle)}>
+            <TabsList className="h-8">
+              <TabsTrigger value="all" className="text-xs px-2 py-1">All</TabsTrigger>
+              {(Object.entries(DEBATE_STYLE_LABELS) as [DebateStyle, string][]).map(([style, label]) => (
+                <TabsTrigger key={style} value={style} className="text-xs px-2 py-1">{label}</TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        )}
+
+        {/* Row 3: Sort + Season + Pagination */}
         <div className="flex items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
