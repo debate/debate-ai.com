@@ -1,40 +1,114 @@
 
 <p align="center">
-    <img src="./public/images/logo-collective-mind.png" width="300" height="300"  > 
+    <img src="./public/images/logo-collective-mind.png" width="300" height="300">
 </p>
 
+# Debate AI
 
-## Debate AI 
+AI-powered platform for competitive debaters in Public Forum (PF), Lincoln-Douglas (LD), Policy, and NDT. Combines crowdsourced research, video analytics, team rankings, and AI analysis into a single workspace.
 
-Debate AI enables competitive debaters in PF, LD & Policy to streamline AI-powered debate research management, flow tracking, and evidence debate analysis.
+**Live site:** [debate-ai.com](https://debate-ai.com/) · [Earlier prototype](https://alpha.debate-ai.com/)
 
+---
 
-- **Debate Management**: Create and organize debate topics, arguments, and rebuttals
-- **Real-time Collaboration**: Multi-user support with live updates
-- **Rich Text Editing**: Format your arguments with full markdown support
-- **Timer Management**: Built-in debate timers for structured discussions
+## Features
 
-## Crowdsourced Annotated Research Dataset as a Service (CARDS)
+### CARDS — Crowdsourced Annotated Research Dataset
 
+A collaborative evidence library built by the debate community.
 
+- **Full-text search** across a crowdsourced dataset of tagged and annotated evidence cards
+- **Three-panel desktop layout** — search sidebar, card reader, and AI analysis panel — all resizable
+- **Card content viewer** with three reading modes: plain read, highlight, and underline
+- **AI analysis sidebar** — generate LLM summaries, warrant extensions, logic-flaw detection, and argument placement suggestions (TRUTH hierarchy)
+- **Mobile-responsive overlays** — full-screen sidebars for search and AI on small screens
+- **Cite maker, flow integration, and Chrome sidebar** for in-browser research tagging and sharing
 
-<p align="center">
-    <img src="https://i.imgur.com/GBvtyCV.png"  > 
-</p>
+The long-term goal is a decentralized AI knowledge graph — a tree-of-thought reasoning dataset trained on the best arguments from many perspectives, reducing hallucination and steering alignment with common social values.
 
+---
 
-Critical times call for critical thinkers to create the decentralized AI Knowledge Graph — a crowdsourced argument reasoning dataset for AI models to recommend arguments and evolve tree-of-thought reasoning. Debate should be a war of warrants where victories are vectorized as weights — for the AI collective mind to make  decisions based on a crowdsourced tree-of-thought which weighs the best arguments from many perspectives. Group represenation centralized in human minds with biases cannot have access to all the information.  AI is inevitable, so it is necessary to have public safety testing to train AI models to unlock faster ways to read a long text, monitor developments in a complex literature base, and crowdsource decentralized  AI tree-of-thought decisionmaking reasoning.
+### Videos — Debate Round Library
 
- Key metadata is extracted for LLM analysis, enabling LLMs to review the full text, identify logic flaws or unsupported claims, and flag overstatements. LLMs also extend warrants, summarize support, and suggest where each card fits within the Topic Research Unified Tree Hierarchy (TRUTH). The system is built for intersubjective, consensus-driven research claim to find ground truth on issues and evaluate any claim's proximity to accepted truths and human values. This can reduce LLM hallucination and steer alignment with common social values as AI gains capacity to replace human leaders of organizations.
+Browse and filter a curated library of competitive debate round recordings.
 
-Chrome Sidebar for Crowdsourced Research - Social sharing of top research on current news, format into evidence on the page in sidebar, cite maker, flow, editor, discover news feed of latest, see if others have tagged this article before, highlight keywords with AI as the first step before reading, write response to card using vector search of cards read in round.
+- **Infinite-scroll video grid** with responsive layout (1–4 columns)
+- **Search and filter** by title, channel, year, and sort by recency or view count
+- **Click any channel name** to instantly filter the grid to that channel's videos
+- **Thumbnail previews** with inline YouTube playback (toggle on/off)
+- **Favorites** — save videos with a star; filter to favorites-only view
+- **Top Picks** — curated highlight reel toggle
+- **Leaderboard / Rankings tab** — switch to the team rankings view directly from the dock
 
+---
 
+### Rankings — Competitive Team Leaderboard
+
+Historical and current season standings across all four divisions.
+
+- Divisions: **PF, LD, Policy (CX), NDT**
+- Sortable columns: rank, state, bids, TOC score, Debate ELO
+- Year selector spanning from 2001 to the current season
+- **Season champion and topic** displayed for each division and year
+- Rank change indicators (up/down chevrons) between seasons
+
+---
+
+### Lectures — Educational Video Library
+
+A dedicated section for instructional and lecture-style debate videos.
+
+- Same search, filter, and infinite-scroll interface as the round videos
+- **Debate Dictionary** toggle — a searchable glossary of debate terminology with definitions, accessible directly from the lectures page
+
+---
+
+### Debate Workspace
+
+Tools for building and managing arguments in-round.
+
+- Create and organize debate topics, arguments, and rebuttals
+- Rich text / markdown editing
+- Built-in debate timers for structured speech management
+
+---
+
+### Docs — Document Editor
+
+- Full markdown editor for writing and formatting evidence, blocks, and flows
+- Accessible from the main navigation dock
+
+---
+
+## Navigation
+
+A persistent **dock** provides one-click access to all sections:
+
+| Icon | Section |
+|------|---------|
+| Shared | CARDS research search |
+| Debate | Debate workspace |
+| Docs | Document editor |
+| Videos | Round video library |
+| Lectures | Lecture library + dictionary |
+
+On the Videos page, a **Rankings** icon is appended to the dock for instant access to the leaderboard without leaving the videos context.
+
+The dock adapts to screen size: fixed top-left on desktop, fixed bottom bar on mobile.
+
+---
+
+## Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Styling:** Tailwind CSS with dynamic theme support (light/dark + color themes)
+- **AI:** LLM integration for card analysis, warrant extension, and research recommendations
+- **Data:** Crowdsourced evidence dataset, YouTube video index, rankings data synced from external sources
+
+---
 
 ## External Links
 
 - [AI Government Plan](docs/collective-consciousness-government.md)
-
-- [Development Version](https://debate-ai.com/) 
-
-- [Earlier Prototype Version](https://alpha.debate-ai.com/)
+- [Live Site](https://debate-ai.com/)
+- [Earlier Prototype](https://alpha.debate-ai.com/)
