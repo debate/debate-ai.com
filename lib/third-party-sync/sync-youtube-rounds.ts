@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
-import axios from "axios";
+
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
@@ -45,17 +45,12 @@ const categories = {
 
 const publishedAfter = "2025-11-21T00:00:00Z";
 
-const YoutubeAPI = axios.create({
-  baseURL: "https://www.googleapis.com/youtube/v3",
-  params: {
-    key: YOUTUBE_API_KEY,
-  },
-});
+
 
 async function getChannelId(channelName: string): Promise<string | null> {
   try {
     // Use the correct endpoint path for the YouTube API search
-    const { data } = await YoutubeAPI.get("/search", {
+    const data = await youtubeFetch("/search", {
       params: {
         part: "snippet",
         type: "channel",
@@ -84,16 +79,14 @@ async function getVideosForChannel(
   do {
     let searchData: any;
     try {
-      const { data } = await YoutubeAPI.get("/search", {
-        params: {
-          part: "snippet",
-          channelId,
-          order: "date",
-          type: "video",
-          maxResults: 50,
-          publishedAfter,
-          ...(nextPageToken ? { pageToken: nextPageToken } : {}),
-        },
+      const data = await youtubeFetch("/search", {
+        part: "snippet",
+        channelId,
+        order: "date",
+        type: "video",
+        maxResults: 50,
+        publishedAfter,
+        ...(nextPageToken ? { pageToken: nextPageToken } : {}),
       });
       searchData = data;
     } catch (err: any) {
@@ -111,8 +104,9 @@ async function getVideosForChannel(
 
     let statsData: any = { items: [] };
     try {
-      const { data } = await YoutubeAPI.get("/videos", {
-        params: { part: "statistics", id: videoIds },
+      const data = await youtubeFetch("/videos", {
+        part: "statistics",
+        id: videoIds,
       });
       statsData = data;
     } catch (err: any) {

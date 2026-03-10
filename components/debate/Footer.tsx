@@ -12,7 +12,6 @@ const FOOTER_LINKS = [
   { url: "https://discord.gg/SJdBqBz3tV", text: "Support" },
   { url: "/legal/privacy", text: "Privacy" },
   { url: "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit", text: "Rules" },
-  { url: "/legal/terms", text: "Terms" },
 ]
 
 
