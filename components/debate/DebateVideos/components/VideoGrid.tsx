@@ -151,9 +151,9 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
                 e.stopPropagation()
                 onToggleFavorite(videoId)
               }}
-              className={`absolute top-2 right-10 z-10 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors ${isFavorite ? "opacity-100 text-amber-400" : "text-white sm:opacity-0 sm:group-hover/card:opacity-100 focus:opacity-100"}`}
+              className={`absolute top-2 right-10 z-10 p-2 rounded-full transition-colors ${isFavorite ? "opacity-100 bg-amber-500/90 text-white hover:bg-amber-600/90" : "bg-black/50 text-white hover:bg-black/70 sm:opacity-0 sm:group-hover/card:opacity-100 focus:opacity-100"}`}
             >
-              <Star className={`h-5 w-5 ${isFavorite ? "fill-current text-amber-400" : ""}`} />
+              <Star className={`h-5 w-5 ${isFavorite ? "fill-current" : ""}`} />
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom">

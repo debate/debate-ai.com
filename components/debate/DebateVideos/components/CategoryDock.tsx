@@ -7,7 +7,7 @@ import { Settings, UserCircle2, Moon, Sun, Palette, Pause, Play } from "lucide-r
 import { cn } from "@/lib/utils"
 import type { CategoryType } from "@/lib/types/videos"
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
-import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
+import { useVideoPlayerStore, sendYouTubeCommand } from "@/lib/state/videoPlayerStore"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -154,7 +154,7 @@ export function CategoryDock() {
   const pathname = usePathname()
   const router = useRouter()
   const categoryState = useCategoryDockState()
-  const { activeVideoId, activeVideoTitle, isMinimized, setMinimized } = useVideoPlayerStore()
+  const { activeVideoId, activeVideoTitle, isMinimized, isPlaying, setMinimized, setIsPlaying } = useVideoPlayerStore()
 
   const allItems = [
     ...NAV_ITEMS.map(({ href, label, icon }) => ({
@@ -175,15 +175,20 @@ export function CategoryDock() {
       : []),
   ]
 
+  const handleDockPlayPause = () => {
+    sendYouTubeCommand(isPlaying ? "pauseVideo" : "playVideo")
+    setIsPlaying(!isPlaying)
+  }
+
   // Playing indicator item for mobile dock — shows when a video is active
   const playingItem = activeVideoId
     ? {
         key: "playing",
-        label: isMinimized ? "Expand" : "Playing",
+        label: isPlaying ? "Pause" : "Play",
         icon: null as any,
         active: false,
         isPlayingIndicator: true,
-        onClick: () => setMinimized(!isMinimized),
+        onClick: handleDockPlayPause,
       }
     : null
 
@@ -224,10 +229,10 @@ export function CategoryDock() {
                   <DockLabel>{label}</DockLabel>
                   <DockIcon>
                     {isPlayingIndicator ? (
-                      isMinimized ? (
-                        <Play className="w-5 h-5 text-primary" />
-                      ) : (
+                      isPlaying ? (
                         <Pause className="w-5 h-5 text-primary" />
+                      ) : (
+                        <Play className="w-5 h-5 text-primary" />
                       )
                     ) : (
                       <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" />
