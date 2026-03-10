@@ -4,12 +4,12 @@
  */
 
 import { Card, CardDescription } from "@/components/ui/card"
-import { useState } from "react"
 import React from "react"
 import Image from "next/image"
-import { Play, Star, Calendar, Eye, Share2 } from "lucide-react"
+import { Play, Star, Calendar, Eye, Volume2 } from "lucide-react"
 import type { VideoType } from "@/lib/types/videos"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
+import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
 
 /**
  * Props for the VideoGrid component.
@@ -84,7 +84,8 @@ interface VideoCardProps {
  */
 function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChannelClick }: VideoCardProps) {
   const [videoId, title, date, channel, viewCount, description] = video
-  const [isPlaying, setIsPlaying] = useState(false)
+  const { activeVideoId, setActiveVideo } = useVideoPlayerStore()
+  const isPlaying = activeVideoId === videoId
 
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
 
@@ -108,28 +109,32 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
             {isFavorite ? "Remove from favorites" : "Save to favorites"}
           </TooltipContent>
         </Tooltip>
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full relative">
+      <Card className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full relative ${isPlaying ? "ring-2 ring-primary" : ""}`}>
         {showThumbnails && (
           <div
             className="relative w-full pt-[56.25%] bg-muted cursor-pointer"
-            onClick={() => !isPlaying && setIsPlaying(true)}
+            onClick={() => !isPlaying && setActiveVideo(videoId, title)}
           >
+            <Image
+              src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
+              alt={title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            />
             {isPlaying ? (
-              <iframe
-                src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-                title={title}
-                className="absolute inset-0 w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                <div className="flex items-center gap-2 text-white text-sm font-medium">
+                  <Volume2 className="h-5 w-5 animate-pulse" />
+                  <span>Now playing</span>
+                </div>
+              </div>
             ) : (
-              <Image
-                src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
-                alt={title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity bg-black/30">
+                <div className="bg-black/70 rounded-full p-3">
+                  <Play className="h-6 w-6 text-white fill-white" />
+                </div>
+              </div>
             )}
           </div>
         )}

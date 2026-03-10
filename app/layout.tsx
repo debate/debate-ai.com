@@ -4,6 +4,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CategoryDockProvider } from "@/components/category-dock-context"
 import { CategoryDock } from "@/components/debate/DebateVideos/components/CategoryDock"
+import { PersistentVideoPlayer } from "@/components/PersistentVideoPlayer"
 import Template from "./template"
 
 export const metadata: Metadata = {
@@ -40,6 +41,7 @@ export default function RootLayout({
               <CategoryDock />
               <Template>{children}</Template>
             </div>
+            <PersistentVideoPlayer />
           </CategoryDockProvider>
         </ThemeProvider>
       </body>
