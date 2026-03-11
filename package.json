@@ -95,6 +95,7 @@
     "@types/node": "^25.4.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@types/turndown": "^5.0.6",
     "concurrently": "^9.2.1",
     "open-ready": "^0.1.2",
     "opener": "^1.5.2",

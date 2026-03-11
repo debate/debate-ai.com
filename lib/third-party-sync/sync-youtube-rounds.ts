@@ -76,7 +76,7 @@ async function getVideosForChannel(
   let nextPageToken: string | null = null;
 
   do {
-    const searchData = await YoutubeAPI("/search", {
+    const searchData: any = await YoutubeAPI("/search", {
       part: "snippet",
       channelId,
       order: "date",

@@ -31,6 +31,7 @@ import {
 } from "lexical"
 import { marked } from "marked"
 import TurndownService from "turndown"
+// @ts-ignore
 import { gfm } from "turndown-plugin-gfm"
 import { TRANSFORMERS, $convertFromMarkdownString, $convertToMarkdownString } from "@lexical/markdown"
 import { cn } from "@/lib/utils"
@@ -58,13 +59,13 @@ turndownService.use(gfm)
 
 turndownService.addRule("emptyParagraph", {
   filter: (node: HTMLElement) =>
-    node.nodeName === "P" && (!node.textContent || node.textContent.trim() === "") && !node.querySelector("img"),
+    Boolean(node.nodeName === "P" && (!node.textContent || node.textContent.trim() === "") && !node.querySelector("img")),
   replacement: () => "\n\n",
 })
 
 turndownService.addRule("fencedCodeBlock", {
   filter: (node: HTMLElement) => {
-    return node.nodeName === "PRE" && node.firstChild && node.firstChild.nodeName === "CODE"
+    return Boolean(node.nodeName === "PRE" && node.firstChild && node.firstChild.nodeName === "CODE")
   },
   replacement: (content: string, node: HTMLElement) => {
     const codeNode = node.firstChild as HTMLElement

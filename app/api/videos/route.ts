@@ -10,11 +10,11 @@ function getDebateHistory() {
     string,
     Record<string, string | number | undefined>
   > = {};
-  for (const entry of topics) {
+  for (const entry of topics.data) {
     const { year, ...rest } = entry;
     history[String(year)] = { ...history[String(year)], ...rest };
   }
-  for (const entry of champions) {
+  for (const entry of champions.data) {
     const { year, ...rest } = entry;
     history[String(year)] = { ...history[String(year)], ...rest };
   }
@@ -24,11 +24,11 @@ function getDebateHistory() {
 export async function GET() {
   const history = getDebateHistory();
   return NextResponse.json({
-    rounds,
-    topPicks,
-    lectures,
-    topics,
-    champions,
+    rounds: rounds.data,
+    topPicks: topPicks.data,
+    lectures: lectures.data,
+    topics: topics.data,
+    champions: champions.data,
     history,
   });
 }

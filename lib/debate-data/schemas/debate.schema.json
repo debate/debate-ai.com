@@ -1,0 +1,338 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "debate.schema.json",
+  "title": "Debate Data Schemas",
+  "$defs": {
+    "DebateChampions": {
+      "title": "Debate Champions Schema",
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "description": "The year of the championship."
+              },
+              "ndt_champion": {
+                "type": "string",
+                "description": "The winning team of the college National Debate Tournament (NDT)."
+              },
+              "policy_champion": {
+                "type": "string",
+                "description": "The winning team of the high school Policy debate championship."
+              },
+              "ld_champion": {
+                "type": "string",
+                "description": "The winning debater of the high school Lincoln-Douglas debate championship."
+              },
+              "pf_champion": {
+                "type": "string",
+                "description": "The winning team of the high school Public Forum debate championship."
+              }
+            },
+            "required": [
+              "year"
+            ]
+          }
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    "DebateDictionary": {
+      "title": "Debate Dictionary Schema",
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "term": {
+                "type": "string",
+                "description": "The debate vernacular term or concept."
+              },
+              "definition": {
+                "type": "string",
+                "description": "The definition and explanation of the debate term."
+              },
+              "category": {
+                "type": "string",
+                "description": "The category or specific debate format the term belongs to."
+              }
+            },
+            "required": [
+              "term",
+              "definition"
+            ]
+          }
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    "DebateLectures": {
+      "title": "Debate Lectures Schema",
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": [
+              {
+                "type": "string",
+                "description": "The unique identifier of the YouTube video."
+              },
+              {
+                "type": "string",
+                "description": "The title or subject of the lecture video."
+              },
+              {
+                "type": "string",
+                "description": "The date the video was published or recorded, formatted as YYYY-MM-DD."
+              },
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The name of the YouTube channel or publisher, which may be null."
+              },
+              {
+                "type": "integer",
+                "description": "The number of views or duration length of the video."
+              },
+              {
+                "type": "string",
+                "description": "The detailed description of the lecture video."
+              },
+              {
+                "type": "string",
+                "description": "The string identifier representing the debate style (e.g., 'college', 'ld', 'pf', 'policy')."
+              }
+            ],
+            "additionalItems": false
+          }
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    "DebateRoundsVideos": {
+      "title": "Debate Rounds Videos Schema",
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": [
+              {
+                "type": "string",
+                "description": "The unique identifier of the YouTube video."
+              },
+              {
+                "type": "string",
+                "description": "The title or subject of the debate round video."
+              },
+              {
+                "type": "string",
+                "description": "The date the video was published or recorded, formatted as YYYY-MM-DD."
+              },
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The name of the YouTube channel or publisher, which may be null."
+              },
+              {
+                "type": "integer",
+                "description": "The number of views or duration length of the video."
+              },
+              {
+                "type": "string",
+                "description": "The detailed description of the debate round video."
+              },
+              {
+                "type": "integer",
+                "description": "The numerical identifier representing the debate style (1 for Policy, 2 for PF, 3 for LD, 4 for College)."
+              },
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The name of the tournament, parsed from title."
+              },
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The round level, parsed from title."
+              },
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The affirmative team, parsed from title."
+              },
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The negative team, parsed from title."
+              }
+            ],
+            "additionalItems": false
+          }
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    "DebateTopPicks": {
+      "title": "Debate Top Picks Schema",
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": [
+              {
+                "type": "string",
+                "description": "The unique identifier of the YouTube video."
+              },
+              {
+                "type": "string",
+                "description": "The title or subject of the top pick video."
+              },
+              {
+                "type": "string",
+                "description": "The date the video was published or recorded, formatted as YYYY-MM-DD."
+              },
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The name of the YouTube channel or publisher, which may be null."
+              },
+              {
+                "type": "integer",
+                "description": "The number of views or duration length of the video."
+              },
+              {
+                "type": "string",
+                "description": "The detailed description of the top pick video."
+              },
+              {
+                "type": "string",
+                "description": "The string identifier representing the debate style (e.g., 'college', 'ld', 'pf', 'policy')."
+              }
+            ],
+            "additionalItems": false
+          }
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    "DebateTopics": {
+      "title": "Debate Topics Schema",
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "description": "The academic year the topics were debated."
+              },
+              "ndt_topic": {
+                "type": "string",
+                "description": "The college National Debate Tournament (NDT) topic for the year."
+              },
+              "policy_topic": {
+                "type": "string",
+                "description": "The high school Policy debate topic for the year."
+              },
+              "ld_topic": {
+                "type": "string",
+                "description": "The high school Lincoln-Douglas debate topic for the year."
+              },
+              "pf_topic": {
+                "type": "string",
+                "description": "The high school Public Forum debate topic for the year."
+              }
+            },
+            "required": [
+              "year"
+            ]
+          }
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    "DebateTournaments": {
+      "title": "Debate Tournaments Schema",
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "The name of the debate tournament."
+          }
+        }
+      },
+      "required": [
+        "data"
+      ]
+    }
+  }
+}

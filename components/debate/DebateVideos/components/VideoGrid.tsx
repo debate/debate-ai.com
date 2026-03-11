@@ -94,11 +94,11 @@ interface VideoCardProps {
   isHidden: boolean
 }
 
-const STYLE_COLORS: Record<string, string> = {
-  pf: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-  ld: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
-  policy: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
-  college: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
+const STYLE_COLORS: Record<number, string> = {
+  2: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+  3: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
+  1: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+  4: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
 }
 
 /**

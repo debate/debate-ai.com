@@ -329,11 +329,11 @@ export function SpeechHeaderBar({
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => { /* TODO */ }}>
                 <Users className="h-4 w-4 mr-2" />
-                Share with Team
+                Share with Partner
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => { /* TODO */ }}>
                 <Radio className="h-4 w-4 mr-2" />
-                Share with Debate Room
+                Share with Round
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

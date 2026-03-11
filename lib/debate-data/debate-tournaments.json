@@ -1,4 +1,6 @@
-[
+{
+  "$schema": "./schemas/debate-tournaments.schema.json",
+  "data": [
     "A Wicked Wildcat Tournament Be Changed For Good",
     "AA State",
     "Abbeville High School Speech Tournament",
@@ -1095,4 +1097,5 @@
     "Year End YG Congress and Spontaneous Speech Tournament",
     "Yellow Rose District Tournament",
     "Ysleta High School"
-]
+  ]
+}

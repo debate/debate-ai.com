@@ -1,4 +1,3 @@
-
 <p align="center">
     <img src="./public/images/logo-collective-mind.png" width="300" height="300">
 </p>
@@ -84,12 +83,12 @@ Tools for building and managing arguments in-round.
 
 A persistent **dock** provides one-click access to all sections:
 
-| Icon | Section |
-|------|---------|
-| Shared | CARDS research search |
-| Debate | Debate workspace |
-| Docs | Document editor |
-| Videos | Round video library |
+| Icon     | Section                      |
+| -------- | ---------------------------- |
+| Shared   | CARDS research search        |
+| Debate   | Debate workspace             |
+| Docs     | Document editor              |
+| Videos   | Round video library          |
 | Lectures | Lecture library + dictionary |
 
 On the Videos page, a **Rankings** icon is appended to the dock for instant access to the leaderboard without leaving the videos context.
@@ -100,8 +99,6 @@ The dock adapts to screen size: fixed top-left on desktop, fixed bottom bar on m
 
 ## Tech Stack
 
-- **Framework:** Next.js (App Router)
-- **Styling:** Tailwind CSS with dynamic theme support (light/dark + color themes)
 - **AI:** LLM integration for card analysis, warrant extension, and research recommendations
 - **Data:** Crowdsourced evidence dataset, YouTube video index, rankings data synced from external sources
 

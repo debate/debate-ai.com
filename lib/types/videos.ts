@@ -1,16 +1,24 @@
 /** Debate style/format category */
-export type DebateStyle = "pf" | "ld" | "policy" | "college";
+export type DebateStyle = 1 | 2 | 3 | 4;
 
 /** Display labels for each debate style */
 export const DEBATE_STYLE_LABELS: Record<DebateStyle, string> = {
-  pf: "PF",
-  ld: "LD",
-  policy: "Policy",
-  college: "College",
+  2: "PF",
+  3: "LD",
+  1: "Policy",
+  4: "NDT",
 };
 
 /** Video data tuple: [videoId, title, date, channel, viewCount, description, style?] */
-export type VideoType = [string, string, string, string, number, string, DebateStyle?];
+export type VideoType = [
+  string,
+  string,
+  string,
+  string,
+  number,
+  string,
+  DebateStyle?,
+];
 
 export type TopicType = {
   year: number;

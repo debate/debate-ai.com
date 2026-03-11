@@ -1,180 +1,183 @@
-[
-  {
-    "year": 2000,
-    "ndt_champion": "Emory University – Michael Horowitz & Jon Paul Lupo",
-    "policy_champion": "Greenhill School (TX) – Asher Haig & Jordan Pietzsch",
-    "ld_champion": "Seamus Donovan – Edmond North High School (OK)"
-  },
-  {
-    "year": 2001,
-    "ndt_champion": "University of Iowa – Andy Peterson & Andy Ryan",
-    "policy_champion": "Glenbrook North (IL) – Michael Klinger & Stacey Nathan",
-    "ld_champion": "Tom Pryor – Hopkins High School (MN)"
-  },
-  {
-    "year": 2002,
-    "ndt_champion": "Northwestern University – Jake Foster & Jonathan Paul",
-    "policy_champion": "Pace Academy (GA) – Bob Allen & Brian Smith",
-    "ld_champion": "Jenn Larson – Millard West High School (NE)"
-  },
-  {
-    "year": 2003,
-    "ndt_champion": "Northwestern University – Geoff Garen & Tristan Morales",
-    "policy_champion": "The College Preparatory School (CA) – Michael Burshteyn & Eli Anders",
-    "ld_champion": "Andrew Garvin – Mission San Jose High School (CA)"
-  },
-  {
-    "year": 2004,
-    "ndt_champion": "Michigan State University – Greta Stahl & Dave Strauss",
-    "policy_champion": "Glenbrook North (IL) – Jake Ziering & Michael Rosecrans",
-    "ld_champion": "John McNeil – Edina High School (MN)",
-    "pf_champion": "Jay M. Robinson HS (NC) – Erin Lopez & Jordan Myers"
-  },
-  {
-    "year": 2005,
-    "ndt_champion": "Northwestern University – Tristan Morales & Josh Branson",
-    "policy_champion": "The Westminster Schools (GA) – Anusha Deshpande & Stephen Weil",
-    "ld_champion": "David Wolfish – Greenhill School (TX)",
-    "pf_champion": "Albuquerque Academy (NM) – Hollie Putnam & Heather Campbell"
-  },
-  {
-    "year": 2006,
-    "ndt_champion": "Michigan State University – Ryan Burke & Casey Harrigan",
-    "policy_champion": "Greenhill School (TX) – Mathew Andrews & Stephen Polley",
-    "ld_champion": "Stephen Hess – Mountain View High School (CA)",
-    "pf_champion": "Manchester-Essex (MA) – James Pates & Dan Cellucci"
-  },
-  {
-    "year": 2007,
-    "ndt_champion": "Emory University – Aimi Hamraie & Julie Hoehn",
-    "policy_champion": "Glenbrook North (IL) – Matt Fisher & Stephanie Spies",
-    "ld_champion": "Patrick Diehl – Lynbrook High School (CA)",
-    "pf_champion": "Lexington (MA) – Chrissy Kugel & Garth Goldwater"
-  },
-  {
-    "year": 2008,
-    "ndt_champion": "Wake Forest University – Seth Gannon & Alex Lamballe",
-    "policy_champion": "Greenhill School (TX) – Nicholas Rogan & Olivia Rogan",
-    "ld_champion": "Chris Theis – Apple Valley High School (MN)",
-    "pf_champion": "North Allegheny (PA) – Naz El-Khatib & Claire Kairys"
-  },
-  {
-    "year": 2009,
-    "ndt_champion": "University of Kansas – Brett Bricker & Nate Johnson",
-    "policy_champion": "The Westminster Schools (GA) – Sanjena Anshu Sathian & Rajesh Jegadeesh",
-    "ld_champion": "Chris Theis – Apple Valley High School (MN)",
-    "pf_champion": "Harker School (CA) – Kelsey Hilbrich & Kaavya Gowda"
-  },
-  {
-    "year": 2010,
-    "ndt_champion": "Michigan State University – Carly Wunderlich & Eric Lanning",
-    "policy_champion": "The Westminster Schools (GA) – Ellis Allen & Daniel Taylor",
-    "ld_champion": "Catherine Tarsney – St. Louis Park High School (MN)",
-    "pf_champion": "George Washington High School (CO) – Gabe Rusk & Brendan Patrick"
-  },
-  {
-    "year": 2011,
-    "ndt_champion": "Northwestern University – Matt Fisher & Stephanie Spies",
-    "policy_champion": "The Westminster Schools (GA) – Ellis Allen & Daniel Taylor",
-    "ld_champion": "Larry Liu and Jeffrey Liu – Indian Springs School (AL) – Close-out",
-    "pf_champion": "The Harker School (CA) – Aakash Jagadeesh & Frederic Enea"
-  },
-  {
-    "year": 2012,
-    "ndt_champion": "Georgetown University – Andrew Arsht & Andrew Markoff",
-    "policy_champion": "Iowa City West High School (IA) – Jeffrey Ding & Liam Hancock",
-    "ld_champion": "Noah Star – Lexington High School (MA)",
-    "pf_champion": "Florida University School (FL) – Dalton Feeley & Daniel Rego"
-  },
-  {
-    "year": 2013,
-    "ndt_champion": "Emporia State University – Elijah Smith & Ryan Wash",
-    "policy_champion": "C. K. McClatchy High School (CA) – John Spurlock & Keenan Harris",
-    "ld_champion": "Rebecca Kuang – Greenhill School (TX)",
-    "pf_champion": "Pine View School (FL) – Arjun Byju & Mark Allseits"
-  },
-  {
-    "year": 2014,
-    "ndt_champion": "Georgetown University – Andrew Arsht & Andrew Markoff",
-    "policy_champion": "Centennial High School (MD) – Gabriel Koo & Michael Koo",
-    "ld_champion": "Danny DeBois – Harrison High School (NY)",
-    "pf_champion": "Walt Whitman High School (MD) – Fionn Adamian & Ben Zimmermann"
-  },
-  {
-    "year": 2015,
-    "ndt_champion": "Northwestern University – Alex Miles & Arjun Vellayappan",
-    "policy_champion": "The Westminster Schools (GA) – Saul Forman & Naman Gupta",
-    "ld_champion": "Pranav Reddy – The Harker School (CA)",
-    "pf_champion": "Walt Whitman High School (MD) – Samuel Arnesen & William Arnesen"
-  },
-  {
-    "year": 2016,
-    "ndt_champion": "Harvard University – David Herman & Hemanth Sanjeev",
-    "policy_champion": "Highland Park (MN) – Dan Bannister & Ian Dill",
-    "ld_champion": "Nick Steele – Harvard-Westlake (CA)",
-    "pf_champion": "Pine View School (FL) – Aravind Byju & Sho Szczepaniuk"
-  },
-  {
-    "year": 2017,
-    "ndt_champion": "Rutgers University–Newark – Devane Murphy & Nicole Nave",
-    "policy_champion": "McDonogh (MD) – Ryan James & Nishad Neelakandan",
-    "ld_champion": "Parker Whitfill – Phoenix Country Day (AZ)",
-    "pf_champion": "the Nueva School (CA) – Jake Mengarelli & Matthew Salah"
-  },
-  {
-    "year": 2018,
-    "ndt_champion": "University of Kansas – Quaram Robinson & Will Katz",
-    "policy_champion": "Monta Vista (CA) – Rafael Pierry & Dhruv Sudesh",
-    "ld_champion": "Brian Zhou – Greenhill (TX)",
-    "pf_champion": "Newton South (MA) – Jay Garg & Anika Sridhar"
-  },
-  {
-    "year": 2019,
-    "ndt_champion": "University of Kentucky – Dan Bannister & Anthony Trufanov",
-    "policy_champion": "North Broward Prep (FL) – Nicholas Mancini & Giorgio Rabbini",
-    "ld_champion": "Ishan Bhatt – St. Andrew's Episcopal (MS)",
-    "pf_champion": "The Blake School (MN) – Thomas Gill & Jack Johnson"
-  },
-  {
-    "year": 2020,
-    "ndt_champion": "N/A – Due to Covid",
-    "policy_champion": "Montgomery Bell Academy (TN) – Aden Barton & Sam Meacham",
-    "ld_champion": "Evan Li – Lexington High School (MA)",
-    "pf_champion": "The Blake School (MN) – Morgan Swigert & Jack Johnson"
-  },
-  {
-    "year": 2021,
-    "ndt_champion": "Dartmouth College – Raam Tambe & Tyler Vergho",
-    "policy_champion": "Bellarmine College Preparatory (CA) – Adarsh Hiremath & Surya Midha",
-    "ld_champion": "Zion Dixon – Strake Jesuit College Preparatory (TX)",
-    "pf_champion": "The Dalton School (NY) – Daniel Yu & Rebecca Solomon"
-  },
-  {
-    "year": 2022,
-    "ndt_champion": "Dartmouth College – Arvind Shankar & Tyler Vergho",
-    "policy_champion": "Lawrence Free State (KS) – John Marshall & Serena Rupp",
-    "ld_champion": "Max Perin – Sage Hill (CA)",
-    "pf_champion": "Brentwood High School (TN) - William Hong & Sully Mrkva"
-  },
-  {
-    "year": 2023,
-    "ndt_champion": "Wake Forest University – Tajaih Robinson & Iyana Trotman",
-    "policy_champion": "Liberal Arts and Science Academy (TX) – Sam Church & Alexandrea Huang",
-    "ld_champion": "Muzzi Khan – Harker (CA)",
-    "pf_champion": "Durham Academy (NC) - Michael Hansen & Alex Huang"
-  },
-  {
-    "year": 2024,
-    "ndt_champion": "University of Michigan – Kelly Phil & Bennett Dombcik",
-    "policy_champion": "Westwood High School (TX) – Ishan Sharma & Ayush Tripathi",
-    "ld_champion": "Spencer Swickle – American Heritage Broward (FL)",
-    "pf_champion": "Strake Jesuit College Preparatory (TX) - Daniel Guo & Jason Zhao"
-  },
-  {
-    "year": 2025,
-    "ndt_champion": "Binghamton University - Elis Louis & Jeremiah Cohn",
-    "policy_champion": "Greenhill School (TX) - Rory Liu & Gautam Chamarthy",
-    "ld_champion": "Orange County School of the Arts (CA) - Iva Liu",
-    "pf_champion": "Strake Jesuit College Preparatory (TX) - Daniel Guo & Jason Zhao"
-  }
-]
+{
+  "$schema": "./schemas/debate-champions.schema.json",
+  "data": [
+    {
+      "year": 2000,
+      "ndt_champion": "Emory University – Michael Horowitz & Jon Paul Lupo",
+      "policy_champion": "Greenhill School (TX) – Asher Haig & Jordan Pietzsch",
+      "ld_champion": "Seamus Donovan – Edmond North High School (OK)"
+    },
+    {
+      "year": 2001,
+      "ndt_champion": "University of Iowa – Andy Peterson & Andy Ryan",
+      "policy_champion": "Glenbrook North (IL) – Michael Klinger & Stacey Nathan",
+      "ld_champion": "Tom Pryor – Hopkins High School (MN)"
+    },
+    {
+      "year": 2002,
+      "ndt_champion": "Northwestern University – Jake Foster & Jonathan Paul",
+      "policy_champion": "Pace Academy (GA) – Bob Allen & Brian Smith",
+      "ld_champion": "Jenn Larson – Millard West High School (NE)"
+    },
+    {
+      "year": 2003,
+      "ndt_champion": "Northwestern University – Geoff Garen & Tristan Morales",
+      "policy_champion": "The College Preparatory School (CA) – Michael Burshteyn & Eli Anders",
+      "ld_champion": "Andrew Garvin – Mission San Jose High School (CA)"
+    },
+    {
+      "year": 2004,
+      "ndt_champion": "Michigan State University – Greta Stahl & Dave Strauss",
+      "policy_champion": "Glenbrook North (IL) – Jake Ziering & Michael Rosecrans",
+      "ld_champion": "John McNeil – Edina High School (MN)",
+      "pf_champion": "Jay M. Robinson HS (NC) – Erin Lopez & Jordan Myers"
+    },
+    {
+      "year": 2005,
+      "ndt_champion": "Northwestern University – Tristan Morales & Josh Branson",
+      "policy_champion": "The Westminster Schools (GA) – Anusha Deshpande & Stephen Weil",
+      "ld_champion": "David Wolfish – Greenhill School (TX)",
+      "pf_champion": "Albuquerque Academy (NM) – Hollie Putnam & Heather Campbell"
+    },
+    {
+      "year": 2006,
+      "ndt_champion": "Michigan State University – Ryan Burke & Casey Harrigan",
+      "policy_champion": "Greenhill School (TX) – Mathew Andrews & Stephen Polley",
+      "ld_champion": "Stephen Hess – Mountain View High School (CA)",
+      "pf_champion": "Manchester-Essex (MA) – James Pates & Dan Cellucci"
+    },
+    {
+      "year": 2007,
+      "ndt_champion": "Emory University – Aimi Hamraie & Julie Hoehn",
+      "policy_champion": "Glenbrook North (IL) – Matt Fisher & Stephanie Spies",
+      "ld_champion": "Patrick Diehl – Lynbrook High School (CA)",
+      "pf_champion": "Lexington (MA) – Chrissy Kugel & Garth Goldwater"
+    },
+    {
+      "year": 2008,
+      "ndt_champion": "Wake Forest University – Seth Gannon & Alex Lamballe",
+      "policy_champion": "Greenhill School (TX) – Nicholas Rogan & Olivia Rogan",
+      "ld_champion": "Chris Theis – Apple Valley High School (MN)",
+      "pf_champion": "North Allegheny (PA) – Naz El-Khatib & Claire Kairys"
+    },
+    {
+      "year": 2009,
+      "ndt_champion": "University of Kansas – Brett Bricker & Nate Johnson",
+      "policy_champion": "The Westminster Schools (GA) – Sanjena Anshu Sathian & Rajesh Jegadeesh",
+      "ld_champion": "Chris Theis – Apple Valley High School (MN)",
+      "pf_champion": "Harker School (CA) – Kelsey Hilbrich & Kaavya Gowda"
+    },
+    {
+      "year": 2010,
+      "ndt_champion": "Michigan State University – Carly Wunderlich & Eric Lanning",
+      "policy_champion": "The Westminster Schools (GA) – Ellis Allen & Daniel Taylor",
+      "ld_champion": "Catherine Tarsney – St. Louis Park High School (MN)",
+      "pf_champion": "George Washington High School (CO) – Gabe Rusk & Brendan Patrick"
+    },
+    {
+      "year": 2011,
+      "ndt_champion": "Northwestern University – Matt Fisher & Stephanie Spies",
+      "policy_champion": "The Westminster Schools (GA) – Ellis Allen & Daniel Taylor",
+      "ld_champion": "Larry Liu and Jeffrey Liu – Indian Springs School (AL) – Close-out",
+      "pf_champion": "The Harker School (CA) – Aakash Jagadeesh & Frederic Enea"
+    },
+    {
+      "year": 2012,
+      "ndt_champion": "Georgetown University – Andrew Arsht & Andrew Markoff",
+      "policy_champion": "Iowa City West High School (IA) – Jeffrey Ding & Liam Hancock",
+      "ld_champion": "Noah Star – Lexington High School (MA)",
+      "pf_champion": "Florida University School (FL) – Dalton Feeley & Daniel Rego"
+    },
+    {
+      "year": 2013,
+      "ndt_champion": "Emporia State University – Elijah Smith & Ryan Wash",
+      "policy_champion": "C. K. McClatchy High School (CA) – John Spurlock & Keenan Harris",
+      "ld_champion": "Rebecca Kuang – Greenhill School (TX)",
+      "pf_champion": "Pine View School (FL) – Arjun Byju & Mark Allseits"
+    },
+    {
+      "year": 2014,
+      "ndt_champion": "Georgetown University – Andrew Arsht & Andrew Markoff",
+      "policy_champion": "Centennial High School (MD) – Gabriel Koo & Michael Koo",
+      "ld_champion": "Danny DeBois – Harrison High School (NY)",
+      "pf_champion": "Walt Whitman High School (MD) – Fionn Adamian & Ben Zimmermann"
+    },
+    {
+      "year": 2015,
+      "ndt_champion": "Northwestern University – Alex Miles & Arjun Vellayappan",
+      "policy_champion": "The Westminster Schools (GA) – Saul Forman & Naman Gupta",
+      "ld_champion": "Pranav Reddy – The Harker School (CA)",
+      "pf_champion": "Walt Whitman High School (MD) – Samuel Arnesen & William Arnesen"
+    },
+    {
+      "year": 2016,
+      "ndt_champion": "Harvard University – David Herman & Hemanth Sanjeev",
+      "policy_champion": "Highland Park (MN) – Dan Bannister & Ian Dill",
+      "ld_champion": "Nick Steele – Harvard-Westlake (CA)",
+      "pf_champion": "Pine View School (FL) – Aravind Byju & Sho Szczepaniuk"
+    },
+    {
+      "year": 2017,
+      "ndt_champion": "Rutgers University–Newark – Devane Murphy & Nicole Nave",
+      "policy_champion": "McDonogh (MD) – Ryan James & Nishad Neelakandan",
+      "ld_champion": "Parker Whitfill – Phoenix Country Day (AZ)",
+      "pf_champion": "the Nueva School (CA) – Jake Mengarelli & Matthew Salah"
+    },
+    {
+      "year": 2018,
+      "ndt_champion": "University of Kansas – Quaram Robinson & Will Katz",
+      "policy_champion": "Monta Vista (CA) – Rafael Pierry & Dhruv Sudesh",
+      "ld_champion": "Brian Zhou – Greenhill (TX)",
+      "pf_champion": "Newton South (MA) – Jay Garg & Anika Sridhar"
+    },
+    {
+      "year": 2019,
+      "ndt_champion": "University of Kentucky – Dan Bannister & Anthony Trufanov",
+      "policy_champion": "North Broward Prep (FL) – Nicholas Mancini & Giorgio Rabbini",
+      "ld_champion": "Ishan Bhatt – St. Andrew's Episcopal (MS)",
+      "pf_champion": "The Blake School (MN) – Thomas Gill & Jack Johnson"
+    },
+    {
+      "year": 2020,
+      "ndt_champion": "N/A – Due to Covid",
+      "policy_champion": "Montgomery Bell Academy (TN) – Aden Barton & Sam Meacham",
+      "ld_champion": "Evan Li – Lexington High School (MA)",
+      "pf_champion": "The Blake School (MN) – Morgan Swigert & Jack Johnson"
+    },
+    {
+      "year": 2021,
+      "ndt_champion": "Dartmouth College – Raam Tambe & Tyler Vergho",
+      "policy_champion": "Bellarmine College Preparatory (CA) – Adarsh Hiremath & Surya Midha",
+      "ld_champion": "Zion Dixon – Strake Jesuit College Preparatory (TX)",
+      "pf_champion": "The Dalton School (NY) – Daniel Yu & Rebecca Solomon"
+    },
+    {
+      "year": 2022,
+      "ndt_champion": "Dartmouth College – Arvind Shankar & Tyler Vergho",
+      "policy_champion": "Lawrence Free State (KS) – John Marshall & Serena Rupp",
+      "ld_champion": "Max Perin – Sage Hill (CA)",
+      "pf_champion": "Brentwood High School (TN) - William Hong & Sully Mrkva"
+    },
+    {
+      "year": 2023,
+      "ndt_champion": "Wake Forest University – Tajaih Robinson & Iyana Trotman",
+      "policy_champion": "Liberal Arts and Science Academy (TX) – Sam Church & Alexandrea Huang",
+      "ld_champion": "Muzzi Khan – Harker (CA)",
+      "pf_champion": "Durham Academy (NC) - Michael Hansen & Alex Huang"
+    },
+    {
+      "year": 2024,
+      "ndt_champion": "University of Michigan – Kelly Phil & Bennett Dombcik",
+      "policy_champion": "Westwood High School (TX) – Ishan Sharma & Ayush Tripathi",
+      "ld_champion": "Spencer Swickle – American Heritage Broward (FL)",
+      "pf_champion": "Strake Jesuit College Preparatory (TX) - Daniel Guo & Jason Zhao"
+    },
+    {
+      "year": 2025,
+      "ndt_champion": "Binghamton University - Elis Louis & Jeremiah Cohn",
+      "policy_champion": "Greenhill School (TX) - Rory Liu & Gautam Chamarthy",
+      "ld_champion": "Orange County School of the Arts (CA) - Iva Liu",
+      "pf_champion": "Strake Jesuit College Preparatory (TX) - Daniel Guo & Jason Zhao"
+    }
+  ]
+}

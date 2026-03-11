@@ -187,14 +187,14 @@ export function VideoSearchBar({
         {/* Style dropdown */}
         {onStyleChange && (
           <div className="w-[80px] shrink-0">
-            <Select value={selectedStyle || "all"} onValueChange={(v) => onStyleChange(v === "all" ? "" : v as DebateStyle)}>
+            <Select value={selectedStyle ? String(selectedStyle) : "all"} onValueChange={(v) => onStyleChange(v === "all" ? "" : Number(v) as DebateStyle)}>
               <SelectTrigger className="h-9">
                 <SelectValue placeholder="Style" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All</SelectItem>
-                {(Object.entries(DEBATE_STYLE_LABELS) as [DebateStyle, string][]).map(([style, label]) => (
-                  <SelectItem key={style} value={style}>{label}</SelectItem>
+                {(Object.entries(DEBATE_STYLE_LABELS) as [string, string][]).map(([styleStr, label]) => (
+                  <SelectItem key={styleStr} value={styleStr}>{label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
