@@ -323,6 +323,7 @@ export function DebateVideosPage() {
           <VideoGrid
             videos={currentVideos}
             showThumbnails={state.showThumbnails}
+            topics={state.debateVideos?.topics}
             videoContainerRef={state.videoContainerRef}
             favorites={state.favorites}
             onToggleFavorite={actions.toggleFavorite}

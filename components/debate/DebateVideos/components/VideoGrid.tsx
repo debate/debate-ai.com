@@ -9,10 +9,10 @@ import { Card, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import React, { useState } from "react"
 import Image from "next/image"
-import { Play, Star, Calendar, Eye, Volume2, MoreHorizontal, ListVideo, Flag, EyeOff, Eye as EyeIcon } from "lucide-react"
-import type { VideoType } from "@/lib/types/videos"
+import { Play, Star, Calendar, Eye, Volume2, MoreHorizontal, ListVideo, Flag, EyeOff, Eye as EyeIcon, ExternalLink } from "lucide-react"
+import type { VideoType, TopicType } from "@/lib/types/videos"
 import { DEBATE_STYLE_LABELS } from "@/lib/types/videos"
-import { TooltipProvider } from "@/components/ui/tooltip"
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
 import {
   DropdownMenu,
@@ -40,6 +40,8 @@ interface VideoGridProps {
   videos: VideoType[]
   /** Whether thumbnail images should be displayed on each card. */
   showThumbnails: boolean
+  /** Topics data to display year tooltips */
+  topics?: TopicType[]
   /** Ref attached to the grid wrapper element for scroll targeting. */
   videoContainerRef: React.RefObject<HTMLDivElement | null>
   /** Set of favorited video IDs. */
@@ -59,7 +61,7 @@ interface VideoGridProps {
 /**
  * Renders a responsive grid of video cards.
  */
-export function VideoGrid({ videos, showThumbnails, videoContainerRef, favorites, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, hiddenVideos }: VideoGridProps) {
+export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, favorites, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, hiddenVideos }: VideoGridProps) {
   return (
     <div
       ref={videoContainerRef}
@@ -70,6 +72,7 @@ export function VideoGrid({ videos, showThumbnails, videoContainerRef, favorites
           key={`${video[0]}-${index}`}
           video={video}
           showThumbnails={showThumbnails}
+          topics={topics}
           isFavorite={favorites.has(video[0])}
           onToggleFavorite={onToggleFavorite}
           onBadgeClick={onBadgeClick}
@@ -88,6 +91,7 @@ export function VideoGrid({ videos, showThumbnails, videoContainerRef, favorites
 interface VideoCardProps {
   video: VideoType
   showThumbnails: boolean
+  topics?: TopicType[]
   isFavorite: boolean
   onToggleFavorite: (videoId: string) => void
   onBadgeClick: (text: string) => void
@@ -107,7 +111,7 @@ const STYLE_COLORS: Record<number, string> = {
  * Renders a single linked video card with thumbnail, title, channel, metadata,
  * a style/format badge, and an ellipsis menu with queue, report, and hide actions.
  */
-function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, isHidden }: VideoCardProps) {
+function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, isHidden }: VideoCardProps) {
   const [videoId, title, date, channel, viewCount, description, style, tournament, roundLevel, affTeam, negTeam] = video
   const { activeVideoId, setActiveVideo, addToQueue, queue } = useVideoPlayerStore()
   const isPlaying = activeVideoId === videoId
@@ -141,8 +145,11 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onBadg
     </span>
   ) : null
 
-  const roundBadges = [tournament, roundLevel].filter(Boolean) as string[]
+
   const hasTeams = affTeam || negTeam;
+
+  const year = new Date(date).getFullYear();
+  const yearTopic = year && topics ? topics.find(t => Number(t.year) === year)?.ndt_topic : undefined;
 
   return (
     <TooltipProvider>
@@ -247,25 +254,59 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onBadg
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="text-lg font-semibold text-primary hover:underline line-clamp-2 flex-1 min-w-0"
+                className="text-lg font-semibold text-primary hover:underline line-clamp-2 flex-1 min-w-0 group/link inline-flex items-start gap-1"
               >
-                {title}
+                <span>{title}</span>
+                <ExternalLink className="w-3.5 h-3.5 text-muted-foreground group-hover/link:text-primary transition-colors mt-1.5 shrink-0" />
               </a>
               {styleBadge}
             </div>
 
-            {roundBadges.length > 0 && (
-              <div className="mb-3 flex flex-wrap gap-1.5">
-                {roundBadges.map((badge) => (
+            {tournament && (
+              <div className="mb-1 flex items-center gap-2">
+                <div
+                  className="text-sm font-bold text-purple-600 dark:text-purple-400 cursor-pointer hover:underline w-fit"
+                  onClick={(e) => { e.stopPropagation(); onBadgeClick(tournament); }}
+                >
+                  {tournament}
+                </div>
+                {year && yearTopic && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge
+                        variant="outline"
+                        className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-[9px] px-1.5 py-0 font-semibold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
+                        onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
+                      >
+                        {year}
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs text-xs">
+                      {yearTopic}
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+                {year && !yearTopic && (
                   <Badge
-                    key={badge}
                     variant="outline"
-                    className="border-border/70 bg-muted/40 text-[10px] font-semibold text-foreground/80 cursor-pointer hover:bg-muted/80 transition-colors"
-                    onClick={(e) => { e.stopPropagation(); onBadgeClick(badge); }}
+                    className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-[9px] px-1.5 py-0 font-semibold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
+                    onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
                   >
-                    {badge}
+                    {year}
                   </Badge>
-                ))}
+                )}
+              </div>
+            )}
+
+            {roundLevel && (
+              <div className="mb-3 flex flex-wrap gap-1.5">
+                <Badge
+                  variant="outline"
+                  className="border-border/70 bg-muted/40 text-[10px] font-semibold text-foreground/80 cursor-pointer hover:bg-muted/80 transition-colors"
+                  onClick={(e) => { e.stopPropagation(); onBadgeClick(roundLevel); }}
+                >
+                  {roundLevel}
+                </Badge>
               </div>
             )}
 
