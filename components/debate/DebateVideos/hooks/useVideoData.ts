@@ -167,13 +167,7 @@ export function useResponsiveVideosPerPage(
   useEffect(() => {
     if (typeof window !== "undefined") {
       const updateVideosPerPage = () => {
-        if (window.innerWidth < 640) {
-          setVideosPerPage(4);
-        } else if (window.innerWidth < 1024) {
-          setVideosPerPage(6);
-        } else {
-          setVideosPerPage(8);
-        }
+        setVideosPerPage(100);
       };
       updateVideosPerPage();
       window.addEventListener("resize", updateVideosPerPage);

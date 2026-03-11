@@ -18,7 +18,7 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
   const [allVideos, setAllVideos] = useState<VideoType[]>([]);
   const [filteredVideos, setFilteredVideos] = useState<VideoType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [videosPerPage, setVideosPerPage] = useState(8);
+  const [videosPerPage, setVideosPerPage] = useState(100);
   const [currentCategory, setCurrentCategory] =
     useState<CategoryType>(initialCategory);
   const [isLoading, setIsLoading] = useState(true);
