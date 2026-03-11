@@ -147,9 +147,50 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
 
 
   const hasTeams = affTeam || negTeam;
+  const hasFullMetadata = Boolean(tournament && affTeam && negTeam);
+
+  const getRoundBadgeColor = (roundLevel: string) => {
+    const round = roundLevel.toLowerCase();
+    if (round.includes("final") || round.includes("champ") || round.includes("1st")) {
+      // Golden Dark Yellow
+      return "border-yellow-500 bg-yellow-500 text-yellow-950 dark:border-yellow-600 dark:bg-yellow-600 dark:text-yellow-50 hover:bg-yellow-600 dark:hover:bg-yellow-500";
+    }
+    if (round.includes("semi")) {
+      // Dark Yellow
+      return "border-yellow-400 bg-yellow-400 text-yellow-950 dark:border-yellow-500 dark:bg-yellow-500 dark:text-yellow-50 hover:bg-yellow-500 dark:hover:bg-yellow-400";
+    }
+    if (round.includes("quarter")) {
+      // Medium Yellow
+      return "border-yellow-300 bg-yellow-300 text-yellow-900 dark:border-yellow-400 dark:bg-yellow-400 dark:text-yellow-950 hover:bg-yellow-400 dark:hover:bg-yellow-300";
+    }
+    if (round.includes("octo")) {
+      // Light Medium Yellow
+      return "border-yellow-200 bg-yellow-200 text-yellow-800 dark:border-yellow-300 dark:bg-yellow-300 dark:text-yellow-900 hover:bg-yellow-300 dark:hover:bg-yellow-200";
+    }
+    if (round.includes("double") && !round.includes("octo")) {
+      // Light Yellow (Double Octos typically)
+      return "border-yellow-200 bg-yellow-100/80 text-yellow-800 dark:border-yellow-300 dark:bg-yellow-200 dark:text-yellow-900 hover:bg-yellow-200 dark:hover:bg-yellow-100";
+    }
+    if (round.includes("triple")) {
+      // Very Light Yellow
+      return "border-yellow-100 bg-yellow-50 text-yellow-700 dark:border-yellow-200 dark:bg-yellow-100 dark:text-yellow-800 hover:bg-yellow-200 dark:hover:bg-yellow-50";
+    }
+    // Default (Round 1, 2, etc): Lightest yellow / nearly white-yellow
+    return "border-amber-100 bg-amber-50/50 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/40";
+  }
 
   const year = new Date(date).getFullYear();
-  const yearTopic = year && topics ? topics.find(t => Number(t.year) === year)?.ndt_topic : undefined;
+  const cleanTournament = tournament?.replace(/\d+/g, '').trim();
+  let yearTopic: string | undefined = undefined;
+  if (year && topics) {
+    const topicEntry = topics.find((t) => Number(t.year) === year);
+    if (topicEntry) {
+      if (style === 1) yearTopic = topicEntry.policy_topic;
+      else if (style === 2) yearTopic = topicEntry.ld_topic;
+      else if (style === 3) yearTopic = topicEntry.pf_topic;
+      else if (style === 4) yearTopic = topicEntry.ndt_topic;
+    }
+  }
 
   return (
     <TooltipProvider>
@@ -248,75 +289,94 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
           )}
 
           <div className="p-4 flex-1 flex flex-col">
-            <div className="flex items-start gap-2 mb-2">
-              <a
-                href={youtubeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="text-lg font-semibold text-primary hover:underline line-clamp-2 flex-1 min-w-0 group/link inline-flex items-start gap-1"
-              >
-                <span>{title}</span>
-                <ExternalLink className="w-3.5 h-3.5 text-muted-foreground group-hover/link:text-primary transition-colors mt-1.5 shrink-0" />
-              </a>
-              {styleBadge}
-            </div>
 
-            {tournament && (
-              <div className="mb-1 flex items-center gap-2">
-                <div
-                  className="text-sm font-bold text-purple-600 dark:text-purple-400 cursor-pointer hover:underline w-fit"
-                  onClick={(e) => { e.stopPropagation(); onBadgeClick(tournament); }}
-                >
-                  {tournament}
-                </div>
-                {year && yearTopic && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Badge
-                        variant="outline"
-                        className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-[9px] px-1.5 py-0 font-semibold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
-                        onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
-                      >
-                        {year}
-                      </Badge>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-xs text-xs">
-                      {yearTopic}
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-                {year && !yearTopic && (
-                  <Badge
-                    variant="outline"
-                    className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-[9px] px-1.5 py-0 font-semibold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
-                    onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
+            <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm font-medium leading-tight">
+              {hasFullMetadata ? (
+                <>
+                  {cleanTournament && (
+                    <span
+                      className="text-base font-bold text-purple-600 dark:text-purple-400 cursor-pointer hover:underline"
+                      onClick={(e) => { e.stopPropagation(); onBadgeClick(cleanTournament); }}
+                    >
+                      {cleanTournament}
+                    </span>
+                  )}
+                  
+                  {year && yearTopic && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge
+                          variant="outline"
+                          className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-xs px-1.5 py-0 font-semibold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
+                          onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
+                        >
+                          {year}
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-xs text-xs">
+                        {yearTopic}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {year && !yearTopic && (
+                    <Badge
+                      variant="outline"
+                      className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-xs px-1.5 py-0 font-semibold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
+                      onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
+                    >
+                      {year}
+                    </Badge>
+                  )}
+
+                  {roundLevel && (
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "text-[10px] font-semibold cursor-pointer transition-colors",
+                        getRoundBadgeColor(roundLevel)
+                      )}
+                      onClick={(e) => { e.stopPropagation(); onBadgeClick(roundLevel); }}
+                    >
+                      {roundLevel}
+                    </Badge>
+                  )}
+
+                  {hasTeams && (
+                    <div className="flex items-center text-base gap-2">
+                      {affTeam && <span className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline font-semibold" onClick={(e) => { e.stopPropagation(); onBadgeClick(affTeam); }}>{affTeam}</span>}
+                      {negTeam && <span className="text-red-600 dark:text-red-400 cursor-pointer hover:underline font-semibold" onClick={(e) => { e.stopPropagation(); onBadgeClick(negTeam); }}>{negTeam}</span>}
+                    </div>
+                  )}
+                  
+                  {styleBadge}
+
+                  <a
+                    href={youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="group/link flex items-center h-full"
+                    title={`Watch "${title}" on YouTube`}
                   >
-                    {year}
-                  </Badge>
-                )}
-              </div>
-            )}
-
-            {roundLevel && (
-              <div className="mb-3 flex flex-wrap gap-1.5">
-                <Badge
-                  variant="outline"
-                  className="border-border/70 bg-muted/40 text-[10px] font-semibold text-foreground/80 cursor-pointer hover:bg-muted/80 transition-colors"
-                  onClick={(e) => { e.stopPropagation(); onBadgeClick(roundLevel); }}
-                >
-                  {roundLevel}
-                </Badge>
-              </div>
-            )}
-
-            {hasTeams && (
-              <div className="mb-3 text-xs font-medium leading-snug">
-                {affTeam && <span className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline" onClick={(e) => { e.stopPropagation(); onBadgeClick(affTeam); }}>{affTeam}</span>}
-                {affTeam && negTeam && <span className="text-muted-foreground mx-1">vs</span>}
-                {negTeam && <span className="text-red-600 dark:text-red-400 cursor-pointer hover:underline" onClick={(e) => { e.stopPropagation(); onBadgeClick(negTeam); }}>{negTeam}</span>}
-              </div>
-            )}
+                    <ExternalLink className="w-4 h-4 text-muted-foreground group-hover/link:text-primary transition-colors" />
+                  </a>
+                </>
+              ) : (
+                <>
+                  {styleBadge}
+                  <a
+                    href={youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-base font-semibold text-primary hover:underline line-clamp-2 group/link inline-flex items-center gap-1"
+                  >
+                    <span>{title}</span>
+                    <ExternalLink className="w-4 h-4 text-muted-foreground group-hover/link:text-primary transition-colors shrink-0" />
+                  </a>
+                </>
+              )}
+            </div>
 
             <CardDescription className="text-xs line-clamp-2 mb-3 flex-1">{description}</CardDescription>
 
