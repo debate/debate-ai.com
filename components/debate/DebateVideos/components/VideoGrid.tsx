@@ -46,8 +46,8 @@ interface VideoGridProps {
   favorites: Set<string>
   /** Callback to toggle a video as favorite. */
   onToggleFavorite: (videoId: string) => void
-  /** Callback when a channel name is clicked to filter by channel. */
-  onChannelClick: (channel: string) => void
+  /** Callback when a badge, channel, or team is clicked to filter by that text. */
+  onBadgeClick: (text: string) => void
   /** Callback to hide a video. */
   onHideVideo: (videoId: string) => void
   /** Callback to unhide a video. */
@@ -59,7 +59,7 @@ interface VideoGridProps {
 /**
  * Renders a responsive grid of video cards.
  */
-export function VideoGrid({ videos, showThumbnails, videoContainerRef, favorites, onToggleFavorite, onChannelClick, onHideVideo, onUnhideVideo, hiddenVideos }: VideoGridProps) {
+export function VideoGrid({ videos, showThumbnails, videoContainerRef, favorites, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, hiddenVideos }: VideoGridProps) {
   return (
     <div
       ref={videoContainerRef}
@@ -72,7 +72,7 @@ export function VideoGrid({ videos, showThumbnails, videoContainerRef, favorites
           showThumbnails={showThumbnails}
           isFavorite={favorites.has(video[0])}
           onToggleFavorite={onToggleFavorite}
-          onChannelClick={onChannelClick}
+          onBadgeClick={onBadgeClick}
           onHideVideo={onHideVideo}
           onUnhideVideo={onUnhideVideo}
           isHidden={hiddenVideos.has(video[0])}
@@ -90,7 +90,7 @@ interface VideoCardProps {
   showThumbnails: boolean
   isFavorite: boolean
   onToggleFavorite: (videoId: string) => void
-  onChannelClick: (channel: string) => void
+  onBadgeClick: (text: string) => void
   onHideVideo: (videoId: string) => void
   onUnhideVideo: (videoId: string) => void
   isHidden: boolean
@@ -107,7 +107,7 @@ const STYLE_COLORS: Record<number, string> = {
  * Renders a single linked video card with thumbnail, title, channel, metadata,
  * a style/format badge, and an ellipsis menu with queue, report, and hide actions.
  */
-function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChannelClick, onHideVideo, onUnhideVideo, isHidden }: VideoCardProps) {
+function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, isHidden }: VideoCardProps) {
   const [videoId, title, date, channel, viewCount, description, style, tournament, roundLevel, affTeam, negTeam] = video
   const { activeVideoId, setActiveVideo, addToQueue, queue } = useVideoPlayerStore()
   const isPlaying = activeVideoId === videoId
@@ -142,10 +142,7 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
   ) : null
 
   const roundBadges = [tournament, roundLevel].filter(Boolean) as string[]
-  const teamRows = [
-    affTeam ? { label: "AFF", name: affTeam, className: "text-sky-700 dark:text-sky-300" } : null,
-    negTeam ? { label: "NEG", name: negTeam, className: "text-rose-700 dark:text-rose-300" } : null,
-  ].filter(Boolean) as { label: string; name: string; className: string }[]
+  const hasTeams = affTeam || negTeam;
 
   return (
     <TooltipProvider>
@@ -263,7 +260,8 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
                   <Badge
                     key={badge}
                     variant="outline"
-                    className="border-border/70 bg-muted/40 text-[10px] font-semibold text-foreground/80"
+                    className="border-border/70 bg-muted/40 text-[10px] font-semibold text-foreground/80 cursor-pointer hover:bg-muted/80 transition-colors"
+                    onClick={(e) => { e.stopPropagation(); onBadgeClick(badge); }}
                   >
                     {badge}
                   </Badge>
@@ -271,14 +269,11 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
               </div>
             )}
 
-            {teamRows.length > 0 && (
-              <div className="mb-3 space-y-1 text-xs">
-                {teamRows.map((team) => (
-                  <div key={`${videoId}-${team.label}`} className={cn("flex items-start gap-2 font-medium", team.className)}>
-                    <span className="min-w-8 text-[10px] font-bold tracking-[0.18em] opacity-80">{team.label}</span>
-                    <span className="leading-snug">{team.name}</span>
-                  </div>
-                ))}
+            {hasTeams && (
+              <div className="mb-3 text-xs font-medium leading-snug">
+                {affTeam && <span className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline" onClick={(e) => { e.stopPropagation(); onBadgeClick(affTeam); }}>{affTeam}</span>}
+                {affTeam && negTeam && <span className="text-muted-foreground mx-1">vs</span>}
+                {negTeam && <span className="text-red-600 dark:text-red-400 cursor-pointer hover:underline" onClick={(e) => { e.stopPropagation(); onBadgeClick(negTeam); }}>{negTeam}</span>}
               </div>
             )}
 
@@ -286,7 +281,7 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
 
             <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
               <button
-                onClick={() => onChannelClick(channel)}
+                onClick={(e) => { e.stopPropagation(); onBadgeClick(channel); }}
                 className="font-medium text-foreground hover:text-primary hover:underline truncate max-w-[140px] text-left"
                 title={`Filter by ${channel}`}
               >

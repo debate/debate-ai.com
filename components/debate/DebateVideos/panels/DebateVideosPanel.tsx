@@ -326,7 +326,7 @@ export function DebateVideosPage() {
             videoContainerRef={state.videoContainerRef}
             favorites={state.favorites}
             onToggleFavorite={actions.toggleFavorite}
-            onChannelClick={handleSearchChange}
+            onBadgeClick={handleSearchChange}
             onHideVideo={actions.hideVideo}
             onUnhideVideo={actions.unhideVideo}
             hiddenVideos={state.hiddenVideos}

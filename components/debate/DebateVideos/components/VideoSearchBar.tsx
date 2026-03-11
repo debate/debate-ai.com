@@ -124,7 +124,7 @@ export function VideoSearchBar({
     <TooltipProvider>
       <div className="flex items-center gap-1 shrink-0">
         {totalVideos !== undefined && (
-          <span className="text-[10px] sm:text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+          <span className="hidden sm:inline text-[10px] sm:text-xs text-muted-foreground tabular-nums whitespace-nowrap">
             {totalVideos} videos
           </span>
         )}
