@@ -172,7 +172,7 @@ export function IntroTextOverview() {
                   Recognizing the interconnectedness of research articles mirrors how we should relate to global citizens as part of an emergent collective
                   consciousness. Losing sight of that bigger picture fuels bias, tribalism, and division at the root of modern conflicts
                   between isolated social news bubbles. Only by mapping the whole internet as a debate outline
-                  enables seeing how each idea fits into a whole greater than the sum of its parts.  This  set a socio-polical model to  build synergistic
+                  enables seeing how each idea fits into a whole greater than the sum of its parts.  This  sets a socio-polical model to  build synergistic
                   consciousness ethical awareness across both discourse and institutional governance.  This can reduce LLM hallucination and steer alignment with common social values as AI gains capacity to replace human leaders of organizations.
 
 

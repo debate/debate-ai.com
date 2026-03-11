@@ -9,7 +9,9 @@ export const DEBATE_STYLE_LABELS: Record<DebateStyle, string> = {
   4: "NDT",
 };
 
-/** Video data tuple: [videoId, title, date, channel, viewCount, description, style?] */
+/** Video data tuple:
+ * [videoId, title, date, channel, viewCount, description, style?, tournament?, roundLevel?, affTeam?, negTeam?]
+ */
 export type VideoType = [
   string,
   string,
@@ -18,6 +20,10 @@ export type VideoType = [
   number,
   string,
   DebateStyle?,
+  (string | null)?,
+  (string | null)?,
+  (string | null)?,
+  (string | null)?,
 ];
 
 export type TopicType = {

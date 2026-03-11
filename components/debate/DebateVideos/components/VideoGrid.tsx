@@ -6,6 +6,7 @@
 "use client"
 
 import { Card, CardDescription } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import React, { useState } from "react"
 import Image from "next/image"
 import { Play, Star, Calendar, Eye, Volume2, MoreHorizontal, ListVideo, Flag, EyeOff, Eye as EyeIcon } from "lucide-react"
@@ -29,6 +30,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { cn } from "@/lib/utils"
 
 /**
  * Props for the VideoGrid component.
@@ -106,7 +108,7 @@ const STYLE_COLORS: Record<number, string> = {
  * a style/format badge, and an ellipsis menu with queue, report, and hide actions.
  */
 function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChannelClick, onHideVideo, onUnhideVideo, isHidden }: VideoCardProps) {
-  const [videoId, title, date, channel, viewCount, description, style] = video
+  const [videoId, title, date, channel, viewCount, description, style, tournament, roundLevel, affTeam, negTeam] = video
   const { activeVideoId, setActiveVideo, addToQueue, queue } = useVideoPlayerStore()
   const isPlaying = activeVideoId === videoId
   const isInQueue = queue.some((q) => q.videoId === videoId)
@@ -138,6 +140,12 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
       {DEBATE_STYLE_LABELS[style]}
     </span>
   ) : null
+
+  const roundBadges = [tournament, roundLevel].filter(Boolean) as string[]
+  const teamRows = [
+    affTeam ? { label: "AFF", name: affTeam, className: "text-sky-700 dark:text-sky-300" } : null,
+    negTeam ? { label: "NEG", name: negTeam, className: "text-rose-700 dark:text-rose-300" } : null,
+  ].filter(Boolean) as { label: string; name: string; className: string }[]
 
   return (
     <TooltipProvider>
@@ -248,6 +256,31 @@ function VideoCard({ video, showThumbnails, isFavorite, onToggleFavorite, onChan
               </a>
               {styleBadge}
             </div>
+
+            {roundBadges.length > 0 && (
+              <div className="mb-3 flex flex-wrap gap-1.5">
+                {roundBadges.map((badge) => (
+                  <Badge
+                    key={badge}
+                    variant="outline"
+                    className="border-border/70 bg-muted/40 text-[10px] font-semibold text-foreground/80"
+                  >
+                    {badge}
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {teamRows.length > 0 && (
+              <div className="mb-3 space-y-1 text-xs">
+                {teamRows.map((team) => (
+                  <div key={`${videoId}-${team.label}`} className={cn("flex items-start gap-2 font-medium", team.className)}>
+                    <span className="min-w-8 text-[10px] font-bold tracking-[0.18em] opacity-80">{team.label}</span>
+                    <span className="leading-snug">{team.name}</span>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <CardDescription className="text-xs line-clamp-2 mb-3 flex-1">{description}</CardDescription>
 
