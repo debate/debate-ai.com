@@ -11,7 +11,7 @@ import Image from "next/image"
 import { Play, Star, Calendar, Eye, Volume2, MoreHorizontal, ListVideo, Flag, EyeOff, Eye as EyeIcon } from "lucide-react"
 import type { VideoType } from "@/lib/types/videos"
 import { DEBATE_STYLE_LABELS } from "@/lib/types/videos"
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
 import {
   DropdownMenu,
