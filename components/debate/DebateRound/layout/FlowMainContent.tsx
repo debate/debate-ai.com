@@ -69,6 +69,8 @@ interface FlowMainContentProps {
   onNavigatePrev?: () => void
   /** Handler called when the user navigates to the next pair of speeches. */
   onNavigateNext?: () => void
+  /** When provided, a hamburger button is rendered inside the mobile SpeechHeaderBar for sidebar access. */
+  onMobileMenuClick?: () => void
 }
 
 /**
@@ -123,6 +125,7 @@ export function FlowMainContent({
   canNavigateNext,
   onNavigatePrev,
   onNavigateNext,
+  onMobileMenuClick,
 }: FlowMainContentProps) {
   if (!currentFlow) {
     return (
@@ -152,6 +155,7 @@ export function FlowMainContent({
               canNavigateNext={canNavigateNext}
               onNavigatePrev={onNavigatePrev}
               onNavigateNext={onNavigateNext}
+              onMobileMenuClick={onMobileMenuClick}
             />
           </div>
           <div className="flex-1 overflow-hidden">

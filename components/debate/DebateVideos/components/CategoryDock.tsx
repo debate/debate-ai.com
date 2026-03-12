@@ -35,11 +35,10 @@ const NAV_ITEMS = [
   { href: "/edit", label: "Docs", icon: IconRead },
   { href: "/videos", label: "Videos", icon: IconRoundsYoutube },
   { href: "/lectures", label: "Lectures", icon: IconLectures },
+  { href: "/rank", label: "Rankings", icon: IconLeaderboard },
 ]
 
-const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = [
-  { category: "leaderboard", label: "Leaderboard", icon: IconLeaderboard },
-]
+const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
 
 function SettingsMenu({ side }: { side: "bottom" | "top" }) {
   const themeState = useThemeState()

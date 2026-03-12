@@ -325,6 +325,7 @@ export function DebateFlowPage() {
             canNavigateNext={state.isMobile ? splitHandlers.canNavigateNextSingle : splitHandlers.canNavigateNext}
             onNavigatePrev={state.isMobile ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches}
             onNavigateNext={state.isMobile ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches}
+            onMobileMenuClick={state.isMobile ? () => state.setMobileMenuOpen(true) : undefined}
             onMouseDown={() => {
               const handleMouseMove = (e: MouseEvent) => {
                 const container = (e.target as HTMLElement).closest(".split-container")
@@ -374,8 +375,8 @@ export function DebateFlowPage() {
   // ============================================================================
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden">
-      {/* Mobile Header */}
-      {state.isMobile && (
+      {/* Mobile Header — only shown in non-split mode; split mode uses SpeechHeaderBar instead */}
+      {state.isMobile && !state.splitMode && (
         <FlowPageHeader
           currentFlow={currentFlow}
           splitMode={state.splitMode}
