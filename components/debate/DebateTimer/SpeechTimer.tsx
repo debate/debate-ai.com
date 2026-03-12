@@ -311,12 +311,12 @@ export function SpeechTimer({
       <div className="flex flex-col items-center gap-0.5 group/timer">
         {/* Time display with controls on sides */}
         <div className="flex items-center gap-0.5">
-          {/* Reset button (left) */}
+          {/* Reset button (left) — always visible on touch devices, hover-reveal on desktop */}
           <Button
             variant="ghost"
             size="icon"
             className={cn(
-              "rounded-full opacity-0 group-hover/timer:opacity-100 transition-opacity",
+              "rounded-full transition-opacity opacity-0 group-hover/timer:opacity-100 [@media(hover:none)]:opacity-100",
               compact ? "h-5 w-5" : "h-6 w-6"
             )}
             onClick={reset}

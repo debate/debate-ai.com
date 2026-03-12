@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { Round } from "@/components/debate/DebateRound/types"
-import { FileText, Share2, Lock, Users, Radio, Quote, ChevronLeft, ChevronRight } from "lucide-react"
+import { FileText, Share2, Lock, Users, Radio, Quote, ChevronLeft, ChevronRight, Menu } from "lucide-react"
 import type { ViewMode } from "@/lib/types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "@/components/ui/button"
@@ -79,6 +79,8 @@ export interface SpeechHeaderBarProps {
   onNavigatePrev?: () => void
   /** Handler called when the user navigates to the next speech. */
   onNavigateNext?: () => void
+  /** When provided, renders a hamburger menu button for mobile sidebar access. */
+  onMobileMenuClick?: () => void
 }
 
 export function SpeechHeaderBar({
@@ -96,6 +98,7 @@ export function SpeechHeaderBar({
   canNavigateNext,
   onNavigatePrev,
   onNavigateNext,
+  onMobileMenuClick,
 }: SpeechHeaderBarProps) {
   const { rounds, flows, selected } = useFlowStore()
   const currentFlow = flows[selected]
@@ -213,6 +216,19 @@ export function SpeechHeaderBar({
       )}
       {/* Single row: name · recording playback · timer & controls */}
       <div className="flex items-center gap-1 w-full overflow-hidden min-w-0">
+        {/* Mobile sidebar hamburger */}
+        {onMobileMenuClick && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onMobileMenuClick}
+            className="h-6 w-6 shrink-0"
+            aria-label="Open menu"
+          >
+            <Menu className="h-3.5 w-3.5" />
+          </Button>
+        )}
+
         {/* Speech name with navigation */}
         <div className="flex items-center shrink-0">
           {onNavigatePrev && (
