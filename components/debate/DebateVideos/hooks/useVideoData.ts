@@ -112,8 +112,8 @@ export function useVideoFiltering() {
       // Filter by season year
       if (year) {
         if (year === "legacy") {
-          // Everything before 2008 season (i.e. before June 1st, 2007)
-          const legacyEndDate = new Date("2007-06-01")
+          // Everything before 2011 season (i.e. before June 1st, 2010)
+          const legacyEndDate = new Date("2010-06-01")
           filtered = filtered.filter((video) => {
             const videoDate = new Date(video[2])
             return videoDate < legacyEndDate

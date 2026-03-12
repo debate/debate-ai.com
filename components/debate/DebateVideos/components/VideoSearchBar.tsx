@@ -106,8 +106,8 @@ export function VideoSearchBar({
 }: VideoSearchBarProps) {
   const currentYear = new Date().getFullYear()
   const maxYear = Math.max(currentYear, 2026)
-  // Stop seasons at 2008
-  const years = Array.from({ length: maxYear - 2008 + 1 }, (_, i) => String(maxYear - i))
+  // Stop seasons at 2011
+  const years = Array.from({ length: maxYear - 2011 + 1 }, (_, i) => String(maxYear - i))
 
   const pagination = totalVideos !== undefined ? (
     <div className="flex items-center gap-1 shrink-0 ml-auto">
@@ -196,7 +196,7 @@ export function VideoSearchBar({
                   {Number(y) - 1}-{y}
                 </SelectItem>
               ))}
-              <SelectItem value="legacy">Archive Pre-2008</SelectItem>
+              <SelectItem value="legacy">Archive Pre-2010</SelectItem>
             </SelectContent>
           </Select>
         </div>

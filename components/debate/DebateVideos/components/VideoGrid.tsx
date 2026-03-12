@@ -149,6 +149,63 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
     </span>
   ) : null
 
+  const actionsDropdown = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
+          className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="More options"
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuItem
+          onClick={() => onToggleFavorite(videoId)}
+          className={`gap-2 ${isFavorite ? "text-amber-600 dark:text-amber-400" : ""}`}
+        >
+          <Star className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
+          {isFavorite ? "Remove from favorites" : "Save to favorites"}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => addToQueue(videoId, title)}
+          disabled={isInQueue}
+          className="gap-2"
+        >
+          <ListVideo className="h-4 w-4" />
+          {isInQueue ? "In queue" : "Add to queue"}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => setShowReportDialog(true)}
+          className="gap-2 text-orange-600 dark:text-orange-400"
+        >
+          <Flag className="h-4 w-4" />
+          Report issue
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        {isHidden ? (
+          <DropdownMenuItem
+            onClick={() => onUnhideVideo(videoId)}
+            className="gap-2"
+          >
+            <EyeIcon className="h-4 w-4" />
+            Unhide
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem
+            onClick={() => setShowHideConfirm(true)}
+            className="gap-2 text-destructive"
+          >
+            <EyeOff className="h-4 w-4" />
+            Hide video
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
 
   const hasTeams = affTeam || negTeam;
   const hasFullMetadata = Boolean(tournament && affTeam && negTeam);
@@ -195,63 +252,6 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
   return (
     <TooltipProvider>
       <div className="block h-full relative group/card">
-        {/* Ellipsis menu */}
-        <div className="absolute top-2 right-2 z-10">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
-                className="p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors text-white sm:opacity-0 sm:group-hover/card:opacity-100 focus:opacity-100"
-                aria-label="More options"
-              >
-                <MoreHorizontal className="h-5 w-5" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem
-                onClick={() => onToggleFavorite(videoId)}
-                className={`gap-2 ${isFavorite ? "text-amber-600 dark:text-amber-400" : ""}`}
-              >
-                <Star className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
-                {isFavorite ? "Remove from favorites" : "Save to favorites"}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => addToQueue(videoId, title)}
-                disabled={isInQueue}
-                className="gap-2"
-              >
-                <ListVideo className="h-4 w-4" />
-                {isInQueue ? "In queue" : "Add to queue"}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setShowReportDialog(true)}
-                className="gap-2 text-orange-600 dark:text-orange-400"
-              >
-                <Flag className="h-4 w-4" />
-                Report issue
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {isHidden ? (
-                <DropdownMenuItem
-                  onClick={() => onUnhideVideo(videoId)}
-                  className="gap-2"
-                >
-                  <EyeIcon className="h-4 w-4" />
-                  Unhide
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem
-                  onClick={() => setShowHideConfirm(true)}
-                  className="gap-2 text-destructive"
-                >
-                  <EyeOff className="h-4 w-4" />
-                  Hide video
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
 
         <Card className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full relative ${isPlaying ? "ring-2 ring-primary" : ""} ${isHidden ? "opacity-60 ring-2 ring-dashed ring-muted-foreground/50" : ""}`}>
           {isHidden && (
@@ -290,50 +290,41 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
 
           <div className="p-4 flex-1 flex flex-col">
 
-            <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm font-medium leading-tight">
+            <div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium leading-tight">
               {isTopPick && (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Medal className="h-4.5 w-4.5 text-amber-500 fill-amber-500/20" />
+                    <span className="text-xl cursor-default" role="img" aria-label="Top Pick">🎖️</span>
                   </TooltipTrigger>
                   <TooltipContent side="top">Top Pick</TooltipContent>
                 </Tooltip>
               )}
-              {hasFullMetadata ? (
+              {hasFullMetadata && (
                 <>
                   {cleanTournament && (
                     <span
-                      className="text-base font-bold text-purple-600 dark:text-purple-400 cursor-pointer hover:underline"
+                      className="text-[11px] font-bold text-purple-600 dark:text-purple-400 cursor-pointer hover:underline uppercase tracking-wider"
                       onClick={(e) => { e.stopPropagation(); onBadgeClick(cleanTournament); }}
                     >
                       {cleanTournament}
                     </span>
                   )}
 
-                  {year && yearTopic && (
+                  {year && (
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Badge
                           variant="outline"
-                          className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-base px-0 py-0 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
+                          className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-[10px] px-1.5 py-0 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
                           onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
                         >
                           '{String(year).slice(-2)}
                         </Badge>
                       </TooltipTrigger>
                       <TooltipContent side="top" className="max-w-xs text-xs">
-                        {yearTopic}
+                        {yearTopic || `${year} Season`}
                       </TooltipContent>
                     </Tooltip>
-                  )}
-                  {year && !yearTopic && (
-                    <Badge
-                      variant="outline"
-                      className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-base px-0 py-0 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
-                      onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
-                    >
-                      '{String(year).slice(-2)}
-                    </Badge>
                   )}
 
                   {roundLevel && !/\d/.test(roundLevel) && (
@@ -342,7 +333,7 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
                       <Badge
                         variant="outline"
                         className={cn(
-                          "text-[10px] font-semibold cursor-pointer transition-colors flex items-center gap-1",
+                          "text-[10px] font-semibold cursor-pointer transition-colors flex items-center gap-1 px-1.5 py-0",
                           getRoundBadgeColor(roundLevel)
                         )}
                         onClick={(e) => { e.stopPropagation(); onBadgeClick(roundLevel); }}
@@ -353,42 +344,36 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
                   )}
 
                   {hasTeams && (
-                    <div className="flex items-center text-base gap-2">
-                      {affTeam && <span className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline font-semibold" onClick={(e) => { e.stopPropagation(); onBadgeClick(affTeam); }}>{affTeam}</span>}
-                      {negTeam && <span className="text-red-600 dark:text-red-400 cursor-pointer hover:underline font-semibold" onClick={(e) => { e.stopPropagation(); onBadgeClick(negTeam); }}>{negTeam}</span>}
+                    <div className="flex items-center text-[11px] gap-2 font-semibold">
+                      {affTeam && <span className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline" onClick={(e) => { e.stopPropagation(); onBadgeClick(affTeam); }}>{affTeam}</span>}
+                      {negTeam && <span className="text-red-600 dark:text-red-400 cursor-pointer hover:underline" onClick={(e) => { e.stopPropagation(); onBadgeClick(negTeam); }}>{negTeam}</span>}
                     </div>
                   )}
-
-                  {styleBadge}
-
-                  <a
-                    href={youtubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="group/link flex items-center h-full"
-                    title={`Watch "${title}" on YouTube`}
-                  >
-                    <ExternalLink className="w-4 h-4 text-muted-foreground group-hover/link:text-primary transition-colors" />
-                  </a>
-                </>
-              ) : (
-                <>
-                  {styleBadge}
-                  <a
-                    href={youtubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="text-base font-semibold text-primary hover:underline line-clamp-2 group/link inline-flex items-center gap-1"
-                  >
-                    <span>{title}</span>
-                    <ExternalLink className="w-4 h-4 text-muted-foreground group-hover/link:text-primary transition-colors shrink-0" />
-                  </a>
                 </>
               )}
+              {styleBadge}
             </div>
 
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <a
+                href={youtubeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="group/link flex-1 min-w-0"
+                title={`Watch "${title}" on YouTube`}
+              >
+                <div className="flex items-center gap-1.5 overflow-hidden">
+                  <h3 className="text-base font-semibold text-foreground line-clamp-2 group-hover/link:text-primary transition-colors">
+                    {title}
+                  </h3>
+                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover/link:text-primary transition-colors shrink-0" />
+                </div>
+              </a>
+              <div className="flex items-center gap-1 shrink-0">
+                {actionsDropdown}
+              </div>
+            </div>
             <CardDescription className="text-xs line-clamp-2 mb-3 flex-1">{description}</CardDescription>
 
             <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
