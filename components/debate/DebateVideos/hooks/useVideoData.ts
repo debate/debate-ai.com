@@ -86,10 +86,24 @@ export function useVideoFiltering() {
     ) => {
       let allCategoryVideos = videos;
       if (search.trim() && data && Array.isArray(data.rounds)) {
-        allCategoryVideos = [
+        const combined = [
           ...data.rounds,
           ...(data.lectures || []),
         ];
+        const seen = new Set<string>();
+        allCategoryVideos = combined.filter((v) => {
+          if (seen.has(v[0])) return false;
+          seen.add(v[0]);
+          return true;
+        });
+      } else {
+        // Deduplicate the current category videos by id
+        const seen = new Set<string>();
+        allCategoryVideos = videos.filter((v) => {
+          if (seen.has(v[0])) return false;
+          seen.add(v[0]);
+          return true;
+        });
       }
 
       let filtered: VideoType[] = allCategoryVideos;
