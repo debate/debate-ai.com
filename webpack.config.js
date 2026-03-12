@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   mode: 'production',
-  entry: './src/sw/service-worker.ts',
+  entry: './lib/serviceworker/service-worker.ts',
   module: {
     rules: [
       {

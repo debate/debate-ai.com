@@ -98,12 +98,17 @@ export async function scrapeDivision({
   fallbackUrl,
 }: DatasetConfig): Promise<LeaderboardEntry[]> {
   try {
-    const result = await grab(url);
-    let csvText = result.data;
+    const result = await grab(url, { headers: { Accept: "text/plain" } });
+    let csvText = result.error ? null : result.data;
 
-    if (result.error && fallbackUrl) {
-      const fallbackResult = await grab(fallbackUrl);
+    if (!csvText && fallbackUrl) {
+      const fallbackResult = await grab(fallbackUrl, { headers: { Accept: "text/plain" } });
       csvText = fallbackResult.data;
+    }
+
+    // grab may return a Buffer for octet-stream responses; coerce to string
+    if (Buffer.isBuffer(csvText)) {
+      csvText = csvText.toString("utf-8");
     }
 
     if (!csvText || typeof csvText !== "string") {

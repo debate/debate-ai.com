@@ -3,7 +3,7 @@
  * @module components/debate/videos/components/VideoSearchBar
  */
 
-import { Search, X, Video, VideoOff, Star, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search, X, Video, VideoOff, Star, Trophy, ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
 import { IconTopRounds } from "@/components/icons"
 import { Badge } from "@/components/ui/badge"
@@ -51,6 +51,10 @@ interface VideoSearchBarProps {
   showTopPicksActive?: boolean
   /** Callback invoked to toggle the Top Picks view. */
   onToggleTopPicks?: () => void
+  /** Whether the Rankings view is currently active. */
+  showRankingsActive?: boolean
+  /** Callback invoked to toggle the Rankings view. */
+  onToggleRankings?: () => void
   /** Total number of videos matching the current filter. */
   totalVideos?: number
   /** Currently selected debate style filter. */  selectedStyle?: DebateStyle | ""
@@ -99,6 +103,8 @@ export function VideoSearchBar({
   onToggleFavoritesOnly,
   showTopPicksActive,
   onToggleTopPicks,
+  showRankingsActive,
+  onToggleRankings,
   totalVideos,
   selectedStyle,
   onStyleChange,
@@ -196,7 +202,7 @@ export function VideoSearchBar({
                   {Number(y) - 1}-{y}
                 </SelectItem>
               ))}
-              <SelectItem value="legacy">Archive Pre-2010</SelectItem>
+              <SelectItem value="legacy">Pre-2010</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -242,6 +248,23 @@ export function VideoSearchBar({
               </TooltipTrigger>
               <TooltipContent side="bottom">
                 {showTopPicksActive ? "Show all debates" : "Show top picks"}
+              </TooltipContent>
+            </Tooltip>
+          )}
+          {onToggleRankings && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className={`shrink-0 ${showRankingsActive ? "bg-primary/20 ring-2 ring-primary" : ""}`}
+                  variant="outline"
+                  size="icon"
+                  onClick={onToggleRankings}
+                >
+                  <Trophy className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                {showRankingsActive ? "Show all debates" : "Show rankings"}
               </TooltipContent>
             </Tooltip>
           )}

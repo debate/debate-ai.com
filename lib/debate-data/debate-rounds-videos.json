@@ -3354,20 +3354,7 @@
       "Round 3",
       "Iowa AC",
       "Kansas RS"
-    ],
-    [
-      "ZnRM5wRLieU",
-      "NDT 2024 Finals: Kansas RS vs Michigan DP",
-      "2024-04-01",
-      "Lincoln Garrett",
-      10,
-      "Debate between Finals Kansas RS and Michigan DP at NDT 2024",
-      4,
-      "NDT 2024",
-      "Finals",
-      "Kansas RS",
-      "Michigan DP"
-    ],
+  ],
     [
       "i5iILXjjJdk",
       "NDT 2024 Semis: Kansas RS vs Emory GH",
@@ -3805,7 +3792,7 @@
       1833,
       "",
       4,
-      "2024 Emory Phyllis Flory Barton Tutorial (Octos)",
+      "Emory",
       "Octos",
       "Carrollton Sacred Heart PR",
       "LASA BD"
@@ -3818,10 +3805,10 @@
       2485,
       "Taipei American LY vs LASA BD in the final round of the 69th annual Barkley Forum for High Schools at Emory University.",
       1,
-      null,
-      null,
-      null,
-      null
+      "Barkley Forum",
+      "Finals",
+      "Taipei American LY",
+      "LASA BD"
     ],
     [
       "7DpRUbdDxNE",
@@ -5226,6 +5213,20 @@
       "RFD",
       "LASA CH",
       "Berkeley Prep SZ"
+    ],
+
+    [
+      "0f02-Ztg_bg",
+      "Michigan PR v Emory GS",
+      "2020-05-08",
+      "Michigan Debate",
+      3800,
+      "",
+      4,
+      "Demo",
+      "R1",
+      "Michigan PR",
+      "Emory GS"
     ],
     [
       "DqWSwxUqCJE",
@@ -9673,19 +9674,6 @@
       "Octos",
       "OU JS",
       "Cornell KR"
-    ],
-    [
-      "z2V8wLK85_A",
-      "Kansas KR vs Georgetown BK, Round the Eighth, NDT 2018",
-      "2018-03-25",
-      "Joe Leeson-Schatz",
-      7924,
-      "",
-      4,
-      "NDT 2018",
-      "Round Eighth",
-      "Kansas KR",
-      "Georgetown BK"
     ],
     [
       "yVoTAiUOCNo",
@@ -23136,19 +23124,6 @@
       "Vintage Debate Vids",
       625,
       "2010 Cross Examination Debate Association National Tournament Final Round Affirmative - Oklahoma RJ Giglio Nick Watts ...",
-      4,
-      "CEDA 2010",
-      "Finals",
-      "Oklahoma GW",
-      "Whitman CS"
-    ],
-    [
-      "wzmKw6DDUkg",
-      "CEDA 2010 Finals: Oklahoma GW vs Whitman CS",
-      "2010-02-22",
-      "Lincoln Garrett",
-      0,
-      "Debate between Finals Oklahoma GW and Whitman CS at CEDA 2010",
       4,
       "CEDA 2010",
       "Finals",

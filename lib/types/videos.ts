@@ -6,7 +6,7 @@ export const DEBATE_STYLE_LABELS: Record<DebateStyle, string> = {
   2: "PF",
   3: "LD",
   1: "Policy",
-  4: "NDT",
+  4: "College",
 };
 
 /** Video data tuple:
