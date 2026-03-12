@@ -163,3 +163,23 @@ export function useVideoFiltering() {
   return { filterAndSortVideos };
 }
 
+/**
+ * Adjusts the videos-per-page count based on the current viewport width.
+ * Listens to window resize events and cleans up on unmount.
+ *
+ * @param setVideosPerPage - Setter for the videos-per-page count.
+ */
+export function useResponsiveVideosPerPage(
+  setVideosPerPage: (count: number) => void,
+) {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const updateVideosPerPage = () => {
+        setVideosPerPage(100);
+      };
+      updateVideosPerPage();
+      window.addEventListener("resize", updateVideosPerPage);
+      return () => window.removeEventListener("resize", updateVideosPerPage);
+    }
+  }, [setVideosPerPage]);
+}

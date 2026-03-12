@@ -134,7 +134,7 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
       const existing = JSON.parse(localStorage.getItem("debateVideoReports") || "[]")
       existing.push({ videoId, title, report: reportText, date: new Date().toISOString() })
       localStorage.setItem("debateVideoReports", JSON.stringify(existing))
-    } catch {}
+    } catch { }
     setReportSubmitted(true)
     setTimeout(() => {
       setShowReportDialog(false)
@@ -154,32 +154,28 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
   const hasFullMetadata = Boolean(tournament && affTeam && negTeam);
 
   const getRoundBadgeColor = (roundLevel: string) => {
-    const round = roundLevel.toLowerCase();
-    if (round.includes("final") || round.includes("champ") || round.includes("1st")) {
-      // Golden Dark Yellow
-      return "border-yellow-500 bg-yellow-500 text-yellow-950 dark:border-yellow-600 dark:bg-yellow-600 dark:text-yellow-50 hover:bg-yellow-600 dark:hover:bg-yellow-500";
+    const round = roundLevel.toLowerCase().trim();
+    if (round === "finals" || round === "final" || round === "champ" || round === "1st") {
+      // Golden - Finals
+      return "border-amber-400 bg-amber-400 text-amber-950 dark:border-amber-500 dark:bg-amber-600 dark:text-amber-50 hover:bg-amber-500 dark:hover:bg-amber-500";
     }
     if (round.includes("semi")) {
-      // Dark Yellow
+      // Warm Yellow - Semis
       return "border-yellow-400 bg-yellow-400 text-yellow-950 dark:border-yellow-500 dark:bg-yellow-500 dark:text-yellow-50 hover:bg-yellow-500 dark:hover:bg-yellow-400";
     }
     if (round.includes("quarter")) {
-      // Medium Yellow
+      // Bright Yellow - Quarters
       return "border-yellow-300 bg-yellow-300 text-yellow-900 dark:border-yellow-400 dark:bg-yellow-400 dark:text-yellow-950 hover:bg-yellow-400 dark:hover:bg-yellow-300";
     }
     if (round.includes("octo")) {
-      // Light Medium Yellow
+      // Soft Yellow - Octos
       return "border-yellow-200 bg-yellow-200 text-yellow-800 dark:border-yellow-300 dark:bg-yellow-300 dark:text-yellow-900 hover:bg-yellow-300 dark:hover:bg-yellow-200";
     }
-    if (round.includes("double") && !round.includes("octo")) {
-      // Light Yellow (Double Octos typically)
-      return "border-yellow-200 bg-yellow-100/80 text-yellow-800 dark:border-yellow-300 dark:bg-yellow-200 dark:text-yellow-900 hover:bg-yellow-200 dark:hover:bg-yellow-100";
-    }
-    if (round.includes("triple")) {
-      // Very Light Yellow
+    if (round.includes("double") || round.includes("triple")) {
+      // Very Light Yellow - Other Elims
       return "border-yellow-100 bg-yellow-50 text-yellow-700 dark:border-yellow-200 dark:bg-yellow-100 dark:text-yellow-800 hover:bg-yellow-200 dark:hover:bg-yellow-50";
     }
-    // Default (Round 1, 2, etc): Lightest yellow / nearly white-yellow
+    // Default (Round 1, 2, etc): Lightest amber/yellow
     return "border-amber-100 bg-amber-50/50 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/40";
   }
 
@@ -313,16 +309,16 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
                       {cleanTournament}
                     </span>
                   )}
-                  
+
                   {year && yearTopic && (
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Badge
                           variant="outline"
-                          className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-base px-2 py-0.5 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
+                          className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-base px-0 py-0 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
                           onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
                         >
-                          {String(year).slice(-2)}
+                          '{String(year).slice(-2)}
                         </Badge>
                       </TooltipTrigger>
                       <TooltipContent side="top" className="max-w-xs text-xs">
@@ -333,25 +329,27 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
                   {year && !yearTopic && (
                     <Badge
                       variant="outline"
-                      className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-base px-2 py-0.5 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
+                      className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-base px-0 py-0 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
                       onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
                     >
-                      {String(year).slice(-2)}
+                      '{String(year).slice(-2)}
                     </Badge>
                   )}
 
                   {roundLevel && !/\d/.test(roundLevel) && (
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        "text-[10px] font-semibold cursor-pointer transition-colors flex items-center gap-1",
-                        getRoundBadgeColor(roundLevel)
-                      )}
-                      onClick={(e) => { e.stopPropagation(); onBadgeClick(roundLevel); }}
-                    >
-                      {roundLevel.toLowerCase().includes("final") && "🏆"}
-                      {roundLevel}
-                    </Badge>
+                    <>
+                      {(roundLevel.toLowerCase().trim() === "finals" || roundLevel.toLowerCase().trim() === "final") && <span className="text-sm mr-[-4px]">🏆</span>}
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "text-[10px] font-semibold cursor-pointer transition-colors flex items-center gap-1",
+                          getRoundBadgeColor(roundLevel)
+                        )}
+                        onClick={(e) => { e.stopPropagation(); onBadgeClick(roundLevel); }}
+                      >
+                        {roundLevel}
+                      </Badge>
+                    </>
                   )}
 
                   {hasTeams && (
@@ -360,7 +358,7 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
                       {negTeam && <span className="text-red-600 dark:text-red-400 cursor-pointer hover:underline font-semibold" onClick={(e) => { e.stopPropagation(); onBadgeClick(negTeam); }}>{negTeam}</span>}
                     </div>
                   )}
-                  
+
                   {styleBadge}
 
                   <a

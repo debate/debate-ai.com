@@ -17,7 +17,8 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/comp
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
-import { useVideoDataFetch, useVideoFiltering } from "../hooks/useVideoData"
+import { useVideoDataFetch, useVideoFiltering, useResponsiveVideosPerPage } from "../hooks/useVideoData"
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 
 // Components
 import { VideoSearchBar } from "../components/VideoSearchBar"
@@ -39,8 +40,12 @@ export function LecturesPage() {
 
   const [dictSearchTerm, setDictSearchTerm] = useState("")
 
-  // No longer using pagination slicing
-  const currentVideos = state.filteredVideos
+  // ============================================================================
+  // Computed Values
+  // ============================================================================
+  const totalPages = Math.ceil(state.filteredVideos.length / state.videosPerPage)
+  const endIndex = state.currentPage * state.videosPerPage
+  const currentVideos = state.filteredVideos.slice(0, endIndex)
 
   // ============================================================================
   // Category Management
@@ -48,6 +53,7 @@ export function LecturesPage() {
   const changeCategory = useCallback(
     (category: CategoryType, data: DebateVideosData) => {
       actions.setCurrentCategory(category)
+      actions.setCurrentPage(1)
 
       if (category === "lectures") {
         const videos = data[category] || []
@@ -81,10 +87,13 @@ export function LecturesPage() {
 
   useVideoDataFetch(actions.setDebateVideos, actions.setIsLoading, actions.setErrorMessage, changeCategory, initialCategory)
 
+  useResponsiveVideosPerPage(actions.setVideosPerPage)
+
   useEffect(() => {
     const filtered = filterAndSortVideos(state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos)
     actions.setFilteredVideos(filtered)
-  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, filterAndSortVideos, actions.setFilteredVideos])
+    actions.setCurrentPage(1)
+  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
 
   // ============================================================================
   // Search & Filter Handlers
@@ -93,6 +102,18 @@ export function LecturesPage() {
   const handleClearSearch = useCallback(() => { actions.setSearchTerm("") }, [actions.setSearchTerm])
   const handleSortChange = useCallback((value: string) => { actions.setSortOrder(value) }, [actions.setSortOrder])
   const handleToggleThumbnails = useCallback(() => { actions.setShowThumbnails(!state.showThumbnails) }, [actions.setShowThumbnails, state.showThumbnails])
+
+  // ============================================================================
+  // Infinite Scroll
+  // ============================================================================
+  useInfiniteScroll(
+    state.loadMoreTriggerRef,
+    state.currentPage,
+    totalPages,
+    state.isLoadingMore,
+    actions.setCurrentPage,
+    actions.setIsLoadingMore,
+  )
 
   // ============================================================================
   // Dictionary toggle button (shown in every header)
@@ -243,6 +264,14 @@ export function LecturesPage() {
             hiddenVideos={state.hiddenVideos}
             topPicks={topPicksSet}
           />
+
+          <div ref={state.loadMoreTriggerRef} className="h-10" />
+
+          {state.isLoadingMore && (
+            <div className="text-center py-4">
+              <p className="text-sm text-muted-foreground">Loading more...</p>
+            </div>
+          )}
         </>
       )}
     </div>

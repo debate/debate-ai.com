@@ -15,7 +15,8 @@ import { LeaderboardPanel } from "./RankingsLeaderboardPanel"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
-import { useVideoDataFetch, useVideoFiltering } from "../hooks/useVideoData"
+import { useVideoDataFetch, useVideoFiltering, useResponsiveVideosPerPage } from "../hooks/useVideoData"
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 
 // Components
 import { useCategoryDock } from "@/components/category-dock-context"
@@ -58,8 +59,17 @@ export function DebateVideosPage() {
 
   const topPicksSet = useMemo(() => new Set(state.debateVideos?.topPicks || []), [state.debateVideos?.topPicks])
 
-  // No longer using pagination slicing
-  const currentVideos = state.filteredVideos
+  // ============================================================================
+  // Computed Values
+  // ============================================================================
+  /** Total number of pagination pages for the current filtered list. */
+  const totalPages = Math.ceil(state.filteredVideos.length / state.videosPerPage)
+  /** Slice start index; always 0 because infinite scroll accumulates videos. */
+  const startIndex = 0
+  /** Slice end index based on how many pages have been loaded. */
+  const endIndex = state.currentPage * state.videosPerPage
+  /** The subset of filtered videos visible in the current infinite-scroll window. */
+  const currentVideos = state.filteredVideos.slice(startIndex, endIndex)
 
   // ============================================================================
   // Category Management
@@ -76,6 +86,7 @@ export function DebateVideosPage() {
   const changeCategory = useCallback(
     (category: CategoryType, data: DebateVideosData) => {
       actions.setCurrentCategory(category)
+      actions.setCurrentPage(1)
 
       if (category === "rounds") {
         actions.setAllVideos(data.rounds || [])
@@ -122,11 +133,14 @@ export function DebateVideosPage() {
 
   useVideoDataFetch(actions.setDebateVideos, actions.setIsLoading, actions.setErrorMessage, changeCategory, initialCategory)
 
+  useResponsiveVideosPerPage(actions.setVideosPerPage)
+
   // Filter and sort when dependencies change
   useEffect(() => {
     const filtered = filterAndSortVideos(state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos)
     actions.setFilteredVideos(filtered)
-  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, filterAndSortVideos, actions.setFilteredVideos])
+    actions.setCurrentPage(1)
+  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
 
   // ============================================================================
   // Search & Filter Handlers
@@ -165,6 +179,18 @@ export function DebateVideosPage() {
   const handleToggleThumbnails = useCallback(() => {
     actions.setShowThumbnails(!state.showThumbnails)
   }, [actions.setShowThumbnails, state.showThumbnails])
+
+  // ============================================================================
+  // Infinite Scroll
+  // ============================================================================
+  useInfiniteScroll(
+    state.loadMoreTriggerRef,
+    state.currentPage,
+    totalPages,
+    state.isLoadingMore,
+    actions.setCurrentPage,
+    actions.setIsLoadingMore,
+  )
 
   // ============================================================================
   // Render Special Panels
@@ -281,6 +307,15 @@ export function DebateVideosPage() {
             hiddenVideos={state.hiddenVideos}
             topPicks={topPicksSet}
           />
+
+          {/* Infinite scroll trigger */}
+          <div ref={state.loadMoreTriggerRef} className="h-10" />
+
+          {state.isLoadingMore && (
+            <div className="text-center py-4">
+              <p className="text-sm text-muted-foreground">Loading more...</p>
+            </div>
+          )}
         </>
       )}
     </div>

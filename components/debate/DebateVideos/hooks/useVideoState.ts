@@ -17,6 +17,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
   );
   const [allVideos, setAllVideos] = useState<VideoType[]>([]);
   const [filteredVideos, setFilteredVideos] = useState<VideoType[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [videosPerPage, setVideosPerPage] = useState(100);
   const [currentCategory, setCurrentCategory] =
     useState<CategoryType>(initialCategory);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,6 +28,7 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
   const [sortOrder, setSortOrder] = useState("Recency");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showThumbnails, setShowThumbnails] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [selectedStyle, setSelectedStyle] = useState<DebateStyle | "">("");
@@ -95,6 +98,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
 
   /** Ref attached to the scrollable video grid container. */
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
+  /** Ref attached to the sentinel element that triggers infinite scroll loading. */
+  const loadMoreTriggerRef = useRef<HTMLDivElement | null>(null);
 
   return {
     /**
@@ -107,6 +112,10 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       allVideos,
       /** Videos remaining after search and sort have been applied. */
       filteredVideos,
+      /** Current pagination page number (1-indexed). */
+      currentPage,
+      /** Number of videos displayed per page. */
+      videosPerPage,
       /** The category tab currently selected by the user. */
       currentCategory,
       /** Whether the initial video fetch is in progress. */
@@ -123,6 +132,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       isSearchFocused,
       /** Whether video thumbnail images are visible in the grid. */
       showThumbnails,
+      /** Whether additional videos are being loaded via infinite scroll. */
+      isLoadingMore,
       /** Whether to only show favorited videos. */
       showFavoritesOnly,
       /** Set of favorite video IDs. */
@@ -133,6 +144,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       hiddenVideos,
       /** Ref for the video grid container element. */
       videoContainerRef,
+      /** Ref for the infinite-scroll sentinel element. */
+      loadMoreTriggerRef,
     },
     /**
      * Setter functions for updating each piece of state.
@@ -144,6 +157,10 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       setAllVideos,
       /** Replaces the filtered and sorted video list. */
       setFilteredVideos,
+      /** Sets the current pagination page. */
+      setCurrentPage,
+      /** Sets how many videos are shown per page. */
+      setVideosPerPage,
       /** Sets the active category tab. */
       setCurrentCategory,
       /** Sets the initial loading state. */
@@ -160,6 +177,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       setIsSearchFocused,
       /** Sets whether thumbnails are shown. */
       setShowThumbnails,
+      /** Sets whether more videos are being fetched for infinite scroll. */
+      setIsLoadingMore,
       /** Sets whether to only show favorited videos. */
       setShowFavoritesOnly,
       /** Toggles a video in the favorites set. */
