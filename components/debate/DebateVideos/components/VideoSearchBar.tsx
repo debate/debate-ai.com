@@ -6,6 +6,7 @@
 import { Search, X, Video, VideoOff, Star, ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
 import { IconTopRounds } from "@/components/icons"
+import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
@@ -50,18 +51,9 @@ interface VideoSearchBarProps {
   showTopPicksActive?: boolean
   /** Callback invoked to toggle the Top Picks view. */
   onToggleTopPicks?: () => void
-  /** Current page number for pagination. */
-  currentPage?: number
-  /** Total number of pages for pagination. */
-  totalPages?: number
   /** Total number of videos matching the current filter. */
   totalVideos?: number
-  /** Callback for previous page action. */
-  onPrevPage?: () => void
-  /** Callback for next page action. */
-  onNextPage?: () => void
-  /** Currently selected debate style filter. */
-  selectedStyle?: DebateStyle | ""
+  /** Currently selected debate style filter. */  selectedStyle?: DebateStyle | ""
   /** Callback invoked when the style filter changes. */
   onStyleChange?: (style: DebateStyle | "") => void
   /** Extra icon buttons rendered alongside the built-in icon buttons. */
@@ -107,48 +99,22 @@ export function VideoSearchBar({
   onToggleFavoritesOnly,
   showTopPicksActive,
   onToggleTopPicks,
-  currentPage,
-  totalPages,
   totalVideos,
-  onPrevPage,
-  onNextPage,
   selectedStyle,
   onStyleChange,
   extraButtons,
 }: VideoSearchBarProps) {
   const currentYear = new Date().getFullYear()
   const maxYear = Math.max(currentYear, 2026)
-  const years = Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
+  // Stop seasons at 2008
+  const years = Array.from({ length: maxYear - 2008 + 1 }, (_, i) => String(maxYear - i))
 
-  const pagination = totalPages && totalPages > 1 && currentPage && onPrevPage && onNextPage ? (
-    <TooltipProvider>
-      <div className="flex items-center gap-1 shrink-0">
-        {totalVideos !== undefined && (
-          <span className="hidden sm:inline text-[10px] sm:text-xs text-muted-foreground tabular-nums whitespace-nowrap">
-            {totalVideos} videos
-          </span>
-        )}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onPrevPage} disabled={currentPage === 1}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">Previous page</TooltipContent>
-        </Tooltip>
-        <span className="text-[10px] sm:text-xs font-medium tabular-nums whitespace-nowrap text-muted-foreground min-w-[3rem] text-center">
-          {currentPage} / {totalPages}
-        </span>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onNextPage} disabled={currentPage >= totalPages}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">Next page</TooltipContent>
-        </Tooltip>
-      </div>
-    </TooltipProvider>
+  const pagination = totalVideos !== undefined ? (
+    <div className="flex items-center gap-1 shrink-0 ml-auto">
+      <Badge variant="secondary" className="hidden sm:inline-flex text-[10px] sm:text-xs tabular-nums whitespace-nowrap px-1.5 py-0 h-5">
+        {totalVideos}
+      </Badge>
+    </div>
   ) : null
 
   return (
@@ -230,6 +196,7 @@ export function VideoSearchBar({
                   {Number(y) - 1}-{y}
                 </SelectItem>
               ))}
+              <SelectItem value="legacy">Archive Pre-2008</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -281,8 +248,8 @@ export function VideoSearchBar({
           {extraButtons}
         </div>
 
-        {/* Pagination */}
-        {pagination && <div className="ml-auto shrink-0">{pagination}</div>}
+        {/* Video Total Badge */}
+        {pagination}
       </div>
     </TooltipProvider>
   )

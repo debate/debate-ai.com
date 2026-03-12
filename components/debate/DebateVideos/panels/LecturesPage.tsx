@@ -17,8 +17,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/comp
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
-import { useVideoDataFetch, useVideoFiltering, useResponsiveVideosPerPage } from "../hooks/useVideoData"
-import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
+import { useVideoDataFetch, useVideoFiltering } from "../hooks/useVideoData"
 
 // Components
 import { VideoSearchBar } from "../components/VideoSearchBar"
@@ -36,14 +35,12 @@ export function LecturesPage() {
 
   const { state, actions } = useVideoState(initialCategory)
 
+  const topPicksSet = useMemo(() => new Set(state.debateVideos?.topPicks || []), [state.debateVideos?.topPicks])
+
   const [dictSearchTerm, setDictSearchTerm] = useState("")
 
-  // ============================================================================
-  // Computed Values
-  // ============================================================================
-  const totalPages = Math.ceil(state.filteredVideos.length / state.videosPerPage)
-  const endIndex = state.currentPage * state.videosPerPage
-  const currentVideos = state.filteredVideos.slice(0, endIndex)
+  // No longer using pagination slicing
+  const currentVideos = state.filteredVideos
 
   // ============================================================================
   // Category Management
@@ -51,7 +48,6 @@ export function LecturesPage() {
   const changeCategory = useCallback(
     (category: CategoryType, data: DebateVideosData) => {
       actions.setCurrentCategory(category)
-      actions.setCurrentPage(1)
 
       if (category === "lectures") {
         const videos = data[category] || []
@@ -63,7 +59,7 @@ export function LecturesPage() {
         actions.setIsLoading(false)
       }
     },
-    [actions.setCurrentCategory, actions.setCurrentPage, actions.setAllVideos, actions.setFilteredVideos, actions.setIsLoading],
+    [actions.setCurrentCategory, actions.setAllVideos, actions.setFilteredVideos, actions.setIsLoading],
   )
 
   const handleCategoryChange = useCallback(
@@ -85,13 +81,10 @@ export function LecturesPage() {
 
   useVideoDataFetch(actions.setDebateVideos, actions.setIsLoading, actions.setErrorMessage, changeCategory, initialCategory)
 
-  useResponsiveVideosPerPage(actions.setVideosPerPage)
-
   useEffect(() => {
     const filtered = filterAndSortVideos(state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos)
     actions.setFilteredVideos(filtered)
-    actions.setCurrentPage(1)
-  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
+  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, filterAndSortVideos, actions.setFilteredVideos])
 
   // ============================================================================
   // Search & Filter Handlers
@@ -102,39 +95,8 @@ export function LecturesPage() {
   const handleToggleThumbnails = useCallback(() => { actions.setShowThumbnails(!state.showThumbnails) }, [actions.setShowThumbnails, state.showThumbnails])
 
   // ============================================================================
-  // Pagination Handlers
+  // Dictionary toggle button (shown in every header)
   // ============================================================================
-  const handlePrevPage = useCallback(() => {
-    if (state.currentPage > 1) {
-      actions.setCurrentPage(state.currentPage - 1)
-      requestAnimationFrame(() => {
-        state.videoContainerRef.current?.scrollIntoView({ behavior: "smooth" })
-      })
-    }
-  }, [state.currentPage, state.videoContainerRef, actions.setCurrentPage])
-
-  const handleNextPage = useCallback(() => {
-    if (state.currentPage < totalPages) {
-      actions.setCurrentPage(state.currentPage + 1)
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" })
-        })
-      })
-    }
-  }, [state.currentPage, totalPages, actions.setCurrentPage])
-
-  // ============================================================================
-  // Infinite Scroll
-  // ============================================================================
-  useInfiniteScroll(
-    state.loadMoreTriggerRef,
-    state.currentPage,
-    totalPages,
-    state.isLoadingMore,
-    actions.setCurrentPage,
-    actions.setIsLoadingMore,
-  )
 
   // ============================================================================
   // Dictionary toggle button (shown in every header)
@@ -249,11 +211,7 @@ export function LecturesPage() {
           onYearChange={(year) => actions.setSelectedYear(year)}
           onToggleThumbnails={handleToggleThumbnails}
           onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
-          currentPage={state.currentPage}
-          totalPages={totalPages}
           totalVideos={state.filteredVideos.length}
-          onPrevPage={handlePrevPage}
-          onNextPage={handleNextPage}
           extraButtons={dictToggleButton}
         />
       )}
@@ -283,15 +241,8 @@ export function LecturesPage() {
             onHideVideo={actions.hideVideo}
             onUnhideVideo={actions.unhideVideo}
             hiddenVideos={state.hiddenVideos}
+            topPicks={topPicksSet}
           />
-
-          <div ref={state.loadMoreTriggerRef} className="h-10" />
-
-          {state.isLoadingMore && (
-            <div className="text-center py-4">
-              <p className="text-sm text-muted-foreground">Loading more...</p>
-            </div>
-          )}
         </>
       )}
     </div>

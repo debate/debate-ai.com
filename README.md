@@ -10,6 +10,11 @@ AI-powered platform for competitive debaters in Public Forum (PF), Lincoln-Dougl
 
 ---
 
+```
+# dev setup and run
+  bunx git0 debate/debate-ai.com
+```
+
 ## Features
 
 ### CARDS — Crowdsourced Annotated Research Dataset

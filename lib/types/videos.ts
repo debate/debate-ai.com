@@ -46,7 +46,7 @@ export type ChampionType = {
 export type DebateVideosData = {
   rounds: VideoType[];
   lectures: VideoType[];
-  topPicks: VideoType[];
+  topPicks: string[];
   topics?: TopicType[];
   champions?: ChampionType[];
   history?: Record<string, any>;

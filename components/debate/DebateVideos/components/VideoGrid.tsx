@@ -9,7 +9,7 @@ import { Card, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import React, { useState } from "react"
 import Image from "next/image"
-import { Play, Star, Calendar, Eye, Volume2, MoreHorizontal, ListVideo, Flag, EyeOff, Eye as EyeIcon, ExternalLink } from "lucide-react"
+import { Play, Star, Calendar, Eye, Volume2, MoreHorizontal, ListVideo, Flag, EyeOff, Eye as EyeIcon, ExternalLink, Medal } from "lucide-react"
 import type { VideoType, TopicType } from "@/lib/types/videos"
 import { DEBATE_STYLE_LABELS } from "@/lib/types/videos"
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
@@ -56,12 +56,14 @@ interface VideoGridProps {
   onUnhideVideo: (videoId: string) => void
   /** Set of hidden video IDs. */
   hiddenVideos: Set<string>
+  /** Set of top pick video IDs. */
+  topPicks?: Set<string>
 }
 
 /**
  * Renders a responsive grid of video cards.
  */
-export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, favorites, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, hiddenVideos }: VideoGridProps) {
+export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, favorites, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, hiddenVideos, topPicks }: VideoGridProps) {
   return (
     <div
       ref={videoContainerRef}
@@ -79,6 +81,7 @@ export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, f
           onHideVideo={onHideVideo}
           onUnhideVideo={onUnhideVideo}
           isHidden={hiddenVideos.has(video[0])}
+          isTopPick={topPicks?.has(video[0]) || false}
         />
       ))}
     </div>
@@ -98,6 +101,7 @@ interface VideoCardProps {
   onHideVideo: (videoId: string) => void
   onUnhideVideo: (videoId: string) => void
   isHidden: boolean
+  isTopPick: boolean
 }
 
 const STYLE_COLORS: Record<number, string> = {
@@ -111,7 +115,7 @@ const STYLE_COLORS: Record<number, string> = {
  * Renders a single linked video card with thumbnail, title, channel, metadata,
  * a style/format badge, and an ellipsis menu with queue, report, and hide actions.
  */
-function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, isHidden }: VideoCardProps) {
+function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, isHidden, isTopPick }: VideoCardProps) {
   const [videoId, title, date, channel, viewCount, description, style, tournament, roundLevel, affTeam, negTeam] = video
   const { activeVideoId, setActiveVideo, addToQueue, queue } = useVideoPlayerStore()
   const isPlaying = activeVideoId === videoId
@@ -291,6 +295,14 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
           <div className="p-4 flex-1 flex flex-col">
 
             <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm font-medium leading-tight">
+              {isTopPick && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Medal className="h-4.5 w-4.5 text-amber-500 fill-amber-500/20" />
+                  </TooltipTrigger>
+                  <TooltipContent side="top">Top Pick</TooltipContent>
+                </Tooltip>
+              )}
               {hasFullMetadata ? (
                 <>
                   {cleanTournament && (
@@ -307,10 +319,10 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
                       <TooltipTrigger asChild>
                         <Badge
                           variant="outline"
-                          className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-xs px-1.5 py-0 font-semibold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
+                          className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-base px-2 py-0.5 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
                           onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
                         >
-                          {year}
+                          {String(year).slice(-2)}
                         </Badge>
                       </TooltipTrigger>
                       <TooltipContent side="top" className="max-w-xs text-xs">
@@ -321,22 +333,23 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
                   {year && !yearTopic && (
                     <Badge
                       variant="outline"
-                      className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-xs px-1.5 py-0 font-semibold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
+                      className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-base px-2 py-0.5 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
                       onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
                     >
-                      {year}
+                      {String(year).slice(-2)}
                     </Badge>
                   )}
 
-                  {roundLevel && (
+                  {roundLevel && !/\d/.test(roundLevel) && (
                     <Badge
                       variant="outline"
                       className={cn(
-                        "text-[10px] font-semibold cursor-pointer transition-colors",
+                        "text-[10px] font-semibold cursor-pointer transition-colors flex items-center gap-1",
                         getRoundBadgeColor(roundLevel)
                       )}
                       onClick={(e) => { e.stopPropagation(); onBadgeClick(roundLevel); }}
                     >
+                      {roundLevel.toLowerCase().includes("final") && "🏆"}
                       {roundLevel}
                     </Badge>
                   )}

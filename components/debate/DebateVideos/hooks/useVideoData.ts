@@ -89,7 +89,6 @@ export function useVideoFiltering() {
         allCategoryVideos = [
           ...data.rounds,
           ...(data.lectures || []),
-          ...(data.topPicks || []),
         ];
       }
 
@@ -112,15 +111,24 @@ export function useVideoFiltering() {
 
       // Filter by season year
       if (year) {
-        const seasonYear = parseInt(year);
-        // Season runs from June 1st of (year-1) to June 1st of year
-        const startDate = new Date(`${seasonYear - 1}-06-01`);
-        const endDate = new Date(`${seasonYear}-06-01`);
+        if (year === "legacy") {
+          // Everything before 2008 season (i.e. before June 1st, 2007)
+          const legacyEndDate = new Date("2007-06-01")
+          filtered = filtered.filter((video) => {
+            const videoDate = new Date(video[2])
+            return videoDate < legacyEndDate
+          })
+        } else {
+          const seasonYear = parseInt(year)
+          // Season runs from June 1st of (year-1) to June 1st of year
+          const startDate = new Date(`${seasonYear - 1}-06-01`)
+          const endDate = new Date(`${seasonYear}-06-01`)
 
-        filtered = filtered.filter((video) => {
-          const videoDate = new Date(video[2]);
-          return videoDate >= startDate && videoDate < endDate;
-        });
+          filtered = filtered.filter((video) => {
+            const videoDate = new Date(video[2])
+            return videoDate >= startDate && videoDate < endDate
+          })
+        }
       }
 
       // Filter by search if provided using Fuse.js
@@ -155,23 +163,3 @@ export function useVideoFiltering() {
   return { filterAndSortVideos };
 }
 
-/**
- * Adjusts the videos-per-page count based on the current viewport width.
- * Listens to window resize events and cleans up on unmount.
- *
- * @param setVideosPerPage - Setter for the videos-per-page count.
- */
-export function useResponsiveVideosPerPage(
-  setVideosPerPage: (count: number) => void,
-) {
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const updateVideosPerPage = () => {
-        setVideosPerPage(100);
-      };
-      updateVideosPerPage();
-      window.addEventListener("resize", updateVideosPerPage);
-      return () => window.removeEventListener("resize", updateVideosPerPage);
-    }
-  }, [setVideosPerPage]);
-}
