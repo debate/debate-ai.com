@@ -7,13 +7,23 @@ const sw: ServiceWorkerGlobalScope = self as unknown as ServiceWorkerGlobalScope
 async function onInstall() {
   console.info("SW : Install : " + VERSION);
   const cache = await caches.open(VERSION);
-  // User specifies: caches.open('v1').then(cache => cache.addAll(['/', '/index.html', ...]))
-  try {
-    await cache.addAll(['/', '/index.html', ...APP_FILE_LIST]);
-    console.info(`SW : Cached critical assets`);
-  } catch (err) {
-    console.warn("SW : Cache addAll failed:", err);
-  }
+  
+  // Cache assets individually so one missing file doesn't break the whole installation
+  const assetsToCache = ['/', '/index.html', ...APP_FILE_LIST];
+  let cachedCount = 0;
+  
+  await Promise.all(
+    assetsToCache.map(async (url) => {
+      try {
+        await cache.add(url);
+        cachedCount++;
+      } catch (err) {
+        console.warn(`SW : Failed to cache asset: ${url}`, err);
+      }
+    })
+  );
+  
+  console.info(`SW : Cached ${cachedCount}/${assetsToCache.length} critical assets`);
 }
 
 async function onActivate() {
@@ -27,31 +37,38 @@ async function onActivate() {
 }
 
 function isNavigationRequest(request: Request): boolean {
-  return request.mode === "navigate" || request.headers.get("accept")?.includes("text/html") === true;
+  return request.mode === "navigate" || 
+         (request.method === 'GET' && request.headers.get("accept")?.includes("text/html") === true);
 }
 
 async function onFetch(event: FetchEvent): Promise<Response> {
   const url = new URL(event.request.url);
 
-  // Only handle same-origin requests
-  if (url.origin !== sw.location.origin) {
-    try {
-      return await fetch(event.request);
-    } catch {
-      const cached = await caches.match(event.request);
-      if (cached) return cached;
-      throw new Error("Offline fetch failed");
-    }
-  }
+  // 1. Check cache first for all requests
+  const cachedResponse = await caches.match(event.request);
+  if (cachedResponse) return cachedResponse;
 
-  const cache = await caches.open(VERSION);
-  const cached = await cache.match(event.request);
-  if (cached) return cached;
-  
+  // 2. Try network
   try {
-    return await fetch(event.request);
-  } catch {
-    return new Response('Offline', {status: 503});
+    const networkResponse = await fetch(event.request);
+    
+    // Optional: Cache successful same-origin responses (Network First strategy for others)
+    if (networkResponse.ok && url.origin === sw.location.origin) {
+      const cache = await caches.open(VERSION);
+      cache.put(event.request, networkResponse.clone());
+    }
+    
+    return networkResponse;
+  } catch (error) {
+    // 3. Fallback for navigation requests (App Shell)
+    if (isNavigationRequest(event.request)) {
+      const cache = await caches.open(VERSION);
+      const offlineShell = await cache.match('/');
+      if (offlineShell) return offlineShell;
+    }
+    
+    // Return a basic error instead of hardcoded string if not in cache
+    throw error;
   }
 }
 
@@ -61,7 +78,5 @@ sw.addEventListener("install", (event) => {
 });
 sw.addEventListener("activate", (event) => event.waitUntil(onActivate()));
 sw.addEventListener("fetch", (event) => {
-  event.respondWith(
-    onFetch(event).catch(() => caches.match(event.request) as Promise<Response>)
-  );
+  event.respondWith(onFetch(event));
 });

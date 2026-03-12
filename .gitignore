@@ -36,4 +36,4 @@ src/sw/version.ts
 public/service-worker.js
 .claude
 pnpm-lock.yaml
-bun.lockzz
+bun.lock

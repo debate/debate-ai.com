@@ -144,7 +144,7 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
   }
 
   const styleBadge = style && DEBATE_STYLE_LABELS[style] ? (
-    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide ${STYLE_COLORS[style] ?? "bg-muted text-muted-foreground"}`}>
+    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-semibold uppercase tracking-wide ${STYLE_COLORS[style] ?? "bg-muted text-muted-foreground"}`}>
       {DEBATE_STYLE_LABELS[style]}
     </span>
   ) : null
@@ -303,7 +303,7 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
                 <>
                   {cleanTournament && (
                     <span
-                      className="text-[11px] font-bold text-purple-600 dark:text-purple-400 cursor-pointer hover:underline uppercase tracking-wider"
+                      className="text-sm font-bold text-purple-600 dark:text-purple-400 cursor-pointer hover:underline uppercase tracking-wider"
                       onClick={(e) => { e.stopPropagation(); onBadgeClick(cleanTournament); }}
                     >
                       {cleanTournament}
@@ -315,7 +315,7 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
                       <TooltipTrigger asChild>
                         <Badge
                           variant="outline"
-                          className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-[10px] px-1.5 py-0 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
+                          className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-sm px-1.5 py-0 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
                           onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
                         >
                           '{String(year).slice(-2)}
@@ -333,7 +333,7 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
                       <Badge
                         variant="outline"
                         className={cn(
-                          "text-[10px] font-semibold cursor-pointer transition-colors flex items-center gap-1 px-1.5 py-0",
+                          "text-sm font-semibold cursor-pointer transition-colors flex items-center gap-1 px-1.5 py-0",
                           getRoundBadgeColor(roundLevel)
                         )}
                         onClick={(e) => { e.stopPropagation(); onBadgeClick(roundLevel); }}
@@ -344,7 +344,7 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
                   )}
 
                   {hasTeams && (
-                    <div className="flex items-center text-[11px] gap-2 font-semibold">
+                    <div className="flex items-center text-sm gap-2 font-semibold">
                       {affTeam && <span className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline" onClick={(e) => { e.stopPropagation(); onBadgeClick(affTeam); }}>{affTeam}</span>}
                       {negTeam && <span className="text-red-600 dark:text-red-400 cursor-pointer hover:underline" onClick={(e) => { e.stopPropagation(); onBadgeClick(negTeam); }}>{negTeam}</span>}
                     </div>
@@ -355,22 +355,38 @@ function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite
             </div>
 
             <div className="flex items-start justify-between gap-2 mb-2">
-              <a
-                href={youtubeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="group/link flex-1 min-w-0"
-                title={`Watch "${title}" on YouTube`}
-              >
-                <div className="flex items-center gap-1.5 overflow-hidden">
-                  <h3 className="text-base font-semibold text-foreground line-clamp-2 group-hover/link:text-primary transition-colors">
-                    {title}
-                  </h3>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover/link:text-primary transition-colors shrink-0" />
-                </div>
-              </a>
+              {!hasFullMetadata ? (
+                <a
+                  href={youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="group/link flex-1 min-w-0"
+                  title={`Watch "${title}" on YouTube`}
+                >
+                  <div className="flex items-center gap-1.5 overflow-hidden">
+                    <h3 className="text-base font-semibold text-foreground line-clamp-2 group-hover/link:text-primary transition-colors">
+                      {title}
+                    </h3>
+                    <ExternalLink className="w-4 h-4 text-muted-foreground group-hover/link:text-primary transition-colors shrink-0" />
+                  </div>
+                </a>
+              ) : (
+                <div className="flex-1" />
+              )}
               <div className="flex items-center gap-1 shrink-0">
+                {hasFullMetadata && (
+                  <a
+                    href={youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="p-1 rounded text-muted-foreground hover:text-foreground hover:text-primary transition-colors"
+                    title={`Watch "${title}" on YouTube`}
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
                 {actionsDropdown}
               </div>
             </div>
