@@ -39,6 +39,9 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
   const isPlaying = activeVideoId === videoId
   const isInQueue = queue.some((q) => q.videoId === videoId)
 
+  const year = new Date(date).getFullYear();
+  const videoMeta = { style, tournament, year, affTeam, negTeam }
+
   const [showReportDialog, setShowReportDialog] = useState(false)
   const [showHideConfirm, setShowHideConfirm] = useState(false)
 
@@ -70,7 +73,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
           {isFavorite ? "Remove from favorites" : "Save to favorites"}
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => addToQueue(videoId, title)}
+          onClick={() => addToQueue(videoId, title, videoMeta)}
           disabled={isInQueue}
           className="gap-2"
         >
@@ -110,7 +113,6 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
   const hasTeams = affTeam || negTeam;
   const hasFullMetadata = Boolean(tournament && affTeam && negTeam);
 
-  const year = new Date(date).getFullYear();
   const cleanTournament = tournament?.replace(/\d+/g, '').trim();
   const yearTopic = getYearTopic(year, style, topics);
 
@@ -127,7 +129,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
           {showThumbnails && (
             <div
               className="relative w-full pt-[56.25%] bg-muted cursor-pointer"
-              onClick={() => !isPlaying && setActiveVideo(videoId, title)}
+              onClick={() => !isPlaying && setActiveVideo(videoId, title, videoMeta)}
             >
               <Image
                 src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
@@ -249,7 +251,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                 className="font-medium text-foreground hover:text-primary hover:underline truncate max-w-[100px] text-left"
                 title={`Filter by ${channel}`}
               >
-                {channel.slice(0, 16)}
+                {channel}
               </button>
               <div className="flex items-center gap-1 shrink-0">
                 <Eye className="h-3 w-3" />
@@ -257,7 +259,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
               </div>
               <div className="flex items-center gap-1 shrink-0">
                 <Calendar className="h-3 w-3" />
-                <span>{new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                <span>{new Date(date).toLocaleDateString("en-US", { month: "short" })}</span>
               </div>
 
               <a

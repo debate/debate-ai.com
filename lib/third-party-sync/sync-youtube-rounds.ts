@@ -68,6 +68,38 @@ async function getChannelId(channelName: string): Promise<string | null> {
   }
 }
 
+async function getVideosByIds(videoIds: string[]): Promise<any[]> {
+  const allVideos: any[] = [];
+
+  // YouTube API allows max 50 IDs per request
+  for (let i = 0; i < videoIds.length; i += 50) {
+    const batch = videoIds.slice(i, i + 50);
+    const ids = batch.join(",");
+
+    const data = await YoutubeAPI("/videos", {
+      part: "snippet,statistics",
+      id: ids,
+    });
+
+    if (data.items) {
+      for (const item of data.items) {
+        allVideos.push([
+          item.id,
+          item.snippet.title,
+          item.snippet.publishedAt.split("T")[0],
+          item.snippet.channelTitle,
+          Number.parseInt(item.statistics?.viewCount || "0"),
+          item.snippet.description || "",
+        ]);
+      }
+    }
+
+    console.log(`Fetched ${allVideos.length}/${videoIds.length} videos`);
+  }
+
+  return allVideos;
+}
+
 async function getVideosForChannel(
   channelId: string,
   channelName: string,
@@ -120,6 +152,48 @@ async function getVideosForChannel(
   } while (nextPageToken);
 
   return allVideos;
+}
+
+export async function syncMissingTopPicks() {
+  if (!YOUTUBE_API_KEY) {
+    throw new Error("YouTube API key not configured");
+  }
+
+  const missingFile = path.join(process.cwd(), "missing-top-picks.txt");
+  const content = await fs.readFile(missingFile, "utf-8");
+  const videoIds = content.split("\n").map((l) => l.trim()).filter(Boolean);
+
+  if (videoIds.length === 0) {
+    console.log("No missing video IDs found.");
+    return;
+  }
+
+  console.log(`Fetching info for ${videoIds.length} missing top picks...`);
+
+  const videos = await getVideosByIds(videoIds);
+
+  const dataDir = path.join(process.cwd(), "lib", "debate-data");
+  const roundsPath = path.join(dataDir, "debate-rounds-videos.json");
+
+  const roundsFile = JSON.parse(await fs.readFile(roundsPath, "utf-8"));
+  const existingIds = new Set(roundsFile.data.map((v: any[]) => v[0]));
+  const newVideos = videos.filter((v) => !existingIds.has(v[0]));
+
+  roundsFile.data.push(...newVideos);
+
+  await fs.writeFile(roundsPath, JSON.stringify(roundsFile, null, 2));
+
+  console.log(`Added ${newVideos.length} videos to debate-rounds-videos.json`);
+  console.log(`Skipped ${videos.length - newVideos.length} already present`);
+
+  const notFound = videoIds.filter(
+    (id) => !videos.some((v) => v[0] === id),
+  );
+  if (notFound.length > 0) {
+    console.log(`Could not find ${notFound.length} videos on YouTube:`, notFound);
+  }
+
+  return { added: newVideos.length, notFound };
 }
 
 export async function syncYouTubeVideos() {
@@ -202,10 +276,19 @@ export async function syncYouTubeVideos() {
   };
 }
 
+const args = process.argv.slice(2);
 if (import.meta.main || (require.main === module)) {
-  console.log("Syncing YouTube videos...");
-  syncYouTubeVideos().catch((err) => {
-    console.error("Sync failed:", err);
-    process.exit(1);
-  });
+  if (args.includes("--missing-top-picks")) {
+    console.log("Fetching missing top picks...");
+    syncMissingTopPicks().catch((err) => {
+      console.error("Sync failed:", err);
+      process.exit(1);
+    });
+  } else {
+    console.log("Syncing YouTube videos...");
+    syncYouTubeVideos().catch((err) => {
+      console.error("Sync failed:", err);
+      process.exit(1);
+    });
+  }
 }

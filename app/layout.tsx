@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from "next"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CategoryDockProvider } from "@/components/category-dock-context"
-import { CategoryDock } from "@/components/debate/DebateVideos/components/CategoryDock"
-import { PersistentVideoPlayer } from "@/components/PersistentVideoPlayer"
+import { CategoryDock } from "@/components/debate/DebateVideos/components/category-dock/CategoryDock"
+import { PersistentVideoPlayer } from "@/components/debate/DebateVideos/components/video-player/PersistentVideoPlayer"
 import Template from "./template"
 
 export const metadata: Metadata = {

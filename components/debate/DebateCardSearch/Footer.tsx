@@ -4,7 +4,7 @@ import Link from "next/link"
 import React, { useEffect, useState } from "react"
 
 const FOOTER_LINKS = [
-  { url: "https://www.reddit.com/r/Debate+policydebate", text: "Reddit/r/Debate" },
+  { url: "https://www.reddit.com/r/Debate+policydebate", text: "Debate Reddit" },
   { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments" },
   { url: "https://www.debate.land", text: "Rankings" },
   { url: "https://debate-decoded.ghost.io", text: "Community Blog" },

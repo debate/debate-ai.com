@@ -106,8 +106,11 @@ export async function scrapeDivision({
       csvText = fallbackResult.data;
     }
 
-    // grab may return a Buffer for octet-stream responses; coerce to string
-    if (Buffer.isBuffer(csvText)) {
+    // grab returns a Blob for octet-stream responses (GitHub raw content);
+    // also handle Buffer for safety
+    if (typeof Blob !== "undefined" && csvText instanceof Blob) {
+      csvText = await csvText.text();
+    } else if (Buffer.isBuffer(csvText)) {
       csvText = csvText.toString("utf-8");
     }
 

@@ -86,10 +86,7 @@ export function useVideoFiltering() {
     ) => {
       let allCategoryVideos = videos;
       if (search.trim() && data && Array.isArray(data.rounds)) {
-        allCategoryVideos = [
-          ...data.rounds,
-          ...(data.lectures || []),
-        ];
+        allCategoryVideos = [...data.rounds, ...(data.lectures || [])];
       }
 
       let filtered: VideoType[] = allCategoryVideos;
@@ -113,21 +110,21 @@ export function useVideoFiltering() {
       if (year) {
         if (year === "legacy") {
           // Everything before 2011 season (i.e. before June 1st, 2010)
-          const legacyEndDate = new Date("2010-06-01")
+          const legacyEndDate = new Date("2010-06-01");
           filtered = filtered.filter((video) => {
-            const videoDate = new Date(video[2])
-            return videoDate < legacyEndDate
-          })
+            const videoDate = new Date(video[2]);
+            return videoDate < legacyEndDate;
+          });
         } else {
-          const seasonYear = parseInt(year)
+          const seasonYear = parseInt(year);
           // Season runs from June 1st of (year-1) to June 1st of year
-          const startDate = new Date(`${seasonYear - 1}-06-01`)
-          const endDate = new Date(`${seasonYear}-06-01`)
+          const startDate = new Date(`${seasonYear - 1}-06-01`);
+          const endDate = new Date(`${seasonYear}-06-01`);
 
           filtered = filtered.filter((video) => {
-            const videoDate = new Date(video[2])
-            return videoDate >= startDate && videoDate < endDate
-          })
+            const videoDate = new Date(video[2]);
+            return videoDate >= startDate && videoDate < endDate;
+          });
         }
       }
 
@@ -139,7 +136,7 @@ export function useVideoFiltering() {
             { name: "3", weight: 0.3 }, // channel
             { name: "5", weight: 0.2 }, // description
           ],
-          threshold: 0.3, // low tolerance
+          threshold: 0.1, // low tolerance
           ignoreLocation: true,
         });
 

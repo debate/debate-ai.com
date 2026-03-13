@@ -21,8 +21,8 @@ import { useVideoDataFetch, useVideoFiltering, useResponsiveVideosPerPage } from
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 
 // Components
-import { VideoSearchBar } from "../components/VideoSearchBar"
-import { VideoGrid } from "../components/VideoGrid"
+import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
+import { VideoGrid } from "../components/video-grid/VideoGrid"
 
 export function LecturesPage() {
   const searchParams = useSearchParams()

@@ -22,8 +22,8 @@ import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 
 // Components
 import { useCategoryDock } from "@/components/category-dock-context"
-import { VideoSearchBar } from "../components/VideoSearchBar"
-import { VideoGrid } from "../components/VideoGrid"
+import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
+import { VideoGrid } from "../components/video-grid/VideoGrid"
 
 /**
  * Main video browsing page that composes state, data-fetching, and UI sub-components.

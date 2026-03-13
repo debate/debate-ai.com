@@ -2,7 +2,7 @@
 
 import React from "react"
 import type { VideoType, TopicType } from "@/lib/types/videos"
-import { VideoCard } from "./VideoCard"
+import { VideoCard } from "../video-card/VideoCard"
 
 interface VideoGridProps {
   videos: VideoType[]

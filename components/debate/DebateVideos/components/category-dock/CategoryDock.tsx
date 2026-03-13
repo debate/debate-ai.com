@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Settings, UserCircle2, Moon, Sun, Palette, Pause, Play } from "lucide-react"
@@ -27,6 +26,7 @@ import {
   IconLectures,
   IconRoundsYoutube,
   IconLeaderboard,
+  IconSettings
 } from "@/components/icons"
 
 const NAV_ITEMS = [
@@ -135,7 +135,7 @@ function DockInstance({
           <DockItem className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
             <DockLabel>Settings</DockLabel>
             <DockIcon>
-              <Settings className="w-5 h-5" />
+              <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" />
             </DockIcon>
           </DockItem>
         </DropdownMenuTrigger>
@@ -166,12 +166,12 @@ export function CategoryDock() {
     })),
     ...(categoryState
       ? VIDEO_CATEGORY_ITEMS.map(({ category, label, icon }) => ({
-          key: `cat-${category}`,
-          label,
-          icon,
-          active: categoryState.currentCategory === category,
-          onClick: () => categoryState.onCategoryChange(category),
-        }))
+        key: `cat-${category}`,
+        label,
+        icon,
+        active: categoryState.currentCategory === category,
+        onClick: () => categoryState.onCategoryChange(category),
+      }))
       : []),
   ]
 
@@ -183,13 +183,13 @@ export function CategoryDock() {
   // Playing indicator item for mobile dock — shows when a video is active
   const playingItem = activeVideoId
     ? {
-        key: "playing",
-        label: isPlaying ? "Pause" : "Play",
-        icon: null as any,
-        active: false,
-        isPlayingIndicator: true,
-        onClick: handleDockPlayPause,
-      }
+      key: "playing",
+      label: isPlaying ? "Pause" : "Play",
+      icon: null as any,
+      active: false,
+      isPlayingIndicator: true,
+      onClick: handleDockPlayPause,
+    }
     : null
 
   const mobileItems = playingItem
@@ -222,8 +222,8 @@ export function CategoryDock() {
                     active
                       ? "bg-primary/20 ring-2 ring-primary"
                       : isPlayingIndicator
-                      ? "bg-primary/10 ring-1 ring-primary/50 animate-pulse"
-                      : "bg-gray-200 dark:bg-neutral-800",
+                        ? "bg-primary/10 ring-1 ring-primary/50 animate-pulse"
+                        : "bg-gray-200 dark:bg-neutral-800",
                   )}
                 >
                   <DockLabel>{label}</DockLabel>
@@ -245,7 +245,7 @@ export function CategoryDock() {
               <DockItem className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
                 <DockLabel>Settings</DockLabel>
                 <DockIcon>
-                  <Settings className="w-5 h-5" />
+                  <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" />
                 </DockIcon>
               </DockItem>
             </DropdownMenuTrigger>

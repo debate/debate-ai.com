@@ -22,7 +22,7 @@ import { useAiAnalysis } from "./hooks/useAiAnalysis"
 import { DesktopLayout } from "./layout/DesktopLayout"
 import { MobileOverlays } from "./layout/MobileOverlays"
 import { FloatingActions } from "./layout/FloatingActions"
-import { Footer } from "@/components/debate/Footer"
+import { Footer } from "@/components/debate/DebateCardSearch/Footer"
 
 /**
  * Top-level search interface that wires together hooks and layout components.
