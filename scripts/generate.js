@@ -38,10 +38,10 @@ const staticFiles = getAllFilesInDir(folderPath)
 const allFiles = [...appRoutes, ...publicAssets, ...staticFiles];
 
 const fileList = `export const APP_FILE_LIST = [\n  ${allFiles.map(f => `'${f}'`).join(',\n  ')}\n];\n`;
-fs.writeFileSync('./src/sw/app-file-list.ts', fileList);
+fs.writeFileSync('./lib/serviceworker/app-file-list.ts', fileList);
 
 const versionFile = `export const VERSION = '${VERSION}';\n`;
-fs.writeFileSync('./src/sw/version.ts', versionFile);
+fs.writeFileSync('./lib/serviceworker/version.ts', versionFile);
 
 console.log(`Generated app-file-list.ts and version.ts with ${allFiles.length} files`);
 
