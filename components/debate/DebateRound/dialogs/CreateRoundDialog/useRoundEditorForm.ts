@@ -6,6 +6,7 @@
 
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import type { Flow, Box, Round } from "@/components/debate/DebateRound/types";
 import { generateRoundTitle, generateRoundSlug } from "@/components/debate/DebateRound/types";
 import { useFlowStore } from "@/lib/state/store";
@@ -88,6 +89,7 @@ export function useRoundEditorForm(
   const [winner, setWinner] = useState<"aff" | "neg" | "none">("none");
 
   const { createRound, updateRound, flows, setFlows, rounds } = useFlowStore();
+  const router = useRouter();
 
   const handleSetRoundLevel = (level: string) => {
     setRoundLevel(level);
@@ -320,10 +322,10 @@ export function useRoundEditorForm(
       tournamentName,
       roundLevel,
       debaters: {
-        aff: [affDebater1, affDebater2],
-        neg: [negDebater1, negDebater2],
+        aff: [affDebater1, affDebater2] as [string, string],
+        neg: [negDebater1, negDebater2] as [string, string],
       },
-      schools: { aff: [affSchool, affSchool], neg: [negSchool, negSchool] },
+      schools: { aff: [affSchool, affSchool] as [string, string], neg: [negSchool, negSchool] as [string, string] },
       judges,
       spectators: spectatorEmails.filter((s) => s.trim()),
       flowIds: newFlowIds,
@@ -348,6 +350,11 @@ export function useRoundEditorForm(
     const finalFlows = [...archivedFlows, ...updatedFlows];
     setFlows(finalFlows);
     localStorage.setItem("flows", JSON.stringify(finalFlows));
+
+    // Navigate to the round's URL
+    if (slug) {
+      router.push(`/debate/${slug}`);
+    }
 
     resetForm();
     onOpenChange(false);
