@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Settings, UserCircle2, Moon, Sun, Palette, Pause, Play } from "lucide-react"
@@ -174,6 +175,27 @@ export function CategoryDock() {
       }))
       : []),
   ]
+
+  // Keyboard shortcuts: Alt+1 through Alt+6 for navigation items
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if Alt key is pressed (and not Ctrl/Meta to avoid conflicts)
+      if (event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+        const key = event.key
+        const numKey = parseInt(key, 10)
+
+        // Alt+1 through Alt+6 for the first 6 nav items
+        if (numKey >= 1 && numKey <= NAV_ITEMS.length) {
+          event.preventDefault()
+          const navItem = NAV_ITEMS[numKey - 1]
+          router.push(navItem.href)
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [router])
 
   const handleDockPlayPause = () => {
     sendYouTubeCommand(isPlaying ? "pauseVideo" : "playVideo")
