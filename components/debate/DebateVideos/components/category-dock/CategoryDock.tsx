@@ -22,6 +22,7 @@ import { useCategoryDockState } from "@/components/category-dock-context"
 import {
   IconCollectiveMind,
   IconRounds,
+  IconFlowFlower,
   IconRead,
   IconLectures,
   IconRoundsYoutube,
@@ -31,7 +32,7 @@ import {
 
 const NAV_ITEMS = [
   { href: "/cards", label: "Shared", icon: IconCollectiveMind },
-  { href: "/debate", label: "Debate", icon: IconRounds },
+  { href: "/debate", label: "Debate", icon: IconFlowFlower },
   { href: "/edit", label: "Docs", icon: IconRead },
   { href: "/videos", label: "Videos", icon: IconRoundsYoutube },
   { href: "/lectures", label: "Lectures", icon: IconLectures },

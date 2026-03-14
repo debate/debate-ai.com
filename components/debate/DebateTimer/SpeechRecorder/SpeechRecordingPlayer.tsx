@@ -5,20 +5,32 @@
 "use client"
 
 
-import { useEffect, useState, type RefObject } from "react"
+import { useEffect, useState, type RefObject, useRef } from "react"
 import { createPortal } from "react-dom"
-import { Trash2 } from "lucide-react"
+import { Trash2, MoreVertical, RotateCcw, Clock, Upload, Mic, Check, MicOff, Users, Gauge } from "lucide-react"
 import {
     AudioPlayerButton,
     AudioPlayerProgress,
     AudioPlayerProvider,
-    AudioPlayerSpeed,
     AudioPlayerTime,
     AudioPlayerDuration,
     useAudioPlayer,
 } from "./audio-player"
 import { Button } from "@/components/ui/button"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    DropdownMenuSeparator,
+    DropdownMenuLabel,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
+} from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import { useAudioDevices } from "./mic-selector"
+import { LiveWaveform } from "./live-waveform"
 
 interface StoredRecording {
     key: string
@@ -43,6 +55,90 @@ function InlineProgressWhenPaused({ className }: { className?: string }) {
     return <AudioPlayerProgress className={className} />
 }
 
+/** Player row component that has access to the audio player context */
+function PlayerRow({
+    track,
+    rec,
+    speechName,
+    speechLabel,
+    micDeviceId,
+    onMicDeviceChange,
+    recordingEnabled,
+    onRecordingEnabledChange,
+    onResetSpeechTime,
+    onSwitchToCrossX,
+    handleDelete,
+    progressBarPortalRef,
+    hideInlineMenu,
+}: {
+    track: { id: string; src: string }
+    rec: StoredRecording
+    speechName: string
+    speechLabel?: string
+    micDeviceId?: string
+    onMicDeviceChange?: (deviceId: string) => void
+    recordingEnabled?: boolean
+    onRecordingEnabledChange?: (enabled: boolean) => void
+    onResetSpeechTime?: () => void
+    onSwitchToCrossX?: () => void
+    handleDelete: (key: string) => void
+    progressBarPortalRef?: RefObject<HTMLDivElement | null>
+    hideInlineMenu?: boolean
+}) {
+    const player = useAudioPlayer()
+
+    return (
+        <div className="flex items-center gap-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs group">
+            {/* Play / Pause */}
+            <AudioPlayerButton
+                item={track}
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 flex-shrink-0"
+            />
+
+            {/* Times */}
+            <div className="flex items-center gap-0.5 text-[10px] tabular-nums text-muted-foreground min-w-max">
+                <AudioPlayerTime className="text-[10px] tabular-nums text-foreground" />
+                <span>/</span>
+                {rec.durationSeconds != null ? (
+                    <span>{formatDuration(rec.durationSeconds)}</span>
+                ) : (
+                    <AudioPlayerDuration className="text-[10px] tabular-nums text-muted-foreground" />
+                )}
+            </div>
+
+            {/* Scrubber — hidden when portaled to top bar */}
+            {!progressBarPortalRef && (
+                <AudioPlayerProgress className="flex-1 h-5" />
+            )}
+            {progressBarPortalRef && (
+                <InlineProgressWhenPaused className="flex-1 h-5" />
+            )}
+
+            {/* Menu with Mic Selector, Reset, Cross-X, Upload, Delete, Playback Speed */}
+            {!hideInlineMenu && (
+                <SpeechRecordingMenu
+                    speechName={speechName}
+                    speechLabel={speechLabel}
+                    micDeviceId={micDeviceId}
+                    onMicDeviceChange={onMicDeviceChange}
+                    recordingEnabled={recordingEnabled}
+                    onRecordingEnabledChange={onRecordingEnabledChange}
+                    onResetSpeechTime={onResetSpeechTime}
+                    onSwitchToCrossX={onSwitchToCrossX}
+                    onDeleteRecording={handleDelete}
+                    recordingKey={rec.key}
+                    inHeader={false}
+                    playbackRate={player.playbackRate}
+                    onPlaybackRateChange={player.setPlaybackRate}
+                    speeds={[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
+                />
+            )}
+        </div>
+    )
+}
+
 /** Renders the seekable progress bar into an external container via portal when playing. */
 function PortaledProgress({
     portalRef,
@@ -63,6 +159,39 @@ function PortaledProgress({
     )
 }
 
+interface SpeechRecordingMenuProps {
+    /** Name of the speech for upload/delete operations */
+    speechName: string
+    /** Display label for the speech */
+    speechLabel?: string
+    /** Selected microphone device ID */
+    micDeviceId?: string
+    /** Callback when microphone device changes */
+    onMicDeviceChange?: (deviceId: string) => void
+    /** Whether recording is enabled */
+    recordingEnabled?: boolean
+    /** Callback when recording enabled state changes */
+    onRecordingEnabledChange?: (enabled: boolean) => void
+    /** Callback to reset the speech timer */
+    onResetSpeechTime?: () => void
+    /** Callback to switch timer to Cross-X (3 min) */
+    onSwitchToCrossX?: () => void
+    /** Callback to delete a recording */
+    onDeleteRecording?: (key: string) => void
+    /** The recording key if deleting from player context */
+    recordingKey?: string
+    /** Whether this is rendered in the header (vs in player) */
+    inHeader?: boolean
+    /** Custom button variant/styling */
+    buttonClassName?: string
+    /** Available playback speeds */
+    speeds?: readonly number[]
+    /** Current playback rate */
+    playbackRate?: number
+    /** Callback when playback rate changes */
+    onPlaybackRateChange?: (rate: number) => void
+}
+
 interface SpeechRecordingPlayerProps {
     /** Name of the currently selected speech — used as localStorage key suffix */
     speechName: string
@@ -73,6 +202,20 @@ interface SpeechRecordingPlayerProps {
     progressBarPortalRef?: RefObject<HTMLDivElement | null>
     /** Callback fired when audio playing state changes. */
     onPlayingChange?: (playing: boolean) => void
+    /** Callback to reset the speech timer. */
+    onResetSpeechTime?: () => void
+    /** Callback to switch timer to Cross-X (3 min). */
+    onSwitchToCrossX?: () => void
+    /** Selected microphone device ID */
+    micDeviceId?: string
+    /** Callback when microphone device changes */
+    onMicDeviceChange?: (deviceId: string) => void
+    /** Whether recording is enabled */
+    recordingEnabled?: boolean
+    /** Callback when recording enabled state changes */
+    onRecordingEnabledChange?: (enabled: boolean) => void
+    /** Whether to hide the inline menu button in player rows */
+    hideInlineMenu?: boolean
 }
 
 /**
@@ -91,12 +234,300 @@ function loadRecordings(speechName: string): StoredRecording[] {
     }
 }
 
+/**
+ * Menu button for speech recording controls (mic selector, timer controls, upload, delete).
+ * Can be used in the player row or in the header bar.
+ */
+export function SpeechRecordingMenu({
+    speechName,
+    speechLabel,
+    micDeviceId,
+    onMicDeviceChange,
+    recordingEnabled = true,
+    onRecordingEnabledChange,
+    onResetSpeechTime,
+    onSwitchToCrossX,
+    onDeleteRecording,
+    recordingKey,
+    inHeader = false,
+    buttonClassName,
+    speeds = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+    playbackRate = 1,
+    onPlaybackRateChange,
+}: SpeechRecordingMenuProps) {
+    const fileInputRef = useRef<HTMLInputElement>(null)
+    const { devices, loading: loadingDevices, loadDevices } = useAudioDevices()
+    const [previewStream, setPreviewStream] = useState<MediaStream | null>(null)
+    const previewStreamRef = useRef<MediaStream | null>(null)
+    const [menuOpen, setMenuOpen] = useState(false)
+
+    const handleUploadAudio = () => {
+        fileInputRef.current?.click()
+    }
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (!file) return
+
+        if (!file.type.startsWith("audio/")) {
+            alert("Please select an audio file")
+            return
+        }
+
+        const reader = new FileReader()
+        reader.onload = async (e) => {
+            const audioData = e.target?.result as string
+            if (!audioData) return
+
+            const audio = new Audio(audioData)
+            await new Promise((resolve) => {
+                audio.onloadedmetadata = resolve
+            })
+
+            const durationSeconds = audio.duration
+            const key = `debate-recording-${speechName}`
+            const recording = {
+                speechName,
+                speechLabel: speechLabel || speechName,
+                recordedAt: new Date().toISOString(),
+                audio: audioData,
+                durationSeconds,
+            }
+            localStorage.setItem(key, JSON.stringify(recording))
+            window.dispatchEvent(new CustomEvent("debate-recording-saved"))
+        }
+        reader.readAsDataURL(file)
+        event.target.value = ""
+    }
+
+    const handleMenuOpenChange = async (open: boolean) => {
+        setMenuOpen(open)
+
+        if (open) {
+            if (devices.length === 0) {
+                await loadDevices()
+            }
+
+            const constraints: MediaStreamConstraints = {
+                audio: micDeviceId ? { deviceId: { exact: micDeviceId } } : true,
+            }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints)
+                previewStreamRef.current = stream
+                setPreviewStream(stream)
+            } catch {
+                // Permission denied or error
+            }
+        } else {
+            if (previewStreamRef.current) {
+                previewStreamRef.current.getTracks().forEach((t) => t.stop())
+                previewStreamRef.current = null
+                setPreviewStream(null)
+            }
+        }
+    }
+
+    const handleMicDeviceSelect = (deviceId: string) => {
+        onMicDeviceChange?.(deviceId)
+
+        if (menuOpen && previewStreamRef.current) {
+            previewStreamRef.current.getTracks().forEach((t) => t.stop())
+
+            const constraints: MediaStreamConstraints = {
+                audio: { deviceId: { exact: deviceId } },
+            }
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then((stream) => {
+                    previewStreamRef.current = stream
+                    setPreviewStream(stream)
+                })
+                .catch(() => { /* error */ })
+        }
+    }
+
+    const selectedDevice = devices.find((d) => d.deviceId === micDeviceId)
+    const selectedLabel = selectedDevice?.label ?? (devices[0]?.label ?? "Microphone")
+
+    return (
+        <>
+            <DropdownMenu open={menuOpen} onOpenChange={handleMenuOpenChange}>
+                <DropdownMenuTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className={cn(
+                            inHeader ? "h-6 w-6 shrink-0" : "h-5 w-5 flex-shrink-0 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity",
+                            buttonClassName
+                        )}
+                    >
+                        <MoreVertical className={inHeader ? "h-3.5 w-3.5" : "h-3 w-3"} />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                    {/* Share with Opponents & Judge - First menu item */}
+                    <DropdownMenuItem onClick={() => { /* TODO: Implement sharing */ }}>
+                        <Users className="h-4 w-4 mr-2" />
+                        Share with Opponents & Judge
+                    </DropdownMenuItem>
+
+                    {/* Playback Speed submenu */}
+                    {onPlaybackRateChange && (
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                                <Gauge className="h-4 w-4 mr-2" />
+                                Playback Speed
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent>
+                                {speeds.map((speed) => (
+                                    <DropdownMenuItem
+                                        key={speed}
+                                        onClick={() => onPlaybackRateChange(speed)}
+                                        className={cn(
+                                            "cursor-pointer",
+                                            playbackRate === speed && "bg-accent"
+                                        )}
+                                    >
+                                        <span className="flex-1 font-mono">
+                                            {speed === 1 ? "Normal" : `${speed * 100}% Speed`}
+                                        </span>
+                                        {playbackRate === speed && <Check className="h-4 w-4 ml-2" />}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuSubContent>
+                        </DropdownMenuSub>
+                    )}
+
+                    <DropdownMenuSeparator />
+
+                    {/* Microphone selector section */}
+                    <DropdownMenuLabel className="text-xs text-muted-foreground">
+                        Microphone Input
+                    </DropdownMenuLabel>
+
+                    {/* Live waveform preview */}
+                    {menuOpen && (
+                        <div className="px-1.5 pt-1 pb-1.5">
+                            <LiveWaveform
+                                active={menuOpen}
+                                stream={previewStream}
+                                mode="scrolling"
+                                height={28}
+                                barWidth={2}
+                                barGap={1}
+                                barRadius={1}
+                                sensitivity={1.5}
+                                fadeEdges={true}
+                                fadeWidth={16}
+                                className="rounded bg-muted/50 w-full"
+                            />
+                        </div>
+                    )}
+
+                    {devices.length === 0 && !loadingDevices && (
+                        <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                            No microphones found
+                        </DropdownMenuItem>
+                    )}
+
+                    {devices.map((device) => (
+                        <DropdownMenuItem
+                            key={device.deviceId}
+                            onClick={() => handleMicDeviceSelect(device.deviceId)}
+                            className={cn(
+                                "text-xs cursor-pointer",
+                                device.deviceId === micDeviceId && "font-medium bg-accent"
+                            )}
+                        >
+                            <Mic className="h-3 w-3 mr-2 flex-shrink-0" />
+                            <span className="truncate flex-1">{device.label}</span>
+                            {device.deviceId === micDeviceId && (
+                                <Check className="h-3 w-3 ml-2 flex-shrink-0" />
+                            )}
+                        </DropdownMenuItem>
+                    ))}
+
+                    <div className="px-2 py-1 text-[10px] text-muted-foreground">
+                        Currently: {selectedLabel}
+                    </div>
+
+                    <DropdownMenuSeparator />
+
+                    {/* Recording toggle */}
+                    {onRecordingEnabledChange && (
+                        <>
+                            <DropdownMenuItem
+                                onClick={() => onRecordingEnabledChange(!recordingEnabled)}
+                                className={cn(
+                                    "cursor-pointer",
+                                    !recordingEnabled && "bg-accent"
+                                )}
+                            >
+                                <MicOff className="h-4 w-4 mr-2" />
+                                <span className="flex-1">Don't record audio</span>
+                                {!recordingEnabled && <Check className="h-4 w-4 ml-2" />}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                        </>
+                    )}
+
+                    {/* Timer control actions */}
+                    {onResetSpeechTime && (
+                        <DropdownMenuItem onClick={onResetSpeechTime}>
+                            <RotateCcw className="h-4 w-4 mr-2" />
+                            Reset Speech Time
+                        </DropdownMenuItem>
+                    )}
+                    {onSwitchToCrossX && (
+                        <DropdownMenuItem onClick={onSwitchToCrossX}>
+                            <Clock className="h-4 w-4 mr-2" />
+                            Switch to Cross-X (3 min)
+                        </DropdownMenuItem>
+                    )}
+
+                    <DropdownMenuSeparator />
+
+                    {/* Audio file actions */}
+                    <DropdownMenuItem onClick={handleUploadAudio}>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload Speech Audio
+                    </DropdownMenuItem>
+                    {onDeleteRecording && recordingKey && (
+                        <DropdownMenuItem
+                            onClick={() => onDeleteRecording(recordingKey)}
+                            className="text-destructive focus:text-destructive"
+                        >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete Recording
+                        </DropdownMenuItem>
+                    )}
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Hidden file input for audio upload */}
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="audio/*"
+                onChange={handleFileChange}
+                className="hidden"
+            />
+        </>
+    )
+}
+
 export function SpeechRecordingPlayer({
     speechName,
     speechLabel,
     className,
     progressBarPortalRef,
     onPlayingChange,
+    onResetSpeechTime,
+    onSwitchToCrossX,
+    micDeviceId,
+    onMicDeviceChange,
+    recordingEnabled = true,
+    onRecordingEnabledChange,
+    hideInlineMenu = false,
 }: SpeechRecordingPlayerProps) {
     const [recordings, setRecordings] = useState<StoredRecording[]>([])
 
@@ -147,52 +578,21 @@ export function SpeechRecordingPlayer({
                                 onPlayingChange={onPlayingChange}
                             />
                         )}
-                        {/* Player row */}
-                        <div className="flex items-center gap-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs group">
-                            {/* Play / Pause */}
-                            <AudioPlayerButton
-                                item={track}
-                                variant="ghost"
-                                size="icon"
-                                className="h-7 w-7 flex-shrink-0"
-                            />
-
-                            {/* Times */}
-                            <div className="flex items-center gap-0.5 text-[10px] tabular-nums text-muted-foreground min-w-max">
-                                <AudioPlayerTime className="text-[10px] tabular-nums text-foreground" />
-                                <span>/</span>
-                                {rec.durationSeconds != null ? (
-                                    <span>{formatDuration(rec.durationSeconds)}</span>
-                                ) : (
-                                    <AudioPlayerDuration className="text-[10px] tabular-nums text-muted-foreground" />
-                                )}
-                            </div>
-
-                            {/* Scrubber — hidden when portaled to top bar */}
-                            {!progressBarPortalRef && (
-                                <AudioPlayerProgress className="flex-1 h-5" />
-                            )}
-                            {progressBarPortalRef && (
-                                <InlineProgressWhenPaused className="flex-1 h-5" />
-                            )}
-
-                            <AudioPlayerSpeed
-                                variant="ghost"
-                                size="icon"
-                                className="h-6 w-6 flex-shrink-0"
-                                speeds={[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
-                            />
-
-                            {/* Delete */}
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-5 w-5 flex-shrink-0 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => handleDelete(rec.key)}
-                            >
-                                <Trash2 className="h-3 w-3" />
-                            </Button>
-                        </div>
+                        <PlayerRow
+                            track={track}
+                            rec={rec}
+                            speechName={speechName}
+                            speechLabel={speechLabel}
+                            micDeviceId={micDeviceId}
+                            onMicDeviceChange={onMicDeviceChange}
+                            recordingEnabled={recordingEnabled}
+                            onRecordingEnabledChange={onRecordingEnabledChange}
+                            onResetSpeechTime={onResetSpeechTime}
+                            onSwitchToCrossX={onSwitchToCrossX}
+                            handleDelete={handleDelete}
+                            progressBarPortalRef={progressBarPortalRef}
+                            hideInlineMenu={hideInlineMenu}
+                        />
                     </AudioPlayerProvider>
                 )
             })}

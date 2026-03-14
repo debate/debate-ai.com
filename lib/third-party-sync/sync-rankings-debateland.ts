@@ -61,8 +61,6 @@ function extractRankAndTeam(firstTd: Element | null): RankAndTeam {
   const raw = firstTd.textContent || "";
   const text = raw.replace(/\s+/g, " ").trim();
 
-  console.log("[v0] Extracting from text:", text);
-
   let rank: number | null = null;
   let rankRaw = "";
   let teamSchool = "";
@@ -91,8 +89,6 @@ function extractRankAndTeam(firstTd: Element | null): RankAndTeam {
     .replace(/(SUTOC|TOC|NSD|NSDA)$/gi, "") // Remove at end without space
     .replace(/\s+/g, " ")
     .trim();
-
-  console.log("[v0] Extracted - Rank:", rank, "Team:", teamSchool);
 
   return { rank, rankRaw, teamSchool };
 }

@@ -101,13 +101,6 @@ export async function GET(request: Request) {
   const division = (searchParams.get("division") || "VPF").toUpperCase();
   const isCurrentYear = year === "2026";
 
-  console.log(
-    "[v0] Leaderboard API called with year:",
-    year,
-    "division:",
-    division,
-  );
-
   try {
     // Prior years (2021-2025): DebateDrills Elo only for VPF/VLD
     if (!isCurrentYear) {
@@ -125,7 +118,6 @@ export async function GET(request: Request) {
       }
 
       const drillsData = await scrapeDivision(config);
-      console.log("[v0] DebateDrills historical data count:", drillsData.length);
       return NextResponse.json(drillsData);
     }
 
@@ -136,7 +128,6 @@ export async function GET(request: Request) {
     }
 
     const tocData = await tocScraper();
-    console.log("[v0] Scraped TOC data count:", tocData.length);
 
     // For VPF/VLD, also fetch DebateDrills Elo and merge
     if (division === "VPF" || division === "VLD") {
@@ -148,23 +139,14 @@ export async function GET(request: Request) {
       if (config) {
         try {
           const drillsData = await scrapeDivision(config);
-          console.log(
-            "[v0] DebateDrills Elo entries for merge:",
-            drillsData.length,
-          );
           const merged = mergeElo(tocData, drillsData, division);
-          const matchCount = merged.filter((e) => e.debateElo !== undefined).length;
-          console.log("[v0] Merged Elo matches:", matchCount);
           return NextResponse.json(merged);
-        } catch (err) {
-          console.warn("[v0] DebateDrills fetch failed, returning TOC-only:", err);
-        }
+        } catch (err) {}
       }
     }
 
     return NextResponse.json(tocData);
   } catch (error) {
-    console.error("[v0] Error in leaderboard API:", error);
     return NextResponse.json(
       {
         error: "Failed to fetch leaderboard data",

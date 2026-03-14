@@ -159,10 +159,8 @@ export function ThemeDropdown() {
       setColorTheme(saved)
       themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
       document.documentElement.classList.add(`theme-${saved}`)
-      console.log("[v0] Theme mounted:", { saved, classList: document.documentElement.className })
     } else {
       document.documentElement.classList.add("theme-modern-minimal")
-      console.log("[v0] Default theme applied:", document.documentElement.className)
     }
   }, [])
 
@@ -178,8 +176,6 @@ export function ThemeDropdown() {
     themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
     document.documentElement.classList.add(`theme-${newTheme}`)
 
-    console.log("[v0] Theme changed:", { newTheme, classList: document.documentElement.className })
-
     setPreviewTheme(null)
   }
 
@@ -191,7 +187,6 @@ export function ThemeDropdown() {
     setPreviewTheme(themeName)
     themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
     document.documentElement.classList.add(`theme-${themeName}`)
-    console.log("[v0] Theme preview:", { themeName, classList: document.documentElement.className })
   }
 
   /** Restores the persisted theme after a preview ends (mouse leave or dropdown close). */
@@ -199,7 +194,6 @@ export function ThemeDropdown() {
     if (previewTheme) {
       themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
       document.documentElement.classList.add(`theme-${colorTheme}`)
-      console.log("[v0] Theme preview ended, restored:", { colorTheme, classList: document.documentElement.className })
       setPreviewTheme(null)
     }
   }
@@ -220,7 +214,6 @@ export function ThemeDropdown() {
   const toggleLightDark = () => {
     const currentTheme = resolvedTheme || theme || "light"
     const newTheme = currentTheme === "dark" ? "light" : "dark"
-    console.log("[v0] Toggling theme:", { currentTheme, newTheme })
     setTheme(newTheme)
   }
 

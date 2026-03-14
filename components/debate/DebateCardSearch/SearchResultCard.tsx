@@ -45,8 +45,6 @@ interface SearchResultCardProps {
  * ```
  */
 export function SearchResultCard({ result, isSelected, onClick }: SearchResultCardProps) {
-  console.log("[v0] Rendering ResultCard:", result.id, result.summary.substring(0, 30))
-
   return (
     <Card
       onClick={onClick}

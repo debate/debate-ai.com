@@ -1,9 +1,8 @@
-import React from "react"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "REASON Docs",
-  description: "Research Evidence And Speech Organizer Notes",
+  description: "Research Editor for Annotated Summaries in Outline Notation",
 }
 
 export default function EditorPage() {

@@ -59,7 +59,6 @@
 
 //     return NextResponse.json({ result })
 //   } catch (error) {
-//     console.error("[v0] Error in analyze route:", error)
 //     return NextResponse.json(
 //       { error: error instanceof Error ? error.message : "Failed to analyze content" },
 //       { status: 500 },

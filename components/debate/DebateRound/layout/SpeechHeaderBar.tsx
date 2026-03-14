@@ -11,13 +11,20 @@ import { FileText, Share2, Lock, Users, Radio, Quote, ChevronLeft, ChevronRight,
 import type { ViewMode } from "@/lib/types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { SpeechRecordingPlayer } from "../../DebateTimer/SpeechRecorder/SpeechRecordingPlayer"
+import { SpeechRecordingPlayer, SpeechRecordingMenu } from "../../DebateTimer/SpeechRecorder/SpeechRecordingPlayer"
 import { useFlowStore } from "@/lib/state/store"
 import { SpeechTimer } from "../../DebateTimer/SpeechTimer"
 import { MicSelector } from "../../DebateTimer/SpeechRecorder/mic-selector"
@@ -33,6 +40,51 @@ function getSpeakerEmail(speechName: string, round: Round): string {
   if (lower.includes("1n") || lower === "nc") return round.debaters.neg[0] ?? ""
   if (lower.includes("2n")) return round.debaters.neg[1] ?? ""
   return ""
+}
+
+/**
+ * Count words that are bolded or highlighted in markdown text.
+ * Matches:
+ * - **bold** or __bold__
+ * - ==highlight==
+ * - <mark>highlight</mark>
+ * - <b>bold</b> or <strong>bold</strong>
+ */
+function countBoldedHighlightedWords(markdown: string): number {
+  if (!markdown) return 0
+
+  let count = 0
+
+  // Match **bold** or __bold__
+  const boldPattern = /(?:\*\*|__)(.+?)(?:\*\*|__)/g
+  let match
+  while ((match = boldPattern.exec(markdown)) !== null) {
+    const text = match[1].trim()
+    count += text.split(/\s+/).filter(w => w.length > 0).length
+  }
+
+  // Match ==highlight==
+  const highlightPattern = /==(.+?)==/g
+  while ((match = highlightPattern.exec(markdown)) !== null) {
+    const text = match[1].trim()
+    count += text.split(/\s+/).filter(w => w.length > 0).length
+  }
+
+  // Match <mark>text</mark>
+  const markPattern = /<mark>(.+?)<\/mark>/gi
+  while ((match = markPattern.exec(markdown)) !== null) {
+    const text = match[1].trim()
+    count += text.split(/\s+/).filter(w => w.length > 0).length
+  }
+
+  // Match <b>text</b> or <strong>text</strong>
+  const htmlBoldPattern = /<(?:b|strong)>(.+?)<\/(?:b|strong)>/gi
+  while ((match = htmlBoldPattern.exec(markdown)) !== null) {
+    const text = match[1].trim()
+    count += text.split(/\s+/).filter(w => w.length > 0).length
+  }
+
+  return count
 }
 
 /** Read the recording duration (in seconds) for a speech from localStorage. Returns null if none. */
@@ -158,10 +210,19 @@ export function SpeechHeaderBar({
     typeof window !== "undefined" ? getRecordingDurationSeconds(speechName) : null
   )
 
+  // Track if there's a recording for this speech
+  const [hasRecording, setHasRecording] = useState(() => {
+    if (typeof window === "undefined") return false
+    const key = `debate-recording-${speechName}`
+    return localStorage.getItem(key) !== null
+  })
+
   useEffect(() => {
-    // Refresh duration when a new recording is saved
+    // Refresh duration and recording status when a new recording is saved
     const onSaved = () => {
       setRecordingDurationSec(getRecordingDurationSeconds(speechName))
+      const key = `debate-recording-${speechName}`
+      setHasRecording(localStorage.getItem(key) !== null)
     }
     window.addEventListener("debate-recording-saved", onSaved)
     return () => window.removeEventListener("debate-recording-saved", onSaved)
@@ -170,7 +231,32 @@ export function SpeechHeaderBar({
   // Also re-read when speechName changes (column switching)
   useEffect(() => {
     setRecordingDurationSec(getRecordingDurationSeconds(speechName))
+    const key = `debate-recording-${speechName}`
+    setHasRecording(localStorage.getItem(key) !== null)
   }, [speechName])
+
+  // Track bolded/highlighted word count
+  const [boldHighlightCount, setBoldHighlightCount] = useState(0)
+
+  // Update word count every 15 seconds and when speech changes
+  useEffect(() => {
+    const updateWordCount = () => {
+      if (currentFlow && speechName) {
+        const speechDoc = currentFlow.speechDocs?.[speechName] || ""
+        setBoldHighlightCount(countBoldedHighlightedWords(speechDoc))
+      } else {
+        setBoldHighlightCount(0)
+      }
+    }
+
+    // Initial update
+    updateWordCount()
+
+    // Update every 15 seconds
+    const interval = setInterval(updateWordCount, 15000)
+
+    return () => clearInterval(interval)
+  }, [currentFlow, speechName])
 
   const speakerEmail = currentRound ? getSpeakerEmail(speechName, currentRound) : ""
   const hasN = speechName.includes("N")
@@ -230,7 +316,7 @@ export function SpeechHeaderBar({
         )}
 
         {/* Speech name with navigation */}
-        <div className="flex items-center shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
           {onNavigatePrev && (
             <Button
               variant="ghost"
@@ -252,6 +338,23 @@ export function SpeechHeaderBar({
           >
             {speechName}
           </span>
+          {boldHighlightCount > 0 && (
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge
+                    variant="secondary"
+                    className="h-4 px-1.5 text-[10px] font-bold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-900 dark:text-yellow-200 hover:bg-yellow-200 dark:hover:bg-yellow-900/50"
+                  >
+                    {boldHighlightCount}
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="text-xs">
+                  <p>{boldHighlightCount} word{boldHighlightCount !== 1 ? 's' : ''} bolded or highlighted in speech doc</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
           {onNavigateNext && (
             <Button
               variant="ghost"
@@ -272,6 +375,20 @@ export function SpeechHeaderBar({
             className="w-full"
             progressBarPortalRef={progressBarPortalRef}
             onPlayingChange={handleRecordingPlayingChange}
+            onResetSpeechTime={() => {
+              setTime(defaultTimeMs)
+              setTimerState({ name: "paused" })
+            }}
+            onSwitchToCrossX={() => {
+              // Set to 3 minutes (180,000 ms)
+              setTime(3 * 60 * 1000)
+              setTimerState({ name: "paused" })
+            }}
+            micDeviceId={micDeviceId}
+            onMicDeviceChange={setMicDeviceId}
+            recordingEnabled={recordingEnabled}
+            onRecordingEnabledChange={setRecordingEnabled}
+            hideInlineMenu={true}
           />
         </div>
 
@@ -316,15 +433,43 @@ export function SpeechHeaderBar({
             </div>
           )}
 
-          {/* Mic selector — to the right of the timer */}
-          <MicSelector
-            value={micDeviceId}
-            onValueChange={setMicDeviceId}
-            muted={!recordingEnabled}
-            onMutedChange={(m) => setRecordingEnabled(!m)}
-            disabled={false}
-            className="shrink-0 scale-[0.8]"
-          />
+          {/* Mic selector or speech menu — to the right of the timer */}
+          {hasRecording ? (
+            <div className="shrink-0 scale-[0.8]">
+              <SpeechRecordingMenu
+                speechName={speechName}
+                speechLabel={speechName}
+                micDeviceId={micDeviceId}
+                onMicDeviceChange={setMicDeviceId}
+                recordingEnabled={recordingEnabled}
+                onRecordingEnabledChange={setRecordingEnabled}
+                onResetSpeechTime={() => {
+                  setTime(defaultTimeMs)
+                  setTimerState({ name: "paused" })
+                }}
+                onSwitchToCrossX={() => {
+                  setTime(3 * 60 * 1000)
+                  setTimerState({ name: "paused" })
+                }}
+                onDeleteRecording={(key) => {
+                  localStorage.removeItem(key)
+                  setHasRecording(false)
+                  setRecordingDurationSec(null)
+                }}
+                recordingKey={`debate-recording-${speechName}`}
+                inHeader={true}
+              />
+            </div>
+          ) : (
+            <MicSelector
+              value={micDeviceId}
+              onValueChange={setMicDeviceId}
+              muted={!recordingEnabled}
+              onMutedChange={(m) => setRecordingEnabled(!m)}
+              disabled={false}
+              className="shrink-0 scale-[0.8]"
+            />
+          )}
 
           {/* Share speech dropdown */}
           <DropdownMenu>

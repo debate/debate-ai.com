@@ -2,6 +2,7 @@
  * @fileoverview Index of custom SVG and PNG icons used across the application.
  */
 
+export { default as IconFlowFlower } from "./icon-flow-flower.svg";
 export { default as IconAffBubble } from "./icon-aff-bubble.png";
 export { default as IconSettings } from "./icon-settings.svg";
 export { default as IconBook } from "./icon-book.svg";

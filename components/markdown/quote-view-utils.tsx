@@ -267,11 +267,8 @@ export function htmlToCards(
       profile: "ultraFlexible",
     })
 
-    console.log("[v0] parseHtmlToCards result:", result)
-
     // Safety check: ensure result exists and has outline
     if (!result || typeof result !== "object") {
-      console.warn("[v0] parseHtmlToCards returned invalid result:", result)
       return {
         sections: [],
         outline: [],
@@ -285,7 +282,6 @@ export function htmlToCards(
 
     // Safety check: ensure outline exists and is an array
     if (!Array.isArray(result.outline)) {
-      console.warn("[v0] parseHtmlToCards outline is not an array:", result.outline)
       return {
         sections: [],
         outline: [],
@@ -338,7 +334,6 @@ export function htmlToCards(
       },
     }
   } catch (error) {
-    console.error("[v0] Error in htmlToCards:", error)
     return {
       sections: [],
       outline: [],
@@ -389,7 +384,6 @@ export function buildQuoteCardsHtml(
 
     // Safety check
     if (!Array.isArray(outline)) {
-      console.error("[v0] outline is not an array in buildQuoteCardsHtml:", outline)
       return {
         html: '<div class="quote-view-empty"><p>Error: Unable to parse quote cards.</p></div>',
         metadata: { fileName, cardCount: 0, totalWords: 0 },
@@ -462,7 +456,6 @@ export function buildQuoteCardsHtml(
       metadata,
     }
   } catch (error) {
-    console.error("[v0] Error in buildQuoteCardsHtml:", error)
     return {
       html: '<div class="quote-view-empty"><p>Error building quote cards view.</p></div>',
       metadata: { fileName, cardCount: 0, totalWords: 0 },
