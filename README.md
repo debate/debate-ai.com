@@ -2,57 +2,32 @@
     <img src="./public/images/logo-collective-mind.png" width="300" height="300">
 </p>
 
-# Debate AI
+# 🎙️ Debate AI
 
-AI-powered platform for competitive debaters in Public Forum (PF), Lincoln-Douglas (LD), Policy, and NDT. Combines crowdsourced research, video analytics, team rankings, and AI analysis into a single workspace.
+> **The all-in-one competitive debate platform** — where AI meets argumentation
 
-**Live site:** [debate-ai.com](https://debate-ai.com/) · [Earlier prototype](https://alpha.debate-ai.com/)
+Empowering debaters in **Public Forum**, **Lincoln-Douglas**, **Policy**, and **NDT** with cutting-edge tools for research, flowing, video analysis, and team rankings. Everything you need to prep, compete, and win.
+
+**🌐 Live:** [debate-ai.com](https://debate-ai.com/) · **📦 Alpha:** [alpha.debate-ai.com](https://alpha.debate-ai.com/)
 
 ---
 
-## Quick Start
+## ⚡ Quick Start
 
 ```bash
-# Clone and setup
+# Clone and run (one command!)
 bunx git0 debate/debate-ai.com
-
-# Install dependencies and run dev server
-bun install
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+🚀 Server auto-starts at [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## What's New
+## 🚀 Features
 
-### 🎯 Shareable Round URLs
-Every debate round now gets a unique, shareable URL:
-- **Format:** `debate-ai.com/debate/2025-glenbrooks/lynbrook-bz-monta-ey`
-- **Auto-generated** from tournament, schools, and year
-- **SEO-friendly** with proper metadata
-- **Direct navigation** - visit URL to load exact round state
+### 📚 CARDS — Crowdsourced Research Arsenal
 
-### 📊 Enhanced Rankings with Dual Elo Columns
-- **Elo Rank** and **Elo Score** now displayed separately
-- **Smart name matching** between TOC and DebateDrills data
-- **Auto-detection** of full debater names → converts to initials
-- **Historical data** from 2001 to current season
-
-### 🔗 Automatic URL Synchronization
-- Browser URL **always reflects** the active round
-- Switch rounds → URL updates automatically
-- Create round → navigates to round's URL
-- Refresh page → loads correct round from URL
-
----
-
-## Features
-
-### CARDS — Crowdsourced Annotated Research Dataset
-
-A collaborative evidence library built by the debate community.
+**The community's evidence library. By debaters, for debaters.**
 
 - **Full-text search** across a crowdsourced dataset of tagged and annotated evidence cards
 - **Three-panel desktop layout** — search sidebar, card reader, and AI analysis panel — all resizable
@@ -65,9 +40,9 @@ The long-term goal is a decentralized AI knowledge graph — a tree-of-thought r
 
 ---
 
-### Videos — Debate Round Library
+### 🎥 Videos — Tournament Archive
 
-Browse and filter a curated library of competitive debate round recordings.
+**Watch the best rounds. Learn from the champions.**
 
 - **Infinite-scroll video grid** with responsive layout (1–4 columns)
 - **Search and filter** by title, channel, year, and sort by recency or view count
@@ -79,11 +54,12 @@ Browse and filter a curated library of competitive debate round recordings.
 
 ---
 
-### Rankings — Competitive Team Leaderboard
+### 🏆 Rankings — National Leaderboard
 
-Historical and current season standings across all four divisions with integrated Elo ratings.
+**Track every team. From prelims to TOC.**
+Historical and current standings across all divisions, powered by dual ranking systems.
 
-#### Features
+#### 📊 Core Features
 
 - **Divisions:** PF, LD, Policy (CX), NDT
 - **Sortable columns:** rank, state, bids, TOC score, **Elo Rank**, **Elo Score**
@@ -94,40 +70,42 @@ Historical and current season standings across all four divisions with integrate
 - **Season champion and topic** displayed for each division and year
 - **Rank change indicators** (up/down chevrons) between seasons
 
-#### Elo Integration
+#### 🧠 Smart Elo Integration
 
-- **Automatic team matching** between TOC bid list and DebateDrills data
-- **Smart name normalization:**
-  - Auto-detects full debater names (e.g., "Campbell Hall Jared Bart & Alexandra Kosloff")
-  - Converts to standard initials format (e.g., "Campbell Hall BK")
-  - Manual mappings for edge cases
-- **Separate Elo columns:**
-  - **Elo Rk:** Team's rank in DebateDrills system
-  - **Elo:** Actual Elo rating score
-- **Tooltip explanation** of how Debate Elo is calculated
+- 🔗 **Auto-matching** — seamlessly merges TOC + DebateDrills data
+- ✨ **Name normalization:**
+  - Detects: `"Campbell Hall Jared Bart & Alexandra Kosloff"`
+  - Converts: `"Campbell Hall BK"` (last name initials)
+  - Handles edge cases with manual overrides
+- 📈 **Dual columns:**
+  - **Elo Rk** → Your national Elo ranking
+  - **Elo** → Your actual rating score
+- 💡 **Interactive tooltip** — hover to learn how Elo is calculated
 
-#### Data Sources
+#### 📦 Data Sources
 
-- Current season: TOC bid list + DebateDrills Elo
-- Historical seasons: DebateDrills Elo rankings
-- Syncs from official GitHub repositories
-
----
-
-### Lectures — Educational Video Library
-
-A dedicated section for instructional and lecture-style debate videos.
-
-- Same search, filter, and infinite-scroll interface as the round videos
-- **Debate Dictionary** toggle — a searchable glossary of debate terminology with definitions, accessible directly from the lectures page
+- ✅ **Current season:** TOC bid list + DebateDrills Elo
+- 📚 **Historical:** DebateDrills archives (2001–present)
+- 🔄 **Auto-sync:** Pulls latest from official GitHub repos
 
 ---
 
-### Debate Workspace — Flow-Based Debate Management
+### 🎓 Lectures — Learning Hub
 
-A comprehensive workspace for flowing debates, managing rounds, and collaborating with judges and teammates.
+**Master the fundamentals. Sharpen advanced tactics.**
 
-#### Flow System (FIAT - Flow Interconnected Argument Tree)
+- 🔍 Full search + infinite scroll (same interface as Rounds)
+- 📖 **Debate Dictionary** — toggle on for instant term definitions
+- 🎯 Curated instructional content from top coaches
+
+---
+
+### 📝 Debate Workspace — The Flow Command Center
+
+**Your digital flowing companion. From prep to podium.**
+Everything you need to flow rounds, manage tournaments, and collaborate in real-time.
+
+#### ⚡ FIAT — Flow Interconnected Argument Tree
 
 - **Multi-column spreadsheet interface** with AG Grid
 - **Debate format support:** PF, LD, Policy, NDT, and custom formats
@@ -136,121 +114,153 @@ A comprehensive workspace for flowing debates, managing rounds, and collaboratin
 - **Archive system** for managing multiple rounds
 - **Flow history** with restore capability
 
-#### Round Management
+#### 🎪 Round Management
 
-- **Create Round Dialog** with comprehensive setup:
-  - Tournament name and round level (Prelims, Octos, Quarters, etc.)
-  - Team debater emails and school names
-  - Judge and spectator invitations
-  - Public/private visibility toggle
-  - Winner declaration (post-round)
+**One dialog. Complete setup.**
 
-#### Automatic Round Titling & URL Generation
+- 🏟️ Tournament name + round level (Prelims → Finals)
+- 👥 Team emails, school names, debater IDs
+- ⚖️ Judge + spectator invitations
+- 🔒 Public/private toggle
+- 🏅 Winner declaration (post-round)
 
-- **Auto-generated titles:** `"2025 Glenbrooks - Octos - Lynbrook BZ vs Monta Vista EY"`
+#### 🔗 Shareable Round URLs
+
+**Every round gets its own permanent link.**
+Share with teammates, judges, or coaches — or bookmark for later review.
+
+```
+https://debate-ai.com/debate/2025-glenbrooks/lynbrook-bz-monta-ey
+```
+
+**Features:**
+- 📝 **Auto-generated titles:** `"2025 Glenbrooks - Octos - Lynbrook BZ vs Monta Vista EY"`
   - Format: `{Year} {Tournament} - {Round} - {Aff School} vs {Neg School}`
-  - Updates browser tab title
-- **SEO-friendly URL slugs:** `debate-ai.com/debate/2025-glenbrooks/lynbrook-bz-monta-ey`
+  - Updates browser tab title automatically
+- 🔗 **SEO-optimized slugs:** Clean, readable URLs for sharing
   - Format: `{year}-{tournament}/{aff-school}-{neg-school}`
-  - Automatically generated on round creation
-  - Shareable links to specific rounds
-- **Dynamic URL syncing:**
-  - URL updates when switching between rounds
-  - Direct navigation via URL loads correct round
-  - Browser history integration
+  - Auto-generated on round creation
+  - Direct access — paste link, instantly load round state
+- 🔄 **Live URL sync:** Address bar always reflects active round
+  - Switch rounds → URL updates instantly
+  - Create round → browser navigates to new URL
+  - Refresh page → loads exact round from URL
+  - Browser back/forward → seamlessly navigate round history
 
-#### Speech Documents
+#### 📄 Speech Docs
 
-- **Integrated markdown editor** for each speech
-- **Share speeches** with judges and teammates via email
-- **View modes:** plain, highlights, quotes
-- **Auto-save** to localStorage
+- ✍️ **Markdown editor** built into each speech
+- 📧 **Share via email** to judges/teammates
+- 👁️ **View modes:** plain, highlights, quotes
+- 💾 **Auto-save** (localStorage)
 
-#### Debate Timers
+#### ⏱️ Smart Timers
 
-- **Format-specific timers** for constructives, rebuttals, crossfire, prep time
-- **Visual and audio alerts** at time expiration
-- **Persistent across view switches**
-- **Mobile-optimized** compact display
+- 🎯 **Format-aware** — PF, LD, Policy, NDT presets
+- 🔔 **Audio + visual** alerts at time expiration
+- 🔄 **Persistent** across view switches
+- 📱 **Mobile-optimized** compact header display
 
-#### Collaboration Features
+#### 🤝 Collaboration
 
-- **Email invitations** for judges and spectators
-- **Private rounds** option for practice
-- **Round status tracking:** pending, active, completed
+- 📬 **Email invites** for judges + spectators
+- 🔐 **Private rounds** for practice sessions
+- 📊 **Status tracking:** pending → active → completed
 
-#### Mobile Experience
+#### 📱 Mobile-First
 
-- **Responsive design** with mobile-first approach
-- **Swipeable column navigation** on touch devices
-- **Sheet-based sidebars** for tools and settings
-- **Compact timer display** in header
-
----
-
-### Docs — Document Editor
-
-- Full markdown editor for writing and formatting evidence, blocks, and flows
-- Accessible from the main navigation dock
+- 📐 **Responsive** — adapts to any screen size
+- 👆 **Swipe navigation** on touch devices
+- 🎛️ **Sheet sidebars** for tools and settings
+- ⚡ **Compact UI** optimized for on-the-go flowing
 
 ---
 
-## Navigation
+### 📃 Docs — Markdown Editor
 
-A persistent **dock** provides one-click access to all sections:
+**Write blocks. Format evidence. Export flows.**
 
-| Icon     | Section                      |
-| -------- | ---------------------------- |
-| Shared   | CARDS research search        |
-| Debate   | Debate workspace             |
-| Docs     | Document editor              |
-| Videos   | Round video library          |
-| Lectures | Lecture library + dictionary |
-
-On the Videos page, a **Rankings** icon is appended to the dock for instant access to the leaderboard without leaving the videos context.
-
-The dock adapts to screen size: fixed top-left on desktop, fixed bottom bar on mobile.
+- 📝 Full markdown support for evidence cards
+- 🎨 Rich formatting for blocks and briefs
+- 🧭 Quick access from navigation dock
 
 ---
 
-## Routing Architecture
+## 🧭 Navigation
 
-### Static Routes
-- `/` - Home page with feature overview
-- `/cards` - CARDS research search
-- `/debate` - Debate workspace (flow interface)
-- `/docs` - Document editor
-- `/videos` - Round video library
-- `/lectures` - Educational video library
+**Always-accessible dock** — one click to any section:
 
-### Dynamic Routes
-- `/debate/[tournament]/[teams]` - Specific debate round
-  - Example: `/debate/2025-glenbrooks/lynbrook-bz-monta-ey`
-  - Loads round state from URL slug
-  - Activates corresponding flows
-  - Updates document title
+| Icon | Section | Feature |
+| ---- | ------- | ------- |
+| 📚 | **CARDS** | Research + evidence search |
+| 📝 | **Debate** | Flow workspace |
+| 📃 | **Docs** | Markdown editor |
+| 🎥 | **Videos** | Round library |
+| 🎓 | **Lectures** | Learning hub + dictionary |
 
-### URL Slug Format
+💡 **Contextual expansion:** On Videos page, a **Rankings** button auto-appears in dock.
+
+📍 **Adaptive positioning:**
+- 🖥️ **Desktop:** Fixed top-left corner
+- 📱 **Mobile:** Fixed bottom bar
+
+---
+
+## 🗺️ Routing Architecture
+
+### 📍 Static Routes
+| Path | Page | Purpose |
+| ---- | ---- | ------- |
+| `/` | 🏠 Home | Feature overview + onboarding |
+| `/cards` | 📚 CARDS | Evidence search |
+| `/debate` | 📝 Workspace | Flow interface |
+| `/docs` | 📃 Editor | Document creation |
+| `/videos` | 🎥 Library | Round videos |
+| `/lectures` | 🎓 Learning | Educational content |
+
+### 🔗 Dynamic Routes
 ```
-{year}-{tournament}/{aff-school}-{neg-school}
+/debate/[tournament]/[teams]
 ```
 
-**Example transformations:**
-- Tournament: "Glenbrooks" → "glenbrooks"
-- School: "Lynbrook BZ" → "lynbrook-bz"
-- Full slug: "2025-glenbrooks/lynbrook-bz-monta-ey"
+**Example:**
+```
+https://debate-ai.com/debate/2025-glenbrooks/lynbrook-bz-monta-ey
+                               └─┬─┘ └────┬────┘  └───┬──┘ └──┬──┘
+                               year   tournament     aff     neg
+```
 
-**Normalization:**
-- Lowercase
-- Replace special characters with hyphens
-- Remove leading/trailing hyphens
-- URL-safe encoding
+**What happens:**
+- ✅ Loads round state from slug
+- ✅ Activates corresponding flows
+- ✅ Updates document title
+- ✅ Enables sharing via link
+
+### 🔤 Slug Normalization
+
+**Transformation pipeline:**
+
+1️⃣ **Input:** `"2025 Glenbrooks Tournament"`
+2️⃣ **Lowercase:** `"2025 glenbrooks tournament"`
+3️⃣ **Replace special chars:** `"2025-glenbrooks-tournament"`
+4️⃣ **Trim hyphens:** `"2025-glenbrooks-tournament"` ✅
+
+**Team names:**
+```
+"Lynbrook BZ" → "lynbrook-bz"
+"Monta Vista EY" → "monta-vista-ey"
+```
+
+**Final slug:**
+```
+2025-glenbrooks/lynbrook-bz-monta-ey
+```
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-### Frontend
+### ⚛️ Frontend
 
 - **Framework:** Next.js 16 (App Router) with React Server Components
 - **Language:** TypeScript with strict type checking

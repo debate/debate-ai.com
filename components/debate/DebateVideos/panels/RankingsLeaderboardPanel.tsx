@@ -55,15 +55,41 @@ function getStringValue(val: unknown): string {
   return String(val).toLowerCase()
 }
 
+function hasValue(val: unknown): boolean {
+  return val !== undefined && val !== null && val !== "--"
+}
+
 function sortEntries(entries: LeaderboardEntry[], sort: SortState): LeaderboardEntry[] {
   if (!sort) return entries
   const { key, dir } = sort
   const mul = dir === "asc" ? 1 : -1
 
   return [...entries].sort((a, b) => {
+    // String comparison for state
     if (key === "state") {
       return mul * getStringValue(a.state).localeCompare(getStringValue(b.state))
     }
+
+    // Special handling for rank-based columns (rank, eloRank)
+    // Empty values always go to the bottom regardless of sort direction
+    if (key === "rank" || key === "eloRank") {
+      const aHasValue = hasValue(a[key])
+      const bHasValue = hasValue(b[key])
+
+      // Both empty - maintain original order
+      if (!aHasValue && !bHasValue) return 0
+      // Only a is empty - put it at the end
+      if (!aHasValue) return 1
+      // Only b is empty - put it at the end
+      if (!bHasValue) return -1
+
+      // Both have values - sort normally (lower rank number = better)
+      const aVal = getNumericValue(a[key])
+      const bVal = getNumericValue(b[key])
+      return mul * (aVal - bVal)
+    }
+
+    // Default numeric comparison for other columns
     return mul * (getNumericValue(a[key]) - getNumericValue(b[key]))
   })
 }
