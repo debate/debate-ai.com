@@ -218,8 +218,8 @@
     2400,
     "1AC: NEW Islam 2NR: Islam Negates Decision: 2-1 AFF (Adam Torson*, Riley Reichel, Andrew Brandt) Documents: ...",
     3,
-    "Unknown",
-    "Unknown",
+    "Glenbrooks",
+    "Semis",
     "Harker SD",
     "Lynbrook OM"
   ],
@@ -300,19 +300,6 @@
     "Semis",
     "Lynbrook OM",
     "Coppell KT"
-  ],
-  [
-    "QFv-KxPeFbI",
-    "Lynbrook - Loyola 2025",
-    "2025-09-04",
-    "Lynbrook Debate",
-    1333,
-    "as the title suggests.",
-    3,
-    "Unknown",
-    "Unknown",
-    "Unknown",
-    "Unknown"
   ],
   [
     "ArHwVD9bXlk",
@@ -1271,10 +1258,10 @@
       1577,
       "On Saturday, our instructors will tackle the September–October PF topic, showcasing high-level strategy, evidence work, and ...",
       3,
-      null,
-      null,
-      null,
-      null
+      "Debate Drills",
+      "Demo",
+      "Demo aff",
+      "Demo neg"
     ],
     [
       "anM2AF6393Y",
@@ -1297,8 +1284,8 @@
       1733,
       "Camp demonstration debate.",
       4,
-      "Demo Debates",
-      null,
+      "Policy Debate Central",
+      "Demo",
       "Asha(Westminster) and Felix(Mamaroneck)",
       "MBA Russell and Jimmy"
     ],
@@ -1323,10 +1310,10 @@
       1681,
       "Debate between Tate/Lab Leader Jack and Erin/Lab Leader Raleigh.",
       4,
-      null,
-      null,
-      null,
-      null
+      "Michigan Camp",
+      "Demo",
+      "Tate/Lab Leader Jack",
+      "Erin/Lab Leader Raleigh"
     ],
     [
       "L7La-9agBXk",
@@ -3013,10 +3000,10 @@
       364,
       "Demo Debate #1 at the 2024 Dartmouth Debate Institute. Connelly Cowan (Georgetown Class of '26) and Adam White ...",
       4,
-      null,
-      null,
-      null,
-      null
+      "DDI 2024",
+      "Demo",
+      "Connelly Cowan, Adam White",
+      "Azja Butler, Julian Kuffour"
     ],
     [
       "GQAw4AYAOvw",
@@ -3026,10 +3013,10 @@
       507,
       "Demo Debate #1 at the 2024 Dartmouth Debate Institute. Sean Wallace (Dartmouth Class of '27) and Michi Okahata (Emory Class ...",
       4,
-      null,
-      null,
-      null,
-      null
+      "DDI 2024",
+      "Demo",
+      "Sean Wallace, Michi Okahata",
+      "E. Katie Carpenter, Eleanor Barrett"
     ],
     [
       "CYwEwphvVbY",
@@ -5224,8 +5211,8 @@
       2958,
       "Vote here for who you think won ! https://forms.gle/Tx4VKjuYhjKx3NeE8.",
       3,
-      "NSD February Demo Debate",
-      null,
+      "NSD",
+      "Demo",
       "Strambert DB",
       "Hackerson BY"
     ],
@@ -5535,7 +5522,7 @@
       "LASA Debate",
       1112,
       "",
-      4,
+      1,
       "2022 Glenbrooks (RFD)",
       "RFD",
       "LASA CH",
@@ -5653,10 +5640,10 @@
       2081,
       "Demonstration debate on the NATO security cooperation topic. The AFF team is Maya El-Sharif and Kyujin Derradji. The NEG ...",
       4,
-      null,
-      null,
-      null,
-      null
+      "DDI",
+      "Demo",
+      "Maya El-Sharif  Kyujin Derradji",
+      "Arvind Shankar  Margaret Hecht"
     ],
     [
       "s_gJ6KK3yoM",
@@ -5666,10 +5653,10 @@
       2701,
       "Demonstration debate on the NATO security cooperation topic. The AFF team is Arvind Shankar and Tyler Vergho. The NEG team ...",
       4,
-      null,
-      null,
-      null,
-      null
+      "DDI",
+      "Demo",
+      "Arvind Shankar, Tyler Vergho",
+      "David Kilpatrick, Nick Lepp"
     ],
     [
       "ZRmJkC8aPx8",
@@ -6628,10 +6615,10 @@
       5673,
       "Resolved: On balance, the benefits of the IMF outweigh the harms. NEG: Manuel De Leon and Hattie Bilson AFF: Rebecca ...",
       2,
-      null,
-      null,
-      null,
-      null
+      "Magnolia",
+      "Demo",
+      "Manuel De Leon and Hattie Bilson",
+      "Rebecca and Grace"
     ],
     [
       "T8hYbZKJd4w",
@@ -9319,10 +9306,10 @@
       19903,
       "MSJ is pro while Millburn is con. MSJ wins on an equivalent 2-1 decision. The resolution is, \"Resolved: the U.S. should accede to ...",
       2,
-      null,
-      null,
+      "Capitol Debate",
+      "Demo",
       "Mission San Jose KW",
-      "Millburn CM Capitol Debate Babson Demo Round"
+      "Millburn CM "
     ],
     [
       "20GwA2d2Tgk",
@@ -24230,8 +24217,8 @@
       3602,
       "Michigan PR takes on Michigan JS with the F-35s aff to demonstrated how feasible it is for debaters to debate from four different places. \n\nFind the docs here - https://drive.google.com/drive/folders/1hGAxEwKTTDh6cG4uTr3vKqALFHD4K8KF?usp=sharing\n\nWho do you think won? Vote here https://forms.gle/TVyQhFZVNu8iQgat8",
       4,
-      null,
-      null,
+      "Michigan",
+      "Demo",
       "Michigan PR",
       "Michigan JS"
     ],

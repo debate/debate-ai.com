@@ -3,7 +3,8 @@
 import React from "react"
 import type { VideoType, TopicType } from "@/lib/types/videos"
 import { VideoCard } from "../video-card/VideoCard"
-import { GlowingEffect } from "@/components/ui/glowing-effect"
+import { CardSpotlight } from "@/components/ui/card-spotlight"
+
 interface VideoGridProps {
   videos: VideoType[]
   showThumbnails: boolean
@@ -26,14 +27,7 @@ export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, f
     >
       {videos.map((video, index) => (
         <div key={`${video[0]}-${index}`} className="relative">
-          <GlowingEffect
-            spread={40}
-            glow={true}
-            disabled={false}
-            proximity={64}
-            inactiveZone={0.01}
-            borderWidth={2}
-          />
+
           <VideoCard
             video={video}
             showThumbnails={showThumbnails}

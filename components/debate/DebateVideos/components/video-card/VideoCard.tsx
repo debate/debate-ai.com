@@ -1,4 +1,5 @@
 "use client"
+import { GlowingEffect } from "@/components/ui/glowing-effect"
 
 import { Card, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -121,6 +122,15 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
       <div className="block h-full relative group/card">
 
         <Card className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full relative ${isPlaying ? "ring-2 ring-primary" : ""} ${isHidden ? "opacity-60 ring-2 ring-dashed ring-muted-foreground/50" : ""}`}>
+          <GlowingEffect
+            spread={40}
+            glow={true}
+            disabled={false}
+            proximity={64}
+            inactiveZone={0.01}
+            borderWidth={2}
+          />
+
           {isHidden && (
             <div className="absolute top-1 left-1 z-10">
               <span className="text-[9px] bg-muted/90 text-muted-foreground px-1.5 py-0.5 rounded font-medium">Hidden</span>
@@ -276,6 +286,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
             <CardDescription className="text-xs line-clamp-2 mb-3 flex-1">{description}</CardDescription>
 
           </div>
+
         </Card>
 
         <ReportDialog
@@ -291,6 +302,6 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
           onConfirm={() => onHideVideo(videoId)}
         />
       </div>
-    </TooltipProvider>
+    </TooltipProvider >
   )
 }
