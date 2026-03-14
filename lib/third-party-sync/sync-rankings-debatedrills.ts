@@ -6,6 +6,44 @@ import grab from "grab-url";
 const ELO_PRECISION = 0;
 
 /**
+ * Manual mappings for school name normalization
+ * Maps non-standard names to their canonical form
+ */
+const SCHOOL_NAME_MAPPINGS: Record<string, string> = {
+  "Strake Stratton & Murthy": "Strake Jesuit MS",
+  "Campbell Hall Jared Bart & Alexandra Kosloff": "Campbell Hall BK",
+  "National Debate Club": "National Debate Club (NDC)",
+};
+
+/**
+ * Normalizes school names that contain full debater names to use last name initials
+ * Example: "Campbell Hall Jared Bart & Alexandra Kosloff" -> "Campbell Hall BK"
+ */
+function normalizeSchoolName(schoolName: string): string {
+  // First check manual mappings
+  if (SCHOOL_NAME_MAPPINGS[schoolName]) {
+    return SCHOOL_NAME_MAPPINGS[schoolName];
+  }
+
+  // Pattern: "School Name FirstName LastName & FirstName LastName"
+  // Match: school name + full names with & separator
+  const fullNamePattern =
+    /^(.+?)\s+([A-Z][a-z]+)\s+([A-Z][a-z]+)\s+&\s+([A-Z][a-z]+)\s+([A-Z][a-z]+)$/;
+  const match = schoolName.match(fullNamePattern);
+
+  if (match) {
+    const schoolBase = match[1].trim();
+    const lastName1 = match[3]; // Last name of first debater
+    const lastName2 = match[5]; // Last name of second debater
+    const initials = lastName1.charAt(0) + lastName2.charAt(0);
+    return `${schoolBase} ${initials}`;
+  }
+
+  // If doesn't match pattern, return as-is
+  return schoolName;
+}
+
+/**
  * Configuration for a debate division dataset
  */
 export interface DatasetConfig {
@@ -54,13 +92,13 @@ export function getDatasets(year = "2026"): DatasetConfig[] {
   return [
     {
       division: "VPF",
-      url: `https://raw.githubusercontent.com/skumar-ml/debate-rankings/master/${academicYear}/PF/PFRankings_top500.csv`,
-      fallbackUrl: `https://raw.githubusercontent.com/skumar-ml/debate-rankings/master/${academicYear}/PF/Rankings_top500.csv`,
+      url: `https://raw.githubusercontent.com/skumar-ml/debate-rankings/master/${academicYear}/PF/PFRankings.csv`,
+      fallbackUrl: `https://raw.githubusercontent.com/skumar-ml/debate-rankings/master/${academicYear}/PF/Rankings.csv`,
     },
     {
       division: "VLD",
-      url: `https://raw.githubusercontent.com/skumar-ml/debate-rankings/master/${academicYear}/LD/LDRankings_top500.csv`,
-      fallbackUrl: `https://raw.githubusercontent.com/skumar-ml/debate-rankings/master/${academicYear}/LD/Rankings_top500.csv`,
+      url: `https://raw.githubusercontent.com/skumar-ml/debate-rankings/master/${academicYear}/LD/LDRankings.csv`,
+      fallbackUrl: `https://raw.githubusercontent.com/skumar-ml/debate-rankings/master/${academicYear}/LD/Rankings.csv`,
     },
   ];
 }
@@ -102,7 +140,9 @@ export async function scrapeDivision({
     let csvText = result.error ? null : result.data;
 
     if (!csvText && fallbackUrl) {
-      const fallbackResult = await grab(fallbackUrl, { headers: { Accept: "text/plain" } });
+      const fallbackResult = await grab(fallbackUrl, {
+        headers: { Accept: "text/plain" },
+      });
       csvText = fallbackResult.data;
     }
 
@@ -143,7 +183,8 @@ export async function scrapeDivision({
       }
 
       const cleanSchool = schoolStr.replace(/^"|"$/g, "").trim();
-      // Option to include Name if preferred, but School contains the main team name (e.g. "Strake Stratton & Murthy")
+      // Normalize school names with full debater names to use last name initials
+      const normalizedSchool = normalizeSchoolName(cleanSchool);
 
       const elo = parseFloat(eloStr);
       const debateElo = isNaN(elo)
@@ -151,7 +192,7 @@ export async function scrapeDivision({
         : Number(elo.toFixed(ELO_PRECISION));
       entries.push({
         rank,
-        teamName: cleanSchool,
+        teamName: normalizedSchool,
         debateElo,
       });
     }

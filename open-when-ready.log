@@ -1,44 +1,7 @@
-⚠ Port 3000 is in use by an unknown process, using available port 3005 instead.
+⚠ Port 3000 is in use by an unknown process, using available port 3003 instead.
 ▲ Next.js 16.1.6 (Turbopack)
-- Local:         http://localhost:3005
-- Network:       http://172.18.116.74:3005
+- Local:         http://localhost:3003
+- Network:       http://10.147.124.74:3003
 - Environments: .env
 
 ✓ Starting...
-✓ Ready in 1165ms
-○ Compiling / ...
- GET / 307 in 3.2s (compile: 2.7s, render: 450ms)
- GET /videos 200 in 1347ms (compile: 1186ms, render: 162ms)
-⨯ ./lib/debate-data/debate-lectures.json
-Code generation for chunk item errored
-An error occurred while generating the chunk item [project]/lib/debate-data/debate-lectures.json (json)
-
-Caused by:
-- Unable to make a module from invalid JSON: trailing comma at line 85 column 5
-
-Debug info:
-- An error occurred while generating the chunk item [project]/lib/debate-data/debate-lectures.json (json)
-- Execution of <JsonChunkItem as EcmascriptChunkItem>::content failed
-- Unable to make a module from invalid JSON: trailing comma at line 85 column 5
-    at data[8]
-      81 |       "2020-08-17",
-      82 |       "Exodus Files",
-      83 |       476,
-      84 |       "Check out exodusfiles.org Follow \"The Chop Up\" on iTunes Donate to WDI https://womensdebateinstitute.org/donate Donate to ...",
-         |     v
-      85 +     ],
-         |     ^
-      86 |     [
-      87 |       "G6ZZg1i2Bq4",
-      88 |       "NDT 2020 Awards Ceremony",
-      89 |       "2020-06-18",
-
-Import trace:
-  App Route:
-    ./lib/debate-data/debate-lectures.json
-    ./app/api/videos/route.ts
-
-
- GET /api/videos 500 in 1693ms (compile: 1536ms, render: 157ms)
- GET /videos 500 in 41ms (compile: 22ms, render: 19ms)
- GET /videos 500 in 88ms (compile: 34ms, render: 55ms)
