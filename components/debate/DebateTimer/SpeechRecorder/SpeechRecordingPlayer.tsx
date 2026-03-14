@@ -7,7 +7,7 @@
 
 import { useEffect, useState, type RefObject, useRef } from "react"
 import { createPortal } from "react-dom"
-import { Trash2, MoreVertical, RotateCcw, Clock, Upload, Mic, Check, MicOff, Users, Gauge } from "lucide-react"
+import { Trash2, MoreVertical, Clock, Upload, Mic, Check, MicOff, Users, Gauge } from "lucide-react"
 import {
     AudioPlayerButton,
     AudioPlayerProgress,
@@ -367,7 +367,7 @@ export function SpeechRecordingMenu({
                     {/* Share with Opponents & Judge - First menu item */}
                     <DropdownMenuItem onClick={() => { /* TODO: Implement sharing */ }}>
                         <Users className="h-4 w-4 mr-2" />
-                        Share with Opponents & Judge
+                        Share with Opponents
                     </DropdownMenuItem>
 
                     {/* Playback Speed submenu */}
@@ -471,12 +471,6 @@ export function SpeechRecordingMenu({
                     )}
 
                     {/* Timer control actions */}
-                    {onResetSpeechTime && (
-                        <DropdownMenuItem onClick={onResetSpeechTime}>
-                            <RotateCcw className="h-4 w-4 mr-2" />
-                            Reset Speech Time
-                        </DropdownMenuItem>
-                    )}
                     {onSwitchToCrossX && (
                         <DropdownMenuItem onClick={onSwitchToCrossX}>
                             <Clock className="h-4 w-4 mr-2" />

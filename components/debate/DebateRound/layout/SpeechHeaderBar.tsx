@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { Round } from "@/components/debate/DebateRound/types"
-import { FileText, Share2, Lock, Users, Radio, Quote, ChevronLeft, ChevronRight, Menu } from "lucide-react"
+import { FileText, Quote, ChevronLeft, ChevronRight, Menu } from "lucide-react"
 import type { ViewMode } from "@/lib/types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "@/components/ui/button"
@@ -18,16 +18,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { SpeechRecordingPlayer, SpeechRecordingMenu } from "../../DebateTimer/SpeechRecorder/SpeechRecordingPlayer"
 import { useFlowStore } from "@/lib/state/store"
 import { SpeechTimer } from "../../DebateTimer/SpeechTimer"
-import { MicSelector } from "../../DebateTimer/SpeechRecorder/mic-selector"
 import { debateStyles, debateStyleMap } from "../../DebateTimer/debate-format-times"
 import { settings } from "@/lib/state/settings"
 import { cn } from "@/lib/utils"
@@ -433,71 +426,32 @@ export function SpeechHeaderBar({
             </div>
           )}
 
-          {/* Mic selector or speech menu — to the right of the timer */}
-          {hasRecording ? (
-            <div className="shrink-0 scale-[0.8]">
-              <SpeechRecordingMenu
-                speechName={speechName}
-                speechLabel={speechName}
-                micDeviceId={micDeviceId}
-                onMicDeviceChange={setMicDeviceId}
-                recordingEnabled={recordingEnabled}
-                onRecordingEnabledChange={setRecordingEnabled}
-                onResetSpeechTime={() => {
-                  setTime(defaultTimeMs)
-                  setTimerState({ name: "paused" })
-                }}
-                onSwitchToCrossX={() => {
-                  setTime(3 * 60 * 1000)
-                  setTimerState({ name: "paused" })
-                }}
-                onDeleteRecording={(key) => {
-                  localStorage.removeItem(key)
-                  setHasRecording(false)
-                  setRecordingDurationSec(null)
-                }}
-                recordingKey={`debate-recording-${speechName}`}
-                inHeader={true}
-              />
-            </div>
-          ) : (
-            <MicSelector
-              value={micDeviceId}
-              onValueChange={setMicDeviceId}
-              muted={!recordingEnabled}
-              onMutedChange={(m) => setRecordingEnabled(!m)}
-              disabled={false}
-              className="shrink-0 scale-[0.8]"
+          {/* Speech menu — always show ellipsis dropdown */}
+          <div className="shrink-0 scale-[0.8]">
+            <SpeechRecordingMenu
+              speechName={speechName}
+              speechLabel={speechName}
+              micDeviceId={micDeviceId}
+              onMicDeviceChange={setMicDeviceId}
+              recordingEnabled={recordingEnabled}
+              onRecordingEnabledChange={setRecordingEnabled}
+              onResetSpeechTime={() => {
+                setTime(defaultTimeMs)
+                setTimerState({ name: "paused" })
+              }}
+              onSwitchToCrossX={() => {
+                setTime(3 * 60 * 1000)
+                setTimerState({ name: "paused" })
+              }}
+              onDeleteRecording={hasRecording ? (key) => {
+                localStorage.removeItem(key)
+                setHasRecording(false)
+                setRecordingDurationSec(null)
+              } : undefined}
+              recordingKey={hasRecording ? `debate-recording-${speechName}` : undefined}
+              inHeader={true}
             />
-          )}
-
-          {/* Share speech dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 shrink-0"
-                title={`Share ${speechName}`}
-              >
-                <Share2 className="h-3.5 w-3.5 text-muted-foreground" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem onClick={() => { /* TODO */ }}>
-                <Lock className="h-4 w-4 mr-2" />
-                Keep Private
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { /* TODO */ }}>
-                <Users className="h-4 w-4 mr-2" />
-                Share with Partner
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { /* TODO */ }}>
-                <Radio className="h-4 w-4 mr-2" />
-                Share with Round
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          </div>
 
           {/* Open speech-doc button */}
           {onOpenSpeechPanel && (
