@@ -35,6 +35,7 @@ import { useSplitModeHandlers } from "./hooks/useSplitModeHandlers"
 import { useColumnNavigation } from "./hooks/useColumnNavigation"
 import { useTimerState } from "./hooks/useTimerState"
 import { useRoundFromSlug } from "./hooks/useRoundFromSlug"
+import { useSyncUrlWithRound } from "./hooks/useSyncUrlWithRound"
 
 /**
  * Manages the entire debate flow experience with a modular, maintainable architecture:
@@ -75,6 +76,7 @@ export function DebateFlowPage() {
   useFlowPersistence(flows, setFlows)
   useMobileDetection(state.setIsMobile)
   useRoundFromSlug()
+  useSyncUrlWithRound()
 
   // Update document title when active round changes
   useEffect(() => {
