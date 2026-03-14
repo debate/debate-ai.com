@@ -6,44 +6,44 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
 const categories = {
   rounds: [
-    "su.debate",
-    "ResolvedDebate",
-    "PolicyDebateCentral-gv1nl",
-    "pfvideos9234",
-    "ddidebate4071",
-    "DebateStreamDB8",
-  ],
-  lectures: [
-    "thatdebatekid5313",
-    "NSD_DebateCamp",
-    "ddidebate4071",
-    "pfvideos9234",
-    "lasadebate",
-    "DebateStreamDB8",
-    "CEDADebate",
-    "KentuckyDebate",
-    "sailorferrets",
-    "wakedebate8636",
-    "exodusfiles3478",
-    "SolvencyAdvocate",
-    "northbrowardmr4523",
-    "TexasDebate",
-    "jacobwilkus8697",
-    "arvindshankar2481",
-    "NDT-jl6oi",
-    "atrujillo9",
-    "UNTDebate",
-    "vintagedebatevids",
-    "georgetowndebateseminar1234",
-    "barkleyforumvideos3220",
-    "BillBatterman",
-    "msudebate6544",
-    "ProfessorGraham",
-    "michigandebate7440",
+    //   "su.debate",
+    //   "ResolvedDebate",
+    //   "PolicyDebateCentral",
+    //   "pfvideos9234",
+    //   "ddidebate4071",
+    //   "DebateStreamDB8",
+    // ],
+    // lectures: [
+    //   "thatdebatekid5313",
+    //   "NSD_DebateCamp",
+    //   "ddidebate4071",
+    //   "pfvideos9234",
+    //   "lasadebate",
+    //   "DebateStreamDB8",
+    //   "CEDADebate",
+    //   "KentuckyDebate",
+    //   "sailorferrets",
+    //   "wakedebate8636",
+    //   "exodusfiles3478",
+    //   "SolvencyAdvocate",
+    //   "northbrowardmr4523",
+    //   "TexasDebate",
+    "jacob_wilkus",
+    //   "arvindshankar2481",
+    //   "NDT-jl6oi",
+    //   "atrujillo9",
+    //   "UNTDebate",
+    //   "vintagedebatevids",
+    //   "georgetowndebateseminar1234",
+    //   "barkleyforumvideos3220",
+    //   "BillBatterman",
+    //   "msudebate6544",
+    //   "ProfessorGraham",
+    //   "michigandebate7440",
   ],
 };
 
-const publishedAfter = "2025-08-21T00:00:00Z";
+const publishedAfter = "2026-03-01T00:00:00Z";
 
 const YoutubeAPI = grab.instance({
   baseURL: "https://www.googleapis.com/youtube/v3",
@@ -161,7 +161,10 @@ export async function syncMissingTopPicks() {
 
   const missingFile = path.join(process.cwd(), "missing-top-picks.txt");
   const content = await fs.readFile(missingFile, "utf-8");
-  const videoIds = content.split("\n").map((l) => l.trim()).filter(Boolean);
+  const videoIds = content
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
 
   if (videoIds.length === 0) {
     console.log("No missing video IDs found.");
@@ -186,11 +189,12 @@ export async function syncMissingTopPicks() {
   console.log(`Added ${newVideos.length} videos to debate-rounds-videos.json`);
   console.log(`Skipped ${videos.length - newVideos.length} already present`);
 
-  const notFound = videoIds.filter(
-    (id) => !videos.some((v) => v[0] === id),
-  );
+  const notFound = videoIds.filter((id) => !videos.some((v) => v[0] === id));
   if (notFound.length > 0) {
-    console.log(`Could not find ${notFound.length} videos on YouTube:`, notFound);
+    console.log(
+      `Could not find ${notFound.length} videos on YouTube:`,
+      notFound,
+    );
   }
 
   return { added: newVideos.length, notFound };
@@ -237,7 +241,9 @@ export async function syncYouTubeVideos() {
         existing = JSON.parse(await fs.readFile(filePaths[category], "utf-8"));
       }
     } catch (e) {
-      console.warn(`Could not read existing data for ${category}, starting fresh.`);
+      console.warn(
+        `Could not read existing data for ${category}, starting fresh.`,
+      );
     }
     const newVids = newVideos[category] || [];
 
@@ -277,7 +283,7 @@ export async function syncYouTubeVideos() {
 }
 
 const args = process.argv.slice(2);
-if (import.meta.main || (require.main === module)) {
+if (import.meta.main || require.main === module) {
   if (args.includes("--missing-top-picks")) {
     console.log("Fetching missing top picks...");
     syncMissingTopPicks().catch((err) => {

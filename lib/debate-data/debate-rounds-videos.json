@@ -3082,6 +3082,20 @@
       "Iowa AC",
       "Kansas RS"
     ],
+    ["B4mnEOBsSOg",
+  "Texas Open 2025 Finals — Wake Forest BM (AFF) vs. Kansas RM (NEG)",
+  "2025-02-03",
+  "Jacob Wilkus",
+  2534,
+  "",
+  4,
+  "2025 Texas",
+  "Finals",
+  "Wake Forest BM",
+  "Kansas RM"
+
+
+],
     [
       "0pWgCT5KBDo",
       "2024 Long Beach R5 Aff Iowa AC Neg Dartmouth VW",
@@ -5631,19 +5645,6 @@
       "Northwestern DF"
     ],
     [
-      "rIZEUo5WqcI",
-      "NDT 2022 Awards",
-      "2022-04-04",
-      "Jacob Wilkus",
-      987,
-      "",
-      4,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
       "Cih82t0t-Go",
       "NDT 2022 - Doubles - Wichita State HP (Aff) v. GMU BG (Neg)",
       "2022-04-04",
@@ -6476,58 +6477,6 @@
       "Leland WT"
     ],
     [
-      "KLc9czzG7Rc",
-      "UKSO 2020---Congresss Semis---Room 102",
-      "2020-09-17",
-      "Kentucky Debate",
-      346,
-      "",
-      4,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      "IaT-7K5DXgs",
-      "UKSO 2020---Congress Semis---Room 101",
-      "2020-09-17",
-      "Kentucky Debate",
-      358,
-      "",
-      4,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      "I2F79Z-7Y1M",
-      "Pro Demo Debates - Debate Boutique",
-      "2020-08-17",
-      "Exodus Files",
-      476,
-      "Check out exodusfiles.org Follow \"The Chop Up\" on iTunes Donate to WDI https://womensdebateinstitute.org/donate Donate to ...",
-      4,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      "nwgVRdx_Lck",
-      "Anti-Blackness in Debate Panel Discussion",
-      "2020-08-09",
-      "PF Videos",
-      2004,
-      "Anti-Blackness in Debate Resource Guide: ...",
-      2,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
       "Ku_RjjQnfOA",
       "Montgomery Blair JQ vs Thomas Wootton TZ  Finals",
       "2020-08-08",
@@ -6539,19 +6488,6 @@
       "Finals",
       "Montgomery Blair JQ",
       "Thomas Wootton TZ"
-    ],
-    [
-      "VQq4kLbRQBs",
-      "Pro Demo Debates - Debate Boutique",
-      "2020-07-25",
-      "Exodus Files",
-      412,
-      "Check out exodusfiles.org Follow \"The Chop Up\" on iTunes Donate to WDI https://womensdebateinstitute.org/donate Donate to ...",
-      4,
-      null,
-      null,
-      null,
-      null
     ],
     [
       "llNpyCq0L8Q",
@@ -6916,19 +6852,6 @@
       "Octos",
       "Hebron BS",
       "Washburn Rural KP"
-    ],
-    [
-      "G6ZZg1i2Bq4",
-      "NDT 2020 Awards Ceremony",
-      "2020-06-18",
-      "Joe Leeson-Schatz",
-      524,
-      "",
-      4,
-      null,
-      null,
-      null,
-      null
     ],
     [
       "OvRaD4OY5lI",
@@ -10552,10 +10475,10 @@
       19966,
       "Aff: MBA GH Neg: Monta Vista PS Decision: Split (1-1)",
       4,
-      null,
-      null,
+      "Cal RR",
+      "RD 3",
       "MBA GH",
-      "Monta Vista - Cal RR - RD 3 - 2018"
+      "Monta Vista "
     ],
     [
       "HXGNNhOxrBw",
@@ -10618,7 +10541,7 @@
       "",
       4,
       "Monmouth 2017",
-      "Open Round 4",
+      "Round 4",
       "NYU BZ",
       "GMU LB"
     ],
@@ -10643,7 +10566,7 @@
       356,
       "",
       4,
-      "The Shirley 2017",
+      "Shirley 2017",
       "Round 6",
       "Mo State SW",
       "Wayne State AD"
@@ -10670,7 +10593,7 @@
       "Poly Prep is pro while Newton South is con. Newton South wins on a 3-0 decision. The resolution is, \"Resolved: deployment of ...",
       2,
       "Yale 2017",
-      "Double-Octos",
+      "Doubles",
       "Poly Prep SS",
       "Newton South GS"
     ],
@@ -10708,10 +10631,10 @@
       311,
       "",
       4,
-      null,
-      null,
+      "UNLV 2017",
+      "Doubles",
       "Berkeley DW",
-      "Washington EP, UNLV 2017, Open Doubles Disclosure"
+      "Washington EP"
     ],
     [
       "K31cOrZ4aZM",
@@ -23344,9 +23267,9 @@
       0,
       "Debate between Louisville and Berkeley",
       4,
+      "CEDA",
       null,
-      null,
-      "CEDA 2004 Louisville",
+      " Louisville",
       "Berkeley"
     ],
     [
