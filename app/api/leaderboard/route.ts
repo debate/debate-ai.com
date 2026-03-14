@@ -61,11 +61,14 @@ function mergeElo(
   drillsEntries: LeaderboardEntry[],
   division: string,
 ): LeaderboardEntry[] {
-  // Build exact-match map
-  const eloMap = new Map<string, number | string>();
+  // Build exact-match map with both Elo score and rank
+  const eloMap = new Map<string, { elo: number | string; rank: number | string }>();
   for (const entry of drillsEntries) {
     if (entry.debateElo !== undefined) {
-      eloMap.set(normalizeTeamName(entry.teamName), entry.debateElo);
+      eloMap.set(normalizeTeamName(entry.teamName), {
+        elo: entry.debateElo,
+        rank: entry.eloRank ?? entry.rank,
+      });
     }
   }
 
@@ -81,17 +84,19 @@ function mergeElo(
     }
 
     // 1. Try direct match
-    let elo = eloMap.get(key);
+    let eloData = eloMap.get(key);
 
     // 2. For PF, try swapped trailing initials (e.g. "school ms" -> "school sm")
-    if (elo === undefined && division === "VPF") {
+    if (eloData === undefined && division === "VPF") {
       const swapped = swapTrailingInitials(key);
       if (swapped) {
-        elo = eloMap.get(swapped);
+        eloData = eloMap.get(swapped);
       }
     }
 
-    return elo !== undefined ? { ...entry, debateElo: elo } : entry;
+    return eloData !== undefined
+      ? { ...entry, debateElo: eloData.elo, eloRank: eloData.rank }
+      : entry;
   });
 }
 

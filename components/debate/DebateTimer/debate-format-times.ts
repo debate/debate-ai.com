@@ -4,8 +4,10 @@
  * Public Forum, Lincoln Douglas, and others.
  */
 
-import type { DebateStyle, TimerSpeech } from "@/components/debate/DebateTimer/types";
-
+import type {
+  DebateStyle,
+  TimerSpeech,
+} from "@/components/debate/DebateTimer/types";
 
 export const debateStyleMap = [
   "publicForum",
@@ -22,8 +24,8 @@ export const debateStyleMap = [
 
 export const debateStyleNames = [
   "Public Forum",
-  "Lincoln Douglas", //1
   "Policy",
+  "Lincoln Douglas", //1
   "College Policy",
   "College LD",
   "Congress",

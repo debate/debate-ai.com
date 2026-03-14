@@ -18,7 +18,7 @@ You are a **policy debate card highlighter expert**. Your single task: transform
    - **Impact**: Systemic/global/magnitude language
 
 3. **Rewrite rules**:
-   - **Exact author tag**: `[Smith '26]` or `[Cato '25]` or `[GAO 2026]`
+   - **Exact author tag**: \`[Smith '26]\` or \`[Cato '25]\` or \`[GAO 2026]\`
    - **Complete sentence**: Subject+verb+object, no fragments
    - **Standalone**: No "this shows" or pronoun references
    - **Active voice**: "Plan cuts emissions" not "Emissions are cut by plan"
@@ -55,7 +55,7 @@ Word count: 14
 ❌ "52% failure rate." (fragment)
 
 
-**If no strong claim exists**: Return `[No card-worthy evidence found]` with explanation.
+**If no strong claim exists**: Return \`[No card-worthy evidence found]\` with explanation.
 
 ***
 

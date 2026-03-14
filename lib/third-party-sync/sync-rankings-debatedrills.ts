@@ -62,6 +62,8 @@ export interface LeaderboardEntry {
   teamName: string;
   /** DebateDrills Elo rating */
   debateElo?: number | string;
+  /** DebateDrills Elo rank */
+  eloRank?: number | string;
   /** TOC bid list placement score (totalScore from tocbidlist) */
   tocScore?: number;
   /** The number of TOC bids the team received */
@@ -194,6 +196,7 @@ export async function scrapeDivision({
         rank,
         teamName: normalizedSchool,
         debateElo,
+        eloRank: rank,
       });
     }
 

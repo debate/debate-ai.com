@@ -20,7 +20,7 @@ import type { TopicType, ChampionType } from "@/lib/types/videos"
 type Division = "VPF" | "VLD" | "VCX" | "NDT"
 const VALID_DIVISIONS = new Set<string>(["VPF", "VLD", "VCX", "NDT"])
 
-type SortKey = "rank" | "state" | "bids" | "tocScore" | "debateElo"
+type SortKey = "rank" | "state" | "bids" | "tocScore" | "debateElo" | "eloRank"
 type SortDir = "asc" | "desc"
 type SortState = { key: SortKey; dir: SortDir } | null
 
@@ -204,7 +204,7 @@ export function LeaderboardPanel({
   const gridCols = !showTocColumns
     ? "grid-cols-[40px_1fr_70px] sm:grid-cols-[50px_1fr_80px]"
     : showElo
-      ? "grid-cols-[40px_1fr_32px_40px_50px_50px] sm:grid-cols-[50px_1fr_40px_50px_70px_70px]"
+      ? "grid-cols-[40px_1fr_32px_40px_50px_50px_50px] sm:grid-cols-[50px_1fr_40px_50px_70px_60px_70px]"
       : "grid-cols-[40px_1fr_32px_40px_50px] sm:grid-cols-[50px_1fr_40px_50px_70px]"
 
   const filteredData = sortEntries(data, sort)
@@ -360,7 +360,28 @@ export function LeaderboardPanel({
                           </div>
                         </>
                       )}
-                      {(showElo || !showTocColumns) && (
+                      {showElo && showTocColumns && (
+                        <>
+                          <div className="text-right cursor-pointer select-none" onClick={() => toggleSort("eloRank")}>
+                            Elo Rk <SortIcon col="eloRank" />
+                          </div>
+                          <div className="text-right cursor-pointer select-none flex items-center justify-end gap-1" onClick={() => toggleSort("debateElo")}>
+                            <Tooltip delayDuration={200}>
+                              <TooltipTrigger asChild>
+                                <span className="cursor-help flex items-center gap-1">
+                                  Elo
+                                  <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="bottom" className="max-w-xs">
+                                <p className="text-xs leading-relaxed">{ELO_TOOLTIP}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                            <SortIcon col="debateElo" />
+                          </div>
+                        </>
+                      )}
+                      {!showTocColumns && (
                         <div className="text-right cursor-pointer select-none flex items-center justify-end gap-1" onClick={() => toggleSort("debateElo")}>
                           <Tooltip delayDuration={200}>
                             <TooltipTrigger asChild>
@@ -413,7 +434,13 @@ export function LeaderboardPanel({
                                   <div className="text-right text-sm">{entry.tocScore ?? "--"}</div>
                                 </>
                               )}
-                              {(showElo || !showTocColumns) && (
+                              {showElo && showTocColumns && (
+                                <>
+                                  <div className="text-right text-sm">{entry.eloRank ?? "--"}</div>
+                                  <div className="text-right text-sm">{entry.debateElo ?? "--"}</div>
+                                </>
+                              )}
+                              {!showTocColumns && (
                                 <div className="text-right text-sm">{entry.debateElo ?? "--"}</div>
                               )}
                             </div>

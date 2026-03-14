@@ -96,9 +96,9 @@ export const settings = new Settings({
     detail: {
       options: [
         "Public Forum",
-        "Lincoln Douglas", //1
         "Policy",
         "College Policy",
+        "Lincoln Douglas", //1
         "College LD",
         "Congress",
         "World Schools", //3

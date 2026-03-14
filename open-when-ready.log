@@ -1,7 +1,6 @@
-⚠ Port 3000 is in use by an unknown process, using available port 3003 instead.
 ▲ Next.js 16.1.6 (Turbopack)
-- Local:         http://localhost:3003
-- Network:       http://10.147.124.74:3003
+- Local:         http://localhost:3000
+- Network:       http://10.147.124.74:3000
 - Environments: .env
 
 ✓ Starting...
