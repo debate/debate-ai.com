@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from "react";
 import type { Flow, Box, Round } from "@/components/debate/DebateRound/types";
+import { generateRoundTitle, generateRoundSlug } from "@/components/debate/DebateRound/types";
 import { useFlowStore } from "@/lib/state/store";
 import { settings } from "@/lib/state/settings";
 import {
@@ -315,7 +316,7 @@ export function useRoundEditorForm(
       newFlowIds.push(flowId);
     });
 
-    const round = createRound({
+    const roundData = {
       tournamentName,
       roundLevel,
       debaters: {
@@ -326,8 +327,17 @@ export function useRoundEditorForm(
       judges,
       spectators: spectatorEmails.filter((s) => s.trim()),
       flowIds: newFlowIds,
-      status: "active",
+      status: "active" as const,
       isPrivate,
+    };
+
+    const title = generateRoundTitle(roundData);
+    const slug = generateRoundSlug(roundData);
+
+    const round = createRound({
+      ...roundData,
+      title,
+      slug,
     });
 
     const archivedFlows = flows.map((f) => ({ ...f, archived: true }));
