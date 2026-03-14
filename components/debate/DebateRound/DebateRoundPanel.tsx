@@ -82,7 +82,7 @@ export function DebateFlowPage() {
   useEffect(() => {
     const activeRound = rounds.find((r) => r.status === "active")
     if (activeRound?.title) {
-      document.title = activeRound.title
+      document.title = activeRound.title.toUpperCase()
     } else {
       document.title = "Debate FIAT"
     }

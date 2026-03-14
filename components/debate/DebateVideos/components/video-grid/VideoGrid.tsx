@@ -3,7 +3,7 @@
 import React from "react"
 import type { VideoType, TopicType } from "@/lib/types/videos"
 import { VideoCard } from "../video-card/VideoCard"
-
+import { GlowingEffect } from "@/components/ui/glowing-effect"
 interface VideoGridProps {
   videos: VideoType[]
   showThumbnails: boolean
@@ -25,19 +25,28 @@ export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, f
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-6"
     >
       {videos.map((video, index) => (
-        <VideoCard
-          key={`${video[0]}-${index}`}
-          video={video}
-          showThumbnails={showThumbnails}
-          topics={topics}
-          isFavorite={favorites.has(video[0])}
-          onToggleFavorite={onToggleFavorite}
-          onBadgeClick={onBadgeClick}
-          onHideVideo={onHideVideo}
-          onUnhideVideo={onUnhideVideo}
-          isHidden={hiddenVideos.has(video[0])}
-          isTopPick={topPicks?.has(video[0]) || false}
-        />
+        <div key={`${video[0]}-${index}`} className="relative">
+          <GlowingEffect
+            spread={40}
+            glow={true}
+            disabled={false}
+            proximity={64}
+            inactiveZone={0.01}
+            borderWidth={2}
+          />
+          <VideoCard
+            video={video}
+            showThumbnails={showThumbnails}
+            topics={topics}
+            isFavorite={favorites.has(video[0])}
+            onToggleFavorite={onToggleFavorite}
+            onBadgeClick={onBadgeClick}
+            onHideVideo={onHideVideo}
+            onUnhideVideo={onUnhideVideo}
+            isHidden={hiddenVideos.has(video[0])}
+            isTopPick={topPicks?.has(video[0]) || false}
+          />
+        </div>
       ))}
     </div>
   )
