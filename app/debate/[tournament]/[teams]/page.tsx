@@ -35,3 +35,4 @@ export default async function DebateRoundPage({ params }: PageProps) {
     </Suspense>
   )
 }
+https://debate-ai.com/debate/2026-aberdeen-novice-online-debate-1/0-yamily-tx-adl-tw
