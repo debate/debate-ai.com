@@ -5,8 +5,6 @@
  *
  * This is the primary component for the debate flow interface, now refactored
  * into a clean, modular architecture using custom hooks and layout components.
- *
- * @module components/debate/DebateRound/DebateRoundPanel
  */
 
 import { useRef, useEffect } from "react"

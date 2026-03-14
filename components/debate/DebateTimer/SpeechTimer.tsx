@@ -21,7 +21,7 @@ import type { Round } from "@/components/debate/DebateRound/types"
 
 import { useEffect, useRef, useState } from "react"
 import { Play, Pause, RotateCcw } from "lucide-react"
-import { playSoundEffect } from "@/components/debate/DebateTimer/timer-sounds/sound-effects"
+import { playSoundEffect } from "@/components/debate/DebateTimer/sound-effects"
 import { Button } from "@/components/ui/button"
 import { MicSelector } from "@/components/debate/DebateTimer/SpeechRecorder/mic-selector"
 import { cn } from "@/lib/utils"

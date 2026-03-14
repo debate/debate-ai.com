@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Settings, UserCircle2, Moon, Sun, Palette, Pause, Play } from "lucide-react"
+import { UserCircle2, Moon, Sun, Palette, Pause, Play } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { CategoryType } from "@/lib/types/videos"
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { themeNames, themeColors, formatThemeName, useThemeState } from "@/components/theme-dropdown"
-import { useCategoryDockState } from "@/components/category-dock-context"
+import { useCategoryDockState } from "@/components/layout/category-dock-context"
 import {
   IconCollectiveMind,
   IconRounds,
@@ -158,7 +158,12 @@ export function CategoryDock() {
   const { activeVideoId, activeVideoTitle, isMinimized, isPlaying, setMinimized, setIsPlaying } = useVideoPlayerStore()
 
   const allItems = [
-    ...NAV_ITEMS.map(({ href, label, icon }) => ({
+    ...NAV_ITEMS.filter(({ href }) => {
+      if (href === '/rank') {
+        return pathname === '/videos' || pathname === '/lectures' || pathname.startsWith('/rank')
+      }
+      return true
+    }).map(({ href, label, icon }) => ({
       key: href,
       label,
       icon,

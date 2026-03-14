@@ -3,6 +3,7 @@
  * @module components/debate/flow/controls/QuickActionsBar
  */
 
+import { useEffect } from "react"
 import { Plus, Clock, Users, Columns2, Grid3x3, FileSpreadsheet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -51,6 +52,19 @@ export function QuickActionsBar({
   splitMode,
   canEditRound = false,
 }: QuickActionsBarProps) {
+  // Keyboard shortcut: Alt+X to toggle split mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey && e.key.toLowerCase() === 'x') {
+        e.preventDefault()
+        onToggleSplit()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onToggleSplit])
+
   return (
     <div className="h-auto pb-[var(--padding)] grid grid-cols-4 gap-0.5">
       <TooltipProvider>

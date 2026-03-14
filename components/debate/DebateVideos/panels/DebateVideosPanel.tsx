@@ -21,7 +21,7 @@ import { useVideoDataFetch, useVideoFiltering, useResponsiveVideosPerPage } from
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 
 // Components
-import { useCategoryDock } from "@/components/category-dock-context"
+import { useCategoryDock } from "@/components/layout/category-dock-context"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 

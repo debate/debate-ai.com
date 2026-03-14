@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
-import grab from "grab-url";
+import grab, { log } from "grab-url";
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
@@ -14,11 +14,12 @@ const categories = {
     //   "DebateStreamDB8",
     // ],
     // lectures: [
+    "LynbrookDebate",
     //   "thatdebatekid5313",
     //   "NSD_DebateCamp",
     //   "ddidebate4071",
     //   "pfvideos9234",
-    //   "lasadebate",
+    // "lasadebate",
     //   "DebateStreamDB8",
     //   "CEDADebate",
     //   "KentuckyDebate",
@@ -28,7 +29,7 @@ const categories = {
     //   "SolvencyAdvocate",
     //   "northbrowardmr4523",
     //   "TexasDebate",
-    "jacob_wilkus",
+    // "jacob_wilkus",
     //   "arvindshankar2481",
     //   "NDT-jl6oi",
     //   "atrujillo9",
@@ -43,7 +44,7 @@ const categories = {
   ],
 };
 
-const publishedAfter = "2026-03-01T00:00:00Z";
+const publishedAfter = "2023-03-01T00:00:00Z";
 
 const YoutubeAPI = grab.instance({
   baseURL: "https://www.googleapis.com/youtube/v3",
@@ -58,8 +59,8 @@ async function getChannelId(channelName: string): Promise<string | null> {
       q: channelName,
     });
 
-    if (data.items && data.items.length > 0) {
-      return data.items[0].id.channelId;
+    if (data.data.items && data.data.items.length > 0) {
+      return data.data.items[0].id.channelId;
     }
     return null;
   } catch (error) {
@@ -107,16 +108,18 @@ async function getVideosForChannel(
   const allVideos: any[] = [];
   let nextPageToken: string | null = null;
 
+  log(channelId);
   do {
     const searchData: any = await YoutubeAPI("/search", {
       part: "snippet",
       channelId,
       order: "date",
       type: "video",
-      maxResults: "50",
+      maxResults: 50,
       publishedAfter,
-      pageToken: nextPageToken ? nextPageToken : undefined,
+      // pageToken: nextPageToken ? nextPageToken : undefined,
     });
+    log(searchData);
     if (!searchData.items || searchData.items.length === 0) break;
 
     const videoIds = searchData.items
@@ -226,54 +229,47 @@ export async function syncYouTubeVideos() {
     }
   }
 
-  const dataDir = path.join(process.cwd(), "lib", "debate-data");
-  const filePaths: Record<string, string> = {
-    rounds: path.join(dataDir, "debate-rounds.json"),
-    topPicks: path.join(dataDir, "debate-top-picks.json"),
-    lectures: path.join(dataDir, "debate-lectures.json"),
-  };
+  // Combine all videos from all categories into one array
+  const allVideos = [
+    ...newVideos.rounds,
+    ...newVideos.lectures,
+    ...newVideos.topPicks,
+  ];
 
-  const mergedData: Record<string, any[]> = {};
-  for (const category of ["rounds", "lectures", "topPicks"]) {
-    let existing = [];
-    try {
-      if (await fs.stat(filePaths[category]).catch(() => null)) {
-        existing = JSON.parse(await fs.readFile(filePaths[category], "utf-8"));
-      }
-    } catch (e) {
-      console.warn(
-        `Could not read existing data for ${category}, starting fresh.`,
-      );
-    }
-    const newVids = newVideos[category] || [];
+  console.log("\n" + "=".repeat(60));
+  console.log("💾 SAVING ALL VIDEOS TO new-videos.json");
+  console.log("=".repeat(60) + "\n");
 
-    const existingIds = new Set(existing.map((v: any[]) => v[0]));
-    const uniqueNewVids = newVids.filter((v: any[]) => !existingIds.has(v[0]));
+  console.log(`📹 Total videos fetched: ${allVideos.length}`);
+  console.log(`   Rounds: ${newVideos.rounds.length}`);
+  console.log(`   Lectures: ${newVideos.lectures.length}`);
+  console.log(`   Top Picks: ${newVideos.topPicks.length}`);
 
-    mergedData[category] = [...uniqueNewVids, ...existing];
-    await fs.mkdir(dataDir, { recursive: true });
-    await fs.writeFile(
-      filePaths[category],
-      JSON.stringify(mergedData[category], null, 2),
-    );
-  }
+  const outputPath = path.join(process.cwd(), "new-videos.json");
+
+  await fs.writeFile(
+    outputPath,
+    JSON.stringify(allVideos, null, 2),
+  );
+
+  console.log(`\n💾 Saved all videos to: ${outputPath}`);
+  console.log(`📦 Total videos: ${allVideos.length}`);
 
   const stats = {
-    rounds: {
-      new: newVideos.rounds.length,
-      total: mergedData.rounds.length,
+    total: allVideos.length,
+    byCategory: {
+      rounds: newVideos.rounds.length,
+      lectures: newVideos.lectures.length,
+      topPicks: newVideos.topPicks.length,
     },
-    lectures: {
-      new: newVideos.lectures.length,
-      total: mergedData.lectures.length,
-    },
-    topPicks: {
-      new: newVideos.topPicks.length,
-      total: mergedData.topPicks.length,
-    },
+    outputFile: outputPath,
   };
 
-  console.log("Video sync completed:", stats);
+  console.log("\n" + "=".repeat(60));
+  console.log("✅ VIDEO SYNC COMPLETED");
+  console.log("=".repeat(60));
+  console.log(JSON.stringify(stats, null, 2));
+  console.log("=".repeat(60) + "\n");
 
   return {
     success: true,
@@ -284,17 +280,9 @@ export async function syncYouTubeVideos() {
 
 const args = process.argv.slice(2);
 if (import.meta.main || require.main === module) {
-  if (args.includes("--missing-top-picks")) {
-    console.log("Fetching missing top picks...");
-    syncMissingTopPicks().catch((err) => {
-      console.error("Sync failed:", err);
-      process.exit(1);
-    });
-  } else {
-    console.log("Syncing YouTube videos...");
-    syncYouTubeVideos().catch((err) => {
-      console.error("Sync failed:", err);
-      process.exit(1);
-    });
-  }
+  console.log("Syncing YouTube videos...");
+  syncYouTubeVideos().catch((err) => {
+    console.error("Sync failed:", err);
+    process.exit(1);
+  });
 }
