@@ -47,7 +47,7 @@ export function TournamentSection({
   setDebateStyleIndex,
 }: TournamentSectionProps) {
   return (
-    <div className="grid grid-cols-4 gap-4 items-end">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 items-end">
       {/* Tournament Name with Autocomplete */}
       <div className="col-span-2 space-y-2">
         <Autocomplete

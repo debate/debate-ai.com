@@ -152,7 +152,7 @@ export function SpeechHeaderBar({
     : undefined
 
   const [micDeviceId, setMicDeviceId] = useState<string | undefined>()
-  const [recordingEnabled, setRecordingEnabled] = useState(false)
+  const [recordingEnabled, setRecordingEnabled] = useState(true)
 
   // Portal ref for recording seekable progress bar in top edge
   const progressBarPortalRef = useRef<HTMLDivElement>(null)
