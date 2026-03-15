@@ -397,9 +397,45 @@ export function SpeechRecordingMenu({
                         </DropdownMenuSub>
                     )}
 
-                    <DropdownMenuSeparator />
+                    {/* Recording toggle */}
+                    {onRecordingEnabledChange && (
+                        <DropdownMenuItem
+                            onClick={() => onRecordingEnabledChange(!recordingEnabled)}
+                            className={cn(
+                                "cursor-pointer",
+                                !recordingEnabled && "bg-accent"
+                            )}
+                        >
+                            <MicOff className="h-4 w-4 mr-2" />
+                            <span className="flex-1">Don't record audio</span>
+                            {!recordingEnabled && <Check className="h-4 w-4 ml-2" />}
+                        </DropdownMenuItem>
+                    )}
 
-                    {/* Microphone selector section */}
+                    {/* Timer control actions */}
+                    {onSwitchToCrossX && (
+                        <DropdownMenuItem onClick={onSwitchToCrossX}>
+                            <Clock className="h-4 w-4 mr-2" />
+                            Switch to Cross-X (3 min)
+                        </DropdownMenuItem>
+                    )}
+
+                    {/* Audio file actions */}
+                    <DropdownMenuItem onClick={handleUploadAudio}>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload Speech Audio
+                    </DropdownMenuItem>
+                    {onDeleteRecording && recordingKey && (
+                        <DropdownMenuItem
+                            onClick={() => onDeleteRecording(recordingKey)}
+                            className="text-destructive focus:text-destructive"
+                        >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete Recording
+                        </DropdownMenuItem>
+                    )}
+
+                    {/* Microphone selector section — at the bottom */}
                     <DropdownMenuLabel className="text-xs text-muted-foreground">
                         Microphone Input
                     </DropdownMenuLabel>
@@ -449,51 +485,6 @@ export function SpeechRecordingMenu({
                     <div className="px-2 py-1 text-[10px] text-muted-foreground">
                         Currently: {selectedLabel}
                     </div>
-
-                    <DropdownMenuSeparator />
-
-                    {/* Recording toggle */}
-                    {onRecordingEnabledChange && (
-                        <>
-                            <DropdownMenuItem
-                                onClick={() => onRecordingEnabledChange(!recordingEnabled)}
-                                className={cn(
-                                    "cursor-pointer",
-                                    !recordingEnabled && "bg-accent"
-                                )}
-                            >
-                                <MicOff className="h-4 w-4 mr-2" />
-                                <span className="flex-1">Don't record audio</span>
-                                {!recordingEnabled && <Check className="h-4 w-4 ml-2" />}
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                        </>
-                    )}
-
-                    {/* Timer control actions */}
-                    {onSwitchToCrossX && (
-                        <DropdownMenuItem onClick={onSwitchToCrossX}>
-                            <Clock className="h-4 w-4 mr-2" />
-                            Switch to Cross-X (3 min)
-                        </DropdownMenuItem>
-                    )}
-
-                    <DropdownMenuSeparator />
-
-                    {/* Audio file actions */}
-                    <DropdownMenuItem onClick={handleUploadAudio}>
-                        <Upload className="h-4 w-4 mr-2" />
-                        Upload Speech Audio
-                    </DropdownMenuItem>
-                    {onDeleteRecording && recordingKey && (
-                        <DropdownMenuItem
-                            onClick={() => onDeleteRecording(recordingKey)}
-                            className="text-destructive focus:text-destructive"
-                        >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete Recording
-                        </DropdownMenuItem>
-                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
 
