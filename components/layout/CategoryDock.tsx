@@ -237,6 +237,7 @@ export function CategoryDock() {
       {/* Mobile: fixed bottom bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
         <DropdownMenu>
+          <div className="overflow-x-auto scrollbar-hide">
           <Dock direction="middle" className="h-[52px] shrink-0 !mt-0 mx-auto w-max mb-2">
             {mobileItems.map(({ key, label, icon, active, onClick, ...rest }) => {
               const isPlayingIndicator = (rest as any).isPlayingIndicator
@@ -277,6 +278,7 @@ export function CategoryDock() {
               </DockItem>
             </DropdownMenuTrigger>
           </Dock>
+          </div>
           <SettingsMenu side="top" />
         </DropdownMenu>
       </div>
