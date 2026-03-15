@@ -16,7 +16,6 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 
 // Modular components
-import { FlowPageHeader } from "./layout/FlowPageHeader"
 import { FlowPageSidebar } from "./layout/FlowPageSidebar"
 import { FlowMainContent } from "./layout/FlowMainContent"
 import { SpeechDocPanel } from "./layout/SpeechDocPanel"
@@ -32,7 +31,6 @@ import { useMobileDetection } from "./hooks/useMobileDetection"
 import { useFlowHandlers } from "./hooks/useFlowHandlers"
 import { useSpeechHandlers } from "./hooks/useSpeechHandlers"
 import { useSplitModeHandlers } from "./hooks/useSplitModeHandlers"
-import { useColumnNavigation } from "./hooks/useColumnNavigation"
 import { useTimerState } from "./hooks/useTimerState"
 import { useRoundFromSlug } from "./hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "./hooks/useSyncUrlWithRound"
@@ -92,7 +90,6 @@ export function DebateFlowPage() {
   // Handlers
   // ============================================================================
   const flowHandlers = useFlowHandlers(flows, setFlows, setSelected)
-  const columnNav = useColumnNavigation(gridApiRef)
 
   /**
    * Apply partial updates to a flow at the given index.
@@ -387,18 +384,6 @@ export function DebateFlowPage() {
   // ============================================================================
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden">
-      {/* Mobile Header — only shown in non-split mode; split mode uses SpeechHeaderBar instead */}
-      {state.isMobile && !state.splitMode && (
-        <FlowPageHeader
-          currentFlow={currentFlow}
-          splitMode={state.splitMode}
-          onMenuClick={() => state.setMobileMenuOpen(true)}
-          onNavigatePrev={columnNav.navigatePreviousColumn}
-          onNavigateNext={columnNav.navigateNextColumn}
-          activeTimer={timerState.activeTimer}
-        />
-      )}
-
       {/* Main Layout */}
       <div className="flex-1 overflow-hidden">
         {!state.isMobile ? (
