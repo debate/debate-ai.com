@@ -22,11 +22,13 @@ interface VideoPlayerStore {
   activeVideoMeta: VideoMeta | null
   isMinimized: boolean
   isPlaying: boolean
+  isSlowMode: boolean
   queue: QueueItem[]
   setActiveVideo: (videoId: string, title: string, meta?: VideoMeta) => void
   clearActiveVideo: () => void
   setMinimized: (minimized: boolean) => void
   setIsPlaying: (playing: boolean) => void
+  setSlowMode: (slow: boolean) => void
   addToQueue: (videoId: string, title: string, meta?: VideoMeta) => void
   removeFromQueue: (videoId: string) => void
   playNextInQueue: () => void
@@ -39,6 +41,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   activeVideoMeta: null,
   isMinimized: false,
   isPlaying: false,
+  isSlowMode: false,
   queue: [],
   setActiveVideo: (videoId, title, meta) => set({ activeVideoId: videoId, activeVideoTitle: title, activeVideoMeta: meta ?? null, isMinimized: false, isPlaying: true }),
   clearActiveVideo: () => {
@@ -51,6 +54,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   },
   setMinimized: (minimized) => set({ isMinimized: minimized }),
   setIsPlaying: (playing) => set({ isPlaying: playing }),
+  setSlowMode: (slow) => set({ isSlowMode: slow }),
   addToQueue: (videoId, title, meta) =>
     set((state) => ({
       queue: state.queue.some((q) => q.videoId === videoId)
