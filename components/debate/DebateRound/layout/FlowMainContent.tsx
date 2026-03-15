@@ -156,6 +156,7 @@ export function FlowMainContent({
               onNavigatePrev={onNavigatePrev}
               onNavigateNext={onNavigateNext}
               onMobileMenuClick={onMobileMenuClick}
+              onOpenSpeechPanel={onOpenSpeechPanel}
             />
           </div>
           <div className="flex-1 overflow-hidden">
@@ -272,6 +273,7 @@ export function FlowMainContent({
             onNavigatePrev={onNavigatePrev}
             onNavigateNext={onNavigateNext}
             onMobileMenuClick={onMobileMenuClick}
+            onOpenSpeechPanel={onOpenSpeechPanel}
           />
         </div>
         <div className="flex-1 overflow-hidden">

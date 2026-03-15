@@ -294,7 +294,7 @@ export function SpeechHeaderBar({
         </div>
       )}
       {/* Single row: name · recording playback · timer & controls */}
-      <div className="flex items-center gap-1 w-full overflow-hidden min-w-0">
+      <div className="flex items-center gap-1 w-full overflow-x-auto min-w-0">
         {/* Mobile sidebar hamburger */}
         {onMobileMenuClick && (
           <Button
@@ -361,8 +361,8 @@ export function SpeechHeaderBar({
           )}
         </div>
 
-        {/* Recording playback — fills middle space */}
-        <div className="min-w-0 flex-1">
+        {/* Recording playback — fills middle space on desktop; natural width on mobile */}
+        <div className="min-w-0 sm:flex-1">
           <SpeechRecordingPlayer
             speechName={speechName}
             className="w-full"

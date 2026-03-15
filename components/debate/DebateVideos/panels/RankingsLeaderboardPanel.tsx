@@ -542,7 +542,9 @@ export function LeaderboardPanel({
                                 </div>
                                 {/* Desktop: show students + details inline (truncated) */}
                                 {entry.students && (
-                                  <div className="hidden sm:block text-xs text-muted-foreground truncate">{entry.students}</div>
+                                  <div className="hidden sm:block text-xs text-muted-foreground truncate">
+                                    {entry.teamName} {entry.students.split("&").map(s => s.trim().split(/\s+/).pop()).join(" & ")}
+                                  </div>
                                 )}
                                 {entry.details && entry.details.length > 0 && (
                                   <div className="hidden sm:block text-xs text-muted-foreground mt-0.5 truncate">
@@ -584,7 +586,9 @@ export function LeaderboardPanel({
                                 onClick={() => setExpandedRow(expandedRow === index ? null : index)}
                               >
                                 {entry.students && (
-                                  <div className="text-sm font-medium text-foreground mb-1.5">{entry.students}</div>
+                                  <div className="text-sm font-medium text-foreground mb-1.5">
+                                    {entry.teamName} {entry.students.split("&").map(s => s.trim().split(/\s+/).pop()).join(" & ")}
+                                  </div>
                                 )}
                                 {entry.details && entry.details.length > 0 && (
                                   <div className="flex flex-wrap gap-1.5">
