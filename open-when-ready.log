@@ -298,3 +298,65 @@
  GET /lectures 200 in 115ms (compile: 86ms, render: 28ms)
  GET /api/videos 200 in 23ms (compile: 10ms, render: 13ms)
  GET /api/videos 200 in 33ms (compile: 20ms, render: 12ms)
+✓ Compiled in 1881ms
+✓ Compiled in 398ms
+○ Compiling /rank ...
+ GET /rank 200 in 6.7s (compile: 6.3s, render: 482ms)
+ GET /rank 200 in 293ms (compile: 18ms, render: 275ms)
+ GET /rank 200 in 127ms (compile: 35ms, render: 91ms)
+ GET /rank 200 in 25ms (compile: 3ms, render: 22ms)
+ GET /cards 200 in 2.1s (compile: 2.0s, render: 36ms)
+ GET /api/leaderboard?division=VPF&year=2026 200 in 2.2s (compile: 10ms, render: 2.1s)
+ GET /api/leaderboard?division=VPF&year=2026 200 in 2.2s (compile: 136ms, render: 2.0s)
+✓ Compiled in 685ms
+✓ Compiled in 187ms
+✓ Compiled in 266ms
+✓ Compiled in 342ms
+✓ Compiled in 599ms
+ GET /rank 200 in 1029ms (compile: 164ms, render: 865ms)
+ GET /api/leaderboard?division=VPF&year=2026 200 in 649ms (compile: 3ms, render: 645ms)
+✓ Compiled in 378ms
+✓ Compiled in 122ms
+✓ Compiled in 304ms
+✓ Compiled in 123ms
+✓ Compiled in 172ms
+✓ Compiled in 192ms
+✓ Compiled in 143ms
+✓ Compiled in 216ms
+✓ Compiled in 201ms
+ GET /api/leaderboard?division=VPF&year=2025 200 in 595ms (compile: 4ms, render: 591ms)
+ GET /api/leaderboard?division=VPF&year=2024 200 in 378ms (compile: 1732µs, render: 377ms)
+ GET /rank?format=VLD 200 in 43ms (compile: 30ms, render: 12ms)
+ GET /api/leaderboard?division=VLD&year=2024 200 in 361ms (compile: 4ms, render: 357ms)
+ GET /api/leaderboard?division=VLD&year=2025 200 in 265ms (compile: 1988µs, render: 263ms)
+ GET /rank?format=VCX 200 in 13ms (compile: 2ms, render: 11ms)
+ GET /api/leaderboard?division=VCX&year=2025 200 in 5ms (compile: 1843µs, render: 4ms)
+ GET /rank?format=VLD 200 in 15ms (compile: 3ms, render: 12ms)
+ GET /api/leaderboard?division=VLD&year=2025 200 in 191ms (compile: 3ms, render: 188ms)
+ GET /rank?format=VCX 200 in 17ms (compile: 3ms, render: 14ms)
+ GET /api/leaderboard?division=VLD&year=2026 200 in 1223ms (compile: 3ms, render: 1219ms)
+ GET /api/leaderboard?division=VCX&year=2026 200 in 371ms (compile: 3ms, render: 369ms)
+ GET /rank?format=VPF 200 in 20ms (compile: 5ms, render: 15ms)
+ GET /api/leaderboard?division=VPF&year=2026 200 in 1475ms (compile: 2ms, render: 1473ms)
+✓ Compiled in 176ms
+ GET /api/leaderboard?division=VPF&year=2026 200 in 631ms (compile: 3ms, render: 628ms)
+ GET /api/leaderboard?division=VPF&year=2026 200 in 655ms (compile: 8ms, render: 646ms)
+✓ Compiled in 306ms
+✓ Compiled in 146ms
+✓ Compiled in 125ms
+✓ Finished filesystem cache database compaction in 11.4s
+ GET /rank?format=VLD 200 in 65ms (compile: 49ms, render: 16ms)
+ GET /api/leaderboard?division=VLD&year=2026 200 in 1102ms (compile: 1935µs, render: 1100ms)
+ GET /lectures 200 in 36ms (compile: 17ms, render: 18ms)
+ GET /api/videos 200 in 24ms (compile: 5ms, render: 19ms)
+ GET /api/videos 200 in 87ms (compile: 27ms, render: 60ms)
+ GET /videos 200 in 180ms (compile: 162ms, render: 17ms)
+ GET /api/videos 200 in 17ms (compile: 1976µs, render: 15ms)
+ GET /api/videos 200 in 26ms (compile: 18ms, render: 8ms)
+ GET /videos?view=leaderboard 200 in 16ms (compile: 3ms, render: 13ms)
+ GET /api/leaderboard?division=VPF&year=2026 200 in 1218ms (compile: 11ms, render: 1207ms)
+ GET /api/leaderboard?division=VPF&year=2026 200 in 1231ms (compile: 2ms, render: 1228ms)
+ GET /videos?view=rounds 200 in 14ms (compile: 3ms, render: 12ms)
+ GET /edit 200 in 31ms (compile: 18ms, render: 13ms)
+ GET /debate 200 in 171ms (compile: 155ms, render: 15ms)
+ GET /debate 200 in 895ms (compile: 4ms, render: 890ms)

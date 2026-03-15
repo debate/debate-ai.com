@@ -20,7 +20,7 @@ import type { TopicType, ChampionType } from "@/lib/types/videos"
 type Division = "VPF" | "VLD" | "VCX" | "NDT"
 const VALID_DIVISIONS = new Set<string>(["VPF", "VLD", "VCX", "NDT"])
 
-type SortKey = "rank" | "state" | "bids" | "tocScore" | "debateElo" | "eloRank"
+type SortKey = "rank" | "state" | "bids" | "tocScore" | "debateElo" | "eloRank" | "eloToBid" | "eloTimesBid"
 type SortDir = "asc" | "desc"
 type SortState = { key: SortKey; dir: SortDir } | null
 
@@ -68,6 +68,52 @@ function sortEntries(entries: LeaderboardEntry[], sort: SortState): LeaderboardE
     // String comparison for state
     if (key === "state") {
       return mul * getStringValue(a.state).localeCompare(getStringValue(b.state))
+    }
+
+    // Special handling for eloToBid (calculated field)
+    if (key === "eloToBid") {
+      const aHasElo = hasValue(a.eloRank)
+      const aHasBid = hasValue(a.rank)
+      const bHasElo = hasValue(b.eloRank)
+      const bHasBid = hasValue(b.rank)
+
+      const aValid = aHasElo && aHasBid
+      const bValid = bHasElo && bHasBid
+
+      // Both empty - maintain original order
+      if (!aValid && !bValid) return 0
+      // Only a is empty - put it at the end
+      if (!aValid) return 1
+      // Only b is empty - put it at the end
+      if (!bValid) return -1
+
+      // Both have values - calculate and compare
+      const aVal = getNumericValue(a.eloRank) / getNumericValue(a.rank)
+      const bVal = getNumericValue(b.eloRank) / getNumericValue(b.rank)
+      return mul * (aVal - bVal)
+    }
+
+    // Special handling for eloTimesBid (calculated field)
+    if (key === "eloTimesBid") {
+      const aHasElo = hasValue(a.eloRank)
+      const aHasBid = hasValue(a.rank)
+      const bHasElo = hasValue(b.eloRank)
+      const bHasBid = hasValue(b.rank)
+
+      const aValid = aHasElo && aHasBid
+      const bValid = bHasElo && bHasBid
+
+      // Both empty - maintain original order
+      if (!aValid && !bValid) return 0
+      // Only a is empty - put it at the end
+      if (!aValid) return 1
+      // Only b is empty - put it at the end
+      if (!bValid) return -1
+
+      // Both have values - calculate and compare
+      const aVal = getNumericValue(a.eloRank) * getNumericValue(a.rank)
+      const bVal = getNumericValue(b.eloRank) * getNumericValue(b.rank)
+      return mul * (aVal - bVal)
     }
 
     // Special handling for rank-based columns (rank, eloRank)
@@ -208,7 +254,7 @@ export function LeaderboardPanel({
   }, [year, division])
 
   const [expandedRow, setExpandedRow] = useState<number | null>(null)
-  const [sort, setSort] = useState<SortState>(null)
+  const [sort, setSort] = useState<SortState>({ key: "eloRank", dir: "asc" })
 
   const isControlled = controlledDivision !== undefined
   const showInternalFilters = !isControlled
@@ -230,7 +276,7 @@ export function LeaderboardPanel({
   const gridCols = !showTocColumns
     ? "grid-cols-[40px_1fr_70px] sm:grid-cols-[50px_1fr_80px]"
     : showElo
-      ? "grid-cols-[40px_1fr_32px_40px_50px_50px_50px] sm:grid-cols-[50px_1fr_40px_50px_70px_60px_70px]"
+      ? "grid-cols-[50px_50px_1fr_32px_40px_50px_70px_60px_60px] sm:grid-cols-[70px_60px_1fr_40px_50px_70px_70px_70px_70px]"
       : "grid-cols-[40px_1fr_32px_40px_50px] sm:grid-cols-[50px_1fr_40px_50px_70px]"
 
   const filteredData = sortEntries(data, sort)
@@ -369,9 +415,21 @@ export function LeaderboardPanel({
                   <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
                     {/* Table header */}
                     <div className={`grid ${gridCols} gap-1 sm:gap-2 px-2 sm:px-4 py-3 bg-gray-50 border-b text-sm font-medium text-muted-foreground`}>
-                      <div className="cursor-pointer select-none" onClick={() => toggleSort("rank")}>
-                        Rank <SortIcon col="rank" />
-                      </div>
+                      {showElo && showTocColumns && (
+                        <div className="cursor-pointer select-none" onClick={() => toggleSort("eloRank")}>
+                          Elo Rk <SortIcon col="eloRank" />
+                        </div>
+                      )}
+                      {showElo && showTocColumns && (
+                        <div className="cursor-pointer select-none" onClick={() => toggleSort("rank")}>
+                          Bid Rk <SortIcon col="rank" />
+                        </div>
+                      )}
+                      {(!showElo || !showTocColumns) && (
+                        <div className="cursor-pointer select-none" onClick={() => toggleSort("rank")}>
+                          Bid Rk <SortIcon col="rank" />
+                        </div>
+                      )}
                       <div>Team</div>
                       {showTocColumns && (
                         <>
@@ -382,15 +440,12 @@ export function LeaderboardPanel({
                             Bids <SortIcon col="bids" />
                           </div>
                           <div className="text-right cursor-pointer select-none" onClick={() => toggleSort("tocScore")}>
-                            Score <SortIcon col="tocScore" />
+                            Bid Score <SortIcon col="tocScore" />
                           </div>
                         </>
                       )}
                       {showElo && showTocColumns && (
                         <>
-                          <div className="text-right cursor-pointer select-none" onClick={() => toggleSort("eloRank")}>
-                            Elo Rk <SortIcon col="eloRank" />
-                          </div>
                           <div className="text-right cursor-pointer select-none flex items-center justify-end gap-1" onClick={() => toggleSort("debateElo")}>
                             <Tooltip delayDuration={200}>
                               <TooltipTrigger asChild>
@@ -404,6 +459,38 @@ export function LeaderboardPanel({
                               </TooltipContent>
                             </Tooltip>
                             <SortIcon col="debateElo" />
+                          </div>
+                          <div className="text-right cursor-pointer select-none flex items-center justify-end gap-1" onClick={() => toggleSort("eloToBid")}>
+                            <Tooltip delayDuration={200}>
+                              <TooltipTrigger asChild>
+                                <span className="cursor-help flex items-center gap-1">
+                                  Elo/Bid
+                                  <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="bottom" className="max-w-xs">
+                                <p className="text-xs leading-relaxed">
+                                  Elo/Bid ratio = Elo Rank ÷ Bid Rank. Lower scores indicate strong teams that underperform in key elimination rounds relative to their overall performance. Higher scores suggest an underdog team that won a clutch round.
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                            <SortIcon col="eloToBid" />
+                          </div>
+                          <div className="text-right cursor-pointer select-none flex items-center justify-end gap-1" onClick={() => toggleSort("eloTimesBid")}>
+                            <Tooltip delayDuration={200}>
+                              <TooltipTrigger asChild>
+                                <span className="cursor-help flex items-center gap-1">
+                                  Elo×Bid
+                                  <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="bottom" className="max-w-xs">
+                                <p className="text-xs leading-relaxed">
+                                  Elo×Bid = Elo Rank × Bid Rank. This represents a balanced measure of prelim and elimination performance. Lower scores indicate teams that perform well in both categories.
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                            <SortIcon col="eloTimesBid" />
                           </div>
                         </>
                       )}
@@ -436,7 +523,15 @@ export function LeaderboardPanel({
                               className={`grid ${gridCols} gap-1 sm:gap-2 items-center px-2 sm:px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer`}
                               onClick={() => setExpandedRow(expandedRow === index ? null : index)}
                             >
-                              <div className="font-bold text-sm sm:text-base">{entry.rank}</div>
+                              {showElo && showTocColumns && (
+                                <>
+                                  <div className="font-bold text-sm sm:text-base">{entry.eloRank ?? "--"}</div>
+                                  <div className="text-sm">{entry.rank}</div>
+                                </>
+                              )}
+                              {(!showElo || !showTocColumns) && (
+                                <div className="font-bold text-sm sm:text-base">{entry.rank}</div>
+                              )}
                               <div className="min-w-0">
                                 <div className="font-semibold text-xs sm:text-sm break-words">
                                   {division === "VLD" && entry.students
@@ -462,8 +557,17 @@ export function LeaderboardPanel({
                               )}
                               {showElo && showTocColumns && (
                                 <>
-                                  <div className="text-right text-sm">{entry.eloRank ?? "--"}</div>
                                   <div className="text-right text-sm">{entry.debateElo ?? "--"}</div>
+                                  <div className="text-right text-sm">
+                                    {hasValue(entry.eloRank) && hasValue(entry.rank)
+                                      ? (getNumericValue(entry.eloRank) / getNumericValue(entry.rank)).toFixed(2)
+                                      : "--"}
+                                  </div>
+                                  <div className="text-right text-sm">
+                                    {hasValue(entry.eloRank) && hasValue(entry.rank)
+                                      ? Math.round(getNumericValue(entry.eloRank) * getNumericValue(entry.rank))
+                                      : "--"}
+                                  </div>
                                 </>
                               )}
                               {!showTocColumns && (
