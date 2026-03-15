@@ -128,163 +128,157 @@ export function VideoSearchBar({
 
   return (
     <TooltipProvider>
-      <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
-        {/* Search input */}
-        <div className="relative min-w-0 flex-1 basis-[140px] md:basis-[180px] md:max-w-[280px]">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              onFocus={onSearchFocus}
-              onBlur={onSearchBlur}
-              className="pl-9 pr-8 h-9"
-            />
-            {searchTerm && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={onClearSearch}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">Clear search</TooltipContent>
-              </Tooltip>
-            )}
-            {isSearchFocused && <GlowingEffect />}
+      <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 flex-1 min-w-0">
+        {/* Row 1 (mobile): Search + Season */}
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          {/* Search input */}
+          <div className="relative min-w-0 flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => onSearchChange(e.target.value)}
+                onFocus={onSearchFocus}
+                onBlur={onSearchBlur}
+                className="pl-9 pr-8 h-9"
+              />
+              {searchTerm && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={onClearSearch}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">Clear search</TooltipContent>
+                </Tooltip>
+              )}
+              {isSearchFocused && <GlowingEffect />}
+            </div>
           </div>
-        </div>
 
-        {/* Custom element after search */}
-        {afterSearchElement}
+          {/* Custom element after search */}
+          {afterSearchElement}
 
-        {/* Style dropdown */}
-        {onStyleChange && (
-          <div className="w-[80px] shrink-0">
-            <Select value={selectedStyle ? String(selectedStyle) : "all"} onValueChange={(v) => onStyleChange(v === "all" ? "" : Number(v) as DebateStyle)}>
+          {/* Season dropdown */}
+          <div className="w-[110px] sm:w-[130px] shrink-0">
+            <Select value={selectedYear || "all"} onValueChange={(v) => onYearChange(v === "all" ? "" : v)}>
               <SelectTrigger className="h-9">
-                <SelectValue placeholder="Style" />
+                <SelectValue placeholder="All Seasons" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                {(Object.entries(DEBATE_STYLE_LABELS) as [string, string][]).map(([styleStr, label]) => (
-                  <SelectItem key={styleStr} value={styleStr}>{label}</SelectItem>
+                <SelectItem value="all">All Seasons</SelectItem>
+                {years.map((y) => (
+                  <SelectItem key={y} value={y}>
+                    {Number(y) - 1}-{y}
+                  </SelectItem>
                 ))}
+                <SelectItem value="legacy">Pre-2010</SelectItem>
               </SelectContent>
             </Select>
           </div>
-        )}
-
-
-
-        {/* Season dropdown */}
-        <div className="w-[110px] sm:w-[130px] shrink-0">
-          <Select value={selectedYear || "all"} onValueChange={(v) => onYearChange(v === "all" ? "" : v)}>
-            <SelectTrigger className="h-9">
-              <SelectValue placeholder="All Seasons" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Seasons</SelectItem>
-              {years.map((y) => (
-                <SelectItem key={y} value={y}>
-                  {Number(y) - 1}-{y}
-                </SelectItem>
-              ))}
-              <SelectItem value="legacy">Pre-2010</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
 
-        {/* Icon buttons */}
-        <div className="flex items-center gap-1 shrink-0">
-          {/* <Tooltip>
-            <TooltipTrigger asChild>
-              <Button className="shrink-0" variant="outline" size="icon" onClick={onToggleThumbnails}>
-                {showThumbnails ? <VideoOff className="h-4 w-4" /> : <Video className="h-4 w-4" />}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              {showThumbnails ? "Hide thumbnails" : "Show thumbnails"}
-            </TooltipContent>
-          </Tooltip> */}
-          {/* Sort toggle button */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                className="shrink-0"
-                variant="outline"
-                size="icon"
-                onClick={() => onSortChange(sortOrder === "Recency" ? "Views" : "Recency")}
-              >
-                {sortOrder === "Recency" ? (
-                  <Calendar className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              {sortOrder === "Recency" ? "Sorted by date (click for views)" : "Sorted by views (click for date)"}
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                className={`shrink-0 ${showFavoritesOnly ? "bg-amber-100 text-amber-600 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 border-amber-200 dark:border-amber-800" : ""}`}
-                variant="outline"
-                size="icon"
-                onClick={onToggleFavoritesOnly}
-              >
-                <Star className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              {showFavoritesOnly ? "Show all videos" : "Show favorites only"}
-            </TooltipContent>
-          </Tooltip>
-          {onToggleTopPicks && (
+        {/* Row 2 (mobile): Format selector + Icon buttons + Pagination */}
+        <div className="flex items-center gap-2 sm:contents">
+          {/* Style dropdown */}
+          {onStyleChange && (
+            <div className="w-[80px] shrink-0">
+              <Select value={selectedStyle ? String(selectedStyle) : "all"} onValueChange={(v) => onStyleChange(v === "all" ? "" : Number(v) as DebateStyle)}>
+                <SelectTrigger className="h-9">
+                  <SelectValue placeholder="Style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {(Object.entries(DEBATE_STYLE_LABELS) as [string, string][]).map(([styleStr, label]) => (
+                    <SelectItem key={styleStr} value={styleStr}>{label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* Icon buttons */}
+          <div className="flex items-center gap-1 shrink-0">
+            {/* Sort toggle button */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  className={`shrink-0 ${showTopPicksActive ? "bg-primary/20 ring-2 ring-primary" : ""}`}
+                  className="shrink-0"
                   variant="outline"
                   size="icon"
-                  onClick={onToggleTopPicks}
+                  onClick={() => onSortChange(sortOrder === "Recency" ? "Views" : "Recency")}
                 >
-                  <Image src={IconTopRounds} alt="Top Picks" width={16} height={16} className="h-4 w-4" />
+                  {sortOrder === "Recency" ? (
+                    <Calendar className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                {showTopPicksActive ? "Show all debates" : "Show top picks"}
+                {sortOrder === "Recency" ? "Sorted by date (click for views)" : "Sorted by views (click for date)"}
               </TooltipContent>
             </Tooltip>
-          )}
-          {onToggleRankings && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  className={`shrink-0 ${showRankingsActive ? "bg-primary/20 ring-2 ring-primary" : ""}`}
+                  className={`shrink-0 ${showFavoritesOnly ? "bg-amber-100 text-amber-600 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 border-amber-200 dark:border-amber-800" : ""}`}
                   variant="outline"
                   size="icon"
-                  onClick={onToggleRankings}
+                  onClick={onToggleFavoritesOnly}
                 >
-                  <Trophy className="h-4 w-4" />
+                  <Star className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`} />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                {showRankingsActive ? "Show all debates" : "Show rankings"}
+                {showFavoritesOnly ? "Show all videos" : "Show favorites only"}
               </TooltipContent>
             </Tooltip>
-          )}
-          {extraButtons}
-        </div>
+            {onToggleTopPicks && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className={`shrink-0 ${showTopPicksActive ? "bg-primary/20 ring-2 ring-primary" : ""}`}
+                    variant="outline"
+                    size="icon"
+                    onClick={onToggleTopPicks}
+                  >
+                    <Image src={IconTopRounds} alt="Top Picks" width={16} height={16} className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  {showTopPicksActive ? "Show all debates" : "Show top picks"}
+                </TooltipContent>
+              </Tooltip>
+            )}
+            {onToggleRankings && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className={`shrink-0 ${showRankingsActive ? "bg-primary/20 ring-2 ring-primary" : ""}`}
+                    variant="outline"
+                    size="icon"
+                    onClick={onToggleRankings}
+                  >
+                    <Trophy className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  {showRankingsActive ? "Show all debates" : "Show rankings"}
+                </TooltipContent>
+              </Tooltip>
+            )}
+            {extraButtons}
+          </div>
 
-        {/* Video Total Badge */}
-        {pagination}
+          {/* Video Total Badge */}
+          {pagination}
+        </div>
       </div>
     </TooltipProvider>
   )

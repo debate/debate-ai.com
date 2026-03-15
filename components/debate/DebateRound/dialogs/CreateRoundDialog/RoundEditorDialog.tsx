@@ -118,7 +118,7 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
                     id="visibility-toggle"
                     checked={form.isPrivate}
                     onCheckedChange={form.setIsPrivate}
-                    className="data-[state=checked]:bg-primary"
+                    className="data-[state=checked]:bg-primary !h-[1.15rem] !w-8"
                   />
                 </div>
               </div>

@@ -157,6 +157,8 @@ export function CategoryDock() {
   const categoryState = useCategoryDockState()
   const { activeVideoId, activeVideoTitle, isMinimized, isPlaying, setMinimized, setIsPlaying } = useVideoPlayerStore()
 
+  const MOBILE_HIDDEN_HREFS = ['/lectures']
+
   const allItems = [
     ...NAV_ITEMS.filter(({ href }) => {
       if (href === '/rank') {
@@ -219,9 +221,10 @@ export function CategoryDock() {
     }
     : null
 
-  const mobileItems = playingItem
+  const mobileItems = (playingItem
     ? [...allItems, playingItem]
     : allItems
+  ).filter(({ key }) => !MOBILE_HIDDEN_HREFS.includes(key))
 
   return (
     <>
@@ -237,7 +240,7 @@ export function CategoryDock() {
       {/* Mobile: fixed bottom bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
         <DropdownMenu>
-          <Dock direction="middle" className="h-[52px] shrink-0 !mt-0 mx-auto w-max mb-2">
+          <Dock direction="middle" className="h-[52px] shrink-0 !mt-0 mx-auto w-max mb-2 !gap-1 !p-1">
             {mobileItems.map(({ key, label, icon, active, onClick, ...rest }) => {
               const isPlayingIndicator = (rest as any).isPlayingIndicator
               return (

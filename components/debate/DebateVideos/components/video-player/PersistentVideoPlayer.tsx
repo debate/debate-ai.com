@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useRef, useState, useCallback } from "react"
+import React, { useEffect, useRef, useState, useCallback } from "react" // useState kept for PersistentVideoPlayer mounted state
 import { createPortal } from "react-dom"
 import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "@/lib/state/videoPlayerStore"
 import { useDragResize } from "./useDragResize"
@@ -16,16 +16,19 @@ function VideoPlayerUI() {
     activeVideoMeta,
     isMinimized,
     isPlaying,
+    isSlowMode,
     queue,
     clearActiveVideo,
     setMinimized,
     setIsPlaying,
+    setSlowMode,
     playNextInQueue,
   } = useVideoPlayerStore()
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const [isSlowMode, setIsSlowMode] = useState(false)
+  // Track whether we still need to apply slow mode for the current video load
+  const pendingSlowMode = useRef(false)
 
   const { position, isDragging, isResizing, playerWidth, startDrag, startResize } = useDragResize(containerRef)
 
@@ -33,6 +36,13 @@ function VideoPlayerUI() {
     iframeRef.current = el
     videoPlayerIframeRef.current = el
   }, [])
+
+  // When a new video opens, mark that slow mode needs to be applied on first play
+  useEffect(() => {
+    if (activeVideoId && isSlowMode) {
+      pendingSlowMode.current = true
+    }
+  }, [activeVideoId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Listen for YouTube IFrame API state change events
   useEffect(() => {
@@ -43,6 +53,11 @@ function VideoPlayerUI() {
         if (data.event === "onStateChange") {
           if (data.info === 1 || data.info === 3) {
             setIsPlaying(true)
+            // Apply slow mode on the first playing event after a new video loads
+            if (pendingSlowMode.current) {
+              pendingSlowMode.current = false
+              sendYouTubeCommand("setPlaybackRate", [0.65])
+            }
           } else if (data.info === 2 || data.info === 0) {
             setIsPlaying(false)
           }
@@ -62,9 +77,9 @@ function VideoPlayerUI() {
 
   const handleToggleSlowMode = useCallback(() => {
     const next = !isSlowMode
-    setIsSlowMode(next)
+    setSlowMode(next)
     sendYouTubeCommand("setPlaybackRate", [next ? 0.65 : 1])
-  }, [isSlowMode])
+  }, [isSlowMode, setSlowMode])
 
   if (!activeVideoId) return null
 

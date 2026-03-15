@@ -34,7 +34,7 @@ export function SpectatorsSection({ spectatorEmails, setSpectatorEmails }: Spect
             <div className="flex items-center gap-2">
                 <h3 className="text-sm font-semibold flex items-center gap-1.5">
                     <Users className="h-4 w-4" />
-                    Spectators {spectatorEmails.length === 0 && <span className="text-muted-foreground font-normal">(none)</span>}
+                    Spectators
                 </h3>
                 <div className="flex gap-1">
                     <Button
