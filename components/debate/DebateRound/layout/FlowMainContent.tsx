@@ -256,7 +256,41 @@ export function FlowMainContent({
     )
   }
 
-  // Spreadsheet view
+  // Spreadsheet view — on mobile, add a SpeechHeaderBar above the spreadsheet
+  if (isMobile && leftSpeech) {
+    return (
+      <div className="flex flex-col h-full bg-[var(--background)] rounded-[var(--border-radius)]">
+        <div className="border-b border-border bg-muted/50">
+          <SpeechHeaderBar
+            speechName={leftSpeech}
+            controlledTime={speechTimerStates?.[leftSpeech]?.time}
+            controlledTimerRunState={speechTimerStates?.[leftSpeech]?.state}
+            onControlledTimeChange={(t) => onSpeechTimerStateChange?.(leftSpeech, { time: t })}
+            onControlledTimerRunStateChange={(s) => onSpeechTimerStateChange?.(leftSpeech, { state: s })}
+            canNavigatePrev={canNavigatePrev}
+            canNavigateNext={canNavigateNext}
+            onNavigatePrev={onNavigatePrev}
+            onNavigateNext={onNavigateNext}
+            onMobileMenuClick={onMobileMenuClick}
+          />
+        </div>
+        <div className="flex-1 overflow-hidden">
+          <FlowSpreadsheet
+            flow={currentFlow}
+            onUpdate={onUpdate || ((_updates: Partial<Flow>) => { })}
+            onOpenSpeechPanel={onOpenSpeechPanel}
+            onGridReady={(api) => {
+              if (gridApiRef) {
+                // @ts-ignore - gridApiRef is a mutable ref
+                gridApiRef.current = api
+              }
+            }}
+          />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full h-full bg-[var(--background)] rounded-[var(--border-radius)] box-border overflow-hidden">
       <FlowSpreadsheet
