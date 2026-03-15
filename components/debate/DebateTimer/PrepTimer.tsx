@@ -280,7 +280,7 @@ export function PrepTimer({
           size="icon"
           className={cn(
             compact ? "h-5 w-5" : "h-8 w-8",
-            hideControlsByDefault && "opacity-0 group-hover/timer:opacity-100 transition-opacity"
+            hideControlsByDefault && "sm:opacity-0 sm:group-hover/timer:opacity-100 transition-opacity"
           )}
           onClick={reset}
         >
@@ -328,7 +328,7 @@ export function PrepTimer({
           size="icon"
           className={cn(
             compact ? "h-5 w-5" : "h-8 w-8",
-            hideControlsByDefault && "opacity-0 group-hover/timer:opacity-100 transition-opacity"
+            hideControlsByDefault && "sm:opacity-0 sm:group-hover/timer:opacity-100 transition-opacity"
           )}
           onClick={toggleTimer}
           onMouseDown={() => playSoundEffect("popDown")}
