@@ -413,6 +413,8 @@ export function LeaderboardPanel({
                   </div>
                 ) : filteredData.length === 0 ? null : (
                   <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+                    <div className="overflow-x-auto">
+                    <div className="min-w-[480px]">
                     {/* Table header */}
                     <div className={`grid ${gridCols} gap-1 sm:gap-2 px-2 sm:px-4 py-3 bg-gray-50 border-b text-sm font-medium text-muted-foreground`}>
                       {showElo && showTocColumns && (
@@ -533,7 +535,7 @@ export function LeaderboardPanel({
                                 <div className="font-bold text-sm sm:text-base">{entry.rank}</div>
                               )}
                               <div className="min-w-0">
-                                <div className="font-semibold text-xs sm:text-sm break-words">
+                                <div className="font-semibold text-xs sm:text-sm truncate">
                                   {division === "VLD" && entry.students
                                     ? `${entry.teamName} ${entry.students.split(/\s+/).filter(Boolean).map(w => w[0].toUpperCase()).join("")}`
                                     : entry.teamName}
@@ -625,6 +627,8 @@ export function LeaderboardPanel({
                         </Fragment>
                       )
                     })}
+                    </div>
+                    </div>
                   </div>
                 )}
               </>
