@@ -15,7 +15,7 @@ import { IconBook } from "@/components/icons"
 import { DictionaryPanel } from "./DictionaryPanel"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import lectureCategories from "@/lib/debate-data/debate-lectures-categories.json"
+import categoryDescriptions from "@/lib/debate-data/debate-lectures-category-descriptions.json"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
@@ -98,11 +98,16 @@ export function LecturesPage() {
 
     // Apply category filter if one is selected
     if (selectedCategory !== "all") {
-      const categoryData = lectureCategories.categories[selectedCategory as keyof typeof lectureCategories.categories]
-      if (categoryData) {
-        const categoryVideoIds = new Set(categoryData.video_ids)
-        filtered = filtered.filter((video) => categoryVideoIds.has(video[0]))
-      }
+      // Filter by category label at index 6
+      filtered = filtered.filter((video) => {
+        const videoCategory = video[6];
+        if (typeof videoCategory === 'string') {
+          // Match by label directly or by normalized key
+          const normalizedKey = videoCategory.toLowerCase().replace(/\s+/g, '_').replace(/[&/]/g, '_');
+          return videoCategory === selectedCategory || normalizedKey === selectedCategory;
+        }
+        return false;
+      });
     }
 
     actions.setFilteredVideos(filtered)

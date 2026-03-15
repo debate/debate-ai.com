@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import lectureCategories from '@/lib/debate-data/debate-lectures-categories.json';
+import categoryDescriptions from '@/lib/debate-data/debate-lectures-category-descriptions.json';
 
 interface LectureCategoryGalleryProps {
   onCategorySelect?: (categoryKey: string) => void;
@@ -10,25 +10,25 @@ interface LectureCategoryGalleryProps {
   videosData?: any[]; // For getting most viewed video per category
 }
 
-// Map category keys to gradient colors
+// Map category labels to gradient colors
 const CATEGORY_GRADIENTS: Record<string, string> = {
-  affirmative_strategy: "from-blue-500 via-cyan-500 to-teal-500",
-  negative_strategy: "from-red-500 via-rose-500 to-pink-500",
-  kritik_critical_theory: "from-purple-500 via-violet-500 to-fuchsia-500",
-  counterplans_and_theory: "from-orange-500 via-amber-500 to-yellow-500",
-  topicality_and_framework: "from-indigo-500 via-purple-500 to-pink-500",
-  disadvantages: "from-cyan-500 via-blue-500 to-indigo-500",
-  speaking_and_delivery: "from-green-400 via-emerald-500 to-teal-500",
-  research_and_flowing: "from-amber-500 via-orange-500 to-red-500",
-  topic_lectures: "from-purple-500 via-violet-500 to-fuchsia-500",
-  demo_debates: "from-indigo-500 via-blue-500 to-cyan-500",
-  judge_and_tournament_skills: "from-pink-500 via-rose-500 to-red-500",
-  impact_calculus_and_evidence: "from-yellow-500 via-orange-500 to-red-500",
-  philosophy_and_ir_theory: "from-violet-500 via-purple-500 to-indigo-500",
-  public_forum: "from-teal-500 via-cyan-500 to-blue-500",
-  documentaries_and_culture: "from-fuchsia-500 via-pink-500 to-rose-500",
-  camp_and_coaching_advice: "from-emerald-500 via-green-500 to-teal-500",
-  novice_and_introductory: "from-sky-500 via-blue-500 to-indigo-500",
+  "Affirmative Strategy": "from-blue-500 via-cyan-500 to-teal-500",
+  "Negative Strategy": "from-red-500 via-rose-500 to-pink-500",
+  "Kritik / Critical Theory": "from-purple-500 via-violet-500 to-fuchsia-500",
+  "Counterplans & Theory": "from-orange-500 via-amber-500 to-yellow-500",
+  "Topicality & Framework": "from-indigo-500 via-purple-500 to-pink-500",
+  "Disadvantages": "from-cyan-500 via-blue-500 to-indigo-500",
+  "Speaking & Delivery": "from-green-400 via-emerald-500 to-teal-500",
+  "Research & Flowing": "from-amber-500 via-orange-500 to-red-500",
+  "Topic Lectures": "from-purple-500 via-violet-500 to-fuchsia-500",
+  "Demo Debates": "from-indigo-500 via-blue-500 to-cyan-500",
+  "Judge & Tournament Skills": "from-pink-500 via-rose-500 to-red-500",
+  "Impact Calculus & Evidence": "from-yellow-500 via-orange-500 to-red-500",
+  "Philosophy & IR Theory": "from-violet-500 via-purple-500 to-indigo-500",
+  "Public Forum": "from-teal-500 via-cyan-500 to-blue-500",
+  "Documentaries & Culture": "from-fuchsia-500 via-pink-500 to-rose-500",
+  "Camp & Coaching Advice": "from-emerald-500 via-green-500 to-teal-500",
+  "Novice & Introductory": "from-sky-500 via-blue-500 to-indigo-500",
 };
 
 export function LectureCategoryGallery({ onCategorySelect, selectedCategory, videosData }: LectureCategoryGalleryProps) {
@@ -40,35 +40,50 @@ export function LectureCategoryGallery({ onCategorySelect, selectedCategory, vid
 
   // Convert categories to card format
   const cards = useMemo(() => {
+    if (!videosData || videosData.length === 0) return [];
+
     const getVideoViews = (videoId: string): number => {
-      if (!videosData) return 0;
       const video = videosData.find((v) => v[0] === videoId);
       return video ? (video[7] || 0) : 0;
     };
 
-    return Object.entries(lectureCategories.categories).map(([key, category]) => {
-      // Find most viewed video for thumbnail
-      let maxViews = 0;
-      let mostViewedVideoId = category.video_ids[0];
+    // Extract unique categories from video data (index 6)
+    const categoryMap = new Map<string, { videos: any[], maxViews: number, mostViewedId: string }>();
 
-      category.video_ids.forEach((videoId) => {
-        const views = getVideoViews(videoId);
-        if (views > maxViews) {
-          maxViews = views;
-          mostViewedVideoId = videoId;
+    videosData.forEach((video) => {
+      const categoryLabel = video[6];
+      if (typeof categoryLabel === 'string') {
+        if (!categoryMap.has(categoryLabel)) {
+          categoryMap.set(categoryLabel, { videos: [], maxViews: 0, mostViewedId: video[0] });
         }
-      });
+        const catData = categoryMap.get(categoryLabel)!;
+        catData.videos.push(video);
 
-      return {
-        id: key,
-        title: category.label,
-        description: category.description,
-        videoCount: category.video_ids.length,
-        image: `https://img.youtube.com/vi/${mostViewedVideoId}/maxresdefault.jpg`,
-        gradient: CATEGORY_GRADIENTS[key] || "from-gray-500 via-gray-600 to-gray-700",
-        maxViews,
-      };
-    }).sort((a, b) => b.maxViews - a.maxViews); // Sort by popularity
+        const views = video[7] || 0;
+        if (views > catData.maxViews) {
+          catData.maxViews = views;
+          catData.mostViewedId = video[0];
+        }
+      }
+    });
+
+    // Build cards from extracted categories
+    return Array.from(categoryMap.entries())
+      .map(([label, data]) => {
+        const description = categoryDescriptions.categories[label]?.description || "Debate lecture videos";
+        const normalizedKey = label.toLowerCase().replace(/\s+/g, '_').replace(/[&/]/g, '_');
+
+        return {
+          id: normalizedKey,
+          title: label,
+          description,
+          videoCount: data.videos.length,
+          image: `https://img.youtube.com/vi/${data.mostViewedId}/maxresdefault.jpg`,
+          gradient: CATEGORY_GRADIENTS[label] || "from-gray-500 via-gray-600 to-gray-700",
+          maxViews: data.maxViews,
+        };
+      })
+      .sort((a, b) => b.maxViews - a.maxViews); // Sort by popularity
   }, [videosData]);
 
   useEffect(() => {

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import lectureCategories from "@/lib/debate-data/debate-lectures-categories.json";
+import categoryDescriptions from "@/lib/debate-data/debate-lectures-category-descriptions.json";
 
 interface LectureExpandCardsProps {
   onCategorySelect?: (categoryKey: string) => void;
@@ -16,26 +16,41 @@ export function LectureExpandCards({
   videosData,
 }: LectureExpandCardsProps) {
   const categories = useMemo(() => {
+    if (!videosData || videosData.length === 0) return [];
+
     const getVideoViews = (videoId: string): number => {
-      if (!videosData) return 0;
       const video = videosData.find((v) => v[0] === videoId);
       return video ? (video[7] || 0) : 0;
     };
 
-    // Get all video IDs from all categories to find most viewed overall
-    const allVideoIds: string[] = [];
-    Object.values(lectureCategories.categories).forEach(cat => {
-      allVideoIds.push(...cat.video_ids);
+    // Extract unique categories from video data (index 6)
+    const categoryMap = new Map<string, { videos: any[], maxViews: number, mostViewedId: string }>();
+
+    videosData.forEach((video) => {
+      const categoryLabel = video[6];
+      if (typeof categoryLabel === 'string') {
+        if (!categoryMap.has(categoryLabel)) {
+          categoryMap.set(categoryLabel, { videos: [], maxViews: 0, mostViewedId: video[0] });
+        }
+        const catData = categoryMap.get(categoryLabel)!;
+        catData.videos.push(video);
+
+        const views = video[7] || 0;
+        if (views > catData.maxViews) {
+          catData.maxViews = views;
+          catData.mostViewedId = video[0];
+        }
+      }
     });
 
-    // Find most viewed video across all videos
+    // Find overall most viewed video for "All Videos" category
     let overallMaxViews = 0;
-    let overallMostViewedVideoId = allVideoIds[0] || "yaaAW-wtVKE";
-    allVideoIds.forEach((videoId) => {
-      const views = getVideoViews(videoId);
+    let overallMostViewedVideoId = videosData[0]?.[0] || "yaaAW-wtVKE";
+    videosData.forEach((video) => {
+      const views = video[7] || 0;
       if (views > overallMaxViews) {
         overallMaxViews = views;
-        overallMostViewedVideoId = videoId;
+        overallMostViewedVideoId = video[0];
       }
     });
 
@@ -44,32 +59,24 @@ export function LectureExpandCards({
       key: "all",
       label: "All Videos",
       description: "Browse all debate lecture videos across every category",
-      videoCount: videosData?.length || 0,
+      videoCount: videosData.length,
       thumbnail: `https://img.youtube.com/vi/${overallMostViewedVideoId}/maxresdefault.jpg`,
       maxViews: overallMaxViews,
     };
 
-    const categoriesArray = Object.entries(lectureCategories.categories)
-      .map(([key, category]) => {
-        // Find most viewed video for thumbnail
-        let maxViews = 0;
-        let mostViewedVideoId = category.video_ids[0];
-
-        category.video_ids.forEach((videoId) => {
-          const views = getVideoViews(videoId);
-          if (views > maxViews) {
-            maxViews = views;
-            mostViewedVideoId = videoId;
-          }
-        });
+    // Build categories array from the extracted data
+    const categoriesArray = Array.from(categoryMap.entries())
+      .map(([label, data]) => {
+        // Get description from the descriptions file
+        const description = categoryDescriptions.categories[label]?.description || "Debate lecture videos";
 
         return {
-          key,
-          label: category.label,
-          description: category.description,
-          videoCount: category.video_ids.length,
-          thumbnail: `https://img.youtube.com/vi/${mostViewedVideoId}/maxresdefault.jpg`,
-          maxViews,
+          key: label.toLowerCase().replace(/\s+/g, '_').replace(/[&/]/g, '_'),
+          label,
+          description,
+          videoCount: data.videos.length,
+          thumbnail: `https://img.youtube.com/vi/${data.mostViewedId}/maxresdefault.jpg`,
+          maxViews: data.maxViews,
         };
       })
       .sort((a, b) => b.maxViews - a.maxViews); // Sort by popularity
