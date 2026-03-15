@@ -280,6 +280,7 @@ export function CategoryDock() {
               </DockItem>
             </DropdownMenuTrigger>
           </Dock>
+          </div>
           <SettingsMenu side="top" />
         </DropdownMenu>
       </div>
