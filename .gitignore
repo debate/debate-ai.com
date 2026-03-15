@@ -37,3 +37,4 @@ public/service-worker.js
 .claude
 pnpm-lock.yaml
 bun.lock
+open-when-ready.log

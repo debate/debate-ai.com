@@ -45,12 +45,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   queue: [],
   setActiveVideo: (videoId, title, meta) => set({ activeVideoId: videoId, activeVideoTitle: title, activeVideoMeta: meta ?? null, isMinimized: false, isPlaying: true }),
   clearActiveVideo: () => {
-    const { queue } = get()
-    if (queue.length > 0) {
-      get().playNextInQueue()
-    } else {
-      set({ activeVideoId: null, activeVideoTitle: null, activeVideoMeta: null, isMinimized: false, isPlaying: false })
-    }
+    set({ activeVideoId: null, activeVideoTitle: null, activeVideoMeta: null, isMinimized: false, isPlaying: false })
   },
   setMinimized: (minimized) => set({ isMinimized: minimized }),
   setIsPlaying: (playing) => set({ isPlaying: playing }),

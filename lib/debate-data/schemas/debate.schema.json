@@ -207,6 +207,45 @@
                   "null"
                 ],
                 "description": "The negative team, parsed from title."
+              },
+              {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The winner of the debate: null for unknown, true for affirmative win, false for negative win."
+              },
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The judge decision in the format '2-1 (Bricker, Kate, *Phillips)' where * indicates the dissenting judge."
+              },
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The 1AC (First Affirmative Constructive) argument label or case type."
+              },
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The 2NR (Second Negative Rebuttal) argument label or strategy."
+              },
+              {
+                "type": "boolean",
+                "description": "Whether this video is one of the top 100 greatest debates of all time."
+              },
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL link to speech documents for this round."
               }
             ],
             "additionalItems": false

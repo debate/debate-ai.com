@@ -16,6 +16,14 @@ import {
 } from "@/components/ui/dialog"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from "recharts"
 import type { ChartConfig } from "@/components/ui/chart"
@@ -53,13 +61,6 @@ interface YouTubeStats {
   }>
 }
 
-const debateStyleLabels: Record<string, string> = {
-  "1": "Policy",
-  "2": "PF",
-  "3": "LD",
-  "4": "College",
-}
-
 const chartConfig = {
   views: {
     label: "Views",
@@ -78,19 +79,13 @@ const chartConfig = {
 export function YouTubeStatsModal({ stats }: { stats: YouTubeStats }) {
   // Prepare data for charts
   const topChannelsData = stats.byChannel
-    .slice(0, 10)
+    .slice(0, 20)
     .map((ch) => ({
       name: ch.channel,
       views: ch.totalViews,
       videos: ch.videoCount,
       avgViews: ch.avgViewsPerVideo,
     }))
-
-  const debateStyleData = stats.byDebateStyle.map((style) => ({
-    name: debateStyleLabels[style.debateStyle] || `Style ${style.debateStyle}`,
-    views: style.totalViews,
-    videos: style.videoCount,
-  }))
 
   // Filter years with significant data and recent years (2013-2025, excluding incomplete current year)
   const recentYears = (stats.byYear || [])
@@ -154,51 +149,36 @@ export function YouTubeStatsModal({ stats }: { stats: YouTubeStats }) {
           </div>
 
           <Tabs defaultValue="channels" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="channels">Top Channels</TabsTrigger>
-              <TabsTrigger value="styles">By Style</TabsTrigger>
               <TabsTrigger value="rounds">Elim Rounds</TabsTrigger>
               <TabsTrigger value="years">By Year</TabsTrigger>
             </TabsList>
 
             <TabsContent value="channels" className="space-y-2">
-              <div>
-                <h3 className="text-sm font-medium mb-3">Views by Top Channels</h3>
-                <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                  <BarChart data={topChannelsData} margin={{ top: 5, right: 10, left: 10, bottom: 80 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="name"
-                      angle={-45}
-                      textAnchor="end"
-                      height={100}
-                      tick={{ fontSize: 8 }}
-                      interval={0}
-                    />
-                    <YAxis tick={{ fontSize: 9 }} width={70} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="views" fill="var(--color-views)" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ChartContainer>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-3">Avg Views per Video by Top Channels</h3>
-                <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                  <BarChart data={topChannelsData} margin={{ top: 5, right: 10, left: 10, bottom: 80 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="name"
-                      angle={-45}
-                      textAnchor="end"
-                      height={100}
-                      tick={{ fontSize: 8 }}
-                      interval={0}
-                    />
-                    <YAxis tick={{ fontSize: 9 }} width={70} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="avgViews" fill="var(--color-avgViews)" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ChartContainer>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[50px]">#</TableHead>
+                      <TableHead>Channel</TableHead>
+                      <TableHead className="text-right">Total Views</TableHead>
+                      <TableHead className="text-right">Videos</TableHead>
+                      <TableHead className="text-right">Avg Views/Video</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {topChannelsData.map((channel, index) => (
+                      <TableRow key={channel.name}>
+                        <TableCell className="font-medium">{index + 1}</TableCell>
+                        <TableCell>{channel.name}</TableCell>
+                        <TableCell className="text-right">{channel.views.toLocaleString()}</TableCell>
+                        <TableCell className="text-right">{channel.videos.toLocaleString()}</TableCell>
+                        <TableCell className="text-right">{channel.avgViews.toLocaleString()}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </TabsContent>
 
@@ -240,35 +220,6 @@ export function YouTubeStatsModal({ stats }: { stats: YouTubeStats }) {
                     <Bar dataKey="videos" fill="var(--color-videos)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ChartContainer>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="styles" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h3 className="text-sm font-medium mb-3">Views by Debate Style</h3>
-                  <ChartContainer config={chartConfig} className="h-[250px] w-full">
-                    <BarChart data={debateStyleData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                      <YAxis tick={{ fontSize: 9 }} />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Bar dataKey="views" fill="var(--color-views)" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ChartContainer>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium mb-3">Videos by Debate Style</h3>
-                  <ChartContainer config={chartConfig} className="h-[250px] w-full">
-                    <BarChart data={debateStyleData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                      <YAxis tick={{ fontSize: 9 }} />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Bar dataKey="videos" fill="var(--color-videos)" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ChartContainer>
-                </div>
               </div>
             </TabsContent>
 

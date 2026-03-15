@@ -74,28 +74,71 @@ interface HideConfirmDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onConfirm: () => void
+  videoId: string
+  title: string
 }
 
-export function HideConfirmDialog({ open, onOpenChange, onConfirm }: HideConfirmDialogProps) {
+export function HideConfirmDialog({ open, onOpenChange, onConfirm, videoId, title }: HideConfirmDialogProps) {
+  const [issueText, setIssueText] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleHide = async () => {
+    setIsSubmitting(true)
+
+    // Submit issue to API if there's text
+    if (issueText.trim()) {
+      try {
+        await fetch('/api/video-issues', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            videoId,
+            title,
+            issue: issueText.trim(),
+            timestamp: new Date().toISOString()
+          })
+        })
+      } catch (error) {
+        console.error('Failed to submit issue:', error)
+      }
+    }
+
+    onConfirm()
+    onOpenChange(false)
+    setIssueText("")
+    setIsSubmitting(false)
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Hide this video?</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground mb-3">
           This video will be hidden from the list. You can still find it by searching, and unhide it from the menu.
         </p>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">
+            What's wrong with this video? (optional)
+          </label>
+          <Textarea
+            placeholder="Wrong category, broken link, poor quality, inappropriate content..."
+            value={issueText}
+            onChange={(e) => setIssueText(e.target.value)}
+            className="min-h-[80px]"
+          />
+        </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+            Cancel
+          </Button>
           <Button
             variant="destructive"
-            onClick={() => {
-              onConfirm()
-              onOpenChange(false)
-            }}
+            onClick={handleHide}
+            disabled={isSubmitting}
           >
-            Hide
+            {isSubmitting ? "Hiding..." : "Hide"}
           </Button>
         </DialogFooter>
       </DialogContent>

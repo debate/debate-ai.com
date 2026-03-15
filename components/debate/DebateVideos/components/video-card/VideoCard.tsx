@@ -3,22 +3,15 @@ import { GlowingEffect } from "@/components/ui/glowing-effect"
 
 import { Card, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import React, { useState } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Image from "next/image"
-import { Play, Star, Calendar, Eye, Volume2, MoreHorizontal, ListVideo, Flag, EyeOff, Eye as EyeIcon, ExternalLink } from "lucide-react"
+import { Play, Star, Calendar, Eye, Volume2, ListVideo, EyeOff, Eye as EyeIcon, ExternalLink, Scale } from "lucide-react"
 import type { TopicType } from "@/lib/types/videos"
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
-import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor, getYearTopic } from "./videoCardUtils"
-import { ReportDialog, HideConfirmDialog } from "./VideoCardDialogs"
+import { STYLE_COLORS, DEBATE_STYLE_LABELS, TOURNAMENT_COLORS, getRoundBadgeColor, getYearTopic } from "./videoCardUtils"
+import { HideConfirmDialog } from "./VideoCardDialogs"
 import type { VideoType } from "@/lib/types/videos"
 
 export interface VideoCardProps {
@@ -35,7 +28,7 @@ export interface VideoCardProps {
 }
 
 export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, isHidden, isTopPick }: VideoCardProps) {
-  const [videoId, title, date, channel, viewCount, description, style, tournament, roundLevel, affTeam, negTeam] = video
+  const [videoId, title, date, channel, viewCount, description, style, tournament, roundLevel, affTeam, negTeam, affWin, judgeDecision, arg1AC, arg2NR] = video
   const { activeVideoId, setActiveVideo, addToQueue, queue } = useVideoPlayerStore()
   const isPlaying = activeVideoId === videoId
   const isInQueue = queue.some((q) => q.videoId === videoId)
@@ -43,8 +36,68 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
   const year = new Date(date).getFullYear();
   const videoMeta = { style, tournament, year, affTeam, negTeam }
 
-  const [showReportDialog, setShowReportDialog] = useState(false)
   const [showHideConfirm, setShowHideConfirm] = useState(false)
+  const [thumbnailFailed, setThumbnailFailed] = useState(false)
+  const thumbnailContainerRef = useRef<HTMLDivElement>(null)
+
+  // Mutation observer to detect failed image loads
+  useEffect(() => {
+    if (!showThumbnails || !thumbnailContainerRef.current) return
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
+          const target = mutation.target as HTMLImageElement
+          // Check if image has error state or broken src
+          if (target.tagName === 'IMG') {
+            const checkImage = () => {
+              if (target.complete && target.naturalHeight === 0) {
+                setThumbnailFailed(true)
+              }
+            }
+            checkImage()
+            target.addEventListener('error', () => setThumbnailFailed(true), { once: true })
+          }
+        }
+      })
+    })
+
+    // Also observe child additions to catch Next.js Image component loading
+    const imgObserver = new MutationObserver(() => {
+      const imgs = thumbnailContainerRef.current?.querySelectorAll('img')
+      imgs?.forEach((img) => {
+        if (img.complete && img.naturalHeight === 0) {
+          setThumbnailFailed(true)
+        }
+        img.addEventListener('error', () => setThumbnailFailed(true), { once: true })
+      })
+    })
+
+    observer.observe(thumbnailContainerRef.current, {
+      attributes: true,
+      subtree: true,
+      attributeFilter: ['src']
+    })
+
+    imgObserver.observe(thumbnailContainerRef.current, {
+      childList: true,
+      subtree: true
+    })
+
+    // Initial check for images that might already be loaded
+    const imgs = thumbnailContainerRef.current.querySelectorAll('img')
+    imgs.forEach((img) => {
+      if (img.complete && img.naturalHeight === 0) {
+        setThumbnailFailed(true)
+      }
+      img.addEventListener('error', () => setThumbnailFailed(true), { once: true })
+    })
+
+    return () => {
+      observer.disconnect()
+      imgObserver.disconnect()
+    }
+  }, [showThumbnails])
 
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
 
@@ -54,62 +107,6 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
     </span>
   ) : null
 
-  const actionsDropdown = (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
-          className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="More options"
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuItem
-          onClick={() => onToggleFavorite(videoId)}
-          className={`gap-2 ${isFavorite ? "text-amber-600 dark:text-amber-400" : ""}`}
-        >
-          <Star className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
-          {isFavorite ? "Remove from favorites" : "Save to favorites"}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => addToQueue(videoId, title, videoMeta)}
-          disabled={isInQueue}
-          className="gap-2"
-        >
-          <ListVideo className="h-4 w-4" />
-          {isInQueue ? "In queue" : "Add to queue"}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => setShowReportDialog(true)}
-          className="gap-2 text-orange-600 dark:text-orange-400"
-        >
-          <Flag className="h-4 w-4" />
-          Report issue
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        {isHidden ? (
-          <DropdownMenuItem
-            onClick={() => onUnhideVideo(videoId)}
-            className="gap-2"
-          >
-            <EyeIcon className="h-4 w-4" />
-            Unhide
-          </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem
-            onClick={() => setShowHideConfirm(true)}
-            className="gap-2 text-destructive"
-          >
-            <EyeOff className="h-4 w-4" />
-            Hide video
-          </DropdownMenuItem>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
 
   const hasTeams = affTeam || negTeam;
   const hasFullMetadata = Boolean(tournament && affTeam && negTeam);
@@ -140,6 +137,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
           )}
           {showThumbnails && (
             <div
+              ref={thumbnailContainerRef}
               className="relative w-full pt-[56.25%] bg-muted cursor-pointer"
               onClick={() => !isPlaying && setActiveVideo(videoId, title, videoMeta)}
             >
@@ -147,7 +145,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                 src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
                 alt={title}
                 fill
-                className="rounded object-cover"
+                className={`rounded object-cover transition-opacity ${thumbnailFailed ? 'opacity-0' : 'opacity-100'}`}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               />
 
@@ -155,43 +153,78 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
               <div className="absolute inset-0 flex items-center justify-center p-3">
                 <div className="max-w-[90%]">
                   {hasFullMetadata ? (
-                    <div className="flex flex-wrap items-center justify-center gap-2">
-                      {isTopPick && (
-                        <span className="inline-flex items-center px-2 py-1 rounded text-base backdrop-blur-md bg-amber-500/80 border border-amber-300/90 shadow-lg">
-                          🎖️
-                        </span>
-                      )}
-                      {style && DEBATE_STYLE_LABELS[style] && (
-                        <span className={`inline-flex items-center px-2 py-1 rounded text-sm [font-variant:small-caps] uppercase tracking-wide backdrop-blur-md ${STYLE_COLORS[style] ?? "bg-muted text-muted-foreground"}`}>
-                          {DEBATE_STYLE_LABELS[style]}
-                        </span>
-                      )}
-                      {cleanTournament && (
-                        <span className="text-base font-bold text-purple-300 backdrop-blur-md bg-purple-900/80 border border-purple-400/90 px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg">
-                          {cleanTournament}
-                        </span>
-                      )}
-                      {year && (
-                        <span className="text-base font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
-                          '{String(year).slice(-2)}
-                        </span>
-                      )}
-                      {roundLevel && !/\d/.test(roundLevel) && (
-                        <>
-                          {(roundLevel.toLowerCase().trim() === "finals" || roundLevel.toLowerCase().trim() === "final") && <span className="text-base">🏆</span>}
-                          <span className={cn(
-                            "text-sm font-semibold px-2 py-1 rounded border backdrop-blur-md shadow-lg",
-                            getRoundBadgeColor(roundLevel)
-                          )}>
-                            {roundLevel}
+                    <div className="flex flex-col items-center justify-center gap-1.5">
+                      {/* First row: Tournament, Year, Round Level */}
+                      <div className="flex flex-wrap items-center justify-center gap-1.5">
+                        {isTopPick && (
+                          <span className="inline-flex items-center px-2 py-1 rounded text-base backdrop-blur-md bg-amber-500/80 border border-amber-300/90 shadow-lg">
+                            🎖️
                           </span>
-                        </>
-                      )}
+                        )}
+                        {cleanTournament && (
+                          <span className={cn(
+                            "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
+                            style && TOURNAMENT_COLORS[style] ? TOURNAMENT_COLORS[style] : "text-purple-300 bg-purple-900/80 border-purple-400/90"
+                          )}>
+                            {cleanTournament}
+                          </span>
+                        )}
+                        {year && (
+                          <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
+                            '{String(year).slice(-2)}
+                          </span>
+                        )}
+                        {roundLevel && !/\d/.test(roundLevel) && (
+                          <>
+                            {(roundLevel.toLowerCase().trim() === "finals" || roundLevel.toLowerCase().trim() === "final") && <span className="text-base">🏆</span>}
+                            <span className={cn(
+                              "text-sm font-semibold px-2 py-1 rounded border backdrop-blur-md shadow-lg",
+                              getRoundBadgeColor(roundLevel)
+                            )}>
+                              {roundLevel}
+                            </span>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Second row: Teams */}
                       {hasTeams && (
-                        <>
-                          {affTeam && <span className="text-base font-bold text-blue-300 backdrop-blur-md bg-blue-900/80 border border-blue-400/90 px-2 py-1 rounded shadow-lg">{affTeam}</span>}
-                          {negTeam && <span className="text-base font-bold text-red-300 backdrop-blur-md bg-red-900/80 border border-red-400/90 px-2 py-1 rounded shadow-lg">{negTeam}</span>}
-                        </>
+                        <div className="flex flex-wrap items-start justify-center gap-2">
+                          {affTeam && (
+                            <div className="flex flex-col items-center gap-0.5">
+                              <span className={cn(
+                                "text-base font-bold backdrop-blur-md bg-blue-900/80 px-2 py-1 rounded",
+                                affWin === true
+                                  ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100"
+                                  : "border border-blue-400/90 shadow-lg text-blue-300"
+                              )}>
+                                {affTeam}
+                              </span>
+                              {arg1AC && (
+                                <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm text-center max-w-[120px] leading-tight">
+                                  {arg1AC}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          {negTeam && (
+                            <div className="flex flex-col items-center gap-0.5">
+                              <span className={cn(
+                                "text-base font-bold backdrop-blur-md bg-red-900/80 px-2 py-1 rounded",
+                                affWin === false
+                                  ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100"
+                                  : "border border-red-400/90 shadow-lg text-red-300"
+                              )}>
+                                {negTeam}
+                              </span>
+                              {arg2NR && (
+                                <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm text-center max-w-[120px] leading-tight">
+                                  {arg2NR}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                   ) : (
@@ -241,21 +274,27 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
             {/* Badges now displayed on thumbnail - removed from here */}
 
             <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
-              <button
-                onClick={(e) => { e.stopPropagation(); onBadgeClick(channel); }}
-                className="font-medium text-foreground hover:text-primary hover:underline truncate max-w-[100px] text-left"
-                title={`Filter by ${channel}`}
-              >
-                {channel}
-              </button>
-              <div className="flex items-center gap-1 shrink-0">
-                <Eye className="h-3 w-3" />
-                <span>{viewCount.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center gap-1 shrink-0">
-                <Calendar className="h-3 w-3" />
-                <span>{new Date(date).toLocaleDateString("en-US", { month: "short" })}</span>
-              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onBadgeClick(channel); }}
+                    className="flex items-center gap-1 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Calendar className="h-3 w-3" />
+                    <span>{new Date(date).toLocaleDateString("en-US", { month: "short" })}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="text-sm space-y-1">
+                    <p className="font-medium">{channel}</p>
+                    <p className="text-orange-400">{new Date(date).toLocaleDateString("en-US", {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
 
               <a
                 href={youtubeUrl}
@@ -267,25 +306,112 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
               >
                 <ExternalLink className="w-4 h-4" />
               </a>
-              {actionsDropdown}
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onToggleFavorite(videoId); }}
+                    className={`p-1 rounded transition-colors ${isFavorite ? "text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300" : "text-muted-foreground hover:text-foreground"}`}
+                    aria-label={isFavorite ? "Remove from favorites" : "Save to favorites"}
+                  >
+                    <Star className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{isFavorite ? "Remove from favorites" : "Save to favorites"}</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); !isInQueue && addToQueue(videoId, title, videoMeta); }}
+                    disabled={isInQueue}
+                    className={`p-1 rounded transition-colors ${isInQueue ? "text-muted-foreground/50 cursor-not-allowed" : "text-muted-foreground hover:text-foreground"}`}
+                    aria-label={isInQueue ? "In queue" : "Add to queue"}
+                  >
+                    <ListVideo className="w-4 h-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{isInQueue ? "In queue" : "Add to queue"}</p>
+                </TooltipContent>
+              </Tooltip>
+
+              {yearTopic && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); }}
+                      className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors font-semibold text-xs"
+                      aria-label="View topic"
+                    >
+                      T
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p className="text-sm whitespace-pre-line">{yearTopic.replace(/<br\s*\/?>/gi, '\n')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+
+              {isHidden ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onUnhideVideo(videoId); }}
+                      className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
+                      aria-label="Unhide video"
+                    >
+                      <EyeIcon className="w-4 h-4" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Unhide video</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setShowHideConfirm(true); }}
+                      className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
+                      aria-label="Hide video"
+                    >
+                      <EyeOff className="w-4 h-4" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Hide video</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+
+              <div className="flex items-center gap-1 shrink-0">
+                <Eye className="h-3 w-3" />
+                <span>{viewCount.toLocaleString()}</span>
+              </div>
             </div>
+
+            {judgeDecision && (
+              <div className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
+                <Scale className="h-3.5 w-3.5" />
+                <span>{judgeDecision}</span>
+              </div>
+            )}
+
             <CardDescription className="text-xs line-clamp-2 mb-3 flex-1">{description}</CardDescription>
 
           </div>
 
         </Card>
 
-        <ReportDialog
-          open={showReportDialog}
-          onOpenChange={setShowReportDialog}
-          videoId={videoId}
-          title={title}
-        />
-
         <HideConfirmDialog
           open={showHideConfirm}
           onOpenChange={setShowHideConfirm}
           onConfirm={() => onHideVideo(videoId)}
+          videoId={videoId}
+          title={title}
         />
       </div>
     </TooltipProvider >

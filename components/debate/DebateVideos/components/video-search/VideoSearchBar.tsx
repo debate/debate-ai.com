@@ -14,6 +14,7 @@ import { GlowingEffect } from "@/components/ui/glowing-effect"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import type { DebateStyle } from "@/lib/types/videos"
 import { DEBATE_STYLE_LABELS } from "@/lib/types/videos"
+import { STYLE_COLORS } from "../video-card/videoCardUtils"
 
 /**
  * Props for the VideoSearchBar component.
@@ -194,9 +195,15 @@ export function VideoSearchBar({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  {(Object.entries(DEBATE_STYLE_LABELS) as [string, string][]).map(([styleStr, label]) => (
-                    <SelectItem key={styleStr} value={styleStr}>{label}</SelectItem>
-                  ))}
+                  {(Object.entries(DEBATE_STYLE_LABELS) as [string, string][]).map(([styleStr, label]) => {
+                    const styleNum = Number(styleStr);
+                    const colorClass = STYLE_COLORS[styleNum];
+                    return (
+                      <SelectItem key={styleStr} value={styleStr} className={colorClass}>
+                        {label}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import lectureCategories from "@/lib/debate-data/debate-lectures-categories.json";
 
 interface LectureExpandCardsProps {
@@ -118,6 +119,18 @@ export function LectureExpandCards({
     setTimeout(() => setIsDragging(false), 100);
   };
 
+  const handlePrevious = () => {
+    const newIndex = expandedCard > 0 ? expandedCard - 1 : categories.length - 1;
+    setExpandedCard(newIndex);
+    onCategorySelect?.(categories[newIndex].key);
+  };
+
+  const handleNext = () => {
+    const newIndex = expandedCard < categories.length - 1 ? expandedCard + 1 : 0;
+    setExpandedCard(newIndex);
+    onCategorySelect?.(categories[newIndex].key);
+  };
+
   return (
     <div className="w-full bg-gradient-to-br from-gray-950 via-gray-900 to-black rounded-2xl overflow-hidden">
       <div className="relative flex items-center justify-center p-4 transition-all duration-300 ease-in-out w-full">
@@ -126,6 +139,31 @@ export function LectureExpandCards({
             <div className="relative w-full px-4">
               {/* Header */}
 
+              {/* Navigation Arrows */}
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <button
+                  onClick={handlePrevious}
+                  className="p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-110"
+                  aria-label="Previous category"
+                >
+                  <ChevronLeft className="w-5 h-5 text-white" />
+                </button>
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-white">
+                    {categories[expandedCard]?.label}
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    {expandedCard + 1} / {categories.length}
+                  </p>
+                </div>
+                <button
+                  onClick={handleNext}
+                  className="p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-110"
+                  aria-label="Next category"
+                >
+                  <ChevronRight className="w-5 h-5 text-white" />
+                </button>
+              </div>
 
               {/* Expandable Cards */}
               <div

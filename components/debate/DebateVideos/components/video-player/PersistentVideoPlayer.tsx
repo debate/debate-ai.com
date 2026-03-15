@@ -39,10 +39,14 @@ function VideoPlayerUI() {
 
   // When a new video opens, mark that slow mode needs to be applied on first play
   useEffect(() => {
-    if (activeVideoId && isSlowMode) {
-      pendingSlowMode.current = true
+    if (activeVideoId) {
+      if (isSlowMode) {
+        pendingSlowMode.current = true
+      } else {
+        pendingSlowMode.current = false
+      }
     }
-  }, [activeVideoId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activeVideoId, isSlowMode])
 
   // Listen for YouTube IFrame API state change events
   useEffect(() => {
@@ -96,7 +100,7 @@ function VideoPlayerUI() {
   return (
     <div
       ref={containerRef}
-      className={`fixed bottom-20 right-4 md:bottom-6 z-[9999] shadow-2xl rounded-xl overflow-hidden border border-border bg-background transition-[width,height] duration-300 ${isMinimized ? "w-64 h-10" : playerWidth ? "" : "w-72 sm:w-80"}`}
+      className={`fixed bottom-20 right-4 md:bottom-6 z-[9999] shadow-2xl rounded-xl overflow-hidden border border-border bg-background transition-[width,height] duration-300 ${isMinimized ? "w-64 h-10" : playerWidth ? "" : "w-[360px] sm:w-[400px]"}`}
       style={{ maxWidth: "calc(100vw - 2rem)", ...positionStyle, ...widthStyle }}
     >
       {/* Title bar — drag handle */}
