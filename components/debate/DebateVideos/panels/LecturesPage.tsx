@@ -15,7 +15,6 @@ import { IconBook } from "@/components/icons"
 import { DictionaryPanel } from "./DictionaryPanel"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import categoryDescriptions from "@/lib/debate-data/debate-lectures-category-descriptions.json"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"

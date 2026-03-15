@@ -11,6 +11,7 @@ export const DEBATE_STYLE_LABELS: Record<DebateStyle, string> = {
 
 /** Video data tuple:
  * [videoId, title, date, channel, viewCount, description, style?, tournament?, roundLevel?, affTeam?, negTeam?, affWin?, judgeDecision?, arg1AC?, arg2NR?, isTopPick?, speechDocsUrl?]
+ * Note: For lectures, index 6 can be either a DebateStyle number OR a category string
  */
 export type VideoType = [
   string,
@@ -19,7 +20,7 @@ export type VideoType = [
   string,
   number,
   string,
-  DebateStyle?,
+  (DebateStyle | string)?,
   (string | null)?,
   (string | null)?,
   (string | null)?,

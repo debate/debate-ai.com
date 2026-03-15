@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import categoryDescriptions from "@/lib/debate-data/debate-lectures-category-descriptions.json";
+import categoryDescriptions from "../../panels/debate-lectures-category-descriptions.json";
 
 interface LectureExpandCardsProps {
   onCategorySelect?: (categoryKey: string) => void;
@@ -68,7 +68,7 @@ export function LectureExpandCards({
     const categoriesArray = Array.from(categoryMap.entries())
       .map(([label, data]) => {
         // Get description from the descriptions file
-        const description = categoryDescriptions.categories[label]?.description || "Debate lecture videos";
+        const description = categoryDescriptions[label as keyof typeof categoryDescriptions] || "Debate lecture videos";
 
         return {
           key: label.toLowerCase().replace(/\s+/g, '_').replace(/[&/]/g, '_'),
