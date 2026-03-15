@@ -179,26 +179,7 @@ export function VideoSearchBar({
           </div>
         )}
 
-        {/* Sort toggle button */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              className="shrink-0"
-              variant="outline"
-              size="icon"
-              onClick={() => onSortChange(sortOrder === "Recency" ? "Views" : "Recency")}
-            >
-              {sortOrder === "Recency" ? (
-                <Calendar className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            {sortOrder === "Recency" ? "Sorted by date (click for views)" : "Sorted by views (click for date)"}
-          </TooltipContent>
-        </Tooltip>
+
 
         {/* Season dropdown */}
         <div className="w-[110px] sm:w-[130px] shrink-0">
@@ -220,7 +201,7 @@ export function VideoSearchBar({
 
         {/* Icon buttons */}
         <div className="flex items-center gap-1 shrink-0">
-          <Tooltip>
+          {/* <Tooltip>
             <TooltipTrigger asChild>
               <Button className="shrink-0" variant="outline" size="icon" onClick={onToggleThumbnails}>
                 {showThumbnails ? <VideoOff className="h-4 w-4" /> : <Video className="h-4 w-4" />}
@@ -228,6 +209,26 @@ export function VideoSearchBar({
             </TooltipTrigger>
             <TooltipContent side="bottom">
               {showThumbnails ? "Hide thumbnails" : "Show thumbnails"}
+            </TooltipContent>
+          </Tooltip> */}
+          {/* Sort toggle button */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                className="shrink-0"
+                variant="outline"
+                size="icon"
+                onClick={() => onSortChange(sortOrder === "Recency" ? "Views" : "Recency")}
+              >
+                {sortOrder === "Recency" ? (
+                  <Calendar className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {sortOrder === "Recency" ? "Sorted by date (click for views)" : "Sorted by views (click for date)"}
             </TooltipContent>
           </Tooltip>
           <Tooltip>

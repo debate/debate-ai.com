@@ -282,3 +282,19 @@
  GET /api/videos 200 in 15ms (compile: 3ms, render: 12ms)
  GET /api/videos 200 in 12ms (compile: 2ms, render: 10ms)
  GET /videos?view=topPicks 200 in 27ms (compile: 6ms, render: 21ms)
+✓ Compiled in 764ms
+✓ Compiled in 227ms
+✓ Compiled in 295ms
+✓ Compiled in 194ms
+✓ Compiled in 152ms
+✓ Compiled in 319ms
+ GET /videos?view=topPicks 200 in 466ms (compile: 67ms, render: 399ms)
+ GET /api/videos 200 in 150ms (compile: 131ms, render: 19ms)
+ GET /videos?view=rounds 200 in 23ms (compile: 4ms, render: 18ms)
+ GET /videos?view=topPicks 200 in 26ms (compile: 12ms, render: 15ms)
+ GET /videos?view=topPicks 200 in 83ms (compile: 5ms, render: 79ms)
+ GET /api/videos 200 in 129ms (compile: 103ms, render: 26ms)
+ GET /videos?view=rounds 200 in 29ms (compile: 5ms, render: 24ms)
+ GET /lectures 200 in 115ms (compile: 86ms, render: 28ms)
+ GET /api/videos 200 in 23ms (compile: 10ms, render: 13ms)
+ GET /api/videos 200 in 33ms (compile: 20ms, render: 12ms)

@@ -156,7 +156,11 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                 <div className="max-w-[90%]">
                   {hasFullMetadata ? (
                     <div className="flex flex-wrap items-center justify-center gap-2">
-                      {isTopPick && <span className="text-xl">🎖️</span>}
+                      {isTopPick && (
+                        <span className="inline-flex items-center px-2 py-1 rounded text-base backdrop-blur-md bg-amber-500/80 border border-amber-300/90 shadow-lg">
+                          🎖️
+                        </span>
+                      )}
                       {style && DEBATE_STYLE_LABELS[style] && (
                         <span className={`inline-flex items-center px-2 py-1 rounded text-sm [font-variant:small-caps] uppercase tracking-wide backdrop-blur-md ${STYLE_COLORS[style] ?? "bg-muted text-muted-foreground"}`}>
                           {DEBATE_STYLE_LABELS[style]}
@@ -192,7 +196,11 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-2">
-                      {isTopPick && <span className="text-2xl">🎖️</span>}
+                      {isTopPick && (
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xl backdrop-blur-md bg-amber-500/80 border border-amber-300/90 shadow-lg">
+                          🎖️
+                        </span>
+                      )}
                       <a
                         href={youtubeUrl}
                         target="_blank"

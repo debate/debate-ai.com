@@ -161,46 +161,44 @@ export function YouTubeStatsModal({ stats }: { stats: YouTubeStats }) {
               <TabsTrigger value="years">By Year</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="channels" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h3 className="text-sm font-medium mb-3">Views by Top Channels</h3>
-                  <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                    <BarChart data={topChannelsData} margin={{ top: 5, right: 10, left: 10, bottom: 80 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="name"
-                        angle={-45}
-                        textAnchor="end"
-                        height={100}
-                        tick={{ fontSize: 8 }}
-                        interval={0}
-                      />
-                      <YAxis tick={{ fontSize: 9 }} width={70} />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Bar dataKey="views" fill="var(--color-views)" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ChartContainer>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium mb-3">Avg Views per Video by Top Channels</h3>
-                  <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                    <BarChart data={topChannelsData} margin={{ top: 5, right: 10, left: 10, bottom: 80 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="name"
-                        angle={-45}
-                        textAnchor="end"
-                        height={100}
-                        tick={{ fontSize: 8 }}
-                        interval={0}
-                      />
-                      <YAxis tick={{ fontSize: 9 }} width={70} />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Bar dataKey="avgViews" fill="var(--color-avgViews)" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ChartContainer>
-                </div>
+            <TabsContent value="channels" className="space-y-2">
+              <div>
+                <h3 className="text-sm font-medium mb-3">Views by Top Channels</h3>
+                <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                  <BarChart data={topChannelsData} margin={{ top: 5, right: 10, left: 10, bottom: 80 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="name"
+                      angle={-45}
+                      textAnchor="end"
+                      height={100}
+                      tick={{ fontSize: 8 }}
+                      interval={0}
+                    />
+                    <YAxis tick={{ fontSize: 9 }} width={70} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="views" fill="var(--color-views)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ChartContainer>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium mb-3">Avg Views per Video by Top Channels</h3>
+                <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                  <BarChart data={topChannelsData} margin={{ top: 5, right: 10, left: 10, bottom: 80 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="name"
+                      angle={-45}
+                      textAnchor="end"
+                      height={100}
+                      tick={{ fontSize: 8 }}
+                      interval={0}
+                    />
+                    <YAxis tick={{ fontSize: 9 }} width={70} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="avgViews" fill="var(--color-avgViews)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ChartContainer>
               </div>
             </TabsContent>
 

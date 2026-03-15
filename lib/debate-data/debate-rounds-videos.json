@@ -10052,16 +10052,16 @@
     ],
     [
       "US-pxWceS0E",
-      "Kentucky BT vs Northwestern CE - NDT - RD 3 - 2018 - Part 2",
+      "Kentucky BT vs Northwestern CE -  - RD 3 - 2018 - Part 2",
       "2018-03-24",
       "North Broward MR",
       4069,
       "",
       4,
-      null,
-      null,
+      "NDT",
+      "3",
       "Kentucky BT",
-      "Northwestern CE - NDT - RD 3 - 2018"
+      "Northwestern CE"
     ],
     [
       "oYfCvuekHeY",
@@ -10071,10 +10071,10 @@
       3483,
       "",
       4,
-      null,
-      null,
+      "NDT",
+      "3",
       "Kentucky BT",
-      "Northwestern CE - NDT - RD 3 - 2018"
+      "Northwestern CE"
     ],
     [
       "9gzW-CkPASo",
@@ -12177,10 +12177,10 @@
       11584,
       "",
       4,
-      null,
-      null,
+      "Northwestern",
+      "Round 5",
       "Rutgers NM",
-      "Berkeley WG, Open Round 5, Northwestern 2017"
+      "Berkeley WG"
     ],
     [
       "XBsollKw4Lg",
@@ -12229,10 +12229,10 @@
       5743,
       "",
       4,
-      null,
-      null,
+      "Fullerton",
+      "Semis",
       "Georgetown KL",
-      "Berkeley MS, Semis, Fullerton 2017"
+      "Berkeley MS"
     ],
     [
       "i7xQ2KFLtTs",
@@ -12281,10 +12281,10 @@
       1698,
       "",
       4,
-      null,
-      null,
+      "Fullerton",
+      "6",
       "Michigan DM",
-      "Berkeley GW, Open Round 6, Fullerton 2017 The Debate"
+      "Berkeley GW"
     ],
     [
       "1F6sjYXhJ30",
@@ -24202,8 +24202,8 @@
       3604,
       "Michigan PR takes on Michigan JS with the F-35s aff to demonstrated how feasible it is for debaters to debate from four different places. \n\nFind the docs here - https://drive.google.com/drive/folders/1hGAxEwKTTDh6cG4uTr3vKqALFHD4K8KF?usp=sharing\n\nWho do you think won? Vote here https://forms.gle/TVyQhFZVNu8iQgat8",
       4,
-      "Michigan",
-      "Demo",
+      "Michigan Demo",
+      "Round 1",
       "Michigan PR",
       "Michigan JS"
     ],
