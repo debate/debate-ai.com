@@ -1,27 +1,11 @@
-/**
- * @deprecated This file is kept for backward compatibility.
- * Please use the individual modules instead:
- * - youtube-api.ts for API functions
- * - youtube-sync.ts for sync functions
- * - youtube-update-views.ts for view update functions
- * - youtube-stats.ts for statistics functions
- * - index.ts for CLI entry point
- */
-
 import { promises as fs } from "fs";
 import path from "path";
-
-// Re-export all functions for backward compatibility
-export { syncYouTubeVideos, syncMissingTopPicks } from "./youtube-sync";
-export { updateVideoViewCounts } from "./youtube-update-views";
-export { calculateYouTubeViewStats } from "./youtube-stats";
-
-// Import for CLI
-import { syncYouTubeVideos, syncMissingTopPicks } from "./youtube-sync";
-import { updateVideoViewCounts } from "./youtube-update-views";
-import { calculateYouTubeViewStats } from "./youtube-stats";
+import { syncYouTubeVideos, syncMissingTopPicks } from "./youtube-sync.js";
+import { updateVideoViewCounts } from "./youtube-update-views.js";
+import { calculateYouTubeViewStats } from "./youtube-stats.js";
 
 const args = process.argv.slice(2);
+
 if (import.meta.main || require.main === module) {
   if (args.includes("--stats")) {
     console.log("Calculating YouTube view statistics...");
@@ -88,6 +72,13 @@ if (import.meta.main || require.main === module) {
       })
       .catch((err) => {
         console.error("Update failed:", err);
+        process.exit(1);
+      });
+  } else if (args.includes("--missing-top-picks")) {
+    console.log("Syncing missing top picks...");
+    syncMissingTopPicks()
+      .catch((err) => {
+        console.error("Missing top picks sync failed:", err);
         process.exit(1);
       });
   } else {

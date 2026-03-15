@@ -3,7 +3,7 @@
 import React from "react"
 import type { VideoType, TopicType } from "@/lib/types/videos"
 import { VideoCard } from "../video-card/VideoCard"
-import { CardSpotlight } from "@/components/ui/card-spotlight"
+import { HoverCardWrapper } from "@/components/ui/hover-card-wrapper"
 
 interface VideoGridProps {
   videos: VideoType[]
@@ -26,8 +26,7 @@ export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, f
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-6"
     >
       {videos.map((video, index) => (
-        <div key={`${video[0]}-${index}`} className="relative">
-
+        <HoverCardWrapper key={`${video[0]}-${index}`}>
           <VideoCard
             video={video}
             showThumbnails={showThumbnails}
@@ -40,7 +39,7 @@ export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, f
             isHidden={hiddenVideos.has(video[0])}
             isTopPick={topPicks?.has(video[0]) || false}
           />
-        </div>
+        </HoverCardWrapper>
       ))}
     </div>
   )

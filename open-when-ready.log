@@ -1,7 +1,284 @@
-⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
 ▲ Next.js 16.1.6 (Turbopack)
-- Local:         http://localhost:3001
-- Network:       http://10.152.189.74:3001
+- Local:         http://localhost:3000
+- Network:       http://10.152.189.74:3000
 - Environments: .env
 
 ✓ Starting...
+✓ Ready in 702ms
+○ Compiling / ...
+ GET / 307 in 3.4s (compile: 3.2s, render: 230ms)
+ GET /videos 200 in 2.1s (compile: 2.0s, render: 140ms)
+ GET /api/videos 200 in 290ms (compile: 273ms, render: 17ms)
+ GET /lectures 200 in 921ms (compile: 899ms, render: 22ms)
+ GET /api/videos 200 in 21ms (compile: 4ms, render: 17ms)
+ GET /api/videos 200 in 40ms (compile: 24ms, render: 16ms)
+✓ Compiled in 1428ms
+✓ Compiled in 2.3s
+ GET /api/videos 200 in 105ms (compile: 10ms, render: 96ms)
+✓ Compiled in 1556ms
+✓ Compiled in 854ms
+ GET /api/videos 200 in 44ms (compile: 5ms, render: 39ms)
+✓ Compiled in 3.2s
+✓ Compiled in 843ms
+✓ Compiled in 2s
+✓ Compiled in 283ms
+ GET /api/videos 200 in 390ms (compile: 78ms, render: 312ms)
+✓ Compiled in 2.1s
+✓ Compiled in 396ms
+✓ Compiled in 216ms
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⨯ ReferenceError: categoryCards is not defined
+    at LecturesPage (components/debate/DebateVideos/panels/LecturesPage.tsx:305:8)
+  303 |
+  304 |       {/* Category cards slider */}
+> 305 |       {categoryCards.length > 0 && (
+      |        ^
+  306 |         <CategoryCards
+  307 |           cards={categoryCards}
+  308 |           onCategorySelect={(categoryKey) => { {
+  digest: '3347790904'
+}
+ GET /lectures 200 in 1153ms (compile: 433ms, render: 720ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 580ms
+ GET /lectures 200 in 259ms (compile: 63ms, render: 196ms)
+ GET /api/videos 200 in 85ms (compile: 4ms, render: 80ms)
+✓ Compiled in 1900ms
+ GET /api/videos 200 in 537ms (compile: 109ms, render: 428ms)
+✓ Compiled in 1782ms
+ GET /api/videos 200 in 45ms (compile: 13ms, render: 32ms)
+ GET /videos 200 in 563ms (compile: 469ms, render: 94ms)
+ GET /api/videos 200 in 67ms (compile: 11ms, render: 56ms)
+ GET /api/videos 200 in 92ms (compile: 68ms, render: 25ms)
+✓ Compiled in 602ms
+ GET /lectures 200 in 321ms (compile: 295ms, render: 26ms)
+ GET /api/videos 200 in 30ms (compile: 5ms, render: 25ms)
+ GET /api/videos 200 in 99ms (compile: 36ms, render: 63ms)
+ GET /videos 200 in 94ms (compile: 28ms, render: 66ms)
+ GET /api/videos 200 in 92ms (compile: 5ms, render: 87ms)
+ GET /api/videos 200 in 107ms (compile: 92ms, render: 15ms)
+ GET /lectures 200 in 31ms (compile: 6ms, render: 24ms)
+ GET /api/videos 200 in 40ms (compile: 3ms, render: 37ms)
+ GET /api/videos 200 in 57ms (compile: 41ms, render: 15ms)
+✓ Compiled in 296ms
+✓ Compiled in 241ms
+✓ Compiled in 544ms
+✓ Compiled in 2.2s
+ GET /lectures 200 in 863ms (compile: 430ms, render: 433ms)
+ GET /lectures 200 in 403ms (compile: 8ms, render: 395ms)
+ GET /lectures 200 in 353ms (compile: 47ms, render: 307ms)
+ GET /lectures 200 in 242ms (compile: 14ms, render: 229ms)
+ GET /lectures 200 in 208ms (compile: 14ms, render: 194ms)
+ GET /lectures 200 in 176ms (compile: 6ms, render: 169ms)
+ GET /lectures 200 in 131ms (compile: 8ms, render: 123ms)
+ GET /lectures 200 in 125ms (compile: 6ms, render: 119ms)
+ GET /lectures 200 in 129ms (compile: 5ms, render: 124ms)
+ GET /lectures 200 in 129ms (compile: 5ms, render: 125ms)
+ GET /lectures 200 in 121ms (compile: 6ms, render: 114ms)
+ GET /lectures 200 in 90ms (compile: 6ms, render: 83ms)
+ GET /lectures 200 in 119ms (compile: 5ms, render: 114ms)
+ GET /lectures 200 in 116ms (compile: 4ms, render: 112ms)
+ GET /lectures 200 in 94ms (compile: 6ms, render: 88ms)
+ GET /lectures 200 in 110ms (compile: 5ms, render: 105ms)
+ GET /lectures 200 in 106ms (compile: 5ms, render: 101ms)
+ GET /lectures 200 in 80ms (compile: 5ms, render: 75ms)
+ GET /lectures 200 in 91ms (compile: 4ms, render: 87ms)
+ GET /lectures 200 in 90ms (compile: 3ms, render: 87ms)
+ GET /lectures 200 in 92ms (compile: 5ms, render: 88ms)
+ GET /lectures 200 in 121ms (compile: 5ms, render: 116ms)
+ GET /lectures 200 in 133ms (compile: 5ms, render: 129ms)
+ GET /lectures 200 in 144ms (compile: 6ms, render: 138ms)
+ GET /lectures 200 in 149ms (compile: 5ms, render: 144ms)
+ GET /lectures 200 in 180ms (compile: 6ms, render: 174ms)
+ GET /lectures 200 in 187ms (compile: 5ms, render: 182ms)
+ GET /lectures 200 in 155ms (compile: 5ms, render: 150ms)
+ GET /lectures 200 in 153ms (compile: 5ms, render: 148ms)
+ GET /lectures 200 in 160ms (compile: 6ms, render: 154ms)
+ GET /lectures 200 in 149ms (compile: 6ms, render: 144ms)
+ GET /lectures 200 in 124ms (compile: 5ms, render: 119ms)
+ GET /lectures 200 in 123ms (compile: 5ms, render: 119ms)
+ GET /lectures 200 in 119ms (compile: 5ms, render: 115ms)
+ GET /lectures 200 in 121ms (compile: 6ms, render: 115ms)
+ GET /lectures 200 in 174ms (compile: 5ms, render: 169ms)
+ GET /lectures 200 in 170ms (compile: 5ms, render: 165ms)
+ GET /lectures 200 in 168ms (compile: 6ms, render: 162ms)
+ GET /lectures 200 in 138ms (compile: 6ms, render: 132ms)
+ GET /lectures 200 in 103ms (compile: 7ms, render: 96ms)
+ GET /lectures 200 in 59ms (compile: 4ms, render: 55ms)
+ GET /lectures 200 in 34ms (compile: 4ms, render: 30ms)
+✓ Compiled in 1137ms
+ GET /lectures 200 in 75ms (compile: 49ms, render: 26ms)
+✓ Compiled in 212ms
+ GET /lectures 200 in 54ms (compile: 34ms, render: 20ms)
+ GET /lectures 200 in 21ms (compile: 3ms, render: 18ms)
+ GET /videos 200 in 105ms (compile: 77ms, render: 28ms)
+ GET /api/videos 200 in 170ms (compile: 145ms, render: 25ms)
+ GET /api/videos 200 in 22ms (compile: 5ms, render: 17ms)
+✓ Compiled in 860ms
+ GET /videos 200 in 1189ms (compile: 98ms, render: 1091ms)
+ GET /api/videos 200 in 75ms (compile: 5ms, render: 70ms)
+✓ Compiled in 428ms
+✓ Compiled in 477ms
+✓ Compiled in 354ms
+✓ Compiled in 409ms
+✓ Compiled in 749ms
+✓ Compiled in 294ms
+✓ Compiled in 439ms
+✓ Compiled in 757ms
+ GET /videos 200 in 419ms (compile: 66ms, render: 354ms)
+ GET /api/videos 200 in 21ms (compile: 5ms, render: 15ms)
+✓ Compiled in 309ms
+✓ Compiled in 175ms
+✓ Compiled in 259ms
+✓ Compiled in 714ms
+ GET /videos 200 in 1004ms (compile: 194ms, render: 811ms)
+ GET /api/videos 200 in 26ms (compile: 5ms, render: 21ms)
+ GET /lectures 200 in 141ms (compile: 108ms, render: 33ms)
+ GET /api/videos 200 in 23ms (compile: 4ms, render: 19ms)
+ GET /api/videos 200 in 50ms (compile: 30ms, render: 19ms)
+✓ Compiled in 967ms
+ GET /lectures 200 in 387ms (compile: 101ms, render: 286ms)
+ GET /api/videos 200 in 23ms (compile: 4ms, render: 18ms)
+✓ Compiled in 904ms
+ GET /lectures 200 in 172ms (compile: 14ms, render: 158ms)
+ GET /api/videos 200 in 24ms (compile: 4ms, render: 20ms)
+✓ Compiled in 427ms
+ GET /lectures 200 in 334ms (compile: 48ms, render: 287ms)
+ GET /api/videos 200 in 19ms (compile: 4ms, render: 14ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 211ms
+⨯ ReferenceError: categoryStackItems is not defined
+    at LecturesPage (components/debate/DebateVideos/panels/LecturesPage.tsx:256:8)
+  254 |
+  255 |       {/* Category card stack */}
+> 256 |       {categoryStackItems.length > 0 && (
+      |        ^
+  257 |         <div className="mb-16 sm:mb-20">
+  258 |           <CardStack
+  259 |             items={categoryStackItems} {
+  digest: '2695445080'
+}
+ GET /lectures 200 in 308ms (compile: 43ms, render: 265ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 381ms
+ GET /lectures 200 in 487ms (compile: 53ms, render: 434ms)
+ GET /api/videos 200 in 42ms (compile: 3ms, render: 39ms)
+✓ Compiled in 1166ms
+✓ Compiled in 686ms
+ GET /lectures 200 in 405ms (compile: 43ms, render: 362ms)
+ GET /api/videos 200 in 25ms (compile: 5ms, render: 20ms)
+✓ Compiled in 510ms
+ GET /videos 200 in 169ms (compile: 136ms, render: 33ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 212ms
+ GET /videos 200 in 721ms (compile: 6ms, render: 715ms)
+ GET /api/videos 200 in 54ms (compile: 4ms, render: 50ms)
+ GET /videos 200 in 486ms (compile: 294ms, render: 192ms)
+ GET /videos 200 in 205ms (compile: 12ms, render: 192ms)
+ GET /videos 200 in 192ms (compile: 5ms, render: 187ms)
+ GET /videos 200 in 237ms (compile: 8ms, render: 229ms)
+ GET /videos 200 in 185ms (compile: 7ms, render: 178ms)
+ GET /videos 200 in 217ms (compile: 5ms, render: 212ms)
+ GET /videos 200 in 232ms (compile: 7ms, render: 226ms)
+ GET /videos 200 in 224ms (compile: 5ms, render: 219ms)
+ GET /videos 200 in 226ms (compile: 8ms, render: 218ms)
+ GET /videos 200 in 211ms (compile: 5ms, render: 206ms)
+ GET /videos 200 in 202ms (compile: 6ms, render: 196ms)
+ GET /videos 200 in 176ms (compile: 7ms, render: 170ms)
+ GET /videos 200 in 148ms (compile: 6ms, render: 142ms)
+ GET /videos 200 in 147ms (compile: 4ms, render: 144ms)
+ GET /videos 200 in 166ms (compile: 6ms, render: 160ms)
+ GET /videos 200 in 185ms (compile: 8ms, render: 177ms)
+ GET /videos 200 in 163ms (compile: 3ms, render: 160ms)
+ GET /videos 200 in 265ms (compile: 6ms, render: 259ms)
+ GET /videos 200 in 266ms (compile: 6ms, render: 260ms)
+ GET /videos 200 in 248ms (compile: 8ms, render: 241ms)
+ GET /videos 200 in 228ms (compile: 8ms, render: 221ms)
+ GET /videos 200 in 163ms (compile: 8ms, render: 155ms)
+ GET /videos 200 in 158ms (compile: 4ms, render: 154ms)
+ GET /videos 200 in 158ms (compile: 4ms, render: 154ms)
+ GET /videos 200 in 160ms (compile: 5ms, render: 155ms)
+ GET /videos 200 in 166ms (compile: 6ms, render: 160ms)
+ GET /videos 200 in 144ms (compile: 5ms, render: 138ms)
+ GET /videos 200 in 179ms (compile: 5ms, render: 174ms)
+ GET /videos 200 in 180ms (compile: 5ms, render: 175ms)
+ GET /videos 200 in 186ms (compile: 8ms, render: 178ms)
+ GET /videos 200 in 190ms (compile: 8ms, render: 182ms)
+ GET /videos 200 in 189ms (compile: 4ms, render: 185ms)
+ GET /videos 200 in 200ms (compile: 5ms, render: 195ms)
+ GET /videos 200 in 207ms (compile: 5ms, render: 203ms)
+ GET /videos 200 in 240ms (compile: 7ms, render: 233ms)
+ GET /videos 200 in 244ms (compile: 6ms, render: 239ms)
+ GET /videos 200 in 253ms (compile: 8ms, render: 245ms)
+ GET /videos 200 in 258ms (compile: 6ms, render: 252ms)
+ GET /videos 200 in 265ms (compile: 11ms, render: 254ms)
+ GET /videos 200 in 256ms (compile: 8ms, render: 249ms)
+ GET /videos 200 in 210ms (compile: 8ms, render: 202ms)
+ GET /videos 200 in 167ms (compile: 6ms, render: 161ms)
+ GET /videos 200 in 122ms (compile: 6ms, render: 117ms)
+ GET /videos 200 in 74ms (compile: 9ms, render: 65ms)
+○ Compiling /debate ...
+ GET /debate 200 in 7.7s (compile: 7.6s, render: 67ms)
+ GET /debate 200 in 61ms (compile: 7ms, render: 54ms)
+ GET /api/tournaments 200 in 626ms (compile: 607ms, render: 19ms)
+ GET /edit 200 in 766ms (compile: 741ms, render: 25ms)
+ GET /edit 200 in 25ms (compile: 5ms, render: 20ms)
+ GET /videos 200 in 23ms (compile: 6ms, render: 18ms)
+ GET /api/videos 200 in 172ms (compile: 156ms, render: 17ms)
+ GET /api/videos 200 in 21ms (compile: 4ms, render: 17ms)
+ GET /lectures 200 in 110ms (compile: 79ms, render: 31ms)
+ GET /api/videos 200 in 19ms (compile: 3ms, render: 16ms)
+ GET /api/videos 200 in 37ms (compile: 26ms, render: 11ms)
+✓ Compiled in 355ms
+✓ Compiled in 169ms
+✓ Compiled in 228ms
+✓ Compiled in 252ms
+✓ Compiled in 1067ms
+ GET /lectures 200 in 544ms (compile: 116ms, render: 428ms)
+ GET /api/videos 200 in 26ms (compile: 6ms, render: 20ms)
+✓ Compiled in 738ms
+✓ Compiled in 192ms
+✓ Compiled in 1363ms
+✓ Compiled in 752ms
+ GET /lectures 200 in 350ms (compile: 84ms, render: 266ms)
+ GET /api/videos 200 in 24ms (compile: 3ms, render: 21ms)
+✓ Compiled in 712ms
+ GET /lectures 200 in 513ms (compile: 100ms, render: 414ms)
+ GET /api/videos 200 in 16ms (compile: 3ms, render: 13ms)
+✓ Compiled in 280ms
+✓ Compiled in 241ms
+✓ Compiled in 339ms
+✓ Compiled in 359ms
+ GET /lectures 200 in 391ms (compile: 117ms, render: 274ms)
+ GET /api/videos 200 in 25ms (compile: 5ms, render: 19ms)
+✓ Compiled in 160ms
+ GET /videos 200 in 85ms (compile: 58ms, render: 26ms)
+ GET /api/videos 200 in 18ms (compile: 4ms, render: 14ms)
+ GET /api/videos 200 in 28ms (compile: 19ms, render: 9ms)
+ GET /lectures 200 in 62ms (compile: 42ms, render: 20ms)
+ GET /api/videos 200 in 14ms (compile: 3ms, render: 11ms)
+ GET /api/videos 200 in 27ms (compile: 16ms, render: 11ms)
+✓ Compiled in 401ms
+ GET /videos 200 in 94ms (compile: 57ms, render: 38ms)
+ GET /api/videos 200 in 20ms (compile: 3ms, render: 17ms)
+ GET /api/videos 200 in 32ms (compile: 23ms, render: 10ms)
+✓ Compiled in 399ms
+ GET /videos?view=leaderboard 200 in 89ms (compile: 61ms, render: 27ms)
+(node:40431) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ GET /api/leaderboard?division=VPF&year=2026 200 in 3.0s (compile: 836ms, render: 2.2s)
+ GET /api/leaderboard?division=VPF&year=2026 200 in 3.0s (compile: 780ms, render: 2.2s)
+ GET /api/leaderboard?division=VLD&year=2026 200 in 617ms (compile: 4ms, render: 613ms)
+ GET /api/leaderboard?division=VCX&year=2026 200 in 257ms (compile: 3ms, render: 254ms)
+ GET /videos?view=rounds 200 in 29ms (compile: 5ms, render: 24ms)
+ GET /videos?view=topPicks 200 in 22ms (compile: 4ms, render: 18ms)
+✓ Compiled in 274ms
+✓ Compiled in 212ms
+ GET /videos?view=rounds 200 in 81ms (compile: 50ms, render: 31ms)
+ GET /lectures 200 in 69ms (compile: 44ms, render: 25ms)
+ GET /api/videos 200 in 199ms (compile: 175ms, render: 24ms)
+ GET /api/videos 200 in 233ms (compile: 204ms, render: 29ms)
+ GET /videos 200 in 24ms (compile: 3ms, render: 20ms)
+ GET /api/videos 200 in 15ms (compile: 3ms, render: 12ms)
+ GET /api/videos 200 in 12ms (compile: 2ms, render: 10ms)
+ GET /videos?view=topPicks 200 in 27ms (compile: 6ms, render: 21ms)

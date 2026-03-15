@@ -24,6 +24,7 @@ import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 import { useCategoryDock } from "@/components/layout/category-dock-context"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
+import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
 
 /**
  * Main video browsing page that composes state, data-fetching, and UI sub-components.
@@ -60,6 +61,15 @@ export function DebateVideosPage() {
   const lbYears = Array.from({ length: Math.max(new Date().getFullYear(), 2026) - 2001 }, (_, i) => String(Math.max(new Date().getFullYear(), 2026) - i))
 
   const topPicksSet = useMemo(() => new Set(state.debateVideos?.topPicks || []), [state.debateVideos?.topPicks])
+
+  // Load YouTube stats
+  const [youtubeStats, setYoutubeStats] = useState<any>(null)
+  useEffect(() => {
+    fetch("/youtube-stats.json")
+      .then((res) => res.json())
+      .then((data) => setYoutubeStats(data))
+      .catch((err) => console.error("Failed to load YouTube stats:", err))
+  }, [])
 
   // ============================================================================
   // Computed Values
@@ -292,6 +302,7 @@ export function DebateVideosPage() {
           totalVideos={state.filteredVideos.length}
           selectedStyle={state.selectedStyle}
           onStyleChange={(style) => actions.setSelectedStyle(style)}
+          extraButtons={youtubeStats && <YouTubeStatsModal stats={youtubeStats} />}
         />
       )}
 

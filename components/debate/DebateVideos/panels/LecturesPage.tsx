@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input"
 import { IconBook } from "@/components/icons"
 import { DictionaryPanel } from "./DictionaryPanel"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import lectureCategories from "@/lib/debate-data/debate-lectures-categories.json"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
@@ -23,6 +25,7 @@ import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 // Components
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
+import { LectureExpandCards } from "../components/expand-category-cards/LectureExpandCards"
 
 export function LecturesPage() {
   const searchParams = useSearchParams()
@@ -39,6 +42,7 @@ export function LecturesPage() {
   const topPicksSet = useMemo(() => new Set(state.debateVideos?.topPicks || []), [state.debateVideos?.topPicks])
 
   const [dictSearchTerm, setDictSearchTerm] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState<string>("all")
 
   // ============================================================================
   // Computed Values
@@ -90,10 +94,20 @@ export function LecturesPage() {
   useResponsiveVideosPerPage(actions.setVideosPerPage)
 
   useEffect(() => {
-    const filtered = filterAndSortVideos(state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos)
+    let filtered = filterAndSortVideos(state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos)
+
+    // Apply category filter if one is selected
+    if (selectedCategory !== "all") {
+      const categoryData = lectureCategories.categories[selectedCategory as keyof typeof lectureCategories.categories]
+      if (categoryData) {
+        const categoryVideoIds = new Set(categoryData.video_ids)
+        filtered = filtered.filter((video) => categoryVideoIds.has(video[0]))
+      }
+    }
+
     actions.setFilteredVideos(filtered)
     actions.setCurrentPage(1)
-  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
+  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, selectedCategory, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
 
   // ============================================================================
   // Search & Filter Handlers
@@ -214,6 +228,7 @@ export function LecturesPage() {
   // ============================================================================
   // Lectures Video Grid
   // ============================================================================
+
   return (
     <div className="min-h-screen bg-background p-3 sm:p-6">
       {stickyHeader(
@@ -235,6 +250,17 @@ export function LecturesPage() {
           totalVideos={state.filteredVideos.length}
           extraButtons={dictToggleButton}
         />
+      )}
+
+      {/* Category Expand Cards */}
+      {state.debateVideos?.lectures && (
+        <div className="mb-8">
+          <LectureExpandCards
+            videosData={state.debateVideos.lectures}
+            selectedCategory={selectedCategory}
+            onCategorySelect={(categoryKey) => setSelectedCategory(categoryKey)}
+          />
+        </div>
       )}
 
       {state.isLoading ? (

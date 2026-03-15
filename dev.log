@@ -1,0 +1,23 @@
+
+> debate-ai@0.3.0 dev
+> rm -rf .next; npx open-ready@latest next dev --webpack
+
+rm: cannot remove '.next/dev/cache/turbopack/0c06f068': Directory not empty
+⚠ Port 3000 is in use by an unknown process, using available port 3003 instead.
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3003
+- Network:       http://10.152.189.74:3003
+- Environments: .env
+
+✓ Starting...
+✓ Ready in 1730ms
+○ Compiling / ...
+ GET / 307 in 4.3s (compile: 3.8s, render: 434ms)
+○ Compiling /videos ...
+ GET /videos 200 in 3.7s (compile: 3.5s, render: 175ms)
+ GET /api/videos 200 in 368ms (compile: 348ms, render: 20ms)
+✓ Compiled in 402ms
+✓ Compiled in 292ms
+✓ Compiled in 215ms
+✓ Compiled in 166ms
+✓ Compiled in 175ms

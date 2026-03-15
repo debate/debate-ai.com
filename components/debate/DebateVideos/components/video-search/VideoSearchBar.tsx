@@ -3,7 +3,7 @@
  * @module components/debate/videos/components/VideoSearchBar
  */
 
-import { Search, X, Video, VideoOff, Star, Trophy, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search, X, Video, VideoOff, Star, Trophy, ChevronLeft, ChevronRight, Eye, Calendar } from "lucide-react"
 import Image from "next/image"
 import { IconTopRounds } from "@/components/icons"
 import { Badge } from "@/components/ui/badge"
@@ -60,6 +60,8 @@ interface VideoSearchBarProps {
   /** Currently selected debate style filter. */  selectedStyle?: DebateStyle | ""
   /** Callback invoked when the style filter changes. */
   onStyleChange?: (style: DebateStyle | "") => void
+  /** Custom element rendered right after the search input. */
+  afterSearchElement?: React.ReactNode
   /** Extra icon buttons rendered alongside the built-in icon buttons. */
   extraButtons?: React.ReactNode
 }
@@ -108,6 +110,7 @@ export function VideoSearchBar({
   totalVideos,
   selectedStyle,
   onStyleChange,
+  afterSearchElement,
   extraButtons,
 }: VideoSearchBarProps) {
   const currentYear = new Date().getFullYear()
@@ -156,6 +159,9 @@ export function VideoSearchBar({
           </div>
         </div>
 
+        {/* Custom element after search */}
+        {afterSearchElement}
+
         {/* Style dropdown */}
         {onStyleChange && (
           <div className="w-[80px] shrink-0">
@@ -173,21 +179,26 @@ export function VideoSearchBar({
           </div>
         )}
 
-        {/* Sort dropdown */}
-        <div className="w-[95px] sm:w-[110px] shrink-0">
-          <Select value={sortOrder} onValueChange={onSortChange}>
-            <SelectTrigger className="h-9">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              {sortOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {/* Sort toggle button */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              className="shrink-0"
+              variant="outline"
+              size="icon"
+              onClick={() => onSortChange(sortOrder === "Recency" ? "Views" : "Recency")}
+            >
+              {sortOrder === "Recency" ? (
+                <Calendar className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {sortOrder === "Recency" ? "Sorted by date (click for views)" : "Sorted by views (click for date)"}
+          </TooltipContent>
+        </Tooltip>
 
         {/* Season dropdown */}
         <div className="w-[110px] sm:w-[130px] shrink-0">

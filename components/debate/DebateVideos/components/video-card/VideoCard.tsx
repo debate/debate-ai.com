@@ -121,19 +121,21 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
     <TooltipProvider>
       <div className="block h-full relative group/card">
 
-        <Card className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full relative ${isPlaying ? "ring-2 ring-primary" : ""} ${isHidden ? "opacity-60 ring-2 ring-dashed ring-muted-foreground/50" : ""}`}>
+        <Card className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full relative p-0 ${isPlaying ? "ring-2 ring-primary" : ""} ${isHidden ? "opacity-60 ring-2 ring-dashed ring-muted-foreground/50" : ""}`}>
           <GlowingEffect
-            spread={40}
-            glow={true}
+            spread={80}
+            glow={false}
             disabled={false}
-            proximity={64}
-            inactiveZone={0.01}
-            borderWidth={2}
+            proximity={200}
+            inactiveZone={0.3}
+            borderWidth={3}
+            blur={2}
+            movementDuration={0.5}
           />
 
           {isHidden && (
             <div className="absolute top-1 left-1 z-10">
-              <span className="text-[9px] bg-muted/90 text-muted-foreground px-1.5 py-0.5 rounded font-medium">Hidden</span>
+              <span className="text-[9px] bg-muted/90 text-muted-foreground py-0.5 rounded font-medium">Hidden</span>
             </div>
           )}
           {showThumbnails && (
@@ -145,9 +147,71 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                 src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
                 alt={title}
                 fill
-                className="object-cover"
+                className="rounded object-cover"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               />
+
+              {/* Title overlay */}
+              <div className="absolute inset-0 flex items-center justify-center p-3">
+                <div className="max-w-[90%]">
+                  {hasFullMetadata ? (
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                      {isTopPick && <span className="text-xl">🎖️</span>}
+                      {style && DEBATE_STYLE_LABELS[style] && (
+                        <span className={`inline-flex items-center px-2 py-1 rounded text-sm [font-variant:small-caps] uppercase tracking-wide backdrop-blur-md ${STYLE_COLORS[style] ?? "bg-muted text-muted-foreground"}`}>
+                          {DEBATE_STYLE_LABELS[style]}
+                        </span>
+                      )}
+                      {cleanTournament && (
+                        <span className="text-base font-bold text-purple-300 backdrop-blur-md bg-purple-900/80 border border-purple-400/90 px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg">
+                          {cleanTournament}
+                        </span>
+                      )}
+                      {year && (
+                        <span className="text-base font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
+                          '{String(year).slice(-2)}
+                        </span>
+                      )}
+                      {roundLevel && !/\d/.test(roundLevel) && (
+                        <>
+                          {(roundLevel.toLowerCase().trim() === "finals" || roundLevel.toLowerCase().trim() === "final") && <span className="text-base">🏆</span>}
+                          <span className={cn(
+                            "text-sm font-semibold px-2 py-1 rounded border backdrop-blur-md shadow-lg",
+                            getRoundBadgeColor(roundLevel)
+                          )}>
+                            {roundLevel}
+                          </span>
+                        </>
+                      )}
+                      {hasTeams && (
+                        <>
+                          {affTeam && <span className="text-base font-bold text-blue-300 backdrop-blur-md bg-blue-900/80 border border-blue-400/90 px-2 py-1 rounded shadow-lg">{affTeam}</span>}
+                          {negTeam && <span className="text-base font-bold text-red-300 backdrop-blur-md bg-red-900/80 border border-red-400/90 px-2 py-1 rounded shadow-lg">{negTeam}</span>}
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2">
+                      {isTopPick && <span className="text-2xl">🎖️</span>}
+                      <a
+                        href={youtubeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="group/link block text-center"
+                        title={`Watch "${title}" on YouTube`}
+                      >
+                        <div className="backdrop-blur-md bg-white/90 border border-white px-3 py-2 rounded-lg shadow-lg">
+                          <h3 className="text-base font-semibold text-blue-600 line-clamp-3 group-hover/link:text-blue-800 transition-colors">
+                            {title}
+                          </h3>
+                        </div>
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {isPlaying ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/60">
                   <div className="flex items-center gap-2 text-white text-sm font-medium">
@@ -165,94 +229,8 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
             </div>
           )}
 
-          <div className="p-4 flex-1 flex flex-col">
-
-            <div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium leading-tight">
-              {isTopPick && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="text-xl cursor-default" role="img" aria-label="Top Pick">🎖️</span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">Top Pick</TooltipContent>
-                </Tooltip>
-              )}
-              {hasFullMetadata && (
-                <>
-                  {styleBadge}
-
-                  {cleanTournament && (
-                    <span
-                      className="text-sm font-bold text-purple-600 dark:text-purple-400 cursor-pointer hover:underline [font-variant:small-caps] tracking-wider"
-                      onClick={(e) => { e.stopPropagation(); onBadgeClick(cleanTournament); }}
-                    >
-                      {cleanTournament}
-                    </span>
-                  )}
-
-                  {year && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Badge
-                          variant="outline"
-                          className="border-orange-200 bg-orange-100 text-orange-700 dark:border-orange-800 dark:bg-orange-900/40 dark:text-orange-300 text-sm px-1.5 py-0 font-bold cursor-pointer hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors"
-                          onClick={(e) => { e.stopPropagation(); onBadgeClick(String(year)); }}
-                        >
-                          '{String(year).slice(-2)}
-                        </Badge>
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-xs text-xs">
-                        {yearTopic || `${year} Season`}
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-
-                  {roundLevel && !/\d/.test(roundLevel) && (
-                    <>
-                      {(roundLevel.toLowerCase().trim() === "finals" || roundLevel.toLowerCase().trim() === "final") && <span className="text-sm mr-[-4px]">🏆</span>}
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "text-sm font-semibold cursor-pointer transition-colors flex items-center gap-1 px-1.5 py-0",
-                          getRoundBadgeColor(roundLevel)
-                        )}
-                        onClick={(e) => { e.stopPropagation(); onBadgeClick(roundLevel); }}
-                      >
-                        {roundLevel}
-                      </Badge>
-                    </>
-                  )}
-
-                  {hasTeams && (
-                    <div className="flex items-center text-sm gap-2 font-semibold">
-                      {affTeam && <span className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline" onClick={(e) => { e.stopPropagation(); onBadgeClick(affTeam); }}>{affTeam}</span>}
-                      {negTeam && <span className="text-red-600 dark:text-red-400 cursor-pointer hover:underline" onClick={(e) => { e.stopPropagation(); onBadgeClick(negTeam); }}>{negTeam}</span>}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            <div className="flex items-start justify-between gap-2 mb-2">
-              {!hasFullMetadata ? (
-                <a
-                  href={youtubeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="group/link flex-1 min-w-0"
-                  title={`Watch "${title}" on YouTube`}
-                >
-                  <div className="flex items-center gap-1.5 overflow-hidden">
-                    <h3 className="text-base font-semibold text-foreground line-clamp-2 group-hover/link:text-primary transition-colors">
-                      {title}
-                    </h3>
-                  </div>
-                </a>
-              ) : (
-                <div className="flex-1" />
-              )}
-
-            </div>
+          <div className="px-2 pb-1.5 pt-0 flex-1 flex flex-col">
+            {/* Badges now displayed on thumbnail - removed from here */}
 
             <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
               <button
