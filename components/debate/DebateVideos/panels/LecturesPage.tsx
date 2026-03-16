@@ -15,6 +15,7 @@ import { IconBook } from "@/components/icons"
 import { DictionaryPanel } from "./DictionaryPanel"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { setStateInURL } from "@/lib/utils"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
@@ -44,6 +45,16 @@ export function LecturesPage() {
 
   const [dictSearchTerm, setDictSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
+
+  // Initialize state from URL parameters
+  useEffect(() => {
+    const urlState = setStateInURL<{ q?: string; category?: string }>()
+    if (urlState) {
+      if (urlState.q) actions.setSearchTerm(urlState.q)
+      if (urlState.category) setSelectedCategory(urlState.category)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // ============================================================================
   // Computed Values
@@ -118,7 +129,10 @@ export function LecturesPage() {
   // ============================================================================
   // Search & Filter Handlers
   // ============================================================================
-  const handleSearchChange = useCallback((value: string) => { actions.setSearchTerm(value) }, [actions.setSearchTerm])
+  const handleSearchChange = useCallback((value: string) => {
+    actions.setSearchTerm(value)
+    setStateInURL({ q: value || null })
+  }, [actions.setSearchTerm])
 
   // Register search handler with video player store
   useEffect(() => {
@@ -126,9 +140,17 @@ export function LecturesPage() {
     return () => setSearchHandler(null)
   }, [handleSearchChange, setSearchHandler])
 
-  const handleClearSearch = useCallback(() => { actions.setSearchTerm("") }, [actions.setSearchTerm])
+  const handleClearSearch = useCallback(() => {
+    actions.setSearchTerm("")
+    setStateInURL({ q: null })
+  }, [actions.setSearchTerm])
   const handleSortChange = useCallback((value: string) => { actions.setSortOrder(value) }, [actions.setSortOrder])
   const handleToggleThumbnails = useCallback(() => { actions.setShowThumbnails(!state.showThumbnails) }, [actions.setShowThumbnails, state.showThumbnails])
+
+  const handleCategorySelect = useCallback((categoryKey: string) => {
+    setSelectedCategory(categoryKey)
+    setStateInURL({ category: categoryKey === "all" ? null : categoryKey })
+  }, [])
 
   // ============================================================================
   // Infinite Scroll
@@ -269,7 +291,7 @@ export function LecturesPage() {
           <LectureExpandCards
             videosData={state.debateVideos.lectures}
             selectedCategory={selectedCategory}
-            onCategorySelect={(categoryKey) => setSelectedCategory(categoryKey)}
+            onCategorySelect={handleCategorySelect}
           />
         </div>
       )}

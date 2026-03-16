@@ -9,11 +9,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import type { CategoryType, DebateVideosData } from "@/lib/types/videos"
+import type { DebateStyle } from "@/lib/types/videos"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Video } from "lucide-react"
 import { LeaderboardPanel } from "./RankingsLeaderboardPanel"
+import { setStateInURL } from "@/lib/utils"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
@@ -56,6 +58,17 @@ export function DebateVideosPage() {
 
   const { state, actions } = useVideoState(initialCategory)
   const setSearchHandler = useVideoPlayerStore((state) => state.setSearchHandler)
+
+  // Initialize state from URL parameters
+  useEffect(() => {
+    const urlState = setStateInURL<{ q?: string; year?: string; style?: string }>()
+    if (urlState) {
+      if (urlState.q) actions.setSearchTerm(urlState.q)
+      if (urlState.year) actions.setSelectedYear(urlState.year)
+      if (urlState.style) actions.setSelectedStyle(Number(urlState.style) as DebateStyle)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Lifted state for special panels
   const [lbDivision, setLbDivision] = useState<"VPF" | "VLD" | "VCX" | "NDT">("VPF")
@@ -169,6 +182,7 @@ export function DebateVideosPage() {
   const handleSearchChange = useCallback(
     (value: string) => {
       actions.setSearchTerm(value)
+      setStateInURL({ q: value || null })
     },
     [actions.setSearchTerm],
   )
@@ -182,6 +196,7 @@ export function DebateVideosPage() {
   /** Clears the current search term. */
   const handleClearSearch = useCallback(() => {
     actions.setSearchTerm("")
+    setStateInURL({ q: null })
   }, [actions.setSearchTerm])
 
   /**
@@ -200,6 +215,24 @@ export function DebateVideosPage() {
   const handleToggleThumbnails = useCallback(() => {
     actions.setShowThumbnails(!state.showThumbnails)
   }, [actions.setShowThumbnails, state.showThumbnails])
+
+  /** Updates the selected year filter and syncs to URL */
+  const handleYearChange = useCallback(
+    (year: string) => {
+      actions.setSelectedYear(year)
+      setStateInURL({ year: year || null })
+    },
+    [actions.setSelectedYear],
+  )
+
+  /** Updates the selected style filter and syncs to URL */
+  const handleStyleChange = useCallback(
+    (style: DebateStyle | "") => {
+      actions.setSelectedStyle(style)
+      setStateInURL({ style: style ? String(style) : null })
+    },
+    [actions.setSelectedStyle],
+  )
 
   // ============================================================================
   // Infinite Scroll
@@ -301,7 +334,7 @@ export function DebateVideosPage() {
           onSearchBlur={() => actions.setIsSearchFocused(false)}
           onClearSearch={handleClearSearch}
           onSortChange={handleSortChange}
-          onYearChange={(year) => actions.setSelectedYear(year)}
+          onYearChange={handleYearChange}
           onToggleThumbnails={handleToggleThumbnails}
           onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
           showTopPicksActive={state.currentCategory === "topPicks"}
@@ -310,10 +343,10 @@ export function DebateVideosPage() {
           onToggleRankings={() => handleCategoryChange(state.currentCategory === "leaderboard" ? "rounds" : "leaderboard")}
           totalVideos={state.filteredVideos.length}
           selectedStyle={state.selectedStyle}
-          onStyleChange={(style) => actions.setSelectedStyle(style)}
+          onStyleChange={handleStyleChange}
           allVideos={state.allVideos}
           hiddenVideos={state.hiddenVideos}
-          extraButtons={youtubeStats && <YouTubeStatsModal stats={youtubeStats} allVideos={state.allVideos} />}
+          extraButtons={youtubeStats && <YouTubeStatsModal stats={youtubeStats} />}
         />
       )}
 

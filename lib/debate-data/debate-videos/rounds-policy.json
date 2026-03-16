@@ -261,7 +261,8 @@
       null,
       null,
       null,
-      false
+      true,
+      null
     ],
     [
       "pppJq9IMB2I",
@@ -423,7 +424,7 @@
       null,
       null,
       null,
-      true
+      false
     ],
     [
       "CWiKOI7_Xgk",
@@ -711,7 +712,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "7DpRUbdDxNE",
@@ -801,7 +802,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "1D1ouWE91Pg",
@@ -1362,24 +1363,6 @@
       true
     ],
     [
-      "qk3dyDcpjNg",
-      "Barkley Forum Finals 2017 - Woodward v MBA - Part 2",
-      "2017-08-09",
-      "Barkley Forum Videos",
-      555,
-      "Part 2 of the final in policy at the 2017 BFHS.",
-      1,
-      "Barkley Forum 2017",
-      "Finals",
-      "Woodward",
-      "MBA",
-      null,
-      null,
-      null,
-      null,
-      false
-    ],
-    [
       "xWBbAEuMlLU",
       "Barkley Forum Finals 2017 - Woodward v MBA - Part 1",
       "2017-08-09",
@@ -1395,25 +1378,7 @@
       null,
       null,
       null,
-      false
-    ],
-    [
-      "gi5tBnf7QR4",
-      "Barkley Forum Finals 2017 - Woodward v MBA - Part 3",
-      "2017-08-09",
-      "Barkley Forum Videos",
-      509,
-      "Part 3 of the final in policy at the 2017 BFHS.",
-      1,
-      "Barkley Forum 2017",
-      "Finals",
-      "Woodward",
-      "MBA",
-      null,
-      null,
-      null,
-      null,
-      false
+      true
     ],
     [
       "TTGjx-gLGas",
@@ -1449,7 +1414,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "QSuwRVPQhi4",
@@ -1773,7 +1738,7 @@
       "2-1",
       null,
       null,
-      true
+      false
     ]
   ]
 }

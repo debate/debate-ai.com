@@ -81,16 +81,15 @@ export function IntroTextOverview() {
         <Card className="shadow-md bg-muted/30">
           <CardContent className="p-6 space-y-4">
             <h3 className="font-semibold text-lg border-b pb-2">Features & Capabilities</h3>
-            <ul className="space-y-3 text-sm list-disc pl-4 marker:text-blue-500">
+            <ul className="space-y-3 text-md list-disc pl-4 marker:text-blue-500">
               Search within summaries, cites, highlighted and full text over millions of research quotes.
               Scout what evidence selected teams and schools frequently read.
               Sort by Speeches Read In Count (statistics from over a decade in all styles).
 
-              Use Characters Highlighted to match speech times (~1500 char/min) and to read aloud summaries while audience
-              reads highlighted on-screen.
+              Use Words Bold & Highlighted to match speech times (~300 w/min) and to read aloud warranted summaries
+              while judge & opponents reads highlighted quotes on-screen, which makes context more understandable and publically persuasive.
 
               Collaborate on topic outlines, share evidence, and download Topic Starter outlines.
-              Use arrow keys to navigate between results.
             </ul>
 
             <div className="pt-4 mt-auto">

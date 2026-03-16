@@ -9,6 +9,7 @@
 
 # production
 /build
+.fuse*
 
 # debug
 npm-debug.log*

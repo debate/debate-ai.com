@@ -6,7 +6,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Synchronizes application state with URL search parameters for shareable, bookmarkable URLs.
+ * Synchronizes on-page selected state vars with URL
+ *  parameters for shareable URLs that load those filters.
  *
  * This utility manages URL state in two ways:
  * - **Reading**: When called without arguments, returns current URL parameters as an object
@@ -37,12 +38,14 @@ export function cn(...inputs: ClassValue[]) {
  * // Remove a parameter by setting it to null or empty string
  * setStateInURL({ q: null }); // or { q: "" }
  */
-export function setStateInURL<T extends Record<string, string | null | undefined> = Record<string, string>>(
+export function setStateInURL<
+  T extends Record<string, string | null | undefined> = Record<string, string>,
+>(
   stateObject?: Partial<T>,
   options: {
     addToBrowserHistory?: boolean;
     removeNullish?: boolean;
-  } = {}
+  } = {},
 ): Partial<T> | undefined {
   const { addToBrowserHistory = false, removeNullish = true } = options;
 
@@ -55,7 +58,10 @@ export function setStateInURL<T extends Record<string, string | null | undefined
   if (stateObject && Object.keys(stateObject).length > 0) {
     Object.entries(stateObject).forEach(([key, value]) => {
       // Remove parameter if value is nullish or empty (when removeNullish is true)
-      if (removeNullish && (value === null || value === undefined || value === "")) {
+      if (
+        removeNullish &&
+        (value === null || value === undefined || value === "")
+      ) {
         url.searchParams.delete(key);
       } else if (value != null) {
         url.searchParams.set(key, String(value));

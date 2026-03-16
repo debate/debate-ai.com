@@ -10,6 +10,12 @@ interface LectureCategoryGalleryProps {
   videosData?: any[]; // For getting most viewed video per category
 }
 
+type CategoryDescriptions = {
+  categories: Record<string, { description: string }>;
+};
+
+const typedCategoryDescriptions = categoryDescriptions as CategoryDescriptions;
+
 // Map category labels to gradient colors
 const CATEGORY_GRADIENTS: Record<string, string> = {
   "Affirmative Strategy": "from-blue-500 via-cyan-500 to-teal-500",
@@ -71,7 +77,7 @@ export function LectureCategoryGallery({ onCategorySelect, selectedCategory, vid
     // Build cards from extracted categories
     return Array.from(categoryMap.entries())
       .map(([label, data]) => {
-        const description = categoryDescriptions.categories[label]?.description || "Debate lecture videos";
+        const description = typedCategoryDescriptions.categories[label]?.description || "Debate lecture videos";
         const normalizedKey = label.toLowerCase().replace(/\s+/g, '_').replace(/[&/]/g, '_');
 
         return {
@@ -334,8 +340,8 @@ export function LectureCategoryGallery({ onCategorySelect, selectedCategory, vid
                 key={index}
                 onClick={() => handleCardClick(index)}
                 className={`h-2 rounded-full transition-all duration-200 ${index === activeIndex
-                    ? 'bg-white w-8'
-                    : 'bg-white/30 hover:bg-white/50 w-2'
+                  ? 'bg-white w-8'
+                  : 'bg-white/30 hover:bg-white/50 w-2'
                   }`}
                 aria-label={`Go to category ${index + 1}`}
               />
