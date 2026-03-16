@@ -10,7 +10,7 @@ import grab from "grab-url";
 import {
   getDatasets,
   scrapeDivision,
-} from "../lib/third-party-sync/sync-rankings-debateland";
+} from "../lib/sync-debate-rankings/sync-rankings-debateland";
 
 const grabMock = vi.mocked(grab);
 

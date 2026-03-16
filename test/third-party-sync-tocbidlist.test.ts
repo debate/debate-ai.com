@@ -7,7 +7,7 @@ vi.mock("axios", () => ({
 }));
 
 import axios from "axios";
-import { scrapeToc } from "../lib/third-party-sync/sync-rankings-tocbidlist";
+import { scrapeToc } from "../lib/sync-debate-rankings/sync-rankings-tocbidlist";
 
 const axiosGetMock = vi.mocked(axios.get);
 

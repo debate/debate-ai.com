@@ -10,7 +10,7 @@ By accessing, using, modifying, or distributing the Software, you agree to the t
 
 ## 2. License Grant
 
-Debate AI  ("Licensor")  grants you a non-exclusive, royalty-free, worldwide, non-transferable, non-sublicensable license to:
+Debate AI ("Licensor") grants you a non-exclusive, royalty-free, worldwide, non-transferable, non-sublicensable license to:
 
 - Use and copy the Software
 - Modify the source code for permitted purposes

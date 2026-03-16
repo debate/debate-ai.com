@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import React, { useEffect, useState } from "react"
-import { Code2, MessageSquare, Calendar, Trophy, BookOpen, BookMarked, MessageCircle, Shield, FileText } from "lucide-react"
+import { Code2, Scale, MessageSquare, Calendar, Trophy, BookOpen, BookMarked, MessageCircle, Shield, FileText } from "lucide-react"
 
 const FOOTER_LINKS = [
   { url: "https://github.com/debate", text: "Github", icon: Code2 },
@@ -11,6 +11,10 @@ const FOOTER_LINKS = [
   { url: "https://www.debate.land", text: "Rankings", icon: Trophy },
   { url: "https://debate-decoded.ghost.io", text: "Community Blog", icon: BookOpen },
   { url: "https://opencaselist.com", text: "Research", icon: BookMarked },
+
+  { url: "https://debaterhub.com", text: "DebaterHub", icon: Scale },
+
+
   { url: "https://discord.gg/SJdBqBz3tV", text: "Support", icon: MessageCircle },
   { url: "/legal/privacy", text: "Privacy", icon: Shield },
   { url: "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit", text: "Rules", icon: FileText },

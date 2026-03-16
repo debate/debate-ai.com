@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 vi.mock("grab-url", () => ({ default: vi.fn() }))
 
 import grab from "grab-url"
-import { getDatasets, scrapeDivision } from "../lib/third-party-sync/sync-rankings-debatedrills"
+import { getDatasets, scrapeDivision } from "../lib/sync-debate-rankings/sync-rankings-debatedrills"
 
 const grabMock = vi.mocked(grab)
 

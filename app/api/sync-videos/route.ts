@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { syncYouTubeVideos } from "@/lib/third-party-sync/sync-youtube-rounds"
+import { syncYouTubeVideos } from "@/lib/sync-debate-sites/sync-youtube-rounds"
 
 export async function GET() {
   try {

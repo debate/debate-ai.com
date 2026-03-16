@@ -4,13 +4,57 @@ import { getChannelId, getVideosForChannel, getVideosByIds } from "./youtube-api
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
+const ROUNDS_FILES: Record<number, string> = {
+  1: "rounds-policy.json",
+  2: "rounds-pf.json",
+  3: "rounds-ld.json",
+  4: "rounds-college.json",
+};
+
 const categories = {
   rounds: [
-    "LynbrookDebate",
+    "Debatedrills"
   ],
 };
 
-const publishedAfter = "2023-03-01T00:00:00Z";
+/*
+    // "championbriefs1508",
+      "su.debate",
+      "ResolvedDebate",
+      "PolicyDebateCentral",
+      "pfvideos9234",
+      "ddidebate4071",
+      "DebateStreamDB8",
+    "LynbrookDebate",
+      "thatdebatekid5313",
+      "NSD_DebateCamp",
+      "ddidebate4071",
+      "pfvideos9234",
+    "lasadebate",
+      "DebateStreamDB8",
+      "CEDADebate",
+      "KentuckyDebate",
+      "sailorferrets",
+      "wakedebate8636",
+      "exodusfiles3478",
+      "SolvencyAdvocate",
+      "northbrowardmr4523",
+      "TexasDebate",
+    "jacob_wilkus",
+      "arvindshankar2481",
+      "NDT-jl6oi",
+      "atrujillo9",
+      "UNTDebate",
+      "vintagedebatevids",
+      "georgetowndebateseminar1234",
+      "barkleyforumvideos3220",
+      "BillBatterman",
+      "msudebate6544",
+      "ProfessorGraham",
+      "michigandebate7440",
+  */
+
+const publishedAfter = "2010-03-01T00:00:00Z";
 
 export async function syncMissingTopPicks() {
   if (!YOUTUBE_API_KEY) {
@@ -34,17 +78,31 @@ export async function syncMissingTopPicks() {
   const videos = await getVideosByIds(videoIds);
 
   const dataDir = path.join(process.cwd(), "lib", "debate-data");
-  const roundsPath = path.join(dataDir, "debate-rounds-videos.json");
 
-  const roundsFile = JSON.parse(await fs.readFile(roundsPath, "utf-8"));
-  const existingIds = new Set(roundsFile.data.map((v: any[]) => v[0]));
+  // Load all split files and collect existing IDs
+  const roundsFiles: Record<number, { path: string; data: any }> = {};
+  const existingIds = new Set<string>();
+  for (const [style, filename] of Object.entries(ROUNDS_FILES)) {
+    const filePath = path.join(dataDir, filename);
+    const file = JSON.parse(await fs.readFile(filePath, "utf-8"));
+    roundsFiles[Number(style)] = { path: filePath, data: file };
+    for (const v of file.data) existingIds.add(v[0]);
+  }
+
   const newVideos = videos.filter((v) => !existingIds.has(v[0]));
 
-  roundsFile.data.push(...newVideos);
+  // Add each video to the correct split file based on style (index 6)
+  for (const video of newVideos) {
+    const style = video[6] || 4; // default to college if unknown
+    roundsFiles[style].data.data.push(video);
+  }
 
-  await fs.writeFile(roundsPath, JSON.stringify(roundsFile, null, 2));
+  // Write back only files that changed
+  for (const entry of Object.values(roundsFiles)) {
+    await fs.writeFile(entry.path, JSON.stringify(entry.data, null, 2));
+  }
 
-  console.log(`Added ${newVideos.length} videos to debate-rounds-videos.json`);
+  console.log(`Added ${newVideos.length} videos across split round files`);
   console.log(`Skipped ${videos.length - newVideos.length} already present`);
 
   const notFound = videoIds.filter((id) => !videos.some((v) => v[0] === id));

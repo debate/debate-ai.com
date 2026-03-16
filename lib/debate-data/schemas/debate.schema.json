@@ -248,7 +248,7 @@
                 "description": "URL link to speech documents for this round."
               }
             ],
-            "additionalItems": false
+            "additionalItems": true
           }
         }
       },

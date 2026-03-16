@@ -18,22 +18,34 @@ export async function updateVideoViewCounts(batchSize = 50) {
   const dataDir = path.join(process.cwd(), "lib", "debate-data");
   const progressFile = path.join(process.cwd(), "youtube-update-progress.json");
 
-  // Load existing data
-  const roundsPath = path.join(dataDir, "debate-rounds-videos.json");
+  // Load existing data from split round files
+  const roundsFileNames = [
+    "rounds-policy.json",
+    "rounds-pf.json",
+    "rounds-ld.json",
+    "rounds-college.json",
+  ];
   const lecturesPath = path.join(dataDir, "debate-lectures.json");
 
-  const roundsData = JSON.parse(await fs.readFile(roundsPath, "utf-8"));
+  const roundsFiles = await Promise.all(
+    roundsFileNames.map(async (name) => {
+      const filePath = path.join(dataDir, name);
+      return { name, path: filePath, data: JSON.parse(await fs.readFile(filePath, "utf-8")) };
+    })
+  );
   const lecturesData = JSON.parse(await fs.readFile(lecturesPath, "utf-8"));
 
   // Combine all videos
   const allVideos = [
-    ...roundsData.data.map((v: any[], idx: number) => ({
-      type: "rounds" as const,
-      index: idx,
-      videoId: v[0],
-      oldViews: v[4],
-      data: v,
-    })),
+    ...roundsFiles.flatMap((file) =>
+      file.data.data.map((v: any[], idx: number) => ({
+        type: file.name,
+        index: idx,
+        videoId: v[0],
+        oldViews: v[4],
+        data: v,
+      }))
+    ),
     ...lecturesData.data.map((v: any[], idx: number) => ({
       type: "lectures" as const,
       index: idx,
@@ -100,8 +112,9 @@ export async function updateVideoViewCounts(batchSize = 50) {
             video.data[4] = newViews;
 
             // Update in the appropriate dataset
-            if (video.type === "rounds") {
-              roundsData.data[video.index] = video.data;
+            const roundsFile = roundsFiles.find((f) => f.name === video.type);
+            if (roundsFile) {
+              roundsFile.data.data[video.index] = video.data;
             } else {
               lecturesData.data[video.index] = video.data;
             }
@@ -133,7 +146,9 @@ export async function updateVideoViewCounts(batchSize = 50) {
     await fs.writeFile(progressFile, JSON.stringify(progress, null, 2));
 
     // Save updated data files after each batch
-    await fs.writeFile(roundsPath, JSON.stringify(roundsData, null, 2));
+    for (const file of roundsFiles) {
+      await fs.writeFile(file.path, JSON.stringify(file.data, null, 2));
+    }
     await fs.writeFile(lecturesPath, JSON.stringify(lecturesData, null, 2));
 
     console.log(

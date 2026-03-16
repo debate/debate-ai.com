@@ -14,7 +14,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { Info, ChevronUp, ChevronDown, Trophy } from "lucide-react"
 import grab from "grab-url"
-import type { LeaderboardEntry } from "@/lib/third-party-sync/sync-rankings-debatedrills"
+import type { LeaderboardEntry } from "@/lib/sync-debate-rankings/sync-rankings-debatedrills"
 import type { TopicType, ChampionType } from "@/lib/types/videos"
 
 type Division = "VPF" | "VLD" | "VCX" | "NDT"

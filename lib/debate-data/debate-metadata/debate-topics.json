@@ -1,5 +1,5 @@
 {
-  "$schema": "./schemas/debate-topics.schema.json",
+  "$schema": "../schemas/debate-topics.schema.json",
   "data": [
     {
       "year": 2000,

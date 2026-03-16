@@ -1,5 +1,140 @@
 {
+  "$schema": "../schemas/debate-lectures.schema.json",
   "data": [
+
+    [
+    "48sucCBSFTA",
+    "Mar/Apr 2026 Lincoln-Douglas Topic Analysis by Daniel Shatzkin",
+    "2026-02-27",
+    "Champion Briefs",
+    789,
+    "Resolved: The United States military ought to abide by the principle of non-intervention. Visit www.ChampionBriefs.com to ...",
+    "Topic Analysis"
+  ],
+  [
+    "4HoJd5ufC60",
+    "March 2026 Public Forum Topic Analysis by Yair Fraifeld",
+    "2026-02-23",
+    "Champion Briefs",
+    1402,
+    "Resolved: The United States federal government should ban corporate acquisition of single-family residences. Visit www."
+    ,"Topic Analysis"
+  ],
+  [
+    "bLJwzkVdyqI",
+    "February 2026 Public Forum Topic Analysis by Yair Fraifeld",
+    "2026-01-22",
+    "Champion Briefs",
+    1226,
+    "Resolved: The Federal Trade Commission should establish a federal regulatory framework for sports betting. Visit www."
+    ,"Topic Analysis"
+  ],
+  [
+    "0n-cSRJJ0lA",
+    "January 2026 Public Forum Topic Analysis by Rachel Mauchline",
+    "2026-01-02",
+    "Champion Briefs",
+    858,
+    "Resolved: The People's Republic of China should substantially reduce its international extraction of natural resources. Visit www."
+    ,"Topic Analysis"
+  ],
+  [
+    "MyeB1gyXyDE",
+    "Jan/Feb 2026 Lincoln-Douglas Topic Analysis by Daniel Shatzkin",
+    "2026-01-02",
+    "Champion Briefs",
+    763,
+    "Resolved: The possession of nuclear weapons is immoral. Visit www.ChampionBriefs.com to download our Jan/Feb ..."
+    ,"Topic Analysis"
+  ],
+  [
+    "bovKpkjq4tg",
+    "Nov/Dec 2025 Public Forum Topic Analysis by Sach Letchumanan",
+    "2025-11-04",
+    "Champion Briefs",
+    1460,
+    "Resolved: The United States federal government should require technology companies to provide lawful access to encrypted ..."
+    ,"Topic Analysis"
+  ],
+  [
+    "2AwTbGW_Gk4",
+    "Nov/Dec 2025 Lincoln-Douglas Topic Analysis by Daniel Shatzkin",
+    "2025-10-24",
+    "Champion Briefs",
+    1089,
+    "Prepping for the Sep/Oct topic in Lincoln-Douglas? Here's an in-depth, high-level topic analysis from our writers about the ..."
+    ,"Topic Analysis"
+  ],
+
+  
+  [
+    "uPvtKCjwZSk",
+    "Sep/Oct 2025 Lincoln-Douglas Topic Analysis by Adam Tomasi",
+    "2025-09-08",
+    "Champion Briefs",
+    761,
+    "Prepping for the Sep/Oct topic in Lincoln-Douglas? Here's an in-depth, high-level topic analysis from our writers about the Plea ..."
+ 
+,     "Topic Analysis"
+  ],
+  [
+    "A0Uq7YCgiIo",
+    "Sept/Oct 2025 Public Forum Topic Analysis by Sach Letchumanan",
+    "2025-08-27",
+    "Champion Briefs",
+    1337,
+    "Resolved: The United Kingdom should rejoin the European Union. Visit www.ChampionBriefs.com to download our Sep/Oct ..."
+,     "Topic Analysis"
+],
+  [
+    "vWJ3Y6gVqac",
+    "June/NSDA 2025 Lincoln-Douglas Topic Analysis",
+    "2025-05-28",
+    "Champion Briefs",
+    198,
+    "Prepping for the June/NSDA topic in Lincoln-Douglas? Here's an in-depth, high-level topic analysis from our writers about the ..."
+,     "Topic Analysis"
+  ],
+  [
+    "YVE4zVSJqYk",
+    "June/NSDA 2025 Public Forum Topic Analysis by Rachel Mauchline",
+    "2025-05-20",
+    "Champion Briefs",
+    363,
+    "Resolved: On balance, in the United States, the benefits of presidential executive orders outweigh the harms. Visit www."
+,     "Topic Analysis"
+  ],
+
+    [
+      "NsNUx8iGVy8",
+      "Public Forum Demo Debate Round (Sept/Oct 2017 Topic)",
+      "2017-08-22",
+      "Champion Briefs",
+      59187,
+      "In this Public Forum demo round, Kevin Hautigan and Cornelia Fraser (Pro Team) debate Sarah Branse and Miranda Nutt (Con Team) on the topic \"Resolved: Deployment of anti-missile systems is in South Koreas best interest.\"",
+      "Demo Debates"
+    ],
+    [
+      "dgUnH-NGaPw",
+      "Public Forum Demo Round",
+      "2013-07-03",
+      "Champion Briefs",
+      17650,
+      "In this unique demo round, coaches and students team up to debate the June 2013 Public Forum Topic. This round is meant to be an example for students to better understand the technical side of debate.",
+      "Demo Debates"
+    ],
+    [
+      "K17JD_8O0MI",
+      "Champion Briefs - Public Forum Demo Round",
+      "2016-08-31",
+      "Champion Briefs",
+      23463,
+      "In this Public Forum demo round, Eitan Ezra and Nathan Witkin (Affirmative) debate Caroline Wohl and Alekh Kale (Negative) on the topic Resolved: In United States public K-12 schools, the probable cause standard ought to apply to searches of students.",
+      "Demo Debates"
+    ],
+
+
+
     [
       "yaaAW-wtVKE",
       "January/February 2026 LD Topic Webinar",
@@ -16,16 +151,7 @@
       "LASA Debate",
       1398,
       "",
-      4,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      false
+      "Awards"
     ],
     [
       "8NgH2yyr5s0",

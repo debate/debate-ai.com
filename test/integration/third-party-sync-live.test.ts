@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest"
 
-import { scrapeAll as scrapeDebateland } from "../../lib/third-party-sync/sync-rankings-debateland"
-import { scrapeAll as scrapeDebateDrills } from "../../lib/third-party-sync/sync-rankings-debatedrills"
-import { scrapeToc } from "../../lib/third-party-sync/sync-rankings-tocbidlist"
-import { getTournamentNames } from "../../lib/third-party-sync/sync-tournaments"
+import { scrapeAll as scrapeDebateland } from "../../lib/sync-debate-rankings/sync-rankings-debateland"
+import { scrapeAll as scrapeDebateDrills } from "../../lib/sync-debate-rankings/sync-rankings-debatedrills"
+import { scrapeToc } from "../../lib/sync-debate-rankings/sync-rankings-tocbidlist"
+import { getTournamentNames } from "../../lib/sync-debate-rankings/sync-tournaments"
 
 const runLive = process.env.SYNC_LIVE === "1" || process.env.RUN_SYNC_INTEGRATION === "1"
 const integrationDescribe = runLive ? describe : describe.skip

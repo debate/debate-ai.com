@@ -74,15 +74,7 @@ export function IntroTextOverview() {
               which lead to the emergence of Collective Consciousness.
 
             </p>
-            <p className="text-lg leading-relaxed">
-              An open debate garden provides all points of view so that people can understand the most popular and most
-              "round winning" arguments against their personal beliefs. Many people today have lost faith in unbiased
-              media sources or the authority of field experts — the neutral stance is only possible through presenting
-              every ideology available. When most people are given an opposing point of view, they&apos;re usually only
-              offered a reductionist strawperson argument. This service provides an easy way to view what is actually
-              the best and most reasoned argument for the other side, so that people have a chance to understand what
-              those opposed to them truly believe, in their own unfiltered words.
-            </p>
+
           </CardContent>
         </Card>
 
@@ -150,6 +142,16 @@ export function IntroTextOverview() {
                 <p className="text-black-400 leading-relaxed">
                   AI reveals the exact sentences and citations behind its reasoning, allowing users to verify alignment with
                   collective interests through sentence-by-sentence interpretability.
+                </p>
+
+                <p className="text-lg leading-relaxed">
+                  An open debate garden provides all points of view so that people can understand the most popular and most
+                  "round winning" arguments against their personal beliefs. Many people today have lost faith in unbiased
+                  media sources or the authority of field experts — the neutral stance is only possible through presenting
+                  every ideology available. When most people are given an opposing point of view, they&apos;re usually only
+                  offered a reductionist strawperson argument. This service provides an easy way to view what is actually
+                  the best and most reasoned argument for the other side, so that people have a chance to understand what
+                  those opposed to them truly believe, in their own unfiltered words.
                 </p>
 
 

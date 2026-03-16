@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
-import rounds from "@/lib/debate-data/debate-rounds-videos.json";
-import topPicks from "@/lib/debate-data/debate-top-picks.json";
-import lectures from "@/lib/debate-data/debate-lectures.json";
-import topics from "@/lib/debate-data/debate-topics.json";
-import champions from "@/lib/debate-data/debate-champions.json";
+import roundsPolicy from "@/lib/debate-data/debate-videos/rounds-policy.json";
+import roundsPf from "@/lib/debate-data/debate-videos/rounds-pf.json";
+import roundsLd from "@/lib/debate-data/debate-videos/rounds-ld.json";
+import roundsCollege from "@/lib/debate-data/debate-videos/rounds-college.json";
+import topPicks from "@/lib/debate-data/debate-videos/debate-top-picks.json";
+import lectures from "@/lib/debate-data/debate-videos/debate-lectures.json";
+import topics from "@/lib/debate-data/debate-metadata/debate-topics.json";
+import champions from "@/lib/debate-data/debate-metadata/debate-champions.json";
 
 function dedupeById<T extends [string, ...unknown[]]>(videos: T[]): T[] {
   const seen = new Set<string>();
@@ -33,7 +36,7 @@ function getDebateHistory() {
 export async function GET() {
   const history = getDebateHistory();
   return NextResponse.json({
-    rounds: dedupeById(rounds.data as [string, ...unknown[]][]),
+    rounds: dedupeById([...roundsPolicy.data, ...roundsPf.data, ...roundsLd.data, ...roundsCollege.data] as [string, ...unknown[]][]),
     topPicks: topPicks.data,
     lectures: dedupeById(lectures.data as [string, ...unknown[]][]),
     topics: topics.data,

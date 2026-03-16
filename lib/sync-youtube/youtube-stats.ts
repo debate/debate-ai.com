@@ -8,9 +8,15 @@ import path from "path";
 export async function calculateYouTubeViewStats() {
   const dataDir = path.join(process.cwd(), "lib", "debate-data");
 
-  // Load debate rounds videos (format: [videoId, title, date, channel, views, description, debateStyle, ...])
-  const roundsPath = path.join(dataDir, "debate-rounds-videos.json");
-  const roundsData = JSON.parse(await fs.readFile(roundsPath, "utf-8"));
+  // Load debate rounds videos from split files
+  const roundsFileNames = ["rounds-policy.json", "rounds-pf.json", "rounds-ld.json", "rounds-college.json"];
+  const roundsDataArrays = await Promise.all(
+    roundsFileNames.map(async (name) => {
+      const file = JSON.parse(await fs.readFile(path.join(dataDir, name), "utf-8"));
+      return file.data;
+    })
+  );
+  const roundsData = { data: roundsDataArrays.flat() };
 
   // Load debate lectures (format: [videoId, title, date, channel, views, description, debateStyle])
   const lecturesPath = path.join(dataDir, "debate-lectures.json");

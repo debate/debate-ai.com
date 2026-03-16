@@ -11,7 +11,7 @@ describe("sync-youtube-rounds", () => {
   it("throws when the YouTube API key is missing", async () => {
     vi.resetModules()
     vi.stubEnv("YOUTUBE_API_KEY", "")
-    const { syncYouTubeVideos } = await import("../lib/third-party-sync/sync-youtube-rounds")
+    const { syncYouTubeVideos } = await import("../lib/sync-debate-rankings/sync-youtube-rounds")
 
     await expect(syncYouTubeVideos()).rejects.toThrow("YouTube API key not configured")
   })
