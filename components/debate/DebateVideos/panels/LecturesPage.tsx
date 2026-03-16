@@ -239,7 +239,6 @@ export function LecturesPage() {
         <VideoSearchBar
           searchTerm={state.searchTerm}
           sortOrder={state.sortOrder}
-          selectedYear={state.selectedYear}
           isSearchFocused={state.isSearchFocused}
           showThumbnails={state.showThumbnails}
           showFavoritesOnly={state.showFavoritesOnly}
@@ -248,7 +247,6 @@ export function LecturesPage() {
           onSearchBlur={() => actions.setIsSearchFocused(false)}
           onClearSearch={handleClearSearch}
           onSortChange={handleSortChange}
-          onYearChange={(year) => actions.setSelectedYear(year)}
           onToggleThumbnails={handleToggleThumbnails}
           onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
           totalVideos={state.filteredVideos.length}

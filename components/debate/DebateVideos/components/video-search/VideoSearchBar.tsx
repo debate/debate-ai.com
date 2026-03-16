@@ -29,7 +29,7 @@ interface VideoSearchBarProps {
   /** Whether video thumbnails are currently visible in the grid. */
   showThumbnails: boolean
   /** Currently selected season year. */
-  selectedYear: string
+  selectedYear?: string
   /** Callback invoked with the new search string on every input change. */
   onSearchChange: (value: string) => void
   /** Callback invoked when the search input receives focus. */
@@ -41,7 +41,7 @@ interface VideoSearchBarProps {
   /** Callback invoked with the newly selected sort option value. */
   onSortChange: (value: string) => void
   /** Callback invoked with the newly selected season year. */
-  onYearChange: (value: string) => void
+  onYearChange?: (value: string) => void
   /** Callback invoked to toggle thumbnail visibility. */
   onToggleThumbnails: () => void
   /** Whether to show only favorite videos. */
@@ -166,22 +166,24 @@ export function VideoSearchBar({
           {afterSearchElement}
 
           {/* Season dropdown */}
-          <div className="w-[110px] sm:w-[130px] shrink-0">
-            <Select value={selectedYear || "all"} onValueChange={(v) => onYearChange(v === "all" ? "" : v)}>
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder="All Seasons" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Seasons</SelectItem>
-                {years.map((y) => (
-                  <SelectItem key={y} value={y}>
-                    {Number(y) - 1}-{y}
-                  </SelectItem>
-                ))}
-                <SelectItem value="legacy">Pre-2010</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {onYearChange && (
+            <div className="w-[110px] sm:w-[130px] shrink-0">
+              <Select value={selectedYear || "all"} onValueChange={(v) => onYearChange(v === "all" ? "" : v)}>
+                <SelectTrigger className="h-9">
+                  <SelectValue placeholder="All Seasons" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Seasons</SelectItem>
+                  {years.map((y) => (
+                    <SelectItem key={y} value={y}>
+                      {Number(y) - 1}-{y}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="legacy">Pre-2010</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
 
         {/* Row 2 (mobile): Format selector + Icon buttons + Pagination */}
