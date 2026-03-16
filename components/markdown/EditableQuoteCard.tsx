@@ -59,6 +59,11 @@ interface EditableQuoteCardProps {
   onUpdate?: (cardId: string, html: string) => void
   /** Display mode controlling which parts of the card are visible. */
   viewMode?: ViewMode
+  /**
+   * Speech-sync reading progress for this card (0–1).
+   * null = speech sync inactive, 0 = not yet reached, 0–1 = currently reading, 1 = done.
+   */
+  speechReadingProgress?: number | null
 }
 
 /**
@@ -226,11 +231,18 @@ export function EditableQuoteCard({
   highlightedWords,
   onUpdate,
   viewMode = "read",
+  speechReadingProgress = null,
 }: EditableQuoteCardProps) {
   const [isEditing, setIsEditing] = useState(true)
   const [showKeyPoints, setShowKeyPoints] = useState(false)
   const [summaryText, setSummaryText] = useState(summary)
   const [isCollapsed, setIsCollapsed] = useState(true)
+
+  // Speech-sync reading state derived from progress prop
+  const isReadingActive = speechReadingProgress !== null
+  const isReadingDone = isReadingActive && speechReadingProgress >= 1
+  const isReadingCurrent = isReadingActive && speechReadingProgress > 0 && speechReadingProgress < 1
+  const isReadingUpcoming = isReadingActive && speechReadingProgress <= 0
 
   const handleCopyCard = useCallback(async () => {
     const textParts: string[] = []
@@ -264,7 +276,16 @@ export function EditableQuoteCard({
   }
 
   return (
-    <section className={cn("quote-card", showKeyPoints && "key-points-mode")} data-quote-id={cardId}>
+    <section
+      className={cn(
+        "quote-card",
+        showKeyPoints && "key-points-mode",
+        isReadingCurrent && "speech-reading-current",
+        isReadingDone && "speech-reading-done",
+        isReadingUpcoming && isReadingActive && "speech-reading-upcoming",
+      )}
+      data-quote-id={cardId}
+    >
       <div className="quote-card-toolbar">
         <button
           type="button"
@@ -371,6 +392,20 @@ export function EditableQuoteCard({
                 </a>
               )}
             </footer>
+
+            {/* Speech-sync reading progress bar */}
+            {isReadingActive && (
+              <div className="speech-reading-bar-track" aria-hidden="true">
+                <div
+                  className={cn(
+                    "speech-reading-bar-fill",
+                    isReadingDone && "speech-reading-bar-done",
+                    isReadingCurrent && "speech-reading-bar-active",
+                  )}
+                  style={{ width: `${Math.round((speechReadingProgress ?? 0) * 100)}%` }}
+                />
+              </div>
+            )}
           </>
         )}
       </blockquote>

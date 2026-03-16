@@ -710,6 +710,86 @@
   }
 }
 
+/* ─────────────────────────────────────────────────────────────
+   Speech-Sync Reading Progress States
+   Cards visually track the speaker's position at ~1500 chars/min
+   ───────────────────────────────────────────────────────────── */
+
+/* Card currently being read — glowing border + subtle lift */
+.quote-card.speech-reading-current .lexical-fancy-blockquote {
+  border-color: rgba(251, 191, 36, 0.7);
+  box-shadow:
+    0 0 0 2px rgba(251, 191, 36, 0.2),
+    0 0 24px rgba(251, 191, 36, 0.25),
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 -1px 0 rgba(15, 23, 42, 0.95) inset,
+    0 18px 30px rgba(15, 23, 42, 0.85);
+  transform: translateY(-2px);
+}
+
+/* Card fully read — dimmed to signal it's been covered */
+.quote-card.speech-reading-done .lexical-fancy-blockquote {
+  opacity: 0.5;
+  border-color: rgba(74, 222, 128, 0.4);
+  box-shadow:
+    0 0 0 1px rgba(74, 222, 128, 0.1),
+    0 10px 20px rgba(15, 23, 42, 0.5);
+}
+
+/* Cards not yet reached — slightly faded so audience focuses on current */
+.quote-card.speech-reading-upcoming .lexical-fancy-blockquote {
+  opacity: 0.75;
+}
+
+/* Reading progress bar track (bottom of the card body) */
+.speech-reading-bar-track {
+  height: 3px;
+  border-radius: 9999px;
+  background: rgba(148, 163, 184, 0.15);
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+/* Progress fill — animated for smooth sweep */
+.speech-reading-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  transition: width 0.15s linear;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+}
+
+.speech-reading-bar-fill.speech-reading-bar-active {
+  animation: speech-bar-pulse 1.5s ease-in-out infinite;
+}
+
+.speech-reading-bar-fill.speech-reading-bar-done {
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.4);
+  animation: none;
+}
+
+@keyframes speech-bar-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+
+/* Light theme overrides for speech-sync */
+@media (prefers-color-scheme: light) {
+  .quote-card.speech-reading-current .lexical-fancy-blockquote {
+    border-color: rgba(217, 119, 6, 0.6);
+    box-shadow:
+      0 0 0 2px rgba(217, 119, 6, 0.15),
+      0 0 20px rgba(217, 119, 6, 0.15),
+      0 1px 0 rgba(255, 255, 255, 0.8) inset,
+      0 10px 25px rgba(15, 23, 42, 0.1);
+  }
+  .speech-reading-bar-fill {
+    background: linear-gradient(90deg, #d97706, #b45309);
+    box-shadow: 0 0 6px rgba(217, 119, 6, 0.4);
+  }
+}
+
 /* Print styles */
 @media print {
   .quote-card-toolbar {

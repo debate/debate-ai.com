@@ -10,10 +10,14 @@ import type React from "react"
 import { useEffect, useState, useCallback, useRef } from "react"
 import { htmlToCards, type HeadingSection } from "./quote-view-utils"
 import { EditableQuoteCard } from "./EditableQuoteCard"
-import { useTimerState } from "../debate/DebateRound/hooks/useTimerState"
 import type { ViewMode } from "@/lib/types/debate-flow"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import "./quote-view.css"
+
+/** Average characters per word used to estimate reading position. */
+const CHARS_PER_WORD = 5.5
+/** Debate reading speed in characters per minute. */
+const READING_SPEED_CHARS_PER_MIN = 1500
 
 /** Props for the QuoteView component. */
 interface QuoteViewProps {
@@ -44,6 +48,19 @@ export function QuoteView({ html, fileName, active = true, viewMode = "read" }: 
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set())
   const containerRef = useRef<HTMLDivElement>(null)
   const prevFileNameRef = useRef<string | undefined>(fileName)
+
+  // Speech-sync reading progress — driven by speech-timer-tick events from SpeechHeaderBar
+  const [readingElapsedMs, setReadingElapsedMs] = useState<number | null>(null)
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const evt = e as CustomEvent<{ speechName: string; elapsedMs: number; totalMs: number; syncEnabled: boolean }>
+      if (evt.detail.speechName !== fileName) return
+      setReadingElapsedMs(evt.detail.syncEnabled ? evt.detail.elapsedMs : null)
+    }
+    window.addEventListener("speech-timer-tick", handler)
+    return () => window.removeEventListener("speech-timer-tick", handler)
+  }, [fileName])
 
   useEffect(() => {
     if (!active) return
@@ -156,6 +173,44 @@ export function QuoteView({ html, fileName, active = true, viewMode = "read" }: 
   }
 
   /**
+   * Flattens all cards from the section tree into a list ordered by document position.
+   * Used to assign cumulative char offsets for speech-sync highlighting.
+   */
+  const flattenCards = (sectionList: HeadingSection[]): { id: string; words: number }[] => {
+    const result: { id: string; words: number }[] = []
+    const visit = (s: HeadingSection) => {
+      for (const card of s.cards) {
+        if (card.id) result.push({ id: card.id, words: card.words })
+      }
+      for (const sub of s.subsections ?? []) visit(sub)
+    }
+    for (const s of sectionList) visit(s)
+    return result
+  }
+
+  const filteredSections = sections.filter(shouldRenderSection)
+
+  /**
+   * Build a map from cardId → { charOffset, charCount } for speech-sync progress.
+   * charOffset is the cumulative chars before this card; charCount is this card's chars.
+   */
+  const cardCharMap = (() => {
+    const allCards = flattenCards(filteredSections)
+    const map: Record<string, { charOffset: number; charCount: number }> = {}
+    let offset = 0
+    for (const c of allCards) {
+      const charCount = Math.round(c.words * CHARS_PER_WORD)
+      map[c.id] = { charOffset: offset, charCount }
+      offset += charCount
+    }
+    return map
+  })()
+
+  /** Chars elapsed based on timer, using debate reading speed. */
+  const elapsedChars =
+    readingElapsedMs !== null ? (readingElapsedMs / 60000) * READING_SPEED_CHARS_PER_MIN : null
+
+  /**
    * Recursively renders a heading section and its cards/subsections.
    * @param section - The section data to render.
    * @param depth - Current nesting depth, used for CSS class naming.
@@ -188,23 +243,35 @@ export function QuoteView({ html, fileName, active = true, viewMode = "read" }: 
 
         {!isCollapsed && hasContent && (
           <div className="quote-section-content">
-            {section.cards.map((card) => (
-              <EditableQuoteCard
-                key={card.id}
-                cardId={card.id || ""}
-                summary={card.summary || ""}
-                author={card.author}
-                year={card.year ? String(card.year) : null}
-                cite={card.cite}
-                url={card.url}
-                html={card.html}
-                words={card.words}
-                boldWords={card.boldWords || 0}
-                highlightedWords={card.highlightedWords || 0}
-                onUpdate={handleCardUpdate}
-                viewMode={viewMode}
-              />
-            ))}
+            {section.cards.map((card) => {
+              // Compute per-card reading progress for speech-sync mode
+              let speechReadingProgress: number | null = null
+              if (elapsedChars !== null && card.id && cardCharMap[card.id]) {
+                const { charOffset, charCount } = cardCharMap[card.id]
+                if (charCount > 0) {
+                  speechReadingProgress = Math.max(0, Math.min(1, (elapsedChars - charOffset) / charCount))
+                }
+              }
+
+              return (
+                <EditableQuoteCard
+                  key={card.id}
+                  cardId={card.id || ""}
+                  summary={card.summary || ""}
+                  author={card.author}
+                  year={card.year ? String(card.year) : null}
+                  cite={card.cite}
+                  url={card.url}
+                  html={card.html}
+                  words={card.words}
+                  boldWords={card.boldWords || 0}
+                  highlightedWords={card.highlightedWords || 0}
+                  onUpdate={handleCardUpdate}
+                  viewMode={viewMode}
+                  speechReadingProgress={speechReadingProgress}
+                />
+              )
+            })}
 
             {filteredSubsections.map((subsection, subIndex) => renderSection(subsection, depth + 1, subIndex))}
           </div>
@@ -212,8 +279,6 @@ export function QuoteView({ html, fileName, active = true, viewMode = "read" }: 
       </div>
     )
   }
-
-  const filteredSections = sections.filter(shouldRenderSection)
 
   return (
     <div className="quote-view-wrapper" ref={containerRef}>

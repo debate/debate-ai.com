@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { Round } from "@/components/debate/DebateRound/types"
-import { FileText, Quote, ChevronLeft, ChevronRight, Menu } from "lucide-react"
+import { FileText, Quote, ChevronLeft, ChevronRight, Menu, Radio } from "lucide-react"
 import type { ViewMode } from "@/lib/types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "@/components/ui/button"
@@ -228,6 +228,9 @@ export function SpeechHeaderBar({
     setHasRecording(localStorage.getItem(key) !== null)
   }, [speechName])
 
+  // Speech-sync reading mode — broadcasts elapsed time to QuoteView cards
+  const [speechSyncEnabled, setSpeechSyncEnabled] = useState(false)
+
   // Track bolded/highlighted word count
   const [boldHighlightCount, setBoldHighlightCount] = useState(0)
 
@@ -268,6 +271,27 @@ export function SpeechHeaderBar({
       : "bg-blue-500 dark:bg-blue-400"
 
   const totalSpeechTimeMs = defaultTimeMs
+
+  // Emit speech-timer-tick events when sync is on and timer is running
+  // (placed after totalSpeechTimeMs is defined)
+  useEffect(() => {
+    if (!speechSyncEnabled || timerState.name !== "running") {
+      window.dispatchEvent(
+        new CustomEvent("speech-timer-tick", {
+          detail: { speechName, elapsedMs: 0, totalMs: totalSpeechTimeMs, syncEnabled: false },
+        }),
+      )
+      return
+    }
+
+    const elapsedMs = totalSpeechTimeMs - time
+    window.dispatchEvent(
+      new CustomEvent("speech-timer-tick", {
+        detail: { speechName, elapsedMs, totalMs: totalSpeechTimeMs, syncEnabled: true },
+      }),
+    )
+  }, [time, timerState.name, speechSyncEnabled, speechName, totalSpeechTimeMs])
+
   const progressPercent = totalSpeechTimeMs > 0
     ? Math.min(1, Math.max(0, (totalSpeechTimeMs - time) / totalSpeechTimeMs))
     : 0
@@ -419,6 +443,19 @@ export function SpeechHeaderBar({
                 title={quoteView ? "Disable Quote View" : "Enable Quote View"}
               >
                 <Quote className="h-3.5 w-3.5" />
+              </Button>
+              {/* Speech-sync: highlight cards as timer progresses */}
+              <Button
+                variant={speechSyncEnabled ? "default" : "ghost"}
+                size="icon"
+                onClick={() => setSpeechSyncEnabled((v) => !v)}
+                className={cn(
+                  "h-6 w-6 shrink-0",
+                  speechSyncEnabled && timerState.name === "running" && "animate-pulse",
+                )}
+                title={speechSyncEnabled ? "Disable speech-sync highlighting" : "Enable speech-sync: cards highlight as you speak"}
+              >
+                <Radio className="h-3.5 w-3.5" />
               </Button>
               <div className="shrink-0 scale-[0.85] origin-left ml-0.5">
                 <ViewModeSelector value={viewMode} onChange={onViewModeChange} size="sm" />
