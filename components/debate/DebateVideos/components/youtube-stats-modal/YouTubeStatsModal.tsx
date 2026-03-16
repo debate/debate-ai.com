@@ -4,7 +4,7 @@
 
 "use client"
 
-import { Info } from "lucide-react"
+import { Info, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dialog"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState } from "react"
+import type { VideoType } from "@/lib/types/videos"
 import {
   Table,
   TableBody,
@@ -76,7 +78,142 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function YouTubeStatsModal({ stats }: { stats: YouTubeStats }) {
+// Helper function to calculate stats from video data
+function calculateStatsFromVideos(videos: VideoType[]): YouTubeStats {
+  const statsByChannel: Record<string, { totalViews: number; videoCount: number }> = {}
+  const statsByDebateStyle: Record<string, { totalViews: number; videoCount: number }> = {}
+  const statsByYear: Record<string, { totalViews: number; videoCount: number }> = {}
+  const statsByElimRound: Record<string, { totalViews: number; videoCount: number }> = {}
+
+  const normalizeElimRound = (roundName: string): string | null => {
+    const lower = roundName.toLowerCase()
+    if (lower.includes('final') && !lower.includes('semi')) return 'Finals'
+    if (lower.includes('semi')) return 'Semifinals'
+    if (lower.includes('quarter')) return 'Quarterfinals'
+    if (lower.includes('octa') || lower.includes('octo')) return 'Octafinals'
+    if (lower.includes('double')) return 'Double Octafinals'
+    return null
+  }
+
+  for (const video of videos) {
+    const channel = video[3]
+    const views = Number(video[4]) || 0
+    const debateStyle = video[6] || "unknown"
+    const date = video[2]
+    const year = date ? date.split("-")[0] : "unknown"
+    const roundName = video[8]
+
+    if (!statsByChannel[channel]) {
+      statsByChannel[channel] = { totalViews: 0, videoCount: 0 }
+    }
+    statsByChannel[channel].totalViews += views
+    statsByChannel[channel].videoCount += 1
+
+    // Handle debateStyle - can be a number (1-4) or a string (for lectures)
+    const styleLabel = typeof debateStyle === 'number'
+      ? (debateStyle === 1 ? "Policy" : debateStyle === 2 ? "Public Forum" : debateStyle === 3 ? "Lincoln-Douglas" : debateStyle === 4 ? "College Policy" : "Unknown")
+      : String(debateStyle)
+
+    if (!statsByDebateStyle[styleLabel]) {
+      statsByDebateStyle[styleLabel] = { totalViews: 0, videoCount: 0 }
+    }
+    statsByDebateStyle[styleLabel].totalViews += views
+    statsByDebateStyle[styleLabel].videoCount += 1
+
+    if (!statsByYear[year]) {
+      statsByYear[year] = { totalViews: 0, videoCount: 0 }
+    }
+    statsByYear[year].totalViews += views
+    statsByYear[year].videoCount += 1
+
+    if (roundName) {
+      const normalizedRound = normalizeElimRound(roundName)
+      if (normalizedRound) {
+        if (!statsByElimRound[normalizedRound]) {
+          statsByElimRound[normalizedRound] = { totalViews: 0, videoCount: 0 }
+        }
+        statsByElimRound[normalizedRound].totalViews += views
+        statsByElimRound[normalizedRound].videoCount += 1
+      }
+    }
+  }
+
+  const totalViews = Object.values(statsByChannel).reduce((sum, ch) => sum + ch.totalViews, 0)
+  const totalVideos = Object.values(statsByChannel).reduce((sum, ch) => sum + ch.videoCount, 0)
+
+  const channelsSorted = Object.entries(statsByChannel)
+    .sort(([, a], [, b]) => b.totalViews - a.totalViews)
+    .map(([channel, stats]) => ({
+      channel,
+      totalViews: stats.totalViews,
+      videoCount: stats.videoCount,
+      avgViewsPerVideo: Math.round(stats.totalViews / stats.videoCount),
+    }))
+
+  const debateStylesSorted = Object.entries(statsByDebateStyle)
+    .sort(([, a], [, b]) => b.totalViews - a.totalViews)
+    .map(([debateStyle, stats]) => ({
+      debateStyle,
+      totalViews: stats.totalViews,
+      videoCount: stats.videoCount,
+      avgViewsPerVideo: Math.round(stats.totalViews / stats.videoCount),
+    }))
+
+  const yearsSorted = Object.entries(statsByYear)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([year, stats]) => ({
+      year,
+      totalViews: stats.totalViews,
+      videoCount: stats.videoCount,
+      avgViewsPerVideo: Math.round(stats.totalViews / stats.videoCount),
+    }))
+
+  const elimRoundOrder = ['Finals', 'Semifinals', 'Quarterfinals', 'Octafinals', 'Double Octafinals']
+  const elimRoundsSorted = elimRoundOrder
+    .filter(round => statsByElimRound[round])
+    .map((round) => ({
+      round,
+      totalViews: statsByElimRound[round].totalViews,
+      videoCount: statsByElimRound[round].videoCount,
+      avgViewsPerVideo: Math.round(statsByElimRound[round].totalViews / statsByElimRound[round].videoCount),
+    }))
+
+  return {
+    summary: {
+      totalViews,
+      totalVideos,
+      totalChannels: channelsSorted.length,
+      totalDebateStyles: debateStylesSorted.length,
+    },
+    byChannel: channelsSorted,
+    byDebateStyle: debateStylesSorted,
+    byYear: yearsSorted,
+    byElimRound: elimRoundsSorted,
+  }
+}
+
+export function YouTubeStatsModal({ stats: initialStats, allVideos }: { stats: YouTubeStats; allVideos?: VideoType[] }) {
+  const [stats, setStats] = useState(initialStats)
+  const [isRecalculating, setIsRecalculating] = useState(false)
+
+  const handleRecalculate = async () => {
+    if (!allVideos || allVideos.length === 0) {
+      console.error("No videos available for recalculation")
+      return
+    }
+
+    setIsRecalculating(true)
+    try {
+      // Small delay to show loading state
+      await new Promise(resolve => setTimeout(resolve, 100))
+      const newStats = calculateStatsFromVideos(allVideos)
+      setStats(newStats)
+    } catch (error) {
+      console.error("Failed to recalculate stats:", error)
+    } finally {
+      setIsRecalculating(false)
+    }
+  }
   // Prepare data for charts
   const topChannelsData = stats.byChannel
     .slice(0, 20)
@@ -123,10 +260,26 @@ export function YouTubeStatsModal({ stats }: { stats: YouTubeStats }) {
         </Tooltip>
         <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>YouTube Statistics</DialogTitle>
-            <DialogDescription>
-              Comprehensive statistics from {stats.summary.totalChannels} YouTube channels
-            </DialogDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle>YouTube Statistics</DialogTitle>
+                <DialogDescription>
+                  Comprehensive statistics from {stats.summary.totalChannels} YouTube channels
+                </DialogDescription>
+              </div>
+              {allVideos && allVideos.length > 0 && (
+                <Button
+                  onClick={handleRecalculate}
+                  disabled={isRecalculating}
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                >
+                  <RefreshCw className={`h-4 w-4 ${isRecalculating ? 'animate-spin' : ''}`} />
+                  Recalculate
+                </Button>
+              )}
+            </div>
           </DialogHeader>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-4">

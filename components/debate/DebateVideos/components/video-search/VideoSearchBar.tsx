@@ -3,7 +3,7 @@
  * @module components/debate/videos/components/VideoSearchBar
  */
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Search, X, Video, VideoOff, Star, Trophy, ChevronLeft, ChevronRight, Eye, Calendar } from "lucide-react"
 import Image from "next/image"
 import { IconTopRounds } from "@/components/icons"
@@ -62,6 +62,10 @@ interface VideoSearchBarProps {
   /** Currently selected debate style filter. */  selectedStyle?: DebateStyle | ""
   /** Callback invoked when the style filter changes. */
   onStyleChange?: (style: DebateStyle | "") => void
+  /** All videos for calculating counts per year/style. */
+  allVideos?: any[]
+  /** Hidden videos set for filtering. */
+  hiddenVideos?: Set<string>
   /** Custom element rendered right after the search input. */
   afterSearchElement?: React.ReactNode
   /** Extra icon buttons rendered alongside the built-in icon buttons. */
@@ -112,6 +116,8 @@ export function VideoSearchBar({
   totalVideos,
   selectedStyle,
   onStyleChange,
+  allVideos = [],
+  hiddenVideos = new Set(),
   afterSearchElement,
   extraButtons,
 }: VideoSearchBarProps) {
@@ -147,6 +153,78 @@ export function VideoSearchBar({
   const maxYear = Math.max(currentYear, 2026)
   // Stop seasons at 2011
   const years = Array.from({ length: maxYear - 2011 + 1 }, (_, i) => String(maxYear - i))
+
+  // Calculate counts per year (excluding search filter but including style filter and hidden videos)
+  const yearCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+
+    if (!allVideos.length) return counts
+
+    const visibleVideos = allVideos.filter(video => !hiddenVideos.has(video[0]))
+
+    // Apply style filter if selected
+    const filteredVideos = selectedStyle
+      ? visibleVideos.filter(video => video[6] === selectedStyle)
+      : visibleVideos
+
+    years.forEach(year => {
+      const seasonYear = parseInt(year)
+      const startDate = new Date(`${seasonYear - 1}-06-01`)
+      const endDate = new Date(`${seasonYear}-06-01`)
+
+      counts[year] = filteredVideos.filter(video => {
+        const videoDate = new Date(video[2])
+        return videoDate >= startDate && videoDate < endDate
+      }).length
+    })
+
+    // Legacy count
+    const legacyEndDate = new Date("2010-06-01")
+    counts['legacy'] = filteredVideos.filter(video => {
+      const videoDate = new Date(video[2])
+      return videoDate < legacyEndDate
+    }).length
+
+    return counts
+  }, [allVideos, hiddenVideos, selectedStyle, years])
+
+  // Calculate counts per style (excluding search filter but including year filter and hidden videos)
+  const styleCounts = useMemo(() => {
+    const counts: Record<number, number> = {}
+
+    if (!allVideos.length) return counts
+
+    const visibleVideos = allVideos.filter(video => !hiddenVideos.has(video[0]))
+
+    // Apply year filter if selected
+    let filteredVideos = visibleVideos
+    if (selectedYear) {
+      if (selectedYear === "legacy") {
+        const legacyEndDate = new Date("2010-06-01")
+        filteredVideos = visibleVideos.filter(video => {
+          const videoDate = new Date(video[2])
+          return videoDate < legacyEndDate
+        })
+      } else {
+        const seasonYear = parseInt(selectedYear)
+        const startDate = new Date(`${seasonYear - 1}-06-01`)
+        const endDate = new Date(`${seasonYear}-06-01`)
+
+        filteredVideos = visibleVideos.filter(video => {
+          const videoDate = new Date(video[2])
+          return videoDate >= startDate && videoDate < endDate
+        })
+      }
+    }
+
+    // Count by style
+    Object.keys(DEBATE_STYLE_LABELS).forEach(styleStr => {
+      const styleNum = Number(styleStr) as DebateStyle
+      counts[styleNum] = filteredVideos.filter(video => video[6] === styleNum).length
+    })
+
+    return counts
+  }, [allVideos, hiddenVideos, selectedYear])
 
   const pagination = totalVideos !== undefined ? (
     <div className="flex items-center gap-1 shrink-0 ml-auto">
@@ -205,10 +283,10 @@ export function VideoSearchBar({
                   <SelectItem value="all">All Seasons</SelectItem>
                   {years.map((y) => (
                     <SelectItem key={y} value={y}>
-                      {Number(y) - 1}-{y}
+                      {Number(y) - 1}-{y} {yearCounts[y] ? `(${yearCounts[y]})` : ''}
                     </SelectItem>
                   ))}
-                  <SelectItem value="legacy">Pre-2010</SelectItem>
+                  <SelectItem value="legacy">Pre-2010 {yearCounts['legacy'] ? `(${yearCounts['legacy']})` : ''}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -229,9 +307,10 @@ export function VideoSearchBar({
                   {(Object.entries(DEBATE_STYLE_LABELS) as [string, string][]).map(([styleStr, label]) => {
                     const styleNum = Number(styleStr);
                     const colorClass = STYLE_COLORS[styleNum];
+                    const count = styleCounts[styleNum];
                     return (
                       <SelectItem key={styleStr} value={styleStr} className={colorClass}>
-                        {label}
+                        {label} {count ? `(${count})` : ''}
                       </SelectItem>
                     );
                   })}

@@ -26,6 +26,7 @@ const CATEGORY_GRADIENTS: Record<string, string> = {
   "Impact Calculus & Evidence": "from-yellow-500 via-orange-500 to-red-500",
   "Philosophy & IR Theory": "from-violet-500 via-purple-500 to-indigo-500",
   "Public Forum": "from-teal-500 via-cyan-500 to-blue-500",
+  "Awards": "from-fuchsia-500 via-pink-500 to-rose-500",
   "Documentaries & Culture": "from-fuchsia-500 via-pink-500 to-rose-500",
   "Camp & Coaching Advice": "from-emerald-500 via-green-500 to-teal-500",
   "Novice & Introductory": "from-sky-500 via-blue-500 to-indigo-500",
@@ -332,11 +333,10 @@ export function LectureCategoryGallery({ onCategorySelect, selectedCategory, vid
               <button
                 key={index}
                 onClick={() => handleCardClick(index)}
-                className={`h-2 rounded-full transition-all duration-200 ${
-                  index === activeIndex
+                className={`h-2 rounded-full transition-all duration-200 ${index === activeIndex
                     ? 'bg-white w-8'
                     : 'bg-white/30 hover:bg-white/50 w-2'
-                }`}
+                  }`}
                 aria-label={`Go to category ${index + 1}`}
               />
             ))}

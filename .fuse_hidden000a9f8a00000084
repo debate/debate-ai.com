@@ -75,3 +75,54 @@
 ✓ Compiled in 506ms
 ✓ Compiled in 192ms
  GET /videos?view=rounds 200 in 796ms (compile: 562ms, render: 234ms)
+ GET /videos?view=rounds 200 in 896ms (compile: 8ms, render: 888ms)
+ GET /api/videos 200 in 321ms (compile: 289ms, render: 32ms)
+ GET /videos?view=rounds 200 in 107ms (compile: 11ms, render: 96ms)
+ GET /api/videos 200 in 122ms (compile: 96ms, render: 26ms)
+ GET /videos?view=rounds 200 in 72ms (compile: 3ms, render: 69ms)
+ GET /api/videos 200 in 119ms (compile: 93ms, render: 26ms)
+✓ Compiled in 229ms
+✓ Compiled in 153ms
+✓ Compiled in 612ms
+✓ Compiled in 161ms
+✓ Compiled in 149ms
+✓ Compiled in 523ms
+✓ Compiled in 132ms
+ GET /api/videos 200 in 300ms (compile: 229ms, render: 71ms)
+ GET /api/videos 200 in 39ms (compile: 3ms, render: 36ms)
+ GET /api/videos 200 in 33ms (compile: 5ms, render: 28ms)
+ GET /api/videos 200 in 46ms (compile: 34ms, render: 11ms)
+ GET /api/videos 200 in 69ms (compile: 56ms, render: 13ms)
+ GET /api/videos 200 in 42ms (compile: 28ms, render: 14ms)
+ GET /api/videos 200 in 40ms (compile: 20ms, render: 20ms)
+✓ Compiled in 133ms
+✓ Compiled in 177ms
+✓ Compiled in 638ms
+✓ Compiled in 112ms
+ GET /api/videos 200 in 37ms (compile: 8ms, render: 29ms)
+✓ Compiled in 138ms
+✓ Compiled in 142ms
+✓ Compiled in 186ms
+✓ Compiled in 126ms
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 154ms
+ GET /api/videos 200 in 32ms (compile: 9ms, render: 23ms)
+ GET /videos?view=rounds 200 in 961ms (compile: 215ms, render: 746ms)
+ GET /api/videos 200 in 57ms (compile: 33ms, render: 24ms)
+✓ Compiled in 265ms
+✓ Compiled in 223ms
+ GET /videos?view=rounds 200 in 294ms (compile: 56ms, render: 238ms)
+ GET /api/videos 200 in 23ms (compile: 5ms, render: 18ms)
+✓ Compiled in 140ms
+ GET /api/videos 200 in 23ms (compile: 2ms, render: 21ms)
+✓ Compiled in 151ms
+ GET /lectures 200 in 152ms (compile: 119ms, render: 33ms)
+ GET /api/videos 200 in 35ms (compile: 6ms, render: 29ms)
+ GET /api/videos 200 in 61ms (compile: 36ms, render: 25ms)
+✓ Compiled in 225ms
+✓ Compiled in 314ms
+✓ Compiled in 131ms
+✓ Compiled in 194ms
+✓ Compiled in 317ms
+✓ Compiled in 201ms
+ GET /api/videos 200 in 36ms (compile: 3ms, render: 34ms)

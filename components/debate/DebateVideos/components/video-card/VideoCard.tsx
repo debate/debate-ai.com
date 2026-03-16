@@ -26,9 +26,10 @@ export interface VideoCardProps {
   isHidden: boolean
   isTopPick: boolean
   showFullDate?: boolean
+  showDescription?: boolean
 }
 
-export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, isHidden, isTopPick, showFullDate = false }: VideoCardProps) {
+export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, isHidden, isTopPick, showFullDate = false, showDescription = false }: VideoCardProps) {
   const [videoId, title, date, channel, viewCount, description, style, tournament, roundLevel, affTeam, negTeam, affWin, judgeDecision, arg1AC, arg2NR] = video
   const { activeVideoId, setActiveVideo, addToQueue, queue } = useVideoPlayerStore()
   const isPlaying = activeVideoId === videoId
@@ -354,7 +355,16 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                     </button>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
-                    <p className="text-sm whitespace-pre-line">{yearTopic.replace(/<br\s*\/?>/gi, '\n')}</p>
+                    <div className="text-sm whitespace-pre-line space-y-2">
+                      {description ? (
+                        <>
+                          <p className="font-semibold text-primary">{yearTopic.replace(/<br\s*\/?>/gi, '\n')}</p>
+                          <p>{description.split('\n').slice(2).join('\n').trim()}</p>
+                        </>
+                      ) : (
+                        <p>{yearTopic.replace(/<br\s*\/?>/gi, '\n')}</p>
+                      )}
+                    </div>
                   </TooltipContent>
                 </Tooltip>
               )}
@@ -410,6 +420,12 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                 </Tooltip>
               )}
             </div>
+
+            {showDescription && description && (
+              <div className="mt-2 pt-2 border-t border-border">
+                <p className="text-xs text-muted-foreground line-clamp-3">{description}</p>
+              </div>
+            )}
 
           </div>
 

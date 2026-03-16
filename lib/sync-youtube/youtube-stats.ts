@@ -6,7 +6,7 @@ import path from "path";
  * @returns Object containing view statistics organized by channel, debate style, and year
  */
 export async function calculateYouTubeViewStats() {
-  const dataDir = path.join(process.cwd(), "lib", "debate-data");
+  const dataDir = path.join(process.cwd(), "lib", "debate-data", "debate-videos");
 
   // Load debate rounds videos from split files
   const roundsFileNames = ["rounds-policy.json", "rounds-pf.json", "rounds-ld.json", "rounds-college.json"];

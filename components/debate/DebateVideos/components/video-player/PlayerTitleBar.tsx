@@ -1,4 +1,5 @@
 import type { VideoMeta } from "@/lib/state/videoPlayerStore"
+import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS } from "../video-card/videoCardUtils"
 
 interface PlayerTitleBarProps {
@@ -7,6 +8,7 @@ interface PlayerTitleBarProps {
 }
 
 export function PlayerTitleBar({ activeVideoMeta, activeVideoTitle }: PlayerTitleBarProps) {
+  const searchHandler = useVideoPlayerStore((state) => state.searchHandler)
   return (
     <div className="flex items-center gap-1.5 flex-1 min-w-0 overflow-hidden">
       {activeVideoMeta?.style && DEBATE_STYLE_LABELS[activeVideoMeta.style as keyof typeof DEBATE_STYLE_LABELS] ? (
@@ -20,19 +22,28 @@ export function PlayerTitleBar({ activeVideoMeta, activeVideoTitle }: PlayerTitl
         </span>
       ) : null}
       {activeVideoMeta?.tournament ? (
-        <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 [font-variant:small-caps] tracking-wider truncate shrink-0 max-w-[80px]">
+        <button
+          onClick={() => searchHandler?.(activeVideoMeta.tournament?.replace(/\d+/g, '').trim() || '')}
+          className="text-[10px] font-bold text-purple-600 dark:text-purple-400 [font-variant:small-caps] tracking-wider truncate shrink-0 max-w-[80px] hover:underline cursor-pointer"
+        >
           {activeVideoMeta.tournament.replace(/\d+/g, '').trim()}
-        </span>
+        </button>
       ) : null}
       {activeVideoMeta?.affTeam ? (
-        <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 shrink-0">
+        <button
+          onClick={() => searchHandler?.(activeVideoMeta.affTeam || '')}
+          className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 shrink-0 hover:underline cursor-pointer"
+        >
           {activeVideoMeta.affTeam}
-        </span>
+        </button>
       ) : null}
       {activeVideoMeta?.negTeam ? (
-        <span className="text-[10px] font-semibold text-red-600 dark:text-red-400 shrink-0">
+        <button
+          onClick={() => searchHandler?.(activeVideoMeta.negTeam || '')}
+          className="text-[10px] font-semibold text-red-600 dark:text-red-400 shrink-0 hover:underline cursor-pointer"
+        >
           {activeVideoMeta.negTeam}
-        </span>
+        </button>
       ) : null}
       {!activeVideoMeta?.style && !activeVideoMeta?.tournament && (
         <span className="text-xs font-medium text-foreground truncate">

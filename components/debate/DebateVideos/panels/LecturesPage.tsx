@@ -25,6 +25,7 @@ import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { LectureExpandCards } from "../components/expand-category-cards/LectureExpandCards"
+import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
 
 export function LecturesPage() {
   const searchParams = useSearchParams()
@@ -37,6 +38,7 @@ export function LecturesPage() {
   }, [])
 
   const { state, actions } = useVideoState(initialCategory)
+  const setSearchHandler = useVideoPlayerStore((state) => state.setSearchHandler)
 
   const topPicksSet = useMemo(() => new Set(state.debateVideos?.topPicks || []), [state.debateVideos?.topPicks])
 
@@ -117,6 +119,13 @@ export function LecturesPage() {
   // Search & Filter Handlers
   // ============================================================================
   const handleSearchChange = useCallback((value: string) => { actions.setSearchTerm(value) }, [actions.setSearchTerm])
+
+  // Register search handler with video player store
+  useEffect(() => {
+    setSearchHandler(handleSearchChange)
+    return () => setSearchHandler(null)
+  }, [handleSearchChange, setSearchHandler])
+
   const handleClearSearch = useCallback(() => { actions.setSearchTerm("") }, [actions.setSearchTerm])
   const handleSortChange = useCallback((value: string) => { actions.setSortOrder(value) }, [actions.setSortOrder])
   const handleToggleThumbnails = useCallback(() => { actions.setShowThumbnails(!state.showThumbnails) }, [actions.setShowThumbnails, state.showThumbnails])
@@ -292,6 +301,7 @@ export function LecturesPage() {
             hiddenVideos={state.hiddenVideos}
             topPicks={topPicksSet}
             showFullDate={true}
+            showDescription={true}
           />
 
           <div ref={state.loadMoreTriggerRef} className="h-10" />

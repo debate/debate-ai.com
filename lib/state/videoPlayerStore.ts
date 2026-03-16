@@ -24,6 +24,7 @@ interface VideoPlayerStore {
   isPlaying: boolean
   isSlowMode: boolean
   queue: QueueItem[]
+  searchHandler: ((searchTerm: string) => void) | null
   setActiveVideo: (videoId: string, title: string, meta?: VideoMeta) => void
   clearActiveVideo: () => void
   setMinimized: (minimized: boolean) => void
@@ -33,6 +34,7 @@ interface VideoPlayerStore {
   removeFromQueue: (videoId: string) => void
   playNextInQueue: () => void
   clearQueue: () => void
+  setSearchHandler: (handler: ((searchTerm: string) => void) | null) => void
 }
 
 export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
@@ -43,6 +45,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   isPlaying: false,
   isSlowMode: false,
   queue: [],
+  searchHandler: null,
   setActiveVideo: (videoId, title, meta) => set({ activeVideoId: videoId, activeVideoTitle: title, activeVideoMeta: meta ?? null, isMinimized: false, isPlaying: true }),
   clearActiveVideo: () => {
     set({ activeVideoId: null, activeVideoTitle: null, activeVideoMeta: null, isMinimized: false, isPlaying: false })
@@ -65,6 +68,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
       return { activeVideoId: next.videoId, activeVideoTitle: next.title, activeVideoMeta: next.meta ?? null, queue: rest, isMinimized: false, isPlaying: true }
     }),
   clearQueue: () => set({ queue: [] }),
+  setSearchHandler: (handler) => set({ searchHandler: handler }),
 }))
 
 /** Module-level ref so any component can send commands to the YouTube iframe */

@@ -25,6 +25,7 @@ import { useCategoryDock } from "@/components/layout/category-dock-context"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
+import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
 
 /**
  * Main video browsing page that composes state, data-fetching, and UI sub-components.
@@ -54,6 +55,7 @@ export function DebateVideosPage() {
   }, [])
 
   const { state, actions } = useVideoState(initialCategory)
+  const setSearchHandler = useVideoPlayerStore((state) => state.setSearchHandler)
 
   // Lifted state for special panels
   const [lbDivision, setLbDivision] = useState<"VPF" | "VLD" | "VCX" | "NDT">("VPF")
@@ -170,6 +172,12 @@ export function DebateVideosPage() {
     },
     [actions.setSearchTerm],
   )
+
+  // Register search handler with video player store
+  useEffect(() => {
+    setSearchHandler(handleSearchChange)
+    return () => setSearchHandler(null)
+  }, [handleSearchChange, setSearchHandler])
 
   /** Clears the current search term. */
   const handleClearSearch = useCallback(() => {
@@ -303,7 +311,9 @@ export function DebateVideosPage() {
           totalVideos={state.filteredVideos.length}
           selectedStyle={state.selectedStyle}
           onStyleChange={(style) => actions.setSelectedStyle(style)}
-          extraButtons={youtubeStats && <YouTubeStatsModal stats={youtubeStats} />}
+          allVideos={state.allVideos}
+          hiddenVideos={state.hiddenVideos}
+          extraButtons={youtubeStats && <YouTubeStatsModal stats={youtubeStats} allVideos={state.allVideos} />}
         />
       )}
 
