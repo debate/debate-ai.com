@@ -12,9 +12,9 @@
     "start": "npx open-ready next start",
     "test": "vitest",
     "favicon": "npm create favicon public/favicon-512.png public/ -- --overwrite",
-    "sync-youtube": "bun run lib/third-party-sync/sync-youtube-rounds.ts",
-    "youtube-stats": "bun run lib/third-party-sync/sync-youtube-rounds.ts --stats",
-    "youtube-update-views": "bun run lib/third-party-sync/sync-youtube-rounds.ts --update-views"
+    "sync-youtube": "bun run lib/sync-youtube/youtube-sync-cli.ts",
+    "youtube-stats": "bun run lib/sync-youtube/youtube-sync-cli.ts --stats",
+    "youtube-update-views": "bun run lib/sync-youtube/youtube-sync-cli.ts --update-views"
   },
   "dependencies": {
     "@langchain/core": "latest",

@@ -291,6 +291,7 @@ export function LecturesPage() {
             onUnhideVideo={actions.unhideVideo}
             hiddenVideos={state.hiddenVideos}
             topPicks={topPicksSet}
+            showFullDate={true}
           />
 
           <div ref={state.loadMoreTriggerRef} className="h-10" />

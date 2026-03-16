@@ -17,9 +17,10 @@ interface VideoGridProps {
   onUnhideVideo: (videoId: string) => void
   hiddenVideos: Set<string>
   topPicks?: Set<string>
+  showFullDate?: boolean
 }
 
-export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, favorites, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, hiddenVideos, topPicks }: VideoGridProps) {
+export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, favorites, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, hiddenVideos, topPicks, showFullDate }: VideoGridProps) {
   return (
     <div
       ref={videoContainerRef}
@@ -38,6 +39,7 @@ export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, f
             onUnhideVideo={onUnhideVideo}
             isHidden={hiddenVideos.has(video[0])}
             isTopPick={topPicks?.has(video[0]) || false}
+            showFullDate={showFullDate}
           />
         </HoverCardWrapper>
       ))}

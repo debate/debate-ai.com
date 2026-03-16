@@ -9,15 +9,40 @@ export const YoutubeAPI = grab.instance({
 
 export async function getChannelId(channelName: string): Promise<string | null> {
   try {
-    const data = await YoutubeAPI("/search", {
-      part: "snippet",
-      type: "channel",
-      q: channelName,
-    });
+    // Remove @ prefix if present (for handles like @DebateArchive2)
+    const cleanName = channelName.startsWith("@") ? channelName.slice(1) : channelName;
 
-    if (data.data.items && data.data.items.length > 0) {
-      return data.data.items[0].id.channelId;
+    // Try to get channel by forUsername (legacy username)
+    try {
+      const byUsername = await YoutubeAPI("/channels", {
+        part: "id",
+        forUsername: cleanName,
+      });
+
+      if (byUsername.data?.items && byUsername.data.items.length > 0) {
+        console.log(`Found channel by username: ${channelName} -> ${byUsername.data.items[0].id}`);
+        return byUsername.data.items[0].id;
+      }
+    } catch (err) {
+      // Username not found, continue to handle
     }
+
+    // Try to get channel by handle (modern @handle format)
+    try {
+      const byHandle = await YoutubeAPI("/channels", {
+        part: "id",
+        forHandle: channelName.startsWith("@") ? channelName : `@${channelName}`,
+      });
+
+      if (byHandle.data?.items && byHandle.data.items.length > 0) {
+        console.log(`Found channel by handle: ${channelName} -> ${byHandle.data.items[0].id}`);
+        return byHandle.data.items[0].id;
+      }
+    } catch (err) {
+      // Handle not found
+    }
+
+    console.warn(`Could not find channel for exact name: ${channelName}`);
     return null;
   } catch (error) {
     console.warn(`Error fetching channel ID for ${channelName}:`, error);

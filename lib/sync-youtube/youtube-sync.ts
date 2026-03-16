@@ -1,60 +1,29 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { getChannelId, getVideosForChannel, getVideosByIds } from "./youtube-api";
+import {
+  getChannelId,
+  getVideosForChannel,
+  getVideosByIds,
+  fetchFullDescriptions,
+} from "./youtube-api";
+import {
+  channelsToUpdate,
+  channels,
+  ROUNDS_FILES,
+  publishedAfter,
+} from "./channel-config";
+import {
+  parseDebateStyle,
+  parseRoundLevel,
+  parseTournament,
+  parseTeams,
+  parseWinner,
+  parseJudgeDecision,
+} from "./parsers/round-parsers";
+import { classifyLecture } from "./parsers/lecture-classifier";
+import { isRound } from "./parsers/video-classifier";
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
-
-const ROUNDS_FILES: Record<number, string> = {
-  1: "rounds-policy.json",
-  2: "rounds-pf.json",
-  3: "rounds-ld.json",
-  4: "rounds-college.json",
-};
-
-const categories = {
-  rounds: [
-    "Debatedrills"
-  ],
-};
-
-/*
-    // "championbriefs1508",
-      "su.debate",
-      "ResolvedDebate",
-      "PolicyDebateCentral",
-      "pfvideos9234",
-      "ddidebate4071",
-      "DebateStreamDB8",
-    "LynbrookDebate",
-      "thatdebatekid5313",
-      "NSD_DebateCamp",
-      "ddidebate4071",
-      "pfvideos9234",
-    "lasadebate",
-      "DebateStreamDB8",
-      "CEDADebate",
-      "KentuckyDebate",
-      "sailorferrets",
-      "wakedebate8636",
-      "exodusfiles3478",
-      "SolvencyAdvocate",
-      "northbrowardmr4523",
-      "TexasDebate",
-    "jacob_wilkus",
-      "arvindshankar2481",
-      "NDT-jl6oi",
-      "atrujillo9",
-      "UNTDebate",
-      "vintagedebatevids",
-      "georgetowndebateseminar1234",
-      "barkleyforumvideos3220",
-      "BillBatterman",
-      "msudebate6544",
-      "ProfessorGraham",
-      "michigandebate7440",
-  */
-
-const publishedAfter = "2010-03-01T00:00:00Z";
 
 export async function syncMissingTopPicks() {
   if (!YOUTUBE_API_KEY) {
@@ -123,59 +92,253 @@ export async function syncYouTubeVideos() {
 
   console.log("Starting video sync...");
 
-  const newVideos: Record<string, any[]> = {
-    rounds: [],
-    lectures: [],
-    topPicks: [],
-  };
+  const allVideos: any[] = [];
 
-  for (const [category, channels] of Object.entries(categories)) {
-    for (const channelName of channels) {
-      const channelId = await getChannelId(channelName);
-      if (channelId) {
-        const videos = await getVideosForChannel(channelId, channelName, publishedAfter);
-        newVideos[category].push(...videos);
-        console.log(`Fetched ${videos.length} videos from ${channelName} `);
-      } else {
-        console.log(`Could not find channel ID for ${channelName}`);
-      }
+  for (const channelName of channelsToUpdate.length
+    ? channelsToUpdate
+    : channels) {
+    const channelId = await getChannelId(channelName);
+    if (channelId) {
+      const videos = await getVideosForChannel(
+        channelId,
+        channelName,
+        publishedAfter,
+      );
+      allVideos.push(...videos);
+      console.log(`Fetched ${videos.length} videos from ${channelName}`);
+    } else {
+      console.log(`Could not find channel ID for ${channelName}`);
     }
   }
 
-  // Combine all videos from all categories into one array
-  const allVideos = [
-    ...newVideos.rounds,
-    ...newVideos.lectures,
-    ...newVideos.topPicks,
-  ];
-
   console.log("\n" + "=".repeat(60));
-  console.log("💾 SAVING ALL VIDEOS TO new-videos.json");
+  console.log("🔍 FETCHING FULL DESCRIPTIONS");
   console.log("=".repeat(60) + "\n");
 
-  console.log(`📹 Total videos fetched: ${allVideos.length}`);
-  console.log(`   Rounds: ${newVideos.rounds.length}`);
-  console.log(`   Lectures: ${newVideos.lectures.length}`);
-  console.log(`   Top Picks: ${newVideos.topPicks.length}`);
+  // Find videos with truncated descriptions and fetch full ones
+  const truncatedIds = allVideos
+    .filter((v) => v[5]?.endsWith("..."))
+    .map((v) => v[0]);
 
-  const outputPath = path.join(process.cwd(), "new-videos.json");
+  if (truncatedIds.length > 0) {
+    console.log(
+      `Found ${truncatedIds.length} videos with truncated descriptions`,
+    );
+    const fullDescriptions = await fetchFullDescriptions(truncatedIds);
 
-  await fs.writeFile(
-    outputPath,
-    JSON.stringify(allVideos, null, 2),
+    let updated = 0;
+    for (const video of allVideos) {
+      if (
+        fullDescriptions[video[0]] !== undefined &&
+        video[5]?.endsWith("...")
+      ) {
+        video[5] = fullDescriptions[video[0]];
+        updated++;
+      }
+    }
+    console.log(`Updated ${updated} descriptions with full text\n`);
+  } else {
+    console.log("No truncated descriptions found\n");
+  }
+
+  console.log("=".repeat(60));
+  console.log("📋 CLASSIFYING VIDEOS INTO ROUNDS AND LECTURES");
+  console.log("=".repeat(60) + "\n");
+
+  // Split into rounds and lectures
+  const rounds: any[] = [];
+  const lectures: any[] = [];
+
+  for (const video of allVideos) {
+    const [id, title, date, channel, views, desc] = video;
+
+    if (isRound(title, desc)) {
+      // Parse round data
+      const style = parseDebateStyle(title, channel);
+      const tournament = parseTournament(title);
+      const roundLevel = parseRoundLevel(title);
+      const { aff, neg } = parseTeams(title);
+      const winner = parseWinner(desc);
+      const judgeDecision = parseJudgeDecision(desc);
+
+      rounds.push([
+        id,
+        title,
+        date,
+        channel,
+        views,
+        desc,
+        style,
+        tournament,
+        roundLevel,
+        aff,
+        neg,
+        winner,
+        judgeDecision,
+        null, // 1AC arg
+        null, // 2NR arg
+        false, // isTopPick
+        null, // speech docs URL
+      ]);
+    } else {
+      // Classify lecture
+      const category = classifyLecture(title, desc);
+      lectures.push([...video, category]);
+    }
+  }
+
+  console.log(
+    `Classified ${rounds.length} rounds and ${lectures.length} lectures\n`,
   );
 
-  console.log(`\n💾 Saved all videos to: ${outputPath}`);
-  console.log(`📦 Total videos: ${allVideos.length}`);
+  // Show lecture category distribution
+  const lectureCats: Record<string, number> = {};
+  lectures.forEach((v) => {
+    const cat = v[6];
+    lectureCats[cat] = (lectureCats[cat] || 0) + 1;
+  });
+  console.log("Lecture categories:", lectureCats);
+
+  console.log("\n" + "=".repeat(60));
+  console.log("💾 MERGING AND SAVING SPLIT FILES");
+  console.log("=".repeat(60) + "\n");
+
+  const dataDir = path.join(
+    process.cwd(),
+    "lib",
+    "debate-data",
+    "debate-videos",
+  );
+
+  // Split rounds by style
+  const roundsByStyle: Record<number, any[]> = {
+    1: [], // Policy
+    2: [], // PF
+    3: [], // LD
+    4: [], // College
+  };
+
+  for (const round of rounds) {
+    const style = round[6]; // style is at index 6
+    if (roundsByStyle[style]) {
+      roundsByStyle[style].push(round);
+    }
+  }
+
+  const styleNames: Record<number, string> = {
+    1: "policy",
+    2: "pf",
+    3: "ld",
+    4: "college",
+  };
+
+  const mergedStats: Record<string, any> = {};
+
+  // Process each style
+  for (const [styleNum, styleName] of Object.entries(styleNames)) {
+    const style = Number(styleNum);
+    const newStyleRounds = roundsByStyle[style];
+
+    if (newStyleRounds.length === 0) {
+      console.log(`Skipping ${styleName.toUpperCase()}: no new rounds`);
+      continue;
+    }
+
+    const roundsPath = path.join(dataDir, `new-rounds-${styleName}.json`);
+
+    // Load existing data if file exists
+    let existingRounds: any[] = [];
+    try {
+      const roundsData = await fs.readFile(roundsPath, "utf-8");
+      existingRounds = JSON.parse(roundsData);
+      console.log(`Found ${existingRounds.length} existing ${styleName.toUpperCase()} rounds`);
+    } catch (err) {
+      console.log(`No existing ${styleName.toUpperCase()} rounds file found, creating new one`);
+    }
+
+    // Merge: deduplicate by video ID (index 0)
+    const existingRoundIds = new Set(existingRounds.map((v) => v[0]));
+    const newRounds = newStyleRounds.filter((v) => !existingRoundIds.has(v[0]));
+    const mergedRounds = [...existingRounds, ...newRounds];
+
+    // Sort by date (index 2) descending (newest first)
+    mergedRounds.sort((a, b) => b[2].localeCompare(a[2]));
+
+    await fs.writeFile(roundsPath, JSON.stringify(mergedRounds, null, 2));
+
+    console.log(
+      `\n💾 Saved ${mergedRounds.length} total ${styleName.toUpperCase()} rounds to: ${roundsPath}`,
+    );
+    console.log(`   - ${existingRounds.length} existing`);
+    console.log(`   - ${newRounds.length} newly added`);
+    console.log(`   - ${newStyleRounds.length - newRounds.length} duplicates skipped`);
+
+    mergedStats[styleName] = {
+      total: mergedRounds.length,
+      existing: existingRounds.length,
+      new: newRounds.length,
+      duplicates: newStyleRounds.length - newRounds.length,
+    };
+  }
+
+  // Process lectures
+  const lecturesPath = path.join(dataDir, "new-lectures.json");
+  let existingLectures: any[] = [];
+
+  try {
+    const lecturesData = await fs.readFile(lecturesPath, "utf-8");
+    existingLectures = JSON.parse(lecturesData);
+    console.log(`\nFound ${existingLectures.length} existing lectures`);
+  } catch (err) {
+    console.log("\nNo existing lectures file found, creating new one");
+  }
+
+  // Merge: deduplicate by video ID (index 0)
+  const existingLectureIds = new Set(existingLectures.map((v) => v[0]));
+  const newLectures = lectures.filter((v) => !existingLectureIds.has(v[0]));
+  const mergedLectures = [...existingLectures, ...newLectures];
+
+  // Sort by date (index 2) descending (newest first)
+  mergedLectures.sort((a, b) => b[2].localeCompare(a[2]));
+
+  await fs.writeFile(lecturesPath, JSON.stringify(mergedLectures, null, 2));
+
+  console.log(
+    `\n💾 Saved ${mergedLectures.length} total lectures to: ${lecturesPath}`,
+  );
+  console.log(`   - ${existingLectures.length} existing`);
+  console.log(`   - ${newLectures.length} newly added`);
+  console.log(
+    `   - ${lectures.length - newLectures.length} duplicates skipped`,
+  );
 
   const stats = {
-    total: allVideos.length,
-    byCategory: {
-      rounds: newVideos.rounds.length,
-      lectures: newVideos.lectures.length,
-      topPicks: newVideos.topPicks.length,
+    fetched: allVideos.length,
+    classified: {
+      rounds: rounds.length,
+      roundsByStyle: {
+        policy: roundsByStyle[1].length,
+        pf: roundsByStyle[2].length,
+        ld: roundsByStyle[3].length,
+        college: roundsByStyle[4].length,
+      },
+      lectures: lectures.length,
     },
-    outputFile: outputPath,
+    merged: mergedStats,
+    lectures: {
+      total: mergedLectures.length,
+      existing: existingLectures.length,
+      new: newLectures.length,
+      duplicates: lectures.length - newLectures.length,
+    },
+    truncatedFixed: truncatedIds.length,
+    lectureCats,
+    outputFiles: {
+      rounds: Object.entries(styleNames)
+        .filter(([style]) => roundsByStyle[Number(style)].length > 0)
+        .map(([, name]) => path.join(dataDir, `new-rounds-${name}.json`)),
+      lectures: lecturesPath,
+    },
   };
 
   console.log("\n" + "=".repeat(60));

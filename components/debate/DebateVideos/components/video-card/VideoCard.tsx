@@ -1,7 +1,7 @@
 "use client"
 import { GlowingEffect } from "@/components/ui/glowing-effect"
 
-import { Card, CardDescription } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import React, { useState, useEffect, useRef } from "react"
 import Image from "next/image"
@@ -25,9 +25,10 @@ export interface VideoCardProps {
   onUnhideVideo: (videoId: string) => void
   isHidden: boolean
   isTopPick: boolean
+  showFullDate?: boolean
 }
 
-export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, isHidden, isTopPick }: VideoCardProps) {
+export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, isHidden, isTopPick, showFullDate = false }: VideoCardProps) {
   const [videoId, title, date, channel, viewCount, description, style, tournament, roundLevel, affTeam, negTeam, affWin, judgeDecision, arg1AC, arg2NR] = video
   const { activeVideoId, setActiveVideo, addToQueue, queue } = useVideoPlayerStore()
   const isPlaying = activeVideoId === videoId
@@ -273,7 +274,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
           <div className="px-2 pb-1.5 pt-0 flex-1 flex flex-col">
             {/* Badges now displayed on thumbnail - removed from here */}
 
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 text-xs text-muted-foreground flex-wrap">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
@@ -281,7 +282,10 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                     className="flex items-center gap-1 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <Calendar className="h-3 w-3" />
-                    <span>{new Date(date).toLocaleDateString("en-US", { month: "short" })}</span>
+                    <span>{showFullDate
+                      ? new Date(date).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })
+                      : new Date(date).toLocaleDateString("en-US", { month: "short" })
+                    }</span>
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -391,16 +395,21 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                 <Eye className="h-3 w-3" />
                 <span>{viewCount.toLocaleString()}</span>
               </div>
+
+              {judgeDecision && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-1 shrink-0 cursor-help">
+                      <Scale className="h-3.5 w-3.5" />
+                      <span>{judgeDecision}</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p className="text-sm">{description}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </div>
-
-            {judgeDecision && (
-              <div className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
-                <Scale className="h-3.5 w-3.5" />
-                <span>{judgeDecision}</span>
-              </div>
-            )}
-
-            <CardDescription className="text-xs line-clamp-2 mb-3 flex-1">{description}</CardDescription>
 
           </div>
 

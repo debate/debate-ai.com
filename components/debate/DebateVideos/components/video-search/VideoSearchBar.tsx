@@ -3,6 +3,7 @@
  * @module components/debate/videos/components/VideoSearchBar
  */
 
+import { useState, useEffect } from "react"
 import { Search, X, Video, VideoOff, Star, Trophy, ChevronLeft, ChevronRight, Eye, Calendar } from "lucide-react"
 import Image from "next/image"
 import { IconTopRounds } from "@/components/icons"
@@ -114,6 +115,34 @@ export function VideoSearchBar({
   afterSearchElement,
   extraButtons,
 }: VideoSearchBarProps) {
+  // Local state for immediate input display
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm)
+
+  // Sync local state when parent searchTerm changes (e.g., from clear button)
+  useEffect(() => {
+    setLocalSearchTerm(searchTerm)
+  }, [searchTerm])
+
+  // Debounce search changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (localSearchTerm !== searchTerm) {
+        onSearchChange(localSearchTerm)
+      }
+    }, 2000)
+
+    return () => clearTimeout(timer)
+  }, [localSearchTerm, searchTerm, onSearchChange])
+
+  const handleLocalSearchChange = (value: string) => {
+    setLocalSearchTerm(value)
+  }
+
+  const handleClearSearch = () => {
+    setLocalSearchTerm("")
+    onClearSearch()
+  }
+
   const currentYear = new Date().getFullYear()
   const maxYear = Math.max(currentYear, 2026)
   // Stop seasons at 2011
@@ -139,17 +168,17 @@ export function VideoSearchBar({
               <Input
                 type="text"
                 placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => onSearchChange(e.target.value)}
+                value={localSearchTerm}
+                onChange={(e) => handleLocalSearchChange(e.target.value)}
                 onFocus={onSearchFocus}
                 onBlur={onSearchBlur}
                 className="pl-9 pr-8 h-9"
               />
-              {searchTerm && (
+              {localSearchTerm && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
-                      onClick={onClearSearch}
+                      onClick={handleClearSearch}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       <X className="h-4 w-4" />
