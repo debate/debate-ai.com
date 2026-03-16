@@ -273,7 +273,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
           <div className="px-2 pb-1.5 pt-0 flex-1 flex flex-col">
             {/* Badges now displayed on thumbnail - removed from here */}
 
-            <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
@@ -301,7 +301,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="p-1 rounded text-muted-foreground hover:text-foreground hover:text-primary transition-colors"
+                className="p-0.5 rounded text-muted-foreground hover:text-foreground hover:text-primary transition-colors"
                 title={`Watch "${title}" on YouTube`}
               >
                 <ExternalLink className="w-4 h-4" />
@@ -311,7 +311,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                 <TooltipTrigger asChild>
                   <button
                     onClick={(e) => { e.stopPropagation(); onToggleFavorite(videoId); }}
-                    className={`p-1 rounded transition-colors ${isFavorite ? "text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300" : "text-muted-foreground hover:text-foreground"}`}
+                    className={`p-0.5 rounded transition-colors ${isFavorite ? "text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300" : "text-muted-foreground hover:text-foreground"}`}
                     aria-label={isFavorite ? "Remove from favorites" : "Save to favorites"}
                   >
                     <Star className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`} />
@@ -327,7 +327,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                   <button
                     onClick={(e) => { e.stopPropagation(); !isInQueue && addToQueue(videoId, title, videoMeta); }}
                     disabled={isInQueue}
-                    className={`p-1 rounded transition-colors ${isInQueue ? "text-muted-foreground/50 cursor-not-allowed" : "text-muted-foreground hover:text-foreground"}`}
+                    className={`p-0.5 rounded transition-colors ${isInQueue ? "text-muted-foreground/50 cursor-not-allowed" : "text-muted-foreground hover:text-foreground"}`}
                     aria-label={isInQueue ? "In queue" : "Add to queue"}
                   >
                     <ListVideo className="w-4 h-4" />
@@ -343,7 +343,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                   <TooltipTrigger asChild>
                     <button
                       onClick={(e) => { e.stopPropagation(); }}
-                      className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors font-semibold text-xs"
+                      className="p-0.5 rounded text-muted-foreground hover:text-foreground transition-colors font-semibold text-xs"
                       aria-label="View topic"
                     >
                       T
@@ -360,7 +360,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                   <TooltipTrigger asChild>
                     <button
                       onClick={(e) => { e.stopPropagation(); onUnhideVideo(videoId); }}
-                      className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
+                      className="p-0.5 rounded text-muted-foreground hover:text-foreground transition-colors"
                       aria-label="Unhide video"
                     >
                       <EyeIcon className="w-4 h-4" />
@@ -375,7 +375,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                   <TooltipTrigger asChild>
                     <button
                       onClick={(e) => { e.stopPropagation(); setShowHideConfirm(true); }}
-                      className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
+                      className="p-0.5 rounded text-muted-foreground hover:text-destructive transition-colors"
                       aria-label="Hide video"
                     >
                       <EyeOff className="w-4 h-4" />
