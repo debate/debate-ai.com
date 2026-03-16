@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import categoryDescriptions from '@/lib/debate-data/debate-lectures-category-descriptions.json';
+import categoryDescriptions from '@/lib/debate-data/debate-metadata/debate-lectures-category-descriptions.json';
 
 interface LectureCategoryGalleryProps {
   onCategorySelect?: (categoryKey: string) => void;

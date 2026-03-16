@@ -14,7 +14,7 @@ The vision: every policy debate, social controversy, and ethical question mapped
 
 ## 1. Define a Minimal Argument Schema
 
-Create and evangelize a practical ontology for claims, premises, support/attack edges, and provenance that any tool or platform can adopt. Build on existing work like AIF and argumentation knowledge graphs, but lock in a "v1 web-native schema" that is easy to serialize as JSON/RDF and embed in HTML, markdown, or APIs.
+Create and evangelize a practical ontology for claims, premises, support/attack edges, and provenance that any tool or platform can adopt. Build on existing work like Argument Interchange Format (AIF) and argumentation knowledge graphs, but lock in a "v1 web-native schema" that is easy to serialize as JSON/RDF and embed in HTML, markdown, or APIs.
 
 ## 2. Standardize Machine-Readable Debate Metadata
 
@@ -208,39 +208,42 @@ Partner with schools, universities, citizen assemblies, and media literacy progr
 
 
 ---
+
 **Last Updated Feb 20, 2026**
 
 
 ## References
 
-[^1]: https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2023.1124045/full
-    
-[^2]: https://cacm.acm.org/research/implementing-the-argument-web/
-    
-[^3]: https://pmc.ncbi.nlm.nih.gov/articles/PMC9956294/
-    
-[^4]: https://pmc.ncbi.nlm.nih.gov/articles/PMC10313200/
-    
-[^5]: https://aaai.org/ojs/index.php/AAAI/article/view/6231
-    
-[^6]: https://publications.ics.forth.gr/tech-reports/2013/2013.TR438_The_Vision_of_the_Persuasive_Web.pdf
-    
-[^7]: https://researchrepository.universityofgalway.ie/bitstreams/bc5b0601-a7c3-470e-bad3-3ab53fc9d0b0/download
-    
-[^8]: https://homepages.abdn.ac.uk/n.oren/pages/TAFA-15/TAFA-15_submission_18.pdf
-    
-[^9]: https://asistdl.onlinelibrary.wiley.com/doi/10.1002/pra2.205
-    
-[^10]: https://aclanthology.org/2025.argmining-1.13.pdf
-    
-[^11]: https://aclanthology.org/2023.argmining-1.pdf
-    
-[^12]: https://oro.open.ac.uk/38003/1/DeLiddo-DC8-2013.pdf
-    
-[^13]: https://www.visual-mapping.com/2008/12/debate-graph-wiki-debate-mind-mapping.html
-    
-[^14]: https://www.asc.upenn.edu/research/centers/blog/collective-consciousness-and-quest-strong-independent-media
-    
-[^15]: https://homerdixon.com/resource/graphical-argument-analysis-a-new-approach-to-understanding-arguments-applied-to-a-debate-about-the-window-of-vulnerability/
-    
-[^16]: https://pubsonline.informs.org/doi/10.1287/isre.2021.0615
+
+
+1. Bikakis, A., Flouris, G., Patkos, T., & Plexousakis, D. (2023). Sketching the vision of the Web of Debates. *Frontiers in Artificial Intelligence, 6*, Article 1124045. https://doi.org/10.3389/frai.2023.1124045  
+
+2. *Implementing the Argument Web.* (n.d.). *Communications of the ACM.* https://cacm.acm.org/research/implementing-the-argument-web/  
+
+3. Xiao, L., & Greer, D. (2023). Linked argumentation graphs for multidisciplinary decision support. *Healthcare, 11*(4), Article 585. https://doi.org/10.3390/healthcare11040585  
+
+4. Bikakis, A., Flouris, G., Patkos, T., & Plexousakis, D. (2023). Sketching the vision of the Web of Debates. *Frontiers in Artificial Intelligence, 6*, Article 1124045. https://doi.org/10.3389/frai.2023.1124045  
+
+5. *End‑to‑end argumentation knowledge graph construction.* (n.d.). *Proceedings of the AAAI Conference on Artificial Intelligence, 34*(5), 7367–7374. https://doi.org/10.1609/aaai.v34i05.6231  
+
+6. Flouris, G., Bikakis, A., Patkos, T., & Plexousakis, D. (2013). *The vision of the Persuasive Web* (FORTH Technical Report TR 438). Institute of Computer Science, Foundation for Research and Technology–Hellas. https://publications.ics.forth.gr/tech-reports/2013/2013.TR438_The_Vision_of_the_Persuasive_Web.pdf  
+
+7. Schneider, J., Passant, A., Groza, T., & Breslin, J. G. (2010). Argumentation 3.0: How Semantic Web technologies can improve argumentation modeling in Web 2.0 environments. Digital Enterprise Research Institute, National University of Ireland, Galway. https://researchrepository.universityofgalway.ie/bitstreams/bc5b0601-a7c3-470e-bad3-3ab53fc9d0b0/download  
+
+8. Lippi, M., & Torroni, P. (n.d.). *Argumentation mining: A machine learning perspective* [Conference paper]. TAFA‑15. https://homepages.abdn.ac.uk/n.oren/pages/TAFA-15/TAFA-15_submission_18.pdf  
+
+9. Zhou, H., Song, N., Chang, W., & Wang, X. (2019). Linking the thoughts within scientific papers: Construction and visualization of argumentation graph. *Proceedings of the Association for Information Science and Technology, 56*(1), 757–759. https://doi.org/10.1002/pra2.205  
+
+10. Gruber, M., Kikteva, Z., Rutter, I., & Hautli‑Janisz, A. (2025). DEBARGVIS: An interactive visualisation tool for exploring argumentative dynamics in debate. In *Proceedings of the Workshop on Argument Mining (ArgMining 2025).* https://aclanthology.org/2025.argmining-1.13.pdf  
+
+11. Association for Computational Linguistics. (2023). *The 10th Workshop on Argument Mining (ArgMining 2023): Proceedings of the workshop.* https://aclanthology.org/2023.argmining-1.pdf  
+
+12. *Improving online deliberation with argument network visualization.* (2013, June 30). Paper presented at Digital Cities 8 (DC8), Munich, Germany. https://oro.open.ac.uk/38003/1/DeLiddo-DC8-2013.pdf  
+
+13. Centre for Argument Technology. (2024, May 28). *ARG Tech AIF datasets* [GitHub repository]. GitHub. https://github.com/arg-tech/aif-arg-datasets
+
+14. Syarief, S. (n.d.). Collective consciousness and the quest for strong independent media. *Annenberg School for Communication, University of Pennsylvania.* https://www.asc.upenn.edu/research/centers/blog/collective-consciousness-and-quest-strong-independent-media  
+
+15. Homer‑Dixon, T., & Karapin, R. S. (1989). Graphical argument analysis: A new approach to understanding arguments applied to a debate about the window of vulnerability. *International Studies Quarterly, 33*(4), 389–410. https://homerdixon.com/resource/graphical-argument-analysis-a-new-approach-to-understanding-arguments-applied-to-a-debate-about-the-window-of-vulnerability/  
+
+16. Wambsganss, T., Janson, A., Thomsen, J. P., Nistor, N., & Leimeister, J. M. (2024). Improving students’ argumentation skills using dynamic machine‑learning–based modeling. *Information Systems Research.* Advance online publication. https://doi.org/10.1287/isre.2021.0615  

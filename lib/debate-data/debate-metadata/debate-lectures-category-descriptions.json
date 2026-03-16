@@ -1,0 +1,58 @@
+{
+  "categories": {
+    "Affirmative Strategy": {
+      "description": "1AC construction, 2AC, 1AR, aff writing, case selection"
+    },
+    "Negative Strategy": {
+      "description": "2N bootcamp, neg prep, block writing, 1NR, case neg"
+    },
+    "Kritik / Critical Theory": {
+      "description": "K fundamentals, afropessimism, cap K, settler colonialism, Baudrillard, security K, queer theory"
+    },
+    "Counterplans & Theory": {
+      "description": "Process CPs, conditionality, competition, solvency advocates, topicality theory"
+    },
+    "Topicality & Framework": {
+      "description": "T vs planless affs, fairness impacts, fiat theory, plan texts, reasonability"
+    },
+    "Disadvantages": {
+      "description": "Disad theory, politics DA, risk analysis, elections, economy DAs"
+    },
+    "Speaking & Delivery": {
+      "description": "Top speaker tips, speaking drills, roadmapping, vocal delivery, CX technique"
+    },
+    "Research & Flowing": {
+      "description": "Card cutting, verbatim, paperless debate, research methodology, flowing"
+    },
+    "PF & LD Topic Analysis": {
+      "description": "PF & LD topic analysis from various coaches and debaters from Champion Briefs"
+    },
+    "Policy Topic Lectures": {
+      "description": "Arctic, IP rights, inequality, water resources, immigration, arms sales, NATO topic overviews"
+    },
+    "Demo Debates": {
+      "description": "Full round recordings from DDI, SDI, ENDI, Michigan camp, Georgetown"
+    },
+    "Judge & Tournament Skills": {
+      "description": "Judge adaptation, post-rounding, prefs, tournament prep, mental performance"
+    },
+    "Impact Calculus & Evidence": {
+      "description": "Extinction impacts, magnitude/probability/timeframe, evidence comparison, risk assessment"
+    },
+    "Philosophy & IR Theory": {
+      "description": "Kant, MMT, IR theory, political economy, critical IR, environmental theory"
+    },
+    "Public Forum": {
+      "description": "PF structure, case writing, rebuttal, summary and final focus speeches"
+    },
+    "Documentaries & Culture": {
+      "description": "Debate documentaries, anti-blackness panels, community discussions, humor"
+    },
+    "Camp & Coaching Advice": {
+      "description": "Summer institute prep, how to get coached, team leadership, online debate tips"
+    },
+    "Novice & Introductory": {
+      "description": "Intro to policy debate, basic concepts, ABC's of debate series, structure overviews"
+    }
+  }
+}

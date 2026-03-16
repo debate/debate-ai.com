@@ -233,7 +233,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "zi8y1sl2gBk",
@@ -1007,7 +1007,7 @@
       null,
       null,
       null,
-      true
+      false
     ],
     [
       "1W0x8hnkv7o",
@@ -1424,24 +1424,6 @@
       false
     ],
     [
-      "NtvoT5iZKHo",
-      "Magnolia Debate April 2021 Demo Round",
-      "2021-03-17",
-      "PF Videos",
-      5805,
-      "Resolved: On balance, the benefits of the IMF outweigh the harms.\n\nNEG: Manuel De Leon and Hattie Bilson\nAFF: Rebecca Solomon and Ryan Jiang\n\nhttps://www.magnoliadebate.com/ for camp info and for future prep uploads!\n\nPrep used in this round: https://docs.google.com/document/d/10TM_jNSC53d4abRtd7nAXFWG7eMnVjW6QS_HNVQxrsk/edit?fbclid=IwAR00Ih9CCk5A__Jaxqp8jJTe2dahOUugMCO_QqZFGgegSdxubtAa2UHbhyI",
-      2,
-      "Magnolia",
-      "Demo",
-      "Manuel De Leon and Hattie Bilson",
-      "Rebecca and Grace",
-      null,
-      null,
-      null,
-      null,
-      false
-    ],
-    [
       "T8hYbZKJd4w",
       "Lynbrook CS vs Marist WO Round 6 Blake 2020 (With RFD)",
       "2021-02-26",
@@ -1691,7 +1673,7 @@
       null,
       null,
       null,
-      true
+      false
     ],
     [
       "IcQGl6R0WbI",
@@ -2951,7 +2933,7 @@
       null,
       null,
       null,
-      true
+      false
     ],
     [
       "6JevTcweW0c",
@@ -3476,24 +3458,6 @@
       false
     ],
     [
-      "V5ScWKYFVl4",
-      "Mission San Jose KW vs Millburn CM Capitol Debate Babson Demo Round",
-      "2018-08-01",
-      "PF Videos",
-      20318,
-      "MSJ is pro while Millburn is con.  MSJ wins on an equivalent 2-1 decision.  The resolution is, \"Resolved: the U.S. should accede to the UNCLOS without reservations.\"",
-      2,
-      "Capitol Debate",
-      "Demo",
-      "Mission San Jose KW",
-      "Millburn CM ",
-      true,
-      null,
-      null,
-      null,
-      false
-    ],
-    [
       "20GwA2d2Tgk",
       "Campbell Hall SS vs Altamont CZ Nats18 Round 9",
       "2018-07-02",
@@ -3663,12 +3627,12 @@
       8588,
       "Presentation is pro while Quarry Lane is con.  Quarry Lane wins 2-1.  The resolution is, \"Resolved: The United States should pass a universal background check on all gun sales and transfers of ownership.\" \n\nAlso, I totally forgot to thank my team and partner before rebuttal, so thank you Ahana, Anik, Keya, Sai, Rahi, Vineela, Franklin, Zac, and everyone else!\n\nAnik was a recorder-in-training and accidently stopped recording after first summary, so Ahana's summary and GCX are missing.  Sorry about that!",
       2,
-      null,
-      null,
+      "Alta",
+      "Finals",
       "Quarry Lane AS",
-      "Presentation VM Alta Finals",
-      null,
-      null,
+      "Presentation VM ",
+      true,
+      "2-1",
       null,
       null,
       false
@@ -4365,11 +4329,11 @@
       1657,
       "Ft. Laud is pro while Ardrey Kell is con.  Laudy defends the fort, winning on a 2-1.  \n\nThe topic is \"Resolved: In United States Public K-12 schools, the Probable Cause standard ought to apply to searches of students.\"",
       2,
-      null,
-      null,
+      "Wake Forest 2016",
+      " Finals",
       "Fort Lauderdale HS",
-      "Ardrey Kell KW Wake Forest 2016 Finals",
-      null,
+      "Ardrey Kell KW ",
+      false,
       null,
       null,
       null,

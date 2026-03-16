@@ -133,11 +133,13 @@ export function useVideoFiltering() {
         const fuse = new Fuse(filtered, {
           keys: [
             { name: "1", weight: 0.5 }, // title
+            { name: "2", weight: 0.1 }, // date
             { name: "3", weight: 0.3 }, // channel
             { name: "5", weight: 0.2 }, // description
           ],
-          threshold: 0.1, // low tolerance
-          ignoreLocation: true,
+          threshold: 0.3, // more lenient matching
+          ignoreLocation: true, // don't care about word position
+          distance: 1000, // allow matches far apart
         });
 
         const results = fuse.search(search);

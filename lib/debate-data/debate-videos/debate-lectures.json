@@ -1,110 +1,105 @@
 {
   "$schema": "../schemas/debate-lectures.schema.json",
   "data": [
-
     [
-    "48sucCBSFTA",
-    "Mar/Apr 2026 Lincoln-Douglas Topic Analysis by Daniel Shatzkin",
-    "2026-02-27",
-    "Champion Briefs",
-    789,
-    "Resolved: The United States military ought to abide by the principle of non-intervention. Visit www.ChampionBriefs.com to ...",
-    "Topic Analysis"
-  ],
-  [
-    "4HoJd5ufC60",
-    "March 2026 Public Forum Topic Analysis by Yair Fraifeld",
-    "2026-02-23",
-    "Champion Briefs",
-    1402,
-    "Resolved: The United States federal government should ban corporate acquisition of single-family residences. Visit www."
-    ,"Topic Analysis"
-  ],
-  [
-    "bLJwzkVdyqI",
-    "February 2026 Public Forum Topic Analysis by Yair Fraifeld",
-    "2026-01-22",
-    "Champion Briefs",
-    1226,
-    "Resolved: The Federal Trade Commission should establish a federal regulatory framework for sports betting. Visit www."
-    ,"Topic Analysis"
-  ],
-  [
-    "0n-cSRJJ0lA",
-    "January 2026 Public Forum Topic Analysis by Rachel Mauchline",
-    "2026-01-02",
-    "Champion Briefs",
-    858,
-    "Resolved: The People's Republic of China should substantially reduce its international extraction of natural resources. Visit www."
-    ,"Topic Analysis"
-  ],
-  [
-    "MyeB1gyXyDE",
-    "Jan/Feb 2026 Lincoln-Douglas Topic Analysis by Daniel Shatzkin",
-    "2026-01-02",
-    "Champion Briefs",
-    763,
-    "Resolved: The possession of nuclear weapons is immoral. Visit www.ChampionBriefs.com to download our Jan/Feb ..."
-    ,"Topic Analysis"
-  ],
-  [
-    "bovKpkjq4tg",
-    "Nov/Dec 2025 Public Forum Topic Analysis by Sach Letchumanan",
-    "2025-11-04",
-    "Champion Briefs",
-    1460,
-    "Resolved: The United States federal government should require technology companies to provide lawful access to encrypted ..."
-    ,"Topic Analysis"
-  ],
-  [
-    "2AwTbGW_Gk4",
-    "Nov/Dec 2025 Lincoln-Douglas Topic Analysis by Daniel Shatzkin",
-    "2025-10-24",
-    "Champion Briefs",
-    1089,
-    "Prepping for the Sep/Oct topic in Lincoln-Douglas? Here's an in-depth, high-level topic analysis from our writers about the ..."
-    ,"Topic Analysis"
-  ],
-
-  
-  [
-    "uPvtKCjwZSk",
-    "Sep/Oct 2025 Lincoln-Douglas Topic Analysis by Adam Tomasi",
-    "2025-09-08",
-    "Champion Briefs",
-    761,
-    "Prepping for the Sep/Oct topic in Lincoln-Douglas? Here's an in-depth, high-level topic analysis from our writers about the Plea ..."
- 
-,     "Topic Analysis"
-  ],
-  [
-    "A0Uq7YCgiIo",
-    "Sept/Oct 2025 Public Forum Topic Analysis by Sach Letchumanan",
-    "2025-08-27",
-    "Champion Briefs",
-    1337,
-    "Resolved: The United Kingdom should rejoin the European Union. Visit www.ChampionBriefs.com to download our Sep/Oct ..."
-,     "Topic Analysis"
-],
-  [
-    "vWJ3Y6gVqac",
-    "June/NSDA 2025 Lincoln-Douglas Topic Analysis",
-    "2025-05-28",
-    "Champion Briefs",
-    198,
-    "Prepping for the June/NSDA topic in Lincoln-Douglas? Here's an in-depth, high-level topic analysis from our writers about the ..."
-,     "Topic Analysis"
-  ],
-  [
-    "YVE4zVSJqYk",
-    "June/NSDA 2025 Public Forum Topic Analysis by Rachel Mauchline",
-    "2025-05-20",
-    "Champion Briefs",
-    363,
-    "Resolved: On balance, in the United States, the benefits of presidential executive orders outweigh the harms. Visit www."
-,     "Topic Analysis"
-  ],
-
+      "48sucCBSFTA",
+      "Mar/Apr 2026 Lincoln-Douglas Topic Analysis by Daniel Shatzkin",
+      "2026-02-27",
+      "Champion Briefs",
+      789,
+      "Resolved: The United States military ought to abide by the principle of non-intervention. Visit www.ChampionBriefs.com to ...",
+      "Topic Analysis"
+    ],
+    [
+      "4HoJd5ufC60",
+      "March 2026 Public Forum Topic Analysis by Yair Fraifeld",
+      "2026-02-23",
+      "Champion Briefs",
+      1402,
+      "Resolved: The United States federal government should ban corporate acquisition of single-family residences. Visit www.",
+      "Topic Analysis"
+    ],
+    [
+      "bLJwzkVdyqI",
+      "February 2026 Public Forum Topic Analysis by Yair Fraifeld",
+      "2026-01-22",
+      "Champion Briefs",
+      1226,
+      "Resolved: The Federal Trade Commission should establish a federal regulatory framework for sports betting. Visit www.",
+      "Topic Analysis"
+    ],
+    [
+      "0n-cSRJJ0lA",
+      "January 2026 Public Forum Topic Analysis by Rachel Mauchline",
+      "2026-01-02",
+      "Champion Briefs",
+      858,
+      "Resolved: The People's Republic of China should substantially reduce its international extraction of natural resources. Visit www.",
+      "Topic Analysis"
+    ],
+    [
+      "MyeB1gyXyDE",
+      "Jan/Feb 2026 Lincoln-Douglas Topic Analysis by Daniel Shatzkin",
+      "2026-01-02",
+      "Champion Briefs",
+      763,
+      "Resolved: The possession of nuclear weapons is immoral. Visit www.ChampionBriefs.com to download our Jan/Feb ...",
+      "Topic Analysis"
+    ],
+    [
+      "bovKpkjq4tg",
+      "Nov/Dec 2025 Public Forum Topic Analysis by Sach Letchumanan",
+      "2025-11-04",
+      "Champion Briefs",
+      1460,
+      "Resolved: The United States federal government should require technology companies to provide lawful access to encrypted ...",
+      "Topic Analysis"
+    ],
+    [
+      "2AwTbGW_Gk4",
+      "Nov/Dec 2025 Lincoln-Douglas Topic Analysis by Daniel Shatzkin",
+      "2025-10-24",
+      "Champion Briefs",
+      1089,
+      "Prepping for the Sep/Oct topic in Lincoln-Douglas? Here's an in-depth, high-level topic analysis from our writers about the ...",
+      "Topic Analysis"
+    ],
+    [
+      "uPvtKCjwZSk",
+      "Sep/Oct 2025 Lincoln-Douglas Topic Analysis by Adam Tomasi",
+      "2025-09-08",
+      "Champion Briefs",
+      761,
+      "Prepping for the Sep/Oct topic in Lincoln-Douglas? Here's an in-depth, high-level topic analysis from our writers about the Plea ...",
+      "Topic Analysis"
+    ],
+    [
+      "A0Uq7YCgiIo",
+      "Sept/Oct 2025 Public Forum Topic Analysis by Sach Letchumanan",
+      "2025-08-27",
+      "Champion Briefs",
+      1337,
+      "Resolved: The United Kingdom should rejoin the European Union. Visit www.ChampionBriefs.com to download our Sep/Oct ...",
+      "Topic Analysis"
+    ],
+    [
+      "vWJ3Y6gVqac",
+      "June/NSDA 2025 Lincoln-Douglas Topic Analysis",
+      "2025-05-28",
+      "Champion Briefs",
+      198,
+      "Prepping for the June/NSDA topic in Lincoln-Douglas? Here's an in-depth, high-level topic analysis from our writers about the ...",
+      "Topic Analysis"
+    ],
+    [
+      "YVE4zVSJqYk",
+      "June/NSDA 2025 Public Forum Topic Analysis by Rachel Mauchline",
+      "2025-05-20",
+      "Champion Briefs",
+      363,
+      "Resolved: On balance, in the United States, the benefits of presidential executive orders outweigh the harms. Visit www.",
+      "Topic Analysis"
+    ],
     [
       "NsNUx8iGVy8",
       "Public Forum Demo Debate Round (Sept/Oct 2017 Topic)",
@@ -132,9 +127,6 @@
       "In this Public Forum demo round, Eitan Ezra and Nathan Witkin (Affirmative) debate Caroline Wohl and Alekh Kale (Negative) on the topic Resolved: In United States public K-12 schools, the probable cause standard ought to apply to searches of students.",
       "Demo Debates"
     ],
-
-
-
     [
       "yaaAW-wtVKE",
       "January/February 2026 LD Topic Webinar",
@@ -199,6 +191,15 @@
       "Affirmative Strategy"
     ],
     [
+      "L7La-9agBXk",
+      "2025 Michigan Camp - 7 Week Demo Debate 2",
+      "2025-07-10",
+      "Policy Debate Central",
+      3653,
+      "",
+      "Demo Debates"
+    ],
+    [
       "iwHyc-vFuPs",
       "2025 High School Debate Championship | 3.14.2025",
       "2025-03-14",
@@ -215,6 +216,141 @@
       5019,
       "Important Links Cases, flow, and Ryan & Thomas's written round analysis (with tips for redos): ...",
       "Public Forum"
+    ],
+    [
+      "ZZetMXpwKko",
+      "DDI 2024 - Demo Debate 2",
+      "2024-07-28",
+      "DDI Debate",
+      1981,
+      "Demo Debate #1 at the 2024 Dartmouth Debate Institute. Connelly Cowan (Georgetown Class of '26) and Adam White (Georgetown Class of '26) are on the affirmative; Azja Butler and Julian Kuffour are on the negative. \n\nYou can skip to the speeches you are interested in using the links below:\n\n1AC - 2:35\n1AC CX - 10:38\n1AC Discussion - 13:45\n1NC - 24:59\n1NC CX - 34:35\n1NC Discussion - 37:45\n2AC - 57:31\n2AC CX - 1:06:36\n2AC Discussion - 1:10:00\n2NC - 1:27:30\n2NC CX - 1:38:53\n2NC Discussion - 1:41:40\n1NR - 2:02:47\n1NR Discussion - 2:09:52\n1AR - 2:23:46\n1AR Discussion - 2:30:35\n2NR - 2:43:45\n2NR Discussion - 2:49:36 \n2AR - 2:58:32",
+      "Demo Debates",
+      "DDI 2024",
+      "Demo",
+      "Connelly Cowan, Adam White",
+      "Azja Butler, Julian Kuffour"
+    ],
+    [
+      "E0QnPJHGbe0",
+      "DDI 2022 - Demo Debate 1",
+      "2022-08-09",
+      "DDI Debate",
+      2714,
+      "Demonstration debate on the NATO security cooperation topic. \n\nThe AFF team is Maya El-Sharif and Kyujin Derradji. The NEG team is Arvind Shankar and Margaret Hecht. \n\nYou can see the flow and speech docs here: \nhttps://drive.google.com/drive/folders/1fDYj222qpxWuMcGUNkd_Nz4BUODNMkA3?usp=sharing\n\nTime stamps: \n1AC - 0:10\n1AC Comments - 7:24\n1AC CX - 11:36\n1AC CX Comments - 14:42\n1NC - 18:05\n1NC Comments - 26:15\n1NC CX - 33:26\n1NC CX Comments - 36:36\n2AC - 43:30\n2AC Comments - 51:48\n2AC CX - 1:05:10\n2AC CX Comments - 1:08:22\n2NC - 1:11:20\n2NC Comments - 1:20:23  \n2NC CX - 1:33:00\n2NC CX Comments - 1:36:15 \n1NR - 1:38:17\n1NR Comments - 1:43:52 \n1AR - 1:57:30\n1AR Comments - 2:02:41\n2NR - 2:06:06\n2NR Comments - 2:11:15 \n2AR - 2:20:25\n2AR Comments - 2:25:42",
+      "Demo Debates",
+      "DDI",
+      "Demo",
+      "Maya El-Sharif  Kyujin Derradji",
+      "Arvind Shankar  Margaret Hecht"
+    ],
+
+    [
+      "pdneN6eYijg",
+      "Michigan PR v Michigan JS - Arm Sales Demo Debate",
+      "2020-03-21",
+      "Michigan Debate",
+      3604,
+      "Michigan PR takes on Michigan JS with the F-35s aff to demonstrated how feasible it is for debaters to debate from four different places. \n\nFind the docs here - https://drive.google.com/drive/folders/1hGAxEwKTTDh6cG4uTr3vKqALFHD4K8KF?usp=sharing\n\nWho do you think won? Vote here https://forms.gle/TVyQhFZVNu8iQgat8",
+      "Demo Debates",
+      "Michigan Demo",
+      "Round 1",
+      "Michigan PR",
+      "Michigan JS"
+    ],
+    [
+      "JUkR0iahsIo",
+      "Debate Drills Demo Debate | Septober 2025",
+      "2025-08-25",
+      "National Symposium for Debate ",
+      1818,
+      "On Saturday, our instructors will tackle the September–October PF topic, showcasing high-level strategy, evidence work, and round vision. The Debate Drills Club Team brings together nationally ranked competitors who train weekly through practice rounds, drills, and seminars with our coaching staff.\n\nThis stream is designed to give you an inside look at how top instructors approach the resolution. \n\nFlow the round, come up with a decision yourself, and redo the speeches to fine tune your skills!\n\nLearn more about DD @ https://www.debatedrills.com/debate-club",
+         "Demo Debates",
+      "Debate Drills",
+      "Demo",
+      "Demo aff",
+      "Demo neg"
+    ],[
+      "En7MVHkdL0M",
+      "NSD February Demo Debate | Strambert DB (Aff) vs Hackerson BY",
+      "2023-02-28",
+      "National Symposium for Debate ",
+      3327,
+      "Vote here for who you think won ! https://forms.gle/Tx4VKjuYhjKx3NeE8.",
+         "Demo Debates",
+      "NSD",
+      "Demo",
+      "Strambert DB",
+      "Hackerson BY"
+    ],
+    [
+      "En7MVHkdL0M",
+      "NSD February Demo Debate | Strambert DB (Aff) vs Hackerson BY",
+      "2023-02-28",
+      "National Symposium for Debate ",
+      3327,
+      "Vote here for who you think won ! https://forms.gle/Tx4VKjuYhjKx3NeE8.",
+         "Demo Debates",
+      "NSD",
+      "Demo",
+      "Strambert DB",
+      "Hackerson BY"
+    ],
+    [
+      "NtvoT5iZKHo",
+      "Magnolia Debate April 2021 Demo Round",
+      "2021-03-17",
+      "PF Videos",
+      5805,
+      "Resolved: On balance, the benefits of the IMF outweigh the harms.\n\nNEG: Manuel De Leon and Hattie Bilson\nAFF: Rebecca Solomon and Ryan Jiang\n\nhttps://www.magnoliadebate.com/ for camp info and for future prep uploads!\n\nPrep used in this round: https://docs.google.com/document/d/10TM_jNSC53d4abRtd7nAXFWG7eMnVjW6QS_HNVQxrsk/edit?fbclid=IwAR00Ih9CCk5A__Jaxqp8jJTe2dahOUugMCO_QqZFGgegSdxubtAa2UHbhyI",
+         "Demo Debates",
+      "Magnolia",
+      "Demo",
+      "Manuel De Leon and Hattie Bilson",
+      "Rebecca and Grace"
+    ],
+    [
+      "V5ScWKYFVl4",
+      "Mission San Jose KW vs Millburn CM Capitol Debate Babson Demo Round",
+      "2018-08-01",
+      "PF Videos",
+      20318,
+      "MSJ is pro while Millburn is con.  MSJ wins on an equivalent 2-1 decision.  The resolution is, \"Resolved: the U.S. should accede to the UNCLOS without reservations.\"",
+         "Demo Debates",
+      "Capitol Debate",
+      "Demo",
+      "Mission San Jose KW",
+      "Millburn CM "
+    ],
+    [
+      "s_gJ6KK3yoM",
+      "DDI 2022 - Demo Debate 2",
+      "2022-08-09",
+      "DDI Debate",
+      3445,
+      "Demonstration debate on the NATO security cooperation topic. \n\nThe AFF team is Arvind Shankar and Tyler Vergho. The NEG team is David Kilpatrick and Nick Lepp.\n\nTime stamps: \n1AC - 2:08\n1AC CX - 8:37\n1NC - 13:28\n1NC CX - 21:04\n1AC / 1NC Comments - 24:18\n2AC - 42:36  \n2AC CX -  50:47  \n2AC Comments - 54:04\n2NC - 1:11:09  \n2NC CX - 1:19:11\n1NR - 1:22:49\nBlock Comments - 1:28:04 \n1AR - 1:51:24\n1AR Comments - 1:56:40 \n2NR - 2:14:26\n2NR Comments - 2:19:38\n2AR - 2:29:32\n2AR Comments - 2:34:42",
+      "Demo Debates",
+      "DDI",
+      "Demo",
+      "Arvind Shankar, Tyler Vergho",
+      "David Kilpatrick, Nick Lepp",
+      null,
+      null,
+      null,
+      null,
+      false
+    ],
+    [
+      "GQAw4AYAOvw",
+      "DDI 2024 - Demo Debate #1",
+      "2024-07-27",
+      "DDI Debate",
+      2115,
+      "Demo Debate #1 at the 2024 Dartmouth Debate Institute. Sean Wallace (Dartmouth Class of '27) and Michi Okahata (Emory Class of '27) are on the affirmative; E. Katie Carpenter (Dartmouth Class of '28) and Eleanor Barrett (University of Michigan Class of '28) are on the negative. \n\nYou can skip to the speeches you are interested in using the links below:\n\n1AC - 4:17\n1AC CX - 9:45\n1AC Discussion - 12:56\n1NC - 19:52\n1NC CX - 26:41\n1NC Discussion - 29:48\n2AC - 35:15\n2AC CX - 42:52\n2AC Discussion - 45:53\n2NC - 52:03\n2NC CX - 1:01:01\n2NC Discussion - 1:03:27\n1NR - 1:10:14\n1NR Discussion - 1:15:10\n1AR - 1:26:08\n1AR Discussion - 1:32:03\n2NR - 1:41:13\n2NR Discussion - 1:47:12\n2AR - 1:55:40\n2AR Discussion - 2:01:00",
+      "Demo Debates",
+      "DDI 2024",
+      "Demo",
+      "Sean Wallace, Michi Okahata",
+      "E. Katie Carpenter, Eleanor Barrett"
     ],
     [
       "I2F79Z-7Y1M",
@@ -234,7 +370,7 @@
       "",
       1
     ],
-     [
+    [
       "IzRxlnDNfJ0",
       "HS Coaches Meeting - Has Debate Lost It's Way?",
       "2014-03-29",
@@ -243,7 +379,6 @@
       "",
       4
     ],
-
     [
       "F8_v6wYmkks",
       "HS Debate Coaches Meeting - MPJ and HS CoTD",
@@ -253,7 +388,6 @@
       "",
       4
     ],
-
     [
       "LwoWyMq0OPE",
       "2014 NDCA Round 6 Discussion - SVDP MY and Nevada Union CH",
@@ -263,7 +397,7 @@
       "",
       "Round Discussions"
     ],
-       [
+    [
       "HUJ8sqjDLqU",
       "2019 NDT Opening Awards Ceremony, Second Half",
       "2019-03-22",
@@ -432,16 +566,7 @@
       "Debate Stream",
       863,
       "",
-      4,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      false
+      "Awards"
     ],
     [
       "nwgVRdx_Lck",

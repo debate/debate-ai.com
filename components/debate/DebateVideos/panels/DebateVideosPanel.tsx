@@ -104,9 +104,9 @@ export function DebateVideosPage() {
         actions.setAllVideos(data.rounds || [])
         actions.setIsLoading(false)
       } else if (category === "topPicks") {
-        const topPickIds = new Set(data.topPicks || [])
+        // Filter debates where index 15 (isTopPick) is true - these are the greatest 100 debates
         const allAvailableVideos = [...(data.rounds || []), ...(data.lectures || [])]
-        const topPickVideos = allAvailableVideos.filter((v) => topPickIds.has(v[0]))
+        const topPickVideos = allAvailableVideos.filter((v) => v[15] === true)
         actions.setAllVideos(topPickVideos)
         actions.setIsLoading(false)
       } else {

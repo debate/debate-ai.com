@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import debateTopics from "@/lib/debate-data/debate-topics.json"
-import debateChampions from "@/lib/debate-data/debate-champions.json"
+import debateTopics from "@/lib/debate-data/debate-metadata/debate-topics.json"
+import debateChampions from "@/lib/debate-data/debate-metadata/debate-champions.json"
 
 function getDebateHistory() {
   const history: Record<string, Record<string, string | undefined>> = {}

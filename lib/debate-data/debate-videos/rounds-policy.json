@@ -1,5 +1,5 @@
 {
-  "$schema": "./schemas/debate-rounds-videos.schema.json",
+  "$schema": "../schemas/debate-rounds-videos.schema.json",
   "data": [
     [
       "_uG0EqKE02A",
@@ -197,7 +197,7 @@
       null,
       null,
       null,
-      true
+      false
     ],
     [
       "pppJq9IMB2I",
@@ -359,7 +359,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "CWiKOI7_Xgk",
@@ -575,7 +575,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "DAWcxv1buaw",
@@ -989,7 +989,7 @@
       null,
       null,
       null,
-      true
+      false
     ],
     [
       "Tl5Z0whiPZs",
@@ -1097,7 +1097,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "CWzoGwNEQss",
@@ -1223,7 +1223,7 @@
       "3-0, M. Shackelford, T. Noparstak, A. Adam",
       null,
       null,
-      false
+      true
     ],
     [
       "DYyAG7BBJhs",
@@ -1259,7 +1259,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "rsFoizOHVFg",
@@ -1295,7 +1295,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "qk3dyDcpjNg",
@@ -1385,7 +1385,7 @@
       null,
       null,
       null,
-      true
+      false
     ],
     [
       "QSuwRVPQhi4",
@@ -1583,7 +1583,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "RbkBkbI9mEg",
@@ -1709,7 +1709,7 @@
       "2-1",
       null,
       null,
-      false
+      true
     ]
   ]
 }
