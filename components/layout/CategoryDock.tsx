@@ -157,8 +157,6 @@ export function CategoryDock() {
   const categoryState = useCategoryDockState()
   const { activeVideoId, activeVideoTitle, isMinimized, isPlaying, setMinimized, setIsPlaying } = useVideoPlayerStore()
 
-  const MOBILE_HIDDEN_HREFS = ['/lectures']
-
   const allItems = [
     ...NAV_ITEMS.filter(({ href }) => {
       if (href === '/rank') {
@@ -224,7 +222,7 @@ export function CategoryDock() {
   const mobileItems = (playingItem
     ? [...allItems, playingItem]
     : allItems
-  ).filter(({ key }) => !MOBILE_HIDDEN_HREFS.includes(key))
+  )
 
   return (
     <>
