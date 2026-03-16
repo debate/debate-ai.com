@@ -330,6 +330,21 @@ export function DebateFlowPage() {
             onUpdate={updateFlow.bind(null, selected)}
             speechTimerStates={timerState.perSpeechTimerStates}
             onSpeechTimerStateChange={timerState.setSpeechTimerState}
+            onResetPrepTimers={() => {
+              const prepTime = timerState.debateStyle.prepTime
+              if (prepTime) {
+                timerState.setPrepState({
+                  resetTime: prepTime * 60 * 1000,
+                  time: prepTime * 60 * 1000,
+                  state: { name: "paused" },
+                })
+                timerState.setPrepSecondaryState({
+                  resetTime: prepTime * 60 * 1000,
+                  time: prepTime * 60 * 1000,
+                  state: { name: "paused" },
+                })
+              }
+            }}
             canNavigatePrev={splitHandlers.canNavigatePrev}
             canNavigateNext={state.isMobile ? splitHandlers.canNavigateNextSingle : splitHandlers.canNavigateNext}
             onNavigatePrev={state.isMobile ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches}

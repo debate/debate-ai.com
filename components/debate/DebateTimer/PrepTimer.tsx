@@ -18,7 +18,7 @@ import type React from "react"
 import type { TimerState } from "@/components/debate/DebateTimer/types"
 
 import { useEffect, useRef, useState } from "react"
-import { Play, Pause, RotateCcw } from "lucide-react"
+import { Play, Pause } from "lucide-react"
 import { playSoundEffect } from "@/components/debate/DebateTimer/sound-effects"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -148,13 +148,6 @@ export function PrepTimer({
     }
   }
 
-  /**
-   * Reset timer to default time
-   */
-  const reset = () => {
-    onTimeChange(resetTime)
-    onStateChange({ name: "paused" })
-  }
 
   /**
    * Format seconds value with padding
@@ -274,19 +267,6 @@ export function PrepTimer({
       {label && <div className="text-xs font-medium text-muted-foreground mb-1">{label}</div>}
 
       <div className="flex items-center justify-center gap-0.5">
-        {/* Reset button (left) */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            compact ? "h-5 w-5" : "h-8 w-8",
-            hideControlsByDefault && "sm:opacity-0 sm:group-hover/timer:opacity-100 transition-opacity"
-          )}
-          onClick={reset}
-        >
-          <RotateCcw className={compact ? "h-2.5 w-2.5" : "h-4 w-4"} />
-        </Button>
-
         {/* Editable time display */}
         <div
           className={cn(

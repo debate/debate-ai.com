@@ -20,7 +20,7 @@ import type { TimerSpeech, SpeechTimerState } from "@/components/debate/DebateTi
 import type { Round } from "@/components/debate/DebateRound/types"
 
 import { useEffect, useRef, useState } from "react"
-import { Play, Pause, RotateCcw } from "lucide-react"
+import { Play, Pause } from "lucide-react"
 import { playSoundEffect } from "@/components/debate/DebateTimer/sound-effects"
 import { Button } from "@/components/ui/button"
 import { MicSelector } from "@/components/debate/DebateTimer/SpeechRecorder/mic-selector"
@@ -189,13 +189,6 @@ export function SpeechTimer({
     }
   }
 
-  /**
-   * Reset timer to current speech's default time
-   */
-  const reset = () => {
-    onTimeChange(currentSpeech.time * 60 * 1000)
-    onStateChange({ name: "paused" })
-  }
 
   /**
    * Format seconds value with padding
@@ -311,19 +304,6 @@ export function SpeechTimer({
       <div className="flex flex-col items-center gap-0.5 group/timer">
         {/* Time display with controls on sides */}
         <div className="flex items-center gap-0.5">
-          {/* Reset button (left) — always visible on touch devices, hover-reveal on desktop */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn(
-              "rounded-full transition-opacity opacity-0 group-hover/timer:opacity-100 [@media(hover:none)]:opacity-100",
-              compact ? "h-5 w-5" : "h-6 w-6"
-            )}
-            onClick={reset}
-          >
-            <RotateCcw className="h-3 w-3" />
-          </Button>
-
           {/* Time */}
           <div
             className={cn(

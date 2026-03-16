@@ -646,12 +646,6 @@ export const MarkdownEditor = memo(function MarkdownEditor({
           </div>
         </div>
       </LexicalComposer>
-
-      <div className="border-t bg-muted/30 px-4 py-2 flex items-center gap-4 text-xs text-muted-foreground">
-        <span className="tabular-nums">{editorSyncState.totalWords} words</span>
-        <span className="tabular-nums">{editorSyncState.boldWords} bold</span>
-        <span className="tabular-nums">{editorSyncState.highlightedWords} highlighted</span>
-      </div>
     </div>
   )
 })

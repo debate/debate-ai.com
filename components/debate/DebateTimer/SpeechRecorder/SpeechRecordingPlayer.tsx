@@ -7,7 +7,7 @@
 
 import { useEffect, useState, type RefObject, useRef } from "react"
 import { createPortal } from "react-dom"
-import { Trash2, MoreVertical, Clock, Upload, Mic, Check, MicOff, Users, Gauge } from "lucide-react"
+import { Trash2, RefreshCw, MoreVertical, Clock, Upload, Mic, Check, MicOff, Users, Gauge } from "lucide-react"
 import {
     AudioPlayerButton,
     AudioPlayerProgress,
@@ -67,6 +67,7 @@ function PlayerRow({
     onRecordingEnabledChange,
     onResetSpeechTime,
     onSwitchToCrossX,
+    onResetPrepTimers,
     handleDelete,
     progressBarPortalRef,
     hideInlineMenu,
@@ -81,6 +82,7 @@ function PlayerRow({
     onRecordingEnabledChange?: (enabled: boolean) => void
     onResetSpeechTime?: () => void
     onSwitchToCrossX?: () => void
+    onResetPrepTimers?: () => void
     handleDelete: (key: string) => void
     progressBarPortalRef?: RefObject<HTMLDivElement | null>
     hideInlineMenu?: boolean
@@ -127,6 +129,7 @@ function PlayerRow({
                     onRecordingEnabledChange={onRecordingEnabledChange}
                     onResetSpeechTime={onResetSpeechTime}
                     onSwitchToCrossX={onSwitchToCrossX}
+                    onResetPrepTimers={onResetPrepTimers}
                     onDeleteRecording={handleDelete}
                     recordingKey={rec.key}
                     inHeader={false}
@@ -176,6 +179,8 @@ interface SpeechRecordingMenuProps {
     onResetSpeechTime?: () => void
     /** Callback to switch timer to Cross-X (3 min) */
     onSwitchToCrossX?: () => void
+    /** Callback to reset prep timers to their defaults */
+    onResetPrepTimers?: () => void
     /** Callback to delete a recording */
     onDeleteRecording?: (key: string) => void
     /** The recording key if deleting from player context */
@@ -206,6 +211,8 @@ interface SpeechRecordingPlayerProps {
     onResetSpeechTime?: () => void
     /** Callback to switch timer to Cross-X (3 min). */
     onSwitchToCrossX?: () => void
+    /** Callback to reset prep timers to their defaults. */
+    onResetPrepTimers?: () => void
     /** Selected microphone device ID */
     micDeviceId?: string
     /** Callback when microphone device changes */
@@ -247,6 +254,7 @@ export function SpeechRecordingMenu({
     onRecordingEnabledChange,
     onResetSpeechTime,
     onSwitchToCrossX,
+    onResetPrepTimers,
     onDeleteRecording,
     recordingKey,
     inHeader = false,
@@ -413,10 +421,24 @@ export function SpeechRecordingMenu({
                     )}
 
                     {/* Timer control actions */}
+                    {onResetSpeechTime && (
+                        <DropdownMenuItem onClick={onResetSpeechTime}>
+                            <RefreshCw className="h-4 w-4 mr-2" />
+                            Reset Speech Timer
+                        </DropdownMenuItem>
+                    )}
+
                     {onSwitchToCrossX && (
                         <DropdownMenuItem onClick={onSwitchToCrossX}>
                             <Clock className="h-4 w-4 mr-2" />
-                            Switch to Cross-X (3 min)
+                            Set Timer Cross-X
+                        </DropdownMenuItem>
+                    )}
+
+                    {onResetPrepTimers && (
+                        <DropdownMenuItem onClick={onResetPrepTimers}>
+                            <RefreshCw className="h-4 w-4 mr-2" />
+                            Reset Prep Timers
                         </DropdownMenuItem>
                     )}
 
@@ -427,7 +449,11 @@ export function SpeechRecordingMenu({
                     </DropdownMenuItem>
                     {onDeleteRecording && recordingKey && (
                         <DropdownMenuItem
-                            onClick={() => onDeleteRecording(recordingKey)}
+                            onClick={() => {
+                                if (window.confirm("Delete this recording? This cannot be undone.")) {
+                                    onDeleteRecording(recordingKey)
+                                }
+                            }}
                             className="text-destructive focus:text-destructive"
                         >
                             <Trash2 className="h-4 w-4 mr-2" />
@@ -508,6 +534,7 @@ export function SpeechRecordingPlayer({
     onPlayingChange,
     onResetSpeechTime,
     onSwitchToCrossX,
+    onResetPrepTimers,
     micDeviceId,
     onMicDeviceChange,
     recordingEnabled = true,
@@ -574,6 +601,7 @@ export function SpeechRecordingPlayer({
                             onRecordingEnabledChange={onRecordingEnabledChange}
                             onResetSpeechTime={onResetSpeechTime}
                             onSwitchToCrossX={onSwitchToCrossX}
+                            onResetPrepTimers={onResetPrepTimers}
                             handleDelete={handleDelete}
                             progressBarPortalRef={progressBarPortalRef}
                             hideInlineMenu={hideInlineMenu}

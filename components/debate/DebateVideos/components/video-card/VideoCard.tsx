@@ -276,30 +276,6 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
             {/* Badges now displayed on thumbnail - removed from here */}
 
             <div className="flex items-center gap-1.5 sm:gap-2.5 text-xs text-muted-foreground flex-wrap">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onBadgeClick(channel); }}
-                    className="flex items-center gap-1 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Calendar className="h-3 w-3" />
-                    <span>{showFullDate
-                      ? new Date(date).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })
-                      : new Date(date).toLocaleDateString("en-US", { month: "short" })
-                    }</span>
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <div className="text-sm space-y-1">
-                    <p className="font-medium">{channel}</p>
-                    <p className="text-orange-400">{new Date(date).toLocaleDateString("en-US", {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
 
               <a
                 href={youtubeUrl}
@@ -342,6 +318,8 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                   <p>{isInQueue ? "In queue" : "Add to queue"}</p>
                 </TooltipContent>
               </Tooltip>
+
+
 
               {yearTopic && (
                 <Tooltip>
@@ -401,10 +379,38 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                 </Tooltip>
               )}
 
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onBadgeClick(channel); }}
+                    className="flex items-center gap-1 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Calendar className="h-3 w-3" />
+                    <span>{showFullDate
+                      ? new Date(date).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })
+                      : new Date(date).toLocaleDateString("en-US", { month: "short" })
+                    }</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="text-sm space-y-1">
+                    <p className="font-medium">{channel}</p>
+                    <p className="text-orange-400">{new Date(date).toLocaleDateString("en-US", {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+
+
               <div className="flex items-center gap-1 shrink-0">
                 <Eye className="h-3 w-3" />
                 <span>{viewCount.toLocaleString()}</span>
               </div>
+
+
 
               {judgeDecision && (
                 <Tooltip>

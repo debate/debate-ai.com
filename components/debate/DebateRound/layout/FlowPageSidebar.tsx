@@ -179,7 +179,7 @@ export function FlowPageSidebar({
                       palette="accent-secondary"
                       color="blue"
                       compact
-                      hideControlsByDefault={true}
+                      hideControlsByDefault={isMobile}
                       onTimeChange={(time) => timerState.setPrepState((prev) => prev && { ...prev, time })}
                       onStateChange={(state) => {
                         timerState.setPrepState((prev) => prev && { ...prev, state })
@@ -191,7 +191,7 @@ export function FlowPageSidebar({
                     />
                   </div>
                 </TooltipTrigger>
-                <TooltipContent><p>Prep Timers</p></TooltipContent>
+                <TooltipContent><p>Aff Prep</p></TooltipContent>
               </Tooltip>
             )}
             {timerState.prepSecondaryState && (
@@ -205,7 +205,7 @@ export function FlowPageSidebar({
                       palette="accent-secondary"
                       color="red"
                       compact
-                      hideControlsByDefault={true}
+                      hideControlsByDefault={isMobile}
                       onTimeChange={(time) => timerState.setPrepSecondaryState((prev) => prev && { ...prev, time })}
                       onStateChange={(state) => {
                         timerState.setPrepSecondaryState((prev) => prev && { ...prev, state })
@@ -217,7 +217,7 @@ export function FlowPageSidebar({
                     />
                   </div>
                 </TooltipTrigger>
-                <TooltipContent><p>Prep Timers</p></TooltipContent>
+                <TooltipContent><p>Neg Prep</p></TooltipContent>
               </Tooltip>
             )}
           </div>

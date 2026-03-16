@@ -116,6 +116,8 @@ export interface SpeechHeaderBarProps {
   onControlledTimeChange?: (time: number) => void
   /** Callback when controlled timer run state changes. */
   onControlledTimerRunStateChange?: (state: { name: "paused" } | { name: "running"; startTime: number } | { name: "done" }) => void
+  /** Callback to reset prep timers to their defaults. */
+  onResetPrepTimers?: () => void
   /** Whether backward speech navigation is available. */
   canNavigatePrev?: boolean
   /** Whether forward speech navigation is available. */
@@ -139,6 +141,7 @@ export function SpeechHeaderBar({
   controlledTimerRunState,
   onControlledTimeChange,
   onControlledTimerRunStateChange,
+  onResetPrepTimers,
   canNavigatePrev,
   canNavigateNext,
   onNavigatePrev,
@@ -401,6 +404,7 @@ export function SpeechHeaderBar({
               setTime(3 * 60 * 1000)
               setTimerState({ name: "paused" })
             }}
+            onResetPrepTimers={onResetPrepTimers}
             micDeviceId={micDeviceId}
             onMicDeviceChange={setMicDeviceId}
             recordingEnabled={recordingEnabled}
@@ -445,7 +449,7 @@ export function SpeechHeaderBar({
                 <Quote className="h-3.5 w-3.5" />
               </Button>
               {/* Speech-sync: highlight cards as timer progresses */}
-              <Button
+              {/* <Button
                 variant={speechSyncEnabled ? "default" : "ghost"}
                 size="icon"
                 onClick={() => setSpeechSyncEnabled((v) => !v)}
@@ -456,7 +460,7 @@ export function SpeechHeaderBar({
                 title={speechSyncEnabled ? "Disable speech-sync highlighting" : "Enable speech-sync: cards highlight as you speak"}
               >
                 <Radio className="h-3.5 w-3.5" />
-              </Button>
+              </Button> */}
               <div className="shrink-0 scale-[0.85] origin-left ml-0.5">
                 <ViewModeSelector value={viewMode} onChange={onViewModeChange} size="sm" />
               </div>
@@ -480,10 +484,12 @@ export function SpeechHeaderBar({
                 setTime(3 * 60 * 1000)
                 setTimerState({ name: "paused" })
               }}
+              onResetPrepTimers={onResetPrepTimers}
               onDeleteRecording={hasRecording ? (key) => {
                 localStorage.removeItem(key)
                 setHasRecording(false)
                 setRecordingDurationSec(null)
+                window.dispatchEvent(new CustomEvent("debate-recording-saved"))
               } : undefined}
               recordingKey={hasRecording ? `debate-recording-${speechName}` : undefined}
               inHeader={true}

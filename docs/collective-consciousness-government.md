@@ -4,9 +4,7 @@
 
 # Reimagining the Internet as Argument Mind Map is Key to Collective Consciousness Governance
 
-
-The vision: every policy debate, social controversy, and ethical question mapped in a living graph. Decisions made not by representatives serving four-year terms with imperfect information, but by AI agents serving continuous mandates with complete information, full transparency, and real-time accountability to every affected person. The debate community can treat "argument graphs for the whole internet" as an infrastructure project that feeds into next-generation AI collective intelligence systems. By agreeing on shared formats, workflows, and incentives, we can iterate tools that surface genuinely new arguments while building the foundation for transparent, accountable AI reasoning. 
-
+The vision: every policy debate, social controversy, and ethical question mapped in a living graph. Decisions made not by representatives serving four-year terms with imperfect information, but by AI agents serving continuous mandates with complete information, full transparency, and real-time accountability to every affected person. The debate community can treat "argument graphs for the whole internet" as an infrastructure project that feeds into next-generation AI collective intelligence systems. By agreeing on shared formats, workflows, and incentives, we can iterate tools that surface genuinely new arguments while building the foundation for transparent, accountable AI reasoning.
 
 ## DECAP: Decision-Making via Elected Community Agent Personas
 
@@ -80,7 +78,7 @@ The vision: every policy debate, social controversy, and ethical question mapped
 
 ## 15. Establish Governance and Quality Norms
 
-Form a multi-stakeholder governance group (debate orgs, argument-mining researchers, journalists, civic tech folks) to set norms around neutrality, labeling value-laden frames, and handling low-quality or manipulative arguments. Publish transparent metrics: redundancy rates, balance of pro/con coverage, source diversity.
+🗽Form a multi-stakeholder governance group (debate orgs, argument-mining researchers, journalists, civic tech folks) to set norms around neutrality, labeling value-laden frames, and handling low-quality or manipulative arguments. Publish transparent metrics: redundancy rates, balance of pro/con coverage, source diversity.
 
 ## 16. Public Safety Testing & Alignment
 
@@ -171,45 +169,25 @@ Partner with schools, universities, citizen assemblies, and media literacy progr
 
 **Emergence (25):** Planetary self-organizing collective consciousness
 
-
-
 ---
 
 **Last Updated March 16, 2026**
 
-
 ## References
 
-
-
-1. Bikakis, A., Flouris, G., Patkos, T., & Plexousakis, D. (2023). Sketching the vision of the Web of Debates. *Frontiers in Artificial Intelligence, 6*, Article 1124045. https://doi.org/10.3389/frai.2023.1124045  
-
-2. *Implementing the Argument Web.* (n.d.). *Communications of the ACM.* https://cacm.acm.org/research/implementing-the-argument-web/  
-
-3. Xiao, L., & Greer, D. (2023). Linked argumentation graphs for multidisciplinary decision support. *Healthcare, 11*(4), Article 585. https://doi.org/10.3390/healthcare11040585  
-
-4. Bikakis, A., Flouris, G., Patkos, T., & Plexousakis, D. (2023). Sketching the vision of the Web of Debates. *Frontiers in Artificial Intelligence, 6*, Article 1124045. https://doi.org/10.3389/frai.2023.1124045  
-
-5. *End‑to‑end argumentation knowledge graph construction.* (n.d.). *Proceedings of the AAAI Conference on Artificial Intelligence, 34*(5), 7367–7374. https://doi.org/10.1609/aaai.v34i05.6231  
-
-6. Flouris, G., Bikakis, A., Patkos, T., & Plexousakis, D. (2013). *The vision of the Persuasive Web* (FORTH Technical Report TR 438). Institute of Computer Science, Foundation for Research and Technology–Hellas. https://publications.ics.forth.gr/tech-reports/2013/2013.TR438_The_Vision_of_the_Persuasive_Web.pdf  
-
-7. Schneider, J., Passant, A., Groza, T., & Breslin, J. G. (2010). Argumentation 3.0: How Semantic Web technologies can improve argumentation modeling in Web 2.0 environments. Digital Enterprise Research Institute, National University of Ireland, Galway. https://researchrepository.universityofgalway.ie/bitstreams/bc5b0601-a7c3-470e-bad3-3ab53fc9d0b0/download  
-
-8. Lippi, M., & Torroni, P. (n.d.). *Argumentation mining: A machine learning perspective* [Conference paper]. TAFA‑15. https://homepages.abdn.ac.uk/n.oren/pages/TAFA-15/TAFA-15_submission_18.pdf  
-
-9. Zhou, H., Song, N., Chang, W., & Wang, X. (2019). Linking the thoughts within scientific papers: Construction and visualization of argumentation graph. *Proceedings of the Association for Information Science and Technology, 56*(1), 757–759. https://doi.org/10.1002/pra2.205  
-
-10. Gruber, M., Kikteva, Z., Rutter, I., & Hautli‑Janisz, A. (2025). DEBARGVIS: An interactive visualisation tool for exploring argumentative dynamics in debate. In *Proceedings of the Workshop on Argument Mining (ArgMining 2025).* https://aclanthology.org/2025.argmining-1.13.pdf  
-
-11. Association for Computational Linguistics. (2023). *The 10th Workshop on Argument Mining (ArgMining 2023): Proceedings of the workshop.* https://aclanthology.org/2023.argmining-1.pdf  
-
-12. *Improving online deliberation with argument network visualization.* (2013, June 30). Paper presented at Digital Cities 8 (DC8), Munich, Germany. https://oro.open.ac.uk/38003/1/DeLiddo-DC8-2013.pdf  
-
+1. Bikakis, A., Flouris, G., Patkos, T., & Plexousakis, D. (2023). Sketching the vision of the Web of Debates. *Frontiers in Artificial Intelligence, 6*, Article 1124045. https://doi.org/10.3389/frai.2023.1124045
+2. *Implementing the Argument Web.* (n.d.). *Communications of the ACM.* https://cacm.acm.org/research/implementing-the-argument-web/
+3. Xiao, L., & Greer, D. (2023). Linked argumentation graphs for multidisciplinary decision support. *Healthcare, 11*(4), Article 585. https://doi.org/10.3390/healthcare11040585
+4. Bikakis, A., Flouris, G., Patkos, T., & Plexousakis, D. (2023). Sketching the vision of the Web of Debates. *Frontiers in Artificial Intelligence, 6*, Article 1124045. https://doi.org/10.3389/frai.2023.1124045
+5. *End‑to‑end argumentation knowledge graph construction.* (n.d.). *Proceedings of the AAAI Conference on Artificial Intelligence, 34*(5), 7367–7374. https://doi.org/10.1609/aaai.v34i05.6231
+6. Flouris, G., Bikakis, A., Patkos, T., & Plexousakis, D. (2013). *The vision of the Persuasive Web* (FORTH Technical Report TR 438). Institute of Computer Science, Foundation for Research and Technology–Hellas. https://publications.ics.forth.gr/tech-reports/2013/2013.TR438_The_Vision_of_the_Persuasive_Web.pdf
+7. Schneider, J., Passant, A., Groza, T., & Breslin, J. G. (2010). Argumentation 3.0: How Semantic Web technologies can improve argumentation modeling in Web 2.0 environments. Digital Enterprise Research Institute, National University of Ireland, Galway. https://researchrepository.universityofgalway.ie/bitstreams/bc5b0601-a7c3-470e-bad3-3ab53fc9d0b0/download
+8. Lippi, M., & Torroni, P. (n.d.). *Argumentation mining: A machine learning perspective* [Conference paper]. TAFA‑15. https://homepages.abdn.ac.uk/n.oren/pages/TAFA-15/TAFA-15_submission_18.pdf
+9. Zhou, H., Song, N., Chang, W., & Wang, X. (2019). Linking the thoughts within scientific papers: Construction and visualization of argumentation graph. *Proceedings of the Association for Information Science and Technology, 56*(1), 757–759. https://doi.org/10.1002/pra2.205
+10. Gruber, M., Kikteva, Z., Rutter, I., & Hautli‑Janisz, A. (2025). DEBARGVIS: An interactive visualisation tool for exploring argumentative dynamics in debate. In *Proceedings of the Workshop on Argument Mining (ArgMining 2025).* https://aclanthology.org/2025.argmining-1.13.pdf
+11. Association for Computational Linguistics. (2023). *The 10th Workshop on Argument Mining (ArgMining 2023): Proceedings of the workshop.* https://aclanthology.org/2023.argmining-1.pdf
+12. *Improving online deliberation with argument network visualization.* (2013, June 30). Paper presented at Digital Cities 8 (DC8), Munich, Germany. https://oro.open.ac.uk/38003/1/DeLiddo-DC8-2013.pdf
 13. Centre for Argument Technology. (2024, May 28). *ARG Tech AIF datasets* [GitHub repository]. GitHub. https://github.com/arg-tech/aif-arg-datasets
-
-14. Syarief, S. (n.d.). Collective consciousness and the quest for strong independent media. *Annenberg School for Communication, University of Pennsylvania.* https://www.asc.upenn.edu/research/centers/blog/collective-consciousness-and-quest-strong-independent-media  
-
-15. Homer‑Dixon, T., & Karapin, R. S. (1989). Graphical argument analysis: A new approach to understanding arguments applied to a debate about the window of vulnerability. *International Studies Quarterly, 33*(4), 389–410. https://homerdixon.com/resource/graphical-argument-analysis-a-new-approach-to-understanding-arguments-applied-to-a-debate-about-the-window-of-vulnerability/  
-
-16. Wambsganss, T., Janson, A., Thomsen, J. P., Nistor, N., & Leimeister, J. M. (2024). Improving students’ argumentation skills using dynamic machine‑learning–based modeling. *Information Systems Research.* Advance online publication. https://doi.org/10.1287/isre.2021.0615  
+14. Syarief, S. (n.d.). Collective consciousness and the quest for strong independent media. *Annenberg School for Communication, University of Pennsylvania.* https://www.asc.upenn.edu/research/centers/blog/collective-consciousness-and-quest-strong-independent-media
+15. Homer‑Dixon, T., & Karapin, R. S. (1989). Graphical argument analysis: A new approach to understanding arguments applied to a debate about the window of vulnerability. *International Studies Quarterly, 33*(4), 389–410. https://homerdixon.com/resource/graphical-argument-analysis-a-new-approach-to-understanding-arguments-applied-to-a-debate-about-the-window-of-vulnerability/
+16. Wambsganss, T., Janson, A., Thomsen, J. P., Nistor, N., & Leimeister, J. M. (2024). Improving students’ argumentation skills using dynamic machine‑learning–based modeling. *Information Systems Research.* Advance online publication. https://doi.org/10.1287/isre.2021.0615
