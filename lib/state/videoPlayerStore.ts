@@ -24,6 +24,8 @@ interface VideoPlayerStore {
   isPlaying: boolean
   isSlowMode: boolean
   queue: QueueItem[]
+  /** Seconds to start the video from (for YouTube &start= param). Reset to 0 after each new video. */
+  startTime: number
   searchHandler: ((searchTerm: string) => void) | null
   setActiveVideo: (videoId: string, title: string, meta?: VideoMeta) => void
   clearActiveVideo: () => void
@@ -35,6 +37,13 @@ interface VideoPlayerStore {
   playNextInQueue: () => void
   clearQueue: () => void
   setSearchHandler: (handler: ((searchTerm: string) => void) | null) => void
+  /** Restore all player state from a persisted snapshot (does not reset startTime). */
+  restoreVideo: (
+    videoId: string,
+    title: string,
+    meta: VideoMeta | null,
+    opts: { isMinimized: boolean; isSlowMode: boolean; queue: QueueItem[]; savedTime: number }
+  ) => void
 }
 
 export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
@@ -45,10 +54,11 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   isPlaying: false,
   isSlowMode: false,
   queue: [],
+  startTime: 0,
   searchHandler: null,
-  setActiveVideo: (videoId, title, meta) => set({ activeVideoId: videoId, activeVideoTitle: title, activeVideoMeta: meta ?? null, isMinimized: false, isPlaying: true }),
+  setActiveVideo: (videoId, title, meta) => set({ activeVideoId: videoId, activeVideoTitle: title, activeVideoMeta: meta ?? null, isMinimized: false, isPlaying: true, startTime: 0 }),
   clearActiveVideo: () => {
-    set({ activeVideoId: null, activeVideoTitle: null, activeVideoMeta: null, isMinimized: false, isPlaying: false })
+    set({ activeVideoId: null, activeVideoTitle: null, activeVideoMeta: null, isMinimized: false, isPlaying: false, startTime: 0 })
   },
   setMinimized: (minimized) => set({ isMinimized: minimized }),
   setIsPlaying: (playing) => set({ isPlaying: playing }),
@@ -63,12 +73,23 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
     set((state) => ({ queue: state.queue.filter((q) => q.videoId !== videoId) })),
   playNextInQueue: () =>
     set((state) => {
-      if (state.queue.length === 0) return { activeVideoId: null, activeVideoTitle: null, activeVideoMeta: null, isPlaying: false }
+      if (state.queue.length === 0) return { activeVideoId: null, activeVideoTitle: null, activeVideoMeta: null, isPlaying: false, startTime: 0 }
       const [next, ...rest] = state.queue
-      return { activeVideoId: next.videoId, activeVideoTitle: next.title, activeVideoMeta: next.meta ?? null, queue: rest, isMinimized: false, isPlaying: true }
+      return { activeVideoId: next.videoId, activeVideoTitle: next.title, activeVideoMeta: next.meta ?? null, queue: rest, isMinimized: false, isPlaying: true, startTime: 0 }
     }),
   clearQueue: () => set({ queue: [] }),
   setSearchHandler: (handler) => set({ searchHandler: handler }),
+  restoreVideo: (videoId, title, meta, opts) =>
+    set({
+      activeVideoId: videoId,
+      activeVideoTitle: title,
+      activeVideoMeta: meta,
+      isMinimized: opts.isMinimized,
+      isSlowMode: opts.isSlowMode,
+      queue: opts.queue,
+      startTime: opts.savedTime,
+      isPlaying: true,
+    }),
 }))
 
 /** Module-level ref so any component can send commands to the YouTube iframe */
