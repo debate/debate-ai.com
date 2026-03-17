@@ -23,6 +23,7 @@ export type ActiveTimerInfo = {
 /** Per-speech timer state stored in the map. */
 export type SpeechTimerEntry = {
   time: number;
+  resetTime: number;
   state: SpeechTimerState["state"];
 };
 
@@ -123,7 +124,7 @@ export function useTimerState() {
       );
       const safeIdx = idx !== -1 ? idx : 0;
       const defaultTime = (debateStyle.timerSpeeches[safeIdx]?.time ?? 0) * 60 * 1000;
-      return { time: defaultTime, state: { name: "paused" } };
+      return { time: defaultTime, resetTime: defaultTime, state: { name: "paused" } };
     },
     [perSpeechTimerStates, debateStyle]
   );

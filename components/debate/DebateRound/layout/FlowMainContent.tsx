@@ -151,8 +151,10 @@ export function FlowMainContent({
               onViewModeChange={onLeftViewModeChange}
               onQuoteViewToggle={onLeftQuoteViewToggle}
               controlledTime={speechTimerStates?.[leftSpeech]?.time}
+              controlledResetTime={speechTimerStates?.[leftSpeech]?.resetTime}
               controlledTimerRunState={speechTimerStates?.[leftSpeech]?.state}
               onControlledTimeChange={(t) => onSpeechTimerStateChange?.(leftSpeech, { time: t })}
+              onControlledResetTimeChange={(rt) => onSpeechTimerStateChange?.(leftSpeech, { resetTime: rt })}
               onControlledTimerRunStateChange={(s) => onSpeechTimerStateChange?.(leftSpeech, { state: s })}
               onResetPrepTimers={onResetPrepTimers}
               canNavigatePrev={canNavigatePrev}
@@ -193,8 +195,10 @@ export function FlowMainContent({
               onViewModeChange={onLeftViewModeChange}
               onQuoteViewToggle={onLeftQuoteViewToggle}
               controlledTime={speechTimerStates?.[leftSpeech]?.time}
+              controlledResetTime={speechTimerStates?.[leftSpeech]?.resetTime}
               controlledTimerRunState={speechTimerStates?.[leftSpeech]?.state}
               onControlledTimeChange={(t) => onSpeechTimerStateChange?.(leftSpeech, { time: t })}
+              onControlledResetTimeChange={(rt) => onSpeechTimerStateChange?.(leftSpeech, { resetTime: rt })}
               onControlledTimerRunStateChange={(s) => onSpeechTimerStateChange?.(leftSpeech, { state: s })}
               onResetPrepTimers={onResetPrepTimers}
               canNavigatePrev={canNavigatePrev}
@@ -237,8 +241,10 @@ export function FlowMainContent({
               onViewModeChange={onRightViewModeChange}
               onQuoteViewToggle={onRightQuoteViewToggle}
               controlledTime={speechTimerStates?.[rightSpeech]?.time}
+              controlledResetTime={speechTimerStates?.[rightSpeech]?.resetTime}
               controlledTimerRunState={speechTimerStates?.[rightSpeech]?.state}
               onControlledTimeChange={(t) => onSpeechTimerStateChange?.(rightSpeech, { time: t })}
+              onControlledResetTimeChange={(rt) => onSpeechTimerStateChange?.(rightSpeech, { resetTime: rt })}
               onControlledTimerRunStateChange={(s) => onSpeechTimerStateChange?.(rightSpeech, { state: s })}
               onResetPrepTimers={onResetPrepTimers}
               canNavigatePrev={canNavigatePrev}
@@ -271,8 +277,10 @@ export function FlowMainContent({
           <SpeechHeaderBar
             speechName={leftSpeech}
             controlledTime={speechTimerStates?.[leftSpeech]?.time}
+            controlledResetTime={speechTimerStates?.[leftSpeech]?.resetTime}
             controlledTimerRunState={speechTimerStates?.[leftSpeech]?.state}
             onControlledTimeChange={(t) => onSpeechTimerStateChange?.(leftSpeech, { time: t })}
+            onControlledResetTimeChange={(rt) => onSpeechTimerStateChange?.(leftSpeech, { resetTime: rt })}
             onControlledTimerRunStateChange={(s) => onSpeechTimerStateChange?.(leftSpeech, { state: s })}
             onResetPrepTimers={onResetPrepTimers}
             canNavigatePrev={canNavigatePrev}

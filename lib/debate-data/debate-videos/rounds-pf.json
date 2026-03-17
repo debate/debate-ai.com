@@ -201,13 +201,13 @@
     2,
     "2018 TOC",
     "Finals",
-    "Tournament of Champions Finals Santa Monica RE",
+    " Santa Monica RE",
     "Greenhill BZ",
     false,
     "3-0 (Murphy, Hood, Evans)",
     null,
     null,
-    false,
+    true,
     null
   ],
   [
@@ -1786,7 +1786,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "1W0x8hnkv7o",
@@ -3712,7 +3712,7 @@
       null,
       null,
       null,
-      false
+      true
     ],
     [
       "6JevTcweW0c",
@@ -5600,11 +5600,11 @@
       "Finals",
       "Pine View BS",
       "Mission San Jose KW",
+      true,
       null,
       null,
       null,
-      null,
-      false
+      true
     ],
     [
       "LXgiYfI0tFs",

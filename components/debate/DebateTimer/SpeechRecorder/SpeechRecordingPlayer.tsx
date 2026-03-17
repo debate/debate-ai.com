@@ -99,15 +99,16 @@ function PlayerRow({
                 className="h-7 w-7 flex-shrink-0"
             />
 
-            {/* Times */}
-            <div className="flex items-center gap-0.5 text-[10px] tabular-nums text-muted-foreground min-w-max">
-                <AudioPlayerTime className="text-[10px] tabular-nums text-foreground" />
-                <span>/</span>
-                {rec.durationSeconds != null ? (
-                    <span>{formatDuration(rec.durationSeconds)}</span>
-                ) : (
-                    <AudioPlayerDuration className="text-[10px] tabular-nums text-muted-foreground" />
-                )}
+            {/* Times - Two rows: current time on top, total duration below */}
+            <div className="flex flex-col items-center justify-center text-[10px] tabular-nums min-w-max leading-tight">
+                <AudioPlayerTime className="text-[10px] tabular-nums text-foreground font-medium" />
+                <div className="text-muted-foreground">
+                    {rec.durationSeconds != null ? (
+                        <span>{formatDuration(rec.durationSeconds)}</span>
+                    ) : (
+                        <AudioPlayerDuration className="text-[10px] tabular-nums" />
+                    )}
+                </div>
             </div>
 
             {/* Scrubber — hidden when portaled to top bar */}

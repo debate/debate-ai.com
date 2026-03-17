@@ -25,7 +25,7 @@ import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 // Components
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
-import { LectureExpandCards } from "../components/expand-category-cards/LectureExpandCards"
+import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
 import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
 
 export function LecturesPage() {
@@ -285,10 +285,10 @@ export function LecturesPage() {
         />
       )}
 
-      {/* Category Expand Cards */}
+      {/* Category Grid Gallery */}
       {state.debateVideos?.lectures && (
         <div className="mb-8">
-          <LectureExpandCards
+          <LectureCategoryGridGallery
             videosData={state.debateVideos.lectures}
             selectedCategory={selectedCategory}
             onCategorySelect={handleCategorySelect}

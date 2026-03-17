@@ -836,6 +836,7 @@ export function FlowSpreadsheet({
   /**
    * Handle keyboard navigation for Excel-like editing experience
    * Arrow keys move between cells while editing
+   * Enter key on mobile moves to cell below and inserts a space
    */
   const onCellKeyDown = useCallback(
     (event: CellKeyDownEvent) => {
@@ -845,6 +846,63 @@ export function FlowSpreadsheet({
 
       const key = keyEvent.key
       const isArrow = key === "ArrowUp" || key === "ArrowDown" || key === "ArrowLeft" || key === "ArrowRight"
+
+      // Handle Enter key on mobile - move to cell below and insert space
+      if (key === "Enter" && isMobile && node && column) {
+        const editingCells = api.getEditingCells()
+        const isEditing = editingCells.length > 0
+
+        if (isEditing) {
+          keyEvent.preventDefault()
+          keyEvent.stopPropagation()
+
+          const rowIndex = node.rowIndex
+          const colId = column.getColId()
+
+          // Commit current edit
+          api.stopEditing()
+
+          // Check if there's a next row
+          const nextNode = api.getDisplayedRowAtIndex(rowIndex! + 1)
+          if (nextNode) {
+            const nextRow = rowIndex! + 1
+
+            // Move focus to next cell
+            api.setFocusedCell(nextRow, colId)
+
+            // Get current value of the cell below
+            const currentValue = nextNode.data?.[colId] || ""
+
+            // Set the cell value to start with a space if it's empty or doesn't start with one
+            if (!currentValue.startsWith(" ")) {
+              nextNode.setDataValue(colId, " " + currentValue)
+            }
+
+            // Start editing the next cell with the space already inserted
+            setTimeout(() => {
+              api.startEditingCell({
+                rowIndex: nextRow,
+                colKey: colId,
+              })
+
+              // Explicitly show the virtual keyboard on mobile
+              setTimeout(() => {
+                // Try using VirtualKeyboard API if available
+                if ("virtualKeyboard" in navigator) {
+                  try {
+                    ;(navigator as any).virtualKeyboard.show()
+                  } catch (e) {
+                    // Fallback: focus will trigger keyboard automatically
+                    console.debug("VirtualKeyboard API not supported or failed")
+                  }
+                }
+              }, 50)
+            }, 0)
+          }
+
+          return
+        }
+      }
 
       // Handle Excel-style arrow key navigation while editing
       if (isArrow && node && column) {
@@ -900,7 +958,7 @@ export function FlowSpreadsheet({
         }
       }
     },
-    [flow.columns, onUpdate],
+    [flow.columns, onUpdate, isMobile],
   )
 
   return (

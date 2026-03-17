@@ -110,10 +110,14 @@ export interface SpeechHeaderBarProps {
   onQuoteViewToggle?: () => void
   /** Controlled timer time in ms. When provided, persists state across navigation. */
   controlledTime?: number
+  /** Controlled timer reset time in ms. When provided, persists state across navigation. */
+  controlledResetTime?: number
   /** Controlled timer run state. When provided, persists state across navigation. */
   controlledTimerRunState?: { name: "paused" } | { name: "running"; startTime: number } | { name: "done" }
   /** Callback when controlled time changes. */
   onControlledTimeChange?: (time: number) => void
+  /** Callback when controlled reset time changes. */
+  onControlledResetTimeChange?: (resetTime: number) => void
   /** Callback when controlled timer run state changes. */
   onControlledTimerRunStateChange?: (state: { name: "paused" } | { name: "running"; startTime: number } | { name: "done" }) => void
   /** Callback to reset prep timers to their defaults. */
@@ -138,8 +142,10 @@ export function SpeechHeaderBar({
   onViewModeChange,
   onQuoteViewToggle,
   controlledTime,
+  controlledResetTime,
   controlledTimerRunState,
   onControlledTimeChange,
+  onControlledResetTimeChange,
   onControlledTimerRunStateChange,
   onResetPrepTimers,
   canNavigatePrev,
@@ -177,13 +183,15 @@ export function SpeechHeaderBar({
 
   // Local fallback state (used when no controlled callbacks are provided)
   const [localTime, setLocalTime] = useState(defaultTimeMs)
+  const [localResetTime, setLocalResetTime] = useState(defaultTimeMs)
   const [localTimerState, setLocalTimerState] = useState<RunState>({ name: "paused" })
 
   // Controlled mode: use callbacks when provided so state persists outside this component
   const isControlled = onControlledTimeChange !== undefined && onControlledTimerRunStateChange !== undefined
 
-  // Effective time and run-state: prefer controlled values (falling back to defaults) when controlled
+  // Effective time, resetTime, and run-state: prefer controlled values (falling back to defaults) when controlled
   const time = isControlled ? (controlledTime ?? defaultTimeMs) : localTime
+  const resetTime = isControlled ? (controlledResetTime ?? defaultTimeMs) : localResetTime
   const timerState: RunState = isControlled ? (controlledTimerRunState ?? { name: "paused" }) : localTimerState
 
   const setTime = (t: number) => {
@@ -191,6 +199,13 @@ export function SpeechHeaderBar({
       onControlledTimeChange!(t)
     } else {
       setLocalTime(t)
+    }
+  }
+  const setResetTime = (t: number) => {
+    if (isControlled) {
+      onControlledResetTimeChange?.(t)
+    } else {
+      setLocalResetTime(t)
     }
   }
   const setTimerState = (s: RunState) => {
@@ -230,6 +245,13 @@ export function SpeechHeaderBar({
     const key = `debate-recording-${speechName}`
     setHasRecording(localStorage.getItem(key) !== null)
   }, [speechName])
+
+  // Update local reset time when speech or debate style changes (for non-controlled mode)
+  useEffect(() => {
+    if (!isControlled) {
+      setLocalResetTime(defaultTimeMs)
+    }
+  }, [speechName, defaultTimeMs, isControlled])
 
   // Speech-sync reading mode — broadcasts elapsed time to QuoteView cards
   const [speechSyncEnabled, setSpeechSyncEnabled] = useState(false)
@@ -273,7 +295,7 @@ export function SpeechHeaderBar({
       ? "bg-blue-500 dark:bg-blue-400"
       : "bg-blue-500 dark:bg-blue-400"
 
-  const totalSpeechTimeMs = defaultTimeMs
+  const totalSpeechTimeMs = resetTime
 
   // Emit speech-timer-tick events when sync is on and timer is running
   // (placed after totalSpeechTimeMs is defined)
@@ -396,12 +418,14 @@ export function SpeechHeaderBar({
             progressBarPortalRef={progressBarPortalRef}
             onPlayingChange={handleRecordingPlayingChange}
             onResetSpeechTime={() => {
-              setTime(defaultTimeMs)
+              setTime(resetTime)
               setTimerState({ name: "paused" })
             }}
             onSwitchToCrossX={() => {
               // Set to 3 minutes (180,000 ms)
-              setTime(3 * 60 * 1000)
+              const crossXTime = 3 * 60 * 1000
+              setTime(crossXTime)
+              setResetTime(crossXTime)
               setTimerState({ name: "paused" })
             }}
             onResetPrepTimers={onResetPrepTimers}
@@ -477,11 +501,13 @@ export function SpeechHeaderBar({
               recordingEnabled={recordingEnabled}
               onRecordingEnabledChange={setRecordingEnabled}
               onResetSpeechTime={() => {
-                setTime(defaultTimeMs)
+                setTime(resetTime)
                 setTimerState({ name: "paused" })
               }}
               onSwitchToCrossX={() => {
-                setTime(3 * 60 * 1000)
+                const crossXTime = 3 * 60 * 1000
+                setTime(crossXTime)
+                setResetTime(crossXTime)
                 setTimerState({ name: "paused" })
               }}
               onResetPrepTimers={onResetPrepTimers}
