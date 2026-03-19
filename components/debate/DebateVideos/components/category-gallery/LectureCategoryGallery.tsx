@@ -26,33 +26,26 @@ const CATEGORY_GRADIENTS: Record<string, string> = {
   "Disadvantages": "from-cyan-500 via-blue-500 to-indigo-500",
   "Speaking & Delivery": "from-green-400 via-emerald-500 to-teal-500",
   "Research & Flowing": "from-amber-500 via-orange-500 to-red-500",
-  "Topic Lectures": "from-purple-500 via-violet-500 to-fuchsia-500",
+  "Policy Topic Lectures": "from-purple-500 via-violet-500 to-fuchsia-500",
   "Demo Debates": "from-indigo-500 via-blue-500 to-cyan-500",
   "Judge & Tournament Skills": "from-pink-500 via-rose-500 to-red-500",
   "Impact Calculus & Evidence": "from-yellow-500 via-orange-500 to-red-500",
   "Philosophy & IR Theory": "from-violet-500 via-purple-500 to-indigo-500",
   "Public Forum": "from-teal-500 via-cyan-500 to-blue-500",
   "Awards": "from-fuchsia-500 via-pink-500 to-rose-500",
-  "Documentaries & Culture": "from-fuchsia-500 via-pink-500 to-rose-500",
+  "Documentaries & Culture": "from-rose-500 via-pink-500 to-fuchsia-500",
   "Camp & Coaching Advice": "from-emerald-500 via-green-500 to-teal-500",
   "Novice & Introductory": "from-sky-500 via-blue-500 to-indigo-500",
+  "PF & LD Topic Analysis": "from-lime-500 via-green-500 to-emerald-500",
 };
 
 export function LectureCategoryGallery({ onCategorySelect, selectedCategory, videosData }: LectureCategoryGalleryProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const galleryRef = useRef<HTMLDivElement>(null);
-  const [isHovering, setIsHovering] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
 
-  // Convert categories to card format
+  // Convert categories to card format - ensure ALL categories from JSON are included
   const cards = useMemo(() => {
     if (!videosData || videosData.length === 0) return [];
-
-    const getVideoViews = (videoId: string): number => {
-      const video = videosData.find((v) => v[0] === videoId);
-      return video ? (video[7] || 0) : 0;
-    };
 
     // Extract unique categories from video data (index 6)
     const categoryMap = new Map<string, { videos: any[], maxViews: number, mostViewedId: string }>();
@@ -93,25 +86,6 @@ export function LectureCategoryGallery({ onCategorySelect, selectedCategory, vid
       .sort((a, b) => b.maxViews - a.maxViews); // Sort by popularity
   }, [videosData]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Update activeIndex when selectedCategory changes externally
-  useEffect(() => {
-    if (selectedCategory) {
-      const index = cards.findIndex(card => card.id === selectedCategory);
-      if (index !== -1) {
-        setActiveIndex(index);
-      }
-    }
-  }, [selectedCategory, cards]);
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!galleryRef.current) return;
 
@@ -122,46 +96,8 @@ export function LectureCategoryGallery({ onCategorySelect, selectedCategory, vid
     setMousePosition({ x, y });
   };
 
-  const nextCard = () => {
-    const newIndex = (activeIndex + 1) % cards.length;
-    setActiveIndex(newIndex);
-    onCategorySelect?.(cards[newIndex].id);
-  };
-
-  const prevCard = () => {
-    const newIndex = (activeIndex - 1 + cards.length) % cards.length;
-    setActiveIndex(newIndex);
-    onCategorySelect?.(cards[newIndex].id);
-  };
-
-  const handleCardClick = (index: number) => {
-    setActiveIndex(index);
-    onCategorySelect?.(cards[index].id);
-  };
-
-  const calculateCardStyles = (index: number) => {
-    const diff = index - activeIndex;
-
-    // For mobile devices, stack cards vertically
-    if (windowWidth < 768) {
-      return {
-        zIndex: cards.length - Math.abs(diff),
-        transform: diff === 0
-          ? 'translateY(0) scale(1)'
-          : `translateY(${diff * 20}px) scale(${1 - Math.abs(diff) * 0.1})`,
-        opacity: 1 - Math.abs(diff) * 0.2,
-      };
-    }
-
-    // For desktop, create a horizontal carousel effect
-    return {
-      zIndex: cards.length - Math.abs(diff),
-      transform: diff === 0
-        ? 'translateX(0) scale(1)'
-        : `translateX(${diff * 60}%) scale(${1 - Math.abs(diff) * 0.2})`,
-      opacity: 1 - Math.abs(diff) * 0.3,
-      filter: diff === 0 ? 'blur(0px)' : 'blur(2px)',
-    };
+  const handleCardClick = (categoryId: string) => {
+    onCategorySelect?.(categoryId);
   };
 
   return (

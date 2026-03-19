@@ -59,19 +59,6 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "Novice & Introductory": <GraduationCap className="h-4 w-4" />,
 };
 
-// Define grid areas for responsive layout
-const GRID_AREAS = [
-  "md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/5]",
-  "md:[grid-area:1/7/2/13] xl:[grid-area:2/1/3/5]",
-  "md:[grid-area:2/1/3/7] xl:[grid-area:1/5/3/8]",
-  "md:[grid-area:2/7/3/13] xl:[grid-area:1/8/2/13]",
-  "md:[grid-area:3/1/4/13] xl:[grid-area:2/8/3/13]",
-  "md:[grid-area:4/1/5/7] xl:[grid-area:3/1/4/5]",
-  "md:[grid-area:4/7/5/13] xl:[grid-area:3/5/4/8]",
-  "md:[grid-area:5/1/6/7] xl:[grid-area:3/8/4/13]",
-  "md:[grid-area:5/7/6/13] xl:[grid-area:4/1/5/7]",
-  "md:[grid-area:6/1/7/13] xl:[grid-area:4/7/5/13]",
-];
 
 export function LectureCategoryGridGallery({
   onCategorySelect,
@@ -148,11 +135,10 @@ export function LectureCategoryGridGallery({
         </p>
       </div>
 
-      <ul className="grid grid-cols-1 grid-rows-none gap-4 md:grid-cols-12 md:grid-rows-3 lg:gap-4 xl:max-h-[60rem] xl:grid-rows-4">
-        {cards.slice(0, 10).map((card, index) => (
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+        {cards.map((card) => (
           <GridItem
             key={card.id}
-            area={GRID_AREAS[index % GRID_AREAS.length]}
             icon={card.icon}
             title={card.title}
             description={card.description}
@@ -167,7 +153,6 @@ export function LectureCategoryGridGallery({
 }
 
 interface GridItemProps {
-  area: string;
   icon: React.ReactNode;
   title: string;
   description: React.ReactNode;
@@ -177,7 +162,6 @@ interface GridItemProps {
 }
 
 const GridItem = ({
-  area,
   icon,
   title,
   description,
@@ -186,39 +170,39 @@ const GridItem = ({
   onClick,
 }: GridItemProps) => {
   return (
-    <li className={cn("min-h-[14rem] list-none", area)}>
+    <li className="min-h-[10rem] list-none">
       <button
         onClick={onClick}
-        className="relative h-full w-full rounded-[1.25rem] border-[0.75px] border-border p-2 md:rounded-[1.5rem] md:p-3 hover:border-primary/50 transition-colors"
+        className="relative h-full w-full rounded-lg border-[0.75px] border-border p-1.5 md:rounded-xl md:p-2 hover:border-primary/50 transition-colors"
       >
         <GlowingEffect
-          spread={40}
+          spread={30}
           glow={true}
           disabled={false}
-          proximity={64}
+          proximity={48}
           inactiveZone={0.01}
-          borderWidth={isSelected ? 3 : 2}
+          borderWidth={isSelected ? 2 : 1.5}
         />
         <div
           className={cn(
-            "relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-[0.75px] bg-background p-6 shadow-sm dark:shadow-[0px_0px_27px_0px_rgba(45,45,45,0.3)] md:p-6 transition-all",
+            "relative flex h-full flex-col justify-between gap-3 overflow-hidden rounded-lg border-[0.75px] bg-background p-3 shadow-sm dark:shadow-[0px_0px_20px_0px_rgba(45,45,45,0.2)] md:p-4 transition-all",
             isSelected && "border-primary bg-primary/5"
           )}
         >
-          <div className="relative flex flex-1 flex-col justify-between gap-3">
+          <div className="relative flex flex-1 flex-col justify-between gap-2">
             <div className="flex items-start justify-between gap-2">
-              <div className="w-fit rounded-lg border-[0.75px] border-border bg-muted p-2">
+              <div className="w-fit rounded-md border-[0.75px] border-border bg-muted p-1.5">
                 {icon}
               </div>
-              <span className="text-xs font-medium text-muted-foreground px-2 py-1 rounded-full bg-muted">
-                {videoCount} videos
+              <span className="text-xs font-medium text-muted-foreground px-1.5 py-0.5 rounded-full bg-muted">
+                {videoCount}
               </span>
             </div>
-            <div className="space-y-3">
-              <h3 className="pt-0.5 text-xl leading-[1.375rem] font-semibold font-sans tracking-[-0.04em] md:text-2xl md:leading-[1.875rem] text-balance text-foreground">
+            <div className="space-y-1.5">
+              <h3 className="pt-0.5 text-sm leading-tight font-semibold font-sans tracking-[-0.02em] md:text-base md:leading-snug text-balance text-foreground">
                 {title}
               </h3>
-              <h2 className="[&_b]:md:font-semibold [&_strong]:md:font-semibold font-sans text-sm leading-[1.125rem] md:text-base md:leading-[1.375rem] text-muted-foreground">
+              <h2 className="font-sans text-xs leading-snug md:text-sm md:leading-tight text-muted-foreground line-clamp-2">
                 {description}
               </h2>
             </div>
