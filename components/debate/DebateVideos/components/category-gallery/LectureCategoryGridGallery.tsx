@@ -125,17 +125,16 @@ export function LectureCategoryGridGallery({
 
   return (
     <div className="w-full">
-      <div className="mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold mb-2">
+      <div className="mb-3">
+        <h2 className="text-xl md:text-2xl font-bold mb-1">
           Debate Lecture Categories
         </h2>
-        <p className="text-muted-foreground text-sm md:text-base">
-          Explore {cards.length} curated categories •{" "}
-          {cards.reduce((sum, c) => sum + c.videoCount, 0)} total videos
+        <p className="text-muted-foreground text-xs md:text-sm">
+          {cards.length} categories • {cards.reduce((sum, c) => sum + c.videoCount, 0)} videos
         </p>
       </div>
 
-      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+      <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
         {cards.map((card) => (
           <GridItem
             key={card.id}
@@ -170,10 +169,10 @@ const GridItem = ({
   onClick,
 }: GridItemProps) => {
   return (
-    <li className="min-h-[10rem] list-none">
+    <li className="list-none">
       <button
         onClick={onClick}
-        className="relative h-full w-full rounded-lg border-[0.75px] border-border p-1.5 md:rounded-xl md:p-2 hover:border-primary/50 transition-colors"
+        className="relative h-full w-full rounded-lg border-[0.75px] border-border p-1 hover:border-primary/50 transition-colors"
       >
         <GlowingEffect
           spread={30}
@@ -185,28 +184,21 @@ const GridItem = ({
         />
         <div
           className={cn(
-            "relative flex h-full flex-col justify-between gap-3 overflow-hidden rounded-lg border-[0.75px] bg-background p-3 shadow-sm dark:shadow-[0px_0px_20px_0px_rgba(45,45,45,0.2)] md:p-4 transition-all",
+            "relative flex h-full flex-col gap-1.5 overflow-hidden rounded-md border-[0.75px] bg-background p-2 shadow-sm dark:shadow-[0px_0px_20px_0px_rgba(45,45,45,0.2)] transition-all",
             isSelected && "border-primary bg-primary/5"
           )}
         >
-          <div className="relative flex flex-1 flex-col justify-between gap-2">
-            <div className="flex items-start justify-between gap-2">
-              <div className="w-fit rounded-md border-[0.75px] border-border bg-muted p-1.5">
-                {icon}
-              </div>
-              <span className="text-xs font-medium text-muted-foreground px-1.5 py-0.5 rounded-full bg-muted">
-                {videoCount}
-              </span>
+          <div className="flex items-center justify-between gap-1.5">
+            <div className="w-fit rounded-md border-[0.75px] border-border bg-muted p-1">
+              {icon}
             </div>
-            <div className="space-y-1.5">
-              <h3 className="pt-0.5 text-sm leading-tight font-semibold font-sans tracking-[-0.02em] md:text-base md:leading-snug text-balance text-foreground">
-                {title}
-              </h3>
-              <h2 className="font-sans text-xs leading-snug md:text-sm md:leading-tight text-muted-foreground line-clamp-2">
-                {description}
-              </h2>
-            </div>
+            <span className="text-xs font-medium text-muted-foreground px-1.5 py-0.5 rounded-full bg-muted">
+              {videoCount}
+            </span>
           </div>
+          <h3 className="text-xs leading-tight font-semibold font-sans tracking-[-0.01em] text-foreground line-clamp-2">
+            {title}
+          </h3>
         </div>
       </button>
     </li>
