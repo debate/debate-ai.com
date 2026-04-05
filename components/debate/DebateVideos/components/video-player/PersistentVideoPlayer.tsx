@@ -26,6 +26,7 @@ function VideoPlayerUI() {
     setSlowMode,
     playNextInQueue,
     restoreVideo,
+    setGetCurrentTimeRef,
   } = useVideoPlayerStore()
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
@@ -66,6 +67,12 @@ function VideoPlayerUI() {
       savedTime: getCurrentTime(),
     })
   }, [getCurrentTime])
+
+  // Register getCurrentTime function with the store so it can be used when switching videos
+  useEffect(() => {
+    setGetCurrentTimeRef(getCurrentTime)
+    return () => setGetCurrentTimeRef(null)
+  }, [getCurrentTime, setGetCurrentTimeRef])
 
   // On mount, restore player state from localStorage if no video is currently playing
   useEffect(() => {

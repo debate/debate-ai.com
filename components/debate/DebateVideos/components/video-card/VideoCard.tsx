@@ -36,7 +36,9 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
   const isInQueue = queue.some((q) => q.videoId === videoId)
 
   const year = new Date(date).getFullYear();
-  const videoMeta = { style, tournament, year, affTeam, negTeam }
+  // Type guard: ensure style is a number (DebateStyle) for VideoMeta
+  const styleNumber = typeof style === 'number' ? style : undefined;
+  const videoMeta = { style: styleNumber, tournament, year, affTeam, negTeam }
 
   const [showHideConfirm, setShowHideConfirm] = useState(false)
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
@@ -103,9 +105,9 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
 
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
 
-  const styleBadge = style && DEBATE_STYLE_LABELS[style] ? (
-    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] [font-variant:small-caps]  uppercase tracking-wide ${STYLE_COLORS[style] ?? "bg-muted text-muted-foreground"}`}>
-      {DEBATE_STYLE_LABELS[style]}
+  const styleBadge = styleNumber && DEBATE_STYLE_LABELS[styleNumber] ? (
+    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] [font-variant:small-caps]  uppercase tracking-wide ${STYLE_COLORS[styleNumber] ?? "bg-muted text-muted-foreground"}`}>
+      {DEBATE_STYLE_LABELS[styleNumber]}
     </span>
   ) : null
 
@@ -114,7 +116,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
   const hasFullMetadata = Boolean(tournament && affTeam && negTeam);
 
   const cleanTournament = tournament?.replace(/\d+/g, '').trim();
-  const yearTopic = getYearTopic(year, style, topics);
+  const yearTopic = getYearTopic(year, styleNumber, topics);
 
   return (
     <TooltipProvider>
@@ -166,7 +168,7 @@ export function VideoCard({ video, showThumbnails, topics, isFavorite, onToggleF
                         {cleanTournament && (
                           <span className={cn(
                             "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
-                            style && TOURNAMENT_COLORS[style] ? TOURNAMENT_COLORS[style] : "text-purple-300 bg-purple-900/80 border-purple-400/90"
+                            styleNumber && TOURNAMENT_COLORS[styleNumber] ? TOURNAMENT_COLORS[styleNumber] : "text-purple-300 bg-purple-900/80 border-purple-400/90"
                           )}>
                             {cleanTournament}
                           </span>
