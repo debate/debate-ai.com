@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Utility functions and constants for video card styling and metadata
+ */
+
 import type { TopicType } from "@/lib/types/videos";
 import { DEBATE_STYLE_LABELS } from "@/lib/types/videos";
 

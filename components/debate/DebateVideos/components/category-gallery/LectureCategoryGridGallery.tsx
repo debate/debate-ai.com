@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Grid-based lecture category gallery with icons and video counts
+ */
+
 "use client";
 
 import React, { useMemo } from "react";
@@ -125,14 +129,7 @@ export function LectureCategoryGridGallery({
 
   return (
     <div className="w-full">
-      <div className="mb-3">
-        <h2 className="text-xl md:text-2xl font-bold mb-1">
-          Debate Lecture Categories
-        </h2>
-        <p className="text-muted-foreground text-xs md:text-sm">
-          {cards.length} categories • {cards.reduce((sum, c) => sum + c.videoCount, 0)} videos
-        </p>
-      </div>
+
 
       <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
         {cards.map((card) => (

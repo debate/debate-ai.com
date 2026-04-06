@@ -4,24 +4,297 @@
 
 "use client"
 
+
 import { useMemo, useCallback, useRef, useState, useEffect } from "react"
 import { AgGridReact } from "ag-grid-react"
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from "ag-grid-community"
 import type {
+  ColDef,
   CellValueChangedEvent,
   GridReadyEvent,
   CellKeyDownEvent,
   RowDragEndEvent,
+  IHeaderParams,
   CellContextMenuEvent,
+  ICellRendererParams,
 } from "ag-grid-community"
-import type { FlowSpreadsheetProps, ContextMenuEntry } from "./types"
-import { buildRowData, rowDataToBoxes } from "./dataTransform"
-import { GridContextMenu } from "./GridContextMenu"
-import { useFlowGridConfig } from "./useFlowGridConfig"
-import { useFlowRowOperations } from "./useFlowRowOperations"
+import { ChevronDown, ChevronRight, FileText } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import type { Flow, Box } from "@/components/debate/DebateRound/types"
 
 // Register AG Grid community modules
 ModuleRegistry.registerModules([AllCommunityModule])
+
+/**
+ * Props for the FlowSpreadsheet component
+ */
+interface FlowSpreadsheetProps {
+  /** The flow data to display */
+  flow: Flow
+  /** Callback when flow data is updated */
+  onUpdate: (updates: Partial<Flow>) => void
+  /** Optional callback to open speech document panel */
+  onOpenSpeechPanel?: (speechName: string) => void
+  /** Optional callback when grid is ready */
+  onGridReady?: (api: any) => void
+}
+
+/**
+ * Simplified AG Grid column header — speech name + speech-doc icon only.
+ */
+const FlowColumnHeader = (props: IHeaderParams & { onOpenSpeechPanel?: (speechName: string) => void }) => {
+  if (!props.displayName) return null
+  const name = props.displayName
+  const hasN = name.toUpperCase().includes("N")
+  const hasA = name.toUpperCase().includes("A")
+  const textColor = hasN
+    ? "text-red-600 dark:text-red-400"
+    : hasA
+      ? "text-blue-600 dark:text-blue-400"
+      : ""
+
+  return (
+    <div className="flex items-center justify-between w-full px-2">
+      <span className={`text-sm font-semibold ${textColor}`}>{name}</span>
+      {props.onOpenSpeechPanel && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 shrink-0"
+          onClick={(e) => {
+            e.stopPropagation()
+            props.onOpenSpeechPanel!(name)
+          }}
+          title={`Open ${name} speech document`}
+        >
+          <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+        </Button>
+      )}
+    </div>
+  )
+}
+
+/**
+ * Custom cell renderer for first column cells that are section headings.
+ * Shows a chevron toggle and bold text for heading rows.
+ */
+const FirstColumnCellRenderer = (props: ICellRendererParams & {
+  collapsedHeadings: Set<string>
+  onToggleCollapse: (rowId: string) => void
+}) => {
+  const { data, value, collapsedHeadings, onToggleCollapse } = props
+  if (!data) return <span>{value}</span>
+
+  if (data.isHeading) {
+    const isCollapsed = collapsedHeadings.has(data.id)
+    return (
+      <div className="flex items-center gap-1 w-full h-full">
+        <button
+          className="flex items-center justify-center w-5 h-5 rounded hover:bg-muted shrink-0"
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleCollapse(data.id)
+          }}
+        >
+          {isCollapsed ? (
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+          )}
+        </button>
+        <span className="font-bold">{value}</span>
+      </div>
+    )
+  }
+
+  // Indent child rows under headings
+  if (data.parentHeadingId) {
+    return (
+      <div className="flex items-center w-full h-full" style={{ paddingLeft: 24 }}>
+        <span>{value}</span>
+      </div>
+    )
+  }
+
+  return <span>{value}</span>
+}
+
+/**
+ * A single item in the context menu
+ */
+interface ContextMenuItem {
+  label: string
+  onClick: () => void
+  disabled?: boolean
+  separator?: false
+}
+
+interface ContextMenuSeparator {
+  separator: true
+}
+
+type ContextMenuEntry = ContextMenuItem | ContextMenuSeparator
+
+/**
+ * Custom right-click context menu for the grid
+ */
+const GridContextMenu = ({
+  x,
+  y,
+  items,
+  onClose,
+}: {
+  x: number
+  y: number
+  items: ContextMenuEntry[]
+  onClose: () => void
+}) => {
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        onClose()
+      }
+    }
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("keydown", handleEsc)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("keydown", handleEsc)
+    }
+  }, [onClose])
+
+  // Clamp menu position to viewport
+  const style = useMemo(() => {
+    const menuWidth = 220
+    const menuHeight = items.length * 32
+    return {
+      left: Math.min(x, window.innerWidth - menuWidth - 8),
+      top: Math.min(y, window.innerHeight - menuHeight - 8),
+    }
+  }, [x, y, items.length])
+
+  return (
+    <div
+      ref={menuRef}
+      className="fixed z-50 min-w-[200px] rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
+      style={style}
+    >
+      {items.map((item, i) => {
+        if (item.separator) {
+          return <div key={i} className="my-1 h-px bg-border" />
+        }
+        return (
+          <button
+            key={i}
+            disabled={item.disabled}
+            className="relative flex w-full cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
+            onClick={() => {
+              item.onClick()
+              onClose()
+            }}
+          >
+            {item.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/**
+ * Convert flow children (nested Box structure) to flat row data for AG Grid
+ *
+ * @param boxes - Array of root-level boxes
+ * @param columns - Column names from the flow
+ * @returns Array of row objects with column values
+ */
+function buildRowData(boxes: Box[], columns: string[]): any[] {
+  const depth = columns.length
+  const rows: any[] = []
+
+  boxes.forEach((box, index) => {
+    const row: any = {
+      id: `row-${index}`,
+      originalIndex: index,
+      isHeading: box.isHeading ?? false,
+    }
+
+    // Flatten box chain into column values
+    let current: Box | undefined = box
+    for (let i = 0; i < depth; i++) {
+      row[`col_${i}`] = current?.content ?? ""
+      current = current?.children?.[0]
+    }
+
+    rows.push(row)
+  })
+
+  // Reconstruct parentHeadingId from heading flags
+  let currentHeadingId: string | undefined
+  for (const row of rows) {
+    if (row.isHeading) {
+      currentHeadingId = row.id
+    } else if (currentHeadingId) {
+      row.parentHeadingId = currentHeadingId
+    }
+  }
+
+  return rows
+}
+
+/**
+ * Convert flat row data back to nested Box structure
+ *
+ * @param rows - Array of row objects from AG Grid
+ * @param columns - Column names from the flow
+ * @returns Array of Box objects with nested children
+ */
+function rowDataToBoxes(rows: any[], columns: string[]): Box[] {
+  const depth = columns.length
+  const boxes: Box[] = []
+
+  rows.forEach((row) => {
+    const values: string[] = []
+    for (let i = 0; i < depth; i++) {
+      values.push(row[`col_${i}`] ?? "")
+    }
+
+    // Build box chain from deepest to shallowest
+    let box: Box = {
+      content: values[depth - 1] ?? "",
+      children: [],
+      index: depth,
+      level: depth,
+      focus: false,
+      empty: !(values[depth - 1] ?? "").trim(),
+    }
+
+    for (let i = depth - 2; i >= 0; i--) {
+      box = {
+        content: values[i] ?? "",
+        children: [box],
+        index: i,
+        level: i + 1,
+        focus: false,
+        empty: !(values[i] ?? "").trim(),
+      }
+    }
+
+    // Persist heading state on the root box
+    if (row.isHeading) {
+      box.isHeading = true
+    }
+
+    boxes.push(box)
+  })
+
+  return boxes
+}
 
 /**
  * FlowSpreadsheet - AG Grid-based debate flow interface
@@ -60,14 +333,6 @@ export function FlowSpreadsheet({
   // Initialize row data from flow
   const [rowData, setRowData] = useState<any[]>(() => buildRowData(flow.children, flow.columns))
 
-  // Row operations hook
-  const { toggleHeading, indentRow, outdentRow, insertRow, deleteRow } = useFlowRowOperations(
-    flow,
-    onUpdate,
-    setRowData,
-    setCollapsedHeadings,
-  )
-
   /**
    * Update row data when flow children change externally.
    * Rebuilds rows from boxes (which now carry isHeading), preserving tree structure.
@@ -92,6 +357,57 @@ export function FlowSpreadsheet({
   }, [])
 
   /**
+   * Toggle a row as a section heading.
+   * When toggling ON, all subsequent non-heading rows get parentHeadingId set.
+   * When toggling OFF, children lose their parentHeadingId.
+   */
+  const toggleHeading = useCallback(
+    (rowId: string) => {
+      setRowData((prev) => {
+        const rows = prev.map((r) => ({ ...r }))
+        const idx = rows.findIndex((r) => r.id === rowId)
+        if (idx === -1) return prev
+
+        const row = rows[idx]
+        const wasHeading = row.isHeading
+
+        if (wasHeading) {
+          // Remove heading status and unparent children
+          row.isHeading = false
+          for (let i = idx + 1; i < rows.length; i++) {
+            if (rows[i].parentHeadingId === rowId) {
+              rows[i].parentHeadingId = undefined
+            } else {
+              break
+            }
+          }
+          // Remove from collapsed set
+          setCollapsedHeadings((s) => {
+            const next = new Set(s)
+            next.delete(rowId)
+            return next
+          })
+        } else {
+          // Make it a heading and assign children until next heading
+          row.isHeading = true
+          row.parentHeadingId = undefined
+          for (let i = idx + 1; i < rows.length; i++) {
+            if (rows[i].isHeading) break
+            rows[i].parentHeadingId = rowId
+          }
+        }
+
+        // Sync to flow
+        const newChildren = rowDataToBoxes(rows, flow.columns)
+        onUpdate({ children: newChildren })
+
+        return rows
+      })
+    },
+    [flow.columns, onUpdate],
+  )
+
+  /**
    * Toggle collapse/expand for a heading row
    */
   const toggleCollapse = useCallback(
@@ -111,6 +427,129 @@ export function FlowSpreadsheet({
       }, 0)
     },
     [],
+  )
+
+  /**
+   * Indent a row — make it a child of the nearest heading above it
+   */
+  const indentRow = useCallback(
+    (rowId: string) => {
+      setRowData((prev) => {
+        const rows = prev.map((r) => ({ ...r }))
+        const idx = rows.findIndex((r) => r.id === rowId)
+        if (idx <= 0 || rows[idx].isHeading) return prev
+
+        // Find the nearest heading above
+        let headingId: string | undefined
+        for (let i = idx - 1; i >= 0; i--) {
+          if (rows[i].isHeading) {
+            headingId = rows[i].id
+            break
+          }
+        }
+        if (!headingId || rows[idx].parentHeadingId === headingId) return prev
+
+        rows[idx].parentHeadingId = headingId
+        const newChildren = rowDataToBoxes(rows, flow.columns)
+        onUpdate({ children: newChildren })
+        return rows
+      })
+    },
+    [flow.columns, onUpdate],
+  )
+
+  /**
+   * Outdent a row — remove it from its parent heading
+   */
+  const outdentRow = useCallback(
+    (rowId: string) => {
+      setRowData((prev) => {
+        const rows = prev.map((r) => ({ ...r }))
+        const idx = rows.findIndex((r) => r.id === rowId)
+        if (idx === -1 || !rows[idx].parentHeadingId) return prev
+
+        rows[idx].parentHeadingId = undefined
+        const newChildren = rowDataToBoxes(rows, flow.columns)
+        onUpdate({ children: newChildren })
+        return rows
+      })
+    },
+    [flow.columns, onUpdate],
+  )
+
+  /**
+   * Insert a new empty row above or below the target row
+   */
+  const insertRow = useCallback(
+    (rowId: string, position: "above" | "below") => {
+      setRowData((prev) => {
+        const rows = prev.map((r) => ({ ...r }))
+        const idx = rows.findIndex((r) => r.id === rowId)
+        if (idx === -1) return prev
+
+        const newRow: any = {
+          id: `row-${Date.now()}`,
+          originalIndex: 0,
+        }
+        for (let i = 0; i < flow.columns.length; i++) {
+          newRow[`col_${i}`] = ""
+        }
+
+        // Inherit parent heading if inserting among children
+        const targetRow = rows[idx]
+        if (targetRow.parentHeadingId) {
+          newRow.parentHeadingId = targetRow.parentHeadingId
+        }
+
+        const insertIdx = position === "above" ? idx : idx + 1
+        rows.splice(insertIdx, 0, newRow)
+
+        // Re-index
+        rows.forEach((r, i) => (r.originalIndex = i))
+
+        const newChildren = rowDataToBoxes(rows, flow.columns)
+        onUpdate({ children: newChildren })
+        return rows
+      })
+    },
+    [flow.columns, onUpdate],
+  )
+
+  /**
+   * Delete a row (and unparent its children if it's a heading)
+   */
+  const deleteRow = useCallback(
+    (rowId: string) => {
+      setRowData((prev) => {
+        const rows = prev.map((r) => ({ ...r }))
+        const idx = rows.findIndex((r) => r.id === rowId)
+        if (idx === -1) return prev
+
+        // If deleting a heading, unparent its children
+        if (rows[idx].isHeading) {
+          for (let i = idx + 1; i < rows.length; i++) {
+            if (rows[i].parentHeadingId === rowId) {
+              rows[i].parentHeadingId = undefined
+            } else if (rows[i].isHeading) {
+              break
+            }
+          }
+          setCollapsedHeadings((s) => {
+            const next = new Set(s)
+            next.delete(rowId)
+            return next
+          })
+        }
+
+        rows.splice(idx, 1)
+        rows.forEach((r, i) => (r.originalIndex = i))
+
+        const newChildren = rowDataToBoxes(rows, flow.columns)
+        onUpdate({ children: newChildren })
+        return rows
+      })
+    },
+    [flow.columns, onUpdate],
   )
 
   /**
@@ -236,13 +675,65 @@ export function FlowSpreadsheet({
     [collapsedHeadings],
   )
 
-  // Grid configuration hook
-  const { columnDefs, defaultColDef, getRowId } = useFlowGridConfig(
-    flow,
-    onOpenSpeechPanel,
-    collapsedHeadings,
-    toggleCollapse,
+  /**
+   * Generate column definitions for AG Grid
+   * Includes team color coding and custom headers with speech icons
+   */
+  const columnDefs = useMemo<ColDef[]>(() => {
+    return flow.columns.map((colName, idx) => {
+      const hasN = colName.toUpperCase().includes("N")
+      const hasA = colName.toUpperCase().includes("A")
+
+      const colDef: ColDef = {
+        field: `col_${idx}`,
+        headerName: colName,
+        editable: true,
+        rowDrag: idx === 0,
+        flex: 1,
+        minWidth: 150,
+        cellEditor: "agTextCellEditor",
+        cellEditorParams: {
+          maxLength: 1000,
+        },
+        wrapText: true,
+        autoHeight: false,
+        cellClass: hasN ? "text-red-500 dark:text-red-400" : hasA ? "text-blue-500 dark:text-blue-400" : "",
+        headerComponent: FlowColumnHeader,
+        headerComponentParams: {
+          onOpenSpeechPanel,
+        },
+      }
+
+      // First column gets the tree cell renderer
+      if (idx === 0) {
+        colDef.cellRenderer = FirstColumnCellRenderer
+        colDef.cellRendererParams = {
+          collapsedHeadings,
+          onToggleCollapse: toggleCollapse,
+        }
+      }
+
+      return colDef
+    })
+  }, [flow.columns, onOpenSpeechPanel, collapsedHeadings, toggleCollapse])
+
+  /**
+   * Default column settings
+   */
+  const defaultColDef = useMemo<ColDef>(
+    () => ({
+      editable: true,
+      sortable: false,
+      filter: false,
+      resizable: true,
+    }),
+    [],
   )
+
+  /**
+   * Get unique row ID for AG Grid
+   */
+  const getRowId = useCallback((params: any) => params.data.id, [])
 
   /**
    * Handle cell value changes

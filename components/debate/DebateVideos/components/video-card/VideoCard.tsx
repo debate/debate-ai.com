@@ -1,9 +1,12 @@
+/**
+ * @fileoverview Video card component displaying debate video metadata, thumbnails, and actions
+ */
+
 "use client"
 import { GlowingEffect } from "@/components/ui/glowing-effect"
 
 import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import React, { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { Play, Star, Calendar, Eye, Volume2, ListVideo, EyeOff, Eye as EyeIcon, ExternalLink, Scale } from "lucide-react"
 import type { TopicType } from "@/lib/types/videos"

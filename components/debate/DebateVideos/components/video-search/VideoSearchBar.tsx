@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useMemo } from "react"
-import { Search, X, Video, VideoOff, Star, Trophy, ChevronLeft, ChevronRight, Eye, Calendar } from "lucide-react"
+import { Search, X, Star, Trophy, Eye, Calendar } from "lucide-react"
 import Image from "next/image"
 import { IconTopRounds } from "@/components/icons"
 import { Badge } from "@/components/ui/badge"

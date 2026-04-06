@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Player queue display component showing upcoming videos
+ */
+
 import { ListVideo } from "lucide-react"
 import type { QueueItem } from "@/lib/state/videoPlayerStore"
 

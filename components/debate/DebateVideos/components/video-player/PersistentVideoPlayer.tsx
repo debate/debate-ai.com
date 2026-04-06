@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Persistent video player with drag, resize, and playback state management
+ */
+
 "use client"
 
 import React, { useEffect, useRef, useState, useCallback } from "react" // useState kept for PersistentVideoPlayer mounted state

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Custom hook for draggable and resizable video player functionality
+ */
+
 import { useRef, useState, useCallback, useEffect } from "react"
 
 export type ResizeEdge = "left" | "right" | "bottom-left" | "bottom-right"

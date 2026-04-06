@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Animated carousel gallery for lecture categories with 3D effects
+ */
+
 "use client"
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
@@ -41,6 +45,8 @@ const CATEGORY_GRADIENTS: Record<string, string> = {
 
 export function LectureCategoryGallery({ onCategorySelect, selectedCategory, videosData }: LectureCategoryGalleryProps) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
   const galleryRef = useRef<HTMLDivElement>(null);
 
   // Convert categories to card format - ensure ALL categories from JSON are included
@@ -96,8 +102,29 @@ export function LectureCategoryGallery({ onCategorySelect, selectedCategory, vid
     setMousePosition({ x, y });
   };
 
-  const handleCardClick = (categoryId: string) => {
-    onCategorySelect?.(categoryId);
+  const handleCardClick = (index: number) => {
+    setActiveIndex(index);
+    onCategorySelect?.(cards[index]?.id);
+  };
+
+  const nextCard = () => {
+    setActiveIndex((prev) => (prev + 1) % cards.length);
+  };
+
+  const prevCard = () => {
+    setActiveIndex((prev) => (prev - 1 + cards.length) % cards.length);
+  };
+
+  const calculateCardStyles = (index: number) => {
+    const offset = index - activeIndex;
+    const absOffset = Math.abs(offset);
+
+    return {
+      zIndex: 50 - absOffset,
+      transform: `translateX(${offset * 30}px) scale(${1 - absOffset * 0.1})`,
+      opacity: absOffset > 2 ? 0 : 1 - absOffset * 0.3,
+      pointerEvents: absOffset > 2 ? 'none' as const : 'auto' as const,
+    };
   };
 
   return (

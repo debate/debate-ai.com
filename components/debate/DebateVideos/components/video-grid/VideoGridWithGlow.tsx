@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Video grid with glowing effect applied to all video cards
+ */
+
 "use client"
 
 import React from "react"

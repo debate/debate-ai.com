@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Resize handle components for video player edges and corners
+ */
+
 import type { ResizeEdge } from "./useDragResize"
 
 interface PlayerResizeHandlesProps {

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Player control buttons component for video player UI
+ */
+
 import { X, Minus, Maximize2, SkipForward, Play, Pause, Gauge } from "lucide-react"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 import type { QueueItem } from "@/lib/state/videoPlayerStore"

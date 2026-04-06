@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Expandable category cards gallery with drag-to-scroll functionality
+ */
+
 "use client";
 
 import { useState, useMemo, useRef } from "react";

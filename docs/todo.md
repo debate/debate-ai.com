@@ -4,7 +4,7 @@ word counts only format
 
 online format vs AI
 
-ai will chart out outcomes via model councel
+ai will chart out response outcomes via model councel
 
 options for judge decision via AI
 

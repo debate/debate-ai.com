@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Dialog components for video card actions (report and hide)
+ */
+
 "use client"
 
 import React, { useState } from "react"

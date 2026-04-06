@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Video grid with selective glowing effect applied to top pick videos
+ */
+
 "use client"
 
 import React from "react"

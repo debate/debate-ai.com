@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Standard video grid component for displaying video cards
+ */
+
 "use client"
 
 import React from "react"
