@@ -2,10 +2,10 @@
  * Configuration for YouTube channels to sync
  */
 
-export const publishedAfter = "2010-03-01";
+export const publishedAfter = "2026-03-01";
 // export const publishedAfter = "2026-02-10";
 
-export const channelsToUpdate = ["Debatedrills"];
+export const channelsToUpdate = [];
 
 export const channels = [
   "DebateArchive2",

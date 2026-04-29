@@ -8,11 +8,9 @@
 
 Empowering debaters in **Public Forum**, **Lincoln-Douglas**, **Policy**, and **College NDT** with tools for research, flowing, video analysis, and team rankings.
 
-### 📝 Debate Round Speeches Command Center
+### 📝 Debate Round Speeches Exchange
 
 **Digital flowing from prep to podium.**
-
-#### ⚡ Features
 
 - **Multi-column spreadsheet** with format-specific speech columns (PF, LD, Policy, NDT)
 - **Shareable round URLs** — every round gets a permanent link
@@ -82,7 +80,14 @@ Empowering debaters in **Public Forum**, **Lincoln-Douglas**, **Policy**, and **
 
 ---
 
-## External Links
+## Developer Contribution
 
-- [Live Site](https://debate-ai.com/)
-- [Earlier Prototype](https://alpha.debate-ai.com/)
+Develop features, open ideas in discussions, and submit PR! Start developing locally
+
+```
+npx git0 debate/debate-ai.com
+```
+
+
+
+[Earlier Prototype](https://alpha.debate-ai.com/) of Debate AI app

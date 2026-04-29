@@ -118,7 +118,7 @@ Partner with schools, universities, citizen assemblies, and media literacy progr
 
 ## 23. Public Resource Voting and Economic Planning
 
-💰 Citizens directly vote on funding priorities with informed decision-making via argument graphs and simulations. AI facilitates transparent governance of economic resources through auditable systems. Markets handle micro-decisions; macro-allocation happens through democratic choice.
+💰 Citizens directly vote on funding priorities with informed decision-making to allocate proportionally to creators of digital content which is copied infinitely. AI facilitates transparent governance of economic resources through auditable systems. Markets handle micro-decisions; macro-allocation happens through democratic choice.
 
 ## 24. Decentralized Chain-of-Thought and Literature Monitoring
 
