@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
-import categoryDescriptions from "@/lib/debate-data/debate-metadata/debate-lectures-category-descriptions.json";
+import categoryDescriptions from "../../panels/debate-lectures-category-descriptions.json";
 
 interface LectureCategoryGridGalleryProps {
   onCategorySelect?: (categoryKey: string) => void;
@@ -34,11 +34,7 @@ interface LectureCategoryGridGalleryProps {
   videosData?: any[];
 }
 
-type CategoryDescriptions = {
-  categories: Record<string, { description: string }>;
-};
-
-const typedCategoryDescriptions = categoryDescriptions as CategoryDescriptions;
+const typedCategoryDescriptions = categoryDescriptions as Record<string, string>;
 
 // Map category labels to icons
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
@@ -104,7 +100,7 @@ export function LectureCategoryGridGallery({
     return Array.from(categoryMap.entries())
       .map(([label, data]) => {
         const description =
-          typedCategoryDescriptions.categories[label]?.description ||
+          typedCategoryDescriptions[label] ||
           "Debate lecture videos";
         const normalizedKey = label
           .toLowerCase()

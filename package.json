@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "rm -rf .next; npx open-ready@latest next dev --webpack",
     "build": "next build --webpack && npm run build:sw:generate && npm run build:sw",
-    "build:sw:generate": "node lib/scripts/generate.js",
+    "build:sw:generate": "node lib/offline-sw/generate.js",
     "build:sw": "webpack",
     "start": "npx open-ready next start",
     "test": "vitest",
