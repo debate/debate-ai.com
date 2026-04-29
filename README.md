@@ -2,24 +2,10 @@
     <img src="./public/images/logo-collective-mind.png" width="300" height="300">
 </p>
 
+
 # 🎙️ Debate AI
 
-> **The all-in-one competitive debate platform** — where AI meets argumentation to set a model for AI governance.
-
-Empowering debaters in **Public Forum**, **Lincoln-Douglas**, **Policy**, and **College NDT** with tools for research, flowing, video analysis, and team rankings.
-
-### 📝 Debate Round Speeches Exchange
-
-**Digital flowing from prep to podium.**
-
-- **Multi-column spreadsheet** with format-specific speech columns (PF, LD, Policy, NDT)
-- **Shareable round URLs** — every round gets a permanent link
-- **Round management** — tournament setup, team info, judge invites
-- **Speech docs** — markdown editor with email sharing
-- **Smart timers** — format-aware with audio/visual alerts
-- **Collaboration** — email invites for judges and spectators
-- **Archive system** — manage and restore multiple rounds
-- **Mobile-optimized** — responsive design with swipe navigation
+> **The all-in-one competitive debate platform** — with AI practice,research, flowing, video analysis, and team rankings — where AI meets argumentation to set a model for AI governance.
 
 ---
 
@@ -36,6 +22,30 @@ Empowering debaters in **Public Forum**, **Lincoln-Douglas**, **Policy**, and **
 
 ---
 
+<p align="center">
+    <img src="https://i.imgur.com/lY4MMGF.png" >
+</p>
+
+### 📝 Debate Round Speeches Exchange
+
+**Digital flowing from prep to podium.**
+
+- **Multi-column spreadsheet** with format-specific speech columns (PF, LD, Policy, NDT)
+- **Shareable round URLs** — every round gets a permanent link
+- **Round management** — tournament setup, team info, judge invites
+- **Speech docs** — markdown editor with email sharing
+- **Smart timers** — format-aware with audio/visual alerts
+- **Collaboration** — email invites for judges and spectators
+- **Archive system** — manage and restore multiple rounds
+- **Mobile-optimized** — responsive design with swipe navigation
+
+---
+
+
+<p align="center">
+    <img src="https://i.imgur.com/Bi4Q6wa.png" >
+</p>
+
 ### 🎥 Videos — Tournament Archive
 
 **Watch the best rounds. Learn from champions.**
@@ -45,49 +55,21 @@ Empowering debaters in **Public Forum**, **Lincoln-Douglas**, **Policy**, and **
 - Inline YouTube playback with thumbnail previews
 - Save favorites and browse curated top picks
 - Quick access to Rankings/Leaderboard
-
----
-
-### 🏆 Rankings — National Leaderboard
-
-**Track every team from prelims to TOC.**
-
-- All divisions: PF, LD, Policy, NDT
+- Searchable library of instructional content
+- Built-in Debate Dictionary for term definitions
+- Curated content from top coaches
+- National Rankings: All divisions: PF, LD, Policy, NDT
 - Dual ranking system: TOC bid list + DebateDrills Elo
 - Historical data from 2001 to present
-- Sortable columns with rank change indicators
 - Auto-synced with official data sources
 
 ---
 
-### 🎓 Lectures — Learning Hub
 
-**Master fundamentals and advanced tactics.**
-
-- Searchable library of instructional content
-- Built-in Debate Dictionary for term definitions
-- Curated content from top coaches
-
----
-
-### 📃 Docs — Markdown Editor
-
-**Write blocks. Format evidence. Export flows.**
-
-- Full markdown support for evidence cards
-- Rich formatting for blocks and briefs
-- Quick access from navigation dock
-
----
-
-## Developer Contribution
+## Contributing
 
 Develop features, open ideas in discussions, and submit PR! Start developing locally
 
 ```
 npx git0 debate/debate-ai.com
 ```
-
-
-
-[Earlier Prototype](https://alpha.debate-ai.com/) of Debate AI app
