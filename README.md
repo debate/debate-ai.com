@@ -1,13 +1,12 @@
-<p align="center">
-    <img src="./public/images/logo-collective-mind.png" width="300" height="300">
-</p>
+# Debate AI
 
-
-# 🎙️ Debate AI
-
-> **The all-in-one competitive debate platform** — with AI practice,research, flowing, video analysis, and team rankings — where AI meets argumentation to set a model for AI governance.
+**The competitive debate platform where AI meets argumentation to set a model for AI governance**.
 
 ---
+
+<p align="center">
+    <img src="./public/images/logo-collective-mind.png" width="300" >
+</p>
 
 ### 📚 CARDS — Evidence Research Library
 
@@ -23,12 +22,10 @@
 ---
 
 <p align="center">
-    <img src="https://i.imgur.com/lY4MMGF.png" >
+    <img src="https://i.imgur.com/1NBeQij.png" width="400" >
 </p>
 
-### 📝 Debate Round Speeches Exchange
-
-**Digital flowing from prep to podium.**
+### 📝 Debate FIAT Speech Exchange
 
 - **Multi-column spreadsheet** with format-specific speech columns (PF, LD, Policy, NDT)
 - **Shareable round URLs** — every round gets a permanent link
@@ -41,9 +38,8 @@
 
 ---
 
-
 <p align="center">
-    <img src="https://i.imgur.com/Bi4Q6wa.png" >
+    <img src="https://i.imgur.com/JxxJUXt.png" width="400"  >
 </p>
 
 ### 🎥 Videos — Tournament Archive
@@ -65,10 +61,9 @@
 
 ---
 
-
 ## Contributing
 
-Develop features, open ideas in discussions, and submit PR! Start developing locally
+Start developing locally, develop features, open ideas in discussions, and submit PR!
 
 ```
 npx git0 debate/debate-ai.com
