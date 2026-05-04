@@ -92,16 +92,6 @@ export function IntroTextOverview() {
               Collaborate on topic outlines, share evidence, and download Topic Starter outlines.
             </ul>
 
-            <div className="pt-4 mt-auto">
-              <a
-                href="https://arxiv.org/html/2406.14657v3"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
-              >
-                Read the Academic Paper &rarr;
-              </a>
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -192,6 +182,18 @@ export function IntroTextOverview() {
                 </p>
 
               </ol>
+            </div>
+
+
+            <div className="pt-4 mt-auto">
+              <a
+                href="https://arxiv.org/html/2406.14657v3"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
+              >
+                Read the Academic Paper &rarr;
+              </a>
             </div>
 
           </div>

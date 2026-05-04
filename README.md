@@ -5,19 +5,19 @@
 ---
 
 <p align="center">
-    <img src="./public/images/logo-collective-mind.png" width="300" >
+    <img src="./public/images/logo-collective-mind.png" width="300">
 </p>
 
 ### 📚 CARDS — Evidence Research Library
 
 **Community-sourced evidence. By debaters, for debaters.**
 
-- Full-text search across tagged and annotated evidence cards
-- Three-panel layout with search, card reader, and AI analysis
-- Three reading modes: plain, highlight, and underline
-- AI-powered summaries, warrant extensions, and logic-flaw detection
-- Mobile-responsive with full-screen overlays
-- Citation maker and flow integration
+- Full-text search across thousands of tagged, annotated evidence cards spanning policy, LD, PF, and college formats
+- Three-panel layout: search sidebar, full card reader, and AI analysis pane — all visible simultaneously
+- Three reading modes: plain text, highlighted tags, and underline-only for fast cutting
+- AI-powered one-click summaries, warrant extensions, and logic-flaw detection per card
+- Citation auto-formatter and one-click flow integration — paste directly into your speech doc
+- Mobile-responsive with full-screen card overlays for reading on the go
 
 ---
 
@@ -27,14 +27,14 @@
 
 ### 📝 Debate FIAT Speech Exchange
 
-- **Multi-column spreadsheet** with format-specific speech columns (PF, LD, Policy, NDT)
-- **Shareable round URLs** — every round gets a permanent link
-- **Round management** — tournament setup, team info, judge invites
-- **Speech docs** — markdown editor with email sharing
-- **Smart timers** — format-aware with audio/visual alerts
-- **Collaboration** — email invites for judges and spectators
-- **Archive system** — manage and restore multiple rounds
-- **Mobile-optimized** — responsive design with swipe navigation
+- **Multi-column flow spreadsheet** — format-specific speech columns for PF, LD, Policy, and NDT with inline editing
+- **Shareable round URLs** — every round gets a permanent link; share with judges or teammates instantly
+- **Round management** — tournament setup, team pairing, judge assignments, and round notes in one place
+- **Speech docs** — full markdown editor per speech with email sharing to judges and coaches
+- **Smart timers** — format-aware prep and speech timers with audio/visual alerts and auto-advance
+- **Collaboration** — invite judges and spectators by email; view-only and edit roles supported
+- **Archive system** — save, browse, and restore any past round with full flow history
+- **Mobile-optimized** — responsive design with swipe navigation between speech columns
 
 ---
 
@@ -44,20 +44,16 @@
 
 ### 🎥 Videos — Tournament Archive
 
-**Watch the best rounds. Learn from champions.**
+**2,939 videos: 1,984 competitive rounds + 859 instructional lectures.**
 
-- Searchable video grid with infinite scroll
-- Filter by title, channel, year, or view count
-- Inline YouTube playback with thumbnail previews
-- Save favorites and browse curated top picks
-- Quick access to Rankings/Leaderboard
-- Searchable library of instructional content
-- Built-in Debate Dictionary for term definitions
-- Curated content from top coaches
-- National Rankings: All divisions: PF, LD, Policy, NDT
-- Dual ranking system: TOC bid list + DebateDrills Elo
-- Historical data from 2001 to present
-- Auto-synced with official data sources
+- **1,420 college/NDT rounds** dating back to 1995, including every recent TOC and NDT elimination round
+- **348 Public Forum rounds** (2015–present), **125 Policy rounds** (2003–present), **91 LD rounds** (2019–present)
+- **859 instructional videos** across 20 categories: topic lectures, camp coaching, kritik theory, counterplans, impact calc, novice intro, speaking & delivery, and more
+- **96 hand-curated top picks** — the highest-value rounds and lectures selected for study
+- Searchable grid with filter by title, channel, year, or view count; inline YouTube playback with thumbnails
+- **203-term Debate Dictionary** with plain-English definitions for theory, kritik, and procedural jargon
+- **26 years of national champion records** (2000–2025) across NDT, Policy, LD, and PF
+- **1,095 tournaments** indexed with rankings — TOC bid list + DebateDrills Elo dual ranking system
 
 ---
 

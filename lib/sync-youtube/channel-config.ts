@@ -5,9 +5,10 @@
 export const publishedAfter = "2026-03-01";
 // export const publishedAfter = "2026-02-10";
 
-export const channelsToUpdate = [];
+export const channelsToUpdate = ["Adi_Arora_PF"];
 
 export const channels = [
+  "Adi_Arora_PF",
   "DebateArchive2",
   "Debatedrills",
   "championbriefs1508",

@@ -1,6 +1,25 @@
 {
-  "$schema": "./schemas/debate-rounds-videos.schema.json",
+  "$schema": "../schemas/debate-rounds-videos.schema.json",
   "data": [
+    [
+      "I4b5N_M6U4M",
+      "2026 TOC - Finals - Aff Head Royce AJ vs Neg Lynbrook BZ",
+      "2026-04-14",
+      "Lynbrook Debate",
+      1992,
+      "1AC: Greatest Hits\n2NR: Topicality\n\nDecision: 2-1 Neg (Vontrez White*, Christian Bohmer, Conner Shih)",
+      1,
+      null,
+      "Finals",
+      null,
+      null,
+      null,
+      "2-1",
+      null,
+      null,
+      false,
+      null
+    ],
     [
       "3Ggwyi8f-XQ",
       "2026 TOC - Octos - Aff Harvard Westlake AS vs Neg Harker AA",
