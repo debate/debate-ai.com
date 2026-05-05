@@ -1,23 +1,26 @@
-<p align="center">
+<h3 align="center">
     <img width=200px" src="./public/favicon-512.png" />
-<br />
+    <br />
+    <a href="https://qwksearch.com"> 🚀 App</a>
+    <a href="https://airesearch.js.org"> 📑 Docs </a> <a href="https://qwksearch.com/api/docs"> 🎯 API </a> </h3>
+<p align="center">
     <a href="https://discord.gg/SJdBqBz3tV">
         <img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat"
             alt="Join Discord" />
     </a>
      <a href="https://github.com/debate/debate-ai.com/discussions">
      <img alt="GitHub Stars" src="https://img.shields.io/github/stars/debate/debate-ai.com" /></a>
-    <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js" />
-<br />
     <a href="https://github.com/debate/debate-ai.com/discussions">
     <img alt="GitHub Discussions"
         src="https://img.shields.io/github/discussions/debate/debate-ai.com" />
     </a>
+<br />
     <a href="https://github.com/debate/debate-ai.com/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/debate/debate-ai.com" />
     </a>
     <img src="https://img.shields.io/github/last-commit/debate/debate-ai.com.svg" alt="GitHub last commit" />
 <br />
+    <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js" />
     <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request">
         <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"
             alt="PRs Welcome" />
@@ -28,16 +31,12 @@
 <br />
 <b>The permutation of competitive debate</b>
 <br />
-<b>With AI meets news topic argument outlines</b> 
+<b>Where AI meets news topic argument outlines</b> 
 <br />
 <b>Is key to set a model for AI governance.</b>
 <br />
-<h3 align="center">
-    <a href="https://qwksearch.com"> 🚀 App</a>
-    <a href="https://airesearch.js.org"> 📑 Docs </a> <a href="https://qwksearch.com/api/docs"> 🎯 API </a>
- </h3>
  </p>
- 
+
 ---
 
 <p align="center">
@@ -80,12 +79,12 @@
 
 ### 🎥 Videos — Tournament Archive
 
-**2,939 videos: 1,984 competitive rounds + 859 instructional lectures.**
+**~3,000 videos: ~2,000 competitive rounds + ~900 instructional lectures.**
 
-- **1,420 college/NDT rounds** dating back to 1995, including every recent TOC and NDT elimination round
-- **348 Public Forum rounds** (2015–present), **125 Policy rounds** (2003–present), **91 LD rounds** (2019–present)
-- **859 instructional videos** across 20 categories: topic lectures, camp coaching, kritik theory, counterplans, impact calc, novice intro, speaking & delivery, and more
-- **96 hand-curated top picks** — the highest-value rounds and lectures selected for study
+- **~1,400 college/NDT rounds** dating back to 1995, averaging 50+ new rounds per year, including every recent TOC and NDT elimination round
+- **~350 Public Forum rounds** (2015–present), **~125 Policy rounds** (2003–present), **~90 LD rounds** (2019–present)
+- **~900 instructional videos** across 20 categories: topic lectures, camp coaching, kritik theory, counterplans, impact calc, novice intro, speaking & delivery, and more
+- **~100 hand-curated top picks** — the highest-value rounds and lectures selected for study
 - Searchable grid with filter by title, channel, year, or view count; inline YouTube playback with thumbnails
 - **203-term Debate Dictionary** with plain-English definitions for theory, kritik, and procedural jargon
 - **26 years of national champion records** (2000–2025) across NDT, Policy, LD, and PF
