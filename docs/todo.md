@@ -27,3 +27,7 @@ whose summaries and highligting gets more likes
 on round info - show tournament results, pairingsm .jsdge paradigm
 
 docs categories icons
+
+https://docs.paperlessdebate.com/verbatim/advanced/shortcuts
+
+https://sites.google.com/view/debatex/debatex

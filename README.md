@@ -1,8 +1,8 @@
 <h3 align="center">
     <img width=200px" src="./public/favicon-512.png" />
     <br />
-    <a href="https://qwksearch.com"> 🚀 App</a>
-    <a href="https://airesearch.js.org"> 📑 Docs </a> <a href="https://qwksearch.com/api/docs"> 🎯 API </a> </h3>
+    <a href="https://debate.ai.com"> 🚀 App</a>
+    <a href="https://github.com/debate/debate-ai.com/tree/master/docs"> 📑 Docs </a> <a href="https://qwksearch.com/api/api-docs"> 🎯 API </a> </h3>
 <p align="center">
     <a href="https://discord.gg/SJdBqBz3tV">
         <img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat"
@@ -29,11 +29,11 @@
     <img src="https://github.com/codespaces/badge.svg" width="150" height="20" />
     </a>
 <br />
-<b>The permutation of competitive debate</b>
+<b>The permutation of crowd-sourced debate </b>
 <br />
-<b>Where AI meets news topic argument outlines</b> 
+<b>And AI-generated outlines of topic arguments</b> 
 <br />
-<b>Is key to set a model for AI governance.</b>
+<b>Sets a critical model for AI governance.</b>
 <br />
  </p>
 

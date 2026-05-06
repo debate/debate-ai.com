@@ -48,8 +48,7 @@ Deploy in virtual environments to test AI reasoning with synthetic scenarios. In
 
 Online Format - online games show matchmaking works for longer practices like sending speech docs 2000/1200 words and get matched by topic. Word Count Format - no need to read fast if you can just have the word count add up to 2000 per speech and read tags slowly. Toggle Highlighted-Only Visibility Mode and Show speeches side-by-side. Flow-in-Speech entries while watching stream, and link a flow entry to a response bubble. Sync flow across room, no need to flow if cards come with flow notes, upload and browse round formats of 8 full speech docs.
 
-
-## History of Innovation in Debate Interfaces
+## Historically Proven Leadership in Debate Interfaces
 
 https://globaldebateblog.blogspot.com/2009/07/using-new-technology-in-policy-debate.html
 

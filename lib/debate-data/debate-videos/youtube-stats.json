@@ -1,0 +1,2574 @@
+{
+  "summary": {
+    "totalViews": 5712926,
+    "totalVideos": 2843,
+    "totalChannels": 46,
+    "totalDebateStyles": 24
+  },
+  "byChannel": [
+    {
+      "channel": "PF Videos",
+      "totalViews": 1527780,
+      "videoCount": 288,
+      "avgViewsPerVideo": 5305
+    },
+    {
+      "channel": "Debate Stream",
+      "totalViews": 673338,
+      "videoCount": 187,
+      "avgViewsPerVideo": 3601
+    },
+    {
+      "channel": "LASA Debate",
+      "totalViews": 426507,
+      "videoCount": 74,
+      "avgViewsPerVideo": 5764
+    },
+    {
+      "channel": "DebateDrills",
+      "totalViews": 393001,
+      "videoCount": 301,
+      "avgViewsPerVideo": 1306
+    },
+    {
+      "channel": "Wired",
+      "totalViews": 256696,
+      "videoCount": 1,
+      "avgViewsPerVideo": 256696
+    },
+    {
+      "channel": "DDI Debate",
+      "totalViews": 253483,
+      "videoCount": 208,
+      "avgViewsPerVideo": 1219
+    },
+    {
+      "channel": "Jacob Wilkus",
+      "totalViews": 191640,
+      "videoCount": 46,
+      "avgViewsPerVideo": 4166
+    },
+    {
+      "channel": "Exodus Files",
+      "totalViews": 189871,
+      "videoCount": 59,
+      "avgViewsPerVideo": 3218
+    },
+    {
+      "channel": "Michigan Debate",
+      "totalViews": 181724,
+      "videoCount": 64,
+      "avgViewsPerVideo": 2839
+    },
+    {
+      "channel": "National Symposium ",
+      "totalViews": 178331,
+      "videoCount": 49,
+      "avgViewsPerVideo": 3639
+    },
+    {
+      "channel": "Joe Leeson-Schatz",
+      "totalViews": 152436,
+      "videoCount": 393,
+      "avgViewsPerVideo": 388
+    },
+    {
+      "channel": "CEDADebate",
+      "totalViews": 142269,
+      "videoCount": 102,
+      "avgViewsPerVideo": 1395
+    },
+    {
+      "channel": "Bill Batterman",
+      "totalViews": 135202,
+      "videoCount": 58,
+      "avgViewsPerVideo": 2331
+    },
+    {
+      "channel": "Champion Briefs",
+      "totalViews": 111811,
+      "videoCount": 15,
+      "avgViewsPerVideo": 7454
+    },
+    {
+      "channel": "Barkley Forum Videos",
+      "totalViews": 106903,
+      "videoCount": 54,
+      "avgViewsPerVideo": 1980
+    },
+    {
+      "channel": "PolicyDebateCentral",
+      "totalViews": 96906,
+      "videoCount": 37,
+      "avgViewsPerVideo": 2619
+    },
+    {
+      "channel": "Kentucky Debate",
+      "totalViews": 68182,
+      "videoCount": 40,
+      "avgViewsPerVideo": 1705
+    },
+    {
+      "channel": "2015 NDT",
+      "totalViews": 67025,
+      "videoCount": 28,
+      "avgViewsPerVideo": 2394
+    },
+    {
+      "channel": "North Broward MR",
+      "totalViews": 62880,
+      "videoCount": 4,
+      "avgViewsPerVideo": 15720
+    },
+    {
+      "channel": "MSU Debate",
+      "totalViews": 61535,
+      "videoCount": 119,
+      "avgViewsPerVideo": 517
+    },
+    {
+      "channel": "NDT Streams",
+      "totalViews": 58986,
+      "videoCount": 18,
+      "avgViewsPerVideo": 3277
+    },
+    {
+      "channel": "Policy Debate Central",
+      "totalViews": 55417,
+      "videoCount": 37,
+      "avgViewsPerVideo": 1498
+    },
+    {
+      "channel": "Lynbrook Debate",
+      "totalViews": 40440,
+      "videoCount": 29,
+      "avgViewsPerVideo": 1394
+    },
+    {
+      "channel": "Matthew Granstrom",
+      "totalViews": 37481,
+      "videoCount": 4,
+      "avgViewsPerVideo": 9370
+    },
+    {
+      "channel": "Vintage Debate Vids",
+      "totalViews": 35746,
+      "videoCount": 10,
+      "avgViewsPerVideo": 3575
+    },
+    {
+      "channel": "Aaron Trujillo",
+      "totalViews": 31380,
+      "videoCount": 58,
+      "avgViewsPerVideo": 541
+    },
+    {
+      "channel": "Eric Morris",
+      "totalViews": 23457,
+      "videoCount": 1,
+      "avgViewsPerVideo": 23457
+    },
+    {
+      "channel": "Texas Debate",
+      "totalViews": 21108,
+      "videoCount": 20,
+      "avgViewsPerVideo": 1055
+    },
+    {
+      "channel": "greg zoda",
+      "totalViews": 20281,
+      "videoCount": 1,
+      "avgViewsPerVideo": 20281
+    },
+    {
+      "channel": "Arvind Shankar",
+      "totalViews": 16759,
+      "videoCount": 7,
+      "avgViewsPerVideo": 2394
+    },
+    {
+      "channel": "Spencer Anderson McElligott",
+      "totalViews": 15583,
+      "videoCount": 15,
+      "avgViewsPerVideo": 1039
+    },
+    {
+      "channel": "Wake Debate",
+      "totalViews": 13330,
+      "videoCount": 11,
+      "avgViewsPerVideo": 1212
+    },
+    {
+      "channel": "The City Club of Cleveland",
+      "totalViews": 13000,
+      "videoCount": 1,
+      "avgViewsPerVideo": 13000
+    },
+    {
+      "channel": "SU Debate Rounds",
+      "totalViews": 8306,
+      "videoCount": 18,
+      "avgViewsPerVideo": 461
+    },
+    {
+      "channel": "Syd Hegseth-Huntimer",
+      "totalViews": 6214,
+      "videoCount": 1,
+      "avgViewsPerVideo": 6214
+    },
+    {
+      "channel": "NDT Debate Stream",
+      "totalViews": 5422,
+      "videoCount": 2,
+      "avgViewsPerVideo": 2711
+    },
+    {
+      "channel": "Resolved Debate",
+      "totalViews": 5421,
+      "videoCount": 4,
+      "avgViewsPerVideo": 1355
+    },
+    {
+      "channel": "Ryan James",
+      "totalViews": 5376,
+      "videoCount": 1,
+      "avgViewsPerVideo": 5376
+    },
+    {
+      "channel": "William Soper",
+      "totalViews": 4366,
+      "videoCount": 2,
+      "avgViewsPerVideo": 2183
+    },
+    {
+      "channel": "Professor Graham",
+      "totalViews": 4102,
+      "videoCount": 34,
+      "avgViewsPerVideo": 121
+    },
+    {
+      "channel": "Indiana Debate",
+      "totalViews": 3690,
+      "videoCount": 2,
+      "avgViewsPerVideo": 1845
+    },
+    {
+      "channel": "Lincoln Garrett",
+      "totalViews": 3606,
+      "videoCount": 412,
+      "avgViewsPerVideo": 9
+    },
+    {
+      "channel": "National Symposium for Debate ",
+      "totalViews": 3543,
+      "videoCount": 5,
+      "avgViewsPerVideo": 709
+    },
+    {
+      "channel": "Debate Stream (Debate Stream)",
+      "totalViews": 1742,
+      "videoCount": 10,
+      "avgViewsPerVideo": 174
+    },
+    {
+      "channel": "Debate Archive",
+      "totalViews": 595,
+      "videoCount": 12,
+      "avgViewsPerVideo": 50
+    },
+    {
+      "channel": "UNTDebate",
+      "totalViews": 55,
+      "videoCount": 1,
+      "avgViewsPerVideo": 55
+    }
+  ],
+  "byDebateStyle": [
+    {
+      "debateStyle": "4",
+      "totalViews": 1838329,
+      "videoCount": 1431,
+      "byChannel": {
+        "LASA Debate": {
+          "views": 171488,
+          "count": 51
+        },
+        "Jacob Wilkus": {
+          "views": 189274,
+          "count": 44
+        },
+        "Debate Stream (Debate Stream)": {
+          "views": 1441,
+          "count": 7
+        },
+        "Debate Archive": {
+          "views": 469,
+          "count": 9
+        },
+        "Policy Debate Central": {
+          "views": 27061,
+          "count": 15
+        },
+        "Lincoln Garrett": {
+          "views": 3606,
+          "count": 412
+        },
+        "Spencer Anderson McElligott": {
+          "views": 15583,
+          "count": 15
+        },
+        "DDI Debate": {
+          "views": 41370,
+          "count": 30
+        },
+        "Arvind Shankar": {
+          "views": 16759,
+          "count": 7
+        },
+        "Debate Stream": {
+          "views": 516010,
+          "count": 154
+        },
+        "Texas Debate": {
+          "views": 21108,
+          "count": 20
+        },
+        "PolicyDebateCentral": {
+          "views": 2925,
+          "count": 1
+        },
+        "CEDADebate": {
+          "views": 138382,
+          "count": 90
+        },
+        "Michigan Debate": {
+          "views": 4126,
+          "count": 1
+        },
+        "Joe Leeson-Schatz": {
+          "views": 149891,
+          "count": 380
+        },
+        "Exodus Files": {
+          "views": 188961,
+          "count": 57
+        },
+        "Wake Debate": {
+          "views": 13082,
+          "count": 8
+        },
+        "North Broward MR": {
+          "views": 62880,
+          "count": 4
+        },
+        "DebateDrills": {
+          "views": 1998,
+          "count": 1
+        },
+        "Kentucky Debate": {
+          "views": 297,
+          "count": 2
+        },
+        "NDT Streams": {
+          "views": 58986,
+          "count": 18
+        },
+        "2015 NDT": {
+          "views": 67025,
+          "count": 28
+        },
+        "Aaron Trujillo": {
+          "views": 31380,
+          "count": 58
+        },
+        "Vintage Debate Vids": {
+          "views": 13316,
+          "count": 6
+        },
+        "Indiana Debate": {
+          "views": 3690,
+          "count": 2
+        },
+        "NDT Debate Stream": {
+          "views": 5422,
+          "count": 2
+        },
+        "Matthew Granstrom": {
+          "views": 37481,
+          "count": 4
+        },
+        "William Soper": {
+          "views": 4366,
+          "count": 2
+        },
+        "Syd Hegseth-Huntimer": {
+          "views": 6214,
+          "count": 1
+        },
+        "greg zoda": {
+          "views": 20281,
+          "count": 1
+        },
+        "Eric Morris": {
+          "views": 23457,
+          "count": 1
+        }
+      },
+      "avgViewsPerVideo": 1285
+    },
+    {
+      "debateStyle": "2",
+      "totalViews": 1671016,
+      "videoCount": 352,
+      "byChannel": {
+        "PF Videos": {
+          "views": 1431653,
+          "count": 279
+        },
+        "DebateDrills": {
+          "views": 83725,
+          "count": 44
+        },
+        "National Symposium ": {
+          "views": 155638,
+          "count": 29
+        }
+      },
+      "avgViewsPerVideo": 4747
+    },
+    {
+      "debateStyle": "1",
+      "totalViews": 709570,
+      "videoCount": 290,
+      "byChannel": {
+        "Lynbrook Debate": {
+          "views": 4099,
+          "count": 4
+        },
+        "PF Videos": {
+          "views": 3015,
+          "count": 3
+        },
+        "Debate Stream (Debate Stream)": {
+          "views": 301,
+          "count": 3
+        },
+        "SU Debate Rounds": {
+          "views": 8306,
+          "count": 18
+        },
+        "Policy Debate Central": {
+          "views": 19761,
+          "count": 11
+        },
+        "LASA Debate": {
+          "views": 248070,
+          "count": 19
+        },
+        "Debate Archive": {
+          "views": 126,
+          "count": 3
+        },
+        "Resolved Debate": {
+          "views": 5421,
+          "count": 4
+        },
+        "PolicyDebateCentral": {
+          "views": 92292,
+          "count": 34
+        },
+        "Barkley Forum Videos": {
+          "views": 100470,
+          "count": 31
+        },
+        "Jacob Wilkus": {
+          "views": 2366,
+          "count": 2
+        },
+        "Debate Stream": {
+          "views": 139538,
+          "count": 25
+        },
+        "Ryan James": {
+          "views": 5376,
+          "count": 1
+        },
+        "Joe Leeson-Schatz": {
+          "views": 1789,
+          "count": 9
+        },
+        "DDI Debate": {
+          "views": 36020,
+          "count": 28
+        },
+        "Michigan Debate": {
+          "views": 19305,
+          "count": 27
+        },
+        "Professor Graham": {
+          "views": 922,
+          "count": 1
+        },
+        "Wake Debate": {
+          "views": 248,
+          "count": 3
+        },
+        "CEDADebate": {
+          "views": 1087,
+          "count": 5
+        },
+        "MSU Debate": {
+          "views": 8996,
+          "count": 49
+        },
+        "Kentucky Debate": {
+          "views": 9038,
+          "count": 5
+        },
+        "Bill Batterman": {
+          "views": 3024,
+          "count": 5
+        }
+      },
+      "avgViewsPerVideo": 2447
+    },
+    {
+      "debateStyle": "Documentaries & Culture",
+      "totalViews": 371363,
+      "videoCount": 20,
+      "byChannel": {
+        "The City Club of Cleveland": {
+          "views": 13000,
+          "count": 1
+        },
+        "PF Videos": {
+          "views": 61970,
+          "count": 3
+        },
+        "Policy Debate Central": {
+          "views": 547,
+          "count": 3
+        },
+        "Vintage Debate Vids": {
+          "views": 22430,
+          "count": 4
+        },
+        "Michigan Debate": {
+          "views": 1341,
+          "count": 1
+        },
+        "Bill Batterman": {
+          "views": 3716,
+          "count": 3
+        },
+        "Wired": {
+          "views": 256696,
+          "count": 1
+        },
+        "Debate Stream": {
+          "views": 11663,
+          "count": 4
+        }
+      },
+      "avgViewsPerVideo": 18568
+    },
+    {
+      "debateStyle": "Demo Debates",
+      "totalViews": 214225,
+      "videoCount": 66,
+      "byChannel": {
+        "UNTDebate": {
+          "views": 55,
+          "count": 1
+        },
+        "DebateDrills": {
+          "views": 1524,
+          "count": 2
+        },
+        "Debate Stream": {
+          "views": 352,
+          "count": 1
+        },
+        "Champion Briefs": {
+          "views": 100300,
+          "count": 3
+        },
+        "Policy Debate Central": {
+          "views": 4767,
+          "count": 2
+        },
+        "DDI Debate": {
+          "views": 13384,
+          "count": 6
+        },
+        "Michigan Debate": {
+          "views": 23643,
+          "count": 8
+        },
+        "National Symposium ": {
+          "views": 8472,
+          "count": 3
+        },
+        "PF Videos": {
+          "views": 26123,
+          "count": 2
+        },
+        "Exodus Files": {
+          "views": 910,
+          "count": 2
+        },
+        "Barkley Forum Videos": {
+          "views": 4098,
+          "count": 14
+        },
+        "MSU Debate": {
+          "views": 17292,
+          "count": 17
+        },
+        "Kentucky Debate": {
+          "views": 3066,
+          "count": 2
+        },
+        "Bill Batterman": {
+          "views": 10239,
+          "count": 3
+        }
+      },
+      "avgViewsPerVideo": 3246
+    },
+    {
+      "debateStyle": "3",
+      "totalViews": 199806,
+      "videoCount": 91,
+      "byChannel": {
+        "Lynbrook Debate": {
+          "views": 36341,
+          "count": 25
+        },
+        "LASA Debate": {
+          "views": 5551,
+          "count": 3
+        },
+        "National Symposium for Debate ": {
+          "views": 3543,
+          "count": 5
+        },
+        "DebateDrills": {
+          "views": 140981,
+          "count": 43
+        },
+        "National Symposium ": {
+          "views": 13390,
+          "count": 15
+        }
+      },
+      "avgViewsPerVideo": 2196
+    },
+    {
+      "debateStyle": "Philosophy & IR Theory",
+      "totalViews": 131478,
+      "videoCount": 26,
+      "byChannel": {
+        "DDI Debate": {
+          "views": 11215,
+          "count": 16
+        },
+        "Michigan Debate": {
+          "views": 117804,
+          "count": 7
+        },
+        "CEDADebate": {
+          "views": 667,
+          "count": 1
+        },
+        "Bill Batterman": {
+          "views": 1792,
+          "count": 2
+        }
+      },
+      "avgViewsPerVideo": 5057
+    },
+    {
+      "debateStyle": "Affirmative Strategy",
+      "totalViews": 62723,
+      "videoCount": 63,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 33150,
+          "count": 35
+        },
+        "Kentucky Debate": {
+          "views": 563,
+          "count": 5
+        },
+        "DDI Debate": {
+          "views": 14887,
+          "count": 14
+        },
+        "PolicyDebateCentral": {
+          "views": 742,
+          "count": 1
+        },
+        "Bill Batterman": {
+          "views": 13160,
+          "count": 7
+        },
+        "MSU Debate": {
+          "views": 221,
+          "count": 1
+        }
+      },
+      "avgViewsPerVideo": 996
+    },
+    {
+      "debateStyle": "Topic Lectures",
+      "totalViews": 61266,
+      "videoCount": 103,
+      "byChannel": {
+        "Champion Briefs": {
+          "views": 1265,
+          "count": 1
+        },
+        "DebateDrills": {
+          "views": 27546,
+          "count": 66
+        },
+        "National Symposium ": {
+          "views": 142,
+          "count": 1
+        },
+        "Michigan Debate": {
+          "views": 7007,
+          "count": 8
+        },
+        "DDI Debate": {
+          "views": 1672,
+          "count": 3
+        },
+        "Policy Debate Central": {
+          "views": 1080,
+          "count": 2
+        },
+        "MSU Debate": {
+          "views": 14461,
+          "count": 16
+        },
+        "Professor Graham": {
+          "views": 1369,
+          "count": 1
+        },
+        "Bill Batterman": {
+          "views": 6724,
+          "count": 5
+        }
+      },
+      "avgViewsPerVideo": 595
+    },
+    {
+      "debateStyle": "Kritik / Critical Theory",
+      "totalViews": 60145,
+      "videoCount": 50,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 4882,
+          "count": 5
+        },
+        "DDI Debate": {
+          "views": 48162,
+          "count": 38
+        },
+        "Barkley Forum Videos": {
+          "views": 321,
+          "count": 1
+        },
+        "MSU Debate": {
+          "views": 1745,
+          "count": 3
+        },
+        "Bill Batterman": {
+          "views": 5035,
+          "count": 3
+        }
+      },
+      "avgViewsPerVideo": 1203
+    },
+    {
+      "debateStyle": "Research & Flowing",
+      "totalViews": 53280,
+      "videoCount": 37,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 18166,
+          "count": 15
+        },
+        "Policy Debate Central": {
+          "views": 1680,
+          "count": 3
+        },
+        "DDI Debate": {
+          "views": 6344,
+          "count": 3
+        },
+        "Professor Graham": {
+          "views": 52,
+          "count": 1
+        },
+        "CEDADebate": {
+          "views": 366,
+          "count": 1
+        },
+        "MSU Debate": {
+          "views": 12362,
+          "count": 10
+        },
+        "Kentucky Debate": {
+          "views": 2460,
+          "count": 1
+        },
+        "Michigan Debate": {
+          "views": 605,
+          "count": 1
+        },
+        "Debate Stream": {
+          "views": 3496,
+          "count": 1
+        },
+        "Bill Batterman": {
+          "views": 7749,
+          "count": 1
+        }
+      },
+      "avgViewsPerVideo": 1440
+    },
+    {
+      "debateStyle": "Counterplans & Theory",
+      "totalViews": 50421,
+      "videoCount": 48,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 23984,
+          "count": 25
+        },
+        "DDI Debate": {
+          "views": 18064,
+          "count": 14
+        },
+        "Michigan Debate": {
+          "views": 1209,
+          "count": 4
+        },
+        "CEDADebate": {
+          "views": 439,
+          "count": 1
+        },
+        "Bill Batterman": {
+          "views": 6529,
+          "count": 2
+        },
+        "Barkley Forum Videos": {
+          "views": 196,
+          "count": 2
+        }
+      },
+      "avgViewsPerVideo": 1050
+    },
+    {
+      "debateStyle": "Novice & Introductory",
+      "totalViews": 48145,
+      "videoCount": 61,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 19765,
+          "count": 18
+        },
+        "Professor Graham": {
+          "views": 1259,
+          "count": 28
+        },
+        "CEDADebate": {
+          "views": 132,
+          "count": 1
+        },
+        "Kentucky Debate": {
+          "views": 26409,
+          "count": 11
+        },
+        "Joe Leeson-Schatz": {
+          "views": 580,
+          "count": 3
+        }
+      },
+      "avgViewsPerVideo": 789
+    },
+    {
+      "debateStyle": "Speaking & Delivery",
+      "totalViews": 45652,
+      "videoCount": 20,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 591,
+          "count": 1
+        },
+        "DDI Debate": {
+          "views": 5780,
+          "count": 6
+        },
+        "Professor Graham": {
+          "views": 51,
+          "count": 1
+        },
+        "CEDADebate": {
+          "views": 463,
+          "count": 1
+        },
+        "Bill Batterman": {
+          "views": 38602,
+          "count": 10
+        },
+        "Barkley Forum Videos": {
+          "views": 165,
+          "count": 1
+        }
+      },
+      "avgViewsPerVideo": 2283
+    },
+    {
+      "debateStyle": "Negative Strategy",
+      "totalViews": 40519,
+      "videoCount": 35,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 21223,
+          "count": 18
+        },
+        "DDI Debate": {
+          "views": 18349,
+          "count": 16
+        },
+        "PolicyDebateCentral": {
+          "views": 947,
+          "count": 1
+        }
+      },
+      "avgViewsPerVideo": 1158
+    },
+    {
+      "debateStyle": "Judge & Tournament Skills",
+      "totalViews": 37646,
+      "videoCount": 30,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 8113,
+          "count": 9
+        },
+        "DDI Debate": {
+          "views": 6166,
+          "count": 5
+        },
+        "Professor Graham": {
+          "views": 47,
+          "count": 1
+        },
+        "Barkley Forum Videos": {
+          "views": 493,
+          "count": 2
+        },
+        "MSU Debate": {
+          "views": 1233,
+          "count": 4
+        },
+        "Kentucky Debate": {
+          "views": 79,
+          "count": 1
+        },
+        "Michigan Debate": {
+          "views": 1239,
+          "count": 1
+        },
+        "Bill Batterman": {
+          "views": 20276,
+          "count": 7
+        }
+      },
+      "avgViewsPerVideo": 1255
+    },
+    {
+      "debateStyle": "Public Forum",
+      "totalViews": 34504,
+      "videoCount": 23,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 2526,
+          "count": 8
+        },
+        "PF Videos": {
+          "views": 5019,
+          "count": 1
+        },
+        "National Symposium ": {
+          "views": 689,
+          "count": 1
+        },
+        "Kentucky Debate": {
+          "views": 26270,
+          "count": 13
+        }
+      },
+      "avgViewsPerVideo": 1500
+    },
+    {
+      "debateStyle": "Topicality & Framework",
+      "totalViews": 21297,
+      "videoCount": 19,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 678,
+          "count": 2
+        },
+        "DDI Debate": {
+          "views": 18117,
+          "count": 15
+        },
+        "Michigan Debate": {
+          "views": 2502,
+          "count": 2
+        }
+      },
+      "avgViewsPerVideo": 1121
+    },
+    {
+      "debateStyle": "Camp & Coaching Advice",
+      "totalViews": 20437,
+      "videoCount": 26,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 1294,
+          "count": 3
+        },
+        "Policy Debate Central": {
+          "views": 521,
+          "count": 1
+        },
+        "DDI Debate": {
+          "views": 1346,
+          "count": 2
+        },
+        "CEDADebate": {
+          "views": 457,
+          "count": 1
+        },
+        "MSU Debate": {
+          "views": 1654,
+          "count": 7
+        },
+        "Barkley Forum Videos": {
+          "views": 1160,
+          "count": 3
+        },
+        "Michigan Debate": {
+          "views": 1522,
+          "count": 2
+        },
+        "Bill Batterman": {
+          "views": 12483,
+          "count": 7
+        }
+      },
+      "avgViewsPerVideo": 786
+    },
+    {
+      "debateStyle": "Impact Calculus & Evidence",
+      "totalViews": 16493,
+      "videoCount": 17,
+      "byChannel": {
+        "DebateDrills": {
+          "views": 2855,
+          "count": 6
+        },
+        "DDI Debate": {
+          "views": 6719,
+          "count": 4
+        },
+        "MSU Debate": {
+          "views": 870,
+          "count": 3
+        },
+        "Bill Batterman": {
+          "views": 5873,
+          "count": 3
+        },
+        "Joe Leeson-Schatz": {
+          "views": 176,
+          "count": 1
+        }
+      },
+      "avgViewsPerVideo": 970
+    },
+    {
+      "debateStyle": "Disadvantages",
+      "totalViews": 10688,
+      "videoCount": 21,
+      "byChannel": {
+        "Michigan Debate": {
+          "views": 1421,
+          "count": 2
+        },
+        "DDI Debate": {
+          "views": 5888,
+          "count": 8
+        },
+        "Professor Graham": {
+          "views": 402,
+          "count": 1
+        },
+        "CEDADebate": {
+          "views": 276,
+          "count": 1
+        },
+        "MSU Debate": {
+          "views": 2701,
+          "count": 9
+        }
+      },
+      "avgViewsPerVideo": 509
+    },
+    {
+      "debateStyle": "Topic Analysis",
+      "totalViews": 10246,
+      "videoCount": 11,
+      "byChannel": {
+        "Champion Briefs": {
+          "views": 10246,
+          "count": 11
+        }
+      },
+      "avgViewsPerVideo": 931
+    },
+    {
+      "debateStyle": "Awards",
+      "totalViews": 2261,
+      "videoCount": 2,
+      "byChannel": {
+        "LASA Debate": {
+          "views": 1398,
+          "count": 1
+        },
+        "Debate Stream": {
+          "views": 863,
+          "count": 1
+        }
+      },
+      "avgViewsPerVideo": 1131
+    },
+    {
+      "debateStyle": "Round Discussions",
+      "totalViews": 1416,
+      "videoCount": 1,
+      "byChannel": {
+        "Debate Stream": {
+          "views": 1416,
+          "count": 1
+        }
+      },
+      "avgViewsPerVideo": 1416
+    }
+  ],
+  "byYear": [
+    {
+      "year": "1995",
+      "totalViews": 139,
+      "videoCount": 8,
+      "avgViewsPerVideo": 17
+    },
+    {
+      "year": "1996",
+      "totalViews": 36,
+      "videoCount": 3,
+      "avgViewsPerVideo": 12
+    },
+    {
+      "year": "1997",
+      "totalViews": 158,
+      "videoCount": 11,
+      "avgViewsPerVideo": 14
+    },
+    {
+      "year": "1999",
+      "totalViews": 63,
+      "videoCount": 3,
+      "avgViewsPerVideo": 21
+    },
+    {
+      "year": "2000",
+      "totalViews": 40,
+      "videoCount": 4,
+      "avgViewsPerVideo": 10
+    },
+    {
+      "year": "2002",
+      "totalViews": 1679,
+      "videoCount": 6,
+      "avgViewsPerVideo": 280
+    },
+    {
+      "year": "2003",
+      "totalViews": 141,
+      "videoCount": 5,
+      "avgViewsPerVideo": 28
+    },
+    {
+      "year": "2004",
+      "totalViews": 6377,
+      "videoCount": 5,
+      "avgViewsPerVideo": 1275
+    },
+    {
+      "year": "2005",
+      "totalViews": 9027,
+      "videoCount": 2,
+      "avgViewsPerVideo": 4514
+    },
+    {
+      "year": "2006",
+      "totalViews": 48,
+      "videoCount": 3,
+      "avgViewsPerVideo": 16
+    },
+    {
+      "year": "2007",
+      "totalViews": 9850,
+      "videoCount": 3,
+      "avgViewsPerVideo": 3283
+    },
+    {
+      "year": "2008",
+      "totalViews": 3993,
+      "videoCount": 8,
+      "avgViewsPerVideo": 499
+    },
+    {
+      "year": "2009",
+      "totalViews": 23768,
+      "videoCount": 14,
+      "avgViewsPerVideo": 1698
+    },
+    {
+      "year": "2010",
+      "totalViews": 1821,
+      "videoCount": 46,
+      "avgViewsPerVideo": 40
+    },
+    {
+      "year": "2011",
+      "totalViews": 232,
+      "videoCount": 20,
+      "avgViewsPerVideo": 12
+    },
+    {
+      "year": "2012",
+      "totalViews": 434,
+      "videoCount": 6,
+      "avgViewsPerVideo": 72
+    },
+    {
+      "year": "2013",
+      "totalViews": 305065,
+      "videoCount": 217,
+      "avgViewsPerVideo": 1406
+    },
+    {
+      "year": "2014",
+      "totalViews": 253353,
+      "videoCount": 204,
+      "avgViewsPerVideo": 1242
+    },
+    {
+      "year": "2015",
+      "totalViews": 255714,
+      "videoCount": 295,
+      "avgViewsPerVideo": 867
+    },
+    {
+      "year": "2016",
+      "totalViews": 392034,
+      "videoCount": 182,
+      "avgViewsPerVideo": 2154
+    },
+    {
+      "year": "2017",
+      "totalViews": 494600,
+      "videoCount": 215,
+      "avgViewsPerVideo": 2300
+    },
+    {
+      "year": "2018",
+      "totalViews": 773415,
+      "videoCount": 203,
+      "avgViewsPerVideo": 3810
+    },
+    {
+      "year": "2019",
+      "totalViews": 617710,
+      "videoCount": 168,
+      "avgViewsPerVideo": 3677
+    },
+    {
+      "year": "2020",
+      "totalViews": 724939,
+      "videoCount": 250,
+      "avgViewsPerVideo": 2900
+    },
+    {
+      "year": "2021",
+      "totalViews": 188569,
+      "videoCount": 158,
+      "avgViewsPerVideo": 1193
+    },
+    {
+      "year": "2022",
+      "totalViews": 268375,
+      "videoCount": 121,
+      "avgViewsPerVideo": 2218
+    },
+    {
+      "year": "2023",
+      "totalViews": 455927,
+      "videoCount": 167,
+      "avgViewsPerVideo": 2730
+    },
+    {
+      "year": "2024",
+      "totalViews": 361186,
+      "videoCount": 233,
+      "avgViewsPerVideo": 1550
+    },
+    {
+      "year": "2025",
+      "totalViews": 210589,
+      "videoCount": 182,
+      "avgViewsPerVideo": 1157
+    },
+    {
+      "year": "2026",
+      "totalViews": 96948,
+      "videoCount": 100,
+      "avgViewsPerVideo": 969
+    },
+    {
+      "year": "May 14, 2013",
+      "totalViews": 256696,
+      "videoCount": 1,
+      "avgViewsPerVideo": 256696
+    }
+  ],
+  "byElimRound": [
+    {
+      "round": "Finals",
+      "totalViews": 1043546,
+      "videoCount": 182,
+      "avgViewsPerVideo": 5734
+    },
+    {
+      "round": "Semifinals",
+      "totalViews": 536559,
+      "videoCount": 122,
+      "avgViewsPerVideo": 4398
+    },
+    {
+      "round": "Quarterfinals",
+      "totalViews": 456915,
+      "videoCount": 131,
+      "avgViewsPerVideo": 3488
+    },
+    {
+      "round": "Octafinals",
+      "totalViews": 529740,
+      "videoCount": 155,
+      "avgViewsPerVideo": 3418
+    },
+    {
+      "round": "Double Octafinals",
+      "totalViews": 125224,
+      "videoCount": 75,
+      "avgViewsPerVideo": 1670
+    }
+  ],
+  "rawData": {
+    "statsByChannel": {
+      "Lynbrook Debate": {
+        "totalViews": 40440,
+        "videoCount": 29
+      },
+      "PF Videos": {
+        "totalViews": 1527780,
+        "videoCount": 288
+      },
+      "Debate Stream (Debate Stream)": {
+        "totalViews": 1742,
+        "videoCount": 10
+      },
+      "SU Debate Rounds": {
+        "totalViews": 8306,
+        "videoCount": 18
+      },
+      "Policy Debate Central": {
+        "totalViews": 55417,
+        "videoCount": 37
+      },
+      "LASA Debate": {
+        "totalViews": 426507,
+        "videoCount": 74
+      },
+      "Debate Archive": {
+        "totalViews": 595,
+        "videoCount": 12
+      },
+      "Resolved Debate": {
+        "totalViews": 5421,
+        "videoCount": 4
+      },
+      "PolicyDebateCentral": {
+        "totalViews": 96906,
+        "videoCount": 37
+      },
+      "Barkley Forum Videos": {
+        "totalViews": 106903,
+        "videoCount": 54
+      },
+      "Jacob Wilkus": {
+        "totalViews": 191640,
+        "videoCount": 46
+      },
+      "Debate Stream": {
+        "totalViews": 673338,
+        "videoCount": 187
+      },
+      "Ryan James": {
+        "totalViews": 5376,
+        "videoCount": 1
+      },
+      "DebateDrills": {
+        "totalViews": 393001,
+        "videoCount": 301
+      },
+      "National Symposium ": {
+        "totalViews": 178331,
+        "videoCount": 49
+      },
+      "National Symposium for Debate ": {
+        "totalViews": 3543,
+        "videoCount": 5
+      },
+      "Lincoln Garrett": {
+        "totalViews": 3606,
+        "videoCount": 412
+      },
+      "Spencer Anderson McElligott": {
+        "totalViews": 15583,
+        "videoCount": 15
+      },
+      "DDI Debate": {
+        "totalViews": 253483,
+        "videoCount": 208
+      },
+      "Arvind Shankar": {
+        "totalViews": 16759,
+        "videoCount": 7
+      },
+      "Texas Debate": {
+        "totalViews": 21108,
+        "videoCount": 20
+      },
+      "CEDADebate": {
+        "totalViews": 142269,
+        "videoCount": 102
+      },
+      "Michigan Debate": {
+        "totalViews": 181724,
+        "videoCount": 64
+      },
+      "Joe Leeson-Schatz": {
+        "totalViews": 152436,
+        "videoCount": 393
+      },
+      "Exodus Files": {
+        "totalViews": 189871,
+        "videoCount": 59
+      },
+      "Wake Debate": {
+        "totalViews": 13330,
+        "videoCount": 11
+      },
+      "North Broward MR": {
+        "totalViews": 62880,
+        "videoCount": 4
+      },
+      "Kentucky Debate": {
+        "totalViews": 68182,
+        "videoCount": 40
+      },
+      "NDT Streams": {
+        "totalViews": 58986,
+        "videoCount": 18
+      },
+      "2015 NDT": {
+        "totalViews": 67025,
+        "videoCount": 28
+      },
+      "Aaron Trujillo": {
+        "totalViews": 31380,
+        "videoCount": 58
+      },
+      "Vintage Debate Vids": {
+        "totalViews": 35746,
+        "videoCount": 10
+      },
+      "Indiana Debate": {
+        "totalViews": 3690,
+        "videoCount": 2
+      },
+      "NDT Debate Stream": {
+        "totalViews": 5422,
+        "videoCount": 2
+      },
+      "Matthew Granstrom": {
+        "totalViews": 37481,
+        "videoCount": 4
+      },
+      "William Soper": {
+        "totalViews": 4366,
+        "videoCount": 2
+      },
+      "Syd Hegseth-Huntimer": {
+        "totalViews": 6214,
+        "videoCount": 1
+      },
+      "greg zoda": {
+        "totalViews": 20281,
+        "videoCount": 1
+      },
+      "Eric Morris": {
+        "totalViews": 23457,
+        "videoCount": 1
+      },
+      "UNTDebate": {
+        "totalViews": 55,
+        "videoCount": 1
+      },
+      "Champion Briefs": {
+        "totalViews": 111811,
+        "videoCount": 15
+      },
+      "The City Club of Cleveland": {
+        "totalViews": 13000,
+        "videoCount": 1
+      },
+      "MSU Debate": {
+        "totalViews": 61535,
+        "videoCount": 119
+      },
+      "Professor Graham": {
+        "totalViews": 4102,
+        "videoCount": 34
+      },
+      "Bill Batterman": {
+        "totalViews": 135202,
+        "videoCount": 58
+      },
+      "Wired": {
+        "totalViews": 256696,
+        "videoCount": 1
+      }
+    },
+    "statsByDebateStyle": {
+      "1": {
+        "totalViews": 709570,
+        "videoCount": 290,
+        "byChannel": {
+          "Lynbrook Debate": {
+            "views": 4099,
+            "count": 4
+          },
+          "PF Videos": {
+            "views": 3015,
+            "count": 3
+          },
+          "Debate Stream (Debate Stream)": {
+            "views": 301,
+            "count": 3
+          },
+          "SU Debate Rounds": {
+            "views": 8306,
+            "count": 18
+          },
+          "Policy Debate Central": {
+            "views": 19761,
+            "count": 11
+          },
+          "LASA Debate": {
+            "views": 248070,
+            "count": 19
+          },
+          "Debate Archive": {
+            "views": 126,
+            "count": 3
+          },
+          "Resolved Debate": {
+            "views": 5421,
+            "count": 4
+          },
+          "PolicyDebateCentral": {
+            "views": 92292,
+            "count": 34
+          },
+          "Barkley Forum Videos": {
+            "views": 100470,
+            "count": 31
+          },
+          "Jacob Wilkus": {
+            "views": 2366,
+            "count": 2
+          },
+          "Debate Stream": {
+            "views": 139538,
+            "count": 25
+          },
+          "Ryan James": {
+            "views": 5376,
+            "count": 1
+          },
+          "Joe Leeson-Schatz": {
+            "views": 1789,
+            "count": 9
+          },
+          "DDI Debate": {
+            "views": 36020,
+            "count": 28
+          },
+          "Michigan Debate": {
+            "views": 19305,
+            "count": 27
+          },
+          "Professor Graham": {
+            "views": 922,
+            "count": 1
+          },
+          "Wake Debate": {
+            "views": 248,
+            "count": 3
+          },
+          "CEDADebate": {
+            "views": 1087,
+            "count": 5
+          },
+          "MSU Debate": {
+            "views": 8996,
+            "count": 49
+          },
+          "Kentucky Debate": {
+            "views": 9038,
+            "count": 5
+          },
+          "Bill Batterman": {
+            "views": 3024,
+            "count": 5
+          }
+        }
+      },
+      "2": {
+        "totalViews": 1671016,
+        "videoCount": 352,
+        "byChannel": {
+          "PF Videos": {
+            "views": 1431653,
+            "count": 279
+          },
+          "DebateDrills": {
+            "views": 83725,
+            "count": 44
+          },
+          "National Symposium ": {
+            "views": 155638,
+            "count": 29
+          }
+        }
+      },
+      "3": {
+        "totalViews": 199806,
+        "videoCount": 91,
+        "byChannel": {
+          "Lynbrook Debate": {
+            "views": 36341,
+            "count": 25
+          },
+          "LASA Debate": {
+            "views": 5551,
+            "count": 3
+          },
+          "National Symposium for Debate ": {
+            "views": 3543,
+            "count": 5
+          },
+          "DebateDrills": {
+            "views": 140981,
+            "count": 43
+          },
+          "National Symposium ": {
+            "views": 13390,
+            "count": 15
+          }
+        }
+      },
+      "4": {
+        "totalViews": 1838329,
+        "videoCount": 1431,
+        "byChannel": {
+          "LASA Debate": {
+            "views": 171488,
+            "count": 51
+          },
+          "Jacob Wilkus": {
+            "views": 189274,
+            "count": 44
+          },
+          "Debate Stream (Debate Stream)": {
+            "views": 1441,
+            "count": 7
+          },
+          "Debate Archive": {
+            "views": 469,
+            "count": 9
+          },
+          "Policy Debate Central": {
+            "views": 27061,
+            "count": 15
+          },
+          "Lincoln Garrett": {
+            "views": 3606,
+            "count": 412
+          },
+          "Spencer Anderson McElligott": {
+            "views": 15583,
+            "count": 15
+          },
+          "DDI Debate": {
+            "views": 41370,
+            "count": 30
+          },
+          "Arvind Shankar": {
+            "views": 16759,
+            "count": 7
+          },
+          "Debate Stream": {
+            "views": 516010,
+            "count": 154
+          },
+          "Texas Debate": {
+            "views": 21108,
+            "count": 20
+          },
+          "PolicyDebateCentral": {
+            "views": 2925,
+            "count": 1
+          },
+          "CEDADebate": {
+            "views": 138382,
+            "count": 90
+          },
+          "Michigan Debate": {
+            "views": 4126,
+            "count": 1
+          },
+          "Joe Leeson-Schatz": {
+            "views": 149891,
+            "count": 380
+          },
+          "Exodus Files": {
+            "views": 188961,
+            "count": 57
+          },
+          "Wake Debate": {
+            "views": 13082,
+            "count": 8
+          },
+          "North Broward MR": {
+            "views": 62880,
+            "count": 4
+          },
+          "DebateDrills": {
+            "views": 1998,
+            "count": 1
+          },
+          "Kentucky Debate": {
+            "views": 297,
+            "count": 2
+          },
+          "NDT Streams": {
+            "views": 58986,
+            "count": 18
+          },
+          "2015 NDT": {
+            "views": 67025,
+            "count": 28
+          },
+          "Aaron Trujillo": {
+            "views": 31380,
+            "count": 58
+          },
+          "Vintage Debate Vids": {
+            "views": 13316,
+            "count": 6
+          },
+          "Indiana Debate": {
+            "views": 3690,
+            "count": 2
+          },
+          "NDT Debate Stream": {
+            "views": 5422,
+            "count": 2
+          },
+          "Matthew Granstrom": {
+            "views": 37481,
+            "count": 4
+          },
+          "William Soper": {
+            "views": 4366,
+            "count": 2
+          },
+          "Syd Hegseth-Huntimer": {
+            "views": 6214,
+            "count": 1
+          },
+          "greg zoda": {
+            "views": 20281,
+            "count": 1
+          },
+          "Eric Morris": {
+            "views": 23457,
+            "count": 1
+          }
+        }
+      },
+      "Demo Debates": {
+        "totalViews": 214225,
+        "videoCount": 66,
+        "byChannel": {
+          "UNTDebate": {
+            "views": 55,
+            "count": 1
+          },
+          "DebateDrills": {
+            "views": 1524,
+            "count": 2
+          },
+          "Debate Stream": {
+            "views": 352,
+            "count": 1
+          },
+          "Champion Briefs": {
+            "views": 100300,
+            "count": 3
+          },
+          "Policy Debate Central": {
+            "views": 4767,
+            "count": 2
+          },
+          "DDI Debate": {
+            "views": 13384,
+            "count": 6
+          },
+          "Michigan Debate": {
+            "views": 23643,
+            "count": 8
+          },
+          "National Symposium ": {
+            "views": 8472,
+            "count": 3
+          },
+          "PF Videos": {
+            "views": 26123,
+            "count": 2
+          },
+          "Exodus Files": {
+            "views": 910,
+            "count": 2
+          },
+          "Barkley Forum Videos": {
+            "views": 4098,
+            "count": 14
+          },
+          "MSU Debate": {
+            "views": 17292,
+            "count": 17
+          },
+          "Kentucky Debate": {
+            "views": 3066,
+            "count": 2
+          },
+          "Bill Batterman": {
+            "views": 10239,
+            "count": 3
+          }
+        }
+      },
+      "Topic Lectures": {
+        "totalViews": 61266,
+        "videoCount": 103,
+        "byChannel": {
+          "Champion Briefs": {
+            "views": 1265,
+            "count": 1
+          },
+          "DebateDrills": {
+            "views": 27546,
+            "count": 66
+          },
+          "National Symposium ": {
+            "views": 142,
+            "count": 1
+          },
+          "Michigan Debate": {
+            "views": 7007,
+            "count": 8
+          },
+          "DDI Debate": {
+            "views": 1672,
+            "count": 3
+          },
+          "Policy Debate Central": {
+            "views": 1080,
+            "count": 2
+          },
+          "MSU Debate": {
+            "views": 14461,
+            "count": 16
+          },
+          "Professor Graham": {
+            "views": 1369,
+            "count": 1
+          },
+          "Bill Batterman": {
+            "views": 6724,
+            "count": 5
+          }
+        }
+      },
+      "Public Forum": {
+        "totalViews": 34504,
+        "videoCount": 23,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 2526,
+            "count": 8
+          },
+          "PF Videos": {
+            "views": 5019,
+            "count": 1
+          },
+          "National Symposium ": {
+            "views": 689,
+            "count": 1
+          },
+          "Kentucky Debate": {
+            "views": 26270,
+            "count": 13
+          }
+        }
+      },
+      "Affirmative Strategy": {
+        "totalViews": 62723,
+        "videoCount": 63,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 33150,
+            "count": 35
+          },
+          "Kentucky Debate": {
+            "views": 563,
+            "count": 5
+          },
+          "DDI Debate": {
+            "views": 14887,
+            "count": 14
+          },
+          "PolicyDebateCentral": {
+            "views": 742,
+            "count": 1
+          },
+          "Bill Batterman": {
+            "views": 13160,
+            "count": 7
+          },
+          "MSU Debate": {
+            "views": 221,
+            "count": 1
+          }
+        }
+      },
+      "Impact Calculus & Evidence": {
+        "totalViews": 16493,
+        "videoCount": 17,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 2855,
+            "count": 6
+          },
+          "DDI Debate": {
+            "views": 6719,
+            "count": 4
+          },
+          "MSU Debate": {
+            "views": 870,
+            "count": 3
+          },
+          "Bill Batterman": {
+            "views": 5873,
+            "count": 3
+          },
+          "Joe Leeson-Schatz": {
+            "views": 176,
+            "count": 1
+          }
+        }
+      },
+      "Novice & Introductory": {
+        "totalViews": 48145,
+        "videoCount": 61,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 19765,
+            "count": 18
+          },
+          "Professor Graham": {
+            "views": 1259,
+            "count": 28
+          },
+          "CEDADebate": {
+            "views": 132,
+            "count": 1
+          },
+          "Kentucky Debate": {
+            "views": 26409,
+            "count": 11
+          },
+          "Joe Leeson-Schatz": {
+            "views": 580,
+            "count": 3
+          }
+        }
+      },
+      "Camp & Coaching Advice": {
+        "totalViews": 20437,
+        "videoCount": 26,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 1294,
+            "count": 3
+          },
+          "Policy Debate Central": {
+            "views": 521,
+            "count": 1
+          },
+          "DDI Debate": {
+            "views": 1346,
+            "count": 2
+          },
+          "CEDADebate": {
+            "views": 457,
+            "count": 1
+          },
+          "MSU Debate": {
+            "views": 1654,
+            "count": 7
+          },
+          "Barkley Forum Videos": {
+            "views": 1160,
+            "count": 3
+          },
+          "Michigan Debate": {
+            "views": 1522,
+            "count": 2
+          },
+          "Bill Batterman": {
+            "views": 12483,
+            "count": 7
+          }
+        }
+      },
+      "Judge & Tournament Skills": {
+        "totalViews": 37646,
+        "videoCount": 30,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 8113,
+            "count": 9
+          },
+          "DDI Debate": {
+            "views": 6166,
+            "count": 5
+          },
+          "Professor Graham": {
+            "views": 47,
+            "count": 1
+          },
+          "Barkley Forum Videos": {
+            "views": 493,
+            "count": 2
+          },
+          "MSU Debate": {
+            "views": 1233,
+            "count": 4
+          },
+          "Kentucky Debate": {
+            "views": 79,
+            "count": 1
+          },
+          "Michigan Debate": {
+            "views": 1239,
+            "count": 1
+          },
+          "Bill Batterman": {
+            "views": 20276,
+            "count": 7
+          }
+        }
+      },
+      "Research & Flowing": {
+        "totalViews": 53280,
+        "videoCount": 37,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 18166,
+            "count": 15
+          },
+          "Policy Debate Central": {
+            "views": 1680,
+            "count": 3
+          },
+          "DDI Debate": {
+            "views": 6344,
+            "count": 3
+          },
+          "Professor Graham": {
+            "views": 52,
+            "count": 1
+          },
+          "CEDADebate": {
+            "views": 366,
+            "count": 1
+          },
+          "MSU Debate": {
+            "views": 12362,
+            "count": 10
+          },
+          "Kentucky Debate": {
+            "views": 2460,
+            "count": 1
+          },
+          "Michigan Debate": {
+            "views": 605,
+            "count": 1
+          },
+          "Debate Stream": {
+            "views": 3496,
+            "count": 1
+          },
+          "Bill Batterman": {
+            "views": 7749,
+            "count": 1
+          }
+        }
+      },
+      "Negative Strategy": {
+        "totalViews": 40519,
+        "videoCount": 35,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 21223,
+            "count": 18
+          },
+          "DDI Debate": {
+            "views": 18349,
+            "count": 16
+          },
+          "PolicyDebateCentral": {
+            "views": 947,
+            "count": 1
+          }
+        }
+      },
+      "Speaking & Delivery": {
+        "totalViews": 45652,
+        "videoCount": 20,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 591,
+            "count": 1
+          },
+          "DDI Debate": {
+            "views": 5780,
+            "count": 6
+          },
+          "Professor Graham": {
+            "views": 51,
+            "count": 1
+          },
+          "CEDADebate": {
+            "views": 463,
+            "count": 1
+          },
+          "Bill Batterman": {
+            "views": 38602,
+            "count": 10
+          },
+          "Barkley Forum Videos": {
+            "views": 165,
+            "count": 1
+          }
+        }
+      },
+      "Counterplans & Theory": {
+        "totalViews": 50421,
+        "videoCount": 48,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 23984,
+            "count": 25
+          },
+          "DDI Debate": {
+            "views": 18064,
+            "count": 14
+          },
+          "Michigan Debate": {
+            "views": 1209,
+            "count": 4
+          },
+          "CEDADebate": {
+            "views": 439,
+            "count": 1
+          },
+          "Bill Batterman": {
+            "views": 6529,
+            "count": 2
+          },
+          "Barkley Forum Videos": {
+            "views": 196,
+            "count": 2
+          }
+        }
+      },
+      "Kritik / Critical Theory": {
+        "totalViews": 60145,
+        "videoCount": 50,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 4882,
+            "count": 5
+          },
+          "DDI Debate": {
+            "views": 48162,
+            "count": 38
+          },
+          "Barkley Forum Videos": {
+            "views": 321,
+            "count": 1
+          },
+          "MSU Debate": {
+            "views": 1745,
+            "count": 3
+          },
+          "Bill Batterman": {
+            "views": 5035,
+            "count": 3
+          }
+        }
+      },
+      "Topicality & Framework": {
+        "totalViews": 21297,
+        "videoCount": 19,
+        "byChannel": {
+          "DebateDrills": {
+            "views": 678,
+            "count": 2
+          },
+          "DDI Debate": {
+            "views": 18117,
+            "count": 15
+          },
+          "Michigan Debate": {
+            "views": 2502,
+            "count": 2
+          }
+        }
+      },
+      "Topic Analysis": {
+        "totalViews": 10246,
+        "videoCount": 11,
+        "byChannel": {
+          "Champion Briefs": {
+            "views": 10246,
+            "count": 11
+          }
+        }
+      },
+      "Awards": {
+        "totalViews": 2261,
+        "videoCount": 2,
+        "byChannel": {
+          "LASA Debate": {
+            "views": 1398,
+            "count": 1
+          },
+          "Debate Stream": {
+            "views": 863,
+            "count": 1
+          }
+        }
+      },
+      "Documentaries & Culture": {
+        "totalViews": 371363,
+        "videoCount": 20,
+        "byChannel": {
+          "The City Club of Cleveland": {
+            "views": 13000,
+            "count": 1
+          },
+          "PF Videos": {
+            "views": 61970,
+            "count": 3
+          },
+          "Policy Debate Central": {
+            "views": 547,
+            "count": 3
+          },
+          "Vintage Debate Vids": {
+            "views": 22430,
+            "count": 4
+          },
+          "Michigan Debate": {
+            "views": 1341,
+            "count": 1
+          },
+          "Bill Batterman": {
+            "views": 3716,
+            "count": 3
+          },
+          "Wired": {
+            "views": 256696,
+            "count": 1
+          },
+          "Debate Stream": {
+            "views": 11663,
+            "count": 4
+          }
+        }
+      },
+      "Round Discussions": {
+        "totalViews": 1416,
+        "videoCount": 1,
+        "byChannel": {
+          "Debate Stream": {
+            "views": 1416,
+            "count": 1
+          }
+        }
+      },
+      "Disadvantages": {
+        "totalViews": 10688,
+        "videoCount": 21,
+        "byChannel": {
+          "Michigan Debate": {
+            "views": 1421,
+            "count": 2
+          },
+          "DDI Debate": {
+            "views": 5888,
+            "count": 8
+          },
+          "Professor Graham": {
+            "views": 402,
+            "count": 1
+          },
+          "CEDADebate": {
+            "views": 276,
+            "count": 1
+          },
+          "MSU Debate": {
+            "views": 2701,
+            "count": 9
+          }
+        }
+      },
+      "Philosophy & IR Theory": {
+        "totalViews": 131478,
+        "videoCount": 26,
+        "byChannel": {
+          "DDI Debate": {
+            "views": 11215,
+            "count": 16
+          },
+          "Michigan Debate": {
+            "views": 117804,
+            "count": 7
+          },
+          "CEDADebate": {
+            "views": 667,
+            "count": 1
+          },
+          "Bill Batterman": {
+            "views": 1792,
+            "count": 2
+          }
+        }
+      }
+    },
+    "statsByYear": {
+      "1995": {
+        "totalViews": 139,
+        "videoCount": 8
+      },
+      "1996": {
+        "totalViews": 36,
+        "videoCount": 3
+      },
+      "1997": {
+        "totalViews": 158,
+        "videoCount": 11
+      },
+      "1999": {
+        "totalViews": 63,
+        "videoCount": 3
+      },
+      "2000": {
+        "totalViews": 40,
+        "videoCount": 4
+      },
+      "2002": {
+        "totalViews": 1679,
+        "videoCount": 6
+      },
+      "2003": {
+        "totalViews": 141,
+        "videoCount": 5
+      },
+      "2004": {
+        "totalViews": 6377,
+        "videoCount": 5
+      },
+      "2005": {
+        "totalViews": 9027,
+        "videoCount": 2
+      },
+      "2006": {
+        "totalViews": 48,
+        "videoCount": 3
+      },
+      "2007": {
+        "totalViews": 9850,
+        "videoCount": 3
+      },
+      "2008": {
+        "totalViews": 3993,
+        "videoCount": 8
+      },
+      "2009": {
+        "totalViews": 23768,
+        "videoCount": 14
+      },
+      "2010": {
+        "totalViews": 1821,
+        "videoCount": 46
+      },
+      "2011": {
+        "totalViews": 232,
+        "videoCount": 20
+      },
+      "2012": {
+        "totalViews": 434,
+        "videoCount": 6
+      },
+      "2013": {
+        "totalViews": 305065,
+        "videoCount": 217
+      },
+      "2014": {
+        "totalViews": 253353,
+        "videoCount": 204
+      },
+      "2015": {
+        "totalViews": 255714,
+        "videoCount": 295
+      },
+      "2016": {
+        "totalViews": 392034,
+        "videoCount": 182
+      },
+      "2017": {
+        "totalViews": 494600,
+        "videoCount": 215
+      },
+      "2018": {
+        "totalViews": 773415,
+        "videoCount": 203
+      },
+      "2019": {
+        "totalViews": 617710,
+        "videoCount": 168
+      },
+      "2020": {
+        "totalViews": 724939,
+        "videoCount": 250
+      },
+      "2021": {
+        "totalViews": 188569,
+        "videoCount": 158
+      },
+      "2022": {
+        "totalViews": 268375,
+        "videoCount": 121
+      },
+      "2023": {
+        "totalViews": 455927,
+        "videoCount": 167
+      },
+      "2024": {
+        "totalViews": 361186,
+        "videoCount": 233
+      },
+      "2025": {
+        "totalViews": 210589,
+        "videoCount": 182
+      },
+      "2026": {
+        "totalViews": 96948,
+        "videoCount": 100
+      },
+      "May 14, 2013": {
+        "totalViews": 256696,
+        "videoCount": 1
+      }
+    },
+    "statsByElimRound": {
+      "Finals": {
+        "totalViews": 1043546,
+        "videoCount": 182
+      },
+      "Semifinals": {
+        "totalViews": 536559,
+        "videoCount": 122
+      },
+      "Octafinals": {
+        "totalViews": 529740,
+        "videoCount": 155
+      },
+      "Double Octafinals": {
+        "totalViews": 125224,
+        "videoCount": 75
+      },
+      "Quarterfinals": {
+        "totalViews": 456915,
+        "videoCount": 131
+      }
+    }
+  }
+}
