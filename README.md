@@ -2,7 +2,7 @@
     <img width=200px" src="./public/favicon-512.png" />
     <br />
     <a href="https://debate.ai.com"> 🚀 App</a>
-    <a href="https://github.com/debate/debate-ai.com/tree/master/docs"> 📑 Docs </a> <a href="https://qwksearch.com/api/api-docs"> 🎯 API </a> </h3>
+    <a href="https://github.com/debate/debate-ai.com/tree/master/docs"> 📑 Docs </a> <a href="https://debate-ai.com/api/api-docs"> 🎯 API </a> </h3>
 <p align="center">
     <a href="https://discord.gg/SJdBqBz3tV">
         <img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat"
