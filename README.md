@@ -44,9 +44,7 @@
     <img src="./public/images/logo-collective-mind.png" width="300">
 </p>
 
-### 📚 CARDS — Evidence Research Library
-
-**Community-sourced evidence. By debaters, for debaters.**
+### 📚 CARDS: Crowdsourced Annotated Research for Debating Solutions
 
 - Full-text search across thousands of tagged, annotated evidence cards spanning policy, LD, PF, and college formats
 - Three-panel layout: search sidebar, full card reader, and AI analysis pane — all visible simultaneously

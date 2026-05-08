@@ -56,7 +56,7 @@ export function IntroTextOverview() {
 
         <div className="text-center space-y-2 max-w-2xl">
           <p className="text-muted-foreground font-bold tracking-wide text-lg md:text-black-400 [font-variant:small-caps]">
-            Crowdsourced Argument, Reasoning, Decisionmaking &amp; Summarization (CARDS)
+            Crowdsourced Annotated Research for Debating Solutions (CARDS)
           </p>
         </div>
       </div>

@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "CARDS Search",
-  description: "Crowdsourced Argument, Reasoning, Decisionmaking & Summarization (CARDS)",
+  description: "Crowdsourced Annotated Research for Debatable Subjects (CARDS)",
 }
 
 export default function SearchLayout({
