@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://i.imgur.com/GBvtyCV.png" width="400px" > 
+ <img src="https://i.imgur.com/2lkYi3t.png" width="400px" > 
 </p>
 
 # Debate Singularity: Reimagining the Internet as Argument Mind Map is Key to Crowdsourced Decision-Making via Collective Consciousness
