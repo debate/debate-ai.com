@@ -1,42 +1,18 @@
-"
-"On the other hand, the authors argue that the peril of kritiks is its unfair
-tilt to the negative team and its nihilistic nature that could defeat its own purpose. In the end the
-authors concluded that the argument for using the kritiks strategy did not outweigh the arguments
-against using this strategy. Hasain and Penatta hoped that the deconstructive nature of kritik
-would not catch on, but that it would lead to a reconstruction of assumed thought about the
-debate process... To Solt, kritiks fail in five major areas: they fail to intellectually engage within the topic, the
+"To Solt, kritiks fail in five major areas: they fail to intellectually engage within the topic, the
 quality of critical debate remains low, they result in uneducational theory debates, the personal
 narrative structure remains uneducational for those who employ it, and finally the cultural split
 between pro and anti-kritik camps has led to an unsatisfying community".
-
+...
 Anything that the United States federal government does which
 seems (on the surface) to be good is actually bad – it only serves to delay the inevitable transition
 to a communist future.” (Galloway, 2013, 2). So in effect, kritiks are in favor of all societal ills
 because kritiks will always interrogate government action, even on when it involves taking
-measures against poverty or genocide. It is Galloway’s goal for students to mount a concentrated
-effort to defeat kritiks within rounds so the tactic will no longer be used in academic debate.
+measures against poverty or genocide.
 
-Even for students with an outstanding background in classical and modern rhetorical theory, it is almost impossible to meaningfully interpret postmodern texts. Yet critique arguments routinely invite high school students to make sense of arguments which confuse most Ph.D. candidates in philosophy.
-
-The truth of the matter is that most critiques are so counter-intuitive that they will fall under their own weight if inquisitive debaters can force the proponents of the critiques to explain them. So long as the debate remains at the jibberish level (―the reification of social alienation‖ or ―we have to choose between Habermasian discourse and the subtextual paradigm of context‖) then the critique is al lowed to continue to wear the Emperor‘s new clothes
-Final Thoughts on Critiques
-Most critiques invite debaters and judges to wallow in imponderable questions of meaning while ignoring policy issues. Advocates of critiques will argue that since 'fiat' is only an artificial creation, the outcome of a debate will have no real impact on military polices in any case. Critique advocates say that debaters should spend their time in debates worrying only about those things they can directly do something about, namely, their own attitudes toward 'important' subjects such as the evils of capitalism and colonialism. From this perspective, the 'political' is not as important as the 'personal.' Regardless of the role of 'fiat,' however, debaters should be willing to take some responsibility for their own personal advocacy. Why is it more important to engage in the rhetoric of blaming and guilt assignment, than to advocate for responsible social policies in the military arena?
-
-Despite the best efforts of postmodern theorists, there is not a moral equivalence between the United States and the world's worst despots. Capitalism did not construct the Gulag Archipelago or cause the Rwandan genocide. It was not the Bush administration that caused the killing in Darfur. The Obama administration policies are not morally inferior to those of socialist Venezuela or Cuba. Professor Richard Wolin explains that 'the current disaffection with postmodernism is in no small measure attributable to recent political circumstances. Humanism's return spells postmodernism's demise. Totalitarianism was the twentieth century's defining political experience. Its aftermath has left us with a new categorical imperative: no more Auschwitzes or Gulags. We now know that an ineffaceable difference separates democratic and totalitarian regimes. Despite their manifest empirical failings, democratic polities possess a capacity for internal political change that totalitarian societies do not. A discourse such as postmodernism that celebrates the virtues of cultural relativism and that remains ambivalent, at best, vis-à-vis democratic norms is inadequate to the moral and political demands of the contemporary hour' (The Seduction of Unreason, 2004, pp.xiii-xiv). I frequently hear prominent college debate coaches lament what critiques have done to college debate. For high school policy debate, it is not yet too late. Critiques debates are still rare events in many parts of the country. Many judges would like an opportunity to vote against critiques, but they have to have substantive answers allowing them to justify their vote. Many users of critiques in high school debates win purely from the shock value of their arguments; they win because the affirmative team is confused and unsure how to answer a critique based in nearly incomprehensible language." (Edwards 2013)
+...
+The truth of the matter is that most critiques are so counter-intuitive that they will fall under their own weight if inquisitive debaters can force the proponents of the critiques to explain them. So long as the debate remains at the jibberish level "the reification of social alienation‖ or ―we have to choose between Habermasian discourse and the subtextual paradigm of context‖ then the critique is al lowed to continue to wear the Emperor's new clothes
 
 Edwards, R. E., & Galloway, R. (Eds.). (2013). Kritik killer: Winning answers to the critique (Latin America edition). [PDF file]. Scribd. https://www.scribd.com/doc/293560476/Kritik-Master-Answer-File-pdf
-
-#
-
-###
-
-#
-
-#
-
-#
-
-##
 
 ## K
 
@@ -229,3 +205,23 @@ This upgrade would require congressional consent. Interstate compacts receiving 
 The only known possible limit on the federal law “upgrade” of an interstate compact that receives congressional consent is whether the compact is an appropriate area for congressional legislation
 
 Shapiro, I. (2016, September 6). Constitutionality of the prosperity zone compact [Testimony before the U.S. Congress]. Cato Institute. https://www.cato.org/testimony/constitutionality-prosperity-zone-compact
+
+## stat
+
+> "Federal intervention is necessary to prevent Oregon from setting a precedent that could lead to a fractured national economy, where every state attempts to apply its own labor laws to any product that crosses its borders. [...] When large states leverage their market share to compel nationwide compliance with their regulatory schemes—whether in vehicle emissions, data privacy, AI governance, or payments—they effectively nullify other states' policy choices and usurp Congress' constitutional role. [...] The compliance costs of a 50-state AI regulatory patchwork would be enormous. As demonstrated by the experience with state privacy laws, which are projected to impose more than $1 trillion in out-of-state costs over a decade, a similar patchwork for the more complex field of AI would create a compliance nightmare [...] The federal government’s constitutional authority to regulate commerce among the states includes the power—and the responsibility—to prevent the policy choices of one state from inflicting direct economic and social costs on another. [...] The situation presents precisely the type of state law that warrants federal attention: [...] Federal legislative or regulatory intervention may be necessary to clarify the relationship between state unfair-competition laws and federal antitrust standards, particularly in markets where business operations are inherently interstate and cannot be effectively segregated by state boundaries." (Manne et al., 2025)
+
+The negative cannot fiat true uniformity any more than fiating everyone be equally kind. The counterplan still gives precent to other policies that patchwork on these issues. If counterplan also fiats territiores that means federal government also acts on federally governed military islands like Wake Island. The death of the states counterplan is to perm do the counterplan, since it's irrelevant if the plan is done from a different starting point still resulting in federal government playing a role in doing it, thus avoiding the political cost or both trigger it irregardless. It's a moot distinction like whether the courts allow abortion to top-down control our activist society or whether activists demand abortion and the courts recognize it.
+
+As Shapiro (2016) argues, “there is simply no way the Uniformity Clause would preclude the Prosperity Zone Compact from attaining the status of federal law,” meaning constitutional barriers to federal recognition are minimal. He further explains that “treating the Prosperity Zone Compact as the equivalent of federal law when it receives congressional consent is not precluded by the non-delegation doctrine,” reinforcing that such an arrangement would remain within established limits of congressional authority. In this view, an interstate compact functions as “an enforceable contract between state sovereigns that could be ‘upgraded’ to the status of federal law,” since “interstate compacts receiving congressional consent are now clearly recognized as equivalent to federal law,” with the only real constraint being “whether the compact is an appropriate area for congressional legislation.”
+
+Some may object a debater is biased to write this paper to win debates, but here no one else can in the sense no domain expert would consider how it gets applied in debate. There is no bias for a given team to win, just the hope we all win by returning to relevant comparisons. Galloway writes "the states counterplan thrives by distorting the literature base to answer it.. not even the notion that something is currently considered to be a federal only activity protects the aff. I’ve seen federal nuclear policy, federal transportation policy, and federal lands policies Lopez’d back to the states." (Galloway, 2020) The Lopez precedent categorically justifies ceding every single issue to the states, thus destroying our federalism model and the entire nation. It is not what you do in one round, but what you categorically justify by reading on all topics while claiming the distortion you keep powers separate, making us negligent of anti-educational confusion that the process can be whatever you want to spin it to be. Then claiming at least we learn about the process, which can be used to self-justify any magic trick you think the judge likes or you want to learn about, like have God do it, while avoiding learning any topic details from which to infer a relevant process agent.
+
+In the US, you have "Soviet Reversal" style of humor where the joke ends absurdly wrong. In Soviet Russia, the wrong joke ends _you!_ In the US, you should kill States counterplans. Or else, in Soviet Russia, the State's counterplans kill _you!_ The federalism net benefit that Russia & others model US federalism does not assume a shift to the nonsense disaster magic roller-coaster of whatever it takes to conveniently justify the political agenda's other concerns. This justifies fiating that Russia should implement all domestic policy in the USA (which becomes United Soviet America) with the net benefit of showing the world a model of working together.
+
+We can permute the advocacy of state uniformity and set a better model:
+
+"Congress should enact a federal statute requiring states to recognize and enforce contractual choice-of-law provisions ...This immediately solves the patchwork problem for businesses, allowing them to comply with one coherent set of rules, rather than 50 conflicting ones. At the same time, it preserves the role of states as “laboratories of democracy” ... Congress possesses clear constitutional authority under the Commerce Clause to restore uniformity to interstate markets, whether through direct preemption, conditional spending requirements, or innovative approaches like mandating recognition of contractual choice-of-law provisions." (Manne et al., 2025)
+
+Counterplans and alternative thought paradigms were never advocacies like the plan, but rather only justified to run like disadvantages to the supporting the plan by showing more effective, feasible solutions asopportunity costs inherently given up by the affirmative's advocacy. The negative must prove, "you are inherently giving up a better solution that impacts your concern." The debate can not be defined as between two advocacies of two affirmatives. The judge should cross out every sentence said by the negative which does not show intrinsic harm or a feasible opportunity cost with real-world advocates given up by the affirmative's advocacy.
+
+Remember, it is not up to debaters to redefine debate each round to make up an ad-hoc framework and say debate can work that way to learn about that. We should accept it is just how opportunity costs work under common-sense evaluation of decision-making. Otherwise, we learn worse-than-useless distraction tactics, not persuasive dissuation needed to avert society's worst decisions. Lincoln-Douglas debating emerged from the attempt to avoid the Civil War by using competing viewpoint articles in newspapers. Real-world readers would not find persuasive the sentence, "we should ignore all our concerns on this issue and resolve the whole debate only through a separate prior question..." Think of it like telling Truman to think of the atomic bomb question as a matter to resolve based on whether the nation-state should exist to begin with. We are negligent of confusing young adults decision-making considerations and teach the process can be whatever you want to spin it to be.
