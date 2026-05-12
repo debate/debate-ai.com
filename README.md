@@ -6,7 +6,7 @@
     <b><i>Dream Emerges Destiny.</i></b><br>
     <b>Whatever Research Can Be —</b><br>
     <b>That is What It Must Become.</b><br>
-    <b>If AI Will Be Humanity's Last Invention —</b><br>
+    <b>If AI is Humanity's Last Invention —</b><br>
     <b>Collective Consciousness is the Final Frontier.</b>
     <br />
     </p>
@@ -55,6 +55,7 @@
 - 📖 **Three reading modes**: plain text, highlighted tags, and underline-only for fast cutting
 - 📎 **Citation auto-formatter:** and one-click flow integration — paste directly into your speech doc
 - 📱 **Mobile-responsive:** with full-screen card overlays for reading on the go
+- 📝 **Auto-Research Outlines**: agents outline the topic to keyphrases and monitor for new quotes
 
 <p align="center">
     <img src="https://i.imgur.com/1NBeQij.png" width="300" >
@@ -63,8 +64,7 @@
 ### ⚖️ FIAT: Forum for Issue Analysis on Topics
 
 - 🧠 **Recommendation Agents**: AI assists with research, summarization, flaw detection, and comparative quote analysis
-- 🧑‍⚖️ **Judge Decision**: agents prompts reccommend multipel judge decision options, speech to flow, quote to response options
-- 📝 **Auto-Research Outlines** agents outline the topic to keyphrases and monitor for new quotes
+- 🧑‍⚖️ **Judge Decision**: agents prompts recommend multiple judge decision options, speech to flow, quote to response options
 - 📊 **Multi-column flow spreadsheet**: format-specific speech columns for PF, LD, Policy, and NDT with inline editing
 - 🔗 **Shareable round URLs**: every round gets a permanent link; share with judges or teammates instantly
 - 🏆 **Round management**: tournament setup, team pairing, judge assignments, and round notes in one place
@@ -73,19 +73,21 @@
 - 👥 **Collaboration**: invite judges and spectators by email; view-only and edit roles supported
 - 🗄️ **Archive system**: save, browse, and restore any past round with full flow history
 - 📲 **Mobile-optimized**: responsive design with swipe navigation between speech columns
+- 🧑‍⚖️ **Judge Decision**: agents prompts recommend multiple judge decision options, speech to flow, quote to response options
+-
 
 <p align="center">
-    <img src="https://i.imgur.com/JxxJUXt.png" width="300"  >
+    <img src="https://i.imgur.com/eIQB4Sp.png" width="300"  >
 </p>
 
-### 🎥 DEARLY: Debate Educational Archive of Rounds & Lectures on YouTube
+### 🎥 LEARN: Lectures from Educators, Archive of Rounds & Notes
 
 - 🎓 **~1,400 college NDT rounds**: dating back to 1995, averaging 50+ new rounds per year, including every recent TOC and NDT elimination round
 - 🗣️ **~350 Public Forum rounds**: (2015–present), **~125 Policy rounds**: (2003–present), **~90 LD rounds** (2019–present)
 - 📺 **~900 instructional videos**: across 20 categories: topic lectures, camp coaching, kritik theory, counterplans, impact calc, novice intro, speaking & delivery, and more
 - ⭐ **~100 hand-curated top picks**: the highest-value rounds and lectures selected for study
 - 🔍 Searchable grid with filter by title, channel, year, or view count; inline YouTube playback with thumbnails
-- 📘 **203-term Debate Dictionary**: with plain-English definitions for theory, kritik, and procedural jargon
+- 📘 **200-term Debate Dictionary**: with plain-English definitions for theory, kritik, and procedural jargon
 - 🏅 **26 years of national champion records**: (2000–2025) across NDT, Policy, LD, and PF
 - 📈 **Team Rankings**: TOC bid list + DebateDrills Elo dual ranking system
 
