@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Lectures from Educators, Archive of Rounds & Notes",
 }
 
-export default function VideosHome() {
+export default function VideosCategory() {
   return (
     <Suspense>
       <LecturesPage />

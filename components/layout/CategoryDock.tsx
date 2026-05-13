@@ -22,12 +22,9 @@ import { themeNames, themeColors, formatThemeName, useThemeState } from "@/compo
 import { useCategoryDockState } from "@/components/layout/category-dock-context"
 import {
   IconCollectiveMind,
-  IconRounds,
   IconFlowFlower,
   IconRead,
   IconLectures,
-  IconRoundsYoutube,
-  IconLeaderboard,
   IconSettings
 } from "@/components/icons"
 
@@ -35,9 +32,7 @@ const NAV_ITEMS = [
   { href: "/cards", label: "Shared", icon: IconCollectiveMind },
   { href: "/debate", label: "Debate", icon: IconFlowFlower },
   { href: "/edit", label: "Docs", icon: IconRead },
-  { href: "/videos", label: "Videos", icon: IconRoundsYoutube },
   { href: "/lectures", label: "Lectures", icon: IconLectures },
-  { href: "/rank", label: "Rankings", icon: IconLeaderboard },
 ]
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
@@ -158,12 +153,7 @@ export function CategoryDock() {
   const { activeVideoId, activeVideoTitle, isMinimized, isPlaying, setMinimized, setIsPlaying } = useVideoPlayerStore()
 
   const allItems = [
-    ...NAV_ITEMS.filter(({ href }) => {
-      if (href === '/rank') {
-        return pathname === '/videos' || pathname === '/lectures' || pathname.startsWith('/rank')
-      }
-      return true
-    }).map(({ href, label, icon }) => ({
+    ...NAV_ITEMS.map(({ href, label, icon }) => ({
       key: href,
       label,
       icon,

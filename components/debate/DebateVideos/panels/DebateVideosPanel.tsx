@@ -59,13 +59,18 @@ export function DebateVideosPage() {
   const { state, actions } = useVideoState(initialCategory)
   const setSearchHandler = useVideoPlayerStore((state) => state.setSearchHandler)
 
+  // Stats modal auto-open via URL param
+  const [statsModalOpen, setStatsModalOpen] = useState(false)
+
   // Initialize state from URL parameters
   useEffect(() => {
-    const urlState = setStateInURL<{ q?: string; year?: string; style?: string }>()
+    const urlState = setStateInURL<{ q?: string; year?: string; style?: string; favorites?: string; stats?: string }>()
     if (urlState) {
       if (urlState.q) actions.setSearchTerm(urlState.q)
       if (urlState.year) actions.setSelectedYear(urlState.year)
       if (urlState.style) actions.setSelectedStyle(Number(urlState.style) as DebateStyle)
+      if (urlState.favorites === "1") actions.setShowFavoritesOnly(true)
+      if (urlState.stats === "1") setStatsModalOpen(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -346,7 +351,7 @@ export function DebateVideosPage() {
           onStyleChange={handleStyleChange}
           allVideos={state.allVideos}
           hiddenVideos={state.hiddenVideos}
-          extraButtons={youtubeStats && <YouTubeStatsModal stats={youtubeStats} />}
+          extraButtons={youtubeStats && <YouTubeStatsModal stats={youtubeStats} open={statsModalOpen} onOpenChange={setStatsModalOpen} />}
         />
       )}
 

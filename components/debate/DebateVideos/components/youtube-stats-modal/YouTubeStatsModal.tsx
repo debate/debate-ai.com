@@ -76,7 +76,15 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function YouTubeStatsModal({ stats }: { stats: YouTubeStats }) {
+export function YouTubeStatsModal({
+  stats,
+  open,
+  onOpenChange,
+}: {
+  stats: YouTubeStats
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}) {
   // Prepare data for charts
   const topChannelsData = stats.byChannel
     .slice(0, 20)
@@ -110,7 +118,7 @@ export function YouTubeStatsModal({ stats }: { stats: YouTubeStats }) {
 
   return (
     <TooltipProvider>
-      <Dialog>
+      <Dialog open={open} onOpenChange={onOpenChange}>
         <Tooltip>
           <TooltipTrigger asChild>
             <DialogTrigger asChild>

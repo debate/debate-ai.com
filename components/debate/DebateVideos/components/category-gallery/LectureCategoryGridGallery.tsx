@@ -5,6 +5,7 @@
 "use client";
 
 import React, { useMemo } from "react";
+import Link from "next/link";
 import {
   Lightbulb,
   Shield,
@@ -29,7 +30,6 @@ import { cn } from "@/lib/utils";
 import categoryDescriptions from "../../panels/debate-lectures-category-descriptions.json";
 
 interface LectureCategoryGridGalleryProps {
-  onCategorySelect?: (categoryKey: string) => void;
   selectedCategory?: string;
   videosData?: any[];
 }
@@ -61,7 +61,6 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 
 
 export function LectureCategoryGridGallery({
-  onCategorySelect,
   selectedCategory,
   videosData,
 }: LectureCategoryGridGalleryProps) {
@@ -119,8 +118,9 @@ export function LectureCategoryGridGallery({
       .sort((a, b) => b.maxViews - a.maxViews); // Sort by popularity
   }, [videosData]);
 
-  const handleCategoryClick = (categoryId: string) => {
-    onCategorySelect?.(categoryId);
+  const buildHref = (categoryId: string) => {
+    const isSame = selectedCategory === categoryId;
+    return isSame ? "/videos" : `/videos/${encodeURIComponent(categoryId)}`;
   };
 
   return (
@@ -136,7 +136,7 @@ export function LectureCategoryGridGallery({
             description={card.description}
             videoCount={card.videoCount}
             isSelected={selectedCategory === card.id}
-            onClick={() => handleCategoryClick(card.id)}
+            href={buildHref(card.id)}
           />
         ))}
       </ul>
@@ -150,6 +150,7 @@ interface GridItemProps {
   description: React.ReactNode;
   videoCount: number;
   isSelected?: boolean;
+  href: string;
   onClick?: () => void;
 }
 
@@ -159,13 +160,16 @@ const GridItem = ({
   description,
   videoCount,
   isSelected,
+  href,
   onClick,
 }: GridItemProps) => {
   return (
     <li className="list-none">
-      <button
+      <Link
+        href={href}
+        scroll={false}
         onClick={onClick}
-        className="relative h-full w-full rounded-lg border-[0.75px] border-border p-1 hover:border-primary/50 transition-colors"
+        className="relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/50 transition-colors"
       >
         <GlowingEffect
           spread={30}
@@ -193,7 +197,7 @@ const GridItem = ({
             {title}
           </h3>
         </div>
-      </button>
+      </Link>
     </li>
   );
 };

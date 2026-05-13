@@ -14,4 +14,4 @@
 14. docs categories icons
 15. legacy keys [https://docs.paperlessdebate.com/verbatim/advanced/shortcuts](https://docs.paperlessdebate.com/verbatim/advanced/shortcuts)
 16. Flow-in-Speech entries while watching stream, and link a flow entry to a response bubble.
-17. Sync flow across room, no need to flow if cards come with flow notes
+17. Sync flow across room, no need to flow if cards come with flow notes https://debateflow.app https://www.debateflow.org
