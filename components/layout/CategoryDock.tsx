@@ -37,11 +37,11 @@ const NAV_ITEMS = [
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
 
-function SettingsMenu({ side }: { side: "bottom" | "top" }) {
+function SettingsMenu({ side, align = "end" }: { side: "bottom" | "top"; align?: "start" | "center" | "end" }) {
   const themeState = useThemeState()
 
   return (
-    <DropdownMenuContent side={side} align="end" className="w-48">
+    <DropdownMenuContent side={side} align={align} className="w-56">
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
         {themeState.isDark ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}
         {themeState.isDark ? "Dark Mode" : "Light Mode"}
@@ -51,7 +51,7 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
           <Palette className="mr-2 h-4 w-4" />
           Theme
         </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className="w-56 max-h-[min(400px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
+        <DropdownMenuSubContent className="w-56 max-h-[min(400px,70vh)] overflow-y-auto" collisionPadding={20} avoidCollisions sideOffset={2}>
           <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
             {themeState.isDark ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}
             {themeState.isDark ? "Switch to Light" : "Switch to Dark"}
@@ -268,7 +268,7 @@ export function CategoryDock() {
               </DockItem>
             </DropdownMenuTrigger>
           </Dock>
-          <SettingsMenu side="top" />
+          <SettingsMenu side="top" align="center" />
         </DropdownMenu>
       </div>
     </>
