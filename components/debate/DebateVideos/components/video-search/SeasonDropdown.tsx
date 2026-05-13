@@ -44,7 +44,7 @@ export function SeasonDropdown({
   yearCounts,
 }: SeasonDropdownProps) {
   return (
-    <div className="w-[110px] sm:w-[130px] shrink-0">
+    <div className="flex-1 sm:flex-none sm:w-[130px] shrink-0 min-w-[110px] max-w-[160px]">
       <Select
         value={selectedYear || "all"}
         onValueChange={(v) => onYearChange(v === "all" ? "" : v)}

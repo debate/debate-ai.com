@@ -144,9 +144,9 @@ export function VideoSearchBar({
 
   return (
     <TooltipProvider>
-      <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 flex-1 min-w-0">
-        {/* Row 1 (mobile) / inline (desktop): search input + season dropdown */}
-        <div className="flex items-center gap-2 flex-1 min-w-0">
+      <div className="flex flex-col gap-2 flex-1 min-w-0">
+        {/* Row 1: search input — full width on mobile, flex item on desktop */}
+        <div className="flex items-center gap-2 sm:hidden">
           <div className="relative min-w-0 flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -175,8 +175,42 @@ export function VideoSearchBar({
               {isSearchFocused && <GlowingEffect />}
             </div>
           </div>
-
           {afterSearchElement}
+        </div>
+
+        {/* Row 2 (mobile) / single row (desktop): season + style dropdowns + icons */}
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          {/* Search — hidden on mobile (shown above), inline on desktop */}
+          <div className="relative min-w-0 flex-1 hidden sm:block">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search..."
+                value={localSearchTerm}
+                onChange={(e) => setLocalSearchTerm(e.target.value)}
+                onFocus={onSearchFocus}
+                onBlur={onSearchBlur}
+                className="pl-9 pr-8 h-9"
+              />
+              {localSearchTerm && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={handleClearSearch}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">Clear search</TooltipContent>
+                </Tooltip>
+              )}
+              {isSearchFocused && <GlowingEffect />}
+            </div>
+          </div>
+
+          <div className="hidden sm:block">{afterSearchElement}</div>
 
           {onYearChange && (
             <SeasonDropdown
@@ -184,6 +218,14 @@ export function VideoSearchBar({
               onYearChange={onYearChange}
               years={years}
               yearCounts={yearCounts}
+            />
+          )}
+
+          {onStyleChange && (
+            <StyleDropdown
+              selectedStyle={selectedStyle}
+              onStyleChange={onStyleChange}
+              styleCounts={styleCounts}
             />
           )}
 
@@ -198,17 +240,6 @@ export function VideoSearchBar({
             onToggleRankings={onToggleRankings}
             extraButtons={extraButtons}
           />
-        </div>
-
-        {/* Row 2 (mobile) / inline (desktop): style dropdown + count badge */}
-        <div className="flex items-center gap-2 sm:contents">
-          {onStyleChange && (
-            <StyleDropdown
-              selectedStyle={selectedStyle}
-              onStyleChange={onStyleChange}
-              styleCounts={styleCounts}
-            />
-          )}
 
           {totalVideos !== undefined && (
             <div className="flex items-center gap-1 shrink-0 ml-auto">

@@ -38,7 +38,7 @@ interface StyleDropdownProps {
  */
 export function StyleDropdown({ selectedStyle, onStyleChange, styleCounts }: StyleDropdownProps) {
   return (
-    <div className="w-[80px] shrink-0">
+    <div className="flex-1 sm:flex-none sm:w-[80px] shrink-0 min-w-[72px] max-w-[110px]">
       <Select
         value={selectedStyle ? String(selectedStyle) : "all"}
         onValueChange={(v) =>

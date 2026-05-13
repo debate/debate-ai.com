@@ -262,7 +262,7 @@ export function DebateVideosPage() {
   // Desktop: single row (flex-nowrap). Mobile: wraps to multiple rows.
   const stickyHeader = (controls?: React.ReactNode) => (
     <div className="sm:sticky top-0 z-40 supports-backdrop-blur:bg-background/30 bg-background/80 backdrop-blur-lg border-b border-white/10 dark:border-white/5 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 mb-4 flex flex-wrap md:flex-nowrap items-center gap-2 md:justify-end">
-      {controls && <div className="min-w-0 flex flex-wrap items-center gap-2">{controls}</div>}
+      {controls && <div className="min-w-0 flex flex-1 flex-wrap items-center gap-2">{controls}</div>}
     </div>
   )
 
