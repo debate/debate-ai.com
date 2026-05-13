@@ -186,17 +186,6 @@ export function VideoSearchBar({
               yearCounts={yearCounts}
             />
           )}
-        </div>
-
-        {/* Row 2 (mobile) / inline (desktop): style dropdown + icon buttons + count badge */}
-        <div className="flex items-center gap-2 sm:contents">
-          {onStyleChange && (
-            <StyleDropdown
-              selectedStyle={selectedStyle}
-              onStyleChange={onStyleChange}
-              styleCounts={styleCounts}
-            />
-          )}
 
           <SearchBarIconButtons
             sortOrder={sortOrder}
@@ -209,6 +198,17 @@ export function VideoSearchBar({
             onToggleRankings={onToggleRankings}
             extraButtons={extraButtons}
           />
+        </div>
+
+        {/* Row 2 (mobile) / inline (desktop): style dropdown + count badge */}
+        <div className="flex items-center gap-2 sm:contents">
+          {onStyleChange && (
+            <StyleDropdown
+              selectedStyle={selectedStyle}
+              onStyleChange={onStyleChange}
+              styleCounts={styleCounts}
+            />
+          )}
 
           {totalVideos !== undefined && (
             <div className="flex items-center gap-1 shrink-0 ml-auto">

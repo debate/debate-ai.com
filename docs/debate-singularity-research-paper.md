@@ -5,7 +5,7 @@
  </h1>
 </p>
 
-### Reimagining the Internet as Argument Mind Map is Key to Crowdsourced AI Decision-Making Replacing Governmentality
+### Reimagining the Internet as Argument Mind Map is Key to Crowdsourced AI Decision-Making as Governance
 
 **Alex Gulakov, Debate AI Institute,** support@debate-ai.com, ORCID: 0009-0003-4439-1461
 

@@ -269,7 +269,7 @@ export function VideoCardActions({
                   {showFullDate
                     ? new Date(date).toLocaleDateString("en-US", {
                         year: "numeric",
-                        month: "long",
+                        month: "short",
                         day: "numeric",
                       })
                     : new Date(date).toLocaleDateString("en-US", {

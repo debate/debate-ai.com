@@ -11,6 +11,7 @@ import type { CategoryType, DebateStyle, DebateVideosData } from "@/lib/types/vi
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
 import { Input } from "@/components/ui/input"
 import { DictionaryPanel } from "./DictionaryPanel"
+import { Footer } from "@/components/debate/DebateCardSearch/Footer"
 import { LeaderboardPanel } from "./RankingsLeaderboardPanel"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { setStateInURL } from "@/lib/utils"
@@ -96,6 +97,7 @@ export function LecturesPage() {
       favorites: all.filter((v) => favSet.has(v[0])).length,
       rankings: 4,
       statistics: all.length,
+      dictionary: 203,
     } as Record<string, number>
   }, [state.debateVideos, state.favorites])
 
@@ -126,33 +128,46 @@ export function LecturesPage() {
 
   const videosSectionRef = useRef<HTMLDivElement | null>(null)
 
-  // Sync ?category= from URL when the lecture-category Link navigates.
-  // Auto-scroll to the videos section so the user lands on the filtered results.
+  // Sync ?category= from URL (legacy query-string form).
   useEffect(() => {
     const urlCategory = searchParams.get("category")
-    setSelectedCategory(urlCategory || "all")
     if (urlCategory) {
+      setSelectedCategory(urlCategory)
       videosSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
     }
   }, [searchParams])
 
   // React to path-slug changes so navigation between /videos/<slug> routes
   // (without unmounting the page) applies the new filter state.
+  // Unknown slugs are treated as lecture-category ids (e.g. /videos/topic_lectures).
   useEffect(() => {
+    const data = state.debateVideos
     if (slugState) {
       actions.setSelectedStyle(slugState.style ?? "")
       actions.setShowFavoritesOnly(!!slugState.favorites)
       setStatsModalOpen(!!slugState.stats)
-      if (slugState.view) actions.setCurrentCategory(slugState.view)
-      else if (state.currentCategory !== "lectures") actions.setCurrentCategory("lectures")
+      const nextView: CategoryType = slugState.view ?? "lectures"
+      if (data) changeCategory(nextView, data)
+      else actions.setCurrentCategory(nextView)
+      setSelectedCategory("all")
       videosSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-    } else if (slug === undefined) {
+    } else if (slug) {
       actions.setSelectedStyle("")
       actions.setShowFavoritesOnly(false)
       setStatsModalOpen(false)
+      if (data) changeCategory("lectures", data)
+      else actions.setCurrentCategory("lectures")
+      setSelectedCategory(slug)
+      videosSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+    } else {
+      actions.setSelectedStyle("")
+      actions.setShowFavoritesOnly(false)
+      setStatsModalOpen(false)
+      setSelectedCategory("all")
+      if (data && state.currentCategory !== "lectures") changeCategory("lectures", data)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug])
+  }, [slug, state.debateVideos])
 
   // ============================================================================
   // Computed Values
@@ -358,6 +373,7 @@ export function LecturesPage() {
             videosData={state.debateVideos.lectures}
             selectedCategory={selectedCategory}
           />
+          <Footer />
         </div>
       )}
 
@@ -373,7 +389,7 @@ export function LecturesPage() {
         </div>
       ) : currentVideos.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No lectures found matching your search.</p>
+          <p className="text-muted-foreground">No videos found matching your filters.</p>
         </div>
       ) : (
         <>

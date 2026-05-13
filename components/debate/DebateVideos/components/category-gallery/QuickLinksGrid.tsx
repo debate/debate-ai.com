@@ -8,10 +8,9 @@
 import React from "react";
 import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
-import { Heart } from "lucide-react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
-import { IconBook, IconLeaderboard, IconTopRounds } from "@/components/icons";
+import { IconBook, IconLeaderboard, IconRoundsYoutube, IconTrophy } from "@/components/icons";
 
 interface QuickLink {
   id: string;
@@ -25,12 +24,12 @@ interface QuickLink {
 
 const QUICK_LINKS: QuickLink[] = [
   {
-    id: "policy",
-    title: "Policy Debates",
-    href: "/videos/policy",
-    logo: "/images/logo-policy-format.png",
-    gradient: "from-red-500/20 via-rose-500/10 to-transparent",
-    iconBg: "bg-red-500/15 ring-1 ring-red-500/30",
+    id: "pf",
+    title: "PF Debates",
+    href: "/videos/pf",
+    logo: "/images/logo-public-forum-format.png",
+    gradient: "from-emerald-500/20 via-green-500/10 to-transparent",
+    iconBg: "bg-emerald-500/15 ring-1 ring-emerald-500/30",
   },
   {
     id: "ld",
@@ -41,12 +40,12 @@ const QUICK_LINKS: QuickLink[] = [
     iconBg: "bg-sky-500/15 ring-1 ring-sky-500/30",
   },
   {
-    id: "pf",
-    title: "PF Debates",
-    href: "/videos/pf",
-    logo: "/images/logo-public-forum-format.png",
-    gradient: "from-emerald-500/20 via-green-500/10 to-transparent",
-    iconBg: "bg-emerald-500/15 ring-1 ring-emerald-500/30",
+    id: "policy",
+    title: "Policy Debates",
+    href: "/videos/policy",
+    logo: "/images/logo-policy-format.png",
+    gradient: "from-red-500/20 via-rose-500/10 to-transparent",
+    iconBg: "bg-red-500/15 ring-1 ring-red-500/30",
   },
   {
     id: "college",
@@ -58,9 +57,9 @@ const QUICK_LINKS: QuickLink[] = [
   },
   {
     id: "topPicks",
-    title: "Hall of Fame",
+    title: "All-Time Greatest",
     href: "/videos/topPicks",
-    logo: IconTopRounds,
+    logo: IconRoundsYoutube,
     gradient: "from-amber-500/20 via-yellow-500/10 to-transparent",
     iconBg: "bg-amber-500/15 ring-1 ring-amber-500/30",
   },
@@ -68,7 +67,7 @@ const QUICK_LINKS: QuickLink[] = [
     id: "favorites",
     title: "Favorites",
     href: "/videos/favorites",
-    icon: <Heart className="h-10 w-10 text-rose-500" />,
+    logo: IconTrophy,
     gradient: "from-rose-500/20 via-pink-500/10 to-transparent",
     iconBg: "bg-rose-500/15 ring-1 ring-rose-500/30",
   },

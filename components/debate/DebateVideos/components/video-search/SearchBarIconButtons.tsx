@@ -5,7 +5,7 @@
  */
 
 import Image from "next/image"
-import { Star, Calendar, Eye, Trophy } from "lucide-react"
+import { Calendar, Eye, Trophy } from "lucide-react"
 import { IconTopRounds } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import {
@@ -84,29 +84,6 @@ export function SearchBarIconButtons({
           {sortOrder === "Recency"
             ? "Sorted by date (click for views)"
             : "Sorted by views (click for date)"}
-        </TooltipContent>
-      </Tooltip>
-
-      {/* Favorites filter toggle */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            className={`shrink-0 ${
-              showFavoritesOnly
-                ? "bg-amber-100 text-amber-600 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 border-amber-200 dark:border-amber-800"
-                : ""
-            }`}
-            variant="outline"
-            size="icon"
-            onClick={onToggleFavoritesOnly}
-          >
-            <Star
-              className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`}
-            />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          {showFavoritesOnly ? "Show all videos" : "Show favorites only"}
         </TooltipContent>
       </Tooltip>
 
