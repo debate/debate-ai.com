@@ -1,5 +1,5 @@
 {
-  "$schema": "../schemas/debate-tournaments.schema.json",
+  "$schema": "../../schemas/debate-tournaments.schema.json",
   "data": [
     "AA State",
     "Abbeville High School Speech Tournament",

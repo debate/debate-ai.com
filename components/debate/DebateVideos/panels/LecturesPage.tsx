@@ -107,7 +107,7 @@ export function LecturesPage() {
   const [youtubeStats, setYoutubeStats] = useState<any>(null)
 
   useEffect(() => {
-    fetch("/youtube-stats.json")
+    fetch("/api/youtube-stats")
       .then((res) => res.json())
       .then((data) => setYoutubeStats(data))
       .catch((err) => console.error("Failed to load YouTube stats:", err))
@@ -128,12 +128,19 @@ export function LecturesPage() {
 
   const videosSectionRef = useRef<HTMLDivElement | null>(null)
 
+  const scrollToVideos = useCallback(() => {
+    const el = videosSectionRef.current
+    if (!el) return
+    const top = el.getBoundingClientRect().top + window.scrollY + 400
+    window.scrollTo({ top, behavior: "smooth" })
+  }, [])
+
   // Sync ?category= from URL (legacy query-string form).
   useEffect(() => {
     const urlCategory = searchParams.get("category")
     if (urlCategory) {
       setSelectedCategory(urlCategory)
-      videosSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+      scrollToVideos()
     }
   }, [searchParams])
 
@@ -150,7 +157,7 @@ export function LecturesPage() {
       if (data) changeCategory(nextView, data)
       else actions.setCurrentCategory(nextView)
       setSelectedCategory("all")
-      videosSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+      scrollToVideos()
     } else if (slug) {
       actions.setSelectedStyle("")
       actions.setShowFavoritesOnly(false)
@@ -158,7 +165,7 @@ export function LecturesPage() {
       if (data) changeCategory("lectures", data)
       else actions.setCurrentCategory("lectures")
       setSelectedCategory(slug)
-      videosSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+      scrollToVideos()
     } else {
       actions.setSelectedStyle("")
       actions.setShowFavoritesOnly(false)

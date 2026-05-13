@@ -1,5 +1,5 @@
 {
-  "$schema": "../schemas/debate-lectures.schema.json",
+  "$schema": "../../schemas/debate-lectures.schema.json",
   "data": [
     
 

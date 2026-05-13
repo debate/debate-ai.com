@@ -1,5 +1,5 @@
 {
-  "$schema": "../schemas/debate-rounds-videos.schema.json",
+  "$schema": "../../schemas/debate-rounds-videos.schema.json",
   "data": [
     [
       "I4b5N_M6U4M",

@@ -69,18 +69,12 @@ if (import.meta.main || require.main === module) {
 
         console.log("\n" + "=".repeat(80) + "\n");
 
-        // Save to file in both locations
         const statsJson = JSON.stringify(stats, null, 2);
-        const debateDataPath = path.join(process.cwd(), "lib", "debate-data", "debate-videos", "youtube-stats.json");
-        const publicPath = path.join(process.cwd(), "public", "youtube-stats.json");
+        const debateDataPath = path.join(process.cwd(), "packages", "debate-data-sync", "data", "metadata", "youtube-stats.json");
 
-        return Promise.all([
-          fs.writeFile(debateDataPath, statsJson),
-          fs.writeFile(publicPath, statsJson)
-        ]).then(() => {
+        return fs.writeFile(debateDataPath, statsJson).then(() => {
           console.log(`💾 Full statistics saved to:`);
-          console.log(`   - ${debateDataPath}`);
-          console.log(`   - ${publicPath}\n`);
+          console.log(`   - ${debateDataPath}\n`);
         });
       })
       .catch((err) => {

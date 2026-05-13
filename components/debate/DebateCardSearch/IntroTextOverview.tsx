@@ -6,29 +6,13 @@
 
 "use client"
 
-import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { ChevronDown, ChevronUp, Trophy, BookOpen } from "lucide-react"
+import { DownloadAppButton } from "react-native-app-buttons"
 
 type DebateHistoryEntry = Record<string, string | undefined>
 type DebateHistory = Record<string, DebateHistoryEntry>
 
-const EVENT_LABELS: Record<string, string> = {
-  ndt_topic: "NDT/CEDA",
-  policy_topic: "Policy (HS)",
-  ld_topic: "Lincoln-Douglas",
-  pf_topic: "Public Forum",
-  ndt_champion: "NDT Champion",
-  policy_champion: "Policy Champion",
-  ld_champion: "LD Champion",
-  pf_champion: "PF Champion",
-}
-
 export function IntroTextOverview() {
-  const [history, setHistory] = useState<DebateHistory>({})
-  const [expandedYear, setExpandedYear] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-
 
   return (
     <div className="h-full overflow-y-auto p-4 bg-background max-w-4xl mx-auto space-y-6">
@@ -40,18 +24,9 @@ export function IntroTextOverview() {
             alt="Building Blocks Icon"
             className="drop-shadow-sm"
           />
-          <a
-            className="hover:scale-105 transition-transform duration-200"
-            target="_blank"
-            href="https://chromewebstore.google.com/detail/debate-timer-chrome-mobil/noecbaibfhbmpapofcdkgchfifmoinfj"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/images/download-extension.png"
-              alt="Install Chrome Extension"
-              className="h-16"
-            />
-          </a>
+          <div className="flex flex-col gap-2">
+            <DownloadAppButton platform="chrome-extension" appId="noecbaibfhbmpapofcdkgchfifmoinfj" autoHighlight />
+          </div>
         </div>
 
         <div className="text-center space-y-2 max-w-2xl">

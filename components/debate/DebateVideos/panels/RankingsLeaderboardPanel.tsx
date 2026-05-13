@@ -18,7 +18,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import grab from "grab-url"
-import type { LeaderboardEntry } from "@/lib/sync-debate-rankings/sync-rankings-debatedrills"
+import type { LeaderboardEntry } from "@/packages/debate-data-sync/rankings/sync-rankings-debatedrills"
 import {
   DIVISION_CONFIG,
   VALID_DIVISIONS,

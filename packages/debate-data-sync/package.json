@@ -1,0 +1,18 @@
+{
+  "name": "debate-data-sync",
+  "version": "0.1.0",
+  "description": "Debate data assets (metadata, videos, schemas) plus sync scripts for YouTube videos and debate rankings",
+  "private": true,
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "scripts": {
+    "sync-youtube": "bun run youtube/youtube-sync-cli.ts",
+    "youtube-stats": "bun run youtube/youtube-sync-cli.ts --stats",
+    "youtube-update-views": "bun run youtube/youtube-sync-cli.ts --update-views"
+  },
+  "dependencies": {
+    "axios": "*",
+    "grab-url": "*",
+    "linkedom": "*"
+  }
+}

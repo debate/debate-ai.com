@@ -46,7 +46,7 @@ export async function syncMissingTopPicks() {
 
   const videos = await getVideosByIds(videoIds);
 
-  const dataDir = path.join(process.cwd(), "lib", "debate-data");
+  const dataDir = path.join(process.cwd(), "packages", "debate-data-sync", "data");
 
   // Load all split files and collect existing IDs
   const roundsFiles: Record<number, { path: string; data: any }> = {};
@@ -205,9 +205,10 @@ export async function syncYouTubeVideos() {
 
   const dataDir = path.join(
     process.cwd(),
-    "lib",
-    "debate-data",
-    "debate-videos",
+    "packages",
+    "debate-data-sync",
+    "data",
+    "videos",
   );
 
   // Split rounds by style

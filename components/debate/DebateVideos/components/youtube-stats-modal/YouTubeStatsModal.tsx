@@ -134,21 +134,9 @@ export function YouTubeStatsModal({
             <div className="flex items-center gap-4">
               <img
                 src="https://i.imgur.com/eIQB4Sp.png"
-                alt="YouTube Statistics"
-                className="h-16 w-16 object-contain shrink-0"
+                alt="Debate VideosStatistics"
+                className="h-32 w-32 object-contain shrink-0"
               />
-              <div className="flex-1 min-w-0">
-                <DialogTitle>YouTube Statistics</DialogTitle>
-                <DialogDescription>
-                  Comprehensive statistics from {stats.summary.totalChannels} YouTube channels • {stats.summary.totalVideos.toLocaleString()} total videos
-                </DialogDescription>
-                <a
-                  href="mailto:support@debate-ai.com"
-                  className="text-sm text-primary hover:underline mt-1 inline-block"
-                >
-                  Submit a channel
-                </a>
-              </div>
             </div>
           </DialogHeader>
 

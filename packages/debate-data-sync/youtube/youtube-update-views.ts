@@ -15,7 +15,7 @@ export async function updateVideoViewCounts(batchSize = 50) {
     throw new Error("YouTube API key not configured");
   }
 
-  const dataDir = path.join(process.cwd(), "lib", "debate-data");
+  const dataDir = path.join(process.cwd(), "packages", "debate-data-sync", "data");
   const progressFile = path.join(process.cwd(), "youtube-update-progress.json");
 
   // Load existing data from split round files

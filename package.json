@@ -11,10 +11,7 @@
     "build:sw": "webpack",
     "start": "npx open-ready next start",
     "test": "vitest",
-    "favicon": "npm create favicon public/favicon-512.png public/ -- --overwrite",
-    "sync-youtube": "bun run lib/sync-youtube/youtube-sync-cli.ts",
-    "youtube-stats": "bun run lib/sync-youtube/youtube-sync-cli.ts --stats",
-    "youtube-update-views": "bun run lib/sync-youtube/youtube-sync-cli.ts --update-views"
+    "favicon": "npm create favicon public/favicon-512.png public/ -- --overwrite"
   },
   "dependencies": {
     "@langchain/core": "latest",
@@ -85,6 +82,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.71.2",
+    "react-native-app-buttons": "^0.1.4",
     "react-resizable-panels": "^4.7.2",
     "recharts": "2.15.4",
     "streamdown": "^2.4.0",

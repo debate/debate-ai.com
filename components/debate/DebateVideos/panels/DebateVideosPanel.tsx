@@ -85,7 +85,7 @@ export function DebateVideosPage() {
   // Load YouTube stats
   const [youtubeStats, setYoutubeStats] = useState<any>(null)
   useEffect(() => {
-    fetch("/youtube-stats.json")
+    fetch("/api/youtube-stats")
       .then((res) => res.json())
       .then((data) => setYoutubeStats(data))
       .catch((err) => console.error("Failed to load YouTube stats:", err))

@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Info, ChevronUp, ChevronDown, Trophy } from "lucide-react"
-import type { LeaderboardEntry } from "@/lib/sync-debate-rankings/sync-rankings-debatedrills"
+import type { LeaderboardEntry } from "@/packages/debate-data-sync/rankings/sync-rankings-debatedrills"
 import { ELO_TOOLTIP, hasValue, getNumericValue } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardUtils"
 
