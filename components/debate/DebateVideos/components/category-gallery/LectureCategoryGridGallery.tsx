@@ -181,19 +181,17 @@ const GridItem = ({
         />
         <div
           className={cn(
-            "relative flex h-full flex-col gap-1.5 overflow-hidden rounded-md border-[0.75px] bg-background p-2 shadow-sm dark:shadow-[0px_0px_20px_0px_rgba(45,45,45,0.2)] transition-all",
+            "relative flex h-full items-center gap-1.5 overflow-hidden rounded-md border-[0.75px] bg-background p-1.5 shadow-sm dark:shadow-[0px_0px_20px_0px_rgba(45,45,45,0.2)] transition-all",
             isSelected && "border-primary bg-primary/5"
           )}
         >
-          <div className="flex items-center justify-between gap-1.5">
-            <div className="w-fit rounded-md border-[0.75px] border-border bg-muted p-1">
-              {icon}
-            </div>
-            <span className="text-xs font-medium text-muted-foreground px-1.5 py-0.5 rounded-full bg-muted">
-              {videoCount}
-            </span>
+          <div className="shrink-0 rounded-md border-[0.75px] border-border bg-muted p-1">
+            {icon}
           </div>
-          <h3 className="text-xs leading-tight font-semibold font-sans tracking-[-0.01em] text-foreground line-clamp-2">
+          <span className="shrink-0 text-xs font-medium text-muted-foreground px-1.5 py-0.5 rounded-full bg-muted">
+            {videoCount}
+          </span>
+          <h3 className="min-w-0 flex-1 text-xs leading-tight font-semibold font-sans tracking-[-0.01em] text-foreground line-clamp-2">
             {title}
           </h3>
         </div>

@@ -57,7 +57,7 @@ const QUICK_LINKS: QuickLink[] = [
   },
   {
     id: "topPicks",
-    title: "All-Time Greatest",
+    title: "Greatest of All-Time",
     href: "/videos/topPicks",
     logo: IconRoundsYoutube,
     gradient: "from-amber-500/20 via-yellow-500/10 to-transparent",
@@ -73,7 +73,7 @@ const QUICK_LINKS: QuickLink[] = [
   },
   {
     id: "dictionary",
-    title: "Ontology Dictionary",
+    title: "Glossary of Terms",
     href: "/videos/dictionary",
     logo: IconBook,
     gradient: "from-indigo-500/20 via-blue-500/10 to-transparent",
