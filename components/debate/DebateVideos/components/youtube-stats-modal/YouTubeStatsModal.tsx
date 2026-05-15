@@ -135,7 +135,7 @@ export function YouTubeStatsModal({
               <img
                 src="https://i.imgur.com/eIQB4Sp.png"
                 alt="Debate VideosStatistics"
-                className="h-32 w-32 object-contain shrink-0"
+                className="h-48 w-48 object-contain shrink-0"
               />
             </div>
           </DialogHeader>
@@ -158,7 +158,7 @@ export function YouTubeStatsModal({
           <Tabs defaultValue="channels" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="channels">Top Channels</TabsTrigger>
-              <TabsTrigger value="years">By Year</TabsTrigger>
+              <TabsTrigger value="years">Statistics</TabsTrigger>
             </TabsList>
 
             <TabsContent value="channels" className="space-y-2">
