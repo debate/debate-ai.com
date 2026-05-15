@@ -3,17 +3,17 @@
  * @module components/debate/DebateVideos/panels/leaderboardUtils
  */
 
-import type { LeaderboardEntry } from "@/packages/debate-data-sync/rankings/sync-rankings-debatedrills"
+import type { LeaderboardEntry } from "@/packages/debate-data-sync/rankings/sync-rankings-debatedrills";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
 /** High-school and college debate division identifiers. */
-export type Division = "VPF" | "VLD" | "VCX" | "NDT"
+export type Division = "VPF" | "VLD" | "VCX" | "NDT";
 
 /** Set of valid division strings used for URL query-param validation. */
-export const VALID_DIVISIONS = new Set<string>(["VPF", "VLD", "VCX", "NDT"])
+export const VALID_DIVISIONS = new Set<string>(["VPF", "VLD", "VCX", "NDT"]);
 
 /** Column keys available for sorting the leaderboard grid. */
 export type SortKey =
@@ -24,28 +24,28 @@ export type SortKey =
   | "debateElo"
   | "eloRank"
   | "eloToBid"
-  | "eloTimesBid"
+  | "eloTimesBid";
 
 /** Sort direction for a leaderboard column. */
-export type SortDir = "asc" | "desc"
+export type SortDir = "asc" | "desc";
 
 /** Active sort state, or `null` when no column is sorted. */
-export type SortState = { key: SortKey; dir: SortDir } | null
+export type SortState = { key: SortKey; dir: SortDir } | null;
 
 /** Champion and topic data for a single debate season. */
 export type YearData = {
-  ndt_topic?: string
-  ndt_champion?: string
-  policy_topic?: string
-  policy_champion?: string
-  ld_topic?: string
-  ld_champion?: string
-  pf_topic?: string
-  pf_champion?: string
-}
+  ndt_topic?: string;
+  ndt_champion?: string;
+  policy_topic?: string;
+  policy_champion?: string;
+  ld_topic?: string;
+  ld_champion?: string;
+  pf_topic?: string;
+  pf_champion?: string;
+};
 
 /** Historical champion/topic data indexed by four-digit year string (e.g. `"2026"`). */
-export type DebateHistory = Record<string, YearData>
+export type DebateHistory = Record<string, YearData>;
 
 // ---------------------------------------------------------------------------
 // Division config
@@ -56,47 +56,47 @@ export type DebateHistory = Record<string, YearData>
  * banner, and the logo image path.
  */
 export const DIVISION_CONFIG: {
-  value: Division
-  label: string
-  topicKey: keyof YearData
-  championKey: keyof YearData
-  logoSrc: string
+  value: Division;
+  label: string;
+  topicKey: keyof YearData;
+  championKey: keyof YearData;
+  logoSrc: string;
 }[] = [
   {
     value: "VPF",
     label: "Public Forum",
     topicKey: "pf_topic",
     championKey: "pf_champion",
-    logoSrc: "/images/logo-public-forum-format.png",
+    logoSrc: "https://i.imgur.com/92V0FBF.png",
   },
   {
     value: "VLD",
     label: "LD",
     topicKey: "ld_topic",
     championKey: "ld_champion",
-    logoSrc: "/images/logo-lincoln-douglas-format.png",
+    logoSrc: "https://i.imgur.com/3xFjCvO.png",
   },
   {
     value: "VCX",
     label: "Policy",
     topicKey: "policy_topic",
     championKey: "policy_champion",
-    logoSrc: "/images/logo-policy-format.png",
+    logoSrc: "https://i.imgur.com/CMuiSKj.png",
   },
   {
     value: "NDT",
     label: "College NDT",
     topicKey: "ndt_topic",
     championKey: "ndt_champion",
-    logoSrc: "/images/logo-college-policy-format.png",
+    logoSrc: "https://i.imgur.com/cFmTAdJ.png",
   },
-]
+];
 
 /**
  * Tooltip copy describing the Debate Elo rating formula shown on the Elo
  * column header inside the leaderboard table.
  */
-export const ELO_TOOLTIP = `Debate Elo rating updates a team's skill score after each round using an Elo-style formula. The change in Elo for the winner is S = K · mv · (1 - wp), where S is the points gained (the loser loses roughly S). Here K is a scaling "drift factor" based on tournament bid level, mv is the margin of victory from judge ballots, and wp is the win probability implied by the pre-round Elo difference. Upsets against higher-rated opponents and larger margins give bigger Elo gains, while expected results change Elo only slightly. Debate Elo also adds a small outround bonus: e = b/2, where b is the number of bids, awarded to each team that wins an elimination round.`
+export const ELO_TOOLTIP = `Debate Elo rating updates a team's skill score after each round using an Elo-style formula. The change in Elo for the winner is S = K · mv · (1 - wp), where S is the points gained (the loser loses roughly S). Here K is a scaling "drift factor" based on tournament bid level, mv is the margin of victory from judge ballots, and wp is the win probability implied by the pre-round Elo difference. Upsets against higher-rated opponents and larger margins give bigger Elo gains, while expected results change Elo only slightly. Debate Elo also adds a small outround bonus: e = b/2, where b is the number of bids, awarded to each team that wins an elimination round.`;
 
 // ---------------------------------------------------------------------------
 // Utility functions
@@ -109,9 +109,9 @@ export const ELO_TOOLTIP = `Debate Elo rating updates a team's skill score after
  * @param val - Raw cell value from a {@link LeaderboardEntry} field.
  */
 export function getNumericValue(val: unknown): number {
-  if (val === undefined || val === null || val === "--") return -Infinity
-  const n = Number(val)
-  return isNaN(n) ? -Infinity : n
+  if (val === undefined || val === null || val === "--") return -Infinity;
+  const n = Number(val);
+  return isNaN(n) ? -Infinity : n;
 }
 
 /**
@@ -121,8 +121,8 @@ export function getNumericValue(val: unknown): number {
  * @param val - Raw cell value.
  */
 export function getStringValue(val: unknown): string {
-  if (val === undefined || val === null) return ""
-  return String(val).toLowerCase()
+  if (val === undefined || val === null) return "";
+  return String(val).toLowerCase();
 }
 
 /**
@@ -132,7 +132,7 @@ export function getStringValue(val: unknown): string {
  * @param val - Raw cell value.
  */
 export function hasValue(val: unknown): boolean {
-  return val !== undefined && val !== null && val !== "--"
+  return val !== undefined && val !== null && val !== "--";
 }
 
 /**
@@ -147,50 +147,54 @@ export function sortEntries(
   entries: LeaderboardEntry[],
   sort: SortState,
 ): LeaderboardEntry[] {
-  if (!sort) return entries
-  const { key, dir } = sort
-  const mul = dir === "asc" ? 1 : -1
+  if (!sort) return entries;
+  const { key, dir } = sort;
+  const mul = dir === "asc" ? 1 : -1;
 
   return [...entries].sort((a, b) => {
     if (key === "state") {
-      return mul * getStringValue(a.state).localeCompare(getStringValue(b.state))
+      return (
+        mul * getStringValue(a.state).localeCompare(getStringValue(b.state))
+      );
     }
 
     if (key === "eloToBid") {
-      const aValid = hasValue(a.eloRank) && hasValue(a.rank)
-      const bValid = hasValue(b.eloRank) && hasValue(b.rank)
-      if (!aValid && !bValid) return 0
-      if (!aValid) return 1
-      if (!bValid) return -1
-      return mul * (
-        getNumericValue(a.eloRank) / getNumericValue(a.rank) -
-        getNumericValue(b.eloRank) / getNumericValue(b.rank)
-      )
+      const aValid = hasValue(a.eloRank) && hasValue(a.rank);
+      const bValid = hasValue(b.eloRank) && hasValue(b.rank);
+      if (!aValid && !bValid) return 0;
+      if (!aValid) return 1;
+      if (!bValid) return -1;
+      return (
+        mul *
+        (getNumericValue(a.eloRank) / getNumericValue(a.rank) -
+          getNumericValue(b.eloRank) / getNumericValue(b.rank))
+      );
     }
 
     if (key === "eloTimesBid") {
-      const aValid = hasValue(a.eloRank) && hasValue(a.rank)
-      const bValid = hasValue(b.eloRank) && hasValue(b.rank)
-      if (!aValid && !bValid) return 0
-      if (!aValid) return 1
-      if (!bValid) return -1
-      return mul * (
-        getNumericValue(a.eloRank) * getNumericValue(a.rank) -
-        getNumericValue(b.eloRank) * getNumericValue(b.rank)
-      )
+      const aValid = hasValue(a.eloRank) && hasValue(a.rank);
+      const bValid = hasValue(b.eloRank) && hasValue(b.rank);
+      if (!aValid && !bValid) return 0;
+      if (!aValid) return 1;
+      if (!bValid) return -1;
+      return (
+        mul *
+        (getNumericValue(a.eloRank) * getNumericValue(a.rank) -
+          getNumericValue(b.eloRank) * getNumericValue(b.rank))
+      );
     }
 
     if (key === "rank" || key === "eloRank") {
-      const aOk = hasValue(a[key])
-      const bOk = hasValue(b[key])
-      if (!aOk && !bOk) return 0
-      if (!aOk) return 1
-      if (!bOk) return -1
-      return mul * (getNumericValue(a[key]) - getNumericValue(b[key]))
+      const aOk = hasValue(a[key]);
+      const bOk = hasValue(b[key]);
+      if (!aOk && !bOk) return 0;
+      if (!aOk) return 1;
+      if (!bOk) return -1;
+      return mul * (getNumericValue(a[key]) - getNumericValue(b[key]));
     }
 
-    return mul * (getNumericValue(a[key]) - getNumericValue(b[key]))
-  })
+    return mul * (getNumericValue(a[key]) - getNumericValue(b[key]));
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -200,16 +204,16 @@ export function sortEntries(
 /** Props for the {@link LeaderboardPanel} component. */
 export interface LeaderboardPanelProps {
   /** When provided, the parent controls the active division. */
-  controlledDivision?: Division
+  controlledDivision?: Division;
   /** When provided, the parent controls the active season year. */
-  controlledYear?: string
+  controlledYear?: string;
   /** Callback for division changes when the parent is controlling it. */
-  onControlledDivisionChange?: (v: Division) => void
+  onControlledDivisionChange?: (v: Division) => void;
   /** Callback for year changes when the parent is controlling it. */
-  onControlledYearChange?: (v: string) => void
+  onControlledYearChange?: (v: string) => void;
   /**
    * Pre-loaded champion and topic history data.
    * When omitted the panel fetches it from the `/history` API endpoint.
    */
-  history?: DebateHistory | null
+  history?: DebateHistory | null;
 }

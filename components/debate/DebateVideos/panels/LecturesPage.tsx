@@ -5,8 +5,9 @@
 "use client"
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import Link from "next/link"
 import { useSearchParams, useParams } from "next/navigation"
-import { Search, X } from "lucide-react"
+import { ArrowLeft, Search, X } from "lucide-react"
 import type { CategoryType, DebateStyle, DebateVideosData } from "@/lib/types/videos"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
 import { Input } from "@/components/ui/input"
@@ -287,10 +288,21 @@ export function LecturesPage() {
   // ============================================================================
   // Leaderboard Panel (/videos/rankings)
   // ============================================================================
+  const backButton = (
+    <Link
+      href="/videos"
+      className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background hover:bg-accent text-sm font-medium text-foreground transition-colors"
+      aria-label="Back to lectures"
+    >
+      <ArrowLeft className="h-4 w-4" />
+      Back
+    </Link>
+  )
+
   if (state.currentCategory === "leaderboard") {
     return (
       <div className="min-h-screen bg-background p-3 sm:p-6">
-        {stickyHeader()}
+        {stickyHeader(backButton)}
         <LeaderboardPanel history={state.debateVideos?.history} />
       </div>
     )
@@ -301,6 +313,7 @@ export function LecturesPage() {
       <div className="min-h-screen bg-background p-3 sm:p-6">
         {stickyHeader(
           <div className="flex items-center gap-2 w-full md:w-auto">
+            {backButton}
             <div className="relative flex-1 min-w-0 md:w-[240px] md:flex-none">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input

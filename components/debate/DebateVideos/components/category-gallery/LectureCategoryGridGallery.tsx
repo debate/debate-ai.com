@@ -20,10 +20,10 @@ import {
   Target,
   Zap,
   Globe,
-  Award,
   Film,
   Users,
   GraduationCap,
+  LayoutGrid,
 } from "lucide-react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
@@ -53,7 +53,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "Impact Calculus & Evidence": <Zap className="h-4 w-4" />,
   "Philosophy & IR Theory": <Globe className="h-4 w-4" />,
   "Public Forum": <MessageSquare className="h-4 w-4" />,
-  Awards: <Award className="h-4 w-4" />,
+  "All Lectures": <LayoutGrid className="h-4 w-4" />,
   "Documentaries & Culture": <Film className="h-4 w-4" />,
   "Camp & Coaching Advice": <Users className="h-4 w-4" />,
   "Novice & Introductory": <GraduationCap className="h-4 w-4" />,
@@ -76,7 +76,7 @@ export function LectureCategoryGridGallery({
 
     videosData.forEach((video) => {
       const categoryLabel = video[6];
-      if (typeof categoryLabel === "string") {
+      if (typeof categoryLabel === "string" && categoryLabel !== "Awards") {
         if (!categoryMap.has(categoryLabel)) {
           categoryMap.set(categoryLabel, {
             videos: [],
@@ -96,7 +96,7 @@ export function LectureCategoryGridGallery({
     });
 
     // Build cards from extracted categories
-    return Array.from(categoryMap.entries())
+    const categoryCards = Array.from(categoryMap.entries())
       .map(([label, data]) => {
         const description =
           typedCategoryDescriptions[label] ||
@@ -116,9 +116,22 @@ export function LectureCategoryGridGallery({
         };
       })
       .sort((a, b) => b.maxViews - a.maxViews); // Sort by popularity
+
+    const totalCount = categoryCards.reduce((sum, c) => sum + c.videoCount, 0);
+    const allLecturesCard = {
+      id: "all",
+      title: "All Lectures",
+      description: "Browse every debate lecture across all categories",
+      videoCount: totalCount,
+      icon: CATEGORY_ICONS["All Lectures"],
+      maxViews: Infinity,
+    };
+
+    return [allLecturesCard, ...categoryCards];
   }, [videosData]);
 
   const buildHref = (categoryId: string) => {
+    if (categoryId === "all") return "/videos";
     const isSame = selectedCategory === categoryId;
     return isSame ? "/videos" : `/videos/${encodeURIComponent(categoryId)}`;
   };

@@ -32,7 +32,7 @@ const NAV_ITEMS = [
   { href: "/cards", label: "Shared", icon: IconCollectiveMind },
   { href: "/debate", label: "Debate", icon: IconFlowFlower },
   { href: "/edit", label: "Docs", icon: IconRead },
-  { href: "/lectures", label: "Lectures", icon: IconLectures },
+  { href: "/videos", label: "Lectures", icon: IconLectures },
 ]
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
