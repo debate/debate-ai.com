@@ -20,12 +20,12 @@ export function IntroTextOverview() {
         <div className="flex items-center justify-center gap-8">
           <img
             width="128"
-            src="/images/logo-collective-mind.png"
+            src="https://i.imgur.com/VbJF0Bx.png"
             alt="Building Blocks Icon"
             className="drop-shadow-sm"
           />
           <div className="flex flex-col gap-2">
-            <DownloadAppButton platform="chrome-extension" appId="noecbaibfhbmpapofcdkgchfifmoinfj" autoHighlight />
+            <DownloadAppButton platform="chrome-extension" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
           </div>
         </div>
 

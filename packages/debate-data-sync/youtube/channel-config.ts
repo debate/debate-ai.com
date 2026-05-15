@@ -2,9 +2,9 @@
  * Configuration for YouTube channels to sync
  */
 
-export const publishedAfter = "2026-05-01";
+export const publishedAfter = "2024-05-01";
 
-export const channelsToUpdate = [];
+export const channelsToUpdate = ["msudebate6544"];
 
 export const channels = [
   "Adi_Arora_PF",
