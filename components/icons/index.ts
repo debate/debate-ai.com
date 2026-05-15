@@ -16,3 +16,4 @@ export { default as IconRounds } from "./icon-rounds.svg";
 export { default as IconThemePantone } from "./icon-theme-pantone.svg";
 export { default as IconTopRounds } from "./icon-top-rounds.svg";
 export { default as IconTrophy } from "./icon-trophy.svg";
+export { default as IconTrophyGoat } from "./icon-trophy-goat.svg";

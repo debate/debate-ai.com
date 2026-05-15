@@ -128,13 +128,24 @@ export function LecturesPage() {
   }, [])
 
   const videosSectionRef = useRef<HTMLDivElement | null>(null)
+  const pendingScrollRef = useRef(false)
 
   const scrollToVideos = useCallback(() => {
-    const el = videosSectionRef.current
-    if (!el) return
-    const top = el.getBoundingClientRect().top + window.scrollY + 400
-    window.scrollTo({ top, behavior: "smooth" })
+    pendingScrollRef.current = true
   }, [])
+
+  useEffect(() => {
+    if (!pendingScrollRef.current) return
+    if (state.isLoading) return
+    if (state.filteredVideos.length === 0) return
+    pendingScrollRef.current = false
+    requestAnimationFrame(() => {
+      const el = videosSectionRef.current
+      if (!el) return
+      const top = el.getBoundingClientRect().top + window.scrollY + 400
+      window.scrollTo({ top, behavior: "smooth" })
+    })
+  }, [state.isLoading, state.filteredVideos.length])
 
   // Sync ?category= from URL (legacy query-string form).
   useEffect(() => {
@@ -222,6 +233,12 @@ export function LecturesPage() {
   useEffect(() => {
     let filtered = filterAndSortVideos(state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos)
 
+    // "All Lectures" should show only lecture videos, not rounds.
+    // Rounds carry a numeric DebateStyle at index 6; lectures carry a string category label.
+    if (state.currentCategory === "lectures" && selectedCategory === "all" && !state.selectedStyle) {
+      filtered = filtered.filter((video) => typeof video[6] !== "number")
+    }
+
     // Apply category filter if one is selected
     if (selectedCategory !== "all") {
       // Filter by category label at index 6
@@ -238,7 +255,7 @@ export function LecturesPage() {
 
     actions.setFilteredVideos(filtered)
     actions.setCurrentPage(1)
-  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, selectedCategory, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
+  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, state.currentCategory, selectedCategory, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
 
   // ============================================================================
   // Search & Filter Handlers

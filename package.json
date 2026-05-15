@@ -5,12 +5,10 @@
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "scripts": {
-    "dev": "rm -rf .next; npx open-ready@latest next dev --webpack",
-    "build": "next build --webpack && npm run build:sw:generate && npm run build:sw",
+    "dev": "rm -rf .next; open-ready next dev --webpack",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096'  next build --webpack && npm run build:sw:generate && npm run build:sw",
     "build:sw:generate": "node lib/offline-sw/generate.js",
-    "build:sw": "webpack",
     "start": "npx open-ready next start",
-    "test": "vitest",
     "favicon": "npm create favicon public/favicon-512.png public/ -- --overwrite"
   },
   "dependencies": {

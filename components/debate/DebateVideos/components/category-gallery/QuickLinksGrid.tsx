@@ -10,7 +10,7 @@ import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
-import { IconBook, IconLeaderboard, IconRoundsYoutube, IconTrophy } from "@/components/icons";
+import { IconBook, IconTrophyGoat, IconLeaderboard, IconRoundsYoutube, IconTrophy } from "@/components/icons";
 
 interface QuickLink {
   id: string;
@@ -23,6 +23,15 @@ interface QuickLink {
 }
 
 const QUICK_LINKS: QuickLink[] = [
+
+  {
+    id: "policy",
+    title: "Policy Debates",
+    href: "/videos/policy",
+    logo: "https://i.imgur.com/CMuiSKj.png",
+    gradient: "from-red-500/20 via-rose-500/10 to-transparent",
+    iconBg: "bg-red-500/15 ring-1 ring-red-500/30",
+  },
   {
     id: "pf",
     title: "PF Debates",
@@ -40,14 +49,6 @@ const QUICK_LINKS: QuickLink[] = [
     iconBg: "bg-sky-500/15 ring-1 ring-sky-500/30",
   },
   {
-    id: "policy",
-    title: "Policy Debates",
-    href: "/videos/policy",
-    logo: "https://i.imgur.com/CMuiSKj.png",
-    gradient: "from-red-500/20 via-rose-500/10 to-transparent",
-    iconBg: "bg-red-500/15 ring-1 ring-red-500/30",
-  },
-  {
     id: "college",
     title: "College Debates",
     href: "/videos/college",
@@ -59,7 +60,7 @@ const QUICK_LINKS: QuickLink[] = [
     id: "topPicks",
     title: "Greatest of All-Time",
     href: "/videos/topPicks",
-    logo: IconRoundsYoutube,
+    logo: IconTrophyGoat,
     gradient: "from-amber-500/20 via-yellow-500/10 to-transparent",
     iconBg: "bg-amber-500/15 ring-1 ring-amber-500/30",
   },
@@ -100,7 +101,7 @@ function formatCount(n: number): string {
 
 export function QuickLinksGrid({ counts }: QuickLinksGridProps) {
   return (
-    <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 mb-4">
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] xl:grid-cols-4 gap-2 mb-4">
       {QUICK_LINKS.map((link) => {
         const count = counts?.[link.id];
         return (
