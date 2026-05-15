@@ -6,7 +6,7 @@
   "license": "rights.institute/prosper",
   "scripts": {
     "dev": "rm -rf .next; open-ready next dev --webpack",
-    "build": "NODE_OPTIONS='--max-old-space-size=4096'  next build --webpack && npm run build:sw:generate && npm run build:sw",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096'  next build --webpack && npm run build:sw:generate && webpack",
     "build:sw:generate": "node lib/offline-sw/generate.js",
     "start": "npx open-ready next start",
     "favicon": "npm create favicon public/favicon-512.png public/ -- --overwrite"

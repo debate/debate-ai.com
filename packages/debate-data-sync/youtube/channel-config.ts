@@ -4,7 +4,7 @@
 
 export const publishedAfter = "2024-05-01";
 
-export const channelsToUpdate = ["msudebate6544"];
+export const channelsToUpdate = [];
 
 export const channels = [
   "Adi_Arora_PF",
