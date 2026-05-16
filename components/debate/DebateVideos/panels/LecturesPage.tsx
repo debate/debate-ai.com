@@ -142,8 +142,7 @@ export function LecturesPage() {
     requestAnimationFrame(() => {
       const el = videosSectionRef.current
       if (!el) return
-      const top = el.getBoundingClientRect().top + window.scrollY + 400
-      window.scrollTo({ top, behavior: "smooth" })
+      el.scrollIntoView({ behavior: "smooth", block: "start" })
     })
   }, [state.isLoading, state.filteredVideos.length])
 
