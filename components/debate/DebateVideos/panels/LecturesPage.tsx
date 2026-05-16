@@ -104,6 +104,7 @@ export function LecturesPage() {
 
   const [dictSearchTerm, setDictSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
+  const [showCategories, setShowCategories] = useState(false)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
   const [youtubeStats, setYoutubeStats] = useState<any>(null)
 
@@ -401,10 +402,14 @@ export function LecturesPage() {
       )}
 
       {/* Quick-link shortcuts to other panels */}
-      <QuickLinksGrid counts={quickLinkCounts} />
+      <QuickLinksGrid
+        counts={quickLinkCounts}
+        onLecturesClick={() => setShowCategories((v) => !v)}
+        lecturesActive={showCategories}
+      />
 
-      {/* Category Grid Gallery */}
-      {state.debateVideos?.lectures && (
+      {/* Category Grid Gallery — only shown after clicking the Lectures card */}
+      {showCategories && state.debateVideos?.lectures && (
         <div className="mb-8">
           <LectureCategoryGridGallery
             videosData={state.debateVideos.lectures}
