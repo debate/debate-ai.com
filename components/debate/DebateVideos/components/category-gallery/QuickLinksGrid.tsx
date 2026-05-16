@@ -104,6 +104,7 @@ const QUICK_LINKS: QuickLink[] = [
 
 interface QuickLinksGridProps {
   counts?: Record<string, number>;
+  onLecturesToggle?: (active: boolean) => void;
 }
 
 function formatCount(n: number): string {
@@ -140,17 +141,22 @@ function CardBody({ link, showLectures }: { link: QuickLink; showLectures: boole
   );
 }
 
-export function QuickLinksGrid({ counts }: QuickLinksGridProps) {
+export function QuickLinksGrid({ counts, onLecturesToggle }: QuickLinksGridProps) {
   const [showLectures, setShowLectures] = useState(false);
-  const visibleLinks = QUICK_LINKS.filter((link) => !link.lecturesOnly || showLectures);
+
+  function handleLecturesClick() {
+    const next = !showLectures;
+    setShowLectures(next);
+    onLecturesToggle?.(next);
+  }
 
   return (
     <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-2 mb-4">
-      {visibleLinks.map((link) => (
+      {QUICK_LINKS.map((link) => (
         <li key={link.id} className="list-none">
           {link.id === "lectures" ? (
             <button
-              onClick={() => setShowLectures((v) => !v)}
+              onClick={handleLecturesClick}
               className="relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group cursor-pointer"
             >
               <CardBody link={link} showLectures={showLectures} />
