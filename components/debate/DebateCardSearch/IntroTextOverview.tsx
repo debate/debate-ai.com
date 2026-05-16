@@ -168,12 +168,12 @@ export function IntroTextOverview() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
               >
-                Debate Singularity (Paper) &rarr;
+                Debate AI Collective Consciousness (Paper) &rarr;
               </a>
             </div>
 
 
-            <div className="pt-4 mt-auto">
+            {/* <div className="pt-4 mt-auto">
               <a
                 href="https://arxiv.org/html/2406.14657v3"
                 target="_blank"
@@ -182,7 +182,7 @@ export function IntroTextOverview() {
               >
                 OpenDebateEvidence (Paper) &rarr;
               </a>
-            </div>
+            </div> */}
 
           </div>
         </CardContent>

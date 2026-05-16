@@ -83,6 +83,7 @@
     "react-native-app-buttons": "^0.1.4",
     "react-resizable-panels": "^4.7.2",
     "recharts": "2.15.4",
+    "shadcn-theme-menu": "^1.1.4",
     "streamdown": "^2.4.0",
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7",

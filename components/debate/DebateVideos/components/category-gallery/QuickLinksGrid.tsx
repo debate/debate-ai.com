@@ -5,12 +5,12 @@
 
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
-import { IconBook, IconTrophyGoat, IconLeaderboard, IconRoundsYoutube, IconTrophy } from "@/components/icons";
+import { IconBook, IconTrophyGoat, IconLeaderboard, IconTrophy, IconLectures } from "@/components/icons";
 
 interface QuickLink {
   id: string;
@@ -20,12 +20,21 @@ interface QuickLink {
   logo?: string | StaticImageData;
   gradient: string;
   iconBg: string;
+  lecturesOnly?: boolean;
 }
 
 const QUICK_LINKS: QuickLink[] = [
-
+  {
+    id: "lectures",
+    title: "Lectures",
+    href: "",
+    logo: IconLectures,
+    gradient: "from-cyan-500/20 via-teal-500/10 to-transparent",
+    iconBg: "bg-cyan-500/15 ring-1 ring-cyan-500/30",
+  },
   {
     id: "policy",
+    lecturesOnly: true,
     title: "Policy Debates",
     href: "/videos/policy",
     logo: "https://i.imgur.com/CMuiSKj.png",
@@ -34,6 +43,7 @@ const QUICK_LINKS: QuickLink[] = [
   },
   {
     id: "pf",
+    lecturesOnly: true,
     title: "PF Debates",
     href: "/videos/pf",
     logo: "https://i.imgur.com/92V0FBF.png",
@@ -42,6 +52,7 @@ const QUICK_LINKS: QuickLink[] = [
   },
   {
     id: "ld",
+    lecturesOnly: true,
     title: "LD Debates",
     href: "/videos/ld",
     logo: "https://i.imgur.com/3xFjCvO.png",
@@ -50,6 +61,7 @@ const QUICK_LINKS: QuickLink[] = [
   },
   {
     id: "college",
+    lecturesOnly: true,
     title: "College Debates",
     href: "/videos/college",
     logo: "https://i.imgur.com/cFmTAdJ.png",
@@ -99,65 +111,60 @@ function formatCount(n: number): string {
   return String(n);
 }
 
-export function QuickLinksGrid({ counts }: QuickLinksGridProps) {
+function CardBody({ link, showLectures }: { link: QuickLink; showLectures: boolean }) {
+  const isLecturesToggle = link.id === "lectures";
   return (
-    <ul className="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] xl:grid-cols-4 gap-2 mb-4">
-      {QUICK_LINKS.map((link) => {
-        const count = counts?.[link.id];
-        return (
-          <li key={link.id} className="list-none">
+    <>
+      <GlowingEffect spread={30} glow proximity={48} inactiveZone={0.01} borderWidth={1.5} />
+      <div
+        className={cn(
+          "relative flex h-full flex-col overflow-hidden rounded-md border-[0.75px] bg-background p-2 shadow-sm dark:shadow-[0px_0px_20px_0px_rgba(45,45,45,0.2)] transition-all bg-gradient-to-br",
+          link.gradient,
+          isLecturesToggle && showLectures && "ring-1 ring-primary/50",
+        )}
+      >
+        <div className="flex items-center justify-center h-14 w-full">
+          <div className={cn("rounded-md p-1.5 flex items-center justify-center transition-transform group-hover:scale-110", link.iconBg)}>
+            {link.logo ? (
+              <Image src={link.logo as string} alt={link.title} width={48} height={48} className="h-10 w-10 object-contain" />
+            ) : (
+              link.icon
+            )}
+          </div>
+        </div>
+        <h3 className="mt-auto text-xs leading-tight font-semibold font-sans tracking-[-0.01em] text-foreground text-center min-h-[2rem] flex items-center justify-center">
+          {link.title}
+        </h3>
+      </div>
+    </>
+  );
+}
+
+export function QuickLinksGrid({ counts }: QuickLinksGridProps) {
+  const [showLectures, setShowLectures] = useState(false);
+  const visibleLinks = QUICK_LINKS.filter((link) => !link.lecturesOnly || showLectures);
+
+  return (
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-2 mb-4">
+      {visibleLinks.map((link) => (
+        <li key={link.id} className="list-none">
+          {link.id === "lectures" ? (
+            <button
+              onClick={() => setShowLectures((v) => !v)}
+              className="relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group cursor-pointer"
+            >
+              <CardBody link={link} showLectures={showLectures} />
+            </button>
+          ) : (
             <Link
               href={link.href}
               className="relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group"
             >
-              <GlowingEffect
-                spread={30}
-                glow={true}
-                disabled={false}
-                proximity={48}
-                inactiveZone={0.01}
-                borderWidth={1.5}
-              />
-              <div
-                className={cn(
-                  "relative flex h-full flex-col overflow-hidden rounded-md border-[0.75px] bg-background p-3 shadow-sm dark:shadow-[0px_0px_20px_0px_rgba(45,45,45,0.2)] transition-all",
-                  "bg-gradient-to-br",
-                  link.gradient,
-                )}
-              >
-                {count != null && (
-                  <span className="absolute top-2 right-2 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-muted/70 backdrop-blur-sm text-muted-foreground">
-                    {formatCount(count)}
-                  </span>
-                )}
-                <div className="flex items-center justify-center h-16 w-full">
-                  <div
-                    className={cn(
-                      "rounded-md p-1.5 flex items-center justify-center transition-transform group-hover:scale-110",
-                      link.iconBg,
-                    )}
-                  >
-                    {link.logo ? (
-                      <Image
-                        src={link.logo as string}
-                        alt={link.title}
-                        width={56}
-                        height={56}
-                        className="h-12 w-12 object-contain"
-                      />
-                    ) : (
-                      link.icon
-                    )}
-                  </div>
-                </div>
-                <h3 className="mt-auto text-xs leading-tight font-semibold font-sans tracking-[-0.01em] text-foreground text-center min-h-[2rem] flex items-center justify-center">
-                  {link.title}
-                </h3>
-              </div>
+              <CardBody link={link} showLectures={showLectures} />
             </Link>
-          </li>
-        );
-      })}
+          )}
+        </li>
+      ))}
     </ul>
   );
 }

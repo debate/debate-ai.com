@@ -73,8 +73,6 @@
 - 👥 **Collaboration**: invite judges and spectators by email; view-only and edit roles supported
 - 🗄️ **Archive system**: save, browse, and restore any past round with full flow history
 - 📲 **Mobile-optimized**: responsive design with swipe navigation between speech columns
-- 🧑‍⚖️ **Judge Decision**: agents prompts recommend multiple judge decision options, speech to flow, quote to response options
--
 
 <p align="center">
     <img src="https://i.imgur.com/eIQB4Sp.png" width="300"  >
@@ -123,12 +121,12 @@
 - ⌨️ **Keyboard Navigation**: efficient keyboard shortcuts for power users
 - 💬 **Research Quotes**: capture and organize key quotes and insights from your research
 
-## The Elements of Debate Singularity
+## Reimagine the Internet as Self-Organizing Mind Map
 
-1. **The Debate Singularity is Happening.** AI systems can already assist with research, summarization, flaw detection, and comparative argument analysis, and prior debate-focused systems have shown that computational tools can support live argumentative tasks [8][11]. In this paper, the “singularity” does not mean full automation of judgment; it means the rapid convergence of debate practice, knowledge organization, and machine-assisted reasoning into one workflow.
-2. **Collective Thought Engine.** Crowdsourced research can be represented as a weighted argument space where claims gain influence through reuse, support, contestation, and contextual relevance [4]. This turns debate from a sequence of isolated rounds into a shared reasoning substrate in which public arguments can be compared at scale.
-3. **Transparent Reasoning.** Argumentative AI is most useful when users can inspect the exact sentences, citations, and inferential steps behind an output, a principle aligned with work on contestable human-AI decision-making and explainability [3]. A debate-native system should therefore expose not just conclusions, but the evidence path that produced them.
-4. **Outcome Simulation Trees.** Users should be able to model likely responses, counterarguments, and downstream consequences across multiple branches of a controversy [15]. This extends debate preparation into a formal simulation environment for testing which lines of reasoning remain persuasive across audiences and contexts.
+1. **The Debate Singularity is Happening.** AI systems can already assist with research, summarization, flaw detection, and comparative argument analysis, and prior debate-focused systems have shown that computational tools can support live argumentative tasks (Lippi & Torroni, n.d.; Association for Computational Linguistics, 2023). In this paper, the “singularity” does not mean full automation of judgment; it means the rapid convergence of debate practice, knowledge organization, and machine-assisted reasoning into one workflow.
+2. **Collective Thought Engine.** Crowdsourced research can be represented as a weighted argument space where claims gain influence through reuse, support, contestation, and contextual relevance (Bikakis et al., 2023). This turns debate from a sequence of isolated rounds into a shared reasoning substrate in which public arguments can be compared at scale.
+3. **Transparent Reasoning.** Argumentative AI is most useful when users can inspect the exact sentences, citations, and inferential steps behind an output, a principle aligned with work on contestable human-AI decision-making and explainability (Xiao & Greer, 2023). A debate-native system should therefore expose not just conclusions, but the evidence path that produced them.
+4. **Outcome Simulation Trees.** Users should be able to model likely responses, counterarguments, and downstream consequences across multiple branches of a controversy (Homer-Dixon & Karapin, 1989). This extends debate preparation into a formal simulation environment for testing which lines of reasoning remain persuasive across audiences and contexts.
 5. **Outlines of Current News Issues.** The most practical use case is live news outlines. Each article, quote, or claim becomes part of a topic tree, allowing users to track how a story evolves, where the main disagreements are, and which warrants support each side.
 6. **Solving Post-Self Alignment.** Modern discourse is fragmented by platform incentives, ideological sorting, and partial information environments. A shared debate outline can function as a corrective by placing opposed claims into one visible structure, making disagreement legible without reducing it to caricature.
 7. **Topic Research Unified Tree Hierarchy (TRUTH).** We call the resulting structure the Topic Research Unified Tree Hierarchy, or TRUTH: a hierarchical representation of issues, claims, evidence, and value conflicts. TRUTH is designed to help models identify overstatement, missing warrants, and unsupported leaps while grounding outputs in a common research map.
