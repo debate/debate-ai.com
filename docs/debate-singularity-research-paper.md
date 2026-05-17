@@ -448,7 +448,7 @@ Bail, C. A., et al. (2021). Echo chambers, filter bubbles, and polarisation: A l
 
 Bandow, D. (n.d.). The myth of the omniscient authoritarian. _Cato Institute._ https://www.cato.org/commentary/myth-omniscient-authoritarian
 
-Barkley Forum for High Schools—Pelham Division. (2008, January 23–25). _Emory University_ [PDF]. https://the3nr.com/results/2008-2009/2009%20Emory%20Varsity%20CX%20Results.pdf
+Barkley Forum for High Schools—Pelham Division. (2008, January 23–25). _Emory University_ [PDF]. https://the3nr.com/results/2008-2009/2009%20Emory%20Varsity%20CX%20Results.pdf See also: Glenbrook Results 2008. https://the3nr.com/results/2008-2009/2008%20Glenbrooks%20Varsity%20CX%20Results.pdf
 
 Berkun, S. (2005, April). Why smart people defend bad ideas. https://scottberkun.com/essays/40-why-smart-people-defend-bad-ideas/
 

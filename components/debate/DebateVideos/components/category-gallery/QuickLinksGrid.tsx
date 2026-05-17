@@ -5,7 +5,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
@@ -20,7 +20,6 @@ interface QuickLink {
   logo?: string | StaticImageData;
   gradient: string;
   iconBg: string;
-  lecturesOnly?: boolean;
 }
 
 const QUICK_LINKS: QuickLink[] = [
@@ -34,7 +33,6 @@ const QUICK_LINKS: QuickLink[] = [
   },
   {
     id: "policy",
-    lecturesOnly: true,
     title: "Policy Debates",
     href: "/videos/policy",
     logo: "https://i.imgur.com/CMuiSKj.png",
@@ -43,7 +41,6 @@ const QUICK_LINKS: QuickLink[] = [
   },
   {
     id: "pf",
-    lecturesOnly: true,
     title: "PF Debates",
     href: "/videos/pf",
     logo: "https://i.imgur.com/92V0FBF.png",
@@ -52,7 +49,6 @@ const QUICK_LINKS: QuickLink[] = [
   },
   {
     id: "ld",
-    lecturesOnly: true,
     title: "LD Debates",
     href: "/videos/ld",
     logo: "https://i.imgur.com/3xFjCvO.png",
@@ -61,7 +57,6 @@ const QUICK_LINKS: QuickLink[] = [
   },
   {
     id: "college",
-    lecturesOnly: true,
     title: "College Debates",
     href: "/videos/college",
     logo: "https://i.imgur.com/cFmTAdJ.png",
@@ -104,6 +99,8 @@ const QUICK_LINKS: QuickLink[] = [
 
 interface QuickLinksGridProps {
   counts?: Record<string, number>;
+  showLectures?: boolean;
+  onToggleLectures?: () => void;
 }
 
 function formatCount(n: number): string {
@@ -140,17 +137,14 @@ function CardBody({ link, showLectures }: { link: QuickLink; showLectures: boole
   );
 }
 
-export function QuickLinksGrid({ counts }: QuickLinksGridProps) {
-  const [showLectures, setShowLectures] = useState(false);
-  const visibleLinks = QUICK_LINKS.filter((link) => !link.lecturesOnly || showLectures);
-
+export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures }: QuickLinksGridProps) {
   return (
     <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-2 mb-4">
-      {visibleLinks.map((link) => (
+      {QUICK_LINKS.map((link) => (
         <li key={link.id} className="list-none">
           {link.id === "lectures" ? (
             <button
-              onClick={() => setShowLectures((v) => !v)}
+              onClick={onToggleLectures}
               className="relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group cursor-pointer"
             >
               <CardBody link={link} showLectures={showLectures} />

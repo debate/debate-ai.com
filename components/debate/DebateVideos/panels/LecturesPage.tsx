@@ -104,6 +104,7 @@ export function LecturesPage() {
 
   const [dictSearchTerm, setDictSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
+  const [showLectureCategories, setShowLectureCategories] = useState(false)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
   const [youtubeStats, setYoutubeStats] = useState<any>(null)
 
@@ -142,8 +143,7 @@ export function LecturesPage() {
     requestAnimationFrame(() => {
       const el = videosSectionRef.current
       if (!el) return
-      const top = el.getBoundingClientRect().top + window.scrollY + 400
-      window.scrollTo({ top, behavior: "smooth" })
+      el.scrollIntoView({ behavior: "smooth", block: "start" })
     })
   }, [state.isLoading, state.filteredVideos.length])
 
@@ -401,10 +401,14 @@ export function LecturesPage() {
       )}
 
       {/* Quick-link shortcuts to other panels */}
-      <QuickLinksGrid counts={quickLinkCounts} />
+      <QuickLinksGrid
+        counts={quickLinkCounts}
+        showLectures={showLectureCategories}
+        onToggleLectures={() => setShowLectureCategories((v) => !v)}
+      />
 
-      {/* Category Grid Gallery */}
-      {state.debateVideos?.lectures && (
+      {/* Category Grid Gallery — only visible when Lectures toggle is on */}
+      {showLectureCategories && state.debateVideos?.lectures && (
         <div className="mb-8">
           <LectureCategoryGridGallery
             videosData={state.debateVideos.lectures}
