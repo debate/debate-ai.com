@@ -108,7 +108,7 @@ function formatCount(n: number): string {
   return String(n);
 }
 
-function CardBody({ link, showLectures }: { link: QuickLink; showLectures: boolean }) {
+function CardBody({ link, showLectures, count }: { link: QuickLink; showLectures: boolean; count?: number }) {
   const isLecturesToggle = link.id === "lectures";
   return (
     <>
@@ -132,6 +132,11 @@ function CardBody({ link, showLectures }: { link: QuickLink; showLectures: boole
         <h3 className="mt-auto text-xs leading-tight font-semibold font-sans tracking-[-0.01em] text-foreground text-center min-h-[2rem] flex items-center justify-center">
           {link.title}
         </h3>
+        {count != null && count > 0 && (
+          <span className="absolute top-1 right-1 text-[10px] font-semibold text-foreground/60 leading-none">
+            {formatCount(count)}
+          </span>
+        )}
       </div>
     </>
   );
@@ -147,14 +152,14 @@ export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures 
               onClick={onToggleLectures}
               className="relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group cursor-pointer"
             >
-              <CardBody link={link} showLectures={showLectures} />
+              <CardBody link={link} showLectures={showLectures} count={counts?.[link.id]} />
             </button>
           ) : (
             <Link
               href={link.href}
               className="relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group"
             >
-              <CardBody link={link} showLectures={showLectures} />
+              <CardBody link={link} showLectures={showLectures} count={counts?.[link.id]} />
             </Link>
           )}
         </li>

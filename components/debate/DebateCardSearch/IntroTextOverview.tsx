@@ -77,6 +77,20 @@ export function IntroTextOverview() {
             <div className="space-y-8 text-black-100 leading-relaxed">
               <ol className="list-decimal list-inside space-y-2">
 
+
+                   <div className="pt-4 mt-auto">
+              <a
+                href="https://debate-ai.com/legal/debate-ai-paper.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
+              >
+                📝 Debate AI Collective Consciousness (Paper) &rarr;
+              </a>
+            </div>
+
+
+
                 <div className="font-bold text-lg text-blue-400 [font-variant:small-caps] tracking-wider">1. The Debate Singularity is Happening</div>
                 <p className="text-black-400 leading-relaxed">
                   AI now researches topics in depth, highlights key quotes, frames both sides
@@ -161,17 +175,7 @@ export function IntroTextOverview() {
 
 
 
-            <div className="pt-4 mt-auto">
-              <a
-                href="https://github.com/debate/debate-ai.com/blob/master/docs/debate-singularity-research-paper.md"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
-              >
-                Debate AI Collective Consciousness (Paper) &rarr;
-              </a>
-            </div>
-
+         
 
             {/* <div className="pt-4 mt-auto">
               <a

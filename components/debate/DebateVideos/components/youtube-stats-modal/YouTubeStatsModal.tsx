@@ -134,26 +134,25 @@ export function YouTubeStatsModal({
             <div className="flex items-center gap-4">
               <img
                 src="https://i.imgur.com/eIQB4Sp.png"
-                alt="Debate VideosStatistics"
-                className="h-48 w-48 object-contain shrink-0"
+                alt="Debate Videos Statistics"
+                className="h-24 w-24 object-contain shrink-0"
               />
+              <div className="flex gap-3">
+                <div className="rounded-lg border px-3 py-2">
+                  <div className="text-lg font-bold">{stats.summary.totalViews.toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">Total Views</div>
+                </div>
+                <div className="rounded-lg border px-3 py-2">
+                  <div className="text-lg font-bold">{stats.summary.totalVideos.toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">Total Videos</div>
+                </div>
+                <div className="rounded-lg border px-3 py-2">
+                  <div className="text-lg font-bold">{stats.summary.totalChannels}</div>
+                  <div className="text-xs text-muted-foreground">Channels</div>
+                </div>
+              </div>
             </div>
           </DialogHeader>
-
-          <div className="grid grid-cols-3 gap-4 my-4">
-            <div className="rounded-lg border p-3">
-              <div className="text-2xl font-bold">{stats.summary.totalViews.toLocaleString()}</div>
-              <div className="text-xs text-muted-foreground">Total Views</div>
-            </div>
-            <div className="rounded-lg border p-3">
-              <div className="text-2xl font-bold">{stats.summary.totalVideos.toLocaleString()}</div>
-              <div className="text-xs text-muted-foreground">Total Videos</div>
-            </div>
-            <div className="rounded-lg border p-3">
-              <div className="text-2xl font-bold">{stats.summary.totalChannels}</div>
-              <div className="text-xs text-muted-foreground">Channels</div>
-            </div>
-          </div>
 
           <Tabs defaultValue="channels" className="w-full">
             <TabsList className="grid w-full grid-cols-2">

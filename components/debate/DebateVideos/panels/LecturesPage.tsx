@@ -90,6 +90,7 @@ export function LecturesPage() {
     const byStyle = (n: number) => all.filter((v) => v[6] === n).length
     const favSet = state.favorites
     return {
+      lectures: lectures.length,
       policy: byStyle(1),
       ld: byStyle(3),
       pf: byStyle(2),
@@ -414,9 +415,10 @@ export function LecturesPage() {
             videosData={state.debateVideos.lectures}
             selectedCategory={selectedCategory}
           />
-          <Footer />
         </div>
       )}
+
+      <Footer />
 
       <div ref={videosSectionRef} className="scroll-mt-20" />
 
