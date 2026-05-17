@@ -2,11 +2,12 @@
  * Configuration for YouTube channels to sync
  */
 
-export const publishedAfter = "2024-05-01";
+export const publishedAfter = "2023-05-01";
 
-export const channelsToUpdate = ["KansasDebate-wd4vf"];
+export const channelsToUpdate = ["spencerandersonmcelligott"];
 
 export const channels = [
+  "KansasDebate-wd4vf",
   "Adi_Arora_PF",
   "DebateArchive2",
   "Debatedrills",

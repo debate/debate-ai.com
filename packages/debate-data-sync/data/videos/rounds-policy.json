@@ -1,6 +1,23 @@
 {
   "$schema": "../../schemas/debate-rounds-videos.schema.json",
   "data": [
+        ["rkyqmv78xAk","2024 NDT Round the First - Iowa AC vs Harvard CC","2024-04-13","Spencer Anderson McElligott",1029,"",4,"NDT","Round the First","Iowa AC","Harvard CC",null,null,null,null,false,null],
+    ["w_PQeTND8qc","2024 NDT Round the Sixth - James Madison BR vs Iowa AC","2024-04-12","Spencer Anderson McElligott",283,"",4,"NDT","Round the Sixth","James Madison BR","Iowa AC",null,null,null,null,false,null],
+    ["I3VnPn8K-hQ","2024 NDT Round the Eighth - Berkeley RM vs Iowa AC","2024-04-11","Spencer Anderson McElligott",307,"",4,"NDT","Round the Eighth","Berkeley RM","Iowa AC",null,null,null,null,false,null],
+    ["0pWgCT5KBDo","2024 Long Beach R5 Aff Iowa AC Neg Dartmouth VW","2024-04-11","Spencer Anderson McElligott",436,"",4,"Long Beach","R5","Iowa AC","Dartmouth VW",null,null,null,null,false,null],
+    ["Pxqx6Eo_asg","2024 NDT Round the Third - Iowa AC vs Kansas RS","2024-04-11","Spencer Anderson McElligott",616,"",4,"NDT","Round the Third","Iowa AC","Kansas RS",null,null,null,null,false,null],
+    ["Fy_QNapo5Ew","2024 CEDA quarters Iowa AC vs CSULB OF part 2","2024-04-10","Spencer Anderson McElligott",315,"",4,"CEDA","Quarterfinals","Iowa AC","CSULB OF",null,null,null,null,false,null],
+    ["32BN-7lZGJ4","2024 CEDA quarters Iowa AC vs CSULB OF part 1","2024-04-10","Spencer Anderson McElligott",583,"",4,"CEDA","Quarterfinals","Iowa AC","CSULB OF",null,null,null,null,false,null],
+    ["8q4kIIOmef0","2024 NDT Round the Fourth - MSU KL vs Iowa AC","2024-04-10","Spencer Anderson McElligott",289,"",4,"NDT","Round the Fourth","MSU KL","Iowa AC",null,null,null,null,false,null],
+    ["SzfnKl7C7Mg","2024 NDT Round the Fifth - Iowa AC vs UTD KS","2024-04-10","Spencer Anderson McElligott",312,"",4,"NDT","Round the Fifth","Iowa AC","UTD KS",null,null,null,null,false,null],
+    ["8cG91DvCTI8","2026 NDT R2 - USC BR vs Iowa AP","2026-04-02","Spencer Anderson McElligott",355,"",4,"NDT","R2","USC BR","Iowa AP",null,null,null,null,false,null],
+    ["sVEkHJLOFjk","2025 NDT Semifinals - Binghamton CT vs CSU Long Beach OM","2025-04-09","Spencer Anderson McElligott",6145,"",4,"NDT","Semifinals","Binghamton CT","CSU Long Beach OM",null,null,null,null,false,null],
+    ["bAbI3vogaYE","2024 - CEDA R6 Massachusetts CM vs Iowa AC","2024-03-23","Spencer Anderson McElligott",524,"",4,"CEDA","R6","Massachusetts CM","Iowa AC",null,null,null,null,false,null],
+    ["Ayhila9qiEw","2026 Texas Open R2 - NYU JT vs Iowa AP","2026-04-08","Spencer Anderson McElligott",167,"",1,"Texas Open","R2","NYU JT","Iowa AP",null,null,null,null,false,null],
+    ["hQN7MPnEz-M","2026 Brick City RR R4 - Emory RY vs Iowa AP","2026-01-20","Spencer Anderson McElligott",640,"",1,"Brick City","R4","Emory RY","Iowa AP",null,null,null,null,false,null],
+    ["LwsF-HxyEnY","2024 Harvard R5 Kansas WW vs Iowa AP","2024-10-30","Spencer Anderson McElligott",707,"","1","Harvard","R5","Kansas WW","Iowa AP",null,null,null,null,false,null],
+    ["SHikcif2sDE","Harvard 2024 Quarterfinals: Michigan SS vs CSU Long Beach OM","2024-10-29","Spencer Anderson McElligott",3137,"",1,"Harvard 2024","Quarterfinals","Michigan SS","CSU Long Beach OM",null,null,null,null,false,null],
+    ["aZ10w1060sg","2024 Harvard Quarterfinals: Michigan SS vs CSU Long Beach OM (Decisions)","2024-10-29","Spencer Anderson McElligott",1335,"",1,"Harvard 2024","Quarterfinals","Michigan SS","CSU Long Beach OM",null,null,null,null,false,null],
     [
       "aWlJvofnxmQ",
       "2026 TOC Semis - Westwood AG vs Montgomery Bell Academy HL",
