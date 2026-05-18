@@ -6,46 +6,52 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Options to configure the behavior of {@link setStateInURL}.
+ */
+export interface SetStateInURLOptions {
+  /**
+   * If `true`, the state change will be pushed to the browser history,
+   * creating a new history entry so the back button works.
+   * If `false` (default), the current history entry is replaced.
+   */
+  addToBrowserHistory?: boolean;
+  /**
+   * If `true` (default), query parameters with `null`, `undefined`, or empty string `""`
+   * values will be removed from the URL instead of being serialized.
+   */
+  removeNullish?: boolean;
+}
+
+/**
  * Synchronizes on-page selected state vars with URL
- *  parameters for shareable URLs that load those filters.
+ * parameters for shareable URLs that load those filters.
  *
  * This utility manages URL state in two ways:
  * - **Reading**: When called without arguments, returns current URL parameters as an object
  * - **Writing**: When provided a state object, updates URL parameters without page reload
  *
- * @template T - The expected shape of the state object (defaults to Record<string, string>)
+ * @template T - The expected shape of the state object (defaults to Record<string, string | null | undefined>)
  *
  * @param stateObject - Key-value pairs to sync to URL. Use `null` or empty string to remove a parameter.
- * @param options - Configuration options
- * @param options.addToBrowserHistory - If `true`, creates a new history entry (back button navigates to previous state). If `false` (default), replaces current history entry.
- * @param options.removeNullish - If `true`, removes parameters with `null`, `undefined`, or empty string values. Default: `true`
+ * @param options - Configuration options for history behavior and serialization
  *
  * @returns The current URL state as a key-value object, or `undefined` in SSR context
  *
  * @example
  * // Read current URL state
  * const { view, q } = setStateInURL<{ view?: string; q?: string }>();
- *
- * @example
  * // Update URL state (replaces history)
  * setStateInURL({ view: "search", q: "debate" });
- *
- * @example
  * // Update URL state (adds to history - enables back button)
  * setStateInURL({ view: "results" }, { addToBrowserHistory: true });
- *
- * @example
  * // Remove a parameter by setting it to null or empty string
  * setStateInURL({ q: null }); // or { q: "" }
  */
 export function setStateInURL<
-  T extends Record<string, string | null | undefined> = Record<string, string>,
+  T extends Record<string, string | null | undefined> = Record<string, string | null | undefined>,
 >(
   stateObject?: Partial<T>,
-  options: {
-    addToBrowserHistory?: boolean;
-    removeNullish?: boolean;
-  } = {},
+  options: SetStateInURLOptions = {},
 ): Partial<T> | undefined {
   const { addToBrowserHistory = false, removeNullish = true } = options;
 

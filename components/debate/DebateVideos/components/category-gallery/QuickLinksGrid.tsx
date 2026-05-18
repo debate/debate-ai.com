@@ -10,7 +10,7 @@ import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
-import { IconBook, IconTrophyGoat, IconLeaderboard, IconTrophy, IconLectures } from "@/components/icons";
+import { IconBook, IconTrophyGoat, IconLeaderboard, IconTrophy, IconRoundsYoutube, IconLectures } from "@/components/icons";
 
 interface QuickLink {
   id: string;

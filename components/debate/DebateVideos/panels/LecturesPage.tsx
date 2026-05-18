@@ -105,7 +105,7 @@ export function LecturesPage() {
 
   const [dictSearchTerm, setDictSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [showLectureCategories, setShowLectureCategories] = useState(false)
+  const [showLectureCategories, setShowLectureCategories] = useState(true)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
   const [youtubeStats, setYoutubeStats] = useState<any>(null)
 
@@ -179,6 +179,7 @@ export function LecturesPage() {
       else actions.setCurrentCategory("lectures")
       setSelectedCategory(slug)
       scrollToVideos()
+      setShowLectureCategories(true)
     } else {
       actions.setSelectedStyle("")
       actions.setShowFavoritesOnly(false)
@@ -319,47 +320,53 @@ export function LecturesPage() {
 
   if (state.currentCategory === "leaderboard") {
     return (
-      <div className="min-h-screen bg-background p-3 sm:p-6">
-        {stickyHeader(backButton)}
-        <LeaderboardPanel history={state.debateVideos?.history} />
+      <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
+        <div>
+          {stickyHeader(backButton)}
+          <LeaderboardPanel history={state.debateVideos?.history} />
+        </div>
+        <Footer />
       </div>
     )
   }
 
   if (isDictionary) {
     return (
-      <div className="min-h-screen bg-background p-3 sm:p-6">
-        {stickyHeader(
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            {backButton}
-            <div className="relative flex-1 min-w-0 md:w-[240px] md:flex-none">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search terms..."
-                value={dictSearchTerm}
-                onChange={(e) => setDictSearchTerm(e.target.value)}
-                className="pl-9 pr-8 h-9"
-              />
-              {dictSearchTerm && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => setDictSearchTerm("")}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">Clear search</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
+      <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
+        <div>
+          {stickyHeader(
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              {backButton}
+              <div className="relative flex-1 min-w-0 md:w-[240px] md:flex-none">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search terms..."
+                  value={dictSearchTerm}
+                  onChange={(e) => setDictSearchTerm(e.target.value)}
+                  className="pl-9 pr-8 h-9"
+                />
+                {dictSearchTerm && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={() => setDictSearchTerm("")}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">Clear search</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+              </div>
             </div>
-          </div>
-        )}
-        <DictionaryPanel controlledSearchTerm={dictSearchTerm} onControlledSearchChange={setDictSearchTerm} />
+          )}
+          <DictionaryPanel controlledSearchTerm={dictSearchTerm} onControlledSearchChange={setDictSearchTerm} />
+        </div>
+        <Footer />
       </div>
     )
   }

@@ -28,6 +28,7 @@ import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
 import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
+import { Footer } from "@/components/debate/DebateCardSearch/Footer"
 
 /**
  * Main video browsing page that composes state, data-fetching, and UI sub-components.
@@ -344,8 +345,8 @@ export function DebateVideosPage() {
           onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
           showTopPicksActive={state.currentCategory === "topPicks"}
           onToggleTopPicks={() => handleCategoryChange(state.currentCategory === "topPicks" ? "rounds" : "topPicks")}
-          showRankingsActive={state.currentCategory === "leaderboard"}
-          onToggleRankings={() => handleCategoryChange(state.currentCategory === "leaderboard" ? "rounds" : "leaderboard")}
+          showRankingsActive={false}
+          onToggleRankings={() => handleCategoryChange("leaderboard")}
           totalVideos={state.filteredVideos.length}
           selectedStyle={state.selectedStyle}
           onStyleChange={handleStyleChange}
@@ -354,6 +355,8 @@ export function DebateVideosPage() {
           extraButtons={youtubeStats && <YouTubeStatsModal stats={youtubeStats} open={statsModalOpen} onOpenChange={setStatsModalOpen} />}
         />
       )}
+
+      <Footer />
 
       {state.isLoading ? (
         <div className="text-center py-12">

@@ -25,11 +25,12 @@ import {
   IconFlowFlower,
   IconRead,
   IconLectures,
-  IconSettings
+  IconSettings,
+  IconRoundsYoutube 
 } from "@/components/icons"
 
 const NAV_ITEMS = [
-  { href: "/videos", label: "Videos", icon: IconLectures },
+  { href: "/videos", label: "Videos", icon: IconRoundsYoutube },
   { href: "/cards", label: "Shared", icon: IconCollectiveMind },
   { href: "/debate", label: "Debate", icon: IconFlowFlower },
   { href: "/edit", label: "Docs", icon: IconRead },
