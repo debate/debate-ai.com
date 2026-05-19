@@ -9,7 +9,7 @@ import type { CategoryType, DebateStyle } from "@/lib/types/videos"
 
 /**
  * Shape of per-slug state overrides applied when navigating to
- * `/videos/<slug>`.
+ * `/videos/<slug>`.1
  */
 export interface SlugState {
   /** DebateStyle filter to apply (1=Policy, 2=PF, 3=LD, 4=College). */

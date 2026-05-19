@@ -78,16 +78,32 @@ export function IntroTextOverview() {
               <ol className="list-decimal list-inside space-y-2">
 
 
-                   <div className="pt-4 mt-auto">
-              <a
+                   <a
                 href="https://debate-ai.com/legal/debate-ai-paper.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                className="group block"
               >
-                📝 Debate AI Collective Consciousness (Paper) &rarr;
+                <div className="relative overflow-hidden rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-blue-900/40 dark:border-blue-800 p-5 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-200/60 dark:hover:shadow-blue-900/60 hover:-translate-y-0.5 hover:border-blue-300 dark:hover:border-blue-600">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/5 to-indigo-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="relative flex items-center gap-4">
+                    <div className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-lg bg-blue-100 dark:bg-blue-900/60 border border-blue-200 dark:border-blue-700 text-2xl transition-transform duration-300 group-hover:scale-110">
+                      📝
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-blue-900 dark:text-blue-100 text-base leading-tight">
+                        Debate AI Collective Consciousness
+                      </div>
+                      <div className="text-blue-600 dark:text-blue-400 text-sm mt-0.5">
+                        Research Paper (PDF)
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0 text-blue-400 dark:text-blue-500 transition-transform duration-300 group-hover:translate-x-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </div>
+                  </div>
+                </div>
               </a>
-            </div>
 
 
 

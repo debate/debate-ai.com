@@ -8,10 +8,12 @@
   "scripts": {
     "sync-youtube": "bun run youtube/youtube-sync-cli.ts",
     "youtube-stats": "bun run youtube/youtube-sync-cli.ts --stats",
-    "youtube-update-views": "bun run youtube/youtube-sync-cli.ts --update-views"
+    "youtube-update-views": "bun run youtube/youtube-sync-cli.ts --update-views",
+    "extract-transcripts": "bun run youtube/extract-transcripts.ts"
   },
   "dependencies": {
     "axios": "*",
+    "extract-youtube": "^1.0.2",
     "grab-url": "*",
     "linkedom": "*"
   }

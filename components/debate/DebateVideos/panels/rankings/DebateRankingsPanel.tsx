@@ -1,10 +1,10 @@
 /**
- * @fileoverview Ranking and leaderboard panel for debate teams.
+ * @fileoverview Debate rankings panel for debate teams.
  * Supports VPF, VLD, VCX, and NDT divisions with historical season data.
  *
  * Delegates data-fetching to {@link useLeaderboardData} and filter UI to
  * {@link LeaderboardFilterBar}, keeping this file focused on orchestration.
- * @module components/debate/DebateVideos/panels/RankingsLeaderboardPanel
+ * @module components/debate/DebateVideos/panels/rankings/DebateRankingsPanel
  */
 
 "use client"
@@ -27,7 +27,7 @@ import { LeaderboardTable } from "./LeaderboardTable"
 import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
 
 /**
- * Full-page leaderboard panel.
+ * Full-page debate rankings panel.
  *
  * When no controlled props are provided the panel manages division/year state
  * internally and syncs the active division to the `?format=` URL query param.
@@ -36,7 +36,7 @@ import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
  *
  * @param props - See {@link LeaderboardPanelProps}.
  */
-export function LeaderboardPanel({
+export function DebateRankingsPanel({
   controlledDivision,
   controlledYear,
   onControlledDivisionChange,
@@ -176,7 +176,7 @@ export function LeaderboardPanel({
                   <div className="flex items-center justify-center min-h-[400px]">
                     <div className="text-center">
                       <div className="text-4xl mb-2">⏳</div>
-                      <p className="text-muted-foreground">Loading leaderboard...</p>
+                      <p className="text-muted-foreground">Loading rankings...</p>
                     </div>
                   </div>
                 ) : error ? (

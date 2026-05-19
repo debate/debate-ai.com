@@ -46,7 +46,7 @@ export async function syncMissingTopPicks() {
 
   const videos = await getVideosByIds(videoIds);
 
-  const dataDir = path.join(import.meta.dir, "..", "data");
+  const dataDir = path.join(path.dirname(new URL(import.meta.url).pathname), "..", "data");
 
   // Load all split files and collect existing IDs
   const roundsFiles: Record<number, { path: string; data: any }> = {};
@@ -203,7 +203,7 @@ export async function syncYouTubeVideos() {
   console.log("💾 MERGING AND SAVING SPLIT FILES");
   console.log("=".repeat(60) + "\n");
 
-  const dataDir = path.join(import.meta.dir, "..", "data", "videos");
+  const dataDir = path.join(path.dirname(new URL(import.meta.url).pathname), "..", "data", "videos");
 
   // Split rounds by style
   const roundsByStyle: Record<number, any[]> = {

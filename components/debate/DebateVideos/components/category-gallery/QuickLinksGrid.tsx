@@ -24,12 +24,12 @@ interface QuickLink {
 
 const QUICK_LINKS: QuickLink[] = [
   {
-    id: "lectures",
-    title: "Lectures",
-    href: "",
-    logo: IconLectures,
-    gradient: "from-cyan-500/20 via-teal-500/10 to-transparent",
-    iconBg: "bg-cyan-500/15 ring-1 ring-cyan-500/30",
+    id: "college",
+    title: "College Debates",
+    href: "/videos/college",
+    logo: "https://i.imgur.com/cFmTAdJ.png",
+    gradient: "from-purple-500/20 via-violet-500/10 to-transparent",
+    iconBg: "bg-purple-500/15 ring-1 ring-purple-500/30",
   },
   {
     id: "policy",
@@ -56,12 +56,12 @@ const QUICK_LINKS: QuickLink[] = [
     iconBg: "bg-sky-500/15 ring-1 ring-sky-500/30",
   },
   {
-    id: "college",
-    title: "College Debates",
-    href: "/videos/college",
-    logo: "https://i.imgur.com/cFmTAdJ.png",
-    gradient: "from-purple-500/20 via-violet-500/10 to-transparent",
-    iconBg: "bg-purple-500/15 ring-1 ring-purple-500/30",
+    id: "lectures",
+    title: "Lectures",
+    href: "",
+    logo: IconLectures,
+    gradient: "from-cyan-500/20 via-teal-500/10 to-transparent",
+    iconBg: "bg-cyan-500/15 ring-1 ring-cyan-500/30",
   },
   {
     id: "topPicks",
@@ -101,6 +101,7 @@ interface QuickLinksGridProps {
   counts?: Record<string, number>;
   showLectures?: boolean;
   onToggleLectures?: () => void;
+  activeId?: string;
 }
 
 function formatCount(n: number): string {
@@ -108,7 +109,7 @@ function formatCount(n: number): string {
   return String(n);
 }
 
-function CardBody({ link, showLectures, count }: { link: QuickLink; showLectures: boolean; count?: number }) {
+function CardBody({ link, showLectures, count, isActive }: { link: QuickLink; showLectures: boolean; count?: number; isActive?: boolean }) {
   const isLecturesToggle = link.id === "lectures";
   return (
     <>
@@ -117,7 +118,7 @@ function CardBody({ link, showLectures, count }: { link: QuickLink; showLectures
         className={cn(
           "relative flex h-full flex-col overflow-hidden rounded-md border-[0.75px] bg-background p-2 shadow-sm dark:shadow-[0px_0px_20px_0px_rgba(45,45,45,0.2)] transition-all bg-gradient-to-br",
           link.gradient,
-          isLecturesToggle && showLectures && "ring-1 ring-primary/50",
+          (isActive || (isLecturesToggle && showLectures)) && "ring-1 ring-primary/50",
         )}
       >
         <div className="flex items-center justify-center h-14 w-full">
@@ -142,28 +143,37 @@ function CardBody({ link, showLectures, count }: { link: QuickLink; showLectures
   );
 }
 
-export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures }: QuickLinksGridProps) {
+export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures, activeId }: QuickLinksGridProps) {
   return (
     <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-2 mb-4">
-      {QUICK_LINKS.map((link) => (
-        <li key={link.id} className="list-none">
-          {link.id === "lectures" ? (
-            <button
-              onClick={onToggleLectures}
-              className="relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group cursor-pointer"
-            >
-              <CardBody link={link} showLectures={showLectures} count={counts?.[link.id]} />
-            </button>
-          ) : (
-            <Link
-              href={link.href}
-              className="relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group"
-            >
-              <CardBody link={link} showLectures={showLectures} count={counts?.[link.id]} />
-            </Link>
-          )}
-        </li>
-      ))}
+      {QUICK_LINKS.map((link) => {
+        const isActive = activeId === link.id;
+        return (
+          <li key={link.id} className="list-none">
+            {link.id === "lectures" ? (
+              <button
+                onClick={onToggleLectures}
+                className={cn(
+                  "relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group cursor-pointer",
+                  isActive && "border-primary/60",
+                )}
+              >
+                <CardBody link={link} showLectures={showLectures} count={counts?.[link.id]} isActive={isActive} />
+              </button>
+            ) : (
+              <Link
+                href={link.href}
+                className={cn(
+                  "relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group",
+                  isActive && "border-primary/60",
+                )}
+              >
+                <CardBody link={link} showLectures={showLectures} count={counts?.[link.id]} isActive={isActive} />
+              </Link>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }

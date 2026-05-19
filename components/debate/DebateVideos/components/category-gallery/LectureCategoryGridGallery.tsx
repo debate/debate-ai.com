@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
-import categoryDescriptions from "../../panels/debate-lectures-category-descriptions.json";
+import categoryDescriptions from "../../data/category-descriptions.json";
 
 interface LectureCategoryGridGalleryProps {
   selectedCategory?: string;

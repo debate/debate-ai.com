@@ -1,63 +1,85 @@
 /**
- * @fileoverview Video grid view used by DebateVideosPanel for rounds and
- * top-picks categories. Renders the sticky search/filter bar, video grid,
- * and infinite-scroll trigger as a self-contained layout component.
- * @module components/debate/DebateVideos/panels/VideoGridView
+ * @fileoverview Main video grid view for the lectures page.
+ * Renders the sticky search/filter bar, quick-link navigation cards,
+ * the lecture-category gallery, and the paginated video grid with
+ * infinite-scroll trigger.
+ * @module components/debate/DebateVideos/panels/LecturesVideoGridView
  */
 
 "use client"
 
 import React from "react"
+import type { CategoryType, TopicType } from "@/lib/types/videos"
 import type { VideoType } from "@/lib/types/videos"
 import { Footer } from "@/components/debate/DebateCardSearch/Footer"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
+import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
+import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
-import type { DebateStyle, CategoryType, TopicType } from "@/lib/types/videos"
-// import { ico } from  "grab-url/icons";
 
-/** Props for the {@link VideoGridView} component. */
-interface VideoGridViewProps {
-  // ---- State ----
+/** Props for the {@link LecturesVideoGridView} component. */
+interface LecturesVideoGridViewProps {
+  // ---- Search / filter state ----
   /** Current search query string. */
   searchTerm: string
   /** Active sort order key. */
   sortOrder: string
-  /** Active year filter (e.g. `"2026"`), or empty string for all years. */
+  /** Active year filter string (e.g. `"2026"`), or empty string for all years. */
   selectedYear: string
-  /** Whether the search input is currently focused. */
+  /** Whether the search input is focused. */
   isSearchFocused: boolean
-  /** Whether video thumbnails are shown in the grid. */
+  /** Whether video thumbnails are shown. */
   showThumbnails: boolean
-  /** Whether only marked as favorite videos are shown. */
+  /** Whether only favorited videos are shown. */
   showFavoritesOnly: boolean
-  /** Currently active view category (`"rounds"` or `"topPicks"`). */
+  /** Active category (`"lectures"` or `"topPicks"`). */
   currentCategory: CategoryType
+  /** Total filtered video count for the search bar counter. */
+  totalVideos: number
+
+  // ---- Load state ----
   /** `true` while the initial video data is loading. */
   isLoading: boolean
   /** Error message from a failed fetch, or empty string. */
   errorMessage: string
   /** `true` while additional pages are loading (infinite scroll). */
   isLoadingMore: boolean
-  /** Active debate-style filter, or `""` for no filter. */
-  selectedStyle: DebateStyle | ""
-  /** Set of marked as favorite video IDs. */
-  favorites: Set<string>
-  /** Set of hidden video IDs. */
-  hiddenVideos: Set<string>
-  /** Full unfiltered video list (used by the search bar for counts). */
+
+  // ---- Video data ----
+  /** Full unfiltered list, used by the search bar for counts. */
   allVideos: VideoType[]
-  /** Filtered+paginated videos currently visible in the grid. */
+  /** Filtered+paginated videos to display in the grid. */
   currentVideos: VideoType[]
+  /** Set of video IDs marked as favorites. */
+  favorites: Set<string>
+  /** Set of video IDs marked as hidden. */
+  hiddenVideos: Set<string>
+  /** Set of top-pick video IDs. */
+  topPicks: Set<string>
   /** Topic metadata for badge rendering. */
   topics: TopicType[] | undefined
-  /** Set of video IDs marked as top picks. */
-  topPicks: Set<string>
-  /** Ref attached to the sentinel element that triggers infinite scroll. */
+  /** Lecture video list used by the category gallery. */
+  debateLectures: VideoType[] | undefined
+
+  // ---- Refs ----
+  /** Sentinel element that triggers the next page load. */
   loadMoreTriggerRef: React.RefObject<HTMLDivElement | null>
-  /** Ref attached to the video grid container (used for scroll positioning). */
+  /** Grid container ref used for scroll positioning. */
   videoContainerRef: React.RefObject<HTMLDivElement | null>
+  /** Ref for the scroll-to-videos anchor. */
+  videosSectionRef: React.RefObject<HTMLDivElement | null>
+
+  // ---- Lecture-specific state ----
+  /** Per-category video counts shown on the quick-link cards. */
+  quickLinkCounts: Record<string, number>
+  /** Whether the lecture category gallery is visible. */
+  showLectureCategories: boolean
+  /** The active lecture category filter key, or `"all"`. */
+  selectedCategory: string
+
+  // ---- Stats modal ----
   /** YouTube channel stats object, or `null` before data loads. */
   youtubeStats: any
   /** Whether the YouTube stats modal is open. */
@@ -70,22 +92,18 @@ interface VideoGridViewProps {
   onSearchFocus: () => void
   /** Called when the search input loses focus. */
   onSearchBlur: () => void
-  /** Called to clear the search term. */
+  /** Clears the active search term. */
   onClearSearch: () => void
   /** Called when the user changes the sort order. */
   onSortChange: (value: string) => void
   /** Called when the user changes the year filter. */
   onYearChange: (year: string) => void
-  /** Toggles thumbnail visibility in the grid. */
+  /** Toggles thumbnail visibility. */
   onToggleThumbnails: () => void
   /** Toggles the favorites-only filter. */
   onToggleFavoritesOnly: () => void
-  /** Toggles the top-picks category filter. */
-  onToggleTopPicks: () => void
-  /** Switches the view to the leaderboard category. */
-  onToggleRankings: () => void
-  /** Called when the user changes the debate-style filter. */
-  onStyleChange: (style: DebateStyle | "") => void
+  /** Toggles the lecture category gallery visibility. */
+  onToggleLectureCategories: () => void
   /** Toggles the favorite state of a single video. */
   onToggleFavorite: (id: string) => void
   /** Hides a video from the grid. */
@@ -97,12 +115,15 @@ interface VideoGridViewProps {
 }
 
 /**
- * Renders the full video-grid layout: sticky search bar, loading/error states,
- * the video grid, and the infinite-scroll sentinel.
+ * Renders the full lectures video-grid layout:
+ * - Sticky search/filter bar
+ * - Quick-link navigation cards
+ * - Lecture category gallery (collapsible)
+ * - Video grid with infinite-scroll
  *
- * @param props - See {@link VideoGridViewProps}.
+ * @param props - See {@link LecturesVideoGridViewProps}.
  */
-export function VideoGridView({
+export function LecturesVideoGridView({
   searchTerm,
   sortOrder,
   selectedYear,
@@ -110,18 +131,23 @@ export function VideoGridView({
   showThumbnails,
   showFavoritesOnly,
   currentCategory,
+  totalVideos,
   isLoading,
   errorMessage,
   isLoadingMore,
-  selectedStyle,
-  favorites,
-  hiddenVideos,
   allVideos,
   currentVideos,
-  topics,
+  favorites,
+  hiddenVideos,
   topPicks,
+  topics,
+  debateLectures,
   loadMoreTriggerRef,
   videoContainerRef,
+  videosSectionRef,
+  quickLinkCounts,
+  showLectureCategories,
+  selectedCategory,
   youtubeStats,
   statsModalOpen,
   onSearchChange,
@@ -132,14 +158,18 @@ export function VideoGridView({
   onYearChange,
   onToggleThumbnails,
   onToggleFavoritesOnly,
-  onToggleTopPicks,
-  onToggleRankings,
-  onStyleChange,
+  onToggleLectureCategories,
   onToggleFavorite,
   onHideVideo,
   onUnhideVideo,
   onStatsModalOpenChange,
-}: VideoGridViewProps) {
+}: LecturesVideoGridViewProps) {
+  /** Derive the active quick-link card ID from filter state. */
+  const activeQuickLinkId =
+    showFavoritesOnly ? "favorites"
+    : currentCategory === "topPicks" ? "topPicks"
+    : "lectures"
+
   return (
     <div className="min-h-screen bg-background p-3 sm:p-6">
       <StickyHeader
@@ -147,37 +177,53 @@ export function VideoGridView({
           <VideoSearchBar
             searchTerm={searchTerm}
             sortOrder={sortOrder}
-            selectedYear={selectedYear}
             isSearchFocused={isSearchFocused}
             showThumbnails={showThumbnails}
             showFavoritesOnly={showFavoritesOnly}
+            selectedYear={selectedYear}
+            onYearChange={onYearChange}
+            allVideos={allVideos}
+            hiddenVideos={hiddenVideos}
             onSearchChange={onSearchChange}
             onSearchFocus={onSearchFocus}
             onSearchBlur={onSearchBlur}
             onClearSearch={onClearSearch}
             onSortChange={onSortChange}
-            onYearChange={onYearChange}
             onToggleThumbnails={onToggleThumbnails}
             onToggleFavoritesOnly={onToggleFavoritesOnly}
-            showTopPicksActive={currentCategory === "topPicks"}
-            onToggleTopPicks={onToggleTopPicks}
-            showRankingsActive={false}
-            onToggleRankings={onToggleRankings}
-            totalVideos={currentVideos.length}
-            selectedStyle={selectedStyle}
-            onStyleChange={onStyleChange}
-            allVideos={allVideos}
-            hiddenVideos={hiddenVideos}
+            totalVideos={totalVideos}
             extraButtons={
-              youtubeStats && (
-                <YouTubeStatsModal stats={youtubeStats} open={statsModalOpen} onOpenChange={onStatsModalOpenChange} />
-              )
+              youtubeStats ? (
+                <YouTubeStatsModal
+                  stats={youtubeStats}
+                  open={statsModalOpen}
+                  onOpenChange={onStatsModalOpenChange}
+                />
+              ) : null
             }
           />
         }
       />
 
+      <QuickLinksGrid
+        counts={quickLinkCounts}
+        showLectures={showLectureCategories}
+        onToggleLectures={onToggleLectureCategories}
+        activeId={activeQuickLinkId}
+      />
+
+      {showLectureCategories && debateLectures && (
+        <div className="mb-8">
+          <LectureCategoryGridGallery
+            videosData={debateLectures}
+            selectedCategory={selectedCategory}
+          />
+        </div>
+      )}
+
       <Footer />
+
+      <div ref={videosSectionRef} className="scroll-mt-20" />
 
       {isLoading ? (
         <div className="text-center py-12">
@@ -189,7 +235,7 @@ export function VideoGridView({
         </div>
       ) : currentVideos.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No videos found matching your search.</p>
+          <p className="text-muted-foreground">No videos found matching your filters.</p>
         </div>
       ) : (
         <>
@@ -205,6 +251,8 @@ export function VideoGridView({
             onUnhideVideo={onUnhideVideo}
             hiddenVideos={hiddenVideos}
             topPicks={topPicks}
+            showFullDate={true}
+            showDescription={true}
           />
 
           <div ref={loadMoreTriggerRef} className="h-10" />

@@ -4,6 +4,7 @@
 
 import { useMemo, useCallback } from "react"
 import type { ColDef } from "ag-grid-community"
+import type { Flow } from "../types"
 import { FlowColumnHeader } from "./FlowColumnHeader"
 import { FirstColumnCellRenderer } from "./FirstColumnCellRenderer"
 
@@ -21,7 +22,7 @@ export function useFlowGridConfig(
    * Includes team color coding and custom headers with speech icons
    */
   const columnDefs = useMemo<ColDef[]>(() => {
-    return flow.columns.map((colName, idx) => {
+    return flow.columns.map((colName: string, idx: number) => {
       const hasN = colName.toUpperCase().includes("N")
       const hasA = colName.toUpperCase().includes("A")
 

@@ -3,6 +3,7 @@
  */
 
 import type { IHeaderParams, ICellRendererParams } from "ag-grid-community"
+import type { Flow } from "../types"
 
 /**
  * Props for the FlowSpreadsheet component

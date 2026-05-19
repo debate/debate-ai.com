@@ -1,5 +1,14 @@
 /**
- * @fileoverview Lectures page - shows lecture videos with a Dictionary toggle button.
+ * @fileoverview Lectures page coordinator.
+ *
+ * Manages all state, data-fetching, URL sync, and slug-based routing for
+ * the /videos and /videos/[category] routes, then delegates rendering to
+ * one of three branch views:
+ *
+ * - {@link LeaderboardPanel} — when the active category is `"leaderboard"`
+ * - {@link LecturesDictionaryView} — when the active category is `"dictionary"`
+ * - {@link LecturesVideoGridView} — for all lecture/video categories
+ * @module components/debate/DebateVideos/panels/LecturesPage
  */
 
 "use client"
@@ -7,51 +16,35 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { useSearchParams, useParams } from "next/navigation"
-import { ArrowLeft, Search, X } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import type { CategoryType, DebateStyle, DebateVideosData } from "@/lib/types/videos"
-import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
-import { Input } from "@/components/ui/input"
-import { DictionaryPanel } from "./DictionaryPanel"
 import { Footer } from "@/components/debate/DebateCardSearch/Footer"
-import { LeaderboardPanel } from "./RankingsLeaderboardPanel"
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
+import { LeaderboardPanel } from "./leaderboard/RankingsLeaderboardPanel"
 import { setStateInURL } from "@/lib/utils"
+import { StickyHeader } from "../components/layout/StickyHeader"
+import { SLUG_MAP } from "./lectureRouteConfig"
+import { LecturesDictionaryView } from "./dictionary/LecturesDictionaryView"
+import { LecturesVideoGridView } from "./LecturesVideoGridView"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
 import { useVideoDataFetch, useVideoFiltering, useResponsiveVideosPerPage } from "../hooks/useVideoData"
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
-
-// Components
-import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
-import { VideoGrid } from "../components/video-grid/VideoGrid"
-import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
-import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { useVideoPlayerStore } from "@/lib/state/videoPlayerStore"
 
 /**
- * Path-slug → derived state for /videos/[category].
- * style: filters by DebateStyle. view: switches the active category.
- * favorites: enables favorites-only filter. stats: auto-opens the stats modal.
+ * Lectures page — top-level coordinator for the /videos route family.
+ *
+ * All state lives here; rendering is delegated to the three branch view
+ * components depending on `state.currentCategory`.
  */
-const SLUG_MAP: Record<string, { style?: DebateStyle; view?: CategoryType; favorites?: boolean; stats?: boolean }> = {
-  policy: { style: 1 },
-  ld: { style: 3 },
-  pf: { style: 2 },
-  college: { style: 4 },
-  toppicks: { view: "topPicks" },
-  favoritedebates: { favorites: true },
-  favoritelectures: { favorites: true, view: "lectures" },
-  favorites: { favorites: true },
-  dictionary: { view: "dictionary" },
-  rankings: { view: "leaderboard" },
-  statistics: { stats: true },
-  stats: { stats: true },
-}
-
 export function LecturesPage() {
   const searchParams = useSearchParams()
   const routeParams = useParams()
+
+  // ---------------------------------------------------------------------------
+  // Slug / route state
+  // ---------------------------------------------------------------------------
 
   const slug = useMemo(() => {
     const raw = routeParams?.category
@@ -72,15 +65,22 @@ export function LecturesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // /videos/rankings → render leaderboard via existing handler below; no redirect needed.
-  // Legacy: /videos?view=leaderboard also handled the same way.
+  // ---------------------------------------------------------------------------
+  // Core video state and search handler
+  // ---------------------------------------------------------------------------
 
   const { state, actions } = useVideoState(initialCategory)
   const setSearchHandler = useVideoPlayerStore((state) => state.setSearchHandler)
 
-  const topPicksSet = useMemo(() => new Set(state.debateVideos?.topPicks || []), [state.debateVideos?.topPicks])
+  const topPicksSet = useMemo(
+    () => new Set(state.debateVideos?.topPicks || []),
+    [state.debateVideos?.topPicks],
+  )
 
-  // Compute per-category counts for the QuickLinks cards
+  // ---------------------------------------------------------------------------
+  // Quick-link counts (per-category video tallies for navigation cards)
+  // ---------------------------------------------------------------------------
+
   const quickLinkCounts = useMemo(() => {
     const data = state.debateVideos
     if (!data) return {} as Record<string, number>
@@ -103,6 +103,10 @@ export function LecturesPage() {
     } as Record<string, number>
   }, [state.debateVideos, state.favorites])
 
+  // ---------------------------------------------------------------------------
+  // UI state
+  // ---------------------------------------------------------------------------
+
   const [dictSearchTerm, setDictSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [showLectureCategories, setShowLectureCategories] = useState(true)
@@ -118,16 +122,25 @@ export function LecturesPage() {
 
   // Initialize state from URL parameters on mount
   useEffect(() => {
-    const urlState = setStateInURL<{ q?: string; category?: string; favorites?: string; style?: string; stats?: string }>()
+    const urlState = setStateInURL<{
+      q?: string; category?: string; favorites?: string
+      style?: string; stats?: string; sort?: string; year?: string
+    }>()
     if (urlState) {
       if (urlState.q) actions.setSearchTerm(urlState.q)
       if (urlState.category) setSelectedCategory(urlState.category)
       if (urlState.favorites === "1") actions.setShowFavoritesOnly(true)
       if (urlState.style) actions.setSelectedStyle(Number(urlState.style) as DebateStyle)
       if (urlState.stats === "1") setStatsModalOpen(true)
+      if (urlState.sort) actions.setSortOrder(urlState.sort)
+      if (urlState.year) actions.setSelectedYear(urlState.year)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // ---------------------------------------------------------------------------
+  // Scroll-to-videos on category/slug change
+  // ---------------------------------------------------------------------------
 
   const videosSectionRef = useRef<HTMLDivElement | null>(null)
   const pendingScrollRef = useRef(false)
@@ -137,18 +150,14 @@ export function LecturesPage() {
   }, [])
 
   useEffect(() => {
-    if (!pendingScrollRef.current) return
-    if (state.isLoading) return
-    if (state.filteredVideos.length === 0) return
+    if (!pendingScrollRef.current || state.isLoading || state.filteredVideos.length === 0) return
     pendingScrollRef.current = false
     requestAnimationFrame(() => {
-      const el = videosSectionRef.current
-      if (!el) return
-      el.scrollIntoView({ behavior: "smooth", block: "start" })
+      videosSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
     })
   }, [state.isLoading, state.filteredVideos.length])
 
-  // Sync ?category= from URL (legacy query-string form).
+  // Sync ?category= from URL (legacy query-string form)
   useEffect(() => {
     const urlCategory = searchParams.get("category")
     if (urlCategory) {
@@ -157,9 +166,33 @@ export function LecturesPage() {
     }
   }, [searchParams])
 
-  // React to path-slug changes so navigation between /videos/<slug> routes
-  // (without unmounting the page) applies the new filter state.
-  // Unknown slugs are treated as lecture-category ids (e.g. /videos/topic_lectures).
+  // ---------------------------------------------------------------------------
+  // Category management
+  // ---------------------------------------------------------------------------
+
+  const changeCategory = useCallback(
+    (category: CategoryType, data: DebateVideosData) => {
+      actions.setCurrentCategory(category)
+      actions.setCurrentPage(1)
+
+      if (category === "lectures") {
+        actions.setAllVideos([...(data.lectures || []), ...(data.rounds || [])])
+        actions.setIsLoading(false)
+      } else if (category === "topPicks") {
+        const topPickIds = new Set(data.topPicks || [])
+        const all = [...(data.rounds || []), ...(data.lectures || [])]
+        actions.setAllVideos(all.filter((v) => topPickIds.has(v[0])))
+        actions.setIsLoading(false)
+      } else {
+        actions.setAllVideos([])
+        actions.setFilteredVideos([])
+        actions.setIsLoading(false)
+      }
+    },
+    [actions.setCurrentCategory, actions.setAllVideos, actions.setFilteredVideos, actions.setIsLoading],
+  )
+
+  // React to slug changes: apply the slug's state overrides when data is available
   useEffect(() => {
     const data = state.debateVideos
     if (slugState) {
@@ -170,8 +203,10 @@ export function LecturesPage() {
       if (data) changeCategory(nextView, data)
       else actions.setCurrentCategory(nextView)
       setSelectedCategory("all")
+      if (nextView !== "lectures") setShowLectureCategories(false)
       scrollToVideos()
     } else if (slug) {
+      // Unknown slug → treat as lecture-category id
       actions.setSelectedStyle("")
       actions.setShowFavoritesOnly(false)
       setStatsModalOpen(false)
@@ -190,84 +225,61 @@ export function LecturesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, state.debateVideos])
 
-  // ============================================================================
-  // Computed Values
-  // ============================================================================
-  const totalPages = Math.ceil(state.filteredVideos.length / state.videosPerPage)
-  const endIndex = state.currentPage * state.videosPerPage
-  const currentVideos = state.filteredVideos.slice(0, endIndex)
+  // ---------------------------------------------------------------------------
+  // Data fetching & filtering
+  // ---------------------------------------------------------------------------
 
-  // ============================================================================
-  // Category Management
-  // ============================================================================
-  const changeCategory = useCallback(
-    (category: CategoryType, data: DebateVideosData) => {
-      actions.setCurrentCategory(category)
-      actions.setCurrentPage(1)
-
-      if (category === "lectures") {
-        const combined = [...(data.lectures || []), ...(data.rounds || [])]
-        actions.setAllVideos(combined)
-        actions.setIsLoading(false)
-      } else if (category === "topPicks") {
-        const topPickIds = new Set(data.topPicks || [])
-        const all = [...(data.rounds || []), ...(data.lectures || [])]
-        actions.setAllVideos(all.filter((v) => topPickIds.has(v[0])))
-        actions.setIsLoading(false)
-      } else {
-        actions.setAllVideos([])
-        actions.setFilteredVideos([])
-        actions.setIsLoading(false)
-      }
-    },
-    [actions.setCurrentCategory, actions.setAllVideos, actions.setFilteredVideos, actions.setIsLoading],
-  )
-
-  // ============================================================================
-  // Data Fetching & Filtering
-  // ============================================================================
   const { filterAndSortVideos } = useVideoFiltering()
 
-  useVideoDataFetch(actions.setDebateVideos, actions.setIsLoading, actions.setErrorMessage, changeCategory, initialCategory)
-
+  useVideoDataFetch(
+    actions.setDebateVideos, actions.setIsLoading,
+    actions.setErrorMessage, changeCategory, initialCategory,
+  )
   useResponsiveVideosPerPage(actions.setVideosPerPage)
 
   useEffect(() => {
-    let filtered = filterAndSortVideos(state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos)
+    let filtered = filterAndSortVideos(
+      state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear,
+      state.debateVideos, state.showFavoritesOnly, state.favorites,
+      state.selectedStyle, state.hiddenVideos,
+    )
 
-    // "All Lectures" should show only lecture videos, not rounds.
-    // Rounds carry a numeric DebateStyle at index 6; lectures carry a string category label.
+    // "All Lectures" shows only lecture videos (string category at index 6), not rounds (numeric style).
     if (state.currentCategory === "lectures" && selectedCategory === "all" && !state.selectedStyle) {
       filtered = filtered.filter((video) => typeof video[6] !== "number")
     }
 
-    // Apply category filter if one is selected
+    // Apply the selected lecture sub-category filter
     if (selectedCategory !== "all") {
-      // Filter by category label at index 6
       filtered = filtered.filter((video) => {
-        const videoCategory = video[6];
-        if (typeof videoCategory === 'string') {
-          // Match by label directly or by normalized key
-          const normalizedKey = videoCategory.toLowerCase().replace(/\s+/g, '_').replace(/[&/]/g, '_');
-          return videoCategory === selectedCategory || normalizedKey === selectedCategory;
-        }
-        return false;
-      });
+        const cat = video[6]
+        if (typeof cat !== "string") return false
+        const key = cat.toLowerCase().replace(/\s+/g, "_").replace(/[&/]/g, "_")
+        return cat === selectedCategory || key === selectedCategory
+      })
     }
 
     actions.setFilteredVideos(filtered)
     actions.setCurrentPage(1)
-  }, [state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear, state.debateVideos, state.showFavoritesOnly, state.favorites, state.selectedStyle, state.hiddenVideos, state.currentCategory, selectedCategory, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage])
+  }, [
+    state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear,
+    state.debateVideos, state.showFavoritesOnly, state.favorites,
+    state.selectedStyle, state.hiddenVideos, state.currentCategory,
+    selectedCategory, filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage,
+  ])
 
-  // ============================================================================
-  // Search & Filter Handlers
-  // ============================================================================
-  const handleSearchChange = useCallback((value: string) => {
-    actions.setSearchTerm(value)
-    setStateInURL({ q: value || null })
-  }, [actions.setSearchTerm])
+  // ---------------------------------------------------------------------------
+  // Search & filter handlers
+  // ---------------------------------------------------------------------------
 
-  // Register search handler with video player store
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      actions.setSearchTerm(value)
+      setStateInURL({ q: value || null })
+    },
+    [actions.setSearchTerm],
+  )
+
   useEffect(() => {
     setSearchHandler(handleSearchChange)
     return () => setSearchHandler(null)
@@ -277,13 +289,36 @@ export function LecturesPage() {
     actions.setSearchTerm("")
     setStateInURL({ q: null })
   }, [actions.setSearchTerm])
-  const handleSortChange = useCallback((value: string) => { actions.setSortOrder(value) }, [actions.setSortOrder])
-  const handleToggleThumbnails = useCallback(() => { actions.setShowThumbnails(!state.showThumbnails) }, [actions.setShowThumbnails, state.showThumbnails])
 
+  const handleYearChange = useCallback(
+    (value: string) => {
+      actions.setSelectedYear(value)
+      setStateInURL({ year: value || null })
+    },
+    [actions.setSelectedYear],
+  )
 
-  // ============================================================================
-  // Infinite Scroll
-  // ============================================================================
+  const handleSortChange = useCallback(
+    (value: string) => {
+      actions.setSortOrder(value)
+      setStateInURL({ sort: value || null })
+    },
+    [actions.setSortOrder],
+  )
+
+  const handleToggleThumbnails = useCallback(
+    () => { actions.setShowThumbnails(!state.showThumbnails) },
+    [actions.setShowThumbnails, state.showThumbnails],
+  )
+
+  // ---------------------------------------------------------------------------
+  // Infinite scroll
+  // ---------------------------------------------------------------------------
+
+  const totalPages = Math.ceil(state.filteredVideos.length / state.videosPerPage)
+  const endIndex = state.currentPage * state.videosPerPage
+  const currentVideos = state.filteredVideos.slice(0, endIndex)
+
   useInfiniteScroll(
     state.loadMoreTriggerRef,
     state.currentPage,
@@ -293,20 +328,10 @@ export function LecturesPage() {
     actions.setIsLoadingMore,
   )
 
-  const isDictionary = state.currentCategory === "dictionary"
+  // ---------------------------------------------------------------------------
+  // Shared back button
+  // ---------------------------------------------------------------------------
 
-  const stickyHeader = (controls?: React.ReactNode) => (
-    <div className="sm:sticky top-0 z-40 supports-backdrop-blur:bg-background/30 bg-background/80 backdrop-blur-lg border-b border-white/10 dark:border-white/5 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 mb-4 flex flex-wrap md:flex-nowrap items-center gap-2 md:justify-end">
-      {controls && <div className="min-w-0 flex flex-wrap items-center gap-2">{controls}</div>}
-    </div>
-  )
-
-  // ============================================================================
-  // Dictionary Panel
-  // ============================================================================
-  // ============================================================================
-  // Leaderboard Panel (/videos/rankings)
-  // ============================================================================
   const backButton = (
     <Link
       href="/videos"
@@ -318,11 +343,15 @@ export function LecturesPage() {
     </Link>
   )
 
+  // ---------------------------------------------------------------------------
+  // Branch rendering
+  // ---------------------------------------------------------------------------
+
   if (state.currentCategory === "leaderboard") {
     return (
       <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
         <div>
-          {stickyHeader(backButton)}
+          <StickyHeader controls={backButton} />
           <LeaderboardPanel history={state.debateVideos?.history} />
         </div>
         <Footer />
@@ -330,144 +359,56 @@ export function LecturesPage() {
     )
   }
 
-  if (isDictionary) {
+  if (state.currentCategory === "dictionary") {
     return (
-      <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
-        <div>
-          {stickyHeader(
-            <div className="flex items-center gap-2 w-full md:w-auto">
-              {backButton}
-              <div className="relative flex-1 min-w-0 md:w-[240px] md:flex-none">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Search terms..."
-                  value={dictSearchTerm}
-                  onChange={(e) => setDictSearchTerm(e.target.value)}
-                  className="pl-9 pr-8 h-9"
-                />
-                {dictSearchTerm && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => setDictSearchTerm("")}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom">Clear search</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-              </div>
-            </div>
-          )}
-          <DictionaryPanel controlledSearchTerm={dictSearchTerm} onControlledSearchChange={setDictSearchTerm} />
-        </div>
-        <Footer />
-      </div>
+      <LecturesDictionaryView
+        dictSearchTerm={dictSearchTerm}
+        onDictSearchTermChange={setDictSearchTerm}
+      />
     )
   }
 
-  // ============================================================================
-  // Lectures Video Grid
-  // ============================================================================
-
   return (
-    <div className="min-h-screen bg-background p-3 sm:p-6">
-      {stickyHeader(
-        <VideoSearchBar
-          searchTerm={state.searchTerm}
-          sortOrder={state.sortOrder}
-          isSearchFocused={state.isSearchFocused}
-          showThumbnails={state.showThumbnails}
-          showFavoritesOnly={state.showFavoritesOnly}
-          selectedYear={state.selectedYear}
-          onYearChange={actions.setSelectedYear}
-          allVideos={state.allVideos}
-          hiddenVideos={state.hiddenVideos}
-          onSearchChange={handleSearchChange}
-          onSearchFocus={() => actions.setIsSearchFocused(true)}
-          onSearchBlur={() => actions.setIsSearchFocused(false)}
-          onClearSearch={handleClearSearch}
-          onSortChange={handleSortChange}
-          onToggleThumbnails={handleToggleThumbnails}
-          onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
-          totalVideos={state.filteredVideos.length}
-          extraButtons={
-            youtubeStats ? (
-              <YouTubeStatsModal
-                stats={youtubeStats}
-                open={statsModalOpen}
-                onOpenChange={setStatsModalOpen}
-              />
-            ) : null
-          }
-        />
-      )}
-
-      {/* Quick-link shortcuts to other panels */}
-      <QuickLinksGrid
-        counts={quickLinkCounts}
-        showLectures={showLectureCategories}
-        onToggleLectures={() => setShowLectureCategories((v) => !v)}
-      />
-
-      {/* Category Grid Gallery — only visible when Lectures toggle is on */}
-      {showLectureCategories && state.debateVideos?.lectures && (
-        <div className="mb-8">
-          <LectureCategoryGridGallery
-            videosData={state.debateVideos.lectures}
-            selectedCategory={selectedCategory}
-          />
-        </div>
-      )}
-
-      <Footer />
-
-      <div ref={videosSectionRef} className="scroll-mt-20" />
-
-      {state.isLoading ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Loading lectures...</p>
-        </div>
-      ) : state.errorMessage ? (
-        <div className="text-center py-12">
-          <p className="text-destructive">{state.errorMessage}</p>
-        </div>
-      ) : currentVideos.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">No videos found matching your filters.</p>
-        </div>
-      ) : (
-        <>
-          <VideoGrid
-            videos={currentVideos}
-            showThumbnails={state.showThumbnails}
-            topics={state.debateVideos?.topics}
-            videoContainerRef={state.videoContainerRef}
-            favorites={state.favorites}
-            onToggleFavorite={actions.toggleFavorite}
-            onBadgeClick={handleSearchChange}
-            onHideVideo={actions.hideVideo}
-            onUnhideVideo={actions.unhideVideo}
-            hiddenVideos={state.hiddenVideos}
-            topPicks={topPicksSet}
-            showFullDate={true}
-            showDescription={true}
-          />
-
-          <div ref={state.loadMoreTriggerRef} className="h-10" />
-
-          {state.isLoadingMore && (
-            <div className="text-center py-4">
-              <p className="text-sm text-muted-foreground">Loading more...</p>
-            </div>
-          )}
-        </>
-      )}
-    </div>
+    <LecturesVideoGridView
+      searchTerm={state.searchTerm}
+      sortOrder={state.sortOrder}
+      selectedYear={state.selectedYear}
+      isSearchFocused={state.isSearchFocused}
+      showThumbnails={state.showThumbnails}
+      showFavoritesOnly={state.showFavoritesOnly}
+      currentCategory={state.currentCategory}
+      totalVideos={state.filteredVideos.length}
+      isLoading={state.isLoading}
+      errorMessage={state.errorMessage}
+      isLoadingMore={state.isLoadingMore}
+      allVideos={state.allVideos}
+      currentVideos={currentVideos}
+      favorites={state.favorites}
+      hiddenVideos={state.hiddenVideos}
+      topPicks={topPicksSet}
+      topics={state.debateVideos?.topics}
+      debateLectures={state.debateVideos?.lectures}
+      loadMoreTriggerRef={state.loadMoreTriggerRef}
+      videoContainerRef={state.videoContainerRef}
+      videosSectionRef={videosSectionRef}
+      quickLinkCounts={quickLinkCounts}
+      showLectureCategories={showLectureCategories}
+      selectedCategory={selectedCategory}
+      youtubeStats={youtubeStats}
+      statsModalOpen={statsModalOpen}
+      onSearchChange={handleSearchChange}
+      onSearchFocus={() => actions.setIsSearchFocused(true)}
+      onSearchBlur={() => actions.setIsSearchFocused(false)}
+      onClearSearch={handleClearSearch}
+      onSortChange={handleSortChange}
+      onYearChange={handleYearChange}
+      onToggleThumbnails={handleToggleThumbnails}
+      onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
+      onToggleLectureCategories={() => setShowLectureCategories((v) => !v)}
+      onToggleFavorite={actions.toggleFavorite}
+      onHideVideo={actions.hideVideo}
+      onUnhideVideo={actions.unhideVideo}
+      onStatsModalOpenChange={setStatsModalOpen}
+    />
   )
 }

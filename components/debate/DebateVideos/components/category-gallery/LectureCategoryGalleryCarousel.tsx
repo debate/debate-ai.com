@@ -6,7 +6,7 @@
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import categoryDescriptions from '@/components/debate/DebateVideos/panels/debate-lectures-category-descriptions.json';
+import categoryDescriptions from '@/components/debate/DebateVideos/data/category-descriptions.json';
 
 interface LectureCategoryGalleryProps {
   onCategorySelect?: (categoryKey: string) => void;
@@ -14,9 +14,7 @@ interface LectureCategoryGalleryProps {
   videosData?: any[]; // For getting most viewed video per category
 }
 
-type CategoryDescriptions = {
-  categories: Record<string, { description: string }>;
-};
+type CategoryDescriptions = Record<string, string>;
 
 const typedCategoryDescriptions = categoryDescriptions as CategoryDescriptions;
 
@@ -76,7 +74,7 @@ export function LectureCategoryGallery({ onCategorySelect, selectedCategory, vid
     // Build cards from extracted categories
     return Array.from(categoryMap.entries())
       .map(([label, data]) => {
-        const description = typedCategoryDescriptions.categories[label]?.description || "Debate lecture videos";
+        const description = typedCategoryDescriptions[label] || "Debate lecture videos";
         const normalizedKey = label.toLowerCase().replace(/\s+/g, '_').replace(/[&/]/g, '_');
 
         return {

@@ -231,7 +231,7 @@ export function MarkdownToolbar({
     onClick: () => void
     isActive?: boolean
     disabled?: boolean
-    icon: React.ElementType
+    icon: React.ElementType<{ className?: string }>
     tooltip: string
     shortcut?: string
   }) => (

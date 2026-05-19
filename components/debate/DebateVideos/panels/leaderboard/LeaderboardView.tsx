@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Video } from "lucide-react"
-import { StickyHeader } from "../components/StickyHeader"
+import { StickyHeader } from "../../components/layout/StickyHeader"
 import { LeaderboardPanel } from "./RankingsLeaderboardPanel"
 
 const DIVISION_LABELS: { value: "VPF" | "VLD" | "VCX" | "NDT"; label: string }[] = [
