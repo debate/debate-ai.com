@@ -95,7 +95,8 @@ export function VideoCard({
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
   const hasTeams = !!(affTeam || negTeam)
   const hasFullMetadata = Boolean(tournament && affTeam && negTeam)
-  const cleanTournament = tournament?.replace(/\d+/g, "").trim()
+  const styleSuffix = styleNumber === 2 ? " (PF)" : styleNumber === 3 ? " (LD)" : ""
+  const cleanTournament = tournament ? tournament.replace(/\d+/g, "").trim() + styleSuffix : undefined
   const yearTopic = getYearTopic(year, styleNumber, topics)
 
   return (

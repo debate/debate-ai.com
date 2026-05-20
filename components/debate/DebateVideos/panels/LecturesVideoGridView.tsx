@@ -18,6 +18,8 @@ import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
+import { StyleTabs } from "../components/video-search/StyleTabs"
+import type { DebateStyle } from "@/lib/types/videos"
 
 /** Props for the {@link LecturesVideoGridView} component. */
 interface LecturesVideoGridViewProps {
@@ -112,6 +114,10 @@ interface LecturesVideoGridViewProps {
   onUnhideVideo: (id: string) => void
   /** Called when the YouTube stats modal open state changes. */
   onStatsModalOpenChange: (open: boolean) => void
+  /** Currently selected debate-style filter. */
+  selectedStyle?: DebateStyle | ""
+  /** Called when the style filter changes. */
+  onStyleChange: (style: DebateStyle | "") => void
 }
 
 /**
@@ -163,6 +169,8 @@ export function LecturesVideoGridView({
   onHideVideo,
   onUnhideVideo,
   onStatsModalOpenChange,
+  selectedStyle,
+  onStyleChange,
 }: LecturesVideoGridViewProps) {
   /** Derive the active quick-link card ID from filter state. */
   const activeQuickLinkId =
@@ -174,34 +182,37 @@ export function LecturesVideoGridView({
     <div className="min-h-screen bg-background p-3 sm:p-6">
       <StickyHeader
         controls={
-          <VideoSearchBar
-            searchTerm={searchTerm}
-            sortOrder={sortOrder}
-            isSearchFocused={isSearchFocused}
-            showThumbnails={showThumbnails}
-            showFavoritesOnly={showFavoritesOnly}
-            selectedYear={selectedYear}
-            onYearChange={onYearChange}
-            allVideos={allVideos}
-            hiddenVideos={hiddenVideos}
-            onSearchChange={onSearchChange}
-            onSearchFocus={onSearchFocus}
-            onSearchBlur={onSearchBlur}
-            onClearSearch={onClearSearch}
-            onSortChange={onSortChange}
-            onToggleThumbnails={onToggleThumbnails}
-            onToggleFavoritesOnly={onToggleFavoritesOnly}
-            totalVideos={totalVideos}
-            extraButtons={
-              youtubeStats ? (
-                <YouTubeStatsModal
-                  stats={youtubeStats}
-                  open={statsModalOpen}
-                  onOpenChange={onStatsModalOpenChange}
-                />
-              ) : null
-            }
-          />
+          <>
+            <StyleTabs selectedStyle={selectedStyle} onStyleChange={onStyleChange} />
+            <VideoSearchBar
+              searchTerm={searchTerm}
+              sortOrder={sortOrder}
+              isSearchFocused={isSearchFocused}
+              showThumbnails={showThumbnails}
+              showFavoritesOnly={showFavoritesOnly}
+              selectedYear={selectedYear}
+              onYearChange={onYearChange}
+              allVideos={allVideos}
+              hiddenVideos={hiddenVideos}
+              onSearchChange={onSearchChange}
+              onSearchFocus={onSearchFocus}
+              onSearchBlur={onSearchBlur}
+              onClearSearch={onClearSearch}
+              onSortChange={onSortChange}
+              onToggleThumbnails={onToggleThumbnails}
+              onToggleFavoritesOnly={onToggleFavoritesOnly}
+              totalVideos={totalVideos}
+              extraButtons={
+                youtubeStats ? (
+                  <YouTubeStatsModal
+                    stats={youtubeStats}
+                    open={statsModalOpen}
+                    onOpenChange={onStatsModalOpenChange}
+                  />
+                ) : null
+              }
+            />
+          </>
         }
       />
 
@@ -212,7 +223,7 @@ export function LecturesVideoGridView({
         activeId={activeQuickLinkId}
       />
 
-      {showLectureCategories && debateLectures && (
+      {showLectureCategories && currentCategory === "lectures" && !selectedStyle && debateLectures && (
         <div className="mb-8">
           <LectureCategoryGridGallery
             videosData={debateLectures}

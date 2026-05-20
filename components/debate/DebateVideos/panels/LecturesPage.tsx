@@ -109,7 +109,7 @@ export function LecturesPage() {
 
   const [dictSearchTerm, setDictSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [showLectureCategories, setShowLectureCategories] = useState(true)
+  const [showLectureCategories, setShowLectureCategories] = useState(false)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
   const [youtubeStats, setYoutubeStats] = useState<any>(null)
 
@@ -409,6 +409,11 @@ export function LecturesPage() {
       onHideVideo={actions.hideVideo}
       onUnhideVideo={actions.unhideVideo}
       onStatsModalOpenChange={setStatsModalOpen}
+      selectedStyle={state.selectedStyle}
+      onStyleChange={(style) => {
+        actions.setSelectedStyle(style)
+        setStateInURL({ style: style ? String(style) : null })
+      }}
     />
   )
 }

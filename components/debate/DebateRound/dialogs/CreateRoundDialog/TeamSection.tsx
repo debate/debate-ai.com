@@ -5,9 +5,9 @@
 "use client"
 
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
-import { Settings2 } from "lucide-react"
+import { Settings2, ChevronDown, Check, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Autocomplete } from "@/components/ui/autocomplete"
@@ -20,6 +20,84 @@ import { searchSchools } from "@/lib/state/client-cache"
 const SCHOOL_SUGGESTION_LIMIT = 10
 const SCHOOL_DROPDOWN_CLASS = "right-auto w-[14rem]"
 const SCHOOL_OPTION_CLASS = "!px-0"
+
+const ARG_PREFS = [
+  { id: "critic-theory", label: "Critic Theory" },
+  { id: "alt-topic", label: "Alternative Topic" },
+  { id: "process-generics", label: "Process Generics" },
+  { id: "word-limits", label: "Word Limits" },
+]
+
+function ArgPrefsDropdown({
+  selected,
+  onChange,
+}: {
+  selected: Set<string>
+  onChange: (next: Set<string>) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function onOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener("mousedown", onOutside)
+    return () => document.removeEventListener("mousedown", onOutside)
+  }, [])
+
+  const summary =
+    selected.size === 0
+      ? "Argument Preferences"
+      : ARG_PREFS.filter((p) => selected.has(p.id))
+          .map((p) => p.label)
+          .join(", ")
+
+  function toggle(id: string) {
+    const next = new Set(selected)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    onChange(next)
+  }
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between gap-1 h-9 px-3 rounded-md border border-input bg-background text-sm text-left hover:bg-muted/40 transition-colors"
+      >
+        <span className={`truncate ${selected.size === 0 ? "text-muted-foreground" : ""}`}>
+          {summary}
+        </span>
+        <ChevronDown className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="absolute z-50 mt-1 w-full rounded-md border border-border bg-popover shadow-md py-1">
+          {ARG_PREFS.map((pref) => {
+            const checked = selected.has(pref.id)
+            return (
+              <button
+                key={pref.id}
+                type="button"
+                onClick={() => toggle(pref.id)}
+                className="w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-muted/60 transition-colors"
+              >
+                <span className={`flex items-center justify-center h-4 w-4 rounded border shrink-0 ${checked ? "bg-primary border-primary" : "border-input"}`}>
+                  {checked && <Check className="h-3 w-3 text-primary-foreground" />}
+                </span>
+                <span className="flex-1 text-left">{pref.label}</span>
+                <span className={`text-xs font-medium ${checked ? "text-primary" : "text-muted-foreground"}`}>
+                  {checked ? "Yes" : "No"}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
 
 /** Props for {@link TeamSection}. */
 interface TeamSectionProps {
@@ -166,6 +244,8 @@ export function TeamSection({
 
   const [affMyTeam, setAffMyTeam] = useState(false)
   const [negMyTeam, setNegMyTeam] = useState(false)
+  const [affArgPrefs, setAffArgPrefs] = useState<Set<string>>(new Set())
+  const [negArgPrefs, setNegArgPrefs] = useState<Set<string>>(new Set())
   const [showAffConfig, setShowAffConfig] = useState(false)
   const [showNegConfig, setShowNegConfig] = useState(false)
   const [profile, setProfile] = useState<MyTeamProfile>(() => getMyTeamProfile())
@@ -263,6 +343,7 @@ export function TeamSection({
               onChange={(e) => setAffDebater2(e.target.value)}
             />
           )}
+          <ArgPrefsDropdown selected={affArgPrefs} onChange={setAffArgPrefs} />
         </div>
       </div>
 
@@ -311,6 +392,7 @@ export function TeamSection({
               onChange={(e) => setNegDebater2(e.target.value)}
             />
           )}
+          <ArgPrefsDropdown selected={negArgPrefs} onChange={setNegArgPrefs} />
         </div>
       </div>
     </div>
