@@ -54,7 +54,7 @@ export function TournamentSection({
           placeholder="Tournament Name"
           value={tournamentName}
           onChange={setTournamentName}
-          fetchOptions={(q) => searchTournaments(q, TOURNAMENT_SUGGESTION_LIMIT)}
+          fetchOptions={(q) => q.length > 2 ? searchTournaments(q, TOURNAMENT_SUGGESTION_LIMIT) : Promise.resolve([])}
           dropdownClassName={TOURNAMENT_DROPDOWN_CLASS}
           optionClassName={TOURNAMENT_OPTION_CLASS}
         />

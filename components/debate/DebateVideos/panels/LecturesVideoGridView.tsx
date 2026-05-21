@@ -8,7 +8,8 @@
 
 "use client"
 
-import React from "react"
+import React, { useMemo } from "react"
+import { useParams } from "next/navigation"
 import type { CategoryType, TopicType } from "@/lib/types/videos"
 import type { VideoType } from "@/lib/types/videos"
 import { Footer } from "@/components/debate/DebateCardSearch/Footer"
@@ -172,11 +173,32 @@ export function LecturesVideoGridView({
   selectedStyle,
   onStyleChange,
 }: LecturesVideoGridViewProps) {
-  /** Derive the active quick-link card ID from filter state. */
-  const activeQuickLinkId =
-    showFavoritesOnly ? "favorites"
-    : currentCategory === "topPicks" ? "topPicks"
-    : "lectures"
+  const params = useParams()
+  const slug = useMemo(() => {
+    const raw = params?.category
+    if (typeof raw === "string") return raw.toLowerCase()
+    if (Array.isArray(raw) && raw.length > 0) return String(raw[0]).toLowerCase()
+    return undefined
+  }, [params])
+
+  /** Derive the active quick-link card ID from filter state and active slug. */
+  const activeQuickLinkId = useMemo(() => {
+    if (showFavoritesOnly) return "favorites"
+    if (currentCategory === "topPicks") return "topPicks"
+    
+    // Map selected debate style to highlight the respective quick links
+    if (selectedStyle === 1) return "policy"
+    if (selectedStyle === 2) return "pf"
+    if (selectedStyle === 3) return "ld"
+    if (selectedStyle === 4) return "college"
+    
+    // Highlight "lectures" only when the slug is explicitly "lectures"
+    if (slug === "lectures") {
+      return "lectures"
+    }
+    
+    return undefined
+  }, [showFavoritesOnly, currentCategory, selectedStyle, slug])
 
   return (
     <div className="min-h-screen bg-background p-3 sm:p-6">

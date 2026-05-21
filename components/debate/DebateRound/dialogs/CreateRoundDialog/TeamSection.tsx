@@ -1,20 +1,16 @@
 /**
  * @fileoverview Team information section of the Round Editor dialog.
  */
-
 "use client"
-
 
 import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { Settings2, ChevronDown, Check, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Autocomplete } from "@/components/ui/autocomplete"
 import { debateStyles, debateStyleMap } from "@/components/debate/DebateTimer/debate-format-times"
 import { IconAffBubble, IconNegBubble } from "@/components/icons"
 import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "@/lib/state/myTeamProfile"
-import type { Round } from "@/components/debate/DebateRound/types"
 import { searchSchools } from "@/lib/state/client-cache"
 
 const SCHOOL_SUGGESTION_LIMIT = 10
@@ -25,7 +21,7 @@ const ARG_PREFS = [
   { id: "critic-theory", label: "Critic Theory" },
   { id: "alt-topic", label: "Alternative Topic" },
   { id: "process-generics", label: "Process Generics" },
-  { id: "word-limits", label: "Word Limits" },
+  { id: "word-limits", label: "Word Count Credits" },
 ]
 
 function ArgPrefsDropdown({
@@ -50,8 +46,8 @@ function ArgPrefsDropdown({
     selected.size === 0
       ? "Argument Preferences"
       : ARG_PREFS.filter((p) => selected.has(p.id))
-          .map((p) => p.label)
-          .join(", ")
+        .map((p) => p.label)
+        .join(", ")
 
   function toggle(id: string) {
     const next = new Set(selected)
