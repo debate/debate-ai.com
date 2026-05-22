@@ -15,11 +15,13 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { useSearchParams, useParams } from "next/navigation"
+import { useSearchParams, useParams, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import type { CategoryType, DebateStyle, DebateVideosData } from "@/lib/types/videos"
 import { Footer } from "@/components/debate/DebateCardSearch/Footer"
 import { LeaderboardPanel } from "./leaderboard/RankingsLeaderboardPanel"
+import { LeaderboardFilterBar } from "./leaderboard/LeaderboardFilterBar"
+import type { Division } from "./leaderboard/leaderboardUtils"
 import { setStateInURL } from "@/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { SLUG_MAP } from "./lectureRouteConfig"
@@ -112,6 +114,29 @@ export function LecturesPage() {
   const [showLectureCategories, setShowLectureCategories] = useState(true)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
   const [youtubeStats, setYoutubeStats] = useState<any>(null)
+
+  // Leaderboard states managed at page level for top-bar sticky header integration
+  const router = useRouter()
+  const initialDivision = useMemo(() => {
+    const f = searchParams.get("format")
+    return f && ["VPF", "VLD", "VCX", "NDT"].includes(f) ? (f as Division) : "VPF"
+  }, [searchParams])
+
+  const [leaderboardDivision, setLeaderboardDivision] = useState<Division>(initialDivision)
+  const [leaderboardYear, setLeaderboardYear] = useState("2026")
+
+  const leaderboardYears = useMemo(() => {
+    const currentYear = new Date().getFullYear()
+    const maxYear = Math.max(currentYear, 2026)
+    return Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
+  }, [])
+
+  const handleDivisionChange = useCallback((val: Division) => {
+    setLeaderboardDivision(val)
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("format", val)
+    router.replace(`?${params.toString()}`, { scroll: false })
+  }, [searchParams, router])
 
   useEffect(() => {
     fetch("/api/youtube-stats")
@@ -351,8 +376,27 @@ export function LecturesPage() {
     return (
       <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
         <div>
-          <StickyHeader controls={backButton} />
-          <LeaderboardPanel history={state.debateVideos?.history} />
+          <StickyHeader
+            controls={
+              <div className="flex flex-row items-center gap-3 w-full justify-between sm:justify-start">
+                {backButton}
+                <LeaderboardFilterBar
+                  division={leaderboardDivision}
+                  year={leaderboardYear}
+                  years={leaderboardYears}
+                  onChangeDivision={handleDivisionChange}
+                  onChangeYear={setLeaderboardYear}
+                />
+              </div>
+            }
+          />
+          <LeaderboardPanel
+            controlledDivision={leaderboardDivision}
+            controlledYear={leaderboardYear}
+            onControlledDivisionChange={handleDivisionChange}
+            onControlledYearChange={setLeaderboardYear}
+            history={state.debateVideos?.history}
+          />
         </div>
         <Footer />
       </div>

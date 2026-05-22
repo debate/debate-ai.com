@@ -19,7 +19,6 @@ import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
-import { StyleTabs } from "../components/video-search/StyleTabs"
 import type { DebateStyle } from "@/lib/types/videos"
 
 /** Props for the {@link LecturesVideoGridView} component. */
@@ -204,37 +203,34 @@ export function LecturesVideoGridView({
     <div className="min-h-screen bg-background p-3 sm:p-6">
       <StickyHeader
         controls={
-          <>
-            <StyleTabs selectedStyle={selectedStyle} onStyleChange={onStyleChange} />
-            <VideoSearchBar
-              searchTerm={searchTerm}
-              sortOrder={sortOrder}
-              isSearchFocused={isSearchFocused}
-              showThumbnails={showThumbnails}
-              showFavoritesOnly={showFavoritesOnly}
-              selectedYear={selectedYear}
-              onYearChange={onYearChange}
-              allVideos={allVideos}
-              hiddenVideos={hiddenVideos}
-              onSearchChange={onSearchChange}
-              onSearchFocus={onSearchFocus}
-              onSearchBlur={onSearchBlur}
-              onClearSearch={onClearSearch}
-              onSortChange={onSortChange}
-              onToggleThumbnails={onToggleThumbnails}
-              onToggleFavoritesOnly={onToggleFavoritesOnly}
-              totalVideos={totalVideos}
-              extraButtons={
-                youtubeStats ? (
-                  <YouTubeStatsModal
-                    stats={youtubeStats}
-                    open={statsModalOpen}
-                    onOpenChange={onStatsModalOpenChange}
-                  />
-                ) : null
-              }
-            />
-          </>
+          <VideoSearchBar
+            searchTerm={searchTerm}
+            sortOrder={sortOrder}
+            isSearchFocused={isSearchFocused}
+            showThumbnails={showThumbnails}
+            showFavoritesOnly={showFavoritesOnly}
+            selectedYear={selectedYear}
+            onYearChange={onYearChange}
+            allVideos={allVideos}
+            hiddenVideos={hiddenVideos}
+            onSearchChange={onSearchChange}
+            onSearchFocus={onSearchFocus}
+            onSearchBlur={onSearchBlur}
+            onClearSearch={onClearSearch}
+            onSortChange={onSortChange}
+            onToggleThumbnails={onToggleThumbnails}
+            onToggleFavoritesOnly={onToggleFavoritesOnly}
+            totalVideos={totalVideos}
+            extraButtons={
+              youtubeStats ? (
+                <YouTubeStatsModal
+                  stats={youtubeStats}
+                  open={statsModalOpen}
+                  onOpenChange={onStatsModalOpenChange}
+                />
+              ) : null
+            }
+          />
         }
       />
 

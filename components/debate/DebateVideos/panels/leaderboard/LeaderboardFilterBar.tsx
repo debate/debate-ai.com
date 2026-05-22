@@ -44,15 +44,15 @@ export function LeaderboardFilterBar({
   onChangeYear,
 }: LeaderboardFilterBarProps) {
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-center gap-3 p-4 border-b">
+    <div className="flex flex-wrap items-center gap-3">
       <Tabs
         value={division}
         onValueChange={(val) => onChangeDivision(val as Division)}
-        className="w-full sm:w-auto"
+        className="w-auto"
       >
-        <TabsList>
+        <TabsList className="h-9">
           {DIVISION_CONFIG.map((d) => (
-            <TabsTrigger key={d.value} value={d.value}>
+            <TabsTrigger key={d.value} value={d.value} className="px-3 text-xs">
               {d.label}
             </TabsTrigger>
           ))}
@@ -60,7 +60,7 @@ export function LeaderboardFilterBar({
       </Tabs>
 
       <Select value={year} onValueChange={onChangeYear}>
-        <SelectTrigger className="w-full sm:w-[160px]">
+        <SelectTrigger className="w-[130px] h-9">
           <SelectValue placeholder="Select year" />
         </SelectTrigger>
         <SelectContent>

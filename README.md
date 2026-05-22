@@ -12,7 +12,7 @@
     </p>
 <h3 align="center">
     <a href="https://debate.ai.com">🚀 App</a>
-    <a href="https://github.com/debate/debate-ai.com/tree/master/docs">📑 Docs</a> <a href="https://debate-ai.com/api/api-docs">🎯 API</a> <a href="https://github.com/debate/debate-ai.com/blob/master/docs/debate-singularity-research-paper.md">📜 Debate AI Paper</a> <a href="https://drive.google.com/drive/u/1/folders/1inxyWjAkPiyJ9BdspbhV20_-xRIc8RJn">⏯️  Slides</a> 
+    <a href="https://github.com/debate/debate-ai.com/tree/master/docs">📑 Docs</a> <a href="https://debate-ai.com/api/api-docs">🎯 API</a> <a href="https://github.com/debate/debate-ai.com/blob/master/docs/debate-singularity-research-paper.md">📜 Paper</a> <a href="https://drive.google.com/drive/u/1/folders/1inxyWjAkPiyJ9BdspbhV20_-xRIc8RJn">⏯️  Slides</a> 
 </h3>
 <p align="center">
     <a href="https://discord.gg/SJdBqBz3tV">
@@ -49,7 +49,7 @@
 
 ### 📚 CARDS: Crowdsourced Annotated Research for Debating Solutions
 
-- 🖍️ **Auto-Highlight Agents:** agents highlight and udnerline as many words as needed on a slider, multiple options
+- 🖍️ **Auto-Highlight Agents:** agents highlight and underline as many words as needed on a slider, multiple options
 - 🔎 **Full-text search:** across thousands of tagged, annotated evidence cards spanning policy, LD, PF, and college formats
 - 🤖 **AI-powered annotation:** one-click summaries, warrant extensions, and logic-flaw detection per card
 - 📖 **Three reading modes**: plain text, highlighted tags, and underline-only for fast cutting
