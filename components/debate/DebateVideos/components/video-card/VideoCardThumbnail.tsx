@@ -238,7 +238,7 @@ export function VideoCardThumbnail({
                     <div className="flex flex-col items-center gap-0.5">
                       <span
                         className={cn(
-                          "text-base font-bold backdrop-blur-md bg-blue-900/80 px-2 py-1 rounded",
+                          "text-xs font-bold backdrop-blur-md bg-blue-900/80 px-1.5 py-0.5 rounded",
                           affWin === true
                             ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100"
                             : "border border-blue-400/90 shadow-lg text-blue-300",
@@ -257,7 +257,7 @@ export function VideoCardThumbnail({
                     <div className="flex flex-col items-center gap-0.5">
                       <span
                         className={cn(
-                          "text-base font-bold backdrop-blur-md bg-red-900/80 px-2 py-1 rounded",
+                          "text-xs font-bold backdrop-blur-md bg-red-900/80 px-1.5 py-0.5 rounded",
                           affWin === false
                             ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100"
                             : "border border-red-400/90 shadow-lg text-red-300",
