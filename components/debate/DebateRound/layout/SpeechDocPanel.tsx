@@ -4,7 +4,7 @@
  */
 import { X, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { MarkdownEditor } from "@/components/markdown/markdown-editor"
+import { EditorWithToolbar } from "@/components/markdown/markdown-editor"
 import type { Flow } from "@/components/debate/DebateRound/types"
 import type { ViewMode } from "@/lib/types/debate-flow"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
@@ -83,14 +83,7 @@ export function SpeechDocPanel({
 
       {/* Markdown editor */}
       <div className="flex-1 overflow-auto">
-        <MarkdownEditor
-          content={content}
-          onChange={onUpdateContent}
-          fileName={selectedSpeech}
-          className="h-full"
-          showToolbar={true}
-          viewMode={quoteView ? "quotes" : viewMode}
-        />
+        <EditorWithToolbar />
       </div>
     </div>
   )

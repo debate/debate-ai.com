@@ -5,7 +5,7 @@
 
 import type React from "react"
 import { FlowSpreadsheet } from "../Flow/FlowSpreadsheet"
-import { MarkdownEditor } from "../../../markdown/markdown-editor"
+import { EditorWithToolbar } from "../../../markdown/markdown-editor"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
 import type { Flow } from "@/components/debate/DebateRound/types"
 import type { ViewMode } from "@/lib/types/debate-flow"
@@ -166,15 +166,7 @@ export function FlowMainContent({
             />
           </div>
           <div className="flex-1 overflow-hidden">
-            <MarkdownEditor
-              key={`mobile-${leftSpeech}`}
-              content={leftContent}
-              onChange={onUpdateLeftSpeech || ((_content: string) => { })}
-              fileName={leftSpeech}
-              className="h-full"
-              showToolbar={true}
-              viewMode={leftQuoteView ? "quotes" : leftViewMode}
-            />
+            <EditorWithToolbar key={`mobile-${leftSpeech}`} />
           </div>
         </div>
       )
@@ -208,15 +200,7 @@ export function FlowMainContent({
             />
           </div>
           <div className="flex-1 overflow-hidden">
-            <MarkdownEditor
-              key={`left-${leftSpeech}`}
-              content={leftContent}
-              onChange={onUpdateLeftSpeech || ((_content: string) => { })}
-              fileName={leftSpeech}
-              className="h-full"
-              showToolbar={true}
-              viewMode={leftQuoteView ? "quotes" : leftViewMode}
-            />
+            <EditorWithToolbar key={`left-${leftSpeech}`} />
           </div>
         </div>
 
@@ -254,15 +238,7 @@ export function FlowMainContent({
             />
           </div>
           <div className="flex-1 overflow-hidden">
-            <MarkdownEditor
-              key={`right-${rightSpeech}`}
-              content={rightContent}
-              onChange={onUpdateRightSpeech || ((_content: string) => { })}
-              fileName={rightSpeech}
-              className="h-full"
-              showToolbar={true}
-              viewMode={rightQuoteView ? "quotes" : rightViewMode}
-            />
+            <EditorWithToolbar key={`right-${rightSpeech}`} />
           </div>
         </div>
       </div>
