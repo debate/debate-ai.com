@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: "Flow Inteconnected Argument Tree",
 }
 
+export const dynamic = "force-dynamic"
+
 export default function Home() {
   return (
     <Suspense>
