@@ -195,7 +195,8 @@ export function EmojiPickerDialog({
   const [EmojiPicker, setEmojiPicker] = useState<any>(null);
 
   useEffect(() => {
-    import(/* @vite-ignore */ 'https://esm.sh/emoji-picker-react').then((mod) => {
+    const cdnUrl = 'https://esm.sh/emoji-picker-react';
+    (new Function('u', 'return import(u)'))(cdnUrl).then((mod: any) => {
       setEmojiPicker(() => mod.default);
     });
   }, []);

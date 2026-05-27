@@ -7,7 +7,8 @@
     "strict": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": []
   },
   "include": ["./lib/offline-sw/service-worker.ts"]
 }
