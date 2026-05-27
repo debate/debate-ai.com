@@ -33,6 +33,8 @@ export default defineConfig(({ mode, command }) => {
           "react/jsx-runtime",
           "lexical",
           /^@lexical\/.*/,
+          "yjs",
+          /^y-.*/,
         ],
         output: {
           globals: {
