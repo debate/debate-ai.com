@@ -4,7 +4,7 @@
  */
 import { X, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { EditorWithToolbar } from "@/components/markdown/markdown-editor"
+import { LexicalEditorWrapper } from "@/components/markdown/markdown-editor"
 import type { Flow } from "@/components/debate/DebateRound/types"
 import type { ViewMode } from "@/lib/types/debate-flow"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
@@ -81,9 +81,16 @@ export function SpeechDocPanel({
         </div>
       </div>
 
-      {/* Markdown editor */}
-      <div className="flex-1 overflow-auto">
-        <EditorWithToolbar />
+      {/* Reason editor */}
+      <div className="flex-1 overflow-hidden">
+        <LexicalEditorWrapper
+          content={content}
+          contentKey={selectedSpeech}
+          onChange={onUpdateContent}
+          title={selectedSpeech}
+          onTitleChange={() => {}}
+          onShareClick={onShareSpeech}
+        />
       </div>
     </div>
   )

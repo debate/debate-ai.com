@@ -27,6 +27,10 @@ export type { ToolbarItemId } from './lexical/plugins/ToolbarPlugin';
 // Full app layout with sidebar (ReasonDocs)
 export { default as ReasonDocs } from './editors/ReasonDocs';
 
+// Standalone rich-text editor with content/onChange wiring
+export { LexicalEditorWrapper } from './editors/LexicalEditorWrapper';
+export type { LexicalEditorHandle } from './editors/LexicalEditorWrapper';
+
 // Node registry and theme
 export { default as PlaygroundNodes } from './lexical/nodes/PlaygroundNodes';
 export { default as PlaygroundEditorTheme } from './lexical/themes/PlaygroundEditorTheme';

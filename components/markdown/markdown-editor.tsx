@@ -1,1 +1,2 @@
-export { default, EditorWithToolbar, EditorContent } from "reason-editor"
+export { default, EditorWithToolbar, EditorContent, LexicalEditorWrapper } from "reason-editor"
+export type { LexicalEditorHandle } from "reason-editor"

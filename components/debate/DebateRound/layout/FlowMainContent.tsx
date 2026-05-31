@@ -5,7 +5,7 @@
 
 import type React from "react"
 import { FlowSpreadsheet } from "../Flow/FlowSpreadsheet"
-import { EditorWithToolbar } from "../../../markdown/markdown-editor"
+import { LexicalEditorWrapper } from "../../../markdown/markdown-editor"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
 import type { Flow } from "@/components/debate/DebateRound/types"
 import type { ViewMode } from "@/lib/types/debate-flow"
@@ -166,7 +166,14 @@ export function FlowMainContent({
             />
           </div>
           <div className="flex-1 overflow-hidden">
-            <EditorWithToolbar key={`mobile-${leftSpeech}`} />
+            <LexicalEditorWrapper
+              key={`mobile-${leftSpeech}`}
+              content={leftContent}
+              contentKey={`mobile-${leftSpeech}`}
+              onChange={onUpdateLeftSpeech || (() => {})}
+              title={leftSpeech}
+              onTitleChange={() => {}}
+            />
           </div>
         </div>
       )
@@ -200,7 +207,14 @@ export function FlowMainContent({
             />
           </div>
           <div className="flex-1 overflow-hidden">
-            <EditorWithToolbar key={`left-${leftSpeech}`} />
+            <LexicalEditorWrapper
+              key={`left-${leftSpeech}`}
+              content={leftContent}
+              contentKey={`left-${leftSpeech}`}
+              onChange={onUpdateLeftSpeech || (() => {})}
+              title={leftSpeech}
+              onTitleChange={() => {}}
+            />
           </div>
         </div>
 
@@ -238,7 +252,14 @@ export function FlowMainContent({
             />
           </div>
           <div className="flex-1 overflow-hidden">
-            <EditorWithToolbar key={`right-${rightSpeech}`} />
+            <LexicalEditorWrapper
+              key={`right-${rightSpeech}`}
+              content={rightContent}
+              contentKey={`right-${rightSpeech}`}
+              onChange={onUpdateRightSpeech || (() => {})}
+              title={rightSpeech}
+              onTitleChange={() => {}}
+            />
           </div>
         </div>
       </div>
