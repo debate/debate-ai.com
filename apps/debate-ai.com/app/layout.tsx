@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { CategoryDockProvider } from "@/components/layout/category-dock-context"
 import { CategoryDock } from "@/components/layout/CategoryDock"
 import { PersistentVideoPlayer } from "@/components/debate/DebateVideos/components/video-player/PersistentVideoPlayer"
+import { OneTap } from "@/components/layout/OneTap"
 import Template from "./template"
 
 export const metadata: Metadata = {
@@ -42,6 +43,7 @@ export default function RootLayout({
               <Template>{children}</Template>
             </div>
             <PersistentVideoPlayer />
+            <OneTap />
           </CategoryDockProvider>
         </ThemeProvider>
       </body>

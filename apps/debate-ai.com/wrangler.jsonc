@@ -1,0 +1,47 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "debate-ai",
+	"main": ".open-next/worker.js",
+	"compatibility_date": "2026-03-10",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS",
+	},
+	"images": {
+		"binding": "IMAGES",
+	},
+	"env": {
+		"production": {
+			"keep_vars": true,
+			"images": {
+				"binding": "IMAGES",
+			},
+		},
+	},
+	"observability": {
+		"enabled": false,
+		"head_sampling_rate": 1,
+		"logs": {
+			"enabled": true,
+			"head_sampling_rate": 1,
+			"persist": true,
+			"invocation_logs": true,
+		},
+		"traces": {
+			"enabled": false,
+			"persist": true,
+			"head_sampling_rate": 1,
+		},
+	},
+	"d1_databases": [
+		{
+			"binding": "debate_db",
+			"database_name": "debate-db",
+			"database_id": "eb8ef1b9-3d28-42c4-9358-f2f1ce904552",
+			"remote": true
+		}
+	],
+}
