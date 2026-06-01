@@ -8,18 +8,18 @@
 	],
 	"assets": {
 		"directory": ".open-next/assets",
-		"binding": "ASSETS",
+		"binding": "ASSETS"
 	},
 	"images": {
-		"binding": "IMAGES",
+		"binding": "IMAGES"
 	},
 	"env": {
 		"production": {
 			"keep_vars": true,
 			"images": {
-				"binding": "IMAGES",
-			},
-		},
+				"binding": "IMAGES"
+			}
+		}
 	},
 	"observability": {
 		"enabled": false,
@@ -28,13 +28,13 @@
 			"enabled": true,
 			"head_sampling_rate": 1,
 			"persist": true,
-			"invocation_logs": true,
+			"invocation_logs": true
 		},
 		"traces": {
 			"enabled": false,
 			"persist": true,
-			"head_sampling_rate": 1,
-		},
+			"head_sampling_rate": 1
+		}
 	},
 	"d1_databases": [
 		{
@@ -43,5 +43,5 @@
 			"database_id": "eb8ef1b9-3d28-42c4-9358-f2f1ce904552",
 			"remote": true
 		}
-	],
+	]
 }

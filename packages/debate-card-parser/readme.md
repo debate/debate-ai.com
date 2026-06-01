@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://i.imgur.com/J0XD0IN.png"  width="400px" />
+    <img src="https://i.imgur.com/J0XD0IN.png"  width="200px" />
 </p>
 <p align="center">
     <!-- <img alt="GitHub Stars" src="https://img.shields.io/github/stars/vtempest/debate-docx-to-args" />

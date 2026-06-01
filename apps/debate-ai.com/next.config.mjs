@@ -1,7 +1,8 @@
 import { fileURLToPath } from "url";
-import { dirname } from "path";
+import { dirname, resolve } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const monoRoot = resolve(__dirname, "../..");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -13,8 +14,9 @@ const nextConfig = {
   },
   transpilePackages: ["react-resizable-panels"],
   turbopack: {
-    root: __dirname,
+    root: monoRoot,
   },
+  outputFileTracingRoot: monoRoot,
   webpack(config, { isServer }) {
     // Skip Service Worker bundling on server side
     if (isServer) {
