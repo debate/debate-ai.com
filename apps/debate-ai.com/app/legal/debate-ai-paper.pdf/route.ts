@@ -26,7 +26,6 @@ export async function GET() {
       "Content-Disposition": 'inline; filename="debate-ai-paper.pdf"',
       "Content-Length": String(pdfBytes.byteLength),
       // Cache for 1 hour — the paper is static
-      "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
     },
   });
 }

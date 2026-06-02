@@ -5,11 +5,11 @@
  </h1>
 </p>
 
-### Reimagining the Internet as Argument Mind Map is Key to Crowdsourced AI Decision-Making as Governance
+### Reimagining the Web as Argument Mind Map is Key to Crowdsourced AI Decision-Making 
 
 **Debate AI Institute,** support@debate-ai.com
-
-**Last Updated: May 1, 2026**
+**Updated: May 1, 2026**
+**doi.org/10.5281/zenodo.20320094**
 
 ## Abstract
 
@@ -271,7 +271,7 @@ The Debate Singularity is defined as a shift to a pluralist common cause via a r
 
 ### Acknowledgements
 
-This paper was written by debate theorist and software developer Alex Gulakov, ORCID: 0009-0003-4439-1461, with assistance of Anthropic's Claude and Perplexity's Sonar as a self-reflection.
+_Written by Alex Gulakov, an AI developer and debate theorist based in San Francisco, with assistance of Anthropic's Claude and Perplexity's Sonar as a self-reflection.._
 
 This paper would not be possible without the decades of effort by the debate community, online research sharing, and AI researchers unlocking a new era. Need a break from all this calculative thought? Try sprinkling some _poesis_ on the Ontology of Collective Being:
 

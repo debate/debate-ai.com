@@ -25,6 +25,12 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@/packages/*": [
+        "../../packages/*"
+      ],
+      "@/lib/card-parser/*": [
+        "../../packages/debate-card-parser/*"
       ]
     }
   },
