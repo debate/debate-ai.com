@@ -82,8 +82,6 @@
     "react-native-app-buttons": "^0.1.4",
     "react-resizable-panels": "^4.7.2",
     "reason-editor": "*",
-    "yjs": "^13.6.29",
-    "y-websocket": "^3.0.0",
     "recharts": "2.15.4",
     "shadcn-theme-menu": "^1.1.4",
     "streamdown": "^2.4.0",
@@ -93,6 +91,8 @@
     "turndown": "^7.2.2",
     "turndown-plugin-gfm": "^1.0.2",
     "use-sound": "^5.0.0",
+    "y-websocket": "^3.0.0",
+    "yjs": "^13.6.29",
     "zustand": "latest"
   },
   "devDependencies": {

@@ -115,6 +115,8 @@
     "yjs": "^13.6.0"
   },
   "peerDependenciesMeta": {
-    "y-websocket": { "optional": true }
+    "y-websocket": {
+      "optional": true
+    }
   }
 }
