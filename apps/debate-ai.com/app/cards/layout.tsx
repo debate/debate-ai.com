@@ -3,10 +3,10 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "CARDS Search",
-  description: "Crowdsourced Annotated Research for Debatable Subjects (CARDS)",
+  description: "Crowdsourced Annotated Research for Debating Solutions(CARDS)",
 }
 
-export default function SearchLayout({
+export  default function SearchLayout({
   children,
 }: {
   children: React.ReactNode

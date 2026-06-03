@@ -1,5 +1,5 @@
 <h3 align="center">
-    <img width=200px" src="./public/favicon-512.png" />
+    <img width="100px" src="./apps/debate-ai.com/public/favicon-512.png" />
 </h3>
 <p align="center">
     <b>Being is Becoming —</b><br>
