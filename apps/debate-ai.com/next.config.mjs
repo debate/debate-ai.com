@@ -13,6 +13,14 @@ const nextConfig = {
     unoptimized: true,
   },
   transpilePackages: ["react-resizable-panels"],
+  serverExternalPackages: [
+    "better-auth",
+    "@better-auth/kysely-adapter",
+    "kysely",
+    "drizzle-orm",
+    "@libsql/client",
+    "libsql",
+  ],
   turbopack: {
     root: monoRoot,
   },
