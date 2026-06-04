@@ -157,7 +157,7 @@ export function SpeechHeaderBar({
   const { rounds, flows, selected } = useFlowStore()
   const currentFlow = flows[selected]
   const currentRound = currentFlow?.roundId
-    ? rounds.find((r) => r.id === currentFlow.roundId)
+    ? rounds.find((r: any) => r.id === currentFlow.roundId)
     : undefined
 
   const [micDeviceId, setMicDeviceId] = useState<string | undefined>()
