@@ -8,7 +8,9 @@ node_modules
 # next.js
 /.next/
 /out/
-
+.vinext/
+.wrangler
+.yarn
 # production
 /build
 .fuse*

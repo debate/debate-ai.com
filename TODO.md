@@ -10,7 +10,7 @@
 10. filter outline and tree
 11. whose summaries and highligting gets more likes
 12. on round info - show tournament results, pairingsm .jsdge paradigm
-13. docs categories icons
+13. coaching & group challenges
 14. legacy keys [https://docs.paperlessdebate.com/verbatim/advanced/shortcuts](https://docs.paperlessdebate.com/verbatim/advanced/shortcuts)
 15. Flow-in-Speech entries while watching stream, and link a flow entry to a response bubble.
 16. Sync flow across room, no need to flow if cards come with flow notes https://debateflow.app https://www.debateflow.org

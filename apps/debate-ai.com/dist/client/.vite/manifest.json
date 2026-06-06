@@ -1,0 +1,163 @@
+{
+  "../../node_modules/.bun/grab-url@1.6.22+5d03113f5fd47eb2/node_modules/grab-url/dist/archiver-web.es.js": {
+    "file": "assets/archiver-web.es-Bub5vqR4.js",
+    "name": "archiver-web.es",
+    "src": "../../node_modules/.bun/grab-url@1.6.22+5d03113f5fd47eb2/node_modules/grab-url/dist/archiver-web.es.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_framework-BC9iO96I.js"
+    ]
+  },
+  "../../node_modules/.bun/grab-url@1.6.22+5d03113f5fd47eb2/node_modules/grab-url/dist/index-CLlAnStL.js": {
+    "file": "assets/index-CLlAnStL-DVSH81pm.js",
+    "name": "index-CLlAnStL",
+    "src": "../../node_modules/.bun/grab-url@1.6.22+5d03113f5fd47eb2/node_modules/grab-url/dist/index-CLlAnStL.js",
+    "isDynamicEntry": true
+  },
+  "../../node_modules/.bun/vinext@0.0.45+0759bfa6203512db/node_modules/vinext/dist/shims/router.js": {
+    "file": "assets/router-C4YROI5C.js",
+    "name": "router",
+    "src": "../../node_modules/.bun/vinext@0.0.45+0759bfa6203512db/node_modules/vinext/dist/shims/router.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "virtual:vinext-app-browser-entry",
+      "_framework-BC9iO96I.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js"
+    ],
+    "dynamicImports": [
+      "_framework-BC9iO96I.js"
+    ]
+  },
+  "../../packages/reason-editor/dist/DateTimeComponent-DS-W2TeX.js": {
+    "file": "assets/DateTimeComponent-DS-W2TeX-D-xQpt1P.js",
+    "name": "DateTimeComponent-DS-W2TeX",
+    "src": "../../packages/reason-editor/dist/DateTimeComponent-DS-W2TeX.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_framework-BC9iO96I.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "virtual:vinext-app-browser-entry"
+    ]
+  },
+  "../../packages/reason-editor/dist/StickyComponent-sUoCqAF7.js": {
+    "file": "assets/StickyComponent-sUoCqAF7-BUNqqkJp.js",
+    "name": "StickyComponent-sUoCqAF7",
+    "src": "../../packages/reason-editor/dist/StickyComponent-sUoCqAF7.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_framework-BC9iO96I.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "virtual:vinext-app-browser-entry"
+    ]
+  },
+  "../../packages/reason-editor/dist/marked.esm-D-Krttip.js": {
+    "file": "assets/marked.esm-D-Krttip-B_WiJx_9.js",
+    "name": "marked.esm-D-Krttip",
+    "src": "../../packages/reason-editor/dist/marked.esm-D-Krttip.js",
+    "isDynamicEntry": true
+  },
+  "_PollComponent-C_xQ0cvI-C9Af-xDd.js": {
+    "file": "assets/PollComponent-C_xQ0cvI-C9Af-xDd.js",
+    "name": "PollComponent-C_xQ0cvI",
+    "isDynamicEntry": true,
+    "imports": [
+      "_framework-BC9iO96I.js",
+      "virtual:vinext-app-browser-entry"
+    ],
+    "dynamicImports": [
+      "../../node_modules/.bun/grab-url@1.6.22+5d03113f5fd47eb2/node_modules/grab-url/dist/archiver-web.es.js",
+      "../../node_modules/.bun/grab-url@1.6.22+5d03113f5fd47eb2/node_modules/grab-url/dist/index-CLlAnStL.js",
+      "../../packages/reason-editor/dist/DateTimeComponent-DS-W2TeX.js",
+      "../../packages/reason-editor/dist/StickyComponent-sUoCqAF7.js",
+      "../../packages/reason-editor/dist/marked.esm-D-Krttip.js",
+      "../../node_modules/.bun/vinext@0.0.45+0759bfa6203512db/node_modules/vinext/dist/shims/router.js"
+    ],
+    "assets": [
+      "assets/icon-flow-flower-Dxq3N3s3.svg",
+      "assets/icon-aff-bubble-hblDFzOH.png",
+      "assets/icon-book-Co8jqSei.svg",
+      "assets/icon-collective-mind-BsCrIECf.png",
+      "assets/icon-leaderboard-DZQlMRow.png",
+      "assets/icon-lectures--sSUvJH4.svg",
+      "assets/icon-neg-bubble-BTzaYm7X.png",
+      "assets/icon-rounds-youtube-DHFPJzPe.svg",
+      "assets/icon-rounds-oqqWsICl.svg",
+      "assets/icon-top-rounds-dNv6Egra.svg"
+    ]
+  },
+  "_framework-BC9iO96I.js": {
+    "file": "assets/framework-BC9iO96I.js",
+    "name": "framework",
+    "isDynamicEntry": true
+  },
+  "components/icons/icon-aff-bubble.png": {
+    "file": "assets/icon-aff-bubble-hblDFzOH.png",
+    "src": "components/icons/icon-aff-bubble.png"
+  },
+  "components/icons/icon-book.svg": {
+    "file": "assets/icon-book-Co8jqSei.svg",
+    "src": "components/icons/icon-book.svg"
+  },
+  "components/icons/icon-collective-mind.png": {
+    "file": "assets/icon-collective-mind-BsCrIECf.png",
+    "src": "components/icons/icon-collective-mind.png"
+  },
+  "components/icons/icon-flow-flower.svg": {
+    "file": "assets/icon-flow-flower-Dxq3N3s3.svg",
+    "src": "components/icons/icon-flow-flower.svg"
+  },
+  "components/icons/icon-leaderboard.png": {
+    "file": "assets/icon-leaderboard-DZQlMRow.png",
+    "src": "components/icons/icon-leaderboard.png"
+  },
+  "components/icons/icon-lectures.svg": {
+    "file": "assets/icon-lectures--sSUvJH4.svg",
+    "src": "components/icons/icon-lectures.svg"
+  },
+  "components/icons/icon-neg-bubble.png": {
+    "file": "assets/icon-neg-bubble-BTzaYm7X.png",
+    "src": "components/icons/icon-neg-bubble.png"
+  },
+  "components/icons/icon-rounds-youtube.svg": {
+    "file": "assets/icon-rounds-youtube-DHFPJzPe.svg",
+    "src": "components/icons/icon-rounds-youtube.svg"
+  },
+  "components/icons/icon-rounds.svg": {
+    "file": "assets/icon-rounds-oqqWsICl.svg",
+    "src": "components/icons/icon-rounds.svg"
+  },
+  "components/icons/icon-theme-pantone.svg": {
+    "file": "assets/icon-theme-pantone-Bqnzt8TT.svg",
+    "src": "components/icons/icon-theme-pantone.svg"
+  },
+  "components/icons/icon-top-rounds.svg": {
+    "file": "assets/icon-top-rounds-dNv6Egra.svg",
+    "src": "components/icons/icon-top-rounds.svg"
+  },
+  "virtual:vinext-app-browser-entry": {
+    "file": "assets/index-BTt4o5at.js",
+    "name": "index",
+    "src": "virtual:vinext-app-browser-entry",
+    "isEntry": true,
+    "imports": [
+      "_framework-BC9iO96I.js"
+    ],
+    "dynamicImports": [
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js",
+      "_PollComponent-C_xQ0cvI-C9Af-xDd.js"
+    ]
+  }
+}

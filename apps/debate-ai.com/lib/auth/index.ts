@@ -21,11 +21,11 @@ function buildAuth() {
         clientSecret: getEnv("GOOGLE_CLIENT_SECRET")!,
       },
       discord: {
-        clientId: getEnv("AUTH_DISCORD_ID"),
+        clientId: getEnv("AUTH_DISCORD_ID") || "",
         clientSecret: getEnv("AUTH_DISCORD_SECRET"),
       },
       linkedin: {
-        clientId: getEnv("AUTH_LINKEDIN_ID"),
+        clientId: getEnv("AUTH_LINKEDIN_ID") || "",
         clientSecret: getEnv("AUTH_LINKEDIN_SECRET"),
       },
     },

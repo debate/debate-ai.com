@@ -1,5 +1,7 @@
 /** @fileoverview Public export surface for the card parser module. */
 export { htmlToCards } from "./parsers/html-to-cards";
+export { convertDocxToHTML, styleMap } from "./parsers/docx-to-html";
+export { docxToCards, docxToHtml } from "./parsers/docx-to-cards";
 export { FORMAT_PROFILES } from "./utils/format-profiles";
 export {
   extractCiteInfo,

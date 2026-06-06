@@ -1,0 +1,73 @@
+{
+  "../../node_modules/.bun/@better-auth+memory-adapter@1.6.14+eebc42236046d19b/node_modules/@better-auth/memory-adapter/dist/index.mjs": {
+    "file": "assets/index-Cjo_kj-a.js",
+    "name": "index",
+    "src": "../../node_modules/.bun/@better-auth+memory-adapter@1.6.14+eebc42236046d19b/node_modules/@better-auth/memory-adapter/dist/index.mjs",
+    "isDynamicEntry": true,
+    "imports": [
+      "_worker-entry-DHvMRgx3.js"
+    ]
+  },
+  "../../node_modules/.bun/@libsql+client@0.17.3/node_modules/@libsql/client/lib-esm/web.js": {
+    "file": "assets/web-DH_vLNkH.js",
+    "name": "web",
+    "src": "../../node_modules/.bun/@libsql+client@0.17.3/node_modules/@libsql/client/lib-esm/web.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_worker-entry-DHvMRgx3.js"
+    ]
+  },
+  "../../node_modules/.bun/better-auth@1.6.14+0d73ad71c53e80c0/node_modules/better-auth/dist/adapters/kysely-adapter/index.mjs": {
+    "file": "assets/index-DrAlF-n4.js",
+    "name": "index",
+    "src": "../../node_modules/.bun/better-auth@1.6.14+0d73ad71c53e80c0/node_modules/better-auth/dist/adapters/kysely-adapter/index.mjs",
+    "isDynamicEntry": true,
+    "imports": [
+      "_worker-entry-DHvMRgx3.js"
+    ]
+  },
+  "../../node_modules/.bun/drizzle-orm@0.45.2+c825b688fd931359/node_modules/drizzle-orm/libsql/index.js": {
+    "file": "assets/index-VyqyuR6z.js",
+    "name": "index",
+    "src": "../../node_modules/.bun/drizzle-orm@0.45.2+c825b688fd931359/node_modules/drizzle-orm/libsql/index.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "../../node_modules/.bun/@libsql+client@0.17.3/node_modules/@libsql/client/lib-esm/web.js",
+      "_worker-entry-DHvMRgx3.js"
+    ]
+  },
+  "__vite-optional-peer-dep:@react-email/render:resend:false": {
+    "file": "assets/render_resend_false-MiC__Smr.js",
+    "name": "render_resend_false",
+    "src": "__vite-optional-peer-dep:@react-email/render:resend:false",
+    "isDynamicEntry": true
+  },
+  "_worker-entry-DHvMRgx3.js": {
+    "file": "assets/worker-entry-DHvMRgx3.js",
+    "name": "worker-entry",
+    "dynamicImports": [
+      "../../node_modules/.bun/@better-auth+memory-adapter@1.6.14+eebc42236046d19b/node_modules/@better-auth/memory-adapter/dist/index.mjs",
+      "../../node_modules/.bun/better-auth@1.6.14+0d73ad71c53e80c0/node_modules/better-auth/dist/adapters/kysely-adapter/index.mjs",
+      "../../node_modules/.bun/better-auth@1.6.14+0d73ad71c53e80c0/node_modules/better-auth/dist/adapters/kysely-adapter/index.mjs",
+      "../../node_modules/.bun/drizzle-orm@0.45.2+c825b688fd931359/node_modules/drizzle-orm/libsql/index.js",
+      "../../node_modules/.bun/@libsql+client@0.17.3/node_modules/@libsql/client/lib-esm/web.js",
+      "__vite-optional-peer-dep:@react-email/render:resend:false"
+    ],
+    "css": [
+      "assets/worker-entry-wVGWgpkk.css"
+    ]
+  },
+  "_worker-entry-wVGWgpkk.css": {
+    "file": "assets/worker-entry-wVGWgpkk.css",
+    "src": "_worker-entry-wVGWgpkk.css"
+  },
+  "virtual:cloudflare/worker-entry": {
+    "file": "index.js",
+    "name": "index",
+    "src": "virtual:cloudflare/worker-entry",
+    "isEntry": true,
+    "imports": [
+      "_worker-entry-DHvMRgx3.js"
+    ]
+  }
+}

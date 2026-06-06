@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { authClient } from "@/lib/auth/client";
-import { useSession } from "@/lib/auth/hooks/useSession";
+import { useSession } from "@/lib/hooks/useSession";
 
 export function OneTap() {
   const { isAuthenticated, isLoading } = useSession();

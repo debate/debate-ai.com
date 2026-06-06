@@ -29,7 +29,7 @@ function normalizeTeamName(name: string): string {
 }
 
 /**
- * Extract initials from a student name, e.g. "Alex Gul" -> "AG"
+ * Extract initials from a student name, 
  */
 function getInitials(name: string): string {
   return name

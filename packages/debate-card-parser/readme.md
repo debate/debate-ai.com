@@ -16,9 +16,9 @@
 </p>
 
 
-# Debate DOCX to ARGS: Annotated Research Graph Summaries
+# Debate Card Parser: DOCX/HTML to Structured Cards
 
-Node.js tool for converting DOCX files into structured debate cards with rich metadata extraction and analysis, designed to build consensus on research claims. 
+Comprehensive toolkit for converting debate research documents (DOCX/HTML) into structured debate cards with rich metadata extraction and analysis. 
 It transforms debate research documents (DOCX) into structured JSON, capturing citations, highlights, word counts, and error tracking, while preserving the hierarchical structure of debate briefs. Key metadata is extracted for LLM analysis, enabling LLMs to review the full text, identify logic flaws or unsupported claims, and flag overstatements. LLMs also extend warrants, summarize support, and suggest where each card fits within the Topic Research Unified Tree Hierarchy (TRUTH). The system is built for intersubjective, consensus-driven research claim to find ground truth on issues and evaluate any claim's proximity to accepted truths and human values. This can reduce LLM hallucination and steer alignment with common social values as AI gains capacity to replace human  leaders of organizations. Annotated Research Graph Summaries on the overall TRUTH can build GOD: Governance via Online Debate.
 
 ## Algorithm: Step-by-Step Conversion Process
@@ -175,16 +175,52 @@ node src/process-cards-files.js /path/to/html/files
 ```
 
 ### Programmatic Usage
-```javascript
-import { htmlToCards } from './src/html-to-cards.js'
-import { convertDocxToHTML } from './src/docx-to-html.js'
 
-// Convert DOCX to HTML
-const html = await convertDocxToHTML(docxBuffer)
+```typescript
+import { docxToCards, docxToHtml, htmlToCards } from 'debate-card-parser';
 
-// Convert HTML to structured cards
-const result = htmlToCards(html, 'filename.docx')
-console.log(`Extracted ${result.metadata.quotes} cards`)
+// Method 1: Direct DOCX to Cards (recommended)
+const result = await docxToCards(docxFile, 'filename.docx');
+console.log(`Extracted ${result.metadata.quotes} cards`);
+
+// Method 2: DOCX to HTML only
+const html = await docxToHtml(docxFile);
+
+// Method 3: Two-step process
+const html = await docxToHtml(docxBuffer);
+const result = htmlToCards(html, 'filename.docx');
+```
+
+#### Input Types Supported
+
+```typescript
+// From File upload (browser)
+const file = event.target.files[0];
+const result = await docxToCards(file, file.name);
+
+// From URL
+const result = await docxToCards('https://example.com/cards.docx');
+
+// From ArrayBuffer
+const buffer = await fetch(url).then(r => r.arrayBuffer());
+const result = await docxToCards(buffer, 'cards.docx');
+
+// From Node.js Buffer
+import { readFileSync } from 'fs';
+const buffer = readFileSync('./cards.docx');
+const result = await docxToCards(buffer, 'cards.docx');
+```
+
+#### Parser Options
+
+```typescript
+// Customize parsing behavior
+const result = await docxToCards(file, 'debate.docx', {
+  profile: 'verbatim', // or 'standard' (default)
+  minBlankLinesForBoundary: 2, // Card boundary detection
+  headingTags: ['h1', 'h2', 'h3', 'h4'],
+  summaryPatterns: [/^[A-Z]/],
+});
 ```
 
 ## Key Features
