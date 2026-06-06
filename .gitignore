@@ -4,10 +4,13 @@ apps/debate-ai.com/.open-next
 apps/debate-ai.com/.next
 # dependencies
 node_modules
-
+yarn.lock
 # next.js
 /.next/
+.yarn
 /out/
+dist/*
+apps/debate-ai.com/dist/*
 .vinext/
 .wrangler
 .yarn
