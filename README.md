@@ -12,11 +12,13 @@
     </p>
 <h3 align="center">
     <a href="https://debate.ai.com">🚀 App</a>
-    <a href="https://github.com/debate/debate-ai.com/tree/master/docs">📑 Docs</a> <a href="https://debate-ai.com/api/api-docs">🎯 API</a> <a href="https://github.com/debate/debate-ai.com/blob/master/docs/debate-singularity-research-paper.md">📜 Paper</a> <a href="https://drive.google.com/drive/u/1/folders/1inxyWjAkPiyJ9BdspbhV20_-xRIc8RJn">⏯️  Slides</a> 
+    <a href="https://github.com/debate/debate-ai.com/tree/master/docs">📑 Docs</a> <a href="https://debate-ai.com/api/api-docs">🎯 API</a>  <a href="https://drive.google.com/drive/u/1/folders/1inxyWjAkPiyJ9BdspbhV20_-xRIc8RJn">⏯️ Papers </a> 
 </h3>
 <p align="center">
-    <a href="https://discord.gg/SJdBqBz3tV">
-        <img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat"
+    <a href="https://doi.org/10.5281/zenodo.20574318"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20574318.svg" alt="DOI"></a>
+    <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+    <a href="https://discord.gg/KfxNhWEMj">
+    <img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat"
             alt="Join Discord" />
     </a>
      <a href="https://github.com/debate/debate-ai.com/discussions">
@@ -31,7 +33,7 @@
     </a>
     <img src="https://img.shields.io/github/last-commit/debate/debate-ai.com.svg" alt="GitHub last commit" />
 <br />
-    <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js" />
+    <img src="https://img.shields.io/badge/Next.js-black" alt="Next.js" />
     <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request">
         <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"
             alt="PRs Welcome" />
