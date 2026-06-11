@@ -17,8 +17,8 @@
   },
   "devDependencies": {
     "turbo": "^2.9.9",
-    "vite": "^8",
-    "vinext": "0.0.45"
+    "vinext": "0.0.45",
+    "vite": "^8"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.40.1",
