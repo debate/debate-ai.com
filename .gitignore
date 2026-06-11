@@ -7,8 +7,10 @@ node_modules
 yarn.lock
 # next.js
 /.next/
-.yarn
+.yarn/
 /out/
+.turbo/
+
 dist/*
 apps/debate-ai.com/dist/*
 .vinext/

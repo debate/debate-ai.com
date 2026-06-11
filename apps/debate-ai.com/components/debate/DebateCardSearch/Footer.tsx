@@ -6,7 +6,7 @@ import { Code2, Scale, MessageSquare, Calendar, Trophy, Book, BookOpen, BookMark
 
 const FOOTER_LINKS = [
   { url: "https://github.com/debate", text: "Github", icon: Code2 },
-  { url: "https://www.reddit.com/r/Debate+policydebate", text: "Debate Reddit", icon: MessageSquare },
+  { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Debate Reddit", icon: MessageSquare },
   { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar },
   { url: "https://www.debate.land", text: "Rankings", icon: Trophy },
   { url: "https://debate-decoded.ghost.io", text: "Community Blog", icon: BookOpen },
