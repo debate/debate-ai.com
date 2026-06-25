@@ -12,9 +12,9 @@
     "extract-transcripts": "bun run youtube/extract-transcripts.ts"
   },
   "dependencies": {
-    "axios": "*",
+    "axios": "^1.18.1",
     "extract-youtube": "^1.0.2",
-    "grab-url": "*",
-    "linkedom": "*"
+    "grab-url": "^1.6.22",
+    "linkedom": "^0.18.12"
   }
 }

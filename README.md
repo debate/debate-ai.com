@@ -110,7 +110,7 @@
 
 ### 📝 REASON: Research Editor for Annotated Summaries in Outline Notation
 
-- 📝 **Complex Rich Text Editor:** full featured alternative to Google Docs based on Meta's Lexical with core features and fast ease of use
+- 📝 **Complex Rich Text Editor:** full featured alternative to Google Docs, built on [TipTap](https://tiptap.dev/) with the [CardMirror](https://github.com/debate/cardmirror) debate-card schema for pockets/hats/blocks/cards, lossless `.docx` (Verbatim) and `.cmir` round-trip, and core formatting features with fast ease of use
 - 📂 **Nested Document Tree**: organize research notes with a nested document organizer with drag-and-drop, tabs, and custom storage sources
 - 🖱️ **Context Menu**: right-click to access quick actions for seamless document management
 - 🔍 **Full-Text Search**: instantly find documents by title or content with full-text search

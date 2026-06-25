@@ -14,6 +14,20 @@ It combines two things the app needs in one editor:
   underline / emphasis marks) and lossless `.docx` (Verbatim interop) and
   `.cmir` round-trip.
 
+## Scope
+
+This package vendors CardMirror's **headless engine** (schema,
+`.docx`/`.cmir` codecs, ProseMirror plugins) and wraps it in a fresh
+React/TipTap shell built for this app. It deliberately does not vendor
+CardMirror's own app shell — the multi-pane layout, ribbon toolbar,
+mobile shell, Electron desktop host, Learn/SRS flashcard system, AI
+assistant, or voice features. Those are CardMirror-the-application's UI
+around the engine; debate-ai.com already has its own app shell (FIAT
+speech-doc panels, navigation, account/AI features), so reusing
+CardMirror's would mean running two competing app frameworks side by
+side. The engine — the actual debate-card data model and document
+fidelity — is the part that's shared and vendored here in full.
+
 ## How it fits together
 
 ```
