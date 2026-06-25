@@ -2,8 +2,10 @@ import vinext from "vinext";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { defineConfig } from "vite";
 import path from "path";
+import { createRequire } from "module";
 
 const appDir = path.resolve(import.meta.dirname);
+const require = createRequire(import.meta.url);
 
 export default defineConfig({
   plugins: [
@@ -17,7 +19,7 @@ export default defineConfig({
       "@/lib/card-parser": path.resolve(appDir, "../../packages/debate-card-parser"),
       "@/packages": path.resolve(appDir, "../../packages"),
       "@": appDir,
-      "@emotion/is-prop-valid": path.resolve(appDir, "node_modules/@emotion/is-prop-valid"),
+      "@emotion/is-prop-valid": require.resolve("@emotion/is-prop-valid"),
       "@better-auth/kysely-adapter": path.resolve(appDir, "lib/stubs/kysely-adapter.ts"),
     },
     dedupe: [

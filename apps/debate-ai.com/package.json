@@ -22,7 +22,7 @@
   "dependencies": {
     "@emotion/is-prop-valid": "^1.4.0",
     "@icons-pack/react-simple-icons": "^13.13.0",
-    "@langchain/core": "latest",
+    "@langchain/core": "^1.2.1",
     "@langchain/groq": "1.1.5",
     "@libsql/client": "^0.17.3",
     "@radix-ui/react-accordion": "1.2.12",
@@ -58,7 +58,7 @@
     "autoprefixer": "^10.4.27",
     "better-auth": "^1.6.13",
     "better-auth-cloudflare": "^0.3.0",
-    "canvas": "latest",
+    "canvas": "^3.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.1.1",
@@ -70,7 +70,7 @@
     "fuse.js": "^7.1.0",
     "grab-url": "^1.6.7",
     "htmlparser2": "10.1.0",
-    "immer": "latest",
+    "immer": "^11.1.8",
     "jszip": "3.10.1",
     "katex": "0.16.38",
     "linkedom": "0.18.12",
@@ -102,7 +102,7 @@
     "vinext": "0.0.45",
     "y-websocket": "^3.0.0",
     "yjs": "^13.6.29",
-    "zustand": "latest"
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.40.0",
