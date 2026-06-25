@@ -1,0 +1,248 @@
+/**
+ * reason-editor document-surface styles.
+ *
+ * A self-contained subset of CardMirror's editor stylesheet covering
+ * the document marks and structural nodes the schema renders. Scoped to
+ * `.reason-editor` (instead of CardMirror's `#editor`) so it can drop
+ * into any host page. CSS variables carry sensible standalone defaults;
+ * a host can override any of them on `.reason-editor`.
+ *
+ * Adapted from cardmirror/src/editor/style.css. See THIRD-PARTY-NOTICES.md.
+ */
+
+.reason-editor {
+  /* Display sizes (Verbatim-style per-style font sizing). */
+  --pmd-size-pocket: 1.4rem;
+  --pmd-size-hat: 1.25rem;
+  --pmd-size-block: 1.1rem;
+  --pmd-size-tag: 1.05rem;
+  --pmd-size-analytic: 1rem;
+  --pmd-size-cite: 0.8125rem; /* 13pt-ish */
+  --pmd-size-underline: 1rem;
+  --pmd-size-emphasis: 1rem;
+  --pmd-size-undertag: 0.95rem;
+  --pmd-line-height: 1.3;
+  --pmd-line-height-heading: 1.2;
+  --pmd-line-height-tag: 1.25;
+  --pmd-line-height-analytic: 1.25;
+  --pmd-line-height-cite: 1.15;
+  --pmd-line-height-undertag: 1.2;
+  /* Colors. */
+  --pmd-color-analytic: #1f3864;
+  --pmd-color-undertag: #555;
+  --pmd-c-emphasis-box: #c00;
+  --pmd-c-card-hover: #bcd;
+
+  color: inherit;
+  font-family: 'Times New Roman', Georgia, serif;
+  line-height: var(--pmd-line-height);
+}
+
+.reason-editor .ProseMirror {
+  outline: none;
+  padding: 0.75rem 1rem;
+  min-height: 8rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.reason-editor .ProseMirror:focus {
+  outline: none;
+}
+
+/* ----- Structural heading nodes ----- */
+.reason-editor .pmd-pocket {
+  font-size: var(--pmd-size-pocket);
+  line-height: var(--pmd-line-height-heading);
+  font-weight: bold;
+  text-align: center;
+  border: 3px solid var(--pmd-c-emphasis-box);
+  padding: 0.5rem 1rem;
+  margin: 1.5rem 0 0.75rem 0;
+}
+
+.reason-editor .pmd-hat {
+  font-size: var(--pmd-size-hat);
+  line-height: var(--pmd-line-height-heading);
+  font-weight: bold;
+  text-align: center;
+  text-decoration: underline double;
+  margin: 1.25rem 0 0.5rem 0;
+}
+
+.reason-editor .pmd-block {
+  font-size: var(--pmd-size-block);
+  line-height: var(--pmd-line-height-heading);
+  font-weight: bold;
+  text-align: center;
+  text-decoration: underline;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.reason-editor .pmd-tag {
+  font-size: var(--pmd-size-tag);
+  line-height: var(--pmd-line-height-tag);
+  font-weight: bold;
+  margin: 0.75rem 0 0.25rem 0;
+}
+
+.reason-editor .pmd-analytic {
+  font-size: var(--pmd-size-analytic);
+  line-height: var(--pmd-line-height-analytic);
+  font-weight: bold;
+  color: var(--pmd-color-analytic);
+  margin: 0.75rem 0 0.25rem 0;
+}
+
+/* ----- Body-level paragraphs ----- */
+.reason-editor .pmd-card-body,
+.reason-editor p {
+  margin: 0 0 0.35rem 0;
+}
+
+.reason-editor .pmd-cite-para {
+  line-height: var(--pmd-line-height-cite);
+  margin: 0 0 0.25rem 0;
+}
+
+.reason-editor .pmd-undertag {
+  color: var(--pmd-color-undertag);
+  font-style: italic;
+  font-size: var(--pmd-size-undertag);
+  line-height: var(--pmd-line-height-undertag);
+  margin: 0 0 0.25rem 0;
+}
+
+/* ----- Card / analytic-unit containers ----- */
+.reason-editor .pmd-card,
+.reason-editor .pmd-analytic-unit {
+  border-left: 2px solid transparent;
+  padding-left: 0.5rem;
+}
+
+.reason-editor .pmd-card:hover,
+.reason-editor .pmd-analytic-unit:hover {
+  border-left-color: var(--pmd-c-card-hover);
+}
+
+/* ----- Named-style evidence marks ----- */
+.reason-editor .pmd-cite {
+  font-weight: bold;
+  font-size: var(--pmd-run-font-size, var(--pmd-size-cite));
+}
+
+.reason-editor .pmd-underline {
+  text-decoration: underline;
+  font-size: var(--pmd-run-font-size, var(--pmd-size-underline));
+}
+
+.reason-editor .pmd-emphasis {
+  text-decoration: underline;
+  font-weight: bold;
+  font-size: var(--pmd-run-font-size, var(--pmd-size-emphasis));
+}
+
+.reason-editor .pmd-undertag-mark {
+  color: var(--pmd-color-undertag);
+  font-style: italic;
+}
+
+.reason-editor .pmd-analytic-mark {
+  font-weight: bold;
+  color: var(--pmd-color-analytic);
+}
+
+.reason-editor .pmd-pilcrow {
+  font-size: 6pt;
+}
+
+/* ----- Highlight (Word named colors) ----- */
+.reason-editor .pmd-highlight {
+  border-radius: 1px;
+}
+.reason-editor .pmd-highlight[data-highlight="yellow"]      { background: #ffff00; color: #000; }
+.reason-editor .pmd-highlight[data-highlight="green"]       { background: #00ff00; color: #000; }
+.reason-editor .pmd-highlight[data-highlight="cyan"]        { background: #00ffff; color: #000; }
+.reason-editor .pmd-highlight[data-highlight="magenta"]     { background: #ff00ff; color: #000; }
+.reason-editor .pmd-highlight[data-highlight="blue"]        { background: #0000ff; color: #fff; }
+.reason-editor .pmd-highlight[data-highlight="red"]         { background: #ff0000; color: #000; }
+.reason-editor .pmd-highlight[data-highlight="darkBlue"]    { background: #000080; color: #fff; }
+.reason-editor .pmd-highlight[data-highlight="darkCyan"]    { background: #008080; color: #fff; }
+.reason-editor .pmd-highlight[data-highlight="darkGreen"]   { background: #008000; color: #fff; }
+.reason-editor .pmd-highlight[data-highlight="darkMagenta"] { background: #800080; color: #fff; }
+.reason-editor .pmd-highlight[data-highlight="darkRed"]     { background: #800000; color: #fff; }
+.reason-editor .pmd-highlight[data-highlight="darkYellow"]  { background: #808000; color: #fff; }
+.reason-editor .pmd-highlight[data-highlight="darkGray"]    { background: #808080; color: #fff; }
+.reason-editor .pmd-highlight[data-highlight="lightGray"]   { background: #c0c0c0; color: #000; }
+.reason-editor .pmd-highlight[data-highlight="black"]       { background: #000000; color: #fff; }
+.reason-editor .pmd-highlight[data-highlight="none"]        { background: transparent; }
+
+/* ----- Images ----- */
+.reason-editor .pmd-image-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed currentColor;
+  opacity: 0.6;
+  font-size: 0.75rem;
+  padding: 0.25rem;
+}
+
+/* ----- Tables ----- */
+.reason-editor .pmd-table {
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+}
+.reason-editor .pmd-table td,
+.reason-editor .pmd-table th {
+  border: 1px solid var(--pmd-c-card-hover, #bcd);
+  padding: 0.25rem 0.5rem;
+  vertical-align: top;
+}
+
+/* ----- Toolbar ----- */
+.reason-editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+  padding: 0.375rem 0.5rem;
+  border-bottom: 1px solid var(--border, #e2e2e2);
+}
+
+.reason-editor-toolbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0 0.4rem;
+  font-size: 0.8125rem;
+  line-height: 1;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.reason-editor-toolbar button:hover {
+  background: var(--muted, rgba(0, 0, 0, 0.06));
+}
+
+.reason-editor-toolbar button[data-active="true"] {
+  background: var(--muted, rgba(0, 0, 0, 0.1));
+  border-color: var(--border, #cfcfcf);
+  font-weight: 600;
+}
+
+.reason-editor-toolbar .reason-editor-toolbar-sep {
+  width: 1px;
+  align-self: stretch;
+  margin: 0.125rem 0.25rem;
+  background: var(--border, #e2e2e2);
+}
+
+.reason-editor-toolbar-spacer {
+  flex: 1 1 auto;
+}

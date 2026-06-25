@@ -20,7 +20,20 @@ export default defineConfig({
       "@emotion/is-prop-valid": path.resolve(appDir, "node_modules/@emotion/is-prop-valid"),
       "@better-auth/kysely-adapter": path.resolve(appDir, "lib/stubs/kysely-adapter.ts"),
     },
-    dedupe: ["react", "react-dom", "react/jsx-runtime", "react-server-dom-webpack"],
+    dedupe: [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "react-server-dom-webpack",
+      // Keep a single ProseMirror instance shared between the
+      // reason-editor TipTap shell (@tiptap/pm) and its vendored
+      // CardMirror engine (bare prosemirror-* imports).
+      "prosemirror-model",
+      "prosemirror-state",
+      "prosemirror-view",
+      "prosemirror-transform",
+      "prosemirror-keymap",
+    ],
   },
   optimizeDeps: {
     exclude: ["canvas"],
