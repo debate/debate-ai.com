@@ -173,6 +173,7 @@ export function FlowMainContent({
               onChange={onUpdateLeftSpeech || (() => {})}
               title={leftSpeech}
               onTitleChange={() => {}}
+              showAiTools
             />
           </div>
         </div>
@@ -214,6 +215,7 @@ export function FlowMainContent({
               onChange={onUpdateLeftSpeech || (() => {})}
               title={leftSpeech}
               onTitleChange={() => {}}
+              showAiTools
             />
           </div>
         </div>
@@ -259,6 +261,7 @@ export function FlowMainContent({
               onChange={onUpdateRightSpeech || (() => {})}
               title={rightSpeech}
               onTitleChange={() => {}}
+              showAiTools
             />
           </div>
         </div>

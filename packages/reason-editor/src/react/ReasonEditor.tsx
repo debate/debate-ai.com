@@ -74,6 +74,10 @@ export interface ReasonEditorProps {
   showToolbar?: boolean;
   /** Show the `.docx` / `.cmir` import-export controls in the toolbar. */
   showCardTools?: boolean;
+  /** Show the AI tools (cite formatting, OCR repair, explain, image
+   *  alt text) in the toolbar. Requires the host to have mounted the
+   *  `/api/reason-ai` proxy route (see `configureReasonAi`). */
+  showAiTools?: boolean;
   /** Toolbar customization (hidden buttons, extra controls). */
   toolbar?: ToolbarCustomization;
   /** Extra class on the editor root. */
@@ -92,6 +96,7 @@ export const ReasonEditor = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
       editable = true,
       showToolbar = true,
       showCardTools = false,
+      showAiTools = false,
       toolbar,
       className,
       autoFocus = false,
@@ -181,6 +186,7 @@ export const ReasonEditor = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
           <Toolbar
             editor={editor}
             showCardTools={showCardTools}
+            showAiTools={showAiTools}
             exportName={title || "document"}
             hide={toolbar?.hide}
             order={toolbar?.order}
