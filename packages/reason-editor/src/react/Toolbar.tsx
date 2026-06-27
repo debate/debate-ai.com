@@ -15,7 +15,7 @@
  * ToolbarCustomization); extra controls can be appended via `children`.
  */
 
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import type { Editor } from "@tiptap/core";
 import { redo, undo } from "@tiptap/pm/history";
 
@@ -28,6 +28,10 @@ import {
   docxToDocJSON,
   downloadBytes,
 } from "./bridge.js";
+import { runAiCite } from "./ai/cite-creator.js";
+import { runAiRepairText } from "./ai/repair-text.js";
+import { runAiExplain } from "./ai/explain.js";
+import { getSelectedImage, runAiAltText } from "./ai/image-alt-text.js";
 
 export interface ToolbarCustomization {
   /** Button ids to hide (e.g. ["highlight", "import-docx"]). */
@@ -42,6 +46,11 @@ interface ToolbarProps extends ToolbarCustomization {
   editor: Editor | null;
   /** Show the `.docx` / `.cmir` import-export controls. */
   showCardTools?: boolean;
+  /** Show the AI tools (cite formatting, OCR repair, explain, image
+   *  alt text). Requires the host to have mounted the `/api/reason-ai`
+   *  proxy route (see `configureReasonAi` in `ai/anthropic-client.ts`
+   *  if it's mounted elsewhere). */
+  showAiTools?: boolean;
   /** Base filename (no extension) for exports. */
   exportName?: string;
 }
@@ -65,6 +74,7 @@ function useEditorTick(editor: Editor | null): void {
 export function Toolbar({
   editor,
   showCardTools = false,
+  showAiTools = false,
   exportName = "document",
   hide = [],
   children,
@@ -72,6 +82,7 @@ export function Toolbar({
   useEditorTick(editor);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const pendingFormat = useRef<"docx" | "cmir">("docx");
+  const [aiBusy, setAiBusy] = useState(false);
 
   if (!editor) {
     return <div className="reason-editor-toolbar" aria-hidden="true" />;
@@ -92,18 +103,21 @@ export function Toolbar({
     label,
     title,
     active,
+    disabled,
     onClick,
   }: {
     id: string;
     label: string;
     title: string;
     active?: boolean;
+    disabled?: boolean;
     onClick: () => void;
   }) =>
     visible(id) ? (
       <button
         type="button"
         title={title}
+        disabled={disabled}
         data-active={active ? "true" : "false"}
         onMouseDown={(e) => e.preventDefault()}
         onClick={onClick}
@@ -154,6 +168,67 @@ export function Toolbar({
     downloadBytes(bytes, `${exportName}.cmir`, CMIR_MIME);
   }
 
+  /** Run an AI action with a shared busy flag (so the AI buttons can't
+   *  be double-fired or overlap) and a minimal error surface. */
+  async function runAi(label: string, fn: () => Promise<void>) {
+    if (aiBusy) return;
+    setAiBusy(true);
+    try {
+      await fn();
+    } catch (err) {
+      console.error(`[reason-editor] ${label} failed:`, err);
+      if (typeof alert !== "undefined") {
+        alert(err instanceof Error ? err.message : String(err));
+      }
+    } finally {
+      setAiBusy(false);
+    }
+  }
+
+  function aiCite() {
+    if (!editor) return;
+    void runAi("AI cite", async () => {
+      await runAiCite(editor.view);
+    });
+  }
+
+  function aiRepairText() {
+    if (!editor) return;
+    void runAi("AI repair", async () => {
+      const result = await runAiRepairText(editor.view);
+      const message =
+        result.applied === 0
+          ? "No OCR errors found."
+          : `Repaired ${result.applied} ${result.applied === 1 ? "spot" : "spots"}` +
+            (result.skipped > 0 ? ` (${result.skipped} couldn't be placed)` : "") +
+            ".";
+      if (typeof alert !== "undefined") alert(message);
+    });
+  }
+
+  function aiExplain() {
+    if (!editor) return;
+    if (typeof prompt === "undefined") return;
+    const question = prompt("What would you like to ask about the selection?");
+    if (!question?.trim()) return;
+    void runAi("AI explain", async () => {
+      const answer = await runAiExplain(editor.state, question);
+      if (typeof alert !== "undefined") alert(answer);
+    });
+  }
+
+  function aiAltText() {
+    if (!editor) return;
+    const selected = getSelectedImage(editor.view);
+    if (!selected) {
+      if (typeof alert !== "undefined") alert("Select an image first.");
+      return;
+    }
+    void runAi("AI alt text", async () => {
+      await runAiAltText(editor.view, selected.pos, selected.node);
+    });
+  }
+
   return (
     <div className="reason-editor-toolbar" role="toolbar">
       <Btn id="undo" label="↶" title="Undo (Ctrl/Cmd+Z)" onClick={() => { undo(editor.state, editor.view.dispatch); editor.view.focus(); }} />
@@ -192,6 +267,16 @@ export function Toolbar({
             style={{ display: "none" }}
             onChange={onPickFile}
           />
+        </>
+      )}
+
+      {showAiTools && (
+        <>
+          <Sep />
+          <Btn id="ai-cite" label="AI Cite" title="Format the selection as a debate cite" disabled={aiBusy} onClick={aiCite} />
+          <Btn id="ai-repair" label="AI Repair" title="Fix OCR/PDF text errors in the selection" disabled={aiBusy} onClick={aiRepairText} />
+          <Btn id="ai-explain" label="AI Explain" title="Ask the AI research coach about the selection" disabled={aiBusy} onClick={aiExplain} />
+          <Btn id="ai-alt-text" label="AI Alt Text" title="Generate alt text for the selected image" disabled={aiBusy} onClick={aiAltText} />
         </>
       )}
 

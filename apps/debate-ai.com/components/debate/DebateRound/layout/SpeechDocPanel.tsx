@@ -90,6 +90,7 @@ export function SpeechDocPanel({
           title={selectedSpeech}
           onTitleChange={() => {}}
           onShareClick={onShareSpeech}
+          showAiTools
         />
       </div>
     </div>

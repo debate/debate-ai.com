@@ -14,6 +14,7 @@
   "exports": {
     ".": "./src/react/index.tsx",
     "./engine": "./src/engine/index.ts",
+    "./ai": "./src/react/ai/index.ts",
     "./styles.css": "./src/react/styles.css"
   },
   "files": [
