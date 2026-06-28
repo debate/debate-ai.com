@@ -8,8 +8,10 @@ async function onInstall() {
   console.info("SW : Install : " + VERSION);
   const cache = await caches.open(VERSION);
   
-  // Cache assets individually so one missing file doesn't break the whole installation
-  const assetsToCache = ['/', '/index.html', ...APP_FILE_LIST];
+  // Cache assets individually so one missing file doesn't break the whole installation.
+  // The app is server-rendered (no static index.html), so the navigation shell is
+  // the root document `/`; the rest comes from the generated build manifest.
+  const assetsToCache = ['/', ...APP_FILE_LIST];
   let cachedCount = 0;
   
   await Promise.all(
