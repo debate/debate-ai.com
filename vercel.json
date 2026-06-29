@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "bun install",
+  "buildCommand": "npm run build:web",
+  "outputDirectory": "apps/debate-ai.com/dist/client"
+}
