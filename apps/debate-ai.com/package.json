@@ -89,6 +89,7 @@
     "react-native-app-buttons": "^0.1.4",
     "react-resizable-panels": "^4.7.2",
     "react-server-dom-webpack": "^19.2.5",
+    "reason-editor": "workspace:*",
     "recharts": "2.15.4",
     "resend": "^6.12.4",
     "shadcn-theme-menu": "^1.1.4",
