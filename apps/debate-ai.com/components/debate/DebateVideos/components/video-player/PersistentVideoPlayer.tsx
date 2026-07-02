@@ -9,6 +9,7 @@ import { createPortal } from "react-dom"
 import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "@/lib/state/videoPlayerStore"
 import { savePlayerState, loadPlayerState, clearSavedPlayerState } from "@/lib/state/videoPlayerPersistence"
 import { useDragResize } from "./useDragResize"
+import { useDocumentPictureInPicture } from "./useDocumentPictureInPicture"
 import { PlayerTitleBar } from "./PlayerTitleBar"
 import { PlayerControls } from "./PlayerControls"
 import { PlayerQueue } from "./PlayerQueue"
@@ -35,8 +36,11 @@ function VideoPlayerUI() {
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const videoWrapperRef = useRef<HTMLDivElement | null>(null)
   // Track whether we still need to apply slow mode for the current video load
   const pendingSlowMode = useRef(false)
+
+  const { isSupported: isPipSupported, isActive: isPipActive, toggle: togglePip, exit: exitPip } = useDocumentPictureInPicture(videoWrapperRef)
 
   // Time tracking refs for persisting playback position
   const playStartedAtRef = useRef<number | null>(null) // Date.now() when video last started playing
@@ -204,9 +208,10 @@ function VideoPlayerUI() {
 
   const handleClose = useCallback(() => {
     // User explicitly closed — clear saved state so it doesn't auto-restore
+    exitPip()
     clearSavedPlayerState()
     clearActiveVideo()
-  }, [clearActiveVideo])
+  }, [clearActiveVideo, exitPip])
 
   if (!activeVideoId) return null
 
@@ -246,18 +251,27 @@ function VideoPlayerUI() {
           isMinimized={isMinimized}
           isSlowMode={isSlowMode}
           queue={queue}
+          isPipSupported={isPipSupported}
+          isPipActive={isPipActive}
           onPlayPause={handlePlayPause}
           onToggleSlowMode={handleToggleSlowMode}
           onPlayNext={playNextInQueue}
           onToggleMinimize={() => setMinimized(!isMinimized)}
+          onTogglePip={togglePip}
           onClose={handleClose}
         />
       </div>
 
-      {/* iframe — hidden via CSS when minimized so playback is never interrupted */}
+      {/* iframe — hidden via CSS when minimized so playback is never interrupted. */}
+      {/* While popped out, this node lives inside the PiP window, so it's always shown there regardless of isMinimized. */}
       <div
+        ref={videoWrapperRef}
         className="relative w-full"
-        style={{ paddingTop: "56.25%", display: isMinimized ? "none" : "block" }}
+        style={
+          isPipActive
+            ? { position: "absolute", inset: 0, width: "100%", height: "100%" }
+            : { paddingTop: "56.25%", display: isMinimized ? "none" : "block" }
+        }
       >
         <iframe
           ref={setIframeRef}
@@ -269,7 +283,7 @@ function VideoPlayerUI() {
         />
       </div>
 
-      {!isMinimized && <PlayerQueue queue={queue} />}
+      {!isMinimized && !isPipActive && <PlayerQueue queue={queue} />}
       {!isMinimized && <PlayerResizeHandles isResizing={isResizing} startResize={startResize} />}
     </div>
   )

@@ -2,7 +2,7 @@
  * @fileoverview Player control buttons component for video player UI
  */
 
-import { X, Minus, Maximize2, SkipForward, Play, Pause, Gauge } from "lucide-react"
+import { X, Minus, Maximize2, SkipForward, Play, Pause, Gauge, PictureInPicture2 } from "lucide-react"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 import type { QueueItem } from "@/lib/state/videoPlayerStore"
 
@@ -11,10 +11,13 @@ interface PlayerControlsProps {
   isMinimized: boolean
   isSlowMode: boolean
   queue: QueueItem[]
+  isPipSupported: boolean
+  isPipActive: boolean
   onPlayPause: () => void
   onToggleSlowMode: () => void
   onPlayNext: () => void
   onToggleMinimize: () => void
+  onTogglePip: () => void
   onClose: () => void
 }
 
@@ -23,10 +26,13 @@ export function PlayerControls({
   isMinimized,
   isSlowMode,
   queue,
+  isPipSupported,
+  isPipActive,
   onPlayPause,
   onToggleSlowMode,
   onPlayNext,
   onToggleMinimize,
+  onTogglePip,
   onClose,
 }: PlayerControlsProps) {
   return (
@@ -76,6 +82,23 @@ export function PlayerControls({
             </TooltipTrigger>
             <TooltipContent side="top" className="text-xs">
               Skip to next ({queue.length} in queue)
+            </TooltipContent>
+          </Tooltip>
+        )}
+
+        {isPipSupported && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={onTogglePip}
+                className={`p-1 rounded hover:bg-accent transition-colors ${isPipActive ? "text-primary bg-accent" : "text-muted-foreground hover:text-foreground"}`}
+                aria-label={isPipActive ? "Exit picture-in-picture" : "Pop out picture-in-picture"}
+              >
+                <PictureInPicture2 className="h-3 w-3" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-xs">
+              {isPipActive ? "Exit picture-in-picture" : "Pop out picture-in-picture"}
             </TooltipContent>
           </Tooltip>
         )}
