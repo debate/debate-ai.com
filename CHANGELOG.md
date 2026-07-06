@@ -1,6 +1,6 @@
 # Changelog
 
-# Beta Phase (2026)
+# MVP Phase (2026)
 
 ## July 2026
 
@@ -26,17 +26,11 @@ The biggest month of development. Built the complete **Debate Round** feature: r
 
 **Beta V2 major release**: core debate application with flow editor, video integration, card parsing, and comprehensive UI components. Completed the **TipTap to Lexical** editor migration with a quotes plugin. Added the **debate flow spreadsheet**, speech document panel, and a new markdown editor. Implemented new **Debate Flow** and **Debate Videos** pages with supporting components and hooks, redesigned the **ChampionsPanel**, and restructured documentation into a new `docs/` directory with project vision and feature docs.
 
-# Foundation Phase (2025)
+# Prototype Phase (2023–2025)
 
 ## December 2025
 
 Created the **FLOW Research Manager** as a **Next.js** application. Established the debate flow and timer system foundation with **React Context** providers and conversion tracking. Completed Phase 1 MVP (core Flow editor with React/Next.js) and Phase 2 (advanced Flow features and UI enhancements).
-
-## June 2025
-
-Documentation and identity refresh: README updates, new logo, and revisions to post-central perspective framing.
-
-# Prototype Research Phase (2023–2024)
 
 ## July 2024
 
