@@ -1,17 +1,19 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { oneTap, openAPI, magicLink, anonymous } from "better-auth/plugins";
-import { getDB } from "../database";
+import { getDBFromContext } from "../database/context";
 import * as schema from "../database/schema";
 import { Resend } from "resend";
 import { APP_NAME, APP_EMAIL, NEXT_PUBLIC_BASE_URL } from "../config/site";
 import { getEnv } from "../env";
 
-function buildAuth() {
+async function buildAuth() {
+  const db = await getDBFromContext();
+
   return betterAuth({
     baseURL: NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
     secret: getEnv("BETTER_AUTH_SECRET") || "dev-secret-change-in-production",
-    database: drizzleAdapter(getDB(), {
+    database: drizzleAdapter(db, {
       provider: "sqlite",
       schema,
     }),
@@ -60,11 +62,11 @@ function buildAuth() {
 }
 
 // Lazy singleton
-let authInstance: ReturnType<typeof buildAuth> | null = null;
+let authInstance: Awaited<ReturnType<typeof buildAuth>> | null = null;
 
-export function getAuth() {
+export async function getAuth() {
   if (!authInstance) {
-    authInstance = buildAuth();
+    authInstance = await buildAuth();
   }
   return authInstance;
 }

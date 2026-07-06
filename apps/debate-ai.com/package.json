@@ -1,13 +1,13 @@
 {
   "name": "debate-ai-web",
   "description": "Debate AI enables competitive debaters in PF, LD & Policy to streamline AI research management, live speech sharing, and evidence analysis",
-  "version": "0.5.0",
+  "version": "0.9.0",
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "scripts": {
     "dev": "vinext dev",
-    "build": "NODE_OPTIONS=\"${NODE_OPTIONS} --max-old-space-size=4096\" vinext build && npm run build:sw",
+    "build": " vinext build && npm run build:sw",
     "build:sw": "node lib/offline-sw/generate.cjs && webpack --config webpack.config.cjs && cp public/service-worker.js dist/client/service-worker.js",
     "start": "vinext start",
     "deploy": "npm run build && vinext deploy --skip-build",

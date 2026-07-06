@@ -17,7 +17,7 @@ export interface AuthSession {
 
 export async function getSession(): Promise<AuthSession | null> {
   try {
-    const auth = getAuth();
+    const auth = await getAuth();
     const session = await auth.api.getSession({
       headers: await headers(),
     });

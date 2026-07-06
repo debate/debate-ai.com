@@ -2,9 +2,6 @@
 
 # MVP Phase (2026)
 
-## July 2026
-
-Added **picture-in-picture popout** for the YouTube video player, letting videos float in a detached window while browsing the rest of the app.
 
 ## June 2026
 
