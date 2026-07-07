@@ -18,7 +18,14 @@
 			"keep_vars": true,
 			"images": {
 				"binding": "IMAGES"
-			}
+			},
+			"d1_databases": [
+				{
+					"binding": "debate_db",
+					"database_name": "debate-db",
+					"database_id": "eb8ef1b9-3d28-42c4-9358-f2f1ce904552"
+				}
+			]
 		}
 	},
 	"observability": {
@@ -40,8 +47,7 @@
 		{
 			"binding": "debate_db",
 			"database_name": "debate-db",
-			"database_id": "eb8ef1b9-3d28-42c4-9358-f2f1ce904552",
-			"remote": true
+			"database_id": "eb8ef1b9-3d28-42c4-9358-f2f1ce904552"
 		}
 	]
 }
