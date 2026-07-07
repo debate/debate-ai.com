@@ -22,8 +22,8 @@
 			"d1_databases": [
 				{
 					"binding": "debate_db",
-					"database_name": "debate-db",
-					"database_id": "eb8ef1b9-3d28-42c4-9358-f2f1ce904552"
+					"database_name": "debate-ai-db",
+					"database_id": "fedaf7ca-66e8-4f8c-9650-53ef56aa5979"
 				}
 			]
 		}
@@ -46,8 +46,8 @@
 	"d1_databases": [
 		{
 			"binding": "debate_db",
-			"database_name": "debate-db",
-			"database_id": "eb8ef1b9-3d28-42c4-9358-f2f1ce904552"
+			"database_name": "debate-ai-db",
+			"database_id": "fedaf7ca-66e8-4f8c-9650-53ef56aa5979"
 		}
 	]
 }

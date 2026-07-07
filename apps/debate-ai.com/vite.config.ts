@@ -8,6 +8,9 @@ const appDir = path.resolve(import.meta.dirname);
 const require = createRequire(import.meta.url);
 
 export default defineConfig({
+  define: {
+    __USE_LIBSQL__: false,
+  },
   plugins: [
     vinext(),
     cloudflare({
@@ -42,7 +45,7 @@ export default defineConfig({
     include: ["@emotion/is-prop-valid"],
   },
   ssr: {
-    external: ["canvas"],
+    external: ["canvas", "@libsql/client"],
     noExternal: [
       "better-auth",
       "better-auth-cloudflare",

@@ -2,7 +2,6 @@
 
 # MVP Phase (2026)
 
-
 ## June 2026
 
 CardMirror release milestone month. Integrated the **CardMirror engine** into a new **reason-editor** workspace package built on **TipTap/React**, then ported CardMirror's **AI editing tools** (cite, repair, explain, alt text). Implemented an **HTML-to-card parser** with citation extraction and metadata assembly. Added new server configuration and **session management hooks**. Hardened the build and deployment pipeline: fixed **Vercel** builds to run as a **Vite** app instead of failing Next.js detection, rebuilt the **PWA service worker** precache for the Vite build (fixing React #130 errors), declared missing workspace dependencies, and pinned loose dependency specifiers with an emotion alias fix. Simplified HTML extraction functions across several refactoring passes.

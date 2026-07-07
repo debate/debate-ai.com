@@ -1,6 +1,7 @@
 import * as schema from "./schema";
+import { getCloudflareContext } from "./context";
 
-let db: any = null;
+declare const __USE_LIBSQL__: boolean;
 
 /**
  * Get database instance - supports both Cloudflare D1 and local libSQL
@@ -8,21 +9,26 @@ let db: any = null;
  * @returns Drizzle database instance
  */
 export async function getDB(d1?: D1Database) {
-  // Use D1 in Cloudflare Workers environment
+  // If D1 is explicitly passed, use it
   if (d1) {
     const { drizzle } = await import("drizzle-orm/d1");
     return drizzle(d1, { schema });
   }
 
-  // Use libSQL for local development
-  if (!db) {
-    const { drizzle } = await import("drizzle-orm/libsql");
-    const { createClient } = await import("@libsql/client");
-    const client = createClient({
-      url: process.env.DATABASE_URL || "file:./data/db.sqlite",
-      authToken: process.env.DATABASE_AUTH_TOKEN,
-    });
-    db = drizzle(client, { schema });
+  // Try to get D1 from Cloudflare context (Workers environment)
+  const context = getCloudflareContext();
+  if (context?.env?.debate_db) {
+    const { drizzle } = await import("drizzle-orm/d1");
+    return drizzle(context.env.debate_db, { schema });
   }
-  return db;
+
+  // Fall back to libSQL for local development only
+  // __USE_LIBSQL__ is false in production Workers build
+  if (typeof __USE_LIBSQL__ !== "undefined" && !__USE_LIBSQL__) {
+    throw new Error("D1 database binding 'debate_db' not found in Cloudflare Workers context");
+  }
+
+  // This code path is dead code in Workers and will be tree-shaken
+  const { getLibSQLDB } = await import("./libsql");
+  return getLibSQLDB();
 }
