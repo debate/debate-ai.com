@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import roundsPolicy from "@/packages/debate-data-sync/data/videos/rounds-policy.json";
-import roundsPf from "@/packages/debate-data-sync/data/videos/rounds-pf.json";
-import roundsLd from "@/packages/debate-data-sync/data/videos/rounds-ld.json";
-import roundsCollege from "@/packages/debate-data-sync/data/videos/rounds-college.json";
-import topPicks from "@/packages/debate-data-sync/data/videos/debate-top-picks.json";
-import lectures from "@/packages/debate-data-sync/data/videos/debate-lectures.json";
-import topics from "@/packages/debate-data-sync/data/metadata/debate-topics.json";
-import champions from "@/packages/debate-data-sync/data/metadata/debate-champions.json";
+import roundsPolicy from "../../../../../packages/debate-data-sync/data/videos/rounds-policy.json";
+import roundsPf from "../../../../../packages/debate-data-sync/data/videos/rounds-pf.json";
+import roundsLd from "../../../../../packages/debate-data-sync/data/videos/rounds-ld.json";
+import roundsCollege from "../../../../../packages/debate-data-sync/data/videos/rounds-college.json";
+import topPicks from "../../../../../packages/debate-data-sync/data/videos/debate-top-picks.json";
+import lectures from "../../../../../packages/debate-data-sync/data/videos/debate-lectures.json";
+import topics from "../../../../../packages/debate-data-sync/data/metadata/debate-topics.json";
+import champions from "../../../../../packages/debate-data-sync/data/metadata/debate-champions.json";
 
 function dedupeById<T extends [string, ...unknown[]]>(videos: T[]): T[] {
   const seen = new Set<string>();
