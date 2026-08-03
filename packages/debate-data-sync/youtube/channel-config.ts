@@ -4,10 +4,11 @@
 
 export const publishedAfter = "2023-05-01";
 
-export const channelsToUpdate = ["spencerandersonmcelligott"];
+export const channelsToUpdate = ["jettsmith7", "artemisway-g2x"]
 
 export const channels = [
   "KansasDebate-wd4vf",
+  "spencerandersonmcelligott",
   "Adi_Arora_PF",
   "DebateArchive2",
   "Debatedrills",

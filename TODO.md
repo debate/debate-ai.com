@@ -5,7 +5,7 @@
 5. options for judge decision via AI
 6. ai should summarize the speech trasncritp and suggest answers
 7. see if anyone has cut this card in ext
-8. DebateOutlineTree - should have two rows and narrow and open to 3 and when hovered over show tags. show info wc and copy to spech
+8. use lecture  transcritps to make a coach ai
 9. ahave the expander toggle thu h1 h2 3h
 10. filter outline and tree
 11. whose summaries and highligting gets more likes

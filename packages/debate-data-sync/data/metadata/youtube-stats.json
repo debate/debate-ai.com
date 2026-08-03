@@ -1121,7 +1121,7 @@
       "avgViewsPerVideo": 1131
     },
     {
-      "debateStyle": "Round Discussions",
+      "debateStyle": "Round Analysis",
       "totalViews": 1416,
       "videoCount": 1,
       "byChannel": {
@@ -2287,7 +2287,7 @@
           }
         }
       },
-      "Round Discussions": {
+      "Round Analysis": {
         "totalViews": 1416,
         "videoCount": 1,
         "byChannel": {
