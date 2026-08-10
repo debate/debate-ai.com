@@ -2,6 +2,16 @@
 @import "tw-animate-css";
 @import "./themes.css";
 
+/* The debate component packages are symlinked in through node_modules, which
+   Tailwind's automatic source detection skips — register them explicitly so
+   their class names end up in the generated stylesheet. */
+@source "../../../packages/debate-ui";
+@source "../../../packages/debate-card-search";
+@source "../../../packages/debate-timer";
+@source "../../../packages/debate-videos";
+@source "../../../packages/debate-round";
+@source "../../../packages/debate-editor";
+
 @custom-variant dark (:is(.dark) &);
 
 :root {

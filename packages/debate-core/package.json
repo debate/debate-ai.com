@@ -1,0 +1,22 @@
+{
+  "name": "debate-core",
+  "version": "0.1.0",
+  "description": "Shared debate domain types (flow/round) and the client-side lookup cache for tournaments, schools and debater names",
+  "private": true,
+  "type": "module",
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fuse.js": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  }
+}

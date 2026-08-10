@@ -1,0 +1,32 @@
+{
+  "name": "debate-card-search",
+  "version": "0.1.0",
+  "description": "Evidence card search UI — search interface, result cards, card viewer and the AI analysis sidebar",
+  "private": true,
+  "type": "module",
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "debate-card-parser": "workspace:*",
+    "debate-core": "workspace:*",
+    "debate-ui": "workspace:*",
+    "grab-url": "^1.6.7",
+    "lucide-react": "^0.577.0",
+    "react-native-app-buttons": "^0.1.4"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  }
+}

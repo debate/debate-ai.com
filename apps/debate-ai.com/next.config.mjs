@@ -12,7 +12,20 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  transpilePackages: ["react-resizable-panels"],
+  transpilePackages: [
+    "react-resizable-panels",
+    // Workspace packages are published as TypeScript source.
+    "reason-editor",
+    "debate-card-parser",
+    "debate-card-search",
+    "debate-core",
+    "debate-data-sync",
+    "debate-editor",
+    "debate-round",
+    "debate-timer",
+    "debate-ui",
+    "debate-videos",
+  ],
   serverExternalPackages: [
     "better-auth",
     "drizzle-orm",

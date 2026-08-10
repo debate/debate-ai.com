@@ -8,10 +8,10 @@ import { SiGoogle, SiDiscord, SiFacebook } from "@icons-pack/react-simple-icons"
 import { FaLinkedin } from 'react-icons/fa'
 import { toast } from "sonner"
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "debate-ui/button"
+import { Card, CardContent, CardHeader } from "debate-ui/card"
+import { Input } from "debate-ui/input"
+import { Label } from "debate-ui/label"
 import { authClient } from "@/lib/auth/client"
 import { APP_NAME } from "@/lib/config/site"
 

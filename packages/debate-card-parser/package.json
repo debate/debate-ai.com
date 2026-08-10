@@ -1,0 +1,21 @@
+{
+  "name": "debate-card-parser",
+  "version": "0.1.0",
+  "description": "Parser for debate evidence cards — Verbatim .docx and HTML in, structured cards with citations and highlighting out",
+  "private": true,
+  "type": "module",
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "docx-preview": "^0.3.7",
+    "grab-url": "^1.6.22",
+    "htmlparser2": "^12.0.0",
+    "jszip": "^3.10.1",
+    "linkedom": "^0.18.12"
+  }
+}

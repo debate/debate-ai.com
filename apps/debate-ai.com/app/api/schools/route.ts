@@ -5,7 +5,7 @@ import {
   teamsNFA,
   teamsVPF,
   teamsVCX,
-} from "@/packages/debate-data-sync/data/metadata/debate-school-names";
+} from "debate-data-sync/data/metadata/debate-school-names";
 
 type FormatKey = "ndt" | "vld" | "nfa" | "vpf" | "vcx";
 

@@ -19,8 +19,6 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@/lib/card-parser": path.resolve(appDir, "../../packages/debate-card-parser"),
-      "@/packages": path.resolve(appDir, "../../packages"),
       "@": appDir,
       "@emotion/is-prop-valid": require.resolve("@emotion/is-prop-valid"),
       "@better-auth/kysely-adapter": path.resolve(appDir, "lib/stubs/kysely-adapter.ts"),
@@ -50,7 +48,18 @@ export default defineConfig({
       "better-auth",
       "better-auth-cloudflare",
       "@better-auth/infra",
+      // Workspace packages ship TypeScript sources, so they always have to be
+      // bundled rather than externalized to the Cloudflare runtime.
       "reason-editor",
+      "debate-card-parser",
+      "debate-card-search",
+      "debate-core",
+      "debate-data-sync",
+      "debate-editor",
+      "debate-round",
+      "debate-timer",
+      "debate-ui",
+      "debate-videos",
     ],
   },
 });

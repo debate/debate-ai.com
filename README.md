@@ -140,3 +140,27 @@ Start developing locally, develop features, open ideas in discussions, and submi
 ```
 npx git0 debate/ai
 ```
+
+### Repository Layout
+
+Each product area is its own workspace package, so a feature can be developed, type-checked
+and reused without pulling in the whole site. `apps/debate-ai.com` is left as a thin shell:
+routes, API handlers, auth, database and layout chrome.
+
+| Package | Product | Contents |
+| --- | --- | --- |
+| `packages/debate-card-search` | CARDS | Evidence search interface, result cards, card viewer, AI analysis sidebar |
+| `packages/debate-round` | FIAT | Flow spreadsheet, round setup dialogs, speech doc panels, round state |
+| `packages/debate-timer` | FIAT | Speech and prep timers, per-format speech times, speech recorder |
+| `packages/debate-videos` | LEARN | Video search and grids, persistent YouTube player, lectures, leaderboards |
+| `packages/debate-editor` | REASON | App-facing editor shell over `reason-editor`, markdown renderer |
+| `packages/reason-editor` | REASON | TipTap/React shell over the CardMirror ProseMirror engine (.docx interop) |
+| `packages/debate-core` | — | Shared flow/round types and the client-side lookup cache |
+| `packages/debate-ui` | — | Shared shadcn/Radix primitives, icons, footer, `cn`/URL helpers |
+| `packages/debate-card-parser` | — | Verbatim .docx and HTML to structured evidence cards |
+| `packages/debate-data-sync` | — | Video, ranking and metadata assets plus their sync scripts |
+
+```bash
+npm run dev:web      # run the site
+npm run typecheck    # type-check every package
+```
