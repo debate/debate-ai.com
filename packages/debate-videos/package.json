@@ -1,0 +1,35 @@
+{
+  "name": "debate-videos",
+  "version": "0.1.0",
+  "description": "Debate video library — grids, search, the persistent YouTube player, lecture pages and rankings leaderboards",
+  "private": true,
+  "type": "module",
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "debate-data-sync": "workspace:*",
+    "debate-ui": "workspace:*",
+    "framer-motion": "^12.36.0",
+    "fuse.js": "^7.1.0",
+    "grab-url": "^1.6.7",
+    "lucide-react": "^0.577.0",
+    "recharts": "2.15.4",
+    "zustand": "^5.0.14"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "next": ">=15"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "next": "16.1.6",
+    "typescript": "^5.9.3"
+  }
+}

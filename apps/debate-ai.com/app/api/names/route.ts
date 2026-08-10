@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import namesData from "@/lib/card-parser/human-name/human-names-92k.json";
+import namesData from "debate-card-parser/human-name/human-names-92k.json";
 
 // Pre-sorted capitalized name list, built once at module load
 const ALL_NAMES: string[] = Object.keys(namesData)

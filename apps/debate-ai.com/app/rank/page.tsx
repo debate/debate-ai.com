@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { LeaderboardPanel } from "@/components/debate/DebateVideos/panels/leaderboard/RankingsLeaderboardPanel"
+import { LeaderboardPanel } from "debate-videos"
 
 export const metadata: Metadata = {
   title: "Rankings",

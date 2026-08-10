@@ -13,7 +13,8 @@
     "dev:web": "turbo dev --filter=debate-ai-web",
     "build:web": "turbo build --filter=debate-ai-web",
     "dev:editor": "turbo dev --filter=reason-editor",
-    "build:editor": "turbo build --filter=reason-editor"
+    "build:editor": "turbo build --filter=reason-editor",
+    "typecheck": "turbo typecheck"
   },
   "devDependencies": {
     "turbo": "^2.9.9",

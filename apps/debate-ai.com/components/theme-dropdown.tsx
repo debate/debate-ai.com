@@ -9,7 +9,7 @@
 import { useState, useEffect } from "react"
 import { Moon, Sun } from "lucide-react"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import { Button } from "debate-ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,9 +17,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "debate-ui/dropdown-menu"
 import { useTheme } from "next-themes"
-import { IconThemePantone } from "@/components/icons"
+import { IconThemePantone } from "debate-ui/icons"
 
 /** Registry of all available colour theme names. */
 export const themeNames = [

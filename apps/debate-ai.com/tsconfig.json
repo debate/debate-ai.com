@@ -26,11 +26,8 @@
       "@/*": [
         "./*"
       ],
-      "@/packages/*": [
-        "../../packages/*"
-      ],
-      "@/lib/card-parser/*": [
-        "../../packages/debate-card-parser/*"
+      "debate-ui/*": [
+        "../../packages/debate-ui/*"
       ]
     }
   },

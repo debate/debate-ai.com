@@ -3,12 +3,12 @@ import {
   scrapeDivision,
   getDatasets,
   LeaderboardEntry,
-} from "@/packages/debate-data-sync/rankings/sync-rankings-debatedrills";
+} from "debate-data-sync/rankings/sync-rankings-debatedrills";
 import {
   scrapeVCX,
   scrapeVPF,
   scrapeVLD,
-} from "@/packages/debate-data-sync/rankings/sync-rankings-tocbidlist";
+} from "debate-data-sync/rankings/sync-rankings-tocbidlist";
 
 const tocScrapers: Record<string, () => Promise<LeaderboardEntry[]>> = {
   VCX: scrapeVCX,

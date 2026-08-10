@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { DebateFlowPage } from "@/components/debate/DebateRound/DebateRoundPanel"
+import { DebateFlowPage } from "debate-round"
 import { notFound } from "next/navigation"
 
 interface PageProps {

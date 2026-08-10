@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { DebateFlowPage } from "@/components/debate/DebateRound/DebateRoundPanel"
+import { DebateFlowPage } from "debate-round"
 
 export const metadata: Metadata = {
   title: "Debate FIAT",
