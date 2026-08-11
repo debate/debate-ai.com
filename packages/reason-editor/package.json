@@ -1,7 +1,7 @@
 {
   "name": "reason-editor",
   "version": "0.1.0",
-  "description": "REASON research editor — a TipTap/React shell over the CardMirror ProseMirror debate-card engine (Verbatim .docx interop) wired for debate-ai.com FIAT speech docs",
+  "description": "REASON research editor \u2014 a TipTap/React shell over the CardMirror ProseMirror debate-card engine (Verbatim .docx interop) wired for debate-ai.com FIAT speech docs",
   "private": true,
   "type": "module",
   "license": "SEE LICENSE IN LICENSE",
@@ -25,7 +25,10 @@
   "scripts": {
     "build": "tsc --noEmit",
     "dev": "tsc --noEmit --watch --preserveWatchOutput",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@tiptap/core": "^3.27.1",
@@ -53,6 +56,8 @@
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "typescript": "^5.9.3"
+    "@vitest/coverage-v8": "^4.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   }
 }

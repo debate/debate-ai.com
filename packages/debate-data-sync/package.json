@@ -6,15 +6,25 @@
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "scripts": {
-    "sync-youtube": "bun run youtube/youtube-sync-cli.ts",
-    "youtube-stats": "bun run youtube/youtube-sync-cli.ts --stats",
-    "youtube-update-views": "bun run youtube/youtube-sync-cli.ts --update-views",
-    "extract-transcripts": "bun run youtube/extract-transcripts.ts"
+    "coverage": "vitest run --coverage",
+    "extract-transcripts": "bun run src/youtube/extract-transcripts.ts",
+    "sync-youtube": "bun run src/youtube/youtube-sync-cli.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "youtube-stats": "bun run src/youtube/youtube-sync-cli.ts --stats",
+    "youtube-update-views": "bun run src/youtube/youtube-sync-cli.ts --update-views"
   },
   "dependencies": {
     "axios": "^1.18.1",
     "extract-youtube": "^1.0.2",
     "grab-url": "^1.6.22",
     "linkedom": "^0.18.12"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@vitest/coverage-v8": "^4.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   }
 }

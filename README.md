@@ -17,6 +17,8 @@
 <p align="center">
     <a href="https://doi.org/10.5281/zenodo.20574318"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20574318.svg" alt="DOI"></a>
     <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+    <a href="https://app.codecov.io/gh/debate/debate-ai.com"><img src="https://codecov.io/gh/debate/debate-ai.com/branch/master/graph/badge.svg" alt="Coverage"></a>
+    <a href="https://github.com/debate/debate-ai.com/actions/workflows/test.yml"><img src="https://github.com/debate/debate-ai.com/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
     <a href="https://discord.gg/KfxNhWEMj">
     <img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat"
             alt="Join Discord" />
@@ -133,19 +135,55 @@
 6. **Solving Post-Self Alignment.** Modern discourse is fragmented by platform incentives, ideological sorting, and partial information environments. A shared debate outline can function as a corrective by placing opposed claims into one visible structure, making disagreement legible without reducing it to caricature.
 7. **Topic Research Unified Tree Hierarchy (TRUTH).** We call the resulting structure the Topic Research Unified Tree Hierarchy, or TRUTH: a hierarchical representation of issues, claims, evidence, and value conflicts. TRUTH is designed to help models identify overstatement, missing warrants, and unsupported leaps while grounding outputs in a common research map.
 
-## Contributing
+## Architecture
 
-Start developing locally, develop features, open ideas in discussions, and submit PR!
+The site is a Next.js app deployed to Cloudflare Workers, but almost none of the product
+logic lives in the app. Each product area is a workspace package with its own dependency
+list, type-check and test suite, and `apps/debate-ai.com` is left as a thin shell: routes,
+API handlers, auth, database access and layout chrome.
 
 ```
-npx git0 debate/ai
+debate-ai.com/
+├── apps/
+│   └── debate-ai.com/     # Next.js routes, API handlers, auth, D1/Drizzle, worker entry
+├── packages/              # every product feature, one workspace package per area
+│   └── <package>/
+│       ├── src/           # all logic, grouped into named folders
+│       ├── test/          # Vitest suites mirroring src/
+│       ├── package.json   # entry point -> ./src/index.ts
+│       ├── tsconfig.json  # includes src/ and test/ only
+│       └── vitest.config.ts
+├── codecov.yml            # coverage targets + one flag per package
+├── vitest.config.ts       # registers packages/* as Vitest projects, merges coverage
+└── turbo.json             # dev / build / typecheck / test / coverage pipelines
 ```
 
-### Repository Layout
+Two rules keep this arrangement honest:
 
-Each product area is its own workspace package, so a feature can be developed, type-checked
-and reused without pulling in the whole site. `apps/debate-ai.com` is left as a thin shell:
-routes, API handlers, auth, database and layout chrome.
+1. **Logic lives in `src/`.** Every package keeps its runtime code under `src/`, split into
+   folders named for what they hold (`hooks/`, `state/`, `panels/`, `primitives/`,
+   `parsers/`, …) rather than a flat pile of files. Package roots hold only manifests,
+   configuration, docs and non-code assets.
+2. **Tests live in `test/`.** Each package has a `test/` folder next to `src/` with a
+   Vitest suite, so coverage can be attributed per package and reported to Codecov with a
+   per-package flag.
+
+### Dependency graph
+
+```
+debate-ui ──────────────┐
+debate-core ────────────┼──► debate-card-search ──► app
+debate-card-parser ─────┘
+debate-core ──► debate-timer ──► debate-round ──► app
+reason-editor ──► debate-editor ──► debate-round
+debate-data-sync ──► debate-videos ──► app
+debate-speech-writer ──► app (AI prompts)
+```
+
+`debate-core` and `debate-ui` sit at the bottom and depend on nothing else in the repo;
+nothing depends on the app. A cycle in this graph is a bug.
+
+### Repository layout
 
 | Package | Product | Contents |
 | --- | --- | --- |
@@ -155,12 +193,142 @@ routes, API handlers, auth, database and layout chrome.
 | `packages/debate-videos` | LEARN | Video search and grids, persistent YouTube player, lectures, leaderboards |
 | `packages/debate-editor` | REASON | App-facing editor shell over `reason-editor`, markdown renderer |
 | `packages/reason-editor` | REASON | TipTap/React shell over the CardMirror ProseMirror engine (.docx interop) |
+| `packages/debate-speech-writer` | FIAT | AI prompt library (speech→flow, judge decisions, flaw finding) and batch quote analysis |
 | `packages/debate-core` | — | Shared flow/round types and the client-side lookup cache |
 | `packages/debate-ui` | — | Shared shadcn/Radix primitives, icons, footer, `cn`/URL helpers |
 | `packages/debate-card-parser` | — | Verbatim .docx and HTML to structured evidence cards |
 | `packages/debate-data-sync` | — | Video, ranking and metadata assets plus their sync scripts |
 
-```bash
-npm run dev:web      # run the site
-npm run typecheck    # type-check every package
+### Inside a package
+
+Every package follows the same shape, so moving between them costs nothing:
+
 ```
+packages/debate-timer/
+├── src/
+│   ├── audio/          # sound effects
+│   ├── formats/        # per-format speech times and column layouts
+│   ├── hooks/          # useSpeechRecorder
+│   ├── recorder/       # mic selector, live waveform, recording player
+│   ├── timers/         # SpeechTimer, PrepTimer
+│   ├── types/          # timer and speech types
+│   └── index.ts        # public entry point
+├── test/
+│   └── debate-format-times.test.ts
+├── package.json
+├── tsconfig.json
+└── vitest.config.ts
+```
+
+Imports name the file they want, so a page that needs a button does not pull in the WebGL
+and chart-heavy components:
+
+```ts
+import { SpeechTimer } from "debate-timer"                                // package entry
+import { debateStyles } from "debate-timer/src/formats/debate-format-times" // deep import
+import { Button } from "debate-ui/src/primitives/button"
+import { cn } from "debate-ui/src/lib/utils"
+import type { Flow, Round } from "debate-core/src/types/flow"
+```
+
+## Getting started
+
+```bash
+git clone https://github.com/debate/debate-ai.com
+cd debate-ai.com
+bun install          # workspaces are linked; npm/pnpm work too
+bun run dev:web      # http://localhost:3000
+```
+
+Requirements: [Bun](https://bun.com) (or Node 22+) and, for deploys, a Cloudflare account
+with Wrangler configured. Copy `apps/debate-ai.com/.dev.vars.example` if present, or set
+the secrets listed in `apps/debate-ai.com/setup-secrets.sh` before running auth-backed
+routes locally.
+
+### Commands
+
+Run from the repo root:
+
+| Command | What it does |
+| --- | --- |
+| `bun run dev:web` | Run the site with hot reload |
+| `bun run build:web` | Production build of the site + service worker |
+| `bun run typecheck` | `tsc --noEmit` in every package, in dependency order |
+| `bun run test` | Run every package's `test/` suite through Vitest |
+| `bun run test:watch` | Same suites in watch mode |
+| `bun run coverage` | Run all suites and write a merged `coverage/lcov.info` |
+
+Per-package equivalents (`bun run test`, `bun run coverage`, `bun run typecheck`) work
+inside any `packages/*` directory and scope to that package alone.
+
+## Testing and coverage
+
+Tests use [Vitest](https://vitest.dev). The root `vitest.config.ts` registers every
+`packages/*` directory as a project, so one command at the root runs all of them and
+produces a single coverage report:
+
+```bash
+bun run coverage     # -> coverage/lcov.info + coverage/index.html
+```
+
+What the suites cover today is the logic that is worth pinning down: card and file-name
+parsing, search query building, the tournament/school/name lookup cache, YouTube title and
+description parsers, markdown link classification, flow construction and localStorage
+helpers, the per-format speech tables, class-name merging and URL state, leaderboard
+sorting, prompt contracts, and the editor's base64 codec and heading ids.
+
+Coverage is uploaded to [Codecov](https://app.codecov.io/gh/debate/debate-ai.com) by
+`.github/workflows/test.yml` on every push and pull request. `codecov.yml` defines one
+flag per package, so the Codecov UI shows which library a change actually moved, and both
+the project and patch statuses are informational — a refactor never fails CI on rounding
+noise, but an untested new module is visible in the PR comment.
+
+CI needs a `CODECOV_TOKEN` repository secret (Settings → Secrets and variables → Actions);
+the upload step is marked `fail_ci_if_error: false`, so a missing token degrades to a
+skipped upload rather than a red build.
+
+### Writing a test
+
+Put the file in the package's `test/` folder, name it `*.test.ts`, and import the module
+under test through a relative path into `src/`:
+
+```ts
+// packages/debate-timer/test/debate-format-times.test.ts
+import { describe, expect, it } from "vitest";
+import { debateStyles } from "../src/formats/debate-format-times";
+
+describe("policy format", () => {
+  it("opens with an eight-minute 1AC", () => {
+    expect(debateStyles.policy.timerSpeeches[0]).toMatchObject({ name: "1AC", time: 8 });
+  });
+});
+```
+
+Prefer testing pure functions. When a component holds logic worth testing, lift that logic
+into a plain module under `src/lib/` (or the package's equivalent) and test it there —
+that is how `buildSearchParams` in `debate-card-search` and `isInternalUrl` in
+`debate-editor` came to exist.
+
+## Contributing
+
+Start developing locally, develop features, open ideas in discussions, and submit a PR!
+
+```
+npx git0 debate/ai
+```
+
+A change is ready to review when:
+
+- `bun run typecheck` passes for every package
+- `bun run test` passes, and new logic arrives with a test in the package's `test/` folder
+- new runtime code lives under a named folder in that package's `src/`
+- the package's `README.md` still describes what is actually there
+
+Open questions and larger proposals belong in
+[Discussions](https://github.com/debate/debate-ai.com/discussions); bugs and scoped work
+belong in Issues.
+
+## License
+
+See [LICENSE.md](./LICENSE.md). `packages/reason-editor` vendors the CardMirror engine and
+carries its own `LICENSE` and `THIRD-PARTY-NOTICES.md`.

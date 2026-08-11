@@ -32,6 +32,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# test coverage
+coverage/
+*.lcov
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

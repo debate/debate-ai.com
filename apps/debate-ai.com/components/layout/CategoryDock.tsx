@@ -4,8 +4,8 @@ import { useEffect } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { UserCircle2, Moon, Sun, Palette, Pause, Play } from "lucide-react"
-import { cn } from "debate-ui/utils"
-import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/dock"
+import { cn } from "debate-ui/src/lib/utils"
+import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,
@@ -21,7 +21,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "debate-ui/dropdown-menu"
+} from "debate-ui/src/primitives/dropdown-menu"
 import { themeNames, themeColors, formatThemeName, useThemeState } from "@/components/theme-dropdown"
 import {
   IconCollectiveMind,
@@ -30,7 +30,7 @@ import {
   IconLectures,
   IconSettings,
   IconRoundsYoutube 
-} from "debate-ui/icons"
+} from "debate-ui/src/icons"
 
 const NAV_ITEMS = [
   { href: "/videos", label: "Videos", icon: IconRoundsYoutube },

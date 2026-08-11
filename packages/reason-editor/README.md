@@ -127,3 +127,26 @@ This package vendors the CardMirror engine, which is under the
 **PolyForm Noncommercial License 1.0.0**. See
 [`LICENSE`](./LICENSE) and [`THIRD-PARTY-NOTICES.md`](./THIRD-PARTY-NOTICES.md).
 `reason-editor` inherits the noncommercial restriction.
+
+## Package layout
+
+Logic lives under `src/`, grouped by role; tests live under `test/`.
+
+```
+reason-editor/
+├── src/
+│   ├── engine/       # vendored CardMirror engine (schema, ooxml, import/export)
+│   └── react/        # TipTap/React shell, toolbar and AI actions
+└── test/             # Vitest suites for the base64 codec and heading ids
+```
+
+## Tests
+
+```bash
+bun run test        # or: npx vitest run
+bun run coverage    # writes ./coverage for this package alone
+```
+
+Suites live in `test/` and mirror the `src/` layout. Coverage for every package is
+merged at the repo root by `bun run coverage` and uploaded to
+[Codecov](https://app.codecov.io/gh/debate/debate-ai.com) by CI.

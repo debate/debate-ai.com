@@ -5,7 +5,7 @@
   "packageManager": "npm@10.0.0",
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/debate-ai.com"
   ],
   "scripts": {
     "dev": "turbo dev",
@@ -14,12 +14,18 @@
     "build:web": "turbo build --filter=debate-ai-web",
     "dev:editor": "turbo dev --filter=reason-editor",
     "build:editor": "turbo build --filter=reason-editor",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.0",
+    "jsdom": "^28.0.1",
     "turbo": "^2.9.9",
     "vinext": "0.0.45",
-    "vite": "^8"
+    "vite": "^8",
+    "vitest": "^4.1.0"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.40.1",
