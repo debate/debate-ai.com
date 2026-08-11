@@ -10,8 +10,10 @@ debate-data-sync/
 │   ├── metadata/  # champions, dictionary, school names, topics, tournaments, youtube-stats
 │   └── videos/    # rounds-{policy,pf,ld,college}.json, lectures, top picks
 ├── schemas/       # JSON Schemas validating the files under data/
-├── rankings/      # Scrapers for debate ranking leaderboards
-└── youtube/       # YouTube channel ingestion + stats + view-count updates
+└── src/
+    ├── rankings/  # Scrapers for debate ranking leaderboards
+    ├── types/     # Ambient declarations for untyped dependencies
+    └── youtube/   # YouTube channel ingestion + stats + view-count updates
 ```
 
 ## Importing data from the app
@@ -21,8 +23,8 @@ The data files are imported via the `@/` root alias:
 ```ts
 import dictionary from "@/packages/debate-data-sync/data/metadata/debate-dictionary.json";
 import rounds from "@/packages/debate-data-sync/data/videos/rounds-pf.json";
-import { LeaderboardEntry } from "@/packages/debate-data-sync/rankings/sync-rankings-debatedrills";
-import { syncYouTubeVideos } from "@/packages/debate-data-sync/youtube/youtube-sync";
+import { LeaderboardEntry } from "@/packages/debate-data-sync/src/rankings/sync-rankings-debatedrills";
+import { syncYouTubeVideos } from "@/packages/debate-data-sync/src/youtube/youtube-sync";
 ```
 
 ## Scripts
@@ -37,7 +39,7 @@ Run from the repo root:
 
 Set `YOUTUBE_API_KEY` in the environment before running any of these.
 
-## rankings/
+## src/rankings/
 
 Scrapers for leaderboards used by `/api/leaderboard`:
 
@@ -46,11 +48,11 @@ Scrapers for leaderboards used by `/api/leaderboard`:
 - `sync-rankings-tocbidlist.ts` — TOC bid list.
 - `sync-tournaments.ts` — Tournament listings.
 
-## youtube/
+## src/youtube/
 
 Synchronizes debate videos from YouTube channels.
 
-Configure channels and the `publishedAfter` cutoff in [youtube/channel-config.ts](youtube/channel-config.ts):
+Configure channels and the `publishedAfter` cutoff in [src/youtube/channel-config.ts](src/youtube/channel-config.ts):
 
 - Add/remove YouTube channels to sync
 - Change the `publishedAfter` date filter
@@ -70,7 +72,7 @@ Main sync function that:
 
 ### Parsers
 
-#### Round Parsers ([youtube/parsers/round-parsers.ts](youtube/parsers/round-parsers.ts))
+#### Round Parsers ([src/youtube/parsers/round-parsers.ts](src/youtube/parsers/round-parsers.ts))
 
 Extracts from title/description:
 
@@ -81,7 +83,7 @@ Extracts from title/description:
 - **Winner**: Affirmative (true), Negative (false), Unknown (null)
 - **Judge decision**: "2-1 (Judge1, Judge2, *Judge3)"
 
-#### Lecture Classifier ([youtube/parsers/lecture-classifier.ts](youtube/parsers/lecture-classifier.ts))
+#### Lecture Classifier ([src/youtube/parsers/lecture-classifier.ts](src/youtube/parsers/lecture-classifier.ts))
 
 Categorizes lectures into 17 topics:
 
@@ -103,7 +105,7 @@ Categorizes lectures into 17 topics:
 - Camp & Coaching Advice
 - Documentaries & Culture
 
-#### Video Classifier ([youtube/parsers/video-classifier.ts](youtube/parsers/video-classifier.ts))
+#### Video Classifier ([src/youtube/parsers/video-classifier.ts](src/youtube/parsers/video-classifier.ts))
 
 Determines if a video is a debate round or lecture based on:
 
@@ -150,3 +152,29 @@ Determines if a video is a debate round or lecture based on:
   category: string
 ]
 ```
+
+## Package layout
+
+Logic lives under `src/`, grouped by role; tests live under `test/`.
+
+```
+debate-data-sync/
+├── data/             # JSON assets consumed at runtime (not logic, stays at the root)
+├── schemas/          # JSON Schemas validating data/
+├── src/
+│   ├── rankings/     # leaderboard scrapers
+│   ├── types/        # ambient declarations for untyped dependencies
+│   └── youtube/      # channel ingestion, stats, view updates, parsers
+└── test/             # Vitest suites for the title/description parsers
+```
+
+## Tests
+
+```bash
+bun run test        # or: npx vitest run
+bun run coverage    # writes ./coverage for this package alone
+```
+
+Suites live in `test/` and mirror the `src/` layout. Coverage for every package is
+merged at the repo root by `bun run coverage` and uploaded to
+[Codecov](https://app.codecov.io/gh/debate/debate-ai.com) by CI.

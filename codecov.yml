@@ -1,0 +1,79 @@
+# Codecov configuration — https://docs.codecov.com/docs/codecov-yaml
+#
+# Coverage is produced by `npm run coverage` at the repo root, which runs every
+# `packages/*/test` suite through Vitest and writes a single merged
+# `coverage/lcov.info`.
+
+codecov:
+  require_ci_to_pass: true
+
+coverage:
+  precision: 2
+  round: down
+  range: "40...90"
+  status:
+    project:
+      default:
+        target: auto
+        # Small refactors should not fail the build over rounding noise.
+        threshold: 2%
+        informational: true
+    patch:
+      default:
+        target: 60%
+        threshold: 5%
+        informational: true
+
+# One flag per workspace package so the Codecov UI can show which library a
+# change actually moved the needle in.
+flag_management:
+  default_rules:
+    carryforward: true
+
+flags:
+  debate-card-parser:
+    paths:
+      - packages/debate-card-parser/src
+  debate-card-search:
+    paths:
+      - packages/debate-card-search/src
+  debate-core:
+    paths:
+      - packages/debate-core/src
+  debate-data-sync:
+    paths:
+      - packages/debate-data-sync/src
+  debate-editor:
+    paths:
+      - packages/debate-editor/src
+  debate-round:
+    paths:
+      - packages/debate-round/src
+  debate-speech-writer:
+    paths:
+      - packages/debate-speech-writer/src
+  debate-timer:
+    paths:
+      - packages/debate-timer/src
+  debate-ui:
+    paths:
+      - packages/debate-ui/src
+  debate-videos:
+    paths:
+      - packages/debate-videos/src
+  reason-editor:
+    paths:
+      - packages/reason-editor/src
+
+comment:
+  layout: "header, diff, flags, components, files, footer"
+  behavior: default
+  require_changes: false
+
+ignore:
+  - "apps/**"
+  - "**/*.d.ts"
+  - "**/test/**"
+  - "packages/debate-data-sync/data/**"
+  - "packages/debate-data-sync/schemas/**"
+  - "**/node_modules/**"
