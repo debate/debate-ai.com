@@ -27,9 +27,10 @@ import {
   IconCollectiveMind,
   IconFlowFlower,
   IconRead,
+  IconBook,
   IconLectures,
   IconSettings,
-  IconRoundsYoutube 
+  IconRoundsYoutube
 } from "debate-ui/src/icons"
 
 const NAV_ITEMS = [
@@ -43,9 +44,19 @@ const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }
 
 function SettingsMenu({ side }: { side: "bottom" | "top" }) {
   const themeState = useThemeState()
+  const router = useRouter()
 
   return (
     <DropdownMenuContent side={side} align="end" className="w-48">
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/reason-editor") }}>
+        <Image src={IconBook} alt="" width={16} height={16} className="mr-2 h-4 w-4" />
+        Reason Editor
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/doc") }}>
+        <Image src={IconRead} alt="" width={16} height={16} className="mr-2 h-4 w-4" />
+        Debate Docs
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
         {themeState.isDark ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}
         {themeState.isDark ? "Dark Mode" : "Light Mode"}
