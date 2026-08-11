@@ -6,6 +6,10 @@
 	"compatibility_flags": [
 		"nodejs_compat"
 	],
+	// Without keep_vars, every `wrangler deploy` deletes plaintext Variables
+	// entered in the CF dashboard (API keys, BETTER_AUTH_SECRET, …) because
+	// this config defines no `vars`. Secrets survive either way.
+	"keep_vars": true,
 	"assets": {
 		"directory": "dist/client",
 		"binding": "ASSETS"
