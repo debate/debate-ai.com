@@ -5,6 +5,26 @@
 _(none)_
 
 ### Completed
+- **Online Debate Versus AI — turn-order and speech-validation slice.**
+  `packages/debate-round/src/round/ai-versus-speech-order.ts` adds
+  `buildAiVersusSpeechOrder` (flattens a `debate-timer` format's
+  `timerSpeeches` into an ordered turn list tagged `speaker: "user" | "ai"`
+  from the user's chosen `primary`/`secondary` side), `getNextSpeechSlot` /
+  `isUsersTurn` (whose turn is next given how many speeches have already
+  been submitted), `validateSpeechSubmission` (checks a submitted speech
+  name against the next expected slot, rejecting it when the round is
+  already complete, it's the AI's turn, or the name doesn't match), and
+  `buildAiResponseRequest` (a structured, non-AI-calling request object —
+  the next AI slot, prior speeches to condition on, and whether it's a
+  cross-examination turn — for a future prompt-builder to consume).
+  Vitest-covered in
+  `packages/debate-round/test/ai-versus-speech-order.test.ts`. See idea #3
+  below. This is the first slice only — it's pure turn-order/state logic
+  over the existing `debateStyles` format registry; it doesn't call any AI
+  model, accept text/audio speech submissions, or persist round state, and
+  it isn't wired into any online-versus-AI round UI yet; see follow-ups
+  noted under idea #3.
+  PR: TBD.
 - **CX NDCA Standings — qualification points and standings computation slice.**
   `packages/debate-data-sync/src/rankings/ndca-standings.ts` adds
   `computeTournamentPoints` (scores a single tournament result from its
@@ -158,7 +178,7 @@ _(none)_
 
 2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slice done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. Follow-ups: (a) a submission UI in `debate-round`/`reason-editor` that calls `getWordCountStatus` while a debater types, (b) extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode, (c) persisting word-count-mode round results alongside timed rounds. None of these are started._
 
-3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order.
+3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildAiVersusSpeechOrder`/`getNextSpeechSlot`/`isUsersTurn`/`validateSpeechSubmission`/`buildAiResponseRequest` for turning a `debate-timer` format + chosen side into an ordered, speaker-tagged turn sequence, validating a submitted speech against whose turn it is, and building a structured (non-AI-calling) request describing the AI's next speech. Follow-ups: (a) an actual AI speech-generation call that consumes `buildAiResponseRequest`'s output (prior speeches + slot + cross-ex flag) to produce the AI's next speech text, (b) a round-setup + submission UI in `debate-round` that lets a user pick a format/side, type or record a speech, and calls `validateSpeechSubmission`, (c) persisting an online-versus-AI round's submitted speeches. None of these are started._
 
 4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slice done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). Follow-ups: (a) an actual AI-panel call (multiple "counsel" model roles) that evaluates likely response paths and clash points beyond this deterministic heuristic, (b) a chart/panel UI in `debate-round` that renders `buildVulnerabilityChartData`/`summarizeOutcomeBySide`, (c) a "what if" mode that recomputes the score against a hypothetical strategic choice rather than only the flow's current state. None of these are started._
 
