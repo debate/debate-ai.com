@@ -2,53 +2,101 @@ name: Auto-merge Claude PRs
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, closed]
 
 permissions:
   contents: write
   pull-requests: write
+  checks: read
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_REPO: ${{ github.repository }}
 
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     if: >
-      github.actor == 'claude[bot]' ||
-      github.actor == 'anthropic-claude[bot]' ||
-      github.actor == 'vtempest'
+      github.event.action != 'closed' &&
+      github.event.pull_request.draft == false &&
+      (github.actor == 'claude[bot]' ||
+       github.actor == 'anthropic-claude[bot]' ||
+       github.actor == 'vtempest')
     steps:
       - name: Auto-approve
         uses: hmarr/auto-approve-action@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Wait for checks & Merge
+      - name: Wait for checks
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          # This workflow is itself a check run on the PR, so it is filtered out
+          # of the rollup — otherwise the job would wait on itself forever.
+          SELF_WORKFLOW: ${{ github.workflow }}
+          TIMEOUT_MINUTES: "30"
+          POLL_SECONDS: "30"
         run: |
-          PR_NUMBER="${{ github.event.pull_request.number }}"
+          set -euo pipefail
           echo "Waiting for checks on PR #$PR_NUMBER"
-          
-          # Poll status checks (adjust required checks)
+          deadline=$(( $(date +%s) + TIMEOUT_MINUTES * 60 ))
+
           while true; do
-            STATUS=$(gh pr status $PR_NUMBER --json statusCheckRollup)
-            if [[ "$STATUS" == *"ALL_SUCCESS"* || "$STATUS" == *"QUEUED"* ]]; then
+            # Check runs expose name/status/conclusion; commit statuses expose
+            # context/state. Normalize both into the same shape.
+            checks=$(gh pr view "$PR_NUMBER" --json statusCheckRollup --jq '
+              [ .statusCheckRollup[]? | {
+                  name: (.name // .context // "unknown"),
+                  workflow: (.workflowName // ""),
+                  status: (.status // "COMPLETED"),
+                  conclusion: ((.conclusion // .state) // "" | ascii_upcase)
+                } ]')
+            others=$(jq -c --arg self "$SELF_WORKFLOW" \
+              '[ .[] | select(.workflow != $self) ]' <<<"$checks")
+
+            failed=$(jq -r '[ .[] | select(.conclusion
+              | IN("FAILURE","TIMED_OUT","CANCELLED","ACTION_REQUIRED","STARTUP_FAILURE","ERROR")) ]
+              | map(.name) | join(", ")' <<<"$others")
+            if [[ -n "$failed" ]]; then
+              echo "::error::Checks failed: $failed"
+              exit 1
+            fi
+
+            pending=$(jq -r '[ .[] | select(.status != "COMPLETED" or .conclusion == "" or .conclusion == "PENDING") ]
+              | map(.name) | join(", ")' <<<"$others")
+            if [[ -z "$pending" ]]; then
+              echo "All checks passed."
               break
             fi
-            sleep 30
+
+            if (( $(date +%s) >= deadline )); then
+              echo "::error::Timed out after ${TIMEOUT_MINUTES}m waiting for: $pending"
+              exit 1
+            fi
+
+            echo "Still pending: $pending"
+            sleep "$POLL_SECONDS"
           done
-          
-          gh pr merge $PR_NUMBER --squash --auto --delete-branch
+
+      - name: Merge
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          # Fall back to GitHub-side auto-merge when a direct merge is blocked
+          # (e.g. branch protection still settling).
+          gh pr merge "$PR_NUMBER" --squash --delete-branch ||
+            gh pr merge "$PR_NUMBER" --squash --auto --delete-branch
 
   delete-branch:
     runs-on: ubuntu-latest
     if: >
       github.event.action == 'closed' &&
-      github.event.pull_request.merged == true
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Delete head branch
-        run: gh api repos/${{ github.repository }}/git/refs/heads/${{ github.event.pull_request.head.ref }} -X DELETE
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api "repos/${{ github.repository }}/git/refs/heads/${{ github.event.pull_request.head.ref }}" \
+            -X DELETE || echo "Branch already deleted."
