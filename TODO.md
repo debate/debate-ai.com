@@ -5,6 +5,32 @@
 _(none)_
 
 ### Completed
+- **Judge Profiles — tendency-profile aggregation slice.**
+  `packages/debate-speech-writer/src/judge/judge-profile.ts` adds
+  `buildJudgeProfile` (aggregates a judge's caller-supplied ballot history —
+  `JudgeRoundRecord`s — into side-vote win rates with a `hasNotableSideBias`
+  flag once there's enough of a sample, average speaker points awarded per
+  side, a rough `classifySpeedTolerance` pace-based delivery-speed estimate,
+  a `classifyTheoryReceptiveness` theory-argument win-rate estimate, and the
+  judge-paradigms.ts paradigm they were most often tagged with),
+  `groupRecordsByJudge` / `buildJudgeProfiles` (batch-build profiles for
+  every judge in a flat record list), and `buildJudgeTendencySummary`
+  (renders a profile as short bullet lines for a pre-round briefing or
+  profile card, explicitly reporting "unknown" rather than fabricating a
+  value when a signal was never tracked). Vitest-covered in
+  `packages/debate-speech-writer/test/judge-profile.test.ts`. See the
+  "Judge Profiles" item under Research Crowdsourcing Organizer Features
+  below. This is the first slice only — it's pure aggregation logic over
+  caller-supplied ballot records; no `Round`/ballot schema in this repo
+  captures speaker points, delivery pace, or theory outcomes today, so it
+  doesn't read or persist real ballot data, and it isn't wired into any
+  judge-profile or pre-round-briefing UI yet. Follow-ups: (a) a real ballot
+  data source (e.g. reconstructed from Tabroom ballots) that produces
+  `JudgeRoundRecord`s instead of relying entirely on caller-supplied data,
+  (b) a judge-profile card/panel UI that renders `buildJudgeTendencySummary`,
+  (c) persisting/looking up profiles by judge across tournaments rather than
+  recomputing from a full history each time.
+  PR: [#69](https://github.com/debate/debate-ai.com/pull/69).
 - **Online Debate Versus AI — turn-order and speech-validation slice.**
   `packages/debate-round/src/round/ai-versus-speech-order.ts` adds
   `buildAiVersusSpeechOrder` (flattens a `debate-timer` format's
@@ -228,7 +254,7 @@ _(none)_
 * 
 * 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes.
 * 
-* ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits.
+* ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. Follow-ups: (a) a real ballot data source producing `JudgeRoundRecord`s instead of relying on caller-supplied data, (b) a judge-profile card/panel UI, (c) persisting/looking up profiles by judge across tournaments. None of these are started._
 * 
 * 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents.
 * 

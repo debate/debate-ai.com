@@ -2,8 +2,9 @@
  * @fileoverview Public entry point for the debate speech-writer package.
  *
  * Exposes the prompt library used by the AI speech/flow features, the batch
- * quote-analysis helper that scores cards for warrants and flaws, and the
- * configurable judge-paradigm registry for AI judge decisions.
+ * quote-analysis helper that scores cards for warrants and flaws, the
+ * configurable judge-paradigm registry for AI judge decisions, and the
+ * judge-profile aggregation helpers for summarizing a judge's ballot history.
  *
  * @module debate-speech-writer
  */
@@ -25,6 +26,23 @@ export type {
   JudgeParadigm,
   CustomJudgeParadigmInput,
 } from "./judge/judge-paradigms";
+
+export {
+  DEFAULT_SPEED_THRESHOLDS_WPM,
+  classifySpeedTolerance,
+  classifyTheoryReceptiveness,
+  buildJudgeProfile,
+  buildJudgeProfiles,
+  groupRecordsByJudge,
+  buildJudgeTendencySummary,
+} from "./judge/judge-profile";
+export type {
+  DebateSide,
+  JudgeRoundRecord,
+  SpeedTolerance,
+  TheoryReceptiveness,
+  JudgeProfile,
+} from "./judge/judge-profile";
 
 export { findFlawsPrompt } from "./prompts/quote-to-find-flaws";
 export { judgeDecisionPrompt } from "./prompts/judge-decision-options";
