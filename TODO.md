@@ -5,6 +5,22 @@
 _(none)_
 
 ### Completed
+- **AI Response-Outcome Charts — flow-derived vulnerability scoring slice.**
+  `packages/debate-round/src/flow/response-outcome.ts` adds
+  `scoreArgumentVulnerability` (a deterministic 0-100 heuristic over an
+  already-flowed argument thread — unanswered arguments score highest,
+  repeated direct opposing responses raise it further, same-side
+  extensions/defense lower it), `getArgumentVulnerabilityReport` (every
+  argument row scored and sorted by vulnerability), `summarizeOutcomeBySide`
+  (rolls the report up per side into argument/unanswered counts and an
+  average vulnerability), and `buildVulnerabilityChartData` (top-N
+  label/value points ready for a bar chart). Vitest-covered in
+  `packages/debate-round/test/response-outcome.test.ts`. See idea #4 below.
+  This is the first slice only — it's a deterministic heuristic over the
+  flow's existing clash signals, not an actual AI panel evaluating response
+  paths or estimating win probabilities, and it isn't wired into any
+  chart/panel UI yet; see follow-ups noted under idea #4.
+  PR: TBD.
 - **Legacy Verbatim / Cardmirror Compatibility — condense/cite/reorder logic slice.**
   `packages/debate-card-parser/src/utils/verbatim-shortcuts.ts` adds
   `condenseCardHtml` (collapses a card's HTML down to its underlined "read"
@@ -103,7 +119,7 @@ _(none)_
 
 3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order.
 
-4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes.
+4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slice done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). Follow-ups: (a) an actual AI-panel call (multiple "counsel" model roles) that evaluates likely response paths and clash points beyond this deterministic heuristic, (b) a chart/panel UI in `debate-round` that renders `buildVulnerabilityChartData`/`summarizeOutcomeBySide`, (c) a "what if" mode that recomputes the score against a hypothetical strategic choice rather than only the flow's current state. None of these are started._
 
 5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. Follow-ups: (a) an AI judge-decision call that uses `buildJudgeParadigmPrompt` output instead of (or alongside) the existing static `judgeDecisionPrompt`, (b) a paradigm-picker UI for selecting a built-in paradigm or entering a custom judge's notes, (c) persisting the selected paradigm per round. None of these are started._
 
