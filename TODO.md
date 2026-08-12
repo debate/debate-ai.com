@@ -30,7 +30,7 @@ _(none)_
   (b) a judge-profile card/panel UI that renders `buildJudgeTendencySummary`,
   (c) persisting/looking up profiles by judge across tournaments rather than
   recomputing from a full history each time.
-  PR: TBD.
+  PR: [#69](https://github.com/debate/debate-ai.com/pull/69).
 - **Online Debate Versus AI — turn-order and speech-validation slice.**
   `packages/debate-round/src/round/ai-versus-speech-order.ts` adds
   `buildAiVersusSpeechOrder` (flattens a `debate-timer` format's
