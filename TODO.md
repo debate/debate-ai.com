@@ -2,7 +2,15 @@
 ## Tracker Status
 
 ### In progress
-_(none)_
+- **AI Judge Decision Modes — judge-paradigm registry slice.** Adding
+  `packages/debate-speech-writer/src/judge/judge-paradigms.ts`: a registry of
+  configurable judge personas (flow, lay, policymaker, critic, educator,
+  truth-tester) plus a `buildJudgeParadigmPrompt` helper that composes a
+  paradigm-specific prompt section, including support for a user-supplied
+  "custom" paradigm built from a real judge's publicly stated preferences.
+  Pure logic + Vitest coverage only — not yet wired into any UI paradigm
+  picker or into an actual AI judge-decision call. See idea #5 below.
+  Branch: `claude/intelligent-thompson-ilhlmr`.
 
 ### Completed
 - **Expandable Heading Structure — outline/collapse logic slice.**
