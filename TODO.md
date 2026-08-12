@@ -17,6 +17,7 @@ _(none)_
   This is the first slice only — it is not wired into the video player
   (`debate-videos`) or the `FlowSpreadsheet`/flow grid UI, and annotations
   aren't persisted anywhere yet; see follow-ups noted under idea #15.
+  PR: [#61](https://github.com/debate/debate-ai.com/pull/61).
 - **AI Judge Decision Modes — judge-paradigm registry slice.**
   `packages/debate-speech-writer/src/judge/judge-paradigms.ts` adds a registry
   of configurable judge personas (flow, lay, policymaker, critic, educator,
