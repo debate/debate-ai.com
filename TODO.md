@@ -19,7 +19,7 @@ _(none)_
   contributor/evidence-status, since neither exists in the flow schema
   today, and it isn't wired into any tree/outline UI yet; see follow-ups
   noted under idea #10.
-  PR: TBD.
+  PR: [#63](https://github.com/debate/debate-ai.com/pull/63).
 - **Speech Transcript Summaries and Answers — flow-derived unanswered-argument slice.**
   `packages/debate-round/src/flow/flow-transcript-summary.ts` adds
   `summarizeFlowRow`, `getFlowRowSummaries`, `getUnansweredFlowRows`,
