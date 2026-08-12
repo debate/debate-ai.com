@@ -5,6 +5,32 @@
 _(none)_
 
 ### Completed
+- **Peer Review System — card review lifecycle slice.**
+  `packages/debate-card-search/src/lib/peer-review.ts` adds a `CardReview`
+  state machine (`draft` → `in_review` → `changes_requested`/`approved`/
+  `rejected` → `published`) plus a reviewer-comment thread on top of it:
+  `createCardReview`, `submitForReview`, `requestChanges`, `approveReview`,
+  `rejectReview`, and `publishReview` enforce only the documented legal
+  transitions (throwing `InvalidReviewTransitionError` otherwise), while
+  `addReviewComment` (auto-moves an in-review card to `changes_requested`
+  when a `blocking`-severity comment is posted), `resolveReviewComment`,
+  `getUnresolvedBlockingComments`, and `isReadyToPublish` model the
+  comment thread — `approveReview` throws `UnresolvedBlockingCommentsError`
+  if any blocking comment is still unresolved, so approval can't skip past
+  requested changes. `buildReviewSummary` renders a short status/comment-count
+  string for a review-queue or card-detail panel. Vitest-covered in
+  `packages/debate-card-search/test/peer-review.test.ts`. See the "Peer
+  Review System" bullet under Research Crowdsourcing Organizer Features
+  below. This is the first slice only — it's pure state-transition logic
+  over a caller-supplied `CardReview`; nothing in this repo persists a
+  review, notifies reviewers, or renders a review-queue/comment-thread UI
+  yet. Follow-ups: (a) wiring `CardReview`/`ReviewComment` into wherever
+  submitted cards are eventually persisted, (b) a review-queue and
+  comment-thread UI in `debate-card-search` that calls
+  `submitForReview`/`addReviewComment`/`approveReview`/etc., (c) reviewer
+  identity/permission checks (e.g. only assigned reviewers can approve)
+  once an auth/roles system exists.
+  PR: [#73](https://github.com/debate/debate-ai.com/pull/73).
 - **Contribution Leaderboard — per-contributor ranking slice.**
   `packages/debate-card-search/src/lib/contribution-leaderboard.ts` adds
   `groupContributionsByContributor` (groups a flat list of
@@ -325,7 +351,7 @@ _(none)_
 * 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history.
 * 📚 Common Argument Library - Organize all shared research into topic folders, case areas, and tag-based collections.
 * 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it.
-* 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live.
+* 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. Follow-ups: (a) persisting `CardReview`/`ReviewComment` alongside submitted cards, (b) a review-queue/comment-thread UI, (c) reviewer identity/permission checks once auth/roles exist. None of these are started._
 * 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations.
 * 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs.
 * 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations.
