@@ -11,6 +11,7 @@ _(none)_
   `packages/debate-timer/test/word-count-format.test.ts`. See idea #2 below. This is the first
   slice only — it is not wired into `SpeechTimer`/`debate-round`'s timer state (built around
   elapsed milliseconds) or exposed in any submission UI; see follow-ups noted under idea #2.
+  PR: [#57](https://github.com/debate/debate-ai.com/pull/57).
 
 ## Product Feature Ideas
 
