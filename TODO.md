@@ -5,6 +5,21 @@
 _(none)_
 
 ### Completed
+- **Speech Transcript Summaries and Answers — flow-derived unanswered-argument slice.**
+  `packages/debate-round/src/flow/flow-transcript-summary.ts` adds
+  `summarizeFlowRow`, `getFlowRowSummaries`, `getUnansweredFlowRows`,
+  `buildFlowSummaryText`, `suggestCrossExamQuestions`, and
+  `suggestExtensionIdeas` so a viewer can turn an already-flowed `Flow` (the
+  existing `Box`/column grid) into a concise per-argument summary, flag
+  which arguments currently stand unanswered as of the flow's latest
+  state, and get template cross-examination questions and extension ideas
+  built from those drops. Vitest-covered in
+  `packages/debate-round/test/flow-transcript-summary.test.ts`. See idea #6
+  below. This is the first slice only — it doesn't transcribe audio or use
+  an AI model to extract claims/warrants/impacts from raw speech text (it
+  works off the flow grid a debater has already flowed), and it isn't wired
+  into any summary/cross-ex UI yet; see follow-ups noted under idea #6.
+  PR: TBD.
 - **Flow-in-Speech Flow Annotations — timestamped annotation data model slice.**
   `packages/debate-round/src/flow/flow-annotations.ts` adds a `FlowAnnotation`
   type plus `createFlowAnnotation`, `sortAnnotationsByTimestamp`,
@@ -60,7 +75,7 @@ _(none)_
 
 5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. Follow-ups: (a) an AI judge-decision call that uses `buildJudgeParadigmPrompt` output instead of (or alongside) the existing static `judgeDecisionPrompt`, (b) a paradigm-picker UI for selecting a built-in paradigm or entering a custom judge's notes, (c) persisting the selected paradigm per round. None of these are started._
 
-6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas.
+6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slice done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. Follow-ups: (a) audio/video transcription plus an AI call to extract claims/warrants/impacts/evidence from raw speech text rather than relying on a manually flowed grid, (b) a summary/cross-ex panel UI in `debate-round` that renders `buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for the selected speech, (c) persisting generated summaries per round. None of these are started._
 
 7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext 
 
