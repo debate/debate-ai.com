@@ -5,6 +5,32 @@
 _(none)_
 
 ### Completed
+- **Contribution Leaderboard — per-contributor ranking slice.**
+  `packages/debate-card-search/src/lib/contribution-leaderboard.ts` adds
+  `groupContributionsByContributor` (groups a flat list of
+  contributor-attributed contributions by `contributorId`, preserving
+  order), `buildContributorStats` (aggregates one contributor's scored
+  contributions into a contribution count, total/average helpfulness
+  score, their single best contribution, and a count of their
+  popularity-only-outlier contributions), and `buildLeaderboard` (groups,
+  scores, and ranks every contributor by total helpfulness score
+  descending — so a contributor with several well-received contributions
+  outranks a single viral hit — tie-broken by `contributorId`). This
+  builds directly on the existing idea #11 `community-rating.ts`
+  helpfulness-scoring slice (`computeHelpfulnessBreakdown`) rather than
+  duplicating its scoring logic. Vitest-covered in
+  `packages/debate-card-search/test/contribution-leaderboard.test.ts`. See
+  the "Contribution Leaderboard" bullet under Research Crowdsourcing
+  Organizer Features below. This is the first slice only — it aggregates
+  whatever contributor-attributed contributions the caller passes in; it
+  doesn't track "most completed tasks" (no task system exists in this
+  repo today), persist standings, or render a leaderboard UI. Follow-ups:
+  (a) a `contributorId` field and query wired into wherever
+  `CommunityContribution`s are eventually persisted, (b) a "completed
+  tasks" signal once a research-task system (see the "Research Task
+  Routing"/"Daily Quests and Targets" ideas below) exists to feed it, (c)
+  a leaderboard UI in `debate-card-search` that renders `buildLeaderboard`.
+  PR: TBD.
 - **Pre-Round Intelligence Panel — briefing composition slice.**
   `packages/debate-round/src/round/pre-round-briefing.ts` adds
   `buildPreRoundBriefing` (combines an already-built `OpponentTeamProfile`
@@ -292,7 +318,7 @@ _(none)_
 ## Research Crowdsourcing Organizer Features
 
 * 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool.
-* 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks.
+* 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. Follow-ups: (a) wiring a `contributorId` into wherever contributions are eventually persisted, (b) a "completed tasks" signal once a research-task system exists, (c) a leaderboard UI. None of these are started._
 * 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution.
 * 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more.
 * 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability.
