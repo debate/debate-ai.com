@@ -2,6 +2,9 @@
 ## Tracker Status
 
 ### In progress
+_(none)_
+
+### Completed
 - **Expandable Heading Structure — outline/collapse logic slice.**
   `packages/reason-editor/src/engine/outline/heading-outline.ts` adds
   `buildHeadingOutline`, `getVisibleHeadingIds`, `getCollapsedRanges`, and
@@ -9,13 +12,10 @@
   collapsible H1-H4 sections (pocket/hat/block/tag+analytic) over the
   existing flat heading schema, without any schema change. Vitest-covered
   in `packages/reason-editor/test/heading-outline.test.ts`. See idea #9
-  below. This is a pure-logic first slice only — it is not wired into any
-  React nav panel/outline UI yet (no such component exists in
-  `reason-editor` today); see follow-ups.
-  Branch: `claude/intelligent-thompson-amfytr`.
+  below. This is the first slice only — it is not wired into any React
+  nav panel/outline UI yet (no such component exists in `reason-editor`
+  today); see follow-ups noted under idea #9.
   PR: [#58](https://github.com/debate/debate-ai.com/pull/58).
-
-### Completed
 - **Word-Count-Only Speech Format — pure logic slice.** `packages/debate-timer/src/formats/word-count-format.ts`
   adds `countWords`, `getWordCountStatus`, `estimateWordLimit`, and a `wordCountStyles` registry
   (mirrors Public Forum's speech order with word limits instead of timers). Vitest-covered in
