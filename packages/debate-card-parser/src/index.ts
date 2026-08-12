@@ -11,6 +11,11 @@ export {
 export { extractMarked, extractUnderlined } from "./extractors/text-extractor";
 export { finalizeCard, repairCards } from "./utils/card-utils";
 export { parseFileNameParts } from "./extractors/file-name-parser";
+export {
+  condenseCardHtml,
+  formatShortCiteTag,
+  moveOutlineNode,
+} from "./utils/verbatim-shortcuts";
 
 export type {
   Card,
