@@ -6,7 +6,16 @@ speech recorder (mic selection, live waveform, playback) that records while the 
 ```tsx
 import { SpeechTimer, PrepTimer, useSpeechRecorder } from "debate-timer"
 import { debateStyles, type DebateStyleKey } from "debate-timer/src/formats/debate-format-times"
+import { wordCountStyles, getWordCountStatus } from "debate-timer/src/formats/word-count-format"
 ```
+
+`formats/word-count-format.ts` holds a second kind of format: speeches bounded by a
+maximum word count instead of a timer, for asynchronous practice rounds. `countWords` and
+`getWordCountStatus` are pure functions a submission UI can call as a debater types;
+`estimateWordLimit` derives a word limit from an existing timed speech length so a
+word-count format can mirror a timed format's speech order. This module is data and pure
+logic only — it is not yet wired into `SpeechTimer`/`debate-round`'s timer state, which
+is built around elapsed milliseconds.
 
 Speech times are the source of truth for which columns a flow gets, so `debate-round`
 depends on this package rather than the other way around.

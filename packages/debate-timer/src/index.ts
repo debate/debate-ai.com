@@ -3,4 +3,5 @@ export { PrepTimer } from "./timers/PrepTimer";
 export { SpeechRecordingPlayer } from "./recorder/SpeechRecordingPlayer";
 export { useSpeechRecorder } from "./hooks/useSpeechRecorder";
 export * from "./formats/debate-format-times";
+export * from "./formats/word-count-format";
 export * from "./types";
