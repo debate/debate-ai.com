@@ -5,6 +5,19 @@
 _(none)_
 
 ### Completed
+- **Flow-in-Speech Flow Annotations — timestamped annotation data model slice.**
+  `packages/debate-round/src/flow/flow-annotations.ts` adds a `FlowAnnotation`
+  type plus `createFlowAnnotation`, `sortAnnotationsByTimestamp`,
+  `getAnnotationsForSpeech`, `getAnnotationsForBox`,
+  `findAnnotationAtPlaybackPosition`, and `resolveAnnotationBox` so a viewer
+  scrubbing a streamed/recorded speech can drop a timestamped note on a
+  specific flow `Box` (addressed via the existing `boxFromPath` path
+  convention) and later jump straight back to it. Vitest-covered in
+  `packages/debate-round/test/flow-annotations.test.ts`. See idea #15 below.
+  This is the first slice only — it is not wired into the video player
+  (`debate-videos`) or the `FlowSpreadsheet`/flow grid UI, and annotations
+  aren't persisted anywhere yet; see follow-ups noted under idea #15.
+  PR: [#61](https://github.com/debate/debate-ai.com/pull/61).
 - **AI Judge Decision Modes — judge-paradigm registry slice.**
   `packages/debate-speech-writer/src/judge/judge-paradigms.ts` adds a registry
   of configurable judge personas (flow, lay, policymaker, critic, educator,
@@ -65,7 +78,7 @@ _(none)_
 
 14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. 
 
-15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made.
+15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slice done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. Follow-ups: (a) a video-player UI (`debate-videos`) that lets a viewer drop an annotation at the current playback position and jump back to one, (b) a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box and links back to the timestamp, (c) persisting annotations alongside a `Round`/`Flow`. None of these are started._
 
 16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow)
 
