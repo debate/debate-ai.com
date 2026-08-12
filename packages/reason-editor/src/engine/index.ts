@@ -48,6 +48,22 @@ export { Docx } from './ooxml/docx.js';
 
 export { readDocIdFromBytes, stampDocId } from './docid.js';
 
+// Heading outline — derives H1-H4 structure from the flat heading
+// paragraphs and computes collapse/expand ranges for a nav panel or
+// editor view.
+export {
+  HEADING_LEVELS,
+  buildHeadingOutline,
+  getVisibleHeadingIds,
+  getCollapsedRanges,
+  isPositionCollapsed,
+} from './outline/heading-outline.js';
+export type {
+  HeadingLevel,
+  OutlineHeading,
+  CollapsedRange,
+} from './outline/heading-outline.js';
+
 // Comment thread model — surfaced so the React shell and host app can
 // read/write comment threads alongside the document.
 export type {
