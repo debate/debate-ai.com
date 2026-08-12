@@ -2,17 +2,20 @@
 ## Tracker Status
 
 ### In progress
-- **AI Judge Decision Modes — judge-paradigm registry slice.** Adding
-  `packages/debate-speech-writer/src/judge/judge-paradigms.ts`: a registry of
-  configurable judge personas (flow, lay, policymaker, critic, educator,
-  truth-tester) plus a `buildJudgeParadigmPrompt` helper that composes a
-  paradigm-specific prompt section, including support for a user-supplied
-  "custom" paradigm built from a real judge's publicly stated preferences.
-  Pure logic + Vitest coverage only — not yet wired into any UI paradigm
-  picker or into an actual AI judge-decision call. See idea #5 below.
-  Branch: `claude/intelligent-thompson-ilhlmr`.
+_(none)_
 
 ### Completed
+- **AI Judge Decision Modes — judge-paradigm registry slice.**
+  `packages/debate-speech-writer/src/judge/judge-paradigms.ts` adds a registry
+  of configurable judge personas (flow, lay, policymaker, critic, educator,
+  truth-tester) plus `buildJudgeParadigmPrompt` (composes a paradigm-specific
+  prompt section) and `buildCustomJudgeParadigm` (builds a "custom" paradigm
+  from a real judge's own publicly stated preferences). Vitest-covered in
+  `packages/debate-speech-writer/test/judge-paradigms.test.ts`. See idea #5
+  below. This is the first slice only — it is not wired into the existing
+  `judgeDecisionPrompt` AI call or into any paradigm-picker UI; see
+  follow-ups noted under idea #5.
+  PR: [#60](https://github.com/debate/debate-ai.com/pull/60).
 - **Expandable Heading Structure — outline/collapse logic slice.**
   `packages/reason-editor/src/engine/outline/heading-outline.ts` adds
   `buildHeadingOutline`, `getVisibleHeadingIds`, `getCollapsedRanges`, and
@@ -42,7 +45,7 @@
 
 4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes.
 
-5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences.
+5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. Follow-ups: (a) an AI judge-decision call that uses `buildJudgeParadigmPrompt` output instead of (or alongside) the existing static `judgeDecisionPrompt`, (b) a paradigm-picker UI for selecting a built-in paradigm or entering a custom judge's notes, (c) persisting the selected paradigm per round. None of these are started._
 
 6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas.
 
