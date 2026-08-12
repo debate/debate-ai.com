@@ -13,6 +13,7 @@
   React nav panel/outline UI yet (no such component exists in
   `reason-editor` today); see follow-ups.
   Branch: `claude/intelligent-thompson-amfytr`.
+  PR: [#58](https://github.com/debate/debate-ai.com/pull/58).
 
 ### Completed
 - **Word-Count-Only Speech Format — pure logic slice.** `packages/debate-timer/src/formats/word-count-format.ts`
