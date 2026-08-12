@@ -5,6 +5,34 @@
 _(none)_
 
 ### Completed
+- **Opponent Team Profiles — scouting-profile aggregation slice.**
+  `packages/debate-data-sync/src/rankings/opponent-team-profile.ts` adds
+  `buildOpponentTeamProfile` (aggregates an opposing team's caller-supplied
+  round history — `OpponentRoundRecord`s — into an overall win/loss record,
+  a per-side win/loss split with a `hasNotableSidePreference` flag once
+  there's enough of a sample on both sides, and frequency-ranked
+  `topArgumentTags`/`topCases` reflecting the arguments and case names they
+  run most often), `groupRecordsByTeam` / `buildOpponentTeamProfiles`
+  (batch-build profiles for every team in a flat record list),
+  `getHeadToHeadRecords` (filters a record list down to rounds recorded
+  specifically against a given opponent, for head-to-head lookups), and
+  `buildOpponentScoutingSummary` (renders a profile as short bullet lines
+  for a pre-round scouting card, explicitly reporting "unknown" rather than
+  fabricating a value when tags/cases were never tracked). Vitest-covered
+  in `packages/debate-data-sync/test/opponent-team-profile.test.ts`. See
+  the "Opponent Team Profiles" item under Research Crowdsourcing Organizer
+  Features below. This is the first slice only — it's pure aggregation
+  logic over caller-supplied round records; no scraper in this repo
+  reconstructs real head-to-head/round history from Tabroom or tab-service
+  ballots, and it isn't wired into any scouting-card or pre-round-briefing
+  UI yet. Follow-ups: (a) a real round-history data source (e.g.
+  reconstructed from Tabroom pairings/ballots) that produces
+  `OpponentRoundRecord`s instead of relying entirely on caller-supplied
+  data, (b) a scouting-card/panel UI that renders
+  `buildOpponentScoutingSummary`, (c) persisting/looking up profiles by
+  team across tournaments rather than recomputing from a full history each
+  time.
+  PR: TBD.
 - **Judge Profiles — tendency-profile aggregation slice.**
   `packages/debate-speech-writer/src/judge/judge-profile.ts` adds
   `buildJudgeProfile` (aggregates a judge's caller-supplied ballot history —
@@ -252,7 +280,7 @@ _(none)_
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.”
 * 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status.
 * 
-* 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes.
+* 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. Follow-ups: (a) a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of relying on caller-supplied data, (b) a scouting-card/panel UI, (c) persisting/looking up profiles by team across tournaments. None of these are started._
 * 
 * ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. Follow-ups: (a) a real ballot data source producing `JudgeRoundRecord`s instead of relying on caller-supplied data, (b) a judge-profile card/panel UI, (c) persisting/looking up profiles by judge across tournaments. None of these are started._
 * 
