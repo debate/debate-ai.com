@@ -30,7 +30,7 @@ _(none)_
   `submitForReview`/`addReviewComment`/`approveReview`/etc., (c) reviewer
   identity/permission checks (e.g. only assigned reviewers can approve)
   once an auth/roles system exists.
-  PR: TBD.
+  PR: [#73](https://github.com/debate/debate-ai.com/pull/73).
 - **Contribution Leaderboard — per-contributor ranking slice.**
   `packages/debate-card-search/src/lib/contribution-leaderboard.ts` adds
   `groupContributionsByContributor` (groups a flat list of
