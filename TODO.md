@@ -5,6 +5,32 @@
 _(none)_
 
 ### Completed
+- **Daily Best Card Challenge — daily-winner selection slice.**
+  `packages/debate-card-search/src/lib/daily-best-card.ts` adds
+  `groupCardsByDay` (groups caller-supplied, timestamped card contributions
+  by their UTC calendar day of submission), `pickBestCardOfDay` (scores a
+  single day's cards via the existing `community-rating.ts`
+  `computeHelpfulnessBreakdown` and returns the single highest-helpfulness
+  card, tie-broken by id), `buildDailyBestCards` (batch-builds one winner
+  per represented day, sorted ascending), `getBestCardForDay` (a
+  caller-supplied-`now` convenience wrapper for "today's" winner, or `null`
+  if nothing was submitted that day), and `buildDailyBestCardHighlight`
+  (renders a short highlight line for a challenge banner/widget). A card's
+  community "vote" reuses the existing likes/saves signal already scored by
+  `computeHelpfulnessBreakdown` rather than introducing a separate voting
+  mechanism. Vitest-covered in
+  `packages/debate-card-search/test/daily-best-card.test.ts`. See the
+  "Daily Best Card Challenge" bullet under Research Crowdsourcing Organizer
+  Features below. This is the first slice only — it works entirely off
+  already-collected, caller-supplied contributions; it doesn't track
+  submission timestamps itself, persist a day's winner, or render a
+  challenge banner/widget UI. Follow-ups: (a) wiring a `submittedAt`
+  timestamp into wherever card contributions are eventually persisted, (b)
+  a scheduled job or view that calls `getBestCardForDay`/`buildDailyBestCards`
+  and persists/announces the day's winner, (c) a challenge banner/widget UI
+  in `debate-card-search` that renders `buildDailyBestCardHighlight`. None
+  of these are started.
+  PR: [#74](https://github.com/debate/debate-ai.com/pull/74).
 - **Peer Review System — card review lifecycle slice.**
   `packages/debate-card-search/src/lib/peer-review.ts` adds a `CardReview`
   state machine (`draft` → `in_review` → `changes_requested`/`approved`/
@@ -350,7 +376,7 @@ _(none)_
 * 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability.
 * 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history.
 * 📚 Common Argument Library - Organize all shared research into topic folders, case areas, and tag-based collections.
-* 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it.
+* 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByDay`/`pickBestCardOfDay`/`buildDailyBestCards`/`getBestCardForDay`/`buildDailyBestCardHighlight` for grouping timestamped card contributions by UTC submission day and picking each day's single highest-helpfulness card, reusing the existing `community-rating.ts` helpfulness scoring (a card's likes/saves already model the community "vote"). Follow-ups: (a) wiring a `submittedAt` timestamp into wherever card contributions are eventually persisted, (b) a scheduled job or view that persists/announces the day's winner, (c) a challenge banner/widget UI. None of these are started._
 * 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. Follow-ups: (a) persisting `CardReview`/`ReviewComment` alongside submitted cards, (b) a review-queue/comment-thread UI, (c) reviewer identity/permission checks once auth/roles exist. None of these are started._
 * 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations.
 * 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs.
