@@ -5,6 +5,30 @@
 _(none)_
 
 ### Completed
+- **CX NDCA Standings — qualification points and standings computation slice.**
+  `packages/debate-data-sync/src/rankings/ndca-standings.ts` adds
+  `computeTournamentPoints` (scores a single tournament result from its
+  outround finish, prelim-win record, and a bid-level bonus, against a
+  configurable `QualificationPointsTable`), `buildTeamStanding` /
+  `buildStandings` (aggregate a team's — or every team's — tournament
+  results into a cumulative standing: total qualification points from its
+  best N tournaments if capped, overall prelim record and best finish
+  across every tournament attended), `rankStandings` (sorts standings by
+  total points, tie-broken by team id), and `getQualifiedTeams` (filters
+  ranked standings by a minimum-points threshold and/or a qualifier cap).
+  The exported `DEFAULT_QUALIFICATION_POINTS_TABLE` is explicitly an
+  illustrative default, not the real NDCA point table (which varies by
+  circuit/season and isn't public data this repo has) — callers who need
+  accurate qualification points should supply their own table.
+  Vitest-covered in
+  `packages/debate-data-sync/test/ndca-standings.test.ts`. See idea #1
+  below. This is the first slice only — it's pure aggregation/ranking logic
+  over caller-supplied `TournamentResult` records; it doesn't scrape or
+  parse real Tabroom/NDCA results into that shape (the existing
+  `sync-tournaments.ts` only fetches tournament *names*, not per-team
+  results), and it isn't wired into any standings dashboard UI yet; see
+  follow-ups noted under idea #1.
+  PR: TBD.
 - **Community-Rated Summaries and Highlights — helpfulness scoring and ranking slice.**
   `packages/debate-card-search/src/lib/community-rating.ts` adds
   `scorePopularitySignal` (logarithmically dampens raw likes/saves so votes
@@ -130,7 +154,7 @@ _(none)_
 
 ## Product Feature Ideas
 
-1. **CX NDCA Standings** — Add a standings dashboard modeled around NDCA-style results, allowing users to browse qualification points, rankings, cumulative records, and tournament performance history across the season. Tabroom already supports tournament results and NDCA-points configuration, so this could expose those data in a more searchable, user-friendly analytics view. [tabroom](https://www.tabroom.com/index/tourn/index.mhtml?tourn_id=26597)
+1. **CX NDCA Standings** — Add a standings dashboard modeled around NDCA-style results, allowing users to browse qualification points, rankings, cumulative records, and tournament performance history across the season. Tabroom already supports tournament results and NDCA-points configuration, so this could expose those data in a more searchable, user-friendly analytics view. [tabroom](https://www.tabroom.com/index/tourn/index.mhtml?tourn_id=26597) _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `computeTournamentPoints`/`buildTeamStanding`/`buildStandings`/`rankStandings`/`getQualifiedTeams` for turning per-team tournament results into ranked, cumulative season standings against a configurable (not authoritative) points table. Follow-ups: (a) a Tabroom/NDCA scraper that produces real `TournamentResult` records per team (today's `sync-tournaments.ts` only fetches tournament names), (b) a real, circuit-sourced `QualificationPointsTable` instead of the illustrative default, (c) a standings dashboard UI (likely under `/rank`) that renders `rankStandings`/`getQualifiedTeams`. None of these are started._
 
 2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slice done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. Follow-ups: (a) a submission UI in `debate-round`/`reason-editor` that calls `getWordCountStatus` while a debater types, (b) extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode, (c) persisting word-count-mode round results alongside timed rounds. None of these are started._
 
