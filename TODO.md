@@ -5,6 +5,33 @@
 _(none)_
 
 ### Completed
+- **Pre-Round Intelligence Panel — briefing composition slice.**
+  `packages/debate-round/src/round/pre-round-briefing.ts` adds
+  `buildPreRoundBriefing` (combines an already-built `OpponentTeamProfile`
+  scouting summary, a `JudgeProfile` tendency summary, a head-to-head
+  prior-meetings record derived from caller-supplied `OpponentRoundRecord`s,
+  and free-text team prep notes into one structured briefing with a
+  labeled section per signal — each missing piece renders an explicit "no
+  data on file" line rather than being silently omitted),
+  `summarizePriorMeetings` (tallies wins/losses from a head-to-head record
+  list), and `buildPreRoundBriefingText` (renders the structured briefing
+  as a single markdown-ish document). This reuses the existing
+  `buildOpponentScoutingSummary` (`debate-data-sync`) and
+  `buildJudgeTendencySummary` (`debate-speech-writer`) slices directly, so
+  `debate-round` now depends on both packages. Vitest-covered in
+  `packages/debate-round/test/pre-round-briefing.test.ts`. See idea #12
+  below. This is the first slice only — it doesn't fetch live tournament
+  results, prior pairings, event details, or room assignments from any
+  real data source (none exist in this repo today; the caller supplies
+  whichever profiles/records/notes they already have), and it isn't wired
+  into any round-information page UI yet. Follow-ups: (a) real data
+  sources for tournament results, pairings, event details, and room
+  assignments to populate `RoundEventInfo` and the head-to-head record
+  list automatically instead of relying entirely on caller-supplied data,
+  (b) a briefing panel UI in `debate-round` that renders
+  `buildPreRoundBriefing`/`buildPreRoundBriefingText` on a round-information
+  page, (c) persisting a generated briefing (or its inputs) per round.
+  PR: TBD.
 - **Opponent Team Profiles — scouting-profile aggregation slice.**
   `packages/debate-data-sync/src/rankings/opponent-team-profile.ts` adds
   `buildOpponentTeamProfile` (aggregates an opposing team's caller-supplied
@@ -250,7 +277,7 @@ _(none)_
 
 11. **Community-Rated Summaries and Highlights** — Let users like, save, and endorse the most useful research summaries, analytic explanations, evidence highlights, and annotations, then rank contributions by helpfulness while guarding against popularity-only scoring through quality and reviewer-weight signals. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scorePopularitySignal`/`scoreQualitySignal`/`scoreReviewerSignal`/`computeHelpfulnessBreakdown`/`rankContributions` for blending logarithmically-dampened popularity with quality and reviewer-credibility signals into a ranked, popularity-resistant helpfulness score. Follow-ups: (a) wiring up actual like/save/endorse actions and persisting those counts per contribution, (b) a real reviewer-credibility system instead of a caller-supplied weight per endorsement, (c) a leaderboard/ranked-feed UI in `debate-card-search` that renders `rankContributions` and surfaces `isPopularityOnlyOutlier` contributions for moderator review. None of these are started._
 
-12. **Pre-Round Intelligence Panel** — On every round-information page, combine live tournament results, prior pairings, opponent records, judge paradigms, event details, room assignments, and relevant team prep notes into one focused pre-round briefing.
+12. **Pre-Round Intelligence Panel** — On every round-information page, combine live tournament results, prior pairings, opponent records, judge paradigms, event details, room assignments, and relevant team prep notes into one focused pre-round briefing. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPreRoundBriefing`/`summarizePriorMeetings`/`buildPreRoundBriefingText` for composing an opponent-scouting summary, a judge-tendency summary, a head-to-head prior-meetings record, and team prep notes into one structured, renderable briefing, reusing the existing `debate-data-sync`/`debate-speech-writer` profile slices. Follow-ups: (a) real data sources for tournament results, pairings, event details, and room assignments (none exist in this repo today), (b) a briefing panel UI that renders it on a round-information page, (c) persisting a generated briefing per round. None of these are started._
 
 13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise.
 
@@ -296,7 +323,7 @@ _(none)_
 * 
 * 🔄 Strategy Sync Notes - Let teammates leave live prep notes, assign tasks, and mark which arguments have been covered or need follow-up.
 * 
-* 📊 Matchup Prep Dashboard - Combine opponent profiles, judge profiles, and topic-specific prep into a single pre-round view.
+* 📊 Matchup Prep Dashboard - Combine opponent profiles, judge profiles, and topic-specific prep into a single pre-round view. _Status: first slice done (see Tracker Status above, "Pre-Round Intelligence Panel") — `debate-round` now has `buildPreRoundBriefing`/`buildPreRoundBriefingText` for combining an opponent-scouting summary, judge-tendency summary, head-to-head record, and prep notes into one structured briefing. See idea #12 in Product Feature Ideas above for the full status and follow-ups._
 * 
 * 🧪 Practice Round Simulator - Recreate a tournament round with timer, speeches, judge persona, and post-round feedback.
 * 
