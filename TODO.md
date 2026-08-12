@@ -5,6 +5,23 @@
 _(none)_
 
 ### Completed
+- **Legacy Verbatim / Cardmirror Compatibility — condense/cite/reorder logic slice.**
+  `packages/debate-card-parser/src/utils/verbatim-shortcuts.ts` adds
+  `condenseCardHtml` (collapses a card's HTML down to its underlined "read"
+  runs, preserving nested `<mark>` emphasis and joining non-adjacent runs
+  with an ellipsis, mirroring Verbatim's condense command), `formatShortCiteTag`
+  (builds a Verbatim-style short cite tag like `"Smith 24"` or `"Smith ND"`
+  from a card's author/year), and `moveOutlineNode` (swaps an outline node
+  with its previous/next sibling, backing a heading/card reorder shortcut).
+  Vitest-covered in
+  `packages/debate-card-parser/test/verbatim-shortcuts.test.ts`. See idea #14
+  below. This is the first slice only — it covers 3 of the 5 shortcuts idea
+  #14 describes (condensing cards, formatting citations, moving headings);
+  "sending selected evidence to a speech document" and "emphasizing text"
+  are not implemented since they need editor-selection/document-target state
+  that doesn't exist yet. None of these functions are wired to an actual
+  keyboard-shortcut handler or UI; see follow-ups noted under idea #14.
+  PR: TBD.
 - **Outline Filters and Argument Tree View — heading-grouped argument tree slice.**
   `packages/debate-round/src/flow/argument-tree.ts` adds `buildArgumentTree`
   (groups a flow's rows into a tree keyed by its `isHeading` rows, nesting
@@ -106,7 +123,7 @@ _(none)_
 
 13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise.
 
-14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. 
+14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slice done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. Follow-ups: (a) wiring these into actual keyboard-shortcut handlers in `reason-editor`'s toolbar/editor view, (b) a "send selected evidence to a speech document" command, which needs a speech-document target that doesn't exist yet, (c) a text-emphasize (toggle `<mark>`) command over an editor selection range. None of these are started._
 
 15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slice done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. Follow-ups: (a) a video-player UI (`debate-videos`) that lets a viewer drop an annotation at the current playback position and jump back to one, (b) a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box and links back to the timestamp, (c) persisting annotations alongside a `Round`/`Flow`. None of these are started._
 
