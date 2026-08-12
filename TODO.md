@@ -30,7 +30,7 @@ _(none)_
   tasks" signal once a research-task system (see the "Research Task
   Routing"/"Daily Quests and Targets" ideas below) exists to feed it, (c)
   a leaderboard UI in `debate-card-search` that renders `buildLeaderboard`.
-  PR: TBD.
+  PR: [#72](https://github.com/debate/debate-ai.com/pull/72).
 - **Pre-Round Intelligence Panel — briefing composition slice.**
   `packages/debate-round/src/round/pre-round-briefing.ts` adds
   `buildPreRoundBriefing` (combines an already-built `OpponentTeamProfile`
