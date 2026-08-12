@@ -30,7 +30,7 @@ _(none)_
   and persists/announces the day's winner, (c) a challenge banner/widget UI
   in `debate-card-search` that renders `buildDailyBestCardHighlight`. None
   of these are started.
-  PR: TBD.
+  PR: [#74](https://github.com/debate/debate-ai.com/pull/74).
 - **Peer Review System — card review lifecycle slice.**
   `packages/debate-card-search/src/lib/peer-review.ts` adds a `CardReview`
   state machine (`draft` → `in_review` → `changes_requested`/`approved`/
