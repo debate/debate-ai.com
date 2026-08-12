@@ -21,7 +21,7 @@ _(none)_
   are not implemented since they need editor-selection/document-target state
   that doesn't exist yet. None of these functions are wired to an actual
   keyboard-shortcut handler or UI; see follow-ups noted under idea #14.
-  PR: TBD.
+  PR: [#64](https://github.com/debate/debate-ai.com/pull/64).
 - **Outline Filters and Argument Tree View — heading-grouped argument tree slice.**
   `packages/debate-round/src/flow/argument-tree.ts` adds `buildArgumentTree`
   (groups a flow's rows into a tree keyed by its `isHeading` rows, nesting
