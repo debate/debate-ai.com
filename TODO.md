@@ -5,6 +5,21 @@
 _(none)_
 
 ### Completed
+- **Outline Filters and Argument Tree View — heading-grouped argument tree slice.**
+  `packages/debate-round/src/flow/argument-tree.ts` adds `buildArgumentTree`
+  (groups a flow's rows into a tree keyed by its `isHeading` rows, nesting
+  each argument under the most recent heading above it),
+  `filterArgumentTree` (filters by speech, by a `sideKey` derived from each
+  argument's origin speech via `getSpeechSideKey`, by unanswered/dropped
+  status, and by heading-vs-argument `kind` — including a pure `kind:
+  "heading"` outline view), `flattenArgumentTree`, and `getFlowSideKeys`.
+  Vitest-covered in `packages/debate-round/test/argument-tree.test.ts`. See
+  idea #10 below. This is the first slice only — it doesn't distinguish
+  finer argument types (link, impact, turn, answer, extension) or track
+  contributor/evidence-status, since neither exists in the flow schema
+  today, and it isn't wired into any tree/outline UI yet; see follow-ups
+  noted under idea #10.
+  PR: [#63](https://github.com/debate/debate-ai.com/pull/63).
 - **Speech Transcript Summaries and Answers — flow-derived unanswered-argument slice.**
   `packages/debate-round/src/flow/flow-transcript-summary.ts` adds
   `summarizeFlowRow`, `getFlowRowSummaries`, `getUnansweredFlowRows`,
@@ -83,7 +98,7 @@ _(none)_
 
 9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slice done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. Follow-ups: (a) a React nav/outline panel in `reason-editor` that renders the outline and toggles collapsed ids, (b) a ProseMirror decoration plugin that hides collapsed ranges in the actual editor view using `getCollapsedRanges`, (c) persisting collapsed-state per document. None of these are started._
 
-10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type.
+10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. Follow-ups: (a) a React tree/outline panel in `debate-round` that renders the filtered tree next to (or instead of) `FlowSpreadsheet`, (b) finer argument-type tagging (link/impact/turn/answer/extension) and contributor/evidence-status fields, none of which exist in the `Box`/`Flow` schema today, (c) persisting the user's chosen filter state per round. None of these are started._
 
 11. **Community-Rated Summaries and Highlights** — Let users like, save, and endorse the most useful research summaries, analytic explanations, evidence highlights, and annotations, then rank contributions by helpfulness while guarding against popularity-only scoring through quality and reviewer-weight signals.
 
