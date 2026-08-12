@@ -2,7 +2,17 @@
 ## Tracker Status
 
 ### In progress
-_(none)_
+- **Expandable Heading Structure — outline/collapse logic slice.**
+  `packages/reason-editor/src/engine/outline/heading-outline.ts` adds
+  `buildHeadingOutline`, `getVisibleHeadingIds`, `getCollapsedRanges`, and
+  `isPositionCollapsed` so a nav panel or editor view can implement
+  collapsible H1-H4 sections (pocket/hat/block/tag+analytic) over the
+  existing flat heading schema, without any schema change. Vitest-covered
+  in `packages/reason-editor/test/heading-outline.test.ts`. See idea #9
+  below. This is a pure-logic first slice only — it is not wired into any
+  React nav panel/outline UI yet (no such component exists in
+  `reason-editor` today); see follow-ups.
+  Branch: `claude/intelligent-thompson-amfytr`.
 
 ### Completed
 - **Word-Count-Only Speech Format — pure logic slice.** `packages/debate-timer/src/formats/word-count-format.ts`
@@ -31,7 +41,7 @@ _(none)_
 
 8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials.
 
-9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence.
+9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slice done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. Follow-ups: (a) a React nav/outline panel in `reason-editor` that renders the outline and toggles collapsed ids, (b) a ProseMirror decoration plugin that hides collapsed ranges in the actual editor view using `getCollapsedRanges`, (c) persisting collapsed-state per document. None of these are started._
 
 10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type.
 
