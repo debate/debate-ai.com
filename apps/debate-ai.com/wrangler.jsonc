@@ -10,6 +10,10 @@
 	// entered in the CF dashboard (API keys, BETTER_AUTH_SECRET, …) because
 	// this config defines no `vars`. Secrets survive either way.
 	"keep_vars": true,
+	// Ship source maps with the Worker so runtime exceptions in Workers Logs
+	// resolve to real files/lines instead of minified bundle offsets. Source
+	// maps are stored separately and do not count against the Worker size limit.
+	"upload_source_maps": true,
 	"assets": {
 		"directory": "dist/client",
 		"binding": "ASSETS"

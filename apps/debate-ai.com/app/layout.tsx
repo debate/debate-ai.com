@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { CategoryDockProvider, PersistentVideoPlayer } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
 import { OneTap } from "@/components/layout/OneTap"
-import Template from "./template"
+import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar"
 
 export const metadata: Metadata = {
   title: "Debate AI",
@@ -39,10 +39,11 @@ export default function RootLayout({
           <CategoryDockProvider>
             <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
               <CategoryDock />
-              <Template>{children}</Template>
+              {children}
             </div>
             <PersistentVideoPlayer />
             <OneTap />
+            <ServiceWorkerRegistrar />
           </CategoryDockProvider>
         </ThemeProvider>
       </body>
