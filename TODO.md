@@ -5,6 +5,34 @@
 _(none)_
 
 ### Completed
+- **Top Contributor Awards — per-category award selection slice.**
+  `packages/debate-card-search/src/lib/contributor-awards.ts` adds
+  `groupContributionsByKind` (groups caller-supplied, contributor-attributed
+  contributions by their `ContributionKind`), `buildCategoryLeaderboard` (a
+  thin wrapper over the existing `contribution-leaderboard.ts`
+  `buildLeaderboard` for one kind's contributions), `buildTopContributorAwards`
+  (selects one category winner per `ContributionKind` present in the input —
+  the contributor with the highest total helpfulness score for that kind,
+  tie-broken by `contributorId` — in a stable `card`/`summary`/`highlight`/
+  `annotation` order, omitting kinds with no contributions), and
+  `buildAwardsAnnouncementText` (renders one human-readable announcement
+  line per award for a banner or notification). Reuses the existing idea
+  #11 `community-rating.ts` helpfulness scoring via `contribution-leaderboard.ts`
+  rather than introducing a separate scoring path. Vitest-covered in
+  `packages/debate-card-search/test/contributor-awards.test.ts`. See the
+  "Top Contributor Awards" bullet under Research Crowdsourcing Organizer
+  Features below. This is the first slice only — the only award categories
+  it can produce today are the ones `ContributionKind` already distinguishes
+  ("card" → Best Evidence Finder, "summary" → Best Explainer, plus
+  "highlight" and "annotation"); it doesn't have a distinct kind for
+  "original argument" or "refutation" contributions (neither exists in this
+  repo today), and it doesn't persist, schedule, or render an awards
+  announcement. Follow-ups: (a) a finer-grained `ContributionKind` (or
+  separate tag) for "original argument"/"refutation" contributions, (b) a
+  scheduled job that periodically calls `buildTopContributorAwards` and
+  persists/announces the winners, (c) an awards UI in `debate-card-search`
+  that renders `buildAwardsAnnouncementText`.
+  PR: TBD.
 - **Topic Coverage Dashboard — per-argument coverage aggregation slice.**
   `packages/debate-card-search/src/lib/topic-coverage.ts` adds
   `groupCardsByArgument` (groups caller-supplied cards by their `argBlock`),
@@ -404,7 +432,7 @@ _(none)_
 * 📚 Common Argument Library - Organize all shared research into topic folders, case areas, and tag-based collections.
 * 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByDay`/`pickBestCardOfDay`/`buildDailyBestCards`/`getBestCardForDay`/`buildDailyBestCardHighlight` for grouping timestamped card contributions by UTC submission day and picking each day's single highest-helpfulness card, reusing the existing `community-rating.ts` helpfulness scoring (a card's likes/saves already model the community "vote"). Follow-ups: (a) wiring a `submittedAt` timestamp into wherever card contributions are eventually persisted, (b) a scheduled job or view that persists/announces the day's winner, (c) a challenge banner/widget UI. None of these are started._
 * 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. Follow-ups: (a) persisting `CardReview`/`ReviewComment` alongside submitted cards, (b) a review-queue/comment-thread UI, (c) reviewer identity/permission checks once auth/roles exist. None of these are started._
-* 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations.
+* 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopContributorAwards`/`buildCategoryLeaderboard`/`groupContributionsByKind`/`buildAwardsAnnouncementText` for grouping contributor-attributed contributions by `ContributionKind` and selecting a per-kind category winner by helpfulness score, reusing the existing idea #11/Contribution Leaderboard scoring. Follow-ups: (a) a finer-grained kind/tag for "original argument" and "refutation" contributions, neither of which exists as a distinct kind today, (b) a scheduled job to persist/announce winners, (c) an awards UI. None of these are started._
 * 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs.
 * 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations.
 * 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. Follow-ups: (a) an `argBlock`/word-count field wired into wherever submitted cards are eventually persisted, (b) a team-editable tracked-argument checklist per topic, (c) a coverage dashboard UI. None of these are started._
