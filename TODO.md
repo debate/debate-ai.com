@@ -5,6 +5,29 @@
 _(none)_
 
 ### Completed
+- **LLM Card Scoring — deterministic heuristic scoring slice.**
+  `packages/debate-card-search/src/lib/llm-card-scoring.ts` adds
+  `scoreRelevance` (keyword/phrase overlap against a card's argument
+  block), `scoreClarity` (average-sentence-length balance), `scoreUniqueness`
+  (Jaccard token similarity against the rest of the corpus), `scoreEvidenceQuality`
+  (a direct alias of the existing idea #11 `community-rating.ts`
+  `scoreQualitySignal`), `scoreUsability` (word-count target band),
+  `computeCardScoreBreakdown` (blends all five into a weighted overall
+  score and flags likely duplicates), `rankCardScores`, and
+  `buildCardScoreSummaryText`. Reuses `scoreQualitySignal` directly rather
+  than introducing a separate quality-scoring path. Vitest-covered in
+  `packages/debate-card-search/test/llm-card-scoring.test.ts`. See the "LLM
+  Card Scoring" bullet under Research Crowdsourcing Organizer Features
+  below. This is the first slice only — it's a deterministic heuristic
+  stand-in for an eventual LLM call, not the LLM call itself; it doesn't
+  call any model, persist scores, or render a scoring UI. Follow-ups: (a)
+  an actual LLM-scoring call for the more subjective dimensions (clarity,
+  usability) that a heuristic can only roughly proxy, (b) wiring real
+  argument-block keywords and a real submitted-card corpus into the
+  scorer instead of caller-supplied data, (c) a scoring/duplicate-flag
+  panel UI in `debate-card-search` that renders `rankCardScores` and
+  surfaces `isLikelyDuplicate` cards for moderator review.
+
 - **Research Progress Tracking — per-contributor topic/task/contribution progress slice.**
   `packages/debate-card-search/src/lib/research-progress.ts` adds
   `buildContributorProgress` (combines a contributor's existing
@@ -540,7 +563,7 @@ _(none)_
 * 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. Follow-ups: (a) wiring a `contributorId` into wherever contributions are eventually persisted, (b) a "completed tasks" signal once a research-task system exists, (c) a leaderboard UI. None of these are started._
 * 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution.
 * 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. Follow-ups: (a) persisting a contributor's tier/badges, (b) a progress/unlock UI, (c) feeding the derived skill level into `research-task-routing.ts`'s `ContributorAvailability` instead of a caller-supplied value. None of these are started._
-* 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability.
+* 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scoreRelevance`/`scoreClarity`/`scoreUniqueness`/`scoreEvidenceQuality`/`scoreUsability`/`computeCardScoreBreakdown`/`rankCardScores`/`buildCardScoreSummaryText` for scoring a card across all five dimensions with deterministic heuristics and flagging likely duplicates, reusing the existing idea #11 `community-rating.ts` quality-signal scoring for evidence quality. Follow-ups: (a) an actual LLM-scoring call for the more subjective dimensions instead of the heuristic proxy, (b) wiring real argument-block keywords and a real submitted-card corpus into the scorer, (c) a scoring/duplicate-flag panel UI. None of these are started._
 * 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildContributorProgress`/`buildTopicProgress`/`buildResearchProgressBoard`/`buildProgressSummaryText` for combining a contributor's existing leaderboard contribution stats with per-topic task-completion counts derived from a topic-tagged research-task-routing assignment list, reusing the existing `ContributorStats`/`RoutedAssignment` types directly. Follow-ups: (a) wiring real task-completion events into a persisted assignment/completion history, (b) a progress dashboard/roster UI, (c) feeding a contributor's topic-progress history back into `progress-unlocks.ts`'s tier computation. None of these are started._
 * 📚 Common Argument Library - Organize all shared research into topic folders, case areas, and tag-based collections.
 * 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByDay`/`pickBestCardOfDay`/`buildDailyBestCards`/`getBestCardForDay`/`buildDailyBestCardHighlight` for grouping timestamped card contributions by UTC submission day and picking each day's single highest-helpfulness card, reusing the existing `community-rating.ts` helpfulness scoring (a card's likes/saves already model the community "vote"). Follow-ups: (a) wiring a `submittedAt` timestamp into wherever card contributions are eventually persisted, (b) a scheduled job or view that persists/announces the day's winner, (c) a challenge banner/widget UI. None of these are started._
