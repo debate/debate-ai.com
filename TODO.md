@@ -28,6 +28,7 @@ _(none)_
   `buildDailyQuestBoard`/`buildQuestBoardSummaryText`, (c) a streak/reward
   layer on top of quest completion once the "Gamified Quests" idea's own
   first slice exists.
+  PR: [#84](https://github.com/debate/debate-ai.com/pull/84).
 
 - **LLM Card Scoring — deterministic heuristic scoring slice.**
   `packages/debate-card-search/src/lib/llm-card-scoring.ts` adds
