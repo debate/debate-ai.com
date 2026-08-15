@@ -5,6 +5,32 @@
 _(none)_
 
 ### Completed
+- **Topic Coverage Dashboard — per-argument coverage aggregation slice.**
+  `packages/debate-card-search/src/lib/topic-coverage.ts` adds
+  `groupCardsByArgument` (groups caller-supplied cards by their `argBlock`),
+  `computeArgumentCoverage` (classifies one argument block as `missing`
+  (zero cards), `thin` (below configurable card-count/word-count
+  thresholds), or `covered`), `buildTopicCoverageReport` (builds coverage
+  for every argument in a caller-supplied tracked list — even ones with
+  zero submitted cards — plus a separate `untracked` list for any argument
+  block cards were filed under that isn't on the tracked list, so an
+  unplanned-but-covered argument or a typo'd block name isn't silently
+  dropped), `getUnderCoveredArguments` (the tracked arguments still needing
+  work, worst-covered first), and `buildTopicCoverageSummaryText` (a short
+  dashboard-header summary line). Vitest-covered in
+  `packages/debate-card-search/test/topic-coverage.test.ts`. See the "Topic
+  Coverage Dashboard" bullet under Research Crowdsourcing Organizer
+  Features below. This is the first slice only — it works entirely off a
+  caller-supplied card list and a caller-supplied tracked-argument list; it
+  doesn't read real submitted cards or a topic's argument checklist from
+  anywhere (neither exists in this repo today), and it isn't wired into any
+  dashboard UI yet. Follow-ups: (a) an `argBlock`/word-count field wired
+  into wherever submitted cards are eventually persisted, (b) a
+  team-editable tracked-argument checklist per topic (no topic/checklist
+  schema exists in this repo today), (c) a coverage dashboard UI in
+  `debate-card-search` that renders `buildTopicCoverageReport`/
+  `getUnderCoveredArguments`. None of these are started.
+  PR: TBD.
 - **Daily Best Card Challenge — daily-winner selection slice.**
   `packages/debate-card-search/src/lib/daily-best-card.ts` adds
   `groupCardsByDay` (groups caller-supplied, timestamped card contributions
@@ -381,7 +407,7 @@ _(none)_
 * 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations.
 * 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs.
 * 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations.
-* 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work.
+* 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. Follow-ups: (a) an `argBlock`/word-count field wired into wherever submitted cards are eventually persisted, (b) a team-editable tracked-argument checklist per topic, (c) a coverage dashboard UI. None of these are started._
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.”
 * 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status.
 * 
