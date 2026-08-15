@@ -5,6 +5,32 @@
 _(none)_
 
 ### Completed
+- **Research Progress Tracking — per-contributor topic/task/contribution progress slice.**
+  `packages/debate-card-search/src/lib/research-progress.ts` adds
+  `buildContributorProgress` (combines a contributor's existing
+  `contribution-leaderboard.ts` `ContributorStats` with per-topic task
+  completion derived from a caller-supplied, topic-tagged
+  `research-task-routing.ts` `RoutedAssignment` list), `buildTopicProgress`
+  (assigned/completed counts and a completion rate for one topic),
+  `groupAssignmentsByContributor`, `buildResearchProgressBoard` (a full,
+  roster-sorted board across every contributor found in either the
+  contribution or assignment lists), and `buildProgressSummaryText`. Reuses
+  the existing `ContributorStats`/`RoutedAssignment` types directly rather
+  than introducing a separate scoring or assignment path. Vitest-covered in
+  `packages/debate-card-search/test/research-progress.test.ts`. See the
+  "Research Progress Tracking" bullet under Research Crowdsourcing Organizer
+  Features below. This is the first slice only — it works entirely off
+  caller-supplied contributions and a caller-supplied, topic-tagged
+  assignment list with a caller-supplied completion timestamp; it doesn't
+  track task completion itself (no task system exists in this repo today),
+  persist a contributor's progress, or render a progress-tracking UI.
+  Follow-ups: (a) wiring real `completedAt` events into a persisted
+  assignment/completion history, (b) a progress dashboard/roster UI that
+  renders `buildResearchProgressBoard`/`buildProgressSummaryText`, (c)
+  feeding a contributor's actual topic-progress history back into
+  `progress-unlocks.ts`'s tier computation instead of raw leaderboard stats
+  alone.
+
 - **Progress Unlocks — contributor tier/skill/badge scoring slice.**
   `packages/debate-card-search/src/lib/progress-unlocks.ts` adds
   `computeContributorTier` (maps the existing `contribution-leaderboard.ts`
@@ -515,7 +541,7 @@ _(none)_
 * 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution.
 * 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. Follow-ups: (a) persisting a contributor's tier/badges, (b) a progress/unlock UI, (c) feeding the derived skill level into `research-task-routing.ts`'s `ContributorAvailability` instead of a caller-supplied value. None of these are started._
 * 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability.
-* 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history.
+* 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildContributorProgress`/`buildTopicProgress`/`buildResearchProgressBoard`/`buildProgressSummaryText` for combining a contributor's existing leaderboard contribution stats with per-topic task-completion counts derived from a topic-tagged research-task-routing assignment list, reusing the existing `ContributorStats`/`RoutedAssignment` types directly. Follow-ups: (a) wiring real task-completion events into a persisted assignment/completion history, (b) a progress dashboard/roster UI, (c) feeding a contributor's topic-progress history back into `progress-unlocks.ts`'s tier computation. None of these are started._
 * 📚 Common Argument Library - Organize all shared research into topic folders, case areas, and tag-based collections.
 * 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByDay`/`pickBestCardOfDay`/`buildDailyBestCards`/`getBestCardForDay`/`buildDailyBestCardHighlight` for grouping timestamped card contributions by UTC submission day and picking each day's single highest-helpfulness card, reusing the existing `community-rating.ts` helpfulness scoring (a card's likes/saves already model the community "vote"). Follow-ups: (a) wiring a `submittedAt` timestamp into wherever card contributions are eventually persisted, (b) a scheduled job or view that persists/announces the day's winner, (c) a challenge banner/widget UI. None of these are started._
 * 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. Follow-ups: (a) persisting `CardReview`/`ReviewComment` alongside submitted cards, (b) a review-queue/comment-thread UI, (c) reviewer identity/permission checks once auth/roles exist. None of these are started._

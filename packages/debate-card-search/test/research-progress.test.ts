@@ -1,0 +1,132 @@
+import { describe, expect, it } from "vitest";
+import {
+  buildContributorProgress,
+  buildProgressSummaryText,
+  buildResearchProgressBoard,
+  buildTopicProgress,
+  groupAssignmentsByContributor,
+  type TrackedTopicAssignment,
+} from "../src/lib/research-progress";
+import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
+import type { ResearchTask } from "../src/lib/research-task-routing";
+
+const warmingTask: ResearchTask = { argBlock: "Warming DA", category: "DA", level: "missing", requiredSkill: "intermediate" };
+const statesTask: ResearchTask = { argBlock: "States CP", category: "CP", level: "thin", requiredSkill: "novice" };
+const courtsTask: ResearchTask = { argBlock: "Courts CP", category: "CP", level: "missing", requiredSkill: "intermediate" };
+
+const aliceWarming: TrackedTopicAssignment = {
+  topic: "Immigration",
+  assignment: { task: warmingTask, contributorId: "alice" },
+  completedAt: "2026-01-05T00:00:00Z",
+};
+const aliceStates: TrackedTopicAssignment = {
+  topic: "Immigration",
+  assignment: { task: statesTask, contributorId: "alice" },
+};
+const aliceCourts: TrackedTopicAssignment = {
+  topic: "Healthcare",
+  assignment: { task: courtsTask, contributorId: "alice" },
+  completedAt: "2026-01-06T00:00:00Z",
+};
+const bobStates: TrackedTopicAssignment = {
+  topic: "Immigration",
+  assignment: { task: statesTask, contributorId: "bob" },
+};
+
+const aliceCard: AttributedContribution = {
+  id: "alice-card",
+  contributorId: "alice",
+  kind: "card",
+  likes: 2,
+  saves: 1,
+  qualitySignals: [0.9, 0.9],
+  reviewerEndorsements: [{ reviewerWeight: 1 }],
+};
+
+describe("groupAssignmentsByContributor", () => {
+  it("groups topic-tagged assignments by contributorId, preserving order within a group", () => {
+    const grouped = groupAssignmentsByContributor([aliceWarming, bobStates, aliceStates]);
+    expect(Array.from(grouped.keys())).toEqual(["alice", "bob"]);
+    expect(grouped.get("alice")?.map((t) => t.assignment.task.argBlock)).toEqual(["Warming DA", "States CP"]);
+    expect(grouped.get("bob")?.map((t) => t.assignment.task.argBlock)).toEqual(["States CP"]);
+  });
+
+  it("returns an empty map for an empty assignment list", () => {
+    expect(groupAssignmentsByContributor([]).size).toBe(0);
+  });
+});
+
+describe("buildTopicProgress", () => {
+  it("computes assigned/completed counts and a completion rate for one topic", () => {
+    const progress = buildTopicProgress("Immigration", [aliceWarming, aliceStates]);
+    expect(progress).toEqual({
+      topic: "Immigration",
+      assignedTaskCount: 2,
+      completedTaskCount: 1,
+      completionRate: 0.5,
+    });
+  });
+
+  it("returns a zero completion rate rather than dividing by zero when nothing is assigned", () => {
+    expect(buildTopicProgress("Immigration", []).completionRate).toBe(0);
+  });
+
+  it("reports full completion when every assignment has a completedAt", () => {
+    const progress = buildTopicProgress("Healthcare", [aliceCourts]);
+    expect(progress.completionRate).toBe(1);
+  });
+});
+
+describe("buildContributorProgress", () => {
+  it("combines contribution stats and per-topic task progress for one contributor", () => {
+    const progress = buildContributorProgress("alice", [aliceCard], [aliceWarming, aliceStates, aliceCourts]);
+
+    expect(progress.contributorId).toBe("alice");
+    expect(progress.contributionStats?.contributionCount).toBe(1);
+    expect(progress.topics.map((t) => t.topic)).toEqual(["Healthcare", "Immigration"]);
+    expect(progress.totalAssignedTasks).toBe(3);
+    expect(progress.totalCompletedTasks).toBe(2);
+    expect(progress.overallCompletionRate).toBeCloseTo(0.67, 5);
+  });
+
+  it("returns a null contributionStats for a contributor with no scored contributions", () => {
+    const progress = buildContributorProgress("bob", [], [bobStates]);
+    expect(progress.contributionStats).toBeNull();
+    expect(progress.totalAssignedTasks).toBe(1);
+  });
+
+  it("returns empty topics and zero task totals for a contributor with only contributions", () => {
+    const progress = buildContributorProgress("alice", [aliceCard], []);
+    expect(progress.topics).toEqual([]);
+    expect(progress.totalAssignedTasks).toBe(0);
+    expect(progress.overallCompletionRate).toBe(0);
+  });
+});
+
+describe("buildResearchProgressBoard", () => {
+  it("includes every contributor found in either contributions or assignments, sorted by contributorId", () => {
+    const board = buildResearchProgressBoard([aliceCard], [aliceWarming, bobStates]);
+    expect(board.map((p) => p.contributorId)).toEqual(["alice", "bob"]);
+    expect(board[1].contributionStats).toBeNull();
+  });
+
+  it("returns an empty board for empty inputs", () => {
+    expect(buildResearchProgressBoard([], [])).toEqual([]);
+  });
+});
+
+describe("buildProgressSummaryText", () => {
+  it("renders contribution and task-completion parts for a fully populated contributor", () => {
+    const progress = buildContributorProgress("alice", [aliceCard], [aliceWarming, aliceStates]);
+    const text = buildProgressSummaryText(progress);
+    expect(text).toContain("alice:");
+    expect(text).toContain("1 contribution");
+    expect(text).toContain("1/2 tasks complete (50%)");
+  });
+
+  it("renders fallback phrases when a contributor has neither contributions nor tasks", () => {
+    const progress = buildContributorProgress("carol", [], []);
+    const text = buildProgressSummaryText(progress);
+    expect(text).toBe("carol: no scored contributions; no assigned tasks");
+  });
+});
