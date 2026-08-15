@@ -32,7 +32,7 @@ _(none)_
   scheduled job that periodically calls `buildTopContributorAwards` and
   persists/announces the winners, (c) an awards UI in `debate-card-search`
   that renders `buildAwardsAnnouncementText`.
-  PR: TBD.
+  PR: [#77](https://github.com/debate/debate-ai.com/pull/77).
 - **Topic Coverage Dashboard — per-argument coverage aggregation slice.**
   `packages/debate-card-search/src/lib/topic-coverage.ts` adds
   `groupCardsByArgument` (groups caller-supplied cards by their `argBlock`),
