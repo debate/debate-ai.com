@@ -1,0 +1,163 @@
+import { describe, expect, it } from "vitest";
+import {
+  buildDailyQuestBoard,
+  buildQuestBoardSummaryText,
+  buildUnderCoveredArgumentQuests,
+  computeQuestProgress,
+  type QuestContribution,
+  type QuestTemplate,
+} from "../src/lib/daily-quests";
+import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "../src/lib/topic-coverage";
+
+const DAY_ONE = Date.parse("2026-08-10T12:00:00.000Z");
+const DAY_ONE_LATER = Date.parse("2026-08-10T23:00:00.000Z");
+const DAY_TWO = Date.parse("2026-08-11T09:00:00.000Z");
+
+function card(id: string, argBlock: string, submittedAt: number): QuestContribution {
+  return {
+    id,
+    kind: "card",
+    contributorId: "alex",
+    argBlock,
+    submittedAt,
+    likes: 0,
+    saves: 0,
+    qualitySignals: [],
+    reviewerEndorsements: [],
+  };
+}
+
+const findSolvencyCards: QuestTemplate = {
+  id: "find-solvency-cards",
+  description: "Find 5 solvency cards",
+  target: { kind: "card", argBlock: "Solvency" },
+  targetCount: 5,
+};
+
+describe("computeQuestProgress", () => {
+  it("counts only contributions matching the day and target", () => {
+    const contributions = [
+      card("a", "Solvency", DAY_ONE),
+      card("b", "Solvency", DAY_ONE_LATER),
+      card("c", "Topicality", DAY_ONE),
+      card("d", "Solvency", DAY_TWO),
+    ];
+
+    const progress = computeQuestProgress(findSolvencyCards, contributions, "2026-08-10");
+    expect(progress.completedCount).toBe(2);
+    expect(progress.remainingCount).toBe(3);
+    expect(progress.isComplete).toBe(false);
+  });
+
+  it("ignores a mismatched contribution kind", () => {
+    const contributions: QuestContribution[] = [
+      { ...card("a", "Solvency", DAY_ONE), kind: "summary" },
+      card("b", "Solvency", DAY_ONE),
+    ];
+    const progress = computeQuestProgress(findSolvencyCards, contributions, "2026-08-10");
+    expect(progress.completedCount).toBe(1);
+  });
+
+  it("treats a quest as complete once the target count is reached", () => {
+    const contributions = Array.from({ length: 5 }, (_, index) => card(`c${index}`, "Solvency", DAY_ONE));
+    const progress = computeQuestProgress(findSolvencyCards, contributions, "2026-08-10");
+    expect(progress.completedCount).toBe(5);
+    expect(progress.remainingCount).toBe(0);
+    expect(progress.isComplete).toBe(true);
+  });
+
+  it("matches any kind or argBlock when the target omits that field", () => {
+    const anyCardQuest: QuestTemplate = {
+      id: "any-cards",
+      description: "Add 3 cards",
+      target: { kind: "card" },
+      targetCount: 3,
+    };
+    const contributions = [card("a", "Solvency", DAY_ONE), card("b", "Topicality", DAY_ONE)];
+    expect(computeQuestProgress(anyCardQuest, contributions, "2026-08-10").completedCount).toBe(2);
+  });
+});
+
+describe("buildDailyQuestBoard", () => {
+  it("orders incomplete quests before complete ones, tie-broken by id", () => {
+    const doneQuest: QuestTemplate = { ...findSolvencyCards, id: "done", targetCount: 1 };
+    const pendingQuestB: QuestTemplate = { ...findSolvencyCards, id: "pending-b", targetCount: 5 };
+    const pendingQuestA: QuestTemplate = { ...findSolvencyCards, id: "pending-a", targetCount: 5 };
+
+    const contributions = [card("a", "Solvency", DAY_ONE)];
+    const board = buildDailyQuestBoard([doneQuest, pendingQuestB, pendingQuestA], contributions, DAY_ONE);
+
+    expect(board.map((q) => q.questId)).toEqual(["pending-a", "pending-b", "done"]);
+    expect(board.find((q) => q.questId === "done")?.isComplete).toBe(true);
+  });
+
+  it("scopes progress to the UTC day of `now`", () => {
+    const contributions = [card("a", "Solvency", DAY_TWO)];
+    const board = buildDailyQuestBoard([findSolvencyCards], contributions, DAY_ONE);
+    expect(board[0].completedCount).toBe(0);
+  });
+});
+
+describe("buildQuestBoardSummaryText", () => {
+  it("renders the completed-vs-total quest count", () => {
+    const board = buildDailyQuestBoard(
+      [
+        { ...findSolvencyCards, id: "a", targetCount: 1 },
+        { ...findSolvencyCards, id: "b", targetCount: 5 },
+      ],
+      [card("x", "Solvency", DAY_ONE)],
+      DAY_ONE,
+    );
+    expect(buildQuestBoardSummaryText(board)).toBe("1/2 quests complete today");
+  });
+});
+
+describe("buildUnderCoveredArgumentQuests", () => {
+  const tracked: TrackedArgument[] = [
+    { argBlock: "Solvency" },
+    { argBlock: "Topicality" },
+    { argBlock: "Warming DA" },
+  ];
+
+  const cards: CoverageCardSummary[] = [
+    { id: "1", argBlock: "Solvency", wordCount: 200 },
+    { id: "2", argBlock: "Topicality", wordCount: 300 },
+    { id: "3", argBlock: "Topicality", wordCount: 300 },
+    { id: "4", argBlock: "Topicality", wordCount: 300 },
+  ];
+
+  it("generates one quest per under-covered tracked argument, worst-covered first", () => {
+    const report = buildTopicCoverageReport(tracked, cards);
+    const quests = buildUnderCoveredArgumentQuests(report);
+
+    expect(quests.map((q) => q.id)).toEqual(["argblock:Warming DA", "argblock:Solvency"]);
+    expect(quests[0].targetCount).toBe(3);
+    expect(quests[0].description).toBe('Find 3 more cards for "Warming DA"');
+    expect(quests[1].targetCount).toBe(2);
+    expect(quests[1].description).toBe('Find 2 more cards for "Solvency"');
+  });
+
+  it("excludes arguments already covered", () => {
+    const report = buildTopicCoverageReport(tracked, cards);
+    const quests = buildUnderCoveredArgumentQuests(report);
+    expect(quests.find((q) => q.id === "argblock:Topicality")).toBeUndefined();
+  });
+
+  it("asks for enough cards to clear the minimum count even when word count is already high", () => {
+    const wordHeavyTracked: TrackedArgument[] = [{ argBlock: "Solvency" }];
+    const wordHeavyCards: CoverageCardSummary[] = [{ id: "1", argBlock: "Solvency", wordCount: 5000 }];
+    const report = buildTopicCoverageReport(wordHeavyTracked, wordHeavyCards);
+    const quests = buildUnderCoveredArgumentQuests(report);
+    expect(quests[0].targetCount).toBe(2);
+  });
+
+  it("returns no quests when every tracked argument is covered", () => {
+    const fullCards: CoverageCardSummary[] = [
+      { id: "1", argBlock: "Solvency", wordCount: 700 },
+      { id: "2", argBlock: "Solvency", wordCount: 700 },
+      { id: "3", argBlock: "Solvency", wordCount: 700 },
+    ];
+    const report = buildTopicCoverageReport([{ argBlock: "Solvency" }], fullCards);
+    expect(buildUnderCoveredArgumentQuests(report)).toEqual([]);
+  });
+});
