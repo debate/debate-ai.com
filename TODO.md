@@ -5,6 +5,33 @@
 _(none)_
 
 ### Completed
+- **Gamified Quests — streak tracking and milestone-badge slice.**
+  `packages/debate-card-search/src/lib/gamified-quests.ts` adds
+  `computeDailyMissionResult` (derives whether a day's `daily-quests.ts`
+  `QuestProgress` board was fully completed), `computeStreakStatus`
+  (current streak walking backward from a caller-supplied "as of" UTC day
+  key, plus the longest streak found anywhere in the supplied history),
+  `getEarnedStreakBadges` (milestone badges — 3/7/14/30-day streaks by
+  default — earned at a given streak length), `buildContributorQuestStreak`,
+  and `buildStreakSummaryText`. Reuses `daily-quests.ts`'s `QuestProgress`
+  board directly as the per-day completion signal rather than introducing a
+  separate mission-tracking data model. Vitest-covered in
+  `packages/debate-card-search/test/gamified-quests.test.ts`. See the
+  "Gamified Quests" bullet under Research Crowdsourcing Organizer Features
+  below — the "Daily Quests and Targets", "Progress Unlocks", and "Revision
+  Incentives" slices all named this as a follow-up. This is the first slice
+  only — it works entirely off caller-supplied daily mission-completion
+  history; it doesn't wire in real contribution-submission events, persist a
+  contributor's streak/badges anywhere, or render a streak/badge UI.
+  Follow-ups: (a) wiring the existing `daily-quests.ts` board (fed by real
+  persisted daily contributions) into `computeDailyMissionResult` per
+  contributor per day instead of caller-supplied results, (b) a streak/badge
+  widget UI that renders `buildContributorQuestStreak`/
+  `buildStreakSummaryText` alongside the quest board, (c) surfacing earned
+  streak badges on a contributor's `progress-unlocks.ts` unlock status
+  alongside their tier badges.
+  PR: TBD.
+
 - **Daily Quests and Targets — per-day quest progress tracking slice.**
   `packages/debate-card-search/src/lib/daily-quests.ts` adds
   `computeQuestProgress` (tallies a day's contributions matching a quest's
@@ -586,7 +613,7 @@ _(none)_
 
 * 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool.
 * 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. Follow-ups: (a) wiring a `contributorId` into wherever contributions are eventually persisted, (b) a "completed tasks" signal once a research-task system exists, (c) a leaderboard UI. None of these are started._
-* 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution.
+* 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeDailyMissionResult`/`computeStreakStatus`/`getEarnedStreakBadges`/`buildContributorQuestStreak`/`buildStreakSummaryText` for turning a contributor's daily `daily-quests.ts` mission-completion history into a current/longest streak and the milestone badges (3/7/14/30-day streaks by default) that streak has earned. Follow-ups: (a) wiring real, persisted daily contributions into `computeDailyMissionResult` per contributor per day, (b) a streak/badge widget UI, (c) surfacing earned streak badges on a contributor's `progress-unlocks.ts` unlock status. None of these are started._
 * 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. Follow-ups: (a) persisting a contributor's tier/badges, (b) a progress/unlock UI, (c) feeding the derived skill level into `research-task-routing.ts`'s `ContributorAvailability` instead of a caller-supplied value. None of these are started._
 * 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scoreRelevance`/`scoreClarity`/`scoreUniqueness`/`scoreEvidenceQuality`/`scoreUsability`/`computeCardScoreBreakdown`/`rankCardScores`/`buildCardScoreSummaryText` for scoring a card across all five dimensions with deterministic heuristics and flagging likely duplicates, reusing the existing idea #11 `community-rating.ts` quality-signal scoring for evidence quality. Follow-ups: (a) an actual LLM-scoring call for the more subjective dimensions instead of the heuristic proxy, (b) wiring real argument-block keywords and a real submitted-card corpus into the scorer, (c) a scoring/duplicate-flag panel UI. None of these are started._
 * 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildContributorProgress`/`buildTopicProgress`/`buildResearchProgressBoard`/`buildProgressSummaryText` for combining a contributor's existing leaderboard contribution stats with per-topic task-completion counts derived from a topic-tagged research-task-routing assignment list, reusing the existing `ContributorStats`/`RoutedAssignment` types directly. Follow-ups: (a) wiring real task-completion events into a persisted assignment/completion history, (b) a progress dashboard/roster UI, (c) feeding a contributor's topic-progress history back into `progress-unlocks.ts`'s tier computation. None of these are started._
