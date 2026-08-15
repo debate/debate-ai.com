@@ -5,6 +5,39 @@
 _(none)_
 
 ### Completed
+- **Research Task Routing — coverage-gap-to-contributor routing slice.**
+  `packages/debate-card-search/src/lib/research-task-routing.ts` adds
+  `buildTaskQueue` (turns a topic-coverage report's under-covered arguments
+  — via the existing `topic-coverage.ts` `getUnderCoveredArguments` — into a
+  queue of research tasks, most urgent first, each tagged with a required
+  skill level: `missing` arguments need at least `intermediate` skill to
+  build coverage from scratch, `thin` arguments are open to any skill
+  level), `routeTasks` (assigns the queue to caller-supplied contributors,
+  gating each task by required skill and remaining capacity, and routing to
+  whichever eligible contributor currently has the fewest active tasks —
+  updated as assignments happen within the same call — tie-broken by
+  `contributorId`, leaving a task in `unassignedTasks` rather than dropping
+  it when nobody qualifies or has capacity), `buildRoutingResult` (a
+  build-then-route convenience wrapper), and `buildRoutingSummaryText`
+  (renders one line per assignment plus an unassigned-count line for a
+  task-assignment view). Reuses the existing "Topic Coverage Dashboard"
+  slice directly rather than introducing a separate gap-detection path.
+  Vitest-covered in
+  `packages/debate-card-search/test/research-task-routing.test.ts`. See the
+  "Research Task Routing" bullet under Research Crowdsourcing Organizer
+  Features below. This is the first slice only — it works entirely off a
+  caller-supplied `TopicCoverageReport` and a caller-supplied contributor
+  list; it doesn't track contributors' skill levels or active task counts
+  itself (neither exists in this repo today), and it isn't wired into any
+  task-assignment UI yet. Follow-ups: (a) a persisted contributor profile
+  (skill level, active task count) and a persisted task queue, neither of
+  which exist in this repo today, (b) a task-assignment/inbox UI in
+  `debate-card-search` that renders `buildRoutingSummaryText`/assignments
+  and lets a contributor accept or complete a routed task, (c) an
+  actual-skill-level signal (e.g. derived from the `Contribution
+  Leaderboard`/`community-rating.ts` history) instead of a caller-supplied
+  `skillLevel`.
+  PR: [#78](https://github.com/debate/debate-ai.com/pull/78).
 - **Top Contributor Awards — per-category award selection slice.**
   `packages/debate-card-search/src/lib/contributor-awards.ts` adds
   `groupContributionsByKind` (groups caller-supplied, contributor-attributed
@@ -433,7 +466,7 @@ _(none)_
 * 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByDay`/`pickBestCardOfDay`/`buildDailyBestCards`/`getBestCardForDay`/`buildDailyBestCardHighlight` for grouping timestamped card contributions by UTC submission day and picking each day's single highest-helpfulness card, reusing the existing `community-rating.ts` helpfulness scoring (a card's likes/saves already model the community "vote"). Follow-ups: (a) wiring a `submittedAt` timestamp into wherever card contributions are eventually persisted, (b) a scheduled job or view that persists/announces the day's winner, (c) a challenge banner/widget UI. None of these are started._
 * 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. Follow-ups: (a) persisting `CardReview`/`ReviewComment` alongside submitted cards, (b) a review-queue/comment-thread UI, (c) reviewer identity/permission checks once auth/roles exist. None of these are started._
 * 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopContributorAwards`/`buildCategoryLeaderboard`/`groupContributionsByKind`/`buildAwardsAnnouncementText` for grouping contributor-attributed contributions by `ContributionKind` and selecting a per-kind category winner by helpfulness score, reusing the existing idea #11/Contribution Leaderboard scoring. Follow-ups: (a) a finer-grained kind/tag for "original argument" and "refutation" contributions, neither of which exists as a distinct kind today, (b) a scheduled job to persist/announce winners, (c) an awards UI. None of these are started._
-* 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs.
+* 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. Follow-ups: (a) persisted contributor profiles (skill level, active task count) and a persisted task queue, (b) a task-assignment/inbox UI, (c) an actual-skill-level signal derived from contribution history instead of a caller-supplied value. None of these are started._
 * 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations.
 * 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. Follow-ups: (a) an `argBlock`/word-count field wired into wherever submitted cards are eventually persisted, (b) a team-editable tracked-argument checklist per topic, (c) a coverage dashboard UI. None of these are started._
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.”
