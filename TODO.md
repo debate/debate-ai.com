@@ -37,7 +37,7 @@ _(none)_
   actual-skill-level signal (e.g. derived from the `Contribution
   Leaderboard`/`community-rating.ts` history) instead of a caller-supplied
   `skillLevel`.
-  PR: TBD.
+  PR: [#78](https://github.com/debate/debate-ai.com/pull/78).
 - **Top Contributor Awards — per-category award selection slice.**
   `packages/debate-card-search/src/lib/contributor-awards.ts` adds
   `groupContributionsByKind` (groups caller-supplied, contributor-attributed
