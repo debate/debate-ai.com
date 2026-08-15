@@ -5,6 +5,33 @@
 _(none)_
 
 ### Completed
+- **Progress Unlocks — contributor tier/skill/badge scoring slice.**
+  `packages/debate-card-search/src/lib/progress-unlocks.ts` adds
+  `computeContributorTier` (maps the existing `contribution-leaderboard.ts`
+  `ContributorStats` — contribution count and total helpfulness score — to
+  an unlock tier: `novice` → `apprentice` → `veteran` → `expert`, gated on
+  clearing both a volume and a quality threshold per tier),
+  `getUnlockedSkillLevel` (maps a tier to the `research-task-routing.ts`
+  `SkillLevel` it grants for taking on routed research tasks — `novice`
+  through `veteran` unlock `novice`/`intermediate`, `expert` unlocks
+  `advanced`), `getUnlockedBadges` (every badge earned on the way to a
+  tier, cumulative), and `buildContributorUnlockStatus`/
+  `buildUnlockStatusText` (combine tier, unlocked skill level, badges, and
+  progress toward the next tier into a renderable status). Reuses the
+  existing `ContributorStats`/`SkillLevel` types directly rather than
+  introducing a separate scoring or skill-tagging path. Vitest-covered in
+  `packages/debate-card-search/test/progress-unlocks.test.ts`. See the
+  "Progress Unlocks" bullet under Research Crowdsourcing Organizer Features
+  below. This is the first slice only — it works entirely off a
+  caller-supplied `ContributorStats`; it doesn't persist a contributor's
+  tier/badges, gate any actual UI or task list, or feed the derived
+  `SkillLevel` into `research-task-routing.ts`'s `ContributorAvailability`
+  itself. Follow-ups: (a) persisting a contributor's tier/badges, (b) a
+  progress/unlock UI that renders `buildUnlockStatusText`/
+  `buildContributorUnlockStatus`, (c) feeding `getUnlockedSkillLevel` into
+  `research-task-routing.ts`'s `ContributorAvailability.skillLevel` instead
+  of a caller-supplied value.
+  PR: [#80](https://github.com/debate/debate-ai.com/pull/80).
 - **Revision Incentives — card-revision reward scoring slice.**
   `packages/debate-card-search/src/lib/revision-incentives.ts` adds
   `evaluateRevision` (scores a before/after card snapshot pair — reusing the
@@ -486,7 +513,7 @@ _(none)_
 * 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool.
 * 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. Follow-ups: (a) wiring a `contributorId` into wherever contributions are eventually persisted, (b) a "completed tasks" signal once a research-task system exists, (c) a leaderboard UI. None of these are started._
 * 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution.
-* 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more.
+* 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. Follow-ups: (a) persisting a contributor's tier/badges, (b) a progress/unlock UI, (c) feeding the derived skill level into `research-task-routing.ts`'s `ContributorAvailability` instead of a caller-supplied value. None of these are started._
 * 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability.
 * 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history.
 * 📚 Common Argument Library - Organize all shared research into topic folders, case areas, and tag-based collections.
