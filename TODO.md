@@ -30,7 +30,7 @@ _(none)_
   schema exists in this repo today), (c) a coverage dashboard UI in
   `debate-card-search` that renders `buildTopicCoverageReport`/
   `getUnderCoveredArguments`. None of these are started.
-  PR: TBD.
+  PR: [#76](https://github.com/debate/debate-ai.com/pull/76).
 - **Daily Best Card Challenge — daily-winner selection slice.**
   `packages/debate-card-search/src/lib/daily-best-card.ts` adds
   `groupCardsByDay` (groups caller-supplied, timestamped card contributions
