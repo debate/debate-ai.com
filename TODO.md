@@ -5,6 +5,33 @@
 _(none)_
 
 ### Completed
+- **Revision Incentives — card-revision reward scoring slice.**
+  `packages/debate-card-search/src/lib/revision-incentives.ts` adds
+  `evaluateRevision` (scores a before/after card snapshot pair — reusing the
+  existing idea #11 `community-rating.ts` `scoreQualitySignal` to measure
+  quality gain, doubling the quality-point reward when the card was weak
+  beforehand, plus flat bonuses for a meaningful citation-completeness gain
+  or citing newer evidence than the prior snapshot), `groupRevisionsByContributor`,
+  `buildContributorRevisionStats` (per-contributor revision count, rewarded
+  count, total reward points, and weak-cards-improved count), `buildRevisionIncentiveLeaderboard`
+  (ranks contributors by total reward points, tie-broken by `contributorId`),
+  and `buildRevisionRewardText` (renders a one-line reward notification, or a
+  no-reward line when nothing meaningful improved). Reuses the existing idea
+  #11 quality scoring directly rather than introducing a separate quality
+  metric. Vitest-covered in
+  `packages/debate-card-search/test/revision-incentives.test.ts`. See the
+  "Revision Incentives" bullet under Research Crowdsourcing Organizer
+  Features below. This is the first slice only — it works entirely off
+  caller-supplied before/after card snapshots; it doesn't track card
+  revision history itself (no such history exists in this repo today),
+  persist reward points, or render an incentives UI. Follow-ups: (a) wiring
+  actual card-edit events into a persisted `CardRevision` history, (b) a
+  reward-notification/incentives-leaderboard UI in `debate-card-search`
+  that renders `buildRevisionRewardText`/`buildRevisionIncentiveLeaderboard`,
+  (c) an actual "outdated evidence" staleness signal (e.g. flagging cards
+  whose `evidenceYear` has fallen behind a topic's current cycle) instead of
+  only rewarding a refresh after the fact.
+  PR: [#79](https://github.com/debate/debate-ai.com/pull/79).
 - **Research Task Routing — coverage-gap-to-contributor routing slice.**
   `packages/debate-card-search/src/lib/research-task-routing.ts` adds
   `buildTaskQueue` (turns a topic-coverage report's under-covered arguments
@@ -467,7 +494,7 @@ _(none)_
 * 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. Follow-ups: (a) persisting `CardReview`/`ReviewComment` alongside submitted cards, (b) a review-queue/comment-thread UI, (c) reviewer identity/permission checks once auth/roles exist. None of these are started._
 * 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopContributorAwards`/`buildCategoryLeaderboard`/`groupContributionsByKind`/`buildAwardsAnnouncementText` for grouping contributor-attributed contributions by `ContributionKind` and selecting a per-kind category winner by helpfulness score, reusing the existing idea #11/Contribution Leaderboard scoring. Follow-ups: (a) a finer-grained kind/tag for "original argument" and "refutation" contributions, neither of which exists as a distinct kind today, (b) a scheduled job to persist/announce winners, (c) an awards UI. None of these are started._
 * 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. Follow-ups: (a) persisted contributor profiles (skill level, active task count) and a persisted task queue, (b) a task-assignment/inbox UI, (c) an actual-skill-level signal derived from contribution history instead of a caller-supplied value. None of these are started._
-* 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations.
+* 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. Follow-ups: (a) wiring actual card-edit events into a persisted revision history, (b) a reward-notification/incentives-leaderboard UI, (c) an actual evidence-staleness signal instead of only rewarding a refresh after the fact. None of these are started._
 * 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. Follow-ups: (a) an `argBlock`/word-count field wired into wherever submitted cards are eventually persisted, (b) a team-editable tracked-argument checklist per topic, (c) a coverage dashboard UI. None of these are started._
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.”
 * 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status.
