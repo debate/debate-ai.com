@@ -137,6 +137,18 @@ describe("buildUnderCoveredArgumentQuests", () => {
     expect(quests[1].description).toBe('Find 2 more cards for "Solvency"');
   });
 
+  it("uses singular phrasing when only one more card is needed", () => {
+    const almostCoveredTracked: TrackedArgument[] = [{ argBlock: "Solvency" }];
+    const almostCoveredCards: CoverageCardSummary[] = [
+      { id: "1", argBlock: "Solvency", wordCount: 300 },
+      { id: "2", argBlock: "Solvency", wordCount: 300 },
+    ];
+    const report = buildTopicCoverageReport(almostCoveredTracked, almostCoveredCards);
+    const quests = buildUnderCoveredArgumentQuests(report);
+    expect(quests[0].targetCount).toBe(1);
+    expect(quests[0].description).toBe('Find 1 more card for "Solvency"');
+  });
+
   it("excludes arguments already covered", () => {
     const report = buildTopicCoverageReport(tracked, cards);
     const quests = buildUnderCoveredArgumentQuests(report);
