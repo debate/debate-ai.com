@@ -43,6 +43,26 @@ const aliceCard: AttributedContribution = {
   reviewerEndorsements: [{ reviewerWeight: 1 }],
 };
 
+const carolCard: AttributedContribution = {
+  id: "carol-card",
+  contributorId: "carol",
+  kind: "card",
+  likes: 1,
+  saves: 0,
+  qualitySignals: [0.7],
+  reviewerEndorsements: [],
+};
+
+const aliceSummary: AttributedContribution = {
+  id: "alice-summary",
+  contributorId: "alice",
+  kind: "summary",
+  likes: 1,
+  saves: 1,
+  qualitySignals: [0.8],
+  reviewerEndorsements: [],
+};
+
 describe("groupAssignmentsByContributor", () => {
   it("groups topic-tagged assignments by contributorId, preserving order within a group", () => {
     const grouped = groupAssignmentsByContributor([aliceWarming, bobStates, aliceStates]);
@@ -113,6 +133,14 @@ describe("buildResearchProgressBoard", () => {
   it("returns an empty board for empty inputs", () => {
     expect(buildResearchProgressBoard([], [])).toEqual([]);
   });
+
+  it("gives a contributor with contributions but no assignments an empty topics list rather than throwing", () => {
+    const board = buildResearchProgressBoard([aliceCard, carolCard], [aliceWarming]);
+    const carol = board.find((p) => p.contributorId === "carol");
+    expect(carol?.topics).toEqual([]);
+    expect(carol?.totalAssignedTasks).toBe(0);
+    expect(carol?.contributionStats?.contributionCount).toBe(1);
+  });
 });
 
 describe("buildProgressSummaryText", () => {
@@ -128,5 +156,11 @@ describe("buildProgressSummaryText", () => {
     const progress = buildContributorProgress("carol", [], []);
     const text = buildProgressSummaryText(progress);
     expect(text).toBe("carol: no scored contributions; no assigned tasks");
+  });
+
+  it("pluralizes the contribution count for a contributor with more than one contribution", () => {
+    const progress = buildContributorProgress("alice", [aliceCard, aliceSummary], []);
+    const text = buildProgressSummaryText(progress);
+    expect(text).toContain("2 contributions");
   });
 });
