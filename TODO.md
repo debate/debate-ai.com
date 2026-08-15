@@ -5,6 +5,30 @@
 _(none)_
 
 ### Completed
+- **Daily Quests and Targets — per-day quest progress tracking slice.**
+  `packages/debate-card-search/src/lib/daily-quests.ts` adds
+  `computeQuestProgress` (tallies a day's contributions matching a quest's
+  kind/argument-block target against its target count),
+  `buildDailyQuestBoard` (progress for every quest on the UTC calendar day
+  of a caller-supplied `now`, incomplete quests first), `buildQuestBoardSummaryText`,
+  and `buildUnderCoveredArgumentQuests` (turns the existing "Topic Coverage
+  Dashboard" slice's `getUnderCoveredArguments` output into a ready-made
+  "find N more cards for X" quest per under-covered tracked argument).
+  Reuses `topic-coverage.ts`'s coverage classification and
+  `daily-best-card.ts`'s `getUtcDayKey` directly rather than introducing a
+  separate under-coverage or day-scoping signal. Vitest-covered in
+  `packages/debate-card-search/test/daily-quests.test.ts`. See the "Daily
+  Quests and Targets" bullet under Research Crowdsourcing Organizer
+  Features below. This is the first slice only — it works entirely off
+  caller-supplied quest templates and contributions; it doesn't track
+  streaks (a separate "Gamified Quests" idea), persist quest completion
+  anywhere, or render a quest board UI. Follow-ups: (a) wiring real
+  contribution-submission events into a persisted daily contribution feed
+  instead of caller-supplied data, (b) a quest-board widget UI that renders
+  `buildDailyQuestBoard`/`buildQuestBoardSummaryText`, (c) a streak/reward
+  layer on top of quest completion once the "Gamified Quests" idea's own
+  first slice exists.
+
 - **LLM Card Scoring — deterministic heuristic scoring slice.**
   `packages/debate-card-search/src/lib/llm-card-scoring.ts` adds
   `scoreRelevance` (keyword/phrase overlap against a card's argument
@@ -572,7 +596,7 @@ _(none)_
 * 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. Follow-ups: (a) persisted contributor profiles (skill level, active task count) and a persisted task queue, (b) a task-assignment/inbox UI, (c) an actual-skill-level signal derived from contribution history instead of a caller-supplied value. None of these are started._
 * 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. Follow-ups: (a) wiring actual card-edit events into a persisted revision history, (b) a reward-notification/incentives-leaderboard UI, (c) an actual evidence-staleness signal instead of only rewarding a refresh after the fact. None of these are started._
 * 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. Follow-ups: (a) an `argBlock`/word-count field wired into wherever submitted cards are eventually persisted, (b) a team-editable tracked-argument checklist per topic, (c) a coverage dashboard UI. None of these are started._
-* 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.”
+* 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. Follow-ups: (a) wiring real contribution-submission events into a persisted daily feed, (b) a quest-board widget UI, (c) a streak/reward layer once the Gamified Quests idea has its own first slice. None of these are started._
 * 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status.
 * 
 * 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. Follow-ups: (a) a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of relying on caller-supplied data, (b) a scouting-card/panel UI, (c) persisting/looking up profiles by team across tournaments. None of these are started._
