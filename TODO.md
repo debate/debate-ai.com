@@ -29,7 +29,7 @@ _(none)_
   AI-generated (rather than templated) overview/frontline script once an LLM
   call is wired in, (c) persisting generated drills per round/practice
   session.
-  PR: TBD.
+  PR: [#88](https://github.com/debate/debate-ai.com/pull/88).
 - **Common Argument Library — topic-folder/case-area/tag-collection organizing slice.**
   `packages/debate-card-search/src/lib/argument-library.ts` adds
   `groupCardsByTopic`, `groupCardsByCaseArea`, `buildTopicFolder` (splits one
