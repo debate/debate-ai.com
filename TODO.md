@@ -30,7 +30,7 @@ _(none)_
   wiring real contribution-submission/practice-round-result events into
   `computeGroupChallengeProgress` instead of caller-supplied data, (c)
   notifying the squad when a persisted challenge completes.
-  PR: TBD.
+  PR: [#113](https://github.com/debate/debate-ai.com/pull/113).
 - **Judge Paradigm Selection Persistence — localStorage paradigm-per-round store.**
   `packages/debate-speech-writer/src/state/judgeParadigmSelections.ts` adds
   `listJudgeParadigmSelections`/`getJudgeParadigmSelection`/
