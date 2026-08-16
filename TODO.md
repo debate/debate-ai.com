@@ -30,7 +30,7 @@ _(none)_
   daily mission-completion history so this can be computed from real data
   instead of caller-supplied input, (b) a progress/unlock panel UI that
   renders `buildUnlockStatusWithStreakText`/`ContributorUnlockStatusWithStreak`.
-  PR: TBD.
+  PR: [#117](https://github.com/debate/debate-ai.com/pull/117).
 - **Generated Drill Set Persistence — localStorage drill-set-per-round store.**
   `packages/debate-round/src/state/drillSets.ts` adds
   `listDrillSets`/`getDrillSet`/`saveDrillSet`/`deleteDrillSet`, a
