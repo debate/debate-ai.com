@@ -38,7 +38,8 @@
   index (e.g. Typesense, mirroring the existing `search-query.ts` CARDS
   search) once entries are persisted, for relevance/typo-tolerance beyond
   the current keyword-overlap heuristic. None of these are started. PR:
-  TBD (`bun run typecheck`/`bun run test`/`bun run build` all pass).
+  [#126](https://github.com/debate/debate-ai.com/pull/126) (`bun run
+  typecheck`/`bun run test`/`bun run build` all pass).
 - **AI Coach Mode — coaching-session persistence.**
   `packages/debate-round/src/state/coachingSessions.ts` adds a
   localStorage-backed CRUD store (`listCoachingSessions`/`getCoachingSession`/
