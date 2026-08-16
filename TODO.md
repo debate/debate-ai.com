@@ -34,7 +34,7 @@ _(none)_
   into a task-assignment/inbox UI once one exists, (c) reusing the same
   derive-then-route pattern once `research-task-routing.ts`'s task queue
   gains other skill-gated categories beyond coverage-gap tasks.
-  PR: TBD.
+  PR: [#100](https://github.com/debate/debate-ai.com/pull/100).
 - **Coaching Program Space — topic-sprint/group-challenge/member-drill composition slice.**
   `packages/debate-round/src/round/coaching-program.ts` adds a
   `CoachingProgramConfig` (id, name, squad roster) and
