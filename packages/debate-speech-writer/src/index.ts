@@ -8,8 +8,8 @@
  * the opponent-persona registry for AI practice-opponent styles, the
  * team coach-material library/grounded-prompt helpers for the private team
  * coach AI idea, and localStorage-backed persistence stores for a team's
- * coach materials, for judge profiles, and for a round's selected judge
- * paradigm.
+ * coach materials, for judge profiles, for a round's selected judge
+ * paradigm, and for a practice session's selected opponent persona.
  *
  * @module debate-speech-writer
  */
@@ -69,6 +69,14 @@ export type {
   OpponentPersonaPace,
   OpponentPersona,
 } from "./opponent/opponent-personas";
+
+export {
+  deleteOpponentPersonaSelection,
+  getOpponentPersonaSelection,
+  listOpponentPersonaSelections,
+  saveOpponentPersonaSelection,
+} from "./state/opponentPersonaSelections";
+export type { OpponentPersonaSelection } from "./state/opponentPersonaSelections";
 
 export {
   buildCoachMaterialLibrary,
