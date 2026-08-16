@@ -5,6 +5,40 @@
 _(none)_
 
 ### Completed
+- **Scout-to-Strategy Workflow — case-choice/judge-adaptation/risk-level recommendation slice.**
+  `packages/debate-round/src/round/scout-to-strategy.ts` adds
+  `computeCaseOverlapScore`/`rankCaseOptions` (ranks caller-supplied case
+  options by tag overlap against the opponent's existing `OpponentTeamProfile`
+  `topArgumentTags` — a heuristic proxy for "the opponent likely has blocks
+  prepped against this" — safest/lowest-overlap first, tie-broken
+  alphabetically), `buildJudgeAdaptationNotes` (turns an existing
+  `JudgeProfile`'s speed tolerance, theory receptiveness, side bias, and
+  most-tagged paradigm into concrete adaptation notes, with explicit
+  fallback text when there's no judge data or no notable tendencies),
+  `assessMatchupRisk` (combines opponent win rate/side preference and judge
+  side bias into a `low`/`medium`/`high` risk level plus the specific
+  factors behind it — one risk factor is `medium`, two or more is `high`),
+  and `buildStrategyRecommendation`/`buildStrategyRecommendationText`
+  (compose all of the above into one renderable recommendation). Mirrors the
+  existing `pre-round-briefing.ts` pattern in the same package and reuses
+  the existing `OpponentTeamProfile` (`debate-data-sync`)/`JudgeProfile`
+  (`debate-speech-writer`) types directly rather than introducing new ones.
+  Vitest-covered (100% statement/branch/function/line coverage) in
+  `packages/debate-round/test/scout-to-strategy.test.ts`. See the
+  "Scout-to-Strategy Workflow" bullet under Research Crowdsourcing Organizer
+  Features below. This is the first slice only — the risk/case-overlap
+  heuristics are illustrative, not a validated strategic model; it doesn't
+  know which side the opponent will be on this round (no `ourSide`/opponent
+  side input is wired into the risk heuristic yet), it doesn't call any AI
+  model to evaluate case choice, and it isn't wired into any strategy-panel
+  UI yet. This repo has no `lint` script configured (only
+  `typecheck`/`test`/`build` via turbo), so there was no lint step to run.
+  Follow-ups: (a) a case-choice/strategy panel UI in `debate-round` that
+  renders `buildStrategyRecommendation`/`buildStrategyRecommendationText`,
+  (b) wiring `ourSide`/likely opponent side into the risk heuristic once
+  round-setup state exposes it, (c) an actual AI-panel evaluation of case
+  choice instead of the tag-overlap heuristic.
+  PR: [#90](https://github.com/debate/debate-ai.com/pull/90).
 - **AI Practice Opponent — policy-heavy/kritik/lay/fast-flow persona registry slice.**
   `packages/debate-speech-writer/src/opponent/opponent-personas.ts` adds a
   `opponentPersonas` registry of four built-in styles (`policy-heavy`,
@@ -720,4 +754,4 @@ _(none)_
 * 
 * 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. Follow-ups: (a) a drill-panel UI, (b) an actual AI-generated (rather than templated) script, (c) persisting generated drills per round. None of these are started._
 * 
-* 🧭 Scout-to-Strategy Workflow - Turn scouting data into recommended game plans, case choices, judge adaptation, and risk levels.
+* 🧭 Scout-to-Strategy Workflow - Turn scouting data into recommended game plans, case choices, judge adaptation, and risk levels. _Status: first slice done (see Tracker Status above) — `debate-round` now has `rankCaseOptions`/`computeCaseOverlapScore`/`buildJudgeAdaptationNotes`/`assessMatchupRisk`/`buildStrategyRecommendation`/`buildStrategyRecommendationText` for ranking caller-supplied case options by opponent-tag overlap, turning judge tendencies into adaptation notes, and combining opponent/judge signals into a risk level with its contributing factors, reusing the existing `OpponentTeamProfile`/`JudgeProfile` types directly. Follow-ups: (a) a case-choice/strategy panel UI, (b) wiring `ourSide`/likely opponent side into the risk heuristic, (c) an actual AI-panel evaluation of case choice instead of the tag-overlap heuristic. None of these are started._
