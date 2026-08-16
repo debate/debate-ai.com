@@ -2,7 +2,63 @@
 ## Tracker Status
 
 ### In progress
-_(none)_
+
+## Judge Profile Persistence — localStorage profile store
+
+**Status:** In Progress
+**Source:** TODO.md — "Judge Profiles" bullet under Research Crowdsourcing Organizer Features (follow-up (c): "persisting/looking up profiles by judge across tournaments")
+**Branch:** `claude/upbeat-bardeen-675edm`
+**PR:** Not created yet
+**Started:** 2026-08-16
+
+### Goal
+Add a localStorage-backed CRUD persistence store for `JudgeProfile` records
+(`packages/debate-speech-writer/src/judge/judge-profile.ts`), keyed by
+`judgeId`, mirroring the existing `coachMaterials.ts`/`opponentTeamProfiles.ts`
+persistence convention — the same "(c) persisting/looking up profiles by
+[team/judge] across tournaments" follow-up already closed for Opponent Team
+Profiles (PR #108), now closed for Judge Profiles.
+
+### Scope
+- `packages/debate-speech-writer/src/state/judgeProfiles.ts`:
+  `listJudgeProfiles`/`getJudgeProfile`/`saveJudgeProfile`/`deleteJudgeProfile`,
+  keyed by `judgeId`, upsert-on-save, SSR/no-storage-safe, corrupt/missing
+  JSON degrades to an empty list.
+- Vitest coverage with an in-memory `localStorage` mock (this package's
+  Vitest environment is `node`, no DOM).
+- Export the new store from `packages/debate-speech-writer/src/index.ts`.
+
+### Non-goals
+- No real ballot data source (still caller-supplied `JudgeRoundRecord`s).
+- No judge-profile card/panel UI.
+- No wiring into `buildPreRoundBriefing` (separate follow-up).
+
+### Acceptance criteria
+- [x] `listJudgeProfiles`/`getJudgeProfile`/`saveJudgeProfile`/`deleteJudgeProfile` implemented
+- [x] Corrupt/missing/non-array stored JSON degrades to an empty list rather than throwing
+- [x] Vitest coverage is added
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Production/web build passes
+- [x] Documentation is updated (TODO.md tracker)
+- Lint: no `lint` script is configured in this repo (only `typecheck`/`test`/`build` via turbo) — N/A, matches prior slices' precedent
+
+### Implementation plan
+- [x] Inspect `judge-profile.ts`, `coachMaterials.ts`, `opponentTeamProfiles.ts`, and their tests
+- [x] Implement `state/judgeProfiles.ts`
+- [x] Add Vitest coverage (list/get/save/upsert/delete + corrupt-JSON cases)
+- [x] Run focused tests and fix failures (9/9 passed on first run)
+- [x] Run typecheck (`debate-speech-writer` package + full `turbo typecheck`, 11/11 packages pass)
+- [x] Run the full relevant test suite (65 test files / 880 tests pass repo-wide)
+- [x] Run the production/web build (`turbo build`, 2/2 tasks pass)
+- [x] Review the final diff for scope and quality
+- [x] Commit and push the branch
+- [ ] Create or update the pull request
+- [x] Update tracker status, completed checkboxes, and remaining work
+
+### Remaining work
+- Open the pull request (implementation, tests, and verification are done and pushed).
+
 
 ### Completed
 - **Opponent Team Profile Persistence — localStorage profile store.**

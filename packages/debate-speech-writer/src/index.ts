@@ -7,8 +7,8 @@
  * judge-profile aggregation helpers for summarizing a judge's ballot history,
  * the opponent-persona registry for AI practice-opponent styles, the
  * team coach-material library/grounded-prompt helpers for the private team
- * coach AI idea, and a localStorage-backed persistence store for a team's
- * coach materials.
+ * coach AI idea, and localStorage-backed persistence stores for a team's
+ * coach materials and for judge profiles.
  *
  * @module debate-speech-writer
  */
@@ -47,6 +47,13 @@ export type {
   TheoryReceptiveness,
   JudgeProfile,
 } from "./judge/judge-profile";
+
+export {
+  deleteJudgeProfile,
+  getJudgeProfile,
+  listJudgeProfiles,
+  saveJudgeProfile,
+} from "./state/judgeProfiles";
 
 export {
   opponentPersonas,
