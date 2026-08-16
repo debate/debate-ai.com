@@ -5,6 +5,24 @@
 _(none)_
 
 ### Completed
+- **Generated Drill Set Persistence — localStorage drill-set-per-round store.**
+  `packages/debate-round/src/state/drillSets.ts` adds
+  `listDrillSets`/`getDrillSet`/`saveDrillSet`/`deleteDrillSet`, a
+  localStorage-backed CRUD store for `drill-generator.ts`'s generated
+  `Drill[]` set (plus the `sideKey` it was generated for), keyed by
+  `roundId` with upsert-on-save semantics, mirroring the existing
+  `preRoundBriefings.ts`/`judgeParadigmSelections.ts` persistence convention
+  (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
+  rather than throwing). See the "AI Drill Generator" bullet under Research
+  Crowdsourcing Organizer Features below — this is the "(c) persisting
+  generated drills per round" follow-up named in that slice. This is a
+  persistence slice only — it stores whatever `Drill[]` a caller passes in
+  verbatim (`buildDrillSet` itself is unchanged); no drill-panel UI in this
+  repo yet reads or writes through this store. Vitest-covered in
+  `packages/debate-round/test/drillSets.test.ts`. Follow-ups: (a) a
+  drill-panel UI that calls `buildDrillSet` and reads/writes through this
+  store, (b) an actual AI-generated (rather than templated) drill script.
+  PR: TBD.
 - **Pre-Round Briefing Persistence — localStorage briefing store.**
   `packages/debate-round/src/state/preRoundBriefings.ts` adds
   `listPreRoundBriefings`/`getPreRoundBriefing`/`savePreRoundBriefing`/
@@ -1415,6 +1433,6 @@ _(none)_
 * 
 * 🧪 Practice Round Simulator - Recreate a tournament round with timer, speeches, judge persona, and post-round feedback. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPracticeRoundSetup`/`buildPracticeRoundSetupText` for composing a format's speech order with a selected judge paradigm and AI opponent persona into a renderable round setup, and `buildPracticeRoundFeedback`/`buildPracticeRoundFeedbackText` for framing post-round feedback around the selected paradigm plus the existing AI Coach Mode coaching session, reusing the existing `ai-versus-speech-order.ts`/`judge-paradigms.ts`/`opponent-personas.ts`/`coach-mode.ts` slices directly. Follow-ups: (a) an actual AI speech-generation call for the AI opponent's speeches and an AI judge-decision call under the chosen paradigm, (b) a round-simulator UI, (c) persisting a simulated practice round. None of these are started._
 * 
-* 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. Follow-ups: (a) a drill-panel UI, (b) an actual AI-generated (rather than templated) script, (c) persisting generated drills per round. None of these are started._
+* 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. A second slice, `drillSets.ts` (see Tracker Status above), now persists a round's generated `Drill[]` set to localStorage. Follow-ups: (a) a drill-panel UI that reads/writes through the persistence store, (b) an actual AI-generated (rather than templated) script. Neither of these are started._
 * 
 * 🧭 Scout-to-Strategy Workflow - Turn scouting data into recommended game plans, case choices, judge adaptation, and risk levels. _Status: first slice done (see Tracker Status above) — `debate-round` now has `rankCaseOptions`/`computeCaseOverlapScore`/`buildJudgeAdaptationNotes`/`assessMatchupRisk`/`buildStrategyRecommendation`/`buildStrategyRecommendationText` for ranking caller-supplied case options by opponent-tag overlap, turning judge tendencies into adaptation notes, and combining opponent/judge signals into a risk level with its contributing factors, reusing the existing `OpponentTeamProfile`/`JudgeProfile` types directly. Follow-ups: (a) a case-choice/strategy panel UI, (b) wiring `ourSide`/likely opponent side into the risk heuristic, (c) an actual AI-panel evaluation of case choice instead of the tag-overlap heuristic. None of these are started._
