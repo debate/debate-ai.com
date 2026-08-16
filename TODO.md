@@ -36,7 +36,7 @@ _(none)_
   this store and renders `buildLeaderboard`, (c) composing this store's
   reads directly into `buildLeaderboard`/`buildContributorStats` call sites
   once one exists, instead of requiring a caller-supplied list.
-  PR: TBD.
+  PR: [#111](https://github.com/debate/debate-ai.com/pull/111).
 - **Peer Review Persistence — localStorage review store.**
   `packages/debate-card-search/src/state/peerReviews.ts` adds
   `listPeerReviews`/`getPeerReview`/`savePeerReview`/`deletePeerReview`, a
