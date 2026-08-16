@@ -3,56 +3,44 @@
 
 ### In progress
 
-## Brainstorm Idea Persistence
-
-**Status:** In Progress
-**Source:** TODO.md — "Team Brainstorm Assist" bullet under Research Crowdsourcing Organizer Features (follow-up (c): "persisting submitted ideas and votes")
-**Branch:** `claude/upbeat-bardeen-2zwaow`
-**PR:** [#119](https://github.com/debate/debate-ai.com/pull/119)
-**Started:** 2026-08-16
-
-### Goal
-Persist `team-brainstorm-assist.ts`'s caller-supplied `BrainstormIdea` records (a squad member's brainstormed idea, including its upvote count) to localStorage, mirroring the existing `groupChallenges.ts`/`peerReviews.ts`/`contributions.ts` persistence convention in this package, so a squad's submitted ideas and votes survive a page reload.
-
-### Scope
-- A localStorage-backed CRUD store (`packages/debate-card-search/src/state/brainstormIdeas.ts`) for `BrainstormIdea`, keyed by `id`, upsert-on-save.
-- List/get/save/delete operations mirroring `groupChallenges.ts`'s shape exactly.
-- Vitest coverage mirroring `groupChallenges.test.ts`'s cases (empty, corrupt JSON, non-array JSON, list, get, upsert, delete, delete no-op).
-
-### Non-goals
-- No brainstorm-panel UI for live squad submission/upvoting (separate follow-up).
-- No AI-generation call that drafts candidate ideas (separate follow-up).
-- No change to `team-brainstorm-assist.ts`'s pure ranking/board logic — it keeps taking a caller-supplied `BrainstormIdea[]`.
-
-### Acceptance criteria
-- [x] `listBrainstormIdeas`/`getBrainstormIdea`/`saveBrainstormIdea`/`deleteBrainstormIdea` exist and behave like the `groupChallenges.ts` convention (SSR-safe, corrupt/missing JSON degrades to empty list)
-- [x] Upsert-on-save by `id`; delete is a no-op for an unknown id
-- [x] Vitest coverage is added or updated
-- [x] Typecheck passes (verified in an isolated sandbox — see Remaining work)
-- [x] Tests pass (verified in an isolated sandbox — see Remaining work)
-- [ ] Production/web build passes — blocked, not run (see Remaining work)
-- [x] Documentation is updated if behavior or configuration changes (TODO.md tracker entry)
-
-### Implementation plan
-- [x] Inspect affected modules, local instructions, and existing tests
-- [x] Confirm API, schema, data-flow, or interface requirements
-- [x] Implement the smallest useful vertical slice
-- [x] Add focused Vitest success-path coverage
-- [x] Add focused failure, validation, or edge-case coverage
-- [x] Run focused tests and fix failures
-- [x] Run linting and typechecking (no lint script exists in this repo; typecheck run)
-- [x] Run the full relevant test suite (via isolated sandbox workaround, not the repo's own `npm test`, which is blocked — see Remaining work)
-- [ ] Run the production/web build — blocked, not run (see Remaining work)
-- [x] Review the final diff for scope and quality
-- [x] Commit and push the branch
-- [x] Create or update the pull request ([#119](https://github.com/debate/debate-ai.com/pull/119))
-- [x] Update tracker status, completed checkboxes, and remaining work
-
-### Remaining work
-- **Blocker (pre-existing, environmental, not caused by this change):** `npm install` at the repo root fails on a clean checkout (0 installed packages) with `npm error Cannot read properties of null (reading 'edgesOut')`, thrown from `@npmcli/arborist`'s `#loadPeerSet` during `Arborist.buildIdealTree` (npm 10.9.7 / Node 22.22.2). Reproduced with plain `npm install`, `npm install --legacy-peer-deps` (which additionally regresses to `EUNSUPPORTEDPROTOCOL` on `workspace:*` specs), `npm install --omit=optional`, and `npm install -w packages/debate-card-search -w packages/debate-card-parser -w packages/debate-core -w packages/debate-ui` (still fails — root devDependencies, e.g. `jsdom`'s optional `canvas` peer, are always pulled in). Also reproduced after temporarily removing the root `vinext` devDependency, so it isn't specific to that package either. `pnpm install` refuses outright ("This project is configured to use npm") because of the root `packageManager` field. Because of this, the repo's own `npm test`/`npm run typecheck`/`npm run build` could not be executed at all in this environment. As a substitute, `brainstormIdeas.ts`, `team-brainstorm-assist.ts`, `topic-coverage.ts`, `community-rating.ts`, `llm-card-scoring.ts`, and `brainstormIdeas.test.ts` were copied into an isolated scratch npm project with only `vitest@^4.1.0`/`typescript@^5.9.3` installed and this package's real `tsconfig.json`; `npx vitest run test/brainstormIdeas.test.ts` passed 9/9, and `npx tsc --noEmit` reported no errors. This doesn't substitute for the repo's actual `npm run build` (Cloudflare/vinext production build), which still needs to be run once the root install is unblocked.
-- Next agent run: try to unblock the root `npm install` (e.g. a newer/older npm, or a `pnpm-workspace.yaml`+override so `pnpm install` can be used instead), then run `npm run typecheck`, `npm test`, and `npm run build` for real. PR [#119](https://github.com/debate/debate-ai.com/pull/119) is open; move this entry to Completed once CI (or a manual full-repo verification) confirms the build, or once a maintainer/CI run with a working install confirms green.
+(none)
 
 ### Completed
+- **Fix `packageManager` field so local installs use Bun instead of npm.**
+  `package.json`'s `"packageManager"` field said `"npm@10.0.0"`, but this repo's
+  actual lockfile is `bun.lock` (committed since the original monorepo setup),
+  `.github/workflows/test.yml` installs and verifies with `bun install` /
+  `bun run typecheck` / `bun run coverage`, and `README.md`'s documented
+  workflow is `bun install` / `bun run …`. That mismatch meant every prior
+  autonomous run's `npm install` failed with `Cannot read properties of null
+  (reading 'edgesOut')` (a pre-existing `@npmcli/arborist` bug on this
+  workspace layout), which blocked real `typecheck`/`test`/`build`
+  verification and forced isolated-sandbox workarounds — see PRs
+  [#119](https://github.com/debate/debate-ai.com/pull/119) and earlier entries
+  below for repeated instances of this same blocker. Changed the field to
+  `"bun@1.3.11"` to match the tool this repo actually uses. Verified from a
+  clean checkout: `bun install` (2050 packages, ~9s), `bun run typecheck` (11
+  packages, all pass), `bun run test` (75 files / 969 tests, all pass), and
+  `bun run build` (`debate-ai-web` + `reason-editor`, both succeed) all pass
+  cleanly with no code changes needed. No test changes were needed since this
+  is a tooling-config fix, not a behavior change.
+- **Brainstorm Idea Persistence.** `packages/debate-card-search/src/state/brainstormIdeas.ts`
+  adds a localStorage-backed CRUD store (`listBrainstormIdeas`/`getBrainstormIdea`/
+  `saveBrainstormIdea`/`deleteBrainstormIdea`) for `team-brainstorm-assist.ts`'s
+  `BrainstormIdea`, keyed by `id` with upsert-on-save semantics, mirroring the
+  existing `groupChallenges.ts`/`peerReviews.ts`/`contributions.ts` persistence
+  convention (SSR-safe, corrupt/missing JSON degrades to an empty list rather
+  than throwing). Closes the "(c) persisting submitted ideas and votes"
+  follow-up named under the "Team Brainstorm Assist" bullet below.
+  Vitest-covered in `packages/debate-card-search/test/brainstormIdeas.test.ts`.
+  This is a persistence slice only — `team-brainstorm-assist.ts`'s pure
+  ranking/board logic is unchanged and still takes a caller-supplied
+  `BrainstormIdea[]`. Follow-ups: (a) an actual AI-generation call that drafts
+  candidate ideas, (b) a brainstorm-panel UI for live squad submission/upvoting.
+  Neither of these are started. PR: [#119](https://github.com/debate/debate-ai.com/pull/119)
+  (merged; full `bun run typecheck`/`bun run test`/`bun run build` verification
+  completed after merge — see the `packageManager` fix entry above for why the
+  original PR could only verify in an isolated sandbox).
 - **Collaboration Prep Room — evidence + draft blocks + task-routing composition slice.**
   `packages/debate-card-search/src/lib/prep-room.ts` adds
   `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText`,
@@ -1526,7 +1514,7 @@ Persist `team-brainstorm-assist.ts`'s caller-supplied `BrainstormIdea` records (
 * 
 * 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. Follow-ups: (a) persisting a prep room's entries/draft blocks, (b) a prep-room panel UI, (c) a live presence/who's-active signal. None of these are started._
 * 
-* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. Follow-ups: (a) an actual AI-generation call that drafts candidate ideas from `buildBrainstormPrompt`'s output, (b) a brainstorm-panel UI for live squad submission/upvoting, (c) persisting submitted ideas and votes. None of these are started._
+* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. Follow-ups: (a) an actual AI-generation call that drafts candidate ideas from `buildBrainstormPrompt`'s output, (b) a brainstorm-panel UI for live squad submission/upvoting. A third follow-up, persisting submitted ideas and votes, is now done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`)._
 * 
 * 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. Follow-ups: (a) wiring real submitted cards/blocks into a persisted repository, (b) a search panel UI, (c) a real search index (e.g. Typesense) once entries are persisted. None of these are started._
 * 
