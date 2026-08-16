@@ -5,6 +5,31 @@
 _(none)_
 
 ### Completed
+- **Prep Note Persistence — localStorage note store.**
+  `packages/debate-round/src/state/prepNotes.ts` adds
+  `listPrepNotes`/`listPrepNotesForFlow`/`getPrepNote`/`savePrepNote`/
+  `deletePrepNote`, a localStorage-backed CRUD store for
+  `strategy-sync-notes.ts`'s `PrepNote` (id, flow/box address, author, text,
+  status, optional assignee), keyed by `id` with upsert-on-save semantics,
+  mirroring the existing `coachingPrograms.ts`/`myTeamProfile.ts`
+  persistence convention (SSR/no-storage-safe, corrupt or missing JSON
+  degrades to an empty list rather than throwing). `listPrepNotesForFlow`
+  reuses `strategy-sync-notes.ts`'s existing `getNotesForFlow` query helper
+  directly rather than reimplementing flow-scoped filtering/sorting.
+  Vitest-covered (with an in-memory `localStorage` mock, since this
+  package's Vitest environment is `node` with no DOM) in
+  `packages/debate-round/test/prepNotes.test.ts`. See the "Strategy Sync
+  Notes" bullet under Research Crowdsourcing Organizer Features below — this
+  is the "(a) wiring `PrepNote` into wherever round/flow state is eventually
+  persisted" follow-up named in that slice. This is the first slice
+  only — it persists whatever `PrepNote` a caller passes in verbatim; no UI
+  in this repo yet calls `createPrepNote`/`updateNoteStatus`/`assignNote`
+  and threads the result through `savePrepNote`/`deletePrepNote`. Follow-ups:
+  (a) a prep-notes panel UI in `debate-round` that reads/writes through this
+  store, (b) wiring `updateNoteStatus`/`assignNote`'s returned copies back
+  into `savePrepNote` so status/assignment changes persist, (c) an assignee
+  notification once a notification system exists.
+  PR: [#102](https://github.com/debate/debate-ai.com/pull/102).
 - **Coaching Program Persistence — localStorage config store.**
   `packages/debate-round/src/state/coachingPrograms.ts` adds
   `listCoachingPrograms`/`getCoachingProgram`/`saveCoachingProgram`/
