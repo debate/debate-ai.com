@@ -24,7 +24,7 @@ _(none)_
   (a) a paradigm-picker UI that reads/writes through this store, (b) wiring
   a round's persisted selection into an actual AI judge-decision call via
   `buildJudgeParadigmPrompt`.
-  PR: TBD.
+  PR: [#112](https://github.com/debate/debate-ai.com/pull/112).
 - **Contribution Leaderboard Persistence — localStorage contribution store.**
   `packages/debate-card-search/src/state/contributions.ts` adds
   `listContributions`/`listContributionsByContributor`/`getContribution`/
