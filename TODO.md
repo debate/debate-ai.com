@@ -5,6 +5,33 @@
 _(none)_
 
 ### Completed
+- **Team Brainstorm Assist — squad brainstorm prompt/board slice.**
+  `packages/debate-card-search/src/lib/team-brainstorm-assist.ts` adds
+  `buildBrainstormPrompt` (a structured, non-AI-calling brainstorm prompt for
+  one argument block across four categories — `argument`, `impact_framing`,
+  `frontline`, `response`), `buildBrainstormPromptsForCoverageGaps` (seeds
+  prompts straight from the existing Topic Coverage Dashboard's
+  `getUnderCoveredArguments`, worst-covered argument first), a squad idea
+  board model (`groupIdeasByBoard`, `rankBrainstormIdeas` — reusing the
+  existing `community-rating.ts` `scorePopularitySignal` for ranking and the
+  existing `llm-card-scoring.ts` `scoreUniqueness` heuristic to flag
+  near-duplicate submissions, `buildBrainstormBoard`,
+  `buildBrainstormBoardsForCoverageGaps`), and `buildBrainstormSummaryText`.
+  Reuses `topic-coverage.ts`, `community-rating.ts`, and `llm-card-scoring.ts`
+  directly rather than introducing a separate coverage, popularity, or
+  duplicate-detection signal. Vitest-covered (100% statement/branch/
+  function/line coverage) in
+  `packages/debate-card-search/test/team-brainstorm-assist.test.ts`. See the
+  "Team Brainstorm Assist" bullet under Research Crowdsourcing Organizer
+  Features below. This is the first slice only — it doesn't call any AI
+  model to actually generate ideas, persist a board or its submitted ideas,
+  or render a brainstorm panel UI. Follow-ups: (a) an actual AI-generation
+  call that consumes `buildBrainstormPrompt`'s output to draft candidate
+  ideas for the squad to react to instead of starting from a blank board,
+  (b) a brainstorm-panel UI in `debate-card-search` that renders
+  `buildBrainstormBoard`/`buildBrainstormSummaryText` and lets teammates
+  submit/upvote ideas live, (c) persisting submitted ideas and their votes.
+  PR: TBD.
 - **Practice Round Simulator — setup/post-round-feedback composition slice.**
   `packages/debate-round/src/round/practice-round-simulator.ts` adds
   `buildPracticeRoundSetup`/`buildPracticeRoundSetupText` (combines idea #3's
@@ -832,7 +859,7 @@ _(none)_
 * 
 * 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments.
 * 
-* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions.
+* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. Follow-ups: (a) an actual AI-generation call that drafts candidate ideas from `buildBrainstormPrompt`'s output, (b) a brainstorm-panel UI for live squad submission/upvoting, (c) persisting submitted ideas and votes. None of these are started._
 * 
 * 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search.
 * 
