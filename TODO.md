@@ -5,6 +5,31 @@
 _(none)_
 
 ### Completed
+- **AI Drill Generator — overview/frontline/cross-ex/collapse drill slice.**
+  `packages/debate-round/src/flow/drill-generator.ts` adds `buildOverviewDrill`
+  (a whole-round overview prompt weighing every side's unanswered-argument
+  count and average vulnerability), `buildFrontlineDrills` (a
+  frontline-practice prompt per still-live opposing argument), `buildCrossExamDrills`
+  (wraps the existing `flow-transcript-summary.ts` `suggestCrossExamQuestions`
+  as tagged drills), `buildCollapseDrills` (recommends the opposing side's
+  top-N most vulnerable arguments, via the existing `response-outcome.ts`
+  `getArgumentVulnerabilityReport`, as collapse-scenario candidates),
+  `buildDrillSet` (combines all four in order for a chosen side), and
+  `buildDrillSummaryText`. Reuses the existing `flow-transcript-summary.ts`
+  and `response-outcome.ts` slices directly rather than introducing a
+  separate scoring or template path. Vitest-covered (100% statement/branch/
+  function/line coverage) in
+  `packages/debate-round/test/drill-generator.test.ts`. See the "AI Drill
+  Generator" bullet under Research Crowdsourcing Organizer Features below.
+  This is the first slice only — it's a deterministic template layer over
+  the flow's existing clash/vulnerability signals, not an actual AI-generated
+  drill script; it isn't wired into any drill-panel UI, and generated drills
+  aren't persisted anywhere. Follow-ups: (a) an actual drill-panel UI in
+  `debate-round` that renders `buildDrillSet`/`buildDrillSummaryText`, (b) an
+  AI-generated (rather than templated) overview/frontline script once an LLM
+  call is wired in, (c) persisting generated drills per round/practice
+  session.
+  PR: TBD.
 - **Common Argument Library — topic-folder/case-area/tag-collection organizing slice.**
   `packages/debate-card-search/src/lib/argument-library.ts` adds
   `groupCardsByTopic`, `groupCardsByCaseArea`, `buildTopicFolder` (splits one
@@ -670,6 +695,6 @@ _(none)_
 * 
 * 🧪 Practice Round Simulator - Recreate a tournament round with timer, speeches, judge persona, and post-round feedback.
 * 
-* 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios.
+* 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. Follow-ups: (a) a drill-panel UI, (b) an actual AI-generated (rather than templated) script, (c) persisting generated drills per round. None of these are started._
 * 
 * 🧭 Scout-to-Strategy Workflow - Turn scouting data into recommended game plans, case choices, judge adaptation, and risk levels.
