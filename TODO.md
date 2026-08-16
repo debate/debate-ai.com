@@ -22,7 +22,7 @@ _(none)_
   `packages/debate-round/test/drillSets.test.ts`. Follow-ups: (a) a
   drill-panel UI that calls `buildDrillSet` and reads/writes through this
   store, (b) an actual AI-generated (rather than templated) drill script.
-  PR: TBD.
+  PR: [#116](https://github.com/debate/debate-ai.com/pull/116).
 - **Pre-Round Briefing Persistence — localStorage briefing store.**
   `packages/debate-round/src/state/preRoundBriefings.ts` adds
   `listPreRoundBriefings`/`getPreRoundBriefing`/`savePreRoundBriefing`/
