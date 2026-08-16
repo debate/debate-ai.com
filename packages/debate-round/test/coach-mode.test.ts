@@ -55,6 +55,14 @@ describe("buildExtensionPrompts", () => {
   it("returns an empty array for an empty flow", () => {
     expect(buildExtensionPrompts(EMPTY_FLOW, "A")).toEqual([]);
   });
+
+  it("truncates a very long argument in the extension prompt", () => {
+    const longArgument = "x".repeat(200);
+    const flow = { columns: COLUMNS, children: [rowFromContents([longArgument, "", "", ""])] };
+    const [prompt] = buildExtensionPrompts(flow, "A");
+    expect(prompt.prompt).toContain("…");
+    expect(prompt.prompt.length).toBeLessThan(longArgument.length + 100);
+  });
 });
 
 describe("buildRefutationPrompts", () => {
