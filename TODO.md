@@ -35,6 +35,7 @@ _(none)_
   `searchPrepRoomEvidence`, (c) a live presence/who's-active signal,
   mirroring the "Team Collaboration Mode" idea's own still-open follow-up.
   None of these are started.
+  PR: [#118](https://github.com/debate/debate-ai.com/pull/118).
 - **Unlock Status Streak Badges — Progress Unlocks/Gamified Quests composition slice.**
   `packages/debate-card-search/src/lib/unlock-streak-status.ts` adds
   `buildContributorUnlockStatusWithStreak`/`buildUnlockStatusWithStreakText`,
