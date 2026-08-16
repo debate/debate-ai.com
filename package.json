@@ -2,7 +2,7 @@
   "name": "debate-ai",
   "private": true,
   "version": "2.2.0",
-  "packageManager": "npm@10.0.0",
+  "packageManager": "bun@1.3.11",
   "workspaces": [
     "packages/*",
     "apps/debate-ai.com"
