@@ -5,6 +5,29 @@
 _(none)_
 
 ### Completed
+- **Pre-Round Briefing Persistence — localStorage briefing store.**
+  `packages/debate-round/src/state/preRoundBriefings.ts` adds
+  `listPreRoundBriefings`/`getPreRoundBriefing`/`savePreRoundBriefing`/
+  `deletePreRoundBriefing`, a localStorage-backed CRUD store for
+  `pre-round-briefing.ts`'s `PreRoundBriefing`, keyed by a caller-supplied
+  `roundId` with upsert-on-save semantics, mirroring the existing
+  `judgeParadigmSelections.ts`/`coachingPrograms.ts` persistence convention
+  (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
+  rather than throwing). See idea #12 ("Pre-Round Intelligence Panel") in
+  Product Feature Ideas below — this is the "(c) persisting a generated
+  briefing per round" follow-up named in that slice. This is a persistence
+  slice only — it stores whatever `PreRoundBriefing` a caller passes in
+  verbatim (`buildPreRoundBriefing`/`buildPreRoundBriefingText` themselves
+  are unchanged); no round-information-page UI in this repo yet reads or
+  writes through this store. Vitest-covered in
+  `packages/debate-round/test/preRoundBriefings.test.ts`. Follow-ups: (a) a
+  briefing-panel UI that renders a persisted briefing on a round-information
+  page, (b) real data sources for tournament results, pairings, event
+  details, and room assignments (none exist in this repo today) feeding
+  `buildPreRoundBriefing` before it's persisted, (c) wiring
+  `savePreRoundBriefing` into whatever eventually calls
+  `buildPreRoundBriefing` for a real round.
+  PR: TBD.
 - **Opponent Persona Selection Persistence — localStorage persona-per-session store.**
   `packages/debate-speech-writer/src/state/opponentPersonaSelections.ts` adds
   `listOpponentPersonaSelections`/`getOpponentPersonaSelection`/
