@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Mail } from "lucide-react"
@@ -12,7 +12,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Card, CardContent, CardHeader } from "debate-ui/src/primitives/card"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
-import { authClient } from "@/lib/auth/client"
+import { authClient, setGoogleClientId } from "@/lib/auth/client"
 import { APP_NAME } from "@/lib/config/site"
 
 // Google Sign In Button
@@ -170,6 +170,42 @@ function MagicLinkSignIn() {
 
 // Main Login Page Component
 export default function LoginPage() {
+    // Which OAuth providers this deployment actually has credentials for.
+    // Rendering a button for an unconfigured provider only produces a failed
+    // redirect, so the buttons follow the server's answer.
+    const [availableProviders, setAvailableProviders] = useState<string[]>([])
+    const [loadingProviders, setLoadingProviders] = useState(true)
+
+    useEffect(() => {
+        let cancelled = false
+        fetch("/api/auth/providers")
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data) => {
+                if (cancelled) return
+                setAvailableProviders(data?.providers ?? [])
+                setGoogleClientId(data?.googleClientId ?? "")
+            })
+            .catch((error) => {
+                console.error("Failed to fetch providers:", error)
+            })
+            .finally(() => {
+                if (!cancelled) setLoadingProviders(false)
+            })
+        return () => {
+            cancelled = true
+        }
+    }, [])
+
+    const hasOAuthProviders = availableProviders.length > 0
+
+    if (loadingProviders) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+                <div className="animate-pulse text-muted-foreground">Loading…</div>
+            </div>
+        )
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
             <Card className="w-full max-w-md">
@@ -177,37 +213,42 @@ export default function LoginPage() {
                     <div className="flex items-center gap-2">
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden">
                             <Image
-                                src="/icons/apple-touch-icon.png"
+                                src="/apple-touch-icon.png"
                                 alt="Logo"
                                 width={40}
                                 height={40}
                                 className="h-full w-full object-cover"
+                                unoptimized
                             />
                         </div>
                         <span className="text-2xl font-bold">{APP_NAME}</span>
                     </div>
                     <div className="text-center">
                         <p className="text-sm text-muted-foreground">
-                            Sign in to continue
+                            {hasOAuthProviders ? "Sign in to continue" : "Sign in with email"}
                         </p>
                     </div>
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col gap-4">
-                        <GoogleSignIn />
-                        <OAuthSignIn provider="discord" />
-                        <OAuthSignIn provider="linkedin" />
+                        {hasOAuthProviders && (
+                            <>
+                                {availableProviders.includes("google") && <GoogleSignIn />}
+                                {availableProviders.includes("discord") && <OAuthSignIn provider="discord" />}
+                                {availableProviders.includes("linkedin") && <OAuthSignIn provider="linkedin" />}
 
-                        <div className="relative">
-                            <div className="absolute inset-0 flex items-center">
-                                <span className="w-full border-t" />
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-background px-2 text-muted-foreground">
-                                    Or continue with email
-                                </span>
-                            </div>
-                        </div>
+                                <div className="relative">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <span className="w-full border-t" />
+                                    </div>
+                                    <div className="relative flex justify-center text-xs uppercase">
+                                        <span className="bg-background px-2 text-muted-foreground">
+                                            Or continue with email
+                                        </span>
+                                    </div>
+                                </div>
+                            </>
+                        )}
 
                         <MagicLinkSignIn />
                     </div>
@@ -216,6 +257,11 @@ export default function LoginPage() {
                         <Link href="/" className="underline hover:text-foreground">
                             Homepage
                         </Link>
+                        {!hasOAuthProviders && (
+                            <p className="mt-2 text-xs">
+                                Social sign-in is not configured for this deployment.
+                            </p>
+                        )}
                     </div>
                 </CardContent>
             </Card>

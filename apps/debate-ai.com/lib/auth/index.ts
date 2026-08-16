@@ -4,33 +4,79 @@ import { oneTap, openAPI, magicLink, anonymous } from "better-auth/plugins";
 import { getDBFromContext } from "../database/context";
 import * as schema from "../database/schema";
 import { Resend } from "resend";
-import { APP_NAME, APP_EMAIL, NEXT_PUBLIC_BASE_URL } from "../config/site";
+import { APP_NAME, APP_EMAIL, APP_ORIGIN, NEXT_PUBLIC_BASE_URL } from "../config/site";
 import { getEnv } from "../env";
+
+/**
+ * Providers are only registered when both halves of their credential pair are
+ * present. Registering google with `clientId: undefined` (the previous
+ * behaviour when the secret was missing) leaves better-auth advertising a
+ * provider that can only fail — including the One Tap callback, which verifies
+ * the Google id token against the configured client id.
+ */
+function buildSocialProviders() {
+  const socialProviders: Record<string, { clientId: string; clientSecret: string }> = {};
+
+  const pairs: [string, string, string][] = [
+    ["google", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"],
+    ["discord", "AUTH_DISCORD_ID", "AUTH_DISCORD_SECRET"],
+    ["linkedin", "AUTH_LINKEDIN_ID", "AUTH_LINKEDIN_SECRET"],
+  ];
+
+  for (const [provider, idKey, secretKey] of pairs) {
+    const clientId = getEnv(idKey);
+    const clientSecret = getEnv(secretKey);
+    if (clientId && clientSecret) {
+      socialProviders[provider] = { clientId, clientSecret };
+    }
+  }
+
+  return socialProviders;
+}
 
 async function buildAuth() {
   const db = await getDBFromContext();
 
+  // Prefer an explicitly configured URL, then whatever the deployment exposes.
+  // When nothing is set, leave it undefined so better-auth derives the origin
+  // from the incoming request instead of pinning callbacks and cookies to a
+  // hardcoded host.
+  const baseURL =
+    getEnv("BETTER_AUTH_URL") ||
+    getEnv("NEXT_PUBLIC_APP_URL") ||
+    getEnv("NEXT_PUBLIC_BASE_URL") ||
+    NEXT_PUBLIC_BASE_URL ||
+    undefined;
+
+  // Hosts allowed to make authenticated requests. Preview deployments and
+  // localhost share this backend, and better-auth rejects requests (and omits
+  // the CORS headers) from any origin not listed here. Extra origins can be
+  // supplied via BETTER_AUTH_TRUSTED_ORIGINS (comma-separated).
+  const trustedOrigins = Array.from(
+    new Set(
+      [
+        baseURL,
+        APP_ORIGIN,
+        "https://*.debate-ai.com",
+        "https://*.workers.dev",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        ...(getEnv("BETTER_AUTH_TRUSTED_ORIGINS")?.split(",") ?? []),
+      ]
+        .map((origin) => origin?.trim())
+        .filter((origin): origin is string => Boolean(origin)),
+    ),
+  );
+
   return betterAuth({
-    baseURL: NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
+    ...(baseURL ? { baseURL } : {}),
+    trustedOrigins,
     secret: getEnv("BETTER_AUTH_SECRET") || "dev-secret-change-in-production",
     database: drizzleAdapter(db, {
       provider: "sqlite",
       schema,
     }),
-    socialProviders: {
-      google: {
-        clientId: getEnv("GOOGLE_CLIENT_ID")!,
-        clientSecret: getEnv("GOOGLE_CLIENT_SECRET")!,
-      },
-      discord: {
-        clientId: getEnv("AUTH_DISCORD_ID") || "",
-        clientSecret: getEnv("AUTH_DISCORD_SECRET"),
-      },
-      linkedin: {
-        clientId: getEnv("AUTH_LINKEDIN_ID") || "",
-        clientSecret: getEnv("AUTH_LINKEDIN_SECRET"),
-      },
-    },
+    socialProviders: buildSocialProviders(),
     emailVerification: {
       sendOnSignUp: false,
       autoSignInAfterVerification: true,

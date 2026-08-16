@@ -49,11 +49,11 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
   return (
     <DropdownMenuContent side={side} align="end" className="w-48">
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/reason-editor") }}>
-        <Image src={IconBook} alt="" width={16} height={16} className="mr-2 h-4 w-4" />
+        <Image src={IconBook} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
         Reason Editor
       </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/doc") }}>
-        <Image src={IconRead} alt="" width={16} height={16} className="mr-2 h-4 w-4" />
+        <Image src={IconRead} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
         Debate Docs
       </DropdownMenuItem>
       <DropdownMenuSeparator />
@@ -138,7 +138,7 @@ function DockInstance({
           >
             <DockLabel>{label}</DockLabel>
             <DockIcon>
-              <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" />
+              <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" unoptimized />
             </DockIcon>
           </DockItem>
         ))}
@@ -146,7 +146,7 @@ function DockInstance({
           <DockItem className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
             <DockLabel>Settings</DockLabel>
             <DockIcon>
-              <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" />
+              <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
             </DockIcon>
           </DockItem>
         </DropdownMenuTrigger>
@@ -268,7 +268,7 @@ export function CategoryDock() {
                         <Play className="w-5 h-5 text-primary" />
                       )
                     ) : (
-                      <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" />
+                      <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" unoptimized />
                     )}
                   </DockIcon>
                 </DockItem>
@@ -278,7 +278,7 @@ export function CategoryDock() {
               <DockItem className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
                 <DockLabel>Settings</DockLabel>
                 <DockIcon>
-                  <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" />
+                  <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
                 </DockIcon>
               </DockItem>
             </DropdownMenuTrigger>
