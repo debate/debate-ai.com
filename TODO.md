@@ -27,7 +27,7 @@ _(none)_
   programs through this store, (b) wiring `buildCoachingProgramBoard`'s other
   inputs into their own persistence once those have a natural persisted
   shape (most are session-derived rather than static config).
-  PR: pending.
+  PR: [#101](https://github.com/debate/debate-ai.com/pull/101).
 - **Tiered Task Routing — stats-derived skill-level composition slice.**
   `packages/debate-card-search/src/lib/tiered-task-routing.ts` adds
   `deriveContributorAvailability`/`deriveContributorAvailabilityList` (builds
