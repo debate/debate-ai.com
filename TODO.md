@@ -6,6 +6,40 @@
 (none)
 
 ### Completed
+- **Shared Evidence Library — persisted evidence repository.**
+  `packages/debate-card-search/src/state/evidenceLibraryEntries.ts` adds a
+  localStorage-backed CRUD store (`listEvidenceLibraryEntries`/
+  `getEvidenceLibraryEntry`/`saveEvidenceLibraryEntry`/
+  `deleteEvidenceLibraryEntry`) for `shared-evidence-library.ts`'s
+  `EvidenceLibraryEntry`, keyed by `id` with upsert-on-save semantics, plus
+  `searchPersistedEvidenceLibrary`, which reuses `searchEvidenceLibrary`
+  directly against the persisted list rather than reimplementing search,
+  mirroring the existing `contributions.ts`/`groupChallenges.ts` persistence
+  convention (SSR/no-storage-safe, corrupt or missing JSON degrades to an
+  empty list rather than throwing). Closes the "(a) wiring real submitted
+  cards and team-drafted blocks into a persisted repository instead of
+  caller-supplied entries" follow-up named under the "Shared Evidence
+  Library" bullet in Research Crowdsourcing Organizer Features below, and
+  unblocks the "Collaboration Prep Room" idea's own follow-up (a), which
+  named a persisted evidence store as its prerequisite. Vitest-covered (with
+  an in-memory `localStorage` mock, since this package's Vitest environment
+  is `node` with no DOM) in
+  `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`. This is
+  a persistence slice only — it stores whatever `EvidenceLibraryEntry` a
+  caller passes in verbatim (`searchEvidenceLibrary`/`buildEvidenceLibraryIndex`
+  themselves are unchanged); no search-panel UI in this repo yet reads or
+  writes through this store, and `prep-room.ts`'s `buildPrepRoom` still
+  takes a caller-supplied entry list rather than reading through this store.
+  Follow-ups: (a) a search panel UI in `debate-card-search` that renders
+  `searchPersistedEvidenceLibrary`/`buildEvidenceSearchSummaryText` results
+  and `buildEvidenceLibraryIndex`'s folders/collections, (b) wiring
+  `prep-room.ts`'s `buildPrepRoom`/`searchPrepRoomEvidence` to read through
+  this store instead of a caller-supplied entry list, (c) a real search
+  index (e.g. Typesense, mirroring the existing `search-query.ts` CARDS
+  search) once entries are persisted, for relevance/typo-tolerance beyond
+  the current keyword-overlap heuristic. None of these are started. PR:
+  [#126](https://github.com/debate/debate-ai.com/pull/126) (`bun run
+  typecheck`/`bun run test`/`bun run build` all pass).
 - **AI Coach Mode — coaching-session persistence.**
   `packages/debate-round/src/state/coachingSessions.ts` adds a
   localStorage-backed CRUD store (`listCoachingSessions`/`getCoachingSession`/
@@ -1602,11 +1636,11 @@
 * 
 * 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. Follow-ups: (a) an actual AI coaching call for open-ended feedback beyond this template layer, (b) a coaching-panel UI that reads/writes through the persistence store. Neither of these is started._
 * 
-* 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. Follow-ups: (a) persisting a prep room's entries/draft blocks, (b) a prep-room panel UI, (c) a live presence/who's-active signal. None of these are started._
+* 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. Follow-ups: (a) wiring `buildPrepRoom`/`searchPrepRoomEvidence` to read through the now-persisted `evidenceLibraryEntries.ts` store (see the "Shared Evidence Library — persisted evidence repository" entry above) instead of a caller-supplied entry list, (b) a prep-room panel UI, (c) a live presence/who's-active signal. None of these are started._
 * 
 * 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. Follow-ups: (a) an actual AI-generation call that drafts candidate ideas from `buildBrainstormPrompt`'s output, (b) a brainstorm-panel UI for live squad submission/upvoting. A third follow-up, persisting submitted ideas and votes, is now done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`)._
 * 
-* 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. Follow-ups: (a) wiring real submitted cards/blocks into a persisted repository, (b) a search panel UI, (c) a real search index (e.g. Typesense) once entries are persisted. None of these are started._
+* 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. A second slice, `evidenceLibraryEntries.ts` (see Tracker Status above, "Shared Evidence Library — persisted evidence repository"), now persists `EvidenceLibraryEntry` records to localStorage. Follow-ups: (a) a search panel UI, (b) wiring `prep-room.ts` to read through this store, (c) a real search index (e.g. Typesense) once entries are persisted. None of these are started._
 * 
 * 🔄 Strategy Sync Notes - Let teammates leave live prep notes, assign tasks, and mark which arguments have been covered or need follow-up. _Status: first slice done (see Tracker Status above) — `debate-round` now has a box-addressed `PrepNote` model (`createPrepNote`/`updateNoteStatus`/`assignNote`) plus `getNotesForBox`/`getNotesForFlow`/`getNotesAssignedTo`/`getOpenFollowUps`/`resolvePrepNoteBox`/`buildPrepNoteSummaryText` for attaching a note to a specific flow argument, assigning it to a teammate as a task, and tracking whether it's still open, covered, or needs follow-up, reusing the existing `flow-annotations.ts` box-addressing convention directly. Follow-ups: (a) wiring `PrepNote` into wherever round/flow state is eventually persisted, (b) a prep-notes panel UI, (c) an assignee notification once a notification system exists. None of these are started._
 * 
