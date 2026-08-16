@@ -2,7 +2,10 @@
 ## Tracker Status
 
 ### In progress
-_(none)_
+- **Video-Lecture-Training Coach AI — grounding-materials library and prompt slice.**
+  `packages/debate-speech-writer/src/coach/team-coach-materials.ts`. Branch:
+  `claude/peaceful-cerf-f6mqev`. See idea #8 in Product Feature Ideas below.
+  Implementation complete and Vitest-covered; PR pending.
 
 ### Completed
 - **Group Challenges — squad-scoped friendly-challenge progress-tracking slice.**
@@ -876,7 +879,7 @@ _(none)_
 
 7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext 
 
-8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials.
+8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. Follow-ups: (a) transcription/parsing that turns an uploaded recording or document into a material's text, (b) an actual AI Q&A call that consumes `buildGroundedCoachPrompt`'s output, (c) a materials-upload/coach chat panel UI, (d) persisting a team's materials. None of these are started._
 
 9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slice done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. Follow-ups: (a) a React nav/outline panel in `reason-editor` that renders the outline and toggles collapsed ids, (b) a ProseMirror decoration plugin that hides collapsed ranges in the actual editor view using `getCollapsedRanges`, (c) persisting collapsed-state per document. None of these are started._
 
