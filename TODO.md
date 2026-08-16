@@ -5,6 +5,29 @@
 _(none)_
 
 ### Completed
+- **Coaching Program Persistence — localStorage config store.**
+  `packages/debate-round/src/state/coachingPrograms.ts` adds
+  `listCoachingPrograms`/`getCoachingProgram`/`saveCoachingProgram`/
+  `deleteCoachingProgram`, a localStorage-backed CRUD store for
+  `coaching-program.ts`'s `CoachingProgramConfig` (id, name, squad roster),
+  keyed by `id` with upsert-on-save semantics, mirroring the existing
+  `myTeamProfile.ts` persistence convention (SSR/no-storage-safe, corrupt or
+  missing JSON degrades to an empty list rather than throwing). Reuses
+  `CoachingProgramConfig` from `coaching-program.ts` directly rather than
+  redefining it. Vitest-covered (with an in-memory `localStorage` mock, since
+  this package's Vitest environment is `node` with no DOM) in
+  `packages/debate-round/test/coachingPrograms.test.ts`. See the "Coaching
+  Programs and Group Challenges" idea (#13) in Product Feature Ideas below —
+  this is the "(a) persisting a coaching program's config" half of the
+  follow-up named in the `coaching-program.ts` slice (PR #99). This is the
+  first slice only — it persists a program's *config* only, not its board's
+  session-derived inputs (topic-sprint contributions, member flows,
+  challenges, win events), and there's no UI reading or writing this store
+  yet. Follow-ups: (a) a coaching-space dashboard UI that lists/creates/edits
+  programs through this store, (b) wiring `buildCoachingProgramBoard`'s other
+  inputs into their own persistence once those have a natural persisted
+  shape (most are session-derived rather than static config).
+  PR: pending.
 - **Tiered Task Routing — stats-derived skill-level composition slice.**
   `packages/debate-card-search/src/lib/tiered-task-routing.ts` adds
   `deriveContributorAvailability`/`deriveContributorAvailabilityList` (builds
