@@ -2,7 +2,86 @@
 ## Tracker Status
 
 ### In progress
-_(none)_
+
+## Scout-to-Strategy Workflow
+
+**Status:** In Progress
+**Source:** TODO.md — "Scout-to-Strategy Workflow" bullet under Research Crowdsourcing Organizer Features
+**Branch:** `claude/upbeat-bardeen-bbt8aa`
+**PR:** Not created yet
+**Started:** 2026-08-16
+
+### Goal
+Turn already-built opponent-scouting (`OpponentTeamProfile`) and judge-tendency
+(`JudgeProfile`) signals into a deterministic first-slice strategy
+recommendation: which of the team's candidate cases looks safest to run
+against this opponent, concrete judge-adaptation notes, and an overall
+matchup risk level with the factors behind it.
+
+### Scope
+- A pure, caller-supplied-data computation module (no AI call, no data
+  fetching, no persistence, no UI) mirroring the existing
+  `pre-round-briefing.ts` pattern in `debate-round`.
+- Ranks caller-supplied case options by tag overlap against the opponent's
+  most commonly run argument tags (heuristic proxy for "opponent likely has
+  blocks prepped against this").
+- Judge-adaptation notes derived from the existing `JudgeProfile` fields
+  (speed tolerance, theory receptiveness, side bias, most-tagged paradigm).
+- A simple, documented-as-illustrative risk-level heuristic combining
+  opponent win rate/side preference and judge side bias.
+
+### Non-goals
+- No real scouting/ballot data sources (still caller-supplied, as with the
+  profiles it builds on).
+- No case-choice/strategy UI.
+- No persistence of a generated recommendation.
+
+### Acceptance criteria
+- [x] `rankCaseOptions` ranks caller-supplied case options by opponent-tag
+      overlap, safest (lowest overlap) first, tie-broken alphabetically
+- [x] `buildJudgeAdaptationNotes` returns concrete, testable notes for
+      speed/theory/side-bias/paradigm signals, and explicit fallback text
+      when no judge data or no notable tendencies exist
+- [x] `assessMatchupRisk` returns a `low`/`medium`/`high` level plus the
+      specific factors driving it
+- [x] `buildStrategyRecommendation`/`buildStrategyRecommendationText` compose
+      the above into one renderable recommendation
+- [x] Vitest coverage is added or updated (100% statement/branch/function/line
+      coverage on the new module)
+- [x] Lint passes (no lint script configured in this repo — see note in
+      Remaining work)
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Production/web build passes
+- [x] Documentation is updated if behavior or configuration changes (this
+      TODO entry + file-header doc comment)
+
+### Implementation plan
+- [x] Inspect affected modules (`opponent-team-profile.ts`, `judge-profile.ts`,
+      `pre-round-briefing.ts`) and existing tests
+- [x] Confirm reused types/interfaces (`OpponentTeamProfile`, `JudgeProfile`)
+- [x] Implement the smallest useful vertical slice in
+      `packages/debate-round/src/round/scout-to-strategy.ts`
+- [x] Add focused Vitest success-path coverage
+- [x] Add focused failure/edge-case coverage (empty inputs, no notable
+      tendencies, ties)
+- [x] Run focused tests and fix failures
+- [x] Run typechecking (`turbo typecheck`)
+- [x] Run the full relevant test suite (`vitest run`)
+- [x] Run the production/web build (`turbo build`)
+- [x] Review the final diff for scope and quality
+- [x] Commit and push the branch
+- [x] Create or update the pull request
+- [x] Update tracker status, completed checkboxes, and remaining work
+
+### Remaining work
+- None. Follow-ups (not required for this slice): (a) a case-choice/strategy
+  panel UI in `debate-round`, (b) wiring `ourSide`/likely opponent side into
+  the risk heuristic once round-setup state exposes it, (c) an actual
+  AI-panel evaluation of case choice instead of the tag-overlap heuristic.
+  This repo has no `lint` script configured (only `typecheck`/`test`/`build`
+  via turbo), so "Lint passes" above reflects that there is no lint step to
+  run, not a skipped check.
 
 ### Completed
 - **AI Practice Opponent — policy-heavy/kritik/lay/fast-flow persona registry slice.**
