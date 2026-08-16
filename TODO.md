@@ -5,6 +5,34 @@
 _(none)_
 
 ### Completed
+- **Strategy Sync Notes — box-addressed prep-note/task-assignment/status slice.**
+  `packages/debate-round/src/flow/strategy-sync-notes.ts` adds a `PrepNote`
+  data model addressed to a specific flow `Box` the same way
+  `flow-annotations.ts` already addresses boxes (`boxPath`/`boxFromPath`):
+  `createPrepNote` (validates a non-empty `boxPath`, an `authorId`, and
+  non-blank, length-clamped `text`, starting in the `open` status),
+  `updateNoteStatus` (moves a note between `open`/`covered`/
+  `needs-follow-up`), `assignNote` (assigns — or unassigns, passing `null`
+  — a note to a teammate as a task), `getNotesForBox`/`getNotesForFlow`/
+  `getNotesAssignedTo`/`getOpenFollowUps` (oldest-first query helpers, so
+  the longest-open follow-up surfaces first), `resolvePrepNoteBox` (mirrors
+  `resolveAnnotationBox` for a "jump to argument" link), and
+  `buildPrepNoteSummaryText` (a status-count line plus one line per open
+  follow-up, with its assignee if any). Mirrors `flow-annotations.ts`'s
+  box-addressing convention exactly rather than introducing a separate
+  argument-addressing scheme. Vitest-covered in
+  `packages/debate-round/test/strategy-sync-notes.test.ts`. See the
+  "Strategy Sync Notes" bullet under Research Crowdsourcing Organizer
+  Features below. This is the first slice only — it's pure data-model/query
+  logic over caller-supplied notes; nothing in this repo persists a
+  `PrepNote`, notifies an assignee when a task is assigned, or renders a
+  prep-notes panel UI yet. Follow-ups: (a) wiring `PrepNote` into wherever
+  round/flow state is eventually persisted, (b) a prep-notes panel UI in
+  `debate-round` (likely alongside `FlowSpreadsheet`) that renders
+  `getNotesForFlow`/`buildPrepNoteSummaryText` and calls
+  `createPrepNote`/`updateNoteStatus`/`assignNote`, (c) an assignee
+  notification once a notification system exists in this repo.
+  PR: TBD.
 - **Scout-to-Strategy Workflow — case-choice/judge-adaptation/risk-level recommendation slice.**
   `packages/debate-round/src/round/scout-to-strategy.ts` adds
   `computeCaseOverlapScore`/`rankCaseOptions` (ranks caller-supplied case
@@ -746,7 +774,7 @@ _(none)_
 * 
 * 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search.
 * 
-* 🔄 Strategy Sync Notes - Let teammates leave live prep notes, assign tasks, and mark which arguments have been covered or need follow-up.
+* 🔄 Strategy Sync Notes - Let teammates leave live prep notes, assign tasks, and mark which arguments have been covered or need follow-up. _Status: first slice done (see Tracker Status above) — `debate-round` now has a box-addressed `PrepNote` model (`createPrepNote`/`updateNoteStatus`/`assignNote`) plus `getNotesForBox`/`getNotesForFlow`/`getNotesAssignedTo`/`getOpenFollowUps`/`resolvePrepNoteBox`/`buildPrepNoteSummaryText` for attaching a note to a specific flow argument, assigning it to a teammate as a task, and tracking whether it's still open, covered, or needs follow-up, reusing the existing `flow-annotations.ts` box-addressing convention directly. Follow-ups: (a) wiring `PrepNote` into wherever round/flow state is eventually persisted, (b) a prep-notes panel UI, (c) an assignee notification once a notification system exists. None of these are started._
 * 
 * 📊 Matchup Prep Dashboard - Combine opponent profiles, judge profiles, and topic-specific prep into a single pre-round view. _Status: first slice done (see Tracker Status above, "Pre-Round Intelligence Panel") — `debate-round` now has `buildPreRoundBriefing`/`buildPreRoundBriefingText` for combining an opponent-scouting summary, judge-tendency summary, head-to-head record, and prep notes into one structured briefing. See idea #12 in Product Feature Ideas above for the full status and follow-ups._
 * 
