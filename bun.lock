@@ -245,6 +245,7 @@
       "dependencies": {
         "ag-grid-community": "^35.1.0",
         "ag-grid-react": "^35.1.0",
+        "debate-card-search": "workspace:*",
         "debate-core": "workspace:*",
         "debate-data-sync": "workspace:*",
         "debate-editor": "workspace:*",
