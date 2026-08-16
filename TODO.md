@@ -34,7 +34,7 @@ _(none)_
   `argument-library.ts`'s tagged card corpus to suggest a pre-filled flow
   note from matching evidence, keeping the human in control of whether to
   accept it.
-  PR: TBD.
+  PR: [#103](https://github.com/debate/debate-ai.com/pull/103).
 - **Prep Note Persistence — localStorage note store.**
   `packages/debate-round/src/state/prepNotes.ts` adds
   `listPrepNotes`/`listPrepNotesForFlow`/`getPrepNote`/`savePrepNote`/
