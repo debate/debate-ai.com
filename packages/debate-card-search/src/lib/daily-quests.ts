@@ -62,7 +62,8 @@ export interface QuestProgress {
   isComplete: boolean;
 }
 
-function matchesTarget(contribution: QuestContribution, target: QuestTarget): boolean {
+/** Whether `contribution` satisfies `target` — an omitted target field matches any value. */
+export function matchesQuestTarget(contribution: QuestContribution, target: QuestTarget): boolean {
   if (target.kind !== undefined && contribution.kind !== target.kind) return false;
   if (target.argBlock !== undefined && contribution.argBlock !== target.argBlock) return false;
   return true;
@@ -79,7 +80,8 @@ export function computeQuestProgress(
   dayKey: string,
 ): QuestProgress {
   const completedCount = contributions.filter(
-    (contribution) => getUtcDayKey(contribution.submittedAt) === dayKey && matchesTarget(contribution, quest.target),
+    (contribution) =>
+      getUtcDayKey(contribution.submittedAt) === dayKey && matchesQuestTarget(contribution, quest.target),
   ).length;
 
   return {

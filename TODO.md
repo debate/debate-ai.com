@@ -2,7 +2,67 @@
 ## Tracker Status
 
 ### In progress
-_(none)_
+
+## Group Challenges
+
+**Status:** In Progress
+**Source:** TODO.md — "Coaching Programs and Group Challenges" (idea #13) — "friendly challenges such as completing a set of blocks or winning a rebuttal exercise"
+**Branch:** `claude/upbeat-bardeen-pxzomn`
+**PR:** Not created yet
+**Started:** 2026-08-16
+
+### Goal
+A pure, deterministic first slice of the "friendly challenges" half of idea #13:
+a squad-scoped `GroupChallenge` whose progress is computed from caller-supplied
+contributions/win events, reusing the existing `daily-quests.ts` target-matching
+and `contribution-leaderboard.ts` helpfulness-ranked leaderboard rather than
+introducing a separate scoring path.
+
+### Scope
+- A `GroupChallenge` model supporting two goal kinds: `contribution_target`
+  (e.g. "the squad finds 20 solvency cards this week", reusing
+  `daily-quests.ts`'s `QuestTarget` matching) and `win_target` (e.g. "the squad
+  wins 5 rebuttal exercises", from caller-supplied win events).
+- Progress computation scoped to the challenge's `[startsAt, endsAt)` window
+  and to its `memberIds` roster.
+- A ranked per-member standing (helpfulness-ranked for contribution challenges,
+  via `buildLeaderboard`) and an MVP contributor.
+- A multi-challenge board (incomplete first) and a summary line.
+
+### Non-goals
+- Coaching "spaces"/rosters, assigned drills, research-sprint wiring, or a
+  practice-round composition (the rest of idea #13) — this slice is the
+  challenge-tracking piece only.
+- Persistence of challenges/progress, or any UI.
+- Notifications when a challenge completes.
+
+### Acceptance criteria
+- [x] `computeGroupChallengeProgress` correctly scores both goal kinds within
+      the challenge window and roster
+- [x] Contribution-target MVP reflects helpfulness score, not raw count
+- [x] Vitest coverage is added or updated
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Production/web build passes (no `lint` script is configured in this repo)
+- [x] Documentation is updated if behavior or configuration changes (this entry)
+
+### Implementation plan
+- [x] Inspect `daily-quests.ts`, `community-rating.ts`, `contribution-leaderboard.ts`
+- [x] Export `matchesQuestTarget` from `daily-quests.ts` for reuse
+- [x] Implement `packages/debate-card-search/src/lib/group-challenges.ts`
+- [x] Add focused Vitest success-path coverage
+- [x] Add focused failure/edge-case coverage (window/roster exclusion, ties, empty board)
+- [x] Run focused tests and fix failures
+- [x] Run typechecking (`npm run typecheck`)
+- [x] Run the full relevant test suite (`npm test`)
+- [x] Run the production/web build (`npm run build`)
+- [x] Review the final diff for scope and quality
+- [x] Commit and push the branch
+- [ ] Create or update the pull request
+- [x] Update tracker status, completed checkboxes, and remaining work
+
+### Remaining work
+- Open the PR (this run creates the commit; PR creation follows).
 
 ### Completed
 - **Team Collaboration Mode — topic-sprint composition slice.**
