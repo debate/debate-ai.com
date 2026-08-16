@@ -5,6 +5,38 @@
 _(none)_
 
 ### Completed
+- **Coaching Program Space — topic-sprint/group-challenge/member-drill composition slice.**
+  `packages/debate-round/src/round/coaching-program.ts` adds a
+  `CoachingProgramConfig` (id, name, squad roster) and
+  `buildCoachingProgramBoard`, which composes `debate-card-search`'s
+  `team-collaboration-mode.ts` `buildTopicSprint` (shared research sprint),
+  `debate-card-search`'s `group-challenges.ts` `buildGroupChallengeBoard`
+  (friendly-challenge standings), and this package's own
+  `flow/drill-generator.ts` `buildDrillSet` (one practice-drill set per
+  roster member who has a flowed practice round, ignoring flows for
+  contributors outside the roster) into one renderable coaching-space board,
+  plus `buildCoachingProgramSummaryText` and `buildMemberDrillSummaryText`.
+  `debate-round` now depends on `debate-card-search` to make this
+  composition possible, mirroring the existing precedent of
+  `pre-round-briefing.ts` adding new cross-package dependencies. Reuses
+  `buildTopicSprint`/`buildGroupChallengeBoard`/`buildDrillSet` directly
+  rather than reimplementing any of their quest/challenge/drill logic.
+  Vitest-covered in `packages/debate-round/test/coaching-program.test.ts`.
+  See the "Coaching Programs and Group Challenges" idea (#13) in Product
+  Feature Ideas below — this is the "coaching-program/space model" follow-up
+  named in the Group Challenges slice (PR #97). This is the first slice
+  only — it works entirely off caller-supplied topic-sprint/challenge/flow
+  inputs; it doesn't persist a program, its roster, or its board anywhere,
+  doesn't compose `practice-round-simulator.ts`'s
+  `buildPracticeRoundSetup`/`buildPracticeRoundFeedback` (a practice round is
+  per-member/per-session rather than a fixed part of a program's board), and
+  doesn't render a coaching-space UI. Follow-ups: (a) persisting a
+  `CoachingProgramConfig` and its board's inputs, (b) a coaching-space
+  dashboard UI that renders `buildCoachingProgramBoard`/
+  `buildCoachingProgramSummaryText`, (c) letting a coach start (and later
+  review feedback from) a member's practice round from within the space by
+  wiring in `buildPracticeRoundSetup`/`buildPracticeRoundFeedback`.
+  PR: [#99](https://github.com/debate/debate-ai.com/pull/99).
 - **Video-Lecture-Training Coach AI — grounding-materials library and
   grounded-prompt slice.**
   `packages/debate-speech-writer/src/coach/team-coach-materials.ts` adds a
@@ -910,7 +942,7 @@ _(none)_
 
 12. **Pre-Round Intelligence Panel** — On every round-information page, combine live tournament results, prior pairings, opponent records, judge paradigms, event details, room assignments, and relevant team prep notes into one focused pre-round briefing. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPreRoundBriefing`/`summarizePriorMeetings`/`buildPreRoundBriefingText` for composing an opponent-scouting summary, a judge-tendency summary, a head-to-head prior-meetings record, and team prep notes into one structured, renderable briefing, reusing the existing `debate-data-sync`/`debate-speech-writer` profile slices. Follow-ups: (a) real data sources for tournament results, pairings, event details, and room assignments (none exist in this repo today), (b) a briefing panel UI that renders it on a round-information page, (c) persisting a generated briefing per round. None of these are started._
 
-13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise.
+13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise. _Status: first slices done (see Tracker Status above) — the "friendly challenges" half has `debate-card-search`'s `group-challenges.ts` (`buildGroupChallengeBoard`), and the coaching-space model tying it together has `debate-round`'s `coaching-program.ts` (`buildCoachingProgramBoard`), composing that group-challenge board with the existing Team Collaboration Mode topic sprint and AI Drill Generator drill sets per roster member. Follow-ups: (a) persisting a coaching program's config and board inputs, (b) a coaching-space dashboard UI, (c) wiring a member's practice-round setup/feedback (Practice Round Simulator) into the space. None of these are started._
 
 14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slice done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. Follow-ups: (a) wiring these into actual keyboard-shortcut handlers in `reason-editor`'s toolbar/editor view, (b) a "send selected evidence to a speech document" command, which needs a speech-document target that doesn't exist yet, (c) a text-emphasize (toggle `<mark>`) command over an editor selection range. None of these are started._
 
