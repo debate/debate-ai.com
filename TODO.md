@@ -6,6 +6,24 @@
 (none)
 
 ### Completed
+- **Outline Filters and Argument Tree View — filter-selection persistence.**
+  `packages/debate-round/src/state/argumentTreeFilters.ts` adds a
+  localStorage-backed CRUD store (`listArgumentTreeFilterSelections`/
+  `getArgumentTreeFilterSelection`/`saveArgumentTreeFilterSelection`/
+  `deleteArgumentTreeFilterSelection`) for `argument-tree.ts`'s
+  `ArgumentTreeFilter`, keyed by `roundId` with upsert-on-save semantics,
+  mirroring the existing `judgeParadigmSelections.ts`/
+  `opponentPersonaSelections.ts` persistence convention (SSR-safe,
+  corrupt/missing JSON degrades to an empty list rather than throwing).
+  Closes the "(c) persisting the user's chosen filter state per round"
+  follow-up named under idea #10 below. Vitest-covered in
+  `packages/debate-round/test/argumentTreeFilters.test.ts`. This is a
+  persistence slice only — `argument-tree.ts`'s pure tree-building/filtering
+  logic is unchanged and still takes a caller-supplied `ArgumentTreeFilter`.
+  Follow-ups: (a) a React tree/outline panel in `debate-round` that renders
+  the filtered tree and reads/writes through this store, (b) finer
+  argument-type tagging and contributor/evidence-status fields. Neither of
+  these are started.
 - **Fix `packageManager` field so local installs use Bun instead of npm.**
   `package.json`'s `"packageManager"` field said `"npm@10.0.0"`, but this repo's
   actual lockfile is `bun.lock` (committed since the original monorepo setup),
@@ -1470,7 +1488,7 @@
 
 9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slice done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. Follow-ups: (a) a React nav/outline panel in `reason-editor` that renders the outline and toggles collapsed ids, (b) a ProseMirror decoration plugin that hides collapsed ranges in the actual editor view using `getCollapsedRanges`, (c) persisting collapsed-state per document. None of these are started._
 
-10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. Follow-ups: (a) a React tree/outline panel in `debate-round` that renders the filtered tree next to (or instead of) `FlowSpreadsheet`, (b) finer argument-type tagging (link/impact/turn/answer/extension) and contributor/evidence-status fields, none of which exist in the `Box`/`Flow` schema today, (c) persisting the user's chosen filter state per round. None of these are started._
+10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. A second slice, `argumentTreeFilters.ts` (see Tracker Status above, "Outline Filters and Argument Tree View — filter-selection persistence"), now persists a round's chosen `ArgumentTreeFilter` to localStorage. Follow-ups: (a) a React tree/outline panel in `debate-round` that renders the filtered tree next to (or instead of) `FlowSpreadsheet` and reads/writes through the persistence store, (b) finer argument-type tagging (link/impact/turn/answer/extension) and contributor/evidence-status fields, none of which exist in the `Box`/`Flow` schema today. Neither of these are started._
 
 11. **Community-Rated Summaries and Highlights** — Let users like, save, and endorse the most useful research summaries, analytic explanations, evidence highlights, and annotations, then rank contributions by helpfulness while guarding against popularity-only scoring through quality and reviewer-weight signals. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scorePopularitySignal`/`scoreQualitySignal`/`scoreReviewerSignal`/`computeHelpfulnessBreakdown`/`rankContributions` for blending logarithmically-dampened popularity with quality and reviewer-credibility signals into a ranked, popularity-resistant helpfulness score. Follow-ups: (a) wiring up actual like/save/endorse actions and persisting those counts per contribution, (b) a real reviewer-credibility system instead of a caller-supplied weight per endorsement, (c) a leaderboard/ranked-feed UI in `debate-card-search` that renders `rankContributions` and surfaces `isPopularityOnlyOutlier` contributions for moderator review. None of these are started._
 
