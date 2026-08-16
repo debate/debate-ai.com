@@ -25,9 +25,12 @@
   `localStorage` mock, since this package's Vitest environment is `node`
   with no DOM) in `packages/debate-round/test/aiVersusRounds.test.ts`. This
   is a persistence slice only — `ai-versus-speech-order.ts`'s pure
-  turn-order logic is unchanged. Follow-ups: (a) an actual AI
-  speech-generation call that consumes `buildAiResponseRequest`'s output,
-  (b) a round-setup + submission UI in `debate-round` that reads/writes
+  turn-order logic is unchanged. PR:
+  [#122](https://github.com/debate/debate-ai.com/pull/122) (`bun run
+  typecheck`/`bun run test`/`bun run build:web` all pass). Follow-ups: (a)
+  an actual AI speech-generation call that consumes
+  `buildAiResponseRequest`'s output, (b) a round-setup + submission UI in
+  `debate-round` that reads/writes
   through this store and calls `validateSpeechSubmission`. Neither of these
   are started.
 - **Outline Filters and Argument Tree View — filter-selection persistence.**
