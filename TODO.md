@@ -5,6 +5,38 @@
 _(none)_
 
 ### Completed
+- **Shared Evidence Library — fast keyword/tag/cite/topic search slice.**
+  `packages/debate-card-search/src/lib/shared-evidence-library.ts` adds an
+  `EvidenceLibraryEntry` model (extends the existing "Common Argument
+  Library" slice's `LibraryCard` with a searchable full-text `text` body, a
+  `cite`, and a `kind: "card" | "block"` distinguishing a cut/tagged
+  evidence card from a team-drafted reusable analytic block) plus
+  `searchEvidenceLibrary` (narrows by topic/case-area/kind/tags — reusing
+  `argument-library.ts`'s `filterCardsByTags` directly — then, when a text
+  query is given, ranks the remaining entries by keyword-overlap relevance
+  against their combined text/argBlock/cite via the existing "LLM Card
+  Scoring" slice's `scoreRelevance`, dropping zero-relevance entries rather
+  than returning noise), `findEntriesByCite` (citation lookup),
+  `buildEvidenceLibraryIndex` (a thin alias of `buildArgumentLibrary`, since
+  an `EvidenceLibraryEntry` is already a `LibraryCard`), and
+  `buildEvidenceSearchSummaryText`. Reuses `argument-library.ts` and
+  `llm-card-scoring.ts` directly rather than introducing a separate
+  grouping or relevance-scoring path. Vitest-covered in
+  `packages/debate-card-search/test/shared-evidence-library.test.ts`. See
+  the "Shared Evidence Library" bullet under Research Crowdsourcing
+  Organizer Features below. This is the first slice only — it works
+  entirely off a caller-supplied entry list; it doesn't read real submitted
+  cards or blocks, persist the repository, or render a search UI, and its
+  keyword search is a deterministic overlap heuristic rather than a real
+  full-text/fuzzy search index. Follow-ups: (a) wiring real submitted cards
+  and team-drafted blocks into a persisted repository instead of
+  caller-supplied entries, (b) a search panel UI in `debate-card-search`
+  that renders `searchEvidenceLibrary`/`buildEvidenceSearchSummaryText`
+  results and `buildEvidenceLibraryIndex`'s folders/collections, (c) a real
+  search index (e.g. Typesense, mirroring the existing `search-query.ts`
+  CARDS search) once entries are persisted, for relevance/typo-tolerance
+  beyond the current keyword-overlap heuristic.
+  PR: [#106](https://github.com/debate/debate-ai.com/pull/106).
 - **Sprint Note Persistence — localStorage note store.**
   `packages/debate-card-search/src/state/sprintNotes.ts` adds
   `listSprintNotes`/`listSprintNotesForTopic`/`getSprintNote`/
@@ -1147,7 +1179,7 @@ _(none)_
 * 
 * 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. Follow-ups: (a) an actual AI-generation call that drafts candidate ideas from `buildBrainstormPrompt`'s output, (b) a brainstorm-panel UI for live squad submission/upvoting, (c) persisting submitted ideas and votes. None of these are started._
 * 
-* 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search.
+* 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. Follow-ups: (a) wiring real submitted cards/blocks into a persisted repository, (b) a search panel UI, (c) a real search index (e.g. Typesense) once entries are persisted. None of these are started._
 * 
 * 🔄 Strategy Sync Notes - Let teammates leave live prep notes, assign tasks, and mark which arguments have been covered or need follow-up. _Status: first slice done (see Tracker Status above) — `debate-round` now has a box-addressed `PrepNote` model (`createPrepNote`/`updateNoteStatus`/`assignNote`) plus `getNotesForBox`/`getNotesForFlow`/`getNotesAssignedTo`/`getOpenFollowUps`/`resolvePrepNoteBox`/`buildPrepNoteSummaryText` for attaching a note to a specific flow argument, assigning it to a teammate as a task, and tracking whether it's still open, covered, or needs follow-up, reusing the existing `flow-annotations.ts` box-addressing convention directly. Follow-ups: (a) wiring `PrepNote` into wherever round/flow state is eventually persisted, (b) a prep-notes panel UI, (c) an assignee notification once a notification system exists. None of these are started._
 * 
