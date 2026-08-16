@@ -6,6 +6,35 @@
 (none)
 
 ### Completed
+- **Practice Round Simulator — persisted practice-round store.**
+  `packages/debate-round/src/state/practiceRounds.ts` adds a
+  localStorage-backed CRUD store (`listPracticeRounds`/`getPracticeRound`/
+  `savePracticeRound`/`deletePracticeRound`) for `practice-round-simulator.ts`'s
+  derived `PracticeRoundSetup` and (once generated) `PracticeRoundFeedback`,
+  keyed by `roundId` with upsert-on-save semantics, mirroring the existing
+  `aiVersusRounds.ts`/`drillSets.ts` persistence convention (SSR/no-storage-safe,
+  corrupt or missing JSON degrades to an empty list rather than throwing).
+  Closes the "(c) persisting a simulated practice round (setup, submitted
+  speeches, and feedback) once round-state persistence exists" follow-up
+  named under the "Practice Round Simulator" bullet in Research
+  Crowdsourcing Organizer Features below — round-state persistence now
+  exists via idea #3's `aiVersusRounds.ts` store, so rather than duplicating
+  a round's submitted speeches in a second place, this store also adds
+  `getPracticeRoundSubmittedSpeeches`, which looks them up through the
+  existing `aiVersusRounds.ts` store directly. Vitest-covered (with an
+  in-memory `localStorage` mock, since this package's Vitest environment is
+  `node` with no DOM) in `packages/debate-round/test/practiceRounds.test.ts`.
+  This is a persistence slice only — it stores whatever `PracticeRoundSetup`/
+  `PracticeRoundFeedback` a caller passes in verbatim
+  (`buildPracticeRoundSetup`/`buildPracticeRoundFeedback` themselves are
+  unchanged); no round-simulator UI in this repo yet reads or writes through
+  this store. Follow-ups: (a) an actual AI speech-generation call for the AI
+  opponent's speeches and an AI judge-decision call under the chosen
+  paradigm, (b) a round-simulator UI in `debate-round` that renders
+  `buildPracticeRoundSetupText`/`buildPracticeRoundFeedbackText` and
+  reads/writes through this store. Neither of these are started. PR:
+  [#127](https://github.com/debate/debate-ai.com/pull/127) (`bun run
+  typecheck`/`bun run test`/`bun run build` all pass).
 - **Shared Evidence Library — persisted evidence repository.**
   `packages/debate-card-search/src/state/evidenceLibraryEntries.ts` adds a
   localStorage-backed CRUD store (`listEvidenceLibraryEntries`/
@@ -1646,7 +1675,7 @@
 * 
 * 📊 Matchup Prep Dashboard - Combine opponent profiles, judge profiles, and topic-specific prep into a single pre-round view. _Status: first slice done (see Tracker Status above, "Pre-Round Intelligence Panel") — `debate-round` now has `buildPreRoundBriefing`/`buildPreRoundBriefingText` for combining an opponent-scouting summary, judge-tendency summary, head-to-head record, and prep notes into one structured briefing. See idea #12 in Product Feature Ideas above for the full status and follow-ups._
 * 
-* 🧪 Practice Round Simulator - Recreate a tournament round with timer, speeches, judge persona, and post-round feedback. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPracticeRoundSetup`/`buildPracticeRoundSetupText` for composing a format's speech order with a selected judge paradigm and AI opponent persona into a renderable round setup, and `buildPracticeRoundFeedback`/`buildPracticeRoundFeedbackText` for framing post-round feedback around the selected paradigm plus the existing AI Coach Mode coaching session, reusing the existing `ai-versus-speech-order.ts`/`judge-paradigms.ts`/`opponent-personas.ts`/`coach-mode.ts` slices directly. Follow-ups: (a) an actual AI speech-generation call for the AI opponent's speeches and an AI judge-decision call under the chosen paradigm, (b) a round-simulator UI, (c) persisting a simulated practice round. None of these are started._
+* 🧪 Practice Round Simulator - Recreate a tournament round with timer, speeches, judge persona, and post-round feedback. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPracticeRoundSetup`/`buildPracticeRoundSetupText` for composing a format's speech order with a selected judge paradigm and AI opponent persona into a renderable round setup, and `buildPracticeRoundFeedback`/`buildPracticeRoundFeedbackText` for framing post-round feedback around the selected paradigm plus the existing AI Coach Mode coaching session, reusing the existing `ai-versus-speech-order.ts`/`judge-paradigms.ts`/`opponent-personas.ts`/`coach-mode.ts` slices directly. A second slice, `practiceRounds.ts` (see Tracker Status above), now persists a round's `PracticeRoundSetup`/`PracticeRoundFeedback` to localStorage. Follow-ups: (a) an actual AI speech-generation call for the AI opponent's speeches and an AI judge-decision call under the chosen paradigm, (b) a round-simulator UI that reads/writes through the persistence store. Neither of these are started._
 * 
 * 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. A second slice, `drillSets.ts` (see Tracker Status above), now persists a round's generated `Drill[]` set to localStorage. Follow-ups: (a) a drill-panel UI that reads/writes through the persistence store, (b) an actual AI-generated (rather than templated) script. Neither of these are started._
 * 
