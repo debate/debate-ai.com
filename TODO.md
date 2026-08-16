@@ -36,7 +36,7 @@ _(none)_
   `buildCoachingProgramSummaryText`, (c) letting a coach start (and later
   review feedback from) a member's practice round from within the space by
   wiring in `buildPracticeRoundSetup`/`buildPracticeRoundFeedback`.
-  PR: TBD.
+  PR: [#99](https://github.com/debate/debate-ai.com/pull/99).
 - **Video-Lecture-Training Coach AI — grounding-materials library and
   grounded-prompt slice.**
   `packages/debate-speech-writer/src/coach/team-coach-materials.ts` adds a
