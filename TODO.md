@@ -6,6 +6,27 @@
 (none)
 
 ### Completed
+- **AI Coach Mode — coaching-session persistence.**
+  `packages/debate-round/src/state/coachingSessions.ts` adds a
+  localStorage-backed CRUD store (`listCoachingSessions`/`getCoachingSession`/
+  `getCoachingSessionsForRound`/`saveCoachingSession`/`deleteCoachingSession`)
+  for `coach-mode.ts`'s derived `CoachingPrompt[]` coaching session, keyed by
+  `roundId` + `sideKey` (a round can have a separately-generated session per
+  side represented in its flow) with upsert-on-save semantics, mirroring the
+  existing `flowSummaries.ts`/`drillSets.ts` persistence convention
+  (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
+  rather than throwing). Closes the "(c) persisting a generated coaching
+  session per round" follow-up named under "AI Coach Mode" in the Research
+  Crowdsourcing Organizer Features list below. Vitest-covered (with an
+  in-memory `localStorage` mock, since this package's Vitest environment is
+  `node` with no DOM) in `packages/debate-round/test/coachingSessions.test.ts`.
+  This is a persistence slice only — it stores whatever `CoachingPrompt[]` a
+  caller passes in verbatim (`buildCoachingSession` itself is unchanged); no
+  coaching-panel UI in this repo yet reads or writes through this store. PR:
+  TBD (`bun run test`/`bun run typecheck`/`bun run build:web` all pass).
+  Follow-ups: (a) an actual AI coaching call for open-ended feedback beyond
+  the existing template layer, (b) a coaching-panel UI in `debate-round` that
+  reads/writes through this store. Neither of these is started.
 - **Speech Transcript Summaries and Answers — flow-summary persistence.**
   `packages/debate-round/src/state/flowSummaries.ts` adds a
   localStorage-backed CRUD store (`listFlowSummaries`/`getFlowSummary`/
@@ -1579,7 +1600,7 @@
 * 
 * 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. A second slice, `opponentPersonaSelections.ts` (see Tracker Status above), now persists a practice session's selected `OpponentPersona` to localStorage. Follow-ups: (a) an actual AI speech-generation call that consumes `buildOpponentPersonaPrompt`'s output alongside idea #3's `AiSpeechRequest`, (b) a persona-picker UI that reads/writes through the persistence store. Neither of these are started._
 * 
-* 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. Follow-ups: (a) an actual AI coaching call for open-ended feedback beyond this template layer, (b) a coaching-panel UI, (c) persisting a generated coaching session per round. None of these are started._
+* 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. Follow-ups: (a) an actual AI coaching call for open-ended feedback beyond this template layer, (b) a coaching-panel UI that reads/writes through the persistence store. Neither of these is started._
 * 
 * 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. Follow-ups: (a) persisting a prep room's entries/draft blocks, (b) a prep-room panel UI, (c) a live presence/who's-active signal. None of these are started._
 * 
