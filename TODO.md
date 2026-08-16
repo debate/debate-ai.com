@@ -5,6 +5,31 @@
 _(none)_
 
 ### Completed
+- **Coach Material Persistence — localStorage config store.**
+  `packages/debate-speech-writer/src/state/coachMaterials.ts` adds
+  `listCoachMaterials`/`getCoachMaterial`/`saveCoachMaterial`/
+  `deleteCoachMaterial`, a localStorage-backed CRUD store for
+  `team-coach-materials.ts`'s `CoachMaterial` (id, kind, title, topic, tags,
+  text), keyed by `id` with upsert-on-save semantics, mirroring the existing
+  `coachingPrograms.ts`/`prepNotes.ts`/`flowAnnotations.ts`/`sprintNotes.ts`
+  persistence convention (SSR/no-storage-safe, corrupt or missing JSON
+  degrades to an empty list rather than throwing). Reuses `CoachMaterial`
+  from `team-coach-materials.ts` directly rather than redefining it.
+  Vitest-covered (with an in-memory `localStorage` mock, since this
+  package's Vitest environment is `node` with no DOM) in
+  `packages/debate-speech-writer/test/coachMaterials.test.ts`. See the
+  "Video-Lecture-Training Coach AI" idea (#8) in Product Feature Ideas
+  below — this is the "(d) persisting a team's `CoachMaterial`s" follow-up
+  named in that slice (PR #98). This is the first slice only — it persists
+  whatever `CoachMaterial` a caller passes in verbatim; no UI in this repo
+  yet uploads a material and threads it through `saveCoachMaterial`/
+  `deleteCoachMaterial`, and it still doesn't transcribe recordings, parse
+  uploaded documents, or call any AI model. Follow-ups: (a)
+  transcription/parsing that turns an uploaded recording or document into a
+  `CoachMaterial`'s `text`, (b) an actual AI Q&A call that consumes
+  `buildGroundedCoachPrompt`'s output, (c) a materials-upload/coach chat
+  panel UI that reads/writes through this store.
+  PR: TBD.
 - **Shared Evidence Library — fast keyword/tag/cite/topic search slice.**
   `packages/debate-card-search/src/lib/shared-evidence-library.ts` adds an
   `EvidenceLibraryEntry` model (extends the existing "Common Argument
@@ -1129,7 +1154,7 @@ _(none)_
 
 7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext 
 
-8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. Follow-ups: (a) transcription/parsing that turns an uploaded recording or document into a material's text, (b) an actual AI Q&A call that consumes `buildGroundedCoachPrompt`'s output, (c) a materials-upload/coach chat panel UI, (d) persisting a team's materials. None of these are started._
+8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. Follow-ups: (a) transcription/parsing that turns an uploaded recording or document into a material's text, (b) an actual AI Q&A call that consumes `buildGroundedCoachPrompt`'s output, (c) a materials-upload/coach chat panel UI that reads/writes through the persistence store. None of these are started._
 
 9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slice done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. Follow-ups: (a) a React nav/outline panel in `reason-editor` that renders the outline and toggles collapsed ids, (b) a ProseMirror decoration plugin that hides collapsed ranges in the actual editor view using `getCollapsedRanges`, (c) persisting collapsed-state per document. None of these are started._
 

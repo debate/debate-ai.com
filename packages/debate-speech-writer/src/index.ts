@@ -5,9 +5,10 @@
  * quote-analysis helper that scores cards for warrants and flaws, the
  * configurable judge-paradigm registry for AI judge decisions, the
  * judge-profile aggregation helpers for summarizing a judge's ballot history,
- * the opponent-persona registry for AI practice-opponent styles, and the
+ * the opponent-persona registry for AI practice-opponent styles, the
  * team coach-material library/grounded-prompt helpers for the private team
- * coach AI idea.
+ * coach AI idea, and a localStorage-backed persistence store for a team's
+ * coach materials.
  *
  * @module debate-speech-writer
  */
@@ -78,6 +79,13 @@ export type {
   FindRelevantMaterialsOptions,
   GroundedCoachPromptOptions,
 } from "./coach/team-coach-materials";
+
+export {
+  deleteCoachMaterial,
+  getCoachMaterial,
+  listCoachMaterials,
+  saveCoachMaterial,
+} from "./state/coachMaterials";
 
 export { findFlawsPrompt } from "./prompts/quote-to-find-flaws";
 export { judgeDecisionPrompt } from "./prompts/judge-decision-options";
