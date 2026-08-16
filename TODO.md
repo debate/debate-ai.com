@@ -5,6 +5,32 @@
 _(none)_
 
 ### Completed
+- **Judge Profile Persistence — localStorage profile store.**
+  `packages/debate-speech-writer/src/state/judgeProfiles.ts` adds
+  `listJudgeProfiles`/`getJudgeProfile`/`saveJudgeProfile`/
+  `deleteJudgeProfile`, a localStorage-backed CRUD store for
+  `judge-profile.ts`'s `JudgeProfile`, keyed by `judgeId` with
+  upsert-on-save semantics, mirroring the existing
+  `coachMaterials.ts`/`opponentTeamProfiles.ts` persistence convention
+  (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
+  rather than throwing). See the "Judge Profiles" bullet under Research
+  Crowdsourcing Organizer Features below — this is the "(c)
+  persisting/looking up profiles by judge across tournaments" follow-up
+  named in that slice, mirroring the same follow-up already closed for
+  Opponent Team Profiles (PR #108). This is a persistence slice only — it
+  stores whatever `JudgeProfile` a caller passes in verbatim (still built
+  from caller-supplied `JudgeRoundRecord`s, not a real ballot data source);
+  no judge-profile card/panel UI in this repo yet reads or writes through
+  this store. Vitest-covered (with an in-memory `localStorage` mock, since
+  this package's Vitest environment is `node` with no DOM) in
+  `packages/debate-speech-writer/test/judgeProfiles.test.ts`. Follow-ups:
+  (a) a real ballot data source producing `JudgeRoundRecord`s so profiles
+  reflect real ballots instead of caller-supplied data, (b) a
+  judge-profile card/panel UI that renders `buildJudgeTendencySummary` for
+  a profile read through this store, (c) wiring `buildPreRoundBriefing`
+  (in `debate-round`) to look up a persisted profile here instead of
+  requiring the caller to supply one.
+  PR: [#109](https://github.com/debate/debate-ai.com/pull/109).
 - **Opponent Team Profile Persistence — localStorage profile store.**
   `packages/debate-data-sync/src/state/opponentTeamProfiles.ts` adds
   `listOpponentTeamProfiles`/`getOpponentTeamProfile`/
