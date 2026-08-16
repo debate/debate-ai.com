@@ -5,6 +5,28 @@
 _(none)_
 
 ### Completed
+- **Opponent Persona Selection Persistence — localStorage persona-per-session store.**
+  `packages/debate-speech-writer/src/state/opponentPersonaSelections.ts` adds
+  `listOpponentPersonaSelections`/`getOpponentPersonaSelection`/
+  `saveOpponentPersonaSelection`/`deleteOpponentPersonaSelection`, a
+  localStorage-backed CRUD store for a practice session's selected
+  `OpponentPersona` (`opponent/opponent-personas.ts`), keyed by `sessionId`
+  with upsert-on-save semantics, mirroring the existing
+  `judgeParadigmSelections.ts`/`coachMaterials.ts` persistence convention
+  (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
+  rather than throwing). Stores the full `OpponentPersona` object rather
+  than just a builtin id, so a future custom persona would persist too. See
+  the "AI Practice Opponent" idea in Research Crowdsourcing Organizer
+  Features below — this is the "(c) persisting the selected persona per
+  practice session" follow-up named in that slice. Vitest-covered in
+  `packages/debate-speech-writer/test/opponentPersonaSelections.test.ts`.
+  This is a persistence slice only — no persona-picker UI in this repo yet
+  reads or writes through this store, and it isn't wired into an actual
+  AI speech-generation call. Follow-ups: (a) an actual AI speech-generation
+  call that consumes `buildOpponentPersonaPrompt`'s output alongside idea
+  #3's `AiSpeechRequest`, (b) a persona-picker UI that reads/writes through
+  this store before starting an AI-versus practice round.
+  PR: TBD.
 - **Group Challenge Persistence — localStorage challenge-config store.**
   `packages/debate-card-search/src/state/groupChallenges.ts` adds
   `listGroupChallenges`/`getGroupChallenge`/`saveGroupChallenge`/
@@ -676,8 +698,9 @@ _(none)_
   call that consumes `buildOpponentPersonaPrompt`'s output alongside idea
   #3's `AiSpeechRequest` to produce a persona-styled opponent speech, (b) a
   persona-picker UI for selecting an opponent style before starting an
-  AI-versus practice round, (c) persisting the selected persona per
-  practice session.
+  AI-versus practice round. (c), persisting the selected persona per
+  practice session, is now done — see "Opponent Persona Selection
+  Persistence" above.
   PR: TBD.
 - **AI Drill Generator — overview/frontline/cross-ex/collapse drill slice.**
   `packages/debate-round/src/flow/drill-generator.ts` adds `buildOverviewDrill`
@@ -1353,7 +1376,7 @@ _(none)_
 * 
 * ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. Follow-ups: (a) a real ballot data source producing `JudgeRoundRecord`s instead of relying on caller-supplied data, (b) a judge-profile card/panel UI, (c) persisting/looking up profiles by judge across tournaments. None of these are started._
 * 
-* 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. Follow-ups: (a) an actual AI speech-generation call that consumes `buildOpponentPersonaPrompt`'s output alongside idea #3's `AiSpeechRequest`, (b) a persona-picker UI, (c) persisting the selected persona per practice session. None of these are started._
+* 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. A second slice, `opponentPersonaSelections.ts` (see Tracker Status above), now persists a practice session's selected `OpponentPersona` to localStorage. Follow-ups: (a) an actual AI speech-generation call that consumes `buildOpponentPersonaPrompt`'s output alongside idea #3's `AiSpeechRequest`, (b) a persona-picker UI that reads/writes through the persistence store. Neither of these are started._
 * 
 * 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. Follow-ups: (a) an actual AI coaching call for open-ended feedback beyond this template layer, (b) a coaching-panel UI, (c) persisting a generated coaching session per round. None of these are started._
 * 
