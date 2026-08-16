@@ -34,7 +34,7 @@ _(none)_
   `buildPracticeRoundSetupText` for setup and `buildPracticeRoundFeedbackText`
   after the round, (c) persisting a simulated practice round (setup,
   submitted speeches, and feedback) once round-state persistence exists.
-  PR: TBD.
+  PR: [#94](https://github.com/debate/debate-ai.com/pull/94).
 - **AI Coach Mode — extension/refutation/collapse/weighing coaching-prompt slice.**
   `packages/debate-round/src/flow/coach-mode.ts` adds
   `buildExtensionPrompts` (unanswered rows whose last flowed entry is on the
