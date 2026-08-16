@@ -5,6 +5,39 @@
 _(none)_
 
 ### Completed
+- **Group Challenges — squad-scoped friendly-challenge progress-tracking slice.**
+  `packages/debate-card-search/src/lib/group-challenges.ts` adds a
+  `GroupChallenge` model supporting two goal kinds — `contribution_target`
+  (e.g. "the squad finds 20 solvency cards this week", reusing
+  `daily-quests.ts`'s `QuestTarget` matching, exported as
+  `matchesQuestTarget` for this reuse) and `win_target` (e.g. "the squad wins
+  5 rebuttal exercises", from caller-supplied win events) — plus
+  `computeGroupChallengeProgress` (scopes progress to the challenge's
+  `[startsAt, endsAt)` window and `memberIds` roster, and ranks per-member
+  standings by blended helpfulness score for contribution challenges via the
+  existing `contribution-leaderboard.ts` `buildLeaderboard` — not raw count,
+  so a member with fewer but higher-quality contributions can still lead —
+  or by raw win count for win challenges), `buildGroupChallengeBoard`
+  (incomplete challenges first, mirroring `buildDailyQuestBoard`'s
+  ordering), and `buildGroupChallengeSummaryText`. Reuses
+  `daily-quests.ts`/`contribution-leaderboard.ts` directly rather than
+  introducing a separate matching or scoring path. Vitest-covered in
+  `packages/debate-card-search/test/group-challenges.test.ts`. See the
+  "Coaching Programs and Group Challenges" idea (#13) in Product Feature
+  Ideas below. This is the first slice only — it's the "friendly challenges"
+  half of idea #13 only; it doesn't model coaching "spaces"/rosters,
+  assigned drills, research-sprint wiring, or a practice-round composition
+  (the rest of idea #13), persist a challenge or its progress, notify the
+  squad when a challenge completes, or render a challenge UI. Follow-ups:
+  (a) a coaching-program/space model that composes this with
+  `drill-generator.ts`'s `buildDrillSet`, `team-collaboration-mode.ts`'s
+  `buildTopicSprint`, and `practice-round-simulator.ts`'s
+  `buildPracticeRoundSetup`/`buildPracticeRoundFeedback`, (b) a
+  challenge-board/creation UI in `debate-card-search`, (c) persisting
+  challenges and wiring real contribution-submission/practice-round-result
+  events into `computeGroupChallengeProgress` instead of caller-supplied
+  data.
+  PR: [#97](https://github.com/debate/debate-ai.com/pull/97).
 - **Team Collaboration Mode — topic-sprint composition slice.**
   `packages/debate-card-search/src/lib/team-collaboration-mode.ts` adds
   `buildTopicSprint`/`buildTopicSprintSummaryText`, composing the existing
