@@ -2,12 +2,33 @@
 ## Tracker Status
 
 ### In progress
-- **Video-Lecture-Training Coach AI — grounding-materials library and prompt slice.**
-  `packages/debate-speech-writer/src/coach/team-coach-materials.ts`. Branch:
-  `claude/peaceful-cerf-f6mqev`. See idea #8 in Product Feature Ideas below.
-  Implementation complete and Vitest-covered; PR pending.
+_(none)_
 
 ### Completed
+- **Video-Lecture-Training Coach AI — grounding-materials library and
+  grounded-prompt slice.**
+  `packages/debate-speech-writer/src/coach/team-coach-materials.ts` adds a
+  kind-grouped `CoachMaterial` library (`buildCoachMaterialLibrary` — lecture
+  transcripts, camp materials, instructional documents, and practice-round
+  recordings, in a stable, most-consulted-first order), a deterministic
+  keyword-overlap relevance scorer (`scoreMaterialRelevance`/
+  `findRelevantMaterials`, matching against a material's title, tags, and
+  body text, optionally scoped by topic and capped by limit/threshold), and
+  `buildGroundedCoachPrompt` — a self-contained prompt built from the most
+  relevant materials that instructs a future AI Q&A call to answer only from
+  the supplied grounding materials, mirroring the existing
+  `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention —
+  plus `buildCoachMaterialLibrarySummaryText`. Vitest-covered (100%
+  statement/branch coverage) in
+  `packages/debate-speech-writer/test/team-coach-materials.test.ts`. See the
+  "Video-Lecture-Training Coach AI" idea (#8) in Product Feature Ideas below.
+  This is the first slice only — it doesn't transcribe recordings, parse
+  uploaded documents, call any AI model, or persist a team's materials.
+  Follow-ups: (a) transcription/parsing that turns an uploaded recording or
+  document into a `CoachMaterial`'s `text`, (b) an actual AI Q&A call that
+  consumes `buildGroundedCoachPrompt`'s output, (c) a materials-upload/coach
+  chat panel UI, (d) persisting a team's `CoachMaterial`s.
+  PR: [#98](https://github.com/debate/debate-ai.com/pull/98).
 - **Group Challenges — squad-scoped friendly-challenge progress-tracking slice.**
   `packages/debate-card-search/src/lib/group-challenges.ts` adds a
   `GroupChallenge` model supporting two goal kinds — `contribution_target`
