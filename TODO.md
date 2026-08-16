@@ -36,7 +36,7 @@ _(none)_
   beyond this template layer, (b) a coaching-panel UI in `debate-round` that
   renders `buildCoachingSession`/`buildCoachingSummaryText`, (c) persisting a
   generated coaching session per round.
-  PR: TBD.
+  PR: [#92](https://github.com/debate/debate-ai.com/pull/92).
 - **Strategy Sync Notes — box-addressed prep-note/task-assignment/status slice.**
   `packages/debate-round/src/flow/strategy-sync-notes.ts` adds a `PrepNote`
   data model addressed to a specific flow `Box` the same way
