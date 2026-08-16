@@ -5,6 +5,38 @@
 _(none)_
 
 ### Completed
+- **Contribution Leaderboard Persistence — localStorage contribution store.**
+  `packages/debate-card-search/src/state/contributions.ts` adds
+  `listContributions`/`listContributionsByContributor`/`getContribution`/
+  `saveContribution`/`deleteContribution`, a localStorage-backed CRUD store
+  for `contribution-leaderboard.ts`'s `AttributedContribution` (a
+  `community-rating.ts` `CommunityContribution` attributed to a
+  `contributorId`), keyed by `id` with upsert-on-save semantics, mirroring
+  the existing `sprintNotes.ts`/`peerReviews.ts`/`opponentTeamProfiles.ts`
+  persistence convention (SSR/no-storage-safe, corrupt or missing JSON
+  degrades to an empty list rather than throwing).
+  `listContributionsByContributor` reuses `contribution-leaderboard.ts`'s
+  existing `groupContributionsByContributor` helper directly rather than
+  reimplementing contributor-scoped filtering. Vitest-covered (with an
+  in-memory `localStorage` mock, since this package's Vitest environment is
+  `node` with no DOM) in
+  `packages/debate-card-search/test/contributions.test.ts`. See the
+  "Contribution Leaderboard" bullet under Research Crowdsourcing Organizer
+  Features below — this is the "(a) wiring a `contributorId` into wherever
+  contributions are eventually persisted" follow-up named in that slice.
+  This is a persistence slice only — it stores whatever
+  `AttributedContribution` a caller passes in verbatim (still built from
+  caller-supplied like/save/quality/reviewer-endorsement signals, not wired
+  to any real contribution-submission flow); no leaderboard UI in this repo
+  yet reads or writes through this store, and `buildLeaderboard`/
+  `buildContributorStats` still take a caller-supplied contribution list
+  rather than reading through this store directly. Follow-ups: (a) wiring
+  real like/save/endorse actions and a real submitted-contribution flow into
+  `saveContribution`, (b) a leaderboard/ranked-feed UI that reads through
+  this store and renders `buildLeaderboard`, (c) composing this store's
+  reads directly into `buildLeaderboard`/`buildContributorStats` call sites
+  once one exists, instead of requiring a caller-supplied list.
+  PR: TBD.
 - **Peer Review Persistence — localStorage review store.**
   `packages/debate-card-search/src/state/peerReviews.ts` adds
   `listPeerReviews`/`getPeerReview`/`savePeerReview`/`deletePeerReview`, a
@@ -1256,7 +1288,7 @@ _(none)_
 ## Research Crowdsourcing Organizer Features
 
 * 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool.
-* 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. Follow-ups: (a) wiring a `contributorId` into wherever contributions are eventually persisted, (b) a "completed tasks" signal once a research-task system exists, (c) a leaderboard UI. None of these are started._
+* 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. A second slice, `contributions.ts` (see Tracker Status above), now persists `AttributedContribution` records to localStorage. Follow-ups: (a) wiring real like/save/endorse actions and a real submitted-contribution flow into the persistence store, (b) a "completed tasks" signal once a research-task system exists, (c) a leaderboard UI that reads through the persistence store. None of these are started._
 * 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeDailyMissionResult`/`computeStreakStatus`/`getEarnedStreakBadges`/`buildContributorQuestStreak`/`buildStreakSummaryText` for turning a contributor's daily `daily-quests.ts` mission-completion history into a current/longest streak and the milestone badges (3/7/14/30-day streaks by default) that streak has earned. Follow-ups: (a) wiring real, persisted daily contributions into `computeDailyMissionResult` per contributor per day, (b) a streak/badge widget UI, (c) surfacing earned streak badges on a contributor's `progress-unlocks.ts` unlock status. None of these are started._
 * 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now feeds the derived skill level into `research-task-routing.ts`'s `ContributorAvailability`. Follow-ups: (a) persisting a contributor's tier/badges, (b) a progress/unlock UI. None of these are started._
 * 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scoreRelevance`/`scoreClarity`/`scoreUniqueness`/`scoreEvidenceQuality`/`scoreUsability`/`computeCardScoreBreakdown`/`rankCardScores`/`buildCardScoreSummaryText` for scoring a card across all five dimensions with deterministic heuristics and flagging likely duplicates, reusing the existing idea #11 `community-rating.ts` quality-signal scoring for evidence quality. Follow-ups: (a) an actual LLM-scoring call for the more subjective dimensions instead of the heuristic proxy, (b) wiring real argument-block keywords and a real submitted-card corpus into the scorer, (c) a scoring/duplicate-flag panel UI. None of these are started._
