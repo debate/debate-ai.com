@@ -36,7 +36,7 @@ _(none)_
   `buildTopicSprint`/`buildTopicSprintSummaryText` and calls
   `createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`, (c) a
   presence/live-status signal for who's currently active in the sprint.
-  PR: TBD.
+  PR: [#96](https://github.com/debate/debate-ai.com/pull/96).
 - **Team Brainstorm Assist — squad brainstorm prompt/board slice.**
   `packages/debate-card-search/src/lib/team-brainstorm-assist.ts` adds
   `buildBrainstormPrompt` (a structured, non-AI-calling brainstorm prompt for
