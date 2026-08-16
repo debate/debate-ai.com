@@ -5,6 +5,34 @@
 _(none)_
 
 ### Completed
+- **Flow Annotation Persistence — localStorage annotation store.**
+  `packages/debate-round/src/state/flowAnnotations.ts` adds
+  `listFlowAnnotations`/`listFlowAnnotationsForFlow`/
+  `listFlowAnnotationsForSpeech`/`listFlowAnnotationsForBox`/
+  `getFlowAnnotation`/`saveFlowAnnotation`/`deleteFlowAnnotation`, a
+  localStorage-backed CRUD store for `flow-annotations.ts`'s
+  `FlowAnnotation` (id, flow/box address, speech, playback timestamp,
+  optional note), keyed by `id` with upsert-on-save semantics, mirroring
+  the existing `prepNotes.ts`/`coachingPrograms.ts` persistence convention
+  (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
+  rather than throwing). `listFlowAnnotationsForSpeech`/
+  `listFlowAnnotationsForBox` reuse `flow-annotations.ts`'s existing
+  `getAnnotationsForSpeech`/`getAnnotationsForBox` query helpers directly
+  rather than reimplementing filtering/sorting. Vitest-covered (with an
+  in-memory `localStorage` mock, since this package's Vitest environment is
+  `node` with no DOM) in `packages/debate-round/test/flowAnnotations.test.ts`.
+  See idea #15 below ("Flow-in-Speech Flow Annotations") — this is the "(c)
+  persisting annotations alongside a `Round`/`Flow`" follow-up named in
+  that slice. This is the first slice only — it persists whatever
+  `FlowAnnotation` a caller passes in verbatim; no UI in this repo yet
+  calls `createFlowAnnotation` and threads the result through
+  `saveFlowAnnotation`/`deleteFlowAnnotation`. Follow-ups: (a) a
+  video-player UI (`debate-videos`) that lets a viewer drop an annotation
+  at the current playback position, persisted through this store, and jump
+  back to one, (b) a flow-grid affordance (`FlowSpreadsheet`) that surfaces
+  annotations on their box via `listFlowAnnotationsForBox` and links back
+  to the timestamp.
+  PR: [#104](https://github.com/debate/debate-ai.com/pull/104).
 - **Shared Flow Sync — concurrent-edit merge and conflict-detection slice.**
   `packages/debate-round/src/flow/shared-flow-sync.ts` adds a `FlowEdit`
   model (one contributor's proposed edit to a single flow `Box`'s content,
@@ -1054,7 +1082,7 @@ _(none)_
 
 14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slice done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. Follow-ups: (a) wiring these into actual keyboard-shortcut handlers in `reason-editor`'s toolbar/editor view, (b) a "send selected evidence to a speech document" command, which needs a speech-document target that doesn't exist yet, (c) a text-emphasize (toggle `<mark>`) command over an editor selection range. None of these are started._
 
-15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slice done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. Follow-ups: (a) a video-player UI (`debate-videos`) that lets a viewer drop an annotation at the current playback position and jump back to one, (b) a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box and links back to the timestamp, (c) persisting annotations alongside a `Round`/`Flow`. None of these are started._
+15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slice done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. Follow-ups: (a) a video-player UI (`debate-videos`) that lets a viewer drop an annotation at the current playback position, persisted through `flowAnnotations.ts`, and jump back to one, (b) a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box via `listFlowAnnotationsForBox` and links back to the timestamp. Neither of these are started._
 
 16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow) _Status: first slice done (see Tracker Status above) — `debate-round` now has `mergeFlowEdits`/`applyMergedEditsToFlow`/`buildSharedFlowSyncSummaryText` for reconciling multiple teammates' concurrent box-level flow edits into one canonical flow (last write wins), flagging genuinely concurrent, diverging edits from different authors as conflicts for a human to resolve instead of silently overwriting them. Follow-ups: (a) a live transport (WebSocket or similar) that turns local edits into a shared stream across a room/team, (b) a `FlowSpreadsheet` affordance that applies the merge and surfaces conflicts, (c) composing the Common Argument Library's tagged card corpus to suggest (not auto-apply) a pre-filled flow note from matching evidence. None of these are started._
 
