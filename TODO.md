@@ -2,69 +2,42 @@
 ## Tracker Status
 
 ### In progress
-
-## Group Challenges
-
-**Status:** In Progress
-**Source:** TODO.md — "Coaching Programs and Group Challenges" (idea #13) — "friendly challenges such as completing a set of blocks or winning a rebuttal exercise"
-**Branch:** `claude/upbeat-bardeen-pxzomn`
-**PR:** Not created yet
-**Started:** 2026-08-16
-
-### Goal
-A pure, deterministic first slice of the "friendly challenges" half of idea #13:
-a squad-scoped `GroupChallenge` whose progress is computed from caller-supplied
-contributions/win events, reusing the existing `daily-quests.ts` target-matching
-and `contribution-leaderboard.ts` helpfulness-ranked leaderboard rather than
-introducing a separate scoring path.
-
-### Scope
-- A `GroupChallenge` model supporting two goal kinds: `contribution_target`
-  (e.g. "the squad finds 20 solvency cards this week", reusing
-  `daily-quests.ts`'s `QuestTarget` matching) and `win_target` (e.g. "the squad
-  wins 5 rebuttal exercises", from caller-supplied win events).
-- Progress computation scoped to the challenge's `[startsAt, endsAt)` window
-  and to its `memberIds` roster.
-- A ranked per-member standing (helpfulness-ranked for contribution challenges,
-  via `buildLeaderboard`) and an MVP contributor.
-- A multi-challenge board (incomplete first) and a summary line.
-
-### Non-goals
-- Coaching "spaces"/rosters, assigned drills, research-sprint wiring, or a
-  practice-round composition (the rest of idea #13) — this slice is the
-  challenge-tracking piece only.
-- Persistence of challenges/progress, or any UI.
-- Notifications when a challenge completes.
-
-### Acceptance criteria
-- [x] `computeGroupChallengeProgress` correctly scores both goal kinds within
-      the challenge window and roster
-- [x] Contribution-target MVP reflects helpfulness score, not raw count
-- [x] Vitest coverage is added or updated
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Production/web build passes (no `lint` script is configured in this repo)
-- [x] Documentation is updated if behavior or configuration changes (this entry)
-
-### Implementation plan
-- [x] Inspect `daily-quests.ts`, `community-rating.ts`, `contribution-leaderboard.ts`
-- [x] Export `matchesQuestTarget` from `daily-quests.ts` for reuse
-- [x] Implement `packages/debate-card-search/src/lib/group-challenges.ts`
-- [x] Add focused Vitest success-path coverage
-- [x] Add focused failure/edge-case coverage (window/roster exclusion, ties, empty board)
-- [x] Run focused tests and fix failures
-- [x] Run typechecking (`npm run typecheck`)
-- [x] Run the full relevant test suite (`npm test`)
-- [x] Run the production/web build (`npm run build`)
-- [x] Review the final diff for scope and quality
-- [x] Commit and push the branch
-- [ ] Create or update the pull request
-- [x] Update tracker status, completed checkboxes, and remaining work
-
-### Remaining work
-- Open the PR (this run creates the commit; PR creation follows).
+_(none)_
 
 ### Completed
+- **Group Challenges — squad-scoped friendly-challenge progress-tracking slice.**
+  `packages/debate-card-search/src/lib/group-challenges.ts` adds a
+  `GroupChallenge` model supporting two goal kinds — `contribution_target`
+  (e.g. "the squad finds 20 solvency cards this week", reusing
+  `daily-quests.ts`'s `QuestTarget` matching, exported as
+  `matchesQuestTarget` for this reuse) and `win_target` (e.g. "the squad wins
+  5 rebuttal exercises", from caller-supplied win events) — plus
+  `computeGroupChallengeProgress` (scopes progress to the challenge's
+  `[startsAt, endsAt)` window and `memberIds` roster, and ranks per-member
+  standings by blended helpfulness score for contribution challenges via the
+  existing `contribution-leaderboard.ts` `buildLeaderboard` — not raw count,
+  so a member with fewer but higher-quality contributions can still lead —
+  or by raw win count for win challenges), `buildGroupChallengeBoard`
+  (incomplete challenges first, mirroring `buildDailyQuestBoard`'s
+  ordering), and `buildGroupChallengeSummaryText`. Reuses
+  `daily-quests.ts`/`contribution-leaderboard.ts` directly rather than
+  introducing a separate matching or scoring path. Vitest-covered in
+  `packages/debate-card-search/test/group-challenges.test.ts`. See the
+  "Coaching Programs and Group Challenges" idea (#13) in Product Feature
+  Ideas below. This is the first slice only — it's the "friendly challenges"
+  half of idea #13 only; it doesn't model coaching "spaces"/rosters,
+  assigned drills, research-sprint wiring, or a practice-round composition
+  (the rest of idea #13), persist a challenge or its progress, notify the
+  squad when a challenge completes, or render a challenge UI. Follow-ups:
+  (a) a coaching-program/space model that composes this with
+  `drill-generator.ts`'s `buildDrillSet`, `team-collaboration-mode.ts`'s
+  `buildTopicSprint`, and `practice-round-simulator.ts`'s
+  `buildPracticeRoundSetup`/`buildPracticeRoundFeedback`, (b) a
+  challenge-board/creation UI in `debate-card-search`, (c) persisting
+  challenges and wiring real contribution-submission/practice-round-result
+  events into `computeGroupChallengeProgress` instead of caller-supplied
+  data.
+  PR: [#97](https://github.com/debate/debate-ai.com/pull/97).
 - **Team Collaboration Mode — topic-sprint composition slice.**
   `packages/debate-card-search/src/lib/team-collaboration-mode.ts` adds
   `buildTopicSprint`/`buildTopicSprintSummaryText`, composing the existing
