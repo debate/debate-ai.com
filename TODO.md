@@ -33,7 +33,7 @@ _(none)_
   reads/writes through this store, (b) persisting a topic sprint's other
   inputs once they have a natural persisted shape, (c) a presence/live-status
   signal for who's currently active in the sprint.
-  PR: TBD.
+  PR: [#105](https://github.com/debate/debate-ai.com/pull/105).
 - **Flow Annotation Persistence — localStorage annotation store.**
   `packages/debate-round/src/state/flowAnnotations.ts` adds
   `listFlowAnnotations`/`listFlowAnnotationsForFlow`/
