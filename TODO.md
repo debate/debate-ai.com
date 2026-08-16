@@ -5,6 +5,33 @@
 _(none)_
 
 ### Completed
+- **Opponent Team Profile Persistence — localStorage profile store.**
+  `packages/debate-data-sync/src/state/opponentTeamProfiles.ts` adds
+  `listOpponentTeamProfiles`/`getOpponentTeamProfile`/
+  `saveOpponentTeamProfile`/`deleteOpponentTeamProfile`, a
+  localStorage-backed CRUD store for `opponent-team-profile.ts`'s
+  `OpponentTeamProfile`, keyed by `teamId` with upsert-on-save semantics,
+  mirroring the existing `coachMaterials.ts`/`sprintNotes.ts` persistence
+  convention (SSR/no-storage-safe, corrupt or missing JSON degrades to an
+  empty list rather than throwing). This is the first localStorage-backed
+  persistence store in the `debate-data-sync` package. Vitest-covered
+  (with an in-memory `localStorage` mock, since this package's Vitest
+  environment is `node` with no DOM) in
+  `packages/debate-data-sync/test/opponentTeamProfiles.test.ts`. See the
+  "Opponent Team Profiles" bullet under Research Crowdsourcing Organizer
+  Features below — this is the "(c) persisting/looking up profiles by team
+  across tournaments" follow-up named in that slice. This is a persistence
+  slice only — it stores whatever `OpponentTeamProfile` a caller passes in
+  verbatim (still built from caller-supplied `OpponentRoundRecord`s, not a
+  real Tabroom/tab-service data source); no scouting-card or
+  pre-round-briefing UI in this repo yet reads or writes through this
+  store. Follow-ups: (a) a real round-history data source producing
+  `OpponentRoundRecord`s so profiles reflect real pairings/ballots instead
+  of caller-supplied data, (b) a scouting-card/panel UI that renders
+  `buildOpponentScoutingSummary` for a profile read through this store,
+  (c) wiring `buildPreRoundBriefing` (in `debate-round`) to look up a
+  persisted profile here instead of requiring the caller to supply one.
+  PR: TBD.
 - **Coach Material Persistence — localStorage config store.**
   `packages/debate-speech-writer/src/state/coachMaterials.ts` adds
   `listCoachMaterials`/`getCoachMaterial`/`saveCoachMaterial`/
@@ -1192,7 +1219,7 @@ _(none)_
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. Follow-ups: (a) wiring real contribution-submission events into a persisted daily feed, (b) a quest-board widget UI, (c) a streak/reward layer once the Gamified Quests idea has its own first slice. None of these are started._
 * 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicSprint`/`buildTopicSprintSummaryText` for composing the existing Daily Quests board, Research Task Routing result, and Research Progress Tracking board into one shared topic-scoped session, plus a topic-addressed `SprintNote` model (`createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`) for shared prep notes, mirroring `debate-round`'s `strategy-sync-notes.ts` `PrepNote` lifecycle. A second slice, `sprintNotes.ts` (see Tracker Status above), now persists `SprintNote` records to localStorage. Follow-ups: (a) a collaboration-mode panel UI, (b) persisting a topic sprint's other inputs, (c) a presence/live-status signal for who's currently active. Neither of these are started._
 * 
-* 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. Follow-ups: (a) a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of relying on caller-supplied data, (b) a scouting-card/panel UI, (c) persisting/looking up profiles by team across tournaments. None of these are started._
+* 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slices done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. A second slice, `opponentTeamProfiles.ts` (see Tracker Status above), now persists `OpponentTeamProfile` records to localStorage, keyed by `teamId`. Follow-ups: (a) a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of relying on caller-supplied data, (b) a scouting-card/panel UI, (c) wiring `buildPreRoundBriefing` to look up a persisted profile through this store. Neither of these are started._
 * 
 * ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. Follow-ups: (a) a real ballot data source producing `JudgeRoundRecord`s instead of relying on caller-supplied data, (b) a judge-profile card/panel UI, (c) persisting/looking up profiles by judge across tournaments. None of these are started._
 * 
