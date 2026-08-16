@@ -5,6 +5,38 @@
 _(none)_
 
 ### Completed
+- **AI Coach Mode — extension/refutation/collapse/weighing coaching-prompt slice.**
+  `packages/debate-round/src/flow/coach-mode.ts` adds
+  `buildExtensionPrompts` (unanswered rows whose last flowed entry is on the
+  caller's own side — their last word stands, so extend it as
+  dropped/conceded), `buildRefutationPrompts` (unanswered rows whose last
+  flowed entry is on the opposing side — must be answered before it's
+  extended against the caller), `buildCollapsePrompts` (a thin remap of the
+  existing `drill-generator.ts` `buildCollapseDrills`), `buildWeighingGuidance`
+  (a whole-round weighing prompt comparing the caller's side against every
+  other side via `response-outcome.ts`'s `summarizeOutcomeBySide` — ahead on
+  both unanswered count and average vulnerability is framed as "weigh on your
+  uncontested offense", behind on either is framed as a warning to shore up
+  the case first), `buildCoachingSession` (combines all four, refutation
+  first since live threats need an answer before anything else), and
+  `buildCoachingSummaryText`. Reuses `flow-transcript-summary.ts`,
+  `response-outcome.ts`, `argument-tree.ts`'s `getSpeechSideKey`, and
+  `drill-generator.ts`'s `buildCollapseDrills` directly rather than
+  reimplementing any of that vulnerability/side-classification logic.
+  Vitest-covered in `packages/debate-round/test/coach-mode.test.ts`. See the
+  "AI Coach Mode" bullet under Research Crowdsourcing Organizer Features
+  below. This is the first slice only — it's a deterministic template layer
+  over the flow's existing clash/vulnerability signals (the same heuristic
+  `response-outcome.ts` and `drill-generator.ts` already use), not an actual
+  AI-generated coaching call; it isn't wired into any coaching-panel UI, and
+  generated sessions aren't persisted anywhere. This repo has no `lint`
+  script configured (only `typecheck`/`test`/`build` via turbo), so there was
+  no lint step to run. Follow-ups: (a) an actual AI coaching call (live or
+  post-round) that consumes the same flow signals for open-ended feedback
+  beyond this template layer, (b) a coaching-panel UI in `debate-round` that
+  renders `buildCoachingSession`/`buildCoachingSummaryText`, (c) persisting a
+  generated coaching session per round.
+  PR: TBD.
 - **Strategy Sync Notes — box-addressed prep-note/task-assignment/status slice.**
   `packages/debate-round/src/flow/strategy-sync-notes.ts` adds a `PrepNote`
   data model addressed to a specific flow `Box` the same way
@@ -766,7 +798,7 @@ _(none)_
 * 
 * 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. Follow-ups: (a) an actual AI speech-generation call that consumes `buildOpponentPersonaPrompt`'s output alongside idea #3's `AiSpeechRequest`, (b) a persona-picker UI, (c) persisting the selected persona per practice session. None of these are started._
 * 
-* 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance.
+* 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. Follow-ups: (a) an actual AI coaching call for open-ended feedback beyond this template layer, (b) a coaching-panel UI, (c) persisting a generated coaching session per round. None of these are started._
 * 
 * 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments.
 * 
