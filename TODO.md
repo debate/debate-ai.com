@@ -31,7 +31,7 @@ _(none)_
   (b) a brainstorm-panel UI in `debate-card-search` that renders
   `buildBrainstormBoard`/`buildBrainstormSummaryText` and lets teammates
   submit/upvote ideas live, (c) persisting submitted ideas and their votes.
-  PR: TBD.
+  PR: [#95](https://github.com/debate/debate-ai.com/pull/95).
 - **Practice Round Simulator — setup/post-round-feedback composition slice.**
   `packages/debate-round/src/round/practice-round-simulator.ts` adds
   `buildPracticeRoundSetup`/`buildPracticeRoundSetupText` (combines idea #3's
