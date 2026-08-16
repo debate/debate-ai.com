@@ -5,6 +5,32 @@
 _(none)_
 
 ### Completed
+- **Group Challenge Persistence — localStorage challenge-config store.**
+  `packages/debate-card-search/src/state/groupChallenges.ts` adds
+  `listGroupChallenges`/`getGroupChallenge`/`saveGroupChallenge`/
+  `deleteGroupChallenge`, a localStorage-backed CRUD store for
+  `group-challenges.ts`'s `GroupChallenge` (id, title, goal, member roster,
+  challenge window), keyed by `id` with upsert-on-save semantics, mirroring
+  the existing `sprintNotes.ts`/`coachingPrograms.ts` persistence convention
+  (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
+  rather than throwing). Reuses `GroupChallenge` from `group-challenges.ts`
+  directly rather than redefining it. Vitest-covered (with an in-memory
+  `localStorage` mock, since this package's Vitest environment is `node`
+  with no DOM) in
+  `packages/debate-card-search/test/groupChallenges.test.ts`. See the
+  "Group Challenges" bullet under Research Crowdsourcing Organizer Features
+  below (PR #97) — this is the "(c) persisting challenges" follow-up named
+  in that slice. This is a config-persistence slice only — it stores a
+  challenge's static config verbatim; a challenge's computed progress
+  (`computeGroupChallengeProgress`, `GroupChallengeProgress`) stays
+  session-derived from caller-supplied contributions/win events rather than
+  being persisted, and no challenge-board/creation UI in this repo yet reads
+  or writes through this store. Follow-ups: (a) a challenge-board/creation
+  UI in `debate-card-search` that reads/writes through this store, (b)
+  wiring real contribution-submission/practice-round-result events into
+  `computeGroupChallengeProgress` instead of caller-supplied data, (c)
+  notifying the squad when a persisted challenge completes.
+  PR: [#113](https://github.com/debate/debate-ai.com/pull/113).
 - **Judge Paradigm Selection Persistence — localStorage paradigm-per-round store.**
   `packages/debate-speech-writer/src/state/judgeParadigmSelections.ts` adds
   `listJudgeParadigmSelections`/`getJudgeParadigmSelection`/
