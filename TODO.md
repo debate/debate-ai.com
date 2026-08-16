@@ -5,6 +5,36 @@
 _(none)_
 
 ### Completed
+- **Shared Flow Sync — concurrent-edit merge and conflict-detection slice.**
+  `packages/debate-round/src/flow/shared-flow-sync.ts` adds a `FlowEdit`
+  model (one contributor's proposed edit to a single flow `Box`'s content,
+  addressed via `boxPath` the same way `flow-annotations.ts`/
+  `strategy-sync-notes.ts` already address boxes) plus `mergeFlowEdits`
+  (reconciles every box's edits into one canonical value — last write wins,
+  tie-broken by `id` — except when a box's latest edit and some other,
+  different-author edit with different content land within a configurable
+  `conflictWindowMs` of each other, in which case that box is left out of
+  `merged` and reported in `conflicts` instead, so a teammate's genuinely
+  concurrent work is surfaced for a human to resolve rather than silently
+  overwritten), `applyMergedEditsToFlow` (immutably applies merged edits to
+  a `Flow`'s boxes, skipping an edit whose `boxPath` no longer resolves
+  rather than throwing, mirroring `resolveAnnotationBox`'s handling), and
+  `buildSharedFlowSyncSummaryText`. See idea #16 below ("Shared,
+  Ai-Generated Debate Flow"). This is the first slice only — it's pure
+  merge logic over caller-supplied edits; there's no live transport (e.g.
+  WebSocket) wiring contributors' edits together in real time, it isn't
+  wired into `FlowSpreadsheet`, and it doesn't preload evidence cards into
+  flow notes (the idea's "optionally preloading evidence cards" half).
+  Vitest-covered (100% statement/branch/function/line coverage) in
+  `packages/debate-round/test/shared-flow-sync.test.ts`. Follow-ups: (a) a
+  live transport (WebSocket or similar) that turns local `FlowEdit`s into a
+  shared stream across a room/team, (b) a `FlowSpreadsheet` affordance that
+  applies `mergeFlowEdits`/`applyMergedEditsToFlow` and surfaces
+  `conflicts` for a teammate to pick a winner, (c) composing
+  `argument-library.ts`'s tagged card corpus to suggest a pre-filled flow
+  note from matching evidence, keeping the human in control of whether to
+  accept it.
+  PR: TBD.
 - **Prep Note Persistence — localStorage note store.**
   `packages/debate-round/src/state/prepNotes.ts` adds
   `listPrepNotes`/`listPrepNotesForFlow`/`getPrepNote`/`savePrepNote`/
@@ -1026,7 +1056,7 @@ _(none)_
 
 15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slice done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. Follow-ups: (a) a video-player UI (`debate-videos`) that lets a viewer drop an annotation at the current playback position and jump back to one, (b) a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box and links back to the timestamp, (c) persisting annotations alongside a `Round`/`Flow`. None of these are started._
 
-16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow)
+16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow) _Status: first slice done (see Tracker Status above) — `debate-round` now has `mergeFlowEdits`/`applyMergedEditsToFlow`/`buildSharedFlowSyncSummaryText` for reconciling multiple teammates' concurrent box-level flow edits into one canonical flow (last write wins), flagging genuinely concurrent, diverging edits from different authors as conflicts for a human to resolve instead of silently overwriting them. Follow-ups: (a) a live transport (WebSocket or similar) that turns local edits into a shared stream across a room/team, (b) a `FlowSpreadsheet` affordance that applies the merge and surfaces conflicts, (c) composing the Common Argument Library's tagged card corpus to suggest (not auto-apply) a pre-filled flow note from matching evidence. None of these are started._
 
 
 
