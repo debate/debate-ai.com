@@ -5,6 +5,29 @@
 _(none)_
 
 ### Completed
+- **AI Practice Opponent — policy-heavy/kritik/lay/fast-flow persona registry slice.**
+  `packages/debate-speech-writer/src/opponent/opponent-personas.ts` adds a
+  `opponentPersonas` registry of four built-in styles (`policy-heavy`,
+  `kritik`, `lay`, `fast-flow`), each with a name/description, pace, ordered
+  `preferredArguments`, and imperative `instructions`, plus
+  `getOpponentPersona`/`listOpponentPersonas` lookups and
+  `buildOpponentPersonaPrompt` for composing a self-contained prompt section.
+  Mirrors the existing `judge-paradigms.ts` registry shape exactly rather
+  than introducing a separate persona-definition pattern. Vitest-covered
+  (100% statement/branch/function/line coverage) in
+  `packages/debate-speech-writer/test/opponent-personas.test.ts`. See the "AI
+  Practice Opponent" bullet under Research Crowdsourcing Organizer Features
+  below. This is the first slice only — it doesn't call any AI model, isn't
+  wired into idea #3's `buildAiResponseRequest`/`AiSpeechRequest` (which
+  lives in `debate-round` and can't import from `debate-speech-writer`
+  without inverting the existing dependency direction), and isn't rendered
+  in any persona-picker UI. Follow-ups: (a) an actual AI speech-generation
+  call that consumes `buildOpponentPersonaPrompt`'s output alongside idea
+  #3's `AiSpeechRequest` to produce a persona-styled opponent speech, (b) a
+  persona-picker UI for selecting an opponent style before starting an
+  AI-versus practice round, (c) persisting the selected persona per
+  practice session.
+  PR: TBD.
 - **AI Drill Generator — overview/frontline/cross-ex/collapse drill slice.**
   `packages/debate-round/src/flow/drill-generator.ts` adds `buildOverviewDrill`
   (a whole-round overview prompt weighing every side's unanswered-argument
@@ -679,7 +702,7 @@ _(none)_
 * 
 * ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. Follow-ups: (a) a real ballot data source producing `JudgeRoundRecord`s instead of relying on caller-supplied data, (b) a judge-profile card/panel UI, (c) persisting/looking up profiles by judge across tournaments. None of these are started._
 * 
-* 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents.
+* 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. Follow-ups: (a) an actual AI speech-generation call that consumes `buildOpponentPersonaPrompt`'s output alongside idea #3's `AiSpeechRequest`, (b) a persona-picker UI, (c) persisting the selected persona per practice session. None of these are started._
 * 
 * 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance.
 * 
