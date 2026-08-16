@@ -6,6 +6,32 @@
 (none)
 
 ### Completed
+- **Word-Count-Only Speech Format — persisted word-count round results.**
+  `packages/debate-round/src/state/wordCountRounds.ts` adds a
+  localStorage-backed CRUD store (`listWordCountRounds`/`getWordCountRound`/
+  `saveWordCountRound`/`deleteWordCountRound`) for a round's chosen
+  `debate-timer` word-count style key and its submitted speech text, keyed by
+  `roundId` with upsert-on-save semantics, mirroring the existing
+  `aiVersusRounds.ts`/`practiceRounds.ts` persistence convention
+  (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
+  rather than throwing). Closes the "(c) persisting word-count-mode round
+  results alongside timed rounds" follow-up named under idea #2
+  ("Word-Count-Only Speech Format") below. Also adds
+  `getWordCountRoundStatuses`, which computes each submitted speech's
+  `WordCountStatus` on read (via the existing `getWordCountStatus`) by
+  matching each submission's `name` against the round's style, rather than
+  storing a status snapshot that could go stale if a format's word limits
+  ever change; a submission whose name no longer matches any speech in the
+  style is skipped rather than throwing. Vitest-covered (with an in-memory
+  `localStorage` mock, since this package's Vitest environment is `node`
+  with no DOM) in `packages/debate-round/test/wordCountRounds.test.ts`. This
+  is a persistence slice only — no submission UI in this repo yet reads or
+  writes through this store, and `useTimerState`/`SpeechTimer` still has no
+  non-timed, word-limited speech mode. Follow-ups: (a) a submission UI in
+  `debate-round`/`reason-editor` that calls `getWordCountStatus` while a
+  debater types and reads/writes through this store, (b) extending
+  `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech
+  mode. Neither of these is started.
 - **Practice Round Simulator — persisted practice-round store.**
   `packages/debate-round/src/state/practiceRounds.ts` adds a
   localStorage-backed CRUD store (`listPracticeRounds`/`getPracticeRound`/
@@ -1607,7 +1633,7 @@
 
 1. **CX NDCA Standings** — Add a standings dashboard modeled around NDCA-style results, allowing users to browse qualification points, rankings, cumulative records, and tournament performance history across the season. Tabroom already supports tournament results and NDCA-points configuration, so this could expose those data in a more searchable, user-friendly analytics view. [tabroom](https://www.tabroom.com/index/tourn/index.mhtml?tourn_id=26597) _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `computeTournamentPoints`/`buildTeamStanding`/`buildStandings`/`rankStandings`/`getQualifiedTeams` for turning per-team tournament results into ranked, cumulative season standings against a configurable (not authoritative) points table. Follow-ups: (a) a Tabroom/NDCA scraper that produces real `TournamentResult` records per team (today's `sync-tournaments.ts` only fetches tournament names), (b) a real, circuit-sourced `QualificationPointsTable` instead of the illustrative default, (c) a standings dashboard UI (likely under `/rank`) that renders `rankStandings`/`getQualifiedTeams`. None of these are started._
 
-2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slice done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. Follow-ups: (a) a submission UI in `debate-round`/`reason-editor` that calls `getWordCountStatus` while a debater types, (b) extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode, (c) persisting word-count-mode round results alongside timed rounds. None of these are started._
+2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slices done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. A second slice, `wordCountRounds.ts` (see Tracker Status above, "Word-Count-Only Speech Format — persisted word-count round results"), now persists a round's chosen style and submitted speech text to localStorage. Follow-ups: (a) a submission UI in `debate-round`/`reason-editor` that calls `getWordCountStatus` while a debater types and reads/writes through the persistence store, (b) extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode. Neither of these is started._
 
 3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildAiVersusSpeechOrder`/`getNextSpeechSlot`/`isUsersTurn`/`validateSpeechSubmission`/`buildAiResponseRequest` for turning a `debate-timer` format + chosen side into an ordered, speaker-tagged turn sequence, validating a submitted speech against whose turn it is, and building a structured (non-AI-calling) request describing the AI's next speech. A second slice, `aiVersusRounds.ts` (see Tracker Status above, "Online Debate Versus AI — submitted-round persistence"), now persists a round's format, side, and submitted speeches to localStorage. Follow-ups: (a) an actual AI speech-generation call that consumes `buildAiResponseRequest`'s output (prior speeches + slot + cross-ex flag) to produce the AI's next speech text, (b) a round-setup + submission UI in `debate-round` that lets a user pick a format/side, type or record a speech, calls `validateSpeechSubmission`, and reads/writes through the persistence store. Neither of these are started._
 
