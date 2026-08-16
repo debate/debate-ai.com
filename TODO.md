@@ -26,7 +26,7 @@ _(none)_
   call that consumes `buildOpponentPersonaPrompt`'s output alongside idea
   #3's `AiSpeechRequest`, (b) a persona-picker UI that reads/writes through
   this store before starting an AI-versus practice round.
-  PR: TBD.
+  PR: [#114](https://github.com/debate/debate-ai.com/pull/114).
 - **Group Challenge Persistence — localStorage challenge-config store.**
   `packages/debate-card-search/src/state/groupChallenges.ts` adds
   `listGroupChallenges`/`getGroupChallenge`/`saveGroupChallenge`/
