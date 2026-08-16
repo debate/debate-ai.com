@@ -5,6 +5,38 @@
 _(none)_
 
 ### Completed
+- **Team Collaboration Mode — topic-sprint composition slice.**
+  `packages/debate-card-search/src/lib/team-collaboration-mode.ts` adds
+  `buildTopicSprint`/`buildTopicSprintSummaryText`, composing the existing
+  "Daily Quests and Targets" board (`daily-quests.ts`'s
+  `buildDailyQuestBoard`), "Research Task Routing" result
+  (`research-task-routing.ts`'s `buildRoutingResult`), and "Research
+  Progress Tracking" board (`research-progress.ts`'s
+  `buildResearchProgressBoard`) into one shared, topic-scoped session (a
+  "Topic Sprint"), plus a topic-addressed `SprintNote` model
+  (`createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`/
+  `getNotesForTopic`/`getNotesAssignedTo`/`getOpenFollowUps`) mirroring
+  `debate-round`'s `strategy-sync-notes.ts` `PrepNote` lifecycle
+  (open/covered/needs-follow-up, assignable as a task) — this package has no
+  dependency on `debate-round`, so the box-addressed convention is mirrored
+  locally with a topic in place of a flow box rather than introducing a
+  separate note-status scheme. Reuses `daily-quests.ts`,
+  `research-task-routing.ts`, and `research-progress.ts` directly rather
+  than introducing a separate quest/assignment/progress signal.
+  Vitest-covered (100% statement/branch/function/line coverage) in
+  `packages/debate-card-search/test/team-collaboration-mode.test.ts`. See
+  the "Team Collaboration Mode" bullet under Research Crowdsourcing
+  Organizer Features below. This is the first slice only — it works
+  entirely off caller-supplied quests/contributions/coverage
+  reports/contributor availability/assignments/notes; it doesn't persist a
+  sprint or its notes, track live/presence status for who's currently
+  online, or render a collaboration-mode UI. Follow-ups: (a) persisting
+  `SprintNote`s and a topic sprint's inputs (quest templates, contributor
+  availability) somewhere, (b) a collaboration-mode panel UI that renders
+  `buildTopicSprint`/`buildTopicSprintSummaryText` and calls
+  `createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`, (c) a
+  presence/live-status signal for who's currently active in the sprint.
+  PR: TBD.
 - **Team Brainstorm Assist — squad brainstorm prompt/board slice.**
   `packages/debate-card-search/src/lib/team-brainstorm-assist.ts` adds
   `buildBrainstormPrompt` (a structured, non-AI-calling brainstorm prompt for
@@ -847,7 +879,7 @@ _(none)_
 * 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. Follow-ups: (a) wiring actual card-edit events into a persisted revision history, (b) a reward-notification/incentives-leaderboard UI, (c) an actual evidence-staleness signal instead of only rewarding a refresh after the fact. None of these are started._
 * 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. Follow-ups: (a) an `argBlock`/word-count field wired into wherever submitted cards are eventually persisted, (b) a team-editable tracked-argument checklist per topic, (c) a coverage dashboard UI. None of these are started._
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. Follow-ups: (a) wiring real contribution-submission events into a persisted daily feed, (b) a quest-board widget UI, (c) a streak/reward layer once the Gamified Quests idea has its own first slice. None of these are started._
-* 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status.
+* 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicSprint`/`buildTopicSprintSummaryText` for composing the existing Daily Quests board, Research Task Routing result, and Research Progress Tracking board into one shared topic-scoped session, plus a topic-addressed `SprintNote` model (`createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`) for shared prep notes, mirroring `debate-round`'s `strategy-sync-notes.ts` `PrepNote` lifecycle. Follow-ups: (a) persisting `SprintNote`s and a topic sprint's inputs, (b) a collaboration-mode panel UI, (c) a presence/live-status signal for who's currently active. None of these are started._
 * 
 * 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. Follow-ups: (a) a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of relying on caller-supplied data, (b) a scouting-card/panel UI, (c) persisting/looking up profiles by team across tournaments. None of these are started._
 * 
