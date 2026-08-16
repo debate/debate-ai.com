@@ -27,7 +27,7 @@ _(none)_
   `buildPreRoundBriefing` before it's persisted, (c) wiring
   `savePreRoundBriefing` into whatever eventually calls
   `buildPreRoundBriefing` for a real round.
-  PR: TBD.
+  PR: [#115](https://github.com/debate/debate-ai.com/pull/115).
 - **Opponent Persona Selection Persistence — localStorage persona-per-session store.**
   `packages/debate-speech-writer/src/state/opponentPersonaSelections.ts` adds
   `listOpponentPersonaSelections`/`getOpponentPersonaSelection`/
