@@ -27,7 +27,9 @@
   rather than relying on a manually flowed grid, (b) a summary/cross-ex panel
   UI in `debate-round` that renders `buildFlowSummaryText`/
   `suggestCrossExamQuestions`/`suggestExtensionIdeas` for the selected speech
-  and reads/writes through this store. Neither of these is started.
+  and reads/writes through this store. Neither of these is started. PR:
+  [#123](https://github.com/debate/debate-ai.com/pull/123) (`bun run
+  test`/`bun run typecheck`/`bun run build:web` all pass).
 - **Online Debate Versus AI — submitted-round persistence.**
   `packages/debate-round/src/state/aiVersusRounds.ts` adds a
   localStorage-backed CRUD store (`listAiVersusRounds`/`getAiVersusRound`/
