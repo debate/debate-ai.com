@@ -3,8 +3,9 @@
  *
  * Exposes the prompt library used by the AI speech/flow features, the batch
  * quote-analysis helper that scores cards for warrants and flaws, the
- * configurable judge-paradigm registry for AI judge decisions, and the
- * judge-profile aggregation helpers for summarizing a judge's ballot history.
+ * configurable judge-paradigm registry for AI judge decisions, the
+ * judge-profile aggregation helpers for summarizing a judge's ballot history,
+ * and the opponent-persona registry for AI practice-opponent styles.
  *
  * @module debate-speech-writer
  */
@@ -43,6 +44,20 @@ export type {
   TheoryReceptiveness,
   JudgeProfile,
 } from "./judge/judge-profile";
+
+export {
+  opponentPersonas,
+  opponentPersonaIds,
+  isBuiltinOpponentPersonaId,
+  getOpponentPersona,
+  listOpponentPersonas,
+  buildOpponentPersonaPrompt,
+} from "./opponent/opponent-personas";
+export type {
+  BuiltinOpponentPersonaId,
+  OpponentPersonaPace,
+  OpponentPersona,
+} from "./opponent/opponent-personas";
 
 export { findFlawsPrompt } from "./prompts/quote-to-find-flaws";
 export { judgeDecisionPrompt } from "./prompts/judge-decision-options";
