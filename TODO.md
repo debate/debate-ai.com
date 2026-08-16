@@ -31,7 +31,7 @@ _(none)_
   `buildOpponentScoutingSummary` for a profile read through this store,
   (c) wiring `buildPreRoundBriefing` (in `debate-round`) to look up a
   persisted profile here instead of requiring the caller to supply one.
-  PR: TBD.
+  PR: [#108](https://github.com/debate/debate-ai.com/pull/108).
 - **Coach Material Persistence — localStorage config store.**
   `packages/debate-speech-writer/src/state/coachMaterials.ts` adds
   `listCoachMaterials`/`getCoachMaterial`/`saveCoachMaterial`/
