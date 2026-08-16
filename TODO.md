@@ -6,6 +6,35 @@
 _(none)_
 
 ### Completed
+- **Collaboration Prep Room — evidence + draft blocks + task-routing composition slice.**
+  `packages/debate-card-search/src/lib/prep-room.ts` adds
+  `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText`,
+  composing the existing "Shared Evidence Library"
+  (`shared-evidence-library.ts`'s `buildEvidenceLibraryIndex`/
+  `searchEvidenceLibrary`) and "Research Task Routing"
+  (`research-task-routing.ts`'s `buildRoutingResult`) slices into one
+  topic-scoped `PrepRoom`: the topic's evidence organized into folders/tag
+  collections, its `kind: "block"` entries surfaced as draft blocks (the
+  existing evidence-library model already distinguishes a team-drafted
+  reusable analytic block from a cut evidence card, so no separate block
+  model was needed), and its coverage-gap tasks routed to available
+  contributors — mirroring the existing `team-collaboration-mode.ts`
+  composition precedent (Daily Quests + Research Task Routing + Research
+  Progress Tracking composed into one `TopicSprint`). Reuses
+  `shared-evidence-library.ts` and `research-task-routing.ts` directly
+  rather than introducing a separate evidence or assignment model.
+  Vitest-covered in `packages/debate-card-search/test/prep-room.test.ts`.
+  This is the first slice only — it works entirely off a caller-supplied
+  entry list, coverage report, and contributor-availability list; it
+  doesn't persist a prep room or its inputs, or render a prep-room panel
+  UI. Follow-ups: (a) persisting a prep room's entries/draft blocks (see
+  the existing `sharedEvidenceLibrary.ts`-style localStorage convention
+  once a persisted evidence store exists for this package), (b) a
+  prep-room panel UI that renders `buildPrepRoom`'s evidence
+  index/draft blocks/routing and lets a teammate call
+  `searchPrepRoomEvidence`, (c) a live presence/who's-active signal,
+  mirroring the "Team Collaboration Mode" idea's own still-open follow-up.
+  None of these are started.
 - **Unlock Status Streak Badges — Progress Unlocks/Gamified Quests composition slice.**
   `packages/debate-card-search/src/lib/unlock-streak-status.ts` adds
   `buildContributorUnlockStatusWithStreak`/`buildUnlockStatusWithStreakText`,
@@ -1447,7 +1476,7 @@ _(none)_
 * 
 * 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. Follow-ups: (a) an actual AI coaching call for open-ended feedback beyond this template layer, (b) a coaching-panel UI, (c) persisting a generated coaching session per round. None of these are started._
 * 
-* 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments.
+* 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. Follow-ups: (a) persisting a prep room's entries/draft blocks, (b) a prep-room panel UI, (c) a live presence/who's-active signal. None of these are started._
 * 
 * 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. Follow-ups: (a) an actual AI-generation call that drafts candidate ideas from `buildBrainstormPrompt`'s output, (b) a brainstorm-panel UI for live squad submission/upvoting, (c) persisting submitted ideas and votes. None of these are started._
 * 
