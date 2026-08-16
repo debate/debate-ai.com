@@ -3,7 +3,54 @@
 
 ### In progress
 
-_(none)_
+## Brainstorm Idea Persistence
+
+**Status:** In Progress
+**Source:** TODO.md — "Team Brainstorm Assist" bullet under Research Crowdsourcing Organizer Features (follow-up (c): "persisting submitted ideas and votes")
+**Branch:** `claude/upbeat-bardeen-2zwaow`
+**PR:** [#119](https://github.com/debate/debate-ai.com/pull/119)
+**Started:** 2026-08-16
+
+### Goal
+Persist `team-brainstorm-assist.ts`'s caller-supplied `BrainstormIdea` records (a squad member's brainstormed idea, including its upvote count) to localStorage, mirroring the existing `groupChallenges.ts`/`peerReviews.ts`/`contributions.ts` persistence convention in this package, so a squad's submitted ideas and votes survive a page reload.
+
+### Scope
+- A localStorage-backed CRUD store (`packages/debate-card-search/src/state/brainstormIdeas.ts`) for `BrainstormIdea`, keyed by `id`, upsert-on-save.
+- List/get/save/delete operations mirroring `groupChallenges.ts`'s shape exactly.
+- Vitest coverage mirroring `groupChallenges.test.ts`'s cases (empty, corrupt JSON, non-array JSON, list, get, upsert, delete, delete no-op).
+
+### Non-goals
+- No brainstorm-panel UI for live squad submission/upvoting (separate follow-up).
+- No AI-generation call that drafts candidate ideas (separate follow-up).
+- No change to `team-brainstorm-assist.ts`'s pure ranking/board logic — it keeps taking a caller-supplied `BrainstormIdea[]`.
+
+### Acceptance criteria
+- [x] `listBrainstormIdeas`/`getBrainstormIdea`/`saveBrainstormIdea`/`deleteBrainstormIdea` exist and behave like the `groupChallenges.ts` convention (SSR-safe, corrupt/missing JSON degrades to empty list)
+- [x] Upsert-on-save by `id`; delete is a no-op for an unknown id
+- [x] Vitest coverage is added or updated
+- [x] Typecheck passes (verified in an isolated sandbox — see Remaining work)
+- [x] Tests pass (verified in an isolated sandbox — see Remaining work)
+- [ ] Production/web build passes — blocked, not run (see Remaining work)
+- [x] Documentation is updated if behavior or configuration changes (TODO.md tracker entry)
+
+### Implementation plan
+- [x] Inspect affected modules, local instructions, and existing tests
+- [x] Confirm API, schema, data-flow, or interface requirements
+- [x] Implement the smallest useful vertical slice
+- [x] Add focused Vitest success-path coverage
+- [x] Add focused failure, validation, or edge-case coverage
+- [x] Run focused tests and fix failures
+- [x] Run linting and typechecking (no lint script exists in this repo; typecheck run)
+- [x] Run the full relevant test suite (via isolated sandbox workaround, not the repo's own `npm test`, which is blocked — see Remaining work)
+- [ ] Run the production/web build — blocked, not run (see Remaining work)
+- [x] Review the final diff for scope and quality
+- [x] Commit and push the branch
+- [x] Create or update the pull request ([#119](https://github.com/debate/debate-ai.com/pull/119))
+- [x] Update tracker status, completed checkboxes, and remaining work
+
+### Remaining work
+- **Blocker (pre-existing, environmental, not caused by this change):** `npm install` at the repo root fails on a clean checkout (0 installed packages) with `npm error Cannot read properties of null (reading 'edgesOut')`, thrown from `@npmcli/arborist`'s `#loadPeerSet` during `Arborist.buildIdealTree` (npm 10.9.7 / Node 22.22.2). Reproduced with plain `npm install`, `npm install --legacy-peer-deps` (which additionally regresses to `EUNSUPPORTEDPROTOCOL` on `workspace:*` specs), `npm install --omit=optional`, and `npm install -w packages/debate-card-search -w packages/debate-card-parser -w packages/debate-core -w packages/debate-ui` (still fails — root devDependencies, e.g. `jsdom`'s optional `canvas` peer, are always pulled in). Also reproduced after temporarily removing the root `vinext` devDependency, so it isn't specific to that package either. `pnpm install` refuses outright ("This project is configured to use npm") because of the root `packageManager` field. Because of this, the repo's own `npm test`/`npm run typecheck`/`npm run build` could not be executed at all in this environment. As a substitute, `brainstormIdeas.ts`, `team-brainstorm-assist.ts`, `topic-coverage.ts`, `community-rating.ts`, `llm-card-scoring.ts`, and `brainstormIdeas.test.ts` were copied into an isolated scratch npm project with only `vitest@^4.1.0`/`typescript@^5.9.3` installed and this package's real `tsconfig.json`; `npx vitest run test/brainstormIdeas.test.ts` passed 9/9, and `npx tsc --noEmit` reported no errors. This doesn't substitute for the repo's actual `npm run build` (Cloudflare/vinext production build), which still needs to be run once the root install is unblocked.
+- Next agent run: try to unblock the root `npm install` (e.g. a newer/older npm, or a `pnpm-workspace.yaml`+override so `pnpm install` can be used instead), then run `npm run typecheck`, `npm test`, and `npm run build` for real. PR [#119](https://github.com/debate/debate-ai.com/pull/119) is open; move this entry to Completed once CI (or a manual full-repo verification) confirms the build, or once a maintainer/CI run with a working install confirms green.
 
 ### Completed
 - **Collaboration Prep Room — evidence + draft blocks + task-routing composition slice.**
