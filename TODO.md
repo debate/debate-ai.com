@@ -32,8 +32,9 @@
   opponent's speeches and an AI judge-decision call under the chosen
   paradigm, (b) a round-simulator UI in `debate-round` that renders
   `buildPracticeRoundSetupText`/`buildPracticeRoundFeedbackText` and
-  reads/writes through this store. Neither of these are started. PR: TBD
-  (`bun run typecheck`/`bun run test`/`bun run build` all pass).
+  reads/writes through this store. Neither of these are started. PR:
+  [#127](https://github.com/debate/debate-ai.com/pull/127) (`bun run
+  typecheck`/`bun run test`/`bun run build` all pass).
 - **Shared Evidence Library — persisted evidence repository.**
   `packages/debate-card-search/src/state/evidenceLibraryEntries.ts` adds a
   localStorage-backed CRUD store (`listEvidenceLibraryEntries`/
