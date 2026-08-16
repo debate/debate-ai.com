@@ -234,6 +234,31 @@ describe("buildCoachingProgramSummaryText", () => {
     expect(lines).toContain("1 member drill set generated");
   });
 
+  it("pluralizes the drill-set count when more than one member has a flow", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [
+        { contributorId: "alex", flow: ALEX_FLOW, sideKey: "1AC" },
+        { contributorId: "sam", flow: ALEX_FLOW, sideKey: "1AC" },
+      ],
+    });
+
+    expect(buildCoachingProgramSummaryText(board)).toContain("2 member drill sets generated");
+  });
+
   it("renders a no-drills line when nobody has a flow yet", () => {
     const board = buildCoachingProgramBoard({
       program,
