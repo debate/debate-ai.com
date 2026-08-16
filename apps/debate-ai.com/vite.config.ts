@@ -11,6 +11,15 @@ export default defineConfig({
   define: {
     __USE_LIBSQL__: false,
   },
+  build: {
+    // Never inline assets as `data:` URIs. vinext's next/image shim decides
+    // whether to route a source through `/_vinext/image` by checking whether
+    // the src ends in `.svg`, so any icon Vite inlined (default: everything
+    // under 4 KB) was sent to the optimizer as `data:image/svg+xml,…`, which
+    // it rejects with 400 — the icon silently rendered as a broken image.
+    // Emitting every asset as a real file keeps that extension check working.
+    assetsInlineLimit: 0,
+  },
   plugins: [
     vinext(),
     cloudflare({

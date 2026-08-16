@@ -225,7 +225,7 @@ export function ThemeDropdown() {
     <DropdownMenu onOpenChange={(open) => !open && handlePreviewEnd()}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
-          <Image src={IconThemePantone} alt="Theme" width={20} height={20} className="h-5 w-5" />
+          <Image src={IconThemePantone} alt="Theme" width={20} height={20} className="h-5 w-5" unoptimized />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" side="bottom" className="w-56 max-h-[400px] overflow-y-auto">
