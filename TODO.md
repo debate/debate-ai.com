@@ -5,6 +5,26 @@
 _(none)_
 
 ### Completed
+- **Judge Paradigm Selection Persistence — localStorage paradigm-per-round store.**
+  `packages/debate-speech-writer/src/state/judgeParadigmSelections.ts` adds
+  `listJudgeParadigmSelections`/`getJudgeParadigmSelection`/
+  `saveJudgeParadigmSelection`/`deleteJudgeParadigmSelection`, a
+  localStorage-backed CRUD store for a round's selected `JudgeParadigm`
+  (`judge-paradigms.ts`), keyed by `roundId` with upsert-on-save semantics,
+  mirroring the existing `opponentTeamProfiles.ts`/`coachMaterials.ts`
+  persistence convention (SSR/no-storage-safe, corrupt or missing JSON
+  degrades to an empty list rather than throwing). Stores the full
+  `JudgeParadigm` object rather than just a builtin id, so a "custom"
+  paradigm built with `buildCustomJudgeParadigm` persists too. See idea #5
+  ("AI Judge Decision Modes") in Product Feature Ideas below — this is the
+  "(c) persisting the selected paradigm per round" follow-up named in that
+  slice. This is a persistence slice only — no paradigm-picker UI in this
+  repo yet reads or writes through this store, and no AI judge-decision call
+  looks up a round's persisted selection to build its prompt. Follow-ups:
+  (a) a paradigm-picker UI that reads/writes through this store, (b) wiring
+  a round's persisted selection into an actual AI judge-decision call via
+  `buildJudgeParadigmPrompt`.
+  PR: [#112](https://github.com/debate/debate-ai.com/pull/112).
 - **Contribution Leaderboard Persistence — localStorage contribution store.**
   `packages/debate-card-search/src/state/contributions.ts` adds
   `listContributions`/`listContributionsByContributor`/`getContribution`/
@@ -1259,7 +1279,7 @@ _(none)_
 
 4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slice done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). Follow-ups: (a) an actual AI-panel call (multiple "counsel" model roles) that evaluates likely response paths and clash points beyond this deterministic heuristic, (b) a chart/panel UI in `debate-round` that renders `buildVulnerabilityChartData`/`summarizeOutcomeBySide`, (c) a "what if" mode that recomputes the score against a hypothetical strategic choice rather than only the flow's current state. None of these are started._
 
-5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. Follow-ups: (a) an AI judge-decision call that uses `buildJudgeParadigmPrompt` output instead of (or alongside) the existing static `judgeDecisionPrompt`, (b) a paradigm-picker UI for selecting a built-in paradigm or entering a custom judge's notes, (c) persisting the selected paradigm per round. None of these are started._
+5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. Follow-ups: (a) an AI judge-decision call that uses `buildJudgeParadigmPrompt` output instead of (or alongside) the existing static `judgeDecisionPrompt`, (b) a paradigm-picker UI for selecting a built-in paradigm or entering a custom judge's notes that reads/writes through the persistence store. None of these are started._
 
 6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slice done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. Follow-ups: (a) audio/video transcription plus an AI call to extract claims/warrants/impacts/evidence from raw speech text rather than relying on a manually flowed grid, (b) a summary/cross-ex panel UI in `debate-round` that renders `buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for the selected speech, (c) persisting generated summaries per round. None of these are started._
 
