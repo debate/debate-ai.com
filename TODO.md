@@ -36,7 +36,7 @@ _(none)_
   search index (e.g. Typesense, mirroring the existing `search-query.ts`
   CARDS search) once entries are persisted, for relevance/typo-tolerance
   beyond the current keyword-overlap heuristic.
-  PR: TBD.
+  PR: [#106](https://github.com/debate/debate-ai.com/pull/106).
 - **Sprint Note Persistence — localStorage note store.**
   `packages/debate-card-search/src/state/sprintNotes.ts` adds
   `listSprintNotes`/`listSprintNotesForTopic`/`getSprintNote`/
