@@ -40,6 +40,17 @@ import { JudgeProfilesPanel } from "debate-speech-writer"
 <JudgeProfilesPanel />
 ```
 
+`JudgeParadigmPickerPanel` lets a user save a round's judge paradigm — a built-in one from
+`judge-paradigms.ts` or a custom one built from a real judge's notes — through
+`saveJudgeParadigmSelection`, and lists every round with a saved selection, mounted at
+`/paradigms` in the web app:
+
+```tsx
+import { JudgeParadigmPickerPanel } from "debate-speech-writer"
+
+<JudgeParadigmPickerPanel />
+```
+
 ## Package layout
 
 Logic lives under `src/`, grouped by role; tests live under `test/`.
@@ -50,7 +61,7 @@ debate-speech-writer/
 │   ├── analysis/     # batch LLM analysis over parsed cards
 │   ├── judge/        # judge-paradigm registry, judge-profile aggregation
 │   ├── opponent/      # AI practice-opponent persona registry
-│   ├── panels/       # JudgeProfilesPanel
+│   ├── panels/       # JudgeProfilesPanel, JudgeParadigmPickerPanel
 │   ├── prompts/      # the prompt library
 │   ├── state/        # localStorage-backed persistence stores
 │   └── index.ts      # public entry point
