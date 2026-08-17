@@ -12,11 +12,15 @@
  * actually persists instead of requiring the caller to re-derive and
  * re-save the note itself.
  *
+ * `buildPrepNotesPanelView`/`nextPrepNoteStatus` support the "🔄 Strategy
+ * Sync Notes" bullet's follow-up (a) in TODO.md, "a prep-notes panel UI" —
+ * see `panels/PrepNotesPanel.tsx`.
+ *
  * @module state/prepNotes
  */
 
 import type { PrepNote, PrepNoteStatus } from "../flow/strategy-sync-notes";
-import { assignNote, getNotesForFlow, updateNoteStatus } from "../flow/strategy-sync-notes";
+import { assignNote, getNotesForFlow, sortNotesByCreatedAt, updateNoteStatus } from "../flow/strategy-sync-notes";
 
 const STORAGE_KEY = "prepNotes";
 
@@ -105,4 +109,44 @@ export function assignPersistedPrepNote(
   const updated = assignNote(note, assignedToId, updatedAt);
   savePrepNote(updated);
   return updated;
+}
+
+/** One status group of persisted prep notes, for the prep-notes panel. */
+export type PrepNotesPanelGroup = {
+  status: PrepNoteStatus;
+  notes: PrepNote[];
+};
+
+/**
+ * Status groups in the order a prep-notes panel should render them —
+ * notes still needing follow-up surfaced first, matching
+ * `buildPrepNoteSummaryText`'s ordering.
+ */
+export const PREP_NOTE_STATUS_ORDER: PrepNoteStatus[] = ["needs-follow-up", "open", "covered"];
+
+/**
+ * Reads every persisted prep note (across all flows) and groups it by
+ * status, in `PREP_NOTE_STATUS_ORDER`, each group's notes oldest first.
+ * Used by `PrepNotesPanel` to render a status-grouped list.
+ */
+export function buildPrepNotesPanelView(): PrepNotesPanelGroup[] {
+  const notes = readAll();
+  return PREP_NOTE_STATUS_ORDER.map((status) => ({
+    status,
+    notes: sortNotesByCreatedAt(notes.filter((note) => note.status === status)),
+  }));
+}
+
+const NEXT_STATUS: Record<PrepNoteStatus, PrepNoteStatus> = {
+  open: "covered",
+  covered: "needs-follow-up",
+  "needs-follow-up": "open",
+};
+
+/**
+ * The next status in a prep note's status cycle (open → covered →
+ * needs-follow-up → open), for a panel's "cycle status" action.
+ */
+export function nextPrepNoteStatus(status: PrepNoteStatus): PrepNoteStatus {
+  return NEXT_STATUS[status];
 }
