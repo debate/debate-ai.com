@@ -69,6 +69,7 @@
     "debate-data-sync": "workspace:*",
     "debate-editor": "workspace:*",
     "debate-round": "workspace:*",
+    "debate-speech-writer": "workspace:*",
     "debate-timer": "workspace:*",
     "debate-ui": "workspace:*",
     "debate-videos": "workspace:*",

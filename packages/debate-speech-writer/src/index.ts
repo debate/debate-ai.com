@@ -50,11 +50,14 @@ export type {
 } from "./judge/judge-profile";
 
 export {
+  buildJudgeProfilesRoster,
   deleteJudgeProfile,
   getJudgeProfile,
   listJudgeProfiles,
   saveJudgeProfile,
 } from "./state/judgeProfiles";
+
+export { JudgeProfilesPanel } from "./panels/JudgeProfilesPanel";
 
 export {
   opponentPersonas,

@@ -31,6 +31,14 @@ Prompts are treated as a contract: the test suite asserts each one stays a disti
 non-trivial string with no unreplaced template placeholders, so an accidental truncation
 during editing fails CI rather than silently degrading model output.
 
+`JudgeProfilesPanel` renders every persisted judge profile (built with `buildJudgeProfile`,
+saved with `saveJudgeProfile`) as a roster, mounted at `/judges` in the web app:
+
+```tsx
+import { JudgeProfilesPanel } from "debate-speech-writer"
+
+<JudgeProfilesPanel />
+```
 
 ## Package layout
 
@@ -40,9 +48,13 @@ Logic lives under `src/`, grouped by role; tests live under `test/`.
 debate-speech-writer/
 ├── src/
 │   ├── analysis/     # batch LLM analysis over parsed cards
+│   ├── judge/        # judge-paradigm registry, judge-profile aggregation
+│   ├── opponent/      # AI practice-opponent persona registry
+│   ├── panels/       # JudgeProfilesPanel
 │   ├── prompts/      # the prompt library
+│   ├── state/        # localStorage-backed persistence stores
 │   └── index.ts      # public entry point
-└── test/             # Vitest suites asserting the prompt contracts
+└── test/             # Vitest suites asserting the prompt contracts and state helpers
 ```
 
 ## Tests
