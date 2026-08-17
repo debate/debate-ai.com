@@ -34,7 +34,8 @@
   routed queue and reads/writes through this store. Neither of these is
   started. Verified from a clean install: `bun run typecheck` (all packages
   pass), `bun run test` (86 files / 1085 tests, all pass), and `bun run
-  build` all pass. PR: TBD.
+  build` all pass. PR:
+  [#132](https://github.com/debate/debate-ai.com/pull/132).
 - **Revision Incentives — persisted revision history.**
   `packages/debate-card-search/src/state/revisionHistory.ts` adds a
   localStorage-backed store for `revision-incentives.ts`'s `CardRevision`
