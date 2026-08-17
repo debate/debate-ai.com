@@ -33,7 +33,8 @@
   plugin that hides collapsed ranges in the actual editor view using
   `getCollapsedRanges`. Neither of these is started. Verified from a clean
   install: `bun run typecheck` (12 packages, all pass), `bun run test` (84
-  files / 1061 tests, all pass), and `bun run build` all pass.
+  files / 1061 tests, all pass), and `bun run build` all pass. PR:
+  [#130](https://github.com/debate/debate-ai.com/pull/130).
 - **Research Task Routing — persisted contributor-availability profiles.**
   `packages/debate-card-search/src/state/contributorAvailability.ts` adds a
   localStorage-backed CRUD store (`listContributorAvailability`/
