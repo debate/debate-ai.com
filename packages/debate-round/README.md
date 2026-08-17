@@ -31,6 +31,12 @@ every persisted "AI Coach Mode" `CoachingSessionRecord`, grouped by round +
 side — see
 [`docs/features/coaching-sessions.md`](../../docs/features/coaching-sessions.md).
 
+`FlowSummariesPanel` (also exported from the package root) renders every
+persisted "Speech Transcript Summaries and Answers" `FlowSummaryRecord`,
+one card per round, with suggested cross-exam questions and extension
+ideas for anything still unanswered — see
+[`docs/features/flow-summaries.md`](../../docs/features/flow-summaries.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -47,7 +53,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers
