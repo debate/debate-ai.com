@@ -7,6 +7,7 @@ export { CoachingSessionsPanel } from "./panels/CoachingSessionsPanel";
 export { FlowSummariesPanel } from "./panels/FlowSummariesPanel";
 export { WordCountRoundsPanel } from "./panels/WordCountRoundsPanel";
 export { ArgumentTreePanel } from "./panels/ArgumentTreePanel";
+export { AiVersusRoundPanel } from "./panels/AiVersusRoundPanel";
 export { FlowSpreadsheet } from "./flow/FlowSpreadsheet";
 export { RoundEditorDialog } from "./dialogs/CreateRoundDialog";
 export * from "./state/store";
