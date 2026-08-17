@@ -27,10 +27,18 @@
  * `buildContributorStats` empty-contributions error, since a brand-new
  * contributor having no unlock status yet is an expected state, not a bug.
  *
+ * `buildUnlockStatusRoster` is a third slice that closes the "Progress
+ * Unlocks" bullet's own follow-up (b), "a progress/unlock UI", in TODO.md —
+ * it lists every contributor with at least one persisted contribution (via
+ * `state/contributions.ts`'s `listContributions`) and builds each one's
+ * unlock+streak status via `buildContributorUnlockStatusWithStreakFromStore`,
+ * giving a panel a single call that renders the whole roster instead of
+ * requiring the caller to already know every contributor id.
+ *
  * @module lib/unlock-streak-status
  */
 
-import { buildContributorStats, type ContributorStats } from "./contribution-leaderboard";
+import { buildContributorStats, groupContributionsByContributor, type ContributorStats } from "./contribution-leaderboard";
 import {
   buildContributorQuestStreak,
   buildStreakSummaryText,
@@ -46,7 +54,7 @@ import {
   type ContributorUnlockStatus,
   type UnlockTierRequirement,
 } from "./progress-unlocks";
-import { listContributionsByContributor } from "../state/contributions";
+import { listContributions, listContributionsByContributor } from "../state/contributions";
 import { listDailyMissionResultsForContributor } from "../state/dailyMissionResults";
 
 /**
@@ -143,4 +151,25 @@ export function buildContributorUnlockStatusWithStreakFromStore(
   const missionResults = listDailyMissionResultsForContributor(contributorId);
 
   return buildContributorUnlockStatusWithStreak(stats, missionResults, asOfDayKey, tierRequirements, streakMilestones);
+}
+
+/**
+ * Builds the full contributor roster's unlock+streak status: every
+ * contributor with at least one persisted contribution (via
+ * `state/contributions.ts`'s `listContributions`/`groupContributionsByContributor`),
+ * each resolved through `buildContributorUnlockStatusWithStreakFromStore`,
+ * sorted alphabetically by `contributorId` for a stable, deterministic
+ * roster order (unlike the Contribution Leaderboard, this view isn't ranked
+ * by score). An empty store returns an empty roster rather than throwing.
+ */
+export function buildUnlockStatusRoster(
+  asOfDayKey: string,
+  tierRequirements: UnlockTierRequirement[] = DEFAULT_UNLOCK_TIER_REQUIREMENTS,
+  streakMilestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
+): ContributorUnlockStatusWithStreak[] {
+  const contributorIds = [...groupContributionsByContributor(listContributions()).keys()].sort();
+
+  return contributorIds.map((contributorId) =>
+    buildContributorUnlockStatusWithStreakFromStore(contributorId, asOfDayKey, tierRequirements, streakMilestones),
+  );
 }
