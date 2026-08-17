@@ -51,6 +51,17 @@ import { JudgeParadigmPickerPanel } from "debate-speech-writer"
 <JudgeParadigmPickerPanel />
 ```
 
+`OpponentPersonaPickerPanel` lets a user save a practice session's AI opponent persona — one
+of the four built-in personas from `opponent-personas.ts` — through
+`saveOpponentPersonaSelection`, and lists every session with a saved selection, mounted at
+`/practice-opponent` in the web app:
+
+```tsx
+import { OpponentPersonaPickerPanel } from "debate-speech-writer"
+
+<OpponentPersonaPickerPanel />
+```
+
 ## Package layout
 
 Logic lives under `src/`, grouped by role; tests live under `test/`.
@@ -61,7 +72,7 @@ debate-speech-writer/
 │   ├── analysis/     # batch LLM analysis over parsed cards
 │   ├── judge/        # judge-paradigm registry, judge-profile aggregation
 │   ├── opponent/      # AI practice-opponent persona registry
-│   ├── panels/       # JudgeProfilesPanel, JudgeParadigmPickerPanel
+│   ├── panels/       # JudgeProfilesPanel, JudgeParadigmPickerPanel, OpponentPersonaPickerPanel
 │   ├── prompts/      # the prompt library
 │   ├── state/        # localStorage-backed persistence stores
 │   └── index.ts      # public entry point

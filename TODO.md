@@ -6,6 +6,46 @@
 (none)
 
 ### Completed
+- **AI Practice Opponent — persona-picker UI.**
+  `packages/debate-speech-writer/src/panels/OpponentPersonaPickerPanel.tsx`
+  adds a full-page React panel that lets a user save a practice session's AI
+  opponent persona — one of the four built-in personas
+  (`policy-heavy`/`kritik`/`lay`/`fast-flow`) from
+  `opponent/opponent-personas.ts` — by entering a session ID and picking a
+  persona from a radio group, then lists every session with a saved
+  selection, each with a "Clear" action. It's mounted at `/practice-opponent`
+  (`apps/debate-ai.com/app/practice-opponent/page.tsx`, with a back-link to
+  `/debate`, following the same panel convention as `/paradigms`/`/coaching`)
+  and reachable from the global nav dock's Settings menu ("Opponent Persona
+  Picker", via a new `Swords`-icon `DropdownMenuItem` in
+  `CategoryDock.tsx`). Closes follow-up (b) named under the "AI Practice
+  Opponent" idea in the Research Crowdsourcing Organizer Features list
+  below — this is the fourteenth "wire a persisted slice's UI into the
+  actual web app" follow-up closed in this repo, after the Contribution
+  Leaderboard, Task Inbox, Progress Unlocks, Evidence Library, Prep Notes,
+  Revision Incentives, Judge Profiles, Opponent Team Profiles, Practice
+  Drills, Pre-Round Briefings, AI Coach Mode, Judge Paradigm Picker, and
+  Speech Transcript Summaries panels. The panel adds one small helper
+  rather than new persona-selection logic:
+  `state/opponentPersonaSelections.ts`'s `buildOpponentPersonaSelectionsPanelView`,
+  which sorts every persisted selection by `sessionId` for a stable display
+  order (mirroring `judgeParadigmSelections.ts`'s
+  `buildJudgeParadigmSelectionsPanelView`); every other field/action the
+  panel uses (`listOpponentPersonas`, `saveOpponentPersonaSelection`,
+  `deleteOpponentPersonaSelection`) already existed. Vitest-covered in
+  `packages/debate-speech-writer/test/opponentPersonaSelections.test.ts`
+  (empty view when nothing is stored, sorted by `sessionId`, and that the
+  underlying stored order is left untouched). Documented in
+  `packages/debate-speech-writer/README.md`'s package-layout note and usage
+  example. Verified from a clean install: `bun install`, `bun run
+  typecheck` (11 packages with a typecheck script all pass; `debate-ai-web`
+  has no separate typecheck script — types are checked as part of its
+  build), `bun run test` (87 files / 1186 tests, all pass), and `bun run
+  build:web` (production build, including the new `/practice-opponent`
+  route) all pass. No lint script is configured in this repo. PR:
+  [#156](https://github.com/debate/debate-ai.com/pull/156). The local dev
+  server was not smoke-tested in this sandbox (no reliable local browser
+  workflow available here).
 - **Speech Transcript Summaries and Answers — summary/cross-ex panel UI.**
   `packages/debate-round/src/panels/FlowSummariesPanel.tsx` adds a full-page
   React panel that renders every persisted `FlowSummaryRecord` (from
@@ -2650,7 +2690,7 @@
 * 
 * ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. A second slice, `judgeProfiles.ts` (see Tracker Status above, "Judge Profile Persistence"), now persists `JudgeProfile` records to localStorage, keyed by `judgeId`, closing follow-up (c)'s persistence half. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c)'s lookup half — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `judgeId`. A fourth slice, `JudgeProfilesPanel` (see Tracker Status above, "Judge Profiles — judge-profile roster UI panel"), now renders every persisted profile as a roster at `/judges`, closing follow-up (b). Follow-up (a), a real ballot data source producing `JudgeRoundRecord`s instead of relying on caller-supplied data, remains open — not started._
 * 
-* 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. A second slice, `opponentPersonaSelections.ts` (see Tracker Status above), now persists a practice session's selected `OpponentPersona` to localStorage. Follow-ups: (a) an actual AI speech-generation call that consumes `buildOpponentPersonaPrompt`'s output alongside idea #3's `AiSpeechRequest`, (b) a persona-picker UI that reads/writes through the persistence store. Neither of these are started._
+* 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. A second slice, `opponentPersonaSelections.ts` (see Tracker Status above), now persists a practice session's selected `OpponentPersona` to localStorage. A third slice, `OpponentPersonaPickerPanel` (see Tracker Status above, "AI Practice Opponent — persona-picker UI"), now renders a picker UI at `/practice-opponent` for saving a session's opponent persona, closing follow-up (b). Follow-up (a), an actual AI speech-generation call that consumes `buildOpponentPersonaPrompt`'s output alongside idea #3's `AiSpeechRequest`, remains open — not started._
 * 
 * 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. A third slice, `CoachingSessionsPanel` (see Tracker Status above, "AI Coach Mode — coaching-panel UI"), now renders every persisted coaching session grouped by round + side at `/coaching`, closing follow-up (b). Follow-up (a), an actual AI coaching call for open-ended feedback beyond this template layer, remains open — not started._
 * 
