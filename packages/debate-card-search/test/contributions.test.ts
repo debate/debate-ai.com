@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildPersistedContributionFeed,
   buildPersistedLeaderboard,
+  buildTopContributorAwardsFromStore,
   deleteContribution,
   getContribution,
   listContributions,
@@ -12,6 +13,7 @@ import {
   saveContribution,
 } from "../src/state/contributions";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
+import { DEFAULT_AWARD_CATEGORY_LABELS } from "../src/lib/contributor-awards";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -275,5 +277,43 @@ describe("buildPersistedContributionFeed", () => {
     const [entry] = buildPersistedContributionFeed();
 
     expect(entry.isPopularityOnlyOutlier).toBe(false);
+  });
+});
+
+describe("buildTopContributorAwardsFromStore", () => {
+  it("returns an empty award list when nothing is stored", () => {
+    expect(buildTopContributorAwardsFromStore()).toEqual([]);
+  });
+
+  it("selects the top-scoring contributor per kind from every persisted contribution", () => {
+    saveContribution(ALICE_CARD);
+    saveContribution(BOB_SUMMARY);
+
+    const awards = buildTopContributorAwardsFromStore();
+
+    expect(awards).toHaveLength(2);
+    expect(awards[0]).toMatchObject({ kind: "card", contributorId: "alice", label: "Best Evidence Finder" });
+    expect(awards[1]).toMatchObject({ kind: "summary", contributorId: "bob", label: "Best Explainer" });
+  });
+
+  it("reflects a like recorded after the contribution was saved", () => {
+    saveContribution(ALICE_CARD);
+    const before = buildTopContributorAwardsFromStore()[0];
+
+    recordPersistedLike("contrib-1");
+    const after = buildTopContributorAwardsFromStore()[0];
+
+    expect(after.totalHelpfulnessScore).toBeGreaterThan(before.totalHelpfulnessScore);
+  });
+
+  it("supports overriding a category's award label", () => {
+    saveContribution(ALICE_CARD);
+
+    const [award] = buildTopContributorAwardsFromStore({
+      ...DEFAULT_AWARD_CATEGORY_LABELS,
+      card: "Best Card",
+    });
+
+    expect(award.label).toBe("Best Card");
   });
 });
