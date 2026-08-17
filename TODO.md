@@ -29,7 +29,8 @@
   persistence tests. No briefing-panel UI and no real tournament/pairing/room
   data source exist yet. Verified from a clean install: `bun install`,
   `bun run typecheck` (12 packages, all pass), `bun run test` (87 files /
-  1104 tests, all pass), and `bun run build` all pass.
+  1104 tests, all pass), and `bun run build` all pass. PR:
+  [#134](https://github.com/debate/debate-ai.com/pull/134).
 - **Gamified Quests — persisted daily mission-result history.**
   `packages/debate-card-search/src/state/dailyMissionResults.ts` adds a
   localStorage-backed CRUD store (`listDailyMissionResults`/
