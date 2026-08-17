@@ -1,10 +1,14 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  assignPersistedSprintNote,
+  buildSprintNotesPanelView,
   deleteSprintNote,
   getSprintNote,
   listSprintNotes,
   listSprintNotesForTopic,
+  nextSprintNoteStatus,
   saveSprintNote,
+  updatePersistedSprintNoteStatus,
 } from "../src/state/sprintNotes";
 import type { SprintNote } from "../src/lib/team-collaboration-mode";
 
@@ -121,5 +125,91 @@ describe("deleteSprintNote", () => {
     saveSprintNote(TOPICALITY_NOTE);
     deleteSprintNote("missing");
     expect(listSprintNotes()).toEqual([TOPICALITY_NOTE]);
+  });
+});
+
+describe("updatePersistedSprintNoteStatus", () => {
+  it("updates and persists the status of a stored note", () => {
+    saveSprintNote(SOLVENCY_NOTE);
+    const updated = updatePersistedSprintNoteStatus("note-1", "covered", 500);
+
+    expect(updated).toEqual({ ...SOLVENCY_NOTE, status: "covered", updatedAt: 500 });
+    expect(getSprintNote("note-1")).toEqual({ ...SOLVENCY_NOTE, status: "covered", updatedAt: 500 });
+  });
+
+  it("returns undefined and leaves storage untouched when the id isn't stored", () => {
+    saveSprintNote(SOLVENCY_NOTE);
+    const updated = updatePersistedSprintNoteStatus("missing", "covered", 500);
+
+    expect(updated).toBeUndefined();
+    expect(listSprintNotes()).toEqual([SOLVENCY_NOTE]);
+  });
+});
+
+describe("assignPersistedSprintNote", () => {
+  it("assigns and persists an assignee on a stored note", () => {
+    saveSprintNote(SOLVENCY_NOTE);
+    const updated = assignPersistedSprintNote("note-1", "dana", 600);
+
+    expect(updated).toEqual({ ...SOLVENCY_NOTE, assignedToId: "dana", updatedAt: 600 });
+    expect(getSprintNote("note-1")).toEqual({ ...SOLVENCY_NOTE, assignedToId: "dana", updatedAt: 600 });
+  });
+
+  it("unassigns (removes assignedToId) when passed null", () => {
+    saveSprintNote(TOPICALITY_NOTE);
+    const updated = assignPersistedSprintNote("note-2", null, 700);
+
+    expect(updated?.assignedToId).toBeUndefined();
+    expect(getSprintNote("note-2")?.assignedToId).toBeUndefined();
+  });
+
+  it("returns undefined and leaves storage untouched when the id isn't stored", () => {
+    saveSprintNote(SOLVENCY_NOTE);
+    const updated = assignPersistedSprintNote("missing", "dana", 600);
+
+    expect(updated).toBeUndefined();
+    expect(listSprintNotes()).toEqual([SOLVENCY_NOTE]);
+  });
+});
+
+describe("buildSprintNotesPanelView", () => {
+  it("returns every status group, empty, when nothing is stored", () => {
+    expect(buildSprintNotesPanelView()).toEqual([
+      { status: "needs-follow-up", notes: [] },
+      { status: "open", notes: [] },
+      { status: "covered", notes: [] },
+    ]);
+  });
+
+  it("groups every persisted note by status, needs-follow-up first", () => {
+    saveSprintNote(SOLVENCY_NOTE);
+    saveSprintNote(TOPICALITY_NOTE);
+
+    expect(buildSprintNotesPanelView()).toEqual([
+      { status: "needs-follow-up", notes: [TOPICALITY_NOTE] },
+      { status: "open", notes: [SOLVENCY_NOTE] },
+      { status: "covered", notes: [] },
+    ]);
+  });
+
+  it("sorts each group's notes oldest first without mutating the underlying stored order", () => {
+    const laterNote: SprintNote = { ...SOLVENCY_NOTE, id: "note-3", createdAt: 50 };
+    saveSprintNote(SOLVENCY_NOTE);
+    saveSprintNote(laterNote);
+
+    expect(buildSprintNotesPanelView()).toEqual([
+      { status: "needs-follow-up", notes: [] },
+      { status: "open", notes: [laterNote, SOLVENCY_NOTE] },
+      { status: "covered", notes: [] },
+    ]);
+    expect(listSprintNotes()).toEqual([SOLVENCY_NOTE, laterNote]);
+  });
+});
+
+describe("nextSprintNoteStatus", () => {
+  it("cycles open -> covered -> needs-follow-up -> open", () => {
+    expect(nextSprintNoteStatus("open")).toBe("covered");
+    expect(nextSprintNoteStatus("covered")).toBe("needs-follow-up");
+    expect(nextSprintNoteStatus("needs-follow-up")).toBe("open");
   });
 });

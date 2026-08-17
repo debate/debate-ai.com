@@ -6,6 +6,54 @@
 (none)
 
 ### Completed
+- **Team Collaboration Mode — sprint-notes panel UI.**
+  `packages/debate-card-search/src/panels/SprintNotesPanel.tsx` adds a
+  full-page React panel that renders every persisted `SprintNote` (from
+  `state/sprintNotes.ts`) grouped by status (needs-follow-up first), with a
+  "cycle status" action (open → covered → needs-follow-up → open) and an
+  "assign"/"reassign"/"unassign" control per note, plus a topic badge on
+  each note since a sprint note is topic-scoped rather than flow-box-scoped.
+  It's mounted at `/cards/sprints` (`apps/debate-ai.com/app/cards/sprints/page.tsx`,
+  with a back-link to `/cards`, following the same panel convention as
+  `/cards/reviews`/`/cards/revisions`) and reachable from the global nav
+  dock's Settings menu ("Sprint Notes", via a new `Rocket`-icon
+  `DropdownMenuItem` in `CategoryDock.tsx`). Closes follow-up (a) named
+  under the "🤝 Team Collaboration Mode" bullet in Research Crowdsourcing
+  Organizer Features below — this is the eighteenth "wire a persisted
+  slice's UI into the actual web app" follow-up closed in this repo, after
+  the Contribution Leaderboard, Task Inbox, Progress Unlocks, Evidence
+  Library, Prep Notes, Revision Incentives, Judge Profiles, Opponent Team
+  Profiles, Practice Drills, Pre-Round Briefings, AI Coach Mode, Judge
+  Paradigm Picker, Speech Transcript Summaries, Opponent Persona Picker,
+  Review Queue, and Word-Count Speeches panels. The panel adds no new
+  lifecycle logic; it adds the panel-facing composition layer mirroring
+  `debate-round`'s `prepNotes.ts` convention exactly:
+  `state/sprintNotes.ts`'s `updatePersistedSprintNoteStatus`/
+  `assignPersistedSprintNote` (apply `team-collaboration-mode.ts`'s pure
+  `updateSprintNoteStatus`/`assignSprintNote` transitions against a stored
+  note and save the result) and `buildSprintNotesPanelView`/
+  `nextSprintNoteStatus` (group every persisted note by status for a
+  stable panel view). Vitest-covered in
+  `packages/debate-card-search/test/sprintNotes.test.ts` (status updates
+  and assignment persist and round-trip correctly, undefined/no-op on an
+  unknown id, panel-view grouping and per-group sort order, and the status
+  cycle). Documented in `docs/features/sprint-notes.md` (mirroring
+  `docs/features/review-queue.md`'s format) and in
+  `packages/debate-card-search/README.md`'s package-layout note and usage
+  example. This panel only renders a topic's `SprintNote`s, not the rest of
+  a `TopicSprint` (quest board, task routing, progress board) — those need
+  caller-supplied inputs (quests, coverage report, contributor
+  availability, assignments) this panel doesn't source from a store; a
+  presence/live-status signal for who's currently active also remains
+  open. Neither is started. Verified from a clean install: `bun install`,
+  `bun run typecheck` (11 packages with a typecheck script all pass;
+  `debate-ai-web` has no separate typecheck script — types are checked as
+  part of its build), `bun run test` (87 files / 1201 tests, all pass), and
+  `bun run build:web` (production build, including the new `/cards/sprints`
+  route) all pass. No lint script is configured in this repo. PR: (opened
+  by this run — see branch `claude/peaceful-cerf-0fp7ka`). The local dev
+  server was not smoke-tested in this sandbox (no reliable local browser
+  workflow available here).
 - **Word-Count-Only Speech Format — submission UI.**
   `packages/debate-round/src/panels/WordCountRoundsPanel.tsx` adds a
   full-page React panel that lets a user pick a round ID and `debate-timer`
@@ -2766,7 +2814,7 @@
 * 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. A second slice, `revisionHistory.ts` (see Tracker Status above, "Revision Incentives — persisted revision history"), now persists `CardRevision` edit events (as many-per-card `CardRevisionRecord`s) to localStorage. A third slice, `RevisionIncentivesPanel` (see Tracker Status above, "Revision Incentives — incentives-leaderboard UI panel"), now renders a ranked reward-points leaderboard at `/cards/revisions`, closing follow-up (b). Follow-ups: (a) wiring an actual card-edit/save flow to call `saveRevisionRecord` with a before/after snapshot, (c) an actual evidence-staleness signal instead of only rewarding a refresh after the fact. Neither of these is started._
 * 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. Follow-ups: (a) an `argBlock`/word-count field wired into wherever submitted cards are eventually persisted, (b) a team-editable tracked-argument checklist per topic, (c) a coverage dashboard UI. None of these are started._
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. Follow-ups: (a) wiring real contribution-submission events into a persisted daily feed, (b) a quest-board widget UI, (c) a streak/reward layer once the Gamified Quests idea has its own first slice. None of these are started._
-* 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicSprint`/`buildTopicSprintSummaryText` for composing the existing Daily Quests board, Research Task Routing result, and Research Progress Tracking board into one shared topic-scoped session, plus a topic-addressed `SprintNote` model (`createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`) for shared prep notes, mirroring `debate-round`'s `strategy-sync-notes.ts` `PrepNote` lifecycle. A second slice, `sprintNotes.ts` (see Tracker Status above), now persists `SprintNote` records to localStorage. Follow-ups: (a) a collaboration-mode panel UI, (b) persisting a topic sprint's other inputs, (c) a presence/live-status signal for who's currently active. Neither of these are started._
+* 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicSprint`/`buildTopicSprintSummaryText` for composing the existing Daily Quests board, Research Task Routing result, and Research Progress Tracking board into one shared topic-scoped session, plus a topic-addressed `SprintNote` model (`createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`) for shared prep notes, mirroring `debate-round`'s `strategy-sync-notes.ts` `PrepNote` lifecycle. A second slice, `sprintNotes.ts` (see Tracker Status above), now persists `SprintNote` records to localStorage. A third slice, `SprintNotesPanel` (see Tracker Status above, "Team Collaboration Mode — sprint-notes panel UI"), now renders every persisted sprint note grouped by status at `/cards/sprints`, closing follow-up (a). Follow-ups: (b) persisting a topic sprint's other inputs (quest board, task routing, and progress board inputs), (c) a presence/live-status signal for who's currently active. Neither of these are started._
 * 
 * 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slices done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. A second slice, `opponentTeamProfiles.ts` (see Tracker Status above), now persists `OpponentTeamProfile` records to localStorage, keyed by `teamId`. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c) — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `opponentTeamId`. A fourth slice, `OpponentTeamProfilesPanel` (see Tracker Status above, "Opponent Team Profiles — opponent-scouting roster UI panel"), now renders every persisted profile as a scouting roster at `/opponents`, closing follow-up (b). Follow-up (a), a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of relying on caller-supplied data, remains open — not started._
 * 
