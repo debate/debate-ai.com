@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildAndPersistRoutingResult,
+  buildTaskInboxView,
   completePersistedRoutedTask,
   deleteRoutedTaskQueue,
   getRoutedTaskQueue,
@@ -187,5 +188,35 @@ describe("completePersistedRoutedTask", () => {
     saveRoutedTaskQueue(AT_QUEUE);
     expect(completePersistedRoutedTask("topic-ai", "Nonexistent")).toBeUndefined();
     expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+  });
+});
+
+describe("buildTaskInboxView", () => {
+  it("returns an empty list when nothing is routed", () => {
+    expect(buildTaskInboxView()).toEqual([]);
+  });
+
+  it("flattens every persisted queue, tagging each assignment with its topicId and the assignee's current skill level", () => {
+    saveContributorAvailability({ ...ADVANCED_AMY, contributorId: "alice" });
+    saveRoutedTaskQueue(AT_QUEUE);
+    saveRoutedTaskQueue(OTHER_QUEUE);
+
+    expect(buildTaskInboxView()).toEqual([
+      {
+        topicId: "topic-ai",
+        assignments: [
+          { task: SOLVENCY_TASK, contributorId: "alice", topicId: "topic-ai", contributorSkillLevel: "advanced" },
+        ],
+        unassignedTasks: [IMPACTS_TASK],
+      },
+      { topicId: "topic-space", assignments: [], unassignedTasks: [] },
+    ]);
+  });
+
+  it("omits contributorSkillLevel when the assignee's profile is no longer persisted", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const [topic] = buildTaskInboxView();
+    expect(topic.assignments[0].contributorSkillLevel).toBeUndefined();
   });
 });

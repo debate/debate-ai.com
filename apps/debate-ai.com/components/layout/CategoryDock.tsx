@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy } from "lucide-react"
+import { UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox } from "lucide-react"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
 import {
@@ -59,6 +59,10 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/leaderboard") }}>
         <Trophy className="mr-2 h-4 w-4" />
         Leaderboard
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/inbox") }}>
+        <Inbox className="mr-2 h-4 w-4" />
+        Task Inbox
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>

@@ -6,7 +6,7 @@ Research Crowdsourcing Organizer feature set (leaderboards, quests, task routing
 library, prep rooms, and more) described in `TODO.md`.
 
 ```tsx
-import { SearchInterface, ContributionLeaderboardPanel } from "debate-card-search"
+import { SearchInterface, ContributionLeaderboardPanel, TaskInboxPanel } from "debate-card-search"
 ```
 
 Cards are parsed by `debate-card-parser`; shared lookups come from `debate-core`, and all
@@ -22,7 +22,7 @@ debate-card-search/
 │   ├── components/   # search interface, result card, viewers, sidebars
 │   ├── hooks/        # useSearchState, useAiAnalysis
 │   ├── layout/       # desktop layout, mobile overlays, floating actions
-│   ├── panels/       # full-page feature panels (e.g. ContributionLeaderboardPanel)
+│   ├── panels/       # full-page feature panels (ContributionLeaderboardPanel, TaskInboxPanel)
 │   ├── lib/          # pure logic — search-query building, scoring, quests, task
 │   │                 # routing, evidence library, prep rooms, and more (see TODO.md)
 │   ├── state/        # localStorage-backed persistence stores over the lib/ models
