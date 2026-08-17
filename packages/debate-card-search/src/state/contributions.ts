@@ -31,8 +31,10 @@
 
 import type { AttributedContribution, ContributorStats } from "../lib/contribution-leaderboard";
 import { buildLeaderboard, groupContributionsByContributor } from "../lib/contribution-leaderboard";
-import type { HelpfulnessWeights, ReviewerEndorsement } from "../lib/community-rating";
+import type { ContributionKind, HelpfulnessWeights, ReviewerEndorsement } from "../lib/community-rating";
 import { DEFAULT_HELPFULNESS_WEIGHTS, rankContributions } from "../lib/community-rating";
+import type { ContributorAward } from "../lib/contributor-awards";
+import { DEFAULT_AWARD_CATEGORY_LABELS, buildTopContributorAwards } from "../lib/contributor-awards";
 
 const STORAGE_KEY = "contributions";
 
@@ -180,4 +182,18 @@ export function buildPersistedContributionFeed(
     helpfulnessScore: breakdown.helpfulnessScore,
     isPopularityOnlyOutlier: breakdown.isPopularityOnlyOutlier,
   }));
+}
+
+/**
+ * Builds the Top Contributor Awards directly from every persisted
+ * contribution, composing this store with `contributor-awards.ts`'s pure
+ * `buildTopContributorAwards` rather than requiring a caller to hold and pass
+ * in the full contribution list themselves — mirroring `buildPersistedLeaderboard`'s
+ * "compose the pure function directly against the persisted store"
+ * convention. An empty store returns an empty award list rather than throwing.
+ */
+export function buildTopContributorAwardsFromStore(
+  categoryLabels: Record<ContributionKind, string> = DEFAULT_AWARD_CATEGORY_LABELS,
+): ContributorAward[] {
+  return buildTopContributorAwards(readAll(), categoryLabels);
 }
