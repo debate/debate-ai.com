@@ -6,4 +6,5 @@ export { AiAnalysisSidebar } from "./components/AiAnalysisSidebar";
 export { ContributionLeaderboardPanel } from "./panels/ContributionLeaderboardPanel";
 export { TaskInboxPanel } from "./panels/TaskInboxPanel";
 export { ProgressUnlocksPanel } from "./panels/ProgressUnlocksPanel";
+export { EvidenceLibraryPanel } from "./panels/EvidenceLibraryPanel";
 export * from "./types";

@@ -134,4 +134,13 @@ describe("searchPersistedEvidenceLibrary", () => {
     const results = searchPersistedEvidenceLibrary({ kind: "block" });
     expect(results.map((result) => result.entry.id)).toEqual(["entry-2"]);
   });
+
+  it("treats an empty text query the same as an omitted one, combined with a kind filter", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const results = searchPersistedEvidenceLibrary({ text: "", kind: "card" });
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+    expect(results[0].relevanceScore).toBe(0);
+  });
 });
