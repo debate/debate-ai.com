@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildFlowSummaryText,
+  buildFlowSummaryTextFromRows,
   getFlowRowSummaries,
   getUnansweredFlowRows,
   suggestCrossExamQuestions,
@@ -151,6 +152,25 @@ describe("buildFlowSummaryText", () => {
     const text = buildFlowSummaryText(flow);
     expect(text.length).toBeLessThan(longContent.length);
     expect(text).toContain("…");
+  });
+});
+
+describe("buildFlowSummaryTextFromRows", () => {
+  it("reports no arguments flowed yet for an empty row list", () => {
+    expect(buildFlowSummaryTextFromRows([])).toBe("No arguments have been flowed yet.");
+  });
+
+  it("matches buildFlowSummaryText's output for the same rows", () => {
+    const flow = {
+      columns: COLUMNS,
+      children: [
+        rowFromContents(["Case advantage", "Turn", "", ""]),
+        rowFromContents(["Disad link", "", "", "Weighing"]),
+      ],
+    };
+    const rows = getFlowRowSummaries(flow).filter((row) => !row.isHeading);
+
+    expect(buildFlowSummaryTextFromRows(rows)).toBe(buildFlowSummaryText(flow));
   });
 });
 

@@ -6,6 +6,54 @@
 (none)
 
 ### Completed
+- **Speech Transcript Summaries and Answers — summary/cross-ex panel UI.**
+  `packages/debate-round/src/panels/FlowSummariesPanel.tsx` adds a full-page
+  React panel that renders every persisted `FlowSummaryRecord` (from
+  `state/flowSummaries.ts`), one card per round, sorted by `roundId` — each
+  card shows that round's per-argument summary text and, when any argument
+  is currently unanswered, a suggested cross-examination-questions list and
+  a suggested extension-ideas list for those unanswered rows, plus a
+  "Clear" action. It's mounted at `/summaries`
+  (`apps/debate-ai.com/app/summaries/page.tsx`, with a back-link to
+  `/debate`, following the same panel convention as `/coaching`/`/paradigms`)
+  and reachable from the global nav dock's Settings menu ("Speech
+  Transcript Summaries", via a new `FileText`-icon `DropdownMenuItem` in
+  `CategoryDock.tsx`). Closes follow-up (b) named under idea #6 ("Speech
+  Transcript Summaries and Answers") in Product Feature Ideas below — this
+  is the thirteenth "wire a persisted slice's UI into the actual web app"
+  follow-up closed in this repo, after the Contribution Leaderboard, Task
+  Inbox, Progress Unlocks, Evidence Library, Prep Notes, Revision
+  Incentives, Judge Profiles, Opponent Team Profiles, Practice Drills,
+  Pre-Round Briefings, AI Coach Mode, and Judge Paradigm Picker panels. The
+  panel adds two small helpers rather than new summary-derivation logic:
+  `flow/flow-transcript-summary.ts`'s `buildFlowSummaryTextFromRows` (the
+  row-mapping half of the existing `buildFlowSummaryText`, extracted so the
+  panel can render already-persisted `FlowRowSummary[]` without the
+  original raw `Flow`, with `buildFlowSummaryText` now calling it), and
+  `state/flowSummaries.ts`'s `buildFlowSummariesPanelView`, which sorts
+  every persisted summary by `roundId` for a stable display order; every
+  other field/action the panel uses (`suggestCrossExamQuestions`,
+  `suggestExtensionIdeas`, `deleteFlowSummary`) already existed. Vitest-covered
+  in `packages/debate-round/test/flowSummaries.test.ts` (empty view when
+  nothing is stored, sorted by `roundId`, and that clearing a round's
+  summary is reflected) and `packages/debate-round/test/flow-transcript-summary.test.ts`
+  (empty-row text, and that the extracted helper's output matches
+  `buildFlowSummaryText`'s for the same rows). Documented in
+  `docs/features/flow-summaries.md` (mirroring
+  `docs/features/coaching-sessions.md`'s format) and in
+  `packages/debate-round/README.md`'s package-layout note and usage
+  example. Follow-up (a), audio/video transcription plus an AI call to
+  extract claims/warrants/impacts/evidence from raw speech text instead of
+  relying on a manually flowed grid, remains open — not started. Verified
+  from a clean install: `bun install`, `bun run typecheck` (11 packages
+  with a typecheck script all pass; `debate-ai-web` has no separate
+  typecheck script — types are checked as part of its build), `bun run
+  test` (87 files / 1183 tests, all pass), and `bun run build:web`
+  (production build, including the new `/summaries` route) all pass. No
+  lint script is configured in this repo. PR:
+  [#153](https://github.com/debate/debate-ai.com/pull/153). The local dev
+  server was not smoke-tested in this sandbox (no reliable local browser
+  workflow available here).
 - **AI Judge Decision Modes — paradigm-picker UI.**
   `packages/debate-speech-writer/src/panels/JudgeParadigmPickerPanel.tsx`
   adds a full-page React panel with a form to save a round's AI judge
@@ -2556,7 +2604,7 @@
 
 5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. A third slice, `JudgeParadigmPickerPanel` (see Tracker Status above, "AI Judge Decision Modes — paradigm-picker UI"), now renders a picker UI at `/paradigms` for saving a round's built-in or custom paradigm, closing follow-up (b). Follow-up (a), an AI judge-decision call that uses `buildJudgeParadigmPrompt` output instead of (or alongside) the existing static `judgeDecisionPrompt`, remains open — not started._
 
-6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slices done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. A second slice, `flowSummaries.ts` (see Tracker Status above, "Speech Transcript Summaries and Answers — flow-summary persistence"), now persists a round's derived `FlowRowSummary[]` to localStorage. Follow-ups: (a) audio/video transcription plus an AI call to extract claims/warrants/impacts/evidence from raw speech text rather than relying on a manually flowed grid, (b) a summary/cross-ex panel UI in `debate-round` that renders `buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for the selected speech and reads/writes through the persistence store. Neither of these is started._
+6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slices done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. A second slice, `flowSummaries.ts` (see Tracker Status above, "Speech Transcript Summaries and Answers — flow-summary persistence"), now persists a round's derived `FlowRowSummary[]` to localStorage. A third slice, `FlowSummariesPanel` (see Tracker Status above, "Speech Transcript Summaries and Answers — summary/cross-ex panel UI"), now renders every persisted flow summary, with suggested cross-exam questions and extension ideas for unanswered arguments, at `/summaries`, closing follow-up (b). Follow-up (a), audio/video transcription plus an AI call to extract claims/warrants/impacts/evidence from raw speech text rather than relying on a manually flowed grid, remains open — not started._
 
 7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext 
 
