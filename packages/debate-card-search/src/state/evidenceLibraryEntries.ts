@@ -15,6 +15,8 @@
 
 import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult } from "../lib/shared-evidence-library";
 import { searchEvidenceLibrary } from "../lib/shared-evidence-library";
+import type { ArgumentLibrary } from "../lib/argument-library";
+import { buildArgumentLibrary } from "../lib/argument-library";
 
 const STORAGE_KEY = "evidenceLibraryEntries";
 
@@ -65,4 +67,13 @@ export function deleteEvidenceLibraryEntry(id: string): void {
 /** Searches the persisted evidence repository, reusing `searchEvidenceLibrary` directly. */
 export function searchPersistedEvidenceLibrary(query: EvidenceSearchQuery = {}): EvidenceSearchResult[] {
   return searchEvidenceLibrary(readAll(), query);
+}
+
+/**
+ * Organizes the persisted evidence repository into the Common Argument
+ * Library's topic folders and tag collections, reusing `buildArgumentLibrary`
+ * directly — every `EvidenceLibraryEntry` is already a `LibraryCard`.
+ */
+export function buildPersistedArgumentLibrary(): ArgumentLibrary {
+  return buildArgumentLibrary(readAll());
 }
