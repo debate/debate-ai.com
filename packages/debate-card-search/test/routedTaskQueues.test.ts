@@ -1,12 +1,16 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildAndPersistRoutingResult,
+  completePersistedRoutedTask,
   deleteRoutedTaskQueue,
   getRoutedTaskQueue,
   listRoutedTaskQueues,
   saveRoutedTaskQueue,
   type RoutedTaskQueueRecord,
 } from "../src/state/routedTaskQueues";
-import type { ResearchTask, RoutingResult } from "../src/lib/research-task-routing";
+import { getContributorAvailability, saveContributorAvailability } from "../src/state/contributorAvailability";
+import type { ContributorAvailability, ResearchTask, RoutingResult } from "../src/lib/research-task-routing";
+import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "../src/lib/topic-coverage";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -104,5 +108,84 @@ describe("deleteRoutedTaskQueue", () => {
     saveRoutedTaskQueue(OTHER_QUEUE);
     deleteRoutedTaskQueue("missing");
     expect(listRoutedTaskQueues()).toEqual([OTHER_QUEUE]);
+  });
+});
+
+const TRACKED_ARGUMENTS: TrackedArgument[] = [
+  { argBlock: "Warming DA", category: "DA" },
+  { argBlock: "Case NEG", category: "Case" },
+];
+const WARMING_CARDS: CoverageCardSummary[] = [
+  { id: "warming-1", argBlock: "Warming DA", wordCount: 250 },
+  { id: "warming-2", argBlock: "Warming DA", wordCount: 250 },
+  { id: "warming-3", argBlock: "Warming DA", wordCount: 250 },
+];
+const ADVANCED_AMY: ContributorAvailability = {
+  contributorId: "advanced-amy",
+  skillLevel: "advanced",
+  activeTaskCount: 0,
+  maxConcurrentTasks: 5,
+};
+
+describe("buildAndPersistRoutingResult", () => {
+  it("routes against the persisted contributor list, saves the queue, and increments each assignee's activeTaskCount", () => {
+    saveContributorAvailability(ADVANCED_AMY);
+    const report = buildTopicCoverageReport(TRACKED_ARGUMENTS, WARMING_CARDS);
+
+    const result = buildAndPersistRoutingResult(report, "topic-warming");
+
+    expect(result.assignments).toHaveLength(1);
+    expect(result.assignments[0].contributorId).toBe("advanced-amy");
+    expect(result.assignments[0].task.argBlock).toBe("Case NEG");
+    expect(getRoutedTaskQueue("topic-warming")).toEqual({ topicId: "topic-warming", result });
+    expect(getContributorAvailability("advanced-amy")).toEqual({ ...ADVANCED_AMY, activeTaskCount: 1 });
+  });
+
+  it("leaves activeTaskCount unchanged for contributors nothing was routed to", () => {
+    saveContributorAvailability({ ...ADVANCED_AMY, contributorId: "idle-ivy" });
+    const report = buildTopicCoverageReport([{ argBlock: "Warming DA" }], WARMING_CARDS);
+
+    buildAndPersistRoutingResult(report, "topic-warming");
+
+    expect(getContributorAvailability("idle-ivy")).toEqual({ ...ADVANCED_AMY, contributorId: "idle-ivy" });
+  });
+});
+
+describe("completePersistedRoutedTask", () => {
+  it("removes the matching assignment from the stored queue and decrements the contributor's activeTaskCount", () => {
+    saveContributorAvailability(ADVANCED_AMY);
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const completed = completePersistedRoutedTask("topic-ai", "Solvency");
+
+    expect(completed).toEqual({ task: SOLVENCY_TASK, contributorId: "alice" });
+    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+      topicId: "topic-ai",
+      result: { assignments: [], unassignedTasks: [IMPACTS_TASK] },
+    });
+  });
+
+  it("decrements the completing contributor's stored activeTaskCount", () => {
+    saveContributorAvailability({ ...ADVANCED_AMY, contributorId: "alice", activeTaskCount: 2 });
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    completePersistedRoutedTask("topic-ai", "Solvency");
+
+    expect(getContributorAvailability("alice")).toEqual({
+      ...ADVANCED_AMY,
+      contributorId: "alice",
+      activeTaskCount: 1,
+    });
+  });
+
+  it("returns undefined and leaves storage untouched when the topic has no persisted queue", () => {
+    expect(completePersistedRoutedTask("missing-topic", "Solvency")).toBeUndefined();
+    expect(listRoutedTaskQueues()).toEqual([]);
+  });
+
+  it("returns undefined and leaves the queue untouched when no assignment matches that argBlock", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+    expect(completePersistedRoutedTask("topic-ai", "Nonexistent")).toBeUndefined();
+    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
   });
 });
