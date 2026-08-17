@@ -3,75 +3,41 @@
 
 ### In progress
 
-## Progress Unlocks — derive unlock status from persisted contributions/mission-results
-
-**Status:** In Progress
-**Source:** IDEAS.md (no `IDEAS.md` file exists in this repo; `TODO.md`'s
-"Research Crowdsourcing Organizer Features" section is this repo's backlog) —
-"🔓 Progress Unlocks" bullet, follow-up (a): "persisting a contributor's
-tier/badges".
-**Branch:** `claude/upbeat-bardeen-133qzf`
-**PR:** Not created yet
-**Started:** 2026-08-17
-
-### Goal
-Let a contributor's unlock tier, badges, and streak status (from
-`unlock-streak-status.ts`'s `buildContributorUnlockStatusWithStreak`) be
-computed directly from the already-persisted `contributions.ts` and
-`dailyMissionResults.ts` stores, instead of requiring a caller to hold and
-pass in a `ContributorStats`/`DailyMissionResult[]` list themselves —
-mirroring the existing `buildPersistedContributorQuestStreak`/
-`buildPrepRoomFromStore` "compose the pure function directly against the
-persisted store" convention.
-
-### Scope
-- A store-wired composition function in `packages/debate-card-search/src/lib/unlock-streak-status.ts`
-  that reads a contributor's persisted contributions (`state/contributions.ts`)
-  and mission-result history (`state/dailyMissionResults.ts`) and composes
-  them into a `ContributorUnlockStatusWithStreak`.
-- Graceful zero-contributions handling (a brand-new contributor is `novice`
-  tier, not a thrown error).
-
-### Non-goals
-- No new persistence store (this reads existing stores only).
-- No UI panel.
-- No change to the pure `buildContributorUnlockStatusWithStreak`/
-  `buildContributorStats`/`computeContributorTier` functions themselves.
-
-### Acceptance criteria
-- [x] A contributor with persisted contributions and mission results gets a
-      correct tier/badges/streak status derived from the stores alone
-- [x] A contributor with zero persisted contributions gets a `novice`
-      status instead of a thrown error
-- [x] Vitest coverage is added or updated
-- [x] Lint passes (no separate lint script in this repo — typecheck/build
-      stand in, see Verification)
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Production/web build passes
-- [x] Documentation is updated if behavior or configuration changes (module
-      doc comment + this tracker entry)
-
-### Implementation plan
-- [x] Inspect affected modules, local instructions, and existing tests
-- [x] Confirm API/data-flow requirements (`buildContributorStats`,
-      `listContributionsByContributor`, `listDailyMissionResultsForContributor`)
-- [x] Implement the smallest useful vertical slice
-- [x] Add focused Vitest success-path coverage
-- [x] Add focused failure/edge-case coverage (zero contributions)
-- [x] Run focused tests and fix failures
-- [x] Run linting and typechecking
-- [x] Run the full relevant test suite
-- [x] Run the production/web build
-- [x] Review the final diff for scope and quality
-- [ ] Commit and push the branch
-- [ ] Create or update the pull request
-- [ ] Update tracker status, completed checkboxes, and remaining work
-
-### Remaining work
-- Commit, push, and open the PR; then move this entry to Completed.
+(none)
 
 ### Completed
+- **Progress Unlocks — derive unlock status from persisted contributions/mission-results.**
+  `packages/debate-card-search/src/lib/unlock-streak-status.ts` adds
+  `buildContributorUnlockStatusWithStreakFromStore`, a thin wrapper around the
+  existing pure `buildContributorUnlockStatusWithStreak` that reads a
+  contributor's persisted contributions (`state/contributions.ts`'s
+  `listContributionsByContributor`) and mission-result history
+  (`state/dailyMissionResults.ts`'s `listDailyMissionResultsForContributor`)
+  instead of requiring a caller-supplied `ContributorStats`/
+  `DailyMissionResult[]` list, mirroring the existing
+  `buildPersistedContributorQuestStreak`/`buildPrepRoomFromStore`
+  "compose the pure function directly against the persisted store"
+  convention. A contributor with zero persisted contributions gets an
+  all-zero, `novice` status (via a small `buildEmptyContributorStats`
+  helper) instead of the `buildContributorStats` empty-contributions error,
+  since a brand-new contributor having no unlock status yet is expected, not
+  a bug. Closes the "🔓 Progress Unlocks" bullet's own follow-up (a),
+  "persisting a contributor's tier/badges", named under Research
+  Crowdsourcing Organizer Features below — no separate tier/badge
+  persistence is needed since it's now derived live from the existing
+  stores. `buildContributorUnlockStatusWithStreak`/`buildContributorStats`/
+  `computeContributorTier` themselves are unchanged. Vitest-covered in
+  `packages/debate-card-search/test/unlock-streak-status.test.ts` (tier
+  derived from persisted contributions, streak folded in from persisted
+  mission results, all-zero novice fallback for a contributor with no
+  persisted contributions, and that one contributor's persisted data doesn't
+  leak into another's status), using the same in-memory `localStorage` mock
+  convention as this package's other persistence tests. This is a
+  composition slice only — no UI panel in this repo yet reads this status.
+  Verified from a clean install: `bun install`, `bun run typecheck` (12
+  packages, all pass), `bun run test` (87 files / 1112 tests, all pass), and
+  `bun run build` all pass. PR:
+  [#136](https://github.com/debate/debate-ai.com/pull/136).
 - **Collaboration Prep Room Store Wiring — read entries from the persisted
   evidence library.** `packages/debate-card-search/src/lib/prep-room.ts`
   adds `buildPrepRoomFromStore`, a thin wrapper around the existing pure
