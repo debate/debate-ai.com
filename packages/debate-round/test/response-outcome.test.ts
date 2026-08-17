@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   buildVulnerabilityChartData,
+  buildVulnerabilityChartDataFromReport,
   getArgumentVulnerabilityReport,
   scoreArgumentVulnerability,
   summarizeOutcomeBySide,
+  summarizeOutcomeBySideFromReport,
 } from "../src/flow/response-outcome";
 import { getFlowRowSummaries } from "../src/flow/flow-transcript-summary";
 import type { Box } from "debate-core/src/types/flow";
@@ -157,5 +159,54 @@ describe("buildVulnerabilityChartData", () => {
   it("defaults to a limit of 10", () => {
     const points = buildVulnerabilityChartData(flow);
     expect(points).toHaveLength(3);
+  });
+});
+
+describe("summarizeOutcomeBySideFromReport", () => {
+  it("matches summarizeOutcomeBySide's output given the same flow's derived report and side keys", () => {
+    const flow = {
+      columns: COLUMNS,
+      children: [
+        rowFromContents(["Case advantage", "", "", ""]),
+        rowFromContents(["", "Neg-only point", "", ""]),
+      ],
+    };
+
+    const report = getArgumentVulnerabilityReport(flow);
+    const fromReport = summarizeOutcomeBySideFromReport(report, ["A", "N"]);
+    expect(fromReport).toEqual(summarizeOutcomeBySide(flow));
+  });
+
+  it("omits sides absent from the given sideKeys list even if present in the report", () => {
+    const report = getArgumentVulnerabilityReport({
+      columns: COLUMNS,
+      children: [rowFromContents(["Case advantage", "", "", ""])],
+    });
+    expect(summarizeOutcomeBySideFromReport(report, [])).toEqual([]);
+  });
+});
+
+describe("buildVulnerabilityChartDataFromReport", () => {
+  it("matches buildVulnerabilityChartData's output given the same flow's derived report", () => {
+    const flow = {
+      columns: COLUMNS,
+      children: [
+        rowFromContents(["Disad link", "", "", ""]),
+        rowFromContents(["Case advantage", "Turn", "Extend", "Frontline"]),
+      ],
+    };
+
+    const report = getArgumentVulnerabilityReport(flow);
+    expect(buildVulnerabilityChartDataFromReport(report, { limit: 1 })).toEqual(
+      buildVulnerabilityChartData(flow, { limit: 1 }),
+    );
+  });
+
+  it("defaults to a limit of 10", () => {
+    const report = getArgumentVulnerabilityReport({
+      columns: COLUMNS,
+      children: [rowFromContents(["Disad link", "", "", ""])],
+    });
+    expect(buildVulnerabilityChartDataFromReport(report)).toHaveLength(1);
   });
 });

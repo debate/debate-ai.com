@@ -6,6 +6,58 @@
 (none)
 
 ### Completed
+- **AI Response-Outcome Charts — chart/panel UI.**
+  `packages/debate-round/src/panels/VulnerabilityChartsPanel.tsx` adds a
+  full-page React panel that renders every persisted vulnerability report —
+  a per-side exposure summary (argument count, unanswered count, average
+  vulnerability score) and a "most exposed arguments" bar chart — reusing
+  the already-existing `response-outcome.ts`
+  `getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/
+  `buildVulnerabilityChartData` computation directly. It's mounted at
+  `/outcomes` (`apps/debate-ai.com/app/outcomes/page.tsx`, with a back-link
+  to `/debate`, following the same panel convention as `/summaries`/
+  `/outline`) and reachable from the global nav dock's Settings menu ("AI
+  Response-Outcome Charts", via a new `BarChart3`-icon `DropdownMenuItem`
+  in `CategoryDock.tsx`). Closes follow-up (b), "a chart/panel UI in
+  `debate-round` that renders
+  `buildVulnerabilityChartData`/`summarizeOutcomeBySide`," named under idea
+  #4 ("AI Response-Outcome Charts") in Product Feature Ideas below — this
+  is the twenty-third "wire a persisted slice's UI into the actual web
+  app" follow-up closed in this repo. The panel is backed by a new
+  persistence slice, `packages/debate-round/src/state/vulnerabilityReports.ts`
+  (`listVulnerabilityReports`/`getVulnerabilityReport`/
+  `saveVulnerabilityReport`/`deleteVulnerabilityReport`), which persists a
+  round's derived `ArgumentVulnerability[]` report plus its flow `sideKeys`
+  to localStorage, keyed by `roundId`, mirroring the existing
+  `flowSummaries.ts` persistence convention. `response-outcome.ts` gains
+  two row-based helpers — `summarizeOutcomeBySideFromReport` and
+  `buildVulnerabilityChartDataFromReport` — split out of
+  `summarizeOutcomeBySide`/`buildVulnerabilityChartData` the same way
+  `flow-transcript-summary.ts`'s `buildFlowSummaryTextFromRows` was, so the
+  panel can render an already-persisted report without the original raw
+  `Flow`; no new vulnerability-scoring logic is introduced. Vitest-covered
+  in `packages/debate-round/test/vulnerabilityReports.test.ts` (empty/corrupt
+  storage, list/get/save/delete, upsert-on-save, and the sorted panel view)
+  and new cases in `packages/debate-round/test/response-outcome.test.ts`
+  (the row-based helpers match their `Flow`-based counterparts given the
+  same derived report). Documented in
+  `docs/features/response-outcome-charts.md` (mirroring
+  `docs/features/flow-summaries.md`'s format) and in
+  `packages/debate-round/README.md`'s package-layout notes and usage
+  examples. Follow-up (a), an actual AI-panel call (multiple "counsel"
+  model roles) that evaluates likely response paths and clash points
+  beyond this deterministic heuristic, and follow-up (c), a "what if" mode
+  that recomputes the score against a hypothetical strategic choice, remain
+  open — not started; this panel only renders reports already derived from
+  a manually flowed grid, and nothing in this repo yet calls
+  `getArgumentVulnerabilityReport`/`saveVulnerabilityReport` to generate one
+  from a live round. Verified from a clean install: `bun install`, `bun run
+  typecheck` (11 packages with a typecheck script all pass), `bun run test`
+  (90 files / 1243 tests, all pass), and `bun run build:web` (production
+  build, including the new `/outcomes` route) all pass. No lint script is
+  configured in this repo. PR: [#169](https://github.com/debate/debate-ai.com/pull/169).
+  The local dev server was not smoke-tested in this sandbox (no reliable
+  local browser workflow available here).
 - **CX NDCA Standings — standings dashboard UI.**
   `packages/debate-round/src/panels/StandingsPanel.tsx` adds a full-page
   React panel that lets a user record a team's tournament result
@@ -2978,7 +3030,7 @@
 
 3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildAiVersusSpeechOrder`/`getNextSpeechSlot`/`isUsersTurn`/`validateSpeechSubmission`/`buildAiResponseRequest` for turning a `debate-timer` format + chosen side into an ordered, speaker-tagged turn sequence, validating a submitted speech against whose turn it is, and building a structured (non-AI-calling) request describing the AI's next speech. A second slice, `aiVersusRounds.ts` (see Tracker Status above, "Online Debate Versus AI — submitted-round persistence"), now persists a round's format, side, and submitted speeches to localStorage. A third slice, `AiVersusRoundPanel` (see Tracker Status above, "Online Debate Versus AI — round-setup + submission UI"), now renders a round-setup + submission UI at `/versus-ai`, closing follow-up (b). Follow-up (a), an actual AI speech-generation call that consumes `buildAiResponseRequest`'s output (prior speeches + slot + cross-ex flag) to produce the AI's next speech text, remains open — not started._
 
-4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slice done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). Follow-ups: (a) an actual AI-panel call (multiple "counsel" model roles) that evaluates likely response paths and clash points beyond this deterministic heuristic, (b) a chart/panel UI in `debate-round` that renders `buildVulnerabilityChartData`/`summarizeOutcomeBySide`, (c) a "what if" mode that recomputes the score against a hypothetical strategic choice rather than only the flow's current state. None of these are started._
+4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slices done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). A second slice, `vulnerabilityReports.ts` plus `VulnerabilityChartsPanel` (see Tracker Status above, "AI Response-Outcome Charts — chart/panel UI"), now persists a round's derived report and renders it as a per-side exposure summary and exposure chart at `/outcomes`, closing follow-up (b). Follow-ups: (a) an actual AI-panel call (multiple "counsel" model roles) that evaluates likely response paths and clash points beyond this deterministic heuristic, (c) a "what if" mode that recomputes the score against a hypothetical strategic choice rather than only the flow's current state. Neither of these is started._
 
 5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. A third slice, `JudgeParadigmPickerPanel` (see Tracker Status above, "AI Judge Decision Modes — paradigm-picker UI"), now renders a picker UI at `/paradigms` for saving a round's built-in or custom paradigm, closing follow-up (b). Follow-up (a), an AI judge-decision call that uses `buildJudgeParadigmPrompt` output instead of (or alongside) the existing static `judgeDecisionPrompt`, remains open — not started._
 

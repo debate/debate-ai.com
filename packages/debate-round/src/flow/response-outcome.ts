@@ -125,16 +125,18 @@ export type SideOutcomeSummary = {
 };
 
 /**
- * Rolls the vulnerability report up per side (using the flow's column
- * order via `getFlowSideKeys`), for a "which side is more exposed right
- * now" summary. Sides with no flowed arguments yet are omitted.
+ * Rolls an already-derived vulnerability report up per side (in the given
+ * `sideKeys` order), for a "which side is more exposed right now" summary.
+ * Sides with no flowed arguments yet are omitted. Split out from
+ * `summarizeOutcomeBySide` so a panel can render a persisted
+ * `ArgumentVulnerability[]` (from `state/vulnerabilityReports.ts`) without
+ * needing the original raw `Flow`.
  */
-export function summarizeOutcomeBySide(
-  flow: Pick<Flow, "children" | "columns">,
+export function summarizeOutcomeBySideFromReport(
+  report: ArgumentVulnerability[],
+  sideKeys: string[],
 ): SideOutcomeSummary[] {
-  const report = getArgumentVulnerabilityReport(flow);
-
-  return getFlowSideKeys(flow).flatMap((sideKey) => {
+  return sideKeys.flatMap((sideKey) => {
     const rows = report.filter((row) => row.sideKey === sideKey);
     if (rows.length === 0) return [];
 
@@ -152,6 +154,17 @@ export function summarizeOutcomeBySide(
   });
 }
 
+/**
+ * Rolls the vulnerability report up per side (using the flow's column
+ * order via `getFlowSideKeys`), for a "which side is more exposed right
+ * now" summary. Sides with no flowed arguments yet are omitted.
+ */
+export function summarizeOutcomeBySide(
+  flow: Pick<Flow, "children" | "columns">,
+): SideOutcomeSummary[] {
+  return summarizeOutcomeBySideFromReport(getArgumentVulnerabilityReport(flow), getFlowSideKeys(flow));
+}
+
 export type VulnerabilityChartPoint = {
   rowIndex: number;
   /** Chart label: origin speech plus a truncated version of the argument text. */
@@ -159,6 +172,28 @@ export type VulnerabilityChartPoint = {
   sideKey: string | null;
   value: number;
 };
+
+/**
+ * The top `limit` most vulnerable arguments (default 10) from an
+ * already-derived report as chart-ready `{ label, value }` points. Split
+ * out from `buildVulnerabilityChartData` so a panel can render a persisted
+ * `ArgumentVulnerability[]` (from `state/vulnerabilityReports.ts`) without
+ * needing the original raw `Flow` — the report is already sorted by
+ * `vulnerabilityScore` descending (see `getArgumentVulnerabilityReport`).
+ */
+export function buildVulnerabilityChartDataFromReport(
+  report: ArgumentVulnerability[],
+  options: { limit?: number } = {},
+): VulnerabilityChartPoint[] {
+  const limit = options.limit ?? 10;
+
+  return report.slice(0, limit).map((row) => ({
+    rowIndex: row.rowIndex,
+    label: `${row.originSpeech}: ${truncateForDisplay(row.argument)}`,
+    sideKey: row.sideKey,
+    value: row.vulnerabilityScore,
+  }));
+}
 
 /**
  * The top `limit` most vulnerable arguments (default 10) as chart-ready
@@ -170,14 +205,5 @@ export function buildVulnerabilityChartData(
   flow: Pick<Flow, "children" | "columns">,
   options: { limit?: number } = {},
 ): VulnerabilityChartPoint[] {
-  const limit = options.limit ?? 10;
-
-  return getArgumentVulnerabilityReport(flow)
-    .slice(0, limit)
-    .map((row) => ({
-      rowIndex: row.rowIndex,
-      label: `${row.originSpeech}: ${truncateForDisplay(row.argument)}`,
-      sideKey: row.sideKey,
-      value: row.vulnerabilityScore,
-    }));
+  return buildVulnerabilityChartDataFromReport(getArgumentVulnerabilityReport(flow), options);
 }
