@@ -3,69 +3,40 @@
 
 ### In progress
 
-## Video-Lecture-Training Coach AI — materials-upload/coach panel UI
-
-**Status:** In Progress
-**Source:** TODO.md Product Feature Ideas — idea #8, "Video-Lecture-Training Coach AI"
-**Branch:** `claude/practical-allen-afjhcs`
-**PR:** Not created yet
-**Started:** 2026-08-17
-
-### Goal
-Give `debate-speech-writer`'s already-persisted `CoachMaterial` store (see
-`state/coachMaterials.ts`) a real panel UI so a coach can actually upload
-grounding materials and preview which materials a question would be
-answered from — closing follow-up (c), "a materials-upload/coach chat panel
-UI," named under idea #8.
-
-### Scope
-- A `CoachMaterialsPanel` React panel in `debate-speech-writer` with an
-  upload form (kind, title, topic, tags, text) that saves through the
-  existing `saveCoachMaterial`/`deleteCoachMaterial`.
-- A kind-grouped list of every persisted material (via
-  `buildCoachMaterialLibrary`), each with a delete action.
-- An "Ask the coach" preview that runs the existing
-  `findRelevantMaterials`/`buildGroundedCoachPrompt` against persisted
-  materials and shows the matched materials plus the composed prompt text
-  (no AI call — follow-up (b) is still open).
-- Mounted at `/coach-materials`, reachable from the nav dock's Settings menu.
-- `docs/features/coach-materials.md` documenting the feature.
-
-### Non-goals
-- No transcription/parsing of uploaded recordings or documents (follow-up (a)).
-- No actual AI Q&A call (follow-up (b)) — the prompt preview is display-only.
-- No new material-scoring or grouping logic — reuses `team-coach-materials.ts` as-is.
-
-### Acceptance criteria
-- [x] A coach can add a `CoachMaterial` through the panel and see it listed, grouped by kind
-- [x] A coach can delete a persisted material and see it removed from the list
-- [x] Entering a question shows the top relevant materials and the composed grounded prompt text
-- [x] Vitest coverage is added or updated
-- [x] Lint passes (no lint script/config exists in this repo — nothing to run)
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Production/web build passes
-- [x] Documentation is updated
-
-### Implementation plan
-- [x] Inspect affected modules, local instructions, and existing tests
-- [x] Confirm API/data-flow requirements (`team-coach-materials.ts`, `state/coachMaterials.ts`)
-- [x] Implement the smallest useful vertical slice (panel + store-composition helpers)
-- [x] Add focused Vitest coverage for the new store-composition helpers
-- [x] Run focused tests and fix failures
-- [x] Run linting and typechecking
-- [x] Run the full relevant test suite
-- [x] Run the production/web build
-- [x] Review the final diff for scope and quality
-- [x] Commit and push the branch
-- [ ] Create or update the pull request
-- [x] Update tracker status, completed checkboxes, and remaining work
-
-### Remaining work
-- Open a PR from `claude/practical-allen-afjhcs` (in progress this run).
-- Follow-ups (a) transcription/parsing and (b) an actual AI Q&A call remain open and unstarted.
+(none)
 
 ### Completed
+- **Video-Lecture-Training Coach AI — materials-upload/coach panel UI.**
+  `packages/debate-speech-writer/src/panels/CoachMaterialsPanel.tsx` renders
+  the already-persisted `CoachMaterial` store (`state/coachMaterials.ts`) as
+  a real panel: an upload form (kind, title, topic, tags, text) that saves
+  through the existing `saveCoachMaterial`/`deleteCoachMaterial`, every
+  material grouped by kind via the new `buildCoachMaterialLibraryFromStore`
+  (each with a "Delete" action), and an "Ask the coach" preview that runs
+  the new `findRelevantMaterialsFromStore` plus the already-existing
+  `buildGroundedCoachPrompt` to show the matched materials and composed
+  prompt text (no AI call is made — see idea #8's follow-up (b), still
+  open). `buildCoachMaterialLibraryFromStore`/`findRelevantMaterialsFromStore`
+  compose the existing pure `buildCoachMaterialLibrary`/`findRelevantMaterials`
+  directly against the persisted store, mirroring
+  `buildTopContributorAwardsFromStore`'s "compose the pure function directly
+  against the persisted store" convention — no new scoring/grouping logic.
+  It's mounted at `/coach-materials`
+  (`apps/debate-ai.com/app/coach-materials/page.tsx`, with a back-link to
+  `/debate`) and reachable from the global nav dock's Settings menu ("Coach
+  Materials", via a new `BookOpen`-icon `DropdownMenuItem` in
+  `CategoryDock.tsx`). Vitest-covered in
+  `packages/debate-speech-writer/test/coachMaterials.test.ts`
+  (`buildCoachMaterialLibraryFromStore`'s empty-store and kind-grouping
+  behavior, `findRelevantMaterialsFromStore`'s empty-store, relevance
+  ranking, and options-passthrough behavior). Documented in
+  `docs/features/coach-materials.md`. See idea #8
+  ("Video-Lecture-Training Coach AI") in Product Feature Ideas below — this
+  closes follow-up (c), "a materials-upload/coach chat panel UI." Follow-ups
+  (a) transcription/parsing that turns an uploaded recording or document
+  into a material's text, and (b) an actual AI Q&A call that consumes
+  `buildGroundedCoachPrompt`'s output, remain open — neither is started.
+  PR: [#177](https://github.com/debate/debate-ai.com/pull/177).
 - **Group Challenges — challenge-board/creation UI.**
   `packages/debate-card-search/src/panels/GroupChallengesPanel.tsx` adds a
   full-page React panel that lets a coach create a squad-scoped friendly
