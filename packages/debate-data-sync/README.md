@@ -12,6 +12,7 @@ debate-data-sync/
 ├── schemas/       # JSON Schemas validating the files under data/
 └── src/
     ├── rankings/  # Scrapers for debate ranking leaderboards
+    ├── state/     # localStorage-backed persistence for team/judge/standings records
     ├── types/     # Ambient declarations for untyped dependencies
     └── youtube/   # YouTube channel ingestion + stats + view-count updates
 ```
@@ -47,6 +48,7 @@ Scrapers for leaderboards used by `/api/leaderboard`:
 - `sync-rankings-debateland.ts` — Debateland rankings.
 - `sync-rankings-tocbidlist.ts` — TOC bid list.
 - `sync-tournaments.ts` — Tournament listings.
+- `ndca-standings.ts` — NDCA-style qualification points and cumulative season standings computation (`computeTournamentPoints`, `buildStandings`, `rankStandings`, `getQualifiedTeams`), against a configurable, illustrative `QualificationPointsTable`. `state/tournamentResults.ts` persists recorded `TournamentResult`s to localStorage and exposes `buildStandingsFromStore` for `debate-round`'s `StandingsPanel` — see [`docs/features/standings.md`](../../docs/features/standings.md).
 
 ## src/youtube/
 

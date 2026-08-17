@@ -6,6 +6,57 @@
 (none)
 
 ### Completed
+- **CX NDCA Standings — standings dashboard UI.**
+  `packages/debate-round/src/panels/StandingsPanel.tsx` adds a full-page
+  React panel that lets a user record a team's tournament result
+  (team ID, tournament name, date, division, bid level, outround finish,
+  prelim win/loss record) and renders every persisted result's cumulative,
+  ranked season standings — rank, total qualification points, tournaments
+  counted vs. attended, cumulative prelim record, and best finish — reusing
+  the already-existing `rankings/ndca-standings.ts`
+  `computeTournamentPoints`/`buildStandings`/`rankStandings` computation
+  directly. It's mounted at `/standings`
+  (`apps/debate-ai.com/app/standings/page.tsx`, with a back-link to
+  `/debate`, following the same panel convention as `/opponents`/`/judges`)
+  and reachable from the global nav dock's Settings menu ("CX NDCA
+  Standings", via a new `TrendingUp`-icon `DropdownMenuItem` in
+  `CategoryDock.tsx`). Closes follow-up (c), "a standings dashboard UI
+  (likely under `/rank`)," named under idea #1 ("CX NDCA Standings") in
+  Product Feature Ideas below — this is the twenty-second "wire a
+  persisted slice's UI into the actual web app" follow-up closed in this
+  repo. The panel is backed by a new persistence slice,
+  `packages/debate-data-sync/src/state/tournamentResults.ts`
+  (`listTournamentResults`/`listTournamentResultsForTeam`/
+  `saveTournamentResult`/`deleteTournamentResult`), which persists
+  `TournamentResult` records (each wrapped with a synthetic `id`, since a
+  team can attend many tournaments, mirroring `debate-card-search`'s
+  `revisionHistory.ts` wrapped-record convention) to localStorage, plus
+  `buildStandingsFromStore`, which groups every persisted result by
+  `teamId` and runs it directly through `buildStandings`/`rankStandings` —
+  introducing no new points-scoring or ranking logic. Vitest-covered in
+  `packages/debate-data-sync/test/tournamentResults.test.ts` (empty/corrupt
+  storage, list/save/delete, per-team filtering, and
+  `buildStandingsFromStore` grouping + ranking + honoring
+  `BuildStandingsOptions` like `countBestN`). Documented in
+  `docs/features/standings.md` (mirroring `docs/features/ai-versus-rounds.md`'s
+  format) and in `packages/debate-data-sync/README.md`/
+  `packages/debate-round/README.md`'s package-layout notes and usage
+  examples. Follow-up (a), a real Tabroom/NDCA scraper that produces
+  `TournamentResult` records automatically (today's `sync-tournaments.ts`
+  only fetches tournament names), and follow-up (b), a real,
+  circuit-sourced `QualificationPointsTable` instead of the illustrative
+  default, remain open — not started; every result is entered by hand
+  through this panel's form, and standings use
+  `DEFAULT_QUALIFICATION_POINTS_TABLE`. Verified from a clean install:
+  `bun install`, `bun run typecheck` (11 packages with a typecheck script
+  all pass — this PR adds `state/tournamentResults.ts` typechecking to
+  `debate-data-sync`'s existing script and `StandingsPanel.tsx` to
+  `debate-round`'s; `debate-ai-web` has no separate typecheck script —
+  types are checked as part of its build), `bun run test` (89 files / 1227
+  tests, all pass), and `bun run build:web` (production build, including
+  the new `/standings` route) all pass. No lint script is configured in
+  this repo. PR: TBD. The local dev server was not smoke-tested in this
+  sandbox (no reliable local browser workflow available here).
 - **Practice Round Simulator — round-simulator UI.**
   `packages/debate-round/src/panels/PracticeRoundSimulatorPanel.tsx` adds a
   full-page React panel that lets a user configure a practice round (round
@@ -2921,7 +2972,7 @@
 
 ## Product Feature Ideas
 
-1. **CX NDCA Standings** — Add a standings dashboard modeled around NDCA-style results, allowing users to browse qualification points, rankings, cumulative records, and tournament performance history across the season. Tabroom already supports tournament results and NDCA-points configuration, so this could expose those data in a more searchable, user-friendly analytics view. [tabroom](https://www.tabroom.com/index/tourn/index.mhtml?tourn_id=26597) _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `computeTournamentPoints`/`buildTeamStanding`/`buildStandings`/`rankStandings`/`getQualifiedTeams` for turning per-team tournament results into ranked, cumulative season standings against a configurable (not authoritative) points table. Follow-ups: (a) a Tabroom/NDCA scraper that produces real `TournamentResult` records per team (today's `sync-tournaments.ts` only fetches tournament names), (b) a real, circuit-sourced `QualificationPointsTable` instead of the illustrative default, (c) a standings dashboard UI (likely under `/rank`) that renders `rankStandings`/`getQualifiedTeams`. None of these are started._
+1. **CX NDCA Standings** — Add a standings dashboard modeled around NDCA-style results, allowing users to browse qualification points, rankings, cumulative records, and tournament performance history across the season. Tabroom already supports tournament results and NDCA-points configuration, so this could expose those data in a more searchable, user-friendly analytics view. [tabroom](https://www.tabroom.com/index/tourn/index.mhtml?tourn_id=26597) _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `computeTournamentPoints`/`buildTeamStanding`/`buildStandings`/`rankStandings`/`getQualifiedTeams` for turning per-team tournament results into ranked, cumulative season standings against a configurable (not authoritative) points table. A second slice, `tournamentResults.ts` (see Tracker Status above), now persists recorded `TournamentResult`s to localStorage. A third slice, `StandingsPanel` (see Tracker Status above, "CX NDCA Standings — standings dashboard UI"), now lets a user record a result and renders every persisted result's ranked standings at `/standings`, closing follow-up (c). Follow-ups: (a) a Tabroom/NDCA scraper that produces real `TournamentResult` records per team (today's `sync-tournaments.ts` only fetches tournament names), (b) a real, circuit-sourced `QualificationPointsTable` instead of the illustrative default. Neither of these is started._
 
 2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slices done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. A second slice, `wordCountRounds.ts` (see Tracker Status above, "Word-Count-Only Speech Format — persisted word-count round results"), now persists a round's chosen style and submitted speech text to localStorage. A third slice, `WordCountRoundsPanel` (see Tracker Status above, "Word-Count-Only Speech Format — submission UI"), now renders a submission form at `/word-count` with a live per-speech word-count readout, closing follow-up (a). Follow-up (b), extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode in the live round timer itself, remains open — not started._
 
