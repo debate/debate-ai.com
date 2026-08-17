@@ -42,6 +42,12 @@ type a "Word-Count-Only Speech Format" round's speeches against a live
 word-count readout and renders every persisted `WordCountRoundRecord` — see
 [`docs/features/word-count-rounds.md`](../../docs/features/word-count-rounds.md).
 
+`ArgumentTreePanel` (also exported from the package root) renders every
+persisted "Outline Filters and Argument Tree View" `ArgumentTreeRecord` as a
+filterable, heading-grouped outline, with speech/side/kind/unanswered-only
+controls that persist per round — see
+[`docs/features/argument-tree-outline.md`](../../docs/features/argument-tree-outline.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -58,7 +64,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel, WordCountRoundsPanel
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel, WordCountRoundsPanel, ArgumentTreePanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers
