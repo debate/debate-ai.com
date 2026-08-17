@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Mail } from "lucide-react"
@@ -15,6 +15,33 @@ import { Label } from "debate-ui/src/primitives/label"
 import { authClient } from "@/lib/auth/client"
 import { APP_NAME } from "@/lib/config/site"
 
+/**
+ * Which social providers the auth backend holds credentials for. Rendering a
+ * button for an unconfigured provider only produces an error on click, so the
+ * buttons wait for this list. `null` means "not yet known".
+ */
+function useConfiguredProviders(): string[] | null {
+    const [providers, setProviders] = useState<string[] | null>(null)
+
+    useEffect(() => {
+        let active = true
+        fetch("/api/auth/providers")
+            .then((res) => res.json())
+            .then((data: { providers?: string[] }) => {
+                if (active) setProviders(data.providers ?? [])
+            })
+            .catch(() => {
+                if (active) setProviders([])
+            })
+
+        return () => {
+            active = false
+        }
+    }, [])
+
+    return providers
+}
+
 // Google Sign In Button
 function GoogleSignIn() {
     const [isLoading, setIsLoading] = useState(false)
@@ -22,11 +49,15 @@ function GoogleSignIn() {
     const handleSignIn = async () => {
         setIsLoading(true)
         try {
-            await authClient.signIn.social({
+            // better-auth resolves with an `error` payload instead of throwing,
+            // so a misconfigured provider used to fail silently here.
+            const { error } = await authClient.signIn.social({
                 provider: "google",
                 callbackURL: "/",
             })
+            if (error) throw new Error(error.message ?? "Unknown error")
         } catch (error) {
+            console.error("Google sign-in error:", error)
             toast.error("Failed to sign in with Google")
         } finally {
             setIsLoading(false)
@@ -57,11 +88,13 @@ function OAuthSignIn({ provider }: OAuthSignInProps) {
     const handleSignIn = async () => {
         setIsLoading(true)
         try {
-            await authClient.signIn.social({
+            const { error } = await authClient.signIn.social({
                 provider,
                 callbackURL: "/",
             })
+            if (error) throw new Error(error.message ?? "Unknown error")
         } catch (error) {
+            console.error(`${provider} sign-in error:`, error)
             toast.error(`Failed to sign in with ${provider}`)
         } finally {
             setIsLoading(false)
@@ -170,6 +203,13 @@ function MagicLinkSignIn() {
 
 // Main Login Page Component
 export default function LoginPage() {
+    const providers = useConfiguredProviders()
+
+    // Until the provider list arrives, assume the buttons are available so the
+    // common (fully configured) case doesn't flash an empty card.
+    const isAvailable = (provider: string) =>
+        providers === null || providers.includes(provider)
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
             <Card className="w-full max-w-md">
@@ -177,10 +217,11 @@ export default function LoginPage() {
                     <div className="flex items-center gap-2">
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden">
                             <Image
-                                src="/icons/apple-touch-icon.png"
+                                src="/apple-touch-icon.png"
                                 alt="Logo"
                                 width={40}
                                 height={40}
+                                unoptimized
                                 className="h-full w-full object-cover"
                             />
                         </div>
@@ -194,9 +235,9 @@ export default function LoginPage() {
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col gap-4">
-                        <GoogleSignIn />
-                        <OAuthSignIn provider="discord" />
-                        <OAuthSignIn provider="linkedin" />
+                        {isAvailable("google") && <GoogleSignIn />}
+                        {isAvailable("discord") && <OAuthSignIn provider="discord" />}
+                        {isAvailable("linkedin") && <OAuthSignIn provider="linkedin" />}
 
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">

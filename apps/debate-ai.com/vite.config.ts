@@ -11,6 +11,18 @@ export default defineConfig({
   define: {
     __USE_LIBSQL__: false,
   },
+  build: {
+    // Never inline imported assets as `data:` URIs. vinext's next/image shim
+    // routes any local src that does not end in `.svg` through
+    // `/_vinext/image?url=…`, and that endpoint rejects every `url` which
+    // doesn't start with `/`. A small icon inlined as `data:image/svg+xml,…`
+    // therefore 400s and renders as a broken image, while the same icon over
+    // Vite's default 4096-byte threshold is emitted as a file and loads fine —
+    // which is why only icon-trophy, icon-trophy-goat, icon-settings and
+    // icon-read were broken. Emitting every asset as a real hashed file keeps
+    // the URLs resolvable regardless of icon size.
+    assetsInlineLimit: 0,
+  },
   plugins: [
     vinext(),
     cloudflare({

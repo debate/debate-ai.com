@@ -10,27 +10,70 @@ import { getEnv } from "../env";
 async function buildAuth() {
   const db = await getDBFromContext();
 
+  // Only register a provider once both halves of its credential pair are
+  // present. Passing an undefined clientId/clientSecret through made
+  // better-auth throw during init, which took down every /api/auth/* route —
+  // including the One Tap callback — rather than just that one provider.
+  const socialProviders: Record<string, { clientId: string; clientSecret: string }> = {};
+
+  const googleClientId = getEnv("GOOGLE_CLIENT_ID");
+  const googleClientSecret = getEnv("GOOGLE_CLIENT_SECRET");
+  if (googleClientId && googleClientSecret) {
+    socialProviders.google = {
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
+    };
+  }
+
+  const discordClientId = getEnv("AUTH_DISCORD_ID");
+  const discordClientSecret = getEnv("AUTH_DISCORD_SECRET");
+  if (discordClientId && discordClientSecret) {
+    socialProviders.discord = {
+      clientId: discordClientId,
+      clientSecret: discordClientSecret,
+    };
+  }
+
+  const linkedinClientId = getEnv("AUTH_LINKEDIN_ID");
+  const linkedinClientSecret = getEnv("AUTH_LINKEDIN_SECRET");
+  if (linkedinClientId && linkedinClientSecret) {
+    socialProviders.linkedin = {
+      clientId: linkedinClientId,
+      clientSecret: linkedinClientSecret,
+    };
+  }
+
+  // Origins allowed to make authenticated requests. The app is served from
+  // several hosts that share this auth backend (the apex domain, Cloudflare
+  // preview deployments, and localhost during development). Without listing
+  // them, better-auth rejects the request and omits the CORS headers, which
+  // surfaces as a blocked preflight when signing in from anywhere other than
+  // the canonical origin. Extra origins can be supplied via the
+  // BETTER_AUTH_TRUSTED_ORIGINS env var (comma-separated).
+  const trustedOrigins = Array.from(
+    new Set(
+      [
+        NEXT_PUBLIC_BASE_URL,
+        "https://debate-ai.com",
+        "https://*.debate-ai.com",
+        "https://*.debate-ai.workers.dev",
+        "http://localhost:3000",
+        ...(getEnv("BETTER_AUTH_TRUSTED_ORIGINS")?.split(",") ?? []),
+      ]
+        .map((origin) => origin?.trim())
+        .filter((origin): origin is string => Boolean(origin)),
+    ),
+  );
+
   return betterAuth({
     baseURL: NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
+    trustedOrigins,
     secret: getEnv("BETTER_AUTH_SECRET") || "dev-secret-change-in-production",
     database: drizzleAdapter(db, {
       provider: "sqlite",
       schema,
     }),
-    socialProviders: {
-      google: {
-        clientId: getEnv("GOOGLE_CLIENT_ID")!,
-        clientSecret: getEnv("GOOGLE_CLIENT_SECRET")!,
-      },
-      discord: {
-        clientId: getEnv("AUTH_DISCORD_ID") || "",
-        clientSecret: getEnv("AUTH_DISCORD_SECRET"),
-      },
-      linkedin: {
-        clientId: getEnv("AUTH_LINKEDIN_ID") || "",
-        clientSecret: getEnv("AUTH_LINKEDIN_SECRET"),
-      },
-    },
+    socialProviders,
     emailVerification: {
       sendOnSignUp: false,
       autoSignInAfterVerification: true,
