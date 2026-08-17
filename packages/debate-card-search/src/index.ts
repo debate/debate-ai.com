@@ -8,4 +8,5 @@ export { TaskInboxPanel } from "./panels/TaskInboxPanel";
 export { ProgressUnlocksPanel } from "./panels/ProgressUnlocksPanel";
 export { EvidenceLibraryPanel } from "./panels/EvidenceLibraryPanel";
 export { RevisionIncentivesPanel } from "./panels/RevisionIncentivesPanel";
+export { PeerReviewsPanel } from "./panels/PeerReviewsPanel";
 export * from "./types";

@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell, ClipboardList, GraduationCap, Scale } from "lucide-react"
+import { UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell, ClipboardList, GraduationCap, Scale, MessageSquareCheck } from "lucide-react"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
 import {
@@ -79,6 +79,10 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/revisions") }}>
         <History className="mr-2 h-4 w-4" />
         Revision Incentives
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/reviews") }}>
+        <MessageSquareCheck className="mr-2 h-4 w-4" />
+        Peer Review
       </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/judges") }}>
         <Gavel className="mr-2 h-4 w-4" />
