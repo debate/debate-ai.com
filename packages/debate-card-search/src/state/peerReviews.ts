@@ -55,3 +55,13 @@ export function savePeerReview(review: CardReview): void {
 export function deletePeerReview(cardId: string): void {
   writeAll(readAll().filter((review) => review.cardId !== cardId));
 }
+
+/**
+ * Lists every persisted card review sorted by `cardId`, for a stable
+ * display order in the review-queue panel — mirrors the
+ * `buildJudgeParadigmSelectionsPanelView`/`buildPrepNotesPanelView`
+ * convention used by this repo's other panel-view helpers.
+ */
+export function buildReviewQueuePanelView(): CardReview[] {
+  return [...readAll()].sort((a, b) => a.cardId.localeCompare(b.cardId));
+}
