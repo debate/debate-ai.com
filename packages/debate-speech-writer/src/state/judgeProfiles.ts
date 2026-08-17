@@ -5,7 +5,10 @@
  * (`judge/judge-profile.ts`) in TODO.md's Research Crowdsourcing Organizer
  * Features list. Stores profiles in localStorage, mirroring
  * `debate-data-sync`'s `opponentTeamProfiles.ts`/this package's
- * `coachMaterials.ts` persistence convention.
+ * `coachMaterials.ts` persistence convention. Also exposes
+ * `buildJudgeProfilesRoster`, the ready-to-render ordering used by
+ * `panels/JudgeProfilesPanel.tsx` — follow-up (b), "a judge-profile
+ * card/panel UI," under the same TODO.md bullet.
  *
  * @module state/judgeProfiles
  */
@@ -56,4 +59,16 @@ export function saveJudgeProfile(profile: JudgeProfile): void {
 /** Deletes a persisted judge profile by `judgeId`; a no-op if it isn't stored. */
 export function deleteJudgeProfile(judgeId: string): void {
   writeAll(readAll().filter((profile) => profile.judgeId !== judgeId));
+}
+
+/**
+ * Lists every persisted judge profile ordered by rounds judged descending
+ * (most experienced first, ties broken alphabetically by `judgeId`) — the
+ * ready-to-render order for a judge-profile roster panel.
+ */
+export function buildJudgeProfilesRoster(): JudgeProfile[] {
+  return [...readAll()].sort((a, b) => {
+    if (b.roundsJudged !== a.roundsJudged) return b.roundsJudged - a.roundsJudged;
+    return a.judgeId.localeCompare(b.judgeId);
+  });
 }
