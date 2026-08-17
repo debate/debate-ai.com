@@ -6,6 +6,38 @@
 (none)
 
 ### Completed
+- **Coaching Programs and Group Challenges — coaching-program config UI.**
+  `packages/debate-round/src/panels/CoachingProgramsPanel.tsx` adds a
+  full-page React panel that lets a coach create a named coaching space
+  (name + comma-separated squad-roster member IDs) and lists every
+  persisted `CoachingProgramConfig`, each with its roster rendered as
+  badges and a "Remove" action, mirroring `PreRoundBriefingsPanel`'s
+  list-plus-clear convention. It's mounted at `/coaching-programs`
+  (`apps/debate-ai.com/app/coaching-programs/page.tsx`, with a back-link to
+  `/debate`, following the same panel-page convention as `/coaching`/
+  `/prep-notes`) and reachable from the global nav dock's Settings menu
+  ("Coaching Programs", via a new `School`-icon `DropdownMenuItem` in
+  `CategoryDock.tsx`) — this is the twenty-fifth "wire a persisted slice's
+  UI into the actual web app" follow-up closed in this repo. The panel
+  adds one small helper to `state/coachingPrograms.ts` —
+  `buildCoachingProgramsPanelView` (every persisted program config,
+  name-sorted, mirroring `drillSets.ts`'s `buildDrillSetsPanelView`
+  sorting convention) — reusing the already-persisted
+  `saveCoachingProgram`/`deleteCoachingProgram` directly rather than
+  introducing new config-lifecycle logic. Vitest-covered in
+  `packages/debate-round/test/coachingPrograms.test.ts`
+  (`buildCoachingProgramsPanelView`'s empty-store, name-sort, and
+  non-mutating-of-the-underlying-store behavior). See idea #13
+  ("Coaching Programs and Group Challenges") in Product Feature Ideas
+  below — this closes the config-management half of follow-up (b), "a
+  coaching-space dashboard UI." It does not yet render
+  `buildCoachingProgramBoard`'s composed topic-sprint/group-challenge/
+  member-drill board, since those inputs (persisted challenges, win
+  events, topic-sprint contributions, and a roundId-to-contributor
+  mapping for member drills) aren't available in a form this panel could
+  read live — group-challenges' own follow-up (c) ("persisting
+  challenges...") is still open. See the new follow-up noted under idea
+  #13 below.
 - **Team Collaboration Mode — collaboration-panel UI.**
   `packages/debate-card-search/src/panels/SprintNotesPanel.tsx` adds a
   full-page React panel that lets a teammate submit a new prep note against a
@@ -3129,7 +3161,7 @@
 
 12. **Pre-Round Intelligence Panel** — On every round-information page, combine live tournament results, prior pairings, opponent records, judge paradigms, event details, room assignments, and relevant team prep notes into one focused pre-round briefing. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPreRoundBriefing`/`summarizePriorMeetings`/`buildPreRoundBriefingText` for composing an opponent-scouting summary, a judge-tendency summary, a head-to-head prior-meetings record, and team prep notes into one structured, renderable briefing, reusing the existing `debate-data-sync`/`debate-speech-writer` profile slices. A second slice, `preRoundBriefings.ts` (see Tracker Status above), now persists a round's generated `PreRoundBriefing` to localStorage, closing follow-up (c). A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now resolves the opponent/judge profiles themselves from the persisted `opponentTeamProfiles.ts`/`judgeProfiles.ts` stores by id instead of requiring the caller to supply pre-fetched profile objects. A fourth slice, `PreRoundBriefingsPanel` (see Tracker Status above, "Pre-Round Intelligence Panel — briefing-panel UI"), now renders every persisted briefing at `/briefings`, closing follow-up (b). Follow-up (a), real data sources for tournament results, pairings, event details, and room assignments (none exist in this repo today), remains open — not started._
 
-13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise. _Status: first slices done (see Tracker Status above) — the "friendly challenges" half has `debate-card-search`'s `group-challenges.ts` (`buildGroupChallengeBoard`), and the coaching-space model tying it together has `debate-round`'s `coaching-program.ts` (`buildCoachingProgramBoard`), composing that group-challenge board with the existing Team Collaboration Mode topic sprint and AI Drill Generator drill sets per roster member. Follow-ups: (a) persisting a coaching program's config and board inputs, (b) a coaching-space dashboard UI, (c) wiring a member's practice-round setup/feedback (Practice Round Simulator) into the space. None of these are started._
+13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise. _Status: first slices done (see Tracker Status above) — the "friendly challenges" half has `debate-card-search`'s `group-challenges.ts` (`buildGroupChallengeBoard`), and the coaching-space model tying it together has `debate-round`'s `coaching-program.ts` (`buildCoachingProgramBoard`), composing that group-challenge board with the existing Team Collaboration Mode topic sprint and AI Drill Generator drill sets per roster member. A second slice, `coachingPrograms.ts` (see Tracker Status above, "Coaching Program Persistence — localStorage config store"), now persists a `CoachingProgramConfig` to localStorage, closing follow-up (a). A third slice, `CoachingProgramsPanel` (see Tracker Status above, "Coaching Programs and Group Challenges — coaching-program config UI"), now renders a create-program form and every persisted program's roster at `/coaching-programs`, closing the config-management half of follow-up (b). Follow-ups: (b-continued) a dashboard view that renders each program's full `buildCoachingProgramBoard` (needs persisted group challenges/win events, topic-sprint contributions, and a roundId-to-contributor mapping for member drills — none of which exist yet), (c) wiring a member's practice-round setup/feedback (Practice Round Simulator) into the space. Neither of these is started._
 
 14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). Follow-ups: (a) wiring these commands into actual keyboard-shortcut handlers in `reason-editor`'s toolbar/editor view, (b) a "send selected evidence to a speech document" command, which needs a speech-document target that doesn't exist yet. Neither of these is started._
 

@@ -11,6 +11,7 @@ export { AiVersusRoundPanel } from "./panels/AiVersusRoundPanel";
 export { PracticeRoundSimulatorPanel } from "./panels/PracticeRoundSimulatorPanel";
 export { StandingsPanel } from "./panels/StandingsPanel";
 export { VulnerabilityChartsPanel } from "./panels/VulnerabilityChartsPanel";
+export { CoachingProgramsPanel } from "./panels/CoachingProgramsPanel";
 export { FlowSpreadsheet } from "./flow/FlowSpreadsheet";
 export { RoundEditorDialog } from "./dialogs/CreateRoundDialog";
 export * from "./state/store";

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildCoachingProgramsPanelView,
   deleteCoachingProgram,
   getCoachingProgram,
   listCoachingPrograms,
@@ -89,5 +90,24 @@ describe("deleteCoachingProgram", () => {
     saveCoachingProgram(JV);
     deleteCoachingProgram("missing");
     expect(listCoachingPrograms()).toEqual([JV]);
+  });
+});
+
+describe("buildCoachingProgramsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildCoachingProgramsPanelView()).toEqual([]);
+  });
+
+  it("sorts persisted programs by name", () => {
+    saveCoachingProgram(VARSITY);
+    saveCoachingProgram(JV);
+    expect(buildCoachingProgramsPanelView()).toEqual([JV, VARSITY]);
+  });
+
+  it("does not mutate the underlying stored order", () => {
+    saveCoachingProgram(VARSITY);
+    saveCoachingProgram(JV);
+    buildCoachingProgramsPanelView();
+    expect(listCoachingPrograms()).toEqual([VARSITY, JV]);
   });
 });
