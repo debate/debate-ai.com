@@ -50,7 +50,8 @@
   script — types are checked as part of its build), `bun run test` (87
   files / 1178 tests, all pass), and `bun run build:web` (production build,
   including the new `/paradigms` route) all pass. No lint script is
-  configured in this repo. PR: (opened alongside this commit). The local dev
+  configured in this repo. PR:
+  [#152](https://github.com/debate/debate-ai.com/pull/152). The local dev
   server was not smoke-tested in this sandbox (no reliable local browser
   workflow available here).
 - **AI Coach Mode — coaching-panel UI.**
