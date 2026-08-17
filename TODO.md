@@ -6,6 +6,35 @@
 (none)
 
 ### Completed
+- **Research Task Routing — persisted routed task queue.**
+  `packages/debate-card-search/src/state/routedTaskQueues.ts` adds a
+  localStorage-backed CRUD store (`listRoutedTaskQueues`/`getRoutedTaskQueue`/
+  `saveRoutedTaskQueue`/`deleteRoutedTaskQueue`) for `research-task-routing.ts`'s
+  `RoutingResult`, wrapped in a `RoutedTaskQueueRecord` (`topicId` + `result`)
+  since a `RoutingResult` has no natural key of its own, keyed by a
+  caller-supplied `topicId` with upsert-on-save semantics, mirroring the
+  existing `drillSets.ts`/`flowSummaries.ts` persistence convention
+  (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
+  rather than throwing). Closes the "persisted task queue" half of the "(a)
+  persisted contributor profiles (active task count — skill level is now
+  derived) and a persisted task queue" follow-up named under the "Research
+  Task Routing" bullet in Research Crowdsourcing Organizer Features below —
+  the contributor-profile half was already closed by
+  `contributorAvailability.ts`. Vitest-covered (with an in-memory
+  `localStorage` mock, since this package's Vitest environment is `node`
+  with no DOM) in `packages/debate-card-search/test/routedTaskQueues.test.ts`.
+  This is a persistence slice only — it stores whatever `RoutingResult` a
+  caller passes in verbatim (`routeTasks`/`buildRoutingResult`/
+  `buildTaskQueue` themselves are unchanged); no task-assignment/inbox UI in
+  this repo yet reads or writes through this store, and nothing yet wires
+  real task-assignment/completion events into a persisted contributor's
+  `activeTaskCount`. Follow-ups: (a) wiring real task-assignment/completion
+  events to keep a persisted `ContributorAvailability`'s `activeTaskCount`
+  accurate, (b) a task-assignment/inbox UI that renders a topic's persisted
+  routed queue and reads/writes through this store. Neither of these is
+  started. Verified from a clean install: `bun run typecheck` (all packages
+  pass), `bun run test` (86 files / 1085 tests, all pass), and `bun run
+  build` all pass. PR: TBD.
 - **Revision Incentives — persisted revision history.**
   `packages/debate-card-search/src/state/revisionHistory.ts` adds a
   localStorage-backed store for `revision-incentives.ts`'s `CardRevision`
