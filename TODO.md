@@ -59,10 +59,10 @@
   separate typecheck script — types are checked as part of its build),
   `bun run test` (88 files / 1209 tests, all pass), and `bun run build:web`
   (production build, including the new `/versus-ai` route) all pass. No
-  lint script is configured in this repo. PR: (opened by this run — see
-  branch `claude/practical-allen-o1c4id`). The local dev server was not
-  smoke-tested in this sandbox (no reliable local browser workflow
-  available here).
+  lint script is configured in this repo. PR:
+  [#164](https://github.com/debate/debate-ai.com/pull/164). The local dev
+  server was not smoke-tested in this sandbox (no reliable local browser
+  workflow available here).
 - **Outline Filters and Argument Tree View — outline panel UI.**
   `packages/debate-round/src/panels/ArgumentTreePanel.tsx` adds a full-page
   React panel that renders every persisted round's argument tree as a
