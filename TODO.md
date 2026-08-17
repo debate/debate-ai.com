@@ -6,6 +6,38 @@
 (none)
 
 ### Completed
+- **Progress Unlocks — derive unlock status from persisted contributions/mission-results.**
+  `packages/debate-card-search/src/lib/unlock-streak-status.ts` adds
+  `buildContributorUnlockStatusWithStreakFromStore`, a thin wrapper around the
+  existing pure `buildContributorUnlockStatusWithStreak` that reads a
+  contributor's persisted contributions (`state/contributions.ts`'s
+  `listContributionsByContributor`) and mission-result history
+  (`state/dailyMissionResults.ts`'s `listDailyMissionResultsForContributor`)
+  instead of requiring a caller-supplied `ContributorStats`/
+  `DailyMissionResult[]` list, mirroring the existing
+  `buildPersistedContributorQuestStreak`/`buildPrepRoomFromStore`
+  "compose the pure function directly against the persisted store"
+  convention. A contributor with zero persisted contributions gets an
+  all-zero, `novice` status (via a small `buildEmptyContributorStats`
+  helper) instead of the `buildContributorStats` empty-contributions error,
+  since a brand-new contributor having no unlock status yet is expected, not
+  a bug. Closes the "🔓 Progress Unlocks" bullet's own follow-up (a),
+  "persisting a contributor's tier/badges", named under Research
+  Crowdsourcing Organizer Features below — no separate tier/badge
+  persistence is needed since it's now derived live from the existing
+  stores. `buildContributorUnlockStatusWithStreak`/`buildContributorStats`/
+  `computeContributorTier` themselves are unchanged. Vitest-covered in
+  `packages/debate-card-search/test/unlock-streak-status.test.ts` (tier
+  derived from persisted contributions, streak folded in from persisted
+  mission results, all-zero novice fallback for a contributor with no
+  persisted contributions, and that one contributor's persisted data doesn't
+  leak into another's status), using the same in-memory `localStorage` mock
+  convention as this package's other persistence tests. This is a
+  composition slice only — no UI panel in this repo yet reads this status.
+  Verified from a clean install: `bun install`, `bun run typecheck` (12
+  packages, all pass), `bun run test` (87 files / 1112 tests, all pass), and
+  `bun run build` all pass. PR:
+  [#136](https://github.com/debate/debate-ai.com/pull/136).
 - **Collaboration Prep Room Store Wiring — read entries from the persisted
   evidence library.** `packages/debate-card-search/src/lib/prep-room.ts`
   adds `buildPrepRoomFromStore`, a thin wrapper around the existing pure

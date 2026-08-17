@@ -14,10 +14,23 @@
  * `ContributorStats`/`DailyMissionResult`s; it doesn't persist a
  * contributor's tier/streak/badges or render a progress/unlock UI.
  *
+ * `buildContributorUnlockStatusWithStreakFromStore` is a second, thin slice
+ * that closes the "Progress Unlocks" bullet's own follow-up (a),
+ * "persisting a contributor's tier/badges", in TODO.md: rather than
+ * introducing a separate tier/badge store, it derives a contributor's status
+ * live from the already-persisted `state/contributions.ts`/
+ * `state/dailyMissionResults.ts` stores, mirroring the existing
+ * `dailyMissionResults.ts` `buildPersistedContributorQuestStreak` and
+ * `prep-room.ts` `buildPrepRoomFromStore` "compose the pure function
+ * directly against the persisted store" convention. A contributor with no
+ * persisted contributions yet gets a `novice` status rather than the
+ * `buildContributorStats` empty-contributions error, since a brand-new
+ * contributor having no unlock status yet is an expected state, not a bug.
+ *
  * @module lib/unlock-streak-status
  */
 
-import type { ContributorStats } from "./contribution-leaderboard";
+import { buildContributorStats, type ContributorStats } from "./contribution-leaderboard";
 import {
   buildContributorQuestStreak,
   buildStreakSummaryText,
@@ -33,6 +46,8 @@ import {
   type ContributorUnlockStatus,
   type UnlockTierRequirement,
 } from "./progress-unlocks";
+import { listContributionsByContributor } from "../state/contributions";
+import { listDailyMissionResultsForContributor } from "../state/dailyMissionResults";
 
 /**
  * A contributor's unlock status extended with their streak standing.
@@ -85,4 +100,47 @@ export function buildUnlockStatusWithStreakText(status: ContributorUnlockStatusW
   });
 
   return [unlockText, streakText].join("\n");
+}
+
+/**
+ * A contributor with no persisted contributions yet has no scored activity
+ * for `buildContributorStats` to aggregate (it throws on an empty list), but
+ * they still have a well-defined `novice` status — every `DEFAULT_UNLOCK_TIER_REQUIREMENTS`
+ * tier requires at least 0 contributions and 0 score, so this all-zero stats
+ * object always resolves to `novice`.
+ */
+function buildEmptyContributorStats(contributorId: string): ContributorStats {
+  return {
+    contributorId,
+    contributionCount: 0,
+    totalHelpfulnessScore: 0,
+    averageHelpfulnessScore: 0,
+    bestContributionId: "",
+    bestHelpfulnessScore: 0,
+    popularityOnlyOutlierCount: 0,
+  };
+}
+
+/**
+ * Builds a contributor's combined unlock+streak status straight from the
+ * persisted `state/contributions.ts`/`state/dailyMissionResults.ts` stores,
+ * instead of requiring the caller to hold and pass in a `ContributorStats`/
+ * `DailyMissionResult[]` list themselves — mirroring the existing
+ * `dailyMissionResults.ts` `buildPersistedContributorQuestStreak` "compose
+ * the pure function directly against the persisted store" convention. A
+ * contributor with no persisted contributions yet gets an all-zero, `novice`
+ * status rather than a thrown error.
+ */
+export function buildContributorUnlockStatusWithStreakFromStore(
+  contributorId: string,
+  asOfDayKey: string,
+  tierRequirements: UnlockTierRequirement[] = DEFAULT_UNLOCK_TIER_REQUIREMENTS,
+  streakMilestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
+): ContributorUnlockStatusWithStreak {
+  const contributions = listContributionsByContributor(contributorId);
+  const stats =
+    contributions.length === 0 ? buildEmptyContributorStats(contributorId) : buildContributorStats(contributorId, contributions);
+  const missionResults = listDailyMissionResultsForContributor(contributorId);
+
+  return buildContributorUnlockStatusWithStreak(stats, missionResults, asOfDayKey, tierRequirements, streakMilestones);
 }
