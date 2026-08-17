@@ -48,9 +48,9 @@
   checked as part of its build), `bun run test` (87 files / 1192 tests,
   all pass), and `bun run build:web` (production build, including the new
   `/practice-round` route) all pass. No lint script is configured in this
-  repo. PR: opened by this run on branch `claude/practical-allen-k5wbh4`.
-  The local dev server was not smoke-tested in this sandbox (no reliable
-  local browser workflow available here).
+  repo. PR: [#159](https://github.com/debate/debate-ai.com/pull/159). The
+  local dev server was not smoke-tested in this sandbox (no reliable local
+  browser workflow available here).
 - **Peer Review System — review-queue/comment-thread UI.**
   `packages/debate-card-search/src/panels/ReviewQueuePanel.tsx` adds a
   full-page React panel that lets a user start a card's peer review, move it
