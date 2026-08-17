@@ -9,4 +9,5 @@ export { ProgressUnlocksPanel } from "./panels/ProgressUnlocksPanel";
 export { EvidenceLibraryPanel } from "./panels/EvidenceLibraryPanel";
 export { RevisionIncentivesPanel } from "./panels/RevisionIncentivesPanel";
 export { ReviewQueuePanel } from "./panels/ReviewQueuePanel";
+export { BrainstormBoardPanel } from "./panels/BrainstormBoardPanel";
 export * from "./types";

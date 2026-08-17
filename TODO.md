@@ -6,6 +6,54 @@
 (none)
 
 ### Completed
+- **Team Brainstorm Assist — brainstorm-panel UI.**
+  `packages/debate-card-search/src/panels/BrainstormBoardPanel.tsx` adds a
+  full-page React panel that lets a squad submit a new brainstorm idea
+  (argument block, contributor ID, category, idea text) and renders every
+  persisted idea grouped into its board (argument block + category), each
+  board ranked by popularity with a "possible duplicate" badge and an
+  upvote action — reusing `team-brainstorm-assist.ts`'s existing
+  `groupIdeasByBoard`/`buildBrainstormBoard`/`rankBrainstormIdeas` directly.
+  It's mounted at `/cards/brainstorm`
+  (`apps/debate-ai.com/app/cards/brainstorm/page.tsx`, with a back-link to
+  `/cards`, following the same panel convention as `/cards/reviews`/
+  `/cards/inbox`) and reachable from the global nav dock's Settings menu
+  ("Team Brainstorm Assist", via a new `Lightbulb`-icon `DropdownMenuItem`
+  in `CategoryDock.tsx`). Closes follow-up (b) named under the "🧠 Team
+  Brainstorm Assist" bullet in Research Crowdsourcing Organizer Features
+  below — this is the twentieth "wire a persisted slice's UI into the
+  actual web app" follow-up closed in this repo. The panel adds two small
+  helpers to `state/brainstormIdeas.ts` — `buildBrainstormBoardsPanelView`,
+  which groups every persisted `BrainstormIdea` into its board and ranks
+  each via `buildBrainstormBoard`, sorted by argument block then category
+  for a stable display order (mirroring `routedTaskQueues.ts`'s
+  `buildTaskInboxView`), and `upvotePersistedBrainstormIdea`, which reads a
+  stored idea, increments its `upvotes` by one, and saves it back
+  (mirroring `prepNotes.ts`'s `updatePersistedPrepNoteStatus` apply-and-save
+  convention) — introducing no new ranking, duplicate-flagging, or mutation
+  logic; every other field/action the panel uses (`groupIdeasByBoard`,
+  `buildBrainstormBoard`, `saveBrainstormIdea`) already existed. Follow-up
+  (a), seeding boards from the Topic Coverage Dashboard's under-covered
+  arguments via `buildBrainstormPromptsForCoverageGaps`, and an actual
+  AI-generation call that drafts candidate ideas, remain open — not
+  started; the panel only lets a human type an idea in, and a board only
+  appears once someone has submitted to it. Vitest-covered in
+  `packages/debate-card-search/test/brainstormIdeas.test.ts` (empty board
+  list when nothing is stored, ideas grouped into boards sorted by argument
+  block then category, and `upvotePersistedBrainstormIdea` incrementing a
+  stored idea's upvote count — including the no-op case for a missing id).
+  Documented in `docs/features/brainstorm-board.md` (mirroring
+  `docs/features/prep-notes.md`'s format) and in
+  `packages/debate-card-search/README.md`'s package-layout note and usage
+  example. Verified from a clean install: `bun install`, `bun run
+  typecheck` (11 packages with a typecheck script all pass; `debate-ai-web`
+  has no separate typecheck script — types are checked as part of its
+  build), `bun run test` (88 files / 1213 tests, all pass), and `bun run
+  build:web` (production build, including the new `/cards/brainstorm`
+  route) all pass. No lint script is configured in this repo. PR:
+  [#165](https://github.com/debate/debate-ai.com/pull/165). The local dev
+  server was not smoke-tested in this sandbox (no reliable local browser
+  workflow available here).
 - **Online Debate Versus AI — round-setup + submission UI.**
   `packages/debate-round/src/panels/AiVersusRoundPanel.tsx` adds a full-page
   React panel that lets a user start a round (round ID, `debate-timer`
@@ -2885,7 +2933,7 @@
 * 
 * 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. A second slice, `buildPrepRoomFromStore` (see Tracker Status above, "Collaboration Prep Room Store Wiring"), now reads a topic's entries from the persisted `evidenceLibraryEntries.ts` store instead of requiring a caller-supplied entry list. Follow-ups: (a) a prep-room panel UI, (b) a live presence/who's-active signal. Neither of these are started._
 * 
-* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. Follow-ups: (a) an actual AI-generation call that drafts candidate ideas from `buildBrainstormPrompt`'s output, (b) a brainstorm-panel UI for live squad submission/upvoting. A third follow-up, persisting submitted ideas and votes, is now done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`)._
+* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. A second follow-up, persisting submitted ideas and votes, is done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`). A third slice, `BrainstormBoardPanel` (see Tracker Status above, "Team Brainstorm Assist — brainstorm-panel UI"), now renders a submission form and every board at `/cards/brainstorm`, closing follow-up (b). Follow-up (a), an actual AI-generation call that drafts candidate ideas from `buildBrainstormPrompt`'s output, remains open — not started; boards also aren't yet seeded from `buildBrainstormPromptsForCoverageGaps` in the panel._
 * 
 * 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. A second slice, `evidenceLibraryEntries.ts` (see Tracker Status above, "Shared Evidence Library — persisted evidence repository"), now persists `EvidenceLibraryEntry` records to localStorage. A third slice, `EvidenceLibraryPanel` (see Tracker Status above, "Shared Evidence Library — evidence library search UI panel"), now renders a free-text/kind search panel at `/cards/library`, closing follow-up (a). Follow-up (b), wiring `prep-room.ts` to read through this store, was also already closed separately by "Collaboration Prep Room Store Wiring"'s `buildPrepRoomFromStore` (see Tracker Status above). Follow-ups: (c) a real search index (e.g. Typesense) once entries are persisted at scale. Not started._
 * 

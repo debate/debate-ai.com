@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildBrainstormBoardsPanelView,
   deleteBrainstormIdea,
   getBrainstormIdea,
   listBrainstormIdeas,
   saveBrainstormIdea,
+  upvotePersistedBrainstormIdea,
 } from "../src/state/brainstormIdeas";
 import type { BrainstormIdea } from "../src/lib/team-brainstorm-assist";
 
@@ -103,5 +105,50 @@ describe("deleteBrainstormIdea", () => {
     saveBrainstormIdea(IMPACT_IDEA);
     deleteBrainstormIdea("missing");
     expect(listBrainstormIdeas()).toEqual([IMPACT_IDEA]);
+  });
+});
+
+describe("buildBrainstormBoardsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildBrainstormBoardsPanelView()).toEqual([]);
+  });
+
+  it("groups persisted ideas into a board per argBlock + category, sorted for stable display", () => {
+    const toplineIdea: BrainstormIdea = {
+      id: "idea-3",
+      argBlock: "topicality",
+      category: "argument",
+      contributorId: "carol",
+      text: "Reasonability outweighs competing interpretations",
+      upvotes: 1,
+    };
+    saveBrainstormIdea(IMPACT_IDEA);
+    saveBrainstormIdea(SOLVENCY_IDEA);
+    saveBrainstormIdea(toplineIdea);
+
+    const boards = buildBrainstormBoardsPanelView();
+
+    expect(boards.map((board) => [board.argBlock, board.category])).toEqual([
+      ["solvency", "argument"],
+      ["solvency", "impact_framing"],
+      ["topicality", "argument"],
+    ]);
+    expect(boards[0].ideas.map((idea) => idea.id)).toEqual(["idea-1"]);
+    expect(boards[1].ideas.map((idea) => idea.id)).toEqual(["idea-2"]);
+    expect(boards[2].ideas.map((idea) => idea.id)).toEqual(["idea-3"]);
+  });
+});
+
+describe("upvotePersistedBrainstormIdea", () => {
+  it("increments a stored idea's upvote count by one", () => {
+    saveBrainstormIdea(SOLVENCY_IDEA);
+    upvotePersistedBrainstormIdea("idea-1");
+    expect(getBrainstormIdea("idea-1")).toEqual({ ...SOLVENCY_IDEA, upvotes: 4 });
+  });
+
+  it("is a no-op when the id isn't stored", () => {
+    saveBrainstormIdea(SOLVENCY_IDEA);
+    upvotePersistedBrainstormIdea("missing");
+    expect(getBrainstormIdea("idea-1")).toEqual(SOLVENCY_IDEA);
   });
 });
