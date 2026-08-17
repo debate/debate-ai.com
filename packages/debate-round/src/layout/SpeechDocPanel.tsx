@@ -82,7 +82,7 @@ export function SpeechDocPanel({
       </div>
 
       {/* Reason editor */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 min-h-0 overflow-hidden">
         <LexicalEditorWrapper
           content={content}
           contentKey={selectedSpeech}
