@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen } from "lucide-react"
+import { UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History } from "lucide-react"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
 import {
@@ -75,6 +75,10 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/prep-notes") }}>
         <NotebookPen className="mr-2 h-4 w-4" />
         Prep Notes
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/revisions") }}>
+        <History className="mr-2 h-4 w-4" />
+        Revision Incentives
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>

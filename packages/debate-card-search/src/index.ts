@@ -7,4 +7,5 @@ export { ContributionLeaderboardPanel } from "./panels/ContributionLeaderboardPa
 export { TaskInboxPanel } from "./panels/TaskInboxPanel";
 export { ProgressUnlocksPanel } from "./panels/ProgressUnlocksPanel";
 export { EvidenceLibraryPanel } from "./panels/EvidenceLibraryPanel";
+export { RevisionIncentivesPanel } from "./panels/RevisionIncentivesPanel";
 export * from "./types";
