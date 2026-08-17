@@ -35,7 +35,8 @@
   folder/collection browser UI." Follow-ups (a) (wiring a `topic`/
   `caseArea`/`tags` field into wherever submitted cards are eventually
   persisted beyond this evidence-library store) and (c) (a tag-autocomplete/
-  tag-management affordance) remain open — neither is started.
+  tag-management affordance) remain open — neither is started. See
+  [PR #173](https://github.com/debate/debate-ai.com/pull/173).
 - **Coaching Programs and Group Challenges — coaching-program config UI.**
   `packages/debate-round/src/panels/CoachingProgramsPanel.tsx` adds a
   full-page React panel that lets a coach create a named coaching space
