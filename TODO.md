@@ -6,6 +6,56 @@
 (none)
 
 ### Completed
+- **Shared Evidence Library — evidence library search UI panel.**
+  `packages/debate-card-search/src/panels/EvidenceLibraryPanel.tsx` adds a
+  full-page React panel with a free-text search box and a card/block kind
+  filter over every persisted `EvidenceLibraryEntry`, showing each match's
+  argument, topic/case area, body, citation, tags, and (while a text query is
+  active) relevance score. It's mounted at `/cards/library`
+  (`apps/debate-ai.com/app/cards/library/page.tsx`, mirroring the existing
+  `/cards/leaderboard`/`/cards/inbox`/`/cards/progress` pages' back-link
+  convention) and reachable from the global nav dock's Settings menu
+  ("Evidence Library", via a new `Library`-icon `DropdownMenuItem` in
+  `CategoryDock.tsx`). Closes follow-up (a), "a search panel UI," named
+  under the "📋 Shared Evidence Library" bullet in Research Crowdsourcing
+  Organizer Features below — this is the fourth "wire a persisted slice's UI
+  into the actual web app" follow-up closed in this repo, after the
+  Contribution Leaderboard, Task Inbox, and Progress Unlocks panels,
+  following that same established pattern (persisted store → thin panel
+  component → routed page → nav entry). Unlike those three panels, this one
+  introduces no new composition function — `state/evidenceLibraryEntries.ts`
+  already exposed `searchPersistedEvidenceLibrary`/`listEvidenceLibraryEntries`
+  in a shape the panel could call directly (with an explicit, possibly-empty
+  `text` field alongside an optional `kind` filter), so the panel wires
+  existing, already-tested search/ranking logic straight through rather than
+  adding a new one. That exact combined `{ text: "", kind }` call shape (the
+  panel's default state before a search is typed) is now explicitly
+  Vitest-covered in
+  `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`, on top
+  of the existing text/kind/combined coverage in that file and in
+  `test/shared-evidence-library.test.ts`. The panel component itself is not
+  unit-tested, matching the Leaderboard/Inbox/Progress panels' precedent —
+  this repo has no `@testing-library/react`/jsdom-based component-render
+  convention in any package's `test/` suite. Documented in
+  `docs/features/evidence-library.md` (mirroring
+  `docs/features/task-inbox.md`'s format) and in
+  `packages/debate-card-search/README.md`'s `panels/` layout note and import
+  example. Follow-ups: (b) no topic/case-area/tag filter controls in the
+  panel itself (only free text and kind are exposed, though
+  `searchEvidenceLibrary` already supports all three), (c) a real search
+  index (e.g. Typesense) once entries are persisted at scale — the "(b)
+  wiring `prep-room.ts` to read through this store" follow-up was already
+  closed separately (see "Collaboration Prep Room Store Wiring" below).
+  Neither of the two remaining follow-ups is started; a new follow-up, a
+  submission UI for adding cards/blocks to the repository (the store's own
+  original follow-up (a), unaffected by this panel), also remains open.
+  Verified from a clean install: `bun install`, `bun run typecheck` (11
+  packages typecheck; `debate-ai-web` has no separate typecheck script —
+  types are checked as part of its build), `bun run test` (87 files / 1153
+  tests, all pass), and `bun run build:web` (production build, including the
+  new `/cards/library` route) all pass. No lint script is configured in this
+  repo. The local dev server was not smoke-tested in this sandbox (no
+  reliable local browser workflow available here).
 - **Progress Unlocks — unlock/progress roster UI panel.**
   `packages/debate-card-search/src/panels/ProgressUnlocksPanel.tsx` adds a
   full-page React panel that renders every contributor with at least one
@@ -2232,7 +2282,7 @@
 * 
 * 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. Follow-ups: (a) an actual AI-generation call that drafts candidate ideas from `buildBrainstormPrompt`'s output, (b) a brainstorm-panel UI for live squad submission/upvoting. A third follow-up, persisting submitted ideas and votes, is now done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`)._
 * 
-* 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. A second slice, `evidenceLibraryEntries.ts` (see Tracker Status above, "Shared Evidence Library — persisted evidence repository"), now persists `EvidenceLibraryEntry` records to localStorage. Follow-ups: (a) a search panel UI, (b) wiring `prep-room.ts` to read through this store, (c) a real search index (e.g. Typesense) once entries are persisted. None of these are started._
+* 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. A second slice, `evidenceLibraryEntries.ts` (see Tracker Status above, "Shared Evidence Library — persisted evidence repository"), now persists `EvidenceLibraryEntry` records to localStorage. A third slice, `EvidenceLibraryPanel` (see Tracker Status above, "Shared Evidence Library — evidence library search UI panel"), now renders a free-text/kind search panel at `/cards/library`, closing follow-up (a). Follow-up (b), wiring `prep-room.ts` to read through this store, was also already closed separately by "Collaboration Prep Room Store Wiring"'s `buildPrepRoomFromStore` (see Tracker Status above). Follow-ups: (c) a real search index (e.g. Typesense) once entries are persisted at scale. Not started._
 * 
 * 🔄 Strategy Sync Notes - Let teammates leave live prep notes, assign tasks, and mark which arguments have been covered or need follow-up. _Status: first slices done (see Tracker Status above) — `debate-round` now has a box-addressed `PrepNote` model (`createPrepNote`/`updateNoteStatus`/`assignNote`) plus `getNotesForBox`/`getNotesForFlow`/`getNotesAssignedTo`/`getOpenFollowUps`/`resolvePrepNoteBox`/`buildPrepNoteSummaryText` for attaching a note to a specific flow argument, assigning it to a teammate as a task, and tracking whether it's still open, covered, or needs follow-up, reusing the existing `flow-annotations.ts` box-addressing convention directly. A second slice, `prepNotes.ts` (see Tracker Status above, "Prep Note Persistence"), now persists `PrepNote` records to localStorage, closing follow-up (a). A third slice, `updatePersistedPrepNoteStatus`/`assignPersistedPrepNote` (see Tracker Status above, "Prep Note Status/Assignment Persistence"), now applies `updateNoteStatus`/`assignNote`'s pure state transitions directly against a stored note and saves the result, closing that same persistence slice's own follow-up (b). Follow-ups: (a) a prep-notes panel UI, (b) an assignee notification once a notification system exists. Neither of these are started._
 * 
