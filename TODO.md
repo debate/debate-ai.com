@@ -51,7 +51,7 @@
   test` (87 files / 1183 tests, all pass), and `bun run build:web`
   (production build, including the new `/summaries` route) all pass. No
   lint script is configured in this repo. PR:
-  [#153](https://github.com/debate/debate-ai.com/pull/153). The local dev
+  [#154](https://github.com/debate/debate-ai.com/pull/154). The local dev
   server was not smoke-tested in this sandbox (no reliable local browser
   workflow available here).
 - **AI Judge Decision Modes — paradigm-picker UI.**
