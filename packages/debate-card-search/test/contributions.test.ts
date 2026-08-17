@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildPersistedContributionFeed,
   buildPersistedLeaderboard,
   deleteContribution,
   getContribution,
@@ -218,5 +219,61 @@ describe("buildPersistedLeaderboard", () => {
     const after = buildPersistedLeaderboard()[0];
 
     expect(after.totalHelpfulnessScore).toBeGreaterThan(before.totalHelpfulnessScore);
+  });
+});
+
+describe("buildPersistedContributionFeed", () => {
+  it("returns an empty feed when nothing is stored", () => {
+    expect(buildPersistedContributionFeed()).toEqual([]);
+  });
+
+  it("ranks every persisted contribution by helpfulness score, carrying its own fields", () => {
+    saveContribution(BOB_SUMMARY);
+    saveContribution(ALICE_CARD);
+
+    const feed = buildPersistedContributionFeed();
+
+    expect(feed).toHaveLength(2);
+    expect(feed[0].id).toBe("contrib-1");
+    expect(feed[0].contributorId).toBe("alice");
+    expect(feed[0].likes).toBe(12);
+    expect(feed[1].id).toBe("contrib-2");
+    expect(feed[0].helpfulnessScore).toBeGreaterThan(feed[1].helpfulnessScore);
+  });
+
+  it("reflects a like recorded after the contribution was saved", () => {
+    saveContribution(BOB_SUMMARY);
+    const before = buildPersistedContributionFeed()[0];
+
+    recordPersistedLike("contrib-2");
+    const after = buildPersistedContributionFeed()[0];
+
+    expect(after.helpfulnessScore).toBeGreaterThan(before.helpfulnessScore);
+    expect(after.likes).toBe(4);
+  });
+
+  it("flags a high-popularity, low-quality, low-reviewer contribution as a popularity-only outlier", () => {
+    const outlier: AttributedContribution = {
+      id: "contrib-3",
+      contributorId: "carol",
+      kind: "highlight",
+      likes: 50,
+      saves: 0,
+      qualitySignals: [0],
+      reviewerEndorsements: [],
+    };
+    saveContribution(outlier);
+
+    const [entry] = buildPersistedContributionFeed();
+
+    expect(entry.isPopularityOnlyOutlier).toBe(true);
+  });
+
+  it("does not flag a well-reviewed contribution as a popularity-only outlier", () => {
+    saveContribution(ALICE_CARD);
+
+    const [entry] = buildPersistedContributionFeed();
+
+    expect(entry.isPopularityOnlyOutlier).toBe(false);
   });
 });
