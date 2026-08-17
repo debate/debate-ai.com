@@ -11,7 +11,9 @@
  * instead of being duplicated here. Stores records in localStorage,
  * mirroring the existing `aiVersusRounds.ts`/`drillSets.ts` persistence
  * convention (SSR/no-storage-safe, corrupt or missing JSON degrades to an
- * empty list rather than throwing).
+ * empty list rather than throwing). `buildPracticeRoundsPanelView` sorts the
+ * stored list by `roundId` for a stable panel display order, mirroring the
+ * same helper on `wordCountRounds.ts`/`aiVersusRounds.ts`.
  *
  * @module state/practiceRounds
  */
@@ -49,6 +51,11 @@ function writeAll(records: PracticeRoundRecord[]): void {
 /** Lists every persisted practice round. */
 export function listPracticeRounds(): PracticeRoundRecord[] {
   return readAll();
+}
+
+/** Lists every persisted practice round sorted by `roundId`, for a stable panel display order. */
+export function buildPracticeRoundsPanelView(): PracticeRoundRecord[] {
+  return [...readAll()].sort((a, b) => a.roundId.localeCompare(b.roundId));
 }
 
 /** Looks up a round's persisted practice-round state, if any. */
