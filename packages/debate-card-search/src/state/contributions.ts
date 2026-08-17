@@ -22,9 +22,10 @@
  * @module state/contributions
  */
 
-import type { AttributedContribution } from "../lib/contribution-leaderboard";
-import { groupContributionsByContributor } from "../lib/contribution-leaderboard";
-import type { ReviewerEndorsement } from "../lib/community-rating";
+import type { AttributedContribution, ContributorStats } from "../lib/contribution-leaderboard";
+import { buildLeaderboard, groupContributionsByContributor } from "../lib/contribution-leaderboard";
+import type { HelpfulnessWeights, ReviewerEndorsement } from "../lib/community-rating";
+import { DEFAULT_HELPFULNESS_WEIGHTS } from "../lib/community-rating";
 
 const STORAGE_KEY = "contributions";
 
@@ -130,4 +131,17 @@ export function recordPersistedEndorsement(id: string, reviewerWeight: number): 
     ...contribution,
     reviewerEndorsements: [...contribution.reviewerEndorsements, endorsement],
   }));
+}
+
+/**
+ * Builds the Contribution Leaderboard directly from every persisted
+ * contribution, composing this store with `contribution-leaderboard.ts`'s
+ * pure `buildLeaderboard` rather than requiring a caller to hold and pass in
+ * the full contribution list themselves — mirroring the existing
+ * `dailyMissionResults.ts` `buildPersistedContributorQuestStreak` "compose
+ * the pure function directly against the persisted store" convention. An
+ * empty store returns an empty leaderboard rather than throwing.
+ */
+export function buildPersistedLeaderboard(weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS): ContributorStats[] {
+  return buildLeaderboard(readAll(), weights);
 }
