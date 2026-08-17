@@ -6,6 +6,36 @@
 (none)
 
 ### Completed
+- **Legacy Verbatim / Cardmirror Compatibility — text-emphasize command.**
+  `packages/debate-card-parser/src/utils/verbatim-shortcuts.ts` adds
+  `toggleEmphasisHtml`, a pure, tag-aware function that toggles a
+  `<mark>`/`</mark>` emphasis run over `[start, end)` of a card's *visible*
+  (tag-stripped) text — closing follow-up (c), "a text-emphasize (toggle
+  `<mark>`) command over an editor selection range," named under idea #14
+  ("Legacy Verbatim / Cardmirror Compatibility") in Product Feature Ideas
+  below. Addressing by visible-text offset (rather than raw HTML index)
+  means a selection lands correctly around existing markup like `<u>` runs,
+  mirroring `condenseCardHtml`'s tag-aware approach in the same file. A
+  collapsed selection is a no-op; a selection that exactly matches an
+  existing `<mark>` run's bounds un-emphasizes it; otherwise the selection
+  is wrapped in a new `<mark>` pair, absorbing any `<mark>`/`</mark>` tags
+  already touching the selection (inside it or immediately adjacent) so
+  overlapping emphasis merges into one run instead of nesting.
+  Vitest-covered in `packages/debate-card-parser/test/verbatim-shortcuts.test.ts`
+  (wrap, un-emphasize, idempotent wrap-then-unwrap, merging a partially
+  pre-marked selection, tag-aware offsets around a surrounding `<u>` run,
+  collapsed-selection no-op, reversed-selection normalization, and
+  out-of-range offset clamping). Exported from the package's public entry
+  point alongside `condenseCardHtml`/`formatShortCiteTag`/`moveOutlineNode`.
+  Follow-ups (a), wiring these commands into actual keyboard-shortcut
+  handlers in `reason-editor`'s toolbar/editor view, and (b), a "send
+  selected evidence to a speech document" command (which needs a
+  speech-document target that doesn't exist yet), remain open — not
+  started; this is a pure command function only, with no editor UI wiring.
+  Verified from a clean install: `bun install`, `bun run typecheck` (11
+  packages with a typecheck script all pass), `bun run test` (90 files /
+  1253 tests, all pass), and `bun run build:web` (production build) all
+  pass. No lint script is configured in this repo.
 - **AI Response-Outcome Charts — chart/panel UI.**
   `packages/debate-round/src/panels/VulnerabilityChartsPanel.tsx` adds a
   full-page React panel that renders every persisted vulnerability report —
@@ -3050,7 +3080,7 @@
 
 13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise. _Status: first slices done (see Tracker Status above) — the "friendly challenges" half has `debate-card-search`'s `group-challenges.ts` (`buildGroupChallengeBoard`), and the coaching-space model tying it together has `debate-round`'s `coaching-program.ts` (`buildCoachingProgramBoard`), composing that group-challenge board with the existing Team Collaboration Mode topic sprint and AI Drill Generator drill sets per roster member. Follow-ups: (a) persisting a coaching program's config and board inputs, (b) a coaching-space dashboard UI, (c) wiring a member's practice-round setup/feedback (Practice Round Simulator) into the space. None of these are started._
 
-14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slice done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. Follow-ups: (a) wiring these into actual keyboard-shortcut handlers in `reason-editor`'s toolbar/editor view, (b) a "send selected evidence to a speech document" command, which needs a speech-document target that doesn't exist yet, (c) a text-emphasize (toggle `<mark>`) command over an editor selection range. None of these are started._
+14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). Follow-ups: (a) wiring these commands into actual keyboard-shortcut handlers in `reason-editor`'s toolbar/editor view, (b) a "send selected evidence to a speech document" command, which needs a speech-document target that doesn't exist yet. Neither of these is started._
 
 15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slice done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. Follow-ups: (a) a video-player UI (`debate-videos`) that lets a viewer drop an annotation at the current playback position, persisted through `flowAnnotations.ts`, and jump back to one, (b) a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box via `listFlowAnnotationsForBox` and links back to the timestamp. Neither of these are started._
 
