@@ -61,6 +61,12 @@ every persisted `PracticeRoundRecord` with its setup, submitted-speech
 progress, and post-round feedback — see
 [`docs/features/practice-round-simulator.md`](../../docs/features/practice-round-simulator.md).
 
+`StandingsPanel` (also exported from the package root) lets a user record
+a team's tournament result and renders every persisted result's cumulative,
+ranked "CX NDCA Standings" via `debate-data-sync`'s
+`buildStandingsFromStore` — see
+[`docs/features/standings.md`](../../docs/features/standings.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -77,7 +83,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel, WordCountRoundsPanel, ArgumentTreePanel, AiVersusRoundPanel, PracticeRoundSimulatorPanel
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel, WordCountRoundsPanel, ArgumentTreePanel, AiVersusRoundPanel, PracticeRoundSimulatorPanel, StandingsPanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers
