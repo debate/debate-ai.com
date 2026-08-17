@@ -4,6 +4,9 @@ import {
   getContribution,
   listContributions,
   listContributionsByContributor,
+  recordPersistedEndorsement,
+  recordPersistedLike,
+  recordPersistedSave,
   saveContribution,
 } from "../src/state/contributions";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
@@ -120,5 +123,71 @@ describe("deleteContribution", () => {
     saveContribution(BOB_SUMMARY);
     deleteContribution("missing");
     expect(listContributions()).toEqual([BOB_SUMMARY]);
+  });
+});
+
+describe("recordPersistedLike", () => {
+  it("increments and persists the stored contribution's likes", () => {
+    saveContribution(ALICE_CARD);
+    const updated = recordPersistedLike("contrib-1");
+
+    expect(updated?.likes).toBe(13);
+    expect(getContribution("contrib-1")?.likes).toBe(13);
+  });
+
+  it("accumulates across repeated likes", () => {
+    saveContribution(ALICE_CARD);
+    recordPersistedLike("contrib-1");
+    recordPersistedLike("contrib-1");
+
+    expect(getContribution("contrib-1")?.likes).toBe(14);
+  });
+
+  it("returns undefined and leaves storage untouched for an id that isn't stored", () => {
+    saveContribution(ALICE_CARD);
+    expect(recordPersistedLike("missing")).toBeUndefined();
+    expect(getContribution("contrib-1")).toEqual(ALICE_CARD);
+  });
+});
+
+describe("recordPersistedSave", () => {
+  it("increments and persists the stored contribution's saves", () => {
+    saveContribution(ALICE_CARD);
+    const updated = recordPersistedSave("contrib-1");
+
+    expect(updated?.saves).toBe(5);
+    expect(getContribution("contrib-1")?.saves).toBe(5);
+  });
+
+  it("returns undefined and leaves storage untouched for an id that isn't stored", () => {
+    saveContribution(ALICE_CARD);
+    expect(recordPersistedSave("missing")).toBeUndefined();
+    expect(getContribution("contrib-1")).toEqual(ALICE_CARD);
+  });
+});
+
+describe("recordPersistedEndorsement", () => {
+  it("appends and persists a reviewer endorsement on the stored contribution", () => {
+    saveContribution(BOB_SUMMARY);
+    const updated = recordPersistedEndorsement("contrib-2", 0.9);
+
+    expect(updated?.reviewerEndorsements).toEqual([{ reviewerWeight: 0.9 }]);
+    expect(getContribution("contrib-2")?.reviewerEndorsements).toEqual([{ reviewerWeight: 0.9 }]);
+  });
+
+  it("preserves existing endorsements when appending another", () => {
+    saveContribution(ALICE_CARD);
+    recordPersistedEndorsement("contrib-1", 0.5);
+
+    expect(getContribution("contrib-1")?.reviewerEndorsements).toEqual([
+      { reviewerWeight: 0.7 },
+      { reviewerWeight: 0.5 },
+    ]);
+  });
+
+  it("returns undefined and leaves storage untouched for an id that isn't stored", () => {
+    saveContribution(ALICE_CARD);
+    expect(recordPersistedEndorsement("missing", 0.5)).toBeUndefined();
+    expect(getContribution("contrib-1")).toEqual(ALICE_CARD);
   });
 });

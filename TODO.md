@@ -6,6 +6,40 @@
 (none)
 
 ### Completed
+- **Contribution Community Signals — persisted like/save/endorse events.**
+  `packages/debate-card-search/src/state/contributions.ts` adds
+  `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement`,
+  which apply a like/save/endorsement event directly to a stored
+  `AttributedContribution` (incrementing `likes`/`saves` by one, or
+  appending a `ReviewerEndorsement` carrying a caller-supplied
+  `reviewerWeight`) and save the result, rather than requiring a caller to
+  read, mutate, and re-save the contribution itself — mirroring
+  `contributorAvailability.ts`'s `recordPersistedTaskAssigned`/
+  `recordPersistedTaskCompleted` "compose the mutation directly against the
+  persisted store" convention. Closes the "wiring real like/save/endorse
+  actions and persisting those counts per contribution" follow-up shared by
+  the "Contribution Leaderboard" bullet and idea #11 ("Community-Rated
+  Summaries and Highlights") under Research Crowdsourcing Organizer
+  Features / Product Feature Ideas below. `community-rating.ts`'s pure
+  `computeHelpfulnessBreakdown`/`rankContributions` and
+  `contribution-leaderboard.ts`'s `buildLeaderboard`/`buildContributorStats`
+  are unchanged — a persisted contribution's updated `likes`/`saves`/
+  `reviewerEndorsements` feed into their existing scoring the same way any
+  other `AttributedContribution` field does. Vitest-covered in
+  `packages/debate-card-search/test/contributions.test.ts` (a like/save
+  increments and persists, repeated likes accumulate, an endorsement is
+  appended and persisted alongside any existing endorsements, and each
+  helper returns `undefined` and leaves storage untouched for an id that
+  isn't stored). This is a composition slice only — no dedup of repeat
+  likes/saves from the same user (no per-user identity is tracked on a
+  contribution today), no reviewer identity/permission checks (no auth/roles
+  exist yet), and no leaderboard/community-rating UI in this repo yet calls
+  these on a real user action. Follow-up: a leaderboard/contribution-card UI
+  that reads through `contributions.ts`/`contribution-leaderboard.ts` and
+  calls these on a real like/save/endorse action; not started. Verified
+  from a clean install: `bun install`, `bun run typecheck` (11 packages,
+  all pass), `bun run test` (87 files / 1143 tests, all pass), and
+  `bun run build` all pass. PR: TBD.
 - **Research Task Routing — persisted activeTaskCount assignment/completion events.**
   `packages/debate-card-search/src/state/contributorAvailability.ts` adds
   `recordPersistedTaskAssigned`/`recordPersistedTaskCompleted`, which apply a
