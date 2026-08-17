@@ -20,16 +20,31 @@
  * still takes a caller-supplied `DailyMissionResult[]` history; no
  * quest-board/streak UI in this repo yet reads or writes through this store.
  *
+ * `computeAndSavePersistedDailyMissionResult` closes that same bullet's
+ * follow-up (a) — "wiring a real end-of-day computation (UI action or
+ * scheduled job) that calls `computeDailyMissionResult` against that day's
+ * persisted contributions and saves it via `saveDailyMissionResult`" — by
+ * reading a contributor's real, persisted contributions directly from
+ * `state/contributions.ts` instead of requiring a caller-supplied
+ * contribution list, mirroring this file's own `buildPersistedContributorQuestStreak`
+ * "compose the pure function directly against the persisted store"
+ * convention, this time on the write side.
+ *
  * @module state/dailyMissionResults
  */
 
+import type { AttributedContribution } from "../lib/contribution-leaderboard";
+import { buildDailyQuestBoard, type QuestContribution, type QuestTemplate } from "../lib/daily-quests";
+import { getUtcDayKey } from "../lib/daily-best-card";
 import {
   buildContributorQuestStreak,
+  computeDailyMissionResult,
   DEFAULT_STREAK_MILESTONES,
   type ContributorQuestStreak,
   type DailyMissionResult,
   type StreakMilestone,
 } from "../lib/gamified-quests";
+import { listContributionsByContributor } from "./contributions";
 
 /** A contributor's mission result for one UTC calendar day. */
 export type DailyMissionResultRecord = DailyMissionResult & {
@@ -107,4 +122,35 @@ export function buildPersistedContributorQuestStreak(
     asOfDayKey,
     milestones,
   );
+}
+
+/** Whether a persisted contribution carries the `submittedAt` timestamp `daily-quests.ts` needs to match it to a calendar day. */
+function hasSubmittedAt(
+  contribution: AttributedContribution,
+): contribution is AttributedContribution & { submittedAt: number } {
+  return typeof (contribution as { submittedAt?: unknown }).submittedAt === "number";
+}
+
+/**
+ * Computes a contributor's mission result for the UTC calendar day of `now`
+ * directly from their real, persisted contributions (`state/contributions.ts`)
+ * — rather than a caller-held in-memory list — and saves it here, upserting
+ * any existing record for that day. Contributions without a `submittedAt`
+ * timestamp (added by `daily-quests.ts`'s `QuestContribution`, a superset of
+ * the persisted `AttributedContribution`) are excluded rather than throwing,
+ * since not every contribution kind is necessarily quest-tracked. Returns
+ * the saved record.
+ */
+export function computeAndSavePersistedDailyMissionResult(
+  contributorId: string,
+  quests: QuestTemplate[],
+  now: number,
+): DailyMissionResultRecord {
+  const contributions = listContributionsByContributor(contributorId).filter(hasSubmittedAt) as QuestContribution[];
+  const dayKey = getUtcDayKey(now);
+  const board = buildDailyQuestBoard(quests, contributions, now);
+  const result = computeDailyMissionResult(board, dayKey);
+  const record: DailyMissionResultRecord = { contributorId, ...result };
+  saveDailyMissionResult(record);
+  return record;
 }

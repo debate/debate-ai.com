@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildPersistedContributorQuestStreak,
+  computeAndSavePersistedDailyMissionResult,
   deleteDailyMissionResult,
   getDailyMissionResult,
   listDailyMissionResults,
@@ -8,6 +9,9 @@ import {
   saveDailyMissionResult,
   type DailyMissionResultRecord,
 } from "../src/state/dailyMissionResults";
+import { saveContribution } from "../src/state/contributions";
+import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
+import type { QuestTemplate } from "../src/lib/daily-quests";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -144,5 +148,94 @@ describe("buildPersistedContributorQuestStreak", () => {
   it("returns a zero streak for a contributor with no persisted history", () => {
     const status = buildPersistedContributorQuestStreak("missing", "2026-08-16");
     expect(status.streak).toEqual({ currentStreak: 0, longestStreak: 0, lastCompletedDayKey: null });
+  });
+});
+
+describe("computeAndSavePersistedDailyMissionResult", () => {
+  const NOW = Date.UTC(2026, 7, 16, 12, 0, 0);
+  const QUESTS: QuestTemplate[] = [
+    { id: "q1", description: "Find 2 solvency cards", target: { kind: "card" }, targetCount: 2 },
+  ];
+
+  function cardContribution(overrides: Partial<AttributedContribution & { submittedAt: number }>) {
+    const contribution: AttributedContribution & { submittedAt?: number } = {
+      id: "contrib-1",
+      contributorId: "alice",
+      kind: "card",
+      likes: 0,
+      saves: 0,
+      qualitySignals: [],
+      reviewerEndorsements: [],
+      submittedAt: NOW,
+      ...overrides,
+    };
+    return contribution;
+  }
+
+  it("computes and saves a complete mission result from real persisted contributions", () => {
+    saveContribution(cardContribution({ id: "contrib-1" }));
+    saveContribution(cardContribution({ id: "contrib-2" }));
+
+    const record = computeAndSavePersistedDailyMissionResult("alice", QUESTS, NOW);
+
+    expect(record).toEqual({ contributorId: "alice", dayKey: "2026-08-16", isComplete: true });
+    expect(getDailyMissionResult("alice", "2026-08-16")).toEqual(record);
+  });
+
+  it("computes and saves an incomplete mission result when the target isn't met", () => {
+    saveContribution(cardContribution({ id: "contrib-1" }));
+
+    const record = computeAndSavePersistedDailyMissionResult("alice", QUESTS, NOW);
+
+    expect(record).toEqual({ contributorId: "alice", dayKey: "2026-08-16", isComplete: false });
+  });
+
+  it("excludes contributions without a submittedAt timestamp rather than throwing", () => {
+    saveContribution(cardContribution({ id: "contrib-1" }));
+    const untimestamped: AttributedContribution = {
+      id: "contrib-2",
+      contributorId: "alice",
+      kind: "card",
+      likes: 0,
+      saves: 0,
+      qualitySignals: [],
+      reviewerEndorsements: [],
+    };
+    saveContribution(untimestamped);
+
+    const record = computeAndSavePersistedDailyMissionResult("alice", QUESTS, NOW);
+    expect(record.isComplete).toBe(false);
+  });
+
+  it("doesn't count a contribution submitted on a different UTC day", () => {
+    saveContribution(cardContribution({ id: "contrib-1" }));
+    saveContribution(cardContribution({ id: "contrib-2", submittedAt: Date.UTC(2026, 7, 15, 12, 0, 0) }));
+
+    const record = computeAndSavePersistedDailyMissionResult("alice", QUESTS, NOW);
+    expect(record.isComplete).toBe(false);
+  });
+
+  it("doesn't count another contributor's contributions", () => {
+    saveContribution(cardContribution({ id: "contrib-1" }));
+    saveContribution(cardContribution({ id: "contrib-2", contributorId: "bob" }));
+
+    const record = computeAndSavePersistedDailyMissionResult("alice", QUESTS, NOW);
+    expect(record.isComplete).toBe(false);
+  });
+
+  it("upserts — recomputing the same day overwrites rather than duplicating the record", () => {
+    saveContribution(cardContribution({ id: "contrib-1" }));
+    computeAndSavePersistedDailyMissionResult("alice", QUESTS, NOW);
+
+    saveContribution(cardContribution({ id: "contrib-2" }));
+    const recomputed = computeAndSavePersistedDailyMissionResult("alice", QUESTS, NOW);
+
+    expect(recomputed.isComplete).toBe(true);
+    expect(listDailyMissionResultsForContributor("alice")).toEqual([recomputed]);
+  });
+
+  it("returns an incomplete result for a contributor with no persisted contributions", () => {
+    const record = computeAndSavePersistedDailyMissionResult("missing", QUESTS, NOW);
+    expect(record).toEqual({ contributorId: "missing", dayKey: "2026-08-16", isComplete: false });
   });
 });
