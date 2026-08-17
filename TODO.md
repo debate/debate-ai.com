@@ -6,6 +6,51 @@
 (none)
 
 ### Completed
+- **Practice Round Simulator — round-simulator UI.**
+  `packages/debate-round/src/panels/PracticeRoundsPanel.tsx` adds a
+  full-page React panel that renders every persisted `PracticeRoundRecord`
+  (from `state/practiceRounds.ts`, keyed by `roundId`) — its setup
+  sections (speech order, judge paradigm, AI opponent persona, from
+  `buildPracticeRoundSetup`) and, once generated, its post-round feedback
+  sections (from `buildPracticeRoundFeedback`) — one card per round, with a
+  "Clear" action. It's mounted at `/practice-round`
+  (`apps/debate-ai.com/app/practice-round/page.tsx`, with a back-link to
+  `/debate`, following the same panel convention as
+  `/coaching`/`/summaries`) and reachable from the global nav dock's
+  Settings menu ("Practice Round Simulator", via a new `PlayCircle`-icon
+  `DropdownMenuItem` in `CategoryDock.tsx`). Closes follow-up (b) named
+  under the "🧪 Practice Round Simulator" bullet in the Research
+  Crowdsourcing Organizer Features list below — this is the seventeenth
+  "wire a persisted slice's UI into the actual web app" follow-up closed
+  in this repo, after the Contribution Leaderboard, Task Inbox, Progress
+  Unlocks, Evidence Library, Prep Notes, Revision Incentives, Judge
+  Profiles, Opponent Team Profiles, Practice Drills, Pre-Round Briefings,
+  AI Coach Mode, Judge Paradigm Picker, Speech Transcript Summaries,
+  Opponent Persona Picker, and Review Queue panels. The panel adds one
+  small helper rather than new setup/feedback composition logic:
+  `state/practiceRounds.ts`'s `buildPracticeRoundsPanelView`, which sorts
+  every persisted round by `roundId` for a stable display order (mirroring
+  `coachingSessions.ts`'s `buildCoachingSessionsPanelView`); every other
+  field/action the panel uses (`buildPracticeRoundSetup`,
+  `buildPracticeRoundFeedback`, `savePracticeRound`, `deletePracticeRound`)
+  already existed. Vitest-covered in
+  `packages/debate-round/test/practiceRounds.test.ts` (empty view when
+  nothing is stored, sorted by `roundId`, and that the underlying stored
+  order is left untouched). Documented in
+  `docs/features/practice-rounds.md` (mirroring
+  `docs/features/coaching-sessions.md`'s format) and in
+  `packages/debate-round/README.md`'s package-layout note and usage
+  example. Follow-up (a), an actual AI speech-generation call for the AI
+  opponent's speeches and an AI judge-decision call under the chosen
+  paradigm, remains open — not started. Verified from a clean install:
+  `bun install`, `bun run typecheck` (11 packages with a typecheck script
+  all pass; `debate-ai-web` has no separate typecheck script — types are
+  checked as part of its build), `bun run test` (87 files / 1192 tests,
+  all pass), and `bun run build:web` (production build, including the new
+  `/practice-round` route) all pass. No lint script is configured in this
+  repo. PR: opened by this run on branch `claude/practical-allen-k5wbh4`.
+  The local dev server was not smoke-tested in this sandbox (no reliable
+  local browser workflow available here).
 - **Peer Review System — review-queue/comment-thread UI.**
   `packages/debate-card-search/src/panels/ReviewQueuePanel.tsx` adds a
   full-page React panel that lets a user start a card's peer review, move it

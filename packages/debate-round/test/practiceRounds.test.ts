@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { saveAiVersusRound, type AiVersusRoundRecord } from "../src/state/aiVersusRounds";
 import {
+  buildPracticeRoundsPanelView,
   deletePracticeRound,
   getPracticeRound,
   getPracticeRoundSubmittedSpeeches,
@@ -118,5 +119,24 @@ describe("getPracticeRoundSubmittedSpeeches", () => {
     saveAiVersusRound(aiVersusRecord);
 
     expect(getPracticeRoundSubmittedSpeeches("round-1")).toEqual(aiVersusRecord.submittedSpeeches);
+  });
+});
+
+describe("buildPracticeRoundsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildPracticeRoundsPanelView()).toEqual([]);
+  });
+
+  it("sorts persisted rounds by roundId", () => {
+    savePracticeRound(ROUND_B);
+    savePracticeRound(ROUND_A);
+    expect(buildPracticeRoundsPanelView()).toEqual([ROUND_A, ROUND_B]);
+  });
+
+  it("reflects a round removed via deletePracticeRound", () => {
+    savePracticeRound(ROUND_A);
+    savePracticeRound(ROUND_B);
+    deletePracticeRound("round-1");
+    expect(buildPracticeRoundsPanelView()).toEqual([ROUND_B]);
   });
 });

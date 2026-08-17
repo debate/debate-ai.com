@@ -37,6 +37,12 @@ one card per round, with suggested cross-exam questions and extension
 ideas for anything still unanswered — see
 [`docs/features/flow-summaries.md`](../../docs/features/flow-summaries.md).
 
+`PracticeRoundsPanel` (also exported from the package root) renders every
+persisted "Practice Round Simulator" `PracticeRoundRecord` — its setup
+(speech order, judge paradigm, AI opponent) and, once generated, its
+post-round feedback — one card per round, sorted by `roundId` — see
+[`docs/features/practice-rounds.md`](../../docs/features/practice-rounds.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -53,7 +59,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel, PracticeRoundsPanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers

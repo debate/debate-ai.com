@@ -82,3 +82,13 @@ export function deletePracticeRound(roundId: string): void {
 export function getPracticeRoundSubmittedSpeeches(roundId: string): PriorSpeechRecord[] {
   return getAiVersusRound(roundId)?.submittedSpeeches ?? [];
 }
+
+/**
+ * Every persisted practice round, sorted by `roundId` for a stable display
+ * order — the "(b) a round-simulator UI that reads/writes through the
+ * persistence store" follow-up named under the "🧪 Practice Round
+ * Simulator" bullet in TODO.md. Used by `panels/PracticeRoundsPanel.tsx`.
+ */
+export function buildPracticeRoundsPanelView(): PracticeRoundRecord[] {
+  return [...listPracticeRounds()].sort((a, b) => a.roundId.localeCompare(b.roundId));
+}
