@@ -26,6 +26,11 @@ every persisted "Pre-Round Intelligence Panel" `PreRoundBriefingRecord`,
 sorted by round — see
 [`docs/features/pre-round-briefings.md`](../../docs/features/pre-round-briefings.md).
 
+`CoachingSessionsPanel` (also exported from the package root) renders
+every persisted "AI Coach Mode" `CoachingSessionRecord`, grouped by round +
+side — see
+[`docs/features/coaching-sessions.md`](../../docs/features/coaching-sessions.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -42,7 +47,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers

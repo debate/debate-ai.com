@@ -6,6 +6,45 @@
 (none)
 
 ### Completed
+- **AI Coach Mode — coaching-panel UI.**
+  `packages/debate-round/src/panels/CoachingSessionsPanel.tsx` adds a
+  full-page React panel that renders every persisted `CoachingSessionRecord`
+  (from `coachingSessions.ts`) grouped by round + side — each prompt showing
+  a kind badge (Extension/Refutation/Collapse/Weighing) and its text — with
+  a "Clear" action per session. It's mounted at `/coaching`
+  (`apps/debate-ai.com/app/coaching/page.tsx`, with a back-link to
+  `/debate`, following the same panel convention as `/drills`/`/briefings`)
+  and reachable from the global nav dock's Settings menu ("AI Coach Mode",
+  via a new `GraduationCap`-icon `DropdownMenuItem` in `CategoryDock.tsx`).
+  Closes follow-up (b), "a coaching-panel UI that reads/writes through the
+  persistence store," named under the "🎙️ AI Coach Mode" bullet in Research
+  Crowdsourcing Organizer Features below — this is the eleventh "wire a
+  persisted slice's UI into the actual web app" follow-up closed in this
+  repo, after the Contribution Leaderboard, Task Inbox, Progress Unlocks,
+  Evidence Library, Prep Notes, Revision Incentives, Judge Profiles,
+  Opponent Team Profiles, Practice Drills, and Pre-Round Briefings panels.
+  The panel adds one small helper to `state/coachingSessions.ts` —
+  `buildCoachingSessionsPanelView`, which sorts every persisted coaching
+  session by `roundId` then `sideKey` for a stable display order —
+  introducing no new coaching-prompt generation logic; every rendered field
+  already existed on `coach-mode.ts`'s `buildCoachingSession` output.
+  Vitest-covered in `packages/debate-round/test/coachingSessions.test.ts`
+  (empty view when nothing is stored, sorted by `roundId` then `sideKey`,
+  and that the view reflects a session removed via the existing
+  `deleteCoachingSession`). Documented in
+  `docs/features/coaching-sessions.md` (mirroring
+  `docs/features/drill-sets.md`'s format) and in
+  `packages/debate-round/README.md`'s package-layout note. Follow-up (a), an
+  actual AI coaching call for open-ended feedback beyond this deterministic
+  template layer, remains open — not started. Verified from a clean
+  install: `bun install`, `bun run typecheck` (11 packages with a typecheck
+  script all pass; `debate-ai-web` has no separate typecheck script — types
+  are checked as part of its build), `bun run test` (87 files / 1175 tests,
+  all pass), and `bun run build:web` (production build, including the new
+  `/coaching` route) all pass. No lint script is configured in this repo.
+  PR: [#151](https://github.com/debate/debate-ai.com/pull/151). The local
+  dev server was not smoke-tested in this sandbox (no reliable
+  local browser workflow available here).
 - **Pre-Round Intelligence Panel — briefing-panel UI.**
   `packages/debate-round/src/panels/PreRoundBriefingsPanel.tsx` adds a
   full-page React panel that renders every persisted `PreRoundBriefingRecord`
@@ -2517,7 +2556,7 @@
 * 
 * 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. A second slice, `opponentPersonaSelections.ts` (see Tracker Status above), now persists a practice session's selected `OpponentPersona` to localStorage. Follow-ups: (a) an actual AI speech-generation call that consumes `buildOpponentPersonaPrompt`'s output alongside idea #3's `AiSpeechRequest`, (b) a persona-picker UI that reads/writes through the persistence store. Neither of these are started._
 * 
-* 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. Follow-ups: (a) an actual AI coaching call for open-ended feedback beyond this template layer, (b) a coaching-panel UI that reads/writes through the persistence store. Neither of these is started._
+* 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. A third slice, `CoachingSessionsPanel` (see Tracker Status above, "AI Coach Mode — coaching-panel UI"), now renders every persisted coaching session grouped by round + side at `/coaching`, closing follow-up (b). Follow-up (a), an actual AI coaching call for open-ended feedback beyond this template layer, remains open — not started._
 * 
 * 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. A second slice, `buildPrepRoomFromStore` (see Tracker Status above, "Collaboration Prep Room Store Wiring"), now reads a topic's entries from the persisted `evidenceLibraryEntries.ts` store instead of requiring a caller-supplied entry list. Follow-ups: (a) a prep-room panel UI, (b) a live presence/who's-active signal. Neither of these are started._
 * 
