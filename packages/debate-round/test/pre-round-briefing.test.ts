@@ -1,14 +1,34 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import type { OpponentRoundRecord } from "debate-data-sync/src/rankings/opponent-team-profile";
 import { buildOpponentTeamProfile } from "debate-data-sync/src/rankings/opponent-team-profile";
+import { saveOpponentTeamProfile } from "debate-data-sync/src/state/opponentTeamProfiles";
 import type { JudgeRoundRecord } from "debate-speech-writer/src/judge/judge-profile";
 import { buildJudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
+import { saveJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
 import {
   buildPreRoundBriefing,
+  buildPreRoundBriefingFromStores,
   buildPreRoundBriefingText,
   summarizePriorMeetings,
   type RoundEventInfo,
 } from "../src/round/pre-round-briefing";
+
+/** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
+class MemoryStorage {
+  private store = new Map<string, string>();
+  getItem(key: string): string | null {
+    return this.store.has(key) ? this.store.get(key)! : null;
+  }
+  setItem(key: string, value: string): void {
+    this.store.set(key, value);
+  }
+  removeItem(key: string): void {
+    this.store.delete(key);
+  }
+  clear(): void {
+    this.store.clear();
+  }
+}
 
 const EVENT: RoundEventInfo = {
   tournamentName: "Blake",
@@ -170,6 +190,58 @@ describe("buildPreRoundBriefing", () => {
     });
     const body = briefing.sections.find((s) => s.title === "Team prep notes")!.body;
     expect(body).toBe("- Watch for the kritik on neg.\n- They read fast — flow carefully.");
+  });
+});
+
+describe("buildPreRoundBriefingFromStores", () => {
+  beforeEach(() => {
+    (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
+  });
+
+  it("resolves opponent/judge profiles from the persisted stores by id", () => {
+    saveOpponentTeamProfile(buildOpponentTeamProfile("OpponentA", opponentRecords()));
+    saveJudgeProfile(buildJudgeProfile("J. Smith", judgeRecords()));
+
+    const briefing = buildPreRoundBriefingFromStores({
+      event: EVENT,
+      opponentTeamId: "OpponentA",
+      judgeId: "J. Smith",
+    });
+    const byTitle = Object.fromEntries(briefing.sections.map((s) => [s.title, s.body]));
+
+    expect(byTitle["Opponent scouting"]).toContain("OpponentA");
+    expect(byTitle["Judge tendencies"]).toContain("J. Smith");
+  });
+
+  it("falls back to 'no data on file' sections when nothing is persisted for the given ids", () => {
+    const briefing = buildPreRoundBriefingFromStores({
+      event: EVENT,
+      opponentTeamId: "Unknown",
+      judgeId: "Unknown",
+    });
+    const byTitle = Object.fromEntries(briefing.sections.map((s) => [s.title, s.body]));
+
+    expect(byTitle["Opponent scouting"]).toBe("No opponent scouting data on file.");
+    expect(byTitle["Judge tendencies"]).toBe("No judge tendency data on file.");
+  });
+
+  it("prefers an explicitly supplied profile over a store lookup", () => {
+    saveOpponentTeamProfile(buildOpponentTeamProfile("OpponentA", opponentRecords()));
+    const explicitProfile = buildOpponentTeamProfile("OpponentA (explicit)", opponentRecords());
+
+    const briefing = buildPreRoundBriefingFromStores({
+      event: EVENT,
+      opponentTeamId: "OpponentA",
+      opponentProfile: explicitProfile,
+    });
+    const body = briefing.sections.find((s) => s.title === "Opponent scouting")!.body;
+
+    expect(body).toContain("OpponentA (explicit)");
+  });
+
+  it("behaves like buildPreRoundBriefing when no ids or profiles are supplied", () => {
+    const briefing = buildPreRoundBriefingFromStores({ event: EVENT });
+    expect(briefing).toEqual(buildPreRoundBriefing({ event: EVENT }));
   });
 });
 
