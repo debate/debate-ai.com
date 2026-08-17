@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildGroupChallengesPanelView,
   deleteGroupChallenge,
   getGroupChallenge,
   listGroupChallenges,
@@ -103,5 +104,29 @@ describe("deleteGroupChallenge", () => {
     saveGroupChallenge(REBUTTAL_CHALLENGE);
     deleteGroupChallenge("missing");
     expect(listGroupChallenges()).toEqual([REBUTTAL_CHALLENGE]);
+  });
+});
+
+describe("buildGroupChallengesPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildGroupChallengesPanelView()).toEqual([]);
+  });
+
+  it("sorts persisted challenges by title", () => {
+    saveGroupChallenge(REBUTTAL_CHALLENGE);
+    saveGroupChallenge(SOLVENCY_SPRINT);
+
+    expect(buildGroupChallengesPanelView().map((challenge) => challenge.id)).toEqual([
+      "challenge-1",
+      "challenge-2",
+    ]);
+  });
+
+  it("doesn't mutate the underlying store", () => {
+    saveGroupChallenge(SOLVENCY_SPRINT);
+    const view = buildGroupChallengesPanelView();
+    view.push(REBUTTAL_CHALLENGE);
+
+    expect(listGroupChallenges()).toEqual([SOLVENCY_SPRINT]);
   });
 });

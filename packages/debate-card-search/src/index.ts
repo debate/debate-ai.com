@@ -14,4 +14,5 @@ export { BrainstormBoardPanel } from "./panels/BrainstormBoardPanel";
 export { SprintNotesPanel } from "./panels/SprintNotesPanel";
 export { ContributionsFeedPanel } from "./panels/ContributionsFeedPanel";
 export { ContributorAwardsPanel } from "./panels/ContributorAwardsPanel";
+export { GroupChallengesPanel } from "./panels/GroupChallengesPanel";
 export * from "./types";
