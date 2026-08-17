@@ -6,6 +6,40 @@
 (none)
 
 ### Completed
+- **Revision Incentives — persisted revision history.**
+  `packages/debate-card-search/src/state/revisionHistory.ts` adds a
+  localStorage-backed store for `revision-incentives.ts`'s `CardRevision`
+  before/after edit events. Unlike this package's other persistence stores,
+  a card can be revised many times, so records aren't keyed by `cardId`/
+  `contributorId` alone — each recorded revision is wrapped in a
+  `CardRevisionRecord` with its own synthetic `id` and `revisedAt`
+  timestamp, and saving appends a new history entry rather than overwriting
+  a prior one for the same card, mirroring the existing `debate-round`
+  `drillSets.ts` wrapped-record convention (SSR/no-storage-safe, corrupt or
+  missing JSON degrades to an empty list rather than throwing).
+  `listRevisionHistory`/`listRevisionHistoryForCard`/
+  `listRevisionHistoryForContributor` return records oldest-first, and
+  because `CardRevisionRecord` is a superset of `CardRevision`, a list of
+  records can be passed directly into `revision-incentives.ts`'s
+  `buildRevisionIncentiveLeaderboard`/`buildContributorRevisionStats`
+  without stripping the extra fields. Closes the "(a) wiring actual
+  card-edit events into a persisted revision history" follow-up named under
+  the "Revision Incentives" bullet in Research Crowdsourcing Organizer
+  Features below. Vitest-covered (with an in-memory `localStorage` mock,
+  since this package's Vitest environment is `node` with no DOM) in
+  `packages/debate-card-search/test/revisionHistory.test.ts`, including an
+  interop test that feeds a persisted history straight into
+  `buildRevisionIncentiveLeaderboard`. This is a persistence slice only —
+  nothing in this repo yet wires a real card-edit event into
+  `saveRevisionRecord`, and the reward points a revision earns still aren't
+  surfaced anywhere. Follow-ups: (a) wiring an actual card-edit/save flow to
+  call `saveRevisionRecord` with a before/after snapshot, (b) a
+  reward-notification/incentives-leaderboard UI that reads through this
+  store via `buildRevisionIncentiveLeaderboard`. Neither of these is
+  started. Verified from a clean install: `bun run typecheck` (12 packages,
+  all pass), `bun run test` (85 files / 1076 tests, all pass), and
+  `bun run build` all pass. PR:
+  [#131](https://github.com/debate/debate-ai.com/pull/131).
 - **Expandable Heading Structure — collapsed-heading persistence.**
   `packages/reason-editor/src/state/collapsedHeadings.ts` adds a
   localStorage-backed CRUD store (`listCollapsedHeadingSelections`/
@@ -1733,7 +1767,7 @@
 * 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. A second slice, `peerReviews.ts` (see Tracker Status above), now persists `CardReview` records (including their `ReviewComment` thread) to localStorage, keyed by `cardId`. Follow-ups: (a) a review-queue/comment-thread UI that reads/writes through this store, (b) reviewer identity/permission checks once auth/roles exist, (c) wiring a review's lifecycle to whatever eventually persists submitted cards, so `publishReview` can gate a card actually going live. Two of these are not started._
 * 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopContributorAwards`/`buildCategoryLeaderboard`/`groupContributionsByKind`/`buildAwardsAnnouncementText` for grouping contributor-attributed contributions by `ContributionKind` and selecting a per-kind category winner by helpfulness score, reusing the existing idea #11/Contribution Leaderboard scoring. Follow-ups: (a) a finer-grained kind/tag for "original argument" and "refutation" contributions, neither of which exists as a distinct kind today, (b) a scheduled job to persist/announce winners, (c) an awards UI. None of these are started._
 * 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now derives each contributor's skill level from their contribution history (via the Progress Unlocks tier logic) instead of requiring a caller-supplied value. A third slice, `contributorAvailability.ts` (see Tracker Status above, "Research Task Routing — persisted contributor-availability profiles"), now persists a contributor's `ContributorAvailability` to localStorage. Follow-ups: (a) wiring real task-assignment/completion events to keep a persisted profile's `activeTaskCount` accurate, (b) persisting a routed `RoutingResult`/task queue, (c) a task-assignment/inbox UI. None of these are started._
-* 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. Follow-ups: (a) wiring actual card-edit events into a persisted revision history, (b) a reward-notification/incentives-leaderboard UI, (c) an actual evidence-staleness signal instead of only rewarding a refresh after the fact. None of these are started._
+* 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. A second slice, `revisionHistory.ts` (see Tracker Status above, "Revision Incentives — persisted revision history"), now persists `CardRevision` edit events (as many-per-card `CardRevisionRecord`s) to localStorage. Follow-ups: (a) wiring an actual card-edit/save flow to call `saveRevisionRecord` with a before/after snapshot, (b) a reward-notification/incentives-leaderboard UI, (c) an actual evidence-staleness signal instead of only rewarding a refresh after the fact. None of these are started._
 * 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. Follow-ups: (a) an `argBlock`/word-count field wired into wherever submitted cards are eventually persisted, (b) a team-editable tracked-argument checklist per topic, (c) a coverage dashboard UI. None of these are started._
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. Follow-ups: (a) wiring real contribution-submission events into a persisted daily feed, (b) a quest-board widget UI, (c) a streak/reward layer once the Gamified Quests idea has its own first slice. None of these are started._
 * 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicSprint`/`buildTopicSprintSummaryText` for composing the existing Daily Quests board, Research Task Routing result, and Research Progress Tracking board into one shared topic-scoped session, plus a topic-addressed `SprintNote` model (`createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`) for shared prep notes, mirroring `debate-round`'s `strategy-sync-notes.ts` `PrepNote` lifecycle. A second slice, `sprintNotes.ts` (see Tracker Status above), now persists `SprintNote` records to localStorage. Follow-ups: (a) a collaboration-mode panel UI, (b) persisting a topic sprint's other inputs, (c) a presence/live-status signal for who's currently active. Neither of these are started._
