@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildPersistedArgumentLibrary,
   deleteEvidenceLibraryEntry,
   getEvidenceLibraryEntry,
   listEvidenceLibraryEntries,
@@ -142,5 +143,40 @@ describe("searchPersistedEvidenceLibrary", () => {
     const results = searchPersistedEvidenceLibrary({ text: "", kind: "card" });
     expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
     expect(results[0].relevanceScore).toBe(0);
+  });
+});
+
+describe("buildPersistedArgumentLibrary", () => {
+  it("returns an empty library when nothing is stored", () => {
+    expect(buildPersistedArgumentLibrary()).toEqual({ topicFolders: [], tagCollections: [] });
+  });
+
+  it("organizes persisted entries into topic folders split by case area", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const library = buildPersistedArgumentLibrary();
+    expect(library.topicFolders).toHaveLength(1);
+    expect(library.topicFolders[0].topic).toBe("Energy Policy");
+    expect(library.topicFolders[0].cardCount).toBe(2);
+    expect(library.topicFolders[0].caseAreas.map((group) => group.caseArea)).toEqual(["Case", "DA"]);
+  });
+
+  it("organizes persisted entries into tag collections", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const library = buildPersistedArgumentLibrary();
+    expect(library.tagCollections.map((collection) => collection.tag)).toEqual(["impact", "solvency", "warming"]);
+    expect(library.tagCollections.find((collection) => collection.tag === "warming")?.cards).toEqual([
+      WARMING_CARD,
+    ]);
+  });
+
+  it("does not mutate the underlying stored order", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    buildPersistedArgumentLibrary();
+    expect(listEvidenceLibraryEntries()).toEqual([WARMING_CARD, SOLVENCY_BLOCK]);
   });
 });
