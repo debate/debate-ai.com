@@ -8,6 +8,7 @@ export { FlowSummariesPanel } from "./panels/FlowSummariesPanel";
 export { WordCountRoundsPanel } from "./panels/WordCountRoundsPanel";
 export { ArgumentTreePanel } from "./panels/ArgumentTreePanel";
 export { AiVersusRoundPanel } from "./panels/AiVersusRoundPanel";
+export { PracticeRoundSimulatorPanel } from "./panels/PracticeRoundSimulatorPanel";
 export { FlowSpreadsheet } from "./flow/FlowSpreadsheet";
 export { RoundEditorDialog } from "./dialogs/CreateRoundDialog";
 export * from "./state/store";
