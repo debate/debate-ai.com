@@ -42,9 +42,10 @@
   has no separate typecheck script — types are checked as part of its
   build), `bun run test` (87 files / 1186 tests, all pass), and `bun run
   build:web` (production build, including the new `/practice-opponent`
-  route) all pass. No lint script is configured in this repo. PR: TBD. The
-  local dev server was not smoke-tested in this sandbox (no reliable local
-  browser workflow available here).
+  route) all pass. No lint script is configured in this repo. PR:
+  [#156](https://github.com/debate/debate-ai.com/pull/156). The local dev
+  server was not smoke-tested in this sandbox (no reliable local browser
+  workflow available here).
 - **Speech Transcript Summaries and Answers — summary/cross-ex panel UI.**
   `packages/debate-round/src/panels/FlowSummariesPanel.tsx` adds a full-page
   React panel that renders every persisted `FlowSummaryRecord` (from
