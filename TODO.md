@@ -6,6 +6,45 @@
 (none)
 
 ### Completed
+- **Pre-Round Intelligence Panel — briefing-panel UI.**
+  `packages/debate-round/src/panels/PreRoundBriefingsPanel.tsx` adds a
+  full-page React panel that renders every persisted `PreRoundBriefingRecord`
+  (from `preRoundBriefings.ts`) as its own card — an event-line header
+  (tournament, division, round label), a badge with the prior head-to-head
+  record against that round's opponent, and every briefing section (Event,
+  Opponent scouting, Prior meetings, Judge tendencies, Team prep notes) —
+  with a "Clear" action per round. It's mounted at `/briefings`
+  (`apps/debate-ai.com/app/briefings/page.tsx`, with a back-link to
+  `/debate`, following the same panel convention as `/drills`/`/prep-notes`)
+  and reachable from the global nav dock's Settings menu ("Pre-Round
+  Briefings", via a new `ClipboardList`-icon `DropdownMenuItem` in
+  `CategoryDock.tsx`). Closes follow-up (b), "a briefing panel UI that
+  renders it on a round-information page," named under idea #12 ("Pre-Round
+  Intelligence Panel") in Product Feature Ideas below — this is the tenth
+  "wire a persisted slice's UI into the actual web app" follow-up closed in
+  this repo, after the Contribution Leaderboard, Task Inbox, Progress
+  Unlocks, Evidence Library, Prep Notes, Revision Incentives, Judge
+  Profiles, Opponent Team Profiles, and Practice Drills panels. The panel
+  adds one small helper to `state/preRoundBriefings.ts` —
+  `buildPreRoundBriefingsPanelView`, which sorts every persisted briefing by
+  `roundId` for a stable display order — introducing no new
+  briefing-composition logic; every rendered field already existed on
+  `pre-round-briefing.ts`'s `buildPreRoundBriefing` output. Vitest-covered
+  in `packages/debate-round/test/preRoundBriefings.test.ts` (empty view when
+  nothing is stored, sorted by `roundId`, and that the sort doesn't mutate
+  the underlying stored order). Documented in
+  `docs/features/pre-round-briefings.md` (mirroring
+  `docs/features/drill-sets.md`'s format) and in
+  `packages/debate-round/README.md`'s package-layout note. Follow-up (a), a
+  real data source for tournament results, pairings, event details, and
+  room assignments, remains open — not started. Verified from a clean
+  install: `bun install`, `bun run typecheck` (12 packages typecheck;
+  `debate-ai-web` has no separate typecheck script — types are checked as
+  part of its build), `bun run test` (87 files / 1172 tests, all pass), and
+  `bun run build:web` (production build, including the new `/briefings`
+  route) all pass. No lint script is configured in this repo. The local dev
+  server was not smoke-tested in this sandbox (no reliable local browser
+  workflow available here).
 - **AI Drill Generator — drill-panel UI.**
   `packages/debate-round/src/panels/DrillSetsPanel.tsx` adds a full-page
   React panel that renders every persisted `DrillSetRecord` (from
@@ -2442,7 +2481,7 @@
 
 11. **Community-Rated Summaries and Highlights** — Let users like, save, and endorse the most useful research summaries, analytic explanations, evidence highlights, and annotations, then rank contributions by helpfulness while guarding against popularity-only scoring through quality and reviewer-weight signals. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scorePopularitySignal`/`scoreQualitySignal`/`scoreReviewerSignal`/`computeHelpfulnessBreakdown`/`rankContributions` for blending logarithmically-dampened popularity with quality and reviewer-credibility signals into a ranked, popularity-resistant helpfulness score. A second slice, `contributions.ts`'s `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` (see Tracker Status above), now persists a like/save/endorse action's counts per contribution, closing half of follow-up (a) — no UI action fires them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders a ranked leaderboard at `/cards/leaderboard`, closing follow-up (c)'s leaderboard half (it does not yet surface `isPopularityOnlyOutlier` contributions separately for moderator review). Follow-ups: (a) a real like/save/endorse UI that calls the now-persisted actions above, (b) a real reviewer-credibility system instead of a caller-supplied weight per endorsement, (c) surfacing `isPopularityOnlyOutlier` contributions in the leaderboard panel for moderator review. None of these is started._
 
-12. **Pre-Round Intelligence Panel** — On every round-information page, combine live tournament results, prior pairings, opponent records, judge paradigms, event details, room assignments, and relevant team prep notes into one focused pre-round briefing. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPreRoundBriefing`/`summarizePriorMeetings`/`buildPreRoundBriefingText` for composing an opponent-scouting summary, a judge-tendency summary, a head-to-head prior-meetings record, and team prep notes into one structured, renderable briefing, reusing the existing `debate-data-sync`/`debate-speech-writer` profile slices. A second slice, `preRoundBriefings.ts` (see Tracker Status above), now persists a round's generated `PreRoundBriefing` to localStorage, closing follow-up (c). A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now resolves the opponent/judge profiles themselves from the persisted `opponentTeamProfiles.ts`/`judgeProfiles.ts` stores by id instead of requiring the caller to supply pre-fetched profile objects. Follow-ups: (a) real data sources for tournament results, pairings, event details, and room assignments (none exist in this repo today), (b) a briefing panel UI that renders it on a round-information page. Neither of these are started._
+12. **Pre-Round Intelligence Panel** — On every round-information page, combine live tournament results, prior pairings, opponent records, judge paradigms, event details, room assignments, and relevant team prep notes into one focused pre-round briefing. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPreRoundBriefing`/`summarizePriorMeetings`/`buildPreRoundBriefingText` for composing an opponent-scouting summary, a judge-tendency summary, a head-to-head prior-meetings record, and team prep notes into one structured, renderable briefing, reusing the existing `debate-data-sync`/`debate-speech-writer` profile slices. A second slice, `preRoundBriefings.ts` (see Tracker Status above), now persists a round's generated `PreRoundBriefing` to localStorage, closing follow-up (c). A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now resolves the opponent/judge profiles themselves from the persisted `opponentTeamProfiles.ts`/`judgeProfiles.ts` stores by id instead of requiring the caller to supply pre-fetched profile objects. A fourth slice, `PreRoundBriefingsPanel` (see Tracker Status above, "Pre-Round Intelligence Panel — briefing-panel UI"), now renders every persisted briefing at `/briefings`, closing follow-up (b). Follow-up (a), real data sources for tournament results, pairings, event details, and room assignments (none exist in this repo today), remains open — not started._
 
 13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise. _Status: first slices done (see Tracker Status above) — the "friendly challenges" half has `debate-card-search`'s `group-challenges.ts` (`buildGroupChallengeBoard`), and the coaching-space model tying it together has `debate-round`'s `coaching-program.ts` (`buildCoachingProgramBoard`), composing that group-challenge board with the existing Team Collaboration Mode topic sprint and AI Drill Generator drill sets per roster member. Follow-ups: (a) persisting a coaching program's config and board inputs, (b) a coaching-space dashboard UI, (c) wiring a member's practice-round setup/feedback (Practice Round Simulator) into the space. None of these are started._
 
