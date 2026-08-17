@@ -1,10 +1,30 @@
-import { describe, expect, it } from "vitest";
-import type { ContributorStats } from "../src/lib/contribution-leaderboard";
+import { beforeEach, describe, expect, it } from "vitest";
+import type { AttributedContribution, ContributorStats } from "../src/lib/contribution-leaderboard";
 import type { DailyMissionResult } from "../src/lib/gamified-quests";
 import {
   buildContributorUnlockStatusWithStreak,
+  buildContributorUnlockStatusWithStreakFromStore,
   buildUnlockStatusWithStreakText,
 } from "../src/lib/unlock-streak-status";
+import { saveContribution } from "../src/state/contributions";
+import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
+
+/** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
+class MemoryStorage {
+  private store = new Map<string, string>();
+  getItem(key: string): string | null {
+    return this.store.has(key) ? this.store.get(key)! : null;
+  }
+  setItem(key: string, value: string): void {
+    this.store.set(key, value);
+  }
+  removeItem(key: string): void {
+    this.store.delete(key);
+  }
+  clear(): void {
+    this.store.clear();
+  }
+}
 
 function makeStats(overrides: Partial<ContributorStats> & { contributorId: string }): ContributorStats {
   return {
@@ -71,5 +91,69 @@ describe("buildUnlockStatusWithStreakText", () => {
 
     expect(text).toContain("veteran-vic: veteran tier");
     expect(text).toContain("veteran-vic: 2-day streak");
+  });
+});
+
+function contribution(id: string, contributorId: string): AttributedContribution {
+  return {
+    id,
+    contributorId,
+    kind: "card",
+    likes: 0,
+    saves: 0,
+    qualitySignals: [1],
+    reviewerEndorsements: [{ reviewerWeight: 1 }],
+  };
+}
+
+describe("buildContributorUnlockStatusWithStreakFromStore", () => {
+  beforeEach(() => {
+    (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
+  });
+
+  it("derives tier and badges directly from a contributor's persisted contributions", () => {
+    for (let i = 0; i < 5; i++) {
+      saveContribution(contribution(`alice-${i}`, "alice"));
+    }
+
+    const status = buildContributorUnlockStatusWithStreakFromStore("alice", "2026-08-16");
+
+    expect(status.contributorId).toBe("alice");
+    expect(status.tier).toBe("apprentice");
+    expect(status.badges).toEqual(["Rising Researcher"]);
+  });
+
+  it("also folds in the contributor's persisted mission-result streak", () => {
+    for (let i = 0; i < 5; i++) {
+      saveContribution(contribution(`bob-${i}`, "bob"));
+    }
+    saveDailyMissionResult({ contributorId: "bob", dayKey: "2026-08-15", isComplete: true });
+    saveDailyMissionResult({ contributorId: "bob", dayKey: "2026-08-16", isComplete: true });
+
+    const status = buildContributorUnlockStatusWithStreakFromStore("bob", "2026-08-16");
+
+    expect(status.streak.currentStreak).toBe(2);
+    expect(status.tier).toBe("apprentice");
+  });
+
+  it("returns an all-zero novice status for a contributor with no persisted contributions", () => {
+    const status = buildContributorUnlockStatusWithStreakFromStore("nobody", "2026-08-16");
+
+    expect(status.tier).toBe("novice");
+    expect(status.unlockedSkillLevel).toBe("novice");
+    expect(status.badges).toEqual([]);
+    expect(status.streak.currentStreak).toBe(0);
+  });
+
+  it("ignores another contributor's persisted contributions and mission results", () => {
+    for (let i = 0; i < 5; i++) {
+      saveContribution(contribution(`carol-${i}`, "carol"));
+    }
+    saveDailyMissionResult({ contributorId: "carol", dayKey: "2026-08-16", isComplete: true });
+
+    const status = buildContributorUnlockStatusWithStreakFromStore("dave", "2026-08-16");
+
+    expect(status.tier).toBe("novice");
+    expect(status.streak.currentStreak).toBe(0);
   });
 });
