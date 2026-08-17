@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildPersistedLeaderboard,
   deleteContribution,
   getContribution,
   listContributions,
@@ -189,5 +190,33 @@ describe("recordPersistedEndorsement", () => {
     saveContribution(ALICE_CARD);
     expect(recordPersistedEndorsement("missing", 0.5)).toBeUndefined();
     expect(getContribution("contrib-1")).toEqual(ALICE_CARD);
+  });
+});
+
+describe("buildPersistedLeaderboard", () => {
+  it("returns an empty leaderboard when nothing is stored", () => {
+    expect(buildPersistedLeaderboard()).toEqual([]);
+  });
+
+  it("ranks every persisted contributor by total helpfulness score", () => {
+    saveContribution(ALICE_CARD);
+    saveContribution(BOB_SUMMARY);
+
+    const leaderboard = buildPersistedLeaderboard();
+
+    expect(leaderboard).toHaveLength(2);
+    expect(leaderboard[0].contributorId).toBe("alice");
+    expect(leaderboard[1].contributorId).toBe("bob");
+  });
+
+  it("reflects a like recorded after the contribution was saved", () => {
+    saveContribution(BOB_SUMMARY);
+    const before = buildPersistedLeaderboard()[0];
+
+    recordPersistedLike("contrib-2");
+    recordPersistedLike("contrib-2");
+    const after = buildPersistedLeaderboard()[0];
+
+    expect(after.totalHelpfulnessScore).toBeGreaterThan(before.totalHelpfulnessScore);
   });
 });

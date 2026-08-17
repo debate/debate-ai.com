@@ -1,10 +1,12 @@
 # debate-card-search
 
 CARDS — the evidence card research interface: the search bar and result list, the card
-content viewer, the research sidebar, and the AI analysis sidebar with its hooks.
+content viewer, the research sidebar, and the AI analysis sidebar with its hooks — plus the
+Research Crowdsourcing Organizer feature set (leaderboards, quests, task routing, evidence
+library, prep rooms, and more) described in `TODO.md`.
 
 ```tsx
-import { SearchInterface } from "debate-card-search"
+import { SearchInterface, ContributionLeaderboardPanel } from "debate-card-search"
 ```
 
 Cards are parsed by `debate-card-parser`; shared lookups come from `debate-core`, and all
@@ -20,11 +22,17 @@ debate-card-search/
 │   ├── components/   # search interface, result card, viewers, sidebars
 │   ├── hooks/        # useSearchState, useAiAnalysis
 │   ├── layout/       # desktop layout, mobile overlays, floating actions
-│   ├── lib/          # pure search-query builders
+│   ├── panels/       # full-page feature panels (e.g. ContributionLeaderboardPanel)
+│   ├── lib/          # pure logic — search-query building, scoring, quests, task
+│   │                 # routing, evidence library, prep rooms, and more (see TODO.md)
+│   ├── state/        # localStorage-backed persistence stores over the lib/ models
 │   ├── types/        # SearchResult and filter types
 │   └── index.ts      # public entry point
-└── test/             # Vitest suites for the query builders
+└── test/             # Vitest suites mirroring lib/ and state/
 ```
+
+See [`docs/features/contribution-leaderboard.md`](../../docs/features/contribution-leaderboard.md)
+for one example of a `lib/` + `state/` slice wired all the way through to a routed panel.
 
 ## Tests
 

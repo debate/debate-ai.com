@@ -6,6 +6,62 @@
 (none)
 
 ### Completed
+- **Contribution Leaderboard — leaderboard UI panel wired to the app.**
+  `packages/debate-card-search/src/panels/ContributionLeaderboardPanel.tsx`
+  adds a full-page React panel that renders every persisted contributor
+  ranked by total helpfulness score, alongside their unlock tier, earned
+  badges, and current daily-quest streak — the first UI panel in this
+  package (previously `src/` only had `components/`, `hooks/`, `layout/`,
+  `lib/`, and `state/`, with every Research Crowdsourcing Organizer Features
+  slice below stopping at pure logic plus a persistence store). It's mounted
+  at `/cards/leaderboard` (`apps/debate-ai.com/app/cards/leaderboard/page.tsx`,
+  mirroring the existing `/rank` page's back-link convention) and reachable
+  from the global nav dock's Settings menu ("Leaderboard", via a new
+  `Trophy`-icon `DropdownMenuItem` in `CategoryDock.tsx`). Closes the
+  "Contribution Leaderboard" bullet's own follow-up (c), "a leaderboard UI
+  that reads through the persistence store," and idea #11's ("Community-Rated
+  Summaries and Highlights") follow-up (c), "a leaderboard/ranked-feed UI,"
+  both under Research Crowdsourcing Organizer Features below. The panel adds
+  one new composition function, `buildPersistedLeaderboard`
+  (`packages/debate-card-search/src/state/contributions.ts`), which composes
+  the existing pure `contribution-leaderboard.ts` `buildLeaderboard` directly
+  against the persisted `contributions.ts` store — mirroring this repo's
+  established "compose the pure function directly against the persisted
+  store" convention — and reuses the existing
+  `unlock-streak-status.ts` `buildContributorUnlockStatusWithStreakFromStore`
+  for each row's tier/badges/streak; no new scoring, tier, or streak logic
+  was introduced. Vitest-covered in
+  `packages/debate-card-search/test/contributions.test.ts` (empty store
+  yields an empty leaderboard, contributors are ranked by total helpfulness
+  score, and a like recorded after a contribution is saved is reflected in a
+  later leaderboard build). The panel component itself is not unit-tested —
+  this repo has no `@testing-library/react`/jsdom-based component-render
+  convention in any package's `test/` suite; its data composition is fully
+  covered via the `state`/`lib` tests above. Documented in
+  `docs/features/contribution-leaderboard.md` (new `docs/` folder — none
+  existed in this repo before) and in `packages/debate-card-search/README.md`
+  (updated to describe the current `panels/`/`lib/`/`state/` layout, which
+  had drifted out of date across ~40 prior persistence-slice PRs). This is
+  the first "wire a persisted slice's UI into the actual web app" follow-up
+  closed in this repo — every other UI follow-up named throughout Product
+  Feature Ideas and Research Crowdsourcing Organizer Features below (prep-room
+  panels, drill panels, coaching panels, task-routing inboxes, etc.) remains
+  open and is a natural next task for a future run, following this same
+  pattern (persisted store → thin panel component → routed page → nav entry).
+  Follow-ups: (a) a real submitted-contribution flow (card/summary/analytic
+  submission UI) that calls `saveContribution`, so the leaderboard has data
+  to show; today it renders an explicit empty state until something does,
+  (b) a like/save/endorse UI on that submission flow wired to
+  `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement`.
+  Neither of these is started. Verified from a clean install: `bun install`,
+  `bun run typecheck` (11 packages typecheck; `debate-ai-web` has no separate
+  typecheck script — types are checked as part of its build), `bun run test`
+  (87 files / 1146 tests, all pass), and `bun run build:web` (production
+  build, including the new `/cards/leaderboard` route) all pass. The local
+  dev server (`bun run dev:web`) could not be smoke-tested in this sandbox —
+  it fails during startup on an unrelated `Error: self-signed certificate in
+  certificate chain` from a Cloudflare `Request.cf` fetch, a pre-existing
+  sandbox/network limitation, not a change introduced here.
 - **Contribution Community Signals — persisted like/save/endorse events.**
   `packages/debate-card-search/src/state/contributions.ts` adds
   `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement`,
@@ -2024,7 +2080,7 @@
 
 10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. A second slice, `argumentTreeFilters.ts` (see Tracker Status above, "Outline Filters and Argument Tree View — filter-selection persistence"), now persists a round's chosen `ArgumentTreeFilter` to localStorage. Follow-ups: (a) a React tree/outline panel in `debate-round` that renders the filtered tree next to (or instead of) `FlowSpreadsheet` and reads/writes through the persistence store, (b) finer argument-type tagging (link/impact/turn/answer/extension) and contributor/evidence-status fields, none of which exist in the `Box`/`Flow` schema today. Neither of these are started._
 
-11. **Community-Rated Summaries and Highlights** — Let users like, save, and endorse the most useful research summaries, analytic explanations, evidence highlights, and annotations, then rank contributions by helpfulness while guarding against popularity-only scoring through quality and reviewer-weight signals. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scorePopularitySignal`/`scoreQualitySignal`/`scoreReviewerSignal`/`computeHelpfulnessBreakdown`/`rankContributions` for blending logarithmically-dampened popularity with quality and reviewer-credibility signals into a ranked, popularity-resistant helpfulness score. Follow-ups: (a) wiring up actual like/save/endorse actions and persisting those counts per contribution, (b) a real reviewer-credibility system instead of a caller-supplied weight per endorsement, (c) a leaderboard/ranked-feed UI in `debate-card-search` that renders `rankContributions` and surfaces `isPopularityOnlyOutlier` contributions for moderator review. None of these are started._
+11. **Community-Rated Summaries and Highlights** — Let users like, save, and endorse the most useful research summaries, analytic explanations, evidence highlights, and annotations, then rank contributions by helpfulness while guarding against popularity-only scoring through quality and reviewer-weight signals. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scorePopularitySignal`/`scoreQualitySignal`/`scoreReviewerSignal`/`computeHelpfulnessBreakdown`/`rankContributions` for blending logarithmically-dampened popularity with quality and reviewer-credibility signals into a ranked, popularity-resistant helpfulness score. A second slice, `contributions.ts`'s `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` (see Tracker Status above), now persists a like/save/endorse action's counts per contribution, closing half of follow-up (a) — no UI action fires them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders a ranked leaderboard at `/cards/leaderboard`, closing follow-up (c)'s leaderboard half (it does not yet surface `isPopularityOnlyOutlier` contributions separately for moderator review). Follow-ups: (a) a real like/save/endorse UI that calls the now-persisted actions above, (b) a real reviewer-credibility system instead of a caller-supplied weight per endorsement, (c) surfacing `isPopularityOnlyOutlier` contributions in the leaderboard panel for moderator review. None of these is started._
 
 12. **Pre-Round Intelligence Panel** — On every round-information page, combine live tournament results, prior pairings, opponent records, judge paradigms, event details, room assignments, and relevant team prep notes into one focused pre-round briefing. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPreRoundBriefing`/`summarizePriorMeetings`/`buildPreRoundBriefingText` for composing an opponent-scouting summary, a judge-tendency summary, a head-to-head prior-meetings record, and team prep notes into one structured, renderable briefing, reusing the existing `debate-data-sync`/`debate-speech-writer` profile slices. A second slice, `preRoundBriefings.ts` (see Tracker Status above), now persists a round's generated `PreRoundBriefing` to localStorage, closing follow-up (c). A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now resolves the opponent/judge profiles themselves from the persisted `opponentTeamProfiles.ts`/`judgeProfiles.ts` stores by id instead of requiring the caller to supply pre-fetched profile objects. Follow-ups: (a) real data sources for tournament results, pairings, event details, and room assignments (none exist in this repo today), (b) a briefing panel UI that renders it on a round-information page. Neither of these are started._
 
@@ -2041,7 +2097,7 @@
 ## Research Crowdsourcing Organizer Features
 
 * 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool.
-* 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. A second slice, `contributions.ts` (see Tracker Status above), now persists `AttributedContribution` records to localStorage. Follow-ups: (a) wiring real like/save/endorse actions and a real submitted-contribution flow into the persistence store, (b) a "completed tasks" signal once a research-task system exists, (c) a leaderboard UI that reads through the persistence store. None of these are started._
+* 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. A second slice, `contributions.ts` (see Tracker Status above), now persists `AttributedContribution` records to localStorage, and its `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` close half of follow-up (a) — persisting like/save/endorse counts once an action fires — though no submission/like UI calls them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders the leaderboard at `/cards/leaderboard`, closing follow-up (c). Follow-ups: (a) a real submitted-contribution flow (and a like/save/endorse UI) that actually calls `saveContribution`/`recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement`, (b) a "completed tasks" signal once a research-task system exists. Neither of these is started._
 * 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeDailyMissionResult`/`computeStreakStatus`/`getEarnedStreakBadges`/`buildContributorQuestStreak`/`buildStreakSummaryText` for turning a contributor's daily `daily-quests.ts` mission-completion history into a current/longest streak and the milestone badges (3/7/14/30-day streaks by default) that streak has earned. A second slice, `dailyMissionResults.ts` (see Tracker Status above, "Gamified Quests — persisted daily mission-result history"), now persists a contributor's per-day `DailyMissionResult` to localStorage, keyed by `contributorId` + `dayKey`, and composes it directly into `buildPersistedContributorQuestStreak`. A third follow-up, surfacing earned streak badges on a contributor's `progress-unlocks.ts` unlock status, is now done — see the "Unlock Status Streak Badges" entry above (`unlock-streak-status.ts`). A fourth slice, `computeAndSavePersistedDailyMissionResult` (see Tracker Status above, "Gamified Quests — persisted end-of-day mission computation"), now computes and saves a contributor's mission result directly from their real persisted contributions, closing follow-up (a) below. Follow-ups: (a) ~~wiring a real end-of-day computation~~ (done — see above; still needs a real trigger, i.e. a UI action or scheduled job, to call it on an actual cadence), (b) a streak/badge widget UI. Neither trigger nor UI is started._
 * 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now feeds the derived skill level into `research-task-routing.ts`'s `ContributorAvailability`. A third slice, `unlock-streak-status.ts` (see Tracker Status above, "Unlock Status Streak Badges"), now merges the Gamified Quests streak badges into this unlock status. Follow-ups: (a) persisting a contributor's tier/badges, (b) a progress/unlock UI. Neither of these are started._
 * 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scoreRelevance`/`scoreClarity`/`scoreUniqueness`/`scoreEvidenceQuality`/`scoreUsability`/`computeCardScoreBreakdown`/`rankCardScores`/`buildCardScoreSummaryText` for scoring a card across all five dimensions with deterministic heuristics and flagging likely duplicates, reusing the existing idea #11 `community-rating.ts` quality-signal scoring for evidence quality. Follow-ups: (a) an actual LLM-scoring call for the more subjective dimensions instead of the heuristic proxy, (b) wiring real argument-block keywords and a real submitted-card corpus into the scorer, (c) a scoring/duplicate-flag panel UI. None of these are started._
