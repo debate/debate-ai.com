@@ -37,6 +37,11 @@ one card per round, with suggested cross-exam questions and extension
 ideas for anything still unanswered — see
 [`docs/features/flow-summaries.md`](../../docs/features/flow-summaries.md).
 
+`WordCountRoundsPanel` (also exported from the package root) lets a user
+type a "Word-Count-Only Speech Format" round's speeches against a live
+word-count readout and renders every persisted `WordCountRoundRecord` — see
+[`docs/features/word-count-rounds.md`](../../docs/features/word-count-rounds.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -53,7 +58,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel, WordCountRoundsPanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers

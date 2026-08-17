@@ -11,6 +11,10 @@
  * `getWordCountStatus` rather than stored, so a stored record never goes
  * stale if the format's word limits ever change.
  *
+ * `buildWordCountRoundsPanelView` sorts the stored list by `roundId` for a
+ * stable panel display order, mirroring the same helper on
+ * `coachingSessions.ts`/`opponentPersonaSelections.ts`.
+ *
  * @module state/wordCountRounds
  */
 
@@ -73,6 +77,11 @@ export function saveWordCountRound(record: WordCountRoundRecord): void {
 /** Deletes a round's persisted state; a no-op if it isn't stored. */
 export function deleteWordCountRound(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
+}
+
+/** Every persisted word-count round, sorted by `roundId` for a stable panel display order. */
+export function buildWordCountRoundsPanelView(): WordCountRoundRecord[] {
+  return [...readAll()].sort((a, b) => a.roundId.localeCompare(b.roundId));
 }
 
 /**

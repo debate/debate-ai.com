@@ -5,6 +5,7 @@ export { DrillSetsPanel } from "./panels/DrillSetsPanel";
 export { PreRoundBriefingsPanel } from "./panels/PreRoundBriefingsPanel";
 export { CoachingSessionsPanel } from "./panels/CoachingSessionsPanel";
 export { FlowSummariesPanel } from "./panels/FlowSummariesPanel";
+export { WordCountRoundsPanel } from "./panels/WordCountRoundsPanel";
 export { FlowSpreadsheet } from "./flow/FlowSpreadsheet";
 export { RoundEditorDialog } from "./dialogs/CreateRoundDialog";
 export * from "./state/store";

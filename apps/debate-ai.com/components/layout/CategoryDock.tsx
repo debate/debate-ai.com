@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell, ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText } from "lucide-react"
+import { UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell, ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type } from "lucide-react"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
 import {
@@ -115,6 +115,10 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/reviews") }}>
         <MessageSquareText className="mr-2 h-4 w-4" />
         Review Queue
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/word-count") }}>
+        <Type className="mr-2 h-4 w-4" />
+        Word-Count Speeches
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
