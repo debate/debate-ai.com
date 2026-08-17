@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildPreRoundBriefingsPanelView,
   deletePreRoundBriefing,
   getPreRoundBriefing,
   listPreRoundBriefings,
@@ -116,5 +117,24 @@ describe("deletePreRoundBriefing", () => {
     savePreRoundBriefing(BRIEFING_B);
     deletePreRoundBriefing("missing");
     expect(listPreRoundBriefings()).toEqual([BRIEFING_B]);
+  });
+});
+
+describe("buildPreRoundBriefingsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildPreRoundBriefingsPanelView()).toEqual([]);
+  });
+
+  it("sorts every persisted briefing by roundId", () => {
+    savePreRoundBriefing(BRIEFING_B);
+    savePreRoundBriefing(BRIEFING_A);
+    expect(buildPreRoundBriefingsPanelView()).toEqual([BRIEFING_A, BRIEFING_B]);
+  });
+
+  it("does not mutate the underlying stored order", () => {
+    savePreRoundBriefing(BRIEFING_B);
+    savePreRoundBriefing(BRIEFING_A);
+    buildPreRoundBriefingsPanelView();
+    expect(listPreRoundBriefings()).toEqual([BRIEFING_B, BRIEFING_A]);
   });
 });

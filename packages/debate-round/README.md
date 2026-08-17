@@ -21,6 +21,11 @@ roster — see
 persisted "AI Drill Generator" `Drill` set, grouped by round — see
 [`docs/features/drill-sets.md`](../../docs/features/drill-sets.md).
 
+`PreRoundBriefingsPanel` (also exported from the package root) renders
+every persisted "Pre-Round Intelligence Panel" `PreRoundBriefingRecord`,
+sorted by round — see
+[`docs/features/pre-round-briefings.md`](../../docs/features/pre-round-briefings.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -37,7 +42,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers
