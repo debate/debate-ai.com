@@ -53,8 +53,9 @@
   part of its build), `bun run test` (88 files / 1216 tests, all pass), and
   `bun run build:web` (production build, including the new
   `/practice-round` route) all pass. No lint script is configured in this
-  repo. The local dev server was not smoke-tested in this sandbox (no
-  reliable local browser workflow available here).
+  repo. PR: [#166](https://github.com/debate/debate-ai.com/pull/166). The
+  local dev server was not smoke-tested in this sandbox (no reliable local
+  browser workflow available here).
 - **Team Brainstorm Assist — brainstorm-panel UI.**
   `packages/debate-card-search/src/panels/BrainstormBoardPanel.tsx` adds a
   full-page React panel that lets a squad submit a new brainstorm idea
