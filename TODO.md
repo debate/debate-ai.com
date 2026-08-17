@@ -6,6 +6,61 @@
 (none)
 
 ### Completed
+- **Research Task Routing — task-assignment/inbox UI.**
+  `packages/debate-card-search/src/panels/TaskInboxPanel.tsx` adds a
+  full-page React panel that lists every persisted routed task queue, grouped
+  by topic: each assignment shows the under-covered argument, its urgency
+  level (`missing`/`thin`), the assignee, and their current skill level, with
+  a "Mark complete" button; any tasks nobody was eligible/available for are
+  listed separately per topic. It's mounted at `/cards/inbox`
+  (`apps/debate-ai.com/app/cards/inbox/page.tsx`, mirroring the existing
+  `/cards/leaderboard` page's back-link convention) and reachable from the
+  global nav dock's Settings menu ("Task Inbox", via a new `Inbox`-icon
+  `DropdownMenuItem` in `CategoryDock.tsx`, alongside the existing
+  Leaderboard entry). Closes the "(c) a task-assignment/inbox UI" follow-up
+  named under the "Research Task Routing" bullet in Research Crowdsourcing
+  Organizer Features below — this is the second "wire a persisted slice's UI
+  into the actual web app" follow-up closed in this repo, after the
+  Contribution Leaderboard panel, following that same established pattern
+  (persisted store → thin panel component → routed page → nav entry). The
+  panel adds one new composition function, `buildTaskInboxView`
+  (`packages/debate-card-search/src/state/routedTaskQueues.ts`), which
+  flattens every persisted `RoutedTaskQueueRecord` (from `routedTaskQueues.ts`)
+  into a flat, per-assignment view tagged with its `topicId` and the
+  assignee's current persisted `skillLevel` (looked up from
+  `contributorAvailability.ts`) — mirroring the leaderboard panel's
+  `buildPersistedLeaderboard` "compose the pure function directly against the
+  persisted store" convention; no new routing or completion logic was
+  introduced. Marking a task complete calls the already-existing, already-
+  persisted `completePersistedRoutedTask` directly (removes the assignment
+  from the stored queue and decrements the assignee's stored
+  `activeTaskCount`), then the panel re-reads `buildTaskInboxView()` to
+  refresh. Vitest-covered in
+  `packages/debate-card-search/test/routedTaskQueues.test.ts` (empty when
+  nothing is routed, flattens multiple persisted queues with each
+  assignment's topic and current skill level attached, and omits
+  `contributorSkillLevel` when the assignee's profile is no longer
+  persisted). The panel component itself is not unit-tested, matching the
+  Contribution Leaderboard panel's precedent — this repo has no
+  `@testing-library/react`/jsdom-based component-render convention in any
+  package's `test/` suite; its data composition is fully covered via the
+  `state` test above. Documented in `docs/features/task-inbox.md` (mirroring
+  `docs/features/contribution-leaderboard.md`'s format) and in
+  `packages/debate-card-search/README.md`'s `panels/` layout note. Follow-ups:
+  (a) a task-routing trigger UI (a topic's queue is currently only populated
+  by calling `buildAndPersistRoutingResult` some other way, e.g. from a
+  future coverage-dashboard action), (b) scoping the inbox to "my tasks"
+  once contributor identity/auth exists, (c) a reviewer/verification step
+  before a task is marked complete. None of these are started. Verified from
+  a clean install: `bun install`, `bun run typecheck` (11 packages
+  typecheck; `debate-ai-web` has no separate typecheck script — types are
+  checked as part of its build), `bun run test` (87 files / 1149 tests, all
+  pass), and `bun run build:web` (production build, including the new
+  `/cards/inbox` route) all pass. The local dev server (`bun run dev:web`)
+  could not be smoke-tested in this sandbox for the same pre-existing
+  `self-signed certificate in certificate chain` reason noted on the
+  Contribution Leaderboard panel entry below — not a regression introduced
+  here.
 - **Contribution Leaderboard — leaderboard UI panel wired to the app.**
   `packages/debate-card-search/src/panels/ContributionLeaderboardPanel.tsx`
   adds a full-page React panel that renders every persisted contributor
@@ -2106,7 +2161,7 @@
 * 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByDay`/`pickBestCardOfDay`/`buildDailyBestCards`/`getBestCardForDay`/`buildDailyBestCardHighlight` for grouping timestamped card contributions by UTC submission day and picking each day's single highest-helpfulness card, reusing the existing `community-rating.ts` helpfulness scoring (a card's likes/saves already model the community "vote"). Follow-ups: (a) wiring a `submittedAt` timestamp into wherever card contributions are eventually persisted, (b) a scheduled job or view that persists/announces the day's winner, (c) a challenge banner/widget UI. None of these are started._
 * 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. A second slice, `peerReviews.ts` (see Tracker Status above), now persists `CardReview` records (including their `ReviewComment` thread) to localStorage, keyed by `cardId`. Follow-ups: (a) a review-queue/comment-thread UI that reads/writes through this store, (b) reviewer identity/permission checks once auth/roles exist, (c) wiring a review's lifecycle to whatever eventually persists submitted cards, so `publishReview` can gate a card actually going live. Two of these are not started._
 * 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopContributorAwards`/`buildCategoryLeaderboard`/`groupContributionsByKind`/`buildAwardsAnnouncementText` for grouping contributor-attributed contributions by `ContributionKind` and selecting a per-kind category winner by helpfulness score, reusing the existing idea #11/Contribution Leaderboard scoring. Follow-ups: (a) a finer-grained kind/tag for "original argument" and "refutation" contributions, neither of which exists as a distinct kind today, (b) a scheduled job to persist/announce winners, (c) an awards UI. None of these are started._
-* 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now derives each contributor's skill level from their contribution history (via the Progress Unlocks tier logic) instead of requiring a caller-supplied value. A third slice, `contributorAvailability.ts` (see Tracker Status above, "Research Task Routing — persisted contributor-availability profiles"), now persists a contributor's `ContributorAvailability` to localStorage. A fourth slice (see Tracker Status above, "Research Task Routing — persisted routed task queue"), now persists a routed `RoutingResult`/task queue to localStorage, closing follow-up (b). A fifth slice (see Tracker Status above, "Research Task Routing — persisted activeTaskCount assignment/completion events") now wires real task-assignment/completion events (`buildAndPersistRoutingResult`/`completePersistedRoutedTask`) into a persisted profile's `activeTaskCount`, closing follow-up (a). Follow-up: (c) a task-assignment/inbox UI; not started._
+* 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now derives each contributor's skill level from their contribution history (via the Progress Unlocks tier logic) instead of requiring a caller-supplied value. A third slice, `contributorAvailability.ts` (see Tracker Status above, "Research Task Routing — persisted contributor-availability profiles"), now persists a contributor's `ContributorAvailability` to localStorage. A fourth slice (see Tracker Status above, "Research Task Routing — persisted routed task queue"), now persists a routed `RoutingResult`/task queue to localStorage, closing follow-up (b). A fifth slice (see Tracker Status above, "Research Task Routing — persisted activeTaskCount assignment/completion events") now wires real task-assignment/completion events (`buildAndPersistRoutingResult`/`completePersistedRoutedTask`) into a persisted profile's `activeTaskCount`, closing follow-up (a). A sixth slice, `TaskInboxPanel` (see Tracker Status above, "Research Task Routing — task-assignment/inbox UI"), now renders every persisted routed task queue at `/cards/inbox` with a "mark complete" action, closing follow-up (c). Follow-ups: (d) a task-routing trigger UI to actually populate a topic's queue, (e) scoping the inbox to "my tasks" once contributor identity/auth exists. Neither of these is started._
 * 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. A second slice, `revisionHistory.ts` (see Tracker Status above, "Revision Incentives — persisted revision history"), now persists `CardRevision` edit events (as many-per-card `CardRevisionRecord`s) to localStorage. Follow-ups: (a) wiring an actual card-edit/save flow to call `saveRevisionRecord` with a before/after snapshot, (b) a reward-notification/incentives-leaderboard UI, (c) an actual evidence-staleness signal instead of only rewarding a refresh after the fact. None of these are started._
 * 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. Follow-ups: (a) an `argBlock`/word-count field wired into wherever submitted cards are eventually persisted, (b) a team-editable tracked-argument checklist per topic, (c) a coverage dashboard UI. None of these are started._
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. Follow-ups: (a) wiring real contribution-submission events into a persisted daily feed, (b) a quest-board widget UI, (c) a streak/reward layer once the Gamified Quests idea has its own first slice. None of these are started._
