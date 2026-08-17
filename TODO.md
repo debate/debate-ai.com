@@ -38,7 +38,7 @@
   started. Verified from a clean install: `bun install`, `bun run typecheck`
   (11 packages, all pass), `bun run test` (87 files / 1124 tests, all pass),
   and `bun run build` all pass. No lint script is configured in this repo.
-  PR: TBD.
+  PR: [#138](https://github.com/debate/debate-ai.com/pull/138).
 - **Prep Note Status/Assignment Persistence — wire `updateNoteStatus`/`assignNote`
   back into the persisted store.**
   `packages/debate-round/src/state/prepNotes.ts` adds
