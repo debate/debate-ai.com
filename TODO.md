@@ -52,9 +52,9 @@
   separate typecheck script — types are checked as part of its build),
   `bun run test` (88 files / 1203 tests, all pass), and `bun run build:web`
   (production build, including the new `/outline` route) all pass. No lint
-  script is configured in this repo. PR: (opened by this run — see branch
-  `claude/peaceful-cerf-arsqnr`). The local dev server was not
-  smoke-tested in this sandbox (no reliable local browser workflow
+  script is configured in this repo. PR:
+  [#162](https://github.com/debate/debate-ai.com/pull/162). The local dev
+  server was not smoke-tested in this sandbox (no reliable local browser workflow
   available here).
 - **Word-Count-Only Speech Format — submission UI.**
   `packages/debate-round/src/panels/WordCountRoundsPanel.tsx` adds a
