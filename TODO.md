@@ -39,7 +39,8 @@
   calls these on a real like/save/endorse action; not started. Verified
   from a clean install: `bun install`, `bun run typecheck` (11 packages,
   all pass), `bun run test` (87 files / 1143 tests, all pass), and
-  `bun run build` all pass. PR: TBD.
+  `bun run build` all pass. PR:
+  [#140](https://github.com/debate/debate-ai.com/pull/140).
 - **Research Task Routing — persisted activeTaskCount assignment/completion events.**
   `packages/debate-card-search/src/state/contributorAvailability.ts` adds
   `recordPersistedTaskAssigned`/`recordPersistedTaskCompleted`, which apply a
