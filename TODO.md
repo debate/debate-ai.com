@@ -31,7 +31,8 @@
   and no prep-notes panel UI in this repo yet calls these new helpers.
   Verified from a clean install: `bun install`, `bun run typecheck` (12
   packages, all pass), `bun run test` (87 files / 1117 tests, all pass), and
-  `bun run build` all pass.
+  `bun run build` all pass. PR:
+  [#137](https://github.com/debate/debate-ai.com/pull/137).
 - **Progress Unlocks — derive unlock status from persisted contributions/mission-results.**
   `packages/debate-card-search/src/lib/unlock-streak-status.ts` adds
   `buildContributorUnlockStatusWithStreakFromStore`, a thin wrapper around the
