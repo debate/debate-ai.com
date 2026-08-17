@@ -74,12 +74,15 @@ export type {
 } from "./opponent/opponent-personas";
 
 export {
+  buildOpponentPersonaSelectionsPanelView,
   deleteOpponentPersonaSelection,
   getOpponentPersonaSelection,
   listOpponentPersonaSelections,
   saveOpponentPersonaSelection,
 } from "./state/opponentPersonaSelections";
 export type { OpponentPersonaSelection } from "./state/opponentPersonaSelections";
+
+export { OpponentPersonaPickerPanel } from "./panels/OpponentPersonaPickerPanel";
 
 export {
   buildCoachMaterialLibrary,
