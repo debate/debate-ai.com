@@ -103,11 +103,15 @@ export type {
 } from "./coach/team-coach-materials";
 
 export {
+  buildCoachMaterialLibraryFromStore,
   deleteCoachMaterial,
+  findRelevantMaterialsFromStore,
   getCoachMaterial,
   listCoachMaterials,
   saveCoachMaterial,
 } from "./state/coachMaterials";
+
+export { CoachMaterialsPanel } from "./panels/CoachMaterialsPanel";
 
 export {
   buildJudgeParadigmSelectionsPanelView,

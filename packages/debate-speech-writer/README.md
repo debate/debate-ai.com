@@ -62,6 +62,18 @@ import { OpponentPersonaPickerPanel } from "debate-speech-writer"
 <OpponentPersonaPickerPanel />
 ```
 
+`CoachMaterialsPanel` lets a coach upload grounding materials (lecture transcripts, camp
+materials, instructional documents, practice-round recordings) through `saveCoachMaterial`,
+lists every persisted material grouped by kind, and previews which materials + grounded
+prompt a question would draw on via `findRelevantMaterialsFromStore`/`buildGroundedCoachPrompt`
+(no AI call is made), mounted at `/coach-materials` in the web app:
+
+```tsx
+import { CoachMaterialsPanel } from "debate-speech-writer"
+
+<CoachMaterialsPanel />
+```
+
 ## Package layout
 
 Logic lives under `src/`, grouped by role; tests live under `test/`.
@@ -72,7 +84,8 @@ debate-speech-writer/
 │   ├── analysis/     # batch LLM analysis over parsed cards
 │   ├── judge/        # judge-paradigm registry, judge-profile aggregation
 │   ├── opponent/      # AI practice-opponent persona registry
-│   ├── panels/       # JudgeProfilesPanel, JudgeParadigmPickerPanel, OpponentPersonaPickerPanel
+│   ├── panels/       # JudgeProfilesPanel, JudgeParadigmPickerPanel, OpponentPersonaPickerPanel,
+│   │                 # CoachMaterialsPanel
 │   ├── prompts/      # the prompt library
 │   ├── state/        # localStorage-backed persistence stores
 │   └── index.ts      # public entry point
