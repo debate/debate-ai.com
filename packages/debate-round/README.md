@@ -8,6 +8,10 @@ doc panels, export and history dialogs, and the flow/settings stores behind them
 import { DebateFlowPage, useFlowStore } from "debate-round"
 ```
 
+`PrepNotesPanel` (also exported from the package root) renders every
+persisted "Strategy Sync Notes" `PrepNote` grouped by status — see
+[`docs/features/prep-notes.md`](../../docs/features/prep-notes.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -24,7 +28,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers

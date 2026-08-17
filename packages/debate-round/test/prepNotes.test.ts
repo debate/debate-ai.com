@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   assignPersistedPrepNote,
+  buildPrepNotesPanelView,
   deletePrepNote,
   getPrepNote,
   listPrepNotes,
   listPrepNotesForFlow,
+  nextPrepNoteStatus,
   savePrepNote,
   updatePersistedPrepNoteStatus,
 } from "../src/state/prepNotes";
@@ -170,5 +172,47 @@ describe("assignPersistedPrepNote", () => {
 
     expect(updated).toBeUndefined();
     expect(listPrepNotes()).toEqual([OTHER_FLOW_NOTE]);
+  });
+});
+
+describe("nextPrepNoteStatus", () => {
+  it("cycles open -> covered -> needs-follow-up -> open", () => {
+    expect(nextPrepNoteStatus("open")).toBe("covered");
+    expect(nextPrepNoteStatus("covered")).toBe("needs-follow-up");
+    expect(nextPrepNoteStatus("needs-follow-up")).toBe("open");
+  });
+});
+
+describe("buildPrepNotesPanelView", () => {
+  it("returns every status group, empty, when nothing is stored", () => {
+    expect(buildPrepNotesPanelView()).toEqual([
+      { status: "needs-follow-up", notes: [] },
+      { status: "open", notes: [] },
+      { status: "covered", notes: [] },
+    ]);
+  });
+
+  it("groups stored notes by status, needs-follow-up first, each group oldest first", () => {
+    const secondOpenNote: PrepNote = { ...OPEN_NOTE, id: "note-3", createdAt: 50 };
+    savePrepNote(OPEN_NOTE);
+    savePrepNote(OTHER_FLOW_NOTE);
+    savePrepNote(secondOpenNote);
+
+    expect(buildPrepNotesPanelView()).toEqual([
+      { status: "needs-follow-up", notes: [OTHER_FLOW_NOTE] },
+      { status: "open", notes: [secondOpenNote, OPEN_NOTE] },
+      { status: "covered", notes: [] },
+    ]);
+  });
+
+  it("reflects a status update made through updatePersistedPrepNoteStatus", () => {
+    savePrepNote(OPEN_NOTE);
+    updatePersistedPrepNoteStatus("note-1", "covered", 150);
+
+    expect(buildPrepNotesPanelView()).toEqual([
+      { status: "needs-follow-up", notes: [] },
+      { status: "open", notes: [] },
+      { status: "covered", notes: [{ ...OPEN_NOTE, status: "covered", updatedAt: 150 }] },
+    ]);
   });
 });
