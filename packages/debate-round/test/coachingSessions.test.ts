@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildCoachingSessionsPanelView,
   deleteCoachingSession,
   getCoachingSession,
   getCoachingSessionsForRound,
@@ -134,5 +135,25 @@ describe("deleteCoachingSession", () => {
     saveCoachingSession(SESSION_NEG);
     deleteCoachingSession("round-1", "AFF");
     expect(listCoachingSessions()).toEqual([SESSION_NEG]);
+  });
+});
+
+describe("buildCoachingSessionsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildCoachingSessionsPanelView()).toEqual([]);
+  });
+
+  it("sorts persisted sessions by roundId then sideKey", () => {
+    saveCoachingSession(SESSION_OTHER_ROUND);
+    saveCoachingSession(SESSION_NEG);
+    saveCoachingSession(SESSION_AFF);
+    expect(buildCoachingSessionsPanelView()).toEqual([SESSION_AFF, SESSION_NEG, SESSION_OTHER_ROUND]);
+  });
+
+  it("reflects a session removed via deleteCoachingSession", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSession(SESSION_NEG);
+    deleteCoachingSession("round-1", "AFF");
+    expect(buildCoachingSessionsPanelView()).toEqual([SESSION_NEG]);
   });
 });

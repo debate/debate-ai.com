@@ -3,6 +3,7 @@ export { PrepNotesPanel } from "./panels/PrepNotesPanel";
 export { OpponentTeamProfilesPanel } from "./panels/OpponentTeamProfilesPanel";
 export { DrillSetsPanel } from "./panels/DrillSetsPanel";
 export { PreRoundBriefingsPanel } from "./panels/PreRoundBriefingsPanel";
+export { CoachingSessionsPanel } from "./panels/CoachingSessionsPanel";
 export { FlowSpreadsheet } from "./flow/FlowSpreadsheet";
 export { RoundEditorDialog } from "./dialogs/CreateRoundDialog";
 export * from "./state/store";

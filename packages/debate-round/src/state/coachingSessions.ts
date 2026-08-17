@@ -74,3 +74,15 @@ export function saveCoachingSession(record: CoachingSessionRecord): void {
 export function deleteCoachingSession(roundId: string, sideKey: string): void {
   writeAll(readAll().filter((record) => !matches(record, roundId, sideKey)));
 }
+
+/**
+ * Every persisted coaching session, sorted by `roundId` then `sideKey` for a
+ * stable display order — the "(b) a coaching-panel UI that reads/writes
+ * through the persistence store" follow-up named under the "🎙️ AI Coach
+ * Mode" bullet in TODO.md. Used by `panels/CoachingSessionsPanel.tsx`.
+ */
+export function buildCoachingSessionsPanelView(): CoachingSessionRecord[] {
+  return [...listCoachingSessions()].sort(
+    (a, b) => a.roundId.localeCompare(b.roundId) || a.sideKey.localeCompare(b.sideKey),
+  );
+}
