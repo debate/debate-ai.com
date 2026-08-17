@@ -17,6 +17,10 @@ every persisted `debate-data-sync` `OpponentTeamProfile` as a scouting
 roster — see
 [`docs/features/opponent-team-profiles.md`](../../docs/features/opponent-team-profiles.md).
 
+`DrillSetsPanel` (also exported from the package root) renders every
+persisted "AI Drill Generator" `Drill` set, grouped by round — see
+[`docs/features/drill-sets.md`](../../docs/features/drill-sets.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -33,7 +37,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers

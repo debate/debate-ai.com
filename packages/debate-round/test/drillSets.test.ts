@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildDrillSetsPanelView,
   deleteDrillSet,
   getDrillSet,
   listDrillSets,
@@ -103,5 +104,24 @@ describe("deleteDrillSet", () => {
     saveDrillSet(DRILL_SET_B);
     deleteDrillSet("missing");
     expect(listDrillSets()).toEqual([DRILL_SET_B]);
+  });
+});
+
+describe("buildDrillSetsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildDrillSetsPanelView()).toEqual([]);
+  });
+
+  it("sorts persisted drill sets by roundId", () => {
+    saveDrillSet(DRILL_SET_B);
+    saveDrillSet(DRILL_SET_A);
+    expect(buildDrillSetsPanelView()).toEqual([DRILL_SET_A, DRILL_SET_B]);
+  });
+
+  it("saving a drill set for an existing roundId under a new sideKey still upserts by roundId alone", () => {
+    saveDrillSet(DRILL_SET_A);
+    const negForRoundOne: DrillSetRecord = { ...DRILL_SET_A, sideKey: "neg" };
+    saveDrillSet(negForRoundOne);
+    expect(buildDrillSetsPanelView()).toEqual([negForRoundOne]);
   });
 });

@@ -64,3 +64,15 @@ export function saveDrillSet(record: DrillSetRecord): void {
 export function deleteDrillSet(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
 }
+
+/**
+ * Every persisted drill set, sorted by `roundId` then `sideKey` for a
+ * stable display order — the "(a) a drill-panel UI that reads/writes
+ * through the persistence store" follow-up named under the "📚 AI Drill
+ * Generator" bullet in TODO.md. Used by `panels/DrillSetsPanel.tsx`.
+ */
+export function buildDrillSetsPanelView(): DrillSetRecord[] {
+  return [...listDrillSets()].sort(
+    (a, b) => a.roundId.localeCompare(b.roundId) || a.sideKey.localeCompare(b.sideKey),
+  );
+}

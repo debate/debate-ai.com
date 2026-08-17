@@ -6,6 +6,43 @@
 (none)
 
 ### Completed
+- **AI Drill Generator — drill-panel UI.**
+  `packages/debate-round/src/panels/DrillSetsPanel.tsx` adds a full-page
+  React panel that renders every persisted `DrillSetRecord` (from
+  `drillSets.ts`) grouped by round — each drill showing a kind badge
+  (Overview/Frontline/Cross-Ex/Collapse) and its prompt — with a "Clear"
+  action per round. It's mounted at `/drills`
+  (`apps/debate-ai.com/app/drills/page.tsx`, with a back-link to `/debate`,
+  following the same panel convention as `/prep-notes`/`/opponents`) and
+  reachable from the global nav dock's Settings menu ("Practice Drills",
+  via a new `Dumbbell`-icon `DropdownMenuItem` in `CategoryDock.tsx`).
+  Closes follow-up (a), "a drill-panel UI that reads/writes through the
+  persistence store," named under the "📚 AI Drill Generator" bullet in
+  Research Crowdsourcing Organizer Features below — this is the ninth
+  "wire a persisted slice's UI into the actual web app" follow-up closed
+  in this repo, after the Contribution Leaderboard, Task Inbox, Progress
+  Unlocks, Evidence Library, Prep Notes, Revision Incentives, Judge
+  Profiles, and Opponent Team Profiles panels. The panel adds one small
+  helper to `state/drillSets.ts` — `buildDrillSetsPanelView`, which sorts
+  every persisted drill set by `roundId` then `sideKey` for a stable
+  display order — introducing no new drill-generation logic; every
+  rendered field already existed on `drill-generator.ts`'s `buildDrillSet`
+  output. Vitest-covered in `packages/debate-round/test/drillSets.test.ts`
+  (empty view when nothing is stored, sorted by `roundId`, and that saving
+  a new drill set for an already-stored `roundId` upserts by `roundId`
+  alone, matching `saveDrillSet`'s existing upsert semantics). Documented
+  in `docs/features/drill-sets.md` (mirroring
+  `docs/features/prep-notes.md`'s format) and in
+  `packages/debate-round/README.md`'s package-layout note. Follow-up (b),
+  an actual AI-generated (rather than templated) drill script, remains
+  open — not started. Verified from a clean install: `bun install`,
+  `bun run typecheck` (12 packages typecheck; `debate-ai-web` has no
+  separate typecheck script — types are checked as part of its build),
+  `bun run test` (87 files / 1169 tests, all pass), and `bun run build:web`
+  (production build, including the new `/drills` route) all pass. No lint
+  script is configured in this repo. The local dev server was not
+  smoke-tested in this sandbox (no reliable local browser workflow
+  available here).
 - **Opponent Team Profiles — opponent-scouting roster UI panel.**
   `packages/debate-round/src/panels/OpponentTeamProfilesPanel.tsx` adds a
   full-page React panel that renders every persisted `OpponentTeamProfile`
@@ -2455,6 +2492,6 @@
 * 
 * 🧪 Practice Round Simulator - Recreate a tournament round with timer, speeches, judge persona, and post-round feedback. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPracticeRoundSetup`/`buildPracticeRoundSetupText` for composing a format's speech order with a selected judge paradigm and AI opponent persona into a renderable round setup, and `buildPracticeRoundFeedback`/`buildPracticeRoundFeedbackText` for framing post-round feedback around the selected paradigm plus the existing AI Coach Mode coaching session, reusing the existing `ai-versus-speech-order.ts`/`judge-paradigms.ts`/`opponent-personas.ts`/`coach-mode.ts` slices directly. A second slice, `practiceRounds.ts` (see Tracker Status above), now persists a round's `PracticeRoundSetup`/`PracticeRoundFeedback` to localStorage. Follow-ups: (a) an actual AI speech-generation call for the AI opponent's speeches and an AI judge-decision call under the chosen paradigm, (b) a round-simulator UI that reads/writes through the persistence store. Neither of these are started._
 * 
-* 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. A second slice, `drillSets.ts` (see Tracker Status above), now persists a round's generated `Drill[]` set to localStorage. Follow-ups: (a) a drill-panel UI that reads/writes through the persistence store, (b) an actual AI-generated (rather than templated) script. Neither of these are started._
+* 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. A second slice, `drillSets.ts` (see Tracker Status above), now persists a round's generated `Drill[]` set to localStorage. A third slice, `DrillSetsPanel` (see Tracker Status above, "AI Drill Generator — drill-panel UI"), now renders every persisted drill set grouped by round at `/drills`, closing follow-up (a). Follow-up (b), an actual AI-generated (rather than templated) script, remains open — not started._
 * 
 * 🧭 Scout-to-Strategy Workflow - Turn scouting data into recommended game plans, case choices, judge adaptation, and risk levels. _Status: first slice done (see Tracker Status above) — `debate-round` now has `rankCaseOptions`/`computeCaseOverlapScore`/`buildJudgeAdaptationNotes`/`assessMatchupRisk`/`buildStrategyRecommendation`/`buildStrategyRecommendationText` for ranking caller-supplied case options by opponent-tag overlap, turning judge tendencies into adaptation notes, and combining opponent/judge signals into a risk level with its contributing factors, reusing the existing `OpponentTeamProfile`/`JudgeProfile` types directly. Follow-ups: (a) a case-choice/strategy panel UI, (b) wiring `ourSide`/likely opponent side into the risk heuristic, (c) an actual AI-panel evaluation of case choice instead of the tag-overlap heuristic. None of these are started._
