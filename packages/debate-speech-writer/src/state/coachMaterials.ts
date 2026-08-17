@@ -7,10 +7,23 @@
  * `coachingPrograms.ts`/`prepNotes.ts`/`flowAnnotations.ts` persistence
  * convention.
  *
+ * `buildPersistedCoachMaterialLibrary`/`findRelevantPersistedMaterials`
+ * compose `team-coach-materials.ts`'s pure `buildCoachMaterialLibrary`/
+ * `findRelevantMaterials` directly against the persisted materials,
+ * mirroring `debate-card-search`'s `evidenceLibraryEntries.ts`
+ * `searchPersistedEvidenceLibrary` convention.
+ *
  * @module state/coachMaterials
  */
 
-import type { CoachMaterial } from "../coach/team-coach-materials";
+import {
+  buildCoachMaterialLibrary,
+  findRelevantMaterials,
+  type CoachMaterial,
+  type CoachMaterialLibrary,
+  type CoachMaterialMatch,
+  type FindRelevantMaterialsOptions,
+} from "../coach/team-coach-materials";
 
 const STORAGE_KEY = "coachMaterials";
 
@@ -56,4 +69,17 @@ export function saveCoachMaterial(material: CoachMaterial): void {
 /** Deletes a persisted coach material by id; a no-op if it isn't stored. */
 export function deleteCoachMaterial(id: string): void {
   writeAll(readAll().filter((material) => material.id !== id));
+}
+
+/** Builds the kind-grouped library from every persisted coach material. */
+export function buildPersistedCoachMaterialLibrary(): CoachMaterialLibrary {
+  return buildCoachMaterialLibrary(readAll());
+}
+
+/** Finds the persisted materials most relevant to `query`, reusing `findRelevantMaterials` directly. */
+export function findRelevantPersistedMaterials(
+  query: string,
+  options: FindRelevantMaterialsOptions = {},
+): CoachMaterialMatch[] {
+  return findRelevantMaterials(readAll(), query, options);
 }

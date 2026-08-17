@@ -88,6 +88,8 @@ export {
   buildCoachMaterialLibrary,
   buildCoachMaterialLibrarySummaryText,
   buildGroundedCoachPrompt,
+  COACH_MATERIAL_KIND_LABELS,
+  COACH_MATERIAL_KIND_ORDER,
   excerptMaterialText,
   findRelevantMaterials,
   scoreMaterialRelevance,
@@ -103,11 +105,15 @@ export type {
 } from "./coach/team-coach-materials";
 
 export {
+  buildPersistedCoachMaterialLibrary,
   deleteCoachMaterial,
+  findRelevantPersistedMaterials,
   getCoachMaterial,
   listCoachMaterials,
   saveCoachMaterial,
 } from "./state/coachMaterials";
+
+export { CoachMaterialsPanel } from "./panels/CoachMaterialsPanel";
 
 export {
   buildJudgeParadigmSelectionsPanelView,
