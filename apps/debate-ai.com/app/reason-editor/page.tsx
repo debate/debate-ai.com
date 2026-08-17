@@ -9,6 +9,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { FilePlus2, FileText, Loader2, Trash2 } from "lucide-react"
 import { EditorWithToolbar } from "debate-editor"
+import type { LexicalEditorHandle } from "debate-editor"
+import { OutlinePanel } from "reason-editor"
 import { cn } from "debate-ui/src/lib/utils"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -29,6 +31,8 @@ export default function ReasonEditorPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const editorHandle = useRef<LexicalEditorHandle | null>(null)
+  const [editor, setEditor] = useState<LexicalEditorHandle["editor"]>(null)
 
   const selected = useMemo(
     () => documents.find((d) => d.id === selectedId) ?? null,
@@ -103,6 +107,13 @@ export default function ReasonEditorPage() {
     [saveDocument],
   )
 
+  // The TipTap instance is created inside the editor's own effects, which run
+  // before this one, so the handle is populated by the time we read it. Keying
+  // on the selected document re-reads it after each remount.
+  useEffect(() => {
+    setEditor(editorHandle.current?.editor ?? null)
+  }, [selectedId])
+
   return (
     <div className="h-screen flex pt-14 lg:pt-0 pb-20 lg:pb-0">
       <aside className="w-64 shrink-0 border-r flex flex-col">
@@ -161,15 +172,21 @@ export default function ReasonEditorPage() {
               />
               {saving && <span className="text-xs text-muted-foreground">Saving…</span>}
             </div>
-            <div className="flex-1 overflow-auto">
-              <EditorWithToolbar
-                key={selected.id}
-                content={selected.content}
-                contentKey={String(selected.id)}
-                title={selected.title}
-                showAiTools
-                onChange={(html) => updateContent(selected.id, html)}
-              />
+            <div className="flex flex-1 overflow-hidden">
+              <div className="flex-1 overflow-auto">
+                <EditorWithToolbar
+                  key={selected.id}
+                  ref={editorHandle}
+                  content={selected.content}
+                  contentKey={String(selected.id)}
+                  title={selected.title}
+                  showAiTools
+                  onChange={(html) => updateContent(selected.id, html)}
+                />
+              </div>
+              <aside className="hidden w-64 shrink-0 overflow-auto border-l p-2 xl:block">
+                <OutlinePanel editor={editor} documentId={String(selected.id)} />
+              </aside>
             </div>
           </>
         ) : (

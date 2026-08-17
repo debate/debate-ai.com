@@ -246,3 +246,113 @@
 .reason-editor-toolbar-spacer {
   flex: 1 1 auto;
 }
+
+/* ---------------------------------------------------------------------------
+ * Outline panel (OutlinePanel.tsx)
+ *
+ * Same token-with-fallback approach as the toolbar above: every colour reads a
+ * host CSS variable first so the panel inherits the app's theme, and falls
+ * back to a neutral value when mounted standalone.
+ * ------------------------------------------------------------------------ */
+
+.reason-outline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  font-size: 0.8125rem;
+  border: 1px solid var(--border, #e2e2e2);
+  border-radius: 0.5rem;
+  background: var(--card, transparent);
+  color: inherit;
+}
+
+.reason-outline-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reason-outline-title {
+  font-weight: 600;
+}
+
+.reason-outline-count {
+  color: var(--muted-foreground, #6b7280);
+  font-size: 0.75rem;
+}
+
+.reason-outline-action {
+  margin-left: auto;
+  padding: 0.125rem 0.375rem;
+  font-size: 0.75rem;
+  border: 1px solid var(--border, #cfcfcf);
+  border-radius: 0.25rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.reason-outline-action:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.reason-outline-empty,
+.reason-outline-status {
+  margin: 0;
+  color: var(--muted-foreground, #6b7280);
+  font-size: 0.75rem;
+}
+
+.reason-outline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reason-outline-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.reason-outline-item.reason-outline-level-1 .reason-outline-link {
+  font-weight: 700;
+}
+
+.reason-outline-item.reason-outline-level-2 .reason-outline-link {
+  font-weight: 600;
+}
+
+.reason-outline-toggle,
+.reason-outline-link {
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.0625rem 0.125rem;
+  font: inherit;
+}
+
+.reason-outline-link {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reason-outline-link:hover {
+  text-decoration: underline;
+}
+
+.reason-outline-type {
+  color: var(--muted-foreground, #6b7280);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+}

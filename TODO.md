@@ -6,6 +6,107 @@
 (none)
 
 ### Completed
+- **Feature panels — the UI layer over every completed logic/persistence slice.**
+  Until now every entry in this tracker was a pure slice or a localStorage
+  store with no way to see it in the product. This adds that layer: a shared
+  panel kit plus one React panel per slice, all wired into the app.
+  `packages/debate-ui/src/panels/panel-shell.tsx` is the shared vocabulary
+  (`PanelShell`/`PanelSection`/`StatGrid`/`StatTile`/`MeterBar`/`Pill`/
+  `PanelRow`/`EmptyState`/`SummaryText`/`LabeledField`, with one five-value
+  tone scale — neutral/info/positive/warning/critical — that the coverage,
+  status and risk vocabularies across the slices all map onto), and
+  `packages/debate-ui/src/panels/use-store-snapshot.ts` is the one hook the
+  store-backed panels read through: it defers the `localStorage` read to an
+  effect after mount so a server render and the first client render agree,
+  and hands back a `refresh()` for panels that write.
+  <br />
+  **`debate-card-search/src/panels` (19 panels)** — `TopicCoverageDashboard`
+  (topic-coverage), `ArgumentLibraryPanel` (argument-library),
+  `EvidenceLibraryPanel` (shared-evidence-library + `evidenceLibraryEntries`),
+  `ContributionLeaderboardPanel` (contribution-leaderboard + `contributions`),
+  `TopContributorAwardsPanel` (contributor-awards), `CommunityRatingPanel`
+  (community-rating), `DailyBestCardPanel` (daily-best-card),
+  `DailyQuestBoardPanel` (daily-quests), `QuestStreakPanel` (gamified-quests),
+  `ProgressUnlocksPanel` (progress-unlocks, switching to the
+  unlock-streak-status composition when mission results are supplied),
+  `GroupChallengePanel` (group-challenges + `groupChallenges`),
+  `CardScoringPanel` (llm-card-scoring), `PeerReviewPanel` (peer-review +
+  `peerReviews`, surfacing the slice's illegal-transition and
+  unresolved-blocking-comment errors inline rather than throwing),
+  `PrepRoomPanel` (prep-room), `TaskRoutingPanel` (research-task-routing with
+  a toggle to the tiered-task-routing composition + `contributorAvailability`),
+  `ResearchProgressPanel` (research-progress), `RevisionIncentivesPanel`
+  (revision-incentives + `revisionHistory`), `BrainstormBoardPanel`
+  (team-brainstorm-assist + `brainstormIdeas`) and `TopicSprintPanel`
+  (team-collaboration-mode + `sprintNotes`).
+  <br />
+  **`debate-round/src/panels` (20 panels)** — `ArgumentTreePanel`
+  (argument-tree + `argumentTreeFilters`), `FlowSummaryPanel`
+  (flow-transcript-summary + `flowSummaries`), `ResponseOutcomePanel`
+  (response-outcome, charting vulnerability as inline SVG so the panel renders
+  identically on the server and in tests rather than pulling in a charting
+  library), `CoachModePanel` (coach-mode + `coachingSessions`),
+  `DrillGeneratorPanel` (drill-generator + `drillSets`),
+  `FlowAnnotationsPanel` (flow-annotations + `flowAnnotations`),
+  `StrategySyncNotesPanel` (strategy-sync-notes + `prepNotes`),
+  `SharedFlowSyncPanel` (shared-flow-sync), `AiVersusRoundPanel`
+  (ai-versus-speech-order + `aiVersusRounds`), `PracticeRoundPanel`
+  (practice-round-simulator + `practiceRounds`), `PreRoundBriefingPanel`
+  (pre-round-briefing + `preRoundBriefings`), `ScoutToStrategyPanel`
+  (scout-to-strategy), `CoachingProgramPanel` (coaching-program +
+  `coachingPrograms`), `WordCountRoundPanel` (`debate-timer`'s
+  word-count-format + `wordCountRounds`), `JudgeParadigmPanel`
+  (judge-paradigms + `judgeParadigmSelections`), `JudgeProfilePanel`
+  (judge-profile + `judgeProfiles`), `OpponentPersonaPanel`
+  (opponent-personas + `opponentPersonaSelections`), `CoachMaterialsPanel`
+  (team-coach-materials + `coachMaterials`), `OpponentScoutingPanel`
+  (opponent-team-profile + `opponentTeamProfiles`) and `NdcaStandingsPanel`
+  (ndca-standings). The last six sit here rather than in their own packages
+  because `debate-speech-writer` and `debate-data-sync` are React-free by
+  design and `debate-round` is the lowest package that already depends on
+  both and ships React.
+  <br />
+  **`reason-editor`** — `src/react/OutlinePanel.tsx` renders the
+  `heading-outline` outline as a nav panel, toggles collapse per heading,
+  persists the collapsed set per document through `collapsedHeadings.ts`, and
+  hands the resulting `CollapsedRange[]` back through `onCollapsedChange` so a
+  host (or a later decoration plugin) can hide those ranges in the editor
+  view. Its styles are appended to the package's own `styles.css` using the
+  same host-CSS-variable-with-fallback approach as the toolbar, so the panel
+  keeps the package React-UI-dependency-free.
+  <br />
+  **App surface** — `/research` (`components/research/ResearchHub.tsx`) and
+  `/coach` (`components/coach/CoachHub.tsx`) are tabbed hubs over the two
+  panel sets, both reachable from the dock's settings menu; the reason-editor
+  route now shows the outline panel beside the editor on wide screens. The
+  hubs feed the panels real data rather than samples: the research hub derives
+  its card corpus, tracked arguments, coverage report, coverage quests and
+  routed assignments from the persisted evidence library and availability
+  profiles, and the coach hub reads the flow currently selected in the round
+  workspace's zustand store. Where no data source exists yet (quest
+  contributions carry no timestamp in the contribution store, and nothing
+  records `FlowEdit`s or `TournamentResult`s), the hub passes an empty list
+  and the panel renders its own empty state instead of fabricating data.
+  <br />
+  This closes the "a UI that reads through this store" / "a dashboard UI" /
+  "a nav panel" follow-up named under essentially every entry below — see the
+  note at the top of "Product Feature Ideas" and "Research Crowdsourcing
+  Organizer Features". The non-UI follow-ups those entries name are untouched
+  and still open: nothing here writes a real card-edit event into the revision
+  history, scrapes Tabroom for `TournamentResult` records, ships a
+  ProseMirror decoration plugin that actually hides collapsed ranges, or
+  connects an AI backend to the practice-opponent and judge prompts the panels
+  compose. Vitest-covered by render tests in
+  `packages/debate-ui/test/panel-shell.test.tsx`,
+  `packages/debate-card-search/test/panels.test.tsx`,
+  `packages/debate-round/test/panels.test.tsx` and
+  `packages/reason-editor/test/outline-panel.test.tsx` — these render through
+  `react-dom/server` rather than a DOM testing library, since every package's
+  Vitest environment is `node`; that covers each panel's slice-to-markup
+  wiring, and leaves the store-backed panels asserted in their pre-hydration
+  (empty) state because a static render never runs effects. Verified from a
+  clean install: `bun run typecheck` (11 packages, all pass), `bun run test`
+  (89 files / 1140 tests, all pass), and `bun run build` all pass.
 - **Revision Incentives — persisted revision history.**
   `packages/debate-card-search/src/state/revisionHistory.ts` adds a
   localStorage-backed store for `revision-incentives.ts`'s `CardRevision`
@@ -1720,6 +1821,14 @@
 
 ## Product Feature Ideas
 
+> **Note on the UI follow-ups below.** Every `_Status:_` line in this section
+> and the next was written before any of these slices had a screen, so each
+> one names a "UI" / "dashboard" / "panel" follow-up as not started. Those are
+> now done — see "Feature panels" at the top of Tracker Status for the panel
+> that covers each slice, and `/research`, `/coach` and `/reason-editor` for
+> where they are mounted. The other follow-ups named below (real data
+> ingestion, AI backends, editor plugins) are still open and still accurate.
+
 1. **CX NDCA Standings** — Add a standings dashboard modeled around NDCA-style results, allowing users to browse qualification points, rankings, cumulative records, and tournament performance history across the season. Tabroom already supports tournament results and NDCA-points configuration, so this could expose those data in a more searchable, user-friendly analytics view. [tabroom](https://www.tabroom.com/index/tourn/index.mhtml?tourn_id=26597) _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `computeTournamentPoints`/`buildTeamStanding`/`buildStandings`/`rankStandings`/`getQualifiedTeams` for turning per-team tournament results into ranked, cumulative season standings against a configurable (not authoritative) points table. Follow-ups: (a) a Tabroom/NDCA scraper that produces real `TournamentResult` records per team (today's `sync-tournaments.ts` only fetches tournament names), (b) a real, circuit-sourced `QualificationPointsTable` instead of the illustrative default, (c) a standings dashboard UI (likely under `/rank`) that renders `rankStandings`/`getQualifiedTeams`. None of these are started._
 
 2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slices done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. A second slice, `wordCountRounds.ts` (see Tracker Status above, "Word-Count-Only Speech Format — persisted word-count round results"), now persists a round's chosen style and submitted speech text to localStorage. Follow-ups: (a) a submission UI in `debate-round`/`reason-editor` that calls `getWordCountStatus` while a debater types and reads/writes through the persistence store, (b) extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode. Neither of these is started._
@@ -1755,6 +1864,8 @@
 
 
 ## Research Crowdsourcing Organizer Features
+
+> The note above about UI follow-ups applies to this section too.
 
 * 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool.
 * 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. A second slice, `contributions.ts` (see Tracker Status above), now persists `AttributedContribution` records to localStorage. Follow-ups: (a) wiring real like/save/endorse actions and a real submitted-contribution flow into the persistence store, (b) a "completed tasks" signal once a research-task system exists, (c) a leaderboard UI that reads through the persistence store. None of these are started._
