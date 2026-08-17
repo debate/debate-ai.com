@@ -15,6 +15,7 @@ export {
   condenseCardHtml,
   formatShortCiteTag,
   moveOutlineNode,
+  toggleEmphasisHtml,
 } from "./utils/verbatim-shortcuts";
 
 export type {
