@@ -6,6 +6,59 @@
 (none)
 
 ### Completed
+- **Progress Unlocks — unlock/progress roster UI panel.**
+  `packages/debate-card-search/src/panels/ProgressUnlocksPanel.tsx` adds a
+  full-page React panel that renders every contributor with at least one
+  persisted contribution as a roster: unlock tier, the research-task skill
+  level that tier grants, every badge earned (tier + daily-quest streak
+  badges), current streak, and how far they are from the next tier. It's
+  mounted at `/cards/progress`
+  (`apps/debate-ai.com/app/cards/progress/page.tsx`, mirroring the existing
+  `/cards/leaderboard`/`/cards/inbox` pages' back-link convention) and
+  reachable from the global nav dock's Settings menu ("Progress", via a new
+  `Award`-icon `DropdownMenuItem` in `CategoryDock.tsx`, alongside the
+  existing Leaderboard/Task Inbox entries). Closes follow-up (b), "a
+  progress/unlock UI", named under the "🔓 Progress Unlocks" bullet in
+  Research Crowdsourcing Organizer Features below — this is the third
+  "wire a persisted slice's UI into the actual web app" follow-up closed in
+  this repo, after the Contribution Leaderboard and Task Inbox panels,
+  following that same established pattern (persisted store → thin panel
+  component → routed page → nav entry). The panel adds one new composition
+  function, `buildUnlockStatusRoster`
+  (`packages/debate-card-search/src/lib/unlock-streak-status.ts`), which
+  lists every contributor id with a persisted contribution (via
+  `state/contributions.ts`'s `listContributions`/`groupContributionsByContributor`)
+  and resolves each one's status through the already-existing
+  `buildContributorUnlockStatusWithStreakFromStore` — mirroring
+  `contributions.ts`'s `buildPersistedLeaderboard` "compose the pure function
+  directly against the persisted store" convention; no new tier, badge, or
+  streak logic was introduced, and `progress-unlocks.ts`/`gamified-quests.ts`
+  themselves are unchanged. The roster is sorted alphabetically by
+  `contributorId` rather than by score, since (unlike the Contribution
+  Leaderboard) this view isn't meant to be a ranking. Vitest-covered in
+  `packages/debate-card-search/test/unlock-streak-status.test.ts` (empty
+  roster when nothing is persisted, multiple contributors each resolved with
+  their own tier/streak and sorted alphabetically, and that one contributor's
+  persisted data doesn't leak into another's roster entry). The panel
+  component itself is not unit-tested, matching the Leaderboard/Task Inbox
+  panels' precedent — this repo has no `@testing-library/react`/jsdom-based
+  component-render convention in any package's `test/` suite; its data
+  composition is fully covered via the `lib` test above. Documented in
+  `docs/features/progress-unlocks.md` (mirroring
+  `docs/features/contribution-leaderboard.md`'s format) and in
+  `packages/debate-card-search/README.md`'s `panels/` layout note and import
+  example. Follow-ups: (a) contributor identity/auth scoping ("my progress"
+  vs. everyone's), the same known gap as the Leaderboard/Inbox panels — not
+  started. Verified from a clean install: `bun install`, `bun run typecheck`
+  (11 packages typecheck; `debate-ai-web` has no separate typecheck script —
+  types are checked as part of its build), `bun run test` (87 files / 1152
+  tests, all pass), and `bun run build:web` (production build, including the
+  new `/cards/progress` route) all pass. No lint script is configured in
+  this repo. The local dev server (`bun run dev:web`) could not be
+  smoke-tested in this sandbox for the same pre-existing `self-signed
+  certificate in certificate chain` reason noted on the Contribution
+  Leaderboard/Task Inbox panel entries below — not a regression introduced
+  here. PR: [#143](https://github.com/debate/debate-ai.com/pull/143).
 - **Research Task Routing — task-assignment/inbox UI.**
   `packages/debate-card-search/src/panels/TaskInboxPanel.tsx` adds a
   full-page React panel that lists every persisted routed task queue, grouped
@@ -2154,7 +2207,7 @@
 * 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool.
 * 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. A second slice, `contributions.ts` (see Tracker Status above), now persists `AttributedContribution` records to localStorage, and its `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` close half of follow-up (a) — persisting like/save/endorse counts once an action fires — though no submission/like UI calls them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders the leaderboard at `/cards/leaderboard`, closing follow-up (c). Follow-ups: (a) a real submitted-contribution flow (and a like/save/endorse UI) that actually calls `saveContribution`/`recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement`, (b) a "completed tasks" signal once a research-task system exists. Neither of these is started._
 * 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeDailyMissionResult`/`computeStreakStatus`/`getEarnedStreakBadges`/`buildContributorQuestStreak`/`buildStreakSummaryText` for turning a contributor's daily `daily-quests.ts` mission-completion history into a current/longest streak and the milestone badges (3/7/14/30-day streaks by default) that streak has earned. A second slice, `dailyMissionResults.ts` (see Tracker Status above, "Gamified Quests — persisted daily mission-result history"), now persists a contributor's per-day `DailyMissionResult` to localStorage, keyed by `contributorId` + `dayKey`, and composes it directly into `buildPersistedContributorQuestStreak`. A third follow-up, surfacing earned streak badges on a contributor's `progress-unlocks.ts` unlock status, is now done — see the "Unlock Status Streak Badges" entry above (`unlock-streak-status.ts`). A fourth slice, `computeAndSavePersistedDailyMissionResult` (see Tracker Status above, "Gamified Quests — persisted end-of-day mission computation"), now computes and saves a contributor's mission result directly from their real persisted contributions, closing follow-up (a) below. Follow-ups: (a) ~~wiring a real end-of-day computation~~ (done — see above; still needs a real trigger, i.e. a UI action or scheduled job, to call it on an actual cadence), (b) a streak/badge widget UI. Neither trigger nor UI is started._
-* 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now feeds the derived skill level into `research-task-routing.ts`'s `ContributorAvailability`. A third slice, `unlock-streak-status.ts` (see Tracker Status above, "Unlock Status Streak Badges"), now merges the Gamified Quests streak badges into this unlock status. Follow-ups: (a) persisting a contributor's tier/badges, (b) a progress/unlock UI. Neither of these are started._
+* 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now feeds the derived skill level into `research-task-routing.ts`'s `ContributorAvailability`. A third slice, `unlock-streak-status.ts` (see Tracker Status above, "Unlock Status Streak Badges"), now merges the Gamified Quests streak badges into this unlock status, and its `buildContributorUnlockStatusWithStreakFromStore` closes follow-up (a) — it derives a contributor's tier/badges live from the already-persisted `contributions.ts`/`dailyMissionResults.ts` stores rather than needing a separate tier/badge store. A fourth slice, `ProgressUnlocksPanel` (see Tracker Status above, "Progress Unlocks — unlock/progress roster UI panel"), now renders every contributor's tier, unlocked skill level, badges, streak, and next-tier progress at `/cards/progress`, closing follow-up (b). Neither follow-up remains open._
 * 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scoreRelevance`/`scoreClarity`/`scoreUniqueness`/`scoreEvidenceQuality`/`scoreUsability`/`computeCardScoreBreakdown`/`rankCardScores`/`buildCardScoreSummaryText` for scoring a card across all five dimensions with deterministic heuristics and flagging likely duplicates, reusing the existing idea #11 `community-rating.ts` quality-signal scoring for evidence quality. Follow-ups: (a) an actual LLM-scoring call for the more subjective dimensions instead of the heuristic proxy, (b) wiring real argument-block keywords and a real submitted-card corpus into the scorer, (c) a scoring/duplicate-flag panel UI. None of these are started._
 * 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildContributorProgress`/`buildTopicProgress`/`buildResearchProgressBoard`/`buildProgressSummaryText` for combining a contributor's existing leaderboard contribution stats with per-topic task-completion counts derived from a topic-tagged research-task-routing assignment list, reusing the existing `ContributorStats`/`RoutedAssignment` types directly. Follow-ups: (a) wiring real task-completion events into a persisted assignment/completion history, (b) a progress dashboard/roster UI, (c) feeding a contributor's topic-progress history back into `progress-unlocks.ts`'s tier computation. None of these are started._
 * 📚 Common Argument Library - Organize all shared research into topic folders, case areas, and tag-based collections. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByTopic`/`groupCardsByCaseArea`/`buildTopicFolder`/`buildTopicFolders`/`buildTagCollections`/`filterCardsByTags`/`buildArgumentLibrary`/`buildLibrarySummaryText` for organizing a caller-supplied, tagged card list into topic folders (each split into case-area subgroups) and cross-cutting tag-based collections, extending the existing Topic Coverage Dashboard's `argBlock`-tagged card model with `topic`/`caseArea`/`tags`. Follow-ups: (a) wiring a `topic`/`caseArea`/`tags` field into wherever submitted cards are eventually persisted, (b) a folder/collection browser UI, (c) a tag-autocomplete/tag-management affordance. None of these are started._

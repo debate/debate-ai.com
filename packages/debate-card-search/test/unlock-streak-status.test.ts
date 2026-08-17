@@ -4,6 +4,7 @@ import type { DailyMissionResult } from "../src/lib/gamified-quests";
 import {
   buildContributorUnlockStatusWithStreak,
   buildContributorUnlockStatusWithStreakFromStore,
+  buildUnlockStatusRoster,
   buildUnlockStatusWithStreakText,
 } from "../src/lib/unlock-streak-status";
 import { saveContribution } from "../src/state/contributions";
@@ -155,5 +156,46 @@ describe("buildContributorUnlockStatusWithStreakFromStore", () => {
 
     expect(status.tier).toBe("novice");
     expect(status.streak.currentStreak).toBe(0);
+  });
+});
+
+describe("buildUnlockStatusRoster", () => {
+  beforeEach(() => {
+    (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
+  });
+
+  it("returns an empty roster when no contributions are persisted", () => {
+    expect(buildUnlockStatusRoster("2026-08-16")).toEqual([]);
+  });
+
+  it("builds every contributor's unlock+streak status, sorted alphabetically by contributorId", () => {
+    for (let i = 0; i < 5; i++) {
+      saveContribution(contribution(`bob-${i}`, "bob"));
+    }
+    for (let i = 0; i < 1; i++) {
+      saveContribution(contribution(`alice-${i}`, "alice"));
+    }
+    saveDailyMissionResult({ contributorId: "bob", dayKey: "2026-08-16", isComplete: true });
+
+    const roster = buildUnlockStatusRoster("2026-08-16");
+
+    expect(roster.map((status) => status.contributorId)).toEqual(["alice", "bob"]);
+    expect(roster[0].tier).toBe("novice");
+    expect(roster[1].tier).toBe("apprentice");
+    expect(roster[1].streak.currentStreak).toBe(1);
+  });
+
+  it("keeps each contributor's data isolated in the roster", () => {
+    for (let i = 0; i < 5; i++) {
+      saveContribution(contribution(`carol-${i}`, "carol"));
+    }
+    saveContribution(contribution("dave-0", "dave"));
+    saveDailyMissionResult({ contributorId: "carol", dayKey: "2026-08-16", isComplete: true });
+
+    const roster = buildUnlockStatusRoster("2026-08-16");
+    const dave = roster.find((status) => status.contributorId === "dave");
+
+    expect(dave?.streak.currentStreak).toBe(0);
+    expect(dave?.tier).toBe("novice");
   });
 });
