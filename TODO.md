@@ -38,7 +38,8 @@
   through these stores; not started. Verified from a clean install:
   `bun install`, `bun run typecheck` (11 packages, all pass), `bun run test`
   (87 files / 1135 tests, all pass), and `bun run build` all pass. No lint
-  script is configured in this repo.
+  script is configured in this repo. PR:
+  [#139](https://github.com/debate/debate-ai.com/pull/139).
 - **Gamified Quests — persisted end-of-day mission computation.**
   `packages/debate-card-search/src/state/dailyMissionResults.ts` adds
   `computeAndSavePersistedDailyMissionResult`, which computes a contributor's
