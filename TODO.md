@@ -6,6 +6,57 @@
 (none)
 
 ### Completed
+- **Online Debate Versus AI — round-setup + submission UI.**
+  `packages/debate-round/src/panels/AiVersusRoundsPanel.tsx` adds a
+  full-page React panel that lets a user pick a round ID, a `debate-timer`
+  timed format, and which side they're debating ("Which side are you?"),
+  then walks the full turn order from `ai-versus-speech-order.ts`'s
+  `buildAiVersusSpeechOrder` as a compact ordered list tagging each slot
+  "You"/"AI" with a delivered checkmark. On the user's turn, a textarea plus
+  Submit calls `validateSpeechSubmission` and, on success, appends the
+  speech to the round's `submittedSpeeches` via `saveAiVersusRound`; on the
+  AI's turn, `buildAiResponseRequest` is used only to show which slot/prior
+  speeches the AI would respond to (and whether it's cross-examination) —
+  its response is entered manually through its own textarea, with an
+  explicit note that follow-up (a), the real AI speech-generation call,
+  isn't wired up yet. A "Round complete" state shows once `getNextSpeechSlot`
+  returns `null`. It's mounted at `/versus-ai`
+  (`apps/debate-ai.com/app/versus-ai/page.tsx`, with a back-link to
+  `/debate`, following the same panel convention as `/word-count`/
+  `/coaching`) and reachable from the global nav dock's Settings menu
+  ("Debate vs AI", via a new `Bot`-icon `DropdownMenuItem` in
+  `CategoryDock.tsx`). Closes follow-up (b) named under idea #3 ("Online
+  Debate Versus AI") in Product Feature Ideas below — this is the
+  eighteenth "wire a persisted slice's UI into the actual web app"
+  follow-up closed in this repo. The panel adds one small helper rather
+  than new turn-order or persistence logic: `state/aiVersusRounds.ts`'s
+  `buildAiVersusRoundsPanelView`, which sorts every persisted round by
+  `roundId` for a stable display order (mirroring
+  `wordCountRounds.ts`'s `buildWordCountRoundsPanelView`); every other
+  field/action the panel uses (`buildAiVersusSpeechOrder`,
+  `getNextSpeechSlot`, `isUsersTurn`, `validateSpeechSubmission`,
+  `buildAiResponseRequest`, `saveAiVersusRound`, `getAiVersusRound`,
+  `deleteAiVersusRound`) already existed. No real AI call is made anywhere
+  in this panel, matching how every prior slice in this repo avoids
+  introducing new AI-calling logic. Vitest-covered in
+  `packages/debate-round/test/aiVersusRounds.test.ts` (empty view when
+  nothing is stored, sorted by `roundId`, and that the underlying stored
+  order is left untouched). Documented in
+  `docs/features/versus-ai-rounds.md` (mirroring
+  `docs/features/word-count-rounds.md`'s format) and in
+  `packages/debate-round/README.md`'s package-layout note and usage
+  example. Follow-up (a), an actual AI speech-generation call that
+  consumes `buildAiResponseRequest`'s output, remains open — not started.
+  Verified from a clean install: `bun install`, `bun run typecheck` (11
+  packages with a typecheck script all pass; `debate-ai-web` has no
+  separate typecheck script — types are checked as part of its build),
+  `bunx vitest run packages/debate-round/test/aiVersusRounds.test.ts`,
+  `bun run test`, and `bun run build:web` (production build, including the
+  new `/versus-ai` route) all pass. No lint script is configured in this
+  repo. PR: (opened by this run — see branch
+  `claude/practical-allen-ofe069`). The local dev server was not
+  smoke-tested in this sandbox (no reliable local browser workflow
+  available here).
 - **Word-Count-Only Speech Format — submission UI.**
   `packages/debate-round/src/panels/WordCountRoundsPanel.tsx` adds a
   full-page React panel that lets a user pick a round ID and `debate-timer`
@@ -2720,7 +2771,7 @@
 
 2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slices done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. A second slice, `wordCountRounds.ts` (see Tracker Status above, "Word-Count-Only Speech Format — persisted word-count round results"), now persists a round's chosen style and submitted speech text to localStorage. A third slice, `WordCountRoundsPanel` (see Tracker Status above, "Word-Count-Only Speech Format — submission UI"), now renders a submission form at `/word-count` with a live per-speech word-count readout, closing follow-up (a). Follow-up (b), extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode in the live round timer itself, remains open — not started._
 
-3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildAiVersusSpeechOrder`/`getNextSpeechSlot`/`isUsersTurn`/`validateSpeechSubmission`/`buildAiResponseRequest` for turning a `debate-timer` format + chosen side into an ordered, speaker-tagged turn sequence, validating a submitted speech against whose turn it is, and building a structured (non-AI-calling) request describing the AI's next speech. A second slice, `aiVersusRounds.ts` (see Tracker Status above, "Online Debate Versus AI — submitted-round persistence"), now persists a round's format, side, and submitted speeches to localStorage. Follow-ups: (a) an actual AI speech-generation call that consumes `buildAiResponseRequest`'s output (prior speeches + slot + cross-ex flag) to produce the AI's next speech text, (b) a round-setup + submission UI in `debate-round` that lets a user pick a format/side, type or record a speech, calls `validateSpeechSubmission`, and reads/writes through the persistence store. Neither of these are started._
+3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildAiVersusSpeechOrder`/`getNextSpeechSlot`/`isUsersTurn`/`validateSpeechSubmission`/`buildAiResponseRequest` for turning a `debate-timer` format + chosen side into an ordered, speaker-tagged turn sequence, validating a submitted speech against whose turn it is, and building a structured (non-AI-calling) request describing the AI's next speech. A second slice, `aiVersusRounds.ts` (see Tracker Status above, "Online Debate Versus AI — submitted-round persistence"), now persists a round's format, side, and submitted speeches to localStorage. A third slice, `AiVersusRoundsPanel` (see Tracker Status above, "Online Debate Versus AI — round-setup + submission UI"), now renders a round-setup + turn-by-turn submission form at `/versus-ai`, closing follow-up (b). Follow-up (a), an actual AI speech-generation call that consumes `buildAiResponseRequest`'s output (prior speeches + slot + cross-ex flag) to produce the AI's next speech text, remains open — not started._
 
 4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slice done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). Follow-ups: (a) an actual AI-panel call (multiple "counsel" model roles) that evaluates likely response paths and clash points beyond this deterministic heuristic, (b) a chart/panel UI in `debate-round` that renders `buildVulnerabilityChartData`/`summarizeOutcomeBySide`, (c) a "what if" mode that recomputes the score against a hypothetical strategic choice rather than only the flow's current state. None of these are started._
 

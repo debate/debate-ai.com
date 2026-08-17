@@ -10,6 +10,10 @@
  * `getNextSpeechSlot`/`isUsersTurn`/`validateSpeechSubmission`/
  * `buildAiResponseRequest` expect, so no separate counter field is stored.
  *
+ * `buildAiVersusRoundsPanelView` sorts the stored list by `roundId` for a
+ * stable panel display order, mirroring the same helper on
+ * `wordCountRounds.ts`/`coachingSessions.ts`.
+ *
  * @module state/aiVersusRounds
  */
 
@@ -67,4 +71,9 @@ export function saveAiVersusRound(record: AiVersusRoundRecord): void {
 /** Deletes a round's persisted state; a no-op if it isn't stored. */
 export function deleteAiVersusRound(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
+}
+
+/** Every persisted AI-versus round, sorted by `roundId` for a stable panel display order. */
+export function buildAiVersusRoundsPanelView(): AiVersusRoundRecord[] {
+  return [...readAll()].sort((a, b) => a.roundId.localeCompare(b.roundId));
 }

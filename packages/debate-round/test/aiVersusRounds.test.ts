@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildAiVersusRoundsPanelView,
   deleteAiVersusRound,
   getAiVersusRound,
   listAiVersusRounds,
@@ -105,5 +106,27 @@ describe("deleteAiVersusRound", () => {
     saveAiVersusRound(ROUND_B);
     deleteAiVersusRound("missing");
     expect(listAiVersusRounds()).toEqual([ROUND_B]);
+  });
+});
+
+describe("buildAiVersusRoundsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildAiVersusRoundsPanelView()).toEqual([]);
+  });
+
+  it("sorts every persisted round by roundId", () => {
+    saveAiVersusRound(ROUND_B);
+    saveAiVersusRound(ROUND_A);
+
+    expect(buildAiVersusRoundsPanelView()).toEqual([ROUND_A, ROUND_B]);
+  });
+
+  it("leaves the underlying stored order untouched", () => {
+    saveAiVersusRound(ROUND_B);
+    saveAiVersusRound(ROUND_A);
+
+    buildAiVersusRoundsPanelView();
+
+    expect(listAiVersusRounds()).toEqual([ROUND_B, ROUND_A]);
   });
 });

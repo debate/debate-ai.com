@@ -42,6 +42,13 @@ type a "Word-Count-Only Speech Format" round's speeches against a live
 word-count readout and renders every persisted `WordCountRoundRecord` — see
 [`docs/features/word-count-rounds.md`](../../docs/features/word-count-rounds.md).
 
+`AiVersusRoundsPanel` (also exported from the package root) lets a user set
+up an "Online Debate Versus AI" round (format + side), walk its turn order
+via `ai-versus-speech-order.ts`, and submit speeches — the user's own, plus
+the AI's entered manually until follow-up (a)'s real AI call exists — and
+renders every persisted `AiVersusRoundRecord` — see
+[`docs/features/versus-ai-rounds.md`](../../docs/features/versus-ai-rounds.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -58,7 +65,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel, WordCountRoundsPanel
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel, WordCountRoundsPanel, AiVersusRoundsPanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers
