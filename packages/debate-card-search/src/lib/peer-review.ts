@@ -131,6 +131,11 @@ export function rejectReview(review: CardReview): CardReview {
   return transitionReview(review, "rejected");
 }
 
+/** Sends a rejected card back to "draft" so its author can revise and resubmit it. */
+export function reviseRejectedReview(review: CardReview): CardReview {
+  return transitionReview(review, "draft");
+}
+
 /** Publishes an approved card, making it live. */
 export function publishReview(review: CardReview): CardReview {
   return transitionReview(review, "published");

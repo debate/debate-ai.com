@@ -6,6 +6,65 @@
 (none)
 
 ### Completed
+- **Peer Review System — review-queue/comment-thread UI panel.**
+  `packages/debate-card-search/src/panels/PeerReviewPanel.tsx` adds a full-page
+  React panel that renders every persisted `CardReview` (from `peerReviews.ts`)
+  grouped by status (statuses needing action first: in review, changes
+  requested, draft, approved, published, rejected) — each review showing a
+  status/comment-count summary, its full comment thread (reviewer, body,
+  severity, resolved state, with a "Resolve" action per unresolved comment),
+  a comment-composer, and whichever lifecycle action is legal from its
+  current status (Submit for review / Approve / Request changes / Reject /
+  Resubmit / Publish / Revise). A "Start review" box lets a teammate begin a
+  review for any card id, since no card-submission flow exists yet. It's
+  mounted at `/cards/reviews` (`apps/debate-ai.com/app/cards/reviews/page.tsx`,
+  mirroring the existing `/cards/leaderboard`/`/cards/revisions` pages'
+  back-link convention) and reachable from the global nav dock's Settings
+  menu ("Peer Review", via a new `ClipboardCheck`-icon `DropdownMenuItem` in
+  `CategoryDock.tsx`). Closes follow-up (a), "a review-queue/comment-thread
+  UI that reads/writes through this store," named under the "🗣️ Peer Review
+  System" bullet in Research Crowdsourcing Organizer Features below — this
+  is the twelfth "wire a persisted slice's UI into the actual web app"
+  follow-up closed in this repo. The panel adds one small new pure
+  transition to `lib/peer-review.ts` — `reviseRejectedReview` (rejected →
+  draft), the only transition in `ALLOWED_TRANSITIONS` that had no exported
+  function yet — plus a set of thin persisted-mutation wrappers in
+  `state/peerReviews.ts` (`submitPersistedReviewForReview`,
+  `requestPersistedReviewChanges`, `approvePersistedReview`,
+  `rejectPersistedReview`, `publishPersistedReview`,
+  `revisePersistedRejectedReview`, `addPersistedReviewComment`,
+  `resolvePersistedReviewComment`, and idempotent `startPersistedCardReview`)
+  that compose each pure transition directly against the persisted store and
+  save the result, mirroring `prepNotes.ts`'s
+  `updatePersistedPrepNoteStatus`/`assignPersistedPrepNote` "compose the pure
+  transition directly against the persisted store" convention, plus
+  `buildPeerReviewsPanelView`, which groups every persisted review by status
+  for the panel. `approvePersistedReview` still throws
+  `UnresolvedBlockingCommentsError` when a blocking comment is unresolved —
+  the panel avoids triggering it by disabling the Approve button rather than
+  swallowing the error. Vitest-covered in
+  `packages/debate-card-search/test/peer-review.test.ts` (the new
+  `reviseRejectedReview` transition and its illegal-source-status error) and
+  `packages/debate-card-search/test/peerReviews.test.ts` (every persisted
+  mutator transitions and persists correctly, returns `undefined` and leaves
+  storage untouched for an unknown `cardId`, `approvePersistedReview`
+  propagates `UnresolvedBlockingCommentsError` without persisting a change,
+  `startPersistedCardReview` is idempotent, and `buildPeerReviewsPanelView`
+  groups by status in the documented order). Documented in
+  `docs/features/peer-review.md` (mirroring
+  `docs/features/revision-incentives.md`'s format) and in
+  `packages/debate-card-search/README.md`'s `panels/` layout note and import
+  example. Follow-ups: (b) reviewer identity/permission checks (no
+  auth/roles exist yet), (c) wiring a review's lifecycle to whatever
+  eventually persists submitted cards, so `publishReview` can gate a card
+  actually going live. Neither of these is started. Verified from a clean
+  install: `bun install`, `bun run typecheck` (11 packages with a typecheck
+  script all pass; `debate-ai-web` has no separate typecheck script — types
+  are checked as part of its build), `bun run test` (87 files / 1193 tests,
+  all pass), and `bun run build:web` (production build, including the new
+  `/cards/reviews` route) all pass. No lint script is configured in this
+  repo. The local dev server was not smoke-tested in this sandbox (no
+  reliable local browser workflow available here).
 - **AI Coach Mode — coaching-panel UI.**
   `packages/debate-round/src/panels/CoachingSessionsPanel.tsx` adds a
   full-page React panel that renders every persisted `CoachingSessionRecord`
@@ -2542,7 +2601,7 @@
 * 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildContributorProgress`/`buildTopicProgress`/`buildResearchProgressBoard`/`buildProgressSummaryText` for combining a contributor's existing leaderboard contribution stats with per-topic task-completion counts derived from a topic-tagged research-task-routing assignment list, reusing the existing `ContributorStats`/`RoutedAssignment` types directly. Follow-ups: (a) wiring real task-completion events into a persisted assignment/completion history, (b) a progress dashboard/roster UI, (c) feeding a contributor's topic-progress history back into `progress-unlocks.ts`'s tier computation. None of these are started._
 * 📚 Common Argument Library - Organize all shared research into topic folders, case areas, and tag-based collections. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByTopic`/`groupCardsByCaseArea`/`buildTopicFolder`/`buildTopicFolders`/`buildTagCollections`/`filterCardsByTags`/`buildArgumentLibrary`/`buildLibrarySummaryText` for organizing a caller-supplied, tagged card list into topic folders (each split into case-area subgroups) and cross-cutting tag-based collections, extending the existing Topic Coverage Dashboard's `argBlock`-tagged card model with `topic`/`caseArea`/`tags`. Follow-ups: (a) wiring a `topic`/`caseArea`/`tags` field into wherever submitted cards are eventually persisted, (b) a folder/collection browser UI, (c) a tag-autocomplete/tag-management affordance. None of these are started._
 * 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByDay`/`pickBestCardOfDay`/`buildDailyBestCards`/`getBestCardForDay`/`buildDailyBestCardHighlight` for grouping timestamped card contributions by UTC submission day and picking each day's single highest-helpfulness card, reusing the existing `community-rating.ts` helpfulness scoring (a card's likes/saves already model the community "vote"). Follow-ups: (a) wiring a `submittedAt` timestamp into wherever card contributions are eventually persisted, (b) a scheduled job or view that persists/announces the day's winner, (c) a challenge banner/widget UI. None of these are started._
-* 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. A second slice, `peerReviews.ts` (see Tracker Status above), now persists `CardReview` records (including their `ReviewComment` thread) to localStorage, keyed by `cardId`. Follow-ups: (a) a review-queue/comment-thread UI that reads/writes through this store, (b) reviewer identity/permission checks once auth/roles exist, (c) wiring a review's lifecycle to whatever eventually persists submitted cards, so `publishReview` can gate a card actually going live. Two of these are not started._
+* 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`/`reviseRejectedReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. A second slice, `peerReviews.ts` (see Tracker Status above), now persists `CardReview` records (including their `ReviewComment` thread) to localStorage, keyed by `cardId`. A third slice, `PeerReviewPanel` (see Tracker Status above, "Peer Review System — review-queue/comment-thread UI panel"), now renders every persisted review as a status-grouped review queue with a full comment thread and lifecycle actions at `/cards/reviews`, closing follow-up (a). Follow-ups: (b) reviewer identity/permission checks once auth/roles exist, (c) wiring a review's lifecycle to whatever eventually persists submitted cards, so `publishReview` can gate a card actually going live. Neither of these is started._
 * 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopContributorAwards`/`buildCategoryLeaderboard`/`groupContributionsByKind`/`buildAwardsAnnouncementText` for grouping contributor-attributed contributions by `ContributionKind` and selecting a per-kind category winner by helpfulness score, reusing the existing idea #11/Contribution Leaderboard scoring. Follow-ups: (a) a finer-grained kind/tag for "original argument" and "refutation" contributions, neither of which exists as a distinct kind today, (b) a scheduled job to persist/announce winners, (c) an awards UI. None of these are started._
 * 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now derives each contributor's skill level from their contribution history (via the Progress Unlocks tier logic) instead of requiring a caller-supplied value. A third slice, `contributorAvailability.ts` (see Tracker Status above, "Research Task Routing — persisted contributor-availability profiles"), now persists a contributor's `ContributorAvailability` to localStorage. A fourth slice (see Tracker Status above, "Research Task Routing — persisted routed task queue"), now persists a routed `RoutingResult`/task queue to localStorage, closing follow-up (b). A fifth slice (see Tracker Status above, "Research Task Routing — persisted activeTaskCount assignment/completion events") now wires real task-assignment/completion events (`buildAndPersistRoutingResult`/`completePersistedRoutedTask`) into a persisted profile's `activeTaskCount`, closing follow-up (a). A sixth slice, `TaskInboxPanel` (see Tracker Status above, "Research Task Routing — task-assignment/inbox UI"), now renders every persisted routed task queue at `/cards/inbox` with a "mark complete" action, closing follow-up (c). Follow-ups: (d) a task-routing trigger UI to actually populate a topic's queue, (e) scoping the inbox to "my tasks" once contributor identity/auth exists. Neither of these is started._
 * 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. A second slice, `revisionHistory.ts` (see Tracker Status above, "Revision Incentives — persisted revision history"), now persists `CardRevision` edit events (as many-per-card `CardRevisionRecord`s) to localStorage. A third slice, `RevisionIncentivesPanel` (see Tracker Status above, "Revision Incentives — incentives-leaderboard UI panel"), now renders a ranked reward-points leaderboard at `/cards/revisions`, closing follow-up (b). Follow-ups: (a) wiring an actual card-edit/save flow to call `saveRevisionRecord` with a before/after snapshot, (c) an actual evidence-staleness signal instead of only rewarding a refresh after the fact. Neither of these is started._
