@@ -38,7 +38,8 @@
   store via `buildRevisionIncentiveLeaderboard`. Neither of these is
   started. Verified from a clean install: `bun run typecheck` (12 packages,
   all pass), `bun run test` (85 files / 1076 tests, all pass), and
-  `bun run build` all pass.
+  `bun run build` all pass. PR:
+  [#131](https://github.com/debate/debate-ai.com/pull/131).
 - **Expandable Heading Structure — collapsed-heading persistence.**
   `packages/reason-editor/src/state/collapsedHeadings.ts` adds a
   localStorage-backed CRUD store (`listCollapsedHeadingSelections`/
