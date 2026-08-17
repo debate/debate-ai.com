@@ -6,6 +6,54 @@
 (none)
 
 ### Completed
+- **AI Judge Decision Modes — paradigm-picker UI.**
+  `packages/debate-speech-writer/src/panels/JudgeParadigmPickerPanel.tsx`
+  adds a full-page React panel with a form to save a round's AI judge
+  paradigm — one of the six built-in paradigms from `judge/judge-paradigms.ts`
+  (Flow, Lay, Policymaker, Kritikal, Educator, Truth Over Tech), each shown
+  with its name and description as a radio choice, or a "Custom judge
+  paradigm" option that reveals a judge-name + preferences-notes form built
+  through the existing `buildCustomJudgeParadigm` — plus a list of every
+  round with a saved `JudgeParadigmSelection`, sorted by `roundId`, each with
+  a "Clear" action. It's mounted at `/paradigms`
+  (`apps/debate-ai.com/app/paradigms/page.tsx`, with a back-link to
+  `/debate`, following the same panel convention as `/judges`/`/coaching`)
+  and reachable from the global nav dock's Settings menu ("Judge Paradigm
+  Picker", via a new `Scale`-icon `DropdownMenuItem` in `CategoryDock.tsx`).
+  Closes follow-up (b), "a paradigm-picker UI for selecting a built-in
+  paradigm or entering a custom judge's notes that reads/writes through the
+  persistence store," named under idea #5 ("AI Judge Decision Modes") in
+  Product Feature Ideas below — this is the twelfth "wire a persisted
+  slice's UI into the actual web app" follow-up closed in this repo, after
+  the Contribution Leaderboard, Task Inbox, Progress Unlocks, Evidence
+  Library, Prep Notes, Revision Incentives, Judge Profiles, Opponent Team
+  Profiles, Practice Drills, Pre-Round Briefings, and AI Coach Mode panels.
+  The panel adds one small helper to `state/judgeParadigmSelections.ts` —
+  `buildJudgeParadigmSelectionsPanelView`, which sorts every persisted
+  selection by `roundId` for a stable display order — introducing no new
+  paradigm-selection or resolution logic; every field the panel saves
+  already existed on `judge-paradigms.ts`'s `listJudgeParadigms`/
+  `buildCustomJudgeParadigm` output, and every save/clear action calls the
+  already-persisted `saveJudgeParadigmSelection`/`deleteJudgeParadigmSelection`
+  directly. Vitest-covered in
+  `packages/debate-speech-writer/test/judgeParadigmSelections.test.ts` (empty
+  view when nothing is stored, sorted by `roundId`, and that the sort
+  doesn't mutate the underlying stored order). Documented in
+  `docs/features/judge-paradigm-selections.md` (mirroring
+  `docs/features/judge-profiles.md`'s format) and in
+  `packages/debate-speech-writer/README.md`'s package-layout note and usage
+  example. Follow-up (a), an actual AI judge-decision call that uses
+  `buildJudgeParadigmPrompt`'s output instead of (or alongside) the existing
+  static `judgeDecisionPrompt`, remains open — not started. Verified from a
+  clean install: `bun install`, `bun run typecheck` (11 packages with a
+  typecheck script all pass; `debate-ai-web` has no separate typecheck
+  script — types are checked as part of its build), `bun run test` (87
+  files / 1178 tests, all pass), and `bun run build:web` (production build,
+  including the new `/paradigms` route) all pass. No lint script is
+  configured in this repo. PR:
+  [#152](https://github.com/debate/debate-ai.com/pull/152). The local dev
+  server was not smoke-tested in this sandbox (no reliable local browser
+  workflow available here).
 - **AI Coach Mode — coaching-panel UI.**
   `packages/debate-round/src/panels/CoachingSessionsPanel.tsx` adds a
   full-page React panel that renders every persisted `CoachingSessionRecord`
@@ -2506,7 +2554,7 @@
 
 4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slice done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). Follow-ups: (a) an actual AI-panel call (multiple "counsel" model roles) that evaluates likely response paths and clash points beyond this deterministic heuristic, (b) a chart/panel UI in `debate-round` that renders `buildVulnerabilityChartData`/`summarizeOutcomeBySide`, (c) a "what if" mode that recomputes the score against a hypothetical strategic choice rather than only the flow's current state. None of these are started._
 
-5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. Follow-ups: (a) an AI judge-decision call that uses `buildJudgeParadigmPrompt` output instead of (or alongside) the existing static `judgeDecisionPrompt`, (b) a paradigm-picker UI for selecting a built-in paradigm or entering a custom judge's notes that reads/writes through the persistence store. None of these are started._
+5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. A third slice, `JudgeParadigmPickerPanel` (see Tracker Status above, "AI Judge Decision Modes — paradigm-picker UI"), now renders a picker UI at `/paradigms` for saving a round's built-in or custom paradigm, closing follow-up (b). Follow-up (a), an AI judge-decision call that uses `buildJudgeParadigmPrompt` output instead of (or alongside) the existing static `judgeDecisionPrompt`, remains open — not started._
 
 6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slices done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. A second slice, `flowSummaries.ts` (see Tracker Status above, "Speech Transcript Summaries and Answers — flow-summary persistence"), now persists a round's derived `FlowRowSummary[]` to localStorage. Follow-ups: (a) audio/video transcription plus an AI call to extract claims/warrants/impacts/evidence from raw speech text rather than relying on a manually flowed grid, (b) a summary/cross-ex panel UI in `debate-round` that renders `buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for the selected speech and reads/writes through the persistence store. Neither of these is started._
 

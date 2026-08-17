@@ -107,12 +107,15 @@ export {
 } from "./state/coachMaterials";
 
 export {
+  buildJudgeParadigmSelectionsPanelView,
   deleteJudgeParadigmSelection,
   getJudgeParadigmSelection,
   listJudgeParadigmSelections,
   saveJudgeParadigmSelection,
 } from "./state/judgeParadigmSelections";
 export type { JudgeParadigmSelection } from "./state/judgeParadigmSelections";
+
+export { JudgeParadigmPickerPanel } from "./panels/JudgeParadigmPickerPanel";
 
 export { findFlawsPrompt } from "./prompts/quote-to-find-flaws";
 export { judgeDecisionPrompt } from "./prompts/judge-decision-options";
