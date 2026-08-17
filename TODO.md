@@ -55,9 +55,9 @@
   typecheck` (11 packages with a typecheck script all pass), `bun run test`
   (90 files / 1243 tests, all pass), and `bun run build:web` (production
   build, including the new `/outcomes` route) all pass. No lint script is
-  configured in this repo. PR: TBD. The local dev server was not
-  smoke-tested in this sandbox (no reliable local browser workflow
-  available here).
+  configured in this repo. PR: [#169](https://github.com/debate/debate-ai.com/pull/169).
+  The local dev server was not smoke-tested in this sandbox (no reliable
+  local browser workflow available here).
 - **CX NDCA Standings — standings dashboard UI.**
   `packages/debate-round/src/panels/StandingsPanel.tsx` adds a full-page
   React panel that lets a user record a team's tournament result
