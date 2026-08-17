@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildWordCountRoundsPanelView,
   deleteWordCountRound,
   getWordCountRound,
   getWordCountRoundStatuses,
@@ -130,5 +131,27 @@ describe("getWordCountRoundStatuses", () => {
     });
 
     expect(getWordCountRoundStatuses("round-3")).toEqual([]);
+  });
+});
+
+describe("buildWordCountRoundsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildWordCountRoundsPanelView()).toEqual([]);
+  });
+
+  it("sorts every persisted round by roundId", () => {
+    saveWordCountRound(ROUND_B);
+    saveWordCountRound(ROUND_A);
+
+    expect(buildWordCountRoundsPanelView()).toEqual([ROUND_A, ROUND_B]);
+  });
+
+  it("leaves the underlying stored order untouched", () => {
+    saveWordCountRound(ROUND_B);
+    saveWordCountRound(ROUND_A);
+
+    buildWordCountRoundsPanelView();
+
+    expect(listWordCountRounds()).toEqual([ROUND_B, ROUND_A]);
   });
 });
