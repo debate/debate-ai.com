@@ -12,6 +12,11 @@ import { DebateFlowPage, useFlowStore } from "debate-round"
 persisted "Strategy Sync Notes" `PrepNote` grouped by status — see
 [`docs/features/prep-notes.md`](../../docs/features/prep-notes.md).
 
+`OpponentTeamProfilesPanel` (also exported from the package root) renders
+every persisted `debate-data-sync` `OpponentTeamProfile` as a scouting
+roster — see
+[`docs/features/opponent-team-profiles.md`](../../docs/features/opponent-team-profiles.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -28,7 +33,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers
