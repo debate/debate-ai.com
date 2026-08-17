@@ -64,6 +64,16 @@ export type {
   CollapsedRange,
 } from './outline/heading-outline.js';
 
+// Collapsed-heading persistence — stores which heading ids a document has
+// collapsed, so a nav panel can restore collapse state across sessions.
+export {
+  listCollapsedHeadingSelections,
+  getCollapsedHeadingSelection,
+  saveCollapsedHeadingSelection,
+  deleteCollapsedHeadingSelection,
+} from '../state/collapsedHeadings.js';
+export type { CollapsedHeadingSelection } from '../state/collapsedHeadings.js';
+
 // Comment thread model — surfaced so the React shell and host app can
 // read/write comment threads alongside the document.
 export type {
