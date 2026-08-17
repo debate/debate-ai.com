@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildReviewQueuePanelView,
   deletePeerReview,
   getPeerReview,
   listPeerReviews,
@@ -97,5 +98,26 @@ describe("deletePeerReview", () => {
     savePeerReview(IN_REVIEW_REVIEW);
     deletePeerReview("missing");
     expect(listPeerReviews()).toEqual([IN_REVIEW_REVIEW]);
+  });
+});
+
+describe("buildReviewQueuePanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildReviewQueuePanelView()).toEqual([]);
+  });
+
+  it("sorts every persisted review by cardId, regardless of save order", () => {
+    savePeerReview(IN_REVIEW_REVIEW);
+    savePeerReview(DRAFT_REVIEW);
+
+    expect(buildReviewQueuePanelView()).toEqual([DRAFT_REVIEW, IN_REVIEW_REVIEW]);
+  });
+
+  it("leaves the underlying stored order untouched", () => {
+    savePeerReview(IN_REVIEW_REVIEW);
+    savePeerReview(DRAFT_REVIEW);
+    buildReviewQueuePanelView();
+
+    expect(listPeerReviews()).toEqual([IN_REVIEW_REVIEW, DRAFT_REVIEW]);
   });
 });
