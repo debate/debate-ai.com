@@ -42,7 +42,8 @@
   are checked as part of its build), `bun run test` (87 files / 1175 tests,
   all pass), and `bun run build:web` (production build, including the new
   `/coaching` route) all pass. No lint script is configured in this repo.
-  The local dev server was not smoke-tested in this sandbox (no reliable
+  PR: [#151](https://github.com/debate/debate-ai.com/pull/151). The local
+  dev server was not smoke-tested in this sandbox (no reliable
   local browser workflow available here).
 - **Pre-Round Intelligence Panel — briefing-panel UI.**
   `packages/debate-round/src/panels/PreRoundBriefingsPanel.tsx` adds a
