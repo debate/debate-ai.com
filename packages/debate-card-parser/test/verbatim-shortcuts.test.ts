@@ -139,6 +139,25 @@ describe("moveOutlineNode", () => {
     expect(moveOutlineNode(outline, -1, "up")).toBe(outline);
     expect(moveOutlineNode(outline, outline.length, "down")).toBe(outline);
   });
+
+  it("is generic — works against a caller's own outline-shaped entries", () => {
+    // e.g. reason-editor's live-document `OutlineHeading`, which has no
+    // relation to this module's `Card`/`OutlineItem` types.
+    interface HeadingLike {
+      id: string;
+      level: number;
+    }
+    const headings: HeadingLike[] = [
+      { id: "a", level: 1 },
+      { id: "b", level: 2 },
+      { id: "c", level: 2 },
+    ];
+    expect(moveOutlineNode(headings, 1, "down")).toEqual([
+      { id: "a", level: 1 },
+      { id: "c", level: 2 },
+      { id: "b", level: 2 },
+    ]);
+  });
 });
 
 describe("toggleEmphasisHtml", () => {

@@ -95,3 +95,19 @@ export type {
 } from './comments-plugin.js';
 
 export { normalizeUnderlineMarks } from './named-style-normalizer-plugin.js';
+
+// Verbatim/Cardmirror compatibility shortcuts — condense-to-read-text and
+// short-cite insertion, reusing `debate-card-parser`'s pure helpers
+// against a live editor selection/document.
+export {
+  applyCondenseToHtml,
+  buildInsertShortCiteTransaction,
+} from './verbatim-shortcuts.js';
+
+// Move-heading-section command — reorders a heading's whole section
+// (heading through the next heading) up or down, reusing
+// `debate-card-parser`'s generic `moveOutlineNode` to validate the swap.
+export {
+  buildMoveHeadingSectionTransaction,
+  findHeadingAtPos,
+} from './outline/heading-move.js';
