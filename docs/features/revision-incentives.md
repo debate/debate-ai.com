@@ -26,6 +26,11 @@ quality scoring.
 ## Data flow
 
 ```
+panels/EvidenceLibraryPanel.tsx (Edit action, /cards/library)
+  → saveEvidenceLibraryEntryRevision(entry, contributorId) — state/evidenceLibraryEntries.ts
+      → buildEvidenceEntryRevision(before, after, contributorId) — lib/shared-evidence-library.ts (pure)
+          → deriveCardSnapshotFromEntry(entry) — lib/shared-evidence-library.ts (pure)
+      → saveRevisionRecord(record)         — state/revisionHistory.ts (localStorage)
 state/revisionHistory.ts (localStorage)
   → buildPersistedRevisionIncentiveLeaderboard()   — lib/revision-incentives.ts
   → panels/RevisionIncentivesPanel.tsx (renders the table)
@@ -38,9 +43,14 @@ read-only composition and rendering layer over that store — it introduces one 
 `buildRevisionIncentiveLeaderboard` directly against the persisted revision-history store (see
 `packages/debate-card-search/test/revisionHistory.test.ts`).
 
+The Shared Evidence Library's Edit action (see
+[`evidence-library.md`](./evidence-library.md)) is the real card-edit/save flow: editing an
+existing `EvidenceLibraryEntry` derives a before/after `CardSnapshot` pair via
+`deriveCardSnapshotFromEntry` (reusing `llm-card-scoring.ts`'s `scoreClarity`/`scoreUsability` for
+`qualitySignals`, and a parsed citation year for `evidenceYear`/`citationCompleteness`) and records
+it as a `CardRevisionRecord`, so this leaderboard now reflects real edits rather than only
+caller-supplied snapshots.
+
 ## Known gaps
 
-- No real card-edit/save flow exists yet — the store only has whatever a caller (or, currently,
-  nothing in the UI) calls `saveRevisionRecord` with. The leaderboard is empty until revisions
-  are persisted some other way (e.g. via a future card-editing flow).
 - No evidence-staleness signal beyond rewarding a refresh after the fact.

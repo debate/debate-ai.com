@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildEvidenceEntryRevision,
   buildEvidenceLibraryIndex,
   buildEvidenceSearchSummaryText,
   computeWordCount,
+  deriveCardSnapshotFromEntry,
   findEntriesByCite,
   searchEvidenceLibrary,
   type EvidenceLibraryEntry,
 } from "../src/lib/shared-evidence-library";
+import { evaluateRevision } from "../src/lib/revision-incentives";
 
 const entries: EvidenceLibraryEntry[] = [
   {
@@ -164,5 +167,86 @@ describe("buildEvidenceSearchSummaryText", () => {
     expect(buildEvidenceSearchSummaryText(searchEvidenceLibrary(entries, query), query)).toBe(
       '2 results for "warming"',
     );
+  });
+});
+
+function entry(overrides: Partial<EvidenceLibraryEntry> = {}): EvidenceLibraryEntry {
+  return {
+    id: "entry-1",
+    argBlock: "Warming DA",
+    wordCount: 0,
+    topic: "Energy",
+    caseArea: "DA",
+    tags: [],
+    kind: "card",
+    text: "Rising global temperatures accelerate extreme weather and sea level rise across every coastal region studied.",
+    cite: "",
+    ...overrides,
+  };
+}
+
+describe("deriveCardSnapshotFromEntry", () => {
+  it("parses a 4-digit year out of the citation as evidenceYear, with full citationCompleteness", () => {
+    const snapshot = deriveCardSnapshotFromEntry(entry({ cite: "Smith 2024" }));
+    expect(snapshot.evidenceYear).toBe(2024);
+    expect(snapshot.citationCompleteness).toBe(1);
+  });
+
+  it("gives partial citationCompleteness and no evidenceYear for a non-blank citation without a year", () => {
+    const snapshot = deriveCardSnapshotFromEntry(entry({ cite: "Smith ND" }));
+    expect(snapshot.evidenceYear).toBe(0);
+    expect(snapshot.citationCompleteness).toBe(0.5);
+  });
+
+  it("gives zero citationCompleteness for a blank citation", () => {
+    const snapshot = deriveCardSnapshotFromEntry(entry({ cite: "" }));
+    expect(snapshot.evidenceYear).toBe(0);
+    expect(snapshot.citationCompleteness).toBe(0);
+  });
+
+  it("stamps wordCount from the entry's text via computeWordCount", () => {
+    const text = "Short two-sentence card. Second sentence here.";
+    const snapshot = deriveCardSnapshotFromEntry(entry({ text }));
+    expect(snapshot.wordCount).toBe(computeWordCount(text));
+  });
+
+  it("derives two 0-1 qualitySignals from the entry's text", () => {
+    const snapshot = deriveCardSnapshotFromEntry(entry());
+    expect(snapshot.qualitySignals).toHaveLength(2);
+    for (const signal of snapshot.qualitySignals) {
+      expect(signal).toBeGreaterThanOrEqual(0);
+      expect(signal).toBeLessThanOrEqual(1);
+    }
+  });
+});
+
+describe("buildEvidenceEntryRevision", () => {
+  it("builds a CardRevision keyed by the after entry's id and the given contributor", () => {
+    const before = entry({ id: "card-9", cite: "" });
+    const after = entry({ id: "card-9", cite: "Smith 2024" });
+
+    const revision = buildEvidenceEntryRevision(before, after, "alice");
+    expect(revision.cardId).toBe("card-9");
+    expect(revision.contributorId).toBe("alice");
+    expect(revision.before).toEqual(deriveCardSnapshotFromEntry(before));
+    expect(revision.after).toEqual(deriveCardSnapshotFromEntry(after));
+  });
+
+  it("scores a real edit that adds a dated citation as a rewarded citation-strengthening/evidence-refresh", () => {
+    const before = entry({ cite: "" });
+    const after = entry({ cite: "Smith 2024" });
+
+    const evaluation = evaluateRevision(buildEvidenceEntryRevision(before, after, "alice"));
+    expect(evaluation.citationStrengthened).toBe(true);
+    expect(evaluation.evidenceRefreshed).toBe(true);
+    expect(evaluation.isRewardedImprovement).toBe(true);
+  });
+
+  it("scores an edit with no meaningful change as unrewarded", () => {
+    const before = entry();
+    const after = entry();
+
+    const evaluation = evaluateRevision(buildEvidenceEntryRevision(before, after, "alice"));
+    expect(evaluation.isRewardedImprovement).toBe(false);
   });
 });

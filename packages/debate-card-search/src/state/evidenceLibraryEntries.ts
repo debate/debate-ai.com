@@ -14,9 +14,10 @@
  */
 
 import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult } from "../lib/shared-evidence-library";
-import { searchEvidenceLibrary } from "../lib/shared-evidence-library";
+import { buildEvidenceEntryRevision, searchEvidenceLibrary } from "../lib/shared-evidence-library";
 import type { ArgumentLibrary } from "../lib/argument-library";
 import { buildArgumentLibrary } from "../lib/argument-library";
+import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
 
 const STORAGE_KEY = "evidenceLibraryEntries";
 
@@ -62,6 +63,31 @@ export function saveEvidenceLibraryEntry(entry: EvidenceLibraryEntry): void {
 /** Deletes a persisted evidence library entry by id; a no-op if it isn't stored. */
 export function deleteEvidenceLibraryEntry(id: string): void {
   writeAll(readAll().filter((entry) => entry.id !== id));
+}
+
+/**
+ * Saves an edited evidence-library entry and, when it overwrites an existing
+ * entry (not a brand-new submission), records the edit as a
+ * `CardRevisionRecord` — the "(a) wiring an actual card-edit/save flow to
+ * call `saveRevisionRecord` with a before/after snapshot" follow-up named
+ * under the "Revision Incentives" bullet in TODO.md. Composes
+ * `shared-evidence-library.ts`'s pure `buildEvidenceEntryRevision` directly
+ * against this store's own before/after entries, so the Revision Incentives
+ * leaderboard now reflects real edits instead of only caller-supplied
+ * snapshots.
+ */
+export function saveEvidenceLibraryEntryRevision(entry: EvidenceLibraryEntry, contributorId: string): void {
+  const previous = getEvidenceLibraryEntry(entry.id);
+  saveEvidenceLibraryEntry(entry);
+  if (!previous) return;
+
+  const revision = buildEvidenceEntryRevision(previous, entry, contributorId);
+  const record: CardRevisionRecord = {
+    ...revision,
+    id: `${entry.id}-${contributorId}-${Date.now()}`,
+    revisedAt: new Date().toISOString(),
+  };
+  saveRevisionRecord(record);
 }
 
 /** Searches the persisted evidence repository, reusing `searchEvidenceLibrary` directly. */
