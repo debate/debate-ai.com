@@ -4,6 +4,40 @@
 ### In progress
 
 ### Completed
+- **Online Debate Versus AI — real AI speech-generation call.**
+  [PR #189](https://github.com/debate/debate-ai.com/pull/189).
+  Closes follow-up (a) under idea #3 ("Online Debate Versus AI") — "an
+  actual AI speech-generation call that consumes `buildAiResponseRequest`'s
+  output (prior speeches + slot + cross-ex flag) to produce the AI's next
+  speech text." A new
+  `packages/debate-round/src/round/ai-versus-speech-ai.ts` adds
+  `AI_VERSUS_SPEECH_SYSTEM_PROMPT` and pure, Vitest-testable
+  `buildAiVersusSpeechUserPrompt`/`parseAiVersusSpeechResponse` helpers —
+  the prompt lists the slot being delivered, its time limit, whether it's
+  a cross-examination turn, and every prior speech tagged "you"/"opponent";
+  the parser strips a wrapping markdown code fence or a single layer of
+  wrapping double quotes and returns `null` (never throws) on an empty
+  reply. `round/ai-versus-speech-client.ts` adds `requestAiVersusSpeech`,
+  a small self-contained `fetch` client (mirroring
+  `lib/llm-card-scoring-client.ts`'s split) that POSTs to the existing
+  `/api/reason-ai` Anthropic proxy. `AiVersusRoundPanel.tsx` gained a
+  "Generate AI speech" button on the AI's turn, which builds the request
+  from the already-existing `buildAiResponseRequest` and saves the
+  returned text through the already-persisted `state/aiVersusRounds.ts`,
+  replacing the prior "AI turns block further submission" placeholder
+  message. No turn-order or persistence logic changed. Vitest-covered in
+  `packages/debate-round/test/ai-versus-speech-ai.test.ts` (prompt
+  building + tolerant parsing) and
+  `packages/debate-round/test/ai-versus-speech-client.test.ts` (the
+  `fetch` client, with `fetch` mocked via `vi.stubGlobal`, covering the
+  success path, an endpoint override, a server error message, a non-JSON
+  error body, and an empty/unparseable AI reply). Documented in
+  `docs/features/ai-versus-rounds.md`. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
+  Verified: `bun install` (2050 packages), `bun run test` (100 files /
+  1415 tests, all pass), `bun run typecheck` (11 of 12 in-scope packages
+  have a typecheck script; all pass), and `bun run build:web`
+  (`debate-ai-web`, succeeds, `/versus-ai` route present) all pass.
 - **Daily Quests and Targets — quest-board widget UI + real contribution wiring.**
   [PR #188](https://github.com/debate/debate-ai.com/pull/188).
   Closes follow-ups (a) and (b) under the "🎯 Daily Quests and Targets"
