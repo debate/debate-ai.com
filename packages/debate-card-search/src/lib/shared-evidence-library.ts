@@ -18,7 +18,8 @@
  */
 
 import { buildArgumentLibrary, filterCardsByTags, type ArgumentLibrary, type LibraryCard } from "./argument-library";
-import { scoreRelevance } from "./llm-card-scoring";
+import { scoreClarity, scoreRelevance, scoreUsability } from "./llm-card-scoring";
+import { computeEvidenceStaleness, type CardRevision, type CardSnapshot, type EvidenceStalenessSignal } from "./revision-incentives";
 
 /** Whether a repository entry is a cut/tagged evidence card or a team-drafted reusable analytic block. */
 export type EvidenceEntryKind = "card" | "block";
@@ -134,6 +135,81 @@ export function findEntriesByCite(entries: EvidenceLibraryEntry[], cite: string)
  */
 export function buildEvidenceLibraryIndex(entries: EvidenceLibraryEntry[]): ArgumentLibrary {
   return buildArgumentLibrary(entries);
+}
+
+/** A 4-digit year (1900s or 2000s) found anywhere in a citation string, e.g. "24" in "Smith 24". */
+const CITE_YEAR_RE = /\b(19|20)\d{2}\b/;
+
+/**
+ * Derives a Revision Incentives `CardSnapshot` from an evidence-library
+ * entry, so an edit to a real `EvidenceLibraryEntry` can be scored by
+ * `lib/revision-incentives.ts` without asking the editor to separately rate
+ * the card. Reuses the existing `llm-card-scoring.ts` deterministic
+ * heuristics directly rather than inventing new scoring logic:
+ * - `qualitySignals` is `[scoreClarity, scoreUsability]` (each rescaled from
+ *   0-100 to the 0-1 signal scale `scoreQualitySignal` expects).
+ * - `citationCompleteness` is `0` with no citation, `1` when the citation
+ *   contains a parseable 4-digit year (e.g. "Smith 24" does not, "Smith
+ *   2024" does — "ND" citations reflect that there's no date to cite), and
+ *   `0.5` for any other non-blank citation.
+ * - `evidenceYear` is the parsed year, or `0` when none is found — so citing
+ *   a dated source for the first time still counts as refreshing evidence
+ *   relative to an undated "before" snapshot.
+ */
+export function deriveCardSnapshotFromEntry(entry: EvidenceLibraryEntry): CardSnapshot {
+  const wordCount = computeWordCount(entry.text);
+  const cite = entry.cite.trim();
+  const yearMatch = cite.match(CITE_YEAR_RE);
+  const evidenceYear = yearMatch ? Number.parseInt(yearMatch[0], 10) : 0;
+
+  return {
+    qualitySignals: [scoreClarity(entry.text) / 100, scoreUsability(wordCount) / 100],
+    citationCompleteness: cite.length === 0 ? 0 : evidenceYear > 0 ? 1 : 0.5,
+    evidenceYear,
+    wordCount,
+  };
+}
+
+/**
+ * Builds a `CardRevision` from an evidence-library entry's before/after
+ * state, composing `deriveCardSnapshotFromEntry` on each side so a real
+ * edit — not a caller-supplied snapshot pair — can feed
+ * `lib/revision-incentives.ts`'s scoring directly.
+ */
+export function buildEvidenceEntryRevision(
+  before: EvidenceLibraryEntry,
+  after: EvidenceLibraryEntry,
+  contributorId: string,
+): CardRevision {
+  return {
+    cardId: after.id,
+    contributorId,
+    before: deriveCardSnapshotFromEntry(before),
+    after: deriveCardSnapshotFromEntry(after),
+  };
+}
+
+/**
+ * Flags whether an evidence-library entry's cited evidence is stale as of
+ * `currentYear`, composing `deriveCardSnapshotFromEntry`'s parsed
+ * `evidenceYear` directly with `revision-incentives.ts`'s
+ * `computeEvidenceStaleness` — so a reusable analytic `block` (no `cite`,
+ * `evidenceYear` always 0) is flagged stale the same way an undated card
+ * would be.
+ */
+export function getEvidenceStaleness(entry: EvidenceLibraryEntry, currentYear: number): EvidenceStalenessSignal {
+  return computeEvidenceStaleness(deriveCardSnapshotFromEntry(entry).evidenceYear, currentYear);
+}
+
+/**
+ * Filters a list of evidence-library entries down to `card` entries (a
+ * reusable analytic `block` never cites outside evidence, so staleness
+ * doesn't apply to it) whose cited evidence is stale as of `currentYear`,
+ * preserving input order — the proactive counterpart to
+ * `revision-incentives.ts` only rewarding a refresh after it happens.
+ */
+export function getStaleEvidenceEntries(entries: EvidenceLibraryEntry[], currentYear: number): EvidenceLibraryEntry[] {
+  return entries.filter((entry) => entry.kind === "card" && getEvidenceStaleness(entry, currentYear).isStale);
 }
 
 /** Renders a short summary line for a search results panel. */

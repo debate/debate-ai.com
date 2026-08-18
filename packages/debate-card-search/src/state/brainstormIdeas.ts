@@ -19,10 +19,23 @@
  * `groupIdeasByBoard`/`buildBrainstormBoard` rather than reimplementing
  * grouping or ranking here.
  *
+ * `buildBrainstormBoardsPanelViewForTopic` closes the "boards aren't seeded
+ * from the coverage-gap prompts" gap noted in
+ * `docs/features/brainstorm-board.md` — it composes a topic's persisted
+ * coverage report (`state/trackedArguments.ts`'s
+ * `buildPersistedTopicCoverageReport`) with the pure
+ * `team-brainstorm-assist.ts` `buildBrainstormBoardsForCoverageGaps` to
+ * produce one board per under-covered tracked argument/category pair (with
+ * its seeding prompt visible even before anyone has submitted an idea),
+ * merged with every other board that already has at least one submitted
+ * idea, so a coverage-gap board that later gets ideas keeps showing them
+ * and a non-coverage-gap board with ideas still appears.
+ *
  * @module state/brainstormIdeas
  */
 
-import { buildBrainstormBoard, groupIdeasByBoard, type BrainstormBoard, type BrainstormIdea } from "../lib/team-brainstorm-assist";
+import { buildBrainstormBoard, buildBrainstormBoardsForCoverageGaps, groupIdeasByBoard, type BrainstormBoard, type BrainstormIdea } from "../lib/team-brainstorm-assist";
+import { buildPersistedTopicCoverageReport } from "./trackedArguments";
 
 const STORAGE_KEY = "brainstormIdeas";
 
@@ -81,6 +94,29 @@ export function buildBrainstormBoardsPanelView(): BrainstormBoard[] {
   return Array.from(byBoard.values())
     .map((boardIdeas) => buildBrainstormBoard(boardIdeas[0].argBlock, boardIdeas[0].category, ideas))
     .sort((a, b) => a.argBlock.localeCompare(b.argBlock) || a.category.localeCompare(b.category));
+}
+
+/**
+ * Builds a topic's brainstorm boards seeded from its coverage gaps: one
+ * board per under-covered tracked argument/category pair (via
+ * `buildPersistedTopicCoverageReport` + `buildBrainstormBoardsForCoverageGaps`),
+ * each populated with whatever ideas have already been submitted for it,
+ * merged with every other persisted board that has at least one submitted
+ * idea but isn't itself a coverage-gap seed. Sorted by argBlock then
+ * category for a stable panel display order, same as
+ * `buildBrainstormBoardsPanelView`.
+ */
+export function buildBrainstormBoardsPanelViewForTopic(topic: string): BrainstormBoard[] {
+  const ideas = readAll();
+  const report = buildPersistedTopicCoverageReport(topic);
+  const seededBoards = buildBrainstormBoardsForCoverageGaps(report, ideas);
+  const seededKeys = new Set(seededBoards.map((board) => `${board.argBlock}::${board.category}`));
+  const otherBoards = buildBrainstormBoardsPanelView().filter(
+    (board) => !seededKeys.has(`${board.argBlock}::${board.category}`),
+  );
+  return [...seededBoards, ...otherBoards].sort(
+    (a, b) => a.argBlock.localeCompare(b.argBlock) || a.category.localeCompare(b.category),
+  );
 }
 
 /**

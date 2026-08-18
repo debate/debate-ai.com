@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_REVISION_REWARD_WEIGHTS,
+  STALE_EVIDENCE_THRESHOLD_YEARS,
   buildContributorRevisionStats,
   buildRevisionIncentiveLeaderboard,
   buildRevisionRewardText,
+  computeEvidenceStaleness,
   evaluateRevision,
   groupRevisionsByContributor,
   type CardRevision,
@@ -222,5 +224,36 @@ describe("buildRevisionRewardText", () => {
     expect(buildRevisionRewardText(evaluation)).toBe(
       'No reward earned revising card "card-4" — no meaningful quality, citation, or evidence improvement detected.',
     );
+  });
+});
+
+describe("computeEvidenceStaleness", () => {
+  it("flags evidence stale once its age reaches the threshold", () => {
+    const signal = computeEvidenceStaleness(2020, 2020 + STALE_EVIDENCE_THRESHOLD_YEARS);
+    expect(signal.ageYears).toBe(STALE_EVIDENCE_THRESHOLD_YEARS);
+    expect(signal.isStale).toBe(true);
+  });
+
+  it("does not flag evidence stale just below the threshold", () => {
+    const signal = computeEvidenceStaleness(2020, 2020 + STALE_EVIDENCE_THRESHOLD_YEARS - 1);
+    expect(signal.isStale).toBe(false);
+  });
+
+  it("treats an unknown (0) evidence year as stale, with a null age", () => {
+    const signal = computeEvidenceStaleness(0, 2026);
+    expect(signal.ageYears).toBeNull();
+    expect(signal.isStale).toBe(true);
+  });
+
+  it("does not flag a current-year citation as stale", () => {
+    const signal = computeEvidenceStaleness(2026, 2026);
+    expect(signal.ageYears).toBe(0);
+    expect(signal.isStale).toBe(false);
+  });
+
+  it("clamps a future-dated citation's age to zero rather than going negative", () => {
+    const signal = computeEvidenceStaleness(2030, 2026);
+    expect(signal.ageYears).toBe(0);
+    expect(signal.isStale).toBe(false);
   });
 });

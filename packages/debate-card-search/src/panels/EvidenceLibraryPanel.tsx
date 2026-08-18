@@ -6,7 +6,14 @@
  * repository a real source of `argBlock`/`wordCount`-carrying entries,
  * follow-up (a) under the "📊 Topic Coverage Dashboard" bullet ("an
  * `argBlock`/word-count field wired into a real card-submission flow beyond
- * the existing `/cards/library` evidence-library form").
+ * the existing `/cards/library` evidence-library form"). Edit/Delete actions
+ * close `docs/features/evidence-library.md`'s "No edit/delete affordance"
+ * gap, and editing an entry closes follow-up (a) under the "🔁 Revision
+ * Incentives" bullet ("wiring an actual card-edit/save flow to call
+ * `saveRevisionRecord` with a before/after snapshot"). A "Stale evidence"
+ * badge on card results closes that same bullet's follow-up (c) — a
+ * forward-looking staleness signal via `getEvidenceStaleness`, rather than
+ * only rewarding a refresh after the fact.
  *
  * Reads the persisted evidence repository via
  * `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibrary`
@@ -17,7 +24,10 @@
  * form saves a new `EvidenceLibraryEntry` via the already-persisted
  * `saveEvidenceLibraryEntry`, stamping `wordCount` from the submitted body
  * text via the pure `computeWordCount` rather than asking the submitter to
- * count it themselves.
+ * count it themselves. Editing an existing entry instead calls
+ * `saveEvidenceLibraryEntryRevision`, which records the edit as a
+ * `CardRevisionRecord` (via the pure `buildEvidenceEntryRevision`) so it
+ * feeds the Revision Incentives leaderboard.
  *
  * @module panels/EvidenceLibraryPanel
  */
@@ -31,12 +41,14 @@ import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
+  deleteEvidenceLibraryEntry,
   listEvidenceLibraryEntries,
   saveEvidenceLibraryEntry,
+  saveEvidenceLibraryEntryRevision,
   searchPersistedEvidenceLibrary,
 } from "../state/evidenceLibraryEntries"
-import { buildEvidenceSearchSummaryText, computeWordCount } from "../lib/shared-evidence-library"
-import type { EvidenceEntryKind, EvidenceSearchResult } from "../lib/shared-evidence-library"
+import { buildEvidenceSearchSummaryText, computeWordCount, getEvidenceStaleness } from "../lib/shared-evidence-library"
+import type { EvidenceEntryKind, EvidenceLibraryEntry, EvidenceSearchResult } from "../lib/shared-evidence-library"
 
 const KIND_FILTERS: { value: EvidenceEntryKind | "all"; label: string }[] = [
   { value: "all", label: "All" },
@@ -61,6 +73,18 @@ type EntryDraft = {
 
 const EMPTY_DRAFT: EntryDraft = { kind: "card", topic: "", caseArea: "", argBlock: "", cite: "", tags: "", text: "" }
 
+function entryToDraft(entry: EvidenceLibraryEntry): EntryDraft {
+  return {
+    kind: entry.kind,
+    topic: entry.topic,
+    caseArea: entry.caseArea,
+    argBlock: entry.argBlock,
+    cite: entry.cite,
+    tags: entry.tags.join(", "),
+    text: entry.text,
+  }
+}
+
 /**
  * Renders the Shared Evidence Library: a card/block submission form, plus a
  * free-text search box and a card/block kind filter over every persisted
@@ -77,6 +101,8 @@ export function EvidenceLibraryPanel() {
   const [results, setResults] = useState<EvidenceSearchResult[]>([])
   const [draft, setDraft] = useState<EntryDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editorContributorId, setEditorContributorId] = useState("")
 
   useEffect(() => {
     setHasEntries(listEvidenceLibraryEntries().length > 0)
@@ -103,12 +129,21 @@ export function EvidenceLibraryPanel() {
       setError("Topic, case area, argument block, and body text are all required.")
       return
     }
+
+    if (editingId) {
+      const contributorId = editorContributorId.trim()
+      if (!contributorId) {
+        setError("Your contributor ID is required to save an edit.")
+        return
+      }
+    }
+
     const tags = draft.tags
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean)
-    saveEvidenceLibraryEntry({
-      id: `${draft.kind}-${argBlock}-${Date.now()}`,
+    const entry: EvidenceLibraryEntry = {
+      id: editingId ?? `${draft.kind}-${argBlock}-${Date.now()}`,
       kind: draft.kind,
       topic,
       caseArea,
@@ -117,9 +152,37 @@ export function EvidenceLibraryPanel() {
       text,
       cite: draft.cite.trim(),
       wordCount: computeWordCount(text),
-    })
+    }
+
+    if (editingId) {
+      saveEvidenceLibraryEntryRevision(entry, editorContributorId.trim())
+    } else {
+      saveEvidenceLibraryEntry(entry)
+    }
+
     setError(null)
     setDraft(EMPTY_DRAFT)
+    setEditingId(null)
+    setEditorContributorId("")
+    refreshResults()
+  }
+
+  const handleEdit = (entry: EvidenceLibraryEntry) => {
+    setEditingId(entry.id)
+    setDraft(entryToDraft(entry))
+    setError(null)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingId(null)
+    setEditorContributorId("")
+    setDraft(EMPTY_DRAFT)
+    setError(null)
+  }
+
+  const handleDelete = (id: string) => {
+    deleteEvidenceLibraryEntry(id)
+    if (editingId === id) handleCancelEdit()
     refreshResults()
   }
 
@@ -128,6 +191,7 @@ export function EvidenceLibraryPanel() {
   }
 
   const summaryQuery = { text: queryText, ...(kind !== "all" ? { kind } : {}) }
+  const currentYear = new Date().getFullYear()
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -140,6 +204,11 @@ export function EvidenceLibraryPanel() {
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-3">
+        {editingId && (
+          <p className="text-sm font-medium text-foreground">
+            Editing entry <span className="text-muted-foreground">{editingId}</span>
+          </p>
+        )}
         <div className="flex gap-1">
           {(["card", "block"] as const).map((option) => (
             <Button
@@ -209,9 +278,33 @@ export function EvidenceLibraryPanel() {
             />
             <p className="text-xs text-muted-foreground">{computeWordCount(draft.text)} words</p>
           </div>
+          {editingId && (
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="evidence-editor-id">Your contributor ID</Label>
+              <Input
+                id="evidence-editor-id"
+                value={editorContributorId}
+                onChange={(e) => setEditorContributorId(e.target.value)}
+                placeholder="alex"
+                className="max-w-xs"
+              />
+              <p className="text-xs text-muted-foreground">
+                Saving this edit records a revision credited to this contributor.
+              </p>
+            </div>
+          )}
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
-        <Button onClick={handleSubmit}>Submit {draft.kind === "card" ? "card" : "block"}</Button>
+        <div className="flex gap-2">
+          <Button onClick={handleSubmit}>
+            {editingId ? "Save edit" : `Submit ${draft.kind === "card" ? "card" : "block"}`}
+          </Button>
+          {editingId && (
+            <Button variant="outline" onClick={handleCancelEdit}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -255,9 +348,20 @@ export function EvidenceLibraryPanel() {
                 {entry.caseArea && (
                   <Badge variant="outline">{entry.caseArea}</Badge>
                 )}
+                {entry.kind === "card" && getEvidenceStaleness(entry, currentYear).isStale && (
+                  <Badge variant="destructive">Stale evidence</Badge>
+                )}
                 {queryText.trim() && (
                   <span className="text-xs text-muted-foreground">relevance {relevanceScore}</span>
                 )}
+                <div className="ml-auto flex gap-1">
+                  <Button size="sm" variant="ghost" onClick={() => handleEdit(entry)}>
+                    Edit
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => handleDelete(entry.id)}>
+                    Delete
+                  </Button>
+                </div>
               </div>
               <p className="mb-2 text-sm text-muted-foreground">{entry.text}</p>
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
