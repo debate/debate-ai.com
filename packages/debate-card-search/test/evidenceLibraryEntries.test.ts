@@ -5,8 +5,10 @@ import {
   getEvidenceLibraryEntry,
   listEvidenceLibraryEntries,
   saveEvidenceLibraryEntry,
+  saveEvidenceLibraryEntryRevision,
   searchPersistedEvidenceLibrary,
 } from "../src/state/evidenceLibraryEntries";
+import { listRevisionHistory } from "../src/state/revisionHistory";
 import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -178,5 +180,43 @@ describe("buildPersistedArgumentLibrary", () => {
     saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
     buildPersistedArgumentLibrary();
     expect(listEvidenceLibraryEntries()).toEqual([WARMING_CARD, SOLVENCY_BLOCK]);
+  });
+});
+
+describe("saveEvidenceLibraryEntryRevision", () => {
+  it("saves a brand-new entry without recording a revision", () => {
+    saveEvidenceLibraryEntryRevision(WARMING_CARD, "alice");
+
+    expect(getEvidenceLibraryEntry("entry-1")).toEqual(WARMING_CARD);
+    expect(listRevisionHistory()).toEqual([]);
+  });
+
+  it("overwrites an existing entry and records a revision crediting the given contributor", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+
+    const edited: EvidenceLibraryEntry = {
+      ...WARMING_CARD,
+      cite: "Smith 2024",
+      text: `${WARMING_CARD.text} Newer data confirms the same trend continues to accelerate.`,
+    };
+    saveEvidenceLibraryEntryRevision(edited, "alice");
+
+    expect(getEvidenceLibraryEntry("entry-1")).toEqual(edited);
+
+    const history = listRevisionHistory();
+    expect(history).toHaveLength(1);
+    expect(history[0].cardId).toBe("entry-1");
+    expect(history[0].contributorId).toBe("alice");
+    expect(history[0].before.citationCompleteness).toBeLessThan(history[0].after.citationCompleteness);
+  });
+
+  it("records a separate revision for each subsequent edit", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntryRevision({ ...WARMING_CARD, cite: "Smith 2024" }, "alice");
+    saveEvidenceLibraryEntryRevision({ ...WARMING_CARD, cite: "Smith 2024", caseArea: "Case" }, "bob");
+
+    const history = listRevisionHistory();
+    expect(history).toHaveLength(2);
+    expect(history.map((record) => record.contributorId)).toEqual(["alice", "bob"]);
   });
 });
