@@ -13,6 +13,7 @@ export { StandingsPanel } from "./panels/StandingsPanel";
 export { VulnerabilityChartsPanel } from "./panels/VulnerabilityChartsPanel";
 export { CoachingProgramsPanel } from "./panels/CoachingProgramsPanel";
 export { StrategyPanel } from "./panels/StrategyPanel";
+export { JudgeDecisionPanel } from "./panels/JudgeDecisionPanel";
 export { FlowSpreadsheet } from "./flow/FlowSpreadsheet";
 export { RoundEditorDialog } from "./dialogs/CreateRoundDialog";
 export * from "./state/store";
