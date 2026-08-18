@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildEvidenceLibraryIndex,
   buildEvidenceSearchSummaryText,
+  computeWordCount,
   findEntriesByCite,
   searchEvidenceLibrary,
   type EvidenceLibraryEntry,
@@ -126,6 +127,25 @@ describe("buildEvidenceLibraryIndex", () => {
     const index = buildEvidenceLibraryIndex(entries);
     expect(index.topicFolders.map((f) => f.topic)).toEqual(["Energy", "Healthcare"]);
     expect(index.tagCollections.map((c) => c.tag)).toEqual(["climate", "federalism", "impact", "solvency"]);
+  });
+});
+
+describe("computeWordCount", () => {
+  it("counts space-separated words", () => {
+    expect(computeWordCount("Rising emissions accelerate warming impacts.")).toBe(5);
+  });
+
+  it("collapses repeated whitespace, including newlines and tabs", () => {
+    expect(computeWordCount("Line one\n\nLine  two\tthree")).toBe(5);
+  });
+
+  it("trims leading and trailing whitespace before counting", () => {
+    expect(computeWordCount("  padded text  ")).toBe(2);
+  });
+
+  it("returns 0 for an empty or whitespace-only string", () => {
+    expect(computeWordCount("")).toBe(0);
+    expect(computeWordCount("   ")).toBe(0);
   });
 });
 

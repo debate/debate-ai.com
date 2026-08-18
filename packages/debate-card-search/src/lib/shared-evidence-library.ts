@@ -64,6 +64,16 @@ function tokenizeQueryText(text: string): string[] {
 }
 
 /**
+ * Counts the words in a card/block's full-text body, for stamping a
+ * submitted entry's `wordCount` (the depth-of-coverage signal
+ * `lib/topic-coverage.ts` scores against) without requiring the submitter to
+ * type it in themselves.
+ */
+export function computeWordCount(text: string): number {
+  return tokenizeQueryText(text).length;
+}
+
+/**
  * Searches the shared evidence repository. Non-text filters (`tags`,
  * `topic`, `caseArea`, `kind`) narrow the candidate set first; a `text`
  * query then ranks the remaining entries by keyword-overlap relevance

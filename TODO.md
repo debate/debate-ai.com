@@ -4,6 +4,40 @@
 ### In progress
 
 ### Completed
+- **Shared Evidence Library — card/block submission form.**
+  Closes the "No submission UI yet" gap noted under the "📚 Shared Evidence
+  Library" bullet in the Research Crowdsourcing Organizer Features list, and,
+  by giving the shared evidence repository a real UI source of
+  `argBlock`/`wordCount`-carrying entries, closes follow-up (a) under the
+  "📊 Topic Coverage Dashboard" bullet in that same list ("an `argBlock`/
+  word-count field wired into a real card-submission flow beyond the
+  existing `/cards/library` evidence-library form"). `lib/shared-evidence-library.ts`
+  gains `computeWordCount`, a plain whitespace tokenizer that stamps a
+  submitted entry's `wordCount` from its body text rather than asking the
+  submitter to count it themselves — the exact field
+  `lib/topic-coverage.ts`'s `missing`/`thin`/`covered` classification scores
+  against. `panels/EvidenceLibraryPanel.tsx` (mounted at `/cards/library`)
+  now renders a submission form above the existing search box — kind
+  (card/block), topic, case area, argument block, citation, comma-separated
+  tags, and a body text area with a live word-count readout — that saves a
+  new `EvidenceLibraryEntry` via the already-persisted
+  `saveEvidenceLibraryEntry` and refreshes the search results, so a card
+  submitted here now flows straight into both the evidence library's own
+  search index and the Topic Coverage Dashboard's live report for the same
+  topic, with no new composition logic needed on either side. No follow-ups
+  remain open on either bullet's submission-flow gap; the "no edit/delete
+  affordance" and "no topic/case-area/tag filter controls in the panel"
+  gaps noted separately in `docs/features/evidence-library.md` remain open,
+  not started. Docs updated in `docs/features/evidence-library.md` and
+  `docs/features/topic-coverage-dashboard.md`. Vitest-covered in
+  `packages/debate-card-search/test/shared-evidence-library.test.ts`
+  (`computeWordCount`: space-separated words, collapsed newline/tab
+  whitespace, leading/trailing trim, and an empty/whitespace-only string).
+  Verified: `bun install` (2050 packages), `bun run test` (120 files / 1602
+  tests, all pass), `bun run typecheck` (all 11 in-scope packages pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/cards/library` route
+  present, no new route) all pass. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
 - **Expandable Heading Structure — collapsed-heading decoration plugin.**
   Closes follow-up (b) under idea #9 ("Expandable Heading Structure") in
   the Product Feature Ideas list — "a ProseMirror decoration plugin that
