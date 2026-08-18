@@ -47,9 +47,6 @@ new card shape was needed. See
 
 ## Known gaps
 
-- No `argBlock`/word-count field is wired into a real card-submission flow
-  yet — the evidence library only has whatever a caller (or, currently, the
-  `/cards/library` submission form) saves as an `EvidenceLibraryEntry`.
 - The checklist is per-browser localStorage, not a shared team resource — two
   teammates on different devices see different checklists for the same topic
   name.
