@@ -54,6 +54,25 @@ function clampScore(score: number): number {
   return Math.max(0, Math.min(100, score));
 }
 
+/**
+ * The same base+unanswered+opposing-pressure-minus-extensions scoring rule
+ * `toVulnerability` applies to a freshly flowed row, exposed standalone so
+ * `applyHypotheticalAdjustments` can recompute a score from an
+ * already-derived `ArgumentVulnerability`'s counts without needing the
+ * original `FlowRowSummary`.
+ */
+function computeVulnerabilityScore(input: {
+  isUnanswered: boolean;
+  opposingResponses: number;
+  sameSideExtensions: number;
+}): number {
+  let score = BASE_SCORE;
+  if (input.isUnanswered) score += UNANSWERED_BONUS;
+  score += Math.min(input.opposingResponses, MAX_OPPOSING_RESPONSE_ENTRIES) * OPPOSING_RESPONSE_WEIGHT;
+  score -= Math.min(input.sameSideExtensions, MAX_SAME_SIDE_EXTENSION_ENTRIES) * SAME_SIDE_EXTENSION_WEIGHT;
+  return clampScore(score);
+}
+
 /** Splits a row's post-origin entries into direct opposing responses vs same-side extensions/defense. */
 function classifyResponses(row: FlowRowSummary): {
   opposingResponses: number;
@@ -74,11 +93,6 @@ function classifyResponses(row: FlowRowSummary): {
 function toVulnerability(row: FlowRowSummary): ArgumentVulnerability {
   const { opposingResponses, sameSideExtensions } = classifyResponses(row);
 
-  let score = BASE_SCORE;
-  if (row.isUnanswered) score += UNANSWERED_BONUS;
-  score += Math.min(opposingResponses, MAX_OPPOSING_RESPONSE_ENTRIES) * OPPOSING_RESPONSE_WEIGHT;
-  score -= Math.min(sameSideExtensions, MAX_SAME_SIDE_EXTENSION_ENTRIES) * SAME_SIDE_EXTENSION_WEIGHT;
-
   return {
     rowIndex: row.rowIndex,
     argument: row.argument,
@@ -88,7 +102,11 @@ function toVulnerability(row: FlowRowSummary): ArgumentVulnerability {
     isUnanswered: row.isUnanswered,
     opposingResponses,
     sameSideExtensions,
-    vulnerabilityScore: clampScore(score),
+    vulnerabilityScore: computeVulnerabilityScore({
+      isUnanswered: row.isUnanswered,
+      opposingResponses,
+      sameSideExtensions,
+    }),
   };
 }
 
@@ -206,4 +224,65 @@ export function buildVulnerabilityChartData(
   options: { limit?: number } = {},
 ): VulnerabilityChartPoint[] {
   return buildVulnerabilityChartDataFromReport(getArgumentVulnerabilityReport(flow), options);
+}
+
+/**
+ * A single hypothetical strategic choice layered onto one already-flowed
+ * argument row, identified by `rowIndex` (see `ArgumentVulnerability`):
+ * - `"extend"` — the row's side adds another same-side extension/defense.
+ * - `"answer"` — the opposing side answers it (adds an opposing response
+ *   and, if it was still unanswered, resolves that).
+ * - `"concede"` — the row's side drops all support for it, resetting both
+ *   response counts and marking it unanswered again.
+ */
+export type HypotheticalAction = "extend" | "answer" | "concede";
+
+export type HypotheticalAdjustment = {
+  rowIndex: number;
+  action: HypotheticalAction;
+};
+
+function applyHypotheticalAction(
+  row: ArgumentVulnerability,
+  action: HypotheticalAction,
+): ArgumentVulnerability {
+  const opposingResponses =
+    action === "answer" ? row.opposingResponses + 1 : action === "concede" ? 0 : row.opposingResponses;
+  const sameSideExtensions =
+    action === "extend" ? row.sameSideExtensions + 1 : action === "concede" ? 0 : row.sameSideExtensions;
+  const isUnanswered = action === "concede" ? true : action === "answer" ? false : row.isUnanswered;
+
+  return {
+    ...row,
+    opposingResponses,
+    sameSideExtensions,
+    isUnanswered,
+    vulnerabilityScore: computeVulnerabilityScore({ isUnanswered, opposingResponses, sameSideExtensions }),
+  };
+}
+
+/**
+ * "What if" mode for idea #4's follow-up (c): recomputes vulnerability
+ * scores against a hypothetical strategic choice per row (see
+ * `HypotheticalAction`) instead of only the flow's current state, without
+ * needing the original raw `Flow` — composes directly against an
+ * already-derived report, mirroring the `*FromReport` convention used by
+ * `summarizeOutcomeBySideFromReport`/`buildVulnerabilityChartDataFromReport`.
+ * Rows not named in `adjustments` are returned unchanged; at most one
+ * adjustment applies per `rowIndex` (a later entry for the same row wins).
+ * The result stays sorted by the *original* order — re-sort with
+ * `getArgumentVulnerabilityReport`'s comparator (or call
+ * `buildVulnerabilityChartDataFromReport`, which only takes the top N by
+ * score) if a hypothetical reordering is desired.
+ */
+export function applyHypotheticalAdjustments(
+  report: readonly ArgumentVulnerability[],
+  adjustments: readonly HypotheticalAdjustment[],
+): ArgumentVulnerability[] {
+  const actionByRow = new Map(adjustments.map((adjustment) => [adjustment.rowIndex, adjustment.action]));
+
+  return report.map((row) => {
+    const action = actionByRow.get(row.rowIndex);
+    return action ? applyHypotheticalAction(row, action) : row;
+  });
 }
