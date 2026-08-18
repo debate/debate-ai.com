@@ -201,6 +201,39 @@ export function buildRevisionIncentiveLeaderboard(
   );
 }
 
+/** A cited year this many years or older than `currentYear` counts as stale, as does no cited year at all. */
+export const STALE_EVIDENCE_THRESHOLD_YEARS = 3;
+
+/** Whether a card's cited evidence is stale, evaluated independently of any revision. */
+export interface EvidenceStalenessSignal {
+  evidenceYear: number;
+  currentYear: number;
+  /** `currentYear - evidenceYear`, or `null` when `evidenceYear` is unknown (0). */
+  ageYears: number | null;
+  /** True when `evidenceYear` is unknown, or at least `STALE_EVIDENCE_THRESHOLD_YEARS` years old. */
+  isStale: boolean;
+}
+
+/**
+ * Flags whether a card's cited evidence is stale as of `currentYear` — a
+ * forward-looking signal a reader can act on before any revision happens,
+ * rather than only rewarding a refresh after the fact once
+ * `evaluateRevision` sees a newer `evidenceYear`. An entry with no
+ * parseable citation year (`evidenceYear === 0`, per
+ * `shared-evidence-library.ts`'s `deriveCardSnapshotFromEntry`) is treated
+ * as stale too — an undated citation is exactly the case a reader can't
+ * otherwise judge for freshness.
+ */
+export function computeEvidenceStaleness(evidenceYear: number, currentYear: number): EvidenceStalenessSignal {
+  const ageYears = evidenceYear > 0 ? Math.max(0, currentYear - evidenceYear) : null;
+  return {
+    evidenceYear,
+    currentYear,
+    ageYears,
+    isStale: ageYears === null || ageYears >= STALE_EVIDENCE_THRESHOLD_YEARS,
+  };
+}
+
 /** Renders a one-line notification for a single scored revision. */
 export function buildRevisionRewardText(evaluation: RevisionEvaluation): string {
   if (!evaluation.isRewardedImprovement) {

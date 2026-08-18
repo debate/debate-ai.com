@@ -12,6 +12,26 @@
  * `upvotePersistedBrainstormIdea`. No new ranking, duplicate-flagging, or
  * mutation logic is introduced here.
  *
+ * A "Generate AI ideas" action closes follow-up (a) named under the "🧠 Team
+ * Brainstorm Assist" bullet in TODO.md ("an actual AI-generation call that
+ * drafts candidate ideas from `buildBrainstormPrompt`'s output") — it POSTs
+ * the form's argument block/category to the existing `/api/reason-ai`
+ * Anthropic proxy via `lib/team-brainstorm-client.ts`, then saves each
+ * drafted idea as a normal, AI-attributed `BrainstormIdea` (`isAiGenerated:
+ * true`) through the already-persisted `saveBrainstormIdea`, so drafted
+ * ideas rank, dedupe-flag, and upvote exactly like a teammate's. A failed
+ * or malformed AI response shows an inline error instead of crashing the
+ * panel.
+ *
+ * A topic switcher (mirroring `TopicCoverageDashboardPanel`'s) closes the
+ * "boards aren't seeded from the coverage-gap prompts" gap noted in
+ * `docs/features/brainstorm-board.md` — picking a tracked topic swaps the
+ * board list to `state/brainstormIdeas.ts`'s
+ * `buildBrainstormBoardsPanelViewForTopic`, which shows one board per
+ * under-covered tracked argument/category pair (with its seeding prompt
+ * visible even before any idea is submitted) merged with every other board
+ * that already has a submitted idea.
+ *
  * @module panels/BrainstormBoardPanel
  */
 
@@ -26,9 +46,13 @@ import { RadioGroup, RadioGroupItem } from "debate-ui/src/primitives/radio-group
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   buildBrainstormBoardsPanelView,
+  buildBrainstormBoardsPanelViewForTopic,
   saveBrainstormIdea,
   upvotePersistedBrainstormIdea,
 } from "../state/brainstormIdeas"
+import { listTrackedTopics } from "../state/trackedArguments"
+import { requestTeamBrainstormAiIdeas } from "../lib/team-brainstorm-client"
+import { buildBrainstormPrompt } from "../lib/team-brainstorm-assist"
 import type { BrainstormBoard, BrainstormCategory } from "../lib/team-brainstorm-assist"
 
 const CATEGORY_OPTIONS: { value: BrainstormCategory; label: string }[] = [
@@ -59,12 +83,26 @@ export function BrainstormBoardPanel() {
   const [boards, setBoards] = useState<BrainstormBoard[] | null>(null)
   const [draft, setDraft] = useState<IdeaDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [aiLoading, setAiLoading] = useState(false)
+  const [aiError, setAiError] = useState<string | null>(null)
+  const [topics, setTopics] = useState<string[]>([])
+  const [topic, setTopic] = useState("")
 
   useEffect(() => {
+    setTopics(listTrackedTopics())
     setBoards(buildBrainstormBoardsPanelView())
   }, [])
 
-  const refresh = () => setBoards(buildBrainstormBoardsPanelView())
+  const refresh = (activeTopic = topic) => {
+    setTopics(listTrackedTopics())
+    const trimmed = activeTopic.trim()
+    setBoards(trimmed ? buildBrainstormBoardsPanelViewForTopic(trimmed) : buildBrainstormBoardsPanelView())
+  }
+
+  const handleTopicChange = (nextTopic: string) => {
+    setTopic(nextTopic)
+    refresh(nextTopic)
+  }
 
   const handleSubmit = () => {
     const argBlock = draft.argBlock.trim()
@@ -92,6 +130,35 @@ export function BrainstormBoardPanel() {
     refresh()
   }
 
+  const handleGenerateAiIdeas = async () => {
+    const argBlock = draft.argBlock.trim()
+    if (!argBlock) {
+      setAiError("Enter an argument block above before generating AI ideas.")
+      return
+    }
+    setAiLoading(true)
+    setAiError(null)
+    try {
+      const ideas = await requestTeamBrainstormAiIdeas(buildBrainstormPrompt(argBlock, draft.category))
+      ideas.forEach((text, index) => {
+        saveBrainstormIdea({
+          id: `${argBlock}-${draft.category}-ai-${Date.now()}-${index}`,
+          argBlock,
+          category: draft.category,
+          contributorId: "AI",
+          text,
+          upvotes: 0,
+          isAiGenerated: true,
+        })
+      })
+      refresh()
+    } catch (e) {
+      setAiError(e instanceof Error ? e.message : "AI idea generation failed.")
+    } finally {
+      setAiLoading(false)
+    }
+  }
+
   if (boards === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading brainstorm boards…</div>
   }
@@ -103,6 +170,37 @@ export function BrainstormBoardPanel() {
         <p className="text-sm text-muted-foreground">
           Submit and upvote squad ideas for an argument block, grouped into boards by category.
         </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="brainstorm-topic">Seed boards from a topic's coverage gaps (optional)</Label>
+        <Input
+          id="brainstorm-topic"
+          value={topic}
+          onChange={(e) => handleTopicChange(e.target.value)}
+          placeholder="Energy Policy"
+          className="max-w-sm"
+        />
+        {topics.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {topics.map((existing) => (
+              <Button
+                key={existing}
+                size="sm"
+                variant={existing === topic.trim() ? "default" : "outline"}
+                onClick={() => handleTopicChange(existing)}
+              >
+                {existing}
+              </Button>
+            ))}
+          </div>
+        )}
+        {topic.trim() !== "" && (
+          <p className="text-xs text-muted-foreground">
+            Showing every under-covered tracked argument's board for "{topic.trim()}" from the Topic Coverage
+            Dashboard, even before anyone has submitted an idea, plus every other board with a submitted idea.
+          </p>
+        )}
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-3">
@@ -154,12 +252,20 @@ export function BrainstormBoardPanel() {
           />
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
-        <Button onClick={handleSubmit}>Submit idea</Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button onClick={handleSubmit}>Submit idea</Button>
+          <Button variant="outline" disabled={aiLoading} onClick={handleGenerateAiIdeas}>
+            {aiLoading ? "Generating…" : "Generate AI ideas"}
+          </Button>
+        </div>
+        {aiError && <p className="text-sm text-destructive">{aiError}</p>}
       </div>
 
       {boards.length === 0 ? (
         <div className="p-6 text-center text-sm text-muted-foreground">
-          No brainstorm ideas yet. Submit one above to start a board.
+          {topic.trim() !== ""
+            ? `No coverage-gap boards for "${topic.trim()}" — its checklist has no under-covered arguments.`
+            : "No brainstorm ideas yet. Submit one above to start a board."}
         </div>
       ) : (
         <div className="space-y-4">
@@ -170,6 +276,9 @@ export function BrainstormBoardPanel() {
                 <Badge variant="outline">{CATEGORY_LABEL[board.category]}</Badge>
               </div>
               <p className="mb-3 text-xs text-muted-foreground">{board.prompt}</p>
+              {board.ideas.length === 0 && (
+                <p className="mb-2 text-xs text-muted-foreground">No ideas submitted yet.</p>
+              )}
               <div className="space-y-2">
                 {board.ideas.map((idea) => (
                   <div
@@ -183,6 +292,7 @@ export function BrainstormBoardPanel() {
                           {idea.popularityScore}/100 popularity
                         </span>
                         {idea.isLikelyDuplicate && <Badge variant="secondary">possible duplicate</Badge>}
+                        {idea.isAiGenerated && <Badge variant="outline">AI</Badge>}
                       </div>
                       <p className="text-muted-foreground">{idea.text}</p>
                     </div>

@@ -23,9 +23,9 @@ through `saveAiVersusRound`.
 Once a round is active, the panel renders its full turn order — each slot
 tagged "You" or "AI" and marked Delivered/Next/Pending — and, when it's the
 user's turn, a text area to type and submit the next expected speech.
-Submission calls `validateSpeechSubmission` before saving, and AI turns are
-shown as pending rather than fillable, since no AI speech-generation call
-exists yet.
+Submission calls `validateSpeechSubmission` before saving. On the AI's
+turn, a "Generate AI speech" button calls the real AI speech-generation
+request (below) and saves the returned text as that slot's speech.
 
 Below that, every persisted round renders as its own card (sorted by
 `roundId`) with a live progress line and a "Continue"/"Clear" action.
@@ -63,27 +63,57 @@ Clearing a round:
 panels/AiVersusRoundPanel.tsx
   → deleteAiVersusRound(roundId)
   → panel re-reads buildAiVersusRoundsPanelView() to refresh
+
+Generating the AI's next speech (follow-up (a)):
+panels/AiVersusRoundPanel.tsx
+  → buildAiResponseRequest(order, submittedCount, submittedSpeeches)
+                                                    — the structured request
+                                                      (slot + prior speeches
+                                                      + cross-ex flag)
+  → round/ai-versus-speech-client.ts's requestAiVersusSpeech(request)
+      → round/ai-versus-speech-ai.ts's AI_VERSUS_SPEECH_SYSTEM_PROMPT +
+        buildAiVersusSpeechUserPrompt(request)      — builds the prompt
+      → POST /api/reason-ai                          — the shared
+                                                        Anthropic proxy
+      → parseAiVersusSpeechResponse(text)             — strips a wrapping
+                                                          code fence/quotes
+  → saveAiVersusRound({ ...record, submittedSpeeches: [...,
+      { name: slot.name, speaker: "ai", text } ] })
+  → panel re-reads buildAiVersusRoundsPanelView() to refresh
 ```
 
 Every turn-order and persistence rule already existed and was
-Vitest-covered; this feature closes follow-up (b) on idea #3, adding two
-small helpers to `state/aiVersusRounds.ts` — `buildAiVersusRoundsPanelView`
-(sorts `listAiVersusRounds`'s output for a stable panel display order) and
-`getAiVersusRoundStatus` (derives a round's order/next-slot status on read
-rather than storing it) — rather than introducing new turn-order or
-validation logic. Vitest-covered in
+Vitest-covered; the round-setup/submission UI closed follow-up (b) on idea
+#3, adding two small helpers to `state/aiVersusRounds.ts` —
+`buildAiVersusRoundsPanelView` (sorts `listAiVersusRounds`'s output for a
+stable panel display order) and `getAiVersusRoundStatus` (derives a
+round's order/next-slot status on read rather than storing it) — rather
+than introducing new turn-order or validation logic. Vitest-covered in
 `packages/debate-round/test/aiVersusRounds.test.ts`.
+
+Follow-up (a) — the AI speech-generation call — adds
+`round/ai-versus-speech-ai.ts` (pure prompt-building + tolerant response
+parsing, `fetch`-free and directly Vitest-testable) and
+`round/ai-versus-speech-client.ts` (the thin `fetch` client posting to
+`/api/reason-ai`), mirroring `debate-card-search`'s "LLM Card Scoring —
+real AI-scoring call" slice's `lib/llm-card-scoring-ai.ts` /
+`lib/llm-card-scoring-client.ts` split. No existing turn-order or
+persistence logic changed. Vitest-covered in
+`packages/debate-round/test/ai-versus-speech-ai.test.ts` (prompt building
++ response parsing) and
+`packages/debate-round/test/ai-versus-speech-client.test.ts` (the `fetch`
+client, with `fetch` mocked via `vi.stubGlobal`).
 
 ## Known gaps
 
-- Follow-up (a), an actual AI speech-generation call that consumes
-  `buildAiResponseRequest`'s output to produce the AI's next speech text,
-  remains open — not started. Until it exists, a round can only ever
-  progress as far as the user's own turns; AI turns block further
-  submission.
 - Speech submission is text-only. `PriorSpeechRecord` (what
   `submittedSpeeches` stores) has no audio field, and no
   transcription pipeline exists in this repo, so "or record a speech" from
   the original follow-up wording isn't implemented — recording would need
   either a new audio field on the persisted record or a transcription step
   ahead of the existing text-only save.
+- The AI speech-generation call has no retry/regenerate action if the
+  generated speech is unsatisfactory — a user must clear the whole round
+  and start over. A "regenerate" affordance (replacing the just-saved AI
+  speech rather than restarting) is a natural follow-up, not yet tracked
+  as its own TODO item.

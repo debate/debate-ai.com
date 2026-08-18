@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildDailyBestCardsFromStore,
   buildPersistedContributionFeed,
-  buildPersistedDailyBestCards,
   buildPersistedLeaderboard,
   buildTopContributorAwardsFromStore,
   deleteContribution,
   getContribution,
-  getPersistedBestCardForDay,
+  getTodaysBestCardFromStore,
   listContributions,
   listContributionsByContributor,
   recordPersistedEndorsement,
@@ -320,53 +320,87 @@ describe("buildTopContributorAwardsFromStore", () => {
   });
 });
 
-const DAY_1_MS = Date.UTC(2026, 7, 17, 12, 0, 0);
-const DAY_2_MS = Date.UTC(2026, 7, 18, 9, 0, 0);
+const DAY_ONE = Date.parse("2026-08-10T12:00:00.000Z");
+const DAY_ONE_LATER = Date.parse("2026-08-10T23:00:00.000Z");
+const DAY_TWO = Date.parse("2026-08-11T09:00:00.000Z");
 
-describe("buildPersistedDailyBestCards", () => {
+const WEAK_CARD_DAY_ONE: AttributedContribution = {
+  ...ALICE_CARD,
+  id: "weak-card-day-one",
+  contributorId: "carol",
+  likes: 0,
+  saves: 0,
+  qualitySignals: [0.1],
+  reviewerEndorsements: [],
+  submittedAt: DAY_ONE,
+};
+const STRONG_CARD_DAY_ONE: AttributedContribution = {
+  ...ALICE_CARD,
+  id: "strong-card-day-one",
+  contributorId: "alice",
+  submittedAt: DAY_ONE_LATER,
+};
+const CARD_DAY_TWO: AttributedContribution = {
+  ...ALICE_CARD,
+  id: "card-day-two",
+  contributorId: "dave",
+  submittedAt: DAY_TWO,
+};
+const CARD_WITHOUT_TIMESTAMP: AttributedContribution = {
+  ...ALICE_CARD,
+  id: "card-no-timestamp",
+  contributorId: "erin",
+};
+const SUMMARY_WITH_TIMESTAMP: AttributedContribution = {
+  ...BOB_SUMMARY,
+  id: "summary-with-timestamp",
+  submittedAt: DAY_ONE,
+};
+
+describe("buildDailyBestCardsFromStore", () => {
   it("returns an empty list when nothing is stored", () => {
-    expect(buildPersistedDailyBestCards()).toEqual([]);
+    expect(buildDailyBestCardsFromStore()).toEqual([]);
   });
 
-  it("excludes contributions with no submittedAt timestamp", () => {
-    saveContribution(ALICE_CARD);
-    expect(buildPersistedDailyBestCards()).toEqual([]);
+  it("picks one winner per represented day from persisted card contributions", () => {
+    saveContribution(WEAK_CARD_DAY_ONE);
+    saveContribution(STRONG_CARD_DAY_ONE);
+    saveContribution(CARD_DAY_TWO);
+
+    const results = buildDailyBestCardsFromStore();
+
+    expect(results.map((r) => r.dayKey)).toEqual(["2026-08-10", "2026-08-11"]);
+    expect(results[0].contribution.id).toBe("strong-card-day-one");
+    expect(results[1].contribution.id).toBe("card-day-two");
   });
 
-  it("excludes non-card contributions even when timestamped", () => {
-    saveContribution({ ...BOB_SUMMARY, submittedAt: DAY_1_MS });
-    expect(buildPersistedDailyBestCards()).toEqual([]);
-  });
+  it("excludes non-card contributions and cards without a submittedAt timestamp", () => {
+    saveContribution(STRONG_CARD_DAY_ONE);
+    saveContribution(SUMMARY_WITH_TIMESTAMP);
+    saveContribution(CARD_WITHOUT_TIMESTAMP);
 
-  it("picks the highest-helpfulness card per UTC day, sorted ascending by day", () => {
-    saveContribution({ ...ALICE_CARD, id: "day2-card", submittedAt: DAY_2_MS });
-    saveContribution({ ...ALICE_CARD, id: "day1-weak", likes: 1, saves: 0, submittedAt: DAY_1_MS });
-    saveContribution({ ...ALICE_CARD, id: "day1-strong", likes: 20, saves: 10, submittedAt: DAY_1_MS });
+    const results = buildDailyBestCardsFromStore();
 
-    const bestCards = buildPersistedDailyBestCards();
-
-    expect(bestCards).toHaveLength(2);
-    expect(bestCards[0].contribution.id).toBe("day1-strong");
-    expect(bestCards[1].contribution.id).toBe("day2-card");
+    expect(results).toHaveLength(1);
+    expect(results[0].contribution.id).toBe("strong-card-day-one");
   });
 });
 
-describe("getPersistedBestCardForDay", () => {
-  it("returns null when no card contributions were submitted on that day", () => {
-    expect(getPersistedBestCardForDay(DAY_1_MS)).toBeNull();
+describe("getTodaysBestCardFromStore", () => {
+  it("returns the winner for the UTC day of `now`", () => {
+    saveContribution(WEAK_CARD_DAY_ONE);
+    saveContribution(STRONG_CARD_DAY_ONE);
+    saveContribution(CARD_DAY_TWO);
+
+    const result = getTodaysBestCardFromStore(DAY_ONE_LATER);
+
+    expect(result?.dayKey).toBe("2026-08-10");
+    expect(result?.contribution.id).toBe("strong-card-day-one");
   });
 
-  it("returns null when the only stored contribution isn't timestamped", () => {
-    saveContribution(ALICE_CARD);
-    expect(getPersistedBestCardForDay(DAY_1_MS)).toBeNull();
-  });
+  it("returns null when no card was submitted that day", () => {
+    saveContribution(STRONG_CARD_DAY_ONE);
 
-  it("returns that day's winning card, ignoring other days", () => {
-    saveContribution({ ...ALICE_CARD, id: "day1-card", submittedAt: DAY_1_MS });
-    saveContribution({ ...ALICE_CARD, id: "day2-card", likes: 99, submittedAt: DAY_2_MS });
-
-    const best = getPersistedBestCardForDay(DAY_1_MS);
-
-    expect(best?.contribution.id).toBe("day1-card");
+    expect(getTodaysBestCardFromStore(DAY_TWO)).toBeNull();
   });
 });

@@ -73,6 +73,13 @@ one card per round, with a per-side exposure summary and a "most exposed
 arguments" bar chart — see
 [`docs/features/response-outcome-charts.md`](../../docs/features/response-outcome-charts.md).
 
+`FlowAnnotationsPanel` (also exported from the package root) lets a viewer
+drop a timestamped "Flow-in-Speech Flow Annotations" `FlowAnnotation` at the
+`debate-videos` player's live playback position (or a manual timestamp),
+and renders every persisted annotation with a "Jump to" action back into
+the player — see
+[`docs/features/flow-annotations.md`](../../docs/features/flow-annotations.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
