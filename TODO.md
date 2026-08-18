@@ -4,6 +4,48 @@
 ### In progress
 
 ### Completed
+- **AI Drill Generator — real AI-generated drill script.**
+  Closes follow-up (b) under the "📚 AI Drill Generator" bullet in the
+  Research Crowdsourcing Organizer Features list — "an actual AI-generated
+  (rather than templated) script." A new
+  `packages/debate-round/src/round/drill-script-ai.ts` adds
+  `DRILL_SCRIPT_AI_SYSTEM_PROMPT`, `buildDrillScriptAiUserPrompt`, and the
+  tolerant `parseDrillScriptAiResponse`, mirroring `round/coach-feedback-ai.ts`'s
+  free-form-text split (a practice script is prose, not structured JSON) —
+  the user-turn prompt composes a single `flow/drill-generator.ts` `Drill`'s
+  kind and template prompt line for a chosen side, asking the model to turn
+  that template line into an actual, ready-to-read practice script rather
+  than restate it. `round/drill-script-client.ts` adds `requestDrillScript`,
+  a small self-contained `fetch` client (mirroring
+  `round/coach-feedback-client.ts`'s split) that POSTs to the existing
+  `/api/reason-ai` Anthropic proxy. `state/drillSets.ts`'s `DrillSetRecord`
+  gains an additive, optional `aiScripts` field keyed by a drill's index in
+  `drills` (existing records without one stay valid) plus a new
+  `saveDrillAiScript(roundId, drillIndex, aiScript)` helper that sets one
+  entry without touching `drills` or any other drill's script — matching
+  this store's existing roundId-only keying (a drill set is unique per
+  `roundId`, unlike `coachingSessions.ts`'s roundId+sideKey keying).
+  `DrillSetsPanel.tsx`'s drills now each have a "Get AI script" ("Regenerate
+  AI script" once one exists) action that calls `requestDrillScript` with
+  the drill and its round's side, saves the result, and renders it (or a
+  per-drill error message on failure) under the template prompt. No
+  follow-ups remain open on this bullet. Docs updated in
+  `docs/features/drill-sets.md`. Vitest-covered in
+  `packages/debate-round/test/drill-script-ai.test.ts` (prompt content,
+  per-kind label rendering, and response parsing, including a fenced reply
+  and a whitespace-only/empty reply),
+  `packages/debate-round/test/drill-script-client.test.ts` (the `fetch`
+  client, mocked via `vi.stubGlobal`, covering the success path, an
+  endpoint override, a server error message, a non-JSON error body, and an
+  empty/unusable AI reply), and `packages/debate-round/test/drillSets.test.ts`
+  (the new `saveDrillAiScript` helper, including overwriting an existing
+  script, leaving other drills' and other rounds' records untouched, and a
+  no-op on an unstored roundId). Verified: `bun install` (2050 packages),
+  `bun run test` (117 files / 1572 tests, all pass), `bun run typecheck`
+  (11 of 12 in-scope packages have a typecheck script; all pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/drills` route present,
+  no new route) all pass. No repo-wide `lint` script exists (checked
+  root/app/package `package.json` scripts) so none was run.
 - **AI Coach Mode — real AI coaching-feedback call.**
   Closes follow-up (a) under the "🎙️ AI Coach Mode" bullet in the Research
   Crowdsourcing Organizer Features list — "an actual AI coaching call for
@@ -4025,6 +4067,6 @@
 * 
 * 🧪 Practice Round Simulator - Recreate a tournament round with timer, speeches, judge persona, and post-round feedback. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildPracticeRoundSetup`/`buildPracticeRoundSetupText` for composing a format's speech order with a selected judge paradigm and AI opponent persona into a renderable round setup, and `buildPracticeRoundFeedback`/`buildPracticeRoundFeedbackText` for framing post-round feedback around the selected paradigm plus the existing AI Coach Mode coaching session, reusing the existing `ai-versus-speech-order.ts`/`judge-paradigms.ts`/`opponent-personas.ts`/`coach-mode.ts` slices directly. A second slice, `practiceRounds.ts` (see Tracker Status above), now persists a round's `PracticeRoundSetup`/`PracticeRoundFeedback` to localStorage. A third slice, `PracticeRoundSimulatorPanel` (see Tracker Status above, "Practice Round Simulator — round-simulator UI"), now renders a setup form and every persisted round at `/practice-round`, closing follow-up (b). A fourth slice (see Tracker Status above, "Practice Round Simulator — AI opponent speech + AI judge-decision calls") wires a "Generate AI opponent speech" action (reusing the existing AI-versus speech-generation calls against the round's own `aiVersusRounds.ts` state and saved persona) and a "Get AI judge decision" action (via a new `round/practice-round-judge-decision-wiring.ts`, composing the round's own saved judge paradigm with a saved flow summary) into the panel, closing follow-up (a). No follow-ups remain open on this idea._
 * 
-* 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. A second slice, `drillSets.ts` (see Tracker Status above), now persists a round's generated `Drill[]` set to localStorage. A third slice, `DrillSetsPanel` (see Tracker Status above, "AI Drill Generator — drill-panel UI"), now renders every persisted drill set grouped by round at `/drills`, closing follow-up (a). Follow-up (b), an actual AI-generated (rather than templated) script, remains open — not started._
+* 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. A second slice, `drillSets.ts` (see Tracker Status above), now persists a round's generated `Drill[]` set to localStorage. A third slice, `DrillSetsPanel` (see Tracker Status above, "AI Drill Generator — drill-panel UI"), now renders every persisted drill set grouped by round at `/drills`, closing follow-up (a). A fourth slice (see Tracker Status above, "AI Drill Generator — real AI-generated drill script") added `round/drill-script-ai.ts` and `round/drill-script-client.ts`, wiring a "Get AI script" action into the panel per drill that calls the existing `/api/reason-ai` Anthropic proxy for an actual, ready-to-read practice script (rather than the template prompt line alone), saved on the drill set's new `aiScripts` map via `saveDrillAiScript`, closing follow-up (b). No follow-ups remain open on this bullet._
 * 
 * 🧭 Scout-to-Strategy Workflow - Turn scouting data into recommended game plans, case choices, judge adaptation, and risk levels. _Status: first slice done (see Tracker Status above) — `debate-round` now has `rankCaseOptions`/`computeCaseOverlapScore`/`buildJudgeAdaptationNotes`/`assessMatchupRisk`/`buildStrategyRecommendation`/`buildStrategyRecommendationText` for ranking caller-supplied case options by opponent-tag overlap, turning judge tendencies into adaptation notes, and combining opponent/judge signals into a risk level with its contributing factors, reusing the existing `OpponentTeamProfile`/`JudgeProfile` types directly. A second slice (see Tracker Status above, "Scout-to-Strategy Workflow — case-choice/strategy panel UI"), now persists a matchup's generated `StrategyRecommendation` to localStorage and renders a case-choice/strategy panel at `/strategy`, closing follow-up (a). Follow-ups: (b) wiring `ourSide`/likely opponent side into the risk heuristic, (c) an actual AI-panel evaluation of case choice instead of the tag-overlap heuristic. Neither of these is started._

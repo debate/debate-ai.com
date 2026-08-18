@@ -9,6 +9,12 @@
  * calls the already-persisted `deleteDrillSet` — no new drill-generation
  * logic is introduced here.
  *
+ * A "Get AI script" action per drill calls `round/drill-script-client.ts`'s
+ * `requestDrillScript` with that drill and its round's side, saves the
+ * result via `saveDrillAiScript`, and renders it under the template prompt
+ * — closing follow-up (b), "an actual AI-generated (rather than templated)
+ * script."
+ *
  * @module panels/DrillSetsPanel
  */
 
@@ -17,8 +23,14 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
-import { buildDrillSetsPanelView, deleteDrillSet, type DrillSetRecord } from "../state/drillSets"
+import {
+  buildDrillSetsPanelView,
+  deleteDrillSet,
+  saveDrillAiScript,
+  type DrillSetRecord,
+} from "../state/drillSets"
 import type { DrillKind } from "../flow/drill-generator"
+import { requestDrillScript } from "../round/drill-script-client"
 
 const DRILL_KIND_LABELS: Record<DrillKind, string> = {
   overview: "Overview",
@@ -36,6 +48,8 @@ const DRILL_KIND_LABELS: Record<DrillKind, string> = {
  */
 export function DrillSetsPanel() {
   const [drillSets, setDrillSets] = useState<DrillSetRecord[] | null>(null)
+  const [scriptLoadingKey, setScriptLoadingKey] = useState<string | null>(null)
+  const [scriptErrorsByKey, setScriptErrorsByKey] = useState<Record<string, string>>({})
 
   useEffect(() => {
     setDrillSets(buildDrillSetsPanelView())
@@ -46,6 +60,27 @@ export function DrillSetsPanel() {
   const handleClear = (roundId: string) => {
     deleteDrillSet(roundId)
     refresh()
+  }
+
+  const handleGetAiScript = async (set: DrillSetRecord, drillIndex: number) => {
+    const key = `${set.roundId}:${drillIndex}`
+    setScriptLoadingKey(key)
+    setScriptErrorsByKey((prev) => {
+      const { [key]: _removed, ...rest } = prev
+      return rest
+    })
+    try {
+      const script = await requestDrillScript({ sideKey: set.sideKey, drill: set.drills[drillIndex] })
+      saveDrillAiScript(set.roundId, drillIndex, script)
+      refresh()
+    } catch (error) {
+      setScriptErrorsByKey((prev) => ({
+        ...prev,
+        [key]: error instanceof Error ? error.message : "Failed to get AI script.",
+      }))
+    } finally {
+      setScriptLoadingKey(null)
+    }
   }
 
   if (drillSets === null) {
@@ -81,17 +116,42 @@ export function DrillSetsPanel() {
             </Button>
           </div>
           <div className="space-y-2">
-            {set.drills.map((drill, index) => (
-              <div
-                key={index}
-                className="flex items-start gap-2 rounded-md border border-border px-3 py-2 text-sm"
-              >
-                <Badge variant="outline" className="whitespace-nowrap">
-                  {DRILL_KIND_LABELS[drill.kind]}
-                </Badge>
-                <p className="text-foreground">{drill.prompt}</p>
-              </div>
-            ))}
+            {set.drills.map((drill, index) => {
+              const key = `${set.roundId}:${index}`
+              const aiScript = set.aiScripts?.[index]
+              return (
+                <div key={index} className="rounded-md border border-border px-3 py-2 text-sm">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start gap-2">
+                      <Badge variant="outline" className="whitespace-nowrap">
+                        {DRILL_KIND_LABELS[drill.kind]}
+                      </Badge>
+                      <p className="text-foreground">{drill.prompt}</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={scriptLoadingKey === key}
+                      onClick={() => handleGetAiScript(set, index)}
+                    >
+                      {scriptLoadingKey === key
+                        ? "Getting script…"
+                        : aiScript
+                          ? "Regenerate AI script"
+                          : "Get AI script"}
+                    </Button>
+                  </div>
+                  {scriptErrorsByKey[key] && (
+                    <p className="mt-2 text-sm text-destructive">{scriptErrorsByKey[key]}</p>
+                  )}
+                  {aiScript && (
+                    <p className="mt-2 whitespace-pre-wrap border-t border-border pt-2 text-sm text-foreground">
+                      {aiScript}
+                    </p>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
       ))}
