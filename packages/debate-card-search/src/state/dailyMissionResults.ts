@@ -30,6 +30,15 @@
  * "compose the pure function directly against the persisted store"
  * convention, this time on the write side.
  *
+ * `buildPersistedQuestStreakRoster` closes that same bullet's remaining
+ * follow-up — "a streak/badge widget UI that renders `buildContributorQuestStreak`/
+ * `getEarnedStreakBadges`" — by listing every contributor with at least one
+ * persisted mission result (via this module's own `listDailyMissionResults`)
+ * and building each one's streak status via `buildPersistedContributorQuestStreak`,
+ * mirroring `lib/unlock-streak-status.ts`'s `buildUnlockStatusRoster` "single
+ * call that renders the whole roster" convention, so a panel doesn't need to
+ * already know every contributor id.
+ *
  * @module state/dailyMissionResults
  */
 
@@ -153,4 +162,22 @@ export function computeAndSavePersistedDailyMissionResult(
   const record: DailyMissionResultRecord = { contributorId, ...result };
   saveDailyMissionResult(record);
   return record;
+}
+
+/**
+ * Builds the full streak+badge roster: every contributor with at least one
+ * persisted mission result, each resolved through
+ * `buildPersistedContributorQuestStreak`, sorted alphabetically by
+ * `contributorId` for a stable, deterministic roster order. An empty store
+ * returns an empty roster rather than throwing.
+ */
+export function buildPersistedQuestStreakRoster(
+  asOfDayKey: string,
+  milestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
+): ContributorQuestStreak[] {
+  const contributorIds = Array.from(new Set(readAll().map((record) => record.contributorId))).sort();
+
+  return contributorIds.map((contributorId) =>
+    buildPersistedContributorQuestStreak(contributorId, asOfDayKey, milestones),
+  );
 }

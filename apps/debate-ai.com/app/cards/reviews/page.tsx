@@ -2,11 +2,11 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { PeerReviewPanel } from "debate-card-search"
+import { ReviewQueuePanel } from "debate-card-search"
 
 export const metadata: Metadata = {
-  title: "Peer Review",
-  description: "Review, comment on, and refine submitted cards before they go live",
+  title: "Review Queue",
+  description: "Move a submitted card through peer review — comment, request changes, approve, and publish",
 }
 
 export default function CardsReviewsPage() {
@@ -23,7 +23,7 @@ export default function CardsReviewsPage() {
         </Link>
       </div>
       <Suspense>
-        <PeerReviewPanel />
+        <ReviewQueuePanel />
       </Suspense>
     </div>
   )

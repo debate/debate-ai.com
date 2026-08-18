@@ -6,6 +6,7 @@ import { CategoryDockProvider, PersistentVideoPlayer } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
 import { OneTap } from "@/components/layout/OneTap"
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar"
+import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
   title: "Debate AI",
@@ -44,6 +45,9 @@ export default function RootLayout({
             <PersistentVideoPlayer />
             <OneTap />
             <ServiceWorkerRegistrar />
+            {/* Sign-in and sign-out report through toasts; without a mounted
+                toaster every one of those messages was dropped silently. */}
+            <Toaster position="top-center" richColors closeButton />
           </CategoryDockProvider>
         </ThemeProvider>
       </body>

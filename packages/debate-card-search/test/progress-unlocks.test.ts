@@ -19,6 +19,7 @@ function makeStats(overrides: Partial<ContributorStats> = {}): ContributorStats 
     bestContributionId: "card-1",
     bestHelpfulnessScore: 0,
     popularityOnlyOutlierCount: 0,
+    completedTaskCount: 0,
     ...overrides,
   };
 }
@@ -51,15 +52,32 @@ describe("computeContributorTier", () => {
 
   it("supports caller-supplied requirement tables", () => {
     const requirements: UnlockTierRequirement[] = [
-      { tier: "novice", minContributionCount: 0, minTotalHelpfulnessScore: 0 },
-      { tier: "apprentice", minContributionCount: 1, minTotalHelpfulnessScore: 1 },
-      { tier: "veteran", minContributionCount: 2, minTotalHelpfulnessScore: 2 },
-      { tier: "expert", minContributionCount: 3, minTotalHelpfulnessScore: 3 },
+      { tier: "novice", minContributionCount: 0, minTotalHelpfulnessScore: 0, minCompletedTaskCount: 0 },
+      { tier: "apprentice", minContributionCount: 1, minTotalHelpfulnessScore: 1, minCompletedTaskCount: 1 },
+      { tier: "veteran", minContributionCount: 2, minTotalHelpfulnessScore: 2, minCompletedTaskCount: 2 },
+      { tier: "expert", minContributionCount: 3, minTotalHelpfulnessScore: 3, minCompletedTaskCount: 3 },
     ];
 
     expect(computeContributorTier(makeStats({ contributionCount: 3, totalHelpfulnessScore: 3 }), requirements)).toBe(
       "expert",
     );
+  });
+
+  it("reaches a tier via completed tasks alone, with no scored contributions", () => {
+    expect(computeContributorTier(makeStats({ completedTaskCount: 3 }))).toBe("apprentice");
+    expect(computeContributorTier(makeStats({ completedTaskCount: 7 }))).toBe("apprentice");
+    expect(computeContributorTier(makeStats({ completedTaskCount: 8 }))).toBe("veteran");
+    expect(computeContributorTier(makeStats({ completedTaskCount: 20 }))).toBe("expert");
+  });
+
+  it("returns the highest tier reached combining the contribution and completed-task paths", () => {
+    expect(
+      computeContributorTier(makeStats({ contributionCount: 15, totalHelpfulnessScore: 100, completedTaskCount: 20 })),
+    ).toBe("expert");
+  });
+
+  it("does not change tier for a contributor already qualifying via contributions when completedTaskCount is 0", () => {
+    expect(computeContributorTier(makeStats({ contributionCount: 15, totalHelpfulnessScore: 100 }))).toBe("veteran");
   });
 });
 
@@ -100,7 +118,8 @@ describe("buildContributorUnlockStatus", () => {
       tier: "novice",
       unlockedSkillLevel: "novice",
       badges: [],
-      nextTier: { tier: "apprentice", contributionsNeeded: 3, helpfulnessScoreNeeded: 15 },
+      nextTier: { tier: "apprentice", contributionsNeeded: 3, helpfulnessScoreNeeded: 15, completedTasksNeeded: 3 },
+      completedTaskCount: 0,
     });
   });
 
@@ -108,7 +127,24 @@ describe("buildContributorUnlockStatus", () => {
     const status = buildContributorUnlockStatus(makeStats({ contributionCount: 20, totalHelpfulnessScore: 5 }));
 
     expect(status.tier).toBe("novice");
-    expect(status.nextTier).toEqual({ tier: "apprentice", contributionsNeeded: 0, helpfulnessScoreNeeded: 20 });
+    expect(status.nextTier).toEqual({
+      tier: "apprentice",
+      contributionsNeeded: 0,
+      helpfulnessScoreNeeded: 20,
+      completedTasksNeeded: 3,
+    });
+  });
+
+  it("reports zero completedTasksNeeded once the completed-task path alone is cleared", () => {
+    const status = buildContributorUnlockStatus(makeStats({ completedTaskCount: 8, contributionCount: 15, totalHelpfulnessScore: 100 }));
+
+    expect(status.tier).toBe("veteran");
+    expect(status.nextTier).toEqual({
+      tier: "expert",
+      contributionsNeeded: 15,
+      helpfulnessScoreNeeded: 200,
+      completedTasksNeeded: 12,
+    });
   });
 
   it("has no next tier once a contributor reaches expert", () => {
@@ -131,7 +167,9 @@ describe("buildUnlockStatusText", () => {
       buildContributorUnlockStatus(makeStats({ contributionCount: 2, totalHelpfulnessScore: 10 })),
     );
 
-    expect(text).toBe("alice: novice tier — unlocked novice tasks (3 contributions and 15 pts to apprentice)");
+    expect(text).toBe(
+      "alice: novice tier — unlocked novice tasks (3 contributions and 15 pts, or 3 completed tasks, to apprentice)",
+    );
   });
 
   it("renders an expert's status with every badge and no next-tier clause", () => {

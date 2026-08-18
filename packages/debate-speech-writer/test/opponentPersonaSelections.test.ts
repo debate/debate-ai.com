@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildOpponentPersonaSelectionsPanelView,
   deleteOpponentPersonaSelection,
   getOpponentPersonaSelection,
   listOpponentPersonaSelections,
@@ -97,5 +98,27 @@ describe("deleteOpponentPersonaSelection", () => {
     saveOpponentPersonaSelection(SESSION_2_KRITIK);
     deleteOpponentPersonaSelection("missing");
     expect(listOpponentPersonaSelections()).toEqual([SESSION_2_KRITIK]);
+  });
+});
+
+describe("buildOpponentPersonaSelectionsPanelView", () => {
+  it("returns an empty view when nothing is stored", () => {
+    expect(buildOpponentPersonaSelectionsPanelView()).toEqual([]);
+  });
+
+  it("sorts every persisted selection by sessionId", () => {
+    saveOpponentPersonaSelection(SESSION_2_KRITIK);
+    saveOpponentPersonaSelection(SESSION_1_POLICY_HEAVY);
+
+    expect(buildOpponentPersonaSelectionsPanelView()).toEqual([SESSION_1_POLICY_HEAVY, SESSION_2_KRITIK]);
+  });
+
+  it("does not mutate the underlying stored order", () => {
+    saveOpponentPersonaSelection(SESSION_2_KRITIK);
+    saveOpponentPersonaSelection(SESSION_1_POLICY_HEAVY);
+
+    buildOpponentPersonaSelectionsPanelView();
+
+    expect(listOpponentPersonaSelections()).toEqual([SESSION_2_KRITIK, SESSION_1_POLICY_HEAVY]);
   });
 });

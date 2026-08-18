@@ -22,6 +22,18 @@ and its prompt:
 | Cross-Ex | A cross-examination question for an unanswered argument |
 | Collapse | A collapse-scenario recommendation for one of the opposing side's most vulnerable arguments |
 
+## AI-generated practice script
+
+Each drill has a "Get AI script" action (label becomes "Regenerate AI
+script" once one exists). It calls `round/drill-script-client.ts`'s
+`requestDrillScript` — a small `fetch` client that POSTs the drill's kind,
+template prompt, and side to the existing `/api/reason-ai` Anthropic proxy
+— and saves the reply on that drill's index via
+`state/drillSets.ts`'s `saveDrillAiScript`. The result renders under the
+template prompt line; a per-drill error message renders instead on
+failure. This is an actual, ready-to-read practice script (e.g. the real
+frontline response text), not another restatement of the template prompt.
+
 ## Data flow
 
 ```
@@ -35,6 +47,13 @@ Clearing a round's drill set:
 panels/DrillSetsPanel.tsx
   → deleteDrillSet(roundId)        — state/drillSets.ts
   → panel re-reads buildDrillSetsPanelView() to refresh
+
+Generating a drill's AI script:
+panels/DrillSetsPanel.tsx
+  → requestDrillScript({ sideKey, drill })  — round/drill-script-client.ts
+    → POST /api/reason-ai (system + user prompt from round/drill-script-ai.ts)
+  → saveDrillAiScript(roundId, drillIndex, script)  — state/drillSets.ts
+  → panel re-reads buildDrillSetsPanelView() to refresh
 ```
 
 Every drill-generation and persistence rule already existed and was
@@ -43,13 +62,16 @@ reads/writes through the persistence store," named under the "📚 AI Drill
 Generator" bullet in `TODO.md`, adding one small helper to
 `state/drillSets.ts` — `buildDrillSetsPanelView`, which sorts
 `listDrillSets`'s output for a stable panel display order — rather than
-introducing new drill-generation logic. Vitest-covered in
-`packages/debate-round/test/drillSets.test.ts`.
+introducing new drill-generation logic. A later slice closes follow-up
+(b), "an actual AI-generated (rather than templated) script," adding
+`round/drill-script-ai.ts` and `round/drill-script-client.ts` plus the
+panel's "Get AI script" action and `saveDrillAiScript`. Vitest-covered in
+`packages/debate-round/test/drillSets.test.ts`,
+`packages/debate-round/test/drill-script-ai.test.ts`, and
+`packages/debate-round/test/drill-script-client.test.ts`.
 
 ## Known gaps
 
-- No actual AI-generated (rather than templated) drill script yet —
-  follow-up (b) on the same bullet, not started.
 - No affordance in this panel to generate a new drill set for a round —
   a set only appears here once something elsewhere calls `buildDrillSet`
   and `saveDrillSet` for that round.

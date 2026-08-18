@@ -2,8 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   createFlowAnnotation,
   findAnnotationAtPlaybackPosition,
+  formatAnnotationTimestamp,
   getAnnotationsForBox,
   getAnnotationsForSpeech,
+  getAnnotationsForVideo,
+  parseAnnotationTimestamp,
+  parseBoxPathInput,
   resolveAnnotationBox,
   sortAnnotationsByTimestamp,
   type FlowAnnotation,
@@ -120,6 +124,32 @@ describe("createFlowAnnotation", () => {
       }),
     ).toThrow(/timestampMs/);
   });
+
+  it("trims a videoId and omits it entirely when blank", () => {
+    expect(
+      createFlowAnnotation({
+        id: "a1",
+        flowId: 1,
+        boxPath: [0],
+        speechId: "1AC",
+        timestampMs: 0,
+        createdAt: 0,
+        videoId: "  dQw4w9WgXcQ  ",
+      }).videoId,
+    ).toBe("dQw4w9WgXcQ");
+
+    expect(
+      createFlowAnnotation({
+        id: "a1",
+        flowId: 1,
+        boxPath: [0],
+        speechId: "1AC",
+        timestampMs: 0,
+        createdAt: 0,
+        videoId: "   ",
+      }).videoId,
+    ).toBeUndefined();
+  });
 });
 
 describe("sortAnnotationsByTimestamp", () => {
@@ -196,5 +226,81 @@ describe("resolveAnnotationBox", () => {
 
   it("returns null when the path no longer resolves (e.g. rows were removed)", () => {
     expect(resolveAnnotationBox(flow, annotation({ boxPath: [5, 0] }))).toBeNull();
+  });
+});
+
+describe("getAnnotationsForVideo", () => {
+  it("filters to the requested video and sorts by timestamp", () => {
+    const annotations = [
+      annotation({ id: "vid-a-2", videoId: "vidA", timestampMs: 5000 }),
+      annotation({ id: "vid-b-1", videoId: "vidB", timestampMs: 1000 }),
+      annotation({ id: "vid-a-1", videoId: "vidA", timestampMs: 1000 }),
+      annotation({ id: "no-video" }),
+    ];
+
+    expect(getAnnotationsForVideo(annotations, "vidA").map((a) => a.id)).toEqual([
+      "vid-a-1",
+      "vid-a-2",
+    ]);
+  });
+
+  it("returns an empty list for a video with no annotations", () => {
+    expect(getAnnotationsForVideo([annotation({ videoId: "vidA" })], "vidB")).toEqual([]);
+  });
+});
+
+describe("formatAnnotationTimestamp", () => {
+  it("formats sub-hour positions as m:ss", () => {
+    expect(formatAnnotationTimestamp(0)).toBe("0:00");
+    expect(formatAnnotationTimestamp(5_000)).toBe("0:05");
+    expect(formatAnnotationTimestamp(90_000)).toBe("1:30");
+  });
+
+  it("formats hour-plus positions as h:mm:ss", () => {
+    expect(formatAnnotationTimestamp(3_661_000)).toBe("1:01:01");
+  });
+
+  it("clamps a negative value to zero", () => {
+    expect(formatAnnotationTimestamp(-500)).toBe("0:00");
+  });
+});
+
+describe("parseAnnotationTimestamp", () => {
+  it("parses m:ss and h:mm:ss", () => {
+    expect(parseAnnotationTimestamp("1:30")).toBe(90_000);
+    expect(parseAnnotationTimestamp("1:01:01")).toBe(3_661_000);
+  });
+
+  it("parses a bare seconds value", () => {
+    expect(parseAnnotationTimestamp("45")).toBe(45_000);
+  });
+
+  it("returns null for out-of-range minutes/seconds", () => {
+    expect(parseAnnotationTimestamp("1:60")).toBeNull();
+    expect(parseAnnotationTimestamp("1:60:00")).toBeNull();
+    expect(parseAnnotationTimestamp("1:00:60")).toBeNull();
+  });
+
+  it("returns null for malformed or empty input", () => {
+    expect(parseAnnotationTimestamp("")).toBeNull();
+    expect(parseAnnotationTimestamp("abc")).toBeNull();
+    expect(parseAnnotationTimestamp("1:")).toBeNull();
+    expect(parseAnnotationTimestamp("1:2:3:4")).toBeNull();
+    expect(parseAnnotationTimestamp("-1:00")).toBeNull();
+  });
+});
+
+describe("parseBoxPathInput", () => {
+  it("parses a comma-separated path", () => {
+    expect(parseBoxPathInput("0, 1")).toEqual([0, 1]);
+    expect(parseBoxPathInput("2")).toEqual([2]);
+  });
+
+  it("returns null for empty or malformed input", () => {
+    expect(parseBoxPathInput("")).toBeNull();
+    expect(parseBoxPathInput("0,,1")).toBeNull();
+    expect(parseBoxPathInput("0, a")).toBeNull();
+    expect(parseBoxPathInput("0, -1")).toBeNull();
+    expect(parseBoxPathInput("0, 1.5")).toBeNull();
   });
 });

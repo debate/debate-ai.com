@@ -125,7 +125,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
 export const videoPlayerIframeRef: { current: HTMLIFrameElement | null } = { current: null }
 
 /** Send a command to the YouTube iframe via postMessage */
-export function sendYouTubeCommand(func: "playVideo" | "pauseVideo" | "setPlaybackRate", args: unknown[] = []) {
+export function sendYouTubeCommand(func: "playVideo" | "pauseVideo" | "setPlaybackRate" | "seekTo", args: unknown[] = []) {
   const iframe = videoPlayerIframeRef.current
   if (!iframe?.contentWindow) return
   iframe.contentWindow.postMessage(
