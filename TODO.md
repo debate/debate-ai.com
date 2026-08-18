@@ -4,6 +4,42 @@
 ### In progress
 
 ### Completed
+- **Practice Round Simulator — AI opponent speech + AI judge-decision calls.**
+  [PR #193](https://github.com/debate/debate-ai.com/pull/193).
+  Closes follow-up (a) under the "🧪 Practice Round Simulator" bullet in
+  Research Crowdsourcing Organizer Features — "an actual AI
+  speech-generation call for the AI opponent's speeches and an AI
+  judge-decision call under the chosen paradigm." `PracticeRoundSimulatorPanel`
+  now has a "Generate AI opponent speech" action per round card, reusing the
+  existing `buildAiResponseRequest`/`requestAiVersusSpeech`/
+  `requestAiVersusSpeechWithPersona` helpers (idea #3's "Online Debate Versus
+  AI" and the "AI Practice Opponent" idea) against the round's own
+  `aiVersusRounds.ts` submitted-speech state — available once the round has
+  been started at `/versus-ai` under the same `roundId` — sourcing the AI
+  opponent's persona directly from the practice round's own saved
+  `setup.opponentPersona` rather than a separate `opponentPersonaSelections`
+  store lookup, since the practice-round setup already carries that choice
+  explicitly. A new `packages/debate-round/src/round/practice-round-judge-decision-wiring.ts`
+  adds `buildPracticeRoundJudgeDecisionInput`, a variant of idea #5's
+  `judge-decision-store-wiring.ts` that takes the practice round's own saved
+  `setup.judgeParadigm` directly as an argument (instead of reading a second
+  `judgeParadigmSelections` store), while still resolving the round's flow
+  summary from the existing `state/flowSummaries.ts` by the same `roundId`.
+  The panel's new "Get AI judge decision" action calls the existing
+  `requestJudgeDecision` with that resolved input and saves the verdict onto
+  the round's own `PracticeRoundRecord` via a new optional `judgeDecision`
+  field, rendering the winner, key voting issues, and rationale. No new
+  turn-order, speech-order, judge-paradigm, or setup-composition logic was
+  introduced. Vitest-covered in
+  `packages/debate-round/test/practice-round-judge-decision-wiring.test.ts`
+  (missing/empty flow summary, successful composition from the round's own
+  paradigm, roundId scoping, and a custom paradigm). No follow-ups remain
+  open on this idea. No repo-wide `lint` script exists (checked
+  root/app/package `package.json` scripts) so none was run. Verified:
+  `bun install` (2050 packages), `bun run test` (108 files / 1465 tests, all
+  pass), `bun run typecheck` (11 of 12 in-scope packages have a typecheck
+  script; all pass), and `bun run build:web` (`debate-ai-web`, succeeds,
+  `/practice-round` route present, no new route) all pass.
 - **AI Practice Opponent — persona-conditioned AI speech-generation call.**
   [PR #191](https://github.com/debate/debate-ai.com/pull/191).
   Closes follow-up (a) under the "🤖 AI Practice Opponent" bullet in Research
@@ -3773,7 +3809,7 @@
 * 
 * 📊 Matchup Prep Dashboard - Combine opponent profiles, judge profiles, and topic-specific prep into a single pre-round view. _Status: first slice done (see Tracker Status above, "Pre-Round Intelligence Panel") — `debate-round` now has `buildPreRoundBriefing`/`buildPreRoundBriefingText` for combining an opponent-scouting summary, judge-tendency summary, head-to-head record, and prep notes into one structured briefing. See idea #12 in Product Feature Ideas above for the full status and follow-ups._
 * 
-* 🧪 Practice Round Simulator - Recreate a tournament round with timer, speeches, judge persona, and post-round feedback. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildPracticeRoundSetup`/`buildPracticeRoundSetupText` for composing a format's speech order with a selected judge paradigm and AI opponent persona into a renderable round setup, and `buildPracticeRoundFeedback`/`buildPracticeRoundFeedbackText` for framing post-round feedback around the selected paradigm plus the existing AI Coach Mode coaching session, reusing the existing `ai-versus-speech-order.ts`/`judge-paradigms.ts`/`opponent-personas.ts`/`coach-mode.ts` slices directly. A second slice, `practiceRounds.ts` (see Tracker Status above), now persists a round's `PracticeRoundSetup`/`PracticeRoundFeedback` to localStorage. A third slice, `PracticeRoundSimulatorPanel` (see Tracker Status above, "Practice Round Simulator — round-simulator UI"), now renders a setup form and every persisted round at `/practice-round`, closing follow-up (b). Follow-up (a), an actual AI speech-generation call for the AI opponent's speeches and an AI judge-decision call under the chosen paradigm, remains open — not started._
+* 🧪 Practice Round Simulator - Recreate a tournament round with timer, speeches, judge persona, and post-round feedback. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildPracticeRoundSetup`/`buildPracticeRoundSetupText` for composing a format's speech order with a selected judge paradigm and AI opponent persona into a renderable round setup, and `buildPracticeRoundFeedback`/`buildPracticeRoundFeedbackText` for framing post-round feedback around the selected paradigm plus the existing AI Coach Mode coaching session, reusing the existing `ai-versus-speech-order.ts`/`judge-paradigms.ts`/`opponent-personas.ts`/`coach-mode.ts` slices directly. A second slice, `practiceRounds.ts` (see Tracker Status above), now persists a round's `PracticeRoundSetup`/`PracticeRoundFeedback` to localStorage. A third slice, `PracticeRoundSimulatorPanel` (see Tracker Status above, "Practice Round Simulator — round-simulator UI"), now renders a setup form and every persisted round at `/practice-round`, closing follow-up (b). A fourth slice (see Tracker Status above, "Practice Round Simulator — AI opponent speech + AI judge-decision calls") wires a "Generate AI opponent speech" action (reusing the existing AI-versus speech-generation calls against the round's own `aiVersusRounds.ts` state and saved persona) and a "Get AI judge decision" action (via a new `round/practice-round-judge-decision-wiring.ts`, composing the round's own saved judge paradigm with a saved flow summary) into the panel, closing follow-up (a). No follow-ups remain open on this idea._
 * 
 * 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. A second slice, `drillSets.ts` (see Tracker Status above), now persists a round's generated `Drill[]` set to localStorage. A third slice, `DrillSetsPanel` (see Tracker Status above, "AI Drill Generator — drill-panel UI"), now renders every persisted drill set grouped by round at `/drills`, closing follow-up (a). Follow-up (b), an actual AI-generated (rather than templated) script, remains open — not started._
 * 
