@@ -3,6 +3,9 @@
 
 ### In progress
 
+(none)
+
+### Completed
 - **Scout-to-Strategy Workflow — case-choice/strategy panel UI.**
   `packages/debate-round/src/state/strategyRecommendations.ts` persists a
   matchup's `StrategyRecommendation` to localStorage, and
@@ -15,9 +18,19 @@
   matchup-id/opponent-id/judge-id/case-options form plus every persisted
   recommendation (recommended case, full case rankings, judge-adaptation
   notes, risk level and factors) at `/strategy`, closing follow-up (a).
-  Branch: `claude/peaceful-cerf-23ubcu`.
-
-### Completed
+  Follow-ups (b) (wiring `ourSide`/likely opponent side into the risk
+  heuristic) and (c) (an actual AI-panel evaluation of case choice) remain
+  open — not started. Vitest-covered in
+  `packages/debate-round/test/strategyRecommendations.test.ts` (CRUD,
+  corrupt/empty/non-array storage handling, upsert, deletion, and the
+  panel-view sort) and new cases in
+  `packages/debate-round/test/scout-to-strategy.test.ts` (store-id
+  resolution, no-data fallback, explicit-profile precedence, and parity
+  with the pure `buildStrategyRecommendation`). Verified: `bun install`
+  (2050 packages), `bun run typecheck` (11 packages, all pass), `bun run
+  test` (92 files / 1324 tests, all pass), and `bun run build:web`
+  (`debate-ai-web`, succeeds, `/strategy` route present) all pass.
+  PR: [#180](https://github.com/debate/debate-ai.com/pull/180).
 - **Topic Coverage Dashboard — checklist persistence + dashboard UI.**
   `packages/debate-card-search/src/state/trackedArguments.ts` adds a small
   CRUD store, `TrackedArgumentRecord`/`listTrackedArguments`/
