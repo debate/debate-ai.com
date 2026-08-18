@@ -36,14 +36,57 @@
   color: inherit;
   font-family: 'Times New Roman', Georgia, serif;
   line-height: var(--pmd-line-height);
+
+  /* Fill the host container: toolbar pinned at the top, document
+     surface taking every remaining pixel. Hosts mount the editor inside
+     a sized box (e.g. `flex-1 min-h-0`); `height: 100%` makes the editor
+     claim that box instead of collapsing to its content height. */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Toolbar keeps its natural height at the top; everything below scrolls. */
+.reason-editor > .reason-editor-toolbar {
+  flex: 0 0 auto;
+}
+
+/* The scroll container for the document. `min-height: 0` lets it shrink
+   inside the flex column instead of pushing past the editor's bounds. */
+.reason-editor > .reason-editor-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .reason-editor .ProseMirror {
   outline: none;
   padding: 0.75rem 1rem;
-  min-height: 8rem;
+  /* Stretch to the full scroll viewport so blank space below the last
+     paragraph is still part of the editable surface (click-to-focus),
+     with `min-height: 8rem` as the floor for unsized hosts. */
+  min-height: max(8rem, 100%);
+  box-sizing: border-box;
+  max-width: 100%;
   white-space: pre-wrap;
   word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Wide atoms scroll or shrink inside the column rather than forcing the
+   page sideways (the horizontal scrollbar seen on narrow screens). */
+.reason-editor .ProseMirror img {
+  max-width: 100%;
+  height: auto;
+}
+
+.reason-editor .ProseMirror pre {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .reason-editor .ProseMirror:focus {
@@ -192,6 +235,7 @@
 .reason-editor .pmd-table {
   border-collapse: collapse;
   margin: 0.5rem 0;
+  max-width: 100%;
 }
 .reason-editor .pmd-table td,
 .reason-editor .pmd-table th {
