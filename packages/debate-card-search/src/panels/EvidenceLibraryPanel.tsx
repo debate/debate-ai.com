@@ -10,7 +10,10 @@
  * close `docs/features/evidence-library.md`'s "No edit/delete affordance"
  * gap, and editing an entry closes follow-up (a) under the "🔁 Revision
  * Incentives" bullet ("wiring an actual card-edit/save flow to call
- * `saveRevisionRecord` with a before/after snapshot").
+ * `saveRevisionRecord` with a before/after snapshot"). A "Stale evidence"
+ * badge on card results closes that same bullet's follow-up (c) — a
+ * forward-looking staleness signal via `getEvidenceStaleness`, rather than
+ * only rewarding a refresh after the fact.
  *
  * Reads the persisted evidence repository via
  * `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibrary`
@@ -44,7 +47,7 @@ import {
   saveEvidenceLibraryEntryRevision,
   searchPersistedEvidenceLibrary,
 } from "../state/evidenceLibraryEntries"
-import { buildEvidenceSearchSummaryText, computeWordCount } from "../lib/shared-evidence-library"
+import { buildEvidenceSearchSummaryText, computeWordCount, getEvidenceStaleness } from "../lib/shared-evidence-library"
 import type { EvidenceEntryKind, EvidenceLibraryEntry, EvidenceSearchResult } from "../lib/shared-evidence-library"
 
 const KIND_FILTERS: { value: EvidenceEntryKind | "all"; label: string }[] = [
@@ -188,6 +191,7 @@ export function EvidenceLibraryPanel() {
   }
 
   const summaryQuery = { text: queryText, ...(kind !== "all" ? { kind } : {}) }
+  const currentYear = new Date().getFullYear()
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -343,6 +347,9 @@ export function EvidenceLibraryPanel() {
                 )}
                 {entry.caseArea && (
                   <Badge variant="outline">{entry.caseArea}</Badge>
+                )}
+                {entry.kind === "card" && getEvidenceStaleness(entry, currentYear).isStale && (
+                  <Badge variant="destructive">Stale evidence</Badge>
                 )}
                 {queryText.trim() && (
                   <span className="text-xs text-muted-foreground">relevance {relevanceScore}</span>

@@ -6,10 +6,12 @@ import {
   computeWordCount,
   deriveCardSnapshotFromEntry,
   findEntriesByCite,
+  getEvidenceStaleness,
+  getStaleEvidenceEntries,
   searchEvidenceLibrary,
   type EvidenceLibraryEntry,
 } from "../src/lib/shared-evidence-library";
-import { evaluateRevision } from "../src/lib/revision-incentives";
+import { STALE_EVIDENCE_THRESHOLD_YEARS, evaluateRevision } from "../src/lib/revision-incentives";
 
 const entries: EvidenceLibraryEntry[] = [
   {
@@ -248,5 +250,40 @@ describe("buildEvidenceEntryRevision", () => {
 
     const evaluation = evaluateRevision(buildEvidenceEntryRevision(before, after, "alice"));
     expect(evaluation.isRewardedImprovement).toBe(false);
+  });
+});
+
+describe("getEvidenceStaleness", () => {
+  it("flags a card with an old citation year as stale", () => {
+    const oldCard = entry({ cite: `Smith ${2026 - STALE_EVIDENCE_THRESHOLD_YEARS}` });
+    expect(getEvidenceStaleness(oldCard, 2026).isStale).toBe(true);
+  });
+
+  it("does not flag a card with a recent citation year as stale", () => {
+    const freshCard = entry({ cite: "Smith 2026" });
+    expect(getEvidenceStaleness(freshCard, 2026).isStale).toBe(false);
+  });
+
+  it("flags a card with an undated citation as stale", () => {
+    expect(getEvidenceStaleness(entry({ cite: "Smith ND" }), 2026).isStale).toBe(true);
+  });
+
+  it("flags a card with no citation at all as stale", () => {
+    expect(getEvidenceStaleness(entry({ cite: "" }), 2026).isStale).toBe(true);
+  });
+});
+
+describe("getStaleEvidenceEntries", () => {
+  it("returns only stale card entries, excluding blocks and fresh cards", () => {
+    const staleCard = entry({ id: "stale-card", cite: "Lee 2018" });
+    const freshCard = entry({ id: "fresh-card", cite: "Smith 2026" });
+    const staleBlock = entry({ id: "stale-block", kind: "block", cite: "" });
+
+    const stale = getStaleEvidenceEntries([staleCard, freshCard, staleBlock], 2026);
+    expect(stale.map((e) => e.id)).toEqual(["stale-card"]);
+  });
+
+  it("returns an empty array when nothing is stale", () => {
+    expect(getStaleEvidenceEntries([entry({ cite: "Smith 2026" })], 2026)).toEqual([]);
   });
 });

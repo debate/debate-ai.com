@@ -21,7 +21,10 @@ actions: Edit loads the entry back into the submission form (now labeled
 contributor ID — saving records the edit as a scored `CardRevisionRecord`
 feeding the Revision Incentives leaderboard (see
 [`revision-incentives.md`](./revision-incentives.md)); Delete removes the
-entry outright.
+entry outright. A `card` result whose citation is stale (no parseable year,
+or `STALE_EVIDENCE_THRESHOLD_YEARS`+ years old) also carries a "Stale
+evidence" badge, via `getEvidenceStaleness` (see
+[`revision-incentives.md`](./revision-incentives.md)).
 
 | Field | Source |
 | --- | --- |
