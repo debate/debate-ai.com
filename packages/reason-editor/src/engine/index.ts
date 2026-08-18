@@ -74,6 +74,17 @@ export {
 } from '../state/collapsedHeadings.js';
 export type { CollapsedHeadingSelection } from '../state/collapsedHeadings.js';
 
+// Collapsed-heading decoration plugin — hides a collapsed heading's
+// content in the live ProseMirror view (`OutlineNavPanel` drives this via
+// `setCollapsedHeadingIdsMeta`).
+export {
+  collapsedHeadingsPlugin,
+  collapsedHeadingsKey,
+  setCollapsedHeadingIdsMeta,
+  getCollapsedHeadingIds,
+} from './outline/collapsed-headings-plugin.js';
+export type { CollapsedHeadingsPluginState } from './outline/collapsed-headings-plugin.js';
+
 // Comment thread model — surfaced so the React shell and host app can
 // read/write comment threads alongside the document.
 export type {

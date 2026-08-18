@@ -13,9 +13,10 @@
  * through `state/collapsedHeadings.ts` keyed by `documentId`, and moves
  * the editor's selection to a heading when its label is clicked.
  *
- * This panel only controls which headings are *listed*; it does not yet
- * hide the corresponding ranges inside the live ProseMirror view itself
- * (that's follow-up (b), a decoration plugin — not implemented here).
+ * Also syncs the collapsed-id selection into the live editor's
+ * `collapsedHeadingsPlugin` (follow-up (b)), so collapsing a heading here
+ * also hides its content in the ProseMirror view itself, not just the nav
+ * list.
  */
 
 import { useEffect, useReducer, useState } from "react";
@@ -27,6 +28,10 @@ import {
   toggleCollapsedHeadingId,
   type OutlineHeading,
 } from "../engine/outline/heading-outline.js";
+import {
+  collapsedHeadingsKey,
+  setCollapsedHeadingIdsMeta,
+} from "../engine/outline/collapsed-headings-plugin.js";
 import {
   getCollapsedHeadingSelection,
   saveCollapsedHeadingSelection,
@@ -64,6 +69,18 @@ export function OutlineNavPanel({ editor, documentId, className }: OutlineNavPan
   useEffect(() => {
     setCollapsedIds(getCollapsedHeadingSelection(documentId)?.collapsedIds ?? []);
   }, [documentId]);
+
+  // Push the current collapse selection into the live editor's decoration
+  // plugin — on mount/document-identity change (initial sync) and on every
+  // toggle (collapsedIds change) — so collapsed sections actually hide in
+  // the ProseMirror view, not just the nav list.
+  useEffect(() => {
+    if (!editor) return;
+    const tr = editor.state.tr
+      .setMeta(collapsedHeadingsKey, setCollapsedHeadingIdsMeta(collapsedIds))
+      .setMeta("addToHistory", false);
+    editor.view.dispatch(tr);
+  }, [editor, collapsedIds]);
 
   if (!editor) return null;
 
