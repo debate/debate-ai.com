@@ -3,7 +3,19 @@
 
 ### In progress
 
-(none)
+- **Scout-to-Strategy Workflow — case-choice/strategy panel UI.**
+  `packages/debate-round/src/state/strategyRecommendations.ts` persists a
+  matchup's `StrategyRecommendation` to localStorage, and
+  `buildStrategyRecommendationFromStores` (in
+  `packages/debate-round/src/round/scout-to-strategy.ts`) resolves
+  `opponentProfile`/`judgeProfile` from the existing
+  `opponentTeamProfiles.ts`/`judgeProfiles.ts` stores by id, mirroring
+  `pre-round-briefing.ts`'s `buildPreRoundBriefingFromStores` convention.
+  `packages/debate-round/src/panels/StrategyPanel.tsx` renders a
+  matchup-id/opponent-id/judge-id/case-options form plus every persisted
+  recommendation (recommended case, full case rankings, judge-adaptation
+  notes, risk level and factors) at `/strategy`, closing follow-up (a).
+  Branch: `claude/peaceful-cerf-23ubcu`.
 
 ### Completed
 - **Topic Coverage Dashboard — checklist persistence + dashboard UI.**
@@ -3439,4 +3451,4 @@
 * 
 * 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. A second slice, `drillSets.ts` (see Tracker Status above), now persists a round's generated `Drill[]` set to localStorage. A third slice, `DrillSetsPanel` (see Tracker Status above, "AI Drill Generator — drill-panel UI"), now renders every persisted drill set grouped by round at `/drills`, closing follow-up (a). Follow-up (b), an actual AI-generated (rather than templated) script, remains open — not started._
 * 
-* 🧭 Scout-to-Strategy Workflow - Turn scouting data into recommended game plans, case choices, judge adaptation, and risk levels. _Status: first slice done (see Tracker Status above) — `debate-round` now has `rankCaseOptions`/`computeCaseOverlapScore`/`buildJudgeAdaptationNotes`/`assessMatchupRisk`/`buildStrategyRecommendation`/`buildStrategyRecommendationText` for ranking caller-supplied case options by opponent-tag overlap, turning judge tendencies into adaptation notes, and combining opponent/judge signals into a risk level with its contributing factors, reusing the existing `OpponentTeamProfile`/`JudgeProfile` types directly. Follow-ups: (a) a case-choice/strategy panel UI, (b) wiring `ourSide`/likely opponent side into the risk heuristic, (c) an actual AI-panel evaluation of case choice instead of the tag-overlap heuristic. None of these are started._
+* 🧭 Scout-to-Strategy Workflow - Turn scouting data into recommended game plans, case choices, judge adaptation, and risk levels. _Status: first slice done (see Tracker Status above) — `debate-round` now has `rankCaseOptions`/`computeCaseOverlapScore`/`buildJudgeAdaptationNotes`/`assessMatchupRisk`/`buildStrategyRecommendation`/`buildStrategyRecommendationText` for ranking caller-supplied case options by opponent-tag overlap, turning judge tendencies into adaptation notes, and combining opponent/judge signals into a risk level with its contributing factors, reusing the existing `OpponentTeamProfile`/`JudgeProfile` types directly. A second slice (see Tracker Status above, "Scout-to-Strategy Workflow — case-choice/strategy panel UI"), now persists a matchup's generated `StrategyRecommendation` to localStorage and renders a case-choice/strategy panel at `/strategy`, closing follow-up (a). Follow-ups: (b) wiring `ourSide`/likely opponent side into the risk heuristic, (c) an actual AI-panel evaluation of case choice instead of the tag-overlap heuristic. Neither of these is started._
