@@ -17,6 +17,16 @@
  * board), since none of those inputs are persisted in a form this panel could
  * read live yet. See follow-up (b) in TODO.md.
  *
+ * Each topic group also renders a live "active now" roster, backed by
+ * `state/topicPresence.ts`'s heartbeat store — closing follow-up (c), "a
+ * presence/live-status signal for who's currently active." There's no
+ * WebSocket (or similar) transport in this repo, so a contributor marks
+ * themselves active with an explicit "I'm active here" button (mirroring the
+ * "no scheduled-job infrastructure" manual-trigger convention `dailyQuests.ts`
+ * already uses for its own check-in action), and the roster re-evaluates
+ * which heartbeats are still fresh on a periodic client-side timer so a
+ * contributor who goes quiet still drops off without needing a new write.
+ *
  * @module panels/SprintNotesPanel
  */
 
@@ -36,7 +46,12 @@ import {
   updatePersistedSprintNoteStatus,
   type SprintNotesPanelGroup,
 } from "../state/sprintNotes"
+import { listPersistedActiveContributors, recordPersistedPresenceHeartbeat } from "../state/topicPresence"
+import { buildPresenceSummaryText, type ActiveContributor } from "../lib/topic-presence"
 import type { SprintNoteStatus } from "../lib/team-collaboration-mode"
+
+/** How often the "active now" roster re-checks for staleness, client-side only. */
+const PRESENCE_REFRESH_INTERVAL_MS = 30_000
 
 const STATUS_LABEL: Record<SprintNoteStatus, string> = {
   "needs-follow-up": "Needs follow-up",
@@ -67,12 +82,37 @@ export function SprintNotesPanel() {
   const [draft, setDraft] = useState<NoteDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
   const [assigneeDrafts, setAssigneeDrafts] = useState<Record<string, string>>({})
+  const [myId, setMyId] = useState("")
+  const [activeByTopic, setActiveByTopic] = useState<Record<string, ActiveContributor[]>>({})
 
   useEffect(() => {
     setGroups(buildSprintNotesPanelView())
   }, [])
 
   const refresh = () => setGroups(buildSprintNotesPanelView())
+
+  const refreshPresence = (topics: string[]) => {
+    const now = Date.now()
+    setActiveByTopic(
+      Object.fromEntries(topics.map((topic) => [topic, listPersistedActiveContributors(topic, now)])),
+    )
+  }
+
+  useEffect(() => {
+    if (!groups) return
+    const topics = groups.map((group) => group.topic)
+    refreshPresence(topics)
+    const interval = setInterval(() => refreshPresence(topics), PRESENCE_REFRESH_INTERVAL_MS)
+    return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groups])
+
+  const handleMarkActive = (topic: string) => {
+    const contributorId = myId.trim()
+    if (!contributorId) return
+    recordPersistedPresenceHeartbeat(topic, contributorId, Date.now())
+    refreshPresence((groups ?? []).map((group) => group.topic))
+  }
 
   const handleSubmit = () => {
     const topic = draft.topic.trim()
@@ -169,68 +209,105 @@ export function SprintNotesPanel() {
         <Button onClick={handleSubmit}>Add note</Button>
       </div>
 
+      <div className="space-y-1.5">
+        <Label htmlFor="sprint-presence-id">Your ID (for "active now")</Label>
+        <Input
+          id="sprint-presence-id"
+          value={myId}
+          onChange={(e) => setMyId(e.target.value)}
+          placeholder="alice"
+          className="max-w-sm"
+        />
+      </div>
+
       {groups.length === 0 ? (
         <div className="p-6 text-center text-sm text-muted-foreground">
           No sprint notes yet. Add one above to start a topic sprint.
         </div>
       ) : (
         <div className="space-y-4">
-          {groups.map((group) => (
-            <div key={group.topic} className="rounded-lg border border-border p-4">
-              <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
-                {group.topic}
-                <span className="text-muted-foreground font-normal">({group.notes.length})</span>
-              </h2>
-              <div className="space-y-2">
-                {group.notes.map((note) => (
-                  <div key={note.id} className="rounded-md border border-border px-3 py-2 space-y-2">
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant={STATUS_VARIANT[note.status]}>{STATUS_LABEL[note.status]}</Badge>
-                        <p className="text-foreground">{note.text}</p>
-                      </div>
-                      <Button size="sm" variant="outline" onClick={() => handleCycleStatus(note.id, note.status)}>
-                        Mark {STATUS_LABEL[nextSprintNoteStatus(note.status)].toLowerCase()}
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                      <span>by {note.authorId}</span>
-                      {note.assignedToId && (
-                        <Badge variant="outline" className="whitespace-nowrap">
-                          assigned to {note.assignedToId}
+          {groups.map((group) => {
+            const active = activeByTopic[group.topic] ?? []
+            return (
+              <div key={group.topic} className="rounded-lg border border-border p-4">
+                <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-foreground">
+                  {group.topic}
+                  <span className="text-muted-foreground font-normal">({group.notes.length})</span>
+                </h2>
+                <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  {active.length === 0 ? (
+                    <span>{buildPresenceSummaryText(active)}</span>
+                  ) : (
+                    <>
+                      <span>Active now:</span>
+                      {active.map((contributor) => (
+                        <Badge key={contributor.contributorId} variant="secondary" className="whitespace-nowrap">
+                          {contributor.contributorId}
                         </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        value={assigneeDrafts[note.id] ?? ""}
-                        onChange={(e) =>
-                          setAssigneeDrafts((prev) => ({ ...prev, [note.id]: e.target.value }))
-                        }
-                        placeholder="Assign to…"
-                        className="h-8 max-w-[220px] text-xs"
-                      />
-                      <Button size="sm" variant="outline" onClick={() => handleAssign(note.id)}>
-                        {note.assignedToId ? "Reassign" : "Assign"}
-                      </Button>
-                      {note.assignedToId && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => {
-                            assignPersistedSprintNote(note.id, null, Date.now())
-                            refresh()
-                          }}
-                        >
-                          Unassign
+                      ))}
+                    </>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 px-2 text-xs"
+                    disabled={!myId.trim()}
+                    onClick={() => handleMarkActive(group.topic)}
+                  >
+                    I'm active here
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  {group.notes.map((note) => (
+                    <div key={note.id} className="rounded-md border border-border px-3 py-2 space-y-2">
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge variant={STATUS_VARIANT[note.status]}>{STATUS_LABEL[note.status]}</Badge>
+                          <p className="text-foreground">{note.text}</p>
+                        </div>
+                        <Button size="sm" variant="outline" onClick={() => handleCycleStatus(note.id, note.status)}>
+                          Mark {STATUS_LABEL[nextSprintNoteStatus(note.status)].toLowerCase()}
                         </Button>
-                      )}
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                        <span>by {note.authorId}</span>
+                        {note.assignedToId && (
+                          <Badge variant="outline" className="whitespace-nowrap">
+                            assigned to {note.assignedToId}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          value={assigneeDrafts[note.id] ?? ""}
+                          onChange={(e) =>
+                            setAssigneeDrafts((prev) => ({ ...prev, [note.id]: e.target.value }))
+                          }
+                          placeholder="Assign to…"
+                          className="h-8 max-w-[220px] text-xs"
+                        />
+                        <Button size="sm" variant="outline" onClick={() => handleAssign(note.id)}>
+                          {note.assignedToId ? "Reassign" : "Assign"}
+                        </Button>
+                        {note.assignedToId && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              assignPersistedSprintNote(note.id, null, Date.now())
+                              refresh()
+                            }}
+                          >
+                            Unassign
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

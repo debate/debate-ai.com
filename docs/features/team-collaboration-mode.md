@@ -53,6 +53,19 @@ panels/SprintNotesPanel.tsx
   → assignPersistedSprintNote(id, assignedToId | null, now)  — state/sprintNotes.ts
       (applies lib/team-collaboration-mode.ts's assignSprintNote and saves it)
   → panel re-reads buildSprintNotesPanelView() to refresh
+
+Presence ("active now"):
+state/topicPresence.ts (localStorage: topicPresenceHeartbeats)
+  → listPersistedActiveContributors(topic, now)  — every topic group polls this
+                                                     on mount and every 30s
+  → panels/SprintNotesPanel.tsx                  — renders each topic's fresh
+                                                     roster as badges
+
+Marking yourself active:
+panels/SprintNotesPanel.tsx ("I'm active here" button, per topic group)
+  → recordPersistedPresenceHeartbeat(topic, myId, now)  — state/topicPresence.ts
+      (applies lib/topic-presence.ts's recordPresenceHeartbeat upsert and saves it)
+  → panel re-reads listPersistedActiveContributors(topic, now) to refresh
 ```
 
 This closes follow-up (a), "a collaboration-mode panel UI," named under the
@@ -65,6 +78,26 @@ status-cycle order), and `updatePersistedSprintNoteStatus`/
 introducing new note-lifecycle logic. Vitest-covered in
 `packages/debate-card-search/test/sprintNotes.test.ts`.
 
+A later slice closes follow-up (c), "a presence/live-status signal for who's
+currently active." There's no WebSocket (or similar) live transport
+anywhere in this repo, so presence is modeled as an explicit,
+caller-recorded heartbeat rather than a push signal: `lib/topic-presence.ts`
+adds a `PresenceHeartbeat` model (one heartbeat per topic + contributor
+pair, upserted by `recordPresenceHeartbeat`) and `listActiveContributors`,
+which treats a contributor as active only while their most recent heartbeat
+for that topic is within a freshness window (5 minutes by default). Its
+`state/topicPresence.ts` persists heartbeats to localStorage under
+`topicPresenceHeartbeats`, mirroring the `sprintNotes.ts` persistence
+convention. `SprintNotesPanel.tsx` renders each topic group's live "active
+now" roster (badges, most-recently-active first, or "No one active right
+now.") and gives a contributor a "Your ID" field plus an "I'm active here"
+button per topic to record their own heartbeat; every topic's roster
+re-evaluates staleness on a 30-second client-side timer even without a new
+heartbeat, so someone who goes quiet drops off the list. Vitest-covered in
+`packages/debate-card-search/test/topic-presence.test.ts` (the pure
+heartbeat/freshness logic) and `test/topicPresence.test.ts` (the persisted
+store). No follow-ups remain open on this bullet.
+
 ## Known gaps
 
 - This panel only renders the `SprintNote` thread itself, not the full
@@ -73,4 +106,3 @@ introducing new note-lifecycle logic. Vitest-covered in
   `ContributorAvailability`, `TrackedTopicAssignment`, or `QuestContribution`
   are persisted in a form this panel could read live yet. That's follow-up
   (b), "persisting a topic sprint's other inputs," and remains open.
-- No live presence/who's-active signal (follow-up (c)) — not attempted.
