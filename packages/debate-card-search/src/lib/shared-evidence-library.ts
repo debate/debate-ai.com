@@ -19,7 +19,7 @@
 
 import { buildArgumentLibrary, filterCardsByTags, type ArgumentLibrary, type LibraryCard } from "./argument-library";
 import { scoreClarity, scoreRelevance, scoreUsability } from "./llm-card-scoring";
-import type { CardRevision, CardSnapshot } from "./revision-incentives";
+import { computeEvidenceStaleness, type CardRevision, type CardSnapshot, type EvidenceStalenessSignal } from "./revision-incentives";
 
 /** Whether a repository entry is a cut/tagged evidence card or a team-drafted reusable analytic block. */
 export type EvidenceEntryKind = "card" | "block";
@@ -187,6 +187,29 @@ export function buildEvidenceEntryRevision(
     before: deriveCardSnapshotFromEntry(before),
     after: deriveCardSnapshotFromEntry(after),
   };
+}
+
+/**
+ * Flags whether an evidence-library entry's cited evidence is stale as of
+ * `currentYear`, composing `deriveCardSnapshotFromEntry`'s parsed
+ * `evidenceYear` directly with `revision-incentives.ts`'s
+ * `computeEvidenceStaleness` — so a reusable analytic `block` (no `cite`,
+ * `evidenceYear` always 0) is flagged stale the same way an undated card
+ * would be.
+ */
+export function getEvidenceStaleness(entry: EvidenceLibraryEntry, currentYear: number): EvidenceStalenessSignal {
+  return computeEvidenceStaleness(deriveCardSnapshotFromEntry(entry).evidenceYear, currentYear);
+}
+
+/**
+ * Filters a list of evidence-library entries down to `card` entries (a
+ * reusable analytic `block` never cites outside evidence, so staleness
+ * doesn't apply to it) whose cited evidence is stale as of `currentYear`,
+ * preserving input order — the proactive counterpart to
+ * `revision-incentives.ts` only rewarding a refresh after it happens.
+ */
+export function getStaleEvidenceEntries(entries: EvidenceLibraryEntry[], currentYear: number): EvidenceLibraryEntry[] {
+  return entries.filter((entry) => entry.kind === "card" && getEvidenceStaleness(entry, currentYear).isStale);
 }
 
 /** Renders a short summary line for a search results panel. */

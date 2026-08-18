@@ -23,6 +23,15 @@ A revision earns points from three signals (`lib/revision-incentives.ts`): a qua
 newer evidence than the prior snapshot — reusing the existing idea #11 `community-rating.ts`
 quality scoring.
 
+Independently of any revision, `lib/revision-incentives.ts`'s `computeEvidenceStaleness` flags a
+citation year as stale once it's `STALE_EVIDENCE_THRESHOLD_YEARS` (3) years old or older — or has
+no parseable year at all — as of the current year. `lib/shared-evidence-library.ts`'s
+`getEvidenceStaleness`/`getStaleEvidenceEntries` compose that directly against an
+`EvidenceLibraryEntry`'s parsed `evidenceYear`, and the Shared Evidence Library panel (see
+[`evidence-library.md`](./evidence-library.md)) renders a "Stale evidence" badge on any stale
+`card` result — so a contributor sees which cards need a refresh before submitting a revision,
+not only after.
+
 ## Data flow
 
 ```
@@ -53,4 +62,4 @@ caller-supplied snapshots.
 
 ## Known gaps
 
-- No evidence-staleness signal beyond rewarding a refresh after the fact.
+None open on this bullet.
