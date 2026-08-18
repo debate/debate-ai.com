@@ -30,6 +30,7 @@
   (plugin-state transitions via tagged/untagged meta, and decoration
   coverage for a mid-document collapse, an outermost collapse, and a
   collapsed heading with nothing to hide).
+  PR: [#201](https://github.com/debate/debate-ai.com/pull/201).
 - **Team Brainstorm Assist — real AI-generation call.**
   Closes follow-up (a) under the "🧠 Team Brainstorm Assist" bullet in the
   Research Crowdsourcing Organizer Features list — "an actual AI-generation
