@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   applyMergedEditsToFlow,
   buildSharedFlowSyncSummaryText,
+  createFlowEdit,
   groupEditsByBox,
   mergeFlowEdits,
+  type CreateFlowEditInput,
   type FlowEdit,
   type MergeFlowEditsResult,
 } from "../src/flow/shared-flow-sync";
@@ -20,6 +22,58 @@ function edit(overrides: Partial<FlowEdit> = {}): FlowEdit {
     ...overrides,
   };
 }
+
+function createEditInput(overrides: Partial<CreateFlowEditInput> = {}): CreateFlowEditInput {
+  return {
+    id: "e1",
+    flowId: 1,
+    boxPath: [0],
+    authorId: "alice",
+    content: "some content",
+    timestampMs: 1000,
+    ...overrides,
+  };
+}
+
+describe("createFlowEdit", () => {
+  it("builds a FlowEdit from valid input", () => {
+    expect(createFlowEdit(createEditInput())).toEqual({
+      id: "e1",
+      flowId: 1,
+      boxPath: [0],
+      authorId: "alice",
+      content: "some content",
+      timestampMs: 1000,
+    });
+  });
+
+  it("trims authorId and content", () => {
+    const result = createFlowEdit(createEditInput({ authorId: "  alice  ", content: "  padded  " }));
+    expect(result.authorId).toBe("alice");
+    expect(result.content).toBe("padded");
+  });
+
+  it("allows empty content, modeling a cleared box", () => {
+    expect(createFlowEdit(createEditInput({ content: "   " })).content).toBe("");
+  });
+
+  it("clamps content past the max length", () => {
+    const long = "x".repeat(2100);
+    expect(createFlowEdit(createEditInput({ content: long })).content).toHaveLength(2000);
+  });
+
+  it("throws for an empty boxPath", () => {
+    expect(() => createFlowEdit(createEditInput({ boxPath: [] }))).toThrow(
+      "createFlowEdit: boxPath must address a box",
+    );
+  });
+
+  it("throws for a blank authorId", () => {
+    expect(() => createFlowEdit(createEditInput({ authorId: "   " }))).toThrow(
+      "createFlowEdit: authorId is required",
+    );
+  });
+});
 
 describe("groupEditsByBox", () => {
   it("groups edits by boxPath, preserving relative order", () => {

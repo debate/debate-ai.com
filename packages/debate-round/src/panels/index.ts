@@ -12,6 +12,7 @@ export { CoachingSessionsPanel } from "./CoachingSessionsPanel";
 export { DebateFlowPage } from "./DebateRoundPanel";
 export { DrillSetsPanel } from "./DrillSetsPanel";
 export { FlowAnnotationsPanel } from "./FlowAnnotationsPanel";
+export { FlowEditLogPanel } from "./FlowEditLogPanel";
 export { FlowSummariesPanel } from "./FlowSummariesPanel";
 export { JudgeDecisionPanel } from "./JudgeDecisionPanel";
 export { OpponentTeamProfilesPanel } from "./OpponentTeamProfilesPanel";
