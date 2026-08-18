@@ -24,8 +24,10 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import { buildStrategyRecommendationFromStores, type CaseOption, type RiskLevel } from "../round/scout-to-strategy"
+import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-profile"
 import {
   buildStrategyRecommendationsPanelView,
   deleteStrategyRecommendation,
@@ -38,6 +40,7 @@ type StrategyDraft = {
   opponentTeamId: string
   judgeId: string
   caseOptionsText: string
+  ourSide: DebateSide | "unspecified"
 }
 
 const EMPTY_DRAFT: StrategyDraft = {
@@ -45,6 +48,7 @@ const EMPTY_DRAFT: StrategyDraft = {
   opponentTeamId: "",
   judgeId: "",
   caseOptionsText: "",
+  ourSide: "unspecified",
 }
 
 const RISK_BADGE_VARIANT: Record<RiskLevel, "default" | "secondary" | "destructive"> = {
@@ -109,6 +113,7 @@ export function StrategyPanel() {
       caseOptions,
       opponentTeamId: draft.opponentTeamId.trim() || undefined,
       judgeId: draft.judgeId.trim() || undefined,
+      ourSide: draft.ourSide === "unspecified" ? undefined : draft.ourSide,
     })
     saveStrategyRecommendation({ matchupId, recommendation })
     setDraft(EMPTY_DRAFT)
@@ -132,7 +137,7 @@ export function StrategyPanel() {
       </div>
 
       <div className="space-y-3 rounded-lg border border-border p-4">
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-4">
           <div className="space-y-1">
             <Label htmlFor="strategy-matchup-id">Matchup id</Label>
             <Input
@@ -159,6 +164,22 @@ export function StrategyPanel() {
               onChange={(e) => setDraft({ ...draft, judgeId: e.target.value })}
               placeholder="judge-123"
             />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="strategy-our-side">Our side (optional)</Label>
+            <Select
+              value={draft.ourSide}
+              onValueChange={(value) => setDraft({ ...draft, ourSide: value as StrategyDraft["ourSide"] })}
+            >
+              <SelectTrigger id="strategy-our-side">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="unspecified">Unspecified</SelectItem>
+                <SelectItem value="aff">Aff</SelectItem>
+                <SelectItem value="neg">Neg</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="space-y-1">

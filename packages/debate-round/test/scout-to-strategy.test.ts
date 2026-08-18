@@ -12,6 +12,7 @@ import {
   buildStrategyRecommendationFromStores,
   buildStrategyRecommendationText,
   computeCaseOverlapScore,
+  getLikelyOpponentSide,
   rankCaseOptions,
   type CaseOption,
 } from "../src/round/scout-to-strategy";
@@ -400,6 +401,82 @@ describe("assessMatchupRisk", () => {
   });
 });
 
+describe("getLikelyOpponentSide", () => {
+  it("returns neg when we're running aff, and aff when we're running neg", () => {
+    expect(getLikelyOpponentSide("aff")).toBe("neg");
+    expect(getLikelyOpponentSide("neg")).toBe("aff");
+  });
+});
+
+describe("assessMatchupRisk with ourSide", () => {
+  /** Opponent below the overall win-rate threshold (4/7 ≈ 57%) so only the side-specific signal is under test — strong on neg (4/4), weak on aff (0/3). */
+  function sideAwareOpponentRecords(): OpponentRoundRecord[] {
+    const negWins: OpponentRoundRecord[] = Array.from({ length: 4 }, (_, i) => ({
+      teamId: "OpponentSide",
+      tournamentName: "Blake",
+      date: `2026-01-0${i + 1}`,
+      division: "LD",
+      side: "neg",
+      won: true,
+    }));
+    const affLosses: OpponentRoundRecord[] = Array.from({ length: 3 }, (_, i) => ({
+      teamId: "OpponentSide",
+      tournamentName: "Blake",
+      date: `2026-02-0${i + 1}`,
+      division: "LD",
+      side: "aff",
+      won: false,
+    }));
+    return [...negWins, ...affLosses];
+  }
+
+  it("flags the opponent's strong record on the side they'll likely run against us", () => {
+    const opponentProfile = buildOpponentTeamProfile("OpponentSide", sideAwareOpponentRecords());
+    // We're aff, so the opponent will likely run neg — where they're 4-0.
+    const { riskLevel, riskFactors } = assessMatchupRisk(opponentProfile, undefined, "aff");
+    expect(riskFactors).toEqual([
+      "Opponent has a strong record on neg (100% win rate across 4 round(s)) — the side they'll likely run against us.",
+    ]);
+    expect(riskLevel).toBe("medium");
+  });
+
+  it("does not flag the opponent's weak side even though their overall side preference is notable", () => {
+    const opponentProfile = buildOpponentTeamProfile("OpponentSide", sideAwareOpponentRecords());
+    // We're neg, so the opponent will likely run aff — where they're 0-3, not a risk to us.
+    const { riskLevel, riskFactors } = assessMatchupRisk(opponentProfile, undefined, "neg");
+    expect(riskFactors).toEqual([]);
+    expect(riskLevel).toBe("low");
+  });
+
+  it("ignores an opponent's likely-side record below the minimum-rounds threshold", () => {
+    // Only 1 neg round (below the 2-round side-specific threshold); overall win rate (1/3) is
+    // also below the overall-record threshold, so no risk factor should fire from either check.
+    const opponentProfile = buildOpponentTeamProfile("OpponentThin", [
+      { teamId: "OpponentThin", tournamentName: "Blake", date: "2026-01-01", division: "LD", side: "neg", won: true },
+      { teamId: "OpponentThin", tournamentName: "Blake", date: "2026-01-02", division: "LD", side: "aff", won: false },
+      { teamId: "OpponentThin", tournamentName: "Blake", date: "2026-01-03", division: "LD", side: "aff", won: false },
+    ]);
+    const { riskFactors } = assessMatchupRisk(opponentProfile, undefined, "aff");
+    expect(riskFactors).toEqual([]);
+  });
+
+  it("flags a judge side bias toward the side the opponent will likely run against us", () => {
+    const judgeProfile = buildJudgeProfile("J. Smith", judgeRecords()); // favors aff
+    // We're neg, so the opponent will likely run aff — the judge's favored side.
+    const { riskFactors } = assessMatchupRisk(undefined, judgeProfile, "neg");
+    expect(riskFactors).toEqual([
+      "Judge has a notable historical side bias toward aff — the side the opponent will likely run against us.",
+    ]);
+  });
+
+  it("does not flag a judge side bias toward our own side", () => {
+    const judgeProfile = buildJudgeProfile("J. Smith", judgeRecords()); // favors aff
+    // We're aff, so the judge's bias favors us, not the opponent.
+    const { riskFactors } = assessMatchupRisk(undefined, judgeProfile, "aff");
+    expect(riskFactors).toEqual([]);
+  });
+});
+
 describe("buildStrategyRecommendation", () => {
   it("returns a null recommended case and empty rankings when no case options are supplied", () => {
     const recommendation = buildStrategyRecommendation({ caseOptions: [] });
@@ -421,6 +498,25 @@ describe("buildStrategyRecommendation", () => {
     expect(recommendation.caseRankings.map((c) => c.name)).toEqual(["Case C", "Case B", "Case A"]);
     expect(recommendation.judgeAdaptationNotes.length).toBeGreaterThan(0);
     expect(recommendation.riskLevel).toBe("high");
+  });
+
+  it("threads ourSide into the risk heuristic, scoping factors to the likely opponent side", () => {
+    const opponentProfile = buildOpponentTeamProfile("OpponentA", opponentRecords());
+    const judgeProfile = buildJudgeProfile("J. Smith", judgeRecords()); // favors aff
+
+    const recommendation = buildStrategyRecommendation({
+      caseOptions: CASE_OPTIONS,
+      opponentProfile,
+      judgeProfile,
+      ourSide: "aff",
+    });
+
+    // Opponent is 2-0 on neg (the side they'll likely run against us) and 80% overall — both flag.
+    // The judge favors aff (our own side), so no judge risk factor is included.
+    expect(recommendation.riskFactors).toEqual([
+      "Opponent has a strong overall record (80% win rate across 5 round(s)).",
+      "Opponent has a strong record on neg (100% win rate across 2 round(s)) — the side they'll likely run against us.",
+    ]);
   });
 });
 
@@ -505,5 +601,28 @@ describe("buildStrategyRecommendationFromStores", () => {
   it("behaves like buildStrategyRecommendation when no ids or profiles are supplied", () => {
     const recommendation = buildStrategyRecommendationFromStores({ caseOptions: CASE_OPTIONS });
     expect(recommendation).toEqual(buildStrategyRecommendation({ caseOptions: CASE_OPTIONS }));
+  });
+
+  it("threads ourSide through to the resolved profiles' risk assessment", () => {
+    saveOpponentTeamProfile(buildOpponentTeamProfile("OpponentA", opponentRecords()));
+    saveJudgeProfile(buildJudgeProfile("J. Smith", judgeRecords()));
+
+    const withSide = buildStrategyRecommendationFromStores({
+      caseOptions: CASE_OPTIONS,
+      opponentTeamId: "OpponentA",
+      judgeId: "J. Smith",
+      ourSide: "aff",
+    });
+    const withoutSide = buildStrategyRecommendationFromStores({
+      caseOptions: CASE_OPTIONS,
+      opponentTeamId: "OpponentA",
+      judgeId: "J. Smith",
+    });
+
+    expect(withSide.riskFactors).not.toEqual(withoutSide.riskFactors);
+    expect(withSide.riskFactors).toEqual([
+      "Opponent has a strong overall record (80% win rate across 5 round(s)).",
+      "Opponent has a strong record on neg (100% win rate across 2 round(s)) — the side they'll likely run against us.",
+    ]);
   });
 });
