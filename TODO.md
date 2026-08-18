@@ -4,6 +4,55 @@
 ### In progress
 
 ### Completed
+- **AI Response-Outcome Charts — AI counsel-panel call.**
+  Closes follow-up (a) under idea #4 ("AI Response-Outcome Charts") in the
+  Product Feature Ideas list — "an actual AI-panel call (multiple 'counsel'
+  model roles) that evaluates likely response paths and clash points
+  beyond this deterministic heuristic." A new
+  `packages/debate-round/src/flow/response-outcome-ai.ts` adds the pure,
+  Vitest-testable `buildCounselPanelAiUserPrompt`/`parseCounselPanelAiResponse`,
+  which compose a round's most-vulnerable already-scored arguments (row
+  index, origin speech, unanswered status, heuristic exposure score) into a
+  prompt asking the model to role-play three specialized debate "counsel"
+  — Policy Counsel, Kritik Counsel, Weighing Counsel — assign whichever
+  role best fits each argument, and estimate that argument's likely
+  response path and clash point, plus one overall round-level clash
+  summary; mirrors `round/judge-decision-ai.ts`'s prompt/parse split
+  exactly, including its tolerant-parsing (fenced/prose-wrapped JSON)
+  convention. `flow/response-outcome-client.ts` adds
+  `requestCounselPanelAssessment`, a small self-contained `fetch` client
+  (mirroring `judge-decision-client.ts`'s split) that POSTs to the
+  existing `/api/reason-ai` Anthropic proxy. A new
+  `state/counselPanelAssessments.ts` persists a round's
+  `CounselPanelAiResult` to localStorage keyed by `roundId`, mirroring
+  `debate-card-search`'s `state/aiCardAssessments.ts` convention exactly.
+  `VulnerabilityChartsPanel.tsx`'s existing round cards now have a "Get AI
+  counsel panel" action that requests an assessment against the round's
+  top exposed arguments (from `buildVulnerabilityChartDataFromReport`) and
+  renders the overall clash summary plus each assessed argument's counsel
+  role, likely response path, and clash estimate; clearing a round now
+  also clears its persisted counsel-panel assessment. No vulnerability-
+  scoring, chart-data, or "what if" hypothetical logic changed, and no new
+  route was added. Vitest-covered in
+  `packages/debate-round/test/response-outcome-ai.test.ts` (prompt
+  composition, well-formed/fenced/prose-wrapped replies, an unrecognized
+  `counselRole`, empty `argumentAssessments`, and missing/blank required
+  fields), `packages/debate-round/test/response-outcome-client.test.ts`
+  (the `fetch` client, with `fetch` mocked via `vi.stubGlobal`, covering
+  the success path, an endpoint override, a server error message, a
+  non-JSON error body, and an unparseable AI reply), and
+  `packages/debate-round/test/counselPanelAssessments.test.ts` (get/save/
+  delete, corrupt/missing storage, and per-`roundId` isolation). Docs
+  updated in `docs/features/response-outcome-charts.md` — including
+  correcting its stale "Known gaps" section, which still listed the
+  already-shipped "what if" hypothetical mode (follow-up (c)) as not
+  started. No follow-ups remain open on idea #4. No repo-wide `lint`
+  script exists (checked root/app/package `package.json` scripts) so none
+  was run. Verified: `bun install` (2050 packages), `bun run test` (111
+  files / 1491 tests, all pass), `bun run typecheck` (11 of 12 in-scope
+  packages have a typecheck script; all pass), and `bun run build:web`
+  (`debate-ai-web`, succeeds, `/outcomes` route present, no new route) all
+  pass.
 - **Practice Round Simulator — AI opponent speech + AI judge-decision calls.**
   [PR #193](https://github.com/debate/debate-ai.com/pull/193).
   Closes follow-up (a) under the "🧪 Practice Round Simulator" bullet in
@@ -3745,7 +3794,7 @@
 
 3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildAiVersusSpeechOrder`/`getNextSpeechSlot`/`isUsersTurn`/`validateSpeechSubmission`/`buildAiResponseRequest` for turning a `debate-timer` format + chosen side into an ordered, speaker-tagged turn sequence, validating a submitted speech against whose turn it is, and building a structured (non-AI-calling) request describing the AI's next speech. A second slice, `aiVersusRounds.ts` (see Tracker Status above, "Online Debate Versus AI — submitted-round persistence"), now persists a round's format, side, and submitted speeches to localStorage. A third slice, `AiVersusRoundPanel` (see Tracker Status above, "Online Debate Versus AI — round-setup + submission UI"), now renders a round-setup + submission UI at `/versus-ai`, closing follow-up (b). A fourth slice (see Tracker Status above, "Online Debate Versus AI — real AI speech-generation call") added `round/ai-versus-speech-ai.ts` and `round/ai-versus-speech-client.ts`, wiring a "Generate AI speech" action into `AiVersusRoundPanel` that calls the existing `/api/reason-ai` Anthropic proxy to produce the AI's next speech text, closing follow-up (a). No follow-ups remain open on this idea; speech submission stays text-only, as noted in `docs/features/ai-versus-rounds.md`._
 
-4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slices done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). A second slice, `vulnerabilityReports.ts` plus `VulnerabilityChartsPanel` (see Tracker Status above, "AI Response-Outcome Charts — chart/panel UI"), now persists a round's derived report and renders it as a per-side exposure summary and exposure chart at `/outcomes`, closing follow-up (b). A third slice, `applyHypotheticalAdjustments` plus the panel's "what if" picker (see Tracker Status above, "AI Response-Outcome Charts — 'what if' hypothetical mode"), now recomputes a chosen argument's score against a hypothetical extend/answer/concede choice, closing follow-up (c). Follow-up (a), an actual AI-panel call (multiple "counsel" model roles) that evaluates likely response paths and clash points beyond this deterministic heuristic, remains open — not started._
+4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slices done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). A second slice, `vulnerabilityReports.ts` plus `VulnerabilityChartsPanel` (see Tracker Status above, "AI Response-Outcome Charts — chart/panel UI"), now persists a round's derived report and renders it as a per-side exposure summary and exposure chart at `/outcomes`, closing follow-up (b). A third slice, `applyHypotheticalAdjustments` plus the panel's "what if" picker (see Tracker Status above, "AI Response-Outcome Charts — 'what if' hypothetical mode"), now recomputes a chosen argument's score against a hypothetical extend/answer/concede choice, closing follow-up (c). A fourth slice (see Tracker Status above, "AI Response-Outcome Charts — AI counsel-panel call") added `flow/response-outcome-ai.ts`, `flow/response-outcome-client.ts`, and `state/counselPanelAssessments.ts`, wiring a "Get AI counsel panel" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy for a real three-role ("Policy Counsel"/"Kritik Counsel"/"Weighing Counsel") assessment of each exposed argument's likely response path and clash point plus an overall clash summary, closing follow-up (a). No follow-ups remain open on this idea._
 
 5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. A third slice, `JudgeParadigmPickerPanel` (see Tracker Status above, "AI Judge Decision Modes — paradigm-picker UI"), now renders a picker UI at `/paradigms` for saving a round's built-in or custom paradigm, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Judge Decision Modes — real AI judge-decision call") added `debate-round`'s `round/judge-decision-ai.ts`, `round/judge-decision-client.ts`, `round/judge-decision-store-wiring.ts`, and `state/judgeDecisions.ts`, wiring an AI judge-decision call — composing `buildJudgeParadigmPrompt` with a round's flow summary and calling the existing `/api/reason-ai` Anthropic proxy — into a new `JudgeDecisionPanel` at `/judge-decision`, closing follow-up (a). No follow-ups remain open on this idea._
 
