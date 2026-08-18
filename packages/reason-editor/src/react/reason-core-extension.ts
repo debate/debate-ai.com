@@ -14,6 +14,8 @@
  *   - baseKeymap     Enter / Backspace / Delete / Mod-a / arrow handling
  *   - dropCursor     drop indicator for drag-and-drop
  *   - gapCursor      caret placement beside isolating nodes (cards/tables)
+ *   - collapsedHeadingsPlugin   hides collapsed-heading ranges (driven by
+ *                    `OutlineNavPanel`'s persisted collapse selection)
  *
  * TipTap's generic mark/node commands (`toggleMark`, `setNode`,
  * `toggleNode`, `isActive`) operate purely by type name, so the toolbar
@@ -28,6 +30,7 @@ import { gapCursor } from '@tiptap/pm/gapcursor';
 import { history, redo, undo } from '@tiptap/pm/history';
 import { keymap } from '@tiptap/pm/keymap';
 import type { Plugin } from '@tiptap/pm/state';
+import { collapsedHeadingsPlugin } from '../engine/outline/collapsed-headings-plugin.js';
 
 export const ReasonCore = Extension.create({
   name: 'reasonCore',
@@ -65,6 +68,7 @@ export const ReasonCore = Extension.create({
       keymap(baseKeymap),
       dropCursor({ class: 'pmd-dropcursor', width: 2 }),
       gapCursor(),
+      collapsedHeadingsPlugin,
     ];
   },
 });

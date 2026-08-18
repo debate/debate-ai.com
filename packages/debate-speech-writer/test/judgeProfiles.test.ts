@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildJudgeProfilesRoster,
   deleteJudgeProfile,
   getJudgeProfile,
   listJudgeProfiles,
@@ -137,5 +138,55 @@ describe("deleteJudgeProfile", () => {
     saveJudgeProfile(JONES);
     deleteJudgeProfile("missing");
     expect(listJudgeProfiles()).toEqual([JONES]);
+  });
+});
+
+describe("buildJudgeProfilesRoster", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildJudgeProfilesRoster()).toEqual([]);
+  });
+
+  it("orders profiles by rounds judged descending", () => {
+    const ADAMS = buildJudgeProfile("adams", [
+      {
+        judgeId: "adams",
+        tournamentName: "Berkeley",
+        date: "2026-01-01",
+        division: "PF",
+        winningSide: "aff",
+        affSpeakerPoints: 28,
+        negSpeakerPoints: 27,
+        theoryArgumentRaised: false,
+        theoryArgumentWon: false,
+      },
+      {
+        judgeId: "adams",
+        tournamentName: "Berkeley",
+        date: "2026-01-02",
+        division: "PF",
+        winningSide: "neg",
+        affSpeakerPoints: 27,
+        negSpeakerPoints: 28,
+        theoryArgumentRaised: false,
+        theoryArgumentWon: false,
+      },
+    ]);
+
+    saveJudgeProfile(SMITH);
+    saveJudgeProfile(ADAMS);
+    saveJudgeProfile(JONES);
+
+    expect(buildJudgeProfilesRoster().map((p) => p.judgeId)).toEqual([
+      "adams",
+      "jones",
+      "smith",
+    ]);
+  });
+
+  it("ties break alphabetically by judgeId when rounds judged are equal", () => {
+    saveJudgeProfile(SMITH);
+    saveJudgeProfile(JONES);
+
+    expect(buildJudgeProfilesRoster().map((p) => p.judgeId)).toEqual(["jones", "smith"]);
   });
 });

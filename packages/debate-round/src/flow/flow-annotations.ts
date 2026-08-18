@@ -23,6 +23,8 @@ export type FlowAnnotation = {
   timestampMs: number;
   note?: string;
   createdAt: number;
+  /** Id of the recording (e.g. a `debate-videos` YouTube video id) this annotation was dropped against, if any. */
+  videoId?: string;
 };
 
 const MAX_NOTE_LENGTH = 500;
@@ -35,6 +37,7 @@ export type CreateFlowAnnotationInput = {
   timestampMs: number;
   createdAt: number;
   note?: string;
+  videoId?: string;
 };
 
 /**
@@ -55,6 +58,7 @@ export function createFlowAnnotation(input: CreateFlowAnnotationInput): FlowAnno
   }
 
   const note = input.note?.trim();
+  const videoId = input.videoId?.trim();
 
   return {
     id: input.id,
@@ -64,6 +68,7 @@ export function createFlowAnnotation(input: CreateFlowAnnotationInput): FlowAnno
     timestampMs: input.timestampMs,
     createdAt: input.createdAt,
     ...(note ? { note: note.slice(0, MAX_NOTE_LENGTH) } : {}),
+    ...(videoId ? { videoId } : {}),
   };
 }
 
@@ -124,4 +129,70 @@ export function resolveAnnotationBox(
 ): Box | null {
   const resolved = boxFromPath(flow, annotation.boxPath);
   return resolved !== null && "content" in resolved ? (resolved as Box) : null;
+}
+
+/** All annotations dropped against a given recording, in playback order. */
+export function getAnnotationsForVideo(
+  annotations: FlowAnnotation[],
+  videoId: string,
+): FlowAnnotation[] {
+  return sortAnnotationsByTimestamp(annotations.filter((a) => a.videoId === videoId));
+}
+
+/**
+ * Formats a playback position in milliseconds as `m:ss` (or `h:mm:ss` past
+ * an hour), for a video-player annotation UI's timestamp badges.
+ */
+export function formatAnnotationTimestamp(timestampMs: number): string {
+  const totalSeconds = Math.max(0, Math.floor(timestampMs / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const paddedSeconds = String(seconds).padStart(2, "0");
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${paddedSeconds}`;
+  }
+  return `${minutes}:${paddedSeconds}`;
+}
+
+/**
+ * Parses a user-typed `m:ss` or `h:mm:ss` timestamp into milliseconds.
+ * Returns `null` for anything that isn't a valid, non-negative timestamp.
+ */
+export function parseAnnotationTimestamp(input: string): number | null {
+  const parts = input.trim().split(":");
+  if (parts.length < 1 || parts.length > 3 || parts.some((part) => part.trim() === "")) {
+    return null;
+  }
+  const numbers = parts.map((part) => Number(part));
+  if (numbers.some((n) => !Number.isFinite(n) || n < 0 || !Number.isInteger(n))) {
+    return null;
+  }
+
+  const [hours, minutes, seconds] =
+    numbers.length === 3
+      ? numbers
+      : numbers.length === 2
+        ? [0, numbers[0], numbers[1]]
+        : [0, 0, numbers[0]];
+
+  if (minutes > 59 || seconds > 59) return null;
+
+  return (hours * 3600 + minutes * 60 + seconds) * 1000;
+}
+
+/**
+ * Parses a user-typed, comma-separated box path (e.g. `"0, 1"`) into the
+ * `number[]` `createFlowAnnotation` expects. Returns `null` for anything
+ * that isn't a non-empty list of non-negative integers.
+ */
+export function parseBoxPathInput(input: string): number[] | null {
+  const parts = input.split(",").map((part) => part.trim());
+  if (parts.length === 0 || parts.some((part) => part === "")) return null;
+
+  const path = parts.map((part) => Number(part));
+  if (path.some((n) => !Number.isFinite(n) || n < 0 || !Number.isInteger(n))) return null;
+
+  return path;
 }

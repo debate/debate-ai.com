@@ -29,6 +29,8 @@ export { ReasonEditor } from "./ReasonEditor.js";
 export type { LexicalEditorHandle, ReasonEditorProps } from "./ReasonEditor.js";
 export { Toolbar } from "./Toolbar.js";
 export type { ToolbarCustomization } from "./Toolbar.js";
+export { OutlineNavPanel } from "./OutlineNavPanel.js";
+export type { OutlineNavPanelProps } from "./OutlineNavPanel.js";
 export {
   buildSchemaExtensions,
   nodeExtensionFromSpec,
@@ -37,6 +39,7 @@ export {
   cardMirrorMarkNames,
 } from "./schema-extensions.js";
 export { ReasonCore } from "./reason-core-extension.js";
+export { VerbatimShortcuts } from "./verbatim-shortcuts-extension.js";
 export {
   docxToDocJSON,
   docJSONToDocx,

@@ -6,18 +6,22 @@
  * Crowdsourcing Organizer Features list. Round-state persistence now exists
  * via `aiVersusRounds.ts` (idea #3's submitted-speech store), so this store
  * only persists `practice-round-simulator.ts`'s own derived
- * `PracticeRoundSetup` and (once generated) `PracticeRoundFeedback` — a
+ * `PracticeRoundSetup`, (once generated) `PracticeRoundFeedback`, and (once
+ * requested) a `JudgeDecisionAiResult` from `judge-decision-ai.ts` — a
  * round's submitted speeches are looked up through `getAiVersusRound`
  * instead of being duplicated here. Stores records in localStorage,
  * mirroring the existing `aiVersusRounds.ts`/`drillSets.ts` persistence
  * convention (SSR/no-storage-safe, corrupt or missing JSON degrades to an
- * empty list rather than throwing).
+ * empty list rather than throwing). `buildPracticeRoundsPanelView` sorts the
+ * stored list by `roundId` for a stable panel display order, mirroring the
+ * same helper on `wordCountRounds.ts`/`aiVersusRounds.ts`.
  *
  * @module state/practiceRounds
  */
 
 import { getAiVersusRound } from "./aiVersusRounds";
 import type { PriorSpeechRecord } from "../round/ai-versus-speech-order";
+import type { JudgeDecisionAiResult } from "../round/judge-decision-ai";
 import type { PracticeRoundFeedback, PracticeRoundSetup } from "../round/practice-round-simulator";
 
 export type PracticeRoundRecord = {
@@ -25,6 +29,8 @@ export type PracticeRoundRecord = {
   setup: PracticeRoundSetup;
   /** Post-round feedback, once generated. Absent while the round is still in progress. */
   feedback?: PracticeRoundFeedback;
+  /** An AI judge's verdict for the round, once requested. Absent until "Get AI judge decision" is used. */
+  judgeDecision?: JudgeDecisionAiResult;
 };
 
 const STORAGE_KEY = "practiceRounds";
@@ -49,6 +55,11 @@ function writeAll(records: PracticeRoundRecord[]): void {
 /** Lists every persisted practice round. */
 export function listPracticeRounds(): PracticeRoundRecord[] {
   return readAll();
+}
+
+/** Lists every persisted practice round sorted by `roundId`, for a stable panel display order. */
+export function buildPracticeRoundsPanelView(): PracticeRoundRecord[] {
+  return [...readAll()].sort((a, b) => a.roundId.localeCompare(b.roundId));
 }
 
 /** Looks up a round's persisted practice-round state, if any. */

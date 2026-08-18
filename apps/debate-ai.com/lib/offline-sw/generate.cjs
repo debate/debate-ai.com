@@ -1,8 +1,7 @@
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const pkg = require("../../package.json");
-
-const VERSION = pkg.version;
 
 // The app builds with vinext/Vite, whose client output lands in `dist/client`
 // and is served at the site root (see wrangler.jsonc `assets.directory`).
@@ -54,6 +53,21 @@ const allFiles = staticFiles;
 
 const fileList = `export const APP_FILE_LIST = [\n  ${allFiles.map((f) => `'${f}'`).join(",\n  ")}\n];\n`;
 fs.writeFileSync("./lib/offline-sw/app-file-list.ts", fileList);
+
+// The worker names its cache after VERSION and deletes every other cache on
+// activate, so VERSION has to change whenever the build output does. Using
+// `pkg.version` alone did not: it has sat at the same number across many
+// deploys, so every build reused one cache and the purge in `onActivate` was a
+// no-op. Entries cached by an older build — including the RSC payloads the
+// router fetches for client-side navigation — outlived the build they came
+// from and were served in preference to the current one. Fold a digest of the
+// emitted files into the version so each distinct build gets its own cache.
+const buildDigest = crypto.createHash("sha256");
+for (const rel of allFiles) {
+  buildDigest.update(rel);
+  buildDigest.update(fs.readFileSync(path.join(folderPath, rel.slice(1))));
+}
+const VERSION = `${pkg.version}-${buildDigest.digest("hex").slice(0, 12)}`;
 
 const versionFile = `export const VERSION = '${VERSION}';\n`;
 fs.writeFileSync("./lib/offline-sw/version.ts", versionFile);

@@ -61,3 +61,13 @@ export function savePreRoundBriefing(record: PreRoundBriefingRecord): void {
 export function deletePreRoundBriefing(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
 }
+
+/**
+ * Every persisted briefing, sorted by `roundId` for a stable display order —
+ * the "(b) a briefing panel UI that renders it on a round-information page"
+ * follow-up named in idea #12 ("Pre-Round Intelligence Panel") in TODO.md.
+ * Used by `panels/PreRoundBriefingsPanel.tsx`.
+ */
+export function buildPreRoundBriefingsPanelView(): PreRoundBriefingRecord[] {
+  return [...listPreRoundBriefings()].sort((a, b) => a.roundId.localeCompare(b.roundId));
+}

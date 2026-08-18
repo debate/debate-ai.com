@@ -9,6 +9,12 @@
  * `buildCoachingSession` is generated per side — a round can have a
  * separately-generated session for each side represented in its flow.
  *
+ * `aiFeedback` is additive and optional (existing records without it stay
+ * valid) — it holds `round/coach-feedback-client.ts`'s open-ended AI
+ * coaching feedback for this session, once a caller has generated one; see
+ * `saveCoachingSessionAiFeedback` below, closing follow-up (a) named under
+ * the same bullet.
+ *
  * @module state/coachingSessions
  */
 
@@ -18,6 +24,8 @@ export type CoachingSessionRecord = {
   roundId: string;
   sideKey: string;
   prompts: CoachingPrompt[];
+  /** Open-ended AI coaching feedback for this session, if one has been generated. */
+  aiFeedback?: string;
 };
 
 const STORAGE_KEY = "coachingSessions";
@@ -73,4 +81,30 @@ export function saveCoachingSession(record: CoachingSessionRecord): void {
 /** Deletes a round+side's persisted coaching session; a no-op if it isn't stored. */
 export function deleteCoachingSession(roundId: string, sideKey: string): void {
   writeAll(readAll().filter((record) => !matches(record, roundId, sideKey)));
+}
+
+/**
+ * Sets a round+side's persisted `aiFeedback` (`round/coach-feedback-client.ts`'s
+ * `requestCoachFeedback` result), leaving its `prompts` untouched. A no-op
+ * when the roundId/sideKey pair isn't stored — a feedback call is only ever
+ * made against an already-generated, already-persisted session.
+ */
+export function saveCoachingSessionAiFeedback(roundId: string, sideKey: string, aiFeedback: string): void {
+  const records = readAll();
+  const index = records.findIndex((existing) => matches(existing, roundId, sideKey));
+  if (index === -1) return;
+  records[index] = { ...records[index], aiFeedback };
+  writeAll(records);
+}
+
+/**
+ * Every persisted coaching session, sorted by `roundId` then `sideKey` for a
+ * stable display order — the "(b) a coaching-panel UI that reads/writes
+ * through the persistence store" follow-up named under the "🎙️ AI Coach
+ * Mode" bullet in TODO.md. Used by `panels/CoachingSessionsPanel.tsx`.
+ */
+export function buildCoachingSessionsPanelView(): CoachingSessionRecord[] {
+  return [...listCoachingSessions()].sort(
+    (a, b) => a.roundId.localeCompare(b.roundId) || a.sideKey.localeCompare(b.sideKey),
+  );
 }

@@ -104,7 +104,7 @@ export default function ReasonEditorPage() {
   )
 
   return (
-    <div className="h-screen flex pt-14 lg:pt-0 pb-20 lg:pb-0">
+    <div className="h-dvh flex overflow-hidden pt-14 lg:pt-0 pb-20 lg:pb-0">
       <aside className="w-64 shrink-0 border-r flex flex-col">
         <div className="flex items-center justify-between px-3 py-2 border-b">
           <h2 className="text-sm font-semibold">Reason Editor</h2>
@@ -161,13 +161,14 @@ export default function ReasonEditorPage() {
               />
               {saving && <span className="text-xs text-muted-foreground">Saving…</span>}
             </div>
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 min-h-0 overflow-hidden">
               <EditorWithToolbar
                 key={selected.id}
                 content={selected.content}
                 contentKey={String(selected.id)}
                 title={selected.title}
                 showAiTools
+                showOutline
                 onChange={(html) => updateContent(selected.id, html)}
               />
             </div>

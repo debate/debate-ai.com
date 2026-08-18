@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { LogIn, LogOut, UserCircle2, Moon, Sun, Palette, Pause, Play } from "lucide-react"
+import { LogIn, LogOut, UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell, ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type, ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School, FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation, ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
@@ -127,6 +127,154 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/doc") }}>
         <Image src={IconRead} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
         Debate Docs
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/leaderboard") }}>
+        <Trophy className="mr-2 h-4 w-4" />
+        Leaderboard
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/contributions") }}>
+        <ThumbsUp className="mr-2 h-4 w-4" />
+        Contributions Feed
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/awards") }}>
+        <Medal className="mr-2 h-4 w-4" />
+        Contributor Awards
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/best-card") }}>
+        <Sparkles className="mr-2 h-4 w-4" />
+        Daily Best Card
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/inbox") }}>
+        <Inbox className="mr-2 h-4 w-4" />
+        Task Inbox
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/progress") }}>
+        <Award className="mr-2 h-4 w-4" />
+        Progress
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/library") }}>
+        <Library className="mr-2 h-4 w-4" />
+        Evidence Library
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/prep-notes") }}>
+        <NotebookPen className="mr-2 h-4 w-4" />
+        Prep Notes
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/revisions") }}>
+        <History className="mr-2 h-4 w-4" />
+        Revision Incentives
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/judges") }}>
+        <Gavel className="mr-2 h-4 w-4" />
+        Judge Profiles
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/opponents") }}>
+        <Users className="mr-2 h-4 w-4" />
+        Opponent Team Profiles
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/drills") }}>
+        <Dumbbell className="mr-2 h-4 w-4" />
+        Practice Drills
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/briefings") }}>
+        <ClipboardList className="mr-2 h-4 w-4" />
+        Pre-Round Briefings
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/coaching") }}>
+        <GraduationCap className="mr-2 h-4 w-4" />
+        AI Coach Mode
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/paradigms") }}>
+        <Scale className="mr-2 h-4 w-4" />
+        Judge Paradigm Picker
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/judge-decision") }}>
+        <Landmark className="mr-2 h-4 w-4" />
+        AI Judge Decision
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/summaries") }}>
+        <FileText className="mr-2 h-4 w-4" />
+        Speech Transcript Summaries
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/practice-opponent") }}>
+        <Swords className="mr-2 h-4 w-4" />
+        Opponent Persona Picker
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/reviews") }}>
+        <MessageSquareText className="mr-2 h-4 w-4" />
+        Review Queue
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/word-count") }}>
+        <Type className="mr-2 h-4 w-4" />
+        Word-Count Speeches
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/outline") }}>
+        <ListTree className="mr-2 h-4 w-4" />
+        Argument Tree Outline
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/versus-ai") }}>
+        <Bot className="mr-2 h-4 w-4" />
+        Online Debate Versus AI
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/brainstorm") }}>
+        <Lightbulb className="mr-2 h-4 w-4" />
+        Team Brainstorm Assist
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/collaboration") }}>
+        <Users2 className="mr-2 h-4 w-4" />
+        Team Collaboration Mode
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/practice-round") }}>
+        <PlayCircle className="mr-2 h-4 w-4" />
+        Practice Round Simulator
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/standings") }}>
+        <TrendingUp className="mr-2 h-4 w-4" />
+        CX NDCA Standings
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/outcomes") }}>
+        <BarChart3 className="mr-2 h-4 w-4" />
+        AI Response-Outcome Charts
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/coaching-programs") }}>
+        <School className="mr-2 h-4 w-4" />
+        Coaching Programs
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/argument-library") }}>
+        <FolderTree className="mr-2 h-4 w-4" />
+        Argument Library
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/group-challenges") }}>
+        <Target className="mr-2 h-4 w-4" />
+        Group Challenges
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/coach-materials") }}>
+        <BookOpen className="mr-2 h-4 w-4" />
+        Coach Materials
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/coverage") }}>
+        <PieChart className="mr-2 h-4 w-4" />
+        Topic Coverage Dashboard
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/prep-room") }}>
+        <Presentation className="mr-2 h-4 w-4" />
+        Collaboration Prep Room
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/progress-tracking") }}>
+        <ListChecks className="mr-2 h-4 w-4" />
+        Research Progress
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/streaks") }}>
+        <Flame className="mr-2 h-4 w-4" />
+        Quest Streaks
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/quests") }}>
+        <CheckSquare className="mr-2 h-4 w-4" />
+        Daily Quests
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/annotations") }}>
+        <MapPin className="mr-2 h-4 w-4" />
+        Flow Annotations
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>

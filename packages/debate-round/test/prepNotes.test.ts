@@ -1,10 +1,14 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  assignPersistedPrepNote,
+  buildPrepNotesPanelView,
   deletePrepNote,
   getPrepNote,
   listPrepNotes,
   listPrepNotesForFlow,
+  nextPrepNoteStatus,
   savePrepNote,
+  updatePersistedPrepNoteStatus,
 } from "../src/state/prepNotes";
 import type { PrepNote } from "../src/flow/strategy-sync-notes";
 
@@ -122,5 +126,93 @@ describe("deletePrepNote", () => {
     savePrepNote(OTHER_FLOW_NOTE);
     deletePrepNote("missing");
     expect(listPrepNotes()).toEqual([OTHER_FLOW_NOTE]);
+  });
+});
+
+describe("updatePersistedPrepNoteStatus", () => {
+  it("applies the status change and persists it", () => {
+    savePrepNote(OPEN_NOTE);
+    const updated = updatePersistedPrepNoteStatus("note-1", "covered", 150);
+
+    expect(updated).toEqual({ ...OPEN_NOTE, status: "covered", updatedAt: 150 });
+    expect(getPrepNote("note-1")).toEqual({ ...OPEN_NOTE, status: "covered", updatedAt: 150 });
+  });
+
+  it("returns undefined and leaves storage untouched when the id isn't stored", () => {
+    savePrepNote(OTHER_FLOW_NOTE);
+    const updated = updatePersistedPrepNoteStatus("missing", "covered", 150);
+
+    expect(updated).toBeUndefined();
+    expect(listPrepNotes()).toEqual([OTHER_FLOW_NOTE]);
+  });
+});
+
+describe("assignPersistedPrepNote", () => {
+  it("assigns the note to a teammate and persists it", () => {
+    savePrepNote(OPEN_NOTE);
+    const updated = assignPersistedPrepNote("note-1", "carol", 150);
+
+    expect(updated).toEqual({ ...OPEN_NOTE, assignedToId: "carol", updatedAt: 150 });
+    expect(getPrepNote("note-1")).toEqual({ ...OPEN_NOTE, assignedToId: "carol", updatedAt: 150 });
+  });
+
+  it("unassigns the note when assignedToId is null and persists it", () => {
+    const assigned: PrepNote = { ...OPEN_NOTE, assignedToId: "carol" };
+    savePrepNote(assigned);
+    const updated = assignPersistedPrepNote("note-1", null, 200);
+
+    expect(updated).toEqual({ ...OPEN_NOTE, updatedAt: 200 });
+    expect(updated?.assignedToId).toBeUndefined();
+    expect(getPrepNote("note-1")).toEqual({ ...OPEN_NOTE, updatedAt: 200 });
+  });
+
+  it("returns undefined and leaves storage untouched when the id isn't stored", () => {
+    savePrepNote(OTHER_FLOW_NOTE);
+    const updated = assignPersistedPrepNote("missing", "carol", 150);
+
+    expect(updated).toBeUndefined();
+    expect(listPrepNotes()).toEqual([OTHER_FLOW_NOTE]);
+  });
+});
+
+describe("nextPrepNoteStatus", () => {
+  it("cycles open -> covered -> needs-follow-up -> open", () => {
+    expect(nextPrepNoteStatus("open")).toBe("covered");
+    expect(nextPrepNoteStatus("covered")).toBe("needs-follow-up");
+    expect(nextPrepNoteStatus("needs-follow-up")).toBe("open");
+  });
+});
+
+describe("buildPrepNotesPanelView", () => {
+  it("returns every status group, empty, when nothing is stored", () => {
+    expect(buildPrepNotesPanelView()).toEqual([
+      { status: "needs-follow-up", notes: [] },
+      { status: "open", notes: [] },
+      { status: "covered", notes: [] },
+    ]);
+  });
+
+  it("groups stored notes by status, needs-follow-up first, each group oldest first", () => {
+    const secondOpenNote: PrepNote = { ...OPEN_NOTE, id: "note-3", createdAt: 50 };
+    savePrepNote(OPEN_NOTE);
+    savePrepNote(OTHER_FLOW_NOTE);
+    savePrepNote(secondOpenNote);
+
+    expect(buildPrepNotesPanelView()).toEqual([
+      { status: "needs-follow-up", notes: [OTHER_FLOW_NOTE] },
+      { status: "open", notes: [secondOpenNote, OPEN_NOTE] },
+      { status: "covered", notes: [] },
+    ]);
+  });
+
+  it("reflects a status update made through updatePersistedPrepNoteStatus", () => {
+    savePrepNote(OPEN_NOTE);
+    updatePersistedPrepNoteStatus("note-1", "covered", 150);
+
+    expect(buildPrepNotesPanelView()).toEqual([
+      { status: "needs-follow-up", notes: [] },
+      { status: "open", notes: [] },
+      { status: "covered", notes: [{ ...OPEN_NOTE, status: "covered", updatedAt: 150 }] },
+    ]);
   });
 });

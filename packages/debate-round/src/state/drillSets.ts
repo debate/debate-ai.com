@@ -7,6 +7,12 @@
  * `preRoundBriefings.ts`/`judgeParadigmSelections.ts` persistence
  * convention.
  *
+ * `aiScripts` is additive and optional (existing records without one stay
+ * valid) — it holds `round/drill-script-client.ts`'s AI-generated practice
+ * scripts, keyed by a drill's index in `drills`, once a caller has
+ * generated one for that drill; see `saveDrillAiScript` below, closing
+ * follow-up (b) named under the "📚 AI Drill Generator" bullet.
+ *
  * @module state/drillSets
  */
 
@@ -17,6 +23,8 @@ export type DrillSetRecord = {
   /** The side the drills were generated for (see `buildDrillSet`). */
   sideKey: string;
   drills: Drill[];
+  /** AI-generated practice scripts, keyed by the drill's index in `drills`. */
+  aiScripts?: Record<number, string>;
 };
 
 const STORAGE_KEY = "drillSets";
@@ -63,4 +71,35 @@ export function saveDrillSet(record: DrillSetRecord): void {
 /** Deletes a round's persisted drill set; a no-op if it isn't stored. */
 export function deleteDrillSet(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
+}
+
+/**
+ * Sets a round's persisted `aiScripts[drillIndex]`
+ * (`round/drill-script-client.ts`'s `requestDrillScript` result for that
+ * drill), leaving `drills` and every other drill's script untouched. A
+ * no-op when the roundId isn't stored — a script call is only ever made
+ * against an already-generated, already-persisted drill set.
+ */
+export function saveDrillAiScript(roundId: string, drillIndex: number, aiScript: string): void {
+  const records = readAll();
+  const index = records.findIndex((existing) => existing.roundId === roundId);
+  if (index === -1) return;
+  const existing = records[index];
+  records[index] = {
+    ...existing,
+    aiScripts: { ...(existing.aiScripts ?? {}), [drillIndex]: aiScript },
+  };
+  writeAll(records);
+}
+
+/**
+ * Every persisted drill set, sorted by `roundId` then `sideKey` for a
+ * stable display order — the "(a) a drill-panel UI that reads/writes
+ * through the persistence store" follow-up named under the "📚 AI Drill
+ * Generator" bullet in TODO.md. Used by `panels/DrillSetsPanel.tsx`.
+ */
+export function buildDrillSetsPanelView(): DrillSetRecord[] {
+  return [...listDrillSets()].sort(
+    (a, b) => a.roundId.localeCompare(b.roundId) || a.sideKey.localeCompare(b.sideKey),
+  );
 }
