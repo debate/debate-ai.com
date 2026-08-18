@@ -196,6 +196,10 @@ describe("toggleEmphasisHtml", () => {
     expect(toggleEmphasisHtml("Hello world", 4, 4)).toBe("Hello world");
   });
 
+  it("is a no-op when there is no visible text to select at all", () => {
+    expect(toggleEmphasisHtml("<b></b>", 0, 1)).toBe("<b></b>");
+  });
+
   it("normalizes a reversed selection", () => {
     expect(toggleEmphasisHtml("Hello world", 11, 6)).toBe("Hello <mark>world</mark>");
   });
