@@ -8,13 +8,20 @@
  * (closing follow-up (b), "persists/announces the day's winner"), plus the
  * history of previously announced daily winners.
  *
+ * Both the live leader and the announced history are
+ * `AttributedDailyBestCard`s, so every winner is rendered with the persisted
+ * `contributorId` who submitted it alongside the existing helpfulness
+ * scoring — reusing `state/contributions.ts`'s day-grouping/winner selection
+ * directly rather than introducing new logic here.
+ *
  * @module panels/DailyBestCardPanel
  */
 
 "use client"
 
 import { useEffect, useState } from "react"
-import { Trophy } from "lucide-react"
+import { Sparkles, Trophy } from "lucide-react"
+import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import {
   announceDailyBestCard,
@@ -22,15 +29,19 @@ import {
   getPersistedBestCardForDay,
   listAnnouncedDailyBestCards,
 } from "../state/dailyBestCardAnnouncements"
-import { buildDailyBestCardHighlight, type DailyBestCard } from "../lib/daily-best-card"
+import type { AttributedDailyBestCard } from "../state/contributions"
+import { buildDailyBestCardHighlight } from "../lib/daily-best-card"
 
-/** Renders one announced day's winner as a row. */
-function AnnouncementRow({ announcement }: { announcement: DailyBestCard }) {
+/** Renders one announced day's winner, with the contributor who submitted it. */
+function AnnouncementRow({ announcement }: { announcement: AttributedDailyBestCard }) {
   return (
     <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
       <Trophy className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
       <div className="min-w-0 flex-1">
         <div className="text-sm font-medium text-foreground">{buildDailyBestCardHighlight(announcement)}</div>
+        <div className="mt-1">
+          <Badge variant="outline">{announcement.contribution.contributorId}</Badge>
+        </div>
       </div>
     </div>
   )
@@ -44,9 +55,9 @@ function AnnouncementRow({ announcement }: { announcement: DailyBestCard }) {
  * state during SSR/hydration rather than throwing.
  */
 export function DailyBestCardPanel() {
-  const [today, setToday] = useState<DailyBestCard | null | undefined>(undefined)
-  const [announcedToday, setAnnouncedToday] = useState<DailyBestCard | undefined>(undefined)
-  const [history, setHistory] = useState<DailyBestCard[]>([])
+  const [today, setToday] = useState<AttributedDailyBestCard | null | undefined>(undefined)
+  const [announcedToday, setAnnouncedToday] = useState<AttributedDailyBestCard | undefined>(undefined)
+  const [history, setHistory] = useState<AttributedDailyBestCard[]>([])
 
   const refresh = () => {
     const now = Date.now()
@@ -84,12 +95,19 @@ export function DailyBestCardPanel() {
           <AnnouncementRow announcement={announcedToday} />
         ) : today ? (
           <>
-            <div className="mb-3 flex items-start gap-3 rounded-lg border border-dashed border-border p-4">
-              <Trophy className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" aria-hidden="true" />
+            <div className="mb-3 flex items-start gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-4">
+              <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
               <div className="min-w-0 flex-1">
-                <div className="text-sm font-medium text-foreground">{buildDailyBestCardHighlight(today)}</div>
-                <div className="mt-1">
-                  <span className="text-xs text-muted-foreground">not yet announced</span>
+                <div className="text-xs font-medium uppercase tracking-wide text-amber-600 dark:text-amber-400">
+                  Card of the day
+                </div>
+                <div className="mt-1 text-sm font-medium text-foreground">{today.contribution.id}</div>
+                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <Badge variant="secondary">{today.contribution.contributorId}</Badge>
+                  <span>helpfulness {today.breakdown.helpfulnessScore}/100</span>
+                  <span>{today.contribution.likes} likes</span>
+                  <span>{today.contribution.saves} saves</span>
+                  <span>not yet announced</span>
                 </div>
               </div>
             </div>
@@ -98,7 +116,10 @@ export function DailyBestCardPanel() {
             </Button>
           </>
         ) : (
-          <p className="text-sm text-muted-foreground">No cards submitted yet today.</p>
+          <p className="text-sm text-muted-foreground">
+            No card submitted today yet. Submit one in the Contributions Feed to compete for today's
+            challenge.
+          </p>
         )}
       </div>
 

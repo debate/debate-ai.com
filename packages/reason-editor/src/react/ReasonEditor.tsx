@@ -23,6 +23,7 @@ import { EditorContent as TiptapEditorContent, useEditor } from "@tiptap/react";
 
 import { buildSchemaExtensions } from "./schema-extensions.js";
 import { ReasonCore } from "./reason-core-extension.js";
+import { VerbatimShortcuts } from "./verbatim-shortcuts-extension.js";
 import { Toolbar, type ToolbarCustomization } from "./Toolbar.js";
 import { OutlineNavPanel } from "./OutlineNavPanel.js";
 import {
@@ -115,7 +116,10 @@ export const ReasonEditor = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
     ref,
   ) {
     // Build the schema once. CardMirror nodes/marks + editing essentials.
-    const extensions = useMemo(() => [...buildSchemaExtensions(), ReasonCore], []);
+    const extensions = useMemo(
+      () => [...buildSchemaExtensions(), ReasonCore, VerbatimShortcuts],
+      [],
+    );
 
     // Tracks the last HTML we emitted so external `content` updates don't
     // echo back into a setContent loop.

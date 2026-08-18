@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildFlowAnnotationsPanelView,
   deleteFlowAnnotation,
   getFlowAnnotation,
   listFlowAnnotations,
   listFlowAnnotationsForBox,
   listFlowAnnotationsForFlow,
   listFlowAnnotationsForSpeech,
+  listFlowAnnotationsForVideo,
   saveFlowAnnotation,
 } from "../src/state/flowAnnotations";
 import type { FlowAnnotation } from "../src/flow/flow-annotations";
@@ -152,5 +154,35 @@ describe("deleteFlowAnnotation", () => {
     saveFlowAnnotation(OTHER_FLOW_ANNOTATION);
     deleteFlowAnnotation("missing");
     expect(listFlowAnnotations()).toEqual([OTHER_FLOW_ANNOTATION]);
+  });
+});
+
+describe("listFlowAnnotationsForVideo", () => {
+  it("returns only annotations dropped against the given video, in playback order", () => {
+    const early = { ...EARLY_ANNOTATION, id: "vid-early", videoId: "vidA", timestampMs: 1_000 };
+    const late = { ...LATE_ANNOTATION, id: "vid-late", videoId: "vidA", timestampMs: 5_000 };
+    saveFlowAnnotation(late);
+    saveFlowAnnotation(early);
+    saveFlowAnnotation(OTHER_FLOW_ANNOTATION);
+
+    expect(listFlowAnnotationsForVideo("vidA")).toEqual([early, late]);
+    expect(listFlowAnnotationsForVideo("vidB")).toEqual([]);
+  });
+});
+
+describe("buildFlowAnnotationsPanelView", () => {
+  it("returns every persisted annotation, newest first by createdAt", () => {
+    saveFlowAnnotation(EARLY_ANNOTATION);
+    saveFlowAnnotation(OTHER_FLOW_ANNOTATION);
+
+    expect(buildFlowAnnotationsPanelView().map((a) => a.id)).toEqual(["anno-3", "anno-1"]);
+  });
+
+  it("does not mutate the underlying stored order", () => {
+    saveFlowAnnotation(EARLY_ANNOTATION);
+    saveFlowAnnotation(OTHER_FLOW_ANNOTATION);
+    buildFlowAnnotationsPanelView();
+
+    expect(listFlowAnnotations().map((a) => a.id)).toEqual(["anno-1", "anno-3"]);
   });
 });

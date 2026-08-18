@@ -39,6 +39,7 @@ export {
   cardMirrorMarkNames,
 } from "./schema-extensions.js";
 export { ReasonCore } from "./reason-core-extension.js";
+export { VerbatimShortcuts } from "./verbatim-shortcuts-extension.js";
 export {
   docxToDocJSON,
   docJSONToDocx,

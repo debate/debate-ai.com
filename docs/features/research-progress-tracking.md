@@ -57,10 +57,32 @@ UI"). Vitest-covered in
 history persistence, corrupt-storage recovery, and board composition across
 contributors with only contributions, only active tasks, or both).
 
+Follow-up (c), feeding a contributor's topic-progress history back into
+`progress-unlocks.ts`'s tier computation, is now closed too:
+`lib/progress-unlocks.ts`'s `UnlockTierRequirement` gained a
+`minCompletedTaskCount` threshold, and `computeContributorTier` now reaches
+a tier via the existing contribution-count-and-score path **or** by
+clearing `minCompletedTaskCount` alone — completing enough routed research
+tasks (`research-task-routing.ts`) is real research contribution in its own
+right, so a contributor can unlock a tier that way even without matching
+scored-contribution volume. `lib/unlock-streak-status.ts`'s
+`buildContributorUnlockStatusWithStreakFromStore`/`buildUnlockStatusRoster`
+now source their `ContributorStats` from this module's own
+`buildPersistedLeaderboardWithCompletedTasks` (real, persisted
+`completedResearchTasks` history) instead of `state/contributions.ts`
+alone, so the Progress Unlocks panel (`/cards/progress`) reflects real task
+completion and now also lists a contributor who has completed tasks but no
+scored contribution yet. See
+[Progress Unlocks](./progress-unlocks.md). Vitest-covered in
+`packages/debate-card-search/test/progress-unlocks.test.ts` (tier reached
+via completed tasks alone, the highest tier across both paths, and
+backward compatibility for contributors with no completed-task data) and
+`packages/debate-card-search/test/unlock-streak-status.test.ts` (real
+completed-task history feeding a store-backed status, and a task-only
+contributor appearing in the roster).
+
 ## Known gaps
 
-- Follow-up (c) — feeding a contributor's topic-progress history back into
-  `progress-unlocks.ts`'s tier computation — remains open, not started.
 - No contributor identity/auth scoping yet — the roster shows every
   contributor, the same known gap as the Leaderboard, Task Inbox, and
   Progress Unlocks panels.

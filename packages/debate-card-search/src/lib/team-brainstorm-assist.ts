@@ -76,6 +76,13 @@ export interface BrainstormIdea {
   text: string;
   /** Raw upvote count from teammates — the same "vote" signal `community-rating.ts` scores. */
   upvotes: number;
+  /**
+   * True when this idea was drafted by the AI-generation call
+   * (`lib/team-brainstorm-client.ts`'s `requestTeamBrainstormAiIdeas`)
+   * rather than typed in by a teammate. Additive and optional so existing
+   * stored ideas without it stay valid.
+   */
+  isAiGenerated?: boolean;
 }
 
 /** A scored idea within a ranked board. */

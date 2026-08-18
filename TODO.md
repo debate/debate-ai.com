@@ -3,49 +3,813 @@
 
 ### In progress
 
+## Word-Count-Only Speech Format — live-round word-limited speech mode
+
+**Status:** In Progress
+**Source:** TODO.md Product Feature Ideas — idea #2 "Word-Count-Only Speech Format", follow-up (b): "extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode in the live round timer itself"
+**Branch:** `claude/practical-allen-grn1m6`
+**PR:** https://github.com/debate/debate-ai.com/pull/209
+**Started:** 2026-08-18
+
+### Goal
+Let a debater run a live round in `/debate` under a word limit instead of a
+countdown: the speech header bar's timer is replaced by a live word-count
+meter for the current speech, whose text is typed in place and persisted
+through the existing `state/wordCountRounds.ts` store so the same round shows
+up on `/word-count`.
+
+### Scope
+- A pure, Vitest-covered word-limit resolver + mode-state module in `debate-round`
+- A word limit derived from the live timed style's speech length when the
+  speech has no `wordCountStyles` entry (`estimateWordLimit`)
+- A `SpeechWordCounter` component in `debate-timer` mirroring `SpeechTimer`'s compact shape
+- A word-limit toggle in `SpeechHeaderBar` that swaps the countdown for the meter
+- Persistence through the existing `wordCountRounds` store (no new storage key)
+
+### Non-goals
+- Audio/speech-to-text word counting
+- Changing the timed-format countdown behavior when the mode is off
+- A new persisted storage key or a second source of truth for round text
+
+### Acceptance criteria
+- [x] A live speech resolves a word limit from `wordCountStyles` when its name matches, else from the timed speech's minutes
+- [x] Typing in word-limit mode updates count/remaining/over-limit status live
+- [x] Speech text typed in the live round is persisted to, and read back from, `wordCountRounds`
+- [x] A round saved from the live header bar appears on `/word-count`
+- [x] Vitest coverage is added for the resolver, mode state, and store round-trip
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Web build passes
+- [x] Documentation updated (`docs/features/word-count-rounds.md`)
+
+### Implementation plan
+- [x] Inspect `word-count-format.ts`, `wordCountRounds.ts`, `useTimerState`, `SpeechTimer`, `SpeechHeaderBar`
+- [x] Add `round/word-count-speech-mode.ts` (limit resolution, mode state, store round-trip)
+- [x] Add focused Vitest success-path coverage
+- [x] Add focused edge-case coverage (unknown speech, no limit source, over-limit, corrupt store)
+- [x] Add `SpeechWordCounter` to `debate-timer` and export it
+- [x] Wire a word-limit toggle + meter into `SpeechHeaderBar`
+- [x] Run focused tests, typecheck, full suite, and the web build
+- [x] Update docs
+- [x] Commit and push the branch
+- [x] Create or update the pull request
+- [x] Update tracker status and checkboxes
+
+### Remaining work
+- Wait for CI on PR #209 to pass; nothing else blocks this task.
+- Not verified in a browser: the mode is covered by Vitest at the logic and
+  store level only; `bun run dev:web` was not exercised this run.
+- Follow-up (not started): surface the live meter in the mobile/`FlowPageHeader`
+  compact timer display as well; it currently only replaces the
+  `SpeechHeaderBar` countdown.
+
 ### Completed
-- **Daily Best Card Challenge — persisted announcements + banner UI.**
+- **Daily Best Card Challenge — persisted announcements.**
   [PR #192](https://github.com/debate/debate-ai.com/pull/192).
-  Closes follow-ups (b) and (c) under the "🕵️ Daily Best Card Challenge"
-  bullet in Research Crowdsourcing Organizer Features — "a scheduled job or
-  view that persists/announces the day's winner" and "a challenge
-  banner/widget UI." Follow-up (a) ("wiring a `submittedAt` timestamp into
-  wherever card contributions are eventually persisted") turned out to
-  already be closed as a side effect of the Daily Quests idea's
-  `ContributionsFeedPanel` wiring, which stamps every submitted
-  contribution's `submittedAt: Date.now()` — so this slice only needed to
-  read that existing persisted store. A new
-  `packages/debate-card-search/src/state/dailyBestCardAnnouncements.ts` adds
-  `buildPersistedDailyBestCards`/`getPersistedBestCardForDay`, composing the
-  existing pure `lib/daily-best-card.ts` (`buildDailyBestCards`,
-  `getBestCardForDay`) directly against `state/contributions.ts`'s persisted
-  contribution list — narrowed to timestamped `kind: "card"` submissions —
-  mirroring the established "compose the pure function directly against the
-  persisted store" convention used by `buildPersistedLeaderboard` and
-  `buildTopContributorAwardsFromStore`. `announceDailyBestCard` freezes a
-  day's computed winner under a separate `dailyBestCardAnnouncements`
-  localStorage key, keyed by UTC day: it is idempotent, so a stronger card
-  submitted after a day is announced does not retroactively change that
-  day's recorded winner. `listAnnouncedDailyBestCards`/
-  `getAnnouncedDailyBestCard` read that announcement history back. A new
-  `DailyBestCardPanel` renders today's live leader (or the frozen announced
-  winner once announced) with an "Announce today's winner" action, plus the
-  history of previously announced days, mounted at
-  `/cards/daily-best` (`apps/debate-ai.com/app/cards/daily-best/page.tsx`)
-  and reachable from the global dock's Settings menu ("Daily Best Card",
-  `apps/debate-ai.com/components/layout/CategoryDock.tsx`). No follow-ups
-  remain open on this idea. Documented in
-  `docs/features/daily-best-card.md`. Vitest-covered in
-  `packages/debate-card-search/test/dailyBestCardAnnouncements.test.ts`
+  Closes follow-up (b) under the "🕵️ Daily Best Card Challenge" bullet in
+  Research Crowdsourcing Organizer Features — "a scheduled job or view that
+  persists/announces the day's winner." Follow-ups (a) and (c) were already
+  closed by the earlier "Daily Best Card Challenge — banner/widget UI" slice
+  below, which composes `state/contributions.ts`'s
+  `buildDailyBestCardsFromStore`/`getTodaysBestCardFromStore` — themselves
+  reading the `submittedAt` timestamp `ContributionsFeedPanel` already stamps
+  on every submission — into the `/cards/best-card` banner. A new
+  `packages/debate-card-search/src/state/dailyBestCardAnnouncements.ts` layers
+  announcements on top of those existing store helpers rather than re-reading
+  and re-narrowing the contribution store itself:
+  `buildPersistedDailyBestCards`/`getPersistedBestCardForDay` delegate to them
+  (so every result stays an `AttributedDailyBestCard`, keeping the winner's
+  `contributorId`), and `announceDailyBestCard` freezes a day's computed
+  winner under a separate `dailyBestCardAnnouncements` localStorage key, keyed
+  by UTC day. It is idempotent, so a stronger card submitted after a day is
+  announced does not retroactively change that day's recorded winner.
+  `listAnnouncedDailyBestCards`/`getAnnouncedDailyBestCard` read that
+  announcement history back. `DailyBestCardPanel` (still mounted at
+  `/cards/best-card`, reachable from the global dock's Settings menu as
+  "Daily Best Card") now renders today's live leader — with its contributor,
+  helpfulness score, likes, and saves — behind an "Announce today's winner"
+  action, showing the frozen announced winner for the day once announced,
+  plus the history of previously announced days. No follow-ups remain open on
+  this idea. Documented in `docs/features/daily-best-card.md`. Vitest-covered
+  in `packages/debate-card-search/test/dailyBestCardAnnouncements.test.ts`
   (empty-store cases, filtering out non-card and undated contributions,
   the live-leader lookup, announce/idempotency including the
   later-stronger-card-doesn't-change-the-announcement case, and listing/
   lookup of announced history). No repo-wide `lint` script exists (checked
   root/app/package `package.json` scripts) so none was run. Verified:
-  `bun install` (2050 packages), `bun run test` (108 files / 1472 tests, all
+  `bun install` (2050 packages), `bun run test`, `bun run typecheck` (all 11
+  in-scope packages pass), and `bun run build:web` (`debate-ai-web` succeeds,
+  `/cards/best-card` route present, no new route) all pass.
+- **Gamified Quests — daily mission-check trigger UI.**
+  Closes follow-up (a) under the "🎮 Gamified Quests" bullet in the
+  Research Crowdsourcing Organizer Features list — "a real trigger, i.e. a
+  UI action or scheduled job, to call
+  `computeAndSavePersistedDailyMissionResult` on an actual cadence." No
+  scheduled-job/cron infrastructure exists anywhere in this repo (every
+  feature here is client-side, localStorage-backed), so this closes the
+  follow-up with a UI action rather than a background job.
+  `debate-card-search`'s `QuestStreaksPanel` (at `/cards/streaks`) gains a
+  "Run today's mission check" form — a free-text contributor id (mirroring
+  `DailyQuestsPanel`/`ContributionsFeedPanel`'s existing no-auth
+  convention, since no contributor identity/auth system exists) plus a
+  button that calls the already-existing
+  `computeAndSavePersistedDailyMissionResult(contributorId,
+  listQuestTemplates(), Date.now())` — composing `state/dailyQuests.ts`'s
+  saved quest-template roster with `state/dailyMissionResults.ts`'s
+  existing compute-and-save helper, which itself already reads a
+  contributor's real, persisted contributions — and re-renders the roster
+  via the panel's existing `buildPersistedQuestStreakRoster` read path. An
+  empty contributor id shows a form-level validation error instead of
+  calling the store. No new lib/state logic was introduced or changed;
+  this wires an existing, already-Vitest-covered helper into the UI for
+  the first time. No follow-ups remain open on this bullet. Docs added in
+  `docs/features/quest-streaks.md`. Verified: `bun install` (2050
+  packages), `bun run test` (119 files / 1590 tests, all pass — the
+  existing `test/dailyMissionResults.test.ts` coverage of
+  `computeAndSavePersistedDailyMissionResult` was untouched by this
+  change), `bun run typecheck` (11 of 12 in-scope packages have a
+  typecheck script; all pass), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/cards/streaks` route present, no new
+  route) all pass. No repo-wide `lint` script exists (checked root/app/
+  package `package.json` scripts) so none was run.
+- **Team Brainstorm Assist — seed boards from coverage gaps.**
+  Closes the "boards aren't seeded from the coverage-gap prompts" gap noted
+  under the "🧠 Team Brainstorm Assist" bullet in the Research Crowdsourcing
+  Organizer Features list in `docs/features/brainstorm-board.md`'s Known
+  gaps section. `packages/debate-card-search/src/state/brainstormIdeas.ts`
+  adds `buildBrainstormBoardsPanelViewForTopic(topic)`, composing the
+  already-persisted `state/trackedArguments.ts`'s
+  `buildPersistedTopicCoverageReport` with the existing, previously-unused
+  pure `lib/team-brainstorm-assist.ts` `buildBrainstormBoardsForCoverageGaps`
+  to produce one board per under-covered tracked argument/category pair —
+  each showing its seeding prompt even with zero submitted ideas — merged
+  with every other board that already has at least one submitted idea but
+  isn't itself a coverage-gap seed, so nothing previously visible disappears
+  once a topic is chosen. `BrainstormBoardPanel.tsx` gains a topic switcher
+  (mirroring `TopicCoverageDashboardPanel`'s free-text input + saved-topic
+  buttons, reading the same tracked topics via `listTrackedTopics`) that
+  swaps the board list between the topic-less `buildBrainstormBoardsPanelView`
+  and the new topic-scoped view, plus a "No ideas submitted yet." hint on an
+  empty board and a topic-aware empty-state message. No new coverage-gap or
+  ranking logic was introduced — this is a composition and rendering layer
+  only. Vitest-covered in
+  `packages/debate-card-search/test/brainstormIdeas.test.ts` (a seeded board
+  with no ideas yet, a seeded board populated with an already-submitted
+  idea, merging in a non-seed board with a submitted idea, and an untracked
+  topic falling back to exactly the topic-less board list). Docs updated in
+  `docs/features/brainstorm-board.md`. Verified: `bun install` (2050
+  packages), `bun run test` (120 files / 1602 tests, all pass), `bun run
+  typecheck` (11 of 12 in-scope packages have a typecheck script; all pass),
+  and `bun run build:web` (`debate-ai-web` succeeds, `/cards/brainstorm`
+  route present, no new route) all pass. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
+- **Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut
+  wiring.** Closes follow-up (a) under idea #14 ("Legacy Verbatim /
+  Cardmirror Compatibility") in the Product Feature Ideas list: "wiring
+  these commands into actual keyboard-shortcut handlers in
+  `reason-editor`'s toolbar/editor view". `debate-card-parser`'s
+  `moveOutlineNode` is now generic (`<T>` instead of hardcoded to
+  `OutlineNode`) so a caller with its own outline shape — not just this
+  module's `Card`/`OutlineItem` — can reuse the same bounds-checked swap
+  directly; its `resolveHtmlBoundary` and the swap itself also gained two
+  non-null assertions the array accesses already guaranteed safe, needed
+  once this file is typechecked under `reason-editor`'s stricter
+  `noUncheckedIndexedAccess` setting (see below). `reason-editor` gains
+  two new engine modules: `engine/verbatim-shortcuts.ts`
+  (`applyCondenseToHtml`, wrapping `condenseCardHtml` with a no-op
+  fallback when nothing's underlined; `buildInsertShortCiteTransaction`,
+  reusing `formatShortCiteTag` to insert a "Smith 24"-style short cite tag
+  at the selection, marked `cite_mark`) and `engine/outline/heading-move.ts`
+  (`buildMoveHeadingSectionTransaction`, reusing `moveOutlineNode` to
+  validate/resolve a heading swap against the live document's
+  `OutlineHeading[]` then swapping the two headings' document ranges via a
+  ProseMirror transaction; `findHeadingAtPos`, resolving which heading's
+  section the cursor is currently in). A new `VerbatimShortcuts` TipTap
+  extension (`react/verbatim-shortcuts-extension.ts`) binds four
+  shortcuts on the live editor: `Mod-Shift-K` (insert short cite),
+  `Mod-Shift-D` (condense to read text), `Alt-ArrowUp`/`Alt-ArrowDown`
+  (move the current heading's section), and `Mod-Shift-E` for emphasis —
+  bound to the schema's own `toggleMark('emphasis_mark')` rather than
+  `debate-card-parser`'s HTML-string `toggleEmphasisHtml`, since the
+  schema already models emphasis as a real mark (the same one the
+  existing "Emph" toolbar button toggles); using the raw-HTML helper
+  against a live ProseMirror document would be the wrong layer.
+  `condenseCardHtml`/`formatShortCiteTag`/`moveOutlineNode` are imported
+  from their specific `debate-card-parser` source files rather than the
+  package barrel, so `reason-editor`'s typecheck isn't forced to also
+  clear the many pre-existing `noUncheckedIndexedAccess` errors in
+  unrelated parser modules (`citation-extractor.ts`, `card-utils.ts`,
+  etc.) the barrel re-exports — out of scope for this slice.
+  `react/Toolbar.tsx` gains "+Cite"/"Condense" buttons; `react/OutlineNavPanel.tsx`
+  gains a Move ↑/↓ button pair per heading (the mouse-driven counterpart to
+  the Alt-Arrow shortcuts). `condenseCardHtml`/`toggleEmphasisHtml`'s
+  follow-up (c) ("send selected evidence to a speech document") remains
+  open — needs a speech-document send target that doesn't exist yet — as
+  does the "video-lecture" idea's transcription follow-up, unrelated. Docs
+  added at `docs/features/legacy-verbatim-shortcuts.md`. Vitest-covered in
+  `packages/debate-card-parser/test/verbatim-shortcuts.test.ts` (new
+  "generic" case: `moveOutlineNode` against a caller-shaped
+  `{id, level}` array unrelated to `Card`/`OutlineItem`),
+  `packages/reason-editor/test/verbatim-shortcuts.test.ts`
+  (`applyCondenseToHtml`: condenses/joins/falls-back cases;
+  `buildInsertShortCiteTransaction`: dated/undated cite insertion,
+  replacing an existing selection, blank-author no-op), and
+  `packages/reason-editor/test/heading-move.test.ts`
+  (`buildMoveHeadingSectionTransaction`: swap down/up, content travels
+  with its heading, out-of-bounds/unknown-id no-ops;
+  `findHeadingAtPos`: mid-section, on-heading, and empty-outline cases).
+  Verified: `bun install` (2050 packages), `bun run test` (122 files /
+  1656 tests, all pass), `bun run typecheck` (all 11 in-scope packages
+  pass — this slice is what first exercised `debate-card-parser`'s source
+  under `reason-editor`'s stricter typecheck settings, hence the two
+  non-null-assertion fixes above), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/reason-editor` route present, no new
+  route) all pass. No repo-wide `lint` script exists (checked root/app/
+  package `package.json` scripts) so none was run.
+- **Revision Incentives — evidence-staleness signal.** Closes follow-up (c)
+  under the "🔁 Revision Incentives" bullet in the Research Crowdsourcing
+  Organizer Features list below, also the sole "Known gap" in
+  `docs/features/revision-incentives.md` ("No evidence-staleness signal
+  beyond rewarding a refresh after the fact"). `lib/revision-incentives.ts`
+  gains `computeEvidenceStaleness(evidenceYear, currentYear)` (pure) — an
+  `EvidenceStalenessSignal` flagging a citation stale once it's
+  `STALE_EVIDENCE_THRESHOLD_YEARS` (3) years old or older, or has no
+  parseable year at all (`evidenceYear === 0`) — a forward-looking signal
+  independent of any revision, unlike the existing `evaluateRevision`'s
+  `evidenceRefreshed`, which only rewards a refresh after it happens.
+  `lib/shared-evidence-library.ts` gains `getEvidenceStaleness`, composing
+  that directly against `deriveCardSnapshotFromEntry`'s parsed
+  `evidenceYear` for a real `EvidenceLibraryEntry`, and
+  `getStaleEvidenceEntries`, filtering a list down to stale `card` entries
+  (a reusable analytic `block` never cites outside evidence, so it's
+  excluded). `panels/EvidenceLibraryPanel.tsx` now renders a "Stale
+  evidence" badge on any `card` search result flagged stale as of the
+  current year, so a contributor sees which cards need a refresh before
+  editing, not only after. No new scoring logic was introduced beyond the
+  staleness threshold itself. Docs updated at
+  `docs/features/revision-incentives.md` (Known gaps now empty) and
+  `docs/features/evidence-library.md`. Vitest-covered in
+  `packages/debate-card-search/test/revision-incentives.test.ts`
+  (`computeEvidenceStaleness`: at/just-below the age threshold, an unknown
+  year, a current-year citation, and a future-dated citation clamped to
+  zero age) and
+  `packages/debate-card-search/test/shared-evidence-library.test.ts`
+  (`getEvidenceStaleness`: old/recent/undated/blank citations;
+  `getStaleEvidenceEntries`: excludes blocks and fresh cards, returns empty
+  when nothing is stale). Verified: `bun install` (2050 packages), `bun run
+  test` (120 files / 1638 tests, all pass), `bun run typecheck` (all 11
+  in-scope packages pass), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/cards/library` route present, no new route) all pass. No
+  repo-wide `lint` script exists (checked root/app/package `package.json`
+  scripts) so none was run. PR: https://github.com/debate/debate-ai.com/pull/210.
+- **Shared Evidence Library — edit/delete affordance wired to Revision Incentives.**
+  Closes the "No edit/delete affordance in the panel" gap noted in
+  `docs/features/evidence-library.md`'s Known gaps, and follow-up (a) under
+  the "🔁 Revision Incentives" bullet in the Research Crowdsourcing Organizer
+  Features list ("wiring an actual card-edit/save flow to call
+  `saveRevisionRecord` with a before/after snapshot"). `lib/shared-evidence-library.ts`
+  gains `deriveCardSnapshotFromEntry`, which derives a Revision Incentives
+  `CardSnapshot` from a real `EvidenceLibraryEntry` — reusing the existing
+  `llm-card-scoring.ts` `scoreClarity`/`scoreUsability` heuristics directly
+  for `qualitySignals`, and parsing a 4-digit year out of the entry's `cite`
+  for `evidenceYear`/`citationCompleteness` (no citation scores 0, a citation
+  with a parseable year scores 1, any other non-blank citation scores 0.5) —
+  and `buildEvidenceEntryRevision`, which composes that derivation over a
+  before/after entry pair into a `CardRevision`. No new scoring logic was
+  introduced; `evaluateRevision`/`buildRevisionIncentiveLeaderboard` are
+  reused unchanged. `state/evidenceLibraryEntries.ts` gains
+  `saveEvidenceLibraryEntryRevision`, which composes
+  `buildEvidenceEntryRevision` against this store's own before (looked up by
+  id) and after (the caller's edit) entries and records the result via the
+  already-persisted `saveRevisionRecord` — but only when the save overwrites
+  an existing entry id, so a brand-new submission never records a spurious
+  revision. `panels/EvidenceLibraryPanel.tsx` now renders **Edit** and
+  **Delete** actions on every search result: Edit loads the entry back into
+  the submission form (now labeled "Editing entry …") with a required "Your
+  contributor ID" field, and saving calls `saveEvidenceLibraryEntryRevision`
+  instead of a plain overwrite; Delete calls the already-existing
+  `deleteEvidenceLibraryEntry`. A real edit through this flow now shows up on
+  the Revision Incentives leaderboard at `/cards/revisions`, which previously
+  had no way to ever gain a row. No follow-ups remain open on the "no edit/
+  delete affordance" gap; follow-up (c) under "Revision Incentives" (a real
+  evidence-staleness signal beyond rewarding a refresh after the fact)
+  remains open, not started. Docs updated at
+  `docs/features/evidence-library.md` and
+  `docs/features/revision-incentives.md`. Vitest-covered in
+  `packages/debate-card-search/test/shared-evidence-library.test.ts`
+  (`deriveCardSnapshotFromEntry`: year-parsing/citation-completeness across a
+  dated citation, an undated non-blank citation, and a blank citation, plus
+  `wordCount` and `qualitySignals` derivation; `buildEvidenceEntryRevision`:
+  correct `cardId`/`contributorId` wiring and an end-to-end
+  `evaluateRevision` score for both a real rewarded edit and a no-op edit)
+  and `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+  (`saveEvidenceLibraryEntryRevision`: a brand-new entry records no
+  revision, an overwrite records one crediting the given contributor, and
+  successive edits each record their own revision). Verified: `bun install`
+  (2050 packages), `bun run test` (120 files / 1627 tests, all pass), `bun
+  run typecheck` (all 11 in-scope packages pass), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/cards/library` and `/cards/revisions` routes
+  present, no new route) all pass. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
+- **Research Progress Tracking — feed topic-progress history into Progress Unlocks tier computation.**
+  Closes follow-up (c) under the "📈 Research Progress Tracking" bullet in the
+  Research Crowdsourcing Organizer Features list ("feeding a contributor's
+  topic-progress history back into `progress-unlocks.ts`'s tier
+  computation," also called out as the sole "Known gap" in both
+  `docs/features/progress-unlocks.md` and
+  `docs/features/research-progress-tracking.md`). `lib/progress-unlocks.ts`'s
+  `UnlockTierRequirement` gained a `minCompletedTaskCount` threshold, and
+  `computeContributorTier` now reaches a tier via the existing
+  contribution-count-and-score AND-path **or** by clearing
+  `minCompletedTaskCount` alone — a contributor's real, persisted
+  completed-research-task count (already folded into a `ContributorStats`
+  row by `state/researchProgress.ts`'s existing
+  `buildPersistedLeaderboardWithCompletedTasks`) is now a genuine,
+  alternate tier-qualifying signal, not just a leaderboard column, so
+  completing enough routed research tasks (`research-task-routing.ts`) can
+  unlock a tier even without matching scored-contribution volume/quality.
+  Backward compatible: every existing fixture's `completedTaskCount`
+  defaults to 0, so the new OR-clause is a no-op unless real
+  task-completion data is supplied. `ContributorUnlockStatus` now surfaces
+  `completedTaskCount` and `NextTierProgress` a `completedTasksNeeded`
+  field; `buildUnlockStatusText` mentions the task-completion path.
+  `lib/unlock-streak-status.ts`'s
+  `buildContributorUnlockStatusWithStreakFromStore`/`buildUnlockStatusRoster`
+  now source their `ContributorStats` from
+  `buildPersistedLeaderboardWithCompletedTasks` instead of
+  `state/contributions.ts` alone, so a contributor who has completed
+  research tasks but no scored contribution yet now also appears in the
+  Progress Unlocks roster. `panels/ProgressUnlocksPanel.tsx` renders a new
+  "Tasks completed" column. Docs updated at
+  `docs/features/progress-unlocks.md` and
+  `docs/features/research-progress-tracking.md`. Vitest-covered in
+  `packages/debate-card-search/test/progress-unlocks.test.ts` (tier reached
+  via completed tasks alone, the highest tier across both paths, next-tier
+  `completedTasksNeeded`, and backward compatibility for the pre-existing
+  AND-path fixtures) and
+  `packages/debate-card-search/test/unlock-streak-status.test.ts` (real
+  completed-task history feeding a store-backed status, and a task-only
+  contributor appearing in the roster). Verified: `bun install` (2050
+  packages), `bun run typecheck` (all in-scope packages pass), `bun run
+  test` (120 files / 1616 tests, all pass), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/cards/progress` route present) all pass. No
+  repo-wide `lint` script exists (checked root/app/package `package.json`
+  scripts) so none was run.
+- **Daily Best Card Challenge — banner/widget UI.**
+  Closes follow-up (c) — "a challenge banner/widget UI" — under the "🕵️ Daily
+  Best Card Challenge" bullet in the Research Crowdsourcing Organizer
+  Features list. `state/contributions.ts` gains `buildDailyBestCardsFromStore`/
+  `getTodaysBestCardFromStore`, which filter every persisted contribution
+  down to `kind: "card"` entries carrying a `submittedAt` timestamp and
+  compose them directly with the existing `lib/daily-best-card.ts`'s
+  `buildDailyBestCards`/`getBestCardForDay` — no new scoring or day-grouping
+  logic was introduced. This also confirms follow-up (a) ("wiring a
+  `submittedAt` timestamp into wherever card contributions are eventually
+  persisted") was already closed as a side effect of the earlier "Daily
+  Quests and Targets" slice, which stamps `submittedAt` on every
+  `ContributionsFeedPanel` submission. `panels/DailyBestCardPanel.tsx`
+  (mounted at `/cards/best-card`, added to the Settings nav menu) renders
+  today's UTC-day winner as a highlighted banner plus every earlier day's
+  winner as a history list, so a coach or contributor can see the day's
+  top card and past winners without needing a separate ballot UI — a card's
+  existing likes/saves in the Contributions Feed already model the
+  community "vote". Follow-up (b), a scheduled job to persist/announce a
+  day's winner automatically, remains open — not started; this repo has no
+  cron/scheduled-task mechanism yet. Docs added at
+  `docs/features/daily-best-card.md`. Vitest-covered in
+  `packages/debate-card-search/test/contributions.test.ts`
+  (`buildDailyBestCardsFromStore`/`getTodaysBestCardFromStore`: picks one
+  winner per represented day from persisted card contributions, excludes
+  non-card contributions and cards without a `submittedAt` timestamp, and
+  returns the correct/`null` result for a given day). Verified: `bun install`
+  (2050 packages), `bun run test` (120 files / 1609 tests, all pass),
+  `bun run typecheck` (all 11 in-scope packages pass), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/cards/best-card` route present) all pass. No
+  repo-wide `lint` script exists (checked root/app/package `package.json`
+  scripts) so none was run.
+- **Research Task Routing — task-routing trigger UI.**
+  Closes follow-up (d) under the "🧭 Research Task Routing" bullet in the
+  Research Crowdsourcing Organizer Features list — "a task-routing trigger
+  UI to actually populate a topic's queue" — and the "No task-routing
+  trigger UI yet" known gap noted in `docs/features/task-inbox.md`.
+  `packages/debate-card-search/src/state/routedTaskQueues.ts` gains
+  `routePersistedTopicTasks`, which composes `state/trackedArguments.ts`'s
+  `buildPersistedTopicCoverageReport` (a topic's tracked-argument checklist
+  against the shared evidence library) directly with the existing
+  `buildAndPersistRoutingResult`, so a caller can route and persist a
+  topic's queue from nothing but a topic id — no new routing logic was
+  introduced. `panels/TaskInboxPanel.tsx` (mounted at `/cards/inbox`) now
+  renders a "Route a topic's tasks" form above the inbox — a topic input
+  (with one-click suggestions from every topic that already has a tracked
+  checklist, via `listTrackedTopics`) plus a "Route tasks" button that calls
+  `routePersistedTopicTasks` and refreshes the inbox view — so a coach or
+  contributor can populate a topic's task queue from the inbox itself
+  instead of needing a separate trigger. No follow-ups remain open on this
+  bullet. Docs updated in `docs/features/task-inbox.md`. Vitest-covered in
+  `packages/debate-card-search/test/routedTaskQueues.test.ts`
+  (`routePersistedTopicTasks`: routes and persists a topic's live coverage
+  gaps end-to-end through the persisted tracked-argument checklist and
+  evidence library, and scopes correctly — tracked arguments filed under a
+  different topic don't leak into the routed report). Verified: `bun
+  install` (2050 packages), `bun run test` (120 files / 1604 tests, all
+  pass), `bun run typecheck` (all 11 in-scope packages pass), and `bun run
+  build:web` (`debate-ai-web` succeeds, `/cards/inbox` route present, no new
+  route) all pass. No repo-wide `lint` script exists (checked root/app/
+  package `package.json` scripts) so none was run.
+- **Shared Evidence Library — card/block submission form.**
+  Closes the "No submission UI yet" gap noted under the "📚 Shared Evidence
+  Library" bullet in the Research Crowdsourcing Organizer Features list, and,
+  by giving the shared evidence repository a real UI source of
+  `argBlock`/`wordCount`-carrying entries, closes follow-up (a) under the
+  "📊 Topic Coverage Dashboard" bullet in that same list ("an `argBlock`/
+  word-count field wired into a real card-submission flow beyond the
+  existing `/cards/library` evidence-library form"). `lib/shared-evidence-library.ts`
+  gains `computeWordCount`, a plain whitespace tokenizer that stamps a
+  submitted entry's `wordCount` from its body text rather than asking the
+  submitter to count it themselves — the exact field
+  `lib/topic-coverage.ts`'s `missing`/`thin`/`covered` classification scores
+  against. `panels/EvidenceLibraryPanel.tsx` (mounted at `/cards/library`)
+  now renders a submission form above the existing search box — kind
+  (card/block), topic, case area, argument block, citation, comma-separated
+  tags, and a body text area with a live word-count readout — that saves a
+  new `EvidenceLibraryEntry` via the already-persisted
+  `saveEvidenceLibraryEntry` and refreshes the search results, so a card
+  submitted here now flows straight into both the evidence library's own
+  search index and the Topic Coverage Dashboard's live report for the same
+  topic, with no new composition logic needed on either side. No follow-ups
+  remain open on either bullet's submission-flow gap; the "no edit/delete
+  affordance" and "no topic/case-area/tag filter controls in the panel"
+  gaps noted separately in `docs/features/evidence-library.md` remain open,
+  not started. Docs updated in `docs/features/evidence-library.md` and
+  `docs/features/topic-coverage-dashboard.md`. Vitest-covered in
+  `packages/debate-card-search/test/shared-evidence-library.test.ts`
+  (`computeWordCount`: space-separated words, collapsed newline/tab
+  whitespace, leading/trailing trim, and an empty/whitespace-only string).
+  Verified: `bun install` (2050 packages), `bun run test` (120 files / 1602
+  tests, all pass), `bun run typecheck` (all 11 in-scope packages pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/cards/library` route
+  present, no new route) all pass. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
+- **Expandable Heading Structure — collapsed-heading decoration plugin.**
+  Closes follow-up (b) under idea #9 ("Expandable Heading Structure") in
+  the Product Feature Ideas list — "a ProseMirror decoration plugin that
+  hides collapsed ranges in the actual editor view using
+  `getCollapsedRanges`." A new
+  `packages/reason-editor/src/engine/outline/collapsed-headings-plugin.ts`
+  adds `collapsedHeadingsPlugin`, a ProseMirror plugin whose state (a
+  `collapsedIds` list) is set via a `collapsedHeadingsKey`-tagged
+  transaction meta — mirroring `comments-plugin.ts`'s meta-driven state
+  convention — and whose `decorations` prop (factored out as the
+  independently testable `computeCollapsedHeadingsDecorations`) composes
+  the existing `buildHeadingOutline`/`getCollapsedRanges` to `display: none`
+  every top-level document node inside a collapsed heading's range. Headings
+  are flat, doc-level paragraphs (see `engine/schema/nodes.ts`), so a
+  `CollapsedRange`'s bounds always line up with top-level node boundaries.
+  `reason-core-extension.ts`'s `ReasonCore.addProseMirrorPlugins()` now
+  includes the plugin unconditionally (a no-op when nothing is collapsed).
+  `OutlineNavPanel.tsx` gains an effect that pushes its persisted
+  `collapsedIds` into the plugin via `setCollapsedHeadingIdsMeta` on mount,
+  on `documentId` change, and on every toggle, so collapsing a heading in
+  the nav panel now also hides its content in the live editor view, not
+  just the nav list. No follow-ups remain open on idea #9. Vitest-covered
+  in `packages/reason-editor/test/collapsed-headings-plugin.test.ts`
+  (plugin-state transitions via tagged/untagged meta, and decoration
+  coverage for a mid-document collapse, an outermost collapse, and a
+  collapsed heading with nothing to hide).
+  PR: [#201](https://github.com/debate/debate-ai.com/pull/201).
+- **Team Brainstorm Assist — real AI-generation call.**
+  Closes follow-up (a) under the "🧠 Team Brainstorm Assist" bullet in the
+  Research Crowdsourcing Organizer Features list — "an actual AI-generation
+  call that drafts candidate ideas from `buildBrainstormPrompt`'s output."
+  A new `packages/debate-card-search/src/lib/team-brainstorm-ai.ts` adds
+  `TEAM_BRAINSTORM_AI_SYSTEM_PROMPT`, `buildTeamBrainstormAiUserPrompt`, and
+  the tolerant `parseTeamBrainstormAiResponse`, mirroring
+  `lib/llm-card-scoring-ai.ts`'s strict-JSON-with-tolerant-fallback split
+  (the model is asked for a `{"ideas": [...]}` array of several distinct
+  candidate ideas for a board's argument block/category/seeding prompt).
+  `lib/team-brainstorm-client.ts` adds `requestTeamBrainstormAiIdeas`, a
+  small self-contained `fetch` client (mirroring
+  `lib/llm-card-scoring-client.ts`'s split) that POSTs to the existing
+  `/api/reason-ai` Anthropic proxy. `lib/team-brainstorm-assist.ts`'s
+  `BrainstormIdea` gains an additive, optional `isAiGenerated` field
+  (existing records without one stay valid) so an AI-drafted idea saves and
+  renders through the exact same `saveBrainstormIdea`/ranking/upvote path
+  as a human-submitted one. `BrainstormBoardPanel.tsx`'s submission form now
+  has a "Generate AI ideas" action (next to "Submit idea") that calls
+  `requestTeamBrainstormAiIdeas` for the form's current argument
+  block/category, saves each returned idea as a normal, AI-attributed
+  (`contributorId: "AI"`, `isAiGenerated: true`) board idea, and renders an
+  "AI" badge on it — or a form-level error message on failure. Follow-up
+  (a) is now closed; the "boards aren't seeded from the coverage-gap
+  prompts" and "no reviewer merge action for flagged duplicates" gaps noted
+  separately remain open, as documented in
+  `docs/features/brainstorm-board.md`. Docs updated in that same file.
+  Vitest-covered in
+  `packages/debate-card-search/test/team-brainstorm-ai.test.ts` (prompt
+  content and response parsing, including a fenced reply, a prose-wrapped
+  reply, entries with blank/whitespace-only ideas dropped, and an
+  empty/unusable reply) and
+  `packages/debate-card-search/test/team-brainstorm-client.test.ts` (the
+  `fetch` client, mocked via `vi.stubGlobal`, covering the success path, an
+  endpoint override, a server error message, a non-JSON error body, and an
+  unparseable reply). Verified: `bun install` (2050 packages), `bun run
+  test` (119 files / 1590 tests, all pass), `bun run typecheck` (11 of 12
+  in-scope packages have a typecheck script; all pass), and `bun run
+  build:web` (`debate-ai-web` succeeds, `/cards/brainstorm` route present,
+  no new route) all pass. No repo-wide `lint` script exists (checked
+  root/app/package `package.json` scripts) so none was run.
+- **AI Drill Generator — real AI-generated drill script.**
+  Closes follow-up (b) under the "📚 AI Drill Generator" bullet in the
+  Research Crowdsourcing Organizer Features list — "an actual AI-generated
+  (rather than templated) script." A new
+  `packages/debate-round/src/round/drill-script-ai.ts` adds
+  `DRILL_SCRIPT_AI_SYSTEM_PROMPT`, `buildDrillScriptAiUserPrompt`, and the
+  tolerant `parseDrillScriptAiResponse`, mirroring `round/coach-feedback-ai.ts`'s
+  free-form-text split (a practice script is prose, not structured JSON) —
+  the user-turn prompt composes a single `flow/drill-generator.ts` `Drill`'s
+  kind and template prompt line for a chosen side, asking the model to turn
+  that template line into an actual, ready-to-read practice script rather
+  than restate it. `round/drill-script-client.ts` adds `requestDrillScript`,
+  a small self-contained `fetch` client (mirroring
+  `round/coach-feedback-client.ts`'s split) that POSTs to the existing
+  `/api/reason-ai` Anthropic proxy. `state/drillSets.ts`'s `DrillSetRecord`
+  gains an additive, optional `aiScripts` field keyed by a drill's index in
+  `drills` (existing records without one stay valid) plus a new
+  `saveDrillAiScript(roundId, drillIndex, aiScript)` helper that sets one
+  entry without touching `drills` or any other drill's script — matching
+  this store's existing roundId-only keying (a drill set is unique per
+  `roundId`, unlike `coachingSessions.ts`'s roundId+sideKey keying).
+  `DrillSetsPanel.tsx`'s drills now each have a "Get AI script" ("Regenerate
+  AI script" once one exists) action that calls `requestDrillScript` with
+  the drill and its round's side, saves the result, and renders it (or a
+  per-drill error message on failure) under the template prompt. No
+  follow-ups remain open on this bullet. Docs updated in
+  `docs/features/drill-sets.md`. Vitest-covered in
+  `packages/debate-round/test/drill-script-ai.test.ts` (prompt content,
+  per-kind label rendering, and response parsing, including a fenced reply
+  and a whitespace-only/empty reply),
+  `packages/debate-round/test/drill-script-client.test.ts` (the `fetch`
+  client, mocked via `vi.stubGlobal`, covering the success path, an
+  endpoint override, a server error message, a non-JSON error body, and an
+  empty/unusable AI reply), and `packages/debate-round/test/drillSets.test.ts`
+  (the new `saveDrillAiScript` helper, including overwriting an existing
+  script, leaving other drills' and other rounds' records untouched, and a
+  no-op on an unstored roundId). Verified: `bun install` (2050 packages),
+  `bun run test` (117 files / 1572 tests, all pass), `bun run typecheck`
+  (11 of 12 in-scope packages have a typecheck script; all pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/drills` route present,
+  no new route) all pass. No repo-wide `lint` script exists (checked
+  root/app/package `package.json` scripts) so none was run.
+- **AI Coach Mode — real AI coaching-feedback call.**
+  Closes follow-up (a) under the "🎙️ AI Coach Mode" bullet in the Research
+  Crowdsourcing Organizer Features list — "an actual AI coaching call for
+  open-ended feedback beyond this deterministic template layer." A new
+  `packages/debate-round/src/round/coach-feedback-ai.ts` adds
+  `COACH_FEEDBACK_AI_SYSTEM_PROMPT`, `buildCoachFeedbackAiUserPrompt`, and
+  the tolerant `parseCoachFeedbackAiResponse`, mirroring
+  `debate-speech-writer`'s `coach/team-coach-ai.ts` free-form-text split
+  (open-ended coaching feedback is prose, not structured JSON like
+  `round/judge-decision-ai.ts`'s verdict) — the user-turn prompt composes a
+  session's side and its already-generated template prompts via the
+  existing `flow/coach-mode.ts`'s `buildCoachingSummaryText`, so no new
+  coaching-prompt derivation logic was introduced.
+  `round/coach-feedback-client.ts` adds `requestCoachFeedback`, a small
+  self-contained `fetch` client (mirroring `coach/team-coach-client.ts`'s
+  split) that POSTs to the existing `/api/reason-ai` Anthropic proxy.
+  `state/coachingSessions.ts`'s `CoachingSessionRecord` gains an additive,
+  optional `aiFeedback` field (existing records without one stay valid)
+  plus a new `saveCoachingSessionAiFeedback(roundId, sideKey, aiFeedback)`
+  helper that sets it without touching a session's `prompts`.
+  `CoachingSessionsPanel.tsx`'s session cards now have a "Get AI feedback"
+  ("Regenerate AI feedback" once one exists) action that calls
+  `requestCoachFeedback` with the session's own prompts, saves the result,
+  and renders it (or a per-session error message on failure) under the
+  template prompts. No follow-ups remain open on this bullet. Docs updated
+  in `docs/features/coaching-sessions.md`. Vitest-covered in
+  `packages/debate-round/test/coach-feedback-ai.test.ts` (prompt content and
+  response parsing, including a fenced reply and a whitespace-only/empty
+  reply), `packages/debate-round/test/coach-feedback-client.test.ts` (the
+  `fetch` client, mocked via `vi.stubGlobal`, covering the success path, an
+  endpoint override, a server error message, a non-JSON error body, and an
+  empty/unusable AI reply), and
+  `packages/debate-round/test/coachingSessions.test.ts` (the new
+  `saveCoachingSessionAiFeedback` helper, including overwriting existing
+  feedback, leaving other sessions untouched, and a no-op on an unstored
+  roundId/sideKey pair). Verified: `bun install` (2050 packages),
+  `bun run test` (115 files / 1549 tests, all pass), `bun run typecheck`
+  (11 of 12 in-scope packages have a typecheck script; all pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/coaching` route present,
+  no new route) all pass. No repo-wide `lint` script exists (checked
+  root/app/package `package.json` scripts) so none was run.
+- **Contribution Leaderboard — completed-tasks signal.**
+  Closes follow-up (b) under the "Contribution Leaderboard" bullet in the
+  Research Crowdsourcing Organizer Features list — "a 'completed tasks'
+  signal once a research-task system exists" (that system now exists: the
+  Research Task Routing idea's persisted `routedTaskQueues.ts`/
+  `completeAndRecordResearchTask`). `debate-card-search`'s
+  `lib/contribution-leaderboard.ts` gains a `completedTaskCount` field on
+  `ContributorStats` and an optional `completedTaskCounts` map parameter on
+  `buildContributorStats`/`buildLeaderboard`, defaulting to 0 so every
+  existing caller is unaffected; a contributor present only in that map
+  (completed tasks, no scored contribution yet) still gets a leaderboard
+  row via a new `buildTaskOnlyContributorStats` — mirroring
+  `lib/research-progress.ts`'s `buildResearchProgressBoard` "union of both
+  signals" convention. `state/researchProgress.ts` (which already reads the
+  persisted completed-task history) adds
+  `buildPersistedLeaderboardWithCompletedTasks`, grouping that history by
+  `contributorId` and composing it with `state/contributions.ts`'s
+  persisted contribution list through `buildLeaderboard` — it lives there
+  rather than alongside `state/contributions.ts`'s existing
+  `buildPersistedLeaderboard` to avoid a circular import between the two
+  state modules (`state/contributions.ts` doesn't depend on
+  `state/researchProgress.ts`). `ContributionLeaderboardPanel.tsx` now reads
+  through `buildPersistedLeaderboardWithCompletedTasks` instead and renders
+  a new "Completed tasks" column. `buildPersistedLeaderboard` itself is
+  unchanged and still used elsewhere. No follow-ups remain open on this
+  bullet. Vitest-covered in `test/contribution-leaderboard.test.ts` (the new
+  `completedTaskCount` field, the `completedTaskCounts` map, and a
+  task-only contributor row) and `test/researchProgress.test.ts` (the new
+  `buildPersistedLeaderboardWithCompletedTasks` store composition, including
+  a task-only contributor). Verified: `bun install`, `bun run test` (113
+  files / 1528 tests, all pass), `bun run typecheck` (11 of 12 in-scope
+  packages have a typecheck script; all pass — also fixed three pre-existing
+  `ContributorStats` object literals in `lib/unlock-streak-status.ts` and
+  three test files that were missing the new required field), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/cards/leaderboard` route
+  present, no new route) all pass. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
+- **Flow-in-Speech Flow Annotations — video-player annotation UI.**
+  Closes follow-up (a) under idea #15 ("Flow-in-Speech Flow Annotations")
+  in the Product Feature Ideas list — "a video-player UI (`debate-videos`)
+  that lets a viewer drop an annotation at the current playback position,
+  persisted through `flowAnnotations.ts`, and jump back to one." A new
+  `packages/debate-round/src/panels/FlowAnnotationsPanel.tsx` renders a
+  drop-annotation form (flow id, speech id, box path, optional note, and a
+  timestamp that defaults to the `debate-videos` persistent player's live
+  playback position via `useVideoPlayerStore`, or a manual `m:ss`/`h:mm:ss`
+  entry) plus every persisted `FlowAnnotation` newest-first, each with a
+  "Jump to" action that calls `sendYouTubeCommand("seekTo", ...)` — a new
+  command added to `debate-videos`'s existing
+  `playVideo`/`pauseVideo`/`setPlaybackRate` postMessage commands, wrapping
+  the YouTube IFrame API's `seekTo(seconds, allowSeekAhead)` — and a
+  "Clear" action, mounted at `/annotations` and linked from the global
+  dock's Settings menu. `flow/flow-annotations.ts` gains an additive,
+  optional `FlowAnnotation.videoId` (existing annotations without one stay
+  valid) so "Jump to" can be scoped to the annotation's own recording
+  rather than firing blindly at whatever happens to be loaded, plus three
+  small pure helpers used by the panel:
+  `getAnnotationsForVideo`/`formatAnnotationTimestamp`/
+  `parseAnnotationTimestamp`/`parseBoxPathInput`.
+  `state/flowAnnotations.ts` gains `listFlowAnnotationsForVideo` and
+  `buildFlowAnnotationsPanelView` (a stable newest-first sort), mirroring
+  the existing `buildFlowSummariesPanelView` convention. `debate-round` now
+  depends on `debate-videos` (previously one-directional the other way —
+  no cycle, `debate-videos` still doesn't depend on `debate-round`). "Jump
+  to" only works once the annotation's own recording is already the one
+  loaded in the player — no video-lookup/auto-open exists — and follow-up
+  (b), a `FlowSpreadsheet` affordance surfacing a box's annotations via
+  `listFlowAnnotationsForBox`, remains open, not started. Docs added at
+  `docs/features/flow-annotations.md`;
+  `packages/debate-round/README.md` updated. Vitest-covered in
+  `packages/debate-round/test/flow-annotations.test.ts` (the new
+  `videoId`/timestamp/box-path helpers) and
+  `packages/debate-round/test/flowAnnotations.test.ts` (the new
+  `listFlowAnnotationsForVideo`/`buildFlowAnnotationsPanelView` persistence
+  helpers). Verified: `bun install`, `bun run test` (113 files / 1519
+  tests, all pass), `bun run typecheck` (11 of 12 in-scope packages have a
+  typecheck script; all pass), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/annotations` route present) all pass. No repo-wide `lint`
+  script exists (checked root/app/package `package.json` scripts) so none
+  was run.
+- **Video-Lecture-Training Coach AI — real AI Q&A call.**
+  [PR #195](https://github.com/debate/debate-ai.com/pull/195).
+  Closes follow-up (b) under idea #8 ("Video-Lecture-Training Coach AI") in
+  the Product Feature Ideas list — "an actual AI Q&A call that consumes
+  `buildGroundedCoachPrompt`'s output." A new
+  `packages/debate-speech-writer/src/coach/team-coach-ai.ts` adds
+  `TEAM_COACH_AI_SYSTEM_PROMPT`, which frames the model as the team's
+  private coach and instructs it to reply with the answer text only, plus
+  the pure, Vitest-testable `parseTeamCoachAiResponse`, which strips a
+  wrapping code fence (mirroring `debate-round`'s
+  `round/ai-versus-speech-ai.ts`'s tolerant-parsing convention exactly —
+  this is free-form answer text, not JSON, so no schema validation is
+  needed). The user-turn message sent to the model is exactly the
+  already-existing `buildGroundedCoachPrompt`'s output (question +
+  ranked grounding-material excerpts + its own "answer strictly from
+  these materials" instruction) — no new prompt-composition logic was
+  introduced. `coach/team-coach-client.ts` adds `requestTeamCoachAnswer`,
+  a small self-contained `fetch` client (mirroring
+  `round/ai-versus-speech-client.ts`'s split) that POSTs to the existing
+  `/api/reason-ai` Anthropic proxy. `CoachMaterialsPanel.tsx`'s existing
+  "Ask the coach" section now has an "Ask the coach" action alongside the
+  existing "Preview grounded prompt" preview — it resolves the question's
+  top relevant materials via the already-existing
+  `findRelevantMaterialsFromStore`, calls `requestTeamCoachAnswer`, and
+  renders the model's grounded answer or a plain error message on
+  failure. No material-scoring, grouping, or persistence logic changed,
+  and no new route was added. Vitest-covered in
+  `packages/debate-speech-writer/test/team-coach-ai.test.ts` (system-prompt
+  content and response parsing, including a fenced reply and a
+  whitespace-only/empty reply) and
+  `packages/debate-speech-writer/test/team-coach-client.test.ts` (the
+  `fetch` client, with `fetch` mocked via `vi.stubGlobal`, covering the
+  success path, an endpoint override, a server error message, a non-JSON
+  error body, and an empty/unusable AI reply). Docs updated in
+  `docs/features/coach-materials.md` and
+  `packages/debate-speech-writer/README.md`. Follow-up (a), transcription/
+  parsing that turns an uploaded recording or document into a material's
+  text, remains open — not started. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
+  Verified: `bun install` (2050 packages), `bun run test` (113 files /
+  1504 tests, all pass), `bun run typecheck` (11 of 12 in-scope packages
+  have a typecheck script; all pass), and `bun run build:web`
+  (`debate-ai-web`, succeeds, `/coach-materials` route present, no new
+  route) all pass.
+- **AI Response-Outcome Charts — AI counsel-panel call.**
+  Closes follow-up (a) under idea #4 ("AI Response-Outcome Charts") in the
+  Product Feature Ideas list — "an actual AI-panel call (multiple 'counsel'
+  model roles) that evaluates likely response paths and clash points
+  beyond this deterministic heuristic." A new
+  `packages/debate-round/src/flow/response-outcome-ai.ts` adds the pure,
+  Vitest-testable `buildCounselPanelAiUserPrompt`/`parseCounselPanelAiResponse`,
+  which compose a round's most-vulnerable already-scored arguments (row
+  index, origin speech, unanswered status, heuristic exposure score) into a
+  prompt asking the model to role-play three specialized debate "counsel"
+  — Policy Counsel, Kritik Counsel, Weighing Counsel — assign whichever
+  role best fits each argument, and estimate that argument's likely
+  response path and clash point, plus one overall round-level clash
+  summary; mirrors `round/judge-decision-ai.ts`'s prompt/parse split
+  exactly, including its tolerant-parsing (fenced/prose-wrapped JSON)
+  convention. `flow/response-outcome-client.ts` adds
+  `requestCounselPanelAssessment`, a small self-contained `fetch` client
+  (mirroring `judge-decision-client.ts`'s split) that POSTs to the
+  existing `/api/reason-ai` Anthropic proxy. A new
+  `state/counselPanelAssessments.ts` persists a round's
+  `CounselPanelAiResult` to localStorage keyed by `roundId`, mirroring
+  `debate-card-search`'s `state/aiCardAssessments.ts` convention exactly.
+  `VulnerabilityChartsPanel.tsx`'s existing round cards now have a "Get AI
+  counsel panel" action that requests an assessment against the round's
+  top exposed arguments (from `buildVulnerabilityChartDataFromReport`) and
+  renders the overall clash summary plus each assessed argument's counsel
+  role, likely response path, and clash estimate; clearing a round now
+  also clears its persisted counsel-panel assessment. No vulnerability-
+  scoring, chart-data, or "what if" hypothetical logic changed, and no new
+  route was added. Vitest-covered in
+  `packages/debate-round/test/response-outcome-ai.test.ts` (prompt
+  composition, well-formed/fenced/prose-wrapped replies, an unrecognized
+  `counselRole`, empty `argumentAssessments`, and missing/blank required
+  fields), `packages/debate-round/test/response-outcome-client.test.ts`
+  (the `fetch` client, with `fetch` mocked via `vi.stubGlobal`, covering
+  the success path, an endpoint override, a server error message, a
+  non-JSON error body, and an unparseable AI reply), and
+  `packages/debate-round/test/counselPanelAssessments.test.ts` (get/save/
+  delete, corrupt/missing storage, and per-`roundId` isolation). Docs
+  updated in `docs/features/response-outcome-charts.md` — including
+  correcting its stale "Known gaps" section, which still listed the
+  already-shipped "what if" hypothetical mode (follow-up (c)) as not
+  started. No follow-ups remain open on idea #4. No repo-wide `lint`
+  script exists (checked root/app/package `package.json` scripts) so none
+  was run. Verified: `bun install` (2050 packages), `bun run test` (111
+  files / 1491 tests, all pass), `bun run typecheck` (11 of 12 in-scope
+  packages have a typecheck script; all pass), and `bun run build:web`
+  (`debate-ai-web`, succeeds, `/outcomes` route present, no new route) all
+  pass.
+- **Practice Round Simulator — AI opponent speech + AI judge-decision calls.**
+  [PR #193](https://github.com/debate/debate-ai.com/pull/193).
+  Closes follow-up (a) under the "🧪 Practice Round Simulator" bullet in
+  Research Crowdsourcing Organizer Features — "an actual AI
+  speech-generation call for the AI opponent's speeches and an AI
+  judge-decision call under the chosen paradigm." `PracticeRoundSimulatorPanel`
+  now has a "Generate AI opponent speech" action per round card, reusing the
+  existing `buildAiResponseRequest`/`requestAiVersusSpeech`/
+  `requestAiVersusSpeechWithPersona` helpers (idea #3's "Online Debate Versus
+  AI" and the "AI Practice Opponent" idea) against the round's own
+  `aiVersusRounds.ts` submitted-speech state — available once the round has
+  been started at `/versus-ai` under the same `roundId` — sourcing the AI
+  opponent's persona directly from the practice round's own saved
+  `setup.opponentPersona` rather than a separate `opponentPersonaSelections`
+  store lookup, since the practice-round setup already carries that choice
+  explicitly. A new `packages/debate-round/src/round/practice-round-judge-decision-wiring.ts`
+  adds `buildPracticeRoundJudgeDecisionInput`, a variant of idea #5's
+  `judge-decision-store-wiring.ts` that takes the practice round's own saved
+  `setup.judgeParadigm` directly as an argument (instead of reading a second
+  `judgeParadigmSelections` store), while still resolving the round's flow
+  summary from the existing `state/flowSummaries.ts` by the same `roundId`.
+  The panel's new "Get AI judge decision" action calls the existing
+  `requestJudgeDecision` with that resolved input and saves the verdict onto
+  the round's own `PracticeRoundRecord` via a new optional `judgeDecision`
+  field, rendering the winner, key voting issues, and rationale. No new
+  turn-order, speech-order, judge-paradigm, or setup-composition logic was
+  introduced. Vitest-covered in
+  `packages/debate-round/test/practice-round-judge-decision-wiring.test.ts`
+  (missing/empty flow summary, successful composition from the round's own
+  paradigm, roundId scoping, and a custom paradigm). No follow-ups remain
+  open on this idea. No repo-wide `lint` script exists (checked
+  root/app/package `package.json` scripts) so none was run. Verified:
+  `bun install` (2050 packages), `bun run test` (108 files / 1465 tests, all
   pass), `bun run typecheck` (11 of 12 in-scope packages have a typecheck
   script; all pass), and `bun run build:web` (`debate-ai-web`, succeeds,
-  `/cards/daily-best` route present) all pass.
+  `/practice-round` route present, no new route) all pass.
 - **AI Practice Opponent — persona-conditioned AI speech-generation call.**
   [PR #191](https://github.com/debate/debate-ai.com/pull/191).
   Closes follow-up (a) under the "🤖 AI Practice Opponent" bullet in Research
@@ -3747,11 +4511,11 @@
 
 1. **CX NDCA Standings** — Add a standings dashboard modeled around NDCA-style results, allowing users to browse qualification points, rankings, cumulative records, and tournament performance history across the season. Tabroom already supports tournament results and NDCA-points configuration, so this could expose those data in a more searchable, user-friendly analytics view. [tabroom](https://www.tabroom.com/index/tourn/index.mhtml?tourn_id=26597) _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `computeTournamentPoints`/`buildTeamStanding`/`buildStandings`/`rankStandings`/`getQualifiedTeams` for turning per-team tournament results into ranked, cumulative season standings against a configurable (not authoritative) points table. A second slice, `tournamentResults.ts` (see Tracker Status above), now persists recorded `TournamentResult`s to localStorage. A third slice, `StandingsPanel` (see Tracker Status above, "CX NDCA Standings — standings dashboard UI"), now lets a user record a result and renders every persisted result's ranked standings at `/standings`, closing follow-up (c). Follow-ups: (a) a Tabroom/NDCA scraper that produces real `TournamentResult` records per team (today's `sync-tournaments.ts` only fetches tournament names), (b) a real, circuit-sourced `QualificationPointsTable` instead of the illustrative default. Neither of these is started._
 
-2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slices done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. A second slice, `wordCountRounds.ts` (see Tracker Status above, "Word-Count-Only Speech Format — persisted word-count round results"), now persists a round's chosen style and submitted speech text to localStorage. A third slice, `WordCountRoundsPanel` (see Tracker Status above, "Word-Count-Only Speech Format — submission UI"), now renders a submission form at `/word-count` with a live per-speech word-count readout, closing follow-up (a). Follow-up (b), extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode in the live round timer itself, remains open — not started._
+2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slices done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. A second slice, `wordCountRounds.ts` (see Tracker Status above, "Word-Count-Only Speech Format — persisted word-count round results"), now persists a round's chosen style and submitted speech text to localStorage. A third slice, `WordCountRoundsPanel` (see Tracker Status above, "Word-Count-Only Speech Format — submission UI"), now renders a submission form at `/word-count` with a live per-speech word-count readout, closing follow-up (a). A fourth slice (see Tracker Status above, "Word-Count-Only Speech Format — live-round word-limited speech mode") added `round/word-count-speech-mode.ts`, `hooks/useWordCountSpeechMode.ts`, and `debate-timer`'s `SpeechWordCounter`, wiring a word-limit toggle into `SpeechHeaderBar` that replaces the live countdown with a `words / limit` meter whose text persists through the same `wordCountRounds` store as `/word-count`, closing follow-up (b). A speech with no authored `wordCountStyles` limit falls back to `estimateWordLimit` applied to the live timed style's speech length, so the mode works for every debate style. No follow-ups remain open on this idea; the mobile `FlowPageHeader` countdown is unchanged, as noted in `docs/features/word-count-rounds.md`._
 
 3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildAiVersusSpeechOrder`/`getNextSpeechSlot`/`isUsersTurn`/`validateSpeechSubmission`/`buildAiResponseRequest` for turning a `debate-timer` format + chosen side into an ordered, speaker-tagged turn sequence, validating a submitted speech against whose turn it is, and building a structured (non-AI-calling) request describing the AI's next speech. A second slice, `aiVersusRounds.ts` (see Tracker Status above, "Online Debate Versus AI — submitted-round persistence"), now persists a round's format, side, and submitted speeches to localStorage. A third slice, `AiVersusRoundPanel` (see Tracker Status above, "Online Debate Versus AI — round-setup + submission UI"), now renders a round-setup + submission UI at `/versus-ai`, closing follow-up (b). A fourth slice (see Tracker Status above, "Online Debate Versus AI — real AI speech-generation call") added `round/ai-versus-speech-ai.ts` and `round/ai-versus-speech-client.ts`, wiring a "Generate AI speech" action into `AiVersusRoundPanel` that calls the existing `/api/reason-ai` Anthropic proxy to produce the AI's next speech text, closing follow-up (a). No follow-ups remain open on this idea; speech submission stays text-only, as noted in `docs/features/ai-versus-rounds.md`._
 
-4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slices done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). A second slice, `vulnerabilityReports.ts` plus `VulnerabilityChartsPanel` (see Tracker Status above, "AI Response-Outcome Charts — chart/panel UI"), now persists a round's derived report and renders it as a per-side exposure summary and exposure chart at `/outcomes`, closing follow-up (b). A third slice, `applyHypotheticalAdjustments` plus the panel's "what if" picker (see Tracker Status above, "AI Response-Outcome Charts — 'what if' hypothetical mode"), now recomputes a chosen argument's score against a hypothetical extend/answer/concede choice, closing follow-up (c). Follow-up (a), an actual AI-panel call (multiple "counsel" model roles) that evaluates likely response paths and clash points beyond this deterministic heuristic, remains open — not started._
+4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slices done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). A second slice, `vulnerabilityReports.ts` plus `VulnerabilityChartsPanel` (see Tracker Status above, "AI Response-Outcome Charts — chart/panel UI"), now persists a round's derived report and renders it as a per-side exposure summary and exposure chart at `/outcomes`, closing follow-up (b). A third slice, `applyHypotheticalAdjustments` plus the panel's "what if" picker (see Tracker Status above, "AI Response-Outcome Charts — 'what if' hypothetical mode"), now recomputes a chosen argument's score against a hypothetical extend/answer/concede choice, closing follow-up (c). A fourth slice (see Tracker Status above, "AI Response-Outcome Charts — AI counsel-panel call") added `flow/response-outcome-ai.ts`, `flow/response-outcome-client.ts`, and `state/counselPanelAssessments.ts`, wiring a "Get AI counsel panel" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy for a real three-role ("Policy Counsel"/"Kritik Counsel"/"Weighing Counsel") assessment of each exposed argument's likely response path and clash point plus an overall clash summary, closing follow-up (a). No follow-ups remain open on this idea._
 
 5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. A third slice, `JudgeParadigmPickerPanel` (see Tracker Status above, "AI Judge Decision Modes — paradigm-picker UI"), now renders a picker UI at `/paradigms` for saving a round's built-in or custom paradigm, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Judge Decision Modes — real AI judge-decision call") added `debate-round`'s `round/judge-decision-ai.ts`, `round/judge-decision-client.ts`, `round/judge-decision-store-wiring.ts`, and `state/judgeDecisions.ts`, wiring an AI judge-decision call — composing `buildJudgeParadigmPrompt` with a round's flow summary and calling the existing `/api/reason-ai` Anthropic proxy — into a new `JudgeDecisionPanel` at `/judge-decision`, closing follow-up (a). No follow-ups remain open on this idea._
 
@@ -3759,9 +4523,9 @@
 
 7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext 
 
-8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. A third slice, `CoachMaterialsPanel` (see Tracker Status above, "Video-Lecture-Training Coach AI — materials-upload/coach panel UI"), now renders an upload form, a kind-grouped material list, and an "ask the coach" grounded-prompt preview at `/coach-materials`, closing follow-up (c). Follow-ups: (a) transcription/parsing that turns an uploaded recording or document into a material's text, (b) an actual AI Q&A call that consumes `buildGroundedCoachPrompt`'s output. Neither of these is started._
+8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. A third slice, `CoachMaterialsPanel` (see Tracker Status above, "Video-Lecture-Training Coach AI — materials-upload/coach panel UI"), now renders an upload form, a kind-grouped material list, and an "ask the coach" grounded-prompt preview at `/coach-materials`, closing follow-up (c). A fourth slice (see Tracker Status above, "Video-Lecture-Training Coach AI — real AI Q&A call") added `coach/team-coach-ai.ts` and `coach/team-coach-client.ts`, wiring an "Ask the coach" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy with `buildGroundedCoachPrompt`'s output for a real, materials-grounded answer, closing follow-up (b). Follow-up (a), transcription/parsing that turns an uploaded recording or document into a material's text, remains open — not started._
 
-9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slices done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. A second slice, `collapsedHeadings.ts` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading persistence"), now persists a document's collapsed heading ids to localStorage. A third slice, `OutlineNavPanel` (see Tracker Status above, "Expandable Heading Structure — outline nav panel"), now renders the outline alongside the document at `/reason-editor` (behind an opt-in `showOutline` prop) with click-to-jump and collapse/expand, reading/writing through the persistence store, closing follow-up (a). Follow-up (b), a ProseMirror decoration plugin that hides collapsed ranges in the actual editor view using `getCollapsedRanges`, remains open — not started._
+9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slices done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. A second slice, `collapsedHeadings.ts` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading persistence"), now persists a document's collapsed heading ids to localStorage. A third slice, `OutlineNavPanel` (see Tracker Status above, "Expandable Heading Structure — outline nav panel"), now renders the outline alongside the document at `/reason-editor` (behind an opt-in `showOutline` prop) with click-to-jump and collapse/expand, reading/writing through the persistence store, closing follow-up (a). A fourth slice, `collapsedHeadingsPlugin` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading decoration plugin"), now hides a collapsed heading's content in the live ProseMirror view itself (driven by `OutlineNavPanel`'s toggle), closing follow-up (b). No follow-ups remain open on this idea._
 
 10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. A second slice, `argumentTreeFilters.ts` (see Tracker Status above, "Outline Filters and Argument Tree View — filter-selection persistence"), now persists a round's chosen `ArgumentTreeFilter` to localStorage. A third slice, `argumentTrees.ts` plus `ArgumentTreePanel` (see Tracker Status above, "Outline Filters and Argument Tree View — outline panel UI"), now persists a round's derived tree and renders it as a filterable outline at `/outline`, closing follow-up (a). Follow-up (b), finer argument-type tagging (link/impact/turn/answer/extension) and contributor/evidence-status fields, none of which exist in the `Box`/`Flow` schema today, remains open — not started._
 
@@ -3771,9 +4535,9 @@
 
 13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise. _Status: first slices done (see Tracker Status above) — the "friendly challenges" half has `debate-card-search`'s `group-challenges.ts` (`buildGroupChallengeBoard`), and the coaching-space model tying it together has `debate-round`'s `coaching-program.ts` (`buildCoachingProgramBoard`), composing that group-challenge board with the existing Team Collaboration Mode topic sprint and AI Drill Generator drill sets per roster member. A second slice, `coachingPrograms.ts` (see Tracker Status above, "Coaching Program Persistence — localStorage config store"), now persists a `CoachingProgramConfig` to localStorage, closing follow-up (a). A third slice, `CoachingProgramsPanel` (see Tracker Status above, "Coaching Programs and Group Challenges — coaching-program config UI"), now renders a create-program form and every persisted program's roster at `/coaching-programs`, closing the config-management half of follow-up (b). A fourth slice, `GroupChallengesPanel` (see Tracker Status above, "Group Challenges — challenge-board/creation UI"), now renders a create-challenge form and every persisted `GroupChallenge` at `/cards/group-challenges`, closing the "Group Challenge Persistence" entry's follow-up (a). Follow-ups: (b-continued) a dashboard view that renders each program's full `buildCoachingProgramBoard` (still needs persisted challenge win events and topic-sprint contributions in a form the board could read live, plus a roundId-to-contributor mapping for member drills — none of which exist yet, though challenge configs themselves are now persisted and manageable), (c) wiring a member's practice-round setup/feedback (Practice Round Simulator) into the space. Neither of these is started._
 
-14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). Follow-ups: (a) wiring these commands into actual keyboard-shortcut handlers in `reason-editor`'s toolbar/editor view, (b) a "send selected evidence to a speech document" command, which needs a speech-document target that doesn't exist yet. Neither of these is started._
+14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). A third slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut wiring") wired real keyboard shortcuts into the live `reason-editor` document — `Mod-Shift-K` insert short cite, `Mod-Shift-D` condense to read text, `Alt-ArrowUp`/`Alt-ArrowDown` move a heading's section, `Mod-Shift-E` toggle emphasis (via the schema's own mark rather than the raw-HTML helper) — plus matching "+Cite"/"Condense" toolbar buttons and a Move ↑/↓ button pair per heading in the outline nav panel, closing follow-up (a). Follow-up (b), a "send selected evidence to a speech document" command, remains open — it needs a speech-document send target that doesn't exist yet — not started._
 
-15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slice done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. Follow-ups: (a) a video-player UI (`debate-videos`) that lets a viewer drop an annotation at the current playback position, persisted through `flowAnnotations.ts`, and jump back to one, (b) a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box via `listFlowAnnotationsForBox` and links back to the timestamp. Neither of these are started._
+15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slices done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. A third slice, `FlowAnnotationsPanel` (see Tracker Status above, "Flow-in-Speech Flow Annotations — video-player annotation UI"), now renders a drop-annotation form wired to the `debate-videos` persistent player's live playback position plus every persisted annotation with a "Jump to" action back into the player, at `/annotations`, closing follow-up (a). Follow-up (b), a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box via `listFlowAnnotationsForBox` and links back to the timestamp, remains open — not started._
 
 16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow) _Status: first slice done (see Tracker Status above) — `debate-round` now has `mergeFlowEdits`/`applyMergedEditsToFlow`/`buildSharedFlowSyncSummaryText` for reconciling multiple teammates' concurrent box-level flow edits into one canonical flow (last write wins), flagging genuinely concurrent, diverging edits from different authors as conflicts for a human to resolve instead of silently overwriting them. Follow-ups: (a) a live transport (WebSocket or similar) that turns local edits into a shared stream across a room/team, (b) a `FlowSpreadsheet` affordance that applies the merge and surfaces conflicts, (c) composing the Common Argument Library's tagged card corpus to suggest (not auto-apply) a pre-filled flow note from matching evidence. None of these are started._
 
@@ -3782,17 +4546,17 @@
 ## Research Crowdsourcing Organizer Features
 
 * 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool.
-* 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. A second slice, `contributions.ts` (see Tracker Status above), now persists `AttributedContribution` records to localStorage, and its `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` close half of follow-up (a) — persisting like/save/endorse counts once an action fires — though no submission/like UI calls them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders the leaderboard at `/cards/leaderboard`, closing follow-up (c). A fourth slice, `ContributionsFeedPanel` (see Tracker Status above, "Contributions Feed — like/save/endorse UI"), now renders a submission form and a like/save/endorse feed at `/cards/contributions`, closing follow-up (a). Follow-up (b), a "completed tasks" signal once a research-task system exists, remains open — not started._
-* 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeDailyMissionResult`/`computeStreakStatus`/`getEarnedStreakBadges`/`buildContributorQuestStreak`/`buildStreakSummaryText` for turning a contributor's daily `daily-quests.ts` mission-completion history into a current/longest streak and the milestone badges (3/7/14/30-day streaks by default) that streak has earned. A second slice, `dailyMissionResults.ts` (see Tracker Status above, "Gamified Quests — persisted daily mission-result history"), now persists a contributor's per-day `DailyMissionResult` to localStorage, keyed by `contributorId` + `dayKey`, and composes it directly into `buildPersistedContributorQuestStreak`. A third follow-up, surfacing earned streak badges on a contributor's `progress-unlocks.ts` unlock status, is now done — see the "Unlock Status Streak Badges" entry above (`unlock-streak-status.ts`). A fourth slice, `computeAndSavePersistedDailyMissionResult` (see Tracker Status above, "Gamified Quests — persisted end-of-day mission computation"), now computes and saves a contributor's mission result directly from their real persisted contributions, closing follow-up (a) below. A fifth slice, `buildPersistedQuestStreakRoster` plus `QuestStreaksPanel` (see Tracker Status above, "Gamified Quests — streak/badge widget UI"), now renders every contributor's streak and earned badges at `/cards/streaks`, closing follow-up (b). Follow-up (a) still needs a real trigger, i.e. a UI action or scheduled job, to call `computeAndSavePersistedDailyMissionResult` on an actual cadence — not started._
+* 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. A second slice, `contributions.ts` (see Tracker Status above), now persists `AttributedContribution` records to localStorage, and its `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` close half of follow-up (a) — persisting like/save/endorse counts once an action fires — though no submission/like UI calls them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders the leaderboard at `/cards/leaderboard`, closing follow-up (c). A fourth slice, `ContributionsFeedPanel` (see Tracker Status above, "Contributions Feed — like/save/endorse UI"), now renders a submission form and a like/save/endorse feed at `/cards/contributions`, closing follow-up (a). A fifth slice (see Tracker Status above, "Contribution Leaderboard — completed-tasks signal") added `completedTaskCount` to each leaderboard row, sourced from the persisted completed-task history and rendered as a new column, closing follow-up (b). No follow-ups remain open on this bullet._
+* 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeDailyMissionResult`/`computeStreakStatus`/`getEarnedStreakBadges`/`buildContributorQuestStreak`/`buildStreakSummaryText` for turning a contributor's daily `daily-quests.ts` mission-completion history into a current/longest streak and the milestone badges (3/7/14/30-day streaks by default) that streak has earned. A second slice, `dailyMissionResults.ts` (see Tracker Status above, "Gamified Quests — persisted daily mission-result history"), now persists a contributor's per-day `DailyMissionResult` to localStorage, keyed by `contributorId` + `dayKey`, and composes it directly into `buildPersistedContributorQuestStreak`. A third follow-up, surfacing earned streak badges on a contributor's `progress-unlocks.ts` unlock status, is now done — see the "Unlock Status Streak Badges" entry above (`unlock-streak-status.ts`). A fourth slice, `computeAndSavePersistedDailyMissionResult` (see Tracker Status above, "Gamified Quests — persisted end-of-day mission computation"), now computes and saves a contributor's mission result directly from their real persisted contributions. A fifth slice, `buildPersistedQuestStreakRoster` plus `QuestStreaksPanel` (see Tracker Status above, "Gamified Quests — streak/badge widget UI"), now renders every contributor's streak and earned badges at `/cards/streaks`, closing follow-up (b). A sixth slice (see Tracker Status above, "Gamified Quests — daily mission-check trigger UI") added a "Run today's mission check" action to `QuestStreaksPanel`, wiring `computeAndSavePersistedDailyMissionResult` to a UI trigger (there is no scheduled-job infrastructure in this repo), closing follow-up (a). No follow-ups remain open on this bullet._
 * 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now feeds the derived skill level into `research-task-routing.ts`'s `ContributorAvailability`. A third slice, `unlock-streak-status.ts` (see Tracker Status above, "Unlock Status Streak Badges"), now merges the Gamified Quests streak badges into this unlock status, and its `buildContributorUnlockStatusWithStreakFromStore` closes follow-up (a) — it derives a contributor's tier/badges live from the already-persisted `contributions.ts`/`dailyMissionResults.ts` stores rather than needing a separate tier/badge store. A fourth slice, `ProgressUnlocksPanel` (see Tracker Status above, "Progress Unlocks — unlock/progress roster UI panel"), now renders every contributor's tier, unlocked skill level, badges, streak, and next-tier progress at `/cards/progress`, closing follow-up (b). Neither follow-up remains open._
 * 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scoreRelevance`/`scoreClarity`/`scoreUniqueness`/`scoreEvidenceQuality`/`scoreUsability`/`computeCardScoreBreakdown`/`rankCardScores`/`buildCardScoreSummaryText` for scoring a card across all five dimensions with deterministic heuristics and flagging likely duplicates, reusing the existing idea #11 `community-rating.ts` quality-signal scoring for evidence quality. A second slice, `cardScores.ts` plus `CardScoringPanel` (see Tracker Status above, "LLM Card Scoring — scoring/duplicate-flag panel UI"), now persists submitted `ScoredCard`s and renders a submission form plus every card's ranked score breakdown at `/cards/scoring`, closing follow-up (c). A third slice (see Tracker Status above, "LLM Card Scoring — real AI-scoring call") added `lib/llm-card-scoring-ai.ts`, `lib/llm-card-scoring-client.ts`, and `state/aiCardAssessments.ts`, wiring a "Get AI assessment" action into `CardScoringPanel` that calls the existing `/api/reason-ai` Anthropic proxy for a real qualitative verdict + per-dimension notes, closing follow-up (a). Follow-up (b) — wiring real argument-block keywords and a real submitted-card corpus into the scorer — remains open, not started._
-* 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildContributorProgress`/`buildTopicProgress`/`buildResearchProgressBoard`/`buildProgressSummaryText` for combining a contributor's existing leaderboard contribution stats with per-topic task-completion counts derived from a topic-tagged research-task-routing assignment list, reusing the existing `ContributorStats`/`RoutedAssignment` types directly. A second slice, `state/researchProgress.ts` plus `ResearchProgressPanel` (see Tracker Status above, "Research Progress Tracking — persisted completion history + progress dashboard UI"), now records real task-completion events (via `completeAndRecordResearchTask`, wired into the Task Inbox panel's "Mark complete" action) and renders every contributor's contribution history, task-completion rate, and per-topic breakdown at `/cards/progress-tracking`, closing follow-ups (a) and (b). Follow-up (c), feeding a contributor's topic-progress history back into `progress-unlocks.ts`'s tier computation, remains open — not started._
+* 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildContributorProgress`/`buildTopicProgress`/`buildResearchProgressBoard`/`buildProgressSummaryText` for combining a contributor's existing leaderboard contribution stats with per-topic task-completion counts derived from a topic-tagged research-task-routing assignment list, reusing the existing `ContributorStats`/`RoutedAssignment` types directly. A second slice, `state/researchProgress.ts` plus `ResearchProgressPanel` (see Tracker Status above, "Research Progress Tracking — persisted completion history + progress dashboard UI"), now records real task-completion events (via `completeAndRecordResearchTask`, wired into the Task Inbox panel's "Mark complete" action) and renders every contributor's contribution history, task-completion rate, and per-topic breakdown at `/cards/progress-tracking`, closing follow-ups (a) and (b). A third slice (see Tracker Status above, "Research Progress Tracking — feed topic-progress history into Progress Unlocks tier computation") added a `minCompletedTaskCount` threshold to `progress-unlocks.ts`'s `UnlockTierRequirement`/`computeContributorTier`, so a contributor's real, persisted completed-task count is now an alternate tier-qualifying signal alongside contribution volume/quality, closing follow-up (c). No follow-ups remain open on this bullet._
 * 📚 Common Argument Library - Organize all shared research into topic folders, case areas, and tag-based collections. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByTopic`/`groupCardsByCaseArea`/`buildTopicFolder`/`buildTopicFolders`/`buildTagCollections`/`filterCardsByTags`/`buildArgumentLibrary`/`buildLibrarySummaryText` for organizing a caller-supplied, tagged card list into topic folders (each split into case-area subgroups) and cross-cutting tag-based collections, extending the existing Topic Coverage Dashboard's `argBlock`-tagged card model with `topic`/`caseArea`/`tags`. A second slice, `ArgumentLibraryPanel` (see Tracker Status above, "Common Argument Library — folder/collection browser UI"), now renders every persisted evidence-library entry as a topic-folder/case-area/tag-collection browser at `/cards/argument-library`, closing follow-up (b). Follow-ups: (a) wiring a `topic`/`caseArea`/`tags` field into wherever submitted cards are eventually persisted beyond the existing evidence-library store, (c) a tag-autocomplete/tag-management affordance. Neither of these is started._
-* 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByDay`/`pickBestCardOfDay`/`buildDailyBestCards`/`getBestCardForDay`/`buildDailyBestCardHighlight` for grouping timestamped card contributions by UTC submission day and picking each day's single highest-helpfulness card, reusing the existing `community-rating.ts` helpfulness scoring (a card's likes/saves already model the community "vote"). Follow-up (a) was closed as a side effect of the Daily Quests idea's Contributions Feed wiring, which already stamps every submitted contribution's `submittedAt`. A second slice, `state/dailyBestCardAnnouncements.ts` plus `DailyBestCardPanel` (see Tracker Status above, "Daily Best Card Challenge — persisted announcements + banner UI"), now composes the persisted Contributions Feed store into a live daily leader, an idempotent "announce" action that freezes a day's winner, and a history view rendered at `/cards/daily-best`, closing follow-ups (b) and (c). No follow-ups remain open on this idea._
+* 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `groupCardsByDay`/`pickBestCardOfDay`/`buildDailyBestCards`/`getBestCardForDay`/`buildDailyBestCardHighlight` for grouping timestamped card contributions by UTC submission day and picking each day's single highest-helpfulness card, reusing the existing `community-rating.ts` helpfulness scoring (a card's likes/saves already model the community "vote"). A second slice, `state/contributions.ts`'s `buildDailyBestCardsFromStore`/`getTodaysBestCardFromStore` plus `DailyBestCardPanel` (see Tracker Status above, "Daily Best Card Challenge — banner/widget UI"), now composes those helpers directly against the persisted Contributions Feed store and renders today's winner banner plus a winner history at `/cards/best-card`, closing follow-up (c) — and, since the composed store already carries the `submittedAt` timestamp stamped by `ContributionsFeedPanel.tsx`'s submission flow, follow-up (a) as well. A third slice, `state/dailyBestCardAnnouncements.ts` (see Tracker Status above, "Daily Best Card Challenge — persisted announcements"), layers an idempotent "announce" action over those same store helpers that freezes a day's winner under its own localStorage key, and the panel now shows the announced winner and announced history alongside the live leader, closing follow-up (b). No follow-ups remain open on this idea._
 * 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. A second slice, `peerReviews.ts` (see Tracker Status above), now persists `CardReview` records (including their `ReviewComment` thread) to localStorage, keyed by `cardId`. A third slice, `ReviewQueuePanel` (see Tracker Status above, "Peer Review System — review-queue/comment-thread UI"), now renders every persisted review at `/cards/reviews` with lifecycle actions and a comment thread, closing follow-up (a). Follow-ups: (b) reviewer identity/permission checks once auth/roles exist, (c) wiring a review's lifecycle to whatever eventually persists submitted cards, so `publishReview` can gate a card actually going live. Neither of these is started._
 * 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildTopContributorAwards`/`buildCategoryLeaderboard`/`groupContributionsByKind`/`buildAwardsAnnouncementText` for grouping contributor-attributed contributions by `ContributionKind` and selecting a per-kind category winner by helpfulness score, reusing the existing idea #11/Contribution Leaderboard scoring. A second slice, `ContributorAwardsPanel` (see Tracker Status above, "Top Contributor Awards — awards UI panel"), now renders every category's current winner at `/cards/awards`, closing follow-up (c). Follow-ups: (a) a finer-grained kind/tag for "original argument" and "refutation" contributions, neither of which exists as a distinct kind today, (b) a scheduled job to persist/announce winners. Neither of these is started._
-* 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now derives each contributor's skill level from their contribution history (via the Progress Unlocks tier logic) instead of requiring a caller-supplied value. A third slice, `contributorAvailability.ts` (see Tracker Status above, "Research Task Routing — persisted contributor-availability profiles"), now persists a contributor's `ContributorAvailability` to localStorage. A fourth slice (see Tracker Status above, "Research Task Routing — persisted routed task queue"), now persists a routed `RoutingResult`/task queue to localStorage, closing follow-up (b). A fifth slice (see Tracker Status above, "Research Task Routing — persisted activeTaskCount assignment/completion events") now wires real task-assignment/completion events (`buildAndPersistRoutingResult`/`completePersistedRoutedTask`) into a persisted profile's `activeTaskCount`, closing follow-up (a). A sixth slice, `TaskInboxPanel` (see Tracker Status above, "Research Task Routing — task-assignment/inbox UI"), now renders every persisted routed task queue at `/cards/inbox` with a "mark complete" action, closing follow-up (c). Follow-ups: (d) a task-routing trigger UI to actually populate a topic's queue, (e) scoping the inbox to "my tasks" once contributor identity/auth exists. Neither of these is started._
-* 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. A second slice, `revisionHistory.ts` (see Tracker Status above, "Revision Incentives — persisted revision history"), now persists `CardRevision` edit events (as many-per-card `CardRevisionRecord`s) to localStorage. A third slice, `RevisionIncentivesPanel` (see Tracker Status above, "Revision Incentives — incentives-leaderboard UI panel"), now renders a ranked reward-points leaderboard at `/cards/revisions`, closing follow-up (b). Follow-ups: (a) wiring an actual card-edit/save flow to call `saveRevisionRecord` with a before/after snapshot, (c) an actual evidence-staleness signal instead of only rewarding a refresh after the fact. Neither of these is started._
+* 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now derives each contributor's skill level from their contribution history (via the Progress Unlocks tier logic) instead of requiring a caller-supplied value. A third slice, `contributorAvailability.ts` (see Tracker Status above, "Research Task Routing — persisted contributor-availability profiles"), now persists a contributor's `ContributorAvailability` to localStorage. A fourth slice (see Tracker Status above, "Research Task Routing — persisted routed task queue"), now persists a routed `RoutingResult`/task queue to localStorage, closing follow-up (b). A fifth slice (see Tracker Status above, "Research Task Routing — persisted activeTaskCount assignment/completion events") now wires real task-assignment/completion events (`buildAndPersistRoutingResult`/`completePersistedRoutedTask`) into a persisted profile's `activeTaskCount`, closing follow-up (a). A sixth slice, `TaskInboxPanel` (see Tracker Status above, "Research Task Routing — task-assignment/inbox UI"), now renders every persisted routed task queue at `/cards/inbox` with a "mark complete" action, closing follow-up (c). A seventh slice, `routePersistedTopicTasks` plus the panel's "Route a topic's tasks" form (see Tracker Status above, "Research Task Routing — task-routing trigger UI"), now lets a coach or contributor populate a topic's queue directly from the inbox, closing follow-up (d). Follow-up (e), scoping the inbox to "my tasks" once contributor identity/auth exists, remains open — not started._
+* 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. A second slice, `revisionHistory.ts` (see Tracker Status above, "Revision Incentives — persisted revision history"), now persists `CardRevision` edit events (as many-per-card `CardRevisionRecord`s) to localStorage. A third slice, `RevisionIncentivesPanel` (see Tracker Status above, "Revision Incentives — incentives-leaderboard UI panel"), now renders a ranked reward-points leaderboard at `/cards/revisions`, closing follow-up (b). A fourth slice, `deriveCardSnapshotFromEntry`/`buildEvidenceEntryRevision` plus `EvidenceLibraryPanel`'s Edit action (see Tracker Status above, "Shared Evidence Library — edit/delete affordance wired to Revision Incentives"), now wires a real card-edit/save flow — editing an evidence-library entry derives a before/after `CardSnapshot` from the entry's own text/citation and records it via `saveEvidenceLibraryEntryRevision`, closing follow-up (a). A fifth slice, `computeEvidenceStaleness`/`getEvidenceStaleness`/`getStaleEvidenceEntries` plus `EvidenceLibraryPanel`'s "Stale evidence" badge (see Tracker Status above, "Revision Incentives — evidence-staleness signal"), now flags a card's cited evidence stale (no parseable citation year, or 3+ years old) independently of any revision, closing follow-up (c). No follow-ups remain open on this bullet._
 * 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. A second slice, `trackedArguments.ts` (see Tracker Status above, "Topic Coverage Dashboard — checklist persistence + dashboard UI"), now persists a topic's tracked-argument checklist to localStorage and composes it with the already-persisted evidence library to build a live report, closing follow-up (b). A third slice, `TopicCoverageDashboardPanel` (see Tracker Status above, same entry), now renders a topic switcher, checklist form, and coverage report at `/cards/coverage`, closing follow-up (c). Follow-up (a), an `argBlock`/word-count field wired into a real card-submission flow beyond the existing `/cards/library` evidence-library form, remains open — not started._
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. A second slice, `state/dailyQuests.ts` plus `DailyQuestsPanel` (see Tracker Status above, "Daily Quests and Targets — quest-board widget UI + real contribution wiring"), now persists a quest-template roster, seeds it from a topic's coverage gaps, and composes it against the real, persisted Contributions Feed at `/cards/quests`, closing follow-up (b) and — by wiring `submittedAt`/`argBlock` into the Contributions Feed's submission flow for the first time — follow-up (a). Follow-up (c), a streak/reward layer once the Gamified Quests idea's streak logic is composed in, remains open — not started._
 * 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildTopicSprint`/`buildTopicSprintSummaryText` for composing the existing Daily Quests board, Research Task Routing result, and Research Progress Tracking board into one shared topic-scoped session, plus a topic-addressed `SprintNote` model (`createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`) for shared prep notes, mirroring `debate-round`'s `strategy-sync-notes.ts` `PrepNote` lifecycle. A second slice, `sprintNotes.ts` (see Tracker Status above), now persists `SprintNote` records to localStorage. A third slice, `SprintNotesPanel` (see Tracker Status above, "Team Collaboration Mode — collaboration-panel UI"), now renders a submission form and every persisted note grouped by topic at `/cards/collaboration`, closing follow-up (a). Follow-ups: (b) persisting a topic sprint's other inputs (so the full `buildTopicSprint` composition can be rendered, not just the note thread), (c) a presence/live-status signal for who's currently active. Neither of these are started._
@@ -3803,11 +4567,11 @@
 * 
 * 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. A second slice, `opponentPersonaSelections.ts` (see Tracker Status above), now persists a practice session's selected `OpponentPersona` to localStorage. A third slice, `OpponentPersonaPickerPanel` (see Tracker Status above, "AI Practice Opponent — persona-picker UI"), now renders a picker UI at `/practice-opponent` for saving a session's opponent persona, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Practice Opponent — persona-conditioned AI speech-generation call") added `debate-round`'s `round/opponent-persona-speech-ai.ts`, `round/opponent-persona-speech-client.ts`, and `round/opponent-persona-speech-wiring.ts`, wiring `AiVersusRoundPanel`'s "Generate AI speech" action to argue in a round's saved persona (looked up by treating `roundId` as `opponentPersonaSelections.ts`'s `sessionId` key) via a persona-conditioned `/api/reason-ai` call, closing follow-up (a). No follow-ups remain open on this idea._
 * 
-* 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. A third slice, `CoachingSessionsPanel` (see Tracker Status above, "AI Coach Mode — coaching-panel UI"), now renders every persisted coaching session grouped by round + side at `/coaching`, closing follow-up (b). Follow-up (a), an actual AI coaching call for open-ended feedback beyond this template layer, remains open — not started._
+* 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. A third slice, `CoachingSessionsPanel` (see Tracker Status above, "AI Coach Mode — coaching-panel UI"), now renders every persisted coaching session grouped by round + side at `/coaching`, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Coach Mode — real AI coaching-feedback call") added `round/coach-feedback-ai.ts` and `round/coach-feedback-client.ts`, wiring a "Get AI feedback" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy with the session's own template prompts for real, open-ended AI coaching feedback, saved on `CoachingSessionRecord.aiFeedback`, closing follow-up (a). No follow-ups remain open on this bullet._
 * 
 * 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. A second slice, `buildPrepRoomFromStore` (see Tracker Status above, "Collaboration Prep Room Store Wiring"), now reads a topic's entries from the persisted `evidenceLibraryEntries.ts` store instead of requiring a caller-supplied entry list. A third slice, `state/prepRooms.ts`'s `buildPersistedPrepRoom`/`listPrepRoomTopics` plus `PrepRoomPanel` (see Tracker Status above, "Collaboration Prep Room — prep-room panel UI"), now composes a topic's coverage report and contributor list from their own persisted stores and renders a topic switcher, evidence/draft-block search, and routed-task view at `/cards/prep-room`, closing follow-up (a). Follow-up (b), a live presence/who's-active signal, remains open — not started._
 * 
-* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. A second follow-up, persisting submitted ideas and votes, is done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`). A third slice, `BrainstormBoardPanel` (see Tracker Status above, "Team Brainstorm Assist — brainstorm-panel UI"), now renders a submission form and every board at `/cards/brainstorm`, closing follow-up (b). Follow-up (a), an actual AI-generation call that drafts candidate ideas from `buildBrainstormPrompt`'s output, remains open — not started; boards also aren't yet seeded from `buildBrainstormPromptsForCoverageGaps` in the panel._
+* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. A second follow-up, persisting submitted ideas and votes, is done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`). A third slice, `BrainstormBoardPanel` (see Tracker Status above, "Team Brainstorm Assist — brainstorm-panel UI"), now renders a submission form and every board at `/cards/brainstorm`, closing follow-up (b). A fourth slice (see Tracker Status above, "Team Brainstorm Assist — real AI-generation call") added `lib/team-brainstorm-ai.ts` and `lib/team-brainstorm-client.ts`, wiring a "Generate AI ideas" action into the panel's submission form that calls the existing `/api/reason-ai` Anthropic proxy to draft several candidate ideas for the form's argument block/category, saved as normal, AI-attributed board ideas via the existing `saveBrainstormIdea`, closing follow-up (a). A fifth slice (see Tracker Status above, "Team Brainstorm Assist — seed boards from coverage gaps") added `state/brainstormIdeas.ts`'s `buildBrainstormBoardsPanelViewForTopic` and a topic switcher in `BrainstormBoardPanel`, wiring the existing `buildBrainstormBoardsForCoverageGaps` into the panel so choosing a tracked topic shows one board per under-covered tracked argument/category pair (with its prompt visible even before an idea is submitted) merged with every other board that already has a submitted idea, closing the "boards aren't seeded from the coverage-gap prompts" gap. No follow-ups remain open on this bullet._
 * 
 * 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. A second slice, `evidenceLibraryEntries.ts` (see Tracker Status above, "Shared Evidence Library — persisted evidence repository"), now persists `EvidenceLibraryEntry` records to localStorage. A third slice, `EvidenceLibraryPanel` (see Tracker Status above, "Shared Evidence Library — evidence library search UI panel"), now renders a free-text/kind search panel at `/cards/library`, closing follow-up (a). Follow-up (b), wiring `prep-room.ts` to read through this store, was also already closed separately by "Collaboration Prep Room Store Wiring"'s `buildPrepRoomFromStore` (see Tracker Status above). Follow-ups: (c) a real search index (e.g. Typesense) once entries are persisted at scale. Not started._
 * 
@@ -3815,8 +4579,8 @@
 * 
 * 📊 Matchup Prep Dashboard - Combine opponent profiles, judge profiles, and topic-specific prep into a single pre-round view. _Status: first slice done (see Tracker Status above, "Pre-Round Intelligence Panel") — `debate-round` now has `buildPreRoundBriefing`/`buildPreRoundBriefingText` for combining an opponent-scouting summary, judge-tendency summary, head-to-head record, and prep notes into one structured briefing. See idea #12 in Product Feature Ideas above for the full status and follow-ups._
 * 
-* 🧪 Practice Round Simulator - Recreate a tournament round with timer, speeches, judge persona, and post-round feedback. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildPracticeRoundSetup`/`buildPracticeRoundSetupText` for composing a format's speech order with a selected judge paradigm and AI opponent persona into a renderable round setup, and `buildPracticeRoundFeedback`/`buildPracticeRoundFeedbackText` for framing post-round feedback around the selected paradigm plus the existing AI Coach Mode coaching session, reusing the existing `ai-versus-speech-order.ts`/`judge-paradigms.ts`/`opponent-personas.ts`/`coach-mode.ts` slices directly. A second slice, `practiceRounds.ts` (see Tracker Status above), now persists a round's `PracticeRoundSetup`/`PracticeRoundFeedback` to localStorage. A third slice, `PracticeRoundSimulatorPanel` (see Tracker Status above, "Practice Round Simulator — round-simulator UI"), now renders a setup form and every persisted round at `/practice-round`, closing follow-up (b). Follow-up (a), an actual AI speech-generation call for the AI opponent's speeches and an AI judge-decision call under the chosen paradigm, remains open — not started._
+* 🧪 Practice Round Simulator - Recreate a tournament round with timer, speeches, judge persona, and post-round feedback. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildPracticeRoundSetup`/`buildPracticeRoundSetupText` for composing a format's speech order with a selected judge paradigm and AI opponent persona into a renderable round setup, and `buildPracticeRoundFeedback`/`buildPracticeRoundFeedbackText` for framing post-round feedback around the selected paradigm plus the existing AI Coach Mode coaching session, reusing the existing `ai-versus-speech-order.ts`/`judge-paradigms.ts`/`opponent-personas.ts`/`coach-mode.ts` slices directly. A second slice, `practiceRounds.ts` (see Tracker Status above), now persists a round's `PracticeRoundSetup`/`PracticeRoundFeedback` to localStorage. A third slice, `PracticeRoundSimulatorPanel` (see Tracker Status above, "Practice Round Simulator — round-simulator UI"), now renders a setup form and every persisted round at `/practice-round`, closing follow-up (b). A fourth slice (see Tracker Status above, "Practice Round Simulator — AI opponent speech + AI judge-decision calls") wires a "Generate AI opponent speech" action (reusing the existing AI-versus speech-generation calls against the round's own `aiVersusRounds.ts` state and saved persona) and a "Get AI judge decision" action (via a new `round/practice-round-judge-decision-wiring.ts`, composing the round's own saved judge paradigm with a saved flow summary) into the panel, closing follow-up (a). No follow-ups remain open on this idea._
 * 
-* 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. A second slice, `drillSets.ts` (see Tracker Status above), now persists a round's generated `Drill[]` set to localStorage. A third slice, `DrillSetsPanel` (see Tracker Status above, "AI Drill Generator — drill-panel UI"), now renders every persisted drill set grouped by round at `/drills`, closing follow-up (a). Follow-up (b), an actual AI-generated (rather than templated) script, remains open — not started._
+* 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. A second slice, `drillSets.ts` (see Tracker Status above), now persists a round's generated `Drill[]` set to localStorage. A third slice, `DrillSetsPanel` (see Tracker Status above, "AI Drill Generator — drill-panel UI"), now renders every persisted drill set grouped by round at `/drills`, closing follow-up (a). A fourth slice (see Tracker Status above, "AI Drill Generator — real AI-generated drill script") added `round/drill-script-ai.ts` and `round/drill-script-client.ts`, wiring a "Get AI script" action into the panel per drill that calls the existing `/api/reason-ai` Anthropic proxy for an actual, ready-to-read practice script (rather than the template prompt line alone), saved on the drill set's new `aiScripts` map via `saveDrillAiScript`, closing follow-up (b). No follow-ups remain open on this bullet._
 * 
 * 🧭 Scout-to-Strategy Workflow - Turn scouting data into recommended game plans, case choices, judge adaptation, and risk levels. _Status: first slice done (see Tracker Status above) — `debate-round` now has `rankCaseOptions`/`computeCaseOverlapScore`/`buildJudgeAdaptationNotes`/`assessMatchupRisk`/`buildStrategyRecommendation`/`buildStrategyRecommendationText` for ranking caller-supplied case options by opponent-tag overlap, turning judge tendencies into adaptation notes, and combining opponent/judge signals into a risk level with its contributing factors, reusing the existing `OpponentTeamProfile`/`JudgeProfile` types directly. A second slice (see Tracker Status above, "Scout-to-Strategy Workflow — case-choice/strategy panel UI"), now persists a matchup's generated `StrategyRecommendation` to localStorage and renders a case-choice/strategy panel at `/strategy`, closing follow-up (a). Follow-ups: (b) wiring `ourSide`/likely opponent side into the risk heuristic, (c) an actual AI-panel evaluation of case choice instead of the tag-overlap heuristic. Neither of these is started._

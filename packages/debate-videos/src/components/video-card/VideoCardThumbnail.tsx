@@ -5,8 +5,7 @@
 
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import Image from "next/image"
+import { useState, useEffect } from "react"
 import { Play, Volume2 } from "lucide-react"
 import { cn } from "debate-ui/src/lib/utils"
 import { TOURNAMENT_COLORS, getRoundBadgeColor } from "./videoCardUtils"
@@ -105,83 +104,45 @@ export function VideoCardThumbnail({
   setActiveVideo,
 }: VideoCardThumbnailProps) {
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
 
-  /** Watches for failed image loads via mutation observer + error events. */
+  // Grids reuse card instances as the user filters and pages, so a failure
+  // recorded for one video must not stick to the next one rendered here.
   useEffect(() => {
-    if (!showThumbnails || !containerRef.current) return
-
-    const attrObserver = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === "attributes" &&
-          mutation.attributeName === "src"
-        ) {
-          const target = mutation.target as HTMLImageElement
-          if (target.tagName === "IMG") {
-            if (target.complete && target.naturalHeight === 0) {
-              setThumbnailFailed(true)
-            }
-            target.addEventListener(
-              "error",
-              () => setThumbnailFailed(true),
-              { once: true },
-            )
-          }
-        }
-      })
-    })
-
-    const childObserver = new MutationObserver(() => {
-      const imgs = containerRef.current?.querySelectorAll("img")
-      imgs?.forEach((img) => {
-        if (img.complete && img.naturalHeight === 0) setThumbnailFailed(true)
-        img.addEventListener("error", () => setThumbnailFailed(true), {
-          once: true,
-        })
-      })
-    })
-
-    attrObserver.observe(containerRef.current, {
-      attributes: true,
-      subtree: true,
-      attributeFilter: ["src"],
-    })
-    childObserver.observe(containerRef.current, {
-      childList: true,
-      subtree: true,
-    })
-
-    // Initial check for images already in a broken state.
-    containerRef.current.querySelectorAll("img").forEach((img) => {
-      if (img.complete && img.naturalHeight === 0) setThumbnailFailed(true)
-      img.addEventListener("error", () => setThumbnailFailed(true), {
-        once: true,
-      })
-    })
-
-    return () => {
-      attrObserver.disconnect()
-      childObserver.disconnect()
-    }
-  }, [showThumbnails])
+    setThumbnailFailed(false)
+  }, [videoId])
 
   if (!showThumbnails) return null
 
   return (
     <div
-      ref={containerRef}
-      className="relative w-full pt-[56.25%] bg-muted cursor-pointer"
+      className="relative w-full aspect-video overflow-hidden bg-muted cursor-pointer"
       onClick={() => !isPlaying && setActiveVideo(videoId, title, videoMeta)}
     >
-      <Image
+      {/*
+        A plain <img>, deliberately, rather than next/image with `fill`:
+        `fill` only positions the image through inline styles, and the Vite
+        shim this app builds with hands remote URLs to a layout component that
+        emits none of them. The thumbnail then dropped out of the ratio box and
+        rendered at its intrinsic size below it, leaving a tall blank band at
+        the top of every card with the overlay floating in the middle of it.
+        There is nothing to lose here either way — images are configured
+        unoptimized, and YouTube already serves this at a fixed size.
+      */}
+      <img
         src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
         alt={title}
-        fill
-        className={`rounded object-cover transition-opacity ${
+        loading="lazy"
+        decoding="async"
+        onError={() => setThumbnailFailed(true)}
+        ref={(node) => {
+          // A thumbnail that failed before React attached the handler — a
+          // cached 404, or markup hydrated from the server — never fires
+          // `error`, so the broken state has to be read off the element.
+          if (node?.complete && node.naturalHeight === 0) setThumbnailFailed(true)
+        }}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity ${
           thumbnailFailed ? "opacity-0" : "opacity-100"
         }`}
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
       />
 
       {/* Metadata overlay */}

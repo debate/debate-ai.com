@@ -14,6 +14,7 @@ export { VulnerabilityChartsPanel } from "./panels/VulnerabilityChartsPanel";
 export { CoachingProgramsPanel } from "./panels/CoachingProgramsPanel";
 export { StrategyPanel } from "./panels/StrategyPanel";
 export { JudgeDecisionPanel } from "./panels/JudgeDecisionPanel";
+export { FlowAnnotationsPanel } from "./panels/FlowAnnotationsPanel";
 export { FlowSpreadsheet } from "./flow/FlowSpreadsheet";
 export { RoundEditorDialog } from "./dialogs/CreateRoundDialog";
 export * from "./state/store";

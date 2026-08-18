@@ -1,10 +1,12 @@
 # Daily Best Card Challenge
 
-Highlights the highest-helpfulness card submitted each day, and lets a day's
-winner be frozen as an official "announced" result rather than always
-reflecting whatever is currently winning.
+Highlights the single highest-helpfulness card submitted each UTC calendar
+day, lets the community "vote" on it through the existing like/save signals
+already used elsewhere in the Contributions Feed, and lets a day's winner be
+frozen as an official "announced" result rather than always reflecting
+whatever is currently winning.
 
-- **Route:** `/cards/daily-best`
+- **Route:** `/cards/best-card`
 - **Nav:** the global dock's Settings menu → **Daily Best Card**
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
@@ -12,42 +14,52 @@ reflecting whatever is currently winning.
 
 - **Today's leader** — the highest-helpfulness `card`-kind contribution
   submitted on the current UTC calendar day, computed live from the persisted
-  Contributions Feed. An **Announce today's winner** action freezes that
+  Contributions Feed and shown with its contributor, helpfulness score,
+  likes, and saves. An **Announce today's winner** action freezes that
   result.
 - Once a day is announced, the panel shows the frozen winner instead of the
   live leader for that day — a stronger card submitted later the same day no
   longer changes the announced result.
 - **Announced history** — every previously announced day's winner, oldest
-  first.
+  first, rendered as a one-line highlight
+  (`lib/daily-best-card.ts`'s `buildDailyBestCardHighlight`) plus the
+  contributor who submitted it.
 
-A day with no card contributions shows "No cards submitted yet today"
-instead of an announce action.
+A day with no card contributions shows a prompt to submit one in the
+Contributions Feed instead of an announce action.
+
+The "vote" itself isn't a separate ballot — a card's existing likes/saves in
+the Contributions Feed (`/cards/contributions`) already model community
+approval, so the winner is simply the day's highest blended helpfulness score
+(`lib/community-rating.ts`).
 
 ## Data flow
 
 ```
-state/contributions.ts (localStorage, "contributions")
-  → state/dailyBestCardAnnouncements.ts    — new
-      → readTimestampedCardContributions() — narrows persisted contributions to
-                                              timestamped `kind: "card"` submissions
-      → buildPersistedDailyBestCards()     — composes lib/daily-best-card.ts's
-                                              buildDailyBestCards
-      → getPersistedBestCardForDay()       — composes lib/daily-best-card.ts's
-                                              getBestCardForDay
+panels/ContributionsFeedPanel.tsx          — stamps submittedAt on every submission
+  → state/contributions.ts (localStorage, "contributions")
+      → getTodaysBestCardFromStore() / buildDailyBestCardsFromStore()
+          → lib/daily-best-card.ts         — groups by UTC day, picks each day's winner
+  → state/dailyBestCardAnnouncements.ts
+      → getPersistedBestCardForDay()       — today's live (unannounced) leader
+      → buildPersistedDailyBestCards()     — every represented day's live winner
       → announceDailyBestCard()            — idempotent: freezes a day's winner
                                               under a separate
                                               "dailyBestCardAnnouncements" key
-  → panels/DailyBestCardPanel.tsx (today's leader, announce action, history)
-  → apps/debate-ai.com/app/cards/daily-best/page.tsx (mounts the panel as a route)
+      → listAnnouncedDailyBestCards() / getAnnouncedDailyBestCard()
+  → panels/DailyBestCardPanel.tsx          — today's leader, announce action, history
+  → apps/debate-ai.com/app/cards/best-card/page.tsx — mounts the panel as a route
 ```
 
-This feature is a persistence and rendering layer over the existing pure
-`lib/daily-best-card.ts` (`groupCardsByDay`, `pickBestCardOfDay`,
-`buildDailyBestCards`, `getBestCardForDay`, `buildDailyBestCardHighlight`) —
-no new scoring or grouping logic. It reuses `state/contributions.ts`'s
-`ContributionsFeedPanel` submission flow, which already stamps every
-submitted contribution's `submittedAt: Date.now()`, so no separate timestamp
-wiring was needed (see
+`state/contributions.ts` filters persisted contributions down to `kind: "card"`
+entries that carry a `submittedAt` timestamp before handing them to
+`lib/daily-best-card.ts`'s pure `buildDailyBestCards`/`getBestCardForDay`, and
+keeps each winner's `contributorId` attached (`AttributedDailyBestCard`).
+`state/dailyBestCardAnnouncements.ts` is purely the announcement layer on top
+of those helpers — no new scoring or grouping logic was introduced in either.
+It reuses `ContributionsFeedPanel`'s submission flow, which already stamps
+every submitted contribution's `submittedAt: Date.now()`, so no separate
+timestamp wiring was needed (see
 `packages/debate-card-search/test/dailyBestCardAnnouncements.test.ts`).
 
 ## Known gaps
@@ -57,6 +69,9 @@ wiring was needed (see
 - No real-time updates across browser tabs/sessions — like every other
   localStorage-backed panel in this repo, the panel reflects a snapshot as of
   its last load or action.
+- Any card submitted before `ContributionsFeedPanel.tsx` started stamping
+  `submittedAt` (or submitted through some future flow that omits it) is
+  excluded from every day's grouping.
 - Same upstream gaps as the [Contribution Leaderboard](contribution-leaderboard.md)
   and [Top Contributor Awards](contributor-awards.md): no real
   submitted-contribution flow beyond the Contributions Feed form, no
