@@ -46,10 +46,16 @@ store (see `packages/debate-card-search/test/contributions.test.ts`).
 
 ## Known gaps
 
-- No real submitted-contribution flow exists yet — the store only has
-  whatever a caller (or, currently, nothing in the UI) calls `saveContribution`
-  with. The leaderboard is empty until contributions are persisted some other
-  way (e.g. via a future card-submission flow).
-- No like/save/endorse UI wired to `recordPersistedLike`/`recordPersistedSave`/
-  `recordPersistedEndorsement` yet.
-- No reviewer-identity/permission checks (no auth/roles in this repo yet).
+- The Contributions Feed panel (`/cards/contributions`) now submits
+  contributions and wires `recordPersistedLike`/`recordPersistedSave`/
+  `recordPersistedEndorsementFromReviewer`, so the leaderboard populates from
+  real UI activity, not just direct `saveContribution` calls.
+- Endorsement weight is now derived from the endorsing reviewer's own
+  persisted contribution history (`community-rating.ts`'s
+  `computeReviewerCredibility`) instead of a fixed placeholder — a reviewer
+  with no contributions of their own still gets a low, non-zero
+  `MIN_REVIEWER_CREDIBILITY` weight.
+- No reviewer-identity/permission checks (no auth/roles in this repo yet) —
+  a "Reviewer ID" is just a typed string, so nothing stops one person from
+  endorsing under many different reviewer ids to inflate an endorsement's
+  weight.

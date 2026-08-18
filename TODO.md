@@ -4,6 +4,44 @@
 ### In progress
 
 ### Completed
+- **Community-Rated Summaries and Highlights — real reviewer-credibility
+  system.** Closes follow-up (b) under idea #11 ("Community-Rated Summaries
+  and Highlights") in the Product Feature Ideas list: "a real
+  reviewer-credibility system instead of a caller-supplied weight per
+  endorsement (the feed's 'Endorse' button records a fixed full-credibility
+  placeholder)". `debate-card-search`'s `lib/community-rating.ts` gains
+  `computeReviewerCredibility(reviewerContributions, weights?)` (pure) —
+  derives a 0-1 endorsement-credibility weight from a reviewer's own scored
+  contribution history: the average blended helpfulness score of their own
+  contributions (via the existing `computeHelpfulnessBreakdown`), dampened
+  toward a `MIN_REVIEWER_CREDIBILITY` (0.1) floor while their contribution
+  count is below a saturation threshold (5), so one or two lucky
+  contributions can't buy full endorsement weight immediately, and a
+  reviewer with no contributions of their own still gets a low, non-zero
+  floor weight rather than nothing. `state/contributions.ts` gains
+  `recordPersistedEndorsementFromReviewer(id, reviewerId)`, composing this
+  with the existing `listContributionsByContributor`/`recordPersistedEndorsement`
+  to look up the endorsing reviewer's own persisted contributions, derive
+  their credibility, and record the endorsement — the existing
+  `recordPersistedEndorsement(id, reviewerWeight)` (raw-weight) function is
+  unchanged and still used internally. `ContributionsFeedPanel.tsx`'s
+  "Endorse" action now requires a typed "Reviewer ID" (mirroring
+  `ReviewQueuePanel`'s existing reviewer-id-input convention) instead of
+  always recording a fixed `reviewerWeight: 1`. Vitest-covered in
+  `packages/debate-card-search/test/community-rating.test.ts`
+  (`computeReviewerCredibility`: no-history floor, dampened low-history
+  case, saturated high-history case, history-count cap, strong-vs-weak
+  track record ordering, never exceeds 1) and
+  `packages/debate-card-search/test/contributions.test.ts`
+  (`recordPersistedEndorsementFromReviewer`: derives weight from the
+  reviewer's real persisted history, floors at `MIN_REVIEWER_CREDIBILITY`
+  for an unknown reviewer, no-op for a missing contribution id). Docs
+  updated at `docs/features/contribution-leaderboard.md`'s "Known gaps".
+  Verified: `bun install` (2050 packages), `bun run test` (123 files / 1670
+  tests, all pass), `bun run typecheck` (all 12 in-scope packages pass),
+  and `bun run build:web` (`debate-ai-web` succeeds) all pass. No
+  repo-wide `lint` script exists (checked root/app/package `package.json`
+  scripts) so none was run.
 - **Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut
   wiring.** Closes follow-up (a) under idea #14 ("Legacy Verbatim /
   Cardmirror Compatibility") in the Product Feature Ideas list: "wiring
@@ -4370,7 +4408,7 @@
 
 10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. A second slice, `argumentTreeFilters.ts` (see Tracker Status above, "Outline Filters and Argument Tree View — filter-selection persistence"), now persists a round's chosen `ArgumentTreeFilter` to localStorage. A third slice, `argumentTrees.ts` plus `ArgumentTreePanel` (see Tracker Status above, "Outline Filters and Argument Tree View — outline panel UI"), now persists a round's derived tree and renders it as a filterable outline at `/outline`, closing follow-up (a). Follow-up (b), finer argument-type tagging (link/impact/turn/answer/extension) and contributor/evidence-status fields, none of which exist in the `Box`/`Flow` schema today, remains open — not started._
 
-11. **Community-Rated Summaries and Highlights** — Let users like, save, and endorse the most useful research summaries, analytic explanations, evidence highlights, and annotations, then rank contributions by helpfulness while guarding against popularity-only scoring through quality and reviewer-weight signals. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scorePopularitySignal`/`scoreQualitySignal`/`scoreReviewerSignal`/`computeHelpfulnessBreakdown`/`rankContributions` for blending logarithmically-dampened popularity with quality and reviewer-credibility signals into a ranked, popularity-resistant helpfulness score. A second slice, `contributions.ts`'s `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` (see Tracker Status above), now persists a like/save/endorse action's counts per contribution, closing half of follow-up (a) — no UI action fires them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders a ranked leaderboard at `/cards/leaderboard`, closing follow-up (c)'s leaderboard half (it does not yet surface `isPopularityOnlyOutlier` contributions separately for moderator review). A fourth slice, `ContributionsFeedPanel` (see Tracker Status above, "Contributions Feed — like/save/endorse UI"), now renders a submission form and every persisted contribution as a ranked, per-contribution feed with Like/Save/Endorse buttons at `/cards/contributions`, closing follow-up (a) and the rest of follow-up (c) (this feed does surface each entry's `isPopularityOnlyOutlier` flag). Follow-up (b), a real reviewer-credibility system instead of a caller-supplied weight per endorsement (the feed's "Endorse" button records a fixed full-credibility placeholder), remains open — not started._
+11. **Community-Rated Summaries and Highlights** — Let users like, save, and endorse the most useful research summaries, analytic explanations, evidence highlights, and annotations, then rank contributions by helpfulness while guarding against popularity-only scoring through quality and reviewer-weight signals. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scorePopularitySignal`/`scoreQualitySignal`/`scoreReviewerSignal`/`computeHelpfulnessBreakdown`/`rankContributions` for blending logarithmically-dampened popularity with quality and reviewer-credibility signals into a ranked, popularity-resistant helpfulness score. A second slice, `contributions.ts`'s `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` (see Tracker Status above), now persists a like/save/endorse action's counts per contribution, closing half of follow-up (a) — no UI action fires them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders a ranked leaderboard at `/cards/leaderboard`, closing follow-up (c)'s leaderboard half (it does not yet surface `isPopularityOnlyOutlier` contributions separately for moderator review). A fourth slice, `ContributionsFeedPanel` (see Tracker Status above, "Contributions Feed — like/save/endorse UI"), now renders a submission form and every persisted contribution as a ranked, per-contribution feed with Like/Save/Endorse buttons at `/cards/contributions`, closing follow-up (a) and the rest of follow-up (c) (this feed does surface each entry's `isPopularityOnlyOutlier` flag). A fifth slice (see Tracker Status above, "Community-Rated Summaries and Highlights — real reviewer-credibility system") added `community-rating.ts`'s `computeReviewerCredibility` and `state/contributions.ts`'s `recordPersistedEndorsementFromReviewer`, deriving an endorsement's weight from the endorsing reviewer's own persisted contribution history instead of a fixed placeholder, and wired a "Reviewer ID" field into the Contributions Feed panel's Endorse action, closing follow-up (b). No follow-ups remain open on this idea._
 
 12. **Pre-Round Intelligence Panel** — On every round-information page, combine live tournament results, prior pairings, opponent records, judge paradigms, event details, room assignments, and relevant team prep notes into one focused pre-round briefing. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPreRoundBriefing`/`summarizePriorMeetings`/`buildPreRoundBriefingText` for composing an opponent-scouting summary, a judge-tendency summary, a head-to-head prior-meetings record, and team prep notes into one structured, renderable briefing, reusing the existing `debate-data-sync`/`debate-speech-writer` profile slices. A second slice, `preRoundBriefings.ts` (see Tracker Status above), now persists a round's generated `PreRoundBriefing` to localStorage, closing follow-up (c). A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now resolves the opponent/judge profiles themselves from the persisted `opponentTeamProfiles.ts`/`judgeProfiles.ts` stores by id instead of requiring the caller to supply pre-fetched profile objects. A fourth slice, `PreRoundBriefingsPanel` (see Tracker Status above, "Pre-Round Intelligence Panel — briefing-panel UI"), now renders every persisted briefing at `/briefings`, closing follow-up (b). Follow-up (a), real data sources for tournament results, pairings, event details, and room assignments (none exist in this repo today), remains open — not started._
 

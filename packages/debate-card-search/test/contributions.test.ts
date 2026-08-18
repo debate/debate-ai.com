@@ -10,12 +10,14 @@ import {
   listContributions,
   listContributionsByContributor,
   recordPersistedEndorsement,
+  recordPersistedEndorsementFromReviewer,
   recordPersistedLike,
   recordPersistedSave,
   saveContribution,
 } from "../src/state/contributions";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 import { DEFAULT_AWARD_CATEGORY_LABELS } from "../src/lib/contributor-awards";
+import { MIN_REVIEWER_CREDIBILITY, computeReviewerCredibility } from "../src/lib/community-rating";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -194,6 +196,32 @@ describe("recordPersistedEndorsement", () => {
   it("returns undefined and leaves storage untouched for an id that isn't stored", () => {
     saveContribution(ALICE_CARD);
     expect(recordPersistedEndorsement("missing", 0.5)).toBeUndefined();
+    expect(getContribution("contrib-1")).toEqual(ALICE_CARD);
+  });
+});
+
+describe("recordPersistedEndorsementFromReviewer", () => {
+  it("derives the endorsement weight from the reviewer's own persisted contribution history", () => {
+    saveContribution(ALICE_CARD);
+    saveContribution(BOB_SUMMARY);
+
+    const updated = recordPersistedEndorsementFromReviewer("contrib-2", "alice");
+    const expectedWeight = computeReviewerCredibility(listContributionsByContributor("alice"));
+
+    expect(updated?.reviewerEndorsements).toEqual([{ reviewerWeight: expectedWeight }]);
+    expect(getContribution("contrib-2")?.reviewerEndorsements).toEqual([{ reviewerWeight: expectedWeight }]);
+  });
+
+  it("floors the weight at MIN_REVIEWER_CREDIBILITY for a reviewer with no contribution history", () => {
+    saveContribution(BOB_SUMMARY);
+    const updated = recordPersistedEndorsementFromReviewer("contrib-2", "brand-new-reviewer");
+
+    expect(updated?.reviewerEndorsements).toEqual([{ reviewerWeight: MIN_REVIEWER_CREDIBILITY }]);
+  });
+
+  it("returns undefined and leaves storage untouched for an id that isn't stored", () => {
+    saveContribution(ALICE_CARD);
+    expect(recordPersistedEndorsementFromReviewer("missing", "alice")).toBeUndefined();
     expect(getContribution("contrib-1")).toEqual(ALICE_CARD);
   });
 });

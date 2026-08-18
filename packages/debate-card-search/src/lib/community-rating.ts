@@ -11,6 +11,13 @@
  * likes/saves/endorsements itself, persist scores, or render a leaderboard
  * UI. See the follow-ups noted in TODO.md.
  *
+ * `computeReviewerCredibility` closes idea #11's follow-up (b) ("a real
+ * reviewer-credibility system instead of a caller-supplied weight per
+ * endorsement") — it derives a reviewer's endorsement weight from their own
+ * scored contribution history (average helpfulness, dampened while their
+ * contribution count is still low) instead of requiring the caller to
+ * supply an arbitrary `reviewerWeight`.
+ *
  * @module lib/community-rating
  */
 
@@ -151,4 +158,49 @@ export function rankContributions(
   return contributions
     .map((contribution) => computeHelpfulnessBreakdown(contribution, weights))
     .sort((a, b) => b.helpfulnessScore - a.helpfulnessScore || a.contributionId.localeCompare(b.contributionId));
+}
+
+/**
+ * Floor credibility granted to a reviewer with no scored contribution
+ * history yet, so a first-time reviewer's endorsement still counts for
+ * something without granting the full weight the old fixed placeholder did.
+ */
+export const MIN_REVIEWER_CREDIBILITY = 0.1;
+
+/**
+ * Number of scored contributions at which a reviewer's credibility fully
+ * reflects their average helpfulness score. Below this, credibility is
+ * dampened toward `MIN_REVIEWER_CREDIBILITY` so one or two lucky
+ * contributions can't buy full endorsement weight immediately.
+ */
+const REVIEWER_CREDIBILITY_SATURATION_COUNT = 5;
+
+function clamp01(value: number): number {
+  return Math.max(0, Math.min(1, value));
+}
+
+function round2(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+/**
+ * Derives a reviewer's endorsement-credibility weight (0-1) from their own
+ * track record as a contributor, rather than a caller-supplied constant:
+ * the average blended helpfulness score of their own scored contributions,
+ * dampened toward `MIN_REVIEWER_CREDIBILITY` while their contribution count
+ * is still below `REVIEWER_CREDIBILITY_SATURATION_COUNT`. A reviewer with no
+ * scored contributions yet gets exactly `MIN_REVIEWER_CREDIBILITY`.
+ */
+export function computeReviewerCredibility(
+  reviewerContributions: CommunityContribution[],
+  weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+): number {
+  if (reviewerContributions.length === 0) return MIN_REVIEWER_CREDIBILITY;
+
+  const breakdowns = reviewerContributions.map((contribution) => computeHelpfulnessBreakdown(contribution, weights));
+  const averageHelpfulness = breakdowns.reduce((sum, breakdown) => sum + breakdown.helpfulnessScore, 0) / breakdowns.length;
+  const qualityFactor = clamp01(averageHelpfulness / 100);
+  const historyFactor = Math.min(1, reviewerContributions.length / REVIEWER_CREDIBILITY_SATURATION_COUNT);
+
+  return round2(MIN_REVIEWER_CREDIBILITY + (1 - MIN_REVIEWER_CREDIBILITY) * qualityFactor * historyFactor);
 }
