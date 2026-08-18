@@ -4,6 +4,43 @@
 ### In progress
 
 ### Completed
+- **Contribution Leaderboard — completed-tasks signal.**
+  Closes follow-up (b) under the "Contribution Leaderboard" bullet in the
+  Research Crowdsourcing Organizer Features list — "a 'completed tasks'
+  signal once a research-task system exists" (that system now exists: the
+  Research Task Routing idea's persisted `routedTaskQueues.ts`/
+  `completeAndRecordResearchTask`). `debate-card-search`'s
+  `lib/contribution-leaderboard.ts` gains a `completedTaskCount` field on
+  `ContributorStats` and an optional `completedTaskCounts` map parameter on
+  `buildContributorStats`/`buildLeaderboard`, defaulting to 0 so every
+  existing caller is unaffected; a contributor present only in that map
+  (completed tasks, no scored contribution yet) still gets a leaderboard
+  row via a new `buildTaskOnlyContributorStats` — mirroring
+  `lib/research-progress.ts`'s `buildResearchProgressBoard` "union of both
+  signals" convention. `state/researchProgress.ts` (which already reads the
+  persisted completed-task history) adds
+  `buildPersistedLeaderboardWithCompletedTasks`, grouping that history by
+  `contributorId` and composing it with `state/contributions.ts`'s
+  persisted contribution list through `buildLeaderboard` — it lives there
+  rather than alongside `state/contributions.ts`'s existing
+  `buildPersistedLeaderboard` to avoid a circular import between the two
+  state modules (`state/contributions.ts` doesn't depend on
+  `state/researchProgress.ts`). `ContributionLeaderboardPanel.tsx` now reads
+  through `buildPersistedLeaderboardWithCompletedTasks` instead and renders
+  a new "Completed tasks" column. `buildPersistedLeaderboard` itself is
+  unchanged and still used elsewhere. No follow-ups remain open on this
+  bullet. Vitest-covered in `test/contribution-leaderboard.test.ts` (the new
+  `completedTaskCount` field, the `completedTaskCounts` map, and a
+  task-only contributor row) and `test/researchProgress.test.ts` (the new
+  `buildPersistedLeaderboardWithCompletedTasks` store composition, including
+  a task-only contributor). Verified: `bun install`, `bun run test` (113
+  files / 1528 tests, all pass), `bun run typecheck` (11 of 12 in-scope
+  packages have a typecheck script; all pass — also fixed three pre-existing
+  `ContributorStats` object literals in `lib/unlock-streak-status.ts` and
+  three test files that were missing the new required field), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/cards/leaderboard` route
+  present, no new route) all pass. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
 - **Flow-in-Speech Flow Annotations — video-player annotation UI.**
   Closes follow-up (a) under idea #15 ("Flow-in-Speech Flow Annotations")
   in the Product Feature Ideas list — "a video-player UI (`debate-videos`)
@@ -3912,7 +3949,7 @@
 ## Research Crowdsourcing Organizer Features
 
 * 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool.
-* 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. A second slice, `contributions.ts` (see Tracker Status above), now persists `AttributedContribution` records to localStorage, and its `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` close half of follow-up (a) — persisting like/save/endorse counts once an action fires — though no submission/like UI calls them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders the leaderboard at `/cards/leaderboard`, closing follow-up (c). A fourth slice, `ContributionsFeedPanel` (see Tracker Status above, "Contributions Feed — like/save/endorse UI"), now renders a submission form and a like/save/endorse feed at `/cards/contributions`, closing follow-up (a). Follow-up (b), a "completed tasks" signal once a research-task system exists, remains open — not started._
+* 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. A second slice, `contributions.ts` (see Tracker Status above), now persists `AttributedContribution` records to localStorage, and its `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` close half of follow-up (a) — persisting like/save/endorse counts once an action fires — though no submission/like UI calls them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders the leaderboard at `/cards/leaderboard`, closing follow-up (c). A fourth slice, `ContributionsFeedPanel` (see Tracker Status above, "Contributions Feed — like/save/endorse UI"), now renders a submission form and a like/save/endorse feed at `/cards/contributions`, closing follow-up (a). A fifth slice (see Tracker Status above, "Contribution Leaderboard — completed-tasks signal") added `completedTaskCount` to each leaderboard row, sourced from the persisted completed-task history and rendered as a new column, closing follow-up (b). No follow-ups remain open on this bullet._
 * 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeDailyMissionResult`/`computeStreakStatus`/`getEarnedStreakBadges`/`buildContributorQuestStreak`/`buildStreakSummaryText` for turning a contributor's daily `daily-quests.ts` mission-completion history into a current/longest streak and the milestone badges (3/7/14/30-day streaks by default) that streak has earned. A second slice, `dailyMissionResults.ts` (see Tracker Status above, "Gamified Quests — persisted daily mission-result history"), now persists a contributor's per-day `DailyMissionResult` to localStorage, keyed by `contributorId` + `dayKey`, and composes it directly into `buildPersistedContributorQuestStreak`. A third follow-up, surfacing earned streak badges on a contributor's `progress-unlocks.ts` unlock status, is now done — see the "Unlock Status Streak Badges" entry above (`unlock-streak-status.ts`). A fourth slice, `computeAndSavePersistedDailyMissionResult` (see Tracker Status above, "Gamified Quests — persisted end-of-day mission computation"), now computes and saves a contributor's mission result directly from their real persisted contributions, closing follow-up (a) below. A fifth slice, `buildPersistedQuestStreakRoster` plus `QuestStreaksPanel` (see Tracker Status above, "Gamified Quests — streak/badge widget UI"), now renders every contributor's streak and earned badges at `/cards/streaks`, closing follow-up (b). Follow-up (a) still needs a real trigger, i.e. a UI action or scheduled job, to call `computeAndSavePersistedDailyMissionResult` on an actual cadence — not started._
 * 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now feeds the derived skill level into `research-task-routing.ts`'s `ContributorAvailability`. A third slice, `unlock-streak-status.ts` (see Tracker Status above, "Unlock Status Streak Badges"), now merges the Gamified Quests streak badges into this unlock status, and its `buildContributorUnlockStatusWithStreakFromStore` closes follow-up (a) — it derives a contributor's tier/badges live from the already-persisted `contributions.ts`/`dailyMissionResults.ts` stores rather than needing a separate tier/badge store. A fourth slice, `ProgressUnlocksPanel` (see Tracker Status above, "Progress Unlocks — unlock/progress roster UI panel"), now renders every contributor's tier, unlocked skill level, badges, streak, and next-tier progress at `/cards/progress`, closing follow-up (b). Neither follow-up remains open._
 * 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scoreRelevance`/`scoreClarity`/`scoreUniqueness`/`scoreEvidenceQuality`/`scoreUsability`/`computeCardScoreBreakdown`/`rankCardScores`/`buildCardScoreSummaryText` for scoring a card across all five dimensions with deterministic heuristics and flagging likely duplicates, reusing the existing idea #11 `community-rating.ts` quality-signal scoring for evidence quality. A second slice, `cardScores.ts` plus `CardScoringPanel` (see Tracker Status above, "LLM Card Scoring — scoring/duplicate-flag panel UI"), now persists submitted `ScoredCard`s and renders a submission form plus every card's ranked score breakdown at `/cards/scoring`, closing follow-up (c). A third slice (see Tracker Status above, "LLM Card Scoring — real AI-scoring call") added `lib/llm-card-scoring-ai.ts`, `lib/llm-card-scoring-client.ts`, and `state/aiCardAssessments.ts`, wiring a "Get AI assessment" action into `CardScoringPanel` that calls the existing `/api/reason-ai` Anthropic proxy for a real qualitative verdict + per-dimension notes, closing follow-up (a). Follow-up (b) — wiring real argument-block keywords and a real submitted-card corpus into the scorer — remains open, not started._

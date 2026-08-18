@@ -126,6 +126,7 @@ function buildEmptyContributorStats(contributorId: string): ContributorStats {
     bestContributionId: "",
     bestHelpfulnessScore: 0,
     popularityOnlyOutlierCount: 0,
+    completedTaskCount: 0,
   };
 }
 
