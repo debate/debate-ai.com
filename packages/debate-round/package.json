@@ -24,6 +24,7 @@
     "debate-speech-writer": "workspace:*",
     "debate-timer": "workspace:*",
     "debate-ui": "workspace:*",
+    "debate-videos": "workspace:*",
     "lucide-react": "^0.577.0",
     "zustand": "^5.0.14"
   },
