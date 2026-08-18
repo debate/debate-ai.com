@@ -4,6 +4,49 @@
 ### In progress
 
 ### Completed
+- **Flow-in-Speech Flow Annotations — video-player annotation UI.**
+  Closes follow-up (a) under idea #15 ("Flow-in-Speech Flow Annotations")
+  in the Product Feature Ideas list — "a video-player UI (`debate-videos`)
+  that lets a viewer drop an annotation at the current playback position,
+  persisted through `flowAnnotations.ts`, and jump back to one." A new
+  `packages/debate-round/src/panels/FlowAnnotationsPanel.tsx` renders a
+  drop-annotation form (flow id, speech id, box path, optional note, and a
+  timestamp that defaults to the `debate-videos` persistent player's live
+  playback position via `useVideoPlayerStore`, or a manual `m:ss`/`h:mm:ss`
+  entry) plus every persisted `FlowAnnotation` newest-first, each with a
+  "Jump to" action that calls `sendYouTubeCommand("seekTo", ...)` — a new
+  command added to `debate-videos`'s existing
+  `playVideo`/`pauseVideo`/`setPlaybackRate` postMessage commands, wrapping
+  the YouTube IFrame API's `seekTo(seconds, allowSeekAhead)` — and a
+  "Clear" action, mounted at `/annotations` and linked from the global
+  dock's Settings menu. `flow/flow-annotations.ts` gains an additive,
+  optional `FlowAnnotation.videoId` (existing annotations without one stay
+  valid) so "Jump to" can be scoped to the annotation's own recording
+  rather than firing blindly at whatever happens to be loaded, plus three
+  small pure helpers used by the panel:
+  `getAnnotationsForVideo`/`formatAnnotationTimestamp`/
+  `parseAnnotationTimestamp`/`parseBoxPathInput`.
+  `state/flowAnnotations.ts` gains `listFlowAnnotationsForVideo` and
+  `buildFlowAnnotationsPanelView` (a stable newest-first sort), mirroring
+  the existing `buildFlowSummariesPanelView` convention. `debate-round` now
+  depends on `debate-videos` (previously one-directional the other way —
+  no cycle, `debate-videos` still doesn't depend on `debate-round`). "Jump
+  to" only works once the annotation's own recording is already the one
+  loaded in the player — no video-lookup/auto-open exists — and follow-up
+  (b), a `FlowSpreadsheet` affordance surfacing a box's annotations via
+  `listFlowAnnotationsForBox`, remains open, not started. Docs added at
+  `docs/features/flow-annotations.md`;
+  `packages/debate-round/README.md` updated. Vitest-covered in
+  `packages/debate-round/test/flow-annotations.test.ts` (the new
+  `videoId`/timestamp/box-path helpers) and
+  `packages/debate-round/test/flowAnnotations.test.ts` (the new
+  `listFlowAnnotationsForVideo`/`buildFlowAnnotationsPanelView` persistence
+  helpers). Verified: `bun install`, `bun run test` (113 files / 1519
+  tests, all pass), `bun run typecheck` (11 of 12 in-scope packages have a
+  typecheck script; all pass), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/annotations` route present) all pass. No repo-wide `lint`
+  script exists (checked root/app/package `package.json` scripts) so none
+  was run.
 - **Video-Lecture-Training Coach AI — real AI Q&A call.**
   [PR #195](https://github.com/debate/debate-ai.com/pull/195).
   Closes follow-up (b) under idea #8 ("Video-Lecture-Training Coach AI") in
@@ -3860,7 +3903,7 @@
 
 14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). Follow-ups: (a) wiring these commands into actual keyboard-shortcut handlers in `reason-editor`'s toolbar/editor view, (b) a "send selected evidence to a speech document" command, which needs a speech-document target that doesn't exist yet. Neither of these is started._
 
-15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slice done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. Follow-ups: (a) a video-player UI (`debate-videos`) that lets a viewer drop an annotation at the current playback position, persisted through `flowAnnotations.ts`, and jump back to one, (b) a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box via `listFlowAnnotationsForBox` and links back to the timestamp. Neither of these are started._
+15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slices done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. A third slice, `FlowAnnotationsPanel` (see Tracker Status above, "Flow-in-Speech Flow Annotations — video-player annotation UI"), now renders a drop-annotation form wired to the `debate-videos` persistent player's live playback position plus every persisted annotation with a "Jump to" action back into the player, at `/annotations`, closing follow-up (a). Follow-up (b), a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box via `listFlowAnnotationsForBox` and links back to the timestamp, remains open — not started._
 
 16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow) _Status: first slice done (see Tracker Status above) — `debate-round` now has `mergeFlowEdits`/`applyMergedEditsToFlow`/`buildSharedFlowSyncSummaryText` for reconciling multiple teammates' concurrent box-level flow edits into one canonical flow (last write wins), flagging genuinely concurrent, diverging edits from different authors as conflicts for a human to resolve instead of silently overwriting them. Follow-ups: (a) a live transport (WebSocket or similar) that turns local edits into a shared stream across a room/team, (b) a `FlowSpreadsheet` affordance that applies the merge and surfaces conflicts, (c) composing the Common Argument Library's tagged card corpus to suggest (not auto-apply) a pre-filled flow note from matching evidence. None of these are started._
 
