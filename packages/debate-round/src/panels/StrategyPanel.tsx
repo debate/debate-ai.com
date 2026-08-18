@@ -1,0 +1,247 @@
+/**
+ * @fileoverview Scout-to-Strategy panel — the "(a) a case-choice/strategy
+ * panel UI" follow-up named under the "Scout-to-Strategy Workflow" bullet in
+ * TODO.md's Research Crowdsourcing Organizer Features list.
+ *
+ * Lets a team enter a matchup id, an optional opponent-team id and judge id
+ * (looked up from the existing `opponentTeamProfiles.ts`/`judgeProfiles.ts`
+ * stores), and a list of case options (one per line, `Name: tag, tag`), then
+ * builds and persists a `StrategyRecommendation` via
+ * `scout-to-strategy.ts`'s `buildStrategyRecommendationFromStores` — no new
+ * scouting/ranking logic is introduced here. Lists every persisted
+ * recommendation via `state/strategyRecommendations.ts`'s
+ * `buildStrategyRecommendationsPanelView`, with a "Clear" action per matchup
+ * that calls the already-persisted `deleteStrategyRecommendation`, mirroring
+ * `PreRoundBriefingsPanel`'s create-form-plus-list convention.
+ *
+ * @module panels/StrategyPanel
+ */
+
+"use client"
+
+import { useEffect, useState } from "react"
+import { Badge } from "debate-ui/src/primitives/badge"
+import { Button } from "debate-ui/src/primitives/button"
+import { Input } from "debate-ui/src/primitives/input"
+import { Label } from "debate-ui/src/primitives/label"
+import { Textarea } from "debate-ui/src/primitives/textarea"
+import { buildStrategyRecommendationFromStores, type CaseOption, type RiskLevel } from "../round/scout-to-strategy"
+import {
+  buildStrategyRecommendationsPanelView,
+  deleteStrategyRecommendation,
+  saveStrategyRecommendation,
+} from "../state/strategyRecommendations"
+import type { StrategyRecommendationRecord } from "../state/strategyRecommendations"
+
+type StrategyDraft = {
+  matchupId: string
+  opponentTeamId: string
+  judgeId: string
+  caseOptionsText: string
+}
+
+const EMPTY_DRAFT: StrategyDraft = {
+  matchupId: "",
+  opponentTeamId: "",
+  judgeId: "",
+  caseOptionsText: "",
+}
+
+const RISK_BADGE_VARIANT: Record<RiskLevel, "default" | "secondary" | "destructive"> = {
+  low: "secondary",
+  medium: "default",
+  high: "destructive",
+}
+
+/** Parses one `Name: tag, tag` case option per line, skipping blank/unnamed lines. */
+function parseCaseOptions(raw: string): CaseOption[] {
+  return raw
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .map((line) => {
+      const separatorIndex = line.indexOf(":")
+      const name = (separatorIndex === -1 ? line : line.slice(0, separatorIndex)).trim()
+      const tagsPart = separatorIndex === -1 ? "" : line.slice(separatorIndex + 1)
+      const argumentTags = tagsPart
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0)
+      return { name, argumentTags }
+    })
+    .filter((option) => option.name.length > 0)
+}
+
+/**
+ * Renders the Scout-to-Strategy panel: a form to build a matchup's strategy
+ * recommendation from case options plus an optional opponent/judge profile
+ * lookup, and every persisted `StrategyRecommendationRecord`, each with a
+ * "Clear" action.
+ *
+ * Reads localStorage on mount only (client-side), so it renders a loading
+ * state during SSR/hydration rather than throwing.
+ */
+export function StrategyPanel() {
+  const [records, setRecords] = useState<StrategyRecommendationRecord[] | null>(null)
+  const [draft, setDraft] = useState<StrategyDraft>(EMPTY_DRAFT)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    setRecords(buildStrategyRecommendationsPanelView())
+  }, [])
+
+  const refresh = () => setRecords(buildStrategyRecommendationsPanelView())
+
+  const handleSubmit = () => {
+    const matchupId = draft.matchupId.trim()
+    const caseOptions = parseCaseOptions(draft.caseOptionsText)
+
+    if (!matchupId) {
+      setError("A matchup id is required.")
+      return
+    }
+    if (caseOptions.length === 0) {
+      setError("At least one case option is required, one per line as \"Name: tag, tag\".")
+      return
+    }
+
+    const recommendation = buildStrategyRecommendationFromStores({
+      caseOptions,
+      opponentTeamId: draft.opponentTeamId.trim() || undefined,
+      judgeId: draft.judgeId.trim() || undefined,
+    })
+    saveStrategyRecommendation({ matchupId, recommendation })
+    setDraft(EMPTY_DRAFT)
+    setError(null)
+    refresh()
+  }
+
+  const handleClear = (matchupId: string) => {
+    deleteStrategyRecommendation(matchupId)
+    refresh()
+  }
+
+  return (
+    <div className="p-4 sm:p-6 space-y-6">
+      <div>
+        <h1 className="mb-1 text-xl font-semibold text-foreground">Scout-to-Strategy</h1>
+        <p className="text-sm text-muted-foreground">
+          Rank case options against an opponent's scouted tendencies, get judge-adaptation notes,
+          and see an overall matchup risk level.
+        </p>
+      </div>
+
+      <div className="space-y-3 rounded-lg border border-border p-4">
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="space-y-1">
+            <Label htmlFor="strategy-matchup-id">Matchup id</Label>
+            <Input
+              id="strategy-matchup-id"
+              value={draft.matchupId}
+              onChange={(e) => setDraft({ ...draft, matchupId: e.target.value })}
+              placeholder="round-42"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="strategy-opponent-id">Opponent team id (optional)</Label>
+            <Input
+              id="strategy-opponent-id"
+              value={draft.opponentTeamId}
+              onChange={(e) => setDraft({ ...draft, opponentTeamId: e.target.value })}
+              placeholder="OpponentA"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="strategy-judge-id">Judge id (optional)</Label>
+            <Input
+              id="strategy-judge-id"
+              value={draft.judgeId}
+              onChange={(e) => setDraft({ ...draft, judgeId: e.target.value })}
+              placeholder="judge-123"
+            />
+          </div>
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="strategy-case-options">Case options (one per line: "Name: tag, tag")</Label>
+          <Textarea
+            id="strategy-case-options"
+            value={draft.caseOptionsText}
+            onChange={(e) => setDraft({ ...draft, caseOptionsText: e.target.value })}
+            placeholder={"Topicality case: topicality, framework\nKritik case: kritik"}
+            rows={3}
+          />
+        </div>
+        {error && <p className="text-sm text-destructive">{error}</p>}
+        <Button onClick={handleSubmit}>Build recommendation</Button>
+      </div>
+
+      {records === null ? (
+        <div className="p-6 text-sm text-muted-foreground">Loading strategy recommendations…</div>
+      ) : records.length === 0 ? (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No strategy recommendations yet. Build one above.
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {records.map(({ matchupId, recommendation }) => (
+            <div key={matchupId} className="rounded-lg border border-border p-4">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h2 className="text-sm font-semibold text-foreground">Matchup {matchupId}</h2>
+                <div className="flex items-center gap-2">
+                  <Badge variant={RISK_BADGE_VARIANT[recommendation.riskLevel]} className="whitespace-nowrap">
+                    {recommendation.riskLevel} risk
+                  </Badge>
+                  <Button size="sm" variant="ghost" onClick={() => handleClear(matchupId)}>
+                    Clear
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="rounded-md border border-border px-3 py-2 text-sm">
+                  <p className="mb-1 font-medium text-foreground">Recommended case</p>
+                  <p className="text-muted-foreground">
+                    {recommendation.recommendedCase
+                      ? `${recommendation.recommendedCase.name} (overlap score: ${recommendation.recommendedCase.overlapScore})`
+                      : "No case options supplied."}
+                  </p>
+                </div>
+
+                <div className="rounded-md border border-border px-3 py-2 text-sm">
+                  <p className="mb-1 font-medium text-foreground">Case rankings</p>
+                  <ul className="list-inside list-disc text-muted-foreground">
+                    {recommendation.caseRankings.map((option) => (
+                      <li key={option.name}>
+                        {option.name} (overlap score: {option.overlapScore})
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="rounded-md border border-border px-3 py-2 text-sm">
+                  <p className="mb-1 font-medium text-foreground">Judge adaptation</p>
+                  <ul className="list-inside list-disc text-muted-foreground">
+                    {recommendation.judgeAdaptationNotes.map((note) => (
+                      <li key={note}>{note}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {recommendation.riskFactors.length > 0 && (
+                  <div className="rounded-md border border-border px-3 py-2 text-sm">
+                    <p className="mb-1 font-medium text-foreground">Risk factors</p>
+                    <ul className="list-inside list-disc text-muted-foreground">
+                      {recommendation.riskFactors.map((factor) => (
+                        <li key={factor}>{factor}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
