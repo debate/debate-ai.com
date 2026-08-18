@@ -5,6 +5,7 @@
 
 ### Completed
 - **Video-Lecture-Training Coach AI — real AI Q&A call.**
+  [PR #195](https://github.com/debate/debate-ai.com/pull/195).
   Closes follow-up (b) under idea #8 ("Video-Lecture-Training Coach AI") in
   the Product Feature Ideas list — "an actual AI Q&A call that consumes
   `buildGroundedCoachPrompt`'s output." A new
