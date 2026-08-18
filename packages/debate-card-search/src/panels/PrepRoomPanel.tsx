@@ -1,219 +1,191 @@
 /**
- * @fileoverview Collaboration prep room — UI over `lib/prep-room.ts`.
+ * @fileoverview Collaboration Prep Room panel — the "(a) a prep-room panel
+ * UI" follow-up named under the "🧑‍🤝‍🧑 Collaboration Prep Room" bullet in
+ * TODO.md ("Create a shared prep space for teammates to research, draft
+ * blocks, organize evidence, and coordinate assignments").
  *
- * One topic-scoped workspace combining the evidence for that topic, the draft
- * blocks pulled out of it, and the task routing for the topic's coverage gaps.
+ * Reads a topic's `PrepRoom` entirely from persisted stores via
+ * `state/prepRooms.ts`'s `buildPersistedPrepRoom` (itself a thin
+ * composition of the already-persisted evidence-library, tracked-argument-
+ * checklist, and contributor-availability stores) and renders it as a
+ * topic-scoped evidence/draft-block search plus the topic's routed research
+ * assignments, reusing each composed slice's own search/render helper
+ * directly rather than introducing new organizing logic here.
+ *
+ * @module panels/PrepRoomPanel
  */
 
-"use client";
+"use client"
 
-import { useMemo, useState } from "react";
-import { Users } from "lucide-react";
+import { useEffect, useState } from "react"
+import { Badge } from "debate-ui/src/primitives/badge"
+import { Button } from "debate-ui/src/primitives/button"
+import { Input } from "debate-ui/src/primitives/input"
+import { Label } from "debate-ui/src/primitives/label"
+import { buildPersistedPrepRoom, listPrepRoomTopics } from "../state/prepRooms"
+import { buildPrepRoomSummaryText, searchPrepRoomEvidence } from "../lib/prep-room"
+import type { PrepRoom } from "../lib/prep-room"
+import type { EvidenceSearchResult } from "../lib/shared-evidence-library"
+import type { CoverageLevel } from "../lib/topic-coverage"
 
-import {
-  EmptyState,
-  PanelRow,
-  PanelSection,
-  PanelShell,
-  Pill,
-  StatGrid,
-  StatTile,
-  SummaryText,
-} from "debate-ui/src/panels/panel-shell";
-import { useStoreSnapshot } from "debate-ui/src/panels/use-store-snapshot";
-import { Button } from "debate-ui/src/primitives/button";
-import { Input } from "debate-ui/src/primitives/input";
-
-import {
-  buildPrepRoom,
-  buildPrepRoomSummaryText,
-  searchPrepRoomEvidence,
-} from "../lib/prep-room";
-import type { EvidenceLibraryEntry } from "../lib/shared-evidence-library";
-import type { ContributorAvailability } from "../lib/research-task-routing";
-import type { TopicCoverageReport } from "../lib/topic-coverage";
-import { listEvidenceLibraryEntries } from "../state/evidenceLibraryEntries";
-import { listContributorAvailability } from "../state/contributorAvailability";
-
-/** Props for {@link PrepRoomPanel}. */
-export interface PrepRoomPanelProps {
-  /** Topic the room is scoped to. */
-  topic: string;
-  /** Evidence pool. Defaults to the persisted evidence library. */
-  entries?: EvidenceLibraryEntry[];
-  /** Coverage report for the topic, used for the routing column. */
-  coverageReport: TopicCoverageReport;
-  /** Contributors available for routing. Defaults to persisted profiles. */
-  contributors?: ContributorAvailability[];
-  /** Invoked when an evidence row is clicked. */
-  onSelectEntry?: (entry: EvidenceLibraryEntry) => void;
-  /** Extra classes for the panel. */
-  className?: string;
+const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> = {
+  missing: "default",
+  thin: "secondary",
+  covered: "outline",
 }
 
 /**
- * Topic-scoped prep room: evidence, draft blocks and assignments together.
+ * Renders the Collaboration Prep Room: a topic switcher, that topic's
+ * evidence/draft-block search (backed by `searchPrepRoomEvidence`), and its
+ * routed research assignments (backed by the room's already-composed
+ * `routing` result).
  *
- * @param props - See {@link PrepRoomPanelProps}.
- * @returns The prep room panel.
+ * Reads localStorage on mount only (client-side), so it renders a loading
+ * state during SSR/hydration rather than throwing.
  */
-export function PrepRoomPanel({
-  topic,
-  entries,
-  coverageReport,
-  contributors,
-  onSelectEntry,
-  className,
-}: PrepRoomPanelProps) {
-  const { data: persistedEntries } = useStoreSnapshot<EvidenceLibraryEntry[]>(
-    listEvidenceLibraryEntries,
-    [],
-  );
-  const { data: persistedContributors } = useStoreSnapshot<ContributorAvailability[]>(
-    listContributorAvailability,
-    [],
-  );
-  const [search, setSearch] = useState("");
+export function PrepRoomPanel() {
+  const [topics, setTopics] = useState<string[] | null>(null)
+  const [topic, setTopic] = useState("")
+  const [room, setRoom] = useState<PrepRoom | null>(null)
+  const [query, setQuery] = useState("")
 
-  const room = useMemo(
-    () =>
-      buildPrepRoom({
-        topic,
-        entries: entries ?? persistedEntries,
-        coverageReport,
-        contributors: contributors ?? persistedContributors,
-      }),
-    [topic, entries, persistedEntries, coverageReport, contributors, persistedContributors],
-  );
+  useEffect(() => {
+    setTopics(listPrepRoomTopics())
+  }, [])
 
-  const results = useMemo(
-    () => (search.trim() ? searchPrepRoomEvidence(room, { text: search.trim() }) : []),
-    [room, search],
-  );
+  useEffect(() => {
+    const activeTopic = topic.trim()
+    setRoom(activeTopic ? buildPersistedPrepRoom(activeTopic) : null)
+  }, [topic])
+
+  if (topics === null) {
+    return <div className="p-6 text-sm text-muted-foreground">Loading prep room…</div>
+  }
+
+  const results: EvidenceSearchResult[] = room
+    ? searchPrepRoomEvidence(room, query.trim() ? { text: query.trim() } : {})
+    : []
 
   return (
-    <PanelShell
-      title={`Prep Room — ${topic}`}
-      description="Evidence, draft blocks and task assignments for one topic."
-      icon={<Users className="h-4 w-4" />}
-      className={className}
-      data-testid="prep-room-panel"
-    >
-      <StatGrid columns={4}>
-        <StatTile label="Evidence" value={room.entries.length} />
-        <StatTile label="Draft blocks" value={room.draftBlocks.length} tone="info" />
-        <StatTile label="Assigned" value={room.routing.assignments.length} tone="positive" />
-        <StatTile
-          label="Unassigned"
-          value={room.routing.unassignedTasks.length}
-          tone={room.routing.unassignedTasks.length > 0 ? "warning" : "neutral"}
+    <div className="p-4 sm:p-6 space-y-6">
+      <div>
+        <h1 className="mb-1 text-xl font-semibold text-foreground">Collaboration Prep Room</h1>
+        <p className="text-sm text-muted-foreground">
+          A topic's shared prep space: its evidence and draft blocks, plus coverage-gap research
+          tasks routed to available contributors.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="prep-room-topic">Topic</Label>
+        <Input
+          id="prep-room-topic"
+          value={topic}
+          onChange={(e) => setTopic(e.target.value)}
+          placeholder="Immigration"
+          className="max-w-sm"
         />
-      </StatGrid>
+        {topics.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {topics.map((existing) => (
+              <Button
+                key={existing}
+                size="sm"
+                variant={existing === topic.trim() ? "default" : "outline"}
+                onClick={() => setTopic(existing)}
+              >
+                {existing}
+              </Button>
+            ))}
+          </div>
+        )}
+      </div>
 
-      <PanelSection title="Search this room">
-        <div className="flex items-center gap-2">
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search evidence in this topic"
-          />
-          {search ? (
-            <Button variant="ghost" size="sm" onClick={() => setSearch("")}>
-              Clear
-            </Button>
-          ) : null}
+      {!room ? (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          Enter a topic above to open its prep room.
         </div>
-        {search.trim() ? (
-          results.length === 0 ? (
-            <EmptyState title="No matches in this room" />
-          ) : (
-            <div className="flex flex-col gap-1">
-              {results.map(({ entry, relevanceScore }) => (
-                <button
-                  key={entry.id}
-                  type="button"
-                  className="hover:bg-muted/60 flex items-center justify-between gap-2 rounded px-2 py-1 text-left text-xs"
-                  onClick={() => onSelectEntry?.(entry)}
-                >
-                  <span className="truncate">{entry.argBlock}</span>
-                  <span className="text-muted-foreground tabular-nums">
-                    {relevanceScore.toFixed(2)}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )
-        ) : null}
-      </PanelSection>
+      ) : (
+        <div className="space-y-4">
+          <p className="whitespace-pre-line text-sm text-muted-foreground">{buildPrepRoomSummaryText(room)}</p>
 
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <PanelSection title="Draft blocks">
-          {room.draftBlocks.length === 0 ? (
-            <EmptyState
-              title="No draft blocks"
-              message="Blocks added to the evidence library for this topic appear here."
+          <div className="space-y-2">
+            <Label htmlFor="prep-room-search">Search this room's evidence and draft blocks</Label>
+            <Input
+              id="prep-room-search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by keyword…"
+              className="max-w-sm"
             />
-          ) : (
-            <div className="flex flex-col gap-2">
-              {room.draftBlocks.map((block) => (
-                <PanelRow
-                  key={block.id}
-                  title={
-                    <button type="button" className="text-left" onClick={() => onSelectEntry?.(block)}>
-                      {block.argBlock}
-                    </button>
-                  }
-                  subtitle={block.caseArea}
-                  trailing={<Pill tone="info">{block.wordCount} w</Pill>}
-                />
-              ))}
-            </div>
-          )}
-        </PanelSection>
+          </div>
 
-        <PanelSection title="Assignments">
-          {room.routing.assignments.length === 0 ? (
-            <EmptyState title="Nothing routed" message="No open gaps matched an available contributor." />
+          {results.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+              {room.entries.length === 0
+                ? "No evidence or draft blocks filed under this topic yet."
+                : "No entries match this search."}
+            </div>
           ) : (
-            <div className="flex flex-col gap-1">
-              {room.routing.assignments.map((assignment) => (
-                <div
-                  key={`${assignment.contributorId}-${assignment.task.argBlock}`}
-                  className="border-border flex items-center justify-between gap-2 rounded border px-2 py-1 text-xs"
-                >
-                  <span className="truncate">{assignment.task.argBlock}</span>
-                  <Pill tone="positive">{assignment.contributorId}</Pill>
+            <div className="space-y-1.5">
+              {results.map(({ entry }) => (
+                <div key={entry.id} className="rounded-md border border-border p-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-medium text-foreground">{entry.argBlock}</span>
+                    <Badge variant={entry.kind === "block" ? "secondary" : "outline"}>{entry.kind}</Badge>
+                    <Badge variant="outline">{entry.caseArea}</Badge>
+                    {entry.cite && <span className="text-xs text-muted-foreground">{entry.cite}</span>}
+                  </div>
+                  {entry.tags.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {entry.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           )}
-          {room.routing.unassignedTasks.length > 0 ? (
-            <div className="flex flex-wrap gap-1">
-              {room.routing.unassignedTasks.map((task) => (
-                <Pill key={task.argBlock} tone="warning">
-                  {task.argBlock}
-                </Pill>
-              ))}
-            </div>
-          ) : null}
-        </PanelSection>
-      </div>
 
-      <PanelSection title="Evidence index">
-        {room.evidenceIndex.topicFolders.length === 0 ? (
-          <EmptyState title="No evidence for this topic yet" />
-        ) : (
-          <div className="flex flex-wrap gap-1">
-            {room.evidenceIndex.tagCollections.map((collection) => (
-              <Pill key={collection.tag}>
-                {collection.tag} · {collection.cards.length}
-              </Pill>
-            ))}
+          <div className="rounded-lg border border-border p-4 space-y-2">
+            <h2 className="text-sm font-semibold text-foreground">Routed research tasks</h2>
+            {room.routing.assignments.length === 0 && room.routing.unassignedTasks.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No coverage-gap tasks routed for this topic yet.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {room.routing.assignments.map((assignment) => (
+                  <div
+                    key={assignment.task.argBlock}
+                    className="flex flex-wrap items-center gap-2 rounded-md border border-border px-3 py-2 text-sm"
+                  >
+                    <span className="font-medium text-foreground">{assignment.task.argBlock}</span>
+                    <Badge variant={LEVEL_VARIANT[assignment.task.level]}>{assignment.task.level}</Badge>
+                    <span className="text-muted-foreground">assigned to</span>
+                    <span className="font-medium text-foreground">{assignment.contributorId}</span>
+                  </div>
+                ))}
+                {room.routing.unassignedTasks.map((task) => (
+                  <div
+                    key={task.argBlock}
+                    className="flex flex-wrap items-center gap-2 rounded-md border border-dashed border-border px-3 py-2 text-sm"
+                  >
+                    <span className="font-medium text-foreground">{task.argBlock}</span>
+                    <Badge variant={LEVEL_VARIANT[task.level]}>{task.level}</Badge>
+                    <span className="text-muted-foreground">
+                      unassigned — no eligible contributor available
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </PanelSection>
-
-      <SummaryText label="Plain-text summary" text={buildPrepRoomSummaryText(room)} />
-    </PanelShell>
-  );
+        </div>
+      )}
+    </div>
+  )
 }

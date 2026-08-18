@@ -3,6 +3,8 @@ import {
   deleteContributorAvailability,
   getContributorAvailability,
   listContributorAvailability,
+  recordPersistedTaskAssigned,
+  recordPersistedTaskCompleted,
   saveContributorAvailability,
 } from "../src/state/contributorAvailability";
 import type { ContributorAvailability } from "../src/lib/research-task-routing";
@@ -99,5 +101,42 @@ describe("deleteContributorAvailability", () => {
     saveContributorAvailability(BOB);
     deleteContributorAvailability("missing");
     expect(listContributorAvailability()).toEqual([BOB]);
+  });
+});
+
+describe("recordPersistedTaskAssigned", () => {
+  it("increments a stored profile's activeTaskCount by one and saves it", () => {
+    saveContributorAvailability(BOB);
+    const updated = recordPersistedTaskAssigned("bob");
+
+    expect(updated).toEqual({ ...BOB, activeTaskCount: 1 });
+    expect(getContributorAvailability("bob")).toEqual({ ...BOB, activeTaskCount: 1 });
+  });
+
+  it("returns undefined and leaves storage untouched when no profile is stored for that contributorId", () => {
+    expect(recordPersistedTaskAssigned("ghost")).toBeUndefined();
+    expect(listContributorAvailability()).toEqual([]);
+  });
+});
+
+describe("recordPersistedTaskCompleted", () => {
+  it("decrements a stored profile's activeTaskCount by one and saves it", () => {
+    saveContributorAvailability(ALICE);
+    const updated = recordPersistedTaskCompleted("alice");
+
+    expect(updated).toEqual({ ...ALICE, activeTaskCount: 0 });
+    expect(getContributorAvailability("alice")).toEqual({ ...ALICE, activeTaskCount: 0 });
+  });
+
+  it("never decrements activeTaskCount below zero", () => {
+    saveContributorAvailability(BOB);
+    const updated = recordPersistedTaskCompleted("bob");
+
+    expect(updated).toEqual({ ...BOB, activeTaskCount: 0 });
+  });
+
+  it("returns undefined and leaves storage untouched when no profile is stored for that contributorId", () => {
+    expect(recordPersistedTaskCompleted("ghost")).toBeUndefined();
+    expect(listContributorAvailability()).toEqual([]);
   });
 });

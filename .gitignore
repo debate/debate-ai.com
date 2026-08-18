@@ -33,7 +33,7 @@ yarn-error.log*
 .vercel
 
 # test coverage
-coverage/
+/coverage/
 *.lcov
 
 # typescript

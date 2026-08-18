@@ -10,6 +10,13 @@
  * session-derived from caller-supplied contributions/win events rather than
  * being stored.
  *
+ * `buildGroupChallengesPanelView` closes the "(a) a challenge-board/creation
+ * UI in `debate-card-search` that reads/writes through this store" follow-up
+ * named in this slice's own TODO.md entry — every persisted challenge,
+ * title-sorted for a stable display order, mirroring
+ * `coachingPrograms.ts`'s `buildCoachingProgramsPanelView` convention. Used
+ * by `panels/GroupChallengesPanel.tsx`.
+ *
  * @module state/groupChallenges
  */
 
@@ -59,4 +66,15 @@ export function saveGroupChallenge(challenge: GroupChallenge): void {
 /** Deletes a persisted group challenge by id; a no-op if it isn't stored. */
 export function deleteGroupChallenge(id: string): void {
   writeAll(readAll().filter((challenge) => challenge.id !== id));
+}
+
+/**
+ * Every persisted group challenge, sorted by title for a stable display
+ * order — the "(a) a challenge-board/creation UI" follow-up named in this
+ * slice's own TODO.md entry. Used by `panels/GroupChallengesPanel.tsx`,
+ * mirroring `coachingPrograms.ts`'s `buildCoachingProgramsPanelView`
+ * convention.
+ */
+export function buildGroupChallengesPanelView(): GroupChallenge[] {
+  return [...readAll()].sort((a, b) => a.title.localeCompare(b.title));
 }

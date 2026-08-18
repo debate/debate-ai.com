@@ -1,207 +1,131 @@
 /**
- * @fileoverview Progress unlocks — UI over `lib/progress-unlocks.ts` and the
- * `lib/unlock-streak-status.ts` composition slice.
+ * @fileoverview Progress Unlocks panel — the UI follow-up named "(b) a
+ * progress/unlock UI" under the "🔓 Progress Unlocks" bullet in TODO.md.
  *
- * Shows a contributor's tier, the skill level and badges that tier unlocks,
- * and the distance to the next tier. When daily mission results are supplied
- * the panel switches to the streak-aware composition so streak badges appear
- * alongside the tier badges.
+ * Reads every contributor's unlock+streak status via
+ * `lib/unlock-streak-status.ts`'s `buildUnlockStatusRoster` (itself a thin
+ * composition against the already-persisted `state/contributions.ts`/
+ * `state/researchProgress.ts`/`state/dailyMissionResults.ts` stores) and
+ * renders it as a roster table: tier, unlocked task skill level, completed
+ * research-task count, badges, current streak, and progress toward the next
+ * tier — reusing every existing tier/badge/streak slice directly rather
+ * than introducing new logic here.
+ *
+ * @module panels/ProgressUnlocksPanel
  */
 
-"use client";
+"use client"
 
-import { useMemo } from "react";
-import { Medal } from "lucide-react";
+import { useEffect, useState } from "react"
+import { Badge } from "debate-ui/src/primitives/badge"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "debate-ui/src/primitives/table"
+import { buildUnlockStatusRoster } from "../lib/unlock-streak-status"
+import type { ContributorUnlockStatusWithStreak } from "../lib/unlock-streak-status"
 
-import {
-  MeterBar,
-  PanelSection,
-  PanelShell,
-  Pill,
-  StatGrid,
-  StatTile,
-  SummaryText,
-  type PanelTone,
-} from "debate-ui/src/panels/panel-shell";
-import { useStoreSnapshot } from "debate-ui/src/panels/use-store-snapshot";
+/** Today's UTC calendar day as `YYYY-MM-DD`, the `dayKey` format used throughout `gamified-quests.ts`. */
+function todayUtcDayKey(): string {
+  return new Date().toISOString().slice(0, 10)
+}
 
-import {
-  DEFAULT_UNLOCK_TIER_REQUIREMENTS,
-  buildContributorUnlockStatus,
-  buildUnlockStatusText,
-  type ContributorUnlockStatus,
-  type UnlockTier,
-  type UnlockTierRequirement,
-} from "../lib/progress-unlocks";
-import {
-  buildContributorUnlockStatusWithStreak,
-  buildUnlockStatusWithStreakText,
-} from "../lib/unlock-streak-status";
-import {
-  DEFAULT_STREAK_MILESTONES,
-  type DailyMissionResult,
-  type StreakMilestone,
-} from "../lib/gamified-quests";
-import {
-  buildContributorStats,
-  type AttributedContribution,
-  type ContributorStats,
-} from "../lib/contribution-leaderboard";
-import { getUtcDayKey } from "../lib/daily-best-card";
-import { listContributionsByContributor } from "../state/contributions";
+const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
+  novice: "outline",
+  apprentice: "secondary",
+  veteran: "secondary",
+  expert: "default",
+}
 
-const TIER_TONE: Record<UnlockTier, PanelTone> = {
-  novice: "neutral",
-  apprentice: "info",
-  veteran: "warning",
-  expert: "positive",
-};
-
-/** Props for {@link ProgressUnlocksPanel}. */
-export interface ProgressUnlocksPanelProps {
-  /** Contributor whose unlock status is shown. */
-  contributorId: string;
-  /**
-   * Pre-computed stats. When omitted the panel derives them from the
-   * contributor's persisted contributions.
-   */
-  stats?: ContributorStats;
-  /** Tier thresholds. */
-  tierRequirements?: UnlockTierRequirement[];
-  /** Daily mission history; supplying it enables the streak-aware status. */
-  missionResults?: DailyMissionResult[];
-  /** Streak milestones used when `missionResults` is supplied. */
-  streakMilestones?: StreakMilestone[];
-  /** "Now" in epoch ms, used to derive the as-of UTC day key. */
-  now?: number;
-  /** Extra classes for the panel. */
-  className?: string;
+function nextTierText(status: ContributorUnlockStatusWithStreak): string {
+  if (!status.nextTier) return "Top tier reached"
+  return `${status.nextTier.contributionsNeeded} contributions, ${status.nextTier.helpfulnessScoreNeeded} pts, or ${status.nextTier.completedTasksNeeded} tasks, to ${status.nextTier.tier}`
 }
 
 /**
- * Shows tier, unlocked skill level, badges and next-tier progress.
+ * Renders the Progress Unlocks roster: every contributor with at least one
+ * persisted contribution, their unlock tier, the task skill level that tier
+ * grants, every badge earned (tier + streak), their current daily-quest
+ * streak, and how far they are from the next tier.
  *
- * @param props - See {@link ProgressUnlocksPanelProps}.
- * @returns The unlock status panel.
+ * Reads localStorage on mount only (client-side), so it renders an empty
+ * state during SSR/hydration rather than throwing.
  */
-export function ProgressUnlocksPanel({
-  contributorId,
-  stats,
-  tierRequirements = DEFAULT_UNLOCK_TIER_REQUIREMENTS,
-  missionResults,
-  streakMilestones = DEFAULT_STREAK_MILESTONES,
-  now = Date.now(),
-  className,
-}: ProgressUnlocksPanelProps) {
-  const { data: persisted } = useStoreSnapshot<AttributedContribution[]>(
-    () => listContributionsByContributor(contributorId),
-    [],
-  );
+export function ProgressUnlocksPanel() {
+  const [roster, setRoster] = useState<ContributorUnlockStatusWithStreak[] | null>(null)
 
-  const resolvedStats = useMemo(
-    () => stats ?? buildContributorStats(contributorId, persisted),
-    [stats, contributorId, persisted],
-  );
+  useEffect(() => {
+    setRoster(buildUnlockStatusRoster(todayUtcDayKey()))
+  }, [])
 
-  const withStreak = useMemo(
-    () =>
-      missionResults
-        ? buildContributorUnlockStatusWithStreak(
-            resolvedStats,
-            missionResults,
-            getUtcDayKey(now),
-            tierRequirements,
-            streakMilestones,
-          )
-        : null,
-    [resolvedStats, missionResults, now, tierRequirements, streakMilestones],
-  );
-  const baseStatus = useMemo(
-    () => buildContributorUnlockStatus(resolvedStats, tierRequirements),
-    [resolvedStats, tierRequirements],
-  );
+  if (roster === null) {
+    return <div className="p-6 text-sm text-muted-foreground">Loading progress…</div>
+  }
 
-  const status: ContributorUnlockStatus = withStreak ?? baseStatus;
-  const streak = withStreak?.streak ?? null;
-  const streakBadges = withStreak?.streakBadges ?? [];
-  const summaryText = withStreak
-    ? buildUnlockStatusWithStreakText(withStreak)
-    : buildUnlockStatusText(baseStatus);
-
-  const nextRequirement = useMemo(
-    () => tierRequirements.find((requirement) => requirement.tier === status.nextTier?.tier) ?? null,
-    [tierRequirements, status.nextTier],
-  );
+  if (roster.length === 0) {
+    return (
+      <div className="p-6 text-center text-sm text-muted-foreground">
+        No contributors yet. Unlock status fills in as contributors submit cards, summaries, and
+        analytics.
+      </div>
+    )
+  }
 
   return (
-    <PanelShell
-      title="Progress Unlocks"
-      description={`Tier and unlocked privileges for ${contributorId}.`}
-      icon={<Medal className="h-4 w-4" />}
-      className={className}
-      data-testid="progress-unlocks-panel"
-      actions={<Pill tone={TIER_TONE[status.tier]}>{status.tier}</Pill>}
-    >
-      <StatGrid columns={streak ? 4 : 3}>
-        <StatTile label="Contributions" value={resolvedStats.contributionCount} />
-        <StatTile
-          label="Helpfulness"
-          value={resolvedStats.totalHelpfulnessScore.toFixed(2)}
-          tone="info"
-        />
-        <StatTile label="Skill level" value={status.unlockedSkillLevel} tone={TIER_TONE[status.tier]} />
-        {streak ? (
-          <StatTile
-            label="Current streak"
-            value={streak.currentStreak}
-            tone={streak.currentStreak > 0 ? "positive" : "neutral"}
-            hint={`longest ${streak.longestStreak}`}
-          />
-        ) : null}
-      </StatGrid>
-
-      {status.nextTier && nextRequirement ? (
-        <PanelSection title={`Next tier: ${status.nextTier.tier}`}>
-          <MeterBar
-            value={resolvedStats.contributionCount}
-            max={nextRequirement.minContributionCount}
-            tone="info"
-            label="Contributions"
-            caption={`${status.nextTier.contributionsNeeded} more`}
-          />
-          <MeterBar
-            value={resolvedStats.totalHelpfulnessScore}
-            max={nextRequirement.minTotalHelpfulnessScore}
-            tone="warning"
-            label="Helpfulness score"
-            caption={`${status.nextTier.helpfulnessScoreNeeded.toFixed(2)} more`}
-          />
-        </PanelSection>
-      ) : (
-        <PanelSection title="Next tier">
-          <p className="text-muted-foreground text-xs">Top tier reached — no further unlocks.</p>
-        </PanelSection>
-      )}
-
-      <PanelSection title="Badges">
-        <div className="flex flex-wrap gap-1.5">
-          {status.badges.map((badge) => (
-            <Pill key={badge} tone={TIER_TONE[status.tier]}>
-              {badge}
-            </Pill>
+    <div className="p-4 sm:p-6">
+      <h1 className="mb-1 text-xl font-semibold text-foreground">Progress Unlocks</h1>
+      <p className="mb-4 text-sm text-muted-foreground">
+        Every contributor's unlock tier, badges, and streak — and how far they are from the next
+        tier.
+      </p>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Contributor</TableHead>
+            <TableHead>Tier</TableHead>
+            <TableHead>Unlocked tasks</TableHead>
+            <TableHead className="text-right">Tasks completed</TableHead>
+            <TableHead className="text-right">Streak</TableHead>
+            <TableHead>Badges</TableHead>
+            <TableHead>Next tier</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {roster.map((status) => (
+            <TableRow key={status.contributorId}>
+              <TableCell className="font-medium">{status.contributorId}</TableCell>
+              <TableCell>
+                <Badge variant={TIER_VARIANT[status.tier] ?? "outline"} className="capitalize">
+                  {status.tier}
+                </Badge>
+              </TableCell>
+              <TableCell className="capitalize text-muted-foreground">{status.unlockedSkillLevel}</TableCell>
+              <TableCell className="text-right">{status.completedTaskCount}</TableCell>
+              <TableCell className="text-right">
+                {status.streak.currentStreak > 0 ? `🔥 ${status.streak.currentStreak}` : "—"}
+              </TableCell>
+              <TableCell>
+                {status.badges.length > 0 ? (
+                  <div className="flex flex-wrap gap-1">
+                    {status.badges.map((badge) => (
+                      <Badge key={badge} variant="outline" className="whitespace-nowrap">
+                        {badge}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </TableCell>
+              <TableCell className="text-sm text-muted-foreground">{nextTierText(status)}</TableCell>
+            </TableRow>
           ))}
-          {streakBadges.map((badge) => (
-            <Pill key={badge} tone="positive">
-              {badge}
-            </Pill>
-          ))}
-          {status.badges.length === 0 && streakBadges.length === 0 ? (
-            <span className="text-muted-foreground text-xs">No badges unlocked yet.</span>
-          ) : null}
-        </div>
-      </PanelSection>
-
-      <SummaryText label="Plain-text summary" text={summaryText} />
-    </PanelShell>
-  );
+        </TableBody>
+      </Table>
+    </div>
+  )
 }

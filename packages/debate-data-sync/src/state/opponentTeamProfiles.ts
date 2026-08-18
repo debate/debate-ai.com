@@ -5,6 +5,12 @@
  * slice (`rankings/opponent-team-profile.ts`) in TODO.md's Research
  * Crowdsourcing Organizer Features list. Stores profiles in localStorage,
  * mirroring `debate-speech-writer`'s `coachMaterials.ts` persistence
+ * convention. Also exposes `buildOpponentTeamProfilesRoster`, the
+ * ready-to-render ordering used by `debate-round`'s
+ * `panels/OpponentTeamProfilesPanel.tsx` — the "(b) a scouting-card/panel
+ * UI" follow-up named under the "Opponent Team Profiles" bullet in TODO.md's
+ * Research Crowdsourcing Organizer Features list, mirroring
+ * `debate-speech-writer`'s `judgeProfiles.ts` `buildJudgeProfilesRoster`
  * convention.
  *
  * @module state/opponentTeamProfiles
@@ -56,4 +62,17 @@ export function saveOpponentTeamProfile(profile: OpponentTeamProfile): void {
 /** Deletes a persisted opponent team profile by `teamId`; a no-op if it isn't stored. */
 export function deleteOpponentTeamProfile(teamId: string): void {
   writeAll(readAll().filter((profile) => profile.teamId !== teamId));
+}
+
+/**
+ * Lists every persisted opponent team profile ordered by rounds recorded
+ * descending (most-scouted opponent first, ties broken alphabetically by
+ * `teamId`) — the ready-to-render order for an opponent-scouting roster
+ * panel.
+ */
+export function buildOpponentTeamProfilesRoster(): OpponentTeamProfile[] {
+  return [...readAll()].sort((a, b) => {
+    if (b.roundsRecorded !== a.roundsRecorded) return b.roundsRecorded - a.roundsRecorded;
+    return a.teamId.localeCompare(b.teamId);
+  });
 }

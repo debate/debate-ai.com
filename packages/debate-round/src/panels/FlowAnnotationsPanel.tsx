@@ -1,200 +1,306 @@
 /**
- * @fileoverview Flow-in-speech annotations — UI over `flow/flow-annotations.ts`
- * backed by the persisted annotations in `state/flowAnnotations.ts`.
+ * @fileoverview Flow-in-Speech Flow Annotations panel — the "(a) a
+ * video-player UI (`debate-videos`) that lets a viewer drop an annotation at
+ * the current playback position, persisted through `flowAnnotations.ts`,
+ * and jump back to one" follow-up named under idea #15 ("Flow-in-Speech Flow
+ * Annotations") in TODO.md.
  *
- * Lists a speech's timestamped annotations, highlights the one covering the
- * current playback position, and can add an annotation at that position.
+ * Reads the currently loaded recording from `debate-videos`'s
+ * `useVideoPlayerStore` (the same persistent player mounted at the app
+ * root) so a viewer can drop an annotation at the live playback position
+ * with one click, or type a manual `m:ss` timestamp when nothing is
+ * playing. Annotations dropped against the live position also record which
+ * video they belong to (`FlowAnnotation.videoId`), so "Jump to" can call
+ * `sendYouTubeCommand("seekTo", ...)` on that exact recording once it's the
+ * one currently loaded — jumping across recordings would require first
+ * opening the right video elsewhere, which stays out of scope here. No new
+ * annotation-model or persistence logic is introduced — this composes the
+ * already-existing `flow/flow-annotations.ts` + `state/flowAnnotations.ts`
+ * with the already-existing video player.
+ *
+ * @module panels/FlowAnnotationsPanel
  */
 
-"use client";
+"use client"
 
-import { useMemo, useState } from "react";
-import { Bookmark, Trash2 } from "lucide-react";
-
-import {
-  EmptyState,
-  LabeledField,
-  PanelRow,
-  PanelSection,
-  PanelShell,
-  Pill,
-  StatGrid,
-  StatTile,
-} from "debate-ui/src/panels/panel-shell";
-import { useStoreSnapshot } from "debate-ui/src/panels/use-store-snapshot";
-import { Button } from "debate-ui/src/primitives/button";
-import { Input } from "debate-ui/src/primitives/input";
-import type { Box, Flow } from "debate-core/src/types/flow";
-
+import { useEffect, useState } from "react"
+import { Badge } from "debate-ui/src/primitives/badge"
+import { Button } from "debate-ui/src/primitives/button"
+import { Input } from "debate-ui/src/primitives/input"
+import { Label } from "debate-ui/src/primitives/label"
+import { Textarea } from "debate-ui/src/primitives/textarea"
+import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
 import {
   createFlowAnnotation,
-  findAnnotationAtPlaybackPosition,
-  getAnnotationsForSpeech,
-  resolveAnnotationBox,
-  sortAnnotationsByTimestamp,
-  type FlowAnnotation,
-} from "../flow/flow-annotations";
+  formatAnnotationTimestamp,
+  parseAnnotationTimestamp,
+  parseBoxPathInput,
+} from "../flow/flow-annotations"
 import {
+  buildFlowAnnotationsPanelView,
   deleteFlowAnnotation,
-  listFlowAnnotationsForFlow,
   saveFlowAnnotation,
-} from "../state/flowAnnotations";
+} from "../state/flowAnnotations"
+import type { FlowAnnotation } from "../flow/flow-annotations"
 
-/** Formats a millisecond offset as `m:ss`. */
-function formatTimestamp(timestampMs: number): string {
-  const totalSeconds = Math.max(0, Math.floor(timestampMs / 1000));
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${String(seconds).padStart(2, "0")}`;
-}
-
-/** Props for {@link FlowAnnotationsPanel}. */
-export interface FlowAnnotationsPanelProps {
-  /** The flow annotations are attached to. */
-  flow: Pick<Flow, "id" | "children">;
-  /** Speech whose recording is being reviewed. */
-  speechId: string;
-  /** Current playback position in ms, used to highlight and to add at. */
-  playbackMs?: number;
-  /** Annotations to show. Defaults to the persisted annotations for the flow. */
-  annotations?: FlowAnnotation[];
-  /** Box path a newly added annotation is attached to. */
-  activeBoxPath?: number[];
-  /** Invoked when an annotation row is clicked, e.g. to seek the player. */
-  onSeek?: (annotation: FlowAnnotation) => void;
-  /** Extra classes for the panel. */
-  className?: string;
+function newAnnotationId(): string {
+  return `anno-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
 /**
- * Timestamped annotations tying a speech recording to flow boxes.
+ * Renders the Flow Annotations panel: a form to drop a new annotation
+ * (against the live video position or a manual timestamp) and every
+ * persisted annotation, newest first, each with a "Jump to" action (enabled
+ * only when its recording is the one currently loaded) and a "Clear" action.
  *
- * @param props - See {@link FlowAnnotationsPanelProps}.
- * @returns The annotations panel.
+ * Reads localStorage on mount only (client-side), so it renders a loading
+ * state during SSR/hydration rather than throwing.
  */
-export function FlowAnnotationsPanel({
-  flow,
-  speechId,
-  playbackMs = 0,
-  annotations,
-  activeBoxPath = [0],
-  onSeek,
-  className,
-}: FlowAnnotationsPanelProps) {
-  const { data: persisted, refresh } = useStoreSnapshot<FlowAnnotation[]>(
-    () => listFlowAnnotationsForFlow(flow.id),
-    [],
-  );
-  const source = annotations ?? persisted;
-  const editable = annotations === undefined;
-  const [note, setNote] = useState("");
+export function FlowAnnotationsPanel() {
+  const { activeVideoId, activeVideoTitle, isPlaying, getCurrentTimeRef, setIsPlaying } =
+    useVideoPlayerStore()
 
-  const forSpeech = useMemo(
-    () => sortAnnotationsByTimestamp(getAnnotationsForSpeech(source, speechId)),
-    [source, speechId],
-  );
-  const active = useMemo(
-    () => findAnnotationAtPlaybackPosition(source, speechId, playbackMs),
-    [source, speechId, playbackMs],
-  );
+  const [annotations, setAnnotations] = useState<FlowAnnotation[] | null>(null)
+  const [liveSeconds, setLiveSeconds] = useState(0)
+  const [flowId, setFlowId] = useState("")
+  const [speechId, setSpeechId] = useState("")
+  const [boxPathInput, setBoxPathInput] = useState("")
+  const [note, setNote] = useState("")
+  const [useLivePosition, setUseLivePosition] = useState(true)
+  const [manualTimestamp, setManualTimestamp] = useState("0:00")
+  const [error, setError] = useState<string | null>(null)
 
-  const addAnnotation = () => {
-    saveFlowAnnotation(
-      createFlowAnnotation({
-        id: `annotation-${Date.now()}`,
-        flowId: flow.id,
-        boxPath: activeBoxPath,
-        speechId,
-        timestampMs: playbackMs,
+  useEffect(() => {
+    setAnnotations(buildFlowAnnotationsPanelView())
+  }, [])
+
+  useEffect(() => {
+    if (!activeVideoId || !isPlaying) return
+    const interval = setInterval(() => {
+      setLiveSeconds(getCurrentTimeRef ? getCurrentTimeRef() : 0)
+    }, 250)
+    return () => clearInterval(interval)
+  }, [activeVideoId, isPlaying, getCurrentTimeRef])
+
+  const refresh = () => setAnnotations(buildFlowAnnotationsPanelView())
+
+  const handleAdd = () => {
+    const trimmedFlowId = flowId.trim()
+    const parsedFlowId = Number(trimmedFlowId)
+    if (!trimmedFlowId || !Number.isFinite(parsedFlowId) || !Number.isInteger(parsedFlowId)) {
+      setError("Flow ID must be a whole number.")
+      return
+    }
+    if (!speechId.trim()) {
+      setError("Speech ID is required (e.g. \"1AC\").")
+      return
+    }
+    const boxPath = parseBoxPathInput(boxPathInput)
+    if (boxPath === null) {
+      setError("Box path must be comma-separated whole numbers (e.g. \"0, 1\").")
+      return
+    }
+
+    const useLive = useLivePosition && Boolean(activeVideoId)
+    const timestampMs = useLive
+      ? Math.round((getCurrentTimeRef ? getCurrentTimeRef() : 0) * 1000)
+      : parseAnnotationTimestamp(manualTimestamp)
+    if (timestampMs === null) {
+      setError("Timestamp must be a valid m:ss (or h:mm:ss) position.")
+      return
+    }
+
+    try {
+      const annotation = createFlowAnnotation({
+        id: newAnnotationId(),
+        flowId: parsedFlowId,
+        boxPath,
+        speechId: speechId.trim(),
+        timestampMs,
         createdAt: Date.now(),
-        ...(note.trim() ? { note: note.trim() } : {}),
-      }),
-    );
-    setNote("");
-    refresh();
-  };
+        note,
+        videoId: useLive ? (activeVideoId ?? undefined) : undefined,
+      })
+      saveFlowAnnotation(annotation)
+      setNote("")
+      setError(null)
+      refresh()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not create annotation.")
+    }
+  }
 
-  const boxFor = (annotation: FlowAnnotation): Box | null =>
-    resolveAnnotationBox({ children: flow.children }, annotation);
+  const handleJump = (annotation: FlowAnnotation) => {
+    if (!annotation.videoId || annotation.videoId !== activeVideoId) return
+    sendYouTubeCommand("seekTo", [annotation.timestampMs / 1000, true])
+    sendYouTubeCommand("playVideo")
+    setIsPlaying(true)
+  }
+
+  const handleClear = (id: string) => {
+    deleteFlowAnnotation(id)
+    refresh()
+  }
+
+  if (annotations === null) {
+    return <div className="p-6 text-sm text-muted-foreground">Loading flow annotations…</div>
+  }
 
   return (
-    <PanelShell
-      title="Flow Annotations"
-      description={`Timestamped marks on ${speechId}.`}
-      icon={<Bookmark className="h-4 w-4" />}
-      className={className}
-      data-testid="flow-annotations-panel"
-      actions={<Pill tone="info">{formatTimestamp(playbackMs)}</Pill>}
-    >
-      <StatGrid columns={3}>
-        <StatTile label="On this speech" value={forSpeech.length} />
-        <StatTile label="On this flow" value={source.length} />
-        <StatTile
-          label="At playhead"
-          value={active ? formatTimestamp(active.timestampMs) : "—"}
-          tone={active ? "positive" : "neutral"}
-        />
-      </StatGrid>
+    <div className="p-4 sm:p-6 space-y-6">
+      <div>
+        <h1 className="mb-1 text-xl font-semibold text-foreground">Flow-in-Speech Annotations</h1>
+        <p className="text-sm text-muted-foreground">
+          While watching a streamed or recorded round, drop a timestamped note tied to a specific
+          flow argument, then jump straight back to it later.
+        </p>
+      </div>
 
-      <PanelSection title="Annotations">
-        {forSpeech.length === 0 ? (
-          <EmptyState
-            title="No annotations yet"
-            message={editable ? "Add one at the current playback position." : undefined}
+      <div className="rounded-lg border border-border p-4 space-y-4">
+        <p className="text-sm text-foreground">
+          {activeVideoId ? (
+            <>
+              Now playing: <span className="font-medium">{activeVideoTitle ?? activeVideoId}</span>{" "}
+              <Badge variant="outline">{formatAnnotationTimestamp(liveSeconds * 1000)}</Badge>
+            </>
+          ) : (
+            <span className="text-muted-foreground">No video is currently playing.</span>
+          )}
+        </p>
+
+        <div className="flex flex-wrap gap-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="annotation-flow-id">Flow ID</Label>
+            <Input
+              id="annotation-flow-id"
+              value={flowId}
+              onChange={(e) => setFlowId(e.target.value)}
+              placeholder="1"
+              className="w-28"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="annotation-speech-id">Speech</Label>
+            <Input
+              id="annotation-speech-id"
+              value={speechId}
+              onChange={(e) => setSpeechId(e.target.value)}
+              placeholder="1AC"
+              className="w-28"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="annotation-box-path">Box path</Label>
+            <Input
+              id="annotation-box-path"
+              value={boxPathInput}
+              onChange={(e) => setBoxPathInput(e.target.value)}
+              placeholder="0, 1"
+              className="w-32"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="annotation-timestamp-mode">Timestamp</Label>
+            <div className="flex items-center gap-2">
+              <Button
+                id="annotation-timestamp-mode"
+                type="button"
+                size="sm"
+                variant={useLivePosition ? "default" : "outline"}
+                onClick={() => setUseLivePosition(true)}
+                disabled={!activeVideoId}
+              >
+                Current position
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={!useLivePosition ? "default" : "outline"}
+                onClick={() => setUseLivePosition(false)}
+              >
+                Manual
+              </Button>
+            </div>
+          </div>
+          {!useLivePosition && (
+            <div className="space-y-1.5">
+              <Label htmlFor="annotation-manual-timestamp">m:ss</Label>
+              <Input
+                id="annotation-manual-timestamp"
+                value={manualTimestamp}
+                onChange={(e) => setManualTimestamp(e.target.value)}
+                placeholder="1:30"
+                className="w-24"
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="annotation-note">Note (optional)</Label>
+          <Textarea
+            id="annotation-note"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="Solvency claim starts here…"
+            className="min-h-16"
           />
-        ) : (
-          <div className="flex flex-col gap-2">
-            {forSpeech.map((annotation) => {
-              const box = boxFor(annotation);
-              return (
-                <PanelRow
-                  key={annotation.id}
-                  className={active?.id === annotation.id ? "border-primary" : undefined}
-                  leading={formatTimestamp(annotation.timestampMs)}
-                  title={
-                    <button
-                      type="button"
-                      className="text-left"
-                      onClick={() => onSeek?.(annotation)}
-                    >
-                      {annotation.note ?? box?.content ?? "(no note)"}
-                    </button>
-                  }
-                  subtitle={box ? box.content : `box ${annotation.boxPath.join(".")}`}
-                  trailing={
-                    editable ? (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label={`Delete annotation at ${formatTimestamp(annotation.timestampMs)}`}
-                        onClick={() => {
-                          deleteFlowAnnotation(annotation.id);
-                          refresh();
-                        }}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    ) : null
-                  }
-                />
-              );
-            })}
-          </div>
-        )}
-      </PanelSection>
+        </div>
 
-      {editable ? (
-        <PanelSection title="Add annotation">
-          <div className="flex items-end gap-2">
-            <LabeledField label={`Note at ${formatTimestamp(playbackMs)}`} className="flex-1">
-              <Input value={note} onChange={(e) => setNote(e.target.value)} />
-            </LabeledField>
-            <Button size="sm" onClick={addAnnotation}>
-              Mark
-            </Button>
-          </div>
-        </PanelSection>
-      ) : null}
-    </PanelShell>
-  );
+        <Button onClick={handleAdd}>Drop annotation</Button>
+        {error && <p className="text-sm text-destructive">{error}</p>}
+      </div>
+
+      {annotations.length === 0 ? (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No flow annotations yet. Drop one above while watching a round to see it here.
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {annotations.map((annotation) => {
+            const canJump = Boolean(annotation.videoId) && annotation.videoId === activeVideoId
+            return (
+              <div
+                key={annotation.id}
+                className="flex flex-wrap items-start justify-between gap-2 rounded-md border border-border px-3 py-2"
+              >
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <Badge variant="outline">{formatAnnotationTimestamp(annotation.timestampMs)}</Badge>
+                    <span>Flow {annotation.flowId}</span>
+                    <span>{annotation.speechId}</span>
+                    <span>box [{annotation.boxPath.join(", ")}]</span>
+                  </div>
+                  {annotation.note && <p className="text-sm text-foreground">{annotation.note}</p>}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleJump(annotation)}
+                    disabled={!canJump}
+                    title={
+                      annotation.videoId
+                        ? canJump
+                          ? undefined
+                          : "Open this annotation's video first"
+                        : "This annotation has no recording attached"
+                    }
+                  >
+                    Jump to
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => handleClear(annotation.id)}>
+                    Clear
+                  </Button>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
 }

@@ -12,6 +12,7 @@ import type { FlowAnnotation } from "../flow/flow-annotations";
 import {
   getAnnotationsForBox,
   getAnnotationsForSpeech,
+  getAnnotationsForVideo,
   sortAnnotationsByTimestamp,
 } from "../flow/flow-annotations";
 
@@ -52,6 +53,19 @@ export function listFlowAnnotationsForSpeech(speechId: string): FlowAnnotation[]
 /** Lists every persisted annotation attached to one box on one flow, in playback order. */
 export function listFlowAnnotationsForBox(flowId: number, boxPath: number[]): FlowAnnotation[] {
   return getAnnotationsForBox(readAll(), flowId, boxPath);
+}
+
+/** Lists every persisted annotation dropped against one recording, in playback order. */
+export function listFlowAnnotationsForVideo(videoId: string): FlowAnnotation[] {
+  return getAnnotationsForVideo(readAll(), videoId);
+}
+
+/**
+ * Builds a stable, panel-ready view of every persisted annotation, newest
+ * first by `createdAt` — the ordering the Flow Annotations panel renders.
+ */
+export function buildFlowAnnotationsPanelView(): FlowAnnotation[] {
+  return [...readAll()].sort((a, b) => b.createdAt - a.createdAt);
 }
 
 /** Looks up a single persisted annotation by id, if any. */

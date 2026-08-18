@@ -1,13 +1,19 @@
 "use client"
 
 /**
- * @fileoverview Research hub — the app surface for the crowdsourcing panels.
+ * @fileoverview Research hub — one tabbed app surface over every
+ * crowdsourcing panel `debate-card-search` ships.
  *
- * Every panel here reads the same locally persisted squad data: the shared
- * evidence library supplies the cards a coverage report is computed from, the
- * contribution store supplies the leaderboard/awards/rating inputs, and the
- * availability profiles supply the routing. Sections that need data nothing
- * has produced yet render their own empty states rather than sample data.
+ * Each panel already reads (and writes) its own localStorage store, so this
+ * is purely navigation: it groups the panels that describe the same stage of
+ * a squad's research cycle and renders one group at a time. The individual
+ * `/cards/*` routes still mount the same panels one at a time; this is the
+ * view for working across them.
+ *
+ * The one exception is {@link TopicSprintPanel}, which renders the full
+ * `buildTopicSprint` composition rather than a single store, so this hub
+ * derives its inputs from the persisted evidence library and availability
+ * profiles the same way the composition expects.
  */
 
 import { useEffect, useMemo, useState } from "react"
@@ -15,21 +21,22 @@ import {
   ArgumentLibraryPanel,
   BrainstormBoardPanel,
   CardScoringPanel,
-  CommunityRatingPanel,
   ContributionLeaderboardPanel,
+  ContributionsFeedPanel,
+  ContributorAwardsPanel,
   DailyBestCardPanel,
-  DailyQuestBoardPanel,
+  DailyQuestsPanel,
   EvidenceLibraryPanel,
-  GroupChallengePanel,
-  PeerReviewPanel,
+  GroupChallengesPanel,
   PrepRoomPanel,
   ProgressUnlocksPanel,
-  QuestStreakPanel,
+  QuestStreaksPanel,
   ResearchProgressPanel,
+  ReviewQueuePanel,
   RevisionIncentivesPanel,
-  TaskRoutingPanel,
-  TopContributorAwardsPanel,
-  TopicCoverageDashboard,
+  SprintNotesPanel,
+  TaskInboxPanel,
+  TopicCoverageDashboardPanel,
   TopicSprintPanel,
 } from "debate-card-search"
 import { buildUnderCoveredArgumentQuests } from "debate-card-search/src/lib/daily-quests"
@@ -42,7 +49,6 @@ import {
 import type { ContributorAvailability } from "debate-card-search/src/lib/research-task-routing"
 import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import type { TrackedTopicAssignment } from "debate-card-search/src/lib/research-progress"
-import type { ScoredCard } from "debate-card-search/src/lib/llm-card-scoring"
 import { listEvidenceLibraryEntries } from "debate-card-search/src/state/evidenceLibraryEntries"
 import { listContributorAvailability } from "debate-card-search/src/state/contributorAvailability"
 import { useStoreSnapshot } from "debate-ui/src/panels/use-store-snapshot"
@@ -133,17 +139,6 @@ export function ResearchHub() {
     }))
   }, [coverageReport, contributors, topic])
 
-  const scoredCards = useMemo<ScoredCard[]>(
-    () =>
-      entries.map((entry) => ({
-        id: entry.id,
-        text: entry.text,
-        argBlockKeywords: entry.argBlock.split(/\s+/).filter(Boolean),
-        qualitySignals: [],
-      })),
-    [entries],
-  )
-
   const activeTopic = topic.trim() || trackedArguments[0]?.category || "Untagged"
 
   return (
@@ -152,7 +147,7 @@ export function ResearchHub() {
         <LabeledField label="Your contributor id">
           <Input value={contributorId} onChange={(e) => updateContributorId(e.target.value)} />
         </LabeledField>
-        <LabeledField label="Topic" hint="Scopes the prep room and sprint.">
+        <LabeledField label="Topic" hint="Scopes the sprint composition.">
           <Input
             value={topic}
             placeholder={activeTopic}
@@ -179,19 +174,15 @@ export function ResearchHub() {
         ))}
       </nav>
 
-      {section === "Coverage" ? (
-        <TopicCoverageDashboard trackedArguments={trackedArguments} cards={cards} />
-      ) : null}
+      {section === "Coverage" ? <TopicCoverageDashboardPanel /> : null}
 
-      {section === "Library" ? (
-        <ArgumentLibraryPanel cards={entries} />
-      ) : null}
+      {section === "Library" ? <ArgumentLibraryPanel /> : null}
 
       {section === "Evidence" ? <EvidenceLibraryPanel /> : null}
 
       {section === "Sprint" ? (
         <div className="flex flex-col gap-4">
-          <PrepRoomPanel topic={activeTopic} coverageReport={coverageReport} />
+          <PrepRoomPanel />
           <TopicSprintPanel
             topic={activeTopic}
             quests={coverageQuests}
@@ -200,44 +191,41 @@ export function ResearchHub() {
             assignments={assignments}
             authorId={contributorId}
           />
-          <BrainstormBoardPanel coverageReport={coverageReport} contributorId={contributorId} />
+          <SprintNotesPanel />
+          <BrainstormBoardPanel />
         </div>
       ) : null}
 
-      {section === "Routing" ? <TaskRoutingPanel coverageReport={coverageReport} /> : null}
+      {section === "Routing" ? <TaskInboxPanel /> : null}
 
       {section === "Progress" ? (
         <div className="flex flex-col gap-4">
-          <ResearchProgressPanel assignments={assignments} />
-          <ProgressUnlocksPanel contributorId={contributorId} />
+          <ResearchProgressPanel />
+          <ProgressUnlocksPanel />
         </div>
       ) : null}
 
       {section === "Quests" ? (
         <div className="flex flex-col gap-4">
-          <DailyQuestBoardPanel
-            quests={coverageQuests}
-            contributions={[]}
-            coverageReport={coverageReport}
-          />
-          <QuestStreakPanel contributorId={contributorId} missionResults={[]} />
-          <GroupChallengePanel contributions={[]} />
+          <DailyQuestsPanel />
+          <QuestStreaksPanel />
+          <GroupChallengesPanel />
         </div>
       ) : null}
 
       {section === "Rewards" ? (
         <div className="flex flex-col gap-4">
-          <ContributionLeaderboardPanel highlightContributorId={contributorId} />
-          <TopContributorAwardsPanel />
-          <CommunityRatingPanel />
-          <DailyBestCardPanel contributions={[]} />
+          <ContributionLeaderboardPanel />
+          <ContributorAwardsPanel />
+          <ContributionsFeedPanel />
+          <DailyBestCardPanel />
           <RevisionIncentivesPanel />
         </div>
       ) : null}
 
-      {section === "Review" ? <PeerReviewPanel reviewerId={contributorId} /> : null}
+      {section === "Review" ? <ReviewQueuePanel /> : null}
 
-      {section === "Scoring" ? <CardScoringPanel cards={scoredCards} /> : null}
+      {section === "Scoring" ? <CardScoringPanel /> : null}
     </div>
   )
 }

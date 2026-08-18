@@ -1,196 +1,149 @@
 /**
- * @fileoverview Contribution leaderboard — UI over `lib/contribution-leaderboard.ts`
- * reading the persisted contributions in `state/contributions.ts`.
+ * @fileoverview Contribution Leaderboard panel — the UI follow-up named
+ * under both the "Contribution Leaderboard" bullet ("(c) a leaderboard UI
+ * that reads through the persistence store") and idea #11 "Community-Rated
+ * Summaries and Highlights" ("(c) a leaderboard/ranked-feed UI") in TODO.md.
+ *
+ * Reads every persisted contribution via `state/researchProgress.ts`'s
+ * `buildPersistedLeaderboardWithCompletedTasks` (a thin composition of
+ * `contribution-leaderboard.ts`'s pure `buildLeaderboard` against the
+ * persisted contribution store plus each contributor's persisted
+ * completed-task count) and renders it as a ranked table, merging in each
+ * contributor's tier/streak status from `lib/unlock-streak-status.ts`'s
+ * `buildContributorUnlockStatusWithStreakFromStore` — reusing every existing
+ * scoring/tier/streak slice directly rather than introducing new logic here.
+ *
+ * @module panels/ContributionLeaderboardPanel
  */
 
-"use client";
+"use client"
 
-import { useMemo, useState } from "react";
-import { Trophy } from "lucide-react";
-
+import { useEffect, useState } from "react"
+import { Badge } from "debate-ui/src/primitives/badge"
 import {
-  EmptyState,
-  MeterBar,
-  PanelRow,
-  PanelSection,
-  PanelShell,
-  Pill,
-  StatGrid,
-  StatTile,
-} from "debate-ui/src/panels/panel-shell";
-import { useStoreSnapshot } from "debate-ui/src/panels/use-store-snapshot";
-import { Button } from "debate-ui/src/primitives/button";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "debate-ui/src/primitives/table"
+import { buildPersistedLeaderboardWithCompletedTasks } from "../state/researchProgress"
+import { buildContributorUnlockStatusWithStreakFromStore } from "../lib/unlock-streak-status"
+import type { ContributorStats } from "../lib/contribution-leaderboard"
 
-import {
-  buildLeaderboard,
-  type AttributedContribution,
-  type ContributorStats,
-} from "../lib/contribution-leaderboard";
-import type { HelpfulnessWeights } from "../lib/community-rating";
-import { listContributions } from "../state/contributions";
+/** One leaderboard row: a contributor's raw stats plus their derived tier/streak status. */
+interface LeaderboardRow extends ContributorStats {
+  tier: string
+  badges: string[]
+  currentStreak: number
+}
 
-type SortKey = "total" | "average" | "count";
+/** Today's UTC calendar day as `YYYY-MM-DD`, the `dayKey` format used throughout `gamified-quests.ts`. */
+function todayUtcDayKey(): string {
+  return new Date().toISOString().slice(0, 10)
+}
 
-const SORT_LABEL: Record<SortKey, string> = {
-  total: "Total score",
-  average: "Average score",
-  count: "Contributions",
-};
+function buildLeaderboardRows(): LeaderboardRow[] {
+  const asOfDayKey = todayUtcDayKey()
+  return buildPersistedLeaderboardWithCompletedTasks().map((stats) => {
+    const status = buildContributorUnlockStatusWithStreakFromStore(stats.contributorId, asOfDayKey)
+    return {
+      ...stats,
+      tier: status.tier,
+      badges: status.badges,
+      currentStreak: status.streak.currentStreak,
+    }
+  })
+}
 
-/** Props for {@link ContributionLeaderboardPanel}. */
-export interface ContributionLeaderboardPanelProps {
-  /** Contributions to rank. Defaults to the persisted contribution store. */
-  contributions?: AttributedContribution[];
-  /** Scoring weights passed through to the leaderboard slice. */
-  weights?: HelpfulnessWeights;
-  /** Highlights one contributor's row, e.g. the signed-in user. */
-  highlightContributorId?: string;
-  /** Invoked when a contributor row is clicked. */
-  onSelectContributor?: (contributorId: string) => void;
-  /** Extra classes for the panel. */
-  className?: string;
+const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
+  novice: "outline",
+  apprentice: "secondary",
+  veteran: "secondary",
+  expert: "default",
 }
 
 /**
- * Ranks contributors by helpfulness-weighted contribution score.
+ * Renders the Contribution Leaderboard: every contributor with at least one
+ * persisted contribution, ranked by total helpfulness score, with their
+ * unlock tier, earned badges, and current daily-quest streak.
  *
- * @param props - See {@link ContributionLeaderboardPanelProps}.
- * @returns The leaderboard panel.
+ * Reads localStorage on mount only (client-side), so it renders an empty
+ * state during SSR/hydration rather than throwing.
  */
-export function ContributionLeaderboardPanel({
-  contributions,
-  weights,
-  highlightContributorId,
-  onSelectContributor,
-  className,
-}: ContributionLeaderboardPanelProps) {
-  const { data: persisted } = useStoreSnapshot<AttributedContribution[]>(listContributions, []);
-  const source = contributions ?? persisted;
-  const [sortKey, setSortKey] = useState<SortKey>("total");
+export function ContributionLeaderboardPanel() {
+  const [rows, setRows] = useState<LeaderboardRow[] | null>(null)
 
-  const leaderboard = useMemo(
-    () => buildLeaderboard(source, weights),
-    [source, weights],
-  );
+  useEffect(() => {
+    setRows(buildLeaderboardRows())
+  }, [])
 
-  const sorted = useMemo(() => {
-    const rows = [...leaderboard];
-    if (sortKey === "average") {
-      rows.sort(
-        (a, b) =>
-          b.averageHelpfulnessScore - a.averageHelpfulnessScore ||
-          a.contributorId.localeCompare(b.contributorId),
-      );
-    } else if (sortKey === "count") {
-      rows.sort(
-        (a, b) =>
-          b.contributionCount - a.contributionCount ||
-          a.contributorId.localeCompare(b.contributorId),
-      );
-    }
-    return rows;
-  }, [leaderboard, sortKey]);
+  if (rows === null) {
+    return <div className="p-6 text-sm text-muted-foreground">Loading leaderboard…</div>
+  }
 
-  const topScore = sorted.length > 0 ? Math.max(...sorted.map((r) => r.totalHelpfulnessScore)) : 0;
-  const outlierCount = leaderboard.reduce((sum, row) => sum + row.popularityOnlyOutlierCount, 0);
+  if (rows.length === 0) {
+    return (
+      <div className="p-6 text-center text-sm text-muted-foreground">
+        No contributions yet. The leaderboard fills in as contributors submit cards, summaries, and
+        analytics.
+      </div>
+    )
+  }
 
   return (
-    <PanelShell
-      title="Contribution Leaderboard"
-      description="Contributors ranked by helpfulness-weighted contributions."
-      icon={<Trophy className="h-4 w-4" />}
-      className={className}
-      data-testid="contribution-leaderboard-panel"
-      actions={
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() =>
-            setSortKey((key) => (key === "total" ? "average" : key === "average" ? "count" : "total"))
-          }
-        >
-          Sort: {SORT_LABEL[sortKey]}
-        </Button>
-      }
-    >
-      <StatGrid columns={3}>
-        <StatTile label="Contributors" value={leaderboard.length} />
-        <StatTile label="Contributions" value={source.length} />
-        <StatTile
-          label="Popularity-only flags"
-          value={outlierCount}
-          tone={outlierCount > 0 ? "warning" : "neutral"}
-          hint="Liked a lot, rated little"
-        />
-      </StatGrid>
-
-      <PanelSection title="Standings">
-        {sorted.length === 0 ? (
-          <EmptyState
-            title="No contributions yet"
-            message="Contributions recorded by the squad show up here automatically."
-          />
-        ) : (
-          <div className="flex flex-col gap-2">
-            {sorted.map((row, index) => (
-              <LeaderboardRow
-                key={row.contributorId}
-                rank={index + 1}
-                stats={row}
-                topScore={topScore}
-                highlighted={row.contributorId === highlightContributorId}
-                onSelect={onSelectContributor}
-              />
-            ))}
-          </div>
-        )}
-      </PanelSection>
-    </PanelShell>
-  );
-}
-
-function LeaderboardRow({
-  rank,
-  stats,
-  topScore,
-  highlighted,
-  onSelect,
-}: {
-  rank: number;
-  stats: ContributorStats;
-  topScore: number;
-  highlighted: boolean;
-  onSelect?: (contributorId: string) => void;
-}) {
-  return (
-    <PanelRow
-      className={highlighted ? "border-primary" : undefined}
-      leading={`#${rank}`}
-      title={
-        onSelect ? (
-          <button type="button" className="text-left" onClick={() => onSelect(stats.contributorId)}>
-            {stats.contributorId}
-          </button>
-        ) : (
-          stats.contributorId
-        )
-      }
-      subtitle={`${stats.contributionCount} contribution${stats.contributionCount === 1 ? "" : "s"} · best ${stats.bestHelpfulnessScore.toFixed(2)}`}
-      trailing={
-        <>
-          {stats.popularityOnlyOutlierCount > 0 ? (
-            <Pill tone="warning">{stats.popularityOnlyOutlierCount} flagged</Pill>
-          ) : null}
-          <span className="font-semibold">{stats.totalHelpfulnessScore.toFixed(2)}</span>
-        </>
-      }
-    >
-      <MeterBar
-        value={stats.totalHelpfulnessScore}
-        max={topScore}
-        tone={rank === 1 ? "positive" : "info"}
-        caption={`avg ${stats.averageHelpfulnessScore.toFixed(2)}`}
-      />
-    </PanelRow>
-  );
+    <div className="p-4 sm:p-6">
+      <h1 className="mb-1 text-xl font-semibold text-foreground">Contribution Leaderboard</h1>
+      <p className="mb-4 text-sm text-muted-foreground">
+        Ranked by total helpfulness score — a blend of popularity, quality, and reviewer signals.
+      </p>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Rank</TableHead>
+            <TableHead>Contributor</TableHead>
+            <TableHead>Tier</TableHead>
+            <TableHead className="text-right">Contributions</TableHead>
+            <TableHead className="text-right">Total score</TableHead>
+            <TableHead className="text-right">Avg score</TableHead>
+            <TableHead className="text-right">Completed tasks</TableHead>
+            <TableHead className="text-right">Streak</TableHead>
+            <TableHead>Badges</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rows.map((row, index) => (
+            <TableRow key={row.contributorId}>
+              <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
+              <TableCell className="font-medium">{row.contributorId}</TableCell>
+              <TableCell>
+                <Badge variant={TIER_VARIANT[row.tier] ?? "outline"} className="capitalize">
+                  {row.tier}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-right">{row.contributionCount}</TableCell>
+              <TableCell className="text-right">{row.totalHelpfulnessScore}</TableCell>
+              <TableCell className="text-right">{row.averageHelpfulnessScore}</TableCell>
+              <TableCell className="text-right">{row.completedTaskCount}</TableCell>
+              <TableCell className="text-right">{row.currentStreak > 0 ? `🔥 ${row.currentStreak}` : "—"}</TableCell>
+              <TableCell>
+                {row.badges.length > 0 ? (
+                  <div className="flex flex-wrap gap-1">
+                    {row.badges.map((badge) => (
+                      <Badge key={badge} variant="outline" className="whitespace-nowrap">
+                        {badge}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  )
 }

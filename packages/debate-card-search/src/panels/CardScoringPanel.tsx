@@ -1,186 +1,271 @@
 /**
- * @fileoverview LLM card scoring — UI over `lib/llm-card-scoring.ts`.
+ * @fileoverview LLM Card Scoring panel — closes follow-up (c) named under
+ * the "🧠 LLM Card Scoring" bullet in TODO.md ("a scoring/duplicate-flag
+ * panel UI").
  *
- * Ranks cards by the deterministic heuristic score and breaks each one into
- * its relevance / clarity / uniqueness / evidence-quality / usability parts,
- * flagging likely duplicates.
+ * Lets a contributor submit a card's text, argument-block keywords, and a
+ * quality signal, then renders every persisted card via
+ * `state/cardScores.ts`'s `buildPersistedCardScoreRanking` — itself a thin
+ * composition of `lib/llm-card-scoring.ts`'s pure `rankCardScores` against
+ * the persisted store — ranked by overall score, with each dimension score
+ * and a likely-duplicate flag. The heuristic scorer itself is unchanged.
+ *
+ * Each ranked row also offers a "Get AI assessment" action that closes
+ * follow-up (a) ("an actual LLM-scoring call for the more subjective
+ * dimensions") — it POSTs the card's text and keywords to the existing
+ * `/api/reason-ai` Anthropic proxy via `lib/llm-card-scoring-client.ts`,
+ * persists the resulting verdict/notes via `state/aiCardAssessments.ts`,
+ * and renders it inline alongside the heuristic breakdown. A malformed or
+ * failed AI response shows a per-card error instead of crashing the panel.
+ * Keywords/corpus are still caller-submitted rather than wired into a real
+ * card-submission flow (follow-up (b), separate and still open).
+ *
+ * @module panels/CardScoringPanel
  */
 
-"use client";
+"use client"
 
-import { useMemo, useState } from "react";
-import { Gauge } from "lucide-react";
+import { useEffect, useState } from "react"
+import { Badge } from "debate-ui/src/primitives/badge"
+import { Button } from "debate-ui/src/primitives/button"
+import { Input } from "debate-ui/src/primitives/input"
+import { Label } from "debate-ui/src/primitives/label"
+import { Textarea } from "debate-ui/src/primitives/textarea"
+import { buildPersistedCardScoreRanking, getScoredCard, saveScoredCard } from "../state/cardScores"
+import { getAiAssessment, saveAiAssessment } from "../state/aiCardAssessments"
+import { requestCardScoringAiAssessment } from "../lib/llm-card-scoring-client"
+import type { CardScoreBreakdown } from "../lib/llm-card-scoring"
+import type { CardScoringAiAssessment } from "../lib/llm-card-scoring-ai"
 
-import {
-  EmptyState,
-  MeterBar,
-  PanelRow,
-  PanelSection,
-  PanelShell,
-  Pill,
-  StatGrid,
-  StatTile,
-  SummaryText,
-} from "debate-ui/src/panels/panel-shell";
-import { Button } from "debate-ui/src/primitives/button";
+type CardDraft = { id: string; text: string; argBlockKeywords: string; quality: string }
 
-import {
-  DEFAULT_CARD_SCORE_WEIGHTS,
-  buildCardScoreSummaryText,
-  rankCardScores,
-  type CardScoreBreakdown,
-  type CardScoreWeights,
-  type ScoredCard,
-} from "../lib/llm-card-scoring";
+const EMPTY_DRAFT: CardDraft = { id: "", text: "", argBlockKeywords: "", quality: "0.5" }
 
-/** Props for {@link CardScoringPanel}. */
-export interface CardScoringPanelProps {
-  /** Cards to score. */
-  cards: ScoredCard[];
-  /**
-   * Corpus the uniqueness score compares against. Defaults to the texts of
-   * the cards being scored.
-   */
-  corpusTexts?: string[];
-  /** Component weights. */
-  weights?: CardScoreWeights;
-  /** Optional label lookup so rows can show a title instead of the card id. */
-  titleFor?: (card: ScoredCard) => string;
-  /** Invoked when a card row is clicked. */
-  onSelectCard?: (card: ScoredCard) => void;
-  /** Extra classes for the panel. */
-  className?: string;
+const DIMENSIONS: { key: keyof CardScoreBreakdown; label: string }[] = [
+  { key: "relevanceScore", label: "Relevance" },
+  { key: "clarityScore", label: "Clarity" },
+  { key: "uniquenessScore", label: "Uniqueness" },
+  { key: "evidenceQualityScore", label: "Evidence quality" },
+  { key: "usabilityScore", label: "Usability" },
+]
+
+function parseKeywords(raw: string): string[] {
+  return raw
+    .split(",")
+    .map((keyword) => keyword.trim())
+    .filter(Boolean)
+}
+
+function parseQuality(raw: string): number {
+  const value = Number.parseFloat(raw)
+  if (Number.isNaN(value)) return 0
+  return Math.max(0, Math.min(1, value))
 }
 
 /**
- * Ranks cards by heuristic quality score.
+ * Renders the LLM Card Scoring panel: a form to submit a card, plus every
+ * persisted card ranked by overall score with its per-dimension breakdown
+ * and a likely-duplicate flag.
  *
- * @param props - See {@link CardScoringPanelProps}.
- * @returns The card scoring panel.
+ * Reads localStorage on mount only (client-side), so it renders a loading
+ * state during SSR/hydration rather than throwing.
  */
-export function CardScoringPanel({
-  cards,
-  corpusTexts,
-  weights = DEFAULT_CARD_SCORE_WEIGHTS,
-  titleFor,
-  onSelectCard,
-  className,
-}: CardScoringPanelProps) {
-  const [hideDuplicates, setHideDuplicates] = useState(false);
-  const [openCardId, setOpenCardId] = useState<string | null>(null);
+export function CardScoringPanel() {
+  const [ranking, setRanking] = useState<CardScoreBreakdown[] | null>(null)
+  const [draft, setDraft] = useState<CardDraft>(EMPTY_DRAFT)
+  const [error, setError] = useState<string | null>(null)
+  const [aiAssessments, setAiAssessments] = useState<Record<string, CardScoringAiAssessment>>({})
+  const [aiLoadingId, setAiLoadingId] = useState<string | null>(null)
+  const [aiErrors, setAiErrors] = useState<Record<string, string>>({})
 
-  const ranked = useMemo(
-    () => rankCardScores(cards, corpusTexts ?? cards.map((card) => card.text), weights),
-    [cards, corpusTexts, weights],
-  );
-  const byId = useMemo(() => new Map(cards.map((card) => [card.id, card])), [cards]);
-  const duplicates = ranked.filter((row) => row.isLikelyDuplicate).length;
-  const visible = hideDuplicates ? ranked.filter((row) => !row.isLikelyDuplicate) : ranked;
-  const averageScore =
-    ranked.length > 0
-      ? ranked.reduce((sum, row) => sum + row.overallScore, 0) / ranked.length
-      : 0;
+  useEffect(() => {
+    const persisted = buildPersistedCardScoreRanking()
+    setRanking(persisted)
+    const assessments: Record<string, CardScoringAiAssessment> = {}
+    for (const breakdown of persisted) {
+      const assessment = getAiAssessment(breakdown.cardId)
+      if (assessment) assessments[breakdown.cardId] = assessment
+    }
+    setAiAssessments(assessments)
+  }, [])
+
+  const refresh = () => setRanking(buildPersistedCardScoreRanking())
+
+  const handleGetAiAssessment = async (cardId: string) => {
+    const card = getScoredCard(cardId)
+    if (!card) return
+    setAiLoadingId(cardId)
+    setAiErrors((prev) => ({ ...prev, [cardId]: "" }))
+    try {
+      const assessment = await requestCardScoringAiAssessment({
+        text: card.text,
+        argBlockKeywords: card.argBlockKeywords,
+      })
+      saveAiAssessment(cardId, assessment)
+      setAiAssessments((prev) => ({ ...prev, [cardId]: assessment }))
+    } catch (e) {
+      setAiErrors((prev) => ({
+        ...prev,
+        [cardId]: e instanceof Error ? e.message : "AI assessment failed.",
+      }))
+    } finally {
+      setAiLoadingId(null)
+    }
+  }
+
+  const handleSubmit = () => {
+    const id = draft.id.trim()
+    const text = draft.text.trim()
+    if (!id) {
+      setError("Card ID is required.")
+      return
+    }
+    if (!text) {
+      setError("Card text is required.")
+      return
+    }
+    saveScoredCard({
+      id,
+      text,
+      argBlockKeywords: parseKeywords(draft.argBlockKeywords),
+      qualitySignals: [parseQuality(draft.quality)],
+    })
+    setError(null)
+    setDraft(EMPTY_DRAFT)
+    refresh()
+  }
+
+  if (ranking === null) {
+    return <div className="p-6 text-sm text-muted-foreground">Loading card scores…</div>
+  }
 
   return (
-    <PanelShell
-      title="Card Scoring"
-      description="Heuristic quality score per card, with duplicate detection."
-      icon={<Gauge className="h-4 w-4" />}
-      className={className}
-      data-testid="card-scoring-panel"
-      actions={
-        <Button variant="outline" size="sm" onClick={() => setHideDuplicates((v) => !v)}>
-          {hideDuplicates ? "Show duplicates" : "Hide duplicates"}
-        </Button>
-      }
-    >
-      <StatGrid columns={3}>
-        <StatTile label="Cards scored" value={ranked.length} />
-        <StatTile label="Average score" value={averageScore.toFixed(2)} tone="info" />
-        <StatTile
-          label="Likely duplicates"
-          value={duplicates}
-          tone={duplicates > 0 ? "warning" : "positive"}
-        />
-      </StatGrid>
-
-      <PanelSection title="Ranked cards">
-        {visible.length === 0 ? (
-          <EmptyState
-            title="No cards to score"
-            message={
-              hideDuplicates && ranked.length > 0
-                ? "Every scored card was flagged as a likely duplicate."
-                : "Pass cards to this panel to see their scores."
-            }
-          />
-        ) : (
-          <div className="flex flex-col gap-2">
-            {visible.map((row, index) => (
-              <ScoreRow
-                key={row.cardId}
-                rank={index + 1}
-                breakdown={row}
-                card={byId.get(row.cardId)}
-                open={openCardId === row.cardId}
-                titleFor={titleFor}
-                onToggle={() => setOpenCardId(openCardId === row.cardId ? null : row.cardId)}
-                onSelect={onSelectCard}
-              />
-            ))}
-          </div>
-        )}
-      </PanelSection>
-    </PanelShell>
-  );
-}
-
-function ScoreRow({
-  rank,
-  breakdown,
-  card,
-  open,
-  titleFor,
-  onToggle,
-  onSelect,
-}: {
-  rank: number;
-  breakdown: CardScoreBreakdown;
-  card?: ScoredCard;
-  open: boolean;
-  titleFor?: (card: ScoredCard) => string;
-  onToggle: () => void;
-  onSelect?: (card: ScoredCard) => void;
-}) {
-  return (
-    <PanelRow
-      leading={`#${rank}`}
-      title={
-        <button type="button" className="text-left" aria-expanded={open} onClick={onToggle}>
-          {card && titleFor ? titleFor(card) : breakdown.cardId}
-        </button>
-      }
-      subtitle={card ? `${card.argBlockKeywords.join(", ") || "no keywords"}` : undefined}
-      trailing={
-        <>
-          {breakdown.isLikelyDuplicate ? <Pill tone="warning">duplicate?</Pill> : null}
-          <span className="font-semibold">{breakdown.overallScore.toFixed(2)}</span>
-          {card && onSelect ? (
-            <Button variant="ghost" size="sm" onClick={() => onSelect(card)}>
-              Open
-            </Button>
-          ) : null}
-        </>
-      }
-    >
-      <div className="grid grid-cols-1 gap-1 sm:grid-cols-5">
-        <MeterBar value={breakdown.relevanceScore} max={1} tone="info" label="Relevance" />
-        <MeterBar value={breakdown.clarityScore} max={1} tone="info" label="Clarity" />
-        <MeterBar value={breakdown.uniquenessScore} max={1} tone="warning" label="Unique" />
-        <MeterBar value={breakdown.evidenceQualityScore} max={1} tone="positive" label="Evidence" />
-        <MeterBar value={breakdown.usabilityScore} max={1} tone="positive" label="Usability" />
+    <div className="p-4 sm:p-6 space-y-6">
+      <div>
+        <h1 className="mb-1 text-xl font-semibold text-foreground">LLM Card Scoring</h1>
+        <p className="text-sm text-muted-foreground">
+          Submit a card to score it for relevance, clarity, uniqueness, evidence quality, and
+          usability — ranked by overall score, with likely duplicates flagged.
+        </p>
       </div>
-      {open ? <SummaryText text={buildCardScoreSummaryText(breakdown)} /> : null}
-    </PanelRow>
-  );
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="card-score-id">Card ID</Label>
+            <Input
+              id="card-score-id"
+              value={draft.id}
+              onChange={(e) => setDraft((prev) => ({ ...prev, id: e.target.value }))}
+              placeholder="warming-da-1"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="card-score-keywords">Argument-block keywords (comma-separated)</Label>
+            <Input
+              id="card-score-keywords"
+              value={draft.argBlockKeywords}
+              onChange={(e) => setDraft((prev) => ({ ...prev, argBlockKeywords: e.target.value }))}
+              placeholder="warming, emissions"
+            />
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="card-score-text">Card text</Label>
+          <Textarea
+            id="card-score-text"
+            value={draft.text}
+            onChange={(e) => setDraft((prev) => ({ ...prev, text: e.target.value }))}
+            placeholder="Paste the card's summary and underlined/highlighted evidence…"
+            rows={4}
+          />
+        </div>
+        <div className="space-y-1.5 sm:max-w-xs">
+          <Label htmlFor="card-score-quality">Quality signal (0-1)</Label>
+          <Input
+            id="card-score-quality"
+            type="number"
+            min={0}
+            max={1}
+            step={0.1}
+            value={draft.quality}
+            onChange={(e) => setDraft((prev) => ({ ...prev, quality: e.target.value }))}
+          />
+        </div>
+        {error && <p className="text-sm text-destructive">{error}</p>}
+        <Button onClick={handleSubmit}>Score card</Button>
+      </div>
+
+      {ranking.length === 0 ? (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No cards scored yet. Submit one above to start the ranking.
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {ranking.map((breakdown) => {
+            const aiAssessment = aiAssessments[breakdown.cardId]
+            const aiError = aiErrors[breakdown.cardId]
+            const isLoadingAi = aiLoadingId === breakdown.cardId
+            return (
+              <div key={breakdown.cardId} className="rounded-lg border border-border p-3 space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-medium text-foreground">{breakdown.cardId}</span>
+                  <span className="text-xs text-muted-foreground">
+                    overall {breakdown.overallScore}/100
+                  </span>
+                  {breakdown.isLikelyDuplicate && <Badge variant="destructive">Likely duplicate</Badge>}
+                </div>
+                <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                  {DIMENSIONS.map((dimension) => (
+                    <span key={dimension.key}>
+                      {dimension.label}: {breakdown[dimension.key]}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="border-t border-border pt-2 space-y-1.5">
+                  {aiAssessment ? (
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                        <Badge variant="secondary">AI assessment</Badge>
+                        <span className="text-muted-foreground">
+                          overall {aiAssessment.overallScore}/100
+                        </span>
+                      </div>
+                      <p className="text-sm text-foreground">{aiAssessment.verdict}</p>
+                      <div className="grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
+                        <span>Relevance: {aiAssessment.notes.relevance}</span>
+                        <span>Clarity: {aiAssessment.notes.clarity}</span>
+                        <span>Uniqueness: {aiAssessment.notes.uniqueness}</span>
+                        <span>Evidence quality: {aiAssessment.notes.evidenceQuality}</span>
+                        <span>Usability: {aiAssessment.notes.usability}</span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={isLoadingAi}
+                        onClick={() => handleGetAiAssessment(breakdown.cardId)}
+                      >
+                        {isLoadingAi ? "Re-scoring…" : "Refresh AI assessment"}
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={isLoadingAi}
+                      onClick={() => handleGetAiAssessment(breakdown.cardId)}
+                    >
+                      {isLoadingAi ? "Scoring…" : "Get AI assessment"}
+                    </Button>
+                  )}
+                  {aiError && <p className="text-sm text-destructive">{aiError}</p>}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
 }

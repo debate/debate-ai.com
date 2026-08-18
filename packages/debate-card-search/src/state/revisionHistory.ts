@@ -18,7 +18,8 @@
  * @module state/revisionHistory
  */
 
-import type { CardRevision } from "../lib/revision-incentives";
+import type { CardRevision, ContributorRevisionStats, RevisionRewardWeights } from "../lib/revision-incentives";
+import { buildRevisionIncentiveLeaderboard, DEFAULT_REVISION_REWARD_WEIGHTS } from "../lib/revision-incentives";
 
 /** A `CardRevision` as persisted: a unique id plus when it was recorded. */
 export interface CardRevisionRecord extends CardRevision {
@@ -90,4 +91,19 @@ export function saveRevisionRecord(record: CardRevisionRecord): void {
 /** Deletes a persisted revision record by id; a no-op if it isn't stored. */
 export function deleteRevisionRecord(id: string): void {
   writeAll(readAll().filter((record) => record.id !== id));
+}
+
+/**
+ * Builds the Revision Incentives leaderboard directly from every persisted
+ * revision record, composing this store with `revision-incentives.ts`'s pure
+ * `buildRevisionIncentiveLeaderboard` rather than requiring a caller to hold
+ * and pass in the full revision list themselves — mirroring the existing
+ * `contributions.ts` `buildPersistedLeaderboard` "compose the pure function
+ * directly against the persisted store" convention. An empty store returns
+ * an empty leaderboard rather than throwing.
+ */
+export function buildPersistedRevisionIncentiveLeaderboard(
+  weights: RevisionRewardWeights = DEFAULT_REVISION_REWARD_WEIGHTS,
+): ContributorRevisionStats[] {
+  return buildRevisionIncentiveLeaderboard(readAll(), weights);
 }

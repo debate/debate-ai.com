@@ -76,6 +76,11 @@ describe("buildContributorStats", () => {
   it("throws for a contributor with no contributions", () => {
     expect(() => buildContributorStats("nobody", [])).toThrow();
   });
+
+  it("defaults completedTaskCount to 0 and accepts a supplied value", () => {
+    expect(buildContributorStats("alice", [strongCard]).completedTaskCount).toBe(0);
+    expect(buildContributorStats("alice", [strongCard], undefined, 4).completedTaskCount).toBe(4);
+  });
 });
 
 describe("buildLeaderboard", () => {
@@ -102,5 +107,38 @@ describe("buildLeaderboard", () => {
       reviewer: 0,
     });
     expect(popularityOnly[0].totalHelpfulnessScore).toBe(100);
+  });
+
+  it("defaults completedTaskCount to 0 when no completed-task counts are supplied", () => {
+    const leaderboard = buildLeaderboard([strongCard]);
+    expect(leaderboard[0].completedTaskCount).toBe(0);
+  });
+
+  it("folds a supplied completedTaskCounts map into a contributor's row", () => {
+    const leaderboard = buildLeaderboard([strongCard, viralHighlight], undefined, new Map([["alice", 3]]));
+    const alice = leaderboard.find((s) => s.contributorId === "alice");
+    const bob = leaderboard.find((s) => s.contributorId === "bob");
+    expect(alice?.completedTaskCount).toBe(3);
+    expect(bob?.completedTaskCount).toBe(0);
+  });
+
+  it("includes a task-only contributor who has completed tasks but no scored contribution", () => {
+    const leaderboard = buildLeaderboard([strongCard], undefined, new Map([["dave", 5]]));
+    const dave = leaderboard.find((s) => s.contributorId === "dave");
+    expect(dave).toEqual({
+      contributorId: "dave",
+      contributionCount: 0,
+      totalHelpfulnessScore: 0,
+      averageHelpfulnessScore: 0,
+      bestContributionId: "",
+      bestHelpfulnessScore: 0,
+      popularityOnlyOutlierCount: 0,
+      completedTaskCount: 5,
+    });
+  });
+
+  it("omits a contributor from completedTaskCounts with a zero count and no contributions", () => {
+    const leaderboard = buildLeaderboard([strongCard], undefined, new Map([["ghost", 0]]));
+    expect(leaderboard.some((s) => s.contributorId === "ghost")).toBe(false);
   });
 });

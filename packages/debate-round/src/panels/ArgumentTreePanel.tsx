@@ -1,267 +1,247 @@
 /**
- * @fileoverview Outline filters and argument tree view — UI over
- * `flow/argument-tree.ts` with the filter selection persisted per round in
- * `state/argumentTreeFilters.ts`.
+ * @fileoverview Outline Filters and Argument Tree View panel — the "(a) a
+ * React tree/outline panel in `debate-round` that renders the filtered tree
+ * next to (or instead of) `FlowSpreadsheet` and reads/writes through the
+ * persistence store" follow-up named under idea #10 ("Outline Filters and
+ * Argument Tree View") in TODO.md.
+ *
+ * Reads every persisted argument tree via `state/argumentTrees.ts`'s
+ * `buildArgumentTreesPanelView`, applies each round's persisted
+ * `ArgumentTreeFilter` (from `state/argumentTreeFilters.ts`) with the
+ * existing `filterArgumentTree`/`flattenArgumentTree` helpers, and renders
+ * the filtered outline with speech/side/kind/unanswered-only controls that
+ * save the chosen filter back through `saveArgumentTreeFilterSelection`. No
+ * new tree-derivation or filtering logic is introduced here.
+ *
+ * @module panels/ArgumentTreePanel
  */
 
-"use client";
+"use client"
 
-import { useEffect, useMemo, useState } from "react";
-import { Network } from "lucide-react";
-
+import { useEffect, useState } from "react"
+import { Badge } from "debate-ui/src/primitives/badge"
+import { Button } from "debate-ui/src/primitives/button"
+import { Label } from "debate-ui/src/primitives/label"
+import { Switch } from "debate-ui/src/primitives/switch"
 import {
-  EmptyState,
-  PanelSection,
-  PanelShell,
-  Pill,
-  StatGrid,
-  StatTile,
-} from "debate-ui/src/panels/panel-shell";
-import { Button } from "debate-ui/src/primitives/button";
-import type { Flow } from "debate-core/src/types/flow";
-
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "debate-ui/src/primitives/select"
+import { filterArgumentTree, flattenArgumentTree, type ArgumentTreeFilter } from "../flow/argument-tree"
+import { buildArgumentTreesPanelView, deleteArgumentTree, type ArgumentTreeRecord } from "../state/argumentTrees"
 import {
-  buildArgumentTree,
-  filterArgumentTree,
-  flattenArgumentTree,
-  getFlowSideKeys,
-  type ArgumentTreeFilter,
-  type ArgumentTreeNode,
-} from "../flow/argument-tree";
-import {
-  deleteArgumentTreeFilterSelection,
   getArgumentTreeFilterSelection,
   saveArgumentTreeFilterSelection,
-} from "../state/argumentTreeFilters";
+} from "../state/argumentTreeFilters"
 
-/** Props for {@link ArgumentTreePanel}. */
-export interface ArgumentTreePanelProps {
-  /** The flow the tree is built from. */
-  flow: Pick<Flow, "children" | "columns">;
-  /**
-   * Round id the filter selection is stored under. Omit to keep the filter
-   * in component state only.
-   */
-  roundId?: string;
-  /** Invoked when an argument row is clicked. */
-  onSelectNode?: (node: ArgumentTreeNode) => void;
-  /** Extra classes for the panel. */
-  className?: string;
+const ANY_VALUE = "__any__"
+
+/** Every distinct `originSpeech`/`lastSpeech` present in a tree's argument rows, in first-seen order. */
+function collectSpeeches(record: ArgumentTreeRecord): string[] {
+  const speeches: string[] = []
+  for (const node of flattenArgumentTree(record.tree)) {
+    if (node.isHeading) continue
+    for (const speech of [node.originSpeech, node.lastSpeech]) {
+      if (speech && !speeches.includes(speech)) speeches.push(speech)
+    }
+  }
+  return speeches
+}
+
+/** Every distinct `sideKey` present in a tree's argument rows, in first-seen order. */
+function collectSideKeys(record: ArgumentTreeRecord): string[] {
+  const keys: string[] = []
+  for (const node of flattenArgumentTree(record.tree)) {
+    if (node.sideKey && !keys.includes(node.sideKey)) keys.push(node.sideKey)
+  }
+  return keys
 }
 
 /**
- * Heading-grouped argument tree with speech/side/unanswered filters.
+ * Renders the Outline Filters and Argument Tree View panel: every persisted
+ * `ArgumentTreeRecord`, one card per round, with speech/side/kind/
+ * unanswered-only filter controls (persisted per round) and a "Clear"
+ * action.
  *
- * @param props - See {@link ArgumentTreePanelProps}.
- * @returns The argument tree panel.
+ * Reads localStorage on mount only (client-side), so it renders a loading
+ * state during SSR/hydration rather than throwing.
  */
-export function ArgumentTreePanel({
-  flow,
-  roundId,
-  onSelectNode,
-  className,
-}: ArgumentTreePanelProps) {
-  const [filter, setFilter] = useState<ArgumentTreeFilter>({});
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+export function ArgumentTreePanel() {
+  const [records, setRecords] = useState<ArgumentTreeRecord[] | null>(null)
+  const [filters, setFilters] = useState<Record<string, ArgumentTreeFilter>>({})
 
-  // Restore the round's saved filter after mount so SSR markup stays stable.
   useEffect(() => {
-    if (!roundId) return;
-    const saved = getArgumentTreeFilterSelection(roundId);
-    if (saved) setFilter(saved.filter);
-  }, [roundId]);
+    const view = buildArgumentTreesPanelView()
+    setRecords(view)
+    setFilters(
+      Object.fromEntries(
+        view.map((record) => [record.roundId, getArgumentTreeFilterSelection(record.roundId)?.filter ?? {}]),
+      ),
+    )
+  }, [])
 
-  const updateFilter = (next: ArgumentTreeFilter) => {
-    setFilter(next);
-    if (!roundId) return;
-    if (Object.keys(next).length === 0) deleteArgumentTreeFilterSelection(roundId);
-    else saveArgumentTreeFilterSelection({ roundId, filter: next });
-  };
+  const refresh = () => setRecords(buildArgumentTreesPanelView())
 
-  const tree = useMemo(() => buildArgumentTree(flow), [flow]);
-  const filtered = useMemo(() => filterArgumentTree(tree, filter), [tree, filter]);
-  const flat = useMemo(() => flattenArgumentTree(filtered), [filtered]);
-  const sideKeys = useMemo(() => getFlowSideKeys(flow), [flow]);
+  const updateFilter = (roundId: string, update: Partial<ArgumentTreeFilter>) => {
+    const filter: ArgumentTreeFilter = { ...filters[roundId], ...update }
+    setFilters((prev) => ({ ...prev, [roundId]: filter }))
+    saveArgumentTreeFilterSelection({ roundId, filter })
+  }
 
-  const unanswered = flat.filter((node) => node.isUnanswered && !node.isHeading).length;
+  const handleClear = (roundId: string) => {
+    deleteArgumentTree(roundId)
+    refresh()
+  }
 
-  const toggleCollapse = (id: string) =>
-    setCollapsed((current) => {
-      const next = new Set(current);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+  if (records === null) {
+    return <div className="p-6 text-sm text-muted-foreground">Loading argument outlines…</div>
+  }
 
-  return (
-    <PanelShell
-      title="Argument Tree"
-      description="The flow grouped under its headings, with outline filters."
-      icon={<Network className="h-4 w-4" />}
-      className={className}
-      data-testid="argument-tree-panel"
-      actions={
-        Object.keys(filter).length > 0 ? (
-          <Button variant="ghost" size="sm" onClick={() => updateFilter({})}>
-            Clear filters
-          </Button>
-        ) : null
-      }
-    >
-      <StatGrid columns={3}>
-        <StatTile label="Rows" value={flat.length} />
-        <StatTile label="Headings" value={flat.filter((node) => node.isHeading).length} />
-        <StatTile
-          label="Unanswered"
-          value={unanswered}
-          tone={unanswered > 0 ? "warning" : "positive"}
-        />
-      </StatGrid>
-
-      <PanelSection title="Filters">
-        <div className="flex flex-wrap gap-1.5">
-          {flow.columns.map((speech) => (
-            <button
-              key={speech}
-              type="button"
-              onClick={() =>
-                updateFilter({
-                  ...filter,
-                  speech: filter.speech === speech ? undefined : speech,
-                })
-              }
-            >
-              <Pill tone={filter.speech === speech ? "info" : "neutral"}>{speech}</Pill>
-            </button>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {sideKeys.map((sideKey) => (
-            <button
-              key={sideKey}
-              type="button"
-              onClick={() =>
-                updateFilter({
-                  ...filter,
-                  sideKey: filter.sideKey === sideKey ? undefined : sideKey,
-                })
-              }
-            >
-              <Pill tone={filter.sideKey === sideKey ? "positive" : "neutral"}>{sideKey}</Pill>
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={() =>
-              updateFilter({
-                ...filter,
-                onlyUnanswered: filter.onlyUnanswered ? undefined : true,
-              })
-            }
-          >
-            <Pill tone={filter.onlyUnanswered ? "warning" : "neutral"}>only unanswered</Pill>
-          </button>
-          {(["heading", "argument"] as const).map((kind) => (
-            <button
-              key={kind}
-              type="button"
-              onClick={() =>
-                updateFilter({ ...filter, kind: filter.kind === kind ? undefined : kind })
-              }
-            >
-              <Pill tone={filter.kind === kind ? "info" : "neutral"}>{kind}</Pill>
-            </button>
-          ))}
-        </div>
-      </PanelSection>
-
-      <PanelSection title="Tree">
-        {filtered.length === 0 ? (
-          <EmptyState
-            title="Nothing matches"
-            message="Clear a filter, or flow an argument to populate the tree."
-          />
-        ) : (
-          <ul className="flex flex-col gap-1">
-            {filtered.map((node) => (
-              <TreeNodeRow
-                key={node.id}
-                node={node}
-                depth={0}
-                collapsed={collapsed}
-                onToggleCollapse={toggleCollapse}
-                onSelect={onSelectNode}
-              />
-            ))}
-          </ul>
-        )}
-      </PanelSection>
-    </PanelShell>
-  );
-}
-
-function TreeNodeRow({
-  node,
-  depth,
-  collapsed,
-  onToggleCollapse,
-  onSelect,
-}: {
-  node: ArgumentTreeNode;
-  depth: number;
-  collapsed: Set<string>;
-  onToggleCollapse: (id: string) => void;
-  onSelect?: (node: ArgumentTreeNode) => void;
-}) {
-  const isCollapsed = collapsed.has(node.id);
-  const hasChildren = node.children.length > 0;
-  return (
-    <li>
-      <div
-        className="hover:bg-muted/60 flex items-center justify-between gap-2 rounded px-2 py-1 text-xs"
-        style={{ paddingLeft: `${depth * 12 + 8}px` }}
-      >
-        <span className="flex min-w-0 items-center gap-1">
-          {hasChildren ? (
-            <button
-              type="button"
-              aria-expanded={!isCollapsed}
-              aria-label={`${isCollapsed ? "Expand" : "Collapse"} ${node.content}`}
-              onClick={() => onToggleCollapse(node.id)}
-            >
-              {isCollapsed ? "▸" : "▾"}
-            </button>
-          ) : (
-            <span className="w-3" />
-          )}
-          <button
-            type="button"
-            className={`truncate text-left ${node.isHeading ? "font-semibold" : ""}`}
-            onClick={() => onSelect?.(node)}
-          >
-            {node.content || "(empty)"}
-          </button>
-        </span>
-        <span className="flex flex-shrink-0 items-center gap-1">
-          {node.sideKey ? <Pill>{node.sideKey}</Pill> : null}
-          {node.isUnanswered && !node.isHeading ? <Pill tone="warning">unanswered</Pill> : null}
-          <span className="text-muted-foreground">{node.lastSpeech}</span>
-        </span>
+  if (records.length === 0) {
+    return (
+      <div className="p-6 text-center text-sm text-muted-foreground">
+        No argument outlines yet. An outline fills in once a round's flow is derived into a tree
+        and saved.
       </div>
-      {hasChildren && !isCollapsed ? (
-        <ul className="flex flex-col gap-1">
-          {node.children.map((child) => (
-            <TreeNodeRow
-              key={child.id}
-              node={child}
-              depth={depth + 1}
-              collapsed={collapsed}
-              onToggleCollapse={onToggleCollapse}
-              onSelect={onSelect}
-            />
-          ))}
-        </ul>
-      ) : null}
-    </li>
-  );
+    )
+  }
+
+  return (
+    <div className="p-4 sm:p-6 space-y-6">
+      <div>
+        <h1 className="mb-1 text-xl font-semibold text-foreground">Outline Filters and Argument Tree</h1>
+        <p className="text-sm text-muted-foreground">
+          A filterable outline of each round's flow, grouped under its headings — filter by speech,
+          side, unanswered status, or heading-vs-argument kind.
+        </p>
+      </div>
+      {records.map((record) => {
+        const filter = filters[record.roundId] ?? {}
+        const speeches = collectSpeeches(record)
+        const sideKeys = collectSideKeys(record)
+        const filtered = flattenArgumentTree(filterArgumentTree(record.tree, filter))
+
+        return (
+          <div key={record.roundId} className="rounded-lg border border-border p-4 space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-sm font-semibold text-foreground">Round {record.roundId}</h2>
+              <Button size="sm" variant="ghost" onClick={() => handleClear(record.roundId)}>
+                Clear
+              </Button>
+            </div>
+
+            <div className="flex flex-wrap items-end gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor={`kind-${record.roundId}`}>Kind</Label>
+                <Select
+                  value={filter.kind ?? ANY_VALUE}
+                  onValueChange={(value) =>
+                    updateFilter(record.roundId, { kind: value === ANY_VALUE ? undefined : (value as "heading" | "argument") })
+                  }
+                >
+                  <SelectTrigger id={`kind-${record.roundId}`} className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ANY_VALUE}>All</SelectItem>
+                    <SelectItem value="heading">Headings only</SelectItem>
+                    <SelectItem value="argument">Arguments only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor={`side-${record.roundId}`}>Side</Label>
+                <Select
+                  value={filter.sideKey ?? ANY_VALUE}
+                  onValueChange={(value) =>
+                    updateFilter(record.roundId, { sideKey: value === ANY_VALUE ? undefined : value })
+                  }
+                >
+                  <SelectTrigger id={`side-${record.roundId}`} className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ANY_VALUE}>Any side</SelectItem>
+                    {sideKeys.map((key) => (
+                      <SelectItem key={key} value={key}>
+                        {key}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor={`speech-${record.roundId}`}>Speech</Label>
+                <Select
+                  value={filter.speech ?? ANY_VALUE}
+                  onValueChange={(value) =>
+                    updateFilter(record.roundId, { speech: value === ANY_VALUE ? undefined : value })
+                  }
+                >
+                  <SelectTrigger id={`speech-${record.roundId}`} className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ANY_VALUE}>Any speech</SelectItem>
+                    {speeches.map((speech) => (
+                      <SelectItem key={speech} value={speech}>
+                        {speech}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <label className="flex items-center gap-2 pb-1.5 text-sm text-foreground">
+                <Switch
+                  checked={filter.onlyUnanswered ?? false}
+                  onCheckedChange={(checked) =>
+                    updateFilter(record.roundId, { onlyUnanswered: checked === true })
+                  }
+                />
+                Unanswered only
+              </label>
+            </div>
+
+            {filtered.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No rows match the current filter.</p>
+            ) : (
+              <div className="space-y-1">
+                {filtered.map((node) => (
+                  <div
+                    key={node.id}
+                    className="flex items-start gap-2 rounded-md border border-border px-3 py-1.5 text-sm"
+                    style={{ marginLeft: node.isHeading ? 0 : 16 }}
+                  >
+                    {node.isHeading ? (
+                      <Badge variant="secondary" className="whitespace-nowrap">
+                        Heading
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="whitespace-nowrap">
+                        {node.originSpeech}
+                      </Badge>
+                    )}
+                    <span className={node.isHeading ? "font-semibold text-foreground" : "text-foreground"}>
+                      {node.content}
+                    </span>
+                    {node.isUnanswered && (
+                      <Badge variant="destructive" className="ml-auto whitespace-nowrap">
+                        Unanswered
+                      </Badge>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
 }

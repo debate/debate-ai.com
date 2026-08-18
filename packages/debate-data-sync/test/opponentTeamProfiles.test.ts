@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildOpponentTeamProfilesRoster,
   deleteOpponentTeamProfile,
   getOpponentTeamProfile,
   listOpponentTeamProfiles,
@@ -97,5 +98,35 @@ describe("deleteOpponentTeamProfile", () => {
     saveOpponentTeamProfile(ABCD);
     deleteOpponentTeamProfile("missing");
     expect(listOpponentTeamProfiles()).toEqual([ABCD]);
+  });
+});
+
+describe("buildOpponentTeamProfilesRoster", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildOpponentTeamProfilesRoster()).toEqual([]);
+  });
+
+  it("orders profiles by rounds recorded descending", () => {
+    const MNOP: OpponentTeamProfile = buildOpponentTeamProfile("mnop", [
+      { teamId: "mnop", tournamentName: "Berkeley", date: "2026-01-01", division: "PF", side: "aff", won: true },
+      { teamId: "mnop", tournamentName: "Berkeley", date: "2026-01-02", division: "PF", side: "neg", won: false },
+    ]);
+
+    saveOpponentTeamProfile(WXYZ);
+    saveOpponentTeamProfile(MNOP);
+    saveOpponentTeamProfile(ABCD);
+
+    expect(buildOpponentTeamProfilesRoster().map((p) => p.teamId)).toEqual([
+      "mnop",
+      "abcd",
+      "wxyz",
+    ]);
+  });
+
+  it("ties break alphabetically by teamId when rounds recorded are equal", () => {
+    saveOpponentTeamProfile(WXYZ);
+    saveOpponentTeamProfile(ABCD);
+
+    expect(buildOpponentTeamProfilesRoster().map((p) => p.teamId)).toEqual(["abcd", "wxyz"]);
   });
 });

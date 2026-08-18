@@ -1,42 +1,48 @@
 "use client"
 
 /**
- * @fileoverview Coach hub — the app surface for the round/coach panels.
+ * @fileoverview Coach hub — one tabbed app surface over every round/coach
+ * panel `debate-round` and `debate-speech-writer` ship.
  *
- * The flow-derived panels read the flow currently selected in the round
- * workspace's store, so the argument tree, summary, coach prompts, drills and
- * vulnerability chart all describe the round the user is actually flowing.
- * The scouting, judge and standings panels read their own persisted stores.
+ * Each panel already reads (and writes) its own store, so this is purely
+ * navigation: it groups the panels that describe the same stage of a round —
+ * flowing it, coaching off it, prepping for the next one — and renders one
+ * group at a time. The individual routes still mount the same panels one at
+ * a time; this is the view for working across them.
+ *
+ * The one exception is {@link SharedFlowSyncPanel}, which previews a merge of
+ * concurrent partner edits rather than reading a store, so this hub hands it
+ * the flow currently selected in the round workspace.
  */
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import {
   AiVersusRoundPanel,
   ArgumentTreePanel,
-  CoachMaterialsPanel,
-  CoachModePanel,
-  DrillGeneratorPanel,
+  CoachingProgramsPanel,
+  CoachingSessionsPanel,
+  DrillSetsPanel,
   FlowAnnotationsPanel,
-  FlowSummaryPanel,
-  JudgeParadigmPanel,
-  JudgeProfilePanel,
-  NdcaStandingsPanel,
-  OpponentPersonaPanel,
-  OpponentScoutingPanel,
-  PracticeRoundPanel,
-  PreRoundBriefingPanel,
-  ResponseOutcomePanel,
-  ScoutToStrategyPanel,
+  FlowSummariesPanel,
+  JudgeDecisionPanel,
+  OpponentTeamProfilesPanel,
+  PracticeRoundSimulatorPanel,
+  PreRoundBriefingsPanel,
+  PrepNotesPanel,
   SharedFlowSyncPanel,
-  StrategySyncNotesPanel,
-  WordCountRoundPanel,
+  StandingsPanel,
+  StrategyPanel,
+  VulnerabilityChartsPanel,
+  WordCountRoundsPanel,
   useFlowStore,
 } from "debate-round"
-import type { CaseOption } from "debate-round/src/round/scout-to-strategy"
-import type { RoundEventInfo } from "debate-round/src/round/pre-round-briefing"
+import {
+  CoachMaterialsPanel,
+  JudgeParadigmPickerPanel,
+  JudgeProfilesPanel,
+  OpponentPersonaPickerPanel,
+} from "debate-speech-writer"
 import type { Flow } from "debate-core/src/types/flow"
-import { Input } from "debate-ui/src/primitives/input"
-import { LabeledField } from "debate-ui/src/panels/panel-shell"
 
 /** A flow to fall back on before the workspace has created one. */
 const EMPTY_FLOW: Flow = {
@@ -69,9 +75,6 @@ type Section = (typeof SECTIONS)[number]
  */
 export function CoachHub() {
   const [section, setSection] = useState<Section>("Flow")
-  const [tournamentName, setTournamentName] = useState("")
-  const [opponentTeamId, setOpponentTeamId] = useState("")
-  const [caseOptions, setCaseOptions] = useState<CaseOption[]>([])
   const [mounted, setMounted] = useState(false)
 
   const flows = useFlowStore((state) => state.flows)
@@ -82,34 +85,9 @@ export function CoachHub() {
   useEffect(() => setMounted(true), [])
 
   const flow = (mounted ? flows[selected] : undefined) ?? EMPTY_FLOW
-  const roundId = String(flow.roundId ?? flow.id)
-
-  const event = useMemo<RoundEventInfo>(
-    () => ({
-      tournamentName: tournamentName.trim() || "Practice",
-      division: "Open",
-      roundLabel: `Round ${flow.speechNumber ?? 1}`,
-      side: flow.invert ? "neg" : "aff",
-      ...(opponentTeamId.trim() ? { opponentLabel: opponentTeamId.trim() } : {}),
-    }),
-    [tournamentName, opponentTeamId, flow.invert, flow.speechNumber],
-  )
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <LabeledField label="Tournament">
-          <Input
-            value={tournamentName}
-            placeholder="Practice"
-            onChange={(e) => setTournamentName(e.target.value)}
-          />
-        </LabeledField>
-        <LabeledField label="Opponent team id">
-          <Input value={opponentTeamId} onChange={(e) => setOpponentTeamId(e.target.value)} />
-        </LabeledField>
-      </div>
-
       <nav className="flex flex-wrap gap-1" aria-label="Coach sections">
         {SECTIONS.map((name) => (
           <button
@@ -130,57 +108,50 @@ export function CoachHub() {
 
       {section === "Flow" ? (
         <div className="flex flex-col gap-4">
-          <ArgumentTreePanel flow={flow} roundId={roundId} />
-          <FlowSummaryPanel flow={flow} roundId={roundId} />
-          <ResponseOutcomePanel flow={flow} />
+          <ArgumentTreePanel />
+          <FlowSummariesPanel />
+          <VulnerabilityChartsPanel />
           <SharedFlowSyncPanel flow={flow} edits={[]} />
         </div>
       ) : null}
 
       {section === "Coaching" ? (
         <div className="flex flex-col gap-4">
-          <CoachModePanel flow={flow} roundId={roundId} />
-          <DrillGeneratorPanel flow={flow} roundId={roundId} />
+          <CoachingSessionsPanel />
+          <CoachingProgramsPanel />
+          <DrillSetsPanel />
           <CoachMaterialsPanel />
         </div>
       ) : null}
 
       {section === "Prep" ? (
         <div className="flex flex-col gap-4">
-          <PreRoundBriefingPanel
-            event={event}
-            roundId={roundId}
-            {...(opponentTeamId.trim() ? { opponentTeamId: opponentTeamId.trim() } : {})}
-          />
-          <StrategySyncNotesPanel flow={flow} />
-          <FlowAnnotationsPanel flow={flow} speechId={flow.columns[0] ?? "1AC"} />
+          <PreRoundBriefingsPanel />
+          <PrepNotesPanel />
+          <FlowAnnotationsPanel />
         </div>
       ) : null}
 
       {section === "Scouting" ? (
         <div className="flex flex-col gap-4">
-          <OpponentScoutingPanel
-            {...(opponentTeamId.trim() ? { highlightTeamId: opponentTeamId.trim() } : {})}
-          />
-          <JudgeProfilePanel />
-          <ScoutToStrategyPanel
-            caseOptions={caseOptions}
-            onAddCaseOption={(option) => setCaseOptions((current) => [...current, option])}
-          />
+          <OpponentTeamProfilesPanel />
+          <JudgeProfilesPanel />
+          <StrategyPanel />
         </div>
       ) : null}
 
       {section === "Practice" ? (
         <div className="flex flex-col gap-4">
-          <PracticeRoundPanel roundId={roundId} flow={flow} />
-          <AiVersusRoundPanel roundId={roundId} />
-          <WordCountRoundPanel roundId={roundId} />
-          <JudgeParadigmPanel roundId={roundId} />
-          <OpponentPersonaPanel sessionId={roundId} />
+          <PracticeRoundSimulatorPanel />
+          <AiVersusRoundPanel />
+          <WordCountRoundsPanel />
+          <JudgeParadigmPickerPanel />
+          <JudgeDecisionPanel />
+          <OpponentPersonaPickerPanel />
         </div>
       ) : null}
 
-      {section === "Standings" ? <NdcaStandingsPanel results={[]} /> : null}
+      {section === "Standings" ? <StandingsPanel /> : null}
     </div>
   )
 }
