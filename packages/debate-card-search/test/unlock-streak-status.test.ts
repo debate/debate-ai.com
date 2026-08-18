@@ -9,6 +9,9 @@ import {
 } from "../src/lib/unlock-streak-status";
 import { saveContribution } from "../src/state/contributions";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
+import { completeAndRecordResearchTask } from "../src/state/researchProgress";
+import { saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "../src/state/routedTaskQueues";
+import type { ResearchTask, RoutingResult } from "../src/lib/research-task-routing";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -35,6 +38,7 @@ function makeStats(overrides: Partial<ContributorStats> & { contributorId: strin
     bestContributionId: "none",
     bestHelpfulnessScore: 0,
     popularityOnlyOutlierCount: 0,
+    completedTaskCount: 0,
     ...overrides,
   };
 }
@@ -107,6 +111,25 @@ function contribution(id: string, contributorId: string): AttributedContribution
   };
 }
 
+/** Routes `count` tasks to `contributorId` in one topic, then completes every one of them. */
+function completeTasksFor(contributorId: string, topicId: string, count: number): void {
+  const tasks: ResearchTask[] = Array.from({ length: count }, (_, i) => ({
+    argBlock: `Block-${i}`,
+    level: "thin",
+    requiredSkill: "novice",
+  }));
+  const result: RoutingResult = {
+    assignments: tasks.map((task) => ({ task, contributorId })),
+    unassignedTasks: [],
+  };
+  const queue: RoutedTaskQueueRecord = { topicId, result };
+  saveRoutedTaskQueue(queue);
+
+  tasks.forEach((task, i) => {
+    completeAndRecordResearchTask(topicId, task.argBlock, `2026-08-${10 + i}T00:00:00Z`);
+  });
+}
+
 describe("buildContributorUnlockStatusWithStreakFromStore", () => {
   beforeEach(() => {
     (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
@@ -157,6 +180,25 @@ describe("buildContributorUnlockStatusWithStreakFromStore", () => {
     expect(status.tier).toBe("novice");
     expect(status.streak.currentStreak).toBe(0);
   });
+
+  it("folds a contributor's real persisted completed-task count into their tier via the completed-task path", () => {
+    completeTasksFor("erin", "topic-research", 3);
+
+    const status = buildContributorUnlockStatusWithStreakFromStore("erin", "2026-08-16");
+
+    expect(status.completedTaskCount).toBe(3);
+    expect(status.tier).toBe("apprentice");
+    expect(status.badges).toEqual(["Rising Researcher"]);
+  });
+
+  it("reaches a higher tier via enough completed tasks even with no scored contributions", () => {
+    completeTasksFor("frank", "topic-research", 20);
+
+    const status = buildContributorUnlockStatusWithStreakFromStore("frank", "2026-08-16");
+
+    expect(status.completedTaskCount).toBe(20);
+    expect(status.tier).toBe("expert");
+  });
 });
 
 describe("buildUnlockStatusRoster", () => {
@@ -197,5 +239,17 @@ describe("buildUnlockStatusRoster", () => {
 
     expect(dave?.streak.currentStreak).toBe(0);
     expect(dave?.tier).toBe("novice");
+  });
+
+  it("includes a contributor with only completed research tasks and no scored contributions", () => {
+    saveContribution(contribution("alice-0", "alice"));
+    completeTasksFor("grace", "topic-research", 3);
+
+    const roster = buildUnlockStatusRoster("2026-08-16");
+
+    expect(roster.map((status) => status.contributorId)).toEqual(["alice", "grace"]);
+    const grace = roster.find((status) => status.contributorId === "grace");
+    expect(grace?.completedTaskCount).toBe(3);
+    expect(grace?.tier).toBe("apprentice");
   });
 });

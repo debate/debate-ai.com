@@ -73,14 +73,15 @@ export interface GroundedCoachPromptOptions {
 }
 
 /** Display order for library groups — most commonly consulted kinds first. */
-const COACH_MATERIAL_KIND_ORDER: CoachMaterialKind[] = [
+export const COACH_MATERIAL_KIND_ORDER: CoachMaterialKind[] = [
   "lecture_transcript",
   "camp_material",
   "instructional_document",
   "practice_recording",
 ];
 
-const COACH_MATERIAL_KIND_LABELS: Record<CoachMaterialKind, string> = {
+/** Human-readable label for each `CoachMaterialKind`, for form/badge display. */
+export const COACH_MATERIAL_KIND_LABELS: Record<CoachMaterialKind, string> = {
   lecture_transcript: "Lecture Transcript",
   camp_material: "Camp Material",
   instructional_document: "Instructional Document",

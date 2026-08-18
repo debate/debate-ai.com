@@ -15,7 +15,9 @@
  */
 
 import type { OpponentTeamProfile } from "debate-data-sync/src/rankings/opponent-team-profile";
+import { getOpponentTeamProfile } from "debate-data-sync/src/state/opponentTeamProfiles";
 import type { JudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
+import { getJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
 
 /** A case the team could choose to run this round. */
 export interface CaseOption {
@@ -175,6 +177,38 @@ export function buildStrategyRecommendation(
     riskLevel,
     riskFactors,
   };
+}
+
+export interface BuildStrategyRecommendationFromStoresInput {
+  caseOptions: CaseOption[];
+  /** Looked up via `debate-data-sync`'s `opponentTeamProfiles.ts` store when `opponentProfile` isn't supplied directly. */
+  opponentTeamId?: string;
+  /** Looked up via `debate-speech-writer`'s `judgeProfiles.ts` store when `judgeProfile` isn't supplied directly. */
+  judgeId?: string;
+  opponentProfile?: OpponentTeamProfile;
+  judgeProfile?: JudgeProfile;
+}
+
+/**
+ * Thin store-wiring slice over `buildStrategyRecommendation` — the "(a) a
+ * case-choice/strategy panel UI" follow-up named under the
+ * "Scout-to-Strategy Workflow" bullet in TODO.md's Research Crowdsourcing
+ * Organizer Features list needs a recommendation composed from persisted
+ * scouting data, not caller-supplied profile objects. Resolves
+ * `opponentProfile`/`judgeProfile` from the existing
+ * `opponentTeamProfiles.ts`/`judgeProfiles.ts` persistence stores by id when
+ * the caller doesn't already have the profile object on hand, mirroring
+ * `pre-round-briefing.ts`'s `buildPreRoundBriefingFromStores` convention.
+ */
+export function buildStrategyRecommendationFromStores(
+  input: BuildStrategyRecommendationFromStoresInput,
+): StrategyRecommendation {
+  const opponentProfile =
+    input.opponentProfile ??
+    (input.opponentTeamId ? getOpponentTeamProfile(input.opponentTeamId) : undefined);
+  const judgeProfile = input.judgeProfile ?? (input.judgeId ? getJudgeProfile(input.judgeId) : undefined);
+
+  return buildStrategyRecommendation({ caseOptions: input.caseOptions, opponentProfile, judgeProfile });
 }
 
 /**

@@ -2,11 +2,11 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { PracticeRoundsPanel } from "debate-round"
+import { PracticeRoundSimulatorPanel } from "debate-round"
 
 export const metadata: Metadata = {
   title: "Practice Round Simulator",
-  description: "Recreated tournament rounds — speech order, judge paradigm, AI opponent, and post-round feedback",
+  description: "Recreate a tournament round with a timer, judge paradigm, and AI opponent persona",
 }
 
 export default function PracticeRoundPage() {
@@ -23,7 +23,7 @@ export default function PracticeRoundPage() {
         </Link>
       </div>
       <Suspense>
-        <PracticeRoundsPanel />
+        <PracticeRoundSimulatorPanel />
       </Suspense>
     </div>
   )

@@ -41,20 +41,32 @@ panels/TaskInboxPanel.tsx
       └─ recordPersistedTaskCompleted(contributorId) — decrements the
          assignee's stored activeTaskCount (state/contributorAvailability.ts)
   → panel re-reads buildTaskInboxView() to refresh
+
+Routing a topic's tasks (the "Route tasks" form):
+panels/TaskInboxPanel.tsx
+  → routePersistedTopicTasks(topicId)  — state/routedTaskQueues.ts
+      ├─ buildPersistedTopicCoverageReport(topicId) — state/trackedArguments.ts
+      │    (that topic's tracked-argument checklist against the shared
+      │    evidence library's entries filed under it)
+      └─ buildAndPersistRoutingResult(report, topicId) — routes the report's
+         gaps against the persisted contributor list, records each
+         assignment's activeTaskCount, and saves the queue
+  → panel re-reads buildTaskInboxView() (and the tracked-topic suggestion
+    list) to refresh
 ```
 
 Every routing/persistence rule already existed and was Vitest-covered; this
-feature adds one new composition function, `buildTaskInboxView`
-(`packages/debate-card-search/src/state/routedTaskQueues.ts`), which flattens
-the existing persisted routed-queue store into a panel-ready shape — no new
-routing or completion logic was introduced. Vitest-covered in
-`packages/debate-card-search/test/routedTaskQueues.test.ts`.
+feature adds two new composition functions in
+`packages/debate-card-search/src/state/routedTaskQueues.ts`:
+`buildTaskInboxView`, which flattens the existing persisted routed-queue
+store into a panel-ready shape, and `routePersistedTopicTasks`, which chains
+`trackedArguments.ts`'s live coverage report straight into
+`buildAndPersistRoutingResult` so the panel can route a topic from nothing
+but a topic id — no new routing or completion logic was introduced.
+Vitest-covered in `packages/debate-card-search/test/routedTaskQueues.test.ts`.
 
 ## Known gaps
 
-- No task-routing trigger UI yet — a topic's queue is only populated by
-  calling `buildAndPersistRoutingResult` some other way (e.g. a future
-  coverage-dashboard "route tasks" action).
 - No contributor identity/permission checks (no auth/roles in this repo yet),
   so the inbox shows every topic's assignments rather than scoping to "my
   tasks."

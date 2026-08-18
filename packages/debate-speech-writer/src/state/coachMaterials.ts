@@ -10,7 +10,13 @@
  * @module state/coachMaterials
  */
 
-import type { CoachMaterial } from "../coach/team-coach-materials";
+import type {
+  CoachMaterial,
+  CoachMaterialLibrary,
+  CoachMaterialMatch,
+  FindRelevantMaterialsOptions,
+} from "../coach/team-coach-materials";
+import { buildCoachMaterialLibrary, findRelevantMaterials } from "../coach/team-coach-materials";
 
 const STORAGE_KEY = "coachMaterials";
 
@@ -56,4 +62,29 @@ export function saveCoachMaterial(material: CoachMaterial): void {
 /** Deletes a persisted coach material by id; a no-op if it isn't stored. */
 export function deleteCoachMaterial(id: string): void {
   writeAll(readAll().filter((material) => material.id !== id));
+}
+
+/**
+ * Builds the kind-grouped coach-material library directly from every
+ * persisted material, composing this store with `team-coach-materials.ts`'s
+ * pure `buildCoachMaterialLibrary` rather than requiring a caller to hold
+ * and pass in the full material list themselves — mirroring
+ * `debate-card-search`'s `buildTopContributorAwardsFromStore` "compose the
+ * pure function directly against the persisted store" convention.
+ */
+export function buildCoachMaterialLibraryFromStore(): CoachMaterialLibrary {
+  return buildCoachMaterialLibrary(readAll());
+}
+
+/**
+ * Finds and ranks the persisted materials most relevant to `query`,
+ * composing this store with `team-coach-materials.ts`'s pure
+ * `findRelevantMaterials` the same way `buildCoachMaterialLibraryFromStore`
+ * composes `buildCoachMaterialLibrary`.
+ */
+export function findRelevantMaterialsFromStore(
+  query: string,
+  options: FindRelevantMaterialsOptions = {},
+): CoachMaterialMatch[] {
+  return findRelevantMaterials(readAll(), query, options);
 }

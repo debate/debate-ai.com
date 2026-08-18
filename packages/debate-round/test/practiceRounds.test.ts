@@ -104,6 +104,25 @@ describe("deletePracticeRound", () => {
   });
 });
 
+describe("buildPracticeRoundsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildPracticeRoundsPanelView()).toEqual([]);
+  });
+
+  it("sorts every persisted practice round by roundId", () => {
+    savePracticeRound(ROUND_B);
+    savePracticeRound(ROUND_A);
+    expect(buildPracticeRoundsPanelView()).toEqual([ROUND_A, ROUND_B]);
+  });
+
+  it("does not mutate the underlying stored order", () => {
+    savePracticeRound(ROUND_B);
+    savePracticeRound(ROUND_A);
+    buildPracticeRoundsPanelView();
+    expect(listPracticeRounds()).toEqual([ROUND_B, ROUND_A]);
+  });
+});
+
 describe("getPracticeRoundSubmittedSpeeches", () => {
   it("returns an empty list when the round has no persisted AI-versus state", () => {
     expect(getPracticeRoundSubmittedSpeeches("round-1")).toEqual([]);
@@ -119,24 +138,5 @@ describe("getPracticeRoundSubmittedSpeeches", () => {
     saveAiVersusRound(aiVersusRecord);
 
     expect(getPracticeRoundSubmittedSpeeches("round-1")).toEqual(aiVersusRecord.submittedSpeeches);
-  });
-});
-
-describe("buildPracticeRoundsPanelView", () => {
-  it("returns an empty list when nothing is stored", () => {
-    expect(buildPracticeRoundsPanelView()).toEqual([]);
-  });
-
-  it("sorts persisted rounds by roundId", () => {
-    savePracticeRound(ROUND_B);
-    savePracticeRound(ROUND_A);
-    expect(buildPracticeRoundsPanelView()).toEqual([ROUND_A, ROUND_B]);
-  });
-
-  it("reflects a round removed via deletePracticeRound", () => {
-    savePracticeRound(ROUND_A);
-    savePracticeRound(ROUND_B);
-    deletePracticeRound("round-1");
-    expect(buildPracticeRoundsPanelView()).toEqual([ROUND_B]);
   });
 });

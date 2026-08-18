@@ -4,10 +4,11 @@
  * that reads through the persistence store") and idea #11 "Community-Rated
  * Summaries and Highlights" ("(c) a leaderboard/ranked-feed UI") in TODO.md.
  *
- * Reads every persisted contribution via `state/contributions.ts`'s
- * `buildPersistedLeaderboard` (itself a thin composition of
+ * Reads every persisted contribution via `state/researchProgress.ts`'s
+ * `buildPersistedLeaderboardWithCompletedTasks` (a thin composition of
  * `contribution-leaderboard.ts`'s pure `buildLeaderboard` against the
- * persisted store) and renders it as a ranked table, merging in each
+ * persisted contribution store plus each contributor's persisted
+ * completed-task count) and renders it as a ranked table, merging in each
  * contributor's tier/streak status from `lib/unlock-streak-status.ts`'s
  * `buildContributorUnlockStatusWithStreakFromStore` — reusing every existing
  * scoring/tier/streak slice directly rather than introducing new logic here.
@@ -27,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "debate-ui/src/primitives/table"
-import { buildPersistedLeaderboard } from "../state/contributions"
+import { buildPersistedLeaderboardWithCompletedTasks } from "../state/researchProgress"
 import { buildContributorUnlockStatusWithStreakFromStore } from "../lib/unlock-streak-status"
 import type { ContributorStats } from "../lib/contribution-leaderboard"
 
@@ -45,7 +46,7 @@ function todayUtcDayKey(): string {
 
 function buildLeaderboardRows(): LeaderboardRow[] {
   const asOfDayKey = todayUtcDayKey()
-  return buildPersistedLeaderboard().map((stats) => {
+  return buildPersistedLeaderboardWithCompletedTasks().map((stats) => {
     const status = buildContributorUnlockStatusWithStreakFromStore(stats.contributorId, asOfDayKey)
     return {
       ...stats,
@@ -106,6 +107,7 @@ export function ContributionLeaderboardPanel() {
             <TableHead className="text-right">Contributions</TableHead>
             <TableHead className="text-right">Total score</TableHead>
             <TableHead className="text-right">Avg score</TableHead>
+            <TableHead className="text-right">Completed tasks</TableHead>
             <TableHead className="text-right">Streak</TableHead>
             <TableHead>Badges</TableHead>
           </TableRow>
@@ -123,6 +125,7 @@ export function ContributionLeaderboardPanel() {
               <TableCell className="text-right">{row.contributionCount}</TableCell>
               <TableCell className="text-right">{row.totalHelpfulnessScore}</TableCell>
               <TableCell className="text-right">{row.averageHelpfulnessScore}</TableCell>
+              <TableCell className="text-right">{row.completedTaskCount}</TableCell>
               <TableCell className="text-right">{row.currentStreak > 0 ? `🔥 ${row.currentStreak}` : "—"}</TableCell>
               <TableCell>
                 {row.badges.length > 0 ? (
