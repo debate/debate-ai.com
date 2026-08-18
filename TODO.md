@@ -6,6 +6,28 @@
 (none)
 
 ### Completed
+- **Expandable Heading Structure — outline nav panel.**
+  `packages/reason-editor/src/react/OutlineNavPanel.tsx` renders the live
+  document's H1-H4 heading outline (via the existing `buildHeadingOutline`/
+  `getVisibleHeadingIds` engine helpers), with a chevron to collapse/expand
+  a heading's subtree and a click-to-jump label that moves the TipTap
+  editor's selection to that heading. A new pure helper,
+  `toggleCollapsedHeadingId` (in `engine/outline/heading-outline.ts`),
+  flips a heading id's membership in the collapsed-id list; the panel
+  persists the result through the existing `state/collapsedHeadings.ts`
+  store, keyed by `documentId`, restoring it on remount — closing follow-up
+  (a) under idea #9 ("Expandable Heading Structure"). `ReasonEditor.tsx`
+  gains opt-in `showOutline`/`documentId` props (falling back to the
+  existing `contentKey`) that render the panel alongside the document; the
+  `/reason-editor` route now passes `showOutline`. Follow-up (b), a
+  ProseMirror decoration plugin that hides collapsed ranges in the live
+  editor view itself, remains open — not started. Vitest-covered in
+  `packages/reason-editor/test/heading-outline.test.ts`
+  (`toggleCollapsedHeadingId` cases). Verified: `bun install` (2050
+  packages), `bun run typecheck` (12 packages, all pass), `bun run test`
+  (92 files / 1327 tests, all pass), and `bun run build:web`
+  (`debate-ai-web`, succeeds, `/reason-editor` route present) all pass.
+  Documented in `docs/features/reason-editor-outline-nav.md`.
 - **Scout-to-Strategy Workflow — case-choice/strategy panel UI.**
   `packages/debate-round/src/state/strategyRecommendations.ts` persists a
   matchup's `StrategyRecommendation` to localStorage, and
@@ -3406,7 +3428,7 @@
 
 8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. A third slice, `CoachMaterialsPanel` (see Tracker Status above, "Video-Lecture-Training Coach AI — materials-upload/coach panel UI"), now renders an upload form, a kind-grouped material list, and an "ask the coach" grounded-prompt preview at `/coach-materials`, closing follow-up (c). Follow-ups: (a) transcription/parsing that turns an uploaded recording or document into a material's text, (b) an actual AI Q&A call that consumes `buildGroundedCoachPrompt`'s output. Neither of these is started._
 
-9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slices done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. A second slice, `collapsedHeadings.ts` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading persistence"), now persists a document's collapsed heading ids to localStorage. Follow-ups: (a) a React nav/outline panel in `reason-editor` that renders the outline and toggles collapsed ids, reading/writing through the persistence store, (b) a ProseMirror decoration plugin that hides collapsed ranges in the actual editor view using `getCollapsedRanges`. Neither of these is started._
+9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slices done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. A second slice, `collapsedHeadings.ts` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading persistence"), now persists a document's collapsed heading ids to localStorage. A third slice, `OutlineNavPanel` (see Tracker Status above, "Expandable Heading Structure — outline nav panel"), now renders the outline alongside the document at `/reason-editor` (behind an opt-in `showOutline` prop) with click-to-jump and collapse/expand, reading/writing through the persistence store, closing follow-up (a). Follow-up (b), a ProseMirror decoration plugin that hides collapsed ranges in the actual editor view using `getCollapsedRanges`, remains open — not started._
 
 10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. A second slice, `argumentTreeFilters.ts` (see Tracker Status above, "Outline Filters and Argument Tree View — filter-selection persistence"), now persists a round's chosen `ArgumentTreeFilter` to localStorage. A third slice, `argumentTrees.ts` plus `ArgumentTreePanel` (see Tracker Status above, "Outline Filters and Argument Tree View — outline panel UI"), now persists a round's derived tree and renders it as a filterable outline at `/outline`, closing follow-up (a). Follow-up (b), finer argument-type tagging (link/impact/turn/answer/extension) and contributor/evidence-status fields, none of which exist in the `Box`/`Flow` schema today, remains open — not started._
 

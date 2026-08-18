@@ -246,3 +246,73 @@
 .reason-editor-toolbar-spacer {
   flex: 1 1 auto;
 }
+
+/* ----- Outline nav panel ----- */
+.reason-editor-outline-nav {
+  width: 14rem;
+  flex-shrink: 0;
+  overflow-y: auto;
+  border-right: 1px solid var(--border, #e2e2e2);
+  padding: 0.5rem 0.25rem;
+  font-family: system-ui, sans-serif;
+  font-size: 0.8125rem;
+}
+
+.reason-editor-outline-nav-empty {
+  padding: 0.5rem;
+  opacity: 0.6;
+}
+
+.reason-editor-outline-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reason-editor-outline-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.reason-editor-outline-nav-toggle {
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.7rem;
+}
+
+.reason-editor-outline-nav-toggle:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.reason-editor-outline-nav-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.15rem 0.25rem;
+  border-radius: 0.2rem;
+}
+
+.reason-editor-outline-nav-label:hover {
+  background: var(--muted, rgba(0, 0, 0, 0.06));
+}
+
+.reason-editor-outline-nav-wrapper {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+}

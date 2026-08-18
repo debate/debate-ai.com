@@ -144,3 +144,18 @@ export function isPositionCollapsed(
 ): boolean {
   return ranges.some((range) => pos >= range.from && pos < range.to);
 }
+
+/**
+ * Toggles a heading id's membership in a collapsed-id list, returning a new
+ * array — present ids are removed, absent ids are appended. Used by
+ * `OutlineNavPanel` to flip a heading's collapse state before persisting
+ * through `state/collapsedHeadings.ts`.
+ */
+export function toggleCollapsedHeadingId(
+  collapsedIds: readonly string[],
+  id: string,
+): string[] {
+  return collapsedIds.includes(id)
+    ? collapsedIds.filter((existing) => existing !== id)
+    : [...collapsedIds, id];
+}
