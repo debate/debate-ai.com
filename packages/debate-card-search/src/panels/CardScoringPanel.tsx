@@ -8,10 +8,17 @@
  * `state/cardScores.ts`'s `buildPersistedCardScoreRanking` — itself a thin
  * composition of `lib/llm-card-scoring.ts`'s pure `rankCardScores` against
  * the persisted store — ranked by overall score, with each dimension score
- * and a likely-duplicate flag. No new scoring logic is introduced here; the
- * heuristic scorer remains a stand-in for an eventual LLM call (follow-up
- * (a)), and keywords/corpus are still caller-submitted rather than wired
- * into a real card-submission flow (follow-up (b)).
+ * and a likely-duplicate flag. The heuristic scorer itself is unchanged.
+ *
+ * Each ranked row also offers a "Get AI assessment" action that closes
+ * follow-up (a) ("an actual LLM-scoring call for the more subjective
+ * dimensions") — it POSTs the card's text and keywords to the existing
+ * `/api/reason-ai` Anthropic proxy via `lib/llm-card-scoring-client.ts`,
+ * persists the resulting verdict/notes via `state/aiCardAssessments.ts`,
+ * and renders it inline alongside the heuristic breakdown. A malformed or
+ * failed AI response shows a per-card error instead of crashing the panel.
+ * Keywords/corpus are still caller-submitted rather than wired into a real
+ * card-submission flow (follow-up (b), separate and still open).
  *
  * @module panels/CardScoringPanel
  */
@@ -24,8 +31,11 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
-import { buildPersistedCardScoreRanking, saveScoredCard } from "../state/cardScores"
+import { buildPersistedCardScoreRanking, getScoredCard, saveScoredCard } from "../state/cardScores"
+import { getAiAssessment, saveAiAssessment } from "../state/aiCardAssessments"
+import { requestCardScoringAiAssessment } from "../lib/llm-card-scoring-client"
 import type { CardScoreBreakdown } from "../lib/llm-card-scoring"
+import type { CardScoringAiAssessment } from "../lib/llm-card-scoring-ai"
 
 type CardDraft = { id: string; text: string; argBlockKeywords: string; quality: string }
 
@@ -64,12 +74,44 @@ export function CardScoringPanel() {
   const [ranking, setRanking] = useState<CardScoreBreakdown[] | null>(null)
   const [draft, setDraft] = useState<CardDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [aiAssessments, setAiAssessments] = useState<Record<string, CardScoringAiAssessment>>({})
+  const [aiLoadingId, setAiLoadingId] = useState<string | null>(null)
+  const [aiErrors, setAiErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    setRanking(buildPersistedCardScoreRanking())
+    const persisted = buildPersistedCardScoreRanking()
+    setRanking(persisted)
+    const assessments: Record<string, CardScoringAiAssessment> = {}
+    for (const breakdown of persisted) {
+      const assessment = getAiAssessment(breakdown.cardId)
+      if (assessment) assessments[breakdown.cardId] = assessment
+    }
+    setAiAssessments(assessments)
   }, [])
 
   const refresh = () => setRanking(buildPersistedCardScoreRanking())
+
+  const handleGetAiAssessment = async (cardId: string) => {
+    const card = getScoredCard(cardId)
+    if (!card) return
+    setAiLoadingId(cardId)
+    setAiErrors((prev) => ({ ...prev, [cardId]: "" }))
+    try {
+      const assessment = await requestCardScoringAiAssessment({
+        text: card.text,
+        argBlockKeywords: card.argBlockKeywords,
+      })
+      saveAiAssessment(cardId, assessment)
+      setAiAssessments((prev) => ({ ...prev, [cardId]: assessment }))
+    } catch (e) {
+      setAiErrors((prev) => ({
+        ...prev,
+        [cardId]: e instanceof Error ? e.message : "AI assessment failed.",
+      }))
+    } finally {
+      setAiLoadingId(null)
+    }
+  }
 
   const handleSubmit = () => {
     const id = draft.id.trim()
@@ -160,24 +202,68 @@ export function CardScoringPanel() {
         </div>
       ) : (
         <div className="space-y-2">
-          {ranking.map((breakdown) => (
-            <div key={breakdown.cardId} className="rounded-lg border border-border p-3 space-y-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-medium text-foreground">{breakdown.cardId}</span>
-                <span className="text-xs text-muted-foreground">
-                  overall {breakdown.overallScore}/100
-                </span>
-                {breakdown.isLikelyDuplicate && <Badge variant="destructive">Likely duplicate</Badge>}
-              </div>
-              <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-                {DIMENSIONS.map((dimension) => (
-                  <span key={dimension.key}>
-                    {dimension.label}: {breakdown[dimension.key]}
+          {ranking.map((breakdown) => {
+            const aiAssessment = aiAssessments[breakdown.cardId]
+            const aiError = aiErrors[breakdown.cardId]
+            const isLoadingAi = aiLoadingId === breakdown.cardId
+            return (
+              <div key={breakdown.cardId} className="rounded-lg border border-border p-3 space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-medium text-foreground">{breakdown.cardId}</span>
+                  <span className="text-xs text-muted-foreground">
+                    overall {breakdown.overallScore}/100
                   </span>
-                ))}
+                  {breakdown.isLikelyDuplicate && <Badge variant="destructive">Likely duplicate</Badge>}
+                </div>
+                <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                  {DIMENSIONS.map((dimension) => (
+                    <span key={dimension.key}>
+                      {dimension.label}: {breakdown[dimension.key]}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="border-t border-border pt-2 space-y-1.5">
+                  {aiAssessment ? (
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                        <Badge variant="secondary">AI assessment</Badge>
+                        <span className="text-muted-foreground">
+                          overall {aiAssessment.overallScore}/100
+                        </span>
+                      </div>
+                      <p className="text-sm text-foreground">{aiAssessment.verdict}</p>
+                      <div className="grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
+                        <span>Relevance: {aiAssessment.notes.relevance}</span>
+                        <span>Clarity: {aiAssessment.notes.clarity}</span>
+                        <span>Uniqueness: {aiAssessment.notes.uniqueness}</span>
+                        <span>Evidence quality: {aiAssessment.notes.evidenceQuality}</span>
+                        <span>Usability: {aiAssessment.notes.usability}</span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={isLoadingAi}
+                        onClick={() => handleGetAiAssessment(breakdown.cardId)}
+                      >
+                        {isLoadingAi ? "Re-scoring…" : "Refresh AI assessment"}
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={isLoadingAi}
+                      onClick={() => handleGetAiAssessment(breakdown.cardId)}
+                    >
+                      {isLoadingAi ? "Scoring…" : "Get AI assessment"}
+                    </Button>
+                  )}
+                  {aiError && <p className="text-sm text-destructive">{aiError}</p>}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
