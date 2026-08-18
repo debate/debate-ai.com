@@ -311,6 +311,29 @@
   background: var(--muted, rgba(0, 0, 0, 0.06));
 }
 
+.reason-editor-outline-nav-move {
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.reason-editor-outline-nav-move:hover:not(:disabled) {
+  opacity: 1;
+  background: var(--muted, rgba(0, 0, 0, 0.06));
+}
+
+.reason-editor-outline-nav-move:disabled {
+  cursor: default;
+  opacity: 0.25;
+}
+
 .reason-editor-outline-nav-wrapper {
   display: flex;
   min-height: 0;

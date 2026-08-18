@@ -20,10 +20,12 @@ export {
 
 export type {
   Card,
+  CardYear,
   CitationInfo,
   FileNameParts,
   FormatProfile,
   OutlineItem,
+  OutlineNode,
   ParseMetadata,
   ParseOptions,
   ParseResult,
