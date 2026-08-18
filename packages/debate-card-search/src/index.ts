@@ -16,4 +16,5 @@ export { ContributionsFeedPanel } from "./panels/ContributionsFeedPanel";
 export { ContributorAwardsPanel } from "./panels/ContributorAwardsPanel";
 export { GroupChallengesPanel } from "./panels/GroupChallengesPanel";
 export { TopicCoverageDashboardPanel } from "./panels/TopicCoverageDashboardPanel";
+export { PrepRoomPanel } from "./panels/PrepRoomPanel";
 export * from "./types";
