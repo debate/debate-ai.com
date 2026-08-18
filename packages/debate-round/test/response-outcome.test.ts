@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyHypotheticalAdjustments,
   buildVulnerabilityChartData,
   buildVulnerabilityChartDataFromReport,
   getArgumentVulnerabilityReport,
@@ -8,6 +9,7 @@ import {
   summarizeOutcomeBySideFromReport,
 } from "../src/flow/response-outcome";
 import { getFlowRowSummaries } from "../src/flow/flow-transcript-summary";
+import { getFlowSideKeys } from "../src/flow/argument-tree";
 import type { Box } from "debate-core/src/types/flow";
 
 const COLUMNS = ["1AC", "1NC", "2AC", "2NC"];
@@ -208,5 +210,80 @@ describe("buildVulnerabilityChartDataFromReport", () => {
       children: [rowFromContents(["Disad link", "", "", ""])],
     });
     expect(buildVulnerabilityChartDataFromReport(report)).toHaveLength(1);
+  });
+});
+
+describe("applyHypotheticalAdjustments", () => {
+  const flow = {
+    columns: COLUMNS,
+    children: [
+      rowFromContents(["Case advantage", "", "", ""]), // dropped -> 80, unanswered
+      rowFromContents(["Disad link", "Turn", "Extend", "Frontline"]), // fully answered -> 45
+    ],
+  };
+  const report = getArgumentVulnerabilityReport(flow);
+  const dropped = report.find((row) => row.argument === "Case advantage")!;
+  const answered = report.find((row) => row.argument === "Disad link")!;
+
+  it("leaves rows unchanged when no adjustment names their rowIndex", () => {
+    expect(applyHypotheticalAdjustments(report, [])).toEqual(report);
+  });
+
+  it("'extend' adds a same-side extension and lowers the score", () => {
+    const [result] = applyHypotheticalAdjustments([dropped], [{ rowIndex: dropped.rowIndex, action: "extend" }]);
+    expect(result.sameSideExtensions).toBe(dropped.sameSideExtensions + 1);
+    expect(result.opposingResponses).toBe(dropped.opposingResponses);
+    expect(result.isUnanswered).toBe(dropped.isUnanswered);
+    expect(result.vulnerabilityScore).toBeLessThan(dropped.vulnerabilityScore);
+  });
+
+  it("'answer' adds an opposing response and resolves unanswered status", () => {
+    const [result] = applyHypotheticalAdjustments([dropped], [{ rowIndex: dropped.rowIndex, action: "answer" }]);
+    expect(result.opposingResponses).toBe(dropped.opposingResponses + 1);
+    expect(result.isUnanswered).toBe(false);
+    expect(result.vulnerabilityScore).toBeLessThan(dropped.vulnerabilityScore);
+  });
+
+  it("'concede' resets both response counts and marks the row unanswered again", () => {
+    const [result] = applyHypotheticalAdjustments([answered], [{ rowIndex: answered.rowIndex, action: "concede" }]);
+    expect(result.opposingResponses).toBe(0);
+    expect(result.sameSideExtensions).toBe(0);
+    expect(result.isUnanswered).toBe(true);
+    expect(result.vulnerabilityScore).toBeGreaterThan(answered.vulnerabilityScore);
+  });
+
+  it("only adjusts the named row, leaving the rest of the report untouched", () => {
+    const result = applyHypotheticalAdjustments(report, [{ rowIndex: dropped.rowIndex, action: "answer" }]);
+    const untouched = result.find((row) => row.rowIndex === answered.rowIndex);
+    expect(untouched).toEqual(answered);
+  });
+
+  it("caps the recomputed score the same way the original scoring does", () => {
+    const columns = ["A1", "A2", "A3", "A4"];
+    const alreadyCapped = getArgumentVulnerabilityReport({
+      columns,
+      children: [rowFromContents(["Case", "Ext1", "Ext2", "Ext3"])],
+    })[0];
+    expect(alreadyCapped.vulnerabilityScore).toBe(0);
+
+    const [result] = applyHypotheticalAdjustments(
+      [alreadyCapped],
+      [{ rowIndex: alreadyCapped.rowIndex, action: "extend" }],
+    );
+    expect(result.sameSideExtensions).toBe(4);
+    expect(result.vulnerabilityScore).toBe(0);
+  });
+
+  it("composes with buildVulnerabilityChartDataFromReport/summarizeOutcomeBySideFromReport", () => {
+    const adjusted = applyHypotheticalAdjustments(report, [{ rowIndex: dropped.rowIndex, action: "answer" }]);
+
+    const chart = buildVulnerabilityChartDataFromReport(adjusted);
+    expect(chart.find((point) => point.rowIndex === dropped.rowIndex)?.value).toBe(
+      adjusted.find((row) => row.rowIndex === dropped.rowIndex)?.vulnerabilityScore,
+    );
+
+    const sides = summarizeOutcomeBySideFromReport(adjusted, getFlowSideKeys(flow));
+    const sideForDropped = sides.find((side) => side.sideKey === dropped.sideKey);
+    expect(sideForDropped?.unansweredCount).toBe(0);
   });
 });
