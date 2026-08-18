@@ -39,7 +39,7 @@
   in-scope packages pass), and `bun run build:web` (`debate-ai-web`
   succeeds, `/cards/library` route present, no new route) all pass. No
   repo-wide `lint` script exists (checked root/app/package `package.json`
-  scripts) so none was run.
+  scripts) so none was run. PR: https://github.com/debate/debate-ai.com/pull/210.
 - **Shared Evidence Library — edit/delete affordance wired to Revision Incentives.**
   Closes the "No edit/delete affordance in the panel" gap noted in
   `docs/features/evidence-library.md`'s Known gaps, and follow-up (a) under
