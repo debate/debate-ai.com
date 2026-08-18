@@ -28,6 +28,13 @@
  * half of idea #11's follow-up (c) — moderators can see which contributions
  * are popularity-driven directly in the feed.
  *
+ * A submission also stamps `submittedAt: Date.now()`, closing follow-up (a)
+ * of the "🕵️ Daily Best Card Challenge" bullet — "wiring a `submittedAt`
+ * timestamp into wherever card contributions are eventually persisted" —
+ * giving `lib/daily-best-card.ts`'s day-grouping/winner-picking logic real
+ * timestamped data to run against via `state/contributions.ts`'s
+ * `buildPersistedDailyBestCards`.
+ *
  * @module panels/ContributionsFeedPanel
  */
 
@@ -99,6 +106,7 @@ export function ContributionsFeedPanel() {
       saves: 0,
       qualitySignals: [0.5],
       reviewerEndorsements: [],
+      submittedAt: Date.now(),
     })
     setError(null)
     setDraft(EMPTY_DRAFT)

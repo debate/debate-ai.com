@@ -26,6 +26,11 @@
  * to render like/save/endorse actions against, reusing
  * `community-rating.ts`'s pure `rankContributions` directly.
  *
+ * `buildPersistedDailyBestCards`/`getPersistedBestCardForDay` close follow-up
+ * (a) named under "🕵️ Daily Best Card Challenge" in TODO.md — composing
+ * `lib/daily-best-card.ts`'s pure day-grouping/winner-picking logic directly
+ * against this store's now-timestamped (`submittedAt`) card contributions.
+ *
  * @module state/contributions
  */
 
@@ -35,6 +40,8 @@ import type { ContributionKind, HelpfulnessWeights, ReviewerEndorsement } from "
 import { DEFAULT_HELPFULNESS_WEIGHTS, rankContributions } from "../lib/community-rating";
 import type { ContributorAward } from "../lib/contributor-awards";
 import { DEFAULT_AWARD_CATEGORY_LABELS, buildTopContributorAwards } from "../lib/contributor-awards";
+import type { DailyBestCard, TimestampedCardContribution } from "../lib/daily-best-card";
+import { buildDailyBestCards, getBestCardForDay } from "../lib/daily-best-card";
 
 const STORAGE_KEY = "contributions";
 
@@ -196,4 +203,49 @@ export function buildTopContributorAwardsFromStore(
   categoryLabels: Record<ContributionKind, string> = DEFAULT_AWARD_CATEGORY_LABELS,
 ): ContributorAward[] {
   return buildTopContributorAwards(readAll(), categoryLabels);
+}
+
+/** A persisted card contribution narrowed to carry a required `submittedAt`. */
+type TimestampedAttributedCardContribution = AttributedContribution & TimestampedCardContribution;
+
+/**
+ * Every persisted `card`-kind contribution that carries a `submittedAt`
+ * timestamp, narrowed to the shape `lib/daily-best-card.ts`'s pure functions
+ * require. Contributions saved before `submittedAt` was wired into the
+ * Contributions Feed's submission form (or of another kind) are excluded
+ * rather than assumed to have one.
+ */
+function readTimestampedCardContributions(): TimestampedAttributedCardContribution[] {
+  return readAll().filter(
+    (contribution): contribution is TimestampedAttributedCardContribution =>
+      contribution.kind === "card" && typeof contribution.submittedAt === "number",
+  );
+}
+
+/**
+ * Builds the "Daily Best Card Challenge" — one highest-helpfulness card per
+ * UTC day — directly from every persisted, timestamped card contribution,
+ * composing this store with `lib/daily-best-card.ts`'s pure
+ * `buildDailyBestCards` rather than requiring a caller to hold and pass in
+ * the full contribution list themselves, mirroring `buildPersistedLeaderboard`'s
+ * "compose the pure function directly against the persisted store"
+ * convention. Returns an empty list — rather than throwing — when no
+ * timestamped card contributions are stored.
+ */
+export function buildPersistedDailyBestCards(weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS): DailyBestCard[] {
+  return buildDailyBestCards(readTimestampedCardContributions(), weights);
+}
+
+/**
+ * Convenience wrapper around `buildPersistedDailyBestCards` for a single UTC
+ * day: the winning card among persisted, timestamped card contributions
+ * submitted on `now`'s UTC calendar day, or `null` if none were submitted
+ * that day. `now` is caller-supplied (epoch ms) rather than read from the
+ * clock, keeping this composition testable.
+ */
+export function getPersistedBestCardForDay(
+  now: number,
+  weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+): DailyBestCard | null {
+  return getBestCardForDay(readTimestampedCardContributions(), now, weights);
 }

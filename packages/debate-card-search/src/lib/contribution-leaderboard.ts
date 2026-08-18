@@ -25,6 +25,13 @@ import {
 /** A community contribution attributed to the contributor who submitted it. */
 export interface AttributedContribution extends CommunityContribution {
   contributorId: string;
+  /**
+   * Submission time, as epoch milliseconds (UTC). Optional — older/caller-
+   * supplied contributions may not carry one — so features requiring it
+   * (e.g. the "Daily Best Card Challenge" idea's `lib/daily-best-card.ts`)
+   * must filter it out rather than assume it's present.
+   */
+  submittedAt?: number;
 }
 
 /** One contributor's aggregated leaderboard standing. */

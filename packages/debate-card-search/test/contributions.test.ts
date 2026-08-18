@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildPersistedContributionFeed,
+  buildPersistedDailyBestCards,
   buildPersistedLeaderboard,
   buildTopContributorAwardsFromStore,
   deleteContribution,
   getContribution,
+  getPersistedBestCardForDay,
   listContributions,
   listContributionsByContributor,
   recordPersistedEndorsement,
@@ -315,5 +317,56 @@ describe("buildTopContributorAwardsFromStore", () => {
     });
 
     expect(award.label).toBe("Best Card");
+  });
+});
+
+const DAY_1_MS = Date.UTC(2026, 7, 17, 12, 0, 0);
+const DAY_2_MS = Date.UTC(2026, 7, 18, 9, 0, 0);
+
+describe("buildPersistedDailyBestCards", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildPersistedDailyBestCards()).toEqual([]);
+  });
+
+  it("excludes contributions with no submittedAt timestamp", () => {
+    saveContribution(ALICE_CARD);
+    expect(buildPersistedDailyBestCards()).toEqual([]);
+  });
+
+  it("excludes non-card contributions even when timestamped", () => {
+    saveContribution({ ...BOB_SUMMARY, submittedAt: DAY_1_MS });
+    expect(buildPersistedDailyBestCards()).toEqual([]);
+  });
+
+  it("picks the highest-helpfulness card per UTC day, sorted ascending by day", () => {
+    saveContribution({ ...ALICE_CARD, id: "day2-card", submittedAt: DAY_2_MS });
+    saveContribution({ ...ALICE_CARD, id: "day1-weak", likes: 1, saves: 0, submittedAt: DAY_1_MS });
+    saveContribution({ ...ALICE_CARD, id: "day1-strong", likes: 20, saves: 10, submittedAt: DAY_1_MS });
+
+    const bestCards = buildPersistedDailyBestCards();
+
+    expect(bestCards).toHaveLength(2);
+    expect(bestCards[0].contribution.id).toBe("day1-strong");
+    expect(bestCards[1].contribution.id).toBe("day2-card");
+  });
+});
+
+describe("getPersistedBestCardForDay", () => {
+  it("returns null when no card contributions were submitted on that day", () => {
+    expect(getPersistedBestCardForDay(DAY_1_MS)).toBeNull();
+  });
+
+  it("returns null when the only stored contribution isn't timestamped", () => {
+    saveContribution(ALICE_CARD);
+    expect(getPersistedBestCardForDay(DAY_1_MS)).toBeNull();
+  });
+
+  it("returns that day's winning card, ignoring other days", () => {
+    saveContribution({ ...ALICE_CARD, id: "day1-card", submittedAt: DAY_1_MS });
+    saveContribution({ ...ALICE_CARD, id: "day2-card", likes: 99, submittedAt: DAY_2_MS });
+
+    const best = getPersistedBestCardForDay(DAY_1_MS);
+
+    expect(best?.contribution.id).toBe("day1-card");
   });
 });
