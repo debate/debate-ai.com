@@ -1,18 +1,19 @@
 /**
  * @fileoverview Coach Materials panel — the "(c) a materials-upload/coach
  * chat panel UI" follow-up named under idea #8 ("Video-Lecture-Training
- * Coach AI") in TODO.md's Product Feature Ideas list.
+ * Coach AI") in TODO.md's Product Feature Ideas list, plus follow-up (b)'s
+ * real AI Q&A call.
  *
  * Lets a coach upload grounding materials (lecture transcripts, camp
  * materials, instructional documents, practice-round recordings) through
  * the already-persisted `state/coachMaterials.ts` (`saveCoachMaterial`,
  * `deleteCoachMaterial`), lists every persisted material grouped by kind via
- * the new `buildCoachMaterialLibraryFromStore`, and lets a coach preview
- * which materials a question would be answered from via the new
- * `findRelevantMaterialsFromStore` plus the already-existing
- * `buildGroundedCoachPrompt`. No AI call is made — the composed prompt is
- * shown as a preview only (follow-up (b) is still open). No new
- * material-scoring or grouping logic is introduced here.
+ * the new `buildCoachMaterialLibraryFromStore`, and lets a coach ask the
+ * team coach AI a question — previewing which materials it would draw on
+ * via `findRelevantMaterialsFromStore` plus the already-existing
+ * `buildGroundedCoachPrompt`, then calling `requestTeamCoachAnswer` for a
+ * real, grounded answer. No new material-scoring or grouping logic is
+ * introduced here.
  *
  * @module panels/CoachMaterialsPanel
  */
@@ -33,6 +34,7 @@ import {
   SelectValue,
 } from "debate-ui/src/primitives/select"
 import { buildGroundedCoachPrompt, type CoachMaterialKind, type CoachMaterialMatch } from "../coach/team-coach-materials"
+import { requestTeamCoachAnswer } from "../coach/team-coach-client"
 import {
   buildCoachMaterialLibraryFromStore,
   deleteCoachMaterial,
@@ -87,6 +89,9 @@ export function CoachMaterialsPanel() {
   const [error, setError] = useState<string | null>(null)
   const [question, setQuestion] = useState("")
   const [matches, setMatches] = useState<CoachMaterialMatch[] | null>(null)
+  const [answer, setAnswer] = useState<string | null>(null)
+  const [asking, setAsking] = useState(false)
+  const [askError, setAskError] = useState<string | null>(null)
 
   useEffect(() => {
     setLibrary(buildCoachMaterialLibraryFromStore())
@@ -122,6 +127,24 @@ export function CoachMaterialsPanel() {
 
   const handleAsk = () => {
     setMatches(findRelevantMaterialsFromStore(question, { limit: 5 }))
+    setAnswer(null)
+    setAskError(null)
+  }
+
+  const handleGetAnswer = async () => {
+    const currentMatches = matches ?? findRelevantMaterialsFromStore(question, { limit: 5 })
+    setMatches(currentMatches)
+    setAsking(true)
+    setAskError(null)
+    setAnswer(null)
+    try {
+      const result = await requestTeamCoachAnswer(question, currentMatches)
+      setAnswer(result)
+    } catch (e) {
+      setAskError(e instanceof Error ? e.message : "Failed to get an answer from the coach.")
+    } finally {
+      setAsking(false)
+    }
   }
 
   if (library === null) {
@@ -250,8 +273,8 @@ export function CoachMaterialsPanel() {
         <div>
           <h2 className="text-sm font-medium text-foreground">Ask the coach</h2>
           <p className="text-xs text-muted-foreground">
-            Preview which materials a question would draw on, and the grounded prompt built from
-            them. No AI call is made yet — this only shows what would be sent.
+            Ask a question and the team coach AI answers strictly from your grounding materials —
+            or say so if they don't cover it.
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-2">
@@ -264,13 +287,29 @@ export function CoachMaterialsPanel() {
               placeholder="How do I answer a topicality violation?"
             />
           </div>
-          <Button onClick={handleAsk}>Preview grounded prompt</Button>
+          <Button variant="outline" onClick={handleAsk}>
+            Preview grounded prompt
+          </Button>
+          <Button onClick={handleGetAnswer} disabled={asking || question.trim().length === 0}>
+            {asking ? "Asking…" : "Ask the coach"}
+          </Button>
         </div>
 
         {groundedPrompt && (
           <pre className="whitespace-pre-wrap rounded-md border border-border bg-muted/30 px-3 py-2 text-sm text-foreground">
             {groundedPrompt}
           </pre>
+        )}
+
+        {askError && <p className="text-sm text-destructive">{askError}</p>}
+
+        {answer && (
+          <div className="space-y-1.5">
+            <Label>Coach's answer</Label>
+            <p className="whitespace-pre-wrap rounded-md border border-border bg-muted/30 px-3 py-2 text-sm text-foreground">
+              {answer}
+            </p>
+          </div>
         )}
       </div>
     </div>

@@ -4,6 +4,49 @@
 ### In progress
 
 ### Completed
+- **Video-Lecture-Training Coach AI — real AI Q&A call.**
+  Closes follow-up (b) under idea #8 ("Video-Lecture-Training Coach AI") in
+  the Product Feature Ideas list — "an actual AI Q&A call that consumes
+  `buildGroundedCoachPrompt`'s output." A new
+  `packages/debate-speech-writer/src/coach/team-coach-ai.ts` adds
+  `TEAM_COACH_AI_SYSTEM_PROMPT`, which frames the model as the team's
+  private coach and instructs it to reply with the answer text only, plus
+  the pure, Vitest-testable `parseTeamCoachAiResponse`, which strips a
+  wrapping code fence (mirroring `debate-round`'s
+  `round/ai-versus-speech-ai.ts`'s tolerant-parsing convention exactly —
+  this is free-form answer text, not JSON, so no schema validation is
+  needed). The user-turn message sent to the model is exactly the
+  already-existing `buildGroundedCoachPrompt`'s output (question +
+  ranked grounding-material excerpts + its own "answer strictly from
+  these materials" instruction) — no new prompt-composition logic was
+  introduced. `coach/team-coach-client.ts` adds `requestTeamCoachAnswer`,
+  a small self-contained `fetch` client (mirroring
+  `round/ai-versus-speech-client.ts`'s split) that POSTs to the existing
+  `/api/reason-ai` Anthropic proxy. `CoachMaterialsPanel.tsx`'s existing
+  "Ask the coach" section now has an "Ask the coach" action alongside the
+  existing "Preview grounded prompt" preview — it resolves the question's
+  top relevant materials via the already-existing
+  `findRelevantMaterialsFromStore`, calls `requestTeamCoachAnswer`, and
+  renders the model's grounded answer or a plain error message on
+  failure. No material-scoring, grouping, or persistence logic changed,
+  and no new route was added. Vitest-covered in
+  `packages/debate-speech-writer/test/team-coach-ai.test.ts` (system-prompt
+  content and response parsing, including a fenced reply and a
+  whitespace-only/empty reply) and
+  `packages/debate-speech-writer/test/team-coach-client.test.ts` (the
+  `fetch` client, with `fetch` mocked via `vi.stubGlobal`, covering the
+  success path, an endpoint override, a server error message, a non-JSON
+  error body, and an empty/unusable AI reply). Docs updated in
+  `docs/features/coach-materials.md` and
+  `packages/debate-speech-writer/README.md`. Follow-up (a), transcription/
+  parsing that turns an uploaded recording or document into a material's
+  text, remains open — not started. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
+  Verified: `bun install` (2050 packages), `bun run test` (113 files /
+  1504 tests, all pass), `bun run typecheck` (11 of 12 in-scope packages
+  have a typecheck script; all pass), and `bun run build:web`
+  (`debate-ai-web`, succeeds, `/coach-materials` route present, no new
+  route) all pass.
 - **AI Response-Outcome Charts — AI counsel-panel call.**
   Closes follow-up (a) under idea #4 ("AI Response-Outcome Charts") in the
   Product Feature Ideas list — "an actual AI-panel call (multiple 'counsel'
@@ -3802,7 +3845,7 @@
 
 7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext 
 
-8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. A third slice, `CoachMaterialsPanel` (see Tracker Status above, "Video-Lecture-Training Coach AI — materials-upload/coach panel UI"), now renders an upload form, a kind-grouped material list, and an "ask the coach" grounded-prompt preview at `/coach-materials`, closing follow-up (c). Follow-ups: (a) transcription/parsing that turns an uploaded recording or document into a material's text, (b) an actual AI Q&A call that consumes `buildGroundedCoachPrompt`'s output. Neither of these is started._
+8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. A third slice, `CoachMaterialsPanel` (see Tracker Status above, "Video-Lecture-Training Coach AI — materials-upload/coach panel UI"), now renders an upload form, a kind-grouped material list, and an "ask the coach" grounded-prompt preview at `/coach-materials`, closing follow-up (c). A fourth slice (see Tracker Status above, "Video-Lecture-Training Coach AI — real AI Q&A call") added `coach/team-coach-ai.ts` and `coach/team-coach-client.ts`, wiring an "Ask the coach" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy with `buildGroundedCoachPrompt`'s output for a real, materials-grounded answer, closing follow-up (b). Follow-up (a), transcription/parsing that turns an uploaded recording or document into a material's text, remains open — not started._
 
 9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slices done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. A second slice, `collapsedHeadings.ts` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading persistence"), now persists a document's collapsed heading ids to localStorage. A third slice, `OutlineNavPanel` (see Tracker Status above, "Expandable Heading Structure — outline nav panel"), now renders the outline alongside the document at `/reason-editor` (behind an opt-in `showOutline` prop) with click-to-jump and collapse/expand, reading/writing through the persistence store, closing follow-up (a). Follow-up (b), a ProseMirror decoration plugin that hides collapsed ranges in the actual editor view using `getCollapsedRanges`, remains open — not started._
 
