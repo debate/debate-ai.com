@@ -5,6 +5,7 @@
 
 ### Completed
 - **Daily Quests and Targets — quest-board widget UI + real contribution wiring.**
+  [PR #188](https://github.com/debate/debate-ai.com/pull/188).
   Closes follow-ups (a) and (b) under the "🎯 Daily Quests and Targets"
   bullet — a quest-board widget UI, and wiring real contribution-submission
   events into a persisted daily feed the board can score against. A new
