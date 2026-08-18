@@ -5,8 +5,8 @@ import { ArrowLeft } from "lucide-react"
 import { CoachMaterialsPanel } from "debate-speech-writer"
 
 export const metadata: Metadata = {
-  title: "Team Coach Materials",
-  description: "Upload lecture transcripts, camp materials, instructional documents, and practice-round recordings to ground the team coach AI",
+  title: "Coach Materials",
+  description: "Upload grounding materials for the team coach AI and preview which ones answer a question",
 }
 
 export default function CoachMaterialsPage() {

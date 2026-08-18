@@ -1,12 +1,9 @@
-# Team Coach Materials
+# Coach Materials
 
 Lets a coach upload grounding materials — lecture transcripts, camp
-materials, instructional documents, and practice-round recordings — and
-preview the grounded prompt a future team coach AI Q&A call would receive
-for a typed question. This is the "(c) a materials-upload/coach chat panel
-UI" follow-up named in the `team-coach-materials.ts` slice for idea #8
-("Video-Lecture-Training Coach AI") in `TODO.md`'s Product Feature Ideas
-list.
+materials, instructional documents, and practice-round recordings — for a
+private team coach AI, preview which materials a question would draw on,
+and ask the coach AI a real question grounded strictly in those materials.
 
 - **Route:** `/coach-materials`
 - **Nav:** the global dock's Settings menu → **Coach Materials**
@@ -14,53 +11,77 @@ list.
 
 ## What it shows
 
-A form to upload a `CoachMaterial` — id, kind (lecture transcript, camp
-material, instructional document, or practice-round recording), title,
-optional topic, comma-separated tags, and body text — saved through
-`saveCoachMaterial`. Below the form, every persisted material renders
-grouped by kind via `buildPersistedCoachMaterialLibrary`, each with a
-"Remove" action.
-
-A "Coach Q&A preview" section lets a user type a question (optionally
-scoped to a topic seen among the persisted materials) and see the exact
-grounded prompt — built from the top-matching materials via
-`findRelevantPersistedMaterials` and `buildGroundedCoachPrompt` — that a
-future AI Q&A call would receive. No AI model is called; this only
-previews the request.
+- An upload form (kind, title, optional topic, comma-separated tags,
+  material text) that saves a `CoachMaterial` through the already-persisted
+  `state/coachMaterials.ts`.
+- Every persisted material, grouped by kind (Lecture Transcript, Camp
+  Material, Instructional Document, Practice-Round Recording), each with a
+  "Delete" action.
+- An "Ask the coach" section: typing a question and clicking "Preview
+  grounded prompt" shows the top relevant materials and the composed
+  grounded prompt text, while "Ask the coach" sends that same prompt to a
+  real AI call and renders the model's grounded answer (or a plain error
+  message if the request fails).
 
 ## Data flow
 
 ```
-state/coachMaterials.ts (localStorage: coachMaterials)
-  → buildPersistedCoachMaterialLibrary()   — groups every persisted
-                                              CoachMaterial by kind
-  → findRelevantPersistedMaterials(query)  — ranks persisted materials
-                                              against a typed question
-  → panels/CoachMaterialsPanel.tsx         — renders the upload form,
-                                              grouped library, and Q&A
-                                              prompt preview
+state/coachMaterials.ts (localStorage)
+  → buildCoachMaterialLibraryFromStore()   — composes coach/team-coach-materials.ts
+      → buildCoachMaterialLibrary()        — groups materials by kind
+  → findRelevantMaterialsFromStore()       — composes coach/team-coach-materials.ts
+      → findRelevantMaterials()            — keyword-overlap relevance ranking
+      → buildGroundedCoachPrompt()         — composes the ranked matches into a prompt
+  → panels/CoachMaterialsPanel.tsx (upload form, kind-grouped list, ask-the-coach UI)
+  → apps/debate-ai.com/app/coach-materials/page.tsx (mounts the panel as a route)
 
-coach/team-coach-materials.ts
-  → buildGroundedCoachPrompt(question, matches)  — composes the preview
-                                                    text shown in the panel
-
-apps/debate-ai.com/app/coach-materials/page.tsx  — mounts the panel as a route
+Asking the coach a question (follow-up (b)):
+panels/CoachMaterialsPanel.tsx
+  → findRelevantMaterialsFromStore(question, { limit: 5 })   — the same
+                                                                 matches the
+                                                                 preview uses
+  → coach/team-coach-client.ts's requestTeamCoachAnswer(question, matches)
+      → coach/team-coach-materials.ts's buildGroundedCoachPrompt(question, matches)
+                                                    — the exact user-turn
+                                                      message sent to the model
+      → coach/team-coach-ai.ts's TEAM_COACH_AI_SYSTEM_PROMPT
+                                                    — frames the model as the
+                                                      team's private coach
+      → POST /api/reason-ai                          — the shared
+                                                        Anthropic proxy
+      → parseTeamCoachAiResponse(text)                — strips a wrapping
+                                                          code fence
+  → renders the answer, or the thrown error message on failure
 ```
 
-Every grouping, relevance-scoring, and prompt-composition rule already
-existed and was Vitest-covered before this panel. Two small composition
-helpers were added to `state/coachMaterials.ts` —
-`buildPersistedCoachMaterialLibrary` and `findRelevantPersistedMaterials`
-— mirroring `debate-card-search`'s `evidenceLibraryEntries.ts`
-`searchPersistedEvidenceLibrary` convention, rather than introducing new
-grouping or scoring logic. Vitest-covered in
-`packages/debate-speech-writer/test/coachMaterials.test.ts`.
+This feature is a read/write UI layer over the existing pure logic: it
+introduces two store-composition functions, `buildCoachMaterialLibraryFromStore`
+and `findRelevantMaterialsFromStore` in `state/coachMaterials.ts`, which
+compose the existing pure `buildCoachMaterialLibrary`/`findRelevantMaterials`
+directly against the persisted materials store — no new scoring or grouping
+logic (see `packages/debate-speech-writer/test/coachMaterials.test.ts`).
+
+Follow-up (b) — the real AI Q&A call — adds `coach/team-coach-ai.ts` (the
+system prompt plus a tolerant response parser, `fetch`-free and directly
+Vitest-testable) and `coach/team-coach-client.ts` (the thin `fetch` client
+posting to `/api/reason-ai`), mirroring `debate-round`'s
+`round/ai-versus-speech-ai.ts` / `round/ai-versus-speech-client.ts` split.
+The user-turn message sent to the model is exactly
+`buildGroundedCoachPrompt`'s existing output — no new prompt-composition
+logic was introduced, only the system prompt and response parsing. Vitest-
+covered in `packages/debate-speech-writer/test/team-coach-ai.test.ts`
+(system prompt content + response parsing) and
+`packages/debate-speech-writer/test/team-coach-client.test.ts` (the `fetch`
+client, with `fetch` mocked via `vi.stubGlobal`, covering the success path,
+an endpoint override, a server error message, a non-JSON error body, and
+an empty/unusable AI reply).
 
 ## Known gaps
 
-- Follow-up (a), transcription/parsing that turns an uploaded recording or
-  document into a material's `text` (today the panel only accepts pasted
-  text), remains open — not started.
-- Follow-up (b), an actual AI Q&A call that consumes
-  `buildGroundedCoachPrompt`'s output instead of only previewing it,
-  remains open — not started.
+- No transcription/parsing of an uploaded recording or document — a
+  material's `text` field must be typed or pasted in directly (follow-up
+  (a) under idea #8 in `TODO.md`).
+- No reviewer/approval workflow before a material is available to the
+  team coach — any saved material is immediately included.
+- No conversation history — each question is answered independently; a
+  prior question/answer isn't persisted or fed back into a later one.

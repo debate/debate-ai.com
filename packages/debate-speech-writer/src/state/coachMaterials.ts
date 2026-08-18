@@ -7,23 +7,16 @@
  * `coachingPrograms.ts`/`prepNotes.ts`/`flowAnnotations.ts` persistence
  * convention.
  *
- * `buildPersistedCoachMaterialLibrary`/`findRelevantPersistedMaterials`
- * compose `team-coach-materials.ts`'s pure `buildCoachMaterialLibrary`/
- * `findRelevantMaterials` directly against the persisted materials,
- * mirroring `debate-card-search`'s `evidenceLibraryEntries.ts`
- * `searchPersistedEvidenceLibrary` convention.
- *
  * @module state/coachMaterials
  */
 
-import {
-  buildCoachMaterialLibrary,
-  findRelevantMaterials,
-  type CoachMaterial,
-  type CoachMaterialLibrary,
-  type CoachMaterialMatch,
-  type FindRelevantMaterialsOptions,
+import type {
+  CoachMaterial,
+  CoachMaterialLibrary,
+  CoachMaterialMatch,
+  FindRelevantMaterialsOptions,
 } from "../coach/team-coach-materials";
+import { buildCoachMaterialLibrary, findRelevantMaterials } from "../coach/team-coach-materials";
 
 const STORAGE_KEY = "coachMaterials";
 
@@ -71,13 +64,25 @@ export function deleteCoachMaterial(id: string): void {
   writeAll(readAll().filter((material) => material.id !== id));
 }
 
-/** Builds the kind-grouped library from every persisted coach material. */
-export function buildPersistedCoachMaterialLibrary(): CoachMaterialLibrary {
+/**
+ * Builds the kind-grouped coach-material library directly from every
+ * persisted material, composing this store with `team-coach-materials.ts`'s
+ * pure `buildCoachMaterialLibrary` rather than requiring a caller to hold
+ * and pass in the full material list themselves — mirroring
+ * `debate-card-search`'s `buildTopContributorAwardsFromStore` "compose the
+ * pure function directly against the persisted store" convention.
+ */
+export function buildCoachMaterialLibraryFromStore(): CoachMaterialLibrary {
   return buildCoachMaterialLibrary(readAll());
 }
 
-/** Finds the persisted materials most relevant to `query`, reusing `findRelevantMaterials` directly. */
-export function findRelevantPersistedMaterials(
+/**
+ * Finds and ranks the persisted materials most relevant to `query`,
+ * composing this store with `team-coach-materials.ts`'s pure
+ * `findRelevantMaterials` the same way `buildCoachMaterialLibraryFromStore`
+ * composes `buildCoachMaterialLibrary`.
+ */
+export function findRelevantMaterialsFromStore(
   query: string,
   options: FindRelevantMaterialsOptions = {},
 ): CoachMaterialMatch[] {

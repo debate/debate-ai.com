@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
-  buildPersistedCoachMaterialLibrary,
+  buildCoachMaterialLibraryFromStore,
   deleteCoachMaterial,
-  findRelevantPersistedMaterials,
+  findRelevantMaterialsFromStore,
   getCoachMaterial,
   listCoachMaterials,
   saveCoachMaterial,
@@ -108,40 +108,47 @@ describe("deleteCoachMaterial", () => {
   });
 });
 
-describe("buildPersistedCoachMaterialLibrary", () => {
+describe("buildCoachMaterialLibraryFromStore", () => {
   it("returns an empty library when nothing is stored", () => {
-    expect(buildPersistedCoachMaterialLibrary()).toEqual({ groups: [], totalMaterials: 0 });
+    expect(buildCoachMaterialLibraryFromStore()).toEqual({ groups: [], totalMaterials: 0 });
   });
 
-  it("groups every persisted material by kind, reusing buildCoachMaterialLibrary directly", () => {
-    saveCoachMaterial(CAMP);
+  it("groups every persisted material by kind, mirroring buildCoachMaterialLibrary", () => {
     saveCoachMaterial(LECTURE);
+    saveCoachMaterial(CAMP);
 
-    const library = buildPersistedCoachMaterialLibrary();
+    const library = buildCoachMaterialLibraryFromStore();
+
     expect(library.totalMaterials).toBe(2);
-    expect(library.groups.map((g) => g.kind)).toEqual(["lecture_transcript", "camp_material"]);
+    expect(library.groups).toEqual([
+      { kind: "lecture_transcript", materials: [LECTURE] },
+      { kind: "camp_material", materials: [CAMP] },
+    ]);
   });
 });
 
-describe("findRelevantPersistedMaterials", () => {
-  it("returns an empty list when nothing is stored", () => {
-    expect(findRelevantPersistedMaterials("topicality")).toEqual([]);
+describe("findRelevantMaterialsFromStore", () => {
+  it("returns no matches when nothing is stored", () => {
+    expect(findRelevantMaterialsFromStore("topicality")).toEqual([]);
   });
 
-  it("ranks persisted materials by relevance, reusing findRelevantMaterials directly", () => {
+  it("ranks persisted materials by relevance to the query", () => {
     saveCoachMaterial(LECTURE);
     saveCoachMaterial(CAMP);
 
-    const matches = findRelevantPersistedMaterials("topicality");
+    const matches = findRelevantMaterialsFromStore("topicality");
+
     expect(matches).toHaveLength(1);
-    expect(matches[0].material.id).toBe("lecture-1");
+    expect(matches[0]?.material).toEqual(LECTURE);
   });
 
-  it("scopes results to a topic when provided", () => {
+  it("passes options (e.g. limit) through to findRelevantMaterials", () => {
     saveCoachMaterial(LECTURE);
     saveCoachMaterial(CAMP);
 
-    expect(findRelevantPersistedMaterials("topicality", { topic: "T" })).toHaveLength(1);
-    expect(findRelevantPersistedMaterials("topicality", { topic: "DA" })).toHaveLength(0);
+    const matches = findRelevantMaterialsFromStore("case", { limit: 1 });
+
+    expect(matches).toHaveLength(1);
+    expect(matches[0]?.material).toEqual(CAMP);
   });
 });

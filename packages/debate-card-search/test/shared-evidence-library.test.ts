@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildEvidenceEntryRevision,
   buildEvidenceLibraryIndex,
   buildEvidenceSearchSummaryText,
+  computeWordCount,
+  deriveCardSnapshotFromEntry,
   findEntriesByCite,
+  getEvidenceStaleness,
+  getStaleEvidenceEntries,
   searchEvidenceLibrary,
   type EvidenceLibraryEntry,
 } from "../src/lib/shared-evidence-library";
+import { STALE_EVIDENCE_THRESHOLD_YEARS, evaluateRevision } from "../src/lib/revision-incentives";
 
 const entries: EvidenceLibraryEntry[] = [
   {
@@ -129,6 +135,25 @@ describe("buildEvidenceLibraryIndex", () => {
   });
 });
 
+describe("computeWordCount", () => {
+  it("counts space-separated words", () => {
+    expect(computeWordCount("Rising emissions accelerate warming impacts.")).toBe(5);
+  });
+
+  it("collapses repeated whitespace, including newlines and tabs", () => {
+    expect(computeWordCount("Line one\n\nLine  two\tthree")).toBe(5);
+  });
+
+  it("trims leading and trailing whitespace before counting", () => {
+    expect(computeWordCount("  padded text  ")).toBe(2);
+  });
+
+  it("returns 0 for an empty or whitespace-only string", () => {
+    expect(computeWordCount("")).toBe(0);
+    expect(computeWordCount("   ")).toBe(0);
+  });
+});
+
 describe("buildEvidenceSearchSummaryText", () => {
   it("renders a count-only summary with no text query", () => {
     expect(buildEvidenceSearchSummaryText(searchEvidenceLibrary(entries), {})).toBe("4 results");
@@ -144,5 +169,121 @@ describe("buildEvidenceSearchSummaryText", () => {
     expect(buildEvidenceSearchSummaryText(searchEvidenceLibrary(entries, query), query)).toBe(
       '2 results for "warming"',
     );
+  });
+});
+
+function entry(overrides: Partial<EvidenceLibraryEntry> = {}): EvidenceLibraryEntry {
+  return {
+    id: "entry-1",
+    argBlock: "Warming DA",
+    wordCount: 0,
+    topic: "Energy",
+    caseArea: "DA",
+    tags: [],
+    kind: "card",
+    text: "Rising global temperatures accelerate extreme weather and sea level rise across every coastal region studied.",
+    cite: "",
+    ...overrides,
+  };
+}
+
+describe("deriveCardSnapshotFromEntry", () => {
+  it("parses a 4-digit year out of the citation as evidenceYear, with full citationCompleteness", () => {
+    const snapshot = deriveCardSnapshotFromEntry(entry({ cite: "Smith 2024" }));
+    expect(snapshot.evidenceYear).toBe(2024);
+    expect(snapshot.citationCompleteness).toBe(1);
+  });
+
+  it("gives partial citationCompleteness and no evidenceYear for a non-blank citation without a year", () => {
+    const snapshot = deriveCardSnapshotFromEntry(entry({ cite: "Smith ND" }));
+    expect(snapshot.evidenceYear).toBe(0);
+    expect(snapshot.citationCompleteness).toBe(0.5);
+  });
+
+  it("gives zero citationCompleteness for a blank citation", () => {
+    const snapshot = deriveCardSnapshotFromEntry(entry({ cite: "" }));
+    expect(snapshot.evidenceYear).toBe(0);
+    expect(snapshot.citationCompleteness).toBe(0);
+  });
+
+  it("stamps wordCount from the entry's text via computeWordCount", () => {
+    const text = "Short two-sentence card. Second sentence here.";
+    const snapshot = deriveCardSnapshotFromEntry(entry({ text }));
+    expect(snapshot.wordCount).toBe(computeWordCount(text));
+  });
+
+  it("derives two 0-1 qualitySignals from the entry's text", () => {
+    const snapshot = deriveCardSnapshotFromEntry(entry());
+    expect(snapshot.qualitySignals).toHaveLength(2);
+    for (const signal of snapshot.qualitySignals) {
+      expect(signal).toBeGreaterThanOrEqual(0);
+      expect(signal).toBeLessThanOrEqual(1);
+    }
+  });
+});
+
+describe("buildEvidenceEntryRevision", () => {
+  it("builds a CardRevision keyed by the after entry's id and the given contributor", () => {
+    const before = entry({ id: "card-9", cite: "" });
+    const after = entry({ id: "card-9", cite: "Smith 2024" });
+
+    const revision = buildEvidenceEntryRevision(before, after, "alice");
+    expect(revision.cardId).toBe("card-9");
+    expect(revision.contributorId).toBe("alice");
+    expect(revision.before).toEqual(deriveCardSnapshotFromEntry(before));
+    expect(revision.after).toEqual(deriveCardSnapshotFromEntry(after));
+  });
+
+  it("scores a real edit that adds a dated citation as a rewarded citation-strengthening/evidence-refresh", () => {
+    const before = entry({ cite: "" });
+    const after = entry({ cite: "Smith 2024" });
+
+    const evaluation = evaluateRevision(buildEvidenceEntryRevision(before, after, "alice"));
+    expect(evaluation.citationStrengthened).toBe(true);
+    expect(evaluation.evidenceRefreshed).toBe(true);
+    expect(evaluation.isRewardedImprovement).toBe(true);
+  });
+
+  it("scores an edit with no meaningful change as unrewarded", () => {
+    const before = entry();
+    const after = entry();
+
+    const evaluation = evaluateRevision(buildEvidenceEntryRevision(before, after, "alice"));
+    expect(evaluation.isRewardedImprovement).toBe(false);
+  });
+});
+
+describe("getEvidenceStaleness", () => {
+  it("flags a card with an old citation year as stale", () => {
+    const oldCard = entry({ cite: `Smith ${2026 - STALE_EVIDENCE_THRESHOLD_YEARS}` });
+    expect(getEvidenceStaleness(oldCard, 2026).isStale).toBe(true);
+  });
+
+  it("does not flag a card with a recent citation year as stale", () => {
+    const freshCard = entry({ cite: "Smith 2026" });
+    expect(getEvidenceStaleness(freshCard, 2026).isStale).toBe(false);
+  });
+
+  it("flags a card with an undated citation as stale", () => {
+    expect(getEvidenceStaleness(entry({ cite: "Smith ND" }), 2026).isStale).toBe(true);
+  });
+
+  it("flags a card with no citation at all as stale", () => {
+    expect(getEvidenceStaleness(entry({ cite: "" }), 2026).isStale).toBe(true);
+  });
+});
+
+describe("getStaleEvidenceEntries", () => {
+  it("returns only stale card entries, excluding blocks and fresh cards", () => {
+    const staleCard = entry({ id: "stale-card", cite: "Lee 2018" });
+    const freshCard = entry({ id: "fresh-card", cite: "Smith 2026" });
+    const staleBlock = entry({ id: "stale-block", kind: "block", cite: "" });
+
+    const stale = getStaleEvidenceEntries([staleCard, freshCard, staleBlock], 2026);
+    expect(stale.map((e) => e.id)).toEqual(["stale-card"]);
+  });
+
+  it("returns an empty array when nothing is stale", () => {
+    expect(getStaleEvidenceEntries([entry({ cite: "Smith 2026" })], 2026)).toEqual([]);
   });
 });

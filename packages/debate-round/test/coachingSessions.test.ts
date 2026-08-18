@@ -6,6 +6,7 @@ import {
   getCoachingSessionsForRound,
   listCoachingSessions,
   saveCoachingSession,
+  saveCoachingSessionAiFeedback,
   type CoachingSessionRecord,
 } from "../src/state/coachingSessions";
 
@@ -135,6 +136,39 @@ describe("deleteCoachingSession", () => {
     saveCoachingSession(SESSION_NEG);
     deleteCoachingSession("round-1", "AFF");
     expect(listCoachingSessions()).toEqual([SESSION_NEG]);
+  });
+});
+
+describe("saveCoachingSessionAiFeedback", () => {
+  it("sets aiFeedback on an existing session without touching its prompts", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSessionAiFeedback("round-1", "AFF", "Lead with the solvency deficit.");
+
+    expect(getCoachingSession("round-1", "AFF")).toEqual({
+      ...SESSION_AFF,
+      aiFeedback: "Lead with the solvency deficit.",
+    });
+  });
+
+  it("overwrites a previously saved aiFeedback", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSessionAiFeedback("round-1", "AFF", "First pass.");
+    saveCoachingSessionAiFeedback("round-1", "AFF", "Revised feedback.");
+
+    expect(getCoachingSession("round-1", "AFF")?.aiFeedback).toBe("Revised feedback.");
+  });
+
+  it("leaves other sessions untouched", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSession(SESSION_NEG);
+    saveCoachingSessionAiFeedback("round-1", "AFF", "Feedback for AFF only.");
+
+    expect(getCoachingSession("round-1", "NEG")).toEqual(SESSION_NEG);
+  });
+
+  it("is a no-op when the roundId/sideKey pair isn't stored", () => {
+    saveCoachingSessionAiFeedback("round-1", "AFF", "Feedback.");
+    expect(listCoachingSessions()).toEqual([]);
   });
 });
 

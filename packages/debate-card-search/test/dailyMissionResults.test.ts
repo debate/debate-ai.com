@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildPersistedContributorQuestStreak,
+  buildPersistedQuestStreakRoster,
   computeAndSavePersistedDailyMissionResult,
   deleteDailyMissionResult,
   getDailyMissionResult,
@@ -148,6 +149,35 @@ describe("buildPersistedContributorQuestStreak", () => {
   it("returns a zero streak for a contributor with no persisted history", () => {
     const status = buildPersistedContributorQuestStreak("missing", "2026-08-16");
     expect(status.streak).toEqual({ currentStreak: 0, longestStreak: 0, lastCompletedDayKey: null });
+  });
+});
+
+describe("buildPersistedQuestStreakRoster", () => {
+  it("returns an empty roster when nothing is stored", () => {
+    expect(buildPersistedQuestStreakRoster("2026-08-16")).toEqual([]);
+  });
+
+  it("builds every contributor's streak status, sorted alphabetically by contributorId", () => {
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-14", isComplete: true });
+    saveDailyMissionResult(ALICE_DAY1);
+    saveDailyMissionResult(ALICE_DAY2);
+    saveDailyMissionResult(BOB_DAY1);
+
+    const roster = buildPersistedQuestStreakRoster("2026-08-16");
+
+    expect(roster.map((status) => status.contributorId)).toEqual(["alice", "bob"]);
+    expect(roster[0].streak.currentStreak).toBe(3);
+    expect(roster[0].earnedBadges).toEqual(["3-Day Streak"]);
+    expect(roster[1].streak.currentStreak).toBe(0);
+    expect(roster[1].earnedBadges).toEqual([]);
+  });
+
+  it("lists each contributor only once even with multiple stored days", () => {
+    saveDailyMissionResult(ALICE_DAY1);
+    saveDailyMissionResult(ALICE_DAY2);
+
+    const roster = buildPersistedQuestStreakRoster("2026-08-16");
+    expect(roster).toHaveLength(1);
   });
 });
 
