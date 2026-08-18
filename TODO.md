@@ -41,7 +41,7 @@
   tests, all pass), `bun run typecheck` (all 12 in-scope packages pass),
   and `bun run build:web` (`debate-ai-web` succeeds) all pass. No
   repo-wide `lint` script exists (checked root/app/package `package.json`
-  scripts) so none was run.
+  scripts) so none was run. PR: [#216](https://github.com/debate/debate-ai.com/pull/216).
 - **Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut
   wiring.** Closes follow-up (a) under idea #14 ("Legacy Verbatim /
   Cardmirror Compatibility") in the Product Feature Ideas list: "wiring
