@@ -11,11 +11,13 @@
  * their own speeches via the already-existing `validateSpeechSubmission`,
  * saving each submission through the already-persisted
  * `state/aiVersusRounds.ts` (`saveAiVersusRound`, `deleteAiVersusRound`).
- * AI turns are shown as pending rather than fillable, since no AI
- * speech-generation call exists yet (follow-up (a), still open). Speech
- * submission is text-only — `PriorSpeechRecord` has no audio field, and no
- * transcription pipeline exists in this repo. No new turn-order or
- * validation logic is introduced here.
+ * On the AI's turn, a "Generate AI speech" action builds the request via
+ * `buildAiResponseRequest` and calls `requestAiVersusSpeech` (the
+ * `/api/reason-ai`-backed follow-up (a) call), saving the returned text as
+ * that slot's speech — closing follow-up (a). Speech submission is
+ * text-only — `PriorSpeechRecord` has no audio field, and no transcription
+ * pipeline exists in this repo. No new turn-order or validation logic is
+ * introduced here.
  *
  * @module panels/AiVersusRoundPanel
  */
@@ -41,7 +43,12 @@ import {
   debateStyles,
   type DebateStyleKey,
 } from "debate-timer/src/formats/debate-format-times"
-import { validateSpeechSubmission, type AiVersusSide } from "../round/ai-versus-speech-order"
+import {
+  buildAiResponseRequest,
+  validateSpeechSubmission,
+  type AiVersusSide,
+} from "../round/ai-versus-speech-order"
+import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import {
   buildAiVersusRoundsPanelView,
   deleteAiVersusRound,
@@ -79,6 +86,7 @@ export function AiVersusRoundPanel() {
   const [activeRoundId, setActiveRoundId] = useState<string | null>(null)
   const [speechText, setSpeechText] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [aiGenerating, setAiGenerating] = useState(false)
 
   useEffect(() => {
     setRounds(buildAiVersusRoundsPanelView())
@@ -151,6 +159,33 @@ export function AiVersusRoundPanel() {
     setError(null)
     setSpeechText("")
     refresh()
+  }
+
+  const handleGenerateAiSpeech = async () => {
+    if (!activeRoundId || !activeRecord || !activeStatus?.nextSlot) return
+    if (activeStatus.nextSlot.speaker !== "ai") return
+
+    const request = buildAiResponseRequest(
+      activeStatus.order,
+      activeStatus.submittedCount,
+      activeRecord.submittedSpeeches,
+    )
+    if (!request) return
+
+    setAiGenerating(true)
+    setError(null)
+    try {
+      const text = await requestAiVersusSpeech(request)
+      saveAiVersusRound({
+        ...activeRecord,
+        submittedSpeeches: [...activeRecord.submittedSpeeches, { name: request.slot.name, speaker: "ai", text }],
+      })
+      refresh()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "AI speech generation failed.")
+    } finally {
+      setAiGenerating(false)
+    }
   }
 
   if (rounds === null) {
@@ -254,10 +289,14 @@ export function AiVersusRoundPanel() {
               Round complete — every speech has been delivered.
             </p>
           ) : activeStatus.nextSlot.speaker === "ai" ? (
-            <p className="text-sm text-muted-foreground">
-              Waiting for the AI to deliver &quot;{activeStatus.nextSlot.name}&quot; — AI speech
-              generation isn&apos;t implemented yet.
-            </p>
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                It&apos;s the AI&apos;s turn to deliver &quot;{activeStatus.nextSlot.name}&quot;.
+              </p>
+              <Button onClick={handleGenerateAiSpeech} disabled={aiGenerating}>
+                {aiGenerating ? "Generating…" : "Generate AI speech"}
+              </Button>
+            </div>
           ) : (
             <div className="space-y-2">
               <Label htmlFor="ai-versus-speech-text">
