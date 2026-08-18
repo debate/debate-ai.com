@@ -6,6 +6,37 @@
 (none)
 
 ### Completed
+- **Video-Lecture-Training Coach AI — materials-upload/coach panel UI.**
+  `packages/debate-speech-writer/src/panels/CoachMaterialsPanel.tsx` renders
+  the already-persisted `CoachMaterial` store (`state/coachMaterials.ts`) as
+  a real panel: an upload form (kind, title, topic, tags, text) that saves
+  through the existing `saveCoachMaterial`/`deleteCoachMaterial`, every
+  material grouped by kind via the new `buildCoachMaterialLibraryFromStore`
+  (each with a "Delete" action), and an "Ask the coach" preview that runs
+  the new `findRelevantMaterialsFromStore` plus the already-existing
+  `buildGroundedCoachPrompt` to show the matched materials and composed
+  prompt text (no AI call is made — see idea #8's follow-up (b), still
+  open). `buildCoachMaterialLibraryFromStore`/`findRelevantMaterialsFromStore`
+  compose the existing pure `buildCoachMaterialLibrary`/`findRelevantMaterials`
+  directly against the persisted store, mirroring
+  `buildTopContributorAwardsFromStore`'s "compose the pure function directly
+  against the persisted store" convention — no new scoring/grouping logic.
+  It's mounted at `/coach-materials`
+  (`apps/debate-ai.com/app/coach-materials/page.tsx`, with a back-link to
+  `/debate`) and reachable from the global nav dock's Settings menu ("Coach
+  Materials", via a new `BookOpen`-icon `DropdownMenuItem` in
+  `CategoryDock.tsx`). Vitest-covered in
+  `packages/debate-speech-writer/test/coachMaterials.test.ts`
+  (`buildCoachMaterialLibraryFromStore`'s empty-store and kind-grouping
+  behavior, `findRelevantMaterialsFromStore`'s empty-store, relevance
+  ranking, and options-passthrough behavior). Documented in
+  `docs/features/coach-materials.md`. See idea #8
+  ("Video-Lecture-Training Coach AI") in Product Feature Ideas below — this
+  closes follow-up (c), "a materials-upload/coach chat panel UI." Follow-ups
+  (a) transcription/parsing that turns an uploaded recording or document
+  into a material's text, and (b) an actual AI Q&A call that consumes
+  `buildGroundedCoachPrompt`'s output, remain open — neither is started.
+  PR: [#177](https://github.com/debate/debate-ai.com/pull/177).
 - **Group Challenges — challenge-board/creation UI.**
   `packages/debate-card-search/src/panels/GroupChallengesPanel.tsx` adds a
   full-page React panel that lets a coach create a squad-scoped friendly
@@ -3281,7 +3312,7 @@
 
 7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext 
 
-8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. Follow-ups: (a) transcription/parsing that turns an uploaded recording or document into a material's text, (b) an actual AI Q&A call that consumes `buildGroundedCoachPrompt`'s output, (c) a materials-upload/coach chat panel UI that reads/writes through the persistence store. None of these are started._
+8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. A third slice, `CoachMaterialsPanel` (see Tracker Status above, "Video-Lecture-Training Coach AI — materials-upload/coach panel UI"), now renders an upload form, a kind-grouped material list, and an "ask the coach" grounded-prompt preview at `/coach-materials`, closing follow-up (c). Follow-ups: (a) transcription/parsing that turns an uploaded recording or document into a material's text, (b) an actual AI Q&A call that consumes `buildGroundedCoachPrompt`'s output. Neither of these is started._
 
 9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slices done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. A second slice, `collapsedHeadings.ts` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading persistence"), now persists a document's collapsed heading ids to localStorage. Follow-ups: (a) a React nav/outline panel in `reason-editor` that renders the outline and toggles collapsed ids, reading/writing through the persistence store, (b) a ProseMirror decoration plugin that hides collapsed ranges in the actual editor view using `getCollapsedRanges`. Neither of these is started._
 
