@@ -5,10 +5,12 @@
  * Reads every contributor's unlock+streak status via
  * `lib/unlock-streak-status.ts`'s `buildUnlockStatusRoster` (itself a thin
  * composition against the already-persisted `state/contributions.ts`/
- * `state/dailyMissionResults.ts` stores) and renders it as a roster table:
- * tier, unlocked task skill level, badges, current streak, and progress
- * toward the next tier — reusing every existing tier/badge/streak slice
- * directly rather than introducing new logic here.
+ * `state/dailyMissionResults.ts`/`state/researchProgress.ts` stores) and
+ * renders it as a roster table: tier, unlocked task skill level, badges,
+ * current streak, completed research-task count, and progress toward the
+ * next tier (which now also names how many more tasks need finishing) —
+ * reusing every existing tier/badge/streak/progress slice directly rather
+ * than introducing new logic here.
  *
  * @module panels/ProgressUnlocksPanel
  */
@@ -42,7 +44,8 @@ const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
 
 function nextTierText(status: ContributorUnlockStatusWithStreak): string {
   if (!status.nextTier) return "Top tier reached"
-  return `${status.nextTier.contributionsNeeded} contributions, ${status.nextTier.helpfulnessScoreNeeded} pts to ${status.nextTier.tier}`
+  const taskPart = status.nextTier.tasksNeeded > 0 ? `, ${status.nextTier.tasksNeeded} tasks` : ""
+  return `${status.nextTier.contributionsNeeded} contributions, ${status.nextTier.helpfulnessScoreNeeded} pts${taskPart} to ${status.nextTier.tier}`
 }
 
 /**
@@ -88,6 +91,7 @@ export function ProgressUnlocksPanel() {
             <TableHead>Tier</TableHead>
             <TableHead>Unlocked tasks</TableHead>
             <TableHead className="text-right">Streak</TableHead>
+            <TableHead className="text-right">Tasks done</TableHead>
             <TableHead>Badges</TableHead>
             <TableHead>Next tier</TableHead>
           </TableRow>
@@ -105,6 +109,7 @@ export function ProgressUnlocksPanel() {
               <TableCell className="text-right">
                 {status.streak.currentStreak > 0 ? `🔥 ${status.streak.currentStreak}` : "—"}
               </TableCell>
+              <TableCell className="text-right text-muted-foreground">{status.completedTaskCount}</TableCell>
               <TableCell>
                 {status.badges.length > 0 ? (
                   <div className="flex flex-wrap gap-1">

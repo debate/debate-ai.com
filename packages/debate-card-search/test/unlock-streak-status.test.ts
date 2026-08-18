@@ -9,6 +9,8 @@ import {
 } from "../src/lib/unlock-streak-status";
 import { saveContribution } from "../src/state/contributions";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
+import { completeAndRecordResearchTask } from "../src/state/researchProgress";
+import { saveRoutedTaskQueue } from "../src/state/routedTaskQueues";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -46,17 +48,18 @@ function day(dayKey: string, isComplete: boolean): DailyMissionResult {
 const veteranStats = makeStats({ contributorId: "veteran-vic", contributionCount: 15, totalHelpfulnessScore: 100 });
 
 describe("buildContributorUnlockStatusWithStreak", () => {
-  it("merges tier badges with streak badges earned as of the given day", () => {
+  it("merges tier badges with streak badges earned as of the given day, once the completed-task gate is also met", () => {
     const missionResults = [
       day("2026-08-08", true),
       day("2026-08-09", true),
       day("2026-08-10", true),
     ];
 
-    const status = buildContributorUnlockStatusWithStreak(veteranStats, missionResults, "2026-08-10");
+    const status = buildContributorUnlockStatusWithStreak(veteranStats, missionResults, "2026-08-10", 5);
 
     expect(status.tier).toBe("veteran");
     expect(status.unlockedSkillLevel).toBe("intermediate");
+    expect(status.completedTaskCount).toBe(5);
     expect(status.streak.currentStreak).toBe(3);
     expect(status.streakBadges).toEqual(["3-Day Streak"]);
     expect(status.badges).toEqual(["Rising Researcher", "Seasoned Contributor", "3-Day Streak"]);
@@ -65,7 +68,7 @@ describe("buildContributorUnlockStatusWithStreak", () => {
   it("still returns a correct tier-only status when the streak is broken", () => {
     const missionResults = [day("2026-08-08", true), day("2026-08-10", false)];
 
-    const status = buildContributorUnlockStatusWithStreak(veteranStats, missionResults, "2026-08-10");
+    const status = buildContributorUnlockStatusWithStreak(veteranStats, missionResults, "2026-08-10", 5);
 
     expect(status.streak.currentStreak).toBe(0);
     expect(status.streakBadges).toEqual([]);
@@ -81,16 +84,29 @@ describe("buildContributorUnlockStatusWithStreak", () => {
     expect(status.streakBadges).toEqual([]);
     expect(status.streak.currentStreak).toBe(0);
   });
+
+  it("caps a contributor at the tier below veteran when they haven't completed enough tasks yet, even with veteran-level stats", () => {
+    const statusWithNoTasks = buildContributorUnlockStatusWithStreak(veteranStats, [], "2026-08-10");
+    const statusWithFewTasks = buildContributorUnlockStatusWithStreak(veteranStats, [], "2026-08-10", 4);
+    const statusWithEnoughTasks = buildContributorUnlockStatusWithStreak(veteranStats, [], "2026-08-10", 5);
+
+    expect(statusWithNoTasks.tier).toBe("apprentice");
+    expect(statusWithFewTasks.tier).toBe("apprentice");
+    expect(statusWithEnoughTasks.tier).toBe("veteran");
+    expect(statusWithNoTasks.nextTier?.tasksNeeded).toBe(5);
+    expect(statusWithFewTasks.nextTier?.tasksNeeded).toBe(1);
+  });
 });
 
 describe("buildUnlockStatusWithStreakText", () => {
   it("composes the tier line and streak line via each source slice's own text builder", () => {
     const missionResults = [day("2026-08-09", true), day("2026-08-10", true)];
-    const status = buildContributorUnlockStatusWithStreak(veteranStats, missionResults, "2026-08-10");
+    const status = buildContributorUnlockStatusWithStreak(veteranStats, missionResults, "2026-08-10", 5);
 
     const text = buildUnlockStatusWithStreakText(status);
 
     expect(text).toContain("veteran-vic: veteran tier");
+    expect(text).toContain("5 tasks completed");
     expect(text).toContain("veteran-vic: 2-day streak");
   });
 });
@@ -105,6 +121,18 @@ function contribution(id: string, contributorId: string): AttributedContribution
     qualitySignals: [1],
     reviewerEndorsements: [{ reviewerWeight: 1 }],
   };
+}
+
+/** Persists a routed queue with one task assigned to `contributorId`, then immediately completes it, so it lands in `researchProgress.ts`'s completed-task history. */
+function completeTaskFor(contributorId: string, topicId: string, argBlock: string, completedAt: string): void {
+  saveRoutedTaskQueue({
+    topicId,
+    result: {
+      assignments: [{ task: { argBlock, level: "thin", requiredSkill: "novice" }, contributorId }],
+      unassignedTasks: [],
+    },
+  });
+  completeAndRecordResearchTask(topicId, argBlock, completedAt);
 }
 
 describe("buildContributorUnlockStatusWithStreakFromStore", () => {
@@ -156,6 +184,24 @@ describe("buildContributorUnlockStatusWithStreakFromStore", () => {
 
     expect(status.tier).toBe("novice");
     expect(status.streak.currentStreak).toBe(0);
+  });
+
+  it("gates veteran tier on a contributor's persisted completed-task count, not just contribution stats", () => {
+    for (let i = 0; i < 15; i++) {
+      saveContribution(contribution(`erin-${i}`, "erin"));
+    }
+
+    const beforeTasks = buildContributorUnlockStatusWithStreakFromStore("erin", "2026-08-16");
+    expect(beforeTasks.tier).toBe("apprentice");
+    expect(beforeTasks.completedTaskCount).toBe(0);
+
+    for (let i = 0; i < 5; i++) {
+      completeTaskFor("erin", "topic-a", `arg-${i}`, "2026-08-16T00:00:00.000Z");
+    }
+
+    const afterTasks = buildContributorUnlockStatusWithStreakFromStore("erin", "2026-08-16");
+    expect(afterTasks.tier).toBe("veteran");
+    expect(afterTasks.completedTaskCount).toBe(5);
   });
 });
 

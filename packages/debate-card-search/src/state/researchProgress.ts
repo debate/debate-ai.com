@@ -26,20 +26,28 @@
  * `dailyMissionResults.ts`'s "compose the pure function directly against the
  * persisted store" convention. `panels/ResearchProgressPanel.tsx` renders it.
  *
- * Follow-up (c), feeding a contributor's topic-progress history back into
- * `progress-unlocks.ts`'s tier computation, remains open — not started.
+ * `getPersistedContributorProgress` closes follow-up (c), "feeding a
+ * contributor's topic-progress history back into `progress-unlocks.ts`'s
+ * tier computation": it builds one contributor's `ContributorProgress`
+ * (their `totalCompletedTasks` in particular) directly from this store's
+ * completed/active assignments, filtered to that contributor up front
+ * rather than building the whole board and searching it. `lib/unlock-streak-status.ts`'s
+ * `buildContributorUnlockStatusWithStreakFromStore` reads it to gate a
+ * contributor's unlock tier on their completed-task count via the new
+ * `lib/unlock-progress-status.ts` slice.
  *
  * @module state/researchProgress
  */
 
 import {
+  buildContributorProgress,
   buildResearchProgressBoard,
   type ContributorProgress,
   type TrackedTopicAssignment,
 } from "../lib/research-progress";
 import { DEFAULT_HELPFULNESS_WEIGHTS, type HelpfulnessWeights } from "../lib/community-rating";
 import type { RoutedAssignment } from "../lib/research-task-routing";
-import { listContributions } from "./contributions";
+import { listContributions, listContributionsByContributor } from "./contributions";
 import { completePersistedRoutedTask, listRoutedTaskQueues } from "./routedTaskQueues";
 
 /** One completed research task, remembered after `completePersistedRoutedTask` removes it from its active queue. */
@@ -120,4 +128,32 @@ export function buildPersistedResearchProgressBoard(
   );
 
   return buildResearchProgressBoard(listContributions(), [...completed, ...active], weights);
+}
+
+/**
+ * Builds one contributor's `ContributorProgress` directly from real,
+ * persisted state, filtered to that contributor before composing
+ * `lib/research-progress.ts`'s pure `buildContributorProgress` — cheaper
+ * than building the whole `buildPersistedResearchProgressBoard` and
+ * searching it when only one contributor's standing (in particular their
+ * `totalCompletedTasks`) is needed, e.g. to gate their unlock tier via
+ * `lib/unlock-progress-status.ts`. Returns a progress record with empty
+ * topics/zero completed tasks (never throws) for a contributor with no
+ * persisted contributions or assignments.
+ */
+export function getPersistedContributorProgress(
+  contributorId: string,
+  weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+): ContributorProgress {
+  const completed: TrackedTopicAssignment[] = readAll()
+    .filter((record) => record.assignment.contributorId === contributorId)
+    .map((record) => ({ topic: record.topic, assignment: record.assignment, completedAt: record.completedAt }));
+
+  const active: TrackedTopicAssignment[] = listRoutedTaskQueues().flatMap(({ topicId, result }) =>
+    result.assignments
+      .filter((assignment) => assignment.contributorId === contributorId)
+      .map((assignment) => ({ topic: topicId, assignment })),
+  );
+
+  return buildContributorProgress(contributorId, listContributionsByContributor(contributorId), [...completed, ...active], weights);
 }

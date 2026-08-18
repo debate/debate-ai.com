@@ -57,10 +57,23 @@ UI"). Vitest-covered in
 history persistence, corrupt-storage recovery, and board composition across
 contributors with only contributions, only active tasks, or both).
 
+Follow-up (c) — feeding a contributor's topic-progress history back into
+`progress-unlocks.ts`'s tier computation — is now closed by
+`lib/unlock-progress-status.ts` and `state/researchProgress.ts`'s
+`getPersistedContributorProgress`: a contributor's completed-task count from
+this board now gates their unlock tier on the [Progress Unlocks](./progress-unlocks.md)
+panel (`veteran`/`expert` require 5/15 completed tasks by default, in
+addition to the existing contribution volume/quality thresholds).
+`getPersistedContributorProgress` builds one contributor's
+`ContributorProgress` directly (filtered up front, rather than building the
+whole board and searching it), reusing `lib/research-progress.ts`'s pure
+`buildContributorProgress`. Vitest-covered in
+`packages/debate-card-search/test/researchProgress.test.ts` (zeroed-out
+progress for an unknown contributor, matching the full board's entry for a
+known one, and isolation between two contributors' completed/active tasks).
+
 ## Known gaps
 
-- Follow-up (c) — feeding a contributor's topic-progress history back into
-  `progress-unlocks.ts`'s tier computation — remains open, not started.
 - No contributor identity/auth scoping yet — the roster shows every
   contributor, the same known gap as the Leaderboard, Task Inbox, and
   Progress Unlocks panels.

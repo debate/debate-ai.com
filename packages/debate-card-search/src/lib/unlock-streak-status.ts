@@ -35,6 +35,17 @@
  * giving a panel a single call that renders the whole roster instead of
  * requiring the caller to already know every contributor id.
  *
+ * A fourth slice closes "Research Progress Tracking"'s own follow-up (c),
+ * "feeding a contributor's topic-progress history back into
+ * `progress-unlocks.ts`'s tier computation" — tier is now derived via
+ * `lib/unlock-progress-status.ts`'s `buildContributorUnlockStatusWithProgress`
+ * instead of `progress-unlocks.ts`'s plain `buildContributorUnlockStatus`,
+ * so a contributor's *completed* research-task count (from
+ * `state/researchProgress.ts`'s persisted board) now gates `veteran`/`expert`
+ * alongside contribution volume/quality. `completedTaskCount` defaults to 0
+ * so existing callers of the pure `buildContributorUnlockStatusWithStreak`
+ * are unaffected unless they opt in.
+ *
  * @module lib/unlock-streak-status
  */
 
@@ -48,40 +59,46 @@ import {
   type StreakStatus,
 } from "./gamified-quests";
 import {
-  buildContributorUnlockStatus,
-  buildUnlockStatusText,
-  DEFAULT_UNLOCK_TIER_REQUIREMENTS,
-  type ContributorUnlockStatus,
-  type UnlockTierRequirement,
-} from "./progress-unlocks";
+  buildContributorUnlockStatusWithProgress,
+  buildUnlockStatusWithProgressText,
+  DEFAULT_PROGRESS_AWARE_UNLOCK_TIER_REQUIREMENTS,
+  type ContributorUnlockStatusWithProgress,
+  type ProgressAwareUnlockTierRequirement,
+} from "./unlock-progress-status";
 import { listContributions, listContributionsByContributor } from "../state/contributions";
 import { listDailyMissionResultsForContributor } from "../state/dailyMissionResults";
+import { getPersistedContributorProgress } from "../state/researchProgress";
 
 /**
  * A contributor's unlock status extended with their streak standing.
- * `badges` (inherited from `ContributorUnlockStatus`) holds tier badges and
- * streak badges combined, tier badges first; `streakBadges` holds just the
- * streak-earned subset for a caller that wants to render them separately.
+ * `badges` (inherited from `ContributorUnlockStatusWithProgress`) holds tier
+ * badges and streak badges combined, tier badges first; `streakBadges` holds
+ * just the streak-earned subset for a caller that wants to render them
+ * separately.
  */
-export interface ContributorUnlockStatusWithStreak extends ContributorUnlockStatus {
+export interface ContributorUnlockStatusWithStreak extends ContributorUnlockStatusWithProgress {
   streak: StreakStatus;
   streakBadges: string[];
 }
 
 /**
- * Builds a contributor's unlock status (tier, unlocked skill level, tier
- * badges, next-tier progress) via `progress-unlocks.ts` and their streak
- * status (current/longest streak, streak badges) via `gamified-quests.ts`
- * from the same contributor, then merges both badge sets into one status.
+ * Builds a contributor's unlock status (tier — gated by both contribution
+ * stats and completed-task count, via `unlock-progress-status.ts` — unlocked
+ * skill level, tier badges, next-tier progress) and their streak status
+ * (current/longest streak, streak badges) via `gamified-quests.ts` from the
+ * same contributor, then merges both badge sets into one status.
+ * `completedTaskCount` defaults to 0 (no task-completion history) so
+ * existing callers are unaffected unless they opt in.
  */
 export function buildContributorUnlockStatusWithStreak(
   stats: ContributorStats,
   missionResults: DailyMissionResult[],
   asOfDayKey: string,
-  tierRequirements: UnlockTierRequirement[] = DEFAULT_UNLOCK_TIER_REQUIREMENTS,
+  completedTaskCount = 0,
+  tierRequirements: ProgressAwareUnlockTierRequirement[] = DEFAULT_PROGRESS_AWARE_UNLOCK_TIER_REQUIREMENTS,
   streakMilestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
 ): ContributorUnlockStatusWithStreak {
-  const unlockStatus = buildContributorUnlockStatus(stats, tierRequirements);
+  const unlockStatus = buildContributorUnlockStatusWithProgress(stats, completedTaskCount, tierRequirements);
   const questStreak = buildContributorQuestStreak(stats.contributorId, missionResults, asOfDayKey, streakMilestones);
 
   return {
@@ -95,12 +112,13 @@ export function buildContributorUnlockStatusWithStreak(
 /**
  * Renders a contributor's combined unlock+streak status as a short
  * human-readable line for a profile/progress view, composing
- * `progress-unlocks.ts`'s `buildUnlockStatusText` (tier + all merged badges)
- * with `gamified-quests.ts`'s `buildStreakSummaryText` (streak length)
- * directly rather than reimplementing either.
+ * `unlock-progress-status.ts`'s `buildUnlockStatusWithProgressText` (tier +
+ * completed-task count + all merged badges) with `gamified-quests.ts`'s
+ * `buildStreakSummaryText` (streak length) directly rather than
+ * reimplementing either.
  */
 export function buildUnlockStatusWithStreakText(status: ContributorUnlockStatusWithStreak): string {
-  const unlockText = buildUnlockStatusText(status);
+  const unlockText = buildUnlockStatusWithProgressText(status);
   const streakText = buildStreakSummaryText({
     contributorId: status.contributorId,
     streak: status.streak,
@@ -131,26 +149,35 @@ function buildEmptyContributorStats(contributorId: string): ContributorStats {
 
 /**
  * Builds a contributor's combined unlock+streak status straight from the
- * persisted `state/contributions.ts`/`state/dailyMissionResults.ts` stores,
- * instead of requiring the caller to hold and pass in a `ContributorStats`/
- * `DailyMissionResult[]` list themselves — mirroring the existing
- * `dailyMissionResults.ts` `buildPersistedContributorQuestStreak` "compose
- * the pure function directly against the persisted store" convention. A
- * contributor with no persisted contributions yet gets an all-zero, `novice`
- * status rather than a thrown error.
+ * persisted `state/contributions.ts`/`state/dailyMissionResults.ts`/
+ * `state/researchProgress.ts` stores, instead of requiring the caller to
+ * hold and pass in a `ContributorStats`/`DailyMissionResult[]`/completed-task
+ * count themselves — mirroring the existing `dailyMissionResults.ts`
+ * `buildPersistedContributorQuestStreak` "compose the pure function directly
+ * against the persisted store" convention. A contributor with no persisted
+ * contributions yet gets an all-zero, `novice` status rather than a thrown
+ * error.
  */
 export function buildContributorUnlockStatusWithStreakFromStore(
   contributorId: string,
   asOfDayKey: string,
-  tierRequirements: UnlockTierRequirement[] = DEFAULT_UNLOCK_TIER_REQUIREMENTS,
+  tierRequirements: ProgressAwareUnlockTierRequirement[] = DEFAULT_PROGRESS_AWARE_UNLOCK_TIER_REQUIREMENTS,
   streakMilestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
 ): ContributorUnlockStatusWithStreak {
   const contributions = listContributionsByContributor(contributorId);
   const stats =
     contributions.length === 0 ? buildEmptyContributorStats(contributorId) : buildContributorStats(contributorId, contributions);
   const missionResults = listDailyMissionResultsForContributor(contributorId);
+  const completedTaskCount = getPersistedContributorProgress(contributorId).totalCompletedTasks;
 
-  return buildContributorUnlockStatusWithStreak(stats, missionResults, asOfDayKey, tierRequirements, streakMilestones);
+  return buildContributorUnlockStatusWithStreak(
+    stats,
+    missionResults,
+    asOfDayKey,
+    completedTaskCount,
+    tierRequirements,
+    streakMilestones,
+  );
 }
 
 /**
@@ -164,7 +191,7 @@ export function buildContributorUnlockStatusWithStreakFromStore(
  */
 export function buildUnlockStatusRoster(
   asOfDayKey: string,
-  tierRequirements: UnlockTierRequirement[] = DEFAULT_UNLOCK_TIER_REQUIREMENTS,
+  tierRequirements: ProgressAwareUnlockTierRequirement[] = DEFAULT_PROGRESS_AWARE_UNLOCK_TIER_REQUIREMENTS,
   streakMilestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
 ): ContributorUnlockStatusWithStreak[] {
   const contributorIds = [...groupContributionsByContributor(listContributions()).keys()].sort();

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildPersistedResearchProgressBoard,
   completeAndRecordResearchTask,
+  getPersistedContributorProgress,
   listCompletedTaskHistory,
 } from "../src/state/researchProgress";
 import { getRoutedTaskQueue, saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "../src/state/routedTaskQueues";
@@ -148,5 +149,45 @@ describe("buildPersistedResearchProgressBoard", () => {
     expect(board[0].contributionStats?.contributionCount).toBe(1);
     expect(board[0].totalAssignedTasks).toBe(0);
     expect(board[0].topics).toEqual([]);
+  });
+});
+
+describe("getPersistedContributorProgress", () => {
+  it("returns a zeroed-out progress record for a contributor with no persisted data", () => {
+    const progress = getPersistedContributorProgress("nobody");
+
+    expect(progress.contributorId).toBe("nobody");
+    expect(progress.contributionStats).toBeNull();
+    expect(progress.totalAssignedTasks).toBe(0);
+    expect(progress.totalCompletedTasks).toBe(0);
+    expect(progress.topics).toEqual([]);
+  });
+
+  it("builds one contributor's progress directly, matching their entry in the full board", () => {
+    saveContribution(ALICE_CARD);
+    saveRoutedTaskQueue(AI_QUEUE);
+    completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+    const progress = getPersistedContributorProgress("alice");
+    const boardEntry = buildPersistedResearchProgressBoard().find((entry) => entry.contributorId === "alice");
+
+    expect(progress).toEqual(boardEntry);
+    expect(progress.totalCompletedTasks).toBe(1);
+  });
+
+  it("isolates one contributor's completed/active tasks from another's", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+    const bobQueue: RoutedTaskQueueRecord = {
+      topicId: "topic-bob",
+      result: { assignments: [{ task: IMPACTS_TASK, contributorId: "bob" }], unassignedTasks: [] },
+    };
+    saveRoutedTaskQueue(bobQueue);
+
+    expect(getPersistedContributorProgress("alice").totalAssignedTasks).toBe(2);
+    expect(getPersistedContributorProgress("alice").totalCompletedTasks).toBe(1);
+    expect(getPersistedContributorProgress("bob").totalAssignedTasks).toBe(1);
+    expect(getPersistedContributorProgress("bob").totalCompletedTasks).toBe(0);
   });
 });
