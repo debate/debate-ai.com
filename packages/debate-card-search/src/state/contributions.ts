@@ -26,13 +26,21 @@
  * to render like/save/endorse actions against, reusing
  * `community-rating.ts`'s pure `rankContributions` directly.
  *
+ * `recordPersistedEndorsementFromReviewer` closes idea #11's follow-up (b)
+ * in TODO.md ("a real reviewer-credibility system instead of a
+ * caller-supplied weight per endorsement") by deriving an endorsement's
+ * weight from the endorsing reviewer's own persisted contribution history,
+ * via `community-rating.ts`'s `computeReviewerCredibility`, instead of
+ * requiring the caller (the feed panel's "Endorse" button) to supply an
+ * arbitrary fixed weight.
+ *
  * @module state/contributions
  */
 
 import type { AttributedContribution, ContributorStats } from "../lib/contribution-leaderboard";
 import { buildLeaderboard, groupContributionsByContributor } from "../lib/contribution-leaderboard";
 import type { ContributionKind, HelpfulnessWeights, ReviewerEndorsement } from "../lib/community-rating";
-import { DEFAULT_HELPFULNESS_WEIGHTS, rankContributions } from "../lib/community-rating";
+import { DEFAULT_HELPFULNESS_WEIGHTS, computeReviewerCredibility, rankContributions } from "../lib/community-rating";
 import type { ContributorAward } from "../lib/contributor-awards";
 import { DEFAULT_AWARD_CATEGORY_LABELS, buildTopContributorAwards } from "../lib/contributor-awards";
 import type { DailyBestCard, TimestampedCardContribution } from "../lib/daily-best-card";
@@ -142,6 +150,25 @@ export function recordPersistedEndorsement(id: string, reviewerWeight: number): 
     ...contribution,
     reviewerEndorsements: [...contribution.reviewerEndorsements, endorsement],
   }));
+}
+
+/**
+ * Records a reviewer endorsement on a stored contribution, deriving the
+ * endorsement's weight from `reviewerId`'s own persisted contribution
+ * history via `community-rating.ts`'s `computeReviewerCredibility` instead
+ * of taking a caller-supplied weight directly — closes idea #11's follow-up
+ * (b) in TODO.md ("a real reviewer-credibility system instead of a
+ * caller-supplied weight per endorsement"). A reviewer with no persisted
+ * contributions of their own still gets `MIN_REVIEWER_CREDIBILITY`, not the
+ * old fixed full-credibility placeholder. Returns the updated contribution,
+ * or `undefined` if no contribution is stored for `id`.
+ */
+export function recordPersistedEndorsementFromReviewer(
+  id: string,
+  reviewerId: string,
+): AttributedContribution | undefined {
+  const reviewerWeight = computeReviewerCredibility(listContributionsByContributor(reviewerId));
+  return recordPersistedEndorsement(id, reviewerWeight);
 }
 
 /**

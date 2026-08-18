@@ -23,7 +23,10 @@ Every persisted `CardReview` (from `state/peerReviews.ts`, keyed by
 
 A form at the top starts a new card's review (`createCardReview`), and each
 review card has an "Add comment" form (reviewer id, severity, body) and a
-"Remove" action.
+"Remove" action. A `rejected` review gets a "Revise" action
+(`reviseRejectedReview`), sending it back to `draft` so its author can revise
+and resubmit — the `ALLOWED_TRANSITIONS.rejected = ["draft"]` edge the state
+machine already permitted.
 
 ## Data flow
 
@@ -36,8 +39,8 @@ state/peerReviews.ts (localStorage: peerReviews)
 Taking an action:
 panels/ReviewQueuePanel.tsx
   → lib/peer-review.ts's pure transition (submitForReview/requestChanges/
-    approveReview/rejectReview/publishReview/addReviewComment/
-    resolveReviewComment)
+    approveReview/rejectReview/reviseRejectedReview/publishReview/
+    addReviewComment/resolveReviewComment)
   → savePeerReview(review)           — state/peerReviews.ts
   → panel re-reads buildReviewQueuePanelView() to refresh
 ```
@@ -53,10 +56,6 @@ no new lifecycle or mutation logic was introduced. Vitest-covered in
 
 - No reviewer identity/permission checks (no auth/roles in this repo yet),
   so any visitor can act as any reviewer and take any lifecycle action.
-- `rejected` reviews have no wired action to move back to `draft` — the
-  state machine allows it (`ALLOWED_TRANSITIONS.rejected = ["draft"]`), but
-  no exported `lib/peer-review.ts` helper performs that specific transition
-  yet, so the panel doesn't call one.
 - No wiring to whatever eventually persists submitted cards, so
   `publishReview` doesn't yet make a card "go live" anywhere beyond this
   review record's own status.

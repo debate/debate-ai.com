@@ -19,9 +19,11 @@
  * A submitted contribution starts with a neutral `qualitySignals: [0.5]`
  * placeholder, since no automated quality scorer is wired into this
  * submission form yet — see follow-up (b) in TODO.md. An "Endorse" action
- * records a full-credibility (`reviewerWeight: 1`) endorsement, since no
- * reviewer-identity/credibility system exists yet — see the "Contribution
- * Leaderboard" bullet's follow-up (b).
+ * now records an endorsement via `recordPersistedEndorsementFromReviewer`,
+ * which derives the endorsement's weight from the typed-in reviewer's own
+ * persisted contribution history rather than a fixed placeholder — closing
+ * idea #11's follow-up (b) ("a real reviewer-credibility system instead of
+ * a caller-supplied weight per endorsement").
  *
  * Also surfaces each entry's `isPopularityOnlyOutlier` flag (computed by the
  * existing `community-rating.ts` scoring), closing the leaderboard-panel
@@ -50,7 +52,7 @@ import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import {
   buildPersistedContributionFeed,
-  recordPersistedEndorsement,
+  recordPersistedEndorsementFromReviewer,
   recordPersistedLike,
   recordPersistedSave,
   saveContribution,
@@ -88,6 +90,8 @@ export function ContributionsFeedPanel() {
   const [feed, setFeed] = useState<ContributionFeedEntry[] | null>(null)
   const [draft, setDraft] = useState<ContributionDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [reviewerId, setReviewerId] = useState("")
+  const [endorseError, setEndorseError] = useState<string | null>(null)
 
   useEffect(() => {
     setFeed(buildPersistedContributionFeed())
@@ -129,7 +133,13 @@ export function ContributionsFeedPanel() {
   }
 
   const handleEndorse = (id: string) => {
-    recordPersistedEndorsement(id, 1)
+    const trimmedReviewerId = reviewerId.trim()
+    if (!trimmedReviewerId) {
+      setEndorseError("Reviewer ID is required to endorse.")
+      return
+    }
+    setEndorseError(null)
+    recordPersistedEndorsementFromReviewer(id, trimmedReviewerId)
     refresh()
   }
 
@@ -186,6 +196,23 @@ export function ContributionsFeedPanel() {
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button onClick={handleSubmit}>Submit contribution</Button>
+      </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-2">
+        <div className="space-y-1.5 max-w-xs">
+          <Label htmlFor="contribution-reviewer">Reviewer ID (for endorsing)</Label>
+          <Input
+            id="contribution-reviewer"
+            value={reviewerId}
+            onChange={(e) => setReviewerId(e.target.value)}
+            placeholder="bob"
+          />
+        </div>
+        <p className="text-xs text-muted-foreground">
+          An endorsement's weight is drawn from the reviewer's own contribution track record, not a
+          fixed amount.
+        </p>
+        {endorseError && <p className="text-sm text-destructive">{endorseError}</p>}
       </div>
 
       {feed.length === 0 ? (

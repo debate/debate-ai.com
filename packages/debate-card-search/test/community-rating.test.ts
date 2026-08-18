@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_HELPFULNESS_WEIGHTS,
+  MIN_REVIEWER_CREDIBILITY,
   computeHelpfulnessBreakdown,
+  computeReviewerCredibility,
   rankContributions,
   scorePopularitySignal,
   scoreQualitySignal,
@@ -155,5 +157,45 @@ describe("rankContributions", () => {
 
   it("returns an empty ranking for an empty contribution list", () => {
     expect(rankContributions([])).toEqual([]);
+  });
+});
+
+describe("computeReviewerCredibility", () => {
+  it("floors credibility at MIN_REVIEWER_CREDIBILITY for a reviewer with no scored contributions", () => {
+    expect(computeReviewerCredibility([])).toBe(MIN_REVIEWER_CREDIBILITY);
+  });
+
+  it("dampens credibility toward the floor while contribution count is still low", () => {
+    expect(computeReviewerCredibility([substantive])).toBe(0.2);
+  });
+
+  it("saturates toward the full quality-derived credibility once history is deep enough", () => {
+    const history = Array.from({ length: 5 }, (_, i) => ({ ...substantive, id: `substantive-${i}` }));
+    expect(computeReviewerCredibility(history)).toBe(0.62);
+  });
+
+  it("caps the history dampening factor rather than rewarding endless volume", () => {
+    const fiveDeep = Array.from({ length: 5 }, (_, i) => ({ ...substantive, id: `s-${i}` }));
+    const tenDeep = Array.from({ length: 10 }, (_, i) => ({ ...substantive, id: `s-${i}` }));
+    expect(computeReviewerCredibility(tenDeep)).toBe(computeReviewerCredibility(fiveDeep));
+  });
+
+  it("gives a reviewer with a strong track record more credibility than one with a weak track record", () => {
+    const strong = computeReviewerCredibility([substantive]);
+    const weak = computeReviewerCredibility([viral]);
+    expect(strong).toBeGreaterThan(weak);
+  });
+
+  it("never exceeds 1 even for a maxed-out, deep history", () => {
+    const maxed: CommunityContribution = {
+      id: "maxed",
+      kind: "summary",
+      likes: 0,
+      saves: 0,
+      qualitySignals: [1, 1, 1],
+      reviewerEndorsements: [{ reviewerWeight: 5 }, { reviewerWeight: 5 }],
+    };
+    const history = Array.from({ length: 20 }, (_, i) => ({ ...maxed, id: `maxed-${i}` }));
+    expect(computeReviewerCredibility(history)).toBeLessThanOrEqual(1);
   });
 });
