@@ -13,6 +13,7 @@ import {
   rejectReview,
   requestChanges,
   resolveReviewComment,
+  reviseRejectedReview,
   submitForReview,
   type CardReview,
 } from "../src/lib/peer-review";
@@ -175,6 +176,17 @@ describe("rejectReview", () => {
   it("rejects an in_review card", () => {
     const review = submitForReview(createCardReview("card-1"));
     expect(rejectReview(review).status).toBe("rejected");
+  });
+});
+
+describe("reviseRejectedReview", () => {
+  it("sends a rejected card back to draft", () => {
+    const review = rejectReview(submitForReview(createCardReview("card-1")));
+    expect(reviseRejectedReview(review).status).toBe("draft");
+  });
+
+  it("throws InvalidReviewTransitionError from a status that isn't rejected", () => {
+    expect(() => reviseRejectedReview(createCardReview("card-1"))).toThrow(InvalidReviewTransitionError);
   });
 });
 
