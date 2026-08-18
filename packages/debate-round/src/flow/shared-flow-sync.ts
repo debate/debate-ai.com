@@ -9,11 +9,11 @@
  * authors, landing within a short window of each other — are surfaced for
  * a human to resolve instead of being silently overwritten, matching the
  * idea's explicit "keep humans in control of the actual flow and
- * strategic interpretation" requirement. This is the first slice only —
- * it is pure merge logic over caller-supplied edits; there's no live
- * transport (e.g. WebSocket) wiring contributors' edits together in real
- * time, it isn't wired into `FlowSpreadsheet`, and it doesn't preload
- * evidence cards into flow notes yet. See the follow-ups noted in TODO.md.
+ * strategic interpretation" requirement. `createFlowEdit` validates and
+ * builds one `FlowEdit`, the unit `state/flowEdits.ts` persists. There's
+ * still no live transport (e.g. WebSocket) wiring contributors' edits
+ * together in real time, and it doesn't preload evidence cards into flow
+ * notes yet. See the follow-ups noted in TODO.md.
  */
 
 import type { Box, Flow } from "debate-core/src/types/flow";
@@ -61,6 +61,42 @@ export type MergeFlowEditsOptions = {
 };
 
 const DEFAULT_CONFLICT_WINDOW_MS = 5000;
+
+const MAX_EDIT_CONTENT_LENGTH = 2000;
+
+export type CreateFlowEditInput = {
+  id: string;
+  flowId: number;
+  boxPath: number[];
+  authorId: string;
+  content: string;
+  timestampMs: number;
+};
+
+/**
+ * Builds a `FlowEdit`, validating that it actually addresses a box
+ * (non-empty `boxPath`) and names an author, mirroring
+ * `flow-annotations.ts#createFlowAnnotation`'s validation style. `content`
+ * is trimmed and clamped to `MAX_EDIT_CONTENT_LENGTH`; an empty, trimmed
+ * `content` is valid (it models clearing a box).
+ */
+export function createFlowEdit(input: CreateFlowEditInput): FlowEdit {
+  if (input.boxPath.length === 0) {
+    throw new Error("createFlowEdit: boxPath must address a box");
+  }
+  if (!input.authorId.trim()) {
+    throw new Error("createFlowEdit: authorId is required");
+  }
+
+  return {
+    id: input.id,
+    flowId: input.flowId,
+    boxPath: input.boxPath,
+    authorId: input.authorId.trim(),
+    content: input.content.trim().slice(0, MAX_EDIT_CONTENT_LENGTH),
+    timestampMs: input.timestampMs,
+  };
+}
 
 function boxPathKey(boxPath: number[]): string {
   return boxPath.join(".");

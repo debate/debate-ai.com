@@ -12,10 +12,12 @@
  *
  * The one exception is {@link SharedFlowSyncPanel}, which previews a merge of
  * concurrent partner edits rather than reading a store, so this hub hands it
- * the flow currently selected in the round workspace.
+ * the flow currently selected in the round workspace plus whatever edits
+ * {@link FlowEditLogPanel} has logged for it via `state/flowEdits.ts`, and
+ * applies an accepted merge straight back into the round workspace's store.
  */
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   AiVersusRoundPanel,
   ArgumentTreePanel,
@@ -23,6 +25,7 @@ import {
   CoachingSessionsPanel,
   DrillSetsPanel,
   FlowAnnotationsPanel,
+  FlowEditLogPanel,
   FlowSummariesPanel,
   JudgeDecisionPanel,
   OpponentTeamProfilesPanel,
@@ -36,13 +39,16 @@ import {
   WordCountRoundsPanel,
   useFlowStore,
 } from "debate-round"
+import { clearFlowEditsForFlow, listFlowEdits } from "debate-round/src/state/flowEdits"
 import {
   CoachMaterialsPanel,
   JudgeParadigmPickerPanel,
   JudgeProfilesPanel,
   OpponentPersonaPickerPanel,
 } from "debate-speech-writer"
+import { useStoreSnapshot } from "debate-ui/src/panels/use-store-snapshot"
 import type { Flow } from "debate-core/src/types/flow"
+import type { FlowEdit } from "debate-round/src/flow/shared-flow-sync"
 
 /** A flow to fall back on before the workspace has created one. */
 const EMPTY_FLOW: Flow = {
@@ -79,12 +85,19 @@ export function CoachHub() {
 
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
+  const setFlows = useFlowStore((state) => state.setFlows)
 
   // The zustand store is client-only; hold the empty flow for the server
   // render so the markup matches on hydration.
   useEffect(() => setMounted(true), [])
 
   const flow = (mounted ? flows[selected] : undefined) ?? EMPTY_FLOW
+
+  const { data: allFlowEdits, refresh: refreshFlowEdits } = useStoreSnapshot<FlowEdit[]>(listFlowEdits, [])
+  const flowEdits = useMemo(
+    () => allFlowEdits.filter((edit) => edit.flowId === flow.id),
+    [allFlowEdits, flow.id],
+  )
 
   return (
     <div className="flex flex-col gap-4">
@@ -111,7 +124,18 @@ export function CoachHub() {
           <ArgumentTreePanel />
           <FlowSummariesPanel />
           <VulnerabilityChartsPanel />
-          <SharedFlowSyncPanel flow={flow} edits={[]} />
+          <SharedFlowSyncPanel
+            flow={flow}
+            edits={flowEdits}
+            onApply={(merged) => {
+              const next = [...flows]
+              next[selected] = merged
+              setFlows(next)
+              clearFlowEditsForFlow(merged.id)
+              refreshFlowEdits()
+            }}
+          />
+          <FlowEditLogPanel onChange={refreshFlowEdits} />
         </div>
       ) : null}
 
