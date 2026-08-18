@@ -19,6 +19,14 @@
  * pipeline exists in this repo. No new turn-order or validation logic is
  * introduced here.
  *
+ * If the active round's `roundId` has a saved persona in the "AI Practice
+ * Opponent" idea's `opponentPersonaSelections.ts` store (via
+ * `getOpponentPersonaForRound`), the "Generate AI speech" action instead
+ * calls `requestAiVersusSpeechWithPersona`, so the AI opponent argues in
+ * that persona's style — closing follow-up (a) under the "🤖 AI Practice
+ * Opponent" idea. Falls back to the plain `requestAiVersusSpeech` call when
+ * no persona is saved for the round.
+ *
  * @module panels/AiVersusRoundPanel
  */
 
@@ -49,6 +57,8 @@ import {
   type AiVersusSide,
 } from "../round/ai-versus-speech-order"
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
+import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
+import { getOpponentPersonaForRound } from "../round/opponent-persona-speech-wiring"
 import {
   buildAiVersusRoundsPanelView,
   deleteAiVersusRound,
@@ -175,7 +185,10 @@ export function AiVersusRoundPanel() {
     setAiGenerating(true)
     setError(null)
     try {
-      const text = await requestAiVersusSpeech(request)
+      const persona = getOpponentPersonaForRound(activeRoundId)
+      const text = persona
+        ? await requestAiVersusSpeechWithPersona(request, persona)
+        : await requestAiVersusSpeech(request)
       saveAiVersusRound({
         ...activeRecord,
         submittedSpeeches: [...activeRecord.submittedSpeeches, { name: request.slot.name, speaker: "ai", text }],
@@ -293,6 +306,14 @@ export function AiVersusRoundPanel() {
               <p className="text-sm text-muted-foreground">
                 It&apos;s the AI&apos;s turn to deliver &quot;{activeStatus.nextSlot.name}&quot;.
               </p>
+              {(() => {
+                const persona = getOpponentPersonaForRound(activeRoundId)
+                return persona ? (
+                  <p className="text-xs text-muted-foreground">
+                    Arguing as <Badge variant="outline">{persona.name}</Badge>
+                  </p>
+                ) : null
+              })()}
               <Button onClick={handleGenerateAiSpeech} disabled={aiGenerating}>
                 {aiGenerating ? "Generating…" : "Generate AI speech"}
               </Button>

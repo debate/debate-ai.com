@@ -4,6 +4,49 @@
 ### In progress
 
 ### Completed
+- **AI Practice Opponent — persona-conditioned AI speech-generation call.**
+  [PR #191](https://github.com/debate/debate-ai.com/pull/191).
+  Closes follow-up (a) under the "🤖 AI Practice Opponent" bullet in Research
+  Crowdsourcing Organizer Features — "an actual AI speech-generation call
+  that consumes `buildOpponentPersonaPrompt`'s output alongside idea #3's
+  `AiSpeechRequest`." A new
+  `packages/debate-round/src/round/opponent-persona-speech-ai.ts` adds the
+  pure, Vitest-testable `buildPersonaAiVersusSystemPrompt(persona)`, which
+  composes the existing "Online Debate Versus AI" `AI_VERSUS_SPEECH_SYSTEM_PROMPT`
+  with `debate-speech-writer`'s `buildOpponentPersonaPrompt`, noting that the
+  persona's style overrides the generic tone where they conflict; it reuses
+  `ai-versus-speech-ai.ts`'s existing `buildAiVersusSpeechUserPrompt` and
+  `parseAiVersusSpeechResponse` unchanged, since only the system prompt
+  changes once a persona is selected. `round/opponent-persona-speech-client.ts`
+  adds `requestAiVersusSpeechWithPersona`, a small self-contained `fetch`
+  client (mirroring `ai-versus-speech-client.ts`'s split) that POSTs to the
+  existing `/api/reason-ai` Anthropic proxy. A new
+  `round/opponent-persona-speech-wiring.ts` adds `getOpponentPersonaForRound`,
+  which resolves a round's persona directly from the already-persisted
+  `opponentPersonaSelections.ts` store, treating a round's `roundId` as that
+  store's `sessionId` key — both are free-text identifiers for the same
+  practice session, so no new persistence field was introduced to link them.
+  `AiVersusRoundPanel.tsx`'s existing "Generate AI speech" action now looks
+  up the active round's saved persona and calls the persona-aware client
+  when one is saved (showing which persona is in play via a badge), falling
+  back to the existing plain `requestAiVersusSpeech` call otherwise. No
+  turn-order, validation, or persona-registry logic changed, and no new
+  route was added. Vitest-covered in
+  `packages/debate-round/test/opponent-persona-speech-ai.test.ts` (prompt
+  composition, including persona name/description/instructions/preferred-
+  arguments and the override note),
+  `packages/debate-round/test/opponent-persona-speech-client.test.ts` (the
+  `fetch` client, with `fetch` mocked via `vi.stubGlobal`, covering the
+  success path, an endpoint override, a server error message, a non-JSON
+  error body, and an empty/unparseable AI reply), and
+  `packages/debate-round/test/opponent-persona-speech-wiring.test.ts`
+  (missing/present/scoped-by-roundId/most-recent-wins lookup cases). No
+  follow-ups remain open on this idea. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
+  Verified: `bun install` (2050 packages), `bun run test` (107 files / 1460
+  tests, all pass), `bun run typecheck` (11 of 12 in-scope packages have a
+  typecheck script; all pass), and `bun run build:web` (`debate-ai-web`,
+  succeeds, `/versus-ai` route present, no new route) all pass.
 - **AI Judge Decision Modes — real AI judge-decision call.**
   [PR #190](https://github.com/debate/debate-ai.com/pull/190).
   Closes follow-up (a) under idea #5 ("AI Judge Decision Modes") — "an AI
@@ -3716,7 +3759,7 @@
 * 
 * ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. A second slice, `judgeProfiles.ts` (see Tracker Status above, "Judge Profile Persistence"), now persists `JudgeProfile` records to localStorage, keyed by `judgeId`, closing follow-up (c)'s persistence half. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c)'s lookup half — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `judgeId`. A fourth slice, `JudgeProfilesPanel` (see Tracker Status above, "Judge Profiles — judge-profile roster UI panel"), now renders every persisted profile as a roster at `/judges`, closing follow-up (b). Follow-up (a), a real ballot data source producing `JudgeRoundRecord`s instead of relying on caller-supplied data, remains open — not started._
 * 
-* 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. A second slice, `opponentPersonaSelections.ts` (see Tracker Status above), now persists a practice session's selected `OpponentPersona` to localStorage. A third slice, `OpponentPersonaPickerPanel` (see Tracker Status above, "AI Practice Opponent — persona-picker UI"), now renders a picker UI at `/practice-opponent` for saving a session's opponent persona, closing follow-up (b). Follow-up (a), an actual AI speech-generation call that consumes `buildOpponentPersonaPrompt`'s output alongside idea #3's `AiSpeechRequest`, remains open — not started._
+* 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. A second slice, `opponentPersonaSelections.ts` (see Tracker Status above), now persists a practice session's selected `OpponentPersona` to localStorage. A third slice, `OpponentPersonaPickerPanel` (see Tracker Status above, "AI Practice Opponent — persona-picker UI"), now renders a picker UI at `/practice-opponent` for saving a session's opponent persona, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Practice Opponent — persona-conditioned AI speech-generation call") added `debate-round`'s `round/opponent-persona-speech-ai.ts`, `round/opponent-persona-speech-client.ts`, and `round/opponent-persona-speech-wiring.ts`, wiring `AiVersusRoundPanel`'s "Generate AI speech" action to argue in a round's saved persona (looked up by treating `roundId` as `opponentPersonaSelections.ts`'s `sessionId` key) via a persona-conditioned `/api/reason-ai` call, closing follow-up (a). No follow-ups remain open on this idea._
 * 
 * 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. A third slice, `CoachingSessionsPanel` (see Tracker Status above, "AI Coach Mode — coaching-panel UI"), now renders every persisted coaching session grouped by round + side at `/coaching`, closing follow-up (b). Follow-up (a), an actual AI coaching call for open-ended feedback beyond this template layer, remains open — not started._
 * 
