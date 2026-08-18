@@ -32,6 +32,7 @@ import { runAiCite } from "./ai/cite-creator.js";
 import { runAiRepairText } from "./ai/repair-text.js";
 import { runAiExplain } from "./ai/explain.js";
 import { getSelectedImage, runAiAltText } from "./ai/image-alt-text.js";
+import { condenseDocument, insertShortCiteViaPrompt } from "./verbatim-shortcuts-extension.js";
 
 export interface ToolbarCustomization {
   /** Button ids to hide (e.g. ["highlight", "import-docx"]). */
@@ -252,6 +253,20 @@ export function Toolbar({
       <Btn id="block" label="Bl" title="Block (Heading 3)" active={editor.isActive("block")} onClick={() => toggleHeading("block")} />
       <Btn id="tag" label="T" title="Tag (card label)" active={editor.isActive("tag")} onClick={() => toggleHeading("tag")} />
       <Btn id="body" label="¶" title="Body paragraph" active={editor.isActive("paragraph")} onClick={() => editor.chain().focus().setNode("paragraph").run()} />
+      <Sep />
+
+      <Btn
+        id="short-cite"
+        label="+Cite"
+        title="Insert short cite (Ctrl/Cmd+Shift+K)"
+        onClick={() => insertShortCiteViaPrompt(editor)}
+      />
+      <Btn
+        id="condense"
+        label="Condense"
+        title="Condense to underlined read text (Ctrl/Cmd+Shift+D)"
+        onClick={() => condenseDocument(editor)}
+      />
 
       {showCardTools && (
         <>

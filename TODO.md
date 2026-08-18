@@ -35,6 +35,293 @@
   and `bun run build:web` (`debate-ai-web` succeeds, `/cards/brainstorm`
   route present, no new route) all pass. No repo-wide `lint` script exists
   (checked root/app/package `package.json` scripts) so none was run.
+- **Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut
+  wiring.** Closes follow-up (a) under idea #14 ("Legacy Verbatim /
+  Cardmirror Compatibility") in the Product Feature Ideas list: "wiring
+  these commands into actual keyboard-shortcut handlers in
+  `reason-editor`'s toolbar/editor view". `debate-card-parser`'s
+  `moveOutlineNode` is now generic (`<T>` instead of hardcoded to
+  `OutlineNode`) so a caller with its own outline shape — not just this
+  module's `Card`/`OutlineItem` — can reuse the same bounds-checked swap
+  directly; its `resolveHtmlBoundary` and the swap itself also gained two
+  non-null assertions the array accesses already guaranteed safe, needed
+  once this file is typechecked under `reason-editor`'s stricter
+  `noUncheckedIndexedAccess` setting (see below). `reason-editor` gains
+  two new engine modules: `engine/verbatim-shortcuts.ts`
+  (`applyCondenseToHtml`, wrapping `condenseCardHtml` with a no-op
+  fallback when nothing's underlined; `buildInsertShortCiteTransaction`,
+  reusing `formatShortCiteTag` to insert a "Smith 24"-style short cite tag
+  at the selection, marked `cite_mark`) and `engine/outline/heading-move.ts`
+  (`buildMoveHeadingSectionTransaction`, reusing `moveOutlineNode` to
+  validate/resolve a heading swap against the live document's
+  `OutlineHeading[]` then swapping the two headings' document ranges via a
+  ProseMirror transaction; `findHeadingAtPos`, resolving which heading's
+  section the cursor is currently in). A new `VerbatimShortcuts` TipTap
+  extension (`react/verbatim-shortcuts-extension.ts`) binds four
+  shortcuts on the live editor: `Mod-Shift-K` (insert short cite),
+  `Mod-Shift-D` (condense to read text), `Alt-ArrowUp`/`Alt-ArrowDown`
+  (move the current heading's section), and `Mod-Shift-E` for emphasis —
+  bound to the schema's own `toggleMark('emphasis_mark')` rather than
+  `debate-card-parser`'s HTML-string `toggleEmphasisHtml`, since the
+  schema already models emphasis as a real mark (the same one the
+  existing "Emph" toolbar button toggles); using the raw-HTML helper
+  against a live ProseMirror document would be the wrong layer.
+  `condenseCardHtml`/`formatShortCiteTag`/`moveOutlineNode` are imported
+  from their specific `debate-card-parser` source files rather than the
+  package barrel, so `reason-editor`'s typecheck isn't forced to also
+  clear the many pre-existing `noUncheckedIndexedAccess` errors in
+  unrelated parser modules (`citation-extractor.ts`, `card-utils.ts`,
+  etc.) the barrel re-exports — out of scope for this slice.
+  `react/Toolbar.tsx` gains "+Cite"/"Condense" buttons; `react/OutlineNavPanel.tsx`
+  gains a Move ↑/↓ button pair per heading (the mouse-driven counterpart to
+  the Alt-Arrow shortcuts). `condenseCardHtml`/`toggleEmphasisHtml`'s
+  follow-up (c) ("send selected evidence to a speech document") remains
+  open — needs a speech-document send target that doesn't exist yet — as
+  does the "video-lecture" idea's transcription follow-up, unrelated. Docs
+  added at `docs/features/legacy-verbatim-shortcuts.md`. Vitest-covered in
+  `packages/debate-card-parser/test/verbatim-shortcuts.test.ts` (new
+  "generic" case: `moveOutlineNode` against a caller-shaped
+  `{id, level}` array unrelated to `Card`/`OutlineItem`),
+  `packages/reason-editor/test/verbatim-shortcuts.test.ts`
+  (`applyCondenseToHtml`: condenses/joins/falls-back cases;
+  `buildInsertShortCiteTransaction`: dated/undated cite insertion,
+  replacing an existing selection, blank-author no-op), and
+  `packages/reason-editor/test/heading-move.test.ts`
+  (`buildMoveHeadingSectionTransaction`: swap down/up, content travels
+  with its heading, out-of-bounds/unknown-id no-ops;
+  `findHeadingAtPos`: mid-section, on-heading, and empty-outline cases).
+  Verified: `bun install` (2050 packages), `bun run test` (122 files /
+  1656 tests, all pass), `bun run typecheck` (all 11 in-scope packages
+  pass — this slice is what first exercised `debate-card-parser`'s source
+  under `reason-editor`'s stricter typecheck settings, hence the two
+  non-null-assertion fixes above), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/reason-editor` route present, no new
+  route) all pass. No repo-wide `lint` script exists (checked root/app/
+  package `package.json` scripts) so none was run.
+- **Revision Incentives — evidence-staleness signal.** Closes follow-up (c)
+  under the "🔁 Revision Incentives" bullet in the Research Crowdsourcing
+  Organizer Features list below, also the sole "Known gap" in
+  `docs/features/revision-incentives.md` ("No evidence-staleness signal
+  beyond rewarding a refresh after the fact"). `lib/revision-incentives.ts`
+  gains `computeEvidenceStaleness(evidenceYear, currentYear)` (pure) — an
+  `EvidenceStalenessSignal` flagging a citation stale once it's
+  `STALE_EVIDENCE_THRESHOLD_YEARS` (3) years old or older, or has no
+  parseable year at all (`evidenceYear === 0`) — a forward-looking signal
+  independent of any revision, unlike the existing `evaluateRevision`'s
+  `evidenceRefreshed`, which only rewards a refresh after it happens.
+  `lib/shared-evidence-library.ts` gains `getEvidenceStaleness`, composing
+  that directly against `deriveCardSnapshotFromEntry`'s parsed
+  `evidenceYear` for a real `EvidenceLibraryEntry`, and
+  `getStaleEvidenceEntries`, filtering a list down to stale `card` entries
+  (a reusable analytic `block` never cites outside evidence, so it's
+  excluded). `panels/EvidenceLibraryPanel.tsx` now renders a "Stale
+  evidence" badge on any `card` search result flagged stale as of the
+  current year, so a contributor sees which cards need a refresh before
+  editing, not only after. No new scoring logic was introduced beyond the
+  staleness threshold itself. Docs updated at
+  `docs/features/revision-incentives.md` (Known gaps now empty) and
+  `docs/features/evidence-library.md`. Vitest-covered in
+  `packages/debate-card-search/test/revision-incentives.test.ts`
+  (`computeEvidenceStaleness`: at/just-below the age threshold, an unknown
+  year, a current-year citation, and a future-dated citation clamped to
+  zero age) and
+  `packages/debate-card-search/test/shared-evidence-library.test.ts`
+  (`getEvidenceStaleness`: old/recent/undated/blank citations;
+  `getStaleEvidenceEntries`: excludes blocks and fresh cards, returns empty
+  when nothing is stale). Verified: `bun install` (2050 packages), `bun run
+  test` (120 files / 1638 tests, all pass), `bun run typecheck` (all 11
+  in-scope packages pass), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/cards/library` route present, no new route) all pass. No
+  repo-wide `lint` script exists (checked root/app/package `package.json`
+  scripts) so none was run. PR: https://github.com/debate/debate-ai.com/pull/210.
+- **Shared Evidence Library — edit/delete affordance wired to Revision Incentives.**
+  Closes the "No edit/delete affordance in the panel" gap noted in
+  `docs/features/evidence-library.md`'s Known gaps, and follow-up (a) under
+  the "🔁 Revision Incentives" bullet in the Research Crowdsourcing Organizer
+  Features list ("wiring an actual card-edit/save flow to call
+  `saveRevisionRecord` with a before/after snapshot"). `lib/shared-evidence-library.ts`
+  gains `deriveCardSnapshotFromEntry`, which derives a Revision Incentives
+  `CardSnapshot` from a real `EvidenceLibraryEntry` — reusing the existing
+  `llm-card-scoring.ts` `scoreClarity`/`scoreUsability` heuristics directly
+  for `qualitySignals`, and parsing a 4-digit year out of the entry's `cite`
+  for `evidenceYear`/`citationCompleteness` (no citation scores 0, a citation
+  with a parseable year scores 1, any other non-blank citation scores 0.5) —
+  and `buildEvidenceEntryRevision`, which composes that derivation over a
+  before/after entry pair into a `CardRevision`. No new scoring logic was
+  introduced; `evaluateRevision`/`buildRevisionIncentiveLeaderboard` are
+  reused unchanged. `state/evidenceLibraryEntries.ts` gains
+  `saveEvidenceLibraryEntryRevision`, which composes
+  `buildEvidenceEntryRevision` against this store's own before (looked up by
+  id) and after (the caller's edit) entries and records the result via the
+  already-persisted `saveRevisionRecord` — but only when the save overwrites
+  an existing entry id, so a brand-new submission never records a spurious
+  revision. `panels/EvidenceLibraryPanel.tsx` now renders **Edit** and
+  **Delete** actions on every search result: Edit loads the entry back into
+  the submission form (now labeled "Editing entry …") with a required "Your
+  contributor ID" field, and saving calls `saveEvidenceLibraryEntryRevision`
+  instead of a plain overwrite; Delete calls the already-existing
+  `deleteEvidenceLibraryEntry`. A real edit through this flow now shows up on
+  the Revision Incentives leaderboard at `/cards/revisions`, which previously
+  had no way to ever gain a row. No follow-ups remain open on the "no edit/
+  delete affordance" gap; follow-up (c) under "Revision Incentives" (a real
+  evidence-staleness signal beyond rewarding a refresh after the fact)
+  remains open, not started. Docs updated at
+  `docs/features/evidence-library.md` and
+  `docs/features/revision-incentives.md`. Vitest-covered in
+  `packages/debate-card-search/test/shared-evidence-library.test.ts`
+  (`deriveCardSnapshotFromEntry`: year-parsing/citation-completeness across a
+  dated citation, an undated non-blank citation, and a blank citation, plus
+  `wordCount` and `qualitySignals` derivation; `buildEvidenceEntryRevision`:
+  correct `cardId`/`contributorId` wiring and an end-to-end
+  `evaluateRevision` score for both a real rewarded edit and a no-op edit)
+  and `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+  (`saveEvidenceLibraryEntryRevision`: a brand-new entry records no
+  revision, an overwrite records one crediting the given contributor, and
+  successive edits each record their own revision). Verified: `bun install`
+  (2050 packages), `bun run test` (120 files / 1627 tests, all pass), `bun
+  run typecheck` (all 11 in-scope packages pass), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/cards/library` and `/cards/revisions` routes
+  present, no new route) all pass. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
+- **Research Progress Tracking — feed topic-progress history into Progress Unlocks tier computation.**
+  Closes follow-up (c) under the "📈 Research Progress Tracking" bullet in the
+  Research Crowdsourcing Organizer Features list ("feeding a contributor's
+  topic-progress history back into `progress-unlocks.ts`'s tier
+  computation," also called out as the sole "Known gap" in both
+  `docs/features/progress-unlocks.md` and
+  `docs/features/research-progress-tracking.md`). `lib/progress-unlocks.ts`'s
+  `UnlockTierRequirement` gained a `minCompletedTaskCount` threshold, and
+  `computeContributorTier` now reaches a tier via the existing
+  contribution-count-and-score AND-path **or** by clearing
+  `minCompletedTaskCount` alone — a contributor's real, persisted
+  completed-research-task count (already folded into a `ContributorStats`
+  row by `state/researchProgress.ts`'s existing
+  `buildPersistedLeaderboardWithCompletedTasks`) is now a genuine,
+  alternate tier-qualifying signal, not just a leaderboard column, so
+  completing enough routed research tasks (`research-task-routing.ts`) can
+  unlock a tier even without matching scored-contribution volume/quality.
+  Backward compatible: every existing fixture's `completedTaskCount`
+  defaults to 0, so the new OR-clause is a no-op unless real
+  task-completion data is supplied. `ContributorUnlockStatus` now surfaces
+  `completedTaskCount` and `NextTierProgress` a `completedTasksNeeded`
+  field; `buildUnlockStatusText` mentions the task-completion path.
+  `lib/unlock-streak-status.ts`'s
+  `buildContributorUnlockStatusWithStreakFromStore`/`buildUnlockStatusRoster`
+  now source their `ContributorStats` from
+  `buildPersistedLeaderboardWithCompletedTasks` instead of
+  `state/contributions.ts` alone, so a contributor who has completed
+  research tasks but no scored contribution yet now also appears in the
+  Progress Unlocks roster. `panels/ProgressUnlocksPanel.tsx` renders a new
+  "Tasks completed" column. Docs updated at
+  `docs/features/progress-unlocks.md` and
+  `docs/features/research-progress-tracking.md`. Vitest-covered in
+  `packages/debate-card-search/test/progress-unlocks.test.ts` (tier reached
+  via completed tasks alone, the highest tier across both paths, next-tier
+  `completedTasksNeeded`, and backward compatibility for the pre-existing
+  AND-path fixtures) and
+  `packages/debate-card-search/test/unlock-streak-status.test.ts` (real
+  completed-task history feeding a store-backed status, and a task-only
+  contributor appearing in the roster). Verified: `bun install` (2050
+  packages), `bun run typecheck` (all in-scope packages pass), `bun run
+  test` (120 files / 1616 tests, all pass), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/cards/progress` route present) all pass. No
+  repo-wide `lint` script exists (checked root/app/package `package.json`
+  scripts) so none was run.
+- **Daily Best Card Challenge — banner/widget UI.**
+  Closes follow-up (c) — "a challenge banner/widget UI" — under the "🕵️ Daily
+  Best Card Challenge" bullet in the Research Crowdsourcing Organizer
+  Features list. `state/contributions.ts` gains `buildDailyBestCardsFromStore`/
+  `getTodaysBestCardFromStore`, which filter every persisted contribution
+  down to `kind: "card"` entries carrying a `submittedAt` timestamp and
+  compose them directly with the existing `lib/daily-best-card.ts`'s
+  `buildDailyBestCards`/`getBestCardForDay` — no new scoring or day-grouping
+  logic was introduced. This also confirms follow-up (a) ("wiring a
+  `submittedAt` timestamp into wherever card contributions are eventually
+  persisted") was already closed as a side effect of the earlier "Daily
+  Quests and Targets" slice, which stamps `submittedAt` on every
+  `ContributionsFeedPanel` submission. `panels/DailyBestCardPanel.tsx`
+  (mounted at `/cards/best-card`, added to the Settings nav menu) renders
+  today's UTC-day winner as a highlighted banner plus every earlier day's
+  winner as a history list, so a coach or contributor can see the day's
+  top card and past winners without needing a separate ballot UI — a card's
+  existing likes/saves in the Contributions Feed already model the
+  community "vote". Follow-up (b), a scheduled job to persist/announce a
+  day's winner automatically, remains open — not started; this repo has no
+  cron/scheduled-task mechanism yet. Docs added at
+  `docs/features/daily-best-card.md`. Vitest-covered in
+  `packages/debate-card-search/test/contributions.test.ts`
+  (`buildDailyBestCardsFromStore`/`getTodaysBestCardFromStore`: picks one
+  winner per represented day from persisted card contributions, excludes
+  non-card contributions and cards without a `submittedAt` timestamp, and
+  returns the correct/`null` result for a given day). Verified: `bun install`
+  (2050 packages), `bun run test` (120 files / 1609 tests, all pass),
+  `bun run typecheck` (all 11 in-scope packages pass), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/cards/best-card` route present) all pass. No
+  repo-wide `lint` script exists (checked root/app/package `package.json`
+  scripts) so none was run.
+- **Research Task Routing — task-routing trigger UI.**
+  Closes follow-up (d) under the "🧭 Research Task Routing" bullet in the
+  Research Crowdsourcing Organizer Features list — "a task-routing trigger
+  UI to actually populate a topic's queue" — and the "No task-routing
+  trigger UI yet" known gap noted in `docs/features/task-inbox.md`.
+  `packages/debate-card-search/src/state/routedTaskQueues.ts` gains
+  `routePersistedTopicTasks`, which composes `state/trackedArguments.ts`'s
+  `buildPersistedTopicCoverageReport` (a topic's tracked-argument checklist
+  against the shared evidence library) directly with the existing
+  `buildAndPersistRoutingResult`, so a caller can route and persist a
+  topic's queue from nothing but a topic id — no new routing logic was
+  introduced. `panels/TaskInboxPanel.tsx` (mounted at `/cards/inbox`) now
+  renders a "Route a topic's tasks" form above the inbox — a topic input
+  (with one-click suggestions from every topic that already has a tracked
+  checklist, via `listTrackedTopics`) plus a "Route tasks" button that calls
+  `routePersistedTopicTasks` and refreshes the inbox view — so a coach or
+  contributor can populate a topic's task queue from the inbox itself
+  instead of needing a separate trigger. No follow-ups remain open on this
+  bullet. Docs updated in `docs/features/task-inbox.md`. Vitest-covered in
+  `packages/debate-card-search/test/routedTaskQueues.test.ts`
+  (`routePersistedTopicTasks`: routes and persists a topic's live coverage
+  gaps end-to-end through the persisted tracked-argument checklist and
+  evidence library, and scopes correctly — tracked arguments filed under a
+  different topic don't leak into the routed report). Verified: `bun
+  install` (2050 packages), `bun run test` (120 files / 1604 tests, all
+  pass), `bun run typecheck` (all 11 in-scope packages pass), and `bun run
+  build:web` (`debate-ai-web` succeeds, `/cards/inbox` route present, no new
+  route) all pass. No repo-wide `lint` script exists (checked root/app/
+  package `package.json` scripts) so none was run.
+- **Shared Evidence Library — card/block submission form.**
+  Closes the "No submission UI yet" gap noted under the "📚 Shared Evidence
+  Library" bullet in the Research Crowdsourcing Organizer Features list, and,
+  by giving the shared evidence repository a real UI source of
+  `argBlock`/`wordCount`-carrying entries, closes follow-up (a) under the
+  "📊 Topic Coverage Dashboard" bullet in that same list ("an `argBlock`/
+  word-count field wired into a real card-submission flow beyond the
+  existing `/cards/library` evidence-library form"). `lib/shared-evidence-library.ts`
+  gains `computeWordCount`, a plain whitespace tokenizer that stamps a
+  submitted entry's `wordCount` from its body text rather than asking the
+  submitter to count it themselves — the exact field
+  `lib/topic-coverage.ts`'s `missing`/`thin`/`covered` classification scores
+  against. `panels/EvidenceLibraryPanel.tsx` (mounted at `/cards/library`)
+  now renders a submission form above the existing search box — kind
+  (card/block), topic, case area, argument block, citation, comma-separated
+  tags, and a body text area with a live word-count readout — that saves a
+  new `EvidenceLibraryEntry` via the already-persisted
+  `saveEvidenceLibraryEntry` and refreshes the search results, so a card
+  submitted here now flows straight into both the evidence library's own
+  search index and the Topic Coverage Dashboard's live report for the same
+  topic, with no new composition logic needed on either side. No follow-ups
+  remain open on either bullet's submission-flow gap; the "no edit/delete
+  affordance" and "no topic/case-area/tag filter controls in the panel"
+  gaps noted separately in `docs/features/evidence-library.md` remain open,
+  not started. Docs updated in `docs/features/evidence-library.md` and
+  `docs/features/topic-coverage-dashboard.md`. Vitest-covered in
+  `packages/debate-card-search/test/shared-evidence-library.test.ts`
+  (`computeWordCount`: space-separated words, collapsed newline/tab
+  whitespace, leading/trailing trim, and an empty/whitespace-only string).
+  Verified: `bun install` (2050 packages), `bun run test` (120 files / 1602
+  tests, all pass), `bun run typecheck` (all 11 in-scope packages pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/cards/library` route
+  present, no new route) all pass. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
 - **Expandable Heading Structure — collapsed-heading decoration plugin.**
   Closes follow-up (b) under idea #9 ("Expandable Heading Structure") in
   the Product Feature Ideas list — "a ProseMirror decoration plugin that
@@ -4120,7 +4407,7 @@
 
 13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise. _Status: first slices done (see Tracker Status above) — the "friendly challenges" half has `debate-card-search`'s `group-challenges.ts` (`buildGroupChallengeBoard`), and the coaching-space model tying it together has `debate-round`'s `coaching-program.ts` (`buildCoachingProgramBoard`), composing that group-challenge board with the existing Team Collaboration Mode topic sprint and AI Drill Generator drill sets per roster member. A second slice, `coachingPrograms.ts` (see Tracker Status above, "Coaching Program Persistence — localStorage config store"), now persists a `CoachingProgramConfig` to localStorage, closing follow-up (a). A third slice, `CoachingProgramsPanel` (see Tracker Status above, "Coaching Programs and Group Challenges — coaching-program config UI"), now renders a create-program form and every persisted program's roster at `/coaching-programs`, closing the config-management half of follow-up (b). A fourth slice, `GroupChallengesPanel` (see Tracker Status above, "Group Challenges — challenge-board/creation UI"), now renders a create-challenge form and every persisted `GroupChallenge` at `/cards/group-challenges`, closing the "Group Challenge Persistence" entry's follow-up (a). Follow-ups: (b-continued) a dashboard view that renders each program's full `buildCoachingProgramBoard` (still needs persisted challenge win events and topic-sprint contributions in a form the board could read live, plus a roundId-to-contributor mapping for member drills — none of which exist yet, though challenge configs themselves are now persisted and manageable), (c) wiring a member's practice-round setup/feedback (Practice Round Simulator) into the space. Neither of these is started._
 
-14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). Follow-ups: (a) wiring these commands into actual keyboard-shortcut handlers in `reason-editor`'s toolbar/editor view, (b) a "send selected evidence to a speech document" command, which needs a speech-document target that doesn't exist yet. Neither of these is started._
+14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). A third slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut wiring") wired real keyboard shortcuts into the live `reason-editor` document — `Mod-Shift-K` insert short cite, `Mod-Shift-D` condense to read text, `Alt-ArrowUp`/`Alt-ArrowDown` move a heading's section, `Mod-Shift-E` toggle emphasis (via the schema's own mark rather than the raw-HTML helper) — plus matching "+Cite"/"Condense" toolbar buttons and a Move ↑/↓ button pair per heading in the outline nav panel, closing follow-up (a). Follow-up (b), a "send selected evidence to a speech document" command, remains open — it needs a speech-document send target that doesn't exist yet — not started._
 
 15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slices done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. A third slice, `FlowAnnotationsPanel` (see Tracker Status above, "Flow-in-Speech Flow Annotations — video-player annotation UI"), now renders a drop-annotation form wired to the `debate-videos` persistent player's live playback position plus every persisted annotation with a "Jump to" action back into the player, at `/annotations`, closing follow-up (a). Follow-up (b), a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box via `listFlowAnnotationsForBox` and links back to the timestamp, remains open — not started._
 
@@ -4135,13 +4422,13 @@
 * 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeDailyMissionResult`/`computeStreakStatus`/`getEarnedStreakBadges`/`buildContributorQuestStreak`/`buildStreakSummaryText` for turning a contributor's daily `daily-quests.ts` mission-completion history into a current/longest streak and the milestone badges (3/7/14/30-day streaks by default) that streak has earned. A second slice, `dailyMissionResults.ts` (see Tracker Status above, "Gamified Quests — persisted daily mission-result history"), now persists a contributor's per-day `DailyMissionResult` to localStorage, keyed by `contributorId` + `dayKey`, and composes it directly into `buildPersistedContributorQuestStreak`. A third follow-up, surfacing earned streak badges on a contributor's `progress-unlocks.ts` unlock status, is now done — see the "Unlock Status Streak Badges" entry above (`unlock-streak-status.ts`). A fourth slice, `computeAndSavePersistedDailyMissionResult` (see Tracker Status above, "Gamified Quests — persisted end-of-day mission computation"), now computes and saves a contributor's mission result directly from their real persisted contributions, closing follow-up (a) below. A fifth slice, `buildPersistedQuestStreakRoster` plus `QuestStreaksPanel` (see Tracker Status above, "Gamified Quests — streak/badge widget UI"), now renders every contributor's streak and earned badges at `/cards/streaks`, closing follow-up (b). Follow-up (a) still needs a real trigger, i.e. a UI action or scheduled job, to call `computeAndSavePersistedDailyMissionResult` on an actual cadence — not started._
 * 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now feeds the derived skill level into `research-task-routing.ts`'s `ContributorAvailability`. A third slice, `unlock-streak-status.ts` (see Tracker Status above, "Unlock Status Streak Badges"), now merges the Gamified Quests streak badges into this unlock status, and its `buildContributorUnlockStatusWithStreakFromStore` closes follow-up (a) — it derives a contributor's tier/badges live from the already-persisted `contributions.ts`/`dailyMissionResults.ts` stores rather than needing a separate tier/badge store. A fourth slice, `ProgressUnlocksPanel` (see Tracker Status above, "Progress Unlocks — unlock/progress roster UI panel"), now renders every contributor's tier, unlocked skill level, badges, streak, and next-tier progress at `/cards/progress`, closing follow-up (b). Neither follow-up remains open._
 * 🧠 LLM Card Scoring - Use an LLM to score cards for relevance, clarity, uniqueness, evidence quality, and usability. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scoreRelevance`/`scoreClarity`/`scoreUniqueness`/`scoreEvidenceQuality`/`scoreUsability`/`computeCardScoreBreakdown`/`rankCardScores`/`buildCardScoreSummaryText` for scoring a card across all five dimensions with deterministic heuristics and flagging likely duplicates, reusing the existing idea #11 `community-rating.ts` quality-signal scoring for evidence quality. A second slice, `cardScores.ts` plus `CardScoringPanel` (see Tracker Status above, "LLM Card Scoring — scoring/duplicate-flag panel UI"), now persists submitted `ScoredCard`s and renders a submission form plus every card's ranked score breakdown at `/cards/scoring`, closing follow-up (c). A third slice (see Tracker Status above, "LLM Card Scoring — real AI-scoring call") added `lib/llm-card-scoring-ai.ts`, `lib/llm-card-scoring-client.ts`, and `state/aiCardAssessments.ts`, wiring a "Get AI assessment" action into `CardScoringPanel` that calls the existing `/api/reason-ai` Anthropic proxy for a real qualitative verdict + per-dimension notes, closing follow-up (a). Follow-up (b) — wiring real argument-block keywords and a real submitted-card corpus into the scorer — remains open, not started._
-* 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildContributorProgress`/`buildTopicProgress`/`buildResearchProgressBoard`/`buildProgressSummaryText` for combining a contributor's existing leaderboard contribution stats with per-topic task-completion counts derived from a topic-tagged research-task-routing assignment list, reusing the existing `ContributorStats`/`RoutedAssignment` types directly. A second slice, `state/researchProgress.ts` plus `ResearchProgressPanel` (see Tracker Status above, "Research Progress Tracking — persisted completion history + progress dashboard UI"), now records real task-completion events (via `completeAndRecordResearchTask`, wired into the Task Inbox panel's "Mark complete" action) and renders every contributor's contribution history, task-completion rate, and per-topic breakdown at `/cards/progress-tracking`, closing follow-ups (a) and (b). Follow-up (c), feeding a contributor's topic-progress history back into `progress-unlocks.ts`'s tier computation, remains open — not started._
+* 📈 Research Progress Tracking - Show each debater’s progress across topics, task completion, and contribution history. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildContributorProgress`/`buildTopicProgress`/`buildResearchProgressBoard`/`buildProgressSummaryText` for combining a contributor's existing leaderboard contribution stats with per-topic task-completion counts derived from a topic-tagged research-task-routing assignment list, reusing the existing `ContributorStats`/`RoutedAssignment` types directly. A second slice, `state/researchProgress.ts` plus `ResearchProgressPanel` (see Tracker Status above, "Research Progress Tracking — persisted completion history + progress dashboard UI"), now records real task-completion events (via `completeAndRecordResearchTask`, wired into the Task Inbox panel's "Mark complete" action) and renders every contributor's contribution history, task-completion rate, and per-topic breakdown at `/cards/progress-tracking`, closing follow-ups (a) and (b). A third slice (see Tracker Status above, "Research Progress Tracking — feed topic-progress history into Progress Unlocks tier computation") added a `minCompletedTaskCount` threshold to `progress-unlocks.ts`'s `UnlockTierRequirement`/`computeContributorTier`, so a contributor's real, persisted completed-task count is now an alternate tier-qualifying signal alongside contribution volume/quality, closing follow-up (c). No follow-ups remain open on this bullet._
 * 📚 Common Argument Library - Organize all shared research into topic folders, case areas, and tag-based collections. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByTopic`/`groupCardsByCaseArea`/`buildTopicFolder`/`buildTopicFolders`/`buildTagCollections`/`filterCardsByTags`/`buildArgumentLibrary`/`buildLibrarySummaryText` for organizing a caller-supplied, tagged card list into topic folders (each split into case-area subgroups) and cross-cutting tag-based collections, extending the existing Topic Coverage Dashboard's `argBlock`-tagged card model with `topic`/`caseArea`/`tags`. A second slice, `ArgumentLibraryPanel` (see Tracker Status above, "Common Argument Library — folder/collection browser UI"), now renders every persisted evidence-library entry as a topic-folder/case-area/tag-collection browser at `/cards/argument-library`, closing follow-up (b). Follow-ups: (a) wiring a `topic`/`caseArea`/`tags` field into wherever submitted cards are eventually persisted beyond the existing evidence-library store, (c) a tag-autocomplete/tag-management affordance. Neither of these is started._
-* 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `groupCardsByDay`/`pickBestCardOfDay`/`buildDailyBestCards`/`getBestCardForDay`/`buildDailyBestCardHighlight` for grouping timestamped card contributions by UTC submission day and picking each day's single highest-helpfulness card, reusing the existing `community-rating.ts` helpfulness scoring (a card's likes/saves already model the community "vote"). Follow-ups: (a) wiring a `submittedAt` timestamp into wherever card contributions are eventually persisted, (b) a scheduled job or view that persists/announces the day's winner, (c) a challenge banner/widget UI. None of these are started._
+* 🕵️ Daily Best Card Challenge - Highlight the highest-scoring card of the day and let the community vote on it. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `groupCardsByDay`/`pickBestCardOfDay`/`buildDailyBestCards`/`getBestCardForDay`/`buildDailyBestCardHighlight` for grouping timestamped card contributions by UTC submission day and picking each day's single highest-helpfulness card, reusing the existing `community-rating.ts` helpfulness scoring (a card's likes/saves already model the community "vote"). A second slice, `state/contributions.ts`'s `buildDailyBestCardsFromStore`/`getTodaysBestCardFromStore` plus `DailyBestCardPanel` (see Tracker Status above, "Daily Best Card Challenge — banner/widget UI"), now composes those helpers directly against the persisted Contributions Feed store and renders today's winner banner plus a past-winners history at `/cards/best-card`, closing follow-up (c) — and, since the composed store already carries the `submittedAt` timestamp stamped by `ContributionsFeedPanel.tsx`'s submission flow, follow-up (a) as well. Follow-up (b), a scheduled job or view that persists/announces the day's winner, remains open — not started; this repo has no cron/scheduled-task mechanism yet._
 * 🗣️ Peer Review System - Allow teammates to review, comment on, and refine submitted cards before they go live. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has a `CardReview` status state machine (`createCardReview`/`submitForReview`/`requestChanges`/`approveReview`/`rejectReview`/`publishReview`) plus a blocking-aware comment thread (`addReviewComment`/`resolveReviewComment`/`getUnresolvedBlockingComments`/`isReadyToPublish`/`buildReviewSummary`) that blocks approval until every blocking comment is resolved. A second slice, `peerReviews.ts` (see Tracker Status above), now persists `CardReview` records (including their `ReviewComment` thread) to localStorage, keyed by `cardId`. A third slice, `ReviewQueuePanel` (see Tracker Status above, "Peer Review System — review-queue/comment-thread UI"), now renders every persisted review at `/cards/reviews` with lifecycle actions and a comment thread, closing follow-up (a). Follow-ups: (b) reviewer identity/permission checks once auth/roles exist, (c) wiring a review's lifecycle to whatever eventually persists submitted cards, so `publishReview` can gate a card actually going live. Neither of these is started._
 * 🏆 Top Contributor Awards - Give recognition for best evidence finder, best explainers, best original argument, and best refutations. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildTopContributorAwards`/`buildCategoryLeaderboard`/`groupContributionsByKind`/`buildAwardsAnnouncementText` for grouping contributor-attributed contributions by `ContributionKind` and selecting a per-kind category winner by helpfulness score, reusing the existing idea #11/Contribution Leaderboard scoring. A second slice, `ContributorAwardsPanel` (see Tracker Status above, "Top Contributor Awards — awards UI panel"), now renders every category's current winner at `/cards/awards`, closing follow-up (c). Follow-ups: (a) a finer-grained kind/tag for "original argument" and "refutation" contributions, neither of which exists as a distinct kind today, (b) a scheduled job to persist/announce winners. Neither of these is started._
-* 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now derives each contributor's skill level from their contribution history (via the Progress Unlocks tier logic) instead of requiring a caller-supplied value. A third slice, `contributorAvailability.ts` (see Tracker Status above, "Research Task Routing — persisted contributor-availability profiles"), now persists a contributor's `ContributorAvailability` to localStorage. A fourth slice (see Tracker Status above, "Research Task Routing — persisted routed task queue"), now persists a routed `RoutingResult`/task queue to localStorage, closing follow-up (b). A fifth slice (see Tracker Status above, "Research Task Routing — persisted activeTaskCount assignment/completion events") now wires real task-assignment/completion events (`buildAndPersistRoutingResult`/`completePersistedRoutedTask`) into a persisted profile's `activeTaskCount`, closing follow-up (a). A sixth slice, `TaskInboxPanel` (see Tracker Status above, "Research Task Routing — task-assignment/inbox UI"), now renders every persisted routed task queue at `/cards/inbox` with a "mark complete" action, closing follow-up (c). Follow-ups: (d) a task-routing trigger UI to actually populate a topic's queue, (e) scoping the inbox to "my tasks" once contributor identity/auth exists. Neither of these is started._
-* 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. A second slice, `revisionHistory.ts` (see Tracker Status above, "Revision Incentives — persisted revision history"), now persists `CardRevision` edit events (as many-per-card `CardRevisionRecord`s) to localStorage. A third slice, `RevisionIncentivesPanel` (see Tracker Status above, "Revision Incentives — incentives-leaderboard UI panel"), now renders a ranked reward-points leaderboard at `/cards/revisions`, closing follow-up (b). Follow-ups: (a) wiring an actual card-edit/save flow to call `saveRevisionRecord` with a before/after snapshot, (c) an actual evidence-staleness signal instead of only rewarding a refresh after the fact. Neither of these is started._
+* 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now derives each contributor's skill level from their contribution history (via the Progress Unlocks tier logic) instead of requiring a caller-supplied value. A third slice, `contributorAvailability.ts` (see Tracker Status above, "Research Task Routing — persisted contributor-availability profiles"), now persists a contributor's `ContributorAvailability` to localStorage. A fourth slice (see Tracker Status above, "Research Task Routing — persisted routed task queue"), now persists a routed `RoutingResult`/task queue to localStorage, closing follow-up (b). A fifth slice (see Tracker Status above, "Research Task Routing — persisted activeTaskCount assignment/completion events") now wires real task-assignment/completion events (`buildAndPersistRoutingResult`/`completePersistedRoutedTask`) into a persisted profile's `activeTaskCount`, closing follow-up (a). A sixth slice, `TaskInboxPanel` (see Tracker Status above, "Research Task Routing — task-assignment/inbox UI"), now renders every persisted routed task queue at `/cards/inbox` with a "mark complete" action, closing follow-up (c). A seventh slice, `routePersistedTopicTasks` plus the panel's "Route a topic's tasks" form (see Tracker Status above, "Research Task Routing — task-routing trigger UI"), now lets a coach or contributor populate a topic's queue directly from the inbox, closing follow-up (d). Follow-up (e), scoping the inbox to "my tasks" once contributor identity/auth exists, remains open — not started._
+* 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. A second slice, `revisionHistory.ts` (see Tracker Status above, "Revision Incentives — persisted revision history"), now persists `CardRevision` edit events (as many-per-card `CardRevisionRecord`s) to localStorage. A third slice, `RevisionIncentivesPanel` (see Tracker Status above, "Revision Incentives — incentives-leaderboard UI panel"), now renders a ranked reward-points leaderboard at `/cards/revisions`, closing follow-up (b). A fourth slice, `deriveCardSnapshotFromEntry`/`buildEvidenceEntryRevision` plus `EvidenceLibraryPanel`'s Edit action (see Tracker Status above, "Shared Evidence Library — edit/delete affordance wired to Revision Incentives"), now wires a real card-edit/save flow — editing an evidence-library entry derives a before/after `CardSnapshot` from the entry's own text/citation and records it via `saveEvidenceLibraryEntryRevision`, closing follow-up (a). A fifth slice, `computeEvidenceStaleness`/`getEvidenceStaleness`/`getStaleEvidenceEntries` plus `EvidenceLibraryPanel`'s "Stale evidence" badge (see Tracker Status above, "Revision Incentives — evidence-staleness signal"), now flags a card's cited evidence stale (no parseable citation year, or 3+ years old) independently of any revision, closing follow-up (c). No follow-ups remain open on this bullet._
 * 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. A second slice, `trackedArguments.ts` (see Tracker Status above, "Topic Coverage Dashboard — checklist persistence + dashboard UI"), now persists a topic's tracked-argument checklist to localStorage and composes it with the already-persisted evidence library to build a live report, closing follow-up (b). A third slice, `TopicCoverageDashboardPanel` (see Tracker Status above, same entry), now renders a topic switcher, checklist form, and coverage report at `/cards/coverage`, closing follow-up (c). Follow-up (a), an `argBlock`/word-count field wired into a real card-submission flow beyond the existing `/cards/library` evidence-library form, remains open — not started._
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. A second slice, `state/dailyQuests.ts` plus `DailyQuestsPanel` (see Tracker Status above, "Daily Quests and Targets — quest-board widget UI + real contribution wiring"), now persists a quest-template roster, seeds it from a topic's coverage gaps, and composes it against the real, persisted Contributions Feed at `/cards/quests`, closing follow-up (b) and — by wiring `submittedAt`/`argBlock` into the Contributions Feed's submission flow for the first time — follow-up (a). Follow-up (c), a streak/reward layer once the Gamified Quests idea's streak logic is composed in, remains open — not started._
 * 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildTopicSprint`/`buildTopicSprintSummaryText` for composing the existing Daily Quests board, Research Task Routing result, and Research Progress Tracking board into one shared topic-scoped session, plus a topic-addressed `SprintNote` model (`createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`) for shared prep notes, mirroring `debate-round`'s `strategy-sync-notes.ts` `PrepNote` lifecycle. A second slice, `sprintNotes.ts` (see Tracker Status above), now persists `SprintNote` records to localStorage. A third slice, `SprintNotesPanel` (see Tracker Status above, "Team Collaboration Mode — collaboration-panel UI"), now renders a submission form and every persisted note grouped by topic at `/cards/collaboration`, closing follow-up (a). Follow-ups: (b) persisting a topic sprint's other inputs (so the full `buildTopicSprint` composition can be rendered, not just the note thread), (c) a presence/live-status signal for who's currently active. Neither of these are started._

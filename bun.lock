@@ -396,6 +396,7 @@
         "@tiptap/core": "^3.27.1",
         "@tiptap/pm": "^3.27.1",
         "@tiptap/react": "^3.27.1",
+        "debate-card-parser": "workspace:*",
         "fast-xml-parser": "^4.5.0",
         "fflate": "^0.8.3",
         "jszip": "^3.10.1",

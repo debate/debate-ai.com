@@ -20,16 +20,19 @@ alphabetically by contributor id (this view isn't ranked by score — see the
 | Tier | `novice` / `apprentice` / `veteran` / `expert`, from `lib/progress-unlocks.ts` |
 | Unlocked tasks | The `research-task-routing.ts` `SkillLevel` that tier grants |
 | Streak | Current consecutive-day quest streak, from `lib/gamified-quests.ts` |
+| Tasks completed | Completed `research-task-routing.ts` tasks, from `state/researchProgress.ts`'s persisted completion history |
 | Badges | Tier badges + streak-milestone badges, merged by `lib/unlock-streak-status.ts` |
-| Next tier | Contributions and helpfulness points still needed to reach the next tier |
+| Next tier | Contributions and helpfulness points, **or** completed tasks, still needed to reach the next tier |
 
 ## Data flow
 
 ```
 state/contributions.ts (localStorage)
+state/researchProgress.ts (localStorage: completedResearchTasks)
   → buildUnlockStatusRoster()             — lib/unlock-streak-status.ts
-      ├─ lists every contributor id with a persisted contribution
-      │  (state/contributions.ts's listContributions + groupContributionsByContributor)
+      ├─ lists every contributor id with a persisted contribution or
+      │  completed task (state/researchProgress.ts's
+      │  buildPersistedLeaderboardWithCompletedTasks)
       └─ buildContributorUnlockStatusWithStreakFromStore() per contributor
           ├─ lib/progress-unlocks.ts   (tier, unlocked skill level, tier badges, next-tier progress)
           └─ lib/gamified-quests.ts    (streak, streak badges, via state/dailyMissionResults.ts)
@@ -46,6 +49,10 @@ status through the already-existing `buildContributorUnlockStatusWithStreakFromS
 `packages/debate-card-search/test/unlock-streak-status.test.ts` (empty roster
 when nothing is persisted, multiple contributors sorted alphabetically with
 their own tier/streak, and per-contributor data isolation).
+
+A later slice closed this page's own "Known gaps" follow-up — see
+[Research Progress Tracking](./research-progress-tracking.md) for the
+completed-task-as-tier-signal change.
 
 ## Known gaps
 

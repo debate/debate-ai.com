@@ -6,10 +6,13 @@ import {
   deleteRoutedTaskQueue,
   getRoutedTaskQueue,
   listRoutedTaskQueues,
+  routePersistedTopicTasks,
   saveRoutedTaskQueue,
   type RoutedTaskQueueRecord,
 } from "../src/state/routedTaskQueues";
 import { getContributorAvailability, saveContributorAvailability } from "../src/state/contributorAvailability";
+import { saveEvidenceLibraryEntry } from "../src/state/evidenceLibraryEntries";
+import { saveTrackedArgument } from "../src/state/trackedArguments";
 import type { ContributorAvailability, ResearchTask, RoutingResult } from "../src/lib/research-task-routing";
 import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "../src/lib/topic-coverage";
 
@@ -149,6 +152,45 @@ describe("buildAndPersistRoutingResult", () => {
     buildAndPersistRoutingResult(report, "topic-warming");
 
     expect(getContributorAvailability("idle-ivy")).toEqual({ ...ADVANCED_AMY, contributorId: "idle-ivy" });
+  });
+});
+
+describe("routePersistedTopicTasks", () => {
+  it("builds a topic's live coverage report from the persisted tracked-argument checklist + evidence library, routes it, and saves the queue", () => {
+    saveContributorAvailability(ADVANCED_AMY);
+    saveTrackedArgument({ id: "warming-track", topic: "topic-warming", argBlock: "Warming DA", category: "DA" });
+    saveTrackedArgument({ id: "case-track", topic: "topic-warming", argBlock: "Case NEG", category: "Case" });
+    for (const card of WARMING_CARDS) {
+      saveEvidenceLibraryEntry({
+        id: card.id,
+        kind: "card",
+        topic: "topic-warming",
+        caseArea: "DA",
+        tags: [],
+        text: "body text",
+        cite: "Smith 24",
+        argBlock: card.argBlock,
+        wordCount: card.wordCount,
+      });
+    }
+
+    const result = routePersistedTopicTasks("topic-warming");
+
+    expect(result.assignments).toHaveLength(1);
+    expect(result.assignments[0].contributorId).toBe("advanced-amy");
+    expect(result.assignments[0].task.argBlock).toBe("Case NEG");
+    expect(getRoutedTaskQueue("topic-warming")).toEqual({ topicId: "topic-warming", result });
+    expect(getContributorAvailability("advanced-amy")).toEqual({ ...ADVANCED_AMY, activeTaskCount: 1 });
+  });
+
+  it("scopes the report to the requested topic — checklist entries filed under other topics don't leak in", () => {
+    saveContributorAvailability(ADVANCED_AMY);
+    saveTrackedArgument({ id: "other-track", topic: "topic-other", argBlock: "Unrelated", category: "DA" });
+
+    const result = routePersistedTopicTasks("topic-warming");
+
+    expect(result).toEqual({ assignments: [], unassignedTasks: [] });
+    expect(getRoutedTaskQueue("topic-warming")).toEqual({ topicId: "topic-warming", result });
   });
 });
 

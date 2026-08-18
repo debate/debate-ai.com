@@ -21,4 +21,5 @@ export { PrepRoomPanel } from "./panels/PrepRoomPanel";
 export { CardScoringPanel } from "./panels/CardScoringPanel";
 export { QuestStreaksPanel } from "./panels/QuestStreaksPanel";
 export { DailyQuestsPanel } from "./panels/DailyQuestsPanel";
+export { DailyBestCardPanel } from "./panels/DailyBestCardPanel";
 export * from "./types";

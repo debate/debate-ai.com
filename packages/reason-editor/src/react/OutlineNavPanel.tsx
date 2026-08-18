@@ -17,6 +17,12 @@
  * `collapsedHeadingsPlugin` (follow-up (b)), so collapsing a heading here
  * also hides its content in the ProseMirror view itself, not just the nav
  * list.
+ *
+ * Each item also gets Move ↑/↓ buttons — the mouse-driven counterpart to
+ * the editor view's Alt-ArrowUp/Alt-ArrowDown shortcuts (see
+ * `verbatim-shortcuts-extension.ts`), closing the "move headings" half of
+ * follow-up (a) under idea #14 ("Legacy Verbatim / Cardmirror
+ * Compatibility") in TODO.md's Product Feature Ideas list.
  */
 
 import { useEffect, useReducer, useState } from "react";
@@ -28,6 +34,7 @@ import {
   toggleCollapsedHeadingId,
   type OutlineHeading,
 } from "../engine/outline/heading-outline.js";
+import { buildMoveHeadingSectionTransaction } from "../engine/outline/heading-move.js";
 import {
   collapsedHeadingsKey,
   setCollapsedHeadingIdsMeta,
@@ -99,6 +106,14 @@ export function OutlineNavPanel({ editor, documentId, className }: OutlineNavPan
     editor.chain().focus().setTextSelection(heading.pos + 1).scrollIntoView().run();
   }
 
+  function move(heading: OutlineHeading, direction: "up" | "down") {
+    if (!editor) return;
+    const tr = buildMoveHeadingSectionTransaction(editor.state, outline, heading.id, direction);
+    if (!tr) return;
+    editor.view.dispatch(tr);
+    editor.commands.focus();
+  }
+
   const hasChildLevels = (heading: OutlineHeading, index: number): boolean => {
     const next = outline[index + 1];
     return next !== undefined && next.level > heading.level;
@@ -140,6 +155,26 @@ export function OutlineNavPanel({ editor, documentId, className }: OutlineNavPan
                   title={heading.text}
                 >
                   {heading.text || "Untitled"}
+                </button>
+                <button
+                  type="button"
+                  className="reason-editor-outline-nav-move"
+                  onClick={() => move(heading, "up")}
+                  disabled={index === 0}
+                  aria-label="Move section up"
+                  title="Move section up (Alt+ArrowUp)"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  className="reason-editor-outline-nav-move"
+                  onClick={() => move(heading, "down")}
+                  disabled={index === outline.length - 1}
+                  aria-label="Move section down"
+                  title="Move section down (Alt+ArrowDown)"
+                >
+                  ↓
                 </button>
               </li>
             );

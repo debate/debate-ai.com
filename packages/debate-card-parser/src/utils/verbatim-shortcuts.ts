@@ -2,7 +2,7 @@
  *  condensing a card to its read (underlined) text, formatting a short cite
  *  tag, reordering outline nodes (headings/cards), and toggling `<mark>`
  *  text emphasis over a selection range. */
-import type { Card, CardYear, OutlineNode } from "../types/types";
+import type { Card, CardYear } from "../types/types";
 
 const UNDERLINE_RE = /<u[^>]*>[\s\S]*?<\/u>/gi;
 
@@ -105,8 +105,8 @@ function buildVisibleCharPositions(html: string): number[] {
 function resolveHtmlBoundary(positions: number[], offset: number): number {
   const n = positions.length;
   const clamped = Math.min(Math.max(offset, 0), n);
-  if (clamped < n) return positions[clamped];
-  return n > 0 ? positions[n - 1] + 1 : 0;
+  if (clamped < n) return positions[clamped]!;
+  return n > 0 ? positions[n - 1]! + 1 : 0;
 }
 
 const MARK_OPEN = "<mark>";
@@ -160,25 +160,34 @@ export function toggleEmphasisHtml(html: string, start: number, end: number): st
 }
 
 /**
- * Moves an outline node (heading or card) one slot up or down, mirroring
- * Verbatim's "move heading" reorder shortcut. Returns a new array; returns
- * the same array reference unchanged when the move would go out of bounds.
+ * Moves an outline entry (heading or card, or any other document-ordered
+ * list an outline is built from — e.g. a live editor's heading outline)
+ * one slot up or down, mirroring Verbatim's "move heading" reorder
+ * shortcut. Returns a new array; returns the same array reference
+ * unchanged when the move would go out of bounds.
  *
- * @param outline - Outline nodes in document order.
- * @param index - Index of the node to move.
- * @param direction - `"up"` swaps with the previous node, `"down"` with the next.
+ * Generic over the entry type so callers with their own outline shape
+ * (this module's `OutlineNode`, or e.g. `reason-editor`'s live-document
+ * `OutlineHeading`) can reuse the same bounds-checked swap directly
+ * instead of reimplementing it.
+ *
+ * @param outline - Outline entries in document order.
+ * @param index - Index of the entry to move.
+ * @param direction - `"up"` swaps with the previous entry, `"down"` with the next.
  */
-export function moveOutlineNode(
-  outline: OutlineNode[],
+export function moveOutlineNode<T>(
+  outline: T[],
   index: number,
   direction: "up" | "down",
-): OutlineNode[] {
+): T[] {
   if (index < 0 || index >= outline.length) return outline;
 
   const targetIndex = direction === "up" ? index - 1 : index + 1;
   if (targetIndex < 0 || targetIndex >= outline.length) return outline;
 
   const next = outline.slice();
-  [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
+  const moved = next[index]!;
+  next[index] = next[targetIndex]!;
+  next[targetIndex] = moved;
   return next;
 }
