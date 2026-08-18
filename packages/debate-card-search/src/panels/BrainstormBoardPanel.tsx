@@ -12,6 +12,17 @@
  * `upvotePersistedBrainstormIdea`. No new ranking, duplicate-flagging, or
  * mutation logic is introduced here.
  *
+ * A "Generate AI ideas" action closes follow-up (a) named under the "🧠 Team
+ * Brainstorm Assist" bullet in TODO.md ("an actual AI-generation call that
+ * drafts candidate ideas from `buildBrainstormPrompt`'s output") — it POSTs
+ * the form's argument block/category to the existing `/api/reason-ai`
+ * Anthropic proxy via `lib/team-brainstorm-client.ts`, then saves each
+ * drafted idea as a normal, AI-attributed `BrainstormIdea` (`isAiGenerated:
+ * true`) through the already-persisted `saveBrainstormIdea`, so drafted
+ * ideas rank, dedupe-flag, and upvote exactly like a teammate's. A failed
+ * or malformed AI response shows an inline error instead of crashing the
+ * panel.
+ *
  * @module panels/BrainstormBoardPanel
  */
 
@@ -29,6 +40,8 @@ import {
   saveBrainstormIdea,
   upvotePersistedBrainstormIdea,
 } from "../state/brainstormIdeas"
+import { requestTeamBrainstormAiIdeas } from "../lib/team-brainstorm-client"
+import { buildBrainstormPrompt } from "../lib/team-brainstorm-assist"
 import type { BrainstormBoard, BrainstormCategory } from "../lib/team-brainstorm-assist"
 
 const CATEGORY_OPTIONS: { value: BrainstormCategory; label: string }[] = [
@@ -59,6 +72,8 @@ export function BrainstormBoardPanel() {
   const [boards, setBoards] = useState<BrainstormBoard[] | null>(null)
   const [draft, setDraft] = useState<IdeaDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [aiLoading, setAiLoading] = useState(false)
+  const [aiError, setAiError] = useState<string | null>(null)
 
   useEffect(() => {
     setBoards(buildBrainstormBoardsPanelView())
@@ -90,6 +105,35 @@ export function BrainstormBoardPanel() {
   const handleUpvote = (id: string) => {
     upvotePersistedBrainstormIdea(id)
     refresh()
+  }
+
+  const handleGenerateAiIdeas = async () => {
+    const argBlock = draft.argBlock.trim()
+    if (!argBlock) {
+      setAiError("Enter an argument block above before generating AI ideas.")
+      return
+    }
+    setAiLoading(true)
+    setAiError(null)
+    try {
+      const ideas = await requestTeamBrainstormAiIdeas(buildBrainstormPrompt(argBlock, draft.category))
+      ideas.forEach((text, index) => {
+        saveBrainstormIdea({
+          id: `${argBlock}-${draft.category}-ai-${Date.now()}-${index}`,
+          argBlock,
+          category: draft.category,
+          contributorId: "AI",
+          text,
+          upvotes: 0,
+          isAiGenerated: true,
+        })
+      })
+      refresh()
+    } catch (e) {
+      setAiError(e instanceof Error ? e.message : "AI idea generation failed.")
+    } finally {
+      setAiLoading(false)
+    }
   }
 
   if (boards === null) {
@@ -154,7 +198,13 @@ export function BrainstormBoardPanel() {
           />
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
-        <Button onClick={handleSubmit}>Submit idea</Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button onClick={handleSubmit}>Submit idea</Button>
+          <Button variant="outline" disabled={aiLoading} onClick={handleGenerateAiIdeas}>
+            {aiLoading ? "Generating…" : "Generate AI ideas"}
+          </Button>
+        </div>
+        {aiError && <p className="text-sm text-destructive">{aiError}</p>}
       </div>
 
       {boards.length === 0 ? (
@@ -183,6 +233,7 @@ export function BrainstormBoardPanel() {
                           {idea.popularityScore}/100 popularity
                         </span>
                         {idea.isLikelyDuplicate && <Badge variant="secondary">possible duplicate</Badge>}
+                        {idea.isAiGenerated && <Badge variant="outline">AI</Badge>}
                       </div>
                       <p className="text-muted-foreground">{idea.text}</p>
                     </div>
