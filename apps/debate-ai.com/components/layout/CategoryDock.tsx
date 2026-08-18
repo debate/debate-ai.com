@@ -128,6 +128,15 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
         <Image src={IconRead} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
         Debate Docs
       </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/research") }}>
+        <Library className="mr-2 h-4 w-4" />
+        Research Workspace
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/coach") }}>
+        <GraduationCap className="mr-2 h-4 w-4" />
+        Coach Workspace
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/leaderboard") }}>
         <Trophy className="mr-2 h-4 w-4" />
         Leaderboard

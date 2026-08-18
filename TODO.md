@@ -64,6 +64,64 @@ up on `/word-count`.
   `SpeechHeaderBar` countdown.
 
 ### Completed
+- **Feature panels — shared panel kit, two workspace hubs, and the two
+  remaining slice panels.**
+  [PR #214](https://github.com/debate/debate-ai.com/pull/214).
+  `packages/debate-ui/src/panels/panel-shell.tsx` adds the shared panel
+  vocabulary (`PanelShell`/`PanelSection`/`StatGrid`/`StatTile`/`MeterBar`/
+  `Pill`/`PanelRow`/`EmptyState`/`SummaryText`/`LabeledField`, with one
+  five-value tone scale — neutral/info/positive/warning/critical — that the
+  coverage, status and risk vocabularies across the slices all map onto), and
+  `packages/debate-ui/src/panels/use-store-snapshot.ts` adds the hook a
+  props-free panel reads a store through: it defers the `localStorage` read to
+  an effect after mount so a server render and the first client render agree,
+  and hands back a `refresh()` for panels that write.
+  <br />
+  This PR was opened against a tree where almost no slice had a screen yet and
+  proposed one panel per slice. By the time it merged, every one of those
+  slices had already grown its own panel on master, mounted on its own route
+  and — for card scoring, the AI-versus round, the evidence library, the
+  brainstorm board and flow annotations — wired to a real `/api/reason-ai`
+  call this PR's versions did not have. Those panels were kept as they are;
+  only the two panels covering a slice with no screen at all landed here:
+  `debate-card-search`'s `TopicSprintPanel` (the full `buildTopicSprint`
+  composition — quest board, routing, per-contributor progress and the shared
+  note wall for one topic, where `SprintNotesPanel` renders only the notes,
+  closing follow-up (b) under "🤝 Team Collaboration Mode") and
+  `debate-round`'s `SharedFlowSyncPanel` (a merge preview over
+  `flow/shared-flow-sync.ts`, flagging boxes two partners edited within the
+  same conflict window). Each package's `src/panels/index.ts` is now a barrel
+  its `src/index.ts` re-exports wholesale, so a new panel no longer needs a
+  second export line.
+  <br />
+  **App surface** — `/research` (`components/research/ResearchHub.tsx`) and
+  `/coach` (`components/coach/CoachHub.tsx`) are tabbed hubs grouping every
+  existing panel by the stage of work it belongs to, both reachable from the
+  dock's settings menu. The individual `/cards/*` and round routes still mount
+  the same panels one at a time; the hubs are the view for working across
+  them. Since each panel reads its own store, the hubs are almost pure
+  navigation — the exceptions are the two prop-driven panels above, for which
+  the research hub derives the coverage report, coverage quests and routed
+  assignments from the persisted evidence library and availability profiles,
+  and the coach hub passes the flow currently selected in the round
+  workspace's zustand store. Where no data source exists yet (quest
+  contributions carry no timestamp in the contribution store, and nothing
+  records `FlowEdit`s), the hub passes an empty list and the panel renders its
+  own empty state instead of fabricating data.
+  <br />
+  `reason-editor`'s existing `OutlineNavPanel` already covers the outline nav
+  this PR also proposed — and additionally syncs the collapsed set into the
+  live `collapsedHeadingsPlugin` and offers per-heading Move ↑/↓ — so its
+  `OutlinePanel` was dropped rather than added alongside. Vitest-covered by
+  render tests in `packages/debate-ui/test/panel-shell.test.tsx`,
+  `packages/debate-card-search/test/panels.test.tsx` (`TopicSprintPanel`) and
+  `packages/debate-round/test/panels.test.tsx` (`SharedFlowSyncPanel`) —
+  these render through `react-dom/server` rather than a DOM testing library,
+  since every package's Vitest environment is `node`. No repo-wide `lint`
+  script exists (checked root/app/package `package.json` scripts) so none was
+  run. Verified: `bun install`, `bun run typecheck` (all 11 in-scope packages
+  pass), `bun run test`, and `bun run build:web` (`debate-ai-web` succeeds,
+  `/research` and `/coach` routes present) all pass.
 - **Daily Best Card Challenge — persisted announcements.**
   [PR #192](https://github.com/debate/debate-ai.com/pull/192).
   Closes follow-up (b) under the "🕵️ Daily Best Card Challenge" bullet in
@@ -4544,6 +4602,8 @@ up on `/word-count`.
 
 
 ## Research Crowdsourcing Organizer Features
+
+> The note above about UI follow-ups applies to this section too.
 
 * 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool.
 * 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. A second slice, `contributions.ts` (see Tracker Status above), now persists `AttributedContribution` records to localStorage, and its `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` close half of follow-up (a) — persisting like/save/endorse counts once an action fires — though no submission/like UI calls them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders the leaderboard at `/cards/leaderboard`, closing follow-up (c). A fourth slice, `ContributionsFeedPanel` (see Tracker Status above, "Contributions Feed — like/save/endorse UI"), now renders a submission form and a like/save/endorse feed at `/cards/contributions`, closing follow-up (a). A fifth slice (see Tracker Status above, "Contribution Leaderboard — completed-tasks signal") added `completedTaskCount` to each leaderboard row, sourced from the persisted completed-task history and rendered as a new column, closing follow-up (b). No follow-ups remain open on this bullet._
