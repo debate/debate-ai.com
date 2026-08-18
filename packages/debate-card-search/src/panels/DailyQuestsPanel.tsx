@@ -29,8 +29,14 @@ import {
   saveQuestTemplate,
   seedQuestTemplatesFromTopicCoverage,
 } from "../state/dailyQuests"
+import {
+  buildPersistedContributorQuestStreak,
+  computeAndSavePersistedDailyMissionResult,
+} from "../state/dailyMissionResults"
 import { buildQuestBoardSummaryText } from "../lib/daily-quests"
 import type { QuestProgress, QuestTemplate } from "../lib/daily-quests"
+import { buildStreakRewardText } from "../lib/gamified-quests"
+import type { ContributorQuestStreak } from "../lib/gamified-quests"
 import type { ContributionKind } from "../lib/community-rating"
 
 const KIND_OPTIONS: { value: ContributionKind; label: string }[] = [
@@ -49,6 +55,11 @@ function nowMs(): number {
   return Date.now()
 }
 
+/** Today's UTC calendar day as `YYYY-MM-DD`, the `dayKey` format used throughout `gamified-quests.ts`. */
+function todayUtcDayKey(): string {
+  return new Date().toISOString().slice(0, 10)
+}
+
 /**
  * Renders the Daily Quests board: a form to add a custom quest, a
  * "seed from topic coverage" action, and today's live progress for every
@@ -63,10 +74,17 @@ export function DailyQuestsPanel() {
   const [draft, setDraft] = useState<QuestDraft>(EMPTY_DRAFT)
   const [topic, setTopic] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [contributorId, setContributorId] = useState("")
+  const [streak, setStreak] = useState<ContributorQuestStreak | null>(null)
+  const [streakError, setStreakError] = useState<string | null>(null)
 
   const refresh = () => {
     setTemplates(listQuestTemplates())
     setBoard(buildPersistedDailyQuestBoard(nowMs()))
+  }
+
+  const refreshStreak = (id: string) => {
+    setStreak(id ? buildPersistedContributorQuestStreak(id, todayUtcDayKey()) : null)
   }
 
   useEffect(() => {
@@ -110,6 +128,17 @@ export function DailyQuestsPanel() {
     seedQuestTemplatesFromTopicCoverage(activeTopic)
     setError(null)
     refresh()
+  }
+
+  const handleRecordMission = () => {
+    const id = contributorId.trim()
+    if (!id) {
+      setStreakError("Contributor id is required.")
+      return
+    }
+    computeAndSavePersistedDailyMissionResult(id, listQuestTemplates(), nowMs())
+    setStreakError(null)
+    refreshStreak(id)
   }
 
   if (templates === null) {
@@ -193,6 +222,49 @@ export function DailyQuestsPanel() {
             </Button>
           </div>
         </div>
+      </div>
+
+      <div className="rounded-lg border border-dashed border-border p-4 space-y-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="quest-streak-contributor">Your streak</Label>
+          <div className="flex flex-wrap gap-2">
+            <Input
+              id="quest-streak-contributor"
+              value={contributorId}
+              onChange={(e) => {
+                const id = e.target.value
+                setContributorId(id)
+                refreshStreak(id.trim())
+              }}
+              placeholder="Contributor id"
+              className="max-w-sm"
+            />
+            <Button type="button" variant="outline" onClick={handleRecordMission}>
+              Record today's mission
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Records this contributor's mission result for today against their real, persisted
+            contributions, then shows their streak and any badge it just earned.
+          </p>
+          {streakError && <p className="text-sm text-destructive">{streakError}</p>}
+        </div>
+        {streak && (
+          <div className="flex flex-wrap items-center gap-2 rounded-md border border-border px-3 py-2">
+            <span className="text-sm font-medium text-foreground">
+              {buildStreakRewardText(streak, streak.streak.lastCompletedDayKey === todayUtcDayKey())}
+            </span>
+            {streak.earnedBadges.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {streak.earnedBadges.map((badge) => (
+                  <Badge key={badge} variant="outline" className="whitespace-nowrap">
+                    {badge}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {board.length === 0 ? (

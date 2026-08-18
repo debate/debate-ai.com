@@ -3,67 +3,59 @@
 
 ### In progress
 
-## Word-Count-Only Speech Format — live-round word-limited speech mode
-
-**Status:** In Progress
-**Source:** TODO.md Product Feature Ideas — idea #2 "Word-Count-Only Speech Format", follow-up (b): "extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode in the live round timer itself"
-**Branch:** `claude/practical-allen-grn1m6`
-**PR:** https://github.com/debate/debate-ai.com/pull/209
-**Started:** 2026-08-18
-
-### Goal
-Let a debater run a live round in `/debate` under a word limit instead of a
-countdown: the speech header bar's timer is replaced by a live word-count
-meter for the current speech, whose text is typed in place and persisted
-through the existing `state/wordCountRounds.ts` store so the same round shows
-up on `/word-count`.
-
-### Scope
-- A pure, Vitest-covered word-limit resolver + mode-state module in `debate-round`
-- A word limit derived from the live timed style's speech length when the
-  speech has no `wordCountStyles` entry (`estimateWordLimit`)
-- A `SpeechWordCounter` component in `debate-timer` mirroring `SpeechTimer`'s compact shape
-- A word-limit toggle in `SpeechHeaderBar` that swaps the countdown for the meter
-- Persistence through the existing `wordCountRounds` store (no new storage key)
-
-### Non-goals
-- Audio/speech-to-text word counting
-- Changing the timed-format countdown behavior when the mode is off
-- A new persisted storage key or a second source of truth for round text
-
-### Acceptance criteria
-- [x] A live speech resolves a word limit from `wordCountStyles` when its name matches, else from the timed speech's minutes
-- [x] Typing in word-limit mode updates count/remaining/over-limit status live
-- [x] Speech text typed in the live round is persisted to, and read back from, `wordCountRounds`
-- [x] A round saved from the live header bar appears on `/word-count`
-- [x] Vitest coverage is added for the resolver, mode state, and store round-trip
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Web build passes
-- [x] Documentation updated (`docs/features/word-count-rounds.md`)
-
-### Implementation plan
-- [x] Inspect `word-count-format.ts`, `wordCountRounds.ts`, `useTimerState`, `SpeechTimer`, `SpeechHeaderBar`
-- [x] Add `round/word-count-speech-mode.ts` (limit resolution, mode state, store round-trip)
-- [x] Add focused Vitest success-path coverage
-- [x] Add focused edge-case coverage (unknown speech, no limit source, over-limit, corrupt store)
-- [x] Add `SpeechWordCounter` to `debate-timer` and export it
-- [x] Wire a word-limit toggle + meter into `SpeechHeaderBar`
-- [x] Run focused tests, typecheck, full suite, and the web build
-- [x] Update docs
-- [x] Commit and push the branch
-- [x] Create or update the pull request
-- [x] Update tracker status and checkboxes
-
-### Remaining work
-- Wait for CI on PR #209 to pass; nothing else blocks this task.
-- Not verified in a browser: the mode is covered by Vitest at the logic and
-  store level only; `bun run dev:web` was not exercised this run.
-- Follow-up (not started): surface the live meter in the mobile/`FlowPageHeader`
-  compact timer display as well; it currently only replaces the
-  `SpeechHeaderBar` countdown.
+_No task currently in progress._
 
 ### Completed
+- **Daily Quests and Targets — streak/reward layer on the quest board.**
+  Closed follow-up (c) under the "🎯 Daily Quests and Targets" bullet in
+  Research Crowdsourcing Organizer Features: "a streak/reward layer once
+  the Gamified Quests idea's streak logic is composed in." Added
+  `buildStreakRewardText` to `lib/gamified-quests.ts` — a pure helper that
+  renders a contributor's already-computed `ContributorQuestStreak` as a
+  reward line, calling out a badge earned exactly today separately from
+  badges earned on prior days — and wired a "Your streak" section into
+  `DailyQuestsPanel` with a "Record today's mission" action that composes
+  the existing `computeAndSavePersistedDailyMissionResult`/
+  `buildPersistedContributorQuestStreak` from `state/dailyMissionResults.ts`
+  (the same helpers `QuestStreaksPanel` already used). No changes to any
+  persistence or streak-computation logic — this is a composition and
+  reward-messaging layer only. No follow-ups remain open on this bullet.
+  Merged as [PR #217](https://github.com/debate/debate-ai.com/pull/217).
+  Vitest-covered in `packages/debate-card-search/test/gamified-quests.test.ts`
+  (6 new cases: no streak yet, continuing an existing streak, a plain
+  non-milestone completion, a freshly-earned milestone badge, not
+  re-announcing a badge earned on a prior day, and a custom milestone
+  list). Docs added in `docs/features/daily-quests.md`. Verified:
+  `bun run test` (125 files / 1701 tests, all pass), `bun run typecheck`
+  (11 of 12 in-scope packages have a typecheck script; all pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/cards/quests` route
+  present) all pass; `codecov/patch` and `codecov/project` both reported
+  success on the PR. No repo-wide `lint` script exists, so none was run.
+  The PR's only failing check was `Vercel` (account-wide "Deployment rate
+  limited — retry in 24 hours"), the same infra-level daily quota that hit
+  PR #209 earlier the same day — unrelated to this diff, confirmed via the
+  identical error message and target URL, and nothing to fix in code.
+- **Word-Count-Only Speech Format — live-round word-limited speech mode.**
+  Closed follow-up (b) under idea #2 ("Word-Count-Only Speech Format"):
+  "extending `useTimerState`/`SpeechTimer` to support a non-timed,
+  word-limited speech mode in the live round timer itself." Added
+  `round/word-count-speech-mode.ts` (limit resolution, mode state, store
+  round-trip through the existing `wordCountRounds` store),
+  `hooks/useWordCountSpeechMode.ts`, and `debate-timer`'s
+  `SpeechWordCounter`, wiring a word-limit toggle into `SpeechHeaderBar`
+  that replaces the live countdown with a `words / limit` meter. Merged as
+  [PR #209](https://github.com/debate/debate-ai.com/pull/209). Vitest-covered
+  in `packages/debate-round/test/word-count-speech-mode.test.ts` (18 tests).
+  Verified: `bun run test`, `bun run typecheck`, `bun run build:web` all
+  pass. Correction to this PR's own docs: `docs/features/word-count-rounds.md`
+  had flagged "the mobile `FlowPageHeader` countdown is unchanged" as a known
+  gap, but `FlowPageHeader.tsx` is dead code — it is not imported or rendered
+  anywhere in the app. The component actually used for both desktop and
+  mobile (via its `onMobileMenuClick` prop, wired in `DebateRoundPanel.tsx`
+  whenever `state.isMobile`) is `SpeechHeaderBar` itself, which already
+  renders the word-limit toggle and `SpeechWordCounter` in every layout mode
+  (split view and spreadsheet view alike). So the mobile experience already
+  has the word-limit meter; no further follow-up is needed on this idea.
 - **Community-Rated Summaries and Highlights — real reviewer-credibility
   system.** Closes follow-up (b) under idea #11 ("Community-Rated Summaries
   and Highlights") in the Product Feature Ideas list: "a real
@@ -4656,7 +4648,7 @@ up on `/word-count`.
 * 🧭 Research Task Routing - Assign specific research jobs to debaters based on topic gaps, skill level, and current needs. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTaskQueue`/`routeTasks`/`buildRoutingResult`/`buildRoutingSummaryText` for turning a topic-coverage report's under-covered arguments into a skill-gated task queue and routing it to whichever eligible, caller-supplied contributor currently has the fewest active tasks. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now derives each contributor's skill level from their contribution history (via the Progress Unlocks tier logic) instead of requiring a caller-supplied value. A third slice, `contributorAvailability.ts` (see Tracker Status above, "Research Task Routing — persisted contributor-availability profiles"), now persists a contributor's `ContributorAvailability` to localStorage. A fourth slice (see Tracker Status above, "Research Task Routing — persisted routed task queue"), now persists a routed `RoutingResult`/task queue to localStorage, closing follow-up (b). A fifth slice (see Tracker Status above, "Research Task Routing — persisted activeTaskCount assignment/completion events") now wires real task-assignment/completion events (`buildAndPersistRoutingResult`/`completePersistedRoutedTask`) into a persisted profile's `activeTaskCount`, closing follow-up (a). A sixth slice, `TaskInboxPanel` (see Tracker Status above, "Research Task Routing — task-assignment/inbox UI"), now renders every persisted routed task queue at `/cards/inbox` with a "mark complete" action, closing follow-up (c). A seventh slice, `routePersistedTopicTasks` plus the panel's "Route a topic's tasks" form (see Tracker Status above, "Research Task Routing — task-routing trigger UI"), now lets a coach or contributor populate a topic's queue directly from the inbox, closing follow-up (d). Follow-up (e), scoping the inbox to "my tasks" once contributor identity/auth exists, remains open — not started._
 * 🔁 Revision Incentives - Reward users for improving weak cards, updating outdated evidence, and strengthening citations. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `evaluateRevision`/`buildContributorRevisionStats`/`buildRevisionIncentiveLeaderboard`/`buildRevisionRewardText` for scoring a before/after card revision's quality gain (doubled when the card was weak beforehand), citation-strengthening, and evidence-refresh bonuses, reusing the existing idea #11 `community-rating.ts` quality scoring. A second slice, `revisionHistory.ts` (see Tracker Status above, "Revision Incentives — persisted revision history"), now persists `CardRevision` edit events (as many-per-card `CardRevisionRecord`s) to localStorage. A third slice, `RevisionIncentivesPanel` (see Tracker Status above, "Revision Incentives — incentives-leaderboard UI panel"), now renders a ranked reward-points leaderboard at `/cards/revisions`, closing follow-up (b). A fourth slice, `deriveCardSnapshotFromEntry`/`buildEvidenceEntryRevision` plus `EvidenceLibraryPanel`'s Edit action (see Tracker Status above, "Shared Evidence Library — edit/delete affordance wired to Revision Incentives"), now wires a real card-edit/save flow — editing an evidence-library entry derives a before/after `CardSnapshot` from the entry's own text/citation and records it via `saveEvidenceLibraryEntryRevision`, closing follow-up (a). A fifth slice, `computeEvidenceStaleness`/`getEvidenceStaleness`/`getStaleEvidenceEntries` plus `EvidenceLibraryPanel`'s "Stale evidence" badge (see Tracker Status above, "Revision Incentives — evidence-staleness signal"), now flags a card's cited evidence stale (no parseable citation year, or 3+ years old) independently of any revision, closing follow-up (c). No follow-ups remain open on this bullet._
 * 📊 Topic Coverage Dashboard - Show which arguments are well-covered, which are missing, and where the team needs more work. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildTopicCoverageReport`/`getUnderCoveredArguments`/`buildTopicCoverageSummaryText` for classifying a topic's tracked argument blocks as missing, thin, or covered from caller-supplied cards and card-count/word-count thresholds, and surfacing cards filed under an untracked argument block separately. A second slice, `trackedArguments.ts` (see Tracker Status above, "Topic Coverage Dashboard — checklist persistence + dashboard UI"), now persists a topic's tracked-argument checklist to localStorage and composes it with the already-persisted evidence library to build a live report, closing follow-up (b). A third slice, `TopicCoverageDashboardPanel` (see Tracker Status above, same entry), now renders a topic switcher, checklist form, and coverage report at `/cards/coverage`, closing follow-up (c). Follow-up (a), an `argBlock`/word-count field wired into a real card-submission flow beyond the existing `/cards/library` evidence-library form, remains open — not started._
-* 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. A second slice, `state/dailyQuests.ts` plus `DailyQuestsPanel` (see Tracker Status above, "Daily Quests and Targets — quest-board widget UI + real contribution wiring"), now persists a quest-template roster, seeds it from a topic's coverage gaps, and composes it against the real, persisted Contributions Feed at `/cards/quests`, closing follow-up (b) and — by wiring `submittedAt`/`argBlock` into the Contributions Feed's submission flow for the first time — follow-up (a). Follow-up (c), a streak/reward layer once the Gamified Quests idea's streak logic is composed in, remains open — not started._
+* 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. A second slice, `state/dailyQuests.ts` plus `DailyQuestsPanel` (see Tracker Status above, "Daily Quests and Targets — quest-board widget UI + real contribution wiring"), now persists a quest-template roster, seeds it from a topic's coverage gaps, and composes it against the real, persisted Contributions Feed at `/cards/quests`, closing follow-up (b) and — by wiring `submittedAt`/`argBlock` into the Contributions Feed's submission flow for the first time — follow-up (a). A third slice (see Tracker Status above, "Daily Quests and Targets — streak/reward layer on the quest board") added `buildStreakRewardText` and a "Your streak"/"Record today's mission" section to the panel, composing the existing Gamified Quests streak logic directly, closing follow-up (c). No follow-ups remain open on this bullet._
 * 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildTopicSprint`/`buildTopicSprintSummaryText` for composing the existing Daily Quests board, Research Task Routing result, and Research Progress Tracking board into one shared topic-scoped session, plus a topic-addressed `SprintNote` model (`createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`) for shared prep notes, mirroring `debate-round`'s `strategy-sync-notes.ts` `PrepNote` lifecycle. A second slice, `sprintNotes.ts` (see Tracker Status above), now persists `SprintNote` records to localStorage. A third slice, `SprintNotesPanel` (see Tracker Status above, "Team Collaboration Mode — collaboration-panel UI"), now renders a submission form and every persisted note grouped by topic at `/cards/collaboration`, closing follow-up (a). Follow-ups: (b) persisting a topic sprint's other inputs (so the full `buildTopicSprint` composition can be rendered, not just the note thread), (c) a presence/live-status signal for who's currently active. Neither of these are started._
 * 
 * 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slices done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. A second slice, `opponentTeamProfiles.ts` (see Tracker Status above), now persists `OpponentTeamProfile` records to localStorage, keyed by `teamId`. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c) — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `opponentTeamId`. A fourth slice, `OpponentTeamProfilesPanel` (see Tracker Status above, "Opponent Team Profiles — opponent-scouting roster UI panel"), now renders every persisted profile as a scouting roster at `/opponents`, closing follow-up (b). Follow-up (a), a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of relying on caller-supplied data, remains open — not started._

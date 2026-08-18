@@ -145,3 +145,28 @@ export function buildStreakSummaryText(status: ContributorQuestStreak): string {
   const badgeText = status.earnedBadges.length > 0 ? `, badges: ${status.earnedBadges.join(", ")}` : "";
   return `${status.contributorId}: ${status.streak.currentStreak}-day streak (longest ${status.streak.longestStreak})${badgeText}`;
 }
+
+/**
+ * Renders a short "reward" line for a contributor's streak status, meant to
+ * sit next to today's quest board itself (the "(c) a streak/reward layer"
+ * follow-up under the "🎯 Daily Quests and Targets" bullet in TODO.md)
+ * rather than the separate Quest Streaks roster. Calls out a badge freshly
+ * earned today — one whose `streakLength` exactly matches the current
+ * streak — instead of restating every badge already earned on prior days.
+ */
+export function buildStreakRewardText(
+  status: ContributorQuestStreak,
+  missionCompleteToday: boolean,
+  milestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
+): string {
+  if (!missionCompleteToday) {
+    return status.streak.currentStreak > 0
+      ? `🔥 ${status.streak.currentStreak}-day streak — complete today's quests to keep it going.`
+      : "Complete today's quests to start a streak.";
+  }
+
+  const freshBadge = milestones.find((milestone) => milestone.streakLength === status.streak.currentStreak)?.badge;
+  return freshBadge
+    ? `🎉 Mission complete! ${status.streak.currentStreak}-day streak — you just earned "${freshBadge}"!`
+    : `🎉 Mission complete! ${status.streak.currentStreak}-day streak.`;
+}

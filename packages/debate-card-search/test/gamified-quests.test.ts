@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_STREAK_MILESTONES,
   buildContributorQuestStreak,
+  buildStreakRewardText,
   buildStreakSummaryText,
   computeDailyMissionResult,
   computeStreakStatus,
@@ -143,5 +144,53 @@ describe("buildStreakSummaryText", () => {
     const results = [day("2026-08-08", true), day("2026-08-09", true), day("2026-08-10", true)];
     const status = buildContributorQuestStreak("alex", results, "2026-08-10");
     expect(buildStreakSummaryText(status)).toBe("alex: 3-day streak (longest 3), badges: 3-Day Streak");
+  });
+});
+
+describe("buildStreakRewardText", () => {
+  it("prompts to start a streak when the mission isn't complete today and there is no streak yet", () => {
+    const status = buildContributorQuestStreak("alex", [], "2026-08-10");
+    expect(buildStreakRewardText(status, false)).toBe("Complete today's quests to start a streak.");
+  });
+
+  it("encourages continuing an existing streak when today's mission isn't complete", () => {
+    const results = [day("2026-08-08", true), day("2026-08-09", true)];
+    const status = buildContributorQuestStreak("alex", results, "2026-08-09");
+    expect(buildStreakRewardText(status, false)).toBe(
+      "🔥 2-day streak — complete today's quests to keep it going.",
+    );
+  });
+
+  it("celebrates a plain completion when today's streak length isn't a milestone", () => {
+    const results = [day("2026-08-09", true), day("2026-08-10", true)];
+    const status = buildContributorQuestStreak("alex", results, "2026-08-10");
+    expect(buildStreakRewardText(status, true)).toBe("🎉 Mission complete! 2-day streak.");
+  });
+
+  it("calls out a badge freshly earned today when the streak exactly reaches a milestone", () => {
+    const results = [day("2026-08-08", true), day("2026-08-09", true), day("2026-08-10", true)];
+    const status = buildContributorQuestStreak("alex", results, "2026-08-10");
+    expect(buildStreakRewardText(status, true)).toBe(
+      '🎉 Mission complete! 3-day streak — you just earned "3-Day Streak"!',
+    );
+  });
+
+  it("does not re-announce a badge earned on a prior day", () => {
+    const results = [
+      day("2026-08-08", true),
+      day("2026-08-09", true),
+      day("2026-08-10", true),
+      day("2026-08-11", true),
+    ];
+    const status = buildContributorQuestStreak("alex", results, "2026-08-11");
+    expect(buildStreakRewardText(status, true)).toBe("🎉 Mission complete! 4-day streak.");
+  });
+
+  it("supports a custom milestone list", () => {
+    const milestones: StreakMilestone[] = [{ streakLength: 1, badge: "First Day" }];
+    const status = buildContributorQuestStreak("alex", [day("2026-08-10", true)], "2026-08-10", milestones);
+    expect(buildStreakRewardText(status, true, milestones)).toBe(
+      '🎉 Mission complete! 1-day streak — you just earned "First Day"!',
+    );
   });
 });
