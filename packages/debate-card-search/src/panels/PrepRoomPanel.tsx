@@ -12,6 +12,14 @@
  * assignments, reusing each composed slice's own search/render helper
  * directly rather than introducing new organizing logic here.
  *
+ * Also renders a live "active now" roster for the open topic, backed by
+ * `state/topicPresence.ts`'s heartbeat store — the same presence signal the
+ * "🤝 Team Collaboration Mode" bullet's follow-up (c) closed for
+ * `SprintNotesPanel.tsx`, reused here to close this bullet's own follow-up
+ * (b), "a live presence/who's-active signal" (TODO.md notes the two
+ * follow-ups as the same signal). See `SprintNotesPanel.tsx` for the
+ * heartbeat/freshness model this reuses unchanged.
+ *
  * @module panels/PrepRoomPanel
  */
 
@@ -27,6 +35,11 @@ import { buildPrepRoomSummaryText, searchPrepRoomEvidence } from "../lib/prep-ro
 import type { PrepRoom } from "../lib/prep-room"
 import type { EvidenceSearchResult } from "../lib/shared-evidence-library"
 import type { CoverageLevel } from "../lib/topic-coverage"
+import { listPersistedActiveContributors, recordPersistedPresenceHeartbeat } from "../state/topicPresence"
+import { buildPresenceSummaryText, type ActiveContributor } from "../lib/topic-presence"
+
+/** How often the "active now" roster re-checks for staleness, client-side only. */
+const PRESENCE_REFRESH_INTERVAL_MS = 30_000
 
 const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> = {
   missing: "default",
@@ -48,6 +61,8 @@ export function PrepRoomPanel() {
   const [topic, setTopic] = useState("")
   const [room, setRoom] = useState<PrepRoom | null>(null)
   const [query, setQuery] = useState("")
+  const [myId, setMyId] = useState("")
+  const [active, setActive] = useState<ActiveContributor[]>([])
 
   useEffect(() => {
     setTopics(listPrepRoomTopics())
@@ -57,6 +72,27 @@ export function PrepRoomPanel() {
     const activeTopic = topic.trim()
     setRoom(activeTopic ? buildPersistedPrepRoom(activeTopic) : null)
   }, [topic])
+
+  const refreshPresence = (activeTopic: string) => {
+    setActive(activeTopic ? listPersistedActiveContributors(activeTopic, Date.now()) : [])
+  }
+
+  useEffect(() => {
+    const activeTopic = topic.trim()
+    refreshPresence(activeTopic)
+    if (!activeTopic) return
+    const interval = setInterval(() => refreshPresence(activeTopic), PRESENCE_REFRESH_INTERVAL_MS)
+    return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topic])
+
+  const handleMarkActive = () => {
+    const activeTopic = topic.trim()
+    const contributorId = myId.trim()
+    if (!activeTopic || !contributorId) return
+    recordPersistedPresenceHeartbeat(activeTopic, contributorId, Date.now())
+    refreshPresence(activeTopic)
+  }
 
   if (topics === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading prep room…</div>
@@ -108,6 +144,30 @@ export function PrepRoomPanel() {
       ) : (
         <div className="space-y-4">
           <p className="whitespace-pre-line text-sm text-muted-foreground">{buildPrepRoomSummaryText(room)}</p>
+
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            {active.length === 0 ? (
+              <span>{buildPresenceSummaryText(active)}</span>
+            ) : (
+              <>
+                <span>Active now:</span>
+                {active.map((contributor) => (
+                  <Badge key={contributor.contributorId} variant="secondary" className="whitespace-nowrap">
+                    {contributor.contributorId}
+                  </Badge>
+                ))}
+              </>
+            )}
+            <Input
+              value={myId}
+              onChange={(e) => setMyId(e.target.value)}
+              placeholder="Your ID"
+              className="h-6 w-28 text-xs"
+            />
+            <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" disabled={!myId.trim()} onClick={handleMarkActive}>
+              I'm active here
+            </Button>
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="prep-room-search">Search this room's evidence and draft blocks</Label>
