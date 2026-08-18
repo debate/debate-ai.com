@@ -25,6 +25,10 @@ import {
 /** A community contribution attributed to the contributor who submitted it. */
 export interface AttributedContribution extends CommunityContribution {
   contributorId: string;
+  /** Submission time, as epoch milliseconds (UTC) — same convention as `daily-best-card.ts`/`daily-quests.ts`. Optional: contributions saved before this field existed, or by callers that don't need day-scoping, omit it. */
+  submittedAt?: number;
+  /** Argument block this contribution supports, matching `topic-coverage.ts`'s `argBlock` tagging. Optional: not every contribution is tied to a tracked argument. */
+  argBlock?: string;
 }
 
 /** One contributor's aggregated leaderboard standing. */
