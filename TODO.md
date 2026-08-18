@@ -42,6 +42,7 @@ _No task currently in progress._
   all pass), and `bun run build:web` (`debate-ai-web` succeeds, both
   `/cards/collaboration` and `/cards/prep-room` routes present) all pass. No
   repo-wide `lint` script exists, so none was run.
+  PR: [#218](https://github.com/debate/debate-ai.com/pull/218).
 - **Daily Quests and Targets — streak/reward layer on the quest board.**
   Closed follow-up (c) under the "🎯 Daily Quests and Targets" bullet in
   Research Crowdsourcing Organizer Features: "a streak/reward layer once
