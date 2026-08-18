@@ -5,15 +5,24 @@ argument block, grouped into boards by category (new arguments, impact
 framing, frontline answers, responses & turns), each board ranked by
 popularity with a near-duplicate badge.
 
+A topic switcher can also seed boards straight from the Topic Coverage
+Dashboard's under-covered arguments, so a board's prompt is visible before
+anyone has submitted an idea to it.
+
 - **Route:** `/cards/brainstorm`
 - **Nav:** the global dock's Settings menu → **Team Brainstorm Assist**
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows
 
-A submission form (argument block, contributor ID, category, idea text)
-followed by every board that has at least one submitted idea, sorted by
-argument block then category. Each board shows its seeding prompt and its
+An optional topic switcher, a submission form (argument block, contributor
+ID, category, idea text), and every board, sorted by argument block then
+category. With no topic chosen, "every board" means every board that has at
+least one submitted idea (the original behavior). Choosing a tracked topic
+(via the Topic Coverage Dashboard's checklist) swaps in one board per
+under-covered tracked argument/category pair — each showing its seeding
+prompt even with zero submitted ideas — merged with every other board that
+already has a submitted idea. Each board shows its seeding prompt and its
 ideas ranked by popularity score, highest first, with:
 
 - the contributor's ID
@@ -63,6 +72,17 @@ panels/BrainstormBoardPanel.tsx
     → saveBrainstormIdea() per drafted idea — state/brainstormIdeas.ts
         (contributorId "AI", isAiGenerated: true)
   → panel re-reads buildBrainstormBoardsPanelView() to refresh
+
+Choosing a topic in the topic switcher:
+panels/BrainstormBoardPanel.tsx
+  → buildBrainstormBoardsPanelViewForTopic(topic) — state/brainstormIdeas.ts
+      → buildPersistedTopicCoverageReport(topic)  — state/trackedArguments.ts
+      → buildBrainstormBoardsForCoverageGaps()    — lib/team-brainstorm-assist.ts (pure)
+          (one board per under-covered tracked argument/category pair,
+           populated with any ideas already submitted for it)
+      → merged with buildBrainstormBoardsPanelView()'s other boards
+          (skipping any board already produced as a coverage-gap seed)
+  → panel re-renders that topic's board list
 ```
 
 Ranking and near-duplicate flagging already existed in
@@ -96,12 +116,24 @@ reply, and an empty/unusable reply), and
 endpoint override, a server error message, a non-JSON error body, and an
 unparseable reply).
 
+This feature also closes the "boards aren't seeded from the coverage-gap
+prompts" gap previously noted here — a new topic switcher (mirroring
+`TopicCoverageDashboardPanel`'s) lets a user pick one of the same tracked
+topics used by the Topic Coverage Dashboard, swapping the board list to
+`state/brainstormIdeas.ts`'s `buildBrainstormBoardsPanelViewForTopic`. That
+composes the topic's persisted coverage report
+(`buildPersistedTopicCoverageReport`) with the already-existing pure
+`buildBrainstormBoardsForCoverageGaps` (`lib/team-brainstorm-assist.ts`) —
+no new coverage-gap or ranking logic is introduced — merged with every other
+board that already has a submitted idea but isn't itself a coverage-gap
+seed, so nothing that was visible before disappears when a topic is chosen.
+Vitest-covered in `packages/debate-card-search/test/brainstormIdeas.test.ts`
+(a seeded board with no ideas yet, a seeded board populated with an already-
+submitted idea, merging in a non-seed board with a submitted idea, and an
+untracked topic falling back to exactly the topic-less board list).
+
 ## Known gaps
 
-- Boards aren't seeded from the Topic Coverage Dashboard's under-covered
-  arguments (`buildBrainstormPromptsForCoverageGaps`) — a board only exists
-  once someone has submitted an idea to it (AI-generated or human), and the
-  form's prompt text is only shown once a board exists.
 - There's no reviewer/moderator merge action for ideas flagged as likely
   duplicates — the badge is informational only. AI-drafted ideas are scored
   for near-duplicates against the board's other ideas the same way a
