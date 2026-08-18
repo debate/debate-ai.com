@@ -64,6 +64,21 @@ describe("buildAiVersusSpeechUserPrompt", () => {
     const prompt = buildAiVersusSpeechUserPrompt(FIRST_SPEECH_REQUEST);
     expect(prompt).not.toContain("cross-examination turn");
   });
+
+  it("prepends a supplied persona prompt section ahead of the turn details", () => {
+    const prompt = buildAiVersusSpeechUserPrompt(
+      FIRST_SPEECH_REQUEST,
+      "Opponent Persona: Kritik\n\nArgue like a critical debater.",
+    );
+    expect(prompt.startsWith("Opponent Persona: Kritik")).toBe(true);
+    expect(prompt).toContain('You are delivering "1AC"');
+  });
+
+  it("omits any persona block when no persona prompt section is supplied", () => {
+    const prompt = buildAiVersusSpeechUserPrompt(FIRST_SPEECH_REQUEST);
+    expect(prompt.startsWith('You are delivering "1AC"')).toBe(true);
+    expect(prompt).not.toContain("Opponent Persona");
+  });
 });
 
 describe("parseAiVersusSpeechResponse", () => {

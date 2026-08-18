@@ -24,9 +24,22 @@ import type { AiSpeechRequest } from "./ai-versus-speech-order";
 /** A full speech can run several paragraphs, well beyond a short JSON verdict. */
 const MAX_TOKENS = 2048;
 
+export type RequestAiVersusSpeechOptions = {
+  /**
+   * The "AI Practice Opponent" idea's `buildOpponentPersonaPrompt(persona)`
+   * output for the round, if one is selected — folded into the prompt via
+   * `buildAiVersusSpeechUserPrompt`'s `personaPromptSection` parameter so
+   * the generated speech argues in that persona's style. Omit for the
+   * prior, persona-neutral behavior.
+   */
+  personaPromptSection?: string;
+  /** Overrides the default `/api/reason-ai` endpoint — primarily for tests. */
+  endpoint?: string;
+};
+
 /**
  * Requests the AI's next speech text for `request` from `/api/reason-ai`
- * (or `endpoint`, if overridden), returning the parsed speech text.
+ * (or `options.endpoint`, if overridden), returning the parsed speech text.
  *
  * Throws a plain `Error` with a useful message when the request fails
  * (reading `{ error }` from the response body if present — e.g. "Sign in
@@ -36,14 +49,16 @@ const MAX_TOKENS = 2048;
  */
 export async function requestAiVersusSpeech(
   request: AiSpeechRequest,
-  endpoint = "/api/reason-ai",
+  options: RequestAiVersusSpeechOptions = {},
 ): Promise<string> {
+  const { personaPromptSection, endpoint = "/api/reason-ai" } = options;
+
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       system: AI_VERSUS_SPEECH_SYSTEM_PROMPT,
-      messages: [{ role: "user", content: buildAiVersusSpeechUserPrompt(request) }],
+      messages: [{ role: "user", content: buildAiVersusSpeechUserPrompt(request, personaPromptSection) }],
       maxTokens: MAX_TOKENS,
     }),
   });

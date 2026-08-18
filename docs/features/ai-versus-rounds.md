@@ -104,6 +104,57 @@ persistence logic changed. Vitest-covered in
 `packages/debate-round/test/ai-versus-speech-client.test.ts` (the `fetch`
 client, with `fetch` mocked via `vi.stubGlobal`).
 
+## AI Practice Opponent persona wiring
+
+Closes the "AI Practice Opponent" idea's follow-up (a) in `TODO.md`'s
+Product Feature Ideas list: "an actual AI speech-generation call that
+consumes `buildOpponentPersonaPrompt`'s output alongside idea #3's
+`AiSpeechRequest`."
+
+`debate-speech-writer`'s Opponent Persona Picker (`/practice-opponent`)
+persists a selected `OpponentPersona` keyed by a freeform `sessionId`
+(`state/opponentPersonaSelections.ts`), independent of this round's
+`roundId`-keyed `state/aiVersusRounds.ts`. A new
+`round/ai-versus-persona-wiring.ts` composes the two by treating a round's
+`roundId` as its `sessionId` — the same "compose two already-persisted
+stores by a shared key" convention as `pre-round-briefing.ts`'s
+`buildPreRoundBriefingFromStores` — rather than adding a new cross-store id
+or a persona field to `AiVersusRoundRecord`:
+
+```
+round/ai-versus-persona-wiring.ts
+  → resolveAiVersusOpponentPersona(roundId)       — looks up the persisted
+                                                      OpponentPersona for
+                                                      this round's id, or
+                                                      null
+  → buildAiVersusPersonaPromptSection(roundId)     — resolves the persona
+                                                      and, if one is
+                                                      selected, composes
+                                                      buildOpponentPersonaPrompt(persona)
+```
+
+`AiVersusRoundPanel.tsx` shows a badge naming the active round's persona
+(or a hint pointing to `/practice-opponent` with the matching Session ID,
+if none is selected) and folds `buildAiVersusPersonaPromptSection` into
+the "Generate AI speech" call via `requestAiVersusSpeech`'s new
+`personaPromptSection` option, so the AI argues in that persona's
+preferred style. `round/ai-versus-speech-ai.ts`'s
+`buildAiVersusSpeechUserPrompt` gained an optional second parameter that
+prepends the persona prompt section ahead of the turn details when
+supplied; omitting it (as every prior call site not covered by this
+follow-up still does) preserves the persona-neutral prompt exactly.
+`round/ai-versus-speech-client.ts`'s `requestAiVersusSpeech` now takes an
+`options` object (`{ personaPromptSection?, endpoint? }`) instead of a
+positional `endpoint` — the only breaking-signature change, updated at its
+one production call site and in its existing tests.
+
+Vitest-covered in `packages/debate-round/test/ai-versus-persona-wiring.test.ts`
+(persona resolution and prompt-section building, including the
+no-selection and scoped-by-id cases), and extended coverage in
+`ai-versus-speech-ai.test.ts` (the prepended persona block) and
+`ai-versus-speech-client.test.ts` (the persona option folded into the
+request body, and its absence when omitted).
+
 ## Known gaps
 
 - Speech submission is text-only. `PriorSpeechRecord` (what
@@ -117,3 +168,8 @@ client, with `fetch` mocked via `vi.stubGlobal`).
   and start over. A "regenerate" affordance (replacing the just-saved AI
   speech rather than restarting) is a natural follow-up, not yet tracked
   as its own TODO item.
+- The persona/round link is an implicit shared-id convention (same string
+  used as both `sessionId` and `roundId`) rather than an explicit
+  reference — picking a persona under a different id than the round's
+  won't apply it. A future slice could add an explicit `personaId` field
+  to `AiVersusRoundRecord` set at "Start round" time instead.

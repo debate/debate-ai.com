@@ -13,6 +13,13 @@
  * parsing logic can be exercised directly in Vitest without mocking
  * `fetch`, mirroring `lib/llm-card-scoring-ai.ts`'s split.
  *
+ * Also closes the "AI Practice Opponent" idea's follow-up (a) — "an actual
+ * AI speech-generation call that consumes `buildOpponentPersonaPrompt`'s
+ * output alongside idea #3's `AiSpeechRequest`" — via
+ * `buildAiVersusSpeechUserPrompt`'s optional `personaPromptSection`
+ * parameter; see `round/ai-versus-persona-wiring.ts` for how a round's
+ * persisted persona selection is resolved into that section.
+ *
  * @module round/ai-versus-speech-ai
  */
 
@@ -47,11 +54,24 @@ function formatPriorSpeeches(priorSpeeches: PriorSpeechRecord[]): string {
  * cross-examination turn, and every prior speech in delivery order (tagged
  * "you" for the AI's own earlier speeches and "opponent" for the human
  * user's), so the model can respond to what's actually been said.
+ *
+ * `personaPromptSection`, if supplied, is prepended verbatim ahead of the
+ * turn details — the "AI Practice Opponent" idea's
+ * `buildOpponentPersonaPrompt(persona)` output, so the generated speech
+ * argues in that persona's preferred style (see
+ * `round/ai-versus-persona-wiring.ts`). Omitting it preserves the prior,
+ * persona-neutral prompt exactly.
  */
-export function buildAiVersusSpeechUserPrompt(request: AiSpeechRequest): string {
+export function buildAiVersusSpeechUserPrompt(
+  request: AiSpeechRequest,
+  personaPromptSection?: string,
+): string {
   const { slot, priorSpeeches, isCrossExamination } = request;
 
+  const personaBlock = personaPromptSection ? `${personaPromptSection}\n\n` : "";
+
   return (
+    personaBlock +
     `You are delivering "${slot.name}"${isCrossExamination ? " (a cross-examination turn)" : ""}, ` +
     `with a time limit of ${slot.time} seconds.\n\n` +
     "Speeches delivered so far, in order:\n" +

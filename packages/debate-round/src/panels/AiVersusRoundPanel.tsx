@@ -19,6 +19,13 @@
  * pipeline exists in this repo. No new turn-order or validation logic is
  * introduced here.
  *
+ * If a round's id has a persisted "AI Practice Opponent" persona selection
+ * (`/practice-opponent`, same id as this round's Round ID), a badge names
+ * it and the AI speech-generation call folds
+ * `buildAiVersusPersonaPromptSection` into the request so the AI argues in
+ * that persona's style — closing the "AI Practice Opponent" idea's
+ * follow-up (a).
+ *
  * @module panels/AiVersusRoundPanel
  */
 
@@ -49,6 +56,10 @@ import {
   type AiVersusSide,
 } from "../round/ai-versus-speech-order"
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
+import {
+  buildAiVersusPersonaPromptSection,
+  resolveAiVersusOpponentPersona,
+} from "../round/ai-versus-persona-wiring"
 import {
   buildAiVersusRoundsPanelView,
   deleteAiVersusRound,
@@ -131,6 +142,7 @@ export function AiVersusRoundPanel() {
 
   const activeStatus = activeRoundId ? getAiVersusRoundStatus(activeRoundId) : undefined
   const activeRecord = activeRoundId ? getAiVersusRound(activeRoundId) : undefined
+  const activePersona = activeRoundId ? resolveAiVersusOpponentPersona(activeRoundId) : null
 
   const handleSubmitSpeech = () => {
     if (!activeRoundId || !activeRecord || !activeStatus?.nextSlot) return
@@ -175,7 +187,8 @@ export function AiVersusRoundPanel() {
     setAiGenerating(true)
     setError(null)
     try {
-      const text = await requestAiVersusSpeech(request)
+      const personaPromptSection = buildAiVersusPersonaPromptSection(activeRoundId) ?? undefined
+      const text = await requestAiVersusSpeech(request, { personaPromptSection })
       saveAiVersusRound({
         ...activeRecord,
         submittedSpeeches: [...activeRecord.submittedSpeeches, { name: request.slot.name, speaker: "ai", text }],
@@ -260,6 +273,22 @@ export function AiVersusRoundPanel() {
               Close
             </Button>
           </div>
+
+          <p className="text-xs text-muted-foreground">
+            AI opponent persona:{" "}
+            {activePersona ? (
+              <Badge variant="secondary">{activePersona.name}</Badge>
+            ) : (
+              <>
+                none selected — pick one at{" "}
+                <a href="/practice-opponent" className="underline">
+                  /practice-opponent
+                </a>{" "}
+                using Session ID &quot;{activeRecord.roundId}&quot; (matching this round&apos;s Round
+                ID) to apply it here.
+              </>
+            )}
+          </p>
 
           <div className="space-y-1.5">
             {activeStatus.order.map((slot, index) => {

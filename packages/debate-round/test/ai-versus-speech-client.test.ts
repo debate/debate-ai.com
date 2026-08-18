@@ -40,9 +40,39 @@ describe("requestAiVersusSpeech", () => {
     })) as unknown as typeof fetch;
     vi.stubGlobal("fetch", fetchMock);
 
-    await requestAiVersusSpeech(REQUEST, "/custom-endpoint");
+    await requestAiVersusSpeech(REQUEST, { endpoint: "/custom-endpoint" });
 
     expect((fetchMock as ReturnType<typeof vi.fn>).mock.calls[0][0]).toBe("/custom-endpoint");
+  });
+
+  it("folds a caller-supplied persona prompt section into the request", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ text: "A speech." }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    await requestAiVersusSpeech(REQUEST, { personaPromptSection: "Opponent Persona: Kritik" });
+
+    const [, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
+    const body = JSON.parse((init as RequestInit).body as string);
+    expect(body.messages[0].content).toContain("Opponent Persona: Kritik");
+  });
+
+  it("omits any persona prompt section when none is supplied", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ text: "A speech." }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    await requestAiVersusSpeech(REQUEST);
+
+    const [, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
+    const body = JSON.parse((init as RequestInit).body as string);
+    expect(body.messages[0].content).not.toContain("Opponent Persona");
   });
 
   it("throws the server's error message when the request fails", async () => {
