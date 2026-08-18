@@ -4,6 +4,50 @@
 ### In progress
 
 ### Completed
+- **AI Judge Decision Modes — real AI judge-decision call.**
+  [PR #190](https://github.com/debate/debate-ai.com/pull/190).
+  Closes follow-up (a) under idea #5 ("AI Judge Decision Modes") — "an AI
+  judge-decision call that uses `buildJudgeParadigmPrompt` output instead of
+  (or alongside) the existing static `judgeDecisionPrompt`." A new
+  `packages/debate-round/src/round/judge-decision-ai.ts` adds
+  `JUDGE_DECISION_AI_SYSTEM_PROMPT` and pure, Vitest-testable
+  `buildJudgeDecisionAiUserPrompt`/`parseJudgeDecisionAiResponse` helpers —
+  the prompt composes the selected paradigm's existing
+  `buildJudgeParadigmPrompt` section with a round's flow summary text
+  (`flow/flow-transcript-summary.ts`'s `buildFlowSummaryTextFromRows`), and
+  the parser tolerantly extracts a `{winner, keyVotingIssues, rationale}`
+  JSON verdict from a fenced or prose-wrapped reply, returning `null` (never
+  throwing) on anything unparseable or missing a required field.
+  `round/judge-decision-client.ts` adds `requestJudgeDecision`, a small
+  self-contained `fetch` client (mirroring `lib/llm-card-scoring-client.ts`'s
+  split) that POSTs to the existing `/api/reason-ai` Anthropic proxy. A new
+  `round/judge-decision-store-wiring.ts` resolves a round's
+  `JudgeDecisionAiInput` directly from two already-persisted, same-keyed
+  stores — this package's own `state/flowSummaries.ts` and
+  `debate-speech-writer`'s `state/judgeParadigmSelections.ts` — mirroring
+  `pre-round-briefing.ts`'s `buildPreRoundBriefingFromStores` convention, and
+  reports which source(s) are missing rather than throwing. A new
+  `state/judgeDecisions.ts` persists a round's generated
+  `JudgeDecisionAiResult` to localStorage, and a new `JudgeDecisionPanel.tsx`
+  renders a "Get AI judge decision" form (round ID + side names) plus every
+  persisted decision (winner, key voting issues, rationale) at
+  `/judge-decision`, linked from the settings dock (`CategoryDock.tsx`, "AI
+  Judge Decision"). No follow-ups remain open on this idea. Vitest-covered
+  in `packages/debate-round/test/judge-decision-ai.test.ts` (prompt building
+  + tolerant parsing, including fenced/prose-wrapped replies and malformed
+  shapes), `packages/debate-round/test/judge-decision-client.test.ts` (the
+  `fetch` client, with `fetch` mocked via `vi.stubGlobal`, covering the
+  success path, an endpoint override, a server error message, a non-JSON
+  error body, and an unparseable reply),
+  `packages/debate-round/test/judge-decision-store-wiring.test.ts`
+  (composing/missing-source cases across both stores), and
+  `packages/debate-round/test/judgeDecisions.test.ts` (persistence CRUD +
+  corrupt-storage recovery). No repo-wide `lint` script exists (checked
+  root/app/package `package.json` scripts) so none was run. Verified: `bun
+  install` (2050 packages), `bun run test` (104 files / 1446 tests, all
+  pass), `bun run typecheck` (11 of 12 in-scope packages have a typecheck
+  script; all pass), and `bun run build:web` (`debate-ai-web`, succeeds,
+  `/judge-decision` route present) all pass.
 - **Online Debate Versus AI — real AI speech-generation call.**
   [PR #189](https://github.com/debate/debate-ai.com/pull/189).
   Closes follow-up (a) under idea #3 ("Online Debate Versus AI") — "an
@@ -3624,7 +3668,7 @@
 
 4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slices done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). A second slice, `vulnerabilityReports.ts` plus `VulnerabilityChartsPanel` (see Tracker Status above, "AI Response-Outcome Charts — chart/panel UI"), now persists a round's derived report and renders it as a per-side exposure summary and exposure chart at `/outcomes`, closing follow-up (b). A third slice, `applyHypotheticalAdjustments` plus the panel's "what if" picker (see Tracker Status above, "AI Response-Outcome Charts — 'what if' hypothetical mode"), now recomputes a chosen argument's score against a hypothetical extend/answer/concede choice, closing follow-up (c). Follow-up (a), an actual AI-panel call (multiple "counsel" model roles) that evaluates likely response paths and clash points beyond this deterministic heuristic, remains open — not started._
 
-5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. A third slice, `JudgeParadigmPickerPanel` (see Tracker Status above, "AI Judge Decision Modes — paradigm-picker UI"), now renders a picker UI at `/paradigms` for saving a round's built-in or custom paradigm, closing follow-up (b). Follow-up (a), an AI judge-decision call that uses `buildJudgeParadigmPrompt` output instead of (or alongside) the existing static `judgeDecisionPrompt`, remains open — not started._
+5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. A third slice, `JudgeParadigmPickerPanel` (see Tracker Status above, "AI Judge Decision Modes — paradigm-picker UI"), now renders a picker UI at `/paradigms` for saving a round's built-in or custom paradigm, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Judge Decision Modes — real AI judge-decision call") added `debate-round`'s `round/judge-decision-ai.ts`, `round/judge-decision-client.ts`, `round/judge-decision-store-wiring.ts`, and `state/judgeDecisions.ts`, wiring an AI judge-decision call — composing `buildJudgeParadigmPrompt` with a round's flow summary and calling the existing `/api/reason-ai` Anthropic proxy — into a new `JudgeDecisionPanel` at `/judge-decision`, closing follow-up (a). No follow-ups remain open on this idea._
 
 6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slices done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. A second slice, `flowSummaries.ts` (see Tracker Status above, "Speech Transcript Summaries and Answers — flow-summary persistence"), now persists a round's derived `FlowRowSummary[]` to localStorage. A third slice, `FlowSummariesPanel` (see Tracker Status above, "Speech Transcript Summaries and Answers — summary/cross-ex panel UI"), now renders every persisted flow summary, with suggested cross-exam questions and extension ideas for unanswered arguments, at `/summaries`, closing follow-up (b). Follow-up (a), audio/video transcription plus an AI call to extract claims/warrants/impacts/evidence from raw speech text rather than relying on a manually flowed grid, remains open — not started._
 
