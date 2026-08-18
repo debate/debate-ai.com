@@ -4,6 +4,7 @@
 
 import type { IHeaderParams, ICellRendererParams } from "ag-grid-community"
 import type { Flow } from "debate-core/src/types/flow"
+import type { FlowAnnotation } from "./flow-annotations"
 
 /**
  * Props for the FlowSpreadsheet component
@@ -32,6 +33,18 @@ export interface FlowColumnHeaderProps extends IHeaderParams {
 export interface FirstColumnCellRendererProps extends ICellRendererParams {
   collapsedHeadings: Set<string>
   onToggleCollapse: (rowId: string) => void
+  flowId: number
+  onJumpToAnnotation: (annotation: FlowAnnotation) => void
+}
+
+/**
+ * Props for the `AnnotationCellRenderer` component, used on every
+ * `FlowSpreadsheet` column after the first to show an `AnnotationBadge`
+ * alongside the cell's plain text value.
+ */
+export interface AnnotationCellRendererProps extends ICellRendererParams {
+  flowId: number
+  onJumpToAnnotation: (annotation: FlowAnnotation) => void
 }
 
 /**

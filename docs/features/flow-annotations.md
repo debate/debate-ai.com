@@ -75,14 +75,50 @@ one," named under idea #15 ("Flow-in-Speech Flow Annotations") in
 Vitest-covered in `packages/debate-round/test/flow-annotations.test.ts` and
 `packages/debate-round/test/flowAnnotations.test.ts`.
 
+## FlowSpreadsheet affordance
+
+Every cell in the live `FlowSpreadsheet` grid (`/debate`) whose box already
+has one or more persisted `FlowAnnotation`s shows a small clock badge next
+to its text. Hovering the badge lists each annotation's formatted timestamp
+and note; clicking it seeks/plays the persistent player straight to the
+earliest one, reusing the exact same `sendYouTubeCommand`/
+`useVideoPlayerStore` mechanism as `FlowAnnotationsPanel`'s own **Jump to**
+button (and the same "only when this annotation's recording is the one
+currently loaded" guard).
+
+This closes follow-up (b), "a flow-grid affordance (`FlowSpreadsheet`) that
+surfaces annotations on their box via `listFlowAnnotationsForBox` and links
+back to the timestamp," named under idea #15 in `TODO.md`. It adds:
+
+- `flow/annotation-cells.ts`: pure helpers — `boxPathForCell` (reconstructs
+  a grid cell's `boxPath` from its row's `originalIndex` and column index,
+  matching how `dataTransform.ts#buildRowData` flattens a box chain via
+  `children[0]`), `columnIndexFromField` (parses an AG Grid `col_N` field
+  name), and `pickJumpAnnotation` (the earliest annotation by timestamp).
+- `flow/AnnotationBadge.tsx`: the clock badge, shared by both cell
+  renderers below.
+- `flow/AnnotationCellRenderer.tsx`: the cell renderer used on every column
+  after the first.
+- `flow/FirstColumnCellRenderer.tsx`: unchanged heading/indent behavior,
+  now also rendering the same badge.
+- `flow/useFlowGridConfig.ts` / `flow/FlowSpreadsheet.tsx`: wire a
+  `handleJumpToAnnotation` callback (identical guard to
+  `FlowAnnotationsPanel.handleJump`) into both renderers' `cellRendererParams`.
+
+Vitest-covered in `packages/debate-round/test/annotation-cells.test.ts`
+(box-path derivation, field parsing, earliest-annotation selection) and
+`packages/debate-round/test/AnnotationBadge.test.tsx` (empty vs. populated
+render, singular/plural wording, tooltip content).
+
 ## Known gaps
 
-- **Jump to** only works once the annotation's own recording is already the
-  one loaded in the player — there's no lookup from a `videoId` to "open
-  this video," so an annotation dropped against a different recording than
-  the one currently playing shows a disabled button instead.
-- Follow-up (b) on the same idea, a `FlowSpreadsheet` affordance that
-  surfaces a box's annotations via `listFlowAnnotationsForBox` and links
-  back to the timestamp, remains open — not started.
+- **Jump to** (both the `/annotations` panel and the `FlowSpreadsheet`
+  badge) only works once the annotation's own recording is already the one
+  loaded in the player — there's no lookup from a `videoId` to "open this
+  video," so an annotation dropped against a different recording than the
+  one currently playing shows a disabled/no-op affordance instead.
+- The `FlowSpreadsheet` badge reads annotations from `localStorage` at cell
+  render time; it does not live-update if another tab drops a new
+  annotation while the grid is open.
 - No collaborative/live sync — annotations are local `localStorage` only,
   same as every other persisted record in this repo today.

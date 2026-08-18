@@ -5,8 +5,10 @@
 import { useMemo, useCallback } from "react"
 import type { ColDef } from "ag-grid-community"
 import type { Flow } from "debate-core/src/types/flow"
+import { AnnotationCellRenderer } from "./AnnotationCellRenderer"
 import { FlowColumnHeader } from "./FlowColumnHeader"
 import { FirstColumnCellRenderer } from "./FirstColumnCellRenderer"
+import type { FlowAnnotation } from "./flow-annotations"
 
 /**
  * Hook providing AG Grid column configuration for Flow spreadsheet
@@ -16,6 +18,7 @@ export function useFlowGridConfig(
   onOpenSpeechPanel?: (speechName: string) => void,
   collapsedHeadings?: Set<string>,
   toggleCollapse?: (rowId: string) => void,
+  onJumpToAnnotation?: (annotation: FlowAnnotation) => void,
 ) {
   /**
    * Generate column definitions for AG Grid
@@ -46,18 +49,28 @@ export function useFlowGridConfig(
         },
       }
 
-      // First column gets the tree cell renderer
-      if (idx === 0 && collapsedHeadings && toggleCollapse) {
+      // First column gets the tree cell renderer; every other column gets the
+      // plain annotation-aware renderer. Both surface an `AnnotationBadge`
+      // for a cell whose box has a persisted `FlowAnnotation`.
+      if (idx === 0 && collapsedHeadings && toggleCollapse && onJumpToAnnotation) {
         colDef.cellRenderer = FirstColumnCellRenderer
         colDef.cellRendererParams = {
           collapsedHeadings,
           onToggleCollapse: toggleCollapse,
+          flowId: flow.id,
+          onJumpToAnnotation,
+        }
+      } else if (idx > 0 && onJumpToAnnotation) {
+        colDef.cellRenderer = AnnotationCellRenderer
+        colDef.cellRendererParams = {
+          flowId: flow.id,
+          onJumpToAnnotation,
         }
       }
 
       return colDef
     })
-  }, [flow.columns, onOpenSpeechPanel, collapsedHeadings, toggleCollapse])
+  }, [flow.columns, flow.id, onOpenSpeechPanel, collapsedHeadings, toggleCollapse, onJumpToAnnotation])
 
   /**
    * Default column settings

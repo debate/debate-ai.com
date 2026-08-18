@@ -6,6 +6,41 @@
 _No task currently in progress._
 
 ### Completed
+- **Flow-in-Speech Flow Annotations — `FlowSpreadsheet` annotation
+  affordance.** Closes follow-up (b) under idea #15 ("Flow-in-Speech Flow
+  Annotations") in Product Feature Ideas: "a flow-grid affordance
+  (`FlowSpreadsheet`) that surfaces annotations on their box via
+  `listFlowAnnotationsForBox` and links back to the timestamp." New
+  `debate-round`'s `flow/annotation-cells.ts` adds `boxPathForCell` (derives
+  a grid cell's `boxPath` from its row's `originalIndex` and column index,
+  matching how `dataTransform.ts#buildRowData` flattens a box chain via
+  `children[0]`), `columnIndexFromField`, and `pickJumpAnnotation` (earliest
+  annotation by timestamp). `flow/AnnotationBadge.tsx` renders a small clock
+  badge (tooltip listing every annotation's formatted timestamp + note) on
+  any cell whose box has a persisted `FlowAnnotation`; a new
+  `flow/AnnotationCellRenderer.tsx` wires it into every `FlowSpreadsheet`
+  column after the first, and `FirstColumnCellRenderer.tsx` now renders the
+  same badge alongside its existing heading/indent/chevron behavior.
+  Clicking a badge calls a new `handleJumpToAnnotation` in
+  `FlowSpreadsheet.tsx` that reuses `FlowAnnotationsPanel.handleJump`'s
+  exact `sendYouTubeCommand`/`useVideoPlayerStore` mechanism and guard
+  (seeks/plays only when the annotation's `videoId` matches the recording
+  currently loaded in the persistent player; otherwise a no-op). No new
+  annotation data model or persistence changes — this composes the
+  already-existing `flow/flow-annotations.ts` +
+  `state/flowAnnotations.ts` with the live grid. No follow-ups remain open
+  on idea #15. Vitest-covered in
+  `packages/debate-round/test/annotation-cells.test.ts` (box-path
+  derivation including the negative-column-index clamp, field parsing, and
+  earliest-annotation selection including a non-mutation check) and
+  `packages/debate-round/test/AnnotationBadge.test.tsx` (empty vs.
+  populated render, singular/plural wording, tooltip content). Verified:
+  `bun run test` (132 files / 1781 tests, all pass), `bun run typecheck`
+  (11 of 12 in-scope packages have a typecheck script; all pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/debate` and
+  `/annotations` routes present) all pass. No repo-wide `lint` script
+  exists, so none was run.
+  PR: [#220](https://github.com/debate/debate-ai.com/pull/220).
 - **Common Argument Library — tag-autocomplete affordance.** Closes
   follow-up (c), "a tag-autocomplete/tag-management affordance," under the
   "📚 Common Argument Library" bullet in Research Crowdsourcing Organizer
@@ -4697,7 +4732,7 @@ _No task currently in progress._
 
 14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). A third slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut wiring") wired real keyboard shortcuts into the live `reason-editor` document — `Mod-Shift-K` insert short cite, `Mod-Shift-D` condense to read text, `Alt-ArrowUp`/`Alt-ArrowDown` move a heading's section, `Mod-Shift-E` toggle emphasis (via the schema's own mark rather than the raw-HTML helper) — plus matching "+Cite"/"Condense" toolbar buttons and a Move ↑/↓ button pair per heading in the outline nav panel, closing follow-up (a). Follow-up (b), a "send selected evidence to a speech document" command, remains open — it needs a speech-document send target that doesn't exist yet — not started._
 
-15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slices done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. A third slice, `FlowAnnotationsPanel` (see Tracker Status above, "Flow-in-Speech Flow Annotations — video-player annotation UI"), now renders a drop-annotation form wired to the `debate-videos` persistent player's live playback position plus every persisted annotation with a "Jump to" action back into the player, at `/annotations`, closing follow-up (a). Follow-up (b), a flow-grid affordance (`FlowSpreadsheet`) that surfaces annotations on their box via `listFlowAnnotationsForBox` and links back to the timestamp, remains open — not started._
+15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slices done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. A third slice, `FlowAnnotationsPanel` (see Tracker Status above, "Flow-in-Speech Flow Annotations — video-player annotation UI"), now renders a drop-annotation form wired to the `debate-videos` persistent player's live playback position plus every persisted annotation with a "Jump to" action back into the player, at `/annotations`, closing follow-up (a). A fourth slice (see Tracker Status above, "Flow-in-Speech Flow Annotations — `FlowSpreadsheet` annotation affordance") added `flow/annotation-cells.ts` and `flow/AnnotationBadge.tsx`, wiring a per-cell annotation badge (with the same "Jump to" mechanism) into `FlowSpreadsheet` via a new `flow/AnnotationCellRenderer.tsx` and the existing `FirstColumnCellRenderer.tsx`, closing follow-up (b). No follow-ups remain open on this idea._
 
 16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow) _Status: first slice done (see Tracker Status above) — `debate-round` now has `mergeFlowEdits`/`applyMergedEditsToFlow`/`buildSharedFlowSyncSummaryText` for reconciling multiple teammates' concurrent box-level flow edits into one canonical flow (last write wins), flagging genuinely concurrent, diverging edits from different authors as conflicts for a human to resolve instead of silently overwriting them. Follow-ups: (a) a live transport (WebSocket or similar) that turns local edits into a shared stream across a room/team, (b) a `FlowSpreadsheet` affordance that applies the merge and surfaces conflicts, (c) composing the Common Argument Library's tagged card corpus to suggest (not auto-apply) a pre-filled flow note from matching evidence. None of these are started._
 

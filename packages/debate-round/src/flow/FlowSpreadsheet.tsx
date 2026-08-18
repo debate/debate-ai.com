@@ -14,8 +14,10 @@ import type {
   RowDragEndEvent,
   CellContextMenuEvent,
 } from "ag-grid-community"
+import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
 import type { FlowSpreadsheetProps, ContextMenuEntry } from "./types"
 import { buildRowData, rowDataToBoxes } from "./dataTransform"
+import type { FlowAnnotation } from "./flow-annotations"
 import { GridContextMenu } from "./GridContextMenu"
 import { useFlowGridConfig } from "./useFlowGridConfig"
 import { useFlowRowOperations } from "./useFlowRowOperations"
@@ -52,6 +54,7 @@ export function FlowSpreadsheet({
   const gridRef = useRef<AgGridReact>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0)
+  const { activeVideoId, setIsPlaying } = useVideoPlayerStore()
 
   // Section heading & collapse state
   const [collapsedHeadings, setCollapsedHeadings] = useState<Set<string>>(new Set())
@@ -236,12 +239,28 @@ export function FlowSpreadsheet({
     [collapsedHeadings],
   )
 
+  /**
+   * Jump the persistent video player to a flow-annotation badge's target,
+   * mirroring `FlowAnnotationsPanel.handleJump`'s exact guard: only seek
+   * when the annotation's recording is the one currently loaded.
+   */
+  const handleJumpToAnnotation = useCallback(
+    (annotation: FlowAnnotation) => {
+      if (!annotation.videoId || annotation.videoId !== activeVideoId) return
+      sendYouTubeCommand("seekTo", [annotation.timestampMs / 1000, true])
+      sendYouTubeCommand("playVideo")
+      setIsPlaying(true)
+    },
+    [activeVideoId, setIsPlaying],
+  )
+
   // Grid configuration hook
   const { columnDefs, defaultColDef, getRowId } = useFlowGridConfig(
     flow,
     onOpenSpeechPanel,
     collapsedHeadings,
     toggleCollapse,
+    handleJumpToAnnotation,
   )
 
   /**
