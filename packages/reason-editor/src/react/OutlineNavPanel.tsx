@@ -13,9 +13,16 @@
  * through `state/collapsedHeadings.ts` keyed by `documentId`, and moves
  * the editor's selection to a heading when its label is clicked.
  *
- * This panel only controls which headings are *listed*; it does not yet
- * hide the corresponding ranges inside the live ProseMirror view itself
- * (that's follow-up (b), a decoration plugin — not implemented here).
+ * Also syncs the collapsed-id selection into the live editor's
+ * `collapsedHeadingsPlugin` (follow-up (b)), so collapsing a heading here
+ * also hides its content in the ProseMirror view itself, not just the nav
+ * list.
+ *
+ * Each item also gets Move ↑/↓ buttons — the mouse-driven counterpart to
+ * the editor view's Alt-ArrowUp/Alt-ArrowDown shortcuts (see
+ * `verbatim-shortcuts-extension.ts`), closing the "move headings" half of
+ * follow-up (a) under idea #14 ("Legacy Verbatim / Cardmirror
+ * Compatibility") in TODO.md's Product Feature Ideas list.
  */
 
 import { useEffect, useReducer, useState } from "react";
@@ -27,6 +34,11 @@ import {
   toggleCollapsedHeadingId,
   type OutlineHeading,
 } from "../engine/outline/heading-outline.js";
+import { buildMoveHeadingSectionTransaction } from "../engine/outline/heading-move.js";
+import {
+  collapsedHeadingsKey,
+  setCollapsedHeadingIdsMeta,
+} from "../engine/outline/collapsed-headings-plugin.js";
 import {
   getCollapsedHeadingSelection,
   saveCollapsedHeadingSelection,
@@ -65,6 +77,18 @@ export function OutlineNavPanel({ editor, documentId, className }: OutlineNavPan
     setCollapsedIds(getCollapsedHeadingSelection(documentId)?.collapsedIds ?? []);
   }, [documentId]);
 
+  // Push the current collapse selection into the live editor's decoration
+  // plugin — on mount/document-identity change (initial sync) and on every
+  // toggle (collapsedIds change) — so collapsed sections actually hide in
+  // the ProseMirror view, not just the nav list.
+  useEffect(() => {
+    if (!editor) return;
+    const tr = editor.state.tr
+      .setMeta(collapsedHeadingsKey, setCollapsedHeadingIdsMeta(collapsedIds))
+      .setMeta("addToHistory", false);
+    editor.view.dispatch(tr);
+  }, [editor, collapsedIds]);
+
   if (!editor) return null;
 
   const outline: OutlineHeading[] = buildHeadingOutline(editor.state.doc);
@@ -80,6 +104,14 @@ export function OutlineNavPanel({ editor, documentId, className }: OutlineNavPan
   function jumpTo(heading: OutlineHeading) {
     if (!editor) return;
     editor.chain().focus().setTextSelection(heading.pos + 1).scrollIntoView().run();
+  }
+
+  function move(heading: OutlineHeading, direction: "up" | "down") {
+    if (!editor) return;
+    const tr = buildMoveHeadingSectionTransaction(editor.state, outline, heading.id, direction);
+    if (!tr) return;
+    editor.view.dispatch(tr);
+    editor.commands.focus();
   }
 
   const hasChildLevels = (heading: OutlineHeading, index: number): boolean => {
@@ -123,6 +155,26 @@ export function OutlineNavPanel({ editor, documentId, className }: OutlineNavPan
                   title={heading.text}
                 >
                   {heading.text || "Untitled"}
+                </button>
+                <button
+                  type="button"
+                  className="reason-editor-outline-nav-move"
+                  onClick={() => move(heading, "up")}
+                  disabled={index === 0}
+                  aria-label="Move section up"
+                  title="Move section up (Alt+ArrowUp)"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  className="reason-editor-outline-nav-move"
+                  onClick={() => move(heading, "down")}
+                  disabled={index === outline.length - 1}
+                  aria-label="Move section down"
+                  title="Move section down (Alt+ArrowDown)"
+                >
+                  ↓
                 </button>
               </li>
             );

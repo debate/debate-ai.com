@@ -34,9 +34,12 @@ export default function EditorLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Root sidebar is bypassed via segments check, render editor full-screen
+  // Root sidebar is bypassed via segments check, render editor full-screen.
+  // `h-dvh` (not `h-screen`) so the mobile URL bar doesn't push the editor
+  // past the visible viewport, and `w-full` (not `w-screen`, i.e. 100vw)
+  // so a vertical scrollbar can't force the page to scroll sideways.
   return (
-    <div className="h-screen w-screen overflow-hidden bg-background">
+    <div className="flex h-dvh w-full flex-col overflow-hidden bg-background">
       {children}
     </div>
   );

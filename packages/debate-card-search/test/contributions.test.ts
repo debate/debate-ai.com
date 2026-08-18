@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildDailyBestCardsFromStore,
   buildPersistedContributionFeed,
   buildPersistedLeaderboard,
   buildTopContributorAwardsFromStore,
   deleteContribution,
   getContribution,
+  getTodaysBestCardFromStore,
   listContributions,
   listContributionsByContributor,
   recordPersistedEndorsement,
@@ -315,5 +317,90 @@ describe("buildTopContributorAwardsFromStore", () => {
     });
 
     expect(award.label).toBe("Best Card");
+  });
+});
+
+const DAY_ONE = Date.parse("2026-08-10T12:00:00.000Z");
+const DAY_ONE_LATER = Date.parse("2026-08-10T23:00:00.000Z");
+const DAY_TWO = Date.parse("2026-08-11T09:00:00.000Z");
+
+const WEAK_CARD_DAY_ONE: AttributedContribution = {
+  ...ALICE_CARD,
+  id: "weak-card-day-one",
+  contributorId: "carol",
+  likes: 0,
+  saves: 0,
+  qualitySignals: [0.1],
+  reviewerEndorsements: [],
+  submittedAt: DAY_ONE,
+};
+const STRONG_CARD_DAY_ONE: AttributedContribution = {
+  ...ALICE_CARD,
+  id: "strong-card-day-one",
+  contributorId: "alice",
+  submittedAt: DAY_ONE_LATER,
+};
+const CARD_DAY_TWO: AttributedContribution = {
+  ...ALICE_CARD,
+  id: "card-day-two",
+  contributorId: "dave",
+  submittedAt: DAY_TWO,
+};
+const CARD_WITHOUT_TIMESTAMP: AttributedContribution = {
+  ...ALICE_CARD,
+  id: "card-no-timestamp",
+  contributorId: "erin",
+};
+const SUMMARY_WITH_TIMESTAMP: AttributedContribution = {
+  ...BOB_SUMMARY,
+  id: "summary-with-timestamp",
+  submittedAt: DAY_ONE,
+};
+
+describe("buildDailyBestCardsFromStore", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildDailyBestCardsFromStore()).toEqual([]);
+  });
+
+  it("picks one winner per represented day from persisted card contributions", () => {
+    saveContribution(WEAK_CARD_DAY_ONE);
+    saveContribution(STRONG_CARD_DAY_ONE);
+    saveContribution(CARD_DAY_TWO);
+
+    const results = buildDailyBestCardsFromStore();
+
+    expect(results.map((r) => r.dayKey)).toEqual(["2026-08-10", "2026-08-11"]);
+    expect(results[0].contribution.id).toBe("strong-card-day-one");
+    expect(results[1].contribution.id).toBe("card-day-two");
+  });
+
+  it("excludes non-card contributions and cards without a submittedAt timestamp", () => {
+    saveContribution(STRONG_CARD_DAY_ONE);
+    saveContribution(SUMMARY_WITH_TIMESTAMP);
+    saveContribution(CARD_WITHOUT_TIMESTAMP);
+
+    const results = buildDailyBestCardsFromStore();
+
+    expect(results).toHaveLength(1);
+    expect(results[0].contribution.id).toBe("strong-card-day-one");
+  });
+});
+
+describe("getTodaysBestCardFromStore", () => {
+  it("returns the winner for the UTC day of `now`", () => {
+    saveContribution(WEAK_CARD_DAY_ONE);
+    saveContribution(STRONG_CARD_DAY_ONE);
+    saveContribution(CARD_DAY_TWO);
+
+    const result = getTodaysBestCardFromStore(DAY_ONE_LATER);
+
+    expect(result?.dayKey).toBe("2026-08-10");
+    expect(result?.contribution.id).toBe("strong-card-day-one");
+  });
+
+  it("returns null when no card was submitted that day", () => {
+    saveContribution(STRONG_CARD_DAY_ONE);
+
+    expect(getTodaysBestCardFromStore(DAY_TWO)).toBeNull();
   });
 });

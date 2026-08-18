@@ -29,16 +29,27 @@
  *
  * `buildUnlockStatusRoster` is a third slice that closes the "Progress
  * Unlocks" bullet's own follow-up (b), "a progress/unlock UI", in TODO.md —
- * it lists every contributor with at least one persisted contribution (via
- * `state/contributions.ts`'s `listContributions`) and builds each one's
- * unlock+streak status via `buildContributorUnlockStatusWithStreakFromStore`,
- * giving a panel a single call that renders the whole roster instead of
- * requiring the caller to already know every contributor id.
+ * it lists every contributor with at least one persisted contribution or
+ * completed research task and builds each one's unlock+streak status via
+ * `buildContributorUnlockStatusWithStreakFromStore`, giving a panel a single
+ * call that renders the whole roster instead of requiring the caller to
+ * already know every contributor id.
+ *
+ * `buildContributorUnlockStatusWithStreakFromStore`/`buildUnlockStatusRoster`
+ * now source their `ContributorStats` from `state/researchProgress.ts`'s
+ * `buildPersistedLeaderboardWithCompletedTasks` (instead of
+ * `state/contributions.ts` alone), which closes the "Research Progress
+ * Tracking" idea's own follow-up (c), "feeding a contributor's
+ * topic-progress history back into `progress-unlocks.ts`'s tier
+ * computation" — a contributor's real, persisted completed-task count is
+ * now an alternate tier-qualifying signal (see `progress-unlocks.ts`'s
+ * `minCompletedTaskCount`), and a contributor who has completed research
+ * tasks but no scored contribution yet now appears in the roster too.
  *
  * @module lib/unlock-streak-status
  */
 
-import { buildContributorStats, groupContributionsByContributor, type ContributorStats } from "./contribution-leaderboard";
+import type { ContributorStats } from "./contribution-leaderboard";
 import {
   buildContributorQuestStreak,
   buildStreakSummaryText,
@@ -54,8 +65,8 @@ import {
   type ContributorUnlockStatus,
   type UnlockTierRequirement,
 } from "./progress-unlocks";
-import { listContributions, listContributionsByContributor } from "../state/contributions";
 import { listDailyMissionResultsForContributor } from "../state/dailyMissionResults";
+import { buildPersistedLeaderboardWithCompletedTasks } from "../state/researchProgress";
 
 /**
  * A contributor's unlock status extended with their streak standing.
@@ -131,14 +142,18 @@ function buildEmptyContributorStats(contributorId: string): ContributorStats {
 }
 
 /**
- * Builds a contributor's combined unlock+streak status straight from the
- * persisted `state/contributions.ts`/`state/dailyMissionResults.ts` stores,
- * instead of requiring the caller to hold and pass in a `ContributorStats`/
- * `DailyMissionResult[]` list themselves — mirroring the existing
- * `dailyMissionResults.ts` `buildPersistedContributorQuestStreak` "compose
- * the pure function directly against the persisted store" convention. A
- * contributor with no persisted contributions yet gets an all-zero, `novice`
- * status rather than a thrown error.
+ * Builds a contributor's combined unlock+streak status straight from
+ * persisted state, instead of requiring the caller to hold and pass in a
+ * `ContributorStats`/`DailyMissionResult[]` list themselves — mirroring the
+ * existing `dailyMissionResults.ts` `buildPersistedContributorQuestStreak`
+ * "compose the pure function directly against the persisted store"
+ * convention. Sources `ContributorStats` from
+ * `state/researchProgress.ts`'s `buildPersistedLeaderboardWithCompletedTasks`
+ * rather than building it fresh from `state/contributions.ts` alone, so a
+ * contributor's real completed-research-task count (not just their scored
+ * contributions) feeds `progress-unlocks.ts`'s tier computation. A
+ * contributor with neither persisted contributions nor completed tasks yet
+ * gets an all-zero, `novice` status rather than a thrown error.
  */
 export function buildContributorUnlockStatusWithStreakFromStore(
   contributorId: string,
@@ -146,9 +161,9 @@ export function buildContributorUnlockStatusWithStreakFromStore(
   tierRequirements: UnlockTierRequirement[] = DEFAULT_UNLOCK_TIER_REQUIREMENTS,
   streakMilestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
 ): ContributorUnlockStatusWithStreak {
-  const contributions = listContributionsByContributor(contributorId);
   const stats =
-    contributions.length === 0 ? buildEmptyContributorStats(contributorId) : buildContributorStats(contributorId, contributions);
+    buildPersistedLeaderboardWithCompletedTasks().find((row) => row.contributorId === contributorId) ??
+    buildEmptyContributorStats(contributorId);
   const missionResults = listDailyMissionResultsForContributor(contributorId);
 
   return buildContributorUnlockStatusWithStreak(stats, missionResults, asOfDayKey, tierRequirements, streakMilestones);
@@ -156,19 +171,23 @@ export function buildContributorUnlockStatusWithStreakFromStore(
 
 /**
  * Builds the full contributor roster's unlock+streak status: every
- * contributor with at least one persisted contribution (via
- * `state/contributions.ts`'s `listContributions`/`groupContributionsByContributor`),
- * each resolved through `buildContributorUnlockStatusWithStreakFromStore`,
- * sorted alphabetically by `contributorId` for a stable, deterministic
- * roster order (unlike the Contribution Leaderboard, this view isn't ranked
- * by score). An empty store returns an empty roster rather than throwing.
+ * contributor with at least one persisted contribution or completed
+ * research task (via `state/researchProgress.ts`'s
+ * `buildPersistedLeaderboardWithCompletedTasks`, which already unions both
+ * signals — see its own "task-only contributor" case), each resolved
+ * through `buildContributorUnlockStatusWithStreakFromStore`, sorted
+ * alphabetically by `contributorId` for a stable, deterministic roster
+ * order (unlike the Contribution Leaderboard, this view isn't ranked by
+ * score). An empty store returns an empty roster rather than throwing.
  */
 export function buildUnlockStatusRoster(
   asOfDayKey: string,
   tierRequirements: UnlockTierRequirement[] = DEFAULT_UNLOCK_TIER_REQUIREMENTS,
   streakMilestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
 ): ContributorUnlockStatusWithStreak[] {
-  const contributorIds = [...groupContributionsByContributor(listContributions()).keys()].sort();
+  const contributorIds = buildPersistedLeaderboardWithCompletedTasks()
+    .map((row) => row.contributorId)
+    .sort();
 
   return contributorIds.map((contributorId) =>
     buildContributorUnlockStatusWithStreakFromStore(contributorId, asOfDayKey, tierRequirements, streakMilestones),
