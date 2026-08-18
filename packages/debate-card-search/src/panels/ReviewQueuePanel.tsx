@@ -32,6 +32,7 @@ import {
   rejectReview,
   requestChanges,
   resolveReviewComment,
+  reviseRejectedReview,
   submitForReview,
   type CardReview,
   type CommentSeverity,
@@ -211,6 +212,11 @@ export function ReviewQueuePanel() {
                     {review.status === "approved" && (
                       <Button size="sm" variant="outline" onClick={() => applyTransition(review, publishReview)}>
                         Publish
+                      </Button>
+                    )}
+                    {review.status === "rejected" && (
+                      <Button size="sm" variant="outline" onClick={() => applyTransition(review, reviseRejectedReview)}>
+                        Revise
                       </Button>
                     )}
                     <Button size="sm" variant="ghost" onClick={() => handleRemove(review.cardId)}>

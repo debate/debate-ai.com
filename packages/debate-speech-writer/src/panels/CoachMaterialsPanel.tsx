@@ -33,7 +33,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "debate-ui/src/primitives/select"
-import { buildGroundedCoachPrompt, type CoachMaterialKind, type CoachMaterialMatch } from "../coach/team-coach-materials"
+import {
+  buildGroundedCoachPrompt,
+  COACH_MATERIAL_KIND_LABELS,
+  COACH_MATERIAL_KIND_ORDER,
+  type CoachMaterialKind,
+  type CoachMaterialMatch,
+} from "../coach/team-coach-materials"
 import { requestTeamCoachAnswer } from "../coach/team-coach-client"
 import {
   buildCoachMaterialLibraryFromStore,
@@ -43,14 +49,11 @@ import {
 } from "../state/coachMaterials"
 import type { CoachMaterialLibrary } from "../coach/team-coach-materials"
 
-const KIND_LABELS: Record<CoachMaterialKind, string> = {
-  lecture_transcript: "Lecture Transcript",
-  camp_material: "Camp Material",
-  instructional_document: "Instructional Document",
-  practice_recording: "Practice-Round Recording",
-}
+// The labels and display order live with the material model itself, so the
+// form, the badges and `buildCoachMaterialLibrary`'s grouping stay in step.
+const KIND_LABELS = COACH_MATERIAL_KIND_LABELS
 
-const KIND_OPTIONS = Object.keys(KIND_LABELS) as CoachMaterialKind[]
+const KIND_OPTIONS = COACH_MATERIAL_KIND_ORDER
 
 type FormState = {
   kind: CoachMaterialKind

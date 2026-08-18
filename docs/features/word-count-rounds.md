@@ -55,9 +55,55 @@ output for a stable panel display order — rather than introducing new
 word-count logic. Vitest-covered in
 `packages/debate-round/test/wordCountRounds.test.ts`.
 
+## Word-limit mode in the live round
+
+The same round can also be run under a word limit inside the flow page
+(`/debate`) instead of on this standalone form — the "(b) extending
+`useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech
+mode in the live round timer itself" follow-up under the same idea.
+
+Each speech header bar shows a **Type** toggle (next to the countdown) when a
+flow has a round. Turning it on replaces that speech's countdown with a
+`SpeechWordCounter`: a compact `words / limit` readout that opens a popover
+holding the speech text, its remaining-words figure, and a fill bar. The
+readout turns yellow at 90% of the limit and red once over it. Toggling it
+off restores the countdown; the choice persists in localStorage
+(`wordLimitModeEnabled`).
+
+Where the limit comes from:
+
+1. the `wordCountStyles` entry whose speech name matches the live column
+   (case-insensitively), e.g. `AC` → 600 words; otherwise
+2. `estimateWordLimit(minutes)` applied to the live timed style's speech
+   length, so word-limit mode works for every debate style rather than only
+   the authored word-count ones.
+
+If neither source resolves a limit, the countdown stays in place rather than
+showing an empty meter.
+
+Text typed here is persisted through the **same** `wordCountRounds` store the
+form uses — keyed by the flow's `roundId`, with untouched speeches dropped —
+so a round typed in the live header bar appears on `/word-count` and a round
+saved there loads back into the header bar.
+
+```
+hooks/useWordCountSpeechMode.ts        — React state + persistence timing
+  → round/word-count-speech-mode.ts    — resolveSpeechWordLimit,
+                                          getSpeechWordCountStatus,
+                                          load/persistWordCountSpeechMode
+  → state/wordCountRounds.ts           — same localStorage key as the form
+  → debate-timer SpeechWordCounter     — the meter itself
+  → layout/SpeechHeaderBar.tsx         — toggle + swap for SpeechTimer
+```
+
+Vitest-covered in
+`packages/debate-round/test/word-count-speech-mode.test.ts` (limit
+resolution, mode state, live status, and the store round-trip).
+
 ## Known gaps
 
-- Follow-up (b), extending `useTimerState`/`SpeechTimer` to support a
-  non-timed, word-limited speech mode in the live round timer itself
-  (rather than this standalone submission form), remains open — not
-  started.
+- The compact ticking timer in `FlowPageHeader` (mobile header) still shows
+  the countdown only; word-limit mode currently replaces the
+  `SpeechHeaderBar` timer.
+- Speech text is typed or pasted; there is no transcription path feeding the
+  word counter.
