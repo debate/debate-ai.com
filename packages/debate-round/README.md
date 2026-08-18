@@ -73,6 +73,12 @@ one card per round, with a per-side exposure summary and a "most exposed
 arguments" bar chart — see
 [`docs/features/response-outcome-charts.md`](../../docs/features/response-outcome-charts.md).
 
+`JudgeDecisionPanel` (also exported from the package root) lets a user
+request a real AI judge verdict for a round — composing its saved flow
+summary and judge paradigm selection into a decision request — and renders
+every persisted `JudgeDecisionRecord` — see
+[`docs/features/ai-judge-decision.md`](../../docs/features/ai-judge-decision.md).
+
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `debate-core` so both sides can share them.
 
@@ -89,7 +95,7 @@ debate-round/
 │   ├── hooks/        # flow, speech, timer and URL-sync hooks
 │   ├── layout/       # page header, sidebar, main content, speech doc panel
 │   ├── navigation/   # flow tabs
-│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel, WordCountRoundsPanel, ArgumentTreePanel, AiVersusRoundPanel, PracticeRoundSimulatorPanel, StandingsPanel, VulnerabilityChartsPanel
+│   ├── panels/       # DebateRoundPanel shell, PrepNotesPanel, OpponentTeamProfilesPanel, DrillSetsPanel, PreRoundBriefingsPanel, CoachingSessionsPanel, FlowSummariesPanel, WordCountRoundsPanel, ArgumentTreePanel, AiVersusRoundPanel, PracticeRoundSimulatorPanel, StandingsPanel, VulnerabilityChartsPanel, JudgeDecisionPanel
 │   ├── state/        # zustand stores (flow, settings, history, profile)
 │   ├── types/        # flow and settings types
 │   ├── utils/        # flow + localStorage helpers

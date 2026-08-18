@@ -4,6 +4,55 @@
 ### In progress
 
 ### Completed
+- **AI Judge Decision Modes — real AI judge-decision call.**
+  Closes follow-up (a) under idea #5 ("AI Judge Decision Modes") — "an AI
+  judge-decision call that uses `buildJudgeParadigmPrompt` output instead
+  of (or alongside) the existing static `judgeDecisionPrompt`." A new
+  `packages/debate-round/src/round/judge-decision-ai.ts` adds
+  `JUDGE_DECISION_AI_SYSTEM_PROMPT` and pure, Vitest-testable
+  `buildJudgeDecisionUserPrompt`/`parseJudgeDecisionAiResponse` helpers —
+  the prompt composes a selected `JudgeParadigm`'s
+  `buildJudgeParadigmPrompt` output (debate-speech-writer) with a round's
+  flow summary text and two side labels, asking for a strict-JSON verdict
+  (`winner`/`reasoning`/`ballotText`); the parser matches `winner`
+  case-insensitively against the two side labels and returns `null` (never
+  throws) on a malformed, empty, or off-menu reply.
+  `round/judge-decision-client.ts` adds `requestJudgeDecision`, a small
+  self-contained `fetch` client (mirroring
+  `round/ai-versus-speech-client.ts`'s split) that POSTs to the existing
+  `/api/reason-ai` Anthropic proxy. `round/judge-decision-from-stores.ts`
+  adds `buildJudgeDecisionAiInputFromStores`, which composes a round's
+  already-persisted flow summary (`state/flowSummaries.ts`) and judge
+  paradigm selection (debate-speech-writer's
+  `state/judgeParadigmSelections.ts`) directly by `roundId` — mirroring
+  `pre-round-briefing.ts`'s `buildPreRoundBriefingFromStores` convention —
+  returning `null` when either isn't saved yet rather than throwing.
+  `state/judgeDecisions.ts` persists a round's verdict to localStorage, and
+  a new `JudgeDecisionPanel` (also exported from the package root) renders
+  a "Get AI decision" form plus every persisted verdict at
+  `/judge-decision`, added to the global dock's Settings menu. A round
+  missing either prerequisite shows an inline message naming what's
+  missing instead of calling the AI or crashing. No existing
+  paradigm/flow-summary logic changed. Vitest-covered in
+  `packages/debate-round/test/judge-decision-ai.test.ts` (prompt building +
+  tolerant JSON parsing, including markdown-fence and off-menu-winner
+  cases), `judge-decision-client.test.ts` (the `fetch` client, with `fetch`
+  mocked via `vi.stubGlobal`, covering the success path, an endpoint
+  override, a server error message, a non-JSON error body, and an
+  unparseable reply), `judgeDecisions.test.ts` (persisted-store CRUD and
+  panel-view ordering), and `judge-decision-from-stores.test.ts`
+  (store-composition, including both missing-prerequisite cases and
+  heading-row exclusion). Documented in
+  `docs/features/ai-judge-decision.md`, with
+  `docs/features/judge-paradigm-selections.md`'s "Known gaps" updated to
+  point at it. No repo-wide `lint` script exists (checked root/app/package
+  `package.json` scripts) so none was run. Verified: `bun install` (2050
+  packages), `bun run test` (104 files / 1451 tests, all pass — up from
+  1415), `bun run typecheck` (11 of 12 in-scope packages have a typecheck
+  script; all pass), and `bun run build:web` (`debate-ai-web`, succeeds,
+  `/judge-decision` route present) all pass. Not verified in a live
+  browser (no dev server smoke test) — the panel's request/error/render
+  paths are covered by the Vitest suites above instead.
 - **Online Debate Versus AI — real AI speech-generation call.**
   [PR #189](https://github.com/debate/debate-ai.com/pull/189).
   Closes follow-up (a) under idea #3 ("Online Debate Versus AI") — "an

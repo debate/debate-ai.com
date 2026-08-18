@@ -54,6 +54,8 @@ paradigm-resolution logic. Vitest-covered in
 
 - Follow-up (a), an AI judge-decision call that uses
   `buildJudgeParadigmPrompt`'s output instead of (or alongside) the existing
-  static `judgeDecisionPrompt`, remains open — not started.
+  static `judgeDecisionPrompt`, is now closed — see
+  [AI Judge Decision](./ai-judge-decision.md) (`/judge-decision`), which
+  composes a round's paradigm selection here with its saved flow summary.
 - This panel only saves/clears a selection; it doesn't itself invoke a judge
   decision or show the resulting `buildJudgeParadigmPrompt` text.
