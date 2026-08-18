@@ -7,10 +7,13 @@
  * `buildTaskInboxView` (itself a thin composition of `listRoutedTaskQueues`
  * against the persisted `contributorAvailability.ts` store for each
  * assignee's current skill level) and renders it grouped by topic: each
- * assignment can be marked complete, which calls the already-persisted
- * `completePersistedRoutedTask` — removing it from the stored queue and
- * decrementing the assignee's stored `activeTaskCount` — rather than
- * introducing new mutation logic here.
+ * assignment can be marked complete, which calls
+ * `state/researchProgress.ts`'s `completeAndRecordResearchTask` — it removes
+ * the assignment from the stored queue and decrements the assignee's stored
+ * `activeTaskCount` the same way `completePersistedRoutedTask` always did,
+ * and additionally records the completion event so
+ * `panels/ResearchProgressPanel.tsx` can show real task-completion history
+ * instead of nothing.
  *
  * @module panels/TaskInboxPanel
  */
@@ -20,7 +23,8 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
-import { buildTaskInboxView, completePersistedRoutedTask, type TaskInboxTopic } from "../state/routedTaskQueues"
+import { buildTaskInboxView, type TaskInboxTopic } from "../state/routedTaskQueues"
+import { completeAndRecordResearchTask } from "../state/researchProgress"
 import type { CoverageLevel } from "../lib/topic-coverage"
 
 const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> = {
@@ -45,7 +49,7 @@ export function TaskInboxPanel() {
   }, [])
 
   const handleComplete = (topicId: string, argBlock: string) => {
-    completePersistedRoutedTask(topicId, argBlock)
+    completeAndRecordResearchTask(topicId, argBlock, new Date().toISOString())
     setTopics(buildTaskInboxView())
   }
 
