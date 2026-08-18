@@ -4,6 +4,47 @@
 ### In progress
 
 ### Completed
+- **AI Coach Mode — real AI coaching-feedback call.**
+  Closes follow-up (a) under the "🎙️ AI Coach Mode" bullet in the Research
+  Crowdsourcing Organizer Features list — "an actual AI coaching call for
+  open-ended feedback beyond this deterministic template layer." A new
+  `packages/debate-round/src/round/coach-feedback-ai.ts` adds
+  `COACH_FEEDBACK_AI_SYSTEM_PROMPT`, `buildCoachFeedbackAiUserPrompt`, and
+  the tolerant `parseCoachFeedbackAiResponse`, mirroring
+  `debate-speech-writer`'s `coach/team-coach-ai.ts` free-form-text split
+  (open-ended coaching feedback is prose, not structured JSON like
+  `round/judge-decision-ai.ts`'s verdict) — the user-turn prompt composes a
+  session's side and its already-generated template prompts via the
+  existing `flow/coach-mode.ts`'s `buildCoachingSummaryText`, so no new
+  coaching-prompt derivation logic was introduced.
+  `round/coach-feedback-client.ts` adds `requestCoachFeedback`, a small
+  self-contained `fetch` client (mirroring `coach/team-coach-client.ts`'s
+  split) that POSTs to the existing `/api/reason-ai` Anthropic proxy.
+  `state/coachingSessions.ts`'s `CoachingSessionRecord` gains an additive,
+  optional `aiFeedback` field (existing records without one stay valid)
+  plus a new `saveCoachingSessionAiFeedback(roundId, sideKey, aiFeedback)`
+  helper that sets it without touching a session's `prompts`.
+  `CoachingSessionsPanel.tsx`'s session cards now have a "Get AI feedback"
+  ("Regenerate AI feedback" once one exists) action that calls
+  `requestCoachFeedback` with the session's own prompts, saves the result,
+  and renders it (or a per-session error message on failure) under the
+  template prompts. No follow-ups remain open on this bullet. Docs updated
+  in `docs/features/coaching-sessions.md`. Vitest-covered in
+  `packages/debate-round/test/coach-feedback-ai.test.ts` (prompt content and
+  response parsing, including a fenced reply and a whitespace-only/empty
+  reply), `packages/debate-round/test/coach-feedback-client.test.ts` (the
+  `fetch` client, mocked via `vi.stubGlobal`, covering the success path, an
+  endpoint override, a server error message, a non-JSON error body, and an
+  empty/unusable AI reply), and
+  `packages/debate-round/test/coachingSessions.test.ts` (the new
+  `saveCoachingSessionAiFeedback` helper, including overwriting existing
+  feedback, leaving other sessions untouched, and a no-op on an unstored
+  roundId/sideKey pair). Verified: `bun install` (2050 packages),
+  `bun run test` (115 files / 1549 tests, all pass), `bun run typecheck`
+  (11 of 12 in-scope packages have a typecheck script; all pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/coaching` route present,
+  no new route) all pass. No repo-wide `lint` script exists (checked
+  root/app/package `package.json` scripts) so none was run.
 - **Contribution Leaderboard — completed-tasks signal.**
   Closes follow-up (b) under the "Contribution Leaderboard" bullet in the
   Research Crowdsourcing Organizer Features list — "a 'completed tasks'
@@ -3970,7 +4011,7 @@
 * 
 * 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. A second slice, `opponentPersonaSelections.ts` (see Tracker Status above), now persists a practice session's selected `OpponentPersona` to localStorage. A third slice, `OpponentPersonaPickerPanel` (see Tracker Status above, "AI Practice Opponent — persona-picker UI"), now renders a picker UI at `/practice-opponent` for saving a session's opponent persona, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Practice Opponent — persona-conditioned AI speech-generation call") added `debate-round`'s `round/opponent-persona-speech-ai.ts`, `round/opponent-persona-speech-client.ts`, and `round/opponent-persona-speech-wiring.ts`, wiring `AiVersusRoundPanel`'s "Generate AI speech" action to argue in a round's saved persona (looked up by treating `roundId` as `opponentPersonaSelections.ts`'s `sessionId` key) via a persona-conditioned `/api/reason-ai` call, closing follow-up (a). No follow-ups remain open on this idea._
 * 
-* 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. A third slice, `CoachingSessionsPanel` (see Tracker Status above, "AI Coach Mode — coaching-panel UI"), now renders every persisted coaching session grouped by round + side at `/coaching`, closing follow-up (b). Follow-up (a), an actual AI coaching call for open-ended feedback beyond this template layer, remains open — not started._
+* 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. A third slice, `CoachingSessionsPanel` (see Tracker Status above, "AI Coach Mode — coaching-panel UI"), now renders every persisted coaching session grouped by round + side at `/coaching`, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Coach Mode — real AI coaching-feedback call") added `round/coach-feedback-ai.ts` and `round/coach-feedback-client.ts`, wiring a "Get AI feedback" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy with the session's own template prompts for real, open-ended AI coaching feedback, saved on `CoachingSessionRecord.aiFeedback`, closing follow-up (a). No follow-ups remain open on this bullet._
 * 
 * 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. A second slice, `buildPrepRoomFromStore` (see Tracker Status above, "Collaboration Prep Room Store Wiring"), now reads a topic's entries from the persisted `evidenceLibraryEntries.ts` store instead of requiring a caller-supplied entry list. A third slice, `state/prepRooms.ts`'s `buildPersistedPrepRoom`/`listPrepRoomTopics` plus `PrepRoomPanel` (see Tracker Status above, "Collaboration Prep Room — prep-room panel UI"), now composes a topic's coverage report and contributor list from their own persisted stores and renders a topic switcher, evidence/draft-block search, and routed-task view at `/cards/prep-room`, closing follow-up (a). Follow-up (b), a live presence/who's-active signal, remains open — not started._
 * 
