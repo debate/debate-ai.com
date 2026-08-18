@@ -47,8 +47,8 @@ _No task currently in progress._
   scripts) so none was run. Verified: `bun install` (2050 packages),
   `bun run test` (133 files / 1798 tests, all pass), `bun run typecheck`
   (all 11 in-scope packages pass), and `bun run build:web`
-  (`debate-ai-web` succeeds, `/coach` route present) all pass. PR: Not
-  created yet.
+  (`debate-ai-web` succeeds, `/coach` route present) all pass. PR:
+  [#221](https://github.com/debate/debate-ai.com/pull/221).
 - **Flow-in-Speech Flow Annotations — `FlowSpreadsheet` annotation
   affordance.** Closes follow-up (b) under idea #15 ("Flow-in-Speech Flow
   Annotations") in Product Feature Ideas: "a flow-grid affordance
