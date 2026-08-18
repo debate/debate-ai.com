@@ -6,7 +6,8 @@
  * Crowdsourcing Organizer Features list. Round-state persistence now exists
  * via `aiVersusRounds.ts` (idea #3's submitted-speech store), so this store
  * only persists `practice-round-simulator.ts`'s own derived
- * `PracticeRoundSetup` and (once generated) `PracticeRoundFeedback` — a
+ * `PracticeRoundSetup`, (once generated) `PracticeRoundFeedback`, and (once
+ * requested) a `JudgeDecisionAiResult` from `judge-decision-ai.ts` — a
  * round's submitted speeches are looked up through `getAiVersusRound`
  * instead of being duplicated here. Stores records in localStorage,
  * mirroring the existing `aiVersusRounds.ts`/`drillSets.ts` persistence
@@ -20,6 +21,7 @@
 
 import { getAiVersusRound } from "./aiVersusRounds";
 import type { PriorSpeechRecord } from "../round/ai-versus-speech-order";
+import type { JudgeDecisionAiResult } from "../round/judge-decision-ai";
 import type { PracticeRoundFeedback, PracticeRoundSetup } from "../round/practice-round-simulator";
 
 export type PracticeRoundRecord = {
@@ -27,6 +29,8 @@ export type PracticeRoundRecord = {
   setup: PracticeRoundSetup;
   /** Post-round feedback, once generated. Absent while the round is still in progress. */
   feedback?: PracticeRoundFeedback;
+  /** An AI judge's verdict for the round, once requested. Absent until "Get AI judge decision" is used. */
+  judgeDecision?: JudgeDecisionAiResult;
 };
 
 const STORAGE_KEY = "practiceRounds";
