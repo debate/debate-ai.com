@@ -16,7 +16,7 @@
 import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult } from "../lib/shared-evidence-library";
 import { buildEvidenceEntryRevision, searchEvidenceLibrary } from "../lib/shared-evidence-library";
 import type { ArgumentLibrary } from "../lib/argument-library";
-import { buildArgumentLibrary } from "../lib/argument-library";
+import { buildArgumentLibrary, buildTagCollections } from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
 
 const STORAGE_KEY = "evidenceLibraryEntries";
@@ -102,4 +102,13 @@ export function searchPersistedEvidenceLibrary(query: EvidenceSearchQuery = {}):
  */
 export function buildPersistedArgumentLibrary(): ArgumentLibrary {
   return buildArgumentLibrary(readAll());
+}
+
+/**
+ * Every distinct tag used across the persisted evidence repository, sorted —
+ * the corpus a tag-autocomplete affordance suggests from (see
+ * `argument-library.ts`'s `suggestTags`).
+ */
+export function listPersistedTags(): string[] {
+  return buildTagCollections(readAll()).map((collection) => collection.tag);
 }

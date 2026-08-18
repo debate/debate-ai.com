@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyTagSuggestion,
   buildArgumentLibrary,
   buildLibrarySummaryText,
   buildTagCollections,
@@ -8,6 +9,8 @@ import {
   filterCardsByTags,
   groupCardsByCaseArea,
   groupCardsByTopic,
+  parseTagsInput,
+  suggestTags,
   type LibraryCard,
 } from "../src/lib/argument-library";
 
@@ -174,5 +177,91 @@ describe("buildLibrarySummaryText", () => {
   it("returns an all-zero summary for an empty library", () => {
     const library = buildArgumentLibrary([]);
     expect(buildLibrarySummaryText(library)).toBe("0 cards across 0 topics, 0 case areas, 0 tags");
+  });
+});
+
+describe("parseTagsInput", () => {
+  it("splits completed tags from the in-progress fragment after the last comma", () => {
+    expect(parseTagsInput("climate, imp")).toEqual({ completedTags: ["climate"], draftTag: " imp" });
+  });
+
+  it("treats a single, comma-less value entirely as the draft fragment", () => {
+    expect(parseTagsInput("clim")).toEqual({ completedTags: [], draftTag: "clim" });
+  });
+
+  it("drops blank segments from completed tags", () => {
+    expect(parseTagsInput("climate, , impact, sol")).toEqual({
+      completedTags: ["climate", "impact"],
+      draftTag: " sol",
+    });
+  });
+
+  it("returns an empty draft fragment for an empty input", () => {
+    expect(parseTagsInput("")).toEqual({ completedTags: [], draftTag: "" });
+  });
+
+  it("returns an empty draft fragment when the input ends in a trailing comma", () => {
+    expect(parseTagsInput("climate,")).toEqual({ completedTags: ["climate"], draftTag: "" });
+  });
+});
+
+describe("applyTagSuggestion", () => {
+  it("replaces the in-progress fragment with the chosen suggestion, leaving a trailing separator", () => {
+    expect(applyTagSuggestion("climate, imp", "impact")).toBe("climate, impact, ");
+  });
+
+  it("appends the first tag with no leading separator", () => {
+    expect(applyTagSuggestion("clim", "climate")).toBe("climate, ");
+  });
+
+  it("appends after a trailing comma with no dangling comma before it", () => {
+    expect(applyTagSuggestion("climate,", "impact")).toBe("climate, impact, ");
+  });
+});
+
+describe("suggestTags", () => {
+  const known = ["climate", "climate-change", "federalism", "impact", "solvency"];
+
+  it("returns no suggestions for an empty (nothing typed yet) query", () => {
+    expect(suggestTags(known, "")).toEqual([]);
+    expect(suggestTags(known, "   ")).toEqual([]);
+  });
+
+  it("ranks prefix matches ahead of substring matches", () => {
+    expect(suggestTags(["deep-impact", "impact", "climate"], "imp")).toEqual(["impact", "deep-impact"]);
+  });
+
+  it("sorts each match group alphabetically", () => {
+    expect(suggestTags(known, "clim")).toEqual(["climate", "climate-change"]);
+  });
+
+  it("matches case-insensitively", () => {
+    expect(suggestTags(known, "CLIM")).toEqual(["climate", "climate-change"]);
+  });
+
+  it("excludes tags already added to the field", () => {
+    expect(suggestTags(known, "clim", ["climate"])).toEqual(["climate-change"]);
+  });
+
+  it("excludes a tag that exactly matches the query already typed in full", () => {
+    expect(suggestTags(known, "climate")).toEqual(["climate-change"]);
+  });
+
+  it("returns an empty list when nothing matches", () => {
+    expect(suggestTags(known, "xyz")).toEqual([]);
+  });
+
+  it("caps results at the given limit", () => {
+    const many = ["aa", "ab", "ac", "ad", "ae"];
+    expect(suggestTags(many, "a", [], 3)).toEqual(["aa", "ab", "ac"]);
+  });
+
+  it("caps results at a default limit of 8", () => {
+    const many = Array.from({ length: 12 }, (_, i) => `tag${String(i).padStart(2, "0")}`);
+    expect(suggestTags(many, "tag")).toHaveLength(8);
+  });
+
+  it("de-duplicates known tags case-insensitively", () => {
+    expect(suggestTags(["Climate", "climate", "CLIMATE"], "cli")).toEqual(["Climate"]);
   });
 });

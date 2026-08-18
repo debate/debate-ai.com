@@ -27,7 +27,11 @@
  * count it themselves. Editing an existing entry instead calls
  * `saveEvidenceLibraryEntryRevision`, which records the edit as a
  * `CardRevisionRecord` (via the pure `buildEvidenceEntryRevision`) so it
- * feeds the Revision Incentives leaderboard.
+ * feeds the Revision Incentives leaderboard. The Tags field suggests
+ * existing tags from the persisted repository as the contributor types (via
+ * `listPersistedTags`/`suggestTags`), closing follow-up (c) — "a
+ * tag-autocomplete/tag-management affordance" — under the "📚 Common
+ * Argument Library" bullet in TODO.md.
  *
  * @module panels/EvidenceLibraryPanel
  */
@@ -43,11 +47,13 @@ import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   deleteEvidenceLibraryEntry,
   listEvidenceLibraryEntries,
+  listPersistedTags,
   saveEvidenceLibraryEntry,
   saveEvidenceLibraryEntryRevision,
   searchPersistedEvidenceLibrary,
 } from "../state/evidenceLibraryEntries"
 import { buildEvidenceSearchSummaryText, computeWordCount, getEvidenceStaleness } from "../lib/shared-evidence-library"
+import { applyTagSuggestion, parseTagsInput, suggestTags } from "../lib/argument-library"
 import type { EvidenceEntryKind, EvidenceLibraryEntry, EvidenceSearchResult } from "../lib/shared-evidence-library"
 
 const KIND_FILTERS: { value: EvidenceEntryKind | "all"; label: string }[] = [
@@ -103,9 +109,11 @@ export function EvidenceLibraryPanel() {
   const [error, setError] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editorContributorId, setEditorContributorId] = useState("")
+  const [knownTags, setKnownTags] = useState<string[]>([])
 
   useEffect(() => {
     setHasEntries(listEvidenceLibraryEntries().length > 0)
+    setKnownTags(listPersistedTags())
   }, [])
 
   useEffect(() => {
@@ -118,6 +126,7 @@ export function EvidenceLibraryPanel() {
     const query = { text: queryText, ...(kind !== "all" ? { kind } : {}) }
     setResults(searchPersistedEvidenceLibrary(query))
     setHasEntries(true)
+    setKnownTags(listPersistedTags())
   }
 
   const handleSubmit = () => {
@@ -192,6 +201,12 @@ export function EvidenceLibraryPanel() {
 
   const summaryQuery = { text: queryText, ...(kind !== "all" ? { kind } : {}) }
   const currentYear = new Date().getFullYear()
+  const { completedTags, draftTag } = parseTagsInput(draft.tags)
+  const tagSuggestions = suggestTags(knownTags, draftTag, completedTags)
+
+  const applySuggestion = (suggestion: string) => {
+    setDraft((prev) => ({ ...prev, tags: applyTagSuggestion(prev.tags, suggestion) }))
+  }
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -267,6 +282,22 @@ export function EvidenceLibraryPanel() {
               onChange={(e) => setDraft((prev) => ({ ...prev, tags: e.target.value }))}
               placeholder="climate, impact"
             />
+            {tagSuggestions.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-xs text-muted-foreground">Existing tags:</span>
+                {tagSuggestions.map((suggestion) => (
+                  <Button
+                    key={suggestion}
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => applySuggestion(suggestion)}
+                  >
+                    {suggestion}
+                  </Button>
+                ))}
+              </div>
+            )}
           </div>
           <div className="space-y-1.5 sm:col-span-2">
             <Label htmlFor="evidence-text">{draft.kind === "card" ? "Card text" : "Block text"}</Label>
