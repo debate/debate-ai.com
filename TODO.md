@@ -3,67 +3,81 @@
 
 ### In progress
 
-## Word-Count-Only Speech Format — live-round word-limited speech mode
+## Daily Quests and Targets — streak/reward layer on the quest board
 
 **Status:** In Progress
-**Source:** TODO.md Product Feature Ideas — idea #2 "Word-Count-Only Speech Format", follow-up (b): "extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode in the live round timer itself"
-**Branch:** `claude/practical-allen-grn1m6`
-**PR:** https://github.com/debate/debate-ai.com/pull/209
+**Source:** TODO.md Research Crowdsourcing Organizer Features — "🎯 Daily Quests and Targets" bullet, follow-up (c): "a streak/reward layer once the Gamified Quests idea's streak logic is composed in"
+**Branch:** `claude/practical-allen-ouuvtn`
+**PR:** Not created yet
 **Started:** 2026-08-18
 
 ### Goal
-Let a debater run a live round in `/debate` under a word limit instead of a
-countdown: the speech header bar's timer is replaced by a live word-count
-meter for the current speech, whose text is typed in place and persisted
-through the existing `state/wordCountRounds.ts` store so the same round shows
-up on `/word-count`.
+Surface a contributor's daily-quest streak and reward messaging directly on
+the `/cards/quests` board, composing the already-built Gamified Quests
+streak/badge logic and `dailyMissionResults.ts` persistence rather than
+requiring a trip to the separate `/cards/streaks` roster.
 
 ### Scope
-- A pure, Vitest-covered word-limit resolver + mode-state module in `debate-round`
-- A word limit derived from the live timed style's speech length when the
-  speech has no `wordCountStyles` entry (`estimateWordLimit`)
-- A `SpeechWordCounter` component in `debate-timer` mirroring `SpeechTimer`'s compact shape
-- A word-limit toggle in `SpeechHeaderBar` that swaps the countdown for the meter
-- Persistence through the existing `wordCountRounds` store (no new storage key)
+- A pure `buildStreakRewardText` helper in `lib/gamified-quests.ts` that
+  renders a contributor's streak as a reward line, calling out a badge
+  earned today specifically (vs. one earned on a prior day)
+- A "Your streak" section in `DailyQuestsPanel` (free-text contributor id,
+  matching the existing no-auth convention) with a "Record today's mission"
+  action that composes the existing `computeAndSavePersistedDailyMissionResult`
+  and `buildPersistedContributorQuestStreak`
 
 ### Non-goals
-- Audio/speech-to-text word counting
-- Changing the timed-format countdown behavior when the mode is off
-- A new persisted storage key or a second source of truth for round text
+- Contributor identity/auth (still free-text id, matching every other panel)
+- A scheduled/automatic daily mission computation (no cron infra exists)
+- Changing `dailyMissionResults.ts`/`gamified-quests.ts`'s existing persistence or streak-computation logic
 
 ### Acceptance criteria
-- [x] A live speech resolves a word limit from `wordCountStyles` when its name matches, else from the timed speech's minutes
-- [x] Typing in word-limit mode updates count/remaining/over-limit status live
-- [x] Speech text typed in the live round is persisted to, and read back from, `wordCountRounds`
-- [x] A round saved from the live header bar appears on `/word-count`
-- [x] Vitest coverage is added for the resolver, mode state, and store round-trip
+- [x] `/cards/quests` shows a contributor's current streak and earned badges after recording today's mission
+- [x] A badge earned exactly today is called out distinctly from badges earned on prior days
+- [x] Vitest coverage is added for the new reward-text helper (no streak, continuing streak, plain completion, fresh milestone, prior-day badge not re-announced, custom milestones)
 - [x] Typecheck passes
 - [x] Tests pass
 - [x] Web build passes
-- [x] Documentation updated (`docs/features/word-count-rounds.md`)
+- [x] Documentation updated (`docs/features/daily-quests.md`)
 
 ### Implementation plan
-- [x] Inspect `word-count-format.ts`, `wordCountRounds.ts`, `useTimerState`, `SpeechTimer`, `SpeechHeaderBar`
-- [x] Add `round/word-count-speech-mode.ts` (limit resolution, mode state, store round-trip)
-- [x] Add focused Vitest success-path coverage
-- [x] Add focused edge-case coverage (unknown speech, no limit source, over-limit, corrupt store)
-- [x] Add `SpeechWordCounter` to `debate-timer` and export it
-- [x] Wire a word-limit toggle + meter into `SpeechHeaderBar`
-- [x] Run focused tests, typecheck, full suite, and the web build
+- [x] Inspect `lib/daily-quests.ts`, `lib/gamified-quests.ts`, `state/dailyMissionResults.ts`, `DailyQuestsPanel.tsx`, `QuestStreaksPanel.tsx`
+- [x] Add `buildStreakRewardText` to `lib/gamified-quests.ts`
+- [x] Add focused Vitest coverage for `buildStreakRewardText`
+- [x] Wire a "Your streak" section + "Record today's mission" action into `DailyQuestsPanel`
+- [x] Run focused tests, full suite, typecheck, and the web build
 - [x] Update docs
 - [x] Commit and push the branch
 - [x] Create or update the pull request
 - [x] Update tracker status and checkboxes
 
 ### Remaining work
-- Wait for CI on PR #209 to pass; nothing else blocks this task.
-- Not verified in a browser: the mode is covered by Vitest at the logic and
-  store level only; `bun run dev:web` was not exercised this run.
-- Follow-up (not started): surface the live meter in the mobile/`FlowPageHeader`
-  compact timer display as well; it currently only replaces the
-  `SpeechHeaderBar` countdown.
+- Open the pull request and update this entry's PR link, then move to Completed once CI is green.
+- Not verified in a browser: covered by Vitest at the logic level only; `bun run dev:web` was not exercised this run.
 
 ### Completed
+- **Word-Count-Only Speech Format — live-round word-limited speech mode.**
+  Closed follow-up (b) under idea #2 ("Word-Count-Only Speech Format"):
+  "extending `useTimerState`/`SpeechTimer` to support a non-timed,
+  word-limited speech mode in the live round timer itself." Added
+  `round/word-count-speech-mode.ts` (limit resolution, mode state, store
+  round-trip through the existing `wordCountRounds` store),
+  `hooks/useWordCountSpeechMode.ts`, and `debate-timer`'s
+  `SpeechWordCounter`, wiring a word-limit toggle into `SpeechHeaderBar`
+  that replaces the live countdown with a `words / limit` meter. Merged as
+  [PR #209](https://github.com/debate/debate-ai.com/pull/209). Vitest-covered
+  in `packages/debate-round/test/word-count-speech-mode.test.ts` (18 tests).
+  Verified: `bun run test`, `bun run typecheck`, `bun run build:web` all
+  pass. Correction to this PR's own docs: `docs/features/word-count-rounds.md`
+  had flagged "the mobile `FlowPageHeader` countdown is unchanged" as a known
+  gap, but `FlowPageHeader.tsx` is dead code — it is not imported or rendered
+  anywhere in the app. The component actually used for both desktop and
+  mobile (via its `onMobileMenuClick` prop, wired in `DebateRoundPanel.tsx`
+  whenever `state.isMobile`) is `SpeechHeaderBar` itself, which already
+  renders the word-limit toggle and `SpeechWordCounter` in every layout mode
+  (split view and spreadsheet view alike). So the mobile experience already
+  has the word-limit meter; no further follow-up is needed on this idea.
+- **Daily Best Card Challenge — persisted announcements.**
 - **Daily Best Card Challenge — persisted announcements.**
   [PR #192](https://github.com/debate/debate-ai.com/pull/192).
   Closes follow-up (b) under the "🕵️ Daily Best Card Challenge" bullet in
