@@ -5,10 +5,10 @@
 
 ## Daily Quests and Targets — streak/reward layer on the quest board
 
-**Status:** In Progress
+**Status:** In Progress (implementation complete; awaiting CI)
 **Source:** TODO.md Research Crowdsourcing Organizer Features — "🎯 Daily Quests and Targets" bullet, follow-up (c): "a streak/reward layer once the Gamified Quests idea's streak logic is composed in"
 **Branch:** `claude/practical-allen-ouuvtn`
-**PR:** Not created yet
+**PR:** https://github.com/debate/debate-ai.com/pull/217
 **Started:** 2026-08-18
 
 ### Goal
@@ -52,8 +52,14 @@ requiring a trip to the separate `/cards/streaks` roster.
 - [x] Update tracker status and checkboxes
 
 ### Remaining work
-- Open the pull request and update this entry's PR link, then move to Completed once CI is green.
+- Wait for CI on PR #217. The repo's Vercel deployment check is currently
+  failing with an account-wide daily rate limit ("Deployment rate limited —
+  retry in 24 hours"), the same infra issue that hit PR #209 earlier today —
+  unrelated to this diff, nothing to fix in code. The `Vitest + coverage`
+  GitHub Actions check and the Cloudflare Workers build were still running
+  as of this update.
 - Not verified in a browser: covered by Vitest at the logic level only; `bun run dev:web` was not exercised this run.
+- Move to Completed once CI settles (or once the only failure is confirmed to be the unrelated Vercel rate limit).
 
 ### Completed
 - **Word-Count-Only Speech Format — live-round word-limited speech mode.**
