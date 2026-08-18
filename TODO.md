@@ -3,6 +3,66 @@
 
 ### In progress
 
+## Word-Count-Only Speech Format — live-round word-limited speech mode
+
+**Status:** In Progress
+**Source:** TODO.md Product Feature Ideas — idea #2 "Word-Count-Only Speech Format", follow-up (b): "extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode in the live round timer itself"
+**Branch:** `claude/practical-allen-grn1m6`
+**PR:** https://github.com/debate/debate-ai.com/pull/209
+**Started:** 2026-08-18
+
+### Goal
+Let a debater run a live round in `/debate` under a word limit instead of a
+countdown: the speech header bar's timer is replaced by a live word-count
+meter for the current speech, whose text is typed in place and persisted
+through the existing `state/wordCountRounds.ts` store so the same round shows
+up on `/word-count`.
+
+### Scope
+- A pure, Vitest-covered word-limit resolver + mode-state module in `debate-round`
+- A word limit derived from the live timed style's speech length when the
+  speech has no `wordCountStyles` entry (`estimateWordLimit`)
+- A `SpeechWordCounter` component in `debate-timer` mirroring `SpeechTimer`'s compact shape
+- A word-limit toggle in `SpeechHeaderBar` that swaps the countdown for the meter
+- Persistence through the existing `wordCountRounds` store (no new storage key)
+
+### Non-goals
+- Audio/speech-to-text word counting
+- Changing the timed-format countdown behavior when the mode is off
+- A new persisted storage key or a second source of truth for round text
+
+### Acceptance criteria
+- [x] A live speech resolves a word limit from `wordCountStyles` when its name matches, else from the timed speech's minutes
+- [x] Typing in word-limit mode updates count/remaining/over-limit status live
+- [x] Speech text typed in the live round is persisted to, and read back from, `wordCountRounds`
+- [x] A round saved from the live header bar appears on `/word-count`
+- [x] Vitest coverage is added for the resolver, mode state, and store round-trip
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Web build passes
+- [x] Documentation updated (`docs/features/word-count-rounds.md`)
+
+### Implementation plan
+- [x] Inspect `word-count-format.ts`, `wordCountRounds.ts`, `useTimerState`, `SpeechTimer`, `SpeechHeaderBar`
+- [x] Add `round/word-count-speech-mode.ts` (limit resolution, mode state, store round-trip)
+- [x] Add focused Vitest success-path coverage
+- [x] Add focused edge-case coverage (unknown speech, no limit source, over-limit, corrupt store)
+- [x] Add `SpeechWordCounter` to `debate-timer` and export it
+- [x] Wire a word-limit toggle + meter into `SpeechHeaderBar`
+- [x] Run focused tests, typecheck, full suite, and the web build
+- [x] Update docs
+- [x] Commit and push the branch
+- [x] Create or update the pull request
+- [x] Update tracker status and checkboxes
+
+### Remaining work
+- Wait for CI on PR #209 to pass; nothing else blocks this task.
+- Not verified in a browser: the mode is covered by Vitest at the logic and
+  store level only; `bun run dev:web` was not exercised this run.
+- Follow-up (not started): surface the live meter in the mobile/`FlowPageHeader`
+  compact timer display as well; it currently only replaces the
+  `SpeechHeaderBar` countdown.
+
 ### Completed
 - **Gamified Quests — daily mission-check trigger UI.**
   Closes follow-up (a) under the "🎮 Gamified Quests" bullet in the
@@ -4415,7 +4475,7 @@
 
 1. **CX NDCA Standings** — Add a standings dashboard modeled around NDCA-style results, allowing users to browse qualification points, rankings, cumulative records, and tournament performance history across the season. Tabroom already supports tournament results and NDCA-points configuration, so this could expose those data in a more searchable, user-friendly analytics view. [tabroom](https://www.tabroom.com/index/tourn/index.mhtml?tourn_id=26597) _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `computeTournamentPoints`/`buildTeamStanding`/`buildStandings`/`rankStandings`/`getQualifiedTeams` for turning per-team tournament results into ranked, cumulative season standings against a configurable (not authoritative) points table. A second slice, `tournamentResults.ts` (see Tracker Status above), now persists recorded `TournamentResult`s to localStorage. A third slice, `StandingsPanel` (see Tracker Status above, "CX NDCA Standings — standings dashboard UI"), now lets a user record a result and renders every persisted result's ranked standings at `/standings`, closing follow-up (c). Follow-ups: (a) a Tabroom/NDCA scraper that produces real `TournamentResult` records per team (today's `sync-tournaments.ts` only fetches tournament names), (b) a real, circuit-sourced `QualificationPointsTable` instead of the illustrative default. Neither of these is started._
 
-2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slices done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. A second slice, `wordCountRounds.ts` (see Tracker Status above, "Word-Count-Only Speech Format — persisted word-count round results"), now persists a round's chosen style and submitted speech text to localStorage. A third slice, `WordCountRoundsPanel` (see Tracker Status above, "Word-Count-Only Speech Format — submission UI"), now renders a submission form at `/word-count` with a live per-speech word-count readout, closing follow-up (a). Follow-up (b), extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode in the live round timer itself, remains open — not started._
+2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slices done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. A second slice, `wordCountRounds.ts` (see Tracker Status above, "Word-Count-Only Speech Format — persisted word-count round results"), now persists a round's chosen style and submitted speech text to localStorage. A third slice, `WordCountRoundsPanel` (see Tracker Status above, "Word-Count-Only Speech Format — submission UI"), now renders a submission form at `/word-count` with a live per-speech word-count readout, closing follow-up (a). A fourth slice (see Tracker Status above, "Word-Count-Only Speech Format — live-round word-limited speech mode") added `round/word-count-speech-mode.ts`, `hooks/useWordCountSpeechMode.ts`, and `debate-timer`'s `SpeechWordCounter`, wiring a word-limit toggle into `SpeechHeaderBar` that replaces the live countdown with a `words / limit` meter whose text persists through the same `wordCountRounds` store as `/word-count`, closing follow-up (b). A speech with no authored `wordCountStyles` limit falls back to `estimateWordLimit` applied to the live timed style's speech length, so the mode works for every debate style. No follow-ups remain open on this idea; the mobile `FlowPageHeader` countdown is unchanged, as noted in `docs/features/word-count-rounds.md`._
 
 3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildAiVersusSpeechOrder`/`getNextSpeechSlot`/`isUsersTurn`/`validateSpeechSubmission`/`buildAiResponseRequest` for turning a `debate-timer` format + chosen side into an ordered, speaker-tagged turn sequence, validating a submitted speech against whose turn it is, and building a structured (non-AI-calling) request describing the AI's next speech. A second slice, `aiVersusRounds.ts` (see Tracker Status above, "Online Debate Versus AI — submitted-round persistence"), now persists a round's format, side, and submitted speeches to localStorage. A third slice, `AiVersusRoundPanel` (see Tracker Status above, "Online Debate Versus AI — round-setup + submission UI"), now renders a round-setup + submission UI at `/versus-ai`, closing follow-up (b). A fourth slice (see Tracker Status above, "Online Debate Versus AI — real AI speech-generation call") added `round/ai-versus-speech-ai.ts` and `round/ai-versus-speech-client.ts`, wiring a "Generate AI speech" action into `AiVersusRoundPanel` that calls the existing `/api/reason-ai` Anthropic proxy to produce the AI's next speech text, closing follow-up (a). No follow-ups remain open on this idea; speech submission stays text-only, as noted in `docs/features/ai-versus-rounds.md`._
 
