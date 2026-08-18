@@ -168,6 +168,7 @@ export default function ReasonEditorPage() {
                 contentKey={String(selected.id)}
                 title={selected.title}
                 showAiTools
+                showOutline
                 onChange={(html) => updateContent(selected.id, html)}
               />
             </div>

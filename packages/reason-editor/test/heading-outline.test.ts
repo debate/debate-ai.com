@@ -5,6 +5,7 @@ import {
   getCollapsedRanges,
   getVisibleHeadingIds,
   isPositionCollapsed,
+  toggleCollapsedHeadingId,
   type OutlineHeading,
 } from "../src/engine/outline/heading-outline";
 
@@ -139,5 +140,22 @@ describe("getCollapsedRanges / isPositionCollapsed", () => {
     ]);
     const trailingOutline = buildHeadingOutline(trailingDoc);
     expect(getCollapsedRanges(trailingDoc, trailingOutline, ["only"])).toEqual([]);
+  });
+});
+
+describe("toggleCollapsedHeadingId", () => {
+  it("appends an id that isn't already collapsed", () => {
+    expect(toggleCollapsedHeadingId([], "off")).toEqual(["off"]);
+    expect(toggleCollapsedHeadingId(["case"], "off")).toEqual(["case", "off"]);
+  });
+
+  it("removes an id that is already collapsed", () => {
+    expect(toggleCollapsedHeadingId(["case", "off"], "off")).toEqual(["case"]);
+  });
+
+  it("does not mutate the input array", () => {
+    const input = ["off"];
+    toggleCollapsedHeadingId(input, "off");
+    expect(input).toEqual(["off"]);
   });
 });

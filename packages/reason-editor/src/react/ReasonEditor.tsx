@@ -24,6 +24,7 @@ import { EditorContent as TiptapEditorContent, useEditor } from "@tiptap/react";
 import { buildSchemaExtensions } from "./schema-extensions.js";
 import { ReasonCore } from "./reason-core-extension.js";
 import { Toolbar, type ToolbarCustomization } from "./Toolbar.js";
+import { OutlineNavPanel } from "./OutlineNavPanel.js";
 import {
   cmirToDocJSON,
   docJSONToCmir,
@@ -84,6 +85,14 @@ export interface ReasonEditorProps {
   className?: string;
   /** Focus the editor on mount. */
   autoFocus?: boolean;
+  /** Show a heading nav/outline panel alongside the document that lets a
+   *  reader jump to and collapse/expand H1-H4 sections. Defaults to false.
+   *  Requires `documentId` to persist the collapsed-heading selection;
+   *  falls back to `contentKey` when `documentId` is omitted. */
+  showOutline?: boolean;
+  /** Identity of the current document for the outline panel's persisted
+   *  collapsed-heading selection. Falls back to `contentKey`. */
+  documentId?: string;
 }
 
 export const ReasonEditor = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
@@ -100,6 +109,8 @@ export const ReasonEditor = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
       toolbar,
       className,
       autoFocus = false,
+      showOutline = false,
+      documentId,
     },
     ref,
   ) {
@@ -194,7 +205,14 @@ export const ReasonEditor = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
             {toolbar?.children}
           </Toolbar>
         )}
-        <TiptapEditorContent editor={editor} className="reason-editor-content" />
+        {showOutline ? (
+          <div className="reason-editor-outline-nav-wrapper">
+            <OutlineNavPanel editor={editor ?? null} documentId={documentId ?? contentKey ?? ""} />
+            <TiptapEditorContent editor={editor} className="reason-editor-content" />
+          </div>
+        ) : (
+          <TiptapEditorContent editor={editor} className="reason-editor-content" />
+        )}
       </div>
     );
   },

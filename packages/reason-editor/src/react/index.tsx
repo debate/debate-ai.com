@@ -29,6 +29,8 @@ export { ReasonEditor } from "./ReasonEditor.js";
 export type { LexicalEditorHandle, ReasonEditorProps } from "./ReasonEditor.js";
 export { Toolbar } from "./Toolbar.js";
 export type { ToolbarCustomization } from "./Toolbar.js";
+export { OutlineNavPanel } from "./OutlineNavPanel.js";
+export type { OutlineNavPanelProps } from "./OutlineNavPanel.js";
 export {
   buildSchemaExtensions,
   nodeExtensionFromSpec,
