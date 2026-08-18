@@ -5,6 +5,7 @@
 
 ### Completed
 - **Daily Best Card Challenge — persisted announcements + banner UI.**
+  [PR #192](https://github.com/debate/debate-ai.com/pull/192).
   Closes follow-ups (b) and (c) under the "🕵️ Daily Best Card Challenge"
   bullet in Research Crowdsourcing Organizer Features — "a scheduled job or
   view that persists/announces the day's winner" and "a challenge
