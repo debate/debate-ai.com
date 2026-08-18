@@ -8,7 +8,7 @@
 **Status:** In Progress
 **Source:** TODO.md Product Feature Ideas — idea #2 "Word-Count-Only Speech Format", follow-up (b): "extending `useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech mode in the live round timer itself"
 **Branch:** `claude/practical-allen-grn1m6`
-**PR:** Not created yet
+**PR:** https://github.com/debate/debate-ai.com/pull/209
 **Started:** 2026-08-18
 
 ### Goal
@@ -51,12 +51,12 @@ up on `/word-count`.
 - [x] Wire a word-limit toggle + meter into `SpeechHeaderBar`
 - [x] Run focused tests, typecheck, full suite, and the web build
 - [x] Update docs
-- [ ] Commit and push the branch
-- [ ] Create or update the pull request
-- [ ] Update tracker status and checkboxes
+- [x] Commit and push the branch
+- [x] Create or update the pull request
+- [x] Update tracker status and checkboxes
 
 ### Remaining work
-- Open a PR for the branch.
+- Wait for CI on PR #209 to pass; nothing else blocks this task.
 - Not verified in a browser: the mode is covered by Vitest at the logic and
   store level only; `bun run dev:web` was not exercised this run.
 - Follow-up (not started): surface the live meter in the mobile/`FlowPageHeader`
