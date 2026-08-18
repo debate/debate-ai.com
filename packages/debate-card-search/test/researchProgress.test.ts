@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildPersistedLeaderboardWithCompletedTasks,
   buildPersistedResearchProgressBoard,
   completeAndRecordResearchTask,
   listCompletedTaskHistory,
@@ -148,5 +149,46 @@ describe("buildPersistedResearchProgressBoard", () => {
     expect(board[0].contributionStats?.contributionCount).toBe(1);
     expect(board[0].totalAssignedTasks).toBe(0);
     expect(board[0].topics).toEqual([]);
+  });
+});
+
+describe("buildPersistedLeaderboardWithCompletedTasks", () => {
+  it("returns an empty leaderboard when nothing is stored", () => {
+    expect(buildPersistedLeaderboardWithCompletedTasks()).toEqual([]);
+  });
+
+  it("folds a contributor's persisted completed-task count into their leaderboard row", () => {
+    saveContribution(ALICE_CARD);
+    saveRoutedTaskQueue(AI_QUEUE);
+    completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+    const leaderboard = buildPersistedLeaderboardWithCompletedTasks();
+
+    expect(leaderboard).toHaveLength(1);
+    expect(leaderboard[0].contributorId).toBe("alice");
+    expect(leaderboard[0].completedTaskCount).toBe(1);
+  });
+
+  it("counts every completed task across topics for the same contributor", () => {
+    saveContribution(ALICE_CARD);
+    saveRoutedTaskQueue(AI_QUEUE);
+    completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+    completeAndRecordResearchTask("topic-ai", "Impacts", "2026-01-06T00:00:00Z");
+
+    expect(buildPersistedLeaderboardWithCompletedTasks()[0].completedTaskCount).toBe(2);
+  });
+
+  it("includes a contributor who has completed tasks but no scored contribution", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+    const leaderboard = buildPersistedLeaderboardWithCompletedTasks();
+
+    expect(leaderboard).toHaveLength(1);
+    expect(leaderboard[0]).toMatchObject({
+      contributorId: "alice",
+      contributionCount: 0,
+      completedTaskCount: 1,
+    });
   });
 });

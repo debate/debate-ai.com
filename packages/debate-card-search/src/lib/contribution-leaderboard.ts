@@ -6,10 +6,16 @@
  * idea #11 helpfulness-scoring slice in `community-rating.ts` — attributes
  * each scored `CommunityContribution` to a `contributorId` and aggregates
  * per-contributor totals, averages, and outlier counts into a ranked
- * leaderboard. This is the first slice only — it works entirely off
- * already-collected contributions passed in by the caller; it doesn't track
- * "completed tasks" (no task system exists in this repo today), persist
- * standings, or render a leaderboard UI. See the follow-ups noted in
+ * leaderboard.
+ *
+ * `completedTaskCount` closes the "(b) a 'completed tasks' signal once a
+ * research-task system exists" follow-up: `buildLeaderboard` now takes an
+ * optional `completedTaskCounts` map (contributorId → count) and folds it
+ * into each row, including a task-only contributor who has completed tasks
+ * but no scored contribution yet — mirroring `research-progress.ts`'s
+ * `buildResearchProgressBoard` "union of both signals" convention. It still
+ * works entirely off caller-supplied data; `state/contributions.ts` supplies
+ * the real, persisted counts. See the remaining follow-ups noted in
  * TODO.md.
  *
  * @module lib/contribution-leaderboard
@@ -46,6 +52,8 @@ export interface ContributorStats {
   bestHelpfulnessScore: number;
   /** Count of this contributor's contributions flagged as popularity-only outliers. */
   popularityOnlyOutlierCount: number;
+  /** Count of this contributor's completed research tasks (from the Research Task Routing/Progress Tracking task-completion history). 0 when no completed-task data was supplied. */
+  completedTaskCount: number;
 }
 
 function round1(value: number): number {
@@ -80,6 +88,7 @@ export function buildContributorStats(
   contributorId: string,
   contributions: CommunityContribution[],
   weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+  completedTaskCount: number = 0,
 ): ContributorStats {
   if (contributions.length === 0) {
     throw new Error(`buildContributorStats: contributor "${contributorId}" has no contributions`);
@@ -102,24 +111,56 @@ export function buildContributorStats(
     bestContributionId: best.contributionId,
     bestHelpfulnessScore: best.helpfulnessScore,
     popularityOnlyOutlierCount: breakdowns.filter((breakdown) => breakdown.isPopularityOnlyOutlier).length,
+    completedTaskCount,
+  };
+}
+
+/**
+ * Builds a zeroed-out leaderboard row for a contributor who has completed
+ * research tasks but has no scored contribution yet — `buildContributorStats`
+ * throws on an empty contribution list, since an empty-average entry isn't
+ * meaningful there, but a task-only contributor still belongs on this
+ * leaderboard once "completed tasks" is one of the signals it tracks.
+ */
+function buildTaskOnlyContributorStats(contributorId: string, completedTaskCount: number): ContributorStats {
+  return {
+    contributorId,
+    contributionCount: 0,
+    totalHelpfulnessScore: 0,
+    averageHelpfulnessScore: 0,
+    bestContributionId: "",
+    bestHelpfulnessScore: 0,
+    popularityOnlyOutlierCount: 0,
+    completedTaskCount,
   };
 }
 
 /**
  * Builds a ranked leaderboard from a flat list of attributed contributions:
- * groups by contributor, scores and aggregates each group, then sorts by
- * `totalHelpfulnessScore` descending (so contributors with more numerous,
- * well-received contributions rank above single lucky hits), tie-broken by
- * `contributorId` for a stable, deterministic order.
+ * groups by contributor, scores and aggregates each group (folding in that
+ * contributor's completed-task count from `completedTaskCounts`, if any),
+ * then sorts by `totalHelpfulnessScore` descending (so contributors with
+ * more numerous, well-received contributions rank above single lucky hits),
+ * tie-broken by `contributorId` for a stable, deterministic order. A
+ * contributor present only in `completedTaskCounts` (completed tasks, no
+ * scored contribution yet) still gets a row, ranked at the bottom of any
+ * tie on `totalHelpfulnessScore` by the same tie-break.
  */
 export function buildLeaderboard(
   contributions: AttributedContribution[],
   weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+  completedTaskCounts: Map<string, number> = new Map(),
 ): ContributorStats[] {
   const byContributor = groupContributionsByContributor(contributions);
   const stats = Array.from(byContributor.entries()).map(([contributorId, group]) =>
-    buildContributorStats(contributorId, group, weights),
+    buildContributorStats(contributorId, group, weights, completedTaskCounts.get(contributorId) ?? 0),
   );
+
+  for (const [contributorId, completedTaskCount] of completedTaskCounts) {
+    if (!byContributor.has(contributorId) && completedTaskCount > 0) {
+      stats.push(buildTaskOnlyContributorStats(contributorId, completedTaskCount));
+    }
+  }
 
   return stats.sort(
     (a, b) => b.totalHelpfulnessScore - a.totalHelpfulnessScore || a.contributorId.localeCompare(b.contributorId),

@@ -35,6 +35,7 @@ function makeStats(overrides: Partial<ContributorStats> & { contributorId: strin
     bestContributionId: "none",
     bestHelpfulnessScore: 0,
     popularityOnlyOutlierCount: 0,
+    completedTaskCount: 0,
     ...overrides,
   };
 }

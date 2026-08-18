@@ -37,6 +37,7 @@ import {
   type ContributorProgress,
   type TrackedTopicAssignment,
 } from "../lib/research-progress";
+import { buildLeaderboard, type ContributorStats } from "../lib/contribution-leaderboard";
 import { DEFAULT_HELPFULNESS_WEIGHTS, type HelpfulnessWeights } from "../lib/community-rating";
 import type { RoutedAssignment } from "../lib/research-task-routing";
 import { listContributions } from "./contributions";
@@ -120,4 +121,30 @@ export function buildPersistedResearchProgressBoard(
   );
 
   return buildResearchProgressBoard(listContributions(), [...completed, ...active], weights);
+}
+
+/**
+ * Builds the Contribution Leaderboard with each contributor's completed
+ * research-task count folded in — closes the "(b) a 'completed tasks'
+ * signal once a research-task system exists" follow-up named under the
+ * "Contribution Leaderboard" bullet in TODO.md. Composes
+ * `state/contributions.ts`'s persisted contribution list with this store's
+ * own persisted completed-task history (grouped by `contributorId`) through
+ * `contribution-leaderboard.ts`'s pure `buildLeaderboard`. Lives here,
+ * rather than alongside `buildPersistedLeaderboard` in
+ * `state/contributions.ts`, because this store is the one that already
+ * reads the completed-task history — `state/contributions.ts` doesn't
+ * depend on it, and importing it there would create a circular import
+ * between the two state modules (this module already imports
+ * `listContributions`).
+ */
+export function buildPersistedLeaderboardWithCompletedTasks(
+  weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+): ContributorStats[] {
+  const completedTaskCounts = new Map<string, number>();
+  for (const record of readAll()) {
+    const contributorId = record.assignment.contributorId;
+    completedTaskCounts.set(contributorId, (completedTaskCounts.get(contributorId) ?? 0) + 1);
+  }
+  return buildLeaderboard(listContributions(), weights, completedTaskCounts);
 }

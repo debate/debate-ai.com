@@ -19,6 +19,7 @@ function makeStats(overrides: Partial<ContributorStats> = {}): ContributorStats 
     bestContributionId: "card-1",
     bestHelpfulnessScore: 0,
     popularityOnlyOutlierCount: 0,
+    completedTaskCount: 0,
     ...overrides,
   };
 }
