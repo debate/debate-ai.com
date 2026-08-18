@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildJudgeParadigmSelectionsPanelView,
   deleteJudgeParadigmSelection,
   getJudgeParadigmSelection,
   listJudgeParadigmSelections,
@@ -100,5 +101,27 @@ describe("deleteJudgeParadigmSelection", () => {
     saveJudgeParadigmSelection(ROUND_2_CUSTOM);
     deleteJudgeParadigmSelection("missing");
     expect(listJudgeParadigmSelections()).toEqual([ROUND_2_CUSTOM]);
+  });
+});
+
+describe("buildJudgeParadigmSelectionsPanelView", () => {
+  it("returns an empty view when nothing is stored", () => {
+    expect(buildJudgeParadigmSelectionsPanelView()).toEqual([]);
+  });
+
+  it("sorts every persisted selection by roundId", () => {
+    saveJudgeParadigmSelection(ROUND_2_CUSTOM);
+    saveJudgeParadigmSelection(ROUND_1_BUILTIN);
+
+    expect(buildJudgeParadigmSelectionsPanelView()).toEqual([ROUND_1_BUILTIN, ROUND_2_CUSTOM]);
+  });
+
+  it("does not mutate the underlying stored order", () => {
+    saveJudgeParadigmSelection(ROUND_2_CUSTOM);
+    saveJudgeParadigmSelection(ROUND_1_BUILTIN);
+
+    buildJudgeParadigmSelectionsPanelView();
+
+    expect(listJudgeParadigmSelections()).toEqual([ROUND_2_CUSTOM, ROUND_1_BUILTIN]);
   });
 });

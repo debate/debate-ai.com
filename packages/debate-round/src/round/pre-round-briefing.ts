@@ -13,6 +13,15 @@
  * each missing piece renders as an explicit "no data on file" line rather
  * than being silently omitted. It isn't wired into any round-information
  * page UI yet.
+ *
+ * `buildPreRoundBriefingFromStores` is a second, thin slice that closes the
+ * "(c) wiring `buildPreRoundBriefing` to look up a persisted profile through
+ * this store" follow-up named under both the "Opponent Team Profiles" and
+ * "Judge Profiles" bullets in TODO.md's Research Crowdsourcing Organizer
+ * Features list — it resolves `opponentProfile`/`judgeProfile` from the
+ * existing `opponentTeamProfiles.ts`/`judgeProfiles.ts` persistence stores by
+ * id when the caller doesn't already have the profile object on hand, then
+ * delegates to the pure `buildPreRoundBriefing` above.
  */
 
 import type {
@@ -21,8 +30,10 @@ import type {
   OpponentTeamProfile,
 } from "debate-data-sync/src/rankings/opponent-team-profile";
 import { buildOpponentScoutingSummary } from "debate-data-sync/src/rankings/opponent-team-profile";
+import { getOpponentTeamProfile } from "debate-data-sync/src/state/opponentTeamProfiles";
 import type { JudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
 import { buildJudgeTendencySummary } from "debate-speech-writer/src/judge/judge-profile";
+import { getJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
 
 /** Basic details about the upcoming round, as the caller already knows them. */
 export interface RoundEventInfo {
@@ -131,6 +142,30 @@ export function buildPreRoundBriefing(input: BuildPreRoundBriefingInput): PreRou
   ];
 
   return { event: input.event, priorMeetings, sections };
+}
+
+export interface BuildPreRoundBriefingFromStoresInput extends BuildPreRoundBriefingInput {
+  /** The judge's id in the `judgeProfiles.ts` store, used when `judgeProfile` isn't already supplied. */
+  judgeId?: string;
+}
+
+/**
+ * Same as `buildPreRoundBriefing`, but resolves `opponentProfile`/
+ * `judgeProfile` from the persisted `opponentTeamProfiles.ts`/
+ * `judgeProfiles.ts` stores by `opponentTeamId`/`judgeId` whenever the
+ * caller doesn't already supply the profile object directly. An explicitly
+ * supplied `opponentProfile`/`judgeProfile` always takes precedence over a
+ * store lookup.
+ */
+export function buildPreRoundBriefingFromStores(
+  input: BuildPreRoundBriefingFromStoresInput,
+): PreRoundBriefing {
+  const opponentProfile =
+    input.opponentProfile ??
+    (input.opponentTeamId ? getOpponentTeamProfile(input.opponentTeamId) : undefined);
+  const judgeProfile = input.judgeProfile ?? (input.judgeId ? getJudgeProfile(input.judgeId) : undefined);
+
+  return buildPreRoundBriefing({ ...input, opponentProfile, judgeProfile });
 }
 
 /**

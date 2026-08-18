@@ -1,0 +1,166 @@
+/**
+ * @fileoverview Common Argument Library folder/collection browser — the UI
+ * follow-up named "(b) a folder/collection browser UI" under the "📚 Common
+ * Argument Library" bullet in TODO.md.
+ *
+ * Reads the persisted evidence repository via
+ * `state/evidenceLibraryEntries.ts`'s `buildPersistedArgumentLibrary` (itself
+ * a thin composition of `argument-library.ts`'s pure `buildArgumentLibrary`
+ * against the persisted store) and renders it as topic folders (each split
+ * into case-area subgroups) plus cross-cutting tag collections, reusing the
+ * existing organizing logic directly rather than introducing new logic here.
+ *
+ * @module panels/ArgumentLibraryPanel
+ */
+
+"use client"
+
+import { useEffect, useState } from "react"
+import { Badge } from "debate-ui/src/primitives/badge"
+import { Button } from "debate-ui/src/primitives/button"
+import { buildPersistedArgumentLibrary } from "../state/evidenceLibraryEntries"
+import { buildLibrarySummaryText, filterCardsByTags } from "../lib/argument-library"
+import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
+
+/**
+ * Renders the Common Argument Library: every persisted evidence entry
+ * organized into topic folders (split into case-area subgroups) and
+ * cross-cutting tag collections, with an optional tag filter.
+ *
+ * Reads localStorage on mount only (client-side), so it renders an empty
+ * state during SSR/hydration rather than throwing.
+ */
+export function ArgumentLibraryPanel() {
+  const [library, setLibrary] = useState<ArgumentLibrary | null>(null)
+  const [activeTags, setActiveTags] = useState<string[]>([])
+
+  useEffect(() => {
+    setLibrary(buildPersistedArgumentLibrary())
+  }, [])
+
+  if (library === null) {
+    return <div className="p-6 text-sm text-muted-foreground">Loading argument library…</div>
+  }
+
+  if (library.topicFolders.length === 0) {
+    return (
+      <div className="p-6 text-center text-sm text-muted-foreground">
+        No argument library entries yet. The library fills in as cards and reusable blocks are
+        submitted to the shared evidence repository.
+      </div>
+    )
+  }
+
+  function toggleTag(tag: string) {
+    setActiveTags((current) =>
+      current.includes(tag) ? current.filter((existing) => existing !== tag) : [...current, tag],
+    )
+  }
+
+  const allCards = library.topicFolders.flatMap((folder) =>
+    folder.caseAreas.flatMap((group) => group.cards),
+  )
+  const filteredCards = activeTags.length > 0 ? filterCardsByTags(allCards, activeTags, "any") : null
+
+  return (
+    <div className="p-4 sm:p-6 space-y-4">
+      <div>
+        <h1 className="mb-1 text-xl font-semibold text-foreground">Common Argument Library</h1>
+        <p className="text-sm text-muted-foreground">{buildLibrarySummaryText(library)}</p>
+      </div>
+
+      {library.tagCollections.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          {library.tagCollections.map((collection) => (
+            <Button
+              key={collection.tag}
+              size="sm"
+              variant={activeTags.includes(collection.tag) ? "default" : "outline"}
+              onClick={() => toggleTag(collection.tag)}
+            >
+              {collection.tag} ({collection.cards.length})
+            </Button>
+          ))}
+          {activeTags.length > 0 && (
+            <Button size="sm" variant="ghost" onClick={() => setActiveTags([])}>
+              Clear filter
+            </Button>
+          )}
+        </div>
+      )}
+
+      {filteredCards ? (
+        <TagFilterResults cards={filteredCards} tags={activeTags} />
+      ) : (
+        <div className="space-y-4">
+          {library.topicFolders.map((folder) => (
+            <div key={folder.topic} className="rounded-lg border border-border p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="font-medium text-foreground">{folder.topic}</span>
+                <Badge variant="outline">
+                  {folder.cardCount} card{folder.cardCount === 1 ? "" : "s"}
+                </Badge>
+              </div>
+              <div className="space-y-3">
+                {folder.caseAreas.map((group) => (
+                  <div key={group.caseArea}>
+                    <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">
+                      {group.caseArea}
+                    </div>
+                    <div className="space-y-1.5">
+                      {group.cards.map((card) => (
+                        <LibraryCardRow key={card.id} card={card} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TagFilterResults({ cards, tags }: { cards: LibraryCard[]; tags: string[] }) {
+  return (
+    <div className="space-y-2">
+      <p className="text-sm text-muted-foreground">
+        {cards.length} card{cards.length === 1 ? "" : "s"} tagged {tags.join(", ")}
+      </p>
+      {cards.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+          No cards match this tag filter.
+        </div>
+      ) : (
+        <div className="space-y-1.5">
+          {cards.map((card) => (
+            <LibraryCardRow key={card.id} card={card} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function LibraryCardRow({ card }: { card: LibraryCard }) {
+  return (
+    <div className="rounded-md border border-border p-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-sm font-medium text-foreground">{card.argBlock}</span>
+        <Badge variant="outline">{card.topic}</Badge>
+        <Badge variant="outline">{card.caseArea}</Badge>
+      </div>
+      {card.tags.length > 0 && (
+        <div className="mt-1 flex flex-wrap gap-1">
+          {card.tags.map((tag) => (
+            <Badge key={tag} variant="secondary" className="text-xs">
+              {tag}
+            </Badge>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

@@ -64,6 +64,27 @@ export type {
   CollapsedRange,
 } from './outline/heading-outline.js';
 
+// Collapsed-heading persistence — stores which heading ids a document has
+// collapsed, so a nav panel can restore collapse state across sessions.
+export {
+  listCollapsedHeadingSelections,
+  getCollapsedHeadingSelection,
+  saveCollapsedHeadingSelection,
+  deleteCollapsedHeadingSelection,
+} from '../state/collapsedHeadings.js';
+export type { CollapsedHeadingSelection } from '../state/collapsedHeadings.js';
+
+// Collapsed-heading decoration plugin — hides a collapsed heading's
+// content in the live ProseMirror view (`OutlineNavPanel` drives this via
+// `setCollapsedHeadingIdsMeta`).
+export {
+  collapsedHeadingsPlugin,
+  collapsedHeadingsKey,
+  setCollapsedHeadingIdsMeta,
+  getCollapsedHeadingIds,
+} from './outline/collapsed-headings-plugin.js';
+export type { CollapsedHeadingsPluginState } from './outline/collapsed-headings-plugin.js';
+
 // Comment thread model — surfaced so the React shell and host app can
 // read/write comment threads alongside the document.
 export type {
@@ -74,3 +95,19 @@ export type {
 } from './comments-plugin.js';
 
 export { normalizeUnderlineMarks } from './named-style-normalizer-plugin.js';
+
+// Verbatim/Cardmirror compatibility shortcuts — condense-to-read-text and
+// short-cite insertion, reusing `debate-card-parser`'s pure helpers
+// against a live editor selection/document.
+export {
+  applyCondenseToHtml,
+  buildInsertShortCiteTransaction,
+} from './verbatim-shortcuts.js';
+
+// Move-heading-section command — reorders a heading's whole section
+// (heading through the next heading) up or down, reusing
+// `debate-card-parser`'s generic `moveOutlineNode` to validate the swap.
+export {
+  buildMoveHeadingSectionTransaction,
+  findHeadingAtPos,
+} from './outline/heading-move.js';

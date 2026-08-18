@@ -297,7 +297,7 @@ export function TeamSection({
       {/* Affirmative Team */}
       <div className="space-y-2">
         <h3 className="text-sm font-semibold text-blue-500 flex items-center gap-1.5">
-          <Image src={IconAffBubble} alt="" width={20} height={20} />
+          <Image src={IconAffBubble} alt="" width={20} height={20} unoptimized />
           {affName}
         </h3>
         <MyTeamCheckbox
@@ -346,7 +346,7 @@ export function TeamSection({
       {/* Negative Team */}
       <div className="space-y-2">
         <h3 className="text-sm font-semibold text-red-500 flex items-center gap-1.5">
-          <Image src={IconNegBubble} alt="" width={20} height={20} />
+          <Image src={IconNegBubble} alt="" width={20} height={20} unoptimized />
           {negName}
         </h3>
         <MyTeamCheckbox

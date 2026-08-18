@@ -123,10 +123,7 @@ function CardBody({ link, showLectures, count, isActive }: { link: QuickLink; sh
         <div className="flex items-center justify-center h-14 w-full">
           <div className={cn("rounded-md p-1.5 flex items-center justify-center transition-transform group-hover:scale-110", link.iconBg)}>
             {link.logo ? (
-              // `unoptimized` keeps bundled icons on their own URL instead of
-              // the /_vinext/image endpoint. next.config.mjs already declares
-              // images.unoptimized, but vinext's shim only reads the prop.
-              <Image src={link.logo} alt={link.title} width={48} height={48} unoptimized className="h-10 w-10 object-contain" />
+              <Image src={link.logo as string} alt={link.title} width={48} height={48} className="h-10 w-10 object-contain" unoptimized />
             ) : (
               link.icon
             )}

@@ -1,10 +1,14 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildBrainstormBoardsPanelView,
+  buildBrainstormBoardsPanelViewForTopic,
   deleteBrainstormIdea,
   getBrainstormIdea,
   listBrainstormIdeas,
   saveBrainstormIdea,
+  upvotePersistedBrainstormIdea,
 } from "../src/state/brainstormIdeas";
+import { saveTrackedArgument } from "../src/state/trackedArguments";
 import type { BrainstormIdea } from "../src/lib/team-brainstorm-assist";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -103,5 +107,102 @@ describe("deleteBrainstormIdea", () => {
     saveBrainstormIdea(IMPACT_IDEA);
     deleteBrainstormIdea("missing");
     expect(listBrainstormIdeas()).toEqual([IMPACT_IDEA]);
+  });
+});
+
+describe("buildBrainstormBoardsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildBrainstormBoardsPanelView()).toEqual([]);
+  });
+
+  it("groups persisted ideas into a board per argBlock + category, sorted for stable display", () => {
+    const toplineIdea: BrainstormIdea = {
+      id: "idea-3",
+      argBlock: "topicality",
+      category: "argument",
+      contributorId: "carol",
+      text: "Reasonability outweighs competing interpretations",
+      upvotes: 1,
+    };
+    saveBrainstormIdea(IMPACT_IDEA);
+    saveBrainstormIdea(SOLVENCY_IDEA);
+    saveBrainstormIdea(toplineIdea);
+
+    const boards = buildBrainstormBoardsPanelView();
+
+    expect(boards.map((board) => [board.argBlock, board.category])).toEqual([
+      ["solvency", "argument"],
+      ["solvency", "impact_framing"],
+      ["topicality", "argument"],
+    ]);
+    expect(boards[0].ideas.map((idea) => idea.id)).toEqual(["idea-1"]);
+    expect(boards[1].ideas.map((idea) => idea.id)).toEqual(["idea-2"]);
+    expect(boards[2].ideas.map((idea) => idea.id)).toEqual(["idea-3"]);
+  });
+});
+
+describe("buildBrainstormBoardsPanelViewForTopic", () => {
+  it("seeds a board for an under-covered tracked argument even with no submitted ideas", () => {
+    saveTrackedArgument({ id: "t1", topic: "Energy Policy", argBlock: "solvency" });
+
+    const boards = buildBrainstormBoardsPanelViewForTopic("Energy Policy");
+
+    expect(boards.map((board) => [board.argBlock, board.category])).toEqual([
+      ["solvency", "argument"],
+      ["solvency", "impact_framing"],
+    ]);
+    expect(boards[0].ideas).toEqual([]);
+    expect(boards[0].prompt.length).toBeGreaterThan(0);
+  });
+
+  it("populates a coverage-gap board with any ideas already submitted for it", () => {
+    saveTrackedArgument({ id: "t1", topic: "Energy Policy", argBlock: "solvency" });
+    saveBrainstormIdea(SOLVENCY_IDEA);
+
+    const boards = buildBrainstormBoardsPanelViewForTopic("Energy Policy");
+    const seeded = boards.find((board) => board.argBlock === "solvency" && board.category === "argument");
+
+    expect(seeded?.ideas.map((idea) => idea.id)).toEqual(["idea-1"]);
+  });
+
+  it("merges in boards that already have a submitted idea but aren't a coverage-gap seed", () => {
+    saveTrackedArgument({ id: "t1", topic: "Energy Policy", argBlock: "solvency" });
+    const toplineIdea: BrainstormIdea = {
+      id: "idea-3",
+      argBlock: "topicality",
+      category: "argument",
+      contributorId: "carol",
+      text: "Reasonability outweighs competing interpretations",
+      upvotes: 1,
+    };
+    saveBrainstormIdea(toplineIdea);
+
+    const boards = buildBrainstormBoardsPanelViewForTopic("Energy Policy");
+
+    expect(boards.map((board) => [board.argBlock, board.category])).toEqual([
+      ["solvency", "argument"],
+      ["solvency", "impact_framing"],
+      ["topicality", "argument"],
+    ]);
+    expect(boards[2].ideas.map((idea) => idea.id)).toEqual(["idea-3"]);
+  });
+
+  it("returns only non-seed boards with submitted ideas when the topic has no tracked arguments", () => {
+    saveBrainstormIdea(SOLVENCY_IDEA);
+    expect(buildBrainstormBoardsPanelViewForTopic("Untracked Topic")).toEqual(buildBrainstormBoardsPanelView());
+  });
+});
+
+describe("upvotePersistedBrainstormIdea", () => {
+  it("increments a stored idea's upvote count by one", () => {
+    saveBrainstormIdea(SOLVENCY_IDEA);
+    upvotePersistedBrainstormIdea("idea-1");
+    expect(getBrainstormIdea("idea-1")).toEqual({ ...SOLVENCY_IDEA, upvotes: 4 });
+  });
+
+  it("is a no-op when the id isn't stored", () => {
+    saveBrainstormIdea(SOLVENCY_IDEA);
+    upvotePersistedBrainstormIdea("missing");
+    expect(getBrainstormIdea("idea-1")).toEqual(SOLVENCY_IDEA);
   });
 });

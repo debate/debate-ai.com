@@ -64,3 +64,14 @@ export function saveJudgeParadigmSelection(selection: JudgeParadigmSelection): v
 export function deleteJudgeParadigmSelection(roundId: string): void {
   writeAll(readAll().filter((selection) => selection.roundId !== roundId));
 }
+
+/**
+ * Every persisted judge-paradigm selection, sorted by `roundId` for a
+ * stable display order — the "(b) a paradigm-picker UI ... that
+ * reads/writes through the persistence store" follow-up named under idea #5
+ * ("AI Judge Decision Modes") in TODO.md's Product Feature Ideas list. Used
+ * by `panels/JudgeParadigmPickerPanel.tsx`.
+ */
+export function buildJudgeParadigmSelectionsPanelView(): JudgeParadigmSelection[] {
+  return [...listJudgeParadigmSelections()].sort((a, b) => a.roundId.localeCompare(b.roundId));
+}

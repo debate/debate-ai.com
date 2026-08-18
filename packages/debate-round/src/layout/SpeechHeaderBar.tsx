@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { Round } from "debate-core/src/types/flow"
-import { FileText, Quote, ChevronLeft, ChevronRight, Menu, Radio } from "lucide-react"
+import { FileText, Quote, ChevronLeft, ChevronRight, Menu, Radio, Type } from "lucide-react"
 import type { ViewMode } from "../types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "debate-ui/src/primitives/button"
@@ -21,7 +21,9 @@ import {
 import { SpeechRecordingPlayer, SpeechRecordingMenu } from "debate-timer/src/recorder/SpeechRecordingPlayer"
 import { useFlowStore } from "../state/store"
 import { SpeechTimer } from "debate-timer/src/timers/SpeechTimer"
+import { SpeechWordCounter } from "debate-timer/src/timers/SpeechWordCounter"
 import { debateStyles, debateStyleMap } from "debate-timer/src/formats/debate-format-times"
+import { useWordCountSpeechMode } from "../hooks/useWordCountSpeechMode"
 import { settings } from "../state/settings"
 import { cn } from "debate-ui/src/lib/utils"
 
@@ -178,6 +180,14 @@ export function SpeechHeaderBar({
   const speechIndex = debateStyle?.timerSpeeches.findIndex((s: any) => s.name.toUpperCase() === speechName.toUpperCase()) ?? -1
   const safeSpeechIndex = speechIndex !== -1 ? speechIndex : 0
   const defaultTimeMs = debateStyle?.timerSpeeches[safeSpeechIndex]?.time * 60 * 1000 || 0
+
+  // -- Word-limit mode: replaces the countdown with a live word-count meter --
+  const wordCountMode = useWordCountSpeechMode(
+    currentFlow?.roundId,
+    speechName,
+    debateStyle?.timerSpeeches[safeSpeechIndex]?.time,
+  )
+  const showWordCounter = wordCountMode.enabled && wordCountMode.status !== undefined
 
   type RunState = { name: "paused" } | { name: "running"; startTime: number } | { name: "done" }
 
@@ -439,7 +449,37 @@ export function SpeechHeaderBar({
 
         {/* ── Timer & Controls ── */}
         <div className="flex items-center gap-1 shrink-0">
-          {!hideTimer && (
+          {!hideTimer && currentFlow?.roundId && (
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={wordCountMode.enabled ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => wordCountMode.setEnabled(!wordCountMode.enabled)}
+                    className="h-6 w-6 shrink-0"
+                  >
+                    <Type className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {wordCountMode.enabled ? "Use the speech timer" : "Use a word limit instead of a timer"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+
+          {!hideTimer && showWordCounter && (
+            <SpeechWordCounter
+              speechName={speechName}
+              wordLimit={wordCountMode.status!.wordLimit}
+              text={wordCountMode.text}
+              onTextChange={wordCountMode.setText}
+              compact={true}
+            />
+          )}
+
+          {!hideTimer && !showWordCounter && (
             <div className="scale-[0.8] origin-right translate-x-1">
               <SpeechTimer
                 speeches={debateStyle?.timerSpeeches || []}
