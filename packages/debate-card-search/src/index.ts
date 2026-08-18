@@ -20,4 +20,5 @@ export { TopicCoverageDashboardPanel } from "./panels/TopicCoverageDashboardPane
 export { PrepRoomPanel } from "./panels/PrepRoomPanel";
 export { CardScoringPanel } from "./panels/CardScoringPanel";
 export { QuestStreaksPanel } from "./panels/QuestStreaksPanel";
+export { DailyQuestsPanel } from "./panels/DailyQuestsPanel";
 export * from "./types";

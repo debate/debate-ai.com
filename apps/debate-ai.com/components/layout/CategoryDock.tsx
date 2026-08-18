@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell, ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type, ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School, FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation, ListChecks, Flame } from "lucide-react"
+import { UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell, ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type, ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School, FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation, ListChecks, Flame, CheckSquare } from "lucide-react"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
 import {
@@ -187,6 +187,10 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/streaks") }}>
         <Flame className="mr-2 h-4 w-4" />
         Quest Streaks
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/quests") }}>
+        <CheckSquare className="mr-2 h-4 w-4" />
+        Daily Quests
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>

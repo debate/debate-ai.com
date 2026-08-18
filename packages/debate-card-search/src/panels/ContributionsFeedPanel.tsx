@@ -28,6 +28,16 @@
  * half of idea #11's follow-up (c) — moderators can see which contributions
  * are popularity-driven directly in the feed.
  *
+ * Every submission now stamps `submittedAt: Date.now()` and an optional
+ * `argBlock`, closing a gap discovered while wiring the "🎯 Daily Quests and
+ * Targets" quest board (`state/dailyQuests.ts`): `lib/daily-quests.ts`,
+ * `state/dailyMissionResults.ts`, and `lib/group-challenges.ts` all key off
+ * a contribution's `submittedAt`/`argBlock`, but nothing here ever set
+ * them, so those features were permanently starved of real data. Existing
+ * contributions saved before this change remain without those fields —
+ * every downstream reader already treats them as optional/filterable
+ * rather than required.
+ *
  * @module panels/ContributionsFeedPanel
  */
 
@@ -62,9 +72,9 @@ const KIND_VARIANT: Record<ContributionKind, "default" | "secondary" | "outline"
   annotation: "outline",
 }
 
-type ContributionDraft = { contributorId: string; kind: ContributionKind }
+type ContributionDraft = { contributorId: string; kind: ContributionKind; argBlock: string }
 
-const EMPTY_DRAFT: ContributionDraft = { contributorId: "", kind: "card" }
+const EMPTY_DRAFT: ContributionDraft = { contributorId: "", kind: "card", argBlock: "" }
 
 /**
  * Renders the Contributions Feed: a form to submit a new contribution, plus
@@ -91,6 +101,7 @@ export function ContributionsFeedPanel() {
       setError("Contributor ID is required.")
       return
     }
+    const argBlock = draft.argBlock.trim()
     saveContribution({
       id: `${draft.kind}-${contributorId}-${Date.now()}`,
       contributorId,
@@ -99,6 +110,8 @@ export function ContributionsFeedPanel() {
       saves: 0,
       qualitySignals: [0.5],
       reviewerEndorsements: [],
+      submittedAt: Date.now(),
+      ...(argBlock ? { argBlock } : {}),
     })
     setError(null)
     setDraft(EMPTY_DRAFT)
@@ -160,6 +173,15 @@ export function ContributionsFeedPanel() {
                 </Button>
               ))}
             </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="contribution-argblock">Argument block (optional)</Label>
+            <Input
+              id="contribution-argblock"
+              value={draft.argBlock}
+              onChange={(e) => setDraft((prev) => ({ ...prev, argBlock: e.target.value }))}
+              placeholder="Solvency"
+            />
           </div>
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
