@@ -19,13 +19,24 @@
  * `recordPersistedTaskCompleted` "compose the mutation directly against the
  * persisted store" convention.
  *
+ * `buildPersistedContributionFeed` closes follow-up (a) named under both the
+ * "Contribution Leaderboard" bullet and idea #11 ("Community-Rated Summaries
+ * and Highlights") in TODO.md — "a real like/save/endorse UI" — by giving a
+ * feed panel a ranked, per-contribution (rather than per-contributor) view
+ * to render like/save/endorse actions against, reusing
+ * `community-rating.ts`'s pure `rankContributions` directly.
+ *
  * @module state/contributions
  */
 
 import type { AttributedContribution, ContributorStats } from "../lib/contribution-leaderboard";
 import { buildLeaderboard, groupContributionsByContributor } from "../lib/contribution-leaderboard";
-import type { HelpfulnessWeights, ReviewerEndorsement } from "../lib/community-rating";
-import { DEFAULT_HELPFULNESS_WEIGHTS } from "../lib/community-rating";
+import type { ContributionKind, HelpfulnessWeights, ReviewerEndorsement } from "../lib/community-rating";
+import { DEFAULT_HELPFULNESS_WEIGHTS, rankContributions } from "../lib/community-rating";
+import type { ContributorAward } from "../lib/contributor-awards";
+import { DEFAULT_AWARD_CATEGORY_LABELS, buildTopContributorAwards } from "../lib/contributor-awards";
+import type { DailyBestCard, TimestampedCardContribution } from "../lib/daily-best-card";
+import { buildDailyBestCards, getBestCardForDay } from "../lib/daily-best-card";
 
 const STORAGE_KEY = "contributions";
 
@@ -144,4 +155,115 @@ export function recordPersistedEndorsement(id: string, reviewerWeight: number): 
  */
 export function buildPersistedLeaderboard(weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS): ContributorStats[] {
   return buildLeaderboard(readAll(), weights);
+}
+
+/** One persisted contribution, ranked with its computed helpfulness breakdown. */
+export interface ContributionFeedEntry extends AttributedContribution {
+  helpfulnessScore: number;
+  isPopularityOnlyOutlier: boolean;
+}
+
+/**
+ * Builds a ranked, per-contribution feed directly from every persisted
+ * contribution, composing this store with `community-rating.ts`'s pure
+ * `rankContributions` rather than requiring a caller to hold and pass in the
+ * full contribution list themselves — mirroring `buildPersistedLeaderboard`'s
+ * "compose the pure function directly against the persisted store"
+ * convention, but per-contribution instead of per-contributor so a feed
+ * panel can render like/save/endorse actions against each entry. An empty
+ * store returns an empty feed rather than throwing.
+ */
+export function buildPersistedContributionFeed(
+  weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+): ContributionFeedEntry[] {
+  const contributions = readAll();
+  const byId = new Map(contributions.map((contribution) => [contribution.id, contribution]));
+
+  return rankContributions(contributions, weights).map((breakdown) => ({
+    ...(byId.get(breakdown.contributionId) as AttributedContribution),
+    helpfulnessScore: breakdown.helpfulnessScore,
+    isPopularityOnlyOutlier: breakdown.isPopularityOnlyOutlier,
+  }));
+}
+
+/**
+ * Builds the Top Contributor Awards directly from every persisted
+ * contribution, composing this store with `contributor-awards.ts`'s pure
+ * `buildTopContributorAwards` rather than requiring a caller to hold and pass
+ * in the full contribution list themselves — mirroring `buildPersistedLeaderboard`'s
+ * "compose the pure function directly against the persisted store"
+ * convention. An empty store returns an empty award list rather than throwing.
+ */
+export function buildTopContributorAwardsFromStore(
+  categoryLabels: Record<ContributionKind, string> = DEFAULT_AWARD_CATEGORY_LABELS,
+): ContributorAward[] {
+  return buildTopContributorAwards(readAll(), categoryLabels);
+}
+
+/**
+ * Narrows a persisted `AttributedContribution` to `daily-best-card.ts`'s
+ * `TimestampedCardContribution` shape — a card-kind contribution that also
+ * carries the `submittedAt` timestamp the "Daily Best Card Challenge" idea
+ * groups by UTC day. Excludes non-card contributions and any card saved
+ * before `submittedAt` was wired into the Contributions Feed submission
+ * flow (see `ContributionsFeedPanel.tsx`).
+ */
+function isTimestampedCardContribution(
+  contribution: AttributedContribution,
+): contribution is AttributedContribution & TimestampedCardContribution {
+  return contribution.kind === "card" && typeof contribution.submittedAt === "number";
+}
+
+/**
+ * Lists every persisted card contribution that carries a `submittedAt`
+ * timestamp, ready for `lib/daily-best-card.ts`'s day-grouping helpers.
+ */
+function readTimestampedCards(): TimestampedCardContribution[] {
+  return readAll().filter(isTimestampedCardContribution);
+}
+
+/**
+ * A day's winning card, still carrying the persisted `contributorId` that
+ * `lib/daily-best-card.ts`'s plain `TimestampedCardContribution` type doesn't
+ * declare (it only extends `CommunityContribution`, not the attributed
+ * shape) — every card this store hands to it is actually an
+ * `AttributedContribution`, so the field is safe to widen back in here for
+ * a panel to render.
+ */
+export interface AttributedDailyBestCard extends DailyBestCard {
+  contribution: TimestampedCardContribution & { contributorId: string };
+}
+
+/**
+ * Builds the "Daily Best Card Challenge" result directly from every
+ * persisted card contribution, composing this store with
+ * `lib/daily-best-card.ts`'s pure `buildDailyBestCards` rather than requiring
+ * a caller to hold and pass in the full contribution list themselves —
+ * mirroring `buildPersistedLeaderboard`'s "compose the pure function directly
+ * against the persisted store" convention. Closes the "(a) wiring a
+ * `submittedAt` timestamp into wherever card contributions are eventually
+ * persisted" follow-up under the "🕵️ Daily Best Card Challenge" bullet in
+ * TODO.md — that timestamp is already stamped by `ContributionsFeedPanel.tsx`
+ * on every submission, so this only needed to read it back out. An empty
+ * store (or one with no card contributions) returns an empty list rather
+ * than throwing.
+ */
+export function buildDailyBestCardsFromStore(
+  weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+): AttributedDailyBestCard[] {
+  return buildDailyBestCards(readTimestampedCards(), weights) as AttributedDailyBestCard[];
+}
+
+/**
+ * Builds today's (the UTC day of `now`) winning card directly from every
+ * persisted card contribution, or `null` if no card was submitted that day.
+ * `now` is caller-supplied (epoch ms) rather than read from the clock here,
+ * mirroring `lib/daily-best-card.ts`'s `getBestCardForDay` contract — a panel
+ * calls this with `Date.now()` at render time.
+ */
+export function getTodaysBestCardFromStore(
+  now: number,
+  weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+): AttributedDailyBestCard | null {
+  return getBestCardForDay(readTimestampedCards(), now, weights) as AttributedDailyBestCard | null;
 }

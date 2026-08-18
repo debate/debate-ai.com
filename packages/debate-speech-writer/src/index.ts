@@ -6,8 +6,9 @@
  * configurable judge-paradigm registry for AI judge decisions, the
  * judge-profile aggregation helpers for summarizing a judge's ballot history,
  * the opponent-persona registry for AI practice-opponent styles, the
- * team coach-material library/grounded-prompt helpers for the private team
- * coach AI idea, and localStorage-backed persistence stores for a team's
+ * team coach-material library/grounded-prompt helpers plus the real AI Q&A
+ * call for the private team coach AI idea, and localStorage-backed
+ * persistence stores for a team's
  * coach materials, for judge profiles, for a round's selected judge
  * paradigm, and for a practice session's selected opponent persona.
  *
@@ -74,12 +75,15 @@ export type {
 } from "./opponent/opponent-personas";
 
 export {
+  buildOpponentPersonaSelectionsPanelView,
   deleteOpponentPersonaSelection,
   getOpponentPersonaSelection,
   listOpponentPersonaSelections,
   saveOpponentPersonaSelection,
 } from "./state/opponentPersonaSelections";
 export type { OpponentPersonaSelection } from "./state/opponentPersonaSelections";
+
+export { OpponentPersonaPickerPanel } from "./panels/OpponentPersonaPickerPanel";
 
 export {
   buildCoachMaterialLibrary,
@@ -99,12 +103,19 @@ export type {
   GroundedCoachPromptOptions,
 } from "./coach/team-coach-materials";
 
+export { TEAM_COACH_AI_SYSTEM_PROMPT, parseTeamCoachAiResponse } from "./coach/team-coach-ai";
+export { requestTeamCoachAnswer } from "./coach/team-coach-client";
+
 export {
+  buildCoachMaterialLibraryFromStore,
   deleteCoachMaterial,
+  findRelevantMaterialsFromStore,
   getCoachMaterial,
   listCoachMaterials,
   saveCoachMaterial,
 } from "./state/coachMaterials";
+
+export { CoachMaterialsPanel } from "./panels/CoachMaterialsPanel";
 
 export {
   buildJudgeParadigmSelectionsPanelView,

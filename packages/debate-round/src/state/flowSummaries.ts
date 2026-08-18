@@ -61,3 +61,14 @@ export function saveFlowSummary(record: FlowSummaryRecord): void {
 export function deleteFlowSummary(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
 }
+
+/**
+ * Every persisted flow summary, sorted by `roundId` for a stable display
+ * order — the "(b) a summary/cross-ex panel UI ... that reads/writes
+ * through the persistence store" follow-up named under idea #6 ("Speech
+ * Transcript Summaries and Answers") in TODO.md. Used by
+ * `panels/FlowSummariesPanel.tsx`.
+ */
+export function buildFlowSummariesPanelView(): FlowSummaryRecord[] {
+  return [...listFlowSummaries()].sort((a, b) => a.roundId.localeCompare(b.roundId));
+}

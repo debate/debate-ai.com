@@ -111,11 +111,13 @@ export function getUnansweredFlowRows(flow: Pick<Flow, "children" | "columns">):
 }
 
 /**
- * Renders a concise, flow-oriented text summary: one line per argument
- * thread, noting where it was introduced and flagging anything unanswered.
+ * Renders a concise, flow-oriented text summary from already-derived,
+ * non-heading rows: one line per argument thread, noting where it was
+ * introduced and flagging anything unanswered. Split out from
+ * `buildFlowSummaryText` so a panel can render persisted `FlowRowSummary[]`
+ * (from `state/flowSummaries.ts`) without needing the original raw `Flow`.
  */
-export function buildFlowSummaryText(flow: Pick<Flow, "children" | "columns">): string {
-  const rows = getFlowRowSummaries(flow).filter((row) => !row.isHeading);
+export function buildFlowSummaryTextFromRows(rows: FlowRowSummary[]): string {
   if (rows.length === 0) return "No arguments have been flowed yet.";
 
   return rows
@@ -124,6 +126,15 @@ export function buildFlowSummaryText(flow: Pick<Flow, "children" | "columns">): 
       return `${row.originSpeech}: ${truncateForDisplay(row.argument)}${status}`;
     })
     .join("\n");
+}
+
+/**
+ * Renders a concise, flow-oriented text summary: one line per argument
+ * thread, noting where it was introduced and flagging anything unanswered.
+ */
+export function buildFlowSummaryText(flow: Pick<Flow, "children" | "columns">): string {
+  const rows = getFlowRowSummaries(flow).filter((row) => !row.isHeading);
+  return buildFlowSummaryTextFromRows(rows);
 }
 
 /** One cross-examination question per unanswered row, referencing where it dropped. */

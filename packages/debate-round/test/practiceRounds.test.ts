@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { saveAiVersusRound, type AiVersusRoundRecord } from "../src/state/aiVersusRounds";
 import {
+  buildPracticeRoundsPanelView,
   deletePracticeRound,
   getPracticeRound,
   getPracticeRoundSubmittedSpeeches,
@@ -100,6 +101,25 @@ describe("deletePracticeRound", () => {
     savePracticeRound(ROUND_B);
     deletePracticeRound("missing");
     expect(listPracticeRounds()).toEqual([ROUND_B]);
+  });
+});
+
+describe("buildPracticeRoundsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildPracticeRoundsPanelView()).toEqual([]);
+  });
+
+  it("sorts every persisted practice round by roundId", () => {
+    savePracticeRound(ROUND_B);
+    savePracticeRound(ROUND_A);
+    expect(buildPracticeRoundsPanelView()).toEqual([ROUND_A, ROUND_B]);
+  });
+
+  it("does not mutate the underlying stored order", () => {
+    savePracticeRound(ROUND_B);
+    savePracticeRound(ROUND_A);
+    buildPracticeRoundsPanelView();
+    expect(listPracticeRounds()).toEqual([ROUND_B, ROUND_A]);
   });
 });
 
