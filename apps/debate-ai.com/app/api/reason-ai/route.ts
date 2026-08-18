@@ -3,13 +3,18 @@ import { getAuth } from "@/lib/auth"
 import { getEnv } from "@/lib/env"
 
 /**
- * Server-side proxy for reason-editor's AI features (cite formatting,
- * OCR/PDF text repair, image alt text, the research-coach "explain").
+ * General-purpose server-side proxy for this app's Anthropic-backed AI
+ * features. Originally built for reason-editor's AI features (cite
+ * formatting, OCR/PDF text repair, image alt text, the research-coach
+ * "explain"), it's a plain `{ system?, messages, maxTokens?, temperature? }`
+ * passthrough to the Anthropic Messages API, so any package in this repo
+ * can reuse it rather than standing up its own proxy route — e.g.
+ * debate-card-search's LLM Card Scoring AI assessment.
  *
- * The CardMirror upstream this is ported from calls Anthropic directly
- * from the browser with a user-pasted API key. debate-ai.com is a
- * shared multi-tenant app, so instead the editor calls this route and
- * the server holds the one Anthropic key (ANTHROPIC_API_KEY).
+ * The CardMirror upstream reason-editor was ported from calls Anthropic
+ * directly from the browser with a user-pasted API key. debate-ai.com is a
+ * shared multi-tenant app, so instead callers hit this route and the
+ * server holds the one Anthropic key (ANTHROPIC_API_KEY).
  */
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"

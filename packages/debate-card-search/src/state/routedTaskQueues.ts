@@ -31,12 +31,23 @@
  * assignee's current skill level. `panels/TaskInboxPanel.tsx` renders it and
  * calls `completePersistedRoutedTask` when a user marks an assignment done.
  *
+ * `routePersistedTopicTasks` closes the "(d) a task-routing trigger UI to
+ * actually populate a topic's queue" follow-up named under the same bullet
+ * (also tracked as `docs/features/task-inbox.md`'s "No task-routing trigger
+ * UI yet" known gap) — it composes `trackedArguments.ts`'s
+ * `buildPersistedTopicCoverageReport` (a topic's checklist against the
+ * shared evidence library) directly with `buildAndPersistRoutingResult`, so
+ * a caller (the Task Inbox panel) can route a topic's queue from nothing but
+ * a `topicId`, instead of needing to separately build a coverage report
+ * first.
+ *
  * @module state/routedTaskQueues
  */
 
 import { buildRoutingResult, type RoutedAssignment, type ResearchTask, type RoutingResult, type SkillLevel } from "../lib/research-task-routing";
-import type { TopicCoverageReport } from "../lib/topic-coverage";
+import type { CoverageThresholds, TopicCoverageReport } from "../lib/topic-coverage";
 import { listContributorAvailability, recordPersistedTaskAssigned, recordPersistedTaskCompleted } from "./contributorAvailability";
+import { buildPersistedTopicCoverageReport } from "./trackedArguments";
 
 export type RoutedTaskQueueRecord = {
   topicId: string;
@@ -109,6 +120,20 @@ export function buildAndPersistRoutingResult(report: TopicCoverageReport, topicI
 
   saveRoutedTaskQueue({ topicId, result });
   return result;
+}
+
+/**
+ * Routes a topic's coverage gaps entirely from persisted stores: builds the
+ * topic's live coverage report from its tracked-argument checklist and the
+ * shared evidence library (`trackedArguments.ts`'s
+ * `buildPersistedTopicCoverageReport`), then routes and persists it the same
+ * way `buildAndPersistRoutingResult` always has. This is the composition a
+ * "route this topic's tasks" trigger UI needs — a topic id in, a saved,
+ * panel-ready `RoutingResult` out.
+ */
+export function routePersistedTopicTasks(topicId: string, thresholds?: CoverageThresholds): RoutingResult {
+  const report = buildPersistedTopicCoverageReport(topicId, thresholds);
+  return buildAndPersistRoutingResult(report, topicId);
 }
 
 /**

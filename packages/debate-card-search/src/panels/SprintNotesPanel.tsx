@@ -1,18 +1,21 @@
 /**
- * @fileoverview Sprint Notes panel — the UI follow-up named "(a) a
- * collaboration-mode panel UI" under the "🤝 Team Collaboration Mode"
- * bullet in TODO.md.
+ * @fileoverview Team Collaboration Mode panel — the "(a) a collaboration-mode
+ * panel UI" follow-up named under the "🤝 Team Collaboration Mode" bullet in
+ * TODO.md.
  *
- * Reads every persisted sprint note via `state/sprintNotes.ts`'s
- * `buildSprintNotesPanelView` (a thin grouping of every stored `SprintNote`
- * by status, follow-ups surfaced first) and renders it grouped by status.
- * Each note has a "cycle status" action (open → covered → needs-follow-up →
- * open) that calls the already-persisted `updatePersistedSprintNoteStatus`,
- * and an "assign" control that calls the already-persisted
- * `assignPersistedSprintNote` — no new mutation logic is introduced here.
- * Mirrors `debate-round`'s `PrepNotesPanel` convention exactly, with a
- * topic badge per note since a sprint note is topic-scoped rather than
- * flow-box-scoped.
+ * Lets a teammate submit a new `SprintNote` against a topic, then renders
+ * every persisted note via `state/sprintNotes.ts`'s `buildSprintNotesPanelView`
+ * grouped by topic, with a "cycle status" action (calling the already-persisted
+ * `updatePersistedSprintNoteStatus`) and an "assign to" control (calling the
+ * already-persisted `assignPersistedSprintNote`) per note — mirroring
+ * `debate-round`'s `PrepNotesPanel` convention, since `SprintNoteStatus` shares
+ * the same open/covered/needs-follow-up cycle as `PrepNoteStatus`. No new
+ * note-lifecycle logic is introduced here.
+ *
+ * This only renders the `SprintNote` thread itself — not the full
+ * `buildTopicSprint` composition (quest board + task routing + progress
+ * board), since none of those inputs are persisted in a form this panel could
+ * read live yet. See follow-up (b) in TODO.md.
  *
  * @module panels/SprintNotesPanel
  */
@@ -23,10 +26,13 @@ import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
+import { Label } from "debate-ui/src/primitives/label"
+import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   assignPersistedSprintNote,
   buildSprintNotesPanelView,
   nextSprintNoteStatus,
+  saveSprintNote,
   updatePersistedSprintNoteStatus,
   type SprintNotesPanelGroup,
 } from "../state/sprintNotes"
@@ -44,16 +50,22 @@ const STATUS_VARIANT: Record<SprintNoteStatus, "default" | "secondary" | "outlin
   covered: "outline",
 }
 
+type NoteDraft = { topic: string; authorId: string; text: string; assignedToId: string }
+
+const EMPTY_DRAFT: NoteDraft = { topic: "", authorId: "", text: "", assignedToId: "" }
+
 /**
- * Renders the Sprint Notes panel: every persisted `SprintNote`, grouped by
- * status (needs follow-up first), with a "cycle status" action and an
- * "assign to" control per note.
+ * Renders the Team Collaboration Mode panel: a form to submit a new sprint
+ * note against a topic, plus every persisted `SprintNote` grouped by topic,
+ * with a "cycle status" action and an "assign to" control per note.
  *
- * Reads localStorage on mount only (client-side), so it renders an empty
+ * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
 export function SprintNotesPanel() {
   const [groups, setGroups] = useState<SprintNotesPanelGroup[] | null>(null)
+  const [draft, setDraft] = useState<NoteDraft>(EMPTY_DRAFT)
+  const [error, setError] = useState<string | null>(null)
   const [assigneeDrafts, setAssigneeDrafts] = useState<Record<string, string>>({})
 
   useEffect(() => {
@@ -61,6 +73,30 @@ export function SprintNotesPanel() {
   }, [])
 
   const refresh = () => setGroups(buildSprintNotesPanelView())
+
+  const handleSubmit = () => {
+    const topic = draft.topic.trim()
+    const authorId = draft.authorId.trim()
+    const text = draft.text.trim()
+    if (!topic || !authorId || !text) {
+      setError("Topic, author ID, and note text are all required.")
+      return
+    }
+    const assignedToId = draft.assignedToId.trim()
+    saveSprintNote({
+      id: `${topic}-${authorId}-${Date.now()}`,
+      topic,
+      authorId,
+      text,
+      status: "open",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      ...(assignedToId ? { assignedToId } : {}),
+    })
+    setError(null)
+    setDraft(EMPTY_DRAFT)
+    refresh()
+  }
 
   const handleCycleStatus = (id: string, status: SprintNoteStatus) => {
     updatePersistedSprintNoteStatus(id, nextSprintNoteStatus(status), Date.now())
@@ -78,85 +114,125 @@ export function SprintNotesPanel() {
     return <div className="p-6 text-sm text-muted-foreground">Loading sprint notes…</div>
   }
 
-  const totalNotes = groups.reduce((sum, group) => sum + group.notes.length, 0)
-
-  if (totalNotes === 0) {
-    return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No sprint notes yet. Notes fill in once teammates leave shared prep notes on a topic sprint.
-      </div>
-    )
-  }
-
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Sprint Notes</h1>
+        <h1 className="mb-1 text-xl font-semibold text-foreground">Team Collaboration Mode</h1>
         <p className="text-sm text-muted-foreground">
-          Live topic-sprint notes across every topic, grouped by status. Cycle a note's status or
-          assign it to a teammate as a task.
+          Leave live prep notes on a shared topic sprint, grouped by topic. Cycle a note's status
+          or assign it to a teammate as a task.
         </p>
       </div>
-      {groups
-        .filter((group) => group.notes.length > 0)
-        .map((group) => (
-          <div key={group.status} className="rounded-lg border border-border p-4">
-            <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Badge variant={STATUS_VARIANT[group.status]}>{STATUS_LABEL[group.status]}</Badge>
-              <span className="text-muted-foreground font-normal">({group.notes.length})</span>
-            </h2>
-            <div className="space-y-2">
-              {group.notes.map((note) => (
-                <div key={note.id} className="rounded-md border border-border px-3 py-2 space-y-2">
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="outline" className="whitespace-nowrap">
-                        {note.topic}
-                      </Badge>
-                      <p className="text-foreground">{note.text}</p>
-                    </div>
-                    <Button size="sm" variant="outline" onClick={() => handleCycleStatus(note.id, note.status)}>
-                      Mark {STATUS_LABEL[nextSprintNoteStatus(note.status)].toLowerCase()}
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                    <span>by {note.authorId}</span>
-                    {note.assignedToId && (
-                      <Badge variant="outline" className="whitespace-nowrap">
-                        assigned to {note.assignedToId}
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      value={assigneeDrafts[note.id] ?? ""}
-                      onChange={(e) =>
-                        setAssigneeDrafts((prev) => ({ ...prev, [note.id]: e.target.value }))
-                      }
-                      placeholder="Assign to…"
-                      className="h-8 max-w-[220px] text-xs"
-                    />
-                    <Button size="sm" variant="outline" onClick={() => handleAssign(note.id)}>
-                      {note.assignedToId ? "Reassign" : "Assign"}
-                    </Button>
-                    {note.assignedToId && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          assignPersistedSprintNote(note.id, null, Date.now())
-                          refresh()
-                        }}
-                      >
-                        Unassign
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="sprint-note-topic">Topic</Label>
+            <Input
+              id="sprint-note-topic"
+              value={draft.topic}
+              onChange={(e) => setDraft((prev) => ({ ...prev, topic: e.target.value }))}
+              placeholder="solvency"
+            />
           </div>
-        ))}
+          <div className="space-y-1.5">
+            <Label htmlFor="sprint-note-author">Author ID</Label>
+            <Input
+              id="sprint-note-author"
+              value={draft.authorId}
+              onChange={(e) => setDraft((prev) => ({ ...prev, authorId: e.target.value }))}
+              placeholder="alice"
+            />
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="sprint-note-text">Note</Label>
+          <Textarea
+            id="sprint-note-text"
+            value={draft.text}
+            onChange={(e) => setDraft((prev) => ({ ...prev, text: e.target.value }))}
+            placeholder="Need a 2026 solvency card for the affirmative"
+            className="min-h-[72px]"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="sprint-note-assignee">Assign to (optional)</Label>
+          <Input
+            id="sprint-note-assignee"
+            value={draft.assignedToId}
+            onChange={(e) => setDraft((prev) => ({ ...prev, assignedToId: e.target.value }))}
+            placeholder="bob"
+            className="max-w-[220px]"
+          />
+        </div>
+        {error && <p className="text-sm text-destructive">{error}</p>}
+        <Button onClick={handleSubmit}>Add note</Button>
+      </div>
+
+      {groups.length === 0 ? (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No sprint notes yet. Add one above to start a topic sprint.
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {groups.map((group) => (
+            <div key={group.topic} className="rounded-lg border border-border p-4">
+              <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
+                {group.topic}
+                <span className="text-muted-foreground font-normal">({group.notes.length})</span>
+              </h2>
+              <div className="space-y-2">
+                {group.notes.map((note) => (
+                  <div key={note.id} className="rounded-md border border-border px-3 py-2 space-y-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant={STATUS_VARIANT[note.status]}>{STATUS_LABEL[note.status]}</Badge>
+                        <p className="text-foreground">{note.text}</p>
+                      </div>
+                      <Button size="sm" variant="outline" onClick={() => handleCycleStatus(note.id, note.status)}>
+                        Mark {STATUS_LABEL[nextSprintNoteStatus(note.status)].toLowerCase()}
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <span>by {note.authorId}</span>
+                      {note.assignedToId && (
+                        <Badge variant="outline" className="whitespace-nowrap">
+                          assigned to {note.assignedToId}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={assigneeDrafts[note.id] ?? ""}
+                        onChange={(e) =>
+                          setAssigneeDrafts((prev) => ({ ...prev, [note.id]: e.target.value }))
+                        }
+                        placeholder="Assign to…"
+                        className="h-8 max-w-[220px] text-xs"
+                      />
+                      <Button size="sm" variant="outline" onClick={() => handleAssign(note.id)}>
+                        {note.assignedToId ? "Reassign" : "Assign"}
+                      </Button>
+                      {note.assignedToId && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            assignPersistedSprintNote(note.id, null, Date.now())
+                            refresh()
+                          }}
+                        >
+                          Unassign
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -57,3 +57,14 @@ export function saveCoachingProgram(program: CoachingProgramConfig): void {
 export function deleteCoachingProgram(id: string): void {
   writeAll(readAll().filter((program) => program.id !== id));
 }
+
+/**
+ * Every persisted coaching-program config, sorted by name for a stable
+ * display order — the "(b) a coaching-space dashboard UI" follow-up named
+ * under idea #13 ("Coaching Programs and Group Challenges") in TODO.md. Used
+ * by `panels/CoachingProgramsPanel.tsx`, mirroring `drillSets.ts`'s
+ * `buildDrillSetsPanelView` convention.
+ */
+export function buildCoachingProgramsPanelView(): CoachingProgramConfig[] {
+  return [...readAll()].sort((a, b) => a.name.localeCompare(b.name));
+}
