@@ -35,6 +35,15 @@ evidence" badge, via `getEvidenceStaleness` (see
 | Tags | `entry.tags` |
 | Relevance | `relevanceScore`, shown only while a text query is active |
 
+The submission form's Tags field also suggests existing tags as the
+contributor types: `lib/argument-library.ts`'s `suggestTags` ranks the
+persisted tag corpus (via `state/evidenceLibraryEntries.ts`'s
+`listPersistedTags`) against the in-progress fragment after the last comma,
+prefix matches first, excluding tags already added to the field. Clicking a
+suggestion appends it and leaves a trailing `", "` to keep typing — this
+closes follow-up (c), "a tag-autocomplete/tag-management affordance," under
+the "📚 Common Argument Library" bullet in TODO.md.
+
 ## Data flow
 
 ```
@@ -83,3 +92,7 @@ card submitted here now feeds that dashboard directly.
   already supports `topic`, `caseArea`, and `tags`.
 - No real search index (e.g. Typesense) — search is the existing in-memory
   keyword-overlap heuristic over whatever is persisted to localStorage.
+- No tag rename/merge tool — the Tags field's autocomplete only suggests
+  reusing an existing tag while typing; renaming or merging a tag already
+  applied to existing entries would mean rewriting every entry that carries
+  it, and isn't implemented.

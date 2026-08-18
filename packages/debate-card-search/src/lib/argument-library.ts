@@ -155,6 +155,75 @@ export function buildArgumentLibrary(cards: LibraryCard[]): ArgumentLibrary {
   };
 }
 
+/**
+ * Splits a comma-separated tags input field into the already-completed tags
+ * before the last comma and the in-progress fragment still being typed after
+ * it, for a tag-autocomplete affordance over a free-text tags field (the "(c)
+ * a tag-autocomplete/tag-management affordance" follow-up under the "📚
+ * Common Argument Library" bullet in TODO.md).
+ */
+export function parseTagsInput(input: string): { completedTags: string[]; draftTag: string } {
+  const parts = input.split(",");
+  const draftTag = parts[parts.length - 1] ?? "";
+  const completedTags = parts
+    .slice(0, -1)
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+  return { completedTags, draftTag };
+}
+
+/**
+ * Appends a chosen suggestion to a comma-separated tags input in place of the
+ * in-progress fragment being typed (see `parseTagsInput`), leaving a trailing
+ * ", " so the contributor can keep typing another tag.
+ */
+export function applyTagSuggestion(input: string, suggestion: string): string {
+  const { completedTags } = parseTagsInput(input);
+  return [...completedTags, suggestion].join(", ") + ", ";
+}
+
+/**
+ * Suggests existing tags from `knownTags` that could complete the
+ * in-progress `query` fragment, so a contributor reuses an existing tag
+ * instead of coining a near-duplicate. Case-insensitive; a tag already
+ * present in `excludeTags` (already added to the field) or matching `query`
+ * exactly is never suggested. Prefix matches rank ahead of substring
+ * matches; each group is otherwise sorted alphabetically. An empty `query`
+ * (nothing typed yet to complete) returns no suggestions. Results are capped
+ * at `limit` (default 8).
+ */
+export function suggestTags(
+  knownTags: string[],
+  query: string,
+  excludeTags: string[] = [],
+  limit = 8,
+): string[] {
+  const trimmedQuery = query.trim().toLowerCase();
+  if (!trimmedQuery) return [];
+
+  const excluded = new Set(excludeTags.map((tag) => tag.trim().toLowerCase()));
+  const seen = new Set<string>();
+  const prefixMatches: string[] = [];
+  const substringMatches: string[] = [];
+
+  for (const tag of knownTags) {
+    const lower = tag.toLowerCase();
+    if (lower === trimmedQuery || excluded.has(lower) || seen.has(lower)) continue;
+    if (lower.startsWith(trimmedQuery)) {
+      prefixMatches.push(tag);
+      seen.add(lower);
+    } else if (lower.includes(trimmedQuery)) {
+      substringMatches.push(tag);
+      seen.add(lower);
+    }
+  }
+
+  prefixMatches.sort((a, b) => a.localeCompare(b));
+  substringMatches.sort((a, b) => a.localeCompare(b));
+
+  return [...prefixMatches, ...substringMatches].slice(0, limit);
+}
+
 /** Renders a short summary line for an argument-library browser header. */
 export function buildLibrarySummaryText(library: ArgumentLibrary): string {
   const cardCount = library.topicFolders.reduce((sum, folder) => sum + folder.cardCount, 0);
