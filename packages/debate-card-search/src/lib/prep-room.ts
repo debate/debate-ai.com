@@ -11,9 +11,16 @@
  * that same topic's coverage gaps, reusing both directly rather than
  * introducing a separate evidence or assignment model. This is the first
  * slice only — it works entirely off a caller-supplied entry list,
- * coverage report, and contributor-availability list; it doesn't persist a
- * prep room or its inputs, or render a prep-room panel UI. See the
- * follow-ups noted in TODO.md.
+ * coverage report, and contributor-availability list; it doesn't render a
+ * prep-room panel UI. See the follow-ups noted in TODO.md.
+ *
+ * `buildPrepRoomFromStore` is a second, thin slice that closes the "(a)
+ * wiring `buildPrepRoom`/`searchPrepRoomEvidence` to read through the
+ * now-persisted `evidenceLibraryEntries.ts` store instead of caller-supplied
+ * entries" follow-up named under the "Collaboration Prep Room" bullet — it
+ * resolves the room's entries from that store when the caller doesn't
+ * already supply an entry list, then delegates to the pure `buildPrepRoom`
+ * above.
  *
  * @module lib/prep-room
  */
@@ -33,6 +40,7 @@ import {
   type RoutingResult,
 } from "./research-task-routing";
 import type { TopicCoverageReport } from "./topic-coverage";
+import { listEvidenceLibraryEntries } from "../state/evidenceLibraryEntries";
 
 /**
  * One topic's shared prep space: its evidence (organized into topic
@@ -86,6 +94,22 @@ export function searchPrepRoomEvidence(
   query: Omit<EvidenceSearchQuery, "topic"> = {},
 ): EvidenceSearchResult[] {
   return searchEvidenceLibrary(room.entries, { ...query, topic: room.topic });
+}
+
+export interface BuildPrepRoomFromStoreInput extends Omit<BuildPrepRoomInput, "entries"> {
+  /** Explicit entries to use instead of reading through the persisted store. */
+  entries?: EvidenceLibraryEntry[];
+}
+
+/**
+ * Same as `buildPrepRoom`, but reads `entries` from the persisted
+ * `evidenceLibraryEntries.ts` store when the caller doesn't already supply
+ * an entry list. An explicitly supplied `entries` array always takes
+ * precedence over the store.
+ */
+export function buildPrepRoomFromStore(input: BuildPrepRoomFromStoreInput): PrepRoom {
+  const entries = input.entries ?? listEvidenceLibraryEntries();
+  return buildPrepRoom({ ...input, entries });
 }
 
 /**

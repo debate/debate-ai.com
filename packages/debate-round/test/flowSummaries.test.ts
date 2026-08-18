@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildFlowSummariesPanelView,
   deleteFlowSummary,
   getFlowSummary,
   listFlowSummaries,
@@ -132,5 +133,24 @@ describe("deleteFlowSummary", () => {
     saveFlowSummary(SUMMARY_B);
     deleteFlowSummary("missing");
     expect(listFlowSummaries()).toEqual([SUMMARY_B]);
+  });
+});
+
+describe("buildFlowSummariesPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildFlowSummariesPanelView()).toEqual([]);
+  });
+
+  it("sorts persisted summaries by roundId", () => {
+    saveFlowSummary(SUMMARY_B);
+    saveFlowSummary(SUMMARY_A);
+    expect(buildFlowSummariesPanelView()).toEqual([SUMMARY_A, SUMMARY_B]);
+  });
+
+  it("reflects a summary removed via deleteFlowSummary", () => {
+    saveFlowSummary(SUMMARY_A);
+    saveFlowSummary(SUMMARY_B);
+    deleteFlowSummary("round-1");
+    expect(buildFlowSummariesPanelView()).toEqual([SUMMARY_B]);
   });
 });

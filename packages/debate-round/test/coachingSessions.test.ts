@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildCoachingSessionsPanelView,
   deleteCoachingSession,
   getCoachingSession,
   getCoachingSessionsForRound,
   listCoachingSessions,
   saveCoachingSession,
+  saveCoachingSessionAiFeedback,
   type CoachingSessionRecord,
 } from "../src/state/coachingSessions";
 
@@ -134,5 +136,58 @@ describe("deleteCoachingSession", () => {
     saveCoachingSession(SESSION_NEG);
     deleteCoachingSession("round-1", "AFF");
     expect(listCoachingSessions()).toEqual([SESSION_NEG]);
+  });
+});
+
+describe("saveCoachingSessionAiFeedback", () => {
+  it("sets aiFeedback on an existing session without touching its prompts", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSessionAiFeedback("round-1", "AFF", "Lead with the solvency deficit.");
+
+    expect(getCoachingSession("round-1", "AFF")).toEqual({
+      ...SESSION_AFF,
+      aiFeedback: "Lead with the solvency deficit.",
+    });
+  });
+
+  it("overwrites a previously saved aiFeedback", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSessionAiFeedback("round-1", "AFF", "First pass.");
+    saveCoachingSessionAiFeedback("round-1", "AFF", "Revised feedback.");
+
+    expect(getCoachingSession("round-1", "AFF")?.aiFeedback).toBe("Revised feedback.");
+  });
+
+  it("leaves other sessions untouched", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSession(SESSION_NEG);
+    saveCoachingSessionAiFeedback("round-1", "AFF", "Feedback for AFF only.");
+
+    expect(getCoachingSession("round-1", "NEG")).toEqual(SESSION_NEG);
+  });
+
+  it("is a no-op when the roundId/sideKey pair isn't stored", () => {
+    saveCoachingSessionAiFeedback("round-1", "AFF", "Feedback.");
+    expect(listCoachingSessions()).toEqual([]);
+  });
+});
+
+describe("buildCoachingSessionsPanelView", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildCoachingSessionsPanelView()).toEqual([]);
+  });
+
+  it("sorts persisted sessions by roundId then sideKey", () => {
+    saveCoachingSession(SESSION_OTHER_ROUND);
+    saveCoachingSession(SESSION_NEG);
+    saveCoachingSession(SESSION_AFF);
+    expect(buildCoachingSessionsPanelView()).toEqual([SESSION_AFF, SESSION_NEG, SESSION_OTHER_ROUND]);
+  });
+
+  it("reflects a session removed via deleteCoachingSession", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSession(SESSION_NEG);
+    deleteCoachingSession("round-1", "AFF");
+    expect(buildCoachingSessionsPanelView()).toEqual([SESSION_NEG]);
   });
 });

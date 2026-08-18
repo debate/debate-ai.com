@@ -1,8 +1,31 @@
-import { describe, expect, it } from "vitest";
-import { buildPrepRoom, buildPrepRoomSummaryText, searchPrepRoomEvidence } from "../src/lib/prep-room";
+import { beforeEach, describe, expect, it } from "vitest";
+import {
+  buildPrepRoom,
+  buildPrepRoomFromStore,
+  buildPrepRoomSummaryText,
+  searchPrepRoomEvidence,
+} from "../src/lib/prep-room";
 import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
 import { buildRoutingResult, type ContributorAvailability } from "../src/lib/research-task-routing";
 import { buildTopicCoverageReport, type TrackedArgument } from "../src/lib/topic-coverage";
+import { saveEvidenceLibraryEntry } from "../src/state/evidenceLibraryEntries";
+
+/** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
+class MemoryStorage {
+  private store = new Map<string, string>();
+  getItem(key: string): string | null {
+    return this.store.has(key) ? this.store.get(key)! : null;
+  }
+  setItem(key: string, value: string): void {
+    this.store.set(key, value);
+  }
+  removeItem(key: string): void {
+    this.store.delete(key);
+  }
+  clear(): void {
+    this.store.clear();
+  }
+}
 
 const IMMIGRATION_CARD: EvidenceLibraryEntry = {
   id: "card-1",
@@ -112,6 +135,62 @@ describe("buildPrepRoom", () => {
     expect(room.entries).toEqual([]);
     expect(room.draftBlocks).toEqual([]);
     expect(room.evidenceIndex.topicFolders).toEqual([]);
+  });
+});
+
+describe("buildPrepRoomFromStore", () => {
+  beforeEach(() => {
+    (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
+  });
+
+  it("reads entries from the persisted evidence library store when none are supplied", () => {
+    saveEvidenceLibraryEntry(IMMIGRATION_CARD);
+    saveEvidenceLibraryEntry(IMMIGRATION_BLOCK);
+    saveEvidenceLibraryEntry(TRADE_CARD);
+
+    const room = buildPrepRoomFromStore({
+      topic: "Immigration",
+      coverageReport: COVERAGE_REPORT,
+      contributors: CONTRIBUTORS,
+    });
+
+    expect(room.entries).toEqual([IMMIGRATION_CARD, IMMIGRATION_BLOCK]);
+    expect(room.draftBlocks).toEqual([IMMIGRATION_BLOCK]);
+  });
+
+  it("returns an empty room when the store has no entries for the topic", () => {
+    saveEvidenceLibraryEntry(TRADE_CARD);
+
+    const room = buildPrepRoomFromStore({
+      topic: "Immigration",
+      coverageReport: COVERAGE_REPORT,
+      contributors: CONTRIBUTORS,
+    });
+
+    expect(room.entries).toEqual([]);
+  });
+
+  it("prefers explicitly supplied entries over the persisted store", () => {
+    saveEvidenceLibraryEntry(TRADE_CARD);
+
+    const room = buildPrepRoomFromStore({
+      topic: "Immigration",
+      entries: [IMMIGRATION_CARD],
+      coverageReport: COVERAGE_REPORT,
+      contributors: CONTRIBUTORS,
+    });
+
+    expect(room.entries).toEqual([IMMIGRATION_CARD]);
+  });
+
+  it("behaves like buildPrepRoom when entries are explicitly supplied", () => {
+    const input = {
+      topic: "Immigration",
+      entries: [IMMIGRATION_CARD, IMMIGRATION_BLOCK, TRADE_CARD],
+      coverageReport: COVERAGE_REPORT,
+      contributors: CONTRIBUTORS,
+    };
+    expect(buildPrepRoomFromStore(input)).toEqual(buildPrepRoom(input));
   });
 });
 

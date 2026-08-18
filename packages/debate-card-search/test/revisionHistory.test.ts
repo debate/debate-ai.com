@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildPersistedRevisionIncentiveLeaderboard,
   deleteRevisionRecord,
   getRevisionRecord,
   listRevisionHistory,
@@ -170,5 +171,32 @@ describe("interop with revision-incentives.ts scoring", () => {
     const leaderboard = buildRevisionIncentiveLeaderboard(listRevisionHistory());
     expect(leaderboard.map((s) => s.contributorId).sort()).toEqual(["alice", "bob"]);
     expect(leaderboard.find((s) => s.contributorId === "alice")?.revisionCount).toBe(2);
+  });
+});
+
+describe("buildPersistedRevisionIncentiveLeaderboard", () => {
+  it("returns an empty leaderboard when nothing is stored", () => {
+    expect(buildPersistedRevisionIncentiveLeaderboard()).toEqual([]);
+  });
+
+  it("builds a ranked leaderboard directly from every persisted revision record", () => {
+    saveRevisionRecord(ALICE_FIRST_EDIT);
+    saveRevisionRecord(ALICE_SECOND_EDIT);
+    saveRevisionRecord(BOB_EDIT);
+
+    const leaderboard = buildPersistedRevisionIncentiveLeaderboard();
+    expect(leaderboard).toEqual(buildRevisionIncentiveLeaderboard(listRevisionHistory()));
+    expect(leaderboard.map((s) => s.contributorId).sort()).toEqual(["alice", "bob"]);
+  });
+
+  it("reflects a newly saved revision without requiring the caller to re-fetch the full list", () => {
+    saveRevisionRecord(BOB_EDIT);
+    expect(buildPersistedRevisionIncentiveLeaderboard().map((s) => s.contributorId)).toEqual(["bob"]);
+
+    saveRevisionRecord(ALICE_FIRST_EDIT);
+    expect(buildPersistedRevisionIncentiveLeaderboard().map((s) => s.contributorId).sort()).toEqual([
+      "alice",
+      "bob",
+    ]);
   });
 });

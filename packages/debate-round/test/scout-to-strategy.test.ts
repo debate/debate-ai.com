@@ -1,17 +1,37 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import type { OpponentRoundRecord } from "debate-data-sync/src/rankings/opponent-team-profile";
 import { buildOpponentTeamProfile } from "debate-data-sync/src/rankings/opponent-team-profile";
+import { saveOpponentTeamProfile } from "debate-data-sync/src/state/opponentTeamProfiles";
 import type { JudgeRoundRecord } from "debate-speech-writer/src/judge/judge-profile";
 import { buildJudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
+import { saveJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
 import {
   assessMatchupRisk,
   buildJudgeAdaptationNotes,
   buildStrategyRecommendation,
+  buildStrategyRecommendationFromStores,
   buildStrategyRecommendationText,
   computeCaseOverlapScore,
   rankCaseOptions,
   type CaseOption,
 } from "../src/round/scout-to-strategy";
+
+/** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
+class MemoryStorage {
+  private store = new Map<string, string>();
+  getItem(key: string): string | null {
+    return this.store.has(key) ? this.store.get(key)! : null;
+  }
+  setItem(key: string, value: string): void {
+    this.store.set(key, value);
+  }
+  removeItem(key: string): void {
+    this.store.delete(key);
+  }
+  clear(): void {
+    this.store.clear();
+  }
+}
 
 function opponentRecords(overrides: Partial<OpponentRoundRecord>[] = []): OpponentRoundRecord[] {
   const base: OpponentRoundRecord[] = [
@@ -434,5 +454,56 @@ describe("buildStrategyRecommendationText", () => {
     expect(text).toContain("- Case A (overlap score: 3)");
     expect(text).toContain("### Judge adaptation");
     expect(text).toContain("### Risk level: high");
+  });
+});
+
+describe("buildStrategyRecommendationFromStores", () => {
+  beforeEach(() => {
+    (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
+  });
+
+  it("resolves opponent/judge profiles from the persisted stores by id", () => {
+    saveOpponentTeamProfile(buildOpponentTeamProfile("OpponentA", opponentRecords()));
+    saveJudgeProfile(buildJudgeProfile("J. Smith", judgeRecords()));
+
+    const recommendation = buildStrategyRecommendationFromStores({
+      caseOptions: CASE_OPTIONS,
+      opponentTeamId: "OpponentA",
+      judgeId: "J. Smith",
+    });
+
+    expect(recommendation.recommendedCase?.name).toBe("Case C");
+    expect(recommendation.riskLevel).toBe("high");
+  });
+
+  it("falls back to the no-data defaults when nothing is persisted for the given ids", () => {
+    const recommendation = buildStrategyRecommendationFromStores({
+      caseOptions: CASE_OPTIONS,
+      opponentTeamId: "Unknown",
+      judgeId: "Unknown",
+    });
+
+    expect(recommendation.caseRankings.every((c) => c.overlapScore === 0)).toBe(true);
+    expect(recommendation.judgeAdaptationNotes).toEqual([
+      "No judge tendency data on file — adapt to a generic flow judge by default.",
+    ]);
+  });
+
+  it("prefers an explicitly supplied profile over a store lookup", () => {
+    saveOpponentTeamProfile(buildOpponentTeamProfile("OpponentA", opponentRecords()));
+    const explicitProfile = buildOpponentTeamProfile("OpponentA (explicit)", []);
+
+    const recommendation = buildStrategyRecommendationFromStores({
+      caseOptions: CASE_OPTIONS,
+      opponentTeamId: "OpponentA",
+      opponentProfile: explicitProfile,
+    });
+
+    expect(recommendation.caseRankings.every((c) => c.overlapScore === 0)).toBe(true);
+  });
+
+  it("behaves like buildStrategyRecommendation when no ids or profiles are supplied", () => {
+    const recommendation = buildStrategyRecommendationFromStores({ caseOptions: CASE_OPTIONS });
+    expect(recommendation).toEqual(buildStrategyRecommendation({ caseOptions: CASE_OPTIONS }));
   });
 });
