@@ -23,6 +23,15 @@
  * or malformed AI response shows an inline error instead of crashing the
  * panel.
  *
+ * A topic switcher (mirroring `TopicCoverageDashboardPanel`'s) closes the
+ * "boards aren't seeded from the coverage-gap prompts" gap noted in
+ * `docs/features/brainstorm-board.md` — picking a tracked topic swaps the
+ * board list to `state/brainstormIdeas.ts`'s
+ * `buildBrainstormBoardsPanelViewForTopic`, which shows one board per
+ * under-covered tracked argument/category pair (with its seeding prompt
+ * visible even before any idea is submitted) merged with every other board
+ * that already has a submitted idea.
+ *
  * @module panels/BrainstormBoardPanel
  */
 
@@ -37,9 +46,11 @@ import { RadioGroup, RadioGroupItem } from "debate-ui/src/primitives/radio-group
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   buildBrainstormBoardsPanelView,
+  buildBrainstormBoardsPanelViewForTopic,
   saveBrainstormIdea,
   upvotePersistedBrainstormIdea,
 } from "../state/brainstormIdeas"
+import { listTrackedTopics } from "../state/trackedArguments"
 import { requestTeamBrainstormAiIdeas } from "../lib/team-brainstorm-client"
 import { buildBrainstormPrompt } from "../lib/team-brainstorm-assist"
 import type { BrainstormBoard, BrainstormCategory } from "../lib/team-brainstorm-assist"
@@ -74,12 +85,24 @@ export function BrainstormBoardPanel() {
   const [error, setError] = useState<string | null>(null)
   const [aiLoading, setAiLoading] = useState(false)
   const [aiError, setAiError] = useState<string | null>(null)
+  const [topics, setTopics] = useState<string[]>([])
+  const [topic, setTopic] = useState("")
 
   useEffect(() => {
+    setTopics(listTrackedTopics())
     setBoards(buildBrainstormBoardsPanelView())
   }, [])
 
-  const refresh = () => setBoards(buildBrainstormBoardsPanelView())
+  const refresh = (activeTopic = topic) => {
+    setTopics(listTrackedTopics())
+    const trimmed = activeTopic.trim()
+    setBoards(trimmed ? buildBrainstormBoardsPanelViewForTopic(trimmed) : buildBrainstormBoardsPanelView())
+  }
+
+  const handleTopicChange = (nextTopic: string) => {
+    setTopic(nextTopic)
+    refresh(nextTopic)
+  }
 
   const handleSubmit = () => {
     const argBlock = draft.argBlock.trim()
@@ -149,6 +172,37 @@ export function BrainstormBoardPanel() {
         </p>
       </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="brainstorm-topic">Seed boards from a topic's coverage gaps (optional)</Label>
+        <Input
+          id="brainstorm-topic"
+          value={topic}
+          onChange={(e) => handleTopicChange(e.target.value)}
+          placeholder="Energy Policy"
+          className="max-w-sm"
+        />
+        {topics.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {topics.map((existing) => (
+              <Button
+                key={existing}
+                size="sm"
+                variant={existing === topic.trim() ? "default" : "outline"}
+                onClick={() => handleTopicChange(existing)}
+              >
+                {existing}
+              </Button>
+            ))}
+          </div>
+        )}
+        {topic.trim() !== "" && (
+          <p className="text-xs text-muted-foreground">
+            Showing every under-covered tracked argument's board for "{topic.trim()}" from the Topic Coverage
+            Dashboard, even before anyone has submitted an idea, plus every other board with a submitted idea.
+          </p>
+        )}
+      </div>
+
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -209,7 +263,9 @@ export function BrainstormBoardPanel() {
 
       {boards.length === 0 ? (
         <div className="p-6 text-center text-sm text-muted-foreground">
-          No brainstorm ideas yet. Submit one above to start a board.
+          {topic.trim() !== ""
+            ? `No coverage-gap boards for "${topic.trim()}" — its checklist has no under-covered arguments.`
+            : "No brainstorm ideas yet. Submit one above to start a board."}
         </div>
       ) : (
         <div className="space-y-4">
@@ -220,6 +276,9 @@ export function BrainstormBoardPanel() {
                 <Badge variant="outline">{CATEGORY_LABEL[board.category]}</Badge>
               </div>
               <p className="mb-3 text-xs text-muted-foreground">{board.prompt}</p>
+              {board.ideas.length === 0 && (
+                <p className="mb-2 text-xs text-muted-foreground">No ideas submitted yet.</p>
+              )}
               <div className="space-y-2">
                 {board.ideas.map((idea) => (
                   <div

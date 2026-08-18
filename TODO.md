@@ -4,6 +4,37 @@
 ### In progress
 
 ### Completed
+- **Team Brainstorm Assist — seed boards from coverage gaps.**
+  Closes the "boards aren't seeded from the coverage-gap prompts" gap noted
+  under the "🧠 Team Brainstorm Assist" bullet in the Research Crowdsourcing
+  Organizer Features list in `docs/features/brainstorm-board.md`'s Known
+  gaps section. `packages/debate-card-search/src/state/brainstormIdeas.ts`
+  adds `buildBrainstormBoardsPanelViewForTopic(topic)`, composing the
+  already-persisted `state/trackedArguments.ts`'s
+  `buildPersistedTopicCoverageReport` with the existing, previously-unused
+  pure `lib/team-brainstorm-assist.ts` `buildBrainstormBoardsForCoverageGaps`
+  to produce one board per under-covered tracked argument/category pair —
+  each showing its seeding prompt even with zero submitted ideas — merged
+  with every other board that already has at least one submitted idea but
+  isn't itself a coverage-gap seed, so nothing previously visible disappears
+  once a topic is chosen. `BrainstormBoardPanel.tsx` gains a topic switcher
+  (mirroring `TopicCoverageDashboardPanel`'s free-text input + saved-topic
+  buttons, reading the same tracked topics via `listTrackedTopics`) that
+  swaps the board list between the topic-less `buildBrainstormBoardsPanelView`
+  and the new topic-scoped view, plus a "No ideas submitted yet." hint on an
+  empty board and a topic-aware empty-state message. No new coverage-gap or
+  ranking logic was introduced — this is a composition and rendering layer
+  only. Vitest-covered in
+  `packages/debate-card-search/test/brainstormIdeas.test.ts` (a seeded board
+  with no ideas yet, a seeded board populated with an already-submitted
+  idea, merging in a non-seed board with a submitted idea, and an untracked
+  topic falling back to exactly the topic-less board list). Docs updated in
+  `docs/features/brainstorm-board.md`. Verified: `bun install` (2050
+  packages), `bun run test` (120 files / 1602 tests, all pass), `bun run
+  typecheck` (11 of 12 in-scope packages have a typecheck script; all pass),
+  and `bun run build:web` (`debate-ai-web` succeeds, `/cards/brainstorm`
+  route present, no new route) all pass. No repo-wide `lint` script exists
+  (checked root/app/package `package.json` scripts) so none was run.
 - **Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut
   wiring.** Closes follow-up (a) under idea #14 ("Legacy Verbatim /
   Cardmirror Compatibility") in the Product Feature Ideas list: "wiring
@@ -4412,7 +4443,7 @@
 * 
 * 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. A second slice, `buildPrepRoomFromStore` (see Tracker Status above, "Collaboration Prep Room Store Wiring"), now reads a topic's entries from the persisted `evidenceLibraryEntries.ts` store instead of requiring a caller-supplied entry list. A third slice, `state/prepRooms.ts`'s `buildPersistedPrepRoom`/`listPrepRoomTopics` plus `PrepRoomPanel` (see Tracker Status above, "Collaboration Prep Room — prep-room panel UI"), now composes a topic's coverage report and contributor list from their own persisted stores and renders a topic switcher, evidence/draft-block search, and routed-task view at `/cards/prep-room`, closing follow-up (a). Follow-up (b), a live presence/who's-active signal, remains open — not started._
 * 
-* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. A second follow-up, persisting submitted ideas and votes, is done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`). A third slice, `BrainstormBoardPanel` (see Tracker Status above, "Team Brainstorm Assist — brainstorm-panel UI"), now renders a submission form and every board at `/cards/brainstorm`, closing follow-up (b). A fourth slice (see Tracker Status above, "Team Brainstorm Assist — real AI-generation call") added `lib/team-brainstorm-ai.ts` and `lib/team-brainstorm-client.ts`, wiring a "Generate AI ideas" action into the panel's submission form that calls the existing `/api/reason-ai` Anthropic proxy to draft several candidate ideas for the form's argument block/category, saved as normal, AI-attributed board ideas via the existing `saveBrainstormIdea`, closing follow-up (a). No follow-ups remain open on this bullet; boards still aren't seeded from `buildBrainstormPromptsForCoverageGaps` in the panel, as noted in `docs/features/brainstorm-board.md`._
+* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. A second follow-up, persisting submitted ideas and votes, is done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`). A third slice, `BrainstormBoardPanel` (see Tracker Status above, "Team Brainstorm Assist — brainstorm-panel UI"), now renders a submission form and every board at `/cards/brainstorm`, closing follow-up (b). A fourth slice (see Tracker Status above, "Team Brainstorm Assist — real AI-generation call") added `lib/team-brainstorm-ai.ts` and `lib/team-brainstorm-client.ts`, wiring a "Generate AI ideas" action into the panel's submission form that calls the existing `/api/reason-ai` Anthropic proxy to draft several candidate ideas for the form's argument block/category, saved as normal, AI-attributed board ideas via the existing `saveBrainstormIdea`, closing follow-up (a). A fifth slice (see Tracker Status above, "Team Brainstorm Assist — seed boards from coverage gaps") added `state/brainstormIdeas.ts`'s `buildBrainstormBoardsPanelViewForTopic` and a topic switcher in `BrainstormBoardPanel`, wiring the existing `buildBrainstormBoardsForCoverageGaps` into the panel so choosing a tracked topic shows one board per under-covered tracked argument/category pair (with its prompt visible even before an idea is submitted) merged with every other board that already has a submitted idea, closing the "boards aren't seeded from the coverage-gap prompts" gap. No follow-ups remain open on this bullet._
 * 
 * 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. A second slice, `evidenceLibraryEntries.ts` (see Tracker Status above, "Shared Evidence Library — persisted evidence repository"), now persists `EvidenceLibraryEntry` records to localStorage. A third slice, `EvidenceLibraryPanel` (see Tracker Status above, "Shared Evidence Library — evidence library search UI panel"), now renders a free-text/kind search panel at `/cards/library`, closing follow-up (a). Follow-up (b), wiring `prep-room.ts` to read through this store, was also already closed separately by "Collaboration Prep Room Store Wiring"'s `buildPrepRoomFromStore` (see Tracker Status above). Follow-ups: (c) a real search index (e.g. Typesense) once entries are persisted at scale. Not started._
 * 
