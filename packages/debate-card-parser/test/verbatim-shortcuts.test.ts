@@ -3,6 +3,7 @@ import {
   condenseCardHtml,
   formatShortCiteTag,
   moveOutlineNode,
+  toggleEmphasisHtml,
 } from "../src/utils/verbatim-shortcuts";
 import type { Card, OutlineItem, OutlineNode } from "../src/types/types";
 
@@ -137,5 +138,73 @@ describe("moveOutlineNode", () => {
   it("returns the same array reference for an out-of-range index", () => {
     expect(moveOutlineNode(outline, -1, "up")).toBe(outline);
     expect(moveOutlineNode(outline, outline.length, "down")).toBe(outline);
+  });
+
+  it("is generic — works against a caller's own outline-shaped entries", () => {
+    // e.g. reason-editor's live-document `OutlineHeading`, which has no
+    // relation to this module's `Card`/`OutlineItem` types.
+    interface HeadingLike {
+      id: string;
+      level: number;
+    }
+    const headings: HeadingLike[] = [
+      { id: "a", level: 1 },
+      { id: "b", level: 2 },
+      { id: "c", level: 2 },
+    ];
+    expect(moveOutlineNode(headings, 1, "down")).toEqual([
+      { id: "a", level: 1 },
+      { id: "c", level: 2 },
+      { id: "b", level: 2 },
+    ]);
+  });
+});
+
+describe("toggleEmphasisHtml", () => {
+  it("wraps an unmarked selection in <mark>", () => {
+    expect(toggleEmphasisHtml("Hello world", 6, 11)).toBe("Hello <mark>world</mark>");
+  });
+
+  it("wraps a selection starting at the beginning of the text", () => {
+    expect(toggleEmphasisHtml("Hello world", 0, 5)).toBe("<mark>Hello</mark> world");
+  });
+
+  it("removes an existing <mark> pair when the selection exactly matches it", () => {
+    const html = "Hello <mark>world</mark>";
+    expect(toggleEmphasisHtml(html, 6, 11)).toBe("Hello world");
+  });
+
+  it("is idempotent: wrapping then unwrapping returns the original html", () => {
+    const html = "Hello world";
+    const wrapped = toggleEmphasisHtml(html, 6, 11);
+    expect(toggleEmphasisHtml(wrapped, 6, 11)).toBe(html);
+  });
+
+  it("merges a wider selection that only partially overlaps an existing mark", () => {
+    const html = "Hello <mark>wor</mark>ld";
+    // Visible text is "Hello world"; select "world" (offsets 6-11), which
+    // only partially covers the existing "wor" mark.
+    expect(toggleEmphasisHtml(html, 6, 11)).toBe("Hello <mark>world</mark>");
+  });
+
+  it("addresses offsets by visible text, ignoring surrounding tags", () => {
+    const html = "<u>Hello world</u>";
+    expect(toggleEmphasisHtml(html, 6, 11)).toBe("<u>Hello <mark>world</mark></u>");
+  });
+
+  it("is a no-op for a collapsed selection", () => {
+    expect(toggleEmphasisHtml("Hello world", 4, 4)).toBe("Hello world");
+  });
+
+  it("normalizes a reversed selection", () => {
+    expect(toggleEmphasisHtml("Hello world", 11, 6)).toBe("Hello <mark>world</mark>");
+  });
+
+  it("clamps out-of-range offsets to the visible text bounds", () => {
+    expect(toggleEmphasisHtml("Hello", -5, 100)).toBe("<mark>Hello</mark>");
+  });
+
+  it("wraps the whole string when fully selected", () => {
+    expect(toggleEmphasisHtml("Hello", 0, 5)).toBe("<mark>Hello</mark>");
   });
 });

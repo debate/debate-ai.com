@@ -4,6 +4,7 @@ import {
   deleteDrillSet,
   getDrillSet,
   listDrillSets,
+  saveDrillAiScript,
   saveDrillSet,
   type DrillSetRecord,
 } from "../src/state/drillSets";
@@ -103,6 +104,49 @@ describe("deleteDrillSet", () => {
   it("is a no-op when the roundId isn't stored", () => {
     saveDrillSet(DRILL_SET_B);
     deleteDrillSet("missing");
+    expect(listDrillSets()).toEqual([DRILL_SET_B]);
+  });
+});
+
+describe("saveDrillAiScript", () => {
+  it("sets aiScripts[drillIndex] on the stored record", () => {
+    saveDrillSet(DRILL_SET_A);
+    saveDrillAiScript("round-1", 0, "Here is the AI-generated overview script.");
+
+    expect(getDrillSet("round-1")).toEqual({
+      ...DRILL_SET_A,
+      aiScripts: { 0: "Here is the AI-generated overview script." },
+    });
+  });
+
+  it("overwrites an existing script for the same drill index", () => {
+    saveDrillSet(DRILL_SET_A);
+    saveDrillAiScript("round-1", 0, "First draft.");
+    saveDrillAiScript("round-1", 0, "Regenerated draft.");
+
+    expect(getDrillSet("round-1")?.aiScripts).toEqual({ 0: "Regenerated draft." });
+  });
+
+  it("keeps scripts for other drill indexes untouched", () => {
+    saveDrillSet(DRILL_SET_A);
+    saveDrillAiScript("round-1", 0, "Overview script.");
+    saveDrillAiScript("round-1", 1, "Frontline script.");
+
+    expect(getDrillSet("round-1")?.aiScripts).toEqual({ 0: "Overview script.", 1: "Frontline script." });
+  });
+
+  it("leaves other rounds' records untouched", () => {
+    saveDrillSet(DRILL_SET_A);
+    saveDrillSet(DRILL_SET_B);
+    saveDrillAiScript("round-1", 0, "Overview script.");
+
+    expect(getDrillSet("round-2")).toEqual(DRILL_SET_B);
+  });
+
+  it("is a no-op when the roundId isn't stored", () => {
+    saveDrillSet(DRILL_SET_B);
+    saveDrillAiScript("missing", 0, "Script.");
+
     expect(listDrillSets()).toEqual([DRILL_SET_B]);
   });
 });

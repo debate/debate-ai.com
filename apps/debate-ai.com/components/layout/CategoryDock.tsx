@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell, ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type, Bot } from "lucide-react"
+import { LogIn, LogOut, UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell, ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type, ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School, FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation, ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles } from "lucide-react"
+import { toast } from "sonner"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
 import {
@@ -22,7 +23,11 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "debate-ui/src/primitives/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "debate-ui/src/primitives/avatar"
 import { themeNames, themeColors, formatThemeName, useThemeState } from "@/components/theme-dropdown"
+import { LoginDialog } from "@/components/layout/LoginDialog"
+import { authClient } from "@/lib/auth/client"
+import { useSession } from "@/lib/hooks/useSession"
 import {
   IconCollectiveMind,
   IconFlowFlower,
@@ -42,7 +47,74 @@ const NAV_ITEMS = [
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
 
-function SettingsMenu({ side }: { side: "bottom" | "top" }) {
+/**
+ * Account block at the foot of the settings menu: who is signed in and how to
+ * change that. Signed out it opens the sign-in dialog rather than navigating to
+ * `/login`, so the current page survives.
+ */
+function AccountSection({ onSignIn }: { onSignIn: () => void }) {
+  const { user, isAuthenticated, isLoading } = useSession()
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await authClient.signOut()
+      if (error) throw new Error(error.message || error.statusText)
+      router.refresh()
+    } catch (error) {
+      console.error("[auth] sign-out failed:", error)
+      toast.error("Could not sign out")
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <DropdownMenuItem disabled>
+        <UserCircle2 className="mr-2 h-4 w-4" />
+        <span className="text-muted-foreground">Checking session…</span>
+      </DropdownMenuItem>
+    )
+  }
+
+  if (!isAuthenticated) {
+    // No `preventDefault` here — the menu has to close, or it sits on top of
+    // the dialog it just opened. Opening on the next tick keeps Radix's
+    // focus-restore on close from stealing focus back from the dialog.
+    return (
+      <DropdownMenuItem onSelect={() => setTimeout(onSignIn, 0)}>
+        <LogIn className="mr-2 h-4 w-4" />
+        Sign In
+      </DropdownMenuItem>
+    )
+  }
+
+  const displayName = user?.name || user?.email || "Signed in"
+
+  return (
+    <>
+      <div className="flex items-center gap-2 px-2 py-1.5">
+        <Avatar className="h-7 w-7">
+          {user?.image ? <AvatarImage src={user.image} alt="" /> : null}
+          <AvatarFallback className="text-xs">
+            {(displayName[0] ?? "?").toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium">{displayName}</p>
+          {user?.email && user.email !== displayName && (
+            <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+          )}
+        </div>
+      </div>
+      <DropdownMenuItem onSelect={() => { handleSignOut() }}>
+        <LogOut className="mr-2 h-4 w-4" />
+        Sign Out
+      </DropdownMenuItem>
+    </>
+  )
+}
+
+function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: () => void }) {
   const themeState = useThemeState()
   const router = useRouter()
 
@@ -59,6 +131,18 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/leaderboard") }}>
         <Trophy className="mr-2 h-4 w-4" />
         Leaderboard
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/contributions") }}>
+        <ThumbsUp className="mr-2 h-4 w-4" />
+        Contributions Feed
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/awards") }}>
+        <Medal className="mr-2 h-4 w-4" />
+        Contributor Awards
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/best-card") }}>
+        <Sparkles className="mr-2 h-4 w-4" />
+        Daily Best Card
       </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/inbox") }}>
         <Inbox className="mr-2 h-4 w-4" />
@@ -104,6 +188,10 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
         <Scale className="mr-2 h-4 w-4" />
         Judge Paradigm Picker
       </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/judge-decision") }}>
+        <Landmark className="mr-2 h-4 w-4" />
+        AI Judge Decision
+      </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/summaries") }}>
         <FileText className="mr-2 h-4 w-4" />
         Speech Transcript Summaries
@@ -120,9 +208,73 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
         <Type className="mr-2 h-4 w-4" />
         Word-Count Speeches
       </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/outline") }}>
+        <ListTree className="mr-2 h-4 w-4" />
+        Argument Tree Outline
+      </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/versus-ai") }}>
         <Bot className="mr-2 h-4 w-4" />
-        Debate vs AI
+        Online Debate Versus AI
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/brainstorm") }}>
+        <Lightbulb className="mr-2 h-4 w-4" />
+        Team Brainstorm Assist
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/collaboration") }}>
+        <Users2 className="mr-2 h-4 w-4" />
+        Team Collaboration Mode
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/practice-round") }}>
+        <PlayCircle className="mr-2 h-4 w-4" />
+        Practice Round Simulator
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/standings") }}>
+        <TrendingUp className="mr-2 h-4 w-4" />
+        CX NDCA Standings
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/outcomes") }}>
+        <BarChart3 className="mr-2 h-4 w-4" />
+        AI Response-Outcome Charts
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/coaching-programs") }}>
+        <School className="mr-2 h-4 w-4" />
+        Coaching Programs
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/argument-library") }}>
+        <FolderTree className="mr-2 h-4 w-4" />
+        Argument Library
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/group-challenges") }}>
+        <Target className="mr-2 h-4 w-4" />
+        Group Challenges
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/coach-materials") }}>
+        <BookOpen className="mr-2 h-4 w-4" />
+        Coach Materials
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/coverage") }}>
+        <PieChart className="mr-2 h-4 w-4" />
+        Topic Coverage Dashboard
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/prep-room") }}>
+        <Presentation className="mr-2 h-4 w-4" />
+        Collaboration Prep Room
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/progress-tracking") }}>
+        <ListChecks className="mr-2 h-4 w-4" />
+        Research Progress
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/streaks") }}>
+        <Flame className="mr-2 h-4 w-4" />
+        Quest Streaks
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/quests") }}>
+        <CheckSquare className="mr-2 h-4 w-4" />
+        Daily Quests
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/annotations") }}>
+        <MapPin className="mr-2 h-4 w-4" />
+        Flow Annotations
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
@@ -166,13 +318,7 @@ function SettingsMenu({ side }: { side: "bottom" | "top" }) {
         </DropdownMenuSubContent>
       </DropdownMenuSub>
       <DropdownMenuSeparator />
-      <DropdownMenuItem>
-        <UserCircle2 className="mr-2 h-4 w-4" />
-        Profile
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <span className="text-muted-foreground">Sign Out</span>
-      </DropdownMenuItem>
+      <AccountSection onSignIn={onSignIn} />
     </DropdownMenuContent>
   )
 }
@@ -185,10 +331,12 @@ function DockInstance({
   dockClassName,
   side,
   allItems,
+  onSignIn,
 }: {
   dockClassName: string
   side: "bottom" | "top"
   allItems: { key: string; label: string; icon: any; active: boolean; onClick: () => void }[]
+  onSignIn: () => void
 }) {
   return (
     <DropdownMenu>
@@ -219,7 +367,7 @@ function DockInstance({
           </DockItem>
         </DropdownMenuTrigger>
       </Dock>
-      <SettingsMenu side={side} />
+      <SettingsMenu side={side} onSignIn={onSignIn} />
     </DropdownMenu>
   )
 }
@@ -234,6 +382,9 @@ export function CategoryDock() {
   const router = useRouter()
   const categoryState = useCategoryDockState()
   const { activeVideoId, activeVideoTitle, isMinimized, isPlaying, setMinimized, setIsPlaying } = useVideoPlayerStore()
+  // Owned here rather than inside the menu: the dropdown unmounts its content
+  // when it closes, which would tear the dialog down with it.
+  const [loginOpen, setLoginOpen] = useState(false)
 
   const allItems = [
     ...NAV_ITEMS.map(({ href, label, icon }) => ({
@@ -305,6 +456,7 @@ export function CategoryDock() {
           dockClassName="h-[52px] shrink-0 !mt-0 !mx-0"
           side="bottom"
           allItems={allItems}
+          onSignIn={() => setLoginOpen(true)}
         />
       </div>
 
@@ -351,9 +503,12 @@ export function CategoryDock() {
               </DockItem>
             </DropdownMenuTrigger>
           </Dock>
-          <SettingsMenu side="top" />
+          <SettingsMenu side="top" onSignIn={() => setLoginOpen(true)} />
         </DropdownMenu>
       </div>
+
+      {/* One dialog for both docks — only one is visible at a time. */}
+      <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
     </>
   )
 }

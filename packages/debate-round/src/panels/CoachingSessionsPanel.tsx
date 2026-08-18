@@ -10,6 +10,13 @@
  * `deleteCoachingSession` — no new coaching-prompt generation logic is
  * introduced here.
  *
+ * A "Get AI feedback" action per session calls
+ * `round/coach-feedback-client.ts`'s `requestCoachFeedback` with the
+ * session's own template prompts, saves the result via
+ * `saveCoachingSessionAiFeedback`, and renders it under the template
+ * prompts — closing follow-up (a), "an actual AI coaching call for
+ * open-ended feedback beyond this deterministic template layer."
+ *
  * @module panels/CoachingSessionsPanel
  */
 
@@ -21,9 +28,11 @@ import { Button } from "debate-ui/src/primitives/button"
 import {
   buildCoachingSessionsPanelView,
   deleteCoachingSession,
+  saveCoachingSessionAiFeedback,
   type CoachingSessionRecord,
 } from "../state/coachingSessions"
 import type { CoachingPromptKind } from "../flow/coach-mode"
+import { requestCoachFeedback } from "../round/coach-feedback-client"
 
 const COACHING_PROMPT_KIND_LABELS: Record<CoachingPromptKind, string> = {
   extension: "Extension",
@@ -41,6 +50,8 @@ const COACHING_PROMPT_KIND_LABELS: Record<CoachingPromptKind, string> = {
  */
 export function CoachingSessionsPanel() {
   const [sessions, setSessions] = useState<CoachingSessionRecord[] | null>(null)
+  const [feedbackLoadingKey, setFeedbackLoadingKey] = useState<string | null>(null)
+  const [feedbackErrorsByKey, setFeedbackErrorsByKey] = useState<Record<string, string>>({})
 
   useEffect(() => {
     setSessions(buildCoachingSessionsPanelView())
@@ -51,6 +62,27 @@ export function CoachingSessionsPanel() {
   const handleClear = (roundId: string, sideKey: string) => {
     deleteCoachingSession(roundId, sideKey)
     refresh()
+  }
+
+  const handleGetAiFeedback = async (session: CoachingSessionRecord) => {
+    const key = `${session.roundId}:${session.sideKey}`
+    setFeedbackLoadingKey(key)
+    setFeedbackErrorsByKey((prev) => {
+      const { [key]: _removed, ...rest } = prev
+      return rest
+    })
+    try {
+      const feedback = await requestCoachFeedback({ sideKey: session.sideKey, prompts: session.prompts })
+      saveCoachingSessionAiFeedback(session.roundId, session.sideKey, feedback)
+      refresh()
+    } catch (error) {
+      setFeedbackErrorsByKey((prev) => ({
+        ...prev,
+        [key]: error instanceof Error ? error.message : "Failed to get AI feedback.",
+      }))
+    } finally {
+      setFeedbackLoadingKey(null)
+    }
   }
 
   if (sessions === null) {
@@ -98,6 +130,37 @@ export function CoachingSessionsPanel() {
                 <p className="text-foreground">{prompt.prompt}</p>
               </div>
             ))}
+          </div>
+          <div className="mt-3 border-t border-border pt-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <h3 className="text-xs font-semibold uppercase text-muted-foreground">AI feedback</h3>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={feedbackLoadingKey === `${session.roundId}:${session.sideKey}`}
+                onClick={() => handleGetAiFeedback(session)}
+              >
+                {feedbackLoadingKey === `${session.roundId}:${session.sideKey}`
+                  ? "Getting feedback…"
+                  : session.aiFeedback
+                    ? "Regenerate AI feedback"
+                    : "Get AI feedback"}
+              </Button>
+            </div>
+            {feedbackErrorsByKey[`${session.roundId}:${session.sideKey}`] && (
+              <p className="text-sm text-destructive">
+                {feedbackErrorsByKey[`${session.roundId}:${session.sideKey}`]}
+              </p>
+            )}
+            {session.aiFeedback && (
+              <p className="whitespace-pre-wrap text-sm text-foreground">{session.aiFeedback}</p>
+            )}
+            {!session.aiFeedback && !feedbackErrorsByKey[`${session.roundId}:${session.sideKey}`] && (
+              <p className="text-sm text-muted-foreground">
+                No AI feedback generated yet — open-ended coaching feedback beyond the template
+                prompts above.
+              </p>
+            )}
           </div>
         </div>
       ))}

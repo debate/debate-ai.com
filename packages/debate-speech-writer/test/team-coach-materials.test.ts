@@ -3,6 +3,8 @@ import {
   buildCoachMaterialLibrary,
   buildCoachMaterialLibrarySummaryText,
   buildGroundedCoachPrompt,
+  COACH_MATERIAL_KIND_LABELS,
+  COACH_MATERIAL_KIND_ORDER,
   excerptMaterialText,
   findRelevantMaterials,
   scoreMaterialRelevance,
@@ -213,5 +215,13 @@ describe("buildCoachMaterialLibrarySummaryText", () => {
   it("uses singular material wording for exactly one material", () => {
     const library = buildCoachMaterialLibrary([lecture]);
     expect(buildCoachMaterialLibrarySummaryText(library)).toContain("Team coach library: 1 material.");
+  });
+});
+
+describe("COACH_MATERIAL_KIND_LABELS", () => {
+  it("has a label for every kind in COACH_MATERIAL_KIND_ORDER", () => {
+    for (const kind of COACH_MATERIAL_KIND_ORDER) {
+      expect(COACH_MATERIAL_KIND_LABELS[kind]).toBeTruthy();
+    }
   });
 });
