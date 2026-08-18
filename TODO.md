@@ -6,6 +6,24 @@
 (none)
 
 ### Completed
+- **Collaboration Prep Room — prep-room panel UI.**
+  `packages/debate-card-search/src/state/prepRooms.ts` adds
+  `buildPersistedPrepRoom`/`listPrepRoomTopics`, composing the already-
+  persisted `evidenceLibraryEntries.ts`, `trackedArguments.ts` (via
+  `buildPersistedTopicCoverageReport`), and `contributorAvailability.ts`
+  stores into a fully store-driven `PrepRoom` (via the existing
+  `buildPrepRoomFromStore`) from just a topic name. A new
+  `packages/debate-card-search/src/panels/PrepRoomPanel.tsx` renders a topic
+  switcher, that topic's evidence/draft-block keyword search (via the
+  existing `searchPrepRoomEvidence`), and its routed research assignments,
+  mounted at `/cards/prep-room` — closing follow-up (a) under the "🧑‍🤝‍🧑
+  Collaboration Prep Room" bullet. Follow-up (b), a live presence/who's-
+  active signal, remains open — not started. Vitest-covered in
+  `packages/debate-card-search/test/prepRooms.test.ts`. Verified: `bun
+  install` (2050 packages), `bun run typecheck` (12 packages, all pass),
+  `bun run test` (93 files / 1332 tests, all pass), and `bun run build:web`
+  (`debate-ai-web`, succeeds, `/cards/prep-room` route present) all pass.
+  Documented in `docs/features/collaboration-prep-room.md`.
 - **Expandable Heading Structure — outline nav panel.**
   `packages/reason-editor/src/react/OutlineNavPanel.tsx` renders the live
   document's H1-H4 heading outline (via the existing `buildHeadingOutline`/
@@ -3472,7 +3490,7 @@
 * 
 * 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. A third slice, `CoachingSessionsPanel` (see Tracker Status above, "AI Coach Mode — coaching-panel UI"), now renders every persisted coaching session grouped by round + side at `/coaching`, closing follow-up (b). Follow-up (a), an actual AI coaching call for open-ended feedback beyond this template layer, remains open — not started._
 * 
-* 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. A second slice, `buildPrepRoomFromStore` (see Tracker Status above, "Collaboration Prep Room Store Wiring"), now reads a topic's entries from the persisted `evidenceLibraryEntries.ts` store instead of requiring a caller-supplied entry list. Follow-ups: (a) a prep-room panel UI, (b) a live presence/who's-active signal. Neither of these are started._
+* 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. A second slice, `buildPrepRoomFromStore` (see Tracker Status above, "Collaboration Prep Room Store Wiring"), now reads a topic's entries from the persisted `evidenceLibraryEntries.ts` store instead of requiring a caller-supplied entry list. A third slice, `state/prepRooms.ts`'s `buildPersistedPrepRoom`/`listPrepRoomTopics` plus `PrepRoomPanel` (see Tracker Status above, "Collaboration Prep Room — prep-room panel UI"), now composes a topic's coverage report and contributor list from their own persisted stores and renders a topic switcher, evidence/draft-block search, and routed-task view at `/cards/prep-room`, closing follow-up (a). Follow-up (b), a live presence/who's-active signal, remains open — not started._
 * 
 * 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. A second follow-up, persisting submitted ideas and votes, is done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`). A third slice, `BrainstormBoardPanel` (see Tracker Status above, "Team Brainstorm Assist — brainstorm-panel UI"), now renders a submission form and every board at `/cards/brainstorm`, closing follow-up (b). Follow-up (a), an actual AI-generation call that drafts candidate ideas from `buildBrainstormPrompt`'s output, remains open — not started; boards also aren't yet seeded from `buildBrainstormPromptsForCoverageGaps` in the panel._
 * 
