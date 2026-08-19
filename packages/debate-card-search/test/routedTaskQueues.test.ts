@@ -4,6 +4,7 @@ import {
   buildTaskInboxView,
   completePersistedRoutedTask,
   deleteRoutedTaskQueue,
+  filterTaskInboxViewByContributor,
   getRoutedTaskQueue,
   listRoutedTaskQueues,
   routePersistedTopicTasks,
@@ -260,5 +261,54 @@ describe("buildTaskInboxView", () => {
 
     const [topic] = buildTaskInboxView();
     expect(topic.assignments[0].contributorSkillLevel).toBeUndefined();
+  });
+});
+
+describe("filterTaskInboxViewByContributor", () => {
+  const MIXED_QUEUE: RoutedTaskQueueRecord = {
+    topicId: "topic-mixed",
+    result: {
+      assignments: [
+        { task: SOLVENCY_TASK, contributorId: "alice" },
+        { task: IMPACTS_TASK, contributorId: "bob" },
+      ],
+      unassignedTasks: [],
+    },
+  };
+
+  it("returns an empty list when nothing is routed", () => {
+    expect(filterTaskInboxViewByContributor([], "alice")).toEqual([]);
+  });
+
+  it("keeps only the requested contributor's assignments within a topic", () => {
+    saveRoutedTaskQueue(MIXED_QUEUE);
+    const view = buildTaskInboxView();
+
+    const filtered = filterTaskInboxViewByContributor(view, "alice");
+
+    expect(filtered).toEqual([
+      {
+        topicId: "topic-mixed",
+        assignments: [{ task: SOLVENCY_TASK, contributorId: "alice", topicId: "topic-mixed" }],
+        unassignedTasks: [],
+      },
+    ]);
+  });
+
+  it("drops a topic entirely once none of its assignments match", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+    saveRoutedTaskQueue(OTHER_QUEUE);
+    const view = buildTaskInboxView();
+
+    expect(filterTaskInboxViewByContributor(view, "nobody")).toEqual([]);
+  });
+
+  it("clears unassignedTasks even on a topic with a matching assignment", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+    const view = buildTaskInboxView();
+
+    const filtered = filterTaskInboxViewByContributor(view, "alice");
+
+    expect(filtered[0].unassignedTasks).toEqual([]);
   });
 });

@@ -24,6 +24,14 @@
  * TopicCoverageDashboardPanel.tsx` already track that topic's checklist
  * under.
  *
+ * A "My tasks" filter closes the "(e) scoping the inbox to 'my tasks' once
+ * contributor identity/auth exists" follow-up named under the same bullet.
+ * This repo still has no auth/identity system, so — mirroring the "🔄
+ * Strategy Sync Notes" assignee-notification slice's identical free-form-id
+ * workaround — a contributor just types their own `contributorId` into a
+ * field, and the panel scopes the rendered view to it via
+ * `filterTaskInboxViewByContributor`.
+ *
  * @module panels/TaskInboxPanel
  */
 
@@ -34,7 +42,12 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
-import { buildTaskInboxView, routePersistedTopicTasks, type TaskInboxTopic } from "../state/routedTaskQueues"
+import {
+  buildTaskInboxView,
+  filterTaskInboxViewByContributor,
+  routePersistedTopicTasks,
+  type TaskInboxTopic,
+} from "../state/routedTaskQueues"
 import { completeAndRecordResearchTask } from "../state/researchProgress"
 import { listTrackedTopics } from "../state/trackedArguments"
 import type { CoverageLevel } from "../lib/topic-coverage"
@@ -58,6 +71,7 @@ export function TaskInboxPanel() {
   const [trackedTopics, setTrackedTopics] = useState<string[]>([])
   const [routeTopic, setRouteTopic] = useState("")
   const [routeError, setRouteError] = useState<string | null>(null)
+  const [myContributorId, setMyContributorId] = useState("")
 
   useEffect(() => {
     setTopics(buildTaskInboxView())
@@ -118,6 +132,23 @@ export function TaskInboxPanel() {
     </div>
   )
 
+  const myTasksFilter = (
+    <div className="rounded-lg border border-border p-4 space-y-1.5">
+      <Label htmlFor="task-inbox-my-id">My tasks</Label>
+      <Input
+        id="task-inbox-my-id"
+        value={myContributorId}
+        onChange={(e) => setMyContributorId(e.target.value)}
+        placeholder="alice"
+        className="max-w-sm"
+      />
+      <p className="text-xs text-muted-foreground">
+        Enter your contributor id to scope the inbox below to just your own assignments. This repo
+        has no auth/identity system, so this is a free-form filter, not a login.
+      </p>
+    </div>
+  )
+
   if (topics.length === 0) {
     return (
       <div className="p-4 sm:p-6 space-y-6">
@@ -136,6 +167,9 @@ export function TaskInboxPanel() {
     )
   }
 
+  const trimmedMyId = myContributorId.trim()
+  const visibleTopics = trimmedMyId ? filterTaskInboxViewByContributor(topics, trimmedMyId) : topics
+
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div>
@@ -145,7 +179,13 @@ export function TaskInboxPanel() {
         </p>
       </div>
       {routeForm}
-      {topics.map((topic) => (
+      {myTasksFilter}
+      {trimmedMyId && visibleTopics.length === 0 && (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No tasks routed to "{trimmedMyId}" right now.
+        </div>
+      )}
+      {visibleTopics.map((topic) => (
         <div key={topic.topicId} className="rounded-lg border border-border p-4">
           <h2 className="mb-3 text-sm font-semibold text-foreground">{topic.topicId}</h2>
           {topic.assignments.length === 0 && topic.unassignedTasks.length === 0 ? (
