@@ -52,6 +52,53 @@ _No task currently in progress._
   passed), `bun run build` (both buildable packages passed, `/coaching-programs`
   appears in the built route list) — no repo-wide `lint` script exists.
   [PR #245](https://github.com/debate/debate-ai.com/pull/245).
+- **Video-Lecture-Training Coach AI — document-upload text extraction.**
+  Closes the "document" half of follow-up (a) named in
+  `team-coach-materials.ts`'s file doc-comment for idea #8
+  ("Video-Lecture-Training Coach AI") in TODO.md's Product Feature Ideas
+  list: "transcription/parsing that turns an uploaded recording or document
+  into a `CoachMaterial`'s `text`." A new
+  `packages/debate-speech-writer/src/coach/document-material-extraction.ts`
+  adds `detectDocumentKind`/`extractMaterialTextFromDocument`, dispatching
+  an uploaded file by extension — `.txt`/`.md`/`.markdown` are read
+  directly via `Blob#text()`, `.docx` goes through `debate-card-parser`'s
+  existing `convertDocxToHTML(file, { plainTextOnly: true })` (the same
+  Verbatim-parsing pipeline `docx-to-cards.ts` already uses), reusing that
+  OOXML pipeline rather than reimplementing it. `debate-speech-writer` now
+  depends on `debate-card-parser` (`workspace:*`), mirroring
+  `reason-editor`'s existing identical dependency. The extracted text is
+  whitespace-normalized and validated non-empty, throwing a plain `Error`
+  for an unsupported extension or a document with no readable text.
+  `CoachMaterialsPanel.tsx` gets an "Upload a document" button next to the
+  Material text field (mirroring `debate-round`'s `FileExportDialog.tsx`
+  hidden-file-input convention) that fills the text field — and the title
+  field, if still empty — from the extraction result, showing a plain error
+  message on failure. Recording (audio/video) transcription, the other half
+  of follow-up (a), remains open — no transcription service exists in this
+  repo. `convertDocxToHTML`'s default renderer (`docx-preview`) needs a
+  browser `DOMParser`, so the `.docx` path only works from this
+  `"use client"` panel in a real browser; `extractMaterialTextFromDocument`
+  takes an injectable `convertDocx` option so its dispatch/validation logic
+  stays Vitest-covered under this repo's Node test environment without
+  needing a DOM (confirmed by directly invoking `convertDocxToHTML` outside
+  a DOM environment, which throws `ReferenceError: DOMParser is not
+  defined` — the same reason no test exists anywhere in this repo for
+  `debate-card-parser`'s own `docx-to-html.ts`). Vitest-covered in
+  `packages/debate-speech-writer/test/document-material-extraction.test.ts`
+  (`detectDocumentKind`: text/docx extensions, case-insensitivity, an
+  unsupported or missing extension; `extractMaterialTextFromDocument`: a
+  string text file's content whitespace-normalized, a `Blob` text file's
+  content, an empty text file throws, an unsupported extension throws, a
+  `.docx` file's text extracted through an injected `convertDocx` stub
+  (asserting it's called with `{ plainTextOnly: true }`) and
+  whitespace-normalized, and a `.docx` file yielding no readable text
+  throws). Docs updated at `docs/features/coach-materials.md`. No
+  repo-wide `lint` script exists (checked root/app/package `package.json`
+  scripts) so none was run. Verified from a clean install: `bun install`
+  (2050 packages), `bun run test` (149 files / 2033 tests, all pass),
+  `bun run typecheck` (11 in-scope packages pass), and `bun run build`
+  (both buildable packages pass, `/coach-materials` appears in the built
+  route list). PR: [#244](https://github.com/debate/debate-ai.com/pull/244).
 - **Shared Evidence Library — topic/case-area/tag filter controls.**
   Closes the "no topic/case-area/tag filter controls in the search half of
   the panel — only free text and kind are exposed" gap named in
@@ -5445,7 +5492,7 @@ _No task currently in progress._
 
 7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext 
 
-8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. A third slice, `CoachMaterialsPanel` (see Tracker Status above, "Video-Lecture-Training Coach AI — materials-upload/coach panel UI"), now renders an upload form, a kind-grouped material list, and an "ask the coach" grounded-prompt preview at `/coach-materials`, closing follow-up (c). A fourth slice (see Tracker Status above, "Video-Lecture-Training Coach AI — real AI Q&A call") added `coach/team-coach-ai.ts` and `coach/team-coach-client.ts`, wiring an "Ask the coach" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy with `buildGroundedCoachPrompt`'s output for a real, materials-grounded answer, closing follow-up (b). Follow-up (a), transcription/parsing that turns an uploaded recording or document into a material's text, remains open — not started._
+8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. A third slice, `CoachMaterialsPanel` (see Tracker Status above, "Video-Lecture-Training Coach AI — materials-upload/coach panel UI"), now renders an upload form, a kind-grouped material list, and an "ask the coach" grounded-prompt preview at `/coach-materials`, closing follow-up (c). A fourth slice (see Tracker Status above, "Video-Lecture-Training Coach AI — real AI Q&A call") added `coach/team-coach-ai.ts` and `coach/team-coach-client.ts`, wiring an "Ask the coach" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy with `buildGroundedCoachPrompt`'s output for a real, materials-grounded answer, closing follow-up (b). A fifth slice (see Tracker Status above, "Video-Lecture-Training Coach AI — document-upload text extraction") added `coach/document-material-extraction.ts`, wiring an "Upload a document" action into the panel that fills a material's text field from an uploaded `.docx`/`.txt`/`.md` file (via `debate-card-parser`'s existing `convertDocxToHTML` for `.docx`), closing the "document" half of follow-up (a). The "recording" half of follow-up (a), audio/video transcription, remains open — not started; no transcription service exists in this repo._
 
 9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slices done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. A second slice, `collapsedHeadings.ts` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading persistence"), now persists a document's collapsed heading ids to localStorage. A third slice, `OutlineNavPanel` (see Tracker Status above, "Expandable Heading Structure — outline nav panel"), now renders the outline alongside the document at `/reason-editor` (behind an opt-in `showOutline` prop) with click-to-jump and collapse/expand, reading/writing through the persistence store, closing follow-up (a). A fourth slice, `collapsedHeadingsPlugin` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading decoration plugin"), now hides a collapsed heading's content in the live ProseMirror view itself (driven by `OutlineNavPanel`'s toggle), closing follow-up (b). No follow-ups remain open on this idea._
 

@@ -14,6 +14,9 @@ and ask the coach AI a real question grounded strictly in those materials.
 - An upload form (kind, title, optional topic, comma-separated tags,
   material text) that saves a `CoachMaterial` through the already-persisted
   `state/coachMaterials.ts`.
+- An "Upload a document" button next to the Material text field that reads
+  an uploaded `.docx`, `.txt`, or `.md` file and fills the text field from
+  it, instead of requiring the text to be pasted in by hand.
 - Every persisted material, grouped by kind (Lecture Transcript, Camp
   Material, Instructional Document, Practice-Round Recording), each with a
   "Delete" action.
@@ -52,6 +55,18 @@ panels/CoachMaterialsPanel.tsx
       → parseTeamCoachAiResponse(text)                — strips a wrapping
                                                           code fence
   → renders the answer, or the thrown error message on failure
+
+Uploading a document to fill the text field (the "document" half of
+follow-up (a)):
+panels/CoachMaterialsPanel.tsx
+  → coach/document-material-extraction.ts's
+      extractMaterialTextFromDocument({ fileName, content: file })
+      → detectDocumentKind(fileName)                  — .txt/.md/.markdown vs .docx
+      → (.txt/.md) file.text()                        — read directly
+      → (.docx) debate-card-parser's convertDocxToHTML(file, { plainTextOnly: true })
+                                                        — the existing Verbatim
+                                                          .docx → text pipeline
+  → fills form.text (and form.title, if it was still empty) from the result
 ```
 
 This feature is a read/write UI layer over the existing pure logic: it
@@ -78,9 +93,14 @@ an empty/unusable AI reply).
 
 ## Known gaps
 
-- No transcription/parsing of an uploaded recording or document — a
-  material's `text` field must be typed or pasted in directly (follow-up
-  (a) under idea #8 in `TODO.md`).
+- No transcription of an uploaded recording — the "document" half of
+  follow-up (a) under idea #8 in `TODO.md` is done (`.docx`/`.txt`/`.md`
+  upload), but the "recording" half (turning an audio/video practice-round
+  recording into text) remains open; no transcription service exists in
+  this repo.
+- `convertDocxToHTML`'s default renderer needs a browser `DOMParser` (via
+  `docx-preview`), so `.docx` upload only works from this `"use client"`
+  panel in the browser — not from a server-rendered or Node context.
 - No reviewer/approval workflow before a material is available to the
   team coach — any saved material is immediately included.
 - No conversation history — each question is answered independently; a

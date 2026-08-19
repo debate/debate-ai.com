@@ -15,12 +15,21 @@
  * real, grounded answer. No new material-scoring or grouping logic is
  * introduced here.
  *
+ * A "Upload a document" file input calls the new
+ * `document-material-extraction.ts`'s `extractMaterialTextFromDocument` to
+ * fill the Material text field from an uploaded .docx/.txt/.md file instead
+ * of requiring it to be pasted in by hand, closing the "document" half of
+ * follow-up (a) named under idea #8 in TODO.md. The "recording" half
+ * (audio/video transcription) remains open — no transcription service
+ * exists in this repo.
+ *
  * @module panels/CoachMaterialsPanel
  */
 
 "use client"
 
-import { useEffect, useState } from "react"
+import type React from "react"
+import { useEffect, useRef, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -41,6 +50,7 @@ import {
   type CoachMaterialMatch,
 } from "../coach/team-coach-materials"
 import { requestTeamCoachAnswer } from "../coach/team-coach-client"
+import { extractMaterialTextFromDocument } from "../coach/document-material-extraction"
 import {
   buildCoachMaterialLibraryFromStore,
   deleteCoachMaterial,
@@ -90,6 +100,9 @@ export function CoachMaterialsPanel() {
   const [library, setLibrary] = useState<CoachMaterialLibrary | null>(null)
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [error, setError] = useState<string | null>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [question, setQuestion] = useState("")
   const [matches, setMatches] = useState<CoachMaterialMatch[] | null>(null)
   const [answer, setAnswer] = useState<string | null>(null)
@@ -121,6 +134,24 @@ export function CoachMaterialsPanel() {
     setError(null)
     setForm(EMPTY_FORM)
     refresh()
+  }
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ""
+    if (!file) return
+
+    setUploading(true)
+    setUploadError(null)
+    try {
+      const text = await extractMaterialTextFromDocument({ fileName: file.name, content: file })
+      const titleFromFile = file.name.replace(/\.[^./]+$/, "")
+      setForm((prev) => ({ ...prev, text, title: prev.title.trim() || titleFromFile }))
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Failed to read the uploaded file.")
+    } finally {
+      setUploading(false)
+    }
   }
 
   const handleDelete = (id: string) => {
@@ -219,14 +250,35 @@ export function CoachMaterialsPanel() {
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="coach-material-text">Material text</Label>
+          <div className="flex items-center justify-between gap-2">
+            <Label htmlFor="coach-material-text">Material text</Label>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={uploading}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {uploading ? "Reading file…" : "Upload a document"}
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".docx,.txt,.md,.markdown"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+            </div>
+          </div>
           <Textarea
             id="coach-material-text"
             value={form.text}
             onChange={(e) => setForm((prev) => ({ ...prev, text: e.target.value }))}
-            placeholder="Paste the lecture transcript, handout, or notes here…"
+            placeholder="Paste the lecture transcript, handout, or notes here, or upload a .docx/.txt/.md file above…"
             className="min-h-32"
           />
+          {uploadError && <p className="text-sm text-destructive">{uploadError}</p>}
         </div>
 
         {error && <p className="text-sm text-destructive">{error}</p>}
