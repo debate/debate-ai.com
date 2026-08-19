@@ -7,17 +7,23 @@
  * deterministic first-slice strategy recommendation: which caller-supplied
  * case option looks safest to run against this opponent, concrete
  * judge-adaptation notes, and an overall matchup risk level with the
- * specific factors behind it. This is the first slice only — it doesn't
- * evaluate case choice with an actual AI panel (the case ranking is a
- * tag-overlap heuristic, not a strategic evaluation), doesn't know which
- * side the opponent will be on this round, and isn't wired into any
- * strategy-panel UI yet.
+ * specific factors behind it. The risk heuristic can optionally be scoped to
+ * an `ourSide`, so opponent-side-preference/judge-side-bias risk factors are
+ * judged against the side the opponent will actually run against us this
+ * round rather than generically. This is still not an actual AI-panel
+ * evaluation of case choice (the case ranking is a tag-overlap heuristic,
+ * not a strategic evaluation) — see follow-up (c) in TODO.md.
  */
 
-import type { OpponentTeamProfile } from "debate-data-sync/src/rankings/opponent-team-profile";
+import type { DebateSide, OpponentTeamProfile } from "debate-data-sync/src/rankings/opponent-team-profile";
 import { getOpponentTeamProfile } from "debate-data-sync/src/state/opponentTeamProfiles";
 import type { JudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
 import { getJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
+
+/** The side the opponent will run this round, given the side we're running — debate is two-sided, so it's always the other one. */
+export function getLikelyOpponentSide(ourSide: DebateSide): DebateSide {
+  return ourSide === "aff" ? "neg" : "aff";
+}
 
 /** A case the team could choose to run this round. */
 export interface CaseOption {
@@ -52,6 +58,8 @@ export interface BuildStrategyRecommendationInput {
   caseOptions: CaseOption[];
   opponentProfile?: OpponentTeamProfile;
   judgeProfile?: JudgeProfile;
+  /** The side our team will run this round, when known — scopes the risk heuristic to the side the opponent will likely run against us. */
+  ourSide?: DebateSide;
 }
 
 /**
@@ -125,17 +133,29 @@ export function buildJudgeAdaptationNotes(judgeProfile?: JudgeProfile): string[]
   return notes;
 }
 
+/** Minimum rounds recorded on a specific side before its win rate is treated as a risk signal. */
+const MIN_SIDE_ROUNDS_FOR_RISK = 2;
+
 /**
  * Assesses an overall matchup risk level from the opponent's win rate/side
  * preference and the judge's side bias. This is an illustrative heuristic
  * only — one risk factor detected is `medium`, two or more is `high`, none
  * is `low` — not a validated probability model.
+ *
+ * When `ourSide` is supplied, the opponent-side-preference and judge-side-bias
+ * checks are scoped to `getLikelyOpponentSide(ourSide)` — the side the
+ * opponent will actually run against us this round — instead of judging any
+ * side preference/bias as generically risky. A judge favoring *our* side is
+ * not treated as a risk factor. Without `ourSide`, both checks fall back to
+ * the prior side-agnostic behavior.
  */
 export function assessMatchupRisk(
   opponentProfile?: OpponentTeamProfile,
   judgeProfile?: JudgeProfile,
+  ourSide?: DebateSide,
 ): { riskLevel: RiskLevel; riskFactors: string[] } {
   const riskFactors: string[] = [];
+  const likelyOpponentSide = ourSide ? getLikelyOpponentSide(ourSide) : undefined;
 
   if (opponentProfile && opponentProfile.roundsRecorded > 0) {
     if (opponentProfile.record.winRate >= 0.65) {
@@ -143,7 +163,15 @@ export function assessMatchupRisk(
         `Opponent has a strong overall record (${Math.round(opponentProfile.record.winRate * 100)}% win rate across ${opponentProfile.roundsRecorded} round(s)).`,
       );
     }
-    if (opponentProfile.sideRecord.hasNotableSidePreference) {
+
+    if (likelyOpponentSide) {
+      const likelySideSplit = opponentProfile.sideRecord[likelyOpponentSide];
+      if (likelySideSplit.rounds >= MIN_SIDE_ROUNDS_FOR_RISK && likelySideSplit.winRate >= 0.65) {
+        riskFactors.push(
+          `Opponent has a strong record on ${likelyOpponentSide} (${Math.round(likelySideSplit.winRate * 100)}% win rate across ${likelySideSplit.rounds} round(s)) — the side they'll likely run against us.`,
+        );
+      }
+    } else if (opponentProfile.sideRecord.hasNotableSidePreference) {
       riskFactors.push(
         `Opponent performs notably better on the ${opponentProfile.sideRecord.strongerSide} side.`,
       );
@@ -152,7 +180,14 @@ export function assessMatchupRisk(
 
   if (judgeProfile && judgeProfile.sideBias.hasNotableSideBias) {
     const favoredSide = judgeProfile.sideBias.affWinRate > judgeProfile.sideBias.negWinRate ? "aff" : "neg";
-    riskFactors.push(`Judge has a notable historical side bias toward ${favoredSide}.`);
+    if (!likelyOpponentSide) {
+      riskFactors.push(`Judge has a notable historical side bias toward ${favoredSide}.`);
+    } else if (favoredSide === likelyOpponentSide) {
+      riskFactors.push(
+        `Judge has a notable historical side bias toward ${favoredSide} — the side the opponent will likely run against us.`,
+      );
+    }
+    // A bias toward our own side is favorable, not a risk factor.
   }
 
   const riskLevel: RiskLevel = riskFactors.length >= 2 ? "high" : riskFactors.length === 1 ? "medium" : "low";
@@ -168,7 +203,7 @@ export function buildStrategyRecommendation(
   input: BuildStrategyRecommendationInput,
 ): StrategyRecommendation {
   const caseRankings = rankCaseOptions(input.caseOptions, input.opponentProfile);
-  const { riskLevel, riskFactors } = assessMatchupRisk(input.opponentProfile, input.judgeProfile);
+  const { riskLevel, riskFactors } = assessMatchupRisk(input.opponentProfile, input.judgeProfile, input.ourSide);
 
   return {
     recommendedCase: caseRankings[0] ?? null,
@@ -187,6 +222,8 @@ export interface BuildStrategyRecommendationFromStoresInput {
   judgeId?: string;
   opponentProfile?: OpponentTeamProfile;
   judgeProfile?: JudgeProfile;
+  /** The side our team will run this round, when known — see `BuildStrategyRecommendationInput.ourSide`. */
+  ourSide?: DebateSide;
 }
 
 /**
@@ -208,7 +245,12 @@ export function buildStrategyRecommendationFromStores(
     (input.opponentTeamId ? getOpponentTeamProfile(input.opponentTeamId) : undefined);
   const judgeProfile = input.judgeProfile ?? (input.judgeId ? getJudgeProfile(input.judgeId) : undefined);
 
-  return buildStrategyRecommendation({ caseOptions: input.caseOptions, opponentProfile, judgeProfile });
+  return buildStrategyRecommendation({
+    caseOptions: input.caseOptions,
+    opponentProfile,
+    judgeProfile,
+    ourSide: input.ourSide,
+  });
 }
 
 /**

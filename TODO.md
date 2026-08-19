@@ -6,6 +6,43 @@
 _No task currently in progress._
 
 ### Completed
+- **Scout-to-Strategy Workflow — side-aware risk heuristic.** Closes
+  follow-up (b) named under the "🧭 Scout-to-Strategy Workflow" bullet in
+  the Research Crowdsourcing Organizer Features list: "wiring
+  `ourSide`/likely opponent side into the risk heuristic." Previously
+  `assessMatchupRisk` in `packages/debate-round/src/round/scout-to-strategy.ts`
+  flagged any notable opponent side preference or judge side bias as risky,
+  without knowing which side our team is running — so it couldn't tell
+  whether the opponent's strong side or the judge's favored side was
+  actually the side we'd face. `scout-to-strategy.ts` adds
+  `getLikelyOpponentSide` (the side opposite `ourSide`, since a round is
+  two-sided) and threads an optional `ourSide?: DebateSide` through
+  `BuildStrategyRecommendationInput`/`BuildStrategyRecommendationFromStoresInput`
+  into `assessMatchupRisk`. When `ourSide` is known, the opponent-side check
+  is scoped to their win rate specifically on the likely-opponent side (≥2
+  recorded rounds there, ≥65% win rate) instead of any notable side
+  preference, and the judge-side check only flags a bias toward the
+  likely-opponent side — a bias toward our own side is no longer treated as
+  a risk factor. Without `ourSide`, both checks fall back to the prior
+  side-agnostic behavior, so existing callers are unaffected.
+  `StrategyPanel.tsx` gets an "Our side" selector (Aff/Neg/Unspecified)
+  wired into the build action. Vitest-covered in
+  `packages/debate-round/test/scout-to-strategy.test.ts` (`getLikelyOpponentSide`
+  both directions; `assessMatchupRisk`/`buildStrategyRecommendation`/
+  `buildStrategyRecommendationFromStores` with `ourSide` supplied: flags the
+  opponent's strong record on the likely-opponent side, does not flag their
+  strong record on the side they won't face us on, ignores a likely-side
+  record below the 2-round minimum, flags a judge bias toward the
+  likely-opponent side, and does not flag a judge bias toward our own
+  side). Follow-up (c) — an actual AI-panel evaluation of case choice
+  instead of the tag-overlap heuristic — remains open, not started. Docs
+  added at `docs/features/scout-to-strategy.md`. No repo-wide `lint` script
+  exists (checked root/app/package `package.json` scripts) so none was run.
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (133 files / 1806 tests, all pass), `bun run typecheck` (all 11
+  in-scope packages pass), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/strategy` route present) all pass. PR:
+  [#222](https://github.com/debate/debate-ai.com/pull/222).
 - **Shared, Ai-Generated Debate Flow — Flow Edit Log + real merge-preview
   data source.** Closes the data-source gap called out under "Feature
   panels" (PR #214) for idea #16 ("Shared, Ai-Generated Debate Flow") in
