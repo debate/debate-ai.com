@@ -11,12 +11,23 @@
  * list-plus-clear convention. No new coaching-program logic is introduced
  * here.
  *
- * This only manages a program's config (name + roster) — it doesn't render
- * `buildCoachingProgramBoard`'s composed topic-sprint/group-challenge/
- * member-drill board yet, since those inputs (challenges, win events,
- * contributions, and a roundId-to-contributor mapping for member flows)
+ * Each roster member also gets a "Practice round" field — closing follow-up
+ * (c), "wiring a member's Practice Round Simulator setup/feedback into the
+ * coaching space." Entering a `roundId` and saving calls
+ * `state/coachingProgramMemberRounds.ts`'s `saveMemberRoundLink`; the
+ * member's linked round's setup/feedback then renders inline via
+ * `round/coaching-program-member-round-wiring.ts`'s
+ * `buildCoachingProgramMemberRoundStatuses`, which resolves that link
+ * straight through the already-persisted `state/practiceRounds.ts` store
+ * (the same round a coach configures at `/practice-round`). Removing a
+ * program also clears its members' links via
+ * `deleteMemberRoundLinksForProgram`.
+ *
+ * This still doesn't render `buildCoachingProgramBoard`'s composed
+ * topic-sprint/group-challenge/member-drill board, since its remaining
+ * inputs (challenges, win events, and live topic-sprint contributions)
  * aren't persisted in a form this panel could read live. See the remaining
- * follow-ups in TODO.md.
+ * follow-up ((b-continued)) in TODO.md.
  *
  * @module panels/CoachingProgramsPanel
  */
@@ -24,6 +35,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -33,6 +45,16 @@ import {
   deleteCoachingProgram,
   saveCoachingProgram,
 } from "../state/coachingPrograms"
+import {
+  deleteMemberRoundLink,
+  deleteMemberRoundLinksForProgram,
+  saveMemberRoundLink,
+} from "../state/coachingProgramMemberRounds"
+import {
+  buildCoachingProgramMemberRoundStatuses,
+  buildMemberPracticeRoundStatusText,
+  type MemberPracticeRoundStatus,
+} from "../round/coaching-program-member-round-wiring"
 import type { CoachingProgramConfig } from "../round/coaching-program"
 
 type ProgramDraft = { name: string; memberIds: string }
@@ -42,7 +64,9 @@ const EMPTY_DRAFT: ProgramDraft = { name: "", memberIds: "" }
 /**
  * Renders the Coaching Programs panel: a form to create a named coaching
  * space with a squad roster, plus every persisted `CoachingProgramConfig`
- * with a "Remove" action.
+ * with a "Remove" action and, per roster member, a practice-round link
+ * field that resolves and renders that member's Practice Round Simulator
+ * setup/feedback.
  *
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
@@ -51,6 +75,7 @@ export function CoachingProgramsPanel() {
   const [programs, setPrograms] = useState<CoachingProgramConfig[] | null>(null)
   const [draft, setDraft] = useState<ProgramDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [roundIdDrafts, setRoundIdDrafts] = useState<Record<string, string>>({})
 
   useEffect(() => {
     setPrograms(buildCoachingProgramsPanelView())
@@ -74,7 +99,27 @@ export function CoachingProgramsPanel() {
     refresh()
   }
 
+  const draftKey = (programId: string, memberId: string) => `${programId}:${memberId}`
+
+  const handleLinkRound = (programId: string, memberId: string) => {
+    const roundId = (roundIdDrafts[draftKey(programId, memberId)] ?? "").trim()
+    if (!roundId) return
+    saveMemberRoundLink({ programId, memberId, roundId })
+    refresh()
+  }
+
+  const handleUnlinkRound = (programId: string, memberId: string) => {
+    deleteMemberRoundLink(programId, memberId)
+    setRoundIdDrafts((prev) => {
+      const next = { ...prev }
+      delete next[draftKey(programId, memberId)]
+      return next
+    })
+    refresh()
+  }
+
   const handleRemove = (id: string) => {
+    deleteMemberRoundLinksForProgram(id)
     deleteCoachingProgram(id)
     refresh()
   }
@@ -137,16 +182,76 @@ export function CoachingProgramsPanel() {
                   Remove
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-1.5">
-                {program.memberIds.map((memberId) => (
-                  <Badge key={memberId} variant="outline">
-                    {memberId}
-                  </Badge>
+              <div className="space-y-3">
+                {buildCoachingProgramMemberRoundStatuses(program).map((status) => (
+                  <MemberPracticeRoundRow
+                    key={status.memberId}
+                    programId={program.id}
+                    status={status}
+                    draftValue={roundIdDrafts[draftKey(program.id, status.memberId)] ?? ""}
+                    onDraftChange={(value) =>
+                      setRoundIdDrafts((prev) => ({ ...prev, [draftKey(program.id, status.memberId)]: value }))
+                    }
+                    onLink={() => handleLinkRound(program.id, status.memberId)}
+                    onUnlink={() => handleUnlinkRound(program.id, status.memberId)}
+                  />
                 ))}
               </div>
             </div>
           ))}
         </div>
+      )}
+    </div>
+  )
+}
+
+function MemberPracticeRoundRow({
+  programId,
+  status,
+  draftValue,
+  onDraftChange,
+  onLink,
+  onUnlink,
+}: {
+  programId: string
+  status: MemberPracticeRoundStatus
+  draftValue: string
+  onDraftChange: (value: string) => void
+  onLink: () => void
+  onUnlink: () => void
+}) {
+  return (
+    <div className="rounded-md border border-border p-3 space-y-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <Badge variant="outline">{status.memberId}</Badge>
+        <div className="flex items-center gap-2">
+          <Label htmlFor={`round-link-${programId}-${status.memberId}`} className="sr-only">
+            Practice round ID
+          </Label>
+          <Input
+            id={`round-link-${programId}-${status.memberId}`}
+            value={draftValue}
+            onChange={(e) => onDraftChange(e.target.value)}
+            placeholder={status.roundId ?? "round-1"}
+            className="h-8 w-32"
+          />
+          <Button size="sm" variant="outline" onClick={onLink}>
+            {status.roundId ? "Update" : "Link"}
+          </Button>
+          {status.roundId && (
+            <Button size="sm" variant="ghost" onClick={onUnlink}>
+              Unlink
+            </Button>
+          )}
+        </div>
+      </div>
+      <p className="whitespace-pre-line text-xs text-muted-foreground">
+        {buildMemberPracticeRoundStatusText(status)}
+      </p>
+      {status.roundId && (
+        <Link href="/practice-round" className="text-xs underline text-muted-foreground">
+          Manage this round in the Practice Round Simulator
+        </Link>
       )}
     </div>
   )
