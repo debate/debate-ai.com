@@ -14,9 +14,10 @@ assessment (verdict + per-dimension notes) for any ranked card.
 
 | Element | Source |
 | --- | --- |
+| Topic switcher + "Use tracked keywords" | Fills the keywords field from a topic's persisted tracked-argument checklist (`deriveArgBlockKeywordsForTopic`) |
 | "Score card" form | Saves a `ScoredCard` (id, text, argument-block keywords, quality signal) |
 | Ranked list | Every persisted card's heuristic `overallScore` and five per-dimension scores, descending |
-| "Likely duplicate" badge | `isLikelyDuplicate` — uniqueness score below the near-duplicate threshold |
+| "Likely duplicate" badge | `isLikelyDuplicate` — uniqueness score below the near-duplicate threshold, checked against every other persisted card plus the real Shared Evidence Library corpus |
 | "Get AI assessment" button | Requests a real Anthropic verdict + per-dimension notes for that card |
 | AI assessment card | The persisted `overallScore`, one-sentence `verdict`, and a short note per dimension, once requested |
 
@@ -25,8 +26,16 @@ assessment (verdict + per-dimension notes) for any ranked card.
 ```
 state/cardScores.ts (localStorage — submitted cards)
   → buildPersistedCardScoreRanking()
-      → rankCardScores()                      — lib/llm-card-scoring.ts (heuristic, pure)
+      → buildRealCorpusTexts()                 — every persisted Shared Evidence Library entry's text
+      → rankCardScores()                       — lib/llm-card-scoring.ts (heuristic, pure)
   → panels/CardScoringPanel.tsx (ranked list + per-dimension breakdown)
+
+Topic switcher / "Use tracked keywords" click:
+  panels/CardScoringPanel.tsx
+    → deriveArgBlockKeywordsForTopic()          — state/cardScores.ts
+        → listTrackedArguments()                — state/trackedArguments.ts (localStorage)
+        → deriveArgBlockKeywords()               — lib/llm-card-scoring.ts (pure)
+    → fills the keywords field (still editable before submitting)
 
 "Get AI assessment" click:
   panels/CardScoringPanel.tsx
@@ -59,9 +68,10 @@ persisted-store coverage.
 
 ## Known gaps
 
-- Argument-block keywords and the comparison corpus are still
-  caller-submitted through the form, not wired into a real
-  card-submission/evidence-library flow (a separate, still-open follow-up).
+- The keywords field is still free-text — "Use tracked keywords" fills it
+  from a topic's tracked-argument checklist, but a contributor can still
+  type anything, and scoring a card for a topic with no tracked arguments
+  yet still requires typing keywords by hand.
 - The AI assessment is a second, independent qualitative signal shown
   alongside the heuristic score — nothing in the heuristic's own blended
   `overallScore` changes when an AI assessment is requested.

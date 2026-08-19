@@ -135,6 +135,28 @@ export function scoreUniqueness(text: string, otherTexts: string[]): number {
 /** Evidence-quality score 0-100, reusing `community-rating.ts`'s quality-signal scoring directly. */
 export const scoreEvidenceQuality = scoreQualitySignal;
 
+/**
+ * Derives `scoreRelevance`'s `argBlockKeywords` from a topic's tracked
+ * argument-block labels (e.g. "Warming DA", "Case NEG Solvency") instead of
+ * requiring a contributor to hand-type keywords: each label is kept whole as
+ * one phrase, plus its individual words (longer than two characters, so
+ * "DA"/"CP"-style short tags don't drown out real words) so a card matching
+ * just part of a block's name still scores partial relevance. Blank labels
+ * and duplicate keywords are dropped.
+ */
+export function deriveArgBlockKeywords(argBlocks: string[]): string[] {
+  const keywords = new Set<string>();
+  for (const block of argBlocks) {
+    const trimmed = block.trim();
+    if (!trimmed) continue;
+    keywords.add(trimmed);
+    for (const word of tokenize(trimmed)) {
+      if (word.length > 2) keywords.add(word);
+    }
+  }
+  return Array.from(keywords);
+}
+
 /** Word counts at or between these bounds score usability at 100. */
 const IDEAL_MIN_WORD_COUNT = 150;
 const IDEAL_MAX_WORD_COUNT = 500;

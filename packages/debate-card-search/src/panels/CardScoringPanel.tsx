@@ -17,8 +17,18 @@
  * persists the resulting verdict/notes via `state/aiCardAssessments.ts`,
  * and renders it inline alongside the heuristic breakdown. A malformed or
  * failed AI response shows a per-card error instead of crashing the panel.
- * Keywords/corpus are still caller-submitted rather than wired into a real
- * card-submission flow (follow-up (b), separate and still open).
+ *
+ * A topic switcher plus a "Use tracked keywords" action closes follow-up (b)
+ * ("real argument-block keywords and a real submitted-card corpus"): picking
+ * one of the topics already tracked by the Topic Coverage Dashboard
+ * (`state/trackedArguments.ts`) and clicking the action fills the keywords
+ * field from that topic's own checklist via
+ * `state/cardScores.ts`'s `deriveArgBlockKeywordsForTopic`, still editable
+ * before submitting. The keywords field stays a plain text input rather than
+ * a picker so a card can also be scored ad hoc, without a tracked topic. The
+ * ranking itself already compares uniqueness against the real, persisted
+ * Shared Evidence Library corpus — no panel change needed there, see
+ * `buildPersistedCardScoreRanking`.
  *
  * @module panels/CardScoringPanel
  */
@@ -31,7 +41,13 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
-import { buildPersistedCardScoreRanking, getScoredCard, saveScoredCard } from "../state/cardScores"
+import {
+  buildPersistedCardScoreRanking,
+  deriveArgBlockKeywordsForTopic,
+  getScoredCard,
+  saveScoredCard,
+} from "../state/cardScores"
+import { listTrackedTopics } from "../state/trackedArguments"
 import { getAiAssessment, saveAiAssessment } from "../state/aiCardAssessments"
 import { requestCardScoringAiAssessment } from "../lib/llm-card-scoring-client"
 import type { CardScoreBreakdown } from "../lib/llm-card-scoring"
@@ -77,10 +93,13 @@ export function CardScoringPanel() {
   const [aiAssessments, setAiAssessments] = useState<Record<string, CardScoringAiAssessment>>({})
   const [aiLoadingId, setAiLoadingId] = useState<string | null>(null)
   const [aiErrors, setAiErrors] = useState<Record<string, string>>({})
+  const [topics, setTopics] = useState<string[]>([])
+  const [topic, setTopic] = useState("")
 
   useEffect(() => {
     const persisted = buildPersistedCardScoreRanking()
     setRanking(persisted)
+    setTopics(listTrackedTopics())
     const assessments: Record<string, CardScoringAiAssessment> = {}
     for (const breakdown of persisted) {
       const assessment = getAiAssessment(breakdown.cardId)
@@ -88,6 +107,21 @@ export function CardScoringPanel() {
     }
     setAiAssessments(assessments)
   }, [])
+
+  const handleUseTrackedKeywords = () => {
+    const activeTopic = topic.trim()
+    if (!activeTopic) {
+      setError("Choose a topic first.")
+      return
+    }
+    const keywords = deriveArgBlockKeywordsForTopic(activeTopic)
+    if (keywords.length === 0) {
+      setError(`"${activeTopic}" has no tracked arguments yet — add some on the Topic Coverage Dashboard first.`)
+      return
+    }
+    setError(null)
+    setDraft((prev) => ({ ...prev, argBlockKeywords: keywords.join(", ") }))
+  }
 
   const refresh = () => setRanking(buildPersistedCardScoreRanking())
 
@@ -150,6 +184,36 @@ export function CardScoringPanel() {
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="card-score-topic">Topic (optional — for tracked keywords)</Label>
+          <div className="flex flex-wrap gap-2">
+            <Input
+              id="card-score-topic"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder="Energy Policy"
+              className="max-w-sm"
+            />
+            <Button type="button" variant="outline" size="sm" onClick={handleUseTrackedKeywords}>
+              Use tracked keywords
+            </Button>
+          </div>
+          {topics.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {topics.map((existing) => (
+                <Button
+                  key={existing}
+                  type="button"
+                  size="sm"
+                  variant={existing === topic.trim() ? "default" : "outline"}
+                  onClick={() => setTopic(existing)}
+                >
+                  {existing}
+                </Button>
+              ))}
+            </div>
+          )}
+        </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="card-score-id">Card ID</Label>
