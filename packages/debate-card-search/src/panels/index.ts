@@ -8,6 +8,7 @@
 export { ArgumentLibraryPanel } from "./ArgumentLibraryPanel";
 export { BrainstormBoardPanel } from "./BrainstormBoardPanel";
 export { CardScoringPanel } from "./CardScoringPanel";
+export { CommunityResearchHubPanel } from "./CommunityResearchHubPanel";
 export { ContributionLeaderboardPanel } from "./ContributionLeaderboardPanel";
 export { ContributionsFeedPanel } from "./ContributionsFeedPanel";
 export { ContributorAwardsPanel } from "./ContributorAwardsPanel";
