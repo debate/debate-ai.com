@@ -4,6 +4,7 @@ import {
   buildPersistedResearchProgressBoard,
   completeAndRecordResearchTask,
   listCompletedTaskHistory,
+  listTrackedAssignmentsForTopic,
 } from "../src/state/researchProgress";
 import { getRoutedTaskQueue, saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "../src/state/routedTaskQueues";
 import { saveContribution } from "../src/state/contributions";
@@ -149,6 +150,45 @@ describe("buildPersistedResearchProgressBoard", () => {
     expect(board[0].contributionStats?.contributionCount).toBe(1);
     expect(board[0].totalAssignedTasks).toBe(0);
     expect(board[0].topics).toEqual([]);
+  });
+});
+
+describe("listTrackedAssignmentsForTopic", () => {
+  const BALLOT_TASK: ResearchTask = { argBlock: "Ballot", level: "missing", requiredSkill: "novice" };
+  const BALLOT_RESULT: RoutingResult = {
+    assignments: [{ task: BALLOT_TASK, contributorId: "carol" }],
+    unassignedTasks: [],
+  };
+  const BALLOT_QUEUE: RoutedTaskQueueRecord = { topicId: "topic-ballot", result: BALLOT_RESULT };
+
+  it("returns an empty list for a topic with nothing routed or completed", () => {
+    expect(listTrackedAssignmentsForTopic("topic-ai")).toEqual([]);
+  });
+
+  it("combines this topic's completed history with its still-active queue, excluding other topics", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    saveRoutedTaskQueue(BALLOT_QUEUE);
+    completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+    expect(listTrackedAssignmentsForTopic("topic-ai")).toEqual([
+      {
+        topic: "topic-ai",
+        assignment: { task: SOLVENCY_TASK, contributorId: "alice" },
+        completedAt: "2026-01-05T00:00:00Z",
+      },
+      { topic: "topic-ai", assignment: { task: IMPACTS_TASK, contributorId: "alice" } },
+    ]);
+  });
+
+  it("doesn't include another topic's completed or active assignments", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    saveRoutedTaskQueue(BALLOT_QUEUE);
+    completeAndRecordResearchTask("topic-ballot", "Ballot", "2026-01-05T00:00:00Z");
+
+    expect(listTrackedAssignmentsForTopic("topic-ai")).toEqual([
+      { topic: "topic-ai", assignment: { task: SOLVENCY_TASK, contributorId: "alice" } },
+      { topic: "topic-ai", assignment: { task: IMPACTS_TASK, contributorId: "alice" } },
+    ]);
   });
 });
 

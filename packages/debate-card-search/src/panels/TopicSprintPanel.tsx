@@ -8,7 +8,7 @@
 
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Users2 } from "lucide-react";
 
 import {
@@ -44,7 +44,20 @@ import type { ContributorAvailability } from "../lib/research-task-routing";
 import type { TrackedTopicAssignment } from "../lib/research-progress";
 import type { TopicCoverageReport } from "../lib/topic-coverage";
 import { deleteSprintNote, listSprintNotes, saveSprintNote } from "../state/sprintNotes";
-import { listContributorAvailability } from "../state/contributorAvailability";
+import {
+  readPersistedTopicSprintInputs,
+  type PersistedTopicSprintInputs,
+} from "../state/topicSprints";
+
+/** Everything a topic sprint needs before any persisted store has been read (first render/SSR). */
+const EMPTY_SPRINT_INPUTS: PersistedTopicSprintInputs = {
+  quests: [],
+  contributions: [],
+  coverageReport: { tracked: [], untracked: [] },
+  contributors: [],
+  assignments: [],
+  notes: [],
+};
 
 const STATUS_TONE: Record<SprintNoteStatus, PanelTone> = {
   open: "info",
@@ -58,14 +71,14 @@ const STATUSES: SprintNoteStatus[] = ["open", "covered", "needs-follow-up"];
 export interface TopicSprintPanelProps {
   /** Topic the sprint is scoped to. */
   topic: string;
-  /** Quests offered during the sprint. */
-  quests: QuestTemplate[];
-  /** Contributions counted toward the quests. */
-  contributions: QuestContribution[];
-  /** Coverage report for the topic. */
-  coverageReport: TopicCoverageReport;
-  /** Assignments tracked for the progress board. */
-  assignments: TrackedTopicAssignment[];
+  /** Quests offered during the sprint. Defaults to every persisted quest template. */
+  quests?: QuestTemplate[];
+  /** Contributions counted toward the quests. Defaults to every persisted, timestamped contribution. */
+  contributions?: QuestContribution[];
+  /** Coverage report for the topic. Defaults to the topic's persisted coverage report. */
+  coverageReport?: TopicCoverageReport;
+  /** Assignments tracked for the progress board. Defaults to the topic's persisted assignments. */
+  assignments?: TrackedTopicAssignment[];
   /** Contributors available for routing. Defaults to persisted profiles. */
   contributors?: ContributorAvailability[];
   /** Notes to show. Defaults to the persisted sprint notes for this topic. */
@@ -97,25 +110,29 @@ export function TopicSprintPanel({
   className,
 }: TopicSprintPanelProps) {
   const { data: persistedNotes, refresh } = useStoreSnapshot<SprintNote[]>(listSprintNotes, []);
-  const { data: persistedContributors } = useStoreSnapshot<ContributorAvailability[]>(
-    listContributorAvailability,
-    [],
-  );
   const editable = notes === undefined;
 
   const [noteText, setNoteText] = useState("");
   const [assignTo, setAssignTo] = useState("");
 
+  // `quests`/`contributions`/`coverageReport`/`assignments`/`contributors` are
+  // topic-scoped, so — unlike the mount-only `useStoreSnapshot` reads above —
+  // they're re-read whenever `topic` changes, not just once on mount.
+  const [persistedInputs, setPersistedInputs] = useState<PersistedTopicSprintInputs>(EMPTY_SPRINT_INPUTS);
+  useEffect(() => {
+    setPersistedInputs(readPersistedTopicSprintInputs(topic));
+  }, [topic]);
+
   const sprint = useMemo(
     () =>
       buildTopicSprint({
         topic,
-        quests,
-        contributions,
+        quests: quests ?? persistedInputs.quests,
+        contributions: contributions ?? persistedInputs.contributions,
         now,
-        coverageReport,
-        contributors: contributors ?? persistedContributors,
-        assignments,
+        coverageReport: coverageReport ?? persistedInputs.coverageReport,
+        contributors: contributors ?? persistedInputs.contributors,
+        assignments: assignments ?? persistedInputs.assignments,
         notes: notes ?? persistedNotes,
       }),
     [
@@ -125,8 +142,8 @@ export function TopicSprintPanel({
       now,
       coverageReport,
       contributors,
-      persistedContributors,
       assignments,
+      persistedInputs,
       notes,
       persistedNotes,
     ],
