@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { buildPersistedCoachingProgramBoard } from "../src/state/persistedCoachingProgramBoard";
+import {
+  buildMemberFlowsFromAssignments,
+  buildPersistedCoachingProgramBoard,
+} from "../src/state/persistedCoachingProgramBoard";
 import { saveCoachingProgram } from "../src/state/coachingPrograms";
+import { saveMemberRoundAssignment } from "../src/state/memberRoundAssignments";
 import type { CoachingProgramConfig } from "../src/round/coaching-program";
 import { saveGroupChallenge } from "debate-card-search/src/state/groupChallenges";
 import { saveContribution } from "debate-card-search/src/state/contributions";
@@ -95,9 +99,68 @@ describe("buildPersistedCoachingProgramBoard", () => {
     expect(board?.challengeBoard[0].memberStandings).toEqual([]);
   });
 
-  it("defaults memberDrills to empty when no memberFlows are supplied", () => {
+  it("defaults memberDrills to empty when no memberFlows are supplied and no round assignments are stored", () => {
     saveCoachingProgram(VARSITY);
     const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
     expect(board?.memberDrills).toEqual({});
+  });
+
+  it("composes a member's drill set from their persisted round assignment and live flow", () => {
+    saveCoachingProgram(VARSITY);
+    localStorage.setItem(
+      "flows",
+      JSON.stringify([
+        {
+          id: 55,
+          columns: ["1AC"],
+          children: [{ content: "Case is good", children: [], index: 0, level: 0, focus: false }],
+        },
+      ]),
+    );
+    saveMemberRoundAssignment({ programId: "varsity", contributorId: "alice", roundId: "55", sideKey: "A" });
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+    expect(board?.memberDrills.alice).toBeDefined();
+    expect(board?.memberDrills.alice.length).toBeGreaterThan(0);
+    expect(board?.memberDrills.bob).toBeUndefined();
+  });
+
+  it("skips a round assignment whose roundId doesn't resolve to a stored flow", () => {
+    saveCoachingProgram(VARSITY);
+    saveMemberRoundAssignment({ programId: "varsity", contributorId: "alice", roundId: "999", sideKey: "A" });
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+    expect(board?.memberDrills).toEqual({});
+  });
+
+  it("lets an explicit memberFlows argument override the persisted round-assignment composition", () => {
+    saveCoachingProgram(VARSITY);
+    localStorage.setItem(
+      "flows",
+      JSON.stringify([{ id: 55, columns: ["1AC"], children: [{ content: "Case is good", children: [], index: 0, level: 0, focus: false }] }]),
+    );
+    saveMemberRoundAssignment({ programId: "varsity", contributorId: "alice", roundId: "55", sideKey: "A" });
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW, []);
+    expect(board?.memberDrills).toEqual({});
+  });
+});
+
+describe("buildMemberFlowsFromAssignments", () => {
+  it("returns an empty list when no assignments are stored", () => {
+    expect(buildMemberFlowsFromAssignments("varsity")).toEqual([]);
+  });
+
+  it("resolves each stored assignment against the live flow store, skipping unresolved ones", () => {
+    localStorage.setItem(
+      "flows",
+      JSON.stringify([{ id: 55, columns: ["1AC"], children: [{ content: "Case is good", children: [], index: 0, level: 0, focus: false }] }]),
+    );
+    saveMemberRoundAssignment({ programId: "varsity", contributorId: "alice", roundId: "55", sideKey: "A" });
+    saveMemberRoundAssignment({ programId: "varsity", contributorId: "bob", roundId: "999", sideKey: "N" });
+
+    const memberFlows = buildMemberFlowsFromAssignments("varsity");
+    expect(memberFlows).toHaveLength(1);
+    expect(memberFlows[0]).toMatchObject({ contributorId: "alice", sideKey: "A" });
   });
 });
