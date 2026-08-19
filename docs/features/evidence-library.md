@@ -91,6 +91,47 @@ page, and `checkPageForExistingCards` wraps that into a
 persisted repository, gated to "live" entries the same way
 `searchPersistedEvidenceLibrary` is (see below).
 
+## Real search index
+
+Closes follow-up (c) named under the "📋 Shared Evidence Library" bullet in
+TODO.md's Research Crowdsourcing Organizer Features list ("a real search
+index (e.g. Typesense) once entries are persisted at scale"). Rather than
+`searchEvidenceLibrary`'s existing keyword-overlap re-scan of every
+candidate entry's full text on every call,
+`lib/evidence-search-index.ts`'s `buildEvidenceSearchIndex` builds a real
+token → postings-list inverted index over a set of entries once, and
+`searchEvidenceLibraryWithIndex` ranks a query by looking its terms up
+directly in that index — an entry sharing no term with the query is never
+visited — weighting each match by TF-IDF (a term's frequency in the entry
+times its inverse document frequency across the indexed corpus) instead of
+a presence/absence keyword-overlap ratio, so a rarer, more distinctive term
+outranks one nearly every entry shares. It's a drop-in alternative to
+`searchEvidenceLibrary`: same `EvidenceSearchQuery` input and
+`EvidenceSearchResult` output shape, and the same non-text filter semantics
+(kind/topic/caseArea/tags).
+
+`state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`
+composes this against the persisted repository, added alongside — not
+replacing — `searchPersistedEvidenceLibrary`, so `EvidenceLibraryPanel`'s
+existing search behavior is unchanged. The index is rebuilt fresh on every
+call (this store has no write-time hook to invalidate a cached index), which
+is still the query-time win the follow-up asked for: ranking no longer
+means visiting every entry's text, only the ones a query term actually
+appears in. Vitest-covered in
+`packages/debate-card-search/test/evidence-search-index.test.ts` (index
+construction, postings/term-frequency correctness, TF-IDF ranking including
+a dedicated case showing a rarer term outranks a common one, every filter
+combination, and candidate-set parity against `searchEvidenceLibrary` on a
+shared fixture) and new cases in
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (mirroring
+`searchPersistedEvidenceLibrary`'s own test suite: peer-review gating,
+empty-repository, kind filtering, empty-text-query).
+
+Follow-up: `EvidenceLibraryPanel` itself still calls
+`searchPersistedEvidenceLibrary`, not the indexed version — wiring the panel
+to the index (or caching it across calls instead of rebuilding on every
+search) is not started.
+
 ## Peer-review gating
 
 A search only ever returns "live" entries — see
@@ -172,8 +213,11 @@ card submitted here now feeds that dashboard directly.
 
 ## Known gaps
 
-- No real search index (e.g. Typesense) — search is the existing in-memory
-  keyword-overlap heuristic over whatever is persisted to localStorage.
+- A real inverted-index/TF-IDF search now exists (see "Real search index"
+  above), but `EvidenceLibraryPanel` isn't wired to it yet — the panel still
+  calls the original keyword-overlap `searchPersistedEvidenceLibrary`. The
+  index is also rebuilt from scratch on every call rather than cached and
+  incrementally updated on write.
 - No browser extension exists — the "Check this page" box is a manual,
   paste-the-URL stand-in for what a future extension would run
   automatically against the current tab. The reuse-check logic itself

@@ -12,6 +12,7 @@ import {
   saveEvidenceLibraryEntry,
   saveEvidenceLibraryEntryRevision,
   searchPersistedEvidenceLibrary,
+  searchPersistedEvidenceLibraryWithIndex,
 } from "../src/state/evidenceLibraryEntries";
 import { listRevisionHistory } from "../src/state/revisionHistory";
 import { saveContribution } from "../src/state/contributions";
@@ -170,6 +171,55 @@ describe("searchPersistedEvidenceLibrary", () => {
     savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
 
     const results = searchPersistedEvidenceLibrary({});
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+  });
+});
+
+describe("searchPersistedEvidenceLibraryWithIndex", () => {
+  it("searches the persisted repository via a freshly built inverted index", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const results = searchPersistedEvidenceLibraryWithIndex({ text: "warming" });
+    expect(results).toHaveLength(1);
+    expect(results[0].entry).toEqual(WARMING_CARD);
+  });
+
+  it("returns an empty list when nothing is persisted", () => {
+    expect(searchPersistedEvidenceLibraryWithIndex({ kind: "card" })).toEqual([]);
+  });
+
+  it("filters by kind across the persisted repository", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const results = searchPersistedEvidenceLibraryWithIndex({ kind: "block" });
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-2"]);
+  });
+
+  it("treats an empty text query the same as an omitted one, combined with a kind filter", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const results = searchPersistedEvidenceLibraryWithIndex({ text: "", kind: "card" });
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+    expect(results[0].relevanceScore).toBe(0);
+  });
+
+  it("excludes an entry held under an in-progress peer review, matching searchPersistedEvidenceLibrary's gating", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    savePeerReview(submitForReview(createCardReview("entry-1")));
+
+    const results = searchPersistedEvidenceLibraryWithIndex({});
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-2"]);
+  });
+
+  it("includes an entry again once its review is published", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
+
+    const results = searchPersistedEvidenceLibraryWithIndex({});
     expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
   });
 });

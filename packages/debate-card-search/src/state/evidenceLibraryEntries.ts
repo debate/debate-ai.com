@@ -22,11 +22,20 @@
  * pure `checkPageForExistingCards` against this store — the persisted half
  * of the "On Page Card Reuse Search" idea's first slice in TODO.md.
  *
+ * `searchPersistedEvidenceLibraryWithIndex` composes
+ * `evidence-search-index.ts`'s inverted-index search against this store's
+ * "live" entries — the persisted half of the "📋 Shared Evidence Library"
+ * bullet's follow-up (c), "a real search index ... once entries are
+ * persisted at scale." Added alongside `searchPersistedEvidenceLibrary`
+ * (not replacing it), so existing callers of the original keyword-overlap
+ * search are unaffected.
+ *
  * @module state/evidenceLibraryEntries
  */
 
 import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult, PageReuseCheckResult } from "../lib/shared-evidence-library";
 import { buildEvidenceEntryRevision, checkPageForExistingCards, searchEvidenceLibrary } from "../lib/shared-evidence-library";
+import { buildEvidenceSearchIndex, searchEvidenceLibraryWithIndex } from "../lib/evidence-search-index";
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library";
 import { buildArgumentLibrary, buildLibraryCardsFromContributions, buildTagCollections } from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
@@ -133,6 +142,24 @@ export function listPendingReviewEntries(): EvidenceLibraryEntry[] {
  */
 export function searchPersistedEvidenceLibrary(query: EvidenceSearchQuery = {}): EvidenceSearchResult[] {
   return searchEvidenceLibrary(readAll().filter((entry) => isEntryLive(entry.id)), query);
+}
+
+/**
+ * Searches the persisted evidence repository via a freshly built
+ * `EvidenceSearchIndex` — the real, postings-list-backed search index named
+ * in follow-up (c) under the "📋 Shared Evidence Library" bullet in
+ * TODO.md, rather than `searchPersistedEvidenceLibrary`'s full re-scan on
+ * every call. Only "live" entries are indexed (see `isEntryLive`), matching
+ * `searchPersistedEvidenceLibrary`'s own gating, so a card still held back
+ * by an in-progress peer review doesn't appear in results here either. The
+ * index itself is rebuilt on every call rather than cached — this store has
+ * no lifecycle hook to invalidate a cached index on write, so a fresh build
+ * is the correctness-first choice; caching the index across calls is a
+ * further follow-up once write volume makes that matter.
+ */
+export function searchPersistedEvidenceLibraryWithIndex(query: EvidenceSearchQuery = {}): EvidenceSearchResult[] {
+  const liveEntries = readAll().filter((entry) => isEntryLive(entry.id));
+  return searchEvidenceLibraryWithIndex(buildEvidenceSearchIndex(liveEntries), query);
 }
 
 /**
