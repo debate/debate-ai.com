@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildCombinedPersistedArgumentLibrary,
   buildPersistedArgumentLibrary,
   deleteEvidenceLibraryEntry,
   getEvidenceLibraryEntry,
@@ -9,7 +10,9 @@ import {
   searchPersistedEvidenceLibrary,
 } from "../src/state/evidenceLibraryEntries";
 import { listRevisionHistory } from "../src/state/revisionHistory";
+import { saveContribution } from "../src/state/contributions";
 import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
+import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -180,6 +183,48 @@ describe("buildPersistedArgumentLibrary", () => {
     saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
     buildPersistedArgumentLibrary();
     expect(listEvidenceLibraryEntries()).toEqual([WARMING_CARD, SOLVENCY_BLOCK]);
+  });
+});
+
+describe("buildCombinedPersistedArgumentLibrary", () => {
+  const TAGGED_CONTRIBUTION: AttributedContribution = {
+    id: "contrib-1",
+    contributorId: "carol",
+    kind: "card",
+    likes: 0,
+    saves: 0,
+    qualitySignals: [0.5],
+    reviewerEndorsements: [],
+    topic: "Energy Policy",
+    caseArea: "Case",
+    tags: ["solvency"],
+    argBlock: "Solvency",
+  };
+
+  it("returns an empty library when nothing is stored in either store", () => {
+    expect(buildCombinedPersistedArgumentLibrary()).toEqual({ topicFolders: [], tagCollections: [] });
+  });
+
+  it("includes persisted evidence-library entries", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    const library = buildCombinedPersistedArgumentLibrary();
+    expect(library.topicFolders[0].cardCount).toBe(1);
+  });
+
+  it("folds in a tagged Contributions Feed submission alongside evidence-library entries", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveContribution(TAGGED_CONTRIBUTION);
+
+    const library = buildCombinedPersistedArgumentLibrary();
+    expect(library.topicFolders).toHaveLength(1);
+    expect(library.topicFolders[0].cardCount).toBe(2);
+    expect(library.topicFolders[0].caseAreas.map((group) => group.caseArea)).toEqual(["Case", "DA"]);
+    expect(library.tagCollections.map((collection) => collection.tag)).toEqual(["impact", "solvency", "warming"]);
+  });
+
+  it("excludes a contribution missing topic or caseArea", () => {
+    saveContribution({ ...TAGGED_CONTRIBUTION, id: "contrib-2", topic: undefined });
+    expect(buildCombinedPersistedArgumentLibrary()).toEqual({ topicFolders: [], tagCollections: [] });
   });
 });
 

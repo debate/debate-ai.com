@@ -11,10 +11,24 @@
  * structure, or render a folder/collection browser UI. See the follow-ups
  * noted in TODO.md.
  *
+ * `contributionToLibraryCard`/`buildLibraryCardsFromContributions` close
+ * follow-up (a) named under this bullet in TODO.md — "wiring a `topic`/
+ * `caseArea`/`tags` field into wherever submitted cards are eventually
+ * persisted beyond the existing evidence-library store". The general-purpose
+ * Contributions Feed (`contribution-leaderboard.ts`'s `AttributedContribution`,
+ * persisted by `state/contributions.ts`) now carries the same optional
+ * `topic`/`caseArea`/`tags` fields as a `LibraryCard`; a contribution missing
+ * `topic` or `caseArea` (both required on `LibraryCard`) is excluded rather
+ * than defaulted, since there's no reasonable topic/case-area fallback.
+ * `state/evidenceLibraryEntries.ts`'s `buildCombinedPersistedArgumentLibrary`
+ * composes these against the persisted Contributions Feed store alongside the
+ * existing evidence-library entries.
+ *
  * @module lib/argument-library
  */
 
 import type { CoverageCardSummary } from "./topic-coverage";
+import type { AttributedContribution } from "./contribution-leaderboard";
 
 /** A submitted card tagged with the topic/case-area/tags needed to file it into the library. */
 export interface LibraryCard extends CoverageCardSummary {
@@ -222,6 +236,38 @@ export function suggestTags(
   substringMatches.sort((a, b) => a.localeCompare(b));
 
   return [...prefixMatches, ...substringMatches].slice(0, limit);
+}
+
+/**
+ * Converts a Contributions Feed `AttributedContribution` into a `LibraryCard`,
+ * or `null` if it's missing `topic` or `caseArea` — both required on
+ * `LibraryCard` but optional on a contribution, since not every contribution
+ * is filed into the Argument Library. `tags` defaults to an empty array.
+ * `argBlock` falls back to `"Untagged"` and `wordCount` to `0`, since a
+ * contribution carries no card body to measure — mirroring how other
+ * cross-store composition in this codebase (see `evidenceLibraryEntries.ts`)
+ * documents its known-placeholder fields rather than silently guessing.
+ */
+export function contributionToLibraryCard(contribution: AttributedContribution): LibraryCard | null {
+  if (!contribution.topic || !contribution.caseArea) return null;
+  return {
+    id: contribution.id,
+    argBlock: contribution.argBlock ?? "Untagged",
+    wordCount: 0,
+    topic: contribution.topic,
+    caseArea: contribution.caseArea,
+    tags: contribution.tags ?? [],
+  };
+}
+
+/**
+ * Converts every contribution that carries both `topic` and `caseArea` into a
+ * `LibraryCard`, dropping the rest (see `contributionToLibraryCard`).
+ */
+export function buildLibraryCardsFromContributions(contributions: AttributedContribution[]): LibraryCard[] {
+  return contributions
+    .map(contributionToLibraryCard)
+    .filter((card): card is LibraryCard => card !== null);
 }
 
 /** Renders a short summary line for an argument-library browser header. */

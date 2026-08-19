@@ -35,6 +35,12 @@ export interface AttributedContribution extends CommunityContribution {
   submittedAt?: number;
   /** Argument block this contribution supports, matching `topic-coverage.ts`'s `argBlock` tagging. Optional: not every contribution is tied to a tracked argument. */
   argBlock?: string;
+  /** Debate topic (resolution), matching `argument-library.ts`'s `LibraryCard.topic` tagging. Optional: only present when the contributor files this into the Common Argument Library. */
+  topic?: string;
+  /** Case area/argument category, matching `argument-library.ts`'s `LibraryCard.caseArea` tagging. Optional, same convention as `topic`. */
+  caseArea?: string;
+  /** Free-form tags, matching `argument-library.ts`'s `LibraryCard.tags` tagging. Optional, same convention as `topic`. */
+  tags?: string[];
 }
 
 /** One contributor's aggregated leaderboard standing. */
