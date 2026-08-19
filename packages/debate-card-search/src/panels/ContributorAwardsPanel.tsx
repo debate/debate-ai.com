@@ -11,6 +11,15 @@
  * existing per-category selection/scoring directly rather than introducing
  * new logic here.
  *
+ * Also closes follow-up (b), "a scheduled job that periodically calls
+ * `buildTopContributorAwards` and persists/announces the winners" — this
+ * repo has no scheduled-job infrastructure, so (mirroring
+ * `state/dailyBestCardAnnouncements.ts`'s identical "Daily Best Card
+ * Challenge" pattern) an **Announce today's awards** action freezes the
+ * current standings for the day via `state/contributorAwardAnnouncements.ts`.
+ * Once a day is announced, the panel shows that frozen snapshot instead of
+ * the live standings for the rest of the day.
+ *
  * @module panels/ContributorAwardsPanel
  */
 
@@ -19,36 +28,91 @@
 import { useEffect, useState } from "react"
 import { Award } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
-import { buildTopContributorAwardsFromStore } from "../state/contributions"
+import { Button } from "debate-ui/src/primitives/button"
+import {
+  announceContributorAwards,
+  buildPersistedTopContributorAwards,
+  getAnnouncedContributorAwards,
+  listAnnouncedContributorAwards,
+  type AnnouncedContributorAwards,
+} from "../state/contributorAwardAnnouncements"
 import type { ContributorAward } from "../lib/contributor-awards"
+
+/** Renders one category winner card. */
+function AwardCard({ award }: { award: ContributorAward }) {
+  return (
+    <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
+      <Award className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
+      <div className="min-w-0 flex-1">
+        <div className="text-sm font-medium text-foreground">{award.label}</div>
+        <div className="mt-1 flex items-center gap-2">
+          <Badge variant="secondary" className="truncate">
+            {award.contributorId}
+          </Badge>
+        </div>
+        <div className="mt-2 text-xs text-muted-foreground">
+          {award.contributionCount} contribution{award.contributionCount === 1 ? "" : "s"} ·{" "}
+          {award.totalHelpfulnessScore} pts
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** Renders one previously announced day's frozen award standings. */
+function AnnouncementGroup({ announcement }: { announcement: AnnouncedContributorAwards }) {
+  return (
+    <div className="mb-4">
+      <div className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {announcement.dayKey}
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {announcement.awards.map((award) => (
+          <AwardCard key={award.kind} award={award} />
+        ))}
+      </div>
+    </div>
+  )
+}
 
 /**
  * Renders the Top Contributor Awards: one category winner per
  * `ContributionKind` present among persisted contributions, ranked by total
- * helpfulness score within that category.
+ * helpfulness score within that category. An **Announce today's awards**
+ * action freezes the current UTC day's standings; once announced, the panel
+ * shows that frozen result instead of the live standings for the rest of the
+ * day, plus the history of every previously announced day.
  *
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
 export function ContributorAwardsPanel() {
-  const [awards, setAwards] = useState<ContributorAward[] | null>(null)
+  const [live, setLive] = useState<ContributorAward[] | null>(null)
+  const [announcedToday, setAnnouncedToday] = useState<AnnouncedContributorAwards | undefined>(undefined)
+  const [history, setHistory] = useState<AnnouncedContributorAwards[]>([])
+
+  const refresh = () => {
+    const now = Date.now()
+    setLive(buildPersistedTopContributorAwards())
+    setAnnouncedToday(getAnnouncedContributorAwards(new Date(now).toISOString().slice(0, 10)))
+    setHistory(listAnnouncedContributorAwards())
+  }
 
   useEffect(() => {
-    setAwards(buildTopContributorAwardsFromStore())
+    refresh()
   }, [])
 
-  if (awards === null) {
+  const handleAnnounce = () => {
+    announceContributorAwards(Date.now())
+    refresh()
+  }
+
+  if (live === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading awards…</div>
   }
 
-  if (awards.length === 0) {
-    return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No awards yet. Categories fill in as contributors submit cards, summaries, highlights, and
-        annotations.
-      </div>
-    )
-  }
+  const awardsToShow = announcedToday?.awards ?? live
+  const pastAnnouncements = history.filter((announcement) => announcement.dayKey !== announcedToday?.dayKey)
 
   return (
     <div className="p-4 sm:p-6">
@@ -56,28 +120,41 @@ export function ContributorAwardsPanel() {
       <p className="mb-4 text-sm text-muted-foreground">
         Current category winners, ranked by total helpfulness score within each contribution kind.
       </p>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {awards.map((award) => (
-          <div
-            key={award.kind}
-            className="flex items-start gap-3 rounded-lg border border-border bg-card p-4"
-          >
-            <Award className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-medium text-foreground">{award.label}</div>
-              <div className="mt-1 flex items-center gap-2">
-                <Badge variant="secondary" className="truncate">
-                  {award.contributorId}
-                </Badge>
-              </div>
-              <div className="mt-2 text-xs text-muted-foreground">
-                {award.contributionCount} contribution{award.contributionCount === 1 ? "" : "s"} ·{" "}
-                {award.totalHelpfulnessScore} pts
-              </div>
-            </div>
-          </div>
-        ))}
+
+      {awardsToShow.length === 0 ? (
+        <div className="mb-6 rounded-lg border border-border bg-card p-6 text-center text-sm text-muted-foreground">
+          No awards yet. Categories fill in as contributors submit cards, summaries, highlights, and
+          annotations.
+        </div>
+      ) : (
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {awardsToShow.map((award) => (
+            <AwardCard key={award.kind} award={award} />
+          ))}
+        </div>
+      )}
+
+      <div className="mb-6 flex items-center gap-3 text-xs text-muted-foreground">
+        {announcedToday ? (
+          <span>Today's awards are announced and frozen.</span>
+        ) : (
+          <>
+            <span>Not yet announced today.</span>
+            <Button size="sm" onClick={handleAnnounce} disabled={live.length === 0}>
+              Announce today's awards
+            </Button>
+          </>
+        )}
       </div>
+
+      <div className="mb-2 text-sm font-medium text-foreground">Announced history</div>
+      {pastAnnouncements.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No prior days have been announced yet.</p>
+      ) : (
+        pastAnnouncements.map((announcement) => (
+          <AnnouncementGroup key={announcement.dayKey} announcement={announcement} />
+        ))
+      )}
     </div>
   )
 }

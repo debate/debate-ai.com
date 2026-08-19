@@ -9,15 +9,15 @@
  * ranking contributors within each kind to pick a category winner. This is
  * the first slice only — it works entirely off already-collected
  * contributions passed in by the caller; the only categories it can produce
- * today are the ones `ContributionKind` already distinguishes ("card" and
- * "summary" — see `DEFAULT_AWARD_CATEGORY_LABELS`), it doesn't persist or
- * announce awards, and it doesn't render an awards UI. Follow-ups: (a) a
- * finer-grained `ContributionKind` (or separate tag) for "original
- * argument" and "refutation" contributions, neither of which exists as a
- * distinct kind today, (b) a scheduled job that periodically calls
- * `buildTopContributorAwards` and persists/announces the winners, (c) an
- * awards UI in `debate-card-search` that renders
- * `buildAwardsAnnouncementText`.
+ * today are the ones `ContributionKind` already distinguishes. Persistence,
+ * announcement, and the awards UI itself live in `state/contributions.ts`
+ * (`buildTopContributorAwardsFromStore`), `state/contributorAwardAnnouncements.ts`,
+ * and `panels/ContributorAwardsPanel.tsx` respectively — see those modules
+ * for how this pure selection logic is composed against the persisted
+ * contribution store and rendered. Follow-up (a), a finer-grained
+ * `ContributionKind` (or separate tag) for "original argument" and
+ * "refutation" contributions (neither of which exists as a distinct kind
+ * today), remains open.
  *
  * @module lib/contributor-awards
  */
