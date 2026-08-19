@@ -60,7 +60,7 @@ _No task currently in progress._
   updated at `docs/features/shared-flow-sync.md`. No repo-wide `lint`
   script exists (checked root/app/package `package.json` scripts) so none
   was run.
-  PR: Not created yet.
+  PR: [#250](https://github.com/debate/debate-ai.com/pull/250).
 - **Coaching Programs and Group Challenges — member practice-round setup/feedback wiring.**
   Closes idea #13's remaining "(c) wiring a member's practice-round
   setup/feedback (Practice Round Simulator) into the space" follow-up in
