@@ -13,13 +13,20 @@
  *
  * Each program also gets a "View board" action that opens its live
  * `buildCoachingProgramBoard` for a chosen topic, composed entirely from
- * persisted state via the new `state/persistedCoachingProgramBoard.ts`'s
+ * persisted state via `state/persistedCoachingProgramBoard.ts`'s
  * `buildPersistedCoachingProgramBoard` — the topic sprint (research, quests,
- * task routing, progress, notes), the group-challenge standings, and (once a
- * `roundId`-to-contributor mapping exists — still a further, separate
- * follow-up) member drill sets. This closes the topic-sprint/group-challenge
- * half of the "(b-continued)" follow-up named under idea #13 in TODO.md; the
- * member-drill half stays open, same as noted there.
+ * task routing, progress, notes), the group-challenge standings, and each
+ * roster member's drill set. This closes the "(b-continued)" follow-up
+ * named under idea #13 in TODO.md.
+ *
+ * A member's drill set comes from their currently recorded practice-round
+ * flow — the `roundId`-to-contributor mapping named as a further follow-up
+ * in TODO.md and `docs/features/coaching-programs.md`'s "Known gaps". An
+ * open board's roster now gets a "Save current flow" action per member that
+ * records the live round workspace's selected flow (`state/store.ts`'s
+ * `useFlowStore`) against that member via
+ * `state/roundContributorFlows.ts`'s `buildAndSaveRoundContributorFlow`,
+ * closing that follow-up.
  *
  * @module panels/CoachingProgramsPanel
  */
@@ -37,7 +44,13 @@ import {
   saveCoachingProgram,
 } from "../state/coachingPrograms"
 import { buildPersistedCoachingProgramBoard } from "../state/persistedCoachingProgramBoard"
+import {
+  buildAndSaveRoundContributorFlow,
+  deleteRoundContributorFlow,
+  listRoundContributorFlows,
+} from "../state/roundContributorFlows"
 import { buildCoachingProgramSummaryText, type CoachingProgramBoard, type CoachingProgramConfig } from "../round/coaching-program"
+import { useFlowStore } from "../state/store"
 
 type ProgramDraft = { name: string; memberIds: string }
 
@@ -58,20 +71,33 @@ export function CoachingProgramsPanel() {
   const [openProgramId, setOpenProgramId] = useState<string | null>(null)
   const [topic, setTopic] = useState("")
   const [board, setBoard] = useState<CoachingProgramBoard | null>(null)
+  const [sideKeyDrafts, setSideKeyDrafts] = useState<Record<string, string>>({})
+  const [recordedContributorIds, setRecordedContributorIds] = useState<Set<string>>(new Set())
+  const [mounted, setMounted] = useState(false)
+
+  const flows = useFlowStore((state) => state.flows)
+  const selected = useFlowStore((state) => state.selected)
+  const currentFlow = mounted ? flows[selected] : undefined
 
   useEffect(() => {
+    setMounted(true)
     setPrograms(buildCoachingProgramsPanelView())
+    setRecordedContributorIds(new Set(listRoundContributorFlows().map((record) => record.contributorId)))
   }, [])
 
   const refresh = () => setPrograms(buildCoachingProgramsPanelView())
 
+  const refreshBoard = (id: string, rawTopic: string) => {
+    const trimmedTopic = rawTopic.trim()
+    setBoard(trimmedTopic ? buildPersistedCoachingProgramBoard(id, trimmedTopic, Date.now()) ?? null : null)
+  }
+
   useEffect(() => {
-    const trimmedTopic = topic.trim()
-    if (!openProgramId || !trimmedTopic) {
+    if (!openProgramId) {
       setBoard(null)
       return
     }
-    setBoard(buildPersistedCoachingProgramBoard(openProgramId, trimmedTopic, Date.now()) ?? null)
+    refreshBoard(openProgramId, topic)
   }, [openProgramId, topic])
 
   const handleToggleBoard = (id: string) => {
@@ -99,6 +125,29 @@ export function CoachingProgramsPanel() {
   const handleRemove = (id: string) => {
     deleteCoachingProgram(id)
     refresh()
+  }
+
+  const handleRecordFlow = (memberId: string) => {
+    if (!currentFlow) return
+    const sideKey = (sideKeyDrafts[memberId] ?? "").trim()
+    if (!sideKey) {
+      setError("A side (e.g. A or N) is required to save a member's flow.")
+      return
+    }
+    buildAndSaveRoundContributorFlow(currentFlow, String(currentFlow.id), memberId, sideKey)
+    setError(null)
+    setRecordedContributorIds((prev) => new Set(prev).add(memberId))
+    if (openProgramId) refreshBoard(openProgramId, topic)
+  }
+
+  const handleClearFlow = (memberId: string) => {
+    deleteRoundContributorFlow(memberId)
+    setRecordedContributorIds((prev) => {
+      const next = new Set(prev)
+      next.delete(memberId)
+      return next
+    })
+    if (openProgramId) refreshBoard(openProgramId, topic)
   }
 
   if (programs === null) {
@@ -184,6 +233,43 @@ export function CoachingProgramsPanel() {
                       className="max-w-sm"
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label>Member flows</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Save the round workspace's currently selected flow against a roster member to
+                      generate their drill set on this board.
+                    </p>
+                    {program.memberIds.map((memberId) => (
+                      <div key={memberId} className="flex flex-wrap items-center gap-2">
+                        <span className="w-24 truncate text-sm text-foreground">{memberId}</span>
+                        <Badge variant={recordedContributorIds.has(memberId) ? "default" : "outline"}>
+                          {recordedContributorIds.has(memberId) ? "Flow recorded" : "No flow recorded"}
+                        </Badge>
+                        <Input
+                          value={sideKeyDrafts[memberId] ?? ""}
+                          onChange={(e) =>
+                            setSideKeyDrafts((prev) => ({ ...prev, [memberId]: e.target.value }))
+                          }
+                          placeholder="Side (e.g. A)"
+                          className="w-32"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={!currentFlow}
+                          onClick={() => handleRecordFlow(memberId)}
+                        >
+                          Save current flow
+                        </Button>
+                        {recordedContributorIds.has(memberId) && (
+                          <Button size="sm" variant="ghost" onClick={() => handleClearFlow(memberId)}>
+                            Clear
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
                   {!topic.trim() ? (
                     <p className="text-sm text-muted-foreground">
                       Enter a topic above to compose this program's live board.
