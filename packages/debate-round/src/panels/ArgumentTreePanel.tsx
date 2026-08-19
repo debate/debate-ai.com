@@ -13,6 +13,14 @@
  * save the chosen filter back through `saveArgumentTreeFilterSelection`. No
  * new tree-derivation or filtering logic is introduced here.
  *
+ * A "Generate from current round" action reads the live round-flowing page's
+ * selected flow (`state/store.ts`'s `useFlowStore`, the same store
+ * `CoachingProgramsPanel`'s "Save current flow" action reads) and calls
+ * `state/argumentTrees.ts`'s `buildAndSaveArgumentTreeFromCurrentFlow`,
+ * closing the "Nothing in the live round-flowing page ... calls
+ * `buildAndSaveArgumentTree` yet" gap noted in
+ * `docs/features/argument-tree-outline.md`.
+ *
  * @module panels/ArgumentTreePanel
  */
 
@@ -31,11 +39,17 @@ import {
   SelectValue,
 } from "debate-ui/src/primitives/select"
 import { filterArgumentTree, flattenArgumentTree, type ArgumentTreeFilter } from "../flow/argument-tree"
-import { buildArgumentTreesPanelView, deleteArgumentTree, type ArgumentTreeRecord } from "../state/argumentTrees"
+import {
+  buildAndSaveArgumentTreeFromCurrentFlow,
+  buildArgumentTreesPanelView,
+  deleteArgumentTree,
+  type ArgumentTreeRecord,
+} from "../state/argumentTrees"
 import {
   getArgumentTreeFilterSelection,
   saveArgumentTreeFilterSelection,
 } from "../state/argumentTreeFilters"
+import { useFlowStore } from "../state/store"
 
 const ANY_VALUE = "__any__"
 
@@ -90,8 +104,14 @@ function collectAuthorIds(record: ArgumentTreeRecord): string[] {
 export function ArgumentTreePanel() {
   const [records, setRecords] = useState<ArgumentTreeRecord[] | null>(null)
   const [filters, setFilters] = useState<Record<string, ArgumentTreeFilter>>({})
+  const [mounted, setMounted] = useState(false)
+
+  const flows = useFlowStore((state) => state.flows)
+  const selected = useFlowStore((state) => state.selected)
+  const currentFlow = mounted ? flows[selected] : undefined
 
   useEffect(() => {
+    setMounted(true)
     const view = buildArgumentTreesPanelView()
     setRecords(view)
     setFilters(
@@ -114,27 +134,45 @@ export function ArgumentTreePanel() {
     refresh()
   }
 
+  const handleGenerateFromCurrentRound = () => {
+    if (!currentFlow) return
+    buildAndSaveArgumentTreeFromCurrentFlow(currentFlow)
+    refresh()
+  }
+
+  const generateAction = (
+    <Button size="sm" variant="outline" disabled={!currentFlow} onClick={handleGenerateFromCurrentRound}>
+      Generate from current round
+    </Button>
+  )
+
   if (records === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading argument outlines…</div>
   }
 
   if (records.length === 0) {
     return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No argument outlines yet. An outline fills in once a round's flow is derived into a tree
-        and saved.
+      <div className="p-6 space-y-4 text-center">
+        <p className="text-sm text-muted-foreground">
+          No argument outlines yet. An outline fills in once a round's flow is derived into a tree
+          and saved.
+        </p>
+        {generateAction}
       </div>
     )
   }
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Outline Filters and Argument Tree</h1>
-        <p className="text-sm text-muted-foreground">
-          A filterable outline of each round's flow, grouped under its headings — filter by speech,
-          side, unanswered status, or heading-vs-argument kind.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="mb-1 text-xl font-semibold text-foreground">Outline Filters and Argument Tree</h1>
+          <p className="text-sm text-muted-foreground">
+            A filterable outline of each round's flow, grouped under its headings — filter by speech,
+            side, unanswered status, or heading-vs-argument kind.
+          </p>
+        </div>
+        {generateAction}
       </div>
       {records.map((record) => {
         const filter = filters[record.roundId] ?? {}

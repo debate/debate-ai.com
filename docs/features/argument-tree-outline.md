@@ -80,13 +80,30 @@ selects (populated from the tree's own distinct values) and per-row
 argument-type/contributor/evidence-status badges. No follow-ups remain open
 on this idea.
 
+## Generating an outline from the current round
+
+A **Generate from current round** button (next to the panel heading, or
+below the empty-state message when no outline is saved yet) reads the live
+round-flowing page's currently selected flow —
+[`state/store.ts`](../../packages/debate-round/src/state/store.ts)'s
+`useFlowStore`, the same store `CoachingProgramsPanel`'s "Save current flow"
+action reads — and calls `state/argumentTrees.ts`'s
+`buildAndSaveArgumentTreeFromCurrentFlow`, which derives and saves an
+`ArgumentTreeRecord` keyed by that flow's own `id` (stringified), mirroring
+`roundContributorFlows.ts`'s "the flow's own numeric id stands in for
+`roundId`" convention rather than requiring a separately-tracked `Round`
+entity. The button is disabled until a flow is selected (e.g. the panel was
+opened without first visiting `/debate`, so the store hasn't hydrated a
+current flow yet).
+
+This closes the "Nothing in the live round-flowing page ... calls
+`buildAndSaveArgumentTree` yet" gap this doc previously listed. Vitest-covered
+in `packages/debate-round/test/argumentTrees.test.ts` (keys the saved record
+by the flow's `id`; persists an empty tree without throwing for a flow with
+no rows).
+
 ## Known gaps
 
-- Nothing in the live round-flowing page (`DebateFlowPage`/
-  `FlowMainContent`) calls `buildAndSaveArgumentTree` yet, so a round's
-  outline only appears here once something computes and saves it — the same
-  "real trigger not wired" gap already noted for several other panels (e.g.
-  `flow-summaries.md`).
 - Nothing in the live flow-editing UI (`FlowSpreadsheet` or elsewhere) lets a
   user actually set a `Box`'s `argumentType`/`authorId`/`evidenceStatus`
   yet — these fields exist in the schema and are read/filtered/rendered
