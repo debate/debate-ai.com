@@ -14,10 +14,10 @@
  * (`buildTopContributorAwardsFromStore`), `state/contributorAwardAnnouncements.ts`,
  * and `panels/ContributorAwardsPanel.tsx` respectively — see those modules
  * for how this pure selection logic is composed against the persisted
- * contribution store and rendered. Follow-up (a), a finer-grained
- * `ContributionKind` (or separate tag) for "original argument" and
- * "refutation" contributions (neither of which exists as a distinct kind
- * today), remains open.
+ * contribution store and rendered. Follow-up (a) is closed: `ContributionKind`
+ * now distinguishes `"original-argument"` and `"refutation"` contributions,
+ * each with their own "Best Original Argument"/"Best Refutation" award
+ * category below.
  *
  * @module lib/contributor-awards
  */
@@ -35,6 +35,8 @@ export const DEFAULT_AWARD_CATEGORY_LABELS: Record<ContributionKind, string> = {
   summary: "Best Explainer",
   highlight: "Best Highlight Curator",
   annotation: "Best Annotator",
+  "original-argument": "Best Original Argument",
+  refutation: "Best Refutation",
 };
 
 /** One category's award winner. */
@@ -83,15 +85,22 @@ export function buildCategoryLeaderboard(
  * producing an award with no winner. `categoryLabels` defaults to
  * `DEFAULT_AWARD_CATEGORY_LABELS` and may be overridden per kind, e.g. once
  * a real reviewer-facing copy deck exists. Awards are returned in a stable
- * order: `card`, `summary`, `highlight`, `annotation`, filtered to kinds
- * actually present.
+ * order: `card`, `summary`, `highlight`, `annotation`, `original-argument`,
+ * `refutation`, filtered to kinds actually present.
  */
 export function buildTopContributorAwards(
   contributions: AttributedContribution[],
   categoryLabels: Record<ContributionKind, string> = DEFAULT_AWARD_CATEGORY_LABELS,
 ): ContributorAward[] {
   const byKind = groupContributionsByKind(contributions);
-  const kindOrder: ContributionKind[] = ["card", "summary", "highlight", "annotation"];
+  const kindOrder: ContributionKind[] = [
+    "card",
+    "summary",
+    "highlight",
+    "annotation",
+    "original-argument",
+    "refutation",
+  ];
 
   const awards: ContributorAward[] = [];
   for (const kind of kindOrder) {

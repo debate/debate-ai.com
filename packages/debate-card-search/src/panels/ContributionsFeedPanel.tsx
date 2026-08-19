@@ -86,6 +86,8 @@ const KIND_OPTIONS: { value: ContributionKind; label: string }[] = [
   { value: "summary", label: "Summary" },
   { value: "highlight", label: "Highlight" },
   { value: "annotation", label: "Annotation" },
+  { value: "original-argument", label: "Original Argument" },
+  { value: "refutation", label: "Refutation" },
 ]
 
 const KIND_VARIANT: Record<ContributionKind, "default" | "secondary" | "outline"> = {
@@ -93,6 +95,8 @@ const KIND_VARIANT: Record<ContributionKind, "default" | "secondary" | "outline"
   summary: "secondary",
   highlight: "outline",
   annotation: "outline",
+  "original-argument": "default",
+  refutation: "secondary",
 }
 
 type ContributionDraft = {
