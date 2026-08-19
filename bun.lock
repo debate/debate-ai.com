@@ -276,6 +276,7 @@
       "name": "debate-speech-writer",
       "version": "0.1.0",
       "dependencies": {
+        "debate-card-parser": "workspace:*",
         "debate-ui": "workspace:*",
         "grab-url": "^1.6.22",
         "qwksearch-api-client": "0.0.12",
