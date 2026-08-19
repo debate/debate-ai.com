@@ -134,6 +134,54 @@ ordering, "(cleared)" fallback), and a new `listFlowEditsForBox` describe
 block in `packages/debate-round/test/flowEdits.test.ts` (exact box-path
 match, excluding prefix/extension paths and other flows).
 
+## Suggested evidence in the edit-review popover
+
+`EditReviewPopover` now shows a ranked **Suggested evidence** list, matched
+against the popover's in-progress content, between the box's already-logged
+edits and the Author ID/Content form:
+
+- As a contributor types (or reads) the box's proposed content, the popover
+  ranks the shared evidence-library corpus by keyword overlap against that
+  text and shows up to five matches, each with its argument block, citation,
+  and a one-line snippet.
+- Clicking a suggestion's **Insert** button appends its snippet and citation
+  onto the content field's existing text (on a new paragraph, or as the
+  whole field if it was empty) — it never overwrites what's already typed,
+  and nothing is applied without a click. Blank/whitespace-only content
+  shows no suggestions.
+
+This closes follow-up (c) under idea #16 ("Shared, Ai-Generated Debate
+Flow") in `TODO.md`: "composing the Common Argument Library's tagged card
+corpus to suggest (not auto-apply) a pre-filled flow note from matching
+evidence." It adds:
+
+- `flow/flow-evidence-suggestions.ts`: `suggestEvidenceForBoxContent` (ranks
+  and caps a caller-supplied `EvidenceLibraryEntry[]` corpus against a box's
+  content by reusing `debate-card-search`'s `searchEvidenceLibrary`
+  directly, rather than reimplementing keyword-overlap ranking) and
+  `appendEvidenceToContent` (the pure "insert" transform). `debate-round`
+  already depends on `debate-card-search` (see `round/coaching-program.ts`
+  for the existing cross-package precedent).
+- `flow/SuggestedEvidenceList.tsx`: the presentational results list, kept
+  separate from `EditReviewPopover` (which touches `window`/`document`
+  directly and has no render test of its own) so it stays render-testable,
+  mirroring the existing `EditBadge`/overlay split.
+- `flow/EditReviewPopover.tsx`, `flow/types.ts`, `flow/FlowSpreadsheet.tsx`,
+  `layout/FlowMainContent.tsx`: thread an optional `evidenceEntries` prop
+  down to the popover.
+- `panels/DebateRoundPanel.tsx`: loads the real, persisted Shared Evidence
+  Library via `debate-card-search`'s `listEvidenceLibraryEntries()` on
+  mount (client-only, since `localStorage` isn't available during server
+  rendering) and passes it down as `evidenceEntries`, so the live round
+  workspace's popover suggests real submitted cards and blocks rather than
+  an empty corpus.
+
+Vitest-covered in `packages/debate-round/test/flow-evidence-suggestions.test.ts`
+(ranking, blank-content and empty-corpus edge cases, the suggestion limit,
+zero-overlap exclusion, and both branches of `appendEvidenceToContent`) and
+`packages/debate-round/test/SuggestedEvidenceList.test.tsx` (empty-results
+render, per-result markup, and the blank-citation case).
+
 ## Known gaps
 
 - Still no live transport (e.g. WebSocket) pushing a teammate's edits here
@@ -149,6 +197,7 @@ match, excluding prefix/extension paths and other flows).
   annotation badge.
 - No collaborative/live sync — edits are local `localStorage` only, same
   as every other persisted record in this repo today.
-- Follow-up (c) — composing the Common Argument Library's tagged card
-  corpus to suggest a pre-filled flow note from matching evidence — is not
-  started.
+- The suggested-evidence corpus is loaded once when the round workspace
+  mounts; it does not live-refresh if a contributor submits a new card to
+  the Shared Evidence Library in another tab while the flow page stays
+  open.

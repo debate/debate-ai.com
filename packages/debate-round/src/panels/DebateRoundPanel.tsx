@@ -7,10 +7,12 @@
  * into a clean, modular architecture using custom hooks and layout components.
  */
 
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
 import { settings } from "../state/settings"
+import { listEvidenceLibraryEntries } from "debate-card-search/src/state/evidenceLibraryEntries"
+import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import type { Flow } from "debate-core/src/types/flow"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "debate-ui/src/primitives/resizable"
 import { Sheet, SheetContent } from "debate-ui/src/primitives/sheet"
@@ -65,6 +67,16 @@ export function DebateFlowPage() {
   // ============================================================================
   /** Reference to the AG Grid API for programmatic column navigation. */
   const gridApiRef = useRef<any>(null)
+
+  // ============================================================================
+  // Shared Evidence Library — for the flow spreadsheet's edit-review popover's
+  // suggested-evidence list (idea #16 follow-up (c) in TODO.md). Loaded once on
+  // mount since localStorage isn't available during server rendering.
+  // ============================================================================
+  const [evidenceEntries, setEvidenceEntries] = useState<EvidenceLibraryEntry[]>([])
+  useEffect(() => {
+    setEvidenceEntries(listEvidenceLibraryEntries())
+  }, [])
 
   // ============================================================================
   // Side Effects
@@ -310,6 +322,7 @@ export function DebateFlowPage() {
             currentFlow={currentFlow}
             splitMode={state.splitMode}
             gridApiRef={gridApiRef}
+            evidenceEntries={evidenceEntries}
             isMobile={state.isMobile}
             leftSpeech={leftSpeech}
             rightSpeech={rightSpeech}

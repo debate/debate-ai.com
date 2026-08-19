@@ -3,6 +3,7 @@
  */
 
 import type { IHeaderParams, ICellRendererParams } from "ag-grid-community"
+import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import type { Flow } from "debate-core/src/types/flow"
 import type { FlowAnnotation } from "./flow-annotations"
 
@@ -31,6 +32,8 @@ export interface FlowSpreadsheetProps {
   onOpenSpeechPanel?: (speechName: string) => void
   /** Optional callback when grid is ready */
   onGridReady?: (api: any) => void
+  /** Shared Evidence Library entries to rank/suggest in the edit-review popover; defaults to none. */
+  evidenceEntries?: EvidenceLibraryEntry[]
 }
 
 /**

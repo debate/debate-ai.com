@@ -51,6 +51,7 @@ export function FlowSpreadsheet({
   onUpdate,
   onOpenSpeechPanel,
   onGridReady: onGridReadyProp,
+  evidenceEntries = [],
 }: FlowSpreadsheetProps) {
   // Refs and state
   const gridRef = useRef<AgGridReact>(null)
@@ -569,6 +570,7 @@ export function FlowSpreadsheet({
           boxPath={editReview.boxPath}
           currentContent={editReview.currentContent}
           edits={editReviewEdits}
+          evidenceEntries={evidenceEntries}
           onLogged={() => setEditReviewRefreshToken((t) => t + 1)}
           onClose={() => setEditReview(null)}
         />

@@ -7,6 +7,7 @@ import type React from "react"
 import { FlowSpreadsheet } from "../flow/FlowSpreadsheet"
 import { LexicalEditorWrapper } from "debate-editor"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
+import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import type { Flow } from "debate-core/src/types/flow"
 import type { ViewMode } from "../types/debate-flow"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
@@ -73,6 +74,8 @@ interface FlowMainContentProps {
   onNavigateNext?: () => void
   /** When provided, a hamburger button is rendered inside the mobile SpeechHeaderBar for sidebar access. */
   onMobileMenuClick?: () => void
+  /** Shared Evidence Library entries to rank/suggest in the flow spreadsheet's edit-review popover. */
+  evidenceEntries?: EvidenceLibraryEntry[]
 }
 
 /**
@@ -129,6 +132,7 @@ export function FlowMainContent({
   onNavigatePrev,
   onNavigateNext,
   onMobileMenuClick,
+  evidenceEntries = [],
 }: FlowMainContentProps) {
   if (!currentFlow) {
     return (
@@ -296,6 +300,7 @@ export function FlowMainContent({
             flow={currentFlow}
             onUpdate={onUpdate || ((_updates: Partial<Flow>) => { })}
             onOpenSpeechPanel={onOpenSpeechPanel}
+            evidenceEntries={evidenceEntries}
             onGridReady={(api) => {
               if (gridApiRef) {
                 // @ts-ignore - gridApiRef is a mutable ref
@@ -314,6 +319,7 @@ export function FlowMainContent({
         flow={currentFlow}
         onUpdate={onUpdate || ((_updates: Partial<Flow>) => { })}
         onOpenSpeechPanel={onOpenSpeechPanel}
+        evidenceEntries={evidenceEntries}
         onGridReady={(api) => {
           if (gridApiRef) {
             // @ts-ignore - gridApiRef is a mutable ref

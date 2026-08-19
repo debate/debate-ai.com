@@ -7,16 +7,23 @@
  * against `state/flowEdits.ts`, closing the remaining half of follow-up
  * (b) under idea #16 ("Shared, Ai-Generated Debate Flow") in TODO.md —
  * logging or reviewing an edit no longer requires leaving the live grid
- * for the separate `FlowEditLogPanel` form.
+ * for the separate `FlowEditLogPanel` form. Also renders a
+ * `SuggestedEvidenceList` ranked against the in-progress content via
+ * `flow-evidence-suggestions.ts`, closing follow-up (c) — a contributor can
+ * insert a matching Shared Evidence Library citation instead of retyping it
+ * from memory, without it ever being auto-applied.
  */
 
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { GitCommitHorizontal } from "lucide-react"
+import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import { createFlowEdit } from "./shared-flow-sync"
 import { saveFlowEdit } from "../state/flowEdits"
 import { sortEditsNewestFirst } from "./edit-cells"
+import { appendEvidenceToContent, suggestEvidenceForBoxContent } from "./flow-evidence-suggestions"
+import { SuggestedEvidenceList } from "./SuggestedEvidenceList"
 import type { FlowEdit } from "./shared-flow-sync"
 
 export interface EditReviewPopoverProps {
@@ -26,6 +33,8 @@ export interface EditReviewPopoverProps {
   boxPath: number[]
   currentContent: string
   edits: FlowEdit[]
+  /** Shared Evidence Library entries to rank/suggest against the in-progress content; defaults to none. */
+  evidenceEntries?: EvidenceLibraryEntry[]
   /** Called after a new edit is successfully logged, so the caller can refresh its own snapshot. */
   onLogged: () => void
   onClose: () => void
@@ -45,6 +54,7 @@ export function EditReviewPopover({
   boxPath,
   currentContent,
   edits,
+  evidenceEntries = [],
   onLogged,
   onClose,
 }: EditReviewPopoverProps) {
@@ -52,6 +62,11 @@ export function EditReviewPopover({
   const [authorId, setAuthorId] = useState("")
   const [content, setContent] = useState(currentContent)
   const [error, setError] = useState<string | null>(null)
+
+  const suggestions = useMemo(
+    () => suggestEvidenceForBoxContent(evidenceEntries, content),
+    [evidenceEntries, content],
+  )
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -118,6 +133,11 @@ export function EditReviewPopover({
       ) : (
         <p className="text-xs text-muted-foreground">No edits logged for this box yet.</p>
       )}
+
+      <SuggestedEvidenceList
+        results={suggestions}
+        onInsert={(result) => setContent((c) => appendEvidenceToContent(c, result.entry))}
+      />
 
       <input
         className="rounded border border-input bg-background px-1.5 py-1 text-xs"
