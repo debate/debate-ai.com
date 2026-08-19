@@ -14,6 +14,14 @@
  * that calls the already-persisted `deleteStrategyRecommendation`, mirroring
  * `PreRoundBriefingsPanel`'s create-form-plus-list convention.
  *
+ * A "Get AI case-choice evaluation" action per matchup calls
+ * `round/case-choice-client.ts`'s `requestCaseChoiceEvaluation` with the
+ * recommendation's own case rankings, judge-adaptation notes, and risk
+ * assessment, saves the result via `saveStrategyRecommendationAiCaseChoice`,
+ * and renders it alongside the deterministic recommendation — closing
+ * follow-up (c), "an actual AI-panel evaluation of case choice instead of
+ * the tag-overlap heuristic."
+ *
  * @module panels/StrategyPanel
  */
 
@@ -27,11 +35,13 @@ import { Label } from "debate-ui/src/primitives/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import { buildStrategyRecommendationFromStores, type CaseOption, type RiskLevel } from "../round/scout-to-strategy"
+import { requestCaseChoiceEvaluation } from "../round/case-choice-client"
 import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-profile"
 import {
   buildStrategyRecommendationsPanelView,
   deleteStrategyRecommendation,
   saveStrategyRecommendation,
+  saveStrategyRecommendationAiCaseChoice,
 } from "../state/strategyRecommendations"
 import type { StrategyRecommendationRecord } from "../state/strategyRecommendations"
 
@@ -89,6 +99,8 @@ export function StrategyPanel() {
   const [records, setRecords] = useState<StrategyRecommendationRecord[] | null>(null)
   const [draft, setDraft] = useState<StrategyDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [caseChoiceLoadingId, setCaseChoiceLoadingId] = useState<string | null>(null)
+  const [caseChoiceErrorsById, setCaseChoiceErrorsById] = useState<Record<string, string>>({})
 
   useEffect(() => {
     setRecords(buildStrategyRecommendationsPanelView())
@@ -124,6 +136,31 @@ export function StrategyPanel() {
   const handleClear = (matchupId: string) => {
     deleteStrategyRecommendation(matchupId)
     refresh()
+  }
+
+  const handleGetAiCaseChoice = async (record: StrategyRecommendationRecord) => {
+    setCaseChoiceLoadingId(record.matchupId)
+    setCaseChoiceErrorsById((prev) => {
+      const { [record.matchupId]: _removed, ...rest } = prev
+      return rest
+    })
+    try {
+      const aiCaseChoice = await requestCaseChoiceEvaluation({
+        caseRankings: record.recommendation.caseRankings,
+        judgeAdaptationNotes: record.recommendation.judgeAdaptationNotes,
+        riskLevel: record.recommendation.riskLevel,
+        riskFactors: record.recommendation.riskFactors,
+      })
+      saveStrategyRecommendationAiCaseChoice(record.matchupId, aiCaseChoice)
+      refresh()
+    } catch (err) {
+      setCaseChoiceErrorsById((prev) => ({
+        ...prev,
+        [record.matchupId]: err instanceof Error ? err.message : "Failed to get AI case-choice evaluation.",
+      }))
+    } finally {
+      setCaseChoiceLoadingId(null)
+    }
   }
 
   return (
@@ -204,7 +241,9 @@ export function StrategyPanel() {
         </div>
       ) : (
         <div className="space-y-4">
-          {records.map(({ matchupId, recommendation }) => (
+          {records.map((record) => {
+            const { matchupId, recommendation } = record
+            return (
             <div key={matchupId} className="rounded-lg border border-border p-4">
               <div className="mb-3 flex items-center justify-between gap-2">
                 <h2 className="text-sm font-semibold text-foreground">Matchup {matchupId}</h2>
@@ -258,9 +297,48 @@ export function StrategyPanel() {
                     </ul>
                   </div>
                 )}
+
+                <div className="rounded-md border border-border px-3 py-2 text-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-medium text-foreground">AI case-choice evaluation</p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={caseChoiceLoadingId === matchupId}
+                      onClick={() => handleGetAiCaseChoice({ matchupId, recommendation })}
+                    >
+                      {caseChoiceLoadingId === matchupId
+                        ? "Evaluating…"
+                        : record.aiCaseChoice
+                          ? "Re-evaluate"
+                          : "Get AI case-choice evaluation"}
+                    </Button>
+                  </div>
+                  {caseChoiceErrorsById[matchupId] && (
+                    <p className="mt-2 text-sm text-destructive">{caseChoiceErrorsById[matchupId]}</p>
+                  )}
+                  {record.aiCaseChoice && (
+                    <div className="mt-2 space-y-2 border-t border-border pt-2">
+                      <p className="text-foreground">
+                        <span className="font-medium">Recommended: </span>
+                        {record.aiCaseChoice.recommendedCase}
+                      </p>
+                      <p className="text-muted-foreground">{record.aiCaseChoice.reasoning}</p>
+                      <ul className="list-inside list-disc text-muted-foreground">
+                        {record.aiCaseChoice.caseAssessments.map((assessment) => (
+                          <li key={assessment.name}>
+                            <span className="font-medium text-foreground">{assessment.name}: </span>
+                            {assessment.assessment}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

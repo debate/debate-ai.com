@@ -7,14 +7,23 @@
  * mirroring the existing `preRoundBriefings.ts`/`vulnerabilityReports.ts`
  * persistence convention.
  *
+ * `aiCaseChoice` is additive and optional (existing records without one
+ * stay valid) — it holds `round/case-choice-client.ts`'s AI-generated
+ * case-choice evaluation once a caller has requested one for that matchup,
+ * closing follow-up (c) named under the "🧭 Scout-to-Strategy Workflow"
+ * bullet, mirroring `drillSets.ts`'s `aiScripts` convention.
+ *
  * @module state/strategyRecommendations
  */
 
+import type { CaseChoiceAiResult } from "../round/case-choice-ai";
 import type { StrategyRecommendation } from "../round/scout-to-strategy";
 
 export type StrategyRecommendationRecord = {
   matchupId: string;
   recommendation: StrategyRecommendation;
+  /** The AI's case-choice evaluation for this matchup, once requested — see `case-choice-client.ts`. */
+  aiCaseChoice?: CaseChoiceAiResult;
 };
 
 const STORAGE_KEY = "strategyRecommendations";
@@ -61,6 +70,24 @@ export function saveStrategyRecommendation(record: StrategyRecommendationRecord)
 /** Deletes a matchup's persisted strategy recommendation; a no-op if it isn't stored. */
 export function deleteStrategyRecommendation(matchupId: string): void {
   writeAll(readAll().filter((record) => record.matchupId !== matchupId));
+}
+
+/**
+ * Sets a matchup's persisted `aiCaseChoice`
+ * (`round/case-choice-client.ts`'s `requestCaseChoiceEvaluation` result for
+ * that matchup), leaving `recommendation` untouched. A no-op when the
+ * matchupId isn't stored — an evaluation call is only ever made against an
+ * already-built, already-persisted recommendation.
+ */
+export function saveStrategyRecommendationAiCaseChoice(
+  matchupId: string,
+  aiCaseChoice: CaseChoiceAiResult,
+): void {
+  const records = readAll();
+  const index = records.findIndex((existing) => existing.matchupId === matchupId);
+  if (index === -1) return;
+  records[index] = { ...records[index], aiCaseChoice };
+  writeAll(records);
 }
 
 /**

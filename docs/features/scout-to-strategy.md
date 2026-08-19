@@ -63,13 +63,30 @@ round/scout-to-strategy.ts
 
 state/strategyRecommendations.ts (localStorage: strategyRecommendations)
   → saveStrategyRecommendation / deleteStrategyRecommendation / buildStrategyRecommendationsPanelView
+  → saveStrategyRecommendationAiCaseChoice — sets aiCaseChoice on a matchup's stored record
+
+round/case-choice-ai.ts / round/case-choice-client.ts
+  → buildCaseChoiceAiUserPrompt(...)           — composes case rankings + judge notes + risk into a prompt
+  → requestCaseChoiceEvaluation(...)           — calls /api/reason-ai, parses the JSON reply
 
 panels/StrategyPanel.tsx
   → apps/debate-ai.com/app/strategy/page.tsx        — mounts the panel as a route
   → apps/debate-ai.com/components/coach/CoachHub.tsx — mounts the panel in the Scouting section
 ```
 
-## Follow-ups still open
+## AI case-choice evaluation
 
-- (c) An actual AI-panel evaluation of case choice, instead of the current
-  tag-overlap heuristic. Not started.
+`round/case-choice-ai.ts` builds a prompt from an already-built
+`StrategyRecommendation`'s own case rankings (with each case's tags and
+opponent-tag overlap score), judge adaptation notes, and risk level/factors,
+asking the model for an actual strategic case-choice evaluation — one that
+weighs a case's fit against the judge's tendencies and the matchup's risk
+factors, not just the raw overlap score. `round/case-choice-client.ts` posts
+that prompt to the existing `/api/reason-ai` proxy and parses the JSON
+reply into a `CaseChoiceAiResult` (`recommendedCase`, `reasoning`, and a
+per-case `caseAssessments` note).
+
+`StrategyPanel.tsx`'s "Get AI case-choice evaluation" action calls this and
+saves the result on `StrategyRecommendationRecord.aiCaseChoice` via
+`saveStrategyRecommendationAiCaseChoice`, rendering it alongside the
+deterministic recommendation. No follow-ups remain open on this idea.
