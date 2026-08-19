@@ -13,9 +13,12 @@ import {
   buildCoachingProgramBoard,
   buildCoachingProgramSummaryText,
   buildMemberDrillSummaryText,
+  buildMemberPracticeRoundSummaryText,
   type CoachingProgramConfig,
   type CoachingProgramMemberFlow,
+  type CoachingProgramMemberPracticeRound,
 } from "../src/round/coaching-program";
+import { buildPracticeRoundSetup } from "../src/round/practice-round-simulator";
 
 const NOW = Date.parse("2026-08-10T00:00:00Z");
 const WEEK_END = Date.parse("2026-08-17T00:00:00Z");
@@ -98,6 +101,13 @@ const memberFlows: CoachingProgramMemberFlow[] = [
   { contributorId: "jordan", flow: ALEX_FLOW, sideKey: "1AC" }, // not on the roster
 ];
 
+const PRACTICE_ROUND_SETUP = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+
+const memberPracticeRounds: CoachingProgramMemberPracticeRound[] = [
+  { contributorId: "alex", setup: PRACTICE_ROUND_SETUP },
+  { contributorId: "jordan", setup: PRACTICE_ROUND_SETUP }, // not on the roster
+];
+
 describe("buildCoachingProgramBoard", () => {
   it("composes the topic sprint, group-challenge board, and roster member drill sets", () => {
     const board = buildCoachingProgramBoard({
@@ -125,6 +135,52 @@ describe("buildCoachingProgramBoard", () => {
     expect(board.challengeBoard[0].challengeId).toBe("find-solvency-cards");
     expect(Object.keys(board.memberDrills)).toEqual(["alex"]);
     expect(board.memberDrills.alex.length).toBeGreaterThan(0);
+  });
+
+  it("composes member practice rounds, scoped to the program roster", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+      memberPracticeRounds,
+    });
+
+    expect(Object.keys(board.memberPracticeRounds)).toEqual(["alex"]);
+    expect(board.memberPracticeRounds.alex).toEqual({ contributorId: "alex", setup: PRACTICE_ROUND_SETUP });
+  });
+
+  it("defaults memberPracticeRounds to an empty map when none are supplied", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+    });
+
+    expect(board.memberPracticeRounds).toEqual({});
   });
 
   it("ignores a member flow for a contributor outside the program roster", () => {
@@ -232,6 +288,33 @@ describe("buildCoachingProgramSummaryText", () => {
     expect(lines).toContain("Immigration sprint");
     expect(text).toContain('"Find 5 solvency cards"');
     expect(lines).toContain("1 member drill set generated");
+    expect(lines).toContain("No member practice rounds recorded yet");
+  });
+
+  it("pluralizes the practice-round count when more than one member has a session", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+      memberPracticeRounds: [
+        { contributorId: "alex", setup: PRACTICE_ROUND_SETUP },
+        { contributorId: "sam", setup: PRACTICE_ROUND_SETUP },
+      ],
+    });
+
+    expect(buildCoachingProgramSummaryText(board)).toContain("2 member practice rounds recorded");
   });
 
   it("pluralizes the drill-set count when more than one member has a flow", () => {
@@ -350,5 +433,78 @@ describe("buildMemberDrillSummaryText", () => {
     expect(buildMemberDrillSummaryText(board, "sam")).toBe(
       "No practice round flowed yet — no drills available.",
     );
+  });
+});
+
+describe("buildMemberPracticeRoundSummaryText", () => {
+  it("renders a member's practice-round setup", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+      memberPracticeRounds,
+    });
+
+    const text = buildMemberPracticeRoundSummaryText(board, "alex");
+    expect(text).toContain("### Speech order");
+    expect(text).toContain("### Judge paradigm");
+  });
+
+  it("includes feedback sections once feedback has been generated", () => {
+    const feedback = { judgeParadigm: PRACTICE_ROUND_SETUP.judgeParadigm, coachingPrompts: [], sections: [{ title: "Overall feedback", body: "Great extensions." }] };
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+      memberPracticeRounds: [{ contributorId: "alex", setup: PRACTICE_ROUND_SETUP, feedback }],
+    });
+
+    expect(buildMemberPracticeRoundSummaryText(board, "alex")).toContain("Great extensions.");
+  });
+
+  it("renders a placeholder for a member with no recorded practice round", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+    });
+
+    expect(buildMemberPracticeRoundSummaryText(board, "sam")).toBe("No practice round session recorded yet.");
   });
 });

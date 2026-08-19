@@ -15,11 +15,19 @@
  * `buildCoachingProgramBoard` actually needs, one flow per member) rather
  * than every round they've ever flowed.
  *
+ * Also resolves idea #13's remaining "(c)" follow-up — wiring a member's
+ * Practice Round Simulator session into the space — via
+ * `buildCoachingProgramMemberPracticeRounds`, which joins each member's
+ * recorded `roundId` against `state/practiceRounds.ts`'s existing
+ * `roundId`-keyed store rather than needing a second contributorId-keyed
+ * store.
+ *
  * @module state/roundContributorFlows
  */
 
 import type { Flow } from "debate-core/src/types/flow";
-import type { CoachingProgramMemberFlow } from "../round/coaching-program";
+import type { CoachingProgramMemberFlow, CoachingProgramMemberPracticeRound } from "../round/coaching-program";
+import { getPracticeRound } from "./practiceRounds";
 
 /** A contributor's currently recorded, already-flowed practice round. */
 export type RoundContributorFlowRecord = {
@@ -106,4 +114,35 @@ export function buildCoachingProgramMemberFlows(memberIds: string[]): CoachingPr
   return readAll()
     .filter((record) => memberSet.has(record.contributorId))
     .map(({ contributorId, sideKey, flow }) => ({ contributorId, sideKey, flow }));
+}
+
+/**
+ * Resolves a coaching program roster's member practice-round sessions
+ * directly from persisted state, for `state/persistedCoachingProgramBoard.ts`'s
+ * `buildPersistedCoachingProgramBoard` to compose into
+ * `round/coaching-program.ts`'s `buildCoachingProgramBoard` — idea #13's
+ * remaining "(c) wiring a member's practice-round setup/feedback (Practice
+ * Round Simulator) into the space" follow-up in TODO.md.
+ *
+ * Each roster member's currently recorded flow (`RoundContributorFlowRecord.roundId`)
+ * already names the same `roundId` `state/practiceRounds.ts` keys its
+ * `PracticeRoundRecord`s by, so no separate contributorId-keyed practice-round
+ * store is needed — this just joins the two. Members outside `memberIds`, or
+ * whose recorded `roundId` has no persisted `PracticeRoundRecord` (no
+ * Practice Round Simulator session started for that round), are excluded.
+ */
+export function buildCoachingProgramMemberPracticeRounds(memberIds: string[]): CoachingProgramMemberPracticeRound[] {
+  const memberSet = new Set(memberIds);
+  const memberPracticeRounds: CoachingProgramMemberPracticeRound[] = [];
+  for (const record of readAll()) {
+    if (!memberSet.has(record.contributorId)) continue;
+    const practiceRound = getPracticeRound(record.roundId);
+    if (!practiceRound) continue;
+    memberPracticeRounds.push({
+      contributorId: record.contributorId,
+      setup: practiceRound.setup,
+      feedback: practiceRound.feedback,
+    });
+  }
+  return memberPracticeRounds;
 }

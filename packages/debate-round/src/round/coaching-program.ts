@@ -15,11 +15,15 @@
  * composition possible, mirroring the existing precedent of
  * `pre-round-briefing.ts` depending on `debate-data-sync`/`debate-speech-writer`.
  * This is the first slice only — it works entirely off caller-supplied
- * inputs; it doesn't persist a program, its roster, or its board anywhere,
- * doesn't compose `practice-round-simulator.ts`'s setup/feedback yet (a
- * practice round is per-member/per-session rather than a fixed part of a
- * program's board), and doesn't render a coaching-space UI. See the
- * follow-ups noted in TODO.md.
+ * inputs; it doesn't persist a program, its roster, or its board anywhere.
+ * See the follow-ups noted in TODO.md.
+ *
+ * A later slice composes `practice-round-simulator.ts`'s
+ * `PracticeRoundSetup`/`PracticeRoundFeedback` too, closing idea #13's
+ * remaining "(c) wiring a member's practice-round setup/feedback (Practice
+ * Round Simulator) into the space" follow-up — `memberPracticeRounds` is
+ * optional and per-member/per-session (like `memberFlows`), rather than a
+ * fixed part of every program's board.
  *
  * @module round/coaching-program
  */
@@ -39,6 +43,12 @@ import {
   type TopicSprint,
 } from "debate-card-search/src/lib/team-collaboration-mode";
 import { buildDrillSet, buildDrillSummaryText, type Drill } from "../flow/drill-generator";
+import {
+  buildPracticeRoundFeedbackText,
+  buildPracticeRoundSetupText,
+  type PracticeRoundFeedback,
+  type PracticeRoundSetup,
+} from "./practice-round-simulator";
 
 /** A coach-created group coaching space, scoped to a squad roster. */
 export interface CoachingProgramConfig {
@@ -55,6 +65,14 @@ export interface CoachingProgramMemberFlow {
   sideKey: string;
 }
 
+/** One member's simulated Practice Round Simulator session — its setup, and feedback once generated. */
+export interface CoachingProgramMemberPracticeRound {
+  contributorId: string;
+  setup: PracticeRoundSetup;
+  /** Absent while the member's practice round is still in progress. */
+  feedback?: PracticeRoundFeedback;
+}
+
 export interface BuildCoachingProgramBoardInput {
   program: CoachingProgramConfig;
   /** This program's shared topic sprint (research, quests, task routing, progress, and prep notes). */
@@ -64,6 +82,8 @@ export interface BuildCoachingProgramBoardInput {
   winEvents: ChallengeWinEvent[];
   /** A member's flowed practice round, one per member who currently has one — members without one get no drill set. */
   memberFlows: CoachingProgramMemberFlow[];
+  /** A member's simulated Practice Round Simulator session, one per member who currently has one. */
+  memberPracticeRounds?: CoachingProgramMemberPracticeRound[];
   drillOptions?: { collapseLimit?: number };
 }
 
@@ -74,6 +94,8 @@ export interface CoachingProgramBoard {
   challengeBoard: GroupChallengeProgress[];
   /** Keyed by `contributorId`, only for members with a supplied practice-round flow. */
   memberDrills: Record<string, Drill[]>;
+  /** Keyed by `contributorId`, only for members with a supplied Practice Round Simulator session. */
+  memberPracticeRounds: Record<string, CoachingProgramMemberPracticeRound>;
 }
 
 /**
@@ -106,7 +128,13 @@ export function buildCoachingProgramBoard(input: BuildCoachingProgramBoardInput)
     );
   }
 
-  return { program: input.program, topicSprint, challengeBoard, memberDrills };
+  const memberPracticeRounds: Record<string, CoachingProgramMemberPracticeRound> = {};
+  for (const memberPracticeRound of input.memberPracticeRounds ?? []) {
+    if (!memberSet.has(memberPracticeRound.contributorId)) continue;
+    memberPracticeRounds[memberPracticeRound.contributorId] = memberPracticeRound;
+  }
+
+  return { program: input.program, topicSprint, challengeBoard, memberDrills, memberPracticeRounds };
 }
 
 /**
@@ -117,6 +145,7 @@ export function buildCoachingProgramBoard(input: BuildCoachingProgramBoardInput)
 export function buildCoachingProgramSummaryText(board: CoachingProgramBoard): string {
   const memberCount = board.program.memberIds.length;
   const drillCount = Object.keys(board.memberDrills).length;
+  const practiceRoundCount = Object.keys(board.memberPracticeRounds).length;
 
   const lines = [
     `${board.program.name} coaching space (${memberCount} member${memberCount === 1 ? "" : "s"})`,
@@ -125,6 +154,9 @@ export function buildCoachingProgramSummaryText(board: CoachingProgramBoard): st
     drillCount === 0
       ? "No member drill sets yet"
       : `${drillCount} member drill set${drillCount === 1 ? "" : "s"} generated`,
+    practiceRoundCount === 0
+      ? "No member practice rounds recorded yet"
+      : `${practiceRoundCount} member practice round${practiceRoundCount === 1 ? "" : "s"} recorded`,
   ];
   return lines.join("\n");
 }
@@ -134,4 +166,16 @@ export function buildMemberDrillSummaryText(board: CoachingProgramBoard, contrib
   const drills = board.memberDrills[contributorId];
   if (!drills) return "No practice round flowed yet — no drills available.";
   return buildDrillSummaryText(drills);
+}
+
+/**
+ * Renders one member's Practice Round Simulator session — its setup, plus
+ * feedback once generated — or a placeholder line when they have none yet.
+ */
+export function buildMemberPracticeRoundSummaryText(board: CoachingProgramBoard, contributorId: string): string {
+  const practiceRound = board.memberPracticeRounds[contributorId];
+  if (!practiceRound) return "No practice round session recorded yet.";
+  const sections = [buildPracticeRoundSetupText(practiceRound.setup)];
+  if (practiceRound.feedback) sections.push(buildPracticeRoundFeedbackText(practiceRound.feedback));
+  return sections.join("\n\n");
 }

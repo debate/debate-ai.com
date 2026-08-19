@@ -2,7 +2,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { buildPersistedCoachingProgramBoard } from "../src/state/persistedCoachingProgramBoard";
 import { saveCoachingProgram } from "../src/state/coachingPrograms";
 import { saveRoundContributorFlow } from "../src/state/roundContributorFlows";
-import type { CoachingProgramConfig, CoachingProgramMemberFlow } from "../src/round/coaching-program";
+import { savePracticeRound } from "../src/state/practiceRounds";
+import { buildPracticeRoundSetup } from "../src/round/practice-round-simulator";
+import type {
+  CoachingProgramConfig,
+  CoachingProgramMemberFlow,
+  CoachingProgramMemberPracticeRound,
+} from "../src/round/coaching-program";
 import { saveGroupChallenge } from "debate-card-search/src/state/groupChallenges";
 import { saveContribution } from "debate-card-search/src/state/contributions";
 import { recordChallengeWinEvent } from "debate-card-search/src/state/challengeWinEvents";
@@ -154,5 +160,58 @@ describe("buildPersistedCoachingProgramBoard", () => {
     const override: CoachingProgramMemberFlow[] = [];
     const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW, override);
     expect(board?.memberDrills).toEqual({});
+  });
+
+  it("defaults memberPracticeRounds to empty when nothing is stored", () => {
+    saveCoachingProgram(VARSITY);
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+    expect(board?.memberPracticeRounds).toEqual({});
+  });
+
+  it("defaults memberPracticeRounds to a roster member's persisted round-contributor flow joined to its practice round", () => {
+    saveCoachingProgram(VARSITY);
+    saveRoundContributorFlow({
+      contributorId: "alice",
+      roundId: "round-1",
+      sideKey: "A",
+      flow: { columns: ["1AC", "1NC"], children: [] },
+    });
+    const setup = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+    savePracticeRound({ roundId: "round-1", setup });
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+
+    expect(board?.memberPracticeRounds.alice).toEqual({ contributorId: "alice", setup, feedback: undefined });
+  });
+
+  it("excludes a roster member's recorded flow when its round has no persisted PracticeRoundRecord", () => {
+    saveCoachingProgram(VARSITY);
+    saveRoundContributorFlow({
+      contributorId: "alice",
+      roundId: "round-1",
+      sideKey: "A",
+      flow: { columns: ["1AC", "1NC"], children: [] },
+    });
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+    expect(board?.memberPracticeRounds).toEqual({});
+  });
+
+  it("lets an explicit memberPracticeRounds argument override the persisted lookup", () => {
+    saveCoachingProgram(VARSITY);
+    saveRoundContributorFlow({
+      contributorId: "alice",
+      roundId: "round-1",
+      sideKey: "A",
+      flow: { columns: ["1AC", "1NC"], children: [] },
+    });
+    savePracticeRound({
+      roundId: "round-1",
+      setup: buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" }),
+    });
+
+    const override: CoachingProgramMemberPracticeRound[] = [];
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW, undefined, undefined, override);
+    expect(board?.memberPracticeRounds).toEqual({});
   });
 });

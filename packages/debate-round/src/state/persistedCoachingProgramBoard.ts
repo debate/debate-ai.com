@@ -23,6 +23,12 @@
  * store's roster-scoped resolution instead of an empty list, while staying
  * overridable by an explicit, caller-supplied list.
  *
+ * `memberPracticeRounds` defaults the same way, via
+ * `roundContributorFlows.ts`'s `buildCoachingProgramMemberPracticeRounds` —
+ * joining each roster member's recorded `roundId` against
+ * `state/practiceRounds.ts`'s existing store — closing idea #13's remaining
+ * "(c)" follow-up in TODO.md.
+ *
  * @module state/persistedCoachingProgramBoard
  */
 
@@ -33,9 +39,14 @@ import { listChallengeWinEvents } from "debate-card-search/src/state/challengeWi
 import type { AttributedContribution } from "debate-card-search/src/lib/contribution-leaderboard";
 import type { QuestContribution } from "debate-card-search/src/lib/daily-quests";
 import type { CoverageThresholds } from "debate-card-search/src/lib/topic-coverage";
-import { buildCoachingProgramBoard, type CoachingProgramBoard, type CoachingProgramMemberFlow } from "../round/coaching-program";
+import {
+  buildCoachingProgramBoard,
+  type CoachingProgramBoard,
+  type CoachingProgramMemberFlow,
+  type CoachingProgramMemberPracticeRound,
+} from "../round/coaching-program";
 import { getCoachingProgram } from "./coachingPrograms";
-import { buildCoachingProgramMemberFlows } from "./roundContributorFlows";
+import { buildCoachingProgramMemberFlows, buildCoachingProgramMemberPracticeRounds } from "./roundContributorFlows";
 
 /** Whether a persisted contribution carries the `submittedAt` timestamp `daily-quests.ts` needs to match it to a calendar day/window — mirrors `state/topicSprints.ts`'s identical guard. */
 function hasSubmittedAt(
@@ -63,6 +74,7 @@ export function buildPersistedCoachingProgramBoard(
   now: number,
   memberFlows?: CoachingProgramMemberFlow[],
   thresholds?: CoverageThresholds,
+  memberPracticeRounds?: CoachingProgramMemberPracticeRound[],
 ): CoachingProgramBoard | undefined {
   const program = getCoachingProgram(programId);
   if (!program) return undefined;
@@ -76,5 +88,6 @@ export function buildPersistedCoachingProgramBoard(
     contributions,
     winEvents: listChallengeWinEvents(),
     memberFlows: memberFlows ?? buildCoachingProgramMemberFlows(program.memberIds),
+    memberPracticeRounds: memberPracticeRounds ?? buildCoachingProgramMemberPracticeRounds(program.memberIds),
   });
 }

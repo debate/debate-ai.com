@@ -28,6 +28,13 @@
  * `state/roundContributorFlows.ts`'s `buildAndSaveRoundContributorFlow`,
  * closing that follow-up.
  *
+ * A roster member's board now also shows a Practice Round Simulator badge —
+ * "Practice round recorded" (or "+ feedback" once feedback has been
+ * generated) when a `PracticeRoundRecord` exists for that same recorded
+ * `roundId` (`state/practiceRounds.ts`, joined through
+ * `state/roundContributorFlows.ts`'s `buildCoachingProgramMemberPracticeRounds`),
+ * closing idea #13's remaining "(c)" follow-up in TODO.md.
+ *
  * @module panels/CoachingProgramsPanel
  */
 
@@ -244,6 +251,13 @@ export function CoachingProgramsPanel() {
                         <span className="w-24 truncate text-sm text-foreground">{memberId}</span>
                         <Badge variant={recordedContributorIds.has(memberId) ? "default" : "outline"}>
                           {recordedContributorIds.has(memberId) ? "Flow recorded" : "No flow recorded"}
+                        </Badge>
+                        <Badge variant={board?.memberPracticeRounds[memberId] ? "default" : "outline"}>
+                          {board?.memberPracticeRounds[memberId]
+                            ? board.memberPracticeRounds[memberId].feedback
+                              ? "Practice round + feedback"
+                              : "Practice round recorded"
+                            : "No practice round"}
                         </Badge>
                         <Input
                           value={sideKeyDrafts[memberId] ?? ""}
