@@ -52,6 +52,7 @@ _No task currently in progress._
   packages pass, `/coaching-programs` appears in the built route list). No
   repo-wide `lint` script exists (checked root/app/package `package.json`
   scripts) so none was run.
+  PR: [#246](https://github.com/debate/debate-ai.com/pull/246).
 - **Video-Lecture-Training Coach AI — document-upload text extraction.**
   Closes the "document" half of follow-up (a) named in
   `team-coach-materials.ts`'s file doc-comment for idea #8
