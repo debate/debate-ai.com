@@ -29,7 +29,7 @@ _No task currently in progress._
   across repeated searches with no intervening write, and rebuilt (a new
   object) after each of the three invalidating write paths; the existing
   test file's `beforeEach` now also resets the module-level cache between
-  tests. PR: TBD.
+  tests. PR: [#259](https://github.com/debate/debate-ai.com/pull/259).
 - **Shared Evidence Library — wire `EvidenceLibraryPanel` to the real search index.**
   Closes the remainder of follow-up (c) named under the "📋 Shared Evidence
   Library" bullet in TODO.md's Research Crowdsourcing Organizer Features
