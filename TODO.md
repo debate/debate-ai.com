@@ -35,6 +35,7 @@ _No task currently in progress._
   Verified: `bun run test` (146 files / 2000 tests passed), `bun run
   typecheck` (11 packages passed), `bun run build` (both buildable packages
   passed) — no repo-wide `lint` script exists.
+  [PR #239](https://github.com/debate/debate-ai.com/pull/239).
 - **Research Task Routing — "my tasks" inbox filter.** Closes follow-up (e)
   named under the "🧭 Research Task Routing" bullet in the Research
   Crowdsourcing Organizer Features list: "scoping the inbox to 'my tasks'
