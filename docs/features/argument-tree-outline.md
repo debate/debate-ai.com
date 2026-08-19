@@ -13,13 +13,20 @@ Argument Tree View") in `TODO.md`'s Product Feature Ideas list.
 ## What it shows
 
 Every persisted `ArgumentTreeRecord` (one card per round). Each card has
-four filter controls — **Kind** (all / headings only / arguments only),
-**Side**, **Speech**, and an **Unanswered only** toggle — populated from the
-distinct side keys and speech names actually present in that round's tree.
-Changing a control re-filters the tree in place via the existing
-`filterArgumentTree`/`flattenArgumentTree` helpers and saves the chosen
-filter through `saveArgumentTreeFilterSelection`, so it's restored the next
-time the panel loads. A "Clear" action deletes the round's persisted tree.
+seven filter controls — **Kind** (all / headings only / arguments only),
+**Side**, **Speech**, **Argument type** (link / impact / turn / answer /
+extension / ..., from `Box.argumentType`), **Contributor** (from
+`Box.authorId`), **Evidence status** (cited / contested / unverified, from
+`Box.evidenceStatus`), and an **Unanswered only** toggle — the type/
+contributor options are populated from the distinct values actually present
+in that round's tree. Changing a control re-filters the tree in place via
+the existing `filterArgumentTree`/`flattenArgumentTree` helpers and saves
+the chosen filter through `saveArgumentTreeFilterSelection`, so it's
+restored the next time the panel loads. Each argument row renders its
+argument-type badge, contributor id, and evidence-status badge (contested
+rendered as a destructive badge) alongside its content when those fields are
+set on the underlying `Box`. A "Clear" action deletes the round's persisted
+tree.
 
 ## Data flow
 
@@ -56,13 +63,32 @@ both this new store and the existing `argumentTreeFilters.ts` filter-
 selection store. Vitest-covered in
 `packages/debate-round/test/argumentTrees.test.ts`.
 
+A later slice closed follow-up (b) — `debate-core`'s `Box` type gained three
+new optional fields: `argumentType?: ArgumentType` (a
+`"contention" | "link" | "impact" | "turn" | "answer" | "extension"` union),
+`authorId?: string` (mirroring `FlowEdit.authorId`'s attribution
+convention from the Shared, AI-Generated Debate Flow idea), and
+`evidenceStatus?: EvidenceStatus` (a `"cited" | "contested" | "unverified"`
+union). `flow-transcript-summary.ts`'s `summarizeFlowRow` now reads these
+off a row's underlying `Box` (the same box `isHeading` is already read
+from) onto `FlowRowSummary`, `argument-tree.ts`'s `toNode` carries them onto
+`ArgumentTreeNode`, and `ArgumentTreeFilter` gained matching
+`argumentType`/`authorId`/`evidenceStatus` filter fields, applied in
+`argumentMatches` alongside the existing `speech`/`sideKey`/
+`onlyUnanswered` checks. `ArgumentTreePanel.tsx` renders three new filter
+selects (populated from the tree's own distinct values) and per-row
+argument-type/contributor/evidence-status badges. No follow-ups remain open
+on this idea.
+
 ## Known gaps
 
-- Follow-up (b), finer argument-type tagging (link/impact/turn/answer/
-  extension) and contributor/evidence-status fields, none of which exist in
-  the `Box`/`Flow` schema today, remains open — not started.
 - Nothing in the live round-flowing page (`DebateFlowPage`/
   `FlowMainContent`) calls `buildAndSaveArgumentTree` yet, so a round's
   outline only appears here once something computes and saves it — the same
   "real trigger not wired" gap already noted for several other panels (e.g.
   `flow-summaries.md`).
+- Nothing in the live flow-editing UI (`FlowSpreadsheet` or elsewhere) lets a
+  user actually set a `Box`'s `argumentType`/`authorId`/`evidenceStatus`
+  yet — these fields exist in the schema and are read/filtered/rendered
+  end-to-end here, but populating them today requires setting them directly
+  on a `Box` (e.g. programmatically, or via a future flow-grid affordance).

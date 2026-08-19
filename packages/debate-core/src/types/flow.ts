@@ -1,3 +1,9 @@
+/** Finer argument-role tag for a flowed row, beyond the plain heading/argument split. */
+export type ArgumentType = 'contention' | 'link' | 'impact' | 'turn' | 'answer' | 'extension'
+
+/** How well-supported a flowed row's evidence is, independent of whether it's been answered. */
+export type EvidenceStatus = 'cited' | 'contested' | 'unverified'
+
 export type Box = {
   content: string
   children: Box[]
@@ -9,6 +15,12 @@ export type Box = {
   crossed?: boolean
   /** Marks this row as a collapsible section heading in the flow grid */
   isHeading?: boolean
+  /** Finer argument-role tag for this row (link/impact/turn/answer/extension/...) */
+  argumentType?: ArgumentType
+  /** Id of the debater/speaker who introduced this row, e.g. for outline filtering by contributor */
+  authorId?: string
+  /** How well-supported this row's evidence is */
+  evidenceStatus?: EvidenceStatus
 }
 
 export type Flow = {

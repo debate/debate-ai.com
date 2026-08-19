@@ -6,6 +6,46 @@
 _No task currently in progress._
 
 ### Completed
+- **Outline Filters and Argument Tree View — argument-type/contributor/
+  evidence-status tagging.** Closes follow-up (b) named under the "Outline
+  Filters and Argument Tree View" bullet (idea #10) in the Product Feature
+  Ideas list: "finer argument-type tagging (link/impact/turn/answer/
+  extension) and contributor/evidence-status fields, none of which exist in
+  the `Box`/`Flow` schema today." Previously `argument-tree.ts`'s
+  `ArgumentTreeNode`/`ArgumentTreeFilter` could only distinguish
+  heading-vs-argument rows and filter by speech/side/unanswered status,
+  since `debate-core`'s `Box` type carried no argument-role, authorship, or
+  evidence-support metadata. `packages/debate-core/src/types/flow.ts` adds
+  an `ArgumentType` union (`"contention" | "link" | "impact" | "turn" |
+  "answer" | "extension"`), an `EvidenceStatus` union (`"cited" |
+  "contested" | "unverified"`), and three new optional `Box` fields —
+  `argumentType`, `authorId` (mirroring `FlowEdit.authorId`'s existing
+  per-edit attribution convention from idea #16), and `evidenceStatus`.
+  `flow-transcript-summary.ts`'s `summarizeFlowRow` now reads these off a
+  row's underlying `Box` (the same box `isHeading` is already read from)
+  onto `FlowRowSummary`, `argument-tree.ts`'s `toNode` carries them onto
+  `ArgumentTreeNode`, and `ArgumentTreeFilter` gained matching
+  `argumentType`/`authorId`/`evidenceStatus` fields applied in
+  `argumentMatches` alongside the existing checks — a heading is still kept
+  whenever it has at least one surviving descendant, so the new filters
+  compose with the existing heading-grouping behavior for free.
+  `ArgumentTreePanel` gets three new filter selects (Argument type,
+  Contributor, Evidence status — the first two populated from the tree's
+  own distinct values, mirroring the existing Side/Speech select pattern)
+  and per-row badges (argument-type badge, contributor id, evidence-status
+  badge with "contested" rendered as a destructive badge). No follow-ups
+  remain open on this idea; nothing in the live flow-editing UI lets a user
+  set these new `Box` fields yet (populating them today requires setting
+  them directly on a `Box`), as noted in
+  `docs/features/argument-tree-outline.md`'s "Known gaps". Vitest-covered
+  in `packages/debate-round/test/flow-transcript-summary.test.ts` (pass-
+  through and undefined-when-unset) and `argument-tree.test.ts` (node
+  pass-through plus filtering by each new field individually and combined
+  with `kind: "argument"`). `bun run test` (1836 tests), `bun run
+  typecheck`, and `bun run build` all pass; no repo-wide `lint` script
+  exists (checked root/package `package.json` scripts) so none was run,
+  matching this bullet's prior entries.
+
 - **Scout-to-Strategy Workflow — AI-panel case-choice evaluation.** Closes
   follow-up (c) named under the "🧭 Scout-to-Strategy Workflow" bullet in the
   Research Crowdsourcing Organizer Features list: "an actual AI-panel
@@ -4840,7 +4880,7 @@ _No task currently in progress._
 
 9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slices done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. A second slice, `collapsedHeadings.ts` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading persistence"), now persists a document's collapsed heading ids to localStorage. A third slice, `OutlineNavPanel` (see Tracker Status above, "Expandable Heading Structure — outline nav panel"), now renders the outline alongside the document at `/reason-editor` (behind an opt-in `showOutline` prop) with click-to-jump and collapse/expand, reading/writing through the persistence store, closing follow-up (a). A fourth slice, `collapsedHeadingsPlugin` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading decoration plugin"), now hides a collapsed heading's content in the live ProseMirror view itself (driven by `OutlineNavPanel`'s toggle), closing follow-up (b). No follow-ups remain open on this idea._
 
-10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. A second slice, `argumentTreeFilters.ts` (see Tracker Status above, "Outline Filters and Argument Tree View — filter-selection persistence"), now persists a round's chosen `ArgumentTreeFilter` to localStorage. A third slice, `argumentTrees.ts` plus `ArgumentTreePanel` (see Tracker Status above, "Outline Filters and Argument Tree View — outline panel UI"), now persists a round's derived tree and renders it as a filterable outline at `/outline`, closing follow-up (a). Follow-up (b), finer argument-type tagging (link/impact/turn/answer/extension) and contributor/evidence-status fields, none of which exist in the `Box`/`Flow` schema today, remains open — not started._
+10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. A second slice, `argumentTreeFilters.ts` (see Tracker Status above, "Outline Filters and Argument Tree View — filter-selection persistence"), now persists a round's chosen `ArgumentTreeFilter` to localStorage. A third slice, `argumentTrees.ts` plus `ArgumentTreePanel` (see Tracker Status above, "Outline Filters and Argument Tree View — outline panel UI"), now persists a round's derived tree and renders it as a filterable outline at `/outline`, closing follow-up (a). A fourth slice (see Tracker Status above, "Outline Filters and Argument Tree View — argument-type/contributor/evidence-status tagging") added `debate-core`'s `ArgumentType`/`EvidenceStatus` unions and `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus` optional fields, threaded them through `flow-transcript-summary.ts`'s `FlowRowSummary` and `argument-tree.ts`'s `ArgumentTreeNode`/`ArgumentTreeFilter`, and wired matching filter selects plus per-row badges into `ArgumentTreePanel`, closing follow-up (b). No follow-ups remain open on this idea._
 
 11. **Community-Rated Summaries and Highlights** — Let users like, save, and endorse the most useful research summaries, analytic explanations, evidence highlights, and annotations, then rank contributions by helpfulness while guarding against popularity-only scoring through quality and reviewer-weight signals. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scorePopularitySignal`/`scoreQualitySignal`/`scoreReviewerSignal`/`computeHelpfulnessBreakdown`/`rankContributions` for blending logarithmically-dampened popularity with quality and reviewer-credibility signals into a ranked, popularity-resistant helpfulness score. A second slice, `contributions.ts`'s `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` (see Tracker Status above), now persists a like/save/endorse action's counts per contribution, closing half of follow-up (a) — no UI action fires them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders a ranked leaderboard at `/cards/leaderboard`, closing follow-up (c)'s leaderboard half (it does not yet surface `isPopularityOnlyOutlier` contributions separately for moderator review). A fourth slice, `ContributionsFeedPanel` (see Tracker Status above, "Contributions Feed — like/save/endorse UI"), now renders a submission form and every persisted contribution as a ranked, per-contribution feed with Like/Save/Endorse buttons at `/cards/contributions`, closing follow-up (a) and the rest of follow-up (c) (this feed does surface each entry's `isPopularityOnlyOutlier` flag). A fifth slice (see Tracker Status above, "Community-Rated Summaries and Highlights — real reviewer-credibility system") added `community-rating.ts`'s `computeReviewerCredibility` and `state/contributions.ts`'s `recordPersistedEndorsementFromReviewer`, deriving an endorsement's weight from the endorsing reviewer's own persisted contribution history instead of a fixed placeholder, and wired a "Reviewer ID" field into the Contributions Feed panel's Endorse action, closing follow-up (b). No follow-ups remain open on this idea._
 
