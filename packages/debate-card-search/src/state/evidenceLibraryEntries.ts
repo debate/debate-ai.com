@@ -27,6 +27,8 @@ import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library";
 import { buildArgumentLibrary, buildLibraryCardsFromContributions, buildTagCollections } from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
 import { listContributions } from "./contributions";
+import { isCardLive } from "../lib/peer-review";
+import { getPeerReview } from "./peerReviews";
 
 const STORAGE_KEY = "evidenceLibraryEntries";
 
@@ -99,9 +101,34 @@ export function saveEvidenceLibraryEntryRevision(entry: EvidenceLibraryEntry, co
   saveRevisionRecord(record);
 }
 
-/** Searches the persisted evidence repository, reusing `searchEvidenceLibrary` directly. */
+/**
+ * Whether an entry is live under peer-review gating — see
+ * `lib/peer-review.ts`'s `isCardLive`. Looks up the entry's `CardReview` by
+ * treating its `id` as the review's `cardId` (the same free-form key
+ * `panels/ReviewQueuePanel.tsx`'s "Start review" form uses).
+ */
+export function isEntryLive(id: string): boolean {
+  return isCardLive(getPeerReview(id));
+}
+
+/**
+ * Every persisted entry currently held back from "live" by an in-progress
+ * (not yet `published`) `CardReview`, so a panel can still surface a
+ * pending submission to its author instead of it silently disappearing.
+ */
+export function listPendingReviewEntries(): EvidenceLibraryEntry[] {
+  return readAll().filter((entry) => !isEntryLive(entry.id));
+}
+
+/**
+ * Searches the persisted evidence repository, reusing `searchEvidenceLibrary`
+ * directly. Only entries that are "live" (see `isEntryLive`) are searched —
+ * a card held under an in-progress peer review doesn't yet appear in the
+ * shared library, closing follow-up (c) named under the "🗣️ Peer Review
+ * System" bullet in TODO.md.
+ */
 export function searchPersistedEvidenceLibrary(query: EvidenceSearchQuery = {}): EvidenceSearchResult[] {
-  return searchEvidenceLibrary(readAll(), query);
+  return searchEvidenceLibrary(readAll().filter((entry) => isEntryLive(entry.id)), query);
 }
 
 /**

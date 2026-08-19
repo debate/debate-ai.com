@@ -4,14 +4,18 @@ import {
   buildPersistedArgumentLibrary,
   deleteEvidenceLibraryEntry,
   getEvidenceLibraryEntry,
+  isEntryLive,
   listCombinedPersistedLibraryCards,
   listEvidenceLibraryEntries,
+  listPendingReviewEntries,
   saveEvidenceLibraryEntry,
   saveEvidenceLibraryEntryRevision,
   searchPersistedEvidenceLibrary,
 } from "../src/state/evidenceLibraryEntries";
 import { listRevisionHistory } from "../src/state/revisionHistory";
 import { saveContribution } from "../src/state/contributions";
+import { approveReview, createCardReview, publishReview, submitForReview } from "../src/lib/peer-review";
+import { savePeerReview } from "../src/state/peerReviews";
 import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 
@@ -149,6 +153,63 @@ describe("searchPersistedEvidenceLibrary", () => {
     const results = searchPersistedEvidenceLibrary({ text: "", kind: "card" });
     expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
     expect(results[0].relevanceScore).toBe(0);
+  });
+
+  it("excludes an entry held under an in-progress peer review", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    savePeerReview(submitForReview(createCardReview("entry-1")));
+
+    const results = searchPersistedEvidenceLibrary({});
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-2"]);
+  });
+
+  it("includes an entry again once its review is published", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
+
+    const results = searchPersistedEvidenceLibrary({});
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+  });
+});
+
+describe("isEntryLive", () => {
+  it("is true for an entry with no review at all", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    expect(isEntryLive("entry-1")).toBe(true);
+  });
+
+  it("is false for an entry with an in-progress review", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    savePeerReview(createCardReview("entry-1"));
+    expect(isEntryLive("entry-1")).toBe(false);
+  });
+
+  it("is true for an entry whose review is published", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
+    expect(isEntryLive("entry-1")).toBe(true);
+  });
+});
+
+describe("listPendingReviewEntries", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(listPendingReviewEntries()).toEqual([]);
+  });
+
+  it("returns only entries held under an in-progress review", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    savePeerReview(submitForReview(createCardReview("entry-1")));
+
+    expect(listPendingReviewEntries()).toEqual([WARMING_CARD]);
+  });
+
+  it("excludes an entry once its review is published", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
+
+    expect(listPendingReviewEntries()).toEqual([]);
   });
 });
 

@@ -147,6 +147,21 @@ export function isReadyToPublish(review: CardReview): boolean {
 }
 
 /**
+ * Whether a card is live — visible in the shared library — under peer-review
+ * gating. Closes follow-up (c) named under the "🗣️ Peer Review System"
+ * bullet in TODO.md: "wiring a review's lifecycle to whatever eventually
+ * persists submitted cards, so `publishReview` can gate a card actually
+ * going live." Peer review is opt-in, not required — a card with no review
+ * at all (`review` is `undefined`) stays live, matching every other
+ * "works standalone, gated further once the gating feature exists" slice in
+ * this repo. Once a review exists, the card is held back from "live" for
+ * every status except `"published"`.
+ */
+export function isCardLive(review: CardReview | undefined): boolean {
+  return review === undefined || review.status === "published";
+}
+
+/**
  * Renders a short, human-readable summary of a review's current state —
  * status plus outstanding/resolved comment counts — for a review-queue or
  * card-detail panel.

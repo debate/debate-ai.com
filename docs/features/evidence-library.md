@@ -65,6 +65,17 @@ submission missing `topic` or `caseArea` rather than guessing a fallback
 for `argBlock` and `0` for `wordCount` — a contribution carries no card body
 to measure a real word count from, unlike a dedicated evidence-library entry.
 
+## Peer-review gating
+
+A search only ever returns "live" entries — see
+[`review-queue.md`](./review-queue.md#gating-the-shared-evidence-library) for
+how starting a [Review Queue](./review-queue.md) review on an entry's id
+holds it back from `searchPersistedEvidenceLibrary`'s results until that
+review reaches `published`. `EvidenceLibraryPanel` renders any such
+held-back entries in a separate "Pending review" section (still editable and
+deletable) so a contributor doesn't lose track of a submission that's
+mid-review.
+
 ## Data flow
 
 ```
@@ -77,10 +88,17 @@ panels/EvidenceLibraryPanel.tsx (submission form)
       → saveRevisionRecord(record)         — state/revisionHistory.ts
   → deleteEvidenceLibraryEntry(id)         — state/evidenceLibraryEntries.ts (delete)
 state/evidenceLibraryEntries.ts (localStorage: evidenceLibraryEntries)
-  → searchPersistedEvidenceLibrary({ text, kind }) — reuses
+  → searchPersistedEvidenceLibrary({ text, kind }) — filters to isEntryLive
+                                           entries, then reuses
                                            lib/shared-evidence-library.ts's
-                                           pure searchEvidenceLibrary directly
-  → panels/EvidenceLibraryPanel.tsx      — renders results as the query changes
+                                           pure searchEvidenceLibrary
+  → listPendingReviewEntries()           — entries isEntryLive excludes
+  → panels/EvidenceLibraryPanel.tsx      — renders results (and pending
+                                           entries) as the query changes
+
+isEntryLive(id) — state/evidenceLibraryEntries.ts
+  → getPeerReview(id)                    — state/peerReviews.ts
+  → isCardLive(review)                   — lib/peer-review.ts (pure)
 ```
 
 Editing an entry derives a Revision Incentives `CardSnapshot` for the entry's
