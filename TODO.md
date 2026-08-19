@@ -6,6 +6,29 @@
 _No task currently in progress._
 
 ### Completed
+- **Strategy Sync Notes — assignee notification.** Closes follow-up (b) on
+  the "🔄 Strategy Sync Notes" bullet (Research Crowdsourcing Organizer
+  Features): "An assignee notification once a notification system exists."
+  No notification system existed anywhere in this repo, so this slice adds
+  a small, generic one — `debate-round` now has
+  `notifications/notifications.ts` (a `Notification` model scoped to one
+  `prep-note-assigned` kind today, with `createAssignmentNotification`
+  (returns `null` for an unassigned or self-assigned note),
+  `markNotificationRead`, `getNotificationsForRecipient`,
+  `getUnreadNotifications`, `buildNotificationSummaryText`) and
+  `state/notifications.ts` (the localStorage store, plus
+  `assignPersistedPrepNoteAndNotify`, which composes the existing, unchanged
+  `assignPersistedPrepNote` with creating+saving the assignee's
+  notification in one call). `PrepNotesPanel`'s assign/unassign actions now
+  call that composed function instead of `assignPersistedPrepNote`
+  directly — no other mutation logic changed. A new `NotificationsPanel`
+  renders a recipient's notifications (unread first, mark-read action) at
+  `/notifications`, wired into the global dock's Settings menu. Vitest
+  covered in `packages/debate-round/test/notifications.test.ts` (40 tests
+  across both new test files, full suite 1979 passed). Typecheck and the
+  production/web build both pass; this repo has no root `lint` script
+  configured, so that verification step is N/A rather than run. Documented
+  in `docs/features/notifications.md`.
 - **Speech Transcript Summaries and Answers — AI extraction from raw speech
   text.** Closes the AI-call half of follow-up (a) named under idea #6 in
   the Product Feature Ideas list: "audio/video transcription plus an AI
@@ -5258,7 +5281,7 @@ _No task currently in progress._
 * 
 * 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. A second slice, `evidenceLibraryEntries.ts` (see Tracker Status above, "Shared Evidence Library — persisted evidence repository"), now persists `EvidenceLibraryEntry` records to localStorage. A third slice, `EvidenceLibraryPanel` (see Tracker Status above, "Shared Evidence Library — evidence library search UI panel"), now renders a free-text/kind search panel at `/cards/library`, closing follow-up (a). Follow-up (b), wiring `prep-room.ts` to read through this store, was also already closed separately by "Collaboration Prep Room Store Wiring"'s `buildPrepRoomFromStore` (see Tracker Status above). Follow-ups: (c) a real search index (e.g. Typesense) once entries are persisted at scale. Not started._
 * 
-* 🔄 Strategy Sync Notes - Let teammates leave live prep notes, assign tasks, and mark which arguments have been covered or need follow-up. _Status: first slices done (see Tracker Status above) — `debate-round` now has a box-addressed `PrepNote` model (`createPrepNote`/`updateNoteStatus`/`assignNote`) plus `getNotesForBox`/`getNotesForFlow`/`getNotesAssignedTo`/`getOpenFollowUps`/`resolvePrepNoteBox`/`buildPrepNoteSummaryText` for attaching a note to a specific flow argument, assigning it to a teammate as a task, and tracking whether it's still open, covered, or needs follow-up, reusing the existing `flow-annotations.ts` box-addressing convention directly. A second slice, `prepNotes.ts` (see Tracker Status above, "Prep Note Persistence"), now persists `PrepNote` records to localStorage, closing follow-up (a). A third slice, `updatePersistedPrepNoteStatus`/`assignPersistedPrepNote` (see Tracker Status above, "Prep Note Status/Assignment Persistence"), now applies `updateNoteStatus`/`assignNote`'s pure state transitions directly against a stored note and saves the result, closing that same persistence slice's own follow-up (b). A fourth slice, `PrepNotesPanel` (see Tracker Status above, "Strategy Sync Notes — prep-notes panel UI"), now renders every persisted prep note grouped by status at `/prep-notes` with status-cycle and assign actions, closing follow-up (a). Follow-up (b), an assignee notification once a notification system exists, is not started._
+* 🔄 Strategy Sync Notes - Let teammates leave live prep notes, assign tasks, and mark which arguments have been covered or need follow-up. _Status: first slices done (see Tracker Status above) — `debate-round` now has a box-addressed `PrepNote` model (`createPrepNote`/`updateNoteStatus`/`assignNote`) plus `getNotesForBox`/`getNotesForFlow`/`getNotesAssignedTo`/`getOpenFollowUps`/`resolvePrepNoteBox`/`buildPrepNoteSummaryText` for attaching a note to a specific flow argument, assigning it to a teammate as a task, and tracking whether it's still open, covered, or needs follow-up, reusing the existing `flow-annotations.ts` box-addressing convention directly. A second slice, `prepNotes.ts` (see Tracker Status above, "Prep Note Persistence"), now persists `PrepNote` records to localStorage, closing follow-up (a). A third slice, `updatePersistedPrepNoteStatus`/`assignPersistedPrepNote` (see Tracker Status above, "Prep Note Status/Assignment Persistence"), now applies `updateNoteStatus`/`assignNote`'s pure state transitions directly against a stored note and saves the result, closing that same persistence slice's own follow-up (b). A fourth slice, `PrepNotesPanel` (see Tracker Status above, "Strategy Sync Notes — prep-notes panel UI"), now renders every persisted prep note grouped by status at `/prep-notes` with status-cycle and assign actions, closing follow-up (a). A fifth slice (see Tracker Status above, "Strategy Sync Notes — assignee notification") added `notifications/notifications.ts` and `state/notifications.ts` — a small, generic in-app `Notification` model/store (this repo had no notification system at all) — and its `assignPersistedPrepNoteAndNotify` composition, wired into `PrepNotesPanel`'s assign/unassign actions, which now creates a persisted, markable-read notification for a note's assignee (skipped for self-assignment) surfaced at a new `/notifications` route via `NotificationsPanel`, closing follow-up (b). No follow-ups remain open on this bullet._
 * 
 * 📊 Matchup Prep Dashboard - Combine opponent profiles, judge profiles, and topic-specific prep into a single pre-round view. _Status: first slice done (see Tracker Status above, "Pre-Round Intelligence Panel") — `debate-round` now has `buildPreRoundBriefing`/`buildPreRoundBriefingText` for combining an opponent-scouting summary, judge-tendency summary, head-to-head record, and prep notes into one structured briefing. See idea #12 in Product Feature Ideas above for the full status and follow-ups._
 * 

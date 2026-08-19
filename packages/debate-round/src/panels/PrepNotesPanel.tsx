@@ -7,8 +7,10 @@
  * follow-ups surfaced first) and renders it grouped by status. Each note
  * has a "cycle status" action (open → covered → needs-follow-up → open)
  * that calls the already-persisted `updatePersistedPrepNoteStatus`, and an
- * "assign" control that calls the already-persisted `assignPersistedPrepNote`
- * — no new mutation logic is introduced here.
+ * "assign" control that calls `state/notifications.ts`'s
+ * `assignPersistedPrepNoteAndNotify`, which persists the assignment (via
+ * the existing `assignPersistedPrepNote`) and creates the assignee's
+ * notification in one call — see `panels/NotificationsPanel.tsx`.
  *
  * @module panels/PrepNotesPanel
  */
@@ -20,13 +22,18 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import {
-  assignPersistedPrepNote,
   buildPrepNotesPanelView,
   nextPrepNoteStatus,
   updatePersistedPrepNoteStatus,
   type PrepNotesPanelGroup,
 } from "../state/prepNotes"
+import { assignPersistedPrepNoteAndNotify } from "../state/notifications"
 import type { PrepNoteStatus } from "../flow/strategy-sync-notes"
+
+/** Mirrors `FlowEditLogPanel.tsx`'s `newFlowEditId` id-generation convention. */
+function newNotificationId(): string {
+  return `notif-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
 
 const STATUS_LABEL: Record<PrepNoteStatus, string> = {
   "needs-follow-up": "Needs follow-up",
@@ -65,7 +72,12 @@ export function PrepNotesPanel() {
 
   const handleAssign = (id: string) => {
     const assignedToId = (assigneeDrafts[id] ?? "").trim()
-    assignPersistedPrepNote(id, assignedToId.length > 0 ? assignedToId : null, Date.now())
+    assignPersistedPrepNoteAndNotify(
+      id,
+      assignedToId.length > 0 ? assignedToId : null,
+      Date.now(),
+      newNotificationId(),
+    )
     setAssigneeDrafts((prev) => ({ ...prev, [id]: "" }))
     refresh()
   }
@@ -135,7 +147,7 @@ export function PrepNotesPanel() {
                         size="sm"
                         variant="ghost"
                         onClick={() => {
-                          assignPersistedPrepNote(note.id, null, Date.now())
+                          assignPersistedPrepNoteAndNotify(note.id, null, Date.now(), newNotificationId())
                           refresh()
                         }}
                       >

@@ -15,6 +15,7 @@ export { FlowAnnotationsPanel } from "./FlowAnnotationsPanel";
 export { FlowEditLogPanel } from "./FlowEditLogPanel";
 export { FlowSummariesPanel } from "./FlowSummariesPanel";
 export { JudgeDecisionPanel } from "./JudgeDecisionPanel";
+export { NotificationsPanel } from "./NotificationsPanel";
 export { OpponentTeamProfilesPanel } from "./OpponentTeamProfilesPanel";
 export { PracticeRoundSimulatorPanel } from "./PracticeRoundSimulatorPanel";
 export { PreRoundBriefingsPanel } from "./PreRoundBriefingsPanel";
