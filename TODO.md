@@ -3,24 +3,48 @@
 
 ### In progress
 
-- **Shared Evidence Library — real search index.**
-  Branch: `claude/peaceful-cerf-bdjl3k`. Closes follow-up (c) named under the
-  "📋 Shared Evidence Library" bullet in TODO.md's Research Crowdsourcing
-  Organizer Features list ("a real search index (e.g. Typesense) once
-  entries are persisted at scale"). Plan: add
-  `packages/debate-card-search/src/lib/evidence-search-index.ts` — a pure
-  inverted-index (postings-list) builder plus a TF-IDF-ranked search
-  function that looks matched terms up directly instead of re-scanning
-  every entry's text on every call, kept a drop-in alternative to
-  `searchEvidenceLibrary`'s existing filter pipeline. Wire it into
-  `state/evidenceLibraryEntries.ts` as an additive
-  `searchPersistedEvidenceLibraryWithIndex` (same "live" gating as
-  `searchPersistedEvidenceLibrary`), without changing the existing default
-  search function's behavior. Vitest coverage for both. Checklist: [x] pure
-  index/search lib + tests, [x] persisted-store wiring + tests, [x]
-  lint/typecheck/test/build green, [ ] PR opened.
+_No task currently in progress._
 
 ### Completed
+- **Shared Evidence Library — real search index.**
+  Closes follow-up (c) named under the "📋 Shared Evidence Library" bullet in
+  TODO.md's Research Crowdsourcing Organizer Features list ("a real search
+  index (e.g. Typesense) once entries are persisted at scale"). Adds
+  `packages/debate-card-search/src/lib/evidence-search-index.ts`'s
+  `buildEvidenceSearchIndex`/`searchEvidenceLibraryWithIndex` — a real
+  token → postings-list inverted index ranked by TF-IDF (term frequency ×
+  inverse document frequency across the indexed corpus), so ranking a query
+  no longer means re-scoring every entry's full text on every call (only
+  entries sharing a query term are ever visited) and a rarer, more
+  distinctive term outranks one nearly every entry shares — unlike
+  `searchEvidenceLibrary`'s existing presence/absence keyword-overlap ratio.
+  Kept a drop-in alternative: same `EvidenceSearchQuery` input,
+  `EvidenceSearchResult` output shape, and kind/topic/caseArea/tags filter
+  semantics (reusing `filterCardsByTags` directly, same as the original).
+  `state/evidenceLibraryEntries.ts`'s new `searchPersistedEvidenceLibraryWithIndex`
+  composes it against the persisted repository with the same "live"/peer-
+  review gating `searchPersistedEvidenceLibrary` already uses, added
+  alongside — not replacing — that existing function, so no current caller's
+  behavior changes. The index is rebuilt fresh from the live entries on
+  every call rather than cached (this store has no write-time hook to
+  invalidate a cached index); that's still the query-time win the follow-up
+  asked for, since ranking no longer requires visiting every entry. Vitest-
+  covered in `packages/debate-card-search/test/evidence-search-index.test.ts`
+  (index construction, postings/term-frequency correctness, TF-IDF ranking
+  including a dedicated case showing a rarer term outranks a common one,
+  every filter combination, and candidate-set parity against
+  `searchEvidenceLibrary` on a shared fixture) and new cases in
+  `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+  (mirroring `searchPersistedEvidenceLibrary`'s own suite: peer-review
+  gating, empty-repository, kind filtering, empty-text-query). Verified with
+  `bun run test` (155 files / 2154 tests, all pass), `bun run typecheck` (11
+  in-scope packages pass — `debate-ai-web` has no `typecheck` script), and
+  `bun run build` (both buildable packages pass). Docs updated at
+  `docs/features/evidence-library.md`. Follow-up remaining, recorded there:
+  `EvidenceLibraryPanel` still calls the original `searchPersistedEvidenceLibrary`,
+  not the indexed version — wiring the panel to it (or caching the index
+  across calls instead of rebuilding it on every search) is not started.
+  PR: [#256](https://github.com/debate/debate-ai.com/pull/256).
 - **Peer Review System — reviewer permission gating for approve/reject/publish.**
   Closes follow-up (b) named under the "🗣️ Peer Review System" bullet in
   TODO.md's Research Crowdsourcing Organizer Features list ("reviewer
