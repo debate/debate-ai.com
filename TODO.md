@@ -28,6 +28,7 @@ _No task currently in progress._
   1989 tests passed), `bun run typecheck` (11 packages passed), `bun run
   build` (both buildable packages passed) — no repo-wide `lint` script
   exists.
+  [PR #238](https://github.com/debate/debate-ai.com/pull/238).
 - **Strategy Sync Notes — assignee notification.** Closes follow-up (b)
   named under the "🔄 Strategy Sync Notes" bullet in the Research
   Crowdsourcing Organizer Features list: "an assignee notification once a
