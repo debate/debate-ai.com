@@ -11,13 +11,24 @@
  * teammate's edits here automatically — a contributor types theirs in, the
  * same way `FlowAnnotationsPanel`'s drop-annotation form works.
  *
+ * As the contributor types the edit's `Content`, a "Suggested from Common
+ * Argument Library" list (closing follow-up (c) under idea #16) scores the
+ * in-progress text against every persisted `LibraryCard`
+ * (`debate-card-search`'s Common Argument Library) via
+ * `flow/flow-note-suggestions.ts#suggestFlowNotesFromLibrary`, and an
+ * "Insert" action fills the field with that card's formatted note — still
+ * editable before logging, never applied automatically.
+ *
  * @module panels/FlowEditLogPanel
  */
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { GitCommitHorizontal } from "lucide-react"
+
+import { listCombinedPersistedLibraryCards } from "debate-card-search/src/state/evidenceLibraryEntries"
+import type { LibraryCard } from "debate-card-search/src/lib/argument-library"
 
 import {
   EmptyState,
@@ -34,6 +45,7 @@ import { Textarea } from "debate-ui/src/primitives/textarea"
 import { createFlowEdit, type FlowEdit } from "../flow/shared-flow-sync"
 import { clearFlowEditsForFlow, listFlowEdits, saveFlowEdit } from "../state/flowEdits"
 import { parseBoxPathInput } from "../flow/flow-annotations"
+import { buildFlowNoteFromCard, suggestFlowNotesFromLibrary } from "../flow/flow-note-suggestions"
 
 function newFlowEditId(): string {
   return `edit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -64,10 +76,17 @@ export function FlowEditLogPanel({ onChange }: FlowEditLogPanelProps = {}) {
   const [boxPathInput, setBoxPathInput] = useState("")
   const [content, setContent] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [libraryCards, setLibraryCards] = useState<LibraryCard[]>([])
 
   useEffect(() => {
     setEdits(listFlowEdits())
+    setLibraryCards(listCombinedPersistedLibraryCards())
   }, [])
+
+  const suggestions = useMemo(
+    () => suggestFlowNotesFromLibrary(libraryCards, content),
+    [libraryCards, content],
+  )
 
   const refresh = () => {
     setEdits(listFlowEdits())
@@ -152,6 +171,32 @@ export function FlowEditLogPanel({ onChange }: FlowEditLogPanelProps = {}) {
             className="min-h-16"
           />
         </LabeledField>
+        {suggestions.length > 0 ? (
+          <div className="flex flex-col gap-1.5" data-testid="flow-note-suggestions">
+            <span className="text-xs font-medium text-muted-foreground">
+              Suggested from Common Argument Library
+            </span>
+            <div className="flex flex-col gap-1.5">
+              {suggestions.map(({ card, score }) => (
+                <PanelRow
+                  key={card.id}
+                  leading={<Pill>{score}</Pill>}
+                  title={`${card.argBlock} — ${card.caseArea} (${card.topic})`}
+                  subtitle={card.tags.length > 0 ? card.tags.join(", ") : undefined}
+                  trailing={
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setContent(buildFlowNoteFromCard(card))}
+                    >
+                      Insert
+                    </Button>
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        ) : null}
         <Button size="sm" onClick={handleLog}>
           Log edit
         </Button>

@@ -23,7 +23,7 @@
 
 import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult } from "../lib/shared-evidence-library";
 import { buildEvidenceEntryRevision, searchEvidenceLibrary } from "../lib/shared-evidence-library";
-import type { ArgumentLibrary } from "../lib/argument-library";
+import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library";
 import { buildArgumentLibrary, buildLibraryCardsFromContributions, buildTagCollections } from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
 import { listContributions } from "./contributions";
@@ -114,6 +114,19 @@ export function buildPersistedArgumentLibrary(): ArgumentLibrary {
 }
 
 /**
+ * The same combined corpus `buildCombinedPersistedArgumentLibrary` folds
+ * into topic folders and tag collections, exposed flat — every persisted
+ * evidence-library entry plus every persisted Contributions Feed
+ * contribution that carries `topic`/`caseArea`. For callers that need to
+ * score or search individual cards rather than browse the organized
+ * library (e.g. `debate-round`'s flow-note suggestions, see idea #16's
+ * follow-up (c) in TODO.md).
+ */
+export function listCombinedPersistedLibraryCards(): LibraryCard[] {
+  return [...readAll(), ...buildLibraryCardsFromContributions(listContributions())];
+}
+
+/**
  * Organizes the persisted evidence repository together with every persisted
  * Contributions Feed contribution that carries `topic`/`caseArea` into one
  * combined Common Argument Library — closes follow-up (a) named under the
@@ -123,7 +136,7 @@ export function buildPersistedArgumentLibrary(): ArgumentLibrary {
  * safe to call even before any contribution is tagged for the library.
  */
 export function buildCombinedPersistedArgumentLibrary(): ArgumentLibrary {
-  return buildArgumentLibrary([...readAll(), ...buildLibraryCardsFromContributions(listContributions())]);
+  return buildArgumentLibrary(listCombinedPersistedLibraryCards());
 }
 
 /**
