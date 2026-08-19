@@ -17,8 +17,12 @@ import type {
 import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
 import type { FlowSpreadsheetProps, ContextMenuEntry } from "./types"
 import { buildRowData, rowDataToBoxes } from "./dataTransform"
+import { EditLogPopover } from "./EditLogPopover"
+import { filterEditsForBox } from "./edit-cells"
 import type { FlowAnnotation } from "./flow-annotations"
 import { GridContextMenu } from "./GridContextMenu"
+import type { FlowEdit } from "./shared-flow-sync"
+import { listFlowEditsForFlow, saveFlowEdit } from "../state/flowEdits"
 import { useFlowGridConfig } from "./useFlowGridConfig"
 import { useFlowRowOperations } from "./useFlowRowOperations"
 
@@ -59,6 +63,12 @@ export function FlowSpreadsheet({
   // Section heading & collapse state
   const [collapsedHeadings, setCollapsedHeadings] = useState<Set<string>>(new Set())
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; rowId: string } | null>(null)
+
+  // Flow edit-log popover state (grid affordance for logging/reviewing a FlowEdit)
+  const [editLogBoxPath, setEditLogBoxPath] = useState<number[] | null>(null)
+  // Bumped after logging an edit, forcing a re-render so the popover's own
+  // (inline, non-store-subscribed) edit list picks up the new one too.
+  const [editsVersion, setEditsVersion] = useState(0)
 
   // Initialize row data from flow
   const [rowData, setRowData] = useState<any[]>(() => buildRowData(flow.children, flow.columns))
@@ -254,6 +264,23 @@ export function FlowSpreadsheet({
     [activeVideoId, setIsPlaying],
   )
 
+  /** Opens the edit-log popover for a cell's box, from either cell renderer. */
+  const handleOpenEditLog = useCallback((boxPath: number[]) => {
+    setEditLogBoxPath(boxPath)
+  }, [])
+
+  /**
+   * Persists a popover-built `FlowEdit` and refreshes the grid's cell
+   * renderers so the new badge shows up immediately, without needing a
+   * remount — localStorage reads inside a cell renderer aren't reactive on
+   * their own.
+   */
+  const handleLogFlowEdit = useCallback((edit: FlowEdit) => {
+    saveFlowEdit(edit)
+    gridRef.current?.api?.refreshCells({ force: true })
+    setEditsVersion((v) => v + 1)
+  }, [])
+
   // Grid configuration hook
   const { columnDefs, defaultColDef, getRowId } = useFlowGridConfig(
     flow,
@@ -261,6 +288,7 @@ export function FlowSpreadsheet({
     collapsedHeadings,
     toggleCollapse,
     handleJumpToAnnotation,
+    handleOpenEditLog,
   )
 
   /**
@@ -533,6 +561,20 @@ export function FlowSpreadsheet({
           y={contextMenu.y}
           items={getContextMenuItems(contextMenu.rowId)}
           onClose={() => setContextMenu(null)}
+        />
+      )}
+
+      {/* Flow edit-log popover, opened from a cell's EditBadge. Keyed off
+          editsVersion so logging another edit re-reads the store and shows
+          up in the popover's own list immediately. */}
+      {editLogBoxPath && (
+        <EditLogPopover
+          key={editsVersion}
+          flowId={flow.id}
+          boxPath={editLogBoxPath}
+          edits={filterEditsForBox(listFlowEditsForFlow(flow.id), editLogBoxPath)}
+          onLog={handleLogFlowEdit}
+          onClose={() => setEditLogBoxPath(null)}
         />
       )}
     </div>

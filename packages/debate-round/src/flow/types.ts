@@ -35,16 +35,20 @@ export interface FirstColumnCellRendererProps extends ICellRendererParams {
   onToggleCollapse: (rowId: string) => void
   flowId: number
   onJumpToAnnotation: (annotation: FlowAnnotation) => void
+  /** Opens the `EditLogPopover` for this cell's box. */
+  onOpenEditLog: (boxPath: number[]) => void
 }
 
 /**
  * Props for the `AnnotationCellRenderer` component, used on every
  * `FlowSpreadsheet` column after the first to show an `AnnotationBadge`
- * alongside the cell's plain text value.
+ * and `EditBadge` alongside the cell's plain text value.
  */
 export interface AnnotationCellRendererProps extends ICellRendererParams {
   flowId: number
   onJumpToAnnotation: (annotation: FlowAnnotation) => void
+  /** Opens the `EditLogPopover` for this cell's box. */
+  onOpenEditLog: (boxPath: number[]) => void
 }
 
 /**

@@ -19,6 +19,7 @@ export function useFlowGridConfig(
   collapsedHeadings?: Set<string>,
   toggleCollapse?: (rowId: string) => void,
   onJumpToAnnotation?: (annotation: FlowAnnotation) => void,
+  onOpenEditLog?: (boxPath: number[]) => void,
 ) {
   /**
    * Generate column definitions for AG Grid
@@ -51,26 +52,29 @@ export function useFlowGridConfig(
 
       // First column gets the tree cell renderer; every other column gets the
       // plain annotation-aware renderer. Both surface an `AnnotationBadge`
-      // for a cell whose box has a persisted `FlowAnnotation`.
-      if (idx === 0 && collapsedHeadings && toggleCollapse && onJumpToAnnotation) {
+      // for a cell whose box has a persisted `FlowAnnotation`, and an
+      // `EditBadge` for its persisted `FlowEdit`s.
+      if (idx === 0 && collapsedHeadings && toggleCollapse && onJumpToAnnotation && onOpenEditLog) {
         colDef.cellRenderer = FirstColumnCellRenderer
         colDef.cellRendererParams = {
           collapsedHeadings,
           onToggleCollapse: toggleCollapse,
           flowId: flow.id,
           onJumpToAnnotation,
+          onOpenEditLog,
         }
-      } else if (idx > 0 && onJumpToAnnotation) {
+      } else if (idx > 0 && onJumpToAnnotation && onOpenEditLog) {
         colDef.cellRenderer = AnnotationCellRenderer
         colDef.cellRendererParams = {
           flowId: flow.id,
           onJumpToAnnotation,
+          onOpenEditLog,
         }
       }
 
       return colDef
     })
-  }, [flow.columns, flow.id, onOpenSpeechPanel, collapsedHeadings, toggleCollapse, onJumpToAnnotation])
+  }, [flow.columns, flow.id, onOpenSpeechPanel, collapsedHeadings, toggleCollapse, onJumpToAnnotation, onOpenEditLog])
 
   /**
    * Default column settings

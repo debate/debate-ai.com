@@ -6,6 +6,40 @@
 _No task currently in progress._
 
 ### Completed
+- **Shared, Ai-Generated Debate Flow — `FlowSpreadsheet` grid edit-log
+  affordance.** Closes follow-up (b) named under idea #16 ("Shared,
+  Ai-Generated Debate Flow") in the Product Feature Ideas list: "a
+  `FlowSpreadsheet`-grid affordance for logging/reviewing an edit (today's
+  `FlowEditLogPanel` is a separate form, not part of the grid itself)."
+  `flow/edit-cells.ts` adds `filterEditsForBox`/`sortEditsByTimestampDesc`,
+  reusing `annotation-cells.ts`'s `boxPathForCell`/`columnIndexFromField`
+  directly since a cell's box path is addressed identically for
+  annotations and edits. `flow/EditBadge.tsx` mirrors `AnnotationBadge`'s
+  pattern — a filled badge (with an author/content tooltip) for a box with
+  logged edits, or a faint "+" affordance for a box with none, so a
+  contributor can start logging even before a box has its first edit.
+  `flow/EditLogPopover.tsx` is a box-scoped popover (mirroring
+  `GridContextMenu`'s click-outside/Escape handling) that lists a box's
+  edits newest-first and a small form to log another, validating with the
+  existing `createFlowEdit` and handing the built `FlowEdit` back to the
+  caller to persist. `AnnotationCellRenderer.tsx` and
+  `FirstColumnCellRenderer.tsx` now render an `EditBadge` alongside the
+  existing `AnnotationBadge`, threaded through a new `onOpenEditLog`
+  callback in `useFlowGridConfig.ts` and `flow/types.ts`.
+  `FlowSpreadsheet.tsx` owns the popover's open/closed state, persists a
+  logged edit via the existing `saveFlowEdit`, and calls
+  `gridRef.current.api.refreshCells({ force: true })` so the new badge
+  appears immediately (a cell renderer's `localStorage` read isn't
+  reactive on its own). No changes to `/coach`'s `FlowEditLogPanel`/
+  `SharedFlowSyncPanel` wiring — this only adds a second, grid-native way
+  to log the same `FlowEdit` records they already read. No follow-ups
+  remain open on this bullet; follow-ups (a) (live transport) and (c)
+  (Common Argument Library evidence suggestions) under idea #16 remain
+  open and unstarted. Docs updated at
+  `docs/features/shared-flow-sync.md`. `bun run test` (1883 tests, up from
+  1859), `bun run typecheck` (11 packages), and `bun run build` all pass;
+  no repo-wide `lint` script exists, matching this bullet's prior entries.
+
 - **LLM Card Scoring — real argument-block keywords and a real submitted-card
   corpus.** Closes follow-up (b) named under the "🧠 LLM Card Scoring" bullet
   in the Research Crowdsourcing Organizer Features list: "wiring real
@@ -5011,7 +5045,7 @@ _No task currently in progress._
 
 15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slices done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. A third slice, `FlowAnnotationsPanel` (see Tracker Status above, "Flow-in-Speech Flow Annotations — video-player annotation UI"), now renders a drop-annotation form wired to the `debate-videos` persistent player's live playback position plus every persisted annotation with a "Jump to" action back into the player, at `/annotations`, closing follow-up (a). A fourth slice (see Tracker Status above, "Flow-in-Speech Flow Annotations — `FlowSpreadsheet` annotation affordance") added `flow/annotation-cells.ts` and `flow/AnnotationBadge.tsx`, wiring a per-cell annotation badge (with the same "Jump to" mechanism) into `FlowSpreadsheet` via a new `flow/AnnotationCellRenderer.tsx` and the existing `FirstColumnCellRenderer.tsx`, closing follow-up (b). No follow-ups remain open on this idea._
 
-16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow) _Status: first slices done (see Tracker Status above) — `debate-round` now has `mergeFlowEdits`/`applyMergedEditsToFlow`/`buildSharedFlowSyncSummaryText` for reconciling multiple teammates' concurrent box-level flow edits into one canonical flow (last write wins), flagging genuinely concurrent, diverging edits from different authors as conflicts for a human to resolve instead of silently overwriting them. A second slice, `SharedFlowSyncPanel` (see "Feature panels", PR #214), renders that merge preview in the Coach hub's Flow section, driven entirely by props. A third slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — Flow Edit Log + real merge-preview data source") added `createFlowEdit` plus `state/flowEdits.ts` and `FlowEditLogPanel`, giving a contributor a way to actually log a `FlowEdit` and wiring `CoachHub` to feed `SharedFlowSyncPanel` real, persisted edits (and apply an accepted merge back into the round workspace) instead of a hardcoded empty array. Follow-ups: (a) a live transport (WebSocket or similar) that turns local edits into a shared stream across a room/team, (b) a `FlowSpreadsheet`-grid affordance for logging/reviewing an edit (today's `FlowEditLogPanel` is a separate form, not part of the grid itself), (c) composing the Common Argument Library's tagged card corpus to suggest (not auto-apply) a pre-filled flow note from matching evidence. None of these are started._
+16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow) _Status: first slices done (see Tracker Status above) — `debate-round` now has `mergeFlowEdits`/`applyMergedEditsToFlow`/`buildSharedFlowSyncSummaryText` for reconciling multiple teammates' concurrent box-level flow edits into one canonical flow (last write wins), flagging genuinely concurrent, diverging edits from different authors as conflicts for a human to resolve instead of silently overwriting them. A second slice, `SharedFlowSyncPanel` (see "Feature panels", PR #214), renders that merge preview in the Coach hub's Flow section, driven entirely by props. A third slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — Flow Edit Log + real merge-preview data source") added `createFlowEdit` plus `state/flowEdits.ts` and `FlowEditLogPanel`, giving a contributor a way to actually log a `FlowEdit` and wiring `CoachHub` to feed `SharedFlowSyncPanel` real, persisted edits (and apply an accepted merge back into the round workspace) instead of a hardcoded empty array. A fourth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — `FlowSpreadsheet` grid edit-log affordance") added `flow/edit-cells.ts`, `flow/EditBadge.tsx`, and `flow/EditLogPopover.tsx`, wiring an `onOpenEditLog` callback through `AnnotationCellRenderer`/`FirstColumnCellRenderer`/`useFlowGridConfig`/`FlowSpreadsheet` so a cell whose box already has a logged `FlowEdit` shows a badge (and a cell with none shows a "+" affordance) that opens a popover to review that box's edits and log a new one directly from the live grid on `/debate`, closing follow-up (b). Follow-ups: (a) a live transport (WebSocket or similar) that turns local edits into a shared stream across a room/team, (c) composing the Common Argument Library's tagged card corpus to suggest (not auto-apply) a pre-filled flow note from matching evidence. Neither of these is started._
 
 
 
