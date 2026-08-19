@@ -6,6 +6,57 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Practice Opponent — `docs/features/practice-opponent.md`.** Every
+  idea in TODO.md's Product Feature Ideas and Research Crowdsourcing
+  Organizer Features lists already has "No follow-ups remain open"
+  implementations except for a handful explicitly documented as blocked on
+  an external dependency this repo doesn't have (see below); of those
+  already-closed ideas, the "AI Practice Opponent" persona picker
+  (`OpponentPersonaPickerPanel` at `/practice-opponent`, in the global
+  dock's Settings menu) was the one implemented slice missing its
+  `docs/features/*.md` entry — every sibling idea (e.g. "AI Judge Decision
+  Modes" → `judge-paradigm-selections.md`) has one. Added
+  `docs/features/practice-opponent.md`, documenting the route, nav
+  location, the four built-in personas, the full save/clear/AI-speech data
+  flow (including `round/opponent-persona-speech-wiring.ts`'s
+  `getOpponentPersonaForRound`), and existing Vitest coverage. No code
+  changed; this is a documentation-only completion.
+
+  Remaining backlog audit (for future runs, so this isn't re-discovered):
+  every other open follow-up left in TODO.md is blocked on an external
+  dependency, not on missing implementation effort —
+  - Idea #1 "CX NDCA Standings" follow-up (a), a real Tabroom/NDCA scraper:
+    confirmed via a live fetch this run that Tabroom's tournament-results
+    pages (e.g. `/index/tourn/results/index.mhtml?tourn_id=...`) require an
+    authenticated Tabroom login and render only a login form to an
+    unauthenticated request — unlike the public `/index/index.mhtml`
+    tournament-name index `sync-tournaments.ts` already scrapes. No
+    Tabroom credentials exist in this repo, so a real per-team results
+    scraper can't be built or tested against real data right now. Follow-up
+    (b), a real circuit-sourced `QualificationPointsTable`, has the same
+    blocker noted in `ndca-standings.ts` — no authoritative public source
+    this repo can cite is available.
+  - "Opponent Team Profiles" and "Judge Profiles" follow-up (a), a real
+    Tabroom pairings/ballots data source: same authentication blocker as
+    above (pairings/ballots live behind the same login-gated Tabroom
+    pages).
+  - Idea #12 "Pre-Round Intelligence Panel" follow-up (a), real tournament
+    results/pairings/event-details/room-assignment data sources: same
+    Tabroom authentication blocker.
+  - Idea #6 "Speech Transcript Summaries" and idea #8 "Video-Lecture-
+    Training Coach AI," each idea's remaining audio/video-transcription
+    half of follow-up (a): no transcription service (e.g. Whisper-style
+    API) exists in this repo or its dependencies, and the browser-native
+    Web Speech API only transcribes live microphone input, not an uploaded
+    recording — not a safe, testable slice without a real service
+    dependency.
+  - Idea #7 "On Page Card Reuse Search" follow-up (a), an actual browser
+    extension: this is a genuinely new project (manifest, content script,
+    packaging) rather than a vertical slice of the existing Next.js app,
+    and the existing check logic reads a client-side `localStorage` store
+    that a separate extension origin can't reach without a new backend API
+    endpoint first — too large to safely scope as one incremental slice.
+
 - **Shared Evidence Library — cache the search index across calls.**
   Closes the remaining follow-up named under the "📋 Shared Evidence
   Library" bullet in TODO.md's Research Crowdsourcing Organizer Features
