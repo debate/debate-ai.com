@@ -10,14 +10,23 @@
  * own follow-up (a), which named a persisted evidence store as its
  * prerequisite.
  *
+ * `buildCombinedPersistedArgumentLibrary` closes follow-up (a) named under
+ * the "📚 Common Argument Library" bullet in TODO.md — it composes this
+ * store's evidence-library cards with `state/contributions.ts`'s persisted
+ * Contributions Feed (via `argument-library.ts`'s
+ * `buildLibraryCardsFromContributions`) into one combined library, so a
+ * general-purpose contribution tagged with `topic`/`caseArea`/`tags` is
+ * organized alongside a dedicated evidence-library entry.
+ *
  * @module state/evidenceLibraryEntries
  */
 
 import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult } from "../lib/shared-evidence-library";
 import { buildEvidenceEntryRevision, searchEvidenceLibrary } from "../lib/shared-evidence-library";
 import type { ArgumentLibrary } from "../lib/argument-library";
-import { buildArgumentLibrary, buildTagCollections } from "../lib/argument-library";
+import { buildArgumentLibrary, buildLibraryCardsFromContributions, buildTagCollections } from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
+import { listContributions } from "./contributions";
 
 const STORAGE_KEY = "evidenceLibraryEntries";
 
@@ -102,6 +111,19 @@ export function searchPersistedEvidenceLibrary(query: EvidenceSearchQuery = {}):
  */
 export function buildPersistedArgumentLibrary(): ArgumentLibrary {
   return buildArgumentLibrary(readAll());
+}
+
+/**
+ * Organizes the persisted evidence repository together with every persisted
+ * Contributions Feed contribution that carries `topic`/`caseArea` into one
+ * combined Common Argument Library — closes follow-up (a) named under the
+ * "📚 Common Argument Library" bullet in TODO.md. A contribution missing
+ * `topic` or `caseArea` is silently excluded (see
+ * `argument-library.ts`'s `buildLibraryCardsFromContributions`), so this is
+ * safe to call even before any contribution is tagged for the library.
+ */
+export function buildCombinedPersistedArgumentLibrary(): ArgumentLibrary {
+  return buildArgumentLibrary([...readAll(), ...buildLibraryCardsFromContributions(listContributions())]);
 }
 
 /**

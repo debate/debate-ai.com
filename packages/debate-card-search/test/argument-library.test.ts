@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   applyTagSuggestion,
   buildArgumentLibrary,
+  buildLibraryCardsFromContributions,
   buildLibrarySummaryText,
   buildTagCollections,
   buildTopicFolder,
   buildTopicFolders,
+  contributionToLibraryCard,
   filterCardsByTags,
   groupCardsByCaseArea,
   groupCardsByTopic,
@@ -13,6 +15,7 @@ import {
   suggestTags,
   type LibraryCard,
 } from "../src/lib/argument-library";
+import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 
 const cards: LibraryCard[] = [
   {
@@ -263,5 +266,76 @@ describe("suggestTags", () => {
 
   it("de-duplicates known tags case-insensitively", () => {
     expect(suggestTags(["Climate", "climate", "CLIMATE"], "cli")).toEqual(["Climate"]);
+  });
+});
+
+function makeContribution(overrides: Partial<AttributedContribution> = {}): AttributedContribution {
+  return {
+    id: "contrib-1",
+    contributorId: "alice",
+    kind: "card",
+    likes: 0,
+    saves: 0,
+    qualitySignals: [0.5],
+    reviewerEndorsements: [],
+    ...overrides,
+  };
+}
+
+describe("contributionToLibraryCard", () => {
+  it("converts a contribution tagged with topic and caseArea into a LibraryCard", () => {
+    expect(
+      contributionToLibraryCard(
+        makeContribution({ topic: "Energy", caseArea: "DA", tags: ["climate"], argBlock: "Warming DA" }),
+      ),
+    ).toEqual({
+      id: "contrib-1",
+      argBlock: "Warming DA",
+      wordCount: 0,
+      topic: "Energy",
+      caseArea: "DA",
+      tags: ["climate"],
+    });
+  });
+
+  it("defaults tags to an empty array and argBlock to 'Untagged' when omitted", () => {
+    expect(contributionToLibraryCard(makeContribution({ topic: "Energy", caseArea: "DA" }))).toEqual({
+      id: "contrib-1",
+      argBlock: "Untagged",
+      wordCount: 0,
+      topic: "Energy",
+      caseArea: "DA",
+      tags: [],
+    });
+  });
+
+  it("returns null when topic is missing", () => {
+    expect(contributionToLibraryCard(makeContribution({ caseArea: "DA" }))).toBeNull();
+  });
+
+  it("returns null when caseArea is missing", () => {
+    expect(contributionToLibraryCard(makeContribution({ topic: "Energy" }))).toBeNull();
+  });
+
+  it("returns null when both topic and caseArea are missing", () => {
+    expect(contributionToLibraryCard(makeContribution())).toBeNull();
+  });
+});
+
+describe("buildLibraryCardsFromContributions", () => {
+  it("converts only the contributions carrying both topic and caseArea", () => {
+    const contributions = [
+      makeContribution({ id: "c1", topic: "Energy", caseArea: "DA" }),
+      makeContribution({ id: "c2" }),
+      makeContribution({ id: "c3", topic: "Energy" }),
+      makeContribution({ id: "c4", topic: "Water", caseArea: "CP", tags: ["federalism"] }),
+    ];
+
+    const cards = buildLibraryCardsFromContributions(contributions);
+    expect(cards.map((card) => card.id)).toEqual(["c1", "c4"]);
+  });
+
+  it("returns an empty array when no contribution is tagged for the library", () => {
+    expect(buildLibraryCardsFromContributions([makeContribution()])).toEqual([]);
   });
 });

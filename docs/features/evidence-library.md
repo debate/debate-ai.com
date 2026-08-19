@@ -44,6 +44,27 @@ suggestion appends it and leaves a trailing `", "` to keep typing — this
 closes follow-up (c), "a tag-autocomplete/tag-management affordance," under
 the "📚 Common Argument Library" bullet in TODO.md.
 
+### Argument Library browser and Contributions Feed tagging
+
+The `/cards/argument-library` panel (`panels/ArgumentLibraryPanel.tsx`)
+renders the Common Argument Library itself — topic folders, split into
+case-area subgroups, plus cross-cutting tag collections — built from
+`state/evidenceLibraryEntries.ts`'s `buildCombinedPersistedArgumentLibrary`.
+That function now composes **two** persisted sources into one library: this
+evidence-library repository, and every `state/contributions.ts` Contributions
+Feed submission (`/cards/contributions`) that was tagged with a `topic` and
+`caseArea`. This closes follow-up (a) under the "📚 Common Argument Library"
+bullet in TODO.md — "wiring a `topic`/`caseArea`/`tags` field into wherever
+submitted cards are eventually persisted beyond the existing evidence-library
+store."
+
+A Contributions Feed submission's `topic`/`caseArea`/`tags` fields are
+optional; `lib/argument-library.ts`'s `contributionToLibraryCard` excludes a
+submission missing `topic` or `caseArea` rather than guessing a fallback
+(there's no reasonable default for either), and falls back to `"Untagged"`
+for `argBlock` and `0` for `wordCount` — a contribution carries no card body
+to measure a real word count from, unlike a dedicated evidence-library entry.
+
 ## Data flow
 
 ```
@@ -96,3 +117,7 @@ card submitted here now feeds that dashboard directly.
   reusing an existing tag while typing; renaming or merging a tag already
   applied to existing entries would mean rewriting every entry that carries
   it, and isn't implemented.
+- A Contributions Feed submission tagged for the Argument Library gets no
+  tag-autocomplete affordance of its own (that only exists on the dedicated
+  `/cards/library` form's Tags field) — it's a plain comma-separated text
+  input.

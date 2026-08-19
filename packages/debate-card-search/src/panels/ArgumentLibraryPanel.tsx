@@ -3,12 +3,17 @@
  * follow-up named "(b) a folder/collection browser UI" under the "📚 Common
  * Argument Library" bullet in TODO.md.
  *
- * Reads the persisted evidence repository via
- * `state/evidenceLibraryEntries.ts`'s `buildPersistedArgumentLibrary` (itself
- * a thin composition of `argument-library.ts`'s pure `buildArgumentLibrary`
- * against the persisted store) and renders it as topic folders (each split
- * into case-area subgroups) plus cross-cutting tag collections, reusing the
- * existing organizing logic directly rather than introducing new logic here.
+ * Reads the persisted evidence repository together with every tagged
+ * Contributions Feed submission via
+ * `state/evidenceLibraryEntries.ts`'s `buildCombinedPersistedArgumentLibrary`
+ * (itself a thin composition of `argument-library.ts`'s pure
+ * `buildArgumentLibrary` against both persisted stores) and renders it as
+ * topic folders (each split into case-area subgroups) plus cross-cutting tag
+ * collections, reusing the existing organizing logic directly rather than
+ * introducing new logic here. Closes follow-up (a) named under the "📚
+ * Common Argument Library" bullet in TODO.md — a Contributions Feed
+ * submission tagged with topic/case-area now appears here too, not just a
+ * dedicated `/cards/library` evidence-library entry.
  *
  * @module panels/ArgumentLibraryPanel
  */
@@ -18,7 +23,7 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
-import { buildPersistedArgumentLibrary } from "../state/evidenceLibraryEntries"
+import { buildCombinedPersistedArgumentLibrary } from "../state/evidenceLibraryEntries"
 import { buildLibrarySummaryText, filterCardsByTags } from "../lib/argument-library"
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
 
@@ -35,7 +40,7 @@ export function ArgumentLibraryPanel() {
   const [activeTags, setActiveTags] = useState<string[]>([])
 
   useEffect(() => {
-    setLibrary(buildPersistedArgumentLibrary())
+    setLibrary(buildCombinedPersistedArgumentLibrary())
   }, [])
 
   if (library === null) {
@@ -46,7 +51,8 @@ export function ArgumentLibraryPanel() {
     return (
       <div className="p-6 text-center text-sm text-muted-foreground">
         No argument library entries yet. The library fills in as cards and reusable blocks are
-        submitted to the shared evidence repository.
+        submitted to the shared evidence repository, or as Contributions Feed submissions are
+        tagged with a topic and case area.
       </div>
     )
   }

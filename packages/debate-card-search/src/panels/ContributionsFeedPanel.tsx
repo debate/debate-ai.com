@@ -40,6 +40,14 @@
  * every downstream reader already treats them as optional/filterable
  * rather than required.
  *
+ * The submission form now also takes optional `topic`/`caseArea`/`tags`
+ * fields, closing follow-up (a) named under the "📚 Common Argument Library"
+ * bullet in TODO.md ("wiring a `topic`/`caseArea`/`tags` field into wherever
+ * submitted cards are eventually persisted beyond the existing
+ * evidence-library store"). A submission that fills in both `topic` and
+ * `caseArea` is picked up by `ArgumentLibraryPanel` via
+ * `state/evidenceLibraryEntries.ts`'s `buildCombinedPersistedArgumentLibrary`.
+ *
  * @module panels/ContributionsFeedPanel
  */
 
@@ -74,9 +82,23 @@ const KIND_VARIANT: Record<ContributionKind, "default" | "secondary" | "outline"
   annotation: "outline",
 }
 
-type ContributionDraft = { contributorId: string; kind: ContributionKind; argBlock: string }
+type ContributionDraft = {
+  contributorId: string
+  kind: ContributionKind
+  argBlock: string
+  topic: string
+  caseArea: string
+  tags: string
+}
 
-const EMPTY_DRAFT: ContributionDraft = { contributorId: "", kind: "card", argBlock: "" }
+const EMPTY_DRAFT: ContributionDraft = {
+  contributorId: "",
+  kind: "card",
+  argBlock: "",
+  topic: "",
+  caseArea: "",
+  tags: "",
+}
 
 /**
  * Renders the Contributions Feed: a form to submit a new contribution, plus
@@ -106,6 +128,12 @@ export function ContributionsFeedPanel() {
       return
     }
     const argBlock = draft.argBlock.trim()
+    const topic = draft.topic.trim()
+    const caseArea = draft.caseArea.trim()
+    const tags = draft.tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean)
     saveContribution({
       id: `${draft.kind}-${contributorId}-${Date.now()}`,
       contributorId,
@@ -116,6 +144,9 @@ export function ContributionsFeedPanel() {
       reviewerEndorsements: [],
       submittedAt: Date.now(),
       ...(argBlock ? { argBlock } : {}),
+      ...(topic ? { topic } : {}),
+      ...(caseArea ? { caseArea } : {}),
+      ...(tags.length > 0 ? { tags } : {}),
     })
     setError(null)
     setDraft(EMPTY_DRAFT)
@@ -193,7 +224,38 @@ export function ContributionsFeedPanel() {
               placeholder="Solvency"
             />
           </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="contribution-topic">Topic (optional)</Label>
+            <Input
+              id="contribution-topic"
+              value={draft.topic}
+              onChange={(e) => setDraft((prev) => ({ ...prev, topic: e.target.value }))}
+              placeholder="Resolved: ..."
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="contribution-casearea">Case area (optional)</Label>
+            <Input
+              id="contribution-casearea"
+              value={draft.caseArea}
+              onChange={(e) => setDraft((prev) => ({ ...prev, caseArea: e.target.value }))}
+              placeholder="Aff, Neg, DA, CP, K, T..."
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="contribution-tags">Tags (optional, comma-separated)</Label>
+            <Input
+              id="contribution-tags"
+              value={draft.tags}
+              onChange={(e) => setDraft((prev) => ({ ...prev, tags: e.target.value }))}
+              placeholder="warming, uniqueness"
+            />
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Filling in both Topic and Case area also files this contribution into the Common
+          Argument Library.
+        </p>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button onClick={handleSubmit}>Submit contribution</Button>
       </div>
@@ -240,6 +302,17 @@ export function ContributionsFeedPanel() {
                 <span>{entry.saves} saves</span>
                 <span>{entry.reviewerEndorsements.length} endorsements</span>
               </div>
+              {(entry.topic || entry.caseArea || (entry.tags && entry.tags.length > 0)) && (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {entry.topic && <Badge variant="outline">{entry.topic}</Badge>}
+                  {entry.caseArea && <Badge variant="outline">{entry.caseArea}</Badge>}
+                  {entry.tags?.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="outline" onClick={() => handleLike(entry.id)}>
                   Like
