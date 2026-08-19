@@ -6,6 +6,32 @@
 _No task currently in progress._
 
 ### Completed
+- **Pre-Round Briefings — add a "create briefing" form.** Idea #12
+  ("Pre-Round Intelligence Panel")'s follow-up (b) was only partly closed:
+  `docs/features/pre-round-briefings.md`'s "Known gaps" said "No affordance
+  in this panel to generate a new briefing for a round" — `savePreRoundBriefing`
+  and `buildPreRoundBriefingFromStores` existed and were Vitest-covered, but
+  were called only from tests, so `/briefings` was permanently empty for a
+  real user. Added a "create briefing" form to `PreRoundBriefingsPanel`
+  (round ID, tournament/division/round-label/side/room/opponent-label,
+  optional picks from already-persisted Opponent Team Profiles / Judge
+  Profiles, free-text prep notes), backed by one new pure helper,
+  `buildPreRoundBriefingRecordFromDraft` in
+  `packages/debate-round/src/state/preRoundBriefings.ts`, which validates
+  the draft and delegates to the existing `buildPreRoundBriefingFromStores`
+  — no new briefing-composition logic. Vitest-covered (12 new cases in
+  `packages/debate-round/test/preRoundBriefings.test.ts`: minimal valid
+  draft, whitespace/missing-field validation, optional room/opponent-
+  label/prep-notes, resolving an opponent/judge profile by id, and the
+  "no data on file" fallback for an unresolved id). Documented in
+  `docs/features/pre-round-briefings.md`, including the still-open gap that
+  the form doesn't collect this team's own round history, so "Prior
+  meetings" always renders "No recorded prior meetings" even when an
+  opponent profile is picked — `buildPreRoundBriefingFromStores` supports a
+  head-to-head `ownRecords`/`opponentTeamId` history when called directly,
+  but no persisted store of a team's own round history exists yet for the
+  form to read from; a real follow-up, not a form oversight.
+
 - **AI Practice Opponent — `docs/features/practice-opponent.md`.** Every
   idea in TODO.md's Product Feature Ideas and Research Crowdsourcing
   Organizer Features lists already has "No follow-ups remain open"

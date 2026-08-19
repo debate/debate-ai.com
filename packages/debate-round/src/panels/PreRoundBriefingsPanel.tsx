@@ -10,6 +10,16 @@
  * round that calls the already-persisted `deletePreRoundBriefing` — no new
  * briefing-composition logic is introduced here.
  *
+ * Also renders a "create briefing" form: draft fields are validated and
+ * composed into a `PreRoundBriefingRecord` by
+ * `state/preRoundBriefings.ts`'s `buildPreRoundBriefingRecordFromDraft`
+ * (optionally pulling in an already-persisted Opponent Team Profile / Judge
+ * Profile by id via the existing `buildPreRoundBriefingFromStores`), then
+ * persisted via `savePreRoundBriefing` — closing the panel's previously
+ * documented gap that nothing in the shipped app could actually create a
+ * briefing — mirroring `StandingsPanel`'s "record a result" form
+ * convention.
+ *
  * @module panels/PreRoundBriefingsPanel
  */
 
@@ -18,11 +28,54 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
+import { Input } from "debate-ui/src/primitives/input"
+import { Label } from "debate-ui/src/primitives/label"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "debate-ui/src/primitives/select"
+import { Textarea } from "debate-ui/src/primitives/textarea"
+import { listOpponentTeamProfiles } from "debate-data-sync/src/state/opponentTeamProfiles"
+import { listJudgeProfiles } from "debate-speech-writer/src/state/judgeProfiles"
+import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-profile"
+import {
+  buildPreRoundBriefingRecordFromDraft,
   buildPreRoundBriefingsPanelView,
   deletePreRoundBriefing,
+  savePreRoundBriefing,
 } from "../state/preRoundBriefings"
 import type { PreRoundBriefingRecord } from "../state/preRoundBriefings"
+
+const NONE_VALUE = "__none__"
+
+type BriefingDraft = {
+  roundId: string
+  tournamentName: string
+  division: string
+  roundLabel: string
+  side: DebateSide
+  room: string
+  opponentLabel: string
+  opponentTeamId: string
+  judgeId: string
+  teamPrepNotes: string
+}
+
+const EMPTY_DRAFT: BriefingDraft = {
+  roundId: "",
+  tournamentName: "",
+  division: "",
+  roundLabel: "",
+  side: "aff",
+  room: "",
+  opponentLabel: "",
+  opponentTeamId: NONE_VALUE,
+  judgeId: NONE_VALUE,
+  teamPrepNotes: "",
+}
 
 /**
  * Renders the Pre-Round Briefings panel: every persisted
@@ -34,9 +87,15 @@ import type { PreRoundBriefingRecord } from "../state/preRoundBriefings"
  */
 export function PreRoundBriefingsPanel() {
   const [briefings, setBriefings] = useState<PreRoundBriefingRecord[] | null>(null)
+  const [opponentProfiles, setOpponentProfiles] = useState<{ teamId: string }[]>([])
+  const [judgeProfiles, setJudgeProfiles] = useState<{ judgeId: string }[]>([])
+  const [draft, setDraft] = useState<BriefingDraft>(EMPTY_DRAFT)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setBriefings(buildPreRoundBriefingsPanelView())
+    setOpponentProfiles(listOpponentTeamProfiles())
+    setJudgeProfiles(listJudgeProfiles())
   }, [])
 
   const refresh = () => setBriefings(buildPreRoundBriefingsPanelView())
@@ -46,16 +105,36 @@ export function PreRoundBriefingsPanel() {
     refresh()
   }
 
-  if (briefings === null) {
-    return <div className="p-6 text-sm text-muted-foreground">Loading briefings…</div>
+  const handleSubmit = () => {
+    const teamPrepNotes = draft.teamPrepNotes
+      .split("\n")
+      .map((note) => note.trim())
+      .filter((note) => note.length > 0)
+
+    const result = buildPreRoundBriefingRecordFromDraft({
+      roundId: draft.roundId,
+      tournamentName: draft.tournamentName,
+      division: draft.division,
+      roundLabel: draft.roundLabel,
+      side: draft.side,
+      room: draft.room,
+      opponentLabel: draft.opponentLabel,
+      opponentTeamId: draft.opponentTeamId === NONE_VALUE ? undefined : draft.opponentTeamId,
+      judgeId: draft.judgeId === NONE_VALUE ? undefined : draft.judgeId,
+      teamPrepNotes,
+    })
+    if (!result.ok) {
+      setError(result.error)
+      return
+    }
+    savePreRoundBriefing(result.record)
+    setError(null)
+    setDraft({ ...EMPTY_DRAFT, tournamentName: draft.tournamentName, division: draft.division })
+    refresh()
   }
 
-  if (briefings.length === 0) {
-    return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No pre-round briefings yet. A briefing fills in once one is generated for a round.
-      </div>
-    )
+  if (briefings === null) {
+    return <div className="p-6 text-sm text-muted-foreground">Loading briefings…</div>
   }
 
   return (
@@ -67,6 +146,137 @@ export function PreRoundBriefingsPanel() {
           one focused briefing per round.
         </p>
       </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="briefing-round-id">Round ID</Label>
+            <Input
+              id="briefing-round-id"
+              value={draft.roundId}
+              onChange={(e) => setDraft((prev) => ({ ...prev, roundId: e.target.value }))}
+              placeholder="round-4"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="briefing-tournament-name">Tournament</Label>
+            <Input
+              id="briefing-tournament-name"
+              value={draft.tournamentName}
+              onChange={(e) => setDraft((prev) => ({ ...prev, tournamentName: e.target.value }))}
+              placeholder="Blake"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="briefing-division">Division</Label>
+            <Input
+              id="briefing-division"
+              value={draft.division}
+              onChange={(e) => setDraft((prev) => ({ ...prev, division: e.target.value }))}
+              placeholder="LD"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="briefing-round-label">Round label</Label>
+            <Input
+              id="briefing-round-label"
+              value={draft.roundLabel}
+              onChange={(e) => setDraft((prev) => ({ ...prev, roundLabel: e.target.value }))}
+              placeholder="Round 4"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="briefing-side">Side</Label>
+            <Select
+              value={draft.side}
+              onValueChange={(value) => setDraft((prev) => ({ ...prev, side: value as DebateSide }))}
+            >
+              <SelectTrigger id="briefing-side" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="aff">Aff</SelectItem>
+                <SelectItem value="neg">Neg</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="briefing-room">Room</Label>
+            <Input
+              id="briefing-room"
+              value={draft.room}
+              onChange={(e) => setDraft((prev) => ({ ...prev, room: e.target.value }))}
+              placeholder="Optional"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="briefing-opponent-label">Opponent label</Label>
+            <Input
+              id="briefing-opponent-label"
+              value={draft.opponentLabel}
+              onChange={(e) => setDraft((prev) => ({ ...prev, opponentLabel: e.target.value }))}
+              placeholder="Optional (e.g. a team code)"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="briefing-opponent-profile">Opponent scouting profile</Label>
+            <Select
+              value={draft.opponentTeamId}
+              onValueChange={(value) => setDraft((prev) => ({ ...prev, opponentTeamId: value }))}
+            >
+              <SelectTrigger id="briefing-opponent-profile" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE_VALUE}>None on file</SelectItem>
+                {opponentProfiles.map((profile) => (
+                  <SelectItem key={profile.teamId} value={profile.teamId}>
+                    {profile.teamId}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="briefing-judge-profile">Judge profile</Label>
+            <Select
+              value={draft.judgeId}
+              onValueChange={(value) => setDraft((prev) => ({ ...prev, judgeId: value }))}
+            >
+              <SelectTrigger id="briefing-judge-profile" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE_VALUE}>None on file</SelectItem>
+                {judgeProfiles.map((profile) => (
+                  <SelectItem key={profile.judgeId} value={profile.judgeId}>
+                    {profile.judgeId}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="briefing-prep-notes">Team prep notes</Label>
+          <Textarea
+            id="briefing-prep-notes"
+            value={draft.teamPrepNotes}
+            onChange={(e) => setDraft((prev) => ({ ...prev, teamPrepNotes: e.target.value }))}
+            placeholder="One note per line"
+            rows={3}
+          />
+        </div>
+        {error && <p className="text-sm text-destructive">{error}</p>}
+        <Button onClick={handleSubmit}>Save briefing</Button>
+      </div>
+
+      {briefings.length === 0 && (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No pre-round briefings yet. Create one above, or one fills in once generated
+          elsewhere for a round.
+        </div>
+      )}
       {briefings.map(({ roundId, briefing }) => (
         <div key={roundId} className="rounded-lg border border-border p-4">
           <div className="mb-3 flex items-center justify-between gap-2">
