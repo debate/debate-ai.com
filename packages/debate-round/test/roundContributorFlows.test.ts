@@ -2,12 +2,15 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildAndSaveRoundContributorFlow,
   buildCoachingProgramMemberFlows,
+  buildCoachingProgramMemberPracticeRounds,
   deleteRoundContributorFlow,
   getRoundContributorFlow,
   listRoundContributorFlows,
   saveRoundContributorFlow,
 } from "../src/state/roundContributorFlows";
 import type { RoundContributorFlowRecord } from "../src/state/roundContributorFlows";
+import { savePracticeRound, type PracticeRoundRecord } from "../src/state/practiceRounds";
+import { buildPracticeRoundSetup } from "../src/round/practice-round-simulator";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -137,5 +140,45 @@ describe("buildCoachingProgramMemberFlows", () => {
 
   it("returns an empty list when no roster member has a recorded flow", () => {
     expect(buildCoachingProgramMemberFlows(["alice", "bob"])).toEqual([]);
+  });
+});
+
+describe("buildCoachingProgramMemberPracticeRounds", () => {
+  const SETUP = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+
+  it("joins a roster member's recorded roundId to its persisted PracticeRoundRecord", () => {
+    saveRoundContributorFlow(ALICE);
+    const record: PracticeRoundRecord = { roundId: ALICE.roundId, setup: SETUP };
+    savePracticeRound(record);
+
+    expect(buildCoachingProgramMemberPracticeRounds(["alice", "bob"])).toEqual([
+      { contributorId: "alice", setup: SETUP, feedback: undefined },
+    ]);
+  });
+
+  it("excludes a stored flow whose contributorId isn't in the given roster", () => {
+    saveRoundContributorFlow(ALICE);
+    savePracticeRound({ roundId: ALICE.roundId, setup: SETUP });
+
+    expect(buildCoachingProgramMemberPracticeRounds(["bob"])).toEqual([]);
+  });
+
+  it("excludes a roster member whose recorded round has no persisted PracticeRoundRecord", () => {
+    saveRoundContributorFlow(ALICE);
+    expect(buildCoachingProgramMemberPracticeRounds(["alice"])).toEqual([]);
+  });
+
+  it("includes feedback once the practice round's PracticeRoundRecord has it", () => {
+    saveRoundContributorFlow(ALICE);
+    const feedback = { judgeParadigm: SETUP.judgeParadigm, coachingPrompts: [], sections: [] };
+    savePracticeRound({ roundId: ALICE.roundId, setup: SETUP, feedback });
+
+    expect(buildCoachingProgramMemberPracticeRounds(["alice"])).toEqual([
+      { contributorId: "alice", setup: SETUP, feedback },
+    ]);
+  });
+
+  it("returns an empty list when no roster member has a recorded flow", () => {
+    expect(buildCoachingProgramMemberPracticeRounds(["alice", "bob"])).toEqual([]);
   });
 });

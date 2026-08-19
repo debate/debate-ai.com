@@ -47,10 +47,11 @@ panels/CoachingProgramsPanel.tsx
       → listContributions() (filtered to a submittedAt timestamp) — debate-card-search's state/contributions.ts
       → listChallengeWinEvents()                                — debate-card-search's state/challengeWinEvents.ts
       → buildCoachingProgramMemberFlows(program.memberIds)      — state/roundContributorFlows.ts (default; overridable)
-      → buildCoachingProgramBoard({ program, topicSprint, challenges, contributions, winEvents, memberFlows })
+      → buildCoachingProgramMemberPracticeRounds(program.memberIds) — state/roundContributorFlows.ts (default; overridable)
+      → buildCoachingProgramBoard({ program, topicSprint, challenges, contributions, winEvents, memberFlows, memberPracticeRounds })
                                                                   — round/coaching-program.ts
   → buildCoachingProgramSummaryText(board)  — round/coaching-program.ts
-  → panel renders it as a status block
+  → panel renders it as a status block, plus a per-member Practice Round Simulator badge
 
 Recording a member's flow ("Save current flow" in the panel's Member flows
 roster):
@@ -78,6 +79,22 @@ current flow" action is the one place this package reads the live round
 workspace's `useFlowStore` directly (every other panel here is otherwise
 self-contained), recording that flow against a chosen roster member and a
 free-form side key.
+
+`state/roundContributorFlows.ts`'s `buildCoachingProgramMemberPracticeRounds`
+closes idea #13's remaining "(c) wiring a member's practice-round
+setup/feedback (Practice Round Simulator) into the space" follow-up: a
+roster member's recorded `roundId` already names the same id
+`state/practiceRounds.ts` keys its `PracticeRoundRecord`s by, so this just
+joins the two stores — no separate contributorId-keyed practice-round store
+was needed. `buildPersistedCoachingProgramBoard` reads it by default (again
+overridable by an explicit `memberPracticeRounds` argument), and
+`round/coaching-program.ts`'s `buildCoachingProgramBoard` composes the result
+into the board's new `memberPracticeRounds` map. The panel shows a
+"Practice round recorded" (or "Practice round + feedback" once feedback has
+been generated) badge per roster member alongside the existing "Flow
+recorded" badge — a member starts a Practice Round Simulator session
+separately at `/practice-round`, then records that same round's flow here to
+surface it on the board.
 
 ## Known gaps
 
