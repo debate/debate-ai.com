@@ -48,7 +48,7 @@ _No task currently in progress._
   and a contribution with no `submittedAt` excluded). Verified from a clean
   install: `bun install`, `bun run test` (2010 tests passed), `bun run
   typecheck` (11/11 packages passed), `bun run build:web` (built
-  successfully).
+  successfully). PR: #240.
 
 - **Peer Review System — gate a card's Shared Evidence Library visibility on
   its review lifecycle.** Closes follow-up (c) named under the "🗣️ Peer
