@@ -3,6 +3,9 @@
 
 ### In progress
 
+_No task currently in progress._
+
+### Completed
 - **Shared Evidence Library — wire `EvidenceLibraryPanel` to the real search index.**
   Closes the remainder of follow-up (c) named under the "📋 Shared Evidence
   Library" bullet in TODO.md's Research Crowdsourcing Organizer Features
@@ -10,18 +13,31 @@
   `docs/features/evidence-library.md` ("`EvidenceLibraryPanel` isn't wired
   to it yet — the panel still calls the original keyword-overlap
   `searchPersistedEvidenceLibrary`"), left open by PR #256.
-  Branch: `claude/peaceful-cerf-dm05bk`.
-  Plan:
-  - [x] Swap `EvidenceLibraryPanel`'s two `searchPersistedEvidenceLibrary`
-    call sites to `searchPersistedEvidenceLibraryWithIndex`.
-  - [x] Add Vitest coverage for the panel's actual call shape
-    (`buildEvidenceSearchFormQuery` output fed into
-    `searchPersistedEvidenceLibraryWithIndex`).
-  - [x] Update `docs/features/evidence-library.md` and this bullet's
-    follow-up text.
-  - [x] Run lint/typecheck/test/build.
-
-### Completed
+  `EvidenceLibraryPanel`'s two search call sites (the live-filter effect and
+  `refreshResults`, used after every submit/edit/delete/reuse-check) now
+  call `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`
+  instead of the original `searchPersistedEvidenceLibrary` — a drop-in swap,
+  since both share the same `EvidenceSearchQuery` input and
+  `EvidenceSearchResult` output shape and non-text filter semantics, so the
+  panel's search box, kind filter, and topic/case-area/tags filters are now
+  all served by PR #256's TF-IDF-ranked inverted index instead of a full
+  keyword-overlap re-scan on every keystroke. `searchPersistedEvidenceLibrary`
+  stays exported, unchanged, for any other caller. Vitest-covered in
+  `packages/debate-card-search/test/evidenceLibraryEntries.test.ts` with a
+  new suite exercising the panel's actual call shape —
+  `buildEvidenceSearchFormQuery`'s output fed straight into
+  `searchPersistedEvidenceLibraryWithIndex` — covering a combined
+  text+topic+tags filter match, a filter combination that narrows past every
+  entry, and peer-review gating through that same query shape (the
+  indexed search's own unit tests, filter-by-filter, were already added in
+  PR #256). Verified with `bun run test` (155 files / 2157 tests, all pass),
+  `bun run typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script), and `bun run build` (both buildable packages pass).
+  Docs updated at `docs/features/evidence-library.md`. Follow-up remaining,
+  recorded there: caching the index across calls instead of rebuilding it on
+  every search is not started — this store still has no write-time hook to
+  invalidate a cache.
+  PR: [#258](https://github.com/debate/debate-ai.com/pull/258).
 - **Shared Evidence Library — real search index.**
   Closes follow-up (c) named under the "📋 Shared Evidence Library" bullet in
   TODO.md's Research Crowdsourcing Organizer Features list ("a real search
