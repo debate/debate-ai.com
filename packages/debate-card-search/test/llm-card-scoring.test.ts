@@ -3,6 +3,7 @@ import {
   DEFAULT_CARD_SCORE_WEIGHTS,
   buildCardScoreSummaryText,
   computeCardScoreBreakdown,
+  deriveArgBlockKeywords,
   rankCardScores,
   scoreClarity,
   scoreEvidenceQuality,
@@ -93,6 +94,35 @@ describe("scoreEvidenceQuality", () => {
   it("delegates directly to community-rating's quality-signal scoring", () => {
     expect(scoreEvidenceQuality([0.8, 0.6])).toBe(70);
     expect(scoreEvidenceQuality([])).toBe(0);
+  });
+});
+
+describe("deriveArgBlockKeywords", () => {
+  it("returns an empty list for an empty or all-blank input", () => {
+    expect(deriveArgBlockKeywords([])).toEqual([]);
+    expect(deriveArgBlockKeywords(["", "   "])).toEqual([]);
+  });
+
+  it("keeps each trimmed label whole, plus its individual words", () => {
+    const keywords = deriveArgBlockKeywords(["Warming DA"]);
+    expect(keywords).toContain("Warming DA");
+    expect(keywords).toContain("warming");
+  });
+
+  it("drops words of two characters or fewer so short tags like 'DA'/'CP' don't drown out real words", () => {
+    const keywords = deriveArgBlockKeywords(["Warming DA"]);
+    expect(keywords).not.toContain("da");
+  });
+
+  it("deduplicates keywords shared across multiple labels", () => {
+    const keywords = deriveArgBlockKeywords(["Warming DA", "Warming Impact"]);
+    expect(keywords.filter((keyword) => keyword === "warming")).toHaveLength(1);
+  });
+
+  it("scores relevance against a card matching only part of a tracked block's name", () => {
+    const keywords = deriveArgBlockKeywords(["Warming DA"]);
+    const text = "Rising emissions accelerate catastrophic warming impacts worldwide.";
+    expect(scoreRelevance(text, keywords)).toBeGreaterThan(0);
   });
 });
 

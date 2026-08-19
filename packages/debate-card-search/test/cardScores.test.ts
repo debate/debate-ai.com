@@ -1,11 +1,16 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildPersistedCardScoreRanking,
+  buildRealCorpusTexts,
   deleteScoredCard,
+  deriveArgBlockKeywordsForTopic,
   getScoredCard,
   listScoredCards,
   saveScoredCard,
 } from "../src/state/cardScores";
+import { saveEvidenceLibraryEntry } from "../src/state/evidenceLibraryEntries";
+import { saveTrackedArgument } from "../src/state/trackedArguments";
+import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
 import type { ScoredCard } from "../src/lib/llm-card-scoring";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -130,5 +135,69 @@ describe("buildPersistedCardScoreRanking", () => {
     saveScoredCard(SOLVENCY_CARD);
     buildPersistedCardScoreRanking();
     expect(listScoredCards()).toEqual([WARMING_CARD, SOLVENCY_CARD]);
+  });
+
+  it("flags a card as a likely duplicate of a real, persisted Shared Evidence Library entry", () => {
+    const libraryEntry: EvidenceLibraryEntry = {
+      id: "lib-1",
+      kind: "card",
+      text: WARMING_CARD.text,
+      cite: "Smith 24",
+      topic: "Energy Policy",
+      caseArea: "Neg",
+      tags: [],
+      argBlock: "Warming DA",
+      wordCount: WARMING_CARD.text.split(/\s+/).length,
+    };
+    saveEvidenceLibraryEntry(libraryEntry);
+    saveScoredCard(WARMING_CARD);
+
+    const ranking = buildPersistedCardScoreRanking();
+    expect(ranking.find((breakdown) => breakdown.cardId === "card-1")?.isLikelyDuplicate).toBe(true);
+  });
+});
+
+describe("buildRealCorpusTexts", () => {
+  it("returns an empty list when nothing is persisted", () => {
+    expect(buildRealCorpusTexts()).toEqual([]);
+  });
+
+  it("returns every persisted Shared Evidence Library entry's text", () => {
+    const entry: EvidenceLibraryEntry = {
+      id: "lib-1",
+      kind: "card",
+      text: "The plan solves through direct regulatory enforcement.",
+      cite: "Smith 24",
+      topic: "Energy Policy",
+      caseArea: "Neg",
+      tags: [],
+      argBlock: "Solvency",
+      wordCount: 7,
+    };
+    saveEvidenceLibraryEntry(entry);
+    expect(buildRealCorpusTexts()).toEqual([entry.text]);
+  });
+});
+
+describe("deriveArgBlockKeywordsForTopic", () => {
+  it("returns an empty list for a topic with no tracked arguments", () => {
+    expect(deriveArgBlockKeywordsForTopic("Energy Policy")).toEqual([]);
+  });
+
+  it("derives keywords from a topic's persisted tracked-argument checklist", () => {
+    saveTrackedArgument({ id: "energy-warming", topic: "Energy Policy", argBlock: "Warming DA" });
+    saveTrackedArgument({ id: "energy-solvency", topic: "Energy Policy", argBlock: "Solvency" });
+
+    const keywords = deriveArgBlockKeywordsForTopic("Energy Policy");
+    expect(keywords).toContain("Warming DA");
+    expect(keywords).toContain("warming");
+    expect(keywords).toContain("Solvency");
+  });
+
+  it("scopes keywords to the requested topic only", () => {
+    saveTrackedArgument({ id: "energy-warming", topic: "Energy Policy", argBlock: "Warming DA" });
+    saveTrackedArgument({ id: "immigration-border", topic: "Immigration", argBlock: "Border Security" });
+
+    expect(deriveArgBlockKeywordsForTopic("Immigration")).not.toContain("Warming DA");
   });
 });
