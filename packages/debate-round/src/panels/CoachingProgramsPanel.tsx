@@ -11,12 +11,15 @@
  * list-plus-clear convention. No new coaching-program logic is introduced
  * here.
  *
- * This only manages a program's config (name + roster) — it doesn't render
- * `buildCoachingProgramBoard`'s composed topic-sprint/group-challenge/
- * member-drill board yet, since those inputs (challenges, win events,
- * contributions, and a roundId-to-contributor mapping for member flows)
- * aren't persisted in a form this panel could read live. See the remaining
- * follow-ups in TODO.md.
+ * Each program also gets a "View board" action that opens its live
+ * `buildCoachingProgramBoard` for a chosen topic, composed entirely from
+ * persisted state via the new `state/persistedCoachingProgramBoard.ts`'s
+ * `buildPersistedCoachingProgramBoard` — the topic sprint (research, quests,
+ * task routing, progress, notes), the group-challenge standings, and (once a
+ * `roundId`-to-contributor mapping exists — still a further, separate
+ * follow-up) member drill sets. This closes the topic-sprint/group-challenge
+ * half of the "(b-continued)" follow-up named under idea #13 in TODO.md; the
+ * member-drill half stays open, same as noted there.
  *
  * @module panels/CoachingProgramsPanel
  */
@@ -33,7 +36,8 @@ import {
   deleteCoachingProgram,
   saveCoachingProgram,
 } from "../state/coachingPrograms"
-import type { CoachingProgramConfig } from "../round/coaching-program"
+import { buildPersistedCoachingProgramBoard } from "../state/persistedCoachingProgramBoard"
+import { buildCoachingProgramSummaryText, type CoachingProgramBoard, type CoachingProgramConfig } from "../round/coaching-program"
 
 type ProgramDraft = { name: string; memberIds: string }
 
@@ -51,12 +55,30 @@ export function CoachingProgramsPanel() {
   const [programs, setPrograms] = useState<CoachingProgramConfig[] | null>(null)
   const [draft, setDraft] = useState<ProgramDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [openProgramId, setOpenProgramId] = useState<string | null>(null)
+  const [topic, setTopic] = useState("")
+  const [board, setBoard] = useState<CoachingProgramBoard | null>(null)
 
   useEffect(() => {
     setPrograms(buildCoachingProgramsPanelView())
   }, [])
 
   const refresh = () => setPrograms(buildCoachingProgramsPanelView())
+
+  useEffect(() => {
+    const trimmedTopic = topic.trim()
+    if (!openProgramId || !trimmedTopic) {
+      setBoard(null)
+      return
+    }
+    setBoard(buildPersistedCoachingProgramBoard(openProgramId, trimmedTopic, Date.now()) ?? null)
+  }, [openProgramId, topic])
+
+  const handleToggleBoard = (id: string) => {
+    setOpenProgramId((prev) => (prev === id ? null : id))
+    setTopic("")
+    setBoard(null)
+  }
 
   const handleSubmit = () => {
     const name = draft.name.trim()
@@ -133,9 +155,14 @@ export function CoachingProgramsPanel() {
                     ({program.memberIds.length} member{program.memberIds.length === 1 ? "" : "s"})
                   </span>
                 </h2>
-                <Button size="sm" variant="ghost" onClick={() => handleRemove(program.id)}>
-                  Remove
-                </Button>
+                <div className="flex gap-1">
+                  <Button size="sm" variant="outline" onClick={() => handleToggleBoard(program.id)}>
+                    {openProgramId === program.id ? "Hide board" : "View board"}
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => handleRemove(program.id)}>
+                    Remove
+                  </Button>
+                </div>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {program.memberIds.map((memberId) => (
@@ -144,6 +171,32 @@ export function CoachingProgramsPanel() {
                   </Badge>
                 ))}
               </div>
+
+              {openProgramId === program.id && (
+                <div className="mt-4 space-y-3 border-t border-border pt-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor={`coaching-board-topic-${program.id}`}>Topic sprint</Label>
+                    <Input
+                      id={`coaching-board-topic-${program.id}`}
+                      value={topic}
+                      onChange={(e) => setTopic(e.target.value)}
+                      placeholder="Immigration"
+                      className="max-w-sm"
+                    />
+                  </div>
+                  {!topic.trim() ? (
+                    <p className="text-sm text-muted-foreground">
+                      Enter a topic above to compose this program's live board.
+                    </p>
+                  ) : !board ? (
+                    <p className="text-sm text-muted-foreground">Loading board…</p>
+                  ) : (
+                    <p className="whitespace-pre-line text-sm text-muted-foreground">
+                      {buildCoachingProgramSummaryText(board)}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
