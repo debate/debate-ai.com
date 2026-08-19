@@ -21,6 +21,11 @@
  *   - Alt-ArrowUp / Alt-ArrowDown  Move the current heading's section up
  *     or down, via `buildMoveHeadingSectionTransaction` (reuses
  *     `moveOutlineNode`).
+ *   - Mod-Shift-S  Send the current selection to a speech document (by
+ *     title, existing or new), via `sendSelectionToSpeechDocument` — the
+ *     "send selected evidence to a speech document" command named as
+ *     follow-up (b) under idea #14, closing this package's last open gap
+ *     on that idea (see `docs/features/legacy-verbatim-shortcuts.md`).
  */
 import { Extension } from "@tiptap/core";
 import type { Editor } from "@tiptap/core";
@@ -35,6 +40,8 @@ import {
   findHeadingAtPos,
 } from "../engine/outline/heading-move.js";
 import { buildHeadingOutline } from "../engine/outline/heading-outline.js";
+import type { SpeechDocument } from "../engine/speech-document.js";
+import { sendSelectionToSpeechDocument } from "../state/speechDocuments.js";
 
 /** Moves the section containing the current selection up or down.
  *  Returns false (a no-op) when the cursor isn't inside any heading's
@@ -83,6 +90,42 @@ export function condenseDocument(editor: Editor): boolean {
   return true;
 }
 
+/**
+ * Prompts for a target speech document's title and sends the current
+ * selection's text to it (finding an existing document with a matching
+ * title or creating one). Returns the updated document, or `null` when
+ * the prompt is unavailable, the selection is blank, or the title prompt
+ * is cancelled/left blank. Alerts a short confirmation on success, since
+ * (unlike condense/insert-cite) the result isn't otherwise visible in the
+ * editor itself.
+ */
+export function sendSelectionToSpeechDocumentViaPrompt(
+  editor: Editor,
+  sourceLabel?: string,
+): SpeechDocument | null {
+  if (typeof prompt === "undefined") return null;
+
+  const { from, to } = editor.state.selection;
+  const text = editor.state.doc.textBetween(from, to, "\n");
+  if (!text.trim()) return null;
+
+  const title = prompt("Send to speech document — title (existing or new)?")?.trim();
+  if (!title) return null;
+
+  const result = sendSelectionToSpeechDocument(
+    title,
+    text,
+    sourceLabel,
+    () => crypto.randomUUID(),
+    Date.now(),
+  );
+  if (result && typeof alert !== "undefined") {
+    const count = result.blocks.length;
+    alert(`Sent to speech document "${result.title}" (${count} block${count === 1 ? "" : "s"}).`);
+  }
+  return result;
+}
+
 export const VerbatimShortcuts = Extension.create({
   name: "verbatimShortcuts",
 
@@ -93,6 +136,7 @@ export const VerbatimShortcuts = Extension.create({
       "Mod-Shift-d": () => condenseDocument(this.editor),
       "Alt-ArrowUp": () => moveCurrentHeadingSection(this.editor, "up"),
       "Alt-ArrowDown": () => moveCurrentHeadingSection(this.editor, "down"),
+      "Mod-Shift-s": () => !!sendSelectionToSpeechDocumentViaPrompt(this.editor),
     };
   },
 });

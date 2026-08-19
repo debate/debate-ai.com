@@ -6,6 +6,36 @@
 _No task currently in progress._
 
 ### Completed
+- **Legacy Verbatim / Cardmirror Compatibility — send-to-speech-document
+  command.** Closes follow-up (b) named under idea #14 ("Legacy Verbatim /
+  Cardmirror Compatibility") in the Product Feature Ideas list: "a 'send
+  selected evidence to a speech document' command" — the last open gap
+  noted in `docs/features/legacy-verbatim-shortcuts.md`'s "Known gaps"
+  section. `reason-editor` adds `engine/speech-document.ts`'s
+  `SpeechDocument`/`SpeechDocumentBlock` model plus
+  `createSpeechDocument`/`buildSpeechDocumentBlock` (null for
+  blank/whitespace-only text)/`appendSpeechDocumentBlock`/
+  `removeSpeechDocumentBlock`/`buildSpeechDocumentText`, and
+  `state/speechDocuments.ts` (mirroring the existing
+  `collapsedHeadings.ts` localStorage-persistence convention — the second
+  such store in this package) for list/get/save/delete plus
+  `findSpeechDocumentByTitle` and `sendSelectionToSpeechDocument`
+  (find-or-create by title, then build+append+save a block). A new
+  `Mod-Shift-S` keyboard shortcut and "→Speech" toolbar button
+  (`verbatim-shortcuts-extension.ts`'s
+  `sendSelectionToSpeechDocumentViaPrompt`, wired into
+  `Toolbar.tsx`) send the live editor selection — tagged with the
+  editor's `exportName` as the block's `sourceLabel` — to a
+  named speech document, prompting for its title and confirming with a
+  short alert. A new `SpeechDocumentsPanel` renders every persisted speech
+  document with its blocks (per-block "Remove"), a plain-text preview, and
+  a per-document "Delete" action, mounted at `/speech-documents`.
+  Vitest-covered in `packages/reason-editor/test/speech-document.test.ts`
+  (model/pure-helper success and blank-text/no-op cases) and
+  `packages/reason-editor/test/speechDocuments.test.ts` (persistence
+  CRUD, corrupt/non-array storage, case-insensitive title matching,
+  find-or-create send semantics, blank-text no-op). No follow-ups remain
+  open on idea #14.
 - **Shared, Ai-Generated Debate Flow — Common Argument Library flow-note
   suggestions.** Closes follow-up (c) named under idea #16 ("Shared,
   Ai-Generated Debate Flow") in the Product Feature Ideas list: "composing
@@ -5104,7 +5134,7 @@ _No task currently in progress._
 
 13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise. _Status: first slices done (see Tracker Status above) — the "friendly challenges" half has `debate-card-search`'s `group-challenges.ts` (`buildGroupChallengeBoard`), and the coaching-space model tying it together has `debate-round`'s `coaching-program.ts` (`buildCoachingProgramBoard`), composing that group-challenge board with the existing Team Collaboration Mode topic sprint and AI Drill Generator drill sets per roster member. A second slice, `coachingPrograms.ts` (see Tracker Status above, "Coaching Program Persistence — localStorage config store"), now persists a `CoachingProgramConfig` to localStorage, closing follow-up (a). A third slice, `CoachingProgramsPanel` (see Tracker Status above, "Coaching Programs and Group Challenges — coaching-program config UI"), now renders a create-program form and every persisted program's roster at `/coaching-programs`, closing the config-management half of follow-up (b). A fourth slice, `GroupChallengesPanel` (see Tracker Status above, "Group Challenges — challenge-board/creation UI"), now renders a create-challenge form and every persisted `GroupChallenge` at `/cards/group-challenges`, closing the "Group Challenge Persistence" entry's follow-up (a). Follow-ups: (b-continued) a dashboard view that renders each program's full `buildCoachingProgramBoard` (still needs persisted challenge win events and topic-sprint contributions in a form the board could read live, plus a roundId-to-contributor mapping for member drills — none of which exist yet, though challenge configs themselves are now persisted and manageable), (c) wiring a member's practice-round setup/feedback (Practice Round Simulator) into the space. Neither of these is started._
 
-14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). A third slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut wiring") wired real keyboard shortcuts into the live `reason-editor` document — `Mod-Shift-K` insert short cite, `Mod-Shift-D` condense to read text, `Alt-ArrowUp`/`Alt-ArrowDown` move a heading's section, `Mod-Shift-E` toggle emphasis (via the schema's own mark rather than the raw-HTML helper) — plus matching "+Cite"/"Condense" toolbar buttons and a Move ↑/↓ button pair per heading in the outline nav panel, closing follow-up (a). Follow-up (b), a "send selected evidence to a speech document" command, remains open — it needs a speech-document send target that doesn't exist yet — not started._
+14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). A third slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut wiring") wired real keyboard shortcuts into the live `reason-editor` document — `Mod-Shift-K` insert short cite, `Mod-Shift-D` condense to read text, `Alt-ArrowUp`/`Alt-ArrowDown` move a heading's section, `Mod-Shift-E` toggle emphasis (via the schema's own mark rather than the raw-HTML helper) — plus matching "+Cite"/"Condense" toolbar buttons and a Move ↑/↓ button pair per heading in the outline nav panel, closing follow-up (a). A fourth slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — send-to-speech-document command") added `reason-editor`'s `engine/speech-document.ts` and `state/speechDocuments.ts`, wiring a `Mod-Shift-S` keyboard shortcut and "→Speech" toolbar button that send the live selection to a named, persisted `SpeechDocument` (find-or-create by title), plus a `SpeechDocumentsPanel` at `/speech-documents`, closing follow-up (b). No follow-ups remain open on this idea._
 
 15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slices done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. A third slice, `FlowAnnotationsPanel` (see Tracker Status above, "Flow-in-Speech Flow Annotations — video-player annotation UI"), now renders a drop-annotation form wired to the `debate-videos` persistent player's live playback position plus every persisted annotation with a "Jump to" action back into the player, at `/annotations`, closing follow-up (a). A fourth slice (see Tracker Status above, "Flow-in-Speech Flow Annotations — `FlowSpreadsheet` annotation affordance") added `flow/annotation-cells.ts` and `flow/AnnotationBadge.tsx`, wiring a per-cell annotation badge (with the same "Jump to" mechanism) into `FlowSpreadsheet` via a new `flow/AnnotationCellRenderer.tsx` and the existing `FirstColumnCellRenderer.tsx`, closing follow-up (b). No follow-ups remain open on this idea._
 
