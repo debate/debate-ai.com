@@ -73,7 +73,45 @@ published again. `state/evidenceLibraryEntries.ts`'s `isEntryLive`/
 `isCardLive`), and `EvidenceLibraryPanel` renders a "Pending review" section
 listing every held-back entry so its author can still find and edit it.
 
+## Reviewer permission gating
+
+Approving, rejecting, and publishing — the three transitions that move a card
+toward or away from actually going live — are gated on the acting reviewer's
+own contribution record. This closes follow-up (b) named under the "🗣️ Peer
+Review System" bullet in TODO.md ("reviewer identity/permission checks").
+
+This repo has no auth/roles system, so rather than fabricating a role model,
+`lib/reviewer-permissions.ts` derives permission from the reviewer's existing
+[Progress Unlocks](./progress-unlocks.md) `UnlockTier` — the same
+"derive eligibility from a contributor's own track record instead of a
+caller-supplied value" approach `lib/tiered-task-routing.ts` already uses for
+task routing. A reviewer needs `MIN_REVIEWER_TIER` (`veteran`: 15
+contributions and 100 helpfulness points, or 8 completed research tasks) to
+take a gated action; below that,
+`InsufficientReviewerPermissionError` is thrown and the stored review is left
+untouched. Submitting, requesting changes, commenting, and resolving comments
+stay open to anyone.
+
+```
+panels/ReviewQueuePanel.tsx ("Your reviewer ID" field)
+  → state/peerReviews.ts's approve/reject/publishPersistedReviewAsReviewer
+  → derivePersistedReviewerTier(reviewerId)
+      → state/contributions.ts's buildPersistedLeaderboard()
+      → lib/reviewer-permissions.ts's deriveReviewerTier
+        → lib/progress-unlocks.ts's computeContributorTier
+  → lib/reviewer-permissions.ts's approve/reject/publishReviewAsReviewer
+    → lib/peer-review.ts's own transition (state machine + blocking-comment
+      checks still apply, after the permission check)
+  → savePeerReview(review)
+```
+
+A reviewer with no persisted contributions at all derives `novice`, not an
+error — the same "every contributor satisfies `novice` at minimum" rule
+`progress-unlocks.ts` already applies.
+
 ## Known gaps
 
-- No reviewer identity/permission checks (no auth/roles in this repo yet),
-  so any visitor can act as any reviewer and take any lifecycle action.
+- Reviewer identity is a free-form id typed into the panel, not an
+  authenticated user — the tier gate reflects that id's contribution record,
+  but nothing stops a visitor from typing someone else's id. A real identity
+  check needs the auth system this repo doesn't have yet.
