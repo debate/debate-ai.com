@@ -46,6 +46,7 @@ import { createFlowEdit, type FlowEdit } from "../flow/shared-flow-sync"
 import { clearFlowEditsForFlow, listFlowEdits, saveFlowEdit } from "../state/flowEdits"
 import { parseBoxPathInput } from "../flow/flow-annotations"
 import { buildFlowNoteFromCard, suggestFlowNotesFromLibrary } from "../flow/flow-note-suggestions"
+import { useFlowSyncPolling } from "../hooks/useFlowSyncPolling"
 
 function newFlowEditId(): string {
   return `edit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -77,6 +78,7 @@ export function FlowEditLogPanel({ onChange }: FlowEditLogPanelProps = {}) {
   const [content, setContent] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [libraryCards, setLibraryCards] = useState<LibraryCard[]>([])
+  const [syncEnabled, setSyncEnabled] = useState(false)
 
   useEffect(() => {
     setEdits(listFlowEdits())
@@ -93,9 +95,20 @@ export function FlowEditLogPanel({ onChange }: FlowEditLogPanelProps = {}) {
     onChange?.()
   }
 
+  const trimmedFlowId = flowId.trim()
+  const parsedFlowId = Number(trimmedFlowId)
+  const syncFlowId =
+    trimmedFlowId && Number.isFinite(parsedFlowId) && Number.isInteger(parsedFlowId)
+      ? parsedFlowId
+      : undefined
+
+  const { status: syncStatus, lastError: syncError, pushEdit } = useFlowSyncPolling(
+    syncFlowId,
+    refresh,
+    { enabled: syncEnabled },
+  )
+
   const handleLog = () => {
-    const trimmedFlowId = flowId.trim()
-    const parsedFlowId = Number(trimmedFlowId)
     if (!trimmedFlowId || !Number.isFinite(parsedFlowId) || !Number.isInteger(parsedFlowId)) {
       setError("Flow ID must be a whole number.")
       return
@@ -119,6 +132,7 @@ export function FlowEditLogPanel({ onChange }: FlowEditLogPanelProps = {}) {
       setContent("")
       setError(null)
       refresh()
+      if (syncEnabled) void pushEdit(edit)
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not log this edit.")
     }
@@ -162,6 +176,22 @@ export function FlowEditLogPanel({ onChange }: FlowEditLogPanelProps = {}) {
           <LabeledField label="Box path" hint="comma-separated, e.g. 0, 1" className="w-32">
             <Input value={boxPathInput} onChange={(e) => setBoxPathInput(e.target.value)} placeholder="0, 1" />
           </LabeledField>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <Button
+            size="sm"
+            variant={syncEnabled ? "default" : "outline"}
+            className="h-6 px-2 text-xs"
+            disabled={syncFlowId === undefined}
+            onClick={() => setSyncEnabled((prev) => !prev)}
+          >
+            {syncEnabled ? "Live sync on" : "Live sync off"}
+          </Button>
+          {syncEnabled ? (
+            <Pill>{syncStatus === "error" ? (syncError ?? "Sync error") : syncStatus}</Pill>
+          ) : (
+            <span>Syncs this Flow ID's edits with teammates while on.</span>
+          )}
         </div>
         <LabeledField label="Content">
           <Textarea

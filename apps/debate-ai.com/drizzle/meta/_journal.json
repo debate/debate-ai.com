@@ -15,6 +15,13 @@
       "when": 1786434519214,
       "tag": "0001_certain_molecule_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1787158411179,
+      "tag": "0002_first_mister_sinister",
+      "breakpoints": true
     }
   ]
 }

@@ -74,3 +74,29 @@ export const documents = sqliteTable(
 );
 
 export type ReasonDocument = typeof documents.$inferSelect;
+
+// Shared, AI-Generated Debate Flow — server-backed live sync transport for
+// `debate-round`'s `FlowEdit` records (see packages/debate-round/src/flow/shared-flow-sync.ts
+// and TODO.md idea #16, follow-up (a)). `boxPath` is a JSON-encoded number
+// array (drizzle's sqlite core has no native array column type). Rows are
+// upserted by their caller-assigned `id` so re-pushing the same edit is a
+// no-op rather than a duplicate.
+export const flowSyncEdits = sqliteTable(
+  "flow_sync_edits",
+  {
+    id: text("id").primaryKey(),
+    flowId: integer("flow_id").notNull(),
+    boxPath: text("box_path").notNull(),
+    authorId: text("author_id").notNull(),
+    content: text("content").notNull().default(""),
+    timestampMs: integer("timestamp_ms").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    flowIdIdx: index("idx_flow_sync_edits_flow_id").on(table.flowId),
+  }),
+);
+
+export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
