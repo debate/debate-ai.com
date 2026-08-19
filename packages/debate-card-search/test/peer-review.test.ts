@@ -140,26 +140,16 @@ describe("getUnresolvedBlockingComments", () => {
 describe("requestChanges", () => {
   it("moves an in_review card to changes_requested", () => {
     const review = submitForReview(createCardReview("card-1"));
-    expect(requestChanges(review, "r1").status).toBe("changes_requested");
-  });
-
-  it("records reviewedBy", () => {
-    const review = submitForReview(createCardReview("card-1"));
-    expect(requestChanges(review, "r1").reviewedBy).toBe("r1");
+    expect(requestChanges(review).status).toBe("changes_requested");
   });
 
   it("throws from a status that can't request changes", () => {
-    expect(() => requestChanges(createCardReview("card-1"), "r1")).toThrow(InvalidReviewTransitionError);
+    expect(() => requestChanges(createCardReview("card-1"))).toThrow(InvalidReviewTransitionError);
   });
 
-  it("throws ReviewerIdRequiredError when no reviewer id is given", () => {
-    const review = submitForReview(createCardReview("card-1"));
-    expect(() => requestChanges(review, "  ")).toThrow(ReviewerIdRequiredError);
-  });
-
-  it("throws SelfReviewNotAllowedError when the reviewer is the card's own author", () => {
+  it("stays open to a review's own author — only approve/reject/publish are self-review-guarded", () => {
     const review = submitForReview(createCardReview("card-1", "alice"));
-    expect(() => requestChanges(review, "alice")).toThrow(SelfReviewNotAllowedError);
+    expect(requestChanges(review).status).toBe("changes_requested");
   });
 });
 

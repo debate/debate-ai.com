@@ -4,9 +4,10 @@
  * and refine submitted cards before they go live"). Models a submitted
  * card's review as an explicit status state machine plus a thread of
  * reviewer comments, and blocks a review from being approved while any
- * blocking comment is still unresolved, and guards every gatekeeping
- * transition (request changes/approve/reject/publish) against a reviewer
- * acting on their own submission (`CardReview.authorId`). This is pure
+ * blocking comment is still unresolved, and guards the transitions that move
+ * a card toward or away from actually going live (approve/reject/publish)
+ * against a reviewer acting on their own submission (`CardReview.authorId`).
+ * This is pure
  * state-transition logic over a caller-supplied `CardReview`; it doesn't
  * persist reviews, notify reviewers, or render a review UI. See the
  * follow-ups noted in TODO.md.
@@ -89,8 +90,8 @@ export function createCardReview(cardId: string, authorId?: string): CardReview 
 }
 
 /**
- * Guards a gatekeeping transition (request changes/approve/reject/publish):
- * a reviewer id is required, and it can't match the review's own `authorId`
+ * Guards a gatekeeping transition (approve/reject/publish): a reviewer id
+ * is required, and it can't match the review's own `authorId`
  * — closes follow-up (b) named under the "🗣️ Peer Review System" bullet in
  * TODO.md ("reviewer identity/permission checks"). A review with no
  * recorded `authorId` (started before this field existed, or by a caller
@@ -153,13 +154,13 @@ export function resolveReviewComment(review: CardReview, commentId: string): Car
 }
 
 /**
- * Explicitly sends an in-review card back to the author for changes.
- * `reviewerId` is required and can't match the review's own `authorId` (see
- * `assertReviewerAllowed`).
+ * Explicitly sends an in-review card back to the author for changes. Stays
+ * open to anyone (no reviewer-id/self-review guard) — only the three
+ * transitions that move a card toward or away from actually going live
+ * (approve/reject/publish) are gated.
  */
-export function requestChanges(review: CardReview, reviewerId: string): CardReview {
-  const trimmed = assertReviewerAllowed(review, reviewerId, "request changes");
-  return transitionReview(review, "changes_requested", trimmed);
+export function requestChanges(review: CardReview): CardReview {
+  return transitionReview(review, "changes_requested");
 }
 
 /**
