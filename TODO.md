@@ -52,6 +52,7 @@ _No task currently in progress._
   `sideKey` picker (or a "generate for every side present in the flow" loop)
   since their persistence records are keyed by `roundId` + `sideKey`, not
   `roundId` alone. Not started.
+  PR: [#257](https://github.com/debate/debate-ai.com/pull/257).
 - **Peer Review System — reviewer permission gating for approve/reject/publish.**
   Closes follow-up (b) named under the "🗣️ Peer Review System" bullet in
   TODO.md's Research Crowdsourcing Organizer Features list ("reviewer
