@@ -113,10 +113,17 @@ outranks one nearly every entry shares. It's a drop-in alternative to
 `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`
 composes this against the persisted repository, added alongside —
 `searchPersistedEvidenceLibrary` stays exported, unchanged, for any other
-caller. The index is rebuilt fresh on every call (this store has no
-write-time hook to invalidate a cached index), which is still the
-query-time win the follow-up asked for: ranking no longer means visiting
-every entry's text, only the ones a query term actually appears in.
+caller. The built index is now cached across calls instead of rebuilt on
+every search (`state/evidenceSearchIndexCache.ts`), so repeated searches —
+e.g. every keystroke in `EvidenceLibraryPanel`'s live-filter effect — reuse
+the same index rather than re-scanning every live entry each time. The
+cache is invalidated by any write that can change which entries the index
+should cover: `evidenceLibraryEntries.ts`'s own
+`saveEvidenceLibraryEntry`/`deleteEvidenceLibraryEntry`, and
+`peerReviews.ts`'s review-lifecycle writes (`savePeerReview`/
+`deletePeerReview`), since a review-status change can move an entry into or
+out of this store's "live" gating. The cache module is split out on its own
+so the two stores can invalidate it without a circular import between them.
 Vitest-covered in
 `packages/debate-card-search/test/evidence-search-index.test.ts` (index
 construction, postings/term-frequency correctness, TF-IDF ranking including
@@ -125,7 +132,10 @@ combination, and candidate-set parity against `searchEvidenceLibrary` on a
 shared fixture) and cases in
 `packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (mirroring
 `searchPersistedEvidenceLibrary`'s own test suite: peer-review gating,
-empty-repository, kind filtering, empty-text-query).
+empty-repository, kind filtering, empty-text-query; plus a dedicated
+"index cache" suite asserting the cached index is reused by reference
+across repeated searches and rebuilt — a new object — after each kind of
+invalidating write).
 
 `EvidenceLibraryPanel` now calls `searchPersistedEvidenceLibraryWithIndex`
 instead of the original keyword-overlap search, closing this follow-up — the
@@ -220,10 +230,12 @@ card submitted here now feeds that dashboard directly.
 
 ## Known gaps
 
-- A real inverted-index/TF-IDF search now exists and `EvidenceLibraryPanel`
-  is wired to it (see "Real search index" above), but the index is still
-  rebuilt from scratch on every call rather than cached and incrementally
-  updated on write.
+- A real inverted-index/TF-IDF search now exists, `EvidenceLibraryPanel` is
+  wired to it, and the built index is now cached across calls rather than
+  rebuilt on every search (see "Real search index" above) — but it's a
+  cache-and-rebuild-on-invalidate strategy, not true incremental indexing;
+  any invalidating write still rebuilds the whole index from scratch on the
+  next search rather than patching it in place.
 - No browser extension exists — the "Check this page" box is a manual,
   paste-the-URL stand-in for what a future extension would run
   automatically against the current tab. The reuse-check logic itself

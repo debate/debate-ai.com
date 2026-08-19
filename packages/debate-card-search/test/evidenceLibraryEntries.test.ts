@@ -17,9 +17,10 @@ import {
 import { listRevisionHistory } from "../src/state/revisionHistory";
 import { saveContribution } from "../src/state/contributions";
 import { approveReview, createCardReview, publishReview, submitForReview } from "../src/lib/peer-review";
-import { savePeerReview } from "../src/state/peerReviews";
+import { deletePeerReview, savePeerReview } from "../src/state/peerReviews";
 import { buildEvidenceSearchFormQuery } from "../src/lib/shared-evidence-library";
 import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
+import { getCachedEvidenceSearchIndex, invalidateEvidenceSearchIndexCache } from "../src/state/evidenceSearchIndexCache";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -64,6 +65,7 @@ const SOLVENCY_BLOCK: EvidenceLibraryEntry = {
 
 beforeEach(() => {
   (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
+  invalidateEvidenceSearchIndexCache();
 });
 
 describe("listEvidenceLibraryEntries", () => {
@@ -222,6 +224,62 @@ describe("searchPersistedEvidenceLibraryWithIndex", () => {
 
     const results = searchPersistedEvidenceLibraryWithIndex({});
     expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+  });
+});
+
+describe("searchPersistedEvidenceLibraryWithIndex's index cache", () => {
+  it("reuses the same built index across repeated searches when nothing writes in between", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+
+    searchPersistedEvidenceLibraryWithIndex({ text: "warming" });
+    const indexAfterFirstSearch = getCachedEvidenceSearchIndex();
+    expect(indexAfterFirstSearch).not.toBeNull();
+
+    searchPersistedEvidenceLibraryWithIndex({ text: "warming" });
+    expect(getCachedEvidenceSearchIndex()).toBe(indexAfterFirstSearch);
+  });
+
+  it("rebuilds the index after saveEvidenceLibraryEntry, reflecting the newly saved entry", () => {
+    searchPersistedEvidenceLibraryWithIndex({});
+    const indexBeforeSave = getCachedEvidenceSearchIndex();
+
+    saveEvidenceLibraryEntry(WARMING_CARD);
+
+    const results = searchPersistedEvidenceLibraryWithIndex({});
+    expect(getCachedEvidenceSearchIndex()).not.toBe(indexBeforeSave);
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+  });
+
+  it("rebuilds the index after deleteEvidenceLibraryEntry, no longer including the deleted entry", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    searchPersistedEvidenceLibraryWithIndex({});
+    const indexBeforeDelete = getCachedEvidenceSearchIndex();
+
+    deleteEvidenceLibraryEntry("entry-1");
+
+    const results = searchPersistedEvidenceLibraryWithIndex({});
+    expect(getCachedEvidenceSearchIndex()).not.toBe(indexBeforeDelete);
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-2"]);
+  });
+
+  it("rebuilds the index after a peer-review write, reflecting the entry's changed live gating", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    searchPersistedEvidenceLibraryWithIndex({});
+    const indexBeforeReview = getCachedEvidenceSearchIndex();
+
+    savePeerReview(submitForReview(createCardReview("entry-1")));
+
+    const resultsWhileInReview = searchPersistedEvidenceLibraryWithIndex({});
+    expect(getCachedEvidenceSearchIndex()).not.toBe(indexBeforeReview);
+    expect(resultsWhileInReview).toEqual([]);
+
+    const indexWhileInReview = getCachedEvidenceSearchIndex();
+    deletePeerReview("entry-1");
+
+    const resultsAfterReviewDeleted = searchPersistedEvidenceLibraryWithIndex({});
+    expect(getCachedEvidenceSearchIndex()).not.toBe(indexWhileInReview);
+    expect(resultsAfterReviewDeleted.map((result) => result.entry.id)).toEqual(["entry-1"]);
   });
 });
 

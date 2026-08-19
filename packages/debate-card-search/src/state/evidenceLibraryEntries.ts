@@ -36,6 +36,7 @@
 import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult, PageReuseCheckResult } from "../lib/shared-evidence-library";
 import { buildEvidenceEntryRevision, checkPageForExistingCards, searchEvidenceLibrary } from "../lib/shared-evidence-library";
 import { buildEvidenceSearchIndex, searchEvidenceLibraryWithIndex } from "../lib/evidence-search-index";
+import { getCachedEvidenceSearchIndex, invalidateEvidenceSearchIndexCache, setCachedEvidenceSearchIndex } from "./evidenceSearchIndexCache";
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library";
 import { buildArgumentLibrary, buildLibraryCardsFromContributions, buildTagCollections } from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
@@ -82,11 +83,13 @@ export function saveEvidenceLibraryEntry(entry: EvidenceLibraryEntry): void {
     entries[index] = entry;
   }
   writeAll(entries);
+  invalidateEvidenceSearchIndexCache();
 }
 
 /** Deletes a persisted evidence library entry by id; a no-op if it isn't stored. */
 export function deleteEvidenceLibraryEntry(id: string): void {
   writeAll(readAll().filter((entry) => entry.id !== id));
+  invalidateEvidenceSearchIndexCache();
 }
 
 /**
@@ -145,21 +148,28 @@ export function searchPersistedEvidenceLibrary(query: EvidenceSearchQuery = {}):
 }
 
 /**
- * Searches the persisted evidence repository via a freshly built
+ * Searches the persisted evidence repository via a cached
  * `EvidenceSearchIndex` — the real, postings-list-backed search index named
  * in follow-up (c) under the "📋 Shared Evidence Library" bullet in
  * TODO.md, rather than `searchPersistedEvidenceLibrary`'s full re-scan on
  * every call. Only "live" entries are indexed (see `isEntryLive`), matching
  * `searchPersistedEvidenceLibrary`'s own gating, so a card still held back
  * by an in-progress peer review doesn't appear in results here either. The
- * index itself is rebuilt on every call rather than cached — this store has
- * no lifecycle hook to invalidate a cached index on write, so a fresh build
- * is the correctness-first choice; caching the index across calls is a
- * further follow-up once write volume makes that matter.
+ * index is built once and reused across calls (see
+ * `state/evidenceSearchIndexCache.ts`) rather than rebuilt on every search —
+ * this store's own writes (`saveEvidenceLibraryEntry`/
+ * `deleteEvidenceLibraryEntry`) and `peerReviews.ts`'s review-lifecycle
+ * writes (which change an entry's "live" gating) invalidate the cache, so a
+ * search after either kind of write always rebuilds against current data.
  */
 export function searchPersistedEvidenceLibraryWithIndex(query: EvidenceSearchQuery = {}): EvidenceSearchResult[] {
-  const liveEntries = readAll().filter((entry) => isEntryLive(entry.id));
-  return searchEvidenceLibraryWithIndex(buildEvidenceSearchIndex(liveEntries), query);
+  let index = getCachedEvidenceSearchIndex();
+  if (!index) {
+    const liveEntries = readAll().filter((entry) => isEntryLive(entry.id));
+    index = buildEvidenceSearchIndex(liveEntries);
+    setCachedEvidenceSearchIndex(index);
+  }
+  return searchEvidenceLibraryWithIndex(index, query);
 }
 
 /**
