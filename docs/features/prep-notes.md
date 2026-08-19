@@ -45,7 +45,16 @@ Assigning/unassigning a note:
 panels/PrepNotesPanel.tsx
   → assignPersistedPrepNote(id, assignedToId | null, now)  — state/prepNotes.ts
       (applies flow/strategy-sync-notes.ts's assignNote and saves it)
+      (on a real assignment, also calls recordPrepNoteAssignedNotification —
+       state/prepNoteNotifications.ts — to notify the new assignee)
   → panel re-reads buildPrepNotesPanelView() to refresh
+
+Notifying an assignee (closes follow-up (b), see "Notifications" below):
+state/prepNotes.ts's assignPersistedPrepNote(id, assignedToId, now)
+  → recordPrepNoteAssignedNotification(id, note, assignedToId, now)  — state/prepNoteNotifications.ts
+      (builds flow/prep-note-notifications.ts's PrepNoteNotification via
+       createPrepNoteAssignedNotification and saves it — skipped on an
+       unassignment, i.e. assignedToId === null)
 ```
 
 Every note create/status-update/assign rule already existed and was
@@ -56,13 +65,36 @@ the persisted notes by status for the panel) and `nextPrepNoteStatus` (the
 panel's status-cycle order) — rather than introducing new mutation logic.
 Vitest-covered in `packages/debate-round/test/prepNotes.test.ts`.
 
+## Notifications
+
+Closes follow-up (b), "an assignee notification once a notification system
+exists." This is the first notification system in this repo, scoped
+narrowly to the one event that follow-up named — a `PrepNote` being
+assigned to a teammate — rather than a general-purpose system for events
+that don't exist yet.
+
+- **Route:** `/notifications`
+- **Nav:** the global dock's Settings menu → **Notifications**
+- **Model:** `flow/prep-note-notifications.ts`'s `PrepNoteNotification`
+  (recipient id, the note's text/author at assignment time, read status).
+  There's no auth/identity system in this repo, so a recipient is a
+  free-form id — the same `assignedToId` a `PrepNote` is assigned to.
+- **Persistence:** `state/prepNoteNotifications.ts` (localStorage:
+  `prepNoteNotifications`), wired directly into `assignPersistedPrepNote`
+  so a real assignment always records one — no caller has to remember to.
+- **UI:** `panels/PrepNoteNotificationsPanel.tsx` asks for a recipient id
+  (remembered in localStorage across visits) and renders that recipient's
+  notifications newest first, with a "Mark read" action per unread
+  notification.
+
 ## Known gaps
 
-- No assignee-notification system yet (follow-up (b) — no notification
-  system exists in this repo).
 - No "jump to argument" link from a note back to its flow box — this panel
   is cross-flow and doesn't mount a live `Flow`, so `resolvePrepNoteBox`
   isn't used here.
 - No note-creation UI here — a note is still created against a specific
   flow box elsewhere (e.g. a future flow-view affordance); this panel only
   surfaces and updates existing notes.
+- Notifications are in-app only (no email/push/browser notification) and
+  cover prep-note assignment only — no other event in this repo creates
+  one yet.

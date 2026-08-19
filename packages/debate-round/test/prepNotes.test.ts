@@ -10,6 +10,7 @@ import {
   savePrepNote,
   updatePersistedPrepNoteStatus,
 } from "../src/state/prepNotes";
+import { listNotificationsForRecipient } from "../src/state/prepNoteNotifications";
 import type { PrepNote } from "../src/flow/strategy-sync-notes";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -156,7 +157,24 @@ describe("assignPersistedPrepNote", () => {
     expect(getPrepNote("note-1")).toEqual({ ...OPEN_NOTE, assignedToId: "carol", updatedAt: 150 });
   });
 
-  it("unassigns the note when assignedToId is null and persists it", () => {
+  it("records a notification for the new assignee", () => {
+    savePrepNote(OPEN_NOTE);
+    assignPersistedPrepNote("note-1", "carol", 150);
+
+    const notifications = listNotificationsForRecipient("carol");
+    expect(notifications).toHaveLength(1);
+    expect(notifications[0]).toEqual({
+      id: "note-1-notif-150",
+      recipientId: "carol",
+      prepNoteId: "note-1",
+      noteText: OPEN_NOTE.text,
+      noteAuthorId: OPEN_NOTE.authorId,
+      createdAt: 150,
+      read: false,
+    });
+  });
+
+  it("unassigns the note when assignedToId is null and persists it, without recording a notification", () => {
     const assigned: PrepNote = { ...OPEN_NOTE, assignedToId: "carol" };
     savePrepNote(assigned);
     const updated = assignPersistedPrepNote("note-1", null, 200);
@@ -164,6 +182,7 @@ describe("assignPersistedPrepNote", () => {
     expect(updated).toEqual({ ...OPEN_NOTE, updatedAt: 200 });
     expect(updated?.assignedToId).toBeUndefined();
     expect(getPrepNote("note-1")).toEqual({ ...OPEN_NOTE, updatedAt: 200 });
+    expect(listNotificationsForRecipient("carol")).toEqual([]);
   });
 
   it("returns undefined and leaves storage untouched when the id isn't stored", () => {
@@ -172,6 +191,7 @@ describe("assignPersistedPrepNote", () => {
 
     expect(updated).toBeUndefined();
     expect(listPrepNotes()).toEqual([OTHER_FLOW_NOTE]);
+    expect(listNotificationsForRecipient("carol")).toEqual([]);
   });
 });
 

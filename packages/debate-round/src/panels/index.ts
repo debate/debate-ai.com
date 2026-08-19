@@ -18,6 +18,7 @@ export { JudgeDecisionPanel } from "./JudgeDecisionPanel";
 export { OpponentTeamProfilesPanel } from "./OpponentTeamProfilesPanel";
 export { PracticeRoundSimulatorPanel } from "./PracticeRoundSimulatorPanel";
 export { PreRoundBriefingsPanel } from "./PreRoundBriefingsPanel";
+export { PrepNoteNotificationsPanel } from "./PrepNoteNotificationsPanel";
 export { PrepNotesPanel } from "./PrepNotesPanel";
 export { SharedFlowSyncPanel, type SharedFlowSyncPanelProps } from "./SharedFlowSyncPanel";
 export { StandingsPanel } from "./StandingsPanel";
