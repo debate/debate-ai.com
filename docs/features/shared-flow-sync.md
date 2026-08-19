@@ -134,13 +134,52 @@ ordering, "(cleared)" fallback), and a new `listFlowEditsForBox` describe
 block in `packages/debate-round/test/flowEdits.test.ts` (exact box-path
 match, excluding prefix/extension paths and other flows).
 
+## Common Argument Library flow-note suggestions
+
+As a contributor types a `FlowEdit`'s **Content** in `FlowEditLogPanel`, a
+"Suggested from Common Argument Library" list scores the in-progress text
+against every persisted `LibraryCard` (`debate-card-search`'s Common
+Argument Library — the combined Shared Evidence Library plus tagged
+Contributions Feed corpus) and shows the closest matches with an
+**Insert** action per suggestion. Clicking **Insert** fills the Content
+field with that card's formatted note (`argBlock — caseArea (topic)
+[tags]`) — still fully editable before logging, never applied to the box
+automatically, keeping a human in control of the actual flow.
+
+This closes follow-up (c) under idea #16 ("Shared, Ai-Generated Debate
+Flow") in `TODO.md`: "composing the Common Argument Library's tagged card
+corpus to suggest (not auto-apply) a pre-filled flow note from matching
+evidence." It adds:
+
+- `flow/flow-note-suggestions.ts`: `deriveLibraryCardKeywords` (mirrors
+  `debate-card-search`'s `llm-card-scoring.ts#deriveArgBlockKeywords` —
+  each of a card's `argBlock`/`topic`/`caseArea`/`tags` phrases kept whole
+  plus its individual words over two characters),
+  `suggestFlowNotesFromLibrary` (scores every card against the query by
+  reusing `scoreRelevance` directly, dropping zero-score cards and capping
+  at a limit), and `buildFlowNoteFromCard` (the inserted note's format).
+- `debate-card-search`'s `state/evidenceLibraryEntries.ts`:
+  `listCombinedPersistedLibraryCards`, the same evidence-library +
+  tagged-contributions corpus `buildCombinedPersistedArgumentLibrary`
+  already composed, now exposed flat for a caller that scores/searches
+  individual cards instead of browsing the organized library.
+- `panels/FlowEditLogPanel.tsx`: loads the combined corpus on mount and
+  renders the suggestion list, recomputed as the Content field changes.
+
+Vitest-covered in `packages/debate-round/test/flow-note-suggestions.test.ts`
+(keyword derivation, blank-query/no-match/matching/ranking/limit/tie-break
+cases for `suggestFlowNotesFromLibrary`, and `buildFlowNoteFromCard`'s
+formatting with and without tags) and a new
+`listCombinedPersistedLibraryCards` describe block in
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`.
+
 ## Known gaps
 
 - Still no live transport (e.g. WebSocket) pushing a teammate's edits here
   automatically — a contributor types theirs in, the same way
   `FlowAnnotationsPanel`'s drop-annotation form works for annotations.
   This is follow-up (a) under idea #16 ("Shared, Ai-Generated Debate
-  Flow") in `TODO.md`.
+  Flow") in `TODO.md` — the only follow-up still open on this idea.
 - The `EditBadge` reads a box's edits from `localStorage` at cell render
   time; it does not live-update if another tab logs a new edit while the
   grid is open, and the badge doesn't refresh in place after logging one
@@ -149,6 +188,7 @@ match, excluding prefix/extension paths and other flows).
   annotation badge.
 - No collaborative/live sync — edits are local `localStorage` only, same
   as every other persisted record in this repo today.
-- Follow-up (c) — composing the Common Argument Library's tagged card
-  corpus to suggest a pre-filled flow note from matching evidence — is not
-  started.
+- The flow-note suggestion query is the Content field's own in-progress
+  text, not the box's existing content or the flow's topic — a
+  contributor gets suggestions only once they've started typing something
+  for the matcher to score against.

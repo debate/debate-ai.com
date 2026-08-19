@@ -4,6 +4,7 @@ import {
   buildPersistedArgumentLibrary,
   deleteEvidenceLibraryEntry,
   getEvidenceLibraryEntry,
+  listCombinedPersistedLibraryCards,
   listEvidenceLibraryEntries,
   saveEvidenceLibraryEntry,
   saveEvidenceLibraryEntryRevision,
@@ -225,6 +226,40 @@ describe("buildCombinedPersistedArgumentLibrary", () => {
   it("excludes a contribution missing topic or caseArea", () => {
     saveContribution({ ...TAGGED_CONTRIBUTION, id: "contrib-2", topic: undefined });
     expect(buildCombinedPersistedArgumentLibrary()).toEqual({ topicFolders: [], tagCollections: [] });
+  });
+});
+
+describe("listCombinedPersistedLibraryCards", () => {
+  const TAGGED_CONTRIBUTION: AttributedContribution = {
+    id: "contrib-1",
+    contributorId: "carol",
+    kind: "card",
+    likes: 0,
+    saves: 0,
+    qualitySignals: [0.5],
+    reviewerEndorsements: [],
+    topic: "Energy Policy",
+    caseArea: "Case",
+    tags: ["solvency"],
+    argBlock: "Solvency",
+  };
+
+  it("returns an empty list when nothing is stored in either store", () => {
+    expect(listCombinedPersistedLibraryCards()).toEqual([]);
+  });
+
+  it("flattens persisted evidence-library entries and tagged contributions into one list", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveContribution(TAGGED_CONTRIBUTION);
+
+    const cards = listCombinedPersistedLibraryCards();
+    expect(cards).toHaveLength(2);
+    expect(cards.map((card) => card.id)).toEqual(["entry-1", "contrib-1"]);
+  });
+
+  it("excludes a contribution missing topic or caseArea", () => {
+    saveContribution({ ...TAGGED_CONTRIBUTION, id: "contrib-2", topic: undefined });
+    expect(listCombinedPersistedLibraryCards()).toEqual([]);
   });
 });
 
