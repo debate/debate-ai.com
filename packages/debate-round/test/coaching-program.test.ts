@@ -9,12 +9,16 @@ import {
   type TrackedArgument,
 } from "debate-card-search/src/lib/topic-coverage";
 import type { ChallengeWinEvent, GroupChallenge } from "debate-card-search/src/lib/group-challenges";
+import type { Drill } from "../src/flow/drill-generator";
 import {
   buildCoachingProgramBoard,
   buildCoachingProgramSummaryText,
   buildMemberDrillSummaryText,
+  resolveMemberDrillsFromAssignments,
   type CoachingProgramConfig,
   type CoachingProgramMemberFlow,
+  type RoundContributorAssignment,
+  type RoundDrillSetLookup,
 } from "../src/round/coaching-program";
 
 const NOW = Date.parse("2026-08-10T00:00:00Z");
@@ -350,5 +354,52 @@ describe("buildMemberDrillSummaryText", () => {
     expect(buildMemberDrillSummaryText(board, "sam")).toBe(
       "No practice round flowed yet — no drills available.",
     );
+  });
+});
+
+describe("resolveMemberDrillsFromAssignments", () => {
+  const OVERVIEW_DRILL: Drill = { kind: "overview", rowIndex: null, prompt: "Weigh the round." };
+  const COLLAPSE_DRILL: Drill = { kind: "collapse", rowIndex: 0, prompt: "Collapse to the case." };
+
+  it("resolves a roster member's assigned round to its persisted drill set", () => {
+    const assignments: RoundContributorAssignment[] = [
+      { programId: "varsity", contributorId: "alex", roundId: "round-1" },
+    ];
+    const drillSets: RoundDrillSetLookup[] = [{ roundId: "round-1", drills: [OVERVIEW_DRILL] }];
+
+    expect(resolveMemberDrillsFromAssignments(assignments, drillSets, ["alex", "sam"])).toEqual({
+      alex: [OVERVIEW_DRILL],
+    });
+  });
+
+  it("pools drills across every persisted drill-set record sharing a roundId (one per side)", () => {
+    const assignments: RoundContributorAssignment[] = [
+      { programId: "varsity", contributorId: "alex", roundId: "round-1" },
+    ];
+    const drillSets: RoundDrillSetLookup[] = [
+      { roundId: "round-1", drills: [OVERVIEW_DRILL] },
+      { roundId: "round-1", drills: [COLLAPSE_DRILL] },
+    ];
+
+    expect(resolveMemberDrillsFromAssignments(assignments, drillSets, ["alex"])).toEqual({
+      alex: [OVERVIEW_DRILL, COLLAPSE_DRILL],
+    });
+  });
+
+  it("ignores an assignment for a contributor outside the roster", () => {
+    const assignments: RoundContributorAssignment[] = [
+      { programId: "varsity", contributorId: "jordan", roundId: "round-1" },
+    ];
+    const drillSets: RoundDrillSetLookup[] = [{ roundId: "round-1", drills: [OVERVIEW_DRILL] }];
+
+    expect(resolveMemberDrillsFromAssignments(assignments, drillSets, ["alex"])).toEqual({});
+  });
+
+  it("skips an assignment whose roundId has no persisted drill set yet", () => {
+    const assignments: RoundContributorAssignment[] = [
+      { programId: "varsity", contributorId: "alex", roundId: "round-missing" },
+    ];
+
+    expect(resolveMemberDrillsFromAssignments(assignments, [], ["alex"])).toEqual({});
   });
 });

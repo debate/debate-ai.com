@@ -22,6 +22,10 @@ status block:
   contributors, open follow-up notes)
 - Each open group challenge's live standings line
 - How many members currently have a generated drill set
+- A "member drill assignments" list — which roster members are assigned to
+  which `roundId`, with an "Unassign" action per entry — and an "Assign a
+  round to a member" form (member select + round ID input) that resolves the
+  assigned round's already-persisted drill set into that member's board entry
 
 ## Data flow
 
@@ -42,8 +46,18 @@ panels/CoachingProgramsPanel.tsx
       → listChallengeWinEvents()                                — debate-card-search's state/challengeWinEvents.ts
       → buildCoachingProgramBoard({ program, topicSprint, challenges, contributions, winEvents, memberFlows: [] })
                                                                   — round/coaching-program.ts
+      → listRoundContributorAssignments(programId)              — state/roundContributorAssignments.ts
+      → listDrillSets()                                         — state/drillSets.ts
+      → resolveMemberDrillsFromAssignments(assignments, drillSets, program.memberIds)
+                                                                  — round/coaching-program.ts
+                                                                  (merged into board.memberDrills; a live
+                                                                  memberFlow's drills win over an assigned
+                                                                  round's for the same contributor)
   → buildCoachingProgramSummaryText(board)  — round/coaching-program.ts
-  → panel renders it as a status block
+  → panel renders it as a status block, plus a "member drill assignments" list with an
+    "Assign a round to a member" action (member select + round ID) wired to
+    assignRoundToContributor, and an "Unassign" action per assignment wired to
+    unassignRoundFromContributor — both in state/roundContributorAssignments.ts
 ```
 
 This closes the topic-sprint/group-challenge half of the "(b-continued)"
@@ -59,9 +73,9 @@ contribution feed, or win-event list itself.
 
 ## Known gaps
 
-- Member drills stay empty. `buildCoachingProgramBoard` needs a `roundId`-
-  to-contributor mapping (a member's already-flowed practice round) to
-  generate a drill set for them, and no such mapping is persisted anywhere in
-  this repo yet — `buildPersistedCoachingProgramBoard` always passes an empty
-  `memberFlows` list. This is the remaining half of the "(b-continued)"
-  follow-up under idea #13 in `TODO.md`, not started.
+- None open — the "(b-continued)" follow-up under idea #13 in `TODO.md` is
+  now fully closed. A member's drill set can also only come from an assigned
+  round's already-*persisted* `DrillSetRecord` (via `state/drillSets.ts`,
+  itself populated from `DrillSetsPanel`/`/drills`); there's still no UI path
+  from this panel to generate a fresh drill set for an unflowed round — a
+  coach assigns a round only after its drill set already exists.

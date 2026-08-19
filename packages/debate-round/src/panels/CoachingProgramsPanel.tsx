@@ -15,11 +15,14 @@
  * `buildCoachingProgramBoard` for a chosen topic, composed entirely from
  * persisted state via the new `state/persistedCoachingProgramBoard.ts`'s
  * `buildPersistedCoachingProgramBoard` — the topic sprint (research, quests,
- * task routing, progress, notes), the group-challenge standings, and (once a
- * `roundId`-to-contributor mapping exists — still a further, separate
- * follow-up) member drill sets. This closes the topic-sprint/group-challenge
- * half of the "(b-continued)" follow-up named under idea #13 in TODO.md; the
- * member-drill half stays open, same as noted there.
+ * task routing, progress, notes), the group-challenge standings, and each
+ * member's drill set, resolved from a roster member's assigned `roundId` via
+ * `state/roundContributorAssignments.ts`. The open board also gets an
+ * "Assign a round to a member" action that calls that store's
+ * `assignRoundToContributor`, with an "Unassign" action per current
+ * assignment — mirroring `debate-card-search`'s `GroupChallengesPanel`'s
+ * "Record a win" inline-form convention. This closes the "(b-continued)"
+ * follow-up named under idea #13 in TODO.md in full.
  *
  * @module panels/CoachingProgramsPanel
  */
@@ -37,7 +40,17 @@ import {
   saveCoachingProgram,
 } from "../state/coachingPrograms"
 import { buildPersistedCoachingProgramBoard } from "../state/persistedCoachingProgramBoard"
-import { buildCoachingProgramSummaryText, type CoachingProgramBoard, type CoachingProgramConfig } from "../round/coaching-program"
+import {
+  assignRoundToContributor,
+  listRoundContributorAssignments,
+  unassignRoundFromContributor,
+} from "../state/roundContributorAssignments"
+import {
+  buildCoachingProgramSummaryText,
+  type CoachingProgramBoard,
+  type CoachingProgramConfig,
+  type RoundContributorAssignment,
+} from "../round/coaching-program"
 
 type ProgramDraft = { name: string; memberIds: string }
 
@@ -58,6 +71,11 @@ export function CoachingProgramsPanel() {
   const [openProgramId, setOpenProgramId] = useState<string | null>(null)
   const [topic, setTopic] = useState("")
   const [board, setBoard] = useState<CoachingProgramBoard | null>(null)
+  const [assignments, setAssignments] = useState<RoundContributorAssignment[]>([])
+  const [assignDraft, setAssignDraft] = useState<{ contributorId: string; roundId: string }>({
+    contributorId: "",
+    roundId: "",
+  })
 
   useEffect(() => {
     setPrograms(buildCoachingProgramsPanelView())
@@ -72,12 +90,29 @@ export function CoachingProgramsPanel() {
       return
     }
     setBoard(buildPersistedCoachingProgramBoard(openProgramId, trimmedTopic, Date.now()) ?? null)
-  }, [openProgramId, topic])
+  }, [openProgramId, topic, assignments])
 
   const handleToggleBoard = (id: string) => {
+    const opening = openProgramId !== id
     setOpenProgramId((prev) => (prev === id ? null : id))
     setTopic("")
     setBoard(null)
+    setAssignDraft({ contributorId: "", roundId: "" })
+    setAssignments(opening ? listRoundContributorAssignments(id) : [])
+  }
+
+  const handleAssignRound = (programId: string) => {
+    const contributorId = assignDraft.contributorId.trim()
+    const roundId = assignDraft.roundId.trim()
+    if (!contributorId || !roundId) return
+    assignRoundToContributor({ programId, contributorId, roundId })
+    setAssignments(listRoundContributorAssignments(programId))
+    setAssignDraft({ contributorId: "", roundId: "" })
+  }
+
+  const handleUnassignRound = (programId: string, contributorId: string) => {
+    unassignRoundFromContributor(programId, contributorId)
+    setAssignments(listRoundContributorAssignments(programId))
   }
 
   const handleSubmit = () => {
@@ -195,6 +230,60 @@ export function CoachingProgramsPanel() {
                       {buildCoachingProgramSummaryText(board)}
                     </p>
                   )}
+
+                  <div className="space-y-2 border-t border-border pt-3">
+                    <p className="text-xs font-medium text-foreground">Member drill assignments</p>
+                    {assignments.length === 0 ? (
+                      <p className="text-xs text-muted-foreground">No rounds assigned to members yet.</p>
+                    ) : (
+                      <ul className="space-y-1 text-xs text-muted-foreground">
+                        {assignments.map((assignment) => (
+                          <li key={assignment.contributorId} className="flex items-center justify-between gap-2">
+                            <span>
+                              {assignment.contributorId} → round <code>{assignment.roundId}</code>
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleUnassignRound(program.id, assignment.contributorId)}
+                            >
+                              Unassign
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <div className="flex items-end gap-2">
+                      <div className="flex-1 space-y-1.5">
+                        <Label htmlFor={`assign-contributor-${program.id}`}>Member</Label>
+                        <select
+                          id={`assign-contributor-${program.id}`}
+                          className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
+                          value={assignDraft.contributorId}
+                          onChange={(e) => setAssignDraft((prev) => ({ ...prev, contributorId: e.target.value }))}
+                        >
+                          <option value="">Select a member…</option>
+                          {program.memberIds.map((memberId) => (
+                            <option key={memberId} value={memberId}>
+                              {memberId}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex-1 space-y-1.5">
+                        <Label htmlFor={`assign-round-${program.id}`}>Round ID</Label>
+                        <Input
+                          id={`assign-round-${program.id}`}
+                          value={assignDraft.roundId}
+                          onChange={(e) => setAssignDraft((prev) => ({ ...prev, roundId: e.target.value }))}
+                          placeholder="round-42"
+                        />
+                      </div>
+                      <Button size="sm" onClick={() => handleAssignRound(program.id)}>
+                        Assign
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

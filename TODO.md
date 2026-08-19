@@ -6,6 +6,57 @@
 _No task currently in progress._
 
 ### Completed
+- **Coaching Programs and Group Challenges — `roundId`-to-contributor
+  assignment for member drills.** Closes the remaining half of the
+  "(b-continued)" follow-up named under idea #13 ("Coaching Programs and
+  Group Challenges") in TODO.md's Product Feature Ideas list, and the "Known
+  gaps" bullet in `docs/features/coaching-programs.md`: `buildCoachingProgramBoard`
+  needed a `roundId`-to-contributor mapping so a member's already-flowed
+  practice round could populate `CoachingProgramBoard.memberDrills`, and no
+  such mapping was persisted anywhere. `packages/debate-round/src/round/coaching-program.ts`
+  adds a `RoundContributorAssignment` type and a pure
+  `resolveMemberDrillsFromAssignments` helper that resolves a roster's
+  `{programId, contributorId, roundId}` assignments against persisted
+  `state/drillSets.ts` drill-set records (pooling every record sharing a
+  `roundId`, since a round can have one drill set per side) — reusing
+  already-generated `Drill`s rather than requiring a raw `Flow`, unlike the
+  existing `memberFlows` path. A new
+  `packages/debate-round/src/state/roundContributorAssignments.ts` persists
+  these assignments to localStorage (one active assignment per
+  `(programId, contributorId)` pair — reassigning a member replaces their
+  prior one), mirroring `state/coachingPrograms.ts`'s CRUD convention.
+  `state/persistedCoachingProgramBoard.ts` now merges every persisted
+  assignment's resolved drills into the composed board's `memberDrills`,
+  with a live, caller-supplied `memberFlows` entry still taking precedence
+  over an assigned round's drills for the same contributor. `CoachingProgramsPanel.tsx`'s
+  open-board section gains a "member drill assignments" list (with an
+  "Unassign" action per entry) and an "Assign a round to a member" form
+  (a member select built from the program's roster + a round ID input),
+  mirroring `debate-card-search`'s `GroupChallengesPanel`'s "Record a win"
+  inline-form convention — calling `assignRoundToContributor`/
+  `unassignRoundFromContributor`. This closes the "(b-continued)" follow-up
+  under idea #13 in full; the remaining idea #13 follow-up, (c) wiring a
+  member's Practice Round Simulator setup/feedback into the space, stays
+  open and not started. Vitest-covered in
+  `packages/debate-round/test/coaching-program.test.ts`
+  (`resolveMemberDrillsFromAssignments`: resolves an assigned round to its
+  drill set, pools drills across every record sharing a roundId, ignores an
+  assignment for a contributor outside the roster, skips an assignment with
+  no persisted drill set), a new
+  `packages/debate-round/test/roundContributorAssignments.test.ts` (empty/
+  corrupt/non-array storage, programId scoping, upsert-replaces-prior-
+  assignment, cross-program independence, unassign and its no-op/scoping
+  cases), and additions to
+  `packages/debate-round/test/persistedCoachingProgramBoard.test.ts`
+  (an assignment resolves into `memberDrills`, an out-of-roster assignment
+  is ignored, a live `memberFlow`'s generated drills win over an assigned
+  round's persisted ones). Docs updated at
+  `docs/features/coaching-programs.md` (data-flow diagram, "What it shows,"
+  and "Known gaps" closed out). Verified from a clean install:
+  `bun install` (2050 packages), `bun run test` (150 files / 2050 tests, all
+  pass), `bun run typecheck` (11 in-scope packages pass), and `bun run build`
+  (both buildable packages pass, `/coaching-programs` appears in the built
+  route list) — no repo-wide `lint` script exists. Completed 2026-08-19.
 - **Video-Lecture-Training Coach AI — document-upload text extraction.**
   Closes the "document" half of follow-up (a) named in
   `team-coach-materials.ts`'s file doc-comment for idea #8
@@ -5456,7 +5507,7 @@ _No task currently in progress._
 
 12. **Pre-Round Intelligence Panel** — On every round-information page, combine live tournament results, prior pairings, opponent records, judge paradigms, event details, room assignments, and relevant team prep notes into one focused pre-round briefing. _Status: first slice done (see Tracker Status above) — `debate-round` now has `buildPreRoundBriefing`/`summarizePriorMeetings`/`buildPreRoundBriefingText` for composing an opponent-scouting summary, a judge-tendency summary, a head-to-head prior-meetings record, and team prep notes into one structured, renderable briefing, reusing the existing `debate-data-sync`/`debate-speech-writer` profile slices. A second slice, `preRoundBriefings.ts` (see Tracker Status above), now persists a round's generated `PreRoundBriefing` to localStorage, closing follow-up (c). A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now resolves the opponent/judge profiles themselves from the persisted `opponentTeamProfiles.ts`/`judgeProfiles.ts` stores by id instead of requiring the caller to supply pre-fetched profile objects. A fourth slice, `PreRoundBriefingsPanel` (see Tracker Status above, "Pre-Round Intelligence Panel — briefing-panel UI"), now renders every persisted briefing at `/briefings`, closing follow-up (b). Follow-up (a), real data sources for tournament results, pairings, event details, and room assignments (none exist in this repo today), remains open — not started._
 
-13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise. _Status: first slices done (see Tracker Status above) — the "friendly challenges" half has `debate-card-search`'s `group-challenges.ts` (`buildGroupChallengeBoard`), and the coaching-space model tying it together has `debate-round`'s `coaching-program.ts` (`buildCoachingProgramBoard`), composing that group-challenge board with the existing Team Collaboration Mode topic sprint and AI Drill Generator drill sets per roster member. A second slice, `coachingPrograms.ts` (see Tracker Status above, "Coaching Program Persistence — localStorage config store"), now persists a `CoachingProgramConfig` to localStorage, closing follow-up (a). A third slice, `CoachingProgramsPanel` (see Tracker Status above, "Coaching Programs and Group Challenges — coaching-program config UI"), now renders a create-program form and every persisted program's roster at `/coaching-programs`, closing the config-management half of follow-up (b). A fourth slice, `GroupChallengesPanel` (see Tracker Status above, "Group Challenges — challenge-board/creation UI"), now renders a create-challenge form and every persisted `GroupChallenge` at `/cards/group-challenges`, closing the "Group Challenge Persistence" entry's follow-up (a). A fifth slice, `state/challengeWinEvents.ts` (see Tracker Status above, "Coaching Programs and Group Challenges — persisted challenge win events + live standings in the Group Challenges panel"), now persists `ChallengeWinEvent`s and composes them with the persisted challenge roster and real contribution feed into a live board, rendered as per-challenge standings (plus a "Record a win" action) in `GroupChallengesPanel`, closing the "persisted challenge win events" half of follow-up (b-continued). A sixth slice, `state/persistedCoachingProgramBoard.ts` plus `CoachingProgramsPanel`'s new "View board" action (see Tracker Status above, "Coaching Programs and Group Challenges — coaching-program board UI"), now composes a program's full `buildCoachingProgramBoard` — topic sprint, challenge standings, and (empty until a roundId-to-contributor mapping exists) member drills — entirely from persisted state for a chosen topic, closing the dashboard-view half of follow-up (b-continued). Follow-ups: (b-continued, remaining) a roundId-to-contributor mapping so a member's already-flowed practice round can generate a drill set on this board — still not started — and (c) wiring a member's practice-round setup/feedback (Practice Round Simulator) into the space. Neither of these is started._
+13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise. _Status: first slices done (see Tracker Status above) — the "friendly challenges" half has `debate-card-search`'s `group-challenges.ts` (`buildGroupChallengeBoard`), and the coaching-space model tying it together has `debate-round`'s `coaching-program.ts` (`buildCoachingProgramBoard`), composing that group-challenge board with the existing Team Collaboration Mode topic sprint and AI Drill Generator drill sets per roster member. A second slice, `coachingPrograms.ts` (see Tracker Status above, "Coaching Program Persistence — localStorage config store"), now persists a `CoachingProgramConfig` to localStorage, closing follow-up (a). A third slice, `CoachingProgramsPanel` (see Tracker Status above, "Coaching Programs and Group Challenges — coaching-program config UI"), now renders a create-program form and every persisted program's roster at `/coaching-programs`, closing the config-management half of follow-up (b). A fourth slice, `GroupChallengesPanel` (see Tracker Status above, "Group Challenges — challenge-board/creation UI"), now renders a create-challenge form and every persisted `GroupChallenge` at `/cards/group-challenges`, closing the "Group Challenge Persistence" entry's follow-up (a). A fifth slice, `state/challengeWinEvents.ts` (see Tracker Status above, "Coaching Programs and Group Challenges — persisted challenge win events + live standings in the Group Challenges panel"), now persists `ChallengeWinEvent`s and composes them with the persisted challenge roster and real contribution feed into a live board, rendered as per-challenge standings (plus a "Record a win" action) in `GroupChallengesPanel`, closing the "persisted challenge win events" half of follow-up (b-continued). A sixth slice, `state/persistedCoachingProgramBoard.ts` plus `CoachingProgramsPanel`'s new "View board" action (see Tracker Status above, "Coaching Programs and Group Challenges — coaching-program board UI"), now composes a program's full `buildCoachingProgramBoard` — topic sprint, challenge standings, and (empty until a roundId-to-contributor mapping exists) member drills — entirely from persisted state for a chosen topic, closing the dashboard-view half of follow-up (b-continued). A seventh slice, `state/roundContributorAssignments.ts` plus `round/coaching-program.ts`'s new `resolveMemberDrillsFromAssignments` (see Tracker Status above, "Coaching Programs and Group Challenges — roundId-to-contributor assignment for member drills"), now persists a `roundId`-to-contributor mapping per program and resolves each assigned round's already-persisted drill set (`debate-round`'s `state/drillSets.ts`) into the open board's `memberDrills`, with an "Assign a round to a member"/"Unassign" action in `CoachingProgramsPanel`, closing follow-up (b-continued) in full. Follow-ups: (c) wiring a member's practice-round setup/feedback (Practice Round Simulator) into the space — not started._
 
 14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). A third slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut wiring") wired real keyboard shortcuts into the live `reason-editor` document — `Mod-Shift-K` insert short cite, `Mod-Shift-D` condense to read text, `Alt-ArrowUp`/`Alt-ArrowDown` move a heading's section, `Mod-Shift-E` toggle emphasis (via the schema's own mark rather than the raw-HTML helper) — plus matching "+Cite"/"Condense" toolbar buttons and a Move ↑/↓ button pair per heading in the outline nav panel, closing follow-up (a). A fourth slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — send-to-speech-document command") added `reason-editor`'s `engine/speech-document.ts` and `state/speechDocuments.ts`, wiring a `Mod-Shift-S` keyboard shortcut and "→Speech" toolbar button that send the live selection to a named, persisted `SpeechDocument` (find-or-create by title), plus a `SpeechDocumentsPanel` at `/speech-documents`, closing follow-up (b). No follow-ups remain open on this idea._
 

@@ -17,10 +17,15 @@
  * "compose every input from its own store" convention, so a panel doesn't
  * need to assemble them itself.
  *
- * A `roundId`-to-contributor mapping for member practice-round flows still
- * doesn't exist anywhere in this repo, so `memberFlows` stays an optional,
- * caller-supplied list (empty by default) rather than being read from a
- * store — that mapping remains a further, separate follow-up.
+ * A `roundId`-to-contributor mapping for member practice-round flows now also
+ * has its own store, `state/roundContributorAssignments.ts` — every persisted
+ * assignment for this program is resolved against `state/drillSets.ts`'s
+ * persisted drill sets (via `round/coaching-program.ts`'s
+ * `resolveMemberDrillsFromAssignments`) and merged into the composed board's
+ * `memberDrills`, closing the remaining half of the "(b-continued)"
+ * follow-up. Caller-supplied `memberFlows` (generated live from a raw `Flow`)
+ * still take precedence over an assignment's resolved drills for the same
+ * contributor, since a live flow is more current than a persisted drill set.
  *
  * @module state/persistedCoachingProgramBoard
  */
@@ -32,8 +37,15 @@ import { listChallengeWinEvents } from "debate-card-search/src/state/challengeWi
 import type { AttributedContribution } from "debate-card-search/src/lib/contribution-leaderboard";
 import type { QuestContribution } from "debate-card-search/src/lib/daily-quests";
 import type { CoverageThresholds } from "debate-card-search/src/lib/topic-coverage";
-import { buildCoachingProgramBoard, type CoachingProgramBoard, type CoachingProgramMemberFlow } from "../round/coaching-program";
+import {
+  buildCoachingProgramBoard,
+  resolveMemberDrillsFromAssignments,
+  type CoachingProgramBoard,
+  type CoachingProgramMemberFlow,
+} from "../round/coaching-program";
 import { getCoachingProgram } from "./coachingPrograms";
+import { listRoundContributorAssignments } from "./roundContributorAssignments";
+import { listDrillSets } from "./drillSets";
 
 /** Whether a persisted contribution carries the `submittedAt` timestamp `daily-quests.ts` needs to match it to a calendar day/window — mirrors `state/topicSprints.ts`'s identical guard. */
 function hasSubmittedAt(
@@ -46,13 +58,15 @@ function hasSubmittedAt(
  * Builds one coaching program's full board directly from persisted state: its
  * saved config (`state/coachingPrograms.ts`), its topic sprint's inputs
  * (`debate-card-search`'s `state/topicSprints.ts`), the persisted group
- * challenge roster, the persisted contribution feed, and persisted win
- * events — composing all of them with `coaching-program.ts`'s
- * `buildCoachingProgramBoard` rather than requiring a caller to assemble
- * them. Returns `undefined` if no program is stored under `programId` rather
- * than throwing. `memberFlows` defaults to an empty list, since no persisted
- * `roundId`-to-contributor mapping exists yet — a program with no supplied
- * member flows renders with an empty `memberDrills` board.
+ * challenge roster, the persisted contribution feed, persisted win events,
+ * and persisted round-contributor assignments resolved against persisted
+ * drill sets (`state/roundContributorAssignments.ts` +
+ * `state/drillSets.ts`) — composing all of them with `coaching-program.ts`'s
+ * `buildCoachingProgramBoard` and `resolveMemberDrillsFromAssignments` rather
+ * than requiring a caller to assemble them. Returns `undefined` if no program
+ * is stored under `programId` rather than throwing. `memberFlows` defaults to
+ * an empty list; a supplied live flow's drills take precedence over an
+ * assignment's resolved drills for the same contributor.
  */
 export function buildPersistedCoachingProgramBoard(
   programId: string,
@@ -66,7 +80,7 @@ export function buildPersistedCoachingProgramBoard(
 
   const contributions = listContributions().filter(hasSubmittedAt) as QuestContribution[];
 
-  return buildCoachingProgramBoard({
+  const board = buildCoachingProgramBoard({
     program,
     topicSprint: { topic, now, ...readPersistedTopicSprintInputs(topic, thresholds) },
     challenges: listGroupChallenges(),
@@ -74,4 +88,12 @@ export function buildPersistedCoachingProgramBoard(
     winEvents: listChallengeWinEvents(),
     memberFlows,
   });
+
+  const assignedDrills = resolveMemberDrillsFromAssignments(
+    listRoundContributorAssignments(programId),
+    listDrillSets(),
+    program.memberIds,
+  );
+
+  return { ...board, memberDrills: { ...assignedDrills, ...board.memberDrills } };
 }

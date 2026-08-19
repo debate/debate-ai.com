@@ -135,3 +135,59 @@ export function buildMemberDrillSummaryText(board: CoachingProgramBoard, contrib
   if (!drills) return "No practice round flowed yet — no drills available.";
   return buildDrillSummaryText(drills);
 }
+
+/**
+ * A roster member assigned to a `roundId` whose drills should populate their
+ * coaching-board drill set — the `roundId`-to-contributor mapping named as
+ * the remaining half of the "(b-continued)" follow-up under idea #13
+ * ("Coaching Programs and Group Challenges") in TODO.md. Persisted by
+ * `state/roundContributorAssignments.ts`, scoped per `programId`.
+ */
+export interface RoundContributorAssignment {
+  programId: string;
+  contributorId: string;
+  roundId: string;
+}
+
+/**
+ * A persisted drill set to resolve into a coaching board's `memberDrills` —
+ * structurally mirrors `state/drillSets.ts`'s `DrillSetRecord` without
+ * importing it, since `state/` modules depend on `round/` ones and not the
+ * reverse anywhere else in this package.
+ */
+export interface RoundDrillSetLookup {
+  roundId: string;
+  drills: Drill[];
+}
+
+/**
+ * Resolves each roster member's `RoundContributorAssignment` into their
+ * already-generated drill set, by looking up every persisted
+ * `RoundDrillSetLookup` sharing that `roundId` (a round can have one drill
+ * set per side, so a roundId's drills are pooled across all of them) and
+ * concatenating their drills. An assignment for a contributor outside
+ * `memberIds`, or whose roundId has no persisted drill set yet, contributes
+ * nothing. Unlike `buildCoachingProgramBoard`'s `memberFlows` (which
+ * generates drills from a raw `Flow` via `buildDrillSet`), this reuses
+ * drills a caller already generated and persisted — no `Flow` is needed.
+ */
+export function resolveMemberDrillsFromAssignments(
+  assignments: RoundContributorAssignment[],
+  drillSets: RoundDrillSetLookup[],
+  memberIds: string[],
+): Record<string, Drill[]> {
+  const memberSet = new Set(memberIds);
+  const drillsByRound = new Map<string, Drill[]>();
+  for (const record of drillSets) {
+    drillsByRound.set(record.roundId, [...(drillsByRound.get(record.roundId) ?? []), ...record.drills]);
+  }
+
+  const resolved: Record<string, Drill[]> = {};
+  for (const assignment of assignments) {
+    if (!memberSet.has(assignment.contributorId)) continue;
+    const drills = drillsByRound.get(assignment.roundId);
+    if (!drills || drills.length === 0) continue;
+    resolved[assignment.contributorId] = drills;
+  }
+  return resolved;
+}

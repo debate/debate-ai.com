@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { buildPersistedCoachingProgramBoard } from "../src/state/persistedCoachingProgramBoard";
 import { saveCoachingProgram } from "../src/state/coachingPrograms";
-import type { CoachingProgramConfig } from "../src/round/coaching-program";
+import { assignRoundToContributor } from "../src/state/roundContributorAssignments";
+import { saveDrillSet } from "../src/state/drillSets";
+import type { CoachingProgramConfig, CoachingProgramMemberFlow } from "../src/round/coaching-program";
+import type { Drill } from "../src/flow/drill-generator";
 import { saveGroupChallenge } from "debate-card-search/src/state/groupChallenges";
 import { saveContribution } from "debate-card-search/src/state/contributions";
 import { recordChallengeWinEvent } from "debate-card-search/src/state/challengeWinEvents";
@@ -99,5 +102,53 @@ describe("buildPersistedCoachingProgramBoard", () => {
     saveCoachingProgram(VARSITY);
     const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
     expect(board?.memberDrills).toEqual({});
+  });
+
+  it("resolves a persisted round-contributor assignment's drill set into memberDrills", () => {
+    saveCoachingProgram(VARSITY);
+    const drills: Drill[] = [{ kind: "collapse", rowIndex: 0, prompt: "Collapse to the case." }];
+    saveDrillSet({ roundId: "round-1", sideKey: "aff", drills });
+    assignRoundToContributor({ programId: "varsity", contributorId: "alice", roundId: "round-1" });
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+    expect(board?.memberDrills).toEqual({ alice: drills });
+  });
+
+  it("ignores a persisted assignment for a contributor outside the program roster", () => {
+    saveCoachingProgram(VARSITY);
+    const drills: Drill[] = [{ kind: "collapse", rowIndex: 0, prompt: "Collapse to the case." }];
+    saveDrillSet({ roundId: "round-1", sideKey: "aff", drills });
+    assignRoundToContributor({ programId: "varsity", contributorId: "carol", roundId: "round-1" });
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+    expect(board?.memberDrills).toEqual({});
+  });
+
+  it("prefers a live memberFlow's generated drills over an assigned round's persisted drill set", () => {
+    saveCoachingProgram(VARSITY);
+    const assignedDrills: Drill[] = [{ kind: "collapse", rowIndex: 0, prompt: "Collapse to the case." }];
+    saveDrillSet({ roundId: "round-1", sideKey: "aff", drills: assignedDrills });
+    assignRoundToContributor({ programId: "varsity", contributorId: "alice", roundId: "round-1" });
+
+    const liveFlow: CoachingProgramMemberFlow = {
+      contributorId: "alice",
+      sideKey: "1AC",
+      flow: {
+        columns: ["1AC", "1NC"],
+        children: [
+          {
+            content: "Case advantage",
+            children: [],
+            index: 0,
+            level: 1,
+            focus: false,
+            empty: false,
+          },
+        ],
+      },
+    };
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW, [liveFlow]);
+    expect(board?.memberDrills.alice[0]?.kind).toBe("overview");
   });
 });
