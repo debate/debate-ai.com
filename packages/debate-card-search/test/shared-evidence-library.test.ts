@@ -5,6 +5,7 @@ import {
   buildEvidenceSearchFormQuery,
   buildEvidenceSearchSummaryText,
   buildPageReuseCheckSummaryText,
+  buildReuseCheckDeepLink,
   checkPageForExistingCards,
   computeWordCount,
   deriveCardSnapshotFromEntry,
@@ -237,6 +238,35 @@ describe("buildPageReuseCheckSummaryText", () => {
       "https://example.com/a",
     );
     expect(buildPageReuseCheckSummaryText(result)).toBe("Already cut: 2 existing entries for this page.");
+  });
+});
+
+describe("buildReuseCheckDeepLink", () => {
+  it("builds a checkUrl deep link into /cards/library", () => {
+    expect(buildReuseCheckDeepLink("https://debate-ai.com", "https://example.com/article")).toBe(
+      "https://debate-ai.com/cards/library?checkUrl=https%3A%2F%2Fexample.com%2Farticle",
+    );
+  });
+
+  it("strips a trailing slash (or several) from the app origin", () => {
+    expect(buildReuseCheckDeepLink("https://debate-ai.com/", "https://example.com/a")).toBe(
+      buildReuseCheckDeepLink("https://debate-ai.com", "https://example.com/a"),
+    );
+    expect(buildReuseCheckDeepLink("https://debate-ai.com///", "https://example.com/a")).toBe(
+      buildReuseCheckDeepLink("https://debate-ai.com", "https://example.com/a"),
+    );
+  });
+
+  it("trims whitespace around both the origin and the page URL", () => {
+    expect(buildReuseCheckDeepLink("  https://debate-ai.com  ", "  https://example.com/a  ")).toBe(
+      "https://debate-ai.com/cards/library?checkUrl=https%3A%2F%2Fexample.com%2Fa",
+    );
+  });
+
+  it("percent-encodes query strings and special characters in the page URL", () => {
+    expect(buildReuseCheckDeepLink("https://debate-ai.com", "https://example.com/a?x=1&y=2")).toBe(
+      "https://debate-ai.com/cards/library?checkUrl=https%3A%2F%2Fexample.com%2Fa%3Fx%3D1%26y%3D2",
+    );
   });
 });
 

@@ -92,12 +92,12 @@ export function derivePersistedReviewerTier(reviewerId: string): UnlockTier {
 function applyGatedPersistedReviewTransition(
   cardId: string,
   reviewerId: string,
-  gatedTransition: (review: CardReview, reviewerTier: UnlockTier) => CardReview,
+  gatedTransition: (review: CardReview, reviewerId: string, reviewerTier: UnlockTier) => CardReview,
 ): CardReview | undefined {
   const review = getPeerReview(cardId);
   if (!review) return undefined;
 
-  const updated = gatedTransition(review, derivePersistedReviewerTier(reviewerId));
+  const updated = gatedTransition(review, reviewerId, derivePersistedReviewerTier(reviewerId));
   savePeerReview(updated);
   return updated;
 }
