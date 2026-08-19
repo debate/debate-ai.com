@@ -167,7 +167,7 @@ describe("searchPersistedEvidenceLibrary", () => {
 
   it("includes an entry again once its review is published", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
-    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
+    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")), "r1"), "r1"));
 
     const results = searchPersistedEvidenceLibrary({});
     expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
@@ -212,7 +212,7 @@ describe("isEntryLive", () => {
 
   it("is true for an entry whose review is published", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
-    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
+    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")), "r1"), "r1"));
     expect(isEntryLive("entry-1")).toBe(true);
   });
 });
@@ -232,7 +232,7 @@ describe("listPendingReviewEntries", () => {
 
   it("excludes an entry once its review is published", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
-    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
+    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")), "r1"), "r1"));
 
     expect(listPendingReviewEntries()).toEqual([]);
   });

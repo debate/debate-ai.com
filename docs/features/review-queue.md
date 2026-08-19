@@ -21,12 +21,29 @@ Every persisted `CardReview` (from `state/peerReviews.ts`, keyed by
 | Unresolved-blocking warning | Shown whenever `getUnresolvedBlockingComments` is non-empty — approval is blocked until they're resolved |
 | Summary | `buildReviewSummary(review)` |
 
-A form at the top starts a new card's review (`createCardReview`), and each
-review card has an "Add comment" form (reviewer id, severity, body) and a
-"Remove" action. A `rejected` review gets a "Revise" action
-(`reviseRejectedReview`), sending it back to `draft` so its author can revise
-and resubmit — the `ALLOWED_TRANSITIONS.rejected = ["draft"]` edge the state
-machine already permitted.
+A form at the top starts a new card's review (`createCardReview`, with an
+optional Author ID), and each review card has an "Add comment" form
+(reviewer id, severity, body) and a "Remove" action. A `rejected` review gets
+a "Revise" action (`reviseRejectedReview`), sending it back to `draft` so its
+author can revise and resubmit — the `ALLOWED_TRANSITIONS.rejected = ["draft"]`
+edge the state machine already permitted.
+
+### Reviewer identity/permission checks
+
+Each gatekeeping action — request changes, approve, reject, publish —
+requires a Reviewer ID (shown as an input next to the action buttons once a
+review reaches `in_review`/`approved`) and rejects the attempt when that id
+matches the review's own `authorId`:
+
+- `ReviewerIdRequiredError` — no reviewer id was given
+- `SelfReviewNotAllowedError` — the reviewer id matches `CardReview.authorId`
+
+A review started with no author id (the Author ID field was left blank, or
+the review predates this field) has nothing to guard against, matching this
+repo's "works standalone, gated further once the gating data exists"
+convention — any reviewer id is accepted. The reviewer id that successfully
+took the last gatekeeping action is recorded on `CardReview.reviewedBy` and
+shown in the panel's summary line.
 
 ## Data flow
 
@@ -75,5 +92,7 @@ listing every held-back entry so its author can still find and edit it.
 
 ## Known gaps
 
-- No reviewer identity/permission checks (no auth/roles in this repo yet),
-  so any visitor can act as any reviewer and take any lifecycle action.
+- Reviewer identity is still free-text, not a real login — there's no
+  auth/roles system in this repo, so nothing stops someone from typing a
+  different id than their own. The self-review guard above only checks that
+  the *typed* reviewer id doesn't match the *typed* author id.

@@ -4,12 +4,14 @@
  * "🗣️ Peer Review System" bullet in TODO.md's Research Crowdsourcing
  * Organizer Features list.
  *
- * Lets a user start a card's review, move it through the `lib/peer-review.ts`
- * state machine (submit, request changes, approve, reject, publish), and
- * leave/resolve comments on its thread — all through the already-persisted
+ * Lets a user start a card's review (optionally recording an author id),
+ * move it through the `lib/peer-review.ts` state machine (submit, request
+ * changes, approve, reject, publish — each gatekeeping action requiring a
+ * reviewer id that can't match the review's own author id, closing follow-up
+ * (b) named under the "🗣️ Peer Review System" bullet), and leave/resolve
+ * comments on its thread — all through the already-persisted
  * `state/peerReviews.ts` (`savePeerReview`, `deletePeerReview`,
- * `buildReviewQueuePanelView`). No new review-lifecycle or persistence logic
- * is introduced here.
+ * `buildReviewQueuePanelView`).
  *
  * @module panels/ReviewQueuePanel
  */
@@ -74,8 +76,10 @@ const EMPTY_COMMENT_DRAFT: CommentDraft = { reviewerId: "", severity: "suggestio
 export function ReviewQueuePanel() {
   const [reviews, setReviews] = useState<CardReview[] | null>(null)
   const [newCardId, setNewCardId] = useState("")
+  const [newAuthorId, setNewAuthorId] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [commentDrafts, setCommentDrafts] = useState<Record<string, CommentDraft>>({})
+  const [actionReviewerId, setActionReviewerId] = useState<Record<string, string>>({})
 
   useEffect(() => {
     setReviews(buildReviewQueuePanelView())
@@ -95,9 +99,10 @@ export function ReviewQueuePanel() {
       setError("Card ID is required.")
       return
     }
-    savePeerReview(createCardReview(cardId))
+    savePeerReview(createCardReview(cardId, newAuthorId))
     setError(null)
     setNewCardId("")
+    setNewAuthorId("")
     refresh()
   }
 
@@ -142,6 +147,12 @@ export function ReviewQueuePanel() {
     refresh()
   }
 
+  const actionReviewerIdFor = (cardId: string): string => actionReviewerId[cardId] ?? ""
+
+  const setActionReviewerIdFor = (cardId: string, value: string) => {
+    setActionReviewerId((prev) => ({ ...prev, [cardId]: value }))
+  }
+
   if (reviews === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading review queue…</div>
   }
@@ -157,15 +168,31 @@ export function ReviewQueuePanel() {
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-4">
-        <div className="space-y-1.5">
-          <Label htmlFor="review-new-card-id">Card ID</Label>
-          <Input
-            id="review-new-card-id"
-            value={newCardId}
-            onChange={(e) => setNewCardId(e.target.value)}
-            placeholder="card-1"
-            className="max-w-xs"
-          />
+        <div className="flex flex-wrap gap-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="review-new-card-id">Card ID</Label>
+            <Input
+              id="review-new-card-id"
+              value={newCardId}
+              onChange={(e) => setNewCardId(e.target.value)}
+              placeholder="card-1"
+              className="max-w-xs"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="review-new-author-id">Author ID (optional)</Label>
+            <Input
+              id="review-new-author-id"
+              value={newAuthorId}
+              onChange={(e) => setNewAuthorId(e.target.value)}
+              placeholder="alice"
+              className="max-w-xs"
+            />
+            <p className="text-xs text-muted-foreground">
+              Recording an author blocks that same id from approving, rejecting, requesting
+              changes on, or publishing this review.
+            </p>
+          </div>
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button onClick={handleStartReview}>Start review</Button>
@@ -189,8 +216,20 @@ export function ReviewQueuePanel() {
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-foreground">{review.cardId}</span>
                     <Badge variant={STATUS_VARIANT[review.status]}>{STATUS_LABEL[review.status]}</Badge>
+                    {review.authorId && (
+                      <span className="text-xs text-muted-foreground">by {review.authorId}</span>
+                    )}
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {(review.status === "in_review" || review.status === "approved") && (
+                      <Input
+                        value={actionReviewerIdFor(review.cardId)}
+                        onChange={(e) => setActionReviewerIdFor(review.cardId, e.target.value)}
+                        placeholder="Reviewer ID"
+                        aria-label={`Reviewer ID for ${review.cardId}`}
+                        className="h-8 w-28 text-xs"
+                      />
+                    )}
                     {(review.status === "draft" || review.status === "changes_requested") && (
                       <Button size="sm" variant="outline" onClick={() => applyTransition(review, submitForReview)}>
                         {review.status === "draft" ? "Submit for review" : "Resubmit"}
@@ -198,19 +237,43 @@ export function ReviewQueuePanel() {
                     )}
                     {review.status === "in_review" && (
                       <>
-                        <Button size="sm" variant="outline" onClick={() => applyTransition(review, requestChanges)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            applyTransition(review, (r) => requestChanges(r, actionReviewerIdFor(review.cardId)))
+                          }
+                        >
                           Request changes
                         </Button>
-                        <Button size="sm" variant="outline" onClick={() => applyTransition(review, approveReview)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            applyTransition(review, (r) => approveReview(r, actionReviewerIdFor(review.cardId)))
+                          }
+                        >
                           Approve
                         </Button>
-                        <Button size="sm" variant="destructive" onClick={() => applyTransition(review, rejectReview)}>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() =>
+                            applyTransition(review, (r) => rejectReview(r, actionReviewerIdFor(review.cardId)))
+                          }
+                        >
                           Reject
                         </Button>
                       </>
                     )}
                     {review.status === "approved" && (
-                      <Button size="sm" variant="outline" onClick={() => applyTransition(review, publishReview)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          applyTransition(review, (r) => publishReview(r, actionReviewerIdFor(review.cardId)))
+                        }
+                      >
                         Publish
                       </Button>
                     )}
