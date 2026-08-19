@@ -17,10 +17,13 @@
  * "compose every input from its own store" convention, so a panel doesn't
  * need to assemble them itself.
  *
- * A `roundId`-to-contributor mapping for member practice-round flows still
- * doesn't exist anywhere in this repo, so `memberFlows` stays an optional,
- * caller-supplied list (empty by default) rather than being read from a
- * store — that mapping remains a further, separate follow-up.
+ * A `roundId`-to-contributor mapping for member practice-round flows now
+ * exists via `state/memberRoundAssignments.ts` (resolved against a live
+ * flow through `state/liveFlows.ts`), closing the remaining half of the
+ * "(b-continued)" follow-up: `memberFlows` is composed from that mapping
+ * whenever a caller doesn't supply its own, the same "compose every input
+ * from its own store, but let a caller override" convention
+ * `state/topicSprints.ts` already uses.
  *
  * @module state/persistedCoachingProgramBoard
  */
@@ -34,6 +37,26 @@ import type { QuestContribution } from "debate-card-search/src/lib/daily-quests"
 import type { CoverageThresholds } from "debate-card-search/src/lib/topic-coverage";
 import { buildCoachingProgramBoard, type CoachingProgramBoard, type CoachingProgramMemberFlow } from "../round/coaching-program";
 import { getCoachingProgram } from "./coachingPrograms";
+import { listMemberRoundAssignments } from "./memberRoundAssignments";
+import { getLiveFlowByRoundId } from "./liveFlows";
+
+/**
+ * Resolves a coaching program's persisted round assignments
+ * (`state/memberRoundAssignments.ts`) against the live flow editor's own
+ * storage (`state/liveFlows.ts`) into `buildCoachingProgramBoard`'s
+ * `memberFlows` input. An assignment whose `roundId` doesn't resolve to a
+ * stored flow (never flowed, or since deleted) is skipped rather than
+ * producing a broken drill set.
+ */
+export function buildMemberFlowsFromAssignments(programId: string): CoachingProgramMemberFlow[] {
+  const memberFlows: CoachingProgramMemberFlow[] = [];
+  for (const assignment of listMemberRoundAssignments(programId)) {
+    const flow = getLiveFlowByRoundId(assignment.roundId);
+    if (!flow) continue;
+    memberFlows.push({ contributorId: assignment.contributorId, flow, sideKey: assignment.sideKey });
+  }
+  return memberFlows;
+}
 
 /** Whether a persisted contribution carries the `submittedAt` timestamp `daily-quests.ts` needs to match it to a calendar day/window — mirrors `state/topicSprints.ts`'s identical guard. */
 function hasSubmittedAt(
@@ -50,15 +73,15 @@ function hasSubmittedAt(
  * events — composing all of them with `coaching-program.ts`'s
  * `buildCoachingProgramBoard` rather than requiring a caller to assemble
  * them. Returns `undefined` if no program is stored under `programId` rather
- * than throwing. `memberFlows` defaults to an empty list, since no persisted
- * `roundId`-to-contributor mapping exists yet — a program with no supplied
- * member flows renders with an empty `memberDrills` board.
+ * than throwing. `memberFlows` defaults to `buildMemberFlowsFromAssignments`'s
+ * composition of this program's persisted round assignments — pass an
+ * explicit list (even `[]`) to override it.
  */
 export function buildPersistedCoachingProgramBoard(
   programId: string,
   topic: string,
   now: number,
-  memberFlows: CoachingProgramMemberFlow[] = [],
+  memberFlows?: CoachingProgramMemberFlow[],
   thresholds?: CoverageThresholds,
 ): CoachingProgramBoard | undefined {
   const program = getCoachingProgram(programId);
@@ -72,6 +95,6 @@ export function buildPersistedCoachingProgramBoard(
     challenges: listGroupChallenges(),
     contributions,
     winEvents: listChallengeWinEvents(),
-    memberFlows,
+    memberFlows: memberFlows ?? buildMemberFlowsFromAssignments(programId),
   });
 }

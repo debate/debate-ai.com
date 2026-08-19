@@ -13,13 +13,15 @@
  *
  * Each program also gets a "View board" action that opens its live
  * `buildCoachingProgramBoard` for a chosen topic, composed entirely from
- * persisted state via the new `state/persistedCoachingProgramBoard.ts`'s
+ * persisted state via `state/persistedCoachingProgramBoard.ts`'s
  * `buildPersistedCoachingProgramBoard` — the topic sprint (research, quests,
- * task routing, progress, notes), the group-challenge standings, and (once a
- * `roundId`-to-contributor mapping exists — still a further, separate
- * follow-up) member drill sets. This closes the topic-sprint/group-challenge
- * half of the "(b-continued)" follow-up named under idea #13 in TODO.md; the
- * member-drill half stays open, same as noted there.
+ * task routing, progress, notes), the group-challenge standings, and each
+ * member's drill set (via their persisted `state/memberRoundAssignments.ts`
+ * round assignment, resolved against a live flow). This closes the
+ * "(b-continued)" follow-up named under idea #13 in TODO.md in full: an
+ * "Assign round" mini-form per open member (round id + side) saves/clears
+ * that mapping through `saveMemberRoundAssignment`/`deleteMemberRoundAssignment`,
+ * and each member's resolved drills render via `buildMemberDrillSummaryText`.
  *
  * @module panels/CoachingProgramsPanel
  */
@@ -37,11 +39,23 @@ import {
   saveCoachingProgram,
 } from "../state/coachingPrograms"
 import { buildPersistedCoachingProgramBoard } from "../state/persistedCoachingProgramBoard"
-import { buildCoachingProgramSummaryText, type CoachingProgramBoard, type CoachingProgramConfig } from "../round/coaching-program"
+import {
+  deleteMemberRoundAssignment,
+  getMemberRoundAssignment,
+  saveMemberRoundAssignment,
+} from "../state/memberRoundAssignments"
+import {
+  buildCoachingProgramSummaryText,
+  buildMemberDrillSummaryText,
+  type CoachingProgramBoard,
+  type CoachingProgramConfig,
+} from "../round/coaching-program"
 
 type ProgramDraft = { name: string; memberIds: string }
 
 const EMPTY_DRAFT: ProgramDraft = { name: "", memberIds: "" }
+type AssignmentDraft = { roundId: string; sideKey: string }
+const EMPTY_ASSIGNMENT_DRAFT: AssignmentDraft = { roundId: "", sideKey: "" }
 
 /**
  * Renders the Coaching Programs panel: a form to create a named coaching
@@ -58,6 +72,8 @@ export function CoachingProgramsPanel() {
   const [openProgramId, setOpenProgramId] = useState<string | null>(null)
   const [topic, setTopic] = useState("")
   const [board, setBoard] = useState<CoachingProgramBoard | null>(null)
+  const [assignmentDrafts, setAssignmentDrafts] = useState<Record<string, AssignmentDraft>>({})
+  const [assignmentVersion, setAssignmentVersion] = useState(0)
 
   useEffect(() => {
     setPrograms(buildCoachingProgramsPanelView())
@@ -72,12 +88,28 @@ export function CoachingProgramsPanel() {
       return
     }
     setBoard(buildPersistedCoachingProgramBoard(openProgramId, trimmedTopic, Date.now()) ?? null)
-  }, [openProgramId, topic])
+  }, [openProgramId, topic, assignmentVersion])
 
   const handleToggleBoard = (id: string) => {
     setOpenProgramId((prev) => (prev === id ? null : id))
     setTopic("")
     setBoard(null)
+    setAssignmentDrafts({})
+  }
+
+  const handleSaveAssignment = (programId: string, contributorId: string) => {
+    const draft = assignmentDrafts[contributorId] ?? EMPTY_ASSIGNMENT_DRAFT
+    const roundId = draft.roundId.trim()
+    const sideKey = draft.sideKey.trim()
+    if (!roundId || !sideKey) return
+    saveMemberRoundAssignment({ programId, contributorId, roundId, sideKey })
+    setAssignmentDrafts((prev) => ({ ...prev, [contributorId]: EMPTY_ASSIGNMENT_DRAFT }))
+    setAssignmentVersion((v) => v + 1)
+  }
+
+  const handleClearAssignment = (programId: string, contributorId: string) => {
+    deleteMemberRoundAssignment(programId, contributorId)
+    setAssignmentVersion((v) => v + 1)
   }
 
   const handleSubmit = () => {
@@ -174,7 +206,58 @@ export function CoachingProgramsPanel() {
 
               {openProgramId === program.id && (
                 <div className="mt-4 space-y-3 border-t border-border pt-4">
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
+                    <Label>Member round assignments</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Assign a member's flowed round (round id + side) to generate their practice
+                      drills on this board.
+                    </p>
+                    {program.memberIds.map((memberId) => {
+                      const existing = getMemberRoundAssignment(program.id, memberId)
+                      const memberDraft = assignmentDrafts[memberId] ?? EMPTY_ASSIGNMENT_DRAFT
+                      return (
+                        <div key={memberId} className="flex flex-wrap items-center gap-2">
+                          <span className="w-20 shrink-0 text-sm text-foreground">{memberId}</span>
+                          <Input
+                            value={memberDraft.roundId}
+                            onChange={(e) =>
+                              setAssignmentDrafts((prev) => ({
+                                ...prev,
+                                [memberId]: { ...memberDraft, roundId: e.target.value },
+                              }))
+                            }
+                            placeholder={existing ? `Round ${existing.roundId}` : "Round id"}
+                            className="max-w-[9rem]"
+                          />
+                          <Input
+                            value={memberDraft.sideKey}
+                            onChange={(e) =>
+                              setAssignmentDrafts((prev) => ({
+                                ...prev,
+                                [memberId]: { ...memberDraft, sideKey: e.target.value },
+                              }))
+                            }
+                            placeholder={existing ? existing.sideKey : "Side (aff/neg)"}
+                            className="max-w-[9rem]"
+                          />
+                          <Button size="sm" variant="outline" onClick={() => handleSaveAssignment(program.id, memberId)}>
+                            Save
+                          </Button>
+                          {existing && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleClearAssignment(program.id, memberId)}
+                            >
+                              Clear
+                            </Button>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  <div className="space-y-1.5 border-t border-border pt-3">
                     <Label htmlFor={`coaching-board-topic-${program.id}`}>Topic sprint</Label>
                     <Input
                       id={`coaching-board-topic-${program.id}`}
@@ -191,9 +274,17 @@ export function CoachingProgramsPanel() {
                   ) : !board ? (
                     <p className="text-sm text-muted-foreground">Loading board…</p>
                   ) : (
-                    <p className="whitespace-pre-line text-sm text-muted-foreground">
-                      {buildCoachingProgramSummaryText(board)}
-                    </p>
+                    <div className="space-y-2">
+                      <p className="whitespace-pre-line text-sm text-muted-foreground">
+                        {buildCoachingProgramSummaryText(board)}
+                      </p>
+                      {program.memberIds.map((memberId) => (
+                        <p key={memberId} className="whitespace-pre-line text-sm text-muted-foreground">
+                          <span className="font-medium text-foreground">{memberId}: </span>
+                          {buildMemberDrillSummaryText(board, memberId)}
+                        </p>
+                      ))}
+                    </div>
                   )}
                 </div>
               )}
