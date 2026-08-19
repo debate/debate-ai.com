@@ -113,11 +113,7 @@ outranks one nearly every entry shares. It's a drop-in alternative to
 `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`
 composes this against the persisted repository, added alongside —
 `searchPersistedEvidenceLibrary` stays exported, unchanged, for any other
-caller. The index is rebuilt fresh on every call (this store has no
-write-time hook to invalidate a cached index), which is still the
-query-time win the follow-up asked for: ranking no longer means visiting
-every entry's text, only the ones a query term actually appears in.
-Vitest-covered in
+caller. Vitest-covered in
 `packages/debate-card-search/test/evidence-search-index.test.ts` (index
 construction, postings/term-frequency correctness, TF-IDF ranking including
 a dedicated case showing a rarer term outranks a common one, every filter
@@ -133,10 +129,32 @@ panel's search box, kind filter, and topic/case-area/tags filters all read
 from the indexed, TF-IDF-ranked search. That exact call shape
 (`buildEvidenceSearchFormQuery`'s output fed into
 `searchPersistedEvidenceLibraryWithIndex`) is Vitest-covered in
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`. Caching
-the index across calls instead of rebuilding it on every search remains a
-further follow-up, not started — this store still has no write-time hook to
-invalidate a cache.
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`.
+
+### Cached across calls
+
+Closes this bullet's remaining follow-up ("caching the index across calls
+instead of rebuilding it on every search"). `searchPersistedEvidenceLibraryWithIndex`
+no longer rebuilds `EvidenceSearchIndex` on every call —
+`getCachedEvidenceSearchIndex` reuses the previously built index as long as
+nothing it depends on could have changed. Which entries are "live" depends
+on two independently-written stores (this store's own `EvidenceLibraryEntry`
+records, and `state/peerReviews.ts`'s `CardReview` records — a review
+transition can flip an entry's liveness with no write to this store at
+all), so rather than a write-time counter on each store (which would only
+catch writes made through that store's own functions), the cache instead
+compares each store's raw persisted JSON string
+(`state/peerReviews.ts`'s new `getPeerReviewsRawSnapshot`) against the
+strings it was built from — a cheap fingerprint that catches any change to
+either store's underlying data before doing the expensive tokenize-and-build
+work again. Vitest-covered in
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (a repeat
+call with nothing changed reuses the cached index; saving, deleting, and a
+peer-review transition that flips an entry's live status each force a
+rebuild whose results reflect the change) and
+`packages/debate-card-search/test/peerReviews.test.ts` (`getPeerReviewsRawSnapshot`
+changes on save/delete and stays stable across repeat calls with no
+changes).
 
 ## Peer-review gating
 
@@ -220,10 +238,11 @@ card submitted here now feeds that dashboard directly.
 
 ## Known gaps
 
-- A real inverted-index/TF-IDF search now exists and `EvidenceLibraryPanel`
-  is wired to it (see "Real search index" above), but the index is still
-  rebuilt from scratch on every call rather than cached and incrementally
-  updated on write.
+- A real inverted-index/TF-IDF search now exists, `EvidenceLibraryPanel` is
+  wired to it, and the built index is now cached across calls (see "Real
+  search index" above) — but a cache-invalidating rebuild is still a full
+  pass over every live entry, not true incremental indexing that updates
+  only the entries a write actually touched.
 - No browser extension exists — the "Check this page" box is a manual,
   paste-the-URL stand-in for what a future extension would run
   automatically against the current tab. The reuse-check logic itself

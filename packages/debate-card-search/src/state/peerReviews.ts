@@ -32,6 +32,23 @@ function writeAll(reviews: CardReview[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
 }
 
+/**
+ * The raw persisted `CardReview` JSON string, or `null` if nothing is
+ * stored (or `localStorage` is unavailable) — a cheap, content-based
+ * fingerprint `evidenceLibraryEntries.ts`'s cached search index compares
+ * against on every search to detect a review-status change. A review
+ * transition can flip an entry's "live" status (see `isEntryLive`) with no
+ * write to that store at all, so a write-counter on this store's own
+ * `writeAll` wouldn't catch it; comparing the raw stored string instead
+ * catches any change to this store's data regardless of how it got
+ * written, without either store needing to call into the other's write
+ * path directly.
+ */
+export function getPeerReviewsRawSnapshot(): string | null {
+  if (typeof localStorage === "undefined") return null;
+  return localStorage.getItem(STORAGE_KEY);
+}
+
 /** Lists every persisted card review. */
 export function listPeerReviews(): CardReview[] {
   return readAll();
