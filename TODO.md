@@ -37,7 +37,8 @@ _No task currently in progress._
   of this entry. `bun run typecheck` (11 packages, all pass), `bun run
   test` (142 files / 1936 tests, all pass), and `bun run build` all pass.
   No repo-wide `lint` script exists (checked root/package `package.json`
-  scripts), matching this bullet's prior entries.
+  scripts), matching this bullet's prior entries. PR:
+  [#233](https://github.com/debate/debate-ai.com/pull/233).
 - **Legacy Verbatim / Cardmirror Compatibility — send-to-speech-document
   command.** Closes follow-up (b) named under idea #14 ("Legacy Verbatim /
   Cardmirror Compatibility") in the Product Feature Ideas list: "a 'send
