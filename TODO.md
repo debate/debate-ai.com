@@ -51,7 +51,7 @@ _No task currently in progress._
   `/coaching-programs` appears in the built route list). No repo-wide `lint`
   script exists (checked root/app/package `package.json` scripts) so none was
   run.
-  PR: [#TBD](https://github.com/debate/debate-ai.com/pulls).
+  PR: [#248](https://github.com/debate/debate-ai.com/pull/248).
 - **Coaching Programs and Group Challenges — roundId-to-contributor mapping for member drill sets.**
   Closes the remaining "(b-continued, remaining)" follow-up named under idea
   #13 ("Coaching Programs and Group Challenges") in TODO.md's Product
