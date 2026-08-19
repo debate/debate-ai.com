@@ -41,7 +41,7 @@ import { buildLeaderboard, type ContributorStats } from "../lib/contribution-lea
 import { DEFAULT_HELPFULNESS_WEIGHTS, type HelpfulnessWeights } from "../lib/community-rating";
 import type { RoutedAssignment } from "../lib/research-task-routing";
 import { listContributions } from "./contributions";
-import { completePersistedRoutedTask, listRoutedTaskQueues } from "./routedTaskQueues";
+import { completePersistedRoutedTask, getRoutedTaskQueue, listRoutedTaskQueues } from "./routedTaskQueues";
 
 /** One completed research task, remembered after `completePersistedRoutedTask` removes it from its active queue. */
 export interface CompletedTaskRecord {
@@ -121,6 +121,25 @@ export function buildPersistedResearchProgressBoard(
   );
 
   return buildResearchProgressBoard(listContributions(), [...completed, ...active], weights);
+}
+
+/**
+ * The same completed-plus-active composition `buildPersistedResearchProgressBoard`
+ * builds across every topic, scoped down to one topic — the assignment
+ * source `state/topicSprints.ts`'s `buildPersistedTopicSprint` needs for a
+ * single topic sprint's progress board, without pulling in every other
+ * topic's assignments.
+ */
+export function listTrackedAssignmentsForTopic(topic: string): TrackedTopicAssignment[] {
+  const completed: TrackedTopicAssignment[] = readAll()
+    .filter((record) => record.topic === topic)
+    .map((record) => ({ topic: record.topic, assignment: record.assignment, completedAt: record.completedAt }));
+
+  const active: TrackedTopicAssignment[] = (getRoutedTaskQueue(topic)?.result.assignments ?? []).map(
+    (assignment) => ({ topic, assignment }),
+  );
+
+  return [...completed, ...active];
 }
 
 /**
