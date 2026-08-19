@@ -23,6 +23,12 @@ Per topic (a persisted `RoutedTaskQueueRecord`, keyed by `topicId`):
 Tasks nobody was eligible or available for (`unassignedTasks`) are listed
 separately per topic, with no complete action.
 
+A "My tasks" field lets a contributor type their own `contributorId` to
+scope the list to just their own assignments, via
+`filterTaskInboxViewByContributor` — a free-form filter, not a login, since
+this repo has no auth/identity system (the same workaround
+`flow/prep-note-notifications.ts` uses for "🔄 Strategy Sync Notes").
+
 ## Data flow
 
 ```
@@ -56,19 +62,23 @@ panels/TaskInboxPanel.tsx
 ```
 
 Every routing/persistence rule already existed and was Vitest-covered; this
-feature adds two new composition functions in
+feature adds three composition functions in
 `packages/debate-card-search/src/state/routedTaskQueues.ts`:
 `buildTaskInboxView`, which flattens the existing persisted routed-queue
-store into a panel-ready shape, and `routePersistedTopicTasks`, which chains
+store into a panel-ready shape; `routePersistedTopicTasks`, which chains
 `trackedArguments.ts`'s live coverage report straight into
 `buildAndPersistRoutingResult` so the panel can route a topic from nothing
-but a topic id — no new routing or completion logic was introduced.
+but a topic id; and `filterTaskInboxViewByContributor`, which scopes that
+panel-ready shape down to one contributor's own assignments (dropping a
+topic entirely once none of its assignments match, and clearing
+`unassignedTasks` since an unassigned task isn't anyone's yet) — no new
+routing or completion logic was introduced.
 Vitest-covered in `packages/debate-card-search/test/routedTaskQueues.test.ts`.
 
 ## Known gaps
 
-- No contributor identity/permission checks (no auth/roles in this repo yet),
-  so the inbox shows every topic's assignments rather than scoping to "my
-  tasks."
+- No contributor identity/permission checks (no auth/roles in this repo
+  yet), so the "My tasks" filter is a free-form id field, not a login —
+  anyone can type any contributor's id to see their assignments.
 - No reviewer/verification step before a task is marked complete — any
   visitor can mark any assignment done.

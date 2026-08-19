@@ -202,3 +202,32 @@ export function buildTaskInboxView(): TaskInboxTopic[] {
     unassignedTasks: result.unassignedTasks,
   }));
 }
+
+/**
+ * Scopes a task-inbox view down to one contributor's own assignments,
+ * closing the "(e) scoping the inbox to 'my tasks' once contributor
+ * identity/auth exists" follow-up named under the "Research Task Routing"
+ * bullet in TODO.md. This repo still has no auth/identity system, so — the
+ * same free-form-id workaround `flow/prep-note-notifications.ts`'s
+ * `getNotificationsForRecipient` already established for "🔄 Strategy Sync
+ * Notes" — a contributor is just whoever types their own `contributorId`
+ * into the filter.
+ *
+ * A topic with no assignments for that contributor is dropped entirely
+ * (there's nothing "mine" to show for it), and every topic's
+ * `unassignedTasks` is cleared, since an unassigned task isn't anyone's yet.
+ * `buildTaskInboxView`'s own topic/assignment ordering is otherwise
+ * preserved.
+ */
+export function filterTaskInboxViewByContributor(
+  topics: TaskInboxTopic[],
+  contributorId: string,
+): TaskInboxTopic[] {
+  return topics
+    .map((topic) => ({
+      ...topic,
+      assignments: topic.assignments.filter((assignment) => assignment.contributorId === contributorId),
+      unassignedTasks: [],
+    }))
+    .filter((topic) => topic.assignments.length > 0);
+}
