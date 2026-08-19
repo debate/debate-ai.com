@@ -6,6 +6,32 @@
 _No task currently in progress._
 
 ### Completed
+- **Speech Transcript Summaries and Answers — AI extraction from raw speech
+  text.** Closes the AI-call half of follow-up (a) named under idea #6 in
+  the Product Feature Ideas list: "audio/video transcription plus an AI
+  call to extract claims/warrants/impacts/evidence from raw speech text
+  rather than relying on a manually flowed grid." This slice adds the
+  AI-call half only (a pasted transcript, not audio/video) — the
+  transcription half stays open as a further follow-up, mirroring this
+  repo's established "AI call now, richer input source later" slicing
+  (e.g. Video-Lecture-Training Coach AI). `debate-round` now has
+  `round/transcript-extraction-ai.ts` (prompt-build + parse, mirroring
+  `judge-decision-ai.ts`'s structured-JSON split) and
+  `round/transcript-extraction-client.ts` (the `/api/reason-ai` network
+  call, mirroring `coach-feedback-client.ts`), converting extracted
+  claim/warrant/impact/evidence arguments into synthetic `FlowRowSummary`
+  rows (`buildFlowRowSummariesFromExtraction`) appended to a round's
+  persisted flow summary via the existing `saveFlowSummary`. A "Generate
+  from raw speech text" form is now wired into `FlowSummariesPanel`, so an
+  extracted argument gets the same cross-exam/extension suggestions as any
+  row derived from a manually flowed grid — no new panel-rendering logic
+  was needed. Vitest-covered in
+  `packages/debate-round/test/transcript-extraction-ai.test.ts` and
+  `packages/debate-round/test/transcript-extraction-client.test.ts`. Docs
+  updated at `docs/features/flow-summaries.md`. Verified: `bun run test`
+  (144 files / 1959 tests passed), `bun run typecheck` (11 packages
+  passed), `bun run build` (both buildable packages passed) — no
+  repo-wide `lint` script exists.
 - **Top Contributor Awards — finer-grained `ContributionKind` for original
   arguments and refutations.** Closes follow-up (a) named in
   `lib/contributor-awards.ts` and under the "🏆 Top Contributor Awards"
@@ -5174,7 +5200,7 @@ _No task currently in progress._
 
 5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. A third slice, `JudgeParadigmPickerPanel` (see Tracker Status above, "AI Judge Decision Modes — paradigm-picker UI"), now renders a picker UI at `/paradigms` for saving a round's built-in or custom paradigm, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Judge Decision Modes — real AI judge-decision call") added `debate-round`'s `round/judge-decision-ai.ts`, `round/judge-decision-client.ts`, `round/judge-decision-store-wiring.ts`, and `state/judgeDecisions.ts`, wiring an AI judge-decision call — composing `buildJudgeParadigmPrompt` with a round's flow summary and calling the existing `/api/reason-ai` Anthropic proxy — into a new `JudgeDecisionPanel` at `/judge-decision`, closing follow-up (a). No follow-ups remain open on this idea._
 
-6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slices done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. A second slice, `flowSummaries.ts` (see Tracker Status above, "Speech Transcript Summaries and Answers — flow-summary persistence"), now persists a round's derived `FlowRowSummary[]` to localStorage. A third slice, `FlowSummariesPanel` (see Tracker Status above, "Speech Transcript Summaries and Answers — summary/cross-ex panel UI"), now renders every persisted flow summary, with suggested cross-exam questions and extension ideas for unanswered arguments, at `/summaries`, closing follow-up (b). Follow-up (a), audio/video transcription plus an AI call to extract claims/warrants/impacts/evidence from raw speech text rather than relying on a manually flowed grid, remains open — not started._
+6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slices done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. A second slice, `flowSummaries.ts` (see Tracker Status above, "Speech Transcript Summaries and Answers — flow-summary persistence"), now persists a round's derived `FlowRowSummary[]` to localStorage. A third slice, `FlowSummariesPanel` (see Tracker Status above, "Speech Transcript Summaries and Answers — summary/cross-ex panel UI"), now renders every persisted flow summary, with suggested cross-exam questions and extension ideas for unanswered arguments, at `/summaries`, closing follow-up (b). A fourth slice (see Tracker Status above, "Speech Transcript Summaries and Answers — AI extraction from raw speech text") added `round/transcript-extraction-ai.ts` and `round/transcript-extraction-client.ts`, wiring a "Generate from raw speech text" form into `FlowSummariesPanel` that calls the existing `/api/reason-ai` Anthropic proxy to extract claim/warrant/impact/evidence arguments from a pasted transcript and appends them to that round's saved flow summary as synthetic `FlowRowSummary` rows, closing the AI-call half of follow-up (a). Follow-up (a)'s remaining half, audio/video transcription (the extraction form above requires an already-transcribed speech text, not a recording), remains open — not started._
 
 7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext 
 
