@@ -212,6 +212,40 @@ export function getStaleEvidenceEntries(entries: EvidenceLibraryEntry[], current
   return entries.filter((entry) => entry.kind === "card" && getEvidenceStaleness(entry, currentYear).isStale);
 }
 
+/** A search panel's raw filter-field values, before being narrowed into an `EvidenceSearchQuery`. */
+export interface EvidenceSearchFormFilters {
+  text: string;
+  /** `undefined` (or omitted) means "any kind" — no `kind` filter applied. */
+  kind?: EvidenceEntryKind;
+  topic: string;
+  caseArea: string;
+  /** Comma-separated tags, matched in `"any"` mode. */
+  tags: string;
+}
+
+/**
+ * Narrows a search panel's raw filter-field values into an `EvidenceSearchQuery`,
+ * trimming `topic`/`caseArea` and parsing `tags` into a list — omitting any
+ * field that's blank so it doesn't narrow the search, rather than passing an
+ * empty string/array through to `searchEvidenceLibrary`.
+ */
+export function buildEvidenceSearchFormQuery(filters: EvidenceSearchFormFilters): EvidenceSearchQuery {
+  const topic = filters.topic.trim();
+  const caseArea = filters.caseArea.trim();
+  const tags = filters.tags
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+
+  return {
+    text: filters.text,
+    ...(filters.kind ? { kind: filters.kind } : {}),
+    ...(topic ? { topic } : {}),
+    ...(caseArea ? { caseArea } : {}),
+    ...(tags.length > 0 ? { tags } : {}),
+  };
+}
+
 /** Renders a short summary line for a search results panel. */
 export function buildEvidenceSearchSummaryText(results: EvidenceSearchResult[], query: EvidenceSearchQuery): string {
   const count = results.length;

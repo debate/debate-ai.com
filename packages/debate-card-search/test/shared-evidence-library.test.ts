@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildEvidenceEntryRevision,
   buildEvidenceLibraryIndex,
+  buildEvidenceSearchFormQuery,
   buildEvidenceSearchSummaryText,
   computeWordCount,
   deriveCardSnapshotFromEntry,
@@ -169,6 +170,63 @@ describe("buildEvidenceSearchSummaryText", () => {
     expect(buildEvidenceSearchSummaryText(searchEvidenceLibrary(entries, query), query)).toBe(
       '2 results for "warming"',
     );
+  });
+});
+
+describe("buildEvidenceSearchFormQuery", () => {
+  it("passes text through as-is, even when blank", () => {
+    expect(buildEvidenceSearchFormQuery({ text: "", kind: undefined, topic: "", caseArea: "", tags: "" })).toEqual({
+      text: "",
+    });
+  });
+
+  it("omits kind when undefined ('any kind')", () => {
+    const query = buildEvidenceSearchFormQuery({ text: "warming", kind: undefined, topic: "", caseArea: "", tags: "" });
+    expect(query).not.toHaveProperty("kind");
+  });
+
+  it("includes kind when set", () => {
+    const query = buildEvidenceSearchFormQuery({ text: "", kind: "block", topic: "", caseArea: "", tags: "" });
+    expect(query.kind).toBe("block");
+  });
+
+  it("trims and includes topic/caseArea, omitting them when blank", () => {
+    const query = buildEvidenceSearchFormQuery({
+      text: "",
+      topic: "  Energy  ",
+      caseArea: "  DA  ",
+      tags: "",
+    });
+    expect(query.topic).toBe("Energy");
+    expect(query.caseArea).toBe("DA");
+  });
+
+  it("omits topic/caseArea when whitespace-only", () => {
+    const query = buildEvidenceSearchFormQuery({ text: "", topic: "   ", caseArea: "  ", tags: "" });
+    expect(query).not.toHaveProperty("topic");
+    expect(query).not.toHaveProperty("caseArea");
+  });
+
+  it("parses comma-separated tags, trimming and dropping empty entries", () => {
+    const query = buildEvidenceSearchFormQuery({ text: "", topic: "", caseArea: "", tags: "climate, , impact ," });
+    expect(query.tags).toEqual(["climate", "impact"]);
+  });
+
+  it("omits tags entirely when the field is blank", () => {
+    const query = buildEvidenceSearchFormQuery({ text: "", topic: "", caseArea: "", tags: "" });
+    expect(query).not.toHaveProperty("tags");
+  });
+
+  it("combines every filter into one query, usable directly by searchEvidenceLibrary", () => {
+    const query = buildEvidenceSearchFormQuery({
+      text: "warming",
+      kind: "card",
+      topic: "Energy",
+      caseArea: "DA",
+      tags: "climate",
+    });
+    const results = searchEvidenceLibrary(entries, query);
+    expect(results.map((r) => r.entry.id)).toEqual(["warming-1", "warming-2"]);
   });
 });
 
