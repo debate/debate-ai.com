@@ -11,10 +11,13 @@
  * `deleteGroupChallenge` — mirroring `CoachingProgramsPanel`'s
  * create-form-plus-roster convention.
  *
- * This only manages a challenge's config — it doesn't render
- * `computeGroupChallengeProgress`'s live standings, since those need
- * caller-supplied contributions/win events that aren't persisted in a form
- * this panel could read live yet. See the remaining follow-ups in TODO.md.
+ * Each challenge now also renders its live `computeGroupChallengeProgress`
+ * standings, composed by `state/challengeWinEvents.ts`'s
+ * `buildPersistedGroupChallengeBoard` directly from the real, persisted
+ * contribution feed and win-event list — closing the "persisted challenge
+ * win events" half of idea #13's "(b-continued)" follow-up in TODO.md. A
+ * `win_target` challenge also gets a "Record a win" action that calls the
+ * same store's `recordChallengeWinEvent`.
  *
  * @module panels/GroupChallengesPanel
  */
@@ -31,7 +34,8 @@ import {
   deleteGroupChallenge,
   saveGroupChallenge,
 } from "../state/groupChallenges"
-import type { ChallengeGoal, GroupChallenge } from "../lib/group-challenges"
+import { buildPersistedGroupChallengeBoard, recordChallengeWinEvent } from "../state/challengeWinEvents"
+import { buildGroupChallengeSummaryText, type ChallengeGoal, type GroupChallenge, type GroupChallengeProgress } from "../lib/group-challenges"
 import type { ContributionKind } from "../lib/community-rating"
 
 type GoalKind = ChallengeGoal["kind"]
@@ -99,14 +103,32 @@ function formatDate(epochMs: number): string {
  */
 export function GroupChallengesPanel() {
   const [challenges, setChallenges] = useState<GroupChallenge[] | null>(null)
+  const [board, setBoard] = useState<GroupChallengeProgress[]>([])
   const [draft, setDraft] = useState<ChallengeDraft>(EMPTY_DRAFT)
+  const [winContributorId, setWinContributorId] = useState<Record<string, string>>({})
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setChallenges(buildGroupChallengesPanelView())
+    setBoard(buildPersistedGroupChallengeBoard(Date.now()))
   }, [])
 
-  const refresh = () => setChallenges(buildGroupChallengesPanelView())
+  const refresh = () => {
+    setChallenges(buildGroupChallengesPanelView())
+    setBoard(buildPersistedGroupChallengeBoard(Date.now()))
+  }
+
+  const handleRecordWin = (challengeId: string) => {
+    const contributorId = (winContributorId[challengeId] ?? "").trim()
+    if (!contributorId) {
+      setError("A contributor ID is required to record a win.")
+      return
+    }
+    recordChallengeWinEvent(contributorId, Date.now())
+    setError(null)
+    setWinContributorId((prev) => ({ ...prev, [challengeId]: "" }))
+    refresh()
+  }
 
   const handleSubmit = () => {
     const title = draft.title.trim()
@@ -282,27 +304,63 @@ export function GroupChallengesPanel() {
         </div>
       ) : (
         <div className="space-y-3">
-          {challenges.map((challenge) => (
-            <div key={challenge.id} className="rounded-lg border border-border p-4">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <h2 className="text-sm font-semibold text-foreground">{challenge.title}</h2>
-                <Button size="sm" variant="ghost" onClick={() => handleRemove(challenge.id)}>
-                  Remove
-                </Button>
+          {challenges.map((challenge) => {
+            const progress = board.find((entry) => entry.challengeId === challenge.id)
+            return (
+              <div key={challenge.id} className="rounded-lg border border-border p-4">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <h2 className="text-sm font-semibold text-foreground">{challenge.title}</h2>
+                  <Button size="sm" variant="ghost" onClick={() => handleRemove(challenge.id)}>
+                    Remove
+                  </Button>
+                </div>
+                <p className="mb-2 text-sm text-muted-foreground">{describeGoal(challenge.goal)}</p>
+                <p className="mb-2 text-xs text-muted-foreground">
+                  {formatDate(challenge.startsAt)} – {formatDate(challenge.endsAt)}
+                </p>
+                <div className="mb-2 flex flex-wrap gap-1.5">
+                  {challenge.memberIds.map((memberId) => (
+                    <Badge key={memberId} variant="outline">
+                      {memberId}
+                    </Badge>
+                  ))}
+                </div>
+                {progress && (
+                  <p className="mb-2 text-sm font-medium text-foreground">
+                    {buildGroupChallengeSummaryText(progress)}
+                  </p>
+                )}
+                {progress && progress.memberStandings.length > 0 && (
+                  <ul className="mb-2 space-y-0.5 text-xs text-muted-foreground">
+                    {progress.memberStandings.map((standing) => (
+                      <li key={standing.contributorId}>
+                        {standing.contributorId === progress.mvpContributorId ? "🏆 " : ""}
+                        {standing.contributorId}: {standing.matchingCount}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {challenge.goal.kind === "win_target" && (
+                  <div className="flex items-end gap-2">
+                    <div className="flex-1 space-y-1.5">
+                      <Label htmlFor={`record-win-${challenge.id}`}>Record a win (contributor ID)</Label>
+                      <Input
+                        id={`record-win-${challenge.id}`}
+                        value={winContributorId[challenge.id] ?? ""}
+                        onChange={(e) =>
+                          setWinContributorId((prev) => ({ ...prev, [challenge.id]: e.target.value }))
+                        }
+                        placeholder="alice"
+                      />
+                    </div>
+                    <Button size="sm" onClick={() => handleRecordWin(challenge.id)}>
+                      Record win
+                    </Button>
+                  </div>
+                )}
               </div>
-              <p className="mb-2 text-sm text-muted-foreground">{describeGoal(challenge.goal)}</p>
-              <p className="mb-2 text-xs text-muted-foreground">
-                {formatDate(challenge.startsAt)} – {formatDate(challenge.endsAt)}
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {challenge.memberIds.map((memberId) => (
-                  <Badge key={memberId} variant="outline">
-                    {memberId}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
