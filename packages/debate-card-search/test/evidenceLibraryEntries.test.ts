@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   buildCombinedPersistedArgumentLibrary,
   buildPersistedArgumentLibrary,
@@ -20,6 +20,7 @@ import { approveReview, createCardReview, publishReview, submitForReview } from 
 import { savePeerReview } from "../src/state/peerReviews";
 import { buildEvidenceSearchFormQuery } from "../src/lib/shared-evidence-library";
 import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
+import * as evidenceSearchIndexModule from "../src/lib/evidence-search-index";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -221,6 +222,76 @@ describe("searchPersistedEvidenceLibraryWithIndex", () => {
     savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
 
     const results = searchPersistedEvidenceLibraryWithIndex({});
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+  });
+});
+
+describe("searchPersistedEvidenceLibraryWithIndex caches the index across calls", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  // `evidenceLibraryEntries.ts`'s cache is module-level state shared across
+  // every test in this file (only `localStorage` is reset per test, in
+  // `beforeEach` above), and several other describe blocks save this exact
+  // same `WARMING_CARD`/`SOLVENCY_BLOCK` content — so whether the *first*
+  // search in a given test triggers a rebuild depends on what an earlier
+  // test happened to leave cached. These assertions compare the spy's call
+  // count before/after an action instead of asserting an absolute count, so
+  // they hold regardless of that leftover state.
+
+  it("does not rebuild the index on a second call when nothing has changed", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
+
+    const first = searchPersistedEvidenceLibraryWithIndex({ text: "warming" });
+    const countAfterFirst = buildSpy.mock.calls.length;
+
+    const second = searchPersistedEvidenceLibraryWithIndex({ text: "warming" });
+    expect(buildSpy.mock.calls.length).toBe(countAfterFirst);
+    expect(second).toEqual(first);
+  });
+
+  it("rebuilds after a new entry is saved, and the new entry is searchable", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
+
+    expect(searchPersistedEvidenceLibraryWithIndex({})).toHaveLength(1);
+    const countBeforeSave = buildSpy.mock.calls.length;
+
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    const results = searchPersistedEvidenceLibraryWithIndex({});
+    expect(buildSpy.mock.calls.length).toBeGreaterThan(countBeforeSave);
+    expect(results.map((result) => result.entry.id).sort()).toEqual(["entry-1", "entry-2"]);
+  });
+
+  it("rebuilds after an entry is deleted", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
+
+    expect(searchPersistedEvidenceLibraryWithIndex({})).toHaveLength(2);
+    const countBeforeDelete = buildSpy.mock.calls.length;
+
+    deleteEvidenceLibraryEntry(WARMING_CARD.id);
+    const results = searchPersistedEvidenceLibraryWithIndex({});
+    expect(buildSpy.mock.calls.length).toBeGreaterThan(countBeforeDelete);
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-2"]);
+  });
+
+  it("rebuilds after a peer review transition changes an entry's live status, with no write to the entry itself", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    const review = submitForReview(createCardReview("entry-1"));
+    savePeerReview(review);
+    const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
+
+    expect(searchPersistedEvidenceLibraryWithIndex({})).toEqual([]);
+    const countBeforePublish = buildSpy.mock.calls.length;
+
+    savePeerReview(publishReview(approveReview(review)));
+    const results = searchPersistedEvidenceLibraryWithIndex({});
+    expect(buildSpy.mock.calls.length).toBeGreaterThan(countBeforePublish);
     expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
   });
 });

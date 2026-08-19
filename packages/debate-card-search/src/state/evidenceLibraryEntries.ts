@@ -28,28 +28,35 @@
  * follow-up (c), "a real search index ... once entries are persisted at
  * scale." `EvidenceLibraryPanel` now calls this instead of
  * `searchPersistedEvidenceLibrary`, which stays exported (unchanged) for any
- * other caller.
+ * other caller. The index it searches is cached across calls (see
+ * `getCachedEvidenceSearchIndex`) rather than rebuilt on every search,
+ * closing that same bullet's remaining follow-up ("caching the index across
+ * calls instead of rebuilding it on every search").
  *
  * @module state/evidenceLibraryEntries
  */
 
 import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult, PageReuseCheckResult } from "../lib/shared-evidence-library";
 import { buildEvidenceEntryRevision, checkPageForExistingCards, searchEvidenceLibrary } from "../lib/shared-evidence-library";
-import { buildEvidenceSearchIndex, searchEvidenceLibraryWithIndex } from "../lib/evidence-search-index";
+import { buildEvidenceSearchIndex, searchEvidenceLibraryWithIndex, type EvidenceSearchIndex } from "../lib/evidence-search-index";
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library";
 import { buildArgumentLibrary, buildLibraryCardsFromContributions, buildTagCollections } from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
 import { listContributions } from "./contributions";
 import { isCardLive } from "../lib/peer-review";
-import { getPeerReview } from "./peerReviews";
+import { getPeerReview, getPeerReviewsRawSnapshot } from "./peerReviews";
 
 const STORAGE_KEY = "evidenceLibraryEntries";
 
+function readRawEntries(): string | null {
+  if (typeof localStorage === "undefined") return null;
+  return localStorage.getItem(STORAGE_KEY);
+}
+
 function readAll(): EvidenceLibraryEntry[] {
-  if (typeof localStorage === "undefined") return [];
+  const raw = readRawEntries();
+  if (!raw) return [];
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? (parsed as EvidenceLibraryEntry[]) : [];
   } catch {
@@ -144,22 +151,53 @@ export function searchPersistedEvidenceLibrary(query: EvidenceSearchQuery = {}):
   return searchEvidenceLibrary(readAll().filter((entry) => isEntryLive(entry.id)), query);
 }
 
+let cachedIndex: EvidenceSearchIndex | null = null;
+let cachedRawEntries: string | null = null;
+let cachedRawReviews: string | null = null;
+
 /**
- * Searches the persisted evidence repository via a freshly built
- * `EvidenceSearchIndex` — the real, postings-list-backed search index named
- * in follow-up (c) under the "📋 Shared Evidence Library" bullet in
- * TODO.md, rather than `searchPersistedEvidenceLibrary`'s full re-scan on
- * every call. Only "live" entries are indexed (see `isEntryLive`), matching
+ * The `EvidenceSearchIndex` built from every currently "live" persisted
+ * entry, cached across calls and rebuilt only when the data it was built
+ * from could have changed — closing follow-up (c)'s remaining half named
+ * under the "📋 Shared Evidence Library" bullet in TODO.md ("caching the
+ * index across calls instead of rebuilding it on every search"). Which
+ * entries are "live" depends on two independently-written stores: this
+ * store's own `EvidenceLibraryEntry` records and `state/peerReviews.ts`'s
+ * `CardReview` records, since a review transition can flip an entry's
+ * liveness with no write to this store at all. Rather than a write-time
+ * counter on each store (which only catches writes made through that
+ * store's own functions), the cache compares each store's raw persisted
+ * JSON string against the strings it was built from — a cheap fingerprint
+ * that catches any change to either store's underlying data, however it
+ * was written, without either store needing to call into the other's write
+ * path directly.
+ */
+function getCachedEvidenceSearchIndex(): EvidenceSearchIndex {
+  const rawEntries = readRawEntries();
+  const rawReviews = getPeerReviewsRawSnapshot();
+  if (cachedIndex && rawEntries === cachedRawEntries && rawReviews === cachedRawReviews) {
+    return cachedIndex;
+  }
+
+  const liveEntries = readAll().filter((entry) => isEntryLive(entry.id));
+  cachedIndex = buildEvidenceSearchIndex(liveEntries);
+  cachedRawEntries = rawEntries;
+  cachedRawReviews = rawReviews;
+  return cachedIndex;
+}
+
+/**
+ * Searches the persisted evidence repository via a cached
+ * `EvidenceSearchIndex` (see `getCachedEvidenceSearchIndex`) — the real,
+ * postings-list-backed search index named in follow-up (c) under the "📋
+ * Shared Evidence Library" bullet in TODO.md, rather than
+ * `searchPersistedEvidenceLibrary`'s full re-scan on every call. Only "live"
+ * entries are indexed (see `isEntryLive`), matching
  * `searchPersistedEvidenceLibrary`'s own gating, so a card still held back
- * by an in-progress peer review doesn't appear in results here either. The
- * index itself is rebuilt on every call rather than cached — this store has
- * no lifecycle hook to invalidate a cached index on write, so a fresh build
- * is the correctness-first choice; caching the index across calls is a
- * further follow-up once write volume makes that matter.
+ * by an in-progress peer review doesn't appear in results here either.
  */
 export function searchPersistedEvidenceLibraryWithIndex(query: EvidenceSearchQuery = {}): EvidenceSearchResult[] {
-  const liveEntries = readAll().filter((entry) => isEntryLive(entry.id));
-  return searchEvidenceLibraryWithIndex(buildEvidenceSearchIndex(liveEntries), query);
+  return searchEvidenceLibraryWithIndex(getCachedEvidenceSearchIndex(), query);
 }
 
 /**

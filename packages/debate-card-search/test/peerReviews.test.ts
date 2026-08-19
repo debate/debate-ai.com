@@ -5,6 +5,7 @@ import {
   deletePeerReview,
   derivePersistedReviewerTier,
   getPeerReview,
+  getPeerReviewsRawSnapshot,
   listPeerReviews,
   publishPersistedReviewAsReviewer,
   rejectPersistedReviewAsReviewer,
@@ -125,6 +126,35 @@ describe("deletePeerReview", () => {
     savePeerReview(IN_REVIEW_REVIEW);
     deletePeerReview("missing");
     expect(listPeerReviews()).toEqual([IN_REVIEW_REVIEW]);
+  });
+});
+
+describe("getPeerReviewsRawSnapshot", () => {
+  it("returns null when nothing is stored", () => {
+    expect(getPeerReviewsRawSnapshot()).toBeNull();
+  });
+
+  it("changes value whenever a review is saved", () => {
+    const empty = getPeerReviewsRawSnapshot();
+    savePeerReview(DRAFT_REVIEW);
+    const afterSave = getPeerReviewsRawSnapshot();
+    expect(afterSave).not.toEqual(empty);
+
+    savePeerReview({ ...DRAFT_REVIEW, status: "in_review" });
+    const afterStatusChange = getPeerReviewsRawSnapshot();
+    expect(afterStatusChange).not.toEqual(afterSave);
+  });
+
+  it("changes value whenever a review is deleted", () => {
+    savePeerReview(DRAFT_REVIEW);
+    const beforeDelete = getPeerReviewsRawSnapshot();
+    deletePeerReview("card-1");
+    expect(getPeerReviewsRawSnapshot()).not.toEqual(beforeDelete);
+  });
+
+  it("stays identical across calls when nothing has changed", () => {
+    savePeerReview(DRAFT_REVIEW);
+    expect(getPeerReviewsRawSnapshot()).toEqual(getPeerReviewsRawSnapshot());
   });
 });
 
