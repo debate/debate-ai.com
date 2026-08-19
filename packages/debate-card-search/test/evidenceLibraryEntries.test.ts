@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildCombinedPersistedArgumentLibrary,
   buildPersistedArgumentLibrary,
+  checkPersistedPageForExistingCards,
   deleteEvidenceLibraryEntry,
   getEvidenceLibraryEntry,
   isEntryLive,
@@ -170,6 +171,30 @@ describe("searchPersistedEvidenceLibrary", () => {
 
     const results = searchPersistedEvidenceLibrary({});
     expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+  });
+});
+
+describe("checkPersistedPageForExistingCards", () => {
+  it("reports alreadyCut true when a persisted entry's sourceUrl matches", () => {
+    saveEvidenceLibraryEntry({ ...WARMING_CARD, sourceUrl: "https://news.example.com/warming-report" });
+
+    const result = checkPersistedPageForExistingCards("http://www.news.example.com/warming-report/");
+    expect(result.alreadyCut).toBe(true);
+    expect(result.matches.map((entry) => entry.id)).toEqual(["entry-1"]);
+  });
+
+  it("reports alreadyCut false when nothing is persisted", () => {
+    const result = checkPersistedPageForExistingCards("https://example.com/unrelated");
+    expect(result.alreadyCut).toBe(false);
+    expect(result.matches).toEqual([]);
+  });
+
+  it("excludes an entry held under an in-progress peer review, matching searchPersistedEvidenceLibrary's gating", () => {
+    saveEvidenceLibraryEntry({ ...WARMING_CARD, sourceUrl: "https://news.example.com/warming-report" });
+    savePeerReview(submitForReview(createCardReview("entry-1")));
+
+    const result = checkPersistedPageForExistingCards("https://news.example.com/warming-report");
+    expect(result.alreadyCut).toBe(false);
   });
 });
 

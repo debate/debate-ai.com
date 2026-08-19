@@ -33,6 +33,18 @@
  * tag-autocomplete/tag-management affordance" — under the "📚 Common
  * Argument Library" bullet in TODO.md.
  *
+ * A "Check this page" box implements the first slice of the "On Page Card
+ * Reuse Search" idea in TODO.md's Product Feature Ideas list — pasting a
+ * page URL calls `state/evidenceLibraryEntries.ts`'s
+ * `checkPersistedPageForExistingCards` (itself a thin composition of
+ * `shared-evidence-library.ts`'s pure `checkPageForExistingCards`) and
+ * renders whether that page has already been cut, plus every matching
+ * entry. The submission form's new optional Source URL field is how an
+ * entry's `sourceUrl` gets recorded in the first place. There is no browser
+ * extension in this repo yet — this panel is the check's only caller today;
+ * an extension would call the same persisted/pure functions against the
+ * current tab's URL instead of a pasted one.
+ *
  * @module panels/EvidenceLibraryPanel
  */
 
@@ -45,6 +57,7 @@ import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
+  checkPersistedPageForExistingCards,
   deleteEvidenceLibraryEntry,
   listEvidenceLibraryEntries,
   listPendingReviewEntries,
@@ -57,11 +70,17 @@ import { getPeerReview } from "../state/peerReviews"
 import {
   buildEvidenceSearchFormQuery,
   buildEvidenceSearchSummaryText,
+  buildPageReuseCheckSummaryText,
   computeWordCount,
   getEvidenceStaleness,
 } from "../lib/shared-evidence-library"
 import { applyTagSuggestion, parseTagsInput, suggestTags } from "../lib/argument-library"
-import type { EvidenceEntryKind, EvidenceLibraryEntry, EvidenceSearchResult } from "../lib/shared-evidence-library"
+import type {
+  EvidenceEntryKind,
+  EvidenceLibraryEntry,
+  EvidenceSearchResult,
+  PageReuseCheckResult,
+} from "../lib/shared-evidence-library"
 
 const KIND_FILTERS: { value: EvidenceEntryKind | "all"; label: string }[] = [
   { value: "all", label: "All" },
@@ -82,9 +101,19 @@ type EntryDraft = {
   cite: string
   tags: string
   text: string
+  sourceUrl: string
 }
 
-const EMPTY_DRAFT: EntryDraft = { kind: "card", topic: "", caseArea: "", argBlock: "", cite: "", tags: "", text: "" }
+const EMPTY_DRAFT: EntryDraft = {
+  kind: "card",
+  topic: "",
+  caseArea: "",
+  argBlock: "",
+  cite: "",
+  tags: "",
+  text: "",
+  sourceUrl: "",
+}
 
 function entryToDraft(entry: EvidenceLibraryEntry): EntryDraft {
   return {
@@ -95,6 +124,7 @@ function entryToDraft(entry: EvidenceLibraryEntry): EntryDraft {
     cite: entry.cite,
     tags: entry.tags.join(", "),
     text: entry.text,
+    sourceUrl: entry.sourceUrl ?? "",
   }
 }
 
@@ -121,6 +151,8 @@ export function EvidenceLibraryPanel() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editorContributorId, setEditorContributorId] = useState("")
   const [knownTags, setKnownTags] = useState<string[]>([])
+  const [reuseCheckUrl, setReuseCheckUrl] = useState("")
+  const [reuseCheckResult, setReuseCheckResult] = useState<PageReuseCheckResult | null>(null)
 
   useEffect(() => {
     setHasEntries(listEvidenceLibraryEntries().length > 0)
@@ -182,6 +214,7 @@ export function EvidenceLibraryPanel() {
       text,
       cite: draft.cite.trim(),
       wordCount: computeWordCount(text),
+      ...(draft.sourceUrl.trim() ? { sourceUrl: draft.sourceUrl.trim() } : {}),
     }
 
     if (editingId) {
@@ -214,6 +247,15 @@ export function EvidenceLibraryPanel() {
     deleteEvidenceLibraryEntry(id)
     if (editingId === id) handleCancelEdit()
     refreshResults()
+  }
+
+  const handleReuseCheck = () => {
+    const url = reuseCheckUrl.trim()
+    if (!url) {
+      setReuseCheckResult(null)
+      return
+    }
+    setReuseCheckResult(checkPersistedPageForExistingCards(url))
   }
 
   if (hasEntries === null) {
@@ -295,6 +337,15 @@ export function EvidenceLibraryPanel() {
               placeholder="Smith 24"
             />
           </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="evidence-source-url">Source URL {draft.kind === "block" && "(optional)"}</Label>
+            <Input
+              id="evidence-source-url"
+              value={draft.sourceUrl}
+              onChange={(e) => setDraft((prev) => ({ ...prev, sourceUrl: e.target.value }))}
+              placeholder="https://example.com/article"
+            />
+          </div>
           <div className="space-y-1.5 sm:col-span-2">
             <Label htmlFor="evidence-tags">Tags (comma-separated, optional)</Label>
             <Input
@@ -357,6 +408,46 @@ export function EvidenceLibraryPanel() {
             </Button>
           )}
         </div>
+      </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div>
+          <h2 className="text-sm font-medium text-foreground">Check this page</h2>
+          <p className="text-xs text-muted-foreground">
+            Paste a page URL to see whether anyone has already cut a card from it — the check a
+            browser extension would run on the current tab before you start cutting.
+          </p>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Input
+            value={reuseCheckUrl}
+            onChange={(e) => setReuseCheckUrl(e.target.value)}
+            placeholder="https://example.com/article"
+            aria-label="Page URL to check for existing cards"
+            className="sm:max-w-sm"
+          />
+          <Button type="button" variant="outline" onClick={handleReuseCheck}>
+            Check for existing cards
+          </Button>
+        </div>
+        {reuseCheckResult && (
+          <div className="space-y-2">
+            <p
+              className={`text-sm ${reuseCheckResult.alreadyCut ? "text-destructive" : "text-muted-foreground"}`}
+            >
+              {buildPageReuseCheckSummaryText(reuseCheckResult)}
+            </p>
+            {reuseCheckResult.matches.map((entry) => (
+              <div key={entry.id} className="rounded-lg border border-dashed border-border p-3">
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                  <span className="font-medium text-foreground">{entry.argBlock}</span>
+                  {entry.cite && <span className="text-xs text-muted-foreground">{entry.cite}</span>}
+                </div>
+                <p className="text-sm text-muted-foreground">{entry.text}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">

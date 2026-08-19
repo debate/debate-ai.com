@@ -18,11 +18,15 @@
  * general-purpose contribution tagged with `topic`/`caseArea`/`tags` is
  * organized alongside a dedicated evidence-library entry.
  *
+ * `checkPersistedPageForExistingCards` composes `shared-evidence-library.ts`'s
+ * pure `checkPageForExistingCards` against this store — the persisted half
+ * of the "On Page Card Reuse Search" idea's first slice in TODO.md.
+ *
  * @module state/evidenceLibraryEntries
  */
 
-import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult } from "../lib/shared-evidence-library";
-import { buildEvidenceEntryRevision, searchEvidenceLibrary } from "../lib/shared-evidence-library";
+import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult, PageReuseCheckResult } from "../lib/shared-evidence-library";
+import { buildEvidenceEntryRevision, checkPageForExistingCards, searchEvidenceLibrary } from "../lib/shared-evidence-library";
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library";
 import { buildArgumentLibrary, buildLibraryCardsFromContributions, buildTagCollections } from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
@@ -129,6 +133,19 @@ export function listPendingReviewEntries(): EvidenceLibraryEntry[] {
  */
 export function searchPersistedEvidenceLibrary(query: EvidenceSearchQuery = {}): EvidenceSearchResult[] {
   return searchEvidenceLibrary(readAll().filter((entry) => isEntryLive(entry.id)), query);
+}
+
+/**
+ * Checks whether a page has already been cut into the persisted evidence
+ * repository, reusing `checkPageForExistingCards` directly — the "On Page
+ * Card Reuse Search" idea in TODO.md's Product Feature Ideas list. Only
+ * "live" entries count as an existing cut (see `isEntryLive`), matching
+ * `searchPersistedEvidenceLibrary`'s own gating, so a card still held back
+ * by an in-progress peer review doesn't yet count as "already cut" for this
+ * check either.
+ */
+export function checkPersistedPageForExistingCards(url: string): PageReuseCheckResult {
+  return checkPageForExistingCards(readAll().filter((entry) => isEntryLive(entry.id)), url);
 }
 
 /**
