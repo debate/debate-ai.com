@@ -54,7 +54,12 @@ import {
   searchPersistedEvidenceLibrary,
 } from "../state/evidenceLibraryEntries"
 import { getPeerReview } from "../state/peerReviews"
-import { buildEvidenceSearchSummaryText, computeWordCount, getEvidenceStaleness } from "../lib/shared-evidence-library"
+import {
+  buildEvidenceSearchFormQuery,
+  buildEvidenceSearchSummaryText,
+  computeWordCount,
+  getEvidenceStaleness,
+} from "../lib/shared-evidence-library"
 import { applyTagSuggestion, parseTagsInput, suggestTags } from "../lib/argument-library"
 import type { EvidenceEntryKind, EvidenceLibraryEntry, EvidenceSearchResult } from "../lib/shared-evidence-library"
 
@@ -106,6 +111,9 @@ export function EvidenceLibraryPanel() {
   const [hasEntries, setHasEntries] = useState<boolean | null>(null)
   const [queryText, setQueryText] = useState("")
   const [kind, setKind] = useState<EvidenceEntryKind | "all">("all")
+  const [filterTopic, setFilterTopic] = useState("")
+  const [filterCaseArea, setFilterCaseArea] = useState("")
+  const [filterTags, setFilterTags] = useState("")
   const [results, setResults] = useState<EvidenceSearchResult[]>([])
   const [pendingEntries, setPendingEntries] = useState<EvidenceLibraryEntry[]>([])
   const [draft, setDraft] = useState<EntryDraft>(EMPTY_DRAFT)
@@ -120,15 +128,23 @@ export function EvidenceLibraryPanel() {
     setPendingEntries(listPendingReviewEntries())
   }, [])
 
+  const buildQuery = () =>
+    buildEvidenceSearchFormQuery({
+      text: queryText,
+      kind: kind === "all" ? undefined : kind,
+      topic: filterTopic,
+      caseArea: filterCaseArea,
+      tags: filterTags,
+    })
+
   useEffect(() => {
     if (hasEntries === null) return
-    const query = { text: queryText, ...(kind !== "all" ? { kind } : {}) }
-    setResults(searchPersistedEvidenceLibrary(query))
-  }, [hasEntries, queryText, kind])
+    setResults(searchPersistedEvidenceLibrary(buildQuery()))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasEntries, queryText, kind, filterTopic, filterCaseArea, filterTags])
 
   const refreshResults = () => {
-    const query = { text: queryText, ...(kind !== "all" ? { kind } : {}) }
-    setResults(searchPersistedEvidenceLibrary(query))
+    setResults(searchPersistedEvidenceLibrary(buildQuery()))
     setHasEntries(true)
     setKnownTags(listPersistedTags())
     setPendingEntries(listPendingReviewEntries())
@@ -204,7 +220,7 @@ export function EvidenceLibraryPanel() {
     return <div className="p-6 text-sm text-muted-foreground">Loading evidence library…</div>
   }
 
-  const summaryQuery = { text: queryText, ...(kind !== "all" ? { kind } : {}) }
+  const summaryQuery = buildQuery()
   const currentYear = new Date().getFullYear()
   const { completedTags, draftTag } = parseTagsInput(draft.tags)
   const tagSuggestions = suggestTags(knownTags, draftTag, completedTags)
@@ -363,6 +379,29 @@ export function EvidenceLibraryPanel() {
             </Button>
           ))}
         </div>
+      </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <Input
+          value={filterTopic}
+          onChange={(event) => setFilterTopic(event.target.value)}
+          placeholder="Filter by topic…"
+          aria-label="Filter by topic"
+          className="sm:max-w-xs"
+        />
+        <Input
+          value={filterCaseArea}
+          onChange={(event) => setFilterCaseArea(event.target.value)}
+          placeholder="Filter by case area…"
+          aria-label="Filter by case area"
+          className="sm:max-w-xs"
+        />
+        <Input
+          value={filterTags}
+          onChange={(event) => setFilterTags(event.target.value)}
+          placeholder="Filter by tags (comma-separated)…"
+          aria-label="Filter by tags"
+          className="sm:max-w-xs"
+        />
       </div>
       {pendingEntries.length > 0 && (
         <div className="space-y-2">

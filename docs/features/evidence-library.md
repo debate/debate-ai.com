@@ -14,8 +14,9 @@ researching a duplicate.
 A submission form (kind, topic, case area, argument block, citation,
 comma-separated tags, and a body text area with a live word-count readout),
 plus a search box (matched against an entry's full-text body, argument
-block, and citation) and a card/block kind filter, over every persisted
-`EvidenceLibraryEntry`. Each result also carries **Edit** and **Delete**
+block, and citation), a card/block kind filter, and topic/case-area/tags
+filter fields, over every persisted `EvidenceLibraryEntry`. Each result also
+carries **Edit** and **Delete**
 actions: Edit loads the entry back into the submission form (now labeled
 "Editing entry …") for revision, and — since editing asks for the editor's
 contributor ID — saving records the edit as a scored `CardRevisionRecord`
@@ -87,9 +88,14 @@ panels/EvidenceLibraryPanel.tsx (submission form)
           → deriveCardSnapshotFromEntry(entry) — lib/shared-evidence-library.ts (pure)
       → saveRevisionRecord(record)         — state/revisionHistory.ts
   → deleteEvidenceLibraryEntry(id)         — state/evidenceLibraryEntries.ts (delete)
-state/evidenceLibraryEntries.ts (localStorage: evidenceLibraryEntries)
-  → searchPersistedEvidenceLibrary({ text, kind }) — filters to isEntryLive
-                                           entries, then reuses
+panels/EvidenceLibraryPanel.tsx (search form: text, kind, topic, case area, tags)
+  → buildEvidenceSearchFormQuery({ text, kind, topic, caseArea, tags }) — lib/shared-evidence-library.ts (pure)
+      narrows the raw filter-field values (trims topic/case area, parses
+      comma-separated tags) into an EvidenceSearchQuery, omitting any
+      blank field so it doesn't narrow the search
+  → searchPersistedEvidenceLibrary(query)  — state/evidenceLibraryEntries.ts,
+                                           filters to isEntryLive entries,
+                                           then reuses
                                            lib/shared-evidence-library.ts's
                                            pure searchEvidenceLibrary
   → listPendingReviewEntries()           — entries isEntryLive excludes
@@ -112,9 +118,13 @@ overwrites an existing entry id; a brand-new submission never does.
 Every search/ranking rule already existed and was Vitest-covered before this
 panel — `searchPersistedEvidenceLibrary`, `searchEvidenceLibrary`, and
 `buildEvidenceSearchSummaryText` are used directly, with no new search logic
-introduced. The panel calls the persisted search with an explicit (possibly
-empty) `text` field alongside an optional `kind` filter; that exact combined
-shape is covered in
+introduced; only the new `buildEvidenceSearchFormQuery` (narrowing the
+panel's five raw filter fields into an `EvidenceSearchQuery`) is new, and is
+Vitest-covered in
+`packages/debate-card-search/test/shared-evidence-library.test.ts`. The
+panel calls the persisted search with an explicit (possibly empty) `text`
+field alongside optional `kind`/`topic`/`caseArea`/`tags` filters; the
+`text`+`kind` combined shape is covered in
 `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`. The
 submission form's only new logic is `computeWordCount` (a plain whitespace
 tokenizer, Vitest-covered in
@@ -126,9 +136,6 @@ card submitted here now feeds that dashboard directly.
 
 ## Known gaps
 
-- No topic/case-area/tag filter controls in the search half of the panel —
-  only free text and kind are exposed; the underlying `searchEvidenceLibrary`
-  already supports `topic`, `caseArea`, and `tags`.
 - No real search index (e.g. Typesense) — search is the existing in-memory
   keyword-overlap heuristic over whatever is persisted to localStorage.
 - No tag rename/merge tool — the Tags field's autocomplete only suggests
