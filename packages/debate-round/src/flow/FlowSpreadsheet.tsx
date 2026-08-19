@@ -15,9 +15,11 @@ import type {
   CellContextMenuEvent,
 } from "ag-grid-community"
 import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
-import type { FlowSpreadsheetProps, ContextMenuEntry } from "./types"
+import type { FlowSpreadsheetProps, ContextMenuEntry, EditReviewOpenParams } from "./types"
 import { buildRowData, rowDataToBoxes } from "./dataTransform"
 import type { FlowAnnotation } from "./flow-annotations"
+import { listFlowEditsForBox } from "../state/flowEdits"
+import { EditReviewPopover } from "./EditReviewPopover"
 import { GridContextMenu } from "./GridContextMenu"
 import { useFlowGridConfig } from "./useFlowGridConfig"
 import { useFlowRowOperations } from "./useFlowRowOperations"
@@ -59,6 +61,8 @@ export function FlowSpreadsheet({
   // Section heading & collapse state
   const [collapsedHeadings, setCollapsedHeadings] = useState<Set<string>>(new Set())
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; rowId: string } | null>(null)
+  const [editReview, setEditReview] = useState<EditReviewOpenParams | null>(null)
+  const [editReviewRefreshToken, setEditReviewRefreshToken] = useState(0)
 
   // Initialize row data from flow
   const [rowData, setRowData] = useState<any[]>(() => buildRowData(flow.children, flow.columns))
@@ -254,6 +258,25 @@ export function FlowSpreadsheet({
     [activeVideoId, setIsPlaying],
   )
 
+  /**
+   * Open the `EditReviewPopover` for a clicked cell's box, at the click
+   * position (mirrors `onCellContextMenu`'s `GridContextMenu` positioning).
+   */
+  const handleOpenEditReview = useCallback((params: EditReviewOpenParams) => {
+    setEditReview(params)
+  }, [])
+
+  /**
+   * The popover's pending-edit list for whichever box it's currently open
+   * for. Re-read on `editReviewRefreshToken` bumps (after logging a new
+   * edit) since AG Grid cell renderers don't re-render on their own when
+   * `localStorage` changes underneath them.
+   */
+  const editReviewEdits = useMemo(() => {
+    if (!editReview || typeof localStorage === "undefined") return []
+    return listFlowEditsForBox(flow.id, editReview.boxPath)
+  }, [editReview, flow.id, editReviewRefreshToken])
+
   // Grid configuration hook
   const { columnDefs, defaultColDef, getRowId } = useFlowGridConfig(
     flow,
@@ -261,6 +284,7 @@ export function FlowSpreadsheet({
     collapsedHeadings,
     toggleCollapse,
     handleJumpToAnnotation,
+    handleOpenEditReview,
   )
 
   /**
@@ -533,6 +557,20 @@ export function FlowSpreadsheet({
           y={contextMenu.y}
           items={getContextMenuItems(contextMenu.rowId)}
           onClose={() => setContextMenu(null)}
+        />
+      )}
+
+      {/* Edit-badge review/log popover */}
+      {editReview && (
+        <EditReviewPopover
+          x={editReview.x}
+          y={editReview.y}
+          flowId={flow.id}
+          boxPath={editReview.boxPath}
+          currentContent={editReview.currentContent}
+          edits={editReviewEdits}
+          onLogged={() => setEditReviewRefreshToken((t) => t + 1)}
+          onClose={() => setEditReview(null)}
         />
       )}
     </div>

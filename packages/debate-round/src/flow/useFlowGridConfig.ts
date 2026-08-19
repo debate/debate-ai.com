@@ -9,6 +9,7 @@ import { AnnotationCellRenderer } from "./AnnotationCellRenderer"
 import { FlowColumnHeader } from "./FlowColumnHeader"
 import { FirstColumnCellRenderer } from "./FirstColumnCellRenderer"
 import type { FlowAnnotation } from "./flow-annotations"
+import type { EditReviewOpenParams } from "./types"
 
 /**
  * Hook providing AG Grid column configuration for Flow spreadsheet
@@ -19,6 +20,7 @@ export function useFlowGridConfig(
   collapsedHeadings?: Set<string>,
   toggleCollapse?: (rowId: string) => void,
   onJumpToAnnotation?: (annotation: FlowAnnotation) => void,
+  onOpenEditReview?: (params: EditReviewOpenParams) => void,
 ) {
   /**
    * Generate column definitions for AG Grid
@@ -51,26 +53,37 @@ export function useFlowGridConfig(
 
       // First column gets the tree cell renderer; every other column gets the
       // plain annotation-aware renderer. Both surface an `AnnotationBadge`
-      // for a cell whose box has a persisted `FlowAnnotation`.
-      if (idx === 0 && collapsedHeadings && toggleCollapse && onJumpToAnnotation) {
+      // for a cell whose box has a persisted `FlowAnnotation`, and an
+      // `EditBadge` for logging or reviewing that box's `FlowEdit`s.
+      if (idx === 0 && collapsedHeadings && toggleCollapse && onJumpToAnnotation && onOpenEditReview) {
         colDef.cellRenderer = FirstColumnCellRenderer
         colDef.cellRendererParams = {
           collapsedHeadings,
           onToggleCollapse: toggleCollapse,
           flowId: flow.id,
           onJumpToAnnotation,
+          onOpenEditReview,
         }
-      } else if (idx > 0 && onJumpToAnnotation) {
+      } else if (idx > 0 && onJumpToAnnotation && onOpenEditReview) {
         colDef.cellRenderer = AnnotationCellRenderer
         colDef.cellRendererParams = {
           flowId: flow.id,
           onJumpToAnnotation,
+          onOpenEditReview,
         }
       }
 
       return colDef
     })
-  }, [flow.columns, flow.id, onOpenSpeechPanel, collapsedHeadings, toggleCollapse, onJumpToAnnotation])
+  }, [
+    flow.columns,
+    flow.id,
+    onOpenSpeechPanel,
+    collapsedHeadings,
+    toggleCollapse,
+    onJumpToAnnotation,
+    onOpenEditReview,
+  ])
 
   /**
    * Default column settings

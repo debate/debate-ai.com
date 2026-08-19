@@ -3,6 +3,7 @@ import {
   clearFlowEditsForFlow,
   deleteFlowEdit,
   listFlowEdits,
+  listFlowEditsForBox,
   listFlowEditsForFlow,
   saveFlowEdit,
 } from "../src/state/flowEdits";
@@ -91,6 +92,40 @@ describe("listFlowEditsForFlow", () => {
   it("returns an empty list for a flow with no edits", () => {
     saveFlowEdit(EARLY_EDIT);
     expect(listFlowEditsForFlow(999)).toEqual([]);
+  });
+});
+
+describe("listFlowEditsForBox", () => {
+  it("returns only edits addressing the exact box, oldest first", () => {
+    const otherBoxEdit: FlowEdit = { ...EARLY_EDIT, id: "edit-other-box", boxPath: [0, 2] };
+    saveFlowEdit(LATE_EDIT);
+    saveFlowEdit(EARLY_EDIT);
+    saveFlowEdit(otherBoxEdit);
+
+    expect(listFlowEditsForBox(1, [0, 1])).toEqual([EARLY_EDIT]);
+  });
+
+  it("excludes a same-flow edit whose box path is a prefix or extension of the target path", () => {
+    const parentPathEdit: FlowEdit = { ...EARLY_EDIT, id: "edit-parent", boxPath: [0] };
+    const childPathEdit: FlowEdit = { ...EARLY_EDIT, id: "edit-child", boxPath: [0, 1, 2] };
+    saveFlowEdit(EARLY_EDIT);
+    saveFlowEdit(parentPathEdit);
+    saveFlowEdit(childPathEdit);
+
+    expect(listFlowEditsForBox(1, [0, 1])).toEqual([EARLY_EDIT]);
+  });
+
+  it("excludes edits from a different flow addressing the same box path", () => {
+    const sameBoxOtherFlow: FlowEdit = { ...OTHER_FLOW_EDIT, boxPath: [0, 1] };
+    saveFlowEdit(EARLY_EDIT);
+    saveFlowEdit(sameBoxOtherFlow);
+
+    expect(listFlowEditsForBox(1, [0, 1])).toEqual([EARLY_EDIT]);
+  });
+
+  it("returns an empty list when the box has no edits", () => {
+    saveFlowEdit(EARLY_EDIT);
+    expect(listFlowEditsForBox(1, [9, 9])).toEqual([]);
   });
 });
 
