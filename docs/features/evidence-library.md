@@ -89,7 +89,7 @@ page, and `checkPageForExistingCards` wraps that into a
 `{ url, alreadyCut, matches }` result; `state/evidenceLibraryEntries.ts`'s
 `checkPersistedPageForExistingCards` composes the pure check against the
 persisted repository, gated to "live" entries the same way
-`searchPersistedEvidenceLibrary` is (see below).
+`searchPersistedEvidenceLibraryWithIndex` is (see below).
 
 ## Real search index
 
@@ -111,34 +111,40 @@ outranks one nearly every entry shares. It's a drop-in alternative to
 (kind/topic/caseArea/tags).
 
 `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`
-composes this against the persisted repository, added alongside — not
-replacing — `searchPersistedEvidenceLibrary`, so `EvidenceLibraryPanel`'s
-existing search behavior is unchanged. The index is rebuilt fresh on every
-call (this store has no write-time hook to invalidate a cached index), which
-is still the query-time win the follow-up asked for: ranking no longer
-means visiting every entry's text, only the ones a query term actually
-appears in. Vitest-covered in
+composes this against the persisted repository, added alongside —
+`searchPersistedEvidenceLibrary` stays exported, unchanged, for any other
+caller. The index is rebuilt fresh on every call (this store has no
+write-time hook to invalidate a cached index), which is still the
+query-time win the follow-up asked for: ranking no longer means visiting
+every entry's text, only the ones a query term actually appears in.
+Vitest-covered in
 `packages/debate-card-search/test/evidence-search-index.test.ts` (index
 construction, postings/term-frequency correctness, TF-IDF ranking including
 a dedicated case showing a rarer term outranks a common one, every filter
 combination, and candidate-set parity against `searchEvidenceLibrary` on a
-shared fixture) and new cases in
+shared fixture) and cases in
 `packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (mirroring
 `searchPersistedEvidenceLibrary`'s own test suite: peer-review gating,
 empty-repository, kind filtering, empty-text-query).
 
-Follow-up: `EvidenceLibraryPanel` itself still calls
-`searchPersistedEvidenceLibrary`, not the indexed version — wiring the panel
-to the index (or caching it across calls instead of rebuilding on every
-search) is not started.
+`EvidenceLibraryPanel` now calls `searchPersistedEvidenceLibraryWithIndex`
+instead of the original keyword-overlap search, closing this follow-up — the
+panel's search box, kind filter, and topic/case-area/tags filters all read
+from the indexed, TF-IDF-ranked search. That exact call shape
+(`buildEvidenceSearchFormQuery`'s output fed into
+`searchPersistedEvidenceLibraryWithIndex`) is Vitest-covered in
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`. Caching
+the index across calls instead of rebuilding it on every search remains a
+further follow-up, not started — this store still has no write-time hook to
+invalidate a cache.
 
 ## Peer-review gating
 
 A search only ever returns "live" entries — see
 [`review-queue.md`](./review-queue.md#gating-the-shared-evidence-library) for
 how starting a [Review Queue](./review-queue.md) review on an entry's id
-holds it back from `searchPersistedEvidenceLibrary`'s results until that
-review reaches `published`. `EvidenceLibraryPanel` renders any such
+holds it back from `searchPersistedEvidenceLibraryWithIndex`'s results until
+that review reaches `published`. `EvidenceLibraryPanel` renders any such
 held-back entries in a separate "Pending review" section (still editable and
 deletable) so a contributor doesn't lose track of a submission that's
 mid-review.
@@ -159,11 +165,12 @@ panels/EvidenceLibraryPanel.tsx (search form: text, kind, topic, case area, tags
       narrows the raw filter-field values (trims topic/case area, parses
       comma-separated tags) into an EvidenceSearchQuery, omitting any
       blank field so it doesn't narrow the search
-  → searchPersistedEvidenceLibrary(query)  — state/evidenceLibraryEntries.ts,
+  → searchPersistedEvidenceLibraryWithIndex(query) — state/evidenceLibraryEntries.ts,
                                            filters to isEntryLive entries,
                                            then reuses
-                                           lib/shared-evidence-library.ts's
-                                           pure searchEvidenceLibrary
+                                           lib/evidence-search-index.ts's
+                                           pure buildEvidenceSearchIndex/
+                                           searchEvidenceLibraryWithIndex
   → listPendingReviewEntries()           — entries isEntryLive excludes
   → panels/EvidenceLibraryPanel.tsx      — renders results (and pending
                                            entries) as the query changes
@@ -193,15 +200,15 @@ the card. `saveEvidenceLibraryEntryRevision` only records a revision when it
 overwrites an existing entry id; a brand-new submission never does.
 
 Every search/ranking rule already existed and was Vitest-covered before this
-panel — `searchPersistedEvidenceLibrary`, `searchEvidenceLibrary`, and
-`buildEvidenceSearchSummaryText` are used directly, with no new search logic
-introduced; only the new `buildEvidenceSearchFormQuery` (narrowing the
-panel's five raw filter fields into an `EvidenceSearchQuery`) is new, and is
-Vitest-covered in
+panel wired to it — `searchPersistedEvidenceLibraryWithIndex`,
+`searchEvidenceLibraryWithIndex`, and `buildEvidenceSearchSummaryText` are
+used directly, with no new search logic introduced; only the
+`buildEvidenceSearchFormQuery` helper (narrowing the panel's five raw filter
+fields into an `EvidenceSearchQuery`) is new, and is Vitest-covered in
 `packages/debate-card-search/test/shared-evidence-library.test.ts`. The
-panel calls the persisted search with an explicit (possibly empty) `text`
-field alongside optional `kind`/`topic`/`caseArea`/`tags` filters; the
-`text`+`kind` combined shape is covered in
+panel calls the persisted indexed search with an explicit (possibly empty)
+`text` field alongside optional `kind`/`topic`/`caseArea`/`tags` filters;
+that exact call shape is covered in
 `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`. The
 submission form's only new logic is `computeWordCount` (a plain whitespace
 tokenizer, Vitest-covered in
@@ -213,11 +220,10 @@ card submitted here now feeds that dashboard directly.
 
 ## Known gaps
 
-- A real inverted-index/TF-IDF search now exists (see "Real search index"
-  above), but `EvidenceLibraryPanel` isn't wired to it yet — the panel still
-  calls the original keyword-overlap `searchPersistedEvidenceLibrary`. The
-  index is also rebuilt from scratch on every call rather than cached and
-  incrementally updated on write.
+- A real inverted-index/TF-IDF search now exists and `EvidenceLibraryPanel`
+  is wired to it (see "Real search index" above), but the index is still
+  rebuilt from scratch on every call rather than cached and incrementally
+  updated on write.
 - No browser extension exists — the "Check this page" box is a manual,
   paste-the-URL stand-in for what a future extension would run
   automatically against the current tab. The reuse-check logic itself
