@@ -52,7 +52,7 @@ _No task currently in progress._
   (2050 packages), `bun run test` (149 files / 2033 tests, all pass),
   `bun run typecheck` (11 in-scope packages pass), and `bun run build`
   (both buildable packages pass, `/coach-materials` appears in the built
-  route list).
+  route list). PR: [#244](https://github.com/debate/debate-ai.com/pull/244).
 - **Shared Evidence Library — topic/case-area/tag filter controls.**
   Closes the "no topic/case-area/tag filter controls in the search half of
   the panel — only free text and kind are exposed" gap named in
