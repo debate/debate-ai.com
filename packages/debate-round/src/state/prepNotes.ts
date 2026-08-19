@@ -16,11 +16,17 @@
  * Sync Notes" bullet's follow-up (a) in TODO.md, "a prep-notes panel UI" —
  * see `panels/PrepNotesPanel.tsx`.
  *
+ * `assignPersistedPrepNote` also closes that bullet's follow-up (b), "an
+ * assignee notification" — every real assignment (not an unassignment)
+ * records a `state/prepNoteNotifications.ts` notification for the new
+ * assignee.
+ *
  * @module state/prepNotes
  */
 
 import type { PrepNote, PrepNoteStatus } from "../flow/strategy-sync-notes";
 import { assignNote, getNotesForFlow, sortNotesByCreatedAt, updateNoteStatus } from "../flow/strategy-sync-notes";
+import { recordPrepNoteAssignedNotification } from "./prepNoteNotifications";
 
 const STORAGE_KEY = "prepNotes";
 
@@ -95,8 +101,10 @@ export function updatePersistedPrepNoteStatus(
 /**
  * Applies `assignNote` to the persisted note with `id` and saves the
  * result, so assigning (or unassigning, via `assignedToId: null`) the note
- * as a task actually persists. Returns the updated note, or `undefined`
- * (leaving storage untouched) if no note with that id is stored.
+ * as a task actually persists. On a real assignment (not an unassignment)
+ * this also records a `prepNoteNotifications.ts` notification for the new
+ * assignee. Returns the updated note, or `undefined` (leaving storage
+ * untouched) if no note with that id is stored.
  */
 export function assignPersistedPrepNote(
   id: string,
@@ -108,6 +116,11 @@ export function assignPersistedPrepNote(
 
   const updated = assignNote(note, assignedToId, updatedAt);
   savePrepNote(updated);
+
+  if (assignedToId) {
+    recordPrepNoteAssignedNotification(`${updated.id}-notif-${updatedAt}`, updated, assignedToId, updatedAt);
+  }
+
   return updated;
 }
 
