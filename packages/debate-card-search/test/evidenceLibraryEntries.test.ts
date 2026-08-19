@@ -18,6 +18,7 @@ import { listRevisionHistory } from "../src/state/revisionHistory";
 import { saveContribution } from "../src/state/contributions";
 import { approveReview, createCardReview, publishReview, submitForReview } from "../src/lib/peer-review";
 import { savePeerReview } from "../src/state/peerReviews";
+import { buildEvidenceSearchFormQuery } from "../src/lib/shared-evidence-library";
 import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 
@@ -221,6 +222,47 @@ describe("searchPersistedEvidenceLibraryWithIndex", () => {
 
     const results = searchPersistedEvidenceLibraryWithIndex({});
     expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+  });
+});
+
+describe("EvidenceLibraryPanel's search wiring (buildEvidenceSearchFormQuery -> searchPersistedEvidenceLibraryWithIndex)", () => {
+  it("finds the matching entry from the panel's raw filter-field shape", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const query = buildEvidenceSearchFormQuery({
+      text: "warming",
+      kind: undefined,
+      topic: "Energy Policy",
+      caseArea: "",
+      tags: "impact",
+    });
+    const results = searchPersistedEvidenceLibraryWithIndex(query);
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+  });
+
+  it("returns no results when a filter field narrows past every entry", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const query = buildEvidenceSearchFormQuery({
+      text: "warming",
+      kind: undefined,
+      topic: "Energy Policy",
+      caseArea: "Case",
+      tags: "",
+    });
+    expect(searchPersistedEvidenceLibraryWithIndex(query)).toEqual([]);
+  });
+
+  it("excludes an entry held under an in-progress peer review through the panel's own query shape", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    savePeerReview(submitForReview(createCardReview("entry-1")));
+
+    const query = buildEvidenceSearchFormQuery({ text: "", kind: undefined, topic: "", caseArea: "", tags: "" });
+    const results = searchPersistedEvidenceLibraryWithIndex(query);
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-2"]);
   });
 });
 

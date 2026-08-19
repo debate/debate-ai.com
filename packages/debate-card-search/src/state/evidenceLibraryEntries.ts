@@ -24,11 +24,11 @@
  *
  * `searchPersistedEvidenceLibraryWithIndex` composes
  * `evidence-search-index.ts`'s inverted-index search against this store's
- * "live" entries — the persisted half of the "📋 Shared Evidence Library"
- * bullet's follow-up (c), "a real search index ... once entries are
- * persisted at scale." Added alongside `searchPersistedEvidenceLibrary`
- * (not replacing it), so existing callers of the original keyword-overlap
- * search are unaffected.
+ * "live" entries — closes the "📋 Shared Evidence Library" bullet's
+ * follow-up (c), "a real search index ... once entries are persisted at
+ * scale." `EvidenceLibraryPanel` now calls this instead of
+ * `searchPersistedEvidenceLibrary`, which stays exported (unchanged) for any
+ * other caller.
  *
  * @module state/evidenceLibraryEntries
  */
