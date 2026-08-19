@@ -22,7 +22,7 @@
  */
 
 /** The kind of community contribution being scored. */
-export type ContributionKind = "summary" | "highlight" | "annotation" | "card";
+export type ContributionKind = "summary" | "highlight" | "annotation" | "card" | "original-argument" | "refutation";
 
 /** A single reviewer's endorsement of a contribution. */
 export interface ReviewerEndorsement {

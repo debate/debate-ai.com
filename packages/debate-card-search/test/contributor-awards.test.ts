@@ -38,6 +38,26 @@ const carolSummary: AttributedContribution = {
   reviewerEndorsements: [{ reviewerWeight: 0.7 }],
 };
 
+const daveOriginalArgument: AttributedContribution = {
+  id: "dave-original-argument",
+  contributorId: "dave",
+  kind: "original-argument",
+  likes: 4,
+  saves: 1,
+  qualitySignals: [0.85],
+  reviewerEndorsements: [{ reviewerWeight: 0.6 }],
+};
+
+const eveRefutation: AttributedContribution = {
+  id: "eve-refutation",
+  contributorId: "eve",
+  kind: "refutation",
+  likes: 1,
+  saves: 1,
+  qualitySignals: [0.6],
+  reviewerEndorsements: [],
+};
+
 describe("groupContributionsByKind", () => {
   it("groups contributions by kind, preserving order within a group", () => {
     const grouped = groupContributionsByKind([aliceCard, carolSummary, bobCard]);
@@ -86,8 +106,33 @@ describe("buildTopContributorAwards", () => {
   });
 
   it("returns categories in stable kind order regardless of input order", () => {
-    const awards = buildTopContributorAwards([carolSummary, aliceCard]);
-    expect(awards.map((a) => a.kind)).toEqual(["card", "summary"]);
+    const awards = buildTopContributorAwards([
+      eveRefutation,
+      carolSummary,
+      daveOriginalArgument,
+      aliceCard,
+    ]);
+    expect(awards.map((a) => a.kind)).toEqual(["card", "summary", "original-argument", "refutation"]);
+  });
+
+  it("selects a winner for the original-argument and refutation kinds", () => {
+    const awards = buildTopContributorAwards([daveOriginalArgument, eveRefutation]);
+    expect(awards).toEqual([
+      {
+        kind: "original-argument",
+        label: DEFAULT_AWARD_CATEGORY_LABELS["original-argument"],
+        contributorId: "dave",
+        contributionCount: 1,
+        totalHelpfulnessScore: expect.any(Number),
+      },
+      {
+        kind: "refutation",
+        label: DEFAULT_AWARD_CATEGORY_LABELS.refutation,
+        contributorId: "eve",
+        contributionCount: 1,
+        totalHelpfulnessScore: expect.any(Number),
+      },
+    ]);
   });
 
   it("returns an empty list for an empty contribution list", () => {
