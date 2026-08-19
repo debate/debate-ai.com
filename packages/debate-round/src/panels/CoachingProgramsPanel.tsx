@@ -15,11 +15,18 @@
  * `buildCoachingProgramBoard` for a chosen topic, composed entirely from
  * persisted state via the new `state/persistedCoachingProgramBoard.ts`'s
  * `buildPersistedCoachingProgramBoard` — the topic sprint (research, quests,
- * task routing, progress, notes), the group-challenge standings, and (once a
- * `roundId`-to-contributor mapping exists — still a further, separate
- * follow-up) member drill sets. This closes the topic-sprint/group-challenge
- * half of the "(b-continued)" follow-up named under idea #13 in TODO.md; the
- * member-drill half stays open, same as noted there.
+ * task routing, progress, notes), the group-challenge standings, and each
+ * roster member's drill set (once they've registered an already-flowed
+ * practice round below). This closes the "(b-continued)" follow-up named
+ * under idea #13 in TODO.md.
+ *
+ * The board view also renders a "Register practice flow" form per roster
+ * member — round id + side — that saves through the new
+ * `state/memberPracticeFlows.ts`'s `saveMemberPracticeFlow`, plus that
+ * member's resolution status (a registered round that can't be resolved to
+ * an actual flow, e.g. it hasn't been flowed yet, is called out rather than
+ * silently rendering no drills). This closes the roundId-to-contributor
+ * mapping half of the "(b-continued)" follow-up.
  *
  * @module panels/CoachingProgramsPanel
  */
@@ -37,11 +44,22 @@ import {
   saveCoachingProgram,
 } from "../state/coachingPrograms"
 import { buildPersistedCoachingProgramBoard } from "../state/persistedCoachingProgramBoard"
+import {
+  deleteMemberPracticeFlow,
+  getMemberPracticeFlow,
+  resolveFlowForRound,
+  saveMemberPracticeFlow,
+  type MemberPracticeFlowRecord,
+} from "../state/memberPracticeFlows"
 import { buildCoachingProgramSummaryText, type CoachingProgramBoard, type CoachingProgramConfig } from "../round/coaching-program"
 
 type ProgramDraft = { name: string; memberIds: string }
 
 const EMPTY_DRAFT: ProgramDraft = { name: "", memberIds: "" }
+
+type PracticeFlowDraft = { roundId: string; sideKey: string }
+
+const EMPTY_PRACTICE_FLOW_DRAFT: PracticeFlowDraft = { roundId: "", sideKey: "" }
 
 /**
  * Renders the Coaching Programs panel: a form to create a named coaching
@@ -58,6 +76,10 @@ export function CoachingProgramsPanel() {
   const [openProgramId, setOpenProgramId] = useState<string | null>(null)
   const [topic, setTopic] = useState("")
   const [board, setBoard] = useState<CoachingProgramBoard | null>(null)
+  const [practiceFlowDrafts, setPracticeFlowDrafts] = useState<Record<string, PracticeFlowDraft>>({})
+  const [practiceFlowErrors, setPracticeFlowErrors] = useState<Record<string, string>>({})
+  /** Bumped on every register/clear so the board and per-member status re-read localStorage. */
+  const [registrationTick, setRegistrationTick] = useState(0)
 
   useEffect(() => {
     setPrograms(buildCoachingProgramsPanelView())
@@ -72,12 +94,36 @@ export function CoachingProgramsPanel() {
       return
     }
     setBoard(buildPersistedCoachingProgramBoard(openProgramId, trimmedTopic, Date.now()) ?? null)
-  }, [openProgramId, topic])
+  }, [openProgramId, topic, registrationTick])
 
   const handleToggleBoard = (id: string) => {
     setOpenProgramId((prev) => (prev === id ? null : id))
     setTopic("")
     setBoard(null)
+    setPracticeFlowDrafts({})
+    setPracticeFlowErrors({})
+  }
+
+  const handleRegisterPracticeFlow = (memberId: string) => {
+    const draft = practiceFlowDrafts[memberId] ?? EMPTY_PRACTICE_FLOW_DRAFT
+    const roundId = Number(draft.roundId.trim())
+    const sideKey = draft.sideKey.trim()
+    if (!draft.roundId.trim() || !Number.isFinite(roundId) || !sideKey) {
+      setPracticeFlowErrors((prev) => ({ ...prev, [memberId]: "A numeric round id and a side are required." }))
+      return
+    }
+    saveMemberPracticeFlow({ contributorId: memberId, roundId, sideKey })
+    setPracticeFlowErrors((prev) => {
+      const { [memberId]: _removed, ...rest } = prev
+      return rest
+    })
+    setPracticeFlowDrafts((prev) => ({ ...prev, [memberId]: EMPTY_PRACTICE_FLOW_DRAFT }))
+    setRegistrationTick((tick) => tick + 1)
+  }
+
+  const handleClearPracticeFlow = (memberId: string) => {
+    deleteMemberPracticeFlow(memberId)
+    setRegistrationTick((tick) => tick + 1)
   }
 
   const handleSubmit = () => {
@@ -195,6 +241,80 @@ export function CoachingProgramsPanel() {
                       {buildCoachingProgramSummaryText(board)}
                     </p>
                   )}
+
+                  <div className="space-y-2 border-t border-border pt-3">
+                    <h3 className="text-xs font-semibold uppercase text-muted-foreground">
+                      Member practice flows
+                    </h3>
+                    {program.memberIds.map((memberId) => {
+                      const registration: MemberPracticeFlowRecord | undefined = getMemberPracticeFlow(memberId)
+                      const resolved = registration ? resolveFlowForRound(registration.roundId) : undefined
+                      const draft = practiceFlowDrafts[memberId] ?? EMPTY_PRACTICE_FLOW_DRAFT
+                      return (
+                        <div key={memberId} className="rounded-md border border-border/60 p-2.5">
+                          <div className="mb-1.5 flex items-center justify-between gap-2">
+                            <span className="text-sm font-medium text-foreground">{memberId}</span>
+                            {registration ? (
+                              <Badge variant={resolved ? "default" : "outline"}>
+                                {resolved
+                                  ? `Round ${registration.roundId} (${registration.sideKey}) — drills ready`
+                                  : `Round ${registration.roundId} not flowed yet`}
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline">No practice round registered</Badge>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap items-end gap-2">
+                            <div className="space-y-1">
+                              <Label htmlFor={`practice-flow-round-${program.id}-${memberId}`} className="text-xs">
+                                Round id
+                              </Label>
+                              <Input
+                                id={`practice-flow-round-${program.id}-${memberId}`}
+                                value={draft.roundId}
+                                onChange={(e) =>
+                                  setPracticeFlowDrafts((prev) => ({
+                                    ...prev,
+                                    [memberId]: { ...draft, roundId: e.target.value },
+                                  }))
+                                }
+                                placeholder="1234"
+                                className="h-8 w-24"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <Label htmlFor={`practice-flow-side-${program.id}-${memberId}`} className="text-xs">
+                                Side
+                              </Label>
+                              <Input
+                                id={`practice-flow-side-${program.id}-${memberId}`}
+                                value={draft.sideKey}
+                                onChange={(e) =>
+                                  setPracticeFlowDrafts((prev) => ({
+                                    ...prev,
+                                    [memberId]: { ...draft, sideKey: e.target.value },
+                                  }))
+                                }
+                                placeholder="A"
+                                className="h-8 w-16"
+                              />
+                            </div>
+                            <Button size="sm" variant="outline" onClick={() => handleRegisterPracticeFlow(memberId)}>
+                              Register
+                            </Button>
+                            {registration && (
+                              <Button size="sm" variant="ghost" onClick={() => handleClearPracticeFlow(memberId)}>
+                                Clear
+                              </Button>
+                            )}
+                          </div>
+                          {practiceFlowErrors[memberId] && (
+                            <p className="mt-1 text-xs text-destructive">{practiceFlowErrors[memberId]}</p>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
               )}
             </div>

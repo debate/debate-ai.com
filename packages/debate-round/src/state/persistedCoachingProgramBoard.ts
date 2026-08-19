@@ -17,10 +17,13 @@
  * "compose every input from its own store" convention, so a panel doesn't
  * need to assemble them itself.
  *
- * A `roundId`-to-contributor mapping for member practice-round flows still
- * doesn't exist anywhere in this repo, so `memberFlows` stays an optional,
- * caller-supplied list (empty by default) rather than being read from a
- * store — that mapping remains a further, separate follow-up.
+ * A `roundId`-to-contributor mapping for member practice-round flows now
+ * exists too — `state/memberPracticeFlows.ts` — closing the remaining half
+ * of the "(b-continued)" follow-up. When the caller doesn't supply an
+ * explicit `memberFlows` list, this module composes it from that store's
+ * `buildMemberPracticeFlowsForRoster`, resolving each registered member's
+ * actual flowed round directly from the live round editor's own persisted
+ * `rounds`/`flows` storage.
  *
  * @module state/persistedCoachingProgramBoard
  */
@@ -34,6 +37,7 @@ import type { QuestContribution } from "debate-card-search/src/lib/daily-quests"
 import type { CoverageThresholds } from "debate-card-search/src/lib/topic-coverage";
 import { buildCoachingProgramBoard, type CoachingProgramBoard, type CoachingProgramMemberFlow } from "../round/coaching-program";
 import { getCoachingProgram } from "./coachingPrograms";
+import { buildMemberPracticeFlowsForRoster } from "./memberPracticeFlows";
 
 /** Whether a persisted contribution carries the `submittedAt` timestamp `daily-quests.ts` needs to match it to a calendar day/window — mirrors `state/topicSprints.ts`'s identical guard. */
 function hasSubmittedAt(
@@ -50,15 +54,18 @@ function hasSubmittedAt(
  * events — composing all of them with `coaching-program.ts`'s
  * `buildCoachingProgramBoard` rather than requiring a caller to assemble
  * them. Returns `undefined` if no program is stored under `programId` rather
- * than throwing. `memberFlows` defaults to an empty list, since no persisted
- * `roundId`-to-contributor mapping exists yet — a program with no supplied
- * member flows renders with an empty `memberDrills` board.
+ * than throwing. When `memberFlows` isn't supplied, it's composed from
+ * `state/memberPracticeFlows.ts`'s `buildMemberPracticeFlowsForRoster` —
+ * every roster member with a registered, resolvable practice round gets a
+ * real drill set; a member with none is skipped, not rendered empty. An
+ * explicit `memberFlows` argument (including `[]`) still overrides that
+ * composition.
  */
 export function buildPersistedCoachingProgramBoard(
   programId: string,
   topic: string,
   now: number,
-  memberFlows: CoachingProgramMemberFlow[] = [],
+  memberFlows?: CoachingProgramMemberFlow[],
   thresholds?: CoverageThresholds,
 ): CoachingProgramBoard | undefined {
   const program = getCoachingProgram(programId);
@@ -72,6 +79,6 @@ export function buildPersistedCoachingProgramBoard(
     challenges: listGroupChallenges(),
     contributions,
     winEvents: listChallengeWinEvents(),
-    memberFlows,
+    memberFlows: memberFlows ?? buildMemberPracticeFlowsForRoster(program.memberIds),
   });
 }

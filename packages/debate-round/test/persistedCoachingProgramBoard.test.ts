@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { buildPersistedCoachingProgramBoard } from "../src/state/persistedCoachingProgramBoard";
 import { saveCoachingProgram } from "../src/state/coachingPrograms";
+import { saveMemberPracticeFlow } from "../src/state/memberPracticeFlows";
 import type { CoachingProgramConfig } from "../src/round/coaching-program";
 import { saveGroupChallenge } from "debate-card-search/src/state/groupChallenges";
 import { saveContribution } from "debate-card-search/src/state/contributions";
 import { recordChallengeWinEvent } from "debate-card-search/src/state/challengeWinEvents";
 import type { GroupChallenge } from "debate-card-search/src/lib/group-challenges";
 import type { AttributedContribution } from "debate-card-search/src/lib/contribution-leaderboard";
+import type { Box, Flow, Round } from "debate-core/src/types/flow";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -95,9 +97,52 @@ describe("buildPersistedCoachingProgramBoard", () => {
     expect(board?.challengeBoard[0].memberStandings).toEqual([]);
   });
 
-  it("defaults memberDrills to empty when no memberFlows are supplied", () => {
+  it("defaults memberDrills to empty when no member practice round is registered", () => {
     saveCoachingProgram(VARSITY);
     const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+    expect(board?.memberDrills).toEqual({});
+  });
+
+  it("resolves a roster member's registered, flowed practice round into a real drill set", () => {
+    saveCoachingProgram(VARSITY);
+
+    const round: Round = {
+      id: 7,
+      tournamentName: "Glenbrooks",
+      roundLevel: "Octos",
+      debaters: { aff: ["A1", "A2"], neg: ["N1", "N2"] },
+      judges: [],
+      flowIds: [70],
+      timestamp: 0,
+      status: "completed",
+    };
+    const argRow: Box = { content: "Case advantage", children: [], index: 0, level: 1, focus: false };
+    const flow: Flow = {
+      content: "",
+      level: 0,
+      columns: ["1AC", "1NC"],
+      invert: false,
+      focus: false,
+      index: 0,
+      lastFocus: [],
+      children: [argRow],
+      id: 70,
+    };
+    localStorage.setItem("rounds", JSON.stringify([round]));
+    localStorage.setItem("flows", JSON.stringify([flow]));
+    saveMemberPracticeFlow({ contributorId: "alice", roundId: 7, sideKey: "A" });
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+    expect(board?.memberDrills.alice).toBeDefined();
+    expect(board?.memberDrills.alice.length).toBeGreaterThan(0);
+    expect(board?.memberDrills.bob).toBeUndefined();
+  });
+
+  it("an explicit memberFlows argument (including []) overrides the persisted composition", () => {
+    saveCoachingProgram(VARSITY);
+    saveMemberPracticeFlow({ contributorId: "alice", roundId: 7, sideKey: "A" });
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW, []);
     expect(board?.memberDrills).toEqual({});
   });
 });
