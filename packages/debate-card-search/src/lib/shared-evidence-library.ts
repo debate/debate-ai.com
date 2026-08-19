@@ -14,6 +14,14 @@
  * blocks, persist the repository, or render a search UI. See the
  * follow-ups noted in TODO.md.
  *
+ * `sourceUrl`/`normalizeSourceUrl`/`findEntriesBySourceUrl`/
+ * `checkPageForExistingCards`/`buildPageReuseCheckSummaryText` implement the
+ * first slice of the "On Page Card Reuse Search" idea in TODO.md's Product
+ * Feature Ideas list ("See if anyone has cut this article in the chrome
+ * ext") — the reuse-check logic a future browser extension would call
+ * against the current tab's URL, kept a plain, testable function here
+ * rather than inside any extension (which doesn't exist in this repo yet).
+ *
  * @module lib/shared-evidence-library
  */
 
@@ -36,6 +44,8 @@ export interface EvidenceLibraryEntry extends LibraryCard {
   text: string;
   /** Citation string, e.g. "Smith 24" — blank for a `block` entry. */
   cite: string;
+  /** The source article's URL this entry was cut from, if known — blank/absent for a `block` entry. */
+  sourceUrl?: string;
 }
 
 /** Search criteria over the shared evidence repository. All fields are optional and combine with AND. */
@@ -126,6 +136,66 @@ export function findEntriesByCite(entries: EvidenceLibraryEntry[], cite: string)
   const lowerCite = cite.trim().toLowerCase();
   if (!lowerCite) return [];
   return entries.filter((entry) => entry.cite.toLowerCase().includes(lowerCite));
+}
+
+/**
+ * Normalizes a page URL for reuse-check matching: lower-cased, scheme and
+ * leading "www." stripped, query string/fragment dropped (tracking
+ * parameters like `?utm_source=` shouldn't defeat a match), and any
+ * trailing slash(es) removed. A plain regex-based normalization rather than
+ * the `URL` API, so it degrades gracefully on a malformed/partial string
+ * instead of throwing.
+ */
+export function normalizeSourceUrl(url: string): string {
+  return url
+    .trim()
+    .toLowerCase()
+    .replace(/^[a-z]+:\/\//, "")
+    .replace(/^www\./, "")
+    .replace(/[?#].*$/, "")
+    .replace(/\/+$/, "");
+}
+
+/**
+ * Finds every entry cut from the same source article as `url`, matched via
+ * `normalizeSourceUrl` so differing schemes, a leading "www.", tracking
+ * query parameters, or a trailing slash don't defeat the match. An entry
+ * with no `sourceUrl` (e.g. a `block`, or a card submitted before this
+ * field existed) never matches.
+ */
+export function findEntriesBySourceUrl(entries: EvidenceLibraryEntry[], url: string): EvidenceLibraryEntry[] {
+  const normalized = normalizeSourceUrl(url);
+  if (!normalized) return [];
+  return entries.filter((entry) => entry.sourceUrl && normalizeSourceUrl(entry.sourceUrl) === normalized);
+}
+
+/**
+ * The result of checking whether a page has already been cut into the
+ * shared evidence repository — the "On Page Card Reuse Search" idea in
+ * TODO.md's Product Feature Ideas list ("See if anyone has cut this
+ * article"). This is the reusable check a browser extension would call
+ * against the current tab's URL before a contributor starts cutting a new
+ * card; no extension exists in this repo yet, so `matches` is exposed
+ * directly for any caller (a panel, or eventually an extension background
+ * script) to render.
+ */
+export interface PageReuseCheckResult {
+  url: string;
+  alreadyCut: boolean;
+  matches: EvidenceLibraryEntry[];
+}
+
+/** Checks whether `url` has already been cut into the repository, via `findEntriesBySourceUrl`. */
+export function checkPageForExistingCards(entries: EvidenceLibraryEntry[], url: string): PageReuseCheckResult {
+  const matches = findEntriesBySourceUrl(entries, url);
+  return { url, alreadyCut: matches.length > 0, matches };
+}
+
+/** Renders a one-line summary of a `PageReuseCheckResult`, e.g. for a "Check this page" panel action. */
+export function buildPageReuseCheckSummaryText(result: PageReuseCheckResult): string {
+  if (!result.alreadyCut) return "No existing cards found for this page — safe to cut.";
+  const count = result.matches.length;
+  return `Already cut: ${count} existing ${count === 1 ? "entry" : "entries"} for this page.`;
 }
 
 /**

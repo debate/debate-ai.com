@@ -4,11 +4,15 @@ import {
   buildEvidenceLibraryIndex,
   buildEvidenceSearchFormQuery,
   buildEvidenceSearchSummaryText,
+  buildPageReuseCheckSummaryText,
+  checkPageForExistingCards,
   computeWordCount,
   deriveCardSnapshotFromEntry,
   findEntriesByCite,
+  findEntriesBySourceUrl,
   getEvidenceStaleness,
   getStaleEvidenceEntries,
+  normalizeSourceUrl,
   searchEvidenceLibrary,
   type EvidenceLibraryEntry,
 } from "../src/lib/shared-evidence-library";
@@ -125,6 +129,114 @@ describe("findEntriesByCite", () => {
 
   it("returns an empty array when nothing matches", () => {
     expect(findEntriesByCite(entries, "Nobody 99")).toEqual([]);
+  });
+});
+
+describe("normalizeSourceUrl", () => {
+  it("lower-cases the url", () => {
+    expect(normalizeSourceUrl("HTTPS://Example.com/Article")).toBe("example.com/article");
+  });
+
+  it("strips the scheme", () => {
+    expect(normalizeSourceUrl("https://example.com/article")).toBe("example.com/article");
+    expect(normalizeSourceUrl("http://example.com/article")).toBe("example.com/article");
+  });
+
+  it("strips a leading www.", () => {
+    expect(normalizeSourceUrl("https://www.example.com/article")).toBe("example.com/article");
+  });
+
+  it("strips query strings and fragments", () => {
+    expect(normalizeSourceUrl("https://example.com/article?utm_source=x")).toBe("example.com/article");
+    expect(normalizeSourceUrl("https://example.com/article#section")).toBe("example.com/article");
+  });
+
+  it("strips trailing slashes", () => {
+    expect(normalizeSourceUrl("https://example.com/article/")).toBe("example.com/article");
+  });
+
+  it("treats equivalent urls as equal after normalization", () => {
+    const a = normalizeSourceUrl("https://www.example.com/article/?utm_source=newsletter");
+    const b = normalizeSourceUrl("http://example.com/article");
+    expect(a).toBe(b);
+  });
+
+  it("trims surrounding whitespace", () => {
+    expect(normalizeSourceUrl("  https://example.com/article  ")).toBe("example.com/article");
+  });
+});
+
+describe("findEntriesBySourceUrl", () => {
+  const withUrls: EvidenceLibraryEntry[] = [
+    ...entries,
+    { ...entries[0], id: "warming-3", sourceUrl: "https://news.example.com/warming-report" },
+    { ...entries[1], id: "warming-4", sourceUrl: "https://www.news.example.com/warming-report/?utm_source=x" },
+    { ...entries[2], id: "states-block-2", sourceUrl: "https://example.com/states" },
+  ];
+
+  it("matches entries whose sourceUrl normalizes to the same page", () => {
+    const matches = findEntriesBySourceUrl(withUrls, "http://news.example.com/warming-report");
+    expect(matches.map((e) => e.id).sort()).toEqual(["warming-3", "warming-4"]);
+  });
+
+  it("ignores entries with no sourceUrl", () => {
+    const matches = findEntriesBySourceUrl(withUrls, "http://news.example.com/warming-report");
+    expect(matches.some((e) => e.id === "warming-1")).toBe(false);
+  });
+
+  it("returns an empty array when nothing matches", () => {
+    expect(findEntriesBySourceUrl(withUrls, "https://example.com/unrelated")).toEqual([]);
+  });
+
+  it("returns an empty array for a blank url", () => {
+    expect(findEntriesBySourceUrl(withUrls, "  ")).toEqual([]);
+  });
+});
+
+describe("checkPageForExistingCards", () => {
+  const withUrls: EvidenceLibraryEntry[] = [
+    ...entries,
+    { ...entries[0], id: "warming-3", sourceUrl: "https://news.example.com/warming-report" },
+  ];
+
+  it("reports alreadyCut true with matches when a card exists for the page", () => {
+    const result = checkPageForExistingCards(withUrls, "https://news.example.com/warming-report/");
+    expect(result.alreadyCut).toBe(true);
+    expect(result.matches.map((e) => e.id)).toEqual(["warming-3"]);
+    expect(result.url).toBe("https://news.example.com/warming-report/");
+  });
+
+  it("reports alreadyCut false with no matches when the page hasn't been cut", () => {
+    const result = checkPageForExistingCards(withUrls, "https://example.com/never-cut");
+    expect(result.alreadyCut).toBe(false);
+    expect(result.matches).toEqual([]);
+  });
+});
+
+describe("buildPageReuseCheckSummaryText", () => {
+  it("summarizes a page with no existing cards", () => {
+    expect(buildPageReuseCheckSummaryText({ url: "x", alreadyCut: false, matches: [] })).toBe(
+      "No existing cards found for this page — safe to cut.",
+    );
+  });
+
+  it("summarizes a page with one existing card, singular", () => {
+    const result = checkPageForExistingCards(
+      [{ ...entries[0], sourceUrl: "https://example.com/a" }],
+      "https://example.com/a",
+    );
+    expect(buildPageReuseCheckSummaryText(result)).toBe("Already cut: 1 existing entry for this page.");
+  });
+
+  it("summarizes a page with multiple existing cards, plural", () => {
+    const result = checkPageForExistingCards(
+      [
+        { ...entries[0], id: "a1", sourceUrl: "https://example.com/a" },
+        { ...entries[1], id: "a2", sourceUrl: "https://example.com/a" },
+      ],
+      "https://example.com/a",
+    );
+    expect(buildPageReuseCheckSummaryText(result)).toBe("Already cut: 2 existing entries for this page.");
   });
 });
 

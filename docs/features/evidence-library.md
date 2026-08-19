@@ -66,6 +66,31 @@ submission missing `topic` or `caseArea` rather than guessing a fallback
 for `argBlock` and `0` for `wordCount` — a contribution carries no card body
 to measure a real word count from, unlike a dedicated evidence-library entry.
 
+## On-page card reuse check
+
+A "Check this page" box implements the first slice of the "On Page Card
+Reuse Search" idea in TODO.md's Product Feature Ideas list — pasting a page
+URL shows whether anyone has already cut a card from it, so a contributor
+can skip duplicate research. This is the reuse check a browser extension
+would eventually run automatically against the current tab's URL; no
+extension exists in this repo yet, so the panel is the only caller today.
+
+The submission form's new optional Source URL field is how an entry's
+`sourceUrl` gets recorded in the first place — it's blank by default, and
+existing entries persisted before this field was added simply have no
+`sourceUrl` and never match a reuse check.
+
+`lib/shared-evidence-library.ts`'s `normalizeSourceUrl` strips the scheme, a
+leading `www.`, any query string/fragment, and a trailing slash before
+comparing two URLs, so `https://www.example.com/article/?utm_source=x` and
+`http://example.com/article` are treated as the same page.
+`findEntriesBySourceUrl` finds every entry cut from the same normalized
+page, and `checkPageForExistingCards` wraps that into a
+`{ url, alreadyCut, matches }` result; `state/evidenceLibraryEntries.ts`'s
+`checkPersistedPageForExistingCards` composes the pure check against the
+persisted repository, gated to "live" entries the same way
+`searchPersistedEvidenceLibrary` is (see below).
+
 ## Peer-review gating
 
 A search only ever returns "live" entries — see
@@ -105,6 +130,17 @@ panels/EvidenceLibraryPanel.tsx (search form: text, kind, topic, case area, tags
 isEntryLive(id) — state/evidenceLibraryEntries.ts
   → getPeerReview(id)                    — state/peerReviews.ts
   → isCardLive(review)                   — lib/peer-review.ts (pure)
+
+panels/EvidenceLibraryPanel.tsx ("Check this page" box)
+  → checkPersistedPageForExistingCards(url) — state/evidenceLibraryEntries.ts,
+                                             filters to isEntryLive entries,
+                                             then reuses
+                                             lib/shared-evidence-library.ts's
+                                             pure checkPageForExistingCards
+      → findEntriesBySourceUrl(entries, url) — lib/shared-evidence-library.ts (pure)
+          → normalizeSourceUrl(url)          — lib/shared-evidence-library.ts (pure)
+  → buildPageReuseCheckSummaryText(result) — lib/shared-evidence-library.ts (pure)
+  → panels/EvidenceLibraryPanel.tsx        — renders the summary plus any matching entries
 ```
 
 Editing an entry derives a Revision Incentives `CardSnapshot` for the entry's
@@ -138,6 +174,11 @@ card submitted here now feeds that dashboard directly.
 
 - No real search index (e.g. Typesense) — search is the existing in-memory
   keyword-overlap heuristic over whatever is persisted to localStorage.
+- No browser extension exists — the "Check this page" box is a manual,
+  paste-the-URL stand-in for what a future extension would run
+  automatically against the current tab. The reuse-check logic itself
+  (`checkPageForExistingCards`/`findEntriesBySourceUrl`/`normalizeSourceUrl`)
+  is already a plain, extension-callable function with no UI dependency.
 - No tag rename/merge tool — the Tags field's autocomplete only suggests
   reusing an existing tag while typing; renaming or merging a tag already
   applied to existing entries would mean rewriting every entry that carries
