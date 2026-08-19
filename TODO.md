@@ -42,7 +42,7 @@ _No task currently in progress._
   browser extension and the round/practice spaces' own remaining
   follow-ups (real Tabroom/ballot-sourced data, audio/video transcription)
   are unrelated to this bullet and untouched here.
-  PR: [#TBD](https://github.com/debate/debate-ai.com/pulls).
+  PR: [#252](https://github.com/debate/debate-ai.com/pull/252).
 - **On Page Card Reuse Search — page-URL reuse-check first slice.**
   Closes the first slice of idea #7 ("On Page Card Reuse Search") in
   TODO.md's Product Feature Ideas list — "See if any one has cut this
