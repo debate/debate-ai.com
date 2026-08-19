@@ -9,6 +9,8 @@ import {
 } from "../src/state/trackedArguments";
 import { saveEvidenceLibraryEntry } from "../src/state/evidenceLibraryEntries";
 import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
+import { saveContribution } from "../src/state/contributions";
+import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -220,5 +222,56 @@ describe("buildPersistedTopicCoverageReport", () => {
 
     const report = buildPersistedTopicCoverageReport("Energy Policy", { minCards: 1, minTotalWords: 500 });
     expect(report.tracked[0].level).toBe("covered");
+  });
+
+  const baseContribution: AttributedContribution = {
+    id: "contribution-1",
+    contributorId: "alice",
+    kind: "card",
+    likes: 0,
+    saves: 0,
+    qualitySignals: [0.5],
+    reviewerEndorsements: [],
+  };
+
+  it("folds in a Contributions Feed entry carrying topic + argBlock + wordCount", () => {
+    saveTrackedArgument(WARMING_DA);
+    saveEvidenceLibraryEntry(warmingCard);
+    saveContribution({ ...baseContribution, topic: "Energy Policy", argBlock: "Warming DA", wordCount: 400 });
+
+    const report = buildPersistedTopicCoverageReport("Energy Policy");
+    expect(report.tracked).toEqual([
+      { argBlock: "Warming DA", category: "DA", cardCount: 2, totalWordCount: 1100, level: "thin" },
+    ]);
+  });
+
+  it("excludes a contribution missing wordCount", () => {
+    saveTrackedArgument(WARMING_DA);
+    saveContribution({ ...baseContribution, topic: "Energy Policy", argBlock: "Warming DA" });
+
+    const report = buildPersistedTopicCoverageReport("Energy Policy");
+    expect(report.tracked).toEqual([
+      { argBlock: "Warming DA", category: "DA", cardCount: 0, totalWordCount: 0, level: "missing" },
+    ]);
+  });
+
+  it("excludes a contribution missing argBlock", () => {
+    saveTrackedArgument(WARMING_DA);
+    saveContribution({ ...baseContribution, topic: "Energy Policy", wordCount: 400 });
+
+    const report = buildPersistedTopicCoverageReport("Energy Policy");
+    expect(report.tracked).toEqual([
+      { argBlock: "Warming DA", category: "DA", cardCount: 0, totalWordCount: 0, level: "missing" },
+    ]);
+  });
+
+  it("excludes a contribution filed under a different topic", () => {
+    saveTrackedArgument(WARMING_DA);
+    saveContribution({ ...baseContribution, topic: "Immigration Policy", argBlock: "Warming DA", wordCount: 400 });
+
+    const report = buildPersistedTopicCoverageReport("Energy Policy");
+    expect(report.tracked).toEqual([
+      { argBlock: "Warming DA", category: "DA", cardCount: 0, totalWordCount: 0, level: "missing" },
+    ]);
   });
 });

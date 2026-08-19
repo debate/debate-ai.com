@@ -41,6 +41,8 @@ export interface AttributedContribution extends CommunityContribution {
   caseArea?: string;
   /** Free-form tags, matching `argument-library.ts`'s `LibraryCard.tags` tagging. Optional, same convention as `topic`. */
   tags?: string[];
+  /** Body word count, matching `topic-coverage.ts`'s `CoverageCardSummary.wordCount` tagging. Optional: only present when the contributor fills in body text. */
+  wordCount?: number;
 }
 
 /** One contributor's aggregated leaderboard standing. */

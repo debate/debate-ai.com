@@ -14,12 +14,28 @@
  * data-source half of that idea's "(c) a coverage dashboard UI" follow-up;
  * see `panels/TopicCoverageDashboardPanel.tsx` for the rendering half.
  *
+ * `buildPersistedTopicCoverageReport` also folds in every topic-scoped
+ * `state/contributions.ts` entry that carries both `argBlock` and
+ * `wordCount` (stamped by `ContributionsFeedPanel`'s optional "Content"
+ * field) as a second `CoverageCardSummary` source — closes follow-up (a)
+ * named under the "📊 Topic Coverage Dashboard" bullet in TODO.md ("an
+ * `argBlock`/word-count field wired into a real card-submission flow beyond
+ * the existing `/cards/library` evidence-library form"). A contribution
+ * missing either field (the common case — both are optional there) is
+ * silently excluded rather than counted with a fabricated word count.
+ *
  * @module state/trackedArguments
  */
 
 import type { TrackedArgument } from "../lib/topic-coverage";
-import { buildTopicCoverageReport, type CoverageThresholds, type TopicCoverageReport } from "../lib/topic-coverage";
+import {
+  buildTopicCoverageReport,
+  type CoverageCardSummary,
+  type CoverageThresholds,
+  type TopicCoverageReport,
+} from "../lib/topic-coverage";
 import { listEvidenceLibraryEntries } from "./evidenceLibraryEntries";
+import { listContributions } from "./contributions";
 
 /** A tracked argument, scoped to a topic and identified for CRUD. */
 export interface TrackedArgumentRecord extends TrackedArgument {
@@ -76,17 +92,28 @@ export function deleteTrackedArgument(id: string): void {
 
 /**
  * Builds a topic's coverage report entirely from persisted stores: this
- * topic's tracked-argument checklist, and the shared evidence library's
- * entries filed under that topic (every `EvidenceLibraryEntry` is already a
- * `CoverageCardSummary`).
+ * topic's tracked-argument checklist, the shared evidence library's entries
+ * filed under that topic (every `EvidenceLibraryEntry` is already a
+ * `CoverageCardSummary`), and any Contributions Feed entry filed under that
+ * same topic that carries both `argBlock` and `wordCount`.
  */
 export function buildPersistedTopicCoverageReport(
   topic: string,
   thresholds?: CoverageThresholds,
 ): TopicCoverageReport {
   const tracked = listTrackedArguments(topic);
-  const cards = listEvidenceLibraryEntries()
+  const libraryCards: CoverageCardSummary[] = listEvidenceLibraryEntries()
     .filter((entry) => entry.topic === topic)
     .map((entry) => ({ id: entry.id, argBlock: entry.argBlock, wordCount: entry.wordCount }));
-  return buildTopicCoverageReport(tracked, cards, thresholds);
+  const contributionCards: CoverageCardSummary[] = listContributions()
+    .filter(
+      (contribution): contribution is typeof contribution & { argBlock: string; wordCount: number } =>
+        contribution.topic === topic && contribution.argBlock !== undefined && contribution.wordCount !== undefined,
+    )
+    .map((contribution) => ({
+      id: contribution.id,
+      argBlock: contribution.argBlock,
+      wordCount: contribution.wordCount,
+    }));
+  return buildTopicCoverageReport(tracked, [...libraryCards, ...contributionCards], thresholds);
 }
