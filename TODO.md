@@ -6,6 +6,44 @@
 _No task currently in progress._
 
 ### Completed
+- **Scout-to-Strategy Workflow — AI-panel case-choice evaluation.** Closes
+  follow-up (c) named under the "🧭 Scout-to-Strategy Workflow" bullet in the
+  Research Crowdsourcing Organizer Features list: "an actual AI-panel
+  evaluation of case choice instead of the tag-overlap heuristic." Previously
+  `StrategyPanel.tsx`'s case recommendation came entirely from
+  `scout-to-strategy.ts`'s deterministic tag-overlap heuristic — no AI
+  evaluation of case fit against the judge's tendencies or the matchup's
+  risk factors. Adds `round/case-choice-ai.ts` (`buildCaseChoiceAiUserPrompt`/
+  `parseCaseChoiceAiResponse`, mirroring `judge-decision-ai.ts`'s
+  prompt/parse split) and `round/case-choice-client.ts`
+  (`requestCaseChoiceEvaluation`, posting to the existing `/api/reason-ai`
+  Anthropic proxy). The prompt composes an already-built
+  `StrategyRecommendation`'s own case rankings (name, tags, opponent-tag
+  overlap score), judge-adaptation notes, and risk level/factors — no new
+  scouting data source is introduced — asking the model to weigh a case's
+  fit against the judge's tendencies and the matchup's risk factors, not
+  just the raw overlap score. `StrategyPanel.tsx` gets a "Get AI case-choice
+  evaluation" action per matchup that calls this and saves the parsed
+  `recommendedCase`/`reasoning`/`caseAssessments` on
+  `state/strategyRecommendations.ts`'s new
+  `StrategyRecommendationRecord.aiCaseChoice` field via the new
+  `saveStrategyRecommendationAiCaseChoice` (additive/optional, mirroring
+  `drillSets.ts`'s `aiScripts` convention), rendering it alongside the
+  deterministic recommendation. Vitest-covered in
+  `packages/debate-round/test/case-choice-ai.test.ts` (prompt composition,
+  fallback text for empty case options/risk factors, tolerant JSON
+  parsing — well-formed, fenced, prose-wrapped, malformed-entry filtering),
+  `case-choice-client.test.ts` (the `/api/reason-ai` request contract,
+  endpoint override, error propagation, unparseable-response handling,
+  mirroring `judge-decision-client.test.ts`), and additions to
+  `strategyRecommendations.test.ts` covering
+  `saveStrategyRecommendationAiCaseChoice` (set/overwrite/no-op-when-missing/
+  leaves-other-matchups-untouched). No follow-ups remain open on this idea.
+  `docs/features/scout-to-strategy.md` updated. `bun run test` (1828 tests),
+  `bun run typecheck`, and `bun run build` all pass; no repo-wide `lint`
+  script exists (checked root/package `package.json` scripts) so none was
+  run, matching this bullet's prior entries.
+
 - **Scout-to-Strategy Workflow — side-aware risk heuristic.** Closes
   follow-up (b) named under the "🧭 Scout-to-Strategy Workflow" bullet in
   the Research Crowdsourcing Organizer Features list: "wiring
@@ -4860,4 +4898,4 @@ _No task currently in progress._
 * 
 * 📚 AI Drill Generator - Generate quick drills for overviews, frontline practice, cross-ex responses, and collapse scenarios. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildOverviewDrill`/`buildFrontlineDrills`/`buildCrossExamDrills`/`buildCollapseDrills`/`buildDrillSet`/`buildDrillSummaryText` for turning an already-flowed `Flow` into a whole-round overview prompt, per-argument frontline/cross-ex prompts, and top-N collapse-scenario recommendations, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts` slices directly. A second slice, `drillSets.ts` (see Tracker Status above), now persists a round's generated `Drill[]` set to localStorage. A third slice, `DrillSetsPanel` (see Tracker Status above, "AI Drill Generator — drill-panel UI"), now renders every persisted drill set grouped by round at `/drills`, closing follow-up (a). A fourth slice (see Tracker Status above, "AI Drill Generator — real AI-generated drill script") added `round/drill-script-ai.ts` and `round/drill-script-client.ts`, wiring a "Get AI script" action into the panel per drill that calls the existing `/api/reason-ai` Anthropic proxy for an actual, ready-to-read practice script (rather than the template prompt line alone), saved on the drill set's new `aiScripts` map via `saveDrillAiScript`, closing follow-up (b). No follow-ups remain open on this bullet._
 * 
-* 🧭 Scout-to-Strategy Workflow - Turn scouting data into recommended game plans, case choices, judge adaptation, and risk levels. _Status: first slice done (see Tracker Status above) — `debate-round` now has `rankCaseOptions`/`computeCaseOverlapScore`/`buildJudgeAdaptationNotes`/`assessMatchupRisk`/`buildStrategyRecommendation`/`buildStrategyRecommendationText` for ranking caller-supplied case options by opponent-tag overlap, turning judge tendencies into adaptation notes, and combining opponent/judge signals into a risk level with its contributing factors, reusing the existing `OpponentTeamProfile`/`JudgeProfile` types directly. A second slice (see Tracker Status above, "Scout-to-Strategy Workflow — case-choice/strategy panel UI"), now persists a matchup's generated `StrategyRecommendation` to localStorage and renders a case-choice/strategy panel at `/strategy`, closing follow-up (a). Follow-ups: (b) wiring `ourSide`/likely opponent side into the risk heuristic, (c) an actual AI-panel evaluation of case choice instead of the tag-overlap heuristic. Neither of these is started._
+* 🧭 Scout-to-Strategy Workflow - Turn scouting data into recommended game plans, case choices, judge adaptation, and risk levels. _Status: first slice done (see Tracker Status above) — `debate-round` now has `rankCaseOptions`/`computeCaseOverlapScore`/`buildJudgeAdaptationNotes`/`assessMatchupRisk`/`buildStrategyRecommendation`/`buildStrategyRecommendationText` for ranking caller-supplied case options by opponent-tag overlap, turning judge tendencies into adaptation notes, and combining opponent/judge signals into a risk level with its contributing factors, reusing the existing `OpponentTeamProfile`/`JudgeProfile` types directly. A second slice (see Tracker Status above, "Scout-to-Strategy Workflow — case-choice/strategy panel UI"), now persists a matchup's generated `StrategyRecommendation` to localStorage and renders a case-choice/strategy panel at `/strategy`, closing follow-up (a). A third slice (see Tracker Status above, "Scout-to-Strategy Workflow — side-aware risk heuristic") threaded an optional `ourSide` through the strategy-recommendation pipeline so `assessMatchupRisk` scopes its opponent-strength/judge-side-bias checks to the side the opponent will likely run against us, closing follow-up (b). A fourth slice (see Tracker Status above, "Scout-to-Strategy Workflow — AI-panel case-choice evaluation") added `round/case-choice-ai.ts` and `round/case-choice-client.ts`, wiring a "Get AI case-choice evaluation" action into `StrategyPanel.tsx` that calls the existing `/api/reason-ai` Anthropic proxy with a recommendation's own case rankings, judge-adaptation notes, and risk factors for a real strategic case-choice evaluation (not just the tag-overlap heuristic), saved on `StrategyRecommendationRecord.aiCaseChoice`, closing follow-up (c). No follow-ups remain open on this bullet._

@@ -5,8 +5,10 @@ import {
   getStrategyRecommendation,
   listStrategyRecommendations,
   saveStrategyRecommendation,
+  saveStrategyRecommendationAiCaseChoice,
   type StrategyRecommendationRecord,
 } from "../src/state/strategyRecommendations";
+import type { CaseChoiceAiResult } from "../src/round/case-choice-ai";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {
@@ -94,6 +96,45 @@ describe("saveStrategyRecommendation", () => {
 
     expect(listStrategyRecommendations()).toEqual([updated]);
     expect(getStrategyRecommendation("round-1")).toEqual(updated);
+  });
+});
+
+describe("saveStrategyRecommendationAiCaseChoice", () => {
+  const AI_CASE_CHOICE: CaseChoiceAiResult = {
+    recommendedCase: "Kritik case",
+    reasoning: "Lowest overlap and fits the judge's tendencies.",
+    caseAssessments: [{ name: "Kritik case", assessment: "Safest available option." }],
+  };
+
+  it("sets aiCaseChoice on the stored record", () => {
+    saveStrategyRecommendation(RECOMMENDATION_A);
+    saveStrategyRecommendationAiCaseChoice("round-1", AI_CASE_CHOICE);
+
+    expect(getStrategyRecommendation("round-1")).toEqual({ ...RECOMMENDATION_A, aiCaseChoice: AI_CASE_CHOICE });
+  });
+
+  it("overwrites an existing evaluation for the same matchup", () => {
+    saveStrategyRecommendation(RECOMMENDATION_A);
+    saveStrategyRecommendationAiCaseChoice("round-1", AI_CASE_CHOICE);
+    const regenerated: CaseChoiceAiResult = { ...AI_CASE_CHOICE, reasoning: "Regenerated reasoning." };
+    saveStrategyRecommendationAiCaseChoice("round-1", regenerated);
+
+    expect(getStrategyRecommendation("round-1")?.aiCaseChoice).toEqual(regenerated);
+  });
+
+  it("leaves other matchups' records untouched", () => {
+    saveStrategyRecommendation(RECOMMENDATION_A);
+    saveStrategyRecommendation(RECOMMENDATION_B);
+    saveStrategyRecommendationAiCaseChoice("round-1", AI_CASE_CHOICE);
+
+    expect(getStrategyRecommendation("round-2")).toEqual(RECOMMENDATION_B);
+  });
+
+  it("is a no-op when the matchupId isn't stored", () => {
+    saveStrategyRecommendation(RECOMMENDATION_B);
+    saveStrategyRecommendationAiCaseChoice("missing", AI_CASE_CHOICE);
+
+    expect(listStrategyRecommendations()).toEqual([RECOMMENDATION_B]);
   });
 });
 
