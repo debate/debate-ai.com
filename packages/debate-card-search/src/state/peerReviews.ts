@@ -12,6 +12,7 @@ import type { CardReview } from "../lib/peer-review";
 import { approveReviewAsReviewer, deriveReviewerTier, publishReviewAsReviewer, rejectReviewAsReviewer } from "../lib/reviewer-permissions";
 import type { UnlockTier } from "../lib/progress-unlocks";
 import { buildPersistedLeaderboard } from "./contributions";
+import { invalidateEvidenceSearchIndexCache } from "./evidenceSearchIndexCache";
 
 const STORAGE_KEY = "peerReviews";
 
@@ -42,7 +43,13 @@ export function getPeerReview(cardId: string): CardReview | undefined {
   return readAll().find((review) => review.cardId === cardId);
 }
 
-/** Saves a card review, overwriting any existing record for the same `cardId`. */
+/**
+ * Saves a card review, overwriting any existing record for the same
+ * `cardId`. Invalidates `evidenceSearchIndexCache.ts`'s cached
+ * `EvidenceSearchIndex` — a review-status change can move an entry into or
+ * out of `evidenceLibraryEntries.ts`'s "live" gating, which the cached index
+ * is built from.
+ */
 export function savePeerReview(review: CardReview): void {
   const reviews = readAll();
   const index = reviews.findIndex((existing) => existing.cardId === review.cardId);
@@ -52,11 +59,18 @@ export function savePeerReview(review: CardReview): void {
     reviews[index] = review;
   }
   writeAll(reviews);
+  invalidateEvidenceSearchIndexCache();
 }
 
-/** Deletes a persisted card review by `cardId`; a no-op if it isn't stored. */
+/**
+ * Deletes a persisted card review by `cardId`; a no-op if it isn't stored.
+ * Invalidates the cached evidence search index for the same reason
+ * `savePeerReview` does — removing a review can change an entry's "live"
+ * gating (no review at all counts as live).
+ */
 export function deletePeerReview(cardId: string): void {
   writeAll(readAll().filter((review) => review.cardId !== cardId));
+  invalidateEvidenceSearchIndexCache();
 }
 
 /**
