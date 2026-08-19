@@ -4,6 +4,8 @@ Shows every persisted "Speech Transcript Summaries and Answers" flow
 summary, one card per round — a concise per-argument summary of that
 round's flow, plus suggested cross-examination questions and extension
 ideas for anything still unanswered — with a "Clear" action per round.
+A "Generate from raw speech text" form lets AI derive a round's summary
+directly from a pasted transcript instead of a manually flowed grid.
 
 - **Route:** `/summaries`
 - **Nav:** the global dock's Settings menu → **Speech Transcript Summaries**
@@ -38,6 +40,21 @@ Clearing a round's flow summary:
 panels/FlowSummariesPanel.tsx
   → deleteFlowSummary(roundId)  — state/flowSummaries.ts
   → panel re-reads buildFlowSummariesPanelView() to refresh
+
+Generating a summary from raw speech text (no manually flowed grid needed):
+panels/FlowSummariesPanel.tsx — "Generate from raw speech text" form
+  → requestTranscriptExtraction()        — round/transcript-extraction-client.ts
+      → POST /api/reason-ai              — server-side Anthropic proxy
+      → parseTranscriptExtractionAiResponse()  — round/transcript-extraction-ai.ts
+                                            parses claim/warrant/impact/
+                                            evidence per argument
+  → buildFlowRowSummariesFromExtraction()  — round/transcript-extraction-ai.ts
+                                              turns extracted arguments into
+                                              synthetic FlowRowSummary rows,
+                                              each isUnanswered: true
+  → saveFlowSummary()                    — state/flowSummaries.ts appends the
+                                            new rows to that round's record
+  → panel re-reads buildFlowSummariesPanelView() to refresh
 ```
 
 Every summary-derivation and persistence rule already existed and was
@@ -55,12 +72,22 @@ which sorts `listFlowSummaries`'s output for a stable panel display order.
 Vitest-covered in `packages/debate-round/test/flowSummaries.test.ts` and
 `packages/debate-round/test/flow-transcript-summary.test.ts`.
 
+A later slice closes the AI-call half of follow-up (a), "audio/video
+transcription plus an AI call to extract claims/warrants/impacts/evidence
+from raw speech text rather than relying on a manually flowed grid":
+`round/transcript-extraction-ai.ts` (prompt-build + parse, mirroring
+`judge-decision-ai.ts`'s structured-JSON split) and
+`round/transcript-extraction-client.ts` (the `/api/reason-ai` network call)
+turn a pasted speech transcript into extracted claim/warrant/impact/evidence
+arguments, and `buildFlowRowSummariesFromExtraction` renders them as the
+same `FlowRowSummary` shape a manually flowed grid would produce — so an
+extracted argument gets the same cross-exam/extension suggestions as any
+other row. Vitest-covered in
+`packages/debate-round/test/transcript-extraction-ai.test.ts` and
+`packages/debate-round/test/transcript-extraction-client.test.ts`.
+
 ## Known gaps
 
-- No audio/video transcription or AI call to extract claims/warrants/
-  impacts from raw speech text — follow-up (a) on the same idea, not
-  started; this panel only renders summaries already derived from a
-  manually flowed grid.
-- No affordance in this panel to generate a new flow summary for a round —
-  a summary only appears here once something elsewhere calls
-  `getFlowRowSummaries` and `saveFlowSummary` for that round.
+- No audio/video transcription — the AI extraction form above requires an
+  already-transcribed speech text (pasted in), not an audio/video
+  recording; that transcription step remains open as a further follow-up.
