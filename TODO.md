@@ -27,6 +27,7 @@ _No task currently in progress._
   `bun install`, `bun run test` (142 files / 1937 tests passed), `bun run
   typecheck` (11 packages passed), `bun run build` (both buildable packages
   passed) — no repo-wide `lint` script exists.
+  [PR #235](https://github.com/debate/debate-ai.com/pull/235).
 
 - **Top Contributor Awards — announce/freeze action.** Closes follow-up (b)
   named under the "🏆 Top Contributor Awards" bullet in the Research
