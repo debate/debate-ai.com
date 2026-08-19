@@ -29,6 +29,7 @@ cards is `missing`; below the card-count or word-count threshold (3 cards /
 ```
 state/trackedArguments.ts (localStorage — topic checklist)
 state/evidenceLibraryEntries.ts (localStorage — submitted cards/blocks)
+state/contributions.ts (localStorage — Contributions Feed submissions)
   → buildPersistedTopicCoverageReport(topic)   — state/trackedArguments.ts
       → buildTopicCoverageReport()             — lib/topic-coverage.ts (pure)
   → panels/TopicCoverageDashboardPanel.tsx (renders the checklist + report)
@@ -44,6 +45,18 @@ the already-persisted evidence library directly — every `EvidenceLibraryEntry`
 is already a `CoverageCardSummary` (it carries `argBlock`/`wordCount`), so no
 new card shape was needed. See
 `packages/debate-card-search/test/trackedArguments.test.ts`.
+
+`buildPersistedTopicCoverageReport` now also folds in every topic-scoped
+`state/contributions.ts` entry that carries both `argBlock` and `wordCount`
+as a second `CoverageCardSummary` source. `ContributionsFeedPanel` (see
+[Contribution Leaderboard](contribution-leaderboard.md)) gained an optional
+"Content" body-text field that stamps `AttributedContribution.wordCount` via
+the same `computeWordCount` helper `EvidenceLibraryPanel` uses — closing the
+"an `argBlock`/word-count field wired into a real card-submission flow
+beyond the existing `/cards/library` evidence-library form" follow-up. A
+contribution missing either field (both stay optional there, matching the
+rest of that form) is silently excluded rather than counted with a
+fabricated word count.
 
 ## Known gaps
 

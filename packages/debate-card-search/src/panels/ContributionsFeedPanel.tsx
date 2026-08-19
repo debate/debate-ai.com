@@ -48,6 +48,17 @@
  * `caseArea` is picked up by `ArgumentLibraryPanel` via
  * `state/evidenceLibraryEntries.ts`'s `buildCombinedPersistedArgumentLibrary`.
  *
+ * The submission form now also takes an optional "Content" body-text field,
+ * stamping `AttributedContribution.wordCount` via `shared-evidence-library.ts`'s
+ * `computeWordCount` — the same helper `EvidenceLibraryPanel` uses — closing
+ * follow-up (a) named under the "📊 Topic Coverage Dashboard" bullet in
+ * TODO.md ("an `argBlock`/word-count field wired into a real
+ * card-submission flow beyond the existing `/cards/library` evidence-library
+ * form"). A contribution that fills in both `topic` and `argBlock` alongside
+ * this content field is now picked up by
+ * `state/trackedArguments.ts`'s `buildPersistedTopicCoverageReport` as a
+ * second real coverage-card source, alongside the evidence library.
+ *
  * @module panels/ContributionsFeedPanel
  */
 
@@ -58,6 +69,7 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
+import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   buildPersistedContributionFeed,
   recordPersistedEndorsementFromReviewer,
@@ -67,6 +79,7 @@ import {
   type ContributionFeedEntry,
 } from "../state/contributions"
 import type { ContributionKind } from "../lib/community-rating"
+import { computeWordCount } from "../lib/shared-evidence-library"
 
 const KIND_OPTIONS: { value: ContributionKind; label: string }[] = [
   { value: "card", label: "Card" },
@@ -89,6 +102,7 @@ type ContributionDraft = {
   topic: string
   caseArea: string
   tags: string
+  content: string
 }
 
 const EMPTY_DRAFT: ContributionDraft = {
@@ -98,6 +112,7 @@ const EMPTY_DRAFT: ContributionDraft = {
   topic: "",
   caseArea: "",
   tags: "",
+  content: "",
 }
 
 /**
@@ -134,6 +149,7 @@ export function ContributionsFeedPanel() {
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean)
+    const content = draft.content.trim()
     saveContribution({
       id: `${draft.kind}-${contributorId}-${Date.now()}`,
       contributorId,
@@ -147,6 +163,7 @@ export function ContributionsFeedPanel() {
       ...(topic ? { topic } : {}),
       ...(caseArea ? { caseArea } : {}),
       ...(tags.length > 0 ? { tags } : {}),
+      ...(content ? { wordCount: computeWordCount(content) } : {}),
     })
     setError(null)
     setDraft(EMPTY_DRAFT)
@@ -252,9 +269,21 @@ export function ContributionsFeedPanel() {
             />
           </div>
         </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="contribution-content">Content (optional)</Label>
+          <Textarea
+            id="contribution-content"
+            value={draft.content}
+            onChange={(e) => setDraft((prev) => ({ ...prev, content: e.target.value }))}
+            placeholder="Paste the card, summary, or highlight text here..."
+            rows={4}
+          />
+          <p className="text-xs text-muted-foreground">{computeWordCount(draft.content)} words</p>
+        </div>
         <p className="text-xs text-muted-foreground">
           Filling in both Topic and Case area also files this contribution into the Common
-          Argument Library.
+          Argument Library. Filling in both Argument block and Content also counts this
+          contribution toward the Topic Coverage Dashboard.
         </p>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button onClick={handleSubmit}>Submit contribution</Button>
