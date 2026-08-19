@@ -6,6 +6,43 @@
 _No task currently in progress._
 
 ### Completed
+- **Community Research Hub — searchable directory of every crowdsourcing and pre-round/practice space.**
+  Closes the "🧩 Community Research Hub" bullet ("A shared space where
+  debaters contribute cards, evidence, and summaries to a common argument
+  pool") under Research Crowdsourcing Organizer Features in TODO.md — the
+  only bullet in that section with no recorded status, because every
+  sibling bullet under it already shipped its own dedicated panel/route
+  and closed itself out independently, and `/research`'s `ResearchHub`
+  already tabs across the card-search-side ones, but nothing tied all of
+  them — including the round/practice-side spaces `ResearchHub` doesn't
+  cover (Opponent/Judge Profiles, AI Coach Mode, Practice Round Simulator,
+  AI Drill Generator) — into one place a debater could browse or search.
+  `debate-card-search` adds `lib/community-research-hub.ts`'s
+  `COMMUNITY_RESEARCH_HUB_ENTRIES` (a static registry of all 17 sibling
+  spaces' title/description/route, taken from each route's own page
+  metadata), `buildCommunityResearchHubSections` (groups entries into five
+  categories — Evidence & Cards, Team Collaboration, Pre-Round
+  Intelligence, Practice & Coaching, Recognition & Progress),
+  `searchCommunityResearchHubEntries` (case-insensitive title/description
+  substring filter), and `buildCommunityResearchHubSummaryText`. A new
+  `CommunityResearchHubPanel` renders a search box over the categorized
+  directory at `/community-hub`, added to the global dock's Settings menu
+  alongside Research Workspace. This panel has no store of its own — every
+  entry just links out to a space that already persists (or doesn't need
+  to persist) its own state. Vitest-covered in
+  `packages/debate-card-search/test/community-research-hub.test.ts`
+  (registry shape, section grouping/ordering, search matching/case-
+  insensitivity/empty-query, and summary-text pluralization). Verified
+  with `bun run test` (153 files / 2107 tests, all pass), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script), and `bun run build` (both buildable packages pass,
+  `/community-hub` present in the route list). Docs added at
+  `docs/features/community-research-hub.md`. No repo-wide `lint` script
+  exists so none was run. No follow-ups open on this bullet; idea #7's
+  browser extension and the round/practice spaces' own remaining
+  follow-ups (real Tabroom/ballot-sourced data, audio/video transcription)
+  are unrelated to this bullet and untouched here.
+  PR: [#TBD](https://github.com/debate/debate-ai.com/pulls).
 - **On Page Card Reuse Search — page-URL reuse-check first slice.**
   Closes the first slice of idea #7 ("On Page Card Reuse Search") in
   TODO.md's Product Feature Ideas list — "See if any one has cut this
@@ -5652,7 +5689,7 @@ _No task currently in progress._
 
 > The note above about UI follow-ups applies to this section too.
 
-* 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool.
+* 🧩 Community Research Hub - A shared space where debaters contribute cards, evidence, and summaries to a common argument pool. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `lib/community-research-hub.ts`'s `COMMUNITY_RESEARCH_HUB_ENTRIES`/`buildCommunityResearchHubSections`/`searchCommunityResearchHubEntries`/`buildCommunityResearchHubSummaryText` for a categorized, searchable directory of every sibling bullet's space (plus the round/practice-side spaces `/research`'s `ResearchHub` doesn't tab across). `CommunityResearchHubPanel` renders it at `/community-hub`, added to the global dock's Settings menu. No follow-ups remain open on this bullet._
 * 🏅 Contribution Leaderboard - Track who has submitted the most useful research, highest-rated cards, and most completed tasks. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildLeaderboard`/`buildContributorStats`/`groupContributionsByContributor` for aggregating contributor-attributed contributions (scored via the idea #11 `community-rating.ts` helpfulness scoring) into a ranked, per-contributor leaderboard. A second slice, `contributions.ts` (see Tracker Status above), now persists `AttributedContribution` records to localStorage, and its `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` close half of follow-up (a) — persisting like/save/endorse counts once an action fires — though no submission/like UI calls them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders the leaderboard at `/cards/leaderboard`, closing follow-up (c). A fourth slice, `ContributionsFeedPanel` (see Tracker Status above, "Contributions Feed — like/save/endorse UI"), now renders a submission form and a like/save/endorse feed at `/cards/contributions`, closing follow-up (a). A fifth slice (see Tracker Status above, "Contribution Leaderboard — completed-tasks signal") added `completedTaskCount` to each leaderboard row, sourced from the persisted completed-task history and rendered as a new column, closing follow-up (b). No follow-ups remain open on this bullet._
 * 🎮 Gamified Quests - Turn research work into missions, challenges, and streaks that reward consistent contribution. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeDailyMissionResult`/`computeStreakStatus`/`getEarnedStreakBadges`/`buildContributorQuestStreak`/`buildStreakSummaryText` for turning a contributor's daily `daily-quests.ts` mission-completion history into a current/longest streak and the milestone badges (3/7/14/30-day streaks by default) that streak has earned. A second slice, `dailyMissionResults.ts` (see Tracker Status above, "Gamified Quests — persisted daily mission-result history"), now persists a contributor's per-day `DailyMissionResult` to localStorage, keyed by `contributorId` + `dayKey`, and composes it directly into `buildPersistedContributorQuestStreak`. A third follow-up, surfacing earned streak badges on a contributor's `progress-unlocks.ts` unlock status, is now done — see the "Unlock Status Streak Badges" entry above (`unlock-streak-status.ts`). A fourth slice, `computeAndSavePersistedDailyMissionResult` (see Tracker Status above, "Gamified Quests — persisted end-of-day mission computation"), now computes and saves a contributor's mission result directly from their real persisted contributions. A fifth slice, `buildPersistedQuestStreakRoster` plus `QuestStreaksPanel` (see Tracker Status above, "Gamified Quests — streak/badge widget UI"), now renders every contributor's streak and earned badges at `/cards/streaks`, closing follow-up (b). A sixth slice (see Tracker Status above, "Gamified Quests — daily mission-check trigger UI") added a "Run today's mission check" action to `QuestStreaksPanel`, wiring `computeAndSavePersistedDailyMissionResult` to a UI trigger (there is no scheduled-job infrastructure in this repo), closing follow-up (a). No follow-ups remain open on this bullet._
 * 🔓 Progress Unlocks - Unlock harder research tasks, advanced topics, and special badges as users contribute more. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `computeContributorTier`/`getUnlockedSkillLevel`/`getUnlockedBadges`/`buildContributorUnlockStatus`/`buildUnlockStatusText` for mapping a contributor's existing leaderboard stats to an unlock tier, the `research-task-routing.ts` skill level that tier grants, and the badges earned along the way, reusing the existing `ContributorStats`/`SkillLevel` types directly. A second slice, `tiered-task-routing.ts` (see Tracker Status above), now feeds the derived skill level into `research-task-routing.ts`'s `ContributorAvailability`. A third slice, `unlock-streak-status.ts` (see Tracker Status above, "Unlock Status Streak Badges"), now merges the Gamified Quests streak badges into this unlock status, and its `buildContributorUnlockStatusWithStreakFromStore` closes follow-up (a) — it derives a contributor's tier/badges live from the already-persisted `contributions.ts`/`dailyMissionResults.ts` stores rather than needing a separate tier/badge store. A fourth slice, `ProgressUnlocksPanel` (see Tracker Status above, "Progress Unlocks — unlock/progress roster UI panel"), now renders every contributor's tier, unlocked skill level, badges, streak, and next-tier progress at `/cards/progress`, closing follow-up (b). Neither follow-up remains open._
