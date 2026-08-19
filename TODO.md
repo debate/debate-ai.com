@@ -51,6 +51,7 @@ _No task currently in progress._
   test` (150 files / 2038 tests passed), `bun run typecheck` (11 packages
   passed), `bun run build` (both buildable packages passed, `/coaching-programs`
   appears in the built route list) — no repo-wide `lint` script exists.
+  [PR #245](https://github.com/debate/debate-ai.com/pull/245).
 - **Shared Evidence Library — topic/case-area/tag filter controls.**
   Closes the "no topic/case-area/tag filter controls in the search half of
   the panel — only free text and kind are exposed" gap named in
