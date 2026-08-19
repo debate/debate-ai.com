@@ -85,6 +85,7 @@ react/ReasonEditor.tsx   → VerbatimShortcuts added to the editor's extensions
 
 ## Known gaps
 
-Follow-up (b) on idea #14 — a "send selected evidence to a speech
-document" command — remains open, not started; it needs a speech-document
-send target that doesn't exist yet in this repo.
+None. Follow-up (b) on idea #14 — a "send selected evidence to a speech
+document" command — is now closed: `Mod-Shift-S` / the "→Speech" toolbar
+button sends the current selection to a persisted `SpeechDocument`. See
+[`speech-document-target.md`](./speech-document-target.md).

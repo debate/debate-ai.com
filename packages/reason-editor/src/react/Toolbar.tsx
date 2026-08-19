@@ -32,7 +32,11 @@ import { runAiCite } from "./ai/cite-creator.js";
 import { runAiRepairText } from "./ai/repair-text.js";
 import { runAiExplain } from "./ai/explain.js";
 import { getSelectedImage, runAiAltText } from "./ai/image-alt-text.js";
-import { condenseDocument, insertShortCiteViaPrompt } from "./verbatim-shortcuts-extension.js";
+import {
+  condenseDocument,
+  insertShortCiteViaPrompt,
+  sendSelectionToSpeechDocumentViaPrompt,
+} from "./verbatim-shortcuts-extension.js";
 
 export interface ToolbarCustomization {
   /** Button ids to hide (e.g. ["highlight", "import-docx"]). */
@@ -266,6 +270,12 @@ export function Toolbar({
         label="Condense"
         title="Condense to underlined read text (Ctrl/Cmd+Shift+D)"
         onClick={() => condenseDocument(editor)}
+      />
+      <Btn
+        id="send-to-speech-doc"
+        label="→Speech"
+        title="Send selection to a speech document (Ctrl/Cmd+Shift+S)"
+        onClick={() => sendSelectionToSpeechDocumentViaPrompt(editor, exportName)}
       />
 
       {showCardTools && (

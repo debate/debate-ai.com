@@ -111,3 +111,24 @@ export {
   buildMoveHeadingSectionTransaction,
   findHeadingAtPos,
 } from './outline/heading-move.js';
+
+// Speech-document send target — a lightweight, persisted staging area a
+// debater sends evidence blocks toward (the "send selected evidence to a
+// speech document" command, closing follow-up (b) under idea #14).
+export {
+  createSpeechDocument,
+  buildSpeechDocumentBlock,
+  appendSpeechDocumentBlock,
+  removeSpeechDocumentBlock,
+  buildSpeechDocumentText,
+} from './speech-document.js';
+export type { SpeechDocument, SpeechDocumentBlock } from './speech-document.js';
+export {
+  listSpeechDocuments,
+  getSpeechDocument,
+  findSpeechDocumentByTitle,
+  saveSpeechDocument,
+  deleteSpeechDocument,
+  removeSpeechDocumentBlockAndSave,
+  sendSelectionToSpeechDocument,
+} from '../state/speechDocuments.js';
