@@ -173,21 +173,83 @@ formatting with and without tags) and a new
 `listCombinedPersistedLibraryCards` describe block in
 `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`.
 
+## Live sync transport
+
+A "Live sync" toggle next to the Flow Edit Log form turns on a short-poll
+transport that shares a flow's edits across contributors' browsers, instead
+of every edit staying local-only `localStorage`. This closes follow-up (a)
+under idea #16 ("Shared, Ai-Generated Debate Flow") in `TODO.md`: "a live
+transport (WebSocket or similar) that turns local edits into a shared
+stream across a room/team" — implemented as a D1-backed poll rather than a
+WebSocket/Durable Object push channel, consistent with this app's existing
+serverless (Cloudflare Workers + D1) API-route architecture and the "or
+similar" wording in the follow-up.
+
+While the toggle is on for a given Flow ID:
+
+- Every ~4 seconds, the panel pulls every server-recorded `FlowEdit` for
+  that flow newer than the last one it has seen and folds them into the
+  local `state/flowEdits.ts` store (`saveFlowEdit` already dedups by id, so
+  a re-pulled edit is a no-op) — a pulled edit from a teammate shows up in
+  the logged-edit list and `SharedFlowSyncPanel`'s merge preview without
+  that teammate relaying it manually.
+- Logging a new edit while sync is on also pushes it to the server, so
+  other contributors' next poll picks it up.
+- A pull/push failure never blocks local logging — it only flips the
+  status pill next to the toggle to the server's error message; local
+  `saveFlowEdit`/`listFlowEdits` keep working exactly as before regardless
+  of network conditions.
+
+It adds:
+
+- `lib/database/schema.ts`'s `flowSyncEdits` table (`apps/debate-ai.com`) —
+  one row per `FlowEdit`, upserted by its caller-assigned `id`, indexed by
+  `flowId`.
+- `app/api/flow-sync/route.ts` — `GET ?flowId&sinceMs` (every edit for that
+  flow newer than `sinceMs`, oldest first, capped at 500) and
+  `POST { id, flowId, boxPath, authorId, content, timestampMs }` (validates
+  and upserts one edit by `id`), mirroring `app/api/doc/documents/route.ts`'s
+  `getDBFromContext()`/drizzle convention.
+- `flow/flow-sync-client.ts`: `pullRemoteFlowEdits`/`pushFlowEditToServer`,
+  the fetch layer, mirroring `round/coach-feedback-client.ts`'s
+  pure-module/fetch-client split so the network calls are unit-testable
+  without mocking timers.
+- `flow/flow-sync-cursor.ts`: `advanceSyncCursor` — the pure "what's the
+  next `sinceMs` to poll from" bookkeeping, kept separate from the hook for
+  the same testability reason.
+- `hooks/useFlowSyncPolling.ts`: the poll-loop/push binding — `status`
+  (`"idle" | "syncing" | "error"`), `lastError`, and `pushEdit`.
+- `panels/FlowEditLogPanel.tsx`: the "Live sync on/off" toggle (scoped to
+  the form's current Flow ID) and status pill, wired to the hook.
+
+Vitest-covered in `packages/debate-round/test/flow-sync-client.test.ts`
+(pull/push request shape, endpoint overrides, empty-`edits`-field fallback,
+server-error-message propagation, non-JSON-error-body fallback) and
+`packages/debate-round/test/flow-sync-cursor.test.ts` (`advanceSyncCursor`:
+no-op on an empty pull, advances to the latest pulled timestamp, never
+moves backwards past the current cursor). The polling hook itself and the
+API route are not directly Vitest-covered — verified instead by the
+package typecheck and the production build (`/api/flow-sync` appears in
+the built route list), matching this repo's existing convention for other
+React hooks (e.g. `useWordCountSpeechMode`) and D1-backed API routes.
+
 ## Known gaps
 
-- Still no live transport (e.g. WebSocket) pushing a teammate's edits here
-  automatically — a contributor types theirs in, the same way
-  `FlowAnnotationsPanel`'s drop-annotation form works for annotations.
-  This is follow-up (a) under idea #16 ("Shared, Ai-Generated Debate
-  Flow") in `TODO.md` — the only follow-up still open on this idea.
 - The `EditBadge` reads a box's edits from `localStorage` at cell render
   time; it does not live-update if another tab logs a new edit while the
   grid is open, and the badge doesn't refresh in place after logging one
   through its own popover until the grid next re-renders that cell —
   mirroring the same known gap already documented for the `FlowSpreadsheet`
   annotation badge.
-- No collaborative/live sync — edits are local `localStorage` only, same
-  as every other persisted record in this repo today.
+- Live sync is opt-in and per-Flow-ID, off by default, and pulls on a fixed
+  ~4s poll rather than pushing instantly — a teammate's edit can take up to
+  one poll interval to appear. The `FlowSpreadsheet` grid's `EditBadge`/
+  `EditReviewPopover` affordance does not itself toggle or drive sync; it
+  only reads whatever `state/flowEdits.ts` already has, whether that came
+  from a local log or a synced pull.
+- `SharedFlowSyncPanel`/`CoachHub` do not surface the sync toggle or status
+  — it lives only in `FlowEditLogPanel`'s own form, scoped to that form's
+  Flow ID field.
 - The flow-note suggestion query is the Content field's own in-progress
   text, not the box's existing content or the flow's topic — a
   contributor gets suggestions only once they've started typing something

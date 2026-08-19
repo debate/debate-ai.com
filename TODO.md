@@ -6,6 +6,61 @@
 _No task currently in progress._
 
 ### Completed
+- **Shared, Ai-Generated Debate Flow — server-backed live sync transport.**
+  Closes follow-up (a) under idea #16 ("Shared, Ai-Generated Debate Flow")
+  in TODO.md's Product Feature Ideas list — "a live transport (WebSocket or
+  similar) that turns local edits into a shared stream across a
+  room/team" — the only follow-up open on that idea, and closes
+  `docs/features/shared-flow-sync.md`'s "Known gaps" entry for it.
+  `apps/debate-ai.com/lib/database/schema.ts` adds a `flowSyncEdits` D1
+  table (one row per `FlowEdit`, upserted by its caller-assigned `id`,
+  indexed by `flowId`), generated via `drizzle-kit generate` into
+  `drizzle/0002_first_mister_sinister.sql`. A new
+  `app/api/flow-sync/route.ts` exposes `GET ?flowId&sinceMs` (every edit
+  for that flow newer than `sinceMs`, oldest first, capped at 500) and
+  `POST { id, flowId, boxPath, authorId, content, timestampMs }`
+  (validates and upserts by `id`), mirroring `app/api/doc/documents/route.ts`'s
+  `getDBFromContext()`/drizzle convention — a short-poll transport rather
+  than a WebSocket/Durable Object push channel, consistent with this app's
+  existing serverless (Cloudflare Workers + D1) architecture and the
+  follow-up's own "WebSocket or similar" wording. `debate-round` adds
+  `flow/flow-sync-client.ts` (`pullRemoteFlowEdits`/`pushFlowEditToServer`,
+  the fetch layer, mirroring `round/coach-feedback-client.ts`'s
+  pure-module/fetch-client split), `flow/flow-sync-cursor.ts`
+  (`advanceSyncCursor`, the pure next-`sinceMs` bookkeeping), and
+  `hooks/useFlowSyncPolling.ts` (the poll-loop/push binding —
+  `status`/`lastError`/`pushEdit`, ~4s interval). `FlowEditLogPanel.tsx`
+  gets a "Live sync on/off" toggle (scoped to the form's current Flow ID)
+  and a status pill: while on, it polls for other contributors' edits to
+  that flow and folds them into the existing local `state/flowEdits.ts`
+  store (`saveFlowEdit` already dedups by id), and pushes newly logged
+  edits to the server; a pull/push failure only updates the status
+  pill — local logging keeps working regardless of network conditions.
+  Vitest-covered in `packages/debate-round/test/flow-sync-client.test.ts`
+  (pull/push request shape, endpoint overrides, empty-`edits`-field
+  fallback, server-error-message propagation, non-JSON-error-body
+  fallback) and `packages/debate-round/test/flow-sync-cursor.test.ts`
+  (`advanceSyncCursor`: no-op on an empty pull, advances to the latest
+  pulled timestamp, never moves backwards). The polling hook and the API
+  route are not directly Vitest-covered, matching this repo's convention
+  for other React hooks (e.g. `useWordCountSpeechMode`) and D1-backed API
+  routes — instead verified by package typecheck, the production build
+  (`/api/flow-sync` appears in the built route list), and a manual
+  end-to-end run against the local D1 emulation (`bun run dev` +
+  `wrangler d1 execute debate_db --local --file=drizzle/0002_first_mister_sinister.sql`):
+  GET before any data returns `{"edits":[]}`, POST persists and returns the
+  edit, GET with `sinceMs=0` returns it, GET with `sinceMs` at the edit's
+  own timestamp correctly excludes it, and re-POSTing the same `id` with
+  new content upserts in place rather than duplicating. Verified from a
+  clean install: `bun install` (2050 packages), `bun run test` (152 files /
+  2077 tests, all pass), `bun run typecheck` (11 in-scope packages pass —
+  `debate-ai-web` has no `typecheck` script, so `app/api/flow-sync/route.ts`
+  is covered by the build instead), and `bun run build` (both buildable
+  packages pass, `/api/flow-sync` appears in the built route list). Docs
+  updated at `docs/features/shared-flow-sync.md`. No repo-wide `lint`
+  script exists (checked root/app/package `package.json` scripts) so none
+  was run.
+  PR: [#250](https://github.com/debate/debate-ai.com/pull/250).
 - **Coaching Programs and Group Challenges — member practice-round setup/feedback wiring.**
   Closes idea #13's remaining "(c) wiring a member's practice-round
   setup/feedback (Practice Round Simulator) into the space" follow-up in
@@ -5555,7 +5610,7 @@ _No task currently in progress._
 
 15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slices done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. A third slice, `FlowAnnotationsPanel` (see Tracker Status above, "Flow-in-Speech Flow Annotations — video-player annotation UI"), now renders a drop-annotation form wired to the `debate-videos` persistent player's live playback position plus every persisted annotation with a "Jump to" action back into the player, at `/annotations`, closing follow-up (a). A fourth slice (see Tracker Status above, "Flow-in-Speech Flow Annotations — `FlowSpreadsheet` annotation affordance") added `flow/annotation-cells.ts` and `flow/AnnotationBadge.tsx`, wiring a per-cell annotation badge (with the same "Jump to" mechanism) into `FlowSpreadsheet` via a new `flow/AnnotationCellRenderer.tsx` and the existing `FirstColumnCellRenderer.tsx`, closing follow-up (b). No follow-ups remain open on this idea._
 
-16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow) _Status: first slices done (see Tracker Status above) — `debate-round` now has `mergeFlowEdits`/`applyMergedEditsToFlow`/`buildSharedFlowSyncSummaryText` for reconciling multiple teammates' concurrent box-level flow edits into one canonical flow (last write wins), flagging genuinely concurrent, diverging edits from different authors as conflicts for a human to resolve instead of silently overwriting them. A second slice, `SharedFlowSyncPanel` (see "Feature panels", PR #214), renders that merge preview in the Coach hub's Flow section, driven entirely by props. A third slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — Flow Edit Log + real merge-preview data source") added `createFlowEdit` plus `state/flowEdits.ts` and `FlowEditLogPanel`, giving a contributor a way to actually log a `FlowEdit` and wiring `CoachHub` to feed `SharedFlowSyncPanel` real, persisted edits (and apply an accepted merge back into the round workspace) instead of a hardcoded empty array. A fourth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — FlowSpreadsheet edit-review/log affordance") added `flow/edit-cells.ts`, `flow/EditBadge.tsx`, and `flow/EditReviewPopover.tsx`, wiring a per-cell badge into `AnnotationCellRenderer`/`FirstColumnCellRenderer` that shows a box's pending `FlowEdit`s and opens a click-positioned popover to log a new one, closing follow-up (b). A fifth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — Common Argument Library flow-note suggestions") added `flow/flow-note-suggestions.ts` and wired a "Suggested from Common Argument Library" list into `FlowEditLogPanel`'s Content field, scoring the in-progress note against the persisted Common Argument Library corpus and offering a matched card's formatted note as an insertable (never auto-applied) starting point, closing follow-up (c). Follow-up (a), a live transport (WebSocket or similar) that turns local edits into a shared stream across a room/team, remains open — not started._
+16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow) _Status: first slices done (see Tracker Status above) — `debate-round` now has `mergeFlowEdits`/`applyMergedEditsToFlow`/`buildSharedFlowSyncSummaryText` for reconciling multiple teammates' concurrent box-level flow edits into one canonical flow (last write wins), flagging genuinely concurrent, diverging edits from different authors as conflicts for a human to resolve instead of silently overwriting them. A second slice, `SharedFlowSyncPanel` (see "Feature panels", PR #214), renders that merge preview in the Coach hub's Flow section, driven entirely by props. A third slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — Flow Edit Log + real merge-preview data source") added `createFlowEdit` plus `state/flowEdits.ts` and `FlowEditLogPanel`, giving a contributor a way to actually log a `FlowEdit` and wiring `CoachHub` to feed `SharedFlowSyncPanel` real, persisted edits (and apply an accepted merge back into the round workspace) instead of a hardcoded empty array. A fourth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — FlowSpreadsheet edit-review/log affordance") added `flow/edit-cells.ts`, `flow/EditBadge.tsx`, and `flow/EditReviewPopover.tsx`, wiring a per-cell badge into `AnnotationCellRenderer`/`FirstColumnCellRenderer` that shows a box's pending `FlowEdit`s and opens a click-positioned popover to log a new one, closing follow-up (b). A fifth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — Common Argument Library flow-note suggestions") added `flow/flow-note-suggestions.ts` and wired a "Suggested from Common Argument Library" list into `FlowEditLogPanel`'s Content field, scoring the in-progress note against the persisted Common Argument Library corpus and offering a matched card's formatted note as an insertable (never auto-applied) starting point, closing follow-up (c). A sixth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — server-backed live sync transport") added `apps/debate-ai.com`'s `lib/database/schema.ts` `flowSyncEdits` D1 table and `app/api/flow-sync/route.ts` (GET pull-since-cursor, POST upsert), plus `debate-round`'s `flow/flow-sync-client.ts`, `flow/flow-sync-cursor.ts`, and `hooks/useFlowSyncPolling.ts`, wiring an opt-in "Live sync" toggle into `FlowEditLogPanel` that short-polls the server for other contributors' edits to the form's current Flow ID and folds them into the existing local `state/flowEdits.ts` store, and best-effort pushes newly logged edits to the server — a short-poll transport rather than a WebSocket/Durable Object push channel, matching the follow-up's "WebSocket or similar" wording. No follow-ups remain open on this idea._
 
 
 
