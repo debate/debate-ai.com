@@ -6,7 +6,9 @@
 
 import { ChevronDown, ChevronRight } from "lucide-react"
 import { listFlowAnnotationsForBox } from "../state/flowAnnotations"
+import { listFlowEditsForBox } from "../state/flowEdits"
 import { AnnotationBadge } from "./AnnotationBadge"
+import { EditBadge } from "./EditBadge"
 import { boxPathForCell } from "./annotation-cells"
 import type { FirstColumnCellRendererProps } from "./types"
 
@@ -14,17 +16,28 @@ import type { FirstColumnCellRendererProps } from "./types"
  * Custom cell renderer for first column cells that are section headings.
  * Shows a chevron toggle and bold text for heading rows, plus an
  * `AnnotationBadge` when the cell's box (column index 0) has a persisted
- * `FlowAnnotation`.
+ * `FlowAnnotation`, and an `EditBadge` for logging or reviewing that box's
+ * `FlowEdit`s.
  */
 export const FirstColumnCellRenderer = (props: FirstColumnCellRendererProps) => {
-  const { data, value, collapsedHeadings, onToggleCollapse, flowId, onJumpToAnnotation } = props
+  const { data, value, collapsedHeadings, onToggleCollapse, flowId, onJumpToAnnotation, onOpenEditReview } = props
   if (!data) return <span>{value}</span>
 
+  const boxPath = boxPathForCell(data.originalIndex, 0)
   const annotations =
-    typeof localStorage === "undefined"
-      ? []
-      : listFlowAnnotationsForBox(flowId, boxPathForCell(data.originalIndex, 0))
-  const badge = <AnnotationBadge annotations={annotations} onJump={onJumpToAnnotation} />
+    typeof localStorage === "undefined" ? [] : listFlowAnnotationsForBox(flowId, boxPath)
+  const edits = typeof localStorage === "undefined" ? [] : listFlowEditsForBox(flowId, boxPath)
+  const badge = (
+    <>
+      <AnnotationBadge annotations={annotations} onJump={onJumpToAnnotation} />
+      <EditBadge
+        edits={edits}
+        onOpen={(e) =>
+          onOpenEditReview({ x: e.clientX, y: e.clientY, boxPath, currentContent: String(value ?? "") })
+        }
+      />
+    </>
+  )
 
   if (data.isHeading) {
     const isCollapsed = collapsedHeadings.has(data.id)

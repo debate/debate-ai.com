@@ -85,6 +85,55 @@ length-clamping, empty-`boxPath`/blank-`authorId` validation errors) and
 storage, cross-flow listing and ordering, upsert-by-id, delete,
 clear-by-flow).
 
+## FlowSpreadsheet affordance
+
+Every cell in the live `FlowSpreadsheet` grid now shows a small commit-icon
+badge next to its text for logging or reviewing that box's `FlowEdit`s,
+without leaving the grid for the separate `FlowEditLogPanel` form:
+
+- A box with one or more logged edits shows a filled badge with the pending
+  count; hovering lists each edit's author and content, newest first.
+- A box with none shows a faint, still-clickable affordance — this is the
+  entry point for logging a new edit, since a box with zero prior edits is
+  exactly when a contributor wants to add one.
+- Clicking either state opens an `EditReviewPopover` at the click position
+  (mirroring `GridContextMenu`'s fixed-position overlay — an AG Grid cell
+  clips normal in-flow content, so this renders as a sibling of the grid).
+  It lists the box's already-logged edits and a small form (Author ID,
+  Content, prefilled with the cell's current value) to log a new one
+  directly against `state/flowEdits.ts`.
+
+This closes the remaining half of follow-up (b), "a `FlowSpreadsheet`-grid
+affordance for logging or reviewing an edit," named under idea #16
+("Shared, Ai-Generated Debate Flow") in `TODO.md`. It adds:
+
+- `flow/edit-cells.ts`: `sortEditsNewestFirst` — orders a box's edits
+  newest first for the badge tooltip and popover list. Box-path derivation
+  is reused directly from `annotation-cells.ts#boxPathForCell`/
+  `columnIndexFromField` (generic to any per-cell, box-addressed feature,
+  not specific to annotations).
+- `state/flowEdits.ts`: `listFlowEditsForBox`, mirroring
+  `flowAnnotations.ts#listFlowAnnotationsForBox`.
+- `flow/EditBadge.tsx`: the commit-icon badge, shared by both cell
+  renderers below. Unlike `AnnotationBadge` (which renders nothing for an
+  empty box), this always renders — it's the log-a-new-edit entry point
+  too.
+- `flow/EditReviewPopover.tsx`: the fixed-position overlay, mirroring
+  `GridContextMenu`'s click-outside/Escape-to-close pattern.
+- `flow/AnnotationCellRenderer.tsx` / `flow/FirstColumnCellRenderer.tsx`:
+  now also render `EditBadge` alongside the existing `AnnotationBadge`.
+- `flow/useFlowGridConfig.ts` / `flow/FlowSpreadsheet.tsx`: wire an
+  `onOpenEditReview` callback (which positions the popover from the
+  clicked badge's event, the same way `onCellContextMenu` positions
+  `GridContextMenu`) into both renderers' `cellRendererParams`.
+
+Vitest-covered in `packages/debate-round/test/edit-cells.test.ts`
+(newest-first ordering), `packages/debate-round/test/EditBadge.test.tsx`
+(empty-box vs. populated render, singular/plural wording, tooltip
+ordering, "(cleared)" fallback), and a new `listFlowEditsForBox` describe
+block in `packages/debate-round/test/flowEdits.test.ts` (exact box-path
+match, excluding prefix/extension paths and other flows).
+
 ## Known gaps
 
 - Still no live transport (e.g. WebSocket) pushing a teammate's edits here
@@ -92,9 +141,12 @@ clear-by-flow).
   `FlowAnnotationsPanel`'s drop-annotation form works for annotations.
   This is follow-up (a) under idea #16 ("Shared, Ai-Generated Debate
   Flow") in `TODO.md`.
-- `FlowSpreadsheet` itself has no affordance yet for logging or reviewing
-  an edit from the live grid — a contributor uses the separate
-  `FlowEditLogPanel` form. This is the remaining half of follow-up (b).
+- The `EditBadge` reads a box's edits from `localStorage` at cell render
+  time; it does not live-update if another tab logs a new edit while the
+  grid is open, and the badge doesn't refresh in place after logging one
+  through its own popover until the grid next re-renders that cell —
+  mirroring the same known gap already documented for the `FlowSpreadsheet`
+  annotation badge.
 - No collaborative/live sync — edits are local `localStorage` only, same
   as every other persisted record in this repo today.
 - Follow-up (c) — composing the Common Argument Library's tagged card

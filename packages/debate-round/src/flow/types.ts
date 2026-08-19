@@ -7,6 +7,19 @@ import type { Flow } from "debate-core/src/types/flow"
 import type { FlowAnnotation } from "./flow-annotations"
 
 /**
+ * Where and for which box an `EditBadge` click should open the
+ * `EditReviewPopover` overlay — `x`/`y` mirror `GridContextMenu`'s
+ * click-position overlay pattern, since an AG Grid cell clips normal
+ * in-flow content.
+ */
+export interface EditReviewOpenParams {
+  x: number
+  y: number
+  boxPath: number[]
+  currentContent: string
+}
+
+/**
  * Props for the FlowSpreadsheet component
  */
 export interface FlowSpreadsheetProps {
@@ -35,16 +48,18 @@ export interface FirstColumnCellRendererProps extends ICellRendererParams {
   onToggleCollapse: (rowId: string) => void
   flowId: number
   onJumpToAnnotation: (annotation: FlowAnnotation) => void
+  onOpenEditReview: (params: EditReviewOpenParams) => void
 }
 
 /**
  * Props for the `AnnotationCellRenderer` component, used on every
  * `FlowSpreadsheet` column after the first to show an `AnnotationBadge`
- * alongside the cell's plain text value.
+ * and `EditBadge` alongside the cell's plain text value.
  */
 export interface AnnotationCellRendererProps extends ICellRendererParams {
   flowId: number
   onJumpToAnnotation: (annotation: FlowAnnotation) => void
+  onOpenEditReview: (params: EditReviewOpenParams) => void
 }
 
 /**

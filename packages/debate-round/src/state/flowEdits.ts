@@ -48,6 +48,19 @@ export function listFlowEditsForFlow(flowId: number): FlowEdit[] {
   return listFlowEdits().filter((edit) => edit.flowId === flowId);
 }
 
+/**
+ * Lists a single box's persisted edits within one flow, oldest first —
+ * feeds the `FlowSpreadsheet` cell affordance (`EditBadge`/
+ * `EditReviewPopover`) that surfaces a box's pending edits without leaving
+ * the live grid for the separate `FlowEditLogPanel` form.
+ */
+export function listFlowEditsForBox(flowId: number, boxPath: number[]): FlowEdit[] {
+  return listFlowEditsForFlow(flowId).filter(
+    (edit) =>
+      edit.boxPath.length === boxPath.length && edit.boxPath.every((value, i) => value === boxPath[i]),
+  );
+}
+
 /** Saves an edit, overwriting any existing record with the same id. */
 export function saveFlowEdit(edit: FlowEdit): void {
   const edits = readAll();
