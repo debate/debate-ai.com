@@ -60,6 +60,24 @@ function collectSideKeys(record: ArgumentTreeRecord): string[] {
   return keys
 }
 
+/** Every distinct `argumentType` present in a tree's argument rows, in first-seen order. */
+function collectArgumentTypes(record: ArgumentTreeRecord): NonNullable<ArgumentTreeFilter["argumentType"]>[] {
+  const types: NonNullable<ArgumentTreeFilter["argumentType"]>[] = []
+  for (const node of flattenArgumentTree(record.tree)) {
+    if (node.argumentType && !types.includes(node.argumentType)) types.push(node.argumentType)
+  }
+  return types
+}
+
+/** Every distinct `authorId` present in a tree's argument rows, in first-seen order. */
+function collectAuthorIds(record: ArgumentTreeRecord): string[] {
+  const authorIds: string[] = []
+  for (const node of flattenArgumentTree(record.tree)) {
+    if (node.authorId && !authorIds.includes(node.authorId)) authorIds.push(node.authorId)
+  }
+  return authorIds
+}
+
 /**
  * Renders the Outline Filters and Argument Tree View panel: every persisted
  * `ArgumentTreeRecord`, one card per round, with speech/side/kind/
@@ -122,6 +140,8 @@ export function ArgumentTreePanel() {
         const filter = filters[record.roundId] ?? {}
         const speeches = collectSpeeches(record)
         const sideKeys = collectSideKeys(record)
+        const argumentTypes = collectArgumentTypes(record)
+        const authorIds = collectAuthorIds(record)
         const filtered = flattenArgumentTree(filterArgumentTree(record.tree, filter))
 
         return (
@@ -197,6 +217,76 @@ export function ArgumentTreePanel() {
                 </Select>
               </div>
 
+              <div className="space-y-1.5">
+                <Label htmlFor={`argument-type-${record.roundId}`}>Argument type</Label>
+                <Select
+                  value={filter.argumentType ?? ANY_VALUE}
+                  onValueChange={(value) =>
+                    updateFilter(record.roundId, {
+                      argumentType:
+                        value === ANY_VALUE ? undefined : (value as NonNullable<ArgumentTreeFilter["argumentType"]>),
+                    })
+                  }
+                >
+                  <SelectTrigger id={`argument-type-${record.roundId}`} className="w-36">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ANY_VALUE}>Any type</SelectItem>
+                    {argumentTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor={`contributor-${record.roundId}`}>Contributor</Label>
+                <Select
+                  value={filter.authorId ?? ANY_VALUE}
+                  onValueChange={(value) =>
+                    updateFilter(record.roundId, { authorId: value === ANY_VALUE ? undefined : value })
+                  }
+                >
+                  <SelectTrigger id={`contributor-${record.roundId}`} className="w-36">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ANY_VALUE}>Any contributor</SelectItem>
+                    {authorIds.map((authorId) => (
+                      <SelectItem key={authorId} value={authorId}>
+                        {authorId}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor={`evidence-status-${record.roundId}`}>Evidence status</Label>
+                <Select
+                  value={filter.evidenceStatus ?? ANY_VALUE}
+                  onValueChange={(value) =>
+                    updateFilter(record.roundId, {
+                      evidenceStatus:
+                        value === ANY_VALUE ? undefined : (value as NonNullable<ArgumentTreeFilter["evidenceStatus"]>),
+                    })
+                  }
+                >
+                  <SelectTrigger id={`evidence-status-${record.roundId}`} className="w-36">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ANY_VALUE}>Any status</SelectItem>
+                    <SelectItem value="cited">cited</SelectItem>
+                    <SelectItem value="contested">contested</SelectItem>
+                    <SelectItem value="unverified">unverified</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <label className="flex items-center gap-2 pb-1.5 text-sm text-foreground">
                 <Switch
                   checked={filter.onlyUnanswered ?? false}
@@ -227,9 +317,25 @@ export function ArgumentTreePanel() {
                         {node.originSpeech}
                       </Badge>
                     )}
+                    {node.argumentType && (
+                      <Badge variant="secondary" className="whitespace-nowrap">
+                        {node.argumentType}
+                      </Badge>
+                    )}
                     <span className={node.isHeading ? "font-semibold text-foreground" : "text-foreground"}>
                       {node.content}
                     </span>
+                    {node.authorId && (
+                      <span className="whitespace-nowrap text-xs text-muted-foreground">{node.authorId}</span>
+                    )}
+                    {node.evidenceStatus && (
+                      <Badge
+                        variant={node.evidenceStatus === "contested" ? "destructive" : "outline"}
+                        className="whitespace-nowrap"
+                      >
+                        {node.evidenceStatus}
+                      </Badge>
+                    )}
                     {node.isUnanswered && (
                       <Badge variant="destructive" className="ml-auto whitespace-nowrap">
                         Unanswered

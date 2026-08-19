@@ -10,7 +10,7 @@
  * speech text; see the follow-ups noted in TODO.md.
  */
 
-import type { Box, Flow } from "debate-core/src/types/flow";
+import type { ArgumentType, Box, EvidenceStatus, Flow } from "debate-core/src/types/flow";
 
 export type FlowRowEntry = {
   /** Column/speech name, e.g. "1AC". */
@@ -35,6 +35,12 @@ export type FlowRowSummary = {
    * nothing has answered or extended this argument since `lastSpeech`.
    */
   isUnanswered: boolean;
+  /** This row's finer argument-role tag, read from its underlying `Box.argumentType`, if any was set. */
+  argumentType?: ArgumentType;
+  /** Id of the debater/speaker who introduced this row, read from its underlying `Box.authorId`, if any was set. */
+  authorId?: string;
+  /** This row's evidence-support status, read from its underlying `Box.evidenceStatus`, if any was set. */
+  evidenceStatus?: EvidenceStatus;
 };
 
 const MAX_DISPLAY_LENGTH = 160;
@@ -92,6 +98,9 @@ export function summarizeFlowRow(
     entries,
     lastSpeech: entries[entries.length - 1].speech,
     isUnanswered,
+    argumentType: box.argumentType,
+    authorId: box.authorId,
+    evidenceStatus: box.evidenceStatus,
   };
 }
 

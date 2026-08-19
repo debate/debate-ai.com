@@ -6,11 +6,10 @@
  * the flow's `isHeading` rows — each heading becomes a top-level
  * "contention" node and the non-heading rows beneath it become its
  * children — and lets a caller filter that tree by speech, by side, by
- * unanswered/dropped status, and by heading-vs-argument kind. This is the
- * first slice only — it doesn't distinguish finer argument types (link,
- * impact, turn, answer, extension) or track contributor/evidence-status,
- * since neither exists in the flow schema today; see the follow-ups noted
- * in TODO.md.
+ * unanswered/dropped status, by heading-vs-argument kind, by finer
+ * argument-role tag (link/impact/turn/answer/extension, from
+ * `Box.argumentType`), by contributor (`Box.authorId`), and by evidence
+ * status (`Box.evidenceStatus`). No follow-ups remain open on this idea.
  */
 
 import type { Flow } from "debate-core/src/types/flow";
@@ -28,6 +27,9 @@ export type ArgumentTreeNode = {
   isUnanswered: boolean;
   entries: FlowRowSummary["entries"];
   children: ArgumentTreeNode[];
+  argumentType?: FlowRowSummary["argumentType"];
+  authorId?: FlowRowSummary["authorId"];
+  evidenceStatus?: FlowRowSummary["evidenceStatus"];
 };
 
 export type ArgumentTreeFilter = {
@@ -37,6 +39,12 @@ export type ArgumentTreeFilter = {
   onlyUnanswered?: boolean;
   /** `"heading"` returns a pure outline of section headers; `"argument"` returns only argument rows (headings are kept only as grouping context when a descendant matches). */
   kind?: "heading" | "argument";
+  /** Matches nodes whose `argumentType` equals this value. */
+  argumentType?: NonNullable<FlowRowSummary["argumentType"]>;
+  /** Matches nodes whose `authorId` equals this value. */
+  authorId?: string;
+  /** Matches nodes whose `evidenceStatus` equals this value. */
+  evidenceStatus?: NonNullable<FlowRowSummary["evidenceStatus"]>;
 };
 
 /**
@@ -76,6 +84,9 @@ function toNode(summary: FlowRowSummary): ArgumentTreeNode {
     isUnanswered: summary.isUnanswered,
     entries: summary.entries,
     children: [],
+    argumentType: summary.argumentType,
+    authorId: summary.authorId,
+    evidenceStatus: summary.evidenceStatus,
   };
 }
 
@@ -121,6 +132,9 @@ function argumentMatches(node: ArgumentTreeNode, filter: ArgumentTreeFilter): bo
   }
   if (filter.sideKey && node.sideKey !== filter.sideKey) return false;
   if (filter.onlyUnanswered && !node.isUnanswered) return false;
+  if (filter.argumentType && node.argumentType !== filter.argumentType) return false;
+  if (filter.authorId && node.authorId !== filter.authorId) return false;
+  if (filter.evidenceStatus && node.evidenceStatus !== filter.evidenceStatus) return false;
   return true;
 }
 

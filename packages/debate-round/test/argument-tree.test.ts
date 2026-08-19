@@ -98,6 +98,38 @@ describe("buildArgumentTree", () => {
     expect(tree[0].sideKey).toBeNull();
     expect(tree[0].children[0].sideKey).toBe("A");
   });
+
+  it("carries argumentType/authorId/evidenceStatus through from the row's Box", () => {
+    const flow = {
+      columns: COLUMNS,
+      children: [
+        rowFromContents(["Disad link", "", "", ""], {
+          argumentType: "link",
+          authorId: "debater-1",
+          evidenceStatus: "contested",
+        }),
+      ],
+    };
+
+    const tree = buildArgumentTree(flow);
+    expect(tree[0]).toMatchObject({
+      argumentType: "link",
+      authorId: "debater-1",
+      evidenceStatus: "contested",
+    });
+  });
+
+  it("leaves argumentType/authorId/evidenceStatus undefined when not set on the Box", () => {
+    const flow = {
+      columns: COLUMNS,
+      children: [rowFromContents(["Case advantage", "", "", ""])],
+    };
+
+    const tree = buildArgumentTree(flow);
+    expect(tree[0].argumentType).toBeUndefined();
+    expect(tree[0].authorId).toBeUndefined();
+    expect(tree[0].evidenceStatus).toBeUndefined();
+  });
 });
 
 describe("filterArgumentTree", () => {
@@ -144,6 +176,46 @@ describe("filterArgumentTree", () => {
     const filtered = filterArgumentTree(tree, { kind: "argument", speech: "1NC" });
     expect(filtered.map((n) => n.content)).toEqual(["Neg-only point"]);
     expect(filtered.every((n) => !n.isHeading)).toBe(true);
+  });
+
+  describe("filtering by argumentType/authorId/evidenceStatus", () => {
+    const taggedFlow = {
+      columns: COLUMNS,
+      children: [
+        rowFromContents(["Off-case", "", "", ""], { isHeading: true }),
+        rowFromContents(["Disad link", "", "", ""], {
+          argumentType: "link",
+          authorId: "debater-1",
+          evidenceStatus: "contested",
+        }),
+        rowFromContents(["Impact turn", "", "", ""], {
+          argumentType: "turn",
+          authorId: "debater-2",
+          evidenceStatus: "cited",
+        }),
+      ],
+    };
+    const taggedTree = buildArgumentTree(taggedFlow);
+
+    it("filters by argumentType, dropping a heading left with no matching children", () => {
+      const filtered = filterArgumentTree(taggedTree, { argumentType: "turn" });
+      expect(flattenArgumentTree(filtered).map((n) => n.content)).toEqual(["Off-case", "Impact turn"]);
+    });
+
+    it("filters by authorId", () => {
+      const filtered = filterArgumentTree(taggedTree, { authorId: "debater-1" });
+      expect(flattenArgumentTree(filtered).map((n) => n.content)).toEqual(["Off-case", "Disad link"]);
+    });
+
+    it("filters by evidenceStatus", () => {
+      const filtered = filterArgumentTree(taggedTree, { evidenceStatus: "contested" });
+      expect(flattenArgumentTree(filtered).map((n) => n.content)).toEqual(["Off-case", "Disad link"]);
+    });
+
+    it("combines with kind: 'argument' to hoist matching rows without their heading", () => {
+      const filtered = filterArgumentTree(taggedTree, { kind: "argument", argumentType: "link" });
+      expect(filtered.map((n) => n.content)).toEqual(["Disad link"]);
+    });
   });
 });
 

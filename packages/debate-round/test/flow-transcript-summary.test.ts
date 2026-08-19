@@ -67,6 +67,30 @@ describe("summarizeFlowRow", () => {
     });
   });
 
+  it("carries argumentType/authorId/evidenceStatus through from the row's Box when set", () => {
+    const row = rowFromContents(["Disad link", "", "", ""], {
+      argumentType: "link",
+      authorId: "debater-1",
+      evidenceStatus: "contested",
+    });
+    const summary = summarizeFlowRow(row, COLUMNS, 0);
+
+    expect(summary).toMatchObject({
+      argumentType: "link",
+      authorId: "debater-1",
+      evidenceStatus: "contested",
+    });
+  });
+
+  it("leaves argumentType/authorId/evidenceStatus undefined when not set on the Box", () => {
+    const row = rowFromContents(["Case advantage", "", "", ""]);
+    const summary = summarizeFlowRow(row, COLUMNS, 0);
+
+    expect(summary?.argumentType).toBeUndefined();
+    expect(summary?.authorId).toBeUndefined();
+    expect(summary?.evidenceStatus).toBeUndefined();
+  });
+
   it("does not flag an argument last flowed in the final column as unanswered", () => {
     const row = rowFromContents(["", "", "", "Final frontline"]);
     const summary = summarizeFlowRow(row, COLUMNS, 0);
