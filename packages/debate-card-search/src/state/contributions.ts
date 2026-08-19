@@ -45,6 +45,9 @@ import type { ContributorAward } from "../lib/contributor-awards";
 import { DEFAULT_AWARD_CATEGORY_LABELS, buildTopContributorAwards } from "../lib/contributor-awards";
 import type { DailyBestCard, TimestampedCardContribution } from "../lib/daily-best-card";
 import { buildDailyBestCards, getBestCardForDay } from "../lib/daily-best-card";
+import type { CardReview, ReviewStatus } from "../lib/peer-review";
+import { createCardReview } from "../lib/peer-review";
+import { getPeerReview, savePeerReview } from "./peerReviews";
 
 const STORAGE_KEY = "contributions";
 
@@ -184,10 +187,67 @@ export function buildPersistedLeaderboard(weights: HelpfulnessWeights = DEFAULT_
   return buildLeaderboard(readAll(), weights);
 }
 
+/**
+ * A contribution's publication status: `"no_review"` if it was never sent to
+ * peer review (the default for every contribution today — review stays
+ * opt-in), or the underlying `CardReview`'s `ReviewStatus` once one exists.
+ * Closes follow-up (c) named under the "🗣️ Peer Review System" bullet in
+ * TODO.md ("wiring a review's lifecycle to whatever eventually persists
+ * submitted cards, so `publishReview` can gate a card actually going live"),
+ * by giving `state/contributions.ts` a way to read a contribution's review
+ * state directly from `state/peerReviews.ts` — a `CardReview.cardId` is the
+ * contribution's own `id`.
+ */
+export type ContributionPublicationStatus = "no_review" | ReviewStatus;
+
+/** Looks up a contribution's current publication status; see `ContributionPublicationStatus`. */
+export function getContributionPublicationStatus(id: string): ContributionPublicationStatus {
+  const review = getPeerReview(id);
+  return review ? review.status : "no_review";
+}
+
+/**
+ * Whether a contribution should be visible in a review-gated "public" view
+ * of the feed: either it was never sent to review (unreviewed contributions
+ * stay visible, so this gate doesn't retroactively hide anything that
+ * predates the Peer Review System), or its review has reached `"published"`.
+ * Anything still `in_review`/`changes_requested`/`approved`/`draft`/`rejected`
+ * is hidden until it's actually published.
+ */
+function isPublicationStatusVisible(status: ContributionPublicationStatus): boolean {
+  return status === "no_review" || status === "published";
+}
+
+/** Whether a contribution should be visible in a review-gated public feed; see `isPublicationStatusVisible`. */
+export function isContributionVisibleInPublicFeed(id: string): boolean {
+  return isPublicationStatusVisible(getContributionPublicationStatus(id));
+}
+
+/**
+ * Starts a contribution's peer review by creating a `"draft"` `CardReview`
+ * keyed by the contribution's own `id`, mirroring `evidenceLibraryEntries.ts`'s
+ * `saveEvidenceLibraryEntryRevision` "store A composes store B directly"
+ * convention (here, `contributions.ts` composes `lib/peer-review.ts` +
+ * `state/peerReviews.ts`). Idempotent: a contribution that already has a
+ * review is returned unchanged rather than being reset back to `"draft"`. A
+ * no-op (returns `undefined`) if `id` isn't a stored contribution.
+ */
+export function sendContributionToReview(id: string): CardReview | undefined {
+  if (!getContribution(id)) return undefined;
+
+  const existing = getPeerReview(id);
+  if (existing) return existing;
+
+  const review = createCardReview(id);
+  savePeerReview(review);
+  return review;
+}
+
 /** One persisted contribution, ranked with its computed helpfulness breakdown. */
 export interface ContributionFeedEntry extends AttributedContribution {
   helpfulnessScore: number;
   isPopularityOnlyOutlier: boolean;
+  publicationStatus: ContributionPublicationStatus;
 }
 
 /**
@@ -199,18 +259,28 @@ export interface ContributionFeedEntry extends AttributedContribution {
  * convention, but per-contribution instead of per-contributor so a feed
  * panel can render like/save/endorse actions against each entry. An empty
  * store returns an empty feed rather than throwing.
+ *
+ * Every entry also carries its `publicationStatus`. Pass
+ * `{ publicOnly: true }` to drop any entry `isPublicationStatusVisible`
+ * excludes — closing follow-up (c) named under the "🗣️ Peer Review System"
+ * bullet in TODO.md by letting a review's lifecycle actually gate whether a
+ * contribution shows up in a public feed view.
  */
 export function buildPersistedContributionFeed(
   weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+  options: { publicOnly?: boolean } = {},
 ): ContributionFeedEntry[] {
   const contributions = readAll();
   const byId = new Map(contributions.map((contribution) => [contribution.id, contribution]));
 
-  return rankContributions(contributions, weights).map((breakdown) => ({
+  const entries = rankContributions(contributions, weights).map((breakdown) => ({
     ...(byId.get(breakdown.contributionId) as AttributedContribution),
     helpfulnessScore: breakdown.helpfulnessScore,
     isPopularityOnlyOutlier: breakdown.isPopularityOnlyOutlier,
+    publicationStatus: getContributionPublicationStatus(breakdown.contributionId),
   }));
+
+  return options.publicOnly ? entries.filter((entry) => isPublicationStatusVisible(entry.publicationStatus)) : entries;
 }
 
 /**

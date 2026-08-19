@@ -59,3 +59,19 @@ store (see `packages/debate-card-search/test/contributions.test.ts`).
   a "Reviewer ID" is just a typed string, so nothing stops one person from
   endorsing under many different reviewer ids to inflate an endorsement's
   weight.
+
+## Peer-review publish gating (Contributions Feed panel)
+
+Each entry in the Contributions Feed panel (`/cards/contributions`) also
+shows its publication status — `"Not under review"` until it's sent to peer
+review, then the underlying `CardReview`'s status (`draft` / `in_review` /
+`changes_requested` / `approved` / `published` / `rejected`). An entry not
+yet under review gets a "Send to review" action
+(`state/contributions.ts`'s `sendContributionToReview`, which starts a
+`"draft"` `CardReview` at [`/cards/reviews`](review-queue.md) keyed by the
+contribution's own id), and a "Public feed only" toggle filters the feed
+through `buildPersistedContributionFeed`'s `publicOnly` option, hiding any
+entry stuck in review until it's actually `published`. See
+[Review Queue](review-queue.md#publish-gating) for the full data flow. This
+closes follow-up (c) named under the "🗣️ Peer Review System" bullet in
+TODO.md.

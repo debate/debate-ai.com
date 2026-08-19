@@ -6,7 +6,9 @@ import {
   buildTopContributorAwardsFromStore,
   deleteContribution,
   getContribution,
+  getContributionPublicationStatus,
   getTodaysBestCardFromStore,
+  isContributionVisibleInPublicFeed,
   listContributions,
   listContributionsByContributor,
   recordPersistedEndorsement,
@@ -14,10 +16,13 @@ import {
   recordPersistedLike,
   recordPersistedSave,
   saveContribution,
+  sendContributionToReview,
 } from "../src/state/contributions";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 import { DEFAULT_AWARD_CATEGORY_LABELS } from "../src/lib/contributor-awards";
 import { MIN_REVIEWER_CREDIBILITY, computeReviewerCredibility } from "../src/lib/community-rating";
+import { approveReview, publishReview, submitForReview } from "../src/lib/peer-review";
+import { getPeerReview, savePeerReview } from "../src/state/peerReviews";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -269,6 +274,7 @@ describe("buildPersistedContributionFeed", () => {
     expect(feed[0].id).toBe("contrib-1");
     expect(feed[0].contributorId).toBe("alice");
     expect(feed[0].likes).toBe(12);
+    expect(feed[0].publicationStatus).toBe("no_review");
     expect(feed[1].id).toBe("contrib-2");
     expect(feed[0].helpfulnessScore).toBeGreaterThan(feed[1].helpfulnessScore);
   });
@@ -430,5 +436,109 @@ describe("getTodaysBestCardFromStore", () => {
     saveContribution(STRONG_CARD_DAY_ONE);
 
     expect(getTodaysBestCardFromStore(DAY_TWO)).toBeNull();
+  });
+});
+
+describe("getContributionPublicationStatus", () => {
+  it('returns "no_review" for a contribution that was never sent to review', () => {
+    saveContribution(ALICE_CARD);
+    expect(getContributionPublicationStatus("contrib-1")).toBe("no_review");
+  });
+
+  it('returns "no_review" for an id with no stored contribution at all', () => {
+    expect(getContributionPublicationStatus("does-not-exist")).toBe("no_review");
+  });
+
+  it("reflects the underlying CardReview's status once one exists", () => {
+    saveContribution(ALICE_CARD);
+    savePeerReview(submitForReview({ cardId: "contrib-1", status: "draft", comments: [] }));
+
+    expect(getContributionPublicationStatus("contrib-1")).toBe("in_review");
+  });
+});
+
+describe("sendContributionToReview", () => {
+  it("creates a draft CardReview keyed by the contribution's id", () => {
+    saveContribution(ALICE_CARD);
+
+    const review = sendContributionToReview("contrib-1");
+
+    expect(review).toEqual({ cardId: "contrib-1", status: "draft", comments: [] });
+    expect(getPeerReview("contrib-1")).toEqual(review);
+  });
+
+  it("is a no-op for an id with no stored contribution", () => {
+    expect(sendContributionToReview("does-not-exist")).toBeUndefined();
+    expect(getPeerReview("does-not-exist")).toBeUndefined();
+  });
+
+  it("is idempotent — does not reset an existing review back to draft", () => {
+    saveContribution(ALICE_CARD);
+    const inReview = submitForReview({ cardId: "contrib-1", status: "draft", comments: [] });
+    savePeerReview(inReview);
+
+    const result = sendContributionToReview("contrib-1");
+
+    expect(result).toEqual(inReview);
+    expect(getPeerReview("contrib-1")?.status).toBe("in_review");
+  });
+});
+
+describe("isContributionVisibleInPublicFeed", () => {
+  it("is true for a contribution never sent to review", () => {
+    saveContribution(ALICE_CARD);
+    expect(isContributionVisibleInPublicFeed("contrib-1")).toBe(true);
+  });
+
+  it("is true once a review reaches published", () => {
+    saveContribution(ALICE_CARD);
+    let review = submitForReview({ cardId: "contrib-1", status: "draft", comments: [] });
+    review = approveReview(review);
+    review = publishReview(review);
+    savePeerReview(review);
+
+    expect(isContributionVisibleInPublicFeed("contrib-1")).toBe(true);
+  });
+
+  it("is false while a review is still in progress", () => {
+    saveContribution(ALICE_CARD);
+    savePeerReview(submitForReview({ cardId: "contrib-1", status: "draft", comments: [] }));
+
+    expect(isContributionVisibleInPublicFeed("contrib-1")).toBe(false);
+  });
+});
+
+describe("buildPersistedContributionFeed publicOnly filtering", () => {
+  it("hides a contribution whose review hasn't been published yet", () => {
+    saveContribution(ALICE_CARD);
+    saveContribution(BOB_SUMMARY);
+    savePeerReview(submitForReview({ cardId: "contrib-1", status: "draft", comments: [] }));
+
+    const publicFeed = buildPersistedContributionFeed(undefined, { publicOnly: true });
+
+    expect(publicFeed.map((entry) => entry.id)).toEqual(["contrib-2"]);
+  });
+
+  it("keeps a never-reviewed and a published contribution visible", () => {
+    saveContribution(ALICE_CARD);
+    saveContribution(BOB_SUMMARY);
+    let review = submitForReview({ cardId: "contrib-1", status: "draft", comments: [] });
+    review = approveReview(review);
+    review = publishReview(review);
+    savePeerReview(review);
+
+    const publicFeed = buildPersistedContributionFeed(undefined, { publicOnly: true });
+
+    expect(publicFeed.map((entry) => entry.id).sort()).toEqual(["contrib-1", "contrib-2"]);
+  });
+
+  it("without publicOnly, returns every contribution regardless of review status", () => {
+    saveContribution(ALICE_CARD);
+    saveContribution(BOB_SUMMARY);
+    savePeerReview(submitForReview({ cardId: "contrib-1", status: "draft", comments: [] }));
+
+    const fullFeed = buildPersistedContributionFeed();
+
+    expect(fullFeed).toHaveLength(2);
   });
 });

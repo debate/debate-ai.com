@@ -59,6 +59,14 @@
  * `state/trackedArguments.ts`'s `buildPersistedTopicCoverageReport` as a
  * second real coverage-card source, alongside the evidence library.
  *
+ * Each entry now shows its `publicationStatus` badge, and an unreviewed
+ * entry gets a "Send to review" action (`state/contributions.ts`'s
+ * `sendContributionToReview`), plus a "Public feed only" toggle that filters
+ * the feed through `buildPersistedContributionFeed`'s `publicOnly` option —
+ * closing follow-up (c) named under the "🗣️ Peer Review System" bullet in
+ * TODO.md ("wiring a review's lifecycle to whatever eventually persists
+ * submitted cards, so `publishReview` can gate a card actually going live").
+ *
  * @module panels/ContributionsFeedPanel
  */
 
@@ -76,7 +84,9 @@ import {
   recordPersistedLike,
   recordPersistedSave,
   saveContribution,
+  sendContributionToReview,
   type ContributionFeedEntry,
+  type ContributionPublicationStatus,
 } from "../state/contributions"
 import type { ContributionKind } from "../lib/community-rating"
 import { computeWordCount } from "../lib/shared-evidence-library"
@@ -97,6 +107,26 @@ const KIND_VARIANT: Record<ContributionKind, "default" | "secondary" | "outline"
   annotation: "outline",
   "original-argument": "default",
   refutation: "secondary",
+}
+
+const PUBLICATION_STATUS_LABEL: Record<ContributionPublicationStatus, string> = {
+  no_review: "Not under review",
+  draft: "Review: draft",
+  in_review: "In review",
+  changes_requested: "Changes requested",
+  approved: "Approved",
+  published: "Published",
+  rejected: "Rejected",
+}
+
+const PUBLICATION_STATUS_VARIANT: Record<ContributionPublicationStatus, "default" | "secondary" | "outline" | "destructive"> = {
+  no_review: "outline",
+  draft: "outline",
+  in_review: "secondary",
+  changes_requested: "default",
+  approved: "secondary",
+  published: "default",
+  rejected: "destructive",
 }
 
 type ContributionDraft = {
@@ -133,12 +163,13 @@ export function ContributionsFeedPanel() {
   const [error, setError] = useState<string | null>(null)
   const [reviewerId, setReviewerId] = useState("")
   const [endorseError, setEndorseError] = useState<string | null>(null)
+  const [publicOnly, setPublicOnly] = useState(false)
 
   useEffect(() => {
-    setFeed(buildPersistedContributionFeed())
-  }, [])
+    setFeed(buildPersistedContributionFeed(undefined, { publicOnly }))
+  }, [publicOnly])
 
-  const refresh = () => setFeed(buildPersistedContributionFeed())
+  const refresh = () => setFeed(buildPersistedContributionFeed(undefined, { publicOnly }))
 
   const handleSubmit = () => {
     const contributorId = draft.contributorId.trim()
@@ -192,6 +223,11 @@ export function ContributionsFeedPanel() {
     }
     setEndorseError(null)
     recordPersistedEndorsementFromReviewer(id, trimmedReviewerId)
+    refresh()
+  }
+
+  const handleSendToReview = (id: string) => {
+    sendContributionToReview(id)
     refresh()
   }
 
@@ -310,9 +346,21 @@ export function ContributionsFeedPanel() {
         {endorseError && <p className="text-sm text-destructive">{endorseError}</p>}
       </div>
 
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground">
+          "Public feed only" hides any contribution sent to peer review until its review reaches
+          "Published" — a contribution never sent to review stays visible.
+        </p>
+        <Button size="sm" variant={publicOnly ? "default" : "outline"} onClick={() => setPublicOnly((prev) => !prev)}>
+          {publicOnly ? "Showing: public feed only" : "Showing: all contributions"}
+        </Button>
+      </div>
+
       {feed.length === 0 ? (
         <div className="p-6 text-center text-sm text-muted-foreground">
-          No contributions yet. Submit one above to start the feed.
+          {publicOnly
+            ? "No publicly visible contributions yet."
+            : "No contributions yet. Submit one above to start the feed."}
         </div>
       ) : (
         <div className="space-y-2">
@@ -329,6 +377,9 @@ export function ContributionsFeedPanel() {
                 {entry.isPopularityOnlyOutlier && (
                   <Badge variant="destructive">Popularity-only</Badge>
                 )}
+                <Badge variant={PUBLICATION_STATUS_VARIANT[entry.publicationStatus]}>
+                  {PUBLICATION_STATUS_LABEL[entry.publicationStatus]}
+                </Badge>
               </div>
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <span>{entry.likes} likes</span>
@@ -356,6 +407,11 @@ export function ContributionsFeedPanel() {
                 <Button size="sm" variant="outline" onClick={() => handleEndorse(entry.id)}>
                   Endorse
                 </Button>
+                {entry.publicationStatus === "no_review" && (
+                  <Button size="sm" variant="outline" onClick={() => handleSendToReview(entry.id)}>
+                    Send to review
+                  </Button>
+                )}
               </div>
             </div>
           ))}

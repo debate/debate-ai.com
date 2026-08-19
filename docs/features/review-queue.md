@@ -52,10 +52,34 @@ which sorts the existing persisted store into a stable panel-ready shape —
 no new lifecycle or mutation logic was introduced. Vitest-covered in
 `packages/debate-card-search/test/peerReviews.test.ts`.
 
+## Publish gating
+
+A `CardReview.cardId` is the same id a `state/contributions.ts` contribution
+uses, so a review actually gates that contribution's visibility once one
+exists:
+
+```
+state/contributions.ts
+  getContributionPublicationStatus(id)      — "no_review" until a CardReview
+                                               exists for id, else that
+                                               review's ReviewStatus
+  sendContributionToReview(id)              — idempotently starts a "draft"
+                                               CardReview keyed by id
+  isContributionVisibleInPublicFeed(id)     — true for "no_review" or
+                                               "published"; false otherwise
+  buildPersistedContributionFeed(weights, { publicOnly: true })
+                                             — drops any entry that isn't
+                                               visible in the public feed
+```
+
+See the [Contribution Leaderboard](contribution-leaderboard.md) doc for how
+the Contributions Feed panel (`/cards/contributions`) surfaces this — a
+"Send to review" action, a publication-status badge per entry, and a
+"Public feed only" toggle. A contribution that was never sent to review
+stays visible either way, so this doesn't retroactively hide anything that
+predates the Peer Review System.
+
 ## Known gaps
 
 - No reviewer identity/permission checks (no auth/roles in this repo yet),
   so any visitor can act as any reviewer and take any lifecycle action.
-- No wiring to whatever eventually persists submitted cards, so
-  `publishReview` doesn't yet make a card "go live" anywhere beyond this
-  review record's own status.
