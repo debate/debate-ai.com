@@ -10,10 +10,12 @@
  * `/cards/*` routes still mount the same panels one at a time; this is the
  * view for working across them.
  *
- * The one exception is {@link TopicSprintPanel}, which renders the full
- * `buildTopicSprint` composition rather than a single store, so this hub
- * derives its inputs from the persisted evidence library and availability
- * profiles the same way the composition expects.
+ * {@link TopicSprintPanel} used to be the one exception — it renders the
+ * full `buildTopicSprint` composition rather than a single store, so this
+ * hub used to hand-derive its inputs from the evidence library. The panel
+ * now reads that composition itself from real persisted state
+ * (`state/topicSprints.ts`'s `readPersistedTopicSprintInputs`), so this hub
+ * only needs to give it a topic.
  */
 
 import { useEffect, useMemo, useState } from "react"
@@ -39,18 +41,9 @@ import {
   TopicCoverageDashboardPanel,
   TopicSprintPanel,
 } from "debate-card-search"
-import { buildUnderCoveredArgumentQuests } from "debate-card-search/src/lib/daily-quests"
-import { buildRoutingResult } from "debate-card-search/src/lib/research-task-routing"
-import {
-  buildTopicCoverageReport,
-  type CoverageCardSummary,
-  type TrackedArgument,
-} from "debate-card-search/src/lib/topic-coverage"
-import type { ContributorAvailability } from "debate-card-search/src/lib/research-task-routing"
+import type { TrackedArgument } from "debate-card-search/src/lib/topic-coverage"
 import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
-import type { TrackedTopicAssignment } from "debate-card-search/src/lib/research-progress"
 import { listEvidenceLibraryEntries } from "debate-card-search/src/state/evidenceLibraryEntries"
-import { listContributorAvailability } from "debate-card-search/src/state/contributorAvailability"
 import { useStoreSnapshot } from "debate-ui/src/panels/use-store-snapshot"
 import { Input } from "debate-ui/src/primitives/input"
 import { LabeledField } from "debate-ui/src/panels/panel-shell"
@@ -97,18 +90,9 @@ export function ResearchHub() {
     listEvidenceLibraryEntries,
     [],
   )
-  const { data: contributors } = useStoreSnapshot<ContributorAvailability[]>(
-    listContributorAvailability,
-    [],
-  )
 
-  // The evidence library doubles as the card corpus every research slice
-  // reasons over: each entry already carries an argBlock and a word count.
-  const cards = useMemo<CoverageCardSummary[]>(
-    () => entries.map((entry) => ({ id: entry.id, argBlock: entry.argBlock, wordCount: entry.wordCount })),
-    [entries],
-  )
-
+  // Only used to guess a sensible default topic below — the evidence
+  // library's own argBlock/caseArea tagging, not a card corpus for scoring.
   const trackedArguments = useMemo<TrackedArgument[]>(() => {
     const seen = new Map<string, TrackedArgument>()
     for (const entry of entries) {
@@ -118,26 +102,6 @@ export function ResearchHub() {
     }
     return Array.from(seen.values()).sort((a, b) => a.argBlock.localeCompare(b.argBlock))
   }, [entries])
-
-  const coverageReport = useMemo(
-    () => buildTopicCoverageReport(trackedArguments, cards),
-    [trackedArguments, cards],
-  )
-
-  const coverageQuests = useMemo(
-    () => buildUnderCoveredArgumentQuests(coverageReport),
-    [coverageReport],
-  )
-
-  // Routing turns the coverage gaps into per-contributor assignments, which is
-  // exactly the shape the progress board tracks completion against.
-  const assignments = useMemo<TrackedTopicAssignment[]>(() => {
-    const routing = buildRoutingResult(coverageReport, contributors)
-    return routing.assignments.map((assignment) => ({
-      topic: topic.trim() || assignment.task.category || assignment.task.argBlock,
-      assignment,
-    }))
-  }, [coverageReport, contributors, topic])
 
   const activeTopic = topic.trim() || trackedArguments[0]?.category || "Untagged"
 
@@ -183,14 +147,7 @@ export function ResearchHub() {
       {section === "Sprint" ? (
         <div className="flex flex-col gap-4">
           <PrepRoomPanel />
-          <TopicSprintPanel
-            topic={activeTopic}
-            quests={coverageQuests}
-            contributions={[]}
-            coverageReport={coverageReport}
-            assignments={assignments}
-            authorId={contributorId}
-          />
+          <TopicSprintPanel topic={activeTopic} authorId={contributorId} />
           <SprintNotesPanel />
           <BrainstormBoardPanel />
         </div>
