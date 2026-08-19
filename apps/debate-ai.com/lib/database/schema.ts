@@ -100,3 +100,31 @@ export const flowSyncEdits = sqliteTable(
 );
 
 export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
+
+// On Page Card Reuse Search — server-backed reuse index (see
+// packages/debate-card-search/src/lib/shared-evidence-library.ts and TODO.md
+// idea #7, follow-up (a)). A small, dedicated index of "this URL has been
+// cut" facts (not a full mirror of `EvidenceLibraryEntry`), keyed by the
+// caller-assigned entry `id` so re-registering the same entry (e.g. after an
+// edit) upserts rather than duplicates. `normalizedUrl` is the
+// `normalizeSourceUrl`-normalized form, indexed for the reuse-check lookup.
+export const evidenceReuseIndex = sqliteTable(
+  "evidence_reuse_index",
+  {
+    id: text("id").primaryKey(),
+    sourceUrl: text("source_url").notNull(),
+    normalizedUrl: text("normalized_url").notNull(),
+    cite: text("cite").notNull().default(""),
+    argBlock: text("arg_block").notNull().default(""),
+    topic: text("topic").notNull().default(""),
+    contributorId: text("contributor_id").notNull().default(""),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    normalizedUrlIdx: index("idx_evidence_reuse_index_normalized_url").on(table.normalizedUrl),
+  }),
+);
+
+export type EvidenceReuseIndexRow = typeof evidenceReuseIndex.$inferSelect;

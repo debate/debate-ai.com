@@ -68,14 +68,12 @@ to measure a real word count from, unlike a dedicated evidence-library entry.
 
 ## On-page card reuse check
 
-A "Check this page" box implements the first slice of the "On Page Card
-Reuse Search" idea in TODO.md's Product Feature Ideas list — pasting a page
-URL shows whether anyone has already cut a card from it, so a contributor
-can skip duplicate research. This is the reuse check a browser extension
-would eventually run automatically against the current tab's URL; no
-extension exists in this repo yet, so the panel is the only caller today.
+A "Check this page" box implements the "On Page Card Reuse Search" idea in
+TODO.md's Product Feature Ideas list — pasting a page URL shows whether
+anyone has already cut a card from it, so a contributor can skip duplicate
+research.
 
-The submission form's new optional Source URL field is how an entry's
+The submission form's optional Source URL field is how an entry's
 `sourceUrl` gets recorded in the first place — it's blank by default, and
 existing entries persisted before this field was added simply have no
 `sourceUrl` and never match a reuse check.
@@ -89,7 +87,41 @@ page, and `checkPageForExistingCards` wraps that into a
 `{ url, alreadyCut, matches }` result; `state/evidenceLibraryEntries.ts`'s
 `checkPersistedPageForExistingCards` composes the pure check against the
 persisted repository, gated to "live" entries the same way
-`searchPersistedEvidenceLibrary` is (see below).
+`searchPersistedEvidenceLibrary` is (see below). This local check only sees
+entries saved in the current browser's own `localStorage`, so it can't
+answer "has anyone on the team cut this" across devices — see the shared
+index below.
+
+### Shared, server-backed reuse index + browser extension
+
+Closes follow-up (a) under TODO.md idea #7 — "an actual browser extension
+that calls this same check automatically against the current tab's URL."
+`app/api/evidence-reuse-check/route.ts` is a small D1-backed API route (a
+dedicated `evidence_reuse_index` table — `id`/`sourceUrl`/`normalizedUrl`/
+`cite`/`argBlock`/`topic`/`contributorId`, **not** a full server-side mirror
+of `EvidenceLibraryEntry`) exposing:
+
+- `GET ?url=` — whether that URL has already been cut by anyone on the
+  team, plus matches, matched by the same `normalizeSourceUrl` normalization
+  as the local check.
+- `POST { id, sourceUrl, cite, argBlock, topic, contributorId }` — registers
+  a cut card's source URL into the shared index, upserted by `id` so
+  re-registering the same entry (e.g. after an edit) doesn't duplicate.
+
+`lib/evidence-reuse-check-client.ts`'s `checkRemotePageForExistingCards`/
+`registerRemoteReuseEntry` are the fetch-based clients against that route.
+`EvidenceLibraryPanel`'s "Check this page" box now calls the remote check
+alongside the existing local one (rendered as a separate "Team-wide check"
+section, degrading gracefully to a note if the request fails), and the
+submission form registers a submitted entry's `sourceUrl` into the shared
+index automatically (best-effort — a network failure doesn't block the
+local save).
+
+`apps/browser-extension` is a dependency-free Manifest V3 extension (no
+bundler, not part of this repo's `bun`/`turbo` workspaces — see its own
+[README](../../apps/browser-extension/README.md)) whose popup calls the same
+`GET /api/evidence-reuse-check` route against the active tab's URL,
+configurable to a non-production API base URL via an Options page.
 
 ## Peer-review gating
 
@@ -141,6 +173,19 @@ panels/EvidenceLibraryPanel.tsx ("Check this page" box)
           → normalizeSourceUrl(url)          — lib/shared-evidence-library.ts (pure)
   → buildPageReuseCheckSummaryText(result) — lib/shared-evidence-library.ts (pure)
   → panels/EvidenceLibraryPanel.tsx        — renders the summary plus any matching entries
+
+panels/EvidenceLibraryPanel.tsx ("Check this page" box, shared index)
+  → checkRemotePageForExistingCards(url)   — lib/evidence-reuse-check-client.ts
+      → GET /api/evidence-reuse-check?url= — app/api/evidence-reuse-check/route.ts (D1)
+  → panels/EvidenceLibraryPanel.tsx        — renders the "Team-wide check" section
+
+panels/EvidenceLibraryPanel.tsx (submission form, entry.sourceUrl set)
+  → registerRemoteReuseEntry(entry)        — lib/evidence-reuse-check-client.ts
+      → POST /api/evidence-reuse-check     — app/api/evidence-reuse-check/route.ts (D1 upsert)
+
+apps/browser-extension/popup.js (active tab's URL)
+  → checkPageForExistingCards(pageUrl, apiBase) — apps/browser-extension/api.js
+      → GET ${apiBase}/api/evidence-reuse-check?url= — app/api/evidence-reuse-check/route.ts (D1)
 ```
 
 Editing an entry derives a Revision Incentives `CardSnapshot` for the entry's
@@ -174,11 +219,11 @@ card submitted here now feeds that dashboard directly.
 
 - No real search index (e.g. Typesense) — search is the existing in-memory
   keyword-overlap heuristic over whatever is persisted to localStorage.
-- No browser extension exists — the "Check this page" box is a manual,
-  paste-the-URL stand-in for what a future extension would run
-  automatically against the current tab. The reuse-check logic itself
-  (`checkPageForExistingCards`/`findEntriesBySourceUrl`/`normalizeSourceUrl`)
-  is already a plain, extension-callable function with no UI dependency.
+- The browser extension is check-only — it doesn't register a newly-cut
+  card into the shared reuse index itself (only the web app's submission
+  form does that today), and its `host_permissions` only pre-authorize
+  `debate-ai.com` and `localhost:3000` (see its
+  [README](../../apps/browser-extension/README.md)).
 - No tag rename/merge tool — the Tags field's autocomplete only suggests
   reusing an existing tag while typing; renaming or merging a tag already
   applied to existing entries would mean rewriting every entry that carries
