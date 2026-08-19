@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { buildPersistedCoachingProgramBoard } from "../src/state/persistedCoachingProgramBoard";
 import { saveCoachingProgram } from "../src/state/coachingPrograms";
-import type { CoachingProgramConfig } from "../src/round/coaching-program";
+import { saveRoundContributorFlow } from "../src/state/roundContributorFlows";
+import type { CoachingProgramConfig, CoachingProgramMemberFlow } from "../src/round/coaching-program";
 import { saveGroupChallenge } from "debate-card-search/src/state/groupChallenges";
 import { saveContribution } from "debate-card-search/src/state/contributions";
 import { recordChallengeWinEvent } from "debate-card-search/src/state/challengeWinEvents";
@@ -95,9 +96,63 @@ describe("buildPersistedCoachingProgramBoard", () => {
     expect(board?.challengeBoard[0].memberStandings).toEqual([]);
   });
 
-  it("defaults memberDrills to empty when no memberFlows are supplied", () => {
+  it("defaults memberDrills to empty when no memberFlows are supplied and none are stored", () => {
     saveCoachingProgram(VARSITY);
     const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+    expect(board?.memberDrills).toEqual({});
+  });
+
+  it("defaults memberFlows to a roster member's persisted round-contributor flow", () => {
+    saveCoachingProgram(VARSITY);
+    saveRoundContributorFlow({
+      contributorId: "alice",
+      roundId: "round-1",
+      sideKey: "A",
+      flow: {
+        columns: ["1AC", "1NC"],
+        children: [
+          {
+            content: "Solvency contention",
+            children: [],
+            index: 0,
+            level: 1,
+            focus: false,
+            empty: false,
+          },
+        ],
+      },
+    });
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+
+    expect(Object.keys(board?.memberDrills ?? {})).toEqual(["alice"]);
+    expect(board?.memberDrills.alice.length).toBeGreaterThan(0);
+  });
+
+  it("excludes a stored round-contributor flow for a contributor outside the program's roster", () => {
+    saveCoachingProgram(VARSITY);
+    saveRoundContributorFlow({
+      contributorId: "eve",
+      roundId: "round-1",
+      sideKey: "A",
+      flow: { columns: ["1AC", "1NC"], children: [] },
+    });
+
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
+    expect(board?.memberDrills).toEqual({});
+  });
+
+  it("lets an explicit memberFlows argument override the persisted lookup", () => {
+    saveCoachingProgram(VARSITY);
+    saveRoundContributorFlow({
+      contributorId: "alice",
+      roundId: "round-1",
+      sideKey: "A",
+      flow: { columns: ["1AC", "1NC"], children: [] },
+    });
+
+    const override: CoachingProgramMemberFlow[] = [];
+    const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW, override);
     expect(board?.memberDrills).toEqual({});
   });
 });
