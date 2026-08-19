@@ -25,9 +25,14 @@ Below the form, every persisted round renders as its own card (sorted by
 `roundId`): the judge-paradigm and opponent-persona badges, how many of the
 round's speeches have been submitted (looked up through the existing
 "Online Debate Versus AI" `aiVersusRounds.ts` store, with a link to
-`/versus-ai` to actually submit them), the rendered setup sections (speech
-order, judge paradigm, AI opponent), and post-round feedback once one has
-been generated — with a "Clear" action per round.
+`/versus-ai` to actually submit them), a "Generate AI opponent speech"
+action (when it's the AI's turn) that calls the existing `/api/reason-ai`
+Anthropic proxy and saves the result back through `aiVersusRounds.ts`, the
+rendered setup sections (speech order, judge paradigm, AI opponent), post-round
+feedback once one has been generated, and a "Get AI judge decision" action
+that resolves the round's saved flow summary (Speech Transcript Summaries,
+same `roundId`) against the round's judge paradigm and renders the verdict —
+with a "Clear" action per round.
 
 ## Data flow
 
@@ -69,9 +74,14 @@ introducing new setup or persistence logic. Vitest-covered in
 
 ## Known gaps
 
-- Follow-up (a), an actual AI speech-generation call for the AI opponent's
-  speeches and an AI judge-decision call under the chosen paradigm, remains
-  open — not started. Until it exists, submitting speeches (at `/versus-ai`)
-  only progresses as far as the user's own turns, and post-round feedback is
-  never generated automatically — the panel shows "no post-round feedback
-  yet" for every round.
+- Follow-up (a) — an AI speech-generation call for the AI opponent's
+  speeches, and an AI judge-decision call under the chosen paradigm — is
+  done: see "Generate AI opponent speech" and "Get AI judge decision" above.
+- Nothing in this panel calls `practice-round-simulator.ts`'s own
+  `buildPracticeRoundFeedback` (it composes the existing AI Coach Mode
+  coaching session for a round's flow and side, and already has a home in
+  `PracticeRoundRecord.feedback`), so post-round feedback is never generated
+  — the panel always shows "no post-round feedback yet." Not started; would
+  need a flow + side source for an in-progress round (e.g. the round-contributor
+  flow already recorded for [Coaching Programs](./coaching-programs.md)
+  members) to call it from.

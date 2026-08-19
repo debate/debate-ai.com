@@ -13,9 +13,12 @@ import {
   buildCoachingProgramBoard,
   buildCoachingProgramSummaryText,
   buildMemberDrillSummaryText,
+  buildMemberPracticeRoundSummaryText,
   type CoachingProgramConfig,
   type CoachingProgramMemberFlow,
+  type CoachingProgramMemberPracticeRound,
 } from "../src/round/coaching-program";
+import { buildPracticeRoundSetup } from "../src/round/practice-round-simulator";
 
 const NOW = Date.parse("2026-08-10T00:00:00Z");
 const WEEK_END = Date.parse("2026-08-17T00:00:00Z");
@@ -302,6 +305,108 @@ describe("buildCoachingProgramSummaryText", () => {
     });
 
     expect(buildCoachingProgramSummaryText(board)).toContain("JV Squad coaching space (1 member)");
+  });
+});
+
+const ALEX_SETUP = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+
+const memberPracticeRounds: CoachingProgramMemberPracticeRound[] = [
+  { contributorId: "alex", roundId: "round-1", setup: ALEX_SETUP },
+  { contributorId: "jordan", roundId: "round-2", setup: ALEX_SETUP }, // not on the roster
+];
+
+describe("buildCoachingProgramBoard — memberPracticeRounds", () => {
+  it("keys roster members' linked practice rounds by contributorId", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+      memberPracticeRounds,
+    });
+
+    expect(Object.keys(board.memberPracticeRounds)).toEqual(["alex"]);
+    expect(board.memberPracticeRounds.alex).toEqual(memberPracticeRounds[0]);
+  });
+
+  it("defaults to an empty memberPracticeRounds map when none are supplied", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+    });
+
+    expect(board.memberPracticeRounds).toEqual({});
+  });
+});
+
+describe("buildMemberPracticeRoundSummaryText", () => {
+  it("renders a member's linked practice round setup", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+      memberPracticeRounds,
+    });
+
+    expect(buildMemberPracticeRoundSummaryText(board, "alex")).toContain("Speech order");
+  });
+
+  it("renders a placeholder for a member with no linked practice round", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+    });
+
+    expect(buildMemberPracticeRoundSummaryText(board, "sam")).toBe("No practice round linked yet.");
   });
 });
 

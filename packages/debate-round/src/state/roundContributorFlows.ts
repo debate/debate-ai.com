@@ -15,11 +15,21 @@
  * `buildCoachingProgramBoard` actually needs, one flow per member) rather
  * than every round they've ever flowed.
  *
+ * The same `roundId`-to-contributor mapping also resolves each roster
+ * member's linked Practice Round Simulator round
+ * (`buildCoachingProgramMemberPracticeRounds`), closing idea #13's remaining
+ * follow-up (c) — "wiring a member's practice-round setup/feedback (Practice
+ * Round Simulator) into the space."
+ *
  * @module state/roundContributorFlows
  */
 
 import type { Flow } from "debate-core/src/types/flow";
-import type { CoachingProgramMemberFlow } from "../round/coaching-program";
+import type {
+  CoachingProgramMemberFlow,
+  CoachingProgramMemberPracticeRound,
+} from "../round/coaching-program";
+import { getPracticeRound } from "./practiceRounds";
 
 /** A contributor's currently recorded, already-flowed practice round. */
 export type RoundContributorFlowRecord = {
@@ -106,4 +116,33 @@ export function buildCoachingProgramMemberFlows(memberIds: string[]): CoachingPr
   return readAll()
     .filter((record) => memberSet.has(record.contributorId))
     .map(({ contributorId, sideKey, flow }) => ({ contributorId, sideKey, flow }));
+}
+
+/**
+ * Resolves a coaching program roster's member Practice Round Simulator
+ * rounds directly from persisted state, for
+ * `state/persistedCoachingProgramBoard.ts`'s `buildPersistedCoachingProgramBoard`
+ * to compose into `round/coaching-program.ts`'s `buildCoachingProgramBoard` —
+ * idea #13's remaining follow-up (c): "wiring a member's practice-round
+ * setup/feedback (Practice Round Simulator) into the space." Reuses this
+ * store's existing `roundId`-to-contributor mapping (the same one
+ * `buildCoachingProgramMemberFlows` reads) to look up each roster member's
+ * `roundId` against `state/practiceRounds.ts`'s `getPracticeRound`. Members
+ * outside `memberIds`, without a recorded flow, or whose flowed `roundId`
+ * has no persisted `PracticeRoundRecord` are simply absent.
+ */
+export function buildCoachingProgramMemberPracticeRounds(
+  memberIds: string[],
+): CoachingProgramMemberPracticeRound[] {
+  const memberSet = new Set(memberIds);
+  const results: CoachingProgramMemberPracticeRound[] = [];
+
+  for (const { contributorId, roundId } of readAll()) {
+    if (!memberSet.has(contributorId)) continue;
+    const practiceRound = getPracticeRound(roundId);
+    if (!practiceRound) continue;
+    results.push({ contributorId, roundId, setup: practiceRound.setup, feedback: practiceRound.feedback });
+  }
+
+  return results;
 }

@@ -28,12 +28,23 @@
  * `state/roundContributorFlows.ts`'s `buildAndSaveRoundContributorFlow`,
  * closing that follow-up.
  *
+ * An open board's roster with a recorded flow whose `roundId` also has a
+ * saved Practice Round Simulator round now gets a read-only "Member practice
+ * rounds" section — judge-paradigm/opponent-persona badges and a
+ * feedback-ready indicator per member, sourced entirely from
+ * `board.memberPracticeRounds` (`state/persistedCoachingProgramBoard.ts`'s
+ * new default resolution) and linking to `/practice-round` to configure or
+ * generate one — closing idea #13's remaining follow-up (c): "wiring a
+ * member's practice-round setup/feedback (Practice Round Simulator) into the
+ * space." No follow-ups remain open on idea #13.
+ *
  * @module panels/CoachingProgramsPanel
  */
 
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -269,6 +280,39 @@ export function CoachingProgramsPanel() {
                       </div>
                     ))}
                   </div>
+
+                  {board && Object.keys(board.memberPracticeRounds).length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Member practice rounds</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Setup and feedback status for each member&apos;s linked Practice Round
+                        Simulator round. Configure one at{" "}
+                        <Link href="/practice-round" className="underline">
+                          Practice Round Simulator
+                        </Link>
+                        .
+                      </p>
+                      {program.memberIds
+                        .filter((memberId) => board.memberPracticeRounds[memberId])
+                        .map((memberId) => {
+                          const practiceRound = board.memberPracticeRounds[memberId]
+                          return (
+                            <div key={memberId} className="flex flex-wrap items-center gap-2">
+                              <span className="w-24 truncate text-sm text-foreground">{memberId}</span>
+                              <Badge variant="outline">{practiceRound.setup.judgeParadigm.name}</Badge>
+                              <Badge variant="outline">
+                                {practiceRound.setup.opponentPersona
+                                  ? practiceRound.setup.opponentPersona.name
+                                  : "No AI opponent"}
+                              </Badge>
+                              <Badge variant={practiceRound.feedback ? "default" : "outline"}>
+                                {practiceRound.feedback ? "Feedback ready" : "No feedback yet"}
+                              </Badge>
+                            </div>
+                          )
+                        })}
+                    </div>
+                  )}
 
                   {!topic.trim() ? (
                     <p className="text-sm text-muted-foreground">

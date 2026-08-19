@@ -29,6 +29,14 @@ side key (e.g. `A`/`N`) and click "Save current flow". A member with a
 recorded flow shows a "Flow recorded" badge and gets a "Clear" action; the
 board's per-member drill count updates the next time it's composed.
 
+Below that, a read-only "Member practice rounds" section lists each roster
+member whose recorded flow's `roundId` also has a saved [Practice Round
+Simulator](./practice-round-simulator.md) round: its judge-paradigm and
+AI-opponent-persona badges, plus a "Feedback ready"/"No feedback yet" badge,
+with a link to `/practice-round` to configure or generate one. A member with
+no recorded flow, or one whose round has no saved Practice Round Simulator
+setup, is simply omitted from this section.
+
 ## Data flow
 
 ```
@@ -58,6 +66,15 @@ panels/CoachingProgramsPanel.tsx (reads state/store.ts's useFlowStore directly)
   → buildAndSaveRoundContributorFlow(flow, roundId, contributorId, sideKey)
                                                                   — state/roundContributorFlows.ts
   → board recomposed via buildPersistedCoachingProgramBoard above
+
+Composing the "Member practice rounds" section (same board composition, no
+separate action — a member's practice round is looked up by the roundId
+already recorded against them):
+buildPersistedCoachingProgramBoard(programId, topic, now)
+  → buildCoachingProgramMemberPracticeRounds(program.memberIds)   — state/roundContributorFlows.ts (default; overridable)
+      → getPracticeRound(roundId) per recorded flow's roundId     — state/practiceRounds.ts
+  → buildCoachingProgramBoard({ ..., memberPracticeRounds })      — round/coaching-program.ts
+  → board.memberPracticeRounds[memberId]                          — panel renders setup/opponent/feedback badges
 ```
 
 This closes the "(b-continued)" follow-up named under idea #13 ("Coaching
@@ -78,6 +95,16 @@ current flow" action is the one place this package reads the live round
 workspace's `useFlowStore` directly (every other panel here is otherwise
 self-contained), recording that flow against a chosen roster member and a
 free-form side key.
+
+This also closes idea #13's remaining follow-up (c): "wiring a member's
+practice-round setup/feedback (Practice Round Simulator) into the space."
+`round/coaching-program.ts`'s `CoachingProgramBoard` now carries a
+`memberPracticeRounds` field alongside `memberDrills`, keyed by
+`contributorId` and filtered to the program's roster the same way, populated
+from a caller-supplied (or, in the persisted path, store-resolved) list of
+`CoachingProgramMemberPracticeRound`s — each one a member's linked
+`PracticeRoundSetup` and (once generated) `PracticeRoundFeedback`, passed
+through as-is rather than recomputed. No follow-ups remain open on idea #13.
 
 ## Known gaps
 
