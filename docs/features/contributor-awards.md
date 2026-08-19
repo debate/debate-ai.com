@@ -18,6 +18,8 @@ One card per `ContributionKind` present among persisted contributions:
 | `summary` | Best Explainer |
 | `highlight` | Best Highlight Curator |
 | `annotation` | Best Annotator |
+| `argument` | Best Original Argument |
+| `refutation` | Best Refutation |
 
 Each card shows the winning contributor, their contribution count in that
 category, and their total helpfulness score. A kind with no contributions yet
@@ -43,9 +45,6 @@ store — no new scoring or grouping logic (see
 
 ## Known gaps
 
-- No finer-grained `ContributionKind` (or separate tag) for "original
-  argument" and "refutation" contributions — only the four kinds
-  `contribution-leaderboard.ts` already distinguishes can win an award today.
 - No scheduled job that periodically recomputes and announces winners — the
   panel always shows the *current* standings, computed on page load.
 - Same upstream gaps as the [Contribution Leaderboard](contribution-leaderboard.md):

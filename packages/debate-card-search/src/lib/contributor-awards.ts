@@ -8,13 +8,14 @@
  * grouping already-attributed contributions by their `ContributionKind` and
  * ranking contributors within each kind to pick a category winner. This is
  * the first slice only — it works entirely off already-collected
- * contributions passed in by the caller; the only categories it can produce
- * today are the ones `ContributionKind` already distinguishes ("card" and
- * "summary" — see `DEFAULT_AWARD_CATEGORY_LABELS`), it doesn't persist or
- * announce awards, and it doesn't render an awards UI. Follow-ups: (a) a
- * finer-grained `ContributionKind` (or separate tag) for "original
- * argument" and "refutation" contributions, neither of which exists as a
- * distinct kind today, (b) a scheduled job that periodically calls
+ * contributions passed in by the caller; it doesn't persist or announce
+ * awards, and it doesn't render an awards UI. Follow-up (a), a finer-grained
+ * `ContributionKind` for "original argument" and "refutation" contributions,
+ * is now closed — `community-rating.ts`'s `ContributionKind` adds "argument"
+ * and "refutation" alongside the original four kinds, and both now have a
+ * `DEFAULT_AWARD_CATEGORY_LABELS` entry ("Best Original Argument" / "Best
+ * Refutation") and a place in the award's stable kind order. Remaining
+ * follow-ups: (b) a scheduled job that periodically calls
  * `buildTopContributorAwards` and persists/announces the winners, (c) an
  * awards UI in `debate-card-search` that renders
  * `buildAwardsAnnouncementText`.
@@ -35,6 +36,8 @@ export const DEFAULT_AWARD_CATEGORY_LABELS: Record<ContributionKind, string> = {
   summary: "Best Explainer",
   highlight: "Best Highlight Curator",
   annotation: "Best Annotator",
+  argument: "Best Original Argument",
+  refutation: "Best Refutation",
 };
 
 /** One category's award winner. */
@@ -83,15 +86,15 @@ export function buildCategoryLeaderboard(
  * producing an award with no winner. `categoryLabels` defaults to
  * `DEFAULT_AWARD_CATEGORY_LABELS` and may be overridden per kind, e.g. once
  * a real reviewer-facing copy deck exists. Awards are returned in a stable
- * order: `card`, `summary`, `highlight`, `annotation`, filtered to kinds
- * actually present.
+ * order: `card`, `summary`, `highlight`, `annotation`, `argument`,
+ * `refutation`, filtered to kinds actually present.
  */
 export function buildTopContributorAwards(
   contributions: AttributedContribution[],
   categoryLabels: Record<ContributionKind, string> = DEFAULT_AWARD_CATEGORY_LABELS,
 ): ContributorAward[] {
   const byKind = groupContributionsByKind(contributions);
-  const kindOrder: ContributionKind[] = ["card", "summary", "highlight", "annotation"];
+  const kindOrder: ContributionKind[] = ["card", "summary", "highlight", "annotation", "argument", "refutation"];
 
   const awards: ContributorAward[] = [];
   for (const kind of kindOrder) {

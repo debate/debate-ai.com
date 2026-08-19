@@ -38,6 +38,26 @@ const carolSummary: AttributedContribution = {
   reviewerEndorsements: [{ reviewerWeight: 0.7 }],
 };
 
+const daveArgument: AttributedContribution = {
+  id: "dave-argument",
+  contributorId: "dave",
+  kind: "argument",
+  likes: 4,
+  saves: 1,
+  qualitySignals: [0.75],
+  reviewerEndorsements: [{ reviewerWeight: 0.5 }],
+};
+
+const eveRefutation: AttributedContribution = {
+  id: "eve-refutation",
+  contributorId: "eve",
+  kind: "refutation",
+  likes: 1,
+  saves: 1,
+  qualitySignals: [0.6],
+  reviewerEndorsements: [],
+};
+
 describe("groupContributionsByKind", () => {
   it("groups contributions by kind, preserving order within a group", () => {
     const grouped = groupContributionsByKind([aliceCard, carolSummary, bobCard]);
@@ -108,6 +128,31 @@ describe("buildTopContributorAwards", () => {
     const awards = buildTopContributorAwards([tiedA, tiedB]);
     expect(awards[0].contributorId).toBe("amy");
   });
+
+  it("selects winners for the argument and refutation kinds", () => {
+    const awards = buildTopContributorAwards([daveArgument, eveRefutation]);
+    expect(awards).toEqual([
+      {
+        kind: "argument",
+        label: DEFAULT_AWARD_CATEGORY_LABELS.argument,
+        contributorId: "dave",
+        contributionCount: 1,
+        totalHelpfulnessScore: expect.any(Number),
+      },
+      {
+        kind: "refutation",
+        label: DEFAULT_AWARD_CATEGORY_LABELS.refutation,
+        contributorId: "eve",
+        contributionCount: 1,
+        totalHelpfulnessScore: expect.any(Number),
+      },
+    ]);
+  });
+
+  it("orders all six kinds card, summary, highlight, annotation, argument, refutation", () => {
+    const awards = buildTopContributorAwards([eveRefutation, daveArgument, carolSummary, aliceCard]);
+    expect(awards.map((a) => a.kind)).toEqual(["card", "summary", "argument", "refutation"]);
+  });
 });
 
 describe("buildAwardsAnnouncementText", () => {
@@ -130,5 +175,12 @@ describe("buildAwardsAnnouncementText", () => {
 
   it("returns a fallback message for an empty award list", () => {
     expect(buildAwardsAnnouncementText([])).toBe("No awards to announce yet.");
+  });
+
+  it("renders the argument and refutation award labels", () => {
+    const awards = buildTopContributorAwards([daveArgument, eveRefutation]);
+    const text = buildAwardsAnnouncementText(awards);
+    expect(text).toContain("Best Original Argument");
+    expect(text).toContain("Best Refutation");
   });
 });

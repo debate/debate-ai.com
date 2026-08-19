@@ -47,6 +47,8 @@ const CONTRIBUTION_KIND_OPTIONS: { value: ContributionKind | ""; label: string }
   { value: "summary", label: "Summary" },
   { value: "highlight", label: "Highlight" },
   { value: "annotation", label: "Annotation" },
+  { value: "argument", label: "Argument" },
+  { value: "refutation", label: "Refutation" },
 ]
 
 type ChallengeDraft = {
