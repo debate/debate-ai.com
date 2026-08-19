@@ -8,6 +8,7 @@ import {
   canTransitionReviewStatus,
   createCardReview,
   getUnresolvedBlockingComments,
+  isCardLive,
   isReadyToPublish,
   publishReview,
   rejectReview,
@@ -215,6 +216,24 @@ describe("isReadyToPublish", () => {
   it("is false once published — it's already live, not pending publish", () => {
     const review = publishReview(approveReview(submitForReview(createCardReview("card-1"))));
     expect(isReadyToPublish(review)).toBe(false);
+  });
+});
+
+describe("isCardLive", () => {
+  it("is true when no review exists — peer review is opt-in, not required", () => {
+    expect(isCardLive(undefined)).toBe(true);
+  });
+
+  it("is false for a review that hasn't reached published yet", () => {
+    expect(isCardLive(createCardReview("card-1"))).toBe(false);
+    expect(isCardLive(submitForReview(createCardReview("card-1")))).toBe(false);
+    expect(isCardLive(approveReview(submitForReview(createCardReview("card-1"))))).toBe(false);
+    expect(isCardLive(rejectReview(submitForReview(createCardReview("card-1"))))).toBe(false);
+  });
+
+  it("is true once the review is published", () => {
+    const review = publishReview(approveReview(submitForReview(createCardReview("card-1"))));
+    expect(isCardLive(review)).toBe(true);
   });
 });
 

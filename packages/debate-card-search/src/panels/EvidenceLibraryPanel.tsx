@@ -47,11 +47,13 @@ import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   deleteEvidenceLibraryEntry,
   listEvidenceLibraryEntries,
+  listPendingReviewEntries,
   listPersistedTags,
   saveEvidenceLibraryEntry,
   saveEvidenceLibraryEntryRevision,
   searchPersistedEvidenceLibrary,
 } from "../state/evidenceLibraryEntries"
+import { getPeerReview } from "../state/peerReviews"
 import { buildEvidenceSearchSummaryText, computeWordCount, getEvidenceStaleness } from "../lib/shared-evidence-library"
 import { applyTagSuggestion, parseTagsInput, suggestTags } from "../lib/argument-library"
 import type { EvidenceEntryKind, EvidenceLibraryEntry, EvidenceSearchResult } from "../lib/shared-evidence-library"
@@ -105,6 +107,7 @@ export function EvidenceLibraryPanel() {
   const [queryText, setQueryText] = useState("")
   const [kind, setKind] = useState<EvidenceEntryKind | "all">("all")
   const [results, setResults] = useState<EvidenceSearchResult[]>([])
+  const [pendingEntries, setPendingEntries] = useState<EvidenceLibraryEntry[]>([])
   const [draft, setDraft] = useState<EntryDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -114,6 +117,7 @@ export function EvidenceLibraryPanel() {
   useEffect(() => {
     setHasEntries(listEvidenceLibraryEntries().length > 0)
     setKnownTags(listPersistedTags())
+    setPendingEntries(listPendingReviewEntries())
   }, [])
 
   useEffect(() => {
@@ -127,6 +131,7 @@ export function EvidenceLibraryPanel() {
     setResults(searchPersistedEvidenceLibrary(query))
     setHasEntries(true)
     setKnownTags(listPersistedTags())
+    setPendingEntries(listPendingReviewEntries())
   }
 
   const handleSubmit = () => {
@@ -359,6 +364,39 @@ export function EvidenceLibraryPanel() {
           ))}
         </div>
       </div>
+      {pendingEntries.length > 0 && (
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-foreground">
+            Pending review ({pendingEntries.length})
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            These entries have an in-progress <code>CardReview</code> and won&apos;t appear in
+            search results until the review reaches &quot;Published&quot; in the Review Queue.
+          </p>
+          <div className="space-y-2">
+            {pendingEntries.map((entry) => (
+              <div key={entry.id} className="rounded-lg border border-dashed border-border p-3">
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                  <span className="font-medium text-foreground">{entry.argBlock}</span>
+                  <Badge variant={KIND_VARIANT[entry.kind]} className="capitalize">
+                    {entry.kind}
+                  </Badge>
+                  <Badge variant="outline">{getPeerReview(entry.id)?.status ?? "unknown"}</Badge>
+                  <div className="ml-auto flex gap-1">
+                    <Button size="sm" variant="ghost" onClick={() => handleEdit(entry)}>
+                      Edit
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => handleDelete(entry.id)}>
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground">{entry.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <p className="text-sm text-muted-foreground">{buildEvidenceSearchSummaryText(results, summaryQuery)}</p>
       {results.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
