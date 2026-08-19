@@ -6,6 +6,42 @@
 _No task currently in progress._
 
 ### Completed
+- **App navigation — wire orphaned feature routes into the global dock.**
+  Four already-built feature pages had a route and a working panel but no link
+  anywhere in the app, so they were reachable only by typing the URL:
+  `/rank` (Rankings), `/speech-documents` (Speech Documents), `/cards/scoring`
+  (LLM Card Scoring), and `/strategy` (Scout-to-Strategy). Each carries a
+  "Back" link *out* to a parent hub, which is why the gap was easy to miss —
+  nothing linked *in*. `apps/debate-ai.com/components/layout/CategoryDock.tsx`
+  now adds a `SettingsMenu` entry for each, placed next to its related feature
+  (Speech Documents under Reason Editor, Rankings under the workspaces, LLM
+  Card Scoring under Evidence Library, Scout-to-Strategy under Pre-Round
+  Briefings), using the existing `router.push` + `lucide-react` icon pattern
+  (`FileStack`/`ListOrdered`/`Star`/`Compass`). `docs/features/llm-card-scoring.md`
+  already claimed a Settings-menu entry that did not exist; that line is now
+  accurate. Also fixed a stale `@fileoverview` line in `debate-videos`'s
+  `QuickLinksGrid.tsx` claiming a card routes to `/rank` (its Rankings card
+  actually points at `/videos/rankings`). New doc
+  `docs/features/navigation.md` records the dock's structure, the three things
+  a new feature page needs (route + menu entry + a doc `**Nav:**` line), and
+  the known gaps; `docs/features/scout-to-strategy.md` and
+  `docs/features/speech-document-target.md` gained the missing `**Nav:**`
+  line. Verified with `bun install` (2050 packages), `bun run test` (152 files
+  / 2096 tests, all pass), `bun run typecheck` (11 in-scope packages pass),
+  and `bun run build` (passes; the route manifest lists `/rank`,
+  `/speech-documents`, `/cards/scoring`, and `/strategy`). No new Vitest
+  coverage: the root Vitest config registers `projects: ["packages/*"]` only,
+  so `apps/debate-ai.com` has no test project and `CategoryDock` cannot be
+  unit-tested without adding one — recorded as a follow-up in
+  `docs/features/navigation.md`'s "Known gaps" rather than expanding this
+  change's scope. `/login` was left unlinked deliberately (sign-in is a
+  dialog, not a navigation). The UI itself was not exercised in a browser —
+  this environment has no display — so the menu entries are verified by build
+  and route manifest only. Follow-ups: (a) register the web app as a Vitest
+  project so nav/route coverage is testable, (b) an automated
+  route-vs-menu-vs-doc consistency check to stop the next page shipping
+  orphaned. Neither started. No repo-wide `lint` script exists so none was
+  run. PR: not created (pushed to `claude/practical-allen-43d50v`).
 - **On Page Card Reuse Search — page-URL reuse-check first slice.**
   Closes the first slice of idea #7 ("On Page Card Reuse Search") in
   TODO.md's Product Feature Ideas list — "See if any one has cut this

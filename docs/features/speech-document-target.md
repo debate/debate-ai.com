@@ -9,6 +9,7 @@ speech document' command", the last open gap noted in
 
 - **Route:** `/speech-documents` (view/manage) — send from any
   `reason-editor` document (e.g. `/reason-editor`)
+- **Nav:** the global dock's Settings menu → **Speech Documents**
 - **Package:** [`reason-editor`](../../packages/reason-editor/README.md)
 
 ## What a "speech document" is

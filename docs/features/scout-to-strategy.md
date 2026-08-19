@@ -6,6 +6,7 @@ deterministic case-choice/risk recommendation for an upcoming matchup — the
 Organizer Features list.
 
 - **Route:** `/strategy`
+- **Nav:** the global dock's Settings menu → **Scout-to-Strategy**
 - **Also mounted:** Coach hub → **Scouting** section (alongside
   `OpponentTeamProfilesPanel`/`JudgeProfilesPanel`)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)

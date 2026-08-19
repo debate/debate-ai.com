@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { LogIn, LogOut, UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell, ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type, ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School, FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation, ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell } from "lucide-react"
+import { LogIn, LogOut, UserCircle2, Moon, Sun, Palette, Pause, Play, Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell, ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type, ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School, FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation, ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, ListOrdered, Compass, Star, FileStack } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
@@ -124,6 +124,10 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
         <Image src={IconBook} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
         Reason Editor
       </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/speech-documents") }}>
+        <FileStack className="mr-2 h-4 w-4" />
+        Speech Documents
+      </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/doc") }}>
         <Image src={IconRead} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
         Debate Docs
@@ -135,6 +139,10 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/coach") }}>
         <GraduationCap className="mr-2 h-4 w-4" />
         Coach Workspace
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/rank") }}>
+        <ListOrdered className="mr-2 h-4 w-4" />
+        Rankings
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/leaderboard") }}>
@@ -165,6 +173,10 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
         <Library className="mr-2 h-4 w-4" />
         Evidence Library
       </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/cards/scoring") }}>
+        <Star className="mr-2 h-4 w-4" />
+        LLM Card Scoring
+      </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/prep-notes") }}>
         <NotebookPen className="mr-2 h-4 w-4" />
         Prep Notes
@@ -192,6 +204,10 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/briefings") }}>
         <ClipboardList className="mr-2 h-4 w-4" />
         Pre-Round Briefings
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/strategy") }}>
+        <Compass className="mr-2 h-4 w-4" />
+        Scout-to-Strategy
       </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/coaching") }}>
         <GraduationCap className="mr-2 h-4 w-4" />

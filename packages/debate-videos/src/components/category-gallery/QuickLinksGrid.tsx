@@ -1,6 +1,6 @@
 /**
  * @fileoverview Quick-link cards shown above the lecture category grid.
- * Each card routes to /videos/<slug> or /rank.
+ * Each card routes to /videos/<slug>.
  */
 
 "use client";
