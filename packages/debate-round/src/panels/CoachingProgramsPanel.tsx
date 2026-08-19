@@ -11,12 +11,22 @@
  * list-plus-clear convention. No new coaching-program logic is introduced
  * here.
  *
- * This only manages a program's config (name + roster) — it doesn't render
+ * This only manages a program's config (name + roster) and each roster
+ * member's assigned Practice Round Simulator round — it doesn't render
  * `buildCoachingProgramBoard`'s composed topic-sprint/group-challenge/
- * member-drill board yet, since those inputs (challenges, win events,
- * contributions, and a roundId-to-contributor mapping for member flows)
- * aren't persisted in a form this panel could read live. See the remaining
- * follow-ups in TODO.md.
+ * member-drill board yet, since those inputs (challenges, win events, and
+ * contributions) aren't persisted in a form this panel could read live. See
+ * the remaining follow-ups in TODO.md.
+ *
+ * The per-member practice-round assignment closes the "(c) wiring a
+ * member's practice-round setup/feedback (Practice Round Simulator) into
+ * the space" follow-up: an "Assign round" control per roster member reads
+ * and writes through `state/coachingProgramMemberRounds.ts`, and every
+ * member with a resolvable assignment renders their round's setup text (and
+ * feedback text, once generated) via
+ * `buildCoachingProgramMemberPracticeRoundsFromStores`. No new
+ * setup/feedback composition logic is introduced here — a round is still
+ * configured at `/practice-round` (Practice Round Simulator).
  *
  * @module panels/CoachingProgramsPanel
  */
@@ -24,6 +34,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -33,6 +44,13 @@ import {
   deleteCoachingProgram,
   saveCoachingProgram,
 } from "../state/coachingPrograms"
+import {
+  buildCoachingProgramMemberPracticeRoundsFromStores,
+  clearMemberPracticeRound,
+  getMemberRoundIds,
+  setMemberPracticeRound,
+} from "../state/coachingProgramMemberRounds"
+import type { CoachingProgramMemberPracticeRoundView } from "../round/coaching-program-practice-rounds"
 import type { CoachingProgramConfig } from "../round/coaching-program"
 
 type ProgramDraft = { name: string; memberIds: string }
@@ -51,12 +69,40 @@ export function CoachingProgramsPanel() {
   const [programs, setPrograms] = useState<CoachingProgramConfig[] | null>(null)
   const [draft, setDraft] = useState<ProgramDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [memberRoundDrafts, setMemberRoundDrafts] = useState<Record<string, string>>({})
+  const [memberPracticeRounds, setMemberPracticeRounds] = useState<
+    Record<string, CoachingProgramMemberPracticeRoundView[]>
+  >({})
 
   useEffect(() => {
-    setPrograms(buildCoachingProgramsPanelView())
+    refresh()
   }, [])
 
-  const refresh = () => setPrograms(buildCoachingProgramsPanelView())
+  const refresh = () => {
+    const loaded = buildCoachingProgramsPanelView()
+    setPrograms(loaded)
+    const roundsByProgram: Record<string, CoachingProgramMemberPracticeRoundView[]> = {}
+    for (const program of loaded) {
+      roundsByProgram[program.id] = buildCoachingProgramMemberPracticeRoundsFromStores(program)
+    }
+    setMemberPracticeRounds(roundsByProgram)
+  }
+
+  const memberRoundDraftKey = (programId: string, contributorId: string) => `${programId}:${contributorId}`
+
+  const handleAssignRound = (programId: string, contributorId: string) => {
+    const key = memberRoundDraftKey(programId, contributorId)
+    const roundId = (memberRoundDrafts[key] ?? "").trim()
+    if (!roundId) return
+    setMemberPracticeRound(programId, contributorId, roundId)
+    setMemberRoundDrafts((prev) => ({ ...prev, [key]: "" }))
+    refresh()
+  }
+
+  const handleClearMemberRound = (programId: string, contributorId: string) => {
+    clearMemberPracticeRound(programId, contributorId)
+    refresh()
+  }
 
   const handleSubmit = () => {
     const name = draft.name.trim()
@@ -143,6 +189,74 @@ export function CoachingProgramsPanel() {
                     {memberId}
                   </Badge>
                 ))}
+              </div>
+
+              <div className="mt-3 space-y-2 border-t border-border pt-3">
+                <p className="text-sm font-medium text-foreground">Practice rounds</p>
+                <p className="text-xs text-muted-foreground">
+                  Assign a member&apos;s{" "}
+                  <Link href="/practice-round" className="underline">
+                    Practice Round Simulator
+                  </Link>{" "}
+                  round to see their setup and feedback here.
+                </p>
+                {program.memberIds.map((memberId) => {
+                  const key = memberRoundDraftKey(program.id, memberId)
+                  const assignedRoundId = getMemberRoundIds(program.id)[memberId]
+                  const view = memberPracticeRounds[program.id]?.find(
+                    (v) => v.contributorId === memberId,
+                  )
+                  return (
+                    <div key={memberId} className="rounded-md border border-border p-3 space-y-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="outline">{memberId}</Badge>
+                        {assignedRoundId && (
+                          <span className="text-xs text-muted-foreground">
+                            Assigned round: {assignedRoundId}
+                            {!view && " (no matching practice round found)"}
+                          </span>
+                        )}
+                        <div className="ml-auto flex items-center gap-2">
+                          <Input
+                            value={memberRoundDrafts[key] ?? ""}
+                            onChange={(e) =>
+                              setMemberRoundDrafts((prev) => ({ ...prev, [key]: e.target.value }))
+                            }
+                            placeholder="round-1"
+                            className="h-8 w-32"
+                          />
+                          <Button size="sm" variant="outline" onClick={() => handleAssignRound(program.id, memberId)}>
+                            Assign round
+                          </Button>
+                          {assignedRoundId && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleClearMemberRound(program.id, memberId)}
+                            >
+                              Clear
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+
+                      {view && (
+                        <div className="space-y-2">
+                          <div className="rounded-md bg-muted/50 px-3 py-2 text-sm">
+                            <p className="mb-1 font-medium text-foreground">Round setup</p>
+                            <p className="whitespace-pre-line text-muted-foreground">{view.setupText}</p>
+                          </div>
+                          <div className="rounded-md bg-muted/50 px-3 py-2 text-sm">
+                            <p className="mb-1 font-medium text-foreground">Post-round feedback</p>
+                            <p className="whitespace-pre-line text-muted-foreground">
+                              {view.feedbackText ?? "No post-round feedback yet."}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             </div>
           ))}
