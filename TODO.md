@@ -3,85 +3,66 @@
 
 ### In progress
 
-## Outline Filters and Argument Tree View — tag an argument's type/contributor/evidence status from the live flow grid
-
-**Status:** In Progress
-**Source:** `docs/features/argument-tree-outline.md` "Known gaps" (this repo
-has no `IDEAS.md`; the "Product Feature Ideas"/"Research Crowdsourcing
-Organizer Features" sections below plus every feature doc's "Known gaps"
-section are the backlog) — "Nothing in the live flow-editing UI
-(`FlowSpreadsheet` or elsewhere) lets a user actually set a `Box`'s
-`argumentType`/`authorId`/`evidenceStatus` yet — these fields exist in the
-schema and are read/filtered/rendered end-to-end here, but populating them
-today requires setting them directly on a `Box`." Follow-up (b) on idea #10.
-**Branch:** `claude/practical-allen-iuuejr`
-**PR:** [#281](https://github.com/debate/debate-ai.com/pull/281)
-**Started:** 2026-08-20
-
-### Goal
-Make the Argument Tree Outline's argument-type/contributor/evidence-status
-filters usable from inside the app: a debater can tag a flowed row right in
-the live flow grid, and the tag survives ordinary grid editing.
-
-### Scope
-- A pure row-tagging helper in `debate-round`'s `flow/` that reads and
-  writes a row's `argumentType`/`authorId`/`evidenceStatus` on the row's
-  root `Box` (the box `flow-transcript-summary.ts#summarizeFlowRow` already
-  reads those fields from).
-- Thread the three fields through `dataTransform.ts`'s
-  `buildRowData`/`rowDataToBoxes` round trip so an ordinary cell edit no
-  longer silently drops a row's tags.
-- A "Tag argument…" entry in `FlowSpreadsheet`'s row context menu opening a
-  small popover (mirroring `PrepNotePopover`'s overlay pattern) that sets or
-  clears the three fields via the existing `onUpdate` flow-update callback.
-
-### Non-goals
-- Per-cell (per-speech) tags — `summarizeFlowRow`/`buildArgumentTree` read
-  tags from the row's root box only, so tagging stays row-level.
-- Any new persistence store: tags live on the `Box` in the existing flow
-  state, not in a side localStorage store.
-- Auto-tagging (AI or heuristic inference of an argument's type).
-
-### Acceptance criteria
-- [x] A row's `argumentType`/`authorId`/`evidenceStatus` can be set and
-      cleared from the flow grid, and the result reaches `onUpdate`.
-- [x] Existing tags survive a `buildRowData` → `rowDataToBoxes` round trip
-      (an ordinary cell edit).
-- [x] An unknown/out-of-range row index is a no-op rather than a crash.
-- [x] Vitest coverage is added for the new pure helpers and the round trip.
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Production/web build passes
-- [x] Documentation is updated (`docs/features/argument-tree-outline.md`)
-
-### Implementation plan
-- [x] Inspect `argument-tree.ts`, `flow-transcript-summary.ts`,
-      `dataTransform.ts`, `FlowSpreadsheet.tsx`, and the existing
-      popover/context-menu affordances
-- [x] Add `flow/argument-tagging.ts` (read/write/clear + author-id roster)
-- [x] Thread the three fields through `dataTransform.ts`
-- [x] Add `flow/ArgumentTagPopover.tsx` and wire a "Tag argument…" context
-      menu entry into `FlowSpreadsheet.tsx`
-- [x] Add focused Vitest success-path coverage
-- [x] Add focused failure/edge-case coverage (unknown row, clearing a tag,
-      round-trip preservation)
-- [x] Run focused tests and fix failures
-- [x] Run typecheck
-- [x] Run the full test suite
-- [x] Run the production/web build
-- [x] Update `docs/features/argument-tree-outline.md`
-- [x] Commit and push the branch
-- [x] Open the PR and record it here
-
-### Remaining work
-- Nothing outstanding on this slice beyond CI going green on
-  [#281](https://github.com/debate/debate-ai.com/pull/281); once it merges
-  this entry moves to Completed. The follow-ups this slice deliberately
-  leaves open are recorded in `docs/features/argument-tree-outline.md`'s
-  "Known gaps" (row-level rather than per-speech tagging, no inferred tags,
-  free-form contributor ids, no bulk section tagging).
+_No task currently in progress._
 
 ### Completed
+- **Outline Filters and Argument Tree View — tag an argument's
+  type/contributor/evidence status from the live flow grid.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used; this repo has no `IDEAS.md`, so the
+  "Product Feature Ideas"/"Research Crowdsourcing Organizer Features"
+  sections below are the backlog):
+  `docs/features/argument-tree-outline.md` said "Nothing in the live
+  flow-editing UI (`FlowSpreadsheet` or elsewhere) lets a user actually set
+  a `Box`'s `argumentType`/`authorId`/`evidenceStatus` yet — these fields
+  exist in the schema and are read/filtered/rendered end-to-end here, but
+  populating them today requires setting them directly on a `Box`," which
+  left the Argument Tree Outline panel's three newest filters with nothing
+  to filter on.
+  A new `packages/debate-round/src/flow/argument-tagging.ts` holds the pure
+  helpers — `getRowArgumentTags`, `setRowArgumentTags` (returns a new `Flow`
+  with the row's root box replaced, mirroring `applyMergedEditsToFlow`; a
+  tag left `undefined` or a whitespace-only `authorId` is *cleared*, and an
+  out-of-range row index is a no-op returning the flow unchanged),
+  `formatArgumentTags`, and `listAuthorIdsInFlow`. Tagging is deliberately
+  row-level rather than per-cell: `flow-transcript-summary.ts`'s
+  `summarizeFlowRow` already reads all three fields off a row's *root* box,
+  so that is what `buildArgumentTree`/`filterArgumentTree` and the panel
+  see.
+  `flow/ArgumentTagPopover.tsx` is the overlay (argument-type select,
+  evidence-status select, and a `datalist`-backed contributor field
+  suggesting ids already used in the same flow), opened from a new **Tag
+  Argument…** entry in `FlowSpreadsheet`'s row context menu — labelled with
+  the row's current tags — and saved through the existing `onUpdate`
+  callback, so tags live on the flow itself rather than in a new store.
+  `FirstColumnCellRenderer.tsx` renders a row's tags as a compact
+  `link · cited · alex` label beside the existing annotation/edit/prep-note
+  badges. `dataTransform.ts`'s `buildRowData`/`rowDataToBoxes` now carry the
+  three fields as well — without that, an ordinary cell edit (which rebuilds
+  every `Box` from the grid's flat row data) silently dropped a row's tags.
+  Vitest-covered (15 new cases:
+  `packages/debate-round/test/argument-tagging.test.ts` covers reading a
+  row's tags, setting all three without touching siblings, clearing a tag
+  and a whitespace-only contributor, the out-of-range-row no-op, tags
+  actually feeding `filterArgumentTree`, the `buildRowData` →
+  `rowDataToBoxes` round trip tagged and untagged, label formatting, and the
+  contributor roster; `packages/debate-round/test/ArgumentTagPopover.test.tsx`
+  render-tests the overlay's options, seeding from existing tags, the
+  contributor datalist, and viewport clamping).
+  Documented in `docs/features/argument-tree-outline.md` (new "Tagging an
+  argument from the flow grid" section with its own data-flow block; the
+  closed gap replaced with the real remaining scope — tags are row-level
+  rather than per-speech, nothing infers a tag, the contributor id is
+  free-form rather than authenticated, and there is no bulk
+  tag-a-whole-section action).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (161 files / 2300 tests, all pass), `bun run typecheck` (11 in-scope
+  packages pass — `debate-ai-web` has no `typecheck` script; this repo has
+  no `lint` script), and `bun run build:web` (production build) all pass.
+  PR: [#281](https://github.com/debate/debate-ai.com/pull/281) (merged), with
+  the popover render test and this tracker move following in a small
+  follow-up PR.
 - **Judge Profiles & Opponent Team Profiles — edit or delete an
   already-logged round from the app.**
   Found via this run's own doc/tracker-drift audit of every
