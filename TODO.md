@@ -35,7 +35,7 @@ _No task currently in progress._
   script), and `bun run build` (both buildable packages pass, `/coaching`
   present in the route list). Docs updated at
   `docs/features/coaching-sessions.md`; no follow-ups remain open on this
-  bullet.
+  bullet. PR: https://github.com/debate/debate-ai.com/pull/266.
 
   Doc/tracker drift audit (systematic pass this run over all 39
   `docs/features/*.md` files with a "Known gaps" section, verifying each
