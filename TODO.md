@@ -38,8 +38,7 @@ _No task currently in progress._
   `docs/features/shared-flow-sync.md` (new "EditBadge same-tab refresh"
   section; Known gaps narrowed to the remaining cross-tab case, now
   explicitly distinguished from Live Sync's cross-*contributor* mechanism).
-  PR: (link added once opened — see the tracker-update commit on this same
-  branch/PR).
+  PR: https://github.com/debate/debate-ai.com/pull/270.
 - **Practice Round Simulator — wire post-round feedback generation to a live round flow.**
   Found via this run's own doc/tracker-drift audit of every
   `docs/features/*.md` "Known gaps" section (following the same audit
