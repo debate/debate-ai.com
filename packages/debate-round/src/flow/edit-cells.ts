@@ -33,3 +33,28 @@ export function sortEditsNewestFirst(edits: FlowEdit[]): FlowEdit[] {
 export function gridCellForBoxPath(boxPath: number[]): { rowId: string; field: string } {
   return { rowId: `row-${boxPath[0]}`, field: `col_${boxPath.length - 1}` };
 }
+
+/** The subset of AG Grid's `GridApi` `jumpToBoxInGrid` needs, for testing against a fake. */
+export type GridJumpApi = {
+  getRowNode: (id: string) => unknown | null | undefined;
+  ensureNodeVisible: (rowNode: unknown) => void;
+  flashCells: (params: { rowNodes: unknown[]; columns: string[] }) => void;
+};
+
+/**
+ * Scrolls `api`'s grid to the row for `boxPath` (via `gridCellForBoxPath`)
+ * and flashes its cell — the Prep Notes "jump to argument" deep link's grid
+ * side (see `hooks/useJumpToPrepNoteBox.ts`). Returns `false` without
+ * calling `ensureNodeVisible`/`flashCells` if the row isn't in the grid's
+ * current row model yet (e.g. the target flow's rows haven't rendered), so
+ * a caller can retry once they have.
+ */
+export function jumpToBoxInGrid(api: GridJumpApi, boxPath: number[]): boolean {
+  const { rowId, field } = gridCellForBoxPath(boxPath);
+  const rowNode = api.getRowNode(rowId);
+  if (!rowNode) return false;
+
+  api.ensureNodeVisible(rowNode);
+  api.flashCells({ rowNodes: [rowNode], columns: [field] });
+  return true;
+}
