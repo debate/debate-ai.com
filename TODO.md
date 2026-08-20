@@ -52,13 +52,13 @@ A browser extension (or any client outside the web app's own localStorage) needs
 - [x] Run the full relevant test suite
 - [x] Run the production/web build
 - [x] Review the final diff for scope and quality
-- [ ] Commit and push the branch
+- [x] Commit and push the branch (`f9187d8`)
 - [ ] Create or update the pull request
 - [x] Update tracker status, completed checkboxes, and remaining work
 - [x] Update `docs/features/evidence-library.md`
 
 ### Remaining work
-- Commit and push the branch; open a PR.
+- Open a PR for `claude/practical-allen-dec5jd` (branch pushed at `f9187d8`; PR not opened — no PR was requested for this run).
 - Follow-ups deliberately left open (recorded in `docs/features/evidence-library.md`'s Known gaps): the actual browser extension is still unbuilt (it can now be a thin client of `GET/POST /api/page-reuse-check`); the index has no auth or rate limiting and takes `contributorId` from the request body; a push that fails is never retried and pre-existing entries are never backfilled; deleting an entry doesn't remove its server row.
 
 ### Completed
