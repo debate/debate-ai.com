@@ -29,8 +29,10 @@ import { ArgumentTagPopover } from "./ArgumentTagPopover"
 import {
   formatArgumentTags,
   getRowArgumentTags,
+  getSectionRowIndexes,
+  getSectionRowPreviews,
   listAuthorIdsInFlow,
-  setRowArgumentTags,
+  setRowsArgumentTags,
 } from "./argument-tagging"
 import type { ArgumentTags } from "./argument-tagging"
 import { GridContextMenu } from "./GridContextMenu"
@@ -277,15 +279,18 @@ export function FlowSpreadsheet({
   )
 
   /**
-   * Save the tags chosen in `ArgumentTagPopover` onto the row's root box.
-   * Pushes the tagged children up through `onUpdate` and rebuilds this
-   * grid's own `rowData` from them, so a later cell edit (which round-trips
-   * through `rowDataToBoxes`) carries the tags forward instead of dropping
-   * them if the parent hasn't re-rendered with the new flow yet.
+   * Save the tags chosen in `ArgumentTagPopover` onto the row's root box —
+   * or, when `applyToSection` is checked in the popover, onto every other
+   * row in the same section as well (via `getSectionRowIndexes`). Pushes
+   * the tagged children up through `onUpdate` and rebuilds this grid's own
+   * `rowData` from them, so a later cell edit (which round-trips through
+   * `rowDataToBoxes`) carries the tags forward instead of dropping them if
+   * the parent hasn't re-rendered with the new flow yet.
    */
   const handleSaveArgumentTags = useCallback(
-    (rowIndex: number, tags: ArgumentTags) => {
-      const tagged = setRowArgumentTags(flow, rowIndex, tags)
+    (rowIndex: number, tags: ArgumentTags, applyToSection: boolean) => {
+      const targetRowIndexes = applyToSection ? getSectionRowIndexes(flow, rowIndex) : [rowIndex]
+      const tagged = setRowsArgumentTags(flow, targetRowIndexes, tags)
       if (tagged === flow) return
       onUpdate({ children: tagged.children })
       setRowData(buildRowData(tagged.children, flow.columns))
@@ -719,7 +724,10 @@ export function FlowSpreadsheet({
           y={argumentTag.y}
           tags={getRowArgumentTags(flow, argumentTag.rowIndex)}
           authorIdSuggestions={listAuthorIdsInFlow(flow)}
-          onSave={(tags) => handleSaveArgumentTags(argumentTag.rowIndex, tags)}
+          sectionRows={getSectionRowPreviews(flow, argumentTag.rowIndex)}
+          onSave={(tags, applyToSection) =>
+            handleSaveArgumentTags(argumentTag.rowIndex, tags, applyToSection)
+          }
           onClose={() => setArgumentTag(null)}
         />
       )}

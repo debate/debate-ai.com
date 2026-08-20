@@ -143,6 +143,47 @@ contributor, the out-of-range-row no-op, tags feeding `filterArgumentTree`,
 the `buildRowData` → `rowDataToBoxes` round trip, label formatting, and the
 contributor roster).
 
+### Neighbour preview and bulk section tagging
+
+The popover also shows how the row's neighbours in the same "section" (the
+content rows between the nearest preceding heading and the next one, or the
+flow's leading rows if none precede it) are already tagged, and offers a
+checkbox to apply the chosen tags to every one of those neighbours at once
+instead of just the row that was right-clicked — closing the "a row's tags
+aren't shown in the `ArgumentTagPopover` for the row's neighbours, and there
+is no bulk 'tag every row in this section' action" Known gap.
+
+```
+flow/argument-tagging.ts
+  → getSectionRowIndexes(flow, rowIndex)   — every content-row index sharing rowIndex's section
+  → getSectionRowPreviews(flow, rowIndex)  — those rows' own content + current tags, for display
+  → setRowsArgumentTags(flow, rowIndexes, tags)  — bulk form of setRowArgumentTags
+
+flow/ArgumentTagPopover.tsx
+  → sectionRows prop           — renders each neighbour's content + tag label
+  → "Also tag these N rows…" checkbox → onSave(tags, applyToSection)
+
+flow/FlowSpreadsheet.tsx
+  → handleSaveArgumentTags(rowIndex, tags, applyToSection)
+      applyToSection ? getSectionRowIndexes(flow, rowIndex) : [rowIndex]
+      → setRowsArgumentTags(flow, targetRowIndexes, tags)
+```
+
+A "section" is derived positionally from `Box.isHeading` (the same
+forward-scan convention `dataTransform.ts`'s `parentHeadingId` and
+`argument-tree.ts`'s `buildArgumentTree` heading-nesting already use), not a
+new field on `Box` — no data-model change was needed. Right-clicking a
+heading row itself targets the content rows that immediately follow it, up
+to (not including) the next heading. Vitest-covered in
+`packages/debate-round/test/argument-tagging.test.ts` (section boundaries
+around single/multiple headings, a heading-row target, leading
+rows before any heading, an out-of-range row, the bulk apply's
+duplicate/out-of-range-index handling and its all-invalid no-op, and the
+section-preview label truncation) and
+`packages/debate-round/test/ArgumentTagPopover.test.tsx` (the neighbour
+list and checkbox render when `sectionRows` is non-empty, and neither
+renders when it's empty).
+
 ## Known gaps
 
 - `ArgumentTreePanel.tsx`'s "Generate outline for current round" action is
@@ -161,5 +202,6 @@ contributor roster).
   (the same gap `prep-notes.md` and `review-queue.md` record), so the
   Argument Tree Outline's contributor filter is only as reliable as what
   people type.
-- A row's tags aren't shown in the `ArgumentTagPopover` for the row's
-  neighbours, and there is no bulk "tag every row in this section" action.
+- No follow-ups remain open on the "row's tags aren't shown... / no bulk
+  'tag every row in this section' action" gap — see "Neighbour preview and
+  bulk section tagging" above.

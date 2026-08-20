@@ -6,6 +6,44 @@
 _No task currently in progress._
 
 ### Completed
+- **Outline Filters and Argument Tree View — neighbour preview + bulk
+  "tag every row in this section" action.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used; this repo has no `IDEAS.md`, so the
+  "Product Feature Ideas"/"Research Crowdsourcing Organizer Features"
+  sections below are the backlog): `docs/features/argument-tree-outline.md`
+  said "A row's tags aren't shown in the `ArgumentTagPopover` for the row's
+  neighbours, and there is no bulk 'tag every row in this section' action,"
+  the last two open Known gaps for idea #10 ("Outline Filters and Argument
+  Tree View") that didn't require new infrastructure (auth, transcription,
+  or a scheduled-job runner) this repo doesn't have. `debate-round`'s
+  `flow/argument-tagging.ts` gained `getSectionRowIndexes(flow, rowIndex)`
+  (every content-row index in the same heading-bounded "section" as
+  `rowIndex`, derived positionally from `Box.isHeading` the same way
+  `dataTransform.ts`'s `parentHeadingId` and `argument-tree.ts`'s
+  `buildArgumentTree` heading-nesting already do — no new `Box` field was
+  needed), `getSectionRowPreviews(flow, rowIndex)` (those neighbours' own
+  content + current tags, for display), and `setRowsArgumentTags(flow,
+  rowIndexes, tags)` (a bulk form of the existing `setRowArgumentTags`,
+  which now delegates to it). `flow/ArgumentTagPopover.tsx` gained an
+  optional `sectionRows` prop rendering each neighbour's content and tag
+  label plus an "Also tag these N rows…" checkbox, and its `onSave`
+  signature grew a second `applyToSection` argument. `flow/FlowSpreadsheet.tsx`'s
+  `handleSaveArgumentTags` now applies the chosen tags to
+  `getSectionRowIndexes(flow, rowIndex)` instead of just `rowIndex` when
+  that checkbox is checked. No follow-ups remain open on this Known gap.
+  Vitest-covered in `packages/debate-round/test/argument-tagging.test.ts`
+  (section boundaries around single/multiple headings, a heading-row
+  target, leading rows before any heading, an out-of-range row, the bulk
+  apply's duplicate/out-of-range-index handling and its all-invalid no-op,
+  and the section-preview label truncation) and
+  `packages/debate-round/test/ArgumentTagPopover.test.tsx` (the neighbour
+  list and checkbox render when `sectionRows` is non-empty, and neither
+  renders when it's empty). Verified: `bun run vitest run` (2311 tests,
+  all packages), `bun run typecheck` (11 packages), `bun run build:web`
+  (production build).
+
 - **Outline Filters and Argument Tree View — tag an argument's
   type/contributor/evidence status from the live flow grid.**
   Found via this run's own doc/tracker-drift audit of every
