@@ -25,6 +25,14 @@ import { listPrepNotesForBox } from "../state/prepNotes"
 import { gridCellForBoxPath } from "./edit-cells"
 import { EditReviewPopover } from "./EditReviewPopover"
 import { PrepNotePopover } from "./PrepNotePopover"
+import { ArgumentTagPopover } from "./ArgumentTagPopover"
+import {
+  formatArgumentTags,
+  getRowArgumentTags,
+  listAuthorIdsInFlow,
+  setRowArgumentTags,
+} from "./argument-tagging"
+import type { ArgumentTags } from "./argument-tagging"
 import { GridContextMenu } from "./GridContextMenu"
 import { useFlowGridConfig } from "./useFlowGridConfig"
 import { useFlowRowOperations } from "./useFlowRowOperations"
@@ -70,6 +78,9 @@ export function FlowSpreadsheet({
   const [editReviewRefreshToken, setEditReviewRefreshToken] = useState(0)
   const [prepNote, setPrepNote] = useState<PrepNoteOpenParams | null>(null)
   const [prepNoteRefreshToken, setPrepNoteRefreshToken] = useState(0)
+  const [argumentTag, setArgumentTag] = useState<{ x: number; y: number; rowIndex: number } | null>(
+    null,
+  )
 
   // Initialize row data from flow
   const [rowData, setRowData] = useState<any[]>(() => buildRowData(flow.children, flow.columns))
@@ -199,11 +210,22 @@ export function FlowSpreadsheet({
         canIndent = foundHeading && !hasParent
       }
 
+      const tagLabel = formatArgumentTags(getRowArgumentTags(flow, row.originalIndex))
+
       return [
         // Tree structure
         {
           label: isHeading ? "Remove Section Heading" : "Make Section Heading",
           onClick: () => toggleHeading(rowId),
+        },
+        {
+          label: tagLabel ? `Tag Argument… (${tagLabel})` : "Tag Argument…",
+          onClick: () =>
+            setArgumentTag(
+              contextMenu
+                ? { x: contextMenu.x, y: contextMenu.y, rowIndex: row.originalIndex }
+                : null,
+            ),
         },
         {
           label: "Indent (Make Child)",
@@ -251,7 +273,24 @@ export function FlowSpreadsheet({
         },
       ]
     },
-    [rowData, collapsedHeadings, toggleHeading, indentRow, outdentRow, toggleCollapse, collapseAll, expandAll, insertRow, deleteRow],
+    [rowData, collapsedHeadings, contextMenu, flow, toggleHeading, indentRow, outdentRow, toggleCollapse, collapseAll, expandAll, insertRow, deleteRow],
+  )
+
+  /**
+   * Save the tags chosen in `ArgumentTagPopover` onto the row's root box.
+   * Pushes the tagged children up through `onUpdate` and rebuilds this
+   * grid's own `rowData` from them, so a later cell edit (which round-trips
+   * through `rowDataToBoxes`) carries the tags forward instead of dropping
+   * them if the parent hasn't re-rendered with the new flow yet.
+   */
+  const handleSaveArgumentTags = useCallback(
+    (rowIndex: number, tags: ArgumentTags) => {
+      const tagged = setRowArgumentTags(flow, rowIndex, tags)
+      if (tagged === flow) return
+      onUpdate({ children: tagged.children })
+      setRowData(buildRowData(tagged.children, flow.columns))
+    },
+    [flow, onUpdate],
   )
 
   /**
@@ -667,6 +706,21 @@ export function FlowSpreadsheet({
           notes={prepNoteBoxNotes}
           onCreated={handlePrepNoteCreated}
           onClose={() => setPrepNote(null)}
+        />
+      )}
+
+      {/* Argument type/contributor/evidence-status tagging popover.
+          Keyed by row so reopening it for a different row remounts the form,
+          which seeds its fields from `tags` once on mount. */}
+      {argumentTag && (
+        <ArgumentTagPopover
+          key={argumentTag.rowIndex}
+          x={argumentTag.x}
+          y={argumentTag.y}
+          tags={getRowArgumentTags(flow, argumentTag.rowIndex)}
+          authorIdSuggestions={listAuthorIdsInFlow(flow)}
+          onSave={(tags) => handleSaveArgumentTags(argumentTag.rowIndex, tags)}
+          onClose={() => setArgumentTag(null)}
         />
       )}
     </div>

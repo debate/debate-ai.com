@@ -92,6 +92,57 @@ selects (populated from the tree's own distinct values) and per-row
 argument-type/contributor/evidence-status badges. No follow-ups remain open
 on this idea.
 
+## Tagging an argument from the flow grid
+
+The three filters above only have something to filter on once a row carries
+tags, and until this slice nothing in the app could set them. Right-clicking
+any row in the live flow grid (`FlowSpreadsheet`, the round-flowing page)
+now offers **Tag Argument…**, which opens a small popover — the same
+fixed-position, click-outside/Escape-to-close overlay pattern as the
+`PrepNotePopover`/`EditReviewPopover` badges — with an **Argument type**
+select, an **Evidence status** select, and a **Contributor** field. The
+contributor field is a `datalist`-backed input suggesting whichever author
+ids are already used elsewhere in the same flow, so an id stays consistent
+across rows instead of being retyped per row.
+
+Choosing **None** for a select (or clearing the contributor field) removes
+that tag rather than leaving the previous value in place. Saving writes the
+tags onto the row's *root* `Box` and pushes the updated children up through
+`FlowSpreadsheet`'s existing `onUpdate` callback — tags live on the flow
+itself, not in a separate store. Row-level (not per-cell) is deliberate:
+`summarizeFlowRow` already reads all three fields from a row's root box, so
+that is what `buildArgumentTree`/`filterArgumentTree` and this panel see.
+
+Whatever tags a row carries also render as a compact `link · cited · alex`
+label in the grid's first column, next to the existing annotation/edit/
+prep-note badges, and are echoed in the context-menu entry itself
+(**Tag Argument… (link · cited · alex)**).
+
+`dataTransform.ts`'s `buildRowData`/`rowDataToBoxes` round trip now carries
+the three fields as well. Without that, an ordinary cell edit — which
+rebuilds every `Box` from the grid's flat row data — silently dropped a
+row's tags.
+
+```
+flow/argument-tagging.ts
+  → getRowArgumentTags(flow, rowIndex)         — reads a row's current tags
+  → setRowArgumentTags(flow, rowIndex, tags)   — returns a new Flow with the row retagged
+  → formatArgumentTags(tags)                   — "link · cited · alex" label
+  → listAuthorIdsInFlow(flow)                  — contributor suggestions
+
+flow/ArgumentTagPopover.tsx                    — the tagging overlay
+flow/FlowSpreadsheet.tsx                       — "Tag Argument…" context-menu entry
+  → onUpdate({ children })                     — saves the tags onto the flow
+flow/FirstColumnCellRenderer.tsx               — renders the row's tag label
+flow/dataTransform.ts                          — round-trips the tags through grid edits
+```
+
+Vitest-covered in `packages/debate-round/test/argument-tagging.test.ts`
+(reading tags, setting all three, clearing a tag and a whitespace-only
+contributor, the out-of-range-row no-op, tags feeding `filterArgumentTree`,
+the `buildRowData` → `rowDataToBoxes` round trip, label formatting, and the
+contributor roster).
+
 ## Known gaps
 
 - `ArgumentTreePanel.tsx`'s "Generate outline for current round" action is
@@ -100,8 +151,15 @@ on this idea.
   `buildAndSaveArgumentTree` automatically as a round is flowed, so a
   round's outline only updates here once someone visits `/outline` and
   regenerates it.
-- Nothing in the live flow-editing UI (`FlowSpreadsheet` or elsewhere) lets a
-  user actually set a `Box`'s `argumentType`/`authorId`/`evidenceStatus`
-  yet — these fields exist in the schema and are read/filtered/rendered
-  end-to-end here, but populating them today requires setting them directly
-  on a `Box` (e.g. programmatically, or via a future flow-grid affordance).
+- Tagging is row-level, not per-speech: one row carries one
+  `argumentType`/`authorId`/`evidenceStatus`, so a row whose 2AC answer was
+  written by a different partner than its 1AC claim can't record both.
+- Nothing infers a tag — every row is tagged by hand from the context menu;
+  there is no heuristic or AI pass that proposes an argument type from the
+  row's own content.
+- The contributor field is a free-form typed id, not an authenticated user
+  (the same gap `prep-notes.md` and `review-queue.md` record), so the
+  Argument Tree Outline's contributor filter is only as reliable as what
+  people type.
+- A row's tags aren't shown in the `ArgumentTagPopover` for the row's
+  neighbours, and there is no bulk "tag every row in this section" action.
