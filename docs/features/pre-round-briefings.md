@@ -28,6 +28,16 @@ header, every briefing section (Event, Opponent scouting, Prior meetings,
 Judge tendencies, Team prep notes) renders as its own labeled block, showing
 "no data on file" for whichever pieces the briefing wasn't built with.
 
+A second "Log a round" form sits below the "create briefing" form: this
+team's own tournament, date, division, side, opponent (picked from an
+already-persisted Opponent Team Profile), and result (Won/Lost). Saving
+appends a record to a persisted own-round-history store; every logged round
+lists below the form with a "Remove" action. When a briefing is created (or
+re-generated via `buildPreRoundBriefingFromStores`) with a matching
+`opponentTeamId`, the briefing's "Prior meetings" section and badge now show
+the real head-to-head record built from these logged rounds, instead of
+always reading "No recorded prior meetings."
+
 ## Data flow
 
 ```
@@ -36,7 +46,9 @@ panels/PreRoundBriefingsPanel.tsx (form state)
   → buildPreRoundBriefingRecordFromDraft(draft)   — state/preRoundBriefings.ts
       → buildPreRoundBriefingFromStores(...)      — round/pre-round-briefing.ts
           resolves opponentTeamId/judgeId against the persisted
-          opponentTeamProfiles.ts / judgeProfiles.ts stores by id
+          opponentTeamProfiles.ts / judgeProfiles.ts stores by id, and
+          resolves ownRecords against the persisted own-round-history
+          history via getOwnRoundHistoryAgainst(opponentTeamId)
   → savePreRoundBriefing(record)                  — state/preRoundBriefings.ts
   → panel re-reads buildPreRoundBriefingsPanelView() to refresh
 
@@ -50,6 +62,20 @@ Clearing a round's briefing:
 panels/PreRoundBriefingsPanel.tsx
   → deletePreRoundBriefing(roundId)     — state/preRoundBriefings.ts
   → panel re-reads buildPreRoundBriefingsPanelView() to refresh
+
+Logging this team's own round history:
+panels/PreRoundBriefingsPanel.tsx ("Log a round" form state)
+  → saveOwnRoundHistoryRecord(record)   — state/ownRoundHistory.ts
+                                           (localStorage: ownRoundHistory)
+  → panel re-reads listOwnRoundHistory() to refresh the logged-rounds list
+  → round/pre-round-briefing.ts's buildPreRoundBriefingFromStores reads it
+    back via getOwnRoundHistoryAgainst(opponentTeamId) the next time a
+    briefing is created/generated for that opponent
+
+Removing a logged round:
+panels/PreRoundBriefingsPanel.tsx
+  → deleteOwnRoundHistoryRecord(id)     — state/ownRoundHistory.ts
+  → panel re-reads listOwnRoundHistory() to refresh
 ```
 
 Every briefing-composition and persistence rule already existed and was
@@ -64,15 +90,27 @@ that validates the draft and delegates to the existing
 briefing-composition logic. Vitest-covered in
 `packages/debate-round/test/preRoundBriefings.test.ts`.
 
+The "Log a round"/own-round-history store closes this doc's own
+previously-listed "Prior meetings" gap below: a new
+`state/ownRoundHistory.ts` persists `OpponentRoundRecord`s logged from this
+team's own perspective (an id-per-round, append-only store mirroring
+`debate-data-sync`'s `tournamentResults.ts` convention), and
+`round/pre-round-briefing.ts`'s `buildPreRoundBriefingFromStores` now
+resolves `ownRecords` from it by `opponentTeamId` — the same
+store-resolution pattern it already used for `opponentProfile`/
+`judgeProfile` — introducing no new head-to-head computation logic (it
+still delegates to the existing `getHeadToHeadRecords`/
+`summarizePriorMeetings`). Vitest-covered in
+`packages/debate-round/test/ownRoundHistory.test.ts` and the new
+`buildPreRoundBriefingFromStores` cases in
+`packages/debate-round/test/pre-round-briefing.test.ts`.
+
 ## Known gaps
 
 - No real data sources for tournament results, pairings, event details, or
   room assignments yet — follow-up (a) on the same idea, not started; a
   briefing's event/opponent/judge fields still have to be entered by hand
   or supplied by a caller of `buildPreRoundBriefing`/
-  `buildPreRoundBriefingFromStores` directly.
-- The form's head-to-head "Prior meetings" section is always "No recorded
-  prior meetings" — it isn't wired to a caller-supplied `ownRecords`/
-  `opponentTeamId` history the way `buildPreRoundBriefingFromStores`
-  supports when called directly; the form only fills in scouting/tendency
-  data by id, not head-to-head history.
+  `buildPreRoundBriefingFromStores` directly. Own round history is also
+  entered by hand via the "Log a round" form — it isn't reconstructed from
+  any real tournament-results/pairings source either.
