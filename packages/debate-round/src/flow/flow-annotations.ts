@@ -131,6 +131,42 @@ export function resolveAnnotationBox(
   return resolved !== null && "content" in resolved ? (resolved as Box) : null;
 }
 
+export type JumpToAnnotationDeps = {
+  /** The recording currently loaded in the player, if any. */
+  activeVideoId: string | null;
+  /** `debate-videos`'s `useVideoPlayerStore().setActiveVideo` — switches the player to a different recording. */
+  setActiveVideo: (videoId: string, title: string, meta?: undefined, startTimeSeconds?: number) => void;
+  /** `debate-videos`'s `sendYouTubeCommand("seekTo", ...)`, given a position in milliseconds. */
+  seekTo: (timestampMs: number) => void;
+  /** `debate-videos`'s `sendYouTubeCommand("playVideo")`. */
+  playVideo: () => void;
+  setIsPlaying: (isPlaying: boolean) => void;
+};
+
+/**
+ * Jumps the persistent video player to an annotation's timestamp, switching
+ * to its recording first via `setActiveVideo` if it isn't already the one
+ * loaded (rather than requiring it to already be open). No stored catalog
+ * maps a bare `videoId` to a title, so a video switch falls back to the
+ * `videoId` itself as the title, matching the panel's own
+ * `activeVideoTitle ?? activeVideoId` display fallback.
+ *
+ * Returns `false` (no-op) if the annotation has no `videoId` at all.
+ */
+export function jumpToAnnotation(annotation: FlowAnnotation, deps: JumpToAnnotationDeps): boolean {
+  if (!annotation.videoId) return false;
+
+  if (annotation.videoId === deps.activeVideoId) {
+    deps.seekTo(annotation.timestampMs);
+    deps.playVideo();
+    deps.setIsPlaying(true);
+    return true;
+  }
+
+  deps.setActiveVideo(annotation.videoId, annotation.videoId, undefined, annotation.timestampMs / 1000);
+  return true;
+}
+
 /** All annotations dropped against a given recording, in playback order. */
 export function getAnnotationsForVideo(
   annotations: FlowAnnotation[],
