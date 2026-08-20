@@ -13,6 +13,15 @@
  * save the chosen filter back through `saveArgumentTreeFilterSelection`. No
  * new tree-derivation or filtering logic is introduced here.
  *
+ * A "Generate outline for current round" action reads the round workspace's
+ * currently selected flow (`state/store.ts`'s `useFlowStore`, the same
+ * mechanism `VulnerabilityChartsPanel`'s "Generate report for current
+ * round" action uses) and derives+persists that round's outline via
+ * `state/argumentTrees.ts`'s already-existing `buildAndSaveArgumentTree` —
+ * closing this doc's "nothing in the live round-flowing page calls
+ * `buildAndSaveArgumentTree` yet" Known gap. No new tree-derivation logic is
+ * introduced here.
+ *
  * @module panels/ArgumentTreePanel
  */
 
@@ -31,11 +40,17 @@ import {
   SelectValue,
 } from "debate-ui/src/primitives/select"
 import { filterArgumentTree, flattenArgumentTree, type ArgumentTreeFilter } from "../flow/argument-tree"
-import { buildArgumentTreesPanelView, deleteArgumentTree, type ArgumentTreeRecord } from "../state/argumentTrees"
+import {
+  buildAndSaveArgumentTree,
+  buildArgumentTreesPanelView,
+  deleteArgumentTree,
+  type ArgumentTreeRecord,
+} from "../state/argumentTrees"
 import {
   getArgumentTreeFilterSelection,
   saveArgumentTreeFilterSelection,
 } from "../state/argumentTreeFilters"
+import { useFlowStore } from "../state/store"
 
 const ANY_VALUE = "__any__"
 
@@ -90,8 +105,14 @@ function collectAuthorIds(record: ArgumentTreeRecord): string[] {
 export function ArgumentTreePanel() {
   const [records, setRecords] = useState<ArgumentTreeRecord[] | null>(null)
   const [filters, setFilters] = useState<Record<string, ArgumentTreeFilter>>({})
+  const [mounted, setMounted] = useState(false)
+
+  const flows = useFlowStore((state) => state.flows)
+  const selected = useFlowStore((state) => state.selected)
+  const currentFlow = mounted ? flows[selected] : undefined
 
   useEffect(() => {
+    setMounted(true)
     const view = buildArgumentTreesPanelView()
     setRecords(view)
     setFilters(
@@ -109,6 +130,12 @@ export function ArgumentTreePanel() {
     saveArgumentTreeFilterSelection({ roundId, filter })
   }
 
+  const handleGenerate = () => {
+    if (!currentFlow) return
+    buildAndSaveArgumentTree(currentFlow, String(currentFlow.id))
+    refresh()
+  }
+
   const handleClear = (roundId: string) => {
     deleteArgumentTree(roundId)
     refresh()
@@ -116,15 +143,6 @@ export function ArgumentTreePanel() {
 
   if (records === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading argument outlines…</div>
-  }
-
-  if (records.length === 0) {
-    return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No argument outlines yet. An outline fills in once a round's flow is derived into a tree
-        and saved.
-      </div>
-    )
   }
 
   return (
@@ -136,6 +154,30 @@ export function ArgumentTreePanel() {
           side, unanswered status, or heading-vs-argument kind.
         </p>
       </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div>
+          <Label className="text-sm font-medium text-foreground">Generate outline for current round</Label>
+          <p className="text-xs text-muted-foreground">
+            Uses the round workspace's currently selected flow.
+          </p>
+        </div>
+        <Button size="sm" disabled={!currentFlow} onClick={handleGenerate}>
+          Generate outline
+        </Button>
+        {!currentFlow && (
+          <p className="text-sm text-muted-foreground">
+            Select a round's flow in the round workspace to generate an outline for it.
+          </p>
+        )}
+      </div>
+
+      {records.length === 0 && (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No argument outlines yet. An outline fills in once a round's flow is derived into a tree
+          and saved.
+        </div>
+      )}
       {records.map((record) => {
         const filter = filters[record.roundId] ?? {}
         const speeches = collectSpeeches(record)

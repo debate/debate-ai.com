@@ -6,6 +6,35 @@
 _No task currently in progress._
 
 ### Completed
+- **Outline Filters and Argument Tree View — wire "generate outline for
+  current round" trigger.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/argument-tree-outline.md`'s
+  Known gaps said "nothing in the live round-flowing page calls
+  `buildAndSaveArgumentTree` yet" — the derive-and-persist helper already
+  existed (and was already Vitest-covered) but had no real caller anywhere
+  in the app, so a round's outline at `/outline` only ever appeared if
+  something computed and saved it programmatically. `ArgumentTreePanel.tsx`
+  gains a "Generate outline for current round" action, reading the round
+  workspace's currently selected flow via `state/store.ts`'s `useFlowStore`
+  — the same mechanism `VulnerabilityChartsPanel`'s "Generate report for
+  current round" action already uses — and calling the existing
+  `buildAndSaveArgumentTree(flow, roundId)` to derive and persist that
+  round's tree. No new tree-derivation or persistence logic was introduced;
+  this composes the existing helper directly, so no new Vitest cases were
+  needed beyond `buildAndSaveArgumentTree`'s existing coverage in
+  `packages/debate-round/test/argumentTrees.test.ts`. Docs updated at
+  `docs/features/argument-tree-outline.md` (new data-flow paragraph; Known
+  gaps' "nothing... calls `buildAndSaveArgumentTree`" bullet replaced with
+  the real remaining scope — the trigger is still manual, not automatic as
+  a round is flowed). Verified from a clean install: `bun install` (2050
+  packages), `bun run test` (158 files / 2253 tests, all pass — no new
+  cases, matching the "no new logic introduced" scope), `bun run typecheck`
+  (11 in-scope packages pass — `debate-ai-web` has no `typecheck` script;
+  this repo has no `lint` script), and `bun run build:web` (production
+  build, including `/outline`) all pass.
+  PR: [#277](https://github.com/debate/debate-ai.com/pull/277).
 - **Flow-in-Speech Flow Annotations / Shared, Ai-Generated Debate Flow —
   cross-tab live update for FlowSpreadsheet's annotation/edit/prep-note
   badges.**
