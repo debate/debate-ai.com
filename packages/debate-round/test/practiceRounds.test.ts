@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { saveAiVersusRound, type AiVersusRoundRecord } from "../src/state/aiVersusRounds";
 import {
+  buildAndSavePracticeRoundFeedback,
   buildPracticeRoundsPanelView,
   deletePracticeRound,
   getPracticeRound,
@@ -10,6 +11,7 @@ import {
   type PracticeRoundRecord,
 } from "../src/state/practiceRounds";
 import { buildPracticeRoundSetup } from "../src/round/practice-round-simulator";
+import type { Box } from "debate-core/src/types/flow";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {
@@ -27,6 +29,30 @@ class MemoryStorage {
     this.store.clear();
   }
 }
+
+const COLUMNS = ["1AC", "1NC"];
+
+/** Builds a row's box chain from per-column content; "" leaves a column unflowed. */
+function rowFromContents(contents: string[], overrides: Partial<Box> = {}): Box {
+  let box: Box | undefined;
+  for (let i = contents.length - 1; i >= 0; i--) {
+    const current: Box = {
+      content: contents[i],
+      children: box ? [box] : [],
+      index: 0,
+      level: i + 1,
+      focus: false,
+      empty: !contents[i].trim(),
+    };
+    box = current;
+  }
+  return { ...box!, ...overrides };
+}
+
+const MIXED_FLOW = {
+  columns: COLUMNS,
+  children: [rowFromContents(["Case advantage", "Turn"]), rowFromContents(["", "Disad link"])],
+};
 
 const SETUP_A = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
 const SETUP_B = buildPracticeRoundSetup({ styleKey: "policy", opponentPersona: "kritik" });
@@ -138,5 +164,46 @@ describe("getPracticeRoundSubmittedSpeeches", () => {
     saveAiVersusRound(aiVersusRecord);
 
     expect(getPracticeRoundSubmittedSpeeches("round-1")).toEqual(aiVersusRecord.submittedSpeeches);
+  });
+});
+
+describe("buildAndSavePracticeRoundFeedback", () => {
+  it("returns undefined and saves nothing when no round is stored for roundId", () => {
+    expect(buildAndSavePracticeRoundFeedback(MIXED_FLOW, "missing", "AFF")).toBeUndefined();
+    expect(getPracticeRound("missing")).toBeUndefined();
+  });
+
+  it("derives feedback under the round's own saved judge paradigm and saves it onto the record", () => {
+    savePracticeRound(ROUND_A);
+
+    const updated = buildAndSavePracticeRoundFeedback(MIXED_FLOW, "round-1", "AFF");
+
+    expect(updated).toBeDefined();
+    expect(updated!.feedback).toBeDefined();
+    expect(updated!.feedback!.judgeParadigm).toEqual(SETUP_A.judgeParadigm);
+    expect(updated!.feedback!.sections.length).toBeGreaterThan(0);
+    expect(getPracticeRound("round-1")).toEqual(updated);
+  });
+
+  it("preserves the round's other fields (setup, judgeDecision) when saving feedback", () => {
+    const judgeDecision = {
+      winner: "primary" as const,
+      keyVotingIssues: ["Turn on case"],
+      rationale: "Aff wins on the turn.",
+    };
+    savePracticeRound({ ...ROUND_A, judgeDecision });
+
+    const updated = buildAndSavePracticeRoundFeedback(MIXED_FLOW, "round-1", "AFF");
+
+    expect(updated!.setup).toEqual(ROUND_A.setup);
+    expect(updated!.judgeDecision).toEqual(judgeDecision);
+  });
+
+  it("overwrites any previously generated feedback for the round", () => {
+    savePracticeRound(ROUND_A);
+    buildAndSavePracticeRoundFeedback(MIXED_FLOW, "round-1", "AFF");
+    const secondPass = buildAndSavePracticeRoundFeedback(MIXED_FLOW, "round-1", "NEG");
+
+    expect(getPracticeRound("round-1")!.feedback).toEqual(secondPass!.feedback);
   });
 });
