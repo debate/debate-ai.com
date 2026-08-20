@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildAiVersusRoundsPanelView,
+  canRegenerateLastAiSpeech,
   deleteAiVersusRound,
   getAiVersusRound,
   getAiVersusRoundStatus,
   listAiVersusRounds,
+  replaceLastAiSpeech,
   saveAiVersusRound,
   type AiVersusRoundRecord,
 } from "../src/state/aiVersusRounds";
@@ -134,6 +136,71 @@ describe("buildAiVersusRoundsPanelView", () => {
     buildAiVersusRoundsPanelView();
 
     expect(listAiVersusRounds()).toEqual([ROUND_B, ROUND_A]);
+  });
+});
+
+describe("canRegenerateLastAiSpeech", () => {
+  it("is false for a round with no submitted speeches", () => {
+    expect(canRegenerateLastAiSpeech({ ...ROUND_B, submittedSpeeches: [] })).toBe(false);
+  });
+
+  it("is false when the last submitted speech was the user's", () => {
+    expect(canRegenerateLastAiSpeech(ROUND_A)).toBe(false);
+  });
+
+  it("is true when the last submitted speech was the AI's", () => {
+    const record: AiVersusRoundRecord = {
+      ...ROUND_A,
+      submittedSpeeches: [
+        ...ROUND_A.submittedSpeeches,
+        { name: "1NC", speaker: "ai", text: "The negative contends..." },
+      ],
+    };
+    expect(canRegenerateLastAiSpeech(record)).toBe(true);
+  });
+});
+
+describe("replaceLastAiSpeech", () => {
+  it("replaces the last speech's text, keeping its name/speaker and every earlier speech", () => {
+    const record: AiVersusRoundRecord = {
+      ...ROUND_A,
+      submittedSpeeches: [
+        ...ROUND_A.submittedSpeeches,
+        { name: "1NC", speaker: "ai", text: "The negative contends..." },
+      ],
+    };
+
+    const replaced = replaceLastAiSpeech(record, "A completely different negative case...");
+
+    expect(replaced.submittedSpeeches).toEqual([
+      ROUND_A.submittedSpeeches[0],
+      { name: "1NC", speaker: "ai", text: "A completely different negative case..." },
+    ]);
+  });
+
+  it("does not mutate the original record", () => {
+    const record: AiVersusRoundRecord = {
+      ...ROUND_A,
+      submittedSpeeches: [
+        ...ROUND_A.submittedSpeeches,
+        { name: "1NC", speaker: "ai", text: "The negative contends..." },
+      ],
+    };
+    const original = JSON.parse(JSON.stringify(record));
+
+    replaceLastAiSpeech(record, "A completely different negative case...");
+
+    expect(record).toEqual(original);
+  });
+
+  it("throws when the last submitted speech isn't the AI's", () => {
+    expect(() => replaceLastAiSpeech(ROUND_A, "new text")).toThrow(
+      "The last submitted speech isn't an AI speech, so it can't be regenerated.",
+    );
+  });
+
+  it("throws when there are no submitted speeches yet", () => {
+    expect(() => replaceLastAiSpeech({ ...ROUND_B, submittedSpeeches: [] }, "new text")).toThrow();
   });
 });
 
