@@ -153,8 +153,16 @@ and the no-`videoId` no-op).
   `dQw4w9WgXcQ`") since no stored catalog maps a `videoId` to a title —
   `FlowAnnotation` itself doesn't carry one, only whatever created the
   annotation (e.g. `VideoCard.tsx`) ever knew it.
-- The `FlowSpreadsheet` badge reads annotations from `localStorage` at cell
-  render time; it does not live-update if another tab drops a new
-  annotation while the grid is open.
+- ~~The `FlowSpreadsheet` badge reads annotations from `localStorage` at
+  cell render time; it does not live-update if another tab drops a new
+  annotation while the grid is open.~~ Closed: `FlowSpreadsheet` now listens
+  for the browser's `storage` event (which fires only in *other* same-origin
+  tabs, never the tab that wrote the change) via
+  `flow/live-update.ts#isFlowLiveUpdateStorageEvent` and force-refreshes
+  every grid cell when it fires for the `flowAnnotations`/`flowEdits`/
+  `prepNotes` keys, so an annotation logged in one tab now shows up in this
+  badge (and the `EditBadge`/`PrepNoteBadge`, see
+  [`shared-flow-sync.md`](shared-flow-sync.md)) in every other open tab on
+  the next `storage` event, not just after a manual reload.
 - No collaborative/live sync — annotations are local `localStorage` only,
   same as every other persisted record in this repo today.

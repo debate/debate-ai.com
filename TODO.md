@@ -6,6 +6,48 @@
 _No task currently in progress._
 
 ### Completed
+- **Flow-in-Speech Flow Annotations / Shared, Ai-Generated Debate Flow —
+  cross-tab live update for FlowSpreadsheet's annotation/edit/prep-note
+  badges.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): both `docs/features/flow-annotations.md`
+  and `docs/features/shared-flow-sync.md` documented the same gap — the
+  `FlowSpreadsheet` grid's `AnnotationBadge`/`EditBadge` (and, incidentally,
+  `PrepNoteBadge`) read straight from `localStorage` at cell-render time and
+  never live-update if a *different browser tab* logs a new annotation,
+  edit, or prep note while the grid is open; only the same-tab,
+  logged-through-its-own-popover case (the prior "force-refresh FlowSpreadsheet
+  EditBadge after logging via popover" run, PR #270) was fixed. This closes
+  that cross-tab half: a new pure helper,
+  `packages/debate-round/src/flow/live-update.ts`'s
+  `isFlowLiveUpdateStorageEvent`, recognizes the browser's `storage`
+  event — which the spec fires only in *other* same-origin tabs, never the
+  tab that made the write — for the three badge-backing `localStorage` keys
+  (`flowAnnotations`, `flowEdits`, `prepNotes`), plus the `null`-key
+  `localStorage.clear()` case. `FlowSpreadsheet.tsx` now subscribes to that
+  event and calls `gridRef.current.api.refreshCells({ force: true })` across
+  the whole grid when it fires (a cross-tab event carries no row/column to
+  target the way the existing same-tab refresh does). This is additive only:
+  it doesn't change what any badge shows, only how promptly a *different*
+  open tab picks up someone else's change; it still doesn't help a different
+  device/browser see the edit (that's what the existing, separate Live Sync
+  server transport is for).
+  Vitest-covered (4 new cases in
+  `packages/debate-round/test/live-update.test.ts`: every backing-store key
+  recognized, the `null`-key clear-all case, an unrelated store's key
+  ignored, and a key that merely contains a badge-store name as a substring
+  also ignored).
+  Documented in `docs/features/shared-flow-sync.md` (new "Cross-tab live
+  update" data-flow section) and `docs/features/flow-annotations.md` (both
+  files' "Known gaps" cross-tab bullets closed and cross-referenced to each
+  other).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (158 files / 2253 tests, all pass — 4 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including `/debate`) all pass.
+  PR: [#276](https://github.com/debate/debate-ai.com/pull/276).
 - **Shared Evidence Library — tag rename/merge tool.**
   Found via this run's own doc/tracker-drift audit of every
   `docs/features/*.md` "Known gaps" section (following the same audit
