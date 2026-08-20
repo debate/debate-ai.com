@@ -20,8 +20,10 @@
  * `buildOpponentTeamProfile`/`saveOpponentTeamProfile`. That's the only
  * in-app way to create a profile — every roster column shown here stays
  * derived from logged rounds, never edited directly. The logged-rounds list
- * below the roster deletes a mistyped round through the same store, which
- * re-aggregates (or removes) the affected team's profile.
+ * below the roster corrects a mistyped round through the same store: Edit
+ * loads it back into the form (which then saves through
+ * `updateOpponentRoundRecord`) and Delete removes it, both re-aggregating
+ * (or removing) the affected team's profile.
  *
  * @module panels/OpponentTeamProfilesPanel
  */
@@ -54,6 +56,7 @@ import {
   deleteOpponentRoundRecord,
   listOpponentRoundRecords,
   recordOpponentRound,
+  updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
 } from "debate-data-sync/src/state/opponentRoundRecords"
 import type {
@@ -101,6 +104,21 @@ const EMPTY_DRAFT: RoundDraft = {
   opponentTeamId: "",
 }
 
+/** Loads an already-logged round back into the form's string-typed draft. */
+function draftFromRecord(record: OpponentRoundRecordEntry): RoundDraft {
+  return {
+    teamId: record.teamId,
+    tournamentName: record.tournamentName,
+    date: record.date,
+    division: record.division,
+    side: record.side,
+    won: record.won,
+    argumentTags: (record.argumentTags ?? []).join(", "),
+    caseName: record.caseName ?? "",
+    opponentTeamId: record.opponentTeamId ?? "",
+  }
+}
+
 /**
  * Renders the Opponent Team Profiles roster: every persisted
  * `OpponentTeamProfile` ordered by rounds recorded descending, with overall
@@ -116,6 +134,8 @@ export function OpponentTeamProfilesPanel() {
   const [roster, setRoster] = useState<OpponentTeamProfile[] | null>(null)
   const [records, setRecords] = useState<OpponentRoundRecordEntry[]>([])
   const [draft, setDraft] = useState<RoundDraft>(EMPTY_DRAFT)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [teamFilter, setTeamFilter] = useState("")
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -140,8 +160,8 @@ export function OpponentTeamProfilesPanel() {
     const argumentTags = parseArgumentTags(draft.argumentTags)
     const caseName = draft.caseName.trim()
     const opponentTeamId = draft.opponentTeamId.trim()
-    recordOpponentRound({
-      id: `${teamId}-${tournamentName}-${date}-${Date.now()}`,
+    const record: OpponentRoundRecordEntry = {
+      id: editingId ?? `${teamId}-${tournamentName}-${date}-${Date.now()}`,
       teamId,
       tournamentName,
       date,
@@ -151,16 +171,44 @@ export function OpponentTeamProfilesPanel() {
       argumentTags: argumentTags.length > 0 ? argumentTags : undefined,
       caseName: caseName === "" ? undefined : caseName,
       opponentTeamId: opponentTeamId === "" ? undefined : opponentTeamId,
-    })
+    }
+    if (editingId) {
+      updateOpponentRoundRecord(record)
+    } else {
+      recordOpponentRound(record)
+    }
     setError(null)
+    setEditingId(null)
     setDraft({ ...EMPTY_DRAFT, teamId, division: draft.division })
     refresh()
   }
 
+  const handleEdit = (record: OpponentRoundRecordEntry) => {
+    setDraft(draftFromRecord(record))
+    setEditingId(record.id)
+    setError(null)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingId(null)
+    setDraft(EMPTY_DRAFT)
+    setError(null)
+  }
+
   const handleDelete = (id: string) => {
     deleteOpponentRoundRecord(id)
+    if (editingId === id) {
+      setEditingId(null)
+      setDraft(EMPTY_DRAFT)
+    }
     refresh()
   }
+
+  const normalizedFilter = teamFilter.trim().toLowerCase()
+  const visibleRecords =
+    normalizedFilter === ""
+      ? records
+      : records.filter((record) => record.teamId.toLowerCase().includes(normalizedFilter))
 
   if (roster === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading opponent team profiles…</div>
@@ -178,7 +226,9 @@ export function OpponentTeamProfilesPanel() {
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-3">
-        <h2 className="text-sm font-medium text-foreground">Log a scouted round</h2>
+        <h2 className="text-sm font-medium text-foreground">
+          {editingId ? "Edit logged round" : "Log a scouted round"}
+        </h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="opponent-round-team-id">Team ID</Label>
@@ -268,7 +318,14 @@ export function OpponentTeamProfilesPanel() {
           </div>
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
-        <Button onClick={handleSubmit}>Log round</Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={handleSubmit}>{editingId ? "Save changes" : "Log round"}</Button>
+          {editingId && (
+            <Button variant="ghost" onClick={handleCancelEdit}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </div>
 
       {roster.length === 0 ? (
@@ -325,44 +382,67 @@ export function OpponentTeamProfilesPanel() {
         <div className="space-y-2">
           <h2 className="text-sm font-medium text-foreground">Logged rounds</h2>
           <p className="text-sm text-muted-foreground">
-            Deleting a round re-derives that team's profile from whatever rounds remain, and
-            removes the profile entirely once its last round is gone.
+            Editing a round rewrites it in place; deleting one re-derives that team's profile from
+            whatever rounds remain, and removes the profile entirely once its last round is gone.
           </p>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Team</TableHead>
-                <TableHead>Tournament</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Side</TableHead>
-                <TableHead>Result</TableHead>
-                <TableHead>Case</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {records.map((record) => (
-                <TableRow key={record.id}>
-                  <TableCell className="font-medium">{record.teamId}</TableCell>
-                  <TableCell>{record.tournamentName}</TableCell>
-                  <TableCell>{record.date}</TableCell>
-                  <TableCell className="uppercase">{record.side}</TableCell>
-                  <TableCell>{record.won ? "Win" : "Loss"}</TableCell>
-                  <TableCell className="text-muted-foreground">{record.caseName ?? "—"}</TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(record.id)}
-                      aria-label={`Delete ${record.teamId}'s ${record.tournamentName} round on ${record.date}`}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
+          <div className="max-w-xs space-y-1.5">
+            <Label htmlFor="opponent-round-filter">Filter by team ID</Label>
+            <Input
+              id="opponent-round-filter"
+              value={teamFilter}
+              onChange={(e) => setTeamFilter(e.target.value)}
+              placeholder="Show every team's rounds"
+            />
+          </div>
+          {visibleRecords.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No logged rounds match that team ID.</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Team</TableHead>
+                  <TableHead>Tournament</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Side</TableHead>
+                  <TableHead>Result</TableHead>
+                  <TableHead>Case</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {visibleRecords.map((record) => (
+                  <TableRow key={record.id}>
+                    <TableCell className="font-medium">{record.teamId}</TableCell>
+                    <TableCell>{record.tournamentName}</TableCell>
+                    <TableCell>{record.date}</TableCell>
+                    <TableCell className="uppercase">{record.side}</TableCell>
+                    <TableCell>{record.won ? "Win" : "Loss"}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {record.caseName ?? "—"}
+                    </TableCell>
+                    <TableCell className="space-x-1 text-right">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEdit(record)}
+                        aria-label={`Edit ${record.teamId}'s ${record.tournamentName} round on ${record.date}`}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(record.id)}
+                        aria-label={`Delete ${record.teamId}'s ${record.tournamentName} round on ${record.date}`}
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       )}
     </div>

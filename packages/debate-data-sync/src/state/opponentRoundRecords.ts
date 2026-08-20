@@ -103,6 +103,28 @@ export function recordOpponentRound(record: OpponentRoundRecordEntry): OpponentT
 }
 
 /**
+ * Replaces one persisted scouted-round record by `id`, keeping its position in
+ * the history, then re-aggregates the affected team's profile. Reassigning a
+ * round to a different team re-aggregates the previous team too (dropping its
+ * derived profile when that was its last round). Returns the profile for the
+ * updated record's team, or `null` if the id isn't stored.
+ */
+export function updateOpponentRoundRecord(
+  record: OpponentRoundRecordEntry,
+): OpponentTeamProfile | null {
+  const records = readAll();
+  const index = records.findIndex((existing) => existing.id === record.id);
+  if (index === -1) return null;
+  const previousTeamId = records[index]!.teamId;
+  records[index] = record;
+  writeAll(records);
+  if (previousTeamId !== record.teamId) {
+    rebuildOpponentTeamProfileFromRecords(previousTeamId);
+  }
+  return rebuildOpponentTeamProfileFromRecords(record.teamId);
+}
+
+/**
  * Deletes one persisted scouted-round record by `id` and re-aggregates the
  * affected team's profile; a no-op if the id isn't stored.
  */

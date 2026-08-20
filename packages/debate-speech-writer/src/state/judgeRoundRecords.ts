@@ -91,6 +91,26 @@ export function recordJudgeRound(record: JudgeRoundRecordEntry): JudgeProfile {
 }
 
 /**
+ * Replaces one persisted judged-round record by `id`, keeping its position in
+ * the history, then re-aggregates the affected judge's profile. Reassigning a
+ * round to a different judge re-aggregates the previous judge too (dropping
+ * their derived profile when that was their last round). Returns the profile
+ * for the updated record's judge, or `null` if the id isn't stored.
+ */
+export function updateJudgeRoundRecord(record: JudgeRoundRecordEntry): JudgeProfile | null {
+  const records = readAll();
+  const index = records.findIndex((existing) => existing.id === record.id);
+  if (index === -1) return null;
+  const previousJudgeId = records[index]!.judgeId;
+  records[index] = record;
+  writeAll(records);
+  if (previousJudgeId !== record.judgeId) {
+    rebuildJudgeProfileFromRecords(previousJudgeId);
+  }
+  return rebuildJudgeProfileFromRecords(record.judgeId);
+}
+
+/**
  * Deletes one persisted judged-round record by `id` and re-aggregates the
  * affected judge's profile; a no-op if the id isn't stored.
  */

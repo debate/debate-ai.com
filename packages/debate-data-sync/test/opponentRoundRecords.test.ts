@@ -5,6 +5,7 @@ import {
   listOpponentRoundRecordsForTeam,
   rebuildOpponentTeamProfileFromRecords,
   recordOpponentRound,
+  updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
 } from "../src/state/opponentRoundRecords";
 import {
@@ -110,6 +111,57 @@ describe("rebuildOpponentTeamProfileFromRecords", () => {
 
     expect(rebuildOpponentTeamProfileFromRecords("wxyz")).toBeNull();
     expect(getOpponentTeamProfile("wxyz")).toBeUndefined();
+  });
+});
+
+describe("updateOpponentRoundRecord", () => {
+  it("replaces the round in place and re-aggregates the team's profile", () => {
+    recordOpponentRound(entry({ id: "r1", side: "aff", won: true }));
+    recordOpponentRound(entry({ id: "r2", side: "aff", won: true }));
+
+    const profile = updateOpponentRoundRecord(entry({ id: "r1", side: "neg", won: false }));
+
+    expect(listOpponentRoundRecords().map((record) => record.id)).toEqual(["r1", "r2"]);
+    expect(profile?.roundsRecorded).toBe(2);
+    expect(profile?.record).toMatchObject({ wins: 1, losses: 1 });
+    expect(getOpponentTeamProfile("wxyz")?.sideRecord.neg.rounds).toBe(1);
+  });
+
+  it("matches re-recording the corrected round from scratch", () => {
+    const corrected = entry({ id: "r1", side: "neg", won: false, caseName: "Warming" });
+    recordOpponentRound(entry({ id: "r1", side: "aff", won: true, caseName: "Trade" }));
+
+    expect(updateOpponentRoundRecord(corrected)).toEqual(
+      buildOpponentTeamProfile("wxyz", [corrected]),
+    );
+  });
+
+  it("re-aggregates both teams when a round is reassigned", () => {
+    recordOpponentRound(entry({ id: "r1", teamId: "wxyz" }));
+    recordOpponentRound(entry({ id: "r2", teamId: "wxyz" }));
+
+    const profile = updateOpponentRoundRecord(entry({ id: "r2", teamId: "abcd" }));
+
+    expect(profile?.teamId).toBe("abcd");
+    expect(getOpponentTeamProfile("wxyz")?.roundsRecorded).toBe(1);
+    expect(getOpponentTeamProfile("abcd")?.roundsRecorded).toBe(1);
+  });
+
+  it("deletes the previous team's profile when the reassigned round was its last", () => {
+    recordOpponentRound(entry({ id: "r1", teamId: "wxyz" }));
+
+    updateOpponentRoundRecord(entry({ id: "r1", teamId: "abcd" }));
+
+    expect(getOpponentTeamProfile("wxyz")).toBeUndefined();
+    expect(getOpponentTeamProfile("abcd")?.roundsRecorded).toBe(1);
+  });
+
+  it("is a no-op returning null for an unknown id", () => {
+    const profile = recordOpponentRound(entry({ id: "r1" }));
+
+    expect(updateOpponentRoundRecord(entry({ id: "does-not-exist", won: false }))).toBeNull();
+    expect(listOpponentRoundRecords()).toHaveLength(1);
+    expect(getOpponentTeamProfile("wxyz")).toEqual(profile);
   });
 });
 

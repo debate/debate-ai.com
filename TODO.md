@@ -6,6 +6,66 @@
 _No task currently in progress._
 
 ### Completed
+- **Judge Profiles & Opponent Team Profiles — edit or delete an
+  already-logged round from the app.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used; this repo has no `IDEAS.md`, so the
+  "Product Feature Ideas"/"Research Crowdsourcing Organizer Features"
+  sections below are the backlog). Two sibling gaps, both created by the
+  logging forms the last two runs added:
+  `docs/features/judge-profiles.md` said "No delete/edit affordance in the
+  panel for an already-logged round — `deleteJudgeRoundRecord` … exists and
+  is covered, but nothing in the UI calls it, so a mistyped ballot can only
+  be corrected by logging further rounds," and
+  `docs/features/opponent-team-profiles.md` said "A logged round can be
+  deleted but not edited in place" plus "The logged-rounds list shows every
+  team's rounds together, with no per-team filter."
+  Both stores gain one new function —
+  `packages/debate-speech-writer/src/state/judgeRoundRecords.ts`'s
+  `updateJudgeRoundRecord` and
+  `packages/debate-data-sync/src/state/opponentRoundRecords.ts`'s
+  `updateOpponentRoundRecord` — which replaces one persisted record by `id`
+  *in place* (keeping its position in the history) and then re-aggregates
+  the affected judge/team through the existing
+  `rebuildJudgeProfileFromRecords`/`rebuildOpponentTeamProfileFromRecords`.
+  Reassigning a round to a different judge/team re-aggregates **both**, so
+  the previous entity's derived profile is dropped rather than left
+  zero-round when that was its last round; an unknown `id` is a no-op
+  returning `null`. No new profile-scoring or scouting logic was
+  introduced — every roster column stays a derived value, so there is still
+  deliberately no direct aggregate editing.
+  `JudgeProfilesPanel.tsx` gains the "Logged rounds" table its sibling
+  panel already had, now with **Edit** and **Delete** actions, and
+  `OpponentTeamProfilesPanel.tsx`'s existing table gains the matching
+  **Edit**. On both panels the log form doubles as the edit form: Edit
+  loads the round back into it ("Edit logged round", with **Save
+  changes**/**Cancel**), saving routes to `update…` instead of `record…`,
+  and deleting the round currently being edited cancels the edit. Both
+  logged-rounds lists also gain a per-judge/per-team filter (a
+  case-insensitive substring match on the id), closing the opponent panel's
+  "no per-team filter" gap.
+  Vitest-covered (10 new cases, 5 per store, in
+  `packages/debate-speech-writer/test/judgeRoundRecords.test.ts` and
+  `packages/debate-data-sync/test/opponentRoundRecords.test.ts`: in-place
+  replacement preserving history order, the updated profile matching a
+  direct `buildJudgeProfile`/`buildOpponentTeamProfile` over the corrected
+  round, reassignment re-aggregating both entities, the previous entity's
+  profile being deleted when the reassigned round was its last, and the
+  unknown-id no-op).
+  Documented in `docs/features/judge-profiles.md` and
+  `docs/features/opponent-team-profiles.md` (new "Correcting a logged
+  round" section in each, data-flow blocks extended with `update…`; the
+  edit/delete-affordance and per-team-filter Known gaps closed and replaced
+  with the real remaining scope — the filter is free-text rather than a
+  picker of the ids actually on record, and an edit has no undo/history).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (160 files / 2285 tests, all pass — 10 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including `/judges` and `/opponents`) all
+  pass.
+  PR: [#280](https://github.com/debate/debate-ai.com/pull/280).
 - **Opponent Team Profiles — "Log a scouted round" form, the in-app way to
   create an opponent scouting profile.**
   Found via this run's own doc/tracker-drift audit of every
