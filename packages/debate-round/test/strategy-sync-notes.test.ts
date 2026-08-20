@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   assignNote,
+  buildPrepNoteJumpHref,
   buildPrepNoteSummaryText,
   createPrepNote,
   getNotesAssignedTo,
   getNotesForBox,
   getNotesForFlow,
   getOpenFollowUps,
+  parsePrepNoteJumpParams,
   resolvePrepNoteBox,
   sortNotesByCreatedAt,
   updateNoteStatus,
@@ -199,6 +201,51 @@ describe("resolvePrepNoteBox", () => {
 
   it("returns null when the path no longer resolves (e.g. rows were removed)", () => {
     expect(resolvePrepNoteBox(flow, note({ boxPath: [5, 0] }))).toBeNull();
+  });
+});
+
+describe("buildPrepNoteJumpHref", () => {
+  it("builds a /debate link carrying the note's flowId and boxPath", () => {
+    expect(buildPrepNoteJumpHref(note({ flowId: 3, boxPath: [0, 1] }))).toBe(
+      "/debate?flowId=3&boxPath=0,1",
+    );
+  });
+
+  it("joins a single-segment boxPath without a trailing comma", () => {
+    expect(buildPrepNoteJumpHref(note({ flowId: 7, boxPath: [2] }))).toBe("/debate?flowId=7&boxPath=2");
+  });
+});
+
+describe("parsePrepNoteJumpParams", () => {
+  function params(values: Record<string, string>) {
+    return { get: (name: string) => values[name] ?? null };
+  }
+
+  it("round-trips through buildPrepNoteJumpHref's query params", () => {
+    expect(parsePrepNoteJumpParams(params({ flowId: "3", boxPath: "0,1" }))).toEqual({
+      flowId: 3,
+      boxPath: [0, 1],
+    });
+  });
+
+  it("returns null when flowId is missing", () => {
+    expect(parsePrepNoteJumpParams(params({ boxPath: "0,1" }))).toBeNull();
+  });
+
+  it("returns null when boxPath is missing", () => {
+    expect(parsePrepNoteJumpParams(params({ flowId: "3" }))).toBeNull();
+  });
+
+  it("returns null when flowId isn't numeric", () => {
+    expect(parsePrepNoteJumpParams(params({ flowId: "abc", boxPath: "0,1" }))).toBeNull();
+  });
+
+  it("returns null when boxPath contains a non-integer segment", () => {
+    expect(parsePrepNoteJumpParams(params({ flowId: "3", boxPath: "0,abc" }))).toBeNull();
+  });
+
+  it("returns null when boxPath contains a negative segment", () => {
+    expect(parsePrepNoteJumpParams(params({ flowId: "3", boxPath: "0,-1" }))).toBeNull();
   });
 });
 

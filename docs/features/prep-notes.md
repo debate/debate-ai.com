@@ -87,11 +87,40 @@ that don't exist yet.
   notifications newest first, with a "Mark read" action per unread
   notification.
 
+## Jump to argument
+
+Each note in `PrepNotesPanel` has a **Jump to argument** link that takes
+you to `/debate` and scrolls the note's flow into view, flashing its cell.
+
+```
+flow/strategy-sync-notes.ts
+  buildPrepNoteJumpHref(note)             — /debate?flowId=<id>&boxPath=<path>
+  parsePrepNoteJumpParams(searchParams)   — the inverse, tolerant of a
+                                             missing/malformed flowId or
+                                             boxPath (returns null rather
+                                             than throwing)
+
+hooks/useJumpToPrepNoteBox.ts (mounted by DebateFlowPage)
+  reads the URL's flowId/boxPath via parsePrepNoteJumpParams
+    → selects the matching flow tab by id (flows.findIndex, not the
+      store's array-index `selected`)
+    → once that flow's AG Grid has the target row rendered — either
+      immediately (grid already mounted) or once its onGridReady fires
+      (fresh mount) — calls edit-cells.ts's jumpToBoxInGrid(api, boxPath)
+      to scroll to and flash the box's cell
+```
+
+The panel itself still doesn't mount a live `Flow` (it stays cross-flow, so
+`resolvePrepNoteBox` isn't used here); the link instead hands off to
+`/debate`, which already owns a live flow and its AG Grid. This closes the
+"No 'jump to argument' link" gap below.
+
 ## Known gaps
 
-- No "jump to argument" link from a note back to its flow box — this panel
-  is cross-flow and doesn't mount a live `Flow`, so `resolvePrepNoteBox`
-  isn't used here.
+- If a note's `boxPath` no longer resolves to a real grid row (e.g. the
+  flow was edited since the note was made), `jumpToBoxInGrid` silently
+  returns `false` — the flow tab still gets selected, but nothing scrolls
+  or flashes, and no error is shown.
 - No note-creation UI here — a note is still created against a specific
   flow box elsewhere (e.g. a future flow-view affordance); this panel only
   surfaces and updates existing notes.

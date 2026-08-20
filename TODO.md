@@ -6,6 +6,48 @@
 _No task currently in progress._
 
 ### Completed
+- **Prep Notes — "jump to argument" link back to a note's flow box.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/prep-notes.md`'s
+  Known gaps section said `PrepNotesPanel` had no "jump to argument" link
+  back to the flow box a note is about, since that panel is cross-flow and
+  doesn't mount a live `Flow` for `resolvePrepNoteBox` to resolve against.
+  Rather than mounting a `Flow` into the cross-flow panel, the link instead
+  hands off to `/debate`, which already owns one. Added
+  `flow/strategy-sync-notes.ts`'s `buildPrepNoteJumpHref`/
+  `parsePrepNoteJumpParams` (a `/debate?flowId=&boxPath=` deep link and its
+  tolerant inverse — returns `null` rather than throwing on a
+  missing/malformed param) and `flow/edit-cells.ts`'s `jumpToBoxInGrid`
+  (scrolls to and flashes a box's AG Grid cell via the existing
+  `gridCellForBoxPath`, returning `false` as a no-op if the row isn't in
+  the grid's current row model yet). A new
+  `hooks/useJumpToPrepNoteBox.ts`, mounted by `DebateFlowPage` alongside
+  the existing `useRoundFromSlug`/`useSyncUrlWithRound` URL-sync hooks,
+  reads the deep link's `flowId`/`boxPath`, selects the matching flow tab
+  by id (`flows.findIndex`, not the store's array-index `selected`), and
+  retries `jumpToBoxInGrid` both immediately (grid already mounted) and via
+  a new `onFlowGridReady` callback threaded through `FlowMainContent` (for
+  a flow whose grid hasn't mounted yet). `PrepNotesPanel.tsx` renders a
+  "Jump to argument" link per note using `buildPrepNoteJumpHref`.
+  Vitest-covered (10 new cases: 8 in
+  `packages/debate-round/test/strategy-sync-notes.test.ts` for
+  `buildPrepNoteJumpHref`/`parsePrepNoteJumpParams` — round-tripping,
+  single-segment paths, and missing/non-numeric/negative-segment
+  malformed-param cases each returning `null`; 2 in
+  `packages/debate-round/test/edit-cells.test.ts` for `jumpToBoxInGrid`
+  against a fake grid API — a successful scroll+flash, and the no-op
+  `false` case when the row isn't found). Documented in
+  `docs/features/prep-notes.md` (new "Jump to argument" section; Known
+  gaps' "No 'jump to argument' link" bullet closed and replaced with the
+  real remaining gap — a stale `boxPath` silently no-ops rather than
+  erroring). Verified from a clean install: `bun install` (2050 packages),
+  `bun run test` (156 files / 2224 tests, all pass — 10 new cases), `bun
+  run typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including every existing route,
+  `/prep-notes` and `/debate` among them) all pass.
+  PR: [#272](https://github.com/debate/debate-ai.com/pull/272).
 - **Shared Evidence Library — true incremental search-index updates instead
   of a full rebuild on every cache invalidation.**
   Found via this run's own doc/tracker-drift audit of every
