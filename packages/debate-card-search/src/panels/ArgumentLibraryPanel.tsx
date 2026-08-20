@@ -15,6 +15,18 @@
  * submission tagged with topic/case-area now appears here too, not just a
  * dedicated `/cards/library` evidence-library entry.
  *
+ * A "Rename/merge tag" form closes `docs/features/evidence-library.md`'s
+ * "No tag rename/merge tool" Known gap: picking an existing tag and typing a
+ * new name calls `state/evidenceLibraryEntries.ts`'s
+ * `renameTagAcrossPersistedEntries` (itself a thin composition of
+ * `argument-library.ts`'s pure `renameTagAcrossCards`), rewriting the tag on
+ * every persisted evidence-library entry that carries it — merging into an
+ * existing tag name instead of duplicating it when the target is already in
+ * use. Only this panel's evidence-library entries are rewritten; a tag
+ * applied to a Contributions Feed submission is a separate store and is
+ * left untouched (documented in the panel's own copy and in
+ * `docs/features/evidence-library.md`).
+ *
  * @module panels/ArgumentLibraryPanel
  */
 
@@ -23,7 +35,9 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
-import { buildCombinedPersistedArgumentLibrary } from "../state/evidenceLibraryEntries"
+import { Input } from "debate-ui/src/primitives/input"
+import { Label } from "debate-ui/src/primitives/label"
+import { buildCombinedPersistedArgumentLibrary, renameTagAcrossPersistedEntries } from "../state/evidenceLibraryEntries"
 import { buildLibrarySummaryText, filterCardsByTags } from "../lib/argument-library"
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
 
@@ -38,10 +52,32 @@ import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
 export function ArgumentLibraryPanel() {
   const [library, setLibrary] = useState<ArgumentLibrary | null>(null)
   const [activeTags, setActiveTags] = useState<string[]>([])
+  const [renameOldTag, setRenameOldTag] = useState("")
+  const [renameNewTag, setRenameNewTag] = useState("")
+  const [renameMessage, setRenameMessage] = useState<string | null>(null)
 
   useEffect(() => {
     setLibrary(buildCombinedPersistedArgumentLibrary())
   }, [])
+
+  function handleRenameTag() {
+    try {
+      const changedCount = renameTagAcrossPersistedEntries(renameOldTag, renameNewTag)
+      setLibrary(buildCombinedPersistedArgumentLibrary())
+      setActiveTags((current) => current.map((tag) => (tag === renameOldTag.trim() ? renameNewTag.trim() : tag)))
+      setRenameMessage(
+        changedCount === 0
+          ? `No evidence-library entries carry "${renameOldTag.trim()}" — nothing changed.`
+          : `Renamed "${renameOldTag.trim()}" to "${renameNewTag.trim()}" on ${changedCount} ${
+              changedCount === 1 ? "entry" : "entries"
+            }.`,
+      )
+      setRenameOldTag("")
+      setRenameNewTag("")
+    } catch (error) {
+      setRenameMessage(error instanceof Error ? error.message : String(error))
+    }
+  }
 
   if (library === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading argument library…</div>
@@ -92,6 +128,57 @@ export function ArgumentLibraryPanel() {
               Clear filter
             </Button>
           )}
+        </div>
+      )}
+
+      {library.tagCollections.length > 0 && (
+        <div className="rounded-lg border border-border p-3 space-y-2">
+          <div className="text-sm font-medium text-foreground">Rename/merge tag</div>
+          <p className="text-xs text-muted-foreground">
+            Rewrites the tag on every evidence-library entry that carries it. Renaming into an
+            existing tag name merges the two. Contributions Feed submissions tagged separately are
+            not affected.
+          </p>
+          <div className="flex flex-wrap items-end gap-2">
+            <div>
+              <Label htmlFor="rename-tag-old" className="text-xs">
+                Existing tag
+              </Label>
+              <select
+                id="rename-tag-old"
+                value={renameOldTag}
+                onChange={(e) => setRenameOldTag(e.target.value)}
+                className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="">Choose a tag…</option>
+                {library.tagCollections.map((collection) => (
+                  <option key={collection.tag} value={collection.tag}>
+                    {collection.tag} ({collection.cards.length})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label htmlFor="rename-tag-new" className="text-xs">
+                New name
+              </Label>
+              <Input
+                id="rename-tag-new"
+                value={renameNewTag}
+                onChange={(e) => setRenameNewTag(e.target.value)}
+                placeholder="new-tag-name"
+                className="h-9"
+              />
+            </div>
+            <Button
+              size="sm"
+              disabled={!renameOldTag.trim() || !renameNewTag.trim()}
+              onClick={handleRenameTag}
+            >
+              Rename/merge
+            </Button>
+          </div>
+          {renameMessage && <p className="text-xs text-muted-foreground">{renameMessage}</p>}
         </div>
       )}
 

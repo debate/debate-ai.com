@@ -273,6 +273,49 @@ submitter to count it themselves — this is also the field the Topic Coverage
 Dashboard's `missing`/`thin`/`covered` classification scores against, so a
 card submitted here now feeds that dashboard directly.
 
+## Tag rename/merge
+
+Closes this bullet's "No tag rename/merge tool" Known gap. The Common
+Argument Library browser (`/cards/argument-library`,
+`panels/ArgumentLibraryPanel.tsx`) — where the tag collections themselves
+are visible — now has a "Rename/merge tag" form: pick an existing tag from a
+dropdown (populated from the library's own `tagCollections`), type a new
+name, and every persisted `EvidenceLibraryEntry` carrying the old tag is
+rewritten to carry the new one instead.
+
+`lib/argument-library.ts`'s `renameTagAcrossCards` (generic over any
+`LibraryCard[]`) does the rewrite: a card not carrying the old tag is
+returned as the exact same object reference (so an unaffected card never
+looks "changed"), and a card that already carries the target tag name has
+its old tag simply dropped rather than ending up with a duplicate — a
+rename into an already-used name is a merge. It throws if either tag,
+trimmed, is blank, or if the two tags are the same (nothing to rename).
+`renameTagInList` is the single-card-list version it builds on.
+
+`state/evidenceLibraryEntries.ts`'s `renameTagAcrossPersistedEntries(oldTag,
+newTag)` applies this against the real persisted repository, writing back
+only when at least one entry actually changed (an all-no-op rename never
+touches `localStorage`, so `getCachedEvidenceSearchIndex`'s raw-JSON
+fingerprint isn't invalidated for nothing), and returns how many entries
+changed. The panel shows that count (or a "nothing changed" message when
+the tag wasn't used) after each rename.
+
+This only rewrites the evidence-library repository's own entries — a tag
+applied to a Contributions Feed submission (composed into the same browser
+via `buildCombinedPersistedArgumentLibrary`, see above) lives in a separate
+store/form and isn't rewritten by this tool; renaming a tag that only
+appears on a contribution reports zero entries changed. The panel's own
+copy states this limitation.
+
+Vitest-covered in `packages/debate-card-search/test/argument-library.test.ts`
+(`renameTagInList`/`renameTagAcrossCards`: rename across multiple cards
+leaving others untouched by reference, merge-dedup into an existing tag,
+no-op when the tag is unused, and throwing on a blank or identical
+old/new tag) and
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+(`renameTagAcrossPersistedEntries`: rewrite-and-persist, merge, a true
+no-write no-op, and throwing on a blank new tag).
+
 ## Known gaps
 
 - A real inverted-index/TF-IDF search now exists, `EvidenceLibraryPanel` is
@@ -285,10 +328,10 @@ card submitted here now feeds that dashboard directly.
   automatically against the current tab. The reuse-check logic itself
   (`checkPageForExistingCards`/`findEntriesBySourceUrl`/`normalizeSourceUrl`)
   is already a plain, extension-callable function with no UI dependency.
-- No tag rename/merge tool — the Tags field's autocomplete only suggests
-  reusing an existing tag while typing; renaming or merging a tag already
-  applied to existing entries would mean rewriting every entry that carries
-  it, and isn't implemented.
+- A tag rename/merge tool now exists (see "Tag rename/merge" above), but it
+  only rewrites this evidence-library repository's own entries — a
+  Contributions Feed submission's tags are a separate store/form and aren't
+  rewritten by it.
 - A Contributions Feed submission tagged for the Argument Library gets no
   tag-autocomplete affordance of its own (that only exists on the dedicated
   `/cards/library` form's Tags field) — it's a plain comma-separated text
