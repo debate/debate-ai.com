@@ -52,7 +52,7 @@ _No task currently in progress._
   typecheck` (11 in-scope packages pass — `debate-ai-web` has no
   `typecheck` script; this repo has no `lint` script), and `bun run
   build:web` (production build, including `/judges`) all pass.
-  PR: pending.
+  PR: [#278](https://github.com/debate/debate-ai.com/pull/278).
 - **Outline Filters and Argument Tree View — wire "generate outline for
   current round" trigger.**
   Found via this run's own doc/tracker-drift audit of every
