@@ -2,8 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   formatArgumentTags,
   getRowArgumentTags,
+  getSectionRowIndexes,
+  getSectionRowPreviews,
   listAuthorIdsInFlow,
   setRowArgumentTags,
+  setRowsArgumentTags,
 } from "../src/flow/argument-tagging";
 import { buildRowData, rowDataToBoxes } from "../src/flow/dataTransform";
 import { buildArgumentTree, filterArgumentTree } from "../src/flow/argument-tree";
@@ -112,6 +115,117 @@ describe("setRowArgumentTags", () => {
     const filtered = filterArgumentTree(buildArgumentTree(updated), { argumentType: "turn" });
 
     expect(filtered.map((node) => node.content)).toEqual(["Turn"]);
+  });
+});
+
+describe("setRowsArgumentTags", () => {
+  it("applies the same tags to every listed row and leaves the rest untouched", () => {
+    const flow = flowWith([
+      rowFromContents(["Link", "", ""]),
+      rowFromContents(["Impact", "", ""]),
+      rowFromContents(["Uniqueness", "", ""]),
+    ]);
+    const updated = setRowsArgumentTags(flow, [0, 2], {
+      argumentType: "extension",
+      authorId: "sam",
+    });
+
+    expect(getRowArgumentTags(updated, 0)).toEqual({
+      argumentType: "extension",
+      authorId: "sam",
+      evidenceStatus: undefined,
+    });
+    expect(getRowArgumentTags(updated, 2)).toEqual({
+      argumentType: "extension",
+      authorId: "sam",
+      evidenceStatus: undefined,
+    });
+    expect(updated.children[1]).toBe(flow.children[1]);
+  });
+
+  it("ignores duplicate and out-of-range indexes", () => {
+    const flow = flowWith([rowFromContents(["Link", "", ""])]);
+    const updated = setRowsArgumentTags(flow, [0, 0, 9], { argumentType: "link" });
+
+    expect(getRowArgumentTags(updated, 0).argumentType).toBe("link");
+    expect(updated.children).toHaveLength(1);
+  });
+
+  it("returns the flow unchanged when no index resolves to a real row", () => {
+    const flow = flowWith([rowFromContents(["Link", "", ""])]);
+    expect(setRowsArgumentTags(flow, [4, 9], { argumentType: "turn" })).toBe(flow);
+  });
+});
+
+describe("getSectionRowIndexes", () => {
+  it("collects every content row under the nearest preceding heading", () => {
+    const flow = flowWith([
+      rowFromContents(["Advantage: Warming", "", ""], { isHeading: true }),
+      rowFromContents(["Link", "", ""]),
+      rowFromContents(["Impact", "", ""]),
+      rowFromContents(["Advantage: Econ", "", ""], { isHeading: true }),
+      rowFromContents(["Uniqueness", "", ""]),
+    ]);
+
+    expect(getSectionRowIndexes(flow, 1)).toEqual([1, 2]);
+    expect(getSectionRowIndexes(flow, 2)).toEqual([1, 2]);
+    expect(getSectionRowIndexes(flow, 4)).toEqual([4]);
+  });
+
+  it("treats a heading row's own section as the rows that follow it", () => {
+    const flow = flowWith([
+      rowFromContents(["Advantage: Warming", "", ""], { isHeading: true }),
+      rowFromContents(["Link", "", ""]),
+      rowFromContents(["Advantage: Econ", "", ""], { isHeading: true }),
+    ]);
+
+    expect(getSectionRowIndexes(flow, 0)).toEqual([1]);
+    expect(getSectionRowIndexes(flow, 2)).toEqual([]);
+  });
+
+  it("treats rows before any heading as their own section", () => {
+    const flow = flowWith([
+      rowFromContents(["Untagged intro", "", ""]),
+      rowFromContents(["Advantage: Warming", "", ""], { isHeading: true }),
+      rowFromContents(["Link", "", ""]),
+    ]);
+
+    expect(getSectionRowIndexes(flow, 0)).toEqual([0]);
+  });
+
+  it("returns an empty array for an out-of-range row index", () => {
+    const flow = flowWith([rowFromContents(["Link", "", ""])]);
+    expect(getSectionRowIndexes(flow, -1)).toEqual([]);
+    expect(getSectionRowIndexes(flow, 5)).toEqual([]);
+  });
+});
+
+describe("getSectionRowPreviews", () => {
+  it("returns every other row in the section with its content and tags", () => {
+    const flow = flowWith([
+      rowFromContents(["Advantage: Warming", "", ""], { isHeading: true }),
+      rowFromContents(["Link", "", ""], { argumentType: "link" }),
+      rowFromContents(["Impact", "", ""], { argumentType: "impact", authorId: "sam" }),
+    ]);
+
+    expect(getSectionRowPreviews(flow, 1)).toEqual([
+      { rowIndex: 2, label: "Impact", tags: { argumentType: "impact", authorId: "sam", evidenceStatus: undefined } },
+    ]);
+  });
+
+  it("truncates a long row's content and returns [] with no section neighbours", () => {
+    const longContent = "A".repeat(60);
+    const flow = flowWith([rowFromContents([longContent, "", ""])]);
+
+    expect(getSectionRowPreviews(flow, 0)).toEqual([]);
+
+    const withNeighbour = flowWith([
+      rowFromContents([longContent, "", ""]),
+      rowFromContents(["Impact", "", ""]),
+    ]);
+    const previews = getSectionRowPreviews(withNeighbour, 1);
+    expect(previews).toHaveLength(1);
+    expect(previews[0].label).toBe(`${longContent.slice(0, 40)}…`);
   });
 });
 

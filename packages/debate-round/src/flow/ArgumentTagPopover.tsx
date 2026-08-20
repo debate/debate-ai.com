@@ -5,6 +5,11 @@
  * `argumentType`/`authorId`/`evidenceStatus`, the three fields the Argument
  * Tree Outline panel (`/outline`) filters and badges on but which nothing in
  * the live flow UI could populate before.
+ *
+ * Also shows how the row's neighbours in the same section are already
+ * tagged, and offers a "tag every other row in this section too" bulk
+ * option — closing the two remaining Known gaps recorded in
+ * `docs/features/argument-tree-outline.md`.
  */
 
 "use client"
@@ -12,8 +17,8 @@
 import { useEffect, useRef, useState } from "react"
 import { Tags } from "lucide-react"
 import type { ArgumentType, EvidenceStatus } from "debate-core/src/types/flow"
-import { ARGUMENT_TYPES, EVIDENCE_STATUSES } from "./argument-tagging"
-import type { ArgumentTags } from "./argument-tagging"
+import { ARGUMENT_TYPES, EVIDENCE_STATUSES, formatArgumentTags } from "./argument-tagging"
+import type { ArgumentTags, SectionRowPreview } from "./argument-tagging"
 
 export interface ArgumentTagPopoverProps {
   x: number
@@ -22,7 +27,10 @@ export interface ArgumentTagPopoverProps {
   tags: ArgumentTags
   /** Contributor ids already used elsewhere in this flow, offered as suggestions. */
   authorIdSuggestions: string[]
-  onSave: (tags: ArgumentTags) => void
+  /** Every *other* row in this row's section, with its own content and current tags. */
+  sectionRows?: SectionRowPreview[]
+  /** `applyToSection` is true when the "also tag these rows" checkbox was checked. */
+  onSave: (tags: ArgumentTags, applyToSection: boolean) => void
   onClose: () => void
 }
 
@@ -36,6 +44,7 @@ export function ArgumentTagPopover({
   y,
   tags,
   authorIdSuggestions,
+  sectionRows = [],
   onSave,
   onClose,
 }: ArgumentTagPopoverProps) {
@@ -45,6 +54,7 @@ export function ArgumentTagPopover({
     tags.evidenceStatus,
   )
   const [authorId, setAuthorId] = useState(tags.authorId ?? "")
+  const [applyToSection, setApplyToSection] = useState(false)
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -138,11 +148,33 @@ export function ArgumentTagPopover({
         </datalist>
       </label>
 
+      {sectionRows.length > 0 && (
+        <div className="flex flex-col gap-1 rounded border border-input bg-muted/30 p-1.5 text-[11px]">
+          <span className="font-medium text-muted-foreground">Other rows in this section</span>
+          <ul className="flex max-h-24 flex-col gap-0.5 overflow-y-auto">
+            {sectionRows.map((row) => (
+              <li key={row.rowIndex} className="flex justify-between gap-2 text-muted-foreground">
+                <span className="truncate">{row.label || "(empty)"}</span>
+                <span className="shrink-0">{formatArgumentTags(row.tags) || "—"}</span>
+              </li>
+            ))}
+          </ul>
+          <label className="flex items-center gap-1.5 pt-1 text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={applyToSection}
+              onChange={(e) => setApplyToSection(e.target.checked)}
+            />
+            Also tag {sectionRows.length === 1 ? "this row" : `these ${sectionRows.length} rows`}
+          </label>
+        </div>
+      )}
+
       <button
         type="button"
         className="self-end rounded bg-primary px-2 py-1 text-xs text-primary-foreground hover:bg-primary/90"
         onClick={() => {
-          onSave({ argumentType, evidenceStatus, authorId })
+          onSave({ argumentType, evidenceStatus, authorId }, applyToSection)
           onClose()
         }}
       >

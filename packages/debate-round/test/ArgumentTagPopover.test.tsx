@@ -75,6 +75,47 @@ describe("ArgumentTagPopover", () => {
     expect(markup).toContain('value="sam"');
   });
 
+  it("renders no section block when there are no neighbouring rows", () => {
+    const markup = renderToStaticMarkup(
+      <ArgumentTagPopover
+        x={100}
+        y={100}
+        tags={{}}
+        authorIdSuggestions={[]}
+        sectionRows={[]}
+        onSave={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(markup).not.toContain("Other rows in this section");
+  });
+
+  it("lists neighbouring section rows with their content and tags, plus a bulk-apply checkbox", () => {
+    const markup = renderToStaticMarkup(
+      <ArgumentTagPopover
+        x={100}
+        y={100}
+        tags={{}}
+        authorIdSuggestions={[]}
+        sectionRows={[
+          { rowIndex: 2, label: "Impact", tags: { argumentType: "impact", authorId: "sam" } },
+          { rowIndex: 3, label: "Uniqueness", tags: {} },
+        ]}
+        onSave={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(markup).toContain("Other rows in this section");
+    expect(markup).toContain("Impact");
+    expect(markup).toContain("impact · sam");
+    expect(markup).toContain("Uniqueness");
+    expect(markup).toContain("—");
+    expect(markup).toContain("Also tag these 2 rows");
+    expect(markup).toContain('type="checkbox"');
+  });
+
   it("clamps its position so it stays inside the viewport", () => {
     const markup = renderToStaticMarkup(
       <ArgumentTagPopover

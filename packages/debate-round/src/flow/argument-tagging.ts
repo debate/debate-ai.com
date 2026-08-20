@@ -12,6 +12,11 @@
  * row-level to match, addressing a row by its index in `flow.children`
  * rather than by the per-cell `boxPath` the annotation/edit/prep-note
  * affordances use.
+ *
+ * `getSectionRowIndexes`/`setRowsArgumentTags`/`getSectionRowPreviews` add a
+ * bulk "tag every row in this section" action plus a same-section neighbour
+ * preview to `ArgumentTagPopover`, closing the two remaining Known gaps
+ * recorded in `docs/features/argument-tree-outline.md`.
  */
 
 import type { ArgumentType, Box, EvidenceStatus, Flow } from "debate-core/src/types/flow";
@@ -61,18 +66,39 @@ export function setRowArgumentTags<T extends Pick<Flow, "children">>(
   rowIndex: number,
   tags: ArgumentTags,
 ): T {
-  const box = flow.children[rowIndex];
-  if (!box) return flow;
+  return setRowsArgumentTags(flow, [rowIndex], tags);
+}
 
+/**
+ * Bulk form of {@link setRowArgumentTags} — applies the same `tags` to every
+ * row in `rowIndexes` in one pass, returning a single new `Flow`. Duplicate
+ * and out-of-range indexes are ignored; if none resolve to a real row, the
+ * flow is returned unchanged (by identity, matching the single-row helper).
+ * This is what a "tag every row in this section" bulk action calls, with
+ * `rowIndexes` typically coming from {@link getSectionRowIndexes}.
+ */
+export function setRowsArgumentTags<T extends Pick<Flow, "children">>(
+  flow: T,
+  rowIndexes: number[],
+  tags: ArgumentTags,
+): T {
+  const validIndexes = [...new Set(rowIndexes)].filter((i) => flow.children[i]);
+  if (validIndexes.length === 0) return flow;
+
+  const children = [...flow.children];
+  for (const rowIndex of validIndexes) {
+    children[rowIndex] = buildTaggedBox(children[rowIndex], tags);
+  }
+  return { ...flow, children };
+}
+
+function buildTaggedBox(box: Box, tags: ArgumentTags): Box {
   const tagged: Box = { ...box };
   applyTag(tagged, "argumentType", tags.argumentType);
   applyTag(tagged, "evidenceStatus", tags.evidenceStatus);
   const authorId = tags.authorId?.trim();
   applyTag(tagged, "authorId", authorId ? authorId : undefined);
-
-  const children = [...flow.children];
-  children[rowIndex] = tagged;
-  return { ...flow, children };
+  return tagged;
 }
 
 function applyTag<K extends keyof ArgumentTags>(
@@ -85,6 +111,83 @@ function applyTag<K extends keyof ArgumentTags>(
   } else {
     box[key] = value as never;
   }
+}
+
+/**
+ * Every content-row index in the same "section" as `rowIndex` — the rows
+ * between the nearest heading at or before `rowIndex` (exclusive of the
+ * heading itself) and the next heading (exclusive), or the flow's leading
+ * rows if none precede it. Mirrors `dataTransform.ts#buildRowData`'s
+ * `parentHeadingId` grouping and `argument-tree.ts#buildArgumentTree`'s
+ * heading nesting, without needing either the grid's row data or a full
+ * tree build. Always includes `rowIndex` itself when it addresses a content
+ * row. An out-of-range `rowIndex`, or a heading row directly followed by
+ * another heading (an empty section), returns `[]`.
+ */
+export function getSectionRowIndexes(
+  flow: Pick<Flow, "children">,
+  rowIndex: number,
+): number[] {
+  const boxes = flow.children;
+  if (rowIndex < 0 || rowIndex >= boxes.length) return [];
+
+  let start = 0;
+  if (boxes[rowIndex]?.isHeading) {
+    start = rowIndex + 1;
+  } else {
+    for (let i = rowIndex; i >= 0; i--) {
+      if (boxes[i]?.isHeading) {
+        start = i + 1;
+        break;
+      }
+    }
+  }
+
+  let end = boxes.length;
+  for (let i = start; i < boxes.length; i++) {
+    if (boxes[i]?.isHeading) {
+      end = i;
+      break;
+    }
+  }
+
+  const indexes: number[] = [];
+  for (let i = start; i < end; i++) indexes.push(i);
+  return indexes;
+}
+
+export type SectionRowPreview = {
+  rowIndex: number;
+  /** The row's own (root-box) content, truncated for a compact list. */
+  label: string;
+  tags: ArgumentTags;
+};
+
+const PREVIEW_LABEL_MAX_LENGTH = 40;
+
+/**
+ * Every *other* content row in `rowIndex`'s section (see
+ * {@link getSectionRowIndexes}), each with its own content and current tags
+ * — what the tagging popover shows so a contributor can see how
+ * neighbouring rows in the section are already tagged before choosing this
+ * row's tags, closing the "a row's tags aren't shown in the
+ * `ArgumentTagPopover` for the row's neighbours" gap recorded in
+ * `docs/features/argument-tree-outline.md`.
+ */
+export function getSectionRowPreviews(
+  flow: Pick<Flow, "children">,
+  rowIndex: number,
+): SectionRowPreview[] {
+  return getSectionRowIndexes(flow, rowIndex)
+    .filter((i) => i !== rowIndex)
+    .map((i) => {
+      const content = flow.children[i]?.content?.trim() ?? "";
+      const label =
+        content.length > PREVIEW_LABEL_MAX_LENGTH
+          ? `${content.slice(0, PREVIEW_LABEL_MAX_LENGTH)}…`
+          : content;
+      return { rowIndex: i, label, tags: getRowArgumentTags(flow, i) };
+    });
 }
 
 /**
