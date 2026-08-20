@@ -6,6 +6,41 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Response-Outcome Charts — AI counsel panel now scores an active "what if" hypothetical.**
+  Closes one of the four "Newly discovered small gaps" logged by the
+  previous run's doc/tracker drift audit (see that entry below):
+  `docs/features/response-outcome-charts.md`'s Known gap that
+  `VulnerabilityChartsPanel.handleGetCounselPanel`
+  (`packages/debate-round/src/panels/VulnerabilityChartsPanel.tsx`) built
+  its AI counsel request's top arguments from `record.report` — the
+  original persisted report — instead of `effectiveReport`, the report
+  with the panel's own "what if" (Extend/Answer/Concede) hypothetical
+  adjustments applied via `applyHypotheticalAdjustments`. The chart and
+  side summary above the counsel-panel button already rendered
+  `effectiveReport`, so an active hypothetical was silently ignored by the
+  AI counsel call even though the rest of the card reflected it.
+  Extracted the inline top-arguments derivation (previously duplicated
+  logic in the panel) into a new pure helper,
+  `buildCounselPanelTopArguments(report, options)` in
+  `packages/debate-round/src/flow/response-outcome.ts`, which composes the
+  existing `buildVulnerabilityChartDataFromReport` + a per-row field trim
+  in one step. `handleGetCounselPanel` now takes `effectiveReport` as a
+  parameter (passed from the render scope where it's already computed) and
+  calls `buildCounselPanelTopArguments(effectiveReport)` instead of
+  rebuilding the list from `record.report` inline. No change to the
+  vulnerability-scoring heuristic itself. Vitest-covered (3 new cases in
+  `packages/debate-round/test/response-outcome.test.ts`'s
+  `buildCounselPanelTopArguments` suite: ranked top-N trimmed to the
+  counsel-request fields, the default limit of 10, and reflecting a
+  hypothetical-adjusted report's recomputed score/unanswered status instead
+  of the original report's). Verified with `bun run test` (156 files /
+  2195 tests, all pass — 3 new cases), `bun run typecheck` (11 in-scope
+  packages pass — `debate-ai-web` has no `typecheck` script; this repo has
+  no `lint` script), and `bun run build` (both buildable packages pass,
+  `/outcomes` present in the route list). Docs updated at
+  `docs/features/response-outcome-charts.md` (closes its only Known gap;
+  the section now reads "No known gaps remain for this idea"). PR:
+  https://github.com/debate/debate-ai.com/pull/267.
 - **AI Coach Mode — "generate coaching session for current round" form.**
   Closed `docs/features/coaching-sessions.md`'s only remaining Known gap —
   the same doc/tracker-drift pattern the three most recent runs already
