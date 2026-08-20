@@ -66,6 +66,46 @@ export function listOpponentRoundRecordsForTeam(teamId: string): OpponentRoundRe
   return readAll().filter((record) => record.teamId === teamId);
 }
 
+/** Every distinct opposing-team id with at least one logged round, sorted alphabetically. */
+export function listOpponentTeamIds(): string[] {
+  return Array.from(new Set(readAll().map((record) => record.teamId))).sort();
+}
+
+/** Levenshtein edit distance between two strings, case-insensitive. */
+function editDistance(a: string, b: string): number {
+  const x = a.toLowerCase();
+  const y = b.toLowerCase();
+  const rows: number[][] = Array.from({ length: x.length + 1 }, () => new Array(y.length + 1).fill(0));
+  for (let i = 0; i <= x.length; i++) rows[i]![0] = i;
+  for (let j = 0; j <= y.length; j++) rows[0]![j] = j;
+  for (let i = 1; i <= x.length; i++) {
+    for (let j = 1; j <= y.length; j++) {
+      const cost = x[i - 1] === y[j - 1] ? 0 : 1;
+      rows[i]![j] = Math.min(
+        rows[i - 1]![j]! + 1,
+        rows[i]![j - 1]! + 1,
+        rows[i - 1]![j - 1]! + cost,
+      );
+    }
+  }
+  return rows[x.length]![y.length]!;
+}
+
+/**
+ * The known opposing-team id closest to `query` by edit distance, for a "did
+ * you mean" suggestion when a typed filter matches no logged round. Returns
+ * `null` when there are no logged team ids or `query` is blank.
+ */
+export function findNearestOpponentTeamId(query: string): string | null {
+  const trimmed = query.trim();
+  if (trimmed === "") return null;
+  const ids = listOpponentTeamIds();
+  if (ids.length === 0) return null;
+  return ids.reduce((closest, id) =>
+    editDistance(trimmed, id) < editDistance(trimmed, closest) ? id : closest,
+  );
+}
+
 /**
  * Re-derives one team's `OpponentTeamProfile` from its persisted scouted-round
  * records and saves it. A team with no records left has its derived profile

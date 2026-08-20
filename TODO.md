@@ -6,6 +6,44 @@
 _No task currently in progress._
 
 ### Completed
+- **Judge Profiles and Opponent Team Profiles — "did you mean" suggestion
+  and datalist autocomplete on the logged-rounds ID filter.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): both `docs/features/judge-profiles.md` and
+  `docs/features/opponent-team-profiles.md` said "The logged-rounds filter
+  is a free-text substring match on the judge id [team id], not a picker of
+  the judges [teams] actually on record — a typo shows an empty list rather
+  than suggesting the nearest judge [team]." `debate-speech-writer`'s
+  `state/judgeRoundRecords.ts` gained `listJudgeIds()` (every distinct
+  logged judge id, sorted alphabetically) and `findNearestJudgeId(query)` (a
+  small case-insensitive Levenshtein edit-distance search over that list,
+  returning `null` for a blank query or when nothing is logged yet);
+  `debate-data-sync`'s `state/opponentRoundRecords.ts` gained the mirrored
+  `listOpponentTeamIds()`/`findNearestOpponentTeamId(query)`, duplicated
+  locally in each package the same way the two round-record stores already
+  mirror each other's wrapped-record convention (there is no shared
+  low-level package either depends on). `JudgeProfilesPanel.tsx`'s and
+  `OpponentTeamProfilesPanel.tsx`'s "Filter by judge/team ID" `Input` now
+  carries a `list` attribute pointing at a `<datalist>` of the ids actually
+  on record, and the "No logged rounds match" empty state now shows a
+  clickable "Did you mean `<id>`?" suggestion (from `findNearest…Id`) that
+  refills the filter, shown only when a real suggestion exists. Both docs'
+  Known gaps sections were updated to close this bullet and describe the new
+  behavior. Vitest-covered in
+  `packages/debate-speech-writer/test/judgeRoundRecords.test.ts` and
+  `packages/debate-data-sync/test/opponentRoundRecords.test.ts` (new
+  `listJudgeIds`/`listOpponentTeamIds` and
+  `findNearestJudgeId`/`findNearestOpponentTeamId` describe blocks:
+  alphabetical dedup, a typo resolving to the right id, and the
+  blank-query/no-data `null` cases). Verified with `bun x vitest run` (162
+  files, 2324 tests), `bunx turbo typecheck --filter=debate-speech-writer
+  --filter=debate-round --filter=debate-data-sync`, and `bunx turbo build
+  --filter=debate-ai-web`; no `lint` script is configured in this repo.
+  **PR:** [#285](https://github.com/debate/debate-ai.com/pull/285).
+  **Completed:** 2026-08-20.
+
 - **Outline Filters and Argument Tree View — auto-sync the argument tree
   as a round is flowed, not just on a manual "Generate outline" click.**
   Found via this run's own audit of `docs/features/*.md` "Known gaps"

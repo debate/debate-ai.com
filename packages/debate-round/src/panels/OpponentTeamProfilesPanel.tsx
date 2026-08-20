@@ -54,7 +54,9 @@ import {
 import { buildOpponentTeamProfilesRoster } from "debate-data-sync/src/state/opponentTeamProfiles"
 import {
   deleteOpponentRoundRecord,
+  findNearestOpponentTeamId,
   listOpponentRoundRecords,
+  listOpponentTeamIds,
   recordOpponentRound,
   updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
@@ -209,6 +211,8 @@ export function OpponentTeamProfilesPanel() {
     normalizedFilter === ""
       ? records
       : records.filter((record) => record.teamId.toLowerCase().includes(normalizedFilter))
+  const teamIds = listOpponentTeamIds()
+  const nearestTeamId = visibleRecords.length === 0 ? findNearestOpponentTeamId(teamFilter) : null
 
   if (roster === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading opponent team profiles…</div>
@@ -389,13 +393,35 @@ export function OpponentTeamProfilesPanel() {
             <Label htmlFor="opponent-round-filter">Filter by team ID</Label>
             <Input
               id="opponent-round-filter"
+              list="opponent-round-filter-options"
               value={teamFilter}
               onChange={(e) => setTeamFilter(e.target.value)}
               placeholder="Show every team's rounds"
             />
+            <datalist id="opponent-round-filter-options">
+              {teamIds.map((id) => (
+                <option key={id} value={id} />
+              ))}
+            </datalist>
           </div>
           {visibleRecords.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No logged rounds match that team ID.</p>
+            <p className="text-sm text-muted-foreground">
+              No logged rounds match that team ID.
+              {nearestTeamId !== null && (
+                <>
+                  {" "}
+                  Did you mean{" "}
+                  <button
+                    type="button"
+                    className="underline underline-offset-2 hover:text-foreground"
+                    onClick={() => setTeamFilter(nearestTeamId)}
+                  >
+                    {nearestTeamId}
+                  </button>
+                  ?
+                </>
+              )}
+            </p>
           ) : (
             <Table>
               <TableHeader>

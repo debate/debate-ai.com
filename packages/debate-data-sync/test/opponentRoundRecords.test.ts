@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   deleteOpponentRoundRecord,
+  findNearestOpponentTeamId,
   listOpponentRoundRecords,
   listOpponentRoundRecordsForTeam,
+  listOpponentTeamIds,
   rebuildOpponentTeamProfileFromRecords,
   recordOpponentRound,
   updateOpponentRoundRecord,
@@ -203,6 +205,39 @@ describe("deleteOpponentRoundRecord", () => {
 
     expect(getOpponentTeamProfile("wxyz")).toBeUndefined();
     expect(getOpponentTeamProfile("abcd")).toEqual(other);
+  });
+});
+
+describe("listOpponentTeamIds", () => {
+  it("returns every distinct logged team id, sorted alphabetically", () => {
+    recordOpponentRound(entry({ id: "r1", teamId: "wxyz" }));
+    recordOpponentRound(entry({ id: "r2", teamId: "abcd" }));
+    recordOpponentRound(entry({ id: "r3", teamId: "wxyz" }));
+
+    expect(listOpponentTeamIds()).toEqual(["abcd", "wxyz"]);
+  });
+
+  it("returns an empty list when nothing is logged", () => {
+    expect(listOpponentTeamIds()).toEqual([]);
+  });
+});
+
+describe("findNearestOpponentTeamId", () => {
+  it("suggests the closest known team id to a typo", () => {
+    recordOpponentRound(entry({ id: "r1", teamId: "wxyz" }));
+    recordOpponentRound(entry({ id: "r2", teamId: "abcd" }));
+
+    expect(findNearestOpponentTeamId("wxyd")).toBe("wxyz");
+  });
+
+  it("returns null for a blank query", () => {
+    recordOpponentRound(entry({ id: "r1", teamId: "wxyz" }));
+
+    expect(findNearestOpponentTeamId("   ")).toBeNull();
+  });
+
+  it("returns null when no team is logged yet", () => {
+    expect(findNearestOpponentTeamId("wxyz")).toBeNull();
   });
 });
 

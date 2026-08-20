@@ -105,6 +105,16 @@ introducing new aggregation logic. Vitest-covered in
 `state/judgeRoundRecords.ts` in
 `packages/debate-speech-writer/test/judgeRoundRecords.test.ts`.
 
+The "Filter by judge ID" input on the logged-rounds list now backs onto a
+`<datalist>` of `listJudgeIds()` — every distinct judge id with at least one
+logged round, sorted alphabetically — so typing offers the ids actually on
+record instead of a blank guess. When the typed filter matches nothing,
+`findNearestJudgeId(query)` (a small case-insensitive Levenshtein
+edit-distance search over the same id list, local to
+`state/judgeRoundRecords.ts`) suggests the closest known id as a clickable
+"Did you mean `<id>`?" prompt that refills the filter. Both are Vitest-covered
+in `judgeRoundRecords.test.ts`.
+
 ## Known gaps
 
 - No real ballot data source yet (follow-up (a) — no `Round`/ballot schema
@@ -113,9 +123,6 @@ introducing new aggregation logic. Vitest-covered in
   a caller of `recordJudgeRound`/`saveJudgeProfile` directly. This is the
   same gap the [Standings](standings.md) and
   [Opponent Team Profiles](opponent-team-profiles.md) panels have.
-- The logged-rounds filter is a free-text substring match on the judge id,
-  not a picker of the judges actually on record — a typo shows an empty
-  list rather than suggesting the nearest judge.
 - Editing a ballot is all-or-nothing per round: there is no history of what
   a round looked like before an edit, so a correction can't be undone.
 - Profiles are per-browser localStorage, not a shared team resource, and

@@ -52,6 +52,8 @@ import {
 import { buildJudgeProfilesRoster } from "../state/judgeProfiles"
 import {
   deleteJudgeRoundRecord,
+  findNearestJudgeId,
+  listJudgeIds,
   listJudgeRoundRecords,
   recordJudgeRound,
   updateJudgeRoundRecord,
@@ -210,6 +212,8 @@ export function JudgeProfilesPanel() {
     normalizedFilter === ""
       ? records
       : records.filter((record) => record.judgeId.toLowerCase().includes(normalizedFilter))
+  const judgeIds = listJudgeIds()
+  const nearestJudgeId = visibleRecords.length === 0 ? findNearestJudgeId(judgeFilter) : null
 
   if (roster === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading judge profiles…</div>
@@ -434,13 +438,35 @@ export function JudgeProfilesPanel() {
             <Label htmlFor="judge-round-filter">Filter by judge ID</Label>
             <Input
               id="judge-round-filter"
+              list="judge-round-filter-options"
               value={judgeFilter}
               onChange={(e) => setJudgeFilter(e.target.value)}
               placeholder="Show every judge's rounds"
             />
+            <datalist id="judge-round-filter-options">
+              {judgeIds.map((id) => (
+                <option key={id} value={id} />
+              ))}
+            </datalist>
           </div>
           {visibleRecords.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No logged rounds match that judge ID.</p>
+            <p className="text-sm text-muted-foreground">
+              No logged rounds match that judge ID.
+              {nearestJudgeId !== null && (
+                <>
+                  {" "}
+                  Did you mean{" "}
+                  <button
+                    type="button"
+                    className="underline underline-offset-2 hover:text-foreground"
+                    onClick={() => setJudgeFilter(nearestJudgeId)}
+                  >
+                    {nearestJudgeId}
+                  </button>
+                  ?
+                </>
+              )}
+            </p>
           ) : (
             <Table>
               <TableHeader>
