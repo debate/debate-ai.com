@@ -19,3 +19,17 @@ import type { FlowEdit } from "./shared-flow-sync";
 export function sortEditsNewestFirst(edits: FlowEdit[]): FlowEdit[] {
   return [...edits].sort((a, b) => b.timestampMs - a.timestampMs);
 }
+
+/**
+ * The AG Grid row id + column field a `boxPath` cell occupies, mirroring
+ * `dataTransform.ts#buildRowData`'s `row-${index}` id convention and
+ * `useFlowGridConfig.ts`'s `col_${j}` column-field convention (the same pair
+ * `boxPathForCell` in `annotation-cells.ts` derives a `boxPath` from).
+ * `FlowSpreadsheet` uses this after logging a new edit through
+ * `EditReviewPopover` to force AG Grid to refresh just that cell's
+ * `EditBadge`, instead of leaving it stale until the grid re-renders the
+ * cell on its own for an unrelated reason.
+ */
+export function gridCellForBoxPath(boxPath: number[]): { rowId: string; field: string } {
+  return { rowId: `row-${boxPath[0]}`, field: `col_${boxPath.length - 1}` };
+}

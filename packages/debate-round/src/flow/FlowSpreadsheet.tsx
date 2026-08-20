@@ -20,6 +20,7 @@ import { buildRowData, rowDataToBoxes } from "./dataTransform"
 import { jumpToAnnotation } from "./flow-annotations"
 import type { FlowAnnotation } from "./flow-annotations"
 import { listFlowEditsForBox } from "../state/flowEdits"
+import { gridCellForBoxPath } from "./edit-cells"
 import { EditReviewPopover } from "./EditReviewPopover"
 import { GridContextMenu } from "./GridContextMenu"
 import { useFlowGridConfig } from "./useFlowGridConfig"
@@ -282,6 +283,23 @@ export function FlowSpreadsheet({
     if (!editReview || typeof localStorage === "undefined") return []
     return listFlowEditsForBox(flow.id, editReview.boxPath)
   }, [editReview, flow.id, editReviewRefreshToken])
+
+  /**
+   * Called after `EditReviewPopover` successfully logs a new edit: bumps
+   * `editReviewRefreshToken` (for the popover's own list, above) and forces
+   * AG Grid to refresh the specific cell the popover was opened from, so its
+   * `EditBadge` count updates immediately instead of staying stale until the
+   * grid re-renders that cell for an unrelated reason.
+   */
+  const handleEditLogged = useCallback(() => {
+    setEditReviewRefreshToken((t) => t + 1)
+    if (!editReview) return
+    const { rowId, field } = gridCellForBoxPath(editReview.boxPath)
+    const rowNode = gridRef.current?.api?.getRowNode(rowId)
+    if (rowNode) {
+      gridRef.current?.api?.refreshCells({ rowNodes: [rowNode], columns: [field], force: true })
+    }
+  }, [editReview])
 
   // Grid configuration hook
   const { columnDefs, defaultColDef, getRowId } = useFlowGridConfig(
@@ -575,7 +593,7 @@ export function FlowSpreadsheet({
           boxPath={editReview.boxPath}
           currentContent={editReview.currentContent}
           edits={editReviewEdits}
-          onLogged={() => setEditReviewRefreshToken((t) => t + 1)}
+          onLogged={handleEditLogged}
           onClose={() => setEditReview(null)}
         />
       )}
