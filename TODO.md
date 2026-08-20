@@ -47,6 +47,7 @@ _No task currently in progress._
   `typecheck` script; this repo has no `lint` script), and `bun run
   build:web` (production build, including every existing route,
   `/prep-notes` and `/debate` among them) all pass.
+  PR: [#272](https://github.com/debate/debate-ai.com/pull/272).
 - **Shared Evidence Library — true incremental search-index updates instead
   of a full rebuild on every cache invalidation.**
   Found via this run's own doc/tracker-drift audit of every
