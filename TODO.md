@@ -42,7 +42,7 @@ _No task currently in progress._
   list and checkbox render when `sectionRows` is non-empty, and neither
   renders when it's empty). Verified: `bun run vitest run` (2311 tests,
   all packages), `bun run typecheck` (11 packages), `bun run build:web`
-  (production build).
+  (production build). [PR #283](https://github.com/debate/debate-ai.com/pull/283).
 
 - **Outline Filters and Argument Tree View — tag an argument's
   type/contributor/evidence status from the live flow grid.**
