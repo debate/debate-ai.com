@@ -6,6 +6,55 @@
 _No task currently in progress._
 
 ### Completed
+- **Prep Notes — note-creation UI directly on the live flow.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/prep-notes.md`'s
+  Known gaps section said there was "no note-creation UI" — a `PrepNote`
+  could only be created programmatically (e.g. in a test), never through
+  the app itself; `PrepNotesPanel` only surfaced and updated existing
+  notes. Rather than the "future flow-view affordance" that gap bullet
+  speculated about, this adds exactly that affordance to the existing
+  `FlowSpreadsheet` grid, mirroring the `EditBadge`/`EditReviewPopover`
+  pattern already used for `FlowEdit`s: a new `flow/PrepNoteBadge.tsx`
+  (always-visible per-cell badge, showing a note count once any exist)
+  renders next to the existing annotation/edit badges in both
+  `FirstColumnCellRenderer` and `AnnotationCellRenderer`; clicking it opens
+  a new `flow/PrepNotePopover.tsx` (lists the box's existing notes, plus an
+  "author id" + "text" form) positioned via `FlowSpreadsheet.tsx`'s new
+  `handleOpenPrepNote`/`prepNoteBoxNotes`/`handlePrepNoteCreated`, which
+  mirror the file's existing edit-review state exactly (including
+  force-refreshing just the affected cell via `gridCellForBoxPath` after a
+  note is created, so the badge's count updates immediately). Submitting
+  the popover's form calls `strategy-sync-notes.ts`'s already-existing
+  `createPrepNote` and `state/prepNotes.ts`'s already-existing
+  `savePrepNote` directly — no new mutation logic, only a new
+  `listPrepNotesForBox(flowId, boxPath)` query helper (wrapping
+  `strategy-sync-notes.ts`'s existing `getNotesForBox`) added to
+  `state/prepNotes.ts` to feed the badge/popover. A note created this way
+  is the same persisted `PrepNote` store `PrepNotesPanel` already reads, so
+  it immediately shows up there too, groupable/assignable/cycleable exactly
+  like a note created any other way.
+  Vitest-covered (6 new cases: 2 in
+  `packages/debate-round/test/prepNotes.test.ts` for `listPrepNotesForBox`
+  — filtering by exact flow+box path, and an empty-box case; 4 in the new
+  `packages/debate-round/test/PrepNoteBadge.test.tsx`, mirroring
+  `EditBadge.test.tsx` — the always-rendered zero-notes affordance, the
+  badge's title listing every note oldest-first, singular vs. plural
+  wording). `PrepNotePopover` itself has no dedicated test file, matching
+  this repo's existing convention for `EditReviewPopover` (no test file
+  either) — popover components here are verified via the production build
+  only. Documented in `docs/features/prep-notes.md` (new "Create a note"
+  section; Known gaps' "No note-creation UI" bullet closed and replaced
+  with the real remaining gap — the popover's "Author ID" field is
+  free-form/unauthenticated, same as every other id field in this
+  auth-less repo). Verified from a clean install: `bun install` (2050
+  packages), `bun run test` (157 files / 2229 tests, all pass — 6 new
+  cases), `bun run typecheck` (11 in-scope packages pass — `debate-ai-web`
+  has no `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including every existing route, `/debate`
+  and `/prep-notes` among them) all pass.
+  PR: [#273](https://github.com/debate/debate-ai.com/pull/273).
 - **Prep Notes — "jump to argument" link back to a note's flow box.**
   Found via this run's own doc/tracker-drift audit of every
   `docs/features/*.md` "Known gaps" section (following the same audit
