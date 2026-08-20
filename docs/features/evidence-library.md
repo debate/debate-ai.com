@@ -156,6 +156,43 @@ rebuild whose results reflect the change) and
 changes on save/delete and stays stable across repeat calls with no
 changes).
 
+### Incremental indexing
+
+Closes this bullet's last remaining "Known gap": a fingerprint change used
+to trigger a full `buildEvidenceSearchIndex` re-tokenize-everything pass
+over every live entry, even when a write only actually touched one of them.
+`lib/evidence-search-index.ts` now exposes `addEntryToIndex`/
+`removeEntryFromIndex`/`updateEntryInIndex`, each mutating an
+`EvidenceSearchIndex` in place and touching only the postings lists the
+affected entry itself contributes to or contributed to (tracked per-entry in
+a new `entryTermsById` map on the index) — not the full vocabulary or any
+other entry.
+
+`getCachedEvidenceSearchIndex` now diffs the current live-entry set against
+the exact entries (`cachedLiveEntriesById`) its cached index was last built
+or updated from, by id and by content, and applies the incremental
+functions only for entries that were actually added, removed, or edited:
+
+- an id present before but not now → `removeEntryFromIndex`
+- an id present now but not before → `addEntryToIndex`
+- an id present in both, with different content → `updateEntryInIndex`
+- an id present in both, with identical content → left untouched entirely
+
+`buildEvidenceSearchIndex` itself is now only ever called for the very
+first index build; every later fingerprint change is handled incrementally.
+Vitest-covered in `packages/debate-card-search/test/evidence-search-index.test.ts`
+(`addEntryToIndex` adds/replaces without duplicating postings,
+`removeEntryFromIndex` drops only the removed entry's own terms while
+leaving a shared term's other postings intact — including dropping a term
+from the postings map entirely once its last entry is removed — and is a
+no-op for an unindexed id, `updateEntryInIndex` drops stale terms and adds
+new ones, and an index built purely via repeated `addEntryToIndex` calls
+matches one built directly) and
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (each of
+save/delete/peer-review-transition/edit now asserts `buildEvidenceSearchIndex`
+is *not* called again and that the matching incremental function *is*,
+alongside the existing result-correctness assertions).
+
 ## Peer-review gating
 
 A search only ever returns "live" entries — see
@@ -239,10 +276,10 @@ card submitted here now feeds that dashboard directly.
 ## Known gaps
 
 - A real inverted-index/TF-IDF search now exists, `EvidenceLibraryPanel` is
-  wired to it, and the built index is now cached across calls (see "Real
-  search index" above) — but a cache-invalidating rebuild is still a full
-  pass over every live entry, not true incremental indexing that updates
-  only the entries a write actually touched.
+  wired to it, the built index is cached across calls, and a cache
+  invalidation now updates that index incrementally instead of rebuilding it
+  (see "Real search index" above) — no further follow-up remains open on
+  this bullet.
 - No browser extension exists — the "Check this page" box is a manual,
   paste-the-URL stand-in for what a future extension would run
   automatically against the current tab. The reuse-check logic itself

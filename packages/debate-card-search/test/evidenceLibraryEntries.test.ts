@@ -253,45 +253,60 @@ describe("searchPersistedEvidenceLibraryWithIndex caches the index across calls"
     expect(second).toEqual(first);
   });
 
-  it("rebuilds after a new entry is saved, and the new entry is searchable", () => {
+  it("incrementally adds a newly saved entry instead of rebuilding the whole index, and the new entry is searchable", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
+    // Force (and consume) the first build so this entry's later add is incremental, not part of an initial build.
+    searchPersistedEvidenceLibraryWithIndex({});
     const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
-
-    expect(searchPersistedEvidenceLibraryWithIndex({})).toHaveLength(1);
-    const countBeforeSave = buildSpy.mock.calls.length;
+    const addSpy = vi.spyOn(evidenceSearchIndexModule, "addEntryToIndex");
 
     saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
     const results = searchPersistedEvidenceLibraryWithIndex({});
-    expect(buildSpy.mock.calls.length).toBeGreaterThan(countBeforeSave);
+    expect(buildSpy).not.toHaveBeenCalled();
+    expect(addSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ id: "entry-2" }));
     expect(results.map((result) => result.entry.id).sort()).toEqual(["entry-1", "entry-2"]);
   });
 
-  it("rebuilds after an entry is deleted", () => {
+  it("incrementally removes a deleted entry instead of rebuilding the whole index", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
     saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    searchPersistedEvidenceLibraryWithIndex({});
     const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
-
-    expect(searchPersistedEvidenceLibraryWithIndex({})).toHaveLength(2);
-    const countBeforeDelete = buildSpy.mock.calls.length;
+    const removeSpy = vi.spyOn(evidenceSearchIndexModule, "removeEntryFromIndex");
 
     deleteEvidenceLibraryEntry(WARMING_CARD.id);
     const results = searchPersistedEvidenceLibraryWithIndex({});
-    expect(buildSpy.mock.calls.length).toBeGreaterThan(countBeforeDelete);
+    expect(buildSpy).not.toHaveBeenCalled();
+    expect(removeSpy).toHaveBeenCalledWith(expect.anything(), WARMING_CARD.id);
     expect(results.map((result) => result.entry.id)).toEqual(["entry-2"]);
   });
 
-  it("rebuilds after a peer review transition changes an entry's live status, with no write to the entry itself", () => {
+  it("incrementally updates an entry whose peer review transition changes its live status, with no write to the entry itself", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
     const review = submitForReview(createCardReview("entry-1"));
     savePeerReview(review);
+    searchPersistedEvidenceLibraryWithIndex({});
     const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
-
-    expect(searchPersistedEvidenceLibraryWithIndex({})).toEqual([]);
-    const countBeforePublish = buildSpy.mock.calls.length;
+    const addSpy = vi.spyOn(evidenceSearchIndexModule, "addEntryToIndex");
 
     savePeerReview(publishReview(approveReview(review)));
     const results = searchPersistedEvidenceLibraryWithIndex({});
-    expect(buildSpy.mock.calls.length).toBeGreaterThan(countBeforePublish);
+    expect(buildSpy).not.toHaveBeenCalled();
+    expect(addSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ id: "entry-1" }));
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+  });
+
+  it("incrementally updates an entry that was edited in place, leaving an untouched entry's postings alone", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    searchPersistedEvidenceLibraryWithIndex({});
+    const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
+    const updateSpy = vi.spyOn(evidenceSearchIndexModule, "updateEntryInIndex");
+
+    saveEvidenceLibraryEntry({ ...WARMING_CARD, text: "Coastal flooding accelerates under warming trends." });
+    const results = searchPersistedEvidenceLibraryWithIndex({ text: "flooding" });
+    expect(buildSpy).not.toHaveBeenCalled();
+    expect(updateSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ id: "entry-1" }));
     expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
   });
 });
