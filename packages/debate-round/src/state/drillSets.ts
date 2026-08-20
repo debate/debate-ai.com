@@ -16,7 +16,8 @@
  * @module state/drillSets
  */
 
-import type { Drill } from "../flow/drill-generator";
+import type { Flow } from "debate-core/src/types/flow";
+import { buildDrillSet, type Drill } from "../flow/drill-generator";
 
 export type DrillSetRecord = {
   roundId: string;
@@ -90,6 +91,26 @@ export function saveDrillAiScript(roundId: string, drillIndex: number, aiScript:
     aiScripts: { ...(existing.aiScripts ?? {}), [drillIndex]: aiScript },
   };
   writeAll(records);
+}
+
+/**
+ * Derives a round's drill set from an already-flowed `Flow` and persists it
+ * in one step — the "generate a new drill set for a round" affordance named
+ * in `docs/features/drill-sets.md`'s Known gaps. Lets a caller with a live
+ * flow (e.g. the round workspace's currently selected flow) create a
+ * `DrillSetRecord` without hand-building it, mirroring
+ * `roundContributorFlows.ts`'s `buildAndSaveRoundContributorFlow`. Overwrites
+ * any existing drill set for `roundId`, same as `saveDrillSet`.
+ */
+export function buildAndSaveDrillSet(
+  flow: Pick<Flow, "children" | "columns">,
+  roundId: string,
+  sideKey: string,
+  options: { collapseLimit?: number } = {},
+): DrillSetRecord {
+  const record: DrillSetRecord = { roundId, sideKey, drills: buildDrillSet(flow, sideKey, options) };
+  saveDrillSet(record);
+  return record;
 }
 
 /**

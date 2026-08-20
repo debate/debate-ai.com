@@ -6,6 +6,32 @@
 _No task currently in progress._
 
 ### Completed
+- **Practice Drills — add a "generate drills for current round" form.** The
+  "📚 AI Drill Generator" bullet in TODO.md's Research Crowdsourcing
+  Organizer Features list said "No follow-ups remain open," but
+  `docs/features/drill-sets.md`'s "Known gaps" still listed one: "No
+  affordance in this panel to generate a new drill set for a round — a set
+  only appears here once something elsewhere calls `buildDrillSet` and
+  `saveDrillSet` for that round" — the same doc/tracker drift idea #12's
+  Pre-Round Briefings form closed last run. `DrillSetsPanel` (`/drills`) now
+  has a "Generate drills for current round" form (a side-key input plus a
+  button, disabled with an inline hint when no flow is currently selected),
+  reading the round workspace's currently selected flow via
+  `state/store.ts`'s `useFlowStore` — the same mechanism
+  `CoachingProgramsPanel`'s "Save current flow" action already uses. It
+  calls one new helper, `buildAndSaveDrillSet` in
+  `packages/debate-round/src/state/drillSets.ts`, which composes the
+  existing `buildDrillSet` + `saveDrillSet` in one step (mirroring
+  `roundContributorFlows.ts`'s `buildAndSaveRoundContributorFlow`) — no new
+  drill-generation logic. Vitest-covered (3 new cases in
+  `packages/debate-round/test/drillSets.test.ts`: deriving and persisting a
+  drill set from a flow, overwriting an existing record for the same round,
+  and `collapseLimit` passing through to `buildDrillSet`). Verified with
+  `bun run test` (155 files / 2174 tests, all pass), `bun run typecheck` (11
+  in-scope packages pass — `debate-ai-web` has no `typecheck` script), and
+  `bun run build` (both buildable packages pass). Docs updated at
+  `docs/features/drill-sets.md`; no follow-ups remain open on this bullet.
+
 - **Pre-Round Briefings — add a "create briefing" form.** Idea #12
   ("Pre-Round Intelligence Panel")'s follow-up (b) was only partly closed:
   `docs/features/pre-round-briefings.md`'s "Known gaps" said "No affordance

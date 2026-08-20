@@ -15,6 +15,15 @@
  * — closing follow-up (b), "an actual AI-generated (rather than templated)
  * script."
  *
+ * A "Generate drills for current round" form reads the round workspace's
+ * currently selected flow (`state/store.ts`'s `useFlowStore`, the same
+ * mechanism `CoachingProgramsPanel`'s "Save current flow" action uses) and,
+ * given a side, derives and persists that round's drill set via
+ * `state/drillSets.ts`'s `buildAndSaveDrillSet` — closing
+ * `docs/features/drill-sets.md`'s "no affordance in this panel to generate a
+ * new drill set for a round" Known gap. No new drill-generation logic is
+ * introduced here.
+ *
  * @module panels/DrillSetsPanel
  */
 
@@ -23,7 +32,10 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
+import { Input } from "debate-ui/src/primitives/input"
+import { Label } from "debate-ui/src/primitives/label"
 import {
+  buildAndSaveDrillSet,
   buildDrillSetsPanelView,
   deleteDrillSet,
   saveDrillAiScript,
@@ -31,6 +43,7 @@ import {
 } from "../state/drillSets"
 import type { DrillKind } from "../flow/drill-generator"
 import { requestDrillScript } from "../round/drill-script-client"
+import { useFlowStore } from "../state/store"
 
 const DRILL_KIND_LABELS: Record<DrillKind, string> = {
   overview: "Overview",
@@ -50,8 +63,16 @@ export function DrillSetsPanel() {
   const [drillSets, setDrillSets] = useState<DrillSetRecord[] | null>(null)
   const [scriptLoadingKey, setScriptLoadingKey] = useState<string | null>(null)
   const [scriptErrorsByKey, setScriptErrorsByKey] = useState<Record<string, string>>({})
+  const [generateSideKey, setGenerateSideKey] = useState("")
+  const [generateError, setGenerateError] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  const flows = useFlowStore((state) => state.flows)
+  const selected = useFlowStore((state) => state.selected)
+  const currentFlow = mounted ? flows[selected] : undefined
 
   useEffect(() => {
+    setMounted(true)
     setDrillSets(buildDrillSetsPanelView())
   }, [])
 
@@ -59,6 +80,19 @@ export function DrillSetsPanel() {
 
   const handleClear = (roundId: string) => {
     deleteDrillSet(roundId)
+    refresh()
+  }
+
+  const handleGenerate = () => {
+    if (!currentFlow) return
+    const sideKey = generateSideKey.trim()
+    if (!sideKey) {
+      setGenerateError("A side (e.g. aff or neg) is required to generate drills.")
+      return
+    }
+    buildAndSaveDrillSet(currentFlow, String(currentFlow.id), sideKey)
+    setGenerateError(null)
+    setGenerateSideKey("")
     refresh()
   }
 
@@ -87,14 +121,6 @@ export function DrillSetsPanel() {
     return <div className="p-6 text-sm text-muted-foreground">Loading drills…</div>
   }
 
-  if (drillSets.length === 0) {
-    return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No practice drills yet. Drills fill in once a round's flow generates a drill set.
-      </div>
-    )
-  }
-
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div>
@@ -104,6 +130,39 @@ export function DrillSetsPanel() {
           and collapse-scenario prompts.
         </p>
       </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div>
+          <Label htmlFor="drill-set-generate-side">Generate drills for current round</Label>
+          <p className="text-xs text-muted-foreground">
+            Uses the round workspace's currently selected flow.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-end gap-2">
+          <Input
+            id="drill-set-generate-side"
+            value={generateSideKey}
+            onChange={(e) => setGenerateSideKey(e.target.value)}
+            placeholder="Side (e.g. aff)"
+            className="w-40"
+          />
+          <Button size="sm" disabled={!currentFlow} onClick={handleGenerate}>
+            Generate drills
+          </Button>
+        </div>
+        {!currentFlow && (
+          <p className="text-sm text-muted-foreground">
+            Select a round's flow in the round workspace to generate drills for it.
+          </p>
+        )}
+        {generateError && <p className="text-sm text-destructive">{generateError}</p>}
+      </div>
+
+      {drillSets.length === 0 && (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No practice drills yet. Drills fill in once a round's flow generates a drill set.
+        </div>
+      )}
       {drillSets.map((set) => (
         <div key={set.roundId} className="rounded-lg border border-border p-4">
           <div className="mb-3 flex items-center justify-between gap-2">
