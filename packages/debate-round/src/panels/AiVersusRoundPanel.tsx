@@ -27,6 +27,15 @@
  * Opponent" idea. Falls back to the plain `requestAiVersusSpeech` call when
  * no persona is saved for the round.
  *
+ * Whenever the round's most recently submitted speech was the AI's
+ * (`canRegenerateLastAiSpeech`), a "Regenerate" action re-requests that
+ * same slot — from the same prior-speeches context originally used to
+ * generate it — and replaces it in place via `replaceLastAiSpeech`, rather
+ * than requiring the whole round to be cleared and restarted. This closes
+ * the "regenerate affordance" follow-up noted in
+ * `docs/features/ai-versus-rounds.md`'s Known gaps.
+ *
+
  * @module panels/AiVersusRoundPanel
  */
 
@@ -61,9 +70,11 @@ import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-spee
 import { getOpponentPersonaForRound } from "../round/opponent-persona-speech-wiring"
 import {
   buildAiVersusRoundsPanelView,
+  canRegenerateLastAiSpeech,
   deleteAiVersusRound,
   getAiVersusRound,
   getAiVersusRoundStatus,
+  replaceLastAiSpeech,
   saveAiVersusRound,
   type AiVersusRoundRecord,
 } from "../state/aiVersusRounds"
@@ -97,6 +108,7 @@ export function AiVersusRoundPanel() {
   const [speechText, setSpeechText] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [aiGenerating, setAiGenerating] = useState(false)
+  const [aiRegenerating, setAiRegenerating] = useState(false)
 
   useEffect(() => {
     setRounds(buildAiVersusRoundsPanelView())
@@ -201,6 +213,34 @@ export function AiVersusRoundPanel() {
     }
   }
 
+  const handleRegenerateAiSpeech = async () => {
+    if (!activeRoundId || !activeRecord || !activeStatus) return
+    if (!canRegenerateLastAiSpeech(activeRecord)) return
+
+    const priorCount = activeRecord.submittedSpeeches.length - 1
+    const request = buildAiResponseRequest(
+      activeStatus.order,
+      priorCount,
+      activeRecord.submittedSpeeches.slice(0, priorCount),
+    )
+    if (!request) return
+
+    setAiRegenerating(true)
+    setError(null)
+    try {
+      const persona = getOpponentPersonaForRound(activeRoundId)
+      const text = persona
+        ? await requestAiVersusSpeechWithPersona(request, persona)
+        : await requestAiVersusSpeech(request)
+      saveAiVersusRound(replaceLastAiSpeech(activeRecord, text))
+      refresh()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "AI speech generation failed.")
+    } finally {
+      setAiRegenerating(false)
+    }
+  }
+
   if (rounds === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading AI-versus rounds…</div>
   }
@@ -297,6 +337,23 @@ export function AiVersusRoundPanel() {
             })}
           </div>
 
+          {canRegenerateLastAiSpeech(activeRecord) && (
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleRegenerateAiSpeech}
+                disabled={aiRegenerating || aiGenerating}
+              >
+                {aiRegenerating ? "Regenerating…" : "Regenerate last AI speech"}
+              </Button>
+              <span className="text-xs text-muted-foreground">
+                Replaces &quot;{activeRecord.submittedSpeeches[activeRecord.submittedSpeeches.length - 1]!.name}
+                &quot; with a new AI-generated version.
+              </span>
+            </div>
+          )}
+
           {activeStatus.nextSlot === null ? (
             <p className="text-sm text-muted-foreground">
               Round complete — every speech has been delivered.
@@ -314,7 +371,7 @@ export function AiVersusRoundPanel() {
                   </p>
                 ) : null
               })()}
-              <Button onClick={handleGenerateAiSpeech} disabled={aiGenerating}>
+              <Button onClick={handleGenerateAiSpeech} disabled={aiGenerating || aiRegenerating}>
                 {aiGenerating ? "Generating…" : "Generate AI speech"}
               </Button>
             </div>

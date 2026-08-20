@@ -16,6 +16,16 @@
  * derives a round's turn order and next-slot status on read rather than
  * storing it, mirroring `wordCountRounds.ts`'s `getWordCountRoundStatuses`.
  *
+ * `canRegenerateLastAiSpeech`/`replaceLastAiSpeech` close the "regenerate
+ * affordance" follow-up noted in `docs/features/ai-versus-rounds.md`'s
+ * Known gaps: replacing the just-saved AI speech in place (keeping its
+ * slot name and every earlier speech untouched) rather than clearing the
+ * whole round and starting over. Neither calls the AI itself — the panel
+ * rebuilds the same `buildAiResponseRequest` used to generate the original
+ * speech (from the speeches delivered before it) and calls the existing
+ * `requestAiVersusSpeech`/`requestAiVersusSpeechWithPersona` client, then
+ * saves the returned text through `replaceLastAiSpeech`.
+ *
  * @module state/aiVersusRounds
  */
 
@@ -80,6 +90,36 @@ export function saveAiVersusRound(record: AiVersusRoundRecord): void {
 /** Deletes a round's persisted state; a no-op if it isn't stored. */
 export function deleteAiVersusRound(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
+}
+
+/**
+ * Whether a round's most recently submitted speech was the AI's, and so
+ * can be regenerated in place — false for a round with no speeches yet, or
+ * one whose last submitted speech was the user's.
+ */
+export function canRegenerateLastAiSpeech(record: AiVersusRoundRecord): boolean {
+  const last = record.submittedSpeeches[record.submittedSpeeches.length - 1];
+  return last !== undefined && last.speaker === "ai";
+}
+
+/**
+ * Returns a copy of `record` with its last submitted speech's text
+ * replaced by `text`, keeping that speech's `name`/`speaker` and every
+ * earlier speech untouched. Throws if the last submitted speech isn't the
+ * AI's (check `canRegenerateLastAiSpeech` first) — this only ever replaces
+ * an AI speech, never a user one. Does not persist the result; call
+ * `saveAiVersusRound` with it.
+ */
+export function replaceLastAiSpeech(record: AiVersusRoundRecord, text: string): AiVersusRoundRecord {
+  if (!canRegenerateLastAiSpeech(record)) {
+    throw new Error("The last submitted speech isn't an AI speech, so it can't be regenerated.");
+  }
+  const speeches = record.submittedSpeeches;
+  const last = speeches[speeches.length - 1]!;
+  return {
+    ...record,
+    submittedSpeeches: [...speeches.slice(0, -1), { ...last, text }],
+  };
 }
 
 /** Every persisted AI-versus round, sorted by `roundId` for a stable panel display order. */
