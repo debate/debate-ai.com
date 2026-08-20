@@ -3,75 +3,68 @@
 
 ### In progress
 
-## Opponent Team Profiles — "Log a scouted round" form, the in-app way to create an opponent profile
-
-**Status:** In Progress
-**Source:** TODO.md — Research Crowdsourcing Organizer Features, "🕵️ Opponent Team Profiles"
-(this repo has no `IDEAS.md`; the "Product Feature Ideas" / "Research Crowdsourcing
-Organizer Features" sections below are the backlog, and `docs/features/*.md`'s
-"Known gaps" sections are the follow-up list every recent run has audited)
-**Branch:** `claude/practical-allen-4yqyre`
-**PR:** Not created yet
-**Started:** 2026-08-20
-
-### Goal
-Close `docs/features/opponent-team-profiles.md`'s "No profile editing/creation
-UI here — this panel only renders existing persisted profiles" Known gap, the
-exact counterpart of the judge-profiles gap closed last run in
-[#278](https://github.com/debate/debate-ai.com/pull/278). Today an
-`OpponentTeamProfile` reaches `/opponents` only if something calls
-`saveOpponentTeamProfile` programmatically.
-
-### Scope
-- A new `state/opponentRoundRecords.ts` store in `debate-data-sync` persisting
-  the raw `OpponentRoundRecord` history each profile is derived from, keyed by
-  a per-round `id` (a team plays many rounds), mirroring
-  `debate-speech-writer`'s `judgeRoundRecords.ts`.
-- Re-derivation of the affected team's profile from its *full* logged history
-  through the existing `buildOpponentTeamProfile`/`saveOpponentTeamProfile`.
-- A "Log a scouted round" form on `OpponentTeamProfilesPanel`, rendered above
-  the roster in the empty state too.
-- A per-team logged-rounds list with a delete action, so
-  `deleteOpponentRoundRecord` has a real UI caller rather than repeating the
-  judge panel's still-open "no delete/edit affordance" gap.
-
-### Non-goals
-- No direct editing of an aggregate profile field — every roster column stays
-  a derived value.
-- No new scouting/aggregation logic; `opponent-team-profile.ts` is reused as-is.
-- No real Tabroom/ballot data source (follow-up (a), still open).
-
-### Acceptance criteria
-- [x] Logging a round from the panel creates or updates that team's profile
-- [x] The form renders in the empty state (no profiles yet), not just alongside a roster
-- [x] Deleting a logged round re-aggregates, and removes the profile when no rounds remain
-- [x] Per-team isolation: logging for one team never re-aggregates another
-- [x] Corrupt/missing/non-array storage degrades to an empty list, never throws
-- [x] Vitest coverage is added
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Web build passes
-- [x] Documentation is updated
-
-### Implementation plan
-- [x] Inspect affected modules and existing tests
-- [x] Add `state/opponentRoundRecords.ts`
-- [x] Add focused Vitest success-path coverage
-- [x] Add focused failure/edge-case coverage
-- [x] Wire the "Log a scouted round" form into `OpponentTeamProfilesPanel`
-- [x] Wire the logged-rounds delete affordance
-- [x] Run focused tests, then the full suite
-- [x] Run typecheck
-- [x] Run `build:web`
-- [x] Update `docs/features/opponent-team-profiles.md`
-- [x] Commit and push the branch
-- [ ] Create the pull request
-- [ ] Move this entry to Completed
-
-### Remaining work
-- Create the pull request, then move this entry to Completed.
+_No task currently in progress._
 
 ### Completed
+- **Opponent Team Profiles — "Log a scouted round" form, the in-app way to
+  create an opponent scouting profile.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used; this repo has no `IDEAS.md`, so the
+  "Product Feature Ideas"/"Research Crowdsourcing Organizer Features"
+  sections below are the backlog):
+  `docs/features/opponent-team-profiles.md`'s Known gaps said "No profile
+  editing/creation UI here — this panel only renders existing persisted
+  profiles," the exact counterpart of the judge-profiles gap closed last run
+  in [#278](https://github.com/debate/debate-ai.com/pull/278), so an
+  `OpponentTeamProfile` could only ever reach `/opponents` if something
+  called `saveOpponentTeamProfile` programmatically. The blocker was that
+  `state/opponentTeamProfiles.ts` persists only the *aggregate*, never the
+  rounds behind it, so there was nothing for a form to append to. A new
+  store, `packages/debate-data-sync/src/state/opponentRoundRecords.ts`,
+  persists the raw `OpponentRoundRecord` history (each entry carrying its
+  own `id`, since a team plays many rounds — mirroring
+  `debate-speech-writer`'s `judgeRoundRecords.ts` and this package's own
+  `tournamentResults.ts` wrapped-record convention), and re-derives the
+  affected team's profile from its *full* history through the existing
+  `buildOpponentTeamProfile`/`saveOpponentTeamProfile`:
+  `recordOpponentRound` (append + re-aggregate),
+  `rebuildOpponentTeamProfileFromRecords` (re-aggregate alone, deleting the
+  derived profile rather than leaving a zero-round one when no rounds
+  remain), and `deleteOpponentRoundRecord` (remove + re-aggregate). No new
+  scouting logic was introduced — every roster column stays a derived value,
+  so there is deliberately no direct aggregate editing. The store is scoped
+  to *opposing* teams and stays separate from `debate-round`'s
+  `state/ownRoundHistory.ts`, which persists the same record type from this
+  team's own perspective for pre-round briefings.
+  `OpponentTeamProfilesPanel.tsx` gains the "Log a scouted round" form (team
+  id, tournament, date, division, side debated, a "they won this round"
+  switch, optional comma-separated argument tags, optional case name, and an
+  optional head-to-head opponent id) and now renders the form above the
+  roster in the empty state too, instead of returning early — plus a "Logged
+  rounds" table whose Delete action calls `deleteOpponentRoundRecord`, so
+  the store's delete path has a real UI caller rather than repeating the
+  judge panel's still-open "no delete affordance" gap.
+  Vitest-covered (12 new cases in
+  `packages/debate-data-sync/test/opponentRoundRecords.test.ts`: persist +
+  derive, re-aggregation across rounds/tournaments/sides, argument-tag and
+  case re-ranking, per-team isolation, rebuild matching a direct
+  `buildOpponentTeamProfile`, profile deletion when no rounds remain,
+  delete-and-re-aggregate, delete of the last round, unknown-id no-op,
+  another team left untouched, and the corrupt-JSON / non-array storage
+  degradations).
+  Documented in `docs/features/opponent-team-profiles.md` (new "Logging a
+  scouted round" section, rewritten data-flow block covering both stores;
+  the editing/creation-UI Known gap closed and replaced with the real
+  remaining scope — no in-place edit of a logged round, no per-team filter
+  on the logged-rounds list, per-browser storage with no identity checks,
+  and follow-up (a)'s still-open real round-history data source).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (160 files / 2275 tests, all pass — 12 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including `/opponents`) all pass.
+  PR: [#279](https://github.com/debate/debate-ai.com/pull/279).
 - **Judge Profiles — "Log a judged round" form, the in-app way to create a
   judge profile.**
   Found via this run's own doc/tracker-drift audit of every
