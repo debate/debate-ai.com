@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   deleteJudgeRoundRecord,
+  findNearestJudgeId,
+  listJudgeIds,
   listJudgeRoundRecords,
   listJudgeRoundRecordsForJudge,
   rebuildJudgeProfileFromRecords,
@@ -179,6 +181,39 @@ describe("deleteJudgeRoundRecord", () => {
 
     expect(listJudgeRoundRecords()).toHaveLength(1);
     expect(getJudgeProfile("smith")).toEqual(profile);
+  });
+});
+
+describe("listJudgeIds", () => {
+  it("returns every distinct logged judge id, sorted alphabetically", () => {
+    recordJudgeRound(entry({ id: "r1", judgeId: "smith" }));
+    recordJudgeRound(entry({ id: "r2", judgeId: "adams" }));
+    recordJudgeRound(entry({ id: "r3", judgeId: "smith" }));
+
+    expect(listJudgeIds()).toEqual(["adams", "smith"]);
+  });
+
+  it("returns an empty list when nothing is logged", () => {
+    expect(listJudgeIds()).toEqual([]);
+  });
+});
+
+describe("findNearestJudgeId", () => {
+  it("suggests the closest known judge id to a typo", () => {
+    recordJudgeRound(entry({ id: "r1", judgeId: "smith" }));
+    recordJudgeRound(entry({ id: "r2", judgeId: "jones" }));
+
+    expect(findNearestJudgeId("smth")).toBe("smith");
+  });
+
+  it("returns null for a blank query", () => {
+    recordJudgeRound(entry({ id: "r1", judgeId: "smith" }));
+
+    expect(findNearestJudgeId("   ")).toBeNull();
+  });
+
+  it("returns null when no judge is logged yet", () => {
+    expect(findNearestJudgeId("smith")).toBeNull();
   });
 });
 

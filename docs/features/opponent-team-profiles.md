@@ -110,6 +110,17 @@ rather than introducing new scouting logic. Vitest-covered in
 `packages/debate-data-sync/test/opponentTeamProfiles.test.ts` and
 `packages/debate-data-sync/test/opponentRoundRecords.test.ts`.
 
+The "Filter by team ID" input on the logged-rounds list now backs onto a
+`<datalist>` of `listOpponentTeamIds()` — every distinct team id with at
+least one logged round, sorted alphabetically — so typing offers the ids
+actually on record instead of a blank guess. When the typed filter matches
+nothing, `findNearestOpponentTeamId(query)` (a small case-insensitive
+Levenshtein edit-distance search over the same id list, local to
+`state/opponentRoundRecords.ts`, mirroring `debate-speech-writer`'s
+`findNearestJudgeId`) suggests the closest known id as a clickable "Did you
+mean `<id>`?" prompt that refills the filter. Both are Vitest-covered in
+`opponentRoundRecords.test.ts`.
+
 ## Known gaps
 
 - No real round-history data source yet (follow-up (a) — no Tabroom/tab-service
@@ -118,9 +129,6 @@ rather than introducing new scouting logic. Vitest-covered in
   caller of `recordOpponentRound`/`saveOpponentTeamProfile` directly. This is
   the same gap the [Standings](standings.md) and
   [Judge Profiles](judge-profiles.md) panels have.
-- The logged-rounds filter is a free-text substring match on the team id,
-  not a picker of the teams actually on record — a typo shows an empty list
-  rather than suggesting the nearest team.
 - Editing a round is all-or-nothing per round: there is no history of what
   a round looked like before an edit, so a correction can't be undone.
 - Profiles are per-browser localStorage, not a shared team resource, and
