@@ -30,7 +30,13 @@ interface VideoPlayerStore {
   searchHandler: ((searchTerm: string) => void) | null
   /** Store the current playback time getter function */
   getCurrentTimeRef: (() => number) | null
-  setActiveVideo: (videoId: string, title: string, meta?: VideoMeta) => void
+  setActiveVideo: (
+    videoId: string,
+    title: string,
+    meta?: VideoMeta,
+    /** Overrides the saved-timestamp lookup, e.g. to jump straight to a flow annotation on a video that isn't loaded yet. */
+    startTimeSeconds?: number
+  ) => void
   clearActiveVideo: () => void
   setMinimized: (minimized: boolean) => void
   setIsPlaying: (playing: boolean) => void
@@ -61,7 +67,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   startTime: 0,
   searchHandler: null,
   getCurrentTimeRef: null,
-  setActiveVideo: (videoId, title, meta) => {
+  setActiveVideo: (videoId, title, meta, startTimeSeconds) => {
     const state = get()
     // If switching from one video to another, preserve the current timestamp
     if (state.activeVideoId && state.activeVideoId !== videoId && state.getCurrentTimeRef) {
@@ -80,8 +86,8 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
       }
     }
 
-    // Check if the new video has a saved timestamp
-    const savedTime = loadVideoTimestamp(videoId) ?? 0
+    // An explicit start time wins over the video's own saved timestamp
+    const savedTime = startTimeSeconds ?? loadVideoTimestamp(videoId) ?? 0
 
     set({ activeVideoId: videoId, activeVideoTitle: title, activeVideoMeta: meta ?? null, isMinimized: false, isPlaying: true, startTime: savedTime })
   },

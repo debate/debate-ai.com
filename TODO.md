@@ -6,6 +6,48 @@
 _No task currently in progress._
 
 ### Completed
+- **Flow Annotations — switch video on cross-recording "Jump to".** Closes
+  one of the four "Newly discovered small gaps" logged by the previous run's
+  doc/tracker drift audit (see the entry below): `FlowAnnotationsPanel.handleJump`
+  (`packages/debate-round/src/panels/FlowAnnotationsPanel.tsx`) and the
+  matching `FlowSpreadsheet.handleJumpToAnnotation`
+  (`packages/debate-round/src/flow/FlowSpreadsheet.tsx`) only seeked within
+  the already-active video — if an annotation's own recording wasn't the one
+  loaded in the persistent player, "Jump to" showed a disabled/no-op
+  affordance instead of opening the right video first. Added a pure,
+  dependency-injected `jumpToAnnotation(annotation, deps)` helper in
+  `packages/debate-round/src/flow/flow-annotations.ts`: same-video jumps
+  still seek in place via `sendYouTubeCommand("seekTo", ...)` +
+  `"playVideo"`; a different (or no) video loaded instead calls
+  `deps.setActiveVideo(videoId, videoId, undefined, timestampMs / 1000)`
+  (falling back to the bare `videoId` as the title, since no stored catalog
+  maps one to a title — `FlowAnnotation` itself never carried one). Both
+  `FlowAnnotationsPanel` and `FlowSpreadsheet` now call this one helper
+  instead of duplicating the guard, and the panel's "Jump to" button is
+  disabled only when the annotation has no `videoId` at all. `debate-videos`'s
+  `useVideoPlayerStore.setActiveVideo`
+  (`packages/debate-videos/src/state/videoPlayerStore.ts`) gained an optional
+  4th `startTimeSeconds` param that overrides its saved-resume-timestamp
+  lookup, feeding the existing `&start=` YouTube-embed URL param — chosen
+  over firing a `seekTo` postMessage immediately after switching, because
+  research this run confirmed the iframe's new document isn't guaranteed to
+  have loaded yet and this codebase has no "player ready" signal anywhere to
+  gate on (no prior "switch then seek" pattern existed to reuse). No new
+  annotation-model or persistence logic; `AnnotationBadge`/`AnnotationCellRenderer`
+  needed no changes (they're pure/props-driven, with no video-matching gate
+  of their own). Vitest-covered (4 new cases in
+  `packages/debate-round/test/flow-annotations.test.ts`'s `jumpToAnnotation`
+  suite, using fake injected deps: same-video seek, cross-video switch,
+  switch when nothing is loaded, and the no-`videoId` no-op). Verified with
+  `bun run test` (156 files / 2199 tests, all pass — 4 new cases),
+  `bun run typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run build`
+  (both buildable packages pass, `/annotations` present in the route list).
+  Docs updated at `docs/features/flow-annotations.md` (new "Cross-recording
+  'Jump to'" section; the sole remaining Known gap is the same
+  title-fallback caveat noted above — a video catalog mapping `videoId` to a
+  title doesn't exist anywhere in this repo yet). PR:
+  https://github.com/debate/debate-ai.com/pull/268.
 - **AI Response-Outcome Charts — AI counsel panel now scores an active "what if" hypothetical.**
   Closes one of the four "Newly discovered small gaps" logged by the
   previous run's doc/tracker drift audit (see that entry below):

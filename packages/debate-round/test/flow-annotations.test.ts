@@ -6,11 +6,13 @@ import {
   getAnnotationsForBox,
   getAnnotationsForSpeech,
   getAnnotationsForVideo,
+  jumpToAnnotation,
   parseAnnotationTimestamp,
   parseBoxPathInput,
   resolveAnnotationBox,
   sortAnnotationsByTimestamp,
   type FlowAnnotation,
+  type JumpToAnnotationDeps,
 } from "../src/flow/flow-annotations";
 import { newBox } from "../src/utils/flow-utils";
 
@@ -302,5 +304,70 @@ describe("parseBoxPathInput", () => {
     expect(parseBoxPathInput("0, a")).toBeNull();
     expect(parseBoxPathInput("0, -1")).toBeNull();
     expect(parseBoxPathInput("0, 1.5")).toBeNull();
+  });
+});
+
+describe("jumpToAnnotation", () => {
+  function fakeDeps(overrides: Partial<JumpToAnnotationDeps> = {}) {
+    const calls: {
+      setActiveVideo: unknown[];
+      seekTo: unknown[];
+      playVideo: number;
+      setIsPlaying: unknown[];
+    } = { setActiveVideo: [], seekTo: [], playVideo: 0, setIsPlaying: [] };
+    const deps: JumpToAnnotationDeps = {
+      activeVideoId: null,
+      setActiveVideo: (...args) => calls.setActiveVideo.push(args),
+      seekTo: (timestampMs) => calls.seekTo.push(timestampMs),
+      playVideo: () => {
+        calls.playVideo += 1;
+      },
+      setIsPlaying: (isPlaying) => calls.setIsPlaying.push(isPlaying),
+      ...overrides,
+    };
+    return { deps, calls };
+  }
+
+  it("seeks in place when the annotation's video is already active", () => {
+    const { deps, calls } = fakeDeps({ activeVideoId: "vid-1" });
+
+    const result = jumpToAnnotation(annotation({ videoId: "vid-1", timestampMs: 4200 }), deps);
+
+    expect(result).toBe(true);
+    expect(calls.seekTo).toEqual([4200]);
+    expect(calls.playVideo).toBe(1);
+    expect(calls.setIsPlaying).toEqual([true]);
+    expect(calls.setActiveVideo).toEqual([]);
+  });
+
+  it("switches video first when a different (or no) recording is loaded", () => {
+    const { deps, calls } = fakeDeps({ activeVideoId: "vid-1" });
+
+    const result = jumpToAnnotation(annotation({ videoId: "vid-2", timestampMs: 4200 }), deps);
+
+    expect(result).toBe(true);
+    expect(calls.setActiveVideo).toEqual([["vid-2", "vid-2", undefined, 4.2]]);
+    expect(calls.seekTo).toEqual([]);
+    expect(calls.playVideo).toBe(0);
+  });
+
+  it("switches video when nothing is currently loaded", () => {
+    const { deps, calls } = fakeDeps({ activeVideoId: null });
+
+    jumpToAnnotation(annotation({ videoId: "vid-2", timestampMs: 1000 }), deps);
+
+    expect(calls.setActiveVideo).toEqual([["vid-2", "vid-2", undefined, 1]]);
+  });
+
+  it("is a no-op when the annotation has no videoId", () => {
+    const { deps, calls } = fakeDeps({ activeVideoId: "vid-1" });
+
+    const result = jumpToAnnotation(annotation({ videoId: undefined }), deps);
+
+    expect(result).toBe(false);
+    expect(calls.setActiveVideo).toEqual([]);
+    expect(calls.seekTo).toEqual([]);
+    expect(calls.playVideo).toBe(0);
+    expect(calls.setIsPlaying).toEqual([]);
   });
 });

@@ -17,6 +17,7 @@ import type {
 import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
 import type { FlowSpreadsheetProps, ContextMenuEntry, EditReviewOpenParams } from "./types"
 import { buildRowData, rowDataToBoxes } from "./dataTransform"
+import { jumpToAnnotation } from "./flow-annotations"
 import type { FlowAnnotation } from "./flow-annotations"
 import { listFlowEditsForBox } from "../state/flowEdits"
 import { EditReviewPopover } from "./EditReviewPopover"
@@ -56,7 +57,7 @@ export function FlowSpreadsheet({
   const gridRef = useRef<AgGridReact>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0)
-  const { activeVideoId, setIsPlaying } = useVideoPlayerStore()
+  const { activeVideoId, setIsPlaying, setActiveVideo } = useVideoPlayerStore()
 
   // Section heading & collapse state
   const [collapsedHeadings, setCollapsedHeadings] = useState<Set<string>>(new Set())
@@ -245,17 +246,22 @@ export function FlowSpreadsheet({
 
   /**
    * Jump the persistent video player to a flow-annotation badge's target,
-   * mirroring `FlowAnnotationsPanel.handleJump`'s exact guard: only seek
-   * when the annotation's recording is the one currently loaded.
+   * via the shared `jumpToAnnotation` helper (mirrors
+   * `FlowAnnotationsPanel.handleJump`): seeks in place when the
+   * annotation's recording is already loaded, otherwise switches the
+   * player to it first.
    */
   const handleJumpToAnnotation = useCallback(
     (annotation: FlowAnnotation) => {
-      if (!annotation.videoId || annotation.videoId !== activeVideoId) return
-      sendYouTubeCommand("seekTo", [annotation.timestampMs / 1000, true])
-      sendYouTubeCommand("playVideo")
-      setIsPlaying(true)
+      jumpToAnnotation(annotation, {
+        activeVideoId,
+        setActiveVideo,
+        seekTo: (timestampMs) => sendYouTubeCommand("seekTo", [timestampMs / 1000, true]),
+        playVideo: () => sendYouTubeCommand("playVideo"),
+        setIsPlaying,
+      })
     },
-    [activeVideoId, setIsPlaying],
+    [activeVideoId, setActiveVideo, setIsPlaying],
   )
 
   /**
