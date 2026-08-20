@@ -26,7 +26,12 @@ import { RoundEditorDialog } from "../dialogs/CreateRoundDialog"
 
 // Custom hooks
 import { useDebateFlowState } from "../hooks/useDebateFlowState"
-import { useInitialLoad, useFontSizeSettings, useFlowPersistence } from "../hooks/useFlowEffects"
+import {
+  useInitialLoad,
+  useFontSizeSettings,
+  useFlowPersistence,
+  useArgumentTreeAutoSync,
+} from "../hooks/useFlowEffects"
 import { useMobileDetection } from "../hooks/useMobileDetection"
 import { useFlowHandlers } from "../hooks/useFlowHandlers"
 import { useSpeechHandlers } from "../hooks/useSpeechHandlers"
@@ -73,6 +78,7 @@ export function DebateFlowPage() {
   useInitialLoad(setFlows, setRounds)
   useFontSizeSettings()
   useFlowPersistence(flows, setFlows)
+  useArgumentTreeAutoSync(flows, selected)
   useMobileDetection(state.setIsMobile)
   useRoundFromSlug()
   useSyncUrlWithRound()
