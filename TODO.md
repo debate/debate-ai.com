@@ -6,6 +6,96 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Coach Mode — "generate coaching session for current round" form.**
+  Closed `docs/features/coaching-sessions.md`'s only remaining Known gap —
+  the same doc/tracker-drift pattern the three most recent runs already
+  closed for Pre-Round Briefings, Practice Drills, and Response-Outcome
+  Charts, found via a systematic audit this run of every `docs/features/*.md`
+  "Known gaps" section against the actual current code (see "Doc/tracker
+  drift audit" note below for what else that audit surfaced).
+  `CoachingSessionsPanel.tsx` (`/coaching`) now has a "Generate coaching
+  session for current round" form (a side input + button, disabled with an
+  inline hint when no flow is currently selected), reading the round
+  workspace's currently selected flow via `state/store.ts`'s `useFlowStore`
+  — the same mechanism `DrillSetsPanel`'s "Generate drills for current
+  round" action already uses. It calls one new helper,
+  `buildAndSaveCoachingSession` in
+  `packages/debate-round/src/state/coachingSessions.ts`, which composes the
+  existing `buildCoachingSession` (from `flow/coach-mode.ts`) +
+  `saveCoachingSession` in one step (mirroring `drillSets.ts`'s
+  `buildAndSaveDrillSet`) — no new coaching-prompt derivation logic.
+  Vitest-covered (4 new cases in
+  `packages/debate-round/test/coachingSessions.test.ts`: deriving and
+  persisting a session from a flow, overwriting an existing record for the
+  same round+side pair, keeping sessions for different sides of the same
+  round distinct, and `collapseLimit` passing through to
+  `buildCoachingSession`). Verified with `bun run test` (156 files / 2192
+  tests, all pass — 4 new cases), `bun run typecheck` (11 in-scope packages
+  pass — `debate-ai-web` has no `typecheck` script; this repo has no `lint`
+  script), and `bun run build` (both buildable packages pass, `/coaching`
+  present in the route list). Docs updated at
+  `docs/features/coaching-sessions.md`; no follow-ups remain open on this
+  bullet.
+
+  Doc/tracker drift audit (systematic pass this run over all 39
+  `docs/features/*.md` files with a "Known gaps" section, verifying each
+  listed gap against the actual current code rather than trusting the doc's
+  own claim):
+  - 4 stale docs found and fixed this run (doc claimed a gap that was
+    already closed in code): `reason-editor-outline-nav.md` (the
+    ProseMirror decoration plugin that hides collapsed ranges,
+    `collapsedHeadingsPlugin`, already exists and is wired in),
+    `judge-paradigm-selections.md` (the AI judge-decision call using
+    `buildJudgeParadigmPrompt` already exists — `judge-decision-ai.ts` /
+    `judge-decision-client.ts` / `judge-decision-store-wiring.ts`, wired
+    into `JudgeDecisionPanel.tsx`/`PracticeRoundSimulatorPanel.tsx`),
+    `contributor-awards.md` (a real submitted-contribution flow already
+    exists via `ContributionsFeedPanel.tsx`), and `group-challenges.md`
+    (`CoachingProgramsPanel.tsx` already reads through this store via
+    `state/persistedCoachingProgramBoard.ts`'s `listGroupChallenges` call).
+  - 4 real, small, non-external-infra-blocked gaps were also found and
+    logged below as new backlog items for a future run (not implemented
+    this run, to keep this run's diff to the one task above): a missing
+    "regenerate AI speech" action in AI-Versus Rounds, completed
+    research-task history that's never pruned, the Flow Annotations "Jump
+    to" action not switching videos, and the Response-Outcome Charts AI
+    counsel call ignoring an active "what if" hypothetical. See "Newly
+    discovered small gaps" below.
+  - Every other audited doc's "Known gaps" section checked out as accurate
+    against the current code — either still genuinely open, or already
+    correctly documented as blocked on external infrastructure this repo
+    doesn't have (Tabroom authentication, audio/video transcription, no
+    reviewer/auth system). See "Remaining backlog audit" below for the
+    external-infra items, unchanged from prior runs.
+
+  Newly discovered small gaps (found by this run's doc/tracker drift audit;
+  each is small and not blocked by external infrastructure — good
+  candidates for a future run's "select a new idea" step before reaching
+  for `IDEAS.md`/Product Feature Ideas):
+  - `docs/features/ai-versus-rounds.md`: `AiVersusRoundPanel.tsx` has no way
+    to replace a just-generated AI speech — only "Generate AI speech" to
+    append one. Add a "Regenerate" action (re-calling
+    `requestAiVersusSpeech`/`requestAiVersusSpeechWithPersona` and
+    overwriting the last `submittedSpeeches` entry) gated to when the last
+    speech is AI-authored.
+  - `docs/features/research-progress-tracking.md`:
+    `state/researchProgress.ts` has no way to delete a topic's completed-task
+    history records — they accumulate forever. Add a
+    `deleteCompletedTaskHistoryForTopic(topic)` export.
+  - `docs/features/flow-annotations.md`: `FlowAnnotationsPanel.handleJump`
+    (and the matching `FlowSpreadsheet` badge) only seeks within the
+    already-active video — if the annotation's video isn't loaded, it gives
+    up instead of switching videos first via `debate-videos`'s
+    `useVideoPlayerStore.setActiveVideo(videoId, title, meta?)`.
+  - `docs/features/response-outcome-charts.md`:
+    `VulnerabilityChartsPanel.handleGetCounselPanel`
+    (`packages/debate-round/src/panels/VulnerabilityChartsPanel.tsx:128-142`)
+    builds its AI counsel request's `topArguments` from `record.report` (the
+    original persisted report) instead of `effectiveReport` (the report with
+    the panel's own "what if" hypothetical adjustments applied via
+    `applyHypotheticalAdjustments`) — so an active what-if adjustment is
+    silently ignored by the AI counsel call even though the rendered chart
+    reflects it.
 - **AI Response-Outcome Charts — add a "generate report for current round" form.**
   TODO.md's idea #4 ("AI Response-Outcome Charts") already said "No
   follow-ups remain open," but `docs/features/response-outcome-charts.md`'s

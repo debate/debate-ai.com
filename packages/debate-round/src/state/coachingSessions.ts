@@ -18,7 +18,8 @@
  * @module state/coachingSessions
  */
 
-import type { CoachingPrompt } from "../flow/coach-mode";
+import type { Flow } from "debate-core/src/types/flow";
+import { buildCoachingSession, type CoachingPrompt } from "../flow/coach-mode";
 
 export type CoachingSessionRecord = {
   roundId: string;
@@ -107,4 +108,28 @@ export function buildCoachingSessionsPanelView(): CoachingSessionRecord[] {
   return [...listCoachingSessions()].sort(
     (a, b) => a.roundId.localeCompare(b.roundId) || a.sideKey.localeCompare(b.sideKey),
   );
+}
+
+/**
+ * Derives a round+side's coaching session from an already-flowed `Flow` and
+ * persists it in one step — the "generate a new coaching session for a
+ * round" affordance named in `docs/features/coaching-sessions.md`'s Known
+ * gaps. Lets a caller with a live flow (e.g. the round workspace's currently
+ * selected flow) create a `CoachingSessionRecord` without hand-building it,
+ * mirroring `drillSets.ts`'s `buildAndSaveDrillSet`. Overwrites any existing
+ * session for that `roundId`+`sideKey` pair, same as `saveCoachingSession`.
+ */
+export function buildAndSaveCoachingSession(
+  flow: Pick<Flow, "children" | "columns">,
+  roundId: string,
+  sideKey: string,
+  options: { collapseLimit?: number } = {},
+): CoachingSessionRecord {
+  const record: CoachingSessionRecord = {
+    roundId,
+    sideKey,
+    prompts: buildCoachingSession(flow, sideKey, options),
+  };
+  saveCoachingSession(record);
+  return record;
 }
