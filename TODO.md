@@ -6,6 +6,40 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Response-Outcome Charts — add a "generate report for current round" form.**
+  TODO.md's idea #4 ("AI Response-Outcome Charts") already said "No
+  follow-ups remain open," but `docs/features/response-outcome-charts.md`'s
+  "Known gaps" still listed one — the same doc/tracker drift the two most
+  recent runs closed for Pre-Round Briefings and Practice Drills: "No
+  affordance in this panel to generate a new vulnerability report for a
+  round — a report only appears here once something elsewhere calls
+  `getArgumentVulnerabilityReport` and `saveVulnerabilityReport` for that
+  round." `VulnerabilityChartsPanel` (`/outcomes`) now has a "Generate
+  report for current round" form (a button, disabled with an inline hint
+  when no flow is currently selected), reading the round workspace's
+  currently selected flow via `state/store.ts`'s `useFlowStore` — the same
+  mechanism `DrillSetsPanel`'s "Generate drills for current round" action
+  already uses. It calls one new helper,
+  `buildAndSaveVulnerabilityReport` in
+  `packages/debate-round/src/state/vulnerabilityReports.ts`, which composes
+  the existing `getArgumentVulnerabilityReport` + `getFlowSideKeys` +
+  `saveVulnerabilityReport` in one step (mirroring `drillSets.ts`'s
+  `buildAndSaveDrillSet`) — no new vulnerability-scoring logic. Unlike the
+  Drill Sets form, no side-key input is needed since a vulnerability report
+  scores every side's arguments in one pass. Vitest-covered (3 new cases in
+  `packages/debate-round/test/vulnerabilityReports.test.ts`: deriving and
+  persisting a report from a flow, overwriting an existing record for the
+  same round, and `sideKeys` deriving correctly via `getFlowSideKeys`).
+  Verified with `bun run test` (156 files / 2188 tests, all pass — 3 new
+  cases), `bun run typecheck` (11 in-scope packages pass — `debate-ai-web`
+  has no `typecheck` script), and `bun run build` (both buildable packages
+  pass, `/outcomes` present in the route list). Docs updated at
+  `docs/features/response-outcome-charts.md`; no follow-ups remain open on
+  this bullet. The remaining backlog audited by prior runs (Tabroom-
+  authentication-gated data sources, missing transcription service, and the
+  browser-extension idea) is unaffected and still accurate — see the
+  Pre-Round Briefings entry below for the full audit.
+
 - **Pre-Round Briefings — persist and wire in a team's own round history.**
   Closes the real (not form-oversight) gap the previous run documented in
   `docs/features/pre-round-briefings.md`'s "Known gaps": the "create

@@ -133,12 +133,20 @@ and an unparseable AI reply), and
 `packages/debate-round/test/counselPanelAssessments.test.ts` (get/save/
 delete, corrupt/missing storage, and per-`roundId` isolation).
 
+A "Generate report for current round" form in the panel reads the round
+workspace's currently selected flow (`state/store.ts`'s `useFlowStore`, the
+same mechanism `DrillSetsPanel`'s "Generate drills for current round" form
+uses) and derives+persists that round's vulnerability report via
+`state/vulnerabilityReports.ts`'s new `buildAndSaveVulnerabilityReport` —
+composing the existing `getArgumentVulnerabilityReport` + `getFlowSideKeys`
++ `saveVulnerabilityReport` in one step, mirroring `drillSets.ts`'s
+`buildAndSaveDrillSet`. No new vulnerability-scoring logic. Vitest-covered
+in `packages/debate-round/test/vulnerabilityReports.test.ts` (deriving and
+persisting a report from a flow, overwriting an existing record for the
+same round, and `sideKeys` derived correctly via `getFlowSideKeys`).
+
 ## Known gaps
 
-- No affordance in this panel to generate a new vulnerability report for a
-  round — a report only appears here once something elsewhere calls
-  `getArgumentVulnerabilityReport` and `saveVulnerabilityReport` for that
-  round.
 - The AI counsel panel scores the round's currently-persisted report only
   (not a "what if" hypothetical) — requesting a fresh panel after applying
   a "what if" adjustment re-scores against the original saved report, not
