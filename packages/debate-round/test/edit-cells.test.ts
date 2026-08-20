@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { sortEditsNewestFirst } from "../src/flow/edit-cells";
+import { gridCellForBoxPath, sortEditsNewestFirst } from "../src/flow/edit-cells";
+import { boxPathForCell } from "../src/flow/annotation-cells";
 import type { FlowEdit } from "../src/flow/shared-flow-sync";
 
 function edit(overrides: Partial<FlowEdit> = {}): FlowEdit {
@@ -32,5 +33,20 @@ describe("sortEditsNewestFirst", () => {
     const input = [early, late];
     sortEditsNewestFirst(input);
     expect(input).toEqual([early, late]);
+  });
+});
+
+describe("gridCellForBoxPath", () => {
+  it("maps the first column of the first row to row-0/col_0", () => {
+    expect(gridCellForBoxPath([0])).toEqual({ rowId: "row-0", field: "col_0" });
+  });
+
+  it("maps a later row/column to the matching row-N/col_N pair", () => {
+    expect(gridCellForBoxPath([4, 0, 0])).toEqual({ rowId: "row-4", field: "col_2" });
+  });
+
+  it("round-trips through boxPathForCell for arbitrary row/column indices", () => {
+    expect(gridCellForBoxPath(boxPathForCell(7, 3))).toEqual({ rowId: "row-7", field: "col_3" });
+    expect(gridCellForBoxPath(boxPathForCell(0, 0))).toEqual({ rowId: "row-0", field: "col_0" });
   });
 });

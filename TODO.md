@@ -6,6 +6,39 @@
 _No task currently in progress._
 
 ### Completed
+- **Shared, Ai-Generated Debate Flow — force-refresh the `FlowSpreadsheet`
+  `EditBadge` cell after logging through its own popover.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/shared-flow-sync.md`'s
+  Known gaps section said the `EditBadge` "doesn't refresh in place after
+  logging one through its own popover until the grid next re-renders that
+  cell" — a same-tab staleness bug, distinct from the cross-tab gap it was
+  bundled with. AG Grid's React cell renderers (`AnnotationCellRenderer`)
+  read `state/flowEdits.ts` directly from `localStorage` at render time and
+  don't re-render on their own when a sibling React state change happens;
+  `FlowSpreadsheet.tsx` already had an `editReviewRefreshToken` bump for the
+  popover's own edit list, but nothing told AG Grid to redraw the grid cell
+  itself. Added `flow/edit-cells.ts`'s `gridCellForBoxPath(boxPath)`, a pure
+  helper mapping a box path to its AG Grid `row-${index}` id and `col_${j}`
+  field (mirroring `dataTransform.ts#buildRowData`'s and
+  `useFlowGridConfig.ts`'s existing conventions — the same pair
+  `annotation-cells.ts#boxPathForCell` derives a `boxPath` from). Wired a new
+  `handleEditLogged` callback into `EditReviewPopover`'s `onLogged` prop that
+  bumps the existing refresh token and calls
+  `gridRef.current.api.refreshCells({ rowNodes, columns, force: true })` for
+  exactly that cell. Vitest-covered (3 new cases in
+  `packages/debate-round/test/edit-cells.test.ts`'s `gridCellForBoxPath`
+  suite: first-row/first-column mapping, a later row/column pair, and a
+  round-trip through `boxPathForCell` for arbitrary indices). Verified with
+  `bun run test` (156 files / 2206 tests, all pass — 3 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no `typecheck`
+  script; this repo has no `lint` script), and `bun run build` (both
+  buildable packages pass). Docs updated at
+  `docs/features/shared-flow-sync.md` (new "EditBadge same-tab refresh"
+  section; Known gaps narrowed to the remaining cross-tab case, now
+  explicitly distinguished from Live Sync's cross-*contributor* mechanism).
+  PR: https://github.com/debate/debate-ai.com/pull/270.
 - **Practice Round Simulator — wire post-round feedback generation to a live round flow.**
   Found via this run's own doc/tracker-drift audit of every
   `docs/features/*.md` "Known gaps" section (following the same audit

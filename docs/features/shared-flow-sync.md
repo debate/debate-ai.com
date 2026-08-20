@@ -233,14 +233,31 @@ package typecheck and the production build (`/api/flow-sync` appears in
 the built route list), matching this repo's existing convention for other
 React hooks (e.g. `useWordCountSpeechMode`) and D1-backed API routes.
 
+## EditBadge same-tab refresh
+
+Logging a new edit through `EditReviewPopover` now force-refreshes the
+originating cell's `EditBadge` in the same render pass, instead of leaving
+the count stale until AG Grid re-renders that cell for an unrelated reason
+(scrolling, sorting, an edit elsewhere). `FlowSpreadsheet.tsx`'s
+`handleEditLogged` (passed as `EditReviewPopover`'s `onLogged`) bumps the
+existing `editReviewRefreshToken` (for the popover's own edit list) and
+calls `gridRef.current.api.refreshCells({ rowNodes, columns, force: true })`
+for exactly that box's row+column, via a new pure helper,
+`flow/edit-cells.ts#gridCellForBoxPath`, which maps a `boxPath` to its AG
+Grid `row-${index}` id and `col_${j}` field (the same conventions
+`dataTransform.ts#buildRowData` and `useFlowGridConfig.ts`'s column defs
+already use). Vitest-covered in `packages/debate-round/test/edit-cells.test.ts`
+(row/column mapping, including a round-trip through `boxPathForCell`).
+
 ## Known gaps
 
-- The `EditBadge` reads a box's edits from `localStorage` at cell render
-  time; it does not live-update if another tab logs a new edit while the
-  grid is open, and the badge doesn't refresh in place after logging one
-  through its own popover until the grid next re-renders that cell —
-  mirroring the same known gap already documented for the `FlowSpreadsheet`
-  annotation badge.
+- The `EditBadge` still reads a box's edits from `localStorage` at cell
+  render time; it does not live-update if another tab logs a new edit while
+  the grid is open — only the same-tab, logged-through-its-own-popover case
+  above is fixed. This cross-tab gap is shared with the `FlowSpreadsheet`
+  annotation badge, and with every other localStorage-backed panel in this
+  repo that has no cross-tab live-update mechanism (Live Sync above is
+  cross-*contributor*, via the server, not cross-tab within one browser).
 - Live sync is opt-in and per-Flow-ID, off by default, and pulls on a fixed
   ~4s poll rather than pushing instantly — a teammate's edit can take up to
   one poll interval to appear. The `FlowSpreadsheet` grid's `EditBadge`/
