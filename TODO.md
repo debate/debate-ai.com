@@ -6,6 +6,47 @@
 _No task currently in progress._
 
 ### Completed
+- **Pre-Round Briefings — persist and wire in a team's own round history.**
+  Closes the real (not form-oversight) gap the previous run documented in
+  `docs/features/pre-round-briefings.md`'s "Known gaps": the "create
+  briefing" form's "Prior meetings" section always rendered "No recorded
+  prior meetings" even when an opponent profile was picked, because
+  `round/pre-round-briefing.ts`'s `buildPreRoundBriefingFromStores` already
+  supported a head-to-head `ownRecords`/`opponentTeamId` history when
+  called directly, but no persisted store of a team's own round history
+  existed for it to read from. Added
+  `packages/debate-round/src/state/ownRoundHistory.ts`, a new
+  `OpponentRoundRecord`-per-logged-round localStorage store (append-only,
+  synthetic id per record, mirroring `debate-data-sync`'s
+  `tournamentResults.ts` convention) with `listOwnRoundHistory`/
+  `saveOwnRoundHistoryRecord`/`deleteOwnRoundHistoryRecord`/
+  `getOwnRoundHistoryAgainst`. `buildPreRoundBriefingFromStores` now
+  resolves `ownRecords` from this store by `opponentTeamId` the same way it
+  already resolved `opponentProfile`/`judgeProfile` by id — no new
+  head-to-head computation logic; it still delegates to the existing
+  `getHeadToHeadRecords`/`summarizePriorMeetings`. `PreRoundBriefingsPanel`
+  (`/briefings`) gained a "Log a round" form (tournament, date, division,
+  side, an opponent picked from an already-persisted Opponent Team Profile,
+  and Won/Lost), with a "Remove" action per logged round — otherwise the
+  store would have been just as unreachable from the shipped app as the
+  briefing store was before last run's "create briefing" form. Vitest-
+  covered: a new `packages/debate-round/test/ownRoundHistory.test.ts` (10
+  cases covering empty/corrupt/non-array storage, append-not-overwrite,
+  delete, and head-to-head filtering including records with no
+  `opponentTeamId`), plus 2 new cases in
+  `packages/debate-round/test/pre-round-briefing.test.ts` covering
+  `buildPreRoundBriefingFromStores` resolving `ownRecords` from the store
+  and an explicitly supplied `ownRecords` still taking precedence over it.
+  Verified with `bun run test` (156 files / 2186 tests, all pass — 1 new
+  file, 12 new cases), `bun run typecheck` (11 in-scope packages pass —
+  `debate-ai-web` has no `typecheck` script), and `bun run build` (both
+  buildable packages pass). Docs updated at
+  `docs/features/pre-round-briefings.md`; no follow-ups remain open on this
+  gap. The remaining backlog audited by the previous run (Tabroom-
+  authentication-gated data sources, missing transcription service, and the
+  browser-extension idea) is unaffected and still accurate — see that
+  entry below.
+
 - **Practice Drills — add a "generate drills for current round" form.** The
   "📚 AI Drill Generator" bullet in TODO.md's Research Crowdsourcing
   Organizer Features list said "No follow-ups remain open," but

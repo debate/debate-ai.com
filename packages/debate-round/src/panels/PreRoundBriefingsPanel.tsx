@@ -20,6 +20,15 @@
  * briefing — mirroring `StandingsPanel`'s "record a result" form
  * convention.
  *
+ * Also renders a "log a round" form: this team's own round history (used
+ * for the "Prior meetings" head-to-head record) is persisted via
+ * `state/ownRoundHistory.ts`'s `saveOwnRoundHistoryRecord`, closing the
+ * real gap `docs/features/pre-round-briefings.md`'s "Known gaps" documented
+ * — no persisted store of a team's own round history existed for
+ * `buildPreRoundBriefingFromStores` to read from, so "Prior meetings"
+ * always rendered "No recorded prior meetings" even when an opponent
+ * profile was picked.
+ *
  * @module panels/PreRoundBriefingsPanel
  */
 
@@ -48,6 +57,12 @@ import {
   savePreRoundBriefing,
 } from "../state/preRoundBriefings"
 import type { PreRoundBriefingRecord } from "../state/preRoundBriefings"
+import {
+  deleteOwnRoundHistoryRecord,
+  listOwnRoundHistory,
+  saveOwnRoundHistoryRecord,
+} from "../state/ownRoundHistory"
+import type { OwnRoundHistoryRecord } from "../state/ownRoundHistory"
 
 const NONE_VALUE = "__none__"
 
@@ -77,6 +92,24 @@ const EMPTY_DRAFT: BriefingDraft = {
   teamPrepNotes: "",
 }
 
+type RoundLogDraft = {
+  tournamentName: string
+  date: string
+  division: string
+  side: DebateSide
+  opponentTeamId: string
+  won: "won" | "lost"
+}
+
+const EMPTY_ROUND_LOG_DRAFT: RoundLogDraft = {
+  tournamentName: "",
+  date: "",
+  division: "",
+  side: "aff",
+  opponentTeamId: NONE_VALUE,
+  won: "won",
+}
+
 /**
  * Renders the Pre-Round Briefings panel: every persisted
  * `PreRoundBriefingRecord`, sorted by `roundId`, with a "Clear" action per
@@ -91,11 +124,15 @@ export function PreRoundBriefingsPanel() {
   const [judgeProfiles, setJudgeProfiles] = useState<{ judgeId: string }[]>([])
   const [draft, setDraft] = useState<BriefingDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [ownRoundHistory, setOwnRoundHistory] = useState<OwnRoundHistoryRecord[]>([])
+  const [roundLogDraft, setRoundLogDraft] = useState<RoundLogDraft>(EMPTY_ROUND_LOG_DRAFT)
+  const [roundLogError, setRoundLogError] = useState<string | null>(null)
 
   useEffect(() => {
     setBriefings(buildPreRoundBriefingsPanelView())
     setOpponentProfiles(listOpponentTeamProfiles())
     setJudgeProfiles(listJudgeProfiles())
+    setOwnRoundHistory(listOwnRoundHistory())
   }, [])
 
   const refresh = () => setBriefings(buildPreRoundBriefingsPanelView())
@@ -130,6 +167,41 @@ export function PreRoundBriefingsPanel() {
     savePreRoundBriefing(result.record)
     setError(null)
     setDraft({ ...EMPTY_DRAFT, tournamentName: draft.tournamentName, division: draft.division })
+    refresh()
+  }
+
+  const refreshOwnRoundHistory = () => setOwnRoundHistory(listOwnRoundHistory())
+
+  const handleLogRound = () => {
+    const tournamentName = roundLogDraft.tournamentName.trim()
+    const date = roundLogDraft.date.trim()
+    const division = roundLogDraft.division.trim()
+    const opponentTeamId =
+      roundLogDraft.opponentTeamId === NONE_VALUE ? "" : roundLogDraft.opponentTeamId.trim()
+    if (!tournamentName || !date || !division || !opponentTeamId) {
+      setRoundLogError("Tournament, date, division, and opponent are all required.")
+      return
+    }
+
+    saveOwnRoundHistoryRecord({
+      id: `round-log-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      teamId: "self",
+      tournamentName,
+      date,
+      division,
+      side: roundLogDraft.side,
+      won: roundLogDraft.won === "won",
+      opponentTeamId,
+    })
+    setRoundLogError(null)
+    setRoundLogDraft({ ...EMPTY_ROUND_LOG_DRAFT, tournamentName, division })
+    refreshOwnRoundHistory()
+    refresh()
+  }
+
+  const handleDeleteRoundLog = (id: string) => {
+    deleteOwnRoundHistoryRecord(id)
+    refreshOwnRoundHistory()
     refresh()
   }
 
@@ -269,6 +341,125 @@ export function PreRoundBriefingsPanel() {
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button onClick={handleSubmit}>Save briefing</Button>
+      </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Log a round</h2>
+          <p className="text-xs text-muted-foreground">
+            Log this team&apos;s own past rounds against an opponent so a future briefing for that
+            opponent can show a head-to-head &quot;Prior meetings&quot; record.
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="round-log-tournament">Tournament</Label>
+            <Input
+              id="round-log-tournament"
+              value={roundLogDraft.tournamentName}
+              onChange={(e) =>
+                setRoundLogDraft((prev) => ({ ...prev, tournamentName: e.target.value }))
+              }
+              placeholder="Blake"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="round-log-date">Date</Label>
+            <Input
+              id="round-log-date"
+              type="date"
+              value={roundLogDraft.date}
+              onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, date: e.target.value }))}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="round-log-division">Division</Label>
+            <Input
+              id="round-log-division"
+              value={roundLogDraft.division}
+              onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, division: e.target.value }))}
+              placeholder="LD"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="round-log-side">Side</Label>
+            <Select
+              value={roundLogDraft.side}
+              onValueChange={(value) =>
+                setRoundLogDraft((prev) => ({ ...prev, side: value as DebateSide }))
+              }
+            >
+              <SelectTrigger id="round-log-side" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="aff">Aff</SelectItem>
+                <SelectItem value="neg">Neg</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="round-log-opponent">Opponent</Label>
+            <Select
+              value={roundLogDraft.opponentTeamId}
+              onValueChange={(value) =>
+                setRoundLogDraft((prev) => ({ ...prev, opponentTeamId: value }))
+              }
+            >
+              <SelectTrigger id="round-log-opponent" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE_VALUE}>Select an opponent profile</SelectItem>
+                {opponentProfiles.map((profile) => (
+                  <SelectItem key={profile.teamId} value={profile.teamId}>
+                    {profile.teamId}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="round-log-result">Result</Label>
+            <Select
+              value={roundLogDraft.won}
+              onValueChange={(value) =>
+                setRoundLogDraft((prev) => ({ ...prev, won: value as "won" | "lost" }))
+              }
+            >
+              <SelectTrigger id="round-log-result" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="won">Won</SelectItem>
+                <SelectItem value="lost">Lost</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        {roundLogError && <p className="text-sm text-destructive">{roundLogError}</p>}
+        <Button onClick={handleLogRound} variant="outline">
+          Log round
+        </Button>
+
+        {ownRoundHistory.length > 0 && (
+          <ul className="space-y-1.5 pt-1">
+            {ownRoundHistory.map((record) => (
+              <li
+                key={record.id}
+                className="flex items-center justify-between gap-2 text-sm text-muted-foreground"
+              >
+                <span>
+                  {record.date} — {record.tournamentName}, {record.division} ({record.side}) vs.{" "}
+                  {record.opponentTeamId}: {record.won ? "W" : "L"}
+                </span>
+                <Button size="sm" variant="ghost" onClick={() => handleDeleteRoundLog(record.id)}>
+                  Remove
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {briefings.length === 0 && (
