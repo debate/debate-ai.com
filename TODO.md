@@ -6,6 +6,41 @@
 _No task currently in progress._
 
 ### Completed
+- **Judge Profiles — "Logged rounds" delete affordance, closing the
+  panel's last actionable Known gap.**
+  Found via this run's audit of every `docs/features/*.md` "Known gaps"
+  section (same pattern the last several runs used, most recently closing
+  the identical gap on `opponent-team-profiles.md` in
+  [#279](https://github.com/debate/debate-ai.com/pull/279); every bullet in
+  this file's "Product Feature Ideas"/"Research Crowdsourcing Organizer
+  Features" sections below already says "No follow-ups remain open", so the
+  per-doc Known gaps audit is this run's backlog source, as it was last
+  run): `docs/features/judge-profiles.md` said "No delete/edit affordance
+  in the panel for an already-logged round — `state/judgeRoundRecords.ts`'s
+  `deleteJudgeRoundRecord` (which re-aggregates the affected judge) exists
+  and is covered, but nothing in the UI calls it, so a mistyped ballot can
+  only be corrected by logging further rounds." Both
+  `deleteJudgeRoundRecord` and `listJudgeRoundRecords` already existed and
+  were fully Vitest-covered in
+  `packages/debate-speech-writer/test/judgeRoundRecords.test.ts` — the gap
+  was purely a missing UI caller, so no new store/aggregation logic or
+  Vitest cases were needed. `JudgeProfilesPanel.tsx` gains a `records`
+  state slice (populated on mount and refreshed after log/delete) and a
+  "Logged rounds" table below the roster — judge, tournament, date,
+  winning side, and each side's speaker points, with a Delete action per
+  row — mirroring `debate-round`'s `OpponentTeamProfilesPanel`'s
+  already-shipped identical table verbatim (same layout, same
+  refresh-after-delete pattern).
+  Documented in `docs/features/judge-profiles.md` (new "Logged rounds"
+  paragraph in the "Logging a judged round" section, updated data-flow
+  line; the closed gap replaced with the two still-open gaps the sibling
+  Opponent Team Profiles panel also carries — no in-place edit of a logged
+  round, and no per-judge filter on the logged-rounds list — rather than
+  claiming those were in scope here).
+  Verified: `bunx vitest run` (160 files / 2275 tests, all passing, no new
+  test file needed since the touched store functions were already
+  covered), `bun run typecheck` (11/11 packages), `bun run build:web`
+  (production build succeeds, `/judges` route present).
 - **Opponent Team Profiles — "Log a scouted round" form, the in-app way to
   create an opponent scouting profile.**
   Found via this run's own doc/tracker-drift audit of every

@@ -16,7 +16,11 @@
  * which re-aggregates that judge's profile from their full logged history
  * via the existing `buildJudgeProfile`/`saveJudgeProfile`. That's the only
  * in-app way to create a profile — every profile field shown here stays
- * derived from logged rounds, never edited directly.
+ * derived from logged rounds, never edited directly. The "Logged rounds"
+ * table below the roster deletes a mistyped round through the same store
+ * (`deleteJudgeRoundRecord`), which re-aggregates (or removes) the
+ * affected judge's profile, mirroring `debate-round`'s
+ * `OpponentTeamProfilesPanel` convention.
  *
  * @module panels/JudgeProfilesPanel
  */
@@ -45,7 +49,12 @@ import {
   TableRow,
 } from "debate-ui/src/primitives/table"
 import { buildJudgeProfilesRoster } from "../state/judgeProfiles"
-import { recordJudgeRound } from "../state/judgeRoundRecords"
+import {
+  deleteJudgeRoundRecord,
+  listJudgeRoundRecords,
+  recordJudgeRound,
+  type JudgeRoundRecordEntry,
+} from "../state/judgeRoundRecords"
 import type { DebateSide, JudgeProfile } from "../judge/judge-profile"
 import { judgeParadigms, judgeParadigmIds } from "../judge/judge-paradigms"
 import type { BuiltinJudgeParadigmId } from "../judge/judge-paradigms"
@@ -92,12 +101,19 @@ const EMPTY_DRAFT: RoundDraft = {
  */
 export function JudgeProfilesPanel() {
   const [roster, setRoster] = useState<JudgeProfile[] | null>(null)
+  const [records, setRecords] = useState<JudgeRoundRecordEntry[]>([])
   const [draft, setDraft] = useState<RoundDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setRoster(buildJudgeProfilesRoster())
+    setRecords(listJudgeRoundRecords())
   }, [])
+
+  const refresh = () => {
+    setRoster(buildJudgeProfilesRoster())
+    setRecords(listJudgeRoundRecords())
+  }
 
   const handleSubmit = () => {
     const judgeId = draft.judgeId.trim()
@@ -138,7 +154,12 @@ export function JudgeProfilesPanel() {
     })
     setError(null)
     setDraft({ ...EMPTY_DRAFT, judgeId, division: draft.division })
-    setRoster(buildJudgeProfilesRoster())
+    refresh()
+  }
+
+  const handleDelete = (id: string) => {
+    deleteJudgeRoundRecord(id)
+    refresh()
   }
 
   if (roster === null) {
@@ -341,6 +362,51 @@ export function JudgeProfilesPanel() {
             ))}
           </TableBody>
         </Table>
+      )}
+
+      {records.length > 0 && (
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-foreground">Logged rounds</h2>
+          <p className="text-sm text-muted-foreground">
+            Deleting a round re-derives that judge's profile from whatever rounds remain, and
+            removes the profile entirely once its last round is gone.
+          </p>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Judge</TableHead>
+                <TableHead>Tournament</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Winner</TableHead>
+                <TableHead className="text-right">Aff pts</TableHead>
+                <TableHead className="text-right">Neg pts</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {records.map((record) => (
+                <TableRow key={record.id}>
+                  <TableCell className="font-medium">{record.judgeId}</TableCell>
+                  <TableCell>{record.tournamentName}</TableCell>
+                  <TableCell>{record.date}</TableCell>
+                  <TableCell className="uppercase">{record.winningSide}</TableCell>
+                  <TableCell className="text-right">{record.affSpeakerPoints}</TableCell>
+                  <TableCell className="text-right">{record.negSpeakerPoints}</TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDelete(record.id)}
+                      aria-label={`Delete ${record.judgeId}'s ${record.tournamentName} round on ${record.date}`}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )}
     </div>
   )

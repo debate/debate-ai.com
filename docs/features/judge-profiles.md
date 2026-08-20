@@ -38,6 +38,14 @@ derived value: there is no way to edit an aggregate directly.
 on; turning the latter off clears and disables the former, so a round can't
 be logged as won-but-never-raised.
 
+The **Logged rounds** table below the roster lists every round recorded so
+far, across every judge, with a **Delete** action. Deleting re-aggregates
+the affected judge from whatever rounds remain, and deletes the derived
+profile entirely once its last round is gone (rather than leaving a
+zero-round one) — the same pattern as the
+[Opponent Team Profiles](opponent-team-profiles.md) panel's logged-rounds
+list.
+
 ## Data flow
 
 ```
@@ -56,7 +64,8 @@ state/judgeProfiles.ts (localStorage: judgeProfiles)
   → buildJudgeProfilesRoster()             — lists every persisted JudgeProfile,
                                               ordered by rounds judged descending
                                               (ties broken alphabetically)
-  → panels/JudgeProfilesPanel.tsx          — renders the log form + roster table
+  → panels/JudgeProfilesPanel.tsx          — renders the log form, roster table, and
+                                              logged-rounds list
   → apps/debate-ai.com/app/judges/page.tsx — mounts the panel as a route
 ```
 
@@ -85,11 +94,14 @@ introducing new aggregation logic. Vitest-covered in
   a caller of `recordJudgeRound`/`saveJudgeProfile` directly. This is the
   same gap the [Standings](standings.md) and
   [Opponent Team Profiles](opponent-team-profiles.md) panels have.
-- No delete/edit affordance in the panel for an already-logged round —
-  `state/judgeRoundRecords.ts`'s `deleteJudgeRoundRecord` (which
-  re-aggregates the affected judge) exists and is covered, but nothing in
-  the UI calls it, so a mistyped ballot can only be corrected by logging
-  further rounds.
+- A logged round can be deleted but not edited in place — correcting a
+  mistyped round means deleting it and logging it again (matches the
+  identical still-open gap on the
+  [Opponent Team Profiles](opponent-team-profiles.md) panel).
+- The logged-rounds list shows every judge's rounds together, with no
+  per-judge filter; on a long history the row for the round you just logged
+  can be far down the table (matches the identical still-open gap on the
+  [Opponent Team Profiles](opponent-team-profiles.md) panel).
 - Profiles are per-browser localStorage, not a shared team resource, and
   there are no identity/permission checks on who may log a round for a
   judge (no auth in this repo yet).
