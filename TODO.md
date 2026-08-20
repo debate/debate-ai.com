@@ -3,64 +3,41 @@
 
 ### In progress
 
-## Argument Tree Outline: auto-sync on live flow edits
-
-**Status:** In Progress
-**Source:** `docs/features/argument-tree-outline.md` Known gaps — "`ArgumentTreePanel.tsx`'s
-'Generate outline for current round' action is a manual trigger a user has to click — the live
-round-flowing page (`DebateFlowPage`/`FlowMainContent`) still doesn't call
-`buildAndSaveArgumentTree` automatically as a round is flowed."
-**Branch:** `claude/practical-allen-qtq14l`
-**PR:** Not created yet
-**Started:** 2026-08-20
-
-### Goal
-As a user edits a flow in the live round-flowing page, the round's persisted
-`ArgumentTreeRecord` (`state/argumentTrees.ts`) updates automatically — without a visit to
-`/outline` and a manual "Generate outline" click.
-
-### Scope
-- Debounced auto-sync of the selected flow's argument tree while `DebateFlowPage` is open.
-- Skip the localStorage write when the derived tree hasn't actually changed since last saved.
-
-### Non-goals
-- No changes to the manual "Generate outline for current round" button (stays as-is for
-  visiting `/outline` directly).
-- No changes to tree-derivation (`buildArgumentTree`) or filtering logic.
-
-### Acceptance criteria
-- [x] Editing a flow's grid while it's the selected flow in the round-flowing page updates its
-      persisted `ArgumentTreeRecord` after a short debounce, with no manual action required.
-- [x] A debounce tick that doesn't change the derived tree doesn't rewrite localStorage.
-- [x] Vitest coverage is added or updated
-- [x] Lint passes (no `lint` script is configured in this repo — not applicable)
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Production/web build passes
-- [x] Documentation is updated
-
-### Implementation plan
-- [x] Inspect `state/argumentTrees.ts`, `panels/ArgumentTreePanel.tsx`,
-      `hooks/useFlowEffects.ts`, `panels/DebateRoundPanel.tsx`
-- [x] Add `buildAndSaveArgumentTreeIfChanged` to `state/argumentTrees.ts` (skips the write when
-      the derived tree is unchanged)
-- [x] Add `useArgumentTreeAutoSync` hook to `hooks/useFlowEffects.ts` (debounced, mirrors the
-      `useSearchState.ts` debounce convention)
-- [x] Wire the hook into `DebateFlowPage` alongside `useFlowPersistence`
-- [x] Add focused Vitest coverage for `buildAndSaveArgumentTreeIfChanged`
-- [x] Run focused tests and fix failures
-- [x] Run linting and typechecking
-- [x] Run the full relevant test suite
-- [x] Run the production/web build
-- [x] Update `docs/features/argument-tree-outline.md`'s Known gaps
-- [x] Commit and push the branch
-- [ ] Create or update the pull request
-- [x] Update tracker status, completed checkboxes, and remaining work
-
-### Remaining work
-- Open the pull request (implementation, tests, docs, and verification are all complete).
+_No task currently in progress._
 
 ### Completed
+- **Outline Filters and Argument Tree View — auto-sync the argument tree
+  as a round is flowed, not just on a manual "Generate outline" click.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/argument-tree-outline.md` said
+  `ArgumentTreePanel.tsx`'s "Generate outline for current round" action was
+  still a manual trigger — "the live round-flowing page
+  (`DebateFlowPage`/`FlowMainContent`) still doesn't call
+  `buildAndSaveArgumentTree` automatically as a round is flowed" — left open
+  by PR #277. `state/argumentTrees.ts` gained
+  `buildAndSaveArgumentTreeIfChanged(flow, roundId)`, which derives the tree
+  the same way `buildAndSaveArgumentTree` does but skips the localStorage
+  write (returning `undefined`) when the result is structurally identical to
+  what's already stored for that round, so a periodic auto-sync tick doesn't
+  thrash storage when nothing actually changed. `hooks/useFlowEffects.ts`
+  gained `useArgumentTreeAutoSync(flows, selected)` — a 1.5s-debounced
+  effect on the selected flow, mirroring the debounce convention already
+  used by `debate-card-search`'s `useSearchState.ts` — wired into
+  `DebateFlowPage` (`panels/DebateRoundPanel.tsx`) alongside its existing
+  `useFlowPersistence` effect. The manual "Generate outline for current
+  round" button in `ArgumentTreePanel.tsx` is unchanged. No follow-ups
+  remain open on this Known gap. Vitest-covered in
+  `packages/debate-round/test/argumentTrees.test.ts` (saving on a first
+  sync, skipping the write and returning `undefined` when the derived tree
+  is unchanged, and saving+returning the new record on a real change).
+  Verified with `bun x vitest run` (162 files, 2314 tests),
+  `bunx turbo typecheck --filter=debate-round`, and
+  `bunx turbo build --filter=debate-ai-web`; no `lint` script is configured
+  in this repo. **PR:** [#284](https://github.com/debate/debate-ai.com/pull/284).
+  **Completed:** 2026-08-20.
+
 - **Outline Filters and Argument Tree View — neighbour preview + bulk
   "tag every row in this section" action.**
   Found via this run's own doc/tracker-drift audit of every
