@@ -5,6 +5,7 @@ import {
   deletePrepNote,
   getPrepNote,
   listPrepNotes,
+  listPrepNotesForBox,
   listPrepNotesForFlow,
   nextPrepNoteStatus,
   savePrepNote,
@@ -88,6 +89,24 @@ describe("listPrepNotesForFlow", () => {
   it("returns an empty list for a flow with no notes", () => {
     savePrepNote(OPEN_NOTE);
     expect(listPrepNotesForFlow(999)).toEqual([]);
+  });
+});
+
+describe("listPrepNotesForBox", () => {
+  it("returns only notes for the given flow and box path, oldest first", () => {
+    const sameBoxOlder: PrepNote = { ...OPEN_NOTE, id: "note-3", createdAt: 50 };
+    const differentBoxSameFlow: PrepNote = { ...OPEN_NOTE, id: "note-4", boxPath: [0, 2] };
+    savePrepNote(OTHER_FLOW_NOTE);
+    savePrepNote(OPEN_NOTE);
+    savePrepNote(sameBoxOlder);
+    savePrepNote(differentBoxSameFlow);
+
+    expect(listPrepNotesForBox(1, [0, 1])).toEqual([sameBoxOlder, OPEN_NOTE]);
+  });
+
+  it("returns an empty list for a box with no notes", () => {
+    savePrepNote(OPEN_NOTE);
+    expect(listPrepNotesForBox(1, [9, 9])).toEqual([]);
   });
 });
 

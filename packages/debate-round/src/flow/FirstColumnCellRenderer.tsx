@@ -7,8 +7,10 @@
 import { ChevronDown, ChevronRight } from "lucide-react"
 import { listFlowAnnotationsForBox } from "../state/flowAnnotations"
 import { listFlowEditsForBox } from "../state/flowEdits"
+import { listPrepNotesForBox } from "../state/prepNotes"
 import { AnnotationBadge } from "./AnnotationBadge"
 import { EditBadge } from "./EditBadge"
+import { PrepNoteBadge } from "./PrepNoteBadge"
 import { boxPathForCell } from "./annotation-cells"
 import type { FirstColumnCellRendererProps } from "./types"
 
@@ -16,17 +18,28 @@ import type { FirstColumnCellRendererProps } from "./types"
  * Custom cell renderer for first column cells that are section headings.
  * Shows a chevron toggle and bold text for heading rows, plus an
  * `AnnotationBadge` when the cell's box (column index 0) has a persisted
- * `FlowAnnotation`, and an `EditBadge` for logging or reviewing that box's
- * `FlowEdit`s.
+ * `FlowAnnotation`, an `EditBadge` for logging or reviewing that box's
+ * `FlowEdit`s, and a `PrepNoteBadge` for creating or reviewing that box's
+ * `PrepNote`s.
  */
 export const FirstColumnCellRenderer = (props: FirstColumnCellRendererProps) => {
-  const { data, value, collapsedHeadings, onToggleCollapse, flowId, onJumpToAnnotation, onOpenEditReview } = props
+  const {
+    data,
+    value,
+    collapsedHeadings,
+    onToggleCollapse,
+    flowId,
+    onJumpToAnnotation,
+    onOpenEditReview,
+    onOpenPrepNote,
+  } = props
   if (!data) return <span>{value}</span>
 
   const boxPath = boxPathForCell(data.originalIndex, 0)
   const annotations =
     typeof localStorage === "undefined" ? [] : listFlowAnnotationsForBox(flowId, boxPath)
   const edits = typeof localStorage === "undefined" ? [] : listFlowEditsForBox(flowId, boxPath)
+  const notes = typeof localStorage === "undefined" ? [] : listPrepNotesForBox(flowId, boxPath)
   const badge = (
     <>
       <AnnotationBadge annotations={annotations} onJump={onJumpToAnnotation} />
@@ -36,6 +49,7 @@ export const FirstColumnCellRenderer = (props: FirstColumnCellRendererProps) => 
           onOpenEditReview({ x: e.clientX, y: e.clientY, boxPath, currentContent: String(value ?? "") })
         }
       />
+      <PrepNoteBadge notes={notes} onOpen={(e) => onOpenPrepNote({ x: e.clientX, y: e.clientY, boxPath })} />
     </>
   )
 

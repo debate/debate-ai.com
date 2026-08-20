@@ -15,13 +15,15 @@ import type {
   CellContextMenuEvent,
 } from "ag-grid-community"
 import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
-import type { FlowSpreadsheetProps, ContextMenuEntry, EditReviewOpenParams } from "./types"
+import type { FlowSpreadsheetProps, ContextMenuEntry, EditReviewOpenParams, PrepNoteOpenParams } from "./types"
 import { buildRowData, rowDataToBoxes } from "./dataTransform"
 import { jumpToAnnotation } from "./flow-annotations"
 import type { FlowAnnotation } from "./flow-annotations"
 import { listFlowEditsForBox } from "../state/flowEdits"
+import { listPrepNotesForBox } from "../state/prepNotes"
 import { gridCellForBoxPath } from "./edit-cells"
 import { EditReviewPopover } from "./EditReviewPopover"
+import { PrepNotePopover } from "./PrepNotePopover"
 import { GridContextMenu } from "./GridContextMenu"
 import { useFlowGridConfig } from "./useFlowGridConfig"
 import { useFlowRowOperations } from "./useFlowRowOperations"
@@ -65,6 +67,8 @@ export function FlowSpreadsheet({
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; rowId: string } | null>(null)
   const [editReview, setEditReview] = useState<EditReviewOpenParams | null>(null)
   const [editReviewRefreshToken, setEditReviewRefreshToken] = useState(0)
+  const [prepNote, setPrepNote] = useState<PrepNoteOpenParams | null>(null)
+  const [prepNoteRefreshToken, setPrepNoteRefreshToken] = useState(0)
 
   // Initialize row data from flow
   const [rowData, setRowData] = useState<any[]>(() => buildRowData(flow.children, flow.columns))
@@ -301,6 +305,41 @@ export function FlowSpreadsheet({
     }
   }, [editReview])
 
+  /**
+   * Open the `PrepNotePopover` for a clicked cell's box, at the click
+   * position (mirrors `handleOpenEditReview`).
+   */
+  const handleOpenPrepNote = useCallback((params: PrepNoteOpenParams) => {
+    setPrepNote(params)
+  }, [])
+
+  /**
+   * The popover's existing-note list for whichever box it's currently open
+   * for. Re-read on `prepNoteRefreshToken` bumps (after creating a new note)
+   * since AG Grid cell renderers don't re-render on their own when
+   * `localStorage` changes underneath them.
+   */
+  const prepNoteBoxNotes = useMemo(() => {
+    if (!prepNote || typeof localStorage === "undefined") return []
+    return listPrepNotesForBox(flow.id, prepNote.boxPath)
+  }, [prepNote, flow.id, prepNoteRefreshToken])
+
+  /**
+   * Called after `PrepNotePopover` successfully creates a new note: bumps
+   * `prepNoteRefreshToken` (for the popover's own list, above) and forces AG
+   * Grid to refresh the specific cell the popover was opened from, so its
+   * `PrepNoteBadge` count updates immediately (mirrors `handleEditLogged`).
+   */
+  const handlePrepNoteCreated = useCallback(() => {
+    setPrepNoteRefreshToken((t) => t + 1)
+    if (!prepNote) return
+    const { rowId, field } = gridCellForBoxPath(prepNote.boxPath)
+    const rowNode = gridRef.current?.api?.getRowNode(rowId)
+    if (rowNode) {
+      gridRef.current?.api?.refreshCells({ rowNodes: [rowNode], columns: [field], force: true })
+    }
+  }, [prepNote])
+
   // Grid configuration hook
   const { columnDefs, defaultColDef, getRowId } = useFlowGridConfig(
     flow,
@@ -309,6 +348,7 @@ export function FlowSpreadsheet({
     toggleCollapse,
     handleJumpToAnnotation,
     handleOpenEditReview,
+    handleOpenPrepNote,
   )
 
   /**
@@ -595,6 +635,19 @@ export function FlowSpreadsheet({
           edits={editReviewEdits}
           onLogged={handleEditLogged}
           onClose={() => setEditReview(null)}
+        />
+      )}
+
+      {/* Prep-note badge review/create popover */}
+      {prepNote && (
+        <PrepNotePopover
+          x={prepNote.x}
+          y={prepNote.y}
+          flowId={flow.id}
+          boxPath={prepNote.boxPath}
+          notes={prepNoteBoxNotes}
+          onCreated={handlePrepNoteCreated}
+          onClose={() => setPrepNote(null)}
         />
       )}
     </div>
