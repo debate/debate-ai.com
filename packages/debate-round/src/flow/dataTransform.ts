@@ -21,6 +21,9 @@ export function buildRowData(boxes: Box[], columns: string[]): any[] {
       id: `row-${index}`,
       originalIndex: index,
       isHeading: box.isHeading ?? false,
+      argumentType: box.argumentType,
+      authorId: box.authorId,
+      evidenceStatus: box.evidenceStatus,
     }
 
     // Flatten box chain into column values
@@ -84,10 +87,13 @@ export function rowDataToBoxes(rows: any[], columns: string[]): Box[] {
       }
     }
 
-    // Persist heading state on the root box
+    // Persist heading state and outline tags on the root box
     if (row.isHeading) {
       box.isHeading = true
     }
+    if (row.argumentType) box.argumentType = row.argumentType
+    if (row.authorId) box.authorId = row.authorId
+    if (row.evidenceStatus) box.evidenceStatus = row.evidenceStatus
 
     boxes.push(box)
   })

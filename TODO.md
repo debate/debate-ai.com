@@ -3,7 +3,83 @@
 
 ### In progress
 
-_No task currently in progress._
+## Outline Filters and Argument Tree View — tag an argument's type/contributor/evidence status from the live flow grid
+
+**Status:** In Progress
+**Source:** `docs/features/argument-tree-outline.md` "Known gaps" (this repo
+has no `IDEAS.md`; the "Product Feature Ideas"/"Research Crowdsourcing
+Organizer Features" sections below plus every feature doc's "Known gaps"
+section are the backlog) — "Nothing in the live flow-editing UI
+(`FlowSpreadsheet` or elsewhere) lets a user actually set a `Box`'s
+`argumentType`/`authorId`/`evidenceStatus` yet — these fields exist in the
+schema and are read/filtered/rendered end-to-end here, but populating them
+today requires setting them directly on a `Box`." Follow-up (b) on idea #10.
+**Branch:** `claude/practical-allen-iuuejr`
+**PR:** [#281](https://github.com/debate/debate-ai.com/pull/281)
+**Started:** 2026-08-20
+
+### Goal
+Make the Argument Tree Outline's argument-type/contributor/evidence-status
+filters usable from inside the app: a debater can tag a flowed row right in
+the live flow grid, and the tag survives ordinary grid editing.
+
+### Scope
+- A pure row-tagging helper in `debate-round`'s `flow/` that reads and
+  writes a row's `argumentType`/`authorId`/`evidenceStatus` on the row's
+  root `Box` (the box `flow-transcript-summary.ts#summarizeFlowRow` already
+  reads those fields from).
+- Thread the three fields through `dataTransform.ts`'s
+  `buildRowData`/`rowDataToBoxes` round trip so an ordinary cell edit no
+  longer silently drops a row's tags.
+- A "Tag argument…" entry in `FlowSpreadsheet`'s row context menu opening a
+  small popover (mirroring `PrepNotePopover`'s overlay pattern) that sets or
+  clears the three fields via the existing `onUpdate` flow-update callback.
+
+### Non-goals
+- Per-cell (per-speech) tags — `summarizeFlowRow`/`buildArgumentTree` read
+  tags from the row's root box only, so tagging stays row-level.
+- Any new persistence store: tags live on the `Box` in the existing flow
+  state, not in a side localStorage store.
+- Auto-tagging (AI or heuristic inference of an argument's type).
+
+### Acceptance criteria
+- [x] A row's `argumentType`/`authorId`/`evidenceStatus` can be set and
+      cleared from the flow grid, and the result reaches `onUpdate`.
+- [x] Existing tags survive a `buildRowData` → `rowDataToBoxes` round trip
+      (an ordinary cell edit).
+- [x] An unknown/out-of-range row index is a no-op rather than a crash.
+- [x] Vitest coverage is added for the new pure helpers and the round trip.
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Production/web build passes
+- [x] Documentation is updated (`docs/features/argument-tree-outline.md`)
+
+### Implementation plan
+- [x] Inspect `argument-tree.ts`, `flow-transcript-summary.ts`,
+      `dataTransform.ts`, `FlowSpreadsheet.tsx`, and the existing
+      popover/context-menu affordances
+- [x] Add `flow/argument-tagging.ts` (read/write/clear + author-id roster)
+- [x] Thread the three fields through `dataTransform.ts`
+- [x] Add `flow/ArgumentTagPopover.tsx` and wire a "Tag argument…" context
+      menu entry into `FlowSpreadsheet.tsx`
+- [x] Add focused Vitest success-path coverage
+- [x] Add focused failure/edge-case coverage (unknown row, clearing a tag,
+      round-trip preservation)
+- [x] Run focused tests and fix failures
+- [x] Run typecheck
+- [x] Run the full test suite
+- [x] Run the production/web build
+- [x] Update `docs/features/argument-tree-outline.md`
+- [x] Commit and push the branch
+- [x] Open the PR and record it here
+
+### Remaining work
+- Nothing outstanding on this slice beyond CI going green on
+  [#281](https://github.com/debate/debate-ai.com/pull/281); once it merges
+  this entry moves to Completed. The follow-ups this slice deliberately
+  leaves open are recorded in `docs/features/argument-tree-outline.md`'s
+  "Known gaps" (row-level rather than per-speech tagging, no inferred tags,
+  free-form contributor ids, no bulk section tagging).
 
 ### Completed
 - **Judge Profiles & Opponent Team Profiles — edit or delete an
@@ -6708,7 +6784,7 @@ _No task currently in progress._
 
 9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slices done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. A second slice, `collapsedHeadings.ts` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading persistence"), now persists a document's collapsed heading ids to localStorage. A third slice, `OutlineNavPanel` (see Tracker Status above, "Expandable Heading Structure — outline nav panel"), now renders the outline alongside the document at `/reason-editor` (behind an opt-in `showOutline` prop) with click-to-jump and collapse/expand, reading/writing through the persistence store, closing follow-up (a). A fourth slice, `collapsedHeadingsPlugin` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading decoration plugin"), now hides a collapsed heading's content in the live ProseMirror view itself (driven by `OutlineNavPanel`'s toggle), closing follow-up (b). No follow-ups remain open on this idea._
 
-10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. A second slice, `argumentTreeFilters.ts` (see Tracker Status above, "Outline Filters and Argument Tree View — filter-selection persistence"), now persists a round's chosen `ArgumentTreeFilter` to localStorage. A third slice, `argumentTrees.ts` plus `ArgumentTreePanel` (see Tracker Status above, "Outline Filters and Argument Tree View — outline panel UI"), now persists a round's derived tree and renders it as a filterable outline at `/outline`, closing follow-up (a). A fourth slice (see Tracker Status above, "Outline Filters and Argument Tree View — argument-type/contributor/evidence-status tagging") added `debate-core`'s `ArgumentType`/`EvidenceStatus` unions and `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus` optional fields, threaded them through `flow-transcript-summary.ts`'s `FlowRowSummary` and `argument-tree.ts`'s `ArgumentTreeNode`/`ArgumentTreeFilter`, and wired matching filter selects plus per-row badges into `ArgumentTreePanel`, closing follow-up (b). No follow-ups remain open on this idea._
+10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. A second slice, `argumentTreeFilters.ts` (see Tracker Status above, "Outline Filters and Argument Tree View — filter-selection persistence"), now persists a round's chosen `ArgumentTreeFilter` to localStorage. A third slice, `argumentTrees.ts` plus `ArgumentTreePanel` (see Tracker Status above, "Outline Filters and Argument Tree View — outline panel UI"), now persists a round's derived tree and renders it as a filterable outline at `/outline`, closing follow-up (a). A fourth slice (see Tracker Status above, "Outline Filters and Argument Tree View — argument-type/contributor/evidence-status tagging") added `debate-core`'s `ArgumentType`/`EvidenceStatus` unions and `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus` optional fields, threaded them through `flow-transcript-summary.ts`'s `FlowRowSummary` and `argument-tree.ts`'s `ArgumentTreeNode`/`ArgumentTreeFilter`, and wired matching filter selects plus per-row badges into `ArgumentTreePanel`, closing follow-up (b). A fifth slice (see Tracker Status above, "Outline Filters and Argument Tree View — tag an argument's type/contributor/evidence status from the live flow grid") added `flow/argument-tagging.ts` and `flow/ArgumentTagPopover.tsx`, wiring a "Tag Argument…" entry into `FlowSpreadsheet`'s row context menu that sets or clears a row's `argumentType`/`authorId`/`evidenceStatus` on its root `Box` (rendered as a compact label in the grid's first column), and threaded the three fields through `dataTransform.ts`'s `buildRowData`/`rowDataToBoxes` round trip so an ordinary cell edit no longer drops them — closing the "nothing in the live flow-editing UI lets a user actually set a `Box`'s `argumentType`/`authorId`/`evidenceStatus`" Known gap recorded in `docs/features/argument-tree-outline.md`. No follow-ups remain open on this idea._
 
 11. **Community-Rated Summaries and Highlights** — Let users like, save, and endorse the most useful research summaries, analytic explanations, evidence highlights, and annotations, then rank contributions by helpfulness while guarding against popularity-only scoring through quality and reviewer-weight signals. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scorePopularitySignal`/`scoreQualitySignal`/`scoreReviewerSignal`/`computeHelpfulnessBreakdown`/`rankContributions` for blending logarithmically-dampened popularity with quality and reviewer-credibility signals into a ranked, popularity-resistant helpfulness score. A second slice, `contributions.ts`'s `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` (see Tracker Status above), now persists a like/save/endorse action's counts per contribution, closing half of follow-up (a) — no UI action fires them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders a ranked leaderboard at `/cards/leaderboard`, closing follow-up (c)'s leaderboard half (it does not yet surface `isPopularityOnlyOutlier` contributions separately for moderator review). A fourth slice, `ContributionsFeedPanel` (see Tracker Status above, "Contributions Feed — like/save/endorse UI"), now renders a submission form and every persisted contribution as a ranked, per-contribution feed with Like/Save/Endorse buttons at `/cards/contributions`, closing follow-up (a) and the rest of follow-up (c) (this feed does surface each entry's `isPopularityOnlyOutlier` flag). A fifth slice (see Tracker Status above, "Community-Rated Summaries and Highlights — real reviewer-credibility system") added `community-rating.ts`'s `computeReviewerCredibility` and `state/contributions.ts`'s `recordPersistedEndorsementFromReviewer`, deriving an endorsement's weight from the endorsing reviewer's own persisted contribution history instead of a fixed placeholder, and wired a "Reviewer ID" field into the Contributions Feed panel's Endorse action, closing follow-up (b). No follow-ups remain open on this idea._
 
