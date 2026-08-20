@@ -55,14 +55,17 @@ store already existed and were Vitest-covered
 (`packages/reason-editor/test/heading-outline.test.ts`,
 `packages/reason-editor/test/collapsedHeadings.test.ts`); this slice adds
 the `toggleCollapsedHeadingId` pure helper (also Vitest-covered) and the
-`OutlineNavPanel` component that wires the two together.
+`OutlineNavPanel` component that wires the two together. A later slice
+closed follow-up (b): `engine/outline/collapsed-headings-plugin.ts`'s
+`collapsedHeadingsPlugin` (registered in `react/reason-core-extension.ts`)
+is a ProseMirror decoration plugin that actually hides collapsed ranges in
+the live editor view, and `OutlineNavPanel.tsx` dispatches
+`setCollapsedHeadingIdsMeta(collapsedIds)` on toggle and on mount to keep
+the plugin's hidden ranges in sync with the panel's own collapsed-heading
+state. No follow-ups remain open on this bullet.
 
 ## Known gaps
 
-- Follow-up (b), a ProseMirror decoration plugin that actually hides
-  collapsed ranges in the live editor view using `getCollapsedRanges`, is
-  not part of this slice — collapsing a heading here only affects what the
-  nav panel *lists*, not what the document itself renders.
 - No component-level test exists for `OutlineNavPanel` itself, consistent
   with this repo's existing convention of Vitest-covering pure state/engine
   logic rather than `.tsx` panel components (verified instead via

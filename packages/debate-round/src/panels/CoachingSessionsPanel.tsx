@@ -17,6 +17,16 @@
  * prompts — closing follow-up (a), "an actual AI coaching call for
  * open-ended feedback beyond this deterministic template layer."
  *
+ * A "Generate coaching session for current round" form reads the round
+ * workspace's currently selected flow (`state/store.ts`'s `useFlowStore`,
+ * the same mechanism `DrillSetsPanel`'s "Generate drills for current round"
+ * action uses) and, given a side, derives and persists that round+side's
+ * coaching session via `state/coachingSessions.ts`'s
+ * `buildAndSaveCoachingSession` — closing
+ * `docs/features/coaching-sessions.md`'s "no affordance in this panel to
+ * generate a new coaching session for a round" Known gap. No new
+ * coaching-prompt derivation logic is introduced here.
+ *
  * @module panels/CoachingSessionsPanel
  */
 
@@ -25,7 +35,10 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
+import { Input } from "debate-ui/src/primitives/input"
+import { Label } from "debate-ui/src/primitives/label"
 import {
+  buildAndSaveCoachingSession,
   buildCoachingSessionsPanelView,
   deleteCoachingSession,
   saveCoachingSessionAiFeedback,
@@ -33,6 +46,7 @@ import {
 } from "../state/coachingSessions"
 import type { CoachingPromptKind } from "../flow/coach-mode"
 import { requestCoachFeedback } from "../round/coach-feedback-client"
+import { useFlowStore } from "../state/store"
 
 const COACHING_PROMPT_KIND_LABELS: Record<CoachingPromptKind, string> = {
   extension: "Extension",
@@ -52,8 +66,16 @@ export function CoachingSessionsPanel() {
   const [sessions, setSessions] = useState<CoachingSessionRecord[] | null>(null)
   const [feedbackLoadingKey, setFeedbackLoadingKey] = useState<string | null>(null)
   const [feedbackErrorsByKey, setFeedbackErrorsByKey] = useState<Record<string, string>>({})
+  const [generateSideKey, setGenerateSideKey] = useState("")
+  const [generateError, setGenerateError] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  const flows = useFlowStore((state) => state.flows)
+  const selected = useFlowStore((state) => state.selected)
+  const currentFlow = mounted ? flows[selected] : undefined
 
   useEffect(() => {
+    setMounted(true)
     setSessions(buildCoachingSessionsPanelView())
   }, [])
 
@@ -61,6 +83,19 @@ export function CoachingSessionsPanel() {
 
   const handleClear = (roundId: string, sideKey: string) => {
     deleteCoachingSession(roundId, sideKey)
+    refresh()
+  }
+
+  const handleGenerate = () => {
+    if (!currentFlow) return
+    const sideKey = generateSideKey.trim()
+    if (!sideKey) {
+      setGenerateError("A side (e.g. aff or neg) is required to generate a coaching session.")
+      return
+    }
+    buildAndSaveCoachingSession(currentFlow, String(currentFlow.id), sideKey)
+    setGenerateError(null)
+    setGenerateSideKey("")
     refresh()
   }
 
@@ -89,15 +124,6 @@ export function CoachingSessionsPanel() {
     return <div className="p-6 text-sm text-muted-foreground">Loading coaching sessions…</div>
   }
 
-  if (sessions.length === 0) {
-    return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No coaching sessions yet. Sessions fill in once a round's flow generates extension,
-        refutation, collapse, and weighing prompts for a side.
-      </div>
-    )
-  }
-
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div>
@@ -107,6 +133,40 @@ export function CoachingSessionsPanel() {
           where to collapse, and how to weigh the round.
         </p>
       </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div>
+          <Label htmlFor="coaching-session-generate-side">Generate coaching session for current round</Label>
+          <p className="text-xs text-muted-foreground">
+            Uses the round workspace's currently selected flow.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-end gap-2">
+          <Input
+            id="coaching-session-generate-side"
+            value={generateSideKey}
+            onChange={(e) => setGenerateSideKey(e.target.value)}
+            placeholder="Side (e.g. aff)"
+            className="w-40"
+          />
+          <Button size="sm" disabled={!currentFlow} onClick={handleGenerate}>
+            Generate coaching session
+          </Button>
+        </div>
+        {!currentFlow && (
+          <p className="text-sm text-muted-foreground">
+            Select a round's flow in the round workspace to generate a coaching session for it.
+          </p>
+        )}
+        {generateError && <p className="text-sm text-destructive">{generateError}</p>}
+      </div>
+
+      {sessions.length === 0 && (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No coaching sessions yet. Sessions fill in once a round's flow generates extension,
+          refutation, collapse, and weighing prompts for a side.
+        </div>
+      )}
       {sessions.map((session) => (
         <div key={`${session.roundId}:${session.sideKey}`} className="rounded-lg border border-border p-4">
           <div className="mb-3 flex items-center justify-between gap-2">

@@ -48,12 +48,19 @@ Decision Modes") in `TODO.md`'s Product Feature Ideas list, adding one small
 ordering helper (`buildJudgeParadigmSelectionsPanelView`) to
 `state/judgeParadigmSelections.ts` rather than introducing new
 paradigm-resolution logic. Vitest-covered in
-`packages/debate-speech-writer/test/judgeParadigmSelections.test.ts`.
+`packages/debate-speech-writer/test/judgeParadigmSelections.test.ts`. A
+later slice closed follow-up (a): `round/judge-decision-ai.ts` composes
+`buildJudgeParadigmPrompt`'s output with a round's flow summary into an AI
+judge-decision request, `round/judge-decision-client.ts` calls the existing
+`/api/reason-ai` proxy with it, and `round/judge-decision-store-wiring.ts`'s
+`buildJudgeDecisionInputFromStores` resolves the round's saved paradigm via
+`getJudgeParadigmSelection` — wired into `panels/JudgeDecisionPanel.tsx`
+(mounted at `/judge-decision`) and `panels/PracticeRoundSimulatorPanel.tsx`.
 
 ## Known gaps
 
-- Follow-up (a), an AI judge-decision call that uses
-  `buildJudgeParadigmPrompt`'s output instead of (or alongside) the existing
-  static `judgeDecisionPrompt`, remains open — not started.
-- This panel only saves/clears a selection; it doesn't itself invoke a judge
-  decision or show the resulting `buildJudgeParadigmPrompt` text.
+- This panel (`JudgeParadigmPickerPanel.tsx`, at `/paradigms`) only
+  saves/clears a selection; it doesn't itself invoke a judge decision or
+  show the resulting `buildJudgeParadigmPrompt` text — that lives in the
+  separate `JudgeDecisionPanel.tsx`/`PracticeRoundSimulatorPanel.tsx` flows
+  described above.

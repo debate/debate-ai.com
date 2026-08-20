@@ -57,10 +57,11 @@ contribution feed rather than a per-challenge one.
 
 ## Known gaps
 
-- The "(b-continued)" follow-up under idea #13 ("Coaching Programs and
-  Group Challenges") in `TODO.md` remains open beyond this slice: a
-  dashboard view that renders each coaching program's full
-  `buildCoachingProgramBoard` off this store and a live topic-sprint
-  composition, plus a `roundId`-to-contributor mapping for member drills.
-  `debate-round`'s `CoachingProgramsPanel` doesn't read through this store
-  yet.
+None open — the "(b-continued)" follow-up under idea #13 ("Coaching
+Programs and Group Challenges") in `TODO.md` this bullet used to point to
+is closed: `debate-round`'s `state/persistedCoachingProgramBoard.ts` reads
+this store via `listGroupChallenges` (composed with the topic-sprint,
+contribution, and win-event stores into a full `CoachingProgramBoard`), and
+`panels/CoachingProgramsPanel.tsx` renders it through
+`buildPersistedCoachingProgramBoard`. See
+[`coaching-programs.md`](coaching-programs.md) for the full data flow.
