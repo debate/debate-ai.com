@@ -52,6 +52,7 @@ _No task currently in progress._
   `typecheck` script; this repo has no `lint` script), and `bun run
   build:web` (production build, including `/cards/argument-library`) all
   pass.
+  PR: [#275](https://github.com/debate/debate-ai.com/pull/275).
 - **Online Debate Versus AI — "Regenerate last AI speech" affordance.**
   Found via this run's own doc/tracker-drift audit of every
   `docs/features/*.md` "Known gaps" section (following the same audit
