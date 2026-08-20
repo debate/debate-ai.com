@@ -33,12 +33,30 @@
  * closing that same bullet's remaining follow-up ("caching the index across
  * calls instead of rebuilding it on every search").
  *
+ * `getCachedEvidenceSearchIndex` also closes the "Known gap" recorded in
+ * `docs/features/evidence-library.md` after that slice — a cache
+ * invalidation used to fall back to a full `buildEvidenceSearchIndex`
+ * re-tokenize-everything pass over every live entry, even when a write only
+ * actually touched one of them. It now diffs the previously-indexed live
+ * entries against the current ones by id and content, then applies
+ * `evidence-search-index.ts`'s `addEntryToIndex`/`removeEntryFromIndex`/
+ * `updateEntryInIndex` only for entries that were actually added, removed,
+ * or changed — true incremental indexing, not a rebuild — falling back to
+ * `buildEvidenceSearchIndex` only for the very first build.
+ *
  * @module state/evidenceLibraryEntries
  */
 
 import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult, PageReuseCheckResult } from "../lib/shared-evidence-library";
 import { buildEvidenceEntryRevision, checkPageForExistingCards, searchEvidenceLibrary } from "../lib/shared-evidence-library";
-import { buildEvidenceSearchIndex, searchEvidenceLibraryWithIndex, type EvidenceSearchIndex } from "../lib/evidence-search-index";
+import {
+  addEntryToIndex,
+  buildEvidenceSearchIndex,
+  removeEntryFromIndex,
+  searchEvidenceLibraryWithIndex,
+  updateEntryInIndex,
+  type EvidenceSearchIndex,
+} from "../lib/evidence-search-index";
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library";
 import { buildArgumentLibrary, buildLibraryCardsFromContributions, buildTagCollections } from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
@@ -154,10 +172,12 @@ export function searchPersistedEvidenceLibrary(query: EvidenceSearchQuery = {}):
 let cachedIndex: EvidenceSearchIndex | null = null;
 let cachedRawEntries: string | null = null;
 let cachedRawReviews: string | null = null;
+/** The exact live entries (by id, with their indexed content) `cachedIndex` was last built/updated from. */
+let cachedLiveEntriesById: Map<string, EvidenceLibraryEntry> | null = null;
 
 /**
  * The `EvidenceSearchIndex` built from every currently "live" persisted
- * entry, cached across calls and rebuilt only when the data it was built
+ * entry, cached across calls and updated only when the data it was built
  * from could have changed — closing follow-up (c)'s remaining half named
  * under the "📋 Shared Evidence Library" bullet in TODO.md ("caching the
  * index across calls instead of rebuilding it on every search"). Which
@@ -171,6 +191,16 @@ let cachedRawReviews: string | null = null;
  * that catches any change to either store's underlying data, however it
  * was written, without either store needing to call into the other's write
  * path directly.
+ *
+ * When that fingerprint changes, this no longer falls back to a full
+ * `buildEvidenceSearchIndex` re-tokenize-everything pass — it diffs the new
+ * live-entry set against `cachedLiveEntriesById` by id and by content, then
+ * applies `evidence-search-index.ts`'s incremental
+ * `addEntryToIndex`/`removeEntryFromIndex`/`updateEntryInIndex` only for the
+ * entries that were actually added, removed, or edited (an unrelated write —
+ * e.g. a different entry's peer-review transition — leaves every other
+ * entry's postings untouched), closing the "Known gap" recorded in
+ * `docs/features/evidence-library.md`.
  */
 function getCachedEvidenceSearchIndex(): EvidenceSearchIndex {
   const rawEntries = readRawEntries();
@@ -180,7 +210,28 @@ function getCachedEvidenceSearchIndex(): EvidenceSearchIndex {
   }
 
   const liveEntries = readAll().filter((entry) => isEntryLive(entry.id));
-  cachedIndex = buildEvidenceSearchIndex(liveEntries);
+  const currentById = new Map(liveEntries.map((entry) => [entry.id, entry] as const));
+
+  if (!cachedIndex || !cachedLiveEntriesById) {
+    cachedIndex = buildEvidenceSearchIndex(liveEntries);
+  } else {
+    const index = cachedIndex;
+    for (const previousId of cachedLiveEntriesById.keys()) {
+      if (!currentById.has(previousId)) {
+        removeEntryFromIndex(index, previousId);
+      }
+    }
+    for (const [id, entry] of currentById) {
+      const previous = cachedLiveEntriesById.get(id);
+      if (!previous) {
+        addEntryToIndex(index, entry);
+      } else if (JSON.stringify(previous) !== JSON.stringify(entry)) {
+        updateEntryInIndex(index, entry);
+      }
+    }
+  }
+
+  cachedLiveEntriesById = currentById;
   cachedRawEntries = rawEntries;
   cachedRawReviews = rawReviews;
   return cachedIndex;
