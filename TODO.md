@@ -6,6 +6,53 @@
 _No task currently in progress._
 
 ### Completed
+- **Judge Profiles — "Log a judged round" form, the in-app way to create a
+  judge profile.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/judge-profiles.md`'s
+  Known gaps said "No profile editing/creation UI here — this panel only
+  renders existing persisted profiles," so a `JudgeProfile` could only ever
+  reach `/judges` if something called `saveJudgeProfile` programmatically.
+  The blocker was that `state/judgeProfiles.ts` persists only the
+  *aggregate*, never the ballots behind it, so there was nothing for a form
+  to append to. A new store,
+  `packages/debate-speech-writer/src/state/judgeRoundRecords.ts`, persists
+  the raw `JudgeRoundRecord` history (each entry carrying its own `id`,
+  since a judge decides many rounds — mirroring `debate-data-sync`'s
+  `tournamentResults.ts` wrapped-record convention that backs the Standings
+  panel's own "record a result" form), and re-derives the affected judge's
+  profile from their *full* history through the existing
+  `buildJudgeProfile`/`saveJudgeProfile`: `recordJudgeRound` (append +
+  re-aggregate), `rebuildJudgeProfileFromRecords` (re-aggregate alone,
+  deleting the derived profile rather than leaving a zero-round one when no
+  rounds remain), and `deleteJudgeRoundRecord` (remove + re-aggregate). No
+  new profile-scoring logic was introduced — every roster column stays a
+  derived value, so there is deliberately no direct aggregate editing.
+  `JudgeProfilesPanel.tsx` gains the "Log a judged round" form (judge id,
+  tournament, date, division, winning side, both sides' speaker points,
+  optional pace wpm, optional tagged paradigm from the existing
+  `judgeParadigms` catalog, and theory raised/won switches — where turning
+  "raised" off clears and disables "won", so a round can't be logged as
+  won-but-never-raised) and now renders the form above the roster in the
+  empty state too, instead of returning early.
+  Vitest-covered (10 new cases in
+  `packages/debate-speech-writer/test/judgeRoundRecords.test.ts`: persist +
+  derive, re-aggregation across rounds/tournaments/pace, per-judge
+  isolation, rebuild matching a direct `buildJudgeProfile`, profile deletion
+  when no rounds remain, delete-and-re-aggregate, delete of the last round,
+  unknown-id no-op, and the corrupt-JSON / non-array storage degradations).
+  Documented in `docs/features/judge-profiles.md` (new "Logging a judged
+  round" section, rewritten data-flow block covering both stores; the
+  editing/creation-UI Known gap closed and replaced with the real remaining
+  scope — no in-UI delete/edit affordance for an already-logged round, and
+  follow-up (a)'s still-open real ballot data source).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (159 files / 2263 tests, all pass — 10 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including `/judges`) all pass.
+  PR: [#278](https://github.com/debate/debate-ai.com/pull/278).
 - **Outline Filters and Argument Tree View — wire "generate outline for
   current round" trigger.**
   Found via this run's own doc/tracker-drift audit of every
@@ -6580,7 +6627,7 @@ _No task currently in progress._
 * 
 * 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slices done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. A second slice, `opponentTeamProfiles.ts` (see Tracker Status above), now persists `OpponentTeamProfile` records to localStorage, keyed by `teamId`. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c) — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `opponentTeamId`. A fourth slice, `OpponentTeamProfilesPanel` (see Tracker Status above, "Opponent Team Profiles — opponent-scouting roster UI panel"), now renders every persisted profile as a scouting roster at `/opponents`, closing follow-up (b). Follow-up (a), a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of relying on caller-supplied data, remains open — not started._
 * 
-* ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. A second slice, `judgeProfiles.ts` (see Tracker Status above, "Judge Profile Persistence"), now persists `JudgeProfile` records to localStorage, keyed by `judgeId`, closing follow-up (c)'s persistence half. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c)'s lookup half — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `judgeId`. A fourth slice, `JudgeProfilesPanel` (see Tracker Status above, "Judge Profiles — judge-profile roster UI panel"), now renders every persisted profile as a roster at `/judges`, closing follow-up (b). Follow-up (a), a real ballot data source producing `JudgeRoundRecord`s instead of relying on caller-supplied data, remains open — not started._
+* ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. A second slice, `judgeProfiles.ts` (see Tracker Status above, "Judge Profile Persistence"), now persists `JudgeProfile` records to localStorage, keyed by `judgeId`, closing follow-up (c)'s persistence half. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c)'s lookup half — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `judgeId`. A fourth slice, `JudgeProfilesPanel` (see Tracker Status above, "Judge Profiles — judge-profile roster UI panel"), now renders every persisted profile as a roster at `/judges`, closing follow-up (b). A fifth slice, `judgeRoundRecords.ts` plus the panel's "Log a judged round" form (see Tracker Status above, "Judge Profiles — 'Log a judged round' form"), now persists the raw ballot history and re-derives a judge's profile from it, so a profile can be built entirely from inside the app rather than only by a programmatic `saveJudgeProfile` caller. Follow-up (a), a real ballot data source producing `JudgeRoundRecord`s automatically instead of hand-entered or caller-supplied data, remains open — not started._
 * 
 * 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. A second slice, `opponentPersonaSelections.ts` (see Tracker Status above), now persists a practice session's selected `OpponentPersona` to localStorage. A third slice, `OpponentPersonaPickerPanel` (see Tracker Status above, "AI Practice Opponent — persona-picker UI"), now renders a picker UI at `/practice-opponent` for saving a session's opponent persona, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Practice Opponent — persona-conditioned AI speech-generation call") added `debate-round`'s `round/opponent-persona-speech-ai.ts`, `round/opponent-persona-speech-client.ts`, and `round/opponent-persona-speech-wiring.ts`, wiring `AiVersusRoundPanel`'s "Generate AI speech" action to argue in a round's saved persona (looked up by treating `roundId` as `opponentPersonaSelections.ts`'s `sessionId` key) via a persona-conditioned `/api/reason-ai` call, closing follow-up (a). No follow-ups remain open on this idea._
 * 
