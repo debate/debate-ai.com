@@ -15,7 +15,7 @@ section are the backlog) — "Nothing in the live flow-editing UI
 schema and are read/filtered/rendered end-to-end here, but populating them
 today requires setting them directly on a `Box`." Follow-up (b) on idea #10.
 **Branch:** `claude/practical-allen-iuuejr`
-**PR:** Not created yet
+**PR:** [#281](https://github.com/debate/debate-ai.com/pull/281)
 **Started:** 2026-08-20
 
 ### Goal
@@ -70,11 +70,16 @@ the live flow grid, and the tag survives ordinary grid editing.
 - [x] Run the full test suite
 - [x] Run the production/web build
 - [x] Update `docs/features/argument-tree-outline.md`
-- [ ] Commit and push the branch
-- [ ] Open the PR and record it here
+- [x] Commit and push the branch
+- [x] Open the PR and record it here
 
 ### Remaining work
-- Commit and push the branch, then open the PR and record its link above.
+- Nothing outstanding on this slice beyond CI going green on
+  [#281](https://github.com/debate/debate-ai.com/pull/281); once it merges
+  this entry moves to Completed. The follow-ups this slice deliberately
+  leaves open are recorded in `docs/features/argument-tree-outline.md`'s
+  "Known gaps" (row-level rather than per-speech tagging, no inferred tags,
+  free-form contributor ids, no bulk section tagging).
 
 ### Completed
 - **Judge Profiles & Opponent Team Profiles — edit or delete an
