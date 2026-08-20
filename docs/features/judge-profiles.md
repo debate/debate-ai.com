@@ -38,12 +38,38 @@ derived value: there is no way to edit an aggregate directly.
 on; turning the latter off clears and disables the former, so a round can't
 be logged as won-but-never-raised.
 
+## Correcting a logged round
+
+The **Logged rounds** table below the roster lists every ballot logged so
+far, filtered to one judge by typing into **Filter by judge ID** (a
+case-insensitive substring match on the judge id, so a long history doesn't
+bury the judge you just logged).
+
+Each row has two actions:
+
+- **Edit** loads the ballot back into the form above, which switches to
+  "Edit logged round" with **Save changes** / **Cancel** buttons. Saving
+  rewrites that round in place (keeping its `id` and its position in the
+  history) and re-aggregates the judge from the updated history. Changing
+  the **Judge ID** while editing reassigns the ballot to a different judge
+  and re-aggregates *both* — dropping the previous judge's derived profile
+  if that was their last round.
+- **Delete** removes the ballot and re-aggregates the affected judge from
+  whatever rounds remain, deleting the derived profile entirely once their
+  last round is gone (rather than leaving a zero-round one). Deleting the
+  round currently being edited also cancels the edit.
+
 ## Data flow
 
 ```
 state/judgeRoundRecords.ts (localStorage: judgeRoundRecords)
   → recordJudgeRound(entry)                — appends one JudgeRoundRecord to the
                                               persisted ballot history, then …
+  → updateJudgeRoundRecord(entry)          — replaces one ballot by id, in place, then
+                                              re-aggregates its judge (and the previous
+                                              judge too, when the ballot is reassigned)
+  → deleteJudgeRoundRecord(id)             — removes one ballot, then re-aggregates
+                                              (deleting the profile if none remain)
   → rebuildJudgeProfileFromRecords(judgeId) — … re-runs judge-profile.ts's existing
                                               buildJudgeProfile over that judge's
                                               full history and persists the result
@@ -56,7 +82,8 @@ state/judgeProfiles.ts (localStorage: judgeProfiles)
   → buildJudgeProfilesRoster()             — lists every persisted JudgeProfile,
                                               ordered by rounds judged descending
                                               (ties broken alphabetically)
-  → panels/JudgeProfilesPanel.tsx          — renders the log form + roster table
+  → panels/JudgeProfilesPanel.tsx          — renders the log/edit form, the roster
+                                              table, and the logged-rounds list
   → apps/debate-ai.com/app/judges/page.tsx — mounts the panel as a route
 ```
 
@@ -64,8 +91,9 @@ The two stores are deliberately separate: `judgeRoundRecords` is the raw
 ballot history (a judge decides many rounds, so each entry carries its own
 `id`, mirroring `debate-data-sync`'s `tournamentResults.ts` convention),
 while `judgeProfiles` holds only the aggregate a caller looks up by
-`judgeId`. Deleting a logged round (`deleteJudgeRoundRecord`) re-aggregates
-the affected judge the same way.
+`judgeId`. Editing (`updateJudgeRoundRecord`) and deleting
+(`deleteJudgeRoundRecord`) a logged round re-aggregate the affected judge
+the same way.
 
 Every profile field already existed and was Vitest-covered by
 `judge/judge-profile.ts`'s `buildJudgeProfile`; this feature closes
@@ -85,11 +113,11 @@ introducing new aggregation logic. Vitest-covered in
   a caller of `recordJudgeRound`/`saveJudgeProfile` directly. This is the
   same gap the [Standings](standings.md) and
   [Opponent Team Profiles](opponent-team-profiles.md) panels have.
-- No delete/edit affordance in the panel for an already-logged round —
-  `state/judgeRoundRecords.ts`'s `deleteJudgeRoundRecord` (which
-  re-aggregates the affected judge) exists and is covered, but nothing in
-  the UI calls it, so a mistyped ballot can only be corrected by logging
-  further rounds.
+- The logged-rounds filter is a free-text substring match on the judge id,
+  not a picker of the judges actually on record — a typo shows an empty
+  list rather than suggesting the nearest judge.
+- Editing a ballot is all-or-nothing per round: there is no history of what
+  a round looked like before an edit, so a correction can't be undone.
 - Profiles are per-browser localStorage, not a shared team resource, and
   there are no identity/permission checks on who may log a round for a
   judge (no auth in this repo yet).

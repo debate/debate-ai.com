@@ -18,6 +18,11 @@
  * in-app way to create a profile — every profile field shown here stays
  * derived from logged rounds, never edited directly.
  *
+ * The "Logged rounds" list below the roster corrects a mistyped ballot
+ * through the same store: Edit loads the round back into the form (which
+ * then saves through `updateJudgeRoundRecord`) and Delete removes it
+ * through `deleteJudgeRoundRecord`; both re-aggregate the affected judge.
+ *
  * @module panels/JudgeProfilesPanel
  */
 
@@ -45,7 +50,13 @@ import {
   TableRow,
 } from "debate-ui/src/primitives/table"
 import { buildJudgeProfilesRoster } from "../state/judgeProfiles"
-import { recordJudgeRound } from "../state/judgeRoundRecords"
+import {
+  deleteJudgeRoundRecord,
+  listJudgeRoundRecords,
+  recordJudgeRound,
+  updateJudgeRoundRecord,
+  type JudgeRoundRecordEntry,
+} from "../state/judgeRoundRecords"
 import type { DebateSide, JudgeProfile } from "../judge/judge-profile"
 import { judgeParadigms, judgeParadigmIds } from "../judge/judge-paradigms"
 import type { BuiltinJudgeParadigmId } from "../judge/judge-paradigms"
@@ -81,6 +92,23 @@ const EMPTY_DRAFT: RoundDraft = {
   paradigmId: NO_PARADIGM,
 }
 
+/** Loads an already-logged round back into the form's string-typed draft. */
+function draftFromRecord(record: JudgeRoundRecordEntry): RoundDraft {
+  return {
+    judgeId: record.judgeId,
+    tournamentName: record.tournamentName,
+    date: record.date,
+    division: record.division,
+    winningSide: record.winningSide,
+    affSpeakerPoints: String(record.affSpeakerPoints),
+    negSpeakerPoints: String(record.negSpeakerPoints),
+    paceWpm: record.paceWpm === undefined ? "" : String(record.paceWpm),
+    theoryArgumentRaised: record.theoryArgumentRaised,
+    theoryArgumentWon: record.theoryArgumentWon,
+    paradigmId: record.paradigmId ?? NO_PARADIGM,
+  }
+}
+
 /**
  * Renders the Judge Profiles roster: every persisted judge profile ordered
  * by rounds judged descending, with side-vote bias, average speaker points,
@@ -92,12 +120,21 @@ const EMPTY_DRAFT: RoundDraft = {
  */
 export function JudgeProfilesPanel() {
   const [roster, setRoster] = useState<JudgeProfile[] | null>(null)
+  const [records, setRecords] = useState<JudgeRoundRecordEntry[]>([])
   const [draft, setDraft] = useState<RoundDraft>(EMPTY_DRAFT)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [judgeFilter, setJudgeFilter] = useState("")
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setRoster(buildJudgeProfilesRoster())
+    setRecords(listJudgeRoundRecords())
   }, [])
+
+  const refresh = () => {
+    setRoster(buildJudgeProfilesRoster())
+    setRecords(listJudgeRoundRecords())
+  }
 
   const handleSubmit = () => {
     const judgeId = draft.judgeId.trim()
@@ -119,8 +156,8 @@ export function JudgeProfilesPanel() {
       setError("Pace must be a number of words per minute, or left blank.")
       return
     }
-    recordJudgeRound({
-      id: `${judgeId}-${tournamentName}-${date}-${Date.now()}`,
+    const record: JudgeRoundRecordEntry = {
+      id: editingId ?? `${judgeId}-${tournamentName}-${date}-${Date.now()}`,
       judgeId,
       tournamentName,
       date,
@@ -135,11 +172,44 @@ export function JudgeProfilesPanel() {
         draft.paradigmId === NO_PARADIGM
           ? undefined
           : (draft.paradigmId as BuiltinJudgeParadigmId),
-    })
+    }
+    if (editingId) {
+      updateJudgeRoundRecord(record)
+    } else {
+      recordJudgeRound(record)
+    }
     setError(null)
+    setEditingId(null)
     setDraft({ ...EMPTY_DRAFT, judgeId, division: draft.division })
-    setRoster(buildJudgeProfilesRoster())
+    refresh()
   }
+
+  const handleEdit = (record: JudgeRoundRecordEntry) => {
+    setDraft(draftFromRecord(record))
+    setEditingId(record.id)
+    setError(null)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingId(null)
+    setDraft(EMPTY_DRAFT)
+    setError(null)
+  }
+
+  const handleDelete = (id: string) => {
+    deleteJudgeRoundRecord(id)
+    if (editingId === id) {
+      setEditingId(null)
+      setDraft(EMPTY_DRAFT)
+    }
+    refresh()
+  }
+
+  const normalizedFilter = judgeFilter.trim().toLowerCase()
+  const visibleRecords =
+    normalizedFilter === ""
+      ? records
+      : records.filter((record) => record.judgeId.toLowerCase().includes(normalizedFilter))
 
   if (roster === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading judge profiles…</div>
@@ -158,7 +228,9 @@ export function JudgeProfilesPanel() {
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-3">
-        <h2 className="text-sm font-medium text-foreground">Log a judged round</h2>
+        <h2 className="text-sm font-medium text-foreground">
+          {editingId ? "Edit logged round" : "Log a judged round"}
+        </h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="judge-round-judge-id">Judge ID</Label>
@@ -292,7 +364,14 @@ export function JudgeProfilesPanel() {
           </div>
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
-        <Button onClick={handleSubmit}>Log round</Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={handleSubmit}>{editingId ? "Save changes" : "Log round"}</Button>
+          {editingId && (
+            <Button variant="ghost" onClick={handleCancelEdit}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </div>
 
       {roster.length === 0 ? (
@@ -341,6 +420,73 @@ export function JudgeProfilesPanel() {
             ))}
           </TableBody>
         </Table>
+      )}
+
+      {records.length > 0 && (
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-foreground">Logged rounds</h2>
+          <p className="text-sm text-muted-foreground">
+            Editing a round rewrites it in place; deleting one re-derives that judge's profile
+            from whatever rounds remain, and removes the profile entirely once its last round is
+            gone.
+          </p>
+          <div className="max-w-xs space-y-1.5">
+            <Label htmlFor="judge-round-filter">Filter by judge ID</Label>
+            <Input
+              id="judge-round-filter"
+              value={judgeFilter}
+              onChange={(e) => setJudgeFilter(e.target.value)}
+              placeholder="Show every judge's rounds"
+            />
+          </div>
+          {visibleRecords.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No logged rounds match that judge ID.</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Judge</TableHead>
+                  <TableHead>Tournament</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Winner</TableHead>
+                  <TableHead>Speaker pts</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {visibleRecords.map((record) => (
+                  <TableRow key={record.id}>
+                    <TableCell className="font-medium">{record.judgeId}</TableCell>
+                    <TableCell>{record.tournamentName}</TableCell>
+                    <TableCell>{record.date}</TableCell>
+                    <TableCell className="uppercase">{record.winningSide}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {record.affSpeakerPoints} / {record.negSpeakerPoints}
+                    </TableCell>
+                    <TableCell className="space-x-1 text-right">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEdit(record)}
+                        aria-label={`Edit ${record.judgeId}'s ${record.tournamentName} round on ${record.date}`}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(record.id)}
+                        aria-label={`Delete ${record.judgeId}'s ${record.tournamentName} round on ${record.date}`}
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
       )}
     </div>
   )

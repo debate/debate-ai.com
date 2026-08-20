@@ -46,10 +46,26 @@ aggregate field. After a successful save the form keeps the team ID and
 division (the fields most likely to repeat across a tournament) and clears the
 rest.
 
+## Correcting a logged round
+
 The **Logged rounds** table below the roster lists every round recorded so
-far, across every team, with a **Delete** action. Deleting re-aggregates the
-affected team from whatever rounds remain, and deletes the derived profile
-entirely once its last round is gone (rather than leaving a zero-round one).
+far, filtered to one team by typing into **Filter by team ID** (a
+case-insensitive substring match on the team id, so a long history doesn't
+bury the team you just logged).
+
+Each row has two actions:
+
+- **Edit** loads the round back into the form above, which switches to
+  "Edit logged round" with **Save changes** / **Cancel** buttons. Saving
+  rewrites that round in place (keeping its `id` and its position in the
+  history) and re-aggregates the team from the updated history. Changing the
+  **Team ID** while editing reassigns the round to a different team and
+  re-aggregates *both* — dropping the previous team's derived profile if
+  that was its last round.
+- **Delete** removes the round and re-aggregates the affected team from
+  whatever rounds remain, deleting the derived profile entirely once its
+  last round is gone (rather than leaving a zero-round one). Deleting the
+  round currently being edited also cancels the edit.
 
 ## Data flow
 
@@ -59,6 +75,9 @@ state/opponentRoundRecords.ts (localStorage: opponentRoundRecords, in debate-dat
                                                        then re-aggregates that team via the
                                                        existing buildOpponentTeamProfile and
                                                        persists through saveOpponentTeamProfile
+  → updateOpponentRoundRecord(entry)                — replaces one round by id, in place, then
+                                                       re-aggregates its team (and the previous
+                                                       team too, when the round is reassigned)
   → deleteOpponentRoundRecord(id)                   — removes one round, then re-aggregates
                                                        (deleting the profile if none remain)
   → rebuildOpponentTeamProfileFromRecords(teamId)   — re-aggregation alone
@@ -99,11 +118,11 @@ rather than introducing new scouting logic. Vitest-covered in
   caller of `recordOpponentRound`/`saveOpponentTeamProfile` directly. This is
   the same gap the [Standings](standings.md) and
   [Judge Profiles](judge-profiles.md) panels have.
-- A logged round can be deleted but not edited in place — correcting a
-  mistyped round means deleting it and logging it again.
-- The logged-rounds list shows every team's rounds together, with no
-  per-team filter; on a long history the row for the team you just logged
-  can be far down the table.
+- The logged-rounds filter is a free-text substring match on the team id,
+  not a picker of the teams actually on record — a typo shows an empty list
+  rather than suggesting the nearest team.
+- Editing a round is all-or-nothing per round: there is no history of what
+  a round looked like before an edit, so a correction can't be undone.
 - Profiles are per-browser localStorage, not a shared team resource, and
   there are no identity/permission checks on who may log a round against a
   team (no auth in this repo yet).

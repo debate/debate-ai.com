@@ -5,6 +5,7 @@ import {
   listJudgeRoundRecordsForJudge,
   rebuildJudgeProfileFromRecords,
   recordJudgeRound,
+  updateJudgeRoundRecord,
   type JudgeRoundRecordEntry,
 } from "../src/state/judgeRoundRecords";
 import { getJudgeProfile, saveJudgeProfile } from "../src/state/judgeProfiles";
@@ -96,6 +97,57 @@ describe("rebuildJudgeProfileFromRecords", () => {
 
     expect(rebuildJudgeProfileFromRecords("smith")).toBeNull();
     expect(getJudgeProfile("smith")).toBeUndefined();
+  });
+});
+
+describe("updateJudgeRoundRecord", () => {
+  it("replaces the round in place and re-aggregates the judge's profile", () => {
+    recordJudgeRound(entry({ id: "r1", winningSide: "aff", affSpeakerPoints: 28 }));
+    recordJudgeRound(entry({ id: "r2", winningSide: "aff", affSpeakerPoints: 28 }));
+
+    const profile = updateJudgeRoundRecord(
+      entry({ id: "r1", winningSide: "neg", affSpeakerPoints: 26 }),
+    );
+
+    expect(listJudgeRoundRecords().map((record) => record.id)).toEqual(["r1", "r2"]);
+    expect(profile?.roundsJudged).toBe(2);
+    expect(profile?.sideBias).toMatchObject({ affWins: 1, negWins: 1 });
+    expect(getJudgeProfile("smith")?.avgSpeakerPoints.aff).toBe(27);
+  });
+
+  it("matches re-recording the corrected round from scratch", () => {
+    const corrected = entry({ id: "r1", winningSide: "neg", paceWpm: 240 });
+    recordJudgeRound(entry({ id: "r1", winningSide: "aff", paceWpm: 320 }));
+
+    expect(updateJudgeRoundRecord(corrected)).toEqual(buildJudgeProfile("smith", [corrected]));
+  });
+
+  it("re-aggregates both judges when a round is reassigned", () => {
+    recordJudgeRound(entry({ id: "r1", judgeId: "smith" }));
+    recordJudgeRound(entry({ id: "r2", judgeId: "smith" }));
+
+    const profile = updateJudgeRoundRecord(entry({ id: "r2", judgeId: "jones" }));
+
+    expect(profile?.judgeId).toBe("jones");
+    expect(getJudgeProfile("smith")?.roundsJudged).toBe(1);
+    expect(getJudgeProfile("jones")?.roundsJudged).toBe(1);
+  });
+
+  it("deletes the previous judge's profile when the reassigned round was their last", () => {
+    recordJudgeRound(entry({ id: "r1", judgeId: "smith" }));
+
+    updateJudgeRoundRecord(entry({ id: "r1", judgeId: "jones" }));
+
+    expect(getJudgeProfile("smith")).toBeUndefined();
+    expect(getJudgeProfile("jones")?.roundsJudged).toBe(1);
+  });
+
+  it("is a no-op returning null for an unknown id", () => {
+    const profile = recordJudgeRound(entry({ id: "r1" }));
+
+    expect(updateJudgeRoundRecord(entry({ id: "does-not-exist", winningSide: "neg" }))).toBeNull();
+    expect(listJudgeRoundRecords()).toHaveLength(1);
+    expect(getJudgeProfile("smith")).toEqual(profile);
   });
 });
 
