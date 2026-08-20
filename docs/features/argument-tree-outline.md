@@ -63,6 +63,18 @@ both this new store and the existing `argumentTreeFilters.ts` filter-
 selection store. Vitest-covered in
 `packages/debate-round/test/argumentTrees.test.ts`.
 
+A later slice closed the "nothing in the live round-flowing page calls
+`buildAndSaveArgumentTree`" Known gap: `ArgumentTreePanel.tsx` gained a
+"Generate outline for current round" action that reads the round
+workspace's currently selected flow (`state/store.ts`'s `useFlowStore`, the
+same mechanism `VulnerabilityChartsPanel`'s "Generate report for current
+round" action uses) and derives+persists that round's outline via the
+already-existing `buildAndSaveArgumentTree(flow, roundId)`. No new
+tree-derivation logic was introduced — `buildAndSaveArgumentTree` already
+existed and was already Vitest-covered in
+`packages/debate-round/test/argumentTrees.test.ts`; this slice only wires a
+real caller to it.
+
 A later slice closed follow-up (b) — `debate-core`'s `Box` type gained three
 new optional fields: `argumentType?: ArgumentType` (a
 `"contention" | "link" | "impact" | "turn" | "answer" | "extension"` union),
@@ -82,11 +94,12 @@ on this idea.
 
 ## Known gaps
 
-- Nothing in the live round-flowing page (`DebateFlowPage`/
-  `FlowMainContent`) calls `buildAndSaveArgumentTree` yet, so a round's
-  outline only appears here once something computes and saves it — the same
-  "real trigger not wired" gap already noted for several other panels (e.g.
-  `flow-summaries.md`).
+- `ArgumentTreePanel.tsx`'s "Generate outline for current round" action is
+  a manual trigger a user has to click — the live round-flowing page
+  (`DebateFlowPage`/`FlowMainContent`) still doesn't call
+  `buildAndSaveArgumentTree` automatically as a round is flowed, so a
+  round's outline only updates here once someone visits `/outline` and
+  regenerates it.
 - Nothing in the live flow-editing UI (`FlowSpreadsheet` or elsewhere) lets a
   user actually set a `Box`'s `argumentType`/`authorId`/`evidenceStatus`
   yet — these fields exist in the schema and are read/filtered/rendered
