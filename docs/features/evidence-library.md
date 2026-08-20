@@ -91,6 +91,42 @@ page, and `checkPageForExistingCards` wraps that into a
 persisted repository, gated to "live" entries the same way
 `searchPersistedEvidenceLibraryWithIndex` is (see below).
 
+### Server-backed reuse index
+
+The check above only ever saw *this device's* localStorage-persisted
+entries, which made it uncallable from anywhere outside the web app — the
+concrete thing blocking the browser extension this idea's follow-up (a)
+asks for. A server-backed index now sits alongside it:
+
+- `page_reuse_entries` (D1, `apps/debate-ai.com/lib/database/schema.ts`)
+  indexes the `id`/`sourceUrl`/`cite`/`argBlock` of every pushed entry,
+  keyed by its `normalizedUrl` — deliberately *not* the card body, so the
+  shared index carries only what a reuse check needs to display.
+- `app/api/page-reuse-check/route.ts` exposes it, mirroring
+  `app/api/flow-sync/route.ts`'s architecture: `GET ?url=` returns
+  `{ url, alreadyCut, matches }` for every entry whose `sourceUrl`
+  normalizes to the same value (via the same `normalizeSourceUrl`, so the
+  server and client agree on what "the same page" means), and `POST`
+  upserts one entry by its caller-assigned `id`, so re-pushing after an
+  edit updates in place rather than duplicating.
+- `lib/page-reuse-check-client.ts`'s `pullRemotePageReuseMatches`/
+  `pushPageReuseEntry` are the fetch calls, kept separate from any caller
+  so they unit-test without mocking a store (mirroring `debate-round`'s
+  `flow/flow-sync-client.ts` split). `mergeRemotePageReuseMatches` folds
+  remote matches into a local `PageReuseCheckResult`, deduping by entry id
+  with the local entry — which carries the full body text — winning.
+
+`EvidenceLibraryPanel` wires both directions, and both are best-effort:
+saving an entry with a `sourceUrl` pushes it without blocking the save, and
+a failed pull leaves the local-only result standing under a "Checked this
+device only — the shared index was unreachable." notice rather than failing
+the check. A match that only the server knew about has no body text, so it
+renders as "Cut by a teammate — body text lives on their device."
+
+A browser extension can now be a thin client of `GET/POST
+/api/page-reuse-check` rather than needing server infrastructure of its
+own.
+
 ## Real search index
 
 Closes follow-up (c) named under the "📋 Shared Evidence Library" bullet in
@@ -242,8 +278,22 @@ panels/EvidenceLibraryPanel.tsx ("Check this page" box)
                                              pure checkPageForExistingCards
       → findEntriesBySourceUrl(entries, url) — lib/shared-evidence-library.ts (pure)
           → normalizeSourceUrl(url)          — lib/shared-evidence-library.ts (pure)
+  → pullRemotePageReuseMatches(url)        — lib/page-reuse-check-client.ts (fetch),
+                                             best-effort; on failure the local
+                                             result stands under a notice
+      → GET /api/page-reuse-check?url=     — app/api/page-reuse-check/route.ts
+          → normalizeSourceUrl(url)         — same pure helper, server side
+          → select from page_reuse_entries where normalized_url = ?
+  → mergeRemotePageReuseMatches(local, remote) — lib/page-reuse-check-client.ts (pure),
+                                             dedupes by id, local entry wins
   → buildPageReuseCheckSummaryText(result) — lib/shared-evidence-library.ts (pure)
   → panels/EvidenceLibraryPanel.tsx        — renders the summary plus any matching entries
+
+panels/EvidenceLibraryPanel.tsx (submission form, after a save)
+  → pushPageReuseEntry(entry)              — lib/page-reuse-check-client.ts (fetch),
+                                             best-effort, no-op without a sourceUrl
+      → POST /api/page-reuse-check         — app/api/page-reuse-check/route.ts,
+                                             upserts page_reuse_entries by entry id
 ```
 
 Editing an entry derives a Revision Incentives `CardSnapshot` for the entry's
@@ -323,11 +373,25 @@ no-write no-op, and throwing on a blank new tag).
   invalidation now updates that index incrementally instead of rebuilding it
   (see "Real search index" above) — no further follow-up remains open on
   this bullet.
-- No browser extension exists — the "Check this page" box is a manual,
-  paste-the-URL stand-in for what a future extension would run
-  automatically against the current tab. The reuse-check logic itself
-  (`checkPageForExistingCards`/`findEntriesBySourceUrl`/`normalizeSourceUrl`)
-  is already a plain, extension-callable function with no UI dependency.
+- No browser extension exists — the "Check this page" box is still a
+  manual, paste-the-URL stand-in for what a future extension would run
+  automatically against the current tab. What an extension needed and
+  didn't have is now in place: `GET/POST /api/page-reuse-check` (see
+  "Server-backed reuse index" above) makes the check callable from outside
+  this app's localStorage, so the extension can be a thin client of that
+  route rather than needing infrastructure of its own.
+- The server-backed reuse index has no authentication or rate limiting, and
+  `contributorId` is accepted from the request body rather than derived
+  from a signed-in user — consistent with the rest of this repo's community
+  features (see `docs/features/review-queue.md`'s identical note), but it
+  means anyone who can reach the route can write to the shared index.
+- Pushing to the server index is fire-and-forget: an entry saved while the
+  server is unreachable is never retried, so it stays invisible to other
+  devices' reuse checks until it's edited and saved again. There's no
+  backfill for entries saved before this index existed either.
+- Deleting an evidence-library entry doesn't remove its row from the server
+  index, so a deleted card can still show up in another device's reuse
+  check.
 - A tag rename/merge tool now exists (see "Tag rename/merge" above), but it
   only rewrites this evidence-library repository's own entries — a
   Contributions Feed submission's tags are a separate store/form and aren't

@@ -100,3 +100,32 @@ export const flowSyncEdits = sqliteTable(
 );
 
 export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
+
+// On Page Card Reuse Search — server-backed index of evidence-library
+// entries carrying a `sourceUrl` (see `packages/debate-card-search/src/lib/shared-evidence-library.ts`'s
+// `EvidenceLibraryEntry`/`checkPageForExistingCards` and TODO.md idea #7,
+// follow-up (a)). The web app's own reuse check works entirely off its own
+// localStorage-persisted entries, so nothing outside the app (e.g. a future
+// browser extension) can call it. This table lets any client check/push
+// against one shared, server-backed index instead. Rows are upserted by
+// their caller-assigned `id` (the source `EvidenceLibraryEntry.id`), so
+// re-pushing the same entry (e.g. after an edit) updates it in place.
+export const pageReuseEntries = sqliteTable(
+  "page_reuse_entries",
+  {
+    id: text("id").primaryKey(),
+    normalizedUrl: text("normalized_url").notNull(),
+    sourceUrl: text("source_url").notNull(),
+    cite: text("cite").notNull().default(""),
+    argBlock: text("arg_block").notNull().default(""),
+    contributorId: text("contributor_id"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    normalizedUrlIdx: index("idx_page_reuse_entries_normalized_url").on(table.normalizedUrl),
+  }),
+);
+
+export type PageReuseEntryRow = typeof pageReuseEntries.$inferSelect;

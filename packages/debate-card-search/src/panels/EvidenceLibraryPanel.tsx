@@ -47,8 +47,20 @@
  * entry. The submission form's new optional Source URL field is how an
  * entry's `sourceUrl` gets recorded in the first place. There is no browser
  * extension in this repo yet — this panel is the check's only caller today;
- * an extension would call the same persisted/pure functions against the
- * current tab's URL instead of a pasted one.
+ * an extension would call the same functions against the current tab's URL
+ * instead of a pasted one.
+ *
+ * That check now also consults the server-backed index via
+ * `lib/page-reuse-check-client.ts`'s `pullRemotePageReuseMatches`, merged
+ * over the local result by `mergeRemotePageReuseMatches`, so a page cut by a
+ * teammate on another device still reads as already-cut here; saving an
+ * entry that carries a `sourceUrl` best-effort pushes it to that same index
+ * via `pushPageReuseEntry`. Both directions are best-effort — an unreachable
+ * server leaves the local-only result standing (with a notice) rather than
+ * failing the check, and a failed push only means other clients won't see
+ * the entry yet. This is what makes the reuse check callable from outside
+ * this app's own localStorage, the prerequisite for the browser extension
+ * that remains this idea's open follow-up.
  *
  * @module panels/EvidenceLibraryPanel
  */
@@ -80,6 +92,11 @@ import {
   getEvidenceStaleness,
 } from "../lib/shared-evidence-library"
 import { applyTagSuggestion, parseTagsInput, suggestTags } from "../lib/argument-library"
+import {
+  mergeRemotePageReuseMatches,
+  pullRemotePageReuseMatches,
+  pushPageReuseEntry,
+} from "../lib/page-reuse-check-client"
 import type {
   EvidenceEntryKind,
   EvidenceLibraryEntry,
@@ -158,6 +175,7 @@ export function EvidenceLibraryPanel() {
   const [knownTags, setKnownTags] = useState<string[]>([])
   const [reuseCheckUrl, setReuseCheckUrl] = useState("")
   const [reuseCheckResult, setReuseCheckResult] = useState<PageReuseCheckResult | null>(null)
+  const [reuseCheckNotice, setReuseCheckNotice] = useState<string | null>(null)
 
   useEffect(() => {
     setHasEntries(listEvidenceLibraryEntries().length > 0)
@@ -228,6 +246,10 @@ export function EvidenceLibraryPanel() {
       saveEvidenceLibraryEntry(entry)
     }
 
+    // Best-effort: the entry is already saved locally, so a failed push only
+    // means other clients' reuse checks won't see it yet.
+    void pushPageReuseEntry(entry).catch(() => {})
+
     setError(null)
     setDraft(EMPTY_DRAFT)
     setEditingId(null)
@@ -254,13 +276,26 @@ export function EvidenceLibraryPanel() {
     refreshResults()
   }
 
-  const handleReuseCheck = () => {
+  const handleReuseCheck = async () => {
     const url = reuseCheckUrl.trim()
     if (!url) {
       setReuseCheckResult(null)
+      setReuseCheckNotice(null)
       return
     }
-    setReuseCheckResult(checkPersistedPageForExistingCards(url))
+
+    const localResult = checkPersistedPageForExistingCards(url)
+    setReuseCheckResult(localResult)
+    setReuseCheckNotice(null)
+
+    // The server index is best-effort: a failed pull leaves the local-only
+    // result standing rather than failing the whole check.
+    try {
+      const remote = await pullRemotePageReuseMatches(url)
+      setReuseCheckResult(mergeRemotePageReuseMatches(localResult, remote))
+    } catch {
+      setReuseCheckNotice("Checked this device only — the shared index was unreachable.")
+    }
   }
 
   if (hasEntries === null) {
@@ -420,7 +455,8 @@ export function EvidenceLibraryPanel() {
           <h2 className="text-sm font-medium text-foreground">Check this page</h2>
           <p className="text-xs text-muted-foreground">
             Paste a page URL to see whether anyone has already cut a card from it — the check a
-            browser extension would run on the current tab before you start cutting.
+            browser extension would run on the current tab before you start cutting. Checks this
+            device's library and the shared server index.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -431,7 +467,7 @@ export function EvidenceLibraryPanel() {
             aria-label="Page URL to check for existing cards"
             className="sm:max-w-sm"
           />
-          <Button type="button" variant="outline" onClick={handleReuseCheck}>
+          <Button type="button" variant="outline" onClick={() => void handleReuseCheck()}>
             Check for existing cards
           </Button>
         </div>
@@ -442,13 +478,18 @@ export function EvidenceLibraryPanel() {
             >
               {buildPageReuseCheckSummaryText(reuseCheckResult)}
             </p>
+            {reuseCheckNotice && (
+              <p className="text-xs text-muted-foreground">{reuseCheckNotice}</p>
+            )}
             {reuseCheckResult.matches.map((entry) => (
               <div key={entry.id} className="rounded-lg border border-dashed border-border p-3">
                 <div className="mb-1 flex flex-wrap items-center gap-2">
                   <span className="font-medium text-foreground">{entry.argBlock}</span>
                   {entry.cite && <span className="text-xs text-muted-foreground">{entry.cite}</span>}
                 </div>
-                <p className="text-sm text-muted-foreground">{entry.text}</p>
+                <p className="text-sm text-muted-foreground">
+                  {entry.text || "Cut by a teammate — body text lives on their device."}
+                </p>
               </div>
             ))}
           </div>

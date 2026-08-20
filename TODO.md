@@ -3,7 +3,63 @@
 
 ### In progress
 
-_No task currently in progress._
+## On Page Card Reuse Search — server-backed page-reuse-check index
+
+**Status:** In Progress
+**Source:** TODO.md — Product Feature Ideas idea #7 "On Page Card Reuse Search", follow-up (a); `docs/features/evidence-library.md`'s "Known gaps": "No browser extension exists ... The reuse-check logic itself (`checkPageForExistingCards`/`findEntriesBySourceUrl`/`normalizeSourceUrl`) is already a plain, extension-callable function with no UI dependency."
+**Branch:** `claude/practical-allen-dec5jd`
+**PR:** Not created yet
+**Started:** 2026-08-20
+
+### Goal
+A browser extension (or any client outside the web app's own localStorage) needs a network-callable way to check whether a page's URL has already been cut into the shared evidence repository. Today `checkPageForExistingCards` only works against a caller-supplied, localStorage-backed entry list inside the web app itself, so nothing outside the app can call it. This slice adds the missing server-backed index (D1 table + API route) other clients can query, plus wires the existing web-app panel to push/check against it — the concrete prerequisite the "Known gaps" note identifies before an actual browser extension can be built.
+
+### Scope
+- A new D1 table indexing `EvidenceLibraryEntry` records that carry a `sourceUrl`, keyed by normalized URL.
+- A GET/POST API route (mirroring `app/api/flow-sync/route.ts`'s short-poll/upsert pattern) for checking a URL and pushing an entry.
+- A `debate-card-search` client module (`pullPageReuseMatches`/`pushPageReuseEntry`) calling that route, unit-tested the same way `flow-sync-client.ts` is.
+- `EvidenceLibraryPanel`'s existing "Check this page" box also checks the server index (opt-in, best-effort — never blocking the local check), and a saved entry with a `sourceUrl` is best-effort pushed to the server.
+- Docs updated in `docs/features/evidence-library.md`.
+
+### Non-goals
+- The actual browser extension itself (still a follow-up — no extension package exists in this repo).
+- Migrating the rest of the Shared Evidence Library (full entries, search, tags, etc.) to server-side storage — only the minimal reuse-check index moves server-side.
+- Authentication/identity for `contributorId` (this repo has no auth system wired to these community features elsewhere either).
+
+### Acceptance criteria
+- [x] A GET request for a previously-pushed URL's reuse-check returns `alreadyCut: true` with the matching entry summaries. (Verified against a running dev server; also matches across scheme/`www.`/tracking-param/trailing-slash differences.)
+- [x] A GET request for an unseen URL returns `alreadyCut: false`.
+- [x] Pushing (POSTing) the same entry id twice upserts rather than duplicating.
+- [x] Vitest coverage is added or updated (client push/pull success + failure paths) — 14 new cases in `packages/debate-card-search/test/page-reuse-check-client.test.ts`
+- [ ] Lint passes — N/A, no `lint` script exists anywhere in this repo
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Production/web build passes
+- [x] Documentation is updated
+
+### Implementation plan
+- [x] Inspect `app/api/flow-sync/route.ts`, `flow-sync-client.ts`, `flow-sync-cursor.ts`, and their tests as the pattern to mirror
+- [x] Add `pageReuseEntries` D1 table to `lib/database/schema.ts`
+- [x] Generate the drizzle migration (`drizzle/0003_skinny_the_santerians.sql`)
+- [x] Add `app/api/page-reuse-check/route.ts` (GET by url, POST upsert)
+- [x] Add `debate-card-search`'s `lib/page-reuse-check-client.ts` (pull/push) with Vitest success-path coverage
+- [x] Add failure/edge-case Vitest coverage (non-OK responses, malformed JSON, missing url, no-sourceUrl no-op, merge dedupe)
+- [x] Wire `EvidenceLibraryPanel`'s "Check this page" action and entry-save flow to the new client module
+- [x] Run focused tests and fix failures
+- [x] Verify the route end-to-end against a running dev server (all 6 behaviors above, plus both 400 paths)
+- [x] Verify the wired panel in a real browser (server-only match renders as already-cut with no console errors)
+- [x] Run typecheck
+- [x] Run the full relevant test suite
+- [x] Run the production/web build
+- [x] Review the final diff for scope and quality
+- [ ] Commit and push the branch
+- [ ] Create or update the pull request
+- [x] Update tracker status, completed checkboxes, and remaining work
+- [x] Update `docs/features/evidence-library.md`
+
+### Remaining work
+- Commit and push the branch; open a PR.
+- Follow-ups deliberately left open (recorded in `docs/features/evidence-library.md`'s Known gaps): the actual browser extension is still unbuilt (it can now be a thin client of `GET/POST /api/page-reuse-check`); the index has no auth or rate limiting and takes `contributorId` from the request body; a push that fails is never retried and pre-existing entries are never backfilled; deleting an entry doesn't remove its server row.
 
 ### Completed
 - **Outline Filters and Argument Tree View — wire "generate outline for
@@ -6536,7 +6592,7 @@ _No task currently in progress._
 
 6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slices done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. A second slice, `flowSummaries.ts` (see Tracker Status above, "Speech Transcript Summaries and Answers — flow-summary persistence"), now persists a round's derived `FlowRowSummary[]` to localStorage. A third slice, `FlowSummariesPanel` (see Tracker Status above, "Speech Transcript Summaries and Answers — summary/cross-ex panel UI"), now renders every persisted flow summary, with suggested cross-exam questions and extension ideas for unanswered arguments, at `/summaries`, closing follow-up (b). A fourth slice (see Tracker Status above, "Speech Transcript Summaries and Answers — AI extraction from raw speech text") added `round/transcript-extraction-ai.ts` and `round/transcript-extraction-client.ts`, wiring a "Generate from raw speech text" form into `FlowSummariesPanel` that calls the existing `/api/reason-ai` Anthropic proxy to extract claim/warrant/impact/evidence arguments from a pasted transcript and appends them to that round's saved flow summary as synthetic `FlowRowSummary` rows, closing the AI-call half of follow-up (a). Follow-up (a)'s remaining half, audio/video transcription (the extraction form above requires an already-transcribed speech text, not a recording), remains open — not started._
 
-7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `EvidenceLibraryEntry.sourceUrl` (optional) plus `normalizeSourceUrl`/`findEntriesBySourceUrl`/`checkPageForExistingCards`/`buildPageReuseCheckSummaryText` for checking whether a given page URL has already been cut into the shared repository, and `state/evidenceLibraryEntries.ts`'s `checkPersistedPageForExistingCards` composes that against the persisted, peer-review-gated repository. A "Check this page" box plus a new Source URL submission field in `EvidenceLibraryPanel` (`/cards/library`) let a contributor paste a URL and see whether it's already been cut, standing in for the eventual browser extension's automatic per-tab check — no chrome extension exists in this repo, so this reuse-check logic is the extension-callable first slice. Follow-up: (a) an actual browser extension that calls this same check automatically against the current tab's URL. Not started._
+7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `EvidenceLibraryEntry.sourceUrl` (optional) plus `normalizeSourceUrl`/`findEntriesBySourceUrl`/`checkPageForExistingCards`/`buildPageReuseCheckSummaryText` for checking whether a given page URL has already been cut into the shared repository, and `state/evidenceLibraryEntries.ts`'s `checkPersistedPageForExistingCards` composes that against the persisted, peer-review-gated repository. A "Check this page" box plus a new Source URL submission field in `EvidenceLibraryPanel` (`/cards/library`) let a contributor paste a URL and see whether it's already been cut, standing in for the eventual browser extension's automatic per-tab check — no chrome extension exists in this repo, so this reuse-check logic is the extension-callable first slice. A second slice (see Tracker Status above, "On Page Card Reuse Search — server-backed page-reuse-check index") added the `page_reuse_entries` D1 table, `app/api/page-reuse-check/route.ts` (GET check-by-url, POST upsert), and `debate-card-search`'s `lib/page-reuse-check-client.ts` (`pullRemotePageReuseMatches`/`pushPageReuseEntry`/`mergeRemotePageReuseMatches`), mirroring the `/api/flow-sync` transport added for idea #16. `EvidenceLibraryPanel`'s "Check this page" box now merges server matches over the local ones (best-effort — an unreachable server leaves the local-only result standing under a notice) and a saved entry carrying a `sourceUrl` is best-effort pushed to that index, so a page cut by a teammate on another device reads as already-cut. This closes the server-side half of follow-up (a): the check is now callable from outside this app's own localStorage. Follow-up (a)'s remaining half, the actual browser extension, is still open — not started, though it can now be a thin client of `GET/POST /api/page-reuse-check` rather than needing server infrastructure of its own. Known gaps recorded in `docs/features/evidence-library.md`: the index has no auth/rate limiting, a failed push is never retried, and deleting an entry doesn't remove its server row._
 
 8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. A third slice, `CoachMaterialsPanel` (see Tracker Status above, "Video-Lecture-Training Coach AI — materials-upload/coach panel UI"), now renders an upload form, a kind-grouped material list, and an "ask the coach" grounded-prompt preview at `/coach-materials`, closing follow-up (c). A fourth slice (see Tracker Status above, "Video-Lecture-Training Coach AI — real AI Q&A call") added `coach/team-coach-ai.ts` and `coach/team-coach-client.ts`, wiring an "Ask the coach" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy with `buildGroundedCoachPrompt`'s output for a real, materials-grounded answer, closing follow-up (b). A fifth slice (see Tracker Status above, "Video-Lecture-Training Coach AI — document-upload text extraction") added `coach/document-material-extraction.ts`, wiring an "Upload a document" action into the panel that fills a material's text field from an uploaded `.docx`/`.txt`/`.md` file (via `debate-card-parser`'s existing `convertDocxToHTML` for `.docx`), closing the "document" half of follow-up (a). The "recording" half of follow-up (a), audio/video transcription, remains open — not started; no transcription service exists in this repo._
 
