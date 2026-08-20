@@ -19,6 +19,7 @@ import type { FlowSpreadsheetProps, ContextMenuEntry, EditReviewOpenParams, Prep
 import { buildRowData, rowDataToBoxes } from "./dataTransform"
 import { jumpToAnnotation } from "./flow-annotations"
 import type { FlowAnnotation } from "./flow-annotations"
+import { isFlowLiveUpdateStorageEvent } from "./live-update"
 import { listFlowEditsForBox } from "../state/flowEdits"
 import { listPrepNotesForBox } from "../state/prepNotes"
 import { gridCellForBoxPath } from "./edit-cells"
@@ -102,6 +103,24 @@ export function FlowSpreadsheet({
     checkMobile()
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
+  /**
+   * Live-update the annotation/edit/prep-note badges when another browser
+   * tab logs one for this same origin. A `storage` event never fires in the
+   * tab that made the write, only in other tabs, so this is purely the
+   * cross-tab case — same-tab logging still force-refreshes just the
+   * affected cell via `handleEditLogged`/`handlePrepNoteCreated` above. Which
+   * cell(s) changed in another tab isn't knowable here, so this refreshes
+   * every cell instead of targeting one.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isFlowLiveUpdateStorageEvent(event)) return
+      gridRef.current?.api?.refreshCells({ force: true })
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   /**
