@@ -6,6 +6,46 @@
 _No task currently in progress._
 
 ### Completed
+- **Practice Round Simulator — wire post-round feedback generation to a live round flow.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/practice-round-simulator.md`'s
+  Known gaps section was itself stale — it still said follow-up (a)'s AI
+  opponent-speech and AI judge-decision calls were "not started," but both
+  already existed and were wired into `PracticeRoundSimulatorPanel.tsx`
+  ("Generate AI opponent speech" / "Get AI judge decision"). Doc text
+  corrected. Underneath that stale half, the doc's real remaining claim —
+  "feedback generation isn't wired to a live round flow in this app yet" —
+  was accurate: `buildPracticeRoundFeedback` (which needs an already-flowed
+  `Flow`) had no caller anywhere in the app, so every practice round's card
+  permanently showed "no post-round feedback yet." Added
+  `buildAndSavePracticeRoundFeedback(flow, roundId, sideKey)` to
+  `packages/debate-round/src/state/practiceRounds.ts`, which derives a
+  round's `PracticeRoundFeedback` (judged under that round's own already-
+  saved `setup.judgeParadigm`) and saves it onto the round's persisted
+  record — returning `undefined` without writing anything if no record is
+  stored for that `roundId` yet. `PracticeRoundSimulatorPanel.tsx` gained a
+  "Generate post-round feedback for current round" form per round, reading
+  the round workspace's currently selected flow via `state/store.ts`'s
+  `useFlowStore` — the same mechanism `CoachingSessionsPanel`'s "Generate
+  coaching session for current round" action already uses — enabled only
+  while the selected flow's id matches that card's `roundId`. No new
+  coaching-session or judge-paradigm logic was introduced; this composes
+  the existing `buildPracticeRoundFeedback` (itself built on `flow/coach-mode.ts`'s
+  `buildCoachingSession`) directly. Vitest-covered (4 new cases in
+  `packages/debate-round/test/practiceRounds.test.ts`'s
+  `buildAndSavePracticeRoundFeedback` suite: no-op + `undefined` for an
+  unstored `roundId`, deriving feedback under the round's own judge
+  paradigm and saving it, preserving the record's other fields (`setup`,
+  `judgeDecision`) when saving feedback, and overwriting previously
+  generated feedback). Verified with `bun run test` (156 files / 2203
+  tests, all pass — 4 new cases), `bun run typecheck` (11 in-scope packages
+  pass — `debate-ai-web` has no `typecheck` script; this repo has no `lint`
+  script), and `bun run build` (both buildable packages pass, `/practice-round`
+  present in the route list). Docs updated at
+  `docs/features/practice-round-simulator.md` (Known gaps section now reads
+  "No known gaps remain for this idea"). PR:
+  https://github.com/debate/debate-ai.com/pull/269.
 - **Flow Annotations — switch video on cross-recording "Jump to".** Closes
   one of the four "Newly discovered small gaps" logged by the previous run's
   doc/tracker drift audit (see the entry below): `FlowAnnotationsPanel.handleJump`

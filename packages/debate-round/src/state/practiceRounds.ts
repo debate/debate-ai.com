@@ -19,9 +19,11 @@
  * @module state/practiceRounds
  */
 
+import type { Flow } from "debate-core/src/types/flow";
 import { getAiVersusRound } from "./aiVersusRounds";
 import type { PriorSpeechRecord } from "../round/ai-versus-speech-order";
 import type { JudgeDecisionAiResult } from "../round/judge-decision-ai";
+import { buildPracticeRoundFeedback } from "../round/practice-round-simulator";
 import type { PracticeRoundFeedback, PracticeRoundSetup } from "../round/practice-round-simulator";
 
 export type PracticeRoundRecord = {
@@ -92,4 +94,33 @@ export function deletePracticeRound(roundId: string): void {
  */
 export function getPracticeRoundSubmittedSpeeches(roundId: string): PriorSpeechRecord[] {
   return getAiVersusRound(roundId)?.submittedSpeeches ?? [];
+}
+
+/**
+ * Derives post-round feedback from an already-flowed `Flow` (e.g. the round
+ * workspace's currently selected flow) against a round's own already-saved
+ * `setup.judgeParadigm`, and saves it onto that round's persisted record —
+ * the "post-round feedback generation isn't wired to a live round flow"
+ * Known gap named in `docs/features/practice-round-simulator.md`. Reuses
+ * the existing `buildPracticeRoundFeedback` directly rather than
+ * reimplementing any of its coaching-session composition.
+ *
+ * Returns `undefined` (without writing anything) when no
+ * `PracticeRoundRecord` is stored for `roundId` yet — feedback is only ever
+ * generated for a round whose setup (and judge paradigm) has already been
+ * saved via `savePracticeRound`.
+ */
+export function buildAndSavePracticeRoundFeedback(
+  flow: Pick<Flow, "children" | "columns">,
+  roundId: string,
+  sideKey: string,
+  options: { collapseLimit?: number } = {},
+): PracticeRoundRecord | undefined {
+  const existing = getPracticeRound(roundId);
+  if (!existing) return undefined;
+
+  const feedback = buildPracticeRoundFeedback(flow, sideKey, existing.setup.judgeParadigm, options);
+  const record: PracticeRoundRecord = { ...existing, feedback };
+  savePracticeRound(record);
+  return record;
 }
