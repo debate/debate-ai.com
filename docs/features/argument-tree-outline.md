@@ -75,6 +75,23 @@ existed and was already Vitest-covered in
 `packages/debate-round/test/argumentTrees.test.ts`; this slice only wires a
 real caller to it.
 
+A later slice closed the remaining "still a manual trigger" half of that
+gap: `hooks/useFlowEffects.ts` gained `useArgumentTreeAutoSync(flows,
+selected)`, wired into `DebateFlowPage` alongside its existing
+`useFlowPersistence` effect. It watches the currently selected flow and,
+1.5s after it stops changing, calls a new `buildAndSaveArgumentTreeIfChanged`
+(`state/argumentTrees.ts`) — the same derive-and-persist step
+`buildAndSaveArgumentTree` performs, except it skips the localStorage write
+entirely when the freshly derived tree is structurally identical to what's
+already stored for that round, so an idle debounce tick (or one that only
+touched something outside the tree, like a timer) doesn't thrash storage.
+The manual "Generate outline for current round" button is unchanged and
+still useful for generating an outline without leaving `/outline`. No
+follow-ups remain open on this gap. Vitest-covered in
+`packages/debate-round/test/argumentTrees.test.ts` (`buildAndSaveArgumentTreeIfChanged`
+saving on a first sync, skipping the write and returning `undefined` when
+unchanged, and saving+returning the new record on a real change).
+
 A later slice closed follow-up (b) — `debate-core`'s `Box` type gained three
 new optional fields: `argumentType?: ArgumentType` (a
 `"contention" | "link" | "impact" | "turn" | "answer" | "extension"` union),
@@ -186,12 +203,6 @@ renders when it's empty).
 
 ## Known gaps
 
-- `ArgumentTreePanel.tsx`'s "Generate outline for current round" action is
-  a manual trigger a user has to click — the live round-flowing page
-  (`DebateFlowPage`/`FlowMainContent`) still doesn't call
-  `buildAndSaveArgumentTree` automatically as a round is flowed, so a
-  round's outline only updates here once someone visits `/outline` and
-  regenerates it.
 - Tagging is row-level, not per-speech: one row carries one
   `argumentType`/`authorId`/`evidenceStatus`, so a row whose 2AC answer was
   written by a different partner than its 1AC claim can't record both.

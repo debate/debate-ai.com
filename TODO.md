@@ -6,6 +6,38 @@
 _No task currently in progress._
 
 ### Completed
+- **Outline Filters and Argument Tree View — auto-sync the argument tree
+  as a round is flowed, not just on a manual "Generate outline" click.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/argument-tree-outline.md` said
+  `ArgumentTreePanel.tsx`'s "Generate outline for current round" action was
+  still a manual trigger — "the live round-flowing page
+  (`DebateFlowPage`/`FlowMainContent`) still doesn't call
+  `buildAndSaveArgumentTree` automatically as a round is flowed" — left open
+  by PR #277. `state/argumentTrees.ts` gained
+  `buildAndSaveArgumentTreeIfChanged(flow, roundId)`, which derives the tree
+  the same way `buildAndSaveArgumentTree` does but skips the localStorage
+  write (returning `undefined`) when the result is structurally identical to
+  what's already stored for that round, so a periodic auto-sync tick doesn't
+  thrash storage when nothing actually changed. `hooks/useFlowEffects.ts`
+  gained `useArgumentTreeAutoSync(flows, selected)` — a 1.5s-debounced
+  effect on the selected flow, mirroring the debounce convention already
+  used by `debate-card-search`'s `useSearchState.ts` — wired into
+  `DebateFlowPage` (`panels/DebateRoundPanel.tsx`) alongside its existing
+  `useFlowPersistence` effect. The manual "Generate outline for current
+  round" button in `ArgumentTreePanel.tsx` is unchanged. No follow-ups
+  remain open on this Known gap. Vitest-covered in
+  `packages/debate-round/test/argumentTrees.test.ts` (saving on a first
+  sync, skipping the write and returning `undefined` when the derived tree
+  is unchanged, and saving+returning the new record on a real change).
+  Verified with `bun x vitest run` (162 files, 2314 tests),
+  `bunx turbo typecheck --filter=debate-round`, and
+  `bunx turbo build --filter=debate-ai-web`; no `lint` script is configured
+  in this repo. **PR:** [#284](https://github.com/debate/debate-ai.com/pull/284).
+  **Completed:** 2026-08-20.
+
 - **Outline Filters and Argument Tree View — neighbour preview + bulk
   "tag every row in this section" action.**
   Found via this run's own doc/tracker-drift audit of every
