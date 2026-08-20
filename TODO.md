@@ -3,7 +3,73 @@
 
 ### In progress
 
-_No task currently in progress._
+## Opponent Team Profiles — "Log a scouted round" form, the in-app way to create an opponent profile
+
+**Status:** In Progress
+**Source:** TODO.md — Research Crowdsourcing Organizer Features, "🕵️ Opponent Team Profiles"
+(this repo has no `IDEAS.md`; the "Product Feature Ideas" / "Research Crowdsourcing
+Organizer Features" sections below are the backlog, and `docs/features/*.md`'s
+"Known gaps" sections are the follow-up list every recent run has audited)
+**Branch:** `claude/practical-allen-4yqyre`
+**PR:** Not created yet
+**Started:** 2026-08-20
+
+### Goal
+Close `docs/features/opponent-team-profiles.md`'s "No profile editing/creation
+UI here — this panel only renders existing persisted profiles" Known gap, the
+exact counterpart of the judge-profiles gap closed last run in
+[#278](https://github.com/debate/debate-ai.com/pull/278). Today an
+`OpponentTeamProfile` reaches `/opponents` only if something calls
+`saveOpponentTeamProfile` programmatically.
+
+### Scope
+- A new `state/opponentRoundRecords.ts` store in `debate-data-sync` persisting
+  the raw `OpponentRoundRecord` history each profile is derived from, keyed by
+  a per-round `id` (a team plays many rounds), mirroring
+  `debate-speech-writer`'s `judgeRoundRecords.ts`.
+- Re-derivation of the affected team's profile from its *full* logged history
+  through the existing `buildOpponentTeamProfile`/`saveOpponentTeamProfile`.
+- A "Log a scouted round" form on `OpponentTeamProfilesPanel`, rendered above
+  the roster in the empty state too.
+- A per-team logged-rounds list with a delete action, so
+  `deleteOpponentRoundRecord` has a real UI caller rather than repeating the
+  judge panel's still-open "no delete/edit affordance" gap.
+
+### Non-goals
+- No direct editing of an aggregate profile field — every roster column stays
+  a derived value.
+- No new scouting/aggregation logic; `opponent-team-profile.ts` is reused as-is.
+- No real Tabroom/ballot data source (follow-up (a), still open).
+
+### Acceptance criteria
+- [x] Logging a round from the panel creates or updates that team's profile
+- [x] The form renders in the empty state (no profiles yet), not just alongside a roster
+- [x] Deleting a logged round re-aggregates, and removes the profile when no rounds remain
+- [x] Per-team isolation: logging for one team never re-aggregates another
+- [x] Corrupt/missing/non-array storage degrades to an empty list, never throws
+- [x] Vitest coverage is added
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Web build passes
+- [x] Documentation is updated
+
+### Implementation plan
+- [x] Inspect affected modules and existing tests
+- [x] Add `state/opponentRoundRecords.ts`
+- [x] Add focused Vitest success-path coverage
+- [x] Add focused failure/edge-case coverage
+- [x] Wire the "Log a scouted round" form into `OpponentTeamProfilesPanel`
+- [x] Wire the logged-rounds delete affordance
+- [x] Run focused tests, then the full suite
+- [x] Run typecheck
+- [x] Run `build:web`
+- [x] Update `docs/features/opponent-team-profiles.md`
+- [x] Commit and push the branch
+- [ ] Create the pull request
+- [ ] Move this entry to Completed
+
+### Remaining work
+- Create the pull request, then move this entry to Completed.
 
 ### Completed
 - **Judge Profiles — "Log a judged round" form, the in-app way to create a
@@ -6625,7 +6691,7 @@ _No task currently in progress._
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. A second slice, `state/dailyQuests.ts` plus `DailyQuestsPanel` (see Tracker Status above, "Daily Quests and Targets — quest-board widget UI + real contribution wiring"), now persists a quest-template roster, seeds it from a topic's coverage gaps, and composes it against the real, persisted Contributions Feed at `/cards/quests`, closing follow-up (b) and — by wiring `submittedAt`/`argBlock` into the Contributions Feed's submission flow for the first time — follow-up (a). A third slice (see Tracker Status above, "Daily Quests and Targets — streak/reward layer on the quest board") added `buildStreakRewardText` and a "Your streak"/"Record today's mission" section to the panel, composing the existing Gamified Quests streak logic directly, closing follow-up (c). No follow-ups remain open on this bullet._
 * 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildTopicSprint`/`buildTopicSprintSummaryText` for composing the existing Daily Quests board, Research Task Routing result, and Research Progress Tracking board into one shared topic-scoped session, plus a topic-addressed `SprintNote` model (`createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`) for shared prep notes, mirroring `debate-round`'s `strategy-sync-notes.ts` `PrepNote` lifecycle. A second slice, `sprintNotes.ts` (see Tracker Status above), now persists `SprintNote` records to localStorage. A third slice, `SprintNotesPanel` (see Tracker Status above, "Team Collaboration Mode — collaboration-panel UI"), now renders a submission form and every persisted note grouped by topic at `/cards/collaboration`, closing follow-up (a). A fourth slice (see Tracker Status above, "Team Collaboration Mode / Collaboration Prep Room — shared 'active now' presence signal") added `lib/topic-presence.ts`/`state/topicPresence.ts` and wired a live "active now" roster plus an "I'm active here" heartbeat control into the panel per topic, closing follow-up (c). A fifth slice (see Tracker Status above, "Team Collaboration Mode — persisted topic-sprint composition") added `state/topicSprints.ts`'s `readPersistedTopicSprintInputs`/`buildPersistedTopicSprint`, composing every `buildTopicSprint` input (quests, timestamped contributions, the topic's live coverage report, contributor availability, this topic's tracked assignments, and notes) from its own already-persisted store, and wired `panels/TopicSprintPanel.tsx` to fall back to that composition for any prop its caller doesn't override — `apps/debate-ai.com/components/research/ResearchHub.tsx`'s Sprint tab now just passes a `topic` instead of hand-deriving a coverage report and always passing an empty contribution list, closing follow-up (b). No follow-ups remain open on this bullet._
 * 
-* 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slices done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. A second slice, `opponentTeamProfiles.ts` (see Tracker Status above), now persists `OpponentTeamProfile` records to localStorage, keyed by `teamId`. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c) — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `opponentTeamId`. A fourth slice, `OpponentTeamProfilesPanel` (see Tracker Status above, "Opponent Team Profiles — opponent-scouting roster UI panel"), now renders every persisted profile as a scouting roster at `/opponents`, closing follow-up (b). Follow-up (a), a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of relying on caller-supplied data, remains open — not started._
+* 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slices done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. A second slice, `opponentTeamProfiles.ts` (see Tracker Status above), now persists `OpponentTeamProfile` records to localStorage, keyed by `teamId`. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c) — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `opponentTeamId`. A fourth slice, `OpponentTeamProfilesPanel` (see Tracker Status above, "Opponent Team Profiles — opponent-scouting roster UI panel"), now renders every persisted profile as a scouting roster at `/opponents`, closing follow-up (b). A fifth slice, `opponentRoundRecords.ts` plus the panel's "Log a scouted round" form (see Tracker Status above, "Opponent Team Profiles — \"Log a scouted round\" form"), now persists the raw `OpponentRoundRecord` history each profile is derived from and makes logging a round the in-app way to create or update a profile, with a logged-rounds list that deletes and re-aggregates. Follow-up (a), a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of hand-entered rounds, remains open — not started._
 * 
 * ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. A second slice, `judgeProfiles.ts` (see Tracker Status above, "Judge Profile Persistence"), now persists `JudgeProfile` records to localStorage, keyed by `judgeId`, closing follow-up (c)'s persistence half. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c)'s lookup half — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `judgeId`. A fourth slice, `JudgeProfilesPanel` (see Tracker Status above, "Judge Profiles — judge-profile roster UI panel"), now renders every persisted profile as a roster at `/judges`, closing follow-up (b). A fifth slice, `judgeRoundRecords.ts` plus the panel's "Log a judged round" form (see Tracker Status above, "Judge Profiles — 'Log a judged round' form"), now persists the raw ballot history and re-derives a judge's profile from it, so a profile can be built entirely from inside the app rather than only by a programmatic `saveJudgeProfile` caller. Follow-up (a), a real ballot data source producing `JudgeRoundRecord`s automatically instead of hand-entered or caller-supplied data, remains open — not started._
 * 
