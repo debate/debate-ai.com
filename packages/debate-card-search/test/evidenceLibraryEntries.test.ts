@@ -9,6 +9,7 @@ import {
   listCombinedPersistedLibraryCards,
   listEvidenceLibraryEntries,
   listPendingReviewEntries,
+  renameTagAcrossPersistedEntries,
   saveEvidenceLibraryEntry,
   saveEvidenceLibraryEntryRevision,
   searchPersistedEvidenceLibrary,
@@ -448,6 +449,45 @@ describe("buildPersistedArgumentLibrary", () => {
     saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
     buildPersistedArgumentLibrary();
     expect(listEvidenceLibraryEntries()).toEqual([WARMING_CARD, SOLVENCY_BLOCK]);
+  });
+});
+
+describe("renameTagAcrossPersistedEntries", () => {
+  it("rewrites the tag on every persisted entry that carries it and persists the result", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const changedCount = renameTagAcrossPersistedEntries("warming", "climate-crisis");
+
+    expect(changedCount).toBe(1);
+    expect(getEvidenceLibraryEntry("entry-1")!.tags).toEqual(["impact", "climate-crisis"]);
+    // The entry that never carried the tag is untouched.
+    expect(getEvidenceLibraryEntry("entry-2")!.tags).toEqual(["solvency"]);
+  });
+
+  it("merges into an already-used tag name instead of duplicating it", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry({ ...SOLVENCY_BLOCK, tags: ["solvency", "impact"] });
+
+    renameTagAcrossPersistedEntries("warming", "impact");
+
+    expect(getEvidenceLibraryEntry("entry-1")!.tags).toEqual(["impact"]);
+    expect(getEvidenceLibraryEntry("entry-2")!.tags).toEqual(["solvency", "impact"]);
+  });
+
+  it("is a safe no-op, and does not write to storage, when no entry carries the tag", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    const before = localStorage.getItem("evidenceLibraryEntries");
+
+    const changedCount = renameTagAcrossPersistedEntries("nonexistent", "whatever");
+
+    expect(changedCount).toBe(0);
+    expect(localStorage.getItem("evidenceLibraryEntries")).toBe(before);
+  });
+
+  it("throws when newTag is blank", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    expect(() => renameTagAcrossPersistedEntries("warming", "  ")).toThrow();
   });
 });
 

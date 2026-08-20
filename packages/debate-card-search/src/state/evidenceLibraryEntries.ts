@@ -58,7 +58,12 @@ import {
   type EvidenceSearchIndex,
 } from "../lib/evidence-search-index";
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library";
-import { buildArgumentLibrary, buildLibraryCardsFromContributions, buildTagCollections } from "../lib/argument-library";
+import {
+  buildArgumentLibrary,
+  buildLibraryCardsFromContributions,
+  buildTagCollections,
+  renameTagAcrossCards,
+} from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
 import { listContributions } from "./contributions";
 import { isCardLive } from "../lib/peer-review";
@@ -297,6 +302,28 @@ export function listCombinedPersistedLibraryCards(): LibraryCard[] {
  */
 export function buildCombinedPersistedArgumentLibrary(): ArgumentLibrary {
   return buildArgumentLibrary(listCombinedPersistedLibraryCards());
+}
+
+/**
+ * Renames (or merges) a tag across every persisted evidence-library entry
+ * that carries it — closes the "No tag rename/merge tool" gap recorded in
+ * `docs/features/evidence-library.md`'s Known gaps. Reuses
+ * `argument-library.ts`'s pure `renameTagAcrossCards` directly against this
+ * store's entries, writing back only when at least one entry actually
+ * changed (so an all-no-op rename doesn't touch `localStorage`, and the
+ * cached search index's raw-JSON fingerprint — see
+ * `getCachedEvidenceSearchIndex` — isn't invalidated for nothing). Returns
+ * the number of entries changed. Only rewrites this store's own entries —
+ * a tag applied to a Contributions Feed submission (see
+ * `buildCombinedPersistedArgumentLibrary`) is a separate store/form and is
+ * left untouched, as noted in `docs/features/evidence-library.md`.
+ */
+export function renameTagAcrossPersistedEntries(oldTag: string, newTag: string): number {
+  const { cards: updated, changedCount } = renameTagAcrossCards(readAll(), oldTag, newTag);
+  if (changedCount > 0) {
+    writeAll(updated);
+  }
+  return changedCount;
 }
 
 /**
