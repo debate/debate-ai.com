@@ -12,6 +12,12 @@
  * reusing the existing Topic Coverage Dashboard's coverage report rather
  * than introducing a separate under-coverage signal.
  *
+ * A custom quest can carry an optional expiry day; expired quests drop off
+ * the board on their own (`buildDailyQuestBoard` excludes them), and a
+ * "Clean up expired quests" action calls `pruneExpiredQuestTemplates` to
+ * remove them from the stored roster entirely — closing the "a quest
+ * template has no expiry" Known gap.
+ *
  * @module panels/DailyQuestsPanel
  */
 
@@ -26,6 +32,7 @@ import {
   buildPersistedDailyQuestBoard,
   deleteQuestTemplate,
   listQuestTemplates,
+  pruneExpiredQuestTemplates,
   saveQuestTemplate,
   seedQuestTemplatesFromTopicCoverage,
 } from "../state/dailyQuests"
@@ -48,9 +55,15 @@ const KIND_OPTIONS: { value: ContributionKind; label: string }[] = [
   { value: "refutation", label: "Refutation" },
 ]
 
-type QuestDraft = { description: string; kind: ContributionKind; argBlock: string; targetCount: string }
+type QuestDraft = {
+  description: string
+  kind: ContributionKind
+  argBlock: string
+  targetCount: string
+  expiresOn: string
+}
 
-const EMPTY_DRAFT: QuestDraft = { description: "", kind: "card", argBlock: "", targetCount: "3" }
+const EMPTY_DRAFT: QuestDraft = { description: "", kind: "card", argBlock: "", targetCount: "3", expiresOn: "" }
 
 /** Today's UTC calendar day, as epoch milliseconds — the `now` convention `daily-quests.ts` needs. */
 function nowMs(): number {
@@ -79,6 +92,7 @@ export function DailyQuestsPanel() {
   const [contributorId, setContributorId] = useState("")
   const [streak, setStreak] = useState<ContributorQuestStreak | null>(null)
   const [streakError, setStreakError] = useState<string | null>(null)
+  const [pruneMessage, setPruneMessage] = useState<string | null>(null)
 
   const refresh = () => {
     setTemplates(listQuestTemplates())
@@ -105,11 +119,13 @@ export function DailyQuestsPanel() {
       return
     }
     const argBlock = draft.argBlock.trim()
+    const expiresOn = draft.expiresOn.trim()
     saveQuestTemplate({
       id: `custom-${Date.now()}`,
       description,
       target: { kind: draft.kind, ...(argBlock ? { argBlock } : {}) },
       targetCount,
+      ...(expiresOn ? { expiresOn } : {}),
     })
     setError(null)
     setDraft(EMPTY_DRAFT)
@@ -118,6 +134,16 @@ export function DailyQuestsPanel() {
 
   const handleRemove = (id: string) => {
     deleteQuestTemplate(id)
+    refresh()
+  }
+
+  const handlePruneExpired = () => {
+    const removedCount = pruneExpiredQuestTemplates(nowMs())
+    setPruneMessage(
+      removedCount === 0
+        ? "No expired quests to clean up."
+        : `Removed ${removedCount} expired quest${removedCount === 1 ? "" : "s"}.`,
+    )
     refresh()
   }
 
@@ -146,6 +172,8 @@ export function DailyQuestsPanel() {
   if (templates === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading daily quests…</div>
   }
+
+  const expiresOnByQuestId = new Map(templates.map((template) => [template.id, template.expiresOn]))
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -201,6 +229,15 @@ export function DailyQuestsPanel() {
               min={1}
               value={draft.targetCount}
               onChange={(e) => setDraft((prev) => ({ ...prev, targetCount: e.target.value }))}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="quest-expires-on">Expires on (optional)</Label>
+            <Input
+              id="quest-expires-on"
+              type="date"
+              value={draft.expiresOn}
+              onChange={(e) => setDraft((prev) => ({ ...prev, expiresOn: e.target.value }))}
             />
           </div>
         </div>
@@ -269,6 +306,13 @@ export function DailyQuestsPanel() {
         )}
       </div>
 
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="outline" onClick={handlePruneExpired}>
+          Clean up expired quests
+        </Button>
+        {pruneMessage && <p className="text-sm text-muted-foreground">{pruneMessage}</p>}
+      </div>
+
       {board.length === 0 ? (
         <div className="p-6 text-center text-sm text-muted-foreground">
           No quests yet. Add one above, or seed a set from a topic's under-covered arguments.
@@ -277,22 +321,30 @@ export function DailyQuestsPanel() {
         <div className="space-y-3">
           <p className="text-sm text-muted-foreground">{buildQuestBoardSummaryText(board)}</p>
           <div className="space-y-2">
-            {board.map((quest) => (
-              <div
-                key={quest.questId}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-2"
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant={quest.isComplete ? "default" : "secondary"}>
-                    {quest.isComplete ? "Complete" : `${quest.completedCount}/${quest.targetCount}`}
-                  </Badge>
-                  <span className="text-sm font-medium text-foreground">{quest.description}</span>
+            {board.map((quest) => {
+              const expiresOn = expiresOnByQuestId.get(quest.questId)
+              return (
+                <div
+                  key={quest.questId}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-2"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant={quest.isComplete ? "default" : "secondary"}>
+                      {quest.isComplete ? "Complete" : `${quest.completedCount}/${quest.targetCount}`}
+                    </Badge>
+                    <span className="text-sm font-medium text-foreground">{quest.description}</span>
+                    {expiresOn && (
+                      <Badge variant="outline" className="whitespace-nowrap">
+                        Expires {expiresOn}
+                      </Badge>
+                    )}
+                  </div>
+                  <Button size="sm" variant="ghost" onClick={() => handleRemove(quest.questId)}>
+                    Remove
+                  </Button>
                 </div>
-                <Button size="sm" variant="ghost" onClick={() => handleRemove(quest.questId)}>
-                  Remove
-                </Button>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       )}

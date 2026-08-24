@@ -22,13 +22,20 @@
  * a team doesn't have to hand-author quests that duplicate what the Topic
  * Coverage Dashboard already knows is missing.
  *
+ * `pruneExpiredQuestTemplates` closes the "a quest template has no expiry"
+ * Known gap: it removes every persisted template whose `expiresOn` (a
+ * `daily-quests.ts` addition) has passed as of a caller-supplied day,
+ * archiving it out of the roster.
+ *
  * @module state/dailyQuests
  */
 
 import type { AttributedContribution } from "../lib/contribution-leaderboard";
+import { getUtcDayKey } from "../lib/daily-best-card";
 import {
   buildDailyQuestBoard,
   buildUnderCoveredArgumentQuests,
+  isQuestTemplateExpired,
   type QuestContribution,
   type QuestProgress,
   type QuestTemplate,
@@ -76,6 +83,24 @@ export function saveQuestTemplate(template: QuestTemplate): void {
 /** Deletes a persisted quest template by id; a no-op if it isn't stored. */
 export function deleteQuestTemplate(id: string): void {
   writeAll(readAll().filter((template) => template.id !== id));
+}
+
+/**
+ * Removes every persisted quest template whose `expiresOn` has passed as of
+ * the UTC calendar day of `now` (via `lib/daily-quests.ts`'s
+ * `isQuestTemplateExpired`), archiving them out of the stored roster rather
+ * than leaving them to keep taking up space once `buildDailyQuestBoard`
+ * already excludes them from scoring. Templates with no `expiresOn`, or
+ * whose `expiresOn` hasn't passed yet, are left untouched. Returns how many
+ * were removed.
+ */
+export function pruneExpiredQuestTemplates(now: number): number {
+  const dayKey = getUtcDayKey(now);
+  const templates = readAll();
+  const remaining = templates.filter((template) => !isQuestTemplateExpired(template, dayKey));
+  const removedCount = templates.length - remaining.length;
+  if (removedCount > 0) writeAll(remaining);
+  return removedCount;
 }
 
 /** Whether a persisted contribution carries the `submittedAt` timestamp `daily-quests.ts` needs to match it to a calendar day. */

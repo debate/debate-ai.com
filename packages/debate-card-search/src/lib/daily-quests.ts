@@ -13,6 +13,11 @@
  * track streaks, persist quest completion, or render a quest board UI. See
  * the follow-ups noted in TODO.md.
  *
+ * `isQuestTemplateExpired`/`QuestTemplate.expiresOn` close the "a quest
+ * template has no expiry" Known gap: a template can carry an optional
+ * last-active UTC day key, and `buildDailyQuestBoard` excludes an expired
+ * template from the board entirely rather than scoring it forever.
+ *
  * @module lib/daily-quests
  */
 
@@ -50,6 +55,8 @@ export interface QuestTemplate {
   description: string;
   target: QuestTarget;
   targetCount: number;
+  /** Last UTC calendar day ("YYYY-MM-DD", same `getUtcDayKey` convention) this quest is still active on; omitted means it never expires. */
+  expiresOn?: string;
 }
 
 /** One quest's progress for a given day. */
@@ -60,6 +67,11 @@ export interface QuestProgress {
   completedCount: number;
   remainingCount: number;
   isComplete: boolean;
+}
+
+/** Whether `template` has expired as of `dayKey` (a UTC calendar day formatted "YYYY-MM-DD") — a quest with no `expiresOn` never expires; one expires the day *after* `expiresOn`, so it still counts on that day itself. */
+export function isQuestTemplateExpired(template: QuestTemplate, dayKey: string): boolean {
+  return template.expiresOn !== undefined && dayKey > template.expiresOn;
 }
 
 /** Whether `contribution` satisfies `target` — an omitted target field matches any value. */
@@ -107,6 +119,7 @@ export function buildDailyQuestBoard(
 ): QuestProgress[] {
   const dayKey = getUtcDayKey(now);
   return quests
+    .filter((quest) => !isQuestTemplateExpired(quest, dayKey))
     .map((quest) => computeQuestProgress(quest, contributions, dayKey))
     .sort((a, b) => Number(a.isComplete) - Number(b.isComplete) || a.questId.localeCompare(b.questId));
 }
