@@ -6,6 +6,49 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Practice Opponent — custom opponent-persona authoring flow.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/practice-opponent.md` said "Only the four
+  built-in personas are selectable; there is no custom opponent-persona
+  authoring flow (unlike the Judge Paradigm Picker's custom paradigm
+  option)." `debate-speech-writer`'s `opponent/opponent-personas.ts` gained
+  `OpponentPersonaId` (`BuiltinOpponentPersonaId | "custom"`, replacing
+  `OpponentPersona.id`'s previously builtin-only type),
+  `CustomOpponentPersonaInput`, and `buildCustomOpponentPersona` — a direct
+  mirror of `judge/judge-paradigms.ts`'s `buildCustomJudgeParadigm`: it
+  sanitizes/trims/clamps a user-supplied name and free-text style
+  description, throws on either being empty after sanitization, and carries
+  the notes verbatim into `instructions` for a future AI speech-generation
+  prompt. `panels/OpponentPersonaPickerPanel.tsx` gained a "Custom opponent
+  persona" radio option with persona-name and debating-style fields,
+  mirroring `JudgeParadigmPickerPanel.tsx`'s custom-paradigm form; saving
+  builds the persona via `buildCustomOpponentPersona` and stores it through
+  the already-persisted `saveOpponentPersonaSelection` unchanged (it already
+  stores a full `OpponentPersona`, not just a builtin id), and
+  `practice-round-simulator.ts`'s `resolveOpponentPersona` needed no changes
+  since it already accepts a full `OpponentPersona | BuiltinOpponentPersonaId`
+  union. Both new symbols are re-exported from `debate-speech-writer`'s
+  `index.ts`. `docs/features/practice-opponent.md` was updated (intro,
+  "What it shows", data-flow section, and a new closing paragraph) to
+  describe the new form and close this Known gap. Vitest-covered in
+  `packages/debate-speech-writer/test/opponent-personas.test.ts` (new
+  `describe("buildCustomOpponentPersona")` block: builds from name/notes,
+  trims whitespace and strips control characters, clamps overly long notes,
+  throws on empty name, throws on empty notes, and produces a prompt via the
+  existing `buildOpponentPersonaPrompt`). Verified with `bun run test`
+  (162 files, 2330 tests, up from 2324), `bun run typecheck` (11 packages),
+  and `bun run build:web` (production build); no `lint` script is configured
+  in this repo. **PR:** [#286](https://github.com/debate/debate-ai.com/pull/286)
+  — all checks pass (Vitest + coverage, codecov, Vercel, `Workers Builds:
+  debate-ai-com`) except a newly-appeared `Workers Builds:
+  debate-ai-production` check, which fails identically on both this PR's
+  commits (including a docs-only commit) and doesn't appear at all on the
+  two prior merged PRs (#284, #285); documented on the PR as an unrelated
+  Cloudflare dashboard config issue, not a code problem, mirroring the
+  unrelated Vercel rate-limit note on PR #217 earlier in this tracker.
+  **Completed:** 2026-08-24.
 - **Common Argument Library — tag autocomplete on the Contributions Feed,
   and tag rename/merge across both persisted tag stores.**
   Found via this run's own audit of `docs/features/*.md` "Known gaps"
