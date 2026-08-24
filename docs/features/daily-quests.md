@@ -19,8 +19,8 @@ Every saved quest template's progress for the current UTC calendar day:
 | Complete | `isComplete`, once `completedCount >= targetCount` |
 
 A quest can be added by hand (description, contribution kind, optional
-argument block, target count), or seeded in bulk from a topic's
-under-covered arguments (via the existing Topic Coverage Dashboard's
+argument block, target count, optional expiry day), or seeded in bulk from a
+topic's under-covered arguments (via the existing Topic Coverage Dashboard's
 coverage report).
 
 A "Your streak" section lets a contributor (identified by free-text id —
@@ -44,10 +44,18 @@ panels/ContributionsFeedPanel.tsx
 Adding or seeding a quest (Daily Quests panel):
 panels/DailyQuestsPanel.tsx
   → saveQuestTemplate(template)                              — state/dailyQuests.ts
+      (template may carry an optional expiresOn UTC day key)
   → seedQuestTemplatesFromTopicCoverage(topic)                — state/dailyQuests.ts
       buildPersistedTopicCoverageReport(topic)  — state/trackedArguments.ts
         → buildUnderCoveredArgumentQuests(report)             — lib/daily-quests.ts
         → saveQuestTemplate(...) per under-covered argument
+
+Cleaning up expired quests (Daily Quests panel):
+panels/DailyQuestsPanel.tsx
+  → pruneExpiredQuestTemplates(now)                           — state/dailyQuests.ts
+      removes every stored template whose expiresOn has passed
+      (isQuestTemplateExpired — lib/daily-quests.ts), returning the removed count
+  → panel re-reads listQuestTemplates()/buildPersistedDailyQuestBoard() to refresh
 
 Recording today's mission + reward (Daily Quests panel):
 panels/DailyQuestsPanel.tsx
@@ -100,6 +108,28 @@ continuing an existing streak, a plain non-milestone completion, a
 freshly-earned milestone badge, not re-announcing a badge earned on a prior
 day, and a custom milestone list).
 
+A quest template can now carry an optional expiry, closing the "a quest
+template has no expiry" Known gap: `QuestTemplate.expiresOn` (a UTC day key,
+same `getUtcDayKey` convention as everywhere else in this module) is
+optional and, when set, `isQuestTemplateExpired`/`buildDailyQuestBoard`
+(`lib/daily-quests.ts`) exclude that template from the board once the
+current UTC day is past it — an expired quest simply stops appearing and
+stops scoring, rather than being reset for a new cycle (no recurring-quest
+concept exists in this repo). `state/dailyQuests.ts`'s
+`pruneExpiredQuestTemplates` additionally removes expired templates from the
+stored roster entirely, and the panel's new "Clean up expired quests" action
+calls it. The "Add quest" form gained an optional "Expires on" date field,
+and each quest's board row shows an "Expires <date>" badge when its
+template has one. Vitest-covered in
+`packages/debate-card-search/test/daily-quests.test.ts`
+(`isQuestTemplateExpired`: no `expiresOn`, on/before/after the expiry day;
+`buildDailyQuestBoard`: excludes an expired template, still includes one on
+its own expiry day) and
+`packages/debate-card-search/test/dailyQuests.test.ts`
+(`pruneExpiredQuestTemplates`: no-op on empty storage, removes an expired
+template and returns the count, leaves a never-expiring or not-yet-expired
+template untouched, and removes only the expired template among several).
+
 ## Known gaps
 
 - No contributor identity/auth scoping yet — the board isn't scoped to "my
@@ -108,5 +138,3 @@ day, and a custom milestone list).
 - Contributions saved before this change don't carry `submittedAt`/
   `argBlock` and are excluded from quest scoring (not retroactively
   backfilled).
-- A quest template has no expiry — it keeps scoring every day until
-  removed, rather than resetting or archiving after one "daily" cycle.

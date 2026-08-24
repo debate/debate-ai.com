@@ -6,6 +6,46 @@
 _No task currently in progress._
 
 ### Completed
+- **Daily Quests — quest-template expiry.**
+  PR: TBD. Closes the "a quest template has no expiry — it keeps scoring
+  every day until removed, rather than resetting or archiving after one
+  'daily' cycle" Known gap documented in `docs/features/daily-quests.md`.
+  `lib/daily-quests.ts`'s `QuestTemplate` gains an optional `expiresOn` (a
+  UTC day key, the same `getUtcDayKey` convention used throughout this
+  module) and a new pure `isQuestTemplateExpired(template, dayKey)` — a
+  template with no `expiresOn` never expires, and one with an `expiresOn`
+  expires the day *after* it (it still counts on that day itself).
+  `buildDailyQuestBoard` now filters out an expired template before scoring,
+  so an expired quest simply stops appearing on the board rather than
+  continuing to score forever — no "reset for a new cycle" concept was
+  introduced, since no recurring-quest model exists in this repo.
+  `packages/debate-card-search/src/state/dailyQuests.ts` adds
+  `pruneExpiredQuestTemplates(now)`, which removes every persisted template
+  whose `expiresOn` has passed and returns how many were removed, archiving
+  them out of the stored roster the same way `researchProgress.ts`'s
+  `deleteCompletedTaskHistoryForTopic` prunes stale history elsewhere in
+  this package. `DailyQuestsPanel.tsx`'s "Add quest" form gained an optional
+  "Expires on" date field, each board row shows an "Expires <date>" badge
+  when its template has one, and a new "Clean up expired quests" action
+  calls `pruneExpiredQuestTemplates` and shows a short result message. No
+  scoring, streak, or seeding logic changed beyond the new expiry filter,
+  and no new route was added. Vitest-covered in
+  `packages/debate-card-search/test/daily-quests.test.ts` (4 new cases:
+  `isQuestTemplateExpired` with no `expiresOn`, on/before/after its expiry
+  day; `buildDailyQuestBoard` excluding an expired template and still
+  including one on its own expiry day) and
+  `packages/debate-card-search/test/dailyQuests.test.ts` (5 new cases for
+  `pruneExpiredQuestTemplates`: no-op on empty storage, removes an expired
+  template and returns the count, leaves a never-expiring template
+  untouched, leaves a not-yet-expired template (including today) untouched,
+  and removes only the expired template among several saved). Docs updated
+  in `docs/features/daily-quests.md` (data flow, narrative, and Known gaps).
+  No repo-wide `lint` script exists (checked root/app/package `package.json`
+  scripts) so none was run. Verified: `bun install`, `bun run test` (165
+  files / 2419 tests, all pass — 9 new), `bun run typecheck` (12 of 13
+  in-scope packages have a typecheck script; all pass), and
+  `bun run build:web` (`debate-ai-web`, succeeds, `/cards/quests` route
+  present, no new route) all pass.
 - **Online Debate Versus AI — microphone dictation for speech submission.**
   Closes the "text-only" half of the "Speech submission is text-only...
   no transcription pipeline exists in this repo" Known gap recorded in

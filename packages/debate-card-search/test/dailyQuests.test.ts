@@ -3,6 +3,7 @@ import {
   buildPersistedDailyQuestBoard,
   deleteQuestTemplate,
   listQuestTemplates,
+  pruneExpiredQuestTemplates,
   saveQuestTemplate,
   seedQuestTemplatesFromTopicCoverage,
 } from "../src/state/dailyQuests";
@@ -91,6 +92,47 @@ describe("deleteQuestTemplate", () => {
   it("is a no-op when the id isn't stored", () => {
     saveQuestTemplate(ADD_ANNOTATIONS);
     deleteQuestTemplate("missing");
+    expect(listQuestTemplates()).toEqual([ADD_ANNOTATIONS]);
+  });
+});
+
+describe("pruneExpiredQuestTemplates", () => {
+  const NOW = Date.UTC(2026, 7, 16, 12, 0, 0); // 2026-08-16
+
+  it("returns 0 and leaves storage untouched when nothing is stored", () => {
+    expect(pruneExpiredQuestTemplates(NOW)).toBe(0);
+    expect(listQuestTemplates()).toEqual([]);
+  });
+
+  it("removes a template whose expiresOn has passed and returns the removed count", () => {
+    const expired: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-15" };
+    saveQuestTemplate(expired);
+
+    expect(pruneExpiredQuestTemplates(NOW)).toBe(1);
+    expect(listQuestTemplates()).toEqual([]);
+  });
+
+  it("leaves a template with no expiresOn untouched", () => {
+    saveQuestTemplate(FIND_CARDS);
+
+    expect(pruneExpiredQuestTemplates(NOW)).toBe(0);
+    expect(listQuestTemplates()).toEqual([FIND_CARDS]);
+  });
+
+  it("leaves a template whose expiresOn hasn't passed yet (including today) untouched", () => {
+    const stillActive: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-16" };
+    saveQuestTemplate(stillActive);
+
+    expect(pruneExpiredQuestTemplates(NOW)).toBe(0);
+    expect(listQuestTemplates()).toEqual([stillActive]);
+  });
+
+  it("removes only the expired templates, leaving others in place", () => {
+    const expired: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-15" };
+    saveQuestTemplate(expired);
+    saveQuestTemplate(ADD_ANNOTATIONS);
+
+    expect(pruneExpiredQuestTemplates(NOW)).toBe(1);
     expect(listQuestTemplates()).toEqual([ADD_ANNOTATIONS]);
   });
 });
