@@ -7,6 +7,7 @@ _No task currently in progress._
 
 ### Completed
 - **Judge Profiles — redo a logged-round edit.**
+  [PR #308](https://github.com/debate/debate-ai.com/pull/308).
   Closes the "Undo has no matching 'redo'" Known gap recorded in
   `docs/features/judge-profiles.md`, the sole remaining follow-up under the
   "⚖️ Judge Profiles" bullet (Research Crowdsourcing Organizer Features).
