@@ -16,11 +16,16 @@
  * only rewarding a refresh after the fact.
  *
  * Reads the persisted evidence repository via
- * `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibrary`
- * (itself a thin composition of `shared-evidence-library.ts`'s pure
- * `searchEvidenceLibrary` against the persisted store) and renders a
- * free-text/kind search box over it, reusing the existing search/ranking
- * logic directly rather than introducing new logic here. The submission
+ * `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`
+ * (itself a thin composition of `evidence-search-index.ts`'s pure
+ * `buildEvidenceSearchIndex`/`searchEvidenceLibraryWithIndex` against the
+ * persisted store) and renders a free-text/kind search box over it, reusing
+ * the existing search/ranking logic directly rather than introducing new
+ * logic here — this closes the remaining half of follow-up (c) named under
+ * the "📋 Shared Evidence Library" bullet in TODO.md ("wiring the panel to
+ * [the real search index]"), left open by the index's original PR. The
+ * older keyword-overlap `searchPersistedEvidenceLibrary` stays exported for
+ * any other caller, unchanged. The submission
  * form saves a new `EvidenceLibraryEntry` via the already-persisted
  * `saveEvidenceLibraryEntry`, stamping `wordCount` from the submitted body
  * text via the pure `computeWordCount` rather than asking the submitter to
@@ -64,7 +69,7 @@ import {
   listPersistedTags,
   saveEvidenceLibraryEntry,
   saveEvidenceLibraryEntryRevision,
-  searchPersistedEvidenceLibrary,
+  searchPersistedEvidenceLibraryWithIndex,
 } from "../state/evidenceLibraryEntries"
 import { getPeerReview } from "../state/peerReviews"
 import {
@@ -171,12 +176,12 @@ export function EvidenceLibraryPanel() {
 
   useEffect(() => {
     if (hasEntries === null) return
-    setResults(searchPersistedEvidenceLibrary(buildQuery()))
+    setResults(searchPersistedEvidenceLibraryWithIndex(buildQuery()))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasEntries, queryText, kind, filterTopic, filterCaseArea, filterTags])
 
   const refreshResults = () => {
-    setResults(searchPersistedEvidenceLibrary(buildQuery()))
+    setResults(searchPersistedEvidenceLibraryWithIndex(buildQuery()))
     setHasEntries(true)
     setKnownTags(listPersistedTags())
     setPendingEntries(listPendingReviewEntries())

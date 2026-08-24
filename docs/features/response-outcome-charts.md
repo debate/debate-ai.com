@@ -65,12 +65,20 @@ panels/VulnerabilityChartsPanel.tsx
   → panel re-reads buildVulnerabilityReportsPanelView() to refresh
 
 AI counsel-panel assessment ("Get AI counsel panel"):
+flow/response-outcome.ts
+  → buildCounselPanelTopArguments(effectiveReport)
+                                              — trims the panel's current
+                                                report (the persisted report,
+                                                or a "what if"-adjusted
+                                                variant via
+                                                applyHypotheticalAdjustments)
+                                                to the top exposed arguments
 flow/response-outcome-ai.ts
-  → buildCounselPanelAiUserPrompt(input)     — composes the round's top
-                                                exposed arguments (row,
-                                                origin speech, unanswered
-                                                status, heuristic score)
-                                                into a prompt
+  → buildCounselPanelAiUserPrompt(input)     — composes those top exposed
+                                                arguments (row, origin
+                                                speech, unanswered status,
+                                                heuristic score) into a
+                                                prompt
   → parseCounselPanelAiResponse(raw)         — tolerant JSON parsing of
                                                 the model's reply
 flow/response-outcome-client.ts
@@ -133,13 +141,33 @@ and an unparseable AI reply), and
 `packages/debate-round/test/counselPanelAssessments.test.ts` (get/save/
 delete, corrupt/missing storage, and per-`roundId` isolation).
 
+A "Generate report for current round" form in the panel reads the round
+workspace's currently selected flow (`state/store.ts`'s `useFlowStore`, the
+same mechanism `DrillSetsPanel`'s "Generate drills for current round" form
+uses) and derives+persists that round's vulnerability report via
+`state/vulnerabilityReports.ts`'s new `buildAndSaveVulnerabilityReport` —
+composing the existing `getArgumentVulnerabilityReport` + `getFlowSideKeys`
++ `saveVulnerabilityReport` in one step, mirroring `drillSets.ts`'s
+`buildAndSaveDrillSet`. No new vulnerability-scoring logic. Vitest-covered
+in `packages/debate-round/test/vulnerabilityReports.test.ts` (deriving and
+persisting a report from a flow, overwriting an existing record for the
+same round, and `sideKeys` derived correctly via `getFlowSideKeys`).
+
+The "Get AI counsel panel" action scores whichever report the chart and
+side summary above it are currently rendering — the round's persisted
+report, or a "what if"-adjusted variant when an Extend/Answer/Concede
+pick is active — via `flow/response-outcome.ts`'s
+`buildCounselPanelTopArguments(effectiveReport)`, so an active hypothetical
+is reflected in the AI counsel call too, not just the chart. Previously
+the counsel call always scored `record.report` (the original persisted
+report), silently ignoring an active "what if" adjustment even though the
+chart/side-summary above it did reflect it. Vitest-covered in
+`packages/debate-round/test/response-outcome.test.ts`'s
+`buildCounselPanelTopArguments` suite (ranked top-N trimmed to the
+counsel-request fields, the default limit, and reflecting a
+hypothetical-adjusted report's recomputed score/unanswered status instead
+of the original).
+
 ## Known gaps
 
-- No affordance in this panel to generate a new vulnerability report for a
-  round — a report only appears here once something elsewhere calls
-  `getArgumentVulnerabilityReport` and `saveVulnerabilityReport` for that
-  round.
-- The AI counsel panel scores the round's currently-persisted report only
-  (not a "what if" hypothetical) — requesting a fresh panel after applying
-  a "what if" adjustment re-scores against the original saved report, not
-  the hypothetical variant.
+- No known gaps remain for this idea.

@@ -239,6 +239,55 @@ export function suggestTags(
 }
 
 /**
+ * Replaces `oldTag` with `newTag` inside a single card's tag list, if
+ * present. If the card already carries `newTag` too, the duplicate is
+ * dropped rather than kept (a merge into an existing tag shouldn't leave a
+ * card with the same tag twice). A card that doesn't carry `oldTag` is
+ * returned unchanged (`tags` itself, not a copy).
+ */
+export function renameTagInList(tags: string[], oldTag: string, newTag: string): string[] {
+  if (!tags.includes(oldTag)) return tags;
+  const withoutOld = tags.filter((tag) => tag !== oldTag);
+  return withoutOld.includes(newTag) ? withoutOld : [...withoutOld, newTag];
+}
+
+/**
+ * Renames (or, when `newTag` is already used elsewhere, merges into) a tag
+ * across every card that carries it — the "no tag rename/merge tool" gap
+ * recorded in `docs/features/evidence-library.md`'s Known gaps. Cards not
+ * carrying `oldTag` are returned as the exact same object (no new
+ * reference), so an unaffected card never appears "changed" to a caller
+ * doing identity comparison. Throws if either tag, once trimmed, is blank,
+ * or if they're the same tag (nothing to rename). Renaming a tag that isn't
+ * used anywhere is a safe no-op — `changedCount` is `0` and every card is
+ * returned unchanged.
+ */
+export function renameTagAcrossCards<T extends LibraryCard>(
+  cards: T[],
+  oldTag: string,
+  newTag: string,
+): { cards: T[]; changedCount: number } {
+  const trimmedOld = oldTag.trim();
+  const trimmedNew = newTag.trim();
+  if (!trimmedOld || !trimmedNew) {
+    throw new Error("renameTagAcrossCards requires non-blank oldTag and newTag");
+  }
+  if (trimmedOld === trimmedNew) {
+    throw new Error("renameTagAcrossCards requires oldTag and newTag to differ");
+  }
+
+  let changedCount = 0;
+  const updated = cards.map((card) => {
+    const renamed = renameTagInList(card.tags, trimmedOld, trimmedNew);
+    if (renamed === card.tags) return card;
+    changedCount++;
+    return { ...card, tags: renamed };
+  });
+
+  return { cards: updated, changedCount };
+}
+
+/**
  * Converts a Contributions Feed `AttributedContribution` into a `LibraryCard`,
  * or `null` if it's missing `topic` or `caseArea` — both required on
  * `LibraryCard` but optional on a contribution, since not every contribution

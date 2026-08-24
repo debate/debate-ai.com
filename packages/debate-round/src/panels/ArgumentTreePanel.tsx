@@ -13,13 +13,15 @@
  * save the chosen filter back through `saveArgumentTreeFilterSelection`. No
  * new tree-derivation or filtering logic is introduced here.
  *
- * A "Generate from current round" action reads the live round-flowing page's
- * selected flow (`state/store.ts`'s `useFlowStore`, the same store
- * `CoachingProgramsPanel`'s "Save current flow" action reads) and calls
- * `state/argumentTrees.ts`'s `buildAndSaveArgumentTreeFromCurrentFlow`,
- * closing the "Nothing in the live round-flowing page ... calls
- * `buildAndSaveArgumentTree` yet" gap noted in
- * `docs/features/argument-tree-outline.md`.
+ * A "Generate outline for current round" action reads the round workspace's
+ * currently selected flow (`state/store.ts`'s `useFlowStore`, the same
+ * mechanism `VulnerabilityChartsPanel`'s "Generate report for current
+ * round" action uses) and derives+persists that round's outline via
+ * `state/argumentTrees.ts`'s `buildAndSaveArgumentTreeFromCurrentFlow` (which
+ * wraps `buildAndSaveArgumentTree`, keying the tree by the flow's own id) —
+ * closing this doc's "nothing in the live round-flowing page calls
+ * `buildAndSaveArgumentTree` yet" Known gap. No new tree-derivation logic is
+ * introduced here.
  *
  * @module panels/ArgumentTreePanel
  */
@@ -129,51 +131,54 @@ export function ArgumentTreePanel() {
     saveArgumentTreeFilterSelection({ roundId, filter })
   }
 
-  const handleClear = (roundId: string) => {
-    deleteArgumentTree(roundId)
-    refresh()
-  }
-
-  const handleGenerateFromCurrentRound = () => {
+  const handleGenerate = () => {
     if (!currentFlow) return
     buildAndSaveArgumentTreeFromCurrentFlow(currentFlow)
     refresh()
   }
 
-  const generateAction = (
-    <Button size="sm" variant="outline" disabled={!currentFlow} onClick={handleGenerateFromCurrentRound}>
-      Generate from current round
-    </Button>
-  )
+  const handleClear = (roundId: string) => {
+    deleteArgumentTree(roundId)
+    refresh()
+  }
 
   if (records === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading argument outlines…</div>
   }
 
-  if (records.length === 0) {
-    return (
-      <div className="p-6 space-y-4 text-center">
-        <p className="text-sm text-muted-foreground">
-          No argument outlines yet. An outline fills in once a round's flow is derived into a tree
-          and saved.
-        </p>
-        {generateAction}
-      </div>
-    )
-  }
-
   return (
     <div className="p-4 sm:p-6 space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <h1 className="mb-1 text-xl font-semibold text-foreground">Outline Filters and Argument Tree</h1>
+        <p className="text-sm text-muted-foreground">
+          A filterable outline of each round's flow, grouped under its headings — filter by speech,
+          side, unanswered status, or heading-vs-argument kind.
+        </p>
+      </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
         <div>
-          <h1 className="mb-1 text-xl font-semibold text-foreground">Outline Filters and Argument Tree</h1>
-          <p className="text-sm text-muted-foreground">
-            A filterable outline of each round's flow, grouped under its headings — filter by speech,
-            side, unanswered status, or heading-vs-argument kind.
+          <Label className="text-sm font-medium text-foreground">Generate outline for current round</Label>
+          <p className="text-xs text-muted-foreground">
+            Uses the round workspace's currently selected flow.
           </p>
         </div>
-        {generateAction}
+        <Button size="sm" disabled={!currentFlow} onClick={handleGenerate}>
+          Generate outline
+        </Button>
+        {!currentFlow && (
+          <p className="text-sm text-muted-foreground">
+            Select a round's flow in the round workspace to generate an outline for it.
+          </p>
+        )}
       </div>
+
+      {records.length === 0 && (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No argument outlines yet. An outline fills in once a round's flow is derived into a tree
+          and saved.
+        </div>
+      )}
       {records.map((record) => {
         const filter = filters[record.roundId] ?? {}
         const speeches = collectSpeeches(record)

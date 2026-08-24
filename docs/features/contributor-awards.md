@@ -71,5 +71,8 @@ pattern) — no new scoring or grouping logic (see
 - No scheduled job announces automatically — a person has to open the panel
   and click **Announce today's awards**, same as the Daily Best Card
   Challenge.
-- Same upstream gaps as the [Contribution Leaderboard](contribution-leaderboard.md):
-  no real submitted-contribution flow, no reviewer-identity/permission checks.
+- Same upstream gap as the [Contribution Leaderboard](contribution-leaderboard.md):
+  no reviewer-identity/permission checks (a real submission flow already
+  exists — `ContributionsFeedPanel.tsx` calls `saveContribution`/
+  `recordPersistedLike`/`recordPersistedSave`/
+  `recordPersistedEndorsementFromReviewer`).

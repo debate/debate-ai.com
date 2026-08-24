@@ -110,3 +110,25 @@ export function buildAndSaveArgumentTreeFromCurrentFlow(
 ): ArgumentTreeRecord {
   return buildAndSaveArgumentTree(flow, String(flow.id));
 }
+
+/**
+ * Like {@link buildAndSaveArgumentTree}, but skips the write (and returns
+ * `undefined`) when the derived tree is structurally identical to what's
+ * already stored for `roundId`. Used by `hooks/useFlowEffects.ts`'s
+ * `useArgumentTreeAutoSync`, which calls this on a debounce tick as a round
+ * is flowed — without this check, every tick would rewrite localStorage
+ * even when nothing about the flow's derived outline actually changed.
+ */
+export function buildAndSaveArgumentTreeIfChanged(
+  flow: Pick<Flow, "children" | "columns">,
+  roundId: string,
+): ArgumentTreeRecord | undefined {
+  const tree = buildArgumentTree(flow);
+  const existing = getArgumentTree(roundId);
+  if (existing && JSON.stringify(existing.tree) === JSON.stringify(tree)) {
+    return undefined;
+  }
+  const record: ArgumentTreeRecord = { roundId, tree };
+  saveArgumentTree(record);
+  return record;
+}

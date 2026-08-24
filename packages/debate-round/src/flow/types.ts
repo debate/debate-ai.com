@@ -20,6 +20,17 @@ export interface EditReviewOpenParams {
 }
 
 /**
+ * Where and for which box a `PrepNoteBadge` click should open the
+ * `PrepNotePopover` overlay — mirrors `EditReviewOpenParams`, minus
+ * `currentContent` since a prep note isn't seeded from the cell's text.
+ */
+export interface PrepNoteOpenParams {
+  x: number
+  y: number
+  boxPath: number[]
+}
+
+/**
  * Props for the FlowSpreadsheet component
  */
 export interface FlowSpreadsheetProps {
@@ -49,6 +60,7 @@ export interface FirstColumnCellRendererProps extends ICellRendererParams {
   flowId: number
   onJumpToAnnotation: (annotation: FlowAnnotation) => void
   onOpenEditReview: (params: EditReviewOpenParams) => void
+  onOpenPrepNote: (params: PrepNoteOpenParams) => void
 }
 
 /**
@@ -60,6 +72,7 @@ export interface AnnotationCellRendererProps extends ICellRendererParams {
   flowId: number
   onJumpToAnnotation: (annotation: FlowAnnotation) => void
   onOpenEditReview: (params: EditReviewOpenParams) => void
+  onOpenPrepNote: (params: PrepNoteOpenParams) => void
 }
 
 /**

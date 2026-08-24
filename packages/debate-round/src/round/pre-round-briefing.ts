@@ -21,7 +21,14 @@
  * Features list — it resolves `opponentProfile`/`judgeProfile` from the
  * existing `opponentTeamProfiles.ts`/`judgeProfiles.ts` persistence stores by
  * id when the caller doesn't already have the profile object on hand, then
- * delegates to the pure `buildPreRoundBriefing` above.
+ * delegates to the pure `buildPreRoundBriefing` above. It also resolves
+ * `ownRecords` from `state/ownRoundHistory.ts`'s persisted store by
+ * `opponentTeamId` when the caller doesn't already supply `ownRecords`
+ * directly — closing the real (not form-oversight) gap documented in
+ * `docs/features/pre-round-briefings.md`'s "Known gaps": the form's "Prior
+ * meetings" section always rendered "No recorded prior meetings" because no
+ * persisted store of a team's own round history existed for it to read
+ * from.
  */
 
 import type {
@@ -34,6 +41,7 @@ import { getOpponentTeamProfile } from "debate-data-sync/src/state/opponentTeamP
 import type { JudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
 import { buildJudgeTendencySummary } from "debate-speech-writer/src/judge/judge-profile";
 import { getJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
+import { getOwnRoundHistoryAgainst } from "../state/ownRoundHistory";
 
 /** Basic details about the upcoming round, as the caller already knows them. */
 export interface RoundEventInfo {
@@ -164,8 +172,11 @@ export function buildPreRoundBriefingFromStores(
     input.opponentProfile ??
     (input.opponentTeamId ? getOpponentTeamProfile(input.opponentTeamId) : undefined);
   const judgeProfile = input.judgeProfile ?? (input.judgeId ? getJudgeProfile(input.judgeId) : undefined);
+  const ownRecords =
+    input.ownRecords ??
+    (input.opponentTeamId ? getOwnRoundHistoryAgainst(input.opponentTeamId) : undefined);
 
-  return buildPreRoundBriefing({ ...input, opponentProfile, judgeProfile });
+  return buildPreRoundBriefing({ ...input, opponentProfile, judgeProfile, ownRecords });
 }
 
 /**

@@ -9,7 +9,7 @@ import { AnnotationCellRenderer } from "./AnnotationCellRenderer"
 import { FlowColumnHeader } from "./FlowColumnHeader"
 import { FirstColumnCellRenderer } from "./FirstColumnCellRenderer"
 import type { FlowAnnotation } from "./flow-annotations"
-import type { EditReviewOpenParams } from "./types"
+import type { EditReviewOpenParams, PrepNoteOpenParams } from "./types"
 
 /**
  * Hook providing AG Grid column configuration for Flow spreadsheet
@@ -21,6 +21,7 @@ export function useFlowGridConfig(
   toggleCollapse?: (rowId: string) => void,
   onJumpToAnnotation?: (annotation: FlowAnnotation) => void,
   onOpenEditReview?: (params: EditReviewOpenParams) => void,
+  onOpenPrepNote?: (params: PrepNoteOpenParams) => void,
 ) {
   /**
    * Generate column definitions for AG Grid
@@ -53,9 +54,17 @@ export function useFlowGridConfig(
 
       // First column gets the tree cell renderer; every other column gets the
       // plain annotation-aware renderer. Both surface an `AnnotationBadge`
-      // for a cell whose box has a persisted `FlowAnnotation`, and an
-      // `EditBadge` for logging or reviewing that box's `FlowEdit`s.
-      if (idx === 0 && collapsedHeadings && toggleCollapse && onJumpToAnnotation && onOpenEditReview) {
+      // for a cell whose box has a persisted `FlowAnnotation`, an
+      // `EditBadge` for logging or reviewing that box's `FlowEdit`s, and a
+      // `PrepNoteBadge` for creating or reviewing that box's `PrepNote`s.
+      if (
+        idx === 0 &&
+        collapsedHeadings &&
+        toggleCollapse &&
+        onJumpToAnnotation &&
+        onOpenEditReview &&
+        onOpenPrepNote
+      ) {
         colDef.cellRenderer = FirstColumnCellRenderer
         colDef.cellRendererParams = {
           collapsedHeadings,
@@ -63,13 +72,15 @@ export function useFlowGridConfig(
           flowId: flow.id,
           onJumpToAnnotation,
           onOpenEditReview,
+          onOpenPrepNote,
         }
-      } else if (idx > 0 && onJumpToAnnotation && onOpenEditReview) {
+      } else if (idx > 0 && onJumpToAnnotation && onOpenEditReview && onOpenPrepNote) {
         colDef.cellRenderer = AnnotationCellRenderer
         colDef.cellRendererParams = {
           flowId: flow.id,
           onJumpToAnnotation,
           onOpenEditReview,
+          onOpenPrepNote,
         }
       }
 
@@ -83,6 +94,7 @@ export function useFlowGridConfig(
     toggleCollapse,
     onJumpToAnnotation,
     onOpenEditReview,
+    onOpenPrepNote,
   ])
 
   /**
