@@ -19,9 +19,12 @@
  * `document-material-extraction.ts`'s `extractMaterialTextFromDocument` to
  * fill the Material text field from an uploaded .docx/.txt/.md file instead
  * of requiring it to be pasted in by hand, closing the "document" half of
- * follow-up (a) named under idea #8 in TODO.md. The "recording" half
- * (audio/video transcription) remains open — no transcription service
- * exists in this repo.
+ * follow-up (a) named under idea #8 in TODO.md. A "🎤 Record" button next to
+ * the same field, wired to `hooks/useMicrophoneTranscription.ts`, dictates
+ * directly into it via the browser's own Web Speech API, closing the
+ * remaining "recording" half (no server-side/paid transcription service
+ * exists in this repo) — mirroring idea #6's identical fix in
+ * `debate-round`'s `FlowSummariesPanel`.
  *
  * @module panels/CoachMaterialsPanel
  */
@@ -51,6 +54,8 @@ import {
 } from "../coach/team-coach-materials"
 import { requestTeamCoachAnswer } from "../coach/team-coach-client"
 import { extractMaterialTextFromDocument } from "../coach/document-material-extraction"
+import { appendDictatedSegment } from "../coach/microphone-transcription"
+import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import {
   buildCoachMaterialLibraryFromStore,
   deleteCoachMaterial,
@@ -108,6 +113,10 @@ export function CoachMaterialsPanel() {
   const [answer, setAnswer] = useState<string | null>(null)
   const [asking, setAsking] = useState(false)
   const [askError, setAskError] = useState<string | null>(null)
+
+  const dictation = useMicrophoneTranscription({
+    onSegment: (segment) => setForm((prev) => ({ ...prev, text: appendDictatedSegment(prev.text, segment) })),
+  })
 
   useEffect(() => {
     setLibrary(buildCoachMaterialLibraryFromStore())
@@ -253,6 +262,20 @@ export function CoachMaterialsPanel() {
           <div className="flex items-center justify-between gap-2">
             <Label htmlFor="coach-material-text">Material text</Label>
             <div className="flex items-center gap-2">
+              {dictation.isSupported ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={dictation.isListening ? "destructive" : "outline"}
+                  onClick={dictation.isListening ? dictation.stop : dictation.start}
+                >
+                  {dictation.isListening ? "Stop recording" : "🎤 Record"}
+                </Button>
+              ) : (
+                <span className="text-xs text-muted-foreground">
+                  Microphone dictation isn't supported in this browser.
+                </span>
+              )}
               <Button
                 type="button"
                 size="sm"
@@ -275,9 +298,13 @@ export function CoachMaterialsPanel() {
             id="coach-material-text"
             value={form.text}
             onChange={(e) => setForm((prev) => ({ ...prev, text: e.target.value }))}
-            placeholder="Paste the lecture transcript, handout, or notes here, or upload a .docx/.txt/.md file above…"
+            placeholder="Paste the lecture transcript, handout, or notes here, upload a .docx/.txt/.md file, or click Record to dictate it…"
             className="min-h-32"
           />
+          {dictation.isListening && (
+            <p className="text-xs text-muted-foreground">Listening… speak now.</p>
+          )}
+          {dictation.error && <p className="text-sm text-destructive">{dictation.error}</p>}
           {uploadError && <p className="text-sm text-destructive">{uploadError}</p>}
         </div>
 
