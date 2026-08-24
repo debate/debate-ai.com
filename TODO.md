@@ -6,6 +6,53 @@
 _No task currently in progress._
 
 ### Completed
+- **Outline Filters and Argument Tree View — "Generate from current round" trigger.**
+  Closes the "Nothing in the live round-flowing page (`DebateFlowPage`/
+  `FlowMainContent`) calls `buildAndSaveArgumentTree` yet" gap previously
+  recorded in `docs/features/argument-tree-outline.md`'s Known gaps (idea #10,
+  "Outline Filters and Argument Tree View," already had no lettered
+  follow-ups open in `TODO.md`'s Product Feature Ideas list — this closes a
+  documented UI gap on that idea rather than a numbered follow-up). Every
+  other derived-data panel this repo has already shipped either composes its
+  data entirely from other persisted stores (no live `Flow` needed) or, like
+  `FlowSummariesPanel`, exposes a manual generation form of its own; this
+  panel and a few siblings (`CoachingSessionsPanel`, `DrillSetsPanel`, the
+  `/outcomes` vulnerability-report panel) had no such affordance at all — a
+  record only ever appeared once some other test or caller invoked its
+  `buildAndSave*` function directly. `state/argumentTrees.ts` adds
+  `buildAndSaveArgumentTreeFromCurrentFlow(flow)`, a thin, independently
+  Vitest-covered wrapper over the existing `buildAndSaveArgumentTree` that
+  keys the saved record by the flow's own `id` (stringified) rather than a
+  separately-tracked `Round` entity — mirroring
+  `state/roundContributorFlows.ts`'s `buildAndSaveRoundContributorFlow`
+  convention, the one other place in this package that already reads the
+  live round-flowing page's `state/store.ts` `useFlowStore` directly (from
+  `CoachingProgramsPanel`'s "Save current flow" action). `ArgumentTreePanel`
+  (`/outline`) reads that same store for the currently selected flow and
+  gets a "Generate from current round" button — shown both above the outline
+  list and in the empty state, disabled until a flow is selected — that
+  calls the new helper and refreshes the panel. No live-flow-derivation
+  trigger was added to `DebateFlowPage`/`FlowMainContent` itself: every
+  derived-data panel in this package is deliberately self-contained (reading
+  `useFlowStore` from the panel, not from the round-flowing page), matching
+  the one existing precedent rather than introducing a new "Tools" surface
+  on the core flow page. Vitest-covered in
+  `packages/debate-round/test/argumentTrees.test.ts` (keys the saved record
+  by the flow's `id`; persists an empty tree without throwing for a flow
+  with no rows). Verified with `bun install` (2050 packages), `bun run test`
+  (154 files / 2132 tests, all pass), `bun run typecheck` (11 in-scope
+  packages pass — `debate-ai-web` has no `typecheck` script), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/outline` route present).
+  Docs updated at `docs/features/argument-tree-outline.md`. Follow-up:
+  `CoachingSessionsPanel` (`/coaching`), `DrillSetsPanel` (`/drills`), and
+  the vulnerability-report panel (`/outcomes`) have the identical
+  "no affordance to generate a new record for a round" gap recorded in their
+  own docs (`coaching-sessions.md`, `drill-sets.md`,
+  `response-outcome-charts.md`) — unlike this one, those three also need a
+  `sideKey` picker (or a "generate for every side present in the flow" loop)
+  since their persistence records are keyed by `roundId` + `sideKey`, not
+  `roundId` alone. Not started.
+  PR: [#257](https://github.com/debate/debate-ai.com/pull/257).
 - **Shared Evidence Library — cache the search index across calls.**
   Closes the last open follow-up named under the "📋 Shared Evidence
   Library" bullet in TODO.md's Research Crowdsourcing Organizer Features

@@ -68,12 +68,18 @@ A later slice closed the "nothing in the live round-flowing page calls
 "Generate outline for current round" action that reads the round
 workspace's currently selected flow (`state/store.ts`'s `useFlowStore`, the
 same mechanism `VulnerabilityChartsPanel`'s "Generate report for current
-round" action uses) and derives+persists that round's outline via the
-already-existing `buildAndSaveArgumentTree(flow, roundId)`. No new
-tree-derivation logic was introduced — `buildAndSaveArgumentTree` already
-existed and was already Vitest-covered in
-`packages/debate-round/test/argumentTrees.test.ts`; this slice only wires a
-real caller to it.
+round" action uses) and derives+persists that round's outline via
+`buildAndSaveArgumentTreeFromCurrentFlow(flow)` — a thin wrapper over the
+already-existing `buildAndSaveArgumentTree(flow, roundId)` that keys the
+record by the flow's own `id`, stringified, mirroring
+`roundContributorFlows.ts`'s "the flow's own numeric id stands in for
+`roundId`" convention rather than requiring a separately-tracked `Round`
+entity. No new tree-derivation logic was introduced — this slice only wires a
+real caller to it. Vitest-covered in
+`packages/debate-round/test/argumentTrees.test.ts`
+(`buildAndSaveArgumentTreeFromCurrentFlow` keys the saved record by the
+flow's `id`, and persists an empty tree without throwing for a flow with no
+rows).
 
 A later slice closed the remaining "still a manual trigger" half of that
 gap: `hooks/useFlowEffects.ts` gained `useArgumentTreeAutoSync(flows,

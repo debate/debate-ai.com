@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildAndSaveArgumentTree,
+  buildAndSaveArgumentTreeFromCurrentFlow,
   buildAndSaveArgumentTreeIfChanged,
   buildArgumentTreesPanelView,
   deleteArgumentTree,
@@ -148,6 +149,49 @@ describe("buildAndSaveArgumentTree", () => {
     expect(record.tree[0]).toMatchObject({ isHeading: true, content: "Off-case" });
     expect(record.tree[0].children.map((n) => n.content)).toEqual(["Disad link"]);
     expect(getArgumentTree("round-3")).toEqual(record);
+  });
+});
+
+describe("buildAndSaveArgumentTreeFromCurrentFlow", () => {
+  const COLUMNS = ["1AC", "1NC"];
+
+  function rowFromContents(contents: string[], overrides: Partial<Box> = {}): Box {
+    let box: Box | undefined;
+    for (let i = contents.length - 1; i >= 0; i--) {
+      const current: Box = {
+        content: contents[i],
+        children: box ? [box] : [],
+        index: 0,
+        level: i + 1,
+        focus: false,
+        empty: !contents[i].trim(),
+      };
+      box = current;
+    }
+    return { ...(box as Box), ...overrides };
+  }
+
+  it("keys the saved tree by the flow's own id, stringified", () => {
+    const flow = {
+      id: 42,
+      columns: COLUMNS,
+      children: [rowFromContents(["Case advantage", ""])],
+    };
+
+    const record = buildAndSaveArgumentTreeFromCurrentFlow(flow);
+
+    expect(record.roundId).toBe("42");
+    expect(record.tree.map((n) => n.content)).toEqual(["Case advantage"]);
+    expect(getArgumentTree("42")).toEqual(record);
+  });
+
+  it("persists an empty tree for a flow with no rows, without throwing", () => {
+    const flow = { id: 7, columns: COLUMNS, children: [] };
+
+    const record = buildAndSaveArgumentTreeFromCurrentFlow(flow);
+
+    expect(record).toEqual({ roundId: "7", tree: [] });
+    expect(getArgumentTree("7")).toEqual(record);
   });
 });
 

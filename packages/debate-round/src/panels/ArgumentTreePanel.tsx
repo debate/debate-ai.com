@@ -17,7 +17,8 @@
  * currently selected flow (`state/store.ts`'s `useFlowStore`, the same
  * mechanism `VulnerabilityChartsPanel`'s "Generate report for current
  * round" action uses) and derives+persists that round's outline via
- * `state/argumentTrees.ts`'s already-existing `buildAndSaveArgumentTree` —
+ * `state/argumentTrees.ts`'s `buildAndSaveArgumentTreeFromCurrentFlow` (which
+ * wraps `buildAndSaveArgumentTree`, keying the tree by the flow's own id) —
  * closing this doc's "nothing in the live round-flowing page calls
  * `buildAndSaveArgumentTree` yet" Known gap. No new tree-derivation logic is
  * introduced here.
@@ -41,7 +42,7 @@ import {
 } from "debate-ui/src/primitives/select"
 import { filterArgumentTree, flattenArgumentTree, type ArgumentTreeFilter } from "../flow/argument-tree"
 import {
-  buildAndSaveArgumentTree,
+  buildAndSaveArgumentTreeFromCurrentFlow,
   buildArgumentTreesPanelView,
   deleteArgumentTree,
   type ArgumentTreeRecord,
@@ -132,7 +133,7 @@ export function ArgumentTreePanel() {
 
   const handleGenerate = () => {
     if (!currentFlow) return
-    buildAndSaveArgumentTree(currentFlow, String(currentFlow.id))
+    buildAndSaveArgumentTreeFromCurrentFlow(currentFlow)
     refresh()
   }
 
