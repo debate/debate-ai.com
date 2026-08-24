@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildAndSaveCoachingSession,
   buildCoachingSessionsPanelView,
   deleteCoachingSession,
   getCoachingSession,
@@ -9,6 +10,7 @@ import {
   saveCoachingSessionAiFeedback,
   type CoachingSessionRecord,
 } from "../src/state/coachingSessions";
+import type { Box } from "debate-core/src/types/flow";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {
@@ -46,6 +48,33 @@ const SESSION_OTHER_ROUND: CoachingSessionRecord = {
   roundId: "round-2",
   sideKey: "AFF",
   prompts: [{ kind: "collapse", rowIndex: 1, prompt: "Collapse onto the most vulnerable opposing argument." }],
+};
+
+const COLUMNS = ["1AC", "1NC", "2AC", "2NC"];
+
+/** Builds a row's box chain from per-column content; "" leaves a column unflowed. */
+function rowFromContents(contents: string[], overrides: Partial<Box> = {}): Box {
+  let box: Box | undefined;
+  for (let i = contents.length - 1; i >= 0; i--) {
+    const current: Box = {
+      content: contents[i],
+      children: box ? [box] : [],
+      index: 0,
+      level: i + 1,
+      focus: false,
+      empty: !contents[i].trim(),
+    };
+    box = current;
+  }
+  return { ...box!, ...overrides };
+}
+
+const MIXED_FLOW = {
+  columns: COLUMNS,
+  children: [
+    rowFromContents(["Case advantage", "Turn", "", ""]),
+    rowFromContents(["", "Disad link", "Extend", "Frontline"]),
+  ],
 };
 
 beforeEach(() => {
@@ -169,6 +198,40 @@ describe("saveCoachingSessionAiFeedback", () => {
   it("is a no-op when the roundId/sideKey pair isn't stored", () => {
     saveCoachingSessionAiFeedback("round-1", "AFF", "Feedback.");
     expect(listCoachingSessions()).toEqual([]);
+  });
+});
+
+describe("buildAndSaveCoachingSession", () => {
+  it("derives a round+side's coaching session from a flow and persists it", () => {
+    const record = buildAndSaveCoachingSession(MIXED_FLOW, "round-3", "A");
+
+    expect(record.roundId).toBe("round-3");
+    expect(record.sideKey).toBe("A");
+    expect(record.prompts.length).toBeGreaterThan(0);
+    expect(getCoachingSession("round-3", "A")).toEqual(record);
+  });
+
+  it("overwrites any existing session for that roundId+sideKey pair", () => {
+    saveCoachingSession(SESSION_AFF);
+    const record = buildAndSaveCoachingSession(MIXED_FLOW, "round-1", "AFF");
+
+    expect(listCoachingSessions()).toEqual([record]);
+  });
+
+  it("keeps sessions for a different side of the same round distinct", () => {
+    buildAndSaveCoachingSession(MIXED_FLOW, "round-1", "AFF");
+    buildAndSaveCoachingSession(MIXED_FLOW, "round-1", "NEG");
+
+    expect(listCoachingSessions()).toHaveLength(2);
+  });
+
+  it("passes collapseLimit through to buildCoachingSession", () => {
+    const unlimited = buildAndSaveCoachingSession(MIXED_FLOW, "round-4", "A");
+    const limited = buildAndSaveCoachingSession(MIXED_FLOW, "round-4", "A", { collapseLimit: 0 });
+
+    const collapseCount = (prompts: CoachingSessionRecord["prompts"]) =>
+      prompts.filter((prompt) => prompt.kind === "collapse").length;
+    expect(collapseCount(limited.prompts)).toBeLessThan(collapseCount(unlimited.prompts));
   });
 });
 

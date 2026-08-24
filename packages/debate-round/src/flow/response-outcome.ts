@@ -261,6 +261,37 @@ function applyHypotheticalAction(
   };
 }
 
+export type CounselPanelTopArgument = Pick<
+  ArgumentVulnerability,
+  "rowIndex" | "argument" | "originSpeech" | "isUnanswered" | "vulnerabilityScore"
+>;
+
+/**
+ * The top `limit` most vulnerable arguments (default 10) from `report`,
+ * trimmed to the fields the AI counsel-panel request needs
+ * (`response-outcome-ai.ts`'s `CounselPanelAiArgumentInput`). Callers pass
+ * whichever report reflects the panel's current view — the round's
+ * persisted report, or an "extend"/"answer"/"concede" what-if variant from
+ * `applyHypotheticalAdjustments` — so a counsel-panel request made while a
+ * hypothetical is active is scored against that hypothetical rather than
+ * silently falling back to the persisted report.
+ */
+export function buildCounselPanelTopArguments(
+  report: ArgumentVulnerability[],
+  options: { limit?: number } = {},
+): CounselPanelTopArgument[] {
+  return buildVulnerabilityChartDataFromReport(report, options).map((point) => {
+    const row = report.find((r) => r.rowIndex === point.rowIndex)!;
+    return {
+      rowIndex: row.rowIndex,
+      argument: row.argument,
+      originSpeech: row.originSpeech,
+      isUnanswered: row.isUnanswered,
+      vulnerabilityScore: row.vulnerabilityScore,
+    };
+  });
+}
+
 /**
  * "What if" mode for idea #4's follow-up (c): recomputes vulnerability
  * scores against a hypothetical strategic choice per row (see

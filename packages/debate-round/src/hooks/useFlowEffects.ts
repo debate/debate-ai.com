@@ -6,7 +6,11 @@
 import { useEffect } from "react"
 import { settings } from "../state/settings"
 import { cleanupOldSpeechDocs, getStorageInfo } from "../utils/storage-utils"
+import { buildAndSaveArgumentTreeIfChanged } from "../state/argumentTrees"
 import type { Flow, Round } from "debate-core/src/types/flow"
+
+/** How long a flow must sit unedited before its argument tree auto-syncs. */
+const ARGUMENT_TREE_AUTO_SYNC_DEBOUNCE_MS = 1500
 
 /**
  * Hook that initializes user settings and loads saved flows and rounds from localStorage.
@@ -124,6 +128,33 @@ export function useFlowPersistence(flows: Flow[], setFlows: (flows: Flow[]) => v
       }
     }
   }, [flows, setFlows])
+}
+
+/**
+ * Auto-syncs the currently selected flow's persisted argument tree
+ * (`state/argumentTrees.ts`) as a round is flowed in the live round-flowing
+ * page, debounced so it doesn't recompute on every keystroke. Closes the
+ * "`ArgumentTreePanel.tsx`'s 'Generate outline for current round' action is
+ * a manual trigger... the live round-flowing page still doesn't call
+ * `buildAndSaveArgumentTree` automatically as a round is flowed" Known gap
+ * in `docs/features/argument-tree-outline.md` — previously the tree only
+ * updated via that panel's manual button.
+ *
+ * @param flows - Current flows array
+ * @param selected - Index of the currently selected flow in `flows`
+ */
+export function useArgumentTreeAutoSync(flows: Flow[], selected: number) {
+  const currentFlow = flows[selected]
+
+  useEffect(() => {
+    if (!currentFlow) return
+
+    const timer = setTimeout(() => {
+      buildAndSaveArgumentTreeIfChanged(currentFlow, String(currentFlow.id))
+    }, ARGUMENT_TREE_AUTO_SYNC_DEBOUNCE_MS)
+
+    return () => clearTimeout(timer)
+  }, [currentFlow])
 }
 
 /**

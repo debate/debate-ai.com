@@ -27,6 +27,15 @@ Submission calls `validateSpeechSubmission` before saving. On the AI's
 turn, a "Generate AI speech" button calls the real AI speech-generation
 request (below) and saves the returned text as that slot's speech.
 
+Whenever the round's most recently submitted speech was the AI's, a
+"Regenerate last AI speech" button also appears (works regardless of whose
+turn is next — including after the round is complete). Clicking it
+re-requests that same slot, from the same prior-speeches context originally
+used to generate it, and replaces it in place — every earlier speech,
+including any of the user's own, is untouched. This is a full do-over of
+that one speech, not a "make it different from before" hint: the
+regeneration request carries no memory of the text being replaced.
+
 Below that, every persisted round renders as its own card (sorted by
 `roundId`) with a live progress line and a "Continue"/"Clear" action.
 
@@ -80,6 +89,24 @@ panels/AiVersusRoundPanel.tsx
   → saveAiVersusRound({ ...record, submittedSpeeches: [...,
       { name: slot.name, speaker: "ai", text } ] })
   → panel re-reads buildAiVersusRoundsPanelView() to refresh
+
+Regenerating the last AI speech:
+panels/AiVersusRoundPanel.tsx
+  → state/aiVersusRounds.ts's canRegenerateLastAiSpeech(record)
+                                                    — gates the button on
+                                                      the last submitted
+                                                      speech being the AI's
+  → buildAiResponseRequest(order, submittedCount - 1,
+      submittedSpeeches.slice(0, -1))                — rebuilds the same
+                                                          slot + prior-
+                                                          speeches request
+                                                          originally used
+  → requestAiVersusSpeech(request) (or the persona-aware variant)
+  → state/aiVersusRounds.ts's replaceLastAiSpeech(record, text)
+                                                    — swaps the last
+                                                      speech's text only
+  → saveAiVersusRound(...)
+  → panel re-reads buildAiVersusRoundsPanelView() to refresh
 ```
 
 Every turn-order and persistence rule already existed and was
@@ -104,6 +131,22 @@ persistence logic changed. Vitest-covered in
 `packages/debate-round/test/ai-versus-speech-client.test.ts` (the `fetch`
 client, with `fetch` mocked via `vi.stubGlobal`).
 
+The "regenerate last AI speech" affordance — found via this run's
+`docs/features/*.md` Known gaps audit, not tracked as its own numbered
+`TODO.md` idea — adds two small, pure `state/aiVersusRounds.ts` helpers,
+`canRegenerateLastAiSpeech` (whether the last submitted speech was the
+AI's) and `replaceLastAiSpeech` (returns a copy of a round record with its
+last speech's text swapped, throwing if that speech wasn't the AI's).
+Neither calls the AI or introduces a new request/response shape — the
+panel rebuilds the exact same `AiSpeechRequest` `buildAiResponseRequest`
+would have built when the speech being replaced was first generated (by
+passing `submittedCount - 1` and the speeches before it), so the
+regenerated speech responds to the same context the original one did.
+Vitest-covered in `packages/debate-round/test/aiVersusRounds.test.ts`
+(6 new cases: `canRegenerateLastAiSpeech` for no speeches / last-speech-is-
+user's / last-speech-is-AI's, and `replaceLastAiSpeech` for the swap
+itself, non-mutation of the input record, and both throwing cases).
+
 ## Known gaps
 
 - Speech submission is text-only. `PriorSpeechRecord` (what
@@ -112,8 +155,8 @@ client, with `fetch` mocked via `vi.stubGlobal`).
   the original follow-up wording isn't implemented — recording would need
   either a new audio field on the persisted record or a transcription step
   ahead of the existing text-only save.
-- The AI speech-generation call has no retry/regenerate action if the
-  generated speech is unsatisfactory — a user must clear the whole round
-  and start over. A "regenerate" affordance (replacing the just-saved AI
-  speech rather than restarting) is a natural follow-up, not yet tracked
-  as its own TODO item.
+- "Regenerate last AI speech" only ever replaces the most recently
+  submitted speech — there's no way to regenerate an earlier AI speech in
+  the middle of a round without also discarding every speech (the user's
+  included) submitted after it, since `submittedSpeeches` is a flat,
+  append-only array with no per-slot identity beyond position.

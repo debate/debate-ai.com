@@ -1,10 +1,18 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import type { OpponentRoundRecord } from "debate-data-sync/src/rankings/opponent-team-profile";
+import { buildOpponentTeamProfile } from "debate-data-sync/src/rankings/opponent-team-profile";
+import { saveOpponentTeamProfile } from "debate-data-sync/src/state/opponentTeamProfiles";
+import type { JudgeRoundRecord } from "debate-speech-writer/src/judge/judge-profile";
+import { buildJudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
+import { saveJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
 import {
+  buildPreRoundBriefingRecordFromDraft,
   buildPreRoundBriefingsPanelView,
   deletePreRoundBriefing,
   getPreRoundBriefing,
   listPreRoundBriefings,
   savePreRoundBriefing,
+  type PreRoundBriefingDraft,
   type PreRoundBriefingRecord,
 } from "../src/state/preRoundBriefings";
 
@@ -136,5 +144,134 @@ describe("buildPreRoundBriefingsPanelView", () => {
     savePreRoundBriefing(BRIEFING_A);
     buildPreRoundBriefingsPanelView();
     expect(listPreRoundBriefings()).toEqual([BRIEFING_B, BRIEFING_A]);
+  });
+});
+
+function judgeRecords(): JudgeRoundRecord[] {
+  return [
+    {
+      judgeId: "J. Smith",
+      tournamentName: "Blake",
+      date: "2026-01-01",
+      division: "LD",
+      winningSide: "aff",
+      affSpeakerPoints: 28,
+      negSpeakerPoints: 27,
+      theoryArgumentRaised: false,
+      theoryArgumentWon: false,
+    },
+  ];
+}
+
+const VALID_DRAFT: PreRoundBriefingDraft = {
+  roundId: "round-9",
+  tournamentName: "Blake",
+  division: "LD",
+  roundLabel: "Round 4",
+  side: "aff",
+};
+
+describe("buildPreRoundBriefingRecordFromDraft", () => {
+  it("composes a valid record from the minimal required fields", () => {
+    const result = buildPreRoundBriefingRecordFromDraft(VALID_DRAFT);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error("expected ok result");
+    expect(result.record.roundId).toBe("round-9");
+    expect(result.record.briefing.event).toEqual({
+      tournamentName: "Blake",
+      division: "LD",
+      roundLabel: "Round 4",
+      side: "aff",
+    });
+    expect(result.record.briefing.priorMeetings).toEqual({ meetings: 0, wins: 0, losses: 0 });
+  });
+
+  it("trims whitespace-only required fields and reports a validation error", () => {
+    const result = buildPreRoundBriefingRecordFromDraft({ ...VALID_DRAFT, roundId: "   " });
+
+    expect(result).toEqual({
+      ok: false,
+      error: "Round ID, tournament, division, and round label are all required.",
+    });
+  });
+
+  it("reports a validation error when any required field is missing", () => {
+    expect(buildPreRoundBriefingRecordFromDraft({ ...VALID_DRAFT, tournamentName: "" }).ok).toBe(
+      false,
+    );
+    expect(buildPreRoundBriefingRecordFromDraft({ ...VALID_DRAFT, division: "" }).ok).toBe(false);
+    expect(buildPreRoundBriefingRecordFromDraft({ ...VALID_DRAFT, roundLabel: "" }).ok).toBe(
+      false,
+    );
+  });
+
+  it("includes optional room, opponent label, and prep notes when supplied", () => {
+    const result = buildPreRoundBriefingRecordFromDraft({
+      ...VALID_DRAFT,
+      room: "  Room 204  ",
+      opponentLabel: "  Greenhill AB  ",
+      teamPrepNotes: ["Read the K first", "Watch for theory"],
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error("expected ok result");
+    expect(result.record.briefing.event).toEqual({
+      tournamentName: "Blake",
+      division: "LD",
+      roundLabel: "Round 4",
+      side: "aff",
+      room: "Room 204",
+      opponentLabel: "Greenhill AB",
+    });
+    const prepNotes = result.record.briefing.sections.find((s) => s.title === "Team prep notes");
+    expect(prepNotes?.body).toBe("- Read the K first\n- Watch for theory");
+  });
+
+  it("resolves an opponent/judge profile from the persisted stores by id", () => {
+    saveOpponentTeamProfile(
+      buildOpponentTeamProfile("OpponentA", [
+        {
+          teamId: "OpponentA",
+          tournamentName: "Blake",
+          date: "2026-01-01",
+          division: "LD",
+          side: "neg",
+          won: false,
+          opponentTeamId: "MyTeam",
+        },
+      ]),
+    );
+    saveJudgeProfile(buildJudgeProfile("J. Smith", judgeRecords()));
+
+    const result = buildPreRoundBriefingRecordFromDraft({
+      ...VALID_DRAFT,
+      opponentTeamId: "OpponentA",
+      judgeId: "J. Smith",
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error("expected ok result");
+    const byTitle = Object.fromEntries(
+      result.record.briefing.sections.map((s) => [s.title, s.body]),
+    );
+    expect(byTitle["Opponent scouting"]).toContain("OpponentA");
+    expect(byTitle["Judge tendencies"]).toContain("J. Smith");
+  });
+
+  it("falls back to 'no data on file' when an opponent/judge id doesn't resolve", () => {
+    const result = buildPreRoundBriefingRecordFromDraft({
+      ...VALID_DRAFT,
+      opponentTeamId: "Unknown",
+      judgeId: "Unknown",
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error("expected ok result");
+    const byTitle = Object.fromEntries(
+      result.record.briefing.sections.map((s) => [s.title, s.body]),
+    );
+    expect(byTitle["Opponent scouting"]).toBe("No opponent scouting data on file.");
+    expect(byTitle["Judge tendencies"]).toBe("No judge tendency data on file.");
   });
 });

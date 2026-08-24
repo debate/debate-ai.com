@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { buildEvidenceSearchIndex, searchEvidenceLibraryWithIndex } from "../src/lib/evidence-search-index";
+import {
+  addEntryToIndex,
+  buildEvidenceSearchIndex,
+  removeEntryFromIndex,
+  searchEvidenceLibraryWithIndex,
+  updateEntryInIndex,
+} from "../src/lib/evidence-search-index";
 import { searchEvidenceLibrary, type EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
 
 const entries: EvidenceLibraryEntry[] = [
@@ -184,5 +190,76 @@ describe("searchEvidenceLibraryWithIndex", () => {
     const indexed = searchEvidenceLibraryWithIndex(buildEvidenceSearchIndex(entries), query);
     const linear = searchEvidenceLibrary(entries, query);
     expect(indexed.map((r) => r.entry.id).sort()).toEqual(linear.map((r) => r.entry.id).sort());
+  });
+});
+
+describe("addEntryToIndex / removeEntryFromIndex / updateEntryInIndex (incremental indexing)", () => {
+  it("adds a new entry in place, making it immediately searchable without touching other entries", () => {
+    const index = buildEvidenceSearchIndex([entries[0]]);
+    addEntryToIndex(index, entries[1]);
+
+    expect(index.documentCount).toBe(2);
+    expect(index.postings.get("warming")?.map((p) => p.entryId).sort()).toEqual(["warming-1", "warming-2"]);
+    const results = searchEvidenceLibraryWithIndex(index, { text: "coastal flooding" });
+    expect(results.map((r) => r.entry.id)).toEqual(["warming-2"]);
+  });
+
+  it("adding an already-indexed id replaces it instead of duplicating postings", () => {
+    const index = buildEvidenceSearchIndex([entries[0]]);
+    addEntryToIndex(index, { ...entries[0], argBlock: "", cite: "", text: "brand new different words entirely" });
+
+    expect(index.documentCount).toBe(1);
+    expect(index.postings.get("warming")).toBeUndefined();
+    expect(index.postings.get("brand")?.map((p) => p.entryId)).toEqual(["warming-1"]);
+  });
+
+  it("removes an entry in place, dropping its own terms but leaving a shared term's other postings intact", () => {
+    const index = buildEvidenceSearchIndex([entries[0], entries[1]]);
+    removeEntryFromIndex(index, "warming-1");
+
+    expect(index.documentCount).toBe(1);
+    expect(index.entriesById.has("warming-1")).toBe(false);
+    // Both entries share the "warming" term; only warming-2's posting should remain.
+    expect(index.postings.get("warming")?.map((p) => p.entryId)).toEqual(["warming-2"]);
+    const results = searchEvidenceLibraryWithIndex(index, {});
+    expect(results.map((r) => r.entry.id)).toEqual(["warming-2"]);
+  });
+
+  it("removing the only entry containing a term drops that term from the postings map entirely", () => {
+    const index = buildEvidenceSearchIndex([entries[2]]); // "states-block-1" is the only entry with "federal"
+    removeEntryFromIndex(index, "states-block-1");
+    expect(index.postings.has("federal")).toBe(false);
+    expect(index.postings.size).toBe(0);
+  });
+
+  it("removing an unindexed id is a no-op", () => {
+    const index = buildEvidenceSearchIndex([entries[0]]);
+    removeEntryFromIndex(index, "does-not-exist");
+    expect(index.documentCount).toBe(1);
+    expect(index.entriesById.has("warming-1")).toBe(true);
+  });
+
+  it("updates an entry's content in place, dropping stale terms and adding new ones", () => {
+    const index = buildEvidenceSearchIndex([entries[0], entries[1]]);
+    updateEntryInIndex(index, {
+      ...entries[0],
+      argBlock: "",
+      cite: "",
+      text: "entirely unrelated citrus farming statistics",
+    });
+
+    expect(index.documentCount).toBe(2);
+    // warming-1 no longer contains "warming" at all (only warming-2 does now).
+    expect(index.postings.get("warming")?.map((p) => p.entryId)).toEqual(["warming-2"]);
+    expect(index.postings.get("citrus")?.map((p) => p.entryId)).toEqual(["warming-1"]);
+  });
+
+  it("incrementally building an index via addEntryToIndex matches a direct buildEvidenceSearchIndex call", () => {
+    const incremental = buildEvidenceSearchIndex([]);
+    for (const entry of entries) addEntryToIndex(incremental, entry);
+    const direct = buildEvidenceSearchIndex(entries);
+
+    const query = { text: "warming coastal flooding" };
+    expect(searchEvidenceLibraryWithIndex(incremental, query)).toEqual(searchEvidenceLibraryWithIndex(direct, query));
   });
 });

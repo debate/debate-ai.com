@@ -29,6 +29,11 @@ side's already-generated open-ended feedback, or a "Get AI feedback" button
 if none has been generated (or generation failed) yet. The button text
 changes to "Regenerate AI feedback" once feedback exists.
 
+A **Generate coaching session for current round** form at the top of the
+panel lets a user derive and persist a new session for a side directly from
+the round workspace's currently selected flow — the button is disabled with
+an inline hint when no flow is currently selected.
+
 ## Data flow
 
 ```
@@ -38,6 +43,14 @@ state/coachingSessions.ts (localStorage: coachingSessions)
                                           then sideKey
   → panels/CoachingSessionsPanel.tsx   — renders it, grouped by round + side
   → apps/debate-ai.com/app/coaching/page.tsx  — mounts the panel as a route
+
+Generating a coaching session for the current round:
+panels/CoachingSessionsPanel.tsx
+  → reads the round workspace's currently selected flow (state/store.ts's
+    useFlowStore)
+  → buildAndSaveCoachingSession(flow, roundId, sideKey)  — state/coachingSessions.ts,
+    composing flow/coach-mode.ts's buildCoachingSession + saveCoachingSession
+  → panel re-reads buildCoachingSessionsPanelView() to refresh
 
 Clearing a round+side's coaching session:
 panels/CoachingSessionsPanel.tsx
@@ -83,10 +96,22 @@ this bullet. Vitest-covered in
 via `vi.stubGlobal`, covering the success path, an endpoint override, a
 server error message, a non-JSON error body, and an empty/unusable AI
 reply), and `packages/debate-round/test/coachingSessions.test.ts` (the new
-`saveCoachingSessionAiFeedback` helper).
+`saveCoachingSessionAiFeedback` helper). A later slice added a "Generate
+coaching session for current round" form to `CoachingSessionsPanel.tsx`,
+reading the round workspace's currently selected flow
+(`state/store.ts`'s `useFlowStore`, the same mechanism `DrillSetsPanel`'s
+analogous form uses) and deriving/persisting that round+side's session via
+a new `buildAndSaveCoachingSession` helper in `state/coachingSessions.ts`
+(composing the existing `buildCoachingSession` + `saveCoachingSession`,
+mirroring `drillSets.ts`'s `buildAndSaveDrillSet`), closing the "no
+affordance in this panel to generate a new coaching session for a round"
+gap below. No follow-ups remain open on this bullet. Vitest-covered in
+`packages/debate-round/test/coachingSessions.test.ts` (deriving and
+persisting a session from a flow, overwriting an existing record for the
+same round+side pair, keeping sessions for different sides of the same
+round distinct, and `collapseLimit` passing through to
+`buildCoachingSession`).
 
 ## Known gaps
 
-- No affordance in this panel to generate a new coaching session for a
-  round — a session only appears here once something elsewhere calls
-  `buildCoachingSession` and `saveCoachingSession` for that round + side.
+None open.

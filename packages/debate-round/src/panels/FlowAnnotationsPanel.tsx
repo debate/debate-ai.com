@@ -10,11 +10,12 @@
  * root) so a viewer can drop an annotation at the live playback position
  * with one click, or type a manual `m:ss` timestamp when nothing is
  * playing. Annotations dropped against the live position also record which
- * video they belong to (`FlowAnnotation.videoId`), so "Jump to" can call
- * `sendYouTubeCommand("seekTo", ...)` on that exact recording once it's the
- * one currently loaded — jumping across recordings would require first
- * opening the right video elsewhere, which stays out of scope here. No new
- * annotation-model or persistence logic is introduced — this composes the
+ * video they belong to (`FlowAnnotation.videoId`), so "Jump to" (via the
+ * shared `jumpToAnnotation` helper) either seeks that exact recording in
+ * place, or switches the persistent player to it first via
+ * `useVideoPlayerStore.setActiveVideo` when a different recording is
+ * currently loaded. No new annotation-model or persistence logic is
+ * introduced — this composes the
  * already-existing `flow/flow-annotations.ts` + `state/flowAnnotations.ts`
  * with the already-existing video player.
  *
@@ -33,6 +34,7 @@ import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
 import {
   createFlowAnnotation,
   formatAnnotationTimestamp,
+  jumpToAnnotation,
   parseAnnotationTimestamp,
   parseBoxPathInput,
 } from "../flow/flow-annotations"
@@ -51,14 +53,22 @@ function newAnnotationId(): string {
  * Renders the Flow Annotations panel: a form to drop a new annotation
  * (against the live video position or a manual timestamp) and every
  * persisted annotation, newest first, each with a "Jump to" action (enabled
- * only when its recording is the one currently loaded) and a "Clear" action.
+ * whenever it has a recording attached — switching the player to that
+ * recording first if a different one is currently loaded) and a "Clear"
+ * action.
  *
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
 export function FlowAnnotationsPanel() {
-  const { activeVideoId, activeVideoTitle, isPlaying, getCurrentTimeRef, setIsPlaying } =
-    useVideoPlayerStore()
+  const {
+    activeVideoId,
+    activeVideoTitle,
+    isPlaying,
+    getCurrentTimeRef,
+    setIsPlaying,
+    setActiveVideo,
+  } = useVideoPlayerStore()
 
   const [annotations, setAnnotations] = useState<FlowAnnotation[] | null>(null)
   const [liveSeconds, setLiveSeconds] = useState(0)
@@ -131,10 +141,13 @@ export function FlowAnnotationsPanel() {
   }
 
   const handleJump = (annotation: FlowAnnotation) => {
-    if (!annotation.videoId || annotation.videoId !== activeVideoId) return
-    sendYouTubeCommand("seekTo", [annotation.timestampMs / 1000, true])
-    sendYouTubeCommand("playVideo")
-    setIsPlaying(true)
+    jumpToAnnotation(annotation, {
+      activeVideoId,
+      setActiveVideo,
+      seekTo: (timestampMs) => sendYouTubeCommand("seekTo", [timestampMs / 1000, true]),
+      playVideo: () => sendYouTubeCommand("playVideo"),
+      setIsPlaying,
+    })
   }
 
   const handleClear = (id: string) => {
@@ -261,7 +274,7 @@ export function FlowAnnotationsPanel() {
       ) : (
         <div className="space-y-2">
           {annotations.map((annotation) => {
-            const canJump = Boolean(annotation.videoId) && annotation.videoId === activeVideoId
+            const canJump = Boolean(annotation.videoId)
             return (
               <div
                 key={annotation.id}
@@ -283,10 +296,10 @@ export function FlowAnnotationsPanel() {
                     onClick={() => handleJump(annotation)}
                     disabled={!canJump}
                     title={
-                      annotation.videoId
-                        ? canJump
+                      canJump
+                        ? annotation.videoId === activeVideoId
                           ? undefined
-                          : "Open this annotation's video first"
+                          : "Switch to this annotation's recording and jump to it"
                         : "This annotation has no recording attached"
                     }
                   >

@@ -25,10 +25,16 @@ A form to drop a new `FlowAnnotation`:
 Below the form, every persisted annotation renders newest-first with its
 formatted timestamp, flow/speech/box address, and note. Each has:
 
-- **Jump to** — seeks the currently loaded video straight to that
-  annotation's timestamp via `sendYouTubeCommand("seekTo", ...)`. Only
-  enabled when the annotation's `videoId` matches the video currently
-  loaded in the player (see **Known gaps**).
+- **Jump to** — seeks that annotation's timestamp, via the shared
+  `jumpToAnnotation` helper: if its recording is already loaded in the
+  player, it seeks in place via `sendYouTubeCommand("seekTo", ...)`;
+  otherwise it first switches the persistent player to that recording via
+  `useVideoPlayerStore.setActiveVideo(videoId, videoId, undefined,
+  startTimeSeconds)`, opening it already positioned at the annotation's
+  timestamp (using the video's `&start=` URL param rather than a `seekTo`
+  postMessage, since there's no "player ready" signal to gate on for a
+  video that isn't loaded yet). Disabled only when the annotation has no
+  `videoId` at all.
 - **Clear** — deletes the annotation.
 
 ## Data flow
@@ -51,8 +57,12 @@ panels/FlowAnnotationsPanel.tsx
 
 Jumping back to one:
 panels/FlowAnnotationsPanel.tsx
-  → sendYouTubeCommand("seekTo", [timestampMs / 1000, true])  — debate-videos
-  → sendYouTubeCommand("playVideo")
+  → jumpToAnnotation(annotation, deps)                     — flow/flow-annotations.ts
+      same video already loaded:
+        → sendYouTubeCommand("seekTo", [timestampMs / 1000, true])  — debate-videos
+        → sendYouTubeCommand("playVideo")
+      different (or no) video loaded:
+        → setActiveVideo(videoId, videoId, undefined, timestampMs / 1000)  — debate-videos
 ```
 
 Every annotation data model and persistence rule already existed and was
@@ -80,11 +90,9 @@ Vitest-covered in `packages/debate-round/test/flow-annotations.test.ts` and
 Every cell in the live `FlowSpreadsheet` grid (`/debate`) whose box already
 has one or more persisted `FlowAnnotation`s shows a small clock badge next
 to its text. Hovering the badge lists each annotation's formatted timestamp
-and note; clicking it seeks/plays the persistent player straight to the
-earliest one, reusing the exact same `sendYouTubeCommand`/
-`useVideoPlayerStore` mechanism as `FlowAnnotationsPanel`'s own **Jump to**
-button (and the same "only when this annotation's recording is the one
-currently loaded" guard).
+and note; clicking it jumps to the earliest one via the exact same
+`jumpToAnnotation` helper as `FlowAnnotationsPanel`'s own **Jump to**
+button, switching videos first when needed.
 
 This closes follow-up (b), "a flow-grid affordance (`FlowSpreadsheet`) that
 surfaces annotations on their box via `listFlowAnnotationsForBox` and links
@@ -102,23 +110,59 @@ back to the timestamp," named under idea #15 in `TODO.md`. It adds:
 - `flow/FirstColumnCellRenderer.tsx`: unchanged heading/indent behavior,
   now also rendering the same badge.
 - `flow/useFlowGridConfig.ts` / `flow/FlowSpreadsheet.tsx`: wire a
-  `handleJumpToAnnotation` callback (identical guard to
-  `FlowAnnotationsPanel.handleJump`) into both renderers' `cellRendererParams`.
+  `handleJumpToAnnotation` callback (uses the same `jumpToAnnotation` helper
+  as `FlowAnnotationsPanel.handleJump`) into both renderers'
+  `cellRendererParams`.
 
 Vitest-covered in `packages/debate-round/test/annotation-cells.test.ts`
 (box-path derivation, field parsing, earliest-annotation selection) and
 `packages/debate-round/test/AnnotationBadge.test.tsx` (empty vs. populated
 render, singular/plural wording, tooltip content).
 
+## Cross-recording "Jump to"
+
+Closes the "Newly discovered small gaps" item logged by a previous run's
+doc/tracker drift audit: "Jump to" used to disable itself instead of
+switching videos when an annotation's recording wasn't the one loaded.
+
+- `flow/flow-annotations.ts`: `jumpToAnnotation(annotation, deps)`, a pure,
+  dependency-injected helper — same-video jumps still seek in place via
+  `sendYouTubeCommand("seekTo", ...)`; a different (or no) video loaded
+  instead calls `deps.setActiveVideo(videoId, videoId, undefined,
+  timestampMs / 1000)`. Returns `false` (no-op) only when the annotation has
+  no `videoId`.
+- `debate-videos`'s `useVideoPlayerStore.setActiveVideo` gains an optional
+  4th `startTimeSeconds` param that overrides the video's own saved-resume
+  lookup, feeding the existing `&start=` YouTube-embed URL param — chosen
+  over a `seekTo` postMessage immediately after switching because the
+  iframe's new document isn't guaranteed to have loaded yet and this
+  codebase has no "player ready" signal to gate on.
+- `panels/FlowAnnotationsPanel.tsx` / `flow/FlowSpreadsheet.tsx`: both
+  `handleJump`/`handleJumpToAnnotation` now call the shared helper; the
+  panel's button is disabled only when the annotation has no `videoId`.
+
+Vitest-covered (4 new cases in
+`packages/debate-round/test/flow-annotations.test.ts`'s `jumpToAnnotation`
+suite: same-video seek, cross-video switch, switch when nothing is loaded,
+and the no-`videoId` no-op).
+
 ## Known gaps
 
-- **Jump to** (both the `/annotations` panel and the `FlowSpreadsheet`
-  badge) only works once the annotation's own recording is already the one
-  loaded in the player — there's no lookup from a `videoId` to "open this
-  video," so an annotation dropped against a different recording than the
-  one currently playing shows a disabled/no-op affordance instead.
-- The `FlowSpreadsheet` badge reads annotations from `localStorage` at cell
-  render time; it does not live-update if another tab drops a new
-  annotation while the grid is open.
+- Switching videos for a cross-recording jump falls back to the bare
+  `videoId` as the player's displayed title (e.g. "Now playing:
+  `dQw4w9WgXcQ`") since no stored catalog maps a `videoId` to a title —
+  `FlowAnnotation` itself doesn't carry one, only whatever created the
+  annotation (e.g. `VideoCard.tsx`) ever knew it.
+- ~~The `FlowSpreadsheet` badge reads annotations from `localStorage` at
+  cell render time; it does not live-update if another tab drops a new
+  annotation while the grid is open.~~ Closed: `FlowSpreadsheet` now listens
+  for the browser's `storage` event (which fires only in *other* same-origin
+  tabs, never the tab that wrote the change) via
+  `flow/live-update.ts#isFlowLiveUpdateStorageEvent` and force-refreshes
+  every grid cell when it fires for the `flowAnnotations`/`flowEdits`/
+  `prepNotes` keys, so an annotation logged in one tab now shows up in this
+  badge (and the `EditBadge`/`PrepNoteBadge`, see
+  [`shared-flow-sync.md`](shared-flow-sync.md)) in every other open tab on
+  the next `storage` event, not just after a manual reload.
 - No collaborative/live sync — annotations are local `localStorage` only,
   same as every other persisted record in this repo today.

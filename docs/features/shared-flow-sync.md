@@ -233,14 +233,58 @@ package typecheck and the production build (`/api/flow-sync` appears in
 the built route list), matching this repo's existing convention for other
 React hooks (e.g. `useWordCountSpeechMode`) and D1-backed API routes.
 
+## EditBadge same-tab refresh
+
+Logging a new edit through `EditReviewPopover` now force-refreshes the
+originating cell's `EditBadge` in the same render pass, instead of leaving
+the count stale until AG Grid re-renders that cell for an unrelated reason
+(scrolling, sorting, an edit elsewhere). `FlowSpreadsheet.tsx`'s
+`handleEditLogged` (passed as `EditReviewPopover`'s `onLogged`) bumps the
+existing `editReviewRefreshToken` (for the popover's own edit list) and
+calls `gridRef.current.api.refreshCells({ rowNodes, columns, force: true })`
+for exactly that box's row+column, via a new pure helper,
+`flow/edit-cells.ts#gridCellForBoxPath`, which maps a `boxPath` to its AG
+Grid `row-${index}` id and `col_${j}` field (the same conventions
+`dataTransform.ts#buildRowData` and `useFlowGridConfig.ts`'s column defs
+already use). Vitest-covered in `packages/debate-round/test/edit-cells.test.ts`
+(row/column mapping, including a round-trip through `boxPathForCell`).
+
+## Cross-tab live update
+
+The refresh above only covers the same tab that logged the edit — a
+teammate's second open tab (or a second browser window on the same machine)
+still showed a stale `EditBadge` until it re-rendered for some unrelated
+reason. `FlowSpreadsheet.tsx` now also subscribes to the browser's
+`storage` event, which the spec fires only in *other* same-origin tabs/
+windows, never the one that made the write, so it's exactly the missing
+cross-tab signal. A new pure helper, `flow/live-update.ts`'s
+`isFlowLiveUpdateStorageEvent`, checks whether the event's `key` is one of
+the badge-backing stores (`flowAnnotations`, `flowEdits`, `prepNotes`, or
+`null` for a `localStorage.clear()`); when it is, the listener calls
+`gridRef.current.api.refreshCells({ force: true })` across the whole grid,
+since a cross-tab event carries no row/column to target the way
+`handleEditLogged`'s same-tab case does. This benefits the `AnnotationBadge`
+and `PrepNoteBadge` the same way, closing the matching Known gap noted in
+[`flow-annotations.md`](flow-annotations.md). Vitest-covered in
+`packages/debate-round/test/live-update.test.ts` (every backing-store key,
+the `null`-key clear-all case, and unrelated/substring-matching keys staying
+ignored).
+
 ## Known gaps
 
-- The `EditBadge` reads a box's edits from `localStorage` at cell render
-  time; it does not live-update if another tab logs a new edit while the
-  grid is open, and the badge doesn't refresh in place after logging one
-  through its own popover until the grid next re-renders that cell —
-  mirroring the same known gap already documented for the `FlowSpreadsheet`
-  annotation badge.
+- ~~The `EditBadge` still reads a box's edits from `localStorage` at cell
+  render time; it does not live-update if another tab logs a new edit while
+  the grid is open — only the same-tab, logged-through-its-own-popover case
+  above is fixed. This cross-tab gap is shared with the `FlowSpreadsheet`
+  annotation badge~~ Closed for the cross-*tab*, same-origin case: see
+  [`flow-annotations.md`](flow-annotations.md)'s matching entry —
+  `flow/live-update.ts` plus a `storage`-event listener in
+  `FlowSpreadsheet` now force-refreshes the `EditBadge` (and
+  `AnnotationBadge`/`PrepNoteBadge`) when another tab logs a `FlowEdit`.
+  Every other localStorage-backed panel in this repo still has no
+  cross-tab live-update mechanism (Live Sync above is cross-*contributor*,
+  via the server, not cross-tab within one browser, and remains the only
+  path for a *different device/browser* to see the edit at all).
 - Live sync is opt-in and per-Flow-ID, off by default, and pulls on a fixed
   ~4s poll rather than pushing instantly — a teammate's edit can take up to
   one poll interval to appear. The `FlowSpreadsheet` grid's `EditBadge`/

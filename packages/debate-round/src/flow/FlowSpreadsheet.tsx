@@ -15,11 +15,26 @@ import type {
   CellContextMenuEvent,
 } from "ag-grid-community"
 import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
-import type { FlowSpreadsheetProps, ContextMenuEntry, EditReviewOpenParams } from "./types"
+import type { FlowSpreadsheetProps, ContextMenuEntry, EditReviewOpenParams, PrepNoteOpenParams } from "./types"
 import { buildRowData, rowDataToBoxes } from "./dataTransform"
+import { jumpToAnnotation } from "./flow-annotations"
 import type { FlowAnnotation } from "./flow-annotations"
+import { isFlowLiveUpdateStorageEvent } from "./live-update"
 import { listFlowEditsForBox } from "../state/flowEdits"
+import { listPrepNotesForBox } from "../state/prepNotes"
+import { gridCellForBoxPath } from "./edit-cells"
 import { EditReviewPopover } from "./EditReviewPopover"
+import { PrepNotePopover } from "./PrepNotePopover"
+import { ArgumentTagPopover } from "./ArgumentTagPopover"
+import {
+  formatArgumentTags,
+  getRowArgumentTags,
+  getSectionRowIndexes,
+  getSectionRowPreviews,
+  listAuthorIdsInFlow,
+  setRowsArgumentTags,
+} from "./argument-tagging"
+import type { ArgumentTags } from "./argument-tagging"
 import { GridContextMenu } from "./GridContextMenu"
 import { useFlowGridConfig } from "./useFlowGridConfig"
 import { useFlowRowOperations } from "./useFlowRowOperations"
@@ -56,13 +71,18 @@ export function FlowSpreadsheet({
   const gridRef = useRef<AgGridReact>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0)
-  const { activeVideoId, setIsPlaying } = useVideoPlayerStore()
+  const { activeVideoId, setIsPlaying, setActiveVideo } = useVideoPlayerStore()
 
   // Section heading & collapse state
   const [collapsedHeadings, setCollapsedHeadings] = useState<Set<string>>(new Set())
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; rowId: string } | null>(null)
   const [editReview, setEditReview] = useState<EditReviewOpenParams | null>(null)
   const [editReviewRefreshToken, setEditReviewRefreshToken] = useState(0)
+  const [prepNote, setPrepNote] = useState<PrepNoteOpenParams | null>(null)
+  const [prepNoteRefreshToken, setPrepNoteRefreshToken] = useState(0)
+  const [argumentTag, setArgumentTag] = useState<{ x: number; y: number; rowIndex: number } | null>(
+    null,
+  )
 
   // Initialize row data from flow
   const [rowData, setRowData] = useState<any[]>(() => buildRowData(flow.children, flow.columns))
@@ -96,6 +116,24 @@ export function FlowSpreadsheet({
     checkMobile()
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
+  /**
+   * Live-update the annotation/edit/prep-note badges when another browser
+   * tab logs one for this same origin. A `storage` event never fires in the
+   * tab that made the write, only in other tabs, so this is purely the
+   * cross-tab case — same-tab logging still force-refreshes just the
+   * affected cell via `handleEditLogged`/`handlePrepNoteCreated` above. Which
+   * cell(s) changed in another tab isn't knowable here, so this refreshes
+   * every cell instead of targeting one.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isFlowLiveUpdateStorageEvent(event)) return
+      gridRef.current?.api?.refreshCells({ force: true })
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   /**
@@ -174,11 +212,22 @@ export function FlowSpreadsheet({
         canIndent = foundHeading && !hasParent
       }
 
+      const tagLabel = formatArgumentTags(getRowArgumentTags(flow, row.originalIndex))
+
       return [
         // Tree structure
         {
           label: isHeading ? "Remove Section Heading" : "Make Section Heading",
           onClick: () => toggleHeading(rowId),
+        },
+        {
+          label: tagLabel ? `Tag Argument… (${tagLabel})` : "Tag Argument…",
+          onClick: () =>
+            setArgumentTag(
+              contextMenu
+                ? { x: contextMenu.x, y: contextMenu.y, rowIndex: row.originalIndex }
+                : null,
+            ),
         },
         {
           label: "Indent (Make Child)",
@@ -226,7 +275,27 @@ export function FlowSpreadsheet({
         },
       ]
     },
-    [rowData, collapsedHeadings, toggleHeading, indentRow, outdentRow, toggleCollapse, collapseAll, expandAll, insertRow, deleteRow],
+    [rowData, collapsedHeadings, contextMenu, flow, toggleHeading, indentRow, outdentRow, toggleCollapse, collapseAll, expandAll, insertRow, deleteRow],
+  )
+
+  /**
+   * Save the tags chosen in `ArgumentTagPopover` onto the row's root box —
+   * or, when `applyToSection` is checked in the popover, onto every other
+   * row in the same section as well (via `getSectionRowIndexes`). Pushes
+   * the tagged children up through `onUpdate` and rebuilds this grid's own
+   * `rowData` from them, so a later cell edit (which round-trips through
+   * `rowDataToBoxes`) carries the tags forward instead of dropping them if
+   * the parent hasn't re-rendered with the new flow yet.
+   */
+  const handleSaveArgumentTags = useCallback(
+    (rowIndex: number, tags: ArgumentTags, applyToSection: boolean) => {
+      const targetRowIndexes = applyToSection ? getSectionRowIndexes(flow, rowIndex) : [rowIndex]
+      const tagged = setRowsArgumentTags(flow, targetRowIndexes, tags)
+      if (tagged === flow) return
+      onUpdate({ children: tagged.children })
+      setRowData(buildRowData(tagged.children, flow.columns))
+    },
+    [flow, onUpdate],
   )
 
   /**
@@ -245,17 +314,22 @@ export function FlowSpreadsheet({
 
   /**
    * Jump the persistent video player to a flow-annotation badge's target,
-   * mirroring `FlowAnnotationsPanel.handleJump`'s exact guard: only seek
-   * when the annotation's recording is the one currently loaded.
+   * via the shared `jumpToAnnotation` helper (mirrors
+   * `FlowAnnotationsPanel.handleJump`): seeks in place when the
+   * annotation's recording is already loaded, otherwise switches the
+   * player to it first.
    */
   const handleJumpToAnnotation = useCallback(
     (annotation: FlowAnnotation) => {
-      if (!annotation.videoId || annotation.videoId !== activeVideoId) return
-      sendYouTubeCommand("seekTo", [annotation.timestampMs / 1000, true])
-      sendYouTubeCommand("playVideo")
-      setIsPlaying(true)
+      jumpToAnnotation(annotation, {
+        activeVideoId,
+        setActiveVideo,
+        seekTo: (timestampMs) => sendYouTubeCommand("seekTo", [timestampMs / 1000, true]),
+        playVideo: () => sendYouTubeCommand("playVideo"),
+        setIsPlaying,
+      })
     },
-    [activeVideoId, setIsPlaying],
+    [activeVideoId, setActiveVideo, setIsPlaying],
   )
 
   /**
@@ -277,6 +351,58 @@ export function FlowSpreadsheet({
     return listFlowEditsForBox(flow.id, editReview.boxPath)
   }, [editReview, flow.id, editReviewRefreshToken])
 
+  /**
+   * Called after `EditReviewPopover` successfully logs a new edit: bumps
+   * `editReviewRefreshToken` (for the popover's own list, above) and forces
+   * AG Grid to refresh the specific cell the popover was opened from, so its
+   * `EditBadge` count updates immediately instead of staying stale until the
+   * grid re-renders that cell for an unrelated reason.
+   */
+  const handleEditLogged = useCallback(() => {
+    setEditReviewRefreshToken((t) => t + 1)
+    if (!editReview) return
+    const { rowId, field } = gridCellForBoxPath(editReview.boxPath)
+    const rowNode = gridRef.current?.api?.getRowNode(rowId)
+    if (rowNode) {
+      gridRef.current?.api?.refreshCells({ rowNodes: [rowNode], columns: [field], force: true })
+    }
+  }, [editReview])
+
+  /**
+   * Open the `PrepNotePopover` for a clicked cell's box, at the click
+   * position (mirrors `handleOpenEditReview`).
+   */
+  const handleOpenPrepNote = useCallback((params: PrepNoteOpenParams) => {
+    setPrepNote(params)
+  }, [])
+
+  /**
+   * The popover's existing-note list for whichever box it's currently open
+   * for. Re-read on `prepNoteRefreshToken` bumps (after creating a new note)
+   * since AG Grid cell renderers don't re-render on their own when
+   * `localStorage` changes underneath them.
+   */
+  const prepNoteBoxNotes = useMemo(() => {
+    if (!prepNote || typeof localStorage === "undefined") return []
+    return listPrepNotesForBox(flow.id, prepNote.boxPath)
+  }, [prepNote, flow.id, prepNoteRefreshToken])
+
+  /**
+   * Called after `PrepNotePopover` successfully creates a new note: bumps
+   * `prepNoteRefreshToken` (for the popover's own list, above) and forces AG
+   * Grid to refresh the specific cell the popover was opened from, so its
+   * `PrepNoteBadge` count updates immediately (mirrors `handleEditLogged`).
+   */
+  const handlePrepNoteCreated = useCallback(() => {
+    setPrepNoteRefreshToken((t) => t + 1)
+    if (!prepNote) return
+    const { rowId, field } = gridCellForBoxPath(prepNote.boxPath)
+    const rowNode = gridRef.current?.api?.getRowNode(rowId)
+    if (rowNode) {
+      gridRef.current?.api?.refreshCells({ rowNodes: [rowNode], columns: [field], force: true })
+    }
+  }, [prepNote])
+
   // Grid configuration hook
   const { columnDefs, defaultColDef, getRowId } = useFlowGridConfig(
     flow,
@@ -285,6 +411,7 @@ export function FlowSpreadsheet({
     toggleCollapse,
     handleJumpToAnnotation,
     handleOpenEditReview,
+    handleOpenPrepNote,
   )
 
   /**
@@ -569,8 +696,39 @@ export function FlowSpreadsheet({
           boxPath={editReview.boxPath}
           currentContent={editReview.currentContent}
           edits={editReviewEdits}
-          onLogged={() => setEditReviewRefreshToken((t) => t + 1)}
+          onLogged={handleEditLogged}
           onClose={() => setEditReview(null)}
+        />
+      )}
+
+      {/* Prep-note badge review/create popover */}
+      {prepNote && (
+        <PrepNotePopover
+          x={prepNote.x}
+          y={prepNote.y}
+          flowId={flow.id}
+          boxPath={prepNote.boxPath}
+          notes={prepNoteBoxNotes}
+          onCreated={handlePrepNoteCreated}
+          onClose={() => setPrepNote(null)}
+        />
+      )}
+
+      {/* Argument type/contributor/evidence-status tagging popover.
+          Keyed by row so reopening it for a different row remounts the form,
+          which seeds its fields from `tags` once on mount. */}
+      {argumentTag && (
+        <ArgumentTagPopover
+          key={argumentTag.rowIndex}
+          x={argumentTag.x}
+          y={argumentTag.y}
+          tags={getRowArgumentTags(flow, argumentTag.rowIndex)}
+          authorIdSuggestions={listAuthorIdsInFlow(flow)}
+          sectionRows={getSectionRowPreviews(flow, argumentTag.rowIndex)}
+          onSave={(tags, applyToSection) =>
+            handleSaveArgumentTags(argumentTag.rowIndex, tags, applyToSection)
+          }
+          onClose={() => setArgumentTag(null)}
         />
       )}
     </div>

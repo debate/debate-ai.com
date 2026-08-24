@@ -87,14 +87,78 @@ that don't exist yet.
   notifications newest first, with a "Mark read" action per unread
   notification.
 
+## Jump to argument
+
+Each note in `PrepNotesPanel` has a **Jump to argument** link that takes
+you to `/debate` and scrolls the note's flow into view, flashing its cell.
+
+```
+flow/strategy-sync-notes.ts
+  buildPrepNoteJumpHref(note)             — /debate?flowId=<id>&boxPath=<path>
+  parsePrepNoteJumpParams(searchParams)   — the inverse, tolerant of a
+                                             missing/malformed flowId or
+                                             boxPath (returns null rather
+                                             than throwing)
+
+hooks/useJumpToPrepNoteBox.ts (mounted by DebateFlowPage)
+  reads the URL's flowId/boxPath via parsePrepNoteJumpParams
+    → selects the matching flow tab by id (flows.findIndex, not the
+      store's array-index `selected`)
+    → once that flow's AG Grid has the target row rendered — either
+      immediately (grid already mounted) or once its onGridReady fires
+      (fresh mount) — calls edit-cells.ts's jumpToBoxInGrid(api, boxPath)
+      to scroll to and flash the box's cell
+```
+
+The panel itself still doesn't mount a live `Flow` (it stays cross-flow, so
+`resolvePrepNoteBox` isn't used here); the link instead hands off to
+`/debate`, which already owns a live flow and its AG Grid. This closes the
+"No 'jump to argument' link" gap below.
+
+## Create a note
+
+Closes the "no note-creation UI" gap below: a `PrepNote` can now be created
+directly against the flow box it's about, from the live `/debate` grid
+itself, rather than needing a not-yet-built flow-view affordance.
+
+- **Where:** every `FlowSpreadsheet` cell gets a small note badge
+  (`PrepNoteBadge`, next to the existing annotation/edit badges) — a filled
+  pill with the note count when the box already has one or more notes, or a
+  faint always-present affordance when it doesn't (mirrors `EditBadge`'s
+  "always visible" pattern, since a box with zero notes is exactly when a
+  contributor most wants to add one).
+- **Flow:**
+
+  ```
+  flow/PrepNoteBadge.tsx          — the cell badge; click opens the popover
+    → FlowSpreadsheet.tsx's handleOpenPrepNote(params)
+        sets popover state (x, y, boxPath)
+    → flow/PrepNotePopover.tsx    — lists the box's existing notes (if any)
+                                     and a small "author id" + "text" form
+        submit → strategy-sync-notes.ts's createPrepNote(...)
+               → state/prepNotes.ts's savePrepNote(note)
+        → onCreated() bumps FlowSpreadsheet's refresh token and force-
+          refreshes the cell (mirrors handleEditLogged for EditBadge), so
+          the badge's count updates immediately
+  ```
+
+- **Data:** `state/prepNotes.ts`'s new `listPrepNotesForBox(flowId,
+  boxPath)` (wrapping `strategy-sync-notes.ts`'s `getNotesForBox`) feeds
+  both the badge's count and the popover's existing-notes list.
+- A note created this way immediately shows up in the cross-flow
+  `PrepNotesPanel` above (same persisted `PrepNote` store) and can be
+  cycled/assigned from either place.
+
 ## Known gaps
 
-- No "jump to argument" link from a note back to its flow box — this panel
-  is cross-flow and doesn't mount a live `Flow`, so `resolvePrepNoteBox`
-  isn't used here.
-- No note-creation UI here — a note is still created against a specific
-  flow box elsewhere (e.g. a future flow-view affordance); this panel only
-  surfaces and updates existing notes.
+- If a note's `boxPath` no longer resolves to a real grid row (e.g. the
+  flow was edited since the note was made), `jumpToBoxInGrid` silently
+  returns `false` — the flow tab still gets selected, but nothing scrolls
+  or flashes, and no error is shown.
+- The new note-creation popover's "Author ID" is a free-form typed field,
+  not an authenticated identity — there's no auth system in this repo, so
+  anyone can type any author id (same gap as `review-queue.md`'s reviewer
+  id).
 - Notifications are in-app only (no email/push/browser notification) and
   cover prep-note assignment only — no other event in this repo creates
   one yet.

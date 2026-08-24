@@ -10,12 +10,20 @@
  * "assign" control that calls the already-persisted `assignPersistedPrepNote`
  * — no new mutation logic is introduced here.
  *
+ * Each note also links "Jump to argument" — `strategy-sync-notes.ts`'s
+ * `buildPrepNoteJumpHref` — to `/debate`, closing the "No 'jump to
+ * argument' link" bullet in `docs/features/prep-notes.md`'s Known gaps.
+ * See `hooks/useJumpToPrepNoteBox.ts` for the flow-select + grid-scroll
+ * side of that link.
+ *
  * @module panels/PrepNotesPanel
  */
 
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -26,7 +34,7 @@ import {
   updatePersistedPrepNoteStatus,
   type PrepNotesPanelGroup,
 } from "../state/prepNotes"
-import type { PrepNoteStatus } from "../flow/strategy-sync-notes"
+import { buildPrepNoteJumpHref, type PrepNoteStatus } from "../flow/strategy-sync-notes"
 
 const STATUS_LABEL: Record<PrepNoteStatus, string> = {
   "needs-follow-up": "Needs follow-up",
@@ -106,9 +114,18 @@ export function PrepNotesPanel() {
                 <div key={note.id} className="rounded-md border border-border px-3 py-2 space-y-2">
                   <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
                     <p className="text-foreground">{note.text}</p>
-                    <Button size="sm" variant="outline" onClick={() => handleCycleStatus(note.id, note.status)}>
-                      Mark {STATUS_LABEL[nextPrepNoteStatus(note.status)].toLowerCase()}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={buildPrepNoteJumpHref(note)}
+                        className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                      >
+                        Jump to argument
+                        <ArrowUpRight className="h-3 w-3" />
+                      </Link>
+                      <Button size="sm" variant="outline" onClick={() => handleCycleStatus(note.id, note.status)}>
+                        Mark {STATUS_LABEL[nextPrepNoteStatus(note.status)].toLowerCase()}
+                      </Button>
+                    </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     <span>by {note.authorId}</span>

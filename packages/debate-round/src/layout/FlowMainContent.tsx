@@ -73,6 +73,8 @@ interface FlowMainContentProps {
   onNavigateNext?: () => void
   /** When provided, a hamburger button is rendered inside the mobile SpeechHeaderBar for sidebar access. */
   onMobileMenuClick?: () => void
+  /** Called after `gridApiRef` is assigned, once the flow spreadsheet's AG Grid is ready. */
+  onFlowGridReady?: (api: any) => void
 }
 
 /**
@@ -129,6 +131,7 @@ export function FlowMainContent({
   onNavigatePrev,
   onNavigateNext,
   onMobileMenuClick,
+  onFlowGridReady,
 }: FlowMainContentProps) {
   if (!currentFlow) {
     return (
@@ -301,6 +304,7 @@ export function FlowMainContent({
                 // @ts-ignore - gridApiRef is a mutable ref
                 gridApiRef.current = api
               }
+              onFlowGridReady?.(api)
             }}
           />
         </div>
@@ -319,6 +323,7 @@ export function FlowMainContent({
             // @ts-ignore - gridApiRef is a mutable ref
             gridApiRef.current = api
           }
+          onFlowGridReady?.(api)
         }}
       />
     </div>

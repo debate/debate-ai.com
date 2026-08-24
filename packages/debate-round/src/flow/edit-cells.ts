@@ -19,3 +19,42 @@ import type { FlowEdit } from "./shared-flow-sync";
 export function sortEditsNewestFirst(edits: FlowEdit[]): FlowEdit[] {
   return [...edits].sort((a, b) => b.timestampMs - a.timestampMs);
 }
+
+/**
+ * The AG Grid row id + column field a `boxPath` cell occupies, mirroring
+ * `dataTransform.ts#buildRowData`'s `row-${index}` id convention and
+ * `useFlowGridConfig.ts`'s `col_${j}` column-field convention (the same pair
+ * `boxPathForCell` in `annotation-cells.ts` derives a `boxPath` from).
+ * `FlowSpreadsheet` uses this after logging a new edit through
+ * `EditReviewPopover` to force AG Grid to refresh just that cell's
+ * `EditBadge`, instead of leaving it stale until the grid re-renders the
+ * cell on its own for an unrelated reason.
+ */
+export function gridCellForBoxPath(boxPath: number[]): { rowId: string; field: string } {
+  return { rowId: `row-${boxPath[0]}`, field: `col_${boxPath.length - 1}` };
+}
+
+/** The subset of AG Grid's `GridApi` `jumpToBoxInGrid` needs, for testing against a fake. */
+export type GridJumpApi = {
+  getRowNode: (id: string) => unknown | null | undefined;
+  ensureNodeVisible: (rowNode: unknown) => void;
+  flashCells: (params: { rowNodes: unknown[]; columns: string[] }) => void;
+};
+
+/**
+ * Scrolls `api`'s grid to the row for `boxPath` (via `gridCellForBoxPath`)
+ * and flashes its cell — the Prep Notes "jump to argument" deep link's grid
+ * side (see `hooks/useJumpToPrepNoteBox.ts`). Returns `false` without
+ * calling `ensureNodeVisible`/`flashCells` if the row isn't in the grid's
+ * current row model yet (e.g. the target flow's rows haven't rendered), so
+ * a caller can retry once they have.
+ */
+export function jumpToBoxInGrid(api: GridJumpApi, boxPath: number[]): boolean {
+  const { rowId, field } = gridCellForBoxPath(boxPath);
+  const rowNode = api.getRowNode(rowId);
+  if (!rowNode) return false;
+
+  api.ensureNodeVisible(rowNode);
+  api.flashCells({ rowNodes: [rowNode], columns: [field] });
+  return true;
+}
