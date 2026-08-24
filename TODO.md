@@ -3,86 +3,62 @@
 
 ### In progress
 
-## Common Argument Library — tag autocomplete and tag rename/merge across both tag stores
-
-**Status:** In Progress
-**Source:** IDEAS.md — this repo has no `IDEAS.md`; the backlog is the
-"Product Feature Ideas"/"Research Crowdsourcing Organizer Features"
-sections of this tracker plus the "Known gaps" sections of
-`docs/features/*.md`. Two open gaps under
-`docs/features/evidence-library.md`:
-"A Contributions Feed submission tagged for the Argument Library gets no
-tag-autocomplete affordance of its own (that only exists on the dedicated
-`/cards/library` form's Tags field) — it's a plain comma-separated text
-input", and "A tag rename/merge tool now exists … but it only rewrites this
-evidence-library repository's own entries — a Contributions Feed
-submission's tags are a separate store/form and aren't rewritten by it."
-**Branch:** `claude/practical-allen-natxu0`
-**PR:** Not created yet
-**Started:** 2026-08-24
-
-### Goal
-Tags applied from the Contributions Feed form behave the same as tags
-applied from the Shared Evidence Library form: they autocomplete from the
-tags already in use across *both* persisted stores, and a rename/merge in
-the Common Argument Library rewrites them in both stores rather than
-silently leaving the Contributions Feed's copy behind under the old name.
-
-### Scope
-- A combined tag corpus across `state/evidenceLibraryEntries.ts` and
-  `state/contributions.ts`, deduped case-insensitively and sorted.
-- Tag autocomplete (`suggestTags`/`parseTagsInput`/`applyTagSuggestion`) on
-  `ContributionsFeedPanel`'s Tags field, matching `EvidenceLibraryPanel`'s
-  existing affordance.
-- A tag rename/merge that spans both stores, wired into
-  `ArgumentLibraryPanel`'s existing "Rename/merge tag" form.
-
-### Non-goals
-- Any other tag store (there is none — these are the only two persisted
-  stores carrying `LibraryCard`-style `tags`).
-- Case-insensitive tag *matching* in the library's own grouping — tag
-  identity stays exact-string, as `buildTagCollections` already treats it.
-- Tag autocomplete on the Contributions Feed's Topic/Case area fields.
-
-### Acceptance criteria
-- [x] The Contributions Feed Tags field suggests existing tags as the
-      contributor types, drawn from both stores
-- [x] Renaming a tag in the Argument Library rewrites it on matching
-      Contributions Feed submissions as well as evidence-library entries
-- [x] A rename that matches nothing in either store is a safe no-op and
-      reports so
-- [x] Vitest coverage is added or updated
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Production/web build passes
-- [x] Documentation is updated (`docs/features/evidence-library.md` Known
-      gaps)
-
-### Implementation plan
-- [x] Inspect the two persisted tag stores and the existing autocomplete
-      wiring in `EvidenceLibraryPanel`
-- [x] Add `listContributionTags`/`renameTagAcrossPersistedContributions` to
-      `state/contributions.ts`
-- [x] Add `listCombinedPersistedTags`/`renameTagAcrossCombinedPersistedStores`
-      to `state/evidenceLibraryEntries.ts`
-- [x] Wire tag autocomplete into `ContributionsFeedPanel`
-- [x] Switch `ArgumentLibraryPanel`'s rename form to the combined rename
-- [x] Add focused Vitest success-path coverage
-- [x] Add focused no-op/blank/duplicate-tag edge-case coverage
-- [x] Run focused tests and fix failures
-- [x] Run typecheck
-- [x] Run the full test suite
-- [x] Run the web build
-- [x] Update `docs/features/evidence-library.md`
-- [ ] Commit and push the branch
-- [ ] Create or update the pull request
-- [ ] Move this entry to Completed once the PR exists
-
-### Remaining work
-- Open the pull request for `claude/practical-allen-natxu0` and record its
-  link here, then move this entry to `Completed`.
+_No task currently in progress._
 
 ### Completed
+- **Common Argument Library — tag autocomplete on the Contributions Feed,
+  and tag rename/merge across both persisted tag stores.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/evidence-library.md` recorded two open gaps —
+  "A Contributions Feed submission tagged for the Argument Library gets no
+  tag-autocomplete affordance of its own (that only exists on the dedicated
+  `/cards/library` form's Tags field)" and "A tag rename/merge tool now
+  exists … but it only rewrites this evidence-library repository's own
+  entries — a Contributions Feed submission's tags are a separate
+  store/form and aren't rewritten by it." Both matter because
+  `ArgumentLibraryPanel` (`/cards/argument-library`) already composes *two*
+  persisted stores into one library via
+  `buildCombinedPersistedArgumentLibrary`, so a tag listed there can come
+  from either one. `state/contributions.ts` gained `listContributionTags()`
+  (every distinct tag on a persisted contribution, deduped and sorted) and
+  `renameTagAcrossPersistedContributions(oldTag, newTag)` (reusing
+  `argument-library.ts`'s pure `renameTagInList` per contribution, with the
+  same write-back-only-when-changed behavior and the same
+  blank/identical-tag validation as the evidence-library side);
+  `state/evidenceLibraryEntries.ts` gained `listCombinedPersistedTags()`
+  (the union of both stores' tags) and
+  `renameTagAcrossCombinedPersistedStores(oldTag, newTag)` (returning
+  `{ entriesChanged, contributionsChanged, totalChanged }`, validating
+  before either store is written). `ContributionsFeedPanel.tsx`'s Tags
+  field now carries the same suggestion row `EvidenceLibraryPanel` already
+  had, driven by the same `parseTagsInput`/`suggestTags`/
+  `applyTagSuggestion` helpers over the combined corpus, and
+  `ArgumentLibraryPanel.tsx`'s "Rename/merge tag" form now calls the
+  combined rename and reports each store's count.
+  `docs/features/evidence-library.md` was updated: "Tag rename/merge"
+  rewritten, a new "Tag autocomplete on the Contributions Feed" section
+  added, and both Known gaps closed (replaced by the remaining
+  exact-string tag-identity note — `warming` and `Warming` stay two
+  different tags). Vitest-covered in
+  `packages/debate-card-search/test/contributions.test.ts` (new
+  `listContributionTags`/`renameTagAcrossPersistedContributions` describe
+  blocks: empty store, contributions with no tags, deduped sorted list,
+  rewrite-and-persist, merge-dedup, a true no-write no-op, and throwing on
+  a blank or identical tag pair) and
+  `packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (new
+  `listCombinedPersistedTags`/`renameTagAcrossCombinedPersistedStores`
+  describe blocks: empty stores, the deduped union, a contribution
+  excluded from the library still contributing its tags, both stores
+  rewritten with per-store counts, one store changed while the other
+  carries nothing, a both-stores no-op, and a throw leaving both stores
+  untouched). Verified with `bun x vitest run` (162 files, 2338 tests),
+  `bunx turbo typecheck --filter=debate-card-search`, and `bunx turbo build
+  --filter=debate-ai-web`; no `lint` script is configured in this repo.
+  **PR:** [#289](https://github.com/debate/debate-ai.com/pull/289).
+  **Completed:** 2026-08-24.
+
 - **Judge Profiles and Opponent Team Profiles — "did you mean" suggestion
   and datalist autocomplete on the logged-rounds ID filter.**
   Found via this run's own audit of `docs/features/*.md` "Known gaps"
