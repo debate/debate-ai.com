@@ -7,7 +7,8 @@ _No task currently in progress._
 
 ### Completed
 - **Daily Quests — quest-template expiry.**
-  PR: TBD. Closes the "a quest template has no expiry — it keeps scoring
+  [PR #300](https://github.com/debate/debate-ai.com/pull/300).
+  Closes the "a quest template has no expiry — it keeps scoring
   every day until removed, rather than resetting or archiving after one
   'daily' cycle" Known gap documented in `docs/features/daily-quests.md`.
   `lib/daily-quests.ts`'s `QuestTemplate` gains an optional `expiresOn` (a
