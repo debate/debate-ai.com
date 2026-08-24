@@ -38,7 +38,8 @@ _No task currently in progress._
   (2062 packages), `bun run test` (165 files / 2408 tests, all pass — 16 new), `bun run
   typecheck` (12 of 12 in-scope packages pass), and `bun run build:web` (`debate-ai-web`
   succeeds, `/coach-materials` route present) all pass. No repo-wide `lint` script exists, so
-  none was run, matching every prior PR's verification notes.
+  none was run, matching every prior PR's verification notes. PR:
+  https://github.com/debate/debate-ai.com/pull/298.
 - **Speech Transcript Summaries — microphone dictation for the transcript-extraction form.**
   Closes the "recording" half of follow-up (a) named under idea #6 ("Speech
   Transcript Summaries and Answers") in this file's Product Feature Ideas
