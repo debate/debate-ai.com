@@ -1,7 +1,8 @@
 # Opponent Persona Picker
 
 Lets a user pick the AI practice-opponent style for a session — one of four
-built-in personas (Policy Heavy, Kritik, Lay, Fast Flow) — and lists every
+built-in personas (Policy Heavy, Kritik, Lay, Fast Flow) or a custom persona
+built from the user's own described debating style — and lists every
 session with a saved selection, with a "Clear" action per session.
 
 - **Route:** `/practice-opponent`
@@ -10,9 +11,10 @@ session with a saved selection, with a "Clear" action per session.
 
 ## What it shows
 
-A form to save a session's opponent persona: a session ID plus a radio
-choice among the four built-in personas (each showing its name and
-description). Below the form, every session with a saved
+A form to save a session's opponent persona: a session ID, a radio choice
+among the four built-in personas (each showing its name and description) or
+"Custom opponent persona," which reveals a persona-name and debating-style
+notes field. Below the form, every session with a saved
 `OpponentPersonaSelection` is listed — session ID and the persona's name —
 sorted by `sessionId`.
 
@@ -41,7 +43,8 @@ state/opponentPersonaSelections.ts (localStorage: opponentPersonaSelections)
 
 Saving a session's persona:
 panels/OpponentPersonaPickerPanel.tsx
-  → a lookup into listOpponentPersonas() for the chosen built-in persona
+  → opponent/opponent-personas.ts's buildCustomOpponentPersona() for a custom
+    persona, or a lookup into listOpponentPersonas() for a built-in one
   → saveOpponentPersonaSelection({ sessionId, persona }) — state/opponentPersonaSelections.ts
   → panel re-reads buildOpponentPersonaSelectionsPanelView() to refresh
 
@@ -72,6 +75,13 @@ key. Vitest-covered in
 `packages/debate-speech-writer/test/opponentPersonaSelections.test.ts` and
 `packages/debate-round/test/opponent-persona-speech-wiring.test.ts`,
 `opponent-persona-speech-ai.test.ts`, `opponent-persona-speech-client.test.ts`.
+A later slice closed the "custom opponent-persona authoring flow" Known gap
+below: `opponent/opponent-personas.ts`'s `buildCustomOpponentPersona`
+mirrors `judge/judge-paradigms.ts`'s `buildCustomJudgeParadigm` (sanitizes
+and clamps a user-supplied name and free-text style description, throwing
+if either is empty), and the panel's "Custom opponent persona" radio option
+mirrors the Judge Paradigm Picker's custom-paradigm form. Vitest-covered in
+`packages/debate-speech-writer/test/opponent-personas.test.ts`.
 
 ## Known gaps
 
@@ -79,6 +89,3 @@ key. Vitest-covered in
 - This panel only saves/clears a selection; it doesn't itself invoke a
   speech-generation call — that lives in the Online Debate Versus AI panel
   (`AiVersusRoundPanel`, `/versus-ai`) once a round's persona is saved here.
-- Only the four built-in personas are selectable; there is no custom
-  opponent-persona authoring flow (unlike the Judge Paradigm Picker's custom
-  paradigm option).

@@ -18,14 +18,13 @@
  * A "Rename/merge tag" form closes `docs/features/evidence-library.md`'s
  * "No tag rename/merge tool" Known gap: picking an existing tag and typing a
  * new name calls `state/evidenceLibraryEntries.ts`'s
- * `renameTagAcrossPersistedEntries` (itself a thin composition of
- * `argument-library.ts`'s pure `renameTagAcrossCards`), rewriting the tag on
- * every persisted evidence-library entry that carries it — merging into an
- * existing tag name instead of duplicating it when the target is already in
- * use. Only this panel's evidence-library entries are rewritten; a tag
- * applied to a Contributions Feed submission is a separate store and is
- * left untouched (documented in the panel's own copy and in
- * `docs/features/evidence-library.md`).
+ * `renameTagAcrossCombinedPersistedStores`, rewriting the tag on every
+ * persisted evidence-library entry *and* every Contributions Feed submission
+ * that carries it — merging into an existing tag name instead of duplicating
+ * it when the target is already in use. Rewriting both stores closes the
+ * follow-on "only rewrites this evidence-library repository's own entries"
+ * gap: this browser shows the combined library, so a tag listed here may come
+ * from either store.
  *
  * @module panels/ArgumentLibraryPanel
  */
@@ -37,7 +36,10 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
-import { buildCombinedPersistedArgumentLibrary, renameTagAcrossPersistedEntries } from "../state/evidenceLibraryEntries"
+import {
+  buildCombinedPersistedArgumentLibrary,
+  renameTagAcrossCombinedPersistedStores,
+} from "../state/evidenceLibraryEntries"
 import { buildLibrarySummaryText, filterCardsByTags } from "../lib/argument-library"
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
 
@@ -62,14 +64,17 @@ export function ArgumentLibraryPanel() {
 
   function handleRenameTag() {
     try {
-      const changedCount = renameTagAcrossPersistedEntries(renameOldTag, renameNewTag)
+      const { entriesChanged, contributionsChanged, totalChanged } =
+        renameTagAcrossCombinedPersistedStores(renameOldTag, renameNewTag)
       setLibrary(buildCombinedPersistedArgumentLibrary())
       setActiveTags((current) => current.map((tag) => (tag === renameOldTag.trim() ? renameNewTag.trim() : tag)))
       setRenameMessage(
-        changedCount === 0
-          ? `No evidence-library entries carry "${renameOldTag.trim()}" — nothing changed.`
-          : `Renamed "${renameOldTag.trim()}" to "${renameNewTag.trim()}" on ${changedCount} ${
-              changedCount === 1 ? "entry" : "entries"
+        totalChanged === 0
+          ? `Nothing carries "${renameOldTag.trim()}" — nothing changed.`
+          : `Renamed "${renameOldTag.trim()}" to "${renameNewTag.trim()}" on ${entriesChanged} ${
+              entriesChanged === 1 ? "evidence entry" : "evidence entries"
+            } and ${contributionsChanged} ${
+              contributionsChanged === 1 ? "contribution" : "contributions"
             }.`,
       )
       setRenameOldTag("")
@@ -135,9 +140,8 @@ export function ArgumentLibraryPanel() {
         <div className="rounded-lg border border-border p-3 space-y-2">
           <div className="text-sm font-medium text-foreground">Rename/merge tag</div>
           <p className="text-xs text-muted-foreground">
-            Rewrites the tag on every evidence-library entry that carries it. Renaming into an
-            existing tag name merges the two. Contributions Feed submissions tagged separately are
-            not affected.
+            Rewrites the tag on every evidence-library entry and every Contributions Feed
+            submission that carries it. Renaming into an existing tag name merges the two.
           </p>
           <div className="flex flex-wrap items-end gap-2">
             <div>
