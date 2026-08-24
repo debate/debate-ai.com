@@ -8,6 +8,7 @@ _No task currently in progress._
 ### Completed
 - **Outline Filters and Argument Tree View — heuristic argument-type
   suggestion.**
+  [PR #306](https://github.com/debate/debate-ai.com/pull/306).
   Closes the "nothing infers a tag — every row is tagged by hand from the
   context menu; there is no heuristic or AI pass that proposes an argument
   type from the row's own content" Known gap recorded in
