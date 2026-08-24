@@ -3,69 +3,37 @@
 
 ### In progress
 
-## Daily Best Card Challenge — cross-tab live update
-
-**Status:** In Progress
-**Source:** `docs/features/daily-best-card.md` — Known gaps: "No real-time
-updates across browser tabs/sessions — like every other localStorage-backed
-panel in this repo, the panel reflects a snapshot as of its last load or
-action."
-**Branch:** `claude/practical-allen-n1fkgs`
-**PR:** Not created yet
-**Started:** 2026-08-24
-
-### Goal
-`DailyBestCardPanel` (`/cards/best-card`) only reflects `contributions`/
-`dailyBestCardAnnouncements` localStorage state as of its own last load or
-action. If another tab submits a card or announces a winner, this panel
-doesn't update until manually reloaded. Close this gap the same way
-`packages/debate-round/src/flow/live-update.ts` already closed the identical
-gap for `FlowSpreadsheet`'s badges: listen for the browser `storage` event
-(which fires in *other* same-origin tabs, not the writing tab) and refresh.
-
-### Scope
-- A small pure predicate (mirroring `isFlowLiveUpdateStorageEvent`) that
-  recognizes a `StorageEvent` touching the `contributions` or
-  `dailyBestCardAnnouncements` keys (or a `null` key, i.e. `localStorage.clear()`).
-- Wiring `DailyBestCardPanel` to call its existing `refresh()` on a matching
-  `storage` event.
-
-### Non-goals
-- No scheduled/automatic announcement (separate, external-infra-shaped gap).
-- No change to the announcement/scoring logic itself.
-
-### Acceptance criteria
-- [x] A cross-tab write to `contributions` or `dailyBestCardAnnouncements`
-      refreshes `DailyBestCardPanel`'s displayed leader/history without a
-      manual reload.
-- [x] An unrelated storage key's write does not force a refresh.
-- [x] Vitest coverage is added for the new predicate (matching keys, `null`
-      key, and an unrelated key).
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Production/web build passes
-- [x] Documentation is updated (`docs/features/daily-best-card.md`'s Known
-      gaps)
-
-### Implementation plan
-- [x] Inspect `packages/debate-round/src/flow/live-update.ts` and its test
-      as the precedent to mirror
-- [x] Add `packages/debate-card-search/src/state/live-update.ts` with the
-      predicate
-- [x] Add focused Vitest coverage for the predicate
-- [x] Wire the `storage` event listener into `DailyBestCardPanel`
-- [x] Run focused tests and fix failures
-- [x] Run typechecking
-- [x] Run the full relevant test suite
-- [x] Run the production/web build
-- [x] Review the final diff for scope and quality
-- [ ] Commit and push the branch
-- [ ] Update tracker status, completed checkboxes, and remaining work
-
-### Remaining work
-- Commit, push, open a PR, and move this entry to Completed.
+_No task currently in progress._
 
 ### Completed
+- **Daily Best Card Challenge — cross-tab live update.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/daily-best-card.md` said "No real-time
+  updates across browser tabs/sessions — like every other localStorage-backed
+  panel in this repo, the panel reflects a snapshot as of its last load or
+  action." `debate-card-search` gained `state/live-update.ts`'s
+  `isDailyBestCardLiveUpdateStorageEvent`, mirroring `debate-round`'s
+  existing `flow/live-update.ts#isFlowLiveUpdateStorageEvent` fix for the
+  identical class of gap on `FlowSpreadsheet`'s badges: it recognizes a
+  cross-tab browser `storage` event (which never fires in the tab that made
+  the write, only other same-origin tabs) touching the `contributions`/
+  `dailyBestCardAnnouncements` keys, or a `null` key from
+  `localStorage.clear()`. `DailyBestCardPanel` now listens for that event
+  and calls its existing `refresh()`, so a card submitted or a winner
+  announced in another tab now shows up without a manual reload. The doc's
+  Known gaps section was updated to close this bullet (matching the existing
+  strikethrough convention used in `flow-annotations.md`). Vitest-covered in
+  `packages/debate-card-search/test/live-update.test.ts` (matching keys, the
+  `null`-key clear case, an unrelated key, and a key that merely contains a
+  tracked store name as a substring). Verified with `bun x vitest run` (163
+  files, 2328 tests), `bunx turbo typecheck --filter=debate-card-search`, and
+  `bunx turbo build --filter=debate-ai-web`; no `lint` script is configured
+  in this repo.
+  **PR:** [#288](https://github.com/debate/debate-ai.com/pull/288).
+  **Completed:** 2026-08-24.
+
 - **Judge Profiles and Opponent Team Profiles — "did you mean" suggestion
   and datalist autocomplete on the logged-rounds ID filter.**
   Found via this run's own audit of `docs/features/*.md` "Known gaps"
