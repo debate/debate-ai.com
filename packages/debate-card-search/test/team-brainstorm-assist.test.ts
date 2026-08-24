@@ -7,6 +7,7 @@ import {
   buildBrainstormPromptsForCoverageGaps,
   buildBrainstormSummaryText,
   groupIdeasByBoard,
+  mergeBrainstormIdeas,
   rankBrainstormIdeas,
   type BrainstormIdea,
 } from "../src/lib/team-brainstorm-assist";
@@ -161,6 +162,38 @@ describe("buildBrainstormBoard", () => {
   it("excludes ideas from a different argBlock or category", () => {
     const board = buildBrainstormBoard("Warming DA", "frontline", ideas);
     expect(board.ideas).toEqual([]);
+  });
+});
+
+describe("mergeBrainstormIdeas", () => {
+  it("combines the two ideas' upvote counts onto a copy of the target", () => {
+    const target: BrainstormIdea = { ...ideas[0] };
+    const duplicate: BrainstormIdea = { ...ideas[1] };
+    const merged = mergeBrainstormIdeas(target, duplicate);
+
+    expect(merged.upvotes).toBe(target.upvotes + duplicate.upvotes);
+    expect(merged.id).toBe(target.id);
+    expect(merged.text).toBe(target.text);
+  });
+
+  it("does not mutate either input idea", () => {
+    const target: BrainstormIdea = { ...ideas[0] };
+    const duplicate: BrainstormIdea = { ...ideas[1] };
+    mergeBrainstormIdeas(target, duplicate);
+
+    expect(target.upvotes).toBe(ideas[0].upvotes);
+    expect(duplicate.upvotes).toBe(ideas[1].upvotes);
+  });
+
+  it("throws when merging an idea into itself", () => {
+    const idea: BrainstormIdea = { ...ideas[0] };
+    expect(() => mergeBrainstormIdeas(idea, idea)).toThrow(/itself/);
+  });
+
+  it("throws when the two ideas aren't on the same board", () => {
+    const target = ideas.find((idea) => idea.category === "argument")!;
+    const duplicate = ideas.find((idea) => idea.category === "impact_framing")!;
+    expect(() => mergeBrainstormIdeas(target, duplicate)).toThrow(/different boards/);
   });
 });
 
