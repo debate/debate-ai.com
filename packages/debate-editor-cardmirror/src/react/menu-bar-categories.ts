@@ -68,7 +68,7 @@ export const MENU_BAR_CATEGORIES: MenuBarCategory[] = [
   },
   {
     title: 'Tools',
-    groupTitles: ['Timer', 'Diagnostics', 'Learn', 'Cleanup'],
+    groupTitles: ['Timer', 'Diagnostics', 'Learn', 'Cleanup', 'Flow', 'Voice'],
   },
 ];
 
