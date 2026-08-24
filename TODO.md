@@ -6,6 +6,36 @@
 _No task currently in progress._
 
 ### Completed
+- **Judge Profiles — undo a logged-round edit.**
+  Closes the "editing a ballot is all-or-nothing per round... a correction
+  can't be undone" Known gap recorded in `docs/features/judge-profiles.md`.
+  `packages/debate-speech-writer/src/state/judgeRoundRecords.ts` gains a
+  small per-round undo history (a separate `judgeRoundRecordEditHistory`
+  localStorage store, keyed by round id, capped at the 10 most recent prior
+  versions): `updateJudgeRoundRecord` now saves a round's pre-edit version
+  there before overwriting it, and the new `undoLastJudgeRoundRecordEdit`
+  pops the most recent saved version and restores it, re-aggregating the
+  affected judge's profile (or both judges', if that edit had reassigned
+  the round) the same way `updateJudgeRoundRecord` does.
+  `hasJudgeRoundRecordEditHistory`/`listJudgeRoundRecordEditHistory` expose
+  whether/what history exists; `deleteJudgeRoundRecord` now also discards a
+  round's undo history when the round itself is deleted.
+  `JudgeProfilesPanel.tsx` (`/judges`) gains an "Undo last edit" action in
+  the Logged rounds table, shown only on a round with at least one edit
+  still undoable. No change to `judge-profile.ts`'s aggregation logic; no
+  redo. Vitest-covered in
+  `packages/debate-speech-writer/test/judgeRoundRecords.test.ts` (history
+  recording/ordering/capping, single and multi-step undo, reassignment
+  re-aggregation, no-op cases for an unedited or unknown round, and history
+  cleanup on delete). Docs updated in `docs/features/judge-profiles.md`
+  ("Undo last edit" row and data-flow entries added; Known gaps updated —
+  the old "can't be undone" bullet is replaced with the new undo
+  mechanism's own no-redo/10-edit-cap limits). No repo-wide `lint` script
+  exists (checked root/app/package `package.json` scripts) so none was run.
+  Verified: `bun install`, `bun run test` (165 files / 2447 tests, all
+  pass — 10 new), `bun run typecheck` (12 of 13 in-scope packages have a
+  typecheck script; all pass), and `bun run build:web` (`debate-ai-web`,
+  succeeds, no route changes) all pass. **Completed:** 2026-08-24.
 - **Shared Evidence Library — normalize a typed tag to its existing casing.**
   [PR #303](https://github.com/debate/debate-ai.com/pull/303).
   Closes the remaining half of the tag-identity Known gap recorded in

@@ -45,7 +45,7 @@ far, filtered to one judge by typing into **Filter by judge ID** (a
 case-insensitive substring match on the judge id, so a long history doesn't
 bury the judge you just logged).
 
-Each row has two actions:
+Each row has up to three actions:
 
 - **Edit** loads the ballot back into the form above, which switches to
   "Edit logged round" with **Save changes** / **Cancel** buttons. Saving
@@ -58,6 +58,12 @@ Each row has two actions:
   whatever rounds remain, deleting the derived profile entirely once their
   last round is gone (rather than leaving a zero-round one). Deleting the
   round currently being edited also cancels the edit.
+- **Undo last edit** appears only on a round that has at least one edit still
+  undoable, and steps it back to the version it held immediately before its
+  most recent edit — re-aggregating the affected judge (or judges, if that
+  edit reassigned the round) the same way an Edit/Save would. Clicking it
+  repeatedly walks further back through up to the last 10 corrections, one
+  edit at a time; deleting the round discards its undo history along with it.
 
 ## Data flow
 
@@ -65,11 +71,21 @@ Each row has two actions:
 state/judgeRoundRecords.ts (localStorage: judgeRoundRecords)
   → recordJudgeRound(entry)                — appends one JudgeRoundRecord to the
                                               persisted ballot history, then …
-  → updateJudgeRoundRecord(entry)          — replaces one ballot by id, in place, then
-                                              re-aggregates its judge (and the previous
-                                              judge too, when the ballot is reassigned)
-  → deleteJudgeRoundRecord(id)             — removes one ballot, then re-aggregates
-                                              (deleting the profile if none remain)
+  → updateJudgeRoundRecord(entry)          — replaces one ballot by id, in place, saving
+                                              its pre-edit version to a small per-round undo
+                                              history first, then re-aggregates its judge
+                                              (and the previous judge too, when the ballot
+                                              is reassigned)
+  → undoLastJudgeRoundRecordEdit(id)       — restores a ballot to the version held before
+                                              its most recent edit, popping that version off
+                                              the id's undo history, then re-aggregates the
+                                              same way updateJudgeRoundRecord would
+  → hasJudgeRoundRecordEditHistory(id)     — whether a ballot has at least one edit still
+                                              undoable
+  → listJudgeRoundRecordEditHistory(id)    — a ballot's prior versions, most-recent-edit-first
+  → deleteJudgeRoundRecord(id)             — removes one ballot and its undo history, then
+                                              re-aggregates (deleting the profile if none
+                                              remain)
   → rebuildJudgeProfileFromRecords(judgeId) — … re-runs judge-profile.ts's existing
                                               buildJudgeProfile over that judge's
                                               full history and persists the result
@@ -93,7 +109,10 @@ ballot history (a judge decides many rounds, so each entry carries its own
 while `judgeProfiles` holds only the aggregate a caller looks up by
 `judgeId`. Editing (`updateJudgeRoundRecord`) and deleting
 (`deleteJudgeRoundRecord`) a logged round re-aggregate the affected judge
-the same way.
+the same way. A third store, `judgeRoundRecordEditHistory` (keyed by round
+id, capped at the 10 most recent prior versions per round), holds what each
+round looked like before each edit, so a correction can be undone via
+`undoLastJudgeRoundRecordEdit` instead of being permanent.
 
 Every profile field already existed and was Vitest-covered by
 `judge/judge-profile.ts`'s `buildJudgeProfile`; this feature closes
@@ -123,8 +142,11 @@ in `judgeRoundRecords.test.ts`.
   a caller of `recordJudgeRound`/`saveJudgeProfile` directly. This is the
   same gap the [Standings](standings.md) and
   [Opponent Team Profiles](opponent-team-profiles.md) panels have.
-- Editing a ballot is all-or-nothing per round: there is no history of what
-  a round looked like before an edit, so a correction can't be undone.
+- Undo has no matching "redo" — there is no way to step back *forward*
+  toward the pre-undo version once you've clicked Undo, short of re-entering
+  it by hand through Edit. Undo history is also capped at the 10 most recent
+  edits per round, so a round corrected more than 10 times can't be undone
+  all the way back to its first-ever logged version.
 - Profiles are per-browser localStorage, not a shared team resource, and
   there are no identity/permission checks on who may log a round for a
   judge (no auth in this repo yet).
