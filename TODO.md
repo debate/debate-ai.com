@@ -8,6 +8,7 @@ _No task currently in progress._
 ### Completed
 - **Word-Count-Only Speech Format — microphone dictation for the standalone
   submission form.**
+  [PR #305](https://github.com/debate/debate-ai.com/pull/305).
   Closes the "Speech text is typed or pasted; there is no transcription path
   feeding the word counter" Known gap recorded in
   `docs/features/word-count-rounds.md`, for the standalone `/word-count`
