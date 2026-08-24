@@ -13,6 +13,8 @@ import {
   recordPersistedEndorsementFromReviewer,
   recordPersistedLike,
   recordPersistedSave,
+  listContributionTags,
+  renameTagAcrossPersistedContributions,
   saveContribution,
 } from "../src/state/contributions";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
@@ -430,5 +432,62 @@ describe("getTodaysBestCardFromStore", () => {
     saveContribution(STRONG_CARD_DAY_ONE);
 
     expect(getTodaysBestCardFromStore(DAY_TWO)).toBeNull();
+  });
+});
+
+describe("listContributionTags", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(listContributionTags()).toEqual([]);
+  });
+
+  it("ignores contributions that carry no tags", () => {
+    saveContribution(ALICE_CARD);
+    expect(listContributionTags()).toEqual([]);
+  });
+
+  it("lists every distinct tag across contributions, deduped and sorted", () => {
+    saveContribution({ ...ALICE_CARD, tags: ["warming", "impact"] });
+    saveContribution({ ...BOB_SUMMARY, tags: ["impact", "solvency"] });
+
+    expect(listContributionTags()).toEqual(["impact", "solvency", "warming"]);
+  });
+});
+
+describe("renameTagAcrossPersistedContributions", () => {
+  it("rewrites the tag on every contribution that carries it and persists the result", () => {
+    saveContribution({ ...ALICE_CARD, tags: ["warming", "impact"] });
+    saveContribution({ ...BOB_SUMMARY, tags: ["solvency"] });
+
+    const changedCount = renameTagAcrossPersistedContributions("warming", "climate-crisis");
+
+    expect(changedCount).toBe(1);
+    expect(getContribution("contrib-1")!.tags).toEqual(["impact", "climate-crisis"]);
+    expect(getContribution("contrib-2")!.tags).toEqual(["solvency"]);
+  });
+
+  it("merges into an already-used tag name instead of duplicating it", () => {
+    saveContribution({ ...ALICE_CARD, tags: ["warming", "impact"] });
+
+    renameTagAcrossPersistedContributions("warming", "impact");
+
+    expect(getContribution("contrib-1")!.tags).toEqual(["impact"]);
+  });
+
+  it("is a safe no-op, and does not write to storage, when no contribution carries the tag", () => {
+    saveContribution({ ...ALICE_CARD, tags: ["impact"] });
+    const before = localStorage.getItem("contributions");
+
+    const changedCount = renameTagAcrossPersistedContributions("nonexistent", "whatever");
+
+    expect(changedCount).toBe(0);
+    expect(localStorage.getItem("contributions")).toBe(before);
+  });
+
+  it("throws when either tag is blank, or when the two tags are the same", () => {
+    saveContribution({ ...ALICE_CARD, tags: ["impact"] });
+
+    expect(() => renameTagAcrossPersistedContributions("  ", "impact")).toThrow();
+    expect(() => renameTagAcrossPersistedContributions("impact", " ")).toThrow();
+    expect(() => renameTagAcrossPersistedContributions("impact", "impact")).toThrow();
   });
 });
