@@ -40,7 +40,7 @@ _No task currently in progress._
   existing `buildOpponentPersonaPrompt`). Verified with `bun run test`
   (162 files, 2330 tests, up from 2324), `bun run typecheck` (11 packages),
   and `bun run build:web` (production build); no `lint` script is configured
-  in this repo. **PR:** PR_LINK_PLACEHOLDER.
+  in this repo. **PR:** [#286](https://github.com/debate/debate-ai.com/pull/286).
   **Completed:** 2026-08-24.
 - **Judge Profiles and Opponent Team Profiles — "did you mean" suggestion
   and datalist autocomplete on the logged-rounds ID filter.**
