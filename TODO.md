@@ -40,7 +40,14 @@ _No task currently in progress._
   existing `buildOpponentPersonaPrompt`). Verified with `bun run test`
   (162 files, 2330 tests, up from 2324), `bun run typecheck` (11 packages),
   and `bun run build:web` (production build); no `lint` script is configured
-  in this repo. **PR:** [#286](https://github.com/debate/debate-ai.com/pull/286).
+  in this repo. **PR:** [#286](https://github.com/debate/debate-ai.com/pull/286)
+  — all checks pass (Vitest + coverage, codecov, Vercel, `Workers Builds:
+  debate-ai-com`) except a newly-appeared `Workers Builds:
+  debate-ai-production` check, which fails identically on both this PR's
+  commits (including a docs-only commit) and doesn't appear at all on the
+  two prior merged PRs (#284, #285); documented on the PR as an unrelated
+  Cloudflare dashboard config issue, not a code problem, mirroring the
+  unrelated Vercel rate-limit note on PR #217 earlier in this tracker.
   **Completed:** 2026-08-24.
 - **Judge Profiles and Opponent Team Profiles — "did you mean" suggestion
   and datalist autocomplete on the logged-rounds ID filter.**
