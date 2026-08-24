@@ -65,7 +65,11 @@ import {
   renameTagAcrossCards,
 } from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
-import { listContributions } from "./contributions";
+import {
+  listContributionTags,
+  listContributions,
+  renameTagAcrossPersistedContributions,
+} from "./contributions";
 import { isCardLive } from "../lib/peer-review";
 import { getPeerReview, getPeerReviewsRawSnapshot } from "./peerReviews";
 
@@ -333,4 +337,51 @@ export function renameTagAcrossPersistedEntries(oldTag: string, newTag: string):
  */
 export function listPersistedTags(): string[] {
   return buildTagCollections(readAll()).map((collection) => collection.tag);
+}
+
+/**
+ * Every distinct tag in use across *both* persisted tag stores — this
+ * evidence repository and the Contributions Feed — sorted. This is the corpus
+ * a tag-autocomplete affordance should suggest from on either submission
+ * form, so a Contributions Feed submission reuses an existing
+ * evidence-library tag rather than coining a near-duplicate (the
+ * "a Contributions Feed submission tagged for the Argument Library gets no
+ * tag-autocomplete affordance of its own" gap in
+ * `docs/features/evidence-library.md`). Deduped by exact string, matching how
+ * `buildTagCollections` already treats tag identity.
+ */
+export function listCombinedPersistedTags(): string[] {
+  const tags = new Set([...listPersistedTags(), ...listContributionTags()]);
+  return Array.from(tags).sort((a, b) => a.localeCompare(b));
+}
+
+/** How many records a combined tag rename/merge rewrote, per store. */
+export interface CombinedTagRenameResult {
+  entriesChanged: number;
+  contributionsChanged: number;
+  totalChanged: number;
+}
+
+/**
+ * Renames (or merges) a tag across both persisted tag stores at once — this
+ * evidence repository via `renameTagAcrossPersistedEntries` and the
+ * Contributions Feed via `renameTagAcrossPersistedContributions`. Closes the
+ * "only rewrites this evidence-library repository's own entries" gap recorded
+ * in `docs/features/evidence-library.md`: a tag shown in the combined Common
+ * Argument Library (see `buildCombinedPersistedArgumentLibrary`) may come from
+ * either store, so renaming it in one alone left the other's copy stranded
+ * under the old name. Throws on a blank or unchanged tag pair, before either
+ * store is touched.
+ */
+export function renameTagAcrossCombinedPersistedStores(
+  oldTag: string,
+  newTag: string,
+): CombinedTagRenameResult {
+  const entriesChanged = renameTagAcrossPersistedEntries(oldTag, newTag);
+  const contributionsChanged = renameTagAcrossPersistedContributions(oldTag, newTag);
+  return {
+    entriesChanged,
+    contributionsChanged,
+    totalChanged: entriesChanged + contributionsChanged,
+  };
 }
