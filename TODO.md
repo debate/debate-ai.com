@@ -29,7 +29,1252 @@ _No task currently in progress._
   across repeated searches with no intervening write, and rebuilt (a new
   object) after each of the three invalidating write paths; the existing
   test file's `beforeEach` now also resets the module-level cache between
-  tests. PR: [#259](https://github.com/debate/debate-ai.com/pull/259).
+  tests. PR: [#259](https://github.com/debate/debate-ai.com/pull/259) — landed
+  after master had already grown a more complete version of this same cache:
+  it fingerprints both stores' raw persisted JSON (so any write path
+  invalidates, not just calls through the two stores' own functions) and
+  applies `evidence-search-index.ts`'s incremental add/remove/update instead
+  of a full rebuild. The merge therefore kept master's implementation and
+  dropped this branch's `state/evidenceSearchIndexCache.ts` module and its
+  explicit `invalidateEvidenceSearchIndexCache` hooks in `peerReviews.ts`;
+  master's own tests already cover each behaviour this branch's tests
+  asserted.
+- **Shared Evidence Library — tag-autocomplete on the Contributions Feed's
+  Tags field.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/evidence-library.md` said "A Contributions
+  Feed submission tagged for the Argument Library gets no tag-autocomplete
+  affordance of its own (that only exists on the dedicated `/cards/library`
+  form's Tags field) — it's a plain comma-separated text input."
+  `debate-card-search`'s `state/evidenceLibraryEntries.ts` gained
+  `listCombinedPersistedTags()`, which merges the existing
+  `listPersistedTags()` evidence-library corpus with every tag already used
+  across `state/contributions.ts`'s persisted Contributions Feed submissions
+  (via `listContributions`), including a contribution tagged without a
+  `topic`/`caseArea`. `ContributionsFeedPanel.tsx`'s Tags field now wires
+  `lib/argument-library.ts`'s existing `parseTagsInput`/`suggestTags`/
+  `applyTagSuggestion` against that combined corpus — the same
+  suggestion-button affordance `EvidenceLibraryPanel.tsx`'s Tags field
+  already had, refreshed on mount and after each submission. Vitest-covered
+  in `packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (new
+  `listCombinedPersistedTags` describe block: empty-store case, merged/
+  deduped/sorted tags across both stores, a tagged-but-untopiced
+  contribution still contributing tags, and a contribution with no `tags`
+  field being ignored). Verified with `bun x vitest run` (162 files, 2328
+  tests), `bunx turbo typecheck --filter=debate-card-search
+  --filter=debate-ai-web`, and `bunx turbo build --filter=debate-ai-web`; no
+  `lint` script is configured in this repo.
+  **PR:** [#287](https://github.com/debate/debate-ai.com/pull/287) — landed
+  after [#289](https://github.com/debate/debate-ai.com/pull/289), which had
+  independently implemented the same `listCombinedPersistedTags` corpus and
+  Contributions Feed suggestion row (plus the cross-store tag rename). The
+  merge therefore kept #289's implementation and folded in only this branch's
+  one additional case — a contribution with no `tags` field at all.
+- **Daily Best Card Challenge — cross-tab live update.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/daily-best-card.md` said "No real-time
+  updates across browser tabs/sessions — like every other localStorage-backed
+  panel in this repo, the panel reflects a snapshot as of its last load or
+  action." `debate-card-search` gained `state/live-update.ts`'s
+  `isDailyBestCardLiveUpdateStorageEvent`, mirroring `debate-round`'s
+  existing `flow/live-update.ts#isFlowLiveUpdateStorageEvent` fix for the
+  identical class of gap on `FlowSpreadsheet`'s badges: it recognizes a
+  cross-tab browser `storage` event (which never fires in the tab that made
+  the write, only other same-origin tabs) touching the `contributions`/
+  `dailyBestCardAnnouncements` keys, or a `null` key from
+  `localStorage.clear()`. `DailyBestCardPanel` now listens for that event
+  and calls its existing `refresh()`, so a card submitted or a winner
+  announced in another tab now shows up without a manual reload. The doc's
+  Known gaps section was updated to close this bullet (matching the existing
+  strikethrough convention used in `flow-annotations.md`). Vitest-covered in
+  `packages/debate-card-search/test/live-update.test.ts` (matching keys, the
+  `null`-key clear case, an unrelated key, and a key that merely contains a
+  tracked store name as a substring). Verified with `bun x vitest run` (163
+  files, 2328 tests), `bunx turbo typecheck --filter=debate-card-search`, and
+  `bunx turbo build --filter=debate-ai-web`; no `lint` script is configured
+  in this repo.
+  **PR:** [#288](https://github.com/debate/debate-ai.com/pull/288).
+- **AI Practice Opponent — custom opponent-persona authoring flow.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/practice-opponent.md` said "Only the four
+  built-in personas are selectable; there is no custom opponent-persona
+  authoring flow (unlike the Judge Paradigm Picker's custom paradigm
+  option)." `debate-speech-writer`'s `opponent/opponent-personas.ts` gained
+  `OpponentPersonaId` (`BuiltinOpponentPersonaId | "custom"`, replacing
+  `OpponentPersona.id`'s previously builtin-only type),
+  `CustomOpponentPersonaInput`, and `buildCustomOpponentPersona` — a direct
+  mirror of `judge/judge-paradigms.ts`'s `buildCustomJudgeParadigm`: it
+  sanitizes/trims/clamps a user-supplied name and free-text style
+  description, throws on either being empty after sanitization, and carries
+  the notes verbatim into `instructions` for a future AI speech-generation
+  prompt. `panels/OpponentPersonaPickerPanel.tsx` gained a "Custom opponent
+  persona" radio option with persona-name and debating-style fields,
+  mirroring `JudgeParadigmPickerPanel.tsx`'s custom-paradigm form; saving
+  builds the persona via `buildCustomOpponentPersona` and stores it through
+  the already-persisted `saveOpponentPersonaSelection` unchanged (it already
+  stores a full `OpponentPersona`, not just a builtin id), and
+  `practice-round-simulator.ts`'s `resolveOpponentPersona` needed no changes
+  since it already accepts a full `OpponentPersona | BuiltinOpponentPersonaId`
+  union. Both new symbols are re-exported from `debate-speech-writer`'s
+  `index.ts`. `docs/features/practice-opponent.md` was updated (intro,
+  "What it shows", data-flow section, and a new closing paragraph) to
+  describe the new form and close this Known gap. Vitest-covered in
+  `packages/debate-speech-writer/test/opponent-personas.test.ts` (new
+  `describe("buildCustomOpponentPersona")` block: builds from name/notes,
+  trims whitespace and strips control characters, clamps overly long notes,
+  throws on empty name, throws on empty notes, and produces a prompt via the
+  existing `buildOpponentPersonaPrompt`). Verified with `bun run test`
+  (162 files, 2330 tests, up from 2324), `bun run typecheck` (11 packages),
+  and `bun run build:web` (production build); no `lint` script is configured
+  in this repo. **PR:** [#286](https://github.com/debate/debate-ai.com/pull/286)
+  — all checks pass (Vitest + coverage, codecov, Vercel, `Workers Builds:
+  debate-ai-com`) except a newly-appeared `Workers Builds:
+  debate-ai-production` check, which fails identically on both this PR's
+  commits (including a docs-only commit) and doesn't appear at all on the
+  two prior merged PRs (#284, #285); documented on the PR as an unrelated
+  Cloudflare dashboard config issue, not a code problem, mirroring the
+  unrelated Vercel rate-limit note on PR #217 earlier in this tracker.
+  **Completed:** 2026-08-24.
+- **Common Argument Library — tag autocomplete on the Contributions Feed,
+  and tag rename/merge across both persisted tag stores.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/evidence-library.md` recorded two open gaps —
+  "A Contributions Feed submission tagged for the Argument Library gets no
+  tag-autocomplete affordance of its own (that only exists on the dedicated
+  `/cards/library` form's Tags field)" and "A tag rename/merge tool now
+  exists … but it only rewrites this evidence-library repository's own
+  entries — a Contributions Feed submission's tags are a separate
+  store/form and aren't rewritten by it." Both matter because
+  `ArgumentLibraryPanel` (`/cards/argument-library`) already composes *two*
+  persisted stores into one library via
+  `buildCombinedPersistedArgumentLibrary`, so a tag listed there can come
+  from either one. `state/contributions.ts` gained `listContributionTags()`
+  (every distinct tag on a persisted contribution, deduped and sorted) and
+  `renameTagAcrossPersistedContributions(oldTag, newTag)` (reusing
+  `argument-library.ts`'s pure `renameTagInList` per contribution, with the
+  same write-back-only-when-changed behavior and the same
+  blank/identical-tag validation as the evidence-library side);
+  `state/evidenceLibraryEntries.ts` gained `listCombinedPersistedTags()`
+  (the union of both stores' tags) and
+  `renameTagAcrossCombinedPersistedStores(oldTag, newTag)` (returning
+  `{ entriesChanged, contributionsChanged, totalChanged }`, validating
+  before either store is written). `ContributionsFeedPanel.tsx`'s Tags
+  field now carries the same suggestion row `EvidenceLibraryPanel` already
+  had, driven by the same `parseTagsInput`/`suggestTags`/
+  `applyTagSuggestion` helpers over the combined corpus, and
+  `ArgumentLibraryPanel.tsx`'s "Rename/merge tag" form now calls the
+  combined rename and reports each store's count.
+  `docs/features/evidence-library.md` was updated: "Tag rename/merge"
+  rewritten, a new "Tag autocomplete on the Contributions Feed" section
+  added, and both Known gaps closed (replaced by the remaining
+  exact-string tag-identity note — `warming` and `Warming` stay two
+  different tags). Vitest-covered in
+  `packages/debate-card-search/test/contributions.test.ts` (new
+  `listContributionTags`/`renameTagAcrossPersistedContributions` describe
+  blocks: empty store, contributions with no tags, deduped sorted list,
+  rewrite-and-persist, merge-dedup, a true no-write no-op, and throwing on
+  a blank or identical tag pair) and
+  `packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (new
+  `listCombinedPersistedTags`/`renameTagAcrossCombinedPersistedStores`
+  describe blocks: empty stores, the deduped union, a contribution
+  excluded from the library still contributing its tags, both stores
+  rewritten with per-store counts, one store changed while the other
+  carries nothing, a both-stores no-op, and a throw leaving both stores
+  untouched). Verified with `bun x vitest run` (162 files, 2338 tests),
+  `bunx turbo typecheck --filter=debate-card-search`, and `bunx turbo build
+  --filter=debate-ai-web`; no `lint` script is configured in this repo.
+  **PR:** [#289](https://github.com/debate/debate-ai.com/pull/289).
+  **Completed:** 2026-08-24.
+
+- **Judge Profiles and Opponent Team Profiles — "did you mean" suggestion
+  and datalist autocomplete on the logged-rounds ID filter.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): both `docs/features/judge-profiles.md` and
+  `docs/features/opponent-team-profiles.md` said "The logged-rounds filter
+  is a free-text substring match on the judge id [team id], not a picker of
+  the judges [teams] actually on record — a typo shows an empty list rather
+  than suggesting the nearest judge [team]." `debate-speech-writer`'s
+  `state/judgeRoundRecords.ts` gained `listJudgeIds()` (every distinct
+  logged judge id, sorted alphabetically) and `findNearestJudgeId(query)` (a
+  small case-insensitive Levenshtein edit-distance search over that list,
+  returning `null` for a blank query or when nothing is logged yet);
+  `debate-data-sync`'s `state/opponentRoundRecords.ts` gained the mirrored
+  `listOpponentTeamIds()`/`findNearestOpponentTeamId(query)`, duplicated
+  locally in each package the same way the two round-record stores already
+  mirror each other's wrapped-record convention (there is no shared
+  low-level package either depends on). `JudgeProfilesPanel.tsx`'s and
+  `OpponentTeamProfilesPanel.tsx`'s "Filter by judge/team ID" `Input` now
+  carries a `list` attribute pointing at a `<datalist>` of the ids actually
+  on record, and the "No logged rounds match" empty state now shows a
+  clickable "Did you mean `<id>`?" suggestion (from `findNearest…Id`) that
+  refills the filter, shown only when a real suggestion exists. Both docs'
+  Known gaps sections were updated to close this bullet and describe the new
+  behavior. Vitest-covered in
+  `packages/debate-speech-writer/test/judgeRoundRecords.test.ts` and
+  `packages/debate-data-sync/test/opponentRoundRecords.test.ts` (new
+  `listJudgeIds`/`listOpponentTeamIds` and
+  `findNearestJudgeId`/`findNearestOpponentTeamId` describe blocks:
+  alphabetical dedup, a typo resolving to the right id, and the
+  blank-query/no-data `null` cases). Verified with `bun x vitest run` (162
+  files, 2324 tests), `bunx turbo typecheck --filter=debate-speech-writer
+  --filter=debate-round --filter=debate-data-sync`, and `bunx turbo build
+  --filter=debate-ai-web`; no `lint` script is configured in this repo.
+  **PR:** [#285](https://github.com/debate/debate-ai.com/pull/285).
+  **Completed:** 2026-08-20.
+
+- **Outline Filters and Argument Tree View — auto-sync the argument tree
+  as a round is flowed, not just on a manual "Generate outline" click.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/argument-tree-outline.md` said
+  `ArgumentTreePanel.tsx`'s "Generate outline for current round" action was
+  still a manual trigger — "the live round-flowing page
+  (`DebateFlowPage`/`FlowMainContent`) still doesn't call
+  `buildAndSaveArgumentTree` automatically as a round is flowed" — left open
+  by PR #277. `state/argumentTrees.ts` gained
+  `buildAndSaveArgumentTreeIfChanged(flow, roundId)`, which derives the tree
+  the same way `buildAndSaveArgumentTree` does but skips the localStorage
+  write (returning `undefined`) when the result is structurally identical to
+  what's already stored for that round, so a periodic auto-sync tick doesn't
+  thrash storage when nothing actually changed. `hooks/useFlowEffects.ts`
+  gained `useArgumentTreeAutoSync(flows, selected)` — a 1.5s-debounced
+  effect on the selected flow, mirroring the debounce convention already
+  used by `debate-card-search`'s `useSearchState.ts` — wired into
+  `DebateFlowPage` (`panels/DebateRoundPanel.tsx`) alongside its existing
+  `useFlowPersistence` effect. The manual "Generate outline for current
+  round" button in `ArgumentTreePanel.tsx` is unchanged. No follow-ups
+  remain open on this Known gap. Vitest-covered in
+  `packages/debate-round/test/argumentTrees.test.ts` (saving on a first
+  sync, skipping the write and returning `undefined` when the derived tree
+  is unchanged, and saving+returning the new record on a real change).
+  Verified with `bun x vitest run` (162 files, 2314 tests),
+  `bunx turbo typecheck --filter=debate-round`, and
+  `bunx turbo build --filter=debate-ai-web`; no `lint` script is configured
+  in this repo. **PR:** [#284](https://github.com/debate/debate-ai.com/pull/284).
+  **Completed:** 2026-08-20.
+
+- **Outline Filters and Argument Tree View — neighbour preview + bulk
+  "tag every row in this section" action.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used; this repo has no `IDEAS.md`, so the
+  "Product Feature Ideas"/"Research Crowdsourcing Organizer Features"
+  sections below are the backlog): `docs/features/argument-tree-outline.md`
+  said "A row's tags aren't shown in the `ArgumentTagPopover` for the row's
+  neighbours, and there is no bulk 'tag every row in this section' action,"
+  the last two open Known gaps for idea #10 ("Outline Filters and Argument
+  Tree View") that didn't require new infrastructure (auth, transcription,
+  or a scheduled-job runner) this repo doesn't have. `debate-round`'s
+  `flow/argument-tagging.ts` gained `getSectionRowIndexes(flow, rowIndex)`
+  (every content-row index in the same heading-bounded "section" as
+  `rowIndex`, derived positionally from `Box.isHeading` the same way
+  `dataTransform.ts`'s `parentHeadingId` and `argument-tree.ts`'s
+  `buildArgumentTree` heading-nesting already do — no new `Box` field was
+  needed), `getSectionRowPreviews(flow, rowIndex)` (those neighbours' own
+  content + current tags, for display), and `setRowsArgumentTags(flow,
+  rowIndexes, tags)` (a bulk form of the existing `setRowArgumentTags`,
+  which now delegates to it). `flow/ArgumentTagPopover.tsx` gained an
+  optional `sectionRows` prop rendering each neighbour's content and tag
+  label plus an "Also tag these N rows…" checkbox, and its `onSave`
+  signature grew a second `applyToSection` argument. `flow/FlowSpreadsheet.tsx`'s
+  `handleSaveArgumentTags` now applies the chosen tags to
+  `getSectionRowIndexes(flow, rowIndex)` instead of just `rowIndex` when
+  that checkbox is checked. No follow-ups remain open on this Known gap.
+  Vitest-covered in `packages/debate-round/test/argument-tagging.test.ts`
+  (section boundaries around single/multiple headings, a heading-row
+  target, leading rows before any heading, an out-of-range row, the bulk
+  apply's duplicate/out-of-range-index handling and its all-invalid no-op,
+  and the section-preview label truncation) and
+  `packages/debate-round/test/ArgumentTagPopover.test.tsx` (the neighbour
+  list and checkbox render when `sectionRows` is non-empty, and neither
+  renders when it's empty). Verified: `bun run vitest run` (2311 tests,
+  all packages), `bun run typecheck` (11 packages), `bun run build:web`
+  (production build). [PR #283](https://github.com/debate/debate-ai.com/pull/283).
+
+- **Outline Filters and Argument Tree View — tag an argument's
+  type/contributor/evidence status from the live flow grid.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used; this repo has no `IDEAS.md`, so the
+  "Product Feature Ideas"/"Research Crowdsourcing Organizer Features"
+  sections below are the backlog):
+  `docs/features/argument-tree-outline.md` said "Nothing in the live
+  flow-editing UI (`FlowSpreadsheet` or elsewhere) lets a user actually set
+  a `Box`'s `argumentType`/`authorId`/`evidenceStatus` yet — these fields
+  exist in the schema and are read/filtered/rendered end-to-end here, but
+  populating them today requires setting them directly on a `Box`," which
+  left the Argument Tree Outline panel's three newest filters with nothing
+  to filter on.
+  A new `packages/debate-round/src/flow/argument-tagging.ts` holds the pure
+  helpers — `getRowArgumentTags`, `setRowArgumentTags` (returns a new `Flow`
+  with the row's root box replaced, mirroring `applyMergedEditsToFlow`; a
+  tag left `undefined` or a whitespace-only `authorId` is *cleared*, and an
+  out-of-range row index is a no-op returning the flow unchanged),
+  `formatArgumentTags`, and `listAuthorIdsInFlow`. Tagging is deliberately
+  row-level rather than per-cell: `flow-transcript-summary.ts`'s
+  `summarizeFlowRow` already reads all three fields off a row's *root* box,
+  so that is what `buildArgumentTree`/`filterArgumentTree` and the panel
+  see.
+  `flow/ArgumentTagPopover.tsx` is the overlay (argument-type select,
+  evidence-status select, and a `datalist`-backed contributor field
+  suggesting ids already used in the same flow), opened from a new **Tag
+  Argument…** entry in `FlowSpreadsheet`'s row context menu — labelled with
+  the row's current tags — and saved through the existing `onUpdate`
+  callback, so tags live on the flow itself rather than in a new store.
+  `FirstColumnCellRenderer.tsx` renders a row's tags as a compact
+  `link · cited · alex` label beside the existing annotation/edit/prep-note
+  badges. `dataTransform.ts`'s `buildRowData`/`rowDataToBoxes` now carry the
+  three fields as well — without that, an ordinary cell edit (which rebuilds
+  every `Box` from the grid's flat row data) silently dropped a row's tags.
+  Vitest-covered (15 new cases:
+  `packages/debate-round/test/argument-tagging.test.ts` covers reading a
+  row's tags, setting all three without touching siblings, clearing a tag
+  and a whitespace-only contributor, the out-of-range-row no-op, tags
+  actually feeding `filterArgumentTree`, the `buildRowData` →
+  `rowDataToBoxes` round trip tagged and untagged, label formatting, and the
+  contributor roster; `packages/debate-round/test/ArgumentTagPopover.test.tsx`
+  render-tests the overlay's options, seeding from existing tags, the
+  contributor datalist, and viewport clamping).
+  Documented in `docs/features/argument-tree-outline.md` (new "Tagging an
+  argument from the flow grid" section with its own data-flow block; the
+  closed gap replaced with the real remaining scope — tags are row-level
+  rather than per-speech, nothing infers a tag, the contributor id is
+  free-form rather than authenticated, and there is no bulk
+  tag-a-whole-section action).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (161 files / 2300 tests, all pass), `bun run typecheck` (11 in-scope
+  packages pass — `debate-ai-web` has no `typecheck` script; this repo has
+  no `lint` script), and `bun run build:web` (production build) all pass.
+  PR: [#281](https://github.com/debate/debate-ai.com/pull/281) (merged), with
+  the popover render test and this tracker move following in a small
+  follow-up PR.
+- **Judge Profiles & Opponent Team Profiles — edit or delete an
+  already-logged round from the app.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used; this repo has no `IDEAS.md`, so the
+  "Product Feature Ideas"/"Research Crowdsourcing Organizer Features"
+  sections below are the backlog). Two sibling gaps, both created by the
+  logging forms the last two runs added:
+  `docs/features/judge-profiles.md` said "No delete/edit affordance in the
+  panel for an already-logged round — `deleteJudgeRoundRecord` … exists and
+  is covered, but nothing in the UI calls it, so a mistyped ballot can only
+  be corrected by logging further rounds," and
+  `docs/features/opponent-team-profiles.md` said "A logged round can be
+  deleted but not edited in place" plus "The logged-rounds list shows every
+  team's rounds together, with no per-team filter."
+  Both stores gain one new function —
+  `packages/debate-speech-writer/src/state/judgeRoundRecords.ts`'s
+  `updateJudgeRoundRecord` and
+  `packages/debate-data-sync/src/state/opponentRoundRecords.ts`'s
+  `updateOpponentRoundRecord` — which replaces one persisted record by `id`
+  *in place* (keeping its position in the history) and then re-aggregates
+  the affected judge/team through the existing
+  `rebuildJudgeProfileFromRecords`/`rebuildOpponentTeamProfileFromRecords`.
+  Reassigning a round to a different judge/team re-aggregates **both**, so
+  the previous entity's derived profile is dropped rather than left
+  zero-round when that was its last round; an unknown `id` is a no-op
+  returning `null`. No new profile-scoring or scouting logic was
+  introduced — every roster column stays a derived value, so there is still
+  deliberately no direct aggregate editing.
+  `JudgeProfilesPanel.tsx` gains the "Logged rounds" table its sibling
+  panel already had, now with **Edit** and **Delete** actions, and
+  `OpponentTeamProfilesPanel.tsx`'s existing table gains the matching
+  **Edit**. On both panels the log form doubles as the edit form: Edit
+  loads the round back into it ("Edit logged round", with **Save
+  changes**/**Cancel**), saving routes to `update…` instead of `record…`,
+  and deleting the round currently being edited cancels the edit. Both
+  logged-rounds lists also gain a per-judge/per-team filter (a
+  case-insensitive substring match on the id), closing the opponent panel's
+  "no per-team filter" gap.
+  Vitest-covered (10 new cases, 5 per store, in
+  `packages/debate-speech-writer/test/judgeRoundRecords.test.ts` and
+  `packages/debate-data-sync/test/opponentRoundRecords.test.ts`: in-place
+  replacement preserving history order, the updated profile matching a
+  direct `buildJudgeProfile`/`buildOpponentTeamProfile` over the corrected
+  round, reassignment re-aggregating both entities, the previous entity's
+  profile being deleted when the reassigned round was its last, and the
+  unknown-id no-op).
+  Documented in `docs/features/judge-profiles.md` and
+  `docs/features/opponent-team-profiles.md` (new "Correcting a logged
+  round" section in each, data-flow blocks extended with `update…`; the
+  edit/delete-affordance and per-team-filter Known gaps closed and replaced
+  with the real remaining scope — the filter is free-text rather than a
+  picker of the ids actually on record, and an edit has no undo/history).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (160 files / 2285 tests, all pass — 10 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including `/judges` and `/opponents`) all
+  pass.
+  PR: [#280](https://github.com/debate/debate-ai.com/pull/280).
+- **Opponent Team Profiles — "Log a scouted round" form, the in-app way to
+  create an opponent scouting profile.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used; this repo has no `IDEAS.md`, so the
+  "Product Feature Ideas"/"Research Crowdsourcing Organizer Features"
+  sections below are the backlog):
+  `docs/features/opponent-team-profiles.md`'s Known gaps said "No profile
+  editing/creation UI here — this panel only renders existing persisted
+  profiles," the exact counterpart of the judge-profiles gap closed last run
+  in [#278](https://github.com/debate/debate-ai.com/pull/278), so an
+  `OpponentTeamProfile` could only ever reach `/opponents` if something
+  called `saveOpponentTeamProfile` programmatically. The blocker was that
+  `state/opponentTeamProfiles.ts` persists only the *aggregate*, never the
+  rounds behind it, so there was nothing for a form to append to. A new
+  store, `packages/debate-data-sync/src/state/opponentRoundRecords.ts`,
+  persists the raw `OpponentRoundRecord` history (each entry carrying its
+  own `id`, since a team plays many rounds — mirroring
+  `debate-speech-writer`'s `judgeRoundRecords.ts` and this package's own
+  `tournamentResults.ts` wrapped-record convention), and re-derives the
+  affected team's profile from its *full* history through the existing
+  `buildOpponentTeamProfile`/`saveOpponentTeamProfile`:
+  `recordOpponentRound` (append + re-aggregate),
+  `rebuildOpponentTeamProfileFromRecords` (re-aggregate alone, deleting the
+  derived profile rather than leaving a zero-round one when no rounds
+  remain), and `deleteOpponentRoundRecord` (remove + re-aggregate). No new
+  scouting logic was introduced — every roster column stays a derived value,
+  so there is deliberately no direct aggregate editing. The store is scoped
+  to *opposing* teams and stays separate from `debate-round`'s
+  `state/ownRoundHistory.ts`, which persists the same record type from this
+  team's own perspective for pre-round briefings.
+  `OpponentTeamProfilesPanel.tsx` gains the "Log a scouted round" form (team
+  id, tournament, date, division, side debated, a "they won this round"
+  switch, optional comma-separated argument tags, optional case name, and an
+  optional head-to-head opponent id) and now renders the form above the
+  roster in the empty state too, instead of returning early — plus a "Logged
+  rounds" table whose Delete action calls `deleteOpponentRoundRecord`, so
+  the store's delete path has a real UI caller rather than repeating the
+  judge panel's still-open "no delete affordance" gap.
+  Vitest-covered (12 new cases in
+  `packages/debate-data-sync/test/opponentRoundRecords.test.ts`: persist +
+  derive, re-aggregation across rounds/tournaments/sides, argument-tag and
+  case re-ranking, per-team isolation, rebuild matching a direct
+  `buildOpponentTeamProfile`, profile deletion when no rounds remain,
+  delete-and-re-aggregate, delete of the last round, unknown-id no-op,
+  another team left untouched, and the corrupt-JSON / non-array storage
+  degradations).
+  Documented in `docs/features/opponent-team-profiles.md` (new "Logging a
+  scouted round" section, rewritten data-flow block covering both stores;
+  the editing/creation-UI Known gap closed and replaced with the real
+  remaining scope — no in-place edit of a logged round, no per-team filter
+  on the logged-rounds list, per-browser storage with no identity checks,
+  and follow-up (a)'s still-open real round-history data source).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (160 files / 2275 tests, all pass — 12 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including `/opponents`) all pass.
+  PR: [#279](https://github.com/debate/debate-ai.com/pull/279).
+- **Judge Profiles — "Log a judged round" form, the in-app way to create a
+  judge profile.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/judge-profiles.md`'s
+  Known gaps said "No profile editing/creation UI here — this panel only
+  renders existing persisted profiles," so a `JudgeProfile` could only ever
+  reach `/judges` if something called `saveJudgeProfile` programmatically.
+  The blocker was that `state/judgeProfiles.ts` persists only the
+  *aggregate*, never the ballots behind it, so there was nothing for a form
+  to append to. A new store,
+  `packages/debate-speech-writer/src/state/judgeRoundRecords.ts`, persists
+  the raw `JudgeRoundRecord` history (each entry carrying its own `id`,
+  since a judge decides many rounds — mirroring `debate-data-sync`'s
+  `tournamentResults.ts` wrapped-record convention that backs the Standings
+  panel's own "record a result" form), and re-derives the affected judge's
+  profile from their *full* history through the existing
+  `buildJudgeProfile`/`saveJudgeProfile`: `recordJudgeRound` (append +
+  re-aggregate), `rebuildJudgeProfileFromRecords` (re-aggregate alone,
+  deleting the derived profile rather than leaving a zero-round one when no
+  rounds remain), and `deleteJudgeRoundRecord` (remove + re-aggregate). No
+  new profile-scoring logic was introduced — every roster column stays a
+  derived value, so there is deliberately no direct aggregate editing.
+  `JudgeProfilesPanel.tsx` gains the "Log a judged round" form (judge id,
+  tournament, date, division, winning side, both sides' speaker points,
+  optional pace wpm, optional tagged paradigm from the existing
+  `judgeParadigms` catalog, and theory raised/won switches — where turning
+  "raised" off clears and disables "won", so a round can't be logged as
+  won-but-never-raised) and now renders the form above the roster in the
+  empty state too, instead of returning early.
+  Vitest-covered (10 new cases in
+  `packages/debate-speech-writer/test/judgeRoundRecords.test.ts`: persist +
+  derive, re-aggregation across rounds/tournaments/pace, per-judge
+  isolation, rebuild matching a direct `buildJudgeProfile`, profile deletion
+  when no rounds remain, delete-and-re-aggregate, delete of the last round,
+  unknown-id no-op, and the corrupt-JSON / non-array storage degradations).
+  Documented in `docs/features/judge-profiles.md` (new "Logging a judged
+  round" section, rewritten data-flow block covering both stores; the
+  editing/creation-UI Known gap closed and replaced with the real remaining
+  scope — no in-UI delete/edit affordance for an already-logged round, and
+  follow-up (a)'s still-open real ballot data source).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (159 files / 2263 tests, all pass — 10 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including `/judges`) all pass.
+  PR: [#278](https://github.com/debate/debate-ai.com/pull/278).
+- **Outline Filters and Argument Tree View — wire "generate outline for
+  current round" trigger.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/argument-tree-outline.md`'s
+  Known gaps said "nothing in the live round-flowing page calls
+  `buildAndSaveArgumentTree` yet" — the derive-and-persist helper already
+  existed (and was already Vitest-covered) but had no real caller anywhere
+  in the app, so a round's outline at `/outline` only ever appeared if
+  something computed and saved it programmatically. `ArgumentTreePanel.tsx`
+  gains a "Generate outline for current round" action, reading the round
+  workspace's currently selected flow via `state/store.ts`'s `useFlowStore`
+  — the same mechanism `VulnerabilityChartsPanel`'s "Generate report for
+  current round" action already uses — and calling the existing
+  `buildAndSaveArgumentTree(flow, roundId)` to derive and persist that
+  round's tree. No new tree-derivation or persistence logic was introduced;
+  this composes the existing helper directly, so no new Vitest cases were
+  needed beyond `buildAndSaveArgumentTree`'s existing coverage in
+  `packages/debate-round/test/argumentTrees.test.ts`. Docs updated at
+  `docs/features/argument-tree-outline.md` (new data-flow paragraph; Known
+  gaps' "nothing... calls `buildAndSaveArgumentTree`" bullet replaced with
+  the real remaining scope — the trigger is still manual, not automatic as
+  a round is flowed). Verified from a clean install: `bun install` (2050
+  packages), `bun run test` (158 files / 2253 tests, all pass — no new
+  cases, matching the "no new logic introduced" scope), `bun run typecheck`
+  (11 in-scope packages pass — `debate-ai-web` has no `typecheck` script;
+  this repo has no `lint` script), and `bun run build:web` (production
+  build, including `/outline`) all pass.
+  PR: [#277](https://github.com/debate/debate-ai.com/pull/277).
+- **Flow-in-Speech Flow Annotations / Shared, Ai-Generated Debate Flow —
+  cross-tab live update for FlowSpreadsheet's annotation/edit/prep-note
+  badges.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): both `docs/features/flow-annotations.md`
+  and `docs/features/shared-flow-sync.md` documented the same gap — the
+  `FlowSpreadsheet` grid's `AnnotationBadge`/`EditBadge` (and, incidentally,
+  `PrepNoteBadge`) read straight from `localStorage` at cell-render time and
+  never live-update if a *different browser tab* logs a new annotation,
+  edit, or prep note while the grid is open; only the same-tab,
+  logged-through-its-own-popover case (the prior "force-refresh FlowSpreadsheet
+  EditBadge after logging via popover" run, PR #270) was fixed. This closes
+  that cross-tab half: a new pure helper,
+  `packages/debate-round/src/flow/live-update.ts`'s
+  `isFlowLiveUpdateStorageEvent`, recognizes the browser's `storage`
+  event — which the spec fires only in *other* same-origin tabs, never the
+  tab that made the write — for the three badge-backing `localStorage` keys
+  (`flowAnnotations`, `flowEdits`, `prepNotes`), plus the `null`-key
+  `localStorage.clear()` case. `FlowSpreadsheet.tsx` now subscribes to that
+  event and calls `gridRef.current.api.refreshCells({ force: true })` across
+  the whole grid when it fires (a cross-tab event carries no row/column to
+  target the way the existing same-tab refresh does). This is additive only:
+  it doesn't change what any badge shows, only how promptly a *different*
+  open tab picks up someone else's change; it still doesn't help a different
+  device/browser see the edit (that's what the existing, separate Live Sync
+  server transport is for).
+  Vitest-covered (4 new cases in
+  `packages/debate-round/test/live-update.test.ts`: every backing-store key
+  recognized, the `null`-key clear-all case, an unrelated store's key
+  ignored, and a key that merely contains a badge-store name as a substring
+  also ignored).
+  Documented in `docs/features/shared-flow-sync.md` (new "Cross-tab live
+  update" data-flow section) and `docs/features/flow-annotations.md` (both
+  files' "Known gaps" cross-tab bullets closed and cross-referenced to each
+  other).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (158 files / 2253 tests, all pass — 4 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including `/debate`) all pass.
+  PR: [#276](https://github.com/debate/debate-ai.com/pull/276).
+- **Shared Evidence Library — tag rename/merge tool.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/evidence-library.md`'s
+  Known gaps said there was "No tag rename/merge tool — the Tags field's
+  autocomplete only suggests reusing an existing tag while typing; renaming
+  or merging a tag already applied to existing entries would mean rewriting
+  every entry that carries it, and isn't implemented." This adds exactly
+  that: two new pure helpers in `packages/debate-card-search/src/lib/argument-library.ts`,
+  `renameTagInList` (rewrites a single card's tag list, deduping if the
+  target tag is already present) and `renameTagAcrossCards` (applies it
+  across a `LibraryCard[]`, returning each unaffected card as the exact same
+  object reference and throwing on a blank or identical old/new tag), plus a
+  persisted `renameTagAcrossPersistedEntries` in
+  `state/evidenceLibraryEntries.ts` that applies the rewrite to the real
+  evidence repository and writes back only when something actually changed.
+  `panels/ArgumentLibraryPanel.tsx` (`/cards/argument-library`, where the
+  tag collections themselves are browsable) gets a new "Rename/merge tag"
+  form: a dropdown of existing tags plus a new-name field, showing how many
+  entries changed (or that nothing did) after each rename. Renaming into an
+  already-used tag name merges the two rather than erroring or duplicating.
+  This only rewrites the evidence-library repository's own entries — a
+  Contributions Feed submission's tags are a separate store/form and are
+  left untouched, as documented in the panel's own copy and in
+  `docs/features/evidence-library.md`.
+  Vitest-covered (8 new cases in
+  `packages/debate-card-search/test/argument-library.test.ts`:
+  `renameTagInList` for replace/unchanged-reference/dedupe-merge, and
+  `renameTagAcrossCards` for a multi-card rename leaving an unrelated card
+  untouched by reference, merging into an existing tag, a true no-op when
+  the tag is unused anywhere, and throwing on a blank old tag, a blank new
+  tag, and identical old/new tags; 4 new cases in
+  `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`:
+  `renameTagAcrossPersistedEntries` for rewrite-and-persist, merge, a true
+  no-write no-op verified against the raw `localStorage` string, and
+  throwing on a blank new tag).
+  Documented in `docs/features/evidence-library.md` (new "Tag rename/merge"
+  data-flow section; Known gaps' "No tag rename/merge tool" bullet closed
+  and replaced with the real remaining scope — Contributions Feed tags
+  aren't covered).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (157 files / 2249 tests, all pass — 12 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including `/cards/argument-library`) all
+  pass.
+  PR: [#275](https://github.com/debate/debate-ai.com/pull/275).
+- **Online Debate Versus AI — "Regenerate last AI speech" affordance.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/ai-versus-rounds.md`'s
+  Known gaps said the AI speech-generation call had no retry/regenerate
+  action if the generated speech was unsatisfactory — a user had to clear
+  the whole round and start over, losing every already-delivered speech
+  (the user's own included) along with it. This adds exactly the narrower
+  "regenerate affordance" that gap bullet named, without touching any
+  existing turn-order, validation, or persistence logic: two new pure
+  helpers in `packages/debate-round/src/state/aiVersusRounds.ts`,
+  `canRegenerateLastAiSpeech` (true only when a round's most recently
+  submitted speech was the AI's) and `replaceLastAiSpeech` (returns a copy
+  of the round record with that last speech's text swapped in place —
+  keeping its slot name/speaker and every earlier speech, including any of
+  the user's, untouched — throwing if the last speech wasn't the AI's).
+  `panels/AiVersusRoundPanel.tsx` wires a new "Regenerate last AI speech"
+  button that appears whenever `canRegenerateLastAiSpeech` is true
+  (regardless of whose turn is next, including after the round is
+  complete): it rebuilds the exact same `AiSpeechRequest` that
+  `buildAiResponseRequest` produced when that speech was first generated
+  (by passing `submittedCount - 1` and the speeches delivered before it,
+  so the regeneration responds to the same context the original call did,
+  carrying no memory of the text it's replacing), calls the existing
+  `requestAiVersusSpeech`/`requestAiVersusSpeechWithPersona` client exactly
+  as "Generate AI speech" does, and saves the result through
+  `replaceLastAiSpeech`. The "Generate AI speech" and "Regenerate" buttons
+  now disable each other while either request is in flight.
+  Vitest-covered (6 new cases in
+  `packages/debate-round/test/aiVersusRounds.test.ts`: `canRegenerateLastAiSpeech`
+  for no submitted speeches, a user-authored last speech, and an
+  AI-authored last speech; `replaceLastAiSpeech` for the text swap itself,
+  non-mutation of the input record, throwing when the last speech isn't
+  the AI's, and throwing when there are no submitted speeches yet).
+  Documented in `docs/features/ai-versus-rounds.md` (new "Regenerating the
+  last AI speech" data-flow section and "What it shows" paragraph; Known
+  gaps' "no retry/regenerate action" bullet closed and replaced with the
+  real remaining gap — only the most recently submitted speech can be
+  regenerated, not an earlier one mid-round, since `submittedSpeeches` is a
+  flat, append-only array with no per-slot identity beyond position).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (157 files / 2236 tests, all pass — 6 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including every existing route, `/versus-ai`
+  among them) all pass.
+  PR: [#274](https://github.com/debate/debate-ai.com/pull/274).
+- **Prep Notes — note-creation UI directly on the live flow.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/prep-notes.md`'s
+  Known gaps section said there was "no note-creation UI" — a `PrepNote`
+  could only be created programmatically (e.g. in a test), never through
+  the app itself; `PrepNotesPanel` only surfaced and updated existing
+  notes. Rather than the "future flow-view affordance" that gap bullet
+  speculated about, this adds exactly that affordance to the existing
+  `FlowSpreadsheet` grid, mirroring the `EditBadge`/`EditReviewPopover`
+  pattern already used for `FlowEdit`s: a new `flow/PrepNoteBadge.tsx`
+  (always-visible per-cell badge, showing a note count once any exist)
+  renders next to the existing annotation/edit badges in both
+  `FirstColumnCellRenderer` and `AnnotationCellRenderer`; clicking it opens
+  a new `flow/PrepNotePopover.tsx` (lists the box's existing notes, plus an
+  "author id" + "text" form) positioned via `FlowSpreadsheet.tsx`'s new
+  `handleOpenPrepNote`/`prepNoteBoxNotes`/`handlePrepNoteCreated`, which
+  mirror the file's existing edit-review state exactly (including
+  force-refreshing just the affected cell via `gridCellForBoxPath` after a
+  note is created, so the badge's count updates immediately). Submitting
+  the popover's form calls `strategy-sync-notes.ts`'s already-existing
+  `createPrepNote` and `state/prepNotes.ts`'s already-existing
+  `savePrepNote` directly — no new mutation logic, only a new
+  `listPrepNotesForBox(flowId, boxPath)` query helper (wrapping
+  `strategy-sync-notes.ts`'s existing `getNotesForBox`) added to
+  `state/prepNotes.ts` to feed the badge/popover. A note created this way
+  is the same persisted `PrepNote` store `PrepNotesPanel` already reads, so
+  it immediately shows up there too, groupable/assignable/cycleable exactly
+  like a note created any other way.
+  Vitest-covered (6 new cases: 2 in
+  `packages/debate-round/test/prepNotes.test.ts` for `listPrepNotesForBox`
+  — filtering by exact flow+box path, and an empty-box case; 4 in the new
+  `packages/debate-round/test/PrepNoteBadge.test.tsx`, mirroring
+  `EditBadge.test.tsx` — the always-rendered zero-notes affordance, the
+  badge's title listing every note oldest-first, singular vs. plural
+  wording). `PrepNotePopover` itself has no dedicated test file, matching
+  this repo's existing convention for `EditReviewPopover` (no test file
+  either) — popover components here are verified via the production build
+  only. Documented in `docs/features/prep-notes.md` (new "Create a note"
+  section; Known gaps' "No note-creation UI" bullet closed and replaced
+  with the real remaining gap — the popover's "Author ID" field is
+  free-form/unauthenticated, same as every other id field in this
+  auth-less repo). Verified from a clean install: `bun install` (2050
+  packages), `bun run test` (157 files / 2229 tests, all pass — 6 new
+  cases), `bun run typecheck` (11 in-scope packages pass — `debate-ai-web`
+  has no `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including every existing route, `/debate`
+  and `/prep-notes` among them) all pass.
+  PR: [#273](https://github.com/debate/debate-ai.com/pull/273).
+- **Prep Notes — "jump to argument" link back to a note's flow box.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/prep-notes.md`'s
+  Known gaps section said `PrepNotesPanel` had no "jump to argument" link
+  back to the flow box a note is about, since that panel is cross-flow and
+  doesn't mount a live `Flow` for `resolvePrepNoteBox` to resolve against.
+  Rather than mounting a `Flow` into the cross-flow panel, the link instead
+  hands off to `/debate`, which already owns one. Added
+  `flow/strategy-sync-notes.ts`'s `buildPrepNoteJumpHref`/
+  `parsePrepNoteJumpParams` (a `/debate?flowId=&boxPath=` deep link and its
+  tolerant inverse — returns `null` rather than throwing on a
+  missing/malformed param) and `flow/edit-cells.ts`'s `jumpToBoxInGrid`
+  (scrolls to and flashes a box's AG Grid cell via the existing
+  `gridCellForBoxPath`, returning `false` as a no-op if the row isn't in
+  the grid's current row model yet). A new
+  `hooks/useJumpToPrepNoteBox.ts`, mounted by `DebateFlowPage` alongside
+  the existing `useRoundFromSlug`/`useSyncUrlWithRound` URL-sync hooks,
+  reads the deep link's `flowId`/`boxPath`, selects the matching flow tab
+  by id (`flows.findIndex`, not the store's array-index `selected`), and
+  retries `jumpToBoxInGrid` both immediately (grid already mounted) and via
+  a new `onFlowGridReady` callback threaded through `FlowMainContent` (for
+  a flow whose grid hasn't mounted yet). `PrepNotesPanel.tsx` renders a
+  "Jump to argument" link per note using `buildPrepNoteJumpHref`.
+  Vitest-covered (10 new cases: 8 in
+  `packages/debate-round/test/strategy-sync-notes.test.ts` for
+  `buildPrepNoteJumpHref`/`parsePrepNoteJumpParams` — round-tripping,
+  single-segment paths, and missing/non-numeric/negative-segment
+  malformed-param cases each returning `null`; 2 in
+  `packages/debate-round/test/edit-cells.test.ts` for `jumpToBoxInGrid`
+  against a fake grid API — a successful scroll+flash, and the no-op
+  `false` case when the row isn't found). Documented in
+  `docs/features/prep-notes.md` (new "Jump to argument" section; Known
+  gaps' "No 'jump to argument' link" bullet closed and replaced with the
+  real remaining gap — a stale `boxPath` silently no-ops rather than
+  erroring). Verified from a clean install: `bun install` (2050 packages),
+  `bun run test` (156 files / 2224 tests, all pass — 10 new cases), `bun
+  run typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run
+  build:web` (production build, including every existing route,
+  `/prep-notes` and `/debate` among them) all pass.
+  PR: [#272](https://github.com/debate/debate-ai.com/pull/272).
+- **Shared Evidence Library — true incremental search-index updates instead
+  of a full rebuild on every cache invalidation.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/evidence-library.md`'s
+  Known gaps section said `state/evidenceLibraryEntries.ts`'s cached
+  `EvidenceSearchIndex` still fell back to a full
+  `buildEvidenceSearchIndex` re-tokenize-everything pass over every live
+  entry whenever its cache-invalidation fingerprint changed, even when a
+  write only actually touched one entry. Added
+  `lib/evidence-search-index.ts`'s `addEntryToIndex`/`removeEntryFromIndex`/
+  `updateEntryInIndex`, each mutating an `EvidenceSearchIndex` in place and
+  touching only the postings lists the affected entry itself contributes to
+  (tracked per-entry via a new `entryTermsById` map on the index, so
+  `removeEntryFromIndex` never has to scan the full vocabulary) —
+  `buildEvidenceSearchIndex` itself is now just `addEntryToIndex` called
+  once per entry into an empty index. `getCachedEvidenceSearchIndex` now
+  diffs the live-entry set its cached index was last built/updated from
+  (`cachedLiveEntriesById`, keyed by id) against the current one and applies
+  the incremental functions only for entries actually added, removed, or
+  changed (by content, not just presence) — an unrelated write (e.g. a
+  different entry's peer-review transition) leaves every other entry's
+  postings untouched, and `buildEvidenceSearchIndex` is now only ever called
+  for the very first build. Vitest-covered (7 new cases in
+  `packages/debate-card-search/test/evidence-search-index.test.ts`:
+  add/replace without duplicating postings, remove drops only the removed
+  entry's own terms while leaving a shared term's other postings intact,
+  removing a term's last entry drops it from the postings map entirely,
+  removing an unindexed id is a no-op, update drops stale terms and adds new
+  ones, and an index built purely via repeated `addEntryToIndex` calls
+  matches one built directly; 4 existing cache tests in
+  `packages/debate-card-search/test/evidenceLibraryEntries.test.ts` rewritten
+  to assert `buildEvidenceSearchIndex` is *not* called again on a
+  save/delete/peer-review-transition/edit while the matching incremental
+  function *is*, alongside the existing result-correctness assertions).
+  Documented in `docs/features/evidence-library.md` (new "Incremental
+  indexing" section; Known gaps' entry for this closed — no further
+  follow-up remains open on the "📋 Shared Evidence Library" bullet).
+  Verified from a clean install: `bun install` (2050 packages), `bun run
+  test` (156 files / 2214 tests, all pass), `bun run typecheck` (11 in-scope
+  packages pass — `debate-ai-web` has no `typecheck` script; this repo has
+  no `lint` script), and `bun run build:web` (production build, including
+  every existing route) all pass.
+- **Shared, Ai-Generated Debate Flow — force-refresh the `FlowSpreadsheet`
+  `EditBadge` cell after logging through its own popover.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/shared-flow-sync.md`'s
+  Known gaps section said the `EditBadge` "doesn't refresh in place after
+  logging one through its own popover until the grid next re-renders that
+  cell" — a same-tab staleness bug, distinct from the cross-tab gap it was
+  bundled with. AG Grid's React cell renderers (`AnnotationCellRenderer`)
+  read `state/flowEdits.ts` directly from `localStorage` at render time and
+  don't re-render on their own when a sibling React state change happens;
+  `FlowSpreadsheet.tsx` already had an `editReviewRefreshToken` bump for the
+  popover's own edit list, but nothing told AG Grid to redraw the grid cell
+  itself. Added `flow/edit-cells.ts`'s `gridCellForBoxPath(boxPath)`, a pure
+  helper mapping a box path to its AG Grid `row-${index}` id and `col_${j}`
+  field (mirroring `dataTransform.ts#buildRowData`'s and
+  `useFlowGridConfig.ts`'s existing conventions — the same pair
+  `annotation-cells.ts#boxPathForCell` derives a `boxPath` from). Wired a new
+  `handleEditLogged` callback into `EditReviewPopover`'s `onLogged` prop that
+  bumps the existing refresh token and calls
+  `gridRef.current.api.refreshCells({ rowNodes, columns, force: true })` for
+  exactly that cell. Vitest-covered (3 new cases in
+  `packages/debate-round/test/edit-cells.test.ts`'s `gridCellForBoxPath`
+  suite: first-row/first-column mapping, a later row/column pair, and a
+  round-trip through `boxPathForCell` for arbitrary indices). Verified with
+  `bun run test` (156 files / 2206 tests, all pass — 3 new cases), `bun run
+  typecheck` (11 in-scope packages pass — `debate-ai-web` has no `typecheck`
+  script; this repo has no `lint` script), and `bun run build` (both
+  buildable packages pass). Docs updated at
+  `docs/features/shared-flow-sync.md` (new "EditBadge same-tab refresh"
+  section; Known gaps narrowed to the remaining cross-tab case, now
+  explicitly distinguished from Live Sync's cross-*contributor* mechanism).
+  PR: https://github.com/debate/debate-ai.com/pull/270.
+- **Practice Round Simulator — wire post-round feedback generation to a live round flow.**
+  Found via this run's own doc/tracker-drift audit of every
+  `docs/features/*.md` "Known gaps" section (following the same audit
+  pattern the last several runs used): `docs/features/practice-round-simulator.md`'s
+  Known gaps section was itself stale — it still said follow-up (a)'s AI
+  opponent-speech and AI judge-decision calls were "not started," but both
+  already existed and were wired into `PracticeRoundSimulatorPanel.tsx`
+  ("Generate AI opponent speech" / "Get AI judge decision"). Doc text
+  corrected. Underneath that stale half, the doc's real remaining claim —
+  "feedback generation isn't wired to a live round flow in this app yet" —
+  was accurate: `buildPracticeRoundFeedback` (which needs an already-flowed
+  `Flow`) had no caller anywhere in the app, so every practice round's card
+  permanently showed "no post-round feedback yet." Added
+  `buildAndSavePracticeRoundFeedback(flow, roundId, sideKey)` to
+  `packages/debate-round/src/state/practiceRounds.ts`, which derives a
+  round's `PracticeRoundFeedback` (judged under that round's own already-
+  saved `setup.judgeParadigm`) and saves it onto the round's persisted
+  record — returning `undefined` without writing anything if no record is
+  stored for that `roundId` yet. `PracticeRoundSimulatorPanel.tsx` gained a
+  "Generate post-round feedback for current round" form per round, reading
+  the round workspace's currently selected flow via `state/store.ts`'s
+  `useFlowStore` — the same mechanism `CoachingSessionsPanel`'s "Generate
+  coaching session for current round" action already uses — enabled only
+  while the selected flow's id matches that card's `roundId`. No new
+  coaching-session or judge-paradigm logic was introduced; this composes
+  the existing `buildPracticeRoundFeedback` (itself built on `flow/coach-mode.ts`'s
+  `buildCoachingSession`) directly. Vitest-covered (4 new cases in
+  `packages/debate-round/test/practiceRounds.test.ts`'s
+  `buildAndSavePracticeRoundFeedback` suite: no-op + `undefined` for an
+  unstored `roundId`, deriving feedback under the round's own judge
+  paradigm and saving it, preserving the record's other fields (`setup`,
+  `judgeDecision`) when saving feedback, and overwriting previously
+  generated feedback). Verified with `bun run test` (156 files / 2203
+  tests, all pass — 4 new cases), `bun run typecheck` (11 in-scope packages
+  pass — `debate-ai-web` has no `typecheck` script; this repo has no `lint`
+  script), and `bun run build` (both buildable packages pass, `/practice-round`
+  present in the route list). Docs updated at
+  `docs/features/practice-round-simulator.md` (Known gaps section now reads
+  "No known gaps remain for this idea"). PR:
+  https://github.com/debate/debate-ai.com/pull/269.
+- **Flow Annotations — switch video on cross-recording "Jump to".** Closes
+  one of the four "Newly discovered small gaps" logged by the previous run's
+  doc/tracker drift audit (see the entry below): `FlowAnnotationsPanel.handleJump`
+  (`packages/debate-round/src/panels/FlowAnnotationsPanel.tsx`) and the
+  matching `FlowSpreadsheet.handleJumpToAnnotation`
+  (`packages/debate-round/src/flow/FlowSpreadsheet.tsx`) only seeked within
+  the already-active video — if an annotation's own recording wasn't the one
+  loaded in the persistent player, "Jump to" showed a disabled/no-op
+  affordance instead of opening the right video first. Added a pure,
+  dependency-injected `jumpToAnnotation(annotation, deps)` helper in
+  `packages/debate-round/src/flow/flow-annotations.ts`: same-video jumps
+  still seek in place via `sendYouTubeCommand("seekTo", ...)` +
+  `"playVideo"`; a different (or no) video loaded instead calls
+  `deps.setActiveVideo(videoId, videoId, undefined, timestampMs / 1000)`
+  (falling back to the bare `videoId` as the title, since no stored catalog
+  maps one to a title — `FlowAnnotation` itself never carried one). Both
+  `FlowAnnotationsPanel` and `FlowSpreadsheet` now call this one helper
+  instead of duplicating the guard, and the panel's "Jump to" button is
+  disabled only when the annotation has no `videoId` at all. `debate-videos`'s
+  `useVideoPlayerStore.setActiveVideo`
+  (`packages/debate-videos/src/state/videoPlayerStore.ts`) gained an optional
+  4th `startTimeSeconds` param that overrides its saved-resume-timestamp
+  lookup, feeding the existing `&start=` YouTube-embed URL param — chosen
+  over firing a `seekTo` postMessage immediately after switching, because
+  research this run confirmed the iframe's new document isn't guaranteed to
+  have loaded yet and this codebase has no "player ready" signal anywhere to
+  gate on (no prior "switch then seek" pattern existed to reuse). No new
+  annotation-model or persistence logic; `AnnotationBadge`/`AnnotationCellRenderer`
+  needed no changes (they're pure/props-driven, with no video-matching gate
+  of their own). Vitest-covered (4 new cases in
+  `packages/debate-round/test/flow-annotations.test.ts`'s `jumpToAnnotation`
+  suite, using fake injected deps: same-video seek, cross-video switch,
+  switch when nothing is loaded, and the no-`videoId` no-op). Verified with
+  `bun run test` (156 files / 2199 tests, all pass — 4 new cases),
+  `bun run typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script; this repo has no `lint` script), and `bun run build`
+  (both buildable packages pass, `/annotations` present in the route list).
+  Docs updated at `docs/features/flow-annotations.md` (new "Cross-recording
+  'Jump to'" section; the sole remaining Known gap is the same
+  title-fallback caveat noted above — a video catalog mapping `videoId` to a
+  title doesn't exist anywhere in this repo yet). PR:
+  https://github.com/debate/debate-ai.com/pull/268.
+- **AI Response-Outcome Charts — AI counsel panel now scores an active "what if" hypothetical.**
+  Closes one of the four "Newly discovered small gaps" logged by the
+  previous run's doc/tracker drift audit (see that entry below):
+  `docs/features/response-outcome-charts.md`'s Known gap that
+  `VulnerabilityChartsPanel.handleGetCounselPanel`
+  (`packages/debate-round/src/panels/VulnerabilityChartsPanel.tsx`) built
+  its AI counsel request's top arguments from `record.report` — the
+  original persisted report — instead of `effectiveReport`, the report
+  with the panel's own "what if" (Extend/Answer/Concede) hypothetical
+  adjustments applied via `applyHypotheticalAdjustments`. The chart and
+  side summary above the counsel-panel button already rendered
+  `effectiveReport`, so an active hypothetical was silently ignored by the
+  AI counsel call even though the rest of the card reflected it.
+  Extracted the inline top-arguments derivation (previously duplicated
+  logic in the panel) into a new pure helper,
+  `buildCounselPanelTopArguments(report, options)` in
+  `packages/debate-round/src/flow/response-outcome.ts`, which composes the
+  existing `buildVulnerabilityChartDataFromReport` + a per-row field trim
+  in one step. `handleGetCounselPanel` now takes `effectiveReport` as a
+  parameter (passed from the render scope where it's already computed) and
+  calls `buildCounselPanelTopArguments(effectiveReport)` instead of
+  rebuilding the list from `record.report` inline. No change to the
+  vulnerability-scoring heuristic itself. Vitest-covered (3 new cases in
+  `packages/debate-round/test/response-outcome.test.ts`'s
+  `buildCounselPanelTopArguments` suite: ranked top-N trimmed to the
+  counsel-request fields, the default limit of 10, and reflecting a
+  hypothetical-adjusted report's recomputed score/unanswered status instead
+  of the original report's). Verified with `bun run test` (156 files /
+  2195 tests, all pass — 3 new cases), `bun run typecheck` (11 in-scope
+  packages pass — `debate-ai-web` has no `typecheck` script; this repo has
+  no `lint` script), and `bun run build` (both buildable packages pass,
+  `/outcomes` present in the route list). Docs updated at
+  `docs/features/response-outcome-charts.md` (closes its only Known gap;
+  the section now reads "No known gaps remain for this idea"). PR:
+  https://github.com/debate/debate-ai.com/pull/267.
+- **AI Coach Mode — "generate coaching session for current round" form.**
+  Closed `docs/features/coaching-sessions.md`'s only remaining Known gap —
+  the same doc/tracker-drift pattern the three most recent runs already
+  closed for Pre-Round Briefings, Practice Drills, and Response-Outcome
+  Charts, found via a systematic audit this run of every `docs/features/*.md`
+  "Known gaps" section against the actual current code (see "Doc/tracker
+  drift audit" note below for what else that audit surfaced).
+  `CoachingSessionsPanel.tsx` (`/coaching`) now has a "Generate coaching
+  session for current round" form (a side input + button, disabled with an
+  inline hint when no flow is currently selected), reading the round
+  workspace's currently selected flow via `state/store.ts`'s `useFlowStore`
+  — the same mechanism `DrillSetsPanel`'s "Generate drills for current
+  round" action already uses. It calls one new helper,
+  `buildAndSaveCoachingSession` in
+  `packages/debate-round/src/state/coachingSessions.ts`, which composes the
+  existing `buildCoachingSession` (from `flow/coach-mode.ts`) +
+  `saveCoachingSession` in one step (mirroring `drillSets.ts`'s
+  `buildAndSaveDrillSet`) — no new coaching-prompt derivation logic.
+  Vitest-covered (4 new cases in
+  `packages/debate-round/test/coachingSessions.test.ts`: deriving and
+  persisting a session from a flow, overwriting an existing record for the
+  same round+side pair, keeping sessions for different sides of the same
+  round distinct, and `collapseLimit` passing through to
+  `buildCoachingSession`). Verified with `bun run test` (156 files / 2192
+  tests, all pass — 4 new cases), `bun run typecheck` (11 in-scope packages
+  pass — `debate-ai-web` has no `typecheck` script; this repo has no `lint`
+  script), and `bun run build` (both buildable packages pass, `/coaching`
+  present in the route list). Docs updated at
+  `docs/features/coaching-sessions.md`; no follow-ups remain open on this
+  bullet. PR: https://github.com/debate/debate-ai.com/pull/266.
+
+  Doc/tracker drift audit (systematic pass this run over all 39
+  `docs/features/*.md` files with a "Known gaps" section, verifying each
+  listed gap against the actual current code rather than trusting the doc's
+  own claim):
+  - 4 stale docs found and fixed this run (doc claimed a gap that was
+    already closed in code): `reason-editor-outline-nav.md` (the
+    ProseMirror decoration plugin that hides collapsed ranges,
+    `collapsedHeadingsPlugin`, already exists and is wired in),
+    `judge-paradigm-selections.md` (the AI judge-decision call using
+    `buildJudgeParadigmPrompt` already exists — `judge-decision-ai.ts` /
+    `judge-decision-client.ts` / `judge-decision-store-wiring.ts`, wired
+    into `JudgeDecisionPanel.tsx`/`PracticeRoundSimulatorPanel.tsx`),
+    `contributor-awards.md` (a real submitted-contribution flow already
+    exists via `ContributionsFeedPanel.tsx`), and `group-challenges.md`
+    (`CoachingProgramsPanel.tsx` already reads through this store via
+    `state/persistedCoachingProgramBoard.ts`'s `listGroupChallenges` call).
+  - 4 real, small, non-external-infra-blocked gaps were also found and
+    logged below as new backlog items for a future run (not implemented
+    this run, to keep this run's diff to the one task above): a missing
+    "regenerate AI speech" action in AI-Versus Rounds, completed
+    research-task history that's never pruned, the Flow Annotations "Jump
+    to" action not switching videos, and the Response-Outcome Charts AI
+    counsel call ignoring an active "what if" hypothetical. See "Newly
+    discovered small gaps" below.
+  - Every other audited doc's "Known gaps" section checked out as accurate
+    against the current code — either still genuinely open, or already
+    correctly documented as blocked on external infrastructure this repo
+    doesn't have (Tabroom authentication, audio/video transcription, no
+    reviewer/auth system). See "Remaining backlog audit" below for the
+    external-infra items, unchanged from prior runs.
+
+  Newly discovered small gaps (found by this run's doc/tracker drift audit;
+  each is small and not blocked by external infrastructure — good
+  candidates for a future run's "select a new idea" step before reaching
+  for `IDEAS.md`/Product Feature Ideas):
+  - `docs/features/ai-versus-rounds.md`: `AiVersusRoundPanel.tsx` has no way
+    to replace a just-generated AI speech — only "Generate AI speech" to
+    append one. Add a "Regenerate" action (re-calling
+    `requestAiVersusSpeech`/`requestAiVersusSpeechWithPersona` and
+    overwriting the last `submittedSpeeches` entry) gated to when the last
+    speech is AI-authored.
+  - `docs/features/research-progress-tracking.md`:
+    `state/researchProgress.ts` has no way to delete a topic's completed-task
+    history records — they accumulate forever. Add a
+    `deleteCompletedTaskHistoryForTopic(topic)` export.
+  - `docs/features/flow-annotations.md`: `FlowAnnotationsPanel.handleJump`
+    (and the matching `FlowSpreadsheet` badge) only seeks within the
+    already-active video — if the annotation's video isn't loaded, it gives
+    up instead of switching videos first via `debate-videos`'s
+    `useVideoPlayerStore.setActiveVideo(videoId, title, meta?)`.
+  - `docs/features/response-outcome-charts.md`:
+    `VulnerabilityChartsPanel.handleGetCounselPanel`
+    (`packages/debate-round/src/panels/VulnerabilityChartsPanel.tsx:128-142`)
+    builds its AI counsel request's `topArguments` from `record.report` (the
+    original persisted report) instead of `effectiveReport` (the report with
+    the panel's own "what if" hypothetical adjustments applied via
+    `applyHypotheticalAdjustments`) — so an active what-if adjustment is
+    silently ignored by the AI counsel call even though the rendered chart
+    reflects it.
+- **AI Response-Outcome Charts — add a "generate report for current round" form.**
+  TODO.md's idea #4 ("AI Response-Outcome Charts") already said "No
+  follow-ups remain open," but `docs/features/response-outcome-charts.md`'s
+  "Known gaps" still listed one — the same doc/tracker drift the two most
+  recent runs closed for Pre-Round Briefings and Practice Drills: "No
+  affordance in this panel to generate a new vulnerability report for a
+  round — a report only appears here once something elsewhere calls
+  `getArgumentVulnerabilityReport` and `saveVulnerabilityReport` for that
+  round." `VulnerabilityChartsPanel` (`/outcomes`) now has a "Generate
+  report for current round" form (a button, disabled with an inline hint
+  when no flow is currently selected), reading the round workspace's
+  currently selected flow via `state/store.ts`'s `useFlowStore` — the same
+  mechanism `DrillSetsPanel`'s "Generate drills for current round" action
+  already uses. It calls one new helper,
+  `buildAndSaveVulnerabilityReport` in
+  `packages/debate-round/src/state/vulnerabilityReports.ts`, which composes
+  the existing `getArgumentVulnerabilityReport` + `getFlowSideKeys` +
+  `saveVulnerabilityReport` in one step (mirroring `drillSets.ts`'s
+  `buildAndSaveDrillSet`) — no new vulnerability-scoring logic. Unlike the
+  Drill Sets form, no side-key input is needed since a vulnerability report
+  scores every side's arguments in one pass. Vitest-covered (3 new cases in
+  `packages/debate-round/test/vulnerabilityReports.test.ts`: deriving and
+  persisting a report from a flow, overwriting an existing record for the
+  same round, and `sideKeys` deriving correctly via `getFlowSideKeys`).
+  Verified with `bun run test` (156 files / 2188 tests, all pass — 3 new
+  cases), `bun run typecheck` (11 in-scope packages pass — `debate-ai-web`
+  has no `typecheck` script), and `bun run build` (both buildable packages
+  pass, `/outcomes` present in the route list). Docs updated at
+  `docs/features/response-outcome-charts.md`; no follow-ups remain open on
+  this bullet. The remaining backlog audited by prior runs (Tabroom-
+  authentication-gated data sources, missing transcription service, and the
+  browser-extension idea) is unaffected and still accurate — see the
+  Pre-Round Briefings entry below for the full audit.
+
+- **Pre-Round Briefings — persist and wire in a team's own round history.**
+  Closes the real (not form-oversight) gap the previous run documented in
+  `docs/features/pre-round-briefings.md`'s "Known gaps": the "create
+  briefing" form's "Prior meetings" section always rendered "No recorded
+  prior meetings" even when an opponent profile was picked, because
+  `round/pre-round-briefing.ts`'s `buildPreRoundBriefingFromStores` already
+  supported a head-to-head `ownRecords`/`opponentTeamId` history when
+  called directly, but no persisted store of a team's own round history
+  existed for it to read from. Added
+  `packages/debate-round/src/state/ownRoundHistory.ts`, a new
+  `OpponentRoundRecord`-per-logged-round localStorage store (append-only,
+  synthetic id per record, mirroring `debate-data-sync`'s
+  `tournamentResults.ts` convention) with `listOwnRoundHistory`/
+  `saveOwnRoundHistoryRecord`/`deleteOwnRoundHistoryRecord`/
+  `getOwnRoundHistoryAgainst`. `buildPreRoundBriefingFromStores` now
+  resolves `ownRecords` from this store by `opponentTeamId` the same way it
+  already resolved `opponentProfile`/`judgeProfile` by id — no new
+  head-to-head computation logic; it still delegates to the existing
+  `getHeadToHeadRecords`/`summarizePriorMeetings`. `PreRoundBriefingsPanel`
+  (`/briefings`) gained a "Log a round" form (tournament, date, division,
+  side, an opponent picked from an already-persisted Opponent Team Profile,
+  and Won/Lost), with a "Remove" action per logged round — otherwise the
+  store would have been just as unreachable from the shipped app as the
+  briefing store was before last run's "create briefing" form. Vitest-
+  covered: a new `packages/debate-round/test/ownRoundHistory.test.ts` (10
+  cases covering empty/corrupt/non-array storage, append-not-overwrite,
+  delete, and head-to-head filtering including records with no
+  `opponentTeamId`), plus 2 new cases in
+  `packages/debate-round/test/pre-round-briefing.test.ts` covering
+  `buildPreRoundBriefingFromStores` resolving `ownRecords` from the store
+  and an explicitly supplied `ownRecords` still taking precedence over it.
+  Verified with `bun run test` (156 files / 2186 tests, all pass — 1 new
+  file, 12 new cases), `bun run typecheck` (11 in-scope packages pass —
+  `debate-ai-web` has no `typecheck` script), and `bun run build` (both
+  buildable packages pass). Docs updated at
+  `docs/features/pre-round-briefings.md`; no follow-ups remain open on this
+  gap. The remaining backlog audited by the previous run (Tabroom-
+  authentication-gated data sources, missing transcription service, and the
+  browser-extension idea) is unaffected and still accurate — see that
+  entry below.
+
+- **Practice Drills — add a "generate drills for current round" form.** The
+  "📚 AI Drill Generator" bullet in TODO.md's Research Crowdsourcing
+  Organizer Features list said "No follow-ups remain open," but
+  `docs/features/drill-sets.md`'s "Known gaps" still listed one: "No
+  affordance in this panel to generate a new drill set for a round — a set
+  only appears here once something elsewhere calls `buildDrillSet` and
+  `saveDrillSet` for that round" — the same doc/tracker drift idea #12's
+  Pre-Round Briefings form closed last run. `DrillSetsPanel` (`/drills`) now
+  has a "Generate drills for current round" form (a side-key input plus a
+  button, disabled with an inline hint when no flow is currently selected),
+  reading the round workspace's currently selected flow via
+  `state/store.ts`'s `useFlowStore` — the same mechanism
+  `CoachingProgramsPanel`'s "Save current flow" action already uses. It
+  calls one new helper, `buildAndSaveDrillSet` in
+  `packages/debate-round/src/state/drillSets.ts`, which composes the
+  existing `buildDrillSet` + `saveDrillSet` in one step (mirroring
+  `roundContributorFlows.ts`'s `buildAndSaveRoundContributorFlow`) — no new
+  drill-generation logic. Vitest-covered (3 new cases in
+  `packages/debate-round/test/drillSets.test.ts`: deriving and persisting a
+  drill set from a flow, overwriting an existing record for the same round,
+  and `collapseLimit` passing through to `buildDrillSet`). Verified with
+  `bun run test` (155 files / 2174 tests, all pass), `bun run typecheck` (11
+  in-scope packages pass — `debate-ai-web` has no `typecheck` script), and
+  `bun run build` (both buildable packages pass). Docs updated at
+  `docs/features/drill-sets.md`; no follow-ups remain open on this bullet.
+
+- **Pre-Round Briefings — add a "create briefing" form.** Idea #12
+  ("Pre-Round Intelligence Panel")'s follow-up (b) was only partly closed:
+  `docs/features/pre-round-briefings.md`'s "Known gaps" said "No affordance
+  in this panel to generate a new briefing for a round" — `savePreRoundBriefing`
+  and `buildPreRoundBriefingFromStores` existed and were Vitest-covered, but
+  were called only from tests, so `/briefings` was permanently empty for a
+  real user. Added a "create briefing" form to `PreRoundBriefingsPanel`
+  (round ID, tournament/division/round-label/side/room/opponent-label,
+  optional picks from already-persisted Opponent Team Profiles / Judge
+  Profiles, free-text prep notes), backed by one new pure helper,
+  `buildPreRoundBriefingRecordFromDraft` in
+  `packages/debate-round/src/state/preRoundBriefings.ts`, which validates
+  the draft and delegates to the existing `buildPreRoundBriefingFromStores`
+  — no new briefing-composition logic. Vitest-covered (12 new cases in
+  `packages/debate-round/test/preRoundBriefings.test.ts`: minimal valid
+  draft, whitespace/missing-field validation, optional room/opponent-
+  label/prep-notes, resolving an opponent/judge profile by id, and the
+  "no data on file" fallback for an unresolved id). Documented in
+  `docs/features/pre-round-briefings.md`, including the still-open gap that
+  the form doesn't collect this team's own round history, so "Prior
+  meetings" always renders "No recorded prior meetings" even when an
+  opponent profile is picked — `buildPreRoundBriefingFromStores` supports a
+  head-to-head `ownRecords`/`opponentTeamId` history when called directly,
+  but no persisted store of a team's own round history exists yet for the
+  form to read from; a real follow-up, not a form oversight.
+
+- **AI Practice Opponent — `docs/features/practice-opponent.md`.** Every
+  idea in TODO.md's Product Feature Ideas and Research Crowdsourcing
+  Organizer Features lists already has "No follow-ups remain open"
+  implementations except for a handful explicitly documented as blocked on
+  an external dependency this repo doesn't have (see below); of those
+  already-closed ideas, the "AI Practice Opponent" persona picker
+  (`OpponentPersonaPickerPanel` at `/practice-opponent`, in the global
+  dock's Settings menu) was the one implemented slice missing its
+  `docs/features/*.md` entry — every sibling idea (e.g. "AI Judge Decision
+  Modes" → `judge-paradigm-selections.md`) has one. Added
+  `docs/features/practice-opponent.md`, documenting the route, nav
+  location, the four built-in personas, the full save/clear/AI-speech data
+  flow (including `round/opponent-persona-speech-wiring.ts`'s
+  `getOpponentPersonaForRound`), and existing Vitest coverage. No code
+  changed; this is a documentation-only completion.
+
+  Remaining backlog audit (for future runs, so this isn't re-discovered):
+  every other open follow-up left in TODO.md is blocked on an external
+  dependency, not on missing implementation effort —
+  - Idea #1 "CX NDCA Standings" follow-up (a), a real Tabroom/NDCA scraper:
+    confirmed via a live fetch this run that Tabroom's tournament-results
+    pages (e.g. `/index/tourn/results/index.mhtml?tourn_id=...`) require an
+    authenticated Tabroom login and render only a login form to an
+    unauthenticated request — unlike the public `/index/index.mhtml`
+    tournament-name index `sync-tournaments.ts` already scrapes. No
+    Tabroom credentials exist in this repo, so a real per-team results
+    scraper can't be built or tested against real data right now. Follow-up
+    (b), a real circuit-sourced `QualificationPointsTable`, has the same
+    blocker noted in `ndca-standings.ts` — no authoritative public source
+    this repo can cite is available.
+  - "Opponent Team Profiles" and "Judge Profiles" follow-up (a), a real
+    Tabroom pairings/ballots data source: same authentication blocker as
+    above (pairings/ballots live behind the same login-gated Tabroom
+    pages).
+  - Idea #12 "Pre-Round Intelligence Panel" follow-up (a), real tournament
+    results/pairings/event-details/room-assignment data sources: same
+    Tabroom authentication blocker.
+  - Idea #6 "Speech Transcript Summaries" and idea #8 "Video-Lecture-
+    Training Coach AI," each idea's remaining audio/video-transcription
+    half of follow-up (a): no transcription service (e.g. Whisper-style
+    API) exists in this repo or its dependencies, and the browser-native
+    Web Speech API only transcribes live microphone input, not an uploaded
+    recording — not a safe, testable slice without a real service
+    dependency.
+  - Idea #7 "On Page Card Reuse Search" follow-up (a), an actual browser
+    extension: this is a genuinely new project (manifest, content script,
+    packaging) rather than a vertical slice of the existing Next.js app,
+    and the existing check logic reads a client-side `localStorage` store
+    that a separate extension origin can't reach without a new backend API
+    endpoint first — too large to safely scope as one incremental slice.
+
+- **Shared Evidence Library — cache the search index across calls.**
+  Closes the remaining follow-up named under the "📋 Shared Evidence
+  Library" bullet in TODO.md's Research Crowdsourcing Organizer Features
+  list ("caching the index across calls instead of rebuilding it on every
+  search"), and the matching "Known gaps" entry in
+  `docs/features/evidence-library.md`. `state/evidenceLibraryEntries.ts`'s
+  `searchPersistedEvidenceLibraryWithIndex` no longer rebuilds
+  `EvidenceSearchIndex` on every call — a new `getCachedEvidenceSearchIndex`
+  reuses the previously built index unless the data it depends on could have
+  changed. Liveness depends on two independently-written stores (this
+  store's own `EvidenceLibraryEntry` records, and `state/peerReviews.ts`'s
+  `CardReview` records — a review transition can flip an entry's liveness
+  with no write to this store at all), so rather than a write-time counter
+  on each store's own write functions (which would miss any storage change
+  made outside them), the cache compares each store's raw persisted JSON
+  string against the strings it was built from —
+  `state/peerReviews.ts`'s new `getPeerReviewsRawSnapshot()` exposes the
+  peer-review side of that fingerprint. Vitest-covered in
+  `packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (a
+  repeat call with nothing changed reuses the cached index rather than
+  calling `buildEvidenceSearchIndex` again; saving an entry, deleting an
+  entry, and a peer-review transition that flips an entry's live status
+  each force a rebuild whose results reflect the change) and
+  `packages/debate-card-search/test/peerReviews.test.ts`
+  (`getPeerReviewsRawSnapshot` changes value on save/delete and stays
+  identical across repeat calls with nothing changed). Verified with
+  `bun run test` (155 files / 2165 tests, all pass), `bun run typecheck` (11
+  in-scope packages pass — `debate-ai-web` has no `typecheck` script), and
+  `bun run build` (both buildable packages pass). Docs updated at
+  `docs/features/evidence-library.md`. Remaining gap, recorded there: a
+  cache-invalidating rebuild is still a full pass over every live entry, not
+  true incremental indexing that updates only the entries a write actually
+  touched.
 - **Shared Evidence Library — wire `EvidenceLibraryPanel` to the real search index.**
   Closes the remainder of follow-up (c) named under the "📋 Shared Evidence
   Library" bullet in TODO.md's Research Crowdsourcing Organizer Features
@@ -5802,7 +7047,7 @@ _No task currently in progress._
 
 2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slices done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. A second slice, `wordCountRounds.ts` (see Tracker Status above, "Word-Count-Only Speech Format — persisted word-count round results"), now persists a round's chosen style and submitted speech text to localStorage. A third slice, `WordCountRoundsPanel` (see Tracker Status above, "Word-Count-Only Speech Format — submission UI"), now renders a submission form at `/word-count` with a live per-speech word-count readout, closing follow-up (a). A fourth slice (see Tracker Status above, "Word-Count-Only Speech Format — live-round word-limited speech mode") added `round/word-count-speech-mode.ts`, `hooks/useWordCountSpeechMode.ts`, and `debate-timer`'s `SpeechWordCounter`, wiring a word-limit toggle into `SpeechHeaderBar` that replaces the live countdown with a `words / limit` meter whose text persists through the same `wordCountRounds` store as `/word-count`, closing follow-up (b). A speech with no authored `wordCountStyles` limit falls back to `estimateWordLimit` applied to the live timed style's speech length, so the mode works for every debate style. No follow-ups remain open on this idea; the mobile `FlowPageHeader` countdown is unchanged, as noted in `docs/features/word-count-rounds.md`._
 
-3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildAiVersusSpeechOrder`/`getNextSpeechSlot`/`isUsersTurn`/`validateSpeechSubmission`/`buildAiResponseRequest` for turning a `debate-timer` format + chosen side into an ordered, speaker-tagged turn sequence, validating a submitted speech against whose turn it is, and building a structured (non-AI-calling) request describing the AI's next speech. A second slice, `aiVersusRounds.ts` (see Tracker Status above, "Online Debate Versus AI — submitted-round persistence"), now persists a round's format, side, and submitted speeches to localStorage. A third slice, `AiVersusRoundPanel` (see Tracker Status above, "Online Debate Versus AI — round-setup + submission UI"), now renders a round-setup + submission UI at `/versus-ai`, closing follow-up (b). A fourth slice (see Tracker Status above, "Online Debate Versus AI — real AI speech-generation call") added `round/ai-versus-speech-ai.ts` and `round/ai-versus-speech-client.ts`, wiring a "Generate AI speech" action into `AiVersusRoundPanel` that calls the existing `/api/reason-ai` Anthropic proxy to produce the AI's next speech text, closing follow-up (a). No follow-ups remain open on this idea; speech submission stays text-only, as noted in `docs/features/ai-versus-rounds.md`._
+3. **Online Debate Versus AI** — Allow a debater or team to enter an online practice debate against an AI opponent, select the debate format and side, submit speeches in text or audio, and receive structured responses that follow the expected speech order. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildAiVersusSpeechOrder`/`getNextSpeechSlot`/`isUsersTurn`/`validateSpeechSubmission`/`buildAiResponseRequest` for turning a `debate-timer` format + chosen side into an ordered, speaker-tagged turn sequence, validating a submitted speech against whose turn it is, and building a structured (non-AI-calling) request describing the AI's next speech. A second slice, `aiVersusRounds.ts` (see Tracker Status above, "Online Debate Versus AI — submitted-round persistence"), now persists a round's format, side, and submitted speeches to localStorage. A third slice, `AiVersusRoundPanel` (see Tracker Status above, "Online Debate Versus AI — round-setup + submission UI"), now renders a round-setup + submission UI at `/versus-ai`, closing follow-up (b). A fourth slice (see Tracker Status above, "Online Debate Versus AI — real AI speech-generation call") added `round/ai-versus-speech-ai.ts` and `round/ai-versus-speech-client.ts`, wiring a "Generate AI speech" action into `AiVersusRoundPanel` that calls the existing `/api/reason-ai` Anthropic proxy to produce the AI's next speech text, closing follow-up (a). A fifth slice (see Tracker Status above, "Online Debate Versus AI — 'Regenerate last AI speech' affordance") added `canRegenerateLastAiSpeech`/`replaceLastAiSpeech` to `aiVersusRounds.ts` and a "Regenerate last AI speech" button to `AiVersusRoundPanel`, letting an unsatisfactory AI speech be redone in place instead of clearing the whole round. No follow-ups remain open on this idea; speech submission stays text-only, and only the most recently submitted AI speech (not an earlier one mid-round) can be regenerated, as noted in `docs/features/ai-versus-rounds.md`._
 
 4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slices done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). A second slice, `vulnerabilityReports.ts` plus `VulnerabilityChartsPanel` (see Tracker Status above, "AI Response-Outcome Charts — chart/panel UI"), now persists a round's derived report and renders it as a per-side exposure summary and exposure chart at `/outcomes`, closing follow-up (b). A third slice, `applyHypotheticalAdjustments` plus the panel's "what if" picker (see Tracker Status above, "AI Response-Outcome Charts — 'what if' hypothetical mode"), now recomputes a chosen argument's score against a hypothetical extend/answer/concede choice, closing follow-up (c). A fourth slice (see Tracker Status above, "AI Response-Outcome Charts — AI counsel-panel call") added `flow/response-outcome-ai.ts`, `flow/response-outcome-client.ts`, and `state/counselPanelAssessments.ts`, wiring a "Get AI counsel panel" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy for a real three-role ("Policy Counsel"/"Kritik Counsel"/"Weighing Counsel") assessment of each exposed argument's likely response path and clash point plus an overall clash summary, closing follow-up (a). No follow-ups remain open on this idea._
 
@@ -5816,7 +7061,7 @@ _No task currently in progress._
 
 9. **Expandable Heading Structure** — Make research documents and outlines collapsible by heading level, allowing users to expand or collapse H1, H2, and H3 sections so they can move quickly between a high-level argument map and detailed evidence. _Status: first slices done (see Tracker Status above) — `reason-editor`'s engine now has `buildHeadingOutline`/`getVisibleHeadingIds`/`getCollapsedRanges`/`isPositionCollapsed` for deriving H1-H4 structure and collapse ranges from the existing flat heading schema. A second slice, `collapsedHeadings.ts` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading persistence"), now persists a document's collapsed heading ids to localStorage. A third slice, `OutlineNavPanel` (see Tracker Status above, "Expandable Heading Structure — outline nav panel"), now renders the outline alongside the document at `/reason-editor` (behind an opt-in `showOutline` prop) with click-to-jump and collapse/expand, reading/writing through the persistence store, closing follow-up (a). A fourth slice, `collapsedHeadingsPlugin` (see Tracker Status above, "Expandable Heading Structure — collapsed-heading decoration plugin"), now hides a collapsed heading's content in the live ProseMirror view itself (driven by `OutlineNavPanel`'s toggle), closing follow-up (b). No follow-ups remain open on this idea._
 
-10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. A second slice, `argumentTreeFilters.ts` (see Tracker Status above, "Outline Filters and Argument Tree View — filter-selection persistence"), now persists a round's chosen `ArgumentTreeFilter` to localStorage. A third slice, `argumentTrees.ts` plus `ArgumentTreePanel` (see Tracker Status above, "Outline Filters and Argument Tree View — outline panel UI"), now persists a round's derived tree and renders it as a filterable outline at `/outline`, closing follow-up (a). A fourth slice (see Tracker Status above, "Outline Filters and Argument Tree View — argument-type/contributor/evidence-status tagging") added `debate-core`'s `ArgumentType`/`EvidenceStatus` unions and `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus` optional fields, threaded them through `flow-transcript-summary.ts`'s `FlowRowSummary` and `argument-tree.ts`'s `ArgumentTreeNode`/`ArgumentTreeFilter`, and wired matching filter selects plus per-row badges into `ArgumentTreePanel`, closing follow-up (b). No follow-ups remain open on this idea._
+10. **Outline Filters and Argument Tree View** — Provide a filterable outline and visual tree that shows the relationship between contentions, links, internal links, impacts, turns, answers, and extensions, with filters for side, speech, contributor, evidence status, and argument type. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildArgumentTree`/`filterArgumentTree`/`flattenArgumentTree`/`getFlowSideKeys` for deriving a heading-grouped argument tree from an already-flowed grid and filtering it by speech, side, unanswered status, and heading-vs-argument kind. A second slice, `argumentTreeFilters.ts` (see Tracker Status above, "Outline Filters and Argument Tree View — filter-selection persistence"), now persists a round's chosen `ArgumentTreeFilter` to localStorage. A third slice, `argumentTrees.ts` plus `ArgumentTreePanel` (see Tracker Status above, "Outline Filters and Argument Tree View — outline panel UI"), now persists a round's derived tree and renders it as a filterable outline at `/outline`, closing follow-up (a). A fourth slice (see Tracker Status above, "Outline Filters and Argument Tree View — argument-type/contributor/evidence-status tagging") added `debate-core`'s `ArgumentType`/`EvidenceStatus` unions and `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus` optional fields, threaded them through `flow-transcript-summary.ts`'s `FlowRowSummary` and `argument-tree.ts`'s `ArgumentTreeNode`/`ArgumentTreeFilter`, and wired matching filter selects plus per-row badges into `ArgumentTreePanel`, closing follow-up (b). A fifth slice (see Tracker Status above, "Outline Filters and Argument Tree View — tag an argument's type/contributor/evidence status from the live flow grid") added `flow/argument-tagging.ts` and `flow/ArgumentTagPopover.tsx`, wiring a "Tag Argument…" entry into `FlowSpreadsheet`'s row context menu that sets or clears a row's `argumentType`/`authorId`/`evidenceStatus` on its root `Box` (rendered as a compact label in the grid's first column), and threaded the three fields through `dataTransform.ts`'s `buildRowData`/`rowDataToBoxes` round trip so an ordinary cell edit no longer drops them — closing the "nothing in the live flow-editing UI lets a user actually set a `Box`'s `argumentType`/`authorId`/`evidenceStatus`" Known gap recorded in `docs/features/argument-tree-outline.md`. No follow-ups remain open on this idea._
 
 11. **Community-Rated Summaries and Highlights** — Let users like, save, and endorse the most useful research summaries, analytic explanations, evidence highlights, and annotations, then rank contributions by helpfulness while guarding against popularity-only scoring through quality and reviewer-weight signals. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `scorePopularitySignal`/`scoreQualitySignal`/`scoreReviewerSignal`/`computeHelpfulnessBreakdown`/`rankContributions` for blending logarithmically-dampened popularity with quality and reviewer-credibility signals into a ranked, popularity-resistant helpfulness score. A second slice, `contributions.ts`'s `recordPersistedLike`/`recordPersistedSave`/`recordPersistedEndorsement` (see Tracker Status above), now persists a like/save/endorse action's counts per contribution, closing half of follow-up (a) — no UI action fires them yet. A third slice, `ContributionLeaderboardPanel` (see Tracker Status above, "Contribution Leaderboard — leaderboard UI panel wired to the app"), now renders a ranked leaderboard at `/cards/leaderboard`, closing follow-up (c)'s leaderboard half (it does not yet surface `isPopularityOnlyOutlier` contributions separately for moderator review). A fourth slice, `ContributionsFeedPanel` (see Tracker Status above, "Contributions Feed — like/save/endorse UI"), now renders a submission form and every persisted contribution as a ranked, per-contribution feed with Like/Save/Endorse buttons at `/cards/contributions`, closing follow-up (a) and the rest of follow-up (c) (this feed does surface each entry's `isPopularityOnlyOutlier` flag). A fifth slice (see Tracker Status above, "Community-Rated Summaries and Highlights — real reviewer-credibility system") added `community-rating.ts`'s `computeReviewerCredibility` and `state/contributions.ts`'s `recordPersistedEndorsementFromReviewer`, deriving an endorsement's weight from the endorsing reviewer's own persisted contribution history instead of a fixed placeholder, and wired a "Reviewer ID" field into the Contributions Feed panel's Endorse action, closing follow-up (b). No follow-ups remain open on this idea._
 
@@ -5852,9 +7097,9 @@ _No task currently in progress._
 * 🎯 Daily Quests and Targets - Set team goals like “find 5 solvency cards” or “add 3 frontline answers today.” _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `computeQuestProgress`/`buildDailyQuestBoard`/`buildQuestBoardSummaryText`/`buildUnderCoveredArgumentQuests` for tracking a day's progress toward caller-supplied kind/argument-block quest targets, including a ready-made quest set derived directly from the existing Topic Coverage Dashboard's under-covered arguments. A second slice, `state/dailyQuests.ts` plus `DailyQuestsPanel` (see Tracker Status above, "Daily Quests and Targets — quest-board widget UI + real contribution wiring"), now persists a quest-template roster, seeds it from a topic's coverage gaps, and composes it against the real, persisted Contributions Feed at `/cards/quests`, closing follow-up (b) and — by wiring `submittedAt`/`argBlock` into the Contributions Feed's submission flow for the first time — follow-up (a). A third slice (see Tracker Status above, "Daily Quests and Targets — streak/reward layer on the quest board") added `buildStreakRewardText` and a "Your streak"/"Record today's mission" section to the panel, composing the existing Gamified Quests streak logic directly, closing follow-up (c). No follow-ups remain open on this bullet._
 * 🤝 Team Collaboration Mode - Let multiple debaters work on the same topic sprint with shared notes, assignments, and live status. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildTopicSprint`/`buildTopicSprintSummaryText` for composing the existing Daily Quests board, Research Task Routing result, and Research Progress Tracking board into one shared topic-scoped session, plus a topic-addressed `SprintNote` model (`createSprintNote`/`updateSprintNoteStatus`/`assignSprintNote`) for shared prep notes, mirroring `debate-round`'s `strategy-sync-notes.ts` `PrepNote` lifecycle. A second slice, `sprintNotes.ts` (see Tracker Status above), now persists `SprintNote` records to localStorage. A third slice, `SprintNotesPanel` (see Tracker Status above, "Team Collaboration Mode — collaboration-panel UI"), now renders a submission form and every persisted note grouped by topic at `/cards/collaboration`, closing follow-up (a). A fourth slice (see Tracker Status above, "Team Collaboration Mode / Collaboration Prep Room — shared 'active now' presence signal") added `lib/topic-presence.ts`/`state/topicPresence.ts` and wired a live "active now" roster plus an "I'm active here" heartbeat control into the panel per topic, closing follow-up (c). A fifth slice (see Tracker Status above, "Team Collaboration Mode — persisted topic-sprint composition") added `state/topicSprints.ts`'s `readPersistedTopicSprintInputs`/`buildPersistedTopicSprint`, composing every `buildTopicSprint` input (quests, timestamped contributions, the topic's live coverage report, contributor availability, this topic's tracked assignments, and notes) from its own already-persisted store, and wired `panels/TopicSprintPanel.tsx` to fall back to that composition for any prop its caller doesn't override — `apps/debate-ai.com/components/research/ResearchHub.tsx`'s Sprint tab now just passes a `topic` instead of hand-deriving a coverage report and always passing an empty contribution list, closing follow-up (b). No follow-ups remain open on this bullet._
 * 
-* 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slices done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. A second slice, `opponentTeamProfiles.ts` (see Tracker Status above), now persists `OpponentTeamProfile` records to localStorage, keyed by `teamId`. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c) — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `opponentTeamId`. A fourth slice, `OpponentTeamProfilesPanel` (see Tracker Status above, "Opponent Team Profiles — opponent-scouting roster UI panel"), now renders every persisted profile as a scouting roster at `/opponents`, closing follow-up (b). Follow-up (a), a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of relying on caller-supplied data, remains open — not started._
+* 🕵️ Opponent Team Profiles - Build tournament-scoped profiles for opposing teams, including likely cases, preferred strategies, past results, and habit notes. _Status: first slices done (see Tracker Status above) — `debate-data-sync` now has `buildOpponentTeamProfile`/`buildOpponentTeamProfiles`/`groupRecordsByTeam`/`getHeadToHeadRecords`/`buildOpponentScoutingSummary` for aggregating a team's round history into an overall and per-side win/loss record, a side-preference signal, frequency-ranked common arguments/cases, and head-to-head lookups. A second slice, `opponentTeamProfiles.ts` (see Tracker Status above), now persists `OpponentTeamProfile` records to localStorage, keyed by `teamId`. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c) — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `opponentTeamId`. A fourth slice, `OpponentTeamProfilesPanel` (see Tracker Status above, "Opponent Team Profiles — opponent-scouting roster UI panel"), now renders every persisted profile as a scouting roster at `/opponents`, closing follow-up (b). A fifth slice, `opponentRoundRecords.ts` plus the panel's "Log a scouted round" form (see Tracker Status above, "Opponent Team Profiles — \"Log a scouted round\" form"), now persists the raw `OpponentRoundRecord` history each profile is derived from and makes logging a round the in-app way to create or update a profile, with a logged-rounds list that deletes and re-aggregates. Follow-up (a), a real round-history data source producing `OpponentRoundRecord`s (e.g. from Tabroom pairings/ballots) instead of hand-entered rounds, remains open — not started._
 * 
-* ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. A second slice, `judgeProfiles.ts` (see Tracker Status above, "Judge Profile Persistence"), now persists `JudgeProfile` records to localStorage, keyed by `judgeId`, closing follow-up (c)'s persistence half. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c)'s lookup half — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `judgeId`. A fourth slice, `JudgeProfilesPanel` (see Tracker Status above, "Judge Profiles — judge-profile roster UI panel"), now renders every persisted profile as a roster at `/judges`, closing follow-up (b). Follow-up (a), a real ballot data source producing `JudgeRoundRecord`s instead of relying on caller-supplied data, remains open — not started._
+* ⚖️ Judge Profiles - Show judge tendencies, paradigm summaries, decision patterns, speed tolerance, theory preferences, and speaker-point habits. _Status: first slice done (see Tracker Status above) — `debate-speech-writer` now has `buildJudgeProfile`/`buildJudgeProfiles`/`groupRecordsByJudge`/`buildJudgeTendencySummary` for aggregating a judge's ballot history into side-vote bias, average speaker points, a pace-based speed-tolerance estimate, theory receptiveness, and their most-tagged paradigm. A second slice, `judgeProfiles.ts` (see Tracker Status above, "Judge Profile Persistence"), now persists `JudgeProfile` records to localStorage, keyed by `judgeId`, closing follow-up (c)'s persistence half. A third slice, `buildPreRoundBriefingFromStores` (see Tracker Status above, "Pre-Round Briefing Store Wiring"), now closes follow-up (c)'s lookup half — it wires `buildPreRoundBriefing` to look up a persisted profile through this store by `judgeId`. A fourth slice, `JudgeProfilesPanel` (see Tracker Status above, "Judge Profiles — judge-profile roster UI panel"), now renders every persisted profile as a roster at `/judges`, closing follow-up (b). A fifth slice, `judgeRoundRecords.ts` plus the panel's "Log a judged round" form (see Tracker Status above, "Judge Profiles — 'Log a judged round' form"), now persists the raw ballot history and re-derives a judge's profile from it, so a profile can be built entirely from inside the app rather than only by a programmatic `saveJudgeProfile` caller. Follow-up (a), a real ballot data source producing `JudgeRoundRecord`s automatically instead of hand-entered or caller-supplied data, remains open — not started._
 * 
 * 🤖 AI Practice Opponent - Let debaters spar against an AI that simulates common styles like policy heavy, kritik, lay, or fast-flowing opponents. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has an `opponentPersonas` registry (`policy-heavy`/`kritik`/`lay`/`fast-flow`) plus `getOpponentPersona`/`listOpponentPersonas`/`buildOpponentPersonaPrompt` for composing a self-contained, style-specific prompt section. A second slice, `opponentPersonaSelections.ts` (see Tracker Status above), now persists a practice session's selected `OpponentPersona` to localStorage. A third slice, `OpponentPersonaPickerPanel` (see Tracker Status above, "AI Practice Opponent — persona-picker UI"), now renders a picker UI at `/practice-opponent` for saving a session's opponent persona, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Practice Opponent — persona-conditioned AI speech-generation call") added `debate-round`'s `round/opponent-persona-speech-ai.ts`, `round/opponent-persona-speech-client.ts`, and `round/opponent-persona-speech-wiring.ts`, wiring `AiVersusRoundPanel`'s "Generate AI speech" action to argue in a round's saved persona (looked up by treating `roundId` as `opponentPersonaSelections.ts`'s `sessionId` key) via a persona-conditioned `/api/reason-ai` call, closing follow-up (a). No follow-ups remain open on this idea._
 * 
@@ -5865,6 +7110,7 @@ _No task currently in progress._
 * 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. A second follow-up, persisting submitted ideas and votes, is done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`). A third slice, `BrainstormBoardPanel` (see Tracker Status above, "Team Brainstorm Assist — brainstorm-panel UI"), now renders a submission form and every board at `/cards/brainstorm`, closing follow-up (b). A fourth slice (see Tracker Status above, "Team Brainstorm Assist — real AI-generation call") added `lib/team-brainstorm-ai.ts` and `lib/team-brainstorm-client.ts`, wiring a "Generate AI ideas" action into the panel's submission form that calls the existing `/api/reason-ai` Anthropic proxy to draft several candidate ideas for the form's argument block/category, saved as normal, AI-attributed board ideas via the existing `saveBrainstormIdea`, closing follow-up (a). A fifth slice (see Tracker Status above, "Team Brainstorm Assist — seed boards from coverage gaps") added `state/brainstormIdeas.ts`'s `buildBrainstormBoardsPanelViewForTopic` and a topic switcher in `BrainstormBoardPanel`, wiring the existing `buildBrainstormBoardsForCoverageGaps` into the panel so choosing a tracked topic shows one board per under-covered tracked argument/category pair (with its prompt visible even before an idea is submitted) merged with every other board that already has a submitted idea, closing the "boards aren't seeded from the coverage-gap prompts" gap. No follow-ups remain open on this bullet._
 * 
 * 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. A second slice, `evidenceLibraryEntries.ts` (see Tracker Status above, "Shared Evidence Library — persisted evidence repository"), now persists `EvidenceLibraryEntry` records to localStorage. A third slice, `EvidenceLibraryPanel` (see Tracker Status above, "Shared Evidence Library — evidence library search UI panel"), now renders a free-text/kind search panel at `/cards/library`, closing follow-up (a). Follow-up (b), wiring `prep-room.ts` to read through this store, was also already closed separately by "Collaboration Prep Room Store Wiring"'s `buildPrepRoomFromStore` (see Tracker Status above). A fourth slice (see Tracker Status above, "Shared Evidence Library — topic/case-area/tag filter controls") added `lib/shared-evidence-library.ts`'s `buildEvidenceSearchFormQuery`, wiring Topic/Case area/Tags filter inputs into `EvidenceLibraryPanel`'s search box alongside the existing free-text/kind filters. A fifth slice (see Tracker Status above, "Shared Evidence Library — real search index") added `lib/evidence-search-index.ts`'s `buildEvidenceSearchIndex`/`searchEvidenceLibraryWithIndex` — a real token → postings-list inverted index ranked by TF-IDF instead of `searchEvidenceLibrary`'s full keyword-overlap re-scan — plus `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`, added alongside (not replacing) the existing persisted search. A sixth slice (see Tracker Status above, "Shared Evidence Library — wire EvidenceLibraryPanel to the real search index") switched `EvidenceLibraryPanel`'s two search call sites from `searchPersistedEvidenceLibrary` to `searchPersistedEvidenceLibraryWithIndex`, closing follow-up (c) in full. A seventh slice (see Tracker Status above, "Shared Evidence Library — cache the search index across calls") added `state/evidenceSearchIndexCache.ts`, wiring `searchPersistedEvidenceLibraryWithIndex` to reuse a cached `EvidenceSearchIndex` across calls instead of rebuilding it on every search, invalidated by this store's own writes and by `peerReviews.ts`'s review-lifecycle writes (since a review-status change can move an entry into or out of this store's "live" gating). No follow-ups remain open on this bullet._
+* 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. A second slice, `evidenceLibraryEntries.ts` (see Tracker Status above, "Shared Evidence Library — persisted evidence repository"), now persists `EvidenceLibraryEntry` records to localStorage. A third slice, `EvidenceLibraryPanel` (see Tracker Status above, "Shared Evidence Library — evidence library search UI panel"), now renders a free-text/kind search panel at `/cards/library`, closing follow-up (a). Follow-up (b), wiring `prep-room.ts` to read through this store, was also already closed separately by "Collaboration Prep Room Store Wiring"'s `buildPrepRoomFromStore` (see Tracker Status above). A fourth slice (see Tracker Status above, "Shared Evidence Library — topic/case-area/tag filter controls") added `lib/shared-evidence-library.ts`'s `buildEvidenceSearchFormQuery`, wiring Topic/Case area/Tags filter inputs into `EvidenceLibraryPanel`'s search box alongside the existing free-text/kind filters. A fifth slice (see Tracker Status above, "Shared Evidence Library — real search index") added `lib/evidence-search-index.ts`'s `buildEvidenceSearchIndex`/`searchEvidenceLibraryWithIndex` — a real token → postings-list inverted index ranked by TF-IDF instead of `searchEvidenceLibrary`'s full keyword-overlap re-scan — plus `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`, added alongside (not replacing) the existing persisted search. A sixth slice (see Tracker Status above, "Shared Evidence Library — wire EvidenceLibraryPanel to the real search index") switched `EvidenceLibraryPanel`'s two search call sites from `searchPersistedEvidenceLibrary` to `searchPersistedEvidenceLibraryWithIndex`, closing follow-up (c) in full. A seventh slice (see Tracker Status above, "Shared Evidence Library — cache the search index across calls") added `state/evidenceLibraryEntries.ts`'s `getCachedEvidenceSearchIndex`, reusing the built index across calls instead of rebuilding it on every search, invalidated via a raw-JSON-string fingerprint comparison against both this store and `state/peerReviews.ts`'s persisted data (the new `getPeerReviewsRawSnapshot`), closing the remaining follow-up. An eighth slice (see Tracker Status above, "Shared Evidence Library — true incremental search-index updates instead of a full rebuild on every cache invalidation") added `lib/evidence-search-index.ts`'s `addEntryToIndex`/`removeEntryFromIndex`/`updateEntryInIndex`, and wired `getCachedEvidenceSearchIndex` to diff the live-entry set by id/content and apply them only to entries actually added, removed, or changed instead of calling `buildEvidenceSearchIndex` again on every invalidation, closing the "Known gaps" entry recorded in `docs/features/evidence-library.md`. A ninth slice (see Tracker Status above, "Shared Evidence Library — tag rename/merge tool") added `lib/argument-library.ts`'s `renameTagInList`/`renameTagAcrossCards` and `state/evidenceLibraryEntries.ts`'s `renameTagAcrossPersistedEntries`, wiring a "Rename/merge tag" form into `ArgumentLibraryPanel` (`/cards/argument-library`) that rewrites (or merges) a tag across every persisted entry that carries it, closing the "No tag rename/merge tool" Known gap recorded in `docs/features/evidence-library.md`. A tenth slice (see Tracker Status above, "Common Argument Library — tag autocomplete and tag rename/merge across both tag stores") added `state/contributions.ts`'s `listContributionTags`/`renameTagAcrossPersistedContributions` and `state/evidenceLibraryEntries.ts`'s `listCombinedPersistedTags`/`renameTagAcrossCombinedPersistedStores`, wiring the same tag-autocomplete affordance the `/cards/library` form already had into `ContributionsFeedPanel`'s Tags field (suggesting from both persisted tag stores) and switching `ArgumentLibraryPanel`'s rename form to rewrite both stores rather than stranding a contribution's copy of the tag under the old name — closing the two remaining Known gaps recorded in `docs/features/evidence-library.md`. No follow-ups remain open on this bullet._
 * 
 * 🔄 Strategy Sync Notes - Let teammates leave live prep notes, assign tasks, and mark which arguments have been covered or need follow-up. _Status: first slices done (see Tracker Status above) — `debate-round` now has a box-addressed `PrepNote` model (`createPrepNote`/`updateNoteStatus`/`assignNote`) plus `getNotesForBox`/`getNotesForFlow`/`getNotesAssignedTo`/`getOpenFollowUps`/`resolvePrepNoteBox`/`buildPrepNoteSummaryText` for attaching a note to a specific flow argument, assigning it to a teammate as a task, and tracking whether it's still open, covered, or needs follow-up, reusing the existing `flow-annotations.ts` box-addressing convention directly. A second slice, `prepNotes.ts` (see Tracker Status above, "Prep Note Persistence"), now persists `PrepNote` records to localStorage, closing follow-up (a). A third slice, `updatePersistedPrepNoteStatus`/`assignPersistedPrepNote` (see Tracker Status above, "Prep Note Status/Assignment Persistence"), now applies `updateNoteStatus`/`assignNote`'s pure state transitions directly against a stored note and saves the result, closing that same persistence slice's own follow-up (b). A fourth slice, `PrepNotesPanel` (see Tracker Status above, "Strategy Sync Notes — prep-notes panel UI"), now renders every persisted prep note grouped by status at `/prep-notes` with status-cycle and assign actions, closing follow-up (a). A fifth slice (see Tracker Status above, "Strategy Sync Notes — assignee notification") added `flow/prep-note-notifications.ts` and `state/prepNoteNotifications.ts`, wiring `assignPersistedPrepNote` to record a notification for a note's new assignee on every real assignment, plus a `PrepNoteNotificationsPanel` at `/notifications` for a recipient to view and mark them read, closing follow-up (b). No follow-ups remain open on this bullet._
 * 

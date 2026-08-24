@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildAndSaveDrillSet,
   buildDrillSetsPanelView,
   deleteDrillSet,
   getDrillSet,
@@ -8,6 +9,7 @@ import {
   saveDrillSet,
   type DrillSetRecord,
 } from "../src/state/drillSets";
+import type { Box } from "debate-core/src/types/flow";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {
@@ -38,6 +40,33 @@ const DRILL_SET_B: DrillSetRecord = {
   roundId: "round-2",
   sideKey: "neg",
   drills: [{ kind: "cross_ex", rowIndex: 0, prompt: "What evidence supports that claim?" }],
+};
+
+const COLUMNS = ["1AC", "1NC", "2AC", "2NC"];
+
+/** Builds a row's box chain from per-column content; "" leaves a column unflowed. */
+function rowFromContents(contents: string[], overrides: Partial<Box> = {}): Box {
+  let box: Box | undefined;
+  for (let i = contents.length - 1; i >= 0; i--) {
+    const current: Box = {
+      content: contents[i],
+      children: box ? [box] : [],
+      index: 0,
+      level: i + 1,
+      focus: false,
+      empty: !contents[i].trim(),
+    };
+    box = current;
+  }
+  return { ...(box as Box), ...overrides };
+}
+
+const MIXED_FLOW = {
+  columns: COLUMNS,
+  children: [
+    rowFromContents(["Case advantage", "Turn", "", ""]),
+    rowFromContents(["", "Disad link", "Extend", "Frontline"]),
+  ],
 };
 
 beforeEach(() => {
@@ -88,6 +117,33 @@ describe("saveDrillSet", () => {
 
     expect(listDrillSets()).toEqual([updated]);
     expect(getDrillSet("round-1")).toEqual(updated);
+  });
+});
+
+describe("buildAndSaveDrillSet", () => {
+  it("derives a round's drill set from a flow and persists it", () => {
+    const record = buildAndSaveDrillSet(MIXED_FLOW, "round-3", "A");
+
+    expect(record.roundId).toBe("round-3");
+    expect(record.sideKey).toBe("A");
+    expect(record.drills.length).toBeGreaterThan(0);
+    expect(getDrillSet("round-3")).toEqual(record);
+  });
+
+  it("overwrites any existing drill set for that roundId", () => {
+    saveDrillSet(DRILL_SET_A);
+    const record = buildAndSaveDrillSet(MIXED_FLOW, "round-1", "N");
+
+    expect(listDrillSets()).toEqual([record]);
+  });
+
+  it("passes collapseLimit through to buildDrillSet", () => {
+    const unlimited = buildAndSaveDrillSet(MIXED_FLOW, "round-4", "A");
+    const limited = buildAndSaveDrillSet(MIXED_FLOW, "round-4", "A", { collapseLimit: 0 });
+
+    const collapseCount = (drills: DrillSetRecord["drills"]) =>
+      drills.filter((drill) => drill.kind === "collapse").length;
+    expect(collapseCount(limited.drills)).toBeLessThan(collapseCount(unlimited.drills));
   });
 });
 

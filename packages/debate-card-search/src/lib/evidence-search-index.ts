@@ -15,11 +15,17 @@
  * drop-in alternative: same `EvidenceSearchQuery` input and
  * `EvidenceSearchResult` output shape as `searchEvidenceLibrary`, and the
  * same non-text filter semantics (topic/caseArea/kind/tags, reusing
- * `filterCardsByTags` directly). Building the index is still a full pass
- * over the entry list — real incremental indexing on every write is a
- * further follow-up — but this is the query-time win: once built, ranking a
- * query no longer has to visit every entry, only the ones its terms
- * actually appear in.
+ * `filterCardsByTags` directly).
+ *
+ * `addEntryToIndex`/`removeEntryFromIndex`/`updateEntryInIndex` close this
+ * bullet's remaining "Known gap" named in `docs/features/evidence-library.md`
+ * — true incremental indexing that updates only the entries a write
+ * actually touched, rather than `state/evidenceLibraryEntries.ts`'s cached
+ * index falling back to a full `buildEvidenceSearchIndex` re-tokenize-
+ * everything pass whenever anything in the corpus changes. Each indexed
+ * entry's own contributed terms are tracked (`entryTermsById`) so removing
+ * or updating one entry only ever touches the postings lists that entry
+ * itself appears in, not the full vocabulary.
  *
  * @module lib/evidence-search-index
  */
@@ -31,6 +37,15 @@ function tokenize(text: string): string[] {
   return text.toLowerCase().match(/[a-z0-9']+/g) ?? [];
 }
 
+/** The same fields `searchEvidenceLibrary` scores against, combined and tokenized into a term → frequency map. */
+function computeEntryTermFrequencies(entry: EvidenceLibraryEntry): Map<string, number> {
+  const termFrequencies = new Map<string, number>();
+  for (const token of tokenize(`${entry.text} ${entry.argBlock} ${entry.cite}`)) {
+    termFrequencies.set(token, (termFrequencies.get(token) ?? 0) + 1);
+  }
+  return termFrequencies;
+}
+
 /** One entry's occurrence of a term: which entry, and how many times the term appears in it. */
 export interface EvidenceSearchIndexPosting {
   entryId: string;
@@ -39,12 +54,15 @@ export interface EvidenceSearchIndexPosting {
 
 /**
  * A real inverted index over a set of evidence-library entries: every
- * indexed entry keyed by id, plus a token → postings-list map recording
- * which entries contain each token and how often.
+ * indexed entry keyed by id, a token → postings-list map recording which
+ * entries contain each token and how often, and (for incremental updates)
+ * each indexed entry's own set of contributed terms.
  */
 export interface EvidenceSearchIndex {
   entriesById: Map<string, EvidenceLibraryEntry>;
   postings: Map<string, EvidenceSearchIndexPosting[]>;
+  /** Which terms each indexed entry contributed, so `removeEntryFromIndex` need not scan the full vocabulary. */
+  entryTermsById: Map<string, string[]>;
   /** Corpus size the inverse-document-frequency weighting below is computed against. */
   documentCount: number;
 }
@@ -56,29 +74,79 @@ export interface EvidenceSearchIndex {
  * inverted index.
  */
 export function buildEvidenceSearchIndex(entries: EvidenceLibraryEntry[]): EvidenceSearchIndex {
-  const entriesById = new Map<string, EvidenceLibraryEntry>();
-  const postings = new Map<string, EvidenceSearchIndexPosting[]>();
-
+  const index: EvidenceSearchIndex = {
+    entriesById: new Map(),
+    postings: new Map(),
+    entryTermsById: new Map(),
+    documentCount: 0,
+  };
   for (const entry of entries) {
-    entriesById.set(entry.id, entry);
+    addEntryToIndex(index, entry);
+  }
+  return index;
+}
 
-    const termFrequencies = new Map<string, number>();
-    for (const token of tokenize(`${entry.text} ${entry.argBlock} ${entry.cite}`)) {
-      termFrequencies.set(token, (termFrequencies.get(token) ?? 0) + 1);
+/**
+ * Adds a single entry to an existing index in place, without re-tokenizing
+ * or touching any other indexed entry. Replaces (via `removeEntryFromIndex`
+ * first) if `entry.id` is already indexed, so it's also safe to call for an
+ * entry whose content changed.
+ */
+export function addEntryToIndex(index: EvidenceSearchIndex, entry: EvidenceLibraryEntry): void {
+  if (index.entriesById.has(entry.id)) {
+    removeEntryFromIndex(index, entry.id);
+  }
+
+  const termFrequencies = computeEntryTermFrequencies(entry);
+  index.entriesById.set(entry.id, entry);
+  index.entryTermsById.set(entry.id, Array.from(termFrequencies.keys()));
+  index.documentCount += 1;
+
+  for (const [term, termFrequency] of termFrequencies) {
+    const list = index.postings.get(term);
+    const posting: EvidenceSearchIndexPosting = { entryId: entry.id, termFrequency };
+    if (list) {
+      list.push(posting);
+    } else {
+      index.postings.set(term, [posting]);
     }
+  }
+}
 
-    for (const [term, termFrequency] of termFrequencies) {
-      const list = postings.get(term);
-      const posting: EvidenceSearchIndexPosting = { entryId: entry.id, termFrequency };
-      if (list) {
-        list.push(posting);
-      } else {
-        postings.set(term, [posting]);
-      }
+/**
+ * Removes a single entry from an existing index in place, touching only the
+ * postings lists for terms that entry itself contributed (via
+ * `entryTermsById`) rather than scanning the full vocabulary. A no-op if
+ * `entryId` isn't indexed.
+ */
+export function removeEntryFromIndex(index: EvidenceSearchIndex, entryId: string): void {
+  const terms = index.entryTermsById.get(entryId);
+  if (!terms) return;
+
+  for (const term of terms) {
+    const list = index.postings.get(term);
+    if (!list) continue;
+    const filtered = list.filter((posting) => posting.entryId !== entryId);
+    if (filtered.length === 0) {
+      index.postings.delete(term);
+    } else {
+      index.postings.set(term, filtered);
     }
   }
 
-  return { entriesById, postings, documentCount: entries.length };
+  index.entryTermsById.delete(entryId);
+  index.entriesById.delete(entryId);
+  index.documentCount -= 1;
+}
+
+/**
+ * Updates a single already-indexed (or new) entry in place — a
+ * remove-then-add, so a changed entry's stale terms/frequencies never
+ * linger in the postings lists.
+ */
+export function updateEntryInIndex(index: EvidenceSearchIndex, entry: EvidenceLibraryEntry): void {
+  removeEntryFromIndex(index, entry.id);
+  addEntryToIndex(index, entry);
 }
 
 /**

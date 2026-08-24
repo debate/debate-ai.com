@@ -8,14 +8,21 @@
  * call any AI model itself; it's the persona-selection layer a future
  * speech-generation call (see idea #3's "Online Debate Versus AI" follow-ups
  * in TODO.md) could condition its prompt on.
+ *
+ * `buildCustomOpponentPersona` additionally mirrors
+ * `judge-paradigms.ts`'s `buildCustomJudgeParadigm` — the "custom
+ * opponent-persona authoring flow" follow-up named in
+ * `docs/features/practice-opponent.md`'s Known gaps.
  */
 
 export type BuiltinOpponentPersonaId = "policy-heavy" | "kritik" | "lay" | "fast-flow";
 
+export type OpponentPersonaId = BuiltinOpponentPersonaId | "custom";
+
 export type OpponentPersonaPace = "slow" | "moderate" | "fast";
 
 export type OpponentPersona = {
-  id: BuiltinOpponentPersonaId;
+  id: OpponentPersonaId;
   name: string;
   description: string;
   pace: OpponentPersonaPace;
@@ -101,6 +108,57 @@ export function getOpponentPersona(id: string): OpponentPersona | null {
 /** All built-in opponent personas, in a stable order — for a persona-picker UI. */
 export function listOpponentPersonas(): OpponentPersona[] {
   return opponentPersonaIds.map((id) => opponentPersonas[id]);
+}
+
+const MAX_CUSTOM_NAME_LENGTH = 80;
+const MAX_CUSTOM_NOTES_LENGTH = 2000;
+
+export type CustomOpponentPersonaInput = {
+  /** Label for the custom persona, e.g. "Coach Amy's aggressive K bot". */
+  name: string;
+  /** Free-form description of how this opponent argues/paces. */
+  notes: string;
+};
+
+/** Strips ASCII control characters (keeping tab/newline/carriage-return),
+ *  then trims and clamps length for user-supplied text. */
+function sanitizeText(raw: string, maxLength: number): string {
+  let stripped = "";
+  for (const ch of raw) {
+    const code = ch.codePointAt(0) ?? 0;
+    const isControl = code < 0x20 || code === 0x7f;
+    const isAllowedWhitespace = code === 9 || code === 10 || code === 13;
+    if (!isControl || isAllowedWhitespace) stripped += ch;
+  }
+  stripped = stripped.trim();
+  return stripped.length > maxLength ? stripped.slice(0, maxLength).trim() : stripped;
+}
+
+/**
+ * Builds a "custom" opponent persona from a user-described debating style,
+ * mirroring `judge-paradigms.ts`'s `buildCustomJudgeParadigm`. Unlike the
+ * built-in personas, preferred arguments aren't structured — the user's
+ * notes are carried verbatim (sanitized) into `instructions` for a future
+ * AI speech-generation prompt to use.
+ *
+ * Throws if `name` or `notes` is empty after sanitization, since a custom
+ * persona with no actual style description isn't meaningful.
+ */
+export function buildCustomOpponentPersona(input: CustomOpponentPersonaInput): OpponentPersona {
+  const name = sanitizeText(input.name, MAX_CUSTOM_NAME_LENGTH);
+  const notes = sanitizeText(input.notes, MAX_CUSTOM_NOTES_LENGTH);
+
+  if (!name) throw new Error("buildCustomOpponentPersona: name is required");
+  if (!notes) throw new Error("buildCustomOpponentPersona: notes are required");
+
+  return {
+    id: "custom",
+    name: `Custom: ${name}`,
+    description: `A custom opponent persona built from ${name}'s described debating style.`,
+    pace: "moderate",
+    preferredArguments: [],
+    instructions: notes,
+  };
 }
 
 /**

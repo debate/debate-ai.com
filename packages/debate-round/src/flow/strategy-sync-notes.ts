@@ -135,6 +135,42 @@ export function resolvePrepNoteBox(flow: { children: Box[] }, note: PrepNote): B
   return resolved !== null && "content" in resolved ? (resolved as Box) : null;
 }
 
+/** A parsed "jump to argument" deep-link target — see `buildPrepNoteJumpHref`. */
+export type PrepNoteJumpTarget = { flowId: number; boxPath: number[] };
+
+/**
+ * Builds the "jump to argument" link for a note — `/debate` with
+ * `flowId`/`boxPath` query params `parsePrepNoteJumpParams` reads back to
+ * select the note's flow tab and scroll to its box (see
+ * `hooks/useJumpToPrepNoteBox.ts`), the panel-side counterpart to
+ * `resolvePrepNoteBox` for a cross-flow panel that has no live `Flow`
+ * mounted to resolve against directly.
+ */
+export function buildPrepNoteJumpHref(note: PrepNote): string {
+  return `/debate?flowId=${note.flowId}&boxPath=${note.boxPath.join(",")}`;
+}
+
+/**
+ * Parses `flowId`/`boxPath` query params (see `buildPrepNoteJumpHref`) into
+ * a jump target. Returns `null` if either is missing or malformed (a
+ * non-numeric `flowId`, or a `boxPath` that isn't a comma-separated list of
+ * non-negative integers) rather than throwing, since this reads
+ * caller-supplied URL state.
+ */
+export function parsePrepNoteJumpParams(params: { get(name: string): string | null }): PrepNoteJumpTarget | null {
+  const flowIdRaw = params.get("flowId");
+  const boxPathRaw = params.get("boxPath");
+  if (!flowIdRaw || !boxPathRaw) return null;
+
+  const flowId = Number(flowIdRaw);
+  if (!Number.isFinite(flowId)) return null;
+
+  const boxPath = boxPathRaw.split(",").map(Number);
+  if (boxPath.some((value) => !Number.isInteger(value) || value < 0)) return null;
+
+  return { flowId, boxPath };
+}
+
 /**
  * Renders a short, human-readable summary of a flow's prep notes — status
  * counts plus one line per note still needing follow-up — for a prep-notes

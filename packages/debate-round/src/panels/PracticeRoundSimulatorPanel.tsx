@@ -31,6 +31,17 @@
  * closing the AI-judge-decision half of follow-up (a). No new setup
  * composition, speech-order, or judge-paradigm logic is introduced here.
  *
+ * A "Generate post-round feedback for current round" form per round reads
+ * the round workspace's currently selected flow (`state/store.ts`'s
+ * `useFlowStore`, the same mechanism `CoachingSessionsPanel`'s "Generate
+ * coaching session for current round" action uses) and, given a side, calls
+ * the new `state/practiceRounds.ts`'s `buildAndSavePracticeRoundFeedback` to
+ * derive and save that round's `PracticeRoundFeedback` — closing
+ * `docs/features/practice-round-simulator.md`'s "feedback generation isn't
+ * wired to a live round flow" Known gap. The button is only enabled while
+ * the workspace's selected flow's id matches this card's `roundId`, since
+ * feedback is judged under that round's own already-saved judge paradigm.
+ *
  * @module panels/PracticeRoundSimulatorPanel
  */
 
@@ -75,6 +86,7 @@ import { buildPracticeRoundJudgeDecisionInput } from "../round/practice-round-ju
 import { buildPracticeRoundSetup } from "../round/practice-round-simulator"
 import { getAiVersusRound, saveAiVersusRound } from "../state/aiVersusRounds"
 import {
+  buildAndSavePracticeRoundFeedback,
   buildPracticeRoundsPanelView,
   deletePracticeRound,
   getPracticeRound,
@@ -82,6 +94,7 @@ import {
   savePracticeRound,
   type PracticeRoundRecord,
 } from "../state/practiceRounds"
+import { useFlowStore } from "../state/store"
 
 const JUDGE_DECISION_SIDE_NAMES = { primary: "Primary", secondary: "Secondary" }
 
@@ -135,8 +148,15 @@ export function PracticeRoundSimulatorPanel() {
   const [aiGeneratingId, setAiGeneratingId] = useState<string | null>(null)
   const [judgeLoadingId, setJudgeLoadingId] = useState<string | null>(null)
   const [actionErrors, setActionErrors] = useState<Record<string, string>>({})
+  const [feedbackSideKeyByRound, setFeedbackSideKeyByRound] = useState<Record<string, string>>({})
+  const [mounted, setMounted] = useState(false)
+
+  const flows = useFlowStore((state) => state.flows)
+  const selected = useFlowStore((state) => state.selected)
+  const currentFlow = mounted ? flows[selected] : undefined
 
   useEffect(() => {
+    setMounted(true)
     setRounds(buildPracticeRoundsPanelView())
   }, [])
 
@@ -259,6 +279,19 @@ export function PracticeRoundSimulatorPanel() {
     } finally {
       setJudgeLoadingId(null)
     }
+  }
+
+  const handleGenerateFeedback = (record: PracticeRoundRecord) => {
+    if (!currentFlow || String(currentFlow.id) !== record.roundId) return
+    const sideKey = (feedbackSideKeyByRound[record.roundId] ?? "").trim()
+    if (!sideKey) {
+      setActionError(record.roundId, "A side (e.g. aff or neg) is required to generate post-round feedback.")
+      return
+    }
+
+    buildAndSavePracticeRoundFeedback(currentFlow, record.roundId, sideKey)
+    setActionError(record.roundId, "")
+    refresh()
   }
 
   if (rounds === null) {
@@ -468,6 +501,40 @@ export function PracticeRoundSimulatorPanel() {
                   ))}
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor={`practice-feedback-side-${record.roundId}`}>
+                    Generate post-round feedback for current round
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Uses the round workspace's currently selected flow.
+                  </p>
+                  <div className="flex flex-wrap items-end gap-2">
+                    <Input
+                      id={`practice-feedback-side-${record.roundId}`}
+                      value={feedbackSideKeyByRound[record.roundId] ?? ""}
+                      onChange={(e) =>
+                        setFeedbackSideKeyByRound((prev) => ({ ...prev, [record.roundId]: e.target.value }))
+                      }
+                      placeholder="Side (e.g. aff)"
+                      className="w-40"
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={!currentFlow || String(currentFlow.id) !== record.roundId}
+                      onClick={() => handleGenerateFeedback(record)}
+                    >
+                      {record.feedback ? "Regenerate post-round feedback" : "Generate post-round feedback"}
+                    </Button>
+                  </div>
+                  {(!currentFlow || String(currentFlow.id) !== record.roundId) && (
+                    <p className="text-xs text-muted-foreground">
+                      Select this round's flow (round ID {record.roundId}) in the round workspace to
+                      generate feedback for it.
+                    </p>
+                  )}
+                </div>
+
                 {record.feedback ? (
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-foreground">Post-round feedback</p>
@@ -482,10 +549,7 @@ export function PracticeRoundSimulatorPanel() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No post-round feedback yet — feedback generation isn&apos;t wired to a live round
-                    flow in this app yet.
-                  </p>
+                  <p className="text-sm text-muted-foreground">No post-round feedback yet.</p>
                 )}
 
                 <div className="space-y-2">

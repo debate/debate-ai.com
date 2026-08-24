@@ -25,7 +25,13 @@
  */
 
 import type { PrepNote, PrepNoteStatus } from "../flow/strategy-sync-notes";
-import { assignNote, getNotesForFlow, sortNotesByCreatedAt, updateNoteStatus } from "../flow/strategy-sync-notes";
+import {
+  assignNote,
+  getNotesForBox,
+  getNotesForFlow,
+  sortNotesByCreatedAt,
+  updateNoteStatus,
+} from "../flow/strategy-sync-notes";
 import { recordPrepNoteAssignedNotification } from "./prepNoteNotifications";
 
 const STORAGE_KEY = "prepNotes";
@@ -55,6 +61,17 @@ export function listPrepNotes(): PrepNote[] {
 /** Lists every persisted prep note for one flow, oldest first. */
 export function listPrepNotesForFlow(flowId: number): PrepNote[] {
   return getNotesForFlow(readAll(), flowId);
+}
+
+/**
+ * Lists a single box's persisted prep notes within one flow, oldest first —
+ * feeds the `FlowSpreadsheet` cell affordance (`PrepNoteBadge`/
+ * `PrepNotePopover`) that lets a note be created directly against the box
+ * it's about, without leaving the live grid for the separate, cross-flow
+ * `PrepNotesPanel`.
+ */
+export function listPrepNotesForBox(flowId: number, boxPath: number[]): PrepNote[] {
+  return getNotesForBox(readAll(), flowId, boxPath);
 }
 
 /** Looks up a single persisted prep note by id, if any. */

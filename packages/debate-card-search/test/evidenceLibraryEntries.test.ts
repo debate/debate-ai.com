@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   buildCombinedPersistedArgumentLibrary,
   buildPersistedArgumentLibrary,
@@ -7,20 +7,24 @@ import {
   getEvidenceLibraryEntry,
   isEntryLive,
   listCombinedPersistedLibraryCards,
+  listCombinedPersistedTags,
   listEvidenceLibraryEntries,
   listPendingReviewEntries,
+  listPersistedTags,
+  renameTagAcrossCombinedPersistedStores,
+  renameTagAcrossPersistedEntries,
   saveEvidenceLibraryEntry,
   saveEvidenceLibraryEntryRevision,
   searchPersistedEvidenceLibrary,
   searchPersistedEvidenceLibraryWithIndex,
 } from "../src/state/evidenceLibraryEntries";
 import { listRevisionHistory } from "../src/state/revisionHistory";
-import { saveContribution } from "../src/state/contributions";
+import { getContribution, saveContribution } from "../src/state/contributions";
 import { approveReview, createCardReview, publishReview, submitForReview } from "../src/lib/peer-review";
-import { deletePeerReview, savePeerReview } from "../src/state/peerReviews";
+import { savePeerReview } from "../src/state/peerReviews";
 import { buildEvidenceSearchFormQuery } from "../src/lib/shared-evidence-library";
 import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
-import { getCachedEvidenceSearchIndex, invalidateEvidenceSearchIndexCache } from "../src/state/evidenceSearchIndexCache";
+import * as evidenceSearchIndexModule from "../src/lib/evidence-search-index";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -65,7 +69,6 @@ const SOLVENCY_BLOCK: EvidenceLibraryEntry = {
 
 beforeEach(() => {
   (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
-  invalidateEvidenceSearchIndexCache();
 });
 
 describe("listEvidenceLibraryEntries", () => {
@@ -227,59 +230,88 @@ describe("searchPersistedEvidenceLibraryWithIndex", () => {
   });
 });
 
-describe("searchPersistedEvidenceLibraryWithIndex's index cache", () => {
-  it("reuses the same built index across repeated searches when nothing writes in between", () => {
-    saveEvidenceLibraryEntry(WARMING_CARD);
-
-    searchPersistedEvidenceLibraryWithIndex({ text: "warming" });
-    const indexAfterFirstSearch = getCachedEvidenceSearchIndex();
-    expect(indexAfterFirstSearch).not.toBeNull();
-
-    searchPersistedEvidenceLibraryWithIndex({ text: "warming" });
-    expect(getCachedEvidenceSearchIndex()).toBe(indexAfterFirstSearch);
+describe("searchPersistedEvidenceLibraryWithIndex caches the index across calls", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
-  it("rebuilds the index after saveEvidenceLibraryEntry, reflecting the newly saved entry", () => {
+  // `evidenceLibraryEntries.ts`'s cache is module-level state shared across
+  // every test in this file (only `localStorage` is reset per test, in
+  // `beforeEach` above), and several other describe blocks save this exact
+  // same `WARMING_CARD`/`SOLVENCY_BLOCK` content — so whether the *first*
+  // search in a given test triggers a rebuild depends on what an earlier
+  // test happened to leave cached. These assertions compare the spy's call
+  // count before/after an action instead of asserting an absolute count, so
+  // they hold regardless of that leftover state.
+
+  it("does not rebuild the index on a second call when nothing has changed", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
+
+    const first = searchPersistedEvidenceLibraryWithIndex({ text: "warming" });
+    const countAfterFirst = buildSpy.mock.calls.length;
+
+    const second = searchPersistedEvidenceLibraryWithIndex({ text: "warming" });
+    expect(buildSpy.mock.calls.length).toBe(countAfterFirst);
+    expect(second).toEqual(first);
+  });
+
+  it("incrementally adds a newly saved entry instead of rebuilding the whole index, and the new entry is searchable", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    // Force (and consume) the first build so this entry's later add is incremental, not part of an initial build.
     searchPersistedEvidenceLibraryWithIndex({});
-    const indexBeforeSave = getCachedEvidenceSearchIndex();
+    const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
+    const addSpy = vi.spyOn(evidenceSearchIndexModule, "addEntryToIndex");
 
-    saveEvidenceLibraryEntry(WARMING_CARD);
-
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
     const results = searchPersistedEvidenceLibraryWithIndex({});
-    expect(getCachedEvidenceSearchIndex()).not.toBe(indexBeforeSave);
-    expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+    expect(buildSpy).not.toHaveBeenCalled();
+    expect(addSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ id: "entry-2" }));
+    expect(results.map((result) => result.entry.id).sort()).toEqual(["entry-1", "entry-2"]);
   });
 
-  it("rebuilds the index after deleteEvidenceLibraryEntry, no longer including the deleted entry", () => {
+  it("incrementally removes a deleted entry instead of rebuilding the whole index", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
     saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
     searchPersistedEvidenceLibraryWithIndex({});
-    const indexBeforeDelete = getCachedEvidenceSearchIndex();
+    const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
+    const removeSpy = vi.spyOn(evidenceSearchIndexModule, "removeEntryFromIndex");
 
-    deleteEvidenceLibraryEntry("entry-1");
-
+    deleteEvidenceLibraryEntry(WARMING_CARD.id);
     const results = searchPersistedEvidenceLibraryWithIndex({});
-    expect(getCachedEvidenceSearchIndex()).not.toBe(indexBeforeDelete);
+    expect(buildSpy).not.toHaveBeenCalled();
+    expect(removeSpy).toHaveBeenCalledWith(expect.anything(), WARMING_CARD.id);
     expect(results.map((result) => result.entry.id)).toEqual(["entry-2"]);
   });
 
-  it("rebuilds the index after a peer-review write, reflecting the entry's changed live gating", () => {
+  it("incrementally updates an entry whose peer review transition changes its live status, with no write to the entry itself", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
+    const review = submitForReview(createCardReview("entry-1"));
+    savePeerReview(review);
     searchPersistedEvidenceLibraryWithIndex({});
-    const indexBeforeReview = getCachedEvidenceSearchIndex();
+    const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
+    const addSpy = vi.spyOn(evidenceSearchIndexModule, "addEntryToIndex");
 
-    savePeerReview(submitForReview(createCardReview("entry-1")));
+    savePeerReview(publishReview(approveReview(review)));
+    const results = searchPersistedEvidenceLibraryWithIndex({});
+    expect(buildSpy).not.toHaveBeenCalled();
+    expect(addSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ id: "entry-1" }));
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
+  });
 
-    const resultsWhileInReview = searchPersistedEvidenceLibraryWithIndex({});
-    expect(getCachedEvidenceSearchIndex()).not.toBe(indexBeforeReview);
-    expect(resultsWhileInReview).toEqual([]);
+  it("incrementally updates an entry that was edited in place, leaving an untouched entry's postings alone", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    searchPersistedEvidenceLibraryWithIndex({});
+    const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
+    const updateSpy = vi.spyOn(evidenceSearchIndexModule, "updateEntryInIndex");
 
-    const indexWhileInReview = getCachedEvidenceSearchIndex();
-    deletePeerReview("entry-1");
-
-    const resultsAfterReviewDeleted = searchPersistedEvidenceLibraryWithIndex({});
-    expect(getCachedEvidenceSearchIndex()).not.toBe(indexWhileInReview);
-    expect(resultsAfterReviewDeleted.map((result) => result.entry.id)).toEqual(["entry-1"]);
+    saveEvidenceLibraryEntry({ ...WARMING_CARD, text: "Coastal flooding accelerates under warming trends." });
+    const results = searchPersistedEvidenceLibraryWithIndex({ text: "flooding" });
+    expect(buildSpy).not.toHaveBeenCalled();
+    expect(updateSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ id: "entry-1" }));
+    expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
   });
 });
 
@@ -423,6 +455,45 @@ describe("buildPersistedArgumentLibrary", () => {
   });
 });
 
+describe("renameTagAcrossPersistedEntries", () => {
+  it("rewrites the tag on every persisted entry that carries it and persists the result", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const changedCount = renameTagAcrossPersistedEntries("warming", "climate-crisis");
+
+    expect(changedCount).toBe(1);
+    expect(getEvidenceLibraryEntry("entry-1")!.tags).toEqual(["impact", "climate-crisis"]);
+    // The entry that never carried the tag is untouched.
+    expect(getEvidenceLibraryEntry("entry-2")!.tags).toEqual(["solvency"]);
+  });
+
+  it("merges into an already-used tag name instead of duplicating it", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry({ ...SOLVENCY_BLOCK, tags: ["solvency", "impact"] });
+
+    renameTagAcrossPersistedEntries("warming", "impact");
+
+    expect(getEvidenceLibraryEntry("entry-1")!.tags).toEqual(["impact"]);
+    expect(getEvidenceLibraryEntry("entry-2")!.tags).toEqual(["solvency", "impact"]);
+  });
+
+  it("is a safe no-op, and does not write to storage, when no entry carries the tag", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    const before = localStorage.getItem("evidenceLibraryEntries");
+
+    const changedCount = renameTagAcrossPersistedEntries("nonexistent", "whatever");
+
+    expect(changedCount).toBe(0);
+    expect(localStorage.getItem("evidenceLibraryEntries")).toBe(before);
+  });
+
+  it("throws when newTag is blank", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    expect(() => renameTagAcrossPersistedEntries("warming", "  ")).toThrow();
+  });
+});
+
 describe("buildCombinedPersistedArgumentLibrary", () => {
   const TAGGED_CONTRIBUTION: AttributedContribution = {
     id: "contrib-1",
@@ -534,5 +605,85 @@ describe("saveEvidenceLibraryEntryRevision", () => {
     const history = listRevisionHistory();
     expect(history).toHaveLength(2);
     expect(history.map((record) => record.contributorId)).toEqual(["alice", "bob"]);
+  });
+});
+
+const SOLVENCY_CONTRIBUTION: AttributedContribution = {
+  id: "contrib-1",
+  contributorId: "carol",
+  kind: "card",
+  likes: 0,
+  saves: 0,
+  qualitySignals: [0.5],
+  reviewerEndorsements: [],
+  topic: "Energy Policy",
+  caseArea: "Case",
+  tags: ["solvency", "warming"],
+  argBlock: "Solvency",
+};
+
+describe("listCombinedPersistedTags", () => {
+  it("returns an empty list when neither store holds a tag", () => {
+    expect(listCombinedPersistedTags()).toEqual([]);
+  });
+
+  it("unions both stores' tags, deduped and sorted", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveContribution(SOLVENCY_CONTRIBUTION);
+
+    // "warming" is in both stores; it appears once.
+    expect(listPersistedTags()).toEqual(["impact", "warming"]);
+    expect(listCombinedPersistedTags()).toEqual(["impact", "solvency", "warming"]);
+  });
+
+  it("includes a contribution's tags even when it is missing topic/caseArea (so excluded from the library)", () => {
+    saveContribution({ ...SOLVENCY_CONTRIBUTION, topic: undefined });
+    expect(listCombinedPersistedTags()).toEqual(["solvency", "warming"]);
+  });
+
+  it("ignores a contribution with no tags field at all", () => {
+    saveContribution({ ...SOLVENCY_CONTRIBUTION, tags: undefined });
+    expect(listCombinedPersistedTags()).toEqual([]);
+  });
+});
+
+describe("renameTagAcrossCombinedPersistedStores", () => {
+  it("rewrites the tag in both stores and reports each store's changed count", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    saveContribution(SOLVENCY_CONTRIBUTION);
+
+    const result = renameTagAcrossCombinedPersistedStores("warming", "climate-crisis");
+
+    expect(result).toEqual({ entriesChanged: 1, contributionsChanged: 1, totalChanged: 2 });
+    expect(getEvidenceLibraryEntry("entry-1")!.tags).toEqual(["impact", "climate-crisis"]);
+    expect(getEvidenceLibraryEntry("entry-2")!.tags).toEqual(["solvency"]);
+    expect(getContribution("contrib-1")!.tags).toEqual(["solvency", "climate-crisis"]);
+  });
+
+  it("rewrites one store even when the other carries nothing under the tag", () => {
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    saveContribution(SOLVENCY_CONTRIBUTION);
+
+    const result = renameTagAcrossCombinedPersistedStores("warming", "climate-crisis");
+
+    expect(result).toEqual({ entriesChanged: 0, contributionsChanged: 1, totalChanged: 1 });
+  });
+
+  it("is a safe no-op when neither store carries the tag", () => {
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const result = renameTagAcrossCombinedPersistedStores("nonexistent", "whatever");
+
+    expect(result).toEqual({ entriesChanged: 0, contributionsChanged: 0, totalChanged: 0 });
+  });
+
+  it("throws, leaving both stores untouched, when the two tags are the same", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveContribution(SOLVENCY_CONTRIBUTION);
+
+    expect(() => renameTagAcrossCombinedPersistedStores("warming", "warming")).toThrow();
+    expect(getEvidenceLibraryEntry("entry-1")!.tags).toEqual(["warming", "impact"]);
+    expect(getContribution("contrib-1")!.tags).toEqual(["solvency", "warming"]);
   });
 });

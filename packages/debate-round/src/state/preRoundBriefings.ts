@@ -9,6 +9,8 @@
  * @module state/preRoundBriefings
  */
 
+import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-profile";
+import { buildPreRoundBriefingFromStores } from "../round/pre-round-briefing";
 import type { PreRoundBriefing } from "../round/pre-round-briefing";
 
 export type PreRoundBriefingRecord = {
@@ -70,4 +72,69 @@ export function deletePreRoundBriefing(roundId: string): void {
  */
 export function buildPreRoundBriefingsPanelView(): PreRoundBriefingRecord[] {
   return [...listPreRoundBriefings()].sort((a, b) => a.roundId.localeCompare(b.roundId));
+}
+
+/** Raw "create briefing" form input, as `panels/PreRoundBriefingsPanel.tsx` collects it. */
+export type PreRoundBriefingDraft = {
+  roundId: string;
+  tournamentName: string;
+  division: string;
+  roundLabel: string;
+  side: DebateSide;
+  room?: string;
+  opponentLabel?: string;
+  /** The `teamId` of an already-persisted Opponent Team Profile to pull scouting data from. */
+  opponentTeamId?: string;
+  /** The `judgeId` of an already-persisted Judge Profile to pull tendency data from. */
+  judgeId?: string;
+  teamPrepNotes?: string[];
+};
+
+export type PreRoundBriefingDraftResult =
+  | { ok: true; record: PreRoundBriefingRecord }
+  | { ok: false; error: string };
+
+/**
+ * Validates and composes a `PreRoundBriefingRecord` from a "create briefing"
+ * form draft — the panel's previously-missing "generate a new briefing for a
+ * round" affordance named in `docs/features/pre-round-briefings.md`'s
+ * "Known gaps." Resolves an opponent/judge profile from their persisted
+ * stores by id via `buildPreRoundBriefingFromStores` rather than introducing
+ * new briefing-composition logic. Does not persist the result — call
+ * `savePreRoundBriefing(result.record)` once `result.ok` is `true`.
+ */
+export function buildPreRoundBriefingRecordFromDraft(
+  draft: PreRoundBriefingDraft,
+): PreRoundBriefingDraftResult {
+  const roundId = draft.roundId.trim();
+  const tournamentName = draft.tournamentName.trim();
+  const division = draft.division.trim();
+  const roundLabel = draft.roundLabel.trim();
+  if (!roundId || !tournamentName || !division || !roundLabel) {
+    return {
+      ok: false,
+      error: "Round ID, tournament, division, and round label are all required.",
+    };
+  }
+
+  const room = draft.room?.trim();
+  const opponentLabel = draft.opponentLabel?.trim();
+  const opponentTeamId = draft.opponentTeamId?.trim();
+  const judgeId = draft.judgeId?.trim();
+
+  const briefing = buildPreRoundBriefingFromStores({
+    event: {
+      tournamentName,
+      division,
+      roundLabel,
+      side: draft.side,
+      ...(room && { room }),
+      ...(opponentLabel && { opponentLabel }),
+    },
+    ...(opponentTeamId && { opponentTeamId }),
+    ...(judgeId && { judgeId }),
+    teamPrepNotes: draft.teamPrepNotes ?? [],
+  });
+
+  return { ok: true, record: { roundId, briefing } };
 }

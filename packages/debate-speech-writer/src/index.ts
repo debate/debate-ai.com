@@ -58,6 +58,15 @@ export {
   saveJudgeProfile,
 } from "./state/judgeProfiles";
 
+export {
+  deleteJudgeRoundRecord,
+  listJudgeRoundRecords,
+  listJudgeRoundRecordsForJudge,
+  rebuildJudgeProfileFromRecords,
+  recordJudgeRound,
+} from "./state/judgeRoundRecords";
+export type { JudgeRoundRecordEntry } from "./state/judgeRoundRecords";
+
 export { JudgeProfilesPanel } from "./panels/JudgeProfilesPanel";
 
 export {
@@ -67,11 +76,14 @@ export {
   getOpponentPersona,
   listOpponentPersonas,
   buildOpponentPersonaPrompt,
+  buildCustomOpponentPersona,
 } from "./opponent/opponent-personas";
 export type {
   BuiltinOpponentPersonaId,
+  OpponentPersonaId,
   OpponentPersonaPace,
   OpponentPersona,
+  CustomOpponentPersonaInput,
 } from "./opponent/opponent-personas";
 
 export {

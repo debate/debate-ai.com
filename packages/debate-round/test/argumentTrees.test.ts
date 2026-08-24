@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildAndSaveArgumentTree,
+  buildAndSaveArgumentTreeIfChanged,
   buildArgumentTreesPanelView,
   deleteArgumentTree,
   getArgumentTree,
@@ -147,6 +148,59 @@ describe("buildAndSaveArgumentTree", () => {
     expect(record.tree[0]).toMatchObject({ isHeading: true, content: "Off-case" });
     expect(record.tree[0].children.map((n) => n.content)).toEqual(["Disad link"]);
     expect(getArgumentTree("round-3")).toEqual(record);
+  });
+});
+
+describe("buildAndSaveArgumentTreeIfChanged", () => {
+  const COLUMNS = ["1AC", "1NC"];
+
+  function rowFromContents(contents: string[], overrides: Partial<Box> = {}): Box {
+    let box: Box | undefined;
+    for (let i = contents.length - 1; i >= 0; i--) {
+      const current: Box = {
+        content: contents[i],
+        children: box ? [box] : [],
+        index: 0,
+        level: i + 1,
+        focus: false,
+        empty: !contents[i].trim(),
+      };
+      box = current;
+    }
+    return { ...(box as Box), ...overrides };
+  }
+
+  it("saves and returns the record when nothing is stored yet for the round", () => {
+    const flow = { columns: COLUMNS, children: [rowFromContents(["Disad link"])] };
+
+    const record = buildAndSaveArgumentTreeIfChanged(flow, "round-4");
+
+    expect(record).toBeDefined();
+    expect(record?.roundId).toBe("round-4");
+    expect(getArgumentTree("round-4")).toEqual(record);
+  });
+
+  it("returns undefined and skips the write when the derived tree is unchanged", () => {
+    const flow = { columns: COLUMNS, children: [rowFromContents(["Disad link"])] };
+    buildAndSaveArgumentTreeIfChanged(flow, "round-5");
+    const stored = getArgumentTree("round-5");
+
+    const result = buildAndSaveArgumentTreeIfChanged(flow, "round-5");
+
+    expect(result).toBeUndefined();
+    expect(getArgumentTree("round-5")).toEqual(stored);
+  });
+
+  it("saves and returns the new record when the derived tree has changed", () => {
+    const flow = { columns: COLUMNS, children: [rowFromContents(["Disad link"])] };
+    buildAndSaveArgumentTreeIfChanged(flow, "round-6");
+
+    const editedFlow = { columns: COLUMNS, children: [rowFromContents(["Disad link, extended"])] };
+    const result = buildAndSaveArgumentTreeIfChanged(editedFlow, "round-6");
+
+    expect(result).toBeDefined();
+    expect(result?.tree[0]).toMatchObject({ content: "Disad link, extended" });
+    expect(getArgumentTree("round-6")).toEqual(result);
   });
 });
 

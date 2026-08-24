@@ -113,18 +113,7 @@ outranks one nearly every entry shares. It's a drop-in alternative to
 `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`
 composes this against the persisted repository, added alongside —
 `searchPersistedEvidenceLibrary` stays exported, unchanged, for any other
-caller. The built index is now cached across calls instead of rebuilt on
-every search (`state/evidenceSearchIndexCache.ts`), so repeated searches —
-e.g. every keystroke in `EvidenceLibraryPanel`'s live-filter effect — reuse
-the same index rather than re-scanning every live entry each time. The
-cache is invalidated by any write that can change which entries the index
-should cover: `evidenceLibraryEntries.ts`'s own
-`saveEvidenceLibraryEntry`/`deleteEvidenceLibraryEntry`, and
-`peerReviews.ts`'s review-lifecycle writes (`savePeerReview`/
-`deletePeerReview`), since a review-status change can move an entry into or
-out of this store's "live" gating. The cache module is split out on its own
-so the two stores can invalidate it without a circular import between them.
-Vitest-covered in
+caller. Vitest-covered in
 `packages/debate-card-search/test/evidence-search-index.test.ts` (index
 construction, postings/term-frequency correctness, TF-IDF ranking including
 a dedicated case showing a rarer term outranks a common one, every filter
@@ -132,10 +121,7 @@ combination, and candidate-set parity against `searchEvidenceLibrary` on a
 shared fixture) and cases in
 `packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (mirroring
 `searchPersistedEvidenceLibrary`'s own test suite: peer-review gating,
-empty-repository, kind filtering, empty-text-query; plus a dedicated
-"index cache" suite asserting the cached index is reused by reference
-across repeated searches and rebuilt — a new object — after each kind of
-invalidating write).
+empty-repository, kind filtering, empty-text-query).
 
 `EvidenceLibraryPanel` now calls `searchPersistedEvidenceLibraryWithIndex`
 instead of the original keyword-overlap search, closing this follow-up — the
@@ -143,10 +129,69 @@ panel's search box, kind filter, and topic/case-area/tags filters all read
 from the indexed, TF-IDF-ranked search. That exact call shape
 (`buildEvidenceSearchFormQuery`'s output fed into
 `searchPersistedEvidenceLibraryWithIndex`) is Vitest-covered in
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`. Caching
-the index across calls instead of rebuilding it on every search remains a
-further follow-up, not started — this store still has no write-time hook to
-invalidate a cache.
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`.
+
+### Cached across calls
+
+Closes this bullet's remaining follow-up ("caching the index across calls
+instead of rebuilding it on every search"). `searchPersistedEvidenceLibraryWithIndex`
+no longer rebuilds `EvidenceSearchIndex` on every call —
+`getCachedEvidenceSearchIndex` reuses the previously built index as long as
+nothing it depends on could have changed. Which entries are "live" depends
+on two independently-written stores (this store's own `EvidenceLibraryEntry`
+records, and `state/peerReviews.ts`'s `CardReview` records — a review
+transition can flip an entry's liveness with no write to this store at
+all), so rather than a write-time counter on each store (which would only
+catch writes made through that store's own functions), the cache instead
+compares each store's raw persisted JSON string
+(`state/peerReviews.ts`'s new `getPeerReviewsRawSnapshot`) against the
+strings it was built from — a cheap fingerprint that catches any change to
+either store's underlying data before doing the expensive tokenize-and-build
+work again. Vitest-covered in
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (a repeat
+call with nothing changed reuses the cached index; saving, deleting, and a
+peer-review transition that flips an entry's live status each force a
+rebuild whose results reflect the change) and
+`packages/debate-card-search/test/peerReviews.test.ts` (`getPeerReviewsRawSnapshot`
+changes on save/delete and stays stable across repeat calls with no
+changes).
+
+### Incremental indexing
+
+Closes this bullet's last remaining "Known gap": a fingerprint change used
+to trigger a full `buildEvidenceSearchIndex` re-tokenize-everything pass
+over every live entry, even when a write only actually touched one of them.
+`lib/evidence-search-index.ts` now exposes `addEntryToIndex`/
+`removeEntryFromIndex`/`updateEntryInIndex`, each mutating an
+`EvidenceSearchIndex` in place and touching only the postings lists the
+affected entry itself contributes to or contributed to (tracked per-entry in
+a new `entryTermsById` map on the index) — not the full vocabulary or any
+other entry.
+
+`getCachedEvidenceSearchIndex` now diffs the current live-entry set against
+the exact entries (`cachedLiveEntriesById`) its cached index was last built
+or updated from, by id and by content, and applies the incremental
+functions only for entries that were actually added, removed, or edited:
+
+- an id present before but not now → `removeEntryFromIndex`
+- an id present now but not before → `addEntryToIndex`
+- an id present in both, with different content → `updateEntryInIndex`
+- an id present in both, with identical content → left untouched entirely
+
+`buildEvidenceSearchIndex` itself is now only ever called for the very
+first index build; every later fingerprint change is handled incrementally.
+Vitest-covered in `packages/debate-card-search/test/evidence-search-index.test.ts`
+(`addEntryToIndex` adds/replaces without duplicating postings,
+`removeEntryFromIndex` drops only the removed entry's own terms while
+leaving a shared term's other postings intact — including dropping a term
+from the postings map entirely once its last entry is removed — and is a
+no-op for an unindexed id, `updateEntryInIndex` drops stale terms and adds
+new ones, and an index built purely via repeated `addEntryToIndex` calls
+matches one built directly) and
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (each of
+save/delete/peer-review-transition/edit now asserts `buildEvidenceSearchIndex`
+is *not* called again and that the matching incremental function *is*,
+alongside the existing result-correctness assertions).
 
 ## Peer-review gating
 
@@ -228,24 +273,111 @@ submitter to count it themselves — this is also the field the Topic Coverage
 Dashboard's `missing`/`thin`/`covered` classification scores against, so a
 card submitted here now feeds that dashboard directly.
 
+## Tag rename/merge
+
+Closes this bullet's "No tag rename/merge tool" Known gap. The Common
+Argument Library browser (`/cards/argument-library`,
+`panels/ArgumentLibraryPanel.tsx`) — where the tag collections themselves
+are visible — now has a "Rename/merge tag" form: pick an existing tag from a
+dropdown (populated from the library's own `tagCollections`), type a new
+name, and every persisted record carrying the old tag — evidence-library
+entry or Contributions Feed submission alike — is rewritten to carry the new
+one instead.
+
+`lib/argument-library.ts`'s `renameTagAcrossCards` (generic over any
+`LibraryCard[]`) does the rewrite: a card not carrying the old tag is
+returned as the exact same object reference (so an unaffected card never
+looks "changed"), and a card that already carries the target tag name has
+its old tag simply dropped rather than ending up with a duplicate — a
+rename into an already-used name is a merge. It throws if either tag,
+trimmed, is blank, or if the two tags are the same (nothing to rename).
+`renameTagInList` is the single-card-list version it builds on.
+
+`state/evidenceLibraryEntries.ts`'s `renameTagAcrossPersistedEntries(oldTag,
+newTag)` applies this against the real persisted repository, writing back
+only when at least one entry actually changed (an all-no-op rename never
+touches `localStorage`, so `getCachedEvidenceSearchIndex`'s raw-JSON
+fingerprint isn't invalidated for nothing), and returns how many entries
+changed. The panel shows that count (or a "nothing changed" message when
+the tag wasn't used) after each rename.
+
+A rename now spans **both** persisted tag stores. The browser composes its
+tag collections from the evidence-library repository *and* the Contributions
+Feed (via `buildCombinedPersistedArgumentLibrary`, see above), so a tag
+listed there may come from either one; renaming in only one used to strand
+the other's copy under the old name. `state/contributions.ts`'s
+`renameTagAcrossPersistedContributions(oldTag, newTag)` mirrors
+`renameTagAcrossPersistedEntries` against the Contributions Feed store
+(reusing the same pure `renameTagInList` per contribution, same
+write-back-only-when-changed and same blank/identical-tag throwing), and
+`state/evidenceLibraryEntries.ts`'s
+`renameTagAcrossCombinedPersistedStores(oldTag, newTag)` runs both and
+returns `{ entriesChanged, contributionsChanged, totalChanged }`. The panel
+calls that combined version and reports both counts (or a "nothing changed"
+message when neither store carried the tag). Validation happens before
+either store is written, so a blank or identical tag pair throws with both
+stores untouched.
+
+Vitest-covered in `packages/debate-card-search/test/argument-library.test.ts`
+(`renameTagInList`/`renameTagAcrossCards`: rename across multiple cards
+leaving others untouched by reference, merge-dedup into an existing tag,
+no-op when the tag is unused, and throwing on a blank or identical
+old/new tag) and
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+(`renameTagAcrossPersistedEntries`: rewrite-and-persist, merge, a true
+no-write no-op, and throwing on a blank new tag;
+`renameTagAcrossCombinedPersistedStores`: both stores rewritten with
+per-store counts, one store changed while the other carries nothing, a
+both-stores no-op, and a throw leaving both stores untouched) and
+`packages/debate-card-search/test/contributions.test.ts`
+(`renameTagAcrossPersistedContributions`: rewrite-and-persist, merge-dedup,
+a true no-write no-op, and throwing on a blank or identical tag pair).
+
+## Tag autocomplete on the Contributions Feed
+
+Closes this bullet's "a Contributions Feed submission tagged for the
+Argument Library gets no tag-autocomplete affordance of its own" Known gap.
+The Contributions Feed form (`/cards/contributions`,
+`panels/ContributionsFeedPanel.tsx`) Tags field now has the same
+suggestion row as the evidence-library form above, driven by the same
+`parseTagsInput`/`suggestTags`/`applyTagSuggestion` helpers.
+
+Its corpus is `state/evidenceLibraryEntries.ts`'s
+`listCombinedPersistedTags()` — the union of `listPersistedTags()` (the
+evidence repository) and `state/contributions.ts`'s `listContributionTags()`
+(every distinct tag on a persisted contribution), deduped by exact string
+and sorted. Suggesting across both stores is the point: a contribution and
+an evidence entry filed under the same idea should land on the same tag
+rather than two near-duplicates that the browser then shows as separate
+collections. A contribution's tags count toward the corpus even when it
+carries no `topic`/`caseArea` (and so is excluded from the library itself).
+
+Vitest-covered in
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+(`listCombinedPersistedTags`: empty stores, the deduped union across both,
+and a contribution excluded from the library still contributing its tags)
+and `packages/debate-card-search/test/contributions.test.ts`
+(`listContributionTags`: empty store, contributions carrying no tags, and
+the deduped sorted list).
+
 ## Known gaps
 
 - A real inverted-index/TF-IDF search now exists, `EvidenceLibraryPanel` is
-  wired to it, and the built index is now cached across calls rather than
-  rebuilt on every search (see "Real search index" above) — but it's a
-  cache-and-rebuild-on-invalidate strategy, not true incremental indexing;
-  any invalidating write still rebuilds the whole index from scratch on the
-  next search rather than patching it in place.
+  wired to it, the built index is cached across calls, and a cache
+  invalidation now updates that index incrementally instead of rebuilding it
+  (see "Real search index" above) — no further follow-up remains open on
+  this bullet.
 - No browser extension exists — the "Check this page" box is a manual,
   paste-the-URL stand-in for what a future extension would run
   automatically against the current tab. The reuse-check logic itself
   (`checkPageForExistingCards`/`findEntriesBySourceUrl`/`normalizeSourceUrl`)
   is already a plain, extension-callable function with no UI dependency.
-- No tag rename/merge tool — the Tags field's autocomplete only suggests
-  reusing an existing tag while typing; renaming or merging a tag already
-  applied to existing entries would mean rewriting every entry that carries
-  it, and isn't implemented.
-- A Contributions Feed submission tagged for the Argument Library gets no
-  tag-autocomplete affordance of its own (that only exists on the dedicated
-  `/cards/library` form's Tags field) — it's a plain comma-separated text
-  input.
+- The tag rename/merge tool now rewrites both persisted tag stores (see
+  "Tag rename/merge" above) and the Contributions Feed form now has the same
+  tag autocomplete as the evidence-library form (see "Tag autocomplete on
+  the Contributions Feed" above) — neither gap remains open.
+- Tag identity is still exact-string everywhere: `warming` and `Warming` are
+  two different tags, in the library's collections, in the autocomplete
+  corpus, and in a rename. Autocomplete *matching* is case-insensitive, so a
+  contributor who takes a suggestion lands on the existing casing, but
+  nothing merges two casings already in use.
