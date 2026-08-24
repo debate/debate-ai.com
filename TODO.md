@@ -3,7 +3,67 @@
 
 ### In progress
 
-_No task currently in progress._
+## Daily Best Card Challenge — cross-tab live update
+
+**Status:** In Progress
+**Source:** `docs/features/daily-best-card.md` — Known gaps: "No real-time
+updates across browser tabs/sessions — like every other localStorage-backed
+panel in this repo, the panel reflects a snapshot as of its last load or
+action."
+**Branch:** `claude/practical-allen-n1fkgs`
+**PR:** Not created yet
+**Started:** 2026-08-24
+
+### Goal
+`DailyBestCardPanel` (`/cards/best-card`) only reflects `contributions`/
+`dailyBestCardAnnouncements` localStorage state as of its own last load or
+action. If another tab submits a card or announces a winner, this panel
+doesn't update until manually reloaded. Close this gap the same way
+`packages/debate-round/src/flow/live-update.ts` already closed the identical
+gap for `FlowSpreadsheet`'s badges: listen for the browser `storage` event
+(which fires in *other* same-origin tabs, not the writing tab) and refresh.
+
+### Scope
+- A small pure predicate (mirroring `isFlowLiveUpdateStorageEvent`) that
+  recognizes a `StorageEvent` touching the `contributions` or
+  `dailyBestCardAnnouncements` keys (or a `null` key, i.e. `localStorage.clear()`).
+- Wiring `DailyBestCardPanel` to call its existing `refresh()` on a matching
+  `storage` event.
+
+### Non-goals
+- No scheduled/automatic announcement (separate, external-infra-shaped gap).
+- No change to the announcement/scoring logic itself.
+
+### Acceptance criteria
+- [x] A cross-tab write to `contributions` or `dailyBestCardAnnouncements`
+      refreshes `DailyBestCardPanel`'s displayed leader/history without a
+      manual reload.
+- [x] An unrelated storage key's write does not force a refresh.
+- [x] Vitest coverage is added for the new predicate (matching keys, `null`
+      key, and an unrelated key).
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Production/web build passes
+- [x] Documentation is updated (`docs/features/daily-best-card.md`'s Known
+      gaps)
+
+### Implementation plan
+- [x] Inspect `packages/debate-round/src/flow/live-update.ts` and its test
+      as the precedent to mirror
+- [x] Add `packages/debate-card-search/src/state/live-update.ts` with the
+      predicate
+- [x] Add focused Vitest coverage for the predicate
+- [x] Wire the `storage` event listener into `DailyBestCardPanel`
+- [x] Run focused tests and fix failures
+- [x] Run typechecking
+- [x] Run the full relevant test suite
+- [x] Run the production/web build
+- [x] Review the final diff for scope and quality
+- [ ] Commit and push the branch
+- [ ] Update tracker status, completed checkboxes, and remaining work
+
+### Remaining work
+- Commit, push, open a PR, and move this entry to Completed.
 
 ### Completed
 - **Judge Profiles and Opponent Team Profiles — "did you mean" suggestion
