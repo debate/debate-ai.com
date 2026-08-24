@@ -3,7 +3,52 @@
 
 ### In progress
 
-_No task currently in progress._
+## Research Progress Tracking — prune a topic's completed-task history
+
+**Status:** In Progress
+**Source:** TODO.md — Research Crowdsourcing Organizer Features, "📈 Research Progress Tracking" bullet; closes the "Known gaps" entry in `docs/features/research-progress-tracking.md` ("A completed task's history record is never deleted (e.g. if its topic's queue is deleted), so `completedResearchTasks` only grows.")
+**Branch:** `claude/practical-allen-3epstu`
+**PR:** Not created yet
+**Started:** 2026-08-24
+
+### Goal
+Let a topic's completed-task history be pruned from `state/researchProgress.ts`'s `completedResearchTasks` localStorage store instead of only ever growing, mirroring `routedTaskQueues.ts`'s existing `deleteRoutedTaskQueue(topicId)` pattern.
+
+### Scope
+- A new `deleteCompletedTaskHistoryForTopic(topic)` export in `packages/debate-card-search/src/state/researchProgress.ts` that removes every `CompletedTaskRecord` for that topic.
+- A "Clear completed history" action per topic in `ResearchProgressPanel` (`/cards/progress-tracking`), re-reading the board afterward.
+- Vitest coverage and a docs update closing the Known gap.
+
+### Non-goals
+- Deleting a single completed-task record (only topic-scoped pruning, matching `deleteRoutedTaskQueue`'s topic scoping).
+- Any change to `routedTaskQueues.ts`'s own deletion behavior.
+
+### Acceptance criteria
+- [x] `deleteCompletedTaskHistoryForTopic(topic)` removes only that topic's completed-task records, leaving other topics' records and the active-queue store untouched
+- [x] `ResearchProgressPanel` offers a per-topic action that calls it and refreshes the roster
+- [x] Vitest coverage is added or updated
+- [ ] Lint passes (no repo-wide `lint` script exists, per every prior run's verification notes)
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Production/web build passes
+- [x] Documentation is updated
+
+### Implementation plan
+- [x] Inspect `state/researchProgress.ts`, `routedTaskQueues.ts`'s delete pattern, `ResearchProgressPanel.tsx`, and the existing test file
+- [x] Implement `deleteCompletedTaskHistoryForTopic`
+- [x] Wire a "Clear completed history" per-topic action into `ResearchProgressPanel`
+- [x] Add focused Vitest coverage (success path + no-op on an untracked topic + other topics unaffected)
+- [x] Run focused tests and fix failures
+- [x] Run typecheck
+- [x] Run the full relevant test suite
+- [x] Run the production/web build
+- [x] Review the final diff for scope and quality
+- [ ] Commit and push the branch
+- [ ] Create the pull request
+- [ ] Update tracker status, completed checkboxes, and remaining work
+
+### Remaining work
+- Commit, push, open the PR, and move this entry to Completed.
 
 ### Completed
 - **Common Argument Library — tag case-variant merge suggestions.**

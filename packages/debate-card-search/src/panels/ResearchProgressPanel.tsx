@@ -12,6 +12,12 @@
  * `lib/research-progress.ts`'s `ContributorProgress`/`TopicProgress` shape
  * directly rather than introducing new aggregation logic here.
  *
+ * A per-topic "Clear completed history" action closes the "a completed
+ * task's history record is never deleted" Known gap recorded in
+ * `docs/features/research-progress-tracking.md`, calling
+ * `state/researchProgress.ts`'s `deleteCompletedTaskHistoryForTopic` and
+ * re-reading the board.
+ *
  * @module panels/ResearchProgressPanel
  */
 
@@ -19,6 +25,7 @@
 
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
+import { Button } from "debate-ui/src/primitives/button"
 import {
   Table,
   TableBody,
@@ -27,7 +34,10 @@ import {
   TableHeader,
   TableRow,
 } from "debate-ui/src/primitives/table"
-import { buildPersistedResearchProgressBoard } from "../state/researchProgress"
+import {
+  buildPersistedResearchProgressBoard,
+  deleteCompletedTaskHistoryForTopic,
+} from "../state/researchProgress"
 import type { ContributorProgress } from "../lib/research-progress"
 
 /**
@@ -44,6 +54,11 @@ export function ResearchProgressPanel() {
   useEffect(() => {
     setRoster(buildPersistedResearchProgressBoard())
   }, [])
+
+  const handleClearTopicHistory = (topic: string) => {
+    deleteCompletedTaskHistoryForTopic(topic)
+    setRoster(buildPersistedResearchProgressBoard())
+  }
 
   if (roster === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading research progress…</div>
@@ -91,9 +106,21 @@ export function ResearchProgressPanel() {
                 {progress.topics.length > 0 ? (
                   <div className="flex flex-wrap gap-1">
                     {progress.topics.map((topic) => (
-                      <Badge key={topic.topic} variant="outline" className="whitespace-nowrap">
-                        {topic.topic}: {topic.completedTaskCount}/{topic.assignedTaskCount}
-                      </Badge>
+                      <div key={topic.topic} className="flex items-center gap-1">
+                        <Badge variant="outline" className="whitespace-nowrap">
+                          {topic.topic}: {topic.completedTaskCount}/{topic.assignedTaskCount}
+                        </Badge>
+                        {topic.completedTaskCount > 0 && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-5 px-1 text-xs text-muted-foreground"
+                            onClick={() => handleClearTopicHistory(topic.topic)}
+                          >
+                            Clear completed history
+                          </Button>
+                        )}
+                      </div>
                     ))}
                   </div>
                 ) : (

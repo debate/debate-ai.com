@@ -75,6 +75,17 @@ export function listCompletedTaskHistory(): CompletedTaskRecord[] {
 }
 
 /**
+ * Deletes every persisted completed-task record for one topic, leaving every
+ * other topic's history (and the active-queue store) untouched; a no-op if
+ * the topic has no completed-task history. Mirrors `routedTaskQueues.ts`'s
+ * `deleteRoutedTaskQueue(topicId)` — closes the "a completed task's history
+ * record is never deleted" Known gap in `docs/features/research-progress-tracking.md`.
+ */
+export function deleteCompletedTaskHistoryForTopic(topic: string): void {
+  writeAll(readAll().filter((record) => record.topic !== topic));
+}
+
+/**
  * Completes a routed task the same way `completePersistedRoutedTask` does
  * (removes it from its topic's stored active queue, decrements the
  * assignee's stored `activeTaskCount`) and, on success, additionally
