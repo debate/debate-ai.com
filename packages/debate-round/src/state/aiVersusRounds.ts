@@ -16,15 +16,17 @@
  * derives a round's turn order and next-slot status on read rather than
  * storing it, mirroring `wordCountRounds.ts`'s `getWordCountRoundStatuses`.
  *
- * `canRegenerateLastAiSpeech`/`replaceLastAiSpeech` close the "regenerate
+ * `canRegenerateAiSpeechAt`/`replaceAiSpeechAt` close the "regenerate
  * affordance" follow-up noted in `docs/features/ai-versus-rounds.md`'s
- * Known gaps: replacing the just-saved AI speech in place (keeping its
- * slot name and every earlier speech untouched) rather than clearing the
- * whole round and starting over. Neither calls the AI itself — the panel
- * rebuilds the same `buildAiResponseRequest` used to generate the original
- * speech (from the speeches delivered before it) and calls the existing
+ * Known gaps: replacing any already-submitted AI speech in place (keeping
+ * its slot name, every earlier speech, and every later speech untouched)
+ * rather than clearing the whole round and starting over, or only ever
+ * being able to redo the single most recent speech. Neither calls the AI
+ * itself — the panel rebuilds the same `buildAiResponseRequest` used to
+ * generate the original speech (from the speeches delivered before that
+ * index) and calls the existing
  * `requestAiVersusSpeech`/`requestAiVersusSpeechWithPersona` client, then
- * saves the returned text through `replaceLastAiSpeech`.
+ * saves the returned text through `replaceAiSpeechAt`.
  *
  * @module state/aiVersusRounds
  */
@@ -93,32 +95,41 @@ export function deleteAiVersusRound(roundId: string): void {
 }
 
 /**
- * Whether a round's most recently submitted speech was the AI's, and so
- * can be regenerated in place — false for a round with no speeches yet, or
- * one whose last submitted speech was the user's.
+ * Whether the submitted speech at `index` exists and is the AI's, and so
+ * can be regenerated in place — false for an out-of-range index or one
+ * whose speech was the user's. Any already-submitted AI speech qualifies,
+ * not just the most recently submitted one.
  */
-export function canRegenerateLastAiSpeech(record: AiVersusRoundRecord): boolean {
-  const last = record.submittedSpeeches[record.submittedSpeeches.length - 1];
-  return last !== undefined && last.speaker === "ai";
+export function canRegenerateAiSpeechAt(record: AiVersusRoundRecord, index: number): boolean {
+  const speech = record.submittedSpeeches[index];
+  return speech !== undefined && speech.speaker === "ai";
 }
 
 /**
- * Returns a copy of `record` with its last submitted speech's text
+ * Returns a copy of `record` with the submitted speech at `index` text
  * replaced by `text`, keeping that speech's `name`/`speaker` and every
- * earlier speech untouched. Throws if the last submitted speech isn't the
- * AI's (check `canRegenerateLastAiSpeech` first) — this only ever replaces
- * an AI speech, never a user one. Does not persist the result; call
- * `saveAiVersusRound` with it.
+ * other speech — earlier or later — untouched. Throws if there's no
+ * speech at `index` or it isn't the AI's (check `canRegenerateAiSpeechAt`
+ * first) — this only ever replaces an AI speech, never a user one. Does
+ * not persist the result; call `saveAiVersusRound` with it.
  */
-export function replaceLastAiSpeech(record: AiVersusRoundRecord, text: string): AiVersusRoundRecord {
-  if (!canRegenerateLastAiSpeech(record)) {
-    throw new Error("The last submitted speech isn't an AI speech, so it can't be regenerated.");
+export function replaceAiSpeechAt(
+  record: AiVersusRoundRecord,
+  index: number,
+  text: string,
+): AiVersusRoundRecord {
+  if (!canRegenerateAiSpeechAt(record, index)) {
+    throw new Error("There's no AI speech at that position, so it can't be regenerated.");
   }
   const speeches = record.submittedSpeeches;
-  const last = speeches[speeches.length - 1]!;
+  const target = speeches[index]!;
   return {
     ...record,
-    submittedSpeeches: [...speeches.slice(0, -1), { ...last, text }],
+    submittedSpeeches: [
+      ...speeches.slice(0, index),
+      { ...target, text },
+      ...speeches.slice(index + 1),
+    ],
   };
 }
 

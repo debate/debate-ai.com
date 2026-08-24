@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildAiVersusRoundsPanelView,
-  canRegenerateLastAiSpeech,
+  canRegenerateAiSpeechAt,
   deleteAiVersusRound,
   getAiVersusRound,
   getAiVersusRoundStatus,
   listAiVersusRounds,
-  replaceLastAiSpeech,
+  replaceAiSpeechAt,
   saveAiVersusRound,
   type AiVersusRoundRecord,
 } from "../src/state/aiVersusRounds";
@@ -139,16 +139,20 @@ describe("buildAiVersusRoundsPanelView", () => {
   });
 });
 
-describe("canRegenerateLastAiSpeech", () => {
+describe("canRegenerateAiSpeechAt", () => {
   it("is false for a round with no submitted speeches", () => {
-    expect(canRegenerateLastAiSpeech({ ...ROUND_B, submittedSpeeches: [] })).toBe(false);
+    expect(canRegenerateAiSpeechAt({ ...ROUND_B, submittedSpeeches: [] }, 0)).toBe(false);
   });
 
-  it("is false when the last submitted speech was the user's", () => {
-    expect(canRegenerateLastAiSpeech(ROUND_A)).toBe(false);
+  it("is false for an index whose submitted speech was the user's", () => {
+    expect(canRegenerateAiSpeechAt(ROUND_A, 0)).toBe(false);
   });
 
-  it("is true when the last submitted speech was the AI's", () => {
+  it("is false for an out-of-range index", () => {
+    expect(canRegenerateAiSpeechAt(ROUND_A, 5)).toBe(false);
+  });
+
+  it("is true for an index whose submitted speech was the AI's", () => {
     const record: AiVersusRoundRecord = {
       ...ROUND_A,
       submittedSpeeches: [
@@ -156,11 +160,23 @@ describe("canRegenerateLastAiSpeech", () => {
         { name: "1NC", speaker: "ai", text: "The negative contends..." },
       ],
     };
-    expect(canRegenerateLastAiSpeech(record)).toBe(true);
+    expect(canRegenerateAiSpeechAt(record, 1)).toBe(true);
+  });
+
+  it("is true for an earlier AI speech even when later speeches were also submitted", () => {
+    const record: AiVersusRoundRecord = {
+      ...ROUND_A,
+      submittedSpeeches: [
+        ...ROUND_A.submittedSpeeches,
+        { name: "1NC", speaker: "ai", text: "The negative contends..." },
+        { name: "2AC", speaker: "user", text: "We extend our first contention..." },
+      ],
+    };
+    expect(canRegenerateAiSpeechAt(record, 1)).toBe(true);
   });
 });
 
-describe("replaceLastAiSpeech", () => {
+describe("replaceAiSpeechAt", () => {
   it("replaces the last speech's text, keeping its name/speaker and every earlier speech", () => {
     const record: AiVersusRoundRecord = {
       ...ROUND_A,
@@ -170,11 +186,30 @@ describe("replaceLastAiSpeech", () => {
       ],
     };
 
-    const replaced = replaceLastAiSpeech(record, "A completely different negative case...");
+    const replaced = replaceAiSpeechAt(record, 1, "A completely different negative case...");
 
     expect(replaced.submittedSpeeches).toEqual([
       ROUND_A.submittedSpeeches[0],
       { name: "1NC", speaker: "ai", text: "A completely different negative case..." },
+    ]);
+  });
+
+  it("replaces an earlier AI speech in place, leaving later speeches (including the user's) untouched", () => {
+    const record: AiVersusRoundRecord = {
+      ...ROUND_A,
+      submittedSpeeches: [
+        ...ROUND_A.submittedSpeeches,
+        { name: "1NC", speaker: "ai", text: "The negative contends..." },
+        { name: "2AC", speaker: "user", text: "We extend our first contention..." },
+      ],
+    };
+
+    const replaced = replaceAiSpeechAt(record, 1, "A completely different negative case...");
+
+    expect(replaced.submittedSpeeches).toEqual([
+      ROUND_A.submittedSpeeches[0],
+      { name: "1NC", speaker: "ai", text: "A completely different negative case..." },
+      { name: "2AC", speaker: "user", text: "We extend our first contention..." },
     ]);
   });
 
@@ -188,19 +223,23 @@ describe("replaceLastAiSpeech", () => {
     };
     const original = JSON.parse(JSON.stringify(record));
 
-    replaceLastAiSpeech(record, "A completely different negative case...");
+    replaceAiSpeechAt(record, 1, "A completely different negative case...");
 
     expect(record).toEqual(original);
   });
 
-  it("throws when the last submitted speech isn't the AI's", () => {
-    expect(() => replaceLastAiSpeech(ROUND_A, "new text")).toThrow(
-      "The last submitted speech isn't an AI speech, so it can't be regenerated.",
+  it("throws when the speech at that index isn't the AI's", () => {
+    expect(() => replaceAiSpeechAt(ROUND_A, 0, "new text")).toThrow(
+      "There's no AI speech at that position, so it can't be regenerated.",
     );
   });
 
+  it("throws for an out-of-range index", () => {
+    expect(() => replaceAiSpeechAt(ROUND_A, 5, "new text")).toThrow();
+  });
+
   it("throws when there are no submitted speeches yet", () => {
-    expect(() => replaceLastAiSpeech({ ...ROUND_B, submittedSpeeches: [] }, "new text")).toThrow();
+    expect(() => replaceAiSpeechAt({ ...ROUND_B, submittedSpeeches: [] }, 0, "new text")).toThrow();
   });
 });
 

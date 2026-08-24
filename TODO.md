@@ -6,6 +6,41 @@
 _No task currently in progress._
 
 ### Completed
+- **Online Debate Versus AI — regenerate any delivered AI speech.**
+  [PR #302](https://github.com/debate/debate-ai.com/pull/302).
+  Closes the Known gap recorded in `docs/features/ai-versus-rounds.md`:
+  "Regenerate last AI speech" only ever replaced the most recently
+  submitted speech — there was no way to regenerate an earlier AI speech
+  mid-round without also discarding every speech (the user's included)
+  submitted after it. `debate-round`'s `state/aiVersusRounds.ts` replaces
+  its narrower `canRegenerateLastAiSpeech`/`replaceLastAiSpeech` pair with
+  index-based `canRegenerateAiSpeechAt(record, index)`/
+  `replaceAiSpeechAt(record, index, text)`, which work for any submitted
+  speech position, not just the last one. `AiVersusRoundPanel.tsx`
+  (`/versus-ai`) now renders an independent "Regenerate" button next to
+  every delivered AI speech in the round's turn-order list, instead of a
+  single button that only ever targeted the most recent speech.
+  Regenerating a speech rebuilds the exact same `buildAiResponseRequest`
+  originally used for it (from the speeches delivered before that index)
+  and swaps only that speech's text in place — every other speech, earlier
+  or later, including the user's own, is left untouched, so redoing an
+  early AI speech no longer discards the rest of the round. No new
+  request/response shape or AI-calling logic was introduced; this is a
+  pure generalization of the existing regenerate mechanism from "last
+  speech only" to "any delivered speech." Vitest-covered in
+  `packages/debate-round/test/aiVersusRounds.test.ts` (9 cases:
+  `canRegenerateAiSpeechAt` for no speeches / a user's speech at that
+  index / an AI speech at that index / an out-of-range index / an earlier
+  AI speech with later speeches also present, and `replaceAiSpeechAt` for
+  the swap itself, an earlier-speech swap leaving later speeches
+  untouched, non-mutation of the input record, and the three throwing
+  cases). Docs updated in `docs/features/ai-versus-rounds.md` (data flow
+  and Known gaps, now closed). No repo-wide `lint` script exists (checked
+  root/app/package `package.json` scripts) so none was run. Verified:
+  `bun install`, `bun run test` (165 files / 2430 tests, all pass — 3 new),
+  `bun run typecheck` (12 of 13 in-scope packages have a typecheck script;
+  all pass), and `bun run build:web` (`debate-ai-web`, succeeds, `/versus-ai`
+  route present, no new route) all pass.
 - **Team Brainstorm Assist — duplicate-idea merge action + per-board AI generation.**
   [PR #301](https://github.com/debate/debate-ai.com/pull/301).
   Closes both Known gaps recorded in `docs/features/brainstorm-board.md`:
