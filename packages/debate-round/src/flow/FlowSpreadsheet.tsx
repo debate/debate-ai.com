@@ -723,6 +723,7 @@ export function FlowSpreadsheet({
           x={argumentTag.x}
           y={argumentTag.y}
           tags={getRowArgumentTags(flow, argumentTag.rowIndex)}
+          content={flow.children[argumentTag.rowIndex]?.content ?? ""}
           authorIdSuggestions={listAuthorIdsInFlow(flow)}
           sectionRows={getSectionRowPreviews(flow, argumentTag.rowIndex)}
           onSave={(tags, applyToSection) =>

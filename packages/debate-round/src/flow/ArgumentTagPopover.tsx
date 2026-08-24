@@ -17,7 +17,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Tags } from "lucide-react"
 import type { ArgumentType, EvidenceStatus } from "debate-core/src/types/flow"
-import { ARGUMENT_TYPES, EVIDENCE_STATUSES, formatArgumentTags } from "./argument-tagging"
+import { ARGUMENT_TYPES, EVIDENCE_STATUSES, formatArgumentTags, inferArgumentType } from "./argument-tagging"
 import type { ArgumentTags, SectionRowPreview } from "./argument-tagging"
 
 export interface ArgumentTagPopoverProps {
@@ -25,6 +25,8 @@ export interface ArgumentTagPopoverProps {
   y: number
   /** The tags the row currently carries, used to seed the form. */
   tags: ArgumentTags
+  /** The row's own content, used to derive a suggested argument type. */
+  content?: string
   /** Contributor ids already used elsewhere in this flow, offered as suggestions. */
   authorIdSuggestions: string[]
   /** Every *other* row in this row's section, with its own content and current tags. */
@@ -43,6 +45,7 @@ export function ArgumentTagPopover({
   x,
   y,
   tags,
+  content = "",
   authorIdSuggestions,
   sectionRows = [],
   onSave,
@@ -50,6 +53,7 @@ export function ArgumentTagPopover({
 }: ArgumentTagPopoverProps) {
   const popoverRef = useRef<HTMLDivElement>(null)
   const [argumentType, setArgumentType] = useState<ArgumentType | undefined>(tags.argumentType)
+  const suggestedArgumentType = inferArgumentType(content)
   const [evidenceStatus, setEvidenceStatus] = useState<EvidenceStatus | undefined>(
     tags.evidenceStatus,
   )
@@ -110,6 +114,15 @@ export function ArgumentTagPopover({
             </option>
           ))}
         </select>
+        {suggestedArgumentType && suggestedArgumentType !== argumentType && (
+          <button
+            type="button"
+            className="self-start text-[11px] text-primary underline-offset-2 hover:underline"
+            onClick={() => setArgumentType(suggestedArgumentType)}
+          >
+            Suggested: {suggestedArgumentType} — use it
+          </button>
+        )}
       </label>
 
       <label className="flex flex-col gap-1 text-xs text-muted-foreground">

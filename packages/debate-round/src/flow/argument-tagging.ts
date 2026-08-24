@@ -204,6 +204,51 @@ export function formatArgumentTags(tags: ArgumentTags): string {
 }
 
 /**
+ * Ordered `argumentType` keyword rules, most-specific first — the first rule
+ * whose `keywords` any appear in the (lowercased) content wins. Order matters:
+ * "turn" and "extend" are checked before the more generic "link"/"impact"
+ * rules so e.g. "this turns their impact" reads as a turn, not an impact.
+ */
+const ARGUMENT_TYPE_KEYWORD_RULES: { type: ArgumentType; keywords: string[] }[] = [
+  { type: "turn", keywords: ["turn", "turns their", "link turn", "impact turn"] },
+  {
+    type: "extension",
+    keywords: ["extend", "extension", "still stands", "goes conceded", "cross-apply", "cross apply"],
+  },
+  {
+    type: "answer",
+    keywords: ["no link", "not true", "answer", "responds to", "denies", "they say", "that's wrong"],
+  },
+  {
+    type: "impact",
+    keywords: ["impact", "outweighs", "magnitude", "extinction", "timeframe", "probability"],
+  },
+  { type: "link", keywords: ["link", "internal link", "uniqueness", "leads to"] },
+  { type: "contention", keywords: ["contention", "advantage", "off-case", "off case"] },
+];
+
+/**
+ * Suggests an `argumentType` for a row from its own content via a
+ * deterministic keyword heuristic — never called automatically, only offered
+ * as a one-click fill-in by `ArgumentTagPopover`, closing the "nothing infers
+ * a tag" Known gap recorded in `docs/features/argument-tree-outline.md`.
+ * Matching is case-insensitive substring search; the first matching rule in
+ * {@link ARGUMENT_TYPE_KEYWORD_RULES} wins. Returns `undefined` for empty
+ * content or content matching no rule.
+ */
+export function inferArgumentType(content: string): ArgumentType | undefined {
+  const normalized = content.trim().toLowerCase();
+  if (!normalized) return undefined;
+
+  for (const rule of ARGUMENT_TYPE_KEYWORD_RULES) {
+    if (rule.keywords.some((keyword) => normalized.includes(keyword))) {
+      return rule.type;
+    }
+  }
+  return undefined;
+}
+
+/**
  * Every distinct `authorId` already used somewhere in the flow, in
  * first-seen row order — the suggestion list the tagging popover offers so a
  * contributor id stays consistent across rows instead of being retyped (and

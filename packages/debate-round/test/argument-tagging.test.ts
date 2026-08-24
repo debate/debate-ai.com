@@ -4,6 +4,7 @@ import {
   getRowArgumentTags,
   getSectionRowIndexes,
   getSectionRowPreviews,
+  inferArgumentType,
   listAuthorIdsInFlow,
   setRowArgumentTags,
   setRowsArgumentTags,
@@ -269,6 +270,42 @@ describe("formatArgumentTags", () => {
     expect(formatArgumentTags({ argumentType: "turn" })).toBe("turn");
     expect(formatArgumentTags({ authorId: "  " })).toBe("");
     expect(formatArgumentTags({})).toBe("");
+  });
+});
+
+describe("inferArgumentType", () => {
+  it("detects a turn before the more generic impact/link rules", () => {
+    expect(inferArgumentType("This turns their warming impact")).toBe("turn");
+  });
+
+  it("detects an extension", () => {
+    expect(inferArgumentType("Extend the uniqueness debate, it still stands")).toBe("extension");
+  });
+
+  it("detects an answer", () => {
+    expect(inferArgumentType("They say no link, but that's wrong")).toBe("answer");
+  });
+
+  it("detects an impact", () => {
+    expect(inferArgumentType("This outweighs on magnitude and timeframe")).toBe("impact");
+  });
+
+  it("detects a link", () => {
+    expect(inferArgumentType("The internal link to the economy is clear")).toBe("link");
+  });
+
+  it("detects a contention/advantage heading", () => {
+    expect(inferArgumentType("Advantage 1: Warming")).toBe("contention");
+  });
+
+  it("is case-insensitive", () => {
+    expect(inferArgumentType("THIS TURNS THE CASE")).toBe("turn");
+  });
+
+  it("returns undefined for content matching no rule, and for empty/whitespace content", () => {
+    expect(inferArgumentType("Just a neutral sentence with nothing special")).toBeUndefined();
+    expect(inferArgumentType("")).toBeUndefined();
+    expect(inferArgumentType("   ")).toBeUndefined();
   });
 });
 
