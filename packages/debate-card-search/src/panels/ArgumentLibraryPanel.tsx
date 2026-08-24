@@ -26,6 +26,14 @@
  * gap: this browser shows the combined library, so a tag listed here may come
  * from either store.
  *
+ * A "Possible duplicate tags" section closes the "nothing merges two
+ * casings already in use" half of that same Known gap's tag-identity note:
+ * `lib/argument-library.ts`'s `findTagCaseVariantGroups` scans the library's
+ * tag collections for tags that differ only by casing (e.g. `warming` vs.
+ * `Warming`) and offers a one-click merge into whichever casing is already
+ * carried by the most cards, reusing the same
+ * `renameTagAcrossCombinedPersistedStores` call the manual form uses.
+ *
  * @module panels/ArgumentLibraryPanel
  */
 
@@ -40,7 +48,7 @@ import {
   buildCombinedPersistedArgumentLibrary,
   renameTagAcrossCombinedPersistedStores,
 } from "../state/evidenceLibraryEntries"
-import { buildLibrarySummaryText, filterCardsByTags } from "../lib/argument-library"
+import { buildLibrarySummaryText, filterCardsByTags, findTagCaseVariantGroups } from "../lib/argument-library"
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
 
 /**
@@ -62,26 +70,30 @@ export function ArgumentLibraryPanel() {
     setLibrary(buildCombinedPersistedArgumentLibrary())
   }, [])
 
-  function handleRenameTag() {
+  function renameTag(oldTag: string, newTag: string) {
     try {
       const { entriesChanged, contributionsChanged, totalChanged } =
-        renameTagAcrossCombinedPersistedStores(renameOldTag, renameNewTag)
+        renameTagAcrossCombinedPersistedStores(oldTag, newTag)
       setLibrary(buildCombinedPersistedArgumentLibrary())
-      setActiveTags((current) => current.map((tag) => (tag === renameOldTag.trim() ? renameNewTag.trim() : tag)))
+      setActiveTags((current) => current.map((tag) => (tag === oldTag.trim() ? newTag.trim() : tag)))
       setRenameMessage(
         totalChanged === 0
-          ? `Nothing carries "${renameOldTag.trim()}" — nothing changed.`
-          : `Renamed "${renameOldTag.trim()}" to "${renameNewTag.trim()}" on ${entriesChanged} ${
+          ? `Nothing carries "${oldTag.trim()}" — nothing changed.`
+          : `Renamed "${oldTag.trim()}" to "${newTag.trim()}" on ${entriesChanged} ${
               entriesChanged === 1 ? "evidence entry" : "evidence entries"
             } and ${contributionsChanged} ${
               contributionsChanged === 1 ? "contribution" : "contributions"
             }.`,
       )
-      setRenameOldTag("")
-      setRenameNewTag("")
     } catch (error) {
       setRenameMessage(error instanceof Error ? error.message : String(error))
     }
+  }
+
+  function handleRenameTag() {
+    renameTag(renameOldTag, renameNewTag)
+    setRenameOldTag("")
+    setRenameNewTag("")
   }
 
   if (library === null) {
@@ -108,6 +120,7 @@ export function ArgumentLibraryPanel() {
     folder.caseAreas.flatMap((group) => group.cards),
   )
   const filteredCards = activeTags.length > 0 ? filterCardsByTags(allCards, activeTags, "any") : null
+  const caseVariantGroups = findTagCaseVariantGroups(library.tagCollections)
 
   return (
     <div className="p-4 sm:p-6 space-y-4">
@@ -183,6 +196,36 @@ export function ArgumentLibraryPanel() {
             </Button>
           </div>
           {renameMessage && <p className="text-xs text-muted-foreground">{renameMessage}</p>}
+        </div>
+      )}
+
+      {caseVariantGroups.length > 0 && (
+        <div className="rounded-lg border border-border p-3 space-y-2">
+          <div className="text-sm font-medium text-foreground">Possible duplicate tags</div>
+          <p className="text-xs text-muted-foreground">
+            These tags differ only by capitalization. Merge each variant into the casing already
+            carried by the most cards.
+          </p>
+          <div className="space-y-1.5">
+            {caseVariantGroups.map((group) => {
+              const [canonical, ...variants] = group.tags
+              return (
+                <div key={canonical} className="flex flex-wrap items-center gap-2 text-sm">
+                  <span className="text-muted-foreground">{group.tags.join(" / ")} →</span>
+                  {variants.map((variant) => (
+                    <Button
+                      key={variant}
+                      size="sm"
+                      variant="outline"
+                      onClick={() => renameTag(variant, canonical)}
+                    >
+                      Merge "{variant}" into "{canonical}"
+                    </Button>
+                  ))}
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
 

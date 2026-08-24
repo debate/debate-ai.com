@@ -287,6 +287,51 @@ export function renameTagAcrossCards<T extends LibraryCard>(
   return { cards: updated, changedCount };
 }
 
+/** A set of tags that are identical except for casing, e.g. `["Warming", "warming"]`. */
+export interface TagCaseVariantGroup {
+  /**
+   * Every exact-string casing in use for this tag, most-used (by card
+   * count) first, ties broken alphabetically. `tags[0]` is the suggested
+   * merge target — the rename/merge tool's `newTag` — since it's already
+   * the casing carried by the most cards.
+   */
+  tags: string[];
+}
+
+/**
+ * Finds tags that are used under more than one exact-string casing (e.g.
+ * `warming` and `Warming`) so a caller can suggest merging them — the
+ * "nothing merges two casings already in use" half of the tag-identity
+ * Known gap recorded in `docs/features/evidence-library.md`. A tag used
+ * under only one casing never appears in the result. Deterministic:
+ * groups are sorted by their most-used casing, and each group's tags are
+ * sorted by card count (descending) then alphabetically.
+ */
+export function findTagCaseVariantGroups(collections: TagCollection[]): TagCaseVariantGroup[] {
+  const byLowerCase = new Map<string, TagCollection[]>();
+  for (const collection of collections) {
+    const key = collection.tag.toLowerCase();
+    const group = byLowerCase.get(key);
+    if (group) {
+      group.push(collection);
+    } else {
+      byLowerCase.set(key, [collection]);
+    }
+  }
+
+  const groups: TagCaseVariantGroup[] = [];
+  for (const group of byLowerCase.values()) {
+    if (group.length < 2) continue;
+    const sorted = [...group].sort((a, b) => {
+      if (b.cards.length !== a.cards.length) return b.cards.length - a.cards.length;
+      return a.tag.localeCompare(b.tag);
+    });
+    groups.push({ tags: sorted.map((collection) => collection.tag) });
+  }
+
+  return groups.sort((a, b) => a.tags[0].localeCompare(b.tags[0]));
+}
+
 /**
  * Converts a Contributions Feed `AttributedContribution` into a `LibraryCard`,
  * or `null` if it's missing `topic` or `caseArea` — both required on

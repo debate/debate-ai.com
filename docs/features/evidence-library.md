@@ -333,6 +333,34 @@ both-stores no-op, and a throw leaving both stores untouched) and
 (`renameTagAcrossPersistedContributions`: rewrite-and-persist, merge-dedup,
 a true no-write no-op, and throwing on a blank or identical tag pair).
 
+## Duplicate-tag merge suggestions
+
+Closes the "nothing merges two casings already in use" half of this
+bullet's tag-identity Known gap. The manual "Rename/merge tag" form above
+requires a contributor to already know two casings of the same tag exist
+(e.g. `warming` and `Warming`) before they think to merge them. The
+Argument Library browser now surfaces that situation itself: a "Possible
+duplicate tags" section lists every tag used under more than one exact
+casing, with a "Merge … into …" button per variant that runs the same
+`renameTagAcrossCombinedPersistedStores` call as the manual form.
+
+`lib/argument-library.ts`'s `findTagCaseVariantGroups(collections)` scans a
+library's `TagCollection[]` (already grouped by exact-string tag) for
+tags whose lowercased form repeats, and groups those variants together.
+Within a group, the casing carried by the most cards is treated as the
+merge target and sorted first (a card-count tie breaks alphabetically); a
+tag used under only one casing never appears in the result, so the section
+is hidden entirely when there's nothing to merge. This only detects
+casing differences already present in persisted data — it doesn't
+normalize a tag as it's typed, and a submission form that bypasses
+autocomplete can still coin a new casing.
+
+Vitest-covered in
+`packages/debate-card-search/test/argument-library.test.ts`
+(`findTagCaseVariantGroups`: grouping case variants, most-used-first
+ordering, an alphabetical tie-break, excluding single-casing tags,
+multiple groups sorted by their own merge target, and an empty input).
+
 ## Tag autocomplete on the Contributions Feed
 
 Closes this bullet's "a Contributions Feed submission tagged for the
@@ -382,5 +410,9 @@ the deduped sorted list).
 - Tag identity is still exact-string everywhere: `warming` and `Warming` are
   two different tags, in the library's collections, in the autocomplete
   corpus, and in a rename. Autocomplete *matching* is case-insensitive, so a
-  contributor who takes a suggestion lands on the existing casing, but
-  nothing merges two casings already in use.
+  contributor who takes a suggestion lands on the existing casing. The
+  Common Argument Library browser now surfaces existing case-variant tags
+  and merges them on request (see "Duplicate-tag merge suggestions"
+  above), but nothing does this automatically, and a tag typed directly
+  into a submission form (rather than via autocomplete) still creates a
+  new casing instead of being normalized to an existing one.
