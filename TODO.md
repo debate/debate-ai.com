@@ -33,7 +33,7 @@ _No task currently in progress._
   tests), `bunx turbo typecheck --filter=debate-card-search
   --filter=debate-ai-web`, and `bunx turbo build --filter=debate-ai-web`; no
   `lint` script is configured in this repo.
-  **PR:** Not created yet.
+  **PR:** [#287](https://github.com/debate/debate-ai.com/pull/287).
   **Completed:** 2026-08-24.
 
 - **Judge Profiles and Opponent Team Profiles — "did you mean" suggestion
