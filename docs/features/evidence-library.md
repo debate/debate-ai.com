@@ -66,6 +66,18 @@ submission missing `topic` or `caseArea` rather than guessing a fallback
 for `argBlock` and `0` for `wordCount` — a contribution carries no card body
 to measure a real word count from, unlike a dedicated evidence-library entry.
 
+`ContributionsFeedPanel.tsx`'s own Tags field now suggests existing tags as
+the contributor types, reusing `lib/argument-library.ts`'s
+`parseTagsInput`/`suggestTags`/`applyTagSuggestion` the same way the
+`/cards/library` form's Tags field does. Its suggestion corpus is
+`state/evidenceLibraryEntries.ts`'s new `listCombinedPersistedTags` — every
+tag used across both the evidence library and the Contributions Feed itself
+(via `state/contributions.ts`'s `listContributions`), so a contributor
+reusing a tag another contributor already typed here (even one that never
+filled in `topic`/`caseArea`) gets suggested it too — closing the "no
+tag-autocomplete affordance of its own" gap recorded below under "Known
+gaps."
+
 ## On-page card reuse check
 
 A "Check this page" box implements the first slice of the "On Page Card
@@ -332,7 +344,12 @@ no-write no-op, and throwing on a blank new tag).
   only rewrites this evidence-library repository's own entries — a
   Contributions Feed submission's tags are a separate store/form and aren't
   rewritten by it.
-- A Contributions Feed submission tagged for the Argument Library gets no
-  tag-autocomplete affordance of its own (that only exists on the dedicated
-  `/cards/library` form's Tags field) — it's a plain comma-separated text
-  input.
+- ~~A Contributions Feed submission tagged for the Argument Library gets no
+  tag-autocomplete affordance of its own...~~ Closed: `ContributionsFeedPanel.tsx`'s
+  Tags field now suggests existing tags as the contributor types, the same
+  `parseTagsInput`/`suggestTags`/`applyTagSuggestion` affordance the
+  `/cards/library` form already had — but drawing from
+  `state/evidenceLibraryEntries.ts`'s new `listCombinedPersistedTags`, which
+  merges this evidence-library repository's tags with every tag already used
+  across the Contributions Feed (`state/contributions.ts`'s
+  `listContributions`), not only the evidence library's own corpus.

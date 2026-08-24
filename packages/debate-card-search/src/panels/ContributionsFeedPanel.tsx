@@ -59,6 +59,17 @@
  * `state/trackedArguments.ts`'s `buildPersistedTopicCoverageReport` as a
  * second real coverage-card source, alongside the evidence library.
  *
+ * The Tags field now suggests existing tags as the contributor types, the
+ * same tag-autocomplete affordance `EvidenceLibraryPanel`'s Tags field
+ * already has (via `lib/argument-library.ts`'s
+ * `parseTagsInput`/`suggestTags`/`applyTagSuggestion`), but drawing from the
+ * broader `listCombinedPersistedTags` corpus — every tag used across both
+ * the evidence library and this Contributions Feed — instead of only the
+ * evidence library's own tags. Closes the gap recorded in
+ * `docs/features/evidence-library.md`'s Known gaps: "A Contributions Feed
+ * submission tagged for the Argument Library gets no tag-autocomplete
+ * affordance of its own."
+ *
  * @module panels/ContributionsFeedPanel
  */
 
@@ -78,8 +89,10 @@ import {
   saveContribution,
   type ContributionFeedEntry,
 } from "../state/contributions"
+import { listCombinedPersistedTags } from "../state/evidenceLibraryEntries"
 import type { ContributionKind } from "../lib/community-rating"
 import { computeWordCount } from "../lib/shared-evidence-library"
+import { applyTagSuggestion, parseTagsInput, suggestTags } from "../lib/argument-library"
 
 const KIND_OPTIONS: { value: ContributionKind; label: string }[] = [
   { value: "card", label: "Card" },
@@ -133,12 +146,17 @@ export function ContributionsFeedPanel() {
   const [error, setError] = useState<string | null>(null)
   const [reviewerId, setReviewerId] = useState("")
   const [endorseError, setEndorseError] = useState<string | null>(null)
+  const [knownTags, setKnownTags] = useState<string[]>([])
 
   useEffect(() => {
     setFeed(buildPersistedContributionFeed())
+    setKnownTags(listCombinedPersistedTags())
   }, [])
 
-  const refresh = () => setFeed(buildPersistedContributionFeed())
+  const refresh = () => {
+    setFeed(buildPersistedContributionFeed())
+    setKnownTags(listCombinedPersistedTags())
+  }
 
   const handleSubmit = () => {
     const contributorId = draft.contributorId.trim()
@@ -197,6 +215,13 @@ export function ContributionsFeedPanel() {
 
   if (feed === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading contributions feed…</div>
+  }
+
+  const { completedTags, draftTag } = parseTagsInput(draft.tags)
+  const tagSuggestions = suggestTags(knownTags, draftTag, completedTags)
+
+  const applyTagSuggestionToDraft = (suggestion: string) => {
+    setDraft((prev) => ({ ...prev, tags: applyTagSuggestion(prev.tags, suggestion) }))
   }
 
   return (
@@ -271,6 +296,22 @@ export function ContributionsFeedPanel() {
               onChange={(e) => setDraft((prev) => ({ ...prev, tags: e.target.value }))}
               placeholder="warming, uniqueness"
             />
+            {tagSuggestions.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-xs text-muted-foreground">Existing tags:</span>
+                {tagSuggestions.map((suggestion) => (
+                  <Button
+                    key={suggestion}
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => applyTagSuggestionToDraft(suggestion)}
+                  >
+                    {suggestion}
+                  </Button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <div className="space-y-1.5">

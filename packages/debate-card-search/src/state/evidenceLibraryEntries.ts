@@ -334,3 +334,21 @@ export function renameTagAcrossPersistedEntries(oldTag: string, newTag: string):
 export function listPersistedTags(): string[] {
   return buildTagCollections(readAll()).map((collection) => collection.tag);
 }
+
+/**
+ * Every distinct tag used across both the persisted evidence repository and
+ * the persisted Contributions Feed, sorted — the broader corpus
+ * `ContributionsFeedPanel`'s tag-autocomplete affordance suggests from,
+ * closing the gap recorded in `docs/features/evidence-library.md`'s Known
+ * gaps: "A Contributions Feed submission tagged for the Argument Library
+ * gets no tag-autocomplete affordance of its own." Unlike
+ * `listPersistedTags`, this also draws from every persisted contribution's
+ * `tags` (via `state/contributions.ts`'s `listContributions`) regardless of
+ * whether that contribution also filled in `topic`/`caseArea` — a
+ * contributor tagging without those fields still adds to the suggestible
+ * corpus.
+ */
+export function listCombinedPersistedTags(): string[] {
+  const contributionTags = listContributions().flatMap((contribution) => contribution.tags ?? []);
+  return Array.from(new Set([...listPersistedTags(), ...contributionTags])).sort((a, b) => a.localeCompare(b));
+}

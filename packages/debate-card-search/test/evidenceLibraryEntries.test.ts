@@ -7,6 +7,7 @@ import {
   getEvidenceLibraryEntry,
   isEntryLive,
   listCombinedPersistedLibraryCards,
+  listCombinedPersistedTags,
   listEvidenceLibraryEntries,
   listPendingReviewEntries,
   renameTagAcrossPersistedEntries,
@@ -564,6 +565,41 @@ describe("listCombinedPersistedLibraryCards", () => {
   it("excludes a contribution missing topic or caseArea", () => {
     saveContribution({ ...TAGGED_CONTRIBUTION, id: "contrib-2", topic: undefined });
     expect(listCombinedPersistedLibraryCards()).toEqual([]);
+  });
+});
+
+describe("listCombinedPersistedTags", () => {
+  const UNTOPICED_CONTRIBUTION: AttributedContribution = {
+    id: "contrib-1",
+    contributorId: "carol",
+    kind: "card",
+    likes: 0,
+    saves: 0,
+    qualitySignals: [0.5],
+    reviewerEndorsements: [],
+    tags: ["uniqueness", "warming"],
+  };
+
+  it("returns an empty list when nothing is stored in either store", () => {
+    expect(listCombinedPersistedTags()).toEqual([]);
+  });
+
+  it("merges evidence-library tags and Contributions Feed tags, deduped and sorted", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    saveContribution(UNTOPICED_CONTRIBUTION);
+
+    expect(listCombinedPersistedTags()).toEqual(["impact", "solvency", "uniqueness", "warming"]);
+  });
+
+  it("includes a contribution's tags even without a topic or case area", () => {
+    saveContribution(UNTOPICED_CONTRIBUTION);
+    expect(listCombinedPersistedTags()).toEqual(["uniqueness", "warming"]);
+  });
+
+  it("ignores a contribution with no tags field", () => {
+    saveContribution({ ...UNTOPICED_CONTRIBUTION, tags: undefined });
+    expect(listCombinedPersistedTags()).toEqual([]);
   });
 });
 
