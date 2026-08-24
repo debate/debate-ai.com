@@ -35,7 +35,14 @@
  * the "regenerate affordance" follow-up noted in
  * `docs/features/ai-versus-rounds.md`'s Known gaps.
  *
-
+ * The speech text field also has a "🎤 Record" button (via the same
+ * `hooks/useMicrophoneTranscription.ts` the "Speech Transcript Summaries"
+ * (idea #6, PR #297) and "Video-Lecture-Training Coach AI" (idea #8, PR
+ * #298) panels already use) that dictates directly into `speechText`,
+ * closing the "text-only" half of the "Speech submission is text-only...
+ * no transcription pipeline exists" Known gap recorded in
+ * `docs/features/ai-versus-rounds.md`.
+ *
  * @module panels/AiVersusRoundPanel
  */
 
@@ -68,6 +75,8 @@ import {
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
 import { getOpponentPersonaForRound } from "../round/opponent-persona-speech-wiring"
+import { appendDictatedSegment } from "../round/microphone-transcription"
+import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import {
   buildAiVersusRoundsPanelView,
   canRegenerateLastAiSpeech,
@@ -109,6 +118,10 @@ export function AiVersusRoundPanel() {
   const [error, setError] = useState<string | null>(null)
   const [aiGenerating, setAiGenerating] = useState(false)
   const [aiRegenerating, setAiRegenerating] = useState(false)
+
+  const dictation = useMicrophoneTranscription({
+    onSegment: (segment) => setSpeechText((prev) => appendDictatedSegment(prev, segment)),
+  })
 
   useEffect(() => {
     setRounds(buildAiVersusRoundsPanelView())
@@ -377,16 +390,36 @@ export function AiVersusRoundPanel() {
             </div>
           ) : (
             <div className="space-y-2">
-              <Label htmlFor="ai-versus-speech-text">
-                Your &quot;{activeStatus.nextSlot.name}&quot;
-              </Label>
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor="ai-versus-speech-text">
+                  Your &quot;{activeStatus.nextSlot.name}&quot;
+                </Label>
+                {dictation.isSupported ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={dictation.isListening ? "destructive" : "outline"}
+                    onClick={dictation.isListening ? dictation.stop : dictation.start}
+                  >
+                    {dictation.isListening ? "Stop recording" : "🎤 Record"}
+                  </Button>
+                ) : (
+                  <span className="text-xs text-muted-foreground">
+                    Microphone dictation isn't supported in this browser.
+                  </span>
+                )}
+              </div>
               <Textarea
                 id="ai-versus-speech-text"
                 value={speechText}
                 onChange={(e) => setSpeechText(e.target.value)}
-                placeholder={`Type the ${activeStatus.nextSlot.name}…`}
+                placeholder={`Type the ${activeStatus.nextSlot.name}, or click Record to dictate it…`}
                 className="min-h-24"
               />
+              {dictation.isListening && (
+                <p className="text-xs text-muted-foreground">Listening… speak now.</p>
+              )}
+              {dictation.error && <p className="text-sm text-destructive">{dictation.error}</p>}
               <Button onClick={handleSubmitSpeech}>Submit speech</Button>
             </div>
           )}

@@ -147,14 +147,23 @@ Vitest-covered in `packages/debate-round/test/aiVersusRounds.test.ts`
 user's / last-speech-is-AI's, and `replaceLastAiSpeech` for the swap
 itself, non-mutation of the input record, and both throwing cases).
 
+The speech-submission text field also has a "🎤 Record"/"Stop recording"
+button (found via this run's `docs/features/*.md` Known gaps audit — the
+former "Speech submission is text-only... no transcription pipeline
+exists" gap was already solved elsewhere in this repo and just never wired
+into this panel), dictating directly into the same `speechText` state the
+"Submit speech" button already reads, via the existing
+`hooks/useMicrophoneTranscription.ts` and `round/microphone-transcription.ts`
+(`appendDictatedSegment`) — the same primitives idea #6's "Speech Transcript
+Summaries" (PR #297) and idea #8's "Video-Lecture-Training Coach AI"
+(PR #298) panels already use, duplicated nowhere new. A disabled
+"Microphone dictation isn't supported in this browser" fallback shows when
+neither `SpeechRecognition` constructor exists, and a recognition error
+(e.g. mic permission denied) surfaces inline. No new pure logic was added —
+`microphone-transcription.ts`'s existing Vitest coverage already applies.
+
 ## Known gaps
 
-- Speech submission is text-only. `PriorSpeechRecord` (what
-  `submittedSpeeches` stores) has no audio field, and no
-  transcription pipeline exists in this repo, so "or record a speech" from
-  the original follow-up wording isn't implemented — recording would need
-  either a new audio field on the persisted record or a transcription step
-  ahead of the existing text-only save.
 - "Regenerate last AI speech" only ever replaces the most recently
   submitted speech — there's no way to regenerate an earlier AI speech in
   the middle of a round without also discarding every speech (the user's

@@ -6,6 +6,38 @@
 _No task currently in progress._
 
 ### Completed
+- **Online Debate Versus AI — microphone dictation for speech submission.**
+  Closes the "text-only" half of the "Speech submission is text-only...
+  no transcription pipeline exists in this repo" Known gap recorded in
+  `docs/features/ai-versus-rounds.md` — a gap this run's `docs/features/*.md`
+  audit found was already solved elsewhere in the repo (idea #6 "Speech
+  Transcript Summaries", PR #297, and idea #8 "Video-Lecture-Training Coach
+  AI", PR #298, both added browser-microphone dictation via
+  `debate-round`'s `round/microphone-transcription.ts` +
+  `hooks/useMicrophoneTranscription.ts`) and just never wired into
+  `AiVersusRoundPanel`. `AiVersusRoundPanel`'s (`/versus-ai`) speech
+  submission field now has a "🎤 Record"/"Stop recording" button next to
+  the existing "Type the ⟨speech⟩…" textarea, dictating directly into the
+  same `speechText` state the "Submit speech" button already reads, with a
+  disabled "Microphone dictation isn't supported in this browser" fallback
+  when neither `SpeechRecognition` constructor exists and an inline error
+  message on recognition failure — mirroring `FlowSummariesPanel`'s
+  identical wiring exactly, duplicating no logic (the existing
+  `round/microphone-transcription.ts` and
+  `hooks/useMicrophoneTranscription.ts` were reused unchanged). No new pure
+  logic was introduced, so no new test file was added; the existing
+  16-case `packages/debate-round/test/microphone-transcription.test.ts`
+  suite already covers every code path this panel now exercises. Docs
+  updated at `docs/features/ai-versus-rounds.md`. This closes the entire
+  "Speech submission is text-only" Known gap; the separate "'Regenerate
+  last AI speech' only replaces the most recently submitted speech" Known
+  gap remains open, untouched. Verified: `bun install` (2062 packages),
+  `bun run test` (165 files / 2408 tests, all pass — no new tests, none
+  needed), `bun run typecheck` (12 of 12 in-scope packages pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/versus-ai` route
+  present) all pass. No repo-wide `lint` script exists, so none was run,
+  matching every prior PR's verification notes. PR:
+  https://github.com/debate/debate-ai.com/pull/299.
 - **Video-Lecture-Training Coach AI — microphone dictation for the Coach Materials upload
   form.** Closes the "recording" half of follow-up (a) named under idea #8
   ("Video-Lecture-Training Coach AI") in this file's Product Feature Ideas list — "audio/video
