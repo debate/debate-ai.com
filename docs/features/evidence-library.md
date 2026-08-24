@@ -367,11 +367,14 @@ the deduped sorted list).
   invalidation now updates that index incrementally instead of rebuilding it
   (see "Real search index" above) — no further follow-up remains open on
   this bullet.
-- No browser extension exists — the "Check this page" box is a manual,
-  paste-the-URL stand-in for what a future extension would run
-  automatically against the current tab. The reuse-check logic itself
+- The "Check this page" box's reuse-check logic
   (`checkPageForExistingCards`/`findEntriesBySourceUrl`/`normalizeSourceUrl`)
-  is already a plain, extension-callable function with no UI dependency.
+  now also has a real caller beyond this page: the
+  `extension/card-reuse-checker` browser extension deep-links into this
+  route's `?checkUrl=` param to run the same check automatically against
+  the active tab's URL. See
+  [`on-page-card-reuse-search.md`](./on-page-card-reuse-search.md) for the
+  full writeup and the extension's own known gaps.
 - The tag rename/merge tool now rewrites both persisted tag stores (see
   "Tag rename/merge" above) and the Contributions Feed form now has the same
   tag autocomplete as the evidence-library form (see "Tag autocomplete on

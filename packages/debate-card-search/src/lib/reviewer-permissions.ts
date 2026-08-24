@@ -57,38 +57,44 @@ function requirePermission(action: GatedReviewAction, tier: UnlockTier, minTier:
 }
 
 /**
- * Approves a review on behalf of a reviewer at `reviewerTier`. Throws
- * `InsufficientReviewerPermissionError` before `approveReview` gets a chance
- * to run, so a reviewer without the required tier never even reaches the
- * "unresolved blocking comments" check.
+ * Approves a review on behalf of `reviewerId` (at their derived
+ * `reviewerTier`). Throws `InsufficientReviewerPermissionError` before
+ * `approveReview` gets a chance to run, so a reviewer without the required
+ * tier never even reaches the "unresolved blocking comments" check — and,
+ * once the tier check passes, `approveReview` still enforces its own
+ * self-review guard (a reviewer can't approve their own submission,
+ * regardless of tier).
  */
 export function approveReviewAsReviewer(
   review: CardReview,
+  reviewerId: string,
   reviewerTier: UnlockTier,
   minTier: UnlockTier = MIN_REVIEWER_TIER,
 ): CardReview {
   requirePermission("approve", reviewerTier, minTier);
-  return approveReview(review);
+  return approveReview(review, reviewerId);
 }
 
-/** Rejects a review on behalf of a reviewer at `reviewerTier`; see `approveReviewAsReviewer`. */
+/** Rejects a review on behalf of `reviewerId`; see `approveReviewAsReviewer`. */
 export function rejectReviewAsReviewer(
   review: CardReview,
+  reviewerId: string,
   reviewerTier: UnlockTier,
   minTier: UnlockTier = MIN_REVIEWER_TIER,
 ): CardReview {
   requirePermission("reject", reviewerTier, minTier);
-  return rejectReview(review);
+  return rejectReview(review, reviewerId);
 }
 
-/** Publishes a review on behalf of a reviewer at `reviewerTier`; see `approveReviewAsReviewer`. */
+/** Publishes a review on behalf of `reviewerId`; see `approveReviewAsReviewer`. */
 export function publishReviewAsReviewer(
   review: CardReview,
+  reviewerId: string,
   reviewerTier: UnlockTier,
   minTier: UnlockTier = MIN_REVIEWER_TIER,
 ): CardReview {
   requirePermission("publish", reviewerTier, minTier);
-  return publishReview(review);
+  return publishReview(review, reviewerId);
 }
 
 /**

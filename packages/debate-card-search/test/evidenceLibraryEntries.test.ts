@@ -174,7 +174,7 @@ describe("searchPersistedEvidenceLibrary", () => {
 
   it("includes an entry again once its review is published", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
-    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
+    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")), "r1"), "r1"));
 
     const results = searchPersistedEvidenceLibrary({});
     expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
@@ -223,7 +223,7 @@ describe("searchPersistedEvidenceLibraryWithIndex", () => {
 
   it("includes an entry again once its review is published", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
-    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
+    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")), "r1"), "r1"));
 
     const results = searchPersistedEvidenceLibraryWithIndex({});
     expect(results.map((result) => result.entry.id)).toEqual(["entry-1"]);
@@ -293,7 +293,7 @@ describe("searchPersistedEvidenceLibraryWithIndex caches the index across calls"
     const buildSpy = vi.spyOn(evidenceSearchIndexModule, "buildEvidenceSearchIndex");
     const addSpy = vi.spyOn(evidenceSearchIndexModule, "addEntryToIndex");
 
-    savePeerReview(publishReview(approveReview(review)));
+    savePeerReview(publishReview(approveReview(review, "r1"), "r1"));
     const results = searchPersistedEvidenceLibraryWithIndex({});
     expect(buildSpy).not.toHaveBeenCalled();
     expect(addSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ id: "entry-1" }));
@@ -394,7 +394,7 @@ describe("isEntryLive", () => {
 
   it("is true for an entry whose review is published", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
-    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
+    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")), "r1"), "r1"));
     expect(isEntryLive("entry-1")).toBe(true);
   });
 });
@@ -414,7 +414,7 @@ describe("listPendingReviewEntries", () => {
 
   it("excludes an entry once its review is published", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
-    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")))));
+    savePeerReview(publishReview(approveReview(submitForReview(createCardReview("entry-1")), "r1"), "r1"));
 
     expect(listPendingReviewEntries()).toEqual([]);
   });
