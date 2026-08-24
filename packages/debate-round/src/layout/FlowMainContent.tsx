@@ -4,6 +4,7 @@
  */
 
 import type React from "react"
+import { useState } from "react"
 import { FlowSpreadsheet } from "../flow/FlowSpreadsheet"
 import { LexicalEditorWrapper } from "debate-editor"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
@@ -133,6 +134,13 @@ export function FlowMainContent({
   onMobileMenuClick,
   onFlowGridReady,
 }: FlowMainContentProps) {
+  // CardMirror (the debate-editor-cardmirror engine behind LexicalEditorWrapper)
+  // is a page-level singleton — only one instance can be the live, editable
+  // ProseMirror view at a time. Split mode still shows both panes, but only
+  // the active side gets the real editor; the other renders a read-only
+  // preview and clicking it swaps which side is live.
+  const [activeSplitSide, setActiveSplitSide] = useState<"left" | "right">("left")
+
   if (!currentFlow) {
     return (
       <div className="flex items-center justify-center h-full w-full">
@@ -219,6 +227,8 @@ export function FlowMainContent({
               title={leftSpeech}
               onTitleChange={() => {}}
               showAiTools
+              live={activeSplitSide === "left"}
+              onActivate={() => setActiveSplitSide("left")}
             />
           </div>
         </div>
@@ -265,6 +275,8 @@ export function FlowMainContent({
               title={rightSpeech}
               onTitleChange={() => {}}
               showAiTools
+              live={activeSplitSide === "right"}
+              onActivate={() => setActiveSplitSide("right")}
             />
           </div>
         </div>
