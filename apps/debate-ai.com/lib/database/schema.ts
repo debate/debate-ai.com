@@ -100,3 +100,63 @@ export const flowSyncEdits = sqliteTable(
 );
 
 export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
+
+// Debate round videos ingested from the subscribed YouTube channels (see
+// packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
+// admin resync action (lib/youtube/resync-rounds.ts) so the admin page can
+// page through them from SQL instead of re-hitting the YouTube API.
+export const youtubeRoundVideos = sqliteTable(
+  "youtube_round_videos",
+  {
+    id: text("id").primaryKey(), // YouTube video id
+    title: text("title").notNull(),
+    publishedAt: text("published_at").notNull(), // ISO date (YYYY-MM-DD), sorts lexically
+    channel: text("channel").notNull(),
+    views: integer("views").notNull().default(0),
+    description: text("description").notNull().default(""),
+    style: integer("style").notNull(), // 1=Policy, 2=PF, 3=LD, 4=College
+    tournament: text("tournament"),
+    roundLevel: text("round_level"),
+    aff: text("aff"),
+    neg: text("neg"),
+    winner: integer("winner", { mode: "boolean" }),
+    judgeDecision: text("judge_decision"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    publishedAtIdx: index("idx_youtube_round_videos_published_at").on(table.publishedAt),
+    channelIdx: index("idx_youtube_round_videos_channel").on(table.channel),
+    styleIdx: index("idx_youtube_round_videos_style").on(table.style),
+  }),
+);
+
+export type YoutubeRoundVideo = typeof youtubeRoundVideos.$inferSelect;
+
+// One row per admin-triggered resync, so the admin page can show progress
+// and history without re-running the sync to find out what happened.
+export const youtubeSyncRuns = sqliteTable(
+  "youtube_sync_runs",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    status: text("status").notNull().default("running"), // "running" | "success" | "error"
+    triggeredBy: text("triggered_by"), // admin email, when known
+    channelsSynced: integer("channels_synced").notNull().default(0),
+    videosFetched: integer("videos_fetched").notNull().default(0),
+    videosUpserted: integer("videos_upserted").notNull().default(0),
+    error: text("error"),
+    startedAt: integer("started_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    finishedAt: integer("finished_at", { mode: "timestamp" }),
+  },
+  (table) => ({
+    startedAtIdx: index("idx_youtube_sync_runs_started_at").on(table.startedAt),
+  }),
+);
+
+export type YoutubeSyncRun = typeof youtubeSyncRuns.$inferSelect;
