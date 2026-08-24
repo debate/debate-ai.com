@@ -64,6 +64,14 @@ Each row has up to three actions:
   edit reassigned the round) the same way an Edit/Save would. Clicking it
   repeatedly walks further back through up to the last 10 corrections, one
   edit at a time; deleting the round discards its undo history along with it.
+- **Redo** appears only on a round that has at least one undone edit still
+  redoable — i.e. right after clicking Undo — and steps it forward again to
+  the version Undo just replaced, the same way Undo itself re-aggregates.
+  Clicking it repeatedly walks forward through however many times Undo was
+  just clicked in a row. Making a fresh Edit/Save after an Undo discards the
+  redo history (the same way any undo/redo stack invalidates "the future"
+  once a new edit branches off from it), and deleting the round discards it
+  too.
 
 ## Data flow
 
@@ -83,9 +91,17 @@ state/judgeRoundRecords.ts (localStorage: judgeRoundRecords)
   → hasJudgeRoundRecordEditHistory(id)     — whether a ballot has at least one edit still
                                               undoable
   → listJudgeRoundRecordEditHistory(id)    — a ballot's prior versions, most-recent-edit-first
-  → deleteJudgeRoundRecord(id)             — removes one ballot and its undo history, then
-                                              re-aggregates (deleting the profile if none
-                                              remain)
+  → redoLastJudgeRoundRecordEdit(id)       — re-applies the version replaced by the most
+                                              recent undo, popping that version off the id's
+                                              redo history and pushing the version it replaces
+                                              back onto the undo history, then re-aggregates
+                                              the same way undoLastJudgeRoundRecordEdit would
+  → hasJudgeRoundRecordRedoHistory(id)     — whether a ballot has at least one undone edit
+                                              still redoable
+  → listJudgeRoundRecordRedoHistory(id)    — a ballot's undone versions, most-recently-undone-first
+  → deleteJudgeRoundRecord(id)             — removes one ballot and its undo/redo history,
+                                              then re-aggregates (deleting the profile if
+                                              none remain)
   → rebuildJudgeProfileFromRecords(judgeId) — … re-runs judge-profile.ts's existing
                                               buildJudgeProfile over that judge's
                                               full history and persists the result
@@ -112,7 +128,11 @@ while `judgeProfiles` holds only the aggregate a caller looks up by
 the same way. A third store, `judgeRoundRecordEditHistory` (keyed by round
 id, capped at the 10 most recent prior versions per round), holds what each
 round looked like before each edit, so a correction can be undone via
-`undoLastJudgeRoundRecordEdit` instead of being permanent.
+`undoLastJudgeRoundRecordEdit` instead of being permanent. A fourth store,
+`judgeRoundRecordRedoHistory` (same per-round cap), holds whatever version
+`undoLastJudgeRoundRecordEdit` most recently replaced, so
+`redoLastJudgeRoundRecordEdit` can step forward through it again; a fresh
+edit or a delete discards it, the same way it discards the undo history.
 
 Every profile field already existed and was Vitest-covered by
 `judge/judge-profile.ts`'s `buildJudgeProfile`; this feature closes
@@ -142,11 +162,11 @@ in `judgeRoundRecords.test.ts`.
   a caller of `recordJudgeRound`/`saveJudgeProfile` directly. This is the
   same gap the [Standings](standings.md) and
   [Opponent Team Profiles](opponent-team-profiles.md) panels have.
-- Undo has no matching "redo" — there is no way to step back *forward*
-  toward the pre-undo version once you've clicked Undo, short of re-entering
-  it by hand through Edit. Undo history is also capped at the 10 most recent
-  edits per round, so a round corrected more than 10 times can't be undone
-  all the way back to its first-ever logged version.
+- ~~Undo has no matching "redo"~~ Closed: a Redo action now steps forward
+  again to whatever version Undo just replaced (see "Correcting a logged
+  round" above). Undo (and now redo) history is still capped at the 10 most
+  recent edits per round, so a round corrected more than 10 times can't be
+  undone all the way back to its first-ever logged version.
 - Profiles are per-browser localStorage, not a shared team resource, and
   there are no identity/permission checks on who may log a round for a
   judge (no auth in this repo yet).

@@ -6,6 +6,36 @@
 _No task currently in progress._
 
 ### Completed
+- **Judge Profiles — redo a logged-round edit.**
+  [PR #308](https://github.com/debate/debate-ai.com/pull/308).
+  Closes the "Undo has no matching 'redo'" Known gap recorded in
+  `docs/features/judge-profiles.md`, the sole remaining follow-up under the
+  "⚖️ Judge Profiles" bullet (Research Crowdsourcing Organizer Features).
+  `packages/debate-speech-writer/src/state/judgeRoundRecords.ts` gains a
+  fourth localStorage store, `judgeRoundRecordRedoHistory` (keyed by round
+  id, capped at the same 10-per-round limit as the existing undo stack),
+  plus `hasJudgeRoundRecordRedoHistory`/`listJudgeRoundRecordRedoHistory`/
+  `redoLastJudgeRoundRecordEdit` mirroring the existing
+  `hasJudgeRoundRecordEditHistory`/`listJudgeRoundRecordEditHistory`/
+  `undoLastJudgeRoundRecordEdit` trio exactly. `undoLastJudgeRoundRecordEdit`
+  now pushes the version it just replaced onto that round's redo stack, and
+  `redoLastJudgeRoundRecordEdit` pops it back off, pushing what *it* replaces
+  back onto the undo stack so a further undo can revert the redo — a
+  standard undo/redo stack pair. `updateJudgeRoundRecord` (a fresh edit) and
+  `deleteJudgeRoundRecord` both discard a round's redo stack, the same way
+  they already touch its undo stack, so a fresh correction after an undo
+  can't leave a stale "redo" pointing at a version that's no longer
+  reachable. `JudgeProfilesPanel.tsx` gains a "Redo" action next to "Undo
+  last edit," shown only when `hasJudgeRoundRecordRedoHistory` says one
+  exists for that row. Docs updated in `docs/features/judge-profiles.md`:
+  the "Correcting a logged round" and "Data flow" sections document the new
+  action and store, and the Known gaps section's "no matching redo" bullet
+  is struck through. No repo-wide `lint` script exists (checked root/app/
+  package `package.json` scripts) so none was run. Verified: `bun install`,
+  `bun run test` (166 files / 2484 tests, all pass — 11 new), `bun run
+  typecheck` (12 of 13 in-scope packages have a typecheck script; all pass),
+  and `bun run build:web` (`debate-ai-web`, succeeds, `/judges` route
+  present, no route changes) all pass. **Completed:** 2026-08-24.
 - **Word-Count-Only Speech Format — microphone dictation for the live
   in-round word-limit popover.**
   Closes the "The live in-round word-limit popover — `debate-timer`'s

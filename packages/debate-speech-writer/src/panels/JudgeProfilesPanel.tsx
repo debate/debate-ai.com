@@ -25,6 +25,9 @@
  * A row that has been edited also gets an "Undo last edit" action, shown
  * only when `hasJudgeRoundRecordEditHistory` says one exists, which steps
  * the round back to its pre-edit version via `undoLastJudgeRoundRecordEdit`.
+ * A row that has just been undone also gets a matching "Redo" action, shown
+ * only when `hasJudgeRoundRecordRedoHistory` says one exists, which steps
+ * forward again via `redoLastJudgeRoundRecordEdit`.
  *
  * @module panels/JudgeProfilesPanel
  */
@@ -57,9 +60,11 @@ import {
   deleteJudgeRoundRecord,
   findNearestJudgeId,
   hasJudgeRoundRecordEditHistory,
+  hasJudgeRoundRecordRedoHistory,
   listJudgeIds,
   listJudgeRoundRecords,
   recordJudgeRound,
+  redoLastJudgeRoundRecordEdit,
   undoLastJudgeRoundRecordEdit,
   updateJudgeRoundRecord,
   type JudgeRoundRecordEntry,
@@ -214,6 +219,15 @@ export function JudgeProfilesPanel() {
 
   const handleUndo = (id: string) => {
     undoLastJudgeRoundRecordEdit(id)
+    if (editingId === id) {
+      setEditingId(null)
+      setDraft(EMPTY_DRAFT)
+    }
+    refresh()
+  }
+
+  const handleRedo = (id: string) => {
+    redoLastJudgeRoundRecordEdit(id)
     if (editingId === id) {
       setEditingId(null)
       setDraft(EMPTY_DRAFT)
@@ -512,6 +526,16 @@ export function JudgeProfilesPanel() {
                           aria-label={`Undo last edit to ${record.judgeId}'s ${record.tournamentName} round on ${record.date}`}
                         >
                           Undo last edit
+                        </Button>
+                      )}
+                      {hasJudgeRoundRecordRedoHistory(record.id) && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRedo(record.id)}
+                          aria-label={`Redo last undone edit to ${record.judgeId}'s ${record.tournamentName} round on ${record.date}`}
+                        >
+                          Redo
                         </Button>
                       )}
                       <Button
