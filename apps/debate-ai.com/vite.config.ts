@@ -31,15 +31,28 @@ export default defineConfig({
       "@": appDir,
       "@emotion/is-prop-valid": require.resolve("@emotion/is-prop-valid"),
       "@better-auth/kysely-adapter": path.resolve(appDir, "lib/stubs/kysely-adapter.ts"),
+      // debate-editor-cardmirror's card-cutter-port.ts dynamically imports
+      // `@cardcutter/browser` — the separately-versioned, NOT-shipped
+      // card-cutter engine, present only when checked out as a sibling of
+      // the CardMirror repo it was ported from. It never is here, so this
+      // always resolves to CardMirror's own in-repo no-op stub (mirrors
+      // that repo's own vite.config.ts production alias), leaving the
+      // (experimental, console-gated) feature inert rather than a bundler
+      // resolution error.
+      "@cardcutter/browser": path.resolve(
+        appDir,
+        "../../packages/debate-editor-cardmirror/src/editor/card-cutter-stub.ts",
+      ),
     },
     dedupe: [
       "react",
       "react-dom",
       "react/jsx-runtime",
       "react-server-dom-webpack",
-      // Keep a single ProseMirror instance shared between the
-      // reason-editor TipTap shell (@tiptap/pm) and its vendored
-      // CardMirror engine (bare prosemirror-* imports).
+      // Keep a single ProseMirror instance across the app: debate-editor-cardmirror
+      // (the CardMirror engine) is the only consumer today, but a duplicate
+      // ProseMirror module breaks its schema/plugin identity checks the
+      // moment anything else in the tree also depends on prosemirror-*.
       "prosemirror-model",
       "prosemirror-state",
       "prosemirror-view",
@@ -65,6 +78,7 @@ export default defineConfig({
       "debate-core",
       "debate-data-sync",
       "debate-editor",
+      "debate-editor-cardmirror",
       "debate-round",
       "debate-timer",
       "debate-ui",
