@@ -9,6 +9,7 @@ import {
   buildTopicFolders,
   contributionToLibraryCard,
   filterCardsByTags,
+  findTagCaseVariantGroups,
   groupCardsByCaseArea,
   groupCardsByTopic,
   parseTagsInput,
@@ -16,6 +17,7 @@ import {
   renameTagInList,
   suggestTags,
   type LibraryCard,
+  type TagCollection,
 } from "../src/lib/argument-library";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 
@@ -394,5 +396,55 @@ describe("renameTagAcrossCards", () => {
 
   it("throws when oldTag and newTag are the same", () => {
     expect(() => renameTagAcrossCards(cards, "climate", "climate")).toThrow();
+  });
+});
+
+describe("findTagCaseVariantGroups", () => {
+  function makeCollection(tag: string, cardCount: number): TagCollection {
+    return { tag, cards: cards.slice(0, cardCount) };
+  }
+
+  it("groups tags that differ only by casing", () => {
+    const collections = [makeCollection("warming", 1), makeCollection("Warming", 3)];
+
+    expect(findTagCaseVariantGroups(collections)).toEqual([{ tags: ["Warming", "warming"] }]);
+  });
+
+  it("orders each group's variants by card count, most-used first", () => {
+    const collections = [makeCollection("SOLVENCY", 1), makeCollection("solvency", 4)];
+
+    expect(findTagCaseVariantGroups(collections)[0].tags).toEqual(["solvency", "SOLVENCY"]);
+  });
+
+  it("breaks a card-count tie alphabetically", () => {
+    const collections = [makeCollection("Impact", 2), makeCollection("impact", 2)];
+
+    expect(findTagCaseVariantGroups(collections)[0].tags).toEqual(
+      ["Impact", "impact"].sort((a, b) => a.localeCompare(b)),
+    );
+  });
+
+  it("excludes tags used under only one casing", () => {
+    const collections = [makeCollection("climate", 2), makeCollection("solvency", 1)];
+
+    expect(findTagCaseVariantGroups(collections)).toEqual([]);
+  });
+
+  it("returns multiple groups sorted by their most-used casing", () => {
+    const collections = [
+      makeCollection("warming", 1),
+      makeCollection("Warming", 2),
+      makeCollection("case", 1),
+      makeCollection("Case", 2),
+    ];
+
+    expect(findTagCaseVariantGroups(collections).map((group) => group.tags[0])).toEqual([
+      "Case",
+      "Warming",
+    ]);
+  });
+
+  it("returns an empty array for an empty tag-collection list", () => {
+    expect(findTagCaseVariantGroups([])).toEqual([]);
   });
 });
