@@ -640,6 +640,11 @@ describe("listCombinedPersistedTags", () => {
     saveContribution({ ...SOLVENCY_CONTRIBUTION, topic: undefined });
     expect(listCombinedPersistedTags()).toEqual(["solvency", "warming"]);
   });
+
+  it("ignores a contribution with no tags field at all", () => {
+    saveContribution({ ...SOLVENCY_CONTRIBUTION, tags: undefined });
+    expect(listCombinedPersistedTags()).toEqual([]);
+  });
 });
 
 describe("renameTagAcrossCombinedPersistedStores", () => {

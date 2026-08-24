@@ -6,6 +6,39 @@
 _No task currently in progress._
 
 ### Completed
+- **Shared Evidence Library — tag-autocomplete on the Contributions Feed's
+  Tags field.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/evidence-library.md` said "A Contributions
+  Feed submission tagged for the Argument Library gets no tag-autocomplete
+  affordance of its own (that only exists on the dedicated `/cards/library`
+  form's Tags field) — it's a plain comma-separated text input."
+  `debate-card-search`'s `state/evidenceLibraryEntries.ts` gained
+  `listCombinedPersistedTags()`, which merges the existing
+  `listPersistedTags()` evidence-library corpus with every tag already used
+  across `state/contributions.ts`'s persisted Contributions Feed submissions
+  (via `listContributions`), including a contribution tagged without a
+  `topic`/`caseArea`. `ContributionsFeedPanel.tsx`'s Tags field now wires
+  `lib/argument-library.ts`'s existing `parseTagsInput`/`suggestTags`/
+  `applyTagSuggestion` against that combined corpus — the same
+  suggestion-button affordance `EvidenceLibraryPanel.tsx`'s Tags field
+  already had, refreshed on mount and after each submission. Vitest-covered
+  in `packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (new
+  `listCombinedPersistedTags` describe block: empty-store case, merged/
+  deduped/sorted tags across both stores, a tagged-but-untopiced
+  contribution still contributing tags, and a contribution with no `tags`
+  field being ignored). Verified with `bun x vitest run` (162 files, 2328
+  tests), `bunx turbo typecheck --filter=debate-card-search
+  --filter=debate-ai-web`, and `bunx turbo build --filter=debate-ai-web`; no
+  `lint` script is configured in this repo.
+  **PR:** [#287](https://github.com/debate/debate-ai.com/pull/287) — landed
+  after [#289](https://github.com/debate/debate-ai.com/pull/289), which had
+  independently implemented the same `listCombinedPersistedTags` corpus and
+  Contributions Feed suggestion row (plus the cross-store tag rename). The
+  merge therefore kept #289's implementation and folded in only this branch's
+  one additional case — a contribution with no `tags` field at all.
 - **Daily Best Card Challenge — cross-tab live update.**
   Found via this run's own audit of `docs/features/*.md` "Known gaps"
   sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
