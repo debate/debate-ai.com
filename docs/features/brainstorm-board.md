@@ -28,15 +28,21 @@ ideas ranked by popularity score, highest first, with:
 - the contributor's ID
 - the idea's popularity score (0-100)
 - a "possible duplicate" badge when the idea's text is a near-duplicate of
-  another idea already on the same board
-- an "AI" badge when the idea was drafted by the "Generate AI ideas" action
+  another idea already on the same board, plus a "Merge into top idea"
+  button (for any duplicate-flagged idea that isn't itself the board's top
+  idea) that folds its upvotes into the board's top-ranked idea and removes
+  it
+- an "AI" badge when the idea was drafted by a "Generate AI ideas" action
   rather than typed in by a teammate
 - an "Upvote" button showing the current upvote count
 
 The form also has a "Generate AI ideas" button (next to "Submit idea") that
 drafts several candidate ideas for the form's current argument block and
 category via a real Anthropic call, saving each one as a normal,
-AI-attributed idea on that board.
+AI-attributed idea on that board. Every rendered board's own header has a
+second "Generate AI ideas" button that does the same thing for that board's
+own argument block/category directly — no need to first type it into the
+form above.
 
 ## Data flow
 
@@ -62,7 +68,7 @@ panels/BrainstormBoardPanel.tsx
       (reads the stored idea, increments its upvotes by one, saves it back)
   → panel re-reads buildBrainstormBoardsPanelView() to refresh
 
-"Generate AI ideas" click:
+"Generate AI ideas" click (form, or a board's own header button):
   panels/BrainstormBoardPanel.tsx
     → requestTeamBrainstormAiIdeas()       — lib/team-brainstorm-client.ts
         → buildTeamBrainstormAiUserPrompt() — lib/team-brainstorm-ai.ts (pure)
@@ -70,7 +76,17 @@ panels/BrainstormBoardPanel.tsx
             → https://api.anthropic.com/v1/messages
         → parseTeamBrainstormAiResponse()   — lib/team-brainstorm-ai.ts (pure)
     → saveBrainstormIdea() per drafted idea — state/brainstormIdeas.ts
-        (contributorId "AI", isAiGenerated: true)
+        (contributorId "AI", isAiGenerated: true; the board's own
+         argBlock/category when triggered from a board header, the form's
+         current fields when triggered from the form)
+  → panel re-reads buildBrainstormBoardsPanelView() to refresh
+
+"Merge into top idea" click:
+panels/BrainstormBoardPanel.tsx
+  → mergePersistedBrainstormIdeas(topId, duplicateId) — state/brainstormIdeas.ts
+      → mergeBrainstormIdeas(target, duplicate)       — lib/team-brainstorm-assist.ts (pure)
+          (returns a copy of target with the two ideas' upvotes combined)
+      → saveBrainstormIdea(merged) + deleteBrainstormIdea(duplicateId)
   → panel re-reads buildBrainstormBoardsPanelView() to refresh
 
 Choosing a topic in the topic switcher:
@@ -132,12 +148,35 @@ Vitest-covered in `packages/debate-card-search/test/brainstormIdeas.test.ts`
 submitted idea, merging in a non-seed board with a submitted idea, and an
 untracked topic falling back to exactly the topic-less board list).
 
+This feature closes both Known gaps previously recorded here. A "Generate
+AI ideas" button now lives on every rendered board's own header, not just
+the submission form — clicking it calls the same
+`requestTeamBrainstormAiIdeas` request using that board's own
+`argBlock`/`category` directly, so drafting AI ideas for a board that's
+already visible no longer requires first typing its argument block into
+the form above. And any idea flagged `isLikelyDuplicate` that isn't
+already its board's top-ranked idea now shows a "Merge into top idea"
+button, calling the new `lib/team-brainstorm-assist.ts`
+`mergeBrainstormIdeas` (via `state/brainstormIdeas.ts`'s
+`mergePersistedBrainstormIdeas`) to fold the duplicate's upvotes into the
+board's top-ranked idea and remove the duplicate — a moderator action
+where the badge was previously informational only. `mergeBrainstormIdeas`
+throws on a same-id or cross-board merge attempt rather than silently
+conflating two unrelated ideas' vote counts. Vitest-covered in
+`packages/debate-card-search/test/team-brainstorm-assist.test.ts`
+(`mergeBrainstormIdeas`: combining upvotes onto a copy of the target, not
+mutating either input, throwing on a same-idea merge, throwing on a
+cross-board merge) and
+`packages/debate-card-search/test/brainstormIdeas.test.ts`
+(`mergePersistedBrainstormIdeas`: folding upvotes and deleting the
+duplicate, and a no-op when either id isn't stored).
+
 ## Known gaps
 
-- There's no reviewer/moderator merge action for ideas flagged as likely
-  duplicates — the badge is informational only. AI-drafted ideas are scored
-  for near-duplicates against the board's other ideas the same way a
-  human's is, so a repeated "Generate AI ideas" click can itself produce
-  flagged duplicates.
-- The AI-generation call requires an argument block to already be filled in
-  on the form; it doesn't infer one from an existing board.
+- No reviewer/moderator identity check gates the merge action — any visitor
+  can merge any two ideas on a board, same as every other unauthenticated
+  moderator-style action in this repo (upvoting, approving a peer review,
+  etc. — no auth system exists here yet).
+- "Merge into top idea" always targets the board's own highest-ranked idea;
+  a duplicate pair that both rank below the board's actual top idea can't
+  be merged directly into each other without first merging one of them up.

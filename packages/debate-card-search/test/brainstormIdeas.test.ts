@@ -5,6 +5,7 @@ import {
   deleteBrainstormIdea,
   getBrainstormIdea,
   listBrainstormIdeas,
+  mergePersistedBrainstormIdeas,
   saveBrainstormIdea,
   upvotePersistedBrainstormIdea,
 } from "../src/state/brainstormIdeas";
@@ -43,6 +44,14 @@ const IMPACT_IDEA: BrainstormIdea = {
   contributorId: "bob",
   text: "Weigh probability over magnitude here",
   upvotes: 0,
+};
+const DUPLICATE_SOLVENCY_IDEA: BrainstormIdea = {
+  id: "idea-4",
+  argBlock: "solvency",
+  category: "argument",
+  contributorId: "carol",
+  text: "Federal funding unlocks state matching grants",
+  upvotes: 2,
 };
 
 beforeEach(() => {
@@ -204,5 +213,33 @@ describe("upvotePersistedBrainstormIdea", () => {
     saveBrainstormIdea(SOLVENCY_IDEA);
     upvotePersistedBrainstormIdea("missing");
     expect(getBrainstormIdea("idea-1")).toEqual(SOLVENCY_IDEA);
+  });
+});
+
+describe("mergePersistedBrainstormIdeas", () => {
+  it("folds the duplicate's upvotes into the target and deletes the duplicate", () => {
+    saveBrainstormIdea(SOLVENCY_IDEA);
+    saveBrainstormIdea(DUPLICATE_SOLVENCY_IDEA);
+
+    mergePersistedBrainstormIdeas("idea-1", "idea-4");
+
+    expect(getBrainstormIdea("idea-1")).toEqual({
+      ...SOLVENCY_IDEA,
+      upvotes: SOLVENCY_IDEA.upvotes + DUPLICATE_SOLVENCY_IDEA.upvotes,
+    });
+    expect(getBrainstormIdea("idea-4")).toBeUndefined();
+    expect(listBrainstormIdeas()).toHaveLength(1);
+  });
+
+  it("is a no-op when the target id isn't stored", () => {
+    saveBrainstormIdea(DUPLICATE_SOLVENCY_IDEA);
+    mergePersistedBrainstormIdeas("missing", "idea-4");
+    expect(listBrainstormIdeas()).toEqual([DUPLICATE_SOLVENCY_IDEA]);
+  });
+
+  it("is a no-op when the duplicate id isn't stored", () => {
+    saveBrainstormIdea(SOLVENCY_IDEA);
+    mergePersistedBrainstormIdeas("idea-1", "missing");
+    expect(listBrainstormIdeas()).toEqual([SOLVENCY_IDEA]);
   });
 });
