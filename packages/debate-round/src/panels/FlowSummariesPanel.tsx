@@ -20,6 +20,11 @@
  * `buildFlowRowSummariesFromExtraction`, so an extracted argument renders
  * exactly like one derived from a manually flowed grid.
  *
+ * A "🎤 Record" button next to the transcript field closes the "recording"
+ * half of follow-up (a) — `hooks/useMicrophoneTranscription.ts` dictates
+ * directly into the same field via the browser's own Web Speech API, with
+ * no server-side transcription service involved.
+ *
  * @module panels/FlowSummariesPanel
  */
 
@@ -45,6 +50,8 @@ import {
 } from "../flow/flow-transcript-summary"
 import { buildFlowRowSummariesFromExtraction } from "../round/transcript-extraction-ai"
 import { requestTranscriptExtraction } from "../round/transcript-extraction-client"
+import { appendDictatedSegment } from "../round/microphone-transcription"
+import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 
 /**
  * Renders the Speech Transcript Summaries panel: every persisted
@@ -60,6 +67,11 @@ export function FlowSummariesPanel() {
   const [extractTranscriptText, setExtractTranscriptText] = useState("")
   const [extractLoading, setExtractLoading] = useState(false)
   const [extractError, setExtractError] = useState<string | null>(null)
+
+  const dictation = useMicrophoneTranscription({
+    onSegment: (segment) =>
+      setExtractTranscriptText((prev) => appendDictatedSegment(prev, segment)),
+  })
 
   useEffect(() => {
     setRecords(buildFlowSummariesPanelView())
@@ -147,14 +159,34 @@ export function FlowSummariesPanel() {
           </div>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="flow-summaries-extract-transcript">Transcript text</Label>
+          <div className="flex items-center justify-between gap-2">
+            <Label htmlFor="flow-summaries-extract-transcript">Transcript text</Label>
+            {dictation.isSupported ? (
+              <Button
+                type="button"
+                size="sm"
+                variant={dictation.isListening ? "destructive" : "outline"}
+                onClick={dictation.isListening ? dictation.stop : dictation.start}
+              >
+                {dictation.isListening ? "Stop recording" : "🎤 Record"}
+              </Button>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                Microphone dictation isn't supported in this browser.
+              </span>
+            )}
+          </div>
           <Textarea
             id="flow-summaries-extract-transcript"
             value={extractTranscriptText}
             onChange={(e) => setExtractTranscriptText(e.target.value)}
-            placeholder="Paste the speech's text here…"
+            placeholder="Paste the speech's text here, or click Record to dictate it…"
             rows={5}
           />
+          {dictation.isListening && (
+            <p className="text-xs text-muted-foreground">Listening… speak now.</p>
+          )}
+          {dictation.error && <p className="text-sm text-destructive">{dictation.error}</p>}
         </div>
 
         {extractError && <p className="text-sm text-destructive">{extractError}</p>}

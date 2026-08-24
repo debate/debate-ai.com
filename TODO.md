@@ -6,6 +6,48 @@
 _No task currently in progress._
 
 ### Completed
+- **Speech Transcript Summaries — microphone dictation for the transcript-extraction form.**
+  Closes the "recording" half of follow-up (a) named under idea #6 ("Speech
+  Transcript Summaries and Answers") in this file's Product Feature Ideas
+  list: "audio/video transcription (the extraction form above requires an
+  already-transcribed speech text, not a recording), remains open — not
+  started." This repo has no server-side/paid transcription service, so
+  `debate-round` gained `round/microphone-transcription.ts`
+  (`isMicrophoneTranscriptionSupported`/`getSpeechRecognitionConstructor` for
+  feature detection, `appendDictatedSegment` for joining dictated segments
+  onto existing textarea text without doubled whitespace, and
+  `describeMicrophoneTranscriptionError` for readable recognition-error
+  messages) and `hooks/useMicrophoneTranscription.ts`, wiring the browser's
+  own Web Speech API (`SpeechRecognition`/`webkitSpeechRecognition` — neither
+  exists in `lib.dom.d.ts`, so this hook carries its own minimal ambient
+  type). `FlowSummariesPanel`'s existing "Generate from raw speech text" form
+  (`/summaries`) now has a "🎤 Record"/"Stop recording" button next to the
+  Transcript text field that dictates directly into the same
+  `extractTranscriptText` state the AI extraction already reads, with a
+  disabled "Microphone dictation isn't supported in this browser" fallback
+  when neither constructor exists, and an inline error message on
+  recognition failure (e.g. mic permission denied). No follow-ups remain
+  open on this idea's text-extraction path; idea #8's ("Video-Lecture-
+  Training Coach AI") identical "recording" follow-up in
+  `docs/features/coach-materials.md` is a separate, still-open gap, left
+  untouched to keep this change small and reviewable. Vitest-covered in
+  `packages/debate-round/test/microphone-transcription.test.ts` (16 cases:
+  preferring the unprefixed constructor over the webkit-prefixed one,
+  falling back to the webkit-prefixed one, no constructor, an `undefined`/SSR
+  host; feature-detection true/false variants including a non-function
+  value; dictated-segment joining — empty existing text, normal join,
+  trailing-whitespace collapse, an empty/whitespace-only segment as a no-op,
+  both empty; every known recognition-error code mapping to a distinct
+  message, plus the unknown-code fallback). The React hook itself
+  (`hooks/useMicrophoneTranscription.ts`) is not directly unit-tested,
+  matching every other browser-API hook in this repo (e.g. `debate-timer`'s
+  `useSpeechRecorder`) — there is no jsdom environment in this repo's Vitest
+  setup. Docs updated at `docs/features/flow-summaries.md`. Verified: `bun
+  install` (2062 packages), `bun run test` (164 files / 2392 tests, all
+  pass — 16 new), `bun run typecheck` (12 of 12 in-scope packages pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/summaries` route present)
+  all pass. No repo-wide `lint` script exists, so none was run, matching
+  every prior PR's verification notes.
 - **Research Progress Tracking — prune a topic's completed-task history.**
   Closes the "a completed task's history record is never deleted (e.g. if
   its topic's queue is deleted), so `completedResearchTasks` only grows"
@@ -7250,7 +7292,7 @@ _No task currently in progress._
 
 5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. A third slice, `JudgeParadigmPickerPanel` (see Tracker Status above, "AI Judge Decision Modes — paradigm-picker UI"), now renders a picker UI at `/paradigms` for saving a round's built-in or custom paradigm, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Judge Decision Modes — real AI judge-decision call") added `debate-round`'s `round/judge-decision-ai.ts`, `round/judge-decision-client.ts`, `round/judge-decision-store-wiring.ts`, and `state/judgeDecisions.ts`, wiring an AI judge-decision call — composing `buildJudgeParadigmPrompt` with a round's flow summary and calling the existing `/api/reason-ai` Anthropic proxy — into a new `JudgeDecisionPanel` at `/judge-decision`, closing follow-up (a). No follow-ups remain open on this idea._
 
-6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slices done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. A second slice, `flowSummaries.ts` (see Tracker Status above, "Speech Transcript Summaries and Answers — flow-summary persistence"), now persists a round's derived `FlowRowSummary[]` to localStorage. A third slice, `FlowSummariesPanel` (see Tracker Status above, "Speech Transcript Summaries and Answers — summary/cross-ex panel UI"), now renders every persisted flow summary, with suggested cross-exam questions and extension ideas for unanswered arguments, at `/summaries`, closing follow-up (b). A fourth slice (see Tracker Status above, "Speech Transcript Summaries and Answers — AI extraction from raw speech text") added `round/transcript-extraction-ai.ts` and `round/transcript-extraction-client.ts`, wiring a "Generate from raw speech text" form into `FlowSummariesPanel` that calls the existing `/api/reason-ai` Anthropic proxy to extract claim/warrant/impact/evidence arguments from a pasted transcript and appends them to that round's saved flow summary as synthetic `FlowRowSummary` rows, closing the AI-call half of follow-up (a). Follow-up (a)'s remaining half, audio/video transcription (the extraction form above requires an already-transcribed speech text, not a recording), remains open — not started._
+6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slices done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. A second slice, `flowSummaries.ts` (see Tracker Status above, "Speech Transcript Summaries and Answers — flow-summary persistence"), now persists a round's derived `FlowRowSummary[]` to localStorage. A third slice, `FlowSummariesPanel` (see Tracker Status above, "Speech Transcript Summaries and Answers — summary/cross-ex panel UI"), now renders every persisted flow summary, with suggested cross-exam questions and extension ideas for unanswered arguments, at `/summaries`, closing follow-up (b). A fourth slice (see Tracker Status above, "Speech Transcript Summaries and Answers — AI extraction from raw speech text") added `round/transcript-extraction-ai.ts` and `round/transcript-extraction-client.ts`, wiring a "Generate from raw speech text" form into `FlowSummariesPanel` that calls the existing `/api/reason-ai` Anthropic proxy to extract claim/warrant/impact/evidence arguments from a pasted transcript and appends them to that round's saved flow summary as synthetic `FlowRowSummary` rows, closing the AI-call half of follow-up (a). A fifth slice (see Tracker Status above, "Speech Transcript Summaries — microphone dictation for the transcript-extraction form") added `round/microphone-transcription.ts` and `hooks/useMicrophoneTranscription.ts`, wiring a "🎤 Record" button into `FlowSummariesPanel`'s transcript field that dictates directly into it via the browser's own Web Speech API, closing the remaining "recording" half of follow-up (a). No follow-ups remain open on this idea._
 
 7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `EvidenceLibraryEntry.sourceUrl` (optional) plus `normalizeSourceUrl`/`findEntriesBySourceUrl`/`checkPageForExistingCards`/`buildPageReuseCheckSummaryText` for checking whether a given page URL has already been cut into the shared repository, and `state/evidenceLibraryEntries.ts`'s `checkPersistedPageForExistingCards` composes that against the persisted, peer-review-gated repository. A "Check this page" box plus a new Source URL submission field in `EvidenceLibraryPanel` (`/cards/library`) let a contributor paste a URL and see whether it's already been cut, standing in for the eventual browser extension's automatic per-tab check. A second slice (see Tracker Status above, "On Page Card Reuse Search — browser extension + deep-link wiring") added `buildReuseCheckDeepLink` plus a `?checkUrl=` query param `EvidenceLibraryPanel` reads on mount, and a new unpacked Manifest V3 browser extension at `extension/card-reuse-checker` that deep-links the active tab's URL into that param on toolbar-icon click, closing follow-up (a). No follow-ups remain open on this idea._
 
