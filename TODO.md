@@ -6,6 +6,40 @@
 _No task currently in progress._
 
 ### Completed
+- **Research Progress Tracking — prune a topic's completed-task history.**
+  Closes the "a completed task's history record is never deleted (e.g. if
+  its topic's queue is deleted), so `completedResearchTasks` only grows"
+  Known gap recorded in `docs/features/research-progress-tracking.md` —
+  one of the "4 real, small, non-external-infra-blocked gaps" a previous
+  run's doc/tracker-drift audit found and logged for a future run (the
+  other three — a "Regenerate last AI speech" action in AI-Versus Rounds,
+  the Flow Annotations "Jump to" action not switching videos, and the
+  Response-Outcome Charts AI counsel call ignoring an active "what if"
+  hypothetical — were already closed in prior runs). `debate-card-search`'s
+  `state/researchProgress.ts` gained `deleteCompletedTaskHistoryForTopic(topic)`,
+  mirroring `routedTaskQueues.ts`'s existing `deleteRoutedTaskQueue(topicId)`
+  filter-and-rewrite pattern: it removes every `CompletedTaskRecord` for one
+  topic from the `completedResearchTasks` localStorage store, leaving every
+  other topic's history and the topic's still-active
+  `routedTaskQueues.ts` queue untouched. `ResearchProgressPanel`
+  (`/cards/progress-tracking`) now renders a "Clear completed history"
+  action next to each topic badge that has at least one completed task,
+  calling it and re-reading `buildPersistedResearchProgressBoard()`
+  afterward. Vitest-covered (4 new cases in
+  `packages/debate-card-search/test/researchProgress.test.ts`'s
+  `deleteCompletedTaskHistoryForTopic` suite: removing a topic's records,
+  leaving another topic's history untouched, a no-op on a topic with no
+  completed-task history, and not touching the active-queue store for that
+  topic). Verified with `bun install` (2062 packages), `bun run test` (163
+  files / 2376 tests, all pass — 4 new cases), `bun run typecheck` (12
+  in-scope packages pass), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/cards/progress-tracking` route present) all pass. No
+  repo-wide `lint` script exists, so none was run, matching every prior
+  PR's verification notes. Docs updated at
+  `docs/features/research-progress-tracking.md`; no known gaps remain open
+  on this bullet's persistence layer besides the still-open, shared
+  "no contributor identity/auth scoping yet" gap. PR:
+  https://github.com/debate/debate-ai.com/pull/296.
 - **Common Argument Library — tag case-variant merge suggestions.**
   Closes the "nothing merges two casings already in use" half of the
   tag-identity Known gap recorded in `docs/features/evidence-library.md`

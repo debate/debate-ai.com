@@ -81,10 +81,22 @@ backward compatibility for contributors with no completed-task data) and
 completed-task history feeding a store-backed status, and a task-only
 contributor appearing in the roster).
 
+A topic's completed-task history can now be pruned:
+`state/researchProgress.ts`'s `deleteCompletedTaskHistoryForTopic(topic)`
+removes every `CompletedTaskRecord` for that topic (mirroring
+`routedTaskQueues.ts`'s existing `deleteRoutedTaskQueue(topicId)` pattern,
+and leaving the topic's still-active queue and every other topic's history
+untouched), and `ResearchProgressPanel` renders a "Clear completed history"
+action next to each topic badge that has at least one completed task. This
+closes the "a completed task's history record is never deleted" Known gap
+previously recorded below. Vitest-covered in
+`packages/debate-card-search/test/researchProgress.test.ts`
+(`deleteCompletedTaskHistoryForTopic`: removing a topic's records, leaving
+other topics' history untouched, a no-op on an untracked topic, and not
+touching the active-queue store).
+
 ## Known gaps
 
 - No contributor identity/auth scoping yet — the roster shows every
   contributor, the same known gap as the Leaderboard, Task Inbox, and
   Progress Unlocks panels.
-- A completed task's history record is never deleted (e.g. if its topic's
-  queue is deleted), so `completedResearchTasks` only grows.
