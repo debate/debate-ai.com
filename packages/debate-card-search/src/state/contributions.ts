@@ -39,6 +39,7 @@
 
 import type { AttributedContribution, ContributorStats } from "../lib/contribution-leaderboard";
 import { buildLeaderboard, groupContributionsByContributor } from "../lib/contribution-leaderboard";
+import { renameTagInList } from "../lib/argument-library";
 import type { ContributionKind, HelpfulnessWeights, ReviewerEndorsement } from "../lib/community-rating";
 import { DEFAULT_HELPFULNESS_WEIGHTS, computeReviewerCredibility, rankContributions } from "../lib/community-rating";
 import type { ContributorAward } from "../lib/contributor-awards";
@@ -169,6 +170,58 @@ export function recordPersistedEndorsementFromReviewer(
 ): AttributedContribution | undefined {
   const reviewerWeight = computeReviewerCredibility(listContributionsByContributor(reviewerId));
   return recordPersistedEndorsement(id, reviewerWeight);
+}
+
+/**
+ * Every distinct tag used across the persisted Contributions Feed, sorted —
+ * the Contributions Feed's half of the tag corpus a tag-autocomplete
+ * affordance suggests from. A contribution carrying no `tags` contributes
+ * nothing. Mirrors `evidenceLibraryEntries.ts`'s `listPersistedTags`, which
+ * covers the other store; `listCombinedPersistedTags` unions the two.
+ */
+export function listContributionTags(): string[] {
+  const tags = new Set<string>();
+  for (const contribution of readAll()) {
+    for (const tag of contribution.tags ?? []) {
+      tags.add(tag);
+    }
+  }
+  return Array.from(tags).sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Renames (or, when `newTag` is already used elsewhere, merges into) a tag
+ * across every persisted contribution that carries it, reusing
+ * `argument-library.ts`'s pure `renameTagInList` per contribution — the
+ * Contributions Feed half of the tag rename/merge tool, which used to rewrite
+ * only `evidenceLibraryEntries.ts`'s own entries (a gap recorded in
+ * `docs/features/evidence-library.md`). Returns the number of contributions
+ * changed, writing back only when at least one actually changed. Throws on a
+ * blank or unchanged tag pair, matching `renameTagAcrossCards`.
+ */
+export function renameTagAcrossPersistedContributions(oldTag: string, newTag: string): number {
+  const trimmedOld = oldTag.trim();
+  const trimmedNew = newTag.trim();
+  if (!trimmedOld || !trimmedNew) {
+    throw new Error("renameTagAcrossPersistedContributions requires non-blank oldTag and newTag");
+  }
+  if (trimmedOld === trimmedNew) {
+    throw new Error("renameTagAcrossPersistedContributions requires oldTag and newTag to differ");
+  }
+
+  let changedCount = 0;
+  const updated = readAll().map((contribution) => {
+    if (!contribution.tags) return contribution;
+    const renamed = renameTagInList(contribution.tags, trimmedOld, trimmedNew);
+    if (renamed === contribution.tags) return contribution;
+    changedCount++;
+    return { ...contribution, tags: renamed };
+  });
+
+  if (changedCount > 0) {
+    writeAll(updated);
+  }
+  return changedCount;
 }
 
 /**

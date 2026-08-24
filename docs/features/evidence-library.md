@@ -66,18 +66,6 @@ submission missing `topic` or `caseArea` rather than guessing a fallback
 for `argBlock` and `0` for `wordCount` — a contribution carries no card body
 to measure a real word count from, unlike a dedicated evidence-library entry.
 
-`ContributionsFeedPanel.tsx`'s own Tags field now suggests existing tags as
-the contributor types, reusing `lib/argument-library.ts`'s
-`parseTagsInput`/`suggestTags`/`applyTagSuggestion` the same way the
-`/cards/library` form's Tags field does. Its suggestion corpus is
-`state/evidenceLibraryEntries.ts`'s new `listCombinedPersistedTags` — every
-tag used across both the evidence library and the Contributions Feed itself
-(via `state/contributions.ts`'s `listContributions`), so a contributor
-reusing a tag another contributor already typed here (even one that never
-filled in `topic`/`caseArea`) gets suggested it too — closing the "no
-tag-autocomplete affordance of its own" gap recorded below under "Known
-gaps."
-
 ## On-page card reuse check
 
 A "Check this page" box implements the first slice of the "On Page Card
@@ -292,8 +280,9 @@ Argument Library browser (`/cards/argument-library`,
 `panels/ArgumentLibraryPanel.tsx`) — where the tag collections themselves
 are visible — now has a "Rename/merge tag" form: pick an existing tag from a
 dropdown (populated from the library's own `tagCollections`), type a new
-name, and every persisted `EvidenceLibraryEntry` carrying the old tag is
-rewritten to carry the new one instead.
+name, and every persisted record carrying the old tag — evidence-library
+entry or Contributions Feed submission alike — is rewritten to carry the new
+one instead.
 
 `lib/argument-library.ts`'s `renameTagAcrossCards` (generic over any
 `LibraryCard[]`) does the rewrite: a card not carrying the old tag is
@@ -312,12 +301,22 @@ fingerprint isn't invalidated for nothing), and returns how many entries
 changed. The panel shows that count (or a "nothing changed" message when
 the tag wasn't used) after each rename.
 
-This only rewrites the evidence-library repository's own entries — a tag
-applied to a Contributions Feed submission (composed into the same browser
-via `buildCombinedPersistedArgumentLibrary`, see above) lives in a separate
-store/form and isn't rewritten by this tool; renaming a tag that only
-appears on a contribution reports zero entries changed. The panel's own
-copy states this limitation.
+A rename now spans **both** persisted tag stores. The browser composes its
+tag collections from the evidence-library repository *and* the Contributions
+Feed (via `buildCombinedPersistedArgumentLibrary`, see above), so a tag
+listed there may come from either one; renaming in only one used to strand
+the other's copy under the old name. `state/contributions.ts`'s
+`renameTagAcrossPersistedContributions(oldTag, newTag)` mirrors
+`renameTagAcrossPersistedEntries` against the Contributions Feed store
+(reusing the same pure `renameTagInList` per contribution, same
+write-back-only-when-changed and same blank/identical-tag throwing), and
+`state/evidenceLibraryEntries.ts`'s
+`renameTagAcrossCombinedPersistedStores(oldTag, newTag)` runs both and
+returns `{ entriesChanged, contributionsChanged, totalChanged }`. The panel
+calls that combined version and reports both counts (or a "nothing changed"
+message when neither store carried the tag). Validation happens before
+either store is written, so a blank or identical tag pair throws with both
+stores untouched.
 
 Vitest-covered in `packages/debate-card-search/test/argument-library.test.ts`
 (`renameTagInList`/`renameTagAcrossCards`: rename across multiple cards
@@ -326,7 +325,40 @@ no-op when the tag is unused, and throwing on a blank or identical
 old/new tag) and
 `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
 (`renameTagAcrossPersistedEntries`: rewrite-and-persist, merge, a true
-no-write no-op, and throwing on a blank new tag).
+no-write no-op, and throwing on a blank new tag;
+`renameTagAcrossCombinedPersistedStores`: both stores rewritten with
+per-store counts, one store changed while the other carries nothing, a
+both-stores no-op, and a throw leaving both stores untouched) and
+`packages/debate-card-search/test/contributions.test.ts`
+(`renameTagAcrossPersistedContributions`: rewrite-and-persist, merge-dedup,
+a true no-write no-op, and throwing on a blank or identical tag pair).
+
+## Tag autocomplete on the Contributions Feed
+
+Closes this bullet's "a Contributions Feed submission tagged for the
+Argument Library gets no tag-autocomplete affordance of its own" Known gap.
+The Contributions Feed form (`/cards/contributions`,
+`panels/ContributionsFeedPanel.tsx`) Tags field now has the same
+suggestion row as the evidence-library form above, driven by the same
+`parseTagsInput`/`suggestTags`/`applyTagSuggestion` helpers.
+
+Its corpus is `state/evidenceLibraryEntries.ts`'s
+`listCombinedPersistedTags()` — the union of `listPersistedTags()` (the
+evidence repository) and `state/contributions.ts`'s `listContributionTags()`
+(every distinct tag on a persisted contribution), deduped by exact string
+and sorted. Suggesting across both stores is the point: a contribution and
+an evidence entry filed under the same idea should land on the same tag
+rather than two near-duplicates that the browser then shows as separate
+collections. A contribution's tags count toward the corpus even when it
+carries no `topic`/`caseArea` (and so is excluded from the library itself).
+
+Vitest-covered in
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+(`listCombinedPersistedTags`: empty stores, the deduped union across both,
+and a contribution excluded from the library still contributing its tags)
+and `packages/debate-card-search/test/contributions.test.ts`
+(`listContributionTags`: empty store, contributions carrying no tags, and
+the deduped sorted list).
 
 ## Known gaps
 
@@ -340,16 +372,12 @@ no-write no-op, and throwing on a blank new tag).
   automatically against the current tab. The reuse-check logic itself
   (`checkPageForExistingCards`/`findEntriesBySourceUrl`/`normalizeSourceUrl`)
   is already a plain, extension-callable function with no UI dependency.
-- A tag rename/merge tool now exists (see "Tag rename/merge" above), but it
-  only rewrites this evidence-library repository's own entries — a
-  Contributions Feed submission's tags are a separate store/form and aren't
-  rewritten by it.
-- ~~A Contributions Feed submission tagged for the Argument Library gets no
-  tag-autocomplete affordance of its own...~~ Closed: `ContributionsFeedPanel.tsx`'s
-  Tags field now suggests existing tags as the contributor types, the same
-  `parseTagsInput`/`suggestTags`/`applyTagSuggestion` affordance the
-  `/cards/library` form already had — but drawing from
-  `state/evidenceLibraryEntries.ts`'s new `listCombinedPersistedTags`, which
-  merges this evidence-library repository's tags with every tag already used
-  across the Contributions Feed (`state/contributions.ts`'s
-  `listContributions`), not only the evidence library's own corpus.
+- The tag rename/merge tool now rewrites both persisted tag stores (see
+  "Tag rename/merge" above) and the Contributions Feed form now has the same
+  tag autocomplete as the evidence-library form (see "Tag autocomplete on
+  the Contributions Feed" above) — neither gap remains open.
+- Tag identity is still exact-string everywhere: `warming` and `Warming` are
+  two different tags, in the library's collections, in the autocomplete
+  corpus, and in a rename. Autocomplete *matching* is case-insensitive, so a
+  contributor who takes a suggestion lands on the existing casing, but
+  nothing merges two casings already in use.

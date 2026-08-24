@@ -10,6 +10,8 @@ import {
   listCombinedPersistedTags,
   listEvidenceLibraryEntries,
   listPendingReviewEntries,
+  listPersistedTags,
+  renameTagAcrossCombinedPersistedStores,
   renameTagAcrossPersistedEntries,
   saveEvidenceLibraryEntry,
   saveEvidenceLibraryEntryRevision,
@@ -17,7 +19,7 @@ import {
   searchPersistedEvidenceLibraryWithIndex,
 } from "../src/state/evidenceLibraryEntries";
 import { listRevisionHistory } from "../src/state/revisionHistory";
-import { saveContribution } from "../src/state/contributions";
+import { getContribution, saveContribution } from "../src/state/contributions";
 import { approveReview, createCardReview, publishReview, submitForReview } from "../src/lib/peer-review";
 import { savePeerReview } from "../src/state/peerReviews";
 import { buildEvidenceSearchFormQuery } from "../src/lib/shared-evidence-library";
@@ -568,41 +570,6 @@ describe("listCombinedPersistedLibraryCards", () => {
   });
 });
 
-describe("listCombinedPersistedTags", () => {
-  const UNTOPICED_CONTRIBUTION: AttributedContribution = {
-    id: "contrib-1",
-    contributorId: "carol",
-    kind: "card",
-    likes: 0,
-    saves: 0,
-    qualitySignals: [0.5],
-    reviewerEndorsements: [],
-    tags: ["uniqueness", "warming"],
-  };
-
-  it("returns an empty list when nothing is stored in either store", () => {
-    expect(listCombinedPersistedTags()).toEqual([]);
-  });
-
-  it("merges evidence-library tags and Contributions Feed tags, deduped and sorted", () => {
-    saveEvidenceLibraryEntry(WARMING_CARD);
-    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
-    saveContribution(UNTOPICED_CONTRIBUTION);
-
-    expect(listCombinedPersistedTags()).toEqual(["impact", "solvency", "uniqueness", "warming"]);
-  });
-
-  it("includes a contribution's tags even without a topic or case area", () => {
-    saveContribution(UNTOPICED_CONTRIBUTION);
-    expect(listCombinedPersistedTags()).toEqual(["uniqueness", "warming"]);
-  });
-
-  it("ignores a contribution with no tags field", () => {
-    saveContribution({ ...UNTOPICED_CONTRIBUTION, tags: undefined });
-    expect(listCombinedPersistedTags()).toEqual([]);
-  });
-});
-
 describe("saveEvidenceLibraryEntryRevision", () => {
   it("saves a brand-new entry without recording a revision", () => {
     saveEvidenceLibraryEntryRevision(WARMING_CARD, "alice");
@@ -638,5 +605,85 @@ describe("saveEvidenceLibraryEntryRevision", () => {
     const history = listRevisionHistory();
     expect(history).toHaveLength(2);
     expect(history.map((record) => record.contributorId)).toEqual(["alice", "bob"]);
+  });
+});
+
+const SOLVENCY_CONTRIBUTION: AttributedContribution = {
+  id: "contrib-1",
+  contributorId: "carol",
+  kind: "card",
+  likes: 0,
+  saves: 0,
+  qualitySignals: [0.5],
+  reviewerEndorsements: [],
+  topic: "Energy Policy",
+  caseArea: "Case",
+  tags: ["solvency", "warming"],
+  argBlock: "Solvency",
+};
+
+describe("listCombinedPersistedTags", () => {
+  it("returns an empty list when neither store holds a tag", () => {
+    expect(listCombinedPersistedTags()).toEqual([]);
+  });
+
+  it("unions both stores' tags, deduped and sorted", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveContribution(SOLVENCY_CONTRIBUTION);
+
+    // "warming" is in both stores; it appears once.
+    expect(listPersistedTags()).toEqual(["impact", "warming"]);
+    expect(listCombinedPersistedTags()).toEqual(["impact", "solvency", "warming"]);
+  });
+
+  it("includes a contribution's tags even when it is missing topic/caseArea (so excluded from the library)", () => {
+    saveContribution({ ...SOLVENCY_CONTRIBUTION, topic: undefined });
+    expect(listCombinedPersistedTags()).toEqual(["solvency", "warming"]);
+  });
+
+  it("ignores a contribution with no tags field at all", () => {
+    saveContribution({ ...SOLVENCY_CONTRIBUTION, tags: undefined });
+    expect(listCombinedPersistedTags()).toEqual([]);
+  });
+});
+
+describe("renameTagAcrossCombinedPersistedStores", () => {
+  it("rewrites the tag in both stores and reports each store's changed count", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    saveContribution(SOLVENCY_CONTRIBUTION);
+
+    const result = renameTagAcrossCombinedPersistedStores("warming", "climate-crisis");
+
+    expect(result).toEqual({ entriesChanged: 1, contributionsChanged: 1, totalChanged: 2 });
+    expect(getEvidenceLibraryEntry("entry-1")!.tags).toEqual(["impact", "climate-crisis"]);
+    expect(getEvidenceLibraryEntry("entry-2")!.tags).toEqual(["solvency"]);
+    expect(getContribution("contrib-1")!.tags).toEqual(["solvency", "climate-crisis"]);
+  });
+
+  it("rewrites one store even when the other carries nothing under the tag", () => {
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+    saveContribution(SOLVENCY_CONTRIBUTION);
+
+    const result = renameTagAcrossCombinedPersistedStores("warming", "climate-crisis");
+
+    expect(result).toEqual({ entriesChanged: 0, contributionsChanged: 1, totalChanged: 1 });
+  });
+
+  it("is a safe no-op when neither store carries the tag", () => {
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const result = renameTagAcrossCombinedPersistedStores("nonexistent", "whatever");
+
+    expect(result).toEqual({ entriesChanged: 0, contributionsChanged: 0, totalChanged: 0 });
+  });
+
+  it("throws, leaving both stores untouched, when the two tags are the same", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveContribution(SOLVENCY_CONTRIBUTION);
+
+    expect(() => renameTagAcrossCombinedPersistedStores("warming", "warming")).toThrow();
+    expect(getEvidenceLibraryEntry("entry-1")!.tags).toEqual(["warming", "impact"]);
+    expect(getContribution("contrib-1")!.tags).toEqual(["solvency", "warming"]);
   });
 });
