@@ -6,6 +6,49 @@
 _No task currently in progress._
 
 ### Completed
+- **Word-Count-Only Speech Format — microphone dictation for the live
+  in-round word-limit popover.**
+  Closes the "The live in-round word-limit popover — `debate-timer`'s
+  `SpeechWordCounter`, opened from `SpeechHeaderBar` — is a separate
+  component in a different package and still has no dictation button; its
+  speech text is typed or pasted only" Known gap recorded in
+  `docs/features/word-count-rounds.md`, the last remaining half of the
+  "Speech text is typed or pasted; there is no transcription path feeding
+  the word counter" gap from idea #2 ("Word-Count-Only Speech Format") —
+  the standalone `/word-count` form half was already closed by PR #305.
+  `debate-timer` has no dependency on `debate-round` (the reverse is true —
+  `debate-round`'s `SpeechHeaderBar` imports `SpeechWordCounter` from
+  `debate-timer`), so this adds a `debate-timer`-local copy of the dictation
+  wiring rather than importing `debate-round`'s: new
+  `packages/debate-timer/src/timers/microphone-transcription.ts` (pure
+  feature-detection, error-message, and text-joining helpers — a byte-for-byte
+  copy of `debate-round/src/round/microphone-transcription.ts`, matching the
+  same per-package-copy pattern `debate-speech-writer/src/coach/microphone-transcription.ts`
+  already established) and new
+  `packages/debate-timer/src/hooks/useMicrophoneTranscription.ts` (the
+  matching React wiring around the browser's own
+  `SpeechRecognition`/`webkitSpeechRecognition` API). `SpeechWordCounter.tsx`
+  wires this into a "🎤 Record"/"Stop recording" button in its popover, below
+  the speech textarea, dictating appended segments into the same `text`/
+  `onTextChange` props the textarea already uses; the button is hidden in a
+  browser without `SpeechRecognition` support, a dictation error renders as a
+  small message under the button, and recording stops automatically if the
+  popover is closed while still listening (only one `SpeechWordCounter`
+  instance is ever rendered at a time, so no cross-speech "only one dictates"
+  coordination is needed here, unlike the multi-textarea `/word-count` form).
+  No changes to `formats/word-count-format.ts`, `hooks/useWordCountSpeechMode.ts`,
+  or the persisted `wordCountRounds` schema. Docs updated in
+  `docs/features/word-count-rounds.md`: the "Word-limit mode in the live
+  round" section documents the new button, and the "Known gaps" section's
+  remaining bullet is struck through — both halves of the word-count
+  dictation gap are now closed, closing out idea #2's transcription
+  follow-up entirely. No repo-wide `lint` script exists (checked root/app/
+  package `package.json` scripts) so none was run. Verified: `bun install`,
+  `bun run test` (166 files / 2473 tests, all pass — 16 new), `bun run
+  typecheck` (12 of 13 in-scope packages have a typecheck script; all pass),
+  and `bun run build:web` (`debate-ai-web`, succeeds, `/word-count` and
+  `/debate` routes present, no route changes) all pass. **Completed:**
+  2026-08-24.
 - **Outline Filters and Argument Tree View — heuristic argument-type
   suggestion.**
   [PR #306](https://github.com/debate/debate-ai.com/pull/306).
