@@ -22,6 +22,9 @@
  * through the same store: Edit loads the round back into the form (which
  * then saves through `updateJudgeRoundRecord`) and Delete removes it
  * through `deleteJudgeRoundRecord`; both re-aggregate the affected judge.
+ * A row that has been edited also gets an "Undo last edit" action, shown
+ * only when `hasJudgeRoundRecordEditHistory` says one exists, which steps
+ * the round back to its pre-edit version via `undoLastJudgeRoundRecordEdit`.
  *
  * @module panels/JudgeProfilesPanel
  */
@@ -53,9 +56,11 @@ import { buildJudgeProfilesRoster } from "../state/judgeProfiles"
 import {
   deleteJudgeRoundRecord,
   findNearestJudgeId,
+  hasJudgeRoundRecordEditHistory,
   listJudgeIds,
   listJudgeRoundRecords,
   recordJudgeRound,
+  undoLastJudgeRoundRecordEdit,
   updateJudgeRoundRecord,
   type JudgeRoundRecordEntry,
 } from "../state/judgeRoundRecords"
@@ -200,6 +205,15 @@ export function JudgeProfilesPanel() {
 
   const handleDelete = (id: string) => {
     deleteJudgeRoundRecord(id)
+    if (editingId === id) {
+      setEditingId(null)
+      setDraft(EMPTY_DRAFT)
+    }
+    refresh()
+  }
+
+  const handleUndo = (id: string) => {
+    undoLastJudgeRoundRecordEdit(id)
     if (editingId === id) {
       setEditingId(null)
       setDraft(EMPTY_DRAFT)
@@ -430,9 +444,9 @@ export function JudgeProfilesPanel() {
         <div className="space-y-2">
           <h2 className="text-sm font-medium text-foreground">Logged rounds</h2>
           <p className="text-sm text-muted-foreground">
-            Editing a round rewrites it in place; deleting one re-derives that judge's profile
-            from whatever rounds remain, and removes the profile entirely once its last round is
-            gone.
+            Editing a round rewrites it in place, keeping the version it held before the edit so
+            it can be undone; deleting one re-derives that judge's profile from whatever rounds
+            remain, and removes the profile entirely once its last round is gone.
           </p>
           <div className="max-w-xs space-y-1.5">
             <Label htmlFor="judge-round-filter">Filter by judge ID</Label>
@@ -490,6 +504,16 @@ export function JudgeProfilesPanel() {
                       {record.affSpeakerPoints} / {record.negSpeakerPoints}
                     </TableCell>
                     <TableCell className="space-x-1 text-right">
+                      {hasJudgeRoundRecordEditHistory(record.id) && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleUndo(record.id)}
+                          aria-label={`Undo last edit to ${record.judgeId}'s ${record.tournamentName} round on ${record.date}`}
+                        >
+                          Undo last edit
+                        </Button>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"

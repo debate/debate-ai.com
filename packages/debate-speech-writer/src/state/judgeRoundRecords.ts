@@ -15,6 +15,13 @@
  * `buildJudgeProfile` and persists through the existing `saveJudgeProfile`,
  * introducing no new profile-scoring logic here.
  *
+ * `updateJudgeRoundRecord` also keeps a small per-round undo history (a
+ * separate `judgeRoundRecordEditHistory` store, keyed by round id), closing
+ * the "editing a ballot is all-or-nothing... a correction can't be undone"
+ * gap named in `docs/features/judge-profiles.md`: `undoLastJudgeRoundRecordEdit`
+ * steps a round back to the version it held immediately before its most
+ * recent edit, one edit at a time.
+ *
  * @module state/judgeRoundRecords
  */
 
@@ -28,6 +35,10 @@ export interface JudgeRoundRecordEntry extends JudgeRoundRecord {
 }
 
 const STORAGE_KEY = "judgeRoundRecords";
+const EDIT_HISTORY_STORAGE_KEY = "judgeRoundRecordEditHistory";
+
+/** Most prior versions kept per round id; oldest is dropped once a correction exceeds this. */
+const MAX_EDIT_HISTORY_PER_RECORD = 10;
 
 function readAll(): JudgeRoundRecordEntry[] {
   if (typeof localStorage === "undefined") return [];
@@ -44,6 +55,42 @@ function readAll(): JudgeRoundRecordEntry[] {
 function writeAll(records: JudgeRoundRecordEntry[]): void {
   if (typeof localStorage === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+
+type EditHistoryById = Record<string, JudgeRoundRecordEntry[]>;
+
+function readEditHistory(): EditHistoryById {
+  if (typeof localStorage === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(EDIT_HISTORY_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as EditHistoryById)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeEditHistory(history: EditHistoryById): void {
+  if (typeof localStorage === "undefined") return;
+  localStorage.setItem(EDIT_HISTORY_STORAGE_KEY, JSON.stringify(history));
+}
+
+/** Pushes `previous` onto `id`'s undo stack, oldest-first, capped at `MAX_EDIT_HISTORY_PER_RECORD`. */
+function pushEditHistory(id: string, previous: JudgeRoundRecordEntry): void {
+  const history = readEditHistory();
+  const stack = [...(history[id] ?? []), previous];
+  history[id] = stack.slice(-MAX_EDIT_HISTORY_PER_RECORD);
+  writeEditHistory(history);
+}
+
+function clearEditHistory(id: string): void {
+  const history = readEditHistory();
+  if (!(id in history)) return;
+  delete history[id];
+  writeEditHistory(history);
 }
 
 /** Lists every persisted judged-round record, across every judge. */
@@ -141,23 +188,80 @@ export function updateJudgeRoundRecord(record: JudgeRoundRecordEntry): JudgeProf
   const records = readAll();
   const index = records.findIndex((existing) => existing.id === record.id);
   if (index === -1) return null;
-  const previousJudgeId = records[index]!.judgeId;
+  const previous = records[index]!;
+  pushEditHistory(record.id, previous);
   records[index] = record;
   writeAll(records);
-  if (previousJudgeId !== record.judgeId) {
-    rebuildJudgeProfileFromRecords(previousJudgeId);
+  if (previous.judgeId !== record.judgeId) {
+    rebuildJudgeProfileFromRecords(previous.judgeId);
   }
   return rebuildJudgeProfileFromRecords(record.judgeId);
 }
 
 /**
  * Deletes one persisted judged-round record by `id` and re-aggregates the
- * affected judge's profile; a no-op if the id isn't stored.
+ * affected judge's profile; a no-op if the id isn't stored. Also discards
+ * that round's edit-undo history, since there is no longer a current
+ * version for it to correct.
  */
 export function deleteJudgeRoundRecord(id: string): void {
   const records = readAll();
   const removed = records.find((record) => record.id === id);
   if (!removed) return;
   writeAll(records.filter((record) => record.id !== id));
+  clearEditHistory(id);
   rebuildJudgeProfileFromRecords(removed.judgeId);
+}
+
+/**
+ * Whether `id` has at least one prior version to undo back to — i.e. it has
+ * been edited (via `updateJudgeRoundRecord`) since it was logged or last
+ * undone.
+ */
+export function hasJudgeRoundRecordEditHistory(id: string): boolean {
+  return (readEditHistory()[id]?.length ?? 0) > 0;
+}
+
+/**
+ * Lists `id`'s prior versions, most-recent-edit-first — what the round
+ * looked like immediately before each correction still available to undo.
+ */
+export function listJudgeRoundRecordEditHistory(id: string): JudgeRoundRecordEntry[] {
+  return [...(readEditHistory()[id] ?? [])].reverse();
+}
+
+/**
+ * Undoes the most recent edit to round `id`: restores it to the version it
+ * held immediately before that edit and re-aggregates the affected judge(s),
+ * the same way `updateJudgeRoundRecord` would. Repeated calls step further
+ * back through the id's history. Returns the profile for the restored
+ * record's judge, or `null` if the round isn't stored or has no edit to
+ * undo (either because it was never edited, or every edit already has been).
+ */
+export function undoLastJudgeRoundRecordEdit(id: string): JudgeProfile | null {
+  const records = readAll();
+  const index = records.findIndex((existing) => existing.id === id);
+  if (index === -1) return null;
+
+  const history = readEditHistory();
+  const stack = history[id] ?? [];
+  const restored = stack[stack.length - 1];
+  if (!restored) return null;
+
+  const currentJudgeId = records[index]!.judgeId;
+  records[index] = restored;
+  writeAll(records);
+
+  const remaining = stack.slice(0, -1);
+  if (remaining.length > 0) {
+    history[id] = remaining;
+  } else {
+    delete history[id];
+  }
+  writeEditHistory(history);
+
+  if (currentJudgeId !== restored.judgeId) {
+    rebuildJudgeProfileFromRecords(currentJudgeId);
+  }
+  return rebuildJudgeProfileFromRecords(restored.judgeId);
 }
