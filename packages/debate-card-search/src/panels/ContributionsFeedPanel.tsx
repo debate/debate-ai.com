@@ -88,7 +88,12 @@ import {
 import type { ContributionKind } from "../lib/community-rating"
 import { computeWordCount } from "../lib/shared-evidence-library"
 import { listCombinedPersistedTags } from "../state/evidenceLibraryEntries"
-import { applyTagSuggestion, parseTagsInput, suggestTags } from "../lib/argument-library"
+import {
+  applyTagSuggestion,
+  normalizeTagsToKnownCasing,
+  parseTagsInput,
+  suggestTags,
+} from "../lib/argument-library"
 
 const KIND_OPTIONS: { value: ContributionKind; label: string }[] = [
   { value: "card", label: "Card" },
@@ -169,10 +174,13 @@ export function ContributionsFeedPanel() {
     const argBlock = draft.argBlock.trim()
     const topic = draft.topic.trim()
     const caseArea = draft.caseArea.trim()
-    const tags = draft.tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean)
+    const tags = normalizeTagsToKnownCasing(
+      draft.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+      knownTags,
+    )
     const content = draft.content.trim()
     saveContribution({
       id: `${draft.kind}-${contributorId}-${Date.now()}`,

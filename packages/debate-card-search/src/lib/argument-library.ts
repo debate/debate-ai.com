@@ -287,6 +287,26 @@ export function renameTagAcrossCards<T extends LibraryCard>(
   return { cards: updated, changedCount };
 }
 
+/**
+ * Normalizes each tag in `tags` to whichever casing already appears in
+ * `knownTags`, when a case-insensitive match exists — so a tag typed
+ * directly into a submission form (rather than picked from autocomplete)
+ * still lands on the existing casing instead of coining a new one. When
+ * `knownTags` carries more than one casing for the same tag, the first
+ * matching casing encountered wins. A tag with no case-insensitive match in
+ * `knownTags` is returned unchanged. Closes the remaining "typed tag isn't
+ * normalized" half of the tag-identity Known gap recorded in
+ * `docs/features/evidence-library.md`.
+ */
+export function normalizeTagsToKnownCasing(tags: string[], knownTags: string[]): string[] {
+  const byLowerCase = new Map<string, string>();
+  for (const known of knownTags) {
+    const lower = known.toLowerCase();
+    if (!byLowerCase.has(lower)) byLowerCase.set(lower, known);
+  }
+  return tags.map((tag) => byLowerCase.get(tag.toLowerCase()) ?? tag);
+}
+
 /** A set of tags that are identical except for casing, e.g. `["Warming", "warming"]`. */
 export interface TagCaseVariantGroup {
   /**
