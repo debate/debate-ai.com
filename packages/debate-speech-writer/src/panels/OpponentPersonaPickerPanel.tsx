@@ -4,8 +4,12 @@
  * "AI Practice Opponent" idea in TODO.md's Product Feature Ideas list.
  *
  * Lets a user pick a practice session's AI opponent persona — one of the
- * four built-in personas from `opponent/opponent-personas.ts` — and saves it
- * through the already-persisted `state/opponentPersonaSelections.ts`
+ * four built-in personas from `opponent/opponent-personas.ts`, or a custom
+ * persona built from the user's own style description via
+ * `buildCustomOpponentPersona` (the "custom opponent-persona authoring flow"
+ * follow-up named in `docs/features/practice-opponent.md`'s Known gaps,
+ * mirroring `JudgeParadigmPickerPanel.tsx`'s custom-paradigm form) — and
+ * saves it through the already-persisted `state/opponentPersonaSelections.ts`
  * (`saveOpponentPersonaSelection`, `deleteOpponentPersonaSelection`). Also
  * lists every session with a saved selection via
  * `buildOpponentPersonaSelectionsPanelView`. No new persona-resolution logic
@@ -22,7 +26,12 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { RadioGroup, RadioGroupItem } from "debate-ui/src/primitives/radio-group"
-import { listOpponentPersonas, type BuiltinOpponentPersonaId } from "../opponent/opponent-personas"
+import { Textarea } from "debate-ui/src/primitives/textarea"
+import {
+  buildCustomOpponentPersona,
+  listOpponentPersonas,
+  type OpponentPersonaId,
+} from "../opponent/opponent-personas"
 import {
   buildOpponentPersonaSelectionsPanelView,
   deleteOpponentPersonaSelection,
@@ -34,12 +43,16 @@ const BUILTIN_PERSONAS = listOpponentPersonas()
 
 type FormState = {
   sessionId: string
-  personaId: BuiltinOpponentPersonaId
+  personaId: OpponentPersonaId
+  customName: string
+  customNotes: string
 }
 
 const EMPTY_FORM: FormState = {
   sessionId: "",
   personaId: BUILTIN_PERSONAS[0].id,
+  customName: "",
+  customNotes: "",
 }
 
 /**
@@ -68,13 +81,23 @@ export function OpponentPersonaPickerPanel() {
       return
     }
 
-    const persona = BUILTIN_PERSONAS.find((candidate) => candidate.id === form.personaId)
-    if (!persona) {
-      setError("Select a persona.")
-      return
+    if (form.personaId === "custom") {
+      try {
+        const persona = buildCustomOpponentPersona({ name: form.customName, notes: form.customNotes })
+        saveOpponentPersonaSelection({ sessionId, persona })
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Could not build custom persona.")
+        return
+      }
+    } else {
+      const persona = BUILTIN_PERSONAS.find((candidate) => candidate.id === form.personaId)
+      if (!persona) {
+        setError("Select a persona.")
+        return
+      }
+      saveOpponentPersonaSelection({ sessionId, persona })
     }
 
-    saveOpponentPersonaSelection({ sessionId, persona })
     setError(null)
     setForm(EMPTY_FORM)
     refresh()
@@ -115,7 +138,7 @@ export function OpponentPersonaPickerPanel() {
           <RadioGroup
             value={form.personaId}
             onValueChange={(value) =>
-              setForm((prev) => ({ ...prev, personaId: value as BuiltinOpponentPersonaId }))
+              setForm((prev) => ({ ...prev, personaId: value as OpponentPersonaId }))
             }
           >
             {BUILTIN_PERSONAS.map((persona) => (
@@ -127,8 +150,38 @@ export function OpponentPersonaPickerPanel() {
                 </Label>
               </div>
             ))}
+            <div className="flex items-start gap-2">
+              <RadioGroupItem value="custom" id="persona-custom" className="mt-0.5" />
+              <Label htmlFor="persona-custom" className="font-normal text-foreground">
+                Custom opponent persona
+              </Label>
+            </div>
           </RadioGroup>
         </div>
+
+        {form.personaId === "custom" && (
+          <div className="space-y-3 rounded-md border border-border p-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="persona-custom-name">Persona name</Label>
+              <Input
+                id="persona-custom-name"
+                value={form.customName}
+                onChange={(e) => setForm((prev) => ({ ...prev, customName: e.target.value }))}
+                placeholder="Coach Amy's aggressive K bot"
+                className="max-w-xs"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="persona-custom-notes">Debating style</Label>
+              <Textarea
+                id="persona-custom-notes"
+                value={form.customNotes}
+                onChange={(e) => setForm((prev) => ({ ...prev, customNotes: e.target.value }))}
+                placeholder="Opens on framework, spreads fast, extends drops…"
+              />
+            </div>
+          </div>
+        )}
 
         {error && <p className="text-sm text-destructive">{error}</p>}
 

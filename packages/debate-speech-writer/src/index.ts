@@ -76,11 +76,14 @@ export {
   getOpponentPersona,
   listOpponentPersonas,
   buildOpponentPersonaPrompt,
+  buildCustomOpponentPersona,
 } from "./opponent/opponent-personas";
 export type {
   BuiltinOpponentPersonaId,
+  OpponentPersonaId,
   OpponentPersonaPace,
   OpponentPersona,
+  CustomOpponentPersonaInput,
 } from "./opponent/opponent-personas";
 
 export {
