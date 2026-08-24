@@ -5,20 +5,22 @@
  * persistence store" follow-up named under idea #2 ("Word-Count-Only Speech
  * Format") in TODO.md's Product Feature Ideas list.
  *
- * Lets a user pick a round ID and `debate-timer` word-count style, type each
- * speech's text against a live `getWordCountStatus` readout, and save the
- * round through the already-persisted `state/wordCountRounds.ts`
- * (`saveWordCountRound`, `deleteWordCountRound`). Also lists every persisted
- * round via `buildWordCountRoundsPanelView`, with each speech's status
- * recomputed via `getWordCountRoundStatuses`. No new word-count logic is
- * introduced here.
+ * Lets a user pick a round ID and `debate-timer` word-count style, type (or
+ * dictate, via a per-speech "🎤 Record" button reusing the existing
+ * `round/microphone-transcription.ts`/`hooks/useMicrophoneTranscription.ts`
+ * Web Speech API wiring) each speech's text against a live
+ * `getWordCountStatus` readout, and save the round through the
+ * already-persisted `state/wordCountRounds.ts` (`saveWordCountRound`,
+ * `deleteWordCountRound`). Also lists every persisted round via
+ * `buildWordCountRoundsPanelView`, with each speech's status recomputed via
+ * `getWordCountRoundStatuses`. No new word-count logic is introduced here.
  *
  * @module panels/WordCountRoundsPanel
  */
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -45,6 +47,8 @@ import {
   saveWordCountRound,
   type WordCountRoundRecord,
 } from "../state/wordCountRounds"
+import { appendDictatedSegment } from "../round/microphone-transcription"
+import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 
 const STYLE_LABELS: Record<WordCountStyleKey, string> = wordCountStyleMap.reduce(
   (labels, key, index) => ({ ...labels, [key]: wordCountStyleNames[index] }),
@@ -76,6 +80,22 @@ export function WordCountRoundsPanel() {
   const [drafts, setDrafts] = useState<Record<string, SpeechDraft>>(emptyDrafts(wordCountStyleMap[0]))
   const [error, setError] = useState<string | null>(null)
 
+  // Which speech's textarea the microphone is currently dictating into, if any.
+  const [dictatingSpeech, setDictatingSpeech] = useState<string | null>(null)
+  const dictatingSpeechRef = useRef<string | null>(null)
+  dictatingSpeechRef.current = dictatingSpeech
+
+  const dictation = useMicrophoneTranscription({
+    onSegment: (segment) => {
+      const target = dictatingSpeechRef.current
+      if (!target) return
+      setDrafts((prev) => ({
+        ...prev,
+        [target]: { ...prev[target], text: appendDictatedSegment(prev[target]?.text ?? "", segment) },
+      }))
+    },
+  })
+
   useEffect(() => {
     setRounds(buildWordCountRoundsPanelView())
   }, [])
@@ -86,6 +106,17 @@ export function WordCountRoundsPanel() {
     const key = value as WordCountStyleKey
     setStyleKey(key)
     setDrafts(emptyDrafts(key))
+    if (dictation.isListening) dictation.stop()
+    setDictatingSpeech(null)
+  }
+
+  const toggleDictation = (speechName: string) => {
+    if (dictation.isListening && dictatingSpeech === speechName) {
+      dictation.stop()
+      return
+    }
+    setDictatingSpeech(speechName)
+    dictation.start()
   }
 
   const updateDraft = (name: string, field: keyof SpeechDraft, value: string) => {
@@ -107,6 +138,8 @@ export function WordCountRoundsPanel() {
     setError(null)
     setRoundId("")
     setDrafts(emptyDrafts(styleKey))
+    if (dictation.isListening) dictation.stop()
+    setDictatingSpeech(null)
     refresh()
   }
 
@@ -163,6 +196,7 @@ export function WordCountRoundsPanel() {
           {style.speeches.map((speech) => {
             const draft = drafts[speech.name] ?? { speaker: "", text: "" }
             const status = getWordCountStatus(draft.text, speech.wordLimit)
+            const isDictatingThis = dictation.isListening && dictatingSpeech === speech.name
             return (
               <div key={speech.name} className="rounded-md border border-border p-3 space-y-2">
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -185,9 +219,30 @@ export function WordCountRoundsPanel() {
                 <Textarea
                   value={draft.text}
                   onChange={(e) => updateDraft(speech.name, "text", e.target.value)}
-                  placeholder={`Type the ${speech.name} speech…`}
+                  placeholder={`Type the ${speech.name} speech, or click Record to dictate it…`}
                   className="min-h-24"
                 />
+                {dictation.isSupported ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={isDictatingThis ? "destructive" : "outline"}
+                    disabled={dictation.isListening && !isDictatingThis}
+                    onClick={() => toggleDictation(speech.name)}
+                  >
+                    {isDictatingThis ? "Stop recording" : "🎤 Record"}
+                  </Button>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Microphone dictation isn't supported in this browser.
+                  </p>
+                )}
+                {isDictatingThis && (
+                  <p className="text-xs text-muted-foreground">Listening… speak now.</p>
+                )}
+                {dictatingSpeech === speech.name && dictation.error && (
+                  <p className="text-sm text-destructive">{dictation.error}</p>
+                )}
               </div>
             )
           })}

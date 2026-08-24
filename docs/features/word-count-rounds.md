@@ -23,6 +23,15 @@ Below the form, every persisted round renders as its own card (sorted by
 `roundId`), each submitted speech's word count recomputed via
 `getWordCountRoundStatuses`, with a "Clear" action.
 
+Each speech's textarea also has a "🎤 Record"/"Stop recording" button
+(hidden, with a muted explanatory note instead, in a browser without
+`SpeechRecognition` support) that dictates directly into that speech's
+draft text via the browser's own Web Speech API — the same
+`round/microphone-transcription.ts`/`hooks/useMicrophoneTranscription.ts`
+wiring used by the Speech Transcript Summaries and Video-Lecture-Training
+Coach AI panels. Only one speech dictates at a time; starting a new
+speech's recording is disabled while another is still listening.
+
 ## Data flow
 
 ```
@@ -102,8 +111,17 @@ resolution, mode state, live status, and the store round-trip).
 
 ## Known gaps
 
-- The compact ticking timer in `FlowPageHeader` (mobile header) still shows
-  the countdown only; word-limit mode currently replaces the
-  `SpeechHeaderBar` timer.
-- Speech text is typed or pasted; there is no transcription path feeding the
-  word counter.
+- ~~The compact ticking timer in `FlowPageHeader` (mobile header) still shows
+  the countdown only~~ `FlowPageHeader.tsx` is dead code — it is not
+  imported or rendered anywhere in the app. `SpeechHeaderBar` is the
+  component actually used for both desktop and mobile layouts (via its
+  `onMobileMenuClick` prop, wired in `DebateRoundPanel.tsx` whenever
+  `state.isMobile`), and it already renders the word-limit toggle and
+  `SpeechWordCounter` in every layout mode. No further follow-up is needed
+  here.
+- Microphone dictation now feeds the word counter on the standalone
+  `/word-count` form (see "What it shows" above). The live in-round
+  word-limit popover — `debate-timer`'s `SpeechWordCounter`, opened from
+  `SpeechHeaderBar`'s meter — is a separate component in a different
+  package and still has no dictation button; its speech text is typed or
+  pasted only.
