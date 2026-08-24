@@ -17,6 +17,10 @@ and ask the coach AI a real question grounded strictly in those materials.
 - An "Upload a document" button next to the Material text field that reads
   an uploaded `.docx`, `.txt`, or `.md` file and fills the text field from
   it, instead of requiring the text to be pasted in by hand.
+- A "🎤 Record"/"Stop recording" button next to the same field that dictates
+  directly into it via the browser's own Web Speech API, with a disabled
+  "Microphone dictation isn't supported in this browser" fallback and an
+  inline error message on recognition failure (e.g. mic permission denied).
 - Every persisted material, grouped by kind (Lecture Transcript, Camp
   Material, Instructional Document, Practice-Round Recording), each with a
   "Delete" action.
@@ -67,6 +71,21 @@ panels/CoachMaterialsPanel.tsx
                                                         — the existing Verbatim
                                                           .docx → text pipeline
   → fills form.text (and form.title, if it was still empty) from the result
+
+Dictating into the Material text field (the "recording" half of
+follow-up (a)):
+panels/CoachMaterialsPanel.tsx
+  → hooks/useMicrophoneTranscription.ts                — wraps the browser's
+                                                           SpeechRecognition/
+                                                           webkitSpeechRecognition
+      → coach/microphone-transcription.ts's
+          getSpeechRecognitionConstructor/isMicrophoneTranscriptionSupported
+                                                        — feature detection
+          appendDictatedSegment                        — joins each finalized
+                                                          segment onto form.text
+          describeMicrophoneTranscriptionError         — readable recognition-
+                                                          error messages
+  → fills form.text as the user speaks
 ```
 
 This feature is a read/write UI layer over the existing pure logic: it
@@ -93,11 +112,13 @@ an empty/unusable AI reply).
 
 ## Known gaps
 
-- No transcription of an uploaded recording — the "document" half of
-  follow-up (a) under idea #8 in `TODO.md` is done (`.docx`/`.txt`/`.md`
-  upload), but the "recording" half (turning an audio/video practice-round
-  recording into text) remains open; no transcription service exists in
-  this repo.
+- No transcription of an *uploaded* audio/video recording file — follow-up
+  (a) under idea #8 in `TODO.md` is now fully closed for text sources
+  (`.docx`/`.txt`/`.md` upload, plus live microphone dictation), but turning
+  an already-recorded practice-round audio/video *file* into text still has
+  no path in this repo; no server-side/paid transcription service exists
+  here, only the browser's live `SpeechRecognition` API used for dictation
+  above.
 - `convertDocxToHTML`'s default renderer needs a browser `DOMParser` (via
   `docx-preview`), so `.docx` upload only works from this `"use client"`
   panel in the browser — not from a server-rendered or Node context.
