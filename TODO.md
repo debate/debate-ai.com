@@ -6,6 +6,32 @@
 _No task currently in progress._
 
 ### Completed
+- **Daily Best Card Challenge — cross-tab live update.**
+  Found via this run's own audit of `docs/features/*.md` "Known gaps"
+  sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
+  "Research Crowdsourcing Organizer Features" sections of this tracker are
+  the backlog): `docs/features/daily-best-card.md` said "No real-time
+  updates across browser tabs/sessions — like every other localStorage-backed
+  panel in this repo, the panel reflects a snapshot as of its last load or
+  action." `debate-card-search` gained `state/live-update.ts`'s
+  `isDailyBestCardLiveUpdateStorageEvent`, mirroring `debate-round`'s
+  existing `flow/live-update.ts#isFlowLiveUpdateStorageEvent` fix for the
+  identical class of gap on `FlowSpreadsheet`'s badges: it recognizes a
+  cross-tab browser `storage` event (which never fires in the tab that made
+  the write, only other same-origin tabs) touching the `contributions`/
+  `dailyBestCardAnnouncements` keys, or a `null` key from
+  `localStorage.clear()`. `DailyBestCardPanel` now listens for that event
+  and calls its existing `refresh()`, so a card submitted or a winner
+  announced in another tab now shows up without a manual reload. The doc's
+  Known gaps section was updated to close this bullet (matching the existing
+  strikethrough convention used in `flow-annotations.md`). Vitest-covered in
+  `packages/debate-card-search/test/live-update.test.ts` (matching keys, the
+  `null`-key clear case, an unrelated key, and a key that merely contains a
+  tracked store name as a substring). Verified with `bun x vitest run` (163
+  files, 2328 tests), `bunx turbo typecheck --filter=debate-card-search`, and
+  `bunx turbo build --filter=debate-ai-web`; no `lint` script is configured
+  in this repo.
+  **PR:** [#288](https://github.com/debate/debate-ai.com/pull/288).
 - **AI Practice Opponent — custom opponent-persona authoring flow.**
   Found via this run's own audit of `docs/features/*.md` "Known gaps"
   sections (this repo has no `IDEAS.md`; the "Product Feature Ideas"/
