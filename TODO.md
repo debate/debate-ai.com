@@ -36,8 +36,8 @@ _No task currently in progress._
   needed), `bun run typecheck` (12 of 12 in-scope packages pass), and
   `bun run build:web` (`debate-ai-web` succeeds, `/versus-ai` route
   present) all pass. No repo-wide `lint` script exists, so none was run,
-  matching every prior PR's verification notes. PR: pending (branch
-  `claude/practical-allen-5atso7`).
+  matching every prior PR's verification notes. PR:
+  https://github.com/debate/debate-ai.com/pull/299.
 - **Video-Lecture-Training Coach AI — microphone dictation for the Coach Materials upload
   form.** Closes the "recording" half of follow-up (a) named under idea #8
   ("Video-Lecture-Training Coach AI") in this file's Product Feature Ideas list — "audio/video
