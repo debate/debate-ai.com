@@ -47,7 +47,8 @@ _No task currently in progress._
   pass — 16 new), `bun run typecheck` (12 of 12 in-scope packages pass), and
   `bun run build:web` (`debate-ai-web` succeeds, `/summaries` route present)
   all pass. No repo-wide `lint` script exists, so none was run, matching
-  every prior PR's verification notes.
+  every prior PR's verification notes. PR:
+  https://github.com/debate/debate-ai.com/pull/297.
 - **Research Progress Tracking — prune a topic's completed-task history.**
   Closes the "a completed task's history record is never deleted (e.g. if
   its topic's queue is deleted), so `completedResearchTasks` only grows"
