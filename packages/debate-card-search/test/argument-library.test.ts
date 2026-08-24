@@ -12,6 +12,7 @@ import {
   findTagCaseVariantGroups,
   groupCardsByCaseArea,
   groupCardsByTopic,
+  normalizeTagsToKnownCasing,
   parseTagsInput,
   renameTagAcrossCards,
   renameTagInList,
@@ -446,5 +447,39 @@ describe("findTagCaseVariantGroups", () => {
 
   it("returns an empty array for an empty tag-collection list", () => {
     expect(findTagCaseVariantGroups([])).toEqual([]);
+  });
+});
+
+describe("normalizeTagsToKnownCasing", () => {
+  it("rewrites a typed tag to the existing casing found in knownTags", () => {
+    expect(normalizeTagsToKnownCasing(["warming"], ["Warming", "solvency"])).toEqual(["Warming"]);
+  });
+
+  it("leaves a tag unchanged when no case-insensitive match exists in knownTags", () => {
+    expect(normalizeTagsToKnownCasing(["federalism"], ["Warming", "solvency"])).toEqual(["federalism"]);
+  });
+
+  it("leaves an already-correctly-cased tag unchanged", () => {
+    expect(normalizeTagsToKnownCasing(["Warming"], ["Warming"])).toEqual(["Warming"]);
+  });
+
+  it("normalizes multiple tags independently, mixing matches and non-matches", () => {
+    expect(normalizeTagsToKnownCasing(["WARMING", "new-tag", "Solvency"], ["warming", "solvency"])).toEqual([
+      "warming",
+      "new-tag",
+      "solvency",
+    ]);
+  });
+
+  it("uses the first-encountered casing when knownTags itself carries more than one casing", () => {
+    expect(normalizeTagsToKnownCasing(["warming"], ["Warming", "WARMING"])).toEqual(["Warming"]);
+  });
+
+  it("returns an empty array for an empty tags input", () => {
+    expect(normalizeTagsToKnownCasing([], ["Warming"])).toEqual([]);
+  });
+
+  it("returns tags unchanged when knownTags is empty", () => {
+    expect(normalizeTagsToKnownCasing(["warming", "Solvency"], [])).toEqual(["warming", "Solvency"]);
   });
 });

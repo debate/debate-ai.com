@@ -351,9 +351,9 @@ Within a group, the casing carried by the most cards is treated as the
 merge target and sorted first (a card-count tie breaks alphabetically); a
 tag used under only one casing never appears in the result, so the section
 is hidden entirely when there's nothing to merge. This only detects
-casing differences already present in persisted data — it doesn't
-normalize a tag as it's typed, and a submission form that bypasses
-autocomplete can still coin a new casing.
+casing differences already present in persisted data; a tag typed directly
+into a submission form is normalized separately (see "Typed-tag
+normalization" below).
 
 Vitest-covered in
 `packages/debate-card-search/test/argument-library.test.ts`
@@ -388,6 +388,32 @@ and `packages/debate-card-search/test/contributions.test.ts`
 (`listContributionTags`: empty store, contributions carrying no tags, and
 the deduped sorted list).
 
+## Typed-tag normalization
+
+Closes the "a tag typed directly into a submission form ... still creates a
+new casing instead of being normalized to an existing one" half of the
+tag-identity Known gap below.
+
+`lib/argument-library.ts`'s `normalizeTagsToKnownCasing(tags, knownTags)`
+rewrites each of `tags` to whichever casing already appears in `knownTags`,
+when a case-insensitive match exists (a tag with no match is left
+unchanged). Both submission forms — `EvidenceLibraryPanel`'s
+(`/cards/library`) and `ContributionsFeedPanel`'s (`/cards/contributions`)
+— run their comma-split tag list through this before saving, using the same
+`knownTags`/corpus each form's autocomplete already reads
+(`listPersistedTags()`/`listCombinedPersistedTags()`). So a contributor who
+types `warming` by hand, without touching the autocomplete dropdown, still
+lands on `Warming` if that's the casing already in use — the same outcome
+autocomplete already gave a contributor who picked a suggestion.
+
+Vitest-covered in
+`packages/debate-card-search/test/argument-library.test.ts`
+(`normalizeTagsToKnownCasing`: rewriting a typed tag to its existing
+casing, leaving an unmatched tag unchanged, leaving an already-correct
+casing unchanged, normalizing several tags independently, resolving a
+tie by first-encountered casing when `knownTags` itself carries more than
+one, and both empty-input cases).
+
 ## Known gaps
 
 - A real inverted-index/TF-IDF search now exists, `EvidenceLibraryPanel` is
@@ -408,11 +434,13 @@ the deduped sorted list).
   tag autocomplete as the evidence-library form (see "Tag autocomplete on
   the Contributions Feed" above) — neither gap remains open.
 - Tag identity is still exact-string everywhere: `warming` and `Warming` are
-  two different tags, in the library's collections, in the autocomplete
-  corpus, and in a rename. Autocomplete *matching* is case-insensitive, so a
-  contributor who takes a suggestion lands on the existing casing. The
-  Common Argument Library browser now surfaces existing case-variant tags
-  and merges them on request (see "Duplicate-tag merge suggestions"
-  above), but nothing does this automatically, and a tag typed directly
-  into a submission form (rather than via autocomplete) still creates a
-  new casing instead of being normalized to an existing one.
+  two different tags, in the library's collections and in a rename, if
+  they're both already in persisted data before either form's normalization
+  runs. Autocomplete *matching* is case-insensitive, a typed tag is now
+  normalized to an existing casing at submit time (see "Typed-tag
+  normalization" above), and the Common Argument Library browser surfaces
+  and merges any case variants that still slip in — e.g. two separate
+  contributors coining different casings for a genuinely new tag in the
+  same window, before either casing became "known" to the other's form —
+  (see "Duplicate-tag merge suggestions" above). No follow-up remains open
+  on this bullet.

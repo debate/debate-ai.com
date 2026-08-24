@@ -84,7 +84,12 @@ import {
   computeWordCount,
   getEvidenceStaleness,
 } from "../lib/shared-evidence-library"
-import { applyTagSuggestion, parseTagsInput, suggestTags } from "../lib/argument-library"
+import {
+  applyTagSuggestion,
+  normalizeTagsToKnownCasing,
+  parseTagsInput,
+  suggestTags,
+} from "../lib/argument-library"
 import type {
   EvidenceEntryKind,
   EvidenceLibraryEntry,
@@ -224,10 +229,13 @@ export function EvidenceLibraryPanel() {
       }
     }
 
-    const tags = draft.tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean)
+    const tags = normalizeTagsToKnownCasing(
+      draft.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+      knownTags,
+    )
     const entry: EvidenceLibraryEntry = {
       id: editingId ?? `${draft.kind}-${argBlock}-${Date.now()}`,
       kind: draft.kind,
