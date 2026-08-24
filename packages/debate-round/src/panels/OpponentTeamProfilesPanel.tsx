@@ -23,7 +23,14 @@
  * below the roster corrects a mistyped round through the same store: Edit
  * loads it back into the form (which then saves through
  * `updateOpponentRoundRecord`) and Delete removes it, both re-aggregating
- * (or removing) the affected team's profile.
+ * (or removing) the affected team's profile. A row that has been edited also
+ * gets an "Undo last edit" action, shown only when
+ * `hasOpponentRoundRecordEditHistory` says one exists, which steps the round
+ * back to its pre-edit version via `undoLastOpponentRoundRecordEdit`. A row
+ * that has just been undone also gets a matching "Redo" action, shown only
+ * when `hasOpponentRoundRecordRedoHistory` says one exists, which steps
+ * forward again via `redoLastOpponentRoundRecordEdit` — mirroring
+ * `debate-speech-writer`'s `JudgeProfilesPanel` undo/redo actions exactly.
  *
  * @module panels/OpponentTeamProfilesPanel
  */
@@ -55,9 +62,13 @@ import { buildOpponentTeamProfilesRoster } from "debate-data-sync/src/state/oppo
 import {
   deleteOpponentRoundRecord,
   findNearestOpponentTeamId,
+  hasOpponentRoundRecordEditHistory,
+  hasOpponentRoundRecordRedoHistory,
   listOpponentRoundRecords,
   listOpponentTeamIds,
   recordOpponentRound,
+  redoLastOpponentRoundRecordEdit,
+  undoLastOpponentRoundRecordEdit,
   updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
 } from "debate-data-sync/src/state/opponentRoundRecords"
@@ -199,6 +210,24 @@ export function OpponentTeamProfilesPanel() {
 
   const handleDelete = (id: string) => {
     deleteOpponentRoundRecord(id)
+    if (editingId === id) {
+      setEditingId(null)
+      setDraft(EMPTY_DRAFT)
+    }
+    refresh()
+  }
+
+  const handleUndo = (id: string) => {
+    undoLastOpponentRoundRecordEdit(id)
+    if (editingId === id) {
+      setEditingId(null)
+      setDraft(EMPTY_DRAFT)
+    }
+    refresh()
+  }
+
+  const handleRedo = (id: string) => {
+    redoLastOpponentRoundRecordEdit(id)
     if (editingId === id) {
       setEditingId(null)
       setDraft(EMPTY_DRAFT)
@@ -386,8 +415,9 @@ export function OpponentTeamProfilesPanel() {
         <div className="space-y-2">
           <h2 className="text-sm font-medium text-foreground">Logged rounds</h2>
           <p className="text-sm text-muted-foreground">
-            Editing a round rewrites it in place; deleting one re-derives that team's profile from
-            whatever rounds remain, and removes the profile entirely once its last round is gone.
+            Editing a round rewrites it in place, keeping the version it held before the edit so
+            it can be undone; deleting one re-derives that team's profile from whatever rounds
+            remain, and removes the profile entirely once its last round is gone.
           </p>
           <div className="max-w-xs space-y-1.5">
             <Label htmlFor="opponent-round-filter">Filter by team ID</Label>
@@ -447,6 +477,26 @@ export function OpponentTeamProfilesPanel() {
                       {record.caseName ?? "—"}
                     </TableCell>
                     <TableCell className="space-x-1 text-right">
+                      {hasOpponentRoundRecordEditHistory(record.id) && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleUndo(record.id)}
+                          aria-label={`Undo last edit to ${record.teamId}'s ${record.tournamentName} round on ${record.date}`}
+                        >
+                          Undo last edit
+                        </Button>
+                      )}
+                      {hasOpponentRoundRecordRedoHistory(record.id) && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRedo(record.id)}
+                          aria-label={`Redo last undone edit to ${record.teamId}'s ${record.tournamentName} round on ${record.date}`}
+                        >
+                          Redo
+                        </Button>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"

@@ -6,6 +6,43 @@
 _No task currently in progress._
 
 ### Completed
+- **Opponent Team Profiles — undo/redo a logged-round edit.**
+  Closes the "Editing a round is all-or-nothing per round: there is no
+  history of what a round looked like before an edit, so a correction can't
+  be undone" Known gap recorded in
+  `docs/features/opponent-team-profiles.md`, the same gap Judge Profiles
+  closed across PR #304 (undo) and PR #308 (redo).
+  `packages/debate-data-sync/src/state/opponentRoundRecords.ts` gains two
+  new localStorage stores mirroring `debate-speech-writer`'s
+  `judgeRoundRecords.ts` exactly: `opponentRoundRecordEditHistory` (keyed by
+  round id, capped at the 10 most recent prior versions per round) and
+  `opponentRoundRecordRedoHistory` (same cap), plus
+  `hasOpponentRoundRecordEditHistory`/`listOpponentRoundRecordEditHistory`/
+  `undoLastOpponentRoundRecordEdit` and
+  `hasOpponentRoundRecordRedoHistory`/`listOpponentRoundRecordRedoHistory`/
+  `redoLastOpponentRoundRecordEdit`. `updateOpponentRoundRecord` now pushes
+  the version it just replaced onto the round's undo stack and clears any
+  pending redo (a fresh edit invalidates redo, the standard undo/redo rule);
+  `undoLastOpponentRoundRecordEdit` pushes the version it just replaced onto
+  the redo stack, and `redoLastOpponentRoundRecordEdit` pops it back off,
+  pushing what *it* replaces back onto the undo stack so a further undo can
+  revert the redo. `deleteOpponentRoundRecord` discards both stacks for the
+  deleted round. Unlike Judge Profiles (which shipped undo in PR #304 and
+  had to add a separate PR #308 for the "Undo has no matching redo" follow-up
+  gap), both stacks are added together here in one slice, since the pattern
+  was already fully proven. `OpponentTeamProfilesPanel.tsx` gains matching
+  "Undo last edit"/"Redo" actions next to Edit/Delete in the logged-rounds
+  table, shown only when `hasOpponentRoundRecordEditHistory`/
+  `hasOpponentRoundRecordRedoHistory` say one exists for that row. Docs
+  updated in `docs/features/opponent-team-profiles.md`: the "Correcting a
+  logged round" and "Data flow" sections document the new actions and
+  stores, and the Known gaps section's "no history... can't be undone"
+  bullet is struck through. No repo-wide `lint` script exists (checked
+  root/app/package `package.json` scripts) so none was run. Verified: `bun
+  install`, `bun run test` (166 files / 2505 tests, all pass — 21 new),
+  `bun run typecheck` (12 of 13 in-scope packages have a typecheck script;
+  all pass), and `bun run build:web` (`debate-ai-web`, succeeds, `/opponents`
+  route present, no route changes) all pass. **Completed:** 2026-08-24.
 - **Judge Profiles — redo a logged-round edit.**
   [PR #308](https://github.com/debate/debate-ai.com/pull/308).
   Closes the "Undo has no matching 'redo'" Known gap recorded in
