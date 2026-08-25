@@ -31,7 +31,9 @@ import {
   RevisionIncentivesPanel,
   TopicCoverageDashboardPanel,
   TopicSprintPanel,
+  deriveContributorIdFromSessionIdentity,
 } from "debate-card-search"
+import { useSession } from "@/lib/hooks/useSession"
 import { TaskInboxWithIdentity } from "./TaskInboxWithIdentity"
 import { ContributionLeaderboardWithIdentity } from "./ContributionLeaderboardWithIdentity"
 import { ProgressUnlocksWithIdentity } from "./ProgressUnlocksWithIdentity"
@@ -74,15 +76,29 @@ type Section = (typeof SECTIONS)[number]
 export function ResearchHub() {
   const [section, setSection] = useState<Section>("Coverage")
   const [contributorId, setContributorId] = useState("me")
+  const [hasSetContributorId, setHasSetContributorId] = useState(false)
   const [topic, setTopic] = useState("")
+  const { user } = useSession()
 
   useEffect(() => {
     const saved = typeof localStorage === "undefined" ? null : localStorage.getItem(CONTRIBUTOR_KEY)
-    if (saved) setContributorId(saved)
+    if (saved) {
+      setContributorId(saved)
+      setHasSetContributorId(true)
+    }
   }, [])
+
+  // Prefills from the real signed-in session (see TaskInboxWithIdentity.tsx
+  // for the pattern this mirrors) — never overwrites a saved/typed value.
+  useEffect(() => {
+    if (hasSetContributorId) return
+    const signedInContributorId = deriveContributorIdFromSessionIdentity(user)
+    if (signedInContributorId) setContributorId(signedInContributorId)
+  }, [user, hasSetContributorId])
 
   const updateContributorId = (value: string) => {
     setContributorId(value)
+    setHasSetContributorId(true)
     if (typeof localStorage !== "undefined") localStorage.setItem(CONTRIBUTOR_KEY, value)
   }
 
@@ -108,7 +124,14 @@ export function ResearchHub() {
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <LabeledField label="Your contributor id">
+        <LabeledField
+          label="Your contributor id"
+          hint={
+            hasSetContributorId
+              ? undefined
+              : "Prefilled from your signed-in account, if any — edit it to use a different id."
+          }
+        >
           <Input value={contributorId} onChange={(e) => updateContributorId(e.target.value)} />
         </LabeledField>
         <LabeledField label="Topic" hint="Scopes the sprint composition.">

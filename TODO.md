@@ -6,6 +6,33 @@
 _No task currently in progress._
 
 ### Completed
+- **Team Collaboration Mode — Topic Sprint "Your contributor id" session
+  prefill.**
+  Continues the "Signed-in identity wiring" series (PRs #318–#322): a full
+  survey of every panel's exported props found exactly one remaining
+  free-form "my id" field with no session prefill — `ResearchHub.tsx`'s
+  Sprint tab "Your contributor id" input, a plain `useState("me")` field
+  that feeds `TopicSprintPanel`'s `authorId` prop (distinct from
+  `SprintNotesWithIdentity`'s already-wired "Author ID"/"Your ID" fields on
+  the same tab). `ResearchHub.tsx` now calls `useSession()` and
+  `debate-card-search`'s `deriveContributorIdFromSessionIdentity` directly
+  (it's already an app-level component, so no separate `*WithIdentity`
+  wrapper was needed) and seeds the field from the signed-in identity only
+  when no `localStorage`-saved value exists and the visitor hasn't typed
+  into it yet this session — a `hasSetContributorId` flag mirrors
+  `TaskInboxPanel`'s `hasEditedMyId` convention so a manual edit or a
+  restored saved value is never clobbered by a later session read. A
+  signed-out visitor still sees the field default to `"me"`, unchanged.
+  Docs updated at `docs/features/team-collaboration-mode.md`. No new pure
+  library function was needed (`deriveContributorIdFromSessionIdentity` is
+  reused as-is, already covered by
+  `packages/debate-card-search/test/session-identity.test.ts`), so this is
+  app-level wiring only, mirroring PR #318's identical scope. Verification:
+  full `bun run test` (171 files / 2587 tests passed, unchanged — no
+  package-level logic changed), `bun run typecheck` (12/12 packages
+  passed), and `bun run build:web` (clean production + SSR + service-worker
+  build). No repo-wide `lint` script exists.
+
 - **Daily Quests — recurring-quest reset.**
   Closes the "no recurring-quest concept exists in this repo" Known gap left
   open by the earlier quest-expiry addition
