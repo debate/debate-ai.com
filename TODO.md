@@ -3,65 +3,37 @@
 
 ### In progress
 
-## Team Brainstorm Assist — choose any idea as a merge target
-
-**Status:** In Progress
-**Source:** TODO.md — "🧠 Team Brainstorm Assist" bullet (Research Crowdsourcing
-Organizer Features), `docs/features/brainstorm-board.md` Known gap: "'Merge
-into top idea' always targets the board's own highest-ranked idea; a
-duplicate pair that both rank below the board's actual top idea can't be
-merged directly into each other without first merging one of them up."
-**Branch:** `claude/practical-allen-92rma8`
-**PR:** Not created yet
-**Started:** 2026-08-25
-
-### Goal
-Let a user merge a duplicate-flagged brainstorm idea into *any* other idea
-on the same board, not only the board's top-ranked idea, closing the
-remaining Known gap on `docs/features/brainstorm-board.md`.
-
-### Scope
-- `BrainstormBoardPanel.tsx`'s per-idea "Merge into top idea" button becomes
-  a "Merge into…" select populated with every other idea on that board.
-- Reuses the existing, already-tested `mergePersistedBrainstormIdeas`/
-  `mergeBrainstormIdeas` (same-board, not-self validation already enforced
-  there) — no new pure merge logic is needed.
-
-### Non-goals
-- No reviewer/moderator identity/permission gate on the merge action (a
-  separate, repo-wide auth gap already recorded).
-- No change to how duplicates are detected/flagged (`isLikelyDuplicate`).
-
-### Acceptance criteria
-- [x] A duplicate-flagged idea can be merged into any other idea on its
-      board, not just the top-ranked one
-- [x] Merging into itself is not offered as an option
-- [x] Lint passes (no repo-wide lint script exists; N/A)
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Production/web build passes
-- [x] Documentation is updated (`docs/features/brainstorm-board.md`)
-
-### Implementation plan
-- [x] Inspect `BrainstormBoardPanel.tsx`, `mergePersistedBrainstormIdeas`,
-      `mergeBrainstormIdeas`, and their existing tests
-- [x] Confirm the underlying merge functions already support an arbitrary
-      target id (they do — only the panel hardcodes the top idea)
-- [x] Replace the "Merge into top idea" button with a per-idea "Merge
-      into…" target picker listing every other idea on the board
-- [x] Run focused tests and fix failures
-- [x] Run typechecking
-- [x] Run the full relevant test suite
-- [x] Run the production/web build
-- [x] Review the final diff for scope and quality
-- [x] Commit and push the branch
-- [x] Create or update the pull request
-- [x] Update tracker status, completed checkboxes, and remaining work
-
-### Remaining work
-- None. See the "Completed" entry below.
+_No task currently in progress._
 
 ### Completed
+- **Team Brainstorm Assist — choose any idea as a merge target.**
+  [PR #313](https://github.com/debate/debate-ai.com/pull/313).
+  Closes the `docs/features/brainstorm-board.md` Known gap: "'Merge into
+  top idea' always targets the board's own highest-ranked idea; a duplicate
+  pair that both rank below the board's actual top idea can't be merged
+  directly into each other without first merging one of them up."
+  `packages/debate-card-search/src/panels/BrainstormBoardPanel.tsx`'s
+  per-idea "Merge into top idea" button is now a "Merge into…" select
+  populated with every other idea on that board; choosing one calls the
+  already-persisted `mergePersistedBrainstormIdeas(targetId, duplicateId)`.
+  No changes were needed to `lib/team-brainstorm-assist.ts`'s
+  `mergeBrainstormIdeas` or `state/brainstormIdeas.ts`'s
+  `mergePersistedBrainstormIdeas` — both already accepted an arbitrary
+  target id and already enforce the same-id/cross-board guards, and both
+  are already Vitest-covered in
+  `packages/debate-card-search/test/team-brainstorm-assist.test.ts` and
+  `packages/debate-card-search/test/brainstormIdeas.test.ts` — this was a
+  UI-wiring-only change, matching this repo's convention of not adding a
+  separate test for a `.tsx` panel when it introduces no new pure logic.
+  Docs updated in `docs/features/brainstorm-board.md`: the "What it shows"
+  and data-flow sections describe the new picker, and the Known gap about
+  only merging into the top idea is struck. `bun install`, `bun run test`
+  (166 files / 2512 tests, all pass, including the pre-existing
+  `brainstormIdeas.test.ts`/`team-brainstorm-assist.test.ts` merge-logic
+  coverage), `bun run typecheck` (12 of 13 in-scope packages have a
+  typecheck script; all pass), and `bun run build:web` (`debate-ai-web`,
+  succeeds, `/cards/brainstorm` route present, no route changes) all pass.
+  No repo-wide `lint` script exists. **Completed:** 2026-08-25.
 - **Flow Annotations — video title on cross-recording jumps.**
   [PR #312](https://github.com/debate/debate-ai.com/pull/312).
   Closes the "Now playing: `<videoId>`" Known gap recorded in
@@ -7917,7 +7889,7 @@ remaining Known gap on `docs/features/brainstorm-board.md`.
 * 
 * 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. A second slice, `buildPrepRoomFromStore` (see Tracker Status above, "Collaboration Prep Room Store Wiring"), now reads a topic's entries from the persisted `evidenceLibraryEntries.ts` store instead of requiring a caller-supplied entry list. A third slice, `state/prepRooms.ts`'s `buildPersistedPrepRoom`/`listPrepRoomTopics` plus `PrepRoomPanel` (see Tracker Status above, "Collaboration Prep Room — prep-room panel UI"), now composes a topic's coverage report and contributor list from their own persisted stores and renders a topic switcher, evidence/draft-block search, and routed-task view at `/cards/prep-room`, closing follow-up (a). A fourth slice (see Tracker Status above, "Team Collaboration Mode / Collaboration Prep Room — shared 'active now' presence signal") reused the same `lib/topic-presence.ts`/`state/topicPresence.ts` heartbeat primitive added for the Team Collaboration Mode idea's identical follow-up, wiring a live "active now" roster plus an "I'm active here" heartbeat control into the panel for its open topic, closing follow-up (b). No follow-ups remain open on this idea._
 * 
-* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. A second follow-up, persisting submitted ideas and votes, is done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`). A third slice, `BrainstormBoardPanel` (see Tracker Status above, "Team Brainstorm Assist — brainstorm-panel UI"), now renders a submission form and every board at `/cards/brainstorm`, closing follow-up (b). A fourth slice (see Tracker Status above, "Team Brainstorm Assist — real AI-generation call") added `lib/team-brainstorm-ai.ts` and `lib/team-brainstorm-client.ts`, wiring a "Generate AI ideas" action into the panel's submission form that calls the existing `/api/reason-ai` Anthropic proxy to draft several candidate ideas for the form's argument block/category, saved as normal, AI-attributed board ideas via the existing `saveBrainstormIdea`, closing follow-up (a). A fifth slice (see Tracker Status above, "Team Brainstorm Assist — seed boards from coverage gaps") added `state/brainstormIdeas.ts`'s `buildBrainstormBoardsPanelViewForTopic` and a topic switcher in `BrainstormBoardPanel`, wiring the existing `buildBrainstormBoardsForCoverageGaps` into the panel so choosing a tracked topic shows one board per under-covered tracked argument/category pair (with its prompt visible even before an idea is submitted) merged with every other board that already has a submitted idea, closing the "boards aren't seeded from the coverage-gap prompts" gap. A sixth slice (see Tracker Status above, "Team Brainstorm Assist — duplicate-idea merge action + per-board AI generation") added `mergeBrainstormIdeas`/`mergePersistedBrainstormIdeas` plus a "Merge into top idea" button on any duplicate-flagged idea and a per-board "Generate AI ideas" button, closing both remaining Known gaps recorded in `docs/features/brainstorm-board.md`. No follow-ups remain open on this bullet._
+* 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. A second follow-up, persisting submitted ideas and votes, is done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`). A third slice, `BrainstormBoardPanel` (see Tracker Status above, "Team Brainstorm Assist — brainstorm-panel UI"), now renders a submission form and every board at `/cards/brainstorm`, closing follow-up (b). A fourth slice (see Tracker Status above, "Team Brainstorm Assist — real AI-generation call") added `lib/team-brainstorm-ai.ts` and `lib/team-brainstorm-client.ts`, wiring a "Generate AI ideas" action into the panel's submission form that calls the existing `/api/reason-ai` Anthropic proxy to draft several candidate ideas for the form's argument block/category, saved as normal, AI-attributed board ideas via the existing `saveBrainstormIdea`, closing follow-up (a). A fifth slice (see Tracker Status above, "Team Brainstorm Assist — seed boards from coverage gaps") added `state/brainstormIdeas.ts`'s `buildBrainstormBoardsPanelViewForTopic` and a topic switcher in `BrainstormBoardPanel`, wiring the existing `buildBrainstormBoardsForCoverageGaps` into the panel so choosing a tracked topic shows one board per under-covered tracked argument/category pair (with its prompt visible even before an idea is submitted) merged with every other board that already has a submitted idea, closing the "boards aren't seeded from the coverage-gap prompts" gap. A sixth slice (see Tracker Status above, "Team Brainstorm Assist — duplicate-idea merge action + per-board AI generation") added `mergeBrainstormIdeas`/`mergePersistedBrainstormIdeas` plus a "Merge into top idea" button on any duplicate-flagged idea and a per-board "Generate AI ideas" button. A seventh slice (see Tracker Status above, "Team Brainstorm Assist — choose any idea as a merge target") turned that button into a "Merge into…" picker listing every other idea on the board, closing the remaining "a duplicate pair that both rank below the board's actual top idea can't be merged directly into each other" Known gap recorded in `docs/features/brainstorm-board.md`. No follow-ups remain open on this bullet._
 * 
 * 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. A second slice, `evidenceLibraryEntries.ts` (see Tracker Status above, "Shared Evidence Library — persisted evidence repository"), now persists `EvidenceLibraryEntry` records to localStorage. A third slice, `EvidenceLibraryPanel` (see Tracker Status above, "Shared Evidence Library — evidence library search UI panel"), now renders a free-text/kind search panel at `/cards/library`, closing follow-up (a). Follow-up (b), wiring `prep-room.ts` to read through this store, was also already closed separately by "Collaboration Prep Room Store Wiring"'s `buildPrepRoomFromStore` (see Tracker Status above). A fourth slice (see Tracker Status above, "Shared Evidence Library — topic/case-area/tag filter controls") added `lib/shared-evidence-library.ts`'s `buildEvidenceSearchFormQuery`, wiring Topic/Case area/Tags filter inputs into `EvidenceLibraryPanel`'s search box alongside the existing free-text/kind filters. A fifth slice (see Tracker Status above, "Shared Evidence Library — real search index") added `lib/evidence-search-index.ts`'s `buildEvidenceSearchIndex`/`searchEvidenceLibraryWithIndex` — a real token → postings-list inverted index ranked by TF-IDF instead of `searchEvidenceLibrary`'s full keyword-overlap re-scan — plus `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`, added alongside (not replacing) the existing persisted search. A sixth slice (see Tracker Status above, "Shared Evidence Library — wire EvidenceLibraryPanel to the real search index") switched `EvidenceLibraryPanel`'s two search call sites from `searchPersistedEvidenceLibrary` to `searchPersistedEvidenceLibraryWithIndex`, closing follow-up (c) in full. A seventh slice (see Tracker Status above, "Shared Evidence Library — cache the search index across calls") added `state/evidenceSearchIndexCache.ts`, wiring `searchPersistedEvidenceLibraryWithIndex` to reuse a cached `EvidenceSearchIndex` across calls instead of rebuilding it on every search, invalidated by this store's own writes and by `peerReviews.ts`'s review-lifecycle writes (since a review-status change can move an entry into or out of this store's "live" gating). No follow-ups remain open on this bullet._
 * 📋 Shared Evidence Library - Keep a team-wide repository of cards, tags, cites, analytics, and reusable blocks with fast search. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `searchEvidenceLibrary`/`findEntriesByCite`/`buildEvidenceLibraryIndex`/`buildEvidenceSearchSummaryText` for a fast-search `EvidenceLibraryEntry` repository (extending the existing Common Argument Library's `LibraryCard` with a full-text body, citation, and card-vs-reusable-block kind) — filterable by topic/case area/kind/tags and rankable by keyword-overlap relevance, reusing `argument-library.ts`'s tag filtering and the LLM Card Scoring slice's `scoreRelevance` directly. A second slice, `evidenceLibraryEntries.ts` (see Tracker Status above, "Shared Evidence Library — persisted evidence repository"), now persists `EvidenceLibraryEntry` records to localStorage. A third slice, `EvidenceLibraryPanel` (see Tracker Status above, "Shared Evidence Library — evidence library search UI panel"), now renders a free-text/kind search panel at `/cards/library`, closing follow-up (a). Follow-up (b), wiring `prep-room.ts` to read through this store, was also already closed separately by "Collaboration Prep Room Store Wiring"'s `buildPrepRoomFromStore` (see Tracker Status above). A fourth slice (see Tracker Status above, "Shared Evidence Library — topic/case-area/tag filter controls") added `lib/shared-evidence-library.ts`'s `buildEvidenceSearchFormQuery`, wiring Topic/Case area/Tags filter inputs into `EvidenceLibraryPanel`'s search box alongside the existing free-text/kind filters. A fifth slice (see Tracker Status above, "Shared Evidence Library — real search index") added `lib/evidence-search-index.ts`'s `buildEvidenceSearchIndex`/`searchEvidenceLibraryWithIndex` — a real token → postings-list inverted index ranked by TF-IDF instead of `searchEvidenceLibrary`'s full keyword-overlap re-scan — plus `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`, added alongside (not replacing) the existing persisted search. A sixth slice (see Tracker Status above, "Shared Evidence Library — wire EvidenceLibraryPanel to the real search index") switched `EvidenceLibraryPanel`'s two search call sites from `searchPersistedEvidenceLibrary` to `searchPersistedEvidenceLibraryWithIndex`, closing follow-up (c) in full. A seventh slice (see Tracker Status above, "Shared Evidence Library — cache the search index across calls") added `state/evidenceLibraryEntries.ts`'s `getCachedEvidenceSearchIndex`, reusing the built index across calls instead of rebuilding it on every search, invalidated via a raw-JSON-string fingerprint comparison against both this store and `state/peerReviews.ts`'s persisted data (the new `getPeerReviewsRawSnapshot`), closing the remaining follow-up. An eighth slice (see Tracker Status above, "Shared Evidence Library — true incremental search-index updates instead of a full rebuild on every cache invalidation") added `lib/evidence-search-index.ts`'s `addEntryToIndex`/`removeEntryFromIndex`/`updateEntryInIndex`, and wired `getCachedEvidenceSearchIndex` to diff the live-entry set by id/content and apply them only to entries actually added, removed, or changed instead of calling `buildEvidenceSearchIndex` again on every invalidation, closing the "Known gaps" entry recorded in `docs/features/evidence-library.md`. A ninth slice (see Tracker Status above, "Shared Evidence Library — tag rename/merge tool") added `lib/argument-library.ts`'s `renameTagInList`/`renameTagAcrossCards` and `state/evidenceLibraryEntries.ts`'s `renameTagAcrossPersistedEntries`, wiring a "Rename/merge tag" form into `ArgumentLibraryPanel` (`/cards/argument-library`) that rewrites (or merges) a tag across every persisted entry that carries it, closing the "No tag rename/merge tool" Known gap recorded in `docs/features/evidence-library.md`. A tenth slice (see Tracker Status above, "Common Argument Library — tag autocomplete and tag rename/merge across both tag stores") added `state/contributions.ts`'s `listContributionTags`/`renameTagAcrossPersistedContributions` and `state/evidenceLibraryEntries.ts`'s `listCombinedPersistedTags`/`renameTagAcrossCombinedPersistedStores`, wiring the same tag-autocomplete affordance the `/cards/library` form already had into `ContributionsFeedPanel`'s Tags field (suggesting from both persisted tag stores) and switching `ArgumentLibraryPanel`'s rename form to rewrite both stores rather than stranding a contribution's copy of the tag under the old name — closing the two remaining Known gaps recorded in `docs/features/evidence-library.md`. An eleventh slice (see Tracker Status above, "Common Argument Library — tag case-variant merge suggestions") added `lib/argument-library.ts`'s `findTagCaseVariantGroups`, wiring a "Possible duplicate tags" section into `ArgumentLibraryPanel` that surfaces tags used under more than one exact casing (e.g. `warming`/`Warming`) with a one-click merge into whichever casing is already carried by the most cards, closing the "nothing merges two casings already in use" half of the tag-identity Known gap recorded in `docs/features/evidence-library.md`. A twelfth slice (see Tracker Status above, "Shared Evidence Library — normalize a typed tag to its existing casing") added `normalizeTagsToKnownCasing`, wired into both `EvidenceLibraryPanel`'s and `ContributionsFeedPanel`'s submit handlers, so a tag typed by hand (not picked from autocomplete) is now rewritten to whichever casing already appears in that form's known-tags corpus, closing the remaining half of the tag-identity Known gap. No follow-ups remain open on this bullet._
