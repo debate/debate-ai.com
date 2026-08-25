@@ -7,7 +7,40 @@ import { useAuthProviders } from "@/lib/hooks/useAuthProviders";
 import { useSession } from "@/lib/hooks/useSession";
 
 /**
- * Google One Tap prompt.
+ * Skipped-prompt reasons worth another try on the next page.
+ *
+ * Everything else — the user closing the prompt, a returned credential, or any
+ * `isNotDisplayed` reason (no Google session, unregistered origin, a
+ * suppression cooldown) — is settled for this page load, so re-prompting on
+ * every navigation would only spend requests on a prompt that cannot appear.
+ */
+const RETRYABLE_SKIP_REASONS = new Set(["auto_cancel", "tap_outside", "issuing_failed"]);
+
+/**
+ * The subset of Google's `PromptMomentNotification` this file reads. The
+ * one-tap plugin hands the notification through untyped.
+ */
+interface PromptNotification {
+  isSkippedMoment?: () => boolean;
+  getSkippedReason?: () => string | undefined;
+  isDismissedMoment?: () => boolean;
+  getDismissedReason?: () => string | undefined;
+  isNotDisplayed?: () => boolean;
+  getNotDisplayedReason?: () => string | undefined;
+}
+
+/** The reason Google gives for a prompt that did not sign the user in. */
+function promptReason(notification?: PromptNotification): string | undefined {
+  if (notification?.isSkippedMoment?.()) return notification.getSkippedReason?.();
+  if (notification?.isDismissedMoment?.()) return notification.getDismissedReason?.();
+  if (notification?.isNotDisplayed?.()) return notification.getNotDisplayedReason?.();
+  return undefined;
+}
+
+/**
+ * Google One Tap prompt, mounted in the root layout so every page of the app
+ * offers a signed-out visitor a one-tap sign-in — the login screen included,
+ * where the prompt sits alongside the form's own Google button.
  *
  * The Google client id is a Worker secret, so it is not in the browser bundle —
  * `useAuthProviders` fetches it from /api/auth/providers, which also says
@@ -18,27 +51,45 @@ export function OneTap() {
   const { isAuthenticated, isLoading } = useSession();
   const { providers, isLoading: providersLoading } = useAuthProviders();
   const pathname = usePathname();
-  const prompted = useRef(false);
+  /** Path of the most recent prompt, so one navigation prompts once. */
+  const promptedPath = useRef<string | null>(null);
+  /** A prompt is on screen (or still retrying); a second call would be a no-op. */
+  const inFlight = useRef(false);
+  /** Google has settled this page load — stop asking until the next reload. */
+  const settled = useRef(false);
 
   const googleReady =
     !providersLoading && providers.includes("google") && hasGoogleClientId();
 
   useEffect(() => {
-    // The login screen has its own Google button; a prompt on top of it competes
-    // with the choice the user is already making.
-    if (isLoading || isAuthenticated || !googleReady || pathname === "/login") return;
+    if (isLoading || isAuthenticated || !googleReady) return;
 
-    // Once per page load. Google throttles callers that re-prompt after a
-    // dismissal, so firing again on every client-side navigation buys nothing
-    // but a console full of suppressed-prompt warnings.
-    if (prompted.current) return;
-    prompted.current = true;
+    // A displayed prompt survives client-side navigation, and the one-tap
+    // plugin refuses overlapping calls, so only prompt when the last one is
+    // done and this navigation has not been prompted for yet.
+    if (settled.current || inFlight.current || promptedPath.current === pathname) return;
+    promptedPath.current = pathname;
+    inFlight.current = true;
 
-    authClient.oneTap({ callbackURL: pathname }).catch((error: unknown) => {
-      console.error("[one-tap] prompt failed:", error);
-      // Let a later navigation try again — this failure was not a dismissal.
-      prompted.current = false;
-    });
+    authClient
+      .oneTap({
+        callbackURL: pathname,
+        onPromptNotification: (notification?: PromptNotification) => {
+          // Only fires when the prompt did not produce a sign-in. Google
+          // throttles callers that re-prompt after a dismissal, so a settled
+          // outcome ends the prompting for this page load.
+          const reason = promptReason(notification);
+          if (!reason || !RETRYABLE_SKIP_REASONS.has(reason)) settled.current = true;
+        },
+      })
+      .catch((error: unknown) => {
+        console.error("[one-tap] prompt failed:", error);
+        // Let a later navigation try again — this failure was not a dismissal.
+        promptedPath.current = null;
+      })
+      .finally(() => {
+        inFlight.current = false;
+      });
   }, [isLoading, isAuthenticated, googleReady, pathname]);
 
   return null;
