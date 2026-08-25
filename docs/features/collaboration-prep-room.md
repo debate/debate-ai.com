@@ -42,6 +42,12 @@ Marking yourself active:
 panels/PrepRoomPanel.tsx ("I'm active here" button, next to a "Your ID" field)
   → recordPersistedPresenceHeartbeat(topic, myId, now)  — state/topicPresence.ts
   → panel re-reads listPersistedActiveContributors(topic, now) to refresh
+
+Signed-in identity prefill ("Your ID"):
+apps/debate-ai.com/components/research/PrepRoomWithIdentity.tsx
+  → deriveContributorIdFromSessionIdentity(user)  — debate-card-search
+  → panels/PrepRoomPanel.tsx's signedInContributorId prop (seeds "Your ID"
+    only if the visitor hasn't typed over it)
 ```
 
 `lib/prep-room.ts`'s `buildPrepRoom`/`buildPrepRoomFromStore` already existed
@@ -64,10 +70,23 @@ first, and re-checks staleness every 30 seconds even without a new
 heartbeat. See `docs/features/team-collaboration-mode.md` for the underlying
 model and its Vitest coverage. No follow-ups remain open on this bullet.
 
+In the Research hub (`ResearchHub.tsx`), the Prep Room tab renders
+`PrepRoomWithIdentity` instead of the raw panel, prefilling "Your ID" from
+`deriveContributorIdFromSessionIdentity` for a signed-in visitor — the same
+prefill-only convention used by `ReviewQueuePanel`/`GroupChallengesPanel`
+and the rest of the identity-wiring series (PRs #318-#323). The standalone
+`/cards/prep-room` route still mounts the raw `PrepRoomPanel` (no
+`signedInContributorId`), so "Your ID" stays blank there regardless of
+sign-in state.
+
 ## Known gaps
 
 - The room is per-browser localStorage, not a shared team resource — two
   teammates on different devices see different rooms for the same topic
   name (this also means presence heartbeats are per-browser, not truly
   cross-device shared).
-- No reviewer-identity/permission checks (no auth/roles in this repo yet).
+- No reviewer-identity/permission checks (this repo's auth system only
+  identifies a signed-in visitor for prefill purposes — see "Your ID"
+  above — there is still no server-side gate on prep-room actions).
+- The `/cards/prep-room` standalone route doesn't get the "Your ID"
+  prefill (only the Research hub's Prep Room tab does).
