@@ -25,6 +25,8 @@ export type FlowAnnotation = {
   createdAt: number;
   /** Id of the recording (e.g. a `debate-videos` YouTube video id) this annotation was dropped against, if any. */
   videoId?: string;
+  /** The recording's display title, if known at the time the annotation was created. */
+  videoTitle?: string;
 };
 
 const MAX_NOTE_LENGTH = 500;
@@ -38,6 +40,7 @@ export type CreateFlowAnnotationInput = {
   createdAt: number;
   note?: string;
   videoId?: string;
+  videoTitle?: string;
 };
 
 /**
@@ -59,6 +62,7 @@ export function createFlowAnnotation(input: CreateFlowAnnotationInput): FlowAnno
 
   const note = input.note?.trim();
   const videoId = input.videoId?.trim();
+  const videoTitle = input.videoTitle?.trim();
 
   return {
     id: input.id,
@@ -69,6 +73,7 @@ export function createFlowAnnotation(input: CreateFlowAnnotationInput): FlowAnno
     createdAt: input.createdAt,
     ...(note ? { note: note.slice(0, MAX_NOTE_LENGTH) } : {}),
     ...(videoId ? { videoId } : {}),
+    ...(videoTitle ? { videoTitle } : {}),
   };
 }
 
@@ -146,9 +151,10 @@ export type JumpToAnnotationDeps = {
 /**
  * Jumps the persistent video player to an annotation's timestamp, switching
  * to its recording first via `setActiveVideo` if it isn't already the one
- * loaded (rather than requiring it to already be open). No stored catalog
- * maps a bare `videoId` to a title, so a video switch falls back to the
- * `videoId` itself as the title, matching the panel's own
+ * loaded (rather than requiring it to already be open). Uses the
+ * annotation's own `videoTitle` (captured at creation time, if the creator
+ * knew it) as the switched-to title; falls back to the bare `videoId` when
+ * no title was captured, matching the panel's own
  * `activeVideoTitle ?? activeVideoId` display fallback.
  *
  * Returns `false` (no-op) if the annotation has no `videoId` at all.
@@ -163,7 +169,12 @@ export function jumpToAnnotation(annotation: FlowAnnotation, deps: JumpToAnnotat
     return true;
   }
 
-  deps.setActiveVideo(annotation.videoId, annotation.videoId, undefined, annotation.timestampMs / 1000);
+  deps.setActiveVideo(
+    annotation.videoId,
+    annotation.videoTitle ?? annotation.videoId,
+    undefined,
+    annotation.timestampMs / 1000,
+  );
   return true;
 }
 

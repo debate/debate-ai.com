@@ -51,7 +51,8 @@ state/flowAnnotations.ts (localStorage: flowAnnotations)
 
 Dropping an annotation at the live position:
 panels/FlowAnnotationsPanel.tsx
-  → createFlowAnnotation({ ..., videoId: activeVideoId })  — flow/flow-annotations.ts
+  → createFlowAnnotation({ ..., videoId: activeVideoId, videoTitle: activeVideoTitle })
+                                                            — flow/flow-annotations.ts
   → saveFlowAnnotation(...)                                — state/flowAnnotations.ts
   → panel re-reads buildFlowAnnotationsPanelView() to refresh
 
@@ -62,7 +63,8 @@ panels/FlowAnnotationsPanel.tsx
         → sendYouTubeCommand("seekTo", [timestampMs / 1000, true])  — debate-videos
         → sendYouTubeCommand("playVideo")
       different (or no) video loaded:
-        → setActiveVideo(videoId, videoId, undefined, timestampMs / 1000)  — debate-videos
+        → setActiveVideo(videoId, videoTitle ?? videoId, undefined, timestampMs / 1000)
+                                                            — debate-videos
 ```
 
 Every annotation data model and persistence rule already existed and was
@@ -146,13 +148,46 @@ Vitest-covered (4 new cases in
 suite: same-video seek, cross-video switch, switch when nothing is loaded,
 and the no-`videoId` no-op).
 
+## Video title on a cross-recording jump
+
+Closes the "falls back to the bare `videoId` as the player's displayed
+title" Known gap below: `FlowAnnotation` now optionally carries the
+recording's own display title, captured at the moment the annotation was
+dropped (from `useVideoPlayerStore`'s `activeVideoTitle`, the same title
+`VideoCardThumbnail.tsx` passes to `setActiveVideo` when a video is
+started), so a later cross-recording "Jump to" can show it instead of the
+bare id.
+
+- `flow/flow-annotations.ts`: an optional `FlowAnnotation.videoTitle`
+  (additive — existing annotations without one are unaffected), trimmed and
+  omitted when blank, mirroring the existing `videoId` handling in
+  `createFlowAnnotation`. `jumpToAnnotation` now calls
+  `deps.setActiveVideo(videoId, annotation.videoTitle ?? annotation.videoId,
+  ...)`, falling back to the bare id only when no title was captured.
+- `panels/FlowAnnotationsPanel.tsx`: `handleAdd` passes the live
+  `activeVideoTitle` through alongside `activeVideoId` when dropping an
+  annotation at the current playback position.
+
+This only threads through a title an annotation already had in scope at
+creation time — there is still no standalone `videoId` → title catalog/
+lookup service, so an annotation dropped before this change, or dropped
+without the live player active, still falls back to the bare id.
+
+Vitest-covered (2 new cases in
+`packages/debate-round/test/flow-annotations.test.ts`: `createFlowAnnotation`
+trims/omits `videoTitle` the same way it does `videoId`, and
+`jumpToAnnotation` uses a recorded `videoTitle` over the bare `videoId` when
+switching recordings).
+
 ## Known gaps
 
-- Switching videos for a cross-recording jump falls back to the bare
+- ~~Switching videos for a cross-recording jump falls back to the bare
   `videoId` as the player's displayed title (e.g. "Now playing:
   `dQw4w9WgXcQ`") since no stored catalog maps a `videoId` to a title —
   `FlowAnnotation` itself doesn't carry one, only whatever created the
-  annotation (e.g. `VideoCard.tsx`) ever knew it.
+  annotation (e.g. `VideoCard.tsx`) ever knew it.~~ Closed: see "Video title
+  on a cross-recording jump" above. An annotation dropped without the live
+  player active (or before this change) still has no title to fall back on.
 - ~~The `FlowSpreadsheet` badge reads annotations from `localStorage` at
   cell render time; it does not live-update if another tab drops a new
   annotation while the grid is open.~~ Closed: `FlowSpreadsheet` now listens

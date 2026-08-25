@@ -6,6 +6,29 @@
 _No task currently in progress._
 
 ### Completed
+- **Flow Annotations — video title on cross-recording jumps.**
+  [PR #312](https://github.com/debate/debate-ai.com/pull/312).
+  Closes the "Now playing: `<videoId>`" Known gap recorded in
+  `docs/features/flow-annotations.md` — switching the persistent video
+  player to a different recording via `jumpToAnnotation` used to always
+  fall back to the bare `videoId` as the player's displayed title, since no
+  stored catalog mapped a `videoId` to a title. `packages/debate-round/src/flow/flow-annotations.ts`'s
+  `FlowAnnotation`/`CreateFlowAnnotationInput` gain an optional
+  `videoTitle`, trimmed and omitted-if-blank exactly like the existing
+  `videoId` field; `jumpToAnnotation` now calls `deps.setActiveVideo(videoId,
+  annotation.videoTitle ?? annotation.videoId, ...)`. `FlowAnnotationsPanel`'s
+  `handleAdd` passes the live player's `activeVideoTitle` (from
+  `useVideoPlayerStore`) through alongside `activeVideoId` when dropping an
+  annotation at the current playback position, so a title captured live is
+  available for a later cross-recording jump to reuse. No new
+  video-id-to-title lookup service was added — an annotation dropped without
+  the live player active, or created before this change, still falls back to
+  the bare id, as documented in the doc's Known gaps. Verified: `bun install`,
+  `bun run test packages/debate-round/test/flow-annotations.test.ts` (31
+  tests, 2 new), `bun run test` (166 files / 2512 tests, all pass), `bun run
+  typecheck` (12 of 13 in-scope packages have a typecheck script; all pass),
+  and `bun run build:web` (`debate-ai-web`, succeeds, `/annotations` route
+  present, no route changes) all pass. **Completed:** 2026-08-25.
 - **Prep Notes — "jump to argument" failure message.**
   [PR #311](https://github.com/debate/debate-ai.com/pull/311).
   Closes the "If a note's `boxPath` no longer resolves to a real grid row
