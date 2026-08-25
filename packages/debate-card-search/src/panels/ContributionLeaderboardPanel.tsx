@@ -20,6 +20,13 @@
  * every contributor, so unlike Task Inbox's "My tasks" prefill there is
  * nothing to filter or prefill here, only to highlight.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isContributionLeaderboardLiveUpdateStorageEvent`, so a contribution,
+ * completed task, or streak update logged in another tab refreshes this
+ * panel's roster without a manual reload — closing the "Every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap noted in `shared-flow-sync.md`, for this panel.
+ *
  * @module panels/ContributionLeaderboardPanel
  */
 
@@ -38,6 +45,7 @@ import {
 import { buildPersistedLeaderboardWithCompletedTasks } from "../state/researchProgress"
 import { buildContributorUnlockStatusWithStreakFromStore } from "../lib/unlock-streak-status"
 import { isOwnContributorRow } from "../lib/session-identity"
+import { isContributionLeaderboardLiveUpdateStorageEvent } from "../state/live-update"
 import type { ContributorStats } from "../lib/contribution-leaderboard"
 
 /** One leaderboard row: a contributor's raw stats plus their derived tier/streak status. */
@@ -96,6 +104,20 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
 
   useEffect(() => {
     setRows(buildLeaderboardRows())
+  }, [])
+
+  /**
+   * Live-update the roster when another browser tab submits a contribution,
+   * completes a research task, or logs quest/streak activity. A `storage`
+   * event never fires in the tab that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isContributionLeaderboardLiveUpdateStorageEvent(event)) return
+      setRows(buildLeaderboardRows())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   if (rows === null) {

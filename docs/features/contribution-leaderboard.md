@@ -71,6 +71,27 @@ store (see `packages/debate-card-search/test/contributions.test.ts`), and one
 new pure helper, `isOwnContributorRow` (`lib/session-identity.ts`,
 Vitest-covered in `test/session-identity.test.ts`).
 
+## Cross-tab live update
+
+`ContributionLeaderboardPanel` now subscribes to the browser's `storage`
+event (which the spec fires only in *other* same-origin tabs/windows, never
+the one that made the write), so a contribution, completed research task,
+or quest/streak update logged in a second tab refreshes this tab's roster
+without a manual reload. A new pure helper,
+`state/live-update.ts`'s `isContributionLeaderboardLiveUpdateStorageEvent`,
+checks whether the event's `key` is one of the roster-backing stores
+(`contributions`, `completedResearchTasks`, `dailyMissionResults`), or
+`null` for a `localStorage.clear()`; when it is, the panel re-derives the
+whole roster via `buildLeaderboardRows()`. This closes, for this panel, the
+"Every other localStorage-backed panel in this repo still has no cross-tab
+live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), mirroring the existing
+`DailyBestCardPanel`/`isDailyBestCardLiveUpdateStorageEvent` precedent.
+Vitest-covered in
+`packages/debate-card-search/test/live-update.test.ts` (every backing-store
+key, the `null`-key clear-all case, and unrelated/substring-matching keys
+staying ignored).
+
 ## Known gaps
 
 - The Contributions Feed panel (`/cards/contributions`) now submits
