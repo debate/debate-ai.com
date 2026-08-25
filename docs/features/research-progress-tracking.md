@@ -121,6 +121,20 @@ previously recorded below. Vitest-covered in
 other topics' history untouched, a no-op on an untracked topic, and not
 touching the active-queue store).
 
+## Cross-tab live update
+
+`ResearchProgressPanel` subscribes to the browser's `storage` event (fires
+only in *other* same-origin tabs/windows, never the one that made the
+write) via `state/live-update.ts`'s `isResearchProgressLiveUpdateStorageEvent`
+and re-derives the roster when it fires for one of its backing keys
+(`contributions`, `completedResearchTasks`, `routedTaskQueues`), so a
+contribution submitted, task completed, or topic routed in a second tab now
+refreshes this tab's roster without a manual reload — closing the "Every
+other localStorage-backed panel in this repo still has no cross-tab
+live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
+Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
+
 ## Known gaps
 
 - No contributor identity/permission *checks* — a real signed-in session now

@@ -21,6 +21,13 @@
  * persisted quest-template roster (`state/dailyQuests.ts`'s
  * `listQuestTemplates`).
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isQuestStreaksLiveUpdateStorageEvent`, so a daily mission result recorded
+ * in another tab refreshes this panel's roster without a manual reload —
+ * closing the "Every other localStorage-backed panel in this repo still has
+ * no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel.
+ *
  * @module panels/QuestStreaksPanel
  */
 
@@ -44,6 +51,7 @@ import {
   computeAndSavePersistedDailyMissionResult,
 } from "../state/dailyMissionResults"
 import { listQuestTemplates } from "../state/dailyQuests"
+import { isQuestStreaksLiveUpdateStorageEvent } from "../state/live-update"
 import type { ContributorQuestStreak } from "../lib/gamified-quests"
 
 /** Today's UTC calendar day as `YYYY-MM-DD`, the `dayKey` format used throughout `gamified-quests.ts`. */
@@ -72,6 +80,20 @@ export function QuestStreaksPanel() {
 
   useEffect(() => {
     refresh()
+  }, [])
+
+  /**
+   * Live-update the roster when another browser tab logs a daily mission
+   * result. A `storage` event never fires in the tab that made the write,
+   * only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isQuestStreaksLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   const handleRunCheck = () => {

@@ -1,17 +1,21 @@
 /**
  * @fileoverview Cross-tab live-update helpers for `DailyBestCardPanel`,
- * `ContributionLeaderboardPanel`, and `TaskInboxPanel`, mirroring
+ * `ContributionLeaderboardPanel`, `TaskInboxPanel`, `ProgressUnlocksPanel`,
+ * `ResearchProgressPanel`, and `QuestStreaksPanel`, mirroring
  * `debate-round`'s `flow/live-update.ts`. The browser's `storage` event
  * never fires in the *same* tab that wrote the change — only in other
  * same-origin tabs — so a panel that reads `localStorage` on mount only
  * never reflects another tab's write without a manual reload.
  * `isDailyBestCardLiveUpdateStorageEvent` closes the "No real-time updates
  * across browser tabs/sessions" Known gap noted in `daily-best-card.md`;
- * `isContributionLeaderboardLiveUpdateStorageEvent` and
- * `isTaskInboxLiveUpdateStorageEvent` close the equivalent gap for their
+ * `isContributionLeaderboardLiveUpdateStorageEvent`,
+ * `isTaskInboxLiveUpdateStorageEvent`, `isProgressUnlocksLiveUpdateStorageEvent`,
+ * `isResearchProgressLiveUpdateStorageEvent`, and
+ * `isQuestStreaksLiveUpdateStorageEvent` close the equivalent gap for their
  * own panels, noted in `shared-flow-sync.md`'s "Every other
  * localStorage-backed panel in this repo still has no cross-tab
- * live-update mechanism."
+ * live-update mechanism." (a gap that still applies to the rest of this
+ * repo's localStorage-backed panels beyond these six).
  *
  * @module state/live-update
  */
@@ -86,5 +90,80 @@ export function isTaskInboxLiveUpdateStorageEvent(event: { key: string | null })
   return (
     event.key === null ||
     (TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `ProgressUnlocksPanel` reads from, via
+ * `lib/unlock-streak-status.ts#buildUnlockStatusRoster`, which composes
+ * `state/researchProgress.ts#buildPersistedLeaderboardWithCompletedTasks`
+ * (`contributions`, `completedResearchTasks`) with
+ * `state/dailyMissionResults.ts#listDailyMissionResultsForContributor`
+ * (`dailyMissionResults`, the streak/streak-badge source).
+ */
+export const PROGRESS_UNLOCKS_LIVE_UPDATE_STORAGE_KEYS = [
+  "contributions",
+  "completedResearchTasks",
+  "dailyMissionResults",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `ProgressUnlocksPanel` to
+ * refresh its rendered roster — closes the "Every other localStorage-backed
+ * panel in this repo still has no cross-tab live-update mechanism" Known gap
+ * noted in `shared-flow-sync.md`, for this panel. Mirrors
+ * `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match rules.
+ */
+export function isProgressUnlocksLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (PROGRESS_UNLOCKS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `ResearchProgressPanel` reads from, via
+ * `state/researchProgress.ts#buildPersistedResearchProgressBoard`
+ * (`contributions`, `completedResearchTasks`, and `routedTaskQueues` via
+ * `state/routedTaskQueues.ts#listRoutedTaskQueues`).
+ */
+export const RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS = [
+  "contributions",
+  "completedResearchTasks",
+  "routedTaskQueues",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `ResearchProgressPanel` to
+ * refresh its rendered roster — closes the "Every other localStorage-backed
+ * panel in this repo still has no cross-tab live-update mechanism" Known gap
+ * noted in `shared-flow-sync.md`, for this panel. Mirrors
+ * `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match rules.
+ */
+export function isResearchProgressLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `QuestStreaksPanel` reads from, via
+ * `state/dailyMissionResults.ts#buildPersistedQuestStreakRoster`
+ * (`dailyMissionResults`).
+ */
+export const QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS = ["dailyMissionResults"] as const;
+
+/**
+ * Whether a `storage` event should trigger `QuestStreaksPanel` to refresh
+ * its rendered roster — closes the "Every other localStorage-backed panel
+ * in this repo still has no cross-tab live-update mechanism" Known gap
+ * noted in `shared-flow-sync.md`, for this panel. Mirrors
+ * `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match rules.
+ */
+export function isQuestStreaksLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

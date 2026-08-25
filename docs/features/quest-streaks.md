@@ -60,6 +60,18 @@ actual cadence" — with a UI action. No scheduled-job/cron infrastructure
 exists in this repo (the whole feature is client-side, localStorage-backed),
 so a truly automatic daily cadence remains a documented gap below.
 
+## Cross-tab live update
+
+`QuestStreaksPanel` subscribes to the browser's `storage` event (fires only
+in *other* same-origin tabs/windows, never the one that made the write) via
+`state/live-update.ts`'s `isQuestStreaksLiveUpdateStorageEvent` and
+re-derives the roster when it fires for its backing `dailyMissionResults`
+key, so a mission check run in a second tab now refreshes this tab's roster
+without a manual reload — closing the "Every other localStorage-backed
+panel in this repo still has no cross-tab live-update mechanism" Known gap
+noted in [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
+Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
+
 ## Known gaps
 
 - The trigger is manual (a button click), not an automatic scheduled job —

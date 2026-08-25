@@ -6,6 +6,55 @@
 _No task currently in progress._
 
 ### Completed
+- **Progress Unlocks / Research Progress / Quest Streaks — cross-tab live
+  update.** Closes, for `ProgressUnlocksPanel`, `ResearchProgressPanel`, and
+  `QuestStreaksPanel`, the "Every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap noted in
+  `shared-flow-sync.md`, previously closed only for
+  `DailyBestCardPanel`/`ContributionLeaderboardPanel`/`TaskInboxPanel`
+  (`debate-card-search/src/state/live-update.ts`) and `FlowSpreadsheet`
+  (`debate-round/src/flow/live-update.ts`). `state/live-update.ts` gains
+  three more helpers: `PROGRESS_UNLOCKS_LIVE_UPDATE_STORAGE_KEYS`
+  (`contributions`, `completedResearchTasks`, `dailyMissionResults`) +
+  `isProgressUnlocksLiveUpdateStorageEvent`;
+  `RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS` (`contributions`,
+  `completedResearchTasks`, `routedTaskQueues`) +
+  `isResearchProgressLiveUpdateStorageEvent`; and
+  `QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS` (`dailyMissionResults`) +
+  `isQuestStreaksLiveUpdateStorageEvent` — mirroring the existing null-key/
+  exact-key-match rules. Each of the three panels subscribes to the
+  browser's `storage` event (fires only in *other* same-origin tabs/windows,
+  never the one that made the write) and re-derives its rendered roster
+  when it fires for one of its own keys, so a contribution recorded, task
+  completed, topic routed, or mission logged in a second tab now refreshes
+  each of these tabs' views without a manual reload. Docs updated at
+  `docs/features/progress-unlocks.md`, `docs/features/research-progress-tracking.md`,
+  and `docs/features/quest-streaks.md` (new "Cross-tab live update" sections)
+  and `docs/features/shared-flow-sync.md` (cross-reference list extended).
+  Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`
+  (every backing-store key per predicate, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored, for all three new
+  predicates). Verified: `bun install` (2062 packages), `bun run test` (174
+  files / 2636 tests, all pass), `bun run typecheck` (12 of 12 in-scope
+  packages pass), and `bun run build:web` (`debate-ai-web` succeeds,
+  `/cards/progress`, `/cards/progress-tracking`, `/cards/streaks` routes
+  present) all pass. No repo-wide `lint` script exists. Remaining follow-up
+  (not started this run): the same treatment for the other ~13
+  `debate-card-search` panels and every `debate-round`/`debate-data-sync`/
+  `debate-speech-writer` panel that still lacks this mechanism
+  (`RevisionIncentivesPanel`, `ArgumentLibraryPanel`, `EvidenceLibraryPanel`,
+  `GroupChallengesPanel`, `ReviewQueuePanel`, `TopicCoverageDashboardPanel`,
+  `DailyQuestsPanel`, `ContributionsFeedPanel`, `ContributorAwardsPanel`,
+  `PrepRoomPanel`, `BrainstormBoardPanel`, `SprintNotesPanel`,
+  `CardScoringPanel`, `StandingsPanel`, `OpponentTeamProfilesPanel`,
+  `JudgeProfilesPanel`, `CoachingProgramsPanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, `StrategyPanel`, `PracticeRoundSimulatorPanel`,
+  `ArgumentTreePanel`, `OutlineNavPanel`, `VulnerabilityChartsPanel`,
+  `FlowSummariesPanel`, `AiVersusRoundPanel`, `JudgeDecisionPanel`,
+  `JudgeParadigmPickerPanel`, `OpponentPersonaPickerPanel`,
+  `WordCountRoundsPanel`, `PreRoundBriefingsPanel`, `CoachMaterialsPanel`,
+  `SpeechDocumentsPanel`, `PrepNotesPanel`, `PrepNoteNotificationsPanel`,
+  `FlowAnnotationsPanel`). PR: opened for this change (see below).
 - **Task Inbox — cross-tab live update.**
   Closes, for `TaskInboxPanel`, the "Every other localStorage-backed panel
   in this repo still has no cross-tab live-update mechanism" Known gap
