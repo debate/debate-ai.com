@@ -20,6 +20,13 @@
  * `lib/peer-review.ts` itself — it can't match the review's own `authorId`.
  * Submitting, commenting, and requesting changes stay open to anyone.
  *
+ * An optional `signedInContributorId` prop (mirroring `TaskInboxPanel`'s
+ * identical convention) prefills "Your reviewer ID" and, per card, the
+ * comment thread's "Reviewer ID" field with a real signed-in visitor's
+ * derived id — a starting value only; typing over either field is always
+ * respected afterward, and a signed-out visitor sees the same blank fields
+ * as before.
+ *
  * @module panels/ReviewQueuePanel
  */
 
@@ -76,6 +83,16 @@ type CommentDraft = { reviewerId: string; severity: CommentSeverity; body: strin
 
 const EMPTY_COMMENT_DRAFT: CommentDraft = { reviewerId: "", severity: "suggestion", body: "" }
 
+export interface ReviewQueuePanelProps {
+  /**
+   * A real signed-in visitor's derived contributor id (see
+   * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`).
+   * Prefills "Your reviewer ID" and each card's comment "Reviewer ID"
+   * field's *initial* value only — never overwrites a visitor's own edit.
+   */
+  signedInContributorId?: string
+}
+
 /**
  * Renders the Review Queue panel: a form to start a new card's review, plus
  * every persisted `CardReview` (sorted by `cardId`), each with lifecycle
@@ -85,11 +102,12 @@ const EMPTY_COMMENT_DRAFT: CommentDraft = { reviewerId: "", severity: "suggestio
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function ReviewQueuePanel() {
+export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProps = {}) {
   const [reviews, setReviews] = useState<CardReview[] | null>(null)
   const [newCardId, setNewCardId] = useState("")
   const [newAuthorId, setNewAuthorId] = useState("")
   const [actingReviewerId, setActingReviewerId] = useState("")
+  const [hasEditedActingReviewerId, setHasEditedActingReviewerId] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [commentDrafts, setCommentDrafts] = useState<Record<string, CommentDraft>>({})
 
@@ -97,9 +115,16 @@ export function ReviewQueuePanel() {
     setReviews(buildReviewQueuePanelView())
   }, [])
 
+  useEffect(() => {
+    if (!hasEditedActingReviewerId && signedInContributorId) {
+      setActingReviewerId(signedInContributorId)
+    }
+  }, [signedInContributorId, hasEditedActingReviewerId])
+
   const refresh = () => setReviews(buildReviewQueuePanelView())
 
-  const commentDraftFor = (cardId: string): CommentDraft => commentDrafts[cardId] ?? EMPTY_COMMENT_DRAFT
+  const commentDraftFor = (cardId: string): CommentDraft =>
+    commentDrafts[cardId] ?? { ...EMPTY_COMMENT_DRAFT, reviewerId: signedInContributorId ?? "" }
 
   const setCommentDraft = (cardId: string, patch: Partial<CommentDraft>) => {
     setCommentDrafts((prev) => ({ ...prev, [cardId]: { ...commentDraftFor(cardId), ...patch } }))
@@ -197,7 +222,10 @@ export function ReviewQueuePanel() {
           <Input
             id="review-acting-reviewer-id"
             value={actingReviewerId}
-            onChange={(e) => setActingReviewerId(e.target.value)}
+            onChange={(e) => {
+              setActingReviewerId(e.target.value)
+              setHasEditedActingReviewerId(true)
+            }}
             placeholder="alice"
             className="max-w-xs"
           />

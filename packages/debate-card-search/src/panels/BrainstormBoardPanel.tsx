@@ -48,6 +48,14 @@
  * the same board (not just the top-ranked one), so two lower-ranked
  * duplicates can be merged directly into each other.
  *
+ * An optional `signedInContributorId` prop (mirroring `TaskInboxPanel`'s
+ * identical convention) prefills the idea form's "Contributor ID" field's
+ * *initial* value only — never overwrites a visitor's own edit, and a
+ * signed-out visitor sees the same blank field as before. A successful
+ * submission's form reset restores that same prefilled value (rather than
+ * clearing it back to blank) so a signed-in visitor can submit several
+ * ideas in a row without retyping their id each time.
+ *
  * @module panels/BrainstormBoardPanel
  */
 
@@ -92,6 +100,16 @@ function boardKey(board: BrainstormBoard): string {
   return `${board.argBlock}::${board.category}`
 }
 
+export interface BrainstormBoardPanelProps {
+  /**
+   * A real signed-in visitor's derived contributor id (see
+   * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`).
+   * Prefills the idea form's "Contributor ID" field's *initial* value only
+   * — never overwrites a visitor's own edit.
+   */
+  signedInContributorId?: string
+}
+
 /**
  * Renders the Team Brainstorm Assist panel: a form to submit a new idea
  * against an argument block and category, plus every persisted
@@ -101,9 +119,10 @@ function boardKey(board: BrainstormBoard): string {
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function BrainstormBoardPanel() {
+export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardPanelProps = {}) {
   const [boards, setBoards] = useState<BrainstormBoard[] | null>(null)
   const [draft, setDraft] = useState<IdeaDraft>(EMPTY_DRAFT)
+  const [hasEditedContributorId, setHasEditedContributorId] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [aiLoading, setAiLoading] = useState(false)
   const [aiError, setAiError] = useState<string | null>(null)
@@ -116,6 +135,12 @@ export function BrainstormBoardPanel() {
     setTopics(listTrackedTopics())
     setBoards(buildBrainstormBoardsPanelView())
   }, [])
+
+  useEffect(() => {
+    if (!hasEditedContributorId && signedInContributorId) {
+      setDraft((prev) => ({ ...prev, contributorId: signedInContributorId }))
+    }
+  }, [signedInContributorId, hasEditedContributorId])
 
   const refresh = (activeTopic = topic) => {
     setTopics(listTrackedTopics())
@@ -145,7 +170,11 @@ export function BrainstormBoardPanel() {
       upvotes: 0,
     })
     setError(null)
-    setDraft({ ...EMPTY_DRAFT, category: draft.category })
+    setDraft({
+      ...EMPTY_DRAFT,
+      category: draft.category,
+      contributorId: hasEditedContributorId ? "" : signedInContributorId ?? "",
+    })
     refresh()
   }
 
@@ -281,7 +310,10 @@ export function BrainstormBoardPanel() {
             <Input
               id="brainstorm-contributor-id"
               value={draft.contributorId}
-              onChange={(e) => setDraft((prev) => ({ ...prev, contributorId: e.target.value }))}
+              onChange={(e) => {
+                setDraft((prev) => ({ ...prev, contributorId: e.target.value }))
+                setHasEditedContributorId(true)
+              }}
               placeholder="alice"
             />
           </div>

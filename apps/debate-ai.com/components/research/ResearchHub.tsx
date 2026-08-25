@@ -21,18 +21,14 @@
 import { useEffect, useMemo, useState } from "react"
 import {
   ArgumentLibraryPanel,
-  BrainstormBoardPanel,
   CardScoringPanel,
   ContributionsFeedPanel,
   ContributorAwardsPanel,
   DailyBestCardPanel,
   EvidenceLibraryPanel,
-  GroupChallengesPanel,
   PrepRoomPanel,
   QuestStreaksPanel,
-  ReviewQueuePanel,
   RevisionIncentivesPanel,
-  SprintNotesPanel,
   TopicCoverageDashboardPanel,
   TopicSprintPanel,
 } from "debate-card-search"
@@ -41,6 +37,10 @@ import { ContributionLeaderboardWithIdentity } from "./ContributionLeaderboardWi
 import { ProgressUnlocksWithIdentity } from "./ProgressUnlocksWithIdentity"
 import { ResearchProgressWithIdentity } from "./ResearchProgressWithIdentity"
 import { DailyQuestsWithIdentity } from "./DailyQuestsWithIdentity"
+import { ReviewQueueWithIdentity } from "./ReviewQueueWithIdentity"
+import { SprintNotesWithIdentity } from "./SprintNotesWithIdentity"
+import { BrainstormBoardWithIdentity } from "./BrainstormBoardWithIdentity"
+import { GroupChallengesWithIdentity } from "./GroupChallengesWithIdentity"
 import type { TrackedArgument } from "debate-card-search/src/lib/topic-coverage"
 import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import { listEvidenceLibraryEntries } from "debate-card-search/src/state/evidenceLibraryEntries"
@@ -148,8 +148,8 @@ export function ResearchHub() {
         <div className="flex flex-col gap-4">
           <PrepRoomPanel />
           <TopicSprintPanel topic={activeTopic} authorId={contributorId} />
-          <SprintNotesPanel />
-          <BrainstormBoardPanel />
+          <SprintNotesWithIdentity />
+          <BrainstormBoardWithIdentity />
         </div>
       ) : null}
 
@@ -166,7 +166,7 @@ export function ResearchHub() {
         <div className="flex flex-col gap-4">
           <DailyQuestsWithIdentity />
           <QuestStreaksPanel />
-          <GroupChallengesPanel />
+          <GroupChallengesWithIdentity />
         </div>
       ) : null}
 
@@ -180,7 +180,7 @@ export function ResearchHub() {
         </div>
       ) : null}
 
-      {section === "Review" ? <ReviewQueuePanel /> : null}
+      {section === "Review" ? <ReviewQueueWithIdentity /> : null}
 
       {section === "Scoring" ? <CardScoringPanel /> : null}
     </div>

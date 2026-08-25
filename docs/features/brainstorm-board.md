@@ -181,9 +181,36 @@ from `board.ideas`); the already-tested `mergeBrainstormIdeas`/
 `mergePersistedBrainstormIdeas` needed no changes, since both already
 accepted an arbitrary target id.
 
+A later slice adds a signed-in prefill (mirroring [Task Inbox](./task-inbox.md)'s
+identical convention) for the idea form's "Contributor ID" field:
+
+```
+components/research/BrainstormBoardWithIdentity.tsx  — "use client" wrapper
+  → useSession()                          — lib/hooks/useSession.ts, the
+                                              better-auth React session hook
+  → deriveContributorIdFromSessionIdentity(user)
+      — debate-card-search's lib/session-identity.ts: name, else the
+        email's local part, else the raw account id, else ""
+  → <BrainstormBoardPanel signedInContributorId={...} />
+      — seeds "Contributor ID" initial value only; a visitor who edits it
+        (hasEditedContributorId) keeps their own typed value from then on,
+        and a successful submission's form reset restores the prefilled
+        value (rather than clearing it to blank) so a signed-in visitor can
+        submit several ideas in a row without retyping their id
+```
+
+`apps/debate-ai.com/app/cards/brainstorm/page.tsx` and `ResearchHub.tsx`'s
+Sprint tab now mount this wrapper instead of the bare panel; a signed-out
+visitor sees the exact same blank field as before.
+
 ## Known gaps
 
 - No reviewer/moderator identity check gates the merge action — any visitor
   can merge any two ideas on a board, same as every other unauthenticated
   moderator-style action in this repo (upvoting, approving a peer review,
   etc. — no auth system exists here yet).
+- "Contributor ID" is still free-form text, not a login — a real signed-in
+  session only *prefills* it (see "Signed-in prefill" above), so a visitor
+  can still overwrite it to submit under any id. There is no server-side
+  session check on `saveBrainstormIdea`, the same trust boundary every
+  other localStorage-backed action in this repo has.

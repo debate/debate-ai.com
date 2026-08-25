@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { ReviewQueuePanel } from "debate-card-search"
+import { ReviewQueueWithIdentity } from "@/components/research/ReviewQueueWithIdentity"
 
 export const metadata: Metadata = {
   title: "Review Queue",
@@ -23,7 +23,7 @@ export default function CardsReviewsPage() {
         </Link>
       </div>
       <Suspense>
-        <ReviewQueuePanel />
+        <ReviewQueueWithIdentity />
       </Suspense>
     </div>
   )

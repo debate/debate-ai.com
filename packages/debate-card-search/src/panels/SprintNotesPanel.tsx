@@ -27,6 +27,12 @@
  * which heartbeats are still fresh on a periodic client-side timer so a
  * contributor who goes quiet still drops off without needing a new write.
  *
+ * An optional `signedInContributorId` prop (mirroring `TaskInboxPanel`'s
+ * identical convention) prefills the note form's "Author ID" and the
+ * presence control's "Your ID" field's *initial* value only — never
+ * overwrites a visitor's own edit, and a signed-out visitor sees the same
+ * blank fields as before.
+ *
  * @module panels/SprintNotesPanel
  */
 
@@ -69,6 +75,17 @@ type NoteDraft = { topic: string; authorId: string; text: string; assignedToId: 
 
 const EMPTY_DRAFT: NoteDraft = { topic: "", authorId: "", text: "", assignedToId: "" }
 
+export interface SprintNotesPanelProps {
+  /**
+   * A real signed-in visitor's derived contributor id (see
+   * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`).
+   * Prefills the note form's "Author ID" and the presence control's
+   * "Your ID" field's *initial* value only — never overwrites a visitor's
+   * own edit.
+   */
+  signedInContributorId?: string
+}
+
 /**
  * Renders the Team Collaboration Mode panel: a form to submit a new sprint
  * note against a topic, plus every persisted `SprintNote` grouped by topic,
@@ -77,17 +94,29 @@ const EMPTY_DRAFT: NoteDraft = { topic: "", authorId: "", text: "", assignedToId
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function SprintNotesPanel() {
+export function SprintNotesPanel({ signedInContributorId }: SprintNotesPanelProps = {}) {
   const [groups, setGroups] = useState<SprintNotesPanelGroup[] | null>(null)
   const [draft, setDraft] = useState<NoteDraft>(EMPTY_DRAFT)
+  const [hasEditedAuthorId, setHasEditedAuthorId] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [assigneeDrafts, setAssigneeDrafts] = useState<Record<string, string>>({})
   const [myId, setMyId] = useState("")
+  const [hasEditedMyId, setHasEditedMyId] = useState(false)
   const [activeByTopic, setActiveByTopic] = useState<Record<string, ActiveContributor[]>>({})
 
   useEffect(() => {
     setGroups(buildSprintNotesPanelView())
   }, [])
+
+  useEffect(() => {
+    if (!signedInContributorId) return
+    if (!hasEditedAuthorId) {
+      setDraft((prev) => ({ ...prev, authorId: signedInContributorId }))
+    }
+    if (!hasEditedMyId) {
+      setMyId(signedInContributorId)
+    }
+  }, [signedInContributorId, hasEditedAuthorId, hasEditedMyId])
 
   const refresh = () => setGroups(buildSprintNotesPanelView())
 
@@ -180,7 +209,10 @@ export function SprintNotesPanel() {
             <Input
               id="sprint-note-author"
               value={draft.authorId}
-              onChange={(e) => setDraft((prev) => ({ ...prev, authorId: e.target.value }))}
+              onChange={(e) => {
+                setDraft((prev) => ({ ...prev, authorId: e.target.value }))
+                setHasEditedAuthorId(true)
+              }}
               placeholder="alice"
             />
           </div>
@@ -214,7 +246,10 @@ export function SprintNotesPanel() {
         <Input
           id="sprint-presence-id"
           value={myId}
-          onChange={(e) => setMyId(e.target.value)}
+          onChange={(e) => {
+            setMyId(e.target.value)
+            setHasEditedMyId(true)
+          }}
           placeholder="alice"
           className="max-w-sm"
         />

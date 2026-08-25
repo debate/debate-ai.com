@@ -55,13 +55,42 @@ against any `win_target` challenge whose roster and window contain it, the
 same way a `contribution_target` challenge matches against the shared
 contribution feed rather than a per-challenge one.
 
+A later slice adds a signed-in prefill (mirroring [Task Inbox](./task-inbox.md)'s
+identical convention) for each challenge's "Record a win (contributor ID)"
+field:
+
+```
+components/research/GroupChallengesWithIdentity.tsx  — "use client" wrapper
+  → useSession()                          — lib/hooks/useSession.ts, the
+                                              better-auth React session hook
+  → deriveContributorIdFromSessionIdentity(user)
+      — debate-card-search's lib/session-identity.ts: name, else the
+        email's local part, else the raw account id, else ""
+  → <GroupChallengesPanel signedInContributorId={...} />
+      — seeds each challenge's own "Record a win" field until that
+        challenge's field is first touched, after which that challenge's
+        typed value always wins; recording a win still clears that
+        challenge's field back to blank afterward, same as before
+```
+
+`apps/debate-ai.com/app/cards/group-challenges/page.tsx` and
+`ResearchHub.tsx`'s Quests tab now mount this wrapper instead of the bare
+panel; a signed-out visitor sees the exact same blank fields as before.
+
 ## Known gaps
 
-None open — the "(b-continued)" follow-up under idea #13 ("Coaching
-Programs and Group Challenges") in `TODO.md` this bullet used to point to
-is closed: `debate-round`'s `state/persistedCoachingProgramBoard.ts` reads
-this store via `listGroupChallenges` (composed with the topic-sprint,
-contribution, and win-event stores into a full `CoachingProgramBoard`), and
+- "Record a win (contributor ID)" is still free-form text, not a login — a
+  real signed-in session only *prefills* it (see "Signed-in prefill"
+  above), so a visitor can still overwrite it to record a win under any
+  id. There is no server-side session check on `recordChallengeWinEvent`,
+  the same trust boundary every other localStorage-backed action in this
+  repo has.
+
+The "(b-continued)" follow-up under idea #13 ("Coaching Programs and Group
+Challenges") in `TODO.md` this bullet used to point to is closed:
+`debate-round`'s `state/persistedCoachingProgramBoard.ts` reads this store
+via `listGroupChallenges` (composed with the topic-sprint, contribution, and
+win-event stores into a full `CoachingProgramBoard`), and
 `panels/CoachingProgramsPanel.tsx` renders it through
 `buildPersistedCoachingProgramBoard`. See
 [`coaching-programs.md`](coaching-programs.md) for the full data flow.

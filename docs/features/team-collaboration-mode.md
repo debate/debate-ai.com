@@ -132,6 +132,32 @@ topic's current coverage gaps against current contributor availability
 to `routedTaskQueues.ts` — only `sprint.progressBoard` reads the persisted
 routed/completed assignments. No follow-ups remain open on this bullet.
 
+A later slice adds a signed-in prefill (mirroring [Task Inbox](./task-inbox.md)'s
+identical convention) for this panel's two free-form id fields:
+
+```
+components/research/SprintNotesWithIdentity.tsx  — "use client" wrapper
+  → useSession()                          — lib/hooks/useSession.ts, the
+                                              better-auth React session hook
+  → deriveContributorIdFromSessionIdentity(user)
+      — debate-card-search's lib/session-identity.ts: name, else the
+        email's local part, else the raw account id, else ""
+  → <SprintNotesPanel signedInContributorId={...} />
+      — seeds the note form's "Author ID" initial value only; a visitor who
+        edits it (hasEditedAuthorId) keeps their own typed value from then on
+      — seeds the presence control's "Your ID" field the same way
+        (hasEditedMyId)
+```
+
+`apps/debate-ai.com/app/cards/collaboration/page.tsx` and `ResearchHub.tsx`'s
+Sprint tab now mount this wrapper instead of the bare panel; a signed-out
+visitor sees the exact same blank fields as before.
+
 ## Known gaps
 
-- None — see the note above.
+- Both id fields ("Author ID" on the note form, "Your ID" for presence) are
+  still free-form text, not a login — a real signed-in session only
+  *prefills* their initial value (see "Signed-in prefill" above), so a
+  visitor can still overwrite either. There is no server-side session check
+  on `saveSprintNote`/`recordPersistedPresenceHeartbeat`, the same trust
+  boundary every other localStorage-backed action in this repo has.
