@@ -7,8 +7,7 @@ _No task currently in progress._
 
 ### Completed
 - **CX NDCA Standings — custom qualification points table.**
-  PR: not yet created — this commit lands ahead of it; see the tracker's
-  "In progress" note below for the branch.
+  [PR #315](https://github.com/debate/debate-ai.com/pull/315).
   Advances idea #1's follow-up (b) ("a real, circuit-sourced
   `QualificationPointsTable`") recorded in `docs/features/standings.md`'s
   Known gaps. No public, authoritative NDCA point table exists for this
