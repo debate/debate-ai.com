@@ -3,66 +3,29 @@
 
 ### In progress
 
-## Collaboration Prep Room — signed-in identity prefill for "Your ID"
-
-**Status:** In Progress
-**Source:** TODO.md — Product Feature Ideas, "🧑‍🤝‍🧑 Collaboration Prep Room" bullet; `docs/features/collaboration-prep-room.md` Known gaps
-**Branch:** `claude/practical-allen-o58i0e`
-**PR:** Not created yet
-**Started:** 2026-08-25
-
-### Goal
-Continue the signed-in identity wiring series (PRs #318-#323): `PrepRoomPanel`'s
-"Your ID" presence field (used for the "I'm active here" heartbeat) is the
-last free-form contributor-id field in the Research hub never wired to the
-real better-auth session. Prefill it from
-`deriveContributorIdFromSessionIdentity` when signed in, mirroring
-`ReviewQueuePanel`/`GroupChallengesPanel`'s existing `signedInContributorId`
-prop convention, without ever clobbering a visitor's own typed edit.
-
-### Scope
-- Add an optional `signedInContributorId` prop to `PrepRoomPanel` that seeds
-  the "Your ID" field's initial value only.
-- Add `PrepRoomWithIdentity.tsx` (mirrors `GroupChallengesWithIdentity.tsx`)
-  wiring `useSession` + `deriveContributorIdFromSessionIdentity`.
-- Wire `ResearchHub.tsx` to render `PrepRoomWithIdentity` instead of the raw
-  `PrepRoomPanel`.
-- Update `docs/features/collaboration-prep-room.md`'s Known gaps.
-
-### Non-goals
-- No real server-side auth/permission gate on prep-room actions — this is a
-  client-side prefill only, matching every prior closure of this gap class.
-- No change to the `/cards/prep-room` standalone route (out of scope; could
-  be a follow-up).
-
-### Acceptance criteria
-- [x] Signed-in visitors see "Your ID" prefilled with their derived
-      contributor id in the Research hub's Prep Room tab
-- [x] Typing over the field is always respected afterward (never clobbered)
-- [x] A signed-out visitor sees the same blank field as before
-- [x] Lint passes (no lint script exists in this repo — nothing to run)
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Production/web build passes
-- [x] Documentation is updated
-
-### Implementation plan
-- [x] Inspect `PrepRoomPanel.tsx`, `ReviewQueuePanel.tsx`/`ReviewQueueWithIdentity.tsx`, and `ResearchHub.tsx`
-- [x] Add `signedInContributorId` prop + prefill effect to `PrepRoomPanel.tsx`
-- [x] Add `PrepRoomWithIdentity.tsx`
-- [x] Wire `ResearchHub.tsx`
-- [x] Run lint/typecheck (`bunx turbo typecheck --filter=debate-card-search --filter=debate-ai-web` — 12/12 tasks passed)
-- [x] Run affected test suite (`bunx vitest run packages/debate-card-search` — 55 files / 1062 tests passed)
-- [x] Run the production/web build (`bunx turbo build --filter=debate-ai-web` — passed)
-- [x] Review the final diff for scope and quality
-- [x] Commit and push the branch
-- [x] Create the pull request
-- [x] Update tracker status, completed checkboxes, and remaining work
-
-### Remaining work
-- None — see Completed section.
+_No task currently in progress._
 
 ### Completed
+- **Collaboration Prep Room — signed-in identity prefill for "Your ID".**
+  Continues the signed-in identity wiring series (PRs #318-#323). The Prep
+  Room's "Your ID" presence field (feeds the "I'm active here" heartbeat)
+  was the last free-form contributor-id field in the Research hub never
+  wired to the real better-auth session. `PrepRoomPanel` gains an optional
+  `signedInContributorId` prop (mirroring `ReviewQueuePanel`/
+  `GroupChallengesPanel`'s existing convention) that seeds "Your ID" from
+  `deriveContributorIdFromSessionIdentity` — a starting value only, never
+  clobbering a visitor's own typed edit — and
+  `apps/debate-ai.com/components/research/PrepRoomWithIdentity.tsx` wires
+  the real session in, used by `ResearchHub.tsx`'s Prep Room tab. The
+  standalone `/cards/prep-room` route still mounts the raw `PrepRoomPanel`
+  without this prefill, recorded as a Known gap in
+  `docs/features/collaboration-prep-room.md`. PR:
+  https://github.com/debate/debate-ai.com/pull/325. Verified with
+  `bunx turbo typecheck --filter=debate-card-search --filter=debate-ai-web`
+  (12/12 passed), `bunx vitest run packages/debate-card-search` (55 files /
+  1062 tests passed), and `bunx turbo build --filter=debate-ai-web`
+  (passed); no lint script exists in this repo. No follow-ups remain open
+  on this bullet beyond the recorded Known gap.
 - **Contribution Leaderboard — cross-tab live update.**
   Closes, for this panel, the "Every other localStorage-backed panel in
   this repo still has no cross-tab live-update mechanism" Known gap noted
@@ -8373,7 +8336,7 @@ prop convention, without ever clobbering a visitor's own typed edit.
 * 
 * 🎙️ AI Coach Mode - Provide live or post-round coaching with prompts for extensions, refutation ideas, strategic collapse, and weighing guidance. _Status: first slices done (see Tracker Status above) — `debate-round` now has `buildExtensionPrompts`/`buildRefutationPrompts`/`buildCollapsePrompts`/`buildWeighingGuidance`/`buildCoachingSession`/`buildCoachingSummaryText` for turning an already-flowed `Flow` into extension/refutation/collapse/weighing coaching prompts for a chosen side, reusing the existing `flow-transcript-summary.ts`/`response-outcome.ts`/`argument-tree.ts`/`drill-generator.ts` slices directly. A second slice, `coachingSessions.ts` (see Tracker Status above, "AI Coach Mode — coaching-session persistence"), now persists a round+side's generated `CoachingPrompt[]` session to localStorage. A third slice, `CoachingSessionsPanel` (see Tracker Status above, "AI Coach Mode — coaching-panel UI"), now renders every persisted coaching session grouped by round + side at `/coaching`, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Coach Mode — real AI coaching-feedback call") added `round/coach-feedback-ai.ts` and `round/coach-feedback-client.ts`, wiring a "Get AI feedback" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy with the session's own template prompts for real, open-ended AI coaching feedback, saved on `CoachingSessionRecord.aiFeedback`, closing follow-up (a). No follow-ups remain open on this bullet._
 * 
-* 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. A second slice, `buildPrepRoomFromStore` (see Tracker Status above, "Collaboration Prep Room Store Wiring"), now reads a topic's entries from the persisted `evidenceLibraryEntries.ts` store instead of requiring a caller-supplied entry list. A third slice, `state/prepRooms.ts`'s `buildPersistedPrepRoom`/`listPrepRoomTopics` plus `PrepRoomPanel` (see Tracker Status above, "Collaboration Prep Room — prep-room panel UI"), now composes a topic's coverage report and contributor list from their own persisted stores and renders a topic switcher, evidence/draft-block search, and routed-task view at `/cards/prep-room`, closing follow-up (a). A fourth slice (see Tracker Status above, "Team Collaboration Mode / Collaboration Prep Room — shared 'active now' presence signal") reused the same `lib/topic-presence.ts`/`state/topicPresence.ts` heartbeat primitive added for the Team Collaboration Mode idea's identical follow-up, wiring a live "active now" roster plus an "I'm active here" heartbeat control into the panel for its open topic, closing follow-up (b). No follow-ups remain open on this idea._
+* 🧑‍🤝‍🧑 Collaboration Prep Room - Create a shared prep space for teammates to research, draft blocks, organize evidence, and coordinate assignments. _Status: first slices done (see Tracker Status above) — `debate-card-search` now has `buildPrepRoom`/`searchPrepRoomEvidence`/`buildPrepRoomSummaryText` for composing the existing Shared Evidence Library and Research Task Routing slices into one topic-scoped prep room: organized evidence, draft blocks, and routed research assignments. A second slice, `buildPrepRoomFromStore` (see Tracker Status above, "Collaboration Prep Room Store Wiring"), now reads a topic's entries from the persisted `evidenceLibraryEntries.ts` store instead of requiring a caller-supplied entry list. A third slice, `state/prepRooms.ts`'s `buildPersistedPrepRoom`/`listPrepRoomTopics` plus `PrepRoomPanel` (see Tracker Status above, "Collaboration Prep Room — prep-room panel UI"), now composes a topic's coverage report and contributor list from their own persisted stores and renders a topic switcher, evidence/draft-block search, and routed-task view at `/cards/prep-room`, closing follow-up (a). A fourth slice (see Tracker Status above, "Team Collaboration Mode / Collaboration Prep Room — shared 'active now' presence signal") reused the same `lib/topic-presence.ts`/`state/topicPresence.ts` heartbeat primitive added for the Team Collaboration Mode idea's identical follow-up, wiring a live "active now" roster plus an "I'm active here" heartbeat control into the panel for its open topic, closing follow-up (b). A fifth slice (see Tracker Status above, "Collaboration Prep Room — signed-in identity prefill for 'Your ID'") added an optional `signedInContributorId` prop to `PrepRoomPanel` plus `apps/debate-ai.com/components/research/PrepRoomWithIdentity.tsx`, prefilling the panel's "Your ID" presence field from the real signed-in session in `ResearchHub.tsx`'s Prep Room tab, closing the "no auth/roles in this repo yet" half of the Known gap recorded in `docs/features/collaboration-prep-room.md` (server-side permission checks remain out of scope, as with every other panel in this identity-wiring series). No follow-ups remain open on this idea._
 * 
 * 🧠 Team Brainstorm Assist - Use AI to help the whole squad generate arguments, impact framing, frontlines, and responses during prep sessions. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `buildBrainstormPrompt`/`buildBrainstormPromptsForCoverageGaps` for structured, category-tagged brainstorm prompts (seedable straight from the existing Topic Coverage Dashboard's under-covered arguments) plus a squad idea board (`groupIdeasByBoard`/`rankBrainstormIdeas`/`buildBrainstormBoard`/`buildBrainstormBoardsForCoverageGaps`/`buildBrainstormSummaryText`) that ranks submitted ideas by the existing `community-rating.ts` popularity scoring and flags near-duplicates via the existing `llm-card-scoring.ts` uniqueness heuristic. A second follow-up, persisting submitted ideas and votes, is done — see the "Brainstorm Idea Persistence" entry above (`brainstormIdeas.ts`). A third slice, `BrainstormBoardPanel` (see Tracker Status above, "Team Brainstorm Assist — brainstorm-panel UI"), now renders a submission form and every board at `/cards/brainstorm`, closing follow-up (b). A fourth slice (see Tracker Status above, "Team Brainstorm Assist — real AI-generation call") added `lib/team-brainstorm-ai.ts` and `lib/team-brainstorm-client.ts`, wiring a "Generate AI ideas" action into the panel's submission form that calls the existing `/api/reason-ai` Anthropic proxy to draft several candidate ideas for the form's argument block/category, saved as normal, AI-attributed board ideas via the existing `saveBrainstormIdea`, closing follow-up (a). A fifth slice (see Tracker Status above, "Team Brainstorm Assist — seed boards from coverage gaps") added `state/brainstormIdeas.ts`'s `buildBrainstormBoardsPanelViewForTopic` and a topic switcher in `BrainstormBoardPanel`, wiring the existing `buildBrainstormBoardsForCoverageGaps` into the panel so choosing a tracked topic shows one board per under-covered tracked argument/category pair (with its prompt visible even before an idea is submitted) merged with every other board that already has a submitted idea, closing the "boards aren't seeded from the coverage-gap prompts" gap. A sixth slice (see Tracker Status above, "Team Brainstorm Assist — duplicate-idea merge action + per-board AI generation") added `mergeBrainstormIdeas`/`mergePersistedBrainstormIdeas` plus a "Merge into top idea" button on any duplicate-flagged idea and a per-board "Generate AI ideas" button. A seventh slice (see Tracker Status above, "Team Brainstorm Assist — choose any idea as a merge target") turned that button into a "Merge into…" picker listing every other idea on the board, closing the remaining "a duplicate pair that both rank below the board's actual top idea can't be merged directly into each other" Known gap recorded in `docs/features/brainstorm-board.md`. No follow-ups remain open on this bullet._
 * 
