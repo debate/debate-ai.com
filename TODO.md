@@ -6,6 +6,51 @@
 _No task currently in progress._
 
 ### Completed
+- **Coach Materials — conversation history for "Ask the coach".**
+  [PR #314](https://github.com/debate/debate-ai.com/pull/314).
+  Closes the "No conversation history — each question is answered
+  independently; a prior question/answer isn't persisted or fed back into a
+  later one" Known gap recorded in `docs/features/coach-materials.md` for
+  idea #8 ("Video-Lecture-Training Coach AI"). `packages/debate-speech-writer/src/coach/team-coach-materials.ts`
+  gains a `CoachConversationTurn` type (question, answer, askedAt) and a
+  pure `buildCoachConversationMessages(question, matches, history, options)`
+  that composes the most recent `maxHistoryTurns` (default 6) history turns
+  as alternating `{ role: "user" }`/`{ role: "assistant" }` messages,
+  followed by the current question's own `buildGroundedCoachPrompt` output
+  as the final user turn. `coach/team-coach-client.ts`'s
+  `requestTeamCoachAnswer` now accepts an optional `history` through its
+  existing `options` object (so its call signature stays backward
+  compatible — the existing endpoint-override test call was untouched) and
+  sends the full multi-turn `messages` array `buildCoachConversationMessages`
+  builds instead of always a single user message; no change was needed to
+  `/api/reason-ai`, whose `{ system, messages, maxTokens }` contract already
+  accepted multiple turns. A new localStorage-backed
+  `state/coachConversation.ts` persists turns (`listCoachConversationTurns`/
+  `appendCoachConversationTurn`/`clearCoachConversationHistory`), capped at
+  the 50 most recently stored turns, mirroring `state/coachMaterials.ts`'s
+  persistence convention. `CoachMaterialsPanel` ("Ask the coach" section,
+  `/coach-materials`) now renders the persisted conversation above the
+  question field, passes it as `requestTeamCoachAnswer`'s `history` option
+  on every question, appends the new turn once a real answer comes back, and
+  adds a "Clear conversation" action. Vitest-covered in
+  `test/team-coach-materials.test.ts` (`buildCoachConversationMessages`'s
+  no-history/with-history/cap/omit-history/excerptLength-passthrough
+  behavior), `test/team-coach-client.test.ts` (history sent as real
+  alternating messages), and a new `test/coachConversation.test.ts`
+  (list/append/clear, the storage cap, and corrupt/non-array JSON handling)
+  — a UI-wiring-only change to the panel itself introduced no new pure
+  logic beyond what those three files cover, matching this repo's
+  convention. Docs updated in `docs/features/coach-materials.md`: "What it
+  shows" and the data-flow section describe the new conversation history,
+  and the Known gap is struck as closed (noting history stays per-browser
+  localStorage, the same gap every other localStorage-backed panel in this
+  repo has). `bun install`, `bun run typecheck` (12 of 13 in-scope packages
+  have a typecheck script; all pass), `bunx vitest run` on the three
+  new/changed test files (47 tests pass), `bun run test` (167 files / 2527
+  tests, all pass, up from 166 files / 2512 tests), and `bun run build:web`
+  (`debate-ai-web`, succeeds, `/coach-materials` route present, no route
+  changes) all pass. No repo-wide `lint` script exists. **Completed:**
+  2026-08-25.
 - **Team Brainstorm Assist — choose any idea as a merge target.**
   [PR #313](https://github.com/debate/debate-ai.com/pull/313).
   Closes the `docs/features/brainstorm-board.md` Known gap: "'Merge into
