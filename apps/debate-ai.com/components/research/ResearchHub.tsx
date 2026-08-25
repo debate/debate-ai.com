@@ -26,7 +26,6 @@ import {
   ContributorAwardsPanel,
   DailyBestCardPanel,
   EvidenceLibraryPanel,
-  PrepRoomPanel,
   QuestStreaksPanel,
   RevisionIncentivesPanel,
   TopicCoverageDashboardPanel,
@@ -43,6 +42,7 @@ import { ReviewQueueWithIdentity } from "./ReviewQueueWithIdentity"
 import { SprintNotesWithIdentity } from "./SprintNotesWithIdentity"
 import { BrainstormBoardWithIdentity } from "./BrainstormBoardWithIdentity"
 import { GroupChallengesWithIdentity } from "./GroupChallengesWithIdentity"
+import { PrepRoomWithIdentity } from "./PrepRoomWithIdentity"
 import type { TrackedArgument } from "debate-card-search/src/lib/topic-coverage"
 import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import { listEvidenceLibraryEntries } from "debate-card-search/src/state/evidenceLibraryEntries"
@@ -169,7 +169,7 @@ export function ResearchHub() {
 
       {section === "Sprint" ? (
         <div className="flex flex-col gap-4">
-          <PrepRoomPanel />
+          <PrepRoomWithIdentity />
           <TopicSprintPanel topic={activeTopic} authorId={contributorId} />
           <SprintNotesWithIdentity />
           <BrainstormBoardWithIdentity />

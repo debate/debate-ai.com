@@ -3,7 +3,64 @@
 
 ### In progress
 
-_No task currently in progress._
+## Collaboration Prep Room — signed-in identity prefill for "Your ID"
+
+**Status:** In Progress
+**Source:** TODO.md — Product Feature Ideas, "🧑‍🤝‍🧑 Collaboration Prep Room" bullet; `docs/features/collaboration-prep-room.md` Known gaps
+**Branch:** `claude/practical-allen-o58i0e`
+**PR:** Not created yet
+**Started:** 2026-08-25
+
+### Goal
+Continue the signed-in identity wiring series (PRs #318-#323): `PrepRoomPanel`'s
+"Your ID" presence field (used for the "I'm active here" heartbeat) is the
+last free-form contributor-id field in the Research hub never wired to the
+real better-auth session. Prefill it from
+`deriveContributorIdFromSessionIdentity` when signed in, mirroring
+`ReviewQueuePanel`/`GroupChallengesPanel`'s existing `signedInContributorId`
+prop convention, without ever clobbering a visitor's own typed edit.
+
+### Scope
+- Add an optional `signedInContributorId` prop to `PrepRoomPanel` that seeds
+  the "Your ID" field's initial value only.
+- Add `PrepRoomWithIdentity.tsx` (mirrors `GroupChallengesWithIdentity.tsx`)
+  wiring `useSession` + `deriveContributorIdFromSessionIdentity`.
+- Wire `ResearchHub.tsx` to render `PrepRoomWithIdentity` instead of the raw
+  `PrepRoomPanel`.
+- Update `docs/features/collaboration-prep-room.md`'s Known gaps.
+
+### Non-goals
+- No real server-side auth/permission gate on prep-room actions — this is a
+  client-side prefill only, matching every prior closure of this gap class.
+- No change to the `/cards/prep-room` standalone route (out of scope; could
+  be a follow-up).
+
+### Acceptance criteria
+- [x] Signed-in visitors see "Your ID" prefilled with their derived
+      contributor id in the Research hub's Prep Room tab
+- [x] Typing over the field is always respected afterward (never clobbered)
+- [x] A signed-out visitor sees the same blank field as before
+- [x] Lint passes (no lint script exists in this repo — nothing to run)
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Production/web build passes
+- [x] Documentation is updated
+
+### Implementation plan
+- [x] Inspect `PrepRoomPanel.tsx`, `ReviewQueuePanel.tsx`/`ReviewQueueWithIdentity.tsx`, and `ResearchHub.tsx`
+- [x] Add `signedInContributorId` prop + prefill effect to `PrepRoomPanel.tsx`
+- [x] Add `PrepRoomWithIdentity.tsx`
+- [x] Wire `ResearchHub.tsx`
+- [x] Run lint/typecheck (`bunx turbo typecheck --filter=debate-card-search --filter=debate-ai-web` — 12/12 tasks passed)
+- [x] Run affected test suite (`bunx vitest run packages/debate-card-search` — 55 files / 1062 tests passed)
+- [x] Run the production/web build (`bunx turbo build --filter=debate-ai-web` — passed)
+- [x] Review the final diff for scope and quality
+- [x] Commit and push the branch
+- [x] Create the pull request
+- [x] Update tracker status, completed checkboxes, and remaining work
+
+### Remaining work
+- None — see Completed section.
 
 ### Completed
 - **Contribution Leaderboard — cross-tab live update.**
