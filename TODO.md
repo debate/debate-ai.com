@@ -3,7 +3,63 @@
 
 ### In progress
 
-_No task currently in progress._
+## Team Brainstorm Assist — choose any idea as a merge target
+
+**Status:** In Progress
+**Source:** TODO.md — "🧠 Team Brainstorm Assist" bullet (Research Crowdsourcing
+Organizer Features), `docs/features/brainstorm-board.md` Known gap: "'Merge
+into top idea' always targets the board's own highest-ranked idea; a
+duplicate pair that both rank below the board's actual top idea can't be
+merged directly into each other without first merging one of them up."
+**Branch:** `claude/practical-allen-92rma8`
+**PR:** Not created yet
+**Started:** 2026-08-25
+
+### Goal
+Let a user merge a duplicate-flagged brainstorm idea into *any* other idea
+on the same board, not only the board's top-ranked idea, closing the
+remaining Known gap on `docs/features/brainstorm-board.md`.
+
+### Scope
+- `BrainstormBoardPanel.tsx`'s per-idea "Merge into top idea" button becomes
+  a "Merge into…" select populated with every other idea on that board.
+- Reuses the existing, already-tested `mergePersistedBrainstormIdeas`/
+  `mergeBrainstormIdeas` (same-board, not-self validation already enforced
+  there) — no new pure merge logic is needed.
+
+### Non-goals
+- No reviewer/moderator identity/permission gate on the merge action (a
+  separate, repo-wide auth gap already recorded).
+- No change to how duplicates are detected/flagged (`isLikelyDuplicate`).
+
+### Acceptance criteria
+- [x] A duplicate-flagged idea can be merged into any other idea on its
+      board, not just the top-ranked one
+- [x] Merging into itself is not offered as an option
+- [x] Lint passes (no repo-wide lint script exists; N/A)
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Production/web build passes
+- [x] Documentation is updated (`docs/features/brainstorm-board.md`)
+
+### Implementation plan
+- [x] Inspect `BrainstormBoardPanel.tsx`, `mergePersistedBrainstormIdeas`,
+      `mergeBrainstormIdeas`, and their existing tests
+- [x] Confirm the underlying merge functions already support an arbitrary
+      target id (they do — only the panel hardcodes the top idea)
+- [x] Replace the "Merge into top idea" button with a per-idea "Merge
+      into…" target picker listing every other idea on the board
+- [x] Run focused tests and fix failures
+- [x] Run typechecking
+- [x] Run the full relevant test suite
+- [x] Run the production/web build
+- [x] Review the final diff for scope and quality
+- [x] Commit and push the branch
+- [x] Create or update the pull request
+- [x] Update tracker status, completed checkboxes, and remaining work
+
+### Remaining work
+- None. See the "Completed" entry below.
 
 ### Completed
 - **Flow Annotations — video title on cross-recording jumps.**
