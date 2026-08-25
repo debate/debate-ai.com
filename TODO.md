@@ -54,7 +54,9 @@ _No task currently in progress._
   `JudgeParadigmPickerPanel`, `OpponentPersonaPickerPanel`,
   `WordCountRoundsPanel`, `PreRoundBriefingsPanel`, `CoachMaterialsPanel`,
   `SpeechDocumentsPanel`, `PrepNotesPanel`, `PrepNoteNotificationsPanel`,
-  `FlowAnnotationsPanel`). PR: opened for this change (see below).
+  `FlowAnnotationsPanel`). PR:
+  https://github.com/debate/debate-ai.com/pull/328 (opened for this
+  change).
 - **Task Inbox — cross-tab live update.**
   Closes, for `TaskInboxPanel`, the "Every other localStorage-backed panel
   in this repo still has no cross-tab live-update mechanism" Known gap
