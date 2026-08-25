@@ -1,3 +1,8 @@
+import type {
+  LectureCategoryFacet,
+  VideoFacets,
+} from "debate-data-sync/src/videos/video-query";
+
 /** Debate style/format category */
 export type DebateStyle = 1 | 2 | 3 | 4;
 
@@ -49,15 +54,48 @@ export type ChampionType = {
   pf_champion?: string;
 };
 
-/** Structure of video data returned from the videos API endpoint. */
-export type DebateVideosData = {
-  rounds: VideoType[];
-  lectures: VideoType[];
-  topPicks: string[];
+/** One page of the paginated `/api/videos` feed. */
+export type VideoFeedResponse = {
+  /** The videos in this page. */
+  videos: VideoType[];
+  /** Total matches for the request's filters, across every page. */
+  total: number;
+  /** Zero-based offset of this page. */
+  offset: number;
+  /** Page size the server applied. */
+  limit: number;
+  /** Whether a further page exists. */
+  hasMore: boolean;
+  /** Season/style dropdown counts, present when `facets=1` was requested. */
+  facets?: VideoFacets;
+  /** Which backend answered — `"sql"`, or `"json"` before the table is seeded. */
+  backend: string;
+};
+
+/** Library-wide video totals used by the quick-link cards. */
+export type VideoCounts = {
+  total: number;
+  rounds: number;
+  /** Videos ingested from the lectures asset. */
+  lectures: number;
+  /** Videos with no numeric debate style — the "All Lectures" tab. */
+  lecturesOnly: number;
+  topPicks: number;
+  /** Count per numeric debate style. */
+  byStyle: Record<number, number>;
+};
+
+/** Response of `/api/videos/meta` — the small, fetch-once page metadata. */
+export type VideoMetaResponse = {
+  counts: VideoCounts;
+  lectureCategories: LectureCategoryFacet[];
   topics?: TopicType[];
   champions?: ChampionType[];
   history?: Record<string, any>;
+  backend: string;
 };
+
+export type { LectureCategoryFacet, VideoFacets };
 
 /** Union of all valid video page category identifiers. */
 export type CategoryType =

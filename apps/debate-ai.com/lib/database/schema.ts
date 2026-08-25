@@ -100,3 +100,61 @@ export const flowSyncEdits = sqliteTable(
 );
 
 export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
+
+// Video library — the queryable projection of the `data/videos/*.json` assets
+// (rounds-policy/pf/ld/college, debate-lectures, debate-top-picks) that the
+// YouTube sync writes. `/api/videos` pages over this table instead of shipping
+// the whole ~1.1 MB JSON blob on first paint; `scripts/seed-videos.ts` loads
+// the JSON into it (local SQLite and Cloudflare D1 share this schema).
+//
+// `style` is the numeric debate format (1 Policy, 2 PF, 3 LD, 4 College) and is
+// null for lectures; `category`/`category_key` hold the lecture category label
+// and its URL slug and are null for rounds — together they mirror tuple index 6.
+// `season_year` is the precomputed competition season (June-to-June, 0 = legacy
+// pre-2010) so season filtering is an indexed equality test rather than a scan,
+// and `published_ms` is the parsed publish timestamp: a handful of rows carry
+// non-ISO date strings ("May 14, 2013"), which would sort wrongly if recency
+// ordering used the raw `published_at` text.
+export const videos = sqliteTable(
+  "videos",
+  {
+    videoId: text("video_id").primaryKey(),
+    source: text("source").notNull(),
+    title: text("title").notNull().default(""),
+    publishedAt: text("published_at").notNull().default(""),
+    publishedMs: integer("published_ms").notNull().default(0),
+    channel: text("channel").notNull().default(""),
+    viewCount: integer("view_count").notNull().default(0),
+    description: text("description").notNull().default(""),
+    style: integer("style"),
+    category: text("category"),
+    categoryKey: text("category_key"),
+    tournament: text("tournament"),
+    roundLevel: text("round_level"),
+    affTeam: text("aff_team"),
+    negTeam: text("neg_team"),
+    affWin: integer("aff_win", { mode: "boolean" }),
+    judgeDecision: text("judge_decision"),
+    arg1ac: text("arg_1ac"),
+    arg2nr: text("arg_2nr"),
+    isTopPick: integer("is_top_pick", { mode: "boolean" }).notNull().default(false),
+    speechDocsUrl: text("speech_docs_url"),
+    seasonYear: integer("season_year").notNull().default(0),
+    searchText: text("search_text").notNull().default(""),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    publishedMsIdx: index("idx_videos_published_ms").on(table.publishedMs),
+    viewCountIdx: index("idx_videos_view_count").on(table.viewCount),
+    styleIdx: index("idx_videos_style").on(table.style),
+    seasonYearIdx: index("idx_videos_season_year").on(table.seasonYear),
+    categoryKeyIdx: index("idx_videos_category_key").on(table.categoryKey),
+    sourceIdx: index("idx_videos_source").on(table.source),
+    topPickIdx: index("idx_videos_is_top_pick").on(table.isTopPick),
+  }),
+);
+
+export type VideoTableRow = typeof videos.$inferSelect;
+export type VideoTableInsert = typeof videos.$inferInsert;
