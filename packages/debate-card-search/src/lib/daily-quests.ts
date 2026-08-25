@@ -18,6 +18,15 @@
  * last-active UTC day key, and `buildDailyQuestBoard` excludes an expired
  * template from the board entirely rather than scoring it forever.
  *
+ * `QuestTemplate.recurrence`/`rolloverRecurringQuestTemplate` close the "no
+ * recurring-quest concept" Known gap left by the expiry addition above: an
+ * expired template can now carry a recurrence cadence ("daily"/"weekly")
+ * instead of just disappearing for good — the caller (see
+ * `state/dailyQuests.ts`'s `rolloverExpiredRecurringQuestTemplates`) rolls its
+ * `expiresOn` forward to the next cycle boundary so the same quest becomes
+ * active again with a fresh 0-count (progress is always scored against just
+ * today's contributions, so no separate "reset the count" step is needed).
+ *
  * @module lib/daily-quests
  */
 
@@ -49,6 +58,9 @@ export interface QuestTarget {
   argBlock?: string;
 }
 
+/** How often a recurring quest template's cycle resets, once its `expiresOn` passes. */
+export type QuestRecurrence = "daily" | "weekly";
+
 /** One daily goal: reach `targetCount` matching contributions to complete it. */
 export interface QuestTemplate {
   id: string;
@@ -57,6 +69,8 @@ export interface QuestTemplate {
   targetCount: number;
   /** Last UTC calendar day ("YYYY-MM-DD", same `getUtcDayKey` convention) this quest is still active on; omitted means it never expires. */
   expiresOn?: string;
+  /** When set alongside `expiresOn`, an expired cycle rolls `expiresOn` forward by this cadence instead of the quest disappearing for good. Has no effect without `expiresOn`. */
+  recurrence?: QuestRecurrence;
 }
 
 /** One quest's progress for a given day. */
@@ -72,6 +86,33 @@ export interface QuestProgress {
 /** Whether `template` has expired as of `dayKey` (a UTC calendar day formatted "YYYY-MM-DD") — a quest with no `expiresOn` never expires; one expires the day *after* `expiresOn`, so it still counts on that day itself. */
 export function isQuestTemplateExpired(template: QuestTemplate, dayKey: string): boolean {
   return template.expiresOn !== undefined && dayKey > template.expiresOn;
+}
+
+const RECURRENCE_CYCLE_DAYS: Record<QuestRecurrence, number> = { daily: 1, weekly: 7 };
+
+/** Shifts a UTC calendar day key ("YYYY-MM-DD") forward by `days` whole days. */
+function shiftDayKey(dayKey: string, days: number): string {
+  return getUtcDayKey(Date.parse(`${dayKey}T00:00:00.000Z`) + days * 24 * 60 * 60 * 1000);
+}
+
+/**
+ * If `template` carries a `recurrence` and has expired as of `dayKey` (via
+ * `isQuestTemplateExpired`), returns a copy with `expiresOn` advanced forward
+ * by whole recurrence cycles until it lands on or after `dayKey` — rolling
+ * the quest into its next active cycle instead of leaving it expired.
+ * A non-recurring, not-yet-expired, or `expiresOn`-less template (recurrence
+ * has no anchor to roll from) is returned unchanged.
+ */
+export function rolloverRecurringQuestTemplate(template: QuestTemplate, dayKey: string): QuestTemplate {
+  if (!template.recurrence || template.expiresOn === undefined || !isQuestTemplateExpired(template, dayKey)) {
+    return template;
+  }
+  const cycleDays = RECURRENCE_CYCLE_DAYS[template.recurrence];
+  let nextExpiresOn = template.expiresOn;
+  while (nextExpiresOn < dayKey) {
+    nextExpiresOn = shiftDayKey(nextExpiresOn, cycleDays);
+  }
+  return { ...template, expiresOn: nextExpiresOn };
 }
 
 /** Whether `contribution` satisfies `target` — an omitted target field matches any value. */

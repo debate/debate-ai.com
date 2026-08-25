@@ -18,6 +18,12 @@
  * remove them from the stored roster entirely — closing the "a quest
  * template has no expiry" Known gap.
  *
+ * A quest with an expiry can also carry a "Recurs" cadence (daily/weekly);
+ * an expired recurring quest rolls its expiry forward to its next cycle
+ * instead of disappearing — `buildPersistedDailyQuestBoard` applies that
+ * rollover automatically on every load, so it just reappears with fresh
+ * progress — closing the "no recurring-quest concept" Known gap.
+ *
  * An optional `signedInContributorId` prop (built from
  * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`
  * against a real signed-in session) prefills the "Your streak" contributor
@@ -48,7 +54,7 @@ import {
   computeAndSavePersistedDailyMissionResult,
 } from "../state/dailyMissionResults"
 import { buildQuestBoardSummaryText } from "../lib/daily-quests"
-import type { QuestProgress, QuestTemplate } from "../lib/daily-quests"
+import type { QuestProgress, QuestRecurrence, QuestTemplate } from "../lib/daily-quests"
 import { buildStreakRewardText } from "../lib/gamified-quests"
 import type { ContributorQuestStreak } from "../lib/gamified-quests"
 import type { ContributionKind } from "../lib/community-rating"
@@ -68,9 +74,23 @@ type QuestDraft = {
   argBlock: string
   targetCount: string
   expiresOn: string
+  recurrence: QuestRecurrence | ""
 }
 
-const EMPTY_DRAFT: QuestDraft = { description: "", kind: "card", argBlock: "", targetCount: "3", expiresOn: "" }
+const EMPTY_DRAFT: QuestDraft = {
+  description: "",
+  kind: "card",
+  argBlock: "",
+  targetCount: "3",
+  expiresOn: "",
+  recurrence: "",
+}
+
+const RECURRENCE_OPTIONS: { value: QuestRecurrence | ""; label: string }[] = [
+  { value: "", label: "Doesn't recur" },
+  { value: "daily", label: "Daily" },
+  { value: "weekly", label: "Weekly" },
+]
 
 /** Today's UTC calendar day, as epoch milliseconds — the `now` convention `daily-quests.ts` needs. */
 function nowMs(): number {
@@ -153,6 +173,7 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
       target: { kind: draft.kind, ...(argBlock ? { argBlock } : {}) },
       targetCount,
       ...(expiresOn ? { expiresOn } : {}),
+      ...(expiresOn && draft.recurrence ? { recurrence: draft.recurrence } : {}),
     })
     setError(null)
     setDraft(EMPTY_DRAFT)
@@ -201,6 +222,7 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
   }
 
   const expiresOnByQuestId = new Map(templates.map((template) => [template.id, template.expiresOn]))
+  const recurrenceByQuestId = new Map(templates.map((template) => [template.id, template.recurrence]))
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -267,6 +289,24 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
               onChange={(e) => setDraft((prev) => ({ ...prev, expiresOn: e.target.value }))}
             />
           </div>
+          {draft.expiresOn && (
+            <div className="space-y-1.5">
+              <Label>Recurs</Label>
+              <div className="flex flex-wrap gap-1">
+                {RECURRENCE_OPTIONS.map((option) => (
+                  <Button
+                    key={option.value || "none"}
+                    type="button"
+                    size="sm"
+                    variant={draft.recurrence === option.value ? "default" : "outline"}
+                    onClick={() => setDraft((prev) => ({ ...prev, recurrence: option.value }))}
+                  >
+                    {option.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button onClick={handleAdd}>Add quest</Button>
@@ -354,6 +394,7 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
           <div className="space-y-2">
             {board.map((quest) => {
               const expiresOn = expiresOnByQuestId.get(quest.questId)
+              const recurrence = recurrenceByQuestId.get(quest.questId)
               return (
                 <div
                   key={quest.questId}
@@ -367,6 +408,11 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
                     {expiresOn && (
                       <Badge variant="outline" className="whitespace-nowrap">
                         Expires {expiresOn}
+                      </Badge>
+                    )}
+                    {recurrence && (
+                      <Badge variant="outline" className="whitespace-nowrap">
+                        Recurs {recurrence}
                       </Badge>
                     )}
                   </div>
