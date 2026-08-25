@@ -10,10 +10,15 @@
  * `buildStandingsFromStore` — a thin grouping/ranking wrapper over the
  * existing `rankings/ndca-standings.ts` computation
  * (`computeTournamentPoints`/`buildStandings`/`rankStandings`). No new
- * points-scoring or ranking logic is introduced here; the qualification
- * points table used is `ndca-standings.ts`'s illustrative
- * `DEFAULT_QUALIFICATION_POINTS_TABLE`, not a real circuit-sourced table
- * (see idea #1's follow-up (b)).
+ * points-scoring or ranking logic is introduced here.
+ *
+ * The qualification points table defaults to `ndca-standings.ts`'s
+ * illustrative `DEFAULT_QUALIFICATION_POINTS_TABLE` — no public,
+ * authoritative NDCA table exists for this repo to hardcode — but a
+ * "Points table" section (backed by `state/qualificationPointsTable.ts`)
+ * now lets a user save their own circuit's point weights for this browser
+ * instead of being stuck with the default, advancing idea #1's follow-up
+ * (b).
  *
  * @module panels/StandingsPanel
  */
@@ -44,7 +49,17 @@ import {
   buildStandingsFromStore,
   saveTournamentResult,
 } from "debate-data-sync/src/state/tournamentResults"
-import type { OutroundFinish, RankedTeamStanding } from "debate-data-sync/src/rankings/ndca-standings"
+import {
+  getEffectiveQualificationPointsTable,
+  getPersistedQualificationPointsTable,
+  resetPersistedQualificationPointsTable,
+  savePersistedQualificationPointsTable,
+} from "debate-data-sync/src/state/qualificationPointsTable"
+import type {
+  OutroundFinish,
+  QualificationPointsTable,
+  RankedTeamStanding,
+} from "debate-data-sync/src/rankings/ndca-standings"
 
 const FINISH_OPTIONS: { value: OutroundFinish; label: string }[] = [
   { value: "champion", label: "Champion" },
@@ -83,6 +98,23 @@ const EMPTY_DRAFT: ResultDraft = {
   prelimLosses: "0",
 }
 
+/** A `QualificationPointsTable`'s numeric fields, as editable text-input strings. */
+type PointsTableDraft = {
+  outroundPoints: Record<OutroundFinish, string>
+  pointsPerPrelimWin: string
+  bidLevelBonusRate: string
+}
+
+function tableToDraft(table: QualificationPointsTable): PointsTableDraft {
+  return {
+    outroundPoints: Object.fromEntries(
+      FINISH_OPTIONS.map((option) => [option.value, String(table.outroundPoints[option.value])]),
+    ) as Record<OutroundFinish, string>,
+    pointsPerPrelimWin: String(table.pointsPerPrelimWin),
+    bidLevelBonusRate: String(table.bidLevelBonusRate),
+  }
+}
+
 /**
  * Renders the CX NDCA Standings panel: a form to record a team's result at a
  * tournament, plus every persisted result's cumulative season standings —
@@ -96,12 +128,53 @@ export function StandingsPanel() {
   const [standings, setStandings] = useState<RankedTeamStanding[] | null>(null)
   const [draft, setDraft] = useState<ResultDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [pointsTableDraft, setPointsTableDraft] = useState<PointsTableDraft | null>(null)
+  const [isCustomPointsTable, setIsCustomPointsTable] = useState(false)
+  const [pointsTableError, setPointsTableError] = useState<string | null>(null)
+  const [pointsTableSaved, setPointsTableSaved] = useState(false)
 
   useEffect(() => {
     setStandings(buildStandingsFromStore())
+    setPointsTableDraft(tableToDraft(getEffectiveQualificationPointsTable()))
+    setIsCustomPointsTable(getPersistedQualificationPointsTable() !== null)
   }, [])
 
   const refresh = () => setStandings(buildStandingsFromStore())
+
+  const handleSavePointsTable = () => {
+    if (!pointsTableDraft) return
+    const outroundPoints = {} as Record<OutroundFinish, number>
+    for (const option of FINISH_OPTIONS) {
+      const value = Number(pointsTableDraft.outroundPoints[option.value])
+      if (!Number.isFinite(value)) {
+        setPointsTableError("Every outround point value must be a number.")
+        setPointsTableSaved(false)
+        return
+      }
+      outroundPoints[option.value] = value
+    }
+    const pointsPerPrelimWin = Number(pointsTableDraft.pointsPerPrelimWin)
+    const bidLevelBonusRate = Number(pointsTableDraft.bidLevelBonusRate)
+    if (!Number.isFinite(pointsPerPrelimWin) || !Number.isFinite(bidLevelBonusRate)) {
+      setPointsTableError("Points per prelim win and bid-level bonus rate must be numbers.")
+      setPointsTableSaved(false)
+      return
+    }
+    savePersistedQualificationPointsTable({ outroundPoints, pointsPerPrelimWin, bidLevelBonusRate })
+    setPointsTableError(null)
+    setIsCustomPointsTable(true)
+    setPointsTableSaved(true)
+    refresh()
+  }
+
+  const handleResetPointsTable = () => {
+    resetPersistedQualificationPointsTable()
+    setPointsTableDraft(tableToDraft(getEffectiveQualificationPointsTable()))
+    setIsCustomPointsTable(false)
+    setPointsTableError(null)
+    setPointsTableSaved(false)
+    refresh()
+  }
 
   const handleSubmit = () => {
     const teamId = draft.teamId.trim()
@@ -135,7 +208,7 @@ export function StandingsPanel() {
     refresh()
   }
 
-  if (standings === null) {
+  if (standings === null || pointsTableDraft === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading standings…</div>
   }
 
@@ -145,9 +218,76 @@ export function StandingsPanel() {
         <h1 className="mb-1 text-xl font-semibold text-foreground">CX NDCA Standings</h1>
         <p className="text-sm text-muted-foreground">
           Record a team's tournament result to build cumulative, ranked season standings.
-          Qualification points use an illustrative default point table, not a real
-          circuit-sourced one.
+          Qualification points use {isCustomPointsTable ? "your saved" : "an illustrative default"}{" "}
+          point table — no real, publicly authoritative circuit table exists to hardcode, so save
+          your own circuit's weights below if you have them.
         </p>
+      </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Points table</h2>
+          <p className="text-xs text-muted-foreground">
+            {isCustomPointsTable
+              ? "Standings below are scored with your saved point table."
+              : "Standings below are scored with the illustrative default point table."}
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-4">
+          {FINISH_OPTIONS.map((option) => (
+            <div key={option.value} className="space-y-1.5">
+              <Label htmlFor={`points-table-${option.value}`}>{option.label}</Label>
+              <Input
+                id={`points-table-${option.value}`}
+                type="number"
+                value={pointsTableDraft.outroundPoints[option.value]}
+                onChange={(e) =>
+                  setPointsTableDraft((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          outroundPoints: { ...prev.outroundPoints, [option.value]: e.target.value },
+                        }
+                      : prev,
+                  )
+                }
+              />
+            </div>
+          ))}
+          <div className="space-y-1.5">
+            <Label htmlFor="points-table-per-prelim-win">Points per prelim win</Label>
+            <Input
+              id="points-table-per-prelim-win"
+              type="number"
+              value={pointsTableDraft.pointsPerPrelimWin}
+              onChange={(e) =>
+                setPointsTableDraft((prev) => (prev ? { ...prev, pointsPerPrelimWin: e.target.value } : prev))
+              }
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="points-table-bid-bonus">Bid-level bonus rate</Label>
+            <Input
+              id="points-table-bid-bonus"
+              type="number"
+              step="0.01"
+              value={pointsTableDraft.bidLevelBonusRate}
+              onChange={(e) =>
+                setPointsTableDraft((prev) => (prev ? { ...prev, bidLevelBonusRate: e.target.value } : prev))
+              }
+            />
+          </div>
+        </div>
+        {pointsTableError && <p className="text-sm text-destructive">{pointsTableError}</p>}
+        {pointsTableSaved && !pointsTableError && (
+          <p className="text-sm text-muted-foreground">Points table saved.</p>
+        )}
+        <div className="flex gap-2">
+          <Button onClick={handleSavePointsTable}>Save points table</Button>
+          <Button variant="outline" onClick={handleResetPointsTable} disabled={!isCustomPointsTable}>
+            Reset to default
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-3">

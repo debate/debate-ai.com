@@ -6,6 +6,50 @@
 _No task currently in progress._
 
 ### Completed
+- **CX NDCA Standings — custom qualification points table.**
+  [PR #315](https://github.com/debate/debate-ai.com/pull/315).
+  Advances idea #1's follow-up (b) ("a real, circuit-sourced
+  `QualificationPointsTable`") recorded in `docs/features/standings.md`'s
+  Known gaps. No public, authoritative NDCA point table exists for this
+  repo to hardcode, so instead this closes the "stuck with a fixed
+  illustrative table" half of that gap: a new
+  `packages/debate-data-sync/src/state/qualificationPointsTable.ts` persists
+  a user's own circuit-sourced `QualificationPointsTable` to localStorage
+  (`getPersistedQualificationPointsTable`/
+  `savePersistedQualificationPointsTable`/
+  `resetPersistedQualificationPointsTable`/
+  `getEffectiveQualificationPointsTable`), validating every required numeric
+  field on read so corrupt or incompletely-shaped stored JSON degrades to
+  "none saved" (falling back to `DEFAULT_QUALIFICATION_POINTS_TABLE`)
+  instead of throwing, mirroring this repo's existing localStorage-store
+  convention. `state/tournamentResults.ts`'s `buildStandingsFromStore` now
+  defaults its `pointsTable` to `getEffectiveQualificationPointsTable()`
+  whenever a caller doesn't pass one explicitly, so every existing caller
+  (and the standings dashboard) picks up a saved custom table automatically
+  without any new required argument. `panels/StandingsPanel.tsx`
+  (`/standings`) gains a "Points table" section above the results form: one
+  editable number input per outround finish plus points-per-prelim-win and
+  the bid-level bonus rate, seeded from `getEffectiveQualificationPointsTable()`
+  on mount, with **Save points table** (validates every field is a finite
+  number before persisting and re-scoring) and **Reset to default**
+  (disabled once nothing custom is saved) actions; the panel's intro copy
+  now names whether standings are currently scored with the saved table or
+  the illustrative default. Vitest-covered in a new
+  `packages/debate-data-sync/test/qualificationPointsTable.test.ts`
+  (get/save/reset, corrupt JSON, missing required fields, a non-finite
+  field, and the default-fallback behavior) and two new cases added to
+  `test/tournamentResults.test.ts` (`buildStandingsFromStore` scores with a
+  persisted custom table when none is passed explicitly, and an explicitly
+  passed `pointsTable` still wins over a persisted custom one). No component
+  test exists for `StandingsPanel.tsx` itself, matching this repo's existing
+  convention of Vitest-covering pure state/engine logic rather than `.tsx`
+  panel components (verified instead via `bun run build:web`). Follow-up
+  (a) (a real Tabroom/NDCA scraper producing `TournamentResult`s
+  automatically) and the "no genuinely authoritative default table can
+  exist here" half of follow-up (b) remain open, as documented in
+  `docs/features/standings.md`'s Known gaps. Verified: `bun install` (2062
+  packages), `bun x turbo typecheck` (all packages), `bun x vitest run`
+  (2538 tests, repo-wide), `bun run build:web`.
 - **Coach Materials — conversation history for "Ask the coach".**
   [PR #314](https://github.com/debate/debate-ai.com/pull/314).
   Closes the "No conversation history — each question is answered
@@ -7870,7 +7914,7 @@ _No task currently in progress._
 
 ## Product Feature Ideas
 
-1. **CX NDCA Standings** — Add a standings dashboard modeled around NDCA-style results, allowing users to browse qualification points, rankings, cumulative records, and tournament performance history across the season. Tabroom already supports tournament results and NDCA-points configuration, so this could expose those data in a more searchable, user-friendly analytics view. [tabroom](https://www.tabroom.com/index/tourn/index.mhtml?tourn_id=26597) _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `computeTournamentPoints`/`buildTeamStanding`/`buildStandings`/`rankStandings`/`getQualifiedTeams` for turning per-team tournament results into ranked, cumulative season standings against a configurable (not authoritative) points table. A second slice, `tournamentResults.ts` (see Tracker Status above), now persists recorded `TournamentResult`s to localStorage. A third slice, `StandingsPanel` (see Tracker Status above, "CX NDCA Standings — standings dashboard UI"), now lets a user record a result and renders every persisted result's ranked standings at `/standings`, closing follow-up (c). Follow-ups: (a) a Tabroom/NDCA scraper that produces real `TournamentResult` records per team (today's `sync-tournaments.ts` only fetches tournament names), (b) a real, circuit-sourced `QualificationPointsTable` instead of the illustrative default. Neither of these is started._
+1. **CX NDCA Standings** — Add a standings dashboard modeled around NDCA-style results, allowing users to browse qualification points, rankings, cumulative records, and tournament performance history across the season. Tabroom already supports tournament results and NDCA-points configuration, so this could expose those data in a more searchable, user-friendly analytics view. [tabroom](https://www.tabroom.com/index/tourn/index.mhtml?tourn_id=26597) _Status: first slice done (see Tracker Status above) — `debate-data-sync` now has `computeTournamentPoints`/`buildTeamStanding`/`buildStandings`/`rankStandings`/`getQualifiedTeams` for turning per-team tournament results into ranked, cumulative season standings against a configurable (not authoritative) points table. A second slice, `tournamentResults.ts` (see Tracker Status above), now persists recorded `TournamentResult`s to localStorage. A third slice, `StandingsPanel` (see Tracker Status above, "CX NDCA Standings — standings dashboard UI"), now lets a user record a result and renders every persisted result's ranked standings at `/standings`, closing follow-up (c). A fourth slice (see Tracker Status above, "CX NDCA Standings — custom qualification points table") added `state/qualificationPointsTable.ts` and a "Points table" section in `StandingsPanel`, letting a user save their own circuit-sourced `QualificationPointsTable` for this browser (validated on read, falling back to the illustrative default) instead of being stuck with it, and wired `buildStandingsFromStore` to default to that saved table — closing the "stuck with a fixed illustrative table" half of follow-up (b). Follow-up (a), a Tabroom/NDCA scraper that produces real `TournamentResult` records per team (today's `sync-tournaments.ts` only fetches tournament names), remains open — not started. The remaining half of follow-up (b) — a genuinely authoritative default table — can't be started here: no such public, circuit-sourced data source exists for this repo to hardcode._
 
 2. **Word-Count-Only Speech Format** — Support a practice and online-debate format where speeches are constrained by a maximum word count rather than a time limit, helping students practice concise writing, efficient argument construction, and comparable asynchronous submissions. _Status: first slices done (see Tracker Status above) — `debate-timer` now has word-count/limit-status utilities and a `wordCountStyles` registry. A second slice, `wordCountRounds.ts` (see Tracker Status above, "Word-Count-Only Speech Format — persisted word-count round results"), now persists a round's chosen style and submitted speech text to localStorage. A third slice, `WordCountRoundsPanel` (see Tracker Status above, "Word-Count-Only Speech Format — submission UI"), now renders a submission form at `/word-count` with a live per-speech word-count readout, closing follow-up (a). A fourth slice (see Tracker Status above, "Word-Count-Only Speech Format — live-round word-limited speech mode") added `round/word-count-speech-mode.ts`, `hooks/useWordCountSpeechMode.ts`, and `debate-timer`'s `SpeechWordCounter`, wiring a word-limit toggle into `SpeechHeaderBar` that replaces the live countdown with a `words / limit` meter whose text persists through the same `wordCountRounds` store as `/word-count`, closing follow-up (b). A speech with no authored `wordCountStyles` limit falls back to `estimateWordLimit` applied to the live timed style's speech length, so the mode works for every debate style — the mobile `FlowPageHeader` countdown turned out to be moot: that component is dead code, not rendered anywhere, and `SpeechHeaderBar` already covers both desktop and mobile layouts. A fifth slice (see Tracker Status above, "Word-Count-Only Speech Format — microphone dictation for the standalone submission form") added a "🎤 Record" button to every speech textarea on `/word-count`, reusing the existing `hooks/useMicrophoneTranscription.ts` wiring. No follow-ups remain open on this idea; the live in-round word-limit popover (`SpeechWordCounter`, opened from `SpeechHeaderBar`) still has no dictation button of its own, as noted in `docs/features/word-count-rounds.md`._
 
