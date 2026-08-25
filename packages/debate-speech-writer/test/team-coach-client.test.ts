@@ -40,6 +40,26 @@ describe("requestTeamCoachAnswer", () => {
     expect(body.maxTokens).toBe(2048);
   });
 
+  it("sends prior conversation turns as alternating user/assistant messages before the grounded prompt", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ text: "A follow-up answer." }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    await requestTeamCoachAnswer("What about a counter-interp?", MATCHES, {
+      history: [{ id: "t1", question: "What is topicality?", answer: "A voting issue.", askedAt: 0 }],
+    });
+
+    const body = JSON.parse((fetchMock as ReturnType<typeof vi.fn>).mock.calls[0][1].body as string);
+    expect(body.messages).toEqual([
+      { role: "user", content: "What is topicality?" },
+      { role: "assistant", content: "A voting issue." },
+      { role: "user", content: expect.stringContaining("What about a counter-interp?") },
+    ]);
+  });
+
   it("posts to a caller-supplied endpoint override", async () => {
     const fetchMock = vi.fn(async () => ({
       ok: true,

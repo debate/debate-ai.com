@@ -3,7 +3,70 @@
 
 ### In progress
 
-_No task currently in progress._
+### Coach Materials — conversation history for "Ask the coach"
+
+**Goal:** Close the "No conversation history — each question is answered
+independently; a prior question/answer isn't persisted or fed back into a
+later one" Known gap recorded in `docs/features/coach-materials.md`, so a
+coach can ask a natural follow-up question ("what about a counter-interp?")
+and have the team coach AI answer with the prior exchange as context, the
+same way idea #8's other panels build on already-shipped slices.
+
+**Scope:** `packages/debate-speech-writer` only (`coach/team-coach-materials.ts`,
+`coach/team-coach-client.ts`, a new `state/coachConversation.ts` persistence
+store, `panels/CoachMaterialsPanel.tsx`, `src/index.ts` exports) plus
+`docs/features/coach-materials.md`. No changes to `/api/reason-ai` (its
+`messages` array already accepts multiple turns) or to any other idea's
+panel.
+
+**Acceptance criteria:**
+1. A pure `CoachConversationTurn` type (question, answer, askedAt) and a
+   pure `buildCoachConversationMessages(question, matches, history, options)`
+   helper compose prior turns (most recent `maxHistoryTurns`, default a
+   small bounded window) as alternating user/assistant messages, followed by
+   the current question's own `buildGroundedCoachPrompt` output as the final
+   user turn — Vitest-covered directly, no `fetch` involved.
+2. `requestTeamCoachAnswer` accepts an optional `history` (via its existing
+   `options` object, so its call signature stays backward compatible) and
+   sends the full multi-turn `messages` array instead of a single user
+   message when history is non-empty.
+3. A new localStorage-backed `state/coachConversation.ts` persists
+   `CoachConversationTurn`s (list/append/clear), bounded to a max stored
+   count so the store can't grow unbounded.
+4. `CoachMaterialsPanel` ("Ask the coach" section, `/coach-materials`)
+   renders the persisted conversation history (question + answer per turn),
+   feeds it into `requestTeamCoachAnswer` on every new question, appends the
+   new turn to the store once an answer comes back, and offers a "Clear
+   conversation" action.
+5. `docs/features/coach-materials.md` updated: "What it shows"/data-flow
+   describe the conversation history, and the "No conversation history"
+   Known gap is struck/closed.
+6. `bun run typecheck`, a focused `bunx vitest run` on the new/changed test
+   files, the full `bun run test`, and `bun run build:web` all pass (or any
+   pre-existing unrelated failure is reproduced on a clean checkout and
+   documented, not silently ignored).
+
+**Implementation checklist:**
+1. Add `CoachConversationTurn` + `buildCoachConversationMessages` to
+   `coach/team-coach-materials.ts`, with tests in
+   `test/team-coach-materials.test.ts`.
+2. Thread an optional `history` option through
+   `coach/team-coach-client.ts`'s `requestTeamCoachAnswer`, building the
+   full `messages` array via `buildCoachConversationMessages`; extend
+   `test/team-coach-client.test.ts`.
+3. Add `state/coachConversation.ts` (list/append/clear, capped storage) with
+   `test/coachConversation.test.ts` mirroring `coachMaterials.test.ts`'s
+   in-memory-localStorage pattern.
+4. Wire `panels/CoachMaterialsPanel.tsx` to read/display/append conversation
+   history and pass it into `requestTeamCoachAnswer`; add a clear-history
+   action.
+5. Export the new symbols from `src/index.ts`.
+6. Update `docs/features/coach-materials.md`.
+7. Run `bun install` (if needed), `bun run typecheck`, focused
+   `bunx vitest run` on the new/changed test files, full `bun run test`,
+   `bun run build:web`.
+8. Move this entry to Completed (or leave it here with an exact Remaining
+   work list) based on the actual verification results.
 
 ### Completed
 - **Team Brainstorm Assist — choose any idea as a merge target.**

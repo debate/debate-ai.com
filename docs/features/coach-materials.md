@@ -29,6 +29,12 @@ and ask the coach AI a real question grounded strictly in those materials.
   grounded prompt text, while "Ask the coach" sends that same prompt to a
   real AI call and renders the model's grounded answer (or a plain error
   message if the request fails).
+- A persisted **Conversation** history above the question field: every
+  question/answer pair asked so far, most recent last, each rendered as a
+  small card. A follow-up question ("what about a counter-interp?") is sent
+  with the prior turns as real conversation context, so the model can build
+  on an earlier answer instead of treating every question as the first one.
+  A "Clear conversation" action (shown once any history exists) wipes it.
 
 ## Data flow
 
@@ -47,18 +53,43 @@ panels/CoachMaterialsPanel.tsx
   → findRelevantMaterialsFromStore(question, { limit: 5 })   — the same
                                                                  matches the
                                                                  preview uses
-  → coach/team-coach-client.ts's requestTeamCoachAnswer(question, matches)
-      → coach/team-coach-materials.ts's buildGroundedCoachPrompt(question, matches)
-                                                    — the exact user-turn
-                                                      message sent to the model
+  → coach/team-coach-client.ts's requestTeamCoachAnswer(question, matches, { history })
+      → coach/team-coach-materials.ts's buildCoachConversationMessages(question, matches, history)
+          → prior turns (most recent `maxHistoryTurns`, default 6) as
+            alternating { role: "user" } / { role: "assistant" } messages
+          → buildGroundedCoachPrompt(question, matches)  — the final
+                                                            user-turn message,
+                                                            unchanged from
+                                                            before
       → coach/team-coach-ai.ts's TEAM_COACH_AI_SYSTEM_PROMPT
                                                     — frames the model as the
                                                       team's private coach
       → POST /api/reason-ai                          — the shared
-                                                        Anthropic proxy
+                                                        Anthropic proxy,
+                                                        whose `messages` array
+                                                        already accepted
+                                                        multiple turns
       → parseTeamCoachAiResponse(text)                — strips a wrapping
                                                           code fence
+  → state/coachConversation.ts's appendCoachConversationTurn({ question, answer })
+                                                    — persists the new turn
+                                                      and folds it into the
+                                                      panel's own `history`
+                                                      state for the next
+                                                      question
   → renders the answer, or the thrown error message on failure
+
+Conversation history (closes the "No conversation history" Known gap):
+state/coachConversation.ts (localStorage, key "coachConversation")
+  → listCoachConversationTurns()      — read on mount, rendered above the
+                                         question field
+  → appendCoachConversationTurn()     — called once a real answer comes back
+                                         (capped at the 50 most recently
+                                         stored turns)
+  → clearCoachConversationHistory()   — wired to the panel's
+                                         "Clear conversation" action
+  → fed into requestTeamCoachAnswer's `history` option on every question, so
+    a follow-up builds on the conversation instead of starting fresh
 
 Uploading a document to fill the text field (the "document" half of
 follow-up (a)):
@@ -124,5 +155,12 @@ an empty/unusable AI reply).
   panel in the browser — not from a server-rendered or Node context.
 - No reviewer/approval workflow before a material is available to the
   team coach — any saved material is immediately included.
-- No conversation history — each question is answered independently; a
-  prior question/answer isn't persisted or fed back into a later one.
+- ~~No conversation history — each question is answered independently; a
+  prior question/answer isn't persisted or fed back into a later one.~~
+  Closed: `state/coachConversation.ts` now persists every question/answer
+  turn, `CoachMaterialsPanel` renders it above the question field, and
+  `requestTeamCoachAnswer` sends the most recent turns (capped at
+  `maxHistoryTurns`, default 6) as real conversation context ahead of the
+  current question's grounded prompt (see "Conversation history" above).
+  History is per-browser localStorage, not a shared team resource, the same
+  gap every other localStorage-backed panel in this repo has.

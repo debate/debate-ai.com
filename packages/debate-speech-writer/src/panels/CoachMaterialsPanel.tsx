@@ -26,6 +26,12 @@
  * exists in this repo) — mirroring idea #6's identical fix in
  * `debate-round`'s `FlowSummariesPanel`.
  *
+ * The "Ask the coach" section also renders and persists a conversation
+ * history (`state/coachConversation.ts`), feeding prior turns back into
+ * `requestTeamCoachAnswer` so a follow-up question can build on an earlier
+ * answer, closing the "No conversation history" Known gap recorded in
+ * `docs/features/coach-materials.md`.
+ *
  * @module panels/CoachMaterialsPanel
  */
 
@@ -62,7 +68,12 @@ import {
   findRelevantMaterialsFromStore,
   saveCoachMaterial,
 } from "../state/coachMaterials"
-import type { CoachMaterialLibrary } from "../coach/team-coach-materials"
+import {
+  appendCoachConversationTurn,
+  clearCoachConversationHistory,
+  listCoachConversationTurns,
+} from "../state/coachConversation"
+import type { CoachConversationTurn, CoachMaterialLibrary } from "../coach/team-coach-materials"
 
 // The labels and display order live with the material model itself, so the
 // form, the badges and `buildCoachMaterialLibrary`'s grouping stay in step.
@@ -113,6 +124,7 @@ export function CoachMaterialsPanel() {
   const [answer, setAnswer] = useState<string | null>(null)
   const [asking, setAsking] = useState(false)
   const [askError, setAskError] = useState<string | null>(null)
+  const [history, setHistory] = useState<CoachConversationTurn[]>([])
 
   const dictation = useMicrophoneTranscription({
     onSegment: (segment) => setForm((prev) => ({ ...prev, text: appendDictatedSegment(prev.text, segment) })),
@@ -120,6 +132,7 @@ export function CoachMaterialsPanel() {
 
   useEffect(() => {
     setLibrary(buildCoachMaterialLibraryFromStore())
+    setHistory(listCoachConversationTurns())
   }, [])
 
   const refresh = () => setLibrary(buildCoachMaterialLibraryFromStore())
@@ -181,13 +194,20 @@ export function CoachMaterialsPanel() {
     setAskError(null)
     setAnswer(null)
     try {
-      const result = await requestTeamCoachAnswer(question, currentMatches)
+      const result = await requestTeamCoachAnswer(question, currentMatches, { history })
       setAnswer(result)
+      const turn = appendCoachConversationTurn({ question, answer: result })
+      setHistory((prev) => [...prev, turn])
     } catch (e) {
       setAskError(e instanceof Error ? e.message : "Failed to get an answer from the coach.")
     } finally {
       setAsking(false)
     }
+  }
+
+  const handleClearHistory = () => {
+    clearCoachConversationHistory()
+    setHistory([])
   }
 
   if (library === null) {
@@ -352,13 +372,35 @@ export function CoachMaterialsPanel() {
       )}
 
       <div className="rounded-lg border border-border p-4 space-y-4">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Ask the coach</h2>
-          <p className="text-xs text-muted-foreground">
-            Ask a question and the team coach AI answers strictly from your grounding materials —
-            or say so if they don't cover it.
-          </p>
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <h2 className="text-sm font-medium text-foreground">Ask the coach</h2>
+            <p className="text-xs text-muted-foreground">
+              Ask a question and the team coach AI answers strictly from your grounding materials —
+              or say so if they don't cover it. Follow-up questions build on the conversation below.
+            </p>
+          </div>
+          {history.length > 0 && (
+            <Button type="button" size="sm" variant="ghost" onClick={handleClearHistory}>
+              Clear conversation
+            </Button>
+          )}
         </div>
+
+        {history.length > 0 && (
+          <div className="space-y-2">
+            <Label>Conversation</Label>
+            <div className="max-h-64 space-y-2 overflow-y-auto">
+              {history.map((turn) => (
+                <div key={turn.id} className="rounded-md border border-border px-3 py-2 text-sm">
+                  <p className="font-medium text-foreground">{turn.question}</p>
+                  <p className="mt-1 whitespace-pre-wrap text-muted-foreground">{turn.answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-end gap-2">
           <div className="space-y-1.5 flex-1 min-w-[16rem]">
             <Label htmlFor="coach-question">Question</Label>
