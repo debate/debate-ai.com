@@ -134,6 +134,7 @@ export function CoachHub() {
               clearFlowEditsForFlow(merged.id)
               refreshFlowEdits()
             }}
+            onSyncPulled={refreshFlowEdits}
           />
           <FlowEditLogPanel onChange={refreshFlowEdits} />
         </div>

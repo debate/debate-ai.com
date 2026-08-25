@@ -6,6 +6,35 @@
 _No task currently in progress._
 
 ### Completed
+- **Shared Flow Sync — live-sync toggle in `SharedFlowSyncPanel`.**
+  [PR #310](https://github.com/debate/debate-ai.com/pull/310).
+  Closes the "`SharedFlowSyncPanel`/`CoachHub` do not surface the sync
+  toggle or status — it lives only in `FlowEditLogPanel`'s own form,
+  scoped to that form's Flow ID field" Known gap recorded in
+  `docs/features/shared-flow-sync.md`. `SharedFlowSyncPanel` gains the
+  same "Live sync on/off" toggle + status pill `FlowEditLogPanel` already
+  had, reusing the existing `hooks/useFlowSyncPolling.ts` hook directly —
+  no new sync logic — scoped automatically to the panel's own `flow.id`
+  prop (unlike `FlowEditLogPanel`'s free-typed Flow ID field, this panel
+  already knows which flow it's previewing). A pulled edit calls a new
+  optional `onSyncPulled` prop, mirroring `FlowEditLogPanel`'s existing
+  `onChange` convention; `CoachHub.tsx` wires its existing
+  `refreshFlowEdits` (from `useStoreSnapshot`) into it, the same callback
+  it already passes to `FlowEditLogPanel` as `onChange`, so the merge
+  preview refreshes in step with a teammate's synced edit. The two
+  toggles are independent `syncEnabled` state, but both poll (and write
+  into) the same `state/flowEdits.ts` store for the same flow, so either
+  one being on is enough for a teammate's edits to show up everywhere.
+  Docs updated in `docs/features/shared-flow-sync.md`: a new "Live sync
+  toggle in `SharedFlowSyncPanel`" section documents the change, and the
+  Known gaps section's "do not surface the sync toggle or status" bullet
+  is struck through. No repo-wide `lint` script exists (checked root/app/
+  package `package.json` scripts) so none was run. Verified: `bun
+  install`, `bun run test` (166 files / 2506 tests, all pass — 1 new),
+  `bun run typecheck` (12 of 13 in-scope packages have a typecheck
+  script; all pass), and `bun run build:web` (`debate-ai-web`, succeeds,
+  `/coach` route present, no route changes) all pass. **Completed:**
+  2026-08-25.
 - **Opponent Team Profiles — undo/redo a logged-round edit.**
   Closes the "Editing a round is all-or-nothing per round: there is no
   history of what a round looked like before an edit, so a correction can't

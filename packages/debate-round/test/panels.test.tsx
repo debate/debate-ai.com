@@ -64,4 +64,10 @@ describe("SharedFlowSyncPanel", () => {
     expect(html).toContain("Conflicts");
     expect(html).toContain("alice");
   });
+
+  it("shows a live-sync toggle scoped to the flow's own id, off by default", () => {
+    const html = renderToStaticMarkup(<SharedFlowSyncPanel flow={flow} edits={edits} />);
+    expect(html).toContain("Live sync off");
+    expect(html).toContain("Flow 7");
+  });
 });
