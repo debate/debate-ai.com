@@ -1819,6 +1819,58 @@ _No task currently in progress._
   `docs/features/practice-round-simulator.md` (Known gaps section now reads
   "No known gaps remain for this idea"). PR:
   https://github.com/debate/debate-ai.com/pull/269.
+- **Features page — one page that outlines everything the app does.** Nothing
+  in the app listed every surface it ships: the global dock exposes four
+  destinations plus a Settings menu that is a flat, unexplained list of
+  forty-odd items; `/research` and `/coach` each tab across the panels of one
+  package; and `/community-hub` covers only the 17 spaces named under this
+  file's "Research Crowdsourcing Organizer Features" heading, deliberately
+  omitting the core workspaces (card search, the flow spreadsheet, the video
+  archive, the Reason editor) and the standings/rankings surfaces. So a
+  debater arriving at the app had no way to learn what it does short of
+  clicking through every Settings entry. Added `/features`: a searchable,
+  category-grouped outline of all 50 user-facing surfaces, each with its
+  title, one-line description, route, and a link to its long-form
+  `docs/features/*.md` doc where one exists. Pure data and helpers live in
+  `packages/debate-ui/src/features/feature-catalog.ts` (`APP_FEATURES`,
+  `buildFeatureSections`, `searchFeatures`, `featureDocUrl`,
+  `buildFeatureCatalogSummaryText`) — modelled on `debate-card-search`'s
+  narrower `lib/community-research-hub.ts` directory, and like it storeless,
+  since every entry links to a surface that already manages its own state.
+  `packages/debate-ui/src/features/FeaturesPanel.tsx` renders it (search box,
+  jump-to-category row, one card per feature) holding only the query in local
+  state, and `apps/debate-ai.com/app/features/page.tsx` mounts it. Titles and
+  descriptions are copied from each route's own `metadata` export (or its
+  feature doc's opening lines) so a card reads the same as the page it links
+  to; each entry can also carry `tags` — search terms absent from the visible
+  copy, so "elo" finds Team Rankings, "rfd" finds AI Judge Decision, and
+  "verbatim" finds the Reason Editor and Speech Documents. `debate-ui` is the
+  home for both files because the catalog names surfaces from `debate-round`,
+  `debate-card-search`, `debate-videos`, `debate-speech-writer` and
+  `reason-editor` (so it can't live in any one of them without inverting the
+  dependency graph), `debate-core` is deliberately React-free, and the app
+  itself sits outside the root Vitest projects, which only cover
+  `packages/*`. The dock's Settings menu gained **All Features** as its first
+  item, above the flat list it explains. Verified the catalog against the
+  filesystem: every one of the app's 55 `page.tsx` routes is either in the
+  catalog or intentionally out of it (`/` redirects to `/videos`, `/login` is
+  a step rather than a feature, `/features` is the page itself, and
+  `/debate/[tournament]/[teams]`/`/videos/[category]` are children of
+  catalogued parents). Vitest-covered (22 new cases across
+  `packages/debate-ui/test/feature-catalog.test.ts` — catalog invariants,
+  section grouping/ordering, search across all four matched fields, doc-URL
+  building, summary pluralization — and
+  `packages/debate-ui/test/features-panel.test.tsx`, which renders the panel
+  and asserts every catalogued route, the headings, the summary line, a docs
+  link, the jump nav, and that a one-entry catalog renders without it).
+  Verified with `bun run test` (158 files / 2221 tests, all pass — 22 new
+  cases), `bun run typecheck` (11 in-scope packages pass — `debate-ai-web`
+  has no `typecheck` script; this repo has no `lint` script), and
+  `bun run build` (both buildable packages pass, `/features` present in the
+  route list). Docs added at `docs/features/features-page.md`; the sole
+  Known gap is that the catalog is a hand-maintained registry, so a new route
+  has to be added to it as well — nothing fails if it isn't, because the app
+  is outside the packages Vitest runs over.
 - **Flow Annotations — switch video on cross-recording "Jump to".** Closes
   one of the four "Newly discovered small gaps" logged by the previous run's
   doc/tracker drift audit (see the entry below): `FlowAnnotationsPanel.handleJump`
