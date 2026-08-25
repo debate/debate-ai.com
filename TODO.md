@@ -6,6 +6,67 @@
 _No task currently in progress._
 
 ### Completed
+- **Signed-in identity wiring — Review Queue, Team Collaboration Mode, Team
+  Brainstorm Assist, Group Challenges.**
+  Closes the follow-up PR #320 flagged as still open: "every other panel's
+  identical 'no auth/identity system' Known gap (Leaderboard, Progress
+  Unlocks, Research Progress, Daily Quests, Standings, Judge/Opponent
+  Profiles, Review Queue, Prep Notes, Contribution Leaderboard, and others)
+  remain open." A survey of every candidate panel found the cleanest,
+  unambiguous "my own id" fields (same shape as the ones PR #318/#319/#320
+  already wired) live on `ReviewQueuePanel` (`actingReviewerId`, per-card
+  `commentDrafts[].reviewerId`), `SprintNotesPanel` (`draft.authorId`, the
+  "Your ID" presence field `myId`), `BrainstormBoardPanel`
+  (`draft.contributorId`), and `GroupChallengesPanel` (per-challenge
+  `winContributorId`). Standings, Judge Profiles, Opponent Team Profiles,
+  Prep Notes, and Coaching Programs were surveyed too but their only
+  free-form id fields identify someone *other* than the signed-in visitor
+  (a team, a judge, an assignee) — not a fit for this exact pattern without
+  a product decision on what field to add, so they're intentionally left
+  out of this PR and still carry the open gap.
+  All four panels gain an optional `signedInContributorId` prop, reusing
+  the existing `debate-card-search`'s `lib/session-identity.ts`'s
+  `deriveContributorIdFromSessionIdentity` directly (no new pure helper was
+  needed): `ReviewQueuePanel`'s "Your reviewer ID" and each card's comment
+  "Reviewer ID" field, `SprintNotesPanel`'s "Author ID" and "Your ID"
+  presence field, and `BrainstormBoardPanel`'s "Contributor ID" all follow
+  the established "prefill the field's *initial* value only, tracked via a
+  `hasEdited*` flag so a visitor's own typed edit is never overwritten"
+  convention `TaskInboxPanel`/`DailyQuestsPanel` already use.
+  `GroupChallengesPanel`'s per-challenge `winContributorId` is keyed by
+  challenge id, so it uses an equivalent "fall back to the signed-in id
+  until that challenge's own field is explicitly touched" record pattern
+  instead of a single flag. `BrainstormBoardPanel`'s post-submit form reset
+  now restores the prefilled id (instead of clearing to blank) so a
+  signed-in visitor can submit several ideas in a row without retyping it.
+  `apps/debate-ai.com` gains four thin `"use client"` wrappers —
+  `components/research/ReviewQueueWithIdentity.tsx`,
+  `SprintNotesWithIdentity.tsx`, `BrainstormBoardWithIdentity.tsx`, and
+  `GroupChallengesWithIdentity.tsx` — mirroring `TaskInboxWithIdentity.tsx`
+  exactly; the four panels' standalone `app/cards/{reviews,collaboration,
+  brainstorm,group-challenges}/page.tsx` routes and `ResearchHub.tsx`'s
+  Review/Sprint/Quests tabs now render the wrappers instead of the bare
+  panels. A signed-out visitor sees the exact same blank fields as before.
+  `docs/features/{review-queue,team-collaboration-mode,brainstorm-board,
+  group-challenges}.md` updated with new "Signed-in prefill" data-flow
+  sections and revised Known gaps sections. Verification: `bun x turbo
+  typecheck` (12/12 package tasks passed — same `apps/debate-ai.com`
+  typecheck-gate exclusion noted on PR #318/#319/#320 applies here too),
+  full `bun run test` (171 files / 2574 tests passed — unchanged from PR
+  #320, since this PR reuses `session-identity.ts`'s existing, already
+  Vitest-covered helper rather than adding new pure functions of its own;
+  this package's Vitest environment is `node`-only with no jsdom/
+  testing-library, so — consistent with every prior PR in this series —
+  the new prop-prefill wiring itself isn't covered by a render test, only
+  by the reused helper's existing coverage plus typecheck/build), and `bun
+  run build:web` (production build succeeded, all four `/cards/*` routes
+  present, no route changes). This repo has no `lint` script configured,
+  so that acceptance step is N/A. The same underlying "free-form id, not an
+  authenticated permission check, no server-side session enforcement on
+  these calls" limitation is unchanged and remains documented in each
+  panel's own Known gaps, alongside Standings/Judge Profiles/Opponent Team
+  Profiles/Prep Notes/Coaching Programs/Contribution Leaderboard's
+  still-open identical gap.
 - **Task Inbox — real identity gate on task verification.**
   [PR #320](https://github.com/debate/debate-ai.com/pull/320). Closes the
   verifier half of the "no contributor identity/permission checks" Known

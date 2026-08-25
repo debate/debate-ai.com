@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { SprintNotesPanel } from "debate-card-search"
+import { SprintNotesWithIdentity } from "@/components/research/SprintNotesWithIdentity"
 
 export const metadata: Metadata = {
   title: "Team Collaboration Mode",
@@ -23,7 +23,7 @@ export default function CardsCollaborationPage() {
         </Link>
       </div>
       <Suspense>
-        <SprintNotesPanel />
+        <SprintNotesWithIdentity />
       </Suspense>
     </div>
   )

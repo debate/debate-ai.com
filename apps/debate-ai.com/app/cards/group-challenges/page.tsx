@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { GroupChallengesPanel } from "debate-card-search"
+import { GroupChallengesWithIdentity } from "@/components/research/GroupChallengesWithIdentity"
 
 export const metadata: Metadata = {
   title: "Group Challenges",
@@ -23,7 +23,7 @@ export default function CardsGroupChallengesPage() {
         </Link>
       </div>
       <Suspense>
-        <GroupChallengesPanel />
+        <GroupChallengesWithIdentity />
       </Suspense>
     </div>
   )

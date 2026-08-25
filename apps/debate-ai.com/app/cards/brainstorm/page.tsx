@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { BrainstormBoardPanel } from "debate-card-search"
+import { BrainstormBoardWithIdentity } from "@/components/research/BrainstormBoardWithIdentity"
 
 export const metadata: Metadata = {
   title: "Team Brainstorm Assist",
@@ -23,7 +23,7 @@ export default function CardsBrainstormPage() {
         </Link>
       </div>
       <Suspense>
-        <BrainstormBoardPanel />
+        <BrainstormBoardWithIdentity />
       </Suspense>
     </div>
   )

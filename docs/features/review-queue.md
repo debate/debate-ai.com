@@ -131,10 +131,35 @@ error — the same "every contributor satisfies `novice` at minimum" rule
 threshold can still be rejected by the self-review guard above if their id
 matches the review's own `authorId`.
 
+## Signed-in prefill
+
+An optional `signedInContributorId` prop (mirroring
+[Task Inbox](./task-inbox.md)'s identical convention) prefills two of this
+panel's free-form id fields from a real signed-in session — a starting
+value only, never a login or a permission gate on its own (the tier/
+self-review checks above still apply to whatever id ends up in the field).
+
+```
+components/research/ReviewQueueWithIdentity.tsx  — "use client" wrapper
+  → useSession()                          — lib/hooks/useSession.ts, the
+                                              better-auth React session hook
+  → deriveContributorIdFromSessionIdentity(user)
+      — debate-card-search's lib/session-identity.ts: name, else the
+        email's local part, else the raw account id, else ""
+  → <ReviewQueuePanel signedInContributorId={...} />
+      — seeds "Your reviewer ID" initial value only; a visitor who edits it
+        (hasEditedActingReviewerId) keeps their own typed value from then on
+      — seeds each card's comment "Reviewer ID" field until that card's own
+        comment draft is first touched (severity, body, or the field
+        itself), after which that card's typed value always wins
+```
+
 ## Known gaps
 
-- Reviewer identity is still a free-form id typed into the panel, not an
-  authenticated user — the tier gate reflects that id's contribution record
-  and the self-review guard checks it against the typed author id, but
-  nothing stops a visitor from typing someone else's id. A real identity
-  check needs the auth system this repo doesn't have yet.
+- Reviewer identity is still a free-form id, not an authenticated user — a
+  real signed-in session only *prefills* "Your reviewer ID" and each card's
+  comment reviewer field (see "Signed-in prefill" above), so a visitor can
+  still overwrite either to type someone else's id. The tier gate and
+  self-review guard still check whatever id is actually in the field, same
+  as before — a real identity check needs the auth system this repo
+  doesn't gate these calls with server-side.
