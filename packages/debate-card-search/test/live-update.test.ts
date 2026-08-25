@@ -2,9 +2,15 @@ import { describe, expect, it } from "vitest";
 import {
   CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS,
   DAILY_BEST_CARD_LIVE_UPDATE_STORAGE_KEYS,
+  PROGRESS_UNLOCKS_LIVE_UPDATE_STORAGE_KEYS,
+  QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS,
+  RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS,
   TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS,
   isContributionLeaderboardLiveUpdateStorageEvent,
   isDailyBestCardLiveUpdateStorageEvent,
+  isProgressUnlocksLiveUpdateStorageEvent,
+  isQuestStreaksLiveUpdateStorageEvent,
+  isResearchProgressLiveUpdateStorageEvent,
   isTaskInboxLiveUpdateStorageEvent,
 } from "../src/state/live-update";
 
@@ -71,5 +77,71 @@ describe("isTaskInboxLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isTaskInboxLiveUpdateStorageEvent({ key: "routedTaskQueuesBackup" })).toBe(false);
     expect(isTaskInboxLiveUpdateStorageEvent({ key: "old_trackedArguments" })).toBe(false);
+  });
+});
+
+describe("isProgressUnlocksLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of PROGRESS_UNLOCKS_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isProgressUnlocksLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isProgressUnlocksLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isProgressUnlocksLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isProgressUnlocksLiveUpdateStorageEvent({ key: "routedTaskQueues" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isProgressUnlocksLiveUpdateStorageEvent({ key: "contributionsBackup" })).toBe(false);
+    expect(isProgressUnlocksLiveUpdateStorageEvent({ key: "old_dailyMissionResults" })).toBe(false);
+  });
+});
+
+describe("isResearchProgressLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isResearchProgressLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isResearchProgressLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isResearchProgressLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isResearchProgressLiveUpdateStorageEvent({ key: "dailyMissionResults" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isResearchProgressLiveUpdateStorageEvent({ key: "contributionsBackup" })).toBe(false);
+    expect(isResearchProgressLiveUpdateStorageEvent({ key: "old_routedTaskQueues" })).toBe(false);
+  });
+});
+
+describe("isQuestStreaksLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isQuestStreaksLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isQuestStreaksLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isQuestStreaksLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isQuestStreaksLiveUpdateStorageEvent({ key: "contributions" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isQuestStreaksLiveUpdateStorageEvent({ key: "dailyMissionResultsBackup" })).toBe(false);
+    expect(isQuestStreaksLiveUpdateStorageEvent({ key: "old_dailyMissionResults" })).toBe(false);
   });
 });

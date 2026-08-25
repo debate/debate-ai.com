@@ -80,6 +80,20 @@ A later slice closed this page's own "Known gaps" follow-up — see
 [Research Progress Tracking](./research-progress-tracking.md) for the
 completed-task-as-tier-signal change.
 
+## Cross-tab live update
+
+`ProgressUnlocksPanel` subscribes to the browser's `storage` event (fires
+only in *other* same-origin tabs/windows, never the one that made the
+write) via `state/live-update.ts`'s `isProgressUnlocksLiveUpdateStorageEvent`
+and re-derives the roster when it fires for one of its backing keys
+(`contributions`, `completedResearchTasks`, `dailyMissionResults`), so a
+contribution submitted, task completed, or daily mission logged in a second
+tab now refreshes this tab's roster without a manual reload — closing the
+"Every other localStorage-backed panel in this repo still has no cross-tab
+live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
+Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
+
 ## Known gaps
 
 - No contributor identity/permission *checks* — a real signed-in session now

@@ -25,6 +25,14 @@
  * every contributor, so unlike Task Inbox's "My tasks" prefill there is
  * nothing to filter or prefill here, only to highlight.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isResearchProgressLiveUpdateStorageEvent`, so a contribution, completed
+ * task, or routed task queue change recorded in another tab refreshes this
+ * panel's roster without a manual reload — closing the "Every other
+ * localStorage-backed panel in this repo still has no cross-tab
+ * live-update mechanism" Known gap noted in `shared-flow-sync.md`, for this
+ * panel.
+ *
  * @module panels/ResearchProgressPanel
  */
 
@@ -46,6 +54,7 @@ import {
   deleteCompletedTaskHistoryForTopic,
 } from "../state/researchProgress"
 import { isOwnContributorRow } from "../lib/session-identity"
+import { isResearchProgressLiveUpdateStorageEvent } from "../state/live-update"
 import type { ContributorProgress } from "../lib/research-progress"
 
 export interface ResearchProgressPanelProps {
@@ -71,6 +80,20 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
 
   useEffect(() => {
     setRoster(buildPersistedResearchProgressBoard())
+  }, [])
+
+  /**
+   * Live-update the roster when another browser tab records a contribution,
+   * completes a task, or routes a topic's task queue. A `storage` event
+   * never fires in the tab that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isResearchProgressLiveUpdateStorageEvent(event)) return
+      setRoster(buildPersistedResearchProgressBoard())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   const handleClearTopicHistory = (topic: string) => {

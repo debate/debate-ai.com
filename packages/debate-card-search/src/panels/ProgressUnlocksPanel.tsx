@@ -18,6 +18,14 @@
  * every contributor, so unlike Task Inbox's "My tasks" prefill there is
  * nothing to filter or prefill here, only to highlight.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isProgressUnlocksLiveUpdateStorageEvent`, so a contribution, completed
+ * task, or daily mission result recorded in another tab refreshes this
+ * panel's roster without a manual reload — closing the "Every other
+ * localStorage-backed panel in this repo still has no cross-tab
+ * live-update mechanism" Known gap noted in `shared-flow-sync.md`, for this
+ * panel.
+ *
  * @module panels/ProgressUnlocksPanel
  */
 
@@ -35,6 +43,7 @@ import {
 } from "debate-ui/src/primitives/table"
 import { buildUnlockStatusRoster } from "../lib/unlock-streak-status"
 import { isOwnContributorRow } from "../lib/session-identity"
+import { isProgressUnlocksLiveUpdateStorageEvent } from "../state/live-update"
 import type { ContributorUnlockStatusWithStreak } from "../lib/unlock-streak-status"
 
 /** Today's UTC calendar day as `YYYY-MM-DD`, the `dayKey` format used throughout `gamified-quests.ts`. */
@@ -78,6 +87,20 @@ export function ProgressUnlocksPanel({ signedInContributorId }: ProgressUnlocksP
 
   useEffect(() => {
     setRoster(buildUnlockStatusRoster(todayUtcDayKey()))
+  }, [])
+
+  /**
+   * Live-update the roster when another browser tab records a contribution,
+   * completes a task, or logs a daily mission result. A `storage` event
+   * never fires in the tab that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isProgressUnlocksLiveUpdateStorageEvent(event)) return
+      setRoster(buildUnlockStatusRoster(todayUtcDayKey()))
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   if (roster === null) {
