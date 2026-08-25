@@ -130,6 +130,7 @@ export function FlowAnnotationsPanel() {
         createdAt: Date.now(),
         note,
         videoId: useLive ? (activeVideoId ?? undefined) : undefined,
+        videoTitle: useLive ? (activeVideoTitle ?? undefined) : undefined,
       })
       saveFlowAnnotation(annotation)
       setNote("")
