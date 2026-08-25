@@ -66,3 +66,28 @@ export function isOwnContributorRow(
 
   return contributorId.trim().toLowerCase() === signedIn.toLowerCase();
 }
+
+/**
+ * Derives the id a "who is performing this action" field (e.g. a task
+ * verifier id) should be *locked* to for a signed-in visitor, turning the
+ * usual prefill-only pattern into a real gate for actions where letting a
+ * visitor type someone else's id would matter (crediting a verification,
+ * endorsing a contribution, etc.).
+ *
+ * Returns "" (no lock — leave the field free-form) when signed out, or
+ * when `ownerContributorId` already belongs to the signed-in visitor (the
+ * action is a self-action, e.g. verifying your own completed task, and
+ * should be disabled outright rather than locked to a value that would
+ * just fail the underlying guard). Otherwise returns the trimmed
+ * signed-in id to lock the field to.
+ */
+export function deriveLockedVerifierId(
+  ownerContributorId: string,
+  signedInContributorId: string | null | undefined,
+): string {
+  const signedIn = signedInContributorId?.trim();
+  if (!signedIn) return "";
+  if (isOwnContributorRow(ownerContributorId, signedIn)) return "";
+
+  return signedIn;
+}

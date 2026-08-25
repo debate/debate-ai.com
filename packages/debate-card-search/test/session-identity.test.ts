@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { deriveContributorIdFromSessionIdentity, isOwnContributorRow } from "../src/lib/session-identity";
+import {
+  deriveContributorIdFromSessionIdentity,
+  deriveLockedVerifierId,
+  isOwnContributorRow,
+} from "../src/lib/session-identity";
 
 describe("deriveContributorIdFromSessionIdentity", () => {
   it("returns '' for a null or undefined identity", () => {
@@ -71,5 +75,30 @@ describe("isOwnContributorRow", () => {
   it("does not match a blank contributor id even when signed in", () => {
     expect(isOwnContributorRow("", "alice")).toBe(false);
     expect(isOwnContributorRow("   ", "alice")).toBe(false);
+  });
+});
+
+describe("deriveLockedVerifierId", () => {
+  it("returns '' when signed out (null, undefined, or blank)", () => {
+    expect(deriveLockedVerifierId("alice", null)).toBe("");
+    expect(deriveLockedVerifierId("alice", undefined)).toBe("");
+    expect(deriveLockedVerifierId("alice", "   ")).toBe("");
+  });
+
+  it("returns the trimmed signed-in id when it differs from the task owner", () => {
+    expect(deriveLockedVerifierId("alice", "  bob  ")).toBe("bob");
+  });
+
+  it("returns '' when the signed-in id matches the task owner (self-verification)", () => {
+    expect(deriveLockedVerifierId("alice", "alice")).toBe("");
+  });
+
+  it("matches the task owner case-insensitively and ignores surrounding whitespace", () => {
+    expect(deriveLockedVerifierId("  Alice  ", "alice")).toBe("");
+    expect(deriveLockedVerifierId("alice", "  ALICE  ")).toBe("");
+  });
+
+  it("does not treat a blank task owner as a self-match", () => {
+    expect(deriveLockedVerifierId("", "alice")).toBe("alice");
   });
 });
