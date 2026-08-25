@@ -5,3 +5,7 @@ export { ResearchSearchSidebar } from "./components/ResearchSearchSidebar";
 export { AiAnalysisSidebar } from "./components/AiAnalysisSidebar";
 export * from "./panels";
 export * from "./types";
+export {
+  deriveContributorIdFromSessionIdentity,
+  type SessionIdentity,
+} from "./lib/session-identity";

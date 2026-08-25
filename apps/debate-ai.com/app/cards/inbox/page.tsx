@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { TaskInboxPanel } from "debate-card-search"
+import { TaskInboxWithIdentity } from "@/components/research/TaskInboxWithIdentity"
 
 export const metadata: Metadata = {
   title: "Task Inbox",
@@ -23,7 +23,7 @@ export default function CardsInboxPage() {
         </Link>
       </div>
       <Suspense>
-        <TaskInboxPanel />
+        <TaskInboxWithIdentity />
       </Suspense>
     </div>
   )

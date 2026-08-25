@@ -37,10 +37,10 @@ import {
   ReviewQueuePanel,
   RevisionIncentivesPanel,
   SprintNotesPanel,
-  TaskInboxPanel,
   TopicCoverageDashboardPanel,
   TopicSprintPanel,
 } from "debate-card-search"
+import { TaskInboxWithIdentity } from "./TaskInboxWithIdentity"
 import type { TrackedArgument } from "debate-card-search/src/lib/topic-coverage"
 import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import { listEvidenceLibraryEntries } from "debate-card-search/src/state/evidenceLibraryEntries"
@@ -153,7 +153,7 @@ export function ResearchHub() {
         </div>
       ) : null}
 
-      {section === "Routing" ? <TaskInboxPanel /> : null}
+      {section === "Routing" ? <TaskInboxWithIdentity /> : null}
 
       {section === "Progress" ? (
         <div className="flex flex-col gap-4">

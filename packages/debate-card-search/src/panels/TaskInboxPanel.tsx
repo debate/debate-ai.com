@@ -33,11 +33,15 @@
  *
  * A "My tasks" filter closes the "(e) scoping the inbox to 'my tasks' once
  * contributor identity/auth exists" follow-up named under the same bullet.
- * This repo still has no auth/identity system, so — mirroring the "🔄
- * Strategy Sync Notes" assignee-notification slice's identical free-form-id
- * workaround — a contributor just types their own `contributorId` into a
- * field, and the panel scopes the rendered view to it via
- * `filterTaskInboxViewByContributor`.
+ * A contributor types their own `contributorId` into a field, and the panel
+ * scopes the rendered view to it via `filterTaskInboxViewByContributor`.
+ *
+ * A later slice wires that field to a real signed-in identity where one is
+ * available: an optional `signedInContributorId` prop (built from
+ * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`
+ * against `apps/debate-ai.com`'s real better-auth session) seeds the
+ * field's *initial* value only — a visitor who edits it keeps whatever they
+ * typed, so this is a prefill, not a login.
  *
  * @module panels/TaskInboxPanel
  */
@@ -70,6 +74,17 @@ const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> 
   covered: "outline",
 }
 
+export interface TaskInboxPanelProps {
+  /**
+   * A contributor id to prefill the "My tasks" field with, typically
+   * derived from a real signed-in session via
+   * `deriveContributorIdFromSessionIdentity`. Only seeds the field's
+   * initial value — once a visitor edits it by hand, this prop is ignored
+   * for the rest of the panel's life so it never overwrites what they typed.
+   */
+  signedInContributorId?: string
+}
+
 /**
  * Renders the Task Inbox: every topic with a persisted routed task queue,
  * its assignments (contributor, task, required skill) with a "Mark
@@ -78,13 +93,14 @@ const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> 
  * Reads localStorage on mount only (client-side), so it renders an empty
  * state during SSR/hydration rather than throwing.
  */
-export function TaskInboxPanel() {
+export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = {}) {
   const [topics, setTopics] = useState<TaskInboxTopic[] | null>(null)
   const [pending, setPending] = useState<PendingTaskVerification[]>([])
   const [trackedTopics, setTrackedTopics] = useState<string[]>([])
   const [routeTopic, setRouteTopic] = useState("")
   const [routeError, setRouteError] = useState<string | null>(null)
   const [myContributorId, setMyContributorId] = useState("")
+  const [hasEditedMyId, setHasEditedMyId] = useState(false)
   const [verifierIds, setVerifierIds] = useState<Record<string, string>>({})
   const [verifyErrors, setVerifyErrors] = useState<Record<string, string>>({})
 
@@ -93,6 +109,12 @@ export function TaskInboxPanel() {
     setPending(listPendingTaskVerifications())
     setTrackedTopics(listTrackedTopics())
   }, [])
+
+  useEffect(() => {
+    if (!hasEditedMyId && signedInContributorId) {
+      setMyContributorId(signedInContributorId)
+    }
+  }, [signedInContributorId, hasEditedMyId])
 
   const pendingKey = (topicId: string, argBlock: string) => `${topicId}::${argBlock}`
 
@@ -173,13 +195,17 @@ export function TaskInboxPanel() {
       <Input
         id="task-inbox-my-id"
         value={myContributorId}
-        onChange={(e) => setMyContributorId(e.target.value)}
+        onChange={(e) => {
+          setHasEditedMyId(true)
+          setMyContributorId(e.target.value)
+        }}
         placeholder="alice"
         className="max-w-sm"
       />
       <p className="text-xs text-muted-foreground">
-        Enter your contributor id to scope the inbox below to just your own assignments. This repo
-        has no auth/identity system, so this is a free-form filter, not a login.
+        {signedInContributorId
+          ? "Prefilled from your signed-in account — edit it if your tasks were routed under a different contributor id."
+          : "Enter your contributor id to scope the inbox below to just your own assignments. This is a free-form filter, not a login."}
       </p>
     </div>
   )
