@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   applyHypotheticalAdjustments,
+  buildCounselPanelTopArguments,
   buildVulnerabilityChartData,
   buildVulnerabilityChartDataFromReport,
   getArgumentVulnerabilityReport,
@@ -285,5 +286,41 @@ describe("applyHypotheticalAdjustments", () => {
     const sides = summarizeOutcomeBySideFromReport(adjusted, getFlowSideKeys(flow));
     const sideForDropped = sides.find((side) => side.sideKey === dropped.sideKey);
     expect(sideForDropped?.unansweredCount).toBe(0);
+  });
+});
+
+describe("buildCounselPanelTopArguments", () => {
+  const flow = {
+    columns: COLUMNS,
+    children: [
+      rowFromContents(["Case advantage", "", "", ""]), // dropped -> 80, unanswered
+      rowFromContents(["Disad link", "Turn", "Extend", "Frontline"]), // fully answered -> 45
+    ],
+  };
+  const report = getArgumentVulnerabilityReport(flow);
+  const dropped = report.find((row) => row.argument === "Case advantage")!;
+
+  it("trims the top arguments to the counsel-panel request's fields, ranked by vulnerability", () => {
+    expect(buildCounselPanelTopArguments(report, { limit: 1 })).toEqual([
+      {
+        rowIndex: dropped.rowIndex,
+        argument: dropped.argument,
+        originSpeech: dropped.originSpeech,
+        isUnanswered: dropped.isUnanswered,
+        vulnerabilityScore: dropped.vulnerabilityScore,
+      },
+    ]);
+  });
+
+  it("defaults to a limit of 10", () => {
+    expect(buildCounselPanelTopArguments(report)).toHaveLength(report.length);
+  });
+
+  it("reflects a hypothetical-adjusted report instead of the original scores", () => {
+    const adjusted = applyHypotheticalAdjustments(report, [{ rowIndex: dropped.rowIndex, action: "answer" }]);
+    const [top] = buildCounselPanelTopArguments(adjusted, { limit: 1 });
+    expect(top.rowIndex).toBe(dropped.rowIndex);
+    expect(top.isUnanswered).toBe(false);
+    expect(top.vulnerabilityScore).toBeLessThan(dropped.vulnerabilityScore);
   });
 });

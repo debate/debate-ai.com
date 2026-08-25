@@ -22,25 +22,68 @@
  * pure `checkPageForExistingCards` against this store — the persisted half
  * of the "On Page Card Reuse Search" idea's first slice in TODO.md.
  *
+ * `searchPersistedEvidenceLibraryWithIndex` composes
+ * `evidence-search-index.ts`'s inverted-index search against this store's
+ * "live" entries — closes the "📋 Shared Evidence Library" bullet's
+ * follow-up (c), "a real search index ... once entries are persisted at
+ * scale." `EvidenceLibraryPanel` now calls this instead of
+ * `searchPersistedEvidenceLibrary`, which stays exported (unchanged) for any
+ * other caller. The index it searches is cached across calls (see
+ * `getCachedEvidenceSearchIndex`) rather than rebuilt on every search,
+ * closing that same bullet's remaining follow-up ("caching the index across
+ * calls instead of rebuilding it on every search").
+ *
+ * `getCachedEvidenceSearchIndex` also closes the "Known gap" recorded in
+ * `docs/features/evidence-library.md` after that slice — a cache
+ * invalidation used to fall back to a full `buildEvidenceSearchIndex`
+ * re-tokenize-everything pass over every live entry, even when a write only
+ * actually touched one of them. It now diffs the previously-indexed live
+ * entries against the current ones by id and content, then applies
+ * `evidence-search-index.ts`'s `addEntryToIndex`/`removeEntryFromIndex`/
+ * `updateEntryInIndex` only for entries that were actually added, removed,
+ * or changed — true incremental indexing, not a rebuild — falling back to
+ * `buildEvidenceSearchIndex` only for the very first build.
+ *
  * @module state/evidenceLibraryEntries
  */
 
 import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult, PageReuseCheckResult } from "../lib/shared-evidence-library";
 import { buildEvidenceEntryRevision, checkPageForExistingCards, searchEvidenceLibrary } from "../lib/shared-evidence-library";
+import {
+  addEntryToIndex,
+  buildEvidenceSearchIndex,
+  removeEntryFromIndex,
+  searchEvidenceLibraryWithIndex,
+  updateEntryInIndex,
+  type EvidenceSearchIndex,
+} from "../lib/evidence-search-index";
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library";
-import { buildArgumentLibrary, buildLibraryCardsFromContributions, buildTagCollections } from "../lib/argument-library";
+import {
+  buildArgumentLibrary,
+  buildLibraryCardsFromContributions,
+  buildTagCollections,
+  renameTagAcrossCards,
+} from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
-import { listContributions } from "./contributions";
+import {
+  listContributionTags,
+  listContributions,
+  renameTagAcrossPersistedContributions,
+} from "./contributions";
 import { isCardLive } from "../lib/peer-review";
-import { getPeerReview } from "./peerReviews";
+import { getPeerReview, getPeerReviewsRawSnapshot } from "./peerReviews";
 
 const STORAGE_KEY = "evidenceLibraryEntries";
 
+function readRawEntries(): string | null {
+  if (typeof localStorage === "undefined") return null;
+  return localStorage.getItem(STORAGE_KEY);
+}
+
 function readAll(): EvidenceLibraryEntry[] {
-  if (typeof localStorage === "undefined") return [];
+  const raw = readRawEntries();
+  if (!raw) return [];
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? (parsed as EvidenceLibraryEntry[]) : [];
   } catch {
@@ -135,6 +178,88 @@ export function searchPersistedEvidenceLibrary(query: EvidenceSearchQuery = {}):
   return searchEvidenceLibrary(readAll().filter((entry) => isEntryLive(entry.id)), query);
 }
 
+let cachedIndex: EvidenceSearchIndex | null = null;
+let cachedRawEntries: string | null = null;
+let cachedRawReviews: string | null = null;
+/** The exact live entries (by id, with their indexed content) `cachedIndex` was last built/updated from. */
+let cachedLiveEntriesById: Map<string, EvidenceLibraryEntry> | null = null;
+
+/**
+ * The `EvidenceSearchIndex` built from every currently "live" persisted
+ * entry, cached across calls and updated only when the data it was built
+ * from could have changed — closing follow-up (c)'s remaining half named
+ * under the "📋 Shared Evidence Library" bullet in TODO.md ("caching the
+ * index across calls instead of rebuilding it on every search"). Which
+ * entries are "live" depends on two independently-written stores: this
+ * store's own `EvidenceLibraryEntry` records and `state/peerReviews.ts`'s
+ * `CardReview` records, since a review transition can flip an entry's
+ * liveness with no write to this store at all. Rather than a write-time
+ * counter on each store (which only catches writes made through that
+ * store's own functions), the cache compares each store's raw persisted
+ * JSON string against the strings it was built from — a cheap fingerprint
+ * that catches any change to either store's underlying data, however it
+ * was written, without either store needing to call into the other's write
+ * path directly.
+ *
+ * When that fingerprint changes, this no longer falls back to a full
+ * `buildEvidenceSearchIndex` re-tokenize-everything pass — it diffs the new
+ * live-entry set against `cachedLiveEntriesById` by id and by content, then
+ * applies `evidence-search-index.ts`'s incremental
+ * `addEntryToIndex`/`removeEntryFromIndex`/`updateEntryInIndex` only for the
+ * entries that were actually added, removed, or edited (an unrelated write —
+ * e.g. a different entry's peer-review transition — leaves every other
+ * entry's postings untouched), closing the "Known gap" recorded in
+ * `docs/features/evidence-library.md`.
+ */
+function getCachedEvidenceSearchIndex(): EvidenceSearchIndex {
+  const rawEntries = readRawEntries();
+  const rawReviews = getPeerReviewsRawSnapshot();
+  if (cachedIndex && rawEntries === cachedRawEntries && rawReviews === cachedRawReviews) {
+    return cachedIndex;
+  }
+
+  const liveEntries = readAll().filter((entry) => isEntryLive(entry.id));
+  const currentById = new Map(liveEntries.map((entry) => [entry.id, entry] as const));
+
+  if (!cachedIndex || !cachedLiveEntriesById) {
+    cachedIndex = buildEvidenceSearchIndex(liveEntries);
+  } else {
+    const index = cachedIndex;
+    for (const previousId of cachedLiveEntriesById.keys()) {
+      if (!currentById.has(previousId)) {
+        removeEntryFromIndex(index, previousId);
+      }
+    }
+    for (const [id, entry] of currentById) {
+      const previous = cachedLiveEntriesById.get(id);
+      if (!previous) {
+        addEntryToIndex(index, entry);
+      } else if (JSON.stringify(previous) !== JSON.stringify(entry)) {
+        updateEntryInIndex(index, entry);
+      }
+    }
+  }
+
+  cachedLiveEntriesById = currentById;
+  cachedRawEntries = rawEntries;
+  cachedRawReviews = rawReviews;
+  return cachedIndex;
+}
+
+/**
+ * Searches the persisted evidence repository via a cached
+ * `EvidenceSearchIndex` (see `getCachedEvidenceSearchIndex`) — the real,
+ * postings-list-backed search index named in follow-up (c) under the "📋
+ * Shared Evidence Library" bullet in TODO.md, rather than
+ * `searchPersistedEvidenceLibrary`'s full re-scan on every call. Only "live"
+ * entries are indexed (see `isEntryLive`), matching
+ * `searchPersistedEvidenceLibrary`'s own gating, so a card still held back
+ * by an in-progress peer review doesn't appear in results here either.
+ */
+export function searchPersistedEvidenceLibraryWithIndex(query: EvidenceSearchQuery = {}): EvidenceSearchResult[] {
+  return searchEvidenceLibraryWithIndex(getCachedEvidenceSearchIndex(), query);
+}
+
 /**
  * Checks whether a page has already been cut into the persisted evidence
  * repository, reusing `checkPageForExistingCards` directly — the "On Page
@@ -184,10 +309,79 @@ export function buildCombinedPersistedArgumentLibrary(): ArgumentLibrary {
 }
 
 /**
+ * Renames (or merges) a tag across every persisted evidence-library entry
+ * that carries it — closes the "No tag rename/merge tool" gap recorded in
+ * `docs/features/evidence-library.md`'s Known gaps. Reuses
+ * `argument-library.ts`'s pure `renameTagAcrossCards` directly against this
+ * store's entries, writing back only when at least one entry actually
+ * changed (so an all-no-op rename doesn't touch `localStorage`, and the
+ * cached search index's raw-JSON fingerprint — see
+ * `getCachedEvidenceSearchIndex` — isn't invalidated for nothing). Returns
+ * the number of entries changed. Only rewrites this store's own entries —
+ * a tag applied to a Contributions Feed submission (see
+ * `buildCombinedPersistedArgumentLibrary`) is a separate store/form and is
+ * left untouched, as noted in `docs/features/evidence-library.md`.
+ */
+export function renameTagAcrossPersistedEntries(oldTag: string, newTag: string): number {
+  const { cards: updated, changedCount } = renameTagAcrossCards(readAll(), oldTag, newTag);
+  if (changedCount > 0) {
+    writeAll(updated);
+  }
+  return changedCount;
+}
+
+/**
  * Every distinct tag used across the persisted evidence repository, sorted —
  * the corpus a tag-autocomplete affordance suggests from (see
  * `argument-library.ts`'s `suggestTags`).
  */
 export function listPersistedTags(): string[] {
   return buildTagCollections(readAll()).map((collection) => collection.tag);
+}
+
+/**
+ * Every distinct tag in use across *both* persisted tag stores — this
+ * evidence repository and the Contributions Feed — sorted. This is the corpus
+ * a tag-autocomplete affordance should suggest from on either submission
+ * form, so a Contributions Feed submission reuses an existing
+ * evidence-library tag rather than coining a near-duplicate (the
+ * "a Contributions Feed submission tagged for the Argument Library gets no
+ * tag-autocomplete affordance of its own" gap in
+ * `docs/features/evidence-library.md`). Deduped by exact string, matching how
+ * `buildTagCollections` already treats tag identity.
+ */
+export function listCombinedPersistedTags(): string[] {
+  const tags = new Set([...listPersistedTags(), ...listContributionTags()]);
+  return Array.from(tags).sort((a, b) => a.localeCompare(b));
+}
+
+/** How many records a combined tag rename/merge rewrote, per store. */
+export interface CombinedTagRenameResult {
+  entriesChanged: number;
+  contributionsChanged: number;
+  totalChanged: number;
+}
+
+/**
+ * Renames (or merges) a tag across both persisted tag stores at once — this
+ * evidence repository via `renameTagAcrossPersistedEntries` and the
+ * Contributions Feed via `renameTagAcrossPersistedContributions`. Closes the
+ * "only rewrites this evidence-library repository's own entries" gap recorded
+ * in `docs/features/evidence-library.md`: a tag shown in the combined Common
+ * Argument Library (see `buildCombinedPersistedArgumentLibrary`) may come from
+ * either store, so renaming it in one alone left the other's copy stranded
+ * under the old name. Throws on a blank or unchanged tag pair, before either
+ * store is touched.
+ */
+export function renameTagAcrossCombinedPersistedStores(
+  oldTag: string,
+  newTag: string,
+): CombinedTagRenameResult {
+  const entriesChanged = renameTagAcrossPersistedEntries(oldTag, newTag);
+  const contributionsChanged = renameTagAcrossPersistedContributions(oldTag, newTag);
+  return {
+    entriesChanged,
+    contributionsChanged,
+    totalChanged: entriesChanged + contributionsChanged,
+  };
 }

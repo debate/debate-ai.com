@@ -18,9 +18,12 @@
  * `checkPageForExistingCards`/`buildPageReuseCheckSummaryText` implement the
  * first slice of the "On Page Card Reuse Search" idea in TODO.md's Product
  * Feature Ideas list ("See if anyone has cut this article in the chrome
- * ext") — the reuse-check logic a future browser extension would call
- * against the current tab's URL, kept a plain, testable function here
- * rather than inside any extension (which doesn't exist in this repo yet).
+ * ext") — the reuse-check logic a browser extension calls against the
+ * current tab's URL, kept a plain, testable function here rather than
+ * inside the extension itself. `buildReuseCheckDeepLink` is the second
+ * slice — the `extension/card-reuse-checker` browser extension (see its
+ * README) calls it to open `/cards/library` with the active tab's URL
+ * pre-filled and auto-checked, closing that idea's remaining follow-up.
  *
  * @module lib/shared-evidence-library
  */
@@ -196,6 +199,26 @@ export function buildPageReuseCheckSummaryText(result: PageReuseCheckResult): st
   if (!result.alreadyCut) return "No existing cards found for this page — safe to cut.";
   const count = result.matches.length;
   return `Already cut: ${count} existing ${count === 1 ? "entry" : "entries"} for this page.`;
+}
+
+/**
+ * Builds the deep-link a browser extension opens to run the "Check this
+ * page" box automatically against the current tab, closing follow-up (a)
+ * under the "On Page Card Reuse Search" idea ("an actual browser extension
+ * that calls this same check automatically against the current tab's URL").
+ * The evidence repository is persisted in this app's own localStorage — an
+ * extension runs in a different origin and can't read it directly — so
+ * rather than reimplementing the check against data it has no access to,
+ * the extension deep-links into `/cards/library` with the active tab's URL
+ * pre-filled via a `checkUrl` query param, which `EvidenceLibraryPanel`
+ * reads on mount and runs through the same `checkPersistedPageForExistingCards`
+ * the manual "Check this page" box already calls. `appOrigin` is trimmed and
+ * stripped of any trailing slash(es) first so a caller-supplied origin with
+ * or without one produces the same link.
+ */
+export function buildReuseCheckDeepLink(appOrigin: string, pageUrl: string): string {
+  const origin = appOrigin.trim().replace(/\/+$/, "");
+  return `${origin}/cards/library?checkUrl=${encodeURIComponent(pageUrl.trim())}`;
 }
 
 /**

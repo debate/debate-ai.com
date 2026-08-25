@@ -9,6 +9,9 @@
  */
 
 import type { CardReview } from "../lib/peer-review";
+import { approveReviewAsReviewer, deriveReviewerTier, publishReviewAsReviewer, rejectReviewAsReviewer } from "../lib/reviewer-permissions";
+import type { UnlockTier } from "../lib/progress-unlocks";
+import { buildPersistedLeaderboard } from "./contributions";
 
 const STORAGE_KEY = "peerReviews";
 
@@ -27,6 +30,23 @@ function readAll(): CardReview[] {
 function writeAll(reviews: CardReview[]): void {
   if (typeof localStorage === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
+}
+
+/**
+ * The raw persisted `CardReview` JSON string, or `null` if nothing is
+ * stored (or `localStorage` is unavailable) — a cheap, content-based
+ * fingerprint `evidenceLibraryEntries.ts`'s cached search index compares
+ * against on every search to detect a review-status change. A review
+ * transition can flip an entry's "live" status (see `isEntryLive`) with no
+ * write to that store at all, so a write-counter on this store's own
+ * `writeAll` wouldn't catch it; comparing the raw stored string instead
+ * catches any change to this store's data regardless of how it got
+ * written, without either store needing to call into the other's write
+ * path directly.
+ */
+export function getPeerReviewsRawSnapshot(): string | null {
+  if (typeof localStorage === "undefined") return null;
+  return localStorage.getItem(STORAGE_KEY);
 }
 
 /** Lists every persisted card review. */
@@ -64,4 +84,52 @@ export function deletePeerReview(cardId: string): void {
  */
 export function buildReviewQueuePanelView(): CardReview[] {
   return [...readAll()].sort((a, b) => a.cardId.localeCompare(b.cardId));
+}
+
+/**
+ * Derives `reviewerId`'s `UnlockTier` from the real Contribution Leaderboard
+ * (`state/contributions.ts`'s `buildPersistedLeaderboard`) instead of
+ * requiring a caller-supplied tier — closes follow-up (b) named under the
+ * "🗣️ Peer Review System" bullet in TODO.md the same way every other
+ * "derive eligibility from persisted history" slice in this package does.
+ */
+export function derivePersistedReviewerTier(reviewerId: string): UnlockTier {
+  return deriveReviewerTier(reviewerId, buildPersistedLeaderboard());
+}
+
+/**
+ * Applies a reviewer-permission-gated transition to the stored review for
+ * `cardId` and saves the result. Returns `undefined` if no review is stored
+ * for `cardId` (mirroring `state/contributions.ts`'s
+ * `applyPersistedContributionUpdate` "no-op on missing id" convention);
+ * otherwise re-throws whatever `gatedTransition` throws (an
+ * `InsufficientReviewerPermissionError`, `InvalidReviewTransitionError`, or
+ * `UnresolvedBlockingCommentsError`) without saving.
+ */
+function applyGatedPersistedReviewTransition(
+  cardId: string,
+  reviewerId: string,
+  gatedTransition: (review: CardReview, reviewerId: string, reviewerTier: UnlockTier) => CardReview,
+): CardReview | undefined {
+  const review = getPeerReview(cardId);
+  if (!review) return undefined;
+
+  const updated = gatedTransition(review, reviewerId, derivePersistedReviewerTier(reviewerId));
+  savePeerReview(updated);
+  return updated;
+}
+
+/** Approves the stored review for `cardId` on behalf of `reviewerId`, gated by their derived tier. */
+export function approvePersistedReviewAsReviewer(cardId: string, reviewerId: string): CardReview | undefined {
+  return applyGatedPersistedReviewTransition(cardId, reviewerId, approveReviewAsReviewer);
+}
+
+/** Rejects the stored review for `cardId` on behalf of `reviewerId`, gated by their derived tier. */
+export function rejectPersistedReviewAsReviewer(cardId: string, reviewerId: string): CardReview | undefined {
+  return applyGatedPersistedReviewTransition(cardId, reviewerId, rejectReviewAsReviewer);
+}
+
+/** Publishes the stored review for `cardId` on behalf of `reviewerId`, gated by their derived tier. */
+export function publishPersistedReviewAsReviewer(cardId: string, reviewerId: string): CardReview | undefined {
+  return applyGatedPersistedReviewTransition(cardId, reviewerId, publishReviewAsReviewer);
 }

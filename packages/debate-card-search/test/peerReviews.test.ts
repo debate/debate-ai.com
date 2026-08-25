@@ -1,12 +1,20 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  approvePersistedReviewAsReviewer,
   buildReviewQueuePanelView,
   deletePeerReview,
+  derivePersistedReviewerTier,
   getPeerReview,
+  getPeerReviewsRawSnapshot,
   listPeerReviews,
+  publishPersistedReviewAsReviewer,
+  rejectPersistedReviewAsReviewer,
   savePeerReview,
 } from "../src/state/peerReviews";
 import type { CardReview } from "../src/lib/peer-review";
+import { InsufficientReviewerPermissionError } from "../src/lib/reviewer-permissions";
+import { saveContribution } from "../src/state/contributions";
+import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -35,6 +43,26 @@ const IN_REVIEW_REVIEW: CardReview = {
   status: "in_review",
   comments: [{ id: "comment-1", reviewerId: "alice", body: "Cite this claim.", severity: "blocking", resolved: false }],
 };
+
+/** Scores 58.2 helpfulness per `community-rating.test.ts`'s identically-shaped "substantive" fixture. */
+function substantiveContribution(id: string, contributorId: string): AttributedContribution {
+  return {
+    id,
+    contributorId,
+    kind: "summary",
+    likes: 2,
+    saves: 1,
+    qualitySignals: [0.9, 0.95],
+    reviewerEndorsements: [{ reviewerWeight: 1 }, { reviewerWeight: 0.9 }],
+  };
+}
+
+/** Gives `contributorId` 15 high-quality contributions — enough to clear "veteran" (15 count / 100 score). */
+function makeVeteranReviewer(contributorId: string): void {
+  for (let i = 0; i < 15; i++) {
+    saveContribution(substantiveContribution(`${contributorId}-contrib-${i}`, contributorId));
+  }
+}
 
 beforeEach(() => {
   (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
@@ -101,6 +129,35 @@ describe("deletePeerReview", () => {
   });
 });
 
+describe("getPeerReviewsRawSnapshot", () => {
+  it("returns null when nothing is stored", () => {
+    expect(getPeerReviewsRawSnapshot()).toBeNull();
+  });
+
+  it("changes value whenever a review is saved", () => {
+    const empty = getPeerReviewsRawSnapshot();
+    savePeerReview(DRAFT_REVIEW);
+    const afterSave = getPeerReviewsRawSnapshot();
+    expect(afterSave).not.toEqual(empty);
+
+    savePeerReview({ ...DRAFT_REVIEW, status: "in_review" });
+    const afterStatusChange = getPeerReviewsRawSnapshot();
+    expect(afterStatusChange).not.toEqual(afterSave);
+  });
+
+  it("changes value whenever a review is deleted", () => {
+    savePeerReview(DRAFT_REVIEW);
+    const beforeDelete = getPeerReviewsRawSnapshot();
+    deletePeerReview("card-1");
+    expect(getPeerReviewsRawSnapshot()).not.toEqual(beforeDelete);
+  });
+
+  it("stays identical across calls when nothing has changed", () => {
+    savePeerReview(DRAFT_REVIEW);
+    expect(getPeerReviewsRawSnapshot()).toEqual(getPeerReviewsRawSnapshot());
+  });
+});
+
 describe("buildReviewQueuePanelView", () => {
   it("returns an empty list when nothing is stored", () => {
     expect(buildReviewQueuePanelView()).toEqual([]);
@@ -119,5 +176,77 @@ describe("buildReviewQueuePanelView", () => {
     buildReviewQueuePanelView();
 
     expect(listPeerReviews()).toEqual([IN_REVIEW_REVIEW, DRAFT_REVIEW]);
+  });
+});
+
+describe("derivePersistedReviewerTier", () => {
+  it("is novice for a reviewer with no persisted contributions", () => {
+    expect(derivePersistedReviewerTier("stranger")).toBe("novice");
+  });
+
+  it("derives veteran from the reviewer's own persisted contribution history", () => {
+    makeVeteranReviewer("vet");
+    expect(derivePersistedReviewerTier("vet")).toBe("veteran");
+  });
+});
+
+describe("approvePersistedReviewAsReviewer", () => {
+  it("returns undefined when no review is stored for cardId", () => {
+    makeVeteranReviewer("vet");
+    expect(approvePersistedReviewAsReviewer("missing", "vet")).toBeUndefined();
+  });
+
+  it("approves and saves when the reviewer's derived tier meets the minimum", () => {
+    makeVeteranReviewer("vet");
+    const cleanInReview: CardReview = { cardId: "card-2", status: "in_review", comments: [] };
+    savePeerReview(cleanInReview);
+
+    const result = approvePersistedReviewAsReviewer("card-2", "vet");
+
+    expect(result?.status).toBe("approved");
+    expect(getPeerReview("card-2")?.status).toBe("approved");
+  });
+
+  it("throws and leaves the stored review untouched when the reviewer lacks the tier", () => {
+    savePeerReview(IN_REVIEW_REVIEW);
+
+    expect(() => approvePersistedReviewAsReviewer("card-2", "newcomer")).toThrow(InsufficientReviewerPermissionError);
+    expect(getPeerReview("card-2")?.status).toBe("in_review");
+  });
+});
+
+describe("rejectPersistedReviewAsReviewer", () => {
+  it("rejects and saves when the reviewer's derived tier meets the minimum", () => {
+    makeVeteranReviewer("vet");
+    savePeerReview(IN_REVIEW_REVIEW);
+
+    const result = rejectPersistedReviewAsReviewer("card-2", "vet");
+
+    expect(result?.status).toBe("rejected");
+    expect(getPeerReview("card-2")?.status).toBe("rejected");
+  });
+
+  it("throws when the reviewer lacks the tier", () => {
+    savePeerReview(IN_REVIEW_REVIEW);
+    expect(() => rejectPersistedReviewAsReviewer("card-2", "newcomer")).toThrow(InsufficientReviewerPermissionError);
+  });
+});
+
+describe("publishPersistedReviewAsReviewer", () => {
+  it("publishes and saves when the reviewer's derived tier meets the minimum", () => {
+    makeVeteranReviewer("vet");
+    const approved: CardReview = { cardId: "card-3", status: "approved", comments: [] };
+    savePeerReview(approved);
+
+    const result = publishPersistedReviewAsReviewer("card-3", "vet");
+
+    expect(result?.status).toBe("published");
+    expect(getPeerReview("card-3")?.status).toBe("published");
+  });
+
+  it("throws when the reviewer lacks the tier", () => {
+    const approved: CardReview = { cardId: "card-3", status: "approved", comments: [] };
+    savePeerReview(approved);
+    expect(() => publishPersistedReviewAsReviewer("card-3", "newcomer")).toThrow(InsufficientReviewerPermissionError);
   });
 });

@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Debate AI — On-Page Card Reuse Check",
+  "version": "0.1.0",
+  "description": "Checks whether the page you're on has already been cut into the Shared Evidence Library, before you start cutting a new card.",
+  "permissions": ["activeTab", "storage"],
+  "action": {
+    "default_title": "Check this page for existing cards",
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html"
+}

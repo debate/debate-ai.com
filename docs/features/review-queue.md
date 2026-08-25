@@ -21,12 +21,30 @@ Every persisted `CardReview` (from `state/peerReviews.ts`, keyed by
 | Unresolved-blocking warning | Shown whenever `getUnresolvedBlockingComments` is non-empty — approval is blocked until they're resolved |
 | Summary | `buildReviewSummary(review)` |
 
-A form at the top starts a new card's review (`createCardReview`), and each
-review card has an "Add comment" form (reviewer id, severity, body) and a
-"Remove" action. A `rejected` review gets a "Revise" action
-(`reviseRejectedReview`), sending it back to `draft` so its author can revise
-and resubmit — the `ALLOWED_TRANSITIONS.rejected = ["draft"]` edge the state
-machine already permitted.
+A form at the top starts a new card's review (`createCardReview`, with an
+optional Author ID), and each review card has an "Add comment" form
+(reviewer id, severity, body) and a "Remove" action. A `rejected` review gets
+a "Revise" action (`reviseRejectedReview`), sending it back to `draft` so its
+author can revise and resubmit — the `ALLOWED_TRANSITIONS.rejected = ["draft"]`
+edge the state machine already permitted.
+
+### Self-review guard
+
+Approve, reject, and publish each require a reviewer id (passed by whichever
+caller drives them — see "Reviewer permission gating" below) and reject the
+attempt when that id matches the review's own `authorId`:
+
+- `ReviewerIdRequiredError` — no reviewer id was given
+- `SelfReviewNotAllowedError` — the reviewer id matches `CardReview.authorId`
+
+A review started with no author id (the Author ID field on the start-review
+form was left blank, or the review predates this field) has nothing to guard
+against, matching this repo's "works standalone, gated further once the
+gating data exists" convention — any reviewer id is accepted. The reviewer
+id that successfully took the last gatekeeping action is recorded on
+`CardReview.reviewedBy` and shown in the panel's summary line. Submitting,
+commenting, and requesting changes stay open to anyone, including a review's
+own author.
 
 ## Data flow
 
@@ -73,7 +91,50 @@ published again. `state/evidenceLibraryEntries.ts`'s `isEntryLive`/
 `isCardLive`), and `EvidenceLibraryPanel` renders a "Pending review" section
 listing every held-back entry so its author can still find and edit it.
 
+## Reviewer permission gating
+
+Approving, rejecting, and publishing — the three transitions that move a card
+toward or away from actually going live — are gated on the acting reviewer's
+own contribution record, on top of the self-review guard above. This closes
+follow-up (b) named under the "🗣️ Peer Review System" bullet in TODO.md
+("reviewer identity/permission checks").
+
+This repo has no auth/roles system, so rather than fabricating a role model,
+`lib/reviewer-permissions.ts` derives permission from the reviewer's existing
+[Progress Unlocks](./progress-unlocks.md) `UnlockTier` — the same
+"derive eligibility from a contributor's own track record instead of a
+caller-supplied value" approach `lib/tiered-task-routing.ts` already uses for
+task routing. A reviewer needs `MIN_REVIEWER_TIER` (`veteran`: 15
+contributions and 100 helpfulness points, or 8 completed research tasks) to
+take a gated action; below that,
+`InsufficientReviewerPermissionError` is thrown and the stored review is left
+untouched. Submitting, requesting changes, commenting, and resolving comments
+stay open to anyone.
+
+```
+panels/ReviewQueuePanel.tsx ("Your reviewer ID" field)
+  → state/peerReviews.ts's approve/reject/publishPersistedReviewAsReviewer
+  → derivePersistedReviewerTier(reviewerId)
+      → state/contributions.ts's buildPersistedLeaderboard()
+      → lib/reviewer-permissions.ts's deriveReviewerTier
+        → lib/progress-unlocks.ts's computeContributorTier
+  → lib/reviewer-permissions.ts's approve/reject/publishReviewAsReviewer
+    → requirePermission (tier check)
+    → lib/peer-review.ts's own transition (self-review guard, state machine,
+      and blocking-comment checks still apply, after the tier check)
+  → savePeerReview(review)
+```
+
+A reviewer with no persisted contributions at all derives `novice`, not an
+error — the same "every contributor satisfies `novice` at minimum" rule
+`progress-unlocks.ts` already applies. A reviewer who clears the tier
+threshold can still be rejected by the self-review guard above if their id
+matches the review's own `authorId`.
+
 ## Known gaps
 
-- No reviewer identity/permission checks (no auth/roles in this repo yet),
-  so any visitor can act as any reviewer and take any lifecycle action.
+- Reviewer identity is still a free-form id typed into the panel, not an
+  authenticated user — the tier gate reflects that id's contribution record
+  and the self-review guard checks it against the typed author id, but
+  nothing stops a visitor from typing someone else's id. A real identity
+  check needs the auth system this repo doesn't have yet.

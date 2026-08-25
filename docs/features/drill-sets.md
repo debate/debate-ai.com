@@ -34,6 +34,19 @@ template prompt line; a per-drill error message renders instead on
 failure. This is an actual, ready-to-read practice script (e.g. the real
 frontline response text), not another restatement of the template prompt.
 
+## Generating a drill set
+
+A "Generate drills for current round" form at the top of the panel derives
+and persists a new `DrillSetRecord` from the round workspace's currently
+selected flow (`state/store.ts`'s `useFlowStore` — the same mechanism
+`CoachingProgramsPanel`'s "Save current flow" action uses). Given a typed
+side (e.g. `aff`/`neg`), it calls `state/drillSets.ts`'s
+`buildAndSaveDrillSet`, which composes the existing `buildDrillSet` +
+`saveDrillSet` in one step; no new drill-generation logic. The action is
+disabled with an inline hint when no flow is currently selected in the
+workspace, and overwrites any existing drill set for that round, same as
+`saveDrillSet`.
+
 ## Data flow
 
 ```
@@ -42,6 +55,12 @@ state/drillSets.ts (localStorage: drillSets)
                                       by roundId then sideKey
   → panels/DrillSetsPanel.tsx      — renders it, grouped by round
   → apps/debate-ai.com/app/drills/page.tsx  — mounts the panel as a route
+
+Generating a round's drill set:
+panels/DrillSetsPanel.tsx
+  → buildAndSaveDrillSet(currentFlow, roundId, sideKey)  — state/drillSets.ts
+    → buildDrillSet(currentFlow, sideKey)  — flow/drill-generator.ts
+  → panel re-reads buildDrillSetsPanelView() to refresh
 
 Clearing a round's drill set:
 panels/DrillSetsPanel.tsx
@@ -68,10 +87,15 @@ introducing new drill-generation logic. A later slice closes follow-up
 panel's "Get AI script" action and `saveDrillAiScript`. Vitest-covered in
 `packages/debate-round/test/drillSets.test.ts`,
 `packages/debate-round/test/drill-script-ai.test.ts`, and
-`packages/debate-round/test/drill-script-client.test.ts`.
+`packages/debate-round/test/drill-script-client.test.ts`. A later slice adds
+`buildAndSaveDrillSet` to `state/drillSets.ts` and the panel's "Generate
+drills for current round" form, closing the "no affordance in this panel to
+generate a new drill set for a round" known gap — see "Generating a drill
+set" above. Vitest-covered in `packages/debate-round/test/drillSets.test.ts`
+(deriving and persisting a drill set from a flow, overwriting an existing
+record for the same round, and `collapseLimit` passing through to
+`buildDrillSet`).
 
 ## Known gaps
 
-- No affordance in this panel to generate a new drill set for a round —
-  a set only appears here once something elsewhere calls `buildDrillSet`
-  and `saveDrillSet` for that round.
+No follow-ups remain open on the "📚 AI Drill Generator" bullet.

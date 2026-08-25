@@ -12,6 +12,7 @@ import {
   summarizePriorMeetings,
   type RoundEventInfo,
 } from "../src/round/pre-round-briefing";
+import { saveOwnRoundHistoryRecord, type OwnRoundHistoryRecord } from "../src/state/ownRoundHistory";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {
@@ -242,6 +243,69 @@ describe("buildPreRoundBriefingFromStores", () => {
   it("behaves like buildPreRoundBriefing when no ids or profiles are supplied", () => {
     const briefing = buildPreRoundBriefingFromStores({ event: EVENT });
     expect(briefing).toEqual(buildPreRoundBriefing({ event: EVENT }));
+  });
+
+  it("resolves ownRecords from the persisted own-round-history store by opponentTeamId", () => {
+    const win: OwnRoundHistoryRecord = {
+      id: "log-1",
+      teamId: "self",
+      tournamentName: "Blake",
+      date: "2026-01-01",
+      division: "LD",
+      side: "aff",
+      won: true,
+      opponentTeamId: "OpponentA",
+    };
+    const loss: OwnRoundHistoryRecord = {
+      id: "log-2",
+      teamId: "self",
+      tournamentName: "Harvard",
+      date: "2026-02-01",
+      division: "LD",
+      side: "neg",
+      won: false,
+      opponentTeamId: "OpponentA",
+    };
+    const unrelated: OwnRoundHistoryRecord = {
+      id: "log-3",
+      teamId: "self",
+      tournamentName: "Greenhill",
+      date: "2026-03-01",
+      division: "LD",
+      side: "aff",
+      won: true,
+      opponentTeamId: "OpponentB",
+    };
+    saveOwnRoundHistoryRecord(win);
+    saveOwnRoundHistoryRecord(loss);
+    saveOwnRoundHistoryRecord(unrelated);
+
+    const briefing = buildPreRoundBriefingFromStores({ event: EVENT, opponentTeamId: "OpponentA" });
+
+    expect(briefing.priorMeetings).toEqual({ meetings: 2, wins: 1, losses: 1 });
+    const body = briefing.sections.find((s) => s.title === "Prior meetings")!.body;
+    expect(body).toBe("2 prior meeting(s): 1-1 record against this opponent.");
+  });
+
+  it("prefers explicitly supplied ownRecords over the persisted store", () => {
+    saveOwnRoundHistoryRecord({
+      id: "log-1",
+      teamId: "self",
+      tournamentName: "Blake",
+      date: "2026-01-01",
+      division: "LD",
+      side: "aff",
+      won: true,
+      opponentTeamId: "OpponentA",
+    });
+
+    const briefing = buildPreRoundBriefingFromStores({
+      event: EVENT,
+      opponentTeamId: "OpponentA",
+      ownRecords: [],
+    });
+
+    expect(briefing.priorMeetings).toEqual({ meetings: 0, wins: 0, losses: 0 });
   });
 });
 

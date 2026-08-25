@@ -66,9 +66,16 @@ timestamp wiring was needed (see
 
 - No scheduled job announces automatically — a person has to open the panel
   and click **Announce today's winner**.
-- No real-time updates across browser tabs/sessions — like every other
+- ~~No real-time updates across browser tabs/sessions — like every other
   localStorage-backed panel in this repo, the panel reflects a snapshot as of
-  its last load or action.
+  its last load or action.~~ Closed: `DailyBestCardPanel` now listens for the
+  browser's `storage` event (which fires only in *other* same-origin tabs,
+  never the tab that wrote the change) via
+  `state/live-update.ts#isDailyBestCardLiveUpdateStorageEvent` and refreshes
+  today's leader and the announced history when it fires for the
+  `contributions`/`dailyBestCardAnnouncements` keys, mirroring
+  `debate-round`'s identical `flow/live-update.ts` fix (see
+  [`flow-annotations.md`](flow-annotations.md)).
 - Any card submitted before `ContributionsFeedPanel.tsx` started stamping
   `submittedAt` (or submitted through some future flow that omits it) is
   excluded from every day's grouping.

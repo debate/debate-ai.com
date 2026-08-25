@@ -26,7 +26,12 @@ import { RoundEditorDialog } from "../dialogs/CreateRoundDialog"
 
 // Custom hooks
 import { useDebateFlowState } from "../hooks/useDebateFlowState"
-import { useInitialLoad, useFontSizeSettings, useFlowPersistence } from "../hooks/useFlowEffects"
+import {
+  useInitialLoad,
+  useFontSizeSettings,
+  useFlowPersistence,
+  useArgumentTreeAutoSync,
+} from "../hooks/useFlowEffects"
 import { useMobileDetection } from "../hooks/useMobileDetection"
 import { useFlowHandlers } from "../hooks/useFlowHandlers"
 import { useSpeechHandlers } from "../hooks/useSpeechHandlers"
@@ -34,6 +39,7 @@ import { useSplitModeHandlers } from "../hooks/useSplitModeHandlers"
 import { useTimerState } from "../hooks/useTimerState"
 import { useRoundFromSlug } from "../hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "../hooks/useSyncUrlWithRound"
+import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
 
 /**
  * Manages the entire debate flow experience with a modular, maintainable architecture:
@@ -72,9 +78,11 @@ export function DebateFlowPage() {
   useInitialLoad(setFlows, setRounds)
   useFontSizeSettings()
   useFlowPersistence(flows, setFlows)
+  useArgumentTreeAutoSync(flows, selected)
   useMobileDetection(state.setIsMobile)
   useRoundFromSlug()
   useSyncUrlWithRound()
+  const { onGridReady: onPrepNoteJumpGridReady } = useJumpToPrepNoteBox(gridApiRef)
 
   // Update document title when active round changes
   useEffect(() => {
@@ -310,6 +318,7 @@ export function DebateFlowPage() {
             currentFlow={currentFlow}
             splitMode={state.splitMode}
             gridApiRef={gridApiRef}
+            onFlowGridReady={onPrepNoteJumpGridReady}
             isMobile={state.isMobile}
             leftSpeech={leftSpeech}
             rightSpeech={rightSpeech}

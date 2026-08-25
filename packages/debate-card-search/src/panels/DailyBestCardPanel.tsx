@@ -31,6 +31,7 @@ import {
 } from "../state/dailyBestCardAnnouncements"
 import type { AttributedDailyBestCard } from "../state/contributions"
 import { buildDailyBestCardHighlight } from "../lib/daily-best-card"
+import { isDailyBestCardLiveUpdateStorageEvent } from "../state/live-update"
 
 /** Renders one announced day's winner, with the contributor who submitted it. */
 function AnnouncementRow({ announcement }: { announcement: AttributedDailyBestCard }) {
@@ -68,6 +69,21 @@ export function DailyBestCardPanel() {
 
   useEffect(() => {
     refresh()
+  }, [])
+
+  /**
+   * Live-update today's leader and history when another browser tab submits
+   * a card contribution or announces a winner. A `storage` event never
+   * fires in the tab that made the write, only in other tabs — same-tab
+   * changes already refresh via `handleAnnounce` above.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isDailyBestCardLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   const handleAnnounce = () => {

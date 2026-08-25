@@ -26,11 +26,16 @@
  * tab's URL.
  *
  * Reads the persisted evidence repository via
- * `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibrary`
- * (itself a thin composition of `shared-evidence-library.ts`'s pure
- * `searchEvidenceLibrary` against the persisted store) and renders a
- * free-text/kind search box over it, reusing the existing search/ranking
- * logic directly rather than introducing new logic here. The submission
+ * `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`
+ * (itself a thin composition of `evidence-search-index.ts`'s pure
+ * `buildEvidenceSearchIndex`/`searchEvidenceLibraryWithIndex` against the
+ * persisted store) and renders a free-text/kind search box over it, reusing
+ * the existing search/ranking logic directly rather than introducing new
+ * logic here — this closes the remaining half of follow-up (c) named under
+ * the "📋 Shared Evidence Library" bullet in TODO.md ("wiring the panel to
+ * [the real search index]"), left open by the index's original PR. The
+ * older keyword-overlap `searchPersistedEvidenceLibrary` stays exported for
+ * any other caller, unchanged. The submission
  * form saves a new `EvidenceLibraryEntry` via the already-persisted
  * `saveEvidenceLibraryEntry`, stamping `wordCount` from the submitted body
  * text via the pure `computeWordCount` rather than asking the submitter to
@@ -50,10 +55,14 @@
  * `shared-evidence-library.ts`'s pure `checkPageForExistingCards`) and
  * renders whether that page has already been cut, plus every matching
  * entry. The submission form's new optional Source URL field is how an
- * entry's `sourceUrl` gets recorded in the first place. There is no browser
- * extension in this repo yet — this panel is the check's only caller today;
- * an extension would call the same persisted/pure functions against the
- * current tab's URL instead of a pasted one.
+ * entry's `sourceUrl` gets recorded in the first place. A `?checkUrl=`
+ * query param (read via `next/navigation`'s `useSearchParams`) pre-fills
+ * and auto-runs the same check — the deep link the `extension/card-reuse-
+ * checker` browser extension opens against the active tab's URL, since the
+ * evidence repository lives in this app's own localStorage and an
+ * extension (a different origin) can't read it directly. See
+ * `buildReuseCheckDeepLink` in `lib/shared-evidence-library.ts` and the
+ * extension's own README.
  *
  * @module panels/EvidenceLibraryPanel
  */
@@ -61,6 +70,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -74,7 +84,7 @@ import {
   listPersistedTags,
   saveEvidenceLibraryEntry,
   saveEvidenceLibraryEntryRevision,
-  searchPersistedEvidenceLibrary,
+  searchPersistedEvidenceLibraryWithIndex,
 } from "../state/evidenceLibraryEntries"
 import { getPeerReview } from "../state/peerReviews"
 import {
@@ -167,12 +177,26 @@ export function EvidenceLibraryPanel() {
   const [reuseCheckResult, setReuseCheckResult] = useState<PageReuseCheckResult | null>(null)
   const [remoteReuseCheckResult, setRemoteReuseCheckResult] = useState<RemotePageReuseCheckResult | null>(null)
   const [remoteReuseCheckError, setRemoteReuseCheckError] = useState<string | null>(null)
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     setHasEntries(listEvidenceLibraryEntries().length > 0)
     setKnownTags(listPersistedTags())
     setPendingEntries(listPendingReviewEntries())
   }, [])
+
+  // Deep-linked from the `extension/card-reuse-checker` browser extension
+  // (or any other caller) via a `?checkUrl=` query param — pre-fills and
+  // runs the "Check this page" box automatically, standing in for a
+  // same-origin API the extension can't reach directly (see
+  // `buildReuseCheckDeepLink` in `lib/shared-evidence-library.ts`).
+  useEffect(() => {
+    const checkUrl = searchParams?.get("checkUrl")
+    if (!checkUrl) return
+    setReuseCheckUrl(checkUrl)
+    setReuseCheckResult(checkPersistedPageForExistingCards(checkUrl))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   const buildQuery = () =>
     buildEvidenceSearchFormQuery({
@@ -185,12 +209,12 @@ export function EvidenceLibraryPanel() {
 
   useEffect(() => {
     if (hasEntries === null) return
-    setResults(searchPersistedEvidenceLibrary(buildQuery()))
+    setResults(searchPersistedEvidenceLibraryWithIndex(buildQuery()))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasEntries, queryText, kind, filterTopic, filterCaseArea, filterTags])
 
   const refreshResults = () => {
-    setResults(searchPersistedEvidenceLibrary(buildQuery()))
+    setResults(searchPersistedEvidenceLibraryWithIndex(buildQuery()))
     setHasEntries(true)
     setKnownTags(listPersistedTags())
     setPendingEntries(listPendingReviewEntries())
@@ -449,8 +473,10 @@ export function EvidenceLibraryPanel() {
         <div>
           <h2 className="text-sm font-medium text-foreground">Check this page</h2>
           <p className="text-xs text-muted-foreground">
-            Paste a page URL to see whether anyone has already cut a card from it — the check a
-            browser extension would run on the current tab before you start cutting.
+            Paste a page URL to see whether anyone has already cut a card from it before you start
+            cutting. The <code>card-reuse-checker</code> browser extension runs this same check
+            automatically for the page you're on — see{" "}
+            <code>extension/card-reuse-checker</code> in the repo to install it.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">

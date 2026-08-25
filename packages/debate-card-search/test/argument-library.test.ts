@@ -12,6 +12,8 @@ import {
   groupCardsByCaseArea,
   groupCardsByTopic,
   parseTagsInput,
+  renameTagAcrossCards,
+  renameTagInList,
   suggestTags,
   type LibraryCard,
 } from "../src/lib/argument-library";
@@ -337,5 +339,60 @@ describe("buildLibraryCardsFromContributions", () => {
 
   it("returns an empty array when no contribution is tagged for the library", () => {
     expect(buildLibraryCardsFromContributions([makeContribution()])).toEqual([]);
+  });
+});
+
+describe("renameTagInList", () => {
+  it("replaces the tag when present", () => {
+    expect(renameTagInList(["climate", "impact"], "climate", "warming")).toEqual(["impact", "warming"]);
+  });
+
+  it("returns the exact same array reference when the tag isn't present", () => {
+    const tags = ["impact"];
+    expect(renameTagInList(tags, "climate", "warming")).toBe(tags);
+  });
+
+  it("dedupes when the target tag is already present", () => {
+    expect(renameTagInList(["climate", "warming"], "climate", "warming")).toEqual(["warming"]);
+  });
+});
+
+describe("renameTagAcrossCards", () => {
+  it("renames the tag on every card that carries it, leaving others untouched", () => {
+    const { cards: updated, changedCount } = renameTagAcrossCards(cards, "climate", "warming");
+
+    expect(changedCount).toBe(3);
+    expect(updated.find((card) => card.id === "warming-1")!.tags).toEqual(["impact", "warming"]);
+    expect(updated.find((card) => card.id === "warming-2")!.tags).toEqual(["warming"]);
+    expect(updated.find((card) => card.id === "case-1")!.tags).toEqual(["solvency", "warming"]);
+    // A card never carrying the old tag is returned as the exact same reference.
+    const untouched = updated.find((card) => card.id === "states-1")!;
+    expect(untouched).toBe(cards.find((card) => card.id === "states-1"));
+  });
+
+  it("merges into an existing tag name instead of duplicating it", () => {
+    const { cards: updated, changedCount } = renameTagAcrossCards(cards, "impact", "climate");
+
+    expect(changedCount).toBe(1);
+    expect(updated.find((card) => card.id === "warming-1")!.tags).toEqual(["climate"]);
+  });
+
+  it("is a safe no-op when the tag isn't used anywhere", () => {
+    const { cards: updated, changedCount } = renameTagAcrossCards(cards, "nonexistent", "whatever");
+
+    expect(changedCount).toBe(0);
+    expect(updated).toEqual(cards);
+  });
+
+  it("throws when oldTag is blank", () => {
+    expect(() => renameTagAcrossCards(cards, "  ", "warming")).toThrow();
+  });
+
+  it("throws when newTag is blank", () => {
+    expect(() => renameTagAcrossCards(cards, "climate", "  ")).toThrow();
+  });
+
+  it("throws when oldTag and newTag are the same", () => {
+    expect(() => renameTagAcrossCards(cards, "climate", "climate")).toThrow();
   });
 });
