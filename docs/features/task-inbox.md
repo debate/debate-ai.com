@@ -166,6 +166,29 @@ Vitest-covered in `test/session-identity.test.ts` — no changes to
 the single source of truth the panel's client-side gate is layered in front
 of.
 
+## Cross-tab live update
+
+`TaskInboxPanel` subscribes to the browser's `storage` event (which the spec
+fires only in *other* same-origin tabs/windows, never the one that made the
+write), so a topic routed, task marked done, or task verified in a second
+tab refreshes this tab's topics/awaiting-verification view without a manual
+reload. A new pure helper,
+`state/live-update.ts`'s `isTaskInboxLiveUpdateStorageEvent`, checks
+whether the event's `key` is one of this panel's backing stores
+(`routedTaskQueues`, `pendingTaskVerifications`, `trackedArguments`), or
+`null` for a `localStorage.clear()`; when it is, the panel re-derives
+`topics`/`pending`/`trackedTopics` via the same calls its mount effect
+already makes. This closes, for this panel, the "Every other
+localStorage-backed panel in this repo still has no cross-tab live-update
+mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), mirroring the existing
+`DailyBestCardPanel`/`ContributionLeaderboardPanel` precedent (see
+[`contribution-leaderboard.md`](contribution-leaderboard.md)'s "Cross-tab
+live update"). Vitest-covered in
+`packages/debate-card-search/test/live-update.test.ts` (every backing-store
+key, the `null`-key clear-all case, and unrelated/substring-matching keys
+staying ignored).
+
 ## Known gaps
 
 - The "My tasks" filter is still free-form text, not a login — a real

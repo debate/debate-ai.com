@@ -6,6 +6,37 @@
 _No task currently in progress._
 
 ### Completed
+- **Task Inbox — cross-tab live update.**
+  Closes, for `TaskInboxPanel`, the "Every other localStorage-backed panel
+  in this repo still has no cross-tab live-update mechanism" Known gap
+  noted in `shared-flow-sync.md`, previously closed only for
+  `DailyBestCardPanel`/`ContributionLeaderboardPanel`
+  (`debate-card-search/src/state/live-update.ts`) and `FlowSpreadsheet`
+  (`debate-round/src/flow/live-update.ts`). `state/live-update.ts` gains a
+  third helper alongside the existing `isDailyBestCardLiveUpdateStorageEvent`/
+  `isContributionLeaderboardLiveUpdateStorageEvent`:
+  `TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS` (`routedTaskQueues`,
+  `pendingTaskVerifications`, `trackedArguments` — the three persisted
+  stores `TaskInboxPanel`'s `buildTaskInboxView`/
+  `listPendingTaskVerifications`/`listTrackedTopics` calls read from) plus
+  `isTaskInboxLiveUpdateStorageEvent`, mirroring the existing null-key/
+  exact-key-match rules. `TaskInboxPanel.tsx` subscribes to the browser's
+  `storage` event (fires only in *other* same-origin tabs/windows, never
+  the one that made the write) and re-derives `topics`/`pending`/
+  `trackedTopics` when it fires for one of those keys, so a teammate
+  routing a topic, marking a task done, or verifying one in a second tab
+  now refreshes this tab's Task Inbox view without a manual reload. Docs
+  updated at `docs/features/task-inbox.md` (new "Cross-tab live update"
+  section) and `docs/features/shared-flow-sync.md` (cross-reference).
+  Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`
+  (every backing-store key, the `null`-key clear-all case, and unrelated/
+  substring-matching keys staying ignored). Verified: `bun install` (2062
+  packages), `bun run test` (174 files / 2624 tests, all pass), `bun run
+  typecheck` (12 of 12 in-scope packages pass), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/cards/inbox` route present) all pass. No
+  repo-wide `lint` script exists. PR:
+  https://github.com/debate/debate-ai.com/pull/327 (opened for this
+  change).
 - **Collaboration Prep Room — signed-in identity prefill for "Your ID".**
   Continues the signed-in identity wiring series (PRs #318-#323). The Prep
   Room's "Your ID" presence field (feeds the "I'm active here" heartbeat)
