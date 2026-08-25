@@ -6,6 +6,58 @@
 _No task currently in progress._
 
 ### Completed
+- **Task Inbox — verification step before a task counts complete.**
+  [PR #316](https://github.com/debate/debate-ai.com/pull/316).
+  Closes the "No reviewer/verification step before a task is marked
+  complete — any visitor can mark any assignment done" Known gap recorded
+  in `docs/features/task-inbox.md` under the "🧭 Research Task Routing"
+  bullet in this file's Research Crowdsourcing Organizer Features section —
+  the only safely-startable open follow-up left anywhere in this file; every
+  other idea/bullet was already marked "No follow-ups remain open," and the
+  remaining four (idea #1's Tabroom scraper, idea #12's real data sources,
+  and the Opponent Team Profiles/Judge Profiles bullets' real data sources)
+  are recorded as a confirmed, out-of-scope blocker in "Confirmed blocker:
+  Tabroom results/pairings/ballot data" above. `packages/debate-card-search`
+  gains `lib/task-verification.ts`'s `assertVerifierAllowed` — mirroring
+  `lib/peer-review.ts`'s self-review guard on approve/reject/publish — which
+  requires a verifier id different from a task's own assignee, throwing
+  `VerifierIdRequiredError`/`SelfVerificationNotAllowedError` otherwise. A
+  new `state/pendingTaskVerifications.ts` store holds a task marked done but
+  not yet verified, with `markRoutedTaskAwaitingVerification` composing the
+  existing `completePersistedRoutedTask` (still removes the assignment from
+  its active queue and decrements the assignee's `activeTaskCount`
+  immediately) without crediting it. `state/researchProgress.ts` gains
+  `verifyAndRecordResearchTask`, which only appends a `CompletedTaskRecord`
+  (now also carrying `markedDoneAt`/`verifiedBy`) once the guard passes,
+  removing the pending record. The existing `completeAndRecordResearchTask`
+  is unchanged — still credits a completion immediately with no
+  verification required — so this is additive, not breaking: every other
+  existing caller (including the unrelated `topicSprints.test.ts`/
+  `unlock-streak-status.test.ts` fixture setup) keeps working exactly as
+  before. `panels/TaskInboxPanel.tsx`'s "Mark complete" action is now "Mark
+  done," which moves a task into a new "Awaiting verification" section; a
+  "Verify" action there (a per-row verifier-id field) calls the gated path
+  and shows an inline error (still pending) if the guard rejects it. Vitest-
+  covered in new `test/task-verification.test.ts` (the guard: trims,
+  requires a non-blank id, rejects self-verification) and
+  `test/pendingTaskVerifications.test.ts` (mark-done's queue/activeTaskCount
+  side effects and pending-store CRUD, mirroring `routedTaskQueues.test.ts`'s
+  conventions), plus new cases in `test/researchProgress.test.ts`
+  (`verifyAndRecordResearchTask` credits on a valid different verifier,
+  returns `undefined` for a topic/argBlock with nothing pending, throws and
+  leaves the task pending for a blank or self-matching verifier id, and
+  leaves `completeAndRecordResearchTask`'s direct/unverified credit path
+  unaffected). Docs updated in `docs/features/task-inbox.md`: "What it
+  shows" and the data-flow section describe the mark-done/verify two-step
+  flow, and the Known gap is struck as closed (noting verification is still
+  a free-form id, not an authenticated reviewer — the same gap every other
+  free-form-id action in this repo has). `bun install` (2062 packages),
+  `bun x turbo typecheck` (all 12 typecheck-enabled packages pass),
+  `bunx vitest run` on the four new/changed test files (87 tests pass),
+  `bun run test` (170 files / 2557 tests, all pass, up from 167 files / 2527
+  tests), and `bun run build:web` (`debate-ai-web`, succeeds, `/cards/inbox`
+  route present, no route changes) all pass. No repo-wide `lint` script
+  exists. **Completed:** 2026-08-25.
 - **CX NDCA Standings — custom qualification points table.**
   [PR #315](https://github.com/debate/debate-ai.com/pull/315).
   Advances idea #1's follow-up (b) ("a real, circuit-sourced
