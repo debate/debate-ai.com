@@ -6,6 +6,42 @@
 _No task currently in progress._
 
 ### Completed
+- **Prep Notes — "jump to argument" failure message.**
+  Closes the "If a note's `boxPath` no longer resolves to a real grid row
+  (e.g. the flow was edited since the note was made), `jumpToBoxInGrid`
+  silently returns `false`... nothing scrolls or flashes, and no error is
+  shown" Known gap recorded in `docs/features/prep-notes.md`.
+  `packages/debate-round/src/flow/edit-cells.ts` gains a bounded retry
+  budget for the Prep Notes "jump to argument" deep link: a new
+  `MAX_BOX_JUMP_ATTEMPTS` constant (5), `hasExhaustedBoxJumpAttempts`, and
+  `buildBoxJumpFailedMessage` (the user-facing text). `hooks/useJumpToPrepNoteBox.ts`
+  now retries `jumpToBoxInGrid` every 200ms — instead of the old single
+  `setTimeout(0)` attempt plus a one-shot `onGridReady` retry — until it
+  succeeds or the retry budget is exhausted, at which point it reports a new
+  `jumpFailed` boolean (and a `dismissJumpFailed` action) instead of quietly
+  giving up forever. Along the way this also fixes a latent bug: the old
+  retry effect depended on `[selected, gridApiRef]` only, so a second jump
+  to a different note in the *same* already-selected flow tab never
+  re-triggered a retry attempt at all; the effect now also depends on the
+  jump's `targetKey`. `DebateFlowPage` (`panels/DebateRoundPanel.tsx`) wires
+  `jumpFailed`/`dismissJumpFailed` into a small dismissible banner above the
+  flow grid, showing `buildBoxJumpFailedMessage()`'s text with a "×" button.
+  Docs updated in `docs/features/prep-notes.md`: the "Jump to argument"
+  section documents the retry budget and failure banner, and the Known gaps
+  section's "silently returns `false`... no error is shown" bullet is struck
+  through. No repo-wide `lint` script exists (checked root/app/package
+  `package.json` scripts) so none was run. `useJumpToPrepNoteBox`/
+  `DebateFlowPage` are hooks/panel components, not pure logic, so — matching
+  this repo's existing convention of Vitest-covering pure state/engine logic
+  rather than React hooks or `.tsx` panel components directly (e.g.
+  `reason-editor-outline-nav.md`'s identical note about `OutlineNavPanel`) —
+  they're verified via `bun run build:web` instead; the new pure
+  `hasExhaustedBoxJumpAttempts`/`buildBoxJumpFailedMessage` helpers are
+  Vitest-covered directly. Verified: `bun install`, `bun run test` (166
+  files / 2510 tests, all pass — 4 new), `bun run typecheck` (12 of 13
+  in-scope packages have a typecheck script; all pass), and `bun run
+  build:web` (`debate-ai-web`, succeeds, `/debate` and `/prep-notes` routes
+  present, no route changes) all pass. **Completed:** 2026-08-25.
 - **Shared Flow Sync — live-sync toggle in `SharedFlowSyncPanel`.**
   [PR #310](https://github.com/debate/debate-ai.com/pull/310).
   Closes the "`SharedFlowSyncPanel`/`CoachHub` do not surface the sync

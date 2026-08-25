@@ -8,12 +8,14 @@
  */
 
 import { useRef, useEffect } from "react"
+import { X } from "lucide-react"
 import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
 import { settings } from "../state/settings"
 import type { Flow } from "debate-core/src/types/flow"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "debate-ui/src/primitives/resizable"
 import { Sheet, SheetContent } from "debate-ui/src/primitives/sheet"
+import { buildBoxJumpFailedMessage } from "../flow/edit-cells"
 
 // Modular components
 import { FlowPageSidebar } from "../layout/FlowPageSidebar"
@@ -82,7 +84,11 @@ export function DebateFlowPage() {
   useMobileDetection(state.setIsMobile)
   useRoundFromSlug()
   useSyncUrlWithRound()
-  const { onGridReady: onPrepNoteJumpGridReady } = useJumpToPrepNoteBox(gridApiRef)
+  const {
+    onGridReady: onPrepNoteJumpGridReady,
+    jumpFailed: prepNoteJumpFailed,
+    dismissJumpFailed: dismissPrepNoteJumpFailed,
+  } = useJumpToPrepNoteBox(gridApiRef)
 
   // Update document title when active round changes
   useEffect(() => {
@@ -307,6 +313,19 @@ export function DebateFlowPage() {
    */
   const mainContentArea = (
     <div className="h-full flex flex-col overflow-hidden p-2">
+      {prepNoteJumpFailed && (
+        <div className="mb-2 flex items-center justify-between gap-2 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <span>{buildBoxJumpFailedMessage()}</span>
+          <button
+            type="button"
+            onClick={dismissPrepNoteJumpFailed}
+            aria-label="Dismiss"
+            className="shrink-0 rounded p-0.5 hover:bg-destructive/20"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
       {/* Resizable Panels */}
       <ResizablePanelGroup
         orientation="horizontal"
