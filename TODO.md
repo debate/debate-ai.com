@@ -7,7 +7,7 @@ _No task currently in progress._
 
 ### Completed
 - **Task Inbox — verification step before a task counts complete.**
-  PR: not yet created.
+  [PR #316](https://github.com/debate/debate-ai.com/pull/316).
   Closes the "No reviewer/verification step before a task is marked
   complete — any visitor can mark any assignment done" Known gap recorded
   in `docs/features/task-inbox.md` under the "🧭 Research Task Routing"
