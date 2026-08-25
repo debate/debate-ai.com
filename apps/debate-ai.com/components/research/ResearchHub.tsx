@@ -23,17 +23,13 @@ import {
   ArgumentLibraryPanel,
   BrainstormBoardPanel,
   CardScoringPanel,
-  ContributionLeaderboardPanel,
   ContributionsFeedPanel,
   ContributorAwardsPanel,
   DailyBestCardPanel,
-  DailyQuestsPanel,
   EvidenceLibraryPanel,
   GroupChallengesPanel,
   PrepRoomPanel,
-  ProgressUnlocksPanel,
   QuestStreaksPanel,
-  ResearchProgressPanel,
   ReviewQueuePanel,
   RevisionIncentivesPanel,
   SprintNotesPanel,
@@ -41,6 +37,10 @@ import {
   TopicSprintPanel,
 } from "debate-card-search"
 import { TaskInboxWithIdentity } from "./TaskInboxWithIdentity"
+import { ContributionLeaderboardWithIdentity } from "./ContributionLeaderboardWithIdentity"
+import { ProgressUnlocksWithIdentity } from "./ProgressUnlocksWithIdentity"
+import { ResearchProgressWithIdentity } from "./ResearchProgressWithIdentity"
+import { DailyQuestsWithIdentity } from "./DailyQuestsWithIdentity"
 import type { TrackedArgument } from "debate-card-search/src/lib/topic-coverage"
 import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import { listEvidenceLibraryEntries } from "debate-card-search/src/state/evidenceLibraryEntries"
@@ -157,14 +157,14 @@ export function ResearchHub() {
 
       {section === "Progress" ? (
         <div className="flex flex-col gap-4">
-          <ResearchProgressPanel />
-          <ProgressUnlocksPanel />
+          <ResearchProgressWithIdentity />
+          <ProgressUnlocksWithIdentity />
         </div>
       ) : null}
 
       {section === "Quests" ? (
         <div className="flex flex-col gap-4">
-          <DailyQuestsPanel />
+          <DailyQuestsWithIdentity />
           <QuestStreaksPanel />
           <GroupChallengesPanel />
         </div>
@@ -172,7 +172,7 @@ export function ResearchHub() {
 
       {section === "Rewards" ? (
         <div className="flex flex-col gap-4">
-          <ContributionLeaderboardPanel />
+          <ContributionLeaderboardWithIdentity />
           <ContributorAwardsPanel />
           <ContributionsFeedPanel />
           <DailyBestCardPanel />

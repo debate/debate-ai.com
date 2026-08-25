@@ -18,6 +18,13 @@
  * `state/researchProgress.ts`'s `deleteCompletedTaskHistoryForTopic` and
  * re-reading the board.
  *
+ * An optional `signedInContributorId` prop (built from
+ * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`
+ * against a real signed-in session) highlights that contributor's own row
+ * with a "You" badge via `isOwnContributorRow` — this roster always shows
+ * every contributor, so unlike Task Inbox's "My tasks" prefill there is
+ * nothing to filter or prefill here, only to highlight.
+ *
  * @module panels/ResearchProgressPanel
  */
 
@@ -38,7 +45,18 @@ import {
   buildPersistedResearchProgressBoard,
   deleteCompletedTaskHistoryForTopic,
 } from "../state/researchProgress"
+import { isOwnContributorRow } from "../lib/session-identity"
 import type { ContributorProgress } from "../lib/research-progress"
+
+export interface ResearchProgressPanelProps {
+  /**
+   * A contributor id to highlight as "You" in the roster, typically derived
+   * from a real signed-in session via `deriveContributorIdFromSessionIdentity`.
+   * This roster always shows every contributor — this only highlights a
+   * matching row, it never filters the others out.
+   */
+  signedInContributorId?: string
+}
 
 /**
  * Renders the Research Progress roster: every contributor with either a
@@ -48,7 +66,7 @@ import type { ContributorProgress } from "../lib/research-progress"
  * Reads localStorage on mount only (client-side), so it renders an empty
  * state during SSR/hydration rather than throwing.
  */
-export function ResearchProgressPanel() {
+export function ResearchProgressPanel({ signedInContributorId }: ResearchProgressPanelProps = {}) {
   const [roster, setRoster] = useState<ContributorProgress[] | null>(null)
 
   useEffect(() => {
@@ -89,9 +107,20 @@ export function ResearchProgressPanel() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {roster.map((progress) => (
-            <TableRow key={progress.contributorId}>
-              <TableCell className="font-medium">{progress.contributorId}</TableCell>
+          {roster.map((progress) => {
+            const isMe = isOwnContributorRow(progress.contributorId, signedInContributorId)
+            return (
+            <TableRow key={progress.contributorId} className={isMe ? "bg-primary/5" : undefined}>
+              <TableCell className="font-medium">
+                <div className="flex items-center gap-1.5">
+                  {progress.contributorId}
+                  {isMe && (
+                    <Badge variant="outline" className="whitespace-nowrap">
+                      You
+                    </Badge>
+                  )}
+                </div>
+              </TableCell>
               <TableCell className="text-muted-foreground">
                 {progress.contributionStats === null
                   ? "—"
@@ -128,7 +157,8 @@ export function ResearchProgressPanel() {
                 )}
               </TableCell>
             </TableRow>
-          ))}
+            )
+          })}
         </TableBody>
       </Table>
     </div>

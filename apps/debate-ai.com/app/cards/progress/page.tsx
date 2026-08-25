@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { ProgressUnlocksPanel } from "debate-card-search"
+import { ProgressUnlocksWithIdentity } from "@/components/research/ProgressUnlocksWithIdentity"
 
 export const metadata: Metadata = {
   title: "Progress Unlocks",
@@ -23,7 +23,7 @@ export default function CardsProgressPage() {
         </Link>
       </div>
       <Suspense>
-        <ProgressUnlocksPanel />
+        <ProgressUnlocksWithIdentity />
       </Suspense>
     </div>
   )

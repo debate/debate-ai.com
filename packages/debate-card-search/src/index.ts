@@ -7,5 +7,6 @@ export * from "./panels";
 export * from "./types";
 export {
   deriveContributorIdFromSessionIdentity,
+  isOwnContributorRow,
   type SessionIdentity,
 } from "./lib/session-identity";

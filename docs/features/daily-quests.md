@@ -29,7 +29,8 @@ there is no contributor identity/auth in this repo, the same known gap as
 on demand and see their reward right on the quest board itself: their
 current streak, a badge freshly earned today (highlighted separately from
 badges earned on prior days), and a nudge to keep the streak going when
-today's mission isn't complete yet.
+today's mission isn't complete yet. A signed-in visitor sees this field
+prefilled with their own id — see "Signed-in prefill" below.
 
 ## Data flow
 
@@ -77,7 +78,25 @@ state/contributions.ts (localStorage: contributions)
       hands both lists to lib/daily-quests.ts's buildDailyQuestBoard
   → panels/DailyQuestsPanel.tsx                                (renders the board)
   → apps/debate-ai.com/app/cards/quests/page.tsx                (mounts the panel)
+
+Signed-in prefill for "Your streak" (apps/debate-ai.com only):
+components/research/DailyQuestsWithIdentity.tsx  — "use client" wrapper
+  → useSession()                          — lib/hooks/useSession.ts, the
+                                              better-auth React session hook
+  → deriveContributorIdFromSessionIdentity(user)
+      — debate-card-search's lib/session-identity.ts: name, else the
+        email's local part, else the raw account id, else ""
+  → <DailyQuestsPanel signedInContributorId={...} />
+      — seeds contributorId's initial value only (and immediately loads that
+        contributor's streak); a visitor who edits the field
+        (hasEditedContributorId) keeps their own typed value from then on,
+        mirroring TaskInboxPanel's "My tasks" prefill exactly
 ```
+
+`app/cards/quests/page.tsx` and `ResearchHub.tsx`'s Quests tab both render
+`DailyQuestsWithIdentity` instead of `DailyQuestsPanel` directly, so the
+panel itself stays app-agnostic — it only knows about a plain
+`signedInContributorId` string prop, not `better-auth`.
 
 `lib/daily-quests.ts`'s pure aggregation (`computeQuestProgress`,
 `buildDailyQuestBoard`, `buildQuestBoardSummaryText`,
@@ -132,8 +151,12 @@ template untouched, and removes only the expired template among several).
 
 ## Known gaps
 
-- No contributor identity/auth scoping yet — the board isn't scoped to "my
-  quests," the same known gap as the Leaderboard, Task Inbox, and Progress
+- No contributor identity/permission *checks* — the "Your streak" field
+  stays free-form text, not a login, so anyone can still type any
+  contributor's id to record a mission or view a streak under it. A real
+  signed-in session now *prefills* the field when one exists (see
+  "Signed-in prefill" above), but nothing stops a visitor from overwriting
+  it — the same known gap as the Leaderboard, Task Inbox, and Progress
   Unlocks panels.
 - Contributions saved before this change don't carry `submittedAt`/
   `argBlock` and are excluded from quest scoring (not retroactively

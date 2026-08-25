@@ -18,6 +18,13 @@
  * remove them from the stored roster entirely — closing the "a quest
  * template has no expiry" Known gap.
  *
+ * An optional `signedInContributorId` prop (built from
+ * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`
+ * against a real signed-in session) prefills the "Your streak" contributor
+ * id field's *initial* value only, mirroring `TaskInboxPanel`'s "My tasks"
+ * prefill exactly — a visitor who edits the field keeps whatever they
+ * typed, so this is a prefill, not a login.
+ *
  * @module panels/DailyQuestsPanel
  */
 
@@ -83,13 +90,25 @@ function todayUtcDayKey(): string {
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function DailyQuestsPanel() {
+export interface DailyQuestsPanelProps {
+  /**
+   * A contributor id to prefill the "Your streak" field with, typically
+   * derived from a real signed-in session via
+   * `deriveContributorIdFromSessionIdentity`. Only seeds the field's
+   * initial value — once a visitor edits it by hand, this prop is ignored
+   * for the rest of the panel's life so it never overwrites what they typed.
+   */
+  signedInContributorId?: string
+}
+
+export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProps = {}) {
   const [templates, setTemplates] = useState<QuestTemplate[] | null>(null)
   const [board, setBoard] = useState<QuestProgress[]>([])
   const [draft, setDraft] = useState<QuestDraft>(EMPTY_DRAFT)
   const [topic, setTopic] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [contributorId, setContributorId] = useState("")
+  const [hasEditedContributorId, setHasEditedContributorId] = useState(false)
   const [streak, setStreak] = useState<ContributorQuestStreak | null>(null)
   const [streakError, setStreakError] = useState<string | null>(null)
   const [pruneMessage, setPruneMessage] = useState<string | null>(null)
@@ -106,6 +125,14 @@ export function DailyQuestsPanel() {
   useEffect(() => {
     refresh()
   }, [])
+
+  useEffect(() => {
+    if (!hasEditedContributorId && signedInContributorId) {
+      setContributorId(signedInContributorId)
+      refreshStreak(signedInContributorId.trim())
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signedInContributorId, hasEditedContributorId])
 
   const handleAdd = () => {
     const description = draft.description.trim()
@@ -272,6 +299,7 @@ export function DailyQuestsPanel() {
               value={contributorId}
               onChange={(e) => {
                 const id = e.target.value
+                setHasEditedContributorId(true)
                 setContributorId(id)
                 refreshStreak(id.trim())
               }}
@@ -283,6 +311,9 @@ export function DailyQuestsPanel() {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
+            {signedInContributorId
+              ? "Prefilled from your signed-in account — edit it if your streak was recorded under a different contributor id. "
+              : ""}
             Records this contributor's mission result for today against their real, persisted
             contributions, then shows their streak and any badge it just earned.
           </p>

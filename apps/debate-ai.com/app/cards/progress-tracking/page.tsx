@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { ResearchProgressPanel } from "debate-card-search"
+import { ResearchProgressWithIdentity } from "@/components/research/ResearchProgressWithIdentity"
 
 export const metadata: Metadata = {
   title: "Research Progress",
@@ -23,7 +23,7 @@ export default function CardsProgressTrackingPage() {
         </Link>
       </div>
       <Suspense>
-        <ResearchProgressPanel />
+        <ResearchProgressWithIdentity />
       </Suspense>
     </div>
   )

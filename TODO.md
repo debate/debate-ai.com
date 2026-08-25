@@ -6,6 +6,53 @@
 _No task currently in progress._
 
 ### Completed
+- **Signed-in identity wiring — Leaderboard, Progress Unlocks, Research
+  Progress, Daily Quests.**
+  [PR #319](https://github.com/debate/debate-ai.com/pull/319).
+  Closes the follow-up PR #318 (Task Inbox's signed-in identity prefill)
+  flagged as still open: "the same 'no auth/identity system' Known gap is
+  recorded on the Leaderboard, Progress Unlocks, Research Progress
+  Tracking, and Daily Quests panels and remains open there as a follow-up
+  for a future run." `debate-card-search`'s `lib/session-identity.ts`
+  gains `isOwnContributorRow` (case-insensitive, trims both sides, `false`
+  whenever either side is blank), exported from the package root and
+  Vitest-covered in `test/session-identity.test.ts`.
+  `ContributionLeaderboardPanel`, `ProgressUnlocksPanel`, and
+  `ResearchProgressPanel` all gain an optional `signedInContributorId`
+  prop — unlike Task Inbox's "My tasks" field, these three are
+  all-contributor rosters with no existing free-form id field to prefill,
+  so a matching row is highlighted with a "You" badge instead of being
+  filtered; every other contributor's row is unaffected.
+  `DailyQuestsPanel` already had a free-form "Your streak" contributor-id
+  field, so it gains the same `signedInContributorId` prop wired the way
+  `TaskInboxPanel` prefills "My tasks": the field's *initial* value only
+  (via a new `hasEditedContributorId` flag), and the panel eagerly loads
+  that contributor's streak on mount. `apps/debate-ai.com` gains four thin
+  `"use client"` wrappers —
+  `components/research/ContributionLeaderboardWithIdentity.tsx`,
+  `ProgressUnlocksWithIdentity.tsx`, `ResearchProgressWithIdentity.tsx`,
+  and `DailyQuestsWithIdentity.tsx` — each reading the real session via
+  `lib/hooks/useSession.ts` and passing the derived id through, mirroring
+  `TaskInboxWithIdentity.tsx` exactly; `ResearchHub.tsx`'s Progress,
+  Quests, and Rewards tabs and the four standalone `app/cards/{leaderboard,
+  progress,progress-tracking,quests}/page.tsx` routes now render the
+  wrappers instead of the bare panels, so the panels themselves stay
+  app-agnostic. A signed-out visitor sees the exact same rosters/fields as
+  before. `docs/features/{contribution-leaderboard,progress-unlocks,
+  research-progress-tracking,daily-quests}.md` updated (new "Signed-in
+  row highlight"/"Signed-in prefill" data-flow sections, revised "Known
+  gaps" — each now explicitly notes this is a highlight/prefill, not a
+  permission check). Verification: `bunx vitest run
+  packages/debate-card-search/test/session-identity.test.ts` (18 tests),
+  `bun x turbo typecheck` (12/12 package tasks passed — same
+  `apps/debate-ai.com` typecheck-gate exclusion noted on PR #318 applies
+  here too), full `bun run test` (171 files / 2569 tests passed, up from
+  170/2557), and `bun run build:web` (production build succeeded, all
+  four `/cards/*` routes present, no route changes). This repo has no
+  `lint` script configured, so that acceptance step is N/A. This closes
+  every panel PR #318 flagged as carrying the gap; the same underlying
+  "free-form id, not an authenticated permission check" limitation is
+  unchanged and remains documented in each panel's own Known gaps.
 - **Task Inbox — signed-in identity prefill for "My tasks."**
   [PR #318](https://github.com/debate/debate-ai.com/pull/318).
   Closes the auth half of the "🧭 Research Task Routing" bullet's follow-up
