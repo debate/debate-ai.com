@@ -7,6 +7,7 @@ _No task currently in progress._
 
 ### Completed
 - **Prep Notes — "jump to argument" failure message.**
+  [PR #311](https://github.com/debate/debate-ai.com/pull/311).
   Closes the "If a note's `boxPath` no longer resolves to a real grid row
   (e.g. the flow was edited since the note was made), `jumpToBoxInGrid`
   silently returns `false`... nothing scrolls or flashes, and no error is
