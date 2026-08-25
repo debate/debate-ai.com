@@ -3,75 +3,46 @@
 
 ### In progress
 
-## Daily Quests — recurring-quest reset
-
-**Status:** In Progress
-**Source:** TODO.md — "🎯 Daily Quests and Targets" bullet under Research
-Crowdsourcing Organizer Features / `docs/features/daily-quests.md` Known gap:
-"a quest template has no expiry" follow-up left the remaining "an expired
-quest simply stops appearing and stops scoring, rather than being reset for
-a new cycle (no recurring-quest concept exists in this repo)" gap open.
-**Branch:** `claude/practical-allen-1abz43`
-**PR:** Not created yet
-**Started:** 2026-08-25
-
-### Goal
-Let a quest template with an expiry also carry a recurrence cadence
-(daily/weekly) so that once its cycle ends, it rolls forward into a fresh
-active cycle (0 progress, scored against that day's real contributions)
-instead of permanently disappearing.
-
-### Scope
-- `QuestTemplate.recurrence?: "daily" | "weekly"` in `lib/daily-quests.ts`.
-- Pure `rolloverRecurringQuestTemplate(template, dayKey)` that advances an
-  expired recurring template's `expiresOn` to its next cycle boundary.
-- `state/dailyQuests.ts`'s `rolloverExpiredRecurringQuestTemplates(now)`,
-  wired into `buildPersistedDailyQuestBoard` (auto-rollover on every board
-  load) and `pruneExpiredQuestTemplates` (never deletes a recurring quest).
-- `DailyQuestsPanel` UI: a "Recurs" picker in the Add-quest form (only shown
-  once an expiry is set) and a "Recurs daily/weekly" badge on board rows.
-
-### Non-goals
-- No scheduled/cron job — rollover happens lazily whenever the board or
-  prune action is next called, same as every other "no cron infra in this
-  repo" convention already documented across this tracker.
-- No UI to edit an existing template's recurrence after creation (matches
-  the existing "no edit affordance" convention for quest templates — delete
-  and re-add).
-
-### Acceptance criteria
-- [x] A recurring template's expired cycle rolls its `expiresOn` forward
-      instead of vanishing from the board.
-- [x] A non-recurring template's existing expire/prune behavior is unchanged.
-- [x] Vitest coverage is added or updated
-- [x] Lint passes
-- [x] Typecheck passes
-- [x] Tests pass
-- [x] Production/web build passes
-- [x] Documentation is updated if behavior or configuration changes
-
-### Implementation plan
-- [x] Inspect affected modules, local instructions, and existing tests
-- [x] Confirm data-flow requirements (pure lib rollover fn + state-layer
-      wiring + panel UI)
-- [x] Implement the smallest useful vertical slice
-- [x] Add focused Vitest success-path coverage
-- [x] Add focused failure/edge-case coverage (no recurrence, no expiresOn,
-      not-yet-expired, weekly cadence, prune never deletes a recurring quest)
-- [x] Run focused tests and fix failures
-- [x] Run linting and typechecking
-- [x] Run the full relevant test suite
-- [x] Run the production/web build
-- [x] Review the final diff for scope and quality
-- [ ] Commit and push the branch
-- [ ] Create or update the pull request
-- [ ] Update tracker status, completed checkboxes, and remaining work
-
-### Remaining work
-- Commit, push, open the PR, then move this entry to "Completed" and link
-  the PR.
+_No task currently in progress._
 
 ### Completed
+- **Daily Quests — recurring-quest reset.**
+  Closes the "no recurring-quest concept exists in this repo" Known gap left
+  open by the earlier quest-expiry addition
+  (`docs/features/daily-quests.md`): an expired quest template used to just
+  stop appearing and stop scoring rather than being reset for a new cycle.
+  `packages/debate-card-search/src/lib/daily-quests.ts` gains
+  `QuestTemplate.recurrence?: "daily" | "weekly"` and the pure
+  `rolloverRecurringQuestTemplate(template, dayKey)`, which advances an
+  expired recurring template's `expiresOn` forward by whole cycles until it
+  lands on/after `dayKey` instead of leaving it expired — since a quest's
+  progress is already scored against just that day's contributions
+  (`computeQuestProgress`), the rolled-over quest is automatically back at
+  0/target for its fresh cycle with no separate "reset the count" step
+  needed. `state/dailyQuests.ts`'s new
+  `rolloverExpiredRecurringQuestTemplates(now)` applies that to the whole
+  persisted roster and is called by both `buildPersistedDailyQuestBoard`
+  (so a recurring quest reappears on its own the next time anyone loads the
+  board — no cron/scheduled-job infra exists in this repo, matching every
+  other "manual trigger" feature here) and `pruneExpiredQuestTemplates` (so
+  the "Clean up expired quests" action can never delete a recurring
+  template out from under a team). `DailyQuestsPanel`'s "Add quest" form
+  gained a "Recurs" picker (Doesn't recur / Daily / Weekly), shown once an
+  expiry date is set, and each board row shows a "Recurs daily"/"Recurs
+  weekly" badge alongside its "Expires" badge when it has one.
+  Verification: full `bun run test` (171 files / 2587 tests passed, 13 new
+  — `daily-quests.test.ts`'s `rolloverRecurringQuestTemplate` covering no
+  recurrence, no `expiresOn` anchor, not-yet-expired, daily rollover, weekly
+  rollover, and a multi-cycle weekly rollover; `dailyQuests.test.ts`'s
+  `rolloverExpiredRecurringQuestTemplates`/updated
+  `pruneExpiredQuestTemplates`/`buildPersistedDailyQuestBoard` covering
+  empty storage, a non-recurring template staying untouched, a single and
+  several recurring rollovers, prune never deleting a recurring template,
+  and the board showing a rolled-over quest at fresh 0 progress), `bun run
+  typecheck` (12/12 package tasks passed — same `apps/debate-ai.com`
+  typecheck-gate exclusion noted on prior PRs applies here too), and `bun
+  run build:web` (production web build passed).
+  PR: [#322](https://github.com/debate/debate-ai.com/pull/322).
 - **Signed-in identity wiring — Review Queue, Team Collaboration Mode, Team
   Brainstorm Assist, Group Challenges.**
   Closes the follow-up PR #320 flagged as still open: "every other panel's
