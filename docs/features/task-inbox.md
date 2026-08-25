@@ -32,6 +32,14 @@ closing the "No reviewer/verification step before a task is marked
 complete" Known gap below. The assignee themself can't verify their own
 task — attempting to leaves an inline error and the task still pending.
 
+When a real signed-in session exists, each pending verification's
+"Verifier id" field is no longer just a suggestion: it's locked (read-only)
+to the signed-in id, and the **Verify** button is disabled outright with an
+inline explanation for a task the signed-in visitor completed themself,
+instead of only failing after the click. A signed-out visitor keeps the
+original fully free-form verifier field. See "Signed-in verifier gate"
+under Data flow below.
+
 A "My tasks" field lets a contributor type their own `contributorId` to
 scope the list to just their own assignments, via
 `filterTaskInboxViewByContributor` — still a free-form text field, not a
@@ -98,6 +106,22 @@ components/research/TaskInboxWithIdentity.tsx  — "use client" wrapper
   → <TaskInboxPanel signedInContributorId={...} />
       — seeds myContributorId's initial value only; a visitor who edits
         the field (hasEditedMyId) keeps their own typed value from then on
+
+Signed-in verifier gate for "Awaiting verification" (same
+signedInContributorId prop, per pending record):
+panels/TaskInboxPanel.tsx
+  → isOwnContributorRow(record.assignment.contributorId, signedInContributorId)
+      — lib/session-identity.ts: true when the signed-in id matches the
+        assignee (case-insensitive, trimmed) → Verify is disabled outright,
+        with an inline "a different contributor must verify it" message
+  → deriveLockedVerifierId(record.assignment.contributorId, signedInContributorId)
+      — lib/session-identity.ts: "" when signed out or self-assigned
+        (leaves the field free-form, matching today's behavior); otherwise
+        the trimmed signed-in id
+  → when non-"", the Verifier id Input renders that value, disabled and
+    read-only, and handleVerify's click handler passes it straight to
+    verifyAndRecordResearchTask instead of reading the (now-unused)
+    verifierIds[key] typed state
 ```
 
 `app/cards/inbox/page.tsx` and `ResearchHub.tsx`'s Routing tab both render
@@ -135,15 +159,29 @@ Vitest-covered in `packages/debate-card-search/test/task-verification.test.ts`
 and `packages/debate-card-search/test/pendingTaskVerifications.test.ts`, plus
 new cases in `test/researchProgress.test.ts` for `verifyAndRecordResearchTask`.
 
+The signed-in verifier gate added one pure helper, `lib/session-identity.ts`'s
+`deriveLockedVerifierId` (reusing the existing `isOwnContributorRow` check),
+Vitest-covered in `test/session-identity.test.ts` — no changes to
+`assertVerifierAllowed`/`verifyAndRecordResearchTask` themselves, which stay
+the single source of truth the panel's client-side gate is layered in front
+of.
+
 ## Known gaps
 
-- No contributor identity/permission *checks* — the "My tasks" filter and
-  the verifier-id field both stay free-form text, not a login, so anyone
-  can still type any contributor's id to see their assignments or verify a
-  task under any name. A real signed-in session now *prefills* "My tasks"
-  when one exists (see "Signed-in prefill" above), but nothing stops a
-  visitor from overwriting it or from verifying under someone else's typed
-  id — that would need this repo's auth to actually gate the action, not
-  just suggest a starting value.
+- The "My tasks" filter is still free-form text, not a login — a real
+  signed-in session only *prefills* it (see "Signed-in prefill" above), so
+  a visitor can still overwrite it to browse anyone's assignments. The
+  verifier-id half of this gap is closed: see "Signed-in verifier gate"
+  above — when signed in, the Verifier id field is locked to that identity
+  and self-verification is disabled outright, not just a typed suggestion.
+  A signed-out visitor still has a fully free-form verifier field, since
+  this repo doesn't require login to use.
 - No follow-ups remain open on the "No reviewer/verification step before a
   task is marked complete" gap — see "Awaiting verification" above.
+- The signed-in verifier gate is enforced client-side only (the panel
+  disables the input/button); `verifyAndRecordResearchTask`/
+  `assertVerifierAllowed` still accept whatever `verifierId` string a
+  caller passes, so a caller bypassing this panel (or a signed-out
+  visitor) is unaffected — the same trust boundary every other
+  localStorage-backed action in this repo has, since there is no
+  server-side session check on these calls.

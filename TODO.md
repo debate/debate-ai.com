@@ -6,6 +6,47 @@
 _No task currently in progress._
 
 ### Completed
+- **Task Inbox — real identity gate on task verification.**
+  [PR #320](https://github.com/debate/debate-ai.com/pull/320). Closes the
+  verifier half of the "no contributor identity/permission checks" Known
+  gap recorded in `docs/features/task-inbox.md` and flagged as still open
+  on PR #318/#319: "nothing stops a visitor from overwriting it or from
+  verifying under someone else's typed id — that would need this repo's
+  auth to actually gate the action, not just suggest a starting value."
+  `debate-card-search`'s `lib/session-identity.ts` gains
+  `deriveLockedVerifierId` (reuses the existing `isOwnContributorRow`
+  check), exported from the package root and Vitest-covered in
+  `test/session-identity.test.ts`. `TaskInboxPanel`'s existing
+  `signedInContributorId` prop (already used to prefill "My tasks") now
+  also gates each pending verification's "Verifier id" field: when signed
+  in, the field is locked read-only to that identity instead of staying a
+  free-form suggestion, and the **Verify** button is disabled outright
+  with an inline explanation for a task the signed-in visitor completed
+  themself, instead of only failing `assertVerifierAllowed` after the
+  click. A signed-out visitor (no `signedInContributorId`) keeps the
+  original fully free-form verifier field unchanged, so this is additive,
+  not a breaking change — and no app-level wrapper changes were needed
+  since `TaskInboxWithIdentity.tsx` already passed the same prop.
+  `docs/features/task-inbox.md` updated: new "Signed-in verifier gate"
+  data-flow section, and the Known gaps section revised to record the
+  verifier half as closed while the "My tasks" filter itself stays a
+  prefill only, plus a new gap noting the client-side-only enforcement
+  boundary (no server-side session check on the underlying calls, same
+  trust boundary every other localStorage-backed action in this repo
+  has). Verification: `bunx vitest run
+  packages/debate-card-search/test/session-identity.test.ts
+  packages/debate-card-search/test/task-verification.test.ts` (21 tests),
+  `bun x turbo typecheck` (12/12 package tasks passed — same
+  `apps/debate-ai.com` typecheck-gate exclusion noted on PR #318/#319
+  applies here too), full `bun run test` (171 files / 2574 tests passed,
+  up from 171/2569), and `bun run build:web` (production build succeeded,
+  `/cards/inbox` route present, no route changes). This repo has no
+  `lint` script configured, so that acceptance step is N/A. The "My
+  tasks" filter's own identity gate and every other panel's identical
+  "no auth/identity system" Known gap (Leaderboard, Progress Unlocks,
+  Research Progress, Daily Quests, Standings, Judge/Opponent Profiles,
+  Review Queue, Prep Notes, Contribution Leaderboard, and others) remain
+  open, unchanged, as documented in each panel's own Known gaps.
 - **Signed-in identity wiring — Leaderboard, Progress Unlocks, Research
   Progress, Daily Quests.**
   [PR #319](https://github.com/debate/debate-ai.com/pull/319).
