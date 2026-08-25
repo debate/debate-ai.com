@@ -1114,6 +1114,44 @@ _No task currently in progress._
   `/cards/argument-library` route present, no new route) all pass. No
   repo-wide `lint` script exists (checked root/app/package `package.json`
   scripts) so none was run, matching every prior PR's verification notes.
+- **On Page Card Reuse Search — server-backed reuse index + browser extension.**
+  Closes the last open follow-up (a) under idea #7 ("On Page Card Reuse
+  Search") in TODO.md's Product Feature Ideas list — "an actual browser
+  extension that calls this same check automatically against the current
+  tab's URL." The previously-completed first slice's check
+  (`checkPersistedPageForExistingCards`) only ever saw entries saved to one
+  browser's own `localStorage`, so it couldn't answer "has anyone on the
+  team cut this" across devices — this slice adds a small, dedicated
+  server-backed reuse index rather than a full server mirror of
+  `EvidenceLibraryEntry`. `apps/debate-ai.com`'s `lib/database/schema.ts`
+  adds an `evidenceReuseIndex` D1 table (`id`/`sourceUrl`/`normalizedUrl`/
+  `cite`/`argBlock`/`topic`/`contributorId`, upserted by `id`), generated via
+  `drizzle-kit generate` into `drizzle/0003_superb_onslaught.sql`. A new
+  `app/api/evidence-reuse-check/route.ts` exposes `GET ?url=` (whether that
+  URL has already been cut, plus matches) and
+  `POST { id, sourceUrl, cite, argBlock, topic, contributorId }` (registers a
+  cut card's source URL), mirroring `app/api/flow-sync/route.ts`'s
+  D1-backed API-route conventions. `debate-card-search` adds
+  `lib/evidence-reuse-check-client.ts`'s `checkRemotePageForExistingCards`/
+  `registerRemoteReuseEntry`, wired into `EvidenceLibraryPanel`'s "Check this
+  page" box (a new "Team-wide check" section alongside the existing local
+  check, degrading gracefully on a network failure) and its submission form
+  (best-effort registers a submitted `sourceUrl` into the shared index). A
+  new dependency-free Manifest V3 browser extension,
+  `apps/browser-extension` (not part of this repo's `bun`/`turbo`
+  workspaces — no build step), calls the same `GET` route against the active
+  tab's URL from its popup, with an Options page for a non-production API
+  base URL. No follow-ups remain open on this idea. Vitest-covered in
+  `packages/debate-card-search/test/evidence-reuse-check-client.test.ts`
+  (`checkRemotePageForExistingCards`, `registerRemoteReuseEntry`, including
+  endpoint-override and error-message cases). Verified with `bun install`
+  (2050 packages), `bun run test` (153 files / 2103 tests, all pass),
+  `bun run typecheck` (11 in-scope packages pass — `debate-ai-web` has no
+  `typecheck` script), and `bun run build:web` (registers the new
+  `/api/evidence-reuse-check` route). Docs updated at
+  `docs/features/evidence-library.md` and `apps/browser-extension/README.md`.
+  No repo-wide `lint` script exists so none was run.
+  PR: not yet opened (see repo push instructions for this session).
 - **On Page Card Reuse Search — browser extension + deep-link wiring.**
   Closes follow-up (a) under idea #7 ("On Page Card Reuse Search") in the
   Product Feature Ideas list — "an actual browser extension that calls this
@@ -2089,6 +2127,58 @@ _No task currently in progress._
   `docs/features/practice-round-simulator.md` (Known gaps section now reads
   "No known gaps remain for this idea"). PR:
   https://github.com/debate/debate-ai.com/pull/269.
+- **Features page — one page that outlines everything the app does.** Nothing
+  in the app listed every surface it ships: the global dock exposes four
+  destinations plus a Settings menu that is a flat, unexplained list of
+  forty-odd items; `/research` and `/coach` each tab across the panels of one
+  package; and `/community-hub` covers only the 17 spaces named under this
+  file's "Research Crowdsourcing Organizer Features" heading, deliberately
+  omitting the core workspaces (card search, the flow spreadsheet, the video
+  archive, the Reason editor) and the standings/rankings surfaces. So a
+  debater arriving at the app had no way to learn what it does short of
+  clicking through every Settings entry. Added `/features`: a searchable,
+  category-grouped outline of all 50 user-facing surfaces, each with its
+  title, one-line description, route, and a link to its long-form
+  `docs/features/*.md` doc where one exists. Pure data and helpers live in
+  `packages/debate-ui/src/features/feature-catalog.ts` (`APP_FEATURES`,
+  `buildFeatureSections`, `searchFeatures`, `featureDocUrl`,
+  `buildFeatureCatalogSummaryText`) — modelled on `debate-card-search`'s
+  narrower `lib/community-research-hub.ts` directory, and like it storeless,
+  since every entry links to a surface that already manages its own state.
+  `packages/debate-ui/src/features/FeaturesPanel.tsx` renders it (search box,
+  jump-to-category row, one card per feature) holding only the query in local
+  state, and `apps/debate-ai.com/app/features/page.tsx` mounts it. Titles and
+  descriptions are copied from each route's own `metadata` export (or its
+  feature doc's opening lines) so a card reads the same as the page it links
+  to; each entry can also carry `tags` — search terms absent from the visible
+  copy, so "elo" finds Team Rankings, "rfd" finds AI Judge Decision, and
+  "verbatim" finds the Reason Editor and Speech Documents. `debate-ui` is the
+  home for both files because the catalog names surfaces from `debate-round`,
+  `debate-card-search`, `debate-videos`, `debate-speech-writer` and
+  `reason-editor` (so it can't live in any one of them without inverting the
+  dependency graph), `debate-core` is deliberately React-free, and the app
+  itself sits outside the root Vitest projects, which only cover
+  `packages/*`. The dock's Settings menu gained **All Features** as its first
+  item, above the flat list it explains. Verified the catalog against the
+  filesystem: every one of the app's 55 `page.tsx` routes is either in the
+  catalog or intentionally out of it (`/` redirects to `/videos`, `/login` is
+  a step rather than a feature, `/features` is the page itself, and
+  `/debate/[tournament]/[teams]`/`/videos/[category]` are children of
+  catalogued parents). Vitest-covered (22 new cases across
+  `packages/debate-ui/test/feature-catalog.test.ts` — catalog invariants,
+  section grouping/ordering, search across all four matched fields, doc-URL
+  building, summary pluralization — and
+  `packages/debate-ui/test/features-panel.test.tsx`, which renders the panel
+  and asserts every catalogued route, the headings, the summary line, a docs
+  link, the jump nav, and that a one-entry catalog renders without it).
+  Verified with `bun run test` (158 files / 2221 tests, all pass — 22 new
+  cases), `bun run typecheck` (11 in-scope packages pass — `debate-ai-web`
+  has no `typecheck` script; this repo has no `lint` script), and
+  `bun run build` (both buildable packages pass, `/features` present in the
+  route list). Docs added at `docs/features/features-page.md`; the sole
+  Known gap is that the catalog is a hand-maintained registry, so a new route
+  has to be added to it as well — nothing fails if it isn't, because the app
+  is outside the packages Vitest runs over.
 - **Flow Annotations — switch video on cross-recording "Jump to".** Closes
   one of the four "Newly discovered small gaps" logged by the previous run's
   doc/tracker drift audit (see the entry below): `FlowAnnotationsPanel.handleJump`
@@ -8286,6 +8376,7 @@ _No task currently in progress._
 
 6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slices done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. A second slice, `flowSummaries.ts` (see Tracker Status above, "Speech Transcript Summaries and Answers — flow-summary persistence"), now persists a round's derived `FlowRowSummary[]` to localStorage. A third slice, `FlowSummariesPanel` (see Tracker Status above, "Speech Transcript Summaries and Answers — summary/cross-ex panel UI"), now renders every persisted flow summary, with suggested cross-exam questions and extension ideas for unanswered arguments, at `/summaries`, closing follow-up (b). A fourth slice (see Tracker Status above, "Speech Transcript Summaries and Answers — AI extraction from raw speech text") added `round/transcript-extraction-ai.ts` and `round/transcript-extraction-client.ts`, wiring a "Generate from raw speech text" form into `FlowSummariesPanel` that calls the existing `/api/reason-ai` Anthropic proxy to extract claim/warrant/impact/evidence arguments from a pasted transcript and appends them to that round's saved flow summary as synthetic `FlowRowSummary` rows, closing the AI-call half of follow-up (a). A fifth slice (see Tracker Status above, "Speech Transcript Summaries — microphone dictation for the transcript-extraction form") added `round/microphone-transcription.ts` and `hooks/useMicrophoneTranscription.ts`, wiring a "🎤 Record" button into `FlowSummariesPanel`'s transcript field that dictates directly into it via the browser's own Web Speech API, closing the remaining "recording" half of follow-up (a). No follow-ups remain open on this idea._
 
+7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext. _Status: done (see Tracker Status above) — `debate-card-search` has `EvidenceLibraryEntry.sourceUrl` (optional) plus `normalizeSourceUrl`/`findEntriesBySourceUrl`/`checkPageForExistingCards`/`buildPageReuseCheckSummaryText` for checking whether a given page URL has already been cut into the shared repository, and `state/evidenceLibraryEntries.ts`'s `checkPersistedPageForExistingCards` composes that against the persisted, peer-review-gated repository. A "Check this page" box plus a Source URL submission field in `EvidenceLibraryPanel` (`/cards/library`) let a contributor paste a URL and see whether it's already been cut. A second slice (see Tracker Status above, "On Page Card Reuse Search — server-backed reuse index + browser extension") added a small D1-backed `evidenceReuseIndex` table, `app/api/evidence-reuse-check/route.ts` (GET check-by-url, POST register-a-cut), `debate-card-search`'s `lib/evidence-reuse-check-client.ts` (wired into `EvidenceLibraryPanel`'s "Check this page" box and submission form as a shared, cross-device check alongside the local one), and a dependency-free Manifest V3 browser extension at `apps/browser-extension` whose popup runs that same check automatically against the active tab's URL, closing follow-up (a). No follow-ups remain open on this idea._
 7. **On Page Card Reuse Search** — See if any one has cut this article in the chrome ext. _Status: first slice done (see Tracker Status above) — `debate-card-search` now has `EvidenceLibraryEntry.sourceUrl` (optional) plus `normalizeSourceUrl`/`findEntriesBySourceUrl`/`checkPageForExistingCards`/`buildPageReuseCheckSummaryText` for checking whether a given page URL has already been cut into the shared repository, and `state/evidenceLibraryEntries.ts`'s `checkPersistedPageForExistingCards` composes that against the persisted, peer-review-gated repository. A "Check this page" box plus a new Source URL submission field in `EvidenceLibraryPanel` (`/cards/library`) let a contributor paste a URL and see whether it's already been cut, standing in for the eventual browser extension's automatic per-tab check. A second slice (see Tracker Status above, "On Page Card Reuse Search — browser extension + deep-link wiring") added `buildReuseCheckDeepLink` plus a `?checkUrl=` query param `EvidenceLibraryPanel` reads on mount, and a new unpacked Manifest V3 browser extension at `extension/card-reuse-checker` that deep-links the active tab's URL into that param on toolbar-icon click, closing follow-up (a). No follow-ups remain open on this idea._
 
 8. **Video-Lecture-Training Coach AI** — Let coaches upload practice-round recordings, lecture transcripts, camp materials, and approved instructional documents to create a private team coach AI that explains concepts and gives advice grounded in that team’s own teaching materials. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has `buildCoachMaterialLibrary`/`findRelevantMaterials`/`buildGroundedCoachPrompt` for organizing a team's caller-supplied materials (lecture transcripts, camp materials, instructional documents, practice-round recordings) into a kind-grouped library, scoring each material's relevance to a question with a deterministic keyword-overlap heuristic, and composing a self-contained, grounded prompt from the most relevant materials, mirroring the existing `opponent-personas.ts`/`judge-paradigms.ts` structured-prompt convention. A second slice, `coachMaterials.ts` (see Tracker Status above), now persists `CoachMaterial` records to localStorage. A third slice, `CoachMaterialsPanel` (see Tracker Status above, "Video-Lecture-Training Coach AI — materials-upload/coach panel UI"), now renders an upload form, a kind-grouped material list, and an "ask the coach" grounded-prompt preview at `/coach-materials`, closing follow-up (c). A fourth slice (see Tracker Status above, "Video-Lecture-Training Coach AI — real AI Q&A call") added `coach/team-coach-ai.ts` and `coach/team-coach-client.ts`, wiring an "Ask the coach" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy with `buildGroundedCoachPrompt`'s output for a real, materials-grounded answer, closing follow-up (b). A fifth slice (see Tracker Status above, "Video-Lecture-Training Coach AI — document-upload text extraction") added `coach/document-material-extraction.ts`, wiring an "Upload a document" action into the panel that fills a material's text field from an uploaded `.docx`/`.txt`/`.md` file (via `debate-card-parser`'s existing `convertDocxToHTML` for `.docx`), closing the "document" half of follow-up (a). A sixth slice (see Tracker Status above, "Video-Lecture-Training Coach AI — microphone dictation for the Coach Materials upload form") added `coach/microphone-transcription.ts` and `hooks/useMicrophoneTranscription.ts`, wiring a "🎤 Record" button into the panel's Material text field that dictates directly into it via the browser's own Web Speech API (mirroring idea #6's identical fix), closing the remaining "recording" half of follow-up (a) for live dictation. An uploaded audio/video recording *file* still has no transcription path — no server-side/paid transcription service exists in this repo — recorded as the sole remaining Known gap._

@@ -15,6 +15,16 @@
  * forward-looking staleness signal via `getEvidenceStaleness`, rather than
  * only rewarding a refresh after the fact.
  *
+ * The "Check this page" box and the submission form's Source URL field also
+ * call the server-backed shared reuse index (`lib/evidence-reuse-check-client.ts`,
+ * `/api/evidence-reuse-check`) alongside the existing local check — the
+ * persisted `localStorage` repository only sees entries saved in this one
+ * browser, so it can't answer "has anyone on the team cut this" across
+ * devices; the shared index can. This closes the last open follow-up (a)
+ * under TODO.md idea #7 ("On Page Card Reuse Search") together with the new
+ * `apps/browser-extension`, which calls the same API against the active
+ * tab's URL.
+ *
  * Reads the persisted evidence repository via
  * `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`
  * (itself a thin composition of `evidence-search-index.ts`'s pure
@@ -90,12 +100,14 @@ import {
   parseTagsInput,
   suggestTags,
 } from "../lib/argument-library"
+import { checkRemotePageForExistingCards, registerRemoteReuseEntry } from "../lib/evidence-reuse-check-client"
 import type {
   EvidenceEntryKind,
   EvidenceLibraryEntry,
   EvidenceSearchResult,
   PageReuseCheckResult,
 } from "../lib/shared-evidence-library"
+import type { RemotePageReuseCheckResult } from "../lib/evidence-reuse-check-client"
 
 const KIND_FILTERS: { value: EvidenceEntryKind | "all"; label: string }[] = [
   { value: "all", label: "All" },
@@ -168,6 +180,8 @@ export function EvidenceLibraryPanel() {
   const [knownTags, setKnownTags] = useState<string[]>([])
   const [reuseCheckUrl, setReuseCheckUrl] = useState("")
   const [reuseCheckResult, setReuseCheckResult] = useState<PageReuseCheckResult | null>(null)
+  const [remoteReuseCheckResult, setRemoteReuseCheckResult] = useState<RemotePageReuseCheckResult | null>(null)
+  const [remoteReuseCheckError, setRemoteReuseCheckError] = useState<string | null>(null)
   const searchParams = useSearchParams()
 
   useEffect(() => {
@@ -255,6 +269,20 @@ export function EvidenceLibraryPanel() {
       saveEvidenceLibraryEntry(entry)
     }
 
+    if (entry.sourceUrl) {
+      // Best-effort: the shared reuse index is a cross-device convenience,
+      // not required for the entry to save locally, so a network failure
+      // here doesn't block the submission.
+      registerRemoteReuseEntry({
+        id: entry.id,
+        sourceUrl: entry.sourceUrl,
+        cite: entry.cite,
+        argBlock: entry.argBlock,
+        topic: entry.topic,
+        contributorId: editorContributorId.trim(),
+      }).catch(() => {})
+    }
+
     setError(null)
     setDraft(EMPTY_DRAFT)
     setEditingId(null)
@@ -285,9 +313,16 @@ export function EvidenceLibraryPanel() {
     const url = reuseCheckUrl.trim()
     if (!url) {
       setReuseCheckResult(null)
+      setRemoteReuseCheckResult(null)
+      setRemoteReuseCheckError(null)
       return
     }
     setReuseCheckResult(checkPersistedPageForExistingCards(url))
+    setRemoteReuseCheckResult(null)
+    setRemoteReuseCheckError(null)
+    checkRemotePageForExistingCards(url)
+      .then(setRemoteReuseCheckResult)
+      .catch((err: unknown) => setRemoteReuseCheckError(err instanceof Error ? err.message : "Shared reuse check failed."))
   }
 
   if (hasEntries === null) {
@@ -478,6 +513,32 @@ export function EvidenceLibraryPanel() {
                   {entry.cite && <span className="text-xs text-muted-foreground">{entry.cite}</span>}
                 </div>
                 <p className="text-sm text-muted-foreground">{entry.text}</p>
+              </div>
+            ))}
+          </div>
+        )}
+        {remoteReuseCheckError && (
+          <p className="text-xs text-muted-foreground">
+            Shared team index unavailable ({remoteReuseCheckError}) — showing only this browser&apos;s local check above.
+          </p>
+        )}
+        {remoteReuseCheckResult && (
+          <div className="space-y-2 border-t border-dashed border-border pt-2">
+            <p className="text-xs font-medium text-foreground">Team-wide check (shared index)</p>
+            <p
+              className={`text-sm ${remoteReuseCheckResult.alreadyCut ? "text-destructive" : "text-muted-foreground"}`}
+            >
+              {remoteReuseCheckResult.alreadyCut
+                ? `Already cut by the team: ${remoteReuseCheckResult.matches.length} matching ${remoteReuseCheckResult.matches.length === 1 ? "entry" : "entries"}.`
+                : "No teammate has registered a cut for this page yet."}
+            </p>
+            {remoteReuseCheckResult.matches.map((match) => (
+              <div key={match.id} className="rounded-lg border border-dashed border-border p-3">
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                  <span className="font-medium text-foreground">{match.argBlock}</span>
+                  {match.cite && <span className="text-xs text-muted-foreground">{match.cite}</span>}
+                  {match.topic && <Badge variant="outline">{match.topic}</Badge>}
+                </div>
               </div>
             ))}
           </div>

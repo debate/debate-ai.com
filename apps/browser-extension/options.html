@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Debate AI Card Reuse Check — Settings</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 480px;
+        margin: 24px auto;
+        color: #1a1a1a;
+      }
+      label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px;
+        font-size: 13px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+      button {
+        margin-top: 10px;
+        padding: 8px 14px;
+        font-size: 13px;
+        border: none;
+        border-radius: 6px;
+        background: #1a73e8;
+        color: white;
+        cursor: pointer;
+      }
+      p.hint {
+        font-size: 12px;
+        color: #666;
+      }
+      p.saved {
+        font-size: 12px;
+        color: #1e7a34;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Debate AI — Card Reuse Check</h1>
+    <label for="api-base">API base URL</label>
+    <input id="api-base" placeholder="https://debate-ai.com" />
+    <p class="hint">
+      The debate-ai.com deployment this extension checks against. Only the
+      production domain and localhost:3000 are pre-authorized in the
+      extension's manifest — pointing this at another host will show a
+      permissions error until the extension is re-installed with that host
+      added.
+    </p>
+    <button id="save">Save</button>
+    <p class="saved" id="saved" style="display: none">Saved.</p>
+    <script src="api.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

@@ -11,6 +11,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { cn, setStateInURL } from "debate-ui/src/lib/utils"
 import { IconFlowFlower } from "debate-ui/src/icons"
 import { Footer } from "debate-ui/src/layout/footer"
+import { FeaturesPanel } from "debate-ui/src/features/FeaturesPanel"
 ```
 
 Consumers must render these inside a Next.js app (styled-jsx, `next/image`) and provide
@@ -26,11 +27,13 @@ debate-ui/
 ├── src/
 │   ├── charts/       # recharts wrappers
 │   ├── effects/      # motion, glow, spotlight and 3D card effects
+│   ├── features/     # the app-wide feature catalog and its /features page panel
 │   ├── icons/        # custom SVG/PNG icon set + barrel
 │   ├── layout/       # footer, dock, card and category grids
 │   ├── lib/          # cn() and URL-state helpers
+│   ├── panels/       # shared feature-panel shell primitives
 │   └── primitives/   # shadcn/Radix primitives
-└── test/             # Vitest suites for the class + URL helpers
+└── test/             # Vitest suites for the class, URL, panel and catalog helpers
 ```
 
 ## Tests
