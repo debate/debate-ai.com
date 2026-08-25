@@ -34,9 +34,11 @@ task — attempting to leaves an inline error and the task still pending.
 
 A "My tasks" field lets a contributor type their own `contributorId` to
 scope the list to just their own assignments, via
-`filterTaskInboxViewByContributor` — a free-form filter, not a login, since
-this repo has no auth/identity system (the same workaround
-`flow/prep-note-notifications.ts` uses for "🔄 Strategy Sync Notes").
+`filterTaskInboxViewByContributor` — still a free-form text field, not a
+login. When `apps/debate-ai.com`'s real signed-in session (better-auth) has
+a user, the field's *initial* value is prefilled from it — a visitor who
+edits the field keeps whatever they typed instead. See "Signed-in prefill"
+under Data flow below.
 
 ## Data flow
 
@@ -85,7 +87,23 @@ panels/TaskInboxPanel.tsx
          assignment's activeTaskCount, and saves the queue
   → panel re-reads buildTaskInboxView() (and the tracked-topic suggestion
     list) to refresh
+
+Signed-in prefill for "My tasks" (apps/debate-ai.com only):
+components/research/TaskInboxWithIdentity.tsx  — "use client" wrapper
+  → useSession()                          — lib/hooks/useSession.ts, the
+                                              better-auth React session hook
+  → deriveContributorIdFromSessionIdentity(user)
+      — debate-card-search's lib/session-identity.ts: name, else the
+        email's local part, else the raw account id, else ""
+  → <TaskInboxPanel signedInContributorId={...} />
+      — seeds myContributorId's initial value only; a visitor who edits
+        the field (hasEditedMyId) keeps their own typed value from then on
 ```
+
+`app/cards/inbox/page.tsx` and `ResearchHub.tsx`'s Routing tab both render
+`TaskInboxWithIdentity` instead of `TaskInboxPanel` directly, so the panel
+itself stays app-agnostic — it only knows about a plain
+`signedInContributorId` string prop, not `better-auth`.
 
 Every routing/persistence rule already existed and was Vitest-covered; this
 feature adds three composition functions in
@@ -119,10 +137,13 @@ new cases in `test/researchProgress.test.ts` for `verifyAndRecordResearchTask`.
 
 ## Known gaps
 
-- No contributor identity/permission checks (no auth/roles in this repo
-  yet), so the "My tasks" filter is a free-form id field, not a login —
-  anyone can type any contributor's id to see their assignments. The same
-  applies to the verification step: a verifier is just whoever types a
-  different free-form id, not an authenticated reviewer.
+- No contributor identity/permission *checks* — the "My tasks" filter and
+  the verifier-id field both stay free-form text, not a login, so anyone
+  can still type any contributor's id to see their assignments or verify a
+  task under any name. A real signed-in session now *prefills* "My tasks"
+  when one exists (see "Signed-in prefill" above), but nothing stops a
+  visitor from overwriting it or from verifying under someone else's typed
+  id — that would need this repo's auth to actually gate the action, not
+  just suggest a starting value.
 - No follow-ups remain open on the "No reviewer/verification step before a
   task is marked complete" gap — see "Awaiting verification" above.
