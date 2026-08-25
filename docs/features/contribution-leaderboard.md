@@ -21,6 +21,10 @@ unlock tier, earned badges, and current daily-quest streak.
 | Streak | Current consecutive-day quest streak, from `lib/gamified-quests.ts` |
 | Badges | Tier badges + streak-milestone badges, merged by `lib/unlock-streak-status.ts` |
 
+A signed-in visitor's own row is highlighted with a "You" badge — see
+"Signed-in row highlight" below. The leaderboard always shows every
+contributor; nothing is filtered.
+
 Helpfulness score itself blends three signals (`lib/community-rating.ts`):
 logarithmically-dampened popularity (likes/saves), a quality signal, and a
 reviewer-credibility signal — so a contribution can't rank highly on raw
@@ -36,13 +40,36 @@ state/contributions.ts (localStorage)
       └─ lib/gamified-quests.ts    (streak, streak badges, via state/dailyMissionResults.ts)
   → panels/ContributionLeaderboardPanel.tsx (renders the table)
   → apps/debate-ai.com/app/cards/leaderboard/page.tsx (mounts the panel as a route)
+
+Signed-in row highlight (apps/debate-ai.com only):
+components/research/ContributionLeaderboardWithIdentity.tsx  — "use client" wrapper
+  → useSession()                          — lib/hooks/useSession.ts, the
+                                              better-auth React session hook
+  → deriveContributorIdFromSessionIdentity(user)
+      — debate-card-search's lib/session-identity.ts: name, else the
+        email's local part, else the raw account id, else ""
+  → <ContributionLeaderboardPanel signedInContributorId={...} />
+      → isOwnContributorRow(row.contributorId, signedInContributorId)
+          — case-insensitive, trims both sides — adds a "You" badge and a
+            highlight to that one row; the roster is never filtered
 ```
+
+`app/cards/leaderboard/page.tsx` and `ResearchHub.tsx`'s Rewards tab both
+render `ContributionLeaderboardWithIdentity` instead of
+`ContributionLeaderboardPanel` directly, so the panel itself stays
+app-agnostic — it only knows about a plain `signedInContributorId` string
+prop, not `better-auth`. Unlike Task Inbox's "My tasks" field, this
+leaderboard has no free-form id field to prefill — it always renders every
+contributor — so the signed-in identity only highlights a matching row
+instead.
 
 Every scoring/tier/streak rule already existed and was Vitest-covered; this
 feature is a read-only composition and rendering layer over those stores — it
 introduces one new function, `buildPersistedLeaderboard`, which composes the
 existing pure `buildLeaderboard` directly against the persisted contributions
-store (see `packages/debate-card-search/test/contributions.test.ts`).
+store (see `packages/debate-card-search/test/contributions.test.ts`), and one
+new pure helper, `isOwnContributorRow` (`lib/session-identity.ts`,
+Vitest-covered in `test/session-identity.test.ts`).
 
 ## Known gaps
 

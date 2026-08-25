@@ -3,7 +3,69 @@
 
 ### In progress
 
-_No task currently in progress._
+## Signed-in identity wiring — Leaderboard, Progress Unlocks, Research Progress, Daily Quests
+
+**Status:** In Progress
+**Source:** TODO.md — "Task Inbox — signed-in identity prefill for 'My tasks'" (PR #318)
+follow-up note: "the same 'no auth/identity system' Known gap is recorded on
+the Leaderboard, Progress Unlocks, Research Progress Tracking, and Daily
+Quests panels and remains open there as a follow-up for a future run."
+**Branch:** `claude/practical-allen-fj96lp`
+**PR:** Not created yet
+**Started:** 2026-08-25
+
+### Goal
+Extend the real signed-in-identity wiring PR #318 added to Task Inbox's
+"My tasks" field (`lib/session-identity.ts`'s
+`deriveContributorIdFromSessionIdentity`, prefill-only, never a login) to
+the four other panels PR #318 flagged as carrying the same gap.
+
+### Scope
+- `ContributionLeaderboardPanel`, `ProgressUnlocksPanel`,
+  `ResearchProgressPanel` are plain rosters with no existing "my id" field —
+  add an optional `signedInContributorId` prop that highlights the matching
+  row (a "You" badge), never filters the roster.
+- `DailyQuestsPanel` already has a free-form "Your streak" contributor-id
+  field — prefill it the same way `TaskInboxPanel` prefills "My tasks"
+  (initial value only; `hasEditedMyId`-style edit tracking).
+- New `apps/debate-ai.com` wrapper components (mirroring
+  `TaskInboxWithIdentity.tsx`) wired into `ResearchHub.tsx` and the four
+  `/cards/*` standalone pages.
+
+### Non-goals
+- No auth gate or permission check — every panel stays free-form/unauthenticated.
+- No change to roster contents or ranking.
+
+### Acceptance criteria
+- [x] Signed-in visitor sees their own row highlighted on Leaderboard/Progress
+      Unlocks/Research Progress without any typing.
+- [x] Signed-in visitor's Daily Quests "Your streak" field starts prefilled;
+      editing it keeps whatever they typed.
+- [x] Signed-out visitor sees identical behavior to before this change.
+- [x] Vitest coverage is added or updated
+- [x] Typecheck passes
+- [x] Tests pass
+- [x] Production/web build passes
+- [x] Documentation is updated
+
+### Implementation plan
+- [x] Inspect the four panels and `session-identity.ts`
+- [x] Add `isOwnContributorRow` pure helper + Vitest coverage
+- [x] Wire `signedInContributorId` prop + row highlight into the three roster panels
+- [x] Wire `signedInContributorId` prefill into `DailyQuestsPanel`
+- [x] Add four app-level identity wrapper components
+- [x] Wire wrappers into `ResearchHub.tsx` and the four `/cards/*` pages
+- [x] Run focused tests and fix failures
+- [x] Run typechecking
+- [x] Run the full relevant test suite
+- [x] Run the production/web build
+- [x] Update docs
+- [ ] Commit and push the branch
+- [ ] Create the pull request
+- [ ] Update tracker status, completed checkboxes, and remaining work
+
+### Remaining work
+- Commit, push, open the PR, then flip this entry to Completed with the PR link.
 
 ### Completed
 - **Task Inbox — signed-in identity prefill for "My tasks."**

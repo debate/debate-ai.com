@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { DailyQuestsPanel } from "debate-card-search"
+import { DailyQuestsWithIdentity } from "@/components/research/DailyQuestsWithIdentity"
 
 export const metadata: Metadata = {
   title: "Daily Quests",
@@ -23,7 +23,7 @@ export default function CardsQuestsPage() {
         </Link>
       </div>
       <Suspense>
-        <DailyQuestsPanel />
+        <DailyQuestsWithIdentity />
       </Suspense>
     </div>
   )

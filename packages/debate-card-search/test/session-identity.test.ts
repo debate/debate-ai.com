@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deriveContributorIdFromSessionIdentity } from "../src/lib/session-identity";
+import { deriveContributorIdFromSessionIdentity, isOwnContributorRow } from "../src/lib/session-identity";
 
 describe("deriveContributorIdFromSessionIdentity", () => {
   it("returns '' for a null or undefined identity", () => {
@@ -45,5 +45,31 @@ describe("deriveContributorIdFromSessionIdentity", () => {
 
   it("handles an email with no local part gracefully by falling back to id", () => {
     expect(deriveContributorIdFromSessionIdentity({ id: "usr_9", email: "@example.com" })).toBe("usr_9");
+  });
+});
+
+describe("isOwnContributorRow", () => {
+  it("matches a row whose contributor id equals the signed-in id", () => {
+    expect(isOwnContributorRow("alice", "alice")).toBe(true);
+  });
+
+  it("matches case-insensitively and ignores surrounding whitespace on both sides", () => {
+    expect(isOwnContributorRow("  Alice  ", "alice")).toBe(true);
+    expect(isOwnContributorRow("alice", "  ALICE  ")).toBe(true);
+  });
+
+  it("does not match a different contributor id", () => {
+    expect(isOwnContributorRow("bob", "alice")).toBe(false);
+  });
+
+  it("returns false when signed out (null, undefined, or blank)", () => {
+    expect(isOwnContributorRow("alice", null)).toBe(false);
+    expect(isOwnContributorRow("alice", undefined)).toBe(false);
+    expect(isOwnContributorRow("alice", "   ")).toBe(false);
+  });
+
+  it("does not match a blank contributor id even when signed in", () => {
+    expect(isOwnContributorRow("", "alice")).toBe(false);
+    expect(isOwnContributorRow("   ", "alice")).toBe(false);
   });
 });

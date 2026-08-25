@@ -49,3 +49,20 @@ export function deriveContributorIdFromSessionIdentity(
 
   return "";
 }
+
+/**
+ * Whether a roster row's contributor id belongs to the signed-in visitor,
+ * for highlighting "your" row in an all-contributors roster (Leaderboard,
+ * Progress Unlocks, Research Progress) without filtering anyone else out.
+ * Case-insensitive and trims both sides; returns `false` when either side
+ * is blank so a signed-out visitor never highlights anything.
+ */
+export function isOwnContributorRow(
+  contributorId: string,
+  signedInContributorId: string | null | undefined,
+): boolean {
+  const signedIn = signedInContributorId?.trim();
+  if (!signedIn) return false;
+
+  return contributorId.trim().toLowerCase() === signedIn.toLowerCase();
+}
