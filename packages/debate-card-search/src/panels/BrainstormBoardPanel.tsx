@@ -39,12 +39,14 @@
  * request as the form's action, using that board's own argBlock/category
  * directly instead of requiring the form to be filled in first.
  *
- * A "Merge into" action on any idea flagged `isLikelyDuplicate` closes the
+ * A "Merge into…" action on any idea flagged `isLikelyDuplicate` closes the
  * "no reviewer/moderator merge action for ideas flagged as likely
  * duplicates" Known gap — it calls the already-persisted
  * `mergePersistedBrainstormIdeas`, which folds the duplicate's upvotes into
- * the chosen target idea and removes the duplicate, rather than leaving the
- * badge purely informational.
+ * a chosen target idea and removes the duplicate, rather than leaving the
+ * badge purely informational. The target picker lists every other idea on
+ * the same board (not just the top-ranked one), so two lower-ranked
+ * duplicates can be merged directly into each other.
  *
  * @module panels/BrainstormBoardPanel
  */
@@ -57,6 +59,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { RadioGroup, RadioGroupItem } from "debate-ui/src/primitives/radio-group"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   buildBrainstormBoardsPanelView,
@@ -212,10 +215,9 @@ export function BrainstormBoardPanel() {
     }
   }
 
-  const handleMergeIntoTopIdea = (board: BrainstormBoard, duplicateId: string) => {
-    const topId = board.ideas[0]?.id
-    if (!topId || topId === duplicateId) return
-    mergePersistedBrainstormIdeas(topId, duplicateId)
+  const handleMergeInto = (duplicateId: string, targetId: string) => {
+    if (!targetId || targetId === duplicateId) return
+    mergePersistedBrainstormIdeas(targetId, duplicateId)
     refresh()
   }
 
@@ -368,10 +370,22 @@ export function BrainstormBoardPanel() {
                       <p className="text-muted-foreground">{idea.text}</p>
                     </div>
                     <div className="flex flex-none items-center gap-2">
-                      {idea.isLikelyDuplicate && idea.id !== board.ideas[0]?.id && (
-                        <Button size="sm" variant="secondary" onClick={() => handleMergeIntoTopIdea(board, idea.id)}>
-                          Merge into top idea
-                        </Button>
+                      {idea.isLikelyDuplicate && board.ideas.length > 1 && (
+                        <Select onValueChange={(targetId) => handleMergeInto(idea.id, targetId)}>
+                          <SelectTrigger size="sm" className="w-[160px] text-xs">
+                            <SelectValue placeholder="Merge into…" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {board.ideas
+                              .filter((other) => other.id !== idea.id)
+                              .map((other) => (
+                                <SelectItem key={other.id} value={other.id}>
+                                  {other.contributorId}: {other.text.slice(0, 40)}
+                                  {other.text.length > 40 ? "…" : ""}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
                       )}
                       <Button size="sm" variant="outline" onClick={() => handleUpvote(idea.id)}>
                         Upvote ({idea.upvotes})

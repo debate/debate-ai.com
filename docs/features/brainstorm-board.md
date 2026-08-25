@@ -28,10 +28,11 @@ ideas ranked by popularity score, highest first, with:
 - the contributor's ID
 - the idea's popularity score (0-100)
 - a "possible duplicate" badge when the idea's text is a near-duplicate of
-  another idea already on the same board, plus a "Merge into top idea"
-  button (for any duplicate-flagged idea that isn't itself the board's top
-  idea) that folds its upvotes into the board's top-ranked idea and removes
-  it
+  another idea already on the same board, plus a "Merge into…" select
+  listing every other idea on that board — choosing one folds the
+  duplicate's upvotes into the chosen target and removes the duplicate, so
+  two lower-ranked duplicates can be merged directly into each other
+  without first merging one of them into the board's top idea
 - an "AI" badge when the idea was drafted by a "Generate AI ideas" action
   rather than typed in by a teammate
 - an "Upvote" button showing the current upvote count
@@ -81,9 +82,9 @@ panels/BrainstormBoardPanel.tsx
          current fields when triggered from the form)
   → panel re-reads buildBrainstormBoardsPanelView() to refresh
 
-"Merge into top idea" click:
+"Merge into…" select (choosing a target idea):
 panels/BrainstormBoardPanel.tsx
-  → mergePersistedBrainstormIdeas(topId, duplicateId) — state/brainstormIdeas.ts
+  → mergePersistedBrainstormIdeas(targetId, duplicateId) — state/brainstormIdeas.ts
       → mergeBrainstormIdeas(target, duplicate)       — lib/team-brainstorm-assist.ts (pure)
           (returns a copy of target with the two ideas' upvotes combined)
       → saveBrainstormIdea(merged) + deleteBrainstormIdea(duplicateId)
@@ -154,12 +155,11 @@ the submission form — clicking it calls the same
 `requestTeamBrainstormAiIdeas` request using that board's own
 `argBlock`/`category` directly, so drafting AI ideas for a board that's
 already visible no longer requires first typing its argument block into
-the form above. And any idea flagged `isLikelyDuplicate` that isn't
-already its board's top-ranked idea now shows a "Merge into top idea"
-button, calling the new `lib/team-brainstorm-assist.ts`
+the form above. And any idea flagged `isLikelyDuplicate` now shows a "Merge into…" target
+picker, calling the new `lib/team-brainstorm-assist.ts`
 `mergeBrainstormIdeas` (via `state/brainstormIdeas.ts`'s
-`mergePersistedBrainstormIdeas`) to fold the duplicate's upvotes into the
-board's top-ranked idea and remove the duplicate — a moderator action
+`mergePersistedBrainstormIdeas`) to fold the duplicate's upvotes into
+whichever idea is chosen and remove the duplicate — a moderator action
 where the badge was previously informational only. `mergeBrainstormIdeas`
 throws on a same-id or cross-board merge attempt rather than silently
 conflating two unrelated ideas' vote counts. Vitest-covered in
@@ -171,12 +171,19 @@ cross-board merge) and
 (`mergePersistedBrainstormIdeas`: folding upvotes and deleting the
 duplicate, and a no-op when either id isn't stored).
 
+The target picker itself lists every *other* idea on the same board (not
+only the board's top-ranked idea), closing the "a duplicate pair that both
+rank below the board's actual top idea can't be merged directly into each
+other without first merging one of them up" Known gap previously recorded
+here — this is a UI-only change in `panels/BrainstormBoardPanel.tsx`
+(swapping a single "Merge into top idea" button for a `Select` populated
+from `board.ideas`); the already-tested `mergeBrainstormIdeas`/
+`mergePersistedBrainstormIdeas` needed no changes, since both already
+accepted an arbitrary target id.
+
 ## Known gaps
 
 - No reviewer/moderator identity check gates the merge action — any visitor
   can merge any two ideas on a board, same as every other unauthenticated
   moderator-style action in this repo (upvoting, approving a peer review,
   etc. — no auth system exists here yet).
-- "Merge into top idea" always targets the board's own highest-ranked idea;
-  a duplicate pair that both rank below the board's actual top idea can't
-  be merged directly into each other without first merging one of them up.
