@@ -1,15 +1,17 @@
 /**
- * @fileoverview Cross-tab live-update helpers for `DailyBestCardPanel` and
- * `ContributionLeaderboardPanel`, mirroring `debate-round`'s
- * `flow/live-update.ts`. The browser's `storage` event never fires in the
- * *same* tab that wrote the change — only in other same-origin tabs — so a
- * panel that reads `localStorage` on mount only never reflects another
- * tab's write without a manual reload. `isDailyBestCardLiveUpdateStorageEvent`
- * closes the "No real-time updates across browser tabs/sessions" Known gap
- * noted in `daily-best-card.md`; `isContributionLeaderboardLiveUpdateStorageEvent`
- * closes the equivalent gap for the leaderboard, noted in
- * `shared-flow-sync.md`'s "Every other localStorage-backed panel in this
- * repo still has no cross-tab live-update mechanism."
+ * @fileoverview Cross-tab live-update helpers for `DailyBestCardPanel`,
+ * `ContributionLeaderboardPanel`, and `TaskInboxPanel`, mirroring
+ * `debate-round`'s `flow/live-update.ts`. The browser's `storage` event
+ * never fires in the *same* tab that wrote the change — only in other
+ * same-origin tabs — so a panel that reads `localStorage` on mount only
+ * never reflects another tab's write without a manual reload.
+ * `isDailyBestCardLiveUpdateStorageEvent` closes the "No real-time updates
+ * across browser tabs/sessions" Known gap noted in `daily-best-card.md`;
+ * `isContributionLeaderboardLiveUpdateStorageEvent` and
+ * `isTaskInboxLiveUpdateStorageEvent` close the equivalent gap for their
+ * own panels, noted in `shared-flow-sync.md`'s "Every other
+ * localStorage-backed panel in this repo still has no cross-tab
+ * live-update mechanism."
  *
  * @module state/live-update
  */
@@ -56,5 +58,33 @@ export function isContributionLeaderboardLiveUpdateStorageEvent(event: { key: st
   return (
     event.key === null ||
     (CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `TaskInboxPanel` reads from, via
+ * `state/routedTaskQueues.ts#buildTaskInboxView` (`routedTaskQueues`),
+ * `state/pendingTaskVerifications.ts#listPendingTaskVerifications`
+ * (`pendingTaskVerifications`), and `state/trackedArguments.ts#listTrackedTopics`
+ * (`trackedArguments`, the "Route tasks" quick-pick list).
+ */
+export const TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS = [
+  "routedTaskQueues",
+  "pendingTaskVerifications",
+  "trackedArguments",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `TaskInboxPanel` to refresh its
+ * rendered topics/pending-verifications/tracked-topics view — closes the
+ * "Every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
+ * for this panel. Mirrors `isDailyBestCardLiveUpdateStorageEvent`'s
+ * null-key/exact-key-match rules.
+ */
+export function isTaskInboxLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

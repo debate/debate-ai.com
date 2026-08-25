@@ -51,6 +51,13 @@
  * `assertVerifierAllowed` after the click. A signed-out visitor keeps the
  * original fully free-form field, unchanged.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isTaskInboxLiveUpdateStorageEvent`, so a topic routed, task marked done,
+ * or task verified in another tab refreshes this panel's view without a
+ * manual reload — closing the "Every other localStorage-backed panel in
+ * this repo still has no cross-tab live-update mechanism" Known gap noted
+ * in `shared-flow-sync.md`, for this panel.
+ *
  * @module panels/TaskInboxPanel
  */
 
@@ -75,6 +82,7 @@ import {
 } from "../state/pendingTaskVerifications"
 import { listTrackedTopics } from "../state/trackedArguments"
 import { deriveLockedVerifierId, isOwnContributorRow } from "../lib/session-identity"
+import { isTaskInboxLiveUpdateStorageEvent } from "../state/live-update"
 import type { CoverageLevel } from "../lib/topic-coverage"
 
 const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> = {
@@ -130,6 +138,22 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
       setMyContributorId(signedInContributorId)
     }
   }, [signedInContributorId, hasEditedMyId])
+
+  /**
+   * Live-update the inbox when another browser tab routes a topic, marks a
+   * task done, or verifies one. A `storage` event never fires in the tab
+   * that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isTaskInboxLiveUpdateStorageEvent(event)) return
+      setTopics(buildTaskInboxView())
+      setPending(listPendingTaskVerifications())
+      setTrackedTopics(listTrackedTopics())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const pendingKey = (topicId: string, argBlock: string) => `${topicId}::${argBlock}`
 
