@@ -321,10 +321,13 @@ Vitest-covered by an added case in `packages/debate-round/test/panels.test.tsx`
   `flow/live-update.ts` plus a `storage`-event listener in
   `FlowSpreadsheet` now force-refreshes the `EditBadge` (and
   `AnnotationBadge`/`PrepNoteBadge`) when another tab logs a `FlowEdit`.
-  Every other localStorage-backed panel in this repo still has no
-  cross-tab live-update mechanism (Live Sync above is cross-*contributor*,
-  via the server, not cross-tab within one browser, and remains the only
-  path for a *different device/browser* to see the edit at all).
+  `DailyBestCardPanel` and `ContributionLeaderboardPanel` (see
+  [`contribution-leaderboard.md`](contribution-leaderboard.md)'s "Cross-tab
+  live update") have since gained the equivalent mechanism for their own
+  stores, but every other localStorage-backed panel in this repo still has
+  none (Live Sync above is cross-*contributor*, via the server, not
+  cross-tab within one browser, and remains the only path for a *different
+  device/browser* to see the edit at all).
 - Live sync is opt-in and per-Flow-ID, off by default, and pulls on a fixed
   ~4s poll rather than pushing instantly — a teammate's edit can take up to
   one poll interval to appear. The `FlowSpreadsheet` grid's `EditBadge`/

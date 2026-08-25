@@ -6,6 +6,41 @@
 _No task currently in progress._
 
 ### Completed
+- **Contribution Leaderboard — cross-tab live update.**
+  Closes, for this panel, the "Every other localStorage-backed panel in
+  this repo still has no cross-tab live-update mechanism" Known gap noted
+  in `shared-flow-sync.md`, which only `DailyBestCardPanel`
+  (`debate-card-search/src/state/live-update.ts`) and `FlowSpreadsheet`
+  (`debate-round/src/flow/live-update.ts`) had closed for their own stores.
+  `state/live-update.ts` gains a second helper alongside the existing
+  `isDailyBestCardLiveUpdateStorageEvent`:
+  `CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS` (`contributions`,
+  `completedResearchTasks`, `dailyMissionResults` — the three persisted
+  stores `ContributionLeaderboardPanel`'s roster is built from, via
+  `state/researchProgress.ts#buildPersistedLeaderboardWithCompletedTasks`
+  and `lib/unlock-streak-status.ts#buildContributorUnlockStatusWithStreakFromStore`)
+  and `isContributionLeaderboardLiveUpdateStorageEvent`, mirroring the
+  existing helper's null-key/exact-key-match rules exactly.
+  `ContributionLeaderboardPanel` now subscribes to the browser's `storage`
+  event (which the spec fires only in *other* same-origin tabs, never the
+  one that made the write) and re-derives its whole roster via the existing
+  `buildLeaderboardRows()` when a relevant key changes — so a contribution,
+  a completed research task, or quest/streak activity logged in a second
+  tab now shows up on the leaderboard without a manual reload. No new
+  persisted store or scoring logic was needed; this is wiring only, mirroring
+  `DailyBestCardPanel`'s identical pattern.
+  `docs/features/contribution-leaderboard.md` gained a new "Cross-tab live
+  update" section, and `shared-flow-sync.md`'s Known gaps entry was updated
+  to note this panel (and `DailyBestCardPanel`) as no longer part of "every
+  other" panel lacking the mechanism. Verification: full `bun run test`
+  (171 files / 2591 tests passed, 4 new — `live-update.test.ts`'s
+  `isContributionLeaderboardLiveUpdateStorageEvent` covering every tracked
+  key, the `null`-key clear-all case, an unrelated key, and a
+  substring-matching key staying ignored), `bun x turbo typecheck` (12/12
+  package tasks passed), and `bun run build:web` (clean production + SSR +
+  service-worker build). No repo-wide `lint` script exists. **Completed:**
+  2026-08-25. PR: [#324](https://github.com/debate/debate-ai.com/pull/324).
+
 - **Team Collaboration Mode — Topic Sprint "Your contributor id" session
   prefill.**
   Continues the "Signed-in identity wiring" series (PRs #318–#322): a full

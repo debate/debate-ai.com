@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS,
   DAILY_BEST_CARD_LIVE_UPDATE_STORAGE_KEYS,
+  isContributionLeaderboardLiveUpdateStorageEvent,
   isDailyBestCardLiveUpdateStorageEvent,
 } from "../src/state/live-update";
 
@@ -23,5 +25,27 @@ describe("isDailyBestCardLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isDailyBestCardLiveUpdateStorageEvent({ key: "contributionsBackup" })).toBe(false);
     expect(isDailyBestCardLiveUpdateStorageEvent({ key: "old_dailyBestCardAnnouncements" })).toBe(false);
+  });
+});
+
+describe("isContributionLeaderboardLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isContributionLeaderboardLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isContributionLeaderboardLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isContributionLeaderboardLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isContributionLeaderboardLiveUpdateStorageEvent({ key: "flowAnnotations" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isContributionLeaderboardLiveUpdateStorageEvent({ key: "contributionsBackup" })).toBe(false);
+    expect(isContributionLeaderboardLiveUpdateStorageEvent({ key: "old_dailyMissionResults" })).toBe(false);
   });
 });
