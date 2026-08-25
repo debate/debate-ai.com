@@ -7,7 +7,7 @@ _No task currently in progress._
 
 ### Completed
 - **Task Inbox — signed-in identity prefill for "My tasks."**
-  PR: pending (branch `claude/practical-allen-arzuvv`).
+  [PR #318](https://github.com/debate/debate-ai.com/pull/318).
   Closes the auth half of the "🧭 Research Task Routing" bullet's follow-up
   (e) in this file's Research Crowdsourcing Organizer Features section —
   the "My tasks" filter used to be a free-form typed id "since this repo
