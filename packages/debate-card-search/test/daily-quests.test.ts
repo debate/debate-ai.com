@@ -5,6 +5,7 @@ import {
   buildUnderCoveredArgumentQuests,
   computeQuestProgress,
   isQuestTemplateExpired,
+  rolloverRecurringQuestTemplate,
   type QuestContribution,
   type QuestTemplate,
 } from "../src/lib/daily-quests";
@@ -97,6 +98,43 @@ describe("isQuestTemplateExpired", () => {
   it("is expired the day after its expiresOn day", () => {
     const expiring: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10" };
     expect(isQuestTemplateExpired(expiring, "2026-08-11")).toBe(true);
+  });
+});
+
+describe("rolloverRecurringQuestTemplate", () => {
+  it("leaves a template with no recurrence unchanged", () => {
+    const expired: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10" };
+    expect(rolloverRecurringQuestTemplate(expired, "2026-08-13")).toBe(expired);
+  });
+
+  it("leaves a recurring template with no expiresOn unchanged", () => {
+    const noAnchor: QuestTemplate = { ...findSolvencyCards, recurrence: "daily" };
+    expect(rolloverRecurringQuestTemplate(noAnchor, "2026-08-13")).toBe(noAnchor);
+  });
+
+  it("leaves a recurring template that hasn't expired yet unchanged", () => {
+    const stillActive: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-13", recurrence: "daily" };
+    expect(rolloverRecurringQuestTemplate(stillActive, "2026-08-13")).toBe(stillActive);
+  });
+
+  it("advances a daily recurring template's expiresOn to today", () => {
+    const expired: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10", recurrence: "daily" };
+    const rolled = rolloverRecurringQuestTemplate(expired, "2026-08-13");
+    expect(rolled.expiresOn).toBe("2026-08-13");
+    expect(rolled).not.toBe(expired);
+    expect(rolled).toEqual({ ...expired, expiresOn: "2026-08-13" });
+  });
+
+  it("advances a weekly recurring template's expiresOn to the next 7-day boundary on or after today", () => {
+    const expired: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10", recurrence: "weekly" };
+    const rolled = rolloverRecurringQuestTemplate(expired, "2026-08-11");
+    expect(rolled.expiresOn).toBe("2026-08-17");
+  });
+
+  it("advances a weekly recurring template through several missed cycles at once", () => {
+    const expired: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10", recurrence: "weekly" };
+    const rolled = rolloverRecurringQuestTemplate(expired, "2026-09-01");
+    expect(rolled.expiresOn).toBe("2026-09-07");
   });
 });
 

@@ -19,8 +19,9 @@ Every saved quest template's progress for the current UTC calendar day:
 | Complete | `isComplete`, once `completedCount >= targetCount` |
 
 A quest can be added by hand (description, contribution kind, optional
-argument block, target count, optional expiry day), or seeded in bulk from a
-topic's under-covered arguments (via the existing Topic Coverage Dashboard's
+argument block, target count, optional expiry day and — once an expiry is
+set — an optional daily/weekly recurrence), or seeded in bulk from a topic's
+under-covered arguments (via the existing Topic Coverage Dashboard's
 coverage report).
 
 A "Your streak" section lets a contributor (identified by free-text id —
@@ -29,7 +30,8 @@ there is no contributor identity/auth in this repo, the same known gap as
 on demand and see their reward right on the quest board itself: their
 current streak, a badge freshly earned today (highlighted separately from
 badges earned on prior days), and a nudge to keep the streak going when
-today's mission isn't complete yet.
+today's mission isn't complete yet. A signed-in visitor sees this field
+prefilled with their own id — see "Signed-in prefill" below.
 
 ## Data flow
 
@@ -53,7 +55,10 @@ panels/DailyQuestsPanel.tsx
 Cleaning up expired quests (Daily Quests panel):
 panels/DailyQuestsPanel.tsx
   → pruneExpiredQuestTemplates(now)                           — state/dailyQuests.ts
-      removes every stored template whose expiresOn has passed
+      → rolloverExpiredRecurringQuestTemplates(now)            — state/dailyQuests.ts
+          rolls an expired recurring template's expiresOn forward first, so
+          it's never deleted as "expired" out from under a team
+      removes every still-expired (non-recurring) stored template
       (isQuestTemplateExpired — lib/daily-quests.ts), returning the removed count
   → panel re-reads listQuestTemplates()/buildPersistedDailyQuestBoard() to refresh
 
@@ -72,12 +77,35 @@ Rendering the board:
 state/dailyQuests.ts (localStorage: dailyQuestTemplates)
 state/contributions.ts (localStorage: contributions)
   → buildPersistedDailyQuestBoard(now)                        — state/dailyQuests.ts
+      → rolloverExpiredRecurringQuestTemplates(now)            — state/dailyQuests.ts
+          → rolloverRecurringQuestTemplate(template, dayKey)   — lib/daily-quests.ts
+              advances an expired recurring template's expiresOn to its next
+              cycle boundary on/after today, so it's back on the board with
+              fresh (today-scoped) progress — no manual action needed
       filters persisted contributions to those carrying a `submittedAt`
       (mirroring dailyMissionResults.ts's `hasSubmittedAt` convention), then
       hands both lists to lib/daily-quests.ts's buildDailyQuestBoard
   → panels/DailyQuestsPanel.tsx                                (renders the board)
   → apps/debate-ai.com/app/cards/quests/page.tsx                (mounts the panel)
+
+Signed-in prefill for "Your streak" (apps/debate-ai.com only):
+components/research/DailyQuestsWithIdentity.tsx  — "use client" wrapper
+  → useSession()                          — lib/hooks/useSession.ts, the
+                                              better-auth React session hook
+  → deriveContributorIdFromSessionIdentity(user)
+      — debate-card-search's lib/session-identity.ts: name, else the
+        email's local part, else the raw account id, else ""
+  → <DailyQuestsPanel signedInContributorId={...} />
+      — seeds contributorId's initial value only (and immediately loads that
+        contributor's streak); a visitor who edits the field
+        (hasEditedContributorId) keeps their own typed value from then on,
+        mirroring TaskInboxPanel's "My tasks" prefill exactly
 ```
+
+`app/cards/quests/page.tsx` and `ResearchHub.tsx`'s Quests tab both render
+`DailyQuestsWithIdentity` instead of `DailyQuestsPanel` directly, so the
+panel itself stays app-agnostic — it only knows about a plain
+`signedInContributorId` string prop, not `better-auth`.
 
 `lib/daily-quests.ts`'s pure aggregation (`computeQuestProgress`,
 `buildDailyQuestBoard`, `buildQuestBoardSummaryText`,
@@ -130,10 +158,49 @@ its own expiry day) and
 template and returns the count, leaves a never-expiring or not-yet-expired
 template untouched, and removes only the expired template among several).
 
+A quest template can now also carry a recurrence cadence, closing the "an
+expired quest simply stops appearing and stops scoring, rather than being
+reset for a new cycle (no recurring-quest concept exists in this repo)"
+Known gap left by the expiry addition above: `QuestTemplate.recurrence`
+(`"daily"` | `"weekly"`, `lib/daily-quests.ts`) has no effect without an
+`expiresOn` to anchor it, but once a recurring template's cycle expires,
+`rolloverRecurringQuestTemplate` advances `expiresOn` forward by whole
+cycles until it lands on/after the current UTC day instead of leaving the
+template expired — the quest simply becomes active again, scored fresh
+against that day's contributions (progress was always day-scoped, so no
+separate "reset the count" step is needed). `state/dailyQuests.ts`'s
+`rolloverExpiredRecurringQuestTemplates` applies that to every persisted
+template and is called automatically by both `buildPersistedDailyQuestBoard`
+(so a recurring quest reappears the next time anyone loads the board — no
+scheduled job exists in this repo, matching every other "manual trigger"
+convention here) and `pruneExpiredQuestTemplates` (so "Clean up expired
+quests" can never delete a recurring template out from under a team). The
+"Add quest" form gained a "Recurs" picker (Doesn't recur / Daily / Weekly),
+shown once an expiry date is set, and each quest's board row shows a
+"Recurs daily"/"Recurs weekly" badge alongside its "Expires" badge when it
+has one. Vitest-covered in
+`packages/debate-card-search/test/daily-quests.test.ts`
+(`rolloverRecurringQuestTemplate`: no recurrence, recurrence with no
+`expiresOn`, not-yet-expired, daily rollover to today, weekly rollover to
+the next 7-day boundary, and a weekly rollover skipping several missed
+cycles at once) and
+`packages/debate-card-search/test/dailyQuests.test.ts`
+(`rolloverExpiredRecurringQuestTemplates`: no-op on empty storage, leaves a
+non-recurring expired template untouched, rolls an expired recurring
+template forward and returns the count, leaves a not-yet-expired recurring
+template untouched, and rolls over only the expired recurring templates
+among several; `pruneExpiredQuestTemplates` never removing an expired
+recurring template; `buildPersistedDailyQuestBoard` rolling a recurring
+template's next cycle back onto the board at 0 progress).
+
 ## Known gaps
 
-- No contributor identity/auth scoping yet — the board isn't scoped to "my
-  quests," the same known gap as the Leaderboard, Task Inbox, and Progress
+- No contributor identity/permission *checks* — the "Your streak" field
+  stays free-form text, not a login, so anyone can still type any
+  contributor's id to record a mission or view a streak under it. A real
+  signed-in session now *prefills* the field when one exists (see
+  "Signed-in prefill" above), but nothing stops a visitor from overwriting
+  it — the same known gap as the Leaderboard, Task Inbox, and Progress
   Unlocks panels.
 - Contributions saved before this change don't carry `submittedAt`/
   `argBlock` and are excluded from quest scoring (not retroactively

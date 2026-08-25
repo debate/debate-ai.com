@@ -32,11 +32,21 @@ closing the "No reviewer/verification step before a task is marked
 complete" Known gap below. The assignee themself can't verify their own
 task — attempting to leaves an inline error and the task still pending.
 
+When a real signed-in session exists, each pending verification's
+"Verifier id" field is no longer just a suggestion: it's locked (read-only)
+to the signed-in id, and the **Verify** button is disabled outright with an
+inline explanation for a task the signed-in visitor completed themself,
+instead of only failing after the click. A signed-out visitor keeps the
+original fully free-form verifier field. See "Signed-in verifier gate"
+under Data flow below.
+
 A "My tasks" field lets a contributor type their own `contributorId` to
 scope the list to just their own assignments, via
-`filterTaskInboxViewByContributor` — a free-form filter, not a login, since
-this repo has no auth/identity system (the same workaround
-`flow/prep-note-notifications.ts` uses for "🔄 Strategy Sync Notes").
+`filterTaskInboxViewByContributor` — still a free-form text field, not a
+login. When `apps/debate-ai.com`'s real signed-in session (better-auth) has
+a user, the field's *initial* value is prefilled from it — a visitor who
+edits the field keeps whatever they typed instead. See "Signed-in prefill"
+under Data flow below.
 
 ## Data flow
 
@@ -85,7 +95,39 @@ panels/TaskInboxPanel.tsx
          assignment's activeTaskCount, and saves the queue
   → panel re-reads buildTaskInboxView() (and the tracked-topic suggestion
     list) to refresh
+
+Signed-in prefill for "My tasks" (apps/debate-ai.com only):
+components/research/TaskInboxWithIdentity.tsx  — "use client" wrapper
+  → useSession()                          — lib/hooks/useSession.ts, the
+                                              better-auth React session hook
+  → deriveContributorIdFromSessionIdentity(user)
+      — debate-card-search's lib/session-identity.ts: name, else the
+        email's local part, else the raw account id, else ""
+  → <TaskInboxPanel signedInContributorId={...} />
+      — seeds myContributorId's initial value only; a visitor who edits
+        the field (hasEditedMyId) keeps their own typed value from then on
+
+Signed-in verifier gate for "Awaiting verification" (same
+signedInContributorId prop, per pending record):
+panels/TaskInboxPanel.tsx
+  → isOwnContributorRow(record.assignment.contributorId, signedInContributorId)
+      — lib/session-identity.ts: true when the signed-in id matches the
+        assignee (case-insensitive, trimmed) → Verify is disabled outright,
+        with an inline "a different contributor must verify it" message
+  → deriveLockedVerifierId(record.assignment.contributorId, signedInContributorId)
+      — lib/session-identity.ts: "" when signed out or self-assigned
+        (leaves the field free-form, matching today's behavior); otherwise
+        the trimmed signed-in id
+  → when non-"", the Verifier id Input renders that value, disabled and
+    read-only, and handleVerify's click handler passes it straight to
+    verifyAndRecordResearchTask instead of reading the (now-unused)
+    verifierIds[key] typed state
 ```
+
+`app/cards/inbox/page.tsx` and `ResearchHub.tsx`'s Routing tab both render
+`TaskInboxWithIdentity` instead of `TaskInboxPanel` directly, so the panel
+itself stays app-agnostic — it only knows about a plain
+`signedInContributorId` string prop, not `better-auth`.
 
 Every routing/persistence rule already existed and was Vitest-covered; this
 feature adds three composition functions in
@@ -117,12 +159,29 @@ Vitest-covered in `packages/debate-card-search/test/task-verification.test.ts`
 and `packages/debate-card-search/test/pendingTaskVerifications.test.ts`, plus
 new cases in `test/researchProgress.test.ts` for `verifyAndRecordResearchTask`.
 
+The signed-in verifier gate added one pure helper, `lib/session-identity.ts`'s
+`deriveLockedVerifierId` (reusing the existing `isOwnContributorRow` check),
+Vitest-covered in `test/session-identity.test.ts` — no changes to
+`assertVerifierAllowed`/`verifyAndRecordResearchTask` themselves, which stay
+the single source of truth the panel's client-side gate is layered in front
+of.
+
 ## Known gaps
 
-- No contributor identity/permission checks (no auth/roles in this repo
-  yet), so the "My tasks" filter is a free-form id field, not a login —
-  anyone can type any contributor's id to see their assignments. The same
-  applies to the verification step: a verifier is just whoever types a
-  different free-form id, not an authenticated reviewer.
+- The "My tasks" filter is still free-form text, not a login — a real
+  signed-in session only *prefills* it (see "Signed-in prefill" above), so
+  a visitor can still overwrite it to browse anyone's assignments. The
+  verifier-id half of this gap is closed: see "Signed-in verifier gate"
+  above — when signed in, the Verifier id field is locked to that identity
+  and self-verification is disabled outright, not just a typed suggestion.
+  A signed-out visitor still has a fully free-form verifier field, since
+  this repo doesn't require login to use.
 - No follow-ups remain open on the "No reviewer/verification step before a
   task is marked complete" gap — see "Awaiting verification" above.
+- The signed-in verifier gate is enforced client-side only (the panel
+  disables the input/button); `verifyAndRecordResearchTask`/
+  `assertVerifierAllowed` still accept whatever `verifierId` string a
+  caller passes, so a caller bypassing this panel (or a signed-out
+  visitor) is unaffected — the same trust boundary every other
+  localStorage-backed action in this repo has, since there is no
+  server-side session check on these calls.

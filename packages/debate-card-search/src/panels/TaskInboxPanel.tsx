@@ -33,11 +33,23 @@
  *
  * A "My tasks" filter closes the "(e) scoping the inbox to 'my tasks' once
  * contributor identity/auth exists" follow-up named under the same bullet.
- * This repo still has no auth/identity system, so — mirroring the "🔄
- * Strategy Sync Notes" assignee-notification slice's identical free-form-id
- * workaround — a contributor just types their own `contributorId` into a
- * field, and the panel scopes the rendered view to it via
- * `filterTaskInboxViewByContributor`.
+ * A contributor types their own `contributorId` into a field, and the panel
+ * scopes the rendered view to it via `filterTaskInboxViewByContributor`.
+ *
+ * A later slice wires that field to a real signed-in identity where one is
+ * available: an optional `signedInContributorId` prop (built from
+ * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`
+ * against `apps/debate-ai.com`'s real better-auth session) seeds the
+ * field's *initial* value only — a visitor who edits it keeps whatever they
+ * typed, so this is a prefill, not a login.
+ *
+ * The same `signedInContributorId` also gates — not just prefills — each
+ * pending verification's "Verifier id" field via `lib/session-identity.ts`'s
+ * `deriveLockedVerifierId`: a signed-in visitor's verifier field is locked
+ * to their own id (read-only), and verifying a task they completed
+ * themself is disabled with an inline explanation instead of only failing
+ * `assertVerifierAllowed` after the click. A signed-out visitor keeps the
+ * original fully free-form field, unchanged.
  *
  * @module panels/TaskInboxPanel
  */
@@ -62,12 +74,30 @@ import {
   type PendingTaskVerification,
 } from "../state/pendingTaskVerifications"
 import { listTrackedTopics } from "../state/trackedArguments"
+import { deriveLockedVerifierId, isOwnContributorRow } from "../lib/session-identity"
 import type { CoverageLevel } from "../lib/topic-coverage"
 
 const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> = {
   missing: "default",
   thin: "secondary",
   covered: "outline",
+}
+
+export interface TaskInboxPanelProps {
+  /**
+   * A contributor id to prefill the "My tasks" field with, typically
+   * derived from a real signed-in session via
+   * `deriveContributorIdFromSessionIdentity`. Only seeds that field's
+   * initial value — once a visitor edits it by hand, this prop is ignored
+   * for the rest of the panel's life so it never overwrites what they typed.
+   *
+   * Every pending verification's "Verifier id" field is treated
+   * differently: when set, that field is locked to this id (not just
+   * prefilled) via `deriveLockedVerifierId`, and verifying a task assigned
+   * to this same id is disabled outright. A signed-out visitor (this prop
+   * unset) keeps the original fully free-form verifier field.
+   */
+  signedInContributorId?: string
 }
 
 /**
@@ -78,13 +108,14 @@ const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> 
  * Reads localStorage on mount only (client-side), so it renders an empty
  * state during SSR/hydration rather than throwing.
  */
-export function TaskInboxPanel() {
+export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = {}) {
   const [topics, setTopics] = useState<TaskInboxTopic[] | null>(null)
   const [pending, setPending] = useState<PendingTaskVerification[]>([])
   const [trackedTopics, setTrackedTopics] = useState<string[]>([])
   const [routeTopic, setRouteTopic] = useState("")
   const [routeError, setRouteError] = useState<string | null>(null)
   const [myContributorId, setMyContributorId] = useState("")
+  const [hasEditedMyId, setHasEditedMyId] = useState(false)
   const [verifierIds, setVerifierIds] = useState<Record<string, string>>({})
   const [verifyErrors, setVerifyErrors] = useState<Record<string, string>>({})
 
@@ -94,6 +125,12 @@ export function TaskInboxPanel() {
     setTrackedTopics(listTrackedTopics())
   }, [])
 
+  useEffect(() => {
+    if (!hasEditedMyId && signedInContributorId) {
+      setMyContributorId(signedInContributorId)
+    }
+  }, [signedInContributorId, hasEditedMyId])
+
   const pendingKey = (topicId: string, argBlock: string) => `${topicId}::${argBlock}`
 
   const handleMarkDone = (topicId: string, argBlock: string) => {
@@ -102,9 +139,9 @@ export function TaskInboxPanel() {
     setPending(listPendingTaskVerifications())
   }
 
-  const handleVerify = (topicId: string, argBlock: string) => {
+  const handleVerify = (topicId: string, argBlock: string, verifierIdOverride?: string) => {
     const key = pendingKey(topicId, argBlock)
-    const verifierId = (verifierIds[key] ?? "").trim()
+    const verifierId = (verifierIdOverride ?? verifierIds[key] ?? "").trim()
     try {
       verifyAndRecordResearchTask(topicId, argBlock, verifierId, new Date().toISOString())
       setPending(listPendingTaskVerifications())
@@ -173,13 +210,17 @@ export function TaskInboxPanel() {
       <Input
         id="task-inbox-my-id"
         value={myContributorId}
-        onChange={(e) => setMyContributorId(e.target.value)}
+        onChange={(e) => {
+          setHasEditedMyId(true)
+          setMyContributorId(e.target.value)
+        }}
         placeholder="alice"
         className="max-w-sm"
       />
       <p className="text-xs text-muted-foreground">
-        Enter your contributor id to scope the inbox below to just your own assignments. This repo
-        has no auth/identity system, so this is a free-form filter, not a login.
+        {signedInContributorId
+          ? "Prefilled from your signed-in account — edit it if your tasks were routed under a different contributor id."
+          : "Enter your contributor id to scope the inbox below to just your own assignments. This is a free-form filter, not a login."}
       </p>
     </div>
   )
@@ -230,6 +271,15 @@ export function TaskInboxPanel() {
           <div className="space-y-2">
             {pending.map((record) => {
               const key = pendingKey(record.topicId, record.assignment.task.argBlock)
+              const isSelfAssignment = isOwnContributorRow(
+                record.assignment.contributorId,
+                signedInContributorId,
+              )
+              const lockedVerifierId = deriveLockedVerifierId(
+                record.assignment.contributorId,
+                signedInContributorId,
+              )
+              const verifierValue = lockedVerifierId || (verifierIds[key] ?? "")
               return (
                 <div
                   key={key}
@@ -242,18 +292,33 @@ export function TaskInboxPanel() {
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <Input
-                      value={verifierIds[key] ?? ""}
+                      value={verifierValue}
                       onChange={(e) => setVerifierIds((prev) => ({ ...prev, [key]: e.target.value }))}
                       placeholder="Verifier id"
                       className="h-8 max-w-[10rem]"
+                      disabled={!!lockedVerifierId || isSelfAssignment}
+                      readOnly={!!lockedVerifierId}
                     />
                     <Button
                       size="sm"
-                      onClick={() => handleVerify(record.topicId, record.assignment.task.argBlock)}
+                      disabled={isSelfAssignment}
+                      onClick={() =>
+                        handleVerify(record.topicId, record.assignment.task.argBlock, lockedVerifierId || undefined)
+                      }
                     >
                       Verify
                     </Button>
                   </div>
+                  {isSelfAssignment && (
+                    <p className="w-full text-xs text-muted-foreground">
+                      You completed this task — a different contributor must verify it.
+                    </p>
+                  )}
+                  {!isSelfAssignment && lockedVerifierId && (
+                    <p className="w-full text-xs text-muted-foreground">
+                      Verifying as your signed-in id.
+                    </p>
+                  )}
                   {verifyErrors[key] && (
                     <p className="w-full text-xs text-destructive">{verifyErrors[key]}</p>
                   )}

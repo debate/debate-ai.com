@@ -20,6 +20,12 @@
  * follow-ups as the same signal). See `SprintNotesPanel.tsx` for the
  * heartbeat/freshness model this reuses unchanged.
  *
+ * An optional `signedInContributorId` prop (mirroring `ReviewQueuePanel`'s
+ * identical convention) prefills the "Your ID" presence field with a real
+ * signed-in visitor's derived id — a starting value only; typing over the
+ * field is always respected afterward, and a signed-out visitor sees the
+ * same blank field as before.
+ *
  * @module panels/PrepRoomPanel
  */
 
@@ -56,17 +62,34 @@ const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> 
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function PrepRoomPanel() {
+export interface PrepRoomPanelProps {
+  /**
+   * A real signed-in visitor's derived contributor id (see
+   * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`).
+   * Prefills the "Your ID" presence field's *initial* value only — never
+   * overwrites a visitor's own edit.
+   */
+  signedInContributorId?: string
+}
+
+export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}) {
   const [topics, setTopics] = useState<string[] | null>(null)
   const [topic, setTopic] = useState("")
   const [room, setRoom] = useState<PrepRoom | null>(null)
   const [query, setQuery] = useState("")
   const [myId, setMyId] = useState("")
+  const [hasEditedMyId, setHasEditedMyId] = useState(false)
   const [active, setActive] = useState<ActiveContributor[]>([])
 
   useEffect(() => {
     setTopics(listPrepRoomTopics())
   }, [])
+
+  useEffect(() => {
+    if (!hasEditedMyId && signedInContributorId) {
+      setMyId(signedInContributorId)
+    }
+  }, [signedInContributorId, hasEditedMyId])
 
   useEffect(() => {
     const activeTopic = topic.trim()
@@ -160,7 +183,10 @@ export function PrepRoomPanel() {
             )}
             <Input
               value={myId}
-              onChange={(e) => setMyId(e.target.value)}
+              onChange={(e) => {
+                setMyId(e.target.value)
+                setHasEditedMyId(true)
+              }}
               placeholder="Your ID"
               className="h-6 w-28 text-xs"
             />

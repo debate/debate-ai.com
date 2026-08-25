@@ -19,6 +19,12 @@
  * `win_target` challenge also gets a "Record a win" action that calls the
  * same store's `recordChallengeWinEvent`.
  *
+ * An optional `signedInContributorId` prop (mirroring `TaskInboxPanel`'s
+ * identical convention) prefills each challenge's "Record a win (contributor
+ * ID)" field with a real signed-in visitor's derived id until that
+ * challenge's field is edited — a starting value only, and a signed-out
+ * visitor sees the same blank fields as before.
+ *
  * @module panels/GroupChallengesPanel
  */
 
@@ -92,6 +98,17 @@ function formatDate(epochMs: number): string {
   return new Date(epochMs).toLocaleDateString()
 }
 
+export interface GroupChallengesPanelProps {
+  /**
+   * A real signed-in visitor's derived contributor id (see
+   * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`).
+   * Prefills each challenge's "Record a win (contributor ID)" field until
+   * that challenge's own field is edited — never overwrites a visitor's
+   * own edit.
+   */
+  signedInContributorId?: string
+}
+
 /**
  * Renders the Group Challenges panel: a form to create a squad-scoped
  * friendly challenge with a contribution- or win-based goal, plus every
@@ -101,7 +118,7 @@ function formatDate(epochMs: number): string {
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function GroupChallengesPanel() {
+export function GroupChallengesPanel({ signedInContributorId }: GroupChallengesPanelProps = {}) {
   const [challenges, setChallenges] = useState<GroupChallenge[] | null>(null)
   const [board, setBoard] = useState<GroupChallengeProgress[]>([])
   const [draft, setDraft] = useState<ChallengeDraft>(EMPTY_DRAFT)
@@ -118,8 +135,11 @@ export function GroupChallengesPanel() {
     setBoard(buildPersistedGroupChallengeBoard(Date.now()))
   }
 
+  const winContributorIdFor = (challengeId: string): string =>
+    winContributorId[challengeId] ?? signedInContributorId ?? ""
+
   const handleRecordWin = (challengeId: string) => {
-    const contributorId = (winContributorId[challengeId] ?? "").trim()
+    const contributorId = winContributorIdFor(challengeId).trim()
     if (!contributorId) {
       setError("A contributor ID is required to record a win.")
       return
@@ -346,7 +366,7 @@ export function GroupChallengesPanel() {
                       <Label htmlFor={`record-win-${challenge.id}`}>Record a win (contributor ID)</Label>
                       <Input
                         id={`record-win-${challenge.id}`}
-                        value={winContributorId[challenge.id] ?? ""}
+                        value={winContributorIdFor(challenge.id)}
                         onChange={(e) =>
                           setWinContributorId((prev) => ({ ...prev, [challenge.id]: e.target.value }))
                         }

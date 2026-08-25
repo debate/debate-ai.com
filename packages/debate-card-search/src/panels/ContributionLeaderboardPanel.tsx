@@ -13,6 +13,20 @@
  * `buildContributorUnlockStatusWithStreakFromStore` — reusing every existing
  * scoring/tier/streak slice directly rather than introducing new logic here.
  *
+ * An optional `signedInContributorId` prop (built from
+ * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`
+ * against a real signed-in session) highlights that contributor's own row
+ * with a "You" badge via `isOwnContributorRow` — this roster always shows
+ * every contributor, so unlike Task Inbox's "My tasks" prefill there is
+ * nothing to filter or prefill here, only to highlight.
+ *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isContributionLeaderboardLiveUpdateStorageEvent`, so a contribution,
+ * completed task, or streak update logged in another tab refreshes this
+ * panel's roster without a manual reload — closing the "Every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap noted in `shared-flow-sync.md`, for this panel.
+ *
  * @module panels/ContributionLeaderboardPanel
  */
 
@@ -30,6 +44,8 @@ import {
 } from "debate-ui/src/primitives/table"
 import { buildPersistedLeaderboardWithCompletedTasks } from "../state/researchProgress"
 import { buildContributorUnlockStatusWithStreakFromStore } from "../lib/unlock-streak-status"
+import { isOwnContributorRow } from "../lib/session-identity"
+import { isContributionLeaderboardLiveUpdateStorageEvent } from "../state/live-update"
 import type { ContributorStats } from "../lib/contribution-leaderboard"
 
 /** One leaderboard row: a contributor's raw stats plus their derived tier/streak status. */
@@ -72,11 +88,36 @@ const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
  * Reads localStorage on mount only (client-side), so it renders an empty
  * state during SSR/hydration rather than throwing.
  */
-export function ContributionLeaderboardPanel() {
+export interface ContributionLeaderboardPanelProps {
+  /**
+   * A contributor id to highlight as "You" in the leaderboard, typically
+   * derived from a real signed-in session via
+   * `deriveContributorIdFromSessionIdentity`. The leaderboard always shows
+   * every contributor — this only highlights a matching row, it never
+   * filters the others out.
+   */
+  signedInContributorId?: string
+}
+
+export function ContributionLeaderboardPanel({ signedInContributorId }: ContributionLeaderboardPanelProps = {}) {
   const [rows, setRows] = useState<LeaderboardRow[] | null>(null)
 
   useEffect(() => {
     setRows(buildLeaderboardRows())
+  }, [])
+
+  /**
+   * Live-update the roster when another browser tab submits a contribution,
+   * completes a research task, or logs quest/streak activity. A `storage`
+   * event never fires in the tab that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isContributionLeaderboardLiveUpdateStorageEvent(event)) return
+      setRows(buildLeaderboardRows())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   if (rows === null) {
@@ -113,10 +154,21 @@ export function ContributionLeaderboardPanel() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rows.map((row, index) => (
-            <TableRow key={row.contributorId}>
+          {rows.map((row, index) => {
+            const isMe = isOwnContributorRow(row.contributorId, signedInContributorId)
+            return (
+            <TableRow key={row.contributorId} className={isMe ? "bg-primary/5" : undefined}>
               <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
-              <TableCell className="font-medium">{row.contributorId}</TableCell>
+              <TableCell className="font-medium">
+                <div className="flex items-center gap-1.5">
+                  {row.contributorId}
+                  {isMe && (
+                    <Badge variant="outline" className="whitespace-nowrap">
+                      You
+                    </Badge>
+                  )}
+                </div>
+              </TableCell>
               <TableCell>
                 <Badge variant={TIER_VARIANT[row.tier] ?? "outline"} className="capitalize">
                   {row.tier}
@@ -141,7 +193,8 @@ export function ContributionLeaderboardPanel() {
                 )}
               </TableCell>
             </TableRow>
-          ))}
+            )
+          })}
         </TableBody>
       </Table>
     </div>
