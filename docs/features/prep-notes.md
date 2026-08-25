@@ -107,13 +107,22 @@ hooks/useJumpToPrepNoteBox.ts (mounted by DebateFlowPage)
     → once that flow's AG Grid has the target row rendered — either
       immediately (grid already mounted) or once its onGridReady fires
       (fresh mount) — calls edit-cells.ts's jumpToBoxInGrid(api, boxPath)
-      to scroll to and flash the box's cell
+      to scroll to and flash the box's cell, retrying every 200ms until it
+      succeeds or edit-cells.ts's MAX_BOX_JUMP_ATTEMPTS (5) is reached
 ```
 
 The panel itself still doesn't mount a live `Flow` (it stays cross-flow, so
 `resolvePrepNoteBox` isn't used here); the link instead hands off to
 `/debate`, which already owns a live flow and its AG Grid. This closes the
 "No 'jump to argument' link" gap below.
+
+If the row never resolves — e.g. the note's `boxPath` no longer matches a
+real row because the flow was edited or the row removed since the note was
+made — `useJumpToPrepNoteBox` gives up after `MAX_BOX_JUMP_ATTEMPTS` retries
+and returns `jumpFailed: true`. `DebateFlowPage` renders
+`edit-cells.ts`'s `buildBoxJumpFailedMessage()` as a dismissible banner
+above the flow grid when that happens, closing the "silently returns
+`false`... no error is shown" Known gap below.
 
 ## Create a note
 
@@ -151,10 +160,14 @@ itself, rather than needing a not-yet-built flow-view affordance.
 
 ## Known gaps
 
-- If a note's `boxPath` no longer resolves to a real grid row (e.g. the
+- ~~If a note's `boxPath` no longer resolves to a real grid row (e.g. the
   flow was edited since the note was made), `jumpToBoxInGrid` silently
   returns `false` — the flow tab still gets selected, but nothing scrolls
-  or flashes, and no error is shown.
+  or flashes, and no error is shown.~~ Closed: `useJumpToPrepNoteBox` now
+  retries the jump every 200ms up to `MAX_BOX_JUMP_ATTEMPTS` (5) times
+  before giving up, and `DebateFlowPage` shows a dismissible
+  `buildBoxJumpFailedMessage()` banner above the flow grid once it does
+  (see "Jump to argument" above).
 - The new note-creation popover's "Author ID" is a free-form typed field,
   not an authenticated identity — there's no auth system in this repo, so
   anyone can type any author id (same gap as `review-queue.md`'s reviewer

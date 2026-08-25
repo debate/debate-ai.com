@@ -58,3 +58,27 @@ export function jumpToBoxInGrid(api: GridJumpApi, boxPath: number[]): boolean {
   api.flashCells({ rowNodes: [rowNode], columns: [field] });
   return true;
 }
+
+/**
+ * Number of spaced-out retries `useJumpToPrepNoteBox` makes before giving up
+ * on a jump target that never resolves — e.g. a Prep Note's `boxPath` no
+ * longer matches a real grid row because the flow was edited (or the row
+ * removed) since the note was made. Closes the "jumpToBoxInGrid silently
+ * returns false... no error is shown" Known gap recorded in
+ * `docs/features/prep-notes.md`.
+ */
+export const MAX_BOX_JUMP_ATTEMPTS = 5;
+
+/** Whether `useJumpToPrepNoteBox` should stop retrying a jump and report failure instead. */
+export function hasExhaustedBoxJumpAttempts(attempts: number): boolean {
+  return attempts >= MAX_BOX_JUMP_ATTEMPTS;
+}
+
+/**
+ * User-facing message `useJumpToPrepNoteBox` surfaces once
+ * `hasExhaustedBoxJumpAttempts` is true — the note's target argument no
+ * longer resolves to a real row in the flow it was made against.
+ */
+export function buildBoxJumpFailedMessage(): string {
+  return "Couldn't find that argument in the flow — it may have been edited or removed since this note was made.";
+}

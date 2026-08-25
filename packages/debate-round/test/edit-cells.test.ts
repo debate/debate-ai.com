@@ -1,5 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
-import { gridCellForBoxPath, jumpToBoxInGrid, sortEditsNewestFirst, type GridJumpApi } from "../src/flow/edit-cells";
+import {
+  buildBoxJumpFailedMessage,
+  gridCellForBoxPath,
+  hasExhaustedBoxJumpAttempts,
+  jumpToBoxInGrid,
+  MAX_BOX_JUMP_ATTEMPTS,
+  sortEditsNewestFirst,
+  type GridJumpApi,
+} from "../src/flow/edit-cells";
 import { boxPathForCell } from "../src/flow/annotation-cells";
 import type { FlowEdit } from "../src/flow/shared-flow-sync";
 
@@ -78,5 +86,29 @@ describe("jumpToBoxInGrid", () => {
 
     expect(api.ensureNodeVisible).not.toHaveBeenCalled();
     expect(api.flashCells).not.toHaveBeenCalled();
+  });
+});
+
+describe("hasExhaustedBoxJumpAttempts", () => {
+  it("is false for every attempt count below the retry budget", () => {
+    for (let attempts = 0; attempts < MAX_BOX_JUMP_ATTEMPTS; attempts++) {
+      expect(hasExhaustedBoxJumpAttempts(attempts)).toBe(false);
+    }
+  });
+
+  it("is true once attempts reaches the retry budget", () => {
+    expect(hasExhaustedBoxJumpAttempts(MAX_BOX_JUMP_ATTEMPTS)).toBe(true);
+  });
+
+  it("stays true beyond the retry budget", () => {
+    expect(hasExhaustedBoxJumpAttempts(MAX_BOX_JUMP_ATTEMPTS + 10)).toBe(true);
+  });
+});
+
+describe("buildBoxJumpFailedMessage", () => {
+  it("returns a non-empty, user-facing message", () => {
+    const message = buildBoxJumpFailedMessage();
+    expect(typeof message).toBe("string");
+    expect(message.length).toBeGreaterThan(0);
   });
 });
