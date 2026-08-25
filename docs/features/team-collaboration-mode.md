@@ -153,11 +153,27 @@ components/research/SprintNotesWithIdentity.tsx  — "use client" wrapper
 Sprint tab now mount this wrapper instead of the bare panel; a signed-out
 visitor sees the exact same blank fields as before.
 
+A later slice closes the one remaining unprefilled "my id" field on this
+tab: `ResearchHub.tsx`'s own "Your contributor id" field (the hub-level
+input that feeds `panels/TopicSprintPanel.tsx`'s `authorId` prop — a
+*different* field from `SprintNotesWithIdentity`'s "Author ID"/"Your ID"
+above, since `TopicSprintPanel` and `SprintNotesPanel` are two separate
+components sharing the tab). `ResearchHub.tsx` now calls `useSession()`
+and `deriveContributorIdFromSessionIdentity(user)` directly (it's already
+an app-level component, so no separate `*WithIdentity` wrapper was
+needed) and seeds the field's initial value from it — but only when the
+field has no previously-saved `localStorage` value and hasn't been
+hand-edited yet this session, mirroring every other slice's prefill-only
+behavior. A signed-out visitor still sees the field default to `"me"`.
+
 ## Known gaps
 
-- Both id fields ("Author ID" on the note form, "Your ID" for presence) are
-  still free-form text, not a login — a real signed-in session only
-  *prefills* their initial value (see "Signed-in prefill" above), so a
-  visitor can still overwrite either. There is no server-side session check
-  on `saveSprintNote`/`recordPersistedPresenceHeartbeat`, the same trust
-  boundary every other localStorage-backed action in this repo has.
+- All three id fields on this tab ("Author ID" and "Your ID" on
+  `SprintNotesPanel`, plus `ResearchHub`'s own "Your contributor id" that
+  feeds `TopicSprintPanel`) are still free-form text, not a login — a real
+  signed-in session only *prefills* their initial value (see "Signed-in
+  prefill" above), so a visitor can still overwrite any of them. There is
+  no server-side session check on `saveSprintNote`/
+  `recordPersistedPresenceHeartbeat`/`createSprintNote` (via
+  `TopicSprintPanel`'s note form), the same trust boundary every other
+  localStorage-backed action in this repo has.
