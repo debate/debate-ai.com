@@ -270,6 +270,46 @@ and `PrepNoteBadge` the same way, closing the matching Known gap noted in
 the `null`-key clear-all case, and unrelated/substring-matching keys staying
 ignored).
 
+## Live sync toggle in `SharedFlowSyncPanel`
+
+Until now, live sync could only be turned on from `FlowEditLogPanel`'s own
+form — a contributor looking at the `SharedFlowSyncPanel` merge preview
+(the panel directly above it in the Coach hub's Flow section) had no way
+to see whether sync was on, or turn it on, without scrolling down to the
+other panel's Flow ID field. `SharedFlowSyncPanel` already knows which
+flow it's previewing (its own `flow` prop, not a separately typed Flow ID),
+so it gains the identical "Live sync on/off" toggle + status pill
+`FlowEditLogPanel` has, scoped to `flow.id` automatically.
+
+While the toggle is on, the panel polls the same `/api/flow-sync` endpoint
+(via the shared `useFlowSyncPolling` hook) for edits to `flow.id` newer
+than the last one it has seen, folding them into `state/flowEdits.ts` the
+same way `FlowEditLogPanel`'s own toggle does. A pulled edit calls the
+panel's new optional `onSyncPulled` prop — mirroring `onChange` — so
+`CoachHub` refreshes its own `listFlowEdits()` snapshot (the `edits` prop
+this panel merges) in step; without a caller-supplied `onSyncPulled`, the
+poll still runs and still writes to `state/flowEdits.ts`, it just doesn't
+prompt an immediate re-render of the panel that's driven by props rather
+than reading the store itself.
+
+This closes the "`SharedFlowSyncPanel`/`CoachHub` do not surface the sync
+toggle or status" Known gap recorded below. It adds:
+
+- `panels/SharedFlowSyncPanel.tsx`: the toggle/status row (reusing
+  `hooks/useFlowSyncPolling.ts` — no new sync logic), and the new
+  `onSyncPulled` prop.
+- `CoachHub.tsx`: passes its existing `refreshFlowEdits` (from
+  `useStoreSnapshot`) as `onSyncPulled`, the same callback it already
+  passes to `FlowEditLogPanel` as `onChange`.
+
+The two toggles are independent `syncEnabled` state — turning sync on in
+one panel doesn't flip the other's button, though both poll (and write
+into) the same `state/flowEdits.ts` store for the same flow, so either one
+being on is enough for a teammate's edits to show up everywhere.
+
+Vitest-covered by an added case in `packages/debate-round/test/panels.test.tsx`
+(the toggle renders "Live sync off" and the panel's own flow id by default).
+
 ## Known gaps
 
 - ~~The `EditBadge` still reads a box's edits from `localStorage` at cell
@@ -291,9 +331,10 @@ ignored).
   `EditReviewPopover` affordance does not itself toggle or drive sync; it
   only reads whatever `state/flowEdits.ts` already has, whether that came
   from a local log or a synced pull.
-- `SharedFlowSyncPanel`/`CoachHub` do not surface the sync toggle or status
-  — it lives only in `FlowEditLogPanel`'s own form, scoped to that form's
-  Flow ID field.
+- ~~`SharedFlowSyncPanel`/`CoachHub` do not surface the sync toggle or
+  status — it lives only in `FlowEditLogPanel`'s own form, scoped to that
+  form's Flow ID field.~~ Closed — see "Live sync toggle in
+  `SharedFlowSyncPanel`" below.
 - The flow-note suggestion query is the Content field's own in-progress
   text, not the box's existing content or the flow's topic — a
   contributor gets suggestions only once they've started typing something

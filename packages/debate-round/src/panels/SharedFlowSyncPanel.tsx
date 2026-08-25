@@ -32,6 +32,7 @@ import {
   mergeFlowEdits,
   type FlowEdit,
 } from "../flow/shared-flow-sync";
+import { useFlowSyncPolling } from "../hooks/useFlowSyncPolling";
 
 /** Props for {@link SharedFlowSyncPanel}. */
 export interface SharedFlowSyncPanelProps {
@@ -43,6 +44,13 @@ export interface SharedFlowSyncPanelProps {
   conflictWindowMs?: number;
   /** Applies the merged flow. Without it the panel is read-only. */
   onApply?: (flow: Flow) => void;
+  /**
+   * Called after a live-sync poll pulls new edits from teammates for this
+   * flow, so a composing screen's own snapshot of `state/flowEdits.ts`
+   * (this panel's `edits` prop) can refresh in step — mirrors
+   * `FlowEditLogPanel`'s `onChange` convention.
+   */
+  onSyncPulled?: () => void;
   /** Extra classes for the panel. */
   className?: string;
 }
@@ -58,11 +66,13 @@ export function SharedFlowSyncPanel({
   edits,
   conflictWindowMs,
   onApply,
+  onSyncPulled,
   className,
 }: SharedFlowSyncPanelProps) {
   const [windowInput, setWindowInput] = useState(
     conflictWindowMs === undefined ? "" : String(conflictWindowMs),
   );
+  const [syncEnabled, setSyncEnabled] = useState(false);
 
   const parsedWindow = Number.parseInt(windowInput, 10);
   const options = Number.isFinite(parsedWindow) ? { conflictWindowMs: parsedWindow } : {};
@@ -72,6 +82,12 @@ export function SharedFlowSyncPanel({
   const authors = useMemo(
     () => Array.from(new Set(edits.map((edit) => edit.authorId))),
     [edits],
+  );
+
+  const { status: syncStatus, lastError: syncError } = useFlowSyncPolling(
+    flow.id,
+    onSyncPulled,
+    { enabled: syncEnabled },
   );
 
   return (
@@ -93,6 +109,22 @@ export function SharedFlowSyncPanel({
         ) : null
       }
     >
+      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+        <Button
+          size="sm"
+          variant={syncEnabled ? "default" : "outline"}
+          className="h-6 px-2 text-xs"
+          onClick={() => setSyncEnabled((prev) => !prev)}
+        >
+          {syncEnabled ? "Live sync on" : "Live sync off"}
+        </Button>
+        {syncEnabled ? (
+          <Pill>{syncStatus === "error" ? (syncError ?? "Sync error") : syncStatus}</Pill>
+        ) : (
+          <span>Pulls teammates&apos; edits to Flow {flow.id} from the server while on.</span>
+        )}
+      </div>
+
       <StatGrid columns={4}>
         <StatTile label="Incoming edits" value={edits.length} />
         <StatTile label="Merged boxes" value={result.merged.length} tone="positive" />
