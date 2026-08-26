@@ -258,8 +258,8 @@ const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
       },
       {
         href: "/speech-documents", label: "Speech Documents", icon: Send,
-        description: "View and manage evidence sent from the Reason Editor toward the speech you're building.",
-        highlights: ["Sent via Reason Editor's Mod-Shift-S shortcut or \"→Speech\" toolbar button", "Find-or-create by title, with a per-block Remove and a plain-text preview"],
+        description: "A history of evidence sent into your designated speech document from the Reason Editor.",
+        highlights: ["Sent via Reason Editor's backtick (`) / Alt-backtick keys, after marking a pane as the speech doc from the File menu's Speech section", "Newest-first list with a per-entry Remove and a Clear history action"],
       },
     ],
   },

@@ -45,3 +45,19 @@ export type {
 export { Docx } from './ooxml/docx.js';
 
 export { readDocIdFromBytes, stampDocId } from './docid.js';
+
+// Speech-send log — history of what has landed in the designated speech
+// doc via `sendToSpeech` (see `editor/speech-doc-send.ts`). No ProseMirror
+// or React in this module, so it's safe for a plain page component (e.g.
+// `/speech-documents`) to import through this headless entry point rather
+// than the full editor bundle.
+export {
+  speechSendLogStore,
+  buildSpeechSendLogEntry,
+  buildSpeechSendPreview,
+  appendSpeechSendLogEntry,
+  removeSpeechSendLogEntry,
+  sanitizeSpeechSendLog,
+  MAX_SPEECH_SEND_LOG_ENTRIES,
+} from './editor/speech-send-log.js';
+export type { SpeechSendLogEntry } from './editor/speech-send-log.js';
