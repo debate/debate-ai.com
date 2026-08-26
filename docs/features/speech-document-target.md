@@ -110,7 +110,8 @@ per-speech-doc — CardMirror's session uids aren't stable across reloads,
 so there's no persisted "document identity" to group by yet), and
 exporting the log as a read-ready script/`.docx`.
 
-`legacy-verbatim-shortcuts.md`'s own "Route" line and data-flow diagram
-still describe the old `reason-editor` package as if it were live at
-`/reason-editor` — out of scope here (this slice's gap was specifically
-the speech-doc send target), but it has the same staleness this doc had.
+`legacy-verbatim-shortcuts.md` had the same "describes the old
+`reason-editor` package as if it were live at `/reason-editor`" staleness
+this doc had — out of scope for this slice (this one's gap was
+specifically the speech-doc send target) — and has since been corrected
+in its own slice to document CardMirror's real, live shortcut set.
