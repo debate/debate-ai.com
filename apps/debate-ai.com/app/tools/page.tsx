@@ -6,7 +6,7 @@ import {
   ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School,
   FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass,
-  Rss, Gauge, Crosshair, Crown,
+  Rss, Gauge, Crosshair, Crown, Send,
   type LucideIcon,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "debate-ui/src/primitives/card"
@@ -255,6 +255,11 @@ const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/annotations", label: "Flow Annotations", icon: MapPin,
         description: "Drop timestamped flow annotations while watching a streamed or recorded round, and jump back to them.",
         highlights: ["Tied to a specific flowed argument, not just a raw timestamp", "Jump straight back to the moment from the annotation later"],
+      },
+      {
+        href: "/speech-documents", label: "Speech Documents", icon: Send,
+        description: "View and manage evidence sent from the Reason Editor toward the speech you're building.",
+        highlights: ["Sent via Reason Editor's Mod-Shift-S shortcut or \"→Speech\" toolbar button", "Find-or-create by title, with a per-block Remove and a plain-text preview"],
       },
     ],
   },

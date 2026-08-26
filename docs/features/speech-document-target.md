@@ -10,6 +10,9 @@ speech document' command", the last open gap noted in
 - **Route:** `/speech-documents` (view/manage) — send from any
   `reason-editor` document (e.g. `/reason-editor`)
 - **Package:** [`reason-editor`](../../packages/reason-editor/README.md)
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t speech documents` in Ctrl/Cmd-Shift-Space's command
+  palette)
 
 ## What a "speech document" is
 

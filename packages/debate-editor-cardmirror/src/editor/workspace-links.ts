@@ -68,6 +68,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/versus-ai', label: 'Online Debate Versus AI', description: 'A full practice round against an AI opponent', category: 'Prep & Practice' },
   { href: '/practice-round', label: 'Practice Round Simulator', description: 'Timer, judge paradigm, AI opponent', category: 'Prep & Practice' },
   { href: '/annotations', label: 'Flow Annotations', description: 'Timestamped notes on a streamed or recorded round', category: 'Prep & Practice' },
+  { href: '/speech-documents', label: 'Speech Documents', description: "Evidence sent from this editor toward the speech you're building", category: 'Prep & Practice' },
 
   // ── Coaching & Analytics ────────────────────────────────────────────────
   { href: '/standings', label: 'CX NDCA Standings', description: 'Cumulative, ranked season standings', category: 'Coaching & Analytics' },
