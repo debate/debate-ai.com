@@ -14,6 +14,8 @@ debate-data-sync/
     ├── rankings/  # Scrapers for debate ranking leaderboards
     ├── state/     # localStorage-backed persistence for team/judge/standings records
     ├── types/     # Ambient declarations for untyped dependencies
+    ├── videos/    # tuple<->row conversion + the filter/sort/facet semantics the
+    │              #   videos SQL table and its JSON fallback share
     └── youtube/   # YouTube channel ingestion + stats + view-count updates
 ```
 
