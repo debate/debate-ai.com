@@ -22,13 +22,30 @@
  * a team doesn't have to hand-author quests that duplicate what the Topic
  * Coverage Dashboard already knows is missing.
  *
+ * `pruneExpiredQuestTemplates` closes the "a quest template has no expiry"
+ * Known gap: it removes every persisted template whose `expiresOn` (a
+ * `daily-quests.ts` addition) has passed as of a caller-supplied day,
+ * archiving it out of the roster.
+ *
+ * `rolloverExpiredRecurringQuestTemplates` closes the "no recurring-quest
+ * concept" Known gap: it applies `daily-quests.ts`'s
+ * `rolloverRecurringQuestTemplate` to every persisted template, advancing an
+ * expired recurring template's `expiresOn` forward to its next cycle instead
+ * of leaving it expired. `buildPersistedDailyQuestBoard` calls this first so
+ * a recurring quest reappears on the board on its own the next time anyone
+ * loads it — no manual cleanup action needed — and `pruneExpiredQuestTemplates`
+ * calls it first too, so a recurring template is never deleted as "expired".
+ *
  * @module state/dailyQuests
  */
 
 import type { AttributedContribution } from "../lib/contribution-leaderboard";
+import { getUtcDayKey } from "../lib/daily-best-card";
 import {
   buildDailyQuestBoard,
   buildUnderCoveredArgumentQuests,
+  isQuestTemplateExpired,
+  rolloverRecurringQuestTemplate,
   type QuestContribution,
   type QuestProgress,
   type QuestTemplate,
@@ -78,6 +95,45 @@ export function deleteQuestTemplate(id: string): void {
   writeAll(readAll().filter((template) => template.id !== id));
 }
 
+/**
+ * Removes every persisted quest template whose `expiresOn` has passed as of
+ * the UTC calendar day of `now` (via `lib/daily-quests.ts`'s
+ * `isQuestTemplateExpired`), archiving them out of the stored roster rather
+ * than leaving them to keep taking up space once `buildDailyQuestBoard`
+ * already excludes them from scoring. Templates with no `expiresOn`, or
+ * whose `expiresOn` hasn't passed yet, are left untouched. Returns how many
+ * were removed.
+ */
+export function pruneExpiredQuestTemplates(now: number): number {
+  rolloverExpiredRecurringQuestTemplates(now);
+  const dayKey = getUtcDayKey(now);
+  const templates = readAll();
+  const remaining = templates.filter((template) => !isQuestTemplateExpired(template, dayKey));
+  const removedCount = templates.length - remaining.length;
+  if (removedCount > 0) writeAll(remaining);
+  return removedCount;
+}
+
+/**
+ * Rolls every persisted template's `expiresOn` forward via
+ * `rolloverRecurringQuestTemplate`: a non-recurring or not-yet-expired
+ * template is untouched, but an expired recurring template gets a new
+ * `expiresOn` on/after the UTC calendar day of `now`, so it counts as active
+ * again for its next cycle. Returns how many templates were rolled over.
+ */
+export function rolloverExpiredRecurringQuestTemplates(now: number): number {
+  const dayKey = getUtcDayKey(now);
+  const templates = readAll();
+  let rolledOverCount = 0;
+  const updated = templates.map((template) => {
+    const rolled = rolloverRecurringQuestTemplate(template, dayKey);
+    if (rolled !== template) rolledOverCount++;
+    return rolled;
+  });
+  if (rolledOverCount > 0) writeAll(updated);
+  return rolledOverCount;
+}
+
 /** Whether a persisted contribution carries the `submittedAt` timestamp `daily-quests.ts` needs to match it to a calendar day. */
 function hasSubmittedAt(
   contribution: AttributedContribution,
@@ -92,9 +148,13 @@ function hasSubmittedAt(
  * themselves. Contributions without a `submittedAt` timestamp are excluded
  * rather than throwing, mirroring `dailyMissionResults.ts`'s
  * `computeAndSavePersistedDailyMissionResult`. An empty template roster
- * returns an empty board rather than throwing.
+ * returns an empty board rather than throwing. Rolls over any expired
+ * recurring template first (see `rolloverExpiredRecurringQuestTemplates`), so
+ * a recurring quest is already back on the board, freshly at 0 progress for
+ * its new cycle.
  */
 export function buildPersistedDailyQuestBoard(now: number): QuestProgress[] {
+  rolloverExpiredRecurringQuestTemplates(now);
   const templates = readAll();
   const contributions = listContributions().filter(hasSubmittedAt) as QuestContribution[];
   return buildDailyQuestBoard(templates, contributions, now);

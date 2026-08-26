@@ -106,3 +106,10 @@ the assets.
 - The seed runs as a separate step from `sync-youtube`, so newly synced videos
   reach the site only after `db:seed:videos:d1` is run (until then the JSON
   fallback, not the table, is what carries them).
+- Rounds are now stored twice: this table projects the committed JSON assets
+  for the public feed, while `youtube_round_videos` is the admin resync's
+  landing table, filled straight from the YouTube API for the admin page
+  (`/api/admin/youtube/videos`). Both are legitimate — different pipelines,
+  different readers — but a round exists in both, and pointing this feed at
+  the resync table (or seeding this one from it) would collapse the
+  duplication.

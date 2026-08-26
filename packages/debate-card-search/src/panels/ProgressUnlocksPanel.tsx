@@ -11,6 +11,21 @@
  * tier — reusing every existing tier/badge/streak slice directly rather
  * than introducing new logic here.
  *
+ * An optional `signedInContributorId` prop (built from
+ * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`
+ * against a real signed-in session) highlights that contributor's own row
+ * with a "You" badge via `isOwnContributorRow` — this roster always shows
+ * every contributor, so unlike Task Inbox's "My tasks" prefill there is
+ * nothing to filter or prefill here, only to highlight.
+ *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isProgressUnlocksLiveUpdateStorageEvent`, so a contribution, completed
+ * task, or daily mission result recorded in another tab refreshes this
+ * panel's roster without a manual reload — closing the "Every other
+ * localStorage-backed panel in this repo still has no cross-tab
+ * live-update mechanism" Known gap noted in `shared-flow-sync.md`, for this
+ * panel.
+ *
  * @module panels/ProgressUnlocksPanel
  */
 
@@ -27,6 +42,8 @@ import {
   TableRow,
 } from "debate-ui/src/primitives/table"
 import { buildUnlockStatusRoster } from "../lib/unlock-streak-status"
+import { isOwnContributorRow } from "../lib/session-identity"
+import { isProgressUnlocksLiveUpdateStorageEvent } from "../state/live-update"
 import type { ContributorUnlockStatusWithStreak } from "../lib/unlock-streak-status"
 
 /** Today's UTC calendar day as `YYYY-MM-DD`, the `dayKey` format used throughout `gamified-quests.ts`. */
@@ -55,11 +72,35 @@ function nextTierText(status: ContributorUnlockStatusWithStreak): string {
  * Reads localStorage on mount only (client-side), so it renders an empty
  * state during SSR/hydration rather than throwing.
  */
-export function ProgressUnlocksPanel() {
+export interface ProgressUnlocksPanelProps {
+  /**
+   * A contributor id to highlight as "You" in the roster, typically derived
+   * from a real signed-in session via `deriveContributorIdFromSessionIdentity`.
+   * This roster always shows every contributor — this only highlights a
+   * matching row, it never filters the others out.
+   */
+  signedInContributorId?: string
+}
+
+export function ProgressUnlocksPanel({ signedInContributorId }: ProgressUnlocksPanelProps = {}) {
   const [roster, setRoster] = useState<ContributorUnlockStatusWithStreak[] | null>(null)
 
   useEffect(() => {
     setRoster(buildUnlockStatusRoster(todayUtcDayKey()))
+  }, [])
+
+  /**
+   * Live-update the roster when another browser tab records a contribution,
+   * completes a task, or logs a daily mission result. A `storage` event
+   * never fires in the tab that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isProgressUnlocksLiveUpdateStorageEvent(event)) return
+      setRoster(buildUnlockStatusRoster(todayUtcDayKey()))
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   if (roster === null) {
@@ -95,9 +136,20 @@ export function ProgressUnlocksPanel() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {roster.map((status) => (
-            <TableRow key={status.contributorId}>
-              <TableCell className="font-medium">{status.contributorId}</TableCell>
+          {roster.map((status) => {
+            const isMe = isOwnContributorRow(status.contributorId, signedInContributorId)
+            return (
+            <TableRow key={status.contributorId} className={isMe ? "bg-primary/5" : undefined}>
+              <TableCell className="font-medium">
+                <div className="flex items-center gap-1.5">
+                  {status.contributorId}
+                  {isMe && (
+                    <Badge variant="outline" className="whitespace-nowrap">
+                      You
+                    </Badge>
+                  )}
+                </div>
+              </TableCell>
               <TableCell>
                 <Badge variant={TIER_VARIANT[status.tier] ?? "outline"} className="capitalize">
                   {status.tier}
@@ -123,7 +175,8 @@ export function ProgressUnlocksPanel() {
               </TableCell>
               <TableCell className="text-sm text-muted-foreground">{nextTierText(status)}</TableCell>
             </TableRow>
-          ))}
+            )
+          })}
         </TableBody>
       </Table>
     </div>

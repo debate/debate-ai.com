@@ -7,6 +7,8 @@ import {
   saveTournamentResult,
   type TournamentResultRecord,
 } from "../src/state/tournamentResults";
+import { savePersistedQualificationPointsTable } from "../src/state/qualificationPointsTable";
+import type { QualificationPointsTable } from "../src/rankings/ndca-standings";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -151,5 +153,65 @@ describe("buildStandingsFromStore", () => {
     expect(capped[0].tournamentsCounted).toBe(1);
     expect(uncapped[0].tournamentsCounted).toBe(2);
     expect(capped[0].totalPoints).toBeLessThan(uncapped[0].totalPoints);
+  });
+
+  it("scores with a persisted custom qualification points table when none is passed explicitly", () => {
+    saveTournamentResult(WXYZ_BERKELEY);
+    const defaultScored = buildStandingsFromStore();
+
+    const customTable: QualificationPointsTable = {
+      outroundPoints: {
+        champion: 0,
+        finalist: 0,
+        semifinalist: 0,
+        quarterfinalist: 1000,
+        octofinalist: 0,
+        doubleOctofinalist: 0,
+        tripleOctofinalist: 0,
+        prelims: 0,
+      },
+      pointsPerPrelimWin: 0,
+      bidLevelBonusRate: 0,
+    };
+    savePersistedQualificationPointsTable(customTable);
+
+    const customScored = buildStandingsFromStore();
+    expect(customScored[0].totalPoints).toBe(1000);
+    expect(customScored[0].totalPoints).not.toBe(defaultScored[0].totalPoints);
+  });
+
+  it("still honors an explicitly passed pointsTable over a persisted custom one", () => {
+    saveTournamentResult(WXYZ_BERKELEY);
+    savePersistedQualificationPointsTable({
+      outroundPoints: {
+        champion: 999,
+        finalist: 999,
+        semifinalist: 999,
+        quarterfinalist: 999,
+        octofinalist: 999,
+        doubleOctofinalist: 999,
+        tripleOctofinalist: 999,
+        prelims: 999,
+      },
+      pointsPerPrelimWin: 999,
+      bidLevelBonusRate: 999,
+    });
+
+    const explicitTable: QualificationPointsTable = {
+      outroundPoints: {
+        champion: 0,
+        finalist: 0,
+        semifinalist: 0,
+        quarterfinalist: 7,
+        octofinalist: 0,
+        doubleOctofinalist: 0,
+        tripleOctofinalist: 0,
+        prelims: 0,
+      },
+      pointsPerPrelimWin: 0,
+      bidLevelBonusRate: 0,
+    };
+
+    expect(buildStandingsFromStore({ pointsTable: explicitTable })[0].totalPoints).toBe(7);
   });
 });

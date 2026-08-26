@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Card reuse checker — settings</title>
+    <style>
+      body {
+        max-width: 420px;
+        margin: 24px auto;
+        padding: 0 16px;
+        font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #1a1a1a;
+      }
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+      p {
+        color: #555;
+      }
+      button {
+        margin-top: 12px;
+        padding: 8px 14px;
+        font-size: 13px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background: #f5f5f5;
+        cursor: pointer;
+      }
+      #status {
+        margin-left: 10px;
+        color: #2a7d2a;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Card reuse checker</h1>
+    <p>
+      The app origin the extension deep-links into when checking a page — override this if you
+      run a self-hosted or local-dev copy of the app.
+    </p>
+    <label for="appOrigin">App origin</label>
+    <input id="appOrigin" type="url" placeholder="https://debate-ai.com" />
+    <div>
+      <button id="save">Save</button>
+      <span id="status"></span>
+    </div>
+    <script src="deep-link.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

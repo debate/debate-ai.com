@@ -21,6 +21,10 @@ assignment (active or completed), sorted alphabetically by contributor id:
 | Tasks | Completed/assigned task count and completion rate, from `lib/research-progress.ts` |
 | Topics | Per-topic completed/assigned counts |
 
+A signed-in visitor's own row is highlighted with a "You" badge — see
+"Signed-in row highlight" below. The roster always shows every contributor;
+nothing is filtered.
+
 ## Data flow
 
 ```
@@ -42,7 +46,29 @@ state/routedTaskQueues.ts (localStorage: routedTaskQueues, still-active assignme
       and hands them to lib/research-progress.ts's buildResearchProgressBoard
   → panels/ResearchProgressPanel.tsx        (renders the roster table)
   → apps/debate-ai.com/app/cards/progress-tracking/page.tsx  (mounts the panel)
+
+Signed-in row highlight (apps/debate-ai.com only):
+components/research/ResearchProgressWithIdentity.tsx  — "use client" wrapper
+  → useSession()                          — lib/hooks/useSession.ts, the
+                                              better-auth React session hook
+  → deriveContributorIdFromSessionIdentity(user)
+      — debate-card-search's lib/session-identity.ts: name, else the
+        email's local part, else the raw account id, else ""
+  → <ResearchProgressPanel signedInContributorId={...} />
+      → isOwnContributorRow(progress.contributorId, signedInContributorId)
+          — case-insensitive, trims both sides — adds a "You" badge and a
+            highlight to that one row; the roster is never filtered
 ```
+
+`app/cards/progress-tracking/page.tsx` and `ResearchHub.tsx`'s Progress tab
+both render `ResearchProgressWithIdentity` instead of `ResearchProgressPanel`
+directly, so the panel itself stays app-agnostic — it only knows about a
+plain `signedInContributorId` string prop, not `better-auth`. Unlike Task
+Inbox's "My tasks" field, this roster has no free-form id field to prefill —
+it always renders every contributor — so the signed-in identity only
+highlights a matching row instead. Adds one new pure helper,
+`isOwnContributorRow` (`lib/session-identity.ts`, Vitest-covered in
+`test/session-identity.test.ts`).
 
 `lib/research-progress.ts`'s pure aggregation (`buildContributorProgress`,
 `buildTopicProgress`, `buildResearchProgressBoard`) already existed and was
@@ -81,10 +107,38 @@ backward compatibility for contributors with no completed-task data) and
 completed-task history feeding a store-backed status, and a task-only
 contributor appearing in the roster).
 
+A topic's completed-task history can now be pruned:
+`state/researchProgress.ts`'s `deleteCompletedTaskHistoryForTopic(topic)`
+removes every `CompletedTaskRecord` for that topic (mirroring
+`routedTaskQueues.ts`'s existing `deleteRoutedTaskQueue(topicId)` pattern,
+and leaving the topic's still-active queue and every other topic's history
+untouched), and `ResearchProgressPanel` renders a "Clear completed history"
+action next to each topic badge that has at least one completed task. This
+closes the "a completed task's history record is never deleted" Known gap
+previously recorded below. Vitest-covered in
+`packages/debate-card-search/test/researchProgress.test.ts`
+(`deleteCompletedTaskHistoryForTopic`: removing a topic's records, leaving
+other topics' history untouched, a no-op on an untracked topic, and not
+touching the active-queue store).
+
+## Cross-tab live update
+
+`ResearchProgressPanel` subscribes to the browser's `storage` event (fires
+only in *other* same-origin tabs/windows, never the one that made the
+write) via `state/live-update.ts`'s `isResearchProgressLiveUpdateStorageEvent`
+and re-derives the roster when it fires for one of its backing keys
+(`contributions`, `completedResearchTasks`, `routedTaskQueues`), so a
+contribution submitted, task completed, or topic routed in a second tab now
+refreshes this tab's roster without a manual reload — closing the "Every
+other localStorage-backed panel in this repo still has no cross-tab
+live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
+Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
+
 ## Known gaps
 
-- No contributor identity/auth scoping yet — the roster shows every
-  contributor, the same known gap as the Leaderboard, Task Inbox, and
-  Progress Unlocks panels.
-- A completed task's history record is never deleted (e.g. if its topic's
-  queue is deleted), so `completedResearchTasks` only grows.
+- No contributor identity/permission *checks* — a real signed-in session now
+  *highlights* the visitor's own row (see "Signed-in row highlight" above),
+  but the roster still shows every contributor, the same "prefill/highlight
+  only, not a gate" known gap the Leaderboard, Task Inbox, and Progress
+  Unlocks panels carry.

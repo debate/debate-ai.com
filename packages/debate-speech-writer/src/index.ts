@@ -76,11 +76,14 @@ export {
   getOpponentPersona,
   listOpponentPersonas,
   buildOpponentPersonaPrompt,
+  buildCustomOpponentPersona,
 } from "./opponent/opponent-personas";
 export type {
   BuiltinOpponentPersonaId,
+  OpponentPersonaId,
   OpponentPersonaPace,
   OpponentPersona,
+  CustomOpponentPersonaInput,
 } from "./opponent/opponent-personas";
 
 export {
@@ -95,6 +98,7 @@ export type { OpponentPersonaSelection } from "./state/opponentPersonaSelections
 export { OpponentPersonaPickerPanel } from "./panels/OpponentPersonaPickerPanel";
 
 export {
+  buildCoachConversationMessages,
   buildCoachMaterialLibrary,
   buildCoachMaterialLibrarySummaryText,
   buildGroundedCoachPrompt,
@@ -103,6 +107,9 @@ export {
   scoreMaterialRelevance,
 } from "./coach/team-coach-materials";
 export type {
+  AnthropicChatTurn,
+  BuildCoachConversationMessagesOptions,
+  CoachConversationTurn,
   CoachMaterial,
   CoachMaterialGroup,
   CoachMaterialKind,
@@ -114,6 +121,7 @@ export type {
 
 export { TEAM_COACH_AI_SYSTEM_PROMPT, parseTeamCoachAiResponse } from "./coach/team-coach-ai";
 export { requestTeamCoachAnswer } from "./coach/team-coach-client";
+export type { RequestTeamCoachAnswerOptions } from "./coach/team-coach-client";
 
 export {
   buildCoachMaterialLibraryFromStore,
@@ -123,6 +131,12 @@ export {
   listCoachMaterials,
   saveCoachMaterial,
 } from "./state/coachMaterials";
+
+export {
+  appendCoachConversationTurn,
+  clearCoachConversationHistory,
+  listCoachConversationTurns,
+} from "./state/coachConversation";
 
 export { CoachMaterialsPanel } from "./panels/CoachMaterialsPanel";
 

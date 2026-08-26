@@ -11,21 +11,33 @@
  * row rendered — either immediately, if the grid is already mounted and the
  * flow tab didn't need to change, or once the returned `onGridReady`
  * handler fires for a fresh grid mount.
+ *
+ * If the row never appears — e.g. the note's `boxPath` no longer resolves
+ * because the flow was edited or the row removed since the note was made —
+ * retries every `RETRY_INTERVAL_MS` up to `edit-cells.ts`'s
+ * `MAX_BOX_JUMP_ATTEMPTS` times, then gives up and reports `jumpFailed` so
+ * the caller can show `buildBoxJumpFailedMessage()`, closing the "silently
+ * returns false... no error is shown" Known gap recorded in
+ * `docs/features/prep-notes.md`.
  */
 
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useFlowStore } from "../state/store";
-import { jumpToBoxInGrid, type GridJumpApi } from "../flow/edit-cells";
+import { jumpToBoxInGrid, hasExhaustedBoxJumpAttempts, type GridJumpApi } from "../flow/edit-cells";
 import { parsePrepNoteJumpParams } from "../flow/strategy-sync-notes";
+
+const RETRY_INTERVAL_MS = 200;
 
 export function useJumpToPrepNoteBox(gridApiRef: React.RefObject<GridJumpApi | null>) {
   const searchParams = useSearchParams();
   const { flows, selected, setSelected } = useFlowStore();
   const pendingBoxPathRef = useRef<number[] | null>(null);
+  const attemptsRef = useRef(0);
   const processedKeyRef = useRef<string | null>(null);
+  const [jumpFailed, setJumpFailed] = useState(false);
 
   const target = parsePrepNoteJumpParams(searchParams);
   const targetKey = target ? `${target.flowId}:${target.boxPath.join(",")}` : null;
@@ -39,34 +51,54 @@ export function useJumpToPrepNoteBox(gridApiRef: React.RefObject<GridJumpApi | n
 
     processedKeyRef.current = targetKey;
     pendingBoxPathRef.current = target.boxPath;
+    attemptsRef.current = 0;
+    setJumpFailed(false);
     if (index !== selected) {
       setSelected(index);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetKey, flows, selected, setSelected]);
 
-  // Retry the grid jump once the selected flow's rows have (re)rendered.
-  useEffect(() => {
+  const attemptJump = () => {
     const boxPath = pendingBoxPathRef.current;
     const api = gridApiRef.current;
     if (!boxPath || !api) return;
 
-    const timeout = setTimeout(() => {
-      if (jumpToBoxInGrid(api, boxPath)) {
-        pendingBoxPathRef.current = null;
-      }
-    }, 0);
-    return () => clearTimeout(timeout);
-  }, [selected, gridApiRef]);
+    if (jumpToBoxInGrid(api, boxPath)) {
+      pendingBoxPathRef.current = null;
+      attemptsRef.current = 0;
+      return;
+    }
+
+    attemptsRef.current += 1;
+    if (hasExhaustedBoxJumpAttempts(attemptsRef.current)) {
+      pendingBoxPathRef.current = null;
+      setJumpFailed(true);
+    }
+  };
+
+  // Retry the grid jump, spaced out, until it succeeds or the retry budget
+  // (edit-cells.ts's MAX_BOX_JUMP_ATTEMPTS) is exhausted. Keyed on targetKey
+  // (not just `selected`) so a second jump to a different note in the same
+  // flow — where `selected` never changes — still starts its own retries.
+  useEffect(() => {
+    if (!pendingBoxPathRef.current) return;
+
+    attemptJump();
+    const interval = setInterval(() => {
+      attemptJump();
+      if (!pendingBoxPathRef.current) clearInterval(interval);
+    }, RETRY_INTERVAL_MS);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected, targetKey]);
 
   return {
     /** Wire into the grid's `onGridReady` so a fresh grid mount also retries a pending jump. */
-    onGridReady: () => {
-      const boxPath = pendingBoxPathRef.current;
-      const api = gridApiRef.current;
-      if (boxPath && api && jumpToBoxInGrid(api, boxPath)) {
-        pendingBoxPathRef.current = null;
-      }
-    },
+    onGridReady: attemptJump,
+    /** True once a jump target's retry budget is exhausted without ever resolving. */
+    jumpFailed,
+    /** Dismiss the failure message (e.g. a banner's "×" button). */
+    dismissJumpFailed: () => setJumpFailed(false),
   };
 }

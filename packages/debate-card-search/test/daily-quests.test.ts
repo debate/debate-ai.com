@@ -4,6 +4,8 @@ import {
   buildQuestBoardSummaryText,
   buildUnderCoveredArgumentQuests,
   computeQuestProgress,
+  isQuestTemplateExpired,
+  rolloverRecurringQuestTemplate,
   type QuestContribution,
   type QuestTemplate,
 } from "../src/lib/daily-quests";
@@ -78,7 +80,82 @@ describe("computeQuestProgress", () => {
   });
 });
 
+describe("isQuestTemplateExpired", () => {
+  it("is never expired when expiresOn is omitted", () => {
+    expect(isQuestTemplateExpired(findSolvencyCards, "2099-01-01")).toBe(false);
+  });
+
+  it("is not expired on its expiresOn day itself", () => {
+    const expiring: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10" };
+    expect(isQuestTemplateExpired(expiring, "2026-08-10")).toBe(false);
+  });
+
+  it("is not expired before its expiresOn day", () => {
+    const expiring: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10" };
+    expect(isQuestTemplateExpired(expiring, "2026-08-09")).toBe(false);
+  });
+
+  it("is expired the day after its expiresOn day", () => {
+    const expiring: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10" };
+    expect(isQuestTemplateExpired(expiring, "2026-08-11")).toBe(true);
+  });
+});
+
+describe("rolloverRecurringQuestTemplate", () => {
+  it("leaves a template with no recurrence unchanged", () => {
+    const expired: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10" };
+    expect(rolloverRecurringQuestTemplate(expired, "2026-08-13")).toBe(expired);
+  });
+
+  it("leaves a recurring template with no expiresOn unchanged", () => {
+    const noAnchor: QuestTemplate = { ...findSolvencyCards, recurrence: "daily" };
+    expect(rolloverRecurringQuestTemplate(noAnchor, "2026-08-13")).toBe(noAnchor);
+  });
+
+  it("leaves a recurring template that hasn't expired yet unchanged", () => {
+    const stillActive: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-13", recurrence: "daily" };
+    expect(rolloverRecurringQuestTemplate(stillActive, "2026-08-13")).toBe(stillActive);
+  });
+
+  it("advances a daily recurring template's expiresOn to today", () => {
+    const expired: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10", recurrence: "daily" };
+    const rolled = rolloverRecurringQuestTemplate(expired, "2026-08-13");
+    expect(rolled.expiresOn).toBe("2026-08-13");
+    expect(rolled).not.toBe(expired);
+    expect(rolled).toEqual({ ...expired, expiresOn: "2026-08-13" });
+  });
+
+  it("advances a weekly recurring template's expiresOn to the next 7-day boundary on or after today", () => {
+    const expired: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10", recurrence: "weekly" };
+    const rolled = rolloverRecurringQuestTemplate(expired, "2026-08-11");
+    expect(rolled.expiresOn).toBe("2026-08-17");
+  });
+
+  it("advances a weekly recurring template through several missed cycles at once", () => {
+    const expired: QuestTemplate = { ...findSolvencyCards, expiresOn: "2026-08-10", recurrence: "weekly" };
+    const rolled = rolloverRecurringQuestTemplate(expired, "2026-09-01");
+    expect(rolled.expiresOn).toBe("2026-09-07");
+  });
+});
+
 describe("buildDailyQuestBoard", () => {
+  it("excludes an expired quest template from the board entirely", () => {
+    const expired: QuestTemplate = { ...findSolvencyCards, id: "expired", expiresOn: "2026-08-09" };
+    const active: QuestTemplate = { ...findSolvencyCards, id: "active" };
+
+    const board = buildDailyQuestBoard([expired, active], [], DAY_ONE);
+
+    expect(board.map((q) => q.questId)).toEqual(["active"]);
+  });
+
+  it("still includes a quest template on its own expiresOn day", () => {
+    const stillActive: QuestTemplate = { ...findSolvencyCards, id: "still-active", expiresOn: "2026-08-10" };
+
+    const board = buildDailyQuestBoard([stillActive], [], DAY_ONE);
+
+    expect(board.map((q) => q.questId)).toEqual(["still-active"]);
+  });
+
   it("orders incomplete quests before complete ones, tie-broken by id", () => {
     const doneQuest: QuestTemplate = { ...findSolvencyCards, id: "done", targetCount: 1 };
     const pendingQuestB: QuestTemplate = { ...findSolvencyCards, id: "pending-b", targetCount: 5 };

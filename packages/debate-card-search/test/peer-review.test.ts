@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   InvalidReviewTransitionError,
+  ReviewerIdRequiredError,
+  SelfReviewNotAllowedError,
   UnresolvedBlockingCommentsError,
   addReviewComment,
   approveReview,
@@ -144,12 +146,22 @@ describe("requestChanges", () => {
   it("throws from a status that can't request changes", () => {
     expect(() => requestChanges(createCardReview("card-1"))).toThrow(InvalidReviewTransitionError);
   });
+
+  it("stays open to a review's own author — only approve/reject/publish are self-review-guarded", () => {
+    const review = submitForReview(createCardReview("card-1", "alice"));
+    expect(requestChanges(review).status).toBe("changes_requested");
+  });
 });
 
 describe("approveReview", () => {
   it("approves an in_review card with no blocking comments", () => {
     const review = submitForReview(createCardReview("card-1"));
-    expect(approveReview(review).status).toBe("approved");
+    expect(approveReview(review, "r1").status).toBe("approved");
+  });
+
+  it("records reviewedBy", () => {
+    const review = submitForReview(createCardReview("card-1"));
+    expect(approveReview(review, "r1").reviewedBy).toBe("r1");
   });
 
   it("approves once all blocking comments are resolved", () => {
@@ -158,31 +170,56 @@ describe("approveReview", () => {
     // The blocking comment above already moved status to changes_requested; resubmit.
     review = submitForReview(review);
     review = resolveReviewComment(review, "c1");
-    expect(approveReview(review).status).toBe("approved");
+    expect(approveReview(review, "r1").status).toBe("approved");
   });
 
   it("throws UnresolvedBlockingCommentsError when a blocking comment is unresolved", () => {
     let review = submitForReview(createCardReview("card-1"));
     review = addReviewComment(review, { id: "c1", reviewerId: "r1", body: "a", severity: "blocking" });
     review = submitForReview(review);
-    expect(() => approveReview(review)).toThrow(UnresolvedBlockingCommentsError);
+    expect(() => approveReview(review, "r1")).toThrow(UnresolvedBlockingCommentsError);
   });
 
   it("throws InvalidReviewTransitionError from draft", () => {
-    expect(() => approveReview(createCardReview("card-1"))).toThrow(InvalidReviewTransitionError);
+    expect(() => approveReview(createCardReview("card-1"), "r1")).toThrow(InvalidReviewTransitionError);
+  });
+
+  it("throws ReviewerIdRequiredError when no reviewer id is given", () => {
+    const review = submitForReview(createCardReview("card-1"));
+    expect(() => approveReview(review, "")).toThrow(ReviewerIdRequiredError);
+  });
+
+  it("throws SelfReviewNotAllowedError when the reviewer is the card's own author", () => {
+    const review = submitForReview(createCardReview("card-1", "alice"));
+    expect(() => approveReview(review, "alice")).toThrow(SelfReviewNotAllowedError);
+  });
+
+  it("allows a reviewer whose id differs from the card's author", () => {
+    const review = submitForReview(createCardReview("card-1", "alice"));
+    expect(approveReview(review, "bob").status).toBe("approved");
+  });
+
+  it("allows any reviewer id when no author was recorded", () => {
+    const review = submitForReview(createCardReview("card-1"));
+    expect(approveReview(review, "anyone").status).toBe("approved");
   });
 });
 
 describe("rejectReview", () => {
   it("rejects an in_review card", () => {
     const review = submitForReview(createCardReview("card-1"));
-    expect(rejectReview(review).status).toBe("rejected");
+    expect(rejectReview(review, "r1").status).toBe("rejected");
+  });
+
+  it("throws SelfReviewNotAllowedError when the reviewer is the card's own author", () => {
+    const review = submitForReview(createCardReview("card-1", "alice"));
+    expect(() => rejectReview(review, "alice")).toThrow(SelfReviewNotAllowedError);
   });
 });
 
 describe("reviseRejectedReview", () => {
   it("sends a rejected card back to draft", () => {
-    const review = rejectReview(submitForReview(createCardReview("card-1")));
+    const review = rejectReview(submitForReview(createCardReview("card-1")), "r1");
     expect(reviseRejectedReview(review).status).toBe("draft");
   });
 
@@ -193,13 +230,23 @@ describe("reviseRejectedReview", () => {
 
 describe("publishReview", () => {
   it("publishes an approved card", () => {
-    const review = approveReview(submitForReview(createCardReview("card-1")));
-    expect(publishReview(review).status).toBe("published");
+    const review = approveReview(submitForReview(createCardReview("card-1")), "r1");
+    expect(publishReview(review, "r1").status).toBe("published");
+  });
+
+  it("records reviewedBy", () => {
+    const review = approveReview(submitForReview(createCardReview("card-1")), "r1");
+    expect(publishReview(review, "r2").reviewedBy).toBe("r2");
   });
 
   it("throws when publishing directly from in_review", () => {
     const review = submitForReview(createCardReview("card-1"));
-    expect(() => publishReview(review)).toThrow(InvalidReviewTransitionError);
+    expect(() => publishReview(review, "r1")).toThrow(InvalidReviewTransitionError);
+  });
+
+  it("throws SelfReviewNotAllowedError when the reviewer is the card's own author", () => {
+    const review = approveReview(submitForReview(createCardReview("card-1", "alice")), "bob");
+    expect(() => publishReview(review, "alice")).toThrow(SelfReviewNotAllowedError);
   });
 });
 
@@ -209,12 +256,12 @@ describe("isReadyToPublish", () => {
   });
 
   it("is true once approved with no unresolved blocking comments", () => {
-    const review = approveReview(submitForReview(createCardReview("card-1")));
+    const review = approveReview(submitForReview(createCardReview("card-1")), "r1");
     expect(isReadyToPublish(review)).toBe(true);
   });
 
   it("is false once published — it's already live, not pending publish", () => {
-    const review = publishReview(approveReview(submitForReview(createCardReview("card-1"))));
+    const review = publishReview(approveReview(submitForReview(createCardReview("card-1")), "r1"), "r1");
     expect(isReadyToPublish(review)).toBe(false);
   });
 });
@@ -227,12 +274,12 @@ describe("isCardLive", () => {
   it("is false for a review that hasn't reached published yet", () => {
     expect(isCardLive(createCardReview("card-1"))).toBe(false);
     expect(isCardLive(submitForReview(createCardReview("card-1")))).toBe(false);
-    expect(isCardLive(approveReview(submitForReview(createCardReview("card-1"))))).toBe(false);
-    expect(isCardLive(rejectReview(submitForReview(createCardReview("card-1"))))).toBe(false);
+    expect(isCardLive(approveReview(submitForReview(createCardReview("card-1")), "r1"))).toBe(false);
+    expect(isCardLive(rejectReview(submitForReview(createCardReview("card-1")), "r1"))).toBe(false);
   });
 
   it("is true once the review is published", () => {
-    const review = publishReview(approveReview(submitForReview(createCardReview("card-1"))));
+    const review = publishReview(approveReview(submitForReview(createCardReview("card-1")), "r1"), "r1");
     expect(isCardLive(review)).toBe(true);
   });
 });

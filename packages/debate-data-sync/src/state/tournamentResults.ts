@@ -20,6 +20,7 @@ import type {
   TournamentResult,
 } from "../rankings/ndca-standings";
 import { buildStandings, rankStandings } from "../rankings/ndca-standings";
+import { getEffectiveQualificationPointsTable } from "./qualificationPointsTable";
 
 /** A `TournamentResult` as persisted: a unique id, since a team can attend many tournaments. */
 export interface TournamentResultRecord extends TournamentResult {
@@ -83,10 +84,15 @@ function groupResultsByTeam(
  * result — groups records by `teamId` and runs them through the existing
  * `buildStandings`/`rankStandings` computation. This is the ready-to-render
  * order for a standings dashboard.
+ *
+ * Scores with `options.pointsTable` if the caller supplies one; otherwise
+ * defaults to `qualificationPointsTable.ts`'s persisted custom table (falling
+ * back to `DEFAULT_QUALIFICATION_POINTS_TABLE` when none is saved).
  */
 export function buildStandingsFromStore(
   options: BuildStandingsOptions = {},
 ): RankedTeamStanding[] {
   const byTeam = groupResultsByTeam(readAll());
-  return rankStandings(buildStandings(byTeam, options));
+  const pointsTable = options.pointsTable ?? getEffectiveQualificationPointsTable();
+  return rankStandings(buildStandings(byTeam, { ...options, pointsTable }));
 }

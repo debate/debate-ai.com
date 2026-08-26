@@ -6,7 +6,8 @@
 /// <reference types="next/image-types/global" />
 
 /**
- * The reason-editor shell imports its stylesheet for its side effects. Bundlers
- * resolve that; a bare `tsc` needs the ambient module declaration.
+ * The debate-editor-cardmirror shell imports its stylesheet for its side
+ * effects. Bundlers resolve that; a bare `tsc` needs the ambient module
+ * declaration.
  */
 declare module "*.css";

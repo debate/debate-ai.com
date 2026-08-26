@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { ContributionLeaderboardPanel } from "debate-card-search"
+import { ContributionLeaderboardWithIdentity } from "@/components/research/ContributionLeaderboardWithIdentity"
 
 export const metadata: Metadata = {
   title: "Contribution Leaderboard",
@@ -23,7 +23,7 @@ export default function CardsLeaderboardPage() {
         </Link>
       </div>
       <Suspense>
-        <ContributionLeaderboardPanel />
+        <ContributionLeaderboardWithIdentity />
       </Suspense>
     </div>
   )

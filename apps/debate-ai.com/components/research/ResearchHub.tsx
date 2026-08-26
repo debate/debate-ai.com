@@ -21,26 +21,28 @@
 import { useEffect, useMemo, useState } from "react"
 import {
   ArgumentLibraryPanel,
-  BrainstormBoardPanel,
   CardScoringPanel,
-  ContributionLeaderboardPanel,
   ContributionsFeedPanel,
   ContributorAwardsPanel,
   DailyBestCardPanel,
-  DailyQuestsPanel,
   EvidenceLibraryPanel,
-  GroupChallengesPanel,
-  PrepRoomPanel,
-  ProgressUnlocksPanel,
   QuestStreaksPanel,
-  ResearchProgressPanel,
-  ReviewQueuePanel,
   RevisionIncentivesPanel,
-  SprintNotesPanel,
-  TaskInboxPanel,
   TopicCoverageDashboardPanel,
   TopicSprintPanel,
+  deriveContributorIdFromSessionIdentity,
 } from "debate-card-search"
+import { useSession } from "@/lib/hooks/useSession"
+import { TaskInboxWithIdentity } from "./TaskInboxWithIdentity"
+import { ContributionLeaderboardWithIdentity } from "./ContributionLeaderboardWithIdentity"
+import { ProgressUnlocksWithIdentity } from "./ProgressUnlocksWithIdentity"
+import { ResearchProgressWithIdentity } from "./ResearchProgressWithIdentity"
+import { DailyQuestsWithIdentity } from "./DailyQuestsWithIdentity"
+import { ReviewQueueWithIdentity } from "./ReviewQueueWithIdentity"
+import { SprintNotesWithIdentity } from "./SprintNotesWithIdentity"
+import { BrainstormBoardWithIdentity } from "./BrainstormBoardWithIdentity"
+import { GroupChallengesWithIdentity } from "./GroupChallengesWithIdentity"
+import { PrepRoomWithIdentity } from "./PrepRoomWithIdentity"
 import type { TrackedArgument } from "debate-card-search/src/lib/topic-coverage"
 import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import { listEvidenceLibraryEntries } from "debate-card-search/src/state/evidenceLibraryEntries"
@@ -74,15 +76,29 @@ type Section = (typeof SECTIONS)[number]
 export function ResearchHub() {
   const [section, setSection] = useState<Section>("Coverage")
   const [contributorId, setContributorId] = useState("me")
+  const [hasSetContributorId, setHasSetContributorId] = useState(false)
   const [topic, setTopic] = useState("")
+  const { user } = useSession()
 
   useEffect(() => {
     const saved = typeof localStorage === "undefined" ? null : localStorage.getItem(CONTRIBUTOR_KEY)
-    if (saved) setContributorId(saved)
+    if (saved) {
+      setContributorId(saved)
+      setHasSetContributorId(true)
+    }
   }, [])
+
+  // Prefills from the real signed-in session (see TaskInboxWithIdentity.tsx
+  // for the pattern this mirrors) — never overwrites a saved/typed value.
+  useEffect(() => {
+    if (hasSetContributorId) return
+    const signedInContributorId = deriveContributorIdFromSessionIdentity(user)
+    if (signedInContributorId) setContributorId(signedInContributorId)
+  }, [user, hasSetContributorId])
 
   const updateContributorId = (value: string) => {
     setContributorId(value)
+    setHasSetContributorId(true)
     if (typeof localStorage !== "undefined") localStorage.setItem(CONTRIBUTOR_KEY, value)
   }
 
@@ -108,7 +124,14 @@ export function ResearchHub() {
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <LabeledField label="Your contributor id">
+        <LabeledField
+          label="Your contributor id"
+          hint={
+            hasSetContributorId
+              ? undefined
+              : "Prefilled from your signed-in account, if any — edit it to use a different id."
+          }
+        >
           <Input value={contributorId} onChange={(e) => updateContributorId(e.target.value)} />
         </LabeledField>
         <LabeledField label="Topic" hint="Scopes the sprint composition.">
@@ -146,33 +169,33 @@ export function ResearchHub() {
 
       {section === "Sprint" ? (
         <div className="flex flex-col gap-4">
-          <PrepRoomPanel />
+          <PrepRoomWithIdentity />
           <TopicSprintPanel topic={activeTopic} authorId={contributorId} />
-          <SprintNotesPanel />
-          <BrainstormBoardPanel />
+          <SprintNotesWithIdentity />
+          <BrainstormBoardWithIdentity />
         </div>
       ) : null}
 
-      {section === "Routing" ? <TaskInboxPanel /> : null}
+      {section === "Routing" ? <TaskInboxWithIdentity /> : null}
 
       {section === "Progress" ? (
         <div className="flex flex-col gap-4">
-          <ResearchProgressPanel />
-          <ProgressUnlocksPanel />
+          <ResearchProgressWithIdentity />
+          <ProgressUnlocksWithIdentity />
         </div>
       ) : null}
 
       {section === "Quests" ? (
         <div className="flex flex-col gap-4">
-          <DailyQuestsPanel />
+          <DailyQuestsWithIdentity />
           <QuestStreaksPanel />
-          <GroupChallengesPanel />
+          <GroupChallengesWithIdentity />
         </div>
       ) : null}
 
       {section === "Rewards" ? (
         <div className="flex flex-col gap-4">
-          <ContributionLeaderboardPanel />
+          <ContributionLeaderboardWithIdentity />
           <ContributorAwardsPanel />
           <ContributionsFeedPanel />
           <DailyBestCardPanel />
@@ -180,7 +203,7 @@ export function ResearchHub() {
         </div>
       ) : null}
 
-      {section === "Review" ? <ReviewQueuePanel /> : null}
+      {section === "Review" ? <ReviewQueueWithIdentity /> : null}
 
       {section === "Scoring" ? <CardScoringPanel /> : null}
     </div>

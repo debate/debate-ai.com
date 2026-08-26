@@ -29,6 +29,15 @@
  * Follow-up (c), feeding a contributor's topic-progress history back into
  * `progress-unlocks.ts`'s tier computation, remains open — not started.
  *
+ * `verifyAndRecordResearchTask` closes the "No reviewer/verification step
+ * before a task is marked complete" Known gap recorded in
+ * `docs/features/task-inbox.md`: it credits a task marked done through
+ * `state/pendingTaskVerifications.ts`'s `markRoutedTaskAwaitingVerification`
+ * only once a *different* contributor confirms it, gated by
+ * `lib/task-verification.ts`'s `assertVerifierAllowed`. This is additive —
+ * `completeAndRecordResearchTask` is unchanged and still credits a
+ * completion immediately, with no verification required.
+ *
  * @module state/researchProgress
  */
 
@@ -40,14 +49,20 @@ import {
 import { buildLeaderboard, type ContributorStats } from "../lib/contribution-leaderboard";
 import { DEFAULT_HELPFULNESS_WEIGHTS, type HelpfulnessWeights } from "../lib/community-rating";
 import type { RoutedAssignment } from "../lib/research-task-routing";
+import { assertVerifierAllowed } from "../lib/task-verification";
 import { listContributions } from "./contributions";
 import { completePersistedRoutedTask, getRoutedTaskQueue, listRoutedTaskQueues } from "./routedTaskQueues";
+import { getPendingTaskVerification, removePendingTaskVerification } from "./pendingTaskVerifications";
 
 /** One completed research task, remembered after `completePersistedRoutedTask` removes it from its active queue. */
 export interface CompletedTaskRecord {
   topic: string;
   assignment: RoutedAssignment;
   completedAt: string;
+  /** When this task was marked done, before verification. Only set for a task completed through `verifyAndRecordResearchTask` — a direct `completeAndRecordResearchTask` call has no separate "marked done" moment. */
+  markedDoneAt?: string;
+  /** Free-text id of whoever verified this completion. Only set for a task completed through `verifyAndRecordResearchTask`. */
+  verifiedBy?: string;
 }
 
 const STORAGE_KEY = "completedResearchTasks";
@@ -75,6 +90,17 @@ export function listCompletedTaskHistory(): CompletedTaskRecord[] {
 }
 
 /**
+ * Deletes every persisted completed-task record for one topic, leaving every
+ * other topic's history (and the active-queue store) untouched; a no-op if
+ * the topic has no completed-task history. Mirrors `routedTaskQueues.ts`'s
+ * `deleteRoutedTaskQueue(topicId)` — closes the "a completed task's history
+ * record is never deleted" Known gap in `docs/features/research-progress-tracking.md`.
+ */
+export function deleteCompletedTaskHistoryForTopic(topic: string): void {
+  writeAll(readAll().filter((record) => record.topic !== topic));
+}
+
+/**
  * Completes a routed task the same way `completePersistedRoutedTask` does
  * (removes it from its topic's stored active queue, decrements the
  * assignee's stored `activeTaskCount`) and, on success, additionally
@@ -95,6 +121,44 @@ export function completeAndRecordResearchTask(
   records.push({ topic: topicId, assignment, completedAt });
   writeAll(records);
   return assignment;
+}
+
+/**
+ * Verifies a task previously marked done via
+ * `state/pendingTaskVerifications.ts`'s `markRoutedTaskAwaitingVerification`,
+ * crediting it only once — closing the "No reviewer/verification step
+ * before a task is marked complete" Known gap recorded in
+ * `docs/features/task-inbox.md`. Requires a `verifierId` different from the
+ * assignment's own `contributorId` (via `assertVerifierAllowed`); throws
+ * `VerifierIdRequiredError`/`SelfVerificationNotAllowedError` and leaves both
+ * the pending and completed stores untouched if the guard fails. Returns
+ * `undefined` — recording nothing — if no task is pending verification for
+ * that `topicId`/`argBlock`.
+ */
+export function verifyAndRecordResearchTask(
+  topicId: string,
+  argBlock: string,
+  verifierId: string,
+  verifiedAt: string,
+): CompletedTaskRecord | undefined {
+  const pending = getPendingTaskVerification(topicId, argBlock);
+  if (!pending) return undefined;
+
+  const trimmedVerifierId = assertVerifierAllowed(pending.assignment, verifierId);
+
+  const record: CompletedTaskRecord = {
+    topic: topicId,
+    assignment: pending.assignment,
+    completedAt: verifiedAt,
+    markedDoneAt: pending.markedDoneAt,
+    verifiedBy: trimmedVerifierId,
+  };
+
+  const records = readAll();
+  records.push(record);
+  writeAll(records);
+  removePendingTaskVerification(topicId, argBlock);
+  return record;
 }
 
 /**

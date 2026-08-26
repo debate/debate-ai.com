@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildCustomOpponentPersona,
   buildOpponentPersonaPrompt,
   getOpponentPersona,
   isBuiltinOpponentPersonaId,
@@ -85,5 +86,57 @@ describe("buildOpponentPersonaPrompt", () => {
     const prompt = buildOpponentPersonaPrompt(bare);
 
     expect(prompt).not.toContain("Preferred arguments");
+  });
+});
+
+describe("buildCustomOpponentPersona", () => {
+  it("builds a custom persona from a user's described debating style", () => {
+    const persona = buildCustomOpponentPersona({
+      name: "Coach Amy's K bot",
+      notes: "Opens on framework, spreads fast, extends drops.",
+    });
+
+    expect(persona.id).toBe("custom");
+    expect(persona.name).toContain("Coach Amy's K bot");
+    expect(persona.instructions).toBe("Opens on framework, spreads fast, extends drops.");
+    expect(persona.preferredArguments).toEqual([]);
+    expect(persona.pace).toBe("moderate");
+  });
+
+  it("trims whitespace and strips control characters from notes", () => {
+    const persona = buildCustomOpponentPersona({
+      name: "  Speedster  ",
+      notes: "  Line one\nLine two\x00\x07 has a bell.  ",
+    });
+
+    expect(persona.name).toBe("Custom: Speedster");
+    expect(persona.instructions).toBe("Line one\nLine two has a bell.");
+  });
+
+  it("clamps overly long notes to the maximum length", () => {
+    const longNotes = "x".repeat(5000);
+    const persona = buildCustomOpponentPersona({ name: "Verbose Bot", notes: longNotes });
+    expect(persona.instructions.length).toBeLessThanOrEqual(2000);
+  });
+
+  it("throws when name is empty after sanitization", () => {
+    expect(() => buildCustomOpponentPersona({ name: "   ", notes: "Some notes" })).toThrow(
+      /name is required/,
+    );
+  });
+
+  it("throws when notes are empty after sanitization", () => {
+    expect(() => buildCustomOpponentPersona({ name: "Speedster", notes: "   " })).toThrow(
+      /notes are required/,
+    );
+  });
+
+  it("produces a distinct prompt usable by buildOpponentPersonaPrompt", () => {
+    const persona = buildCustomOpponentPersona({ name: "Speedster", notes: "Spreads everything." });
+    const prompt = buildOpponentPersonaPrompt(persona);
+
+    expect(prompt).toContain("Opponent Persona: Custom: Speedster");
+    expect(prompt).not.toContain("Preferred arguments");
+    expect(prompt).toContain("Spreads everything.");
   });
 });

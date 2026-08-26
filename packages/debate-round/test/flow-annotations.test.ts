@@ -152,6 +152,34 @@ describe("createFlowAnnotation", () => {
       }).videoId,
     ).toBeUndefined();
   });
+
+  it("trims a videoTitle and omits it entirely when blank", () => {
+    expect(
+      createFlowAnnotation({
+        id: "a1",
+        flowId: 1,
+        boxPath: [0],
+        speechId: "1AC",
+        timestampMs: 0,
+        createdAt: 0,
+        videoId: "dQw4w9WgXcQ",
+        videoTitle: "  Round 3 vs. Lincoln  ",
+      }).videoTitle,
+    ).toBe("Round 3 vs. Lincoln");
+
+    expect(
+      createFlowAnnotation({
+        id: "a1",
+        flowId: 1,
+        boxPath: [0],
+        speechId: "1AC",
+        timestampMs: 0,
+        createdAt: 0,
+        videoId: "dQw4w9WgXcQ",
+        videoTitle: "   ",
+      }).videoTitle,
+    ).toBeUndefined();
+  });
 });
 
 describe("sortAnnotationsByTimestamp", () => {
@@ -340,7 +368,7 @@ describe("jumpToAnnotation", () => {
     expect(calls.setActiveVideo).toEqual([]);
   });
 
-  it("switches video first when a different (or no) recording is loaded", () => {
+  it("switches video first when a different (or no) recording is loaded, falling back to the bare videoId as the title when no videoTitle was recorded", () => {
     const { deps, calls } = fakeDeps({ activeVideoId: "vid-1" });
 
     const result = jumpToAnnotation(annotation({ videoId: "vid-2", timestampMs: 4200 }), deps);
@@ -349,6 +377,18 @@ describe("jumpToAnnotation", () => {
     expect(calls.setActiveVideo).toEqual([["vid-2", "vid-2", undefined, 4.2]]);
     expect(calls.seekTo).toEqual([]);
     expect(calls.playVideo).toBe(0);
+  });
+
+  it("switches video using the annotation's own videoTitle when one was recorded", () => {
+    const { deps, calls } = fakeDeps({ activeVideoId: "vid-1" });
+
+    const result = jumpToAnnotation(
+      annotation({ videoId: "vid-2", videoTitle: "Round 3 vs. Lincoln", timestampMs: 4200 }),
+      deps,
+    );
+
+    expect(result).toBe(true);
+    expect(calls.setActiveVideo).toEqual([["vid-2", "Round 3 vs. Lincoln", undefined, 4.2]]);
   });
 
   it("switches video when nothing is currently loaded", () => {

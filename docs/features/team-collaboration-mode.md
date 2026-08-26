@@ -132,6 +132,48 @@ topic's current coverage gaps against current contributor availability
 to `routedTaskQueues.ts` — only `sprint.progressBoard` reads the persisted
 routed/completed assignments. No follow-ups remain open on this bullet.
 
+A later slice adds a signed-in prefill (mirroring [Task Inbox](./task-inbox.md)'s
+identical convention) for this panel's two free-form id fields:
+
+```
+components/research/SprintNotesWithIdentity.tsx  — "use client" wrapper
+  → useSession()                          — lib/hooks/useSession.ts, the
+                                              better-auth React session hook
+  → deriveContributorIdFromSessionIdentity(user)
+      — debate-card-search's lib/session-identity.ts: name, else the
+        email's local part, else the raw account id, else ""
+  → <SprintNotesPanel signedInContributorId={...} />
+      — seeds the note form's "Author ID" initial value only; a visitor who
+        edits it (hasEditedAuthorId) keeps their own typed value from then on
+      — seeds the presence control's "Your ID" field the same way
+        (hasEditedMyId)
+```
+
+`apps/debate-ai.com/app/cards/collaboration/page.tsx` and `ResearchHub.tsx`'s
+Sprint tab now mount this wrapper instead of the bare panel; a signed-out
+visitor sees the exact same blank fields as before.
+
+A later slice closes the one remaining unprefilled "my id" field on this
+tab: `ResearchHub.tsx`'s own "Your contributor id" field (the hub-level
+input that feeds `panels/TopicSprintPanel.tsx`'s `authorId` prop — a
+*different* field from `SprintNotesWithIdentity`'s "Author ID"/"Your ID"
+above, since `TopicSprintPanel` and `SprintNotesPanel` are two separate
+components sharing the tab). `ResearchHub.tsx` now calls `useSession()`
+and `deriveContributorIdFromSessionIdentity(user)` directly (it's already
+an app-level component, so no separate `*WithIdentity` wrapper was
+needed) and seeds the field's initial value from it — but only when the
+field has no previously-saved `localStorage` value and hasn't been
+hand-edited yet this session, mirroring every other slice's prefill-only
+behavior. A signed-out visitor still sees the field default to `"me"`.
+
 ## Known gaps
 
-- None — see the note above.
+- All three id fields on this tab ("Author ID" and "Your ID" on
+  `SprintNotesPanel`, plus `ResearchHub`'s own "Your contributor id" that
+  feeds `TopicSprintPanel`) are still free-form text, not a login — a real
+  signed-in session only *prefills* their initial value (see "Signed-in
+  prefill" above), so a visitor can still overwrite any of them. There is
+  no server-side session check on `saveSprintNote`/
+  `recordPersistedPresenceHeartbeat`/`createSprintNote` (via
+  `TopicSprintPanel`'s note form), the same trust boundary every other
+  localStorage-backed action in this repo has.

@@ -11,10 +11,18 @@
  * Word counting and limit status come from `formats/word-count-format`; this
  * component adds no counting logic of its own.
  *
+ * The popover's textarea can also be dictated into with a "🎤 Record" button,
+ * backed by `hooks/useMicrophoneTranscription.ts` (browser
+ * `SpeechRecognition`/`webkitSpeechRecognition` API) — closing the last
+ * remaining half of the "Speech text is typed or pasted; there is no
+ * transcription path feeding the word counter" Known gap recorded in
+ * `docs/features/word-count-rounds.md`, mirroring the same dictation button
+ * already shipped on the standalone `/word-count` submission form.
+ *
  * @module timers/SpeechWordCounter
  */
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Type } from "lucide-react"
 import { Button } from "debate-ui/src/primitives/button"
 import { Textarea } from "debate-ui/src/primitives/textarea"
@@ -25,6 +33,8 @@ import {
 } from "debate-ui/src/primitives/popover"
 import { cn } from "debate-ui/src/lib/utils"
 import { getWordCountStatus } from "../formats/word-count-format"
+import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
+import { appendDictatedSegment } from "./microphone-transcription"
 
 /** Fraction of the limit at which the readout starts warning. */
 const WARNING_RATIO = 0.9
@@ -59,6 +69,17 @@ export function SpeechWordCounter({
   const [open, setOpen] = useState(false)
   const status = getWordCountStatus(text, wordLimit)
   const isWarning = !status.overLimit && status.percentUsed >= WARNING_RATIO
+
+  const textRef = useRef(text)
+  textRef.current = text
+  const dictation = useMicrophoneTranscription({
+    onSegment: (segment) => onTextChange(appendDictatedSegment(textRef.current, segment)),
+  })
+
+  // Stop dictation if the popover is closed while still recording.
+  useEffect(() => {
+    if (!open && dictation.isListening) dictation.stop()
+  }, [open, dictation])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -107,9 +128,22 @@ export function SpeechWordCounter({
         <Textarea
           value={text}
           onChange={(e) => onTextChange(e.target.value)}
-          placeholder={`Type the ${speechName} speech…`}
+          placeholder={`Type the ${speechName} speech, or click Record to dictate it…`}
           className="min-h-40"
         />
+        {dictation.isSupported && (
+          <Button
+            type="button"
+            size="sm"
+            variant={dictation.isListening ? "destructive" : "outline"}
+            onClick={() => (dictation.isListening ? dictation.stop() : dictation.start())}
+          >
+            {dictation.isListening ? "Stop recording" : "🎤 Record"}
+          </Button>
+        )}
+        {dictation.error && (
+          <p className="text-xs text-[var(--text-error)]">{dictation.error}</p>
+        )}
       </PopoverContent>
     </Popover>
   )

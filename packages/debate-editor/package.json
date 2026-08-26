@@ -15,9 +15,9 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "debate-editor-cardmirror": "workspace:*",
     "debate-ui": "workspace:*",
     "lucide-react": "^0.577.0",
-    "reason-editor": "workspace:*",
     "streamdown": "^2.4.0"
   },
   "peerDependencies": {

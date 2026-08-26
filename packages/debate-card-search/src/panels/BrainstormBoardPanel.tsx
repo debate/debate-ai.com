@@ -32,6 +32,30 @@
  * visible even before any idea is submitted) merged with every other board
  * that already has a submitted idea.
  *
+ * Each rendered board also gets its own "Generate AI ideas" action, closing
+ * the "the AI-generation call requires an argument block to already be
+ * filled in on the form; it doesn't infer one from an existing board"
+ * Known gap — it calls the exact same `requestTeamBrainstormAiIdeas`
+ * request as the form's action, using that board's own argBlock/category
+ * directly instead of requiring the form to be filled in first.
+ *
+ * A "Merge into…" action on any idea flagged `isLikelyDuplicate` closes the
+ * "no reviewer/moderator merge action for ideas flagged as likely
+ * duplicates" Known gap — it calls the already-persisted
+ * `mergePersistedBrainstormIdeas`, which folds the duplicate's upvotes into
+ * a chosen target idea and removes the duplicate, rather than leaving the
+ * badge purely informational. The target picker lists every other idea on
+ * the same board (not just the top-ranked one), so two lower-ranked
+ * duplicates can be merged directly into each other.
+ *
+ * An optional `signedInContributorId` prop (mirroring `TaskInboxPanel`'s
+ * identical convention) prefills the idea form's "Contributor ID" field's
+ * *initial* value only — never overwrites a visitor's own edit, and a
+ * signed-out visitor sees the same blank field as before. A successful
+ * submission's form reset restores that same prefilled value (rather than
+ * clearing it back to blank) so a signed-in visitor can submit several
+ * ideas in a row without retyping their id each time.
+ *
  * @module panels/BrainstormBoardPanel
  */
 
@@ -43,10 +67,12 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { RadioGroup, RadioGroupItem } from "debate-ui/src/primitives/radio-group"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   buildBrainstormBoardsPanelView,
   buildBrainstormBoardsPanelViewForTopic,
+  mergePersistedBrainstormIdeas,
   saveBrainstormIdea,
   upvotePersistedBrainstormIdea,
 } from "../state/brainstormIdeas"
@@ -70,6 +96,20 @@ type IdeaDraft = { argBlock: string; category: BrainstormCategory; contributorId
 
 const EMPTY_DRAFT: IdeaDraft = { argBlock: "", category: "argument", contributorId: "", text: "" }
 
+function boardKey(board: BrainstormBoard): string {
+  return `${board.argBlock}::${board.category}`
+}
+
+export interface BrainstormBoardPanelProps {
+  /**
+   * A real signed-in visitor's derived contributor id (see
+   * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`).
+   * Prefills the idea form's "Contributor ID" field's *initial* value only
+   * — never overwrites a visitor's own edit.
+   */
+  signedInContributorId?: string
+}
+
 /**
  * Renders the Team Brainstorm Assist panel: a form to submit a new idea
  * against an argument block and category, plus every persisted
@@ -79,12 +119,15 @@ const EMPTY_DRAFT: IdeaDraft = { argBlock: "", category: "argument", contributor
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function BrainstormBoardPanel() {
+export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardPanelProps = {}) {
   const [boards, setBoards] = useState<BrainstormBoard[] | null>(null)
   const [draft, setDraft] = useState<IdeaDraft>(EMPTY_DRAFT)
+  const [hasEditedContributorId, setHasEditedContributorId] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [aiLoading, setAiLoading] = useState(false)
   const [aiError, setAiError] = useState<string | null>(null)
+  const [aiLoadingBoardKey, setAiLoadingBoardKey] = useState<string | null>(null)
+  const [aiErrorByBoard, setAiErrorByBoard] = useState<Record<string, string>>({})
   const [topics, setTopics] = useState<string[]>([])
   const [topic, setTopic] = useState("")
 
@@ -92,6 +135,12 @@ export function BrainstormBoardPanel() {
     setTopics(listTrackedTopics())
     setBoards(buildBrainstormBoardsPanelView())
   }, [])
+
+  useEffect(() => {
+    if (!hasEditedContributorId && signedInContributorId) {
+      setDraft((prev) => ({ ...prev, contributorId: signedInContributorId }))
+    }
+  }, [signedInContributorId, hasEditedContributorId])
 
   const refresh = (activeTopic = topic) => {
     setTopics(listTrackedTopics())
@@ -121,7 +170,11 @@ export function BrainstormBoardPanel() {
       upvotes: 0,
     })
     setError(null)
-    setDraft({ ...EMPTY_DRAFT, category: draft.category })
+    setDraft({
+      ...EMPTY_DRAFT,
+      category: draft.category,
+      contributorId: hasEditedContributorId ? "" : signedInContributorId ?? "",
+    })
     refresh()
   }
 
@@ -157,6 +210,44 @@ export function BrainstormBoardPanel() {
     } finally {
       setAiLoading(false)
     }
+  }
+
+  const handleGenerateAiIdeasForBoard = async (board: BrainstormBoard) => {
+    const key = boardKey(board)
+    setAiLoadingBoardKey(key)
+    setAiErrorByBoard((prev) => {
+      const next = { ...prev }
+      delete next[key]
+      return next
+    })
+    try {
+      const ideas = await requestTeamBrainstormAiIdeas(buildBrainstormPrompt(board.argBlock, board.category))
+      ideas.forEach((text, index) => {
+        saveBrainstormIdea({
+          id: `${board.argBlock}-${board.category}-ai-${Date.now()}-${index}`,
+          argBlock: board.argBlock,
+          category: board.category,
+          contributorId: "AI",
+          text,
+          upvotes: 0,
+          isAiGenerated: true,
+        })
+      })
+      refresh()
+    } catch (e) {
+      setAiErrorByBoard((prev) => ({
+        ...prev,
+        [key]: e instanceof Error ? e.message : "AI idea generation failed.",
+      }))
+    } finally {
+      setAiLoadingBoardKey(null)
+    }
+  }
+
+  const handleMergeInto = (duplicateId: string, targetId: string) => {
+    if (!targetId || targetId === duplicateId) return
+    mergePersistedBrainstormIdeas(targetId, duplicateId)
+    refresh()
   }
 
   if (boards === null) {
@@ -219,7 +310,10 @@ export function BrainstormBoardPanel() {
             <Input
               id="brainstorm-contributor-id"
               value={draft.contributorId}
-              onChange={(e) => setDraft((prev) => ({ ...prev, contributorId: e.target.value }))}
+              onChange={(e) => {
+                setDraft((prev) => ({ ...prev, contributorId: e.target.value }))
+                setHasEditedContributorId(true)
+              }}
               placeholder="alice"
             />
           </div>
@@ -270,12 +364,23 @@ export function BrainstormBoardPanel() {
       ) : (
         <div className="space-y-4">
           {boards.map((board) => (
-            <div key={`${board.argBlock}::${board.category}`} className="rounded-lg border border-border p-4">
+            <div key={boardKey(board)} className="rounded-lg border border-border p-4">
               <div className="mb-1 flex flex-wrap items-center gap-2">
                 <h2 className="text-sm font-semibold text-foreground">{board.argBlock}</h2>
                 <Badge variant="outline">{CATEGORY_LABEL[board.category]}</Badge>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={aiLoadingBoardKey === boardKey(board)}
+                  onClick={() => handleGenerateAiIdeasForBoard(board)}
+                >
+                  {aiLoadingBoardKey === boardKey(board) ? "Generating…" : "Generate AI ideas"}
+                </Button>
               </div>
-              <p className="mb-3 text-xs text-muted-foreground">{board.prompt}</p>
+              <p className="mb-1 text-xs text-muted-foreground">{board.prompt}</p>
+              {aiErrorByBoard[boardKey(board)] && (
+                <p className="mb-2 text-xs text-destructive">{aiErrorByBoard[boardKey(board)]}</p>
+              )}
               {board.ideas.length === 0 && (
                 <p className="mb-2 text-xs text-muted-foreground">No ideas submitted yet.</p>
               )}
@@ -296,9 +401,28 @@ export function BrainstormBoardPanel() {
                       </div>
                       <p className="text-muted-foreground">{idea.text}</p>
                     </div>
-                    <Button size="sm" variant="outline" onClick={() => handleUpvote(idea.id)}>
-                      Upvote ({idea.upvotes})
-                    </Button>
+                    <div className="flex flex-none items-center gap-2">
+                      {idea.isLikelyDuplicate && board.ideas.length > 1 && (
+                        <Select onValueChange={(targetId) => handleMergeInto(idea.id, targetId)}>
+                          <SelectTrigger size="sm" className="w-[160px] text-xs">
+                            <SelectValue placeholder="Merge into…" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {board.ideas
+                              .filter((other) => other.id !== idea.id)
+                              .map((other) => (
+                                <SelectItem key={other.id} value={other.id}>
+                                  {other.contributorId}: {other.text.slice(0, 40)}
+                                  {other.text.length > 40 ? "…" : ""}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                      <Button size="sm" variant="outline" onClick={() => handleUpvote(idea.id)}>
+                        Upvote ({idea.upvotes})
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>

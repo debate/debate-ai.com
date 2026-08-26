@@ -68,12 +68,18 @@ A later slice closed the "nothing in the live round-flowing page calls
 "Generate outline for current round" action that reads the round
 workspace's currently selected flow (`state/store.ts`'s `useFlowStore`, the
 same mechanism `VulnerabilityChartsPanel`'s "Generate report for current
-round" action uses) and derives+persists that round's outline via the
-already-existing `buildAndSaveArgumentTree(flow, roundId)`. No new
-tree-derivation logic was introduced — `buildAndSaveArgumentTree` already
-existed and was already Vitest-covered in
-`packages/debate-round/test/argumentTrees.test.ts`; this slice only wires a
-real caller to it.
+round" action uses) and derives+persists that round's outline via
+`buildAndSaveArgumentTreeFromCurrentFlow(flow)` — a thin wrapper over the
+already-existing `buildAndSaveArgumentTree(flow, roundId)` that keys the
+record by the flow's own `id`, stringified, mirroring
+`roundContributorFlows.ts`'s "the flow's own numeric id stands in for
+`roundId`" convention rather than requiring a separately-tracked `Round`
+entity. No new tree-derivation logic was introduced — this slice only wires a
+real caller to it. Vitest-covered in
+`packages/debate-round/test/argumentTrees.test.ts`
+(`buildAndSaveArgumentTreeFromCurrentFlow` keys the saved record by the
+flow's `id`, and persists an empty tree without throwing for a flow with no
+rows).
 
 A later slice closed the remaining "still a manual trigger" half of that
 gap: `hooks/useFlowEffects.ts` gained `useArgumentTreeAutoSync(flows,
@@ -160,6 +166,39 @@ contributor, the out-of-range-row no-op, tags feeding `filterArgumentTree`,
 the `buildRowData` → `rowDataToBoxes` round trip, label formatting, and the
 contributor roster).
 
+### Suggested argument type
+
+The popover also derives a suggested `argumentType` from the row's own
+content via a deterministic keyword heuristic — `inferArgumentType` checks
+the content (lowercased) against an ordered set of keyword rules (turn →
+extension → answer → impact → link → contention, most-specific first, so
+e.g. "this turns their impact" reads as a turn rather than an impact) and
+returns the first rule's type that matches, or `undefined` if none do. When
+a suggestion exists and differs from whatever the **Argument type** select
+currently shows, a **"Suggested: turn — use it"**-style link appears under
+the select; clicking it only fills the select, it never saves on its own —
+closing the "nothing infers a tag" Known gap.
+
+```
+flow/argument-tagging.ts
+  → inferArgumentType(content)   — keyword-rule argument-type suggestion
+
+flow/ArgumentTagPopover.tsx
+  → content prop                 — the row's own content, passed in
+  → "Suggested: … — use it"      — fills the Argument type select on click
+
+flow/FlowSpreadsheet.tsx
+  → content={flow.children[rowIndex]?.content}
+```
+
+Vitest-covered in `packages/debate-round/test/argument-tagging.test.ts`
+(each keyword rule, rule-priority ordering, case-insensitivity, and no
+match for empty/whitespace/unmatched content) and
+`packages/debate-round/test/ArgumentTagPopover.test.tsx` (the suggestion
+renders when it differs from the current selection, and is hidden for
+unmatched content or when the row is already tagged with the suggested
+type).
+
 ### Neighbour preview and bulk section tagging
 
 The popover also shows how the row's neighbours in the same "section" (the
@@ -206,9 +245,8 @@ renders when it's empty).
 - Tagging is row-level, not per-speech: one row carries one
   `argumentType`/`authorId`/`evidenceStatus`, so a row whose 2AC answer was
   written by a different partner than its 1AC claim can't record both.
-- Nothing infers a tag — every row is tagged by hand from the context menu;
-  there is no heuristic or AI pass that proposes an argument type from the
-  row's own content.
+- No follow-ups remain open on the "nothing infers a tag" gap — see
+  "Suggested argument type" above.
 - The contributor field is a free-form typed id, not an authenticated user
   (the same gap `prep-notes.md` and `review-queue.md` record), so the
   Argument Tree Outline's contributor filter is only as reliable as what

@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Debate AI — Card Reuse Check",
+  "version": "1.0.0",
+  "description": "Checks whether your team has already cut a card from the page you're viewing, against debate-ai.com's shared evidence library.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Check this page for existing cards"
+  },
+  "options_page": "options.html",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["https://debate-ai.com/*", "http://localhost:3000/*"]
+}

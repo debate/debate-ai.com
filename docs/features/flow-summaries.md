@@ -55,6 +55,16 @@ panels/FlowSummariesPanel.tsx — "Generate from raw speech text" form
   → saveFlowSummary()                    — state/flowSummaries.ts appends the
                                             new rows to that round's record
   → panel re-reads buildFlowSummariesPanelView() to refresh
+
+Dictating the transcript text instead of pasting/typing it:
+panels/FlowSummariesPanel.tsx — "🎤 Record" button
+  → useMicrophoneTranscription()         — hooks/useMicrophoneTranscription.ts
+      → browser SpeechRecognition/webkitSpeechRecognition API
+      → onSegment(finalizedText)         — for each finalized dictated segment
+  → appendDictatedSegment()              — round/microphone-transcription.ts
+                                            joins the segment onto the
+                                            textarea's current value
+  → (unchanged) "Extract with AI" reads the same extractTranscriptText state
 ```
 
 Every summary-derivation and persistence rule already existed and was
@@ -86,8 +96,34 @@ other row. Vitest-covered in
 `packages/debate-round/test/transcript-extraction-ai.test.ts` and
 `packages/debate-round/test/transcript-extraction-client.test.ts`.
 
+A further slice closes the "recording" half of follow-up (a) — this repo has
+no server-side/paid transcription service, so instead a "🎤 Record" button
+next to the Transcript text field uses the browser's own Web Speech API
+(`SpeechRecognition`/`webkitSpeechRecognition`) to dictate directly into the
+same field the AI extraction above reads:
+`round/microphone-transcription.ts` (feature detection via
+`isMicrophoneTranscriptionSupported`, `appendDictatedSegment` for
+joining dictated segments onto existing text, and
+`describeMicrophoneTranscriptionError` for readable recognition errors) and
+`hooks/useMicrophoneTranscription.ts` (the actual `SpeechRecognition`
+instance, wired to the panel's `extractTranscriptText` state). A browser
+without support (no `SpeechRecognition`/`webkitSpeechRecognition`
+constructor) shows a disabled explanatory message in place of the button
+instead of a silent no-op. No follow-ups remain open on this idea's
+"Speech Transcript Summaries and Answers" text-extraction path.
+Vitest-covered in
+`packages/debate-round/test/microphone-transcription.test.ts` (feature
+detection with/without a prefixed constructor and for an SSR/`undefined`
+host, dictated-segment joining including whitespace edge cases, and every
+known/unknown recognition error code). The React hook itself
+(`hooks/useMicrophoneTranscription.ts`) is not directly unit-tested, matching
+every other browser-API hook in this repo (e.g.
+`debate-timer/src/hooks/useSpeechRecorder.ts`) — there is no jsdom
+environment in this repo's Vitest setup.
+
 ## Known gaps
 
-- No audio/video transcription — the AI extraction form above requires an
-  already-transcribed speech text (pasted in), not an audio/video
-  recording; that transcription step remains open as a further follow-up.
+- Microphone dictation transcribes live speech only — it does not accept an
+  already-recorded audio/video file upload. Idea #8's ("Video-Lecture-Training
+  Coach AI") identical "recording" follow-up is a separate, still-open gap in
+  `docs/features/coach-materials.md`.

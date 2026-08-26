@@ -12,6 +12,27 @@
  * `lib/research-progress.ts`'s `ContributorProgress`/`TopicProgress` shape
  * directly rather than introducing new aggregation logic here.
  *
+ * A per-topic "Clear completed history" action closes the "a completed
+ * task's history record is never deleted" Known gap recorded in
+ * `docs/features/research-progress-tracking.md`, calling
+ * `state/researchProgress.ts`'s `deleteCompletedTaskHistoryForTopic` and
+ * re-reading the board.
+ *
+ * An optional `signedInContributorId` prop (built from
+ * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`
+ * against a real signed-in session) highlights that contributor's own row
+ * with a "You" badge via `isOwnContributorRow` — this roster always shows
+ * every contributor, so unlike Task Inbox's "My tasks" prefill there is
+ * nothing to filter or prefill here, only to highlight.
+ *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isResearchProgressLiveUpdateStorageEvent`, so a contribution, completed
+ * task, or routed task queue change recorded in another tab refreshes this
+ * panel's roster without a manual reload — closing the "Every other
+ * localStorage-backed panel in this repo still has no cross-tab
+ * live-update mechanism" Known gap noted in `shared-flow-sync.md`, for this
+ * panel.
+ *
  * @module panels/ResearchProgressPanel
  */
 
@@ -19,6 +40,7 @@
 
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
+import { Button } from "debate-ui/src/primitives/button"
 import {
   Table,
   TableBody,
@@ -27,8 +49,23 @@ import {
   TableHeader,
   TableRow,
 } from "debate-ui/src/primitives/table"
-import { buildPersistedResearchProgressBoard } from "../state/researchProgress"
+import {
+  buildPersistedResearchProgressBoard,
+  deleteCompletedTaskHistoryForTopic,
+} from "../state/researchProgress"
+import { isOwnContributorRow } from "../lib/session-identity"
+import { isResearchProgressLiveUpdateStorageEvent } from "../state/live-update"
 import type { ContributorProgress } from "../lib/research-progress"
+
+export interface ResearchProgressPanelProps {
+  /**
+   * A contributor id to highlight as "You" in the roster, typically derived
+   * from a real signed-in session via `deriveContributorIdFromSessionIdentity`.
+   * This roster always shows every contributor — this only highlights a
+   * matching row, it never filters the others out.
+   */
+  signedInContributorId?: string
+}
 
 /**
  * Renders the Research Progress roster: every contributor with either a
@@ -38,12 +75,31 @@ import type { ContributorProgress } from "../lib/research-progress"
  * Reads localStorage on mount only (client-side), so it renders an empty
  * state during SSR/hydration rather than throwing.
  */
-export function ResearchProgressPanel() {
+export function ResearchProgressPanel({ signedInContributorId }: ResearchProgressPanelProps = {}) {
   const [roster, setRoster] = useState<ContributorProgress[] | null>(null)
 
   useEffect(() => {
     setRoster(buildPersistedResearchProgressBoard())
   }, [])
+
+  /**
+   * Live-update the roster when another browser tab records a contribution,
+   * completes a task, or routes a topic's task queue. A `storage` event
+   * never fires in the tab that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isResearchProgressLiveUpdateStorageEvent(event)) return
+      setRoster(buildPersistedResearchProgressBoard())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
+
+  const handleClearTopicHistory = (topic: string) => {
+    deleteCompletedTaskHistoryForTopic(topic)
+    setRoster(buildPersistedResearchProgressBoard())
+  }
 
   if (roster === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading research progress…</div>
@@ -74,9 +130,20 @@ export function ResearchProgressPanel() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {roster.map((progress) => (
-            <TableRow key={progress.contributorId}>
-              <TableCell className="font-medium">{progress.contributorId}</TableCell>
+          {roster.map((progress) => {
+            const isMe = isOwnContributorRow(progress.contributorId, signedInContributorId)
+            return (
+            <TableRow key={progress.contributorId} className={isMe ? "bg-primary/5" : undefined}>
+              <TableCell className="font-medium">
+                <div className="flex items-center gap-1.5">
+                  {progress.contributorId}
+                  {isMe && (
+                    <Badge variant="outline" className="whitespace-nowrap">
+                      You
+                    </Badge>
+                  )}
+                </div>
+              </TableCell>
               <TableCell className="text-muted-foreground">
                 {progress.contributionStats === null
                   ? "—"
@@ -91,9 +158,21 @@ export function ResearchProgressPanel() {
                 {progress.topics.length > 0 ? (
                   <div className="flex flex-wrap gap-1">
                     {progress.topics.map((topic) => (
-                      <Badge key={topic.topic} variant="outline" className="whitespace-nowrap">
-                        {topic.topic}: {topic.completedTaskCount}/{topic.assignedTaskCount}
-                      </Badge>
+                      <div key={topic.topic} className="flex items-center gap-1">
+                        <Badge variant="outline" className="whitespace-nowrap">
+                          {topic.topic}: {topic.completedTaskCount}/{topic.assignedTaskCount}
+                        </Badge>
+                        {topic.completedTaskCount > 0 && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-5 px-1 text-xs text-muted-foreground"
+                            onClick={() => handleClearTopicHistory(topic.topic)}
+                          >
+                            Clear completed history
+                          </Button>
+                        )}
+                      </div>
                     ))}
                   </div>
                 ) : (
@@ -101,7 +180,8 @@ export function ResearchProgressPanel() {
                 )}
               </TableCell>
             </TableRow>
-          ))}
+            )
+          })}
         </TableBody>
       </Table>
     </div>

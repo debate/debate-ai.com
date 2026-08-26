@@ -19,9 +19,18 @@
  * `document-material-extraction.ts`'s `extractMaterialTextFromDocument` to
  * fill the Material text field from an uploaded .docx/.txt/.md file instead
  * of requiring it to be pasted in by hand, closing the "document" half of
- * follow-up (a) named under idea #8 in TODO.md. The "recording" half
- * (audio/video transcription) remains open — no transcription service
- * exists in this repo.
+ * follow-up (a) named under idea #8 in TODO.md. A "🎤 Record" button next to
+ * the same field, wired to `hooks/useMicrophoneTranscription.ts`, dictates
+ * directly into it via the browser's own Web Speech API, closing the
+ * remaining "recording" half (no server-side/paid transcription service
+ * exists in this repo) — mirroring idea #6's identical fix in
+ * `debate-round`'s `FlowSummariesPanel`.
+ *
+ * The "Ask the coach" section also renders and persists a conversation
+ * history (`state/coachConversation.ts`), feeding prior turns back into
+ * `requestTeamCoachAnswer` so a follow-up question can build on an earlier
+ * answer, closing the "No conversation history" Known gap recorded in
+ * `docs/features/coach-materials.md`.
  *
  * @module panels/CoachMaterialsPanel
  */
@@ -51,13 +60,20 @@ import {
 } from "../coach/team-coach-materials"
 import { requestTeamCoachAnswer } from "../coach/team-coach-client"
 import { extractMaterialTextFromDocument } from "../coach/document-material-extraction"
+import { appendDictatedSegment } from "../coach/microphone-transcription"
+import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import {
   buildCoachMaterialLibraryFromStore,
   deleteCoachMaterial,
   findRelevantMaterialsFromStore,
   saveCoachMaterial,
 } from "../state/coachMaterials"
-import type { CoachMaterialLibrary } from "../coach/team-coach-materials"
+import {
+  appendCoachConversationTurn,
+  clearCoachConversationHistory,
+  listCoachConversationTurns,
+} from "../state/coachConversation"
+import type { CoachConversationTurn, CoachMaterialLibrary } from "../coach/team-coach-materials"
 
 // The labels and display order live with the material model itself, so the
 // form, the badges and `buildCoachMaterialLibrary`'s grouping stay in step.
@@ -108,9 +124,15 @@ export function CoachMaterialsPanel() {
   const [answer, setAnswer] = useState<string | null>(null)
   const [asking, setAsking] = useState(false)
   const [askError, setAskError] = useState<string | null>(null)
+  const [history, setHistory] = useState<CoachConversationTurn[]>([])
+
+  const dictation = useMicrophoneTranscription({
+    onSegment: (segment) => setForm((prev) => ({ ...prev, text: appendDictatedSegment(prev.text, segment) })),
+  })
 
   useEffect(() => {
     setLibrary(buildCoachMaterialLibraryFromStore())
+    setHistory(listCoachConversationTurns())
   }, [])
 
   const refresh = () => setLibrary(buildCoachMaterialLibraryFromStore())
@@ -172,13 +194,20 @@ export function CoachMaterialsPanel() {
     setAskError(null)
     setAnswer(null)
     try {
-      const result = await requestTeamCoachAnswer(question, currentMatches)
+      const result = await requestTeamCoachAnswer(question, currentMatches, { history })
       setAnswer(result)
+      const turn = appendCoachConversationTurn({ question, answer: result })
+      setHistory((prev) => [...prev, turn])
     } catch (e) {
       setAskError(e instanceof Error ? e.message : "Failed to get an answer from the coach.")
     } finally {
       setAsking(false)
     }
+  }
+
+  const handleClearHistory = () => {
+    clearCoachConversationHistory()
+    setHistory([])
   }
 
   if (library === null) {
@@ -253,6 +282,20 @@ export function CoachMaterialsPanel() {
           <div className="flex items-center justify-between gap-2">
             <Label htmlFor="coach-material-text">Material text</Label>
             <div className="flex items-center gap-2">
+              {dictation.isSupported ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={dictation.isListening ? "destructive" : "outline"}
+                  onClick={dictation.isListening ? dictation.stop : dictation.start}
+                >
+                  {dictation.isListening ? "Stop recording" : "🎤 Record"}
+                </Button>
+              ) : (
+                <span className="text-xs text-muted-foreground">
+                  Microphone dictation isn't supported in this browser.
+                </span>
+              )}
               <Button
                 type="button"
                 size="sm"
@@ -275,9 +318,13 @@ export function CoachMaterialsPanel() {
             id="coach-material-text"
             value={form.text}
             onChange={(e) => setForm((prev) => ({ ...prev, text: e.target.value }))}
-            placeholder="Paste the lecture transcript, handout, or notes here, or upload a .docx/.txt/.md file above…"
+            placeholder="Paste the lecture transcript, handout, or notes here, upload a .docx/.txt/.md file, or click Record to dictate it…"
             className="min-h-32"
           />
+          {dictation.isListening && (
+            <p className="text-xs text-muted-foreground">Listening… speak now.</p>
+          )}
+          {dictation.error && <p className="text-sm text-destructive">{dictation.error}</p>}
           {uploadError && <p className="text-sm text-destructive">{uploadError}</p>}
         </div>
 
@@ -325,13 +372,35 @@ export function CoachMaterialsPanel() {
       )}
 
       <div className="rounded-lg border border-border p-4 space-y-4">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Ask the coach</h2>
-          <p className="text-xs text-muted-foreground">
-            Ask a question and the team coach AI answers strictly from your grounding materials —
-            or say so if they don't cover it.
-          </p>
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <h2 className="text-sm font-medium text-foreground">Ask the coach</h2>
+            <p className="text-xs text-muted-foreground">
+              Ask a question and the team coach AI answers strictly from your grounding materials —
+              or say so if they don't cover it. Follow-up questions build on the conversation below.
+            </p>
+          </div>
+          {history.length > 0 && (
+            <Button type="button" size="sm" variant="ghost" onClick={handleClearHistory}>
+              Clear conversation
+            </Button>
+          )}
         </div>
+
+        {history.length > 0 && (
+          <div className="space-y-2">
+            <Label>Conversation</Label>
+            <div className="max-h-64 space-y-2 overflow-y-auto">
+              {history.map((turn) => (
+                <div key={turn.id} className="rounded-md border border-border px-3 py-2 text-sm">
+                  <p className="font-medium text-foreground">{turn.question}</p>
+                  <p className="mt-1 whitespace-pre-wrap text-muted-foreground">{turn.answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-end gap-2">
           <div className="space-y-1.5 flex-1 min-w-[16rem]">
             <Label htmlFor="coach-question">Question</Label>

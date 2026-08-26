@@ -68,14 +68,12 @@ to measure a real word count from, unlike a dedicated evidence-library entry.
 
 ## On-page card reuse check
 
-A "Check this page" box implements the first slice of the "On Page Card
-Reuse Search" idea in TODO.md's Product Feature Ideas list — pasting a page
-URL shows whether anyone has already cut a card from it, so a contributor
-can skip duplicate research. This is the reuse check a browser extension
-would eventually run automatically against the current tab's URL; no
-extension exists in this repo yet, so the panel is the only caller today.
+A "Check this page" box implements the "On Page Card Reuse Search" idea in
+TODO.md's Product Feature Ideas list — pasting a page URL shows whether
+anyone has already cut a card from it, so a contributor can skip duplicate
+research.
 
-The submission form's new optional Source URL field is how an entry's
+The submission form's optional Source URL field is how an entry's
 `sourceUrl` gets recorded in the first place — it's blank by default, and
 existing entries persisted before this field was added simply have no
 `sourceUrl` and never match a reuse check.
@@ -89,7 +87,41 @@ page, and `checkPageForExistingCards` wraps that into a
 `{ url, alreadyCut, matches }` result; `state/evidenceLibraryEntries.ts`'s
 `checkPersistedPageForExistingCards` composes the pure check against the
 persisted repository, gated to "live" entries the same way
-`searchPersistedEvidenceLibraryWithIndex` is (see below).
+`searchPersistedEvidenceLibraryWithIndex` is (see below). This local check
+only sees entries saved in the current browser's own `localStorage`, so it
+can't answer "has anyone on the team cut this" across devices — see the
+shared index below.
+
+### Shared, server-backed reuse index + browser extension
+
+Closes follow-up (a) under TODO.md idea #7 — "an actual browser extension
+that calls this same check automatically against the current tab's URL."
+`app/api/evidence-reuse-check/route.ts` is a small D1-backed API route (a
+dedicated `evidence_reuse_index` table — `id`/`sourceUrl`/`normalizedUrl`/
+`cite`/`argBlock`/`topic`/`contributorId`, **not** a full server-side mirror
+of `EvidenceLibraryEntry`) exposing:
+
+- `GET ?url=` — whether that URL has already been cut by anyone on the
+  team, plus matches, matched by the same `normalizeSourceUrl` normalization
+  as the local check.
+- `POST { id, sourceUrl, cite, argBlock, topic, contributorId }` — registers
+  a cut card's source URL into the shared index, upserted by `id` so
+  re-registering the same entry (e.g. after an edit) doesn't duplicate.
+
+`lib/evidence-reuse-check-client.ts`'s `checkRemotePageForExistingCards`/
+`registerRemoteReuseEntry` are the fetch-based clients against that route.
+`EvidenceLibraryPanel`'s "Check this page" box now calls the remote check
+alongside the existing local one (rendered as a separate "Team-wide check"
+section, degrading gracefully to a note if the request fails), and the
+submission form registers a submitted entry's `sourceUrl` into the shared
+index automatically (best-effort — a network failure doesn't block the
+local save).
+
+`apps/browser-extension` is a dependency-free Manifest V3 extension (no
+bundler, not part of this repo's `bun`/`turbo` workspaces — see its own
+[README](../../apps/browser-extension/README.md)) whose popup calls the same
+`GET /api/evidence-reuse-check` route against the active tab's URL,
+configurable to a non-production API base URL via an Options page.
 
 ## Real search index
 
@@ -244,6 +276,19 @@ panels/EvidenceLibraryPanel.tsx ("Check this page" box)
           → normalizeSourceUrl(url)          — lib/shared-evidence-library.ts (pure)
   → buildPageReuseCheckSummaryText(result) — lib/shared-evidence-library.ts (pure)
   → panels/EvidenceLibraryPanel.tsx        — renders the summary plus any matching entries
+
+panels/EvidenceLibraryPanel.tsx ("Check this page" box, shared index)
+  → checkRemotePageForExistingCards(url)   — lib/evidence-reuse-check-client.ts
+      → GET /api/evidence-reuse-check?url= — app/api/evidence-reuse-check/route.ts (D1)
+  → panels/EvidenceLibraryPanel.tsx        — renders the "Team-wide check" section
+
+panels/EvidenceLibraryPanel.tsx (submission form, entry.sourceUrl set)
+  → registerRemoteReuseEntry(entry)        — lib/evidence-reuse-check-client.ts
+      → POST /api/evidence-reuse-check     — app/api/evidence-reuse-check/route.ts (D1 upsert)
+
+apps/browser-extension/popup.js (active tab's URL)
+  → checkPageForExistingCards(pageUrl, apiBase) — apps/browser-extension/api.js
+      → GET ${apiBase}/api/evidence-reuse-check?url= — app/api/evidence-reuse-check/route.ts (D1)
 ```
 
 Editing an entry derives a Revision Incentives `CardSnapshot` for the entry's
@@ -333,6 +378,34 @@ both-stores no-op, and a throw leaving both stores untouched) and
 (`renameTagAcrossPersistedContributions`: rewrite-and-persist, merge-dedup,
 a true no-write no-op, and throwing on a blank or identical tag pair).
 
+## Duplicate-tag merge suggestions
+
+Closes the "nothing merges two casings already in use" half of this
+bullet's tag-identity Known gap. The manual "Rename/merge tag" form above
+requires a contributor to already know two casings of the same tag exist
+(e.g. `warming` and `Warming`) before they think to merge them. The
+Argument Library browser now surfaces that situation itself: a "Possible
+duplicate tags" section lists every tag used under more than one exact
+casing, with a "Merge … into …" button per variant that runs the same
+`renameTagAcrossCombinedPersistedStores` call as the manual form.
+
+`lib/argument-library.ts`'s `findTagCaseVariantGroups(collections)` scans a
+library's `TagCollection[]` (already grouped by exact-string tag) for
+tags whose lowercased form repeats, and groups those variants together.
+Within a group, the casing carried by the most cards is treated as the
+merge target and sorted first (a card-count tie breaks alphabetically); a
+tag used under only one casing never appears in the result, so the section
+is hidden entirely when there's nothing to merge. This only detects
+casing differences already present in persisted data; a tag typed directly
+into a submission form is normalized separately (see "Typed-tag
+normalization" below).
+
+Vitest-covered in
+`packages/debate-card-search/test/argument-library.test.ts`
+(`findTagCaseVariantGroups`: grouping case variants, most-used-first
+ordering, an alphabetical tie-break, excluding single-casing tags,
+multiple groups sorted by their own merge target, and an empty input).
+
 ## Tag autocomplete on the Contributions Feed
 
 Closes this bullet's "a Contributions Feed submission tagged for the
@@ -360,6 +433,32 @@ and `packages/debate-card-search/test/contributions.test.ts`
 (`listContributionTags`: empty store, contributions carrying no tags, and
 the deduped sorted list).
 
+## Typed-tag normalization
+
+Closes the "a tag typed directly into a submission form ... still creates a
+new casing instead of being normalized to an existing one" half of the
+tag-identity Known gap below.
+
+`lib/argument-library.ts`'s `normalizeTagsToKnownCasing(tags, knownTags)`
+rewrites each of `tags` to whichever casing already appears in `knownTags`,
+when a case-insensitive match exists (a tag with no match is left
+unchanged). Both submission forms — `EvidenceLibraryPanel`'s
+(`/cards/library`) and `ContributionsFeedPanel`'s (`/cards/contributions`)
+— run their comma-split tag list through this before saving, using the same
+`knownTags`/corpus each form's autocomplete already reads
+(`listPersistedTags()`/`listCombinedPersistedTags()`). So a contributor who
+types `warming` by hand, without touching the autocomplete dropdown, still
+lands on `Warming` if that's the casing already in use — the same outcome
+autocomplete already gave a contributor who picked a suggestion.
+
+Vitest-covered in
+`packages/debate-card-search/test/argument-library.test.ts`
+(`normalizeTagsToKnownCasing`: rewriting a typed tag to its existing
+casing, leaving an unmatched tag unchanged, leaving an already-correct
+casing unchanged, normalizing several tags independently, resolving a
+tie by first-encountered casing when `knownTags` itself carries more than
+one, and both empty-input cases).
+
 ## Known gaps
 
 - A real inverted-index/TF-IDF search now exists, `EvidenceLibraryPanel` is
@@ -367,17 +466,31 @@ the deduped sorted list).
   invalidation now updates that index incrementally instead of rebuilding it
   (see "Real search index" above) — no further follow-up remains open on
   this bullet.
-- No browser extension exists — the "Check this page" box is a manual,
-  paste-the-URL stand-in for what a future extension would run
-  automatically against the current tab. The reuse-check logic itself
-  (`checkPageForExistingCards`/`findEntriesBySourceUrl`/`normalizeSourceUrl`)
-  is already a plain, extension-callable function with no UI dependency.
+- Two separate browser extensions now call the reuse check, and neither
+  supersedes the other: `extension/card-reuse-checker` deep-links into this
+  route's `?checkUrl=` param to run the *local* check against the active
+  tab's URL (see
+  [`on-page-card-reuse-search.md`](./on-page-card-reuse-search.md)), while
+  `apps/browser-extension` calls the *shared* `GET /api/evidence-reuse-check`
+  route (see "Shared, server-backed reuse index + browser extension" above
+  and its own [README](../../apps/browser-extension/README.md)). Folding them
+  into one extension that does both checks is not done.
+- The shared-index extension is check-only — it doesn't register a newly-cut
+  card into the shared reuse index itself (only the web app's submission
+  form does that today), and its `host_permissions` only pre-authorize
+  `debate-ai.com` and `localhost:3000`.
 - The tag rename/merge tool now rewrites both persisted tag stores (see
   "Tag rename/merge" above) and the Contributions Feed form now has the same
   tag autocomplete as the evidence-library form (see "Tag autocomplete on
   the Contributions Feed" above) — neither gap remains open.
 - Tag identity is still exact-string everywhere: `warming` and `Warming` are
-  two different tags, in the library's collections, in the autocomplete
-  corpus, and in a rename. Autocomplete *matching* is case-insensitive, so a
-  contributor who takes a suggestion lands on the existing casing, but
-  nothing merges two casings already in use.
+  two different tags, in the library's collections and in a rename, if
+  they're both already in persisted data before either form's normalization
+  runs. Autocomplete *matching* is case-insensitive, a typed tag is now
+  normalized to an existing casing at submit time (see "Typed-tag
+  normalization" above), and the Common Argument Library browser surfaces
+  and merges any case variants that still slip in — e.g. two separate
+  contributors coining different casings for a genuinely new tag in the
+  same window, before either casing became "known" to the other's form —
+  (see "Duplicate-tag merge suggestions" above). No follow-up remains open
+  on this bullet.

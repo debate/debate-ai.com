@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "3b649878-21b4-4795-851d-48709b9e140e",
+  "id": "d5307930-10f9-43d5-bf5d-3351a1fbb66c",
   "prevId": "8cd3849f-7376-4ecd-8c6d-94f4c08a6550",
   "tables": {
     "account": {
@@ -481,20 +481,13 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "videos": {
-      "name": "videos",
+    "youtube_round_videos": {
+      "name": "youtube_round_videos",
       "columns": {
-        "video_id": {
-          "name": "video_id",
+        "id": {
+          "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "source": {
-          "name": "source",
-          "type": "text",
-          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
@@ -503,35 +496,24 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "''"
+          "autoincrement": false
         },
         "published_at": {
           "name": "published_at",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "''"
-        },
-        "published_ms": {
-          "name": "published_ms",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
         },
         "channel": {
           "name": "channel",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "''"
+          "autoincrement": false
         },
-        "view_count": {
-          "name": "view_count",
+        "views": {
+          "name": "views",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -550,21 +532,7 @@
           "name": "style",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "category": {
-          "name": "category",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "category_key": {
-          "name": "category_key",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "tournament": {
@@ -581,22 +549,22 @@
           "notNull": false,
           "autoincrement": false
         },
-        "aff_team": {
-          "name": "aff_team",
+        "aff": {
+          "name": "aff",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "neg_team": {
-          "name": "neg_team",
+        "neg": {
+          "name": "neg",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "aff_win": {
-          "name": "aff_win",
+        "winner": {
+          "name": "winner",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -609,50 +577,13 @@
           "notNull": false,
           "autoincrement": false
         },
-        "arg_1ac": {
-          "name": "arg_1ac",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "arg_2nr": {
-          "name": "arg_2nr",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "is_top_pick": {
-          "name": "is_top_pick",
+        "created_at": {
+          "name": "created_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": false
-        },
-        "speech_docs_url": {
-          "name": "speech_docs_url",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "season_year": {
-          "name": "season_year",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        },
-        "search_text": {
-          "name": "search_text",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "''"
+          "default": "(unixepoch())"
         },
         "updated_at": {
           "name": "updated_at",
@@ -664,52 +595,110 @@
         }
       },
       "indexes": {
-        "idx_videos_published_ms": {
-          "name": "idx_videos_published_ms",
+        "idx_youtube_round_videos_published_at": {
+          "name": "idx_youtube_round_videos_published_at",
           "columns": [
-            "published_ms"
+            "published_at"
           ],
           "isUnique": false
         },
-        "idx_videos_view_count": {
-          "name": "idx_videos_view_count",
+        "idx_youtube_round_videos_channel": {
+          "name": "idx_youtube_round_videos_channel",
           "columns": [
-            "view_count"
+            "channel"
           ],
           "isUnique": false
         },
-        "idx_videos_style": {
-          "name": "idx_videos_style",
+        "idx_youtube_round_videos_style": {
+          "name": "idx_youtube_round_videos_style",
           "columns": [
             "style"
           ],
           "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "youtube_sync_runs": {
+      "name": "youtube_sync_runs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
         },
-        "idx_videos_season_year": {
-          "name": "idx_videos_season_year",
-          "columns": [
-            "season_year"
-          ],
-          "isUnique": false
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'running'"
         },
-        "idx_videos_category_key": {
-          "name": "idx_videos_category_key",
-          "columns": [
-            "category_key"
-          ],
-          "isUnique": false
+        "triggered_by": {
+          "name": "triggered_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
-        "idx_videos_source": {
-          "name": "idx_videos_source",
-          "columns": [
-            "source"
-          ],
-          "isUnique": false
+        "channels_synced": {
+          "name": "channels_synced",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
-        "idx_videos_is_top_pick": {
-          "name": "idx_videos_is_top_pick",
+        "videos_fetched": {
+          "name": "videos_fetched",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "videos_upserted": {
+          "name": "videos_upserted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "error": {
+          "name": "error",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "started_at": {
+          "name": "started_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "finished_at": {
+          "name": "finished_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "idx_youtube_sync_runs_started_at": {
+          "name": "idx_youtube_sync_runs_started_at",
           "columns": [
-            "is_top_pick"
+            "started_at"
           ],
           "isUnique": false
         }

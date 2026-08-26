@@ -3,6 +3,8 @@ import {
   buildPersistedDailyQuestBoard,
   deleteQuestTemplate,
   listQuestTemplates,
+  pruneExpiredQuestTemplates,
+  rolloverExpiredRecurringQuestTemplates,
   saveQuestTemplate,
   seedQuestTemplatesFromTopicCoverage,
 } from "../src/state/dailyQuests";
@@ -92,6 +94,98 @@ describe("deleteQuestTemplate", () => {
     saveQuestTemplate(ADD_ANNOTATIONS);
     deleteQuestTemplate("missing");
     expect(listQuestTemplates()).toEqual([ADD_ANNOTATIONS]);
+  });
+});
+
+describe("pruneExpiredQuestTemplates", () => {
+  const NOW = Date.UTC(2026, 7, 16, 12, 0, 0); // 2026-08-16
+
+  it("returns 0 and leaves storage untouched when nothing is stored", () => {
+    expect(pruneExpiredQuestTemplates(NOW)).toBe(0);
+    expect(listQuestTemplates()).toEqual([]);
+  });
+
+  it("removes a template whose expiresOn has passed and returns the removed count", () => {
+    const expired: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-15" };
+    saveQuestTemplate(expired);
+
+    expect(pruneExpiredQuestTemplates(NOW)).toBe(1);
+    expect(listQuestTemplates()).toEqual([]);
+  });
+
+  it("leaves a template with no expiresOn untouched", () => {
+    saveQuestTemplate(FIND_CARDS);
+
+    expect(pruneExpiredQuestTemplates(NOW)).toBe(0);
+    expect(listQuestTemplates()).toEqual([FIND_CARDS]);
+  });
+
+  it("leaves a template whose expiresOn hasn't passed yet (including today) untouched", () => {
+    const stillActive: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-16" };
+    saveQuestTemplate(stillActive);
+
+    expect(pruneExpiredQuestTemplates(NOW)).toBe(0);
+    expect(listQuestTemplates()).toEqual([stillActive]);
+  });
+
+  it("removes only the expired templates, leaving others in place", () => {
+    const expired: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-15" };
+    saveQuestTemplate(expired);
+    saveQuestTemplate(ADD_ANNOTATIONS);
+
+    expect(pruneExpiredQuestTemplates(NOW)).toBe(1);
+    expect(listQuestTemplates()).toEqual([ADD_ANNOTATIONS]);
+  });
+
+  it("never removes an expired recurring template — it rolls it over instead", () => {
+    const recurring: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-15", recurrence: "daily" };
+    saveQuestTemplate(recurring);
+
+    expect(pruneExpiredQuestTemplates(NOW)).toBe(0);
+    expect(listQuestTemplates()).toEqual([{ ...recurring, expiresOn: "2026-08-16" }]);
+  });
+});
+
+describe("rolloverExpiredRecurringQuestTemplates", () => {
+  const NOW = Date.UTC(2026, 7, 16, 12, 0, 0); // 2026-08-16
+
+  it("returns 0 and leaves storage untouched when nothing is stored", () => {
+    expect(rolloverExpiredRecurringQuestTemplates(NOW)).toBe(0);
+    expect(listQuestTemplates()).toEqual([]);
+  });
+
+  it("leaves a non-recurring expired template untouched", () => {
+    const expired: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-15" };
+    saveQuestTemplate(expired);
+
+    expect(rolloverExpiredRecurringQuestTemplates(NOW)).toBe(0);
+    expect(listQuestTemplates()).toEqual([expired]);
+  });
+
+  it("rolls an expired daily recurring template's expiresOn forward and returns the rolled-over count", () => {
+    const recurring: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-14", recurrence: "daily" };
+    saveQuestTemplate(recurring);
+
+    expect(rolloverExpiredRecurringQuestTemplates(NOW)).toBe(1);
+    expect(listQuestTemplates()).toEqual([{ ...recurring, expiresOn: "2026-08-16" }]);
+  });
+
+  it("leaves a recurring template that hasn't expired yet untouched", () => {
+    const stillActive: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-16", recurrence: "weekly" };
+    saveQuestTemplate(stillActive);
+
+    expect(rolloverExpiredRecurringQuestTemplates(NOW)).toBe(0);
+    expect(listQuestTemplates()).toEqual([stillActive]);
+  });
+
+  it("rolls over only the expired recurring templates among several", () => {
+    const recurring: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-15", recurrence: "daily" };
+    const nonRecurringExpired: QuestTemplate = { ...ADD_ANNOTATIONS, expiresOn: "2026-08-15" };
+    saveQuestTemplate(recurring);
+    saveQuestTemplate(nonRecurringExpired);
+
+    expect(rolloverExpiredRecurringQuestTemplates(NOW)).toBe(1);
+    expect(listQuestTemplates()).toEqual([{ ...recurring, expiresOn: "2026-08-16" }, nonRecurringExpired]);
   });
 });
 
@@ -210,6 +304,26 @@ describe("buildPersistedDailyQuestBoard", () => {
 
     const board = buildPersistedDailyQuestBoard(NOW);
     expect(board[0].completedCount).toBe(1);
+  });
+
+  it("rolls an expired recurring template's next cycle back onto the board, freshly at 0 progress", () => {
+    const recurring: QuestTemplate = { ...FIND_CARDS, expiresOn: "2026-08-15", recurrence: "daily" };
+    saveQuestTemplate(recurring);
+    saveContribution(cardContribution({ id: "contrib-1", submittedAt: Date.UTC(2026, 7, 15, 12, 0, 0) }));
+
+    const board = buildPersistedDailyQuestBoard(NOW);
+
+    expect(board).toEqual([
+      {
+        questId: recurring.id,
+        description: recurring.description,
+        targetCount: 2,
+        completedCount: 0,
+        remainingCount: 2,
+        isComplete: false,
+      },
+    ]);
+    expect(listQuestTemplates()).toEqual([{ ...recurring, expiresOn: "2026-08-16" }]);
   });
 
   it("excludes a contribution without a submittedAt timestamp rather than throwing", () => {

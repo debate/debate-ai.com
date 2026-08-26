@@ -94,6 +94,24 @@ export function buildArgumentTreesPanelView(): ArgumentTreeRecord[] {
 }
 
 /**
+ * Derives and saves an argument tree straight from the live round-flowing
+ * page's currently selected `Flow`, keyed by that flow's own `id` — mirroring
+ * `roundContributorFlows.ts`'s `buildAndSaveRoundContributorFlow` "the flow's
+ * own numeric id, stringified, stands in for `roundId`" convention, since a
+ * `Flow` isn't always linked to a separate `Round` entity. This is the pure
+ * half of `panels/ArgumentTreePanel.tsx`'s "Generate from current round"
+ * action, extracted so it doesn't need a live `Flow` object mounted in a
+ * browser to Vitest-cover — closing the "Nothing in the live round-flowing
+ * page ... calls `buildAndSaveArgumentTree` yet" gap noted in
+ * `docs/features/argument-tree-outline.md`.
+ */
+export function buildAndSaveArgumentTreeFromCurrentFlow(
+  flow: Pick<Flow, "id" | "children" | "columns">,
+): ArgumentTreeRecord {
+  return buildAndSaveArgumentTree(flow, String(flow.id));
+}
+
+/**
  * Like {@link buildAndSaveArgumentTree}, but skips the write (and returns
  * `undefined`) when the derived tree is structurally identical to what's
  * already stored for `roundId`. Used by `hooks/useFlowEffects.ts`'s

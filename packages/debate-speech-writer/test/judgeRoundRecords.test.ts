@@ -2,11 +2,17 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   deleteJudgeRoundRecord,
   findNearestJudgeId,
+  hasJudgeRoundRecordEditHistory,
+  hasJudgeRoundRecordRedoHistory,
   listJudgeIds,
+  listJudgeRoundRecordEditHistory,
+  listJudgeRoundRecordRedoHistory,
   listJudgeRoundRecords,
   listJudgeRoundRecordsForJudge,
   rebuildJudgeProfileFromRecords,
   recordJudgeRound,
+  redoLastJudgeRoundRecordEdit,
+  undoLastJudgeRoundRecordEdit,
   updateJudgeRoundRecord,
   type JudgeRoundRecordEntry,
 } from "../src/state/judgeRoundRecords";
@@ -181,6 +187,221 @@ describe("deleteJudgeRoundRecord", () => {
 
     expect(listJudgeRoundRecords()).toHaveLength(1);
     expect(getJudgeProfile("smith")).toEqual(profile);
+  });
+});
+
+describe("hasJudgeRoundRecordEditHistory / listJudgeRoundRecordEditHistory", () => {
+  it("reports no history for a round that has never been edited", () => {
+    recordJudgeRound(entry({ id: "r1" }));
+
+    expect(hasJudgeRoundRecordEditHistory("r1")).toBe(false);
+    expect(listJudgeRoundRecordEditHistory("r1")).toEqual([]);
+  });
+
+  it("reports no history for an unknown id", () => {
+    expect(hasJudgeRoundRecordEditHistory("does-not-exist")).toBe(false);
+  });
+
+  it("records the pre-edit version, most-recent-edit-first", () => {
+    const original = entry({ id: "r1", winningSide: "aff", affSpeakerPoints: 28 });
+    recordJudgeRound(original);
+    updateJudgeRoundRecord(entry({ id: "r1", winningSide: "neg", affSpeakerPoints: 26 }));
+    const afterFirstEdit = entry({ id: "r1", winningSide: "neg", affSpeakerPoints: 26 });
+    updateJudgeRoundRecord(entry({ id: "r1", winningSide: "aff", affSpeakerPoints: 30 }));
+
+    expect(hasJudgeRoundRecordEditHistory("r1")).toBe(true);
+    expect(listJudgeRoundRecordEditHistory("r1")).toEqual([afterFirstEdit, original]);
+  });
+
+  it("caps history at the 10 most recent prior versions", () => {
+    recordJudgeRound(entry({ id: "r1", affSpeakerPoints: 0 }));
+    for (let i = 1; i <= 12; i++) {
+      updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: i }));
+    }
+
+    const history = listJudgeRoundRecordEditHistory("r1");
+    expect(history).toHaveLength(10);
+    expect(history[0]?.affSpeakerPoints).toBe(11);
+    expect(history[9]?.affSpeakerPoints).toBe(2);
+  });
+});
+
+describe("undoLastJudgeRoundRecordEdit", () => {
+  it("restores the round to its version before the most recent edit", () => {
+    recordJudgeRound(entry({ id: "r1", winningSide: "aff", affSpeakerPoints: 28 }));
+    updateJudgeRoundRecord(entry({ id: "r1", winningSide: "neg", affSpeakerPoints: 26 }));
+
+    const profile = undoLastJudgeRoundRecordEdit("r1");
+
+    expect(listJudgeRoundRecords()).toEqual([
+      entry({ id: "r1", winningSide: "aff", affSpeakerPoints: 28 }),
+    ]);
+    expect(profile?.sideBias).toMatchObject({ affWins: 1, negWins: 0 });
+    expect(getJudgeProfile("smith")?.avgSpeakerPoints.aff).toBe(28);
+  });
+
+  it("steps back one edit at a time across multiple corrections", () => {
+    recordJudgeRound(entry({ id: "r1", affSpeakerPoints: 20 }));
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 24 }));
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 28 }));
+
+    undoLastJudgeRoundRecordEdit("r1");
+    expect(listJudgeRoundRecords()[0]?.affSpeakerPoints).toBe(24);
+
+    undoLastJudgeRoundRecordEdit("r1");
+    expect(listJudgeRoundRecords()[0]?.affSpeakerPoints).toBe(20);
+
+    expect(hasJudgeRoundRecordEditHistory("r1")).toBe(false);
+  });
+
+  it("re-aggregates both judges when undoing a reassignment", () => {
+    recordJudgeRound(entry({ id: "r1", judgeId: "smith" }));
+    updateJudgeRoundRecord(entry({ id: "r1", judgeId: "jones" }));
+
+    const profile = undoLastJudgeRoundRecordEdit("r1");
+
+    expect(profile?.judgeId).toBe("smith");
+    expect(getJudgeProfile("smith")?.roundsJudged).toBe(1);
+    expect(getJudgeProfile("jones")).toBeUndefined();
+  });
+
+  it("is a no-op returning null for a round that was never edited", () => {
+    const profile = recordJudgeRound(entry({ id: "r1" }));
+
+    expect(undoLastJudgeRoundRecordEdit("r1")).toBeNull();
+    expect(getJudgeProfile("smith")).toEqual(profile);
+  });
+
+  it("is a no-op returning null for an unknown id", () => {
+    recordJudgeRound(entry({ id: "r1" }));
+
+    expect(undoLastJudgeRoundRecordEdit("does-not-exist")).toBeNull();
+  });
+
+  it("clears the round's edit history when it is deleted", () => {
+    recordJudgeRound(entry({ id: "r1" }));
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 30 }));
+
+    deleteJudgeRoundRecord("r1");
+
+    expect(hasJudgeRoundRecordEditHistory("r1")).toBe(false);
+  });
+});
+
+describe("hasJudgeRoundRecordRedoHistory / listJudgeRoundRecordRedoHistory", () => {
+  it("reports no redo history for a round that has never been undone", () => {
+    recordJudgeRound(entry({ id: "r1" }));
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 30 }));
+
+    expect(hasJudgeRoundRecordRedoHistory("r1")).toBe(false);
+    expect(listJudgeRoundRecordRedoHistory("r1")).toEqual([]);
+  });
+
+  it("reports no redo history for an unknown id", () => {
+    expect(hasJudgeRoundRecordRedoHistory("does-not-exist")).toBe(false);
+  });
+
+  it("records the replaced version once undone, most-recently-undone-first", () => {
+    recordJudgeRound(entry({ id: "r1", affSpeakerPoints: 20 }));
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 24 }));
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 28 }));
+
+    undoLastJudgeRoundRecordEdit("r1");
+    undoLastJudgeRoundRecordEdit("r1");
+
+    expect(hasJudgeRoundRecordRedoHistory("r1")).toBe(true);
+    const redoHistory = listJudgeRoundRecordRedoHistory("r1");
+    expect(redoHistory.map((r) => r.affSpeakerPoints)).toEqual([24, 28]);
+  });
+});
+
+describe("redoLastJudgeRoundRecordEdit", () => {
+  it("re-applies the version replaced by the most recent undo", () => {
+    recordJudgeRound(entry({ id: "r1", winningSide: "aff", affSpeakerPoints: 28 }));
+    updateJudgeRoundRecord(entry({ id: "r1", winningSide: "neg", affSpeakerPoints: 26 }));
+    undoLastJudgeRoundRecordEdit("r1");
+
+    const profile = redoLastJudgeRoundRecordEdit("r1");
+
+    expect(listJudgeRoundRecords()).toEqual([
+      entry({ id: "r1", winningSide: "neg", affSpeakerPoints: 26 }),
+    ]);
+    expect(profile?.sideBias).toMatchObject({ affWins: 0, negWins: 1 });
+    expect(hasJudgeRoundRecordRedoHistory("r1")).toBe(false);
+  });
+
+  it("steps forward one undo at a time across multiple undos", () => {
+    recordJudgeRound(entry({ id: "r1", affSpeakerPoints: 20 }));
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 24 }));
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 28 }));
+    undoLastJudgeRoundRecordEdit("r1");
+    undoLastJudgeRoundRecordEdit("r1");
+
+    redoLastJudgeRoundRecordEdit("r1");
+    expect(listJudgeRoundRecords()[0]?.affSpeakerPoints).toBe(24);
+
+    redoLastJudgeRoundRecordEdit("r1");
+    expect(listJudgeRoundRecords()[0]?.affSpeakerPoints).toBe(28);
+
+    expect(hasJudgeRoundRecordRedoHistory("r1")).toBe(false);
+  });
+
+  it("lets a redone version be undone again", () => {
+    recordJudgeRound(entry({ id: "r1", affSpeakerPoints: 20 }));
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 24 }));
+    undoLastJudgeRoundRecordEdit("r1");
+    redoLastJudgeRoundRecordEdit("r1");
+
+    undoLastJudgeRoundRecordEdit("r1");
+
+    expect(listJudgeRoundRecords()[0]?.affSpeakerPoints).toBe(20);
+  });
+
+  it("re-aggregates both judges when redoing a reassignment", () => {
+    recordJudgeRound(entry({ id: "r1", judgeId: "smith" }));
+    updateJudgeRoundRecord(entry({ id: "r1", judgeId: "jones" }));
+    undoLastJudgeRoundRecordEdit("r1");
+
+    const profile = redoLastJudgeRoundRecordEdit("r1");
+
+    expect(profile?.judgeId).toBe("jones");
+    expect(getJudgeProfile("jones")?.roundsJudged).toBe(1);
+    expect(getJudgeProfile("smith")).toBeUndefined();
+  });
+
+  it("is a no-op returning null for a round with nothing to redo", () => {
+    const profile = recordJudgeRound(entry({ id: "r1" }));
+
+    expect(redoLastJudgeRoundRecordEdit("r1")).toBeNull();
+    expect(getJudgeProfile("smith")).toEqual(profile);
+  });
+
+  it("is a no-op returning null for an unknown id", () => {
+    recordJudgeRound(entry({ id: "r1" }));
+
+    expect(redoLastJudgeRoundRecordEdit("does-not-exist")).toBeNull();
+  });
+
+  it("is cleared by a fresh edit made after an undo", () => {
+    recordJudgeRound(entry({ id: "r1", affSpeakerPoints: 20 }));
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 24 }));
+    undoLastJudgeRoundRecordEdit("r1");
+    expect(hasJudgeRoundRecordRedoHistory("r1")).toBe(true);
+
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 30 }));
+
+    expect(hasJudgeRoundRecordRedoHistory("r1")).toBe(false);
+    expect(redoLastJudgeRoundRecordEdit("r1")).toBeNull();
+  });
+
+  it("is cleared when the round is deleted", () => {
+    recordJudgeRound(entry({ id: "r1" }));
+    updateJudgeRoundRecord(entry({ id: "r1", affSpeakerPoints: 30 }));
+    undoLastJudgeRoundRecordEdit("r1");
+
+    deleteJudgeRoundRecord("r1");
+
+    expect(hasJudgeRoundRecordRedoHistory("r1")).toBe(false);
   });
 });
 

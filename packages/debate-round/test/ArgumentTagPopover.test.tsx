@@ -116,6 +116,50 @@ describe("ArgumentTagPopover", () => {
     expect(markup).toContain('type="checkbox"');
   });
 
+  it("shows a suggested argument type derived from the row's content when it differs from the current selection", () => {
+    const markup = renderToStaticMarkup(
+      <ArgumentTagPopover
+        x={100}
+        y={100}
+        tags={{}}
+        content="This turns their warming impact"
+        authorIdSuggestions={[]}
+        onSave={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(markup).toContain("Suggested: turn");
+  });
+
+  it("shows no suggestion when the content has no matching keywords, or the row is already tagged with the suggested type", () => {
+    const noMatch = renderToStaticMarkup(
+      <ArgumentTagPopover
+        x={100}
+        y={100}
+        tags={{}}
+        content="Just a neutral sentence"
+        authorIdSuggestions={[]}
+        onSave={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+    expect(noMatch).not.toContain("Suggested:");
+
+    const alreadyTagged = renderToStaticMarkup(
+      <ArgumentTagPopover
+        x={100}
+        y={100}
+        tags={{ argumentType: "turn" }}
+        content="This turns their warming impact"
+        authorIdSuggestions={[]}
+        onSave={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+    expect(alreadyTagged).not.toContain("Suggested:");
+  });
+
   it("clamps its position so it stays inside the viewport", () => {
     const markup = renderToStaticMarkup(
       <ArgumentTagPopover

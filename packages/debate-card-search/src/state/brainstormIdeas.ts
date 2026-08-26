@@ -31,10 +31,17 @@
  * idea, so a coverage-gap board that later gets ideas keeps showing them
  * and a non-coverage-gap board with ideas still appears.
  *
+ * `mergePersistedBrainstormIdeas` closes the "no reviewer/moderator merge
+ * action for ideas flagged as likely duplicates" Known gap noted in
+ * `docs/features/brainstorm-board.md` — it applies the pure
+ * `team-brainstorm-assist.ts` `mergeBrainstormIdeas` against the two stored
+ * ideas and deletes the merged-away duplicate, rather than introducing new
+ * merge logic here.
+ *
  * @module state/brainstormIdeas
  */
 
-import { buildBrainstormBoard, buildBrainstormBoardsForCoverageGaps, groupIdeasByBoard, type BrainstormBoard, type BrainstormIdea } from "../lib/team-brainstorm-assist";
+import { buildBrainstormBoard, buildBrainstormBoardsForCoverageGaps, groupIdeasByBoard, mergeBrainstormIdeas, type BrainstormBoard, type BrainstormIdea } from "../lib/team-brainstorm-assist";
 import { buildPersistedTopicCoverageReport } from "./trackedArguments";
 
 const STORAGE_KEY = "brainstormIdeas";
@@ -127,4 +134,19 @@ export function upvotePersistedBrainstormIdea(id: string): void {
   const idea = getBrainstormIdea(id);
   if (!idea) return;
   saveBrainstormIdea({ ...idea, upvotes: idea.upvotes + 1 });
+}
+
+/**
+ * Merges a duplicate-flagged idea into another stored idea on the same
+ * board (via `mergeBrainstormIdeas`), saving the combined-upvote result
+ * under `targetId` and deleting `duplicateId`. A no-op if either id isn't
+ * stored; propagates `mergeBrainstormIdeas`'s error for a same-id or
+ * cross-board merge attempt.
+ */
+export function mergePersistedBrainstormIdeas(targetId: string, duplicateId: string): void {
+  const target = getBrainstormIdea(targetId);
+  const duplicate = getBrainstormIdea(duplicateId);
+  if (!target || !duplicate) return;
+  saveBrainstormIdea(mergeBrainstormIdeas(target, duplicate));
+  deleteBrainstormIdea(duplicateId);
 }

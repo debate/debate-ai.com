@@ -175,6 +175,27 @@ export function buildBrainstormBoardsForCoverageGaps(
   );
 }
 
+/**
+ * Merges a duplicate-flagged idea into another idea on the same board — a
+ * moderator action for the "no reviewer/moderator merge action for ideas
+ * flagged as likely duplicates" Known gap recorded in
+ * `docs/features/brainstorm-board.md`. Returns a copy of `target` with
+ * `duplicate`'s upvotes folded in, rather than splitting the same support
+ * across two near-identical entries; `duplicate` itself is left unchanged —
+ * the caller is expected to delete it once the merge is saved. Throws if
+ * the two ideas aren't the same idea's own board (argBlock + category), or
+ * if `target` and `duplicate` are the same idea.
+ */
+export function mergeBrainstormIdeas(target: BrainstormIdea, duplicate: BrainstormIdea): BrainstormIdea {
+  if (target.id === duplicate.id) {
+    throw new Error("Cannot merge a brainstorm idea into itself.");
+  }
+  if (target.argBlock !== duplicate.argBlock || target.category !== duplicate.category) {
+    throw new Error("Cannot merge brainstorm ideas from different boards.");
+  }
+  return { ...target, upvotes: target.upvotes + duplicate.upvotes };
+}
+
 /** Renders a short summary line for a brainstorm board, for a prep-session panel. */
 export function buildBrainstormSummaryText(board: BrainstormBoard): string {
   const label = CATEGORY_LABELS[board.category];

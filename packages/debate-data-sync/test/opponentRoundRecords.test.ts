@@ -2,11 +2,17 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   deleteOpponentRoundRecord,
   findNearestOpponentTeamId,
+  hasOpponentRoundRecordEditHistory,
+  hasOpponentRoundRecordRedoHistory,
+  listOpponentRoundRecordEditHistory,
+  listOpponentRoundRecordRedoHistory,
   listOpponentRoundRecords,
   listOpponentRoundRecordsForTeam,
   listOpponentTeamIds,
   rebuildOpponentTeamProfileFromRecords,
   recordOpponentRound,
+  redoLastOpponentRoundRecordEdit,
+  undoLastOpponentRoundRecordEdit,
   updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
 } from "../src/state/opponentRoundRecords";
@@ -205,6 +211,221 @@ describe("deleteOpponentRoundRecord", () => {
 
     expect(getOpponentTeamProfile("wxyz")).toBeUndefined();
     expect(getOpponentTeamProfile("abcd")).toEqual(other);
+  });
+});
+
+describe("hasOpponentRoundRecordEditHistory / listOpponentRoundRecordEditHistory", () => {
+  it("reports no history for a round that has never been edited", () => {
+    recordOpponentRound(entry({ id: "r1" }));
+
+    expect(hasOpponentRoundRecordEditHistory("r1")).toBe(false);
+    expect(listOpponentRoundRecordEditHistory("r1")).toEqual([]);
+  });
+
+  it("reports no history for an unknown id", () => {
+    expect(hasOpponentRoundRecordEditHistory("does-not-exist")).toBe(false);
+  });
+
+  it("records the pre-edit version, most-recent-edit-first", () => {
+    const original = entry({ id: "r1", side: "aff", won: true });
+    recordOpponentRound(original);
+    updateOpponentRoundRecord(entry({ id: "r1", side: "neg", won: false }));
+    const afterFirstEdit = entry({ id: "r1", side: "neg", won: false });
+    updateOpponentRoundRecord(entry({ id: "r1", side: "aff", won: true, caseName: "Warming" }));
+
+    expect(hasOpponentRoundRecordEditHistory("r1")).toBe(true);
+    expect(listOpponentRoundRecordEditHistory("r1")).toEqual([afterFirstEdit, original]);
+  });
+
+  it("caps history at the 10 most recent prior versions", () => {
+    recordOpponentRound(entry({ id: "r1", caseName: "v0" }));
+    for (let i = 1; i <= 12; i++) {
+      updateOpponentRoundRecord(entry({ id: "r1", caseName: `v${i}` }));
+    }
+
+    const history = listOpponentRoundRecordEditHistory("r1");
+    expect(history).toHaveLength(10);
+    expect(history[0]?.caseName).toBe("v11");
+    expect(history[9]?.caseName).toBe("v2");
+  });
+});
+
+describe("undoLastOpponentRoundRecordEdit", () => {
+  it("restores the round to its version before the most recent edit", () => {
+    recordOpponentRound(entry({ id: "r1", side: "aff", won: true }));
+    updateOpponentRoundRecord(entry({ id: "r1", side: "neg", won: false }));
+
+    const profile = undoLastOpponentRoundRecordEdit("r1");
+
+    expect(listOpponentRoundRecords()).toEqual([
+      entry({ id: "r1", side: "aff", won: true }),
+    ]);
+    expect(profile?.sideRecord.aff).toMatchObject({ rounds: 1, wins: 1 });
+    expect(getOpponentTeamProfile("wxyz")?.record.wins).toBe(1);
+  });
+
+  it("steps back one edit at a time across multiple corrections", () => {
+    recordOpponentRound(entry({ id: "r1", caseName: "v0" }));
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v1" }));
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v2" }));
+
+    undoLastOpponentRoundRecordEdit("r1");
+    expect(listOpponentRoundRecords()[0]?.caseName).toBe("v1");
+
+    undoLastOpponentRoundRecordEdit("r1");
+    expect(listOpponentRoundRecords()[0]?.caseName).toBe("v0");
+
+    expect(hasOpponentRoundRecordEditHistory("r1")).toBe(false);
+  });
+
+  it("re-aggregates both teams when undoing a reassignment", () => {
+    recordOpponentRound(entry({ id: "r1", teamId: "wxyz" }));
+    updateOpponentRoundRecord(entry({ id: "r1", teamId: "abcd" }));
+
+    const profile = undoLastOpponentRoundRecordEdit("r1");
+
+    expect(profile?.teamId).toBe("wxyz");
+    expect(getOpponentTeamProfile("wxyz")?.roundsRecorded).toBe(1);
+    expect(getOpponentTeamProfile("abcd")).toBeUndefined();
+  });
+
+  it("is a no-op returning null for a round that was never edited", () => {
+    const profile = recordOpponentRound(entry({ id: "r1" }));
+
+    expect(undoLastOpponentRoundRecordEdit("r1")).toBeNull();
+    expect(getOpponentTeamProfile("wxyz")).toEqual(profile);
+  });
+
+  it("is a no-op returning null for an unknown id", () => {
+    recordOpponentRound(entry({ id: "r1" }));
+
+    expect(undoLastOpponentRoundRecordEdit("does-not-exist")).toBeNull();
+  });
+
+  it("clears the round's edit history when it is deleted", () => {
+    recordOpponentRound(entry({ id: "r1" }));
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v1" }));
+
+    deleteOpponentRoundRecord("r1");
+
+    expect(hasOpponentRoundRecordEditHistory("r1")).toBe(false);
+  });
+});
+
+describe("hasOpponentRoundRecordRedoHistory / listOpponentRoundRecordRedoHistory", () => {
+  it("reports no redo history for a round that has never been undone", () => {
+    recordOpponentRound(entry({ id: "r1" }));
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v1" }));
+
+    expect(hasOpponentRoundRecordRedoHistory("r1")).toBe(false);
+    expect(listOpponentRoundRecordRedoHistory("r1")).toEqual([]);
+  });
+
+  it("reports no redo history for an unknown id", () => {
+    expect(hasOpponentRoundRecordRedoHistory("does-not-exist")).toBe(false);
+  });
+
+  it("records the replaced version once undone, most-recently-undone-first", () => {
+    recordOpponentRound(entry({ id: "r1", caseName: "v0" }));
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v1" }));
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v2" }));
+
+    undoLastOpponentRoundRecordEdit("r1");
+    undoLastOpponentRoundRecordEdit("r1");
+
+    expect(hasOpponentRoundRecordRedoHistory("r1")).toBe(true);
+    const redoHistory = listOpponentRoundRecordRedoHistory("r1");
+    expect(redoHistory.map((r) => r.caseName)).toEqual(["v1", "v2"]);
+  });
+});
+
+describe("redoLastOpponentRoundRecordEdit", () => {
+  it("re-applies the version replaced by the most recent undo", () => {
+    recordOpponentRound(entry({ id: "r1", side: "aff", won: true }));
+    updateOpponentRoundRecord(entry({ id: "r1", side: "neg", won: false }));
+    undoLastOpponentRoundRecordEdit("r1");
+
+    const profile = redoLastOpponentRoundRecordEdit("r1");
+
+    expect(listOpponentRoundRecords()).toEqual([
+      entry({ id: "r1", side: "neg", won: false }),
+    ]);
+    expect(profile?.sideRecord.neg).toMatchObject({ rounds: 1, wins: 0 });
+    expect(hasOpponentRoundRecordRedoHistory("r1")).toBe(false);
+  });
+
+  it("steps forward one undo at a time across multiple undos", () => {
+    recordOpponentRound(entry({ id: "r1", caseName: "v0" }));
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v1" }));
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v2" }));
+    undoLastOpponentRoundRecordEdit("r1");
+    undoLastOpponentRoundRecordEdit("r1");
+
+    redoLastOpponentRoundRecordEdit("r1");
+    expect(listOpponentRoundRecords()[0]?.caseName).toBe("v1");
+
+    redoLastOpponentRoundRecordEdit("r1");
+    expect(listOpponentRoundRecords()[0]?.caseName).toBe("v2");
+
+    expect(hasOpponentRoundRecordRedoHistory("r1")).toBe(false);
+  });
+
+  it("lets a redone version be undone again", () => {
+    recordOpponentRound(entry({ id: "r1", caseName: "v0" }));
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v1" }));
+    undoLastOpponentRoundRecordEdit("r1");
+    redoLastOpponentRoundRecordEdit("r1");
+
+    undoLastOpponentRoundRecordEdit("r1");
+
+    expect(listOpponentRoundRecords()[0]?.caseName).toBe("v0");
+  });
+
+  it("re-aggregates both teams when redoing a reassignment", () => {
+    recordOpponentRound(entry({ id: "r1", teamId: "wxyz" }));
+    updateOpponentRoundRecord(entry({ id: "r1", teamId: "abcd" }));
+    undoLastOpponentRoundRecordEdit("r1");
+
+    const profile = redoLastOpponentRoundRecordEdit("r1");
+
+    expect(profile?.teamId).toBe("abcd");
+    expect(getOpponentTeamProfile("abcd")?.roundsRecorded).toBe(1);
+    expect(getOpponentTeamProfile("wxyz")).toBeUndefined();
+  });
+
+  it("is a no-op returning null for a round with nothing to redo", () => {
+    const profile = recordOpponentRound(entry({ id: "r1" }));
+
+    expect(redoLastOpponentRoundRecordEdit("r1")).toBeNull();
+    expect(getOpponentTeamProfile("wxyz")).toEqual(profile);
+  });
+
+  it("is a no-op returning null for an unknown id", () => {
+    recordOpponentRound(entry({ id: "r1" }));
+
+    expect(redoLastOpponentRoundRecordEdit("does-not-exist")).toBeNull();
+  });
+
+  it("is cleared by a fresh edit made after an undo", () => {
+    recordOpponentRound(entry({ id: "r1", caseName: "v0" }));
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v1" }));
+    undoLastOpponentRoundRecordEdit("r1");
+    expect(hasOpponentRoundRecordRedoHistory("r1")).toBe(true);
+
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v2" }));
+
+    expect(hasOpponentRoundRecordRedoHistory("r1")).toBe(false);
+    expect(redoLastOpponentRoundRecordEdit("r1")).toBeNull();
+  });
+
+  it("is cleared when the round is deleted", () => {
+    recordOpponentRound(entry({ id: "r1" }));
+    updateOpponentRoundRecord(entry({ id: "r1", caseName: "v1" }));
+    undoLastOpponentRoundRecordEdit("r1");
+
+    deleteOpponentRoundRecord("r1");
+
+    expect(hasOpponentRoundRecordRedoHistory("r1")).toBe(false);
   });
 });
 

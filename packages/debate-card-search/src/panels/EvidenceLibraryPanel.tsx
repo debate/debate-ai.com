@@ -15,6 +15,16 @@
  * forward-looking staleness signal via `getEvidenceStaleness`, rather than
  * only rewarding a refresh after the fact.
  *
+ * The "Check this page" box and the submission form's Source URL field also
+ * call the server-backed shared reuse index (`lib/evidence-reuse-check-client.ts`,
+ * `/api/evidence-reuse-check`) alongside the existing local check — the
+ * persisted `localStorage` repository only sees entries saved in this one
+ * browser, so it can't answer "has anyone on the team cut this" across
+ * devices; the shared index can. This closes the last open follow-up (a)
+ * under TODO.md idea #7 ("On Page Card Reuse Search") together with the new
+ * `apps/browser-extension`, which calls the same API against the active
+ * tab's URL.
+ *
  * Reads the persisted evidence repository via
  * `state/evidenceLibraryEntries.ts`'s `searchPersistedEvidenceLibraryWithIndex`
  * (itself a thin composition of `evidence-search-index.ts`'s pure
@@ -45,10 +55,14 @@
  * `shared-evidence-library.ts`'s pure `checkPageForExistingCards`) and
  * renders whether that page has already been cut, plus every matching
  * entry. The submission form's new optional Source URL field is how an
- * entry's `sourceUrl` gets recorded in the first place. There is no browser
- * extension in this repo yet — this panel is the check's only caller today;
- * an extension would call the same persisted/pure functions against the
- * current tab's URL instead of a pasted one.
+ * entry's `sourceUrl` gets recorded in the first place. A `?checkUrl=`
+ * query param (read via `next/navigation`'s `useSearchParams`) pre-fills
+ * and auto-runs the same check — the deep link the `extension/card-reuse-
+ * checker` browser extension opens against the active tab's URL, since the
+ * evidence repository lives in this app's own localStorage and an
+ * extension (a different origin) can't read it directly. See
+ * `buildReuseCheckDeepLink` in `lib/shared-evidence-library.ts` and the
+ * extension's own README.
  *
  * @module panels/EvidenceLibraryPanel
  */
@@ -56,6 +70,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -79,13 +94,20 @@ import {
   computeWordCount,
   getEvidenceStaleness,
 } from "../lib/shared-evidence-library"
-import { applyTagSuggestion, parseTagsInput, suggestTags } from "../lib/argument-library"
+import {
+  applyTagSuggestion,
+  normalizeTagsToKnownCasing,
+  parseTagsInput,
+  suggestTags,
+} from "../lib/argument-library"
+import { checkRemotePageForExistingCards, registerRemoteReuseEntry } from "../lib/evidence-reuse-check-client"
 import type {
   EvidenceEntryKind,
   EvidenceLibraryEntry,
   EvidenceSearchResult,
   PageReuseCheckResult,
 } from "../lib/shared-evidence-library"
+import type { RemotePageReuseCheckResult } from "../lib/evidence-reuse-check-client"
 
 const KIND_FILTERS: { value: EvidenceEntryKind | "all"; label: string }[] = [
   { value: "all", label: "All" },
@@ -158,12 +180,28 @@ export function EvidenceLibraryPanel() {
   const [knownTags, setKnownTags] = useState<string[]>([])
   const [reuseCheckUrl, setReuseCheckUrl] = useState("")
   const [reuseCheckResult, setReuseCheckResult] = useState<PageReuseCheckResult | null>(null)
+  const [remoteReuseCheckResult, setRemoteReuseCheckResult] = useState<RemotePageReuseCheckResult | null>(null)
+  const [remoteReuseCheckError, setRemoteReuseCheckError] = useState<string | null>(null)
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     setHasEntries(listEvidenceLibraryEntries().length > 0)
     setKnownTags(listPersistedTags())
     setPendingEntries(listPendingReviewEntries())
   }, [])
+
+  // Deep-linked from the `extension/card-reuse-checker` browser extension
+  // (or any other caller) via a `?checkUrl=` query param — pre-fills and
+  // runs the "Check this page" box automatically, standing in for a
+  // same-origin API the extension can't reach directly (see
+  // `buildReuseCheckDeepLink` in `lib/shared-evidence-library.ts`).
+  useEffect(() => {
+    const checkUrl = searchParams?.get("checkUrl")
+    if (!checkUrl) return
+    setReuseCheckUrl(checkUrl)
+    setReuseCheckResult(checkPersistedPageForExistingCards(checkUrl))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   const buildQuery = () =>
     buildEvidenceSearchFormQuery({
@@ -205,10 +243,13 @@ export function EvidenceLibraryPanel() {
       }
     }
 
-    const tags = draft.tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean)
+    const tags = normalizeTagsToKnownCasing(
+      draft.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+      knownTags,
+    )
     const entry: EvidenceLibraryEntry = {
       id: editingId ?? `${draft.kind}-${argBlock}-${Date.now()}`,
       kind: draft.kind,
@@ -226,6 +267,20 @@ export function EvidenceLibraryPanel() {
       saveEvidenceLibraryEntryRevision(entry, editorContributorId.trim())
     } else {
       saveEvidenceLibraryEntry(entry)
+    }
+
+    if (entry.sourceUrl) {
+      // Best-effort: the shared reuse index is a cross-device convenience,
+      // not required for the entry to save locally, so a network failure
+      // here doesn't block the submission.
+      registerRemoteReuseEntry({
+        id: entry.id,
+        sourceUrl: entry.sourceUrl,
+        cite: entry.cite,
+        argBlock: entry.argBlock,
+        topic: entry.topic,
+        contributorId: editorContributorId.trim(),
+      }).catch(() => {})
     }
 
     setError(null)
@@ -258,9 +313,16 @@ export function EvidenceLibraryPanel() {
     const url = reuseCheckUrl.trim()
     if (!url) {
       setReuseCheckResult(null)
+      setRemoteReuseCheckResult(null)
+      setRemoteReuseCheckError(null)
       return
     }
     setReuseCheckResult(checkPersistedPageForExistingCards(url))
+    setRemoteReuseCheckResult(null)
+    setRemoteReuseCheckError(null)
+    checkRemotePageForExistingCards(url)
+      .then(setRemoteReuseCheckResult)
+      .catch((err: unknown) => setRemoteReuseCheckError(err instanceof Error ? err.message : "Shared reuse check failed."))
   }
 
   if (hasEntries === null) {
@@ -419,8 +481,10 @@ export function EvidenceLibraryPanel() {
         <div>
           <h2 className="text-sm font-medium text-foreground">Check this page</h2>
           <p className="text-xs text-muted-foreground">
-            Paste a page URL to see whether anyone has already cut a card from it — the check a
-            browser extension would run on the current tab before you start cutting.
+            Paste a page URL to see whether anyone has already cut a card from it before you start
+            cutting. The <code>card-reuse-checker</code> browser extension runs this same check
+            automatically for the page you're on — see{" "}
+            <code>extension/card-reuse-checker</code> in the repo to install it.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -449,6 +513,32 @@ export function EvidenceLibraryPanel() {
                   {entry.cite && <span className="text-xs text-muted-foreground">{entry.cite}</span>}
                 </div>
                 <p className="text-sm text-muted-foreground">{entry.text}</p>
+              </div>
+            ))}
+          </div>
+        )}
+        {remoteReuseCheckError && (
+          <p className="text-xs text-muted-foreground">
+            Shared team index unavailable ({remoteReuseCheckError}) — showing only this browser&apos;s local check above.
+          </p>
+        )}
+        {remoteReuseCheckResult && (
+          <div className="space-y-2 border-t border-dashed border-border pt-2">
+            <p className="text-xs font-medium text-foreground">Team-wide check (shared index)</p>
+            <p
+              className={`text-sm ${remoteReuseCheckResult.alreadyCut ? "text-destructive" : "text-muted-foreground"}`}
+            >
+              {remoteReuseCheckResult.alreadyCut
+                ? `Already cut by the team: ${remoteReuseCheckResult.matches.length} matching ${remoteReuseCheckResult.matches.length === 1 ? "entry" : "entries"}.`
+                : "No teammate has registered a cut for this page yet."}
+            </p>
+            {remoteReuseCheckResult.matches.map((match) => (
+              <div key={match.id} className="rounded-lg border border-dashed border-border p-3">
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                  <span className="font-medium text-foreground">{match.argBlock}</span>
+                  {match.cite && <span className="text-xs text-muted-foreground">{match.cite}</span>}
+                  {match.topic && <Badge variant="outline">{match.topic}</Badge>}
+                </div>
               </div>
             ))}
           </div>

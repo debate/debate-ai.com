@@ -7,13 +7,20 @@
  * `buildTaskInboxView` (itself a thin composition of `listRoutedTaskQueues`
  * against the persisted `contributorAvailability.ts` store for each
  * assignee's current skill level) and renders it grouped by topic: each
- * assignment can be marked complete, which calls
- * `state/researchProgress.ts`'s `completeAndRecordResearchTask` — it removes
- * the assignment from the stored queue and decrements the assignee's stored
- * `activeTaskCount` the same way `completePersistedRoutedTask` always did,
- * and additionally records the completion event so
- * `panels/ResearchProgressPanel.tsx` can show real task-completion history
- * instead of nothing.
+ * assignment can be marked done, which calls
+ * `state/pendingTaskVerifications.ts`'s `markRoutedTaskAwaitingVerification`
+ * — it removes the assignment from the stored queue and decrements the
+ * assignee's stored `activeTaskCount` the same way `completePersistedRoutedTask`
+ * always did, but doesn't credit it yet.
+ *
+ * A "Awaiting verification" section closes the "No reviewer/verification
+ * step before a task is marked complete" Known gap recorded in
+ * `docs/features/task-inbox.md`: a task marked done sits here until a
+ * *different* contributor types their own id and verifies it, via
+ * `state/researchProgress.ts`'s `verifyAndRecordResearchTask` (gated by
+ * `lib/task-verification.ts`'s `assertVerifierAllowed` — the assignee
+ * themself can't verify their own task). Only once verified does
+ * `panels/ResearchProgressPanel.tsx` see the completion in its history.
  *
  * A "Route tasks" form closes the "(d) a task-routing trigger UI to
  * actually populate a topic's queue" follow-up named under the "Research
@@ -26,11 +33,30 @@
  *
  * A "My tasks" filter closes the "(e) scoping the inbox to 'my tasks' once
  * contributor identity/auth exists" follow-up named under the same bullet.
- * This repo still has no auth/identity system, so — mirroring the "🔄
- * Strategy Sync Notes" assignee-notification slice's identical free-form-id
- * workaround — a contributor just types their own `contributorId` into a
- * field, and the panel scopes the rendered view to it via
- * `filterTaskInboxViewByContributor`.
+ * A contributor types their own `contributorId` into a field, and the panel
+ * scopes the rendered view to it via `filterTaskInboxViewByContributor`.
+ *
+ * A later slice wires that field to a real signed-in identity where one is
+ * available: an optional `signedInContributorId` prop (built from
+ * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`
+ * against `apps/debate-ai.com`'s real better-auth session) seeds the
+ * field's *initial* value only — a visitor who edits it keeps whatever they
+ * typed, so this is a prefill, not a login.
+ *
+ * The same `signedInContributorId` also gates — not just prefills — each
+ * pending verification's "Verifier id" field via `lib/session-identity.ts`'s
+ * `deriveLockedVerifierId`: a signed-in visitor's verifier field is locked
+ * to their own id (read-only), and verifying a task they completed
+ * themself is disabled with an inline explanation instead of only failing
+ * `assertVerifierAllowed` after the click. A signed-out visitor keeps the
+ * original fully free-form field, unchanged.
+ *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isTaskInboxLiveUpdateStorageEvent`, so a topic routed, task marked done,
+ * or task verified in another tab refreshes this panel's view without a
+ * manual reload — closing the "Every other localStorage-backed panel in
+ * this repo still has no cross-tab live-update mechanism" Known gap noted
+ * in `shared-flow-sync.md`, for this panel.
  *
  * @module panels/TaskInboxPanel
  */
@@ -48,14 +74,38 @@ import {
   routePersistedTopicTasks,
   type TaskInboxTopic,
 } from "../state/routedTaskQueues"
-import { completeAndRecordResearchTask } from "../state/researchProgress"
+import { verifyAndRecordResearchTask } from "../state/researchProgress"
+import {
+  listPendingTaskVerifications,
+  markRoutedTaskAwaitingVerification,
+  type PendingTaskVerification,
+} from "../state/pendingTaskVerifications"
 import { listTrackedTopics } from "../state/trackedArguments"
+import { deriveLockedVerifierId, isOwnContributorRow } from "../lib/session-identity"
+import { isTaskInboxLiveUpdateStorageEvent } from "../state/live-update"
 import type { CoverageLevel } from "../lib/topic-coverage"
 
 const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> = {
   missing: "default",
   thin: "secondary",
   covered: "outline",
+}
+
+export interface TaskInboxPanelProps {
+  /**
+   * A contributor id to prefill the "My tasks" field with, typically
+   * derived from a real signed-in session via
+   * `deriveContributorIdFromSessionIdentity`. Only seeds that field's
+   * initial value — once a visitor edits it by hand, this prop is ignored
+   * for the rest of the panel's life so it never overwrites what they typed.
+   *
+   * Every pending verification's "Verifier id" field is treated
+   * differently: when set, that field is locked to this id (not just
+   * prefilled) via `deriveLockedVerifierId`, and verifying a task assigned
+   * to this same id is disabled outright. A signed-out visitor (this prop
+   * unset) keeps the original fully free-form verifier field.
+   */
+  signedInContributorId?: string
 }
 
 /**
@@ -66,21 +116,67 @@ const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> 
  * Reads localStorage on mount only (client-side), so it renders an empty
  * state during SSR/hydration rather than throwing.
  */
-export function TaskInboxPanel() {
+export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = {}) {
   const [topics, setTopics] = useState<TaskInboxTopic[] | null>(null)
+  const [pending, setPending] = useState<PendingTaskVerification[]>([])
   const [trackedTopics, setTrackedTopics] = useState<string[]>([])
   const [routeTopic, setRouteTopic] = useState("")
   const [routeError, setRouteError] = useState<string | null>(null)
   const [myContributorId, setMyContributorId] = useState("")
+  const [hasEditedMyId, setHasEditedMyId] = useState(false)
+  const [verifierIds, setVerifierIds] = useState<Record<string, string>>({})
+  const [verifyErrors, setVerifyErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
     setTopics(buildTaskInboxView())
+    setPending(listPendingTaskVerifications())
     setTrackedTopics(listTrackedTopics())
   }, [])
 
-  const handleComplete = (topicId: string, argBlock: string) => {
-    completeAndRecordResearchTask(topicId, argBlock, new Date().toISOString())
+  useEffect(() => {
+    if (!hasEditedMyId && signedInContributorId) {
+      setMyContributorId(signedInContributorId)
+    }
+  }, [signedInContributorId, hasEditedMyId])
+
+  /**
+   * Live-update the inbox when another browser tab routes a topic, marks a
+   * task done, or verifies one. A `storage` event never fires in the tab
+   * that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isTaskInboxLiveUpdateStorageEvent(event)) return
+      setTopics(buildTaskInboxView())
+      setPending(listPendingTaskVerifications())
+      setTrackedTopics(listTrackedTopics())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
+
+  const pendingKey = (topicId: string, argBlock: string) => `${topicId}::${argBlock}`
+
+  const handleMarkDone = (topicId: string, argBlock: string) => {
+    markRoutedTaskAwaitingVerification(topicId, argBlock, new Date().toISOString())
     setTopics(buildTaskInboxView())
+    setPending(listPendingTaskVerifications())
+  }
+
+  const handleVerify = (topicId: string, argBlock: string, verifierIdOverride?: string) => {
+    const key = pendingKey(topicId, argBlock)
+    const verifierId = (verifierIdOverride ?? verifierIds[key] ?? "").trim()
+    try {
+      verifyAndRecordResearchTask(topicId, argBlock, verifierId, new Date().toISOString())
+      setPending(listPendingTaskVerifications())
+      setVerifierIds((prev) => ({ ...prev, [key]: "" }))
+      setVerifyErrors((prev) => ({ ...prev, [key]: "" }))
+    } catch (error) {
+      setVerifyErrors((prev) => ({
+        ...prev,
+        [key]: error instanceof Error ? error.message : "Could not verify this task.",
+      }))
+    }
   }
 
   const handleRoute = (topicId: string) => {
@@ -138,13 +234,17 @@ export function TaskInboxPanel() {
       <Input
         id="task-inbox-my-id"
         value={myContributorId}
-        onChange={(e) => setMyContributorId(e.target.value)}
+        onChange={(e) => {
+          setHasEditedMyId(true)
+          setMyContributorId(e.target.value)
+        }}
         placeholder="alice"
         className="max-w-sm"
       />
       <p className="text-xs text-muted-foreground">
-        Enter your contributor id to scope the inbox below to just your own assignments. This repo
-        has no auth/identity system, so this is a free-form filter, not a login.
+        {signedInContributorId
+          ? "Prefilled from your signed-in account — edit it if your tasks were routed under a different contributor id."
+          : "Enter your contributor id to scope the inbox below to just your own assignments. This is a free-form filter, not a login."}
       </p>
     </div>
   )
@@ -155,7 +255,8 @@ export function TaskInboxPanel() {
         <div>
           <h1 className="mb-1 text-xl font-semibold text-foreground">Task Inbox</h1>
           <p className="text-sm text-muted-foreground">
-            Research tasks routed to contributors, grouped by topic. Mark a task complete once it's done.
+            Research tasks routed to contributors, grouped by topic. Mark a task done once it's finished,
+            then a different contributor verifies it before it counts as complete.
           </p>
         </div>
         {routeForm}
@@ -185,6 +286,72 @@ export function TaskInboxPanel() {
           No tasks routed to "{trimmedMyId}" right now.
         </div>
       )}
+      {pending.length > 0 && (
+        <div className="rounded-lg border border-border p-4">
+          <h2 className="mb-1 text-sm font-semibold text-foreground">Awaiting verification</h2>
+          <p className="mb-3 text-xs text-muted-foreground">
+            A task marked done doesn't count as complete until a different contributor verifies it.
+          </p>
+          <div className="space-y-2">
+            {pending.map((record) => {
+              const key = pendingKey(record.topicId, record.assignment.task.argBlock)
+              const isSelfAssignment = isOwnContributorRow(
+                record.assignment.contributorId,
+                signedInContributorId,
+              )
+              const lockedVerifierId = deriveLockedVerifierId(
+                record.assignment.contributorId,
+                signedInContributorId,
+              )
+              const verifierValue = lockedVerifierId || (verifierIds[key] ?? "")
+              return (
+                <div
+                  key={key}
+                  className="flex flex-col gap-2 rounded-md border border-dashed border-border px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="flex flex-wrap items-center gap-2 text-sm">
+                    <span className="font-medium text-foreground">{record.assignment.task.argBlock}</span>
+                    <span className="text-muted-foreground">({record.topicId}) — done by</span>
+                    <span className="font-medium text-foreground">{record.assignment.contributorId}</span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Input
+                      value={verifierValue}
+                      onChange={(e) => setVerifierIds((prev) => ({ ...prev, [key]: e.target.value }))}
+                      placeholder="Verifier id"
+                      className="h-8 max-w-[10rem]"
+                      disabled={!!lockedVerifierId || isSelfAssignment}
+                      readOnly={!!lockedVerifierId}
+                    />
+                    <Button
+                      size="sm"
+                      disabled={isSelfAssignment}
+                      onClick={() =>
+                        handleVerify(record.topicId, record.assignment.task.argBlock, lockedVerifierId || undefined)
+                      }
+                    >
+                      Verify
+                    </Button>
+                  </div>
+                  {isSelfAssignment && (
+                    <p className="w-full text-xs text-muted-foreground">
+                      You completed this task — a different contributor must verify it.
+                    </p>
+                  )}
+                  {!isSelfAssignment && lockedVerifierId && (
+                    <p className="w-full text-xs text-muted-foreground">
+                      Verifying as your signed-in id.
+                    </p>
+                  )}
+                  {verifyErrors[key] && (
+                    <p className="w-full text-xs text-destructive">{verifyErrors[key]}</p>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
       {visibleTopics.map((topic) => (
         <div key={topic.topicId} className="rounded-lg border border-border p-4">
           <h2 className="mb-3 text-sm font-semibold text-foreground">{topic.topicId}</h2>
@@ -211,9 +378,9 @@ export function TaskInboxPanel() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => handleComplete(topic.topicId, assignment.task.argBlock)}
+                    onClick={() => handleMarkDone(topic.topicId, assignment.task.argBlock)}
                   >
-                    Mark complete
+                    Mark done
                   </Button>
                 </div>
               ))}

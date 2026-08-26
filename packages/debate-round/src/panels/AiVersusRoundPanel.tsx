@@ -27,15 +27,23 @@
  * Opponent" idea. Falls back to the plain `requestAiVersusSpeech` call when
  * no persona is saved for the round.
  *
- * Whenever the round's most recently submitted speech was the AI's
- * (`canRegenerateLastAiSpeech`), a "Regenerate" action re-requests that
- * same slot — from the same prior-speeches context originally used to
- * generate it — and replaces it in place via `replaceLastAiSpeech`, rather
- * than requiring the whole round to be cleared and restarted. This closes
- * the "regenerate affordance" follow-up noted in
+ * Every delivered AI speech (`canRegenerateAiSpeechAt`), not just the most
+ * recently submitted one, gets its own "Regenerate" action that
+ * re-requests that slot — from the same prior-speeches context originally
+ * used to generate it — and replaces it in place via `replaceAiSpeechAt`,
+ * leaving every other speech (earlier or later, including the user's)
+ * untouched, rather than requiring the whole round to be cleared and
+ * restarted. This closes the "regenerate affordance" follow-up noted in
  * `docs/features/ai-versus-rounds.md`'s Known gaps.
  *
-
+ * The speech text field also has a "🎤 Record" button (via the same
+ * `hooks/useMicrophoneTranscription.ts` the "Speech Transcript Summaries"
+ * (idea #6, PR #297) and "Video-Lecture-Training Coach AI" (idea #8, PR
+ * #298) panels already use) that dictates directly into `speechText`,
+ * closing the "text-only" half of the "Speech submission is text-only...
+ * no transcription pipeline exists" Known gap recorded in
+ * `docs/features/ai-versus-rounds.md`.
+ *
  * @module panels/AiVersusRoundPanel
  */
 
@@ -68,13 +76,15 @@ import {
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
 import { getOpponentPersonaForRound } from "../round/opponent-persona-speech-wiring"
+import { appendDictatedSegment } from "../round/microphone-transcription"
+import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import {
   buildAiVersusRoundsPanelView,
-  canRegenerateLastAiSpeech,
+  canRegenerateAiSpeechAt,
   deleteAiVersusRound,
   getAiVersusRound,
   getAiVersusRoundStatus,
-  replaceLastAiSpeech,
+  replaceAiSpeechAt,
   saveAiVersusRound,
   type AiVersusRoundRecord,
 } from "../state/aiVersusRounds"
@@ -108,7 +118,11 @@ export function AiVersusRoundPanel() {
   const [speechText, setSpeechText] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [aiGenerating, setAiGenerating] = useState(false)
-  const [aiRegenerating, setAiRegenerating] = useState(false)
+  const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null)
+
+  const dictation = useMicrophoneTranscription({
+    onSegment: (segment) => setSpeechText((prev) => appendDictatedSegment(prev, segment)),
+  })
 
   useEffect(() => {
     setRounds(buildAiVersusRoundsPanelView())
@@ -213,31 +227,30 @@ export function AiVersusRoundPanel() {
     }
   }
 
-  const handleRegenerateAiSpeech = async () => {
+  const handleRegenerateAiSpeech = async (index: number) => {
     if (!activeRoundId || !activeRecord || !activeStatus) return
-    if (!canRegenerateLastAiSpeech(activeRecord)) return
+    if (!canRegenerateAiSpeechAt(activeRecord, index)) return
 
-    const priorCount = activeRecord.submittedSpeeches.length - 1
     const request = buildAiResponseRequest(
       activeStatus.order,
-      priorCount,
-      activeRecord.submittedSpeeches.slice(0, priorCount),
+      index,
+      activeRecord.submittedSpeeches.slice(0, index),
     )
     if (!request) return
 
-    setAiRegenerating(true)
+    setRegeneratingIndex(index)
     setError(null)
     try {
       const persona = getOpponentPersonaForRound(activeRoundId)
       const text = persona
         ? await requestAiVersusSpeechWithPersona(request, persona)
         : await requestAiVersusSpeech(request)
-      saveAiVersusRound(replaceLastAiSpeech(activeRecord, text))
+      saveAiVersusRound(replaceAiSpeechAt(activeRecord, index, text))
       refresh()
     } catch (e) {
       setError(e instanceof Error ? e.message : "AI speech generation failed.")
     } finally {
-      setAiRegenerating(false)
+      setRegeneratingIndex(null)
     }
   }
 
@@ -318,6 +331,7 @@ export function AiVersusRoundPanel() {
             {activeStatus.order.map((slot, index) => {
               const delivered = index < activeStatus.submittedCount
               const isNext = index === activeStatus.submittedCount
+              const canRegenerate = delivered && canRegenerateAiSpeechAt(activeRecord, index)
               return (
                 <div
                   key={slot.name}
@@ -329,30 +343,25 @@ export function AiVersusRoundPanel() {
                       ({slot.speaker === "user" ? "You" : "AI"})
                     </span>
                   </span>
-                  <Badge variant={delivered ? "secondary" : "outline"}>
-                    {delivered ? "Delivered" : isNext ? "Next" : "Pending"}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    {canRegenerate && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleRegenerateAiSpeech(index)}
+                        disabled={regeneratingIndex !== null || aiGenerating}
+                      >
+                        {regeneratingIndex === index ? "Regenerating…" : "Regenerate"}
+                      </Button>
+                    )}
+                    <Badge variant={delivered ? "secondary" : "outline"}>
+                      {delivered ? "Delivered" : isNext ? "Next" : "Pending"}
+                    </Badge>
+                  </div>
                 </div>
               )
             })}
           </div>
-
-          {canRegenerateLastAiSpeech(activeRecord) && (
-            <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleRegenerateAiSpeech}
-                disabled={aiRegenerating || aiGenerating}
-              >
-                {aiRegenerating ? "Regenerating…" : "Regenerate last AI speech"}
-              </Button>
-              <span className="text-xs text-muted-foreground">
-                Replaces &quot;{activeRecord.submittedSpeeches[activeRecord.submittedSpeeches.length - 1]!.name}
-                &quot; with a new AI-generated version.
-              </span>
-            </div>
-          )}
 
           {activeStatus.nextSlot === null ? (
             <p className="text-sm text-muted-foreground">
@@ -371,22 +380,42 @@ export function AiVersusRoundPanel() {
                   </p>
                 ) : null
               })()}
-              <Button onClick={handleGenerateAiSpeech} disabled={aiGenerating || aiRegenerating}>
+              <Button onClick={handleGenerateAiSpeech} disabled={aiGenerating || regeneratingIndex !== null}>
                 {aiGenerating ? "Generating…" : "Generate AI speech"}
               </Button>
             </div>
           ) : (
             <div className="space-y-2">
-              <Label htmlFor="ai-versus-speech-text">
-                Your &quot;{activeStatus.nextSlot.name}&quot;
-              </Label>
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor="ai-versus-speech-text">
+                  Your &quot;{activeStatus.nextSlot.name}&quot;
+                </Label>
+                {dictation.isSupported ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={dictation.isListening ? "destructive" : "outline"}
+                    onClick={dictation.isListening ? dictation.stop : dictation.start}
+                  >
+                    {dictation.isListening ? "Stop recording" : "🎤 Record"}
+                  </Button>
+                ) : (
+                  <span className="text-xs text-muted-foreground">
+                    Microphone dictation isn't supported in this browser.
+                  </span>
+                )}
+              </div>
               <Textarea
                 id="ai-versus-speech-text"
                 value={speechText}
                 onChange={(e) => setSpeechText(e.target.value)}
-                placeholder={`Type the ${activeStatus.nextSlot.name}…`}
+                placeholder={`Type the ${activeStatus.nextSlot.name}, or click Record to dictate it…`}
                 className="min-h-24"
               />
+              {dictation.isListening && (
+                <p className="text-xs text-muted-foreground">Listening… speak now.</p>
+              )}
+              {dictation.error && <p className="text-sm text-destructive">{dictation.error}</p>}
               <Button onClick={handleSubmitSpeech}>Submit speech</Button>
             </div>
           )}

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildCoachConversationMessages,
   buildCoachMaterialLibrary,
   buildCoachMaterialLibrarySummaryText,
   buildGroundedCoachPrompt,
@@ -8,6 +9,7 @@ import {
   excerptMaterialText,
   findRelevantMaterials,
   scoreMaterialRelevance,
+  type CoachConversationTurn,
   type CoachMaterial,
 } from "../src/coach/team-coach-materials";
 
@@ -193,6 +195,66 @@ describe("buildGroundedCoachPrompt", () => {
       excerptLength: 20,
     });
     expect(prompt).toContain("…");
+  });
+});
+
+function turn(question: string, answer: string): CoachConversationTurn {
+  return { id: `${question}-turn`, question, answer, askedAt: 0 };
+}
+
+describe("buildCoachConversationMessages", () => {
+  it("returns a single user turn (the grounded prompt) when there is no history", () => {
+    const messages = buildCoachConversationMessages("What is topicality?", [{ material: lecture, relevance: 1 }]);
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toEqual({
+      role: "user",
+      content: buildGroundedCoachPrompt("What is topicality?", [{ material: lecture, relevance: 1 }]),
+    });
+  });
+
+  it("prepends history as alternating user/assistant turns before the grounded prompt", () => {
+    const history = [turn("What is topicality?", "It's a voting issue about the resolution.")];
+    const messages = buildCoachConversationMessages(
+      "What about a counter-interpretation?",
+      [{ material: lecture, relevance: 1 }],
+      history,
+    );
+
+    expect(messages).toEqual([
+      { role: "user", content: "What is topicality?" },
+      { role: "assistant", content: "It's a voting issue about the resolution." },
+      {
+        role: "user",
+        content: buildGroundedCoachPrompt("What about a counter-interpretation?", [
+          { material: lecture, relevance: 1 },
+        ]),
+      },
+    ]);
+  });
+
+  it("caps history at maxHistoryTurns, keeping the most recent turns", () => {
+    const history = [turn("Q1", "A1"), turn("Q2", "A2"), turn("Q3", "A3")];
+    const messages = buildCoachConversationMessages("Q4", [], history, { maxHistoryTurns: 1 });
+
+    expect(messages).toEqual([
+      { role: "user", content: "Q3" },
+      { role: "assistant", content: "A3" },
+      { role: "user", content: expect.stringContaining("Question: Q4") },
+    ]);
+  });
+
+  it("omits history entirely when maxHistoryTurns is 0", () => {
+    const history = [turn("Q1", "A1")];
+    const messages = buildCoachConversationMessages("Q2", [], history, { maxHistoryTurns: 0 });
+    expect(messages).toHaveLength(1);
+  });
+
+  it("passes excerptLength through to the final grounded-prompt turn", () => {
+    const longMaterial: CoachMaterial = { ...lecture, text: "word ".repeat(200) };
+    const messages = buildCoachConversationMessages("topicality", [{ material: longMaterial, relevance: 1 }], [], {
+      excerptLength: 20,
+    });
+    expect(messages[0]?.content).toContain("…");
   });
 });
 

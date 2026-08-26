@@ -3,11 +3,15 @@ import {
   buildPersistedLeaderboardWithCompletedTasks,
   buildPersistedResearchProgressBoard,
   completeAndRecordResearchTask,
+  deleteCompletedTaskHistoryForTopic,
   listCompletedTaskHistory,
   listTrackedAssignmentsForTopic,
+  verifyAndRecordResearchTask,
 } from "../src/state/researchProgress";
 import { getRoutedTaskQueue, saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "../src/state/routedTaskQueues";
+import { listPendingTaskVerifications, markRoutedTaskAwaitingVerification } from "../src/state/pendingTaskVerifications";
 import { saveContribution } from "../src/state/contributions";
+import { SelfVerificationNotAllowedError, VerifierIdRequiredError } from "../src/lib/task-verification";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 import type { ResearchTask, RoutingResult } from "../src/lib/research-task-routing";
 
@@ -102,6 +106,115 @@ describe("completeAndRecordResearchTask", () => {
     completeAndRecordResearchTask("topic-ai", "Impacts", "2026-01-06T00:00:00Z");
 
     expect(listCompletedTaskHistory()).toHaveLength(2);
+  });
+});
+
+describe("verifyAndRecordResearchTask", () => {
+  it("credits a task marked done once a different contributor verifies it", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    markRoutedTaskAwaitingVerification("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+    const record = verifyAndRecordResearchTask("topic-ai", "Solvency", "bob", "2026-01-06T00:00:00Z");
+
+    expect(record).toEqual({
+      topic: "topic-ai",
+      assignment: { task: SOLVENCY_TASK, contributorId: "alice" },
+      completedAt: "2026-01-06T00:00:00Z",
+      markedDoneAt: "2026-01-05T00:00:00Z",
+      verifiedBy: "bob",
+    });
+    expect(listCompletedTaskHistory()).toEqual([record]);
+    expect(listPendingTaskVerifications()).toEqual([]);
+  });
+
+  it("returns undefined and records nothing when no task is pending verification", () => {
+    expect(verifyAndRecordResearchTask("topic-ai", "Solvency", "bob", "2026-01-06T00:00:00Z")).toBeUndefined();
+    expect(listCompletedTaskHistory()).toEqual([]);
+  });
+
+  it("throws VerifierIdRequiredError for a blank verifier id and leaves the task pending", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    markRoutedTaskAwaitingVerification("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+    expect(() => verifyAndRecordResearchTask("topic-ai", "Solvency", "  ", "2026-01-06T00:00:00Z")).toThrow(
+      VerifierIdRequiredError,
+    );
+    expect(listCompletedTaskHistory()).toEqual([]);
+    expect(listPendingTaskVerifications()).toHaveLength(1);
+  });
+
+  it("throws SelfVerificationNotAllowedError when the verifier is the assignee and leaves the task pending", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    markRoutedTaskAwaitingVerification("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+    expect(() => verifyAndRecordResearchTask("topic-ai", "Solvency", "alice", "2026-01-06T00:00:00Z")).toThrow(
+      SelfVerificationNotAllowedError,
+    );
+    expect(listCompletedTaskHistory()).toEqual([]);
+    expect(listPendingTaskVerifications()).toHaveLength(1);
+  });
+
+  it("doesn't affect a direct completeAndRecordResearchTask call's unverified credit", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+
+    const completed = completeAndRecordResearchTask("topic-ai", "Impacts", "2026-01-06T00:00:00Z");
+
+    expect(completed).toEqual({ task: IMPACTS_TASK, contributorId: "alice" });
+    expect(listCompletedTaskHistory()).toEqual([
+      { topic: "topic-ai", assignment: { task: IMPACTS_TASK, contributorId: "alice" }, completedAt: "2026-01-06T00:00:00Z" },
+    ]);
+    expect(listPendingTaskVerifications()).toEqual([]);
+  });
+});
+
+describe("deleteCompletedTaskHistoryForTopic", () => {
+  it("removes every completed-task record for that topic", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+    completeAndRecordResearchTask("topic-ai", "Impacts", "2026-01-06T00:00:00Z");
+
+    deleteCompletedTaskHistoryForTopic("topic-ai");
+
+    expect(listCompletedTaskHistory()).toEqual([]);
+  });
+
+  it("leaves other topics' completed-task history untouched", () => {
+    const BALLOT_TASK: ResearchTask = { argBlock: "Ballot", level: "missing", requiredSkill: "novice" };
+    const BALLOT_QUEUE: RoutedTaskQueueRecord = {
+      topicId: "topic-ballot",
+      result: { assignments: [{ task: BALLOT_TASK, contributorId: "carol" }], unassignedTasks: [] },
+    };
+    saveRoutedTaskQueue(AI_QUEUE);
+    saveRoutedTaskQueue(BALLOT_QUEUE);
+    completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+    completeAndRecordResearchTask("topic-ballot", "Ballot", "2026-01-06T00:00:00Z");
+
+    deleteCompletedTaskHistoryForTopic("topic-ai");
+
+    expect(listCompletedTaskHistory()).toEqual([
+      { topic: "topic-ballot", assignment: { task: BALLOT_TASK, contributorId: "carol" }, completedAt: "2026-01-06T00:00:00Z" },
+    ]);
+  });
+
+  it("is a no-op when the topic has no completed-task history", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+    deleteCompletedTaskHistoryForTopic("nonexistent-topic");
+
+    expect(listCompletedTaskHistory()).toHaveLength(1);
+  });
+
+  it("doesn't touch the still-active queue store for that topic", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+    deleteCompletedTaskHistoryForTopic("topic-ai");
+
+    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+      topicId: "topic-ai",
+      result: { assignments: [{ task: IMPACTS_TASK, contributorId: "alice" }], unassignedTasks: [] },
+    });
   });
 });
 

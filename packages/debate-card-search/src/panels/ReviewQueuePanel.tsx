@@ -4,12 +4,28 @@
  * "🗣️ Peer Review System" bullet in TODO.md's Research Crowdsourcing
  * Organizer Features list.
  *
- * Lets a user start a card's review, move it through the `lib/peer-review.ts`
- * state machine (submit, request changes, approve, reject, publish), and
- * leave/resolve comments on its thread — all through the already-persisted
- * `state/peerReviews.ts` (`savePeerReview`, `deletePeerReview`,
- * `buildReviewQueuePanelView`). No new review-lifecycle or persistence logic
- * is introduced here.
+ * Lets a user start a card's review (optionally recording an author id),
+ * move it through the `lib/peer-review.ts` state machine (submit, request
+ * changes, approve, reject, publish), and leave/resolve comments on its
+ * thread — all through the already-persisted `state/peerReviews.ts`
+ * (`savePeerReview`, `deletePeerReview`, `buildReviewQueuePanelView`).
+ *
+ * Approve/reject/publish — the three transitions that move a card toward or
+ * away from actually going live — are permission-gated two ways, closing
+ * follow-up (b) named under the "🗣️ Peer Review System" bullet: the acting
+ * reviewer id typed into "Your reviewer ID" must meet
+ * `reviewer-permissions.ts`'s `MIN_REVIEWER_TIER` (derived from their own
+ * Contribution Leaderboard record, via `state/peerReviews.ts`'s
+ * `approve/reject/publishPersistedReviewAsReviewer`), and — enforced inside
+ * `lib/peer-review.ts` itself — it can't match the review's own `authorId`.
+ * Submitting, commenting, and requesting changes stay open to anyone.
+ *
+ * An optional `signedInContributorId` prop (mirroring `TaskInboxPanel`'s
+ * identical convention) prefills "Your reviewer ID" and, per card, the
+ * comment thread's "Reviewer ID" field with a real signed-in visitor's
+ * derived id — a starting value only; typing over either field is always
+ * respected afterward, and a signed-out visitor sees the same blank fields
+ * as before.
  *
  * @module panels/ReviewQueuePanel
  */
@@ -67,6 +83,16 @@ type CommentDraft = { reviewerId: string; severity: CommentSeverity; body: strin
 
 const EMPTY_COMMENT_DRAFT: CommentDraft = { reviewerId: "", severity: "suggestion", body: "" }
 
+export interface ReviewQueuePanelProps {
+  /**
+   * A real signed-in visitor's derived contributor id (see
+   * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`).
+   * Prefills "Your reviewer ID" and each card's comment "Reviewer ID"
+   * field's *initial* value only — never overwrites a visitor's own edit.
+   */
+  signedInContributorId?: string
+}
+
 /**
  * Renders the Review Queue panel: a form to start a new card's review, plus
  * every persisted `CardReview` (sorted by `cardId`), each with lifecycle
@@ -76,10 +102,12 @@ const EMPTY_COMMENT_DRAFT: CommentDraft = { reviewerId: "", severity: "suggestio
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function ReviewQueuePanel() {
+export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProps = {}) {
   const [reviews, setReviews] = useState<CardReview[] | null>(null)
   const [newCardId, setNewCardId] = useState("")
+  const [newAuthorId, setNewAuthorId] = useState("")
   const [actingReviewerId, setActingReviewerId] = useState("")
+  const [hasEditedActingReviewerId, setHasEditedActingReviewerId] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [commentDrafts, setCommentDrafts] = useState<Record<string, CommentDraft>>({})
 
@@ -87,9 +115,16 @@ export function ReviewQueuePanel() {
     setReviews(buildReviewQueuePanelView())
   }, [])
 
+  useEffect(() => {
+    if (!hasEditedActingReviewerId && signedInContributorId) {
+      setActingReviewerId(signedInContributorId)
+    }
+  }, [signedInContributorId, hasEditedActingReviewerId])
+
   const refresh = () => setReviews(buildReviewQueuePanelView())
 
-  const commentDraftFor = (cardId: string): CommentDraft => commentDrafts[cardId] ?? EMPTY_COMMENT_DRAFT
+  const commentDraftFor = (cardId: string): CommentDraft =>
+    commentDrafts[cardId] ?? { ...EMPTY_COMMENT_DRAFT, reviewerId: signedInContributorId ?? "" }
 
   const setCommentDraft = (cardId: string, patch: Partial<CommentDraft>) => {
     setCommentDrafts((prev) => ({ ...prev, [cardId]: { ...commentDraftFor(cardId), ...patch } }))
@@ -101,9 +136,10 @@ export function ReviewQueuePanel() {
       setError("Card ID is required.")
       return
     }
-    savePeerReview(createCardReview(cardId))
+    savePeerReview(createCardReview(cardId, newAuthorId))
     setError(null)
     setNewCardId("")
+    setNewAuthorId("")
     refresh()
   }
 
@@ -186,25 +222,43 @@ export function ReviewQueuePanel() {
           <Input
             id="review-acting-reviewer-id"
             value={actingReviewerId}
-            onChange={(e) => setActingReviewerId(e.target.value)}
+            onChange={(e) => {
+              setActingReviewerId(e.target.value)
+              setHasEditedActingReviewerId(true)
+            }}
             placeholder="alice"
             className="max-w-xs"
           />
           <p className="text-xs text-muted-foreground">
             Approving, rejecting, and publishing are gated on your own contribution record — they need a{" "}
-            {MIN_REVIEWER_TIER} tier on the Contribution Leaderboard. Submitting, commenting, and requesting changes are
-            open to anyone.
+            {MIN_REVIEWER_TIER} tier on the Contribution Leaderboard — and can't be the review's own author.
+            Submitting, commenting, and requesting changes are open to anyone.
           </p>
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="review-new-card-id">Card ID</Label>
-          <Input
-            id="review-new-card-id"
-            value={newCardId}
-            onChange={(e) => setNewCardId(e.target.value)}
-            placeholder="card-1"
-            className="max-w-xs"
-          />
+        <div className="flex flex-wrap gap-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="review-new-card-id">Card ID</Label>
+            <Input
+              id="review-new-card-id"
+              value={newCardId}
+              onChange={(e) => setNewCardId(e.target.value)}
+              placeholder="card-1"
+              className="max-w-xs"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="review-new-author-id">Author ID (optional)</Label>
+            <Input
+              id="review-new-author-id"
+              value={newAuthorId}
+              onChange={(e) => setNewAuthorId(e.target.value)}
+              placeholder="alice"
+              className="max-w-xs"
+            />
+            <p className="text-xs text-muted-foreground">
+              Recording an author blocks that same id from approving, rejecting, or publishing this review.
+            </p>
+          </div>
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button onClick={handleStartReview}>Start review</Button>
@@ -228,6 +282,9 @@ export function ReviewQueuePanel() {
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-foreground">{review.cardId}</span>
                     <Badge variant={STATUS_VARIANT[review.status]}>{STATUS_LABEL[review.status]}</Badge>
+                    {review.authorId && (
+                      <span className="text-xs text-muted-foreground">by {review.authorId}</span>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {(review.status === "draft" || review.status === "changes_requested") && (

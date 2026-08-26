@@ -9,13 +9,16 @@ import {
   buildTopicFolders,
   contributionToLibraryCard,
   filterCardsByTags,
+  findTagCaseVariantGroups,
   groupCardsByCaseArea,
   groupCardsByTopic,
+  normalizeTagsToKnownCasing,
   parseTagsInput,
   renameTagAcrossCards,
   renameTagInList,
   suggestTags,
   type LibraryCard,
+  type TagCollection,
 } from "../src/lib/argument-library";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 
@@ -394,5 +397,89 @@ describe("renameTagAcrossCards", () => {
 
   it("throws when oldTag and newTag are the same", () => {
     expect(() => renameTagAcrossCards(cards, "climate", "climate")).toThrow();
+  });
+});
+
+describe("findTagCaseVariantGroups", () => {
+  function makeCollection(tag: string, cardCount: number): TagCollection {
+    return { tag, cards: cards.slice(0, cardCount) };
+  }
+
+  it("groups tags that differ only by casing", () => {
+    const collections = [makeCollection("warming", 1), makeCollection("Warming", 3)];
+
+    expect(findTagCaseVariantGroups(collections)).toEqual([{ tags: ["Warming", "warming"] }]);
+  });
+
+  it("orders each group's variants by card count, most-used first", () => {
+    const collections = [makeCollection("SOLVENCY", 1), makeCollection("solvency", 4)];
+
+    expect(findTagCaseVariantGroups(collections)[0].tags).toEqual(["solvency", "SOLVENCY"]);
+  });
+
+  it("breaks a card-count tie alphabetically", () => {
+    const collections = [makeCollection("Impact", 2), makeCollection("impact", 2)];
+
+    expect(findTagCaseVariantGroups(collections)[0].tags).toEqual(
+      ["Impact", "impact"].sort((a, b) => a.localeCompare(b)),
+    );
+  });
+
+  it("excludes tags used under only one casing", () => {
+    const collections = [makeCollection("climate", 2), makeCollection("solvency", 1)];
+
+    expect(findTagCaseVariantGroups(collections)).toEqual([]);
+  });
+
+  it("returns multiple groups sorted by their most-used casing", () => {
+    const collections = [
+      makeCollection("warming", 1),
+      makeCollection("Warming", 2),
+      makeCollection("case", 1),
+      makeCollection("Case", 2),
+    ];
+
+    expect(findTagCaseVariantGroups(collections).map((group) => group.tags[0])).toEqual([
+      "Case",
+      "Warming",
+    ]);
+  });
+
+  it("returns an empty array for an empty tag-collection list", () => {
+    expect(findTagCaseVariantGroups([])).toEqual([]);
+  });
+});
+
+describe("normalizeTagsToKnownCasing", () => {
+  it("rewrites a typed tag to the existing casing found in knownTags", () => {
+    expect(normalizeTagsToKnownCasing(["warming"], ["Warming", "solvency"])).toEqual(["Warming"]);
+  });
+
+  it("leaves a tag unchanged when no case-insensitive match exists in knownTags", () => {
+    expect(normalizeTagsToKnownCasing(["federalism"], ["Warming", "solvency"])).toEqual(["federalism"]);
+  });
+
+  it("leaves an already-correctly-cased tag unchanged", () => {
+    expect(normalizeTagsToKnownCasing(["Warming"], ["Warming"])).toEqual(["Warming"]);
+  });
+
+  it("normalizes multiple tags independently, mixing matches and non-matches", () => {
+    expect(normalizeTagsToKnownCasing(["WARMING", "new-tag", "Solvency"], ["warming", "solvency"])).toEqual([
+      "warming",
+      "new-tag",
+      "solvency",
+    ]);
+  });
+
+  it("uses the first-encountered casing when knownTags itself carries more than one casing", () => {
+    expect(normalizeTagsToKnownCasing(["warming"], ["Warming", "WARMING"])).toEqual(["Warming"]);
+  });
+
+  it("returns an empty array for an empty tags input", () => {
+    expect(normalizeTagsToKnownCasing([], ["Warming"])).toEqual([]);
+  });
+
+  it("returns tags unchanged when knownTags is empty", () => {
+    expect(normalizeTagsToKnownCasing(["warming", "Solvency"], [])).toEqual(["warming", "Solvency"]);
   });
 });

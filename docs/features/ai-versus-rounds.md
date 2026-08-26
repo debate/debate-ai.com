@@ -27,14 +27,16 @@ Submission calls `validateSpeechSubmission` before saving. On the AI's
 turn, a "Generate AI speech" button calls the real AI speech-generation
 request (below) and saves the returned text as that slot's speech.
 
-Whenever the round's most recently submitted speech was the AI's, a
-"Regenerate last AI speech" button also appears (works regardless of whose
-turn is next — including after the round is complete). Clicking it
-re-requests that same slot, from the same prior-speeches context originally
-used to generate it, and replaces it in place — every earlier speech,
-including any of the user's own, is untouched. This is a full do-over of
-that one speech, not a "make it different from before" hint: the
-regeneration request carries no memory of the text being replaced.
+Every delivered AI speech in the turn-order list — not just the most
+recently submitted one — gets its own "Regenerate" button (works regardless
+of whose turn is next, including after the round is complete, and
+regardless of how many speeches, from either side, came after it).
+Clicking it re-requests that slot, from the same prior-speeches context
+originally used to generate it, and replaces it in place — every other
+speech, earlier or later, including any of the user's own, is untouched.
+This is a full do-over of that one speech, not a "make it different from
+before" hint: the regeneration request carries no memory of the text being
+replaced.
 
 Below that, every persisted round renders as its own card (sorted by
 `roundId`) with a live progress line and a "Continue"/"Clear" action.
@@ -90,21 +92,25 @@ panels/AiVersusRoundPanel.tsx
       { name: slot.name, speaker: "ai", text } ] })
   → panel re-reads buildAiVersusRoundsPanelView() to refresh
 
-Regenerating the last AI speech:
+Regenerating a delivered AI speech at any position `index`:
 panels/AiVersusRoundPanel.tsx
-  → state/aiVersusRounds.ts's canRegenerateLastAiSpeech(record)
-                                                    — gates the button on
-                                                      the last submitted
-                                                      speech being the AI's
-  → buildAiResponseRequest(order, submittedCount - 1,
-      submittedSpeeches.slice(0, -1))                — rebuilds the same
+  → state/aiVersusRounds.ts's canRegenerateAiSpeechAt(record, index)
+                                                    — gates that speech's
+                                                      button on the
+                                                      submitted speech at
+                                                      `index` being the AI's
+  → buildAiResponseRequest(order, index,
+      submittedSpeeches.slice(0, index))             — rebuilds the same
                                                           slot + prior-
                                                           speeches request
                                                           originally used
   → requestAiVersusSpeech(request) (or the persona-aware variant)
-  → state/aiVersusRounds.ts's replaceLastAiSpeech(record, text)
-                                                    — swaps the last
-                                                      speech's text only
+  → state/aiVersusRounds.ts's replaceAiSpeechAt(record, index, text)
+                                                    — swaps that speech's
+                                                      text only, leaving
+                                                      every other speech
+                                                      (earlier or later)
+                                                      untouched
   → saveAiVersusRound(...)
   → panel re-reads buildAiVersusRoundsPanelView() to refresh
 ```
@@ -131,32 +137,51 @@ persistence logic changed. Vitest-covered in
 `packages/debate-round/test/ai-versus-speech-client.test.ts` (the `fetch`
 client, with `fetch` mocked via `vi.stubGlobal`).
 
-The "regenerate last AI speech" affordance — found via this run's
+The "regenerate any delivered AI speech" affordance — found via this run's
 `docs/features/*.md` Known gaps audit, not tracked as its own numbered
 `TODO.md` idea — adds two small, pure `state/aiVersusRounds.ts` helpers,
-`canRegenerateLastAiSpeech` (whether the last submitted speech was the
-AI's) and `replaceLastAiSpeech` (returns a copy of a round record with its
-last speech's text swapped, throwing if that speech wasn't the AI's).
-Neither calls the AI or introduces a new request/response shape — the
-panel rebuilds the exact same `AiSpeechRequest` `buildAiResponseRequest`
-would have built when the speech being replaced was first generated (by
-passing `submittedCount - 1` and the speeches before it), so the
-regenerated speech responds to the same context the original one did.
+`canRegenerateAiSpeechAt` (whether the submitted speech at a given index
+exists and is the AI's) and `replaceAiSpeechAt` (returns a copy of a round
+record with the speech at that index's text swapped, throwing if there's
+no speech there or it wasn't the AI's). Neither calls the AI or introduces
+a new request/response shape — the panel rebuilds the exact same
+`AiSpeechRequest` `buildAiResponseRequest` would have built when the
+speech being replaced was first generated (by passing that index and the
+speeches before it), so the regenerated speech responds to the same
+context the original one did. This generalizes an earlier, narrower
+version of this affordance that could only ever redo the single most
+recently submitted AI speech — regenerating an earlier one required
+clearing every speech (including the user's own) submitted after it and
+starting over; now every delivered AI speech gets its own independent
+"Regenerate" button, and using it never discards any other speech.
 Vitest-covered in `packages/debate-round/test/aiVersusRounds.test.ts`
-(6 new cases: `canRegenerateLastAiSpeech` for no speeches / last-speech-is-
-user's / last-speech-is-AI's, and `replaceLastAiSpeech` for the swap
-itself, non-mutation of the input record, and both throwing cases).
+(9 cases: `canRegenerateAiSpeechAt` for no speeches / a user's speech at
+that index / an AI speech at that index / an out-of-range index / an
+earlier AI speech with later speeches also present, and `replaceAiSpeechAt`
+for the swap itself, an earlier-speech swap leaving later speeches
+untouched, non-mutation of the input record, and the three throwing
+cases).
+
+The speech-submission text field also has a "🎤 Record"/"Stop recording"
+button (found via this run's `docs/features/*.md` Known gaps audit — the
+former "Speech submission is text-only... no transcription pipeline
+exists" gap was already solved elsewhere in this repo and just never wired
+into this panel), dictating directly into the same `speechText` state the
+"Submit speech" button already reads, via the existing
+`hooks/useMicrophoneTranscription.ts` and `round/microphone-transcription.ts`
+(`appendDictatedSegment`) — the same primitives idea #6's "Speech Transcript
+Summaries" (PR #297) and idea #8's "Video-Lecture-Training Coach AI"
+(PR #298) panels already use, duplicated nowhere new. A disabled
+"Microphone dictation isn't supported in this browser" fallback shows when
+neither `SpeechRecognition` constructor exists, and a recognition error
+(e.g. mic permission denied) surfaces inline. No new pure logic was added —
+`microphone-transcription.ts`'s existing Vitest coverage already applies.
 
 ## Known gaps
 
-- Speech submission is text-only. `PriorSpeechRecord` (what
-  `submittedSpeeches` stores) has no audio field, and no
-  transcription pipeline exists in this repo, so "or record a speech" from
-  the original follow-up wording isn't implemented — recording would need
-  either a new audio field on the persisted record or a transcription step
-  ahead of the existing text-only save.
-- "Regenerate last AI speech" only ever replaces the most recently
-  submitted speech — there's no way to regenerate an earlier AI speech in
-  the middle of a round without also discarding every speech (the user's
-  included) submitted after it, since `submittedSpeeches` is a flat,
-  append-only array with no per-slot identity beyond position.
+None open. Every delivered AI speech can now be regenerated independently
+in place (see "Regenerating a delivered AI speech at any position" above)
+without discarding any other speech; speech submission stays text-only
+beyond microphone dictation, and there is no transcription path for an
+already-recorded audio/video file, matching every other panel in this repo
+that shares that same gap.

@@ -72,6 +72,39 @@ export interface GroundedCoachPromptOptions {
   excerptLength?: number;
 }
 
+/**
+ * One already-answered question/answer pair in an "Ask the coach"
+ * conversation, persisted so a later question can build on it. See
+ * `state/coachConversation.ts` for the persistence layer and
+ * `buildCoachConversationMessages` below for how a turn becomes part of a
+ * later AI call's message history.
+ */
+export interface CoachConversationTurn {
+  id: string;
+  question: string;
+  answer: string;
+  /** Epoch milliseconds the turn was recorded at. */
+  askedAt: number;
+}
+
+/** A single turn of an Anthropic-style chat `messages` array. */
+export interface AnthropicChatTurn {
+  role: "user" | "assistant";
+  content: string;
+}
+
+/** How many of a conversation's most recent turns are fed back as context by default. */
+const DEFAULT_MAX_HISTORY_TURNS = 6;
+
+export interface BuildCoachConversationMessagesOptions extends GroundedCoachPromptOptions {
+  /**
+   * Caps how many of `history`'s most recent turns are included as context
+   * (default 6 — older turns are dropped rather than growing every call's
+   * prompt without bound). Pass 0 to omit history entirely.
+   */
+  maxHistoryTurns?: number;
+}
+
 /** Display order for library groups — most commonly consulted kinds first. */
 export const COACH_MATERIAL_KIND_ORDER: CoachMaterialKind[] = [
   "lecture_transcript",
@@ -207,6 +240,34 @@ export function buildGroundedCoachPrompt(
   });
 
   return lines.join("\n");
+}
+
+/**
+ * Composes the full `messages` array for an "Ask the coach" AI call: each of
+ * `history`'s most recent turns (capped at `maxHistoryTurns`, oldest of the
+ * kept turns first) as an alternating user/assistant pair, followed by
+ * `question`'s own `buildGroundedCoachPrompt` output as the final user turn
+ * — so a follow-up question ("what about a counter-interp?") can build on
+ * an earlier answer while the current question still gets its own
+ * freshly-matched grounding materials rather than reusing an earlier turn's.
+ */
+export function buildCoachConversationMessages(
+  question: string,
+  matches: CoachMaterialMatch[],
+  history: CoachConversationTurn[] = [],
+  options: BuildCoachConversationMessagesOptions = {},
+): AnthropicChatTurn[] {
+  const { maxHistoryTurns = DEFAULT_MAX_HISTORY_TURNS, ...promptOptions } = options;
+  const recentHistory = maxHistoryTurns > 0 ? history.slice(-maxHistoryTurns) : [];
+
+  const messages: AnthropicChatTurn[] = [];
+  for (const turn of recentHistory) {
+    messages.push({ role: "user", content: turn.question });
+    messages.push({ role: "assistant", content: turn.answer });
+  }
+  messages.push({ role: "user", content: buildGroundedCoachPrompt(question, matches, promptOptions) });
+
+  return messages;
 }
 
 /** Renders a short, human-readable summary of a team's coach-material library. */

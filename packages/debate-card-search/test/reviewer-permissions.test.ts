@@ -66,43 +66,56 @@ describe("deriveReviewerTier", () => {
 
 describe("approveReviewAsReviewer", () => {
   it("approves when the reviewer meets the minimum tier", () => {
-    expect(approveReviewAsReviewer(IN_REVIEW, "veteran").status).toBe("approved");
-    expect(approveReviewAsReviewer(IN_REVIEW, "expert").status).toBe("approved");
+    expect(approveReviewAsReviewer(IN_REVIEW, "r1", "veteran").status).toBe("approved");
+    expect(approveReviewAsReviewer(IN_REVIEW, "r1", "expert").status).toBe("approved");
+  });
+
+  it("records reviewedBy", () => {
+    expect(approveReviewAsReviewer(IN_REVIEW, "r1", "veteran").reviewedBy).toBe("r1");
   });
 
   it("throws InsufficientReviewerPermissionError below the minimum tier, without touching the review", () => {
-    expect(() => approveReviewAsReviewer(IN_REVIEW, "novice")).toThrow(InsufficientReviewerPermissionError);
-    expect(() => approveReviewAsReviewer(IN_REVIEW, "apprentice")).toThrow(InsufficientReviewerPermissionError);
+    expect(() => approveReviewAsReviewer(IN_REVIEW, "r1", "novice")).toThrow(InsufficientReviewerPermissionError);
+    expect(() => approveReviewAsReviewer(IN_REVIEW, "r1", "apprentice")).toThrow(InsufficientReviewerPermissionError);
   });
 
   it("still enforces the underlying state machine once permission is granted", () => {
     const draft = createCardReview("card-2");
-    expect(() => approveReviewAsReviewer(draft, "expert")).toThrow(/Cannot move a card review/);
+    expect(() => approveReviewAsReviewer(draft, "r1", "expert")).toThrow(/Cannot move a card review/);
+  });
+
+  it("still enforces the underlying self-review guard once permission is granted", () => {
+    const authored: CardReview = { cardId: "card-3", status: "in_review", comments: [], authorId: "alice" };
+    expect(() => approveReviewAsReviewer(authored, "alice", "expert")).toThrow(
+      /cannot take this action on their own submission/,
+    );
   });
 
   it("honors a caller-supplied minimum tier", () => {
-    expect(approveReviewAsReviewer(IN_REVIEW, "apprentice", "apprentice").status).toBe("approved");
-    expect(() => approveReviewAsReviewer(IN_REVIEW, "novice", "apprentice")).toThrow(InsufficientReviewerPermissionError);
+    expect(approveReviewAsReviewer(IN_REVIEW, "r1", "apprentice", "apprentice").status).toBe("approved");
+    expect(() => approveReviewAsReviewer(IN_REVIEW, "r1", "novice", "apprentice")).toThrow(
+      InsufficientReviewerPermissionError,
+    );
   });
 });
 
 describe("rejectReviewAsReviewer", () => {
   it("rejects when the reviewer meets the minimum tier", () => {
-    expect(rejectReviewAsReviewer(IN_REVIEW, "veteran").status).toBe("rejected");
+    expect(rejectReviewAsReviewer(IN_REVIEW, "r1", "veteran").status).toBe("rejected");
   });
 
   it("throws below the minimum tier", () => {
-    expect(() => rejectReviewAsReviewer(IN_REVIEW, "novice")).toThrow(InsufficientReviewerPermissionError);
+    expect(() => rejectReviewAsReviewer(IN_REVIEW, "r1", "novice")).toThrow(InsufficientReviewerPermissionError);
   });
 });
 
 describe("publishReviewAsReviewer", () => {
   it("publishes when the reviewer meets the minimum tier", () => {
-    expect(publishReviewAsReviewer(APPROVED, "veteran").status).toBe("published");
+    expect(publishReviewAsReviewer(APPROVED, "r1", "veteran").status).toBe("published");
   });
 
   it("throws below the minimum tier", () => {
-    expect(() => publishReviewAsReviewer(APPROVED, "apprentice")).toThrow(InsufficientReviewerPermissionError);
+    expect(() => publishReviewAsReviewer(APPROVED, "r1", "apprentice")).toThrow(InsufficientReviewerPermissionError);
   });
 });
 
