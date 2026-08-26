@@ -6,6 +6,51 @@
 _No task currently in progress._
 
 ### Completed
+- **News Stream — auto-generated "Tool spotlight" posts for every
+  unannounced catalog entry.** Closes `docs/features/news-stream.md`'s
+  longstanding Known gap: "Product Updates are manually curated — nothing
+  detects a newly added route or `feature-catalog.ts` entry and drafts a
+  post for it." Prompted by a request to make sure every tool has real
+  presence across the UI, not just a card on the Tools page — the News
+  Stream's Product Updates category previously only showed a tool if
+  someone remembered to hand-write a `PRODUCT_NEWS` entry for it, so most
+  of the ~50-entry `feature-catalog.ts` catalog (`debate-ui`'s
+  `APP_FEATURES`) had never appeared in the feed at all.
+  `lib/news-stream.ts`'s new `buildAutoFeatureNews(features?, announced?)`
+  (defaulting to the real `APP_FEATURES` and `PRODUCT_NEWS`) synthesizes a
+  generic `"product"`-category "Tool spotlight: …" `NewsItem` for every
+  catalog entry whose `href` no hand-curated item already names — closing
+  the exact gap wording without inventing a second competing "is this
+  announced" registry: `href` overlap with `PRODUCT_NEWS` is the only
+  signal. Every synthesized item shares one timestamp — one millisecond
+  older than the oldest hand-curated item — so a real announcement (about
+  that tool or any other) always sorts above the whole backfilled batch,
+  and the batch itself sorts in stable `APP_FEATURES` order beneath it:
+  spotlighting every uncovered tool without displacing genuine recent
+  updates from the top of the feed. `state/newsStream.ts`'s `buildNewsFeed`
+  now folds `buildAutoFeatureNews()` in alongside `PRODUCT_NEWS` (no store
+  involved, so no live-update wiring needed — it's pure catalog data,
+  identical on every call until either list changes). `debate-card-search`
+  already depended on `debate-ui` (used throughout for UI primitives), so
+  importing `APP_FEATURES`/`FeatureEntry` from
+  `debate-ui/src/features/feature-catalog` needed no new dependency edge or
+  cycle workaround, unlike the prior "AI Coach Mode sessions" run's
+  `extraItems` composition point. `docs/features/news-stream.md` updated
+  (new "What it shows" bullet, data-flow diagram, and the Known gaps
+  section — the closed bullet replaced with a narrower one: a spotlight is
+  a generic restatement of the catalog description and can't tell "just
+  shipped" from "always existed," so a real `PRODUCT_NEWS` entry is still
+  the way to say something more specific). Vitest-covered in
+  `newsStream.test.ts` (`buildAutoFeatureNews`'s own filtering and
+  timestamp-floor behavior against hand-built fixtures, plus one assertion
+  against the real `APP_FEATURES`/`PRODUCT_NEWS` lists; the existing
+  "returns just the hand-maintained product news" `buildNewsFeed` case
+  updated to expect the spotlight batch too). Verified: `bun install`
+  (2260 packages), `bun run test` (178 files / 2753 tests, all pass — 4
+  new), `bun x turbo run typecheck` (13/13 in-scope package tasks pass),
+  and `bun run build:web` (`debate-ai-web` succeeds, `/news` route
+  present). **Completed:** 2026-08-26.
+
 - **News Stream — wire a sixth Community category: AI Coach Mode
   sessions.** Closes the "a coaching session" half of the Known gap
   `docs/features/news-stream.md` recorded after the prior "wire a fifth

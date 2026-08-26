@@ -51,7 +51,7 @@
  * @module state/newsStream
  */
 
-import { PRODUCT_NEWS, sortNewsFeed, type NewsItem } from "../lib/news-stream";
+import { PRODUCT_NEWS, buildAutoFeatureNews, sortNewsFeed, type NewsItem } from "../lib/news-stream";
 import { listAnnouncedDailyBestCards } from "./dailyBestCardAnnouncements";
 import { listAnnouncedContributorAwards } from "./contributorAwardAnnouncements";
 import { buildDailyBestCardHighlight } from "../lib/daily-best-card";
@@ -182,10 +182,17 @@ function argumentLibraryNews(): NewsItem[] {
  * (`apps/debate-ai.com/app/news/page.tsx`, which already depends on both
  * packages) passes it in here rather than this module reaching back into
  * `debate-round`.
+ *
+ * Also folds in `lib/news-stream.ts`'s `buildAutoFeatureNews()` — a
+ * generic "Tool spotlight" post for every `APP_FEATURES` catalog entry
+ * `PRODUCT_NEWS` doesn't already cover by `href` — so every tool has some
+ * presence in the feed even before anyone hand-writes a real announcement
+ * for it.
  */
 export function buildNewsFeed(extraItems: NewsItem[] = []): NewsItem[] {
   return sortNewsFeed([
     ...PRODUCT_NEWS,
+    ...buildAutoFeatureNews(),
     ...extraItems,
     ...dailyBestCardNews(),
     ...contributorAwardsNews(),
