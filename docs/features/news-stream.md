@@ -24,7 +24,7 @@ Every item, newest first, filterable by category:
 - **Contributor Awards** — one item per day announced through
   [`/cards/awards`](contributor-awards.md), rendered with
   `lib/contributor-awards.ts`'s existing `buildAwardsAnnouncementText`.
-- **Community** — four categories, none needing a separate "announce" step
+- **Community** — five categories, none needing a separate "announce" step
   since each is derived straight from its own feature's already-persisted
   history:
   - A [Quest Streaks](quest-streaks.md) milestone, the exact day a
@@ -40,8 +40,16 @@ Every item, newest first, filterable by category:
     moment it's logged on a topic sprint at `/cards/collaboration`
     (`sprintNotes.ts`'s `listSprintNotes`, rendered via
     `team-collaboration-mode.ts`'s `buildSprintNoteAnnouncementText`) — the
-    only Community source that needs no derivation at all, since a
+    first Community source that needs no derivation at all, since a
     `SprintNote` is already the atomic event.
+  - A new [Argument Library](evidence-library.md) submission — a card or
+    analytic block — the moment it's saved and live (not held back by an
+    in-progress peer review) at `/cards/library`
+    (`evidenceLibraryEntries.ts`'s `listEvidenceLibraryEntries`, rendered via
+    `shared-evidence-library.ts`'s `buildEvidenceEntryAnnouncementText`) —
+    like a prep note, needs no derivation either, since a saved entry is
+    already the atomic event; only entries saved after this shipped carry
+    the `createdAt` timestamp it's sourced from.
 
 Each item can be liked and is marked read on hover; unread items get a
 highlighted left border and a "New" badge. Read/like state is a viewer-local
@@ -59,11 +67,15 @@ state/dailyMissionResults.ts    — existing store, read via buildQuestStreakMil
 state/challengeWinEvents.ts     — existing store, read via buildCompletedGroupChallengeEvents()
 state/revisionHistory.ts        — existing store, read via buildDailyTopReviserAnnouncements()
 state/sprintNotes.ts            — existing store, read via listSprintNotes()
-  → state/newsStream.ts         — buildNewsFeed() merges PRODUCT_NEWS with all six stores
+state/evidenceLibraryEntries.ts — existing store, read via listEvidenceLibraryEntries()
+  → state/newsStream.ts         — buildNewsFeed() merges PRODUCT_NEWS with all seven stores
                                     (mapped to NewsItem via each store's own highlight/
                                     announcement-text helper — sprintNotes.ts's via
-                                    team-collaboration-mode.ts's new
-                                    buildSprintNoteAnnouncementText), sorted newest first
+                                    team-collaboration-mode.ts's
+                                    buildSprintNoteAnnouncementText,
+                                    evidenceLibraryEntries.ts's via
+                                    shared-evidence-library.ts's new
+                                    buildEvidenceEntryAnnouncementText), sorted newest first
                                   — isNewsItemRead/markNewsItemRead/isNewsItemLiked/
                                     toggleNewsItemLiked (localStorage, "newsStreamViewerState")
   → panels/NewsStreamPanel.tsx  — category filter tabs, per-item read/like UI,
@@ -89,22 +101,28 @@ to see it.
 `state/newsStream.ts` introduces no new persisted event data of its own —
 it only re-shapes what `dailyBestCardAnnouncements.ts`,
 `contributorAwardAnnouncements.ts`, `dailyMissionResults.ts`,
-`challengeWinEvents.ts`, `revisionHistory.ts`, and `sprintNotes.ts` already
-persist into the feed's common `NewsItem` type. The Daily Best Card and
-Contributor Awards categories need an explicit "announce" action in their
-own panel; the four Community categories added afterward (quest streak
-milestones, group challenge completions, Revision Incentives standings,
-Team Collaboration Mode prep notes) don't — each is derived fresh every
+`challengeWinEvents.ts`, `revisionHistory.ts`, `sprintNotes.ts`, and
+`evidenceLibraryEntries.ts` already persist into the feed's common
+`NewsItem` type. The Daily Best Card and Contributor Awards categories need
+an explicit "announce" action in their own panel; the five Community
+categories added afterward (quest streak milestones, group challenge
+completions, Revision Incentives standings, Team Collaboration Mode prep
+notes, Argument Library submissions) don't — each is derived fresh every
 time straight from its source feature's own history (mission results,
-challenge contributions/win events, revision records, logged sprint notes),
-so completing a mission, winning a challenge, revising a card, or logging a
-prep note (from those features' own panels) is what makes it appear here,
-with no separate "announce" step and no risk of re-reporting the same event
-on a later day. The prep-note source needs no derivation at all over that
-history — every other Community source computes an event from a longer
-record (a streak crossing a milestone, a challenge's Nth contribution, a
-day's top reviser), but a logged `SprintNote` already *is* the event, so
-`sprintNoteNews()` just maps `listSprintNotes()` straight to `NewsItem`s.
+challenge contributions/win events, revision records, logged sprint notes,
+saved evidence-library entries), so completing a mission, winning a
+challenge, revising a card, logging a prep note, or submitting a card/block
+(from those features' own panels) is what makes it appear here, with no
+separate "announce" step and no risk of re-reporting the same event on a
+later day. The prep-note and Argument Library sources need no derivation at
+all over that history — every other Community source computes an event from
+a longer record (a streak crossing a milestone, a challenge's Nth
+contribution, a day's top reviser), but a logged `SprintNote` or saved
+`EvidenceLibraryEntry` already *is* the event, so `sprintNoteNews()` and
+`argumentLibraryNews()` just map `listSprintNotes()`/
+`listEvidenceLibraryEntries()` straight to `NewsItem`s (the latter filtered
+to entries that are "live," via `isEntryLive`, and carry the `createdAt`
+`EvidenceLibraryPanel.tsx`'s `handleSubmit` stamps on first submission).
 
 ## Known gaps
 
@@ -114,11 +132,17 @@ day's top reviser), but a logged `SprintNote` already *is* the event, so
   in on a different device shows every item as unread again.
 - The Community categories only cover events this package can already
   detect from persisted history (streak milestones, challenge completions,
-  daily top reviser, logged Team Collaboration Mode prep notes) — other
-  community moments (a new Argument Library entry, or a coaching session,
-  which lives in the separate `debate-round` package this package doesn't
-  depend on) still aren't wired in.
-- Every logged sprint note posts here, with no volume control — a very
-  active topic sprint could post many prep-note items in a short span,
-  unlike the naturally-bounded streak/challenge/revision categories (at
-  most one event per contributor per milestone, per challenge, or per day).
+  daily top reviser, logged Team Collaboration Mode prep notes, saved
+  Argument Library entries) — a coaching session, which lives in the
+  separate `debate-round` package, still isn't wired in: `debate-round`
+  already depends on this package, so this package taking a dependency back
+  on `debate-round` for a coaching-session news source would be a cycle.
+- Every logged sprint note or saved evidence-library entry posts here, with
+  no volume control — a very active topic sprint or a busy submission
+  period could post many items in a short span, unlike the
+  naturally-bounded streak/challenge/revision categories (at most one event
+  per contributor per milestone, per challenge, or per day).
+- An `EvidenceLibraryEntry` saved before the `createdAt` field existed has
+  none, so it never appears here — only entries saved after this shipped
+  are backfilled; there's no migration that stamps one onto pre-existing
+  localStorage records.

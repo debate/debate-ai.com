@@ -26,6 +26,19 @@
  * `NewsItem`, rendered via `team-collaboration-mode.ts`'s new
  * `buildSprintNoteAnnouncementText`.
  *
+ * A fifth Community source, `evidenceLibraryEntries.ts`'s
+ * `listEvidenceLibraryEntries`, closes the "a new Argument Library entry
+ * ... isn't wired in" half of that same Known gap — like a sprint note, a
+ * submitted `EvidenceLibraryEntry` is already the atomic event, so
+ * `argumentLibraryNews()` maps every "live" (not held back by an
+ * in-progress peer review, via `isEntryLive`) entry that carries the
+ * `createdAt` its submitting panel stamps on first save
+ * straight to a `NewsItem`, rendered via `shared-evidence-library.ts`'s new
+ * `buildEvidenceEntryAnnouncementText`. The gap's other half — a coaching
+ * session — stays open: it lives in `debate-round`, which already depends
+ * on this package, so sourcing a news item from it here would need the
+ * reverse dependency, a cycle this package can't take on.
+ *
  * Read/like state is local to this feed (not shared with `contributions.ts`'s
  * like counts, which track a card's community helpfulness rather than
  * whether a reader has seen a news item) and stored under its own
@@ -48,6 +61,8 @@ import { buildDailyTopReviserAnnouncements } from "./revisionHistory";
 import { buildTopReviserAnnouncementText } from "../lib/revision-incentives";
 import { listSprintNotes } from "./sprintNotes";
 import { buildSprintNoteAnnouncementText } from "../lib/team-collaboration-mode";
+import { isEntryLive, listEvidenceLibraryEntries } from "./evidenceLibraryEntries";
+import { buildEvidenceEntryAnnouncementText, type EvidenceLibraryEntry } from "../lib/shared-evidence-library";
 
 /** Turns every announced Daily Best Card winner into a `NewsItem`. */
 function dailyBestCardNews(): NewsItem[] {
@@ -122,14 +137,38 @@ function sprintNoteNews(): NewsItem[] {
 }
 
 /**
+ * Turns every "live" (not held back by an in-progress peer review) persisted
+ * Argument Library entry that carries a `createdAt` into a `NewsItem` — no
+ * derivation needed, a submitted entry is already the event. An entry
+ * persisted before `createdAt` existed has none and is silently skipped
+ * rather than backdated to an arbitrary time.
+ */
+function argumentLibraryNews(): NewsItem[] {
+  return listEvidenceLibraryEntries()
+    .filter((entry): entry is EvidenceLibraryEntry & { createdAt: number } => entry.createdAt !== undefined && isEntryLive(entry.id))
+    .map((entry) => ({
+      id: `argument-library-entry-${entry.id}`,
+      category: "community" as const,
+      title:
+        entry.kind === "card"
+          ? `New card added to the Argument Library: "${entry.argBlock}"`
+          : `New analytic block added to the Argument Library: "${entry.argBlock}"`,
+      body: buildEvidenceEntryAnnouncementText(entry),
+      timestamp: entry.createdAt,
+      href: "/cards/argument-library",
+    }));
+}
+
+/**
  * Builds the full News Stream feed: hand-maintained product updates plus
  * every announced Daily Best Card winner, Contributor Awards standings,
  * quest-streak milestone crossing, completed group challenge, top daily
- * Revision Incentives earner, and logged Team Collaboration Mode sprint
- * note — newest first. Reads several other localStorage stores (via the
- * modules imported above) in addition to this module's own — safe to call
- * server-side or during SSR, since each underlying store already guards its
- * own `localStorage` access and returns an empty list when unavailable.
+ * Revision Incentives earner, logged Team Collaboration Mode sprint note,
+ * and newly submitted Argument Library entry — newest first. Reads several
+ * other localStorage stores (via the modules imported above) in addition to
+ * this module's own — safe to call server-side or during SSR, since each
+ * underlying store already guards its own `localStorage` access and returns
+ * an empty list when unavailable.
  */
 export function buildNewsFeed(): NewsItem[] {
   return sortNewsFeed([
@@ -140,6 +179,7 @@ export function buildNewsFeed(): NewsItem[] {
     ...groupChallengeNews(),
     ...revisionIncentiveNews(),
     ...sprintNoteNews(),
+    ...argumentLibraryNews(),
   ]);
 }
 

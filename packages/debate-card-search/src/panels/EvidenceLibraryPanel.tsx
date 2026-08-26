@@ -79,6 +79,7 @@ import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   checkPersistedPageForExistingCards,
   deleteEvidenceLibraryEntry,
+  getEvidenceLibraryEntry,
   listEvidenceLibraryEntries,
   listPendingReviewEntries,
   listPersistedTags,
@@ -250,6 +251,12 @@ export function EvidenceLibraryPanel() {
         .filter(Boolean),
       knownTags,
     )
+    // A brand-new entry is stamped with the "first saved" moment
+    // `state/newsStream.ts`'s `argumentLibraryNews()` sources its News
+    // Stream timestamp from (mirroring `SprintNotesPanel.tsx`'s identical
+    // `createdAt: Date.now()` on a new note); an edit keeps the original
+    // entry's `createdAt` rather than resetting it to now.
+    const createdAt = editingId ? getEvidenceLibraryEntry(editingId)?.createdAt : Date.now()
     const entry: EvidenceLibraryEntry = {
       id: editingId ?? `${draft.kind}-${argBlock}-${Date.now()}`,
       kind: draft.kind,
@@ -261,6 +268,7 @@ export function EvidenceLibraryPanel() {
       cite: draft.cite.trim(),
       wordCount: computeWordCount(text),
       ...(draft.sourceUrl.trim() ? { sourceUrl: draft.sourceUrl.trim() } : {}),
+      ...(createdAt !== undefined ? { createdAt } : {}),
     }
 
     if (editingId) {

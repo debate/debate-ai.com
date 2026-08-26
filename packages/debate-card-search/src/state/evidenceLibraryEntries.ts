@@ -44,6 +44,20 @@
  * or changed — true incremental indexing, not a rebuild — falling back to
  * `buildEvidenceSearchIndex` only for the very first build.
  *
+ * `listEvidenceLibraryEntries` is now also read by `state/newsStream.ts`'s
+ * new `argumentLibraryNews()`, sourced from the `createdAt` a submitting
+ * call site (`panels/EvidenceLibraryPanel.tsx`'s `handleSubmit`, mirroring
+ * `SprintNotesPanel.tsx`'s identical `createdAt: Date.now()` convention on a
+ * brand-new entry) stamps before ever calling `saveEvidenceLibraryEntry` —
+ * this store stays a dumb upsert and does not stamp it itself, so a caller
+ * that constructs an `EvidenceLibraryEntry` directly (as every existing test
+ * here does) is unaffected. Together this closes the "a new Argument
+ * Library entry ... isn't wired in" half of the Known gap recorded in
+ * `docs/features/news-stream.md` (the other half, a coaching session, stays
+ * unwired: `debate-round` already depends on this package, so the reverse
+ * dependency this module's news source would need is unavailable without a
+ * cycle).
+ *
  * @module state/evidenceLibraryEntries
  */
 

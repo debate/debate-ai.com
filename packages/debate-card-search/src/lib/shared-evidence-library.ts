@@ -25,6 +25,16 @@
  * README) calls it to open `/cards/library` with the active tab's URL
  * pre-filled and auto-checked, closing that idea's remaining follow-up.
  *
+ * `EvidenceLibraryEntry.createdAt` (stamped by `panels/EvidenceLibraryPanel.tsx`'s
+ * `handleSubmit` the moment a brand-new entry is first submitted, mirroring
+ * `SprintNotesPanel.tsx`'s identical convention) plus
+ * `buildEvidenceEntryAnnouncementText` close the "a new Argument Library
+ * entry ... isn't wired in" half of the Known gap recorded in
+ * `docs/features/news-stream.md` — `state/newsStream.ts`'s new
+ * `argumentLibraryNews()` reads both to post every newly submitted, live
+ * card or block as a Community item, mirroring `team-collaboration-mode.ts`'s
+ * `buildSprintNoteAnnouncementText` convention.
+ *
  * @module lib/shared-evidence-library
  */
 
@@ -49,6 +59,16 @@ export interface EvidenceLibraryEntry extends LibraryCard {
   cite: string;
   /** The source article's URL this entry was cut from, if known — blank/absent for a `block` entry. */
   sourceUrl?: string;
+  /**
+   * Epoch milliseconds (UTC) this entry was first saved, stamped by the
+   * submitting call site (`panels/EvidenceLibraryPanel.tsx`'s
+   * `handleSubmit`) rather than by the store — same convention as
+   * `news-stream.ts`'s `NewsItem.timestamp`. Optional so an entry persisted
+   * before this field existed still parses; such an entry is simply
+   * invisible to `argumentLibraryNews()`, which has no reasonable
+   * original-submission time to attribute to it.
+   */
+  createdAt?: number;
 }
 
 /** Search criteria over the shared evidence repository. All fields are optional and combine with AND. */
@@ -347,4 +367,26 @@ export function buildEvidenceSearchSummaryText(results: EvidenceSearchResult[], 
     return `${count} ${noun} for "${query.text.trim()}"`;
   }
   return `${count} ${noun}`;
+}
+
+/** Longest `text` preview `buildEvidenceEntryAnnouncementText` renders before truncating with an ellipsis. */
+const ANNOUNCEMENT_TEXT_PREVIEW_LENGTH = 140;
+
+/**
+ * Renders a News Stream announcement line for a newly submitted evidence
+ * entry — the Argument Library source `state/newsStream.ts`'s
+ * `argumentLibraryNews()` reads, mirroring
+ * `team-collaboration-mode.ts`'s `buildSprintNoteAnnouncementText` (same
+ * preview length, same "truncate the body, keep the byline" shape). A
+ * `block` entry has no `cite`, so its line omits the "citing ..." clause
+ * rather than reading "citing ." for every one.
+ */
+export function buildEvidenceEntryAnnouncementText(entry: EvidenceLibraryEntry): string {
+  const preview =
+    entry.text.length > ANNOUNCEMENT_TEXT_PREVIEW_LENGTH
+      ? `${entry.text.slice(0, ANNOUNCEMENT_TEXT_PREVIEW_LENGTH).trimEnd()}…`
+      : entry.text;
+  const noun = entry.kind === "card" ? "card" : "analytic block";
+  const citing = entry.kind === "card" && entry.cite ? ` citing ${entry.cite}` : "";
+  return `New ${noun} for "${entry.argBlock}"${citing}: ${preview}`;
 }

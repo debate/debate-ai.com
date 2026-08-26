@@ -50,6 +50,14 @@ export interface NewsItem {
  */
 export const PRODUCT_NEWS: NewsItem[] = [
   {
+    id: "product-news-stream-argument-library",
+    category: "product",
+    title: "News Stream now posts new Argument Library submissions",
+    body: "The Community side of the feed now posts a card or analytic block the moment it's submitted and live in the shared repository at /cards/library — same as prep notes, streak milestones, challenge completions, and Revision Incentives standings.",
+    timestamp: Date.parse("2026-08-26T03:00:00Z"),
+    href: "/news",
+  },
+  {
     id: "product-news-stream-sprint-notes",
     category: "product",
     title: "News Stream now posts Team Collaboration Mode prep notes",

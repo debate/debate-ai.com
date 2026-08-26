@@ -13,8 +13,10 @@ import { saveGroupChallenge } from "../src/state/groupChallenges";
 import { recordChallengeWinEvent } from "../src/state/challengeWinEvents";
 import { saveRevisionRecord, type CardRevisionRecord } from "../src/state/revisionHistory";
 import { saveSprintNote } from "../src/state/sprintNotes";
+import { saveEvidenceLibraryEntry } from "../src/state/evidenceLibraryEntries";
 import type { GroupChallenge } from "../src/lib/group-challenges";
 import type { SprintNote } from "../src/lib/team-collaboration-mode";
+import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -115,6 +117,50 @@ describe("buildNewsFeed", () => {
     expect(item?.body).toBe(
       'erin logged a "Immigration" prep note: Need a 2026 solvency card for the affirmative',
     );
+  });
+
+  it("includes a newly submitted, live Argument Library entry as a community item", () => {
+    const entry: EvidenceLibraryEntry = {
+      id: "entry-1",
+      argBlock: "Warming DA",
+      wordCount: 8,
+      topic: "Energy Policy",
+      caseArea: "DA",
+      tags: ["warming"],
+      kind: "card",
+      text: "Rising emissions accelerate catastrophic warming impacts.",
+      cite: "Smith 24",
+      createdAt: 700,
+    };
+    saveEvidenceLibraryEntry(entry);
+
+    const item = buildNewsFeed().find((news) => news.id === "argument-library-entry-entry-1");
+    expect(item).toMatchObject({
+      category: "community",
+      title: 'New card added to the Argument Library: "Warming DA"',
+      timestamp: 700,
+      href: "/cards/argument-library",
+    });
+    expect(item?.body).toBe(
+      'New card for "Warming DA" citing Smith 24: Rising emissions accelerate catastrophic warming impacts.',
+    );
+  });
+
+  it("omits an Argument Library entry saved before createdAt existed", () => {
+    const entry: EvidenceLibraryEntry = {
+      id: "entry-legacy",
+      argBlock: "Legacy Block",
+      wordCount: 4,
+      topic: "Energy Policy",
+      caseArea: "Case",
+      tags: [],
+      kind: "block",
+      text: "Pre-existing block with no createdAt.",
+      cite: "",
+    };
+    saveEvidenceLibraryEntry(entry);
+
+    expect(buildNewsFeed().find((news) => news.id === "argument-library-entry-entry-legacy")).toBeUndefined();
   });
 
   it("sorts every category newest first together", () => {

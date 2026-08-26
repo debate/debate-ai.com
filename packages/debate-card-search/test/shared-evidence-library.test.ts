@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildEvidenceEntryAnnouncementText,
   buildEvidenceEntryRevision,
   buildEvidenceLibraryIndex,
   buildEvidenceSearchFormQuery,
@@ -312,6 +313,27 @@ describe("buildEvidenceSearchSummaryText", () => {
     expect(buildEvidenceSearchSummaryText(searchEvidenceLibrary(entries, query), query)).toBe(
       '2 results for "warming"',
     );
+  });
+});
+
+describe("buildEvidenceEntryAnnouncementText", () => {
+  it("includes the citation for a card entry", () => {
+    expect(buildEvidenceEntryAnnouncementText(entries[0])).toBe(
+      'New card for "Warming DA" citing Smith 24: Rising global temperatures accelerate extreme weather and sea level rise.',
+    );
+  });
+
+  it("omits the citing clause for a block entry with no cite", () => {
+    expect(buildEvidenceEntryAnnouncementText(entries[2])).toBe(
+      'New analytic block for "States CP": States are better positioned than the federal government to tailor energy policy locally.',
+    );
+  });
+
+  it("truncates a long body with an ellipsis", () => {
+    const longText = "x".repeat(200);
+    const entry: EvidenceLibraryEntry = { ...entries[0], text: longText };
+    const rendered = buildEvidenceEntryAnnouncementText(entry);
+    expect(rendered).toBe(`New card for "Warming DA" citing Smith 24: ${"x".repeat(140)}…`);
   });
 });
 
