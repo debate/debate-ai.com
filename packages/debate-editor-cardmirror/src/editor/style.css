@@ -5606,10 +5606,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
   border-radius: 8px;
   box-shadow: 0 8px 32px var(--pmd-c-shadow-deep);
   width: 90%;
-  /* Max-width sized to fit the full tab strip at the dialog's
-     largest rendering — otherwise the scroll-arrow buttons would
-     show even at max width, which defeats the point of having a
-     "natural" max-width. Update this if the tab labels grow. */
   max-width: 720px;
   max-height: 80vh;
   display: flex;
@@ -5617,18 +5613,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
   font-family: var(--pmd-ui-font);
 }
 
+/* Settings itself is the one dialog in this family that takes over the
+   whole window (Claude-style full-page settings) rather than sitting as
+   a centered card — a left icon+label sidebar plus a wide scrolling
+   content pane needs the full viewport to read comfortably. Scoped to
+   this modifier class (not the shared `.pmd-settings-dialog` base
+   above) because that base is also reused verbatim by the small Word
+   Count popup, which should stay a compact centered card. Still rides
+   inside the shared `.pmd-settings-overlay` scrim/centering rule;
+   matching the overlay's box exactly is what makes it read as "full
+   page" instead of "big dialog". */
+.pmd-settings-dialog-fullpage {
+  border-radius: 0;
+  box-shadow: none;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
 .pmd-settings-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.25rem;
+  padding: 0.85rem 1.5rem;
   border-bottom: 1px solid var(--pmd-c-divider);
   flex: 0 0 auto;
 }
 
 .pmd-settings-header h2 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 600;
 }
 
@@ -5646,104 +5661,95 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
   color: var(--pmd-c-text-strong);
 }
 
-/* Tab bar below the header. The bar wraps the tab nav and a
-   left/right arrow on each side — the arrows are revealed by JS
-   only when the tab list overflows its container. Active tab is
-   indicated by a bottom border + heavier weight (border lives on
-   the bar so the active-tab border can overlay it). */
-.pmd-settings-tabs-bar {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: stretch;
-  padding: 0 1rem;
-  border-bottom: 1px solid var(--pmd-c-divider);
-}
-
-.pmd-settings-tabs {
+/* Body: sidebar nav (icon + label, one category per row) on the left,
+   the active category's panel filling the rest. Replaces the old
+   top tab strip — a vertical list scales to far more categories
+   without ever needing scroll arrows. */
+.pmd-settings-body {
   display: flex;
   flex: 1 1 auto;
-  min-width: 0;
-  gap: 0.25rem;
-  /* Horizontal scroll under JS-arrow control. No native
-     scrollbar — the arrow buttons are the only scroll affordance.
-     `overflow-y: hidden` is explicit because setting just
-     `overflow-x: hidden` would auto-promote `overflow-y: visible`
-     to `auto`, surfacing a vertical scrollbar if any tab button
-     is even 1px taller than the strip's content area. */
-  overflow-x: hidden;
-  overflow-y: hidden;
-  /* The active tab's 2px underline is pulled 1px below the strip's
-     content box (`.pmd-settings-tab` margin-bottom: -1px, to overlap the
-     bar divider). A scrolled `overflow:hidden` container clips that
-     overflow — which dropped the underline on the middle tabs that
-     `scrollTabIntoView` nudges to a non-zero scroll. 1px of bottom
-     padding keeps the underline inside the clip box at any scroll. */
-  padding-bottom: 1px;
-  scroll-behavior: smooth;
+  min-height: 0;
+  overflow: hidden;
 }
 
-/* Arrow buttons revealed when the tab strip overflows. Sized to
-   match the tab buttons' visual weight; lean on the same muted/
-   strong color tokens as the inactive/hover tab states. The
-   negative bottom margin pulls the button onto the bar's bottom
-   border the same way `.pmd-settings-tab` does. */
-.pmd-settings-tabs-scroll {
+.pmd-settings-content-col {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pmd-settings-sidebar {
+  flex: 0 0 240px;
+  width: 240px;
+  overflow-y: auto;
+  padding: 0.75rem;
+  border-right: 1px solid var(--pmd-c-divider);
+  background: var(--pmd-c-surface-soft);
+}
+
+.pmd-settings-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.pmd-settings-navitem {
   appearance: none;
-  background: transparent;
-  border: none;
-  color: var(--pmd-c-text-muted);
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.75rem;
-  padding: 0 0.5rem;
-  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  margin-bottom: -1px;
-  transition: color 0.1s ease;
-}
-.pmd-settings-tabs-scroll[hidden] { display: none; }
-.pmd-settings-tabs-scroll:hover:not(:disabled) {
-  color: var(--pmd-c-text-strong);
-}
-.pmd-settings-tabs-scroll:disabled {
-  color: var(--pmd-c-border);
-  cursor: default;
-}
-
-.pmd-settings-tab {
-  appearance: none;
+  gap: 0.65rem;
+  width: 100%;
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
+  border-radius: 6px;
   color: var(--pmd-c-text-muted);
   cursor: pointer;
   font: inherit;
   font-size: 0.9rem;
-  padding: 0.6rem 0.85rem;
-  margin-bottom: -1px; /* Active-tab border overlays the strip border. */
-  white-space: nowrap;
-  transition: color 0.1s ease, border-color 0.1s ease;
+  padding: 0.55rem 0.7rem;
+  text-align: left;
+  transition: background-color 0.1s ease, color 0.1s ease;
 }
 
-.pmd-settings-tab:hover {
+.pmd-settings-navitem .pmd-icon {
+  flex: 0 0 auto;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.pmd-settings-navitem:hover {
+  background: var(--pmd-c-surface);
   color: var(--pmd-c-text-strong);
 }
 
-.pmd-settings-tab-active {
-  color: var(--pmd-c-text-strong);
-  border-bottom-color: var(--pmd-c-accent);
+.pmd-settings-navitem-active,
+.pmd-settings-navitem-active:hover {
+  background: var(--pmd-c-accent-soft);
+  color: var(--pmd-c-accent);
   font-weight: 600;
 }
 
 .pmd-settings-list {
   flex: 1 1 auto;
   overflow-y: auto;
-  padding: 0.5rem 1.25rem 1.25rem;
+  padding: 1.5rem 1.75rem 2.5rem;
+}
+
+.pmd-settings-panel {
+  max-width: 760px;
+  margin: 0 auto;
 }
 
 .pmd-settings-panel[hidden] {
   display: none;
+}
+
+.pmd-settings-panel-title {
+  margin: 0 0 1rem;
+  font-size: 1.3rem;
+  font-weight: 600;
 }
 
 /* Section headers inside a settings tab (SettingMeta.section).
@@ -5764,7 +5770,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
   text-transform: uppercase;
   color: var(--pmd-c-text-muted);
 }
-.pmd-settings-section-title:first-child {
+/* :first-of-type, not :first-child — the panel's own
+   `.pmd-settings-panel-title` heading sits before the first section
+   title now, so the section title is never literally the first child. */
+.pmd-settings-section-title:first-of-type {
   margin-top: 0.3rem;
   padding-top: 0;
   border-top: none;

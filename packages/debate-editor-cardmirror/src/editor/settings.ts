@@ -2446,6 +2446,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'The body-text zoom level every document opens at (50–300%). Zooming an open document (the zoom buttons, Ctrl-= / Ctrl--, or pinch) only affects that window or pane and resets to this default on reload — so different documents can sit at different zooms. Chrome scale is separate and stays linked across windows.',
     kind: 'defaultZoomPct',
     category: 'accessibility',
+    section: 'Zoom',
     aliases: ['zoom', 'default zoom', 'text size', 'document zoom'],
   },
   {
@@ -2475,6 +2476,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       "Remaps the colors that carry meaning — annotation accents, voice-mode dots, prep-timer Aff/Neg, search-match highlights, category chips — onto a palette engineered to stay distinguishable under red-green and blue-yellow color-vision deficiencies (Okabe-Ito). Works with both light and dark themes. Any colors you set under Color overrides below still win. Note: this preset changes CardMirror's interface colors only — it does not recolor highlights or background colors stored in documents. For those, use 'Override highlight/background color in display' and 'Show highlight & background color names in the status bar' below.",
     kind: 'toggle',
     category: 'accessibility',
+    section: 'Color & contrast',
     aliases: ['colorblind', 'color blind', 'cvd', 'deuteranopia', 'protanopia', 'tritanopia'],
   },
   {
@@ -2484,6 +2486,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Add a shape-coded underline to in-document annotations so you can tell them apart without relying on their tint colors: comments dotted, flashcards solid, AI threads dashed, private notes double. Off shows just the tinted backgrounds. Works independently of the palette above.',
     kind: 'toggle',
     category: 'accessibility',
+    section: 'Color & contrast',
     aliases: ['underline shapes', 'annotation shapes', 'dashed', 'colorblind', 'cvd'],
   },
   {
@@ -2493,6 +2496,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       "Show the navigation pane's Analytic entries in italics so they stand out from tags and other entries by shape, not color alone. Also useful in dark mode and with 'Format nav pane entries by type' off, where the analytic color cue doesn't appear at all.",
     kind: 'toggle',
     category: 'accessibility',
+    section: 'Color & contrast',
     aliases: ['analytic italics', 'nav pane', 'navigation', 'colorblind', 'cvd'],
   },
   {
@@ -2502,6 +2506,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       "Render cite-marked text at normal weight instead of bold. Dense bold runs are a visual-crowding trigger for some readers; this keeps cites readable without changing the document — exports and other machines still see the standard bold cite.",
     kind: 'toggle',
     category: 'accessibility',
+    section: 'Color & contrast',
     aliases: ['cite bold', 'unbold', 'font weight', 'visual crowding'],
   },
   {
@@ -2511,6 +2516,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       "Disable UI animations and transitions (drag-pickup vacuum, popover slides, etc.). 'System' follows your OS preference; 'On' always reduces motion; 'Off' overrides the OS and plays full motion.",
     kind: 'reduceMotion',
     category: 'accessibility',
+    section: 'Motion & assistive tech',
     mobile: true,
     aliases: ['animations', 'disable animations'],
   },
@@ -2521,6 +2527,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Stop the text cursor from blinking — the caret stays solid (in the usual cursor color) instead of flashing on and off while you type.',
     kind: 'toggle',
     category: 'accessibility',
+    section: 'Motion & assistive tech',
     aliases: ['caret', 'cursor blink', 'blinking cursor', 'non-blinking'],
   },
   {
@@ -2530,6 +2537,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Let screen readers and other assistive technology read CardMirror. OFF by default: a current Chromium bug crashes the whole window (white screen, lost work) while building the accessibility tree, so we disable it to keep CardMirror stable. Turn this on only if you rely on a screen reader — it re-activates the known crash. Takes effect after restarting CardMirror.',
     kind: 'accessibilityRenderer',
     category: 'accessibility',
+    section: 'Motion & assistive tech',
     electronOnly: true,
     aliases: ['screen reader', 'accessibility', 'a11y', 'narrator', 'nvda', 'jaws', 'voice access'],
   },
@@ -2540,6 +2548,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       "When on, highlights in the doc render in the override colors below regardless of what's stored on the mark. Display-only — the doc itself is untouched.",
     kind: 'toggle',
     category: 'accessibility',
+    section: 'Highlight & shading overrides',
   },
   {
     key: 'overrideHighlightSlots',
@@ -2548,6 +2557,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       "Up to 3 ordered colors. With one slot, every highlight renders in that color. With two or three, the most-common highlight color in the doc gets slot 1, the second-most-common gets slot 2, and everything else gets the last slot. The ranking re-computes automatically as the doc changes.",
     kind: 'colorSlots',
     category: 'accessibility',
+    section: 'Highlight & shading overrides',
     dependsOn: 'overrideHighlightColor',
   },
   {
@@ -2557,6 +2567,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Same idea, applied to background color. Display-only — the doc itself is untouched.',
     kind: 'toggle',
     category: 'accessibility',
+    section: 'Highlight & shading overrides',
     aliases: ['shading', 'override shading color'],
   },
   {
@@ -2564,6 +2575,7 @@ export const SETTING_METADATA: SettingMeta[] = [
     label: 'Background override colors',
     kind: 'colorSlots',
     category: 'accessibility',
+    section: 'Highlight & shading overrides',
     dependsOn: 'overrideShadingColor',
     aliases: ['shading override colors'],
   },
@@ -2574,6 +2586,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Displays the actual stored highlight and background color names for the text at your cursor (e.g. "Hl: Yellow · Sh: none"), whether or not the display overrides above are on. Highlight hues often carry meaning in shared files — this gives you that meaning as text, useful when colors are hard to tell apart.',
     kind: 'toggle',
     category: 'accessibility',
+    section: 'Highlight & shading overrides',
     aliases: ['shading names', 'color names'],
   },
   {
@@ -2583,6 +2596,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       "Override any color in the interface. Explicit overrides here always win over the defaults and over future accessibility presets (high-contrast, dark mode, colorblind-friendly, etc.) — pick a color to override it; reset a row to fall back to whichever preset is active.",
     kind: 'colorOverrides',
     category: 'accessibility',
+    section: 'Highlight & shading overrides',
   },
   {
     key: 'uiFont',
@@ -2591,6 +2605,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Font family for the user interface — ribbon, dialogs, navigation pane, comments column, etc. Distinct from the body font (the editor content font). "System default" uses the platform\'s native UI font stack.',
     kind: 'uiFont',
     category: 'accessibility',
+    section: 'Fonts',
     aliases: ['ui font', 'app font'],
   },
   {
@@ -2600,6 +2615,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Which microphone the voice session (Ctrl-Shift-V) listens to. "System default" follows the OS setting. Device names appear after the first voice session grants microphone access. Desktop only.',
     kind: 'voiceInputDevice',
     category: 'accessibility',
+    section: 'Voice control',
   },
   {
     key: 'voiceAutoSleepSeconds',
@@ -2608,6 +2624,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'How long the voice session can sit idle before it parks itself asleep, so a forgotten mic doesn\'t eat a conversation. The status pill dims during the last ten seconds. Say "voice wake" to resume. 0 disables auto-sleep.',
     kind: 'number',
     category: 'accessibility',
+    section: 'Voice control',
   },
   {
     key: 'voiceDashStyle',
@@ -2616,6 +2633,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'The glyph dictated by the bare word "dash". Explicit names always work regardless of this setting: "hyphen", "n dash", "m dash", "double dash", "triple dash", each optionally followed by "spaced".',
     kind: 'voiceDashStyle',
     category: 'accessibility',
+    section: 'Voice control',
   },
   {
     key: 'voiceDictationModel',
@@ -2624,6 +2642,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'The standard model — a one-time ~130 MB download — handles all commands and dictation, and is what voice needs to run at all. The large model — a one-time 1.8 GB download, ~5 GB of memory while voice is on — roughly halves dictation word errors on general English, and changes dictation only (not commands, targeting, paint, or debate jargon). Download either below, or let the first voice start fetch the standard model. Takes effect the next time voice starts.',
     kind: 'voiceDictationModel',
     category: 'accessibility',
+    section: 'Voice control',
   },
 
   // ─── Appearance ─────────────────────────────────────────────────
@@ -3372,6 +3391,7 @@ export const SETTING_METADATA: SettingMeta[] = [
     description: 'Display name attached to comments you create. Stored locally.',
     kind: 'text',
     category: 'comments-ai',
+    section: 'Comment identity',
   },
   {
     key: 'commentAuthorInitials',
@@ -3379,6 +3399,7 @@ export const SETTING_METADATA: SettingMeta[] = [
     description: 'Short badge shown on your comments. Auto-derived from the name if left empty.',
     kind: 'text',
     category: 'comments-ai',
+    section: 'Comment identity',
   },
   {
     key: 'aiFeaturesEnabled',
@@ -3387,6 +3408,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Master switch for AI-powered comment features (in-comment "Explain" prompts, @AI mentions). Requires selecting a provider and pasting its API key below.',
     kind: 'toggle',
     category: 'comments-ai',
+    section: 'AI provider',
     mobile: true,
   },
   {
@@ -3398,6 +3420,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Each provider has its own key below.',
     kind: 'aiProvider',
     category: 'comments-ai',
+    section: 'AI provider',
     mobile: true,
     dependsOn: 'aiFeaturesEnabled',
     aliases: ['openrouter', 'provider', 'model provider'],
@@ -3408,6 +3431,7 @@ export const SETTING_METADATA: SettingMeta[] = [
     description: 'Used when AI features are enabled and the provider is Anthropic.',
     kind: 'password',
     category: 'comments-ai',
+    section: 'AI provider',
     mobile: true,
     dependsOn: ['aiFeaturesEnabled', { key: 'aiProvider', equals: 'anthropic' }],
   },
@@ -3418,6 +3442,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Optional. The Claude model id used by all AI features (e.g. claude-opus-4-8). Leave blank to use the version built into this release. Set a newer id here if the built-in model has been retired and you’d rather not update the whole app. A malformed entry is ignored and the default is used.',
     kind: 'text',
     category: 'comments-ai',
+    section: 'AI provider',
     mobile: true,
     dependsOn: ['aiFeaturesEnabled', { key: 'aiProvider', equals: 'anthropic' }],
     aliases: ['model', 'claude model', 'model override', 'opus', 'sonnet', 'haiku'],
@@ -3430,6 +3455,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'settings; sent only to openrouter.ai.',
     kind: 'password',
     category: 'comments-ai',
+    section: 'AI provider',
     mobile: true,
     dependsOn: ['aiFeaturesEnabled', { key: 'aiProvider', equals: 'openrouter' }],
   },
@@ -3442,6 +3468,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'will not run until this is set.',
     kind: 'text',
     category: 'comments-ai',
+    section: 'AI provider',
     mobile: true,
     dependsOn: ['aiFeaturesEnabled', { key: 'aiProvider', equals: 'openrouter' }],
     aliases: ['openrouter model', 'model'],
@@ -3458,6 +3485,7 @@ export const SETTING_METADATA: SettingMeta[] = [
     kind: 'number',
     min: 1024,
     category: 'comments-ai',
+    section: 'AI provider',
     mobile: true,
     dependsOn: 'aiFeaturesEnabled',
     aliases: ['max tokens', 'output tokens', 'token budget', 'reasoning', 'thinking'],
@@ -3469,6 +3497,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'When the AI is composing a reply, the in-flight placeholder cycles through time-of-day Clod activities ("Clod is making toast…") instead of plain "Thinking…".',
     kind: 'clod',
     category: 'comments-ai',
+    section: 'Clod',
     dependsOn: 'aiFeaturesEnabled',
     mobile: true,
   },
@@ -3479,6 +3508,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Set the name and pronouns for Clod, write your own activity phrases for each time of day, and adjust when those periods begin. Opens a full editor.',
     kind: 'clodCustomize',
     category: 'comments-ai',
+    section: 'Clod',
     dependsOn: 'aiFeaturesEnabled',
     aliases: ['clod', 'persona', 'clod activities', 'pronouns', 'clod name'],
   },
@@ -3489,6 +3519,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'System prompt the cite-creator hands to the model. Click "Edit prompt" to open a full-size editor. Leave blank to use the built-in default.',
     kind: 'aiCitePrompt',
     category: 'comments-ai',
+    section: 'Prompts',
     dependsOn: 'aiFeaturesEnabled',
   },
   // ─── Card Cutter (experimental; console-gated, hidden until on) ──
@@ -3499,6 +3530,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Which read-length option the cut panel opens with. Efficient cuts as tight as the content allows with no fixed cap; a seconds cap trims the read to fit at your reader words-per-minute. Every cut can still override this in the panel.',
     kind: 'cardCutterReadTime',
     category: 'comments-ai',
+    section: 'Card cutter (experimental)',
     searchHidden: true,
     revealWhen: 'cardCutterEnabled',
   },
@@ -3509,6 +3541,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Path to the card-cutter engine bundle this build loads (packaged installs only — the engine is never shipped with the app). Leave empty to use the CARDCUTTER_ENGINE environment variable, or the default plugins location in the app data folder. Reload after changing.',
     kind: 'cardCutterEnginePath',
     category: 'comments-ai',
+    section: 'Card cutter (experimental)',
     electronOnly: true,
     searchHidden: true,
     revealWhen: 'cardCutterEnabled',
@@ -3520,6 +3553,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Turns the experimental card cutter back off, hides its ribbon commands and shortcuts, and removes this settings tab. Re-enable with the console command.',
     kind: 'cardCutterDisable',
     category: 'comments-ai',
+    section: 'Card cutter (experimental)',
     searchHidden: true,
     revealWhen: 'cardCutterEnabled',
   },
@@ -3530,6 +3564,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Turn on cross-machine collaboration — both card sharing and real-time co-editing. Card sharing adds a Send and a Receive pill next to the dropzone (drag a card onto Send to push it to a recipient; cards others send you land in Receive). Co-editing lets you share a document and edit it together live.',
     kind: 'toggle',
     category: 'pairing',
+    section: 'Collaboration',
     aliases: ['share', 'send card', 'recipient', 'to', 'pairing', 'card sharing', 'collaboration', 'co-edit', 'coedit', 'co-editing'],
   },
   {
@@ -3539,6 +3574,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       "This machine's code. Share it with anyone you want to be able to send you cards. Anyone with this code (and the app) can send to you; regenerate it to cut off old shares.",
     kind: 'pairingOwnCode',
     category: 'pairing',
+    section: 'Identity & account',
     dependsOn: 'pairingEnabled',
   },
   {
@@ -3552,6 +3588,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'oldest.',
     kind: 'pairingAccount',
     category: 'pairing',
+    section: 'Identity & account',
     dependsOn: 'pairingEnabled',
     aliases: ['account', 'auth', 'authorize', 'debate decoded', 'connect code', 'membership'],
   },
@@ -3564,6 +3601,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       "Optional name shown to collaborators — on your live cursor in co-editing sessions, and stamped on cards you send. Leave empty for a generic name.",
     kind: 'text',
     category: 'pairing',
+    section: 'Identity & account',
     dependsOn: 'pairingEnabled',
   },
   {
@@ -3573,6 +3611,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Machines you can send to. Add one by pasting the code it shared with you and giving it a name (shown in the To list when sending, and on cards you receive from it). Hide a recipient from the Send pill (the eye button) without deleting it.',
     kind: 'pairingPartners',
     category: 'pairing',
+    section: 'Recipients',
     dependsOn: 'pairingEnabled',
   },
   {
@@ -3582,6 +3621,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Named sets of recipients for one-drop sends — e.g. a "Smith/Jones" team. Dropping a card on a group sends it to every member.',
     kind: 'pairingGroups',
     category: 'pairing',
+    section: 'Recipients',
     dependsOn: 'pairingEnabled',
   },
   {
@@ -3591,6 +3631,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Cards and room invites from these senders never appear — they are dropped silently from the Receive inbox and its unread count. Paste a code to block it, or block someone who recently shared with you. The sender code is self-declared, so this is a convenience filter, not a security guarantee.',
     kind: 'pairingBlocked',
     category: 'pairing',
+    section: 'Recipients',
     dependsOn: 'pairingEnabled',
     aliases: ['block', 'blocklist', 'ignore sender', 'mute sender'],
   },
@@ -3601,6 +3642,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       "Render your partner's live cursor and selection during a collaboration session. Turning this off keeps the document syncing — it only hides the cursor overlay (and stops broadcasting yours).",
     kind: 'toggle',
     category: 'pairing',
+    section: 'Session behavior',
     electronOnly: true,
     dependsOn: 'pairingEnabled',
   },
@@ -3611,6 +3653,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Flash the Receive pill green when a card arrives. "Flash once" pulses a single time; "Keep flashing" re-pulses every 10 seconds until you open the Receive pill and see the new card(s); "Off" never flashes.',
     kind: 'pairingReceiveFlash',
     category: 'pairing',
+    section: 'Session behavior',
     dependsOn: 'pairingEnabled',
   },
   {
@@ -3620,6 +3663,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'New cards normally arrive instantly by live push. This sets the polling cadence used only against relays without push support, and (at least every 5 minutes) the safety-net catch-up while push is connected. Default 30; clamped to 5–3600.',
     kind: 'number',
     category: 'pairing',
+    section: 'Relay (advanced)',
     electronOnly: true,
     dependsOn: 'pairingEnabled',
   },
@@ -3630,6 +3674,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       'Point card sharing at your own relay server instead of the official one — e.g. https://relay.example.com/relay. The relay server ships in the CardMirror repo\'s relay/ folder (see its README); everyone sharing cards must use the same relay. Leave empty for the official relay.',
     kind: 'text',
     category: 'pairing',
+    section: 'Relay (advanced)',
     dependsOn: 'pairingEnabled',
     aliases: ['self-hosted relay', 'relay server', 'custom server'],
   },
@@ -3640,6 +3685,7 @@ export const SETTING_METADATA: SettingMeta[] = [
       "The RELAY_TOKEN configured on your self-hosted relay. Only used when a custom relay URL is set; stored locally on this machine. Leave empty when using the official relay.",
     kind: 'password',
     category: 'pairing',
+    section: 'Relay (advanced)',
     dependsOn: 'pairingEnabled',
     aliases: ['relay token', 'relay password'],
   },

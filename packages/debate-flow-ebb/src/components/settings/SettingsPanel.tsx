@@ -3,6 +3,7 @@
 import {
     ArrowsClockwise,
     type Icon,
+    GridFour,
     Keyboard,
     Palette,
     PencilSimpleLine,
@@ -48,6 +49,7 @@ import { cn } from "../../lib/utils";
 
 import FlowsFolderControl from "./FlowsFolderControl";
 import SettingRow from "./SettingRow";
+import SettingsSection from "./SettingsSection";
 import UpdateSettings from "./UpdateSettings";
 
 const THEME_OPTIONS: { id: ThemeMode; label: string }[] = [
@@ -85,11 +87,12 @@ function isReservedChord(chord: string): boolean {
     return [`${mod}+a`, `${mod}+c`, `${mod}+v`, `${mod}+x`, `${mod}+q`].includes(chord);
 }
 
-type Category = "display" | "editor" | "keyboard" | "collaboration" | "updates";
+type Category = "appearance" | "grid" | "editing" | "keyboard" | "collaboration" | "updates";
 
 const BASE_CATEGORIES: { id: Category; label: string; icon: Icon }[] = [
-    { id: "display", label: "Display", icon: Palette },
-    { id: "editor", label: "Editor", icon: PencilSimpleLine },
+    { id: "appearance", label: "Appearance", icon: Palette },
+    { id: "grid", label: "Flow & Grid", icon: GridFour },
+    { id: "editing", label: "Editing", icon: PencilSimpleLine },
     { id: "keyboard", label: "Keyboard", icon: Keyboard },
 ];
 
@@ -147,7 +150,7 @@ export default function SettingsPanel() {
     const setDefaultGridZoom = useFlowStore((s) => s.setDefaultGridZoom);
 
     const [recording, setRecording] = useState<CommandId | null>(null);
-    const [category, setCategory] = useState<Category>("display");
+    const [category, setCategory] = useState<Category>("appearance");
     const [query, setQuery] = useState("");
     const [zoomDraft, setZoomDraft] = useState("");
 
@@ -168,7 +171,7 @@ export default function SettingsPanel() {
         if (!open) {
             setRecording(null);
             setQuery("");
-            setCategory("display");
+            setCategory("appearance");
         }
     }, [open]);
 
@@ -237,6 +240,8 @@ export default function SettingsPanel() {
         }
     }
 
+    const activeCategory = CATEGORIES.find((c) => c.id === category);
+
     return (
         <Dialog
             open={open}
@@ -249,12 +254,12 @@ export default function SettingsPanel() {
                 data-testid="settings-panel"
                 aria-label="Settings"
                 onKeyDown={onPanelKeyDown}
-                className="max-w-[840px] gap-0 overflow-hidden p-0 sm:max-w-[840px]"
+                className="inset-0 top-0 left-0 h-full max-h-full w-full max-w-full translate-x-0 translate-y-0 gap-0 overflow-hidden rounded-none border-0 p-0 sm:max-w-full"
             >
                 <DialogTitle className="sr-only">Settings</DialogTitle>
 
                 {/* Header */}
-                <div className="border-border flex items-center justify-between border-b px-4 py-3">
+                <div className="border-border flex shrink-0 items-center justify-between border-b px-6 py-3.5">
                     <span className="text-foreground text-[15px] font-semibold">Settings</span>
                     <Tip label="Close" hoverOnly>
                         <DialogClose
@@ -267,14 +272,14 @@ export default function SettingsPanel() {
                     </Tip>
                 </div>
 
-                {/* Two-pane body */}
-                <div className="flex h-[70vh]">
+                {/* Two-pane body, filling the rest of the page */}
+                <div className="flex min-h-0 flex-1">
                     {/* Left nav */}
                     <nav
-                        className="border-border bg-muted/30 flex w-[180px] shrink-0 flex-col gap-0.5 border-r p-3"
+                        className="border-border bg-muted/30 flex w-[240px] shrink-0 flex-col gap-0.5 overflow-y-auto border-r p-3"
                         aria-label="Settings categories"
                     >
-                        <span className="text-muted-foreground px-2 pb-1 text-[11px] font-semibold tracking-wide uppercase">
+                        <span className="text-muted-foreground px-2.5 pb-1 text-[11px] font-semibold tracking-wide uppercase">
                             Options
                         </span>
                         {CATEGORIES.map((c) => {
@@ -288,13 +293,13 @@ export default function SettingsPanel() {
                                     onClick={() => setCategory(c.id)}
                                     aria-current={active ? "page" : undefined}
                                     className={cn(
-                                        "flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-[13px] transition-colors",
+                                        "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[13.5px] transition-colors",
                                         active
                                             ? "bg-accent font-medium text-accent-foreground"
                                             : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
                                     )}
                                 >
-                                    <Icon className="size-4 shrink-0 opacity-80" />
+                                    <Icon className="size-[18px] shrink-0 opacity-80" />
                                     {c.label}
                                 </button>
                             );
@@ -302,455 +307,502 @@ export default function SettingsPanel() {
                     </nav>
 
                     {/* Right content */}
-                    <div className="flex-1 overflow-y-auto px-5 py-2">
-                        {category === "updates" && <UpdateSettings />}
-                        {category === "display" && (
-                            <div className="flex flex-col">
-                                <SettingRow
-                                    title="Theme"
-                                    control={
-                                        <div
-                                            role="radiogroup"
-                                            aria-label="Theme"
-                                            className="flex items-center gap-1"
-                                        >
-                                            {THEME_OPTIONS.map((t) => {
-                                                const checked = t.id === theme;
-                                                return (
-                                                    <label
-                                                        key={t.id}
-                                                        className={cn(
-                                                            "flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-[13px] transition-colors",
-                                                            checked
-                                                                ? "bg-accent text-foreground"
-                                                                : "text-muted-foreground hover:bg-accent/50",
-                                                        )}
-                                                    >
-                                                        <input
-                                                            type="radio"
-                                                            name="theme"
-                                                            value={t.id}
-                                                            checked={checked}
-                                                            onChange={() => setTheme(t.id)}
-                                                            data-testid={`theme-${t.id}`}
-                                                            className="accent-sel"
-                                                        />
-                                                        {t.label}
-                                                    </label>
-                                                );
-                                            })}
-                                        </div>
-                                    }
-                                />
-                                <SettingRow
-                                    title="Default zoom"
-                                    description="Zoom level the flow grid opens at."
-                                    control={
-                                        <div className="flex items-center gap-1">
-                                            <Input
-                                                type="text"
-                                                inputMode="numeric"
-                                                value={zoomDraft}
-                                                onChange={(e) => setZoomDraft(e.target.value)}
-                                                onBlur={commitZoom}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === "Enter") e.currentTarget.blur();
-                                                }}
-                                                aria-label="Default zoom percentage"
-                                                data-testid="default-zoom-input"
-                                                className="h-8 w-16 text-right tabular-nums"
-                                            />
-                                            <span className="text-muted-foreground text-[13px]">
-                                                %
-                                            </span>
-                                        </div>
-                                    }
-                                />
-                                <SettingRow
-                                    title="Scroll to zoom"
-                                    description={`Zoom the flow grid by holding ${
-                                        isMacPlatform() ? "Cmd" : "Ctrl"
-                                    } and scrolling, or pinching on a trackpad. Turn off to leave the wheel alone.`}
-                                    control={
-                                        <Switch
-                                            checked={scrollZoom}
-                                            onCheckedChange={setScrollZoom}
-                                            data-testid="scroll-zoom-toggle"
-                                            aria-label="Scroll to zoom"
-                                        />
-                                    }
-                                />
-                                <SettingRow
-                                    title="Visually align speeches"
-                                    description="Line every sheet up on the round's speaking order, so a speech keeps one place on screen as you move between sheets. Speeches which are not accessible for that sheet type are grayed out."
-                                    control={
-                                        <Switch
-                                            checked={alignSpeeches}
-                                            onCheckedChange={setAlignSpeeches}
-                                            data-testid="align-speeches-toggle"
-                                            aria-label="Visually align speeches"
-                                        />
-                                    }
-                                />
-                                <SettingRow
-                                    title="Tooltips"
-                                    description="Hover hints on buttons and controls. Turn off to hide them."
-                                    control={
-                                        <Switch
-                                            checked={tooltips}
-                                            onCheckedChange={setTooltips}
-                                            data-testid="tooltips-toggle"
-                                            aria-label="Tooltips"
-                                        />
-                                    }
-                                />
-                                <SettingRow
-                                    title="Flow font"
-                                    description="Used for the sheet editor."
-                                    control={
-                                        <>
-                                            <Select
-                                                value={flowFont}
-                                                // Base UI Select renders the raw value unless given a
-                                                // value->label map to resolve the trigger display.
-                                                items={FONTS.map((f) => ({
-                                                    value: f.id,
-                                                    label: f.label,
-                                                }))}
-                                                onValueChange={(value) =>
-                                                    setFlowFont(value as FontId)
-                                                }
-                                            >
-                                                <SelectTrigger
-                                                    aria-label="Flow font"
-                                                    data-testid="flow-font-select"
-                                                    className="w-44"
-                                                >
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {FONTS.map((f) => (
-                                                        <SelectItem
-                                                            key={f.id}
-                                                            value={f.id}
-                                                            data-testid={`flow-font-${f.id}`}
-                                                            style={{ fontFamily: f.cssVar }}
-                                                        >
-                                                            {f.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => setFlowFont(DEFAULT_FONT_ID)}
-                                                disabled={flowFont === DEFAULT_FONT_ID}
-                                                data-testid="flow-font-reset"
-                                                aria-label="Reset flow font to default"
-                                            >
-                                                Default
-                                            </Button>
-                                        </>
-                                    }
-                                >
-                                    <p
-                                        className="rounded-md border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-[13px] text-zinc-900"
-                                        style={{
-                                            fontFamily:
-                                                FONTS.find((f) => f.id === flowFont)?.cssVar ??
-                                                FONTS[0].cssVar,
-                                        }}
-                                        data-testid="flow-font-sample"
-                                    >
-                                        Separation of powers outweighs
-                                    </p>
-                                </SettingRow>
-                                <SettingRow
-                                    title="Side colors"
-                                    control={
-                                        <>
-                                            {SIDE_OPTIONS.map((s) => {
-                                                const value =
-                                                    (s.id === "aff" ? affColor : negColor) ??
-                                                    DEFAULT_SIDE_COLORS[s.id];
-                                                return (
-                                                    <label
-                                                        key={s.id}
-                                                        className="text-muted-foreground flex items-center gap-1.5 text-[13px]"
-                                                    >
-                                                        <input
-                                                            type="color"
-                                                            value={value}
-                                                            onChange={(e) =>
-                                                                setSideColor(s.id, e.target.value)
-                                                            }
-                                                            data-testid={`side-color-${s.id}`}
-                                                            aria-label={`${s.label} color`}
-                                                            className="border-border h-5 w-8 cursor-pointer rounded border bg-transparent p-0"
-                                                        />
-                                                        {s.label}
-                                                    </label>
-                                                );
-                                            })}
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => {
-                                                    setSideColor("aff", null);
-                                                    setSideColor("neg", null);
-                                                }}
-                                                disabled={affColor === null && negColor === null}
-                                                data-testid="side-colors-reset"
-                                                aria-label="Reset side colors to default"
-                                            >
-                                                Default
-                                            </Button>
-                                        </>
-                                    }
-                                />
-                                <SettingRow
-                                    title="Vim keybindings"
-                                    description="Applies only to the RFD editor."
-                                    control={
-                                        <Switch
-                                            checked={rfdVim}
-                                            onCheckedChange={setRfdVim}
-                                            data-testid="rfd-vim-toggle"
-                                            aria-label="Vim keybindings"
-                                        />
-                                    }
-                                />
-                            </div>
-                        )}
-                        {category === "editor" && (
-                            <div className="flex flex-col">
-                                <SettingRow
-                                    title="Insert paste"
-                                    description="With insert paste on, pasted cells push the text already in those columns down instead of writing over it."
-                                    control={
-                                        <Switch
-                                            checked={insertPaste}
-                                            onCheckedChange={setInsertPaste}
-                                            data-testid="insert-paste-toggle"
-                                            aria-label="Insert paste"
-                                        />
-                                    }
-                                />
-                                <SettingRow
-                                    title="Append mode"
-                                    description="With append mode on, typing on a cell that already has text adds to the end of it instead of writing over it."
-                                    control={
-                                        <Switch
-                                            checked={appendEdit}
-                                            onCheckedChange={setAppendEdit}
-                                            data-testid="append-edit-toggle"
-                                            aria-label="Append mode"
-                                        />
-                                    }
-                                />
-                                <SettingRow
-                                    title="Flows folder"
-                                    description="Where new flows are filed. Existing files stay where they are."
-                                    control={<FlowsFolderControl />}
-                                />
-                                {isDesktop() && (
-                                    <section
-                                        className="mt-4 flex flex-col"
-                                        data-testid="cardmirror-section"
-                                    >
-                                        {/* The label rides the divider, so the
-                                            preceding row's hairline is the only
-                                            rule between the two groups. */}
-                                        <div className="mb-1 flex items-center gap-2">
-                                            <h3 className="text-muted-foreground text-[11px] font-bold tracking-widest uppercase">
-                                                CardMirror
-                                            </h3>
-                                            <span className="bg-border/60 h-px flex-1" />
-                                        </div>
+                    <div className="min-w-0 flex-1 overflow-y-auto">
+                        <div className="mx-auto max-w-[680px] px-8 py-8">
+                            {activeCategory && (
+                                <h1 className="text-foreground mb-6 text-xl font-semibold">
+                                    {activeCategory.label}
+                                </h1>
+                            )}
+                            {category === "updates" && <UpdateSettings />}
+                            {category === "appearance" && (
+                                <div>
+                                    <SettingsSection title="Theme">
                                         <SettingRow
-                                            title="Enable CardMirror integration"
+                                            title="Theme"
+                                            control={
+                                                <div
+                                                    role="radiogroup"
+                                                    aria-label="Theme"
+                                                    className="flex items-center gap-1"
+                                                >
+                                                    {THEME_OPTIONS.map((t) => {
+                                                        const checked = t.id === theme;
+                                                        return (
+                                                            <label
+                                                                key={t.id}
+                                                                className={cn(
+                                                                    "flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-[13px] transition-colors",
+                                                                    checked
+                                                                        ? "bg-accent text-foreground"
+                                                                        : "text-muted-foreground hover:bg-accent/50",
+                                                                )}
+                                                            >
+                                                                <input
+                                                                    type="radio"
+                                                                    name="theme"
+                                                                    value={t.id}
+                                                                    checked={checked}
+                                                                    onChange={() => setTheme(t.id)}
+                                                                    data-testid={`theme-${t.id}`}
+                                                                    className="accent-sel"
+                                                                />
+                                                                {t.label}
+                                                            </label>
+                                                        );
+                                                    })}
+                                                </div>
+                                            }
+                                        />
+                                        <SettingRow
+                                            title="Tooltips"
+                                            description="Hover hints on buttons and controls. Turn off to hide them."
                                             control={
                                                 <Switch
-                                                    checked={cardmirrorEnabled}
-                                                    onCheckedChange={setCardmirrorEnabled}
-                                                    data-testid="cardmirror-enabled-toggle"
-                                                    aria-label="Enable CardMirror integration"
+                                                    checked={tooltips}
+                                                    onCheckedChange={setTooltips}
+                                                    data-testid="tooltips-toggle"
+                                                    aria-label="Tooltips"
                                                 />
                                             }
                                         />
-                                        {cardmirrorEnabled && (
-                                            <SettingRow
-                                                title="Send to CardMirror as"
-                                                description="What style ebb should apply to text sent to CardMirror."
-                                                control={
+                                    </SettingsSection>
+                                    <SettingsSection title="Flow styling">
+                                        <SettingRow
+                                            title="Flow font"
+                                            description="Used for the sheet editor."
+                                            control={
+                                                <>
                                                     <Select
-                                                        value={cardmirrorTextType}
-                                                        items={CARDMIRROR_TEXT_TYPES}
+                                                        value={flowFont}
+                                                        // Base UI Select renders the raw value unless given a
+                                                        // value->label map to resolve the trigger display.
+                                                        items={FONTS.map((f) => ({
+                                                            value: f.id,
+                                                            label: f.label,
+                                                        }))}
                                                         onValueChange={(value) =>
-                                                            setCardmirrorTextType(
-                                                                value as CardMirrorTextType,
-                                                            )
+                                                            setFlowFont(value as FontId)
                                                         }
                                                     >
                                                         <SelectTrigger
-                                                            aria-label="Send to CardMirror as"
-                                                            data-testid="cardmirror-text-type-select"
+                                                            aria-label="Flow font"
+                                                            data-testid="flow-font-select"
                                                             className="w-44"
                                                         >
                                                             <SelectValue />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            {CARDMIRROR_TEXT_TYPES.map((t) => (
+                                                            {FONTS.map((f) => (
                                                                 <SelectItem
-                                                                    key={t.value}
-                                                                    value={t.value}
-                                                                    data-testid={`cardmirror-text-type-${t.value}`}
+                                                                    key={f.id}
+                                                                    value={f.id}
+                                                                    data-testid={`flow-font-${f.id}`}
+                                                                    style={{ fontFamily: f.cssVar }}
                                                                 >
-                                                                    {t.label}
+                                                                    {f.label}
                                                                 </SelectItem>
                                                             ))}
                                                         </SelectContent>
                                                     </Select>
-                                                }
-                                            />
-                                        )}
-                                    </section>
-                                )}
-                            </div>
-                        )}
-                        {category === "collaboration" && (
-                            <div className="flex flex-col" data-testid="collab-section">
-                                <SettingRow
-                                    title="Shared editing"
-                                    description="Enables collaboration features, off by default. Off, nothing reaches the network. On, sharing or joining a round does, and so does Listen for invites."
-                                    control={
-                                        <Switch
-                                            checked={collabEnabled}
-                                            onCheckedChange={setCollabEnabled}
-                                            data-testid="collab-enabled-toggle"
-                                            aria-label="Shared editing"
-                                        />
-                                    }
-                                />
-                                {collabEnabled && (
-                                    <>
-                                        <SettingRow
-                                            title="Allow relay"
-                                            description="Off restricts a session to direct connections. On enables connections across networks."
-                                            control={
-                                                <Switch
-                                                    checked={collabRelayEnabled}
-                                                    onCheckedChange={setCollabRelayEnabled}
-                                                    data-testid="collab-relay-toggle"
-                                                    aria-label="Allow relay"
-                                                />
-                                            }
-                                        />
-                                        <SettingRow
-                                            title="Listen for invites"
-                                            description="Keeps an endpoint open the whole time ebb is running so a saved contact can share a round with you."
-                                            control={
-                                                <Switch
-                                                    checked={collabListenEnabled}
-                                                    onCheckedChange={setCollabListenEnabled}
-                                                    data-testid="collab-listen-toggle"
-                                                    aria-label="Listen for invites"
-                                                />
-                                            }
-                                        />
-                                        <SettingRow
-                                            title="Show viewer cursors"
-                                            description="Marks the cell a view-only peer is looking at. Off hides them, leaving only the cells a partner is editing."
-                                            control={
-                                                <Switch
-                                                    checked={collabShowViewers}
-                                                    onCheckedChange={setCollabShowViewers}
-                                                    data-testid="collab-show-viewers-toggle"
-                                                    aria-label="Show viewer cursors"
-                                                />
-                                            }
-                                        />
-                                        <DisplayNameRow />
-                                        <MyEndpointId />
-                                        <ContactList />
-                                    </>
-                                )}
-                            </div>
-                        )}
-                        {category === "keyboard" && (
-                            <div className="flex flex-col gap-3">
-                                {/* Filter */}
-                                <Input
-                                    value={query}
-                                    onChange={(e) => setQuery(e.target.value)}
-                                    placeholder="Filter shortcuts…"
-                                    data-testid="shortcut-filter"
-                                    aria-label="Filter shortcuts"
-                                    className="h-8"
-                                />
-
-                                {/* Command list */}
-                                <ul className="m-0 flex list-none flex-col p-0">
-                                    {visibleCommands.map((cmd) => {
-                                        const chord = chordByCommand[cmd.id];
-                                        const overridden = keymapOverrides[cmd.id] !== undefined;
-                                        const isRecording = recording === cmd.id;
-                                        return (
-                                            <li
-                                                key={cmd.id}
-                                                className="grid items-center gap-2.5 rounded-md px-2 py-1.5"
-                                                style={{
-                                                    gridTemplateColumns: "1fr auto auto auto",
-                                                }}
-                                                data-testid={`cmd-${cmd.id}`}
-                                            >
-                                                <span className="text-foreground overflow-hidden text-[13px] text-ellipsis whitespace-nowrap">
-                                                    {cmd.label}
-                                                </span>
-                                                <span
-                                                    className={cn(
-                                                        "bg-muted min-w-[64px] rounded-md border px-1.5 py-0.5 text-center font-mono text-[12px] whitespace-nowrap",
-                                                        overridden
-                                                            ? "border-sel text-sel"
-                                                            : "border-border text-muted-foreground",
-                                                    )}
-                                                    data-testid={`chord-${cmd.id}`}
-                                                >
-                                                    {isRecording ? "Press a key…" : (chord ?? "—")}
-                                                </span>
-                                                <Button
-                                                    type="button"
-                                                    variant={isRecording ? "default" : "outline"}
-                                                    size="sm"
-                                                    onClick={() =>
-                                                        setRecording(isRecording ? null : cmd.id)
-                                                    }
-                                                    data-testid={`record-${cmd.id}`}
-                                                >
-                                                    {isRecording ? "Cancel" : "Record"}
-                                                </Button>
-                                                <Tip label={`Reset ${cmd.label} binding`}>
                                                     <Button
                                                         type="button"
                                                         variant="ghost"
                                                         size="sm"
-                                                        onClick={() => clearKeymapOverride(cmd.id)}
-                                                        disabled={!overridden}
-                                                        data-testid={`reset-${cmd.id}`}
-                                                        aria-label={`Reset ${cmd.label} binding`}
+                                                        onClick={() => setFlowFont(DEFAULT_FONT_ID)}
+                                                        disabled={flowFont === DEFAULT_FONT_ID}
+                                                        data-testid="flow-font-reset"
+                                                        aria-label="Reset flow font to default"
                                                     >
-                                                        Reset
+                                                        Default
                                                     </Button>
-                                                </Tip>
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            </div>
-                        )}
+                                                </>
+                                            }
+                                        >
+                                            <p
+                                                className="rounded-md border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-[13px] text-zinc-900"
+                                                style={{
+                                                    fontFamily:
+                                                        FONTS.find((f) => f.id === flowFont)
+                                                            ?.cssVar ?? FONTS[0].cssVar,
+                                                }}
+                                                data-testid="flow-font-sample"
+                                            >
+                                                Separation of powers outweighs
+                                            </p>
+                                        </SettingRow>
+                                        <SettingRow
+                                            title="Side colors"
+                                            control={
+                                                <>
+                                                    {SIDE_OPTIONS.map((s) => {
+                                                        const value =
+                                                            (s.id === "aff"
+                                                                ? affColor
+                                                                : negColor) ??
+                                                            DEFAULT_SIDE_COLORS[s.id];
+                                                        return (
+                                                            <label
+                                                                key={s.id}
+                                                                className="text-muted-foreground flex items-center gap-1.5 text-[13px]"
+                                                            >
+                                                                <input
+                                                                    type="color"
+                                                                    value={value}
+                                                                    onChange={(e) =>
+                                                                        setSideColor(
+                                                                            s.id,
+                                                                            e.target.value,
+                                                                        )
+                                                                    }
+                                                                    data-testid={`side-color-${s.id}`}
+                                                                    aria-label={`${s.label} color`}
+                                                                    className="border-border h-5 w-8 cursor-pointer rounded border bg-transparent p-0"
+                                                                />
+                                                                {s.label}
+                                                            </label>
+                                                        );
+                                                    })}
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            setSideColor("aff", null);
+                                                            setSideColor("neg", null);
+                                                        }}
+                                                        disabled={
+                                                            affColor === null && negColor === null
+                                                        }
+                                                        data-testid="side-colors-reset"
+                                                        aria-label="Reset side colors to default"
+                                                    >
+                                                        Default
+                                                    </Button>
+                                                </>
+                                            }
+                                        />
+                                    </SettingsSection>
+                                </div>
+                            )}
+                            {category === "grid" && (
+                                <div>
+                                    <SettingsSection title="Zoom & scrolling">
+                                        <SettingRow
+                                            title="Default zoom"
+                                            description="Zoom level the flow grid opens at."
+                                            control={
+                                                <div className="flex items-center gap-1">
+                                                    <Input
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        value={zoomDraft}
+                                                        onChange={(e) =>
+                                                            setZoomDraft(e.target.value)
+                                                        }
+                                                        onBlur={commitZoom}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === "Enter")
+                                                                e.currentTarget.blur();
+                                                        }}
+                                                        aria-label="Default zoom percentage"
+                                                        data-testid="default-zoom-input"
+                                                        className="h-8 w-16 text-right tabular-nums"
+                                                    />
+                                                    <span className="text-muted-foreground text-[13px]">
+                                                        %
+                                                    </span>
+                                                </div>
+                                            }
+                                        />
+                                        <SettingRow
+                                            title="Scroll to zoom"
+                                            description={`Zoom the flow grid by holding ${
+                                                isMacPlatform() ? "Cmd" : "Ctrl"
+                                            } and scrolling, or pinching on a trackpad. Turn off to leave the wheel alone.`}
+                                            control={
+                                                <Switch
+                                                    checked={scrollZoom}
+                                                    onCheckedChange={setScrollZoom}
+                                                    data-testid="scroll-zoom-toggle"
+                                                    aria-label="Scroll to zoom"
+                                                />
+                                            }
+                                        />
+                                    </SettingsSection>
+                                    <SettingsSection title="Layout">
+                                        <SettingRow
+                                            title="Visually align speeches"
+                                            description="Line every sheet up on the round's speaking order, so a speech keeps one place on screen as you move between sheets. Speeches which are not accessible for that sheet type are grayed out."
+                                            control={
+                                                <Switch
+                                                    checked={alignSpeeches}
+                                                    onCheckedChange={setAlignSpeeches}
+                                                    data-testid="align-speeches-toggle"
+                                                    aria-label="Visually align speeches"
+                                                />
+                                            }
+                                        />
+                                    </SettingsSection>
+                                    <SettingsSection title="Cell editing">
+                                        <SettingRow
+                                            title="Insert paste"
+                                            description="With insert paste on, pasted cells push the text already in those columns down instead of writing over it."
+                                            control={
+                                                <Switch
+                                                    checked={insertPaste}
+                                                    onCheckedChange={setInsertPaste}
+                                                    data-testid="insert-paste-toggle"
+                                                    aria-label="Insert paste"
+                                                />
+                                            }
+                                        />
+                                        <SettingRow
+                                            title="Append mode"
+                                            description="With append mode on, typing on a cell that already has text adds to the end of it instead of writing over it."
+                                            control={
+                                                <Switch
+                                                    checked={appendEdit}
+                                                    onCheckedChange={setAppendEdit}
+                                                    data-testid="append-edit-toggle"
+                                                    aria-label="Append mode"
+                                                />
+                                            }
+                                        />
+                                    </SettingsSection>
+                                    <SettingsSection title="Files">
+                                        <SettingRow
+                                            title="Flows folder"
+                                            description="Where new flows are filed. Existing files stay where they are."
+                                            control={<FlowsFolderControl />}
+                                        />
+                                    </SettingsSection>
+                                </div>
+                            )}
+                            {category === "editing" && (
+                                <div>
+                                    <SettingsSection title="Text editors">
+                                        <SettingRow
+                                            title="Vim keybindings"
+                                            description="Applies only to the RFD editor."
+                                            control={
+                                                <Switch
+                                                    checked={rfdVim}
+                                                    onCheckedChange={setRfdVim}
+                                                    data-testid="rfd-vim-toggle"
+                                                    aria-label="Vim keybindings"
+                                                />
+                                            }
+                                        />
+                                    </SettingsSection>
+                                    {isDesktop() && (
+                                        <SettingsSection
+                                            title="CardMirror integration"
+                                            className="mt-4"
+                                            data-testid="cardmirror-section"
+                                        >
+                                            <SettingRow
+                                                title="Enable CardMirror integration"
+                                                control={
+                                                    <Switch
+                                                        checked={cardmirrorEnabled}
+                                                        onCheckedChange={setCardmirrorEnabled}
+                                                        data-testid="cardmirror-enabled-toggle"
+                                                        aria-label="Enable CardMirror integration"
+                                                    />
+                                                }
+                                            />
+                                            {cardmirrorEnabled && (
+                                                <SettingRow
+                                                    title="Send to CardMirror as"
+                                                    description="What style ebb should apply to text sent to CardMirror."
+                                                    control={
+                                                        <Select
+                                                            value={cardmirrorTextType}
+                                                            items={CARDMIRROR_TEXT_TYPES}
+                                                            onValueChange={(value) =>
+                                                                setCardmirrorTextType(
+                                                                    value as CardMirrorTextType,
+                                                                )
+                                                            }
+                                                        >
+                                                            <SelectTrigger
+                                                                aria-label="Send to CardMirror as"
+                                                                data-testid="cardmirror-text-type-select"
+                                                                className="w-44"
+                                                            >
+                                                                <SelectValue />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {CARDMIRROR_TEXT_TYPES.map((t) => (
+                                                                    <SelectItem
+                                                                        key={t.value}
+                                                                        value={t.value}
+                                                                        data-testid={`cardmirror-text-type-${t.value}`}
+                                                                    >
+                                                                        {t.label}
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    }
+                                                />
+                                            )}
+                                        </SettingsSection>
+                                    )}
+                                </div>
+                            )}
+                            {category === "collaboration" && (
+                                <div data-testid="collab-section">
+                                    <SettingsSection title="Shared editing">
+                                        <SettingRow
+                                            title="Shared editing"
+                                            description="Enables collaboration features, off by default. Off, nothing reaches the network. On, sharing or joining a round does, and so does Listen for invites."
+                                            control={
+                                                <Switch
+                                                    checked={collabEnabled}
+                                                    onCheckedChange={setCollabEnabled}
+                                                    data-testid="collab-enabled-toggle"
+                                                    aria-label="Shared editing"
+                                                />
+                                            }
+                                        />
+                                        {collabEnabled && (
+                                            <>
+                                                <SettingRow
+                                                    title="Allow relay"
+                                                    description="Off restricts a session to direct connections. On enables connections across networks."
+                                                    control={
+                                                        <Switch
+                                                            checked={collabRelayEnabled}
+                                                            onCheckedChange={setCollabRelayEnabled}
+                                                            data-testid="collab-relay-toggle"
+                                                            aria-label="Allow relay"
+                                                        />
+                                                    }
+                                                />
+                                                <SettingRow
+                                                    title="Listen for invites"
+                                                    description="Keeps an endpoint open the whole time ebb is running so a saved contact can share a round with you."
+                                                    control={
+                                                        <Switch
+                                                            checked={collabListenEnabled}
+                                                            onCheckedChange={
+                                                                setCollabListenEnabled
+                                                            }
+                                                            data-testid="collab-listen-toggle"
+                                                            aria-label="Listen for invites"
+                                                        />
+                                                    }
+                                                />
+                                                <SettingRow
+                                                    title="Show viewer cursors"
+                                                    description="Marks the cell a view-only peer is looking at. Off hides them, leaving only the cells a partner is editing."
+                                                    control={
+                                                        <Switch
+                                                            checked={collabShowViewers}
+                                                            onCheckedChange={
+                                                                setCollabShowViewers
+                                                            }
+                                                            data-testid="collab-show-viewers-toggle"
+                                                            aria-label="Show viewer cursors"
+                                                        />
+                                                    }
+                                                />
+                                            </>
+                                        )}
+                                    </SettingsSection>
+                                    {collabEnabled && (
+                                        <SettingsSection title="Identity & contacts">
+                                            <DisplayNameRow />
+                                            <MyEndpointId />
+                                            <ContactList />
+                                        </SettingsSection>
+                                    )}
+                                </div>
+                            )}
+                            {category === "keyboard" && (
+                                <div className="flex flex-col gap-3">
+                                    {/* Filter */}
+                                    <Input
+                                        value={query}
+                                        onChange={(e) => setQuery(e.target.value)}
+                                        placeholder="Filter shortcuts…"
+                                        data-testid="shortcut-filter"
+                                        aria-label="Filter shortcuts"
+                                        className="h-8"
+                                    />
+
+                                    {/* Command list */}
+                                    <ul className="border-border bg-card m-0 flex list-none flex-col rounded-lg border p-0">
+                                        {visibleCommands.map((cmd) => {
+                                            const chord = chordByCommand[cmd.id];
+                                            const overridden =
+                                                keymapOverrides[cmd.id] !== undefined;
+                                            const isRecording = recording === cmd.id;
+                                            return (
+                                                <li
+                                                    key={cmd.id}
+                                                    className="border-border/60 grid items-center gap-2.5 border-b px-3 py-1.5 last:border-b-0"
+                                                    style={{
+                                                        gridTemplateColumns:
+                                                            "1fr auto auto auto",
+                                                    }}
+                                                    data-testid={`cmd-${cmd.id}`}
+                                                >
+                                                    <span className="text-foreground overflow-hidden text-[13px] text-ellipsis whitespace-nowrap">
+                                                        {cmd.label}
+                                                    </span>
+                                                    <span
+                                                        className={cn(
+                                                            "bg-muted min-w-[64px] rounded-md border px-1.5 py-0.5 text-center font-mono text-[12px] whitespace-nowrap",
+                                                            overridden
+                                                                ? "border-sel text-sel"
+                                                                : "border-border text-muted-foreground",
+                                                        )}
+                                                        data-testid={`chord-${cmd.id}`}
+                                                    >
+                                                        {isRecording
+                                                            ? "Press a key…"
+                                                            : (chord ?? "—")}
+                                                    </span>
+                                                    <Button
+                                                        type="button"
+                                                        variant={
+                                                            isRecording ? "default" : "outline"
+                                                        }
+                                                        size="sm"
+                                                        onClick={() =>
+                                                            setRecording(
+                                                                isRecording ? null : cmd.id,
+                                                            )
+                                                        }
+                                                        data-testid={`record-${cmd.id}`}
+                                                    >
+                                                        {isRecording ? "Cancel" : "Record"}
+                                                    </Button>
+                                                    <Tip label={`Reset ${cmd.label} binding`}>
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                clearKeymapOverride(cmd.id)
+                                                            }
+                                                            disabled={!overridden}
+                                                            data-testid={`reset-${cmd.id}`}
+                                                            aria-label={`Reset ${cmd.label} binding`}
+                                                        >
+                                                            Reset
+                                                        </Button>
+                                                    </Tip>
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </DialogContent>

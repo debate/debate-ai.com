@@ -75,7 +75,7 @@ import { launchBenchmarkOverlay } from './benchmark-ui.js';
 import { resetTimer } from './timer-state.js';
 import { applyTimerProfile } from './timer-profile.js';
 import { showToast } from './toast.js';
-import { setIcon, CUSTOM_BUTTON_ICONS, type IconName } from './icons';
+import { icon, setIcon, CUSTOM_BUTTON_ICONS, type IconName } from './icons';
 import { availableRibbonCommandIds } from './ribbon-availability.js';
 import { commandLabelFor, RIBBON_COMMAND_LABELS, type RibbonCommandId } from './ribbon-commands.js';
 import { settingCommandOptions } from './setting-commands.js';
@@ -196,12 +196,6 @@ function registerRowCleanup(_el: Element, callback: () => void): () => void {
   };
 }
 
-/** Nudge a tab into the visible band of its scrolling container.
- *  If the tab's bounding rect is fully inside the container's
- *  rect, no-op. Otherwise scroll just enough to reveal it on the
- *  nearer side. Avoids `el.scrollIntoView` because that scrolls
- *  the WHOLE page (including the editor surface behind the modal)
- *  when the container itself is fully on-screen. */
 /** Fill a `.pmd-settings-folder-path` cell. The cell truncates on the
  *  LEFT (CSS `direction: rtl`) so the informative tail of a long path —
  *  the file/folder name — stays visible; the LRM guards pin the string's
@@ -210,16 +204,6 @@ function registerRowCleanup(_el: Element, callback: () => void): () => void {
 function setPathCell(el: HTMLElement, text: string): void {
   el.textContent = `\u{200e}${text}\u{200e}`;
   el.title = text;
-}
-
-function scrollTabIntoView(tab: HTMLElement, container: HTMLElement): void {
-  const tr = tab.getBoundingClientRect();
-  const cr = container.getBoundingClientRect();
-  if (tr.left < cr.left) {
-    container.scrollBy({ left: tr.left - cr.left, behavior: 'smooth' });
-  } else if (tr.right > cr.right) {
-    container.scrollBy({ left: tr.right - cr.right, behavior: 'smooth' });
-  }
 }
 
 // CATEGORY_TABS / visibleCategoryTabs / SettingsTarget live in
@@ -255,10 +239,6 @@ class SettingsModal {
    *  instance (across opens) so reopening lands you back where you
    *  were, but resets if the page reloads. */
   private activeCategory: SettingsCategory = 'general';
-  /** ResizeObserver for the tab strip, used to show / hide the
-   *  scroll-arrow buttons when the tabs overflow horizontally.
-   *  Disconnected on close() and on each new render(). */
-  private tabsResizeObserver: ResizeObserver | null = null;
 
   constructor() {
     this.overlay = document.createElement('div');
@@ -266,7 +246,7 @@ class SettingsModal {
     this.overlay.style.display = 'none';
 
     this.dialog = document.createElement('div');
-    this.dialog.className = 'pmd-settings-dialog';
+    this.dialog.className = 'pmd-settings-dialog pmd-settings-dialog-fullpage';
     this.overlay.appendChild(this.dialog);
 
     // Click outside the dialog → close.
@@ -362,10 +342,6 @@ class SettingsModal {
       this.settingsUnsubscribe();
       this.settingsUnsubscribe = null;
     }
-    if (this.tabsResizeObserver) {
-      this.tabsResizeObserver.disconnect();
-      this.tabsResizeObserver = null;
-    }
     // Release every row/widget settings subscription registered during
     // render() — the dialog DOM stays connected (just hidden), so
     // nothing else would ever release them.
@@ -401,86 +377,58 @@ class SettingsModal {
     header.appendChild(closeBtn);
     this.dialog.appendChild(header);
 
-    // Tab strip + arrow scrollers. The bar wraps the nav so the
-    // arrows sit flush against the divider line (it lives on the
-    // bar, not the nav). The arrows are hidden when the strip
-    // fits its container and revealed via ResizeObserver when it
-    // overflows; each arrow disables at the end of its scroll
-    // range. No native scrollbar — overflow-x: hidden on the nav.
-    const tabsBar = document.createElement('div');
-    tabsBar.className = 'pmd-settings-tabs-bar';
+    // Body: a left sidebar of icon+label nav items (one per category)
+    // plus a wide scrolling content pane on the right — Claude-style
+    // full-page settings, replacing the old top tab strip. A vertical
+    // list has no overflow problem as categories grow, so there's no
+    // scroll-arrow machinery to maintain.
+    const body = document.createElement('div');
+    body.className = 'pmd-settings-body';
+    this.dialog.appendChild(body);
 
-    const scrollLeftBtn = document.createElement('button');
-    scrollLeftBtn.type = 'button';
-    scrollLeftBtn.className = 'pmd-settings-tabs-scroll pmd-settings-tabs-scroll-left';
-    scrollLeftBtn.setAttribute('aria-label', 'Scroll settings tabs left');
-    setIcon(scrollLeftBtn, 'chevron-left');
-    scrollLeftBtn.hidden = true;
-    tabsBar.appendChild(scrollLeftBtn);
+    const sidebar = document.createElement('nav');
+    sidebar.className = 'pmd-settings-sidebar';
+    sidebar.setAttribute('aria-label', 'Settings categories');
+    body.appendChild(sidebar);
 
-    const tabStrip = document.createElement('nav');
-    tabStrip.className = 'pmd-settings-tabs';
-    tabStrip.setAttribute('role', 'tablist');
+    const navList = document.createElement('div');
+    navList.className = 'pmd-settings-nav';
+    navList.setAttribute('role', 'tablist');
+    navList.setAttribute('aria-orientation', 'vertical');
+    sidebar.appendChild(navList);
+
+    const content = document.createElement('div');
+    content.className = 'pmd-settings-content-col';
+    body.appendChild(content);
+
     const tabButtons: Partial<Record<SettingsCategory, HTMLButtonElement>> = {};
-    for (const { id, label } of visibleCategoryTabs()) {
+    for (const { id, label, icon: iconName } of visibleCategoryTabs()) {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'pmd-settings-tab';
+      btn.className = 'pmd-settings-navitem';
       btn.setAttribute('role', 'tab');
-      btn.textContent = label;
+      btn.appendChild(icon(iconName));
+      const labelSpan = document.createElement('span');
+      labelSpan.textContent = label;
+      btn.appendChild(labelSpan);
       btn.addEventListener('click', () => this.setActiveCategory(id));
-      tabStrip.appendChild(btn);
+      navList.appendChild(btn);
       tabButtons[id] = btn;
     }
-    tabsBar.appendChild(tabStrip);
-
-    const scrollRightBtn = document.createElement('button');
-    scrollRightBtn.type = 'button';
-    scrollRightBtn.className = 'pmd-settings-tabs-scroll pmd-settings-tabs-scroll-right';
-    scrollRightBtn.setAttribute('aria-label', 'Scroll settings tabs right');
-    setIcon(scrollRightBtn, 'chevron-right');
-    scrollRightBtn.hidden = true;
-    tabsBar.appendChild(scrollRightBtn);
-
-    this.dialog.appendChild(tabsBar);
-
-    const scrollTabsBy = (dir: -1 | 1): void => {
-      const step = Math.max(60, tabStrip.clientWidth * 0.6);
-      tabStrip.scrollBy({ left: dir * step, behavior: 'smooth' });
-    };
-    scrollLeftBtn.addEventListener('click', () => scrollTabsBy(-1));
-    scrollRightBtn.addEventListener('click', () => scrollTabsBy(1));
-
-    const updateArrows = (): void => {
-      const overflowing = tabStrip.scrollWidth > tabStrip.clientWidth + 1;
-      if (!overflowing) {
-        scrollLeftBtn.hidden = true;
-        scrollRightBtn.hidden = true;
-        return;
-      }
-      scrollLeftBtn.hidden = false;
-      scrollRightBtn.hidden = false;
-      scrollLeftBtn.disabled = tabStrip.scrollLeft <= 0;
-      scrollRightBtn.disabled =
-        tabStrip.scrollLeft + tabStrip.clientWidth >= tabStrip.scrollWidth - 1;
-    };
-    tabStrip.addEventListener('scroll', updateArrows);
-    if (this.tabsResizeObserver) this.tabsResizeObserver.disconnect();
-    this.tabsResizeObserver = new ResizeObserver(updateArrows);
-    this.tabsResizeObserver.observe(tabStrip);
-    // Initial pass — sizes are available immediately because the
-    // dialog is already in the DOM (constructor appended overlay).
-    updateArrows();
 
     // Panels — one per category. Only the active panel is visible
     // (set via `hidden`); we build all of them up-front so the
     // refreshDependents pass can find rows under inactive tabs too.
     this.dependentRows = [];
     const panels: Partial<Record<SettingsCategory, HTMLDivElement>> = {};
-    for (const { id } of visibleCategoryTabs()) {
+    for (const { id, label } of visibleCategoryTabs()) {
       const panel = document.createElement('div');
       panel.className = 'pmd-settings-list pmd-settings-panel';
       panel.setAttribute('role', 'tabpanel');
+      const panelTitle = document.createElement('h1');
+      panelTitle.className = 'pmd-settings-panel-title';
+      panelTitle.textContent = label;
+      panel.appendChild(panelTitle);
       const hostKind = getHost().kind;
       const entries = SETTING_METADATA.filter(
         (m) =>
@@ -560,28 +508,23 @@ class SettingsModal {
         moveRowToEnd('flowHostOnLaunch');
         void import('./plugins-settings-ui.js').then((m) => m.renderPluginsPanel(section));
       }
-      this.dialog.appendChild(panel);
+      content.appendChild(panel);
       panels[id] = panel;
     }
 
-    // Wire tab selection logic.
+    // Wire sidebar nav selection logic.
     const applyActive = (): void => {
       for (const { id } of visibleCategoryTabs()) {
         const isActive = id === this.activeCategory;
         const btn = tabButtons[id];
         const panel = panels[id];
         if (btn) {
-          btn.classList.toggle('pmd-settings-tab-active', isActive);
+          btn.classList.toggle('pmd-settings-navitem-active', isActive);
           btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
           btn.tabIndex = isActive ? 0 : -1;
         }
         if (panel) panel.hidden = !isActive;
       }
-      // If the newly-active tab is clipped by the scroll viewport
-      // (clicked at the edge of view, or activated programmatically
-      // while not in view), nudge it into the visible band.
-      const activeBtn = tabButtons[this.activeCategory];
-      if (activeBtn) scrollTabIntoView(activeBtn, tabStrip);
     };
     this.setActiveCategory = (id: SettingsCategory) => {
       this.activeCategory = id;

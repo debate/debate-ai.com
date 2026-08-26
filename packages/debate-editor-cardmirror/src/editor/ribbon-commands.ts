@@ -4336,6 +4336,7 @@ export type RibbonCommandId =
   | 'openCutterGuidance'
   | 'createFlashcard'
   | 'manageFlashcards'
+  | 'reviewDueFlashcards'
   | 'wordCountSelection'
   | 'openShortcutsReference'
   | 'startUiTour'
@@ -4361,6 +4362,13 @@ export type RibbonCommandId =
   | 'saveSendDoc'
   | 'saveMarkedCards'
   | 'toggleAutosave'
+  // Former Home-screen-only utilities (the start screen was retired):
+  // .docx style cleaning, bulk .docx<->.cmir conversion, and the
+  // dormant bulk-compress migration tool (gated by bulkCompressEnabled()
+  // the same way the tile was).
+  | 'cleanDocxStyles'
+  | 'bulkConvertDocs'
+  | 'bulkCompressDocs'
   | 'newSpeechDocument'
   | 'markActiveAsSpeech'
   | 'sendToSpeechAtCursor'
@@ -4442,7 +4450,6 @@ export type RibbonCommandId =
   | 'flipQuoteDirection'
   | 'toggleParagraphIntegrity'
   | 'selectSpeechDoc'
-  | 'goHome'
   | 'openHighlightPicker'
   | 'openShadingPicker'
   | 'openFontColorPicker'
@@ -4566,6 +4573,7 @@ export const RIBBON_COMMAND_IDS: RibbonCommandId[] = [
   'openCutterGuidance',
   'createFlashcard',
   'manageFlashcards',
+  'reviewDueFlashcards',
   'wordCountSelection',
   'openShortcutsReference',
   'startUiTour',
@@ -4591,6 +4599,9 @@ export const RIBBON_COMMAND_IDS: RibbonCommandId[] = [
   'saveSendDoc',
   'saveMarkedCards',
   'toggleAutosave',
+  'cleanDocxStyles',
+  'bulkConvertDocs',
+  'bulkCompressDocs',
   'newSpeechDocument',
   'markActiveAsSpeech',
   'sendToSpeechAtCursor',
@@ -4649,7 +4660,6 @@ export const RIBBON_COMMAND_IDS: RibbonCommandId[] = [
   'flipQuoteDirection',
   'toggleParagraphIntegrity',
   'selectSpeechDoc',
-  'goHome',
   'openHighlightPicker',
   'openShadingPicker',
   'openFontColorPicker',
@@ -4748,6 +4758,7 @@ export const RIBBON_COMMAND_LABELS: Record<RibbonCommandId, string> = {
   openCutterGuidance: 'Edit File Cutting Guidance',
   createFlashcard: 'Create Flashcard From Selection',
   manageFlashcards: 'Manage Flashcards',
+  reviewDueFlashcards: 'Review Due Flashcards',
   wordCountSelection: 'Word Count Selection',
   openShortcutsReference: 'Open Keyboard Shortcuts',
   startUiTour: 'Take the UI Tour',
@@ -4773,6 +4784,9 @@ export const RIBBON_COMMAND_LABELS: Record<RibbonCommandId, string> = {
   saveSendDoc: 'Save Send Doc',
   saveMarkedCards: 'Save Marked Cards',
   toggleAutosave: 'Toggle Autosave',
+  cleanDocxStyles: 'Clean .docx Styles…',
+  bulkConvertDocs: 'Convert .docx / .cmir…',
+  bulkCompressDocs: 'Compress .cmir…',
   newSpeechDocument: 'New Speech Document',
   markActiveAsSpeech: 'Mark / Unmark Active Doc as the Speech Doc',
   sendToSpeechAtCursor: 'Send to Speech (At Cursor)',
@@ -4830,7 +4844,6 @@ export const RIBBON_COMMAND_LABELS: Record<RibbonCommandId, string> = {
   flipQuoteDirection: 'Flip Quote Direction',
   toggleParagraphIntegrity: 'Toggle Paragraph Integrity',
   selectSpeechDoc: 'Select Speech Document',
-  goHome: 'Go to Home Screen',
   openHighlightPicker: 'Open Highlight Color Picker',
   openShadingPicker: 'Open Background Color Picker',
   openFontColorPicker: 'Open Font Color Picker',
@@ -4920,7 +4933,6 @@ export const RIBBON_COMMAND_ALIASES: Partial<Record<RibbonCommandId, readonly st
   insertReceivedAtEnd: ['add received card at end'],
   moveContainerUp: ['move up', 'move card up', 'move section up', 'reorder up', 'shift up'],
   moveContainerDown: ['move down', 'move card down', 'move section down', 'reorder down', 'shift down'],
-  goHome: ['start screen', 'welcome screen', 'dashboard'],
   openShortcutsReference: ['hotkeys', 'key bindings', 'shortcuts'],
   startUiTour: ['tour', 'onboarding', 'walkthrough', 'coach marks', 'tutorial'],
   zoomReset: ['actual size'],
@@ -5092,6 +5104,7 @@ export const DEFAULT_RIBBON_KEYS: Record<RibbonCommandId, string | string[]> = {
   openCutterGuidance: '',
   createFlashcard: '',
   manageFlashcards: '',
+  reviewDueFlashcards: '',
   wordCountSelection: '',
   openShortcutsReference: '',
   startUiTour: '',
@@ -5124,6 +5137,9 @@ export const DEFAULT_RIBBON_KEYS: Record<RibbonCommandId, string | string[]> = {
   saveSendDoc: 'Mod-Alt-s',
   saveMarkedCards: 'Mod-Alt-m',
   toggleAutosave: '',
+  cleanDocxStyles: '',
+  bulkConvertDocs: '',
+  bulkCompressDocs: '',
   insertLiveZone: '',
   insertSelfLiveZone: '',
   insertInDocCopy: '',
@@ -5215,7 +5231,6 @@ export const DEFAULT_RIBBON_KEYS: Record<RibbonCommandId, string | string[]> = {
   flipQuoteDirection: '',
   toggleParagraphIntegrity: '',
   selectSpeechDoc: '',
-  goHome: '',
   openHighlightPicker: '',
   openShadingPicker: '',
   openFontColorPicker: '',
@@ -5347,6 +5362,7 @@ export interface RibbonContext {
   cardCutterActive: () => boolean;
   createFlashcard: () => void;
   manageFlashcards: () => void;
+  reviewDueFlashcards: () => void;
   /** File-level commands. These work regardless of whether the editor
    *  is mounted / has a doc loaded — they always run the same handler
    *  the corresponding ribbon button uses. */
@@ -5357,6 +5373,11 @@ export interface RibbonContext {
   saveSendDoc: () => void;
   saveMarkedCards: () => void;
   toggleAutosave: () => void;
+  /** Former Home-screen-only file utilities, promoted to ribbon
+   *  commands now that the start screen is retired. */
+  cleanDocxStyles: () => void;
+  bulkConvertDocs: () => void;
+  bulkCompressDocs: () => void;
   /** Speech-doc commands (Verbatim's `Paperless.SendToSpeech` family).
    *  All four are wired via the speech-doc registry — when the host
    *  hasn't installed a real implementation, the defaults are
@@ -5463,7 +5484,6 @@ export interface RibbonContext {
   cycleTimerPreset: () => void;
   toggleParagraphIntegrity: () => void;
   selectSpeechDoc: () => void;
-  goHome: () => void;
   openHighlightPicker: () => void;
   openShadingPicker: () => void;
   openFontColorPicker: () => void;
@@ -5518,6 +5538,7 @@ const DEFAULT_RIBBON_CONTEXT: RibbonContext = {
   cardCutterActive: () => false,
   createFlashcard: () => {},
   manageFlashcards: () => {},
+  reviewDueFlashcards: () => {},
   newDocument: () => {},
   openFile: () => {},
   save: () => {},
@@ -5525,6 +5546,9 @@ const DEFAULT_RIBBON_CONTEXT: RibbonContext = {
   saveSendDoc: () => {},
   saveMarkedCards: () => {},
   toggleAutosave: () => {},
+  cleanDocxStyles: () => {},
+  bulkConvertDocs: () => {},
+  bulkCompressDocs: () => {},
   newSpeechDocument: () => {},
   markActiveAsSpeech: () => {},
   sendToSpeechAtCursor: () => {},
@@ -5572,7 +5596,6 @@ const DEFAULT_RIBBON_CONTEXT: RibbonContext = {
   cycleTimerPreset: () => {},
   toggleParagraphIntegrity: () => {},
   selectSpeechDoc: () => {},
-  goHome: () => {},
   openHighlightPicker: () => {},
   openShadingPicker: () => {},
   openFontColorPicker: () => {},
@@ -5893,6 +5916,12 @@ function commandFor(id: RibbonCommandId, ctx: RibbonContext): Command {
         ctx.manageFlashcards();
         return true;
       };
+    case 'reviewDueFlashcards':
+      return (_state, dispatch) => {
+        if (!dispatch) return true;
+        ctx.reviewDueFlashcards();
+        return true;
+      };
     case 'wordCountSelection':
       return (_state, dispatch) => {
         if (!dispatch) return true;
@@ -5987,6 +6016,24 @@ function commandFor(id: RibbonCommandId, ctx: RibbonContext): Command {
       return (_state, dispatch) => {
         if (!dispatch) return true;
         ctx.toggleAutosave();
+        return true;
+      };
+    case 'cleanDocxStyles':
+      return (_state, dispatch) => {
+        if (!dispatch) return true;
+        ctx.cleanDocxStyles();
+        return true;
+      };
+    case 'bulkConvertDocs':
+      return (_state, dispatch) => {
+        if (!dispatch) return true;
+        ctx.bulkConvertDocs();
+        return true;
+      };
+    case 'bulkCompressDocs':
+      return (_state, dispatch) => {
+        if (!dispatch) return true;
+        ctx.bulkCompressDocs();
         return true;
       };
     case 'newSpeechDocument':
@@ -6396,12 +6443,6 @@ function commandFor(id: RibbonCommandId, ctx: RibbonContext): Command {
       return (_state, dispatch) => {
         if (!dispatch) return true;
         ctx.selectSpeechDoc();
-        return true;
-      };
-    case 'goHome':
-      return (_state, dispatch) => {
-        if (!dispatch) return true;
-        ctx.goHome();
         return true;
       };
     case 'openHighlightPicker':

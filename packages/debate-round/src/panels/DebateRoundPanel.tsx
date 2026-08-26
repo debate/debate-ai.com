@@ -7,8 +7,9 @@
  * into a clean, modular architecture using custom hooks and layout components.
  */
 
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 import { X } from "lucide-react"
+import { EbbFlowEmbed } from "debate-flow-ebb"
 import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
 import { settings } from "../state/settings"
@@ -63,6 +64,11 @@ export function DebateFlowPage() {
   // ============================================================================
   const state = useDebateFlowState()
 
+  // Whether the pinned "ebb Flow" sidebar entry is the active document —
+  // ebb is a separate local-first editor, not one of the database-backed
+  // `flows`, so it isn't tracked via `selected`.
+  const [ebbActive, setEbbActive] = useState(false)
+
   // ============================================================================
   // Timer State (lifted here so it survives mobile sidebar unmount)
   // ============================================================================
@@ -106,6 +112,16 @@ export function DebateFlowPage() {
   const flowHandlers = useFlowHandlers(flows, setFlows, setSelected)
 
   /**
+   * Select a database-backed flow tab, leaving the pinned ebb Flow tab.
+   *
+   * @param index - Index of the flow to select
+   */
+  const handleSelectFlow = (index: number) => {
+    setEbbActive(false)
+    setSelected(index)
+  }
+
+  /**
    * Apply partial updates to a flow at the given index.
    *
    * @param index - Index of the flow to update in the flows array
@@ -135,6 +151,7 @@ export function DebateFlowPage() {
 
     const updatedFlows = [...flows, flow]
     setFlows(updatedFlows)
+    setEbbActive(false)
     setSelected(flow.id)
   }
 
@@ -309,9 +326,18 @@ export function DebateFlowPage() {
 
   /**
    * The main content area containing the resizable flow and speech panels.
-   * Rendered for both desktop and mobile layouts.
+   * Rendered for both desktop and mobile layouts. When the pinned ebb Flow
+   * tab is active, this area hosts ebb's own self-contained editor instead
+   * — it owns its own document tree, grid, and dialogs, so none of the
+   * flow-specific split/speech-panel machinery below applies to it.
    */
-  const mainContentArea = (
+  const mainContentArea = ebbActive ? (
+    <div className="h-full p-2">
+      <div className="h-full w-full rounded-lg border border-border overflow-hidden">
+        <EbbFlowEmbed className="h-full w-full" />
+      </div>
+    </div>
+  ) : (
     <div className="h-full flex flex-col overflow-hidden p-2">
       {prepNoteJumpFailed && (
         <div className="mb-2 flex items-center justify-between gap-2 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -439,7 +465,7 @@ export function DebateFlowPage() {
                 currentFlow={currentFlow}
                 splitMode={state.splitMode}
                 isMobile={false}
-                onSelectFlow={setSelected}
+                onSelectFlow={handleSelectFlow}
                 onAddFlow={handleAddFlow}
                 onRenameFlow={handleRenameFlow}
                 onArchiveFlow={handleArchiveFlow}
@@ -447,6 +473,8 @@ export function DebateFlowPage() {
                 onToggleSplitMode={handleToggleSplit}
                 onOpenHistory={handleOpenHistory}
                 onEditRound={handleEditRound}
+                ebbActive={ebbActive}
+                onSelectEbb={() => setEbbActive(true)}
                 timerState={timerState}
               />
             </ResizablePanel>
@@ -467,7 +495,7 @@ export function DebateFlowPage() {
                   currentFlow={currentFlow}
                   splitMode={state.splitMode}
                   isMobile={true}
-                  onSelectFlow={setSelected}
+                  onSelectFlow={handleSelectFlow}
                   onAddFlow={handleAddFlow}
                   onRenameFlow={handleRenameFlow}
                   onArchiveFlow={handleArchiveFlow}
@@ -475,6 +503,8 @@ export function DebateFlowPage() {
                   onToggleSplitMode={handleToggleSplit}
                   onOpenHistory={handleOpenHistory}
                   onEditRound={handleEditRound}
+                  ebbActive={ebbActive}
+                  onSelectEbb={() => setEbbActive(true)}
                   onCloseMobileMenu={() => state.setMobileMenuOpen(false)}
                   timerState={timerState}
                 />

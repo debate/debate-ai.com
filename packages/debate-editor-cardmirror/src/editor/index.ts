@@ -114,6 +114,7 @@ import {
 } from './scroll-anchor.js';
 import { openCardEditor } from './learn-create-ui.js';
 import { openLearnManage } from './learn-manage-ui.js';
+import { openLearnSession } from './learn-session-ui.js';
 import { openBulkConvert, runConvertSingleFileWeb } from './bulk-convert-ui.js';
 import { openBulkCompress, runCompressSingleFileWeb } from './bulk-compress-ui.js';
 import { bulkCompressEnabled } from './bulk-compress-gate.js';
@@ -491,7 +492,6 @@ export function attachClickBelowToEnd(
 // own per-record surface in `buildDocRecord`.
 attachClickBelowToEnd(editorEl, () => view);
 const navEl = document.getElementById('nav-panel')!;
-const homeBtn = document.getElementById('home-btn') as HTMLButtonElement | null;
 const openBtn = document.getElementById('open-btn') as HTMLButtonElement;
 const newBtn = document.getElementById('new-btn') as HTMLButtonElement | null;
 const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
@@ -2122,15 +2122,6 @@ const ribbonContext: RibbonContext = {
   selectSpeechDoc: () => {
     void openSelectSpeechDocModal();
   },
-  goHome: () => {
-    // Open home over the current doc (return-to-doc enabled) — except a
-    // multi-pane workspace with nothing open: "Return to doc" there
-    // would just dismiss home back to the blank window.
-    const canReturnToDoc =
-      !multiDocActive ||
-      (multiDocGetAllFilenames?.().some((f) => f !== null) ?? false);
-    homeScreen.show({ canReturnToDoc });
-  },
   openHighlightPicker: () => colorPanel?.openPicker('highlight'),
   openShadingPicker: () => colorPanel?.openPicker('shading'),
   openFontColorPicker: () => colorPanel?.openPicker('fontcolor'),
@@ -2138,13 +2129,33 @@ const ribbonContext: RibbonContext = {
   openDocToolsMenu: () => docMenuBtn?.click(),
   openCardToolsMenu: () => cardMenuBtn?.click(),
   openTableMenu: () => tableMenuBtn?.click(),
+  // Former Home-screen-only actions, now reachable from the File / Learn
+  // menus (see MENU_BAR_CATEGORIES / RIBBON_GROUPS) now that the start
+  // screen is gone. Mirror the host branching the Home tiles used.
+  cleanDocxStyles:
+    getHost().kind === 'electron' ? () => openClean() : () => void runCleanSingleFileWeb(),
+  bulkConvertDocs:
+    getHost().kind === 'electron'
+      ? () => openBulkConvert()
+      : () => void runConvertSingleFileWeb(),
+  bulkCompressDocs: () => {
+    if (!bulkCompressEnabled()) return;
+    if (getHost().kind === 'electron') openBulkCompress();
+    else void runCompressSingleFileWeb();
+  },
+  reviewDueFlashcards: () => {
+    if (learnStore.totalCount({ kind: 'all' }) > 0) {
+      openLearnSession({ kind: 'all' }, { title: 'Review — all' });
+    } else {
+      showToast('No flashcards yet — select text and choose Create Flashcard.');
+    }
+  },
 };
 
-// Toolbar convention (same as homeBtn below): don't let the click
-// steal focus onto the button — the flows these trigger end by
-// focusing the mounted doc, and a focused button would otherwise hold
-// the keyboard if any async step in between dropped the ball
-// (2026-07-27 focus audit).
+// Toolbar convention: don't let the click steal focus onto the button —
+// the flows these trigger end by focusing the mounted doc, and a
+// focused button would otherwise hold the keyboard if any async step
+// in between dropped the ball (2026-07-27 focus audit).
 openBtn.addEventListener('mousedown', (e) => e.preventDefault());
 openBtn.addEventListener('click', () => {
   void runOpenFlow();
@@ -2154,14 +2165,6 @@ if (newBtn) {
   newBtn.addEventListener('click', () => {
     void onNewDocClicked();
   });
-}
-if (homeBtn) {
-  homeBtn.addEventListener('mousedown', (e) => e.preventDefault());
-  // goHome is view-less (pure UI) — call the ctx side effect
-  // directly rather than via runRibbon, which gates on a live
-  // `view` (null in multi-pane with no panes open). The keybinding
-  // path reaches the same ctx.goHome via runViewlessRibbon.
-  homeBtn.addEventListener('click', () => ribbonContext.goHome());
 }
 
 
@@ -4073,7 +4076,6 @@ if (timerToggleBtn) {
   };
   button('open-btn', 'openFile');
   button('new-btn', 'newDocument');
-  button('home-btn', 'goHome', 'Home');
   button('export-btn', 'save');
   button('settings-btn', 'openSettings');
   button('reference-btn', 'openShortcutsReference');
@@ -4248,9 +4250,6 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
   // Toggling the nav-pane visibility only flips a transient
   // setting + body class; works without an active doc.
   'toggleNavPane',
-  // Home screen overlay — pure UI, no doc needed. Must be view-
-  // less so it works in multi-pane with zero panes open.
-  'goHome',
   // Quick-card search palette — opens browse-only without a doc, so
   // its Mod-Shift-Space binding must work view-less too.
   'openQuickCardSearch',
@@ -4259,6 +4258,12 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
   'insertInDocCopy',
   // Opens the Quick Cards manager overlay — no active doc required.
   'manageQuickCards',
+  // File-level operations on a picked/dropped file, and the Learn
+  // review session — none of these touch the currently active doc.
+  'cleanDocxStyles',
+  'bulkConvertDocs',
+  'bulkCompressDocs',
+  'reviewDueFlashcards',
   // Multi-pane workspace commands — fire on the shell, not a
   // doc. View-less so they work even when no slot has a doc.
   'focusSlot1',
@@ -4299,12 +4304,15 @@ function runViewlessRibbon(id: AnyCommandId): void {
     case 'zoomOut': ribbonContext.zoomOut(); return;
     case 'zoomReset': ribbonContext.zoomReset(); return;
     case 'toggleNavPane': ribbonContext.toggleNavPane(); return;
-    case 'goHome': ribbonContext.goHome(); return;
     case 'openQuickCardSearch': ribbonContext.openQuickCardSearch(); return;
     case 'insertLiveZone': ribbonContext.insertLiveZone(); return;
     case 'insertSelfLiveZone': ribbonContext.insertSelfLiveZone(); return;
     case 'insertInDocCopy': ribbonContext.insertInDocCopy(); return;
     case 'manageQuickCards': ribbonContext.manageQuickCards(); return;
+    case 'cleanDocxStyles': ribbonContext.cleanDocxStyles(); return;
+    case 'bulkConvertDocs': ribbonContext.bulkConvertDocs(); return;
+    case 'bulkCompressDocs': ribbonContext.bulkCompressDocs(); return;
+    case 'reviewDueFlashcards': ribbonContext.reviewDueFlashcards(); return;
     case 'toggleVoice': ribbonContext.toggleVoice(); return;
     case 'startFlowHost': ribbonContext.startFlowHost(); return;
     case 'collabStartSession': ribbonContext.collabStartSession(); return;

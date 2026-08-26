@@ -182,8 +182,6 @@ export const RIBBON_HTML = `
       <button id="settings-btn" type="button" title="Settings" aria-label="Settings"><span class="pmd-icon pmd-icon-settings" aria-hidden="true"></span></button>
       <button id="timer-toggle-btn" type="button" aria-pressed="false"
               title="Show / hide the timer panel" aria-label="Toggle timer panel"><span class="pmd-icon pmd-icon-timer" aria-hidden="true"></span></button>
-      <button id="home-btn" type="button" class="ribbon-home-btn" hidden
-              title="Home" aria-label="Home"><span class="pmd-icon pmd-icon-home" aria-hidden="true"></span></button>
     </div>
   </div>
 </header>

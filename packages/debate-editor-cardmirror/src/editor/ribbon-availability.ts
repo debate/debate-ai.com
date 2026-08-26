@@ -25,6 +25,7 @@ import { settings } from './settings.js';
 import { collabEnabled } from './collab/collab-gate.js';
 import { isLiteBuild } from './lite.js';
 import { getElectronHost, isWindowsHost } from './host/index.js';
+import { bulkCompressEnabled } from './bulk-compress-gate.js';
 
 const FLOW_COMMANDS = new Set<RibbonCommandId>([
   'sendToFlowColumn',
@@ -74,6 +75,9 @@ export function isRibbonCommandAvailable(id: RibbonCommandId): boolean {
     );
   }
   if (id === 'openCardCutter') return settings.get('cardCutterEnabled') === true;
+  // Retired early-alpha migration tool, dormant behind the same console
+  // gate the old Home-screen tile checked (localStorage['pmd-compress']).
+  if (id === 'bulkCompressDocs') return bulkCompressEnabled();
   // Browsers can't minimize their own window — desktop only.
   if (id === 'minimizeWindow') return getElectronHost() !== null;
   if (id === 'openJournalsFolder') return getElectronHost() !== null;
