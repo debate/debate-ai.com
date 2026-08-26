@@ -17,7 +17,14 @@ Every item, newest first, filterable by category:
   tools (`lib/news-stream.ts`'s `PRODUCT_NEWS`). There's no build step that
   generates these from commits; a feature worth surfacing gets an entry
   added by hand, the same way `feature-catalog.ts`'s `APP_FEATURES` is
-  maintained.
+  maintained. Every `APP_FEATURES` entry whose route no hand-written
+  `PRODUCT_NEWS` item names yet — most of the catalog, since a hand post
+  gets written per noteworthy change rather than per tool — additionally
+  gets a generic "Tool spotlight: …" post synthesized by
+  `lib/news-stream.ts`'s `buildAutoFeatureNews()`, so the feed always
+  mentions every tool somewhere even before someone writes a real
+  announcement for it. These spotlights all share one timestamp (older than
+  every hand-written post) and so always sort below real updates.
 - **Daily Best Card** — one item per day announced through
   [`/cards/best-card`](daily-best-card.md), rendered with
   `lib/daily-best-card.ts`'s existing `buildDailyBestCardHighlight`.
@@ -70,7 +77,8 @@ Contributions Feed.
 ## Data flow
 
 ```
-lib/news-stream.ts              — NewsItem type, NEWS_CATEGORY_LABELS, PRODUCT_NEWS (hand-maintained)
+lib/news-stream.ts              — NewsItem type, NEWS_CATEGORY_LABELS, PRODUCT_NEWS (hand-maintained),
+                                    buildAutoFeatureNews() (reads debate-ui's APP_FEATURES catalog)
 state/dailyBestCardAnnouncements.ts    — existing store, read via listAnnouncedDailyBestCards()
 state/contributorAwardAnnouncements.ts — existing store, read via listAnnouncedContributorAwards()
 state/dailyMissionResults.ts    — existing store, read via buildQuestStreakMilestoneEvents()
@@ -78,7 +86,8 @@ state/challengeWinEvents.ts     — existing store, read via buildCompletedGroup
 state/revisionHistory.ts        — existing store, read via buildDailyTopReviserAnnouncements()
 state/sprintNotes.ts            — existing store, read via listSprintNotes()
 state/evidenceLibraryEntries.ts — existing store, read via listEvidenceLibraryEntries()
-  → state/newsStream.ts         — buildNewsFeed(extraItems?) merges PRODUCT_NEWS with all
+  → state/newsStream.ts         — buildNewsFeed(extraItems?) merges PRODUCT_NEWS,
+                                    buildAutoFeatureNews()'s synthesized spotlights, and all
                                     seven in-package stores (mapped to NewsItem via each
                                     store's own highlight/announcement-text helper —
                                     sprintNotes.ts's via team-collaboration-mode.ts's
@@ -153,8 +162,12 @@ respectively).
 
 ## Known gaps
 
-- Product Updates are manually curated — nothing detects a newly added
-  route or `feature-catalog.ts` entry and drafts a post for it.
+- The auto-generated "Tool spotlight" post is a generic, one-line
+  restatement of `feature-catalog.ts`'s own description — it can't tell a
+  brand-new tool from one that's simply never been individually announced,
+  so it doesn't distinguish "just shipped" from "always been here." Writing
+  a real `PRODUCT_NEWS` entry for a tool remains the way to say something
+  more specific than that.
 - Read/like state is per-browser (localStorage), not per-account — signing
   in on a different device shows every item as unread again.
 - Every logged sprint note or saved evidence-library entry posts here, with
