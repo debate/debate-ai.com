@@ -6,7 +6,8 @@ task routing, progress, notes), its friendly group-challenge standings, and
 (once a member has a flowed practice round) their generated drill set.
 
 - **Route:** `/coaching-programs`
-- **Nav:** the global dock's Settings menu → **Coaching Programs**
+- **Nav:** the Tools page's Coaching & Analytics group; the Reason Editor's
+  Workspace menu (`t programs` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

@@ -5,7 +5,8 @@ it has earned, plus an on-demand action to compute and save today's mission
 result.
 
 - **Route:** `/cards/streaks`
-- **Nav:** the global dock's Settings menu → **Quest Streaks**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t streaks` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

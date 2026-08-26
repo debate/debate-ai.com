@@ -6,7 +6,8 @@ built from the user's own described debating style — and lists every
 session with a saved selection, with a "Clear" action per session.
 
 - **Route:** `/practice-opponent`
-- **Nav:** the global dock's Settings menu → **Opponent Persona Picker**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t persona` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-speech-writer`](../../packages/debate-speech-writer/README.md)
 
 ## What it shows

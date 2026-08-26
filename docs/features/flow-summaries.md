@@ -8,7 +8,8 @@ A "Generate from raw speech text" form lets AI derive a round's summary
 directly from a pasted transcript instead of a manually flowed grid.
 
 - **Route:** `/summaries`
-- **Nav:** the global dock's Settings menu → **Speech Transcript Summaries**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t summaries` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

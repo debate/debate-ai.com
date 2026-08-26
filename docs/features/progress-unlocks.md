@@ -5,7 +5,8 @@ tier grants, every badge earned (tier + daily-quest streak badges), their
 current streak, and how far they are from the next tier.
 
 - **Route:** `/cards/progress`
-- **Nav:** the global dock's Settings menu → **Progress**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t progress` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

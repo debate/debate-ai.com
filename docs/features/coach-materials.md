@@ -6,7 +6,8 @@ private team coach AI, preview which materials a question would draw on,
 and ask the coach AI a real question grounded strictly in those materials.
 
 - **Route:** `/coach-materials`
-- **Nav:** the global dock's Settings menu → **Coach Materials**
+- **Nav:** the Tools page's Coaching & Analytics group; the Reason Editor's
+  Workspace menu (`t materials` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-speech-writer`](../../packages/debate-speech-writer/README.md)
 
 ## What it shows

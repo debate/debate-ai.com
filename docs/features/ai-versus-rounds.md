@@ -9,7 +9,8 @@ persistence store" follow-up named under idea #3 ("Online Debate Versus
 AI") in `TODO.md`'s Product Feature Ideas list.
 
 - **Route:** `/versus-ai`
-- **Nav:** the global dock's Settings menu → **Online Debate Versus AI**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t versus` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

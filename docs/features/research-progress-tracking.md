@@ -6,7 +6,8 @@ research tasks they've completed vs. still have active, and a per-topic
 completion breakdown.
 
 - **Route:** `/cards/progress-tracking`
-- **Nav:** the global dock's Settings menu → **Research Progress**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t research progress` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

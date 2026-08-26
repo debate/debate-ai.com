@@ -7,7 +7,8 @@ Prep Notes panel, since `SprintNoteStatus` shares the same open/covered/
 needs-follow-up cycle as `PrepNoteStatus`.
 
 - **Route:** `/cards/collaboration`
-- **Nav:** the global dock's Settings menu → **Team Collaboration Mode**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t collaboration` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows
