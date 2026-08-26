@@ -28,6 +28,7 @@ const oneTapOptions = {
 
 /** Supply the Google client id resolved at runtime. No-op for a blank id. */
 export function setGoogleClientId(clientId: string) {
+  console.log("[auth] setGoogleClientId:", clientId ? "received" : "empty (not configured)");
   if (clientId) oneTapOptions.clientId = clientId;
 }
 
