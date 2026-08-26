@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   assignSprintNote,
+  buildSprintNoteAnnouncementText,
   buildTopicSprint,
   buildTopicSprintSummaryText,
   createSprintNote,
@@ -166,6 +167,24 @@ describe("getOpenFollowUps", () => {
 
   it("returns an empty array when nothing needs follow-up", () => {
     expect(getOpenFollowUps([noteA, noteB])).toEqual([]);
+  });
+});
+
+describe("buildSprintNoteAnnouncementText", () => {
+  it("names the author, topic, and full note text when it's short", () => {
+    expect(buildSprintNoteAnnouncementText(noteA)).toBe(
+      `${noteA.authorId} logged a "${noteA.topic}" prep note: ${noteA.text}`,
+    );
+  });
+
+  it("truncates a long note's text with an ellipsis", () => {
+    const longNote: SprintNote = {
+      ...noteA,
+      text: "x".repeat(200),
+    };
+    const announcement = buildSprintNoteAnnouncementText(longNote);
+    expect(announcement).toBe(`${longNote.authorId} logged a "${longNote.topic}" prep note: ${"x".repeat(140)}…`);
+    expect(announcement.length).toBeLessThan(longNote.text.length);
   });
 });
 

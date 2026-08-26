@@ -139,6 +139,27 @@ export function getOpenFollowUps(notes: SprintNote[]): SprintNote[] {
   return sortNotesByCreatedAt(notes.filter((note) => note.status === "needs-follow-up"));
 }
 
+/** Truncation length for a sprint note's text once it's rendered outside its own panel (e.g. the News Stream feed). */
+const ANNOUNCEMENT_TEXT_PREVIEW_LENGTH = 140;
+
+/**
+ * Renders a one-line announcement for a newly logged sprint note — the
+ * source text for the News Stream feature's "wire a Team Collaboration Mode
+ * sprint-note community item" slice, mirroring `gamified-quests.ts`'s
+ * `buildStreakMilestoneAnnouncementText`/`group-challenges.ts`'s
+ * `buildChallengeCompletionAnnouncementText`/`revision-incentives.ts`'s
+ * `buildTopReviserAnnouncementText`. A note's text is truncated to
+ * `ANNOUNCEMENT_TEXT_PREVIEW_LENGTH` characters (with an ellipsis) so a long
+ * prep note doesn't dominate the feed's card.
+ */
+export function buildSprintNoteAnnouncementText(note: SprintNote): string {
+  const preview =
+    note.text.length > ANNOUNCEMENT_TEXT_PREVIEW_LENGTH
+      ? `${note.text.slice(0, ANNOUNCEMENT_TEXT_PREVIEW_LENGTH).trimEnd()}…`
+      : note.text;
+  return `${note.authorId} logged a "${note.topic}" prep note: ${preview}`;
+}
+
 /** One topic's full shared collaboration session: quest board, task routing, progress board, and notes. */
 export interface TopicSprint {
   topic: string;

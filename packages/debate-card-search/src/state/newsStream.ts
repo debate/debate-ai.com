@@ -18,6 +18,14 @@
  * mirroring `state/contributions.ts`'s "compose the pure/store layer
  * directly" convention rather than duplicating any store's data.
  *
+ * A fourth Community source, `sprintNotes.ts`'s `listSprintNotes`, closes
+ * the "a Prep Room note ... [isn't] wired in" Known gap recorded in
+ * `docs/features/news-stream.md` — unlike the streak/challenge/revision
+ * sources above, a `SprintNote` is already the atomic event (no derivation
+ * over a longer history is needed): every persisted note becomes one
+ * `NewsItem`, rendered via `team-collaboration-mode.ts`'s new
+ * `buildSprintNoteAnnouncementText`.
+ *
  * Read/like state is local to this feed (not shared with `contributions.ts`'s
  * like counts, which track a card's community helpfulness rather than
  * whether a reader has seen a news item) and stored under its own
@@ -38,6 +46,8 @@ import { buildCompletedGroupChallengeEvents } from "./challengeWinEvents";
 import { buildChallengeCompletionAnnouncementText } from "../lib/group-challenges";
 import { buildDailyTopReviserAnnouncements } from "./revisionHistory";
 import { buildTopReviserAnnouncementText } from "../lib/revision-incentives";
+import { listSprintNotes } from "./sprintNotes";
+import { buildSprintNoteAnnouncementText } from "../lib/team-collaboration-mode";
 
 /** Turns every announced Daily Best Card winner into a `NewsItem`. */
 function dailyBestCardNews(): NewsItem[] {
@@ -99,15 +109,27 @@ function revisionIncentiveNews(): NewsItem[] {
   }));
 }
 
+/** Turns every persisted Team Collaboration Mode sprint note into a `NewsItem` — no derivation needed, a note is already the event. */
+function sprintNoteNews(): NewsItem[] {
+  return listSprintNotes().map((note) => ({
+    id: `sprint-note-${note.id}`,
+    category: "community" as const,
+    title: `${note.authorId} added a "${note.topic}" prep note`,
+    body: buildSprintNoteAnnouncementText(note),
+    timestamp: note.createdAt,
+    href: "/cards/collaboration",
+  }));
+}
+
 /**
  * Builds the full News Stream feed: hand-maintained product updates plus
  * every announced Daily Best Card winner, Contributor Awards standings,
- * quest-streak milestone crossing, completed group challenge, and top daily
- * Revision Incentives earner — newest first. Reads several other
- * localStorage stores (via the modules imported above) in addition to this
- * module's own — safe to call server-side or during SSR, since each
- * underlying store already guards its own `localStorage` access and returns
- * an empty list when unavailable.
+ * quest-streak milestone crossing, completed group challenge, top daily
+ * Revision Incentives earner, and logged Team Collaboration Mode sprint
+ * note — newest first. Reads several other localStorage stores (via the
+ * modules imported above) in addition to this module's own — safe to call
+ * server-side or during SSR, since each underlying store already guards its
+ * own `localStorage` access and returns an empty list when unavailable.
  */
 export function buildNewsFeed(): NewsItem[] {
   return sortNewsFeed([
@@ -117,6 +139,7 @@ export function buildNewsFeed(): NewsItem[] {
     ...questStreakMilestoneNews(),
     ...groupChallengeNews(),
     ...revisionIncentiveNews(),
+    ...sprintNoteNews(),
   ]);
 }
 

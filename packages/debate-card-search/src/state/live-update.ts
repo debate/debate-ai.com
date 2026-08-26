@@ -175,15 +175,17 @@ export function isQuestStreaksLiveUpdateStorageEvent(event: { key: string | null
  * stores it composes into feed items
  * (`dailyBestCardAnnouncements.ts`/`contributorAwardAnnouncements.ts`, both
  * `"dailyBestCardAnnouncements"`/`"contributorAwardAnnouncements"`); the
- * three stores its "Community" category derives its events from directly
+ * four stores its "Community" category derives its events from directly
  * (`dailyMissionResults.ts`'s `"dailyMissionResults"` for streak milestones,
  * `groupChallenges.ts`/`contributions.ts`/`challengeWinEvents.ts`'s
  * `"groupChallenges"`/`"contributions"`/`"challengeWinEvents"` for completed
- * challenges, and `revisionHistory.ts`'s `"revisionHistory"` for Revision
- * Incentives standings); plus its own per-viewer read/like store
- * (`state/newsStream.ts`'s `"newsStreamViewerState"`) — so an announcement,
- * a newly completed challenge or milestone, or a like/read-state change made
- * in another tab is reflected here too.
+ * challenges, `revisionHistory.ts`'s `"revisionHistory"` for Revision
+ * Incentives standings, and `sprintNotes.ts`'s `"sprintNotes"` for logged
+ * Team Collaboration Mode prep notes); plus its own per-viewer read/like
+ * store (`state/newsStream.ts`'s `"newsStreamViewerState"`) — so an
+ * announcement, a newly completed challenge or milestone, a logged sprint
+ * note, or a like/read-state change made in another tab is reflected here
+ * too.
  */
 export const NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS = [
   "dailyBestCardAnnouncements",
@@ -193,6 +195,7 @@ export const NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS = [
   "contributions",
   "challengeWinEvents",
   "revisionHistory",
+  "sprintNotes",
   "newsStreamViewerState",
 ] as const;
 
