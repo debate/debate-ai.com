@@ -31,6 +31,7 @@ import {
   type BuiltinJudgeParadigmId,
 } from "../judge/judge-paradigms"
 import {
+  buildJudgeDecisionDeepLink,
   buildJudgeParadigmSelectionsPanelView,
   deleteJudgeParadigmSelection,
   saveJudgeParadigmSelection,
@@ -202,9 +203,14 @@ export function JudgeParadigmPickerPanel() {
                 <span className="text-sm font-medium text-foreground">Round {selection.roundId}</span>
                 <Badge variant="outline">{selection.paradigm.name}</Badge>
               </div>
-              <Button size="sm" variant="ghost" onClick={() => handleClear(selection.roundId)}>
-                Clear
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button size="sm" variant="outline" asChild>
+                  <a href={buildJudgeDecisionDeepLink(selection.roundId)}>Get AI judge decision →</a>
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => handleClear(selection.roundId)}>
+                  Clear
+                </Button>
+              </div>
             </div>
           ))}
         </div>

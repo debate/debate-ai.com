@@ -13,12 +13,22 @@
  * No new decision logic is introduced here — this panel only wires the
  * already-composed pieces together and renders the result.
  *
+ * A `?roundId=` query param (read via `next/navigation`'s `useSearchParams`)
+ * pre-fills the Round ID field — the deep link
+ * `debate-speech-writer`'s `buildJudgeDecisionDeepLink` builds for the
+ * "Get AI judge decision →" link on each saved selection in
+ * `JudgeParadigmPickerPanel.tsx`, closing the
+ * `docs/features/judge-paradigm-selections.md` Known gap that picking a
+ * paradigm had no path into actually requesting a decision for it, mirroring
+ * `debate-card-search`'s `EvidenceLibraryPanel`/`?checkUrl=` convention.
+ *
  * @module panels/JudgeDecisionPanel
  */
 
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -54,6 +64,7 @@ const MISSING_SOURCE_LABEL: Record<string, string> = {
  * state during SSR/hydration rather than throwing.
  */
 export function JudgeDecisionPanel() {
+  const searchParams = useSearchParams()
   const [records, setRecords] = useState<JudgeDecisionRecord[] | null>(null)
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [loading, setLoading] = useState(false)
@@ -62,6 +73,11 @@ export function JudgeDecisionPanel() {
   useEffect(() => {
     setRecords(buildJudgeDecisionsPanelView())
   }, [])
+
+  useEffect(() => {
+    const roundId = searchParams?.get("roundId")
+    if (roundId) setForm((prev) => ({ ...prev, roundId }))
+  }, [searchParams])
 
   const refresh = () => setRecords(buildJudgeDecisionsPanelView())
 
