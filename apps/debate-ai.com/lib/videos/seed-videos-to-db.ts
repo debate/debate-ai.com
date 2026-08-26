@@ -25,11 +25,11 @@ export interface VideoSeedResult {
 }
 
 /**
- * Rows per statement. Values are inlined rather than bound, so D1's
- * per-query parameter limit does not apply; this keeps each statement a
- * comfortable size while holding the round trips down.
+ * Batching limits. Values are inlined rather than bound, so D1's per-query
+ * parameter limit does not apply — but its 100 KB statement limit does, and
+ * descriptions vary enough that only a byte budget reliably stays under it.
  */
-const ROWS_PER_STATEMENT = 100;
+const SEED_BATCH = { maxRows: 100, maxBytes: 50_000 };
 
 /**
  * Upserts every video from the bundled JSON assets into the `videos` table,
@@ -44,11 +44,7 @@ const ROWS_PER_STATEMENT = 100;
 export async function seedVideosIntoDb(db: any): Promise<VideoSeedResult> {
   const startedAt = Date.now();
   const rows = await getVideoRowsFromJson();
-  const statements = buildVideoSeedStatements(
-    rows,
-    Math.floor(startedAt / 1000),
-    ROWS_PER_STATEMENT,
-  );
+  const statements = buildVideoSeedStatements(rows, Math.floor(startedAt / 1000), SEED_BATCH);
 
   for (const statement of statements) {
     await db.run(sql.raw(statement));

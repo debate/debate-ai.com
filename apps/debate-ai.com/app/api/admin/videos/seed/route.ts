@@ -30,8 +30,17 @@ export async function POST() {
     return NextResponse.json({ ok: true, ...result });
   } catch (error) {
     console.error("Error seeding videos:", error);
+    // Drizzle wraps a driver failure in an error whose message is the whole
+    // (very long) statement, burying the reason D1 rejected it — so report
+    // the cause, and keep the echoed statement short enough to read.
+    const err = error as Error & { cause?: unknown };
+    const cause = err.cause instanceof Error ? err.cause.message : undefined;
     return NextResponse.json(
-      { error: "Failed to seed videos", details: (error as Error).message },
+      {
+        error: "Failed to seed videos",
+        details: cause ?? err.message?.slice(0, 500),
+        query: cause ? err.message?.slice(0, 200) : undefined,
+      },
       { status: 500 },
     );
   }

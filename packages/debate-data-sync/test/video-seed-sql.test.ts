@@ -49,14 +49,14 @@ describe("buildVideoSeedStatements", () => {
   const rows = [row("a"), row("b"), row("c")];
 
   it("batches the upserts and ends with the prune", () => {
-    const statements = buildVideoSeedStatements(rows, 1_700_000_000, 2);
+    const statements = buildVideoSeedStatements(rows, 1_700_000_000, { maxRows: 2 });
     expect(statements).toHaveLength(3); // two insert batches + prune
     expect(statements[0]).toContain('INSERT INTO "videos"');
     expect(statements.at(-1)).toBe('DELETE FROM "videos" WHERE "updated_at" < 1700000000');
   });
 
   it("upserts on conflict so a re-run updates instead of failing", () => {
-    const [insert] = buildVideoSeedStatements(rows, 1, 50);
+    const [insert] = buildVideoSeedStatements(rows, 1, { maxRows: 50 });
     expect(insert).toContain('ON CONFLICT("video_id") DO UPDATE SET');
     expect(insert).toContain('"title" = excluded."title"');
     expect(insert).toContain('"updated_at" = unixepoch()');
@@ -64,13 +64,31 @@ describe("buildVideoSeedStatements", () => {
   });
 
   it("emits every row exactly once across the batches", () => {
-    const statements = buildVideoSeedStatements(rows, 1, 2);
+    const statements = buildVideoSeedStatements(rows, 1, { maxRows: 2 });
     const sql = statements.join("\n");
     for (const r of rows) expect(sql.split(`'${r.videoId}'`).length - 1).toBe(1);
   });
 
   it("guards against a zero or negative batch size", () => {
-    expect(buildVideoSeedStatements(rows, 1, 0)).toHaveLength(rows.length + 1);
+    expect(buildVideoSeedStatements(rows, 1, { maxRows: 0 })).toHaveLength(rows.length + 1);
+  });
+
+  it("splits on bytes, so a wide row cannot push a statement over D1's limit", () => {
+    const wide = [
+      row("w1", { description: "x".repeat(4000) }),
+      row("w2", { description: "y".repeat(4000) }),
+      row("w3", { description: "z".repeat(4000) }),
+    ];
+    const statements = buildVideoSeedStatements(wide, 1, { maxRows: 100, maxBytes: 5000 });
+    expect(statements).toHaveLength(4); // one per row, plus the prune
+    for (const statement of statements) expect(statement.length).toBeLessThan(100_000);
+  });
+
+  it("still places a row that on its own exceeds the byte budget", () => {
+    const huge = [row("huge", { description: "q".repeat(9000) })];
+    const statements = buildVideoSeedStatements(huge, 1, { maxBytes: 100 });
+    expect(statements).toHaveLength(2);
+    expect(statements[0]).toContain("'huge'");
   });
 
   it("still emits the prune for an empty asset set", () => {
