@@ -48,6 +48,18 @@
  * `newsStreamViewerState` key, mirroring `contributorAvailability.ts`'s
  * per-viewer localStorage convention.
  *
+ * `sprintNoteNews()` and `argumentLibraryNews()` close the "no volume
+ * control" Known gap recorded in `docs/features/news-stream.md`: unlike the
+ * streak/challenge/revision sources (naturally bounded to at most one event
+ * per contributor per milestone, per challenge, or per day), a sprint note
+ * or an Argument Library entry is posted every single time one is logged or
+ * submitted, so a very active topic sprint or a busy submission period
+ * could otherwise flood the feed. Both cap themselves to the
+ * `MAX_COMMUNITY_ITEMS_PER_SOURCE` most recent records via `mostRecentBy`
+ * — a feed-projection cap, not a store cap: nothing is deleted from
+ * `sprintNotes.ts`/`evidenceLibraryEntries.ts`, older records just stop
+ * appearing in this feed once newer ones push past the limit.
+ *
  * @module state/newsStream
  */
 
@@ -127,9 +139,22 @@ function revisionIncentiveNews(): NewsItem[] {
   }));
 }
 
-/** Turns every persisted Team Collaboration Mode sprint note into a `NewsItem` — no derivation needed, a note is already the event. */
+/**
+ * Caps a source's persisted history to this feed's most recent
+ * `MAX_COMMUNITY_ITEMS_PER_SOURCE` records before mapping to `NewsItem`s —
+ * see the module doc comment above. `sortNewsFeed` re-sorts the whole feed
+ * afterward, so which records survive the cap (not their order here) is
+ * all that matters.
+ */
+const MAX_COMMUNITY_ITEMS_PER_SOURCE = 20;
+
+function mostRecentBy<T>(items: T[], timestampOf: (item: T) => number, limit: number): T[] {
+  return [...items].sort((a, b) => timestampOf(b) - timestampOf(a)).slice(0, limit);
+}
+
+/** Turns the most recent persisted Team Collaboration Mode sprint notes into `NewsItem`s — no derivation needed, a note is already the event. */
 function sprintNoteNews(): NewsItem[] {
-  return listSprintNotes().map((note) => ({
+  return mostRecentBy(listSprintNotes(), (note) => note.createdAt, MAX_COMMUNITY_ITEMS_PER_SOURCE).map((note) => ({
     id: `sprint-note-${note.id}`,
     category: "community" as const,
     title: `${note.authorId} added a "${note.topic}" prep note`,
@@ -140,26 +165,29 @@ function sprintNoteNews(): NewsItem[] {
 }
 
 /**
- * Turns every "live" (not held back by an in-progress peer review) persisted
- * Argument Library entry that carries a `createdAt` into a `NewsItem` — no
- * derivation needed, a submitted entry is already the event. An entry
- * persisted before `createdAt` existed has none and is silently skipped
- * rather than backdated to an arbitrary time.
+ * Turns the most recent "live" (not held back by an in-progress peer
+ * review) persisted Argument Library entries that carry a `createdAt` into
+ * `NewsItem`s — no derivation needed, a submitted entry is already the
+ * event. An entry persisted before `createdAt` existed has none and is
+ * silently skipped rather than backdated to an arbitrary time; the recency
+ * cap is applied after that filter, so it always keeps the
+ * `MAX_COMMUNITY_ITEMS_PER_SOURCE` most recently *timestamped* entries.
  */
 function argumentLibraryNews(): NewsItem[] {
-  return listEvidenceLibraryEntries()
-    .filter((entry): entry is EvidenceLibraryEntry & { createdAt: number } => entry.createdAt !== undefined && isEntryLive(entry.id))
-    .map((entry) => ({
-      id: `argument-library-entry-${entry.id}`,
-      category: "community" as const,
-      title:
-        entry.kind === "card"
-          ? `New card added to the Argument Library: "${entry.argBlock}"`
-          : `New analytic block added to the Argument Library: "${entry.argBlock}"`,
-      body: buildEvidenceEntryAnnouncementText(entry),
-      timestamp: entry.createdAt,
-      href: "/cards/argument-library",
-    }));
+  const live = listEvidenceLibraryEntries().filter(
+    (entry): entry is EvidenceLibraryEntry & { createdAt: number } => entry.createdAt !== undefined && isEntryLive(entry.id),
+  );
+  return mostRecentBy(live, (entry) => entry.createdAt, MAX_COMMUNITY_ITEMS_PER_SOURCE).map((entry) => ({
+    id: `argument-library-entry-${entry.id}`,
+    category: "community" as const,
+    title:
+      entry.kind === "card"
+        ? `New card added to the Argument Library: "${entry.argBlock}"`
+        : `New analytic block added to the Argument Library: "${entry.argBlock}"`,
+    body: buildEvidenceEntryAnnouncementText(entry),
+    timestamp: entry.createdAt,
+    href: "/cards/argument-library",
+  }));
 }
 
 /**

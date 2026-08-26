@@ -48,14 +48,16 @@ Every item, newest first, filterable by category:
     (`sprintNotes.ts`'s `listSprintNotes`, rendered via
     `team-collaboration-mode.ts`'s `buildSprintNoteAnnouncementText`) — the
     first Community source that needs no derivation at all, since a
-    `SprintNote` is already the atomic event.
+    `SprintNote` is already the atomic event; capped to the 20 most recent
+    notes (see Known gaps).
   - A new [Argument Library](evidence-library.md) submission — a card or
     analytic block — the moment it's saved and live (not held back by an
     in-progress peer review) at `/cards/library`
     (`evidenceLibraryEntries.ts`'s `listEvidenceLibraryEntries`, rendered via
     `shared-evidence-library.ts`'s `buildEvidenceEntryAnnouncementText`) —
     like a prep note, needs no derivation either, since a saved entry is
-    already the atomic event; only entries saved after this shipped carry
+    already the atomic event, and is likewise capped to the 20 most recent
+    entries; only entries saved after this shipped carry
     the `createdAt` timestamp it's sourced from.
   - A new [AI Coach Mode](coaching-sessions.md) session, the moment one is
     generated for a round at `/coaching` — like a prep note or Argument
@@ -170,11 +172,16 @@ respectively).
   more specific than that.
 - Read/like state is per-browser (localStorage), not per-account — signing
   in on a different device shows every item as unread again.
-- Every logged sprint note or saved evidence-library entry posts here, with
-  no volume control — a very active topic sprint or a busy submission
-  period could post many items in a short span, unlike the
-  naturally-bounded streak/challenge/revision categories (at most one event
-  per contributor per milestone, per challenge, or per day).
+- Sprint notes and Argument Library entries are capped to the 20 most
+  recent (by `createdAt`) each — `state/newsStream.ts`'s
+  `MAX_COMMUNITY_ITEMS_PER_SOURCE` — so a very active topic sprint or a
+  busy submission period can no longer flood the whole feed. This is a
+  feed-projection cap only (nothing is deleted from `sprintNotes.ts`/
+  `evidenceLibraryEntries.ts`, and both tools' own pages still list every
+  record); a sprint or submission period busier than 20 items still pushes
+  its own older items out of the feed before a viewer necessarily sees
+  them, and the cap is per source rather than per topic/contributor, so
+  one very active topic can crowd out a quieter one's notes entirely.
 - An `EvidenceLibraryEntry` saved before the `createdAt` field existed has
   none, so it never appears here — only entries saved after this shipped
   are backfilled; there's no migration that stamps one onto pre-existing
