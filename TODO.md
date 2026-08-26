@@ -61,7 +61,8 @@ _No task currently in progress._
   2654 tests, all pass), `bun run typecheck` (12 of 12 in-scope packages
   pass), and `bun run build:web` (`debate-ai-web` succeeds, `/news` and
   `/reason-editor` routes present) all pass. No repo-wide `lint` script
-  exists.
+  exists. PR: https://github.com/debate/debate-ai.com/pull/330 (opened
+  for this change).
 
   Known gaps / explicitly out of scope for this slice (the original
   request — "go through the tools and the todo.md ideas and incorporate
