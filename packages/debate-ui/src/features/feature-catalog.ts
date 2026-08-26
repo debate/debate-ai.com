@@ -135,11 +135,11 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "reason-editor",
     title: "Reason Editor",
     description:
-      "The rich-text card editor: Verbatim/Cardmirror-compatible shortcuts, an outline nav panel, and a send-to-speech-document command",
+      "The rich-text card editor: a Google-Docs-style menu bar (File/Edit/Card/Format/Insert/AI/View/Tools/Workspace), a Ctrl/Cmd-Shift-Space command palette that also jumps to other tools, Verbatim/Cardmirror-compatible shortcuts, an outline nav panel, and a send-to-speech-document command",
     href: "/reason-editor",
     category: "workspaces",
     doc: "legacy-verbatim-shortcuts.md",
-    tags: ["verbatim", "cardmirror", "tiptap", "editor", "docx", "reason-editor"],
+    tags: ["verbatim", "cardmirror", "tiptap", "editor", "docx", "reason-editor", "menu bar", "command palette", "workspace"],
   },
   {
     id: "research-workspace",
@@ -506,6 +506,15 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "recognition",
     doc: "daily-best-card.md",
     tags: ["winner", "vote", "daily"],
+  },
+  {
+    id: "news-stream",
+    title: "News Stream",
+    description: "Product updates and community announcements — new features, Daily Best Card winners, and Contributor Award standings, in one feed",
+    href: "/news",
+    category: "recognition",
+    doc: "news-stream.md",
+    tags: ["feed", "activity", "updates", "announcements"],
   },
   {
     id: "daily-quests",
