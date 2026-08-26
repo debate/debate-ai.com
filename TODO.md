@@ -61,6 +61,19 @@ _No task currently in progress._
   Verified with `bun run test` (164 files, 2381 tests), `bunx tsc --noEmit`
   in `packages/debate-videos` and `debate-data-sync`, and `bunx vinext build`
   for the web app; no `lint` script is configured in this repo.
+  Follow-up in the same PR: the `videos` table and its indexes were applied to
+  the production D1 database (`debate-ai-db`), and because the seed itself is
+  ~1 MB of generated SQL that no local wrangler login could reach from the
+  session, `buildVideoSeedStatements` was lifted into
+  `debate-data-sync/src/videos/video-seed-sql.ts` and given a second caller:
+  `POST /api/admin/videos/seed` (admin-gated, matching the YouTube resync
+  route) runs the same statements inside the Worker against its own D1
+  binding, seeding from the JSON assets the Worker already bundles — no
+  credentials, no data transfer. `GET` on it reports the row count and whether
+  the feed is being served from SQL or the fallback. Covered by
+  `test/video-seed-sql.test.ts` (literal escaping including quotes, newlines
+  and non-ASCII text, column/value alignment, batching, the upsert clause,
+  every row emitted once, and the empty-asset case).
   **PR:** [#331](https://github.com/debate/debate-ai.com/pull/331).
   **Completed:** 2026-08-25.
 - **Progress Unlocks / Research Progress / Quest Streaks — cross-tab live
