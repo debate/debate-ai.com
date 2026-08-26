@@ -148,23 +148,41 @@ function MenuBarCategoryMenu({
 }
 
 /** Workspace category content: every `WORKSPACE_LINKS` entry as a menu
- *  item, navigating to the tool's app route on select. Unlike
- *  `CategoryContent`, this needs no lazy engine import — the link list is a
- *  small static module already loaded with MenuBar itself. */
+ *  item, navigating to the tool's app route on select, grouped into
+ *  labeled sections by `link.category` (same four headings as `/tools`) so
+ *  the dropdown reads as a miniature copy of that page rather than one long
+ *  undifferentiated list. Entries with no `category` render in a trailing,
+ *  unlabeled section. Unlike `CategoryContent`, this needs no lazy engine
+ *  import — the link list is a small static module already loaded with
+ *  MenuBar itself. */
 function WorkspaceLinksContent({
   onNavigate,
 }: {
   onNavigate: (href: string) => void;
 }): React.JSX.Element {
+  const sections: { category: string | undefined; links: typeof WORKSPACE_LINKS }[] = [];
+  for (const link of WORKSPACE_LINKS) {
+    const last = sections[sections.length - 1];
+    if (last && last.category === link.category) {
+      last.links.push(link);
+    } else {
+      sections.push({ category: link.category, links: [link] });
+    }
+  }
   return (
     <>
-      <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">
-        Go to
-      </DropdownMenuLabel>
-      {WORKSPACE_LINKS.map((link) => (
-        <DropdownMenuItem key={link.href} onSelect={() => onNavigate(link.href)} title={link.description}>
-          {link.label}
-        </DropdownMenuItem>
+      {sections.map((section, i) => (
+        <div key={section.category ?? `untitled-${i}`}>
+          {i > 0 && <DropdownMenuSeparator />}
+          <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            {section.category ?? 'Go to'}
+          </DropdownMenuLabel>
+          {section.links.map((link) => (
+            <DropdownMenuItem key={link.href} onSelect={() => onNavigate(link.href)} title={link.description}>
+              {link.label}
+            </DropdownMenuItem>
+          ))}
+        </div>
       ))}
     </>
   );
