@@ -6,6 +6,39 @@
 _No task currently in progress._
 
 ### Completed
+- **Tools discoverability — wire up the Speech Documents orphaned route.**
+  Prompted by the same "make sure every tool is reachable, not just on the
+  Tools page" request that drove the earlier "Tools discoverability — wire
+  up three orphaned routes" entry (below), this run re-ran that entry's
+  audit method (`packages/debate-ui/src/features/feature-catalog.ts`'s
+  `APP_FEATURES` against both `apps/debate-ai.com/app/tools/page.tsx`'s
+  `TOOL_GROUPS` and `packages/debate-editor-cardmirror/src/editor/workspace-links.ts`'s
+  `WORKSPACE_LINKS`) and found one built, working page still missing from
+  both: `/speech-documents` (`SpeechDocumentsPanel`, the "Legacy Verbatim /
+  Cardmirror Compatibility" idea's send-to-speech-document destination —
+  reachable only by typing the URL directly, `/features`, or noticing the
+  "→Speech" toolbar button's confirmation alert). Four other `APP_FEATURES`
+  routes (`/videos`, `/cards`, `/debate`, and `/reason-editor` itself) are
+  in `feature-catalog.ts` but intentionally absent from both lists — the
+  first three are already one click away from anywhere via the global dock
+  (`apps/debate-ai.com/components/layout/CategoryDock.tsx`'s
+  Videos/Shared/Debate items), and the fourth is the editor's own route —
+  so only `/speech-documents` was a genuine gap. Added it to `TOOL_GROUPS`
+  (Prep & Practice, next to the other round-analysis tools) with
+  description + highlights in the page's existing style, and to
+  `WORKSPACE_LINKS` in the same category, so it's now reachable from both
+  the Tools page and the Reason Editor's Workspace menu / `t` palette
+  prefix — closing the loop on CardMirror's own send-to-speech-document
+  command, whose destination page previously had no way back into it short
+  of memorizing the URL. Added the missing `- **Nav:**` line to
+  `docs/features/speech-document-target.md` (the only feature doc that had
+  never had one, since this route had no nav entry to describe until now).
+  Verified: `bun install` (2260 packages), `bun run typecheck` (13/13
+  in-scope package tasks pass), `bun run test` (178 files / 2736 tests,
+  all pass — this is a nav-only change with no new logic, so no test
+  additions were needed), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/speech-documents` present in the route list).
+  **Completed:** 2026-08-26.
 - **Feature docs — fix the stale "global dock's Settings menu" Nav claim
   across the remaining ~34 docs.** Flagged as out-of-scope in the prior
   "Tools discoverability — wire up three orphaned routes" entry (see
