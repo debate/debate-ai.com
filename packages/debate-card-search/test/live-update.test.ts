@@ -161,7 +161,7 @@ describe("isNewsStreamLiveUpdateStorageEvent", () => {
 
   it("is false for an unrelated store's key", () => {
     expect(isNewsStreamLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
-    expect(isNewsStreamLiveUpdateStorageEvent({ key: "contributions" })).toBe(false);
+    expect(isNewsStreamLiveUpdateStorageEvent({ key: "routedTaskQueues" })).toBe(false);
   });
 
   it("is false for a key that merely contains a tracked store name as a substring", () => {

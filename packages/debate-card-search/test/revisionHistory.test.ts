@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildDailyTopReviserAnnouncements,
   buildPersistedRevisionIncentiveLeaderboard,
   deleteRevisionRecord,
   getRevisionRecord,
@@ -198,5 +199,47 @@ describe("buildPersistedRevisionIncentiveLeaderboard", () => {
       "alice",
       "bob",
     ]);
+  });
+});
+
+describe("buildDailyTopReviserAnnouncements", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildDailyTopReviserAnnouncements()).toEqual([]);
+  });
+
+  it("groups revisions by UTC day and reports the top-scoring contributor per day", () => {
+    saveRevisionRecord(ALICE_FIRST_EDIT); // 2026-01-01, earns 70 points
+    saveRevisionRecord(BOB_EDIT); // 2026-01-01, earns 5 points
+    saveRevisionRecord(ALICE_SECOND_EDIT); // 2026-01-02, earns 8 points
+
+    const announcements = buildDailyTopReviserAnnouncements();
+    expect(announcements.map((a) => a.dayKey)).toEqual(["2026-01-02", "2026-01-01"]);
+
+    const day1 = announcements.find((a) => a.dayKey === "2026-01-01");
+    expect(day1?.topContributor.contributorId).toBe("alice");
+    expect(day1?.topContributor.totalRewardPoints).toBe(70);
+
+    const day2 = announcements.find((a) => a.dayKey === "2026-01-02");
+    expect(day2?.topContributor.contributorId).toBe("alice");
+    expect(day2?.topContributor.totalRewardPoints).toBe(8);
+  });
+
+  it("excludes a day whose only revisions earned no reward", () => {
+    const noRewardEdit: CardRevisionRecord = {
+      id: "rev-no-reward",
+      cardId: "card-3",
+      contributorId: "carol",
+      revisedAt: "2026-02-01T00:00:00.000Z",
+      before: snapshot(),
+      after: snapshot(),
+    };
+    saveRevisionRecord(noRewardEdit);
+    expect(buildDailyTopReviserAnnouncements()).toEqual([]);
+  });
+
+  it("sorts newest day first", () => {
+    saveRevisionRecord(ALICE_FIRST_EDIT); // 2026-01-01
+    saveRevisionRecord(ALICE_SECOND_EDIT); // 2026-01-02
+    expect(buildDailyTopReviserAnnouncements().map((a) => a.dayKey)).toEqual(["2026-01-02", "2026-01-01"]);
   });
 });

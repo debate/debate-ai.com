@@ -20,6 +20,7 @@
 
 import type { CardRevision, ContributorRevisionStats, RevisionRewardWeights } from "../lib/revision-incentives";
 import { buildRevisionIncentiveLeaderboard, DEFAULT_REVISION_REWARD_WEIGHTS } from "../lib/revision-incentives";
+import { getUtcDayKey } from "../lib/daily-best-card";
 
 /** A `CardRevision` as persisted: a unique id plus when it was recorded. */
 export interface CardRevisionRecord extends CardRevision {
@@ -106,4 +107,45 @@ export function buildPersistedRevisionIncentiveLeaderboard(
   weights: RevisionRewardWeights = DEFAULT_REVISION_REWARD_WEIGHTS,
 ): ContributorRevisionStats[] {
   return buildRevisionIncentiveLeaderboard(readAll(), weights);
+}
+
+/** One UTC day's top Revision Incentives earner, derived from that day's persisted revisions. */
+export interface DailyTopReviserAnnouncement {
+  dayKey: string;
+  topContributor: ContributorRevisionStats;
+}
+
+/**
+ * Finds each UTC calendar day's top Revision Incentives earner, derived
+ * directly from that day's persisted revision records — the "revision
+ * incentive standings" News Stream category noted as unwired in
+ * `news-stream.md`'s Known gaps. Groups every persisted record by the UTC
+ * day of its `revisedAt`, scores each day's group independently via
+ * `buildRevisionIncentiveLeaderboard`, and keeps only the #1 contributor per
+ * day that earned a nonzero reward — a day with no rewarded revision is
+ * excluded rather than reported as a zero-point "winner". Purely derived, no
+ * separate announcement store needed: replaying the same persisted history
+ * always regroups into the same daily standings. Sorted newest day first.
+ */
+export function buildDailyTopReviserAnnouncements(
+  weights: RevisionRewardWeights = DEFAULT_REVISION_REWARD_WEIGHTS,
+): DailyTopReviserAnnouncement[] {
+  const byDay = new Map<string, CardRevisionRecord[]>();
+  for (const record of readAll()) {
+    const dayKey = getUtcDayKey(Date.parse(record.revisedAt));
+    const group = byDay.get(dayKey);
+    if (group) {
+      group.push(record);
+    } else {
+      byDay.set(dayKey, [record]);
+    }
+  }
+
+  const announcements: DailyTopReviserAnnouncement[] = [];
+  for (const [dayKey, records] of byDay) {
+    const top = buildRevisionIncentiveLeaderboard(records, weights)[0];
+    if (top && top.totalRewardPoints > 0) announcements.push({ dayKey, topContributor: top });
+  }
+
+  return announcements.sort((a, b) => b.dayKey.localeCompare(a.dayKey));
 }

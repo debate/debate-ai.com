@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_STREAK_MILESTONES,
   buildContributorQuestStreak,
+  buildStreakMilestoneAnnouncementText,
   buildStreakRewardText,
   buildStreakSummaryText,
   computeDailyMissionResult,
   computeStreakStatus,
+  deriveEarnedStreakMilestoneEvents,
   getEarnedStreakBadges,
   type DailyMissionResult,
   type StreakMilestone,
@@ -192,5 +194,80 @@ describe("buildStreakRewardText", () => {
     expect(buildStreakRewardText(status, true, milestones)).toBe(
       '🎉 Mission complete! 1-day streak — you just earned "First Day"!',
     );
+  });
+});
+
+describe("deriveEarnedStreakMilestoneEvents", () => {
+  it("returns no events for a history that never reaches a milestone", () => {
+    const results = [day("2026-08-09", true), day("2026-08-10", true)];
+    expect(deriveEarnedStreakMilestoneEvents(results)).toEqual([]);
+  });
+
+  it("reports the exact day a milestone is first crossed", () => {
+    const results = [day("2026-08-08", true), day("2026-08-09", true), day("2026-08-10", true)];
+    expect(deriveEarnedStreakMilestoneEvents(results)).toEqual([
+      { dayKey: "2026-08-10", streakLength: 3, badge: "3-Day Streak" },
+    ]);
+  });
+
+  it("does not re-report the same milestone on later days once the streak has moved past it", () => {
+    const results = [
+      day("2026-08-08", true),
+      day("2026-08-09", true),
+      day("2026-08-10", true),
+      day("2026-08-11", true),
+    ];
+    expect(deriveEarnedStreakMilestoneEvents(results)).toEqual([
+      { dayKey: "2026-08-10", streakLength: 3, badge: "3-Day Streak" },
+    ]);
+  });
+
+  it("reports every milestone crossed across a long enough streak", () => {
+    const results = Array.from({ length: 7 }, (_, i) => day(`2026-08-${String(i + 1).padStart(2, "0")}`, true));
+    expect(deriveEarnedStreakMilestoneEvents(results)).toEqual([
+      { dayKey: "2026-08-03", streakLength: 3, badge: "3-Day Streak" },
+      { dayKey: "2026-08-07", streakLength: 7, badge: "Week Warrior" },
+    ]);
+  });
+
+  it("resets after a gap, so a milestone can be earned again on a fresh streak", () => {
+    const results = [
+      day("2026-08-01", true),
+      day("2026-08-02", true),
+      day("2026-08-03", true),
+      // gap on 2026-08-04
+      day("2026-08-05", true),
+      day("2026-08-06", true),
+      day("2026-08-07", true),
+    ];
+    expect(deriveEarnedStreakMilestoneEvents(results)).toEqual([
+      { dayKey: "2026-08-03", streakLength: 3, badge: "3-Day Streak" },
+      { dayKey: "2026-08-07", streakLength: 3, badge: "3-Day Streak" },
+    ]);
+  });
+
+  it("ignores incomplete days", () => {
+    const results = [day("2026-08-08", true), day("2026-08-09", false), day("2026-08-10", true)];
+    expect(deriveEarnedStreakMilestoneEvents(results)).toEqual([]);
+  });
+
+  it("returns no events for empty history", () => {
+    expect(deriveEarnedStreakMilestoneEvents([])).toEqual([]);
+  });
+
+  it("supports a custom milestone list", () => {
+    const milestones: StreakMilestone[] = [{ streakLength: 1, badge: "First Day" }];
+    const results = [day("2026-08-10", true)];
+    expect(deriveEarnedStreakMilestoneEvents(results, milestones)).toEqual([
+      { dayKey: "2026-08-10", streakLength: 1, badge: "First Day" },
+    ]);
+  });
+});
+
+describe("buildStreakMilestoneAnnouncementText", () => {
+  it("renders a third-person announcement for a freshly earned milestone", () => {
+    expect(
+      buildStreakMilestoneAnnouncementText("alex", { dayKey: "2026-08-10", streakLength: 3, badge: "3-Day Streak" }),
+    ).toBe('alex reached a 3-day streak and earned "3-Day Streak"!');
   });
 });

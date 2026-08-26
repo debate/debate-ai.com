@@ -24,6 +24,18 @@ Every item, newest first, filterable by category:
 - **Contributor Awards** — one item per day announced through
   [`/cards/awards`](contributor-awards.md), rendered with
   `lib/contributor-awards.ts`'s existing `buildAwardsAnnouncementText`.
+- **Community** — three more categories, none needing a separate
+  "announce" step since each is derived straight from its own feature's
+  already-persisted history:
+  - A [Quest Streaks](quest-streaks.md) milestone, the exact day a
+    contributor's streak first reaches it (`dailyMissionResults.ts`'s
+    `buildQuestStreakMilestoneEvents`).
+  - A [Group Challenge](group-challenges.md) the moment its goal is reached
+    (`challengeWinEvents.ts`'s `buildCompletedGroupChallengeEvents`, timed to
+    the `targetCount`-th matching contribution or win event).
+  - Each UTC day's top [Revision Incentives](revision-incentives.md) earner,
+    when at least one revision that day earned a nonzero reward
+    (`revisionHistory.ts`'s `buildDailyTopReviserAnnouncements`).
 
 Each item can be liked and is marked read on hover; unread items get a
 highlighted left border and a "New" badge. Read/like state is a viewer-local
@@ -37,8 +49,11 @@ Contributions Feed.
 lib/news-stream.ts              — NewsItem type, NEWS_CATEGORY_LABELS, PRODUCT_NEWS (hand-maintained)
 state/dailyBestCardAnnouncements.ts    — existing store, read via listAnnouncedDailyBestCards()
 state/contributorAwardAnnouncements.ts — existing store, read via listAnnouncedContributorAwards()
-  → state/newsStream.ts         — buildNewsFeed() merges PRODUCT_NEWS with both announcement
-                                    stores (mapped to NewsItem via each store's own highlight/
+state/dailyMissionResults.ts    — existing store, read via buildQuestStreakMilestoneEvents()
+state/challengeWinEvents.ts     — existing store, read via buildCompletedGroupChallengeEvents()
+state/revisionHistory.ts        — existing store, read via buildDailyTopReviserAnnouncements()
+  → state/newsStream.ts         — buildNewsFeed() merges PRODUCT_NEWS with all five stores
+                                    (mapped to NewsItem via each store's own highlight/
                                     announcement-text helper), sorted newest first
                                   — isNewsItemRead/markNewsItemRead/isNewsItemLiked/
                                     toggleNewsItemLiked (localStorage, "newsStreamViewerState")
@@ -62,12 +77,19 @@ or Contributor Awards winner, or toggles read/like state on a news item
 `"newsStreamViewerState"`), so a second tab no longer needs a manual reload
 to see it.
 
-`state/newsStream.ts` introduces no new persisted event data of its own for
-the Daily Best Card and Contributor Awards categories — it only re-shapes
-what `dailyBestCardAnnouncements.ts`/`contributorAwardAnnouncements.ts`
-already persist into the feed's common `NewsItem` type, so announcing a
-winner or an award standing (from those features' own panels) is what makes
-it appear here; nothing needs to be separately "posted" to the feed.
+`state/newsStream.ts` introduces no new persisted event data of its own —
+it only re-shapes what `dailyBestCardAnnouncements.ts`,
+`contributorAwardAnnouncements.ts`, `dailyMissionResults.ts`,
+`challengeWinEvents.ts`, and `revisionHistory.ts` already persist into the
+feed's common `NewsItem` type. The Daily Best Card and Contributor Awards
+categories need an explicit "announce" action in their own panel; the three
+Community categories added afterward (quest streak milestones, group
+challenge completions, Revision Incentives standings) don't — each is
+derived fresh every time straight from its source feature's own history
+(mission results, challenge contributions/win events, revision records), so
+completing a mission, winning a challenge, or revising a card (from those
+features' own panels) is what makes it appear here, with no separate
+"announce" step and no risk of re-reporting the same event on a later day.
 
 ## Known gaps
 
@@ -75,7 +97,7 @@ it appear here; nothing needs to be separately "posted" to the feed.
   route or `feature-catalog.ts` entry and drafts a post for it.
 - Read/like state is per-browser (localStorage), not per-account — signing
   in on a different device shows every item as unread again.
-- Only two categories currently feed the "Community" side of the stream
-  (Daily Best Card, Contributor Awards); other announceable events in this
-  package (quest streak milestones, group challenge results, revision
-  incentive standings) aren't wired in yet.
+- The Community categories only cover events this package can already
+  detect from persisted history (streak milestones, challenge completions,
+  daily top reviser) — other community moments (a new Argument Library
+  entry, a Prep Room note, a coaching session) still aren't wired in.

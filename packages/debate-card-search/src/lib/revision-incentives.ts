@@ -234,6 +234,12 @@ export function computeEvidenceStaleness(evidenceYear: number, currentYear: numb
   };
 }
 
+/** Renders a short third-person announcement for a day's top Revision Incentives earner, for a feed item. */
+export function buildTopReviserAnnouncementText(dayKey: string, stats: ContributorRevisionStats): string {
+  const revisionLabel = stats.revisionCount === 1 ? "revision" : "revisions";
+  return `${stats.contributorId} led Revision Incentives on ${dayKey} with ${stats.totalRewardPoints} points across ${stats.revisionCount} ${revisionLabel}.`;
+}
+
 /** Renders a one-line notification for a single scored revision. */
 export function buildRevisionRewardText(evaluation: RevisionEvaluation): string {
   if (!evaluation.isRewardedImprovement) {

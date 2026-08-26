@@ -45,6 +45,7 @@ const FILTERS: { value: NewsCategory | "all"; label: string }[] = [
   { value: "product", label: NEWS_CATEGORY_LABELS.product },
   { value: "daily-best-card", label: NEWS_CATEGORY_LABELS["daily-best-card"] },
   { value: "awards", label: NEWS_CATEGORY_LABELS.awards },
+  { value: "community", label: NEWS_CATEGORY_LABELS.community },
 ]
 
 function relativeTime(timestamp: number): string {

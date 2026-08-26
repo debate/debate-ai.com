@@ -203,3 +203,48 @@ export function buildGroupChallengeSummaryText(progress: GroupChallengeProgress)
   const dayLabel = progress.daysRemaining === 1 ? "1 day" : `${progress.daysRemaining} days`;
   return `"${progress.title}": ${progress.completedCount}/${progress.targetCount} — ${dayLabel} left`;
 }
+
+/**
+ * The timestamp a challenge's goal was first satisfied — when its
+ * `targetCount`-th matching contribution or win event landed — or `null` if
+ * it hasn't been reached yet. Purely derived from the same inputs
+ * `computeGroupChallengeProgress` already scores, so a challenge's
+ * completion moment never needs a separately persisted "completed at"
+ * field: replaying the same contributions/win events always yields the same
+ * instant.
+ */
+export function computeChallengeCompletionTimestamp(
+  challenge: GroupChallenge,
+  contributions: QuestContribution[],
+  winEvents: ChallengeWinEvent[],
+): number | null {
+  const memberSet = new Set(challenge.memberIds);
+  const timestamps =
+    challenge.goal.kind === "contribution_target"
+      ? contributions
+          .filter(
+            (contribution) =>
+              memberSet.has(contribution.contributorId) &&
+              isWithinWindow(challenge, contribution.submittedAt) &&
+              matchesQuestTarget(contribution, (challenge.goal as ContributionTargetGoal).target),
+          )
+          .map((contribution) => contribution.submittedAt)
+      : winEvents
+          .filter((event) => memberSet.has(event.contributorId) && isWithinWindow(challenge, event.occurredAt))
+          .map((event) => event.occurredAt);
+
+  if (timestamps.length < challenge.goal.targetCount) return null;
+  return [...timestamps].sort((a, b) => a - b)[challenge.goal.targetCount - 1];
+}
+
+/**
+ * Renders a short third-person announcement for a challenge that just
+ * reached its goal, for a feed item — `buildGroupChallengeSummaryText`'s
+ * complete-case line plus the MVP contributor, if any.
+ */
+export function buildChallengeCompletionAnnouncementText(
+  progress: Pick<GroupChallengeProgress, "title" | "completedCount" | "targetCount" | "mvpContributorId">,
+): string {
+  const summary = `"${progress.title}" complete! (${progress.completedCount}/${progress.targetCount})`;
+  return progress.mvpContributorId ? `${summary} — top contributor: ${progress.mvpContributorId}` : summary;
+}
