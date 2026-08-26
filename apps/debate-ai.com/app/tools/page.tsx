@@ -6,7 +6,7 @@ import {
   ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School,
   FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass,
-  Rss,
+  Rss, Gauge, Crosshair, Crown,
   type LucideIcon,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "debate-ui/src/primitives/card"
@@ -107,6 +107,11 @@ const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Full-text search plus kind/topic/case-area/tag filters", "Edit and Delete per entry — edits score toward Revision Incentives"],
       },
       {
+        href: "/cards/scoring", label: "LLM Card Scoring", icon: Gauge,
+        description: "Score cards for relevance, clarity, uniqueness, evidence quality, and usability.",
+        highlights: ["Deterministic five-dimension heuristic score, ranked across every submitted card", "Likely-duplicate flag checked against the real Shared Evidence Library corpus", "Optional real Anthropic-backed qualitative verdict per card"],
+      },
+      {
         href: "/cards/revisions", label: "Revision Incentives", icon: History,
         description: "See contributors ranked by reward points earned improving weak cards, strengthening citations, and refreshing stale evidence.",
         highlights: ["Points for quality gains, citation completeness, and fresher evidence", "Weak-card improvements score double"],
@@ -197,6 +202,11 @@ const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Pulls straight from saved Opponent and Judge Profiles", "One briefing per round, with free-text team prep notes attached"],
       },
       {
+        href: "/strategy", label: "Scout-to-Strategy", icon: Crosshair,
+        description: "Turn opponent scouting and judge tendencies into a case-choice ranking and matchup risk level.",
+        highlights: ["Reads straight from saved Opponent Team and Judge Profiles", "Ranks case options with a judge-adaptation note per option", "Also mounted in the Coach Workspace's Scouting section"],
+      },
+      {
         href: "/coaching", label: "AI Coach Mode", icon: GraduationCap,
         description: "Get extension, refutation, collapse, and weighing prompts generated from each round's flow.",
         highlights: ["Template prompts per round + side, generated from the flow", "\"Get AI feedback\" expands any prompt into open-ended coaching"],
@@ -260,6 +270,11 @@ const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/outcomes", label: "AI Response-Outcome Charts", icon: BarChart3,
         description: "See per-side exposure and the most vulnerable arguments in each round's flow.",
         highlights: ["\"What if\" picker recomputes exposure under a hypothetical extend/answer/concede", "AI counsel panel assesses likely response paths for exposed arguments"],
+      },
+      {
+        href: "/rank", label: "Team Rankings", icon: Crown,
+        description: "Debate team rankings, leaderboard, and Elo ratings.",
+        highlights: ["Elo-based team leaderboard", "Complements CX NDCA Standings' tournament-result view"],
       },
       {
         href: "/coaching-programs", label: "Coaching Programs", icon: School,

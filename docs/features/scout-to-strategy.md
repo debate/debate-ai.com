@@ -6,6 +6,8 @@ deterministic case-choice/risk recommendation for an upcoming matchup — the
 Organizer Features list.
 
 - **Route:** `/strategy`
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t strategy` in Ctrl/Cmd-Shift-Space's command palette)
 - **Also mounted:** Coach hub → **Scouting** section (alongside
   `OpponentTeamProfilesPanel`/`JudgeProfilesPanel`)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)

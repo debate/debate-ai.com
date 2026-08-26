@@ -37,6 +37,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/cards/inbox', label: 'Task Inbox', description: 'Research tasks routed to contributors', category: 'Community & Progress' },
   { href: '/cards/progress', label: 'Progress', description: 'Unlock tier, badges, and daily-quest streak per contributor', category: 'Community & Progress' },
   { href: '/cards/library', label: 'Evidence Library', description: 'Search shared cut cards and analytic blocks', category: 'Community & Progress' },
+  { href: '/cards/scoring', label: 'LLM Card Scoring', description: 'Five-dimension quality score, ranking, and duplicate check for a card', category: 'Community & Progress' },
   { href: '/cards/revisions', label: 'Revision Incentives', description: 'Reward points for improving weak cards and stale citations', category: 'Community & Progress' },
   { href: '/cards/reviews', label: 'Review Queue', description: 'Move a card through comment, approve, and publish', category: 'Community & Progress' },
   { href: '/cards/argument-library', label: 'Argument Library', description: 'Topic folders, case areas, and tag-based collections', category: 'Community & Progress' },
@@ -56,6 +57,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/opponents', label: 'Opponent Team Profiles', description: 'Side-record tendencies and common arguments per opponent', category: 'Prep & Practice' },
   { href: '/drills', label: 'Practice Drills', description: "Overview, frontline, cross-ex, and collapse prompts from a round's flow", category: 'Prep & Practice' },
   { href: '/briefings', label: 'Pre-Round Briefings', description: 'Opponent scouting, judge tendencies, and prep notes combined', category: 'Prep & Practice' },
+  { href: '/strategy', label: 'Scout-to-Strategy', description: 'Case-choice ranking and matchup risk from scouted opponent and judge data', category: 'Prep & Practice' },
   { href: '/coaching', label: 'AI Coach Mode', description: 'Extension, refutation, collapse, and weighing prompts', category: 'Prep & Practice' },
   { href: '/paradigms', label: 'Judge Paradigm Picker', description: 'Six built-in paradigms or a custom judge paradigm', category: 'Prep & Practice' },
   { href: '/judge-decision', label: 'AI Judge Decision', description: 'An AI round decision under a saved paradigm and flow', category: 'Prep & Practice' },
@@ -69,6 +71,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
 
   // ── Coaching & Analytics ────────────────────────────────────────────────
   { href: '/standings', label: 'CX NDCA Standings', description: 'Cumulative, ranked season standings', category: 'Coaching & Analytics' },
+  { href: '/rank', label: 'Team Rankings', description: 'Elo-based team leaderboard and rankings', category: 'Coaching & Analytics' },
   { href: '/outcomes', label: 'AI Response-Outcome Charts', description: 'Per-side exposure and most-vulnerable arguments', category: 'Coaching & Analytics' },
   { href: '/coaching-programs', label: 'Coaching Programs', description: "A coach's squad-scoped coaching space and boards", category: 'Coaching & Analytics' },
   { href: '/coach-materials', label: 'Coach Materials', description: 'Grounding materials for the team coach AI', category: 'Coaching & Analytics' },
