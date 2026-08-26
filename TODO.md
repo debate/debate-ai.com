@@ -6,6 +6,51 @@
 _No task currently in progress._
 
 ### Completed
+- **News Stream — cap sprint notes and Argument Library submissions to the
+  20 most recent items each.** Closes the "no volume control" Known gap
+  recorded in `docs/features/news-stream.md`: unlike the streak/challenge/
+  revision Community sources (each naturally bounded to at most one event
+  per contributor per milestone, per challenge, or per day), a Team
+  Collaboration Mode prep note or an Argument Library submission posted a
+  `NewsItem` every single time one was logged or saved, so a very active
+  topic sprint or a busy submission period could flood the whole feed.
+  Prompted by the same "flesh out the News Stream's functionality further"
+  line of work as the three prior Community-source runs, this cycle picked
+  the one already-identified, safely-startable gap left in that doc rather
+  than adding a seventh source. `state/newsStream.ts` gains a
+  `MAX_COMMUNITY_ITEMS_PER_SOURCE` constant (20) and a `mostRecentBy`
+  helper (sorts by timestamp descending, slices to the limit) applied
+  inside `sprintNoteNews()` and `argumentLibraryNews()` before mapping to
+  `NewsItem`s — a feed-projection cap only: nothing is deleted from
+  `sprintNotes.ts`/`evidenceLibraryEntries.ts`, and both tools' own pages
+  (`/cards/collaboration`, `/cards/argument-library`) still list every
+  record; `argumentLibraryNews()`'s existing "must carry a `createdAt`"
+  filter runs first, so the cap always keeps the 20 most recently
+  *timestamped* live entries. `sortNewsFeed` still re-sorts the whole feed
+  afterward, so `mostRecentBy`'s own output order doesn't matter — only
+  which records survive the cap does. Added a `PRODUCT_NEWS` entry
+  announcing the change (`product-news-stream-volume-cap`, mirroring the
+  five prior "News Stream now ..." announcements) and updated
+  `docs/features/news-stream.md` (the "What it shows" bullets for both
+  sources now note the cap, and the Known gap is narrowed rather than
+  closed outright — the cap is per-source rather than per-topic/
+  per-contributor, so one very active topic sprint can still crowd out a
+  quieter one's notes within that same 20-item budget, and a burst busier
+  than 20 items can still push its own older items out before a viewer
+  necessarily sees them). Vitest-covered in `newsStream.test.ts` (two new
+  cases: 25 sprint notes/25 Argument Library entries each collapse to
+  exactly 20 items in the feed, keeping the newest and dropping the
+  oldest by `createdAt`). Verified: `bun install` (2258 packages),
+  `bunx vitest run packages/debate-card-search/test/newsStream.test.ts`
+  (18/18 pass, up from 16), full `bun run test` (179 files / 2773 tests,
+  all pass, up from 2771), `bunx turbo run typecheck --filter=debate-card-
+  search --filter=debate-ui` (4/4 in-scope package tasks pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/news` route present, no
+  route changes). No repo-wide `lint` script exists, so that acceptance
+  step is N/A. No follow-ups remain open on the "no volume control" gap
+  specifically; the narrower per-source/per-burst limitation above is
+  recorded as a new, smaller Known gap rather than a numbered follow-up.
+  **Completed:** 2026-08-26.
 - **Speech Documents — replace the dead `reason-editor`-era send target
   with a real history of what CardMirror's send-to-speech actually
   sends.** Closes a disconnect found by the "make sure every tool is

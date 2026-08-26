@@ -63,6 +63,14 @@ export interface NewsItem {
  */
 export const PRODUCT_NEWS: NewsItem[] = [
   {
+    id: "product-news-stream-volume-cap",
+    category: "product",
+    title: "News Stream caps busy sources to the 20 most recent items",
+    body: "Sprint notes and Argument Library submissions used to post here every single time, with no limit — a very active topic sprint or a busy submission period could flood the whole feed. Each of those two sources is now capped to its 20 most recent items; nothing is deleted from Team Collaboration Mode or the Argument Library itself, only how many of each show up here.",
+    timestamp: Date.parse("2026-08-26T06:00:00Z"),
+    href: "/news",
+  },
+  {
     id: "product-news-stream-tool-spotlights",
     category: "product",
     title: "News Stream now spotlights every tool",

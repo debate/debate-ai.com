@@ -213,6 +213,50 @@ describe("buildNewsFeed", () => {
     expect(buildNewsFeed().find((news) => news.id === "argument-library-entry-entry-legacy")).toBeUndefined();
   });
 
+  it("caps sprint notes to the most recent MAX_COMMUNITY_ITEMS_PER_SOURCE, dropping older ones", () => {
+    for (let i = 0; i < 25; i++) {
+      saveSprintNote({
+        id: `note-${i}`,
+        topic: "Immigration",
+        authorId: "erin",
+        text: `Note ${i}`,
+        status: "open",
+        createdAt: i,
+        updatedAt: i,
+      });
+    }
+
+    const feed = buildNewsFeed();
+    const sprintNoteItems = feed.filter((item) => item.id.startsWith("sprint-note-"));
+    expect(sprintNoteItems).toHaveLength(20);
+    // The 20 most recent (highest createdAt) survive; the oldest 5 don't.
+    expect(feed.find((item) => item.id === "sprint-note-note-24")).toBeDefined();
+    expect(feed.find((item) => item.id === "sprint-note-note-4")).toBeUndefined();
+  });
+
+  it("caps Argument Library entries to the most recent MAX_COMMUNITY_ITEMS_PER_SOURCE, dropping older ones", () => {
+    for (let i = 0; i < 25; i++) {
+      saveEvidenceLibraryEntry({
+        id: `entry-${i}`,
+        argBlock: "Warming DA",
+        wordCount: 4,
+        topic: "Energy Policy",
+        caseArea: "DA",
+        tags: [],
+        kind: "block",
+        text: `Entry ${i}`,
+        cite: "",
+        createdAt: i,
+      });
+    }
+
+    const feed = buildNewsFeed();
+    const entryItems = feed.filter((item) => item.id.startsWith("argument-library-entry-"));
+    expect(entryItems).toHaveLength(20);
+    expect(feed.find((item) => item.id === "argument-library-entry-entry-24")).toBeDefined();
+    expect(feed.find((item) => item.id === "argument-library-entry-entry-4")).toBeUndefined();
+  });
+
   it("sorts every category newest first together", () => {
     saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-08", isComplete: true });
     saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: true });
