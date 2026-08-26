@@ -58,6 +58,18 @@ panels/CoachingSessionsPanel.tsx
   → deleteCoachingSession(roundId, sideKey)  — state/coachingSessions.ts
   → panel re-reads buildCoachingSessionsPanelView() to refresh
 
+Posting a freshly generated session to the News Stream:
+state/coachingSessions.ts
+  → coachingSessionNews()              — every session that carries a createdAt
+                                          (stamped by buildAndSaveCoachingSession)
+                                          becomes a "community" NewsItem
+  → apps/debate-ai.com/app/news/NewsPageContent.tsx — passes the result as
+                                          NewsStreamPanel's extraItems prop
+                                          (see news-stream.md — this package
+                                          already depends on debate-card-search,
+                                          so the news source lives here rather
+                                          than in that package)
+
 Getting AI coaching feedback for a session:
 panels/CoachingSessionsPanel.tsx
   → requestCoachFeedback({ sideKey, prompts })  — round/coach-feedback-client.ts
@@ -112,6 +124,20 @@ persisting a session from a flow, overwriting an existing record for the
 same round+side pair, keeping sessions for different sides of the same
 round distinct, and `collapseLimit` passing through to
 `buildCoachingSession`).
+
+A later slice, `coachingSessionNews()` in `state/coachingSessions.ts`,
+closed the "a coaching session" half of `docs/features/news-stream.md`'s
+Known gap: a `CoachingSessionRecord` gained an additive, optional
+`createdAt` field, stamped by `buildAndSaveCoachingSession` on generation
+(existing records without it are silently excluded rather than backdated,
+mirroring `evidenceLibraryEntries.ts`'s `argumentLibraryNews()`
+convention), and `coachingSessionNews()` maps every session that carries
+one straight to a News Stream `NewsItem`. Since `debate-card-search` (where
+News Stream's other sources live) can't depend back on this package, this
+helper is composed into the feed at the app layer instead — see
+`news-stream.md`'s "Data flow" for the full path. No follow-ups remain open
+on this bullet. Vitest-covered in
+`packages/debate-round/test/coachingSessions.test.ts`.
 
 ## Known gaps
 

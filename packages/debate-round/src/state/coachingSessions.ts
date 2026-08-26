@@ -15,11 +15,24 @@
  * `saveCoachingSessionAiFeedback` below, closing follow-up (a) named under
  * the same bullet.
  *
+ * `createdAt` and `coachingSessionNews()` below close the "a coaching
+ * session" half of the Known gap recorded in `docs/features/news-stream.md`
+ * — left open there because `debate-card-search` (where News Stream's other
+ * Community sources live) already depends on nothing here, and this
+ * package taking a dependency back on it for a coaching-session source
+ * would be a cycle. This package already depends on `debate-card-search`
+ * (see `flow/flow-note-suggestions.ts`), so the reverse composition works:
+ * `coachingSessionNews()` lives here and is passed into `buildNewsFeed`'s
+ * new `extraItems` parameter at the app layer
+ * (`apps/debate-ai.com/app/news/page.tsx`), which already depends on both
+ * packages.
+ *
  * @module state/coachingSessions
  */
 
 import type { Flow } from "debate-core/src/types/flow";
-import { buildCoachingSession, type CoachingPrompt } from "../flow/coach-mode";
+import type { NewsItem } from "debate-card-search/src/lib/news-stream";
+import { buildCoachingSession, buildCoachingSummaryText, type CoachingPrompt } from "../flow/coach-mode";
 
 export type CoachingSessionRecord = {
   roundId: string;
@@ -27,6 +40,8 @@ export type CoachingSessionRecord = {
   prompts: CoachingPrompt[];
   /** Open-ended AI coaching feedback for this session, if one has been generated. */
   aiFeedback?: string;
+  /** Epoch milliseconds the session was first generated, if generated after this field existed. */
+  createdAt?: number;
 };
 
 const STORAGE_KEY = "coachingSessions";
@@ -129,7 +144,48 @@ export function buildAndSaveCoachingSession(
     roundId,
     sideKey,
     prompts: buildCoachingSession(flow, sideKey, options),
+    createdAt: Date.now(),
   };
   saveCoachingSession(record);
   return record;
+}
+
+/** Longest summary preview `coachingSessionNews` renders before truncating with an ellipsis. */
+const NEWS_PREVIEW_LENGTH = 140;
+
+/**
+ * Renders a News Stream announcement line for a freshly generated coaching
+ * session, mirroring `team-collaboration-mode.ts`'s
+ * `buildSprintNoteAnnouncementText` (same preview length, same
+ * "truncate the body, keep the byline" shape).
+ */
+function buildCoachingSessionAnnouncementText(session: CoachingSessionRecord): string {
+  const summary = buildCoachingSummaryText(session.prompts);
+  const preview =
+    summary.length > NEWS_PREVIEW_LENGTH ? `${summary.slice(0, NEWS_PREVIEW_LENGTH).trimEnd()}…` : summary;
+  return `Round ${session.roundId} (${session.sideKey}), ${session.prompts.length} prompt${session.prompts.length === 1 ? "" : "s"}: ${preview}`;
+}
+
+/**
+ * Turns every persisted coaching session that carries a `createdAt` into a
+ * News Stream `NewsItem` — see this module's fileoverview for why this
+ * lives here rather than in `debate-card-search`'s `state/newsStream.ts`
+ * alongside its sibling `...News()` functions. A session saved before
+ * `createdAt` existed has none and is silently skipped rather than
+ * backdated, mirroring `evidenceLibraryEntries.ts`'s `argumentLibraryNews()`
+ * convention. Regenerating an existing round+side's session (via
+ * `buildAndSaveCoachingSession`) stamps a fresh `createdAt`, since a
+ * regenerated session is itself a new event worth surfacing again.
+ */
+export function coachingSessionNews(): NewsItem[] {
+  return listCoachingSessions()
+    .filter((session): session is CoachingSessionRecord & { createdAt: number } => session.createdAt !== undefined)
+    .map((session) => ({
+      id: `coaching-session-${session.roundId}-${session.sideKey}-${session.createdAt}`,
+      category: "community" as const,
+      title: `New coaching session generated for round ${session.roundId} (${session.sideKey})`,
+      body: buildCoachingSessionAnnouncementText(session),
+      timestamp: session.createdAt,
+      href: "/coaching",
+    }));
 }

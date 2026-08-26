@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { NewsStreamPanel } from "debate-card-search"
+import { NewsPageContent } from "./NewsPageContent"
 
 export const metadata: Metadata = {
   title: "News Stream",
@@ -30,7 +30,7 @@ export default function NewsPage() {
           </p>
         </div>
         <Suspense>
-          <NewsStreamPanel />
+          <NewsPageContent />
         </Suspense>
       </div>
     </div>

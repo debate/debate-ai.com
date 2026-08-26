@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildAndSaveCoachingSession,
   buildCoachingSessionsPanelView,
+  coachingSessionNews,
   deleteCoachingSession,
   getCoachingSession,
   getCoachingSessionsForRound,
@@ -211,6 +212,13 @@ describe("buildAndSaveCoachingSession", () => {
     expect(getCoachingSession("round-3", "A")).toEqual(record);
   });
 
+  it("stamps createdAt on the generated session", () => {
+    const before = Date.now();
+    const record = buildAndSaveCoachingSession(MIXED_FLOW, "round-3", "A");
+    expect(record.createdAt).toBeGreaterThanOrEqual(before);
+    expect(record.createdAt).toBeLessThanOrEqual(Date.now());
+  });
+
   it("overwrites any existing session for that roundId+sideKey pair", () => {
     saveCoachingSession(SESSION_AFF);
     const record = buildAndSaveCoachingSession(MIXED_FLOW, "round-1", "AFF");
@@ -252,5 +260,39 @@ describe("buildCoachingSessionsPanelView", () => {
     saveCoachingSession(SESSION_NEG);
     deleteCoachingSession("round-1", "AFF");
     expect(buildCoachingSessionsPanelView()).toEqual([SESSION_NEG]);
+  });
+});
+
+describe("coachingSessionNews", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(coachingSessionNews()).toEqual([]);
+  });
+
+  it("skips a session with no createdAt rather than backdating it", () => {
+    saveCoachingSession(SESSION_AFF);
+    expect(coachingSessionNews()).toEqual([]);
+  });
+
+  it("turns a freshly generated session into a community NewsItem", () => {
+    const record = buildAndSaveCoachingSession(MIXED_FLOW, "round-3", "A");
+
+    const items = coachingSessionNews();
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      id: `coaching-session-round-3-A-${record.createdAt}`,
+      category: "community",
+      title: "New coaching session generated for round round-3 (A)",
+      timestamp: record.createdAt,
+      href: "/coaching",
+    });
+    expect(items[0].body).toContain("Round round-3 (A)");
+  });
+
+  it("includes one item per generated session, across rounds and sides", () => {
+    buildAndSaveCoachingSession(MIXED_FLOW, "round-1", "AFF");
+    buildAndSaveCoachingSession(MIXED_FLOW, "round-1", "NEG");
+    buildAndSaveCoachingSession(MIXED_FLOW, "round-2", "AFF");
+
+    expect(coachingSessionNews()).toHaveLength(3);
   });
 });

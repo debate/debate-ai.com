@@ -50,6 +50,14 @@ export interface NewsItem {
  */
 export const PRODUCT_NEWS: NewsItem[] = [
   {
+    id: "product-news-stream-coaching-sessions",
+    category: "product",
+    title: "News Stream now posts new AI Coach Mode sessions",
+    body: "The Community side of the feed now posts a coaching session the moment it's generated for a round at /coaching — same as prep notes, Argument Library submissions, streak milestones, challenge completions, and Revision Incentives standings, closing the last open Community source.",
+    timestamp: Date.parse("2026-08-26T04:00:00Z"),
+    href: "/news",
+  },
+  {
     id: "product-news-stream-argument-library",
     category: "product",
     title: "News Stream now posts new Argument Library submissions",

@@ -6,6 +6,45 @@
 _No task currently in progress._
 
 ### Completed
+- **News Stream — wire a sixth Community category: AI Coach Mode
+  sessions.** Closes the "a coaching session" half of the Known gap
+  `docs/features/news-stream.md` recorded after the prior "wire a fifth
+  Community category" run — that gap existed because `debate-round` (where
+  coaching sessions live) already depends on `debate-card-search` (where
+  News Stream lives), so a coaching-session source *inside*
+  `state/newsStream.ts` would need the reverse dependency, a cycle. Rather
+  than restructure the packages, this run gave `buildNewsFeed` an
+  `extraItems: NewsItem[] = []` parameter — its composition point for a
+  source this package can't produce itself — and added
+  `debate-round`'s own `state/coachingSessions.ts`'s `coachingSessionNews()`
+  (which that package can write, since it already depends on
+  `debate-card-search` for the `NewsItem` type), composed in at the one
+  place that already depends on both packages:
+  `apps/debate-ai.com/app/news/page.tsx`. `CoachingSessionRecord` gained an
+  additive, optional `createdAt` field, stamped by
+  `buildAndSaveCoachingSession` on generation, mirroring the prior run's
+  `EvidenceLibraryEntry.createdAt` convention (an existing session without
+  one is silently skipped rather than backdated). Since `page.tsx` exports
+  `metadata` and must stay a server component, the `extraItems` wiring
+  itself lives in a new client component, `NewsPageContent.tsx` — calling
+  `coachingSessionNews()` directly in its render body is safe (reads `[]`
+  server-side, the real persisted sessions once it hydrates in the
+  browser) because `NewsStreamPanel` never renders `extraItems` into the
+  DOM before its own mount effect runs, so there's no hydration mismatch.
+  `NewsStreamPanel` threads the new prop through a ref (not a `useEffect`
+  dependency), so a parent passing a fresh array literal each render
+  doesn't spuriously re-trigger its mount effect. Added a
+  `product-news-stream-coaching-sessions` entry to `PRODUCT_NEWS`,
+  mirroring the two prior "News Stream now posts X" announcements. No
+  follow-ups remain open on this gap. Vitest-covered in
+  `packages/debate-round/test/coachingSessions.test.ts` (the new
+  `createdAt` stamp and `coachingSessionNews()` — empty when nothing's
+  stored, skipping a session with no `createdAt`, one item per generated
+  session across rounds/sides) — `debate-card-search/test/newsStream.test.ts`
+  needed no new cases since `buildNewsFeed`'s existing tests already cover
+  every in-package source and `extraItems` defaults to `[]`. Full repo test
+  suite (2749 tests) and `typecheck` for both touched packages pass.
+
 - **News Stream — wire a fifth Community category: Argument Library
   submissions.** Closes the "a new Argument Library entry ... isn't wired
   in" half of the Known gap `docs/features/news-stream.md` recorded after

@@ -35,9 +35,12 @@
  * `createdAt` its submitting panel stamps on first save
  * straight to a `NewsItem`, rendered via `shared-evidence-library.ts`'s new
  * `buildEvidenceEntryAnnouncementText`. The gap's other half — a coaching
- * session — stays open: it lives in `debate-round`, which already depends
- * on this package, so sourcing a news item from it here would need the
- * reverse dependency, a cycle this package can't take on.
+ * session — closes not by adding a source function here (it lives in
+ * `debate-round`, which already depends on this package, so sourcing a news
+ * item from it here would need the reverse dependency, a cycle this
+ * package can't take on) but via `buildNewsFeed`'s new `extraItems`
+ * parameter: `debate-round`'s `state/coachingSessions.ts` produces its own
+ * `coachingSessionNews()`, composed in at the app layer instead.
  *
  * Read/like state is local to this feed (not shared with `contributions.ts`'s
  * like counts, which track a card's community helpfulness rather than
@@ -164,15 +167,26 @@ function argumentLibraryNews(): NewsItem[] {
  * every announced Daily Best Card winner, Contributor Awards standings,
  * quest-streak milestone crossing, completed group challenge, top daily
  * Revision Incentives earner, logged Team Collaboration Mode sprint note,
- * and newly submitted Argument Library entry — newest first. Reads several
- * other localStorage stores (via the modules imported above) in addition to
- * this module's own — safe to call server-side or during SSR, since each
- * underlying store already guards its own `localStorage` access and returns
- * an empty list when unavailable.
+ * newly submitted Argument Library entry, and any caller-supplied
+ * `extraItems` — newest first. Reads several other localStorage stores (via
+ * the modules imported above) in addition to this module's own — safe to
+ * call server-side or during SSR, since each underlying store already
+ * guards its own `localStorage` access and returns an empty list when
+ * unavailable.
+ *
+ * `extraItems` is this feed's composition point for a source that would
+ * otherwise need a dependency this package can't take without a cycle —
+ * `debate-round`'s coaching sessions are the first such source: that
+ * package already depends on this one, so it produces its own `NewsItem[]`
+ * (`state/coachingSessions.ts`'s `coachingSessionNews()`) and the app layer
+ * (`apps/debate-ai.com/app/news/page.tsx`, which already depends on both
+ * packages) passes it in here rather than this module reaching back into
+ * `debate-round`.
  */
-export function buildNewsFeed(): NewsItem[] {
+export function buildNewsFeed(extraItems: NewsItem[] = []): NewsItem[] {
   return sortNewsFeed([
     ...PRODUCT_NEWS,
+    ...extraItems,
     ...dailyBestCardNews(),
     ...contributorAwardsNews(),
     ...questStreakMilestoneNews(),

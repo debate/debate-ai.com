@@ -12,12 +12,19 @@
  * without a manual reload — the same cross-tab live-update mechanism
  * `DailyBestCardPanel.tsx` uses.
  *
+ * An optional `extraItems` prop is threaded straight into `buildNewsFeed`,
+ * this panel's composition point for a source this package can't produce
+ * itself without a dependency cycle (e.g. `debate-round`'s
+ * `coachingSessionNews()`, passed in from `apps/debate-ai.com/app/news/page.tsx`).
+ * Held in a ref rather than a `buildNewsFeed` dependency so a caller passing
+ * a fresh array literal each render doesn't re-trigger the mount effect.
+ *
  * @module panels/NewsStreamPanel
  */
 
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Bell, Heart, Megaphone, Sparkles, Trophy } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
@@ -117,16 +124,22 @@ function NewsItemRow({
 /**
  * Renders the News Stream: every product update and community announcement,
  * newest first, filterable by category, with per-viewer read/like state.
+ *
+ * @param extraItems Caller-supplied `NewsItem`s to fold into the feed
+ *   alongside this package's own sources — see this file's fileoverview.
  */
-export function NewsStreamPanel() {
+export function NewsStreamPanel({ extraItems = [] }: { extraItems?: NewsItem[] } = {}) {
   const [items, setItems] = useState<NewsItem[] | null>(null)
   const [filter, setFilter] = useState<NewsCategory | "all">("all")
   // Bumped on every read/like toggle to re-derive the read/liked maps below
   // without re-sorting the feed itself.
   const [viewerTick, setViewerTick] = useState(0)
 
+  const extraItemsRef = useRef(extraItems)
+  extraItemsRef.current = extraItems
+
   useEffect(() => {
-    setItems(buildNewsFeed())
+    setItems(buildNewsFeed(extraItemsRef.current))
   }, [])
 
   /**
@@ -138,7 +151,7 @@ export function NewsStreamPanel() {
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
       if (!isNewsStreamLiveUpdateStorageEvent(event)) return
-      setItems(buildNewsFeed())
+      setItems(buildNewsFeed(extraItemsRef.current))
       setViewerTick((t) => t + 1)
     }
     window.addEventListener("storage", handleStorage)
