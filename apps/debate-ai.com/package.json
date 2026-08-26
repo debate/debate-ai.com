@@ -16,7 +16,9 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:push:d1": "drizzle-kit push --config drizzle.d1.config.ts",
-    "db:migrate:d1": "for f in drizzle/*.sql; do echo ''; wrangler d1 execute debate-db --remote --file=$f; done",
+    "db:migrate:d1": "for f in drizzle/*.sql; do echo ''; wrangler d1 execute debate-ai-db --remote --file=$f; done",
+    "db:seed:videos": "bun run scripts/seed-videos.ts",
+    "db:seed:videos:d1": "bun run scripts/seed-videos.ts --sql-only && wrangler d1 execute debate-ai-db --remote --file=drizzle/seed/videos-seed.sql",
     "db:studio": "drizzle-kit studio",
     "favicon": "bun create favicon public/favicon-512.png public/ --overwrite"
   },

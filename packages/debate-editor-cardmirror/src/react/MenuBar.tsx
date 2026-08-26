@@ -2,12 +2,19 @@
 
 /**
  * Top menu bar sitting above the CardMirror ribbon — File / Edit / Card /
- * Format / Insert / AI / View / Tools dropdowns exposing every ribbon
- * command via `runRibbon(id)`, grouped into labeled sections that mirror
- * CardMirror's own `RIBBON_GROUPS` taxonomy (see menu-bar-categories.ts).
- * Every entry here is one more way to reach a command already bound to a
- * ribbon button and/or the Ctrl/Cmd-Shift-Space command palette — this
- * doesn't replace either, it's the third, browsable path.
+ * Format / Insert / AI / View / Tools / Workspace / Plugins dropdowns
+ * exposing every ribbon command via `runRibbon(id)`, grouped into labeled
+ * sections that mirror CardMirror's own `RIBBON_GROUPS` taxonomy (see
+ * menu-bar-categories.ts). Every entry here is one more way to reach a
+ * command already bound to a ribbon button and/or the Ctrl/Cmd-Shift-Space
+ * command palette — this doesn't replace either, it's the third, browsable
+ * path. Two categories aren't sourced from `RIBBON_GROUPS`: Plugins lists
+ * whatever the palette's `command` search source pulls from the runtime
+ * plugin registry, so a plugin-registered command reachable via the palette
+ * is always reachable here too; Workspace lists `WORKSPACE_LINKS` — the
+ * app's other tools and pages, the same list the palette's `t` prefix
+ * searches — so switching workspaces doesn't require leaving the editor to
+ * find the Tools page first.
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -23,6 +30,7 @@ import {
 } from "debate-ui/src/primitives/dropdown-menu";
 import { Button } from "debate-ui/src/primitives/button";
 import type { MenuBarCategory } from "./menu-bar-categories.js";
+import { WORKSPACE_LINKS } from "../editor/workspace-links.js";
 
 export interface MenuBarProps {
   className?: string;
@@ -60,6 +68,12 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
     void import("../editor/settings-ui.js").then((m) => m.openSettings());
   }, []);
 
+  // Workspace links navigate away from the editor entirely (a different app
+  // route), so this is a full navigation rather than a `runRibbon` dispatch.
+  const navigate = useCallback((href: string) => {
+    window.location.assign(href);
+  }, []);
+
   return (
     <div
       className={
@@ -70,7 +84,15 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
       aria-label="Editor commands"
     >
       {categories?.map((category) => (
-        <MenuBarCategoryMenu key={category.title} title={category.title} groupTitles={category.groupTitles} onRun={run} />
+        <MenuBarCategoryMenu
+          key={category.title}
+          title={category.title}
+          groupTitles={category.groupTitles}
+          includesPluginCommands={category.includesPluginCommands}
+          isWorkspaceLinks={category.isWorkspaceLinks}
+          onRun={run}
+          onNavigate={navigate}
+        />
       ))}
       <div className="flex-1" />
       <Button
@@ -91,11 +113,17 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
 function MenuBarCategoryMenu({
   title,
   groupTitles,
+  includesPluginCommands,
+  isWorkspaceLinks,
   onRun,
+  onNavigate,
 }: {
   title: string;
   groupTitles: string[];
+  includesPluginCommands?: boolean;
+  isWorkspaceLinks?: boolean;
   onRun: (id: string) => void;
+  onNavigate: (href: string) => void;
 }): React.JSX.Element {
   return (
     <DropdownMenu>
@@ -109,9 +137,36 @@ function MenuBarCategoryMenu({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="max-h-[70vh] overflow-y-auto">
-        <CategoryContent groupTitles={groupTitles} onRun={onRun} />
+        {isWorkspaceLinks ? (
+          <WorkspaceLinksContent onNavigate={onNavigate} />
+        ) : (
+          <CategoryContent groupTitles={groupTitles} includesPluginCommands={includesPluginCommands} onRun={onRun} />
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+/** Workspace category content: every `WORKSPACE_LINKS` entry as a menu
+ *  item, navigating to the tool's app route on select. Unlike
+ *  `CategoryContent`, this needs no lazy engine import — the link list is a
+ *  small static module already loaded with MenuBar itself. */
+function WorkspaceLinksContent({
+  onNavigate,
+}: {
+  onNavigate: (href: string) => void;
+}): React.JSX.Element {
+  return (
+    <>
+      <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">
+        Go to
+      </DropdownMenuLabel>
+      {WORKSPACE_LINKS.map((link) => (
+        <DropdownMenuItem key={link.href} onSelect={() => onNavigate(link.href)} title={link.description}>
+          {link.label}
+        </DropdownMenuItem>
+      ))}
+    </>
   );
 }
 
@@ -122,9 +177,11 @@ function MenuBarCategoryMenu({
  *  the user actually opens a menu. */
 function CategoryContent({
   groupTitles,
+  includesPluginCommands,
   onRun,
 }: {
   groupTitles: string[];
+  includesPluginCommands?: boolean;
   onRun: (id: string) => void;
 }): React.JSX.Element {
   const [entries, setEntries] = useState<
@@ -137,19 +194,35 @@ function CategoryContent({
       import("../editor/ribbon-groups.js"),
       import("../editor/ribbon-commands.js"),
       import("../editor/ribbon-availability.js"),
-    ]).then(([groupsMod, cmdMod, availMod]) => {
+      includesPluginCommands ? import("../editor/plugin-registry.js") : null,
+    ]).then(([groupsMod, cmdMod, availMod, pluginMod]) => {
       if (cancelled) return;
-      const sections = groupTitles.map((sectionTitle) => {
-        const group = groupsMod.RIBBON_GROUPS.find((g) => g.title === sectionTitle);
-        const items = (group?.commands ?? [])
-          .filter((id) => availMod.isRibbonCommandAvailable(id))
-          .map((id) => ({
-            id,
-            label: cmdMod.commandLabelFor(id),
-            shortcut: cmdMod.formatKeyForDisplay(cmdMod.primaryKeyFor(id)),
-          }));
-        return { sectionTitle, items };
-      });
+      const sections: { sectionTitle: string; items: { id: string; label: string; shortcut: string }[] }[] =
+        groupTitles.map((sectionTitle) => {
+          const group = groupsMod.RIBBON_GROUPS.find((g) => g.title === sectionTitle);
+          const items = (group?.commands ?? [])
+            .filter((id) => availMod.isRibbonCommandAvailable(id))
+            .map((id) => ({
+              id,
+              label: cmdMod.commandLabelFor(id),
+              shortcut: cmdMod.formatKeyForDisplay(cmdMod.primaryKeyFor(id)),
+            }));
+          return { sectionTitle, items };
+        });
+      if (pluginMod) {
+        for (const plugin of pluginMod.registeredPlugins()) {
+          const prefix = `${plugin.id}.`;
+          const items = pluginMod
+            .pluginCommandIds()
+            .filter((id) => id.startsWith(prefix))
+            .map((id) => ({
+              id,
+              label: cmdMod.commandLabelFor(id),
+              shortcut: cmdMod.formatKeyForDisplay(cmdMod.primaryKeyFor(id)),
+            }));
+          sections.push({ sectionTitle: plugin.name, items });
+        }
+      }
       setEntries(sections);
     });
     return () => {
@@ -160,6 +233,10 @@ function CategoryContent({
 
   if (entries === null) {
     return <DropdownMenuLabel className="text-xs text-muted-foreground">Loading…</DropdownMenuLabel>;
+  }
+
+  if (entries.length === 0) {
+    return <DropdownMenuItem disabled>No commands available</DropdownMenuItem>;
   }
 
   return (

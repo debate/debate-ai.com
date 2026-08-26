@@ -6,64 +6,42 @@
 import { useEffect } from "react";
 
 /**
- * Observes a sentinel element and increments the current page when it enters
- * the viewport, implementing infinite scroll pagination.
+ * Observes a sentinel element and asks the feed for its next page when the
+ * sentinel scrolls into view.
+ *
+ * Pages come from `/api/videos`, so this only signals intent — the feed hook
+ * owns the request and ignores the call while one is already in flight.
  *
  * @param loadMoreTriggerRef - Ref attached to the sentinel element at the bottom of the list.
- * @param currentPage - The currently displayed page number.
- * @param totalPages - The total number of available pages.
- * @param isLoadingMore - Whether a page increment is already in progress.
- * @param setCurrentPage - Setter to advance to the next page.
- * @param setIsLoadingMore - Setter to toggle the loading-more flag.
+ * @param hasMore - Whether the feed has another page available.
+ * @param isLoading - Whether a page request is already in progress.
+ * @param loadMore - Callback that fetches the next page.
  */
 export function useInfiniteScroll(
   loadMoreTriggerRef: React.RefObject<HTMLDivElement | null>,
-  currentPage: number,
-  totalPages: number,
-  isLoadingMore: boolean,
-  setCurrentPage: (page: number) => void,
-  setIsLoadingMore: (loading: boolean) => void,
+  hasMore: boolean,
+  isLoading: boolean,
+  loadMore: () => void,
 ) {
   useEffect(() => {
     if (!loadMoreTriggerRef) return;
     const trigger = loadMoreTriggerRef.current;
-    if (!trigger) return;
+    if (!trigger || !hasMore || isLoading) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
-        if (
-          entry.isIntersecting &&
-          currentPage < totalPages &&
-          !isLoadingMore
-        ) {
-          setIsLoadingMore(true);
-          setTimeout(() => {
-            setCurrentPage(currentPage + 1);
-            setIsLoadingMore(false);
-          }, 500);
-        }
+        if (entry.isIntersecting) loadMore();
       },
       {
         root: null,
-        rootMargin: "100px",
-        threshold: 0.1,
+        rootMargin: "400px",
+        threshold: 0,
       },
     );
 
     observer.observe(trigger);
 
-    return () => {
-      if (trigger) {
-        observer.unobserve(trigger);
-      }
-    };
-  }, [
-    loadMoreTriggerRef,
-    currentPage,
-    totalPages,
-    isLoadingMore,
-    setCurrentPage,
-    setIsLoadingMore,
-  ]);
+    return () => observer.unobserve(trigger);
+  }, [loadMoreTriggerRef, hasMore, isLoading, loadMore]);
 }

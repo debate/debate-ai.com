@@ -14,7 +14,7 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "debate-ui/src/primitives/tooltip"
-import type { DebateStyle } from "../../types/videos"
+import type { DebateStyle, VideoFacets } from "../../types/videos"
 import { useVideoSearchCounts } from "./useVideoSearchCounts"
 import { SeasonDropdown } from "./SeasonDropdown"
 import { StyleDropdown } from "./StyleDropdown"
@@ -64,10 +64,8 @@ interface VideoSearchBarProps {
   selectedStyle?: DebateStyle | ""
   /** Callback invoked when the style filter changes. When omitted the dropdown is hidden. */
   onStyleChange?: (style: DebateStyle | "") => void
-  /** Full video list used to compute per-year and per-style counts. */
-  allVideos?: any[]
-  /** Set of hidden video IDs excluded from counts. */
-  hiddenVideos?: Set<string>
+  /** Season/style counts for the dropdowns, computed server-side. */
+  facets?: VideoFacets | null
   /** Custom element rendered immediately after the search input. */
   afterSearchElement?: React.ReactNode
   /** Extra icon buttons rendered after the built-in icon buttons. */
@@ -107,8 +105,7 @@ export function VideoSearchBar({
   totalVideos,
   selectedStyle,
   onStyleChange,
-  allVideos = [],
-  hiddenVideos = new Set(),
+  facets = null,
   afterSearchElement,
   extraButtons,
 }: VideoSearchBarProps) {
@@ -135,12 +132,7 @@ export function VideoSearchBar({
     onClearSearch()
   }
 
-  const { years, yearCounts, styleCounts } = useVideoSearchCounts({
-    allVideos,
-    hiddenVideos,
-    selectedStyle,
-    selectedYear,
-  })
+  const { years, yearCounts, styleCounts } = useVideoSearchCounts({ facets })
 
   return (
     <TooltipProvider>

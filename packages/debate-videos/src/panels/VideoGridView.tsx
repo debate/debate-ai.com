@@ -14,7 +14,7 @@ import { StickyHeader } from "../components/layout/StickyHeader"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
-import type { DebateStyle, CategoryType, TopicType } from "../types/videos"
+import type { DebateStyle, CategoryType, TopicType, VideoFacets } from "../types/videos"
 // import { ico } from  "grab-url/icons";
 
 /** Props for the {@link VideoGridView} component. */
@@ -46,10 +46,12 @@ interface VideoGridViewProps {
   favorites: Set<string>
   /** Set of hidden video IDs. */
   hiddenVideos: Set<string>
-  /** Full unfiltered video list (used by the search bar for counts). */
-  allVideos: VideoType[]
-  /** Filtered+paginated videos currently visible in the grid. */
+  /** Videos loaded so far for the active filters. */
   currentVideos: VideoType[]
+  /** Total number of videos matching the current filters, across every page. */
+  totalVideos: number
+  /** Season/style counts for the filter dropdowns, or `null` before they load. */
+  facets: VideoFacets | null
   /** Topic metadata for badge rendering. */
   topics: TopicType[] | undefined
   /** Set of video IDs marked as top picks. */
@@ -116,8 +118,9 @@ export function VideoGridView({
   selectedStyle,
   favorites,
   hiddenVideos,
-  allVideos,
   currentVideos,
+  totalVideos,
+  facets,
   topics,
   topPicks,
   loadMoreTriggerRef,
@@ -163,11 +166,10 @@ export function VideoGridView({
             onToggleTopPicks={onToggleTopPicks}
             showRankingsActive={false}
             onToggleRankings={onToggleRankings}
-            totalVideos={currentVideos.length}
+            totalVideos={totalVideos}
             selectedStyle={selectedStyle}
             onStyleChange={onStyleChange}
-            allVideos={allVideos}
-            hiddenVideos={hiddenVideos}
+            facets={facets}
             extraButtons={
               youtubeStats && (
                 <YouTubeStatsModal stats={youtubeStats} open={statsModalOpen} onOpenChange={onStatsModalOpenChange} />

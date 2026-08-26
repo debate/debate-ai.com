@@ -18,6 +18,9 @@
  *            the bar) to search its objects (blocks / tags / cites);
  *            Esc from there returns to the file list with the prior
  *            query restored. Selecting an object inserts it.
+ *   - `t ` → search the app's other workspace tools/pages
+ *            (`WORKSPACE_LINKS`, `workspace-links.ts`); selecting one
+ *            navigates there, leaving the editor
  *   - no prefix → search EVERYTHING, but show nothing until the user
  *     types a query
  * With a prefix present, an empty query browses that source.
@@ -89,6 +92,7 @@ import {
 import { toggleManualPin, recordUsage, effectivePins } from './pins-store.js';
 import { listRecents } from './recents-store.js';
 import { scheduleIdle } from './idle-scheduler.js';
+import { WORKSPACE_LINKS, type WorkspaceLink } from './workspace-links.js';
 
 /** Warm cache of parsed pinned files — module-level so it survives the
  *  palette opening/closing within a session (only cleared on reload).
@@ -422,7 +426,7 @@ export interface QuickCardSearchOptions {
 }
 
 /** A unified palette row — a quick card, dropzone item, command,
- *  settings shortcut, a file, or an object within a file. */
+ *  settings shortcut, a file, an object within a file, or a workspace tool. */
 interface PaletteResult {
   source:
     | 'quickcard'
@@ -432,7 +436,8 @@ interface PaletteResult {
     | 'settingcycle'
     | 'settings'
     | 'file'
-    | 'fileobject';
+    | 'fileobject'
+    | 'tool';
   name: string;
   /** Right-aligned secondary text: card tags / command keybinding /
    *  the settings tab / the file's subfolder / a cite's owning tag. */
@@ -469,23 +474,45 @@ interface PaletteResult {
   collapsible?: boolean;
   /** Outline row is currently collapsed (children hidden). */
   collapsed?: boolean;
+  /** App route to navigate to (tool source). */
+  toolHref?: string;
 }
 
-type Prefix = 'q' | 'd' | 'c' | 's' | 'f' | null;
+type Prefix = 'q' | 'd' | 'c' | 's' | 'f' | 't' | null;
 
 function activeTagSet(): Set<string> {
   return new Set(settings.get('quickCardActiveTags').map(normalizeTag));
 }
 
-/** Split a leading single-letter prefix (`q `/`d `/`c `/`s `) off the query. */
+/** Split a leading single-letter prefix (`q `/`d `/`c `/`s `/`f `/`t `) off the query. */
 function parsePrefix(raw: string): { prefix: Prefix; query: string } {
   const m = raw.match(/^([a-zA-Z])\s+(.*)$/);
   if (m) {
     const p = m[1]!.toLowerCase();
-    if (p === 'q' || p === 'd' || p === 'c' || p === 's' || p === 'f')
+    if (p === 'q' || p === 'd' || p === 'c' || p === 's' || p === 'f' || p === 't')
       return { prefix: p, query: m[2]! };
   }
   return { prefix: null, query: raw };
+}
+
+/** Tools/workspace-pages source (`t` prefix) — searches `WORKSPACE_LINKS`
+ *  by label + description; selecting one navigates there (see
+ *  `activateSelected`'s `'tool'` branch), leaving this document. */
+function searchToolsSource(query: string): PaletteResult[] {
+  const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const haystack = (l: WorkspaceLink): string => `${l.label} ${l.description}`.toLowerCase();
+  const matched =
+    tokens.length === 0
+      ? WORKSPACE_LINKS
+      : WORKSPACE_LINKS.filter((l) => tokens.every((t) => haystack(l).includes(t)));
+  return matched.map((l) => ({
+    source: 'tool' as const,
+    name: l.label,
+    meta: l.description,
+    matchedName: true,
+    snippet: null,
+    toolHref: l.href,
+  }));
 }
 
 function searchQuickCardSource(query: string): PaletteResult[] {
@@ -868,6 +895,8 @@ function badgeText(r: PaletteResult): string {
       return fileFormat(r.filePath ?? r.name).toUpperCase();
     case 'fileobject':
       return r.fileObjectKind ? FILE_OBJECT_KIND_BADGES[r.fileObjectKind] : 'OBJ';
+    case 'tool':
+      return 'APP';
   }
 }
 
@@ -896,6 +925,8 @@ function enterVerb(source: PaletteResult['source']): string {
     case 'settings':
       return 'open';
     case 'file':
+      return 'open';
+    case 'tool':
       return 'open';
     default:
       return 'insert';
@@ -1266,13 +1297,16 @@ class QuickCardSearchUI {
         ...searchSettingCycleSource(query),
       ];
       this.emptyText = 'No matching settings.';
+    } else if (prefix === 't') {
+      this.results = searchToolsSource(query);
+      this.emptyText = 'No matching tools.';
     } else if (query.trim() === '') {
       // No prefix, nothing typed — don't preview anything. The `d
       // dropzone` hint only shows when the dropzone is on.
       this.results = [];
       this.emptyText = `Type to search everything · c commands${
         dropzoneOn() ? ' · d dropzone' : ''
-      } · f files · q cards · s settings`;
+      } · f files · q cards · s settings · t tools`;
     } else {
       // No prefix — search everything. Files (by filename) join the
       // other sources; the ranked rows come from the file-index service
@@ -1288,6 +1322,7 @@ class QuickCardSearchUI {
         ...searchSettingToggleSource(query),
         ...searchSettingCycleSource(query),
         ...searchSettingsSource(query),
+        ...searchToolsSource(query),
       ];
       this.emptyText = 'No matches.';
       // Files join as the lazy tail — the service ranks in full and
@@ -2005,6 +2040,15 @@ class QuickCardSearchUI {
       if (path) recordUsage(path); // counts toward "frequents"
       this.close();
       if (path) this.openFilePath(path, name);
+      return;
+    }
+    // Tool: close the palette, then navigate to the workspace page. A full
+    // navigation (not a router push) — this package has no app-router
+    // dependency, and it's leaving this document entirely.
+    if (result.source === 'tool') {
+      const href = result.toolHref;
+      this.close();
+      if (href) window.location.assign(href);
       return;
     }
     // Everything else (quickcard / dropzone / fileobject) inserts a slice.

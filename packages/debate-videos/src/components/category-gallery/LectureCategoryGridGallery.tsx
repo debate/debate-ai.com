@@ -27,11 +27,18 @@ import {
 } from "lucide-react";
 import { GlowingEffect } from "debate-ui/src/effects/glowing-effect";
 import { cn } from "debate-ui/src/lib/utils";
+import type { LectureCategoryFacet } from "../../types/videos";
 import categoryDescriptions from "../../data/category-descriptions.json";
 
 interface LectureCategoryGridGalleryProps {
+  /** Slug of the category currently being browsed. */
   selectedCategory?: string;
-  videosData?: any[];
+  /**
+   * Category cards from `/api/videos/meta` — label, slug, video count and
+   * popularity. Counts are computed over the whole library server-side, since
+   * the grid itself only holds the pages loaded so far.
+   */
+  categories?: LectureCategoryFacet[];
 }
 
 const typedCategoryDescriptions = categoryDescriptions as Record<string, string>;
@@ -62,60 +69,21 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 
 export function LectureCategoryGridGallery({
   selectedCategory,
-  videosData,
+  categories,
 }: LectureCategoryGridGalleryProps) {
-  // Build category cards from video data
+  // Build category cards from the server-computed facets, most popular first.
   const cards = useMemo(() => {
-    if (!videosData || videosData.length === 0) return [];
+    if (!categories || categories.length === 0) return [];
 
-    // Extract unique categories from video data (index 6)
-    const categoryMap = new Map<
-      string,
-      { videos: any[]; maxViews: number; mostViewedId: string }
-    >();
-
-    videosData.forEach((video) => {
-      const categoryLabel = video[6];
-      if (typeof categoryLabel === "string" && categoryLabel !== "Awards") {
-        if (!categoryMap.has(categoryLabel)) {
-          categoryMap.set(categoryLabel, {
-            videos: [],
-            maxViews: 0,
-            mostViewedId: video[0],
-          });
-        }
-        const catData = categoryMap.get(categoryLabel)!;
-        catData.videos.push(video);
-
-        const views = video[7] || 0;
-        if (views > catData.maxViews) {
-          catData.maxViews = views;
-          catData.mostViewedId = video[0];
-        }
-      }
-    });
-
-    // Build cards from extracted categories
-    const categoryCards = Array.from(categoryMap.entries())
-      .map(([label, data]) => {
-        const description =
-          typedCategoryDescriptions[label] ||
-          "Debate lecture videos";
-        const normalizedKey = label
-          .toLowerCase()
-          .replace(/\s+/g, "_")
-          .replace(/[&/]/g, "_");
-
-        return {
-          id: normalizedKey,
-          title: label,
-          description,
-          videoCount: data.videos.length,
-          icon: CATEGORY_ICONS[label] || <BookOpen className="h-4 w-4" />,
-          maxViews: data.maxViews,
-        };
-      })
-      .sort((a, b) => b.maxViews - a.maxViews); // Sort by popularity
+    const categoryCards = categories.map((category) => ({
+      id: category.key,
+      title: category.label,
+      description:
+        typedCategoryDescriptions[category.label] || "Debate lecture videos",
+      videoCount: category.count,
+      icon: CATEGORY_ICONS[category.label] || <BookOpen className="h-4 w-4" />,
+      maxViews: category.maxViews,
+    }));
 
     const totalCount = categoryCards.reduce((sum, c) => sum + c.videoCount, 0);
     const allLecturesCard = {
@@ -128,7 +96,7 @@ export function LectureCategoryGridGallery({
     };
 
     return [allLecturesCard, ...categoryCards];
-  }, [videosData]);
+  }, [categories]);
 
   const buildHref = (categoryId: string) => {
     if (categoryId === "all") return "/videos";

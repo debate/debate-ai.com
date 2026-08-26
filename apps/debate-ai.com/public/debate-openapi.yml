@@ -318,32 +318,140 @@ paths:
 
   /videos:
     get:
-      operationId: getVideos
-      summary: Get all debate video data
+      operationId: listVideos
+      summary: Get a page of debate videos
       description: |
-        Returns the complete debate video dataset including round recordings,
-        top picks, lecture videos, topic history, and national champions.
+        Returns one page of the debate video library. Videos are stored in SQL
+        (Cloudflare D1) and filtered, searched, sorted and paginated
+        server-side, so clients page through the library as the grid is
+        scrolled rather than downloading the whole dataset. Season topics,
+        champions and library-wide counts live on `/videos/meta`.
+      parameters:
+        - name: source
+          in: query
+          description: Restrict to `round`, `lecture`, or `all` (default).
+          schema:
+            type: string
+            enum: [round, lecture, all]
+        - name: lecturesOnly
+          in: query
+          description: Set to `1` to keep only videos with no numeric debate style.
+          schema:
+            type: string
+        - name: topPicks
+          in: query
+          description: Set to `1` to keep only editorially selected top picks.
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: Lecture category slug, e.g. `demo_debates`.
+          schema:
+            type: string
+        - name: style
+          in: query
+          description: Debate format — 1 Policy, 2 PF, 3 LD, 4 College.
+          schema:
+            type: integer
+        - name: year
+          in: query
+          description: Season year (e.g. `2026`) or `legacy` for pre-2010 content.
+          schema:
+            type: string
+        - name: q
+          in: query
+          description: Free-text search over title, channel and description.
+          schema:
+            type: string
+        - name: ids
+          in: query
+          description: Comma-separated video id allow-list.
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: "`Views` for most viewed, `Recency` (default) for newest first."
+          schema:
+            type: string
+            enum: [Views, Recency]
+        - name: limit
+          in: query
+          description: Page size; defaults to 60, capped at 200.
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: Zero-based offset of the requested page.
+          schema:
+            type: integer
+        - name: facets
+          in: query
+          description: Set to `1` to include per-season and per-style counts.
+          schema:
+            type: string
       responses:
         "200":
-          description: Full video dataset.
+          description: One page of videos.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  rounds:
+                  videos:
                     type: array
-                    description: Debate round video recordings.
+                    description: |
+                      Videos as positional tuples: `[videoId, title, date,
+                      channel, viewCount, description, style|category,
+                      tournament, roundLevel, affTeam, negTeam, affWin,
+                      judgeDecision, arg1AC, arg2NR, isTopPick, speechDocsUrl]`.
                     items:
-                      type: object
-                  topPicks:
+                      type: array
+                      items: {}
+                  total:
+                    type: integer
+                    description: Total videos matching the filters, across all pages.
+                  offset:
+                    type: integer
+                  limit:
+                    type: integer
+                  hasMore:
+                    type: boolean
+                    description: Whether a further page is available.
+                  facets:
+                    type: object
+                    description: Per-season and per-style counts, when requested.
+                    properties:
+                      yearCounts:
+                        type: object
+                        additionalProperties:
+                          type: integer
+                      styleCounts:
+                        type: object
+                        additionalProperties:
+                          type: integer
+
+  /videos/meta:
+    get:
+      operationId: getVideoMeta
+      summary: Get video library metadata
+      description: |
+        Returns the small, fetch-once companion to the paginated `/videos`
+        feed: library-wide counts, the lecture category cards, and the
+        historical topic and champion tables.
+      responses:
+        "200":
+          description: Video library metadata.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  counts:
+                    type: object
+                    description: Library totals per source, debate style and top-pick flag.
+                  lectureCategories:
                     type: array
-                    description: Editorially selected top debate videos.
-                    items:
-                      type: object
-                  lectures:
-                    type: array
-                    description: Instructional debate lecture videos.
+                    description: Lecture categories with their slug, size and popularity.
                     items:
                       type: object
                   topics:
@@ -356,6 +464,9 @@ paths:
                     description: National championship winners by year.
                     items:
                       type: object
+                  history:
+                    type: object
+                    description: Topics and champions merged by season year.
 
 components:
   schemas:

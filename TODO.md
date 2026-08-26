@@ -6,6 +6,63 @@
 _No task currently in progress._
 
 ### Completed
+- **Video library — store the videos JSON in a SQL table (local SQLite +
+  Cloudflare D1) and serve the grid one page at a time as it is scrolled.**
+  `/api/videos` used to answer every request with the whole library: the four
+  `rounds-*.json` assets, `debate-lectures.json`, the top-picks list and the
+  topic/champion tables, concatenated and de-duplicated into a single ~1.1 MB
+  JSON response that the client had to download in full before rendering a
+  card, then filter, search, sort and paginate in the browser. The videos now
+  live in a `videos` table (`lib/database/schema.ts`, migration
+  `drizzle/0003_tranquil_skaar.sql`), which merges the round and lecture
+  assets into one row per video id — rounds win a collision, matching the old
+  `dedupeById` behaviour — with `is_top_pick` set from
+  `debate-top-picks.json`. Three derived columns keep queries cheap:
+  `season_year` (the June-to-June competition season, `0` for legacy pre-2010
+  content), `search_text` (lowercased title + channel + description, matched
+  with `LIKE`), and `published_ms` (the parsed publish timestamp — one row
+  carries a long-form date, "May 14, 2013", that sorts wrongly as text).
+  `packages/debate-data-sync/src/videos/video-rows.ts` owns the tuple↔row
+  conversion and `video-query.ts` the filter/sort/facet semantics;
+  `apps/debate-ai.com/lib/videos/video-repository.ts` expresses the same
+  semantics in SQL and falls back to the JSON assets whenever the table is
+  missing, unreachable or unseeded, so a fresh clone still renders the whole
+  library (the response's `backend` field says which answered). `GET
+  /api/videos` now takes `source`, `lecturesOnly`, `topPicks`, `category`,
+  `style`, `year`, `q`, `ids`, `sort`, `limit` (default 60, capped at 200),
+  `offset` and `facets`, returning `{ videos, total, offset, limit, hasMore,
+  facets }` with ties broken by video id so paging never repeats or skips a
+  video; the new `GET /api/videos/meta` carries the small fetch-once payload
+  (library counts, lecture-category cards, topics/champions/history). On the
+  client, `hooks/useVideoFeed.ts` (`useVideoFeed` + `useVideoMeta`, both via
+  `grab`) replaces `useVideoData.ts`, `useInfiniteScroll` now asks the feed
+  for its next page instead of slicing a fully-loaded array, `useVideoState`
+  sheds the row/pagination state it no longer owns, and both panels
+  (`LecturesPage`, `DebateVideosPanel`) send their filters to the server.
+  Favourites are sent as an explicit `ids` allow-list and hidden videos are
+  filtered out of the loaded pages, since neither is known server-side; the
+  filter dropdowns read their counts from the response's facets
+  (`useVideoSearchCounts` no longer tallies a local array) and the lecture
+  category cards from `/api/videos/meta`. `scripts/seed-videos.ts` (`bun run
+  db:seed:videos`, `db:seed:videos:d1`) projects the JSON into the table and
+  is idempotent — rows are upserted by id and rows the JSON no longer carries
+  are pruned — so a re-run after `sync-youtube` mirrors the assets. New
+  `docs/features/video-library.md` documents the data flow and its Known
+  gaps (LIKE search replaces Fuse.js fuzzy matching, facet counts do not
+  deduct locally hidden videos, seeding is a separate step from the YouTube
+  sync); `public/debate-openapi.yml` documents both endpoints. Vitest-covered
+  in `packages/debate-data-sync/test/video-rows.test.ts` (season and
+  timestamp parsing, category slugs, round/lecture tuple mapping, top-pick
+  flagging, tuple round-tripping and trailing-slot trimming, asset merging)
+  and `test/video-query.test.ts` (each filter, the id tiebreaker, paging over
+  every match exactly once, and the facet rules for seasons, styles and
+  lecture categories). The two backends were also diffed directly against
+  each other over eleven query shapes — same ids, totals, facets and tuples.
+  Verified with `bun run test` (164 files, 2381 tests), `bunx tsc --noEmit`
+  in `packages/debate-videos` and `debate-data-sync`, and `bunx vinext build`
+  for the web app; no `lint` script is configured in this repo.
+  **PR:** [#331](https://github.com/debate/debate-ai.com/pull/331).
+  **Completed:** 2026-08-25.
 - **Progress Unlocks / Research Progress / Quest Streaks — cross-tab live
   update.** Closes, for `ProgressUnlocksPanel`, `ResearchProgressPanel`, and
   `QuestStreaksPanel`, the "Every other localStorage-backed panel in this
