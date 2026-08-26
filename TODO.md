@@ -6,6 +6,46 @@
 _No task currently in progress._
 
 ### Completed
+- **News Stream — wire a fourth Community category: Team Collaboration Mode
+  prep notes.** Closes the last "not wired in" example named in
+  `news-stream.md`'s Known gaps after the prior "wire the three remaining
+  Community categories" run (#340): "other community moments (a new
+  Argument Library entry, a Prep Room note, a coaching session) still
+  aren't wired in." Of those three, `EvidenceLibraryEntry` (Argument
+  Library) has no timestamp field to source an event's `NewsItem.timestamp`
+  from, and coaching sessions (`debate-round`'s `coachingSessions.ts`) live
+  in a package `debate-card-search` (where News Stream lives) has no
+  dependency on — so this run picked the remaining, genuinely available
+  gap: `debate-card-search`'s own `sprintNotes.ts`, the "Team Collaboration
+  Mode" idea's persisted `SprintNote` store (`/cards/collaboration`), which
+  already carries a `createdAt` timestamp, an `authorId`, and a `topic`.
+  Unlike the three prior Community sources (quest streak milestones, group
+  challenge completions, daily top reviser), which each derive a bounded
+  event from a longer history, a `SprintNote` is already the atomic
+  event — no derivation needed. Added `team-collaboration-mode.ts`'s
+  `buildSprintNoteAnnouncementText` (truncating a long note's text to 140
+  characters with an ellipsis so it doesn't dominate the feed's card,
+  mirroring the existing per-source announcement-text builders), read by
+  `state/newsStream.ts`'s new `sprintNoteNews()`, which maps every
+  persisted `listSprintNotes()` record straight to a `"community"`-category
+  `NewsItem` and folds it into `buildNewsFeed()`. `state/live-update.ts`'s
+  `NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS` gained `"sprintNotes"` so another
+  tab logging a prep note now live-updates the feed too. Added a
+  `PRODUCT_NEWS` entry announcing the change and updated
+  `docs/features/news-stream.md` (a new "What it shows" bullet, the
+  data-flow diagram, the announce-vs-derive explanation, and Known gaps —
+  the Argument Library/coaching-session half of the old gap stays open with
+  the reason recorded, and a new gap notes that, unlike the other three
+  Community sources, nothing bounds how many prep-note items a very active
+  topic sprint can post in a short span). Did not touch the "Team
+  Collaboration Mode" Product Feature Idea's own status note — that idea
+  already has no open follow-ups; this closes a gap recorded against the
+  News Stream feature instead. Verified: `bun install` (2260 packages),
+  `bun run test` (178 files / 2739 tests, all pass — including 3 new cases
+  across `newsStream.test.ts` and `team-collaboration-mode.test.ts`),
+  `bun run typecheck` (13/13 in-scope package tasks pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/news` route present).
+  **Completed:** 2026-08-26.
 - **Tools discoverability — wire up the Speech Documents orphaned route.**
   Prompted by the same "make sure every tool is reachable, not just on the
   Tools page" request that drove the earlier "Tools discoverability — wire

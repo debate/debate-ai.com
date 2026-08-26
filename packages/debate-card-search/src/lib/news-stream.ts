@@ -50,6 +50,14 @@ export interface NewsItem {
  */
 export const PRODUCT_NEWS: NewsItem[] = [
   {
+    id: "product-news-stream-sprint-notes",
+    category: "product",
+    title: "News Stream now posts Team Collaboration Mode prep notes",
+    body: "The Community side of the feed now posts a note the moment anyone logs it on a topic sprint at /cards/collaboration — no separate announce step, the same way streak milestones, challenge completions, and Revision Incentives standings already work.",
+    timestamp: Date.parse("2026-08-26T02:00:00Z"),
+    href: "/news",
+  },
+  {
     id: "product-news-stream-community-categories",
     category: "product",
     title: "News Stream now covers streaks, challenges, and revisions",

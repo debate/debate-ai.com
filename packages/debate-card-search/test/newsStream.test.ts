@@ -12,7 +12,9 @@ import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
 import { saveGroupChallenge } from "../src/state/groupChallenges";
 import { recordChallengeWinEvent } from "../src/state/challengeWinEvents";
 import { saveRevisionRecord, type CardRevisionRecord } from "../src/state/revisionHistory";
+import { saveSprintNote } from "../src/state/sprintNotes";
 import type { GroupChallenge } from "../src/lib/group-challenges";
+import type { SprintNote } from "../src/lib/team-collaboration-mode";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -89,6 +91,30 @@ describe("buildNewsFeed", () => {
     const item = buildNewsFeed().find((entry) => entry.id === "revision-incentives-2026-08-10");
     expect(item).toMatchObject({ category: "community", href: "/cards/revisions" });
     expect(item?.body).toContain("dana led Revision Incentives on 2026-08-10");
+  });
+
+  it("includes a logged Team Collaboration Mode prep note as a community item", () => {
+    const note: SprintNote = {
+      id: "note-1",
+      topic: "Immigration",
+      authorId: "erin",
+      text: "Need a 2026 solvency card for the affirmative",
+      status: "open",
+      createdAt: 500,
+      updatedAt: 500,
+    };
+    saveSprintNote(note);
+
+    const item = buildNewsFeed().find((entry) => entry.id === "sprint-note-note-1");
+    expect(item).toMatchObject({
+      category: "community",
+      title: 'erin added a "Immigration" prep note',
+      timestamp: 500,
+      href: "/cards/collaboration",
+    });
+    expect(item?.body).toBe(
+      'erin logged a "Immigration" prep note: Need a 2026 solvency card for the affirmative',
+    );
   });
 
   it("sorts every category newest first together", () => {
