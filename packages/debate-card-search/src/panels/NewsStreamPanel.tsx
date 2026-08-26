@@ -6,7 +6,11 @@
  *
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing, matching every other
- * panel in this package (e.g. `DailyBestCardPanel.tsx`).
+ * panel in this package (e.g. `DailyBestCardPanel.tsx`). Also subscribes to
+ * the `storage` event (`isNewsStreamLiveUpdateStorageEvent`) so a new
+ * announcement, or a read/like made in another tab, refreshes this feed
+ * without a manual reload — the same cross-tab live-update mechanism
+ * `DailyBestCardPanel.tsx` uses.
  *
  * @module panels/NewsStreamPanel
  */
@@ -27,6 +31,7 @@ import {
   toggleNewsItemLiked,
 } from "../state/newsStream"
 import { NEWS_CATEGORY_LABELS, type NewsCategory, type NewsItem } from "../lib/news-stream"
+import { isNewsStreamLiveUpdateStorageEvent } from "../state/live-update"
 
 const CATEGORY_ICON: Record<NewsCategory, typeof Bell> = {
   product: Sparkles,
@@ -121,6 +126,22 @@ export function NewsStreamPanel() {
 
   useEffect(() => {
     setItems(buildNewsFeed())
+  }, [])
+
+  /**
+   * Cross-tab live update: rebuild the feed and bump `viewerTick` whenever
+   * another tab announces a Daily Best Card/Contributor Awards winner, or
+   * toggles read/like state on a news item. A `storage` event never fires
+   * in the tab that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isNewsStreamLiveUpdateStorageEvent(event)) return
+      setItems(buildNewsFeed())
+      setViewerTick((t) => t + 1)
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   const visible = useMemo(

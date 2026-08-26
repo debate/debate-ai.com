@@ -6,6 +6,37 @@
 _No task currently in progress._
 
 ### Completed
+- **News Stream — cross-tab live update.** Closes the "No real-time updates
+  across browser tabs" Known gap noted in `news-stream.md`, following the
+  same mechanism already landed for `DailyBestCardPanel`,
+  `ContributionLeaderboardPanel`, `TaskInboxPanel`, `ProgressUnlocksPanel`,
+  `ResearchProgressPanel`, and `QuestStreaksPanel`
+  (`packages/debate-card-search/src/state/live-update.ts`). Adds
+  `NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS` (`dailyBestCardAnnouncements`,
+  `contributorAwardAnnouncements`, `newsStreamViewerState`) +
+  `isNewsStreamLiveUpdateStorageEvent` and wires `NewsStreamPanel` to
+  subscribe to the browser's `storage` event (fires only in *other*
+  same-origin tabs, never the one that made the write), rebuilding the feed
+  and re-deriving read/liked state whenever another tab announces a Daily
+  Best Card or Contributor Awards winner, or toggles a news item's read/like
+  state — so a second tab no longer needs a manual reload to see it. Docs
+  updated at `docs/features/news-stream.md` (new "Cross-tab live update"
+  section, Known gap removed) and `docs/features/shared-flow-sync.md`
+  (cross-reference list extended). Vitest-covered in
+  `packages/debate-card-search/test/live-update.test.ts` (every backing-store
+  key, the `null`-key clear-all case, and unrelated/substring-matching keys
+  staying ignored, for the new predicate). Verified: `bun install` (2062
+  packages), `bunx vitest run` in `debate-card-search` (56 files / 1089
+  tests, all pass), `bunx tsc --noEmit` in `debate-card-search` (clean), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/news` route present).
+  Remaining follow-up (not started this run): the other three Known gaps in
+  `news-stream.md` — Product Updates are still hand-curated, read/like state
+  is still per-browser rather than per-account, and only two categories
+  (Daily Best Card, Contributor Awards) feed the "Community" side of the
+  stream (quest streak milestones, group challenge results, and revision
+  incentive standings aren't wired in yet).
+  **PR:** [#336](https://github.com/debate/debate-ai.com/pull/336).
+  **Completed:** 2026-08-26.
 - **Video library — store the videos JSON in a SQL table (local SQLite +
   Cloudflare D1) and serve the grid one page at a time as it is scrolled.**
   `/api/videos` used to answer every request with the whole library: the four

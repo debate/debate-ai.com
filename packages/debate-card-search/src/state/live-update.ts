@@ -1,21 +1,23 @@
 /**
  * @fileoverview Cross-tab live-update helpers for `DailyBestCardPanel`,
  * `ContributionLeaderboardPanel`, `TaskInboxPanel`, `ProgressUnlocksPanel`,
- * `ResearchProgressPanel`, and `QuestStreaksPanel`, mirroring
- * `debate-round`'s `flow/live-update.ts`. The browser's `storage` event
- * never fires in the *same* tab that wrote the change — only in other
+ * `ResearchProgressPanel`, `QuestStreaksPanel`, and `NewsStreamPanel`,
+ * mirroring `debate-round`'s `flow/live-update.ts`. The browser's `storage`
+ * event never fires in the *same* tab that wrote the change — only in other
  * same-origin tabs — so a panel that reads `localStorage` on mount only
  * never reflects another tab's write without a manual reload.
  * `isDailyBestCardLiveUpdateStorageEvent` closes the "No real-time updates
  * across browser tabs/sessions" Known gap noted in `daily-best-card.md`;
  * `isContributionLeaderboardLiveUpdateStorageEvent`,
  * `isTaskInboxLiveUpdateStorageEvent`, `isProgressUnlocksLiveUpdateStorageEvent`,
- * `isResearchProgressLiveUpdateStorageEvent`, and
- * `isQuestStreaksLiveUpdateStorageEvent` close the equivalent gap for their
- * own panels, noted in `shared-flow-sync.md`'s "Every other
- * localStorage-backed panel in this repo still has no cross-tab
- * live-update mechanism." (a gap that still applies to the rest of this
- * repo's localStorage-backed panels beyond these six).
+ * `isResearchProgressLiveUpdateStorageEvent`, `isQuestStreaksLiveUpdateStorageEvent`,
+ * and `isNewsStreamLiveUpdateStorageEvent` close the equivalent gap for
+ * their own panels — the last one noted directly in `news-stream.md`'s "No
+ * real-time updates across browser tabs" Known gap, the rest in
+ * `shared-flow-sync.md`'s "Every other localStorage-backed panel in this
+ * repo still has no cross-tab live-update mechanism." (a gap that still
+ * applies to the rest of this repo's localStorage-backed panels beyond
+ * these seven).
  *
  * @module state/live-update
  */
@@ -165,5 +167,33 @@ export function isQuestStreaksLiveUpdateStorageEvent(event: { key: string | null
   return (
     event.key === null ||
     (QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `NewsStreamPanel` reads from: the two announcement
+ * stores it composes into feed items
+ * (`dailyBestCardAnnouncements.ts`/`contributorAwardAnnouncements.ts`, both
+ * `"dailyBestCardAnnouncements"`/`"contributorAwardAnnouncements"`) plus its
+ * own per-viewer read/like store (`state/newsStream.ts`'s
+ * `"newsStreamViewerState"`), so a like or read-state change made in another
+ * tab is reflected here too.
+ */
+export const NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS = [
+  "dailyBestCardAnnouncements",
+  "contributorAwardAnnouncements",
+  "newsStreamViewerState",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `NewsStreamPanel` to rebuild its
+ * feed and re-derive read/liked state — closes the "No real-time updates
+ * across browser tabs" Known gap noted in `news-stream.md`. Mirrors
+ * `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match rules.
+ */
+export function isNewsStreamLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
