@@ -74,6 +74,18 @@ _No task currently in progress._
   `test/video-seed-sql.test.ts` (literal escaping including quotes, newlines
   and non-ASCII text, column/value alignment, batching, the upsert clause,
   every row emitted once, and the empty-asset case).
+  The production D1 database was then seeded through that endpoint and
+  verified against the local projection: 2867 rows, 1970 rounds / 897
+  lectures, 718 style-less lectures, 167 top picks, 277/347/99/1426 per debate
+  style, and identical `sum(length(description))` (349203) and
+  `sum(length(search_text))` (537764) — byte-for-byte the same data. The first
+  attempt surfaced two defects, both fixed here: batching by row count alone
+  produced a 111.8 KB statement (D1 rejects anything over 100 KB), so
+  `buildVideoSeedStatements` now flushes on a byte budget as well, and the
+  route's error handler now reports the driver's cause instead of the 100 KB
+  of echoed SQL drizzle puts in the message. That failed run also left 100
+  rows behind, which the docs now record as a known gap: a seed is not atomic,
+  so an interrupted run must be re-run rather than left partial.
   **PR:** [#331](https://github.com/debate/debate-ai.com/pull/331).
   **Completed:** 2026-08-25.
 - **Progress Unlocks / Research Progress / Quest Streaks — cross-tab live

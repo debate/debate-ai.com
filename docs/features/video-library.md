@@ -116,6 +116,15 @@ committed; regenerate it from the assets.
 - The seed runs as a separate step from `sync-youtube`, so newly synced videos
   reach the site only after the seed is re-run (until then the JSON fallback,
   not the table, is what carries them).
+- A seed run is not atomic. Statements commit as they go, so an interrupted
+  run leaves the rows it already wrote — and because the feed decides where to
+  read from by asking whether the table has *any* rows, a partial table is
+  served as if it were complete. This is not theoretical: the first run
+  against D1 failed on an oversized statement and left exactly 100 rows.
+  Re-running the seed converges (rows are upserted and stale ones pruned), and
+  `GET /api/admin/videos/seed` reports the row count so the state is visible,
+  but a run that fails needs a re-run rather than being left alone. Making the
+  statements one atomic D1 batch would close this.
 - Rounds are now stored twice: this table projects the committed JSON assets
   for the public feed, while `youtube_round_videos` is the admin resync's
   landing table, filled straight from the YouTube API for the admin page
