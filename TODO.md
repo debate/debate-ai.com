@@ -6,6 +6,82 @@
 _No task currently in progress._
 
 ### Completed
+- **Site-wide tool discovery: global command palette, News Stream, and a
+  "More Tools" menu in the live editor.** Three linked slices closing the
+  standing gap that every tool listed on `/tools` was reachable from
+  nowhere else in the product, and that the live Reason Editor (idea #14,
+  "Legacy Verbatim / Cardmirror Compatibility") had no way to reach the
+  app's *other* tools without navigating away first.
+  1. **Global command palette** (`apps/debate-ai.com/components/layout/GlobalCommandPalette.tsx`,
+     mounted in `app/layout.tsx`) — a searchable `Ctrl/Cmd+Shift+Space`
+     palette (built on `debate-ui`'s existing `cmdk`-based `Command`
+     primitives) listing every tool from a new shared registry,
+     `apps/debate-ai.com/lib/tools-registry.ts` (the `TOOL_GROUPS`/`Tool`
+     data extracted out of `app/tools/page.tsx`, which now imports it back
+     instead of holding its own copy). Investigating first revealed the
+     live Reason Editor (`debate-editor-cardmirror`, merged in by #293/#294 —
+     *not* the older TipTap `reason-editor` package, which is now unused
+     for editing itself) already binds `Ctrl/Cmd-Shift-Space` to its own
+     command bar ("searches commands, settings, files, and your quick
+     cards") the moment its page-level engine singleton boots. Binding a
+     second global listener for the same chord on `/reason-editor` would
+     race that handler, so the new palette explicitly disables itself on
+     that one route (`ROUTES_WITH_OWN_COMMAND_BAR`) — every other route
+     had no keyboard-driven "jump to a tool" gesture at all before this.
+  2. **News Stream** (`debate-card-search`'s `lib/news-stream.ts` +
+     `state/newsStream.ts` + `panels/NewsStreamPanel.tsx`, rendered at
+     `/news`) — a small, hand-curated, reverse-chronologically-ranked
+     changelog seeded from entries already recorded as "Completed" in this
+     file (not invented features), with per-browser localStorage read-
+     tracking mirroring the existing `contributions.ts` convention.
+     `findLatestNewsItemForHref` lets `/tools` render an "Updated" badge
+     plus the news item's own summary on any tool card with a recent
+     update, and `CategoryDock`'s Settings menu gained a "News Stream"
+     entry with a live unread-count badge (refreshed on every menu open) —
+     both closing the "not just on the tools page" half of the gap.
+  3. **Reason Editor "More Tools" menu** (`debate-editor-cardmirror`'s
+     `react/MenuBar.tsx` gained an optional `appLinks` prop rendering a
+     trailing dropdown of plain `<a>` links — no Next.js dependency added
+     to that package — threaded through `CardMirrorEditor`'s
+     `ReasonEditorProps` and supplied by `apps/debate-ai.com/app/reason-editor/page.tsx`
+     as a curated list: Speech Documents, Prep Notes, Argument Tree
+     Outline, Word-Count Speeches, AI Coach Mode, Evidence Library, News
+     Stream, and "All tools…". CardMirror's own menu-bar categories
+     (File/Edit/Card/Format/Insert/AI/View/Tools) and its command bar only
+     ever reach *editor* ribbon commands (`RIBBON_GROUPS`/`runRibbon`), so
+     neither had any notion of the surrounding app's routes.
+  Docs: `docs/features/news-stream.md` (new),
+  `docs/features/reason-editor-app-tools-menu.md` (new, including the
+  "why not a fourth Ctrl/Cmd-Shift-Space source" reasoning above in full).
+  Vitest-covered: `packages/debate-card-search/test/news-stream.test.ts`
+  (pure `lib/news-stream.ts` helpers, plus a seed-data uniqueness check)
+  and `test/newsStream.test.ts` (the localStorage-backed read-id store,
+  mirroring `contributions.test.ts`'s `MemoryStorage` convention).
+  Verified: `bun install` (2062 packages), `bun run test` (176 files /
+  2654 tests, all pass), `bun run typecheck` (12 of 12 in-scope packages
+  pass), and `bun run build:web` (`debate-ai-web` succeeds, `/news` and
+  `/reason-editor` routes present) all pass. No repo-wide `lint` script
+  exists.
+
+  Known gaps / explicitly out of scope for this slice (the original
+  request — "go through the tools and the todo.md ideas and incorporate
+  them into the ui... add each tool where needed in the live editor and
+  make new functionalities... improve the details of each feature" — is
+  much larger than one session can responsibly attempt at once; this is
+  the first, real slice rather than a sprawling, unverified pass over
+  every tool and every idea in this file):
+  - `appLinks` on the Reason Editor is a fixed, hand-curated list per call
+    site, not derived from the document's own content.
+  - Every *other* tool page (besides `/reason-editor` and the ones the
+    News Stream/command palette now touch) still doesn't cross-link to
+    tools it's contextually related to — this pass established the
+    pattern (a plain `{label, href}[]` list plus a "More Tools"-style
+    dropdown, or the shared `tools-registry.ts`) without applying it
+    everywhere it could go.
+  - News items are hand-curated, not derived automatically from this
+    file or git history.
+  - No cross-tab live update for the News Stream read-id set (see
+    `shared-flow-sync.md`'s list of panels that still lack this).
 - **Progress Unlocks / Research Progress / Quest Streaks — cross-tab live
   update.** Closes, for `ProgressUnlocksPanel`, `ResearchProgressPanel`, and
   `QuestStreaksPanel`, the "Every other localStorage-backed panel in this

@@ -18,11 +18,13 @@
  */
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { MenuBar } from "./MenuBar.js";
+import { MenuBar, type AppLink } from "./MenuBar.js";
 import { ReadOnlyPreview } from "./ReadOnlyPreview.js";
 import * as singleton from "./singleton.js";
 import "../editor/style.css";
 import "../editor/icons.css";
+
+export type { AppLink } from "./MenuBar.js";
 
 export interface LexicalEditorHandle {
   getHTML(): string;
@@ -59,6 +61,13 @@ export interface ReasonEditorProps {
   /** Read-only preview only: fires when the user clicks/focuses it,
    *  requesting to become the live pane. No-op while `live` is true. */
   onActivate?: () => void;
+  /** Extra links into the surrounding host app rendered in the menu
+   *  bar's "More Tools" dropdown (e.g. "Speech Documents", "Prep
+   *  Notes") — CardMirror's own menu-bar categories only cover editor
+   *  commands, so a host that wants the live editor to also surface
+   *  related app tools passes them here instead of the user having to
+   *  navigate away and back. Ignored when `showToolbar` is false. */
+  appLinks?: AppLink[];
 }
 
 export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
@@ -72,6 +81,7 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
       onActivate,
       className,
       showToolbar = true,
+      appLinks,
     },
     ref,
   ) {
@@ -164,7 +174,7 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
 
     return (
       <div className={"dec-cardmirror-embed flex h-full w-full flex-col overflow-hidden" + (className ? ` ${className}` : "")}>
-        {showToolbar && <MenuBar />}
+        {showToolbar && <MenuBar appLinks={appLinks} />}
         <div ref={hostRef} className="dec-cardmirror-viewport relative min-h-0 flex-1 overflow-hidden" />
         {!claimed && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">

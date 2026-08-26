@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { LogIn, LogOut, UserCircle2, Moon, Sun, Palette, Pause, Play, LayoutGrid } from "lucide-react"
+import { LogIn, LogOut, UserCircle2, Moon, Sun, Palette, Pause, Play, LayoutGrid, Newspaper } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
@@ -117,9 +117,20 @@ function AccountSection({ onSignIn }: { onSignIn: () => void }) {
 function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: () => void }) {
   const themeState = useThemeState()
   const router = useRouter()
+  const [unreadNews, setUnreadNews] = useState<number | null>(null)
 
   return (
-    <DropdownMenuContent side={side} align="end" className="w-48">
+    <DropdownMenuContent
+      side={side}
+      align="end"
+      className="w-48"
+      onOpenAutoFocus={() => {
+        // Refreshed on every open (not once at mount) so a news item read
+        // in another tab, or since the last time this menu was opened,
+        // shows up without a full page reload.
+        void import("debate-card-search/src/state/newsStream").then((m) => setUnreadNews(m.getUnreadNewsCount()))
+      }}
+    >
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/features") }}>
         <LayoutGrid className="mr-2 h-4 w-4" />
         All Features
@@ -127,6 +138,15 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/tools") }}>
         <Image src={IconTools} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
         All Tools
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/news") }}>
+        <Newspaper className="mr-2 h-4 w-4" />
+        <span className="flex-1">News Stream</span>
+        {!!unreadNews && (
+          <span className="ml-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] leading-none text-primary-foreground">
+            {unreadNews}
+          </span>
+        )}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>

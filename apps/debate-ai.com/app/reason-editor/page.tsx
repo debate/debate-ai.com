@@ -14,6 +14,19 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { ScrollArea } from "debate-ui/src/primitives/scroll-area"
 
+// Related tools surfaced in the editor's own menu bar (its "More Tools"
+// dropdown), since CardMirror's own menus only cover editor commands —
+// see the "Legacy Verbatim / Cardmirror Compatibility" TODO.md idea.
+const REASON_EDITOR_APP_LINKS = [
+  { label: "Speech Documents", href: "/speech-documents" },
+  { label: "Prep Notes", href: "/prep-notes" },
+  { label: "Argument Tree Outline", href: "/outline" },
+  { label: "Word-Count Speeches", href: "/word-count" },
+  { label: "AI Coach Mode", href: "/coaching" },
+  { label: "Evidence Library", href: "/cards/library" },
+  { label: "News Stream", href: "/news" },
+]
+
 interface ReasonDocument {
   id: number
   title: string
@@ -169,6 +182,7 @@ export default function ReasonEditorPage() {
                 title={selected.title}
                 showAiTools
                 showOutline
+                appLinks={REASON_EDITOR_APP_LINKS}
                 onChange={(html) => updateContent(selected.id, html)}
               />
             </div>

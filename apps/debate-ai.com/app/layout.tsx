@@ -4,6 +4,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CategoryDockProvider, PersistentVideoPlayer } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
+import { GlobalCommandPalette } from "@/components/layout/GlobalCommandPalette"
 import { OneTap } from "@/components/layout/OneTap"
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar"
 import { Toaster } from "sonner"
@@ -43,6 +44,7 @@ export default function RootLayout({
               {children}
             </div>
             <PersistentVideoPlayer />
+            <GlobalCommandPalette />
             <OneTap />
             <ServiceWorkerRegistrar />
             {/* Sign-in and sign-out report through toasts; without a mounted

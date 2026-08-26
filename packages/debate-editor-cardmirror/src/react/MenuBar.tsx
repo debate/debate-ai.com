@@ -8,10 +8,17 @@
  * Every entry here is one more way to reach a command already bound to a
  * ribbon button and/or the Ctrl/Cmd-Shift-Space command palette — this
  * doesn't replace either, it's the third, browsable path.
+ *
+ * An optional trailing "More Tools" dropdown (`appLinks`) surfaces plain
+ * navigation into the surrounding host app — e.g. Speech Documents, Prep
+ * Notes, the Argument Tree Outline — none of which are CardMirror ribbon
+ * commands, so they can't come from `RIBBON_GROUPS`/`runRibbon` like every
+ * other menu here. Rendered as `<a>` tags rather than a router call so this
+ * package never needs a Next.js dependency.
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { Settings } from "lucide-react";
+import { Settings, Wrench } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,11 +31,21 @@ import {
 import { Button } from "debate-ui/src/primitives/button";
 import { MENU_BAR_CATEGORIES } from "./menu-bar-categories.js";
 
-export interface MenuBarProps {
-  className?: string;
+/** A plain link into another part of the host app. */
+export interface AppLink {
+  label: string;
+  href: string;
 }
 
-export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
+export interface MenuBarProps {
+  className?: string;
+  /** Extra links rendered in a trailing "More Tools" dropdown, for
+   *  related tools elsewhere in the host app. Omit to hide the dropdown
+   *  entirely. */
+  appLinks?: AppLink[];
+}
+
+export function MenuBar({ className, appLinks }: MenuBarProps): React.JSX.Element {
   const run = useCallback((id: string) => {
     void import("../editor/index.js").then((engine) => {
       engine.runRibbon(id as never);
@@ -51,6 +68,7 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
       {MENU_BAR_CATEGORIES.map((category) => (
         <MenuBarCategoryMenu key={category.title} title={category.title} groupTitles={category.groupTitles} onRun={run} />
       ))}
+      {appLinks && appLinks.length > 0 && <MoreToolsMenu links={appLinks} />}
       <div className="flex-1" />
       <Button
         type="button"
@@ -64,6 +82,37 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
         <Settings className="h-3.5 w-3.5" />
       </Button>
     </div>
+  );
+}
+
+function MoreToolsMenu({ links }: { links: AppLink[] }): React.JSX.Element {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          role="menuitem"
+          className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded hover:bg-accent hover:text-accent-foreground focus:outline-none focus:bg-accent"
+        >
+          <Wrench className="h-3 w-3" />
+          More Tools
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">
+          Related tools
+        </DropdownMenuLabel>
+        {links.map((link) => (
+          <DropdownMenuItem key={link.href} asChild>
+            <a href={link.href}>{link.label}</a>
+          </DropdownMenuItem>
+        ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <a href="/tools">All tools…</a>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
