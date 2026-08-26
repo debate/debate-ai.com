@@ -83,6 +83,8 @@ search still surfaces them, as it always has).
 
 ## Seeding the table
 
+From a machine with wrangler credentials:
+
 ```bash
 cd apps/debate-ai.com
 bun run db:generate                     # migrations, after a schema change
@@ -90,10 +92,18 @@ bun run db:seed:videos                  # JSON → drizzle/seed/videos-seed.sql,
 bun run db:seed:videos:d1               # same file, applied to Cloudflare D1
 ```
 
-The seed is idempotent: rows are upserted by video id and any row the JSON no
-longer carries is pruned, so re-running after a YouTube sync mirrors the
-assets exactly. The generated SQL file is not committed — regenerate it from
-the assets.
+Or, from a deployment itself, `POST /api/admin/videos/seed` (admin-gated,
+alongside the YouTube resync on `/admin`). The Worker already bundles the JSON
+assets, so it seeds from its own copy — no credentials and no data transfer.
+`GET` on the same route reports the row count and whether the feed is being
+served from SQL or the JSON fallback.
+
+Both paths build their statements with `buildVideoSeedStatements`, so they
+load identical data. The seed is idempotent: rows are upserted by video id and
+any row the assets no longer carry is pruned, so re-running after a YouTube
+sync mirrors them exactly — and because the prune only removes rows the run
+did not touch, the table is never empty mid-run. The generated SQL file is not
+committed; regenerate it from the assets.
 
 ## Known gaps
 
@@ -104,8 +114,17 @@ the assets.
 - Facet counts do not deduct locally hidden videos: hiding a video removes it
   from the grid, but the season and style dropdowns still count it.
 - The seed runs as a separate step from `sync-youtube`, so newly synced videos
-  reach the site only after `db:seed:videos:d1` is run (until then the JSON
-  fallback, not the table, is what carries them).
+  reach the site only after the seed is re-run (until then the JSON fallback,
+  not the table, is what carries them).
+- A seed run is not atomic. Statements commit as they go, so an interrupted
+  run leaves the rows it already wrote — and because the feed decides where to
+  read from by asking whether the table has *any* rows, a partial table is
+  served as if it were complete. This is not theoretical: the first run
+  against D1 failed on an oversized statement and left exactly 100 rows.
+  Re-running the seed converges (rows are upserted and stale ones pruned), and
+  `GET /api/admin/videos/seed` reports the row count so the state is visible,
+  but a run that fails needs a re-run rather than being left alone. Making the
+  statements one atomic D1 batch would close this.
 - Rounds are now stored twice: this table projects the committed JSON assets
   for the public feed, while `youtube_round_videos` is the admin resync's
   landing table, filled straight from the YouTube API for the admin page

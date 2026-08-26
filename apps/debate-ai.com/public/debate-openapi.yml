@@ -468,6 +468,57 @@ paths:
                     type: object
                     description: Topics and champions merged by season year.
 
+  /admin/videos/seed:
+    post:
+      operationId: seedVideos
+      summary: Load the bundled video assets into the videos table
+      description: |
+        Admin-gated. Upserts every video from the bundled JSON assets into the
+        `videos` table that `/videos` pages over, then prunes rows the assets
+        no longer carry. Safe to re-run. Until it is run the feed still serves
+        correct results from the JSON assets in memory.
+      responses:
+        "200":
+          description: Seed run completed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  rows:
+                    type: integer
+                    description: Rows upserted.
+                  statements:
+                    type: integer
+                  durationMs:
+                    type: integer
+        "403":
+          description: Caller is not an admin.
+    get:
+      operationId: getVideoSeedStatus
+      summary: Report whether the videos table is seeded
+      description: Admin-gated row count and last-seeded timestamp for the `videos` table.
+      responses:
+        "200":
+          description: Current table state.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rows:
+                    type: integer
+                  lastSeededAt:
+                    type: integer
+                    nullable: true
+                  servingFrom:
+                    type: string
+                    enum: [sql, json]
+        "403":
+          description: Caller is not an admin.
+
 components:
   schemas:
     Error:
