@@ -42,9 +42,25 @@ state/contributorAwardAnnouncements.ts — existing store, read via listAnnounce
                                     announcement-text helper), sorted newest first
                                   — isNewsItemRead/markNewsItemRead/isNewsItemLiked/
                                     toggleNewsItemLiked (localStorage, "newsStreamViewerState")
-  → panels/NewsStreamPanel.tsx  — category filter tabs, per-item read/like UI
+  → panels/NewsStreamPanel.tsx  — category filter tabs, per-item read/like UI,
+                                    cross-tab live update
   → apps/debate-ai.com/app/news/page.tsx — mounts the panel as a route
 ```
+
+## Cross-tab live update
+
+`NewsStreamPanel` subscribes to the browser's `storage` event (fires only in
+*other* same-origin tabs/windows, never the one that made the write) via
+`state/live-update.ts`'s `isNewsStreamLiveUpdateStorageEvent` — mirroring the
+mechanism already used by
+[Daily Best Card](daily-best-card.md)/[Contributor Awards](contributor-awards.md)
+and the other panels listed in
+[`shared-flow-sync.md`](shared-flow-sync.md). It rebuilds the feed and
+re-derives read/liked state whenever another tab announces a Daily Best Card
+or Contributor Awards winner, or toggles read/like state on a news item
+(`"dailyBestCardAnnouncements"`, `"contributorAwardAnnouncements"`,
+`"newsStreamViewerState"`), so a second tab no longer needs a manual reload
+to see it.
 
 `state/newsStream.ts` introduces no new persisted event data of its own for
 the Daily Best Card and Contributor Awards categories — it only re-shapes
@@ -57,10 +73,6 @@ it appear here; nothing needs to be separately "posted" to the feed.
 
 - Product Updates are manually curated — nothing detects a newly added
   route or `feature-catalog.ts` entry and drafts a post for it.
-- No real-time updates across browser tabs — unlike
-  [Daily Best Card](daily-best-card.md), this panel doesn't yet subscribe to
-  the `storage` event, so a second tab's announcement needs a reload here to
-  appear.
 - Read/like state is per-browser (localStorage), not per-account — signing
   in on a different device shows every item as unread again.
 - Only two categories currently feed the "Community" side of the stream
