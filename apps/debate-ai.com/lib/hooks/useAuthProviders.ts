@@ -43,6 +43,10 @@ export function fetchAuthProviders(): Promise<AuthProviders> {
         // The One Tap plugin reads the client id when the prompt fires, so
         // handing it over here is enough for a later prompt to work.
         setGoogleClientId(resolved.googleClientId);
+        console.log("[auth] /api/auth/providers resolved:", {
+          providers: resolved.providers,
+          hasGoogleClientId: Boolean(resolved.googleClientId),
+        });
         return resolved;
       })
       .catch((error) => {
