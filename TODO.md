@@ -61,6 +61,7 @@ _No task currently in progress._
   Verified with `bun run test` (164 files, 2381 tests), `bunx tsc --noEmit`
   in `packages/debate-videos` and `debate-data-sync`, and `bunx vinext build`
   for the web app; no `lint` script is configured in this repo.
+  **PR:** [#331](https://github.com/debate/debate-ai.com/pull/331).
   **Completed:** 2026-08-25.
 - **Common Argument Library — tag autocomplete on the Contributions Feed,
   and tag rename/merge across both persisted tag stores.**
