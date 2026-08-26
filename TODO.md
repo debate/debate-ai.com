@@ -6,6 +6,39 @@
 _No task currently in progress._
 
 ### Completed
+- **News Stream — wire a fifth Community category: Argument Library
+  submissions.** Closes the "a new Argument Library entry ... isn't wired
+  in" half of the Known gap `docs/features/news-stream.md` recorded after
+  the prior "wire a fourth Community category" run — the other half of that
+  gap (a coaching session) stays open: `debate-round` already depends on
+  `debate-card-search` (where News Stream lives), so a coaching-session news
+  source here would need the reverse dependency, a cycle. Unlike that prior
+  gap's `EvidenceLibraryEntry` type, this one had no timestamp field at all
+  to source a `NewsItem.timestamp` from, so this run's first move was adding
+  one: `lib/shared-evidence-library.ts`'s `EvidenceLibraryEntry.createdAt`
+  (optional, epoch milliseconds, same convention as `NewsItem.timestamp`).
+  Rather than stamping it inside `state/evidenceLibraryEntries.ts`'s generic
+  `saveEvidenceLibraryEntry` upsert (which would have silently added the
+  field to every entry any existing test constructs by hand, breaking their
+  `toEqual` fixtures), it's stamped at the same layer every other `createdAt`
+  in this package already is — the submitting call site,
+  `panels/EvidenceLibraryPanel.tsx`'s `handleSubmit`, mirroring
+  `SprintNotesPanel.tsx`'s identical `createdAt: Date.now()` convention on a
+  brand-new note; an edit preserves the original entry's `createdAt` (looked
+  up via `getEvidenceLibraryEntry`) instead of resetting it. `lib/shared-
+  evidence-library.ts`'s new `buildEvidenceEntryAnnouncementText` renders the
+  announcement line (truncating a long card/block body to 140 characters,
+  mirroring `team-collaboration-mode.ts`'s `buildSprintNoteAnnouncementText`,
+  and naming the citation for a card but omitting the "citing ..." clause
+  for a block, which never has one). `state/newsStream.ts`'s new
+  `argumentLibraryNews()` composes both: every "live" (not held back by an
+  in-progress peer review, via `isEntryLive`) persisted entry that carries a
+  `createdAt` becomes one `NewsItem`, filtered so a pre-existing entry saved
+  before this shipped (with no `createdAt`) is silently skipped rather than
+  backdated. Added test coverage in `newsStream.test.ts` (a submitted live
+  entry appears; a legacy entry with no `createdAt` doesn't) and `shared-
+  evidence-library.test.ts` (the announcement-text builder's card/block/
+  truncation cases), and a `PRODUCT_NEWS` entry announcing the change.
 - **News Stream — wire a fourth Community category: Team Collaboration Mode
   prep notes.** Closes the last "not wired in" example named in
   `news-stream.md`'s Known gaps after the prior "wire the three remaining
