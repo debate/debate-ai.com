@@ -1,21 +1,29 @@
 /**
- * App home / start screen.
+ * App home / start screen — RETIRED (2026-08-26). `show()` below is now a
+ * permanent no-op, so nothing in this file ever becomes visible; the app
+ * always lands directly on a document instead. See the comment on
+ * `show()` for what replaced each of its tiles. The rest of this file
+ * (mount / render helpers / row builders) is kept as-is rather than
+ * deleted, so reviving the screen — or splitting one section (e.g. Recent files)
+ * back out — doesn't mean reconstructing this from scratch.
  *
- * A full-window view shown when the app launches without a
- * document, when the last open doc is closed, or via the Home
- * affordance in the chrome. Offers the primary entry points —
- * New document, New speech document, Open — plus recently opened
- * files, utility groups (Clean / Convert / Compress / Quick
- * Cards), and the Learn section (spaced-repetition review).
+ * Original design, for context: a full-window view shown when the app
+ * launched without a document, when the last open doc was closed, or via
+ * the Home affordance in the chrome. Offered the primary entry points —
+ * New document, New speech document, Open — plus recently opened files,
+ * utility groups (Clean / Convert / Compress / Quick Cards), and the
+ * Learn section (spaced-repetition review).
  *
- * Visibility is driven by the `pmd-home-active` class on
- * `documentElement`: CSS hides the ribbon / nav pane / editor /
- * status bar while it's set, and reveals `.pmd-home-screen`.
- * The screen itself is mounted once and toggled.
+ * Visibility was driven by the `pmd-home-active` class on
+ * `documentElement`: CSS hid the ribbon / nav pane / editor / status bar
+ * while it was set, and revealed `.pmd-home-screen`. The screen itself
+ * is mounted once and toggled — mounting still happens (see index.ts),
+ * it just never shows.
  *
- * All actions are host-agnostic callbacks supplied by the
- * renderer (index.ts), which owns the actual new-doc / open /
- * load-in-place logic.
+ * All actions are host-agnostic callbacks supplied by the renderer
+ * (index.ts), which owns the actual new-doc / open / load-in-place
+ * logic — the same functions the promoted ribbon commands now call
+ * directly.
  */
 
 import {
@@ -314,30 +322,31 @@ class HomeScreen {
     this.renderLearn();
   }
 
-  /** Show the home screen. `canReturnToDoc` (default false) is set
-   *  when invoked over a live document (the Home button) so the
-   *  user can dismiss back to that doc via the Back button or Esc.
-   *  On launch / close-doc there's nothing behind home, so it's
-   *  left false and home is the only way forward. */
-  show(opts: { canReturnToDoc?: boolean } = {}): void {
-    // No-op when never mounted (multi-pane mode doesn't mount the
-    // home screen). Lets the goHome ribbon command be a safe
-    // no-op there rather than throwing on an undefined root.
-    if (!this.root) return;
-    this.canReturnToDoc = !!opts.canReturnToDoc;
-    this.backBtn.hidden = !this.canReturnToDoc;
-    if (this.visible) return;
-    this.visible = true;
-    this.root.hidden = false;
-    document.documentElement.classList.add('pmd-home-active');
-    document.addEventListener('keydown', this.onKeyDown);
-    // Recents may have changed since last shown (another window
-    // opened a file); re-read. Same for the learn counts (cards may
-    // have been created while a doc was open).
-    this.renderRecents();
-    void this.renderSessions();
-    this.renderLearn();
-    this.notifyVisibility(true);
+  /** Show the home screen — permanently disabled (2026-08-26 product
+   *  decision): the app now always lands directly on a document
+   *  (the blank starter that boot already mounts underneath every
+   *  `show()` call site) instead of an interstitial start page. New
+   *  Document / New Speech Document / Open / Manage Quick Cards /
+   *  Manage Flashcards were already reachable as ribbon commands
+   *  (bindable, in the command palette, and in the File / Learn menu
+   *  dropdowns); Clean .docx Styles, Convert .docx/.cmir, Compress
+   *  .cmir, and Review Due Flashcards — the tiles that were
+   *  home-screen-only — were promoted to ribbon commands alongside
+   *  them (see `cleanDocxStyles` / `bulkConvertDocs` /
+   *  `bulkCompressDocs` / `reviewDueFlashcards` in ribbon-commands.ts)
+   *  so nothing this screen offered was lost. Every call site below
+   *  (launch, close-doc, the old Home button) already falls back to
+   *  the blank starter on its own, so no-opping `show()` here — rather
+   *  than touching each of those call sites — is the single, safe
+   *  choke point: `hide()` / `isVisible()` / `mount()` / `pillDock()`
+   *  all stay correct with `visible` permanently false. The
+   *  now-unreachable rendering code below (recents, sessions, Learn
+   *  breakdown, utility tiles) is deliberately left in place rather
+   *  than gutted — reviving this screen, or splitting a piece of it
+   *  back out (e.g. Recent files) into a menu, only needs this guard
+   *  touched, not the render logic reconstructed. */
+  show(_opts: { canReturnToDoc?: boolean } = {}): void {
+    return;
   }
 
   hide(): void {

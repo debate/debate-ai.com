@@ -4,15 +4,14 @@
  */
 
 import type React from "react"
-import { useState } from "react"
 import { Plus, Clock, Users, Columns2, Grid3x3, Workflow } from "lucide-react"
 import { Button } from "debate-ui/src/primitives/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+import { cn } from "debate-ui/src/lib/utils"
 import { FlowTab } from "../navigation/FlowTab"
 import { PrepTimer } from "debate-timer/src/timers/PrepTimer"
 import type { Flow, Round } from "debate-core/src/types/flow"
 import type { TimerState, SpeechTimerState, DebateStyle } from "debate-timer/src/types"
-import { EbbFlowDialog } from "./EbbFlowDialog"
 
 /** Props for the FlowPageSidebar component. */
 interface FlowPageSidebarProps {
@@ -44,6 +43,10 @@ interface FlowPageSidebarProps {
   onOpenHistory: () => void
   /** Handler called when the user opens the round editor for a given round. */
   onEditRound: (roundId?: number) => void
+  /** Whether the pinned ebb Flow tab is the active document. */
+  ebbActive: boolean
+  /** Handler called when the user selects the pinned ebb Flow tab. */
+  onSelectEbb: () => void
   /** Optional handler called when the mobile menu overlay should be dismissed. */
   onCloseMobileMenu?: () => void
   /** Timer state props passed through to TimersPanel. */
@@ -92,11 +95,11 @@ export function FlowPageSidebar({
   onToggleSplitMode,
   onOpenHistory,
   onEditRound,
+  ebbActive,
+  onSelectEbb,
   onCloseMobileMenu,
   timerState,
 }: FlowPageSidebarProps) {
-  const [ebbOpen, setEbbOpen] = useState(false)
-
   /**
    * Sort flows for rendering:
    * - active flows first
@@ -122,10 +125,20 @@ export function FlowPageSidebar({
     }
   }
 
+  /**
+   * Select the pinned ebb Flow tab and close the mobile menu when applicable.
+   */
+  const handleSelectEbb = () => {
+    onSelectEbb()
+    if (isMobile && onCloseMobileMenu) {
+      onCloseMobileMenu()
+    }
+  }
+
   return (
     <div className="mt-[50px]  bg-[var(--background)] w-full h-full md:h-[var(--main-height)] rounded-[var(--border-radius)] p-[var(--padding)] flex flex-col box-border">
       {/* Quick action buttons */}
-      <div className="h-auto pb-[var(--padding)] grid grid-cols-4 gap-0.5">
+      <div className="h-auto pb-[var(--padding)] grid grid-cols-3 gap-0.5">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -163,17 +176,6 @@ export function FlowPageSidebar({
             </TooltipTrigger>
             <TooltipContent>
               <p>{currentFlow?.roundId ? "Edit Round" : "New Round"}</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEbbOpen(true)}>
-                <Workflow className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Open ebb Flow</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -242,11 +244,28 @@ export function FlowPageSidebar({
       {/* Flow tabs list */}
       <div className="overflow-y-auto flex-grow box-border">
         <div className="p-0 m-0">
+          {/* ebb Flow is a separate local-first editor, not a database-backed
+              Flow record, so it gets a pinned entry above the real flow tabs
+              rather than a fake Flow object slotted into the list — it has
+              no rename/archive/delete, only select. */}
+          <div
+            onClick={handleSelectEbb}
+            className={cn(
+              "w-full text-left p-[var(--padding)] rounded-[var(--border-radius)]",
+              "transition-colors duration-[var(--transition-speed)]",
+              "hover:bg-[var(--background-indent)]",
+              "flex items-center gap-1.5 cursor-pointer",
+              ebbActive && "bg-[var(--background-active)] font-bold",
+            )}
+          >
+            <Workflow className="h-3.5 w-3.5 shrink-0 opacity-80" />
+            <span className="flex-1 truncate">ebb Flow</span>
+          </div>
           {sortedFlows.map((flow) => (
             <FlowTab
               key={flow.id}
               flow={flow}
-              selected={flow.index === selected}
+              selected={!ebbActive && flow.index === selected}
               onClick={() => handleSelectFlow(flow.index)}
               onRename={(newName) => onRenameFlow(flow.index, newName)}
               onArchive={() => onArchiveFlow(flow.index)}
@@ -266,8 +285,6 @@ export function FlowPageSidebar({
           </Button>
         </div>
       </div>
-
-      <EbbFlowDialog open={ebbOpen} onOpenChange={setEbbOpen} />
     </div>
   )
 }
