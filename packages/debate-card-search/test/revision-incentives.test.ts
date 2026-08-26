@@ -5,6 +5,7 @@ import {
   buildContributorRevisionStats,
   buildRevisionIncentiveLeaderboard,
   buildRevisionRewardText,
+  buildTopReviserAnnouncementText,
   computeEvidenceStaleness,
   evaluateRevision,
   groupRevisionsByContributor,
@@ -255,5 +256,21 @@ describe("computeEvidenceStaleness", () => {
     const signal = computeEvidenceStaleness(2030, 2026);
     expect(signal.ageYears).toBe(0);
     expect(signal.isStale).toBe(false);
+  });
+});
+
+describe("buildTopReviserAnnouncementText", () => {
+  it("renders a day's top earner with a plural revision count", () => {
+    const stats = buildContributorRevisionStats("alice", [weakCardImprovedRevision, weakCardImprovedRevision]);
+    expect(buildTopReviserAnnouncementText("2026-08-26", stats)).toBe(
+      `alice led Revision Incentives on 2026-08-26 with ${stats.totalRewardPoints} points across 2 revisions.`,
+    );
+  });
+
+  it("renders a singular revision count for exactly one revision", () => {
+    const stats = buildContributorRevisionStats("alice", [weakCardImprovedRevision]);
+    expect(buildTopReviserAnnouncementText("2026-08-26", stats)).toBe(
+      `alice led Revision Incentives on 2026-08-26 with ${stats.totalRewardPoints} points across 1 revision.`,
+    );
   });
 });

@@ -1,10 +1,16 @@
 /**
- * @fileoverview News Stream panel — renders every seeded `NewsItem`
- * (`lib/news-stream.ts`) newest-first, grouped by category, with an unread
- * indicator per item (backed by `state/newsStream.ts`'s persisted read-id
- * set) and a "Mark all as read" action. Each item that names an in-app
- * route links straight to it, so the stream doubles as a feature-discovery
- * surface for tools that aren't otherwise obvious from `/tools` alone.
+ * @fileoverview News Stream panel — a unified activity feed of product
+ * updates and community announcements, built from `state/newsStream.ts`'s
+ * `buildNewsFeed` (hand-maintained product updates plus every announced
+ * Daily Best Card winner and Contributor Awards standings).
+ *
+ * Reads localStorage on mount only (client-side), so it renders a loading
+ * state during SSR/hydration rather than throwing, matching every other
+ * panel in this package (e.g. `DailyBestCardPanel.tsx`). Also subscribes to
+ * the `storage` event (`isNewsStreamLiveUpdateStorageEvent`) so a new
+ * announcement, or a read/like made in another tab, refreshes this feed
+ * without a manual reload — the same cross-tab live-update mechanism
+ * `DailyBestCardPanel.tsx` uses.
  *
  * @module panels/NewsStreamPanel
  */
@@ -12,120 +18,184 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { Bell, Heart, Megaphone, Sparkles, Trophy } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
+import { Card, CardContent } from "debate-ui/src/primitives/card"
+import { cn } from "debate-ui/src/lib/utils"
 import {
-  NEWS_CATEGORY_LABELS,
-  filterNewsItemsByCategory,
-  sortNewsItemsByRecency,
-  type NewsCategory,
-} from "../lib/news-stream"
-import { NEWS_ITEMS } from "../lib/news-stream"
-import { getReadNewsItemIds, markAllNewsItemsRead, markNewsItemRead } from "../state/newsStream"
+  buildNewsFeed,
+  isNewsItemLiked,
+  isNewsItemRead,
+  markNewsItemRead,
+  toggleNewsItemLiked,
+} from "../state/newsStream"
+import { NEWS_CATEGORY_LABELS, type NewsCategory, type NewsItem } from "../lib/news-stream"
+import { isNewsStreamLiveUpdateStorageEvent } from "../state/live-update"
 
-const CATEGORY_FILTERS: { value: NewsCategory | "all"; label: string }[] = [
+const CATEGORY_ICON: Record<NewsCategory, typeof Bell> = {
+  product: Sparkles,
+  "daily-best-card": Trophy,
+  awards: Trophy,
+  community: Megaphone,
+}
+
+const FILTERS: { value: NewsCategory | "all"; label: string }[] = [
   { value: "all", label: "All" },
-  { value: "editor", label: NEWS_CATEGORY_LABELS.editor },
-  { value: "research", label: NEWS_CATEGORY_LABELS.research },
-  { value: "practice", label: NEWS_CATEGORY_LABELS.practice },
-  { value: "coaching", label: NEWS_CATEGORY_LABELS.coaching },
+  { value: "product", label: NEWS_CATEGORY_LABELS.product },
+  { value: "daily-best-card", label: NEWS_CATEGORY_LABELS["daily-best-card"] },
+  { value: "awards", label: NEWS_CATEGORY_LABELS.awards },
   { value: "community", label: NEWS_CATEGORY_LABELS.community },
 ]
 
+function relativeTime(timestamp: number): string {
+  const diffMs = Date.now() - timestamp
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24))
+  if (diffDays <= 0) return "Today"
+  if (diffDays === 1) return "Yesterday"
+  if (diffDays < 30) return `${diffDays} days ago`
+  const diffMonths = Math.round(diffDays / 30)
+  return `${diffMonths} month${diffMonths === 1 ? "" : "s"} ago`
+}
+
+function NewsItemRow({
+  item,
+  read,
+  liked,
+  onRead,
+  onToggleLike,
+}: {
+  item: NewsItem
+  read: boolean
+  liked: boolean
+  onRead: () => void
+  onToggleLike: () => void
+}) {
+  const Icon = CATEGORY_ICON[item.category]
+  return (
+    <Card
+      className={cn("transition-colors", !read && "border-primary/40 bg-primary/[0.03]")}
+      onMouseEnter={onRead}
+    >
+      <CardContent className="flex items-start gap-3 py-4">
+        <Icon className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-medium text-foreground">{item.title}</span>
+            <Badge variant="outline" className="text-[10px]">
+              {NEWS_CATEGORY_LABELS[item.category]}
+            </Badge>
+            {!read && <Badge className="text-[10px]">New</Badge>}
+          </div>
+          <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{item.body}</p>
+          <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
+            <span>{relativeTime(item.timestamp)}</span>
+            {item.href && (
+              <a href={item.href} className="font-medium text-foreground hover:underline">
+                View →
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={onToggleLike}
+              className={cn(
+                "flex items-center gap-1 hover:text-foreground",
+                liked && "text-rose-500 hover:text-rose-500",
+              )}
+              aria-pressed={liked}
+            >
+              <Heart className={cn("h-3.5 w-3.5", liked && "fill-current")} />
+              {liked ? "Liked" : "Like"}
+            </button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+/**
+ * Renders the News Stream: every product update and community announcement,
+ * newest first, filterable by category, with per-viewer read/like state.
+ */
 export function NewsStreamPanel() {
-  const [readIds, setReadIds] = useState<Set<string> | null>(null)
-  const [category, setCategory] = useState<NewsCategory | "all">("all")
+  const [items, setItems] = useState<NewsItem[] | null>(null)
+  const [filter, setFilter] = useState<NewsCategory | "all">("all")
+  // Bumped on every read/like toggle to re-derive the read/liked maps below
+  // without re-sorting the feed itself.
+  const [viewerTick, setViewerTick] = useState(0)
 
   useEffect(() => {
-    setReadIds(getReadNewsItemIds())
+    setItems(buildNewsFeed())
   }, [])
 
-  const items = useMemo(
-    () => sortNewsItemsByRecency(filterNewsItemsByCategory(NEWS_ITEMS, category)),
-    [category],
+  /**
+   * Cross-tab live update: rebuild the feed and bump `viewerTick` whenever
+   * another tab announces a Daily Best Card/Contributor Awards winner, or
+   * toggles read/like state on a news item. A `storage` event never fires
+   * in the tab that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isNewsStreamLiveUpdateStorageEvent(event)) return
+      setItems(buildNewsFeed())
+      setViewerTick((t) => t + 1)
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
+
+  const visible = useMemo(
+    () => (items ?? []).filter((item) => filter === "all" || item.category === filter),
+    [items, filter],
   )
 
-  if (readIds === null) {
-    return <div className="p-6 text-sm text-muted-foreground">Loading news…</div>
-  }
-
-  const handleOpen = (id: string) => {
-    if (readIds.has(id)) return
+  const handleRead = (id: string) => {
+    if (isNewsItemRead(id)) return
     markNewsItemRead(id)
-    setReadIds(getReadNewsItemIds())
+    setViewerTick((t) => t + 1)
   }
 
-  const handleMarkAllRead = () => {
-    markAllNewsItemsRead()
-    setReadIds(getReadNewsItemIds())
+  const handleToggleLike = (id: string) => {
+    toggleNewsItemLiked(id)
+    setViewerTick((t) => t + 1)
   }
 
-  const unreadCount = NEWS_ITEMS.filter((item) => !readIds.has(item.id)).length
+  if (items === null) {
+    return <p className="text-sm text-muted-foreground">Loading news…</p>
+  }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="mb-1 text-xl font-semibold text-foreground">News Stream</h1>
-          <p className="text-sm text-muted-foreground">
-            What's new across the whole product, newest first.
-          </p>
-        </div>
-        {unreadCount > 0 && (
-          <Button size="sm" variant="outline" onClick={handleMarkAllRead}>
-            Mark all as read
-          </Button>
-        )}
-      </div>
-
-      <div className="flex flex-wrap gap-1.5">
-        {CATEGORY_FILTERS.map((filter) => (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap gap-2">
+        {FILTERS.map((f) => (
           <Button
-            key={filter.value}
+            key={f.value}
             type="button"
             size="sm"
-            variant={category === filter.value ? "default" : "outline"}
-            onClick={() => setCategory(filter.value)}
+            variant={filter === f.value ? "default" : "outline"}
+            onClick={() => setFilter(f.value)}
           >
-            {filter.label}
+            {f.label}
           </Button>
         ))}
       </div>
-
-      <ul className="space-y-3">
-        {items.map((item) => {
-          const unread = !readIds.has(item.id)
-          const Wrapper = item.href ? "a" : "div"
-          return (
-            <li key={item.id}>
-              <Wrapper
-                {...(item.href ? { href: item.href } : {})}
-                onClick={() => handleOpen(item.id)}
-                className="block rounded-lg border border-border p-4 transition-colors hover:bg-accent"
-              >
-                <div className="mb-1 flex items-center gap-2">
-                  {unread && (
-                    <span
-                      className="h-2 w-2 shrink-0 rounded-full bg-primary"
-                      aria-label="Unread"
-                      title="Unread"
-                    />
-                  )}
-                  <h2 className="text-sm font-semibold text-foreground">{item.title}</h2>
-                  <Badge variant="outline" className="ml-auto shrink-0">
-                    {NEWS_CATEGORY_LABELS[item.category]}
-                  </Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">{item.summary}</p>
-              </Wrapper>
-            </li>
-          )
-        })}
-      </ul>
-
-      {items.length === 0 && (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No news in this category yet.
+      {visible.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          {items.length === 0 ? "No news yet." : "Nothing in this category yet."}
+        </p>
+      ) : (
+        <div className="flex flex-col gap-3" key={viewerTick}>
+          {visible.map((item) => (
+            <NewsItemRow
+              key={item.id}
+              item={item}
+              read={isNewsItemRead(item.id)}
+              liked={isNewsItemLiked(item.id)}
+              onRead={() => handleRead(item.id)}
+              onToggleLike={() => handleToggleLike(item.id)}
+            />
+          ))}
         </div>
       )}
     </div>

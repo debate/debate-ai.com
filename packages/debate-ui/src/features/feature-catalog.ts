@@ -135,11 +135,11 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "reason-editor",
     title: "Reason Editor",
     description:
-      "The rich-text card editor: Verbatim/Cardmirror-compatible shortcuts, an outline nav panel, and a send-to-speech-document command",
+      "The rich-text card editor: a Google-Docs-style menu bar (File/Edit/Card/Format/Insert/AI/View/Tools/Workspace), a Ctrl/Cmd-Shift-Space command palette that also jumps to other tools, Verbatim/Cardmirror-compatible shortcuts, an outline nav panel, and a send-to-speech-document command",
     href: "/reason-editor",
     category: "workspaces",
     doc: "legacy-verbatim-shortcuts.md",
-    tags: ["verbatim", "cardmirror", "tiptap", "editor", "docx", "reason-editor"],
+    tags: ["verbatim", "cardmirror", "tiptap", "editor", "docx", "reason-editor", "menu bar", "command palette", "workspace"],
   },
   {
     id: "research-workspace",
@@ -508,6 +508,15 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["winner", "vote", "daily"],
   },
   {
+    id: "news-stream",
+    title: "News Stream",
+    description: "Product updates and community announcements — new features, Daily Best Card winners, and Contributor Award standings, in one feed",
+    href: "/news",
+    category: "recognition",
+    doc: "news-stream.md",
+    tags: ["feed", "activity", "updates", "announcements"],
+  },
+  {
     id: "daily-quests",
     title: "Daily Quests",
     description: 'Team goals like "find 5 solvency cards" — today\'s live progress against real contributions',
@@ -561,6 +570,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     description: "Debate team rankings, leaderboard, and Elo ratings",
     href: "/rank",
     category: "standings",
+    doc: "team-rankings.md",
     tags: ["elo", "toc", "bid list", "debatedrills"],
   },
 ];

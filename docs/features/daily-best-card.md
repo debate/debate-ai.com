@@ -7,7 +7,8 @@ frozen as an official "announced" result rather than always reflecting
 whatever is currently winning.
 
 - **Route:** `/cards/best-card`
-- **Nav:** the global dock's Settings menu → **Daily Best Card**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t best card` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

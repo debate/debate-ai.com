@@ -7,7 +7,8 @@ reads/writes through the persistence store" follow-up named under idea #2
 ("Word-Count-Only Speech Format") in `TODO.md`'s Product Feature Ideas list.
 
 - **Route:** `/word-count`
-- **Nav:** the global dock's Settings menu → **Word-Count Speeches**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t word-count` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

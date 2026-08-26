@@ -4,31 +4,26 @@
  */
 
 import { useState, useRef, useEffect } from "react";
-import type { CategoryType, DebateVideosData, VideoType, DebateStyle } from "../types/videos";
+import type { CategoryType, DebateStyle } from "../types/videos";
 
 /**
- * Initialises and returns all state and refs needed by the videos page.
+ * Initialises and returns the view state and refs the videos pages own.
+ *
+ * Video rows, paging and load state are *not* here — they belong to
+ * {@link useVideoFeed}, which pages them in from `/api/videos`. This hook keeps
+ * only the user-controlled filter state and the browser-local favourite/hidden
+ * sets, which drive the requests that hook makes.
  *
  * @returns An object containing `state` (current values and refs) and `actions` (setter functions).
  */
 export function useVideoState(initialCategory: CategoryType = "rounds") {
-  const [debateVideos, setDebateVideos] = useState<DebateVideosData | null>(
-    null,
-  );
-  const [allVideos, setAllVideos] = useState<VideoType[]>([]);
-  const [filteredVideos, setFilteredVideos] = useState<VideoType[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [videosPerPage, setVideosPerPage] = useState(100);
   const [currentCategory, setCurrentCategory] =
     useState<CategoryType>(initialCategory);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [sortOrder, setSortOrder] = useState("Recency");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showThumbnails, setShowThumbnails] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [selectedStyle, setSelectedStyle] = useState<DebateStyle | "">("");
@@ -106,22 +101,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
      * Current state values and DOM refs for the videos page.
      */
     state: {
-      /** Raw video data fetched from the API, or null while loading. */
-      debateVideos,
-      /** Full list of videos for the active category before filtering. */
-      allVideos,
-      /** Videos remaining after search and sort have been applied. */
-      filteredVideos,
-      /** Current pagination page number (1-indexed). */
-      currentPage,
-      /** Number of videos displayed per page. */
-      videosPerPage,
       /** The category tab currently selected by the user. */
       currentCategory,
-      /** Whether the initial video fetch is in progress. */
-      isLoading,
-      /** Human-readable error message to display when fetching fails. */
-      errorMessage,
       /** Current value of the search input field. */
       searchTerm,
       /** Currently selected season year. */
@@ -132,8 +113,6 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       isSearchFocused,
       /** Whether video thumbnail images are visible in the grid. */
       showThumbnails,
-      /** Whether additional videos are being loaded via infinite scroll. */
-      isLoadingMore,
       /** Whether to only show favorited videos. */
       showFavoritesOnly,
       /** Set of favorite video IDs. */
@@ -151,22 +130,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
      * Setter functions for updating each piece of state.
      */
     actions: {
-      /** Updates the raw API video data. */
-      setDebateVideos,
-      /** Replaces the full unfiltered video list. */
-      setAllVideos,
-      /** Replaces the filtered and sorted video list. */
-      setFilteredVideos,
-      /** Sets the current pagination page. */
-      setCurrentPage,
-      /** Sets how many videos are shown per page. */
-      setVideosPerPage,
       /** Sets the active category tab. */
       setCurrentCategory,
-      /** Sets the initial loading state. */
-      setIsLoading,
-      /** Sets the error message string. */
-      setErrorMessage,
       /** Sets the search input value. */
       setSearchTerm,
       /** Sets the active sort order. */
@@ -177,8 +142,6 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       setIsSearchFocused,
       /** Sets whether thumbnails are shown. */
       setShowThumbnails,
-      /** Sets whether more videos are being fetched for infinite scroll. */
-      setIsLoadingMore,
       /** Sets whether to only show favorited videos. */
       setShowFavoritesOnly,
       /** Toggles a video in the favorites set. */

@@ -5,7 +5,8 @@ submit it, leave and resolve comments, request changes, approve, and
 publish — before it goes live in the shared evidence library.
 
 - **Route:** `/cards/reviews`
-- **Nav:** the global dock's Settings menu → **Review Queue**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t review queue` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

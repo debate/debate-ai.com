@@ -23,6 +23,7 @@ import { ReadOnlyPreview } from "./ReadOnlyPreview.js";
 import * as singleton from "./singleton.js";
 import "../editor/style.css";
 import "../editor/icons.css";
+import "../editor/embed-containment.css";
 
 export type { AppLink } from "./MenuBar.js";
 

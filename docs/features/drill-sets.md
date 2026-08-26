@@ -5,7 +5,8 @@ overview, frontline, cross-ex, and collapse-scenario prompts derived from
 that round's flow — with a "Clear" action per round.
 
 - **Route:** `/drills`
-- **Nav:** the global dock's Settings menu → **Practice Drills**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t drills` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

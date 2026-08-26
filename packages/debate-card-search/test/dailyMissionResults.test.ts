@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildPersistedContributorQuestStreak,
   buildPersistedQuestStreakRoster,
+  buildQuestStreakMilestoneEvents,
   computeAndSavePersistedDailyMissionResult,
   deleteDailyMissionResult,
   getDailyMissionResult,
@@ -267,5 +268,49 @@ describe("computeAndSavePersistedDailyMissionResult", () => {
   it("returns an incomplete result for a contributor with no persisted contributions", () => {
     const record = computeAndSavePersistedDailyMissionResult("missing", QUESTS, NOW);
     expect(record).toEqual({ contributorId: "missing", dayKey: "2026-08-16", isComplete: false });
+  });
+});
+
+describe("buildQuestStreakMilestoneEvents", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildQuestStreakMilestoneEvents()).toEqual([]);
+  });
+
+  it("reports a contributor's freshly earned milestone with their contributorId attached", () => {
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-08", isComplete: true });
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: true });
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-10", isComplete: true });
+
+    expect(buildQuestStreakMilestoneEvents()).toEqual([
+      { contributorId: "alice", dayKey: "2026-08-10", streakLength: 3, badge: "3-Day Streak" },
+    ]);
+  });
+
+  it("covers every contributor with stored history, sorted newest day first then by contributorId", () => {
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-08", isComplete: true });
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: true });
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-10", isComplete: true });
+    saveDailyMissionResult({ contributorId: "bob", dayKey: "2026-08-01", isComplete: true });
+    saveDailyMissionResult({ contributorId: "bob", dayKey: "2026-08-02", isComplete: true });
+    saveDailyMissionResult({ contributorId: "bob", dayKey: "2026-08-03", isComplete: true });
+
+    const events = buildQuestStreakMilestoneEvents();
+    expect(events.map((e) => e.contributorId)).toEqual(["alice", "bob"]);
+    expect(events[0].dayKey).toBe("2026-08-10");
+    expect(events[1].dayKey).toBe("2026-08-03");
+  });
+
+  it("does not report a contributor whose streak never reaches a milestone", () => {
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: true });
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-10", isComplete: true });
+    expect(buildQuestStreakMilestoneEvents()).toEqual([]);
+  });
+
+  it("supports a custom milestone list", () => {
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-10", isComplete: true });
+    const milestones = [{ streakLength: 1, badge: "First Day" }];
+    expect(buildQuestStreakMilestoneEvents(milestones)).toEqual([
+      { contributorId: "alice", dayKey: "2026-08-10", streakLength: 1, badge: "First Day" },
+    ]);
   });
 });

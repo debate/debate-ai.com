@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildChallengeCompletionAnnouncementText,
   buildGroupChallengeBoard,
   buildGroupChallengeSummaryText,
+  computeChallengeCompletionTimestamp,
   computeGroupChallengeProgress,
   type ChallengeWinEvent,
   type GroupChallenge,
@@ -195,5 +197,69 @@ describe("buildGroupChallengeSummaryText", () => {
     const oneDayBeforeEnd = WEEK_END - 24 * 60 * 60 * 1000;
     const progress = computeGroupChallengeProgress(cardChallenge, [], [], oneDayBeforeEnd);
     expect(buildGroupChallengeSummaryText(progress)).toBe('"Find 10 solvency cards": 0/10 — 1 day left');
+  });
+});
+
+describe("computeChallengeCompletionTimestamp — contribution_target", () => {
+  const smallCardChallenge: GroupChallenge = { ...cardChallenge, goal: { ...cardChallenge.goal, targetCount: 2 } as GroupChallenge["goal"] };
+
+  it("returns the timestamp of the targetCount-th matching contribution", () => {
+    const contributions = [
+      card("a", "alex", WEEK_START + 1000),
+      card("b", "sam", WEEK_START + 3000),
+      card("c", "alex", WEEK_START + 2000),
+    ];
+    expect(computeChallengeCompletionTimestamp(smallCardChallenge, contributions, [])).toBe(WEEK_START + 2000);
+  });
+
+  it("returns null when the goal hasn't been reached yet", () => {
+    const contributions = [card("a", "alex", WEEK_START + 1000)];
+    expect(computeChallengeCompletionTimestamp(smallCardChallenge, contributions, [])).toBeNull();
+  });
+
+  it("ignores out-of-roster or out-of-window contributions when finding the completion moment", () => {
+    const contributions = [
+      card("a", "alex", WEEK_START + 1000),
+      card("b", "jordan", WEEK_START + 1500), // not on roster
+      card("c", "sam", WEEK_START - 1000), // before window
+      card("d", "sam", WEEK_START + 4000),
+    ];
+    expect(computeChallengeCompletionTimestamp(smallCardChallenge, contributions, [])).toBe(WEEK_START + 4000);
+  });
+});
+
+describe("computeChallengeCompletionTimestamp — win_target", () => {
+  it("returns the timestamp of the targetCount-th matching win event", () => {
+    const winEvents: ChallengeWinEvent[] = [
+      { contributorId: "alex", occurredAt: WEEK_START + 1000 },
+      { contributorId: "sam", occurredAt: WEEK_START + 3000 },
+      { contributorId: "alex", occurredAt: WEEK_START + 2000 },
+    ];
+    expect(computeChallengeCompletionTimestamp(winChallenge, [], winEvents)).toBe(WEEK_START + 3000);
+  });
+
+  it("returns null when fewer win events than the target have landed", () => {
+    const winEvents: ChallengeWinEvent[] = [{ contributorId: "alex", occurredAt: WEEK_START + 1000 }];
+    expect(computeChallengeCompletionTimestamp(winChallenge, [], winEvents)).toBeNull();
+  });
+});
+
+describe("buildChallengeCompletionAnnouncementText", () => {
+  it("includes the MVP contributor when one is set", () => {
+    const progress = computeGroupChallengeProgress(
+      { ...cardChallenge, goal: { ...cardChallenge.goal, targetCount: 1 } as GroupChallenge["goal"] },
+      [card("a", "alex", WEEK_START + 1000)],
+      [],
+      WEEK_START + 2000,
+    );
+    expect(buildChallengeCompletionAnnouncementText(progress)).toBe(
+      '"Find 10 solvency cards" complete! (1/1) — top contributor: alex',
+    );
+  });
+
+  it("omits the MVP suffix when none is set", () => {
+    expect(
+      buildChallengeCompletionAnnouncementText({ title: "Solo goal", completedCount: 1, targetCount: 1 }),
+    ).toBe('"Solo goal" complete! (1/1)');
   });
 });

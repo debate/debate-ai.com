@@ -6,83 +6,310 @@
 _No task currently in progress._
 
 ### Completed
-- **Site-wide tool discovery: global command palette, News Stream, and a
-  "More Tools" menu in the live editor.** Three linked slices closing the
-  standing gap that every tool listed on `/tools` was reachable from
-  nowhere else in the product, and that the live Reason Editor (idea #14,
-  "Legacy Verbatim / Cardmirror Compatibility") had no way to reach the
-  app's *other* tools without navigating away first.
-  1. **Global command palette** (`apps/debate-ai.com/components/layout/GlobalCommandPalette.tsx`,
-     mounted in `app/layout.tsx`) — a searchable `Ctrl/Cmd+Shift+Space`
-     palette (built on `debate-ui`'s existing `cmdk`-based `Command`
-     primitives) listing every tool from a new shared registry,
-     `apps/debate-ai.com/lib/tools-registry.ts` (the `TOOL_GROUPS`/`Tool`
-     data extracted out of `app/tools/page.tsx`, which now imports it back
-     instead of holding its own copy). Investigating first revealed the
-     live Reason Editor (`debate-editor-cardmirror`, merged in by #293/#294 —
-     *not* the older TipTap `reason-editor` package, which is now unused
-     for editing itself) already binds `Ctrl/Cmd-Shift-Space` to its own
-     command bar ("searches commands, settings, files, and your quick
-     cards") the moment its page-level engine singleton boots. Binding a
-     second global listener for the same chord on `/reason-editor` would
-     race that handler, so the new palette explicitly disables itself on
-     that one route (`ROUTES_WITH_OWN_COMMAND_BAR`) — every other route
-     had no keyboard-driven "jump to a tool" gesture at all before this.
-  2. **News Stream** (`debate-card-search`'s `lib/news-stream.ts` +
-     `state/newsStream.ts` + `panels/NewsStreamPanel.tsx`, rendered at
-     `/news`) — a small, hand-curated, reverse-chronologically-ranked
-     changelog seeded from entries already recorded as "Completed" in this
-     file (not invented features), with per-browser localStorage read-
-     tracking mirroring the existing `contributions.ts` convention.
-     `findLatestNewsItemForHref` lets `/tools` render an "Updated" badge
-     plus the news item's own summary on any tool card with a recent
-     update, and `CategoryDock`'s Settings menu gained a "News Stream"
-     entry with a live unread-count badge (refreshed on every menu open) —
-     both closing the "not just on the tools page" half of the gap.
-  3. **Reason Editor "More Tools" menu** (`debate-editor-cardmirror`'s
-     `react/MenuBar.tsx` gained an optional `appLinks` prop rendering a
-     trailing dropdown of plain `<a>` links — no Next.js dependency added
-     to that package — threaded through `CardMirrorEditor`'s
-     `ReasonEditorProps` and supplied by `apps/debate-ai.com/app/reason-editor/page.tsx`
-     as a curated list: Speech Documents, Prep Notes, Argument Tree
-     Outline, Word-Count Speeches, AI Coach Mode, Evidence Library, News
-     Stream, and "All tools…". CardMirror's own menu-bar categories
-     (File/Edit/Card/Format/Insert/AI/View/Tools) and its command bar only
-     ever reach *editor* ribbon commands (`RIBBON_GROUPS`/`runRibbon`), so
-     neither had any notion of the surrounding app's routes.
-  Docs: `docs/features/news-stream.md` (new),
-  `docs/features/reason-editor-app-tools-menu.md` (new, including the
-  "why not a fourth Ctrl/Cmd-Shift-Space source" reasoning above in full).
-  Vitest-covered: `packages/debate-card-search/test/news-stream.test.ts`
-  (pure `lib/news-stream.ts` helpers, plus a seed-data uniqueness check)
-  and `test/newsStream.test.ts` (the localStorage-backed read-id store,
-  mirroring `contributions.test.ts`'s `MemoryStorage` convention).
-  Verified: `bun install` (2062 packages), `bun run test` (176 files /
-  2654 tests, all pass), `bun run typecheck` (12 of 12 in-scope packages
-  pass), and `bun run build:web` (`debate-ai-web` succeeds, `/news` and
-  `/reason-editor` routes present) all pass. No repo-wide `lint` script
-  exists. PR: https://github.com/debate/debate-ai.com/pull/330 (opened
-  for this change).
-
-  Known gaps / explicitly out of scope for this slice (the original
-  request — "go through the tools and the todo.md ideas and incorporate
-  them into the ui... add each tool where needed in the live editor and
-  make new functionalities... improve the details of each feature" — is
-  much larger than one session can responsibly attempt at once; this is
-  the first, real slice rather than a sprawling, unverified pass over
-  every tool and every idea in this file):
-  - `appLinks` on the Reason Editor is a fixed, hand-curated list per call
-    site, not derived from the document's own content.
-  - Every *other* tool page (besides `/reason-editor` and the ones the
-    News Stream/command palette now touch) still doesn't cross-link to
-    tools it's contextually related to — this pass established the
-    pattern (a plain `{label, href}[]` list plus a "More Tools"-style
-    dropdown, or the shared `tools-registry.ts`) without applying it
-    everywhere it could go.
-  - News items are hand-curated, not derived automatically from this
-    file or git history.
-  - No cross-tab live update for the News Stream read-id set (see
-    `shared-flow-sync.md`'s list of panels that still lack this).
+- **News Stream — wire a fourth Community category: Team Collaboration Mode
+  prep notes.** Closes the last "not wired in" example named in
+  `news-stream.md`'s Known gaps after the prior "wire the three remaining
+  Community categories" run (#340): "other community moments (a new
+  Argument Library entry, a Prep Room note, a coaching session) still
+  aren't wired in." Of those three, `EvidenceLibraryEntry` (Argument
+  Library) has no timestamp field to source an event's `NewsItem.timestamp`
+  from, and coaching sessions (`debate-round`'s `coachingSessions.ts`) live
+  in a package `debate-card-search` (where News Stream lives) has no
+  dependency on — so this run picked the remaining, genuinely available
+  gap: `debate-card-search`'s own `sprintNotes.ts`, the "Team Collaboration
+  Mode" idea's persisted `SprintNote` store (`/cards/collaboration`), which
+  already carries a `createdAt` timestamp, an `authorId`, and a `topic`.
+  Unlike the three prior Community sources (quest streak milestones, group
+  challenge completions, daily top reviser), which each derive a bounded
+  event from a longer history, a `SprintNote` is already the atomic
+  event — no derivation needed. Added `team-collaboration-mode.ts`'s
+  `buildSprintNoteAnnouncementText` (truncating a long note's text to 140
+  characters with an ellipsis so it doesn't dominate the feed's card,
+  mirroring the existing per-source announcement-text builders), read by
+  `state/newsStream.ts`'s new `sprintNoteNews()`, which maps every
+  persisted `listSprintNotes()` record straight to a `"community"`-category
+  `NewsItem` and folds it into `buildNewsFeed()`. `state/live-update.ts`'s
+  `NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS` gained `"sprintNotes"` so another
+  tab logging a prep note now live-updates the feed too. Added a
+  `PRODUCT_NEWS` entry announcing the change and updated
+  `docs/features/news-stream.md` (a new "What it shows" bullet, the
+  data-flow diagram, the announce-vs-derive explanation, and Known gaps —
+  the Argument Library/coaching-session half of the old gap stays open with
+  the reason recorded, and a new gap notes that, unlike the other three
+  Community sources, nothing bounds how many prep-note items a very active
+  topic sprint can post in a short span). Did not touch the "Team
+  Collaboration Mode" Product Feature Idea's own status note — that idea
+  already has no open follow-ups; this closes a gap recorded against the
+  News Stream feature instead. Verified: `bun install` (2260 packages),
+  `bun run test` (178 files / 2739 tests, all pass — including 3 new cases
+  across `newsStream.test.ts` and `team-collaboration-mode.test.ts`),
+  `bun run typecheck` (13/13 in-scope package tasks pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/news` route present).
+  **Completed:** 2026-08-26.
+- **Tools discoverability — wire up the Speech Documents orphaned route.**
+  Prompted by the same "make sure every tool is reachable, not just on the
+  Tools page" request that drove the earlier "Tools discoverability — wire
+  up three orphaned routes" entry (below), this run re-ran that entry's
+  audit method (`packages/debate-ui/src/features/feature-catalog.ts`'s
+  `APP_FEATURES` against both `apps/debate-ai.com/app/tools/page.tsx`'s
+  `TOOL_GROUPS` and `packages/debate-editor-cardmirror/src/editor/workspace-links.ts`'s
+  `WORKSPACE_LINKS`) and found one built, working page still missing from
+  both: `/speech-documents` (`SpeechDocumentsPanel`, the "Legacy Verbatim /
+  Cardmirror Compatibility" idea's send-to-speech-document destination —
+  reachable only by typing the URL directly, `/features`, or noticing the
+  "→Speech" toolbar button's confirmation alert). Four other `APP_FEATURES`
+  routes (`/videos`, `/cards`, `/debate`, and `/reason-editor` itself) are
+  in `feature-catalog.ts` but intentionally absent from both lists — the
+  first three are already one click away from anywhere via the global dock
+  (`apps/debate-ai.com/components/layout/CategoryDock.tsx`'s
+  Videos/Shared/Debate items), and the fourth is the editor's own route —
+  so only `/speech-documents` was a genuine gap. Added it to `TOOL_GROUPS`
+  (Prep & Practice, next to the other round-analysis tools) with
+  description + highlights in the page's existing style, and to
+  `WORKSPACE_LINKS` in the same category, so it's now reachable from both
+  the Tools page and the Reason Editor's Workspace menu / `t` palette
+  prefix — closing the loop on CardMirror's own send-to-speech-document
+  command, whose destination page previously had no way back into it short
+  of memorizing the URL. Added the missing `- **Nav:**` line to
+  `docs/features/speech-document-target.md` (the only feature doc that had
+  never had one, since this route had no nav entry to describe until now).
+  Verified: `bun install` (2260 packages), `bun run typecheck` (13/13
+  in-scope package tasks pass), `bun run test` (178 files / 2736 tests,
+  all pass — this is a nav-only change with no new logic, so no test
+  additions were needed), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/speech-documents` present in the route list).
+  **Completed:** 2026-08-26.
+- **Feature docs — fix the stale "global dock's Settings menu" Nav claim
+  across the remaining ~34 docs.** Flagged as out-of-scope in the prior
+  "Tools discoverability — wire up three orphaned routes" entry (see
+  below): `llm-card-scoring.md`, `scout-to-strategy.md`, and the new
+  `team-rankings.md` were fixed there, but every other `docs/features/*.md`
+  page still claimed a Nav path — `SettingsMenu` in
+  `apps/debate-ai.com/components/layout/CategoryDock.tsx` — that has never
+  linked to individual features; it only ever offered "All Features" and
+  "All Tools". Grepped every doc for the claim (35 files matched;
+  `features-page.md` was already accurate, since `SettingsMenu`'s "All
+  Features" item really does open `/features`) and rewrote the other 34's
+  `- **Nav:**` line to match the format the three earlier fixes already
+  used: `the Tools page's <category> group; the Reason Editor's Workspace
+  menu (`t <keyword>` in Ctrl/Cmd-Shift-Space's command palette)`, with
+  `<category>` and a working `<keyword>` (verified by re-implementing
+  `quick-card-search-ui.ts`'s `searchToolsSource` label+description
+  substring match against `workspace-links.ts`'s `WORKSPACE_LINKS`) derived
+  per doc's `Route:` line. `prep-notes.md` covers two routes (`/prep-notes`
+  and `/notifications`) in one file and needed both of its two Nav lines
+  fixed. Three initial keyword picks (`tracking`, `reviews`, `revisions`)
+  didn't actually substring-match their link's label/description and were
+  corrected to `research progress`, `review queue`, and `revision`
+  respectively after the verification script caught them. No code changed;
+  `packages/debate-ui/test/feature-catalog.test.ts` (17 tests, unaffected
+  by doc content) still passes. Verified: `bun install` (2260 packages),
+  `bunx vitest run packages/debate-ui/test/feature-catalog.test.ts` (17/17
+  pass), and a standalone Node script re-checking every fixed doc's
+  category against `WORKSPACE_LINKS` and every keyword against the same
+  label+description substring match the live palette uses (all 34 pass).
+  **Completed:** 2026-08-26.
+- **News Stream — wire the three remaining Community categories (quest
+  streak milestones, group challenge results, revision incentive
+  standings).** Closes the last of `news-stream.md`'s "Only two categories
+  currently feed the 'Community' side of the stream" Known gap, flagged as
+  not-started follow-up on the earlier News Stream cross-tab PR (#336) and
+  matching a request to flesh out the News Stream's functionality further.
+  Unlike Daily Best Card/Contributor Awards (which need an explicit
+  "announce" action to freeze a day's standings), all three new categories
+  are derived fresh every call straight from their own feature's
+  already-persisted history, so no new store or UI trigger was needed:
+  `gamified-quests.ts` gains `deriveEarnedStreakMilestoneEvents` (the exact
+  day a contributor's streak-as-of-that-day first equals a milestone
+  length — a streak that keeps extending moves past it the very next day,
+  so no separate "already announced" bookkeeping is needed to avoid
+  re-reporting), read by `dailyMissionResults.ts`'s new
+  `buildQuestStreakMilestoneEvents` across every contributor's stored
+  history. `group-challenges.ts` gains `computeChallengeCompletionTimestamp`
+  (the timestamp of the `targetCount`-th matching contribution or win
+  event) and `buildChallengeCompletionAnnouncementText`, read by
+  `challengeWinEvents.ts`'s new `buildCompletedGroupChallengeEvents` across
+  every persisted challenge. `revision-incentives.ts` gains
+  `buildTopReviserAnnouncementText`, read by `revisionHistory.ts`'s new
+  `buildDailyTopReviserAnnouncements`, which groups persisted revisions by
+  UTC day (via `revisedAt`) and keeps each day's #1 scorer, skipping a day
+  with no rewarded revision. `state/newsStream.ts`'s `buildNewsFeed` merges
+  all three into the feed as `"community"`-category items alongside a new
+  `PRODUCT_NEWS` entry announcing the change; `state/live-update.ts`'s
+  `NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS` gained the four backing storage
+  keys (`dailyMissionResults`, `groupChallenges`, `contributions`,
+  `challengeWinEvents`, `revisionHistory`) so another tab's mission
+  completion, challenge win, or card revision now live-updates the feed too.
+  Also fixed `NewsStreamPanel.tsx`'s filter-tab row, which defined a
+  `community` icon and category label but never listed it as a filter tab —
+  the new items were reachable only from "All" until this. Docs updated at
+  `docs/features/news-stream.md` (new bullets under "What it shows", the
+  data-flow diagram, and the announce-vs-derive explanation) with the
+  now-closed gap replaced by a narrower one (community events are still
+  limited to what this package can detect from its own persisted history —
+  other community moments like an Argument Library entry or a Prep Room
+  note still aren't wired in). Verified: `bun install` (2260 packages),
+  `bun run test` (178 files / 2736 tests, all pass — including new
+  `newsStream.test.ts`, the first test coverage `state/newsStream.ts` has
+  had, plus extended `gamified-quests.test.ts`, `dailyMissionResults.test.ts`,
+  `group-challenges.test.ts`, `challengeWinEvents.test.ts`,
+  `revision-incentives.test.ts`, `revisionHistory.test.ts`, and
+  `live-update.test.ts`), `bun run typecheck` (13/13 in-scope package tasks
+  pass), and `bun run build:web` (`debate-ai-web` succeeds, `/news` route
+  present). No repo-wide `lint` script exists. Note found along the way but
+  out of scope here: PR #338 ("Confine CardMirror's chrome to its own
+  column; bring ebb in as an embeddable panel") landed on `master` without a
+  matching entry in this tracker.
+  **Completed:** 2026-08-26.
+- **Tools discoverability — wire up three orphaned routes (LLM Card Scoring,
+  Scout-to-Strategy, Team Rankings).** Prompted by a request to make sure
+  every tool is reachable "not just on the Tools page" but from the live
+  Reason Editor too. Auditing `packages/debate-ui/src/features/feature-catalog.ts`'s
+  `APP_FEATURES` (the full ~50-surface catalog behind `/features`) against
+  both `apps/debate-ai.com/app/tools/page.tsx`'s `TOOL_GROUPS` and
+  `packages/debate-editor-cardmirror/src/editor/workspace-links.ts`'s
+  `WORKSPACE_LINKS` (the Reason Editor's Google-Docs-style Workspace menu
+  and its Ctrl/Cmd-Shift-Space palette's `t` prefix — both already existed
+  from prior "Legacy Verbatim / Cardmirror Compatibility" work) found three
+  built, working pages with no in-app entry point at all: `/cards/scoring`
+  (LLM Card Scoring), `/strategy` (Scout-to-Strategy), and `/rank` (Team
+  Rankings) — reachable only via `/features` or typing the URL directly;
+  two feature docs (`llm-card-scoring.md`, `standings.md`) even claimed a
+  "global dock's Settings menu" entry point that `CategoryDock.tsx`'s
+  `SettingsMenu` doesn't actually have (it only links to "All Features" and
+  "All Tools"). Added all three to `TOOL_GROUPS` (Community & Progress,
+  Prep & Practice, and Coaching & Analytics respectively, matching their
+  `feature-catalog.ts` category) with description + highlights in the
+  page's existing style, and to `WORKSPACE_LINKS` in the same three
+  categories, so they're now reachable from both the Tools page and the
+  Reason Editor's Workspace menu / `t` palette prefix. Fixed the stale Nav
+  line in `llm-card-scoring.md` and added one to `scout-to-strategy.md`
+  (which had none); added a new `docs/features/team-rankings.md` (Team
+  Rankings previously had no doc at all) and pointed `feature-catalog.ts`'s
+  `team-rankings` entry at it. Did not touch the other ~34 feature docs
+  that share the same inaccurate "global dock's Settings menu" Nav claim —
+  that's a separate cleanup, out of scope here. Verified: `bun install`
+  (2062 packages), `bunx tsc --noEmit` clean in `debate-editor-cardmirror`
+  and `debate-ui`, `bunx vitest run` across `debate-ui`,
+  `debate-editor-cardmirror`, `debate-card-search`, `debate-round`, and
+  `debate-videos` (133 files / 2073 tests, all pass — including
+  `feature-catalog.test.ts`'s doc-file-suffix and category-membership
+  invariants), and `bun run build:web` (`debate-ai-web` succeeds, `/rank`,
+  `/strategy`, and `/cards/scoring` all present in the route list).
+  **Completed:** 2026-08-26.
+- **News Stream — cross-tab live update.** Closes the "No real-time updates
+  across browser tabs" Known gap noted in `news-stream.md`, following the
+  same mechanism already landed for `DailyBestCardPanel`,
+  `ContributionLeaderboardPanel`, `TaskInboxPanel`, `ProgressUnlocksPanel`,
+  `ResearchProgressPanel`, and `QuestStreaksPanel`
+  (`packages/debate-card-search/src/state/live-update.ts`). Adds
+  `NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS` (`dailyBestCardAnnouncements`,
+  `contributorAwardAnnouncements`, `newsStreamViewerState`) +
+  `isNewsStreamLiveUpdateStorageEvent` and wires `NewsStreamPanel` to
+  subscribe to the browser's `storage` event (fires only in *other*
+  same-origin tabs, never the one that made the write), rebuilding the feed
+  and re-deriving read/liked state whenever another tab announces a Daily
+  Best Card or Contributor Awards winner, or toggles a news item's read/like
+  state — so a second tab no longer needs a manual reload to see it. Docs
+  updated at `docs/features/news-stream.md` (new "Cross-tab live update"
+  section, Known gap removed) and `docs/features/shared-flow-sync.md`
+  (cross-reference list extended). Vitest-covered in
+  `packages/debate-card-search/test/live-update.test.ts` (every backing-store
+  key, the `null`-key clear-all case, and unrelated/substring-matching keys
+  staying ignored, for the new predicate). Verified: `bun install` (2062
+  packages), `bunx vitest run` in `debate-card-search` (56 files / 1089
+  tests, all pass), `bunx tsc --noEmit` in `debate-card-search` (clean), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/news` route present).
+  Remaining follow-up (not started this run): the other three Known gaps in
+  `news-stream.md` — Product Updates are still hand-curated, read/like state
+  is still per-browser rather than per-account, and only two categories
+  (Daily Best Card, Contributor Awards) feed the "Community" side of the
+  stream (quest streak milestones, group challenge results, and revision
+  incentive standings aren't wired in yet).
+  **PR:** [#336](https://github.com/debate/debate-ai.com/pull/336).
+  **Completed:** 2026-08-26.
+- **Video library — store the videos JSON in a SQL table (local SQLite +
+  Cloudflare D1) and serve the grid one page at a time as it is scrolled.**
+  `/api/videos` used to answer every request with the whole library: the four
+  `rounds-*.json` assets, `debate-lectures.json`, the top-picks list and the
+  topic/champion tables, concatenated and de-duplicated into a single ~1.1 MB
+  JSON response that the client had to download in full before rendering a
+  card, then filter, search, sort and paginate in the browser. The videos now
+  live in a `videos` table (`lib/database/schema.ts`, migration
+  `drizzle/0003_tranquil_skaar.sql`), which merges the round and lecture
+  assets into one row per video id — rounds win a collision, matching the old
+  `dedupeById` behaviour — with `is_top_pick` set from
+  `debate-top-picks.json`. Three derived columns keep queries cheap:
+  `season_year` (the June-to-June competition season, `0` for legacy pre-2010
+  content), `search_text` (lowercased title + channel + description, matched
+  with `LIKE`), and `published_ms` (the parsed publish timestamp — one row
+  carries a long-form date, "May 14, 2013", that sorts wrongly as text).
+  `packages/debate-data-sync/src/videos/video-rows.ts` owns the tuple↔row
+  conversion and `video-query.ts` the filter/sort/facet semantics;
+  `apps/debate-ai.com/lib/videos/video-repository.ts` expresses the same
+  semantics in SQL and falls back to the JSON assets whenever the table is
+  missing, unreachable or unseeded, so a fresh clone still renders the whole
+  library (the response's `backend` field says which answered). `GET
+  /api/videos` now takes `source`, `lecturesOnly`, `topPicks`, `category`,
+  `style`, `year`, `q`, `ids`, `sort`, `limit` (default 60, capped at 200),
+  `offset` and `facets`, returning `{ videos, total, offset, limit, hasMore,
+  facets }` with ties broken by video id so paging never repeats or skips a
+  video; the new `GET /api/videos/meta` carries the small fetch-once payload
+  (library counts, lecture-category cards, topics/champions/history). On the
+  client, `hooks/useVideoFeed.ts` (`useVideoFeed` + `useVideoMeta`, both via
+  `grab`) replaces `useVideoData.ts`, `useInfiniteScroll` now asks the feed
+  for its next page instead of slicing a fully-loaded array, `useVideoState`
+  sheds the row/pagination state it no longer owns, and both panels
+  (`LecturesPage`, `DebateVideosPanel`) send their filters to the server.
+  Favourites are sent as an explicit `ids` allow-list and hidden videos are
+  filtered out of the loaded pages, since neither is known server-side; the
+  filter dropdowns read their counts from the response's facets
+  (`useVideoSearchCounts` no longer tallies a local array) and the lecture
+  category cards from `/api/videos/meta`. `scripts/seed-videos.ts` (`bun run
+  db:seed:videos`, `db:seed:videos:d1`) projects the JSON into the table and
+  is idempotent — rows are upserted by id and rows the JSON no longer carries
+  are pruned — so a re-run after `sync-youtube` mirrors the assets. New
+  `docs/features/video-library.md` documents the data flow and its Known
+  gaps (LIKE search replaces Fuse.js fuzzy matching, facet counts do not
+  deduct locally hidden videos, seeding is a separate step from the YouTube
+  sync); `public/debate-openapi.yml` documents both endpoints. Vitest-covered
+  in `packages/debate-data-sync/test/video-rows.test.ts` (season and
+  timestamp parsing, category slugs, round/lecture tuple mapping, top-pick
+  flagging, tuple round-tripping and trailing-slot trimming, asset merging)
+  and `test/video-query.test.ts` (each filter, the id tiebreaker, paging over
+  every match exactly once, and the facet rules for seasons, styles and
+  lecture categories). The two backends were also diffed directly against
+  each other over eleven query shapes — same ids, totals, facets and tuples.
+  Verified with `bun run test` (164 files, 2381 tests), `bunx tsc --noEmit`
+  in `packages/debate-videos` and `debate-data-sync`, and `bunx vinext build`
+  for the web app; no `lint` script is configured in this repo.
+  Follow-up in the same PR: the `videos` table and its indexes were applied to
+  the production D1 database (`debate-ai-db`), and because the seed itself is
+  ~1 MB of generated SQL that no local wrangler login could reach from the
+  session, `buildVideoSeedStatements` was lifted into
+  `debate-data-sync/src/videos/video-seed-sql.ts` and given a second caller:
+  `POST /api/admin/videos/seed` (admin-gated, matching the YouTube resync
+  route) runs the same statements inside the Worker against its own D1
+  binding, seeding from the JSON assets the Worker already bundles — no
+  credentials, no data transfer. `GET` on it reports the row count and whether
+  the feed is being served from SQL or the fallback. Covered by
+  `test/video-seed-sql.test.ts` (literal escaping including quotes, newlines
+  and non-ASCII text, column/value alignment, batching, the upsert clause,
+  every row emitted once, and the empty-asset case).
+  The production D1 database was then seeded through that endpoint and
+  verified against the local projection: 2867 rows, 1970 rounds / 897
+  lectures, 718 style-less lectures, 167 top picks, 277/347/99/1426 per debate
+  style, and identical `sum(length(description))` (349203) and
+  `sum(length(search_text))` (537764) — byte-for-byte the same data. The first
+  attempt surfaced two defects, both fixed here: batching by row count alone
+  produced a 111.8 KB statement (D1 rejects anything over 100 KB), so
+  `buildVideoSeedStatements` now flushes on a byte budget as well, and the
+  route's error handler now reports the driver's cause instead of the 100 KB
+  of echoed SQL drizzle puts in the message. That failed run also left 100
+  rows behind, which the docs now record as a known gap: a seed is not atomic,
+  so an interrupted run must be re-run rather than left partial.
+  **PR:** [#331](https://github.com/debate/debate-ai.com/pull/331).
+  **Completed:** 2026-08-25.
 - **Progress Unlocks / Research Progress / Quest Streaks — cross-tab live
   update.** Closes, for `ProgressUnlocksPanel`, `ResearchProgressPanel`, and
   `QuestStreaksPanel`, the "Every other localStorage-backed panel in this

@@ -10,8 +10,8 @@
 
 import React, { useMemo } from "react"
 import { useParams } from "next/navigation"
-import type { CategoryType, TopicType } from "../types/videos"
-import type { VideoType } from "../types/videos"
+import type { CategoryType, TopicType, VideoFacets } from "../types/videos"
+import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "debate-ui/src/layout/footer"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
@@ -38,8 +38,10 @@ interface LecturesVideoGridViewProps {
   showFavoritesOnly: boolean
   /** Active category (`"lectures"` or `"topPicks"`). */
   currentCategory: CategoryType
-  /** Total filtered video count for the search bar counter. */
+  /** Total number of videos matching the current filters, across every page. */
   totalVideos: number
+  /** Season/style counts for the filter dropdowns, or `null` before they load. */
+  facets: VideoFacets | null
 
   // ---- Load state ----
   /** `true` while the initial video data is loading. */
@@ -50,9 +52,7 @@ interface LecturesVideoGridViewProps {
   isLoadingMore: boolean
 
   // ---- Video data ----
-  /** Full unfiltered list, used by the search bar for counts. */
-  allVideos: VideoType[]
-  /** Filtered+paginated videos to display in the grid. */
+  /** Videos loaded so far for the active filters. */
   currentVideos: VideoType[]
   /** Set of video IDs marked as favorites. */
   favorites: Set<string>
@@ -62,8 +62,8 @@ interface LecturesVideoGridViewProps {
   topPicks: Set<string>
   /** Topic metadata for badge rendering. */
   topics: TopicType[] | undefined
-  /** Lecture video list used by the category gallery. */
-  debateLectures: VideoType[] | undefined
+  /** Lecture category cards (label, slug, size) from `/api/videos/meta`. */
+  lectureCategories: LectureCategoryFacet[]
 
   // ---- Refs ----
   /** Sentinel element that triggers the next page load. */
@@ -138,16 +138,16 @@ export function LecturesVideoGridView({
   showFavoritesOnly,
   currentCategory,
   totalVideos,
+  facets,
   isLoading,
   errorMessage,
   isLoadingMore,
-  allVideos,
   currentVideos,
   favorites,
   hiddenVideos,
   topPicks,
   topics,
-  debateLectures,
+  lectureCategories,
   loadMoreTriggerRef,
   videoContainerRef,
   videosSectionRef,
@@ -211,8 +211,7 @@ export function LecturesVideoGridView({
             showFavoritesOnly={showFavoritesOnly}
             selectedYear={selectedYear}
             onYearChange={onYearChange}
-            allVideos={allVideos}
-            hiddenVideos={hiddenVideos}
+            facets={facets}
             onSearchChange={onSearchChange}
             onSearchFocus={onSearchFocus}
             onSearchBlur={onSearchBlur}
@@ -241,10 +240,10 @@ export function LecturesVideoGridView({
         activeId={activeQuickLinkId}
       />
 
-      {showLectureCategories && currentCategory === "lectures" && !selectedStyle && debateLectures && (
+      {showLectureCategories && currentCategory === "lectures" && !selectedStyle && lectureCategories.length > 0 && (
         <div className="mb-8">
           <LectureCategoryGridGallery
-            videosData={debateLectures}
+            categories={lectureCategories}
             selectedCategory={selectedCategory}
           />
         </div>

@@ -50,3 +50,5 @@ public/service-worker.js
 .claude
 pnpm-lock.yaml
 open-when-ready.log
+# Generated video seed SQL (regenerate with `bun run db:seed:videos`)
+apps/debate-ai.com/drizzle/seed/

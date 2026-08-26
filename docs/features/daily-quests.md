@@ -5,7 +5,8 @@ a quest board that tracks live progress against real, same-day contribution
 submissions.
 
 - **Route:** `/cards/quests`
-- **Nav:** the global dock's Settings menu → **Daily Quests**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t quests` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

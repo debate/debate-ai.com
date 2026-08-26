@@ -6,7 +6,8 @@ submitted to the shared evidence library — plus any submitted cards filed
 under an argument block nobody added to the checklist.
 
 - **Route:** `/cards/coverage`
-- **Nav:** the global dock's Settings menu → **Topic Coverage Dashboard**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t coverage` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

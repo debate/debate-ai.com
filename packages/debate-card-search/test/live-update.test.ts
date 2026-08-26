@@ -2,12 +2,14 @@ import { describe, expect, it } from "vitest";
 import {
   CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS,
   DAILY_BEST_CARD_LIVE_UPDATE_STORAGE_KEYS,
+  NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS,
   PROGRESS_UNLOCKS_LIVE_UPDATE_STORAGE_KEYS,
   QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS,
   RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS,
   TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS,
   isContributionLeaderboardLiveUpdateStorageEvent,
   isDailyBestCardLiveUpdateStorageEvent,
+  isNewsStreamLiveUpdateStorageEvent,
   isProgressUnlocksLiveUpdateStorageEvent,
   isQuestStreaksLiveUpdateStorageEvent,
   isResearchProgressLiveUpdateStorageEvent,
@@ -143,5 +145,27 @@ describe("isQuestStreaksLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isQuestStreaksLiveUpdateStorageEvent({ key: "dailyMissionResultsBackup" })).toBe(false);
     expect(isQuestStreaksLiveUpdateStorageEvent({ key: "old_dailyMissionResults" })).toBe(false);
+  });
+});
+
+describe("isNewsStreamLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isNewsStreamLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isNewsStreamLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isNewsStreamLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isNewsStreamLiveUpdateStorageEvent({ key: "routedTaskQueues" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isNewsStreamLiveUpdateStorageEvent({ key: "newsStreamViewerStateBackup" })).toBe(false);
+    expect(isNewsStreamLiveUpdateStorageEvent({ key: "old_dailyBestCardAnnouncements" })).toBe(false);
   });
 });

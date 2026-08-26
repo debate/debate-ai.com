@@ -10017,6 +10017,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    Diverge by pulling a selector out, not by re-copying. */
 .pmd-qcs-badge-settings,
 .pmd-qcs-badge-file,
+.pmd-qcs-badge-tool,
 .pmd-learn-session-remembered:hover,
 .pmd-learn-session-context:hover,
 .pmd-learn-manage-link:hover,

@@ -14,6 +14,14 @@
  * A drift guard (module-load assertion below, mirroring `ribbon-groups.ts`'s
  * own) keeps this mapping exhaustive: every `RIBBON_GROUPS` title must
  * appear in exactly one bucket here.
+ *
+ * Two categories aren't `RIBBON_GROUPS` buckets at all, and so sit outside
+ * the drift guard: Plugins is flagged `includesPluginCommands` and rendered
+ * from the runtime plugin registry instead (see MenuBar.tsx); Workspace is
+ * flagged `isWorkspaceLinks` and lists `WORKSPACE_LINKS`
+ * (`../editor/workspace-links.js`) — links out to the app's other tools and
+ * pages (Coach Workspace, Evidence Library, News Stream, …), the same list
+ * the quick card search palette's `t` prefix searches.
  */
 
 import { RIBBON_GROUPS } from '../editor/ribbon-groups.js';
@@ -23,6 +31,20 @@ export interface MenuBarCategory {
   /** `RIBBON_GROUPS[].title` values that render as labeled sections,
    *  in this order, inside this category's dropdown. */
   groupTitles: string[];
+  /** When true, this category's dropdown also lists every currently
+   *  registered plugin command, one labeled section per plugin, after
+   *  any `groupTitles` sections. Plugin commands live outside
+   *  `RIBBON_GROUPS` entirely (the drift guard below only covers core
+   *  ribbon groups), so this is the only way one reaches the menu bar —
+   *  without it, a plugin command stayed reachable via the ribbon and
+   *  the Ctrl/Cmd-Shift-Space palette but not from here. */
+  includesPluginCommands?: boolean;
+  /** When true, this category's dropdown lists `WORKSPACE_LINKS`
+   *  (`../editor/workspace-links.js`) instead of any `RIBBON_GROUPS`
+   *  section — links out to other app tools/pages rather than running an
+   *  in-document ribbon command. Sits outside the drift guard below, same
+   *  as `includesPluginCommands`. */
+  isWorkspaceLinks?: boolean;
 }
 
 export const MENU_BAR_CATEGORIES: MenuBarCategory[] = [
@@ -69,6 +91,16 @@ export const MENU_BAR_CATEGORIES: MenuBarCategory[] = [
   {
     title: 'Tools',
     groupTitles: ['Timer', 'Diagnostics', 'Learn', 'Cleanup', 'Flow', 'Voice'],
+  },
+  {
+    title: 'Workspace',
+    groupTitles: [],
+    isWorkspaceLinks: true,
+  },
+  {
+    title: 'Plugins',
+    groupTitles: [],
+    includesPluginCommands: true,
   },
 ];
 

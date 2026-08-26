@@ -7,7 +7,8 @@ and lists every round with a saved selection, with a "Clear" action per
 round.
 
 - **Route:** `/paradigms`
-- **Nav:** the global dock's Settings menu → **Judge Paradigm Picker**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t paradigm` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-speech-writer`](../../packages/debate-speech-writer/README.md)
 
 ## What it shows

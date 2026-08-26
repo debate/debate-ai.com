@@ -6,7 +6,8 @@ topic's evidence and team-drafted draft blocks, and the topic's coverage-gap
 research tasks routed to available contributors.
 
 - **Route:** `/cards/prep-room`
-- **Nav:** the global dock's Settings menu → **Collaboration Prep Room**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t prep room` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

@@ -61,15 +61,38 @@ export function OneTap() {
   const googleReady =
     !providersLoading && providers.includes("google") && hasGoogleClientId();
 
+  console.log("[one-tap] state:", {
+    pathname,
+    isLoading,
+    isAuthenticated,
+    providersLoading,
+    providers,
+    hasGoogleClientId: hasGoogleClientId(),
+    googleReady,
+  });
+
   useEffect(() => {
-    if (isLoading || isAuthenticated || !googleReady) return;
+    if (isLoading || isAuthenticated || !googleReady) {
+      console.log("[one-tap] effect skipped:", { isLoading, isAuthenticated, googleReady });
+      return;
+    }
 
     // A displayed prompt survives client-side navigation, and the one-tap
     // plugin refuses overlapping calls, so only prompt when the last one is
     // done and this navigation has not been prompted for yet.
-    if (settled.current || inFlight.current || promptedPath.current === pathname) return;
+    if (settled.current || inFlight.current || promptedPath.current === pathname) {
+      console.log("[one-tap] effect skipped (settled/in-flight/already prompted):", {
+        settled: settled.current,
+        inFlight: inFlight.current,
+        promptedPath: promptedPath.current,
+        pathname,
+      });
+      return;
+    }
     promptedPath.current = pathname;
     inFlight.current = true;
+
+    console.log("[one-tap] calling authClient.oneTap for", pathname);
 
     authClient
       .oneTap({
@@ -79,8 +102,12 @@ export function OneTap() {
           // throttles callers that re-prompt after a dismissal, so a settled
           // outcome ends the prompting for this page load.
           const reason = promptReason(notification);
+          console.log("[one-tap] prompt notification:", { reason, notification });
           if (!reason || !RETRYABLE_SKIP_REASONS.has(reason)) settled.current = true;
         },
+      })
+      .then(() => {
+        console.log("[one-tap] oneTap() call resolved (prompt shown or handled)");
       })
       .catch((error: unknown) => {
         console.error("[one-tap] prompt failed:", error);

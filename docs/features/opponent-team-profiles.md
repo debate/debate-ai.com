@@ -6,7 +6,8 @@ commonly run argument tags and cases — ordered by rounds recorded (most
 scouted opponent first).
 
 - **Route:** `/opponents`
-- **Nav:** the global dock's Settings menu → **Opponent Team Profiles**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t opponent` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

@@ -5,7 +5,8 @@ contributions — by a blended helpfulness score, and shows each contributor's
 unlock tier, earned badges, and current daily-quest streak.
 
 - **Route:** `/cards/leaderboard`
-- **Nav:** the global dock's Settings menu → **Leaderboard**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t leaderboard` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

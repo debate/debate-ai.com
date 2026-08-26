@@ -89,6 +89,19 @@ function isImmutableAsset(url: URL): boolean {
   return url.pathname.startsWith("/assets/") || PRECACHED.has(url.pathname);
 }
 
+// Cache.put rejects for non-GET requests and can throw on opaque/odd
+// responses; it's fire-and-forget by design (the response is already on its
+// way back to the page), so failures here must never surface as unhandled
+// rejections or fail the request they were piggybacking on.
+async function putInCache(request: Request, response: Response): Promise<void> {
+  try {
+    const cache = await caches.open(CACHE_NAME);
+    await cache.put(request, response);
+  } catch (err) {
+    console.warn(`SW : Failed to cache response for: ${request.url}`, err);
+  }
+}
+
 async function onFetch(event: FetchEvent): Promise<Response> {
   const url = new URL(event.request.url);
 
@@ -97,9 +110,8 @@ async function onFetch(event: FetchEvent): Promise<Response> {
   if (isDocumentRequest(event.request, url) || url.pathname.startsWith('/api/')) {
     try {
       const networkResponse = await fetch(event.request);
-      if (networkResponse.ok && url.origin === sw.location.origin) {
-        const cache = await caches.open(CACHE_NAME);
-        cache.put(event.request, networkResponse.clone());
+      if (networkResponse.ok) {
+        await putInCache(event.request, networkResponse.clone());
       }
       return networkResponse;
     } catch (error) {
@@ -122,14 +134,13 @@ async function onFetch(event: FetchEvent): Promise<Response> {
 
     const networkResponse = await fetch(event.request);
     if (networkResponse.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(event.request, networkResponse.clone());
+      await putInCache(event.request, networkResponse.clone());
     }
     return networkResponse;
   }
 
-  // Everything else (cross-origin thumbnails, non-GET requests, anything the
-  // build did not emit) is passed straight through.
+  // Everything else same-origin (anything the build did not emit) is passed
+  // straight through.
   return fetch(event.request);
 }
 
@@ -139,5 +150,18 @@ sw.addEventListener("install", (event) => {
 });
 sw.addEventListener("activate", (event) => event.waitUntil(onActivate()));
 sw.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+
+  // Only take responsibility for same-origin GET requests — the only kind
+  // this worker knows how to serve (documents, API routes, this build's
+  // static assets). Leaving respondWith uncalled for everything else (POSTs,
+  // and cross-origin requests like the Cloudflare Insights beacon) hands
+  // them back to the browser's normal networking, so a third-party fetch
+  // failure there is just that page's problem, not a service-worker
+  // "FetchEvent resulted in a network error response" failure.
+  if (event.request.method !== "GET" || url.origin !== sw.location.origin) {
+    return;
+  }
+
   event.respondWith(onFetch(event));
 });

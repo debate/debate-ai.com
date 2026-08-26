@@ -79,6 +79,7 @@ export default defineConfig({
       "debate-data-sync",
       "debate-editor",
       "debate-editor-cardmirror",
+      "debate-flow-ebb",
       "debate-round",
       "debate-timer",
       "debate-ui",

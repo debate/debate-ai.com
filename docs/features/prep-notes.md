@@ -6,7 +6,8 @@ action per note and an "assign to" control for handing a note off as a task
 to a teammate.
 
 - **Route:** `/prep-notes`
-- **Nav:** the global dock's Settings menu → **Prep Notes**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t prep notes` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows
@@ -74,7 +75,8 @@ assigned to a teammate — rather than a general-purpose system for events
 that don't exist yet.
 
 - **Route:** `/notifications`
-- **Nav:** the global dock's Settings menu → **Notifications**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t notifications` in Ctrl/Cmd-Shift-Space's command palette)
 - **Model:** `flow/prep-note-notifications.ts`'s `PrepNoteNotification`
   (recipient id, the note's text/author at assignment time, read status).
   There's no auth/identity system in this repo, so a recipient is a

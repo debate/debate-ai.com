@@ -7,7 +7,8 @@ persistence store" follow-up named under idea #10 ("Outline Filters and
 Argument Tree View") in `TODO.md`'s Product Feature Ideas list.
 
 - **Route:** `/outline`
-- **Nav:** the global dock's Settings menu → **Argument Tree Outline**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t outline` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

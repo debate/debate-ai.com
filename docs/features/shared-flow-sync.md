@@ -328,10 +328,11 @@ Vitest-covered by an added case in `packages/debate-round/test/panels.test.tsx`
   `ProgressUnlocksPanel` (see [`progress-unlocks.md`](progress-unlocks.md)'s
   "Cross-tab live update"), `ResearchProgressPanel` (see
   [`research-progress-tracking.md`](research-progress-tracking.md)'s
-  "Cross-tab live update"), and `QuestStreaksPanel` (see
-  [`quest-streaks.md`](quest-streaks.md)'s "Cross-tab live update") have
-  since gained the equivalent mechanism for their own stores, but every
-  other localStorage-backed panel in this repo still has none (Live Sync
+  "Cross-tab live update"), `QuestStreaksPanel` (see
+  [`quest-streaks.md`](quest-streaks.md)'s "Cross-tab live update"), and
+  `NewsStreamPanel` (see [`news-stream.md`](news-stream.md)'s "Cross-tab live
+  update") have since gained the equivalent mechanism for their own stores,
+  but every other localStorage-backed panel in this repo still has none (Live Sync
   above is cross-*contributor*, via the server, not cross-tab within one
   browser, and remains the only path for a *different device/browser* to
   see the edit at all).

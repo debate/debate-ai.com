@@ -5,7 +5,8 @@ round in the `debate-videos` player, tie it to a specific flow argument, and
 jump straight back to it later.
 
 - **Route:** `/annotations`
-- **Nav:** the global dock's Settings menu → **Flow Annotations**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t annotations` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

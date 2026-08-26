@@ -6,7 +6,8 @@ paradigm each judge is most often tagged with — ordered by rounds judged
 (most experienced first).
 
 - **Route:** `/judges`
-- **Nav:** the global dock's Settings menu → **Judge Profiles**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t judge` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-speech-writer`](../../packages/debate-speech-writer/README.md)
 
 ## What it shows

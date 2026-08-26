@@ -1,9 +1,9 @@
 /**
  * @fileoverview Main panel for the debate videos browsing interface.
  *
- * Orchestrates state, data-fetching, and URL sync via custom hooks, then
- * delegates rendering to {@link LeaderboardView} or {@link VideoGridView}
- * depending on the active category.
+ * Owns filter state and URL sync, pages videos in from `/api/videos` through
+ * {@link useVideoFeed}, then delegates rendering to {@link LeaderboardView} or
+ * {@link VideoGridView} depending on the active category.
  * @module components/debate/DebateVideos/panels/DebateVideosPanel
  */
 
@@ -11,13 +11,13 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import type { CategoryType, DebateVideosData } from "../types/videos"
+import type { CategoryType, VideoType } from "../types/videos"
 import type { DebateStyle } from "../types/videos"
 import { setStateInURL } from "debate-ui/src/lib/utils"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
-import { useVideoDataFetch, useVideoFiltering, useResponsiveVideosPerPage } from "../hooks/useVideoData"
+import { useVideoFeed, useVideoMeta, type VideoFeedFilters } from "../hooks/useVideoFeed"
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 
 // Components
@@ -27,7 +27,8 @@ import { LeaderboardView } from "./leaderboard/LeaderboardView"
 import { VideoGridView } from "./VideoGridView"
 
 /**
- * Main video browsing page that composes state, data-fetching, and UI sub-components.
+ * Main video browsing page that composes filter state, the paginated feed, and
+ * the UI sub-components.
  *
  * Renders {@link LeaderboardView} when the active category is `"leaderboard"`,
  * otherwise renders {@link VideoGridView} for rounds and top-picks browsing.
@@ -74,10 +75,7 @@ export function DebateVideosPage() {
     (_, i) => String(Math.max(new Date().getFullYear(), 2026) - i),
   )
 
-  const topPicksSet = useMemo(
-    () => new Set(state.debateVideos?.topPicks || []),
-    [state.debateVideos?.topPicks],
-  )
+  const { meta } = useVideoMeta()
 
   const [youtubeStats, setYoutubeStats] = useState<any>(null)
   useEffect(() => {
@@ -88,85 +86,64 @@ export function DebateVideosPage() {
   }, [])
 
   // ============================================================================
-  // Computed Values
+  // Feed
   // ============================================================================
 
-  const totalPages = Math.ceil(state.filteredVideos.length / state.videosPerPage)
-  const endIndex = state.currentPage * state.videosPerPage
-  const currentVideos = state.filteredVideos.slice(0, endIndex)
+  // Favourites live in localStorage, so the server filters on an explicit id
+  // list rather than knowing anything about them.
+  const favoriteIds = useMemo(
+    () => (state.showFavoritesOnly ? Array.from(state.favorites) : null),
+    [state.showFavoritesOnly, state.favorites],
+  )
+
+  const filters: VideoFeedFilters = {
+    // A search spans rounds and lectures, matching the old client-side
+    // behaviour of searching the whole library from any tab.
+    source: state.searchTerm.trim() || state.currentCategory === "topPicks" ? "all" : "round",
+    topPicksOnly: state.currentCategory === "topPicks",
+    style: state.selectedStyle,
+    year: state.selectedYear,
+    sort: state.sortOrder,
+    q: state.searchTerm,
+    ids: favoriteIds,
+    withFacets: true,
+    enabled: state.currentCategory !== "leaderboard",
+  }
+
+  const feed = useVideoFeed(filters)
+
+  // Hidden videos are a browser-local preference; an explicit search still
+  // surfaces them, as it always has.
+  const currentVideos = useMemo<VideoType[]>(() => {
+    if (state.searchTerm.trim() || state.hiddenVideos.size === 0) return feed.videos
+    return feed.videos.filter((video) => !state.hiddenVideos.has(video[0]))
+  }, [feed.videos, state.hiddenVideos, state.searchTerm])
+
+  const topPicksSet = useMemo(
+    () => new Set(feed.videos.filter((video) => video[15] === true).map((video) => video[0])),
+    [feed.videos],
+  )
 
   // ============================================================================
   // Category Management
   // ============================================================================
 
   /**
-   * Switches the active category and resets pagination.
-   *
-   * @param category - The category to activate.
-   * @param data - The full API video data to source videos from.
-   */
-  const changeCategory = useCallback(
-    (category: CategoryType, data: DebateVideosData) => {
-      actions.setCurrentCategory(category)
-      actions.setCurrentPage(1)
-
-      if (category === "rounds") {
-        actions.setAllVideos(data.rounds || [])
-        actions.setIsLoading(false)
-      } else if (category === "topPicks") {
-        const topPickIds = new Set(data.topPicks || [])
-        const allAvailableVideos = [...(data.rounds || []), ...(data.lectures || [])]
-        actions.setAllVideos(allAvailableVideos.filter((v) => topPickIds.has(v[0])))
-        actions.setIsLoading(false)
-      } else {
-        actions.setAllVideos([])
-        actions.setFilteredVideos([])
-        actions.setIsLoading(false)
-      }
-    },
-    [actions.setCurrentCategory, actions.setAllVideos, actions.setFilteredVideos, actions.setIsLoading],
-  )
-
-  /**
-   * Handles a category change triggered by the UI when data is already available.
+   * Handles a category change triggered by the UI.
    *
    * @param category - The category selected by the user.
    */
   const handleCategoryChange = useCallback(
     (category: CategoryType) => {
-      if (state.debateVideos) changeCategory(category, state.debateVideos)
+      actions.setCurrentCategory(category)
       const params = new URLSearchParams(searchParams.toString())
       params.set("view", category)
       router.replace(`?${params.toString()}`, { scroll: false })
     },
-    [state.debateVideos, changeCategory, searchParams, router],
+    [actions.setCurrentCategory, searchParams, router],
   )
 
   useCategoryDock(state.currentCategory, handleCategoryChange)
-
-  // ============================================================================
-  // Data Fetching & Filtering
-  // ============================================================================
-
-  const { filterAndSortVideos } = useVideoFiltering()
-
-  useVideoDataFetch(actions.setDebateVideos, actions.setIsLoading, actions.setErrorMessage, changeCategory, initialCategory)
-  useResponsiveVideosPerPage(actions.setVideosPerPage)
-
-  useEffect(() => {
-    const filtered = filterAndSortVideos(
-      state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear,
-      state.debateVideos, state.showFavoritesOnly, state.favorites,
-      state.selectedStyle, state.hiddenVideos,
-    )
-    actions.setFilteredVideos(filtered)
-    actions.setCurrentPage(1)
-  }, [
-    state.allVideos, state.searchTerm, state.sortOrder, state.selectedYear,
-    state.debateVideos, state.showFavoritesOnly, state.favorites,
-    state.selectedStyle, state.hiddenVideos,
-    filterAndSortVideos, actions.setFilteredVideos, actions.setCurrentPage,
-  ])
 
   // ============================================================================
   // Search & Filter Handlers
@@ -222,11 +199,9 @@ export function DebateVideosPage() {
 
   useInfiniteScroll(
     state.loadMoreTriggerRef,
-    state.currentPage,
-    totalPages,
-    state.isLoadingMore,
-    actions.setCurrentPage,
-    actions.setIsLoadingMore,
+    feed.hasMore,
+    feed.isLoading || feed.isLoadingMore,
+    feed.loadMore,
   )
 
   // ============================================================================
@@ -241,7 +216,7 @@ export function DebateVideosPage() {
         lbYear={lbYear}
         setLbYear={setLbYear}
         lbYears={lbYears}
-        history={state.debateVideos?.history}
+        history={meta?.history}
         onBackToVideos={() => handleCategoryChange("rounds")}
       />
     )
@@ -256,15 +231,16 @@ export function DebateVideosPage() {
       showThumbnails={state.showThumbnails}
       showFavoritesOnly={state.showFavoritesOnly}
       currentCategory={state.currentCategory}
-      isLoading={state.isLoading}
-      errorMessage={state.errorMessage}
-      isLoadingMore={state.isLoadingMore}
+      isLoading={feed.isLoading}
+      errorMessage={feed.errorMessage}
+      isLoadingMore={feed.isLoadingMore}
       selectedStyle={state.selectedStyle}
       favorites={state.favorites}
       hiddenVideos={state.hiddenVideos}
-      allVideos={state.allVideos}
       currentVideos={currentVideos}
-      topics={state.debateVideos?.topics}
+      totalVideos={feed.total}
+      facets={feed.facets}
+      topics={meta?.topics}
       topPicks={topPicksSet}
       loadMoreTriggerRef={state.loadMoreTriggerRef}
       videoContainerRef={state.videoContainerRef}
