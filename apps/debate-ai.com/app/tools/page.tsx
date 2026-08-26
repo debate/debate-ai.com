@@ -6,6 +6,7 @@ import {
   ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School,
   FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass,
+  Rss,
   type LucideIcon,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "debate-ui/src/primitives/card"
@@ -20,23 +21,56 @@ type Tool = {
   label: string
   description: string
   icon: LucideIcon
+  /** A few concrete things this tool does, shown under its description.
+   *  Optional — most tools stay adequately described by `description`
+   *  alone; add highlights where a one-liner undersells what's there. */
+  highlights?: string[]
 }
 
 const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
   {
     heading: "Workspaces",
     tools: [
-      { href: "/reason-editor", label: "Reason Editor", icon: FileText, description: "Draft and organize debate cards and outlines in the native REASON document editor, saved to your own account." },
-      { href: "/doc", label: "Debate Docs", icon: BookOpen, description: "Write annotated summaries and case outlines in the REASON Docs research editor." },
-      { href: "/research", label: "Research Workspace", icon: Library, description: "Work the squad research workspace end to end, covering topic coverage, the evidence library, task routing, quests, leaderboards, and peer review." },
-      { href: "/community-hub", label: "Community Research Hub", icon: Compass, description: "Search a directory of every shared research, collaboration, and pre-round or practice space across the community." },
-      { href: "/coach", label: "Coach Workspace", icon: GraduationCap, description: "Coach a round from the argument tree and flow summary through coaching prompts, drills, scouting, briefings, and practice rounds." },
+      {
+        href: "/reason-editor", label: "Reason Editor", icon: FileText,
+        description: "Draft and organize debate cards and outlines in the native REASON document editor, saved to your own account.",
+        highlights: [
+          "Google-Docs-style menu bar (File/Edit/Card/Format/Insert/AI/View/Tools/Workspace) above the ribbon",
+          "Ctrl/Cmd-Shift-Space opens Search Everything — cards, commands, settings, files, and now other tools, all from one bar",
+          "Verbatim/Cardmirror-compatible shortcuts: short cites, condense, emphasis, move-heading, send-to-speech-doc",
+        ],
+      },
+      {
+        href: "/doc", label: "Debate Docs", icon: BookOpen,
+        description: "Write annotated summaries and case outlines in the REASON Docs research editor.",
+        highlights: ["Nested document tree", "Outline Notation for case structure"],
+      },
+      {
+        href: "/research", label: "Research Workspace", icon: Library,
+        description: "Work the squad research workspace end to end, covering topic coverage, the evidence library, task routing, quests, leaderboards, and peer review.",
+        highlights: ["Topic coverage dashboard", "Evidence library search", "Task routing, quests, and peer review in one place"],
+      },
+      {
+        href: "/community-hub", label: "Community Research Hub", icon: Compass,
+        description: "Search a directory of every shared research, collaboration, and pre-round or practice space across the community.",
+        highlights: ["Cross-squad directory", "Filters by topic, format, and space type"],
+      },
+      {
+        href: "/coach", label: "Coach Workspace", icon: GraduationCap,
+        description: "Coach a round from the argument tree and flow summary through coaching prompts, drills, scouting, briefings, and practice rounds.",
+        highlights: ["Argument tree + flow summary in one view", "AI coaching prompts and drills", "Opponent scouting and pre-round briefings"],
+      },
     ],
   },
   {
     heading: "Community & Progress",
     tools: [
       { href: "/cards/leaderboard", label: "Leaderboard", icon: Trophy, description: "Rank contributors by helpfulness score, tier, badges, and quest streak." },
+      {
+        href: "/news", label: "News Stream", icon: Rss,
+        description: "A single feed for product updates and community announcements — new features, Daily Best Card winners, and Contributor Award standings.",
+        highlights: ["Hand-picked product-update posts", "Auto-posts Daily Best Card and Contributor Award announcements", "Filter by category, like, and mark read"],
+      },
       { href: "/cards/contributions", label: "Contributions Feed", icon: ThumbsUp, description: "Submit, like, save, and endorse the community's cards, summaries, highlights, and annotations." },
       { href: "/cards/awards", label: "Contributor Awards", icon: Medal, description: "See category winners for best evidence finder, best explainer, and more, ranked by helpfulness score." },
       { href: "/cards/best-card", label: "Daily Best Card", icon: Sparkles, description: "Check today's highest-helpfulness card along with every past day's winner." },
@@ -110,6 +144,16 @@ export default function ToolsPage() {
                           <CardTitle className="text-base">{tool.label}</CardTitle>
                         </div>
                         <CardDescription>{tool.description}</CardDescription>
+                        {tool.highlights && tool.highlights.length > 0 && (
+                          <ul className="mt-2 flex flex-col gap-1 text-xs text-muted-foreground">
+                            {tool.highlights.map((highlight) => (
+                              <li key={highlight} className="flex gap-1.5">
+                                <span aria-hidden="true">·</span>
+                                <span>{highlight}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </CardHeader>
                     </Card>
                   </Link>

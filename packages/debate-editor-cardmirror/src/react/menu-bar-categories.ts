@@ -15,9 +15,13 @@
  * own) keeps this mapping exhaustive: every `RIBBON_GROUPS` title must
  * appear in exactly one bucket here.
  *
- * One category, Plugins, isn't a `RIBBON_GROUPS` bucket at all — it's
- * flagged `includesPluginCommands` and rendered from the runtime plugin
- * registry instead (see MenuBar.tsx), so it sits outside the drift guard.
+ * Two categories aren't `RIBBON_GROUPS` buckets at all, and so sit outside
+ * the drift guard: Plugins is flagged `includesPluginCommands` and rendered
+ * from the runtime plugin registry instead (see MenuBar.tsx); Workspace is
+ * flagged `isWorkspaceLinks` and lists `WORKSPACE_LINKS`
+ * (`../editor/workspace-links.js`) — links out to the app's other tools and
+ * pages (Coach Workspace, Evidence Library, News Stream, …), the same list
+ * the quick card search palette's `t` prefix searches.
  */
 
 import { RIBBON_GROUPS } from '../editor/ribbon-groups.js';
@@ -35,6 +39,12 @@ export interface MenuBarCategory {
    *  without it, a plugin command stayed reachable via the ribbon and
    *  the Ctrl/Cmd-Shift-Space palette but not from here. */
   includesPluginCommands?: boolean;
+  /** When true, this category's dropdown lists `WORKSPACE_LINKS`
+   *  (`../editor/workspace-links.js`) instead of any `RIBBON_GROUPS`
+   *  section — links out to other app tools/pages rather than running an
+   *  in-document ribbon command. Sits outside the drift guard below, same
+   *  as `includesPluginCommands`. */
+  isWorkspaceLinks?: boolean;
 }
 
 export const MENU_BAR_CATEGORIES: MenuBarCategory[] = [
@@ -81,6 +91,11 @@ export const MENU_BAR_CATEGORIES: MenuBarCategory[] = [
   {
     title: 'Tools',
     groupTitles: ['Timer', 'Diagnostics', 'Learn', 'Cleanup', 'Flow', 'Voice'],
+  },
+  {
+    title: 'Workspace',
+    groupTitles: [],
+    isWorkspaceLinks: true,
   },
   {
     title: 'Plugins',
