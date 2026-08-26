@@ -22,13 +22,34 @@ import {
   DropdownMenuTrigger,
 } from "debate-ui/src/primitives/dropdown-menu";
 import { Button } from "debate-ui/src/primitives/button";
-import { MENU_BAR_CATEGORIES } from "./menu-bar-categories.js";
+import type { MenuBarCategory } from "./menu-bar-categories.js";
 
 export interface MenuBarProps {
   className?: string;
 }
 
+/** Category list is loaded via dynamic `import()` rather than a
+ *  module-scope import — `menu-bar-categories.js` pulls in `RIBBON_GROUPS`
+ *  (and, transitively, the whole ribbon command/table-plugin graph) for
+ *  its drift-guard assertion, which is exactly the engine weight this
+ *  component otherwise keeps out of the initial render path. A
+ *  module-scope import here would force that graph to load — and its
+ *  side effects (e.g. prosemirror-tables' selection-type registration) to
+ *  run — every time this file is merely imported, including during SSR of
+ *  the "use client" boundary. */
 export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
+  const [categories, setCategories] = useState<MenuBarCategory[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void import("./menu-bar-categories.js").then((m) => {
+      if (!cancelled) setCategories(m.MENU_BAR_CATEGORIES);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const run = useCallback((id: string) => {
     void import("../editor/index.js").then((engine) => {
       engine.runRibbon(id as never);
@@ -48,7 +69,7 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
       role="menubar"
       aria-label="Editor commands"
     >
-      {MENU_BAR_CATEGORIES.map((category) => (
+      {categories?.map((category) => (
         <MenuBarCategoryMenu key={category.title} title={category.title} groupTitles={category.groupTitles} onRun={run} />
       ))}
       <div className="flex-1" />
