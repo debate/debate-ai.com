@@ -1,0 +1,54 @@
+/*
+ * CardMirror's chrome (#app, #ribbon, .pmd-nav-panel, #status-bar,
+ * #speech-doc-banner, the home screen, ...) is `position: fixed` against the
+ * browser viewport by design — see the comments beside those rules in
+ * style.css. That is correct for a page-owning deployment, but every host in
+ * this app mounts CardMirror inside one column of a larger page (Flow's
+ * speech-doc panel, the split-mode editors, the /reason-editor route): fixed
+ * chrome paints over the *whole* viewport there instead of staying inside
+ * `.dec-cardmirror-embed`, hiding whatever sidebars and other panels the host
+ * page placed beside it.
+ *
+ * Re-pinning these to `position: absolute` against `.dec-cardmirror-embed`
+ * (declared `position: relative` below) reuses the exact same
+ * var(--ribbon-height) / var(--nav-width) / var(--status-bar-height) offsets
+ * style.css already computes for them, so the chrome's internal geometry is
+ * unchanged — only the box it measures those offsets against moves from the
+ * viewport to the embed's own column.
+ *
+ * JS-positioned floaters (ribbon tooltips, the color picker, context menus,
+ * the find bar, the drag-and-drop pickup pill, ...) are deliberately left
+ * `position: fixed`: their coordinates come from getBoundingClientRect(),
+ * which is always viewport-relative no matter what CSS containing block is
+ * in play, so re-anchoring only the CSS side would misplace them by however
+ * far the embed sits from the viewport's own top-left corner. They still
+ * escape the column when open, the same way a native tooltip or a portalled
+ * popover would — transient, on-top-of-everything UI is expected to do that;
+ * it is the permanent chrome this file confines.
+ */
+
+.dec-cardmirror-embed {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.dec-cardmirror-embed #ribbon,
+.dec-cardmirror-embed #app,
+.dec-cardmirror-embed #status-bar,
+.dec-cardmirror-embed .pmd-nav-panel,
+.dec-cardmirror-embed #speech-doc-banner,
+.dec-cardmirror-embed .pmd-home-screen,
+.dec-cardmirror-embed #nav-pane-pull-tab,
+.dec-cardmirror-embed .pmd-home-pill-dock,
+.dec-cardmirror-embed .pmd-pill-tray {
+  position: absolute !important;
+}
+
+/* Multi-doc's #app sizes itself off `100vh` (see the `body.pmd-multi-doc
+   #app` rule in style.css) rather than the fixed top/left/right/bottom band
+   single-doc uses, so it needs its own height re-anchored to the embed's
+   column instead of the window. */
+body.pmd-multi-doc .dec-cardmirror-embed #app {
+  height: calc(100% - var(--ribbon-height) - var(--status-bar-height)) !important;
+}

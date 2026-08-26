@@ -4,13 +4,15 @@
  */
 
 import type React from "react"
-import { Plus, Clock, Users, Columns2, Grid3x3 } from "lucide-react"
+import { useState } from "react"
+import { Plus, Clock, Users, Columns2, Grid3x3, Workflow } from "lucide-react"
 import { Button } from "debate-ui/src/primitives/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
 import { FlowTab } from "../navigation/FlowTab"
 import { PrepTimer } from "debate-timer/src/timers/PrepTimer"
 import type { Flow, Round } from "debate-core/src/types/flow"
 import type { TimerState, SpeechTimerState, DebateStyle } from "debate-timer/src/types"
+import { EbbFlowDialog } from "./EbbFlowDialog"
 
 /** Props for the FlowPageSidebar component. */
 interface FlowPageSidebarProps {
@@ -93,6 +95,8 @@ export function FlowPageSidebar({
   onCloseMobileMenu,
   timerState,
 }: FlowPageSidebarProps) {
+  const [ebbOpen, setEbbOpen] = useState(false)
+
   /**
    * Sort flows for rendering:
    * - active flows first
@@ -159,6 +163,17 @@ export function FlowPageSidebar({
             </TooltipTrigger>
             <TooltipContent>
               <p>{currentFlow?.roundId ? "Edit Round" : "New Round"}</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEbbOpen(true)}>
+                <Workflow className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Open ebb Flow</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -252,6 +267,7 @@ export function FlowPageSidebar({
         </div>
       </div>
 
+      <EbbFlowDialog open={ebbOpen} onOpenChange={setEbbOpen} />
     </div>
   )
 }
