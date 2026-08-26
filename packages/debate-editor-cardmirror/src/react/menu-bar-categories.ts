@@ -14,6 +14,10 @@
  * A drift guard (module-load assertion below, mirroring `ribbon-groups.ts`'s
  * own) keeps this mapping exhaustive: every `RIBBON_GROUPS` title must
  * appear in exactly one bucket here.
+ *
+ * One category, Plugins, isn't a `RIBBON_GROUPS` bucket at all — it's
+ * flagged `includesPluginCommands` and rendered from the runtime plugin
+ * registry instead (see MenuBar.tsx), so it sits outside the drift guard.
  */
 
 import { RIBBON_GROUPS } from '../editor/ribbon-groups.js';
@@ -23,6 +27,14 @@ export interface MenuBarCategory {
   /** `RIBBON_GROUPS[].title` values that render as labeled sections,
    *  in this order, inside this category's dropdown. */
   groupTitles: string[];
+  /** When true, this category's dropdown also lists every currently
+   *  registered plugin command, one labeled section per plugin, after
+   *  any `groupTitles` sections. Plugin commands live outside
+   *  `RIBBON_GROUPS` entirely (the drift guard below only covers core
+   *  ribbon groups), so this is the only way one reaches the menu bar —
+   *  without it, a plugin command stayed reachable via the ribbon and
+   *  the Ctrl/Cmd-Shift-Space palette but not from here. */
+  includesPluginCommands?: boolean;
 }
 
 export const MENU_BAR_CATEGORIES: MenuBarCategory[] = [
@@ -69,6 +81,11 @@ export const MENU_BAR_CATEGORIES: MenuBarCategory[] = [
   {
     title: 'Tools',
     groupTitles: ['Timer', 'Diagnostics', 'Learn', 'Cleanup', 'Flow', 'Voice'],
+  },
+  {
+    title: 'Plugins',
+    groupTitles: [],
+    includesPluginCommands: true,
   },
 ];
 

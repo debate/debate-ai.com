@@ -2,12 +2,16 @@
 
 /**
  * Top menu bar sitting above the CardMirror ribbon — File / Edit / Card /
- * Format / Insert / AI / View / Tools dropdowns exposing every ribbon
- * command via `runRibbon(id)`, grouped into labeled sections that mirror
- * CardMirror's own `RIBBON_GROUPS` taxonomy (see menu-bar-categories.ts).
- * Every entry here is one more way to reach a command already bound to a
- * ribbon button and/or the Ctrl/Cmd-Shift-Space command palette — this
- * doesn't replace either, it's the third, browsable path.
+ * Format / Insert / AI / View / Tools / Plugins dropdowns exposing every
+ * ribbon command via `runRibbon(id)`, grouped into labeled sections that
+ * mirror CardMirror's own `RIBBON_GROUPS` taxonomy (see
+ * menu-bar-categories.ts). Every entry here is one more way to reach a
+ * command already bound to a ribbon button and/or the Ctrl/Cmd-Shift-Space
+ * command palette — this doesn't replace either, it's the third, browsable
+ * path. The Plugins dropdown is the one category not sourced from
+ * `RIBBON_GROUPS`: it lists whatever the palette's `command` search source
+ * pulls from the runtime plugin registry, so a plugin-registered command
+ * reachable via the palette is always reachable here too.
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -49,7 +53,13 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
       aria-label="Editor commands"
     >
       {MENU_BAR_CATEGORIES.map((category) => (
-        <MenuBarCategoryMenu key={category.title} title={category.title} groupTitles={category.groupTitles} onRun={run} />
+        <MenuBarCategoryMenu
+          key={category.title}
+          title={category.title}
+          groupTitles={category.groupTitles}
+          includesPluginCommands={category.includesPluginCommands}
+          onRun={run}
+        />
       ))}
       <div className="flex-1" />
       <Button
@@ -70,10 +80,12 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
 function MenuBarCategoryMenu({
   title,
   groupTitles,
+  includesPluginCommands,
   onRun,
 }: {
   title: string;
   groupTitles: string[];
+  includesPluginCommands?: boolean;
   onRun: (id: string) => void;
 }): React.JSX.Element {
   return (
@@ -88,7 +100,7 @@ function MenuBarCategoryMenu({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="max-h-[70vh] overflow-y-auto">
-        <CategoryContent groupTitles={groupTitles} onRun={onRun} />
+        <CategoryContent groupTitles={groupTitles} includesPluginCommands={includesPluginCommands} onRun={onRun} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -101,9 +113,11 @@ function MenuBarCategoryMenu({
  *  the user actually opens a menu. */
 function CategoryContent({
   groupTitles,
+  includesPluginCommands,
   onRun,
 }: {
   groupTitles: string[];
+  includesPluginCommands?: boolean;
   onRun: (id: string) => void;
 }): React.JSX.Element {
   const [entries, setEntries] = useState<
@@ -116,19 +130,35 @@ function CategoryContent({
       import("../editor/ribbon-groups.js"),
       import("../editor/ribbon-commands.js"),
       import("../editor/ribbon-availability.js"),
-    ]).then(([groupsMod, cmdMod, availMod]) => {
+      includesPluginCommands ? import("../editor/plugin-registry.js") : null,
+    ]).then(([groupsMod, cmdMod, availMod, pluginMod]) => {
       if (cancelled) return;
-      const sections = groupTitles.map((sectionTitle) => {
-        const group = groupsMod.RIBBON_GROUPS.find((g) => g.title === sectionTitle);
-        const items = (group?.commands ?? [])
-          .filter((id) => availMod.isRibbonCommandAvailable(id))
-          .map((id) => ({
-            id,
-            label: cmdMod.commandLabelFor(id),
-            shortcut: cmdMod.formatKeyForDisplay(cmdMod.primaryKeyFor(id)),
-          }));
-        return { sectionTitle, items };
-      });
+      const sections: { sectionTitle: string; items: { id: string; label: string; shortcut: string }[] }[] =
+        groupTitles.map((sectionTitle) => {
+          const group = groupsMod.RIBBON_GROUPS.find((g) => g.title === sectionTitle);
+          const items = (group?.commands ?? [])
+            .filter((id) => availMod.isRibbonCommandAvailable(id))
+            .map((id) => ({
+              id,
+              label: cmdMod.commandLabelFor(id),
+              shortcut: cmdMod.formatKeyForDisplay(cmdMod.primaryKeyFor(id)),
+            }));
+          return { sectionTitle, items };
+        });
+      if (pluginMod) {
+        for (const plugin of pluginMod.registeredPlugins()) {
+          const prefix = `${plugin.id}.`;
+          const items = pluginMod
+            .pluginCommandIds()
+            .filter((id) => id.startsWith(prefix))
+            .map((id) => ({
+              id,
+              label: cmdMod.commandLabelFor(id),
+              shortcut: cmdMod.formatKeyForDisplay(cmdMod.primaryKeyFor(id)),
+            }));
+          sections.push({ sectionTitle: plugin.name, items });
+        }
+      }
       setEntries(sections);
     });
     return () => {
@@ -139,6 +169,10 @@ function CategoryContent({
 
   if (entries === null) {
     return <DropdownMenuLabel className="text-xs text-muted-foreground">Loading…</DropdownMenuLabel>;
+  }
+
+  if (entries.length === 0) {
+    return <DropdownMenuItem disabled>No commands available</DropdownMenuItem>;
   }
 
   return (
