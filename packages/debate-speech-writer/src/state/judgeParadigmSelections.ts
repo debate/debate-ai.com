@@ -75,3 +75,20 @@ export function deleteJudgeParadigmSelection(roundId: string): void {
 export function buildJudgeParadigmSelectionsPanelView(): JudgeParadigmSelection[] {
   return [...listJudgeParadigmSelections()].sort((a, b) => a.roundId.localeCompare(b.roundId));
 }
+
+/**
+ * Builds the `debate-round` AI Judge Decision page's deep link for a round
+ * that already has a saved paradigm here — closes the
+ * `docs/features/judge-paradigm-selections.md` Known gap that this panel
+ * "doesn't itself invoke a judge decision": `JudgeParadigmPickerPanel.tsx`
+ * renders this as a link next to each saved selection, and
+ * `JudgeDecisionPanel.tsx` (`debate-round`) reads the same `roundId` query
+ * param via `next/navigation`'s `useSearchParams` to pre-fill its form,
+ * mirroring `debate-card-search`'s `buildReuseCheckDeepLink`/`?checkUrl=`
+ * convention. Kept here (rather than in `debate-round`, which already
+ * depends on this package for `getJudgeParadigmSelection`) so the link
+ * shape lives beside the data it points at.
+ */
+export function buildJudgeDecisionDeepLink(roundId: string): string {
+  return `/judge-decision?roundId=${encodeURIComponent(roundId)}`;
+}
