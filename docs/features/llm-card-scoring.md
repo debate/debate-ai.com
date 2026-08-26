@@ -7,7 +7,8 @@ duplicates, and optionally requests a real Anthropic-backed qualitative
 assessment (verdict + per-dimension notes) for any ranked card.
 
 - **Route:** `/cards/scoring`
-- **Nav:** the global dock's Settings menu → **LLM Card Scoring**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t scoring` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

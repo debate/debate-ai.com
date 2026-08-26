@@ -570,6 +570,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     description: "Debate team rankings, leaderboard, and Elo ratings",
     href: "/rank",
     category: "standings",
+    doc: "team-rankings.md",
     tags: ["elo", "toc", "bid list", "debatedrills"],
   },
 ];

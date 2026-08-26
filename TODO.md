@@ -6,6 +6,42 @@
 _No task currently in progress._
 
 ### Completed
+- **Tools discoverability — wire up three orphaned routes (LLM Card Scoring,
+  Scout-to-Strategy, Team Rankings).** Prompted by a request to make sure
+  every tool is reachable "not just on the Tools page" but from the live
+  Reason Editor too. Auditing `packages/debate-ui/src/features/feature-catalog.ts`'s
+  `APP_FEATURES` (the full ~50-surface catalog behind `/features`) against
+  both `apps/debate-ai.com/app/tools/page.tsx`'s `TOOL_GROUPS` and
+  `packages/debate-editor-cardmirror/src/editor/workspace-links.ts`'s
+  `WORKSPACE_LINKS` (the Reason Editor's Google-Docs-style Workspace menu
+  and its Ctrl/Cmd-Shift-Space palette's `t` prefix — both already existed
+  from prior "Legacy Verbatim / Cardmirror Compatibility" work) found three
+  built, working pages with no in-app entry point at all: `/cards/scoring`
+  (LLM Card Scoring), `/strategy` (Scout-to-Strategy), and `/rank` (Team
+  Rankings) — reachable only via `/features` or typing the URL directly;
+  two feature docs (`llm-card-scoring.md`, `standings.md`) even claimed a
+  "global dock's Settings menu" entry point that `CategoryDock.tsx`'s
+  `SettingsMenu` doesn't actually have (it only links to "All Features" and
+  "All Tools"). Added all three to `TOOL_GROUPS` (Community & Progress,
+  Prep & Practice, and Coaching & Analytics respectively, matching their
+  `feature-catalog.ts` category) with description + highlights in the
+  page's existing style, and to `WORKSPACE_LINKS` in the same three
+  categories, so they're now reachable from both the Tools page and the
+  Reason Editor's Workspace menu / `t` palette prefix. Fixed the stale Nav
+  line in `llm-card-scoring.md` and added one to `scout-to-strategy.md`
+  (which had none); added a new `docs/features/team-rankings.md` (Team
+  Rankings previously had no doc at all) and pointed `feature-catalog.ts`'s
+  `team-rankings` entry at it. Did not touch the other ~34 feature docs
+  that share the same inaccurate "global dock's Settings menu" Nav claim —
+  that's a separate cleanup, out of scope here. Verified: `bun install`
+  (2062 packages), `bunx tsc --noEmit` clean in `debate-editor-cardmirror`
+  and `debate-ui`, `bunx vitest run` across `debate-ui`,
+  `debate-editor-cardmirror`, `debate-card-search`, `debate-round`, and
+  `debate-videos` (133 files / 2073 tests, all pass — including
+  `feature-catalog.test.ts`'s doc-file-suffix and category-membership
+  invariants), and `bun run build:web` (`debate-ai-web` succeeds, `/rank`,
+  `/strategy`, and `/cards/scoring` all present in the route list).
+  **Completed:** 2026-08-26.
 - **News Stream — cross-tab live update.** Closes the "No real-time updates
   across browser tabs" Known gap noted in `news-stream.md`, following the
   same mechanism already landed for `DailyBestCardPanel`,
