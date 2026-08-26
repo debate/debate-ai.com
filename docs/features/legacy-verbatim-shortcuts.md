@@ -85,7 +85,21 @@ react/ReasonEditor.tsx   → VerbatimShortcuts added to the editor's extensions
 
 ## Known gaps
 
-None. Follow-up (b) on idea #14 — a "send selected evidence to a speech
-document" command — is now closed: `Mod-Shift-S` / the "→Speech" toolbar
-button sends the current selection to a persisted `SpeechDocument`. See
+This doc's "Route" line and data-flow diagram above describe the
+TipTap-based `reason-editor` package as if it's what `/reason-editor`
+renders today — it isn't; that route now renders `debate-editor-cardmirror`
+(the ported-in CardMirror ProseMirror engine), reached via `debate-editor`'s
+re-export shim. `reason-editor` itself still exists as a standalone
+workspace package (no longer depended on by the app), so the shortcuts and
+data flow described here are real, just not live in the shipped app. Not
+corrected in this slice (out of scope: this repo's audits fix the specific
+gap found each cycle, not every stale doc discovered along the way) — flagged
+here so a future cycle doesn't have to rediscover it.
+
+Follow-up (b) on idea #14 — a "send selected evidence to a speech document"
+command — was originally closed against that old package's `Mod-Shift-S` /
+"→Speech" toolbar button, sending into a persisted, find-or-create-by-title
+`SpeechDocument`. The live CardMirror editor's actual send-to-speech
+mechanism works differently (a pane-designation model, not a named-document
+store) and is now the thing `/speech-documents` reflects — see
 [`speech-document-target.md`](./speech-document-target.md).

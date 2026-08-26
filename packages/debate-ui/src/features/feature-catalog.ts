@@ -359,11 +359,11 @@ export const APP_FEATURES: FeatureEntry[] = [
   {
     id: "speech-documents",
     title: "Speech Documents",
-    description: "Evidence sent from the Reason editor toward the speech you're building",
+    description: "History of evidence sent into the designated speech document from the Reason Editor",
     href: "/speech-documents",
     category: "round",
     doc: "speech-document-target.md",
-    tags: ["send to speech", "verbatim", "cardmirror"],
+    tags: ["send to speech", "cardmirror", "prosemirror"],
   },
   {
     id: "word-count-speeches",

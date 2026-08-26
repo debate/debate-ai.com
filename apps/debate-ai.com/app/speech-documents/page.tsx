@@ -1,12 +1,11 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { SpeechDocumentsPanel } from "reason-editor"
+import { SpeechSendLogPanel } from "./SpeechSendLogPanel"
 
 export const metadata: Metadata = {
   title: "Speech Documents",
-  description: "Evidence sent from the Reason editor (Ctrl/Cmd+Shift+S or the →Speech toolbar button) toward the speech you're building",
+  description: "A history of evidence sent into your designated speech document from the Reason Editor's send-to-speech commands",
 }
 
 export default function SpeechDocumentsPage() {
@@ -22,9 +21,7 @@ export default function SpeechDocumentsPage() {
           Back
         </Link>
       </div>
-      <Suspense>
-        <SpeechDocumentsPanel />
-      </Suspense>
+      <SpeechSendLogPanel />
     </div>
   )
 }

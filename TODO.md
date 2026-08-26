@@ -6,6 +6,63 @@
 _No task currently in progress._
 
 ### Completed
+- **Speech Documents — replace the dead `reason-editor`-era send target
+  with a real history of what CardMirror's send-to-speech actually
+  sends.** Closes a disconnect found by the "make sure every tool is
+  well-integrated in the live UI" audit, this time inside the REASON
+  editor itself: `/speech-documents` (and its `/tools` card) described
+  `Mod-Shift-S` / a "→Speech" toolbar button sending text into a
+  persisted, find-or-create-by-title `SpeechDocument` record — true of
+  the old TipTap-based `reason-editor` package, but `/reason-editor` has
+  rendered `debate-editor`'s shim to `debate-editor-cardmirror` (the
+  ported-in CardMirror ProseMirror engine that replaced it) for a while
+  now, and CardMirror's actual send-to-speech feature is a
+  pane-designation model (mark an open doc as the speech doc via the File
+  menu's Speech section, then the backtick / Alt-backtick keys insert a
+  live slice into it) that never wrote to that old store. The page was
+  permanently empty no matter what a user did in the live editor.
+  Verified end-to-end by reading the real wiring (`speech-doc-send.ts`'s
+  `insertSpeechSlice`, the single call point shared by an in-window send,
+  a cross-tab receive, and a cross-window receive) rather than trusting
+  the old doc's claims. Since the pane model has no natural "list every
+  speech document" concept — the speech doc is just an open Reason
+  document, not a separate record — the fix wires in a real, listable
+  **send log** instead of resurrecting a rival document-record concept:
+  `debate-editor-cardmirror`'s new `editor/speech-send-log.ts` (pure
+  `buildSpeechSendLogEntry`/`appendSpeechSendLogEntry`/
+  `removeSpeechSendLogEntry`/`sanitizeSpeechSendLog`, capped at
+  `MAX_SPEECH_SEND_LOG_ENTRIES`, plus a `WebSharedStore`-backed
+  `speechSendLogStore` mirroring `dropzone-store.ts`'s IndexedDB +
+  BroadcastChannel pattern, but never session-cleared since this is a
+  durable history, not a scratch shelf) is called from `insertSpeechSlice`
+  right after a successful dispatch, logging the plain text of the slice
+  that actually landed. Re-exported from the package's headless `/engine`
+  entry point (no ProseMirror or React in this module) so
+  `apps/debate-ai.com/app/speech-documents`'s new `SpeechSendLogPanel.tsx`
+  can read/subscribe to it without pulling in the editor bundle. The old
+  `reason-editor` package's `SpeechDocumentsPanel` import was dropped from
+  the page along with the app's now-unused `reason-editor` dependency
+  (the package itself still exists in the monorepo, just no longer
+  depended on by the app). Corrected the same "Mod-Shift-S / →Speech
+  button" claim in `/tools`'s Speech Documents card, `WORKSPACE_LINKS`,
+  and `feature-catalog.ts`'s description, and rewrote
+  `docs/features/speech-document-target.md` end to end (plus a pointer
+  left in `legacy-verbatim-shortcuts.md`'s Known gaps, which has the same
+  stale-route staleness but is out of scope this cycle). Vitest-covered
+  in `packages/debate-editor-cardmirror/test/speech-send-log.test.ts` (16
+  new cases: preview collapsing/clipping at and past the cap, entry
+  building including the blank-text null case, append/evict-oldest at a
+  custom and the default cap, remove found/not-found, and sanitize
+  filtering malformed persisted entries) — this package had no test
+  suite of its own before this slice. `SpeechSendLogPanel.tsx` (a `.tsx`
+  panel) verified via the build instead, per convention. Verified: `bun
+  install` (2260 packages), `bun run test` (179 files / 2771 tests, all
+  pass — 16 new), `bunx turbo run typecheck --filter=debate-editor-
+  cardmirror --filter=debate-editor --filter=debate-ui --filter=debate-
+  ai-web --filter=reason-editor` (13/13 in-scope package tasks pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/reason-editor` and
+  `/speech-documents` both present in the route list). **Completed:**
+  2026-08-26.
 - **AI Judge Decision Modes — "Get AI judge decision →" deep link from the
   Judge Paradigm Picker.** Closes the `docs/features/judge-paradigm-selections.md`
   Known gap that saving a round's paradigm at `/paradigms` "doesn't itself

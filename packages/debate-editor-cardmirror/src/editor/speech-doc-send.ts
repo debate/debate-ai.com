@@ -23,6 +23,7 @@ import { flattenZonesInSlice, enclosingZonePos } from './transclusion.js';
 import { flattenSelfRefsInSlice, isSelfRef } from './self-transclusion.js';
 import { normalizeSelectionForSend } from './send-normalize.js';
 import { getSpeechDocResolver } from './speech-doc-registry.js';
+import { buildSpeechSendLogEntry, speechSendLogStore } from './speech-send-log.js';
 import { getElectronHost } from './host/index.js';
 import { alertDialog } from './text-prompt.js';
 import { sectionEndFromHeading } from './headings.js';
@@ -335,6 +336,19 @@ export function insertSpeechSlice(
 
       speechView.dispatch(tr.scrollIntoView());
       speechView.focus();
+      // Record the send for the `/speech-documents` history view. This is
+      // the single call point shared by an in-window send, a cross-tab
+      // receive, and a cross-window receive, so this fires exactly once
+      // per landed send regardless of path. Best-effort: `rewritten` is
+      // the actual final content that just landed, so its plain text is
+      // exactly "what got sent."
+      const sendLogEntry = buildSpeechSendLogEntry(
+        rewritten.content.textBetween(0, rewritten.content.size, '\n', '\n'),
+        atEnd,
+        `speech-send-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+        Date.now(),
+      );
+      if (sendLogEntry) void speechSendLogStore.add(sendLogEntry);
       // Fire destination-side hook (e.g., nav-panel collapse refresh)
       // BEFORE the sender's afterInsert so the dest's nav is in its
       // final state when the sender (in same-window cases) does any
