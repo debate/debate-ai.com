@@ -21,6 +21,7 @@
     "debate-core": "workspace:*",
     "debate-data-sync": "workspace:*",
     "debate-editor": "workspace:*",
+    "debate-flow-ebb": "workspace:*",
     "debate-speech-writer": "workspace:*",
     "debate-timer": "workspace:*",
     "debate-ui": "workspace:*",

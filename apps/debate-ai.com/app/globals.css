@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./themes.css";
+@import "../../../packages/debate-flow-ebb/src/styles/ebb-scope.css";
 
 /* The debate component packages are symlinked in through node_modules, which
    Tailwind's automatic source detection skips — register them explicitly so
@@ -11,6 +12,7 @@
 @source "../../../packages/debate-videos/src";
 @source "../../../packages/debate-round/src";
 @source "../../../packages/debate-editor/src";
+@source "../../../packages/debate-flow-ebb/src";
 
 @custom-variant dark (:is(.dark) &);
 

@@ -1,0 +1,523 @@
+/*
+ * ebb's design tokens, scoped to `.ebb-scope` (EbbFlowEmbed's root) instead
+ * of `:root`/`body` the way the standalone app's globals.css declares them.
+ * Ebb owns the whole page there; embedded in a host app it is one column
+ * among the host's own panels, and `:root`-level custom properties are
+ * global regardless of where in the DOM they're declared - unscoped, ebb's
+ * palette would overwrite the host's `--background`/`--foreground`/etc.
+ * (the same shadcn token names) everywhere, not just inside ebb's own
+ * column, and the reverse on every property the host does *not* redeclare
+ * inside `.ebb-scope`.
+ *
+ * `@theme`/`@theme inline` stay effectively global - Tailwind v4 registers
+ * them at build time to generate utilities like `text-aff`/`bg-scrim`, which
+ * is fine: it only adds new utility class names, it does not assign them
+ * values by itself. The *values* those utilities read (`--aff`, `--scrim`,
+ * ...) are declared under `.ebb-scope` below, so they only resolve inside
+ * ebb's own column.
+ *
+ * No custom `@font-face` here: the standalone app self-hosts its curated
+ * font lineup via `next/font/local` in its own `app/layout.tsx`, which this
+ * package does not carry over. `--font-sans`/`--font-flow` fall back to the
+ * host page's inherited font stack instead; a debater's flow-font choice in
+ * Settings still writes `--font-flow` (see applyFlowFont.ts) but resolves to
+ * that inherited stack for every family not actually loaded on the page.
+ */
+
+@theme {
+    /* The app's one motion curve; MOTION_TRANSITION in MotionRoot.tsx mirrors it. */
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    /* The round header sheds controls at these widths. They are measured
+       against that header's own content rather than the page layout, so
+       they sit off the default sm/md/lg scale. Widest first, the header
+       gives up: the zoom slider below `ribbon-wide`; the speech switcher,
+       the zoom percentage, and the Export label below `ribbon`; the zoom
+       buttons below `ribbon-tight`. The round title, the save indicator,
+       and the link back to the flow list always survive. Each value is
+       the narrowest window at which that tier still leaves the title
+       around 120px, enough to read a truncated team matchup. */
+    --breakpoint-ribbon-tight: 660px;
+    --breakpoint-ribbon: 900px;
+    --breakpoint-ribbon-wide: 1000px;
+}
+
+/* ============================================================
+   EBB — SCOPED DESIGN SYSTEM
+
+   Every UI color flows through one of the tokens below so the
+   light and dark themes swap a small set of values instead of
+   sweeping through components. Color is reserved and meaningful:
+   Blue = Aff, Red = Neg, violet = selection/focus, amber = warn,
+   green = good. Everything else is a neutral.
+
+   RULE: hex / oklch / rgba literals outside this file are a bug.
+   A component that needs a color reuses a token (via its Tailwind
+   utility: bg-card, text-aff, border-border, ...); only add a new
+   token here when the role is genuinely distinct. The one
+   exception is deliberately theme-invariant surfaces (the flow
+   sheet is paper and stays light; the settings font sample
+   mirrors it).
+   ============================================================ */
+
+.ebb-scope {
+    /* Surfaces. The canvas sits a step below the panels so headers,
+       cards, and the paper-white flow sheet read as lifted. */
+    --background: oklch(0.972 0.003 286); /* app canvas */
+    --foreground: oklch(0.145 0.005 285.8);
+    --card: oklch(1 0 0); /* panels: headers, sidebar, cards */
+    --card-foreground: var(--foreground);
+    --popover: oklch(1 0 0);
+    --popover-foreground: var(--foreground);
+
+    /* Neutral interaction fills. Secondary/muted/accent share one
+       step so hover and rest fills stay legible on both the canvas
+       and white panels. */
+    --primary: oklch(0.205 0.006 285.9);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.955 0.003 286.3);
+    --secondary-foreground: var(--primary);
+    --muted: oklch(0.955 0.003 286.3);
+    /* AA on both white panels and the tinted canvas (>=4.5:1). */
+    --muted-foreground: oklch(0.49 0.015 285.9);
+    --accent: oklch(0.955 0.003 286.3);
+    --accent-foreground: var(--primary);
+
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.898 0.005 286.3);
+    --input: oklch(0.898 0.005 286.3);
+    /* Focus ring for shadcn primitives: a lighter violet than the bare
+       :focus-visible outline (--sel), so a focused input reads as a soft
+       halo rather than a heavy border. */
+    --ring: #a78bfa;
+    --radius: 0.625rem;
+
+    /* Side + status colors. These appear on chrome (dashboard,
+       info panel, save status), so the dark theme brightens them;
+       the flow sheet re-pins the light values because it is paper.
+       --partner is one constant color rather than a palette, because at
+       most one partner ever edits a flow. */
+    --aff: #1d4ed8;
+    --neg: #c0271f;
+    --sel: #7c3aed;
+    --warn: #b45309;
+    --good: #047857;
+    --partner: #c2410c;
+
+    /* Dimming layer behind modal surfaces (dialogs, drawers). */
+    --scrim: oklch(0 0 0 / 40%);
+
+    --font-sans: inherit;
+    --font-mono: ui-monospace, monospace;
+    --font-flow: inherit;
+}
+
+.ebb-scope.dark,
+.dark .ebb-scope {
+    /* Render native form controls (select popups, scrollbars,
+       pickers) in their dark variants. */
+    color-scheme: dark;
+
+    --background: oklch(0.145 0.005 285.8);
+    /* Text off pure white: pure white on dark halates on LCDs. */
+    --foreground: oklch(0.93 0.004 286);
+    --card: oklch(0.195 0.006 285.9);
+    --card-foreground: var(--foreground);
+    /* Popovers float above cards, so one step lighter again. */
+    --popover: oklch(0.225 0.006 285.9);
+    --popover-foreground: var(--foreground);
+
+    --primary: oklch(0.92 0.004 286.32);
+    --primary-foreground: oklch(0.205 0.006 285.9);
+    --secondary: oklch(0.27 0.006 286);
+    --secondary-foreground: var(--foreground);
+    --muted: oklch(0.27 0.006 286);
+    --muted-foreground: oklch(0.712 0.013 286);
+    --accent: oklch(0.27 0.006 286);
+    --accent-foreground: var(--foreground);
+
+    --destructive: oklch(0.704 0.191 22.216);
+    /* Borders slightly lighter than the surfaces they edge; they
+       carry elevation because shadows barely read on dark. */
+    --border: oklch(1 0 0 / 12%);
+    --input: oklch(1 0 0 / 16%);
+    --ring: #c4b5fd;
+
+    /* Brightened so they hold AA contrast on dark chrome. */
+    --aff: #7da2ff;
+    --neg: #f0776b;
+    --sel: #a78bfa;
+    --warn: #f59e0b;
+    --good: #34d399;
+    --partner: #fb923c;
+}
+
+@theme inline {
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-aff: var(--aff);
+    --color-neg: var(--neg);
+    --color-sel: var(--sel);
+    --color-warn: var(--warn);
+    --color-good: var(--good);
+    --color-scrim: var(--scrim);
+}
+
+/* ------------------------------------------------------------
+   BASE RESET & BODY
+   ------------------------------------------------------------ */
+
+.ebb-scope {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-wrap: pretty;
+    /* The workspace owns its own scroll; nothing above it (the panel the
+       host page mounted it in) should rubber-band or chain-scroll when a
+       non-scrollable region (menus, panels) is dragged. */
+    overscroll-behavior: none;
+}
+
+/* Keyboard-first focus ring for bare elements (grid cells, links) — violet,
+   never the browser default. In `base` so a component's own `outline-none`
+   utility outranks it: shadcn primitives (input, select, button, switch) opt
+   out here and draw their own thin focus border instead of stacking both. */
+@layer base {
+    .ebb-scope :focus-visible {
+        outline: 2px solid var(--sel);
+        outline-offset: 2px;
+    }
+}
+
+/* Remove outline on mouse/touch focus */
+.ebb-scope :focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Inline editing fields (sheet-title rename, small menu inputs) denote editing
+   with the native caret and text selection alone, so the value never jumps
+   inside a floating ring. Suppressing the loud violet keyboard outline above
+   needs a selector that outranks the bare :focus-visible rule. */
+.ebb-scope [data-editing-field]:focus-visible {
+    outline: none;
+}
+
+/* Text selection. Background only: the tint is translucent so the text's
+   own color stays readable on any surface, including light-locked paper
+   (flow sheet, font sample) under the dark theme. Never set `color` here:
+   dark-theme foreground on a light surface vanishes. */
+.ebb-scope ::selection {
+    background: color-mix(in srgb, var(--sel) 30%, transparent);
+}
+
+/* --- Handsontable theme mapped to app tokens -------------------------------
+   Scoped under `.ebb-scope` (rather than `html`) to outrank the stock theme
+   sheet without reaching Handsontable instances the host app mounts of its
+   own. The flow sheet is paper: it stays on these fixed light values
+   regardless of the app's own light/dark theme, like a physical page under
+   any light. Side colors are re-pinned to their light values for the same
+   reason. */
+.ebb-scope .ht-theme-main {
+    --ht-font-family: var(--font-flow, inherit);
+    --ht-background-color: oklch(1 0 0);
+    --ht-foreground-color: oklch(0.145 0.005 285.8);
+    --ht-border-color: oklch(0.898 0.005 286.3);
+    --ht-cell-vertical-border-color: oklch(0.898 0.005 286.3);
+    --ht-cell-horizontal-border-color: oklch(0.898 0.005 286.3);
+    --ht-header-background-color: oklch(1 0 0);
+    --ht-header-foreground-color: oklch(0.145 0.005 285.8);
+    /* Selection violet: cell selection speaks the app's focus language. */
+    --ht-accent-color: #7c3aed;
+    /* The sheet meets the chrome flush and squared, like a full page. */
+    --ht-border-radius: 0;
+    --aff: #1d4ed8;
+    --neg: #c0271f;
+    --partner: #c2410c;
+    /* The spacer wash. Named for itself rather than borrowing --muted, which
+       is a token read the whole ebb scope over: re-pinning that here would
+       hand every descendant of this wrapper the light value in dark mode. */
+    --spacer: oklch(0.955 0.003 286.3);
+}
+/* Header ink stays put on hover and while its column is selected; the theme
+   otherwise recolors hovered and highlighted th. */
+.ebb-scope .handsontable th.hd-aff,
+.ebb-scope .handsontable th.hd-aff:hover,
+.ebb-scope .handsontable th.hd-aff.ht__highlight {
+    color: var(--aff);
+    font-weight: 700;
+}
+.ebb-scope .handsontable th.hd-neg,
+.ebb-scope .handsontable th.hd-neg:hover,
+.ebb-scope .handsontable th.hd-neg.ht__highlight {
+    color: var(--neg);
+    font-weight: 700;
+}
+/* Cross-ex period tier: neutral ink, bold, above both sides' columns. */
+.ebb-scope .handsontable th.hd-group,
+.ebb-scope .handsontable th.hd-group:hover,
+.ebb-scope .handsontable th.hd-group.ht__highlight {
+    font-weight: 700;
+}
+/* In split view the blurred pane keeps its cursor in memory but hides the
+   active-cell markers, so only the focused pane shows an active cell. Both the
+   selection border (.wtBorder) and the editor's own border (.handsontableInput,
+   parked over the active cell) are suppressed by hitting the elements directly:
+   the react-wrapper nests a second .ht-theme-main inside this one that re-pins
+   --ht-accent-color, so recoloring the accent on the blurred wrapper never
+   reaches them. The editor marker matters because a keyboard focus switch
+   selects the new pane programmatically without deselecting this one, so its
+   editor border would otherwise linger. */
+.ebb-scope .ht-theme-main.ht-blurred .wtBorder {
+    display: none !important;
+}
+.ebb-scope .ht-theme-main.ht-blurred .handsontableInput {
+    box-shadow: none !important;
+}
+/* Cells wear their column's side color, matching the header ink. */
+.ebb-scope .handsontable td.cell-aff {
+    color: var(--aff);
+}
+.ebb-scope .handsontable td.cell-neg {
+    color: var(--neg);
+}
+/* An aligned pane's inert leading columns: a speech this sheet does not hold,
+   kept so the ones it does hold sit where they do on every other sheet. The
+   wash is a background, so the gridlines stay at full strength and the column
+   reads as part of the grid. It outranks the theme's even/odd row striping
+   (.handsontable tr.ht__row_even td), which is otherwise the more specific
+   rule and leaves every other row white. */
+.ebb-scope .handsontable tbody tr td.cell-spacer {
+    background-color: var(--spacer);
+}
+.ebb-scope .handsontable th.hd-spacer,
+.ebb-scope .handsontable th.hd-spacer:hover,
+.ebb-scope .handsontable th.hd-spacer.ht__highlight {
+    opacity: 0.55;
+}
+.ebb-scope .flow-bold {
+    font-weight: 700;
+}
+/* Outranks the theme's even/odd row striping (.handsontable tr.ht__row_even td).
+   Solid yellow on the light-locked sheet; dark ink stays legible. */
+.ebb-scope .handsontable tbody tr td.flow-highlight {
+    background-color: #fde047;
+}
+
+/* Card marker: an inset bottom rule under the cell. box-shadow rather than
+   border-bottom so it never shifts HOT's cell metrics, and it reads over the
+   yellow highlight. */
+.ebb-scope .handsontable tbody tr td.flow-card {
+    box-shadow: inset 0 -2px 0 #2563eb;
+}
+
+/* Linked marker: a cell another app sent in over the bridge wears a teal rail
+   down its left edge, the same rail a linked copy wears in CardMirror, so a run
+   of sent cells reads as borrowed. Painted from the cell's stored source by
+   afterRenderer, so it is never a saved decoration. Fixed teal rather than a
+   token: the flow sheet is light-locked paper. */
+.ebb-scope .handsontable tbody tr td.cell-linked {
+    position: relative;
+}
+.ebb-scope .handsontable tbody tr td.cell-linked::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1px;
+    width: 3px;
+    background: #2f8a8a;
+    pointer-events: none;
+}
+
+/* Group marker: a neutral inset bar down the cell's left edge, so a vertical
+   run reads as one cluster. Inset box-shadow (not border-left) keeps HOT's
+   cell metrics intact, matching the card marker. */
+.ebb-scope .handsontable tbody tr td.flow-group {
+    box-shadow: inset 3px 0 0 var(--muted-foreground);
+}
+/* box-shadow does not stack across rules, so carded + grouped cells need both
+   insets listed together. */
+.ebb-scope .handsontable tbody tr td.flow-card.flow-group {
+    box-shadow:
+        inset 0 -2px 0 #2563eb,
+        inset 3px 0 0 var(--muted-foreground);
+}
+
+/* Kicked marker: the slash a debater draws through a dead argument on paper,
+   corner to corner. */
+.ebb-scope .handsontable tbody tr td.flow-kicked,
+.ebb-scope .print-flow td.flow-kicked {
+    background-image: linear-gradient(
+        to bottom right,
+        transparent calc(50% - 0.5px),
+        #6b7280 calc(50% - 0.5px),
+        #6b7280 calc(50% + 0.5px),
+        transparent calc(50% + 0.5px)
+    );
+}
+
+/* Move mode: the travelling block, tinted for the life of the session. */
+.ebb-scope .handsontable tbody tr td.cell-moving {
+    background: rgba(37, 99, 235, 0.16);
+}
+
+/* Where the partner is. */
+.ebb-scope .handsontable tbody tr td.ebb-peer {
+    position: relative;
+    outline: 2px solid var(--partner);
+    outline-offset: -2px;
+}
+.ebb-scope .handsontable tbody tr td.ebb-peer.ebb-locked {
+    outline-style: dashed;
+}
+.ebb-scope .ht-theme-main .handsontable tbody tr td.ebb-peer[data-peer][data-peer]::after {
+    content: attr(data-peer);
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    min-width: 13px;
+    min-height: 0;
+    height: 13px;
+    padding: 0 2px;
+    box-sizing: border-box;
+    background: var(--partner);
+    color: #fff;
+    font-size: 9px;
+    line-height: 13px;
+    font-weight: 600;
+    text-align: center;
+    pointer-events: none;
+}
+
+/* Hidden on screen; visible only during print */
+.ebb-scope .print-only {
+    display: none;
+}
+
+@media print {
+    .ebb-scope .no-print {
+        display: none !important;
+    }
+    .ebb-scope .print-only {
+        display: block !important;
+    }
+    .ebb-scope .print-flow .print-sheet {
+        page-break-after: auto;
+        margin-bottom: 24px;
+    }
+    .ebb-scope .print-flow h2 {
+        margin: 0 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #000;
+    }
+    .ebb-scope .print-flow table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+    }
+    .ebb-scope .print-flow td,
+    .ebb-scope .print-flow th {
+        border: 1px solid #999;
+        padding: 2px 4px;
+        font-size: 10px;
+        vertical-align: top;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: #000;
+    }
+    .ebb-scope .print-flow td.flow-highlight {
+        background-color: #fde047;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .ebb-scope .print-flow td.flow-card {
+        border-bottom: 2px solid #2563eb;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .ebb-scope .print-flow td.flow-group {
+        box-shadow: inset 3px 0 0 #6b7280;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .ebb-scope .print-flow td.flow-kicked {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .ebb-scope .print-flow .print-rfd {
+        page-break-before: always;
+    }
+    .ebb-scope .print-flow .print-rfd section {
+        margin-top: 12px;
+    }
+    .ebb-scope .print-flow .print-rfd h3 {
+        margin: 0 0 4px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+    .ebb-scope .print-flow .print-rfd p,
+    .ebb-scope .print-flow .print-rfd li {
+        margin: 0 0 4px;
+        font-size: 11px;
+    }
+    .ebb-scope .print-flow .print-rfd li {
+        margin-left: 16px;
+        list-style: disc;
+    }
+}
+
+@layer base {
+    .ebb-scope * {
+        border-color: var(--border);
+    }
+}
+
+/* The wordmark's block caret blinks like a terminal cursor, matching the mark
+   on ebb.smodi.net. step-end holds each half rather than fading, which is what
+   a real caret does. Only the start screen turns it on; chrome-sized marks stay
+   still so nothing pulses beside the grid mid-round. */
+@keyframes ebb-caret-blink {
+    0%,
+    45% {
+        opacity: 1;
+    }
+    50%,
+    95% {
+        opacity: 0;
+    }
+}
+
+.ebb-caret {
+    animation: ebb-caret-blink 1.2s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ebb-caret {
+        animation: none;
+    }
+}
