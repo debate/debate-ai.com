@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildCompletedGroupChallengeEvents,
   buildPersistedGroupChallengeBoard,
   listChallengeWinEvents,
   recordChallengeWinEvent,
@@ -137,5 +138,69 @@ describe("buildPersistedGroupChallengeBoard", () => {
     const board = buildPersistedGroupChallengeBoard(600);
     const progress = board.find((entry) => entry.challengeId === "challenge-1");
     expect(progress?.completedCount).toBe(0);
+  });
+});
+
+describe("buildCompletedGroupChallengeEvents", () => {
+  it("returns an empty list when no challenges are persisted", () => {
+    expect(buildCompletedGroupChallengeEvents()).toEqual([]);
+  });
+
+  it("excludes a challenge whose goal hasn't been reached yet", () => {
+    saveGroupChallenge(REBUTTAL_CHALLENGE);
+    recordChallengeWinEvent("carol", 150);
+    expect(buildCompletedGroupChallengeEvents()).toEqual([]);
+  });
+
+  it("reports a win_target challenge complete, timed to its targetCount-th win event", () => {
+    saveGroupChallenge(REBUTTAL_CHALLENGE);
+    recordChallengeWinEvent("carol", 110);
+    recordChallengeWinEvent("dave", 120);
+    recordChallengeWinEvent("carol", 130);
+    recordChallengeWinEvent("carol", 140);
+    recordChallengeWinEvent("carol", 150);
+
+    const events = buildCompletedGroupChallengeEvents();
+    expect(events).toEqual([
+      {
+        challengeId: "challenge-2",
+        title: "Win 5 rebuttal exercises",
+        completedAt: 150,
+        completedCount: 5,
+        targetCount: 5,
+        mvpContributorId: "carol",
+      },
+    ]);
+  });
+
+  it("reports a contribution_target challenge complete, timed to its targetCount-th contribution", () => {
+    saveGroupChallenge(SOLVENCY_CHALLENGE);
+    saveContribution(
+      makeContribution({ id: "c1", contributorId: "alice", kind: "card", argBlock: "solvency", submittedAt: 100 }),
+    );
+    saveContribution(
+      makeContribution({ id: "c2", contributorId: "bob", kind: "card", argBlock: "solvency", submittedAt: 200 }),
+    );
+
+    const events = buildCompletedGroupChallengeEvents();
+    expect(events).toHaveLength(1);
+    expect(events[0]).toMatchObject({ challengeId: "challenge-1", completedAt: 200, completedCount: 2, targetCount: 2 });
+  });
+
+  it("sorts newest completion first", () => {
+    // Both challenges share the same roster/window and every win event, but need a
+    // different number of them — so they complete at different timestamps.
+    const earlyWinChallenge = { ...REBUTTAL_CHALLENGE, id: "challenge-early", goal: { kind: "win_target" as const, targetCount: 1 } };
+    const lateWinChallenge = { ...REBUTTAL_CHALLENGE, id: "challenge-late", goal: { kind: "win_target" as const, targetCount: 2 } };
+    saveGroupChallenge(earlyWinChallenge);
+    saveGroupChallenge(lateWinChallenge);
+    recordChallengeWinEvent("carol", 110);
+    recordChallengeWinEvent("dave", 190);
+
+    const events = buildCompletedGroupChallengeEvents();
+    expect(events.map((e) => ({ challengeId: e.challengeId, completedAt: e.completedAt }))).toEqual([
+      { challengeId: "challenge-late", completedAt: 190 },
+      { challengeId: "challenge-early", completedAt: 110 },
+    ]);
   });
 });

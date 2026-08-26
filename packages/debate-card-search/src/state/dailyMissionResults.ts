@@ -48,10 +48,12 @@ import { getUtcDayKey } from "../lib/daily-best-card";
 import {
   buildContributorQuestStreak,
   computeDailyMissionResult,
+  deriveEarnedStreakMilestoneEvents,
   DEFAULT_STREAK_MILESTONES,
   type ContributorQuestStreak,
   type DailyMissionResult,
   type StreakMilestone,
+  type StreakMilestoneEvent,
 } from "../lib/gamified-quests";
 import { listContributionsByContributor } from "./contributions";
 
@@ -180,4 +182,31 @@ export function buildPersistedQuestStreakRoster(
   return contributorIds.map((contributorId) =>
     buildPersistedContributorQuestStreak(contributorId, asOfDayKey, milestones),
   );
+}
+
+/** A contributor's streak-milestone crossing, as derived from their persisted mission-result history. */
+export type ContributorStreakMilestoneEvent = StreakMilestoneEvent & { contributorId: string };
+
+/**
+ * Finds every contributor's streak-milestone crossings across their full
+ * persisted mission-result history — the "quest streak milestones" News
+ * Stream category noted as unwired in `news-stream.md`'s Known gaps. Reuses
+ * `listDailyMissionResultsForContributor`'s already-persisted history
+ * directly (no new store), grouped by contributor and run through
+ * `gamified-quests.ts`'s `deriveEarnedStreakMilestoneEvents`, sorted newest
+ * day first, tied-broken by `contributorId` for a stable, deterministic
+ * order.
+ */
+export function buildQuestStreakMilestoneEvents(
+  milestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
+): ContributorStreakMilestoneEvent[] {
+  const contributorIds = Array.from(new Set(readAll().map((record) => record.contributorId))).sort();
+
+  const events = contributorIds.flatMap((contributorId) =>
+    deriveEarnedStreakMilestoneEvents(listDailyMissionResultsForContributor(contributorId), milestones).map(
+      (event): ContributorStreakMilestoneEvent => ({ ...event, contributorId }),
+    ),
+  );
+
+  return events.sort((a, b) => b.dayKey.localeCompare(a.dayKey) || a.contributorId.localeCompare(b.contributorId));
 }

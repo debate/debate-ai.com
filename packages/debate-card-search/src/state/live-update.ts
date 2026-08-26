@@ -174,14 +174,25 @@ export function isQuestStreaksLiveUpdateStorageEvent(event: { key: string | null
  * The `localStorage` keys `NewsStreamPanel` reads from: the two announcement
  * stores it composes into feed items
  * (`dailyBestCardAnnouncements.ts`/`contributorAwardAnnouncements.ts`, both
- * `"dailyBestCardAnnouncements"`/`"contributorAwardAnnouncements"`) plus its
- * own per-viewer read/like store (`state/newsStream.ts`'s
- * `"newsStreamViewerState"`), so a like or read-state change made in another
- * tab is reflected here too.
+ * `"dailyBestCardAnnouncements"`/`"contributorAwardAnnouncements"`); the
+ * three stores its "Community" category derives its events from directly
+ * (`dailyMissionResults.ts`'s `"dailyMissionResults"` for streak milestones,
+ * `groupChallenges.ts`/`contributions.ts`/`challengeWinEvents.ts`'s
+ * `"groupChallenges"`/`"contributions"`/`"challengeWinEvents"` for completed
+ * challenges, and `revisionHistory.ts`'s `"revisionHistory"` for Revision
+ * Incentives standings); plus its own per-viewer read/like store
+ * (`state/newsStream.ts`'s `"newsStreamViewerState"`) — so an announcement,
+ * a newly completed challenge or milestone, or a like/read-state change made
+ * in another tab is reflected here too.
  */
 export const NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS = [
   "dailyBestCardAnnouncements",
   "contributorAwardAnnouncements",
+  "dailyMissionResults",
+  "groupChallenges",
+  "contributions",
+  "challengeWinEvents",
+  "revisionHistory",
   "newsStreamViewerState",
 ] as const;
 

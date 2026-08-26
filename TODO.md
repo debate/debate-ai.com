@@ -6,6 +6,58 @@
 _No task currently in progress._
 
 ### Completed
+- **News Stream — wire the three remaining Community categories (quest
+  streak milestones, group challenge results, revision incentive
+  standings).** Closes the last of `news-stream.md`'s "Only two categories
+  currently feed the 'Community' side of the stream" Known gap, flagged as
+  not-started follow-up on the earlier News Stream cross-tab PR (#336) and
+  matching a request to flesh out the News Stream's functionality further.
+  Unlike Daily Best Card/Contributor Awards (which need an explicit
+  "announce" action to freeze a day's standings), all three new categories
+  are derived fresh every call straight from their own feature's
+  already-persisted history, so no new store or UI trigger was needed:
+  `gamified-quests.ts` gains `deriveEarnedStreakMilestoneEvents` (the exact
+  day a contributor's streak-as-of-that-day first equals a milestone
+  length — a streak that keeps extending moves past it the very next day,
+  so no separate "already announced" bookkeeping is needed to avoid
+  re-reporting), read by `dailyMissionResults.ts`'s new
+  `buildQuestStreakMilestoneEvents` across every contributor's stored
+  history. `group-challenges.ts` gains `computeChallengeCompletionTimestamp`
+  (the timestamp of the `targetCount`-th matching contribution or win
+  event) and `buildChallengeCompletionAnnouncementText`, read by
+  `challengeWinEvents.ts`'s new `buildCompletedGroupChallengeEvents` across
+  every persisted challenge. `revision-incentives.ts` gains
+  `buildTopReviserAnnouncementText`, read by `revisionHistory.ts`'s new
+  `buildDailyTopReviserAnnouncements`, which groups persisted revisions by
+  UTC day (via `revisedAt`) and keeps each day's #1 scorer, skipping a day
+  with no rewarded revision. `state/newsStream.ts`'s `buildNewsFeed` merges
+  all three into the feed as `"community"`-category items alongside a new
+  `PRODUCT_NEWS` entry announcing the change; `state/live-update.ts`'s
+  `NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS` gained the four backing storage
+  keys (`dailyMissionResults`, `groupChallenges`, `contributions`,
+  `challengeWinEvents`, `revisionHistory`) so another tab's mission
+  completion, challenge win, or card revision now live-updates the feed too.
+  Also fixed `NewsStreamPanel.tsx`'s filter-tab row, which defined a
+  `community` icon and category label but never listed it as a filter tab —
+  the new items were reachable only from "All" until this. Docs updated at
+  `docs/features/news-stream.md` (new bullets under "What it shows", the
+  data-flow diagram, and the announce-vs-derive explanation) with the
+  now-closed gap replaced by a narrower one (community events are still
+  limited to what this package can detect from its own persisted history —
+  other community moments like an Argument Library entry or a Prep Room
+  note still aren't wired in). Verified: `bun install` (2260 packages),
+  `bun run test` (178 files / 2736 tests, all pass — including new
+  `newsStream.test.ts`, the first test coverage `state/newsStream.ts` has
+  had, plus extended `gamified-quests.test.ts`, `dailyMissionResults.test.ts`,
+  `group-challenges.test.ts`, `challengeWinEvents.test.ts`,
+  `revision-incentives.test.ts`, `revisionHistory.test.ts`, and
+  `live-update.test.ts`), `bun run typecheck` (13/13 in-scope package tasks
+  pass), and `bun run build:web` (`debate-ai-web` succeeds, `/news` route
+  present). No repo-wide `lint` script exists. Note found along the way but
+  out of scope here: PR #338 ("Confine CardMirror's chrome to its own
+  column; bring ebb in as an embeddable panel") landed on `master` without a
+  matching entry in this tracker.
+  **Completed:** 2026-08-26.
 - **Tools discoverability — wire up three orphaned routes (LLM Card Scoring,
   Scout-to-Strategy, Team Rankings).** Prompted by a request to make sure
   every tool is reachable "not just on the Tools page" but from the live

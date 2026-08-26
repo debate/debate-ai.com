@@ -31,7 +31,7 @@
 
 import type { AttributedContribution } from "../lib/contribution-leaderboard";
 import type { ChallengeWinEvent, GroupChallengeProgress } from "../lib/group-challenges";
-import { buildGroupChallengeBoard } from "../lib/group-challenges";
+import { buildGroupChallengeBoard, computeChallengeCompletionTimestamp, computeGroupChallengeProgress } from "../lib/group-challenges";
 import type { QuestContribution } from "../lib/daily-quests";
 import { listContributions } from "./contributions";
 import { listGroupChallenges } from "./groupChallenges";
@@ -88,4 +88,49 @@ export function buildPersistedGroupChallengeBoard(now: number): GroupChallengePr
   const contributions = listContributions().filter(hasSubmittedAt) as QuestContribution[];
   const winEvents = readAll();
   return buildGroupChallengeBoard(challenges, contributions, winEvents, now);
+}
+
+/** One persisted group challenge that has reached its goal, with the timestamp it did. */
+export interface CompletedGroupChallengeEvent {
+  challengeId: string;
+  title: string;
+  completedAt: number;
+  completedCount: number;
+  targetCount: number;
+  mvpContributorId?: string;
+}
+
+/**
+ * Finds every persisted group challenge that has reached its goal, each with
+ * the timestamp its `targetCount`-th matching contribution or win event
+ * landed — the "group challenge results" News Stream category noted as
+ * unwired in `news-stream.md`'s Known gaps. Purely derived from the same
+ * persisted roster/contributions/win events `buildPersistedGroupChallengeBoard`
+ * already reads, via `group-challenges.ts`'s `computeChallengeCompletionTimestamp`
+ * — no separate "completion" store needed, since replaying the same inputs
+ * always yields the same completion instant. A challenge whose goal hasn't
+ * been reached yet is excluded. Sorted newest completion first, tie-broken
+ * by `challengeId` for a stable, deterministic order.
+ */
+export function buildCompletedGroupChallengeEvents(): CompletedGroupChallengeEvent[] {
+  const challenges = listGroupChallenges();
+  const contributions = listContributions().filter(hasSubmittedAt) as QuestContribution[];
+  const winEvents = readAll();
+
+  const events: CompletedGroupChallengeEvent[] = [];
+  for (const challenge of challenges) {
+    const completedAt = computeChallengeCompletionTimestamp(challenge, contributions, winEvents);
+    if (completedAt === null) continue;
+    const progress = computeGroupChallengeProgress(challenge, contributions, winEvents, completedAt);
+    events.push({
+      challengeId: challenge.id,
+      title: challenge.title,
+      completedAt,
+      completedCount: progress.completedCount,
+      targetCount: progress.targetCount,
+      mvpContributorId: progress.mvpContributorId,
+    });
+  }
+
+  return events.sort((a, b) => b.completedAt - a.completedAt || a.challengeId.localeCompare(b.challengeId));
 }

@@ -50,6 +50,14 @@ export interface NewsItem {
  */
 export const PRODUCT_NEWS: NewsItem[] = [
   {
+    id: "product-news-stream-community-categories",
+    category: "product",
+    title: "News Stream now covers streaks, challenges, and revisions",
+    body: "The Community side of the feed used to only post Daily Best Card and Contributor Awards announcements. It now also posts a contributor's quest-streak milestone the day they earn it, a group challenge the moment it's completed, and each day's top Revision Incentives earner.",
+    timestamp: Date.parse("2026-08-26T01:00:00Z"),
+    href: "/news",
+  },
+  {
     id: "product-news-stream-launch",
     category: "product",
     title: "News Stream launched",

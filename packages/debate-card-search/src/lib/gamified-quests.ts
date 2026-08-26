@@ -115,6 +115,44 @@ export function getEarnedStreakBadges(
     .map((milestone) => milestone.badge);
 }
 
+/** One point in a contributor's history where their streak first reached a milestone. */
+export interface StreakMilestoneEvent {
+  dayKey: string;
+  streakLength: number;
+  badge: string;
+}
+
+/**
+ * Finds every day in a contributor's mission-result history where their
+ * streak-as-of-that-day exactly reached a milestone's `streakLength` — the
+ * one day a badge is freshly earned, since a streak that keeps extending
+ * moves past that exact length the very next day (mirrors
+ * `buildStreakRewardText`'s "freshBadge" check, generalized across a whole
+ * history instead of just today's streak). Purely derived from the history
+ * itself, so replaying the same results always reports the same milestone
+ * days — no separate "announced" store is needed to avoid re-reporting a
+ * badge on a later day.
+ */
+export function deriveEarnedStreakMilestoneEvents(
+  results: DailyMissionResult[],
+  milestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
+): StreakMilestoneEvent[] {
+  const completedDayKeys = [...new Set(results.filter((result) => result.isComplete).map((result) => result.dayKey))].sort();
+
+  const events: StreakMilestoneEvent[] = [];
+  for (const dayKey of completedDayKeys) {
+    const { currentStreak } = computeStreakStatus(results, dayKey);
+    const badge = milestones.find((milestone) => milestone.streakLength === currentStreak)?.badge;
+    if (badge) events.push({ dayKey, streakLength: currentStreak, badge });
+  }
+  return events;
+}
+
+/** Renders a short third-person announcement for a freshly earned streak milestone, for a feed item. */
+export function buildStreakMilestoneAnnouncementText(contributorId: string, event: StreakMilestoneEvent): string {
+  return `${contributorId} reached a ${event.streakLength}-day streak and earned "${event.badge}"!`;
+}
+
 /** A contributor's full gamified-quest standing: their streak and the badges it has earned. */
 export interface ContributorQuestStreak {
   contributorId: string;

@@ -2,15 +2,21 @@
  * @fileoverview News Stream feed assembly + per-viewer read/like state.
  *
  * `buildNewsFeed` composes `lib/news-stream.ts`'s static `PRODUCT_NEWS` with
- * every already-persisted community announcement — `dailyBestCardAnnouncements.ts`'s
- * `listAnnouncedDailyBestCards` and `contributorAwardAnnouncements.ts`'s
- * `listAnnouncedContributorAwards` — turning each into a `NewsItem` via
- * `daily-best-card.ts`'s `buildDailyBestCardHighlight` and
- * `contributor-awards.ts`'s `buildAwardsAnnouncementText`. Those two stores
- * remain the source of truth for their own events; this module only
+ * every already-persisted community announcement, turning each into a
+ * `NewsItem`: `dailyBestCardAnnouncements.ts`'s `listAnnouncedDailyBestCards`
+ * and `contributorAwardAnnouncements.ts`'s `listAnnouncedContributorAwards`
+ * (via `daily-best-card.ts`'s `buildDailyBestCardHighlight` and
+ * `contributor-awards.ts`'s `buildAwardsAnnouncementText`), plus three more
+ * derived directly from their own already-persisted history rather than a
+ * separate "announced" store — `dailyMissionResults.ts`'s
+ * `buildQuestStreakMilestoneEvents`, `challengeWinEvents.ts`'s
+ * `buildCompletedGroupChallengeEvents`, and `revisionHistory.ts`'s
+ * `buildDailyTopReviserAnnouncements`, each replaying the same deterministic
+ * history every time so nothing needs to be separately frozen. Every source
+ * module remains the source of truth for its own events; this module only
  * re-shapes their already-persisted records into the feed's common type,
  * mirroring `state/contributions.ts`'s "compose the pure/store layer
- * directly" convention rather than duplicating either store's data.
+ * directly" convention rather than duplicating any store's data.
  *
  * Read/like state is local to this feed (not shared with `contributions.ts`'s
  * like counts, which track a card's community helpfulness rather than
@@ -26,6 +32,12 @@ import { listAnnouncedDailyBestCards } from "./dailyBestCardAnnouncements";
 import { listAnnouncedContributorAwards } from "./contributorAwardAnnouncements";
 import { buildDailyBestCardHighlight } from "../lib/daily-best-card";
 import { buildAwardsAnnouncementText } from "../lib/contributor-awards";
+import { buildQuestStreakMilestoneEvents } from "./dailyMissionResults";
+import { buildStreakMilestoneAnnouncementText } from "../lib/gamified-quests";
+import { buildCompletedGroupChallengeEvents } from "./challengeWinEvents";
+import { buildChallengeCompletionAnnouncementText } from "../lib/group-challenges";
+import { buildDailyTopReviserAnnouncements } from "./revisionHistory";
+import { buildTopReviserAnnouncementText } from "../lib/revision-incentives";
 
 /** Turns every announced Daily Best Card winner into a `NewsItem`. */
 function dailyBestCardNews(): NewsItem[] {
@@ -51,16 +63,61 @@ function contributorAwardsNews(): NewsItem[] {
   }));
 }
 
+/** Turns every contributor's freshly earned streak-milestone crossing into a `NewsItem`. */
+function questStreakMilestoneNews(): NewsItem[] {
+  return buildQuestStreakMilestoneEvents().map((event) => ({
+    id: `quest-streak-milestone-${event.contributorId}-${event.dayKey}`,
+    category: "community" as const,
+    title: `${event.contributorId} earned "${event.badge}"`,
+    body: buildStreakMilestoneAnnouncementText(event.contributorId, event),
+    timestamp: Date.parse(`${event.dayKey}T00:00:00Z`),
+    href: "/cards/streaks",
+  }));
+}
+
+/** Turns every completed group challenge into a `NewsItem`. */
+function groupChallengeNews(): NewsItem[] {
+  return buildCompletedGroupChallengeEvents().map((event) => ({
+    id: `group-challenge-complete-${event.challengeId}`,
+    category: "community" as const,
+    title: `"${event.title}" complete!`,
+    body: buildChallengeCompletionAnnouncementText(event),
+    timestamp: event.completedAt,
+    href: "/cards/group-challenges",
+  }));
+}
+
+/** Turns each day's top Revision Incentives earner into a `NewsItem`. */
+function revisionIncentiveNews(): NewsItem[] {
+  return buildDailyTopReviserAnnouncements().map((announcement) => ({
+    id: `revision-incentives-${announcement.dayKey}`,
+    category: "community" as const,
+    title: `Revision Incentives — ${announcement.dayKey}`,
+    body: buildTopReviserAnnouncementText(announcement.dayKey, announcement.topContributor),
+    timestamp: Date.parse(`${announcement.dayKey}T00:00:00Z`),
+    href: "/cards/revisions",
+  }));
+}
+
 /**
  * Builds the full News Stream feed: hand-maintained product updates plus
- * every announced Daily Best Card winner and Contributor Awards standings,
- * newest first. Reads two other localStorage stores (via the announcement
- * modules above) in addition to this module's own — safe to call
- * server-side or during SSR, since each underlying store already guards its
- * own `localStorage` access and returns an empty list when unavailable.
+ * every announced Daily Best Card winner, Contributor Awards standings,
+ * quest-streak milestone crossing, completed group challenge, and top daily
+ * Revision Incentives earner — newest first. Reads several other
+ * localStorage stores (via the modules imported above) in addition to this
+ * module's own — safe to call server-side or during SSR, since each
+ * underlying store already guards its own `localStorage` access and returns
+ * an empty list when unavailable.
  */
 export function buildNewsFeed(): NewsItem[] {
-  return sortNewsFeed([...PRODUCT_NEWS, ...dailyBestCardNews(), ...contributorAwardsNews()]);
+  return sortNewsFeed([
+    ...PRODUCT_NEWS,
+    ...dailyBestCardNews(),
+    ...contributorAwardsNews(),
+    ...questStreakMilestoneNews(),
+    ...groupChallengeNews(),
+    ...revisionIncentiveNews(),
+  ]);
 }
 
 const VIEWER_STATE_KEY = "newsStreamViewerState";
