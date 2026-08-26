@@ -1,6 +1,9 @@
 export const APP_NAME = "Debate AI";
 export const APP_EMAIL = "noreply@debate-ai.com";
 
+/** Terms & Privacy Last Revised Date */
+export const LAST_REVISED_DATE = "2026-08-26";
+
 /** Canonical production origin — used as the SSR fallback for auth requests. */
 export const APP_ORIGIN = "https://debate-ai.com";
 
