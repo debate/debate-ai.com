@@ -6,7 +6,8 @@ assigned, mark tasks done as they're finished, and have a different
 contributor verify them before they count as complete.
 
 - **Route:** `/cards/inbox`
-- **Nav:** the global dock's Settings menu → **Task Inbox**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t inbox` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

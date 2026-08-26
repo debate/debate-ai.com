@@ -6,7 +6,8 @@ notes combined into one briefing per round — with a "Clear" action per
 round, and a form to create a new one by hand.
 
 - **Route:** `/briefings`
-- **Nav:** the global dock's Settings menu → **Pre-Round Briefings**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t briefings` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

@@ -6,7 +6,8 @@ contributor can add a new entry, or quickly find an existing one before
 researching a duplicate.
 
 - **Route:** `/cards/library`
-- **Nav:** the global dock's Settings menu → **Evidence Library**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t library` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

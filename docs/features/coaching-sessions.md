@@ -7,7 +7,8 @@ feedback" action that requests open-ended AI coaching feedback expanding on
 those template prompts.
 
 - **Route:** `/coaching`
-- **Nav:** the global dock's Settings menu → **AI Coach Mode**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t coach` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

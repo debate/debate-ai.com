@@ -11,7 +11,8 @@ roles to assess each exposed argument's likely response path and where
 clash will concentrate.
 
 - **Route:** `/outcomes`
-- **Nav:** the global dock's Settings menu → **AI Response-Outcome Charts**
+- **Nav:** the Tools page's Coaching & Analytics group; the Reason Editor's
+  Workspace menu (`t outcome` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

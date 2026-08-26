@@ -6,6 +6,36 @@
 _No task currently in progress._
 
 ### Completed
+- **Feature docs — fix the stale "global dock's Settings menu" Nav claim
+  across the remaining ~34 docs.** Flagged as out-of-scope in the prior
+  "Tools discoverability — wire up three orphaned routes" entry (see
+  below): `llm-card-scoring.md`, `scout-to-strategy.md`, and the new
+  `team-rankings.md` were fixed there, but every other `docs/features/*.md`
+  page still claimed a Nav path — `SettingsMenu` in
+  `apps/debate-ai.com/components/layout/CategoryDock.tsx` — that has never
+  linked to individual features; it only ever offered "All Features" and
+  "All Tools". Grepped every doc for the claim (35 files matched;
+  `features-page.md` was already accurate, since `SettingsMenu`'s "All
+  Features" item really does open `/features`) and rewrote the other 34's
+  `- **Nav:**` line to match the format the three earlier fixes already
+  used: `the Tools page's <category> group; the Reason Editor's Workspace
+  menu (`t <keyword>` in Ctrl/Cmd-Shift-Space's command palette)`, with
+  `<category>` and a working `<keyword>` (verified by re-implementing
+  `quick-card-search-ui.ts`'s `searchToolsSource` label+description
+  substring match against `workspace-links.ts`'s `WORKSPACE_LINKS`) derived
+  per doc's `Route:` line. `prep-notes.md` covers two routes (`/prep-notes`
+  and `/notifications`) in one file and needed both of its two Nav lines
+  fixed. Three initial keyword picks (`tracking`, `reviews`, `revisions`)
+  didn't actually substring-match their link's label/description and were
+  corrected to `research progress`, `review queue`, and `revision`
+  respectively after the verification script caught them. No code changed;
+  `packages/debate-ui/test/feature-catalog.test.ts` (17 tests, unaffected
+  by doc content) still passes. Verified: `bun install` (2260 packages),
+  `bunx vitest run packages/debate-ui/test/feature-catalog.test.ts` (17/17
+  pass), and a standalone Node script re-checking every fixed doc's
+  category against `WORKSPACE_LINKS` and every keyword against the same
+  label+description substring match the live palette uses (all 34 pass).
+  **Completed:** 2026-08-26.
 - **News Stream — wire the three remaining Community categories (quest
   streak milestones, group challenge results, revision incentive
   standings).** Closes the last of `news-stream.md`'s "Only two categories

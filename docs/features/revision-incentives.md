@@ -4,7 +4,8 @@ Rewards contributors for improving weak cards, strengthening citations, and refr
 evidence, and ranks them by total reward points earned.
 
 - **Route:** `/cards/revisions`
-- **Nav:** the global dock's Settings menu → **Revision Incentives**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t revision` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

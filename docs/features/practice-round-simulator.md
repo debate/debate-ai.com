@@ -7,7 +7,8 @@ follow-up named under the "🧪 Practice Round Simulator" bullet in
 `TODO.md`'s Research Crowdsourcing Organizer Features list.
 
 - **Route:** `/practice-round`
-- **Nav:** the global dock's Settings menu → **Practice Round Simulator**
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu (`t simulator` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows

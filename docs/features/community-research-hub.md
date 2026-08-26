@@ -5,7 +5,8 @@ pre-round/practice space in the app, grouped into categories, so a debater
 doesn't need to already know a route exists to find it.
 
 - **Route:** `/community-hub`
-- **Nav:** the global dock's Settings menu → **Community Research Hub**
+- **Nav:** the Tools page's Workspaces group; the Reason Editor's
+  Workspace menu (`t hub` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## Why this exists

@@ -10,7 +10,8 @@ Dashboard's under-covered arguments, so a board's prompt is visible before
 anyone has submitted an idea to it.
 
 - **Route:** `/cards/brainstorm`
-- **Nav:** the global dock's Settings menu → **Team Brainstorm Assist**
+- **Nav:** the Tools page's Community & Progress group; the Reason Editor's
+  Workspace menu (`t brainstorm` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
 
 ## What it shows

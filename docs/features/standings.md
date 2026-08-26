@@ -7,7 +7,8 @@ dashboard UI (likely under `/rank`)" follow-up named under idea #1 ("CX
 NDCA Standings") in `TODO.md`'s Product Feature Ideas list.
 
 - **Route:** `/standings`
-- **Nav:** the global dock's Settings menu → **CX NDCA Standings**
+- **Nav:** the Tools page's Coaching & Analytics group; the Reason Editor's
+  Workspace menu (`t standings` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows
