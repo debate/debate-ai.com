@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { authClient, hasGoogleClientId } from "@/lib/auth/client";
+import { createAppAuthClient } from "@/lib/auth/client";
 import { useAuthProviders } from "@/lib/hooks/useAuthProviders";
 import { useSession } from "@/lib/hooks/useSession";
 
@@ -14,7 +14,11 @@ import { useSession } from "@/lib/hooks/useSession";
  * suppression cooldown) — is settled for this page load, so re-prompting on
  * every navigation would only spend requests on a prompt that cannot appear.
  */
-const RETRYABLE_SKIP_REASONS = new Set(["auto_cancel", "tap_outside", "issuing_failed"]);
+const RETRYABLE_SKIP_REASONS = new Set([
+  "auto_cancel",
+  "tap_outside",
+  "issuing_failed",
+]);
 
 /**
  * The subset of Google's `PromptMomentNotification` this file reads. The
@@ -31,9 +35,12 @@ interface PromptNotification {
 
 /** The reason Google gives for a prompt that did not sign the user in. */
 function promptReason(notification?: PromptNotification): string | undefined {
-  if (notification?.isSkippedMoment?.()) return notification.getSkippedReason?.();
-  if (notification?.isDismissedMoment?.()) return notification.getDismissedReason?.();
-  if (notification?.isNotDisplayed?.()) return notification.getNotDisplayedReason?.();
+  if (notification?.isSkippedMoment?.())
+    return notification.getSkippedReason?.();
+  if (notification?.isDismissedMoment?.())
+    return notification.getDismissedReason?.();
+  if (notification?.isNotDisplayed?.())
+    return notification.getNotDisplayedReason?.();
   return undefined;
 }
 
@@ -49,7 +56,11 @@ function promptReason(notification?: PromptNotification): string | undefined {
  */
 export function OneTap() {
   const { isAuthenticated, isLoading } = useSession();
-  const { providers, isLoading: providersLoading } = useAuthProviders();
+  const {
+    providers,
+    googleClientId,
+    isLoading: providersLoading,
+  } = useAuthProviders();
   const pathname = usePathname();
   /** Path of the most recent prompt, so one navigation prompts once. */
   const promptedPath = useRef<string | null>(null);
@@ -59,7 +70,13 @@ export function OneTap() {
   const settled = useRef(false);
 
   const googleReady =
-    !providersLoading && providers.includes("google") && hasGoogleClientId();
+    !providersLoading &&
+    providers.includes("google") &&
+    Boolean(googleClientId);
+  const oneTapAuthClient = useMemo(
+    () => createAppAuthClient(googleClientId),
+    [googleClientId],
+  );
 
   console.log("[one-tap] state:", {
     pathname,
@@ -67,26 +84,37 @@ export function OneTap() {
     isAuthenticated,
     providersLoading,
     providers,
-    hasGoogleClientId: hasGoogleClientId(),
+    hasGoogleClientId: Boolean(googleClientId),
     googleReady,
   });
 
   useEffect(() => {
     if (isLoading || isAuthenticated || !googleReady) {
-      console.log("[one-tap] effect skipped:", { isLoading, isAuthenticated, googleReady });
+      console.log("[one-tap] effect skipped:", {
+        isLoading,
+        isAuthenticated,
+        googleReady,
+      });
       return;
     }
 
     // A displayed prompt survives client-side navigation, and the one-tap
     // plugin refuses overlapping calls, so only prompt when the last one is
     // done and this navigation has not been prompted for yet.
-    if (settled.current || inFlight.current || promptedPath.current === pathname) {
-      console.log("[one-tap] effect skipped (settled/in-flight/already prompted):", {
-        settled: settled.current,
-        inFlight: inFlight.current,
-        promptedPath: promptedPath.current,
-        pathname,
-      });
+    if (
+      settled.current ||
+      inFlight.current ||
+      promptedPath.current === pathname
+    ) {
+      console.log(
+        "[one-tap] effect skipped (settled/in-flight/already prompted):",
+        {
+          settled: settled.current,
+          inFlight: inFlight.current,
+          promptedPath: promptedPath.current,
+          pathname,
+        },
+      );
       return;
     }
     promptedPath.current = pathname;
@@ -94,7 +122,7 @@ export function OneTap() {
 
     console.log("[one-tap] calling authClient.oneTap for", pathname);
 
-    authClient
+    oneTapAuthClient
       .oneTap({
         callbackURL: pathname,
         onPromptNotification: (notification?: PromptNotification) => {
@@ -102,12 +130,18 @@ export function OneTap() {
           // throttles callers that re-prompt after a dismissal, so a settled
           // outcome ends the prompting for this page load.
           const reason = promptReason(notification);
-          console.log("[one-tap] prompt notification:", { reason, notification });
-          if (!reason || !RETRYABLE_SKIP_REASONS.has(reason)) settled.current = true;
+          console.log("[one-tap] prompt notification:", {
+            reason,
+            notification,
+          });
+          if (!reason || !RETRYABLE_SKIP_REASONS.has(reason))
+            settled.current = true;
         },
       })
       .then(() => {
-        console.log("[one-tap] oneTap() call resolved (prompt shown or handled)");
+        console.log(
+          "[one-tap] oneTap() call resolved (prompt shown or handled)",
+        );
       })
       .catch((error: unknown) => {
         console.error("[one-tap] prompt failed:", error);
@@ -117,7 +151,7 @@ export function OneTap() {
       .finally(() => {
         inFlight.current = false;
       });
-  }, [isLoading, isAuthenticated, googleReady, pathname]);
+  }, [isLoading, isAuthenticated, googleReady, pathname, oneTapAuthClient]);
 
   return null;
 }

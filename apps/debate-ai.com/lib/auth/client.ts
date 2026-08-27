@@ -1,8 +1,16 @@
 "use client";
 
 import { createAuthClient } from "better-auth/react";
-import { oneTapClient, magicLinkClient, anonymousClient } from "better-auth/client/plugins";
-import { APP_ORIGIN, NEXT_PUBLIC_BASE_URL, NEXT_PUBLIC_GOOGLE_CLIENT_ID } from "../config/site";
+import {
+  oneTapClient,
+  magicLinkClient,
+  anonymousClient,
+} from "better-auth/client/plugins";
+import {
+  APP_ORIGIN,
+  NEXT_PUBLIC_BASE_URL,
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+} from "../config/site";
 
 // Always talk to the origin the page was served from. The app ships its own
 // /api/auth routes on every deployment (debate-ai.com, preview builds,
@@ -15,10 +23,11 @@ const baseURL =
     ? window.location.origin
     : NEXT_PUBLIC_BASE_URL || APP_ORIGIN;
 
-// The one-tap plugin reads `clientId` off this object when the prompt is
-// triggered, not when the client is created, so the id can be filled in at
-// runtime from /api/auth/providers. That is how the browser gets it at all:
-// GOOGLE_CLIENT_ID is a Worker secret and is never inlined into the bundle.
+// Default One Tap options. The Google client id may arrive after page load from
+// /api/auth/providers, so callers that need One Tap should create an auth
+// client after that lookup resolves instead of relying on this build-time
+// fallback. GOOGLE_CLIENT_ID is a Worker secret and is never inlined into the
+// browser bundle.
 const oneTapOptions = {
   clientId: NEXT_PUBLIC_GOOGLE_CLIENT_ID,
   additionalOptions: {
@@ -26,18 +35,21 @@ const oneTapOptions = {
   },
 };
 
-/** Supply the Google client id resolved at runtime. No-op for a blank id. */
-export function setGoogleClientId(clientId: string) {
-  console.log("[auth] setGoogleClientId:", clientId ? "received" : "empty (not configured)");
-  if (clientId) oneTapOptions.clientId = clientId;
+/** Create an auth client with the Google client id available at that moment. */
+export function createAppAuthClient(
+  googleClientId = NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+) {
+  return createAuthClient({
+    baseURL,
+    plugins: [
+      oneTapClient({
+        ...oneTapOptions,
+        clientId: googleClientId,
+      }),
+      magicLinkClient(),
+      anonymousClient(),
+    ],
+  });
 }
 
-/** Whether One Tap has a client id to prompt with. */
-export function hasGoogleClientId() {
-  return Boolean(oneTapOptions.clientId);
-}
-
-export const authClient = createAuthClient({
-  baseURL,
-  plugins: [oneTapClient(oneTapOptions), magicLinkClient(), anonymousClient()],
-});
+export const authClient = createAppAuthClient();
