@@ -13,8 +13,21 @@
  * rather than introducing a second, competing source of truth for the same
  * events.
  *
+ * `buildAutoFeatureNews` closes this doc's former "Product Updates are
+ * manually curated — nothing detects a newly added route or
+ * `feature-catalog.ts` entry and drafts a post for it" Known gap: rather than
+ * requiring a hand-written `PRODUCT_NEWS` entry before a tool can appear in
+ * the feed at all, it walks `debate-ui`'s `APP_FEATURES` catalog (the same
+ * ~50-surface list the `/features` and `/tools` pages render from) and
+ * synthesizes a generic "Tool spotlight" post for every entry whose `href`
+ * no hand-curated `PRODUCT_NEWS` item already covers — so a debater browsing
+ * the feed always finds every tool mentioned somewhere, even ones nobody
+ * has gotten around to announcing yet.
+ *
  * @module lib/news-stream
  */
+
+import { APP_FEATURES, type FeatureEntry } from "debate-ui/src/features/feature-catalog";
 
 /** Which of the feed's sources a `NewsItem` came from. */
 export type NewsCategory = "product" | "daily-best-card" | "awards" | "community";
@@ -49,6 +62,30 @@ export interface NewsItem {
  * hand, the same way `feature-catalog.ts`'s `APP_FEATURES` is maintained.
  */
 export const PRODUCT_NEWS: NewsItem[] = [
+  {
+    id: "product-news-stream-volume-cap",
+    category: "product",
+    title: "News Stream caps busy sources to the 20 most recent items",
+    body: "Sprint notes and Argument Library submissions used to post here every single time, with no limit — a very active topic sprint or a busy submission period could flood the whole feed. Each of those two sources is now capped to its 20 most recent items; nothing is deleted from Team Collaboration Mode or the Argument Library itself, only how many of each show up here.",
+    timestamp: Date.parse("2026-08-26T06:00:00Z"),
+    href: "/news",
+  },
+  {
+    id: "product-news-stream-tool-spotlights",
+    category: "product",
+    title: "News Stream now spotlights every tool",
+    body: "Product Updates used to only show a tool once someone hand-wrote a post for it. Now every tool in the catalog gets a generic spotlight the moment it's added, so nothing stays invisible to the feed just because nobody's announced it yet — real announcements always sort above the spotlights.",
+    timestamp: Date.parse("2026-08-26T05:00:00Z"),
+    href: "/news",
+  },
+  {
+    id: "product-news-stream-coaching-sessions",
+    category: "product",
+    title: "News Stream now posts new AI Coach Mode sessions",
+    body: "The Community side of the feed now posts a coaching session the moment it's generated for a round at /coaching — same as prep notes, Argument Library submissions, streak milestones, challenge completions, and Revision Incentives standings, closing the last open Community source.",
+    timestamp: Date.parse("2026-08-26T04:00:00Z"),
+    href: "/news",
+  },
   {
     id: "product-news-stream-argument-library",
     category: "product",
@@ -102,4 +139,44 @@ export const PRODUCT_NEWS: NewsItem[] = [
 /** Sorts newest-first — the feed's one display order. */
 export function sortNewsFeed(items: NewsItem[]): NewsItem[] {
   return [...items].sort((a, b) => b.timestamp - a.timestamp);
+}
+
+/**
+ * Synthesizes a generic "Tool spotlight" `NewsItem` for every `features`
+ * entry whose `href` no item in `announced` already covers — the feed's
+ * fallback so a catalog entry is never invisible to the News Stream just
+ * because nobody has hand-written a `PRODUCT_NEWS` post for it yet.
+ *
+ * Every synthesized item shares one timestamp: one millisecond older than
+ * the oldest item in `announced`, so a real, hand-curated post (about this
+ * tool or any other) always sorts above the whole backfilled batch, and the
+ * batch itself sorts in stable, deterministic `features` order below it —
+ * spotlighting every uncovered tool without displacing genuine updates from
+ * the top of the feed. The moment a hand-curated post naming that `href`
+ * ships, its auto-generated spotlight stops being generated (there is
+ * nothing to "clear" — it was never persisted).
+ *
+ * @param features - Catalog entries to check; defaults to the full `APP_FEATURES` list.
+ * @param announced - Already hand-curated news items; defaults to `PRODUCT_NEWS`.
+ * @returns One `"product"`-category `NewsItem` per uncovered entry.
+ */
+export function buildAutoFeatureNews(
+  features: FeatureEntry[] = APP_FEATURES,
+  announced: NewsItem[] = PRODUCT_NEWS,
+): NewsItem[] {
+  const announcedHrefs = new Set(
+    announced.map((item) => item.href).filter((href): href is string => !!href),
+  );
+  const floorTimestamp =
+    announced.length > 0 ? Math.min(...announced.map((item) => item.timestamp)) - 1 : 0;
+  return features
+    .filter((feature) => !announcedHrefs.has(feature.href))
+    .map((feature) => ({
+      id: `auto-feature-${feature.id}`,
+      category: "product" as const,
+      title: `Tool spotlight: ${feature.title}`,
+      body: feature.description,
+      timestamp: floorTimestamp,
+      href: feature.href,
+    }));
 }

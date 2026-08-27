@@ -6,6 +6,272 @@
 _No task currently in progress._
 
 ### Completed
+- **Legacy Verbatim / Cardmirror Compatibility — correct
+  `legacy-verbatim-shortcuts.md` for the live CardMirror editor.** Closes
+  the staleness `speech-document-target.md`'s Known gaps flagged: "a future
+  cycle doesn't have to rediscover it." The doc's "Route"/"Package" lines
+  and data-flow diagram described the TipTap-based `reason-editor`
+  package's `Mod-Shift-E`/`Mod-Shift-K`/`Mod-Shift-D`/`Alt-ArrowUp`/
+  `Alt-ArrowDown` shortcuts as if they ran in the shipped app — they don't;
+  `/reason-editor` has rendered `debate-editor`'s shim to
+  `debate-editor-cardmirror` since PR #338, and that package's own
+  `ribbon-commands.ts` already ships a considerably larger, Verbatim-
+  hotkey-faithful command set (F8 Cite / F9 Underline / F10 Emphasis, the
+  F3/Alt-F3/Mod-Alt-F3/Mod-Alt-Shift-F3 condense family,
+  Mod-Alt-ArrowUp/Down move-container, Alt-F8 copy-previous-cite,
+  Mod-Shift-x AI-assisted cite formatting) that predates and supersedes
+  the never-wired `Mod-Shift-*` set. Prompted by a request to "integrate
+  CardMirror better into the editor" and make sure every tool's own docs
+  describe what's actually live, this cycle rewrote
+  `docs/features/legacy-verbatim-shortcuts.md` end to end: a corrected
+  Route/Package/Nav header, a shortcuts table cross-referencing each
+  command to its `MenuBar.tsx` category (Format/Card/Edit/AI — all three
+  ways a command is reachable: keybinding, menu-bar dropdown, and the
+  Ctrl/Cmd-Shift-Space command palette, which indexes every ribbon command
+  by label/alias, not just the `t`-prefixed Workspace links), an explicit
+  "how the four never-shipped shortcuts map onto these" section, and an
+  updated data-flow diagram pointing at `ribbon-commands.ts`/
+  `move-container.ts`/`ribbon-groups.ts`/`menu-bar-categories.ts`/
+  `MenuBar.tsx`/`quick-card-search-ui.ts`. Also updated
+  `speech-document-target.md`'s own pointer to this doc (it referenced the
+  staleness this slice just fixed) and idea #14's status note above. One
+  genuine (not just stale-doc) gap surfaced by writing the comparison
+  table honestly: CardMirror has no pure "insert a short cite tag at the
+  cursor" command — the old `Mod-Shift-K` behavior — so `Known gaps` now
+  records that a user has to pick among F8 (style existing text), Alt-F8
+  (reuse a prior cite), or Mod-Shift-x (AI-generate one) depending on
+  intent, rather than claiming a 1:1 equivalent that doesn't exist.
+  Documentation-only slice — no source files changed, so no new test
+  cases were needed; the audit that grepped `ribbon-commands.ts`/
+  `ribbon-groups.ts`/`menu-bar-categories.ts` for the real command
+  ids/keybindings/menu placements before writing the table is what keeps
+  the table itself honest. Verified: `bun install` (2258 packages), `bun
+  run test` (179 files / 2773 tests, all pass, unchanged), `bunx turbo run
+  typecheck --filter=debate-editor-cardmirror --filter=debate-ui
+  --filter=debate-ai-web` (12/12 in-scope package tasks pass), and `bun
+  run build:web` (`debate-ai-web` succeeds, `/reason-editor` present in
+  the route list). No repo-wide `lint` script exists, so that acceptance
+  step is N/A. No follow-ups remain open on the doc-staleness gap; the
+  short-cite-insertion gap noted above is recorded as a new, narrower
+  Known gap rather than a numbered follow-up. **Completed:** 2026-08-26.
+- **News Stream — cap sprint notes and Argument Library submissions to the
+  20 most recent items each.** Closes the "no volume control" Known gap
+  recorded in `docs/features/news-stream.md`: unlike the streak/challenge/
+  revision Community sources (each naturally bounded to at most one event
+  per contributor per milestone, per challenge, or per day), a Team
+  Collaboration Mode prep note or an Argument Library submission posted a
+  `NewsItem` every single time one was logged or saved, so a very active
+  topic sprint or a busy submission period could flood the whole feed.
+  Prompted by the same "flesh out the News Stream's functionality further"
+  line of work as the three prior Community-source runs, this cycle picked
+  the one already-identified, safely-startable gap left in that doc rather
+  than adding a seventh source. `state/newsStream.ts` gains a
+  `MAX_COMMUNITY_ITEMS_PER_SOURCE` constant (20) and a `mostRecentBy`
+  helper (sorts by timestamp descending, slices to the limit) applied
+  inside `sprintNoteNews()` and `argumentLibraryNews()` before mapping to
+  `NewsItem`s — a feed-projection cap only: nothing is deleted from
+  `sprintNotes.ts`/`evidenceLibraryEntries.ts`, and both tools' own pages
+  (`/cards/collaboration`, `/cards/argument-library`) still list every
+  record; `argumentLibraryNews()`'s existing "must carry a `createdAt`"
+  filter runs first, so the cap always keeps the 20 most recently
+  *timestamped* live entries. `sortNewsFeed` still re-sorts the whole feed
+  afterward, so `mostRecentBy`'s own output order doesn't matter — only
+  which records survive the cap does. Added a `PRODUCT_NEWS` entry
+  announcing the change (`product-news-stream-volume-cap`, mirroring the
+  five prior "News Stream now ..." announcements) and updated
+  `docs/features/news-stream.md` (the "What it shows" bullets for both
+  sources now note the cap, and the Known gap is narrowed rather than
+  closed outright — the cap is per-source rather than per-topic/
+  per-contributor, so one very active topic sprint can still crowd out a
+  quieter one's notes within that same 20-item budget, and a burst busier
+  than 20 items can still push its own older items out before a viewer
+  necessarily sees them). Vitest-covered in `newsStream.test.ts` (two new
+  cases: 25 sprint notes/25 Argument Library entries each collapse to
+  exactly 20 items in the feed, keeping the newest and dropping the
+  oldest by `createdAt`). Verified: `bun install` (2258 packages),
+  `bunx vitest run packages/debate-card-search/test/newsStream.test.ts`
+  (18/18 pass, up from 16), full `bun run test` (179 files / 2773 tests,
+  all pass, up from 2771), `bunx turbo run typecheck --filter=debate-card-
+  search --filter=debate-ui` (4/4 in-scope package tasks pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/news` route present, no
+  route changes). No repo-wide `lint` script exists, so that acceptance
+  step is N/A. No follow-ups remain open on the "no volume control" gap
+  specifically; the narrower per-source/per-burst limitation above is
+  recorded as a new, smaller Known gap rather than a numbered follow-up.
+  **Completed:** 2026-08-26.
+- **Speech Documents — replace the dead `reason-editor`-era send target
+  with a real history of what CardMirror's send-to-speech actually
+  sends.** Closes a disconnect found by the "make sure every tool is
+  well-integrated in the live UI" audit, this time inside the REASON
+  editor itself: `/speech-documents` (and its `/tools` card) described
+  `Mod-Shift-S` / a "→Speech" toolbar button sending text into a
+  persisted, find-or-create-by-title `SpeechDocument` record — true of
+  the old TipTap-based `reason-editor` package, but `/reason-editor` has
+  rendered `debate-editor`'s shim to `debate-editor-cardmirror` (the
+  ported-in CardMirror ProseMirror engine that replaced it) for a while
+  now, and CardMirror's actual send-to-speech feature is a
+  pane-designation model (mark an open doc as the speech doc via the File
+  menu's Speech section, then the backtick / Alt-backtick keys insert a
+  live slice into it) that never wrote to that old store. The page was
+  permanently empty no matter what a user did in the live editor.
+  Verified end-to-end by reading the real wiring (`speech-doc-send.ts`'s
+  `insertSpeechSlice`, the single call point shared by an in-window send,
+  a cross-tab receive, and a cross-window receive) rather than trusting
+  the old doc's claims. Since the pane model has no natural "list every
+  speech document" concept — the speech doc is just an open Reason
+  document, not a separate record — the fix wires in a real, listable
+  **send log** instead of resurrecting a rival document-record concept:
+  `debate-editor-cardmirror`'s new `editor/speech-send-log.ts` (pure
+  `buildSpeechSendLogEntry`/`appendSpeechSendLogEntry`/
+  `removeSpeechSendLogEntry`/`sanitizeSpeechSendLog`, capped at
+  `MAX_SPEECH_SEND_LOG_ENTRIES`, plus a `WebSharedStore`-backed
+  `speechSendLogStore` mirroring `dropzone-store.ts`'s IndexedDB +
+  BroadcastChannel pattern, but never session-cleared since this is a
+  durable history, not a scratch shelf) is called from `insertSpeechSlice`
+  right after a successful dispatch, logging the plain text of the slice
+  that actually landed. Re-exported from the package's headless `/engine`
+  entry point (no ProseMirror or React in this module) so
+  `apps/debate-ai.com/app/speech-documents`'s new `SpeechSendLogPanel.tsx`
+  can read/subscribe to it without pulling in the editor bundle. The old
+  `reason-editor` package's `SpeechDocumentsPanel` import was dropped from
+  the page along with the app's now-unused `reason-editor` dependency
+  (the package itself still exists in the monorepo, just no longer
+  depended on by the app). Corrected the same "Mod-Shift-S / →Speech
+  button" claim in `/tools`'s Speech Documents card, `WORKSPACE_LINKS`,
+  and `feature-catalog.ts`'s description, and rewrote
+  `docs/features/speech-document-target.md` end to end (plus a pointer
+  left in `legacy-verbatim-shortcuts.md`'s Known gaps, which has the same
+  stale-route staleness but is out of scope this cycle). Vitest-covered
+  in `packages/debate-editor-cardmirror/test/speech-send-log.test.ts` (16
+  new cases: preview collapsing/clipping at and past the cap, entry
+  building including the blank-text null case, append/evict-oldest at a
+  custom and the default cap, remove found/not-found, and sanitize
+  filtering malformed persisted entries) — this package had no test
+  suite of its own before this slice. `SpeechSendLogPanel.tsx` (a `.tsx`
+  panel) verified via the build instead, per convention. Verified: `bun
+  install` (2260 packages), `bun run test` (179 files / 2771 tests, all
+  pass — 16 new), `bunx turbo run typecheck --filter=debate-editor-
+  cardmirror --filter=debate-editor --filter=debate-ui --filter=debate-
+  ai-web --filter=reason-editor` (13/13 in-scope package tasks pass), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/reason-editor` and
+  `/speech-documents` both present in the route list). **Completed:**
+  2026-08-26.
+- **AI Judge Decision Modes — "Get AI judge decision →" deep link from the
+  Judge Paradigm Picker.** Closes the `docs/features/judge-paradigm-selections.md`
+  Known gap that saving a round's paradigm at `/paradigms` "doesn't itself
+  invoke a judge decision" — a user had to remember the round ID, leave the
+  page, and retype it into the separate `/judge-decision` panel. Prompted by
+  a request to make sure every tool is well-integrated with the others in
+  the live UI, not just individually complete. `debate-speech-writer`'s
+  `state/judgeParadigmSelections.ts` gains `buildJudgeDecisionDeepLink(roundId)`
+  (`/judge-decision?roundId=…`, percent-encoding the id), rendered as a "Get
+  AI judge decision →" button next to each saved selection in
+  `JudgeParadigmPickerPanel.tsx`. `debate-round`'s `JudgeDecisionPanel.tsx`
+  now reads that `roundId` query param via `next/navigation`'s
+  `useSearchParams` (the route already wraps the panel in `<Suspense>`) to
+  pre-fill its Round ID field on mount — mirroring `debate-card-search`'s
+  existing `EvidenceLibraryPanel`/`?checkUrl=`/`buildReuseCheckDeepLink`
+  deep-link convention rather than inventing a new one. Used a plain `<a>`
+  tag (via the `Button` primitive's `asChild`) instead of `next/link`, since
+  `debate-speech-writer` has no dependency on `next` and one link across a
+  page boundary didn't justify adding one. A re-run of the "Tools
+  discoverability" audit (`feature-catalog.ts`'s `APP_FEATURES` against
+  `/tools`'s `TOOL_GROUPS` and the editor's `WORKSPACE_LINKS`) found no
+  orphaned routes remain, and every `TOOL_GROUPS` entry already carries
+  `highlights` — so this cycle's "add each tool where needed" gap turned out
+  to be a cross-tool link, not a missing nav entry. Vitest-covered in
+  `packages/debate-speech-writer/test/judgeParadigmSelections.test.ts` (2
+  new cases: the plain link shape, and percent-encoding a roundId with
+  reserved characters). Verified: `bun install` (2260 packages), `bun run
+  test` (178 files / 2755 tests, all pass — 2 new), `bunx turbo run
+  typecheck --filter=debate-speech-writer --filter=debate-round` (12/12
+  in-scope package tasks pass), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/paradigms` and `/judge-decision` both present in the route
+  list). **Completed:** 2026-08-26.
+- **News Stream — auto-generated "Tool spotlight" posts for every
+  unannounced catalog entry.** Closes `docs/features/news-stream.md`'s
+  longstanding Known gap: "Product Updates are manually curated — nothing
+  detects a newly added route or `feature-catalog.ts` entry and drafts a
+  post for it." Prompted by a request to make sure every tool has real
+  presence across the UI, not just a card on the Tools page — the News
+  Stream's Product Updates category previously only showed a tool if
+  someone remembered to hand-write a `PRODUCT_NEWS` entry for it, so most
+  of the ~50-entry `feature-catalog.ts` catalog (`debate-ui`'s
+  `APP_FEATURES`) had never appeared in the feed at all.
+  `lib/news-stream.ts`'s new `buildAutoFeatureNews(features?, announced?)`
+  (defaulting to the real `APP_FEATURES` and `PRODUCT_NEWS`) synthesizes a
+  generic `"product"`-category "Tool spotlight: …" `NewsItem` for every
+  catalog entry whose `href` no hand-curated item already names — closing
+  the exact gap wording without inventing a second competing "is this
+  announced" registry: `href` overlap with `PRODUCT_NEWS` is the only
+  signal. Every synthesized item shares one timestamp — one millisecond
+  older than the oldest hand-curated item — so a real announcement (about
+  that tool or any other) always sorts above the whole backfilled batch,
+  and the batch itself sorts in stable `APP_FEATURES` order beneath it:
+  spotlighting every uncovered tool without displacing genuine recent
+  updates from the top of the feed. `state/newsStream.ts`'s `buildNewsFeed`
+  now folds `buildAutoFeatureNews()` in alongside `PRODUCT_NEWS` (no store
+  involved, so no live-update wiring needed — it's pure catalog data,
+  identical on every call until either list changes). `debate-card-search`
+  already depended on `debate-ui` (used throughout for UI primitives), so
+  importing `APP_FEATURES`/`FeatureEntry` from
+  `debate-ui/src/features/feature-catalog` needed no new dependency edge or
+  cycle workaround, unlike the prior "AI Coach Mode sessions" run's
+  `extraItems` composition point. `docs/features/news-stream.md` updated
+  (new "What it shows" bullet, data-flow diagram, and the Known gaps
+  section — the closed bullet replaced with a narrower one: a spotlight is
+  a generic restatement of the catalog description and can't tell "just
+  shipped" from "always existed," so a real `PRODUCT_NEWS` entry is still
+  the way to say something more specific). Vitest-covered in
+  `newsStream.test.ts` (`buildAutoFeatureNews`'s own filtering and
+  timestamp-floor behavior against hand-built fixtures, plus one assertion
+  against the real `APP_FEATURES`/`PRODUCT_NEWS` lists; the existing
+  "returns just the hand-maintained product news" `buildNewsFeed` case
+  updated to expect the spotlight batch too). Verified: `bun install`
+  (2260 packages), `bun run test` (178 files / 2753 tests, all pass — 4
+  new), `bun x turbo run typecheck` (13/13 in-scope package tasks pass),
+  and `bun run build:web` (`debate-ai-web` succeeds, `/news` route
+  present). **Completed:** 2026-08-26.
+
+- **News Stream — wire a sixth Community category: AI Coach Mode
+  sessions.** Closes the "a coaching session" half of the Known gap
+  `docs/features/news-stream.md` recorded after the prior "wire a fifth
+  Community category" run — that gap existed because `debate-round` (where
+  coaching sessions live) already depends on `debate-card-search` (where
+  News Stream lives), so a coaching-session source *inside*
+  `state/newsStream.ts` would need the reverse dependency, a cycle. Rather
+  than restructure the packages, this run gave `buildNewsFeed` an
+  `extraItems: NewsItem[] = []` parameter — its composition point for a
+  source this package can't produce itself — and added
+  `debate-round`'s own `state/coachingSessions.ts`'s `coachingSessionNews()`
+  (which that package can write, since it already depends on
+  `debate-card-search` for the `NewsItem` type), composed in at the one
+  place that already depends on both packages:
+  `apps/debate-ai.com/app/news/page.tsx`. `CoachingSessionRecord` gained an
+  additive, optional `createdAt` field, stamped by
+  `buildAndSaveCoachingSession` on generation, mirroring the prior run's
+  `EvidenceLibraryEntry.createdAt` convention (an existing session without
+  one is silently skipped rather than backdated). Since `page.tsx` exports
+  `metadata` and must stay a server component, the `extraItems` wiring
+  itself lives in a new client component, `NewsPageContent.tsx` — calling
+  `coachingSessionNews()` directly in its render body is safe (reads `[]`
+  server-side, the real persisted sessions once it hydrates in the
+  browser) because `NewsStreamPanel` never renders `extraItems` into the
+  DOM before its own mount effect runs, so there's no hydration mismatch.
+  `NewsStreamPanel` threads the new prop through a ref (not a `useEffect`
+  dependency), so a parent passing a fresh array literal each render
+  doesn't spuriously re-trigger its mount effect. Added a
+  `product-news-stream-coaching-sessions` entry to `PRODUCT_NEWS`,
+  mirroring the two prior "News Stream now posts X" announcements. No
+  follow-ups remain open on this gap. Vitest-covered in
+  `packages/debate-round/test/coachingSessions.test.ts` (the new
+  `createdAt` stamp and `coachingSessionNews()` — empty when nothing's
+  stored, skipping a session with no `createdAt`, one item per generated
+  session across rounds/sides) — `debate-card-search/test/newsStream.test.ts`
+  needed no new cases since `buildNewsFeed`'s existing tests already cover
+  every in-package source and `extraItems` defaults to `[]`. Full repo test
+  suite (2749 tests) and `typecheck` for both touched packages pass.
+
 - **News Stream — wire a fifth Community category: Argument Library
   submissions.** Closes the "a new Argument Library entry ... isn't wired
   in" half of the Known gap `docs/features/news-stream.md` recorded after
@@ -8791,7 +9057,7 @@ _No task currently in progress._
 
 4. **AI Response-Outcome Charts** — Use a panel of specialized models or “AI counsel” roles to evaluate likely response paths, map which arguments are most vulnerable, estimate where clash will occur, and visualize how different strategic choices may change likely round outcomes. _Status: first slices done (see Tracker Status above) — `debate-round` now has `scoreArgumentVulnerability`/`getArgumentVulnerabilityReport`/`summarizeOutcomeBySide`/`buildVulnerabilityChartData` for deriving a per-argument exposure score and chart-ready datasets directly from an already-flowed grid's existing clash signals (unanswered status, opposing responses, same-side extensions). A second slice, `vulnerabilityReports.ts` plus `VulnerabilityChartsPanel` (see Tracker Status above, "AI Response-Outcome Charts — chart/panel UI"), now persists a round's derived report and renders it as a per-side exposure summary and exposure chart at `/outcomes`, closing follow-up (b). A third slice, `applyHypotheticalAdjustments` plus the panel's "what if" picker (see Tracker Status above, "AI Response-Outcome Charts — 'what if' hypothetical mode"), now recomputes a chosen argument's score against a hypothetical extend/answer/concede choice, closing follow-up (c). A fourth slice (see Tracker Status above, "AI Response-Outcome Charts — AI counsel-panel call") added `flow/response-outcome-ai.ts`, `flow/response-outcome-client.ts`, and `state/counselPanelAssessments.ts`, wiring a "Get AI counsel panel" action into the panel that calls the existing `/api/reason-ai` Anthropic proxy for a real three-role ("Policy Counsel"/"Kritik Counsel"/"Weighing Counsel") assessment of each exposed argument's likely response path and clash point plus an overall clash summary, closing follow-up (a). No follow-ups remain open on this idea._
 
-5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. A third slice, `JudgeParadigmPickerPanel` (see Tracker Status above, "AI Judge Decision Modes — paradigm-picker UI"), now renders a picker UI at `/paradigms` for saving a round's built-in or custom paradigm, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Judge Decision Modes — real AI judge-decision call") added `debate-round`'s `round/judge-decision-ai.ts`, `round/judge-decision-client.ts`, `round/judge-decision-store-wiring.ts`, and `state/judgeDecisions.ts`, wiring an AI judge-decision call — composing `buildJudgeParadigmPrompt` with a round's flow summary and calling the existing `/api/reason-ai` Anthropic proxy — into a new `JudgeDecisionPanel` at `/judge-decision`, closing follow-up (a). No follow-ups remain open on this idea._
+5. **AI Judge Decision Modes** — Provide configurable AI judge personas that evaluate a completed practice round through different paradigms, such as flow judge, lay judge, policymaker, critic, educator, truth tester, or a user-created paradigm based on a real judge’s publicly provided preferences. _Status: first slices done (see Tracker Status above) — `debate-speech-writer` now has a `judgeParadigms` registry, `buildJudgeParadigmPrompt`, and `buildCustomJudgeParadigm`. A second slice, `judgeParadigmSelections.ts` (see Tracker Status above), now persists a round's selected `JudgeParadigm` to localStorage. A third slice, `JudgeParadigmPickerPanel` (see Tracker Status above, "AI Judge Decision Modes — paradigm-picker UI"), now renders a picker UI at `/paradigms` for saving a round's built-in or custom paradigm, closing follow-up (b). A fourth slice (see Tracker Status above, "AI Judge Decision Modes — real AI judge-decision call") added `debate-round`'s `round/judge-decision-ai.ts`, `round/judge-decision-client.ts`, `round/judge-decision-store-wiring.ts`, and `state/judgeDecisions.ts`, wiring an AI judge-decision call — composing `buildJudgeParadigmPrompt` with a round's flow summary and calling the existing `/api/reason-ai` Anthropic proxy — into a new `JudgeDecisionPanel` at `/judge-decision`, closing follow-up (a). No follow-ups remain open on this idea. A fifth slice (see Tracker Status above, "AI Judge Decision Modes — 'Get AI judge decision →' deep link from the Judge Paradigm Picker") added `buildJudgeDecisionDeepLink` and wired a same-named link from each saved paradigm selection straight into a pre-filled `/judge-decision` form, closing the "picking a paradigm doesn't itself invoke a judge decision" cross-tool gap noted in `docs/features/judge-paradigm-selections.md`._
 
 6. **Speech Transcript Summaries and Answers** — Transcribe a speech, identify its claims, warrants, impacts, evidence, and unanswered arguments, then produce a concise flow-oriented summary along with possible responses, cross-examination questions, and extension ideas. _Status: first slices done (see Tracker Status above) — `debate-round` now has `getFlowRowSummaries`/`getUnansweredFlowRows`/`buildFlowSummaryText`/`suggestCrossExamQuestions`/`suggestExtensionIdeas` for deriving a per-argument summary and drop/answer status directly from an already-flowed grid. A second slice, `flowSummaries.ts` (see Tracker Status above, "Speech Transcript Summaries and Answers — flow-summary persistence"), now persists a round's derived `FlowRowSummary[]` to localStorage. A third slice, `FlowSummariesPanel` (see Tracker Status above, "Speech Transcript Summaries and Answers — summary/cross-ex panel UI"), now renders every persisted flow summary, with suggested cross-exam questions and extension ideas for unanswered arguments, at `/summaries`, closing follow-up (b). A fourth slice (see Tracker Status above, "Speech Transcript Summaries and Answers — AI extraction from raw speech text") added `round/transcript-extraction-ai.ts` and `round/transcript-extraction-client.ts`, wiring a "Generate from raw speech text" form into `FlowSummariesPanel` that calls the existing `/api/reason-ai` Anthropic proxy to extract claim/warrant/impact/evidence arguments from a pasted transcript and appends them to that round's saved flow summary as synthetic `FlowRowSummary` rows, closing the AI-call half of follow-up (a). A fifth slice (see Tracker Status above, "Speech Transcript Summaries — microphone dictation for the transcript-extraction form") added `round/microphone-transcription.ts` and `hooks/useMicrophoneTranscription.ts`, wiring a "🎤 Record" button into `FlowSummariesPanel`'s transcript field that dictates directly into it via the browser's own Web Speech API, closing the remaining "recording" half of follow-up (a). No follow-ups remain open on this idea._
 
@@ -8810,7 +9076,7 @@ _No task currently in progress._
 
 13. **Coaching Programs and Group Challenges** — Enable coaches to create group coaching spaces with assigned drills, research sprints, practice rounds, shared feedback, progress tracking, and friendly challenges such as completing a set of blocks or winning a rebuttal exercise. _Status: first slices done (see Tracker Status above) — the "friendly challenges" half has `debate-card-search`'s `group-challenges.ts` (`buildGroupChallengeBoard`), and the coaching-space model tying it together has `debate-round`'s `coaching-program.ts` (`buildCoachingProgramBoard`), composing that group-challenge board with the existing Team Collaboration Mode topic sprint and AI Drill Generator drill sets per roster member. A second slice, `coachingPrograms.ts` (see Tracker Status above, "Coaching Program Persistence — localStorage config store"), now persists a `CoachingProgramConfig` to localStorage, closing follow-up (a). A third slice, `CoachingProgramsPanel` (see Tracker Status above, "Coaching Programs and Group Challenges — coaching-program config UI"), now renders a create-program form and every persisted program's roster at `/coaching-programs`, closing the config-management half of follow-up (b). A fourth slice, `GroupChallengesPanel` (see Tracker Status above, "Group Challenges — challenge-board/creation UI"), now renders a create-challenge form and every persisted `GroupChallenge` at `/cards/group-challenges`, closing the "Group Challenge Persistence" entry's follow-up (a). A fifth slice, `state/challengeWinEvents.ts` (see Tracker Status above, "Coaching Programs and Group Challenges — persisted challenge win events + live standings in the Group Challenges panel"), now persists `ChallengeWinEvent`s and composes them with the persisted challenge roster and real contribution feed into a live board, rendered as per-challenge standings (plus a "Record a win" action) in `GroupChallengesPanel`, closing the "persisted challenge win events" half of follow-up (b-continued). A sixth slice, `state/persistedCoachingProgramBoard.ts` plus `CoachingProgramsPanel`'s new "View board" action (see Tracker Status above, "Coaching Programs and Group Challenges — coaching-program board UI"), now composes a program's full `buildCoachingProgramBoard` — topic sprint, challenge standings, and (empty until a roundId-to-contributor mapping exists) member drills — entirely from persisted state for a chosen topic, closing the dashboard-view half of follow-up (b-continued). A seventh slice, `state/roundContributorFlows.ts` (see Tracker Status above, "Coaching Programs and Group Challenges — roundId-to-contributor mapping for member drill sets"), now persists each roster member's currently recorded, already-flowed practice round and feeds it into `buildPersistedCoachingProgramBoard`'s `memberFlows` by default, with a "Member flows" roster in `CoachingProgramsPanel` (a side-key input plus "Save current flow" action per member, reading the live round workspace's selected flow) to record it, closing the remaining "(b-continued, remaining)" follow-up. An eighth slice (see Tracker Status above, "Coaching Programs and Group Challenges — member practice-round setup/feedback wiring") added `round/coaching-program.ts`'s `CoachingProgramMemberPracticeRound`/`memberPracticeRounds` and `state/roundContributorFlows.ts`'s `buildCoachingProgramMemberPracticeRounds`, joining each roster member's already-recorded `roundId` against `state/practiceRounds.ts`'s existing `PracticeRoundRecord` store (no new contributorId-keyed store was needed) and surfacing a "Practice round recorded"/"Practice round + feedback" badge per member in `CoachingProgramsPanel`, closing follow-up (c). No follow-ups remain open on this idea._
 
-14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). A third slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut wiring") wired real keyboard shortcuts into the live `reason-editor` document — `Mod-Shift-K` insert short cite, `Mod-Shift-D` condense to read text, `Alt-ArrowUp`/`Alt-ArrowDown` move a heading's section, `Mod-Shift-E` toggle emphasis (via the schema's own mark rather than the raw-HTML helper) — plus matching "+Cite"/"Condense" toolbar buttons and a Move ↑/↓ button pair per heading in the outline nav panel, closing follow-up (a). A fourth slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — send-to-speech-document command") added `reason-editor`'s `engine/speech-document.ts` and `state/speechDocuments.ts`, wiring a `Mod-Shift-S` keyboard shortcut and "→Speech" toolbar button that send the live selection to a named, persisted `SpeechDocument` (find-or-create by title), plus a `SpeechDocumentsPanel` at `/speech-documents`, closing follow-up (b). No follow-ups remain open on this idea._
+14. **Legacy Verbatim / Cardmirror Compatibility** — Offer optional keyboard shortcuts that mirror familiar Verbatim and paperless-debate workflows, including sending selected evidence to a speech document, formatting citations, condensing cards, emphasizing text, and moving headings. _Status: first slices done (see Tracker Status above) — `debate-card-parser` now has `condenseCardHtml`, `formatShortCiteTag`, and `moveOutlineNode` for condensing a card to its underlined "read" text, formatting a short cite tag, and reordering outline nodes. A second slice, `toggleEmphasisHtml` (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — text-emphasize command"), now toggles `<mark>` emphasis over a visible-text selection range, closing follow-up (c). A third slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — editor keyboard-shortcut wiring") wired real keyboard shortcuts into the live `reason-editor` document — `Mod-Shift-K` insert short cite, `Mod-Shift-D` condense to read text, `Alt-ArrowUp`/`Alt-ArrowDown` move a heading's section, `Mod-Shift-E` toggle emphasis (via the schema's own mark rather than the raw-HTML helper) — plus matching "+Cite"/"Condense" toolbar buttons and a Move ↑/↓ button pair per heading in the outline nav panel, closing follow-up (a). A fourth slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — send-to-speech-document command") added `reason-editor`'s `engine/speech-document.ts` and `state/speechDocuments.ts`, wiring a `Mod-Shift-S` keyboard shortcut and "→Speech" toolbar button that send the live selection to a named, persisted `SpeechDocument` (find-or-create by title), plus a `SpeechDocumentsPanel` at `/speech-documents`, closing follow-up (b). A fifth slice (see Tracker Status above, "Legacy Verbatim / Cardmirror Compatibility — correct `legacy-verbatim-shortcuts.md` for the live CardMirror editor") rewrote that doc, which still described the "third slice" `Mod-Shift-*` shortcuts above as if they ran in the shipped app: `/reason-editor` has rendered `debate-editor-cardmirror`, not the `reason-editor` TipTap package those shortcuts were wired into, since PR #338 — the doc now documents CardMirror's own, considerably larger native Verbatim-parity command set (F8/F9/F10, the F3 condense family, Mod-Alt-Arrow move-container, Alt-F8 copy-previous-cite, Mod-Shift-x AI cite) that makes the `Mod-Shift-*` set redundant rather than missing, with one genuine (not just stale-doc) gap identified: no pure "insert a short cite tag at the cursor" command exists in CardMirror. No further follow-ups remain open on this idea._
 
 15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slices done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. A third slice, `FlowAnnotationsPanel` (see Tracker Status above, "Flow-in-Speech Flow Annotations — video-player annotation UI"), now renders a drop-annotation form wired to the `debate-videos` persistent player's live playback position plus every persisted annotation with a "Jump to" action back into the player, at `/annotations`, closing follow-up (a). A fourth slice (see Tracker Status above, "Flow-in-Speech Flow Annotations — `FlowSpreadsheet` annotation affordance") added `flow/annotation-cells.ts` and `flow/AnnotationBadge.tsx`, wiring a per-cell annotation badge (with the same "Jump to" mechanism) into `FlowSpreadsheet` via a new `flow/AnnotationCellRenderer.tsx` and the existing `FirstColumnCellRenderer.tsx`, closing follow-up (b). No follow-ups remain open on this idea._
 

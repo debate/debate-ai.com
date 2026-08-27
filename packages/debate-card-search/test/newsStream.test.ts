@@ -7,7 +7,8 @@ import {
   markNewsItemRead,
   toggleNewsItemLiked,
 } from "../src/state/newsStream";
-import { PRODUCT_NEWS } from "../src/lib/news-stream";
+import { PRODUCT_NEWS, buildAutoFeatureNews, sortNewsFeed } from "../src/lib/news-stream";
+import { APP_FEATURES } from "debate-ui/src/features/feature-catalog";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
 import { saveGroupChallenge } from "../src/state/groupChallenges";
 import { recordChallengeWinEvent } from "../src/state/challengeWinEvents";
@@ -39,9 +40,58 @@ beforeEach(() => {
   (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
 });
 
+describe("buildAutoFeatureNews", () => {
+  it("skips a feature whose href a hand-curated item already covers", () => {
+    const items = buildAutoFeatureNews(
+      [{ id: "reason-editor", title: "Reason Editor", description: "...", href: "/reason-editor", category: "workspaces" }],
+      [{ id: "p1", category: "product", title: "Ship", body: "...", timestamp: 1000, href: "/reason-editor" }],
+    );
+    expect(items).toEqual([]);
+  });
+
+  it("spotlights a feature no hand-curated item covers", () => {
+    const items = buildAutoFeatureNews(
+      [{ id: "drills", title: "Practice Drills", description: "Quick practice drills.", href: "/drills", category: "practice" }],
+      [{ id: "p1", category: "product", title: "Ship", body: "...", timestamp: 1000, href: "/reason-editor" }],
+    );
+    expect(items).toEqual([
+      {
+        id: "auto-feature-drills",
+        category: "product",
+        title: "Tool spotlight: Practice Drills",
+        body: "Quick practice drills.",
+        timestamp: 999,
+        href: "/drills",
+      },
+    ]);
+  });
+
+  it("sorts every spotlight below the oldest hand-curated item, regardless of announced order", () => {
+    const announced = [
+      { id: "p1", category: "product" as const, title: "Ship", body: "...", timestamp: 5000, href: "/a" },
+      { id: "p2", category: "product" as const, title: "Ship 2", body: "...", timestamp: 1000, href: "/b" },
+    ];
+    const [spotlight] = buildAutoFeatureNews(
+      [{ id: "drills", title: "Practice Drills", description: "...", href: "/drills", category: "practice" }],
+      announced,
+    );
+    expect(spotlight.timestamp).toBeLessThan(1000);
+  });
+
+  it("finds every real APP_FEATURES entry an uncovered href against the real PRODUCT_NEWS list", () => {
+    const items = buildAutoFeatureNews();
+    // Every real catalog entry not already covered by a hand-curated href gets exactly one spotlight.
+    const coveredHrefs = new Set(PRODUCT_NEWS.map((item) => item.href));
+    const expectedCount = APP_FEATURES.filter((feature) => !coveredHrefs.has(feature.href)).length;
+    expect(items).toHaveLength(expectedCount);
+    expect(items.every((item) => item.category === "product")).toBe(true);
+    expect(new Set(items.map((item) => item.id)).size).toBe(items.length);
+  });
+});
+
 describe("buildNewsFeed", () => {
-  it("returns just the hand-maintained product news when nothing else is persisted", () => {
-    expect(buildNewsFeed()).toEqual(PRODUCT_NEWS.slice().sort((a, b) => b.timestamp - a.timestamp));
+  it("returns the hand-maintained product news plus an auto tool spotlight for every uncovered catalog entry when nothing else is persisted", () => {
+    expect(buildNewsFeed()).toEqual(sortNewsFeed([...PRODUCT_NEWS, ...buildAutoFeatureNews()]));
   });
 
   it("includes a contributor's freshly earned streak milestone as a community item", () => {
@@ -161,6 +211,50 @@ describe("buildNewsFeed", () => {
     saveEvidenceLibraryEntry(entry);
 
     expect(buildNewsFeed().find((news) => news.id === "argument-library-entry-entry-legacy")).toBeUndefined();
+  });
+
+  it("caps sprint notes to the most recent MAX_COMMUNITY_ITEMS_PER_SOURCE, dropping older ones", () => {
+    for (let i = 0; i < 25; i++) {
+      saveSprintNote({
+        id: `note-${i}`,
+        topic: "Immigration",
+        authorId: "erin",
+        text: `Note ${i}`,
+        status: "open",
+        createdAt: i,
+        updatedAt: i,
+      });
+    }
+
+    const feed = buildNewsFeed();
+    const sprintNoteItems = feed.filter((item) => item.id.startsWith("sprint-note-"));
+    expect(sprintNoteItems).toHaveLength(20);
+    // The 20 most recent (highest createdAt) survive; the oldest 5 don't.
+    expect(feed.find((item) => item.id === "sprint-note-note-24")).toBeDefined();
+    expect(feed.find((item) => item.id === "sprint-note-note-4")).toBeUndefined();
+  });
+
+  it("caps Argument Library entries to the most recent MAX_COMMUNITY_ITEMS_PER_SOURCE, dropping older ones", () => {
+    for (let i = 0; i < 25; i++) {
+      saveEvidenceLibraryEntry({
+        id: `entry-${i}`,
+        argBlock: "Warming DA",
+        wordCount: 4,
+        topic: "Energy Policy",
+        caseArea: "DA",
+        tags: [],
+        kind: "block",
+        text: `Entry ${i}`,
+        cite: "",
+        createdAt: i,
+      });
+    }
+
+    const feed = buildNewsFeed();
+    const entryItems = feed.filter((item) => item.id.startsWith("argument-library-entry-"));
+    expect(entryItems).toHaveLength(20);
+    expect(feed.find((item) => item.id === "argument-library-entry-entry-24")).toBeDefined();
+    expect(feed.find((item) => item.id === "argument-library-entry-entry-4")).toBeUndefined();
   });
 
   it("sorts every category newest first together", () => {

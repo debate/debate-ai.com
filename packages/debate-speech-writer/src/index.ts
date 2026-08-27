@@ -141,6 +141,7 @@ export {
 export { CoachMaterialsPanel } from "./panels/CoachMaterialsPanel";
 
 export {
+  buildJudgeDecisionDeepLink,
   buildJudgeParadigmSelectionsPanelView,
   deleteJudgeParadigmSelection,
   getJudgeParadigmSelection,

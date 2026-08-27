@@ -35,9 +35,12 @@
  * `createdAt` its submitting panel stamps on first save
  * straight to a `NewsItem`, rendered via `shared-evidence-library.ts`'s new
  * `buildEvidenceEntryAnnouncementText`. The gap's other half — a coaching
- * session — stays open: it lives in `debate-round`, which already depends
- * on this package, so sourcing a news item from it here would need the
- * reverse dependency, a cycle this package can't take on.
+ * session — closes not by adding a source function here (it lives in
+ * `debate-round`, which already depends on this package, so sourcing a news
+ * item from it here would need the reverse dependency, a cycle this
+ * package can't take on) but via `buildNewsFeed`'s new `extraItems`
+ * parameter: `debate-round`'s `state/coachingSessions.ts` produces its own
+ * `coachingSessionNews()`, composed in at the app layer instead.
  *
  * Read/like state is local to this feed (not shared with `contributions.ts`'s
  * like counts, which track a card's community helpfulness rather than
@@ -45,10 +48,22 @@
  * `newsStreamViewerState` key, mirroring `contributorAvailability.ts`'s
  * per-viewer localStorage convention.
  *
+ * `sprintNoteNews()` and `argumentLibraryNews()` close the "no volume
+ * control" Known gap recorded in `docs/features/news-stream.md`: unlike the
+ * streak/challenge/revision sources (naturally bounded to at most one event
+ * per contributor per milestone, per challenge, or per day), a sprint note
+ * or an Argument Library entry is posted every single time one is logged or
+ * submitted, so a very active topic sprint or a busy submission period
+ * could otherwise flood the feed. Both cap themselves to the
+ * `MAX_COMMUNITY_ITEMS_PER_SOURCE` most recent records via `mostRecentBy`
+ * — a feed-projection cap, not a store cap: nothing is deleted from
+ * `sprintNotes.ts`/`evidenceLibraryEntries.ts`, older records just stop
+ * appearing in this feed once newer ones push past the limit.
+ *
  * @module state/newsStream
  */
 
-import { PRODUCT_NEWS, sortNewsFeed, type NewsItem } from "../lib/news-stream";
+import { PRODUCT_NEWS, buildAutoFeatureNews, sortNewsFeed, type NewsItem } from "../lib/news-stream";
 import { listAnnouncedDailyBestCards } from "./dailyBestCardAnnouncements";
 import { listAnnouncedContributorAwards } from "./contributorAwardAnnouncements";
 import { buildDailyBestCardHighlight } from "../lib/daily-best-card";
@@ -124,9 +139,22 @@ function revisionIncentiveNews(): NewsItem[] {
   }));
 }
 
-/** Turns every persisted Team Collaboration Mode sprint note into a `NewsItem` — no derivation needed, a note is already the event. */
+/**
+ * Caps a source's persisted history to this feed's most recent
+ * `MAX_COMMUNITY_ITEMS_PER_SOURCE` records before mapping to `NewsItem`s —
+ * see the module doc comment above. `sortNewsFeed` re-sorts the whole feed
+ * afterward, so which records survive the cap (not their order here) is
+ * all that matters.
+ */
+const MAX_COMMUNITY_ITEMS_PER_SOURCE = 20;
+
+function mostRecentBy<T>(items: T[], timestampOf: (item: T) => number, limit: number): T[] {
+  return [...items].sort((a, b) => timestampOf(b) - timestampOf(a)).slice(0, limit);
+}
+
+/** Turns the most recent persisted Team Collaboration Mode sprint notes into `NewsItem`s — no derivation needed, a note is already the event. */
 function sprintNoteNews(): NewsItem[] {
-  return listSprintNotes().map((note) => ({
+  return mostRecentBy(listSprintNotes(), (note) => note.createdAt, MAX_COMMUNITY_ITEMS_PER_SOURCE).map((note) => ({
     id: `sprint-note-${note.id}`,
     category: "community" as const,
     title: `${note.authorId} added a "${note.topic}" prep note`,
@@ -137,26 +165,29 @@ function sprintNoteNews(): NewsItem[] {
 }
 
 /**
- * Turns every "live" (not held back by an in-progress peer review) persisted
- * Argument Library entry that carries a `createdAt` into a `NewsItem` — no
- * derivation needed, a submitted entry is already the event. An entry
- * persisted before `createdAt` existed has none and is silently skipped
- * rather than backdated to an arbitrary time.
+ * Turns the most recent "live" (not held back by an in-progress peer
+ * review) persisted Argument Library entries that carry a `createdAt` into
+ * `NewsItem`s — no derivation needed, a submitted entry is already the
+ * event. An entry persisted before `createdAt` existed has none and is
+ * silently skipped rather than backdated to an arbitrary time; the recency
+ * cap is applied after that filter, so it always keeps the
+ * `MAX_COMMUNITY_ITEMS_PER_SOURCE` most recently *timestamped* entries.
  */
 function argumentLibraryNews(): NewsItem[] {
-  return listEvidenceLibraryEntries()
-    .filter((entry): entry is EvidenceLibraryEntry & { createdAt: number } => entry.createdAt !== undefined && isEntryLive(entry.id))
-    .map((entry) => ({
-      id: `argument-library-entry-${entry.id}`,
-      category: "community" as const,
-      title:
-        entry.kind === "card"
-          ? `New card added to the Argument Library: "${entry.argBlock}"`
-          : `New analytic block added to the Argument Library: "${entry.argBlock}"`,
-      body: buildEvidenceEntryAnnouncementText(entry),
-      timestamp: entry.createdAt,
-      href: "/cards/argument-library",
-    }));
+  const live = listEvidenceLibraryEntries().filter(
+    (entry): entry is EvidenceLibraryEntry & { createdAt: number } => entry.createdAt !== undefined && isEntryLive(entry.id),
+  );
+  return mostRecentBy(live, (entry) => entry.createdAt, MAX_COMMUNITY_ITEMS_PER_SOURCE).map((entry) => ({
+    id: `argument-library-entry-${entry.id}`,
+    category: "community" as const,
+    title:
+      entry.kind === "card"
+        ? `New card added to the Argument Library: "${entry.argBlock}"`
+        : `New analytic block added to the Argument Library: "${entry.argBlock}"`,
+    body: buildEvidenceEntryAnnouncementText(entry),
+    timestamp: entry.createdAt,
+    href: "/cards/argument-library",
+  }));
 }
 
 /**
@@ -164,15 +195,33 @@ function argumentLibraryNews(): NewsItem[] {
  * every announced Daily Best Card winner, Contributor Awards standings,
  * quest-streak milestone crossing, completed group challenge, top daily
  * Revision Incentives earner, logged Team Collaboration Mode sprint note,
- * and newly submitted Argument Library entry — newest first. Reads several
- * other localStorage stores (via the modules imported above) in addition to
- * this module's own — safe to call server-side or during SSR, since each
- * underlying store already guards its own `localStorage` access and returns
- * an empty list when unavailable.
+ * newly submitted Argument Library entry, and any caller-supplied
+ * `extraItems` — newest first. Reads several other localStorage stores (via
+ * the modules imported above) in addition to this module's own — safe to
+ * call server-side or during SSR, since each underlying store already
+ * guards its own `localStorage` access and returns an empty list when
+ * unavailable.
+ *
+ * `extraItems` is this feed's composition point for a source that would
+ * otherwise need a dependency this package can't take without a cycle —
+ * `debate-round`'s coaching sessions are the first such source: that
+ * package already depends on this one, so it produces its own `NewsItem[]`
+ * (`state/coachingSessions.ts`'s `coachingSessionNews()`) and the app layer
+ * (`apps/debate-ai.com/app/news/page.tsx`, which already depends on both
+ * packages) passes it in here rather than this module reaching back into
+ * `debate-round`.
+ *
+ * Also folds in `lib/news-stream.ts`'s `buildAutoFeatureNews()` — a
+ * generic "Tool spotlight" post for every `APP_FEATURES` catalog entry
+ * `PRODUCT_NEWS` doesn't already cover by `href` — so every tool has some
+ * presence in the feed even before anyone hand-writes a real announcement
+ * for it.
  */
-export function buildNewsFeed(): NewsItem[] {
+export function buildNewsFeed(extraItems: NewsItem[] = []): NewsItem[] {
   return sortNewsFeed([
     ...PRODUCT_NEWS,
+    ...buildAutoFeatureNews(),
+    ...extraItems,
     ...dailyBestCardNews(),
     ...contributorAwardsNews(),
     ...questStreakMilestoneNews(),

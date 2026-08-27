@@ -1,85 +1,117 @@
-# Legacy Verbatim / Cardmirror Compatibility — send-to-speech-document command
+# Speech Documents — a history of what CardMirror actually sent
 
-Gives `reason-editor` a real "speech document" send target and wires a
-"send selected evidence" command into the live editor — closing follow-up
-(b) under idea #14 ("Legacy Verbatim / Cardmirror Compatibility") in
-`TODO.md`'s Product Feature Ideas list: "a 'send selected evidence to a
-speech document' command", the last open gap noted in
-[`legacy-verbatim-shortcuts.md`](./legacy-verbatim-shortcuts.md#known-gaps).
+`/speech-documents` shows a durable, listable history of everything the
+live Reason Editor has sent into a designated "speech doc" pane — closing a
+disconnect found by a "make sure every tool is well-integrated in the live
+UI" audit: this page (and its own `/tools` card) described `Mod-Shift-S` /
+a "→Speech" toolbar button sending text into a persisted, find-or-create-by-
+title `SpeechDocument` record. That was true of the *prior*, TipTap-based
+`reason-editor` package. `/reason-editor` now renders `debate-editor`'s
+shim to `debate-editor-cardmirror` — the ported-in CardMirror ProseMirror
+engine that replaced it (see that package's `src/index.tsx`) — whose
+send-to-speech feature works completely differently (below), and never
+wrote to the old package's store. Following the old UI copy in the live
+app did nothing: the page was permanently empty no matter what a user did
+in `/reason-editor`.
 
-- **Route:** `/speech-documents` (view/manage) — send from any
-  `reason-editor` document (e.g. `/reason-editor`)
-- **Package:** [`reason-editor`](../../packages/reason-editor/README.md)
+- **Route:** `/speech-documents` (view/manage history) — send from any
+  CardMirror document (e.g. `/reason-editor`)
+- **Package:** [`debate-editor-cardmirror`](../../packages/debate-editor-cardmirror)
+  (the send mechanism and its history log); `apps/debate-ai.com/app/speech-documents`
+  (the page)
 - **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
   Workspace menu (`t speech documents` in Ctrl/Cmd-Shift-Space's command
   palette)
 
-## What a "speech document" is
+## How sending actually works in the live editor
 
-A `SpeechDocument` is a lightweight, ordered collection of evidence
-`SpeechDocumentBlock`s a debater has sent from a source document (a card,
-a research note, a condensed "read" selection) toward the speech they're
-building — a staging area, not a replacement for the full CardMirror
-document model, and not the same thing as the app's separate, DB-backed
-`/api/doc/documents` document store used by `/reason-editor` and `/doc`.
-Each block records its trimmed text, when it was added, and (optionally)
-a `sourceLabel` — the document it was sent from.
+CardMirror's speech-doc feature is a **pane-designation** model, not a
+named-document registry — there is no "create a speech document" dialog to
+fill out a title into. Instead:
 
-## Sending a selection
+1. **Mark a pane as the speech doc** — File menu → Speech → "Mark /
+   Unmark Active Doc as the Speech Doc" (`speech-doc-registry.ts`), or
+   "New Speech Document" to start a fresh one already marked. (These
+   commands also have a dedicated toolbar row, `#speech-stack`, but it's
+   CSS-gated to CardMirror's multi-pane/multi-window shells — the plain
+   single-doc `/reason-editor` route reaches them through the File menu
+   instead.)
+2. From any *other* open document, **send** the current selection (or,
+   with no selection, the card/section the cursor is in) with the
+   backtick key (` at cursor) or Alt-backtick (at the doc's end) —
+   `speech-doc-send.ts`'s `sendToSpeech`. A live ProseMirror slice is
+   inserted directly into the designated pane's document — same-window,
+   or cross-tab via `BroadcastChannel` + a shared `localStorage` uid
+   (`pmd-speech-uid`) when the speech doc is open in another tab.
+3. **Select which pane is the speech doc** — File menu → Speech →
+   "Select Speech Document," when more than one candidate is open.
 
-- **Keyboard shortcut:** `Mod-Shift-S` with a text selection active.
-- **Toolbar button:** "→Speech".
+The speech doc IS just an ordinary open Reason document — CardMirror keeps
+no separate copy of it. That model has no natural "list every speech
+document" view: asking it to enumerate documents makes no more sense than
+asking `/reason-editor`'s own sidebar to.
 
-Both call `sendSelectionToSpeechDocumentViaPrompt`, which:
+## What this page actually shows
 
-1. Reads the selected text (`editor.state.doc.textBetween`); a blank
-   selection is a no-op.
-2. Prompts for a target document title.
-3. Finds an existing speech document with a matching title
-   (case-insensitive) or creates one, appends the selection as a new
-   block (tagged with the editor's `exportName` as `sourceLabel`), and
-   persists the result.
-4. Confirms with a short alert (`Sent to speech document "<title>" (<n>
-   blocks).`) — the result isn't otherwise visible from the editor.
+What the pane model *is* missing is a durable, glanceable record of what
+got sent, independent of whichever pane happens to be open right now —
+so rather than resurrecting a rival document-record concept, `/speech-
+documents` shows exactly that: a **send log**, not a document list.
 
-`Mod` is Ctrl on Windows/Linux, Cmd on macOS.
-
-## Viewing and managing speech documents
-
-`SpeechDocumentsPanel` (mounted at `/speech-documents`) lists every
-persisted speech document, its blocks (with source label and a per-block
-"Remove" action), a plain-text preview (`buildSpeechDocumentText` — blocks
-joined by a blank line, each prefixed `[source]` when tagged), and a
-per-document "Delete" action.
+`insertSpeechSlice` (`speech-doc-send.ts`) is the single call point shared
+by an in-window send, a cross-tab receive, and (were Electron wired up) a
+cross-window receive, so recording there — right after a successful
+dispatch — captures every path exactly once, with no separate "did this
+already get logged" tracking needed. It logs the plain text of what
+actually landed (from the same `rewritten` slice that gets inserted), not
+a second copy of the document.
 
 ## Data flow
 
 ```
-reason-editor/src/engine/speech-document.ts
-  → createSpeechDocument(id, title)
-  → buildSpeechDocumentBlock(id, text, addedAt, sourceLabel?)  — null for blank text
-  → appendSpeechDocumentBlock(doc, block)   — pure
-  → removeSpeechDocumentBlock(doc, blockId) — pure
-  → buildSpeechDocumentText(doc)            — plain-text render
+debate-editor-cardmirror/src/editor/speech-doc-registry.ts
+  → getSpeechDocResolver() — designates one open pane's uid as the speech doc
 
-reason-editor/src/state/speechDocuments.ts   (localStorage, "reasonEditorSpeechDocuments")
-  → listSpeechDocuments / getSpeechDocument / findSpeechDocumentByTitle
-  → saveSpeechDocument / deleteSpeechDocument / removeSpeechDocumentBlockAndSave
-  → sendSelectionToSpeechDocument(title, text, sourceLabel, idFactory, now)
-      — find-or-create by title, then build+append+save a block
+debate-editor-cardmirror/src/editor/speech-doc-send.ts
+  → sendToSpeech(view, atEnd)     — ` / Alt-` keys, ribbon buttons
+  → insertSpeechSlice(...)        — shared landing path (in-window / cross-tab / Electron)
+      → buildSpeechSendLogEntry(text, atEnd, id, sentAt)  — pure, null for blank text
+      → speechSendLogStore.add(entry)                     — records the send
 
-reason-editor/src/react/verbatim-shortcuts-extension.ts
-  → sendSelectionToSpeechDocumentViaPrompt(editor, sourceLabel?)
-      — the Mod-Shift-S handler + "→Speech" toolbar action
+debate-editor-cardmirror/src/editor/speech-send-log.ts   (IndexedDB, "speech-send-log")
+  → buildSpeechSendPreview / buildSpeechSendLogEntry      — pure
+  → appendSpeechSendLogEntry / removeSpeechSendLogEntry   — pure, cap MAX_SPEECH_SEND_LOG_ENTRIES
+  → sanitizeSpeechSendLog                                 — pure, tolerates malformed persisted data
+  → speechSendLogStore                                    — WebSharedStore-backed, cross-tab synced
 
-reason-editor/src/react/Toolbar.tsx        → "→Speech" button
-reason-editor/src/react/SpeechDocumentsPanel.tsx → the panel above
+debate-editor-cardmirror's `/engine` entry point re-exports the above —
+no ProseMirror or React in this module, so a plain page component can
+import it without pulling in the editor bundle.
+
+apps/debate-ai.com/app/speech-documents/SpeechSendLogPanel.tsx
+  → reads/subscribes to speechSendLogStore, newest first
+  → per-entry Remove, and a Clear history action
 apps/debate-ai.com/app/speech-documents/page.tsx → mounts the panel
 ```
 
 ## Known gaps
 
-None open on idea #14 — this closes its last named follow-up. Out of
-scope for this slice (not started): exporting a speech document as a
-read-ready script/`.docx`, and wiring it into the app's DB-backed document
-store instead of localStorage.
+The old `reason-editor` (TipTap) package's `SpeechDocumentsPanel` /
+`state/speechDocuments.ts` find-or-create-by-title store is no longer used
+anywhere in the app (`apps/debate-ai.com/package.json`'s `reason-editor`
+dependency was dropped along with the only import of it) — the package
+itself still exists in the monorepo as a standalone workspace package, not
+yet deleted outright; a future slice could remove it entirely if nothing
+else is found depending on it.
+
+Out of scope for this slice (not started): grouping send-log entries by
+which document they landed in (today's log is one global history, not
+per-speech-doc — CardMirror's session uids aren't stable across reloads,
+so there's no persisted "document identity" to group by yet), and
+exporting the log as a read-ready script/`.docx`.
+
+`legacy-verbatim-shortcuts.md` had the same "describes the old
+`reason-editor` package as if it were live at `/reason-editor`" staleness
+this doc had — out of scope for this slice (this one's gap was
+specifically the speech-doc send target) — and has since been corrected
+in its own slice to document CardMirror's real, live shortcut set.
