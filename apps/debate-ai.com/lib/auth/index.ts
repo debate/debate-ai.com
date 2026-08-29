@@ -77,6 +77,25 @@ async function buildAuth() {
       schema,
     }),
     socialProviders: buildSocialProviders(),
+    // A visitor can reach this app through several sign-in methods that share
+    // one email (Google, Discord, LinkedIn, magic link), and the same person
+    // is expected to end up as one account. By default better-auth refuses to
+    // link a new provider onto an existing account unless that account's
+    // local `emailVerified` flag is already true — and Discord's own profile
+    // response doesn't always report a verified email, so an account created
+    // there stays unverified and every later sign-in attempt for the same
+    // person (Google One Tap included) fails closed with a 401 "account not
+    // linked" error, even though the incoming identity is independently
+    // verified. Every method this app offers already proves control of the
+    // email out of band (an OAuth provider you're logged into, or a magic
+    // link sent to the inbox), so relaxing this is safe here.
+    account: {
+      accountLinking: {
+        enabled: true,
+        requireLocalEmailVerified: false,
+        trustedProviders: ["google", "discord", "linkedin"],
+      },
+    },
     emailVerification: {
       sendOnSignUp: false,
       autoSignInAfterVerification: true,

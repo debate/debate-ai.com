@@ -43,6 +43,13 @@
       "when": 1787707017619,
       "tag": "0005_green_redwing",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1787915235599,
+      "tag": "0006_ordinary_wallop",
+      "breakpoints": true
     }
   ]
 }

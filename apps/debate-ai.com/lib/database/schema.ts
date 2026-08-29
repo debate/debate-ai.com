@@ -9,6 +9,14 @@ export const user = sqliteTable("user", {
   image: text("image"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  // Required by better-auth's `anonymous` plugin, which reads and writes this
+  // column on every sign-in/sign-up/callback path (one-tap included) to
+  // detect and clean up anonymous sessions once they resolve to a real user.
+  // Without this column the drizzle adapter throws — "field does not exist in
+  // the schema" — inside that plugin's post-sign-in hook, which fails every
+  // first-time sign-in through those paths (verified with a local repro:
+  // magic-link and anonymous sign-in both throw this on the pre-fix schema).
+  isAnonymous: integer("is_anonymous", { mode: "boolean" }).notNull().default(false),
 });
 
 export const session = sqliteTable("session", {
