@@ -114,15 +114,56 @@
 - ⌨️ **Keyboard Navigation**: efficient keyboard shortcuts for power users
 - 💬 **Research Quotes**: capture and organize key quotes and insights from your research
 
-## Reimagine the Internet as Self-Organizing Mind Map
+## Features & Tools List
 
-1. **The Debate Singularity is Happening.** AI systems can already assist with research, summarization, flaw detection, and comparative argument analysis, and prior debate-focused systems have shown that computational tools can support live argumentative tasks (Lippi & Torroni, n.d.; Association for Computational Linguistics, 2023). In this paper, the “singularity” does not mean full automation of judgment; it means the rapid convergence of debate practice, knowledge organization, and machine-assisted reasoning into one workflow.
-2. **Collective Thought Engine.** Crowdsourced research can be represented as a weighted argument space where claims gain influence through reuse, support, contestation, and contextual relevance (Bikakis et al., 2023). This turns debate from a sequence of isolated rounds into a shared reasoning substrate in which public arguments can be compared at scale.
-3. **Transparent Reasoning.** Argumentative AI is most useful when users can inspect the exact sentences, citations, and inferential steps behind an output, a principle aligned with work on contestable human-AI decision-making and explainability (Xiao & Greer, 2023). A debate-native system should therefore expose not just conclusions, but the evidence path that produced them.
-4. **Outcome Simulation Trees.** Users should be able to model likely responses, counterarguments, and downstream consequences across multiple branches of a controversy (Homer-Dixon & Karapin, 1989). This extends debate preparation into a formal simulation environment for testing which lines of reasoning remain persuasive across audiences and contexts.
-5. **Outlines of Current News Issues.** The most practical use case is live news outlines. Each article, quote, or claim becomes part of a topic tree, allowing users to track how a story evolves, where the main disagreements are, and which warrants support each side.
-6. **Solving Post-Self Alignment.** Modern discourse is fragmented by platform incentives, ideological sorting, and partial information environments. A shared debate outline can function as a corrective by placing opposed claims into one visible structure, making disagreement legible without reducing it to caricature.
-7. **Topic Research Unified Tree Hierarchy (TRUTH).** We call the resulting structure the Topic Research Unified Tree Hierarchy, or TRUTH: a hierarchical representation of issues, claims, evidence, and value conflicts. TRUTH is designed to help models identify overstatement, missing warrants, and unsupported leaps while grounding outputs in a common research map.
+- [Reason Editor](https://beta.debate-ai.com/reason-editor) — Draft and organize debate cards and outlines in the native REASON document editor, saved to your own account.
+- [Debate Docs](https://beta.debate-ai.com/doc) — Write annotated summaries and case outlines in the REASON Docs research editor.
+- [Research Workspace](https://beta.debate-ai.com/research) — Run squad research end to end: topic coverage, evidence library, task routing, quests, leaderboards, and peer review.
+- [Community Research Hub](https://beta.debate-ai.com/community-hub) — Search shared research, collaboration, pre-round, and practice spaces across the community.
+- [Coach Workspace](https://beta.debate-ai.com/coach) — Coach rounds using argument trees, flow summaries, drills, scouting, briefings, and practice tools.
+- [Leaderboard](https://beta.debate-ai.com/cards/leaderboard) — Rank contributors by helpfulness score, tier, badges, and quest streak.
+- [News Stream](https://beta.debate-ai.com/news) — View product updates, community announcements, Daily Best Card winners, and Contributor Award standings.
+- [Contributions Feed](https://beta.debate-ai.com/cards/contributions) — Submit, like, save, and endorse community cards, summaries, highlights, and annotations.
+- [Contributor Awards](https://beta.debate-ai.com/cards/awards) — See helpfulness-ranked category winners such as best evidence finder and best explainer.
+- [Daily Best Card](https://beta.debate-ai.com/cards/best-card) — View today’s highest-helpfulness card and previous daily winners.
+- [Task Inbox](https://beta.debate-ai.com/cards/inbox) — Review research tasks routed to contributors and grouped by topic.
+- [Progress](https://beta.debate-ai.com/cards/progress) — Track contributor tiers, badges, unlocked task levels, and daily-quest streaks.
+- [Evidence Library](https://beta.debate-ai.com/cards/library) — Search shared cut cards and reusable analytics by keyword, citation, argument, topic, or tag.
+- [LLM Card Scoring](https://beta.debate-ai.com/cards/scoring) — Score cards for relevance, clarity, uniqueness, evidence quality, and usability.
+- [Revision Incentives](https://beta.debate-ai.com/cards/revisions) — Rank contributors by points earned improving weak cards, citations, and stale evidence.
+- [Review Queue](https://beta.debate-ai.com/cards/reviews) — Move submitted cards through draft, review, requested changes, approval, and publication.
+- [Argument Library](https://beta.debate-ai.com/cards/argument-library) — Browse shared research by topic folders, case areas, and tag-based collections.
+- [Group Challenges](https://beta.debate-ai.com/cards/group-challenges) — Create squad challenges based on contribution counts or recorded rebuttal wins.
+- [Topic Coverage Dashboard](https://beta.debate-ai.com/cards/coverage) — Identify missing, thin, covered, and untracked arguments by card and word count.
+- [Collaboration Prep Room](https://beta.debate-ai.com/cards/prep-room) — Share a topic-specific prep space for evidence, draft blocks, tasks, and active teammates.
+- [Research Progress](https://beta.debate-ai.com/cards/progress-tracking) — Review contribution history, task-completion rates, and per-topic progress for contributors.
+- [Quest Streaks](https://beta.debate-ai.com/cards/streaks) — View current and longest daily-quest streaks plus milestone badges.
+- [Daily Quests](https://beta.debate-ai.com/cards/quests) — Track team goals, such as finding solvency cards, against live same-day contributions.
+- [Team Brainstorm Assist](https://beta.debate-ai.com/cards/brainstorm) — Submit, seed, organize, and upvote ideas for arguments, impacts, frontlines, and turns.
+- [Team Collaboration Mode](https://beta.debate-ai.com/cards/collaboration) — Leave, assign, and track live prep notes on shared topic sprints.
+- [Prep Notes](https://beta.debate-ai.com/prep-notes) — Keep live prep notes across flows, organized by needs-follow-up, open, and covered status.
+- [Notifications](https://beta.debate-ai.com/notifications) — See and mark read notifications for prep notes assigned to you.
+- [Judge Profiles](https://beta.debate-ai.com/judges) — Review saved judges’ side-vote bias, speaker points, speed tolerance, and theory receptiveness.
+- [Opponent Team Profiles](https://beta.debate-ai.com/opponents) — Scout teams using records, side tendencies, common cases, and frequently used arguments.
+- [Practice Drills](https://beta.debate-ai.com/drills) — Run flow-derived overview, frontline, cross-examination, and collapse drills.
+- [Pre-Round Briefings](https://beta.debate-ai.com/briefings) — Combine judge and opponent scouting, head-to-head records, and team prep notes for a round.
+- [Scout-to-Strategy](https://beta.debate-ai.com/strategy) — Convert scouting and judge tendencies into ranked case options and matchup-risk assessments.
+- [AI Coach Mode](https://beta.debate-ai.com/coaching) — Generate extension, refutation, collapse, and weighing prompts from a round’s flow.
+- [Judge Paradigm Picker](https://beta.debate-ai.com/paradigms) — Select a built-in or custom AI judge paradigm for practice rounds.
+- [AI Judge Decision](https://beta.debate-ai.com/judge-decision) — Generate an AI decision grounded in the selected judge paradigm and flow summary.
+- [Speech Transcript Summaries](https://beta.debate-ai.com/summaries) — Create per-argument flow summaries with cross-examination questions and extension ideas.
+- [Opponent Persona Picker](https://beta.debate-ai.com/practice-opponent) — Choose or define an AI practice opponent’s debating style.
+- [Word-Count Speeches](https://beta.debate-ai.com/word-count) — Practice speeches under a maximum word count rather than a time limit.
+- [Argument Tree Outline](https://beta.debate-ai.com/outline) — Browse and filter a structured outline of every argument in a round’s flow.
+- [Online Debate Versus AI](https://beta.debate-ai.com/versus-ai) — Debate an AI opponent in real turn order using a chosen format and side.
+- [Practice Round Simulator](https://beta.debate-ai.com/practice-round) — Simulate a tournament round with a timer, AI judge paradigm, and AI opponent persona.
+- [Flow Annotations](https://beta.debate-ai.com/annotations) — Add timestamped annotations tied to individual flowed arguments while reviewing recordings.
+- [Speech Documents](https://beta.debate-ai.com/speech-documents) — View the history of evidence sent from Reason Editor into a designated speech document.
+- [CX NDCA Standings](https://beta.debate-ai.com/standings) — View cumulative season standings based on recorded tournament results.
+- [AI Response-Outcome Charts](https://beta.debate-ai.com/outcomes) — Analyze side exposure, vulnerable arguments, and hypothetical response paths in a flow.
+- [Team Rankings](https://beta.debate-ai.com/rank) — Browse debate team rankings, leaderboards, and Elo ratings.
+- [Coaching Programs](https://beta.debate-ai.com/coaching-programs) — Run roster-scoped group coaching spaces with topic sprints, challenges, and drills.
+- [Coach Materials](https://beta.debate-ai.com/coach-materials) — Upload or dictate grounding material for the team coach AI and preview relevant sources.
 
 ## Contributing
 
@@ -131,14 +172,6 @@ Start developing locally, develop features, open ideas in discussions, and submi
 ```
 npx git0 debate/ai
 ```
-
-A change is ready to review when:
-
-- `bun run typecheck` passes for every package
-- `bun run test` passes, and new logic arrives with a test in the package's `test/` folder
-- new runtime code lives under a named folder in that package's `src/`
-- the package's `README.md` still describes what is actually there
-
 Open questions and larger proposals belong in
 [Discussions](https://github.com/debate/debate-ai.com/discussions); bugs and scoped work
 belong in Issues.
