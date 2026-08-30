@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { LogIn, LogOut, UserCircle2, Moon, Sun, Palette, Pause, Play, LayoutGrid, Settings as SettingsIcon } from "lucide-react"
+import {
+  LogIn, LogOut, UserCircle2, Moon, Sun, Palette, Pause, Play, LayoutGrid, Settings as SettingsIcon,
+  Globe, Swords, Code2, Scale, MessageSquare, Calendar, Trophy, Book, BookOpen, BookMarked, MessageCircle, Shield, FileText,
+} from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
@@ -36,6 +39,26 @@ import {
   IconRoundsYoutube,
   IconTools
 } from "debate-ui/src/icons"
+
+// Same destinations as packages/debate-ui/src/layout/footer.tsx, split into
+// the two Settings-menu submenus below so they're reachable without
+// scrolling to the page footer.
+const SITE_LINKS = [
+  { url: "https://github.com/debate", text: "Github", icon: Code2 },
+  { url: "https://discord.gg/SJdBqBz3tV", text: "Support", icon: MessageCircle },
+  { url: "/legal/privacy", text: "Privacy", icon: Shield },
+  { url: "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit", text: "Rules", icon: FileText },
+]
+
+const DEBATE_LINKS = [
+  { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Debate Reddit", icon: MessageSquare },
+  { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar },
+  { url: "https://www.debate.land", text: "Rankings", icon: Trophy },
+  { url: "https://debate-decoded.ghost.io", text: "Community Blog", icon: BookOpen },
+  { url: "https://opencaselist.com", text: "Research", icon: BookMarked },
+  { url: "https://debaterhub.com", text: "DebaterHub", icon: Scale },
+  { url: "https://debate101.org/#hub", text: "Resource Links", icon: Book },
+]
 
 const NAV_ITEMS = [
   { href: "/videos", label: "Videos", icon: IconRoundsYoutube },
@@ -171,6 +194,43 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
               </DropdownMenuItem>
             )
           })}
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <Globe className="mr-2 h-4 w-4" />
+          Site Links
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent className="w-56" collisionPadding={8} avoidCollisions>
+          {SITE_LINKS.map((link) => (
+            <DropdownMenuItem key={link.text} asChild>
+              <a
+                href={link.url}
+                target={link.url.startsWith("http") ? "_blank" : "_self"}
+                rel={link.url.startsWith("http") ? "noopener noreferrer" : undefined}
+                className="cursor-pointer"
+              >
+                <link.icon className="mr-2 h-4 w-4" />
+                {link.text}
+              </a>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <Swords className="mr-2 h-4 w-4" />
+          Debate Links
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent className="w-56" collisionPadding={8} avoidCollisions>
+          {DEBATE_LINKS.map((link) => (
+            <DropdownMenuItem key={link.text} asChild>
+              <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                <link.icon className="mr-2 h-4 w-4" />
+                {link.text}
+              </a>
+            </DropdownMenuItem>
+          ))}
         </DropdownMenuSubContent>
       </DropdownMenuSub>
       <DropdownMenuSeparator />
