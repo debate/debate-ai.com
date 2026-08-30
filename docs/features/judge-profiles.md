@@ -161,8 +161,7 @@ in `judgeRoundRecords.test.ts`.
   in this repo captures speaker points, pace, or theory outcomes today);
   every round is entered by hand through this panel's form, or supplied by
   a caller of `recordJudgeRound`/`saveJudgeProfile` directly. This is the
-  same gap the [Standings](standings.md) and
-  [Opponent Team Profiles](opponent-team-profiles.md) panels have.
+  same gap the [Opponent Team Profiles](opponent-team-profiles.md) panel has.
 - ~~Undo has no matching "redo"~~ Closed: a Redo action now steps forward
   again to whatever version Undo just replaced (see "Correcting a logged
   round" above). Undo (and now redo) history is still capped at the 10 most

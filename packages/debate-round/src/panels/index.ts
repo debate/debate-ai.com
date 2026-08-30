@@ -21,7 +21,6 @@ export { PreRoundBriefingsPanel } from "./PreRoundBriefingsPanel";
 export { PrepNoteNotificationsPanel } from "./PrepNoteNotificationsPanel";
 export { PrepNotesPanel } from "./PrepNotesPanel";
 export { SharedFlowSyncPanel, type SharedFlowSyncPanelProps } from "./SharedFlowSyncPanel";
-export { StandingsPanel } from "./StandingsPanel";
 export { StrategyPanel } from "./StrategyPanel";
 export { UserSettingsPanel } from "./UserSettingsPanel";
 export { VulnerabilityChartsPanel } from "./VulnerabilityChartsPanel";

@@ -24,15 +24,6 @@ team on record for that division/year, each row carrying:
 A champion banner (`LeaderboardChampionBanner`) surfaces the recorded
 champion/topic history for the selected division and year when available.
 
-## Relationship to CX NDCA Standings
-
-[CX NDCA Standings](standings.md) (`/standings`) is a separate, newer
-surface: it builds ranked season standings from individually recorded
-`TournamentResult`s against a configurable NDCA-style qualification-points
-table. Team Rankings instead reads a pre-loaded per-division/year dataset
-or its Elo computation — the two aren't reconciled against each other, and
-a team can appear differently ranked on each page.
-
 ## Known gaps
 
 - Was reachable only by typing `/rank` directly or browsing `/features`

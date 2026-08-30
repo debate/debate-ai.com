@@ -175,8 +175,7 @@ mean `<id>`?" prompt that refills the filter. Both are Vitest-covered in
   pairing or ballot sync produces `OpponentRoundRecord`s in this repo today);
   every round is entered by hand through this panel's form, or supplied by a
   caller of `recordOpponentRound`/`saveOpponentTeamProfile` directly. This is
-  the same gap the [Standings](standings.md) and
-  [Judge Profiles](judge-profiles.md) panels have.
+  the same gap the [Judge Profiles](judge-profiles.md) panel has.
 - ~~Editing a round is all-or-nothing per round: there is no history of what
   a round looked like before an edit, so a correction can't be undone.~~
   Closed: **Undo last edit** / **Redo** actions now step a round back to

@@ -1,7 +1,7 @@
 import {
   Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell,
   ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type,
-  ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School,
+  ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass,
   Rss, Gauge, Crosshair, Crown, Send,
@@ -276,11 +276,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     heading: "Coaching & Analytics",
     tools: [
       {
-        href: "/standings", label: "CX NDCA Standings", icon: TrendingUp,
-        description: "See cumulative, ranked season standings built from recorded tournament results.",
-        highlights: ["Record outround finish, prelim record, division, and bid level per result", "Ranked standings aggregated across every tournament a team attended"],
-      },
-      {
         href: "/outcomes", label: "AI Response-Outcome Charts", icon: BarChart3,
         description: "See per-side exposure and the most vulnerable arguments in each round's flow.",
         highlights: ["\"What if\" picker recomputes exposure under a hypothetical extend/answer/concede", "AI counsel panel assesses likely response paths for exposed arguments"],
@@ -288,7 +283,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
       {
         href: "/rank", label: "Team Rankings", icon: Crown,
         description: "Debate team rankings, leaderboard, and Elo ratings.",
-        highlights: ["Elo-based team leaderboard", "Complements CX NDCA Standings' tournament-result view"],
+        highlights: ["Elo-based team leaderboard", "Track team ratings and rankings over time"],
       },
       {
         href: "/coaching-programs", label: "Coaching Programs", icon: School,
