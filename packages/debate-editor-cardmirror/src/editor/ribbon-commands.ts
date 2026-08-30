@@ -4297,6 +4297,7 @@ export type RibbonCommandId =
   | 'uncondense'
   | 'toggleCase'
   | 'copyPreviousCite'
+  | 'insertShortCite'
   | 'pasteAsText'
   | 'pasteCondensed'
   | 'clearToNormal'
@@ -4534,6 +4535,7 @@ export const RIBBON_COMMAND_IDS: RibbonCommandId[] = [
   'uncondense',
   'toggleCase',
   'copyPreviousCite',
+  'insertShortCite',
   'pasteAsText',
   'pasteCondensed',
   'clearToNormal',
@@ -4719,6 +4721,7 @@ export const RIBBON_COMMAND_LABELS: Record<RibbonCommandId, string> = {
   uncondense: 'Uncondense',
   toggleCase: 'Toggle Case',
   copyPreviousCite: 'Copy Previous Cite',
+  insertShortCite: 'Insert Short Cite',
   pasteAsText: 'Paste Plain Text',
   pasteCondensed: 'Paste and Destructively Condense',
   clearToNormal: 'Clear',
@@ -5059,6 +5062,7 @@ export const DEFAULT_RIBBON_KEYS: Record<RibbonCommandId, string | string[]> = {
   uncondense: 'Mod-Alt-Shift-F3',
   toggleCase: 'Shift-F3',
   copyPreviousCite: 'Alt-F8',
+  insertShortCite: 'Mod-Shift-k',
   pasteAsText: 'F2',
   pasteCondensed: '',
   clearToNormal: 'F12',
@@ -5325,6 +5329,9 @@ export interface RibbonContext {
   addNoteToSelection: () => void;
   aiAskAboutSelection: () => void;
   aiCreateCite: () => void;
+  /** Mod-Shift-k — prompts for an author/year and inserts the formatted
+   *  short cite tag at the cursor. See `insert-short-cite.ts`. */
+  insertShortCite: () => void;
   /** Confirm, then run the cite creator over every cite paragraph in the
    *  document — one model request each. */
   reformatAllCites: () => void;
@@ -5519,6 +5526,7 @@ const DEFAULT_RIBBON_CONTEXT: RibbonContext = {
   addNoteToSelection: () => {},
   aiAskAboutSelection: () => {},
   aiCreateCite: () => {},
+  insertShortCite: () => {},
   reformatAllCites: () => {},
   translate: () => {},
   repairText: () => {},
@@ -5793,6 +5801,15 @@ function commandFor(id: RibbonCommandId, ctx: RibbonContext): Command {
         if (state.selection.empty) return false;
         if (!dispatch) return true;
         ctx.aiCreateCite();
+        return true;
+      };
+    case 'insertShortCite':
+      // No selection required — this inserts new text at the cursor
+      // rather than acting on already-typed text (unlike applyCite/
+      // aiCreateCite above).
+      return (_state, dispatch) => {
+        if (!dispatch) return true;
+        ctx.insertShortCite();
         return true;
       };
     case 'reformatAllCites':

@@ -123,6 +123,7 @@ export const RIBBON_GROUPS: RibbonGroup[] = [
       'smartShrink',
       'regrow',
       'copyPreviousCite',
+      'insertShortCite',
       'createReference',
       'extractUndertag',
       'insertImage',

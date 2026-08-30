@@ -150,6 +150,7 @@ import { pillScrollClearancePlugin } from './pill-scroll-clearance.js';
 import { scheduleIdle, cancelIdle, type IdleHandle } from './idle-scheduler.js';
 import { CommentsColumn, addCommentToSelection, FC_PREFIX, AI_PREFIX, NOTE_PREFIX } from './comments-ui.js';
 import { runAiCreateCite } from './ai/cite-creator.js';
+import { runInsertShortCite } from './insert-short-cite.js';
 import { runReformatAllCites } from './ai/reformat-all-cites.js';
 import { runTranslate } from './translate.js';
 import { runRepairText } from './ai/repair-text.js';
@@ -1738,6 +1739,10 @@ const ribbonContext: RibbonContext = {
   aiCreateCite: () => {
     if (!view) return;
     runAiCreateCite(view);
+  },
+  insertShortCite: () => {
+    if (!view) return;
+    void runInsertShortCite(view);
   },
   reformatAllCites: () => {
     if (!view) return;
