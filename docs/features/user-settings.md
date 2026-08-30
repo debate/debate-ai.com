@@ -184,5 +184,8 @@ vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
   `ALL_TOOLS`), so it sits inertly in the saved list until removed.
 - The "standing tool-panel/nav UI-polish audit" idea #17 follow-up (4) named
   by prior slices is still open — this slice's star toggle/favorites strip
-  overlaps with it but doesn't close it (no changes to `CategoryDock`'s nav
-  structure, tool-panel chrome elsewhere, or a broader discoverability pass).
+  overlaps with it but doesn't close it. A later slice (see
+  `docs/features/flow-tools-menu.md`) added a "Tools for this round" menu
+  to the round workspace and audited the `/tools` catalog for undiscoverable
+  routes (finding none), but the "bring weaker panel UIs up to the shared
+  `debate-ui` primitive conventions" half of follow-up (4) remains open.
