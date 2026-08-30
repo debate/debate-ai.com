@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { LogIn, LogOut, UserCircle2, Moon, Sun, Palette, Pause, Play, LayoutGrid, SlidersHorizontal } from "lucide-react"
+import { Book, BookMarked, BookOpen, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
@@ -140,10 +140,6 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
 
   return (
     <DropdownMenuContent side={side} align="end" className="w-48">
-      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/settings") }}>
-        <SettingsIcon className="mr-2 h-4 w-4" />
-        Settings
-      </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/features") }}>
         <LayoutGrid className="mr-2 h-4 w-4" />
         All Features
@@ -152,11 +148,11 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
         <Image src={IconTools} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
         All Tools
       </DropdownMenuItem>
-      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/settings") }}>
-        <SlidersHorizontal className="mr-2 h-4 w-4" />
-        Preferences
-      </DropdownMenuItem>
       <DropdownMenuSeparator />
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/settings") }}>
+        <SettingsIcon className="mr-2 h-4 w-4" />
+        Settings
+      </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
         {themeState.isDark ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}
         {themeState.isDark ? "Dark Mode" : "Light Mode"}
