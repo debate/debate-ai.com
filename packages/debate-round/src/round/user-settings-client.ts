@@ -19,9 +19,10 @@
 
 import type { UserSettingsPayload } from "../state/userSettings";
 import type { ThemeSettingsPayload } from "../state/themeSettings";
+import type { FavoriteToolsPayload } from "../state/favoriteTools";
 
-/** The full shape `/api/settings` reads/writes — app preferences plus the theme fields (idea #17, follow-up (2)). */
-export type FullUserSettingsPayload = UserSettingsPayload & ThemeSettingsPayload;
+/** The full shape `/api/settings` reads/writes — app preferences, the theme fields (idea #17, follow-up (2)), and the favorite-tools list (idea #17, "integrate tools into user settings" follow-up). */
+export type FullUserSettingsPayload = UserSettingsPayload & ThemeSettingsPayload & FavoriteToolsPayload;
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {

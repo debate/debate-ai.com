@@ -6,6 +6,83 @@
 _No task currently in progress._
 
 ### Completed
+- **Integrate Tools into User Settings (idea #17, "integrate tools into
+  user settings" follow-up, plus a `/tools` UI-polish pass).** Prompted by
+  a request to "integrate tools into the user settings and improve tools
+  ui and have more options in user settings." Three parts:
+  (1) **Favorite tools**, a new account-linked `favoriteTools` field on the
+  same `user_settings` row (`apps/debate-ai.com/lib/database/schema.ts`,
+  JSON-array-of-route-paths column, migration
+  `drizzle/0010_add_favorite_tools.sql`) — `debate-round`'s new
+  `state/favoriteTools.ts` (pure `normalizeFavoriteToolsPatch`/
+  `isValidToolHref`/`isValidFavoriteToolsList`/`serializeFavoriteTools`/
+  `parseFavoriteTools`, mirroring `state/userSettings.ts` and
+  `state/themeSettings.ts`'s split, but validating only an in-app path's
+  *shape* — the package doesn't know the app's tool catalog); `/api/settings`
+  now reads/writes `favoriteTools` alongside the other fields on the same
+  GET/PUT; and a new `lib/hooks/useFavoriteTools.ts` (local-first,
+  best-effort account sync, same pattern as `theme-dropdown.tsx`'s
+  `useThemeState`, with a same-tab `favorite-tools-changed` window event so
+  every mounted instance — star buttons, the favorites strip, the Settings
+  list — stays in sync without a shared store). Found via a Playwright
+  smoke check (below) that a naive per-instance `fetchUserSettings()` call
+  fired ~50 GET `/api/settings` requests on one `/tools` load (one per
+  mounted star button); fixed by deduping the account fetch behind a
+  module-level `remoteLoadPromise` so every instance awaits the same
+  in-flight request — exactly one GET fires per page load regardless of
+  how many components mount the hook. (2) **`/tools` UI**: every
+  tool card now has a star toggle (`components/tools/FavoriteToolButton.tsx`,
+  positioned as a sibling of the card's `<Link>`, not nested inside it, to
+  keep the markup valid), and a new "Favorites" strip
+  (`components/tools/FavoritesController.tsx`) shows starred tools as
+  compact pills above the grid, hidden until a favorite exists. The
+  `TOOL_GROUPS` catalog moved out of `app/tools/page.tsx` into a new
+  `app/tools/tool-groups.ts` (plus a flattened `ALL_TOOLS`) so both the
+  favorites strip and the Settings page below can resolve a starred `href`
+  back to its label/icon/description — `page.tsx` itself is otherwise
+  unchanged (still the same grid, still `ToolsSearch`'s DOM-attribute
+  filtering). (3) **More `/settings` options**: `UserSettingsPanel` gained
+  Color theme and Light/dark mode pickers (previously `colorTheme`/
+  `themeMode` synced silently through the dock's separate `ThemeDropdown`
+  only — follow-up (2) closed the API/sync gap but never gave this form its
+  own UI for them) plus a "Reset to defaults" button, and a new
+  "Favorite tools" section (`components/settings/FavoriteToolsSettings.tsx`)
+  lists and lets you unpin your starred tools right from Settings, closing
+  the loop the "integrate tools into user settings" framing asked for
+  (favoriting isn't only reachable from `/tools`). `next-themes` — needed
+  by `UserSettingsPanel` for `useTheme()` — is now a `debate-round`
+  peerDependency/devDependency rather than app-only; bun's
+  content-addressable store resolves both the app's and the package's copy
+  to the same physical module (confirmed via `readlink -f` on both
+  `node_modules/next-themes` symlinks), so it shares one `next-themes`
+  React context rather than risking a duplicate-instance split. Vitest-
+  covered in `packages/debate-round/test/favoriteTools.test.ts` (47 cases:
+  every valid/invalid tool-href shape, list validation including the
+  `MAX_FAVORITE_TOOLS` boundary and duplicate rejection, patch
+  normalization, and `serializeFavoriteTools`/`parseFavoriteTools`
+  round-tripping and malformed-input tolerance). The fetch client, the
+  hook's sync wiring, and the D1 route itself are not unit-tested, matching
+  every other fetch-client/D1-route pair in this repo. Verified: `bun
+  install` (2258 packages, `next-themes` symlinked into
+  `packages/debate-round/node_modules`), `bunx vitest run packages/debate-round/test/favoriteTools.test.ts`
+  (47/47 pass), full `bun run test` (183 files / 2905 tests, all pass, up
+  from 2858), `bunx turbo run typecheck --filter=debate-round` (12/12
+  in-scope package tasks pass), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (same 34 pre-existing, unrelated errors
+  as before this slice), `bun run build:web` (`debate-ai-web` succeeds,
+  `/api/settings`, `/settings`, and `/tools` present in the route list),
+  and a headless-Chromium (Playwright) smoke check against the dev server
+  covering: starring a tool on `/tools` reveals it in the favorites strip;
+  the same favorite appears in `/settings`' Favorite tools list and its
+  remove button un-favorites it (list empties back to the "haven't pinned
+  any" prompt); the Color theme/Light-dark-mode pickers apply
+  (`<html>` gains `theme-cyberpunk dark`, `localStorage['color-theme']`
+  updates) and Save shows the local-save confirmation; and zero
+  `pageerror`s across all of the above (this check is what caught the
+  ~50x duplicate-fetch bug above). Follow-up
+  (4) (the standing tool-panel/nav UI-polish audit named by prior slices)
+  remains open, undecomposed; this slice's `/tools` UI work overlaps but
+  doesn't close it. **Completed:** 2026-08-30.
 - **Theme Settings — sync the color-theme/light-dark preference into
   `user_settings` (idea #17, follow-up (2)).** Closes the "Only
   `debateStyle`/`fontSize` are covered" Known gap `docs/features/

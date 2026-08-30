@@ -1,19 +1,24 @@
 /**
  * @fileoverview User Settings panel — TODO.md idea #17 ("User Settings —
- * account-linked debate preferences"), first slice. Lets a user view and
- * change the `debateStyle`/`fontSize` preferences already read throughout
- * the flow editor (`DebateRoundPanel`, `SpeechHeaderBar`,
- * `CreateRoundDialog`) but never exposed by any settings UI before this —
- * the dock's gear-icon "Settings" menu only ever linked to Features/Tools/
- * Theme/Account, not app preferences.
+ * account-linked debate preferences"), first slice, plus follow-up (2)
+ * (the `colorTheme`/`themeMode` fields, added to this form's own UI here —
+ * previously only synced silently through the dock's separate theme
+ * picker). Lets a user view and change the `debateStyle`/`fontSize`
+ * preferences already read throughout the flow editor (`DebateRoundPanel`,
+ * `SpeechHeaderBar`, `CreateRoundDialog`) but never exposed by any settings
+ * UI before this — the dock's gear-icon "Settings" menu only ever linked to
+ * Features/Tools/Theme/Account, not app preferences.
  *
  * A change always applies immediately to the local `settings` singleton
- * (`applyUserSettingsToLocalStore`), so this panel behaves exactly like
- * today's editor for a signed-out user. When signed in, it additionally
- * loads the account's saved values on mount (`fetchUserSettings`, via
- * `/api/settings`) and syncs a save to the account (`saveUserSettings`) so
- * the same preferences follow the user to another device — a failed
- * account sync is reported but never blocks the local apply.
+ * (`applyUserSettingsToLocalStore`) and, for the theme fields, the same
+ * `localStorage`/cookie/DOM-class/`next-themes` writes
+ * `theme-dropdown.tsx`'s `useThemeState` performs — so this panel behaves
+ * exactly like today's editor/dock for a signed-out user. When signed in,
+ * it additionally loads the account's saved values on mount
+ * (`fetchUserSettings`, via `/api/settings`) and syncs a save to the
+ * account (`saveUserSettings`) so the same preferences follow the user to
+ * another device — a failed account sync is reported but never blocks the
+ * local apply.
  *
  * @module panels/UserSettingsPanel
  */
@@ -21,6 +26,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTheme } from "next-themes"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Label } from "debate-ui/src/primitives/label"
@@ -31,14 +37,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "debate-ui/src/primitives/select"
-import { fetchUserSettings, saveUserSettings } from "../round/user-settings-client"
+import { fetchUserSettings, saveUserSettings, type FullUserSettingsPayload } from "../round/user-settings-client"
 import {
   applyUserSettingsToLocalStore,
   DEBATE_STYLE_OPTIONS,
+  DEFAULT_USER_SETTINGS,
   FONT_SIZE_OPTIONS,
   readLocalUserSettings,
-  type UserSettingsPayload,
 } from "../state/userSettings"
+import {
+  DEFAULT_THEME_SETTINGS,
+  isValidColorTheme,
+  isValidThemeMode,
+  THEME_MODES,
+  THEME_NAMES,
+  type ThemeMode,
+} from "../state/themeSettings"
+
+type FormState = Omit<FullUserSettingsPayload, "favoriteTools">
 
 type SaveStatus =
   | { kind: "idle" }
@@ -47,31 +63,58 @@ type SaveStatus =
   | { kind: "saved-account"; message: string }
   | { kind: "error"; message: string }
 
+function formatThemeName(name: string) {
+  return name
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+}
+
+/** Applies a resolved colorTheme/themeMode to localStorage/cookie/DOM class, mirroring `theme-dropdown.tsx`'s `applyColorTheme`/`handleThemeChange` so this panel's Save button and the dock's picker never disagree about how a theme choice is persisted locally. */
+function applyThemeLocally(colorTheme: string, themeMode: ThemeMode, setTheme: (mode: string) => void) {
+  if (typeof document === "undefined") return
+  THEME_NAMES.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
+  document.documentElement.classList.add(`theme-${colorTheme}`)
+  localStorage.setItem("color-theme", colorTheme)
+  document.cookie = `color-theme=${colorTheme}; path=/; max-age=31536000`
+  setTheme(themeMode)
+}
+
 /**
- * Renders the User Settings panel: a `debateStyle`/`fontSize` form that
- * applies locally on save and, when signed in, syncs to the account via
- * `/api/settings`.
+ * Renders the User Settings panel: a `debateStyle`/`fontSize`/`colorTheme`/
+ * `themeMode` form that applies locally on save and, when signed in, syncs
+ * to the account via `/api/settings`.
  *
  * Reads local/remote state on mount only (client-side), so it renders a
  * loading state during SSR/hydration rather than throwing.
  */
 export function UserSettingsPanel() {
-  const [form, setForm] = useState<UserSettingsPayload | null>(null)
+  const { setTheme, theme, resolvedTheme } = useTheme()
+  const [form, setForm] = useState<FormState | null>(null)
   const [remoteAvailable, setRemoteAvailable] = useState(false)
   const [loading, setLoading] = useState(true)
   const [status, setStatus] = useState<SaveStatus>({ kind: "idle" })
 
   useEffect(() => {
     let cancelled = false
-    setForm(readLocalUserSettings())
+
+    const localColorTheme = localStorage.getItem("color-theme")
+    const localThemeMode = resolvedTheme || theme
+    setForm({
+      ...readLocalUserSettings(),
+      colorTheme: localColorTheme && isValidColorTheme(localColorTheme) ? localColorTheme : DEFAULT_THEME_SETTINGS.colorTheme,
+      themeMode: localThemeMode && isValidThemeMode(localThemeMode) ? localThemeMode : DEFAULT_THEME_SETTINGS.themeMode,
+    })
 
     fetchUserSettings()
       .then((remote) => {
         if (cancelled) return
         if (remote) {
           setRemoteAvailable(true)
-          setForm(remote)
+          const { debateStyle, fontSize, colorTheme, themeMode } = remote
+          setForm({ debateStyle, fontSize, colorTheme, themeMode })
           applyUserSettingsToLocalStore(remote)
+          applyThemeLocally(colorTheme, themeMode, setTheme)
         }
       })
       .catch(() => {
@@ -85,6 +128,7 @@ export function UserSettingsPanel() {
     return () => {
       cancelled = true
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once on mount, same as before this slice; theme/resolvedTheme are only read for their initial value.
   }, [])
 
   if (!form) {
@@ -99,6 +143,7 @@ export function UserSettingsPanel() {
   const handleSave = async () => {
     setStatus({ kind: "saving" })
     applyUserSettingsToLocalStore(form)
+    applyThemeLocally(form.colorTheme, form.themeMode, setTheme)
 
     if (!remoteAvailable) {
       setStatus({
@@ -110,7 +155,8 @@ export function UserSettingsPanel() {
 
     try {
       const saved = await saveUserSettings(form)
-      setForm(saved)
+      const { debateStyle, fontSize, colorTheme, themeMode } = saved
+      setForm({ debateStyle, fontSize, colorTheme, themeMode })
       setStatus({ kind: "saved-account", message: "Saved to your account." })
     } catch (err) {
       setStatus({
@@ -118,6 +164,11 @@ export function UserSettingsPanel() {
         message: err instanceof Error ? err.message : "Failed to save to your account.",
       })
     }
+  }
+
+  const handleResetToDefaults = () => {
+    setForm({ ...DEFAULT_USER_SETTINGS, ...DEFAULT_THEME_SETTINGS })
+    setStatus({ kind: "idle" })
   }
 
   return (
@@ -173,9 +224,55 @@ export function UserSettingsPanel() {
           </Select>
         </div>
 
-        <Button onClick={handleSave} disabled={status.kind === "saving"}>
-          {status.kind === "saving" ? "Saving…" : "Save"}
-        </Button>
+        <div className="space-y-1.5">
+          <Label htmlFor="settings-color-theme">Color theme</Label>
+          <Select
+            value={form.colorTheme}
+            onValueChange={(value) => setForm({ ...form, colorTheme: value })}
+          >
+            <SelectTrigger id="settings-color-theme">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="max-h-[min(360px,60vh)]">
+              {THEME_NAMES.map((name) => (
+                <SelectItem key={name} value={name}>
+                  {formatThemeName(name)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            The same picker as the dock's palette icon — changing it here updates both.
+          </p>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="settings-theme-mode">Light / dark mode</Label>
+          <Select
+            value={form.themeMode}
+            onValueChange={(value) => setForm({ ...form, themeMode: value as ThemeMode })}
+          >
+            <SelectTrigger id="settings-theme-mode">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {THEME_MODES.map((mode) => (
+                <SelectItem key={mode} value={mode}>
+                  {formatThemeName(mode)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button onClick={handleSave} disabled={status.kind === "saving"}>
+            {status.kind === "saving" ? "Saving…" : "Save"}
+          </Button>
+          <Button type="button" variant="outline" onClick={handleResetToDefaults} disabled={status.kind === "saving"}>
+            Reset to defaults
+          </Button>
+        </div>
 
         {status.kind === "saved-local" && (
           <Badge variant="secondary" className="block w-fit">
