@@ -88,9 +88,11 @@ wired up (see `vitest.config.ts`'s `projects` list).
 - `rounds` (the tournament/debaters/judges wrapper around a set of flows)
   are now migrated too — see [`round-cloud-save.md`](round-cloud-save.md)
   (idea #17, follow-up (3)/(b)).
-- No bulk "save this round's flows" action outside of saving a whole round
-  (which does cascade-save its flows) — each flow is still saved one at a
-  time via its own cloud icon.
+- Was: "no bulk 'save this round's flows' action outside of saving a whole
+  round." Closed for the common case — see
+  [`round-cloud-save.md`](round-cloud-save.md)'s "Save all rounds" action,
+  which cascade-saves every round's flows too. A flow with no round
+  referencing it still has no bulk path — only its own per-flow cloud icon.
 - Was: "the `/tools` 'My Saved Items' widget omits saved flows entirely,
   showing only documents and rounds." Closed — see the "My Saved Items —
   include saved flows" entry in `TODO.md`'s Tracker Status.

@@ -22,11 +22,12 @@ import { ScrollArea } from "debate-ui/src/primitives/scroll-area"
 import { Input } from "debate-ui/src/primitives/input"
 import { useFlowStore, type FlowHistory } from "../state/store"
 import type { Flow, Round } from "../types/flow"
-import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2 } from "lucide-react"
+import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2, CloudUpload } from "lucide-react"
 import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { deleteSavedRound, fetchSavedRound, listSavedRounds, saveRoundToAccount } from "../round/saved-rounds-client"
 import type { SavedRoundSummary } from "../state/savedRounds"
+import { collectFlowsForRounds, summarizeBulkRoundSave, type BulkRoundSaveOutcome } from "../state/bulkRoundSave"
 
 /** Load/error state for the "Saved to account" tab's flow list. */
 type CloudListState =
@@ -153,6 +154,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const [cloudActions, setCloudActions] = useState<Record<number, CloudActionStatus>>({})
   const [cloudRoundList, setCloudRoundList] = useState<CloudRoundListState>({ kind: "loading" })
   const [cloudRoundActions, setCloudRoundActions] = useState<Record<number, CloudActionStatus>>({})
+  const [bulkSaveStatus, setBulkSaveStatus] = useState<"idle" | "saving" | "done">("idle")
+  const [bulkSaveSummary, setBulkSaveSummary] = useState<{ savedCount: number; errorCount: number } | null>(null)
 
   /**
    * Load history and rounds when dialog opens.
@@ -165,6 +168,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       setActiveTab("rounds")
       setCloudActions({})
       setCloudRoundActions({})
+      setBulkSaveStatus("idle")
+      setBulkSaveSummary(null)
     }
   }, [open, getFlowHistory, getRounds])
 
@@ -292,6 +297,46 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     } catch {
       setCloudRoundActions((prev) => ({ ...prev, [round.id]: "error" }))
     }
+  }
+
+  /**
+   * Saves every local round (and, transitively, every flow any of them
+   * references) to the account in one action — closing the "no bulk 'save
+   * all my rounds' action" gap `docs/features/round-cloud-save.md`
+   * recorded, since before this a user had to click each round's own
+   * cloud icon individually. Collects the deduplicated set of flows across
+   * all rounds first (a flow shared by more than one round is only ever
+   * PUT once) via `collectFlowsForRounds`, saves those, then saves each
+   * round — both passes reuse the same per-flow/per-round status maps the
+   * individual save buttons already render, so a round's icon updates in
+   * place exactly as if it had been saved on its own. Best-effort per item:
+   * one flow or round failing to save doesn't stop the others.
+   */
+  const handleSaveAllRoundsToAccount = async () => {
+    if (rounds.length === 0 || bulkSaveStatus === "saving") return
+    setBulkSaveStatus("saving")
+    setBulkSaveSummary(null)
+
+    const flowsToSave = collectFlowsForRounds(rounds, flows)
+    await Promise.all(flowsToSave.map((flow) => handleSaveFlowToAccount(flow)))
+
+    const outcomes: Record<number, BulkRoundSaveOutcome> = {}
+    await Promise.all(
+      rounds.map(async (round) => {
+        setCloudRoundActions((prev) => ({ ...prev, [round.id]: "saving" }))
+        try {
+          await saveRoundToAccount(round)
+          setCloudRoundActions((prev) => ({ ...prev, [round.id]: "saved" }))
+          outcomes[round.id] = "saved"
+        } catch {
+          setCloudRoundActions((prev) => ({ ...prev, [round.id]: "error" }))
+          outcomes[round.id] = "error"
+        }
+      }),
+    )
+
+    setBulkSaveSummary(summarizeBulkRoundSave(outcomes))
+    setBulkSaveStatus("done")
   }
 
   /**
@@ -564,6 +609,33 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
               Saved to account
             </Button>
           </div>
+
+          {activeTab === "rounds" && rounds.length > 0 && (
+            <div className="flex items-center justify-between gap-3">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleSaveAllRoundsToAccount}
+                disabled={bulkSaveStatus === "saving"}
+                className="gap-1.5"
+                title="Save every round (and its flows) to your account"
+              >
+                {bulkSaveStatus === "saving" ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <CloudUpload className="h-3.5 w-3.5" />
+                )}
+                Save all rounds
+              </Button>
+              {bulkSaveStatus === "done" && bulkSaveSummary && (
+                <span className="text-xs text-muted-foreground">
+                  {bulkSaveSummary.errorCount === 0
+                    ? `Saved ${bulkSaveSummary.savedCount} round${bulkSaveSummary.savedCount === 1 ? "" : "s"}.`
+                    : `Saved ${bulkSaveSummary.savedCount}, ${bulkSaveSummary.errorCount} failed.`}
+                </span>
+              )}
+            </div>
+          )}
 
           {activeTab === "cloud" ? (
             <ScrollArea className="h-[440px] border rounded-md">

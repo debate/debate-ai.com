@@ -6,6 +6,69 @@
 _No task currently in progress._
 
 ### Completed
+- **Round Cloud Save — "Save all rounds" bulk action (idea #17,
+  `round-cloud-save.md` Known gap).** Closed the "No bulk 'save all my
+  rounds' action — each round is still saved one at a time via its own
+  cloud icon" gap `docs/features/round-cloud-save.md` recorded, prompted by
+  another repeat of idea #17's standing request ("create user settings and
+  link user db SQL... with ability to save flows docs and debates in
+  SQL... add tools into where needed in the ui... develop better tool
+  ui"). `FlowHistoryDialog`'s "Rounds" tab gains a "Save all rounds" button
+  (rendered whenever at least one local round exists) next to the existing
+  per-round cloud-upload icon. New pure module
+  `packages/debate-round/src/state/bulkRoundSave.ts`:
+  `collectFlowsForRounds(rounds, flows)` (dedups the flows referenced
+  across every round — a flow shared by more than one round, or listed
+  twice within one round's `flowIds`, is collected exactly once, in
+  first-referencing-round order, skipping any `flowIds` entry with no
+  matching local flow) and `summarizeBulkRoundSave(outcomes)` (turns a
+  per-round save-outcome map into `{ savedCount, errorCount }` for a status
+  message). `FlowHistoryDialog`'s new `handleSaveAllRoundsToAccount` calls
+  `collectFlowsForRounds` once up front so a shared flow is `PUT` to
+  `/api/flows` exactly once regardless of how many rounds reference it
+  (rather than once per round, which the existing per-round
+  `handleSaveRoundToAccount` would do if simply looped), then saves every
+  round — both passes reuse the same `cloudActions`/`cloudRoundActions`
+  status maps the individual save buttons already render, so a round's or
+  flow's icon updates in place exactly as if saved individually, and a
+  short "Saved N rounds." / "Saved N, M failed." summary appears next to
+  the button once the pass finishes. Best-effort per item, matching every
+  other cloud-save action in this dialog — one flow or round failing to
+  save never blocks the others. No schema or route changes — this reuses
+  the existing `/api/flows` and `/api/rounds` PUT routes exactly as the
+  per-item save buttons already do. Vitest-covered in
+  `packages/debate-round/test/bulkRoundSave.test.ts` (11 cases:
+  `collectFlowsForRounds`'s empty-rounds, no-flows, single-round,
+  cross-round dedup keeping first-referencing-round order, within-round
+  duplicate-flow-id dedup, and missing-local-flow-skip behavior;
+  `summarizeBulkRoundSave`'s empty/mixed/all-saved/all-error outcome
+  counts). The dialog's own button wiring is not unit-tested, matching
+  every other fetch-client/dialog pair in this repo — `apps/debate-ai.com`
+  still has no vitest project wired up (`vitest.config.ts`'s `projects`
+  list is still `["packages/*"]` only). Documented in
+  `docs/features/round-cloud-save.md` (data-flow diagram, feature
+  description, and Known gaps updated — the closed gap is replaced with a
+  narrower one: "Save all rounds" has no per-round dirty tracking, so it
+  re-`PUT`s every round unconditionally on each click) and
+  `docs/features/flow-cloud-save.md` (its own mirrored Known gap marked
+  closed for the common case, with the "a flow with no round referencing
+  it still has no bulk path" caveat noted). Verified: `bun install` (2258
+  packages), `bunx vitest run packages/debate-round/test/
+  bulkRoundSave.test.ts` (11/11 pass), full `bun run test` (192 files /
+  3016 tests, all pass), `bunx turbo run typecheck
+  --filter=debate-round` (11/11 in-scope package tasks pass), a direct
+  `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json` (35 errors — the
+  same pre-existing, unrelated baseline every prior slice has recorded,
+  confirmed none in `FlowHistoryDialog.tsx`, `bulkRoundSave.ts`, or
+  `index.ts`), and `bun run build:web` (`debate-ai-web` succeeds, `/debate`,
+  `/tools`, and `/settings` present in the route list). No UI screenshot/
+  Playwright smoke check was run this slice — the change reuses the same
+  `saveFlowToAccount`/`saveRoundToAccount` calls and `cloudActions`/
+  `cloudRoundActions` status rendering the existing per-item save buttons
+  already exercise (covered by the `favoriteTools`/theme-picker Playwright
+  check's precedent), with only the aggregation/dedup logic being new and
+  that logic is what `bulkRoundSave.test.ts` covers directly. **Completed:**
+  2026-08-30.
 - **My Saved Items — include saved flows (idea #17, `/tools`
   discoverability gap).** Prompted by another repeat of idea #17's standing
   request ("create user settings and link user db SQL... with ability to
