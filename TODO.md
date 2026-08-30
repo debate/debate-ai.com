@@ -6,6 +6,264 @@
 _No task currently in progress._
 
 ### Completed
+- **Integrate Tools into User Settings (idea #17, "integrate tools into
+  user settings" follow-up, plus a `/tools` UI-polish pass).** Prompted by
+  a request to "integrate tools into the user settings and improve tools
+  ui and have more options in user settings." Three parts:
+  (1) **Favorite tools**, a new account-linked `favoriteTools` field on the
+  same `user_settings` row (`apps/debate-ai.com/lib/database/schema.ts`,
+  JSON-array-of-route-paths column, migration
+  `drizzle/0010_add_favorite_tools.sql`) — `debate-round`'s new
+  `state/favoriteTools.ts` (pure `normalizeFavoriteToolsPatch`/
+  `isValidToolHref`/`isValidFavoriteToolsList`/`serializeFavoriteTools`/
+  `parseFavoriteTools`, mirroring `state/userSettings.ts` and
+  `state/themeSettings.ts`'s split, but validating only an in-app path's
+  *shape* — the package doesn't know the app's tool catalog); `/api/settings`
+  now reads/writes `favoriteTools` alongside the other fields on the same
+  GET/PUT; and a new `lib/hooks/useFavoriteTools.ts` (local-first,
+  best-effort account sync, same pattern as `theme-dropdown.tsx`'s
+  `useThemeState`, with a same-tab `favorite-tools-changed` window event so
+  every mounted instance — star buttons, the favorites strip, the Settings
+  list — stays in sync without a shared store). Found via a Playwright
+  smoke check (below) that a naive per-instance `fetchUserSettings()` call
+  fired ~50 GET `/api/settings` requests on one `/tools` load (one per
+  mounted star button); fixed by deduping the account fetch behind a
+  module-level `remoteLoadPromise` so every instance awaits the same
+  in-flight request — exactly one GET fires per page load regardless of
+  how many components mount the hook. (2) **`/tools` UI**: every
+  tool card now has a star toggle (`components/tools/FavoriteToolButton.tsx`,
+  positioned as a sibling of the card's `<Link>`, not nested inside it, to
+  keep the markup valid), and a new "Favorites" strip
+  (`components/tools/FavoritesController.tsx`) shows starred tools as
+  compact pills above the grid, hidden until a favorite exists. The
+  `TOOL_GROUPS` catalog moved out of `app/tools/page.tsx` into a new
+  `app/tools/tool-groups.ts` (plus a flattened `ALL_TOOLS`) so both the
+  favorites strip and the Settings page below can resolve a starred `href`
+  back to its label/icon/description — `page.tsx` itself is otherwise
+  unchanged (still the same grid, still `ToolsSearch`'s DOM-attribute
+  filtering). (3) **More `/settings` options**: `UserSettingsPanel` gained
+  Color theme and Light/dark mode pickers (previously `colorTheme`/
+  `themeMode` synced silently through the dock's separate `ThemeDropdown`
+  only — follow-up (2) closed the API/sync gap but never gave this form its
+  own UI for them) plus a "Reset to defaults" button, and a new
+  "Favorite tools" section (`components/settings/FavoriteToolsSettings.tsx`)
+  lists and lets you unpin your starred tools right from Settings, closing
+  the loop the "integrate tools into user settings" framing asked for
+  (favoriting isn't only reachable from `/tools`). `next-themes` — needed
+  by `UserSettingsPanel` for `useTheme()` — is now a `debate-round`
+  peerDependency/devDependency rather than app-only; bun's
+  content-addressable store resolves both the app's and the package's copy
+  to the same physical module (confirmed via `readlink -f` on both
+  `node_modules/next-themes` symlinks), so it shares one `next-themes`
+  React context rather than risking a duplicate-instance split. Vitest-
+  covered in `packages/debate-round/test/favoriteTools.test.ts` (47 cases:
+  every valid/invalid tool-href shape, list validation including the
+  `MAX_FAVORITE_TOOLS` boundary and duplicate rejection, patch
+  normalization, and `serializeFavoriteTools`/`parseFavoriteTools`
+  round-tripping and malformed-input tolerance). The fetch client, the
+  hook's sync wiring, and the D1 route itself are not unit-tested, matching
+  every other fetch-client/D1-route pair in this repo. Verified: `bun
+  install` (2258 packages, `next-themes` symlinked into
+  `packages/debate-round/node_modules`), `bunx vitest run packages/debate-round/test/favoriteTools.test.ts`
+  (47/47 pass), full `bun run test` (183 files / 2905 tests, all pass, up
+  from 2858), `bunx turbo run typecheck --filter=debate-round` (12/12
+  in-scope package tasks pass), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (same 34 pre-existing, unrelated errors
+  as before this slice), `bun run build:web` (`debate-ai-web` succeeds,
+  `/api/settings`, `/settings`, and `/tools` present in the route list),
+  and a headless-Chromium (Playwright) smoke check against the dev server
+  covering: starring a tool on `/tools` reveals it in the favorites strip;
+  the same favorite appears in `/settings`' Favorite tools list and its
+  remove button un-favorites it (list empties back to the "haven't pinned
+  any" prompt); the Color theme/Light-dark-mode pickers apply
+  (`<html>` gains `theme-cyberpunk dark`, `localStorage['color-theme']`
+  updates) and Save shows the local-save confirmation; and zero
+  `pageerror`s across all of the above (this check is what caught the
+  ~50x duplicate-fetch bug above). Follow-up
+  (4) (the standing tool-panel/nav UI-polish audit named by prior slices)
+  remains open, undecomposed; this slice's `/tools` UI work overlaps but
+  doesn't close it. **Completed:** 2026-08-30.
+- **Theme Settings — sync the color-theme/light-dark preference into
+  `user_settings` (idea #17, follow-up (2)).** Closes the "Only
+  `debateStyle`/`fontSize` are covered" Known gap `docs/features/
+  user-settings.md` flagged after the first slice. Prompted by the same
+  repeated "create user settings and link user db SQL... add tools into
+  where needed in the ui" request that started idea #17. Adds
+  `colorTheme`/`themeMode` nullable columns to the existing D1
+  `user_settings` table (`apps/debate-ai.com/lib/database/schema.ts`) plus
+  migration `drizzle/0009_add_theme_settings.sql`; `debate-round`'s new
+  `state/themeSettings.ts` (pure `THEME_NAMES`/`THEME_MODES` registries —
+  moved here from `theme-dropdown.tsx`'s own copy, now the single source of
+  truth both the picker UI and the account-sync validator read — plus
+  `normalizeThemeSettingsPatch`, mirroring `normalizeUserSettingsPatch`'s
+  shape); `/api/settings`'s `GET`/`PUT` now validate and persist
+  `colorTheme`/`themeMode` alongside `debateStyle`/`fontSize` on the same
+  row (a `PUT` can patch either or both concerns in one request); and
+  `theme-dropdown.tsx`'s `useThemeState` hook (the dock's actual live theme
+  picker, via `CategoryDock`) now calls the same `fetchUserSettings`/
+  `saveUserSettings` client `UserSettingsPanel` uses (newly exported from
+  `debate-round`'s public index, alongside the `FullUserSettingsPayload`
+  type combining both concerns) — on mount, a signed-in user's saved
+  `colorTheme`/`themeMode` overrides the local-only value read first;
+  on every theme/light-dark change, the new value applies locally first
+  (unchanged from before this slice) and then best-effort syncs to the
+  account, silently swallowing a failed sync rather than surfacing an
+  error, since this is a background dropdown action rather than an
+  explicit form Save. No new UI surface was added — the color-theme/
+  light-dark picker already exists in the dock; this slice only makes it
+  account-aware rather than duplicating a second picker on `/settings`, so
+  idea #17's own decomposition ("(2) a follow-up to sync the color-theme/
+  light-dark preference... into the same table") is closed without a UI
+  change. The standalone `ThemeDropdown` component in the same file (as
+  opposed to the `useThemeState` hook it and `CategoryDock` both share) was
+  left unwired — confirmed dead code, unused anywhere in the app.
+  Vitest-covered in `packages/debate-round/test/themeSettings.test.ts` (27
+  cases: every valid/invalid `colorTheme`/`themeMode` value, partial
+  patches, unknown-field passthrough, malformed/non-object bodies, and
+  `DEFAULT_THEME_SETTINGS` itself validating). The fetch client and
+  `useThemeState`'s sync wiring are not unit-tested, matching every other
+  fetch-client/D1-route pair in this repo and this same idea's first slice
+  — `apps/debate-ai.com` still has no vitest project wired up (`vitest.
+  config.ts`'s `projects` list is still `["packages/*"]` only). Documented
+  in `docs/features/user-settings.md` (data-flow diagram and Known gaps
+  updated). Verified: `bun install` (2258 packages), `bunx vitest run
+  packages/debate-round/test/themeSettings.test.ts` (27/27 pass), full
+  `bun run test` (182 files / 2858 tests, all pass, up from 2831), `bunx
+  turbo run typecheck --filter=debate-round --filter=debate-ai-web` (12/12
+  in-scope package tasks pass), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (same 34 pre-existing, unrelated errors
+  as before this slice — e.g. `D1Database`/`Fetcher` globals and
+  `debate-ui`'s `.svg`/`.png` module declarations — confirmed none in any
+  file this slice touched), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/api/settings` and `/settings` present in the route list).
+  Follow-ups (3) (migrate `useFlowStore`'s `rounds` — the "flows" half is
+  already done, see the Flow Cloud Save entry below) and (4) (the standing
+  tool-panel/nav UI-polish audit) remain open, undecomposed. **Completed:**
+  2026-08-30.
+- **Flow Cloud Save (idea #17, follow-up (3), "flows" half).** Lets a
+  signed-in user save an individual debate flow to their account and load
+  it back on any device they sign in on, continuing idea #17's follow-up
+  (3) — "design and migrate specific already-localStorage-only stores that
+  make sense as account-linked data onto D1, most notably `useFlowStore`'s
+  `rounds`/`flows`." Prompted by a repeat of the same request that started
+  idea #17 ("create user settings and link user db SQL... with ability to
+  save flows docs and debates in SQL and link to users"). Adds a new D1
+  `saved_flows` table (`apps/debate-ai.com/lib/database/schema.ts`, one row
+  per (user, flow), unique on `(user_id, client_id)` so re-saving the same
+  flow after an edit upserts rather than duplicates, cascade-deleted with
+  the account) plus migration `drizzle/0008_tough_wolfsbane.sql`; new
+  account-only `/api/flows` (list summaries) and `/api/flows/[clientId]`
+  (get/upsert/delete one saved flow) routes — both 401 without a session,
+  same as `/api/settings`, since (unlike `documents`) a saved flow only
+  exists once explicitly synced to an account; `debate-round`'s new
+  `state/savedFlows.ts` (pure `isValidFlow` structural validator — required
+  fields plus a recursively-validated, depth-capped `Box` tree — and
+  `deriveFlowLabel`, shared by the route and the UI) and
+  `round/saved-flows-client.ts` (fetch client, `null` return rather than a
+  throw on `401`/`404` for the read calls so a signed-out user degrades
+  gracefully); and a "Saved to account" tab plus a per-flow cloud-upload
+  icon added to `dialogs/FlowHistoryDialog.tsx`'s existing "Rounds" tab (its
+  `activeTab` state existed already but was previously unwired to any
+  tab-switcher UI — the never-rendered "history" tab option was dropped in
+  the same change since it had no UI either). Saving a flow to the account
+  is opt-in per flow (no auto-sync-on-every-edit, which would risk
+  clobbering an in-progress local edit with a stale saved copy or
+  hammering the API on every keystroke) — a follow-up. `rounds` are not
+  migrated by this slice; only individual flows. Vitest-covered in
+  `packages/debate-round/test/savedFlows.test.ts` (28 cases: a well-formed
+  flow with an empty/nested `Box` tree, every optional field present,
+  every required field individually missing, non-object top-level values,
+  a non-string entry in `columns`, a non-number entry in `lastFocus`, a
+  malformed `Box` at the top level and nested three levels deep, a tree
+  past the 200-level recursion cap, and every `deriveFlowLabel` branch
+  including the 120-character truncation). The fetch client and the D1
+  routes themselves are not unit-tested, matching every other fetch-client/
+  D1-route pair in this repo (`round/user-settings-client.ts`,
+  `app/api/settings/route.ts`) — `apps/debate-ai.com` still has no vitest
+  project wired up (`vitest.config.ts`'s `projects` list is still
+  `["packages/*"]` only). Documented in `docs/features/flow-cloud-save.md`.
+  Verified: `bun install` (2258 packages), `bunx vitest run
+  packages/debate-round/test/savedFlows.test.ts` (28/28 pass), full `bun
+  run test` (181 files / 2831 tests, all pass, up from 2803), `bunx turbo
+  run typecheck --filter=debate-round --filter=debate-ai-web` (12/12
+  in-scope package tasks pass — same pre-existing, unrelated errors as
+  before this slice when run via a flat `tsc --noEmit` instead, e.g.
+  `D1Database`/`Fetcher` globals and `debate-ui`'s `.svg`/`.png` module
+  declarations, none of them in any file this slice touched), and `bun run
+  build:web` (`debate-ai-web` succeeds, `/api/flows` and
+  `/api/flows/:clientId` present in the route list). Follow-ups: (a) a
+  bulk "save this round's flows" action, so a user doesn't have to click
+  the cloud icon on every flow of a round individually; (b) migrate
+  `rounds` themselves (the tournament/debaters/judges wrapper), which
+  idea #17's follow-up (3) also named and this slice explicitly left out —
+  needs its own schema design for how a saved round should reference its
+  saved flows; (c) idea #17's follow-up (2) (sync the color-theme/
+  light-dark preference into `user_settings`) and follow-up (4) (a standing
+  UI-polish audit of existing tool panels/nav discoverability) both remain
+  open, undecomposed. **Completed:** 2026-08-30.
+- **User Settings — account-linked debate preferences (idea #17), first
+  slice.** Gives a signed-in user a real settings page for the
+  `debateStyle`/`fontSize` preferences `packages/debate-round/src/state/
+  settings.ts` already reads throughout the flow editor
+  (`DebateRoundPanel`, `SpeechHeaderBar`, `CreateRoundDialog`) but never
+  exposed through any UI before this — the gear-icon "Settings" dock menu
+  only ever linked to Features/Tools/Theme/Account. Prompted by a request
+  to "create user settings and link user db SQL... add tools into where
+  needed in the ui." Adds a new D1 `user_settings` table
+  (`apps/debate-ai.com/lib/database/schema.ts`, one row per `user.id`,
+  cascade-deleted with the account, `debateStyle`/`fontSize` nullable —
+  null means "use the client default") plus migration
+  `drizzle/0007_left_wiccan.sql`; a new account-only `/api/settings` route
+  (GET current row or defaults, PUT validate-and-upsert, both 401 without
+  a session — settings are account data, unlike `documents`' anonymous-row
+  fallback); `debate-round`'s new `state/userSettings.ts` (pure
+  `normalizeUserSettingsPatch`/`applyUserSettingsToLocalStore`/
+  `readLocalUserSettings`, validating against the same option lists the
+  local `settings` singleton's picker UI already uses, shared by both the
+  route and the panel so a rejected value can never reach either side)
+  and `round/user-settings-client.ts` (fetch client, `null` return rather
+  than a throw on `401` so a signed-out user degrades gracefully instead
+  of erroring); and `panels/UserSettingsPanel.tsx`, rendered at a new
+  `/settings` route (`apps/debate-ai.com/app/settings/page.tsx`) reachable
+  from a new "Preferences" item in the dock's Settings dropdown
+  (`components/layout/CategoryDock.tsx`). Saving always applies
+  immediately to the local `settings` singleton first — signed-out
+  behavior is unchanged from before this slice — then best-effort syncs
+  to the account when signed in; a failed account sync is reported inline
+  but never blocks the local apply. Vitest-covered in
+  `packages/debate-round/test/userSettings.test.ts` (30 cases: every
+  valid/invalid `debateStyle`/`fontSize` value including boundaries,
+  partial patches, unknown-field passthrough, malformed/non-object
+  bodies, and `applyUserSettingsToLocalStore`'s round-trip through a
+  mocked `localStorage`). The fetch client and the D1 route itself are
+  not unit-tested, matching every other fetch-client/D1-route pair in
+  this repo (`round/judge-decision-client.ts`,
+  `app/api/evidence-reuse-check/route.ts`) — `apps/debate-ai.com` has no
+  vitest project wired up at all (confirmed: `vitest.config.ts`'s
+  `projects` list is `["packages/*"]` only, and there is no repo-wide
+  typecheck or lint script that covers the app either — `tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` run directly surfaces only
+  pre-existing, unrelated errors, e.g. `D1Database`/`Fetcher` globals and
+  `debate-ui`'s `.svg`/`.png` module declarations, none of them in any
+  file this slice touched). Documented in
+  `docs/features/user-settings.md`. Verified: `bun install` (2258
+  packages), `bunx vitest run packages/debate-round/test/
+  userSettings.test.ts` (30/30 pass), full `bun run test` (180 files /
+  2803 tests, all pass, up from 2773), `bunx turbo run typecheck
+  --filter=debate-round --filter=debate-ai-web` (12/12 in-scope package
+  tasks pass — `debate-ai-web` itself has no `typecheck` script, so only
+  its workspace dependencies ran), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/settings` and `/api/settings` present in the route list).
+  Follow-ups recorded under idea #17 above: (2) sync the color-theme/
+  light-dark preference into the same table; (3) design and migrate
+  specific already-localStorage-only stores that make sense as
+  account-linked data onto D1, most notably `useFlowStore`'s `rounds`/
+  `flows` and the REASON-editor-adjacent `Flow.speechDocs`/
+  `sharedSpeeches` fields, each needing its own schema design rather than
+  a mechanical repeat of this slice's flat-row pattern; (4) a standing
+  UI-polish audit of existing tool panels/nav discoverability, not yet
+  decomposed into a specific implementable change. **Completed:**
+  2026-08-30.
 - **Legacy Verbatim / Cardmirror Compatibility — correct
   `legacy-verbatim-shortcuts.md` for the live CardMirror editor.** Closes
   the staleness `speech-document-target.md`'s Known gaps flagged: "a future
@@ -9082,6 +9340,51 @@ _No task currently in progress._
 
 16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow) _Status: first slices done (see Tracker Status above) — `debate-round` now has `mergeFlowEdits`/`applyMergedEditsToFlow`/`buildSharedFlowSyncSummaryText` for reconciling multiple teammates' concurrent box-level flow edits into one canonical flow (last write wins), flagging genuinely concurrent, diverging edits from different authors as conflicts for a human to resolve instead of silently overwriting them. A second slice, `SharedFlowSyncPanel` (see "Feature panels", PR #214), renders that merge preview in the Coach hub's Flow section, driven entirely by props. A third slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — Flow Edit Log + real merge-preview data source") added `createFlowEdit` plus `state/flowEdits.ts` and `FlowEditLogPanel`, giving a contributor a way to actually log a `FlowEdit` and wiring `CoachHub` to feed `SharedFlowSyncPanel` real, persisted edits (and apply an accepted merge back into the round workspace) instead of a hardcoded empty array. A fourth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — FlowSpreadsheet edit-review/log affordance") added `flow/edit-cells.ts`, `flow/EditBadge.tsx`, and `flow/EditReviewPopover.tsx`, wiring a per-cell badge into `AnnotationCellRenderer`/`FirstColumnCellRenderer` that shows a box's pending `FlowEdit`s and opens a click-positioned popover to log a new one, closing follow-up (b). A fifth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — Common Argument Library flow-note suggestions") added `flow/flow-note-suggestions.ts` and wired a "Suggested from Common Argument Library" list into `FlowEditLogPanel`'s Content field, scoring the in-progress note against the persisted Common Argument Library corpus and offering a matched card's formatted note as an insertable (never auto-applied) starting point, closing follow-up (c). A sixth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — server-backed live sync transport") added `apps/debate-ai.com`'s `lib/database/schema.ts` `flowSyncEdits` D1 table and `app/api/flow-sync/route.ts` (GET pull-since-cursor, POST upsert), plus `debate-round`'s `flow/flow-sync-client.ts`, `flow/flow-sync-cursor.ts`, and `hooks/useFlowSyncPolling.ts`, wiring an opt-in "Live sync" toggle into `FlowEditLogPanel` that short-polls the server for other contributors' edits to the form's current Flow ID and folds them into the existing local `state/flowEdits.ts` store, and best-effort pushes newly logged edits to the server — a short-poll transport rather than a WebSocket/Durable Object push channel, matching the follow-up's "WebSocket or similar" wording. No follow-ups remain open on this idea._
 
+17. **User Settings — account-linked debate preferences** — Give a signed-in
+    user a real settings page, backed by the database and linked to their
+    account, instead of the app-wide preferences (`debateStyle`, `fontSize`
+    in `packages/debate-round/src/state/settings.ts`) staying editable only
+    through direct localStorage manipulation — the gear-icon "Settings" dock
+    menu has never actually exposed them, only Features/Tools/Theme/Account
+    links. Prompted by a request to "create user settings and link user db
+    SQL," decomposed into an incremental slice plan: (1) this first slice —
+    a new D1 `user_settings` table (one row per `user.id`, cascade-deleted
+    with the account), a `/api/settings` route, and a `/settings` page
+    reachable from the dock's Settings menu, letting a signed-in user read
+    and edit their `debateStyle`/`fontSize` preference, synced to the
+    account and falling back to the existing local-only `Settings`
+    singleton when signed out; (2) a follow-up to sync the color-theme/
+    light-dark preference (currently `localStorage`/cookie-only in
+    `components/theme-dropdown.tsx`) into the same table once slice 1 is
+    stable; (3) a follow-up (or several — each is its own reviewable
+    migration) to move specific already-localStorage-only stores that make
+    sense as account-linked data onto D1, most notably `useFlowStore`'s
+    `rounds`/`flows` (`packages/debate-round/src/state/store.ts`, "save
+    flows/debates in SQL and link to users" from the original ask) and the
+    REASON-editor-adjacent `Flow.speechDocs`/`sharedSpeeches` fields — each
+    needs its own schema design (a `Flow`/`Round` is large and nested,
+    unlike a flat settings row) and migration plan, not a mechanical
+    repeat of this slice's pattern; (4) a follow-up to audit
+    `apps/debate-ai.com/app/tools` and the per-panel routes for tools that
+    exist but aren't discoverable from the main nav/dock, and to bring
+    weaker panel UIs up to the shared `debate-ui` primitive conventions —
+    "add tools into where needed in the ui... develop better tool ui" from
+    the original ask is a UI-polish pass across ~25 existing panels, not a
+    single implementable change, so it stays a standing follow-up rather
+    than a numbered idea of its own until a specific panel is identified.
+    _Status: first slice done (see Tracker Status above) — a new D1
+    `user_settings` table, `/api/settings` route, and `UserSettingsPanel`
+    at `/settings` (reachable from the dock's Settings menu) let a
+    signed-in user edit `debateStyle`/`fontSize` synced to their account,
+    with the pre-existing local-only `settings` singleton kept as the
+    signed-out fallback. A second slice (see Tracker Status above, "Theme
+    Settings — sync the color-theme/light-dark preference into
+    `user_settings`") added `colorTheme`/`themeMode` columns to the same
+    row and wired the dock's existing `useThemeState` theme picker to sync
+    them, closing follow-up (2). A third slice, Flow Cloud Save (see
+    Tracker Status above), migrated `useFlowStore`'s `flows` (not `rounds`)
+    onto D1, closing the "flows" half of follow-up (3). Follow-ups
+    (3, remaining — the `rounds` half) and (4) remain open — not started._
 
 
 ## Research Crowdsourcing Organizer Features

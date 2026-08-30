@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, index, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const user = sqliteTable("user", {
@@ -161,6 +161,128 @@ export const flowSyncEdits = sqliteTable(
 );
 
 export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
+
+// Account-linked app preferences — TODO.md idea #17 ("User Settings —
+// account-linked debate preferences"), first slice. One row per user,
+// mirroring `debate-round`'s local-only `Settings` singleton
+// (`packages/debate-round/src/state/settings.ts`) so a signed-in user's
+// `debateStyle`/`fontSize` choices follow them across devices instead of
+// staying stuck in one browser's localStorage. `debateStyle`/`fontSize`
+// are nullable — a null column means "use the client default", the same
+// semantics as an absent key in the local `Settings` store.
+//
+// `colorTheme`/`themeMode` (idea #17, follow-up (2)) extend the same row
+// with the color-theme/light-dark preference `components/theme-dropdown.tsx`
+// previously kept in `localStorage`/a cookie only — also nullable, with the
+// same "no saved row/value yet" semantics, validated by `debate-round`'s
+// `normalizeThemeSettingsPatch` against its `THEME_NAMES`/`THEME_MODES`
+// lists (the same lists `ThemeDropdown`'s picker UI uses).
+//
+// `favoriteTools` (idea #17, follow-up "integrate tools into user
+// settings") stores a signed-in user's starred `/tools` entries as a JSON
+// array of route paths (e.g. `["/reason-editor","/drills"]`), or null when
+// empty — same "no saved value yet" semantics as every other column here.
+// Validated by `debate-round`'s `normalizeFavoriteToolsPatch`, which (unlike
+// `debateStyle`/`colorTheme`) can only check shape, not membership in the
+// real tool catalog — that catalog is app-specific (`app/tools/
+// tool-groups.tsx`), not something the shared package knows about.
+export const userSettings = sqliteTable("user_settings", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  debateStyle: integer("debate_style"),
+  fontSize: integer("font_size"),
+  colorTheme: text("color_theme"),
+  themeMode: text("theme_mode"),
+  favoriteTools: text("favorite_tools"),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type UserSettingsRow = typeof userSettings.$inferSelect;
+
+// Account-linked flow cloud save — TODO.md idea #17 ("User Settings —
+// account-linked debate preferences"), follow-up (3): `debate-round`'s
+// `useFlowStore` keeps its `flows`/`rounds` in `localStorage` only (see
+// `packages/debate-round/src/state/store.ts`), so a signed-in user's flows
+// don't follow them to another device. This is the "flows" half of that
+// follow-up (rounds are not migrated by this slice — see TODO.md). One row
+// per saved flow per user, keyed by the local `Flow.id` (a
+// `Date.now()`-based number assigned client-side) via the
+// `(user_id, client_id)` unique index below, so re-saving the same flow
+// upserts instead of duplicating. `data` holds the whole `Flow` object
+// (recursive `Box` tree plus `speechDocs`/`sharedSpeeches`) JSON-stringified
+// — mirrors `documents.content`'s blob-column approach rather than
+// normalizing the tree into rows, since a `Flow` is read/written as one
+// unit everywhere it's used. `label` is a short display string derived
+// server-side from `Flow.content` at save time, so listing saved flows
+// (`GET /api/flows`) doesn't need to parse every row's full `data` blob.
+export const savedFlows = sqliteTable(
+  "saved_flows",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: integer("client_id").notNull(),
+    label: text("label").notNull().default(""),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_flows_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_flows_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedFlowRow = typeof savedFlows.$inferSelect;
+
+// Account-linked round cloud save — TODO.md idea #17, follow-up (3)/(b):
+// "migrate rounds themselves (the tournament/debaters/judges wrapper)... needs
+// its own schema design for how a saved round should reference its saved
+// flows." A `Round` (packages/debate-core/src/types/flow.ts) only ever
+// references its flows indirectly via `flowIds: number[]` — the local
+// `Flow.id`s in `useFlowStore`'s `flows` array — so a saved round's `data`
+// blob keeps that same indirection rather than embedding the flows
+// themselves: loading a saved round resolves each `flowIds` entry against
+// the user's already-saved flows (`saved_flows`), the same way the local
+// `Round`/`Flow` stores are cross-referenced today. This mirrors
+// `savedFlows` above one row per (user, round), unique on
+// `(user_id, client_id)` so re-saving an edited round upserts rather than
+// duplicates, cascade-deleted with the account.
+export const savedRounds = sqliteTable(
+  "saved_rounds",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: integer("client_id").notNull(),
+    label: text("label").notNull().default(""),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_rounds_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_rounds_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedRoundRow = typeof savedRounds.$inferSelect;
 
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
