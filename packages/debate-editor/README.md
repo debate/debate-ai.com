@@ -34,3 +34,5 @@ bun run coverage    # writes ./coverage for this package alone
 Suites live in `test/` and mirror the `src/` layout. Coverage for every package is
 merged at the repo root by `bun run coverage` and uploaded to
 [Codecov](https://app.codecov.io/gh/debate/debate-ai.com) by CI.
+
+Current Codecov package coverage on `master` at commit `5b69dad` is **10.99%**.
