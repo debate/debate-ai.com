@@ -4,4 +4,6 @@ export { RoundEditorDialog } from "./dialogs/CreateRoundDialog";
 export * from "./state/store";
 export * from "./state/settings";
 export * from "./state/userSettings";
+export * from "./state/themeSettings";
+export * from "./round/user-settings-client";
 export * from "./state/savedFlows";

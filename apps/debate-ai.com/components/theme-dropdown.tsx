@@ -1,12 +1,15 @@
 /**
  * @fileoverview Theme dropdown component for selecting colour themes and toggling
  * light/dark mode. Persists selections to localStorage and a cookie, and applies
- * theme CSS classes to the document root.
+ * theme CSS classes to the document root. When signed in, also syncs the
+ * selection to the account via `/api/settings` (TODO.md idea #17, follow-up
+ * (2)) so it follows the user to another device, falling back to the
+ * local-only behavior below when signed out.
  */
 
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Moon, Sun } from "lucide-react"
 import Image from "next/image"
 import { Button } from "debate-ui/src/primitives/button"
@@ -20,35 +23,17 @@ import {
 } from "debate-ui/src/primitives/dropdown-menu"
 import { useTheme } from "next-themes"
 import { IconThemePantone } from "debate-ui/src/icons"
+import {
+  THEME_NAMES,
+  isValidColorTheme,
+  isValidThemeMode,
+  fetchUserSettings,
+  saveUserSettings,
+  type ThemeMode,
+} from "debate-round"
 
-/** Registry of all available colour theme names. */
-export const themeNames = [
-  "modern-minimal",
-  "elegant-luxury",
-  "cyberpunk",
-  "twitter",
-  "mocha-mousse",
-  "amethyst-haze",
-  "notebook",
-  "doom-64",
-  "catppuccin",
-  "graphite",
-  "perpetuity",
-  "kodama-grove",
-  "cosmic-night",
-  "tangerine",
-  "nature",
-  "bold-tech",
-  "amber-minimal",
-  "supabase",
-  "neo-brutalism",
-  "quantum-rose",
-  "solar-dusk",
-  "bubblegum",
-  "pink-lemonade",
-  "claymorphism",
-  "pastel-dreams",
-]
+/** Registry of all available colour theme names — re-exported from `debate-round`'s `THEME_NAMES`, the same list `/api/settings` validates against. */
+export const themeNames: readonly string[] = THEME_NAMES
 
 /**
  * Map of theme names to their representative primary and secondary colour swatches
@@ -97,45 +82,85 @@ export function useThemeState() {
   const [colorTheme, setColorTheme] = useState("modern-minimal")
   const [mounted, setMounted] = useState(false)
   const [previewTheme, setPreviewTheme] = useState<string | null>(null)
+  // Whether `/api/settings` resolved (i.e. the user is signed in) rather than
+  // 401ing, so change handlers below know whether a sync push is worth
+  // attempting instead of firing a doomed request on every theme change.
+  const remoteAvailable = useRef(false)
+
+  const applyColorTheme = (newTheme: string) => {
+    themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
+    document.documentElement.classList.add(`theme-${newTheme}`)
+  }
 
   useEffect(() => {
     setMounted(true)
     const saved = localStorage.getItem("color-theme")
     if (saved && themeNames.includes(saved)) {
       setColorTheme(saved)
-      themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
-      document.documentElement.classList.add(`theme-${saved}`)
+      applyColorTheme(saved)
     } else {
       document.documentElement.classList.add("theme-modern-minimal")
     }
+
+    let cancelled = false
+    fetchUserSettings()
+      .then((remote) => {
+        if (cancelled || !remote) return
+        remoteAvailable.current = true
+        if (isValidColorTheme(remote.colorTheme) && remote.colorTheme !== (saved ?? "modern-minimal")) {
+          setColorTheme(remote.colorTheme)
+          localStorage.setItem("color-theme", remote.colorTheme)
+          document.cookie = `color-theme=${remote.colorTheme}; path=/; max-age=31536000`
+          applyColorTheme(remote.colorTheme)
+        }
+        if (isValidThemeMode(remote.themeMode)) {
+          setTheme(remote.themeMode)
+        }
+      })
+      .catch(() => {
+        // Signed in but the load failed (network/server error) — keep the
+        // local-only theme already applied above rather than blocking.
+      })
+
+    return () => {
+      cancelled = true
+    }
   }, [])
+
+  /** Best-effort account sync — never blocks or surfaces an error to the caller, matching `UserSettingsPanel`'s local-first behavior. */
+  const syncToAccount = (patch: { colorTheme?: string; themeMode?: ThemeMode }) => {
+    if (!remoteAvailable.current) return
+    saveUserSettings(patch).catch(() => {
+      // Best-effort — the change already applied locally above.
+    })
+  }
 
   const handleThemeChange = (newTheme: string) => {
     setColorTheme(newTheme)
     localStorage.setItem("color-theme", newTheme)
     document.cookie = `color-theme=${newTheme}; path=/; max-age=31536000`
-    themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
-    document.documentElement.classList.add(`theme-${newTheme}`)
+    applyColorTheme(newTheme)
     setPreviewTheme(null)
+    syncToAccount({ colorTheme: newTheme })
   }
 
   const handleThemePreview = (themeName: string) => {
     setPreviewTheme(themeName)
-    themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
-    document.documentElement.classList.add(`theme-${themeName}`)
+    applyColorTheme(themeName)
   }
 
   const handlePreviewEnd = () => {
     if (previewTheme) {
-      themeNames.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
-      document.documentElement.classList.add(`theme-${colorTheme}`)
+      applyColorTheme(colorTheme)
       setPreviewTheme(null)
     }
   }
 
   const toggleLightDark = () => {
     const currentTheme = resolvedTheme || theme || "light"
-    setTheme(currentTheme === "dark" ? "light" : "dark")
+    const newTheme = currentTheme === "dark" ? "light" : "dark"
+    setTheme(newTheme)
+    syncToAccount({ themeMode: newTheme })
   }
 
   const isDark = (resolvedTheme || theme) === "dark"

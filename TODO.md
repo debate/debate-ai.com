@@ -6,6 +6,63 @@
 _No task currently in progress._
 
 ### Completed
+- **Theme Settings — sync the color-theme/light-dark preference into
+  `user_settings` (idea #17, follow-up (2)).** Closes the "Only
+  `debateStyle`/`fontSize` are covered" Known gap `docs/features/
+  user-settings.md` flagged after the first slice. Prompted by the same
+  repeated "create user settings and link user db SQL... add tools into
+  where needed in the ui" request that started idea #17. Adds
+  `colorTheme`/`themeMode` nullable columns to the existing D1
+  `user_settings` table (`apps/debate-ai.com/lib/database/schema.ts`) plus
+  migration `drizzle/0009_add_theme_settings.sql`; `debate-round`'s new
+  `state/themeSettings.ts` (pure `THEME_NAMES`/`THEME_MODES` registries —
+  moved here from `theme-dropdown.tsx`'s own copy, now the single source of
+  truth both the picker UI and the account-sync validator read — plus
+  `normalizeThemeSettingsPatch`, mirroring `normalizeUserSettingsPatch`'s
+  shape); `/api/settings`'s `GET`/`PUT` now validate and persist
+  `colorTheme`/`themeMode` alongside `debateStyle`/`fontSize` on the same
+  row (a `PUT` can patch either or both concerns in one request); and
+  `theme-dropdown.tsx`'s `useThemeState` hook (the dock's actual live theme
+  picker, via `CategoryDock`) now calls the same `fetchUserSettings`/
+  `saveUserSettings` client `UserSettingsPanel` uses (newly exported from
+  `debate-round`'s public index, alongside the `FullUserSettingsPayload`
+  type combining both concerns) — on mount, a signed-in user's saved
+  `colorTheme`/`themeMode` overrides the local-only value read first;
+  on every theme/light-dark change, the new value applies locally first
+  (unchanged from before this slice) and then best-effort syncs to the
+  account, silently swallowing a failed sync rather than surfacing an
+  error, since this is a background dropdown action rather than an
+  explicit form Save. No new UI surface was added — the color-theme/
+  light-dark picker already exists in the dock; this slice only makes it
+  account-aware rather than duplicating a second picker on `/settings`, so
+  idea #17's own decomposition ("(2) a follow-up to sync the color-theme/
+  light-dark preference... into the same table") is closed without a UI
+  change. The standalone `ThemeDropdown` component in the same file (as
+  opposed to the `useThemeState` hook it and `CategoryDock` both share) was
+  left unwired — confirmed dead code, unused anywhere in the app.
+  Vitest-covered in `packages/debate-round/test/themeSettings.test.ts` (27
+  cases: every valid/invalid `colorTheme`/`themeMode` value, partial
+  patches, unknown-field passthrough, malformed/non-object bodies, and
+  `DEFAULT_THEME_SETTINGS` itself validating). The fetch client and
+  `useThemeState`'s sync wiring are not unit-tested, matching every other
+  fetch-client/D1-route pair in this repo and this same idea's first slice
+  — `apps/debate-ai.com` still has no vitest project wired up (`vitest.
+  config.ts`'s `projects` list is still `["packages/*"]` only). Documented
+  in `docs/features/user-settings.md` (data-flow diagram and Known gaps
+  updated). Verified: `bun install` (2258 packages), `bunx vitest run
+  packages/debate-round/test/themeSettings.test.ts` (27/27 pass), full
+  `bun run test` (182 files / 2858 tests, all pass, up from 2831), `bunx
+  turbo run typecheck --filter=debate-round --filter=debate-ai-web` (12/12
+  in-scope package tasks pass), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (same 34 pre-existing, unrelated errors
+  as before this slice — e.g. `D1Database`/`Fetcher` globals and
+  `debate-ui`'s `.svg`/`.png` module declarations — confirmed none in any
+  file this slice touched), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/api/settings` and `/settings` present in the route list).
+  Follow-ups (3) (migrate `useFlowStore`'s `rounds` — the "flows" half is
+  already done, see the Flow Cloud Save entry below) and (4) (the standing
+  tool-panel/nav UI-polish audit) remain open, undecomposed. **Completed:**
+  2026-08-30.
 - **Flow Cloud Save (idea #17, follow-up (3), "flows" half).** Lets a
   signed-in user save an individual debate flow to their account and load
   it back on any device they sign in on, continuing idea #17's follow-up
@@ -9243,8 +9300,14 @@ _No task currently in progress._
     at `/settings` (reachable from the dock's Settings menu) let a
     signed-in user edit `debateStyle`/`fontSize` synced to their account,
     with the pre-existing local-only `settings` singleton kept as the
-    signed-out fallback. Follow-ups (2)-(4) above remain open — not
-    started._
+    signed-out fallback. A second slice (see Tracker Status above, "Theme
+    Settings — sync the color-theme/light-dark preference into
+    `user_settings`") added `colorTheme`/`themeMode` columns to the same
+    row and wired the dock's existing `useThemeState` theme picker to sync
+    them, closing follow-up (2). A third slice, Flow Cloud Save (see
+    Tracker Status above), migrated `useFlowStore`'s `flows` (not `rounds`)
+    onto D1, closing the "flows" half of follow-up (3). Follow-ups
+    (3, remaining — the `rounds` half) and (4) remain open — not started._
 
 
 ## Research Crowdsourcing Organizer Features

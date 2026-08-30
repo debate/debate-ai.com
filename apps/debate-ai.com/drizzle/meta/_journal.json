@@ -64,6 +64,13 @@
       "when": 1788068489361,
       "tag": "0008_tough_wolfsbane",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1788071906284,
+      "tag": "0009_add_theme_settings",
+      "breakpoints": true
     }
   ]
 }

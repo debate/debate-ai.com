@@ -117,12 +117,21 @@ export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
 // staying stuck in one browser's localStorage. `debateStyle`/`fontSize`
 // are nullable — a null column means "use the client default", the same
 // semantics as an absent key in the local `Settings` store.
+//
+// `colorTheme`/`themeMode` (idea #17, follow-up (2)) extend the same row
+// with the color-theme/light-dark preference `components/theme-dropdown.tsx`
+// previously kept in `localStorage`/a cookie only — also nullable, with the
+// same "no saved row/value yet" semantics, validated by `debate-round`'s
+// `normalizeThemeSettingsPatch` against its `THEME_NAMES`/`THEME_MODES`
+// lists (the same lists `ThemeDropdown`'s picker UI uses).
 export const userSettings = sqliteTable("user_settings", {
   userId: text("user_id")
     .primaryKey()
     .references(() => user.id, { onDelete: "cascade" }),
   debateStyle: integer("debate_style"),
   fontSize: integer("font_size"),
+  colorTheme: text("color_theme"),
+  themeMode: text("theme_mode"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
