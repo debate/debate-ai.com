@@ -6,11 +6,12 @@ import {
   ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School,
   FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass,
-  Rss, Gauge, Crosshair, Crown, Send,
+  Rss, Gauge, Crosshair, Crown, Send, Settings,
   type LucideIcon,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "debate-ui/src/primitives/card"
 import { ToolsSearch } from "./ToolsSearch"
+import { MySavedItems } from "./MySavedItems"
 
 export const metadata: Metadata = {
   title: "Tools",
@@ -32,6 +33,11 @@ const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
   {
     heading: "Workspaces",
     tools: [
+      {
+        href: "/settings", label: "Settings", icon: Settings,
+        description: "Manage your profile, preferences, and everything saved to your account.",
+        highlights: ["Theme and default-round preferences, saved to your account", "See and manage every saved Reason Editor document and FIAT round"],
+      },
       {
         href: "/reason-editor", label: "Reason Editor", icon: FileText,
         description: "Draft and organize debate cards and outlines in the native REASON document editor, saved to your own account.",
@@ -303,6 +309,7 @@ export default function ToolsPage() {
           <h1 className="text-2xl font-semibold text-foreground">Tools</h1>
           <p className="mt-1 text-sm text-muted-foreground">Every workspace, research, and practice tool in one place.</p>
         </div>
+        <MySavedItems />
         <ToolsSearch />
         <div className="flex flex-col gap-10" data-tools-grid>
           {TOOL_GROUPS.map((group) => (

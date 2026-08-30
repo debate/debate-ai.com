@@ -83,6 +83,59 @@ export const documents = sqliteTable(
 
 export type ReasonDocument = typeof documents.$inferSelect;
 
+// Per-user settings — one row per user, created on first save (see
+// /api/user/settings and /settings). Mirrors the local theme choice
+// (components/theme-dropdown.tsx's useThemeState) so it round-trips across
+// devices/sign-ins, plus a couple of real, wired preferences.
+export const userSettings = sqliteTable("user_settings", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  colorTheme: text("color_theme"),
+  colorMode: text("color_mode"), // "light" | "dark"
+  defaultRoundPrivate: integer("default_round_private", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type UserSettingsRow = typeof userSettings.$inferSelect;
+
+// Durable FIAT round + flow snapshots — closes the README's promised "save,
+// browse, and restore any past round with full flow history" (previously
+// localStorage-only, see packages/debate-round/src/state/store.ts). `id` is
+// caller-assigned (matches the client's `Round.id`, a Date.now() value) and
+// rows are upserted by it, same convention as `flowSyncEdits` above. `data`
+// holds the full JSON snapshot `{ round: Round, flows: Flow[] }` — the round
+// plus every Flow it references via `flowIds` — so a restore needs no other
+// table. `title`/`format` are denormalized copies for list rendering without
+// parsing `data`.
+export const rounds = sqliteTable(
+  "rounds",
+  {
+    id: integer("id").primaryKey(),
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+    title: text("title").notNull().default("Untitled Round"),
+    format: text("format"),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_rounds_user_id").on(table.userId),
+    updatedAtIdx: index("idx_rounds_updated_at").on(table.updatedAt),
+  }),
+);
+
+export type RoundRow = typeof rounds.$inferSelect;
+
 // Shared, AI-Generated Debate Flow — server-backed live sync transport for
 // `debate-round`'s `FlowEdit` records (see packages/debate-round/src/flow/shared-flow-sync.ts
 // and TODO.md idea #16, follow-up (a)). `boxPath` is a JSON-encoded number
