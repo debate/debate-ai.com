@@ -77,7 +77,7 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
   return (
     <div
       className={
-        "dec-menubar flex items-center gap-0.5 border-b border-border bg-muted/40 px-1 h-8 shrink-0" +
+        "dec-menubar flex items-center gap-0.5 border-b border-border bg-muted/40 px-1 h-8 shrink-0 overflow-x-auto overflow-y-hidden" +
         (className ? ` ${className}` : "")
       }
       role="menubar"
@@ -94,12 +94,12 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
           onNavigate={navigate}
         />
       ))}
-      <div className="flex-1" />
+      <div className="flex-1 min-w-2" />
       <Button
         type="button"
         variant="ghost"
         size="icon"
-        className="h-6 w-6"
+        className="h-6 w-6 shrink-0"
         title="Settings"
         aria-label="Settings"
         onClick={openSettings}
@@ -131,7 +131,7 @@ function MenuBarCategoryMenu({
         <button
           type="button"
           role="menuitem"
-          className="px-2 py-1 text-xs font-medium rounded hover:bg-accent hover:text-accent-foreground focus:outline-none focus:bg-accent"
+          className="shrink-0 px-2 py-1 text-xs font-medium rounded hover:bg-accent hover:text-accent-foreground focus:outline-none focus:bg-accent"
         >
           {title}
         </button>
