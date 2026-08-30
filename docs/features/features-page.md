@@ -51,7 +51,7 @@ it stays a stable "how big is this app" answer while someone types.
 | Pre-Round Intelligence | Opponent and judge profiles, briefings, scout-to-strategy, paradigm picker, AI judge decision |
 | Practice & Coaching | Practice round simulator, versus-AI rounds, opponent personas, AI coach mode, drills |
 | Recognition & Progress | Leaderboard, awards, daily best card, quests, streaks, unlocks, group challenges |
-| Standings & Rankings | CX NDCA standings, team rankings |
+| Standings & Rankings | Team rankings |
 
 ## How it works
 

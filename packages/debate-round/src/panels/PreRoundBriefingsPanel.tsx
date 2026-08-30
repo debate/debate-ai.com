@@ -17,8 +17,7 @@
  * Profile by id via the existing `buildPreRoundBriefingFromStores`), then
  * persisted via `savePreRoundBriefing` — closing the panel's previously
  * documented gap that nothing in the shipped app could actually create a
- * briefing — mirroring `StandingsPanel`'s "record a result" form
- * convention.
+ * briefing.
  *
  * Also renders a "log a round" form: this team's own round history (used
  * for the "Prior meetings" head-to-head record) is persisted via

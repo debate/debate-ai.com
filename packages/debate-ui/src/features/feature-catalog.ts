@@ -556,15 +556,6 @@ export const APP_FEATURES: FeatureEntry[] = [
 
   // ── Standings & rankings ───────────────────────────────────────────────
   {
-    id: "cx-ndca-standings",
-    title: "CX NDCA Standings",
-    description: "Cumulative, ranked season standings from recorded tournament results",
-    href: "/standings",
-    category: "standings",
-    doc: "standings.md",
-    tags: ["bids", "outrounds", "prelims", "division"],
-  },
-  {
     id: "team-rankings",
     title: "Team Rankings",
     description: "Debate team rankings, leaderboard, and Elo ratings",

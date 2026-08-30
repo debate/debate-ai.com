@@ -33,7 +33,6 @@ import {
   PreRoundBriefingsPanel,
   PrepNotesPanel,
   SharedFlowSyncPanel,
-  StandingsPanel,
   StrategyPanel,
   VulnerabilityChartsPanel,
   WordCountRoundsPanel,
@@ -69,7 +68,6 @@ const SECTIONS = [
   "Prep",
   "Scouting",
   "Practice",
-  "Standings",
 ] as const
 
 type Section = (typeof SECTIONS)[number]
@@ -176,7 +174,6 @@ export function CoachHub() {
         </div>
       ) : null}
 
-      {section === "Standings" ? <StandingsPanel /> : null}
     </div>
   )
 }

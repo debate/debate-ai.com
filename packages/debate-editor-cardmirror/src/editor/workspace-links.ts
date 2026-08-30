@@ -71,7 +71,6 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/speech-documents', label: 'Speech Documents', description: 'History of evidence sent into the designated speech document from this editor', category: 'Prep & Practice' },
 
   // ── Coaching & Analytics ────────────────────────────────────────────────
-  { href: '/standings', label: 'CX NDCA Standings', description: 'Cumulative, ranked season standings', category: 'Coaching & Analytics' },
   { href: '/rank', label: 'Team Rankings', description: 'Elo-based team leaderboard and rankings', category: 'Coaching & Analytics' },
   { href: '/outcomes', label: 'AI Response-Outcome Charts', description: 'Per-side exposure and most-vulnerable arguments', category: 'Coaching & Analytics' },
   { href: '/coaching-programs', label: 'Coaching Programs', description: "A coach's squad-scoped coaching space and boards", category: 'Coaching & Analytics' },

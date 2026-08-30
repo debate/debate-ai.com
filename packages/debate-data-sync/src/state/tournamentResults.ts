@@ -1,8 +1,6 @@
 /**
  * @fileoverview Persistent storage for `ndca-standings.ts`'s `TournamentResult`
- * records — the "(c) a standings dashboard UI" follow-up's persistence layer,
- * named under idea #1 ("CX NDCA Standings") in TODO.md's Product Feature
- * Ideas list. A team can attend many tournaments, so records aren't keyed by
+ * records. A team can attend many tournaments, so records aren't keyed by
  * `teamId` alone — each recorded result gets its own synthetic `id`
  * (assigned by the caller), mirroring `debate-card-search`'s
  * `revisionHistory.ts` wrapped-record convention (SSR/no-storage-safe,
