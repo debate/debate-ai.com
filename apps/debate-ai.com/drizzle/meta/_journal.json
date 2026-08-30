@@ -71,6 +71,13 @@
       "when": 1788071906284,
       "tag": "0009_add_theme_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1788075497124,
+      "tag": "0010_worthless_raza",
+      "breakpoints": true
     }
   ]
 }

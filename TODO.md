@@ -6,6 +6,70 @@
 _No task currently in progress._
 
 ### Completed
+- **Round Cloud Save (idea #17, follow-up (3)/(b), "rounds" half).** Lets a
+  signed-in user save a whole round (the tournament/debaters/judges wrapper
+  around a set of flows) to their account and load it back on any device
+  they sign in on, closing idea #17's follow-up (3)/(b) — "migrate rounds
+  themselves (the tournament/debaters/judges wrapper), which needs its own
+  schema design for how a saved round should reference its saved flows" —
+  the last still-open half of the recurring "create user settings and link
+  user db SQL... with ability to save flows docs and debates in SQL and
+  link to users" request that started idea #17 (`documents`, i.e. "docs",
+  already existed as a D1-backed, user-linked table before idea #17; the
+  "flows" half was closed by the Flow Cloud Save entry below; this closes
+  the "debates"/rounds half). Adds a new D1 `saved_rounds` table
+  (`apps/debate-ai.com/lib/database/schema.ts`, one row per (user, round),
+  unique on `(user_id, client_id)` so re-saving an edited round upserts
+  rather than duplicates, cascade-deleted with the account) plus migration
+  `drizzle/0010_worthless_raza.sql`; new account-only `/api/rounds` (list
+  summaries) and `/api/rounds/[clientId]` (get/upsert/delete one saved
+  round) routes — both 401 without a session, mirroring `/api/flows`;
+  `debate-round`'s new `state/savedRounds.ts` (pure `isValidRound`
+  structural validator — required fields plus shape checks on every
+  optional field when present — and `deriveRoundLabel`, preferring the
+  round's formatted `title` and falling back to `"${tournamentName} -
+  ${roundLevel}"`) and `round/saved-rounds-client.ts` (fetch client, `null`
+  return rather than a throw on `401`/`404` for the read calls, mirroring
+  `saved-flows-client.ts`); and a per-round cloud-upload icon (next to the
+  existing "Edit round details" button) plus a "Rounds" section added
+  under `dialogs/FlowHistoryDialog.tsx`'s existing "Saved to account" tab
+  (alongside its "Flows" section, unchanged). Since a `Round` only
+  references its flows indirectly via `flowIds: number[]`, saving a round
+  to the account also cascade-saves each of its flows that exist locally
+  (reusing the existing per-flow `saveFlowToAccount` call, which never
+  throws, so one flow failing to save never blocks the round save or the
+  other flows) — otherwise a round loaded on another device would have no
+  flows to resolve `flowIds` against; loading a saved round resolves
+  `flowIds` against the account's saved flows, merging in whichever aren't
+  already present locally and silently skipping any that were never saved.
+  Vitest-covered in `packages/debate-round/test/savedRounds.test.ts` (32
+  cases: every required field individually missing, every optional field's
+  shape both present-and-valid and present-and-malformed, every
+  `status`/`winner` value including an unknown one, and every
+  `deriveRoundLabel` branch including the 120-character truncation). The
+  fetch client, the D1 routes, and the dialog's save/load/remove wiring are
+  not unit-tested, matching every other fetch-client/D1-route/UI trio in
+  this repo — `apps/debate-ai.com` still has no vitest project wired up
+  (`vitest.config.ts`'s `projects` list is still `["packages/*"]` only).
+  Documented in `docs/features/round-cloud-save.md` (new) and
+  `docs/features/flow-cloud-save.md` (Known gaps updated — the "rounds not
+  migrated" gap it flagged is now closed). Verified: `bun install` (2258
+  packages), `bunx vitest run packages/debate-round/test/savedRounds.
+  test.ts` (32/32 pass), full `bun run test` (183 files / 2890 tests, all
+  pass, up from 2858), `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-ai-web` (12/12 in-scope package tasks pass — the same
+  three pre-existing, unrelated `debate-editor-cardmirror` errors surface
+  only via a flat `tsc --noEmit` on that package directly, none of them in
+  any file this slice touched), and `bun run build:web` (`debate-ai-web`
+  succeeds, `/api/rounds` and `/api/rounds/:clientId` present in the route
+  list). Follow-ups: (a) a bulk "save all my rounds" action; (b) no UI
+  exists yet for deleting a *local* round (`deleteRound` exists in
+  `useFlowStore` but has no caller anywhere in the app — only the cloud
+  copy can be removed from this dialog); (c) idea #17's follow-up (4) (a
+  standing UI-polish audit of existing tool panels/nav discoverability)
+  remains open, undecomposed — this is the last of idea #17's follow-ups
+  named in its original decomposition ((2) and (3) are now both fully
+  closed). **Completed:** 2026-08-30.
 - **Theme Settings — sync the color-theme/light-dark preference into
   `user_settings` (idea #17, follow-up (2)).** Closes the "Only
   `debateStyle`/`fontSize` are covered" Known gap `docs/features/
