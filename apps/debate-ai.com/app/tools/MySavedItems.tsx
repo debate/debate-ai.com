@@ -3,8 +3,9 @@
 /**
  * Surfaces the signed-in user's cloud-saved Documents and Rounds at the top
  * of the Tools directory, so the SQL-backed save feature (see /settings and
- * lib/hooks/useRoundsCloudSync.ts) is actually discoverable from the one page
- * that already lists every tool. Renders nothing when signed out or empty.
+ * docs/features/round-cloud-save.md) is actually discoverable from the one
+ * page that already lists every tool. Renders nothing when signed out or
+ * empty.
  */
 
 import { useEffect, useState } from "react"
@@ -45,7 +46,7 @@ export function MySavedItems() {
         .map((d: any) => ({ href: "/reason-editor", label: d.title || "Untitled", updatedAt: d.updatedAt, icon: FileText }))
       const roundItems: Item[] = rounds
         .slice(0, 5)
-        .map((r: any) => ({ href: "/debate", label: r.title || "Untitled Round", updatedAt: r.updatedAt, icon: Flag }))
+        .map((r: any) => ({ href: "/debate", label: r.label || "Untitled Round", updatedAt: r.updatedAt, icon: Flag }))
       const merged = [...docItems, ...roundItems]
         .sort((a, b) => {
           const am = typeof a.updatedAt === "number" ? a.updatedAt : Date.parse(a.updatedAt)
