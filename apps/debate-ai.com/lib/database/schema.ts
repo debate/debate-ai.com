@@ -193,6 +193,44 @@ export const savedFlows = sqliteTable(
 
 export type SavedFlowRow = typeof savedFlows.$inferSelect;
 
+// Account-linked round cloud save — TODO.md idea #17, follow-up (3)/(b):
+// "migrate rounds themselves (the tournament/debaters/judges wrapper)... needs
+// its own schema design for how a saved round should reference its saved
+// flows." A `Round` (packages/debate-core/src/types/flow.ts) only ever
+// references its flows indirectly via `flowIds: number[]` — the local
+// `Flow.id`s in `useFlowStore`'s `flows` array — so a saved round's `data`
+// blob keeps that same indirection rather than embedding the flows
+// themselves: loading a saved round resolves each `flowIds` entry against
+// the user's already-saved flows (`saved_flows`), the same way the local
+// `Round`/`Flow` stores are cross-referenced today. This mirrors
+// `savedFlows` above one row per (user, round), unique on
+// `(user_id, client_id)` so re-saving an edited round upserts rather than
+// duplicates, cascade-deleted with the account.
+export const savedRounds = sqliteTable(
+  "saved_rounds",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: integer("client_id").notNull(),
+    label: text("label").notNull().default(""),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_rounds_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_rounds_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedRoundRow = typeof savedRounds.$inferSelect;
+
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can
