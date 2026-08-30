@@ -1,72 +1,114 @@
-# Expandable Heading Structure — outline nav panel
+# Expandable Heading Structure — outline nav panel + heading breadcrumb
 
-Renders a heading nav/outline panel alongside the `reason-editor` document —
-the "(a) a React nav/outline panel in `reason-editor` that renders the
-outline and toggles collapsed ids, reading/writing through the persistence
-store" follow-up named under idea #9 ("Expandable Heading Structure") in
-`TODO.md`'s Product Feature Ideas list.
+Renders a heading nav/outline panel alongside the document, plus (as of
+this slice) a sticky "current heading" breadcrumb — TODO.md's idea #9
+("Expandable Heading Structure").
 
-- **Route:** `/reason-editor` (opt-in `showOutline` prop on `ReasonEditor`)
-- **Package:** [`reason-editor`](../../packages/reason-editor/README.md)
+**Correction (2026-08-30):** this doc previously described a TipTap-based
+`OutlineNavPanel`/`ReasonEditor` component in the `reason-editor` package.
+That component is dead code: `/reason-editor` has rendered
+`debate-editor-cardmirror`'s `CardMirrorEditor` (via the `debate-editor`
+re-export shim) since PR #338, and `CardMirrorEditor`'s own `showOutline`/
+`documentId` props (declared on its prop type, passed unconditionally from
+`app/reason-editor/page.tsx`) are never read anywhere in its
+implementation — a vestigial no-op left over from the migration. The
+outline nav panel this doc actually needs to describe is CardMirror's own,
+native, considerably more capable implementation below; `reason-editor`'s
+`OutlineNavPanel.tsx`/`ReasonEditor.tsx`'s `showOutline` prop and
+`state/collapsedHeadings.ts` are unreachable from the shipped app and were
+left as-is (deleting a whole legacy package is out of scope for this
+slice; the package is unimported anywhere in `apps/debate-ai.com`, per the
+"Round Workspace" idea #17 audit's dead-code search).
+
+- **Route:** `/reason-editor` (and every other CardMirror-hosted surface —
+  the nav panel and breadcrumb are core editor chrome, not opt-in)
+- **Package:** [`debate-editor-cardmirror`](../../packages/debate-editor-cardmirror)
 
 ## What it shows
 
-Every heading (H1-H4: pocket/hat/block/tag-analytic) in the live document,
-indented by level. A chevron toggle next to any heading that has nested
-subheadings collapses or expands that heading's subtree — collapsing hides
-descendant headings from the list (the heading itself stays visible),
-mirroring the existing `getVisibleHeadingIds` semantics used by
-`getCollapsedRanges`. Clicking a heading's label moves the editor's text
-selection to just inside that heading and scrolls it into view. The
-collapsed-id selection is persisted per `documentId` through the existing
-`state/collapsedHeadings.ts` store, so it's restored the next time the same
-document is opened.
+**Nav panel** (`editor/nav-panel.ts`'s `NavigationPanel`, mounted into the
+static `#nav-panel` div `react/ribbon-template.ts` renders) — every
+heading-anchored node (Pocket/Hat/Block/Tag/Analytic, in that
+level-1-through-4 order) in the live document, indented by level, with:
+chevron/double-click collapse per subtree, drag-and-drop reordering,
+multi-select, a per-level "show levels 1 through N" filter, live
+highlighting of the heading under the caret, and click-to-jump (via
+`precise-scroll.ts`'s cv:auto-aware `scrollToHeadingId`). Shown/hidden by
+the `toggleNavPane` ribbon command (menu bar, command palette, and the
+`#nav-pane-toggle-btn` ribbon button all reach it — no default keybinding)
+persisted as the `navPaneVisible` setting, which **defaults to visible**
+— so idea #9's original "make the panel on-by-default instead of opt-in"
+ask was already true of the live implementation before this slice; the
+`reason-editor` doc above just never got updated to say so.
+
+**Heading breadcrumb** (`editor/heading-breadcrumb-bar.ts`'s
+`HeadingBreadcrumbBar`, new in this slice) — a sticky one-line trail
+(`#heading-breadcrumb-bar`, pinned to the top of `#app`'s own scroll box)
+showing the ancestor chain — e.g. "Case › Advantage 1 › Uniqueness" — for
+whichever heading is at the top of the current scroll position. Each
+segment is clickable and jumps to that heading, reusing the same
+select-then-`scrollToHeadingId` pattern `nav-panel.ts`'s own row clicks
+use. Hidden when scrolled above every heading (nothing to show yet).
+Single-doc only — multi-pane/multi-window each have their own
+`.pmd-pane-body` scroller and view and aren't wired up (a follow-up, not a
+regression: neither had a breadcrumb before this file existed).
 
 ## Data flow
 
 ```
-engine/outline/heading-outline.ts
-  → buildHeadingOutline(doc)                    — derives heading list from the live ProseMirror doc
-  → getVisibleHeadingIds(outline, collapsedIds)  — which headings the panel lists
-  → toggleCollapsedHeadingId(collapsedIds, id)   — flips one heading's collapse state
+editor/headings.ts
+  → collectHeadings(doc)             — flat, doc-order heading list (shared
+                                        by the nav panel, drag/drop, and the
+                                        breadcrumb)
 
-state/collapsedHeadings.ts (localStorage: reasonEditorCollapsedHeadings)
-  → getCollapsedHeadingSelection(documentId)   — restores a document's selection on mount
-  → saveCollapsedHeadingSelection(selection)   — persists after every toggle
+editor/nav-panel.ts (NavigationPanel)
+  → owns collapse state, drag/drop, multi-select, the per-level filter,
+    and caret-follow highlighting
+  → settings.ts's `navPaneVisible` (default true) + `toggleNavPane`
+    ribbon command gate visibility; `formatNavPaneByType` controls the
+    per-level styling
 
-react/OutlineNavPanel.tsx
-  → subscribes to the TipTap editor's "update" event to re-derive the
-    outline whenever the document changes
-  → renders the indented, toggleable heading list
-  → editor.chain().setTextSelection(...).scrollIntoView().run() on click
+editor/heading-breadcrumb.ts
+  → computeBreadcrumbPath(headings, pos) — pure: single forward pass over
+    collectHeadings()'s flat list, maintaining a level-ordered ancestor
+    stack (pop while the top of stack's level >= the next entry's level,
+    then push) — no parent pointers needed, the same trick
+    `sectionEndFromHeading` in headings.ts uses for sibling spans
 
-react/ReasonEditor.tsx
-  → new `showOutline`/`documentId` props render OutlineNavPanel next to the
-    document content
+editor/heading-breadcrumb-bar.ts (HeadingBreadcrumbBar)
+  → on scroll (rAF-throttled) and on doc update, probes a few Y offsets
+    below the bar via `view.posAtCoords` — not just one; the doc's own
+    top padding right at scrollTop 0 can put a single close-in probe in a
+    gap `posAtCoords` resolves as no hit, which left the bar showing a
+    stale heading until this widened — then renders
+    `computeBreadcrumbPath`'s result, clickable per segment to jump
 
-apps/debate-ai.com/app/reason-editor/page.tsx
-  → passes `showOutline` to `EditorWithToolbar` (documentId defaults to the
-    existing `contentKey`, i.e. the document's row id)
+react/ribbon-template.ts
+  → static `#heading-breadcrumb-bar` div, sibling of `.pmd-editor-row`
+    inside `#app`, so `position: sticky` pins it to `#app`'s own scroll
+    box (single-doc's scroller — see `precise-scroll.ts`'s module doc)
 ```
-
-This closes follow-up (a) on the "Expandable Heading Structure" idea. The
-outline/collapse-range derivation and the collapsed-heading persistence
-store already existed and were Vitest-covered
-(`packages/reason-editor/test/heading-outline.test.ts`,
-`packages/reason-editor/test/collapsedHeadings.test.ts`); this slice adds
-the `toggleCollapsedHeadingId` pure helper (also Vitest-covered) and the
-`OutlineNavPanel` component that wires the two together. A later slice
-closed follow-up (b): `engine/outline/collapsed-headings-plugin.ts`'s
-`collapsedHeadingsPlugin` (registered in `react/reason-core-extension.ts`)
-is a ProseMirror decoration plugin that actually hides collapsed ranges in
-the live editor view, and `OutlineNavPanel.tsx` dispatches
-`setCollapsedHeadingIdsMeta(collapsedIds)` on toggle and on mount to keep
-the plugin's hidden ranges in sync with the panel's own collapsed-heading
-state. No follow-ups remain open on this bullet.
 
 ## Known gaps
 
-- No component-level test exists for `OutlineNavPanel` itself, consistent
-  with this repo's existing convention of Vitest-covering pure state/engine
-  logic rather than `.tsx` panel components (verified instead via
-  `bun run build:web`).
+- No component-level test exists for `NavigationPanel`/
+  `HeadingBreadcrumbBar` themselves, consistent with this repo's existing
+  convention of Vitest-covering pure state/engine logic
+  (`heading-breadcrumb.test.ts`'s 8 cases cover `computeBreadcrumbPath`'s
+  ancestor-stack logic directly) rather than DOM-wiring classes — verified
+  instead via `bun run build:web` plus a manual Playwright pass against
+  `wrangler dev` (a real local D1 is required for `/reason-editor`'s
+  document create/list calls to succeed; `bun run dev:web`'s plain
+  `vinext dev` has no D1 binding at all).
+- The breadcrumb is single-doc only; multi-pane and multi-window don't
+  have one yet (see "What it shows" above).
+- No dedicated visibility toggle for the breadcrumb — it always renders
+  when a heading exists above the current scroll position. A follow-up
+  could gate it behind its own setting/ribbon command (mirroring
+  `toggleNavPane`'s `navPaneVisible` pattern) if a user wants it off
+  without also losing the nav panel.
+- Idea #9's other two follow-ups are already done, just not through the
+  `reason-editor` package this doc used to point at: drag-to-reorder
+  headings is `nav-panel.ts`'s existing drag/drop (`drag-controller.ts`),
+  and "on by default" is `navPaneVisible`'s own default. Only the sticky
+  breadcrumb follow-up was genuinely missing before this slice.

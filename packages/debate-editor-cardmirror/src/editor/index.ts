@@ -19,6 +19,7 @@ import { transformForExport, countMarkedCards } from '../export/transform-for-ex
 import type { Thread, Comment } from './comments-plugin.js';
 import type { LocalComment } from './learn-store.js';
 import { NavigationPanel } from './nav-panel.js';
+import { HeadingBreadcrumbBar } from './heading-breadcrumb-bar.js';
 import { initUpdateChip } from './update-chip.js';
 import { mountTimerUI } from './timer-ui.js';
 import { initTimerAudio } from './timer-audio.js';
@@ -5002,6 +5003,14 @@ export function getNavPanel(): NavigationPanel {
   return navPanel;
 }
 
+/** Sticky "current heading" breadcrumb above the single-doc editor
+ *  surface — `null` when the host markup omits the (optional)
+ *  `#heading-breadcrumb-bar` element. Single-doc only; see
+ *  `heading-breadcrumb-bar.ts`'s module doc for why multi-pane/
+ *  multi-window aren't wired up yet. */
+const breadcrumbBarEl = document.getElementById('heading-breadcrumb-bar');
+const breadcrumbBar = breadcrumbBarEl ? new HeadingBreadcrumbBar(breadcrumbBarEl, appEl) : null;
+
 function makeStarterDoc(): PMNode {
   const n = schema.nodes;
   const m = schema.marks;
@@ -5694,6 +5703,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
   }
   currentDoc = doc;
   navPanel.attach(view);
+  breadcrumbBar?.attach(view);
   // Sync visible state with the persisted setting on every mount.
   const startVisible = settings.get('commentsVisible');
   if (commentsColumnEl) commentsColumnEl.hidden = !startVisible;
@@ -5716,6 +5726,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
   // Initial paint: do the heavy update synchronously so the user sees
   // the right thing immediately on doc load.
   navPanel.update(doc);
+  breadcrumbBar?.update(doc);
   refreshWordCount();
   refreshFontSizeDisplay();
   refreshFormattingPanelButtonStates();
@@ -5738,6 +5749,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
   // the previous doc was last in.
   navPanel.scrollToTop();
   appEl.scrollTop = 0;
+  breadcrumbBar?.update(doc);
   // Re-resolve this doc's flashcard highlights once the caller has set
   // the doc identity (adoptDocId runs synchronously right after
   // mountView returns, so defer a frame). No-op when the column is
@@ -5834,6 +5846,7 @@ function scheduleHeavyUpdate(): void {
     pendingHeavyUpdate = null;
     if (!view) return;
     navPanel.update(view.state.doc);
+    breadcrumbBar?.update(view.state.doc);
     // Re-apply the caret highlight now that `update()` has rebuilt
     // `liEntries` with fresh positions. The synchronous `setCaretHeading`
     // in `dispatchTransaction` ran against stale positions (it fires
