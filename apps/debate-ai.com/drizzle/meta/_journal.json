@@ -50,6 +50,13 @@
       "when": 1787915235599,
       "tag": "0006_ordinary_wallop",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1788065172653,
+      "tag": "0007_left_wiccan",
+      "breakpoints": true
     }
   ]
 }

@@ -109,6 +109,30 @@ export const flowSyncEdits = sqliteTable(
 
 export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
 
+// Account-linked app preferences — TODO.md idea #17 ("User Settings —
+// account-linked debate preferences"), first slice. One row per user,
+// mirroring `debate-round`'s local-only `Settings` singleton
+// (`packages/debate-round/src/state/settings.ts`) so a signed-in user's
+// `debateStyle`/`fontSize` choices follow them across devices instead of
+// staying stuck in one browser's localStorage. `debateStyle`/`fontSize`
+// are nullable — a null column means "use the client default", the same
+// semantics as an absent key in the local `Settings` store.
+export const userSettings = sqliteTable("user_settings", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  debateStyle: integer("debate_style"),
+  fontSize: integer("font_size"),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type UserSettingsRow = typeof userSettings.$inferSelect;
+
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can
