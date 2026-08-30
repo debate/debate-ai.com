@@ -6,6 +6,44 @@
 _No task currently in progress._
 
 ### Completed
+- **Round Workspace — "Tools for this round" menu (idea #17, follow-up
+  (4), discoverability-audit half).** Prompted by the same standing "add
+  tools into where needed in the ui... develop better tool ui" ask idea
+  #17's follow-up (4) was left open for. Audited every route under
+  `apps/debate-ai.com/app` against the `/tools` catalog
+  (`app/tools/tool-groups.ts`) and found no genuinely undiscoverable tool
+  route — everything reachable outside the main dock/Settings menu was
+  already listed there. The real gap was the round workspace itself
+  (`/debate`): it linked to none of the tools that read its own currently
+  selected flow back out (Argument Tree Outline, AI Response-Outcome
+  Charts, Practice Drills, AI Coach Mode — each with its own "Generate ...
+  for current round" action reading `debate-round`'s `state/store.ts`
+  `useFlowStore` directly, per `ArgumentTreePanel.tsx`/
+  `VulnerabilityChartsPanel.tsx`/`DrillSetsPanel.tsx`/
+  `CoachingSessionsPanel.tsx`), so a debater had to already know a tool
+  existed, leave the workspace, find it in the `/tools` grid, then come
+  back. Added `debate-round`'s `round/flow-tool-links.ts` (pure
+  `FLOW_TOOL_LINKS`/`buildFlowToolsMenuItems`, disabling every entry when
+  no flow is selected, mirroring each target panel's own
+  `disabled={!currentFlow}` gating) and `layout/FlowToolsMenu.tsx` (a
+  wrench-icon dropdown), wired into `layout/FlowPageSidebar.tsx`'s existing
+  quick-action button row as a fourth button alongside split-mode/Flow
+  History/Edit Round. Also searched every `*Panel.tsx` across
+  `debate-round`/`debate-card-search`/`debate-speech-writer` for one not
+  importing `debate-ui` (the "bring weaker panel UIs up to the shared
+  `debate-ui` primitive conventions" other half of follow-up (4)) and found
+  none outside dead code (the old TipTap-era `packages/reason-editor`
+  panels, superseded by `debate-editor-cardmirror` since PR #338 and
+  imported nowhere in the app) and an unrelated Electron app
+  (`debate-flow-ebb`) — that half of follow-up (4) stays open pending a
+  more exhaustive pass, or a specific panel a user flags as weak. Also
+  found two other open PRs (#362, #365) already in flight for follow-up
+  (3)'s remaining "rounds" D1 half as of this run — deliberately not
+  duplicated here. Vitest-covered in
+  `packages/debate-round/test/flowToolLinks.test.ts` (10 cases:
+  `FLOW_TOOL_LINKS` shape/uniqueness, and `buildFlowToolsMenuItems`'s
+  enabled/disabled behavior for a selected flow vs. `null`/`undefined`).
+  See `docs/features/flow-tools-menu.md`.
 - **Integrate Tools into User Settings (idea #17, "integrate tools into
   user settings" follow-up, plus a `/tools` UI-polish pass).** Prompted by
   a request to "integrate tools into the user settings and improve tools
@@ -9383,8 +9421,18 @@ _No task currently in progress._
     row and wired the dock's existing `useThemeState` theme picker to sync
     them, closing follow-up (2). A third slice, Flow Cloud Save (see
     Tracker Status above), migrated `useFlowStore`'s `flows` (not `rounds`)
-    onto D1, closing the "flows" half of follow-up (3). Follow-ups
-    (3, remaining — the `rounds` half) and (4) remain open — not started._
+    onto D1, closing the "flows" half of follow-up (3). A fourth slice,
+    "Round Workspace — 'Tools for this round' menu" (see Tracker Status
+    above), audited the `/tools` catalog against every app route (finding
+    no undiscoverable tool routes) and added a quick-access menu to the
+    round workspace linking to the four flow-driven analysis tools that act
+    on the currently selected flow, closing the discoverability-audit half
+    of follow-up (4). Follow-up (3, remaining — the `rounds` half) remains
+    open — not started; a `saved_rounds`/`/api/rounds` slice for it appears
+    to already be in flight in an open PR as of this run. The "bring weaker
+    panel UIs up to the shared `debate-ui` primitive conventions" half of
+    follow-up (4) also remains open — this run's panel audit found none,
+    but it was one search pass, not an exhaustive one._
 
 
 ## Research Crowdsourcing Organizer Features
