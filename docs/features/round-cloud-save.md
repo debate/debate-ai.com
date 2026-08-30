@@ -149,6 +149,30 @@ no vitest project wired up (`vitest.config.ts`'s `projects` list is still
 
 ## Known gaps
 
+- Closed: a later, unrelated merge (`7ace3bf`, "Move CardMirror's General/
+  Appearance/Accessibility settings to /settings") resolved a stale merge
+  conflict by resurrecting a dead, pre-`saved_rounds` `rounds` table/route
+  pair from an earlier abandoned branch and deleting this feature's actual
+  `savedRounds` schema export and `/api/rounds/[clientId]/route.ts` — every
+  save/load/delete-round-to-account call started 404ing, and `GET
+  /api/rounds` silently listed from the wrong (unused, always-empty) table,
+  even though three further feature slices ("Save all rounds", "Save flows
+  not in a round", the round delete button) shipped on top of the by-then
+  already-broken client in the following days without anyone rerunning a
+  live save/load smoke check against the actual API route. The same commit
+  also generated an orphaned, never-journaled migration
+  (`0011_curious_human_cannonball.sql`) that overwrote `meta/0011_snapshot.
+  json` with the wrong (post-regression) schema shape, corrupting
+  `drizzle-kit generate`'s diff baseline for any future migration. Restored
+  `savedRounds`/`SavedRoundRow` in `schema.ts`, restored both route files
+  verbatim, removed the resurrected `rounds` table, restored the correct
+  `0011_snapshot.json`, and regenerated a properly journaled
+  `0012_add_editor_preferences.sql` for the one legitimate schema change
+  the orphaned file carried (the `editor_preferences` column the CardMirror-
+  settings-in-`/settings` feature needs) — `drizzle-kit generate` now
+  reports exactly that single-column diff against the corrected baseline.
+  No data loss: `saved_rounds` itself was never dropped by the regression,
+  only the app's ability to read/write it.
 - Saving a round cascade-saves its flows, but there's no reverse indicator
   in the "Flows" section of the cloud tab showing which flows got saved as
   a side effect of a round save (they just appear there like any

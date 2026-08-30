@@ -85,6 +85,13 @@
       "when": 1788097494121,
       "tag": "0011_plain_fantastic_four",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1788129790654,
+      "tag": "0012_add_editor_preferences",
+      "breakpoints": true
     }
   ]
 }
