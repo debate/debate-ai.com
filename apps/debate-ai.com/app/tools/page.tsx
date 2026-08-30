@@ -19,6 +19,7 @@ export default function ToolsPage() {
           <h1 className="text-2xl font-semibold text-foreground">Tools</h1>
           <p className="mt-1 text-sm text-muted-foreground">Every workspace, research, and practice tool in one place.</p>
         </div>
+        <MySavedItems />
         <ToolsSearch />
 
         {/* Hidden until FavoritesController (mounted below) finds a match —

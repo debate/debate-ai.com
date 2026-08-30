@@ -86,10 +86,10 @@ wired up (see `vitest.config.ts`'s `projects` list).
 ## Known gaps
 
 - `rounds` (the tournament/debaters/judges wrapper around a set of flows)
-  are not migrated by this slice — only individual flows. Modeling a saved
-  round (and its relationship to its saved flows) needs its own schema
-  design, per idea #17's follow-up (3) note in `TODO.md`.
-- No bulk "save this round's flows" action — each flow is saved one at a
+  are now migrated too — see [`round-cloud-save.md`](round-cloud-save.md)
+  (idea #17, follow-up (3)/(b)).
+- No bulk "save this round's flows" action outside of saving a whole round
+  (which does cascade-save its flows) — each flow is still saved one at a
   time via its own cloud icon.
 - No optimistic-concurrency handling: the same account editing and saving
   the same flow from two tabs/devices at once has the last PUT win, same
