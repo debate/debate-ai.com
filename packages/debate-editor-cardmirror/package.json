@@ -10,7 +10,10 @@
   "exports": {
     ".": "./src/react/index.tsx",
     "./engine": "./src/index.ts",
-    "./styles.css": "./src/editor/style.css"
+    "./styles.css": "./src/editor/style.css",
+    "./settings": "./src/editor/settings.ts",
+    "./settings-ui": "./src/editor/settings-ui.ts",
+    "./settings-categories": "./src/editor/settings-categories.ts"
   },
   "files": [
     "src"

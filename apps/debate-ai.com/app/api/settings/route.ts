@@ -15,6 +15,13 @@ import {
   type ThemeMode,
   type UserSettingsPayload,
 } from "debate-round"
+import {
+  mergeEditorPreferences,
+  normalizeEditorPreferencesPatch,
+  parseEditorPreferences,
+  serializeEditorPreferences,
+  type EditorPreferencesPayload,
+} from "@/lib/editor-preferences"
 
 /**
  * Account-linked app preferences — TODO.md idea #17 ("User Settings —
@@ -47,9 +54,15 @@ type SettingsRow = {
   colorTheme: string | null
   themeMode: string | null
   favoriteTools: string | null
+  editorPreferences: string | null
 }
 
-type SettingsPayload = UserSettingsPayload & { colorTheme: string; themeMode: ThemeMode; favoriteTools: string[] }
+type SettingsPayload = UserSettingsPayload & {
+  colorTheme: string
+  themeMode: ThemeMode
+  favoriteTools: string[]
+  editorPreferences: EditorPreferencesPayload
+}
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
   return {
@@ -58,6 +71,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     colorTheme: row?.colorTheme ?? DEFAULT_THEME_SETTINGS.colorTheme,
     themeMode: (row?.themeMode as ThemeMode | null) ?? DEFAULT_THEME_SETTINGS.themeMode,
     favoriteTools: row?.favoriteTools ? parseFavoriteTools(row.favoriteTools) : DEFAULT_FAVORITE_TOOLS.favoriteTools,
+    editorPreferences: parseEditorPreferences(row?.editorPreferences),
   }
 }
 
@@ -89,28 +103,54 @@ export async function PUT(req: NextRequest) {
   const userSettingsResult = normalizeUserSettingsPatch(body)
   const themeSettingsResult = normalizeThemeSettingsPatch(body)
   const favoriteToolsResult = normalizeFavoriteToolsPatch(body)
+  const editorPreferencesResult = normalizeEditorPreferencesPatch(
+    (body as { editorPreferences?: unknown } | null)?.editorPreferences,
+  )
   const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid }
-  const errors = [...userSettingsResult.errors, ...themeSettingsResult.errors, ...favoriteToolsResult.errors]
+  const errors = [
+    ...userSettingsResult.errors,
+    ...themeSettingsResult.errors,
+    ...favoriteToolsResult.errors,
+    ...editorPreferencesResult.errors,
+  ]
 
   if (errors.length > 0) {
     return NextResponse.json({ error: errors.join(" ") }, { status: 400 })
   }
-  if (Object.keys(valid).length === 0 && favoriteToolsResult.valid.favoriteTools === undefined) {
+  if (
+    Object.keys(valid).length === 0 &&
+    favoriteToolsResult.valid.favoriteTools === undefined &&
+    Object.keys(editorPreferencesResult.valid).length === 0
+  ) {
     return NextResponse.json(
-      { error: "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, or favoriteTools." },
+      {
+        error:
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, or editorPreferences.",
+      },
       { status: 400 },
     )
   }
 
+  const db = await getDBFromContext()
+  const now = new Date()
+
   // `favoriteTools` is stored as a JSON-serialized column, so it's kept out
   // of `valid` (the picker-style fields written as-is) and merged in here.
-  const dbPatch: typeof valid & { favoriteTools?: string | null } = { ...valid }
+  const dbPatch: typeof valid & { favoriteTools?: string | null; editorPreferences?: string | null } = { ...valid }
   if (favoriteToolsResult.valid.favoriteTools !== undefined) {
     dbPatch.favoriteTools = serializeFavoriteTools(favoriteToolsResult.valid.favoriteTools)
   }
-
-  const db = await getDBFromContext()
-  const now = new Date()
+  // `editorPreferences` is a key→value map updated one control at a time, so
+  // a PUT merges onto the existing stored map rather than replacing it.
+  if (Object.keys(editorPreferencesResult.valid).length > 0) {
+    const [existing] = await db
+      .select({ editorPreferences: userSettings.editorPreferences })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const merged = mergeEditorPreferences(parseEditorPreferences(existing?.editorPreferences), editorPreferencesResult.valid)
+    dbPatch.editorPreferences = serializeEditorPreferences(merged)
+  }
 
   await db
     .insert(userSettings)
