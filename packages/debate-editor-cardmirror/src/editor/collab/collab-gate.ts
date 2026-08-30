@@ -21,7 +21,7 @@
 import { getHost } from '../host/index.js';
 import { isLiteBuild } from '../lite.js';
 import { settings } from '../settings.js';
-import { resolveMobileLayout } from '../mobile-layout.js';
+import { resolveMobileLayout, detectEmbedded } from '../mobile-layout.js';
 
 /** Mirrors `index.ts`'s boot-time mobile-shell resolution, memoized
  *  once per page load (same reload-to-switch convention — resizing
@@ -36,6 +36,7 @@ function isMobileShell(): boolean {
         typeof window.matchMedia === 'function' &&
         window.matchMedia('(pointer: coarse)').matches,
       viewportWidth: window.innerWidth,
+      embedded: detectEmbedded(),
     });
   } catch {
     /* unresolvable layout → treat as mobile, gate stays closed */

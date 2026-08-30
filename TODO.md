@@ -6,6 +6,202 @@
 _No task currently in progress._
 
 ### Completed
+- **My Saved Items — include saved flows (idea #17, `/tools`
+  discoverability gap).** Prompted by another repeat of idea #17's standing
+  request ("create user settings and link user db SQL... with ability to
+  save flows docs and debates in SQL and link to users... add tools into
+  where needed in the ui... develop better tool ui"). Auditing the three
+  D1-backed save stores that request names — `documents` (REASON editor),
+  `saved_flows`, `saved_rounds` — against every place a signed-in user can
+  discover their saved data found `app/tools/MySavedItems.tsx` (the "My
+  Saved Items" widget atop the `/tools` grid, added by an earlier idea #17
+  slice specifically to make cloud saves discoverable) only ever fetched
+  `/api/doc/documents` and `/api/rounds`: a user with cloud-saved flows and
+  nothing else saw an empty widget despite having real cloud data, and a
+  user with all three saw flows silently missing from the merged list.
+  `FlowHistoryDialog`'s own "Saved to account" tab (inside `/debate`) always
+  showed all three correctly — this was specifically the top-level
+  `/tools` widget's gap, not a data or route problem. Extracted the
+  merge/sort/label/relative-time logic the widget had inlined (and that a
+  fix needed to touch anyway) into a new pure module,
+  `packages/debate-round/src/state/cloudLibrary.ts`:
+  `parseCloudTimestamp` (normalizes an ISO string or a raw unix-seconds/
+  -milliseconds number into milliseconds, matching every timestamp shape
+  the three routes can hand back), `buildRecentCloudItems` (merges
+  documents/flows/rounds summaries into one newest-first list, capping each
+  kind to `perKindLimit` before the merge so one prolific kind can't crowd
+  the others out, then the merged result to `limit`, with per-kind default
+  hrefs a caller can override and a per-kind "Untitled ..." fallback label),
+  and `formatRelativeCloudTime` (the widget's "Today"/"Yesterday"/"Nd ago"
+  copy, with an injectable `now` for testability). `MySavedItems.tsx` now
+  fetches `/api/flows` alongside the other two routes and calls these
+  instead of its own inline merge, picking a `ListTree` icon for the new
+  "flow" kind (`FileText` for documents, `Flag` for rounds, unchanged).
+  Vitest-covered in `packages/debate-round/test/cloudLibrary.test.ts` (17
+  cases: every `parseCloudTimestamp` shape including non-finite numbers and
+  unparseable strings, merging+sorting all three kinds together, the
+  flows-inclusion regression itself, default and overridden per-kind hrefs,
+  per-kind untitled-label fallbacks, `perKindLimit` and `limit` capping
+  independently, empty/omitted input, and every `formatRelativeCloudTime`
+  boundary including future-timestamp clock-skew tolerance and a
+  non-finite input). The fetch calls and the widget's own rendering are not
+  unit-tested, matching every other fetch-client/route pair in this repo —
+  `apps/debate-ai.com` still has no vitest project wired up (`vitest.
+  config.ts`'s `projects` list is still `["packages/*"]` only). Documented
+  in `docs/features/flow-cloud-save.md`'s Known gaps (the gap is recorded
+  as closed there, alongside a pointer back to this entry). Verified: `bun
+  install` (2258 packages), `bunx vitest run
+  packages/debate-round/test/cloudLibrary.test.ts` (17/17 pass), full `bun
+  run test` (190 files / 2995 tests, all pass, up from 2978), `bunx turbo run
+  typecheck --filter=debate-round --filter=debate-ai-web` (12/12 in-scope
+  package tasks pass), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (same 34 pre-existing, unrelated errors
+  as every prior slice — confirmed none in `MySavedItems.tsx` or the new
+  `cloudLibrary.ts`), and `bun run build:web` (`debate-ai-web` succeeds,
+  `/tools`, `/settings`, `/api/flows`, `/api/rounds`, and
+  `/api/doc/documents` all present in the route list). No UI screenshot/
+  Playwright smoke check was run this slice — the change is a pure-logic
+  extraction plus a mechanical third `fetch` call, and the existing
+  `favoriteTools`/theme-picker Playwright check already exercises
+  `/tools`'s sign-in-gated rendering path. **Completed:** 2026-08-30.
+- **Insert Short Cite — the one CardMirror shortcut gap idea #14 named
+  (`Mod-Shift-k`).** `docs/features/legacy-verbatim-shortcuts.md`'s Known
+  gaps flagged this as "the one genuine (not just doc-staleness) gap"
+  its audit found: CardMirror never grew a pure "format `Smith 24` and
+  insert it at the cursor" command, unlike `F8` (styles already-typed
+  text), `Alt-F8` (`copyPreviousCite`, reuses the nearest earlier cite),
+  and `Mod-Shift-x` (`aiCreateCite`, formats a full citation from a
+  selection via AI) — none of which cover "there's no cite text yet, I
+  just want to drop in an author/year tag." Adds
+  `packages/debate-editor-cardmirror/src/editor/insert-short-cite.ts`:
+  the pure `buildInsertShortCiteTransaction(state, author, year)`
+  (inserts the formatted tag at the selection/cursor and marks it
+  `cite_mark`, reusing `debate-card-parser`'s existing
+  `formatShortCiteTag` rather than reimplementing it — the same pure
+  formatter the now-dead `reason-editor` package's equivalent command
+  used) and the async `runInsertShortCite(view)`, which prompts for an
+  author then a year via two sequential `text-prompt.ts` `promptForText`
+  dialogs (the shared modal vocabulary every other prompt-driven
+  CardMirror command already uses — never the native `window.prompt`,
+  which Electron disables outright) before dispatching the transaction.
+  Wired as a full `RibbonCommandId` (`insertShortCite`) through every
+  touch point a first-class command needs: `ribbon-commands.ts`'s id
+  union/list/label/`Mod-Shift-k` default keybinding/`RibbonContext`
+  field/no-op default/dispatch case (no-selection-required, like
+  `reformatAllCites`, since this inserts new text rather than acting on
+  existing text), `ribbon-groups.ts`'s "Editing utilities" group
+  (alongside `copyPreviousCite`, which also auto-registers it in the
+  menu bar's Edit dropdown via `menu-bar-categories.ts`'s existing
+  title-based mapping), and the real implementation in `editor/index.ts`
+  alongside `aiCreateCite`'s. The command-palette
+  (`quick-card-search-ui.ts`) and availability gating
+  (`ribbon-availability.ts`) needed no changes — both already derive
+  from the id/label lists automatically. Added `debate-card-parser` as an
+  explicit `debate-editor-cardmirror` dependency (`workspace:*`) to reuse
+  `formatShortCiteTag` rather than duplicating it — matches how
+  `debate-speech-writer` already depends on the same package. Also
+  corrected two other stale bullets under this same idea #14 entry in
+  the Product Feature Ideas list above (an in-editor shortcuts reference
+  and a keybinding-rebinding settings page both already exist —
+  `openShortcutsReference`/`keybindings-editor.ts` — just never pruned
+  from the backlog once built) while already touching that section; see
+  the updated item 14 entry for what's actually still open there.
+  Vitest-covered in
+  `packages/debate-editor-cardmirror/test/insert-short-cite.test.ts` (10
+  cases: `parseCiteYearInput`'s numeric/blank/non-numeric/whitespace
+  branches, and `buildInsertShortCiteTransaction`'s collapsed-cursor
+  insert, `cite_mark` application over exactly the inserted range,
+  replacing a non-collapsed selection, the `"ND"`/`null` year sentinels,
+  and the no-author `null` return). `runInsertShortCite`'s prompt/dispatch
+  wiring itself is not unit-tested — this package has no jsdom
+  environment wired into Vitest (confirmed: no `vitest.config.ts` exists
+  under `packages/debate-editor-cardmirror`, and the root config's
+  `projects: ["packages/*"]` picks it up with Vitest's node default) —
+  matching this file's own precedent, `link-context-menu-plugin.ts`'s
+  `editLink`, which is equally untested for the same reason. Verified:
+  `bun install` (2258 packages, adding the new workspace dependency),
+  `bunx turbo run typecheck --filter=debate-editor-cardmirror
+  --filter=debate-card-parser` then a full `bunx turbo run typecheck`
+  (14/14 in-scope package tasks pass), `bunx vitest run --project
+  debate-editor-cardmirror` (45/45 pass, up from 35), full `bun run test`
+  (189 files / 2978 tests, all pass, up from 2968), a direct `npx tsc
+  --noEmit -p apps/debate-ai.com/tsconfig.json` (same 34 pre-existing,
+  unrelated errors as every prior slice has recorded — `D1Database`/
+  `Fetcher` globals, `debate-ui`'s `.svg`/`.png` module declarations,
+  none in any file this slice touched), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/reason-editor` present in the route
+  list). **Completed:** 2026-08-30.
+- **Fix broken production build — two independently-merged idea #17
+  branches redeclared `user_settings` and collided on `/api/rounds`
+  (data-integrity/build fix, not a new idea slice).** `bun run build:web`
+  and `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json` were both
+  broken on `master`: `lib/database/schema.ts` declared `export const
+  userSettings`/`export type UserSettingsRow` *twice* (TS2451/TS2300), and
+  the vinext build failed outright — "You cannot use different slug names
+  for the same dynamic path ('id' !== 'clientId')" — because
+  `app/api/rounds/[id]/` and `app/api/rounds/[clientId]/` both existed as
+  siblings. Root cause: PR #362 ("Add cloud persistence for FIAT rounds and
+  user settings") and the PR #360/361/363/364/365 chain (this same idea
+  #17's documented, tested, UI-wired slices above) each independently built
+  a full round/user-settings persistence system without visibility into the
+  other, and the merge that landed both kept every file from both sides
+  instead of reconciling them. Investigated which system was actually live:
+  PR #362's `user_settings` columns (`colorMode`/`defaultRoundPrivate`) and
+  its `/api/user/settings` route were referenced nowhere outside their own
+  files (dead on arrival); its `rounds` table + `/api/rounds/[id]` +
+  `useRoundsCloudSync`/`RoundSyncStatus` (an auto-debounced round-sync badge
+  mounted on `/debate`) turned out to already be broken *post-merge* too —
+  the merge had silently overwritten PR #362's own `/api/rounds/route.ts`
+  (GET+POST, `{id,title,format}` shape) with PR #365's `savedRounds`-backed
+  version (GET-only, `{clientId,label,updatedAt}` shape), so
+  `useRoundsCloudSync`'s POST calls already 405'd and its GET response
+  shape no longer matched what it read. Its migration
+  (`drizzle/0007_rapid_dragon_man.sql`, which also contained the
+  conflicting duplicate `CREATE TABLE user_settings`) was never in
+  `drizzle/meta/_journal.json` either — generated on a divergent branch
+  state and never reconciled. Also found `app/tools/page.tsx` rendering
+  `<MySavedItems />` with no import at all (TS2304) — a "recently saved
+  docs/rounds" discoverability card for `/tools`, evidently dropped during
+  the same merge. Fix: removed PR #362's entire dead/broken half —
+  `app/api/user/settings/route.ts`, `app/api/rounds/[id]/route.ts`,
+  `lib/hooks/useRoundsCloudSync.ts`, `components/layout/RoundSyncStatus.tsx`
+  (+ its two `/debate` page mounts), the `rounds`/`RoundRow` schema export,
+  and the duplicate `userSettings`/`UserSettingsRow` declaration — keeping
+  only the tested, documented, UI-wired `saved_rounds`/`/api/settings`
+  chain this idea's own history (below) already covers. Fixed
+  `MySavedItems`'s missing import and updated its round-summary mapping
+  from `r.title` to `r.label` to match the surviving `/api/rounds` route's
+  actual (`saved_rounds`-backed) response shape. Deleted the untracked,
+  conflicting `0007_rapid_dragon_man.sql` and the also-untracked
+  `0010_worthless_raza.sql` (an ad-hoc `saved_rounds` migration that never
+  made it into the journal either), then ran `drizzle-kit generate` against
+  the now-deduplicated schema to produce a properly journaled
+  `0011_plain_fantastic_four.sql` — confirmed via its own dry-run output
+  that it emits *only* `CREATE TABLE saved_rounds` (plus its two indexes),
+  no unrelated diff — restoring `drizzle/meta/_journal.json`/snapshot chain
+  coherence for future `db:generate` runs. No `DROP TABLE`/destructive SQL
+  was written anywhere — the retired `rounds` table's own `CREATE TABLE`
+  statement is simply no longer regenerated for a fresh database; an
+  already-provisioned remote D1 database (if `0007_rapid_dragon_man.sql`
+  ever partially ran there before this fix) is left untouched, just
+  unreferenced. No new Vitest tests were added — every changed file is
+  either dead-code deletion, a route/schema dedup, or app-level UI wiring in
+  `apps/debate-ai.com`, which (per every prior slice's own verification
+  notes above) still has no vitest project wired up
+  (`vitest.config.ts`'s `projects` list is `["packages/*"]` only);
+  correctness here is what `tsc`/the production build/the full existing
+  suite actually catch, and all three now pass. Verified: `bun install`
+  (2258 packages), `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json`
+  (34 errors — the same pre-existing, unrelated baseline every prior slice
+  has recorded, down from 39 before this fix: the 4 duplicate-`userSettings`
+  lines and the `MySavedItems` TS2304 are gone, nothing new introduced),
+  `bunx turbo run typecheck` (13/13 in-scope package tasks pass), full `bun
+  run test` (188 files / 2968 tests, all pass — unchanged from before this
+  fix, confirming no behavior regression in the packages that were already
+  tested), and `bun run build:web` (`debate-ai-web` succeeds — previously
+  failed outright with the vinext slug-collision error — with `/api/rounds`,
+  `/api/flows`, `/api/settings`, `/debate`, `/tools`, and `/settings` all
+  present in the route list). **Completed:** 2026-08-30.
 - **Round Workspace — "Tools for this round" menu (idea #17, follow-up
   (4), discoverability-audit half).** Prompted by the same standing "add
   tools into where needed in the ui... develop better tool ui" ask idea
@@ -9412,10 +9608,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
     - A coach-facing roster analytics dashboard (completion rates, streaks, standings in one place).
     - A digest notification summarizing challenge results instead of requiring a panel visit.
 
-14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) —
-    - Add the one missing command: insert a short cite tag at the cursor without a preceding selection.
-    - An in-editor shortcuts cheat-sheet overlay (`?` to open).
-    - A settings page for rebinding CardMirror's shortcuts.
+14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all three prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); and Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command. See `docs/features/legacy-verbatim-shortcuts.md`. Next: a printable/exportable version of the shortcuts reference, since today it's view-only inside the editor.
 
 15. **Flow-in-Speech Flow Annotations** (`/annotations`, `FlowSpreadsheet` badges) —
     - Search/filter annotations by speech, speaker, or tag.

@@ -132,16 +132,31 @@ async function onFetch(event: FetchEvent): Promise<Response> {
     const cachedResponse = await caches.match(event.request);
     if (cachedResponse) return cachedResponse;
 
-    const networkResponse = await fetch(event.request);
-    if (networkResponse.ok) {
-      await putInCache(event.request, networkResponse.clone());
+    try {
+      const networkResponse = await fetch(event.request);
+      if (networkResponse.ok) {
+        await putInCache(event.request, networkResponse.clone());
+      }
+      return networkResponse;
+    } catch (err) {
+      console.warn('SW : Network fetch failed for immutable asset:', event.request.url, err);
+      const fallback = await caches.match(event.request);
+      if (fallback) return fallback;
+      return new Response('Network error', { status: 502, statusText: 'Network Error' });
     }
-    return networkResponse;
   }
 
   // Everything else same-origin (anything the build did not emit) is passed
-  // straight through.
-  return fetch(event.request);
+  // straight through. Wrap the passthrough fetch so network failures do not
+  // reject the fetch event promise causing noisy console errors.
+  try {
+    return await fetch(event.request);
+  } catch (err) {
+    console.warn('SW : Pass-through fetch failed:', event.request.url, err);
+    const cached = await caches.match(event.request);
+    if (cached) return cached;
+    return new Response('Network error', { status: 502, statusText: 'Network Error' });
+  }
 }
 
 sw.addEventListener("install", (event) => {

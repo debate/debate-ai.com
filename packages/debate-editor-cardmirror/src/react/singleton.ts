@@ -60,13 +60,17 @@ export function getBridgeModule(): BridgeModule | null {
 /** Poll for the boot sequence's `mountView` call to land (see the
  *  module doc on `index.ts` in ribbon-template.ts — there's no
  *  exported "ready" hook to await instead). */
+const CARDMIRROR_BOOT_TIMEOUT_MS = 30000;
 async function waitForView(getActiveView: () => EditorView | null): Promise<EditorView> {
   const start = Date.now();
   for (;;) {
     const view = getActiveView();
     if (view) return view;
-    if (Date.now() - start > 8000) {
-      throw new Error('CardMirror engine did not finish booting within 8s');
+    const elapsed = Date.now() - start;
+    if (elapsed > CARDMIRROR_BOOT_TIMEOUT_MS) {
+      throw new Error(`CardMirror engine did not finish booting within ${Math.round(
+        CARDMIRROR_BOOT_TIMEOUT_MS / 1000,
+      )}s (waited ${Math.round(elapsed / 1000)}s)`);
     }
     await new Promise((resolve) => setTimeout(resolve, 30));
   }

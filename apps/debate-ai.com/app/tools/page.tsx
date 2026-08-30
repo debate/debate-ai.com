@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Card, CardHeader, CardTitle, CardDescription } from "debate-ui/src/primitives/card"
 import { FavoriteToolButton } from "@/components/tools/FavoriteToolButton"
 import { FavoritesController } from "@/components/tools/FavoritesController"
+import { MySavedItems } from "./MySavedItems"
 import { ToolsSearch } from "./ToolsSearch"
 import { ALL_TOOLS, TOOL_GROUPS } from "./tool-groups"
 

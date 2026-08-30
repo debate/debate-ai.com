@@ -231,6 +231,7 @@
       "name": "debate-editor-cardmirror",
       "version": "0.1.0",
       "dependencies": {
+        "debate-card-parser": "workspace:*",
         "debate-ui": "workspace:*",
         "fast-xml-parser": "^4.5.0",
         "fflate": "^0.8.3",

@@ -52,3 +52,21 @@
 body.pmd-multi-doc .dec-cardmirror-embed #app {
   height: calc(100% - var(--ribbon-height) - var(--status-bar-height)) !important;
 }
+
+/* Narrow embeds (the FIAT speech-doc panel, a phone-width `/reason-editor`
+   window) never get CardMirror's own page-owning mobile shell — see
+   `detectEmbedded()`/`resolveMobileLayout` in mobile-layout.ts — so the
+   full desktop ribbon stays mounted here instead of being replaced by it.
+   `initRibbonResizer()` (editor/index.ts) already drops least-essential
+   panels first as the ribbon narrows, but whatever it leaves mounted must
+   stay reachable rather than being squeezed illegibly or clipped by this
+   file's `overflow: hidden` on `.dec-cardmirror-embed` — so scroll the
+   remainder horizontally instead. */
+.dec-cardmirror-embed #ribbon {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.dec-cardmirror-embed #ribbon .ribbon-center {
+  flex-shrink: 0;
+}

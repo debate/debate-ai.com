@@ -91,6 +91,9 @@ wired up (see `vitest.config.ts`'s `projects` list).
 - No bulk "save this round's flows" action outside of saving a whole round
   (which does cascade-save its flows) — each flow is still saved one at a
   time via its own cloud icon.
+- Was: "the `/tools` 'My Saved Items' widget omits saved flows entirely,
+  showing only documents and rounds." Closed — see the "My Saved Items —
+  include saved flows" entry in `TODO.md`'s Tracker Status.
 - No optimistic-concurrency handling: the same account editing and saving
   the same flow from two tabs/devices at once has the last PUT win, same
   as `user-settings`'s documented gap.

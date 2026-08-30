@@ -12,11 +12,13 @@ view." The commands originally built for that ask live in
 depended on by the app. `/reason-editor` renders `debate-editor`'s shim to
 `debate-editor-cardmirror` (the ported-in CardMirror ProseMirror engine),
 which was built with — and ships — its own, considerably larger native
-Verbatim-parity command set that predates this doc and makes the four
-shortcuts above redundant rather than missing. This doc previously
+Verbatim-parity command set that predates this doc and makes three of the
+four shortcuts above redundant rather than missing. This doc previously
 described the dead package as if it were live; it now documents
 CardMirror's real, shipped equivalents, closing the staleness flagged in
-`speech-document-target.md`'s Known gaps.
+`speech-document-target.md`'s Known gaps. The fourth (`Mod-Shift-K`) had no
+CardMirror equivalent at all until `insertShortCite` closed that gap (see
+below) — TODO.md's Product Feature Ideas item 14's own bullet for it.
 
 - **Route:** any CardMirror document (e.g. `/reason-editor`)
 - **Package:** [`debate-editor-cardmirror`](../../packages/debate-editor-cardmirror)
@@ -45,6 +47,7 @@ below — these are the shortcuts a Verbatim-trained user already expects.
 | `Mod-Alt-Shift-F3` | Uncondense (`uncondense`) | Card → Condense |
 | `Mod-Alt-ArrowUp` / `Mod-Alt-ArrowDown` | Move the current card/section up or down (`moveContainerUp` / `moveContainerDown`) | Edit → Editing utilities |
 | `Alt-F8` | Copy the nearest preceding cite to the cursor (`copyPreviousCite`) | Edit → Editing utilities |
+| `Mod-Shift-k` | Prompt for an author/year and insert a formatted short cite tag at the cursor (`insertShortCite`) | Edit → Editing utilities |
 | `Mod-Shift-x` | Format a citation from the selection via AI (`aiCreateCite`) | AI |
 
 `Mod` is Ctrl on Windows/Linux, Cmd on macOS. Every binding is
@@ -63,15 +66,19 @@ so the table above is the *default*, not a fixed contract.
   `Mod-Alt-ArrowUp` / `Mod-Alt-ArrowDown` (`moveContainerUp` /
   `moveContainerDown`) reorder the card/section the cursor is in — the
   same move, aliased in the command palette as "move section up/down".
-- **`Mod-Shift-K` insert a short cite tag** has no direct one-to-one
-  equivalent — CardMirror never grew a pure "format `Smith 24` and insert
-  it at the cursor" command. The nearest real tools solve the same
-  underlying need differently: `F8` marks already-typed text as
-  cite-styled, `Alt-F8` (`copyPreviousCite`) reuses the nearest earlier
-  cite instead of retyping one, and `Mod-Shift-x` (`aiCreateCite`) formats
-  a full citation from a selection via the existing Anthropic proxy.
-  Recorded below as the one genuine (not just doc-staleness) gap this
-  audit found.
+- **`Mod-Shift-K` insert a short cite tag** → `Mod-Shift-k`
+  (`insertShortCite`) is a direct port: prompts for an author last name
+  and a year (two sequential `promptForText` dialogs — the modal
+  vocabulary every other prompt-driven CardMirror command already uses,
+  in place of `reason-editor`'s old `window.prompt` calls, which Electron
+  disables outright), then inserts the formatted "Smith 24" / "Smith ND"
+  tag at the cursor with `cite_mark` applied — reusing
+  `debate-card-parser`'s `formatShortCiteTag`, the same pure formatter
+  the old command called. Distinct from the three tools that solve an
+  adjacent need: `F8` marks already-typed text as cite-styled, `Alt-F8`
+  (`copyPreviousCite`) reuses the nearest earlier cite instead of
+  retyping one, and `Mod-Shift-x` (`aiCreateCite`) formats a full
+  citation from a selection via the existing Anthropic proxy.
 
 ## Data flow
 
@@ -80,7 +87,12 @@ debate-editor-cardmirror/src/editor/ribbon-commands.ts
   → applyEmphasis() / applyUnderline() / applyCite()   — F10 / F9 / F8 body-mark toggles
   → condenseDefault / condenseNoIntegrity / uncondense  — F3 family, wraps condense.ts
   → copyPreviousCite()                                  — Alt-F8, findPreviousCites + computeCitePasteLocation
+  → insertShortCite (RibbonContext.insertShortCite)      — Mod-Shift-k, calls insert-short-cite.ts
   → aiCreateCite (RibbonContext.aiCreateCite)            — Mod-Shift-x, calls ai/cite-creator.ts
+
+debate-editor-cardmirror/src/editor/insert-short-cite.ts
+  → runInsertShortCite() / buildInsertShortCiteTransaction() — prompts via text-prompt.ts,
+    formats via debate-card-parser's formatShortCiteTag
 
 debate-editor-cardmirror/src/editor/move-container.ts
   → moveContainerUp() / moveContainerDown()             — Mod-Alt-ArrowUp/Down
@@ -93,12 +105,13 @@ debate-editor-cardmirror/src/editor/quick-card-search-ui.ts → Ctrl/Cmd-Shift-S
 
 ## Known gaps
 
-No pure "insert a short cite tag at the cursor" command exists in the live
-editor (see above) — a user who wants that exact old behavior has to pick
-among `F8`, `Alt-F8`, or `Mod-Shift-x` depending on whether they're
-styling existing text, reusing a prior cite, or generating one from a
-selection. Not started: a literal port of the old prompt-for-author/year,
-format-and-insert flow.
+`insertShortCite` prompts with two sequential single-field dialogs
+(author, then year) rather than one combined author+year form — matching
+`text-prompt.ts`'s existing `promptForText` shape rather than adding a new
+two-field dialog component for this one command. A user who cancels the
+year prompt after already typing an author gets nothing inserted (by
+design — either both fields commit or neither does), so they re-run the
+command rather than only being asked for the year again.
 
 The old `reason-editor` (TipTap) package's `verbatim-shortcuts.ts`,
 `verbatim-shortcuts-extension.ts`, and `heading-move.ts` are no longer
