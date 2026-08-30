@@ -138,9 +138,18 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
     }
   },
   createRound: (round) => {
+    // Date.now() alone can collide when two rounds are created within the
+    // same millisecond (e.g. importing/creating several in a tight loop) —
+    // guard against that so updateRound/deleteRound never match more than
+    // the one round they're meant to.
+    const existingIds = new Set(get().rounds.map((r) => r.id))
+    let id = Date.now()
+    while (existingIds.has(id)) {
+      id += 1
+    }
     const newRound: Round = {
       ...round,
-      id: Date.now(),
+      id,
       timestamp: Date.now(),
     }
     const rounds = [...get().rounds, newRound]

@@ -6,6 +6,55 @@
 _No task currently in progress._
 
 ### Completed
+- **Delete a local round from the Rounds tab, plus a round-id-collision fix
+  (idea #17, `round-cloud-save.md` Known gap: "no UI for deleting a local
+  round").** Prompted by another repeat of idea #17's standing request
+  ("create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL... add tools into where needed in the
+  ui... develop better tool ui"). `FlowHistoryDialog`'s "Rounds" tab gains
+  a Trash2 delete button on each round row (next to the existing cloud-save
+  and Edit buttons), wired to `useFlowStore`'s `deleteRound(id)` action —
+  which already existed but had no caller anywhere in the app — behind a
+  `confirm()` prompt. Deleting a round only removes it from this browser;
+  any cloud-saved copy of the round is untouched (mirroring the "Saved to
+  account" tab's own remove button, which likewise only ever touches its
+  own side), and the round's flows are never deleted, only unreferenced
+  (they stay reachable, and become eligible for the existing "Save flows
+  not in a round" bulk action if not already cloud-saved). While adding
+  Vitest coverage for the store's previously-untested round CRUD actions,
+  found and fixed a real latent bug: `createRound` derived a round's `id`
+  from a bare `Date.now()`, so two rounds created within the same
+  millisecond got identical ids — `updateRound`/`deleteRound` would then
+  silently match every round sharing that id instead of just the intended
+  one (reproduced directly: creating 25 rounds back-to-back in a test
+  produced duplicate ids before the fix). `createRound` now advances past
+  any id already present in the store before assigning it, guaranteeing
+  uniqueness within the in-memory round list. Vitest-covered in the new
+  `packages/debate-round/test/flowStoreRounds.test.ts` (7 cases:
+  `createRound`'s append-with-generated-id/timestamp behavior and its
+  back-to-back id-uniqueness regression case; `updateRound`'s
+  merge-into-matching-round-only and no-match-is-a-no-op cases;
+  `deleteRound`'s remove-only-the-matching-round, no-match-is-a-no-op, and
+  never-touches-`flows` cases). The dialog's own button wiring is not
+  unit-tested, matching every other fetch-client/dialog pair in this repo.
+  Documented in `docs/features/round-cloud-save.md` (Known gaps updated —
+  the closed gap is replaced with the fix's own description). Verified:
+  `bun install` (2258 packages), `bunx vitest run
+  packages/debate-round/test/flowStoreRounds.test.ts
+  packages/debate-round/test/bulkRoundSave.test.ts` (25/25 pass), full
+  `bun run test` (194 files / 3038 tests, all pass, up from 3031),
+  `bunx turbo run typecheck --filter=debate-round` (11/11 in-scope package
+  tasks pass), and `bun run build:web` (`debate-ai-web` succeeds, `/debate`,
+  `/tools`, and `/settings` present in the route list). No lint script is
+  configured anywhere in this repo (`package.json`/`turbo.json`), matching
+  every prior slice's verification notes. No UI screenshot/Playwright smoke
+  check was run this slice — the new button reuses the exact same
+  `Button`/icon pattern as the adjacent cloud-save and Edit buttons on the
+  same row, and the only new logic (`deleteRound`'s id-collision fix) is
+  what `flowStoreRounds.test.ts` covers directly. Known gaps still open
+  (both pre-existing, both apply equally after this slice): no per-round
+  dirty tracking in the bulk-save actions, and no optimistic-concurrency
+  handling on the cloud-save routes. **Completed:** 2026-08-30.
 - **Bulk-save flows not referenced by any round (idea #17,
   `flow-cloud-save.md` Known gap).** Closes the last remaining piece of
   "Save all rounds"'s own Known gap: "a flow with no round referencing it

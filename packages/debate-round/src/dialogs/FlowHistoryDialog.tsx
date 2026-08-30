@@ -145,6 +145,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     setFlows,
     setSelected,
     setRounds: updateRounds,
+    deleteRound,
   } = useFlowStore()
 
   // Local state
@@ -432,6 +433,23 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     } catch {
       setCloudRoundActions((prev) => ({ ...prev, [clientId]: "error" }))
     }
+  }
+
+  /**
+   * Deletes a round from this browser only, after a confirm prompt — the
+   * store's `deleteRound` action already existed but had no caller anywhere
+   * in the app (`docs/features/round-cloud-save.md`'s "no UI for deleting a
+   * local round" Known gap). Mirrors `handleRemoveCloudRound`'s scope in
+   * reverse: this never touches any cloud-saved copy of the round, and
+   * never deletes the round's flows (a flow still exists locally, and
+   * cloud-save-eligible via "Save flows not in a round", after its last
+   * referencing round is deleted this way).
+   */
+  const handleDeleteLocalRound = (round: Round) => {
+    const label = round.tournamentName ? `${round.tournamentName} — ${round.roundLevel}` : round.roundLevel
+    if (!confirm(`Delete "${label}" from this browser? Any copy saved to your account is not affected.`)) return
+    deleteRound(round.id)
+    setRounds((prev) => prev.filter((r) => r.id !== round.id))
   }
 
   /** Count of locally-available flows no round references, for the "Save flows not in a round" button's visibility/label. */
@@ -947,6 +965,18 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                   <Edit className="h-4 w-4" />
                                 </Button>
                               )}
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleDeleteLocalRound(round)
+                                }}
+                                title="Delete this round from this browser"
+                                className="h-8 w-8 p-0 hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
                           </div>
 
