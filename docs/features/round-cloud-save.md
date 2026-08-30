@@ -160,6 +160,18 @@ no vitest project wired up (`vitest.config.ts`'s `projects` list is still
   everything on every click.
 - No optimistic-concurrency handling, matching `flow-cloud-save.md`'s and
   `user-settings.md`'s documented gap.
-- There is still no UI for deleting a *local* round (`useFlowStore`'s
-  `deleteRound` exists but has no caller anywhere in the app) — only the
-  cloud copy can be removed from this dialog.
+- Closed: `FlowHistoryDialog`'s "Rounds" tab now has a delete (Trash2)
+  button on each round row, wired to the store's `deleteRound(id)` behind a
+  confirm prompt. Deleting a round only removes it from this browser — any
+  cloud-saved copy of the round is untouched (same split as the "Saved to
+  account" tab's own remove button, in reverse), and the round's flows are
+  never deleted, only unreferenced (they remain reachable, and become
+  eligible for "Save flows not in a round" if not already cloud-saved).
+  Fixed a latent bug found while adding this: `createRound` generated a
+  round's `id` from a bare `Date.now()`, so two rounds created within the
+  same millisecond collided — `updateRound`/`deleteRound` would then match
+  every round sharing that id instead of just one. `createRound` now
+  advances past any id already in use. Vitest-covered in
+  `packages/debate-round/test/flowStoreRounds.test.ts` (`createRound`/
+  `updateRound`/`deleteRound`, including the id-collision regression case
+  and confirming `deleteRound` never touches `flows`).
