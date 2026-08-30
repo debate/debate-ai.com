@@ -6,6 +6,64 @@
 _No task currently in progress._
 
 ### Completed
+- **My Saved Items — include saved flows (idea #17, `/tools`
+  discoverability gap).** Prompted by another repeat of idea #17's standing
+  request ("create user settings and link user db SQL... with ability to
+  save flows docs and debates in SQL and link to users... add tools into
+  where needed in the ui... develop better tool ui"). Auditing the three
+  D1-backed save stores that request names — `documents` (REASON editor),
+  `saved_flows`, `saved_rounds` — against every place a signed-in user can
+  discover their saved data found `app/tools/MySavedItems.tsx` (the "My
+  Saved Items" widget atop the `/tools` grid, added by an earlier idea #17
+  slice specifically to make cloud saves discoverable) only ever fetched
+  `/api/doc/documents` and `/api/rounds`: a user with cloud-saved flows and
+  nothing else saw an empty widget despite having real cloud data, and a
+  user with all three saw flows silently missing from the merged list.
+  `FlowHistoryDialog`'s own "Saved to account" tab (inside `/debate`) always
+  showed all three correctly — this was specifically the top-level
+  `/tools` widget's gap, not a data or route problem. Extracted the
+  merge/sort/label/relative-time logic the widget had inlined (and that a
+  fix needed to touch anyway) into a new pure module,
+  `packages/debate-round/src/state/cloudLibrary.ts`:
+  `parseCloudTimestamp` (normalizes an ISO string or a raw unix-seconds/
+  -milliseconds number into milliseconds, matching every timestamp shape
+  the three routes can hand back), `buildRecentCloudItems` (merges
+  documents/flows/rounds summaries into one newest-first list, capping each
+  kind to `perKindLimit` before the merge so one prolific kind can't crowd
+  the others out, then the merged result to `limit`, with per-kind default
+  hrefs a caller can override and a per-kind "Untitled ..." fallback label),
+  and `formatRelativeCloudTime` (the widget's "Today"/"Yesterday"/"Nd ago"
+  copy, with an injectable `now` for testability). `MySavedItems.tsx` now
+  fetches `/api/flows` alongside the other two routes and calls these
+  instead of its own inline merge, picking a `ListTree` icon for the new
+  "flow" kind (`FileText` for documents, `Flag` for rounds, unchanged).
+  Vitest-covered in `packages/debate-round/test/cloudLibrary.test.ts` (17
+  cases: every `parseCloudTimestamp` shape including non-finite numbers and
+  unparseable strings, merging+sorting all three kinds together, the
+  flows-inclusion regression itself, default and overridden per-kind hrefs,
+  per-kind untitled-label fallbacks, `perKindLimit` and `limit` capping
+  independently, empty/omitted input, and every `formatRelativeCloudTime`
+  boundary including future-timestamp clock-skew tolerance and a
+  non-finite input). The fetch calls and the widget's own rendering are not
+  unit-tested, matching every other fetch-client/route pair in this repo —
+  `apps/debate-ai.com` still has no vitest project wired up (`vitest.
+  config.ts`'s `projects` list is still `["packages/*"]` only). Documented
+  in `docs/features/flow-cloud-save.md`'s Known gaps (the gap is recorded
+  as closed there, alongside a pointer back to this entry). Verified: `bun
+  install` (2258 packages), `bunx vitest run
+  packages/debate-round/test/cloudLibrary.test.ts` (17/17 pass), full `bun
+  run test` (190 files / 2995 tests, all pass, up from 2978), `bunx turbo run
+  typecheck --filter=debate-round --filter=debate-ai-web` (12/12 in-scope
+  package tasks pass), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (same 34 pre-existing, unrelated errors
+  as every prior slice — confirmed none in `MySavedItems.tsx` or the new
+  `cloudLibrary.ts`), and `bun run build:web` (`debate-ai-web` succeeds,
+  `/tools`, `/settings`, `/api/flows`, `/api/rounds`, and
+  `/api/doc/documents` all present in the route list). No UI screenshot/
+  Playwright smoke check was run this slice — the change is a pure-logic
+  extraction plus a mechanical third `fetch` call, and the existing
+  `favoriteTools`/theme-picker Playwright check already exercises
+  `/tools`'s sign-in-gated rendering path. **Completed:** 2026-08-30.
 - **Insert Short Cite — the one CardMirror shortcut gap idea #14 named
   (`Mod-Shift-k`).** `docs/features/legacy-verbatim-shortcuts.md`'s Known
   gaps flagged this as "the one genuine (not just doc-staleness) gap"
