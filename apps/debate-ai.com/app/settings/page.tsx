@@ -3,10 +3,11 @@ import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
 import { UserSettingsPanel } from "debate-round"
+import { FavoriteToolsSettings } from "@/components/settings/FavoriteToolsSettings"
 
 export const metadata: Metadata = {
   title: "Settings",
-  description: "Manage your debate style and font size preferences",
+  description: "Manage your debate style, font size, theme, and favorite-tools preferences",
 }
 
 export default function SettingsPage() {
@@ -24,6 +25,9 @@ export default function SettingsPage() {
       </div>
       <Suspense>
         <UserSettingsPanel />
+      </Suspense>
+      <Suspense>
+        <FavoriteToolsSettings />
       </Suspense>
     </div>
   )

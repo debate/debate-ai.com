@@ -4,34 +4,41 @@ import { getDBFromContext } from "@/lib/database/context"
 import { userSettings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import {
+  DEFAULT_FAVORITE_TOOLS,
   DEFAULT_THEME_SETTINGS,
   DEFAULT_USER_SETTINGS,
+  normalizeFavoriteToolsPatch,
   normalizeThemeSettingsPatch,
   normalizeUserSettingsPatch,
+  parseFavoriteTools,
+  serializeFavoriteTools,
   type ThemeMode,
   type UserSettingsPayload,
 } from "debate-round"
 
 /**
  * Account-linked app preferences — TODO.md idea #17 ("User Settings —
- * account-linked debate preferences"), first slice, plus follow-up (2)
- * (the `colorTheme`/`themeMode` fields). One `user_settings` row per
+ * account-linked debate preferences"), first slice, follow-up (2) (the
+ * `colorTheme`/`themeMode` fields), plus the "integrate tools into user
+ * settings" follow-up (`favoriteTools`). One `user_settings` row per
  * signed-in user, mirroring `debate-round`'s local-only `settings`
- * singleton and `components/theme-dropdown.tsx`'s local-storage/cookie
- * theme state so a user's preferences follow them across devices. Unlike
+ * singleton, `components/theme-dropdown.tsx`'s local-storage/cookie theme
+ * state, and `lib/hooks/useFavoriteTools.ts`'s local-storage favorites list
+ * so a user's preferences follow them across devices. Unlike
  * `app/api/doc/documents/route.ts`, there is no anonymous/signed-out mode
  * here — settings are account data, so both handlers require a session and
  * return 401 without one; the clients (`UserSettingsPanel`,
- * `useThemeState`) fall back to their local-only stores when signed out
- * instead of calling this route.
+ * `useThemeState`, `useFavoriteTools`) fall back to their local-only stores
+ * when signed out instead of calling this route.
  *
  * GET  — the current user's saved settings, or the matching `DEFAULT_*`
  *   value for any field with no saved row/value yet.
- * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode? } — validates and
- *   upserts the given fields (validated by `debate-round`'s
- *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`, the same
- *   option lists the picker UIs themselves use), returning the resulting
- *   full settings row.
+ * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools? }
+ *   — validates and upserts the given fields (validated by `debate-round`'s
+ *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
+ *   `normalizeFavoriteToolsPatch`, the same option lists/shape the picker
+ *   and favorite-star UIs themselves use), returning the resulting full
+ *   settings row.
  */
 
 type SettingsRow = {
@@ -39,9 +46,10 @@ type SettingsRow = {
   fontSize: number | null
   colorTheme: string | null
   themeMode: string | null
+  favoriteTools: string | null
 }
 
-type SettingsPayload = UserSettingsPayload & { colorTheme: string; themeMode: ThemeMode }
+type SettingsPayload = UserSettingsPayload & { colorTheme: string; themeMode: ThemeMode; favoriteTools: string[] }
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
   return {
@@ -49,6 +57,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     fontSize: row?.fontSize ?? DEFAULT_USER_SETTINGS.fontSize,
     colorTheme: row?.colorTheme ?? DEFAULT_THEME_SETTINGS.colorTheme,
     themeMode: (row?.themeMode as ThemeMode | null) ?? DEFAULT_THEME_SETTINGS.themeMode,
+    favoriteTools: row?.favoriteTools ? parseFavoriteTools(row.favoriteTools) : DEFAULT_FAVORITE_TOOLS.favoriteTools,
   }
 }
 
@@ -79,17 +88,25 @@ export async function PUT(req: NextRequest) {
 
   const userSettingsResult = normalizeUserSettingsPatch(body)
   const themeSettingsResult = normalizeThemeSettingsPatch(body)
+  const favoriteToolsResult = normalizeFavoriteToolsPatch(body)
   const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid }
-  const errors = [...userSettingsResult.errors, ...themeSettingsResult.errors]
+  const errors = [...userSettingsResult.errors, ...themeSettingsResult.errors, ...favoriteToolsResult.errors]
 
   if (errors.length > 0) {
     return NextResponse.json({ error: errors.join(" ") }, { status: 400 })
   }
-  if (Object.keys(valid).length === 0) {
+  if (Object.keys(valid).length === 0 && favoriteToolsResult.valid.favoriteTools === undefined) {
     return NextResponse.json(
-      { error: "Provide at least one of debateStyle, fontSize, colorTheme, or themeMode." },
+      { error: "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, or favoriteTools." },
       { status: 400 },
     )
+  }
+
+  // `favoriteTools` is stored as a JSON-serialized column, so it's kept out
+  // of `valid` (the picker-style fields written as-is) and merged in here.
+  const dbPatch: typeof valid & { favoriteTools?: string | null } = { ...valid }
+  if (favoriteToolsResult.valid.favoriteTools !== undefined) {
+    dbPatch.favoriteTools = serializeFavoriteTools(favoriteToolsResult.valid.favoriteTools)
   }
 
   const db = await getDBFromContext()
@@ -97,8 +114,8 @@ export async function PUT(req: NextRequest) {
 
   await db
     .insert(userSettings)
-    .values({ userId, ...valid, createdAt: now, updatedAt: now })
-    .onConflictDoUpdate({ target: userSettings.userId, set: { ...valid, updatedAt: now } })
+    .values({ userId, ...dbPatch, createdAt: now, updatedAt: now })
+    .onConflictDoUpdate({ target: userSettings.userId, set: { ...dbPatch, updatedAt: now } })
 
   const [row] = await db.select().from(userSettings).where(eq(userSettings.userId, userId)).limit(1)
 
