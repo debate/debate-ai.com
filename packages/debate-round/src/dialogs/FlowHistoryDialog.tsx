@@ -139,6 +139,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     setFlows,
     setSelected,
     setRounds: updateRounds,
+    deleteRound,
   } = useFlowStore()
 
   // Local state
@@ -343,6 +344,20 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     } catch {
       setCloudRoundActions((prev) => ({ ...prev, [clientId]: "error" }))
     }
+  }
+
+  /**
+   * Deletes a round from the local rounds list after user confirmation. This
+   * only removes the round itself (`useFlowStore`'s `deleteRound`, which
+   * persists the updated list to `localStorage`) — the round's flows are
+   * left untouched and remain individually accessible, and any cloud copy of
+   * the round (saved via `handleSaveRoundToAccount`) is unaffected; that can
+   * still be removed separately from the "Saved to account" tab.
+   */
+  const handleDeleteLocalRound = (round: Round) => {
+    if (!confirm(`Delete "${round.tournamentName} - ${round.roundLevel}"? Its flows will not be deleted.`)) return
+    deleteRound(round.id)
+    setRounds((prev) => prev.filter((r) => r.id !== round.id))
   }
 
   /**
@@ -798,6 +813,18 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                   <Edit className="h-4 w-4" />
                                 </Button>
                               )}
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleDeleteLocalRound(round)
+                                }}
+                                title="Delete this round"
+                                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
                           </div>
 

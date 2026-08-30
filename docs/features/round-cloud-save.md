@@ -8,9 +8,11 @@ reference its saved flows") in `TODO.md`'s Product Feature Ideas list, the
 "rounds" half of the same follow-up
 [`flow-cloud-save.md`](flow-cloud-save.md) closed the "flows" half of.
 
-- **Nav:** `FlowHistoryDialog`'s "Rounds" tab gained a cloud-upload icon
-  next to each round's existing "Edit round details" button; its "Saved to
-  account" tab gained a "Rounds" section below the existing "Flows" section
+- **Nav:** `FlowHistoryDialog`'s "Rounds" tab gained a cloud-upload icon and
+  a destructive trash icon (deletes the local round only, per Known gaps
+  below) next to each round's existing "Edit round details" button; its
+  "Saved to account" tab gained a "Rounds" section below the existing
+  "Flows" section
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
   (dialog + validation + fetch client), `apps/debate-ai.com` (`/api/rounds`,
   `saved_rounds` D1 table)
@@ -66,6 +68,8 @@ round/saved-rounds-client.ts (fetch)
 dialogs/FlowHistoryDialog.tsx
   → "Rounds" tab's per-round cloud icon  → saveFlowToAccount (per referenced
                                             flow) then saveRoundToAccount
+  → "Rounds" tab's per-round trash icon  → useFlowStore's deleteRound (local
+                                            only — no fetch call)
   → "Saved to account" tab's Rounds section → listSavedRounds / fetchSavedRound /
                                                deleteSavedRound
 
@@ -93,7 +97,11 @@ Vitest-covered in `packages/debate-round/test/savedRounds.test.ts` (32
 cases: every required field individually missing, every optional field's
 shape when present and malformed, every `status`/`winner` value including
 an unknown one, and every `deriveRoundLabel` branch including the
-120-character truncation). The fetch client, the D1 route, and the dialog's
+120-character truncation) and `packages/debate-round/test/
+flowStoreRounds.test.ts` (5 cases covering `useFlowStore`'s
+`createRound`/`updateRound`/`deleteRound`, including that deleting one
+round leaves others untouched and that deleting an unknown or empty list
+is a no-op). The fetch client, the D1 route, and the dialog's
 save/load/remove wiring are not unit-tested, matching every other
 fetch-client/D1-route/UI trio in this repo — `apps/debate-ai.com` still has
 no vitest project wired up (`vitest.config.ts`'s `projects` list is still
@@ -109,6 +117,8 @@ no vitest project wired up (`vitest.config.ts`'s `projects` list is still
   time via its own cloud icon.
 - No optimistic-concurrency handling, matching `flow-cloud-save.md`'s and
   `user-settings.md`'s documented gap.
-- There is still no UI for deleting a *local* round (`useFlowStore`'s
-  `deleteRound` exists but has no caller anywhere in the app) — only the
-  cloud copy can be removed from this dialog.
+- Deleting a local round (via the "Rounds" tab's destructive trash icon,
+  wired to `useFlowStore`'s `deleteRound`) only removes the local round —
+  any cloud copy saved via the round's cloud icon is untouched and must be
+  removed separately from the "Saved to account" tab; the round's flows are
+  never deleted either way and remain individually accessible.

@@ -6,6 +6,53 @@
 _No task currently in progress._
 
 ### Completed
+- **Round Workspace — delete a local round (idea #17, follow-up (b)'s
+  "no UI for deleting a local round" gap).** `docs/features/
+  round-cloud-save.md`'s Known gaps flagged that `useFlowStore`'s
+  `deleteRound` existed but had no caller anywhere in the app — only a
+  round's *cloud* copy could be removed, from `FlowHistoryDialog`'s "Saved
+  to account" tab; a round saved only locally could never be removed once
+  created. Prompted by the same standing "add tools into where needed in
+  the ui... develop better tool ui" ask idea #17's UI-polish follow-up was
+  left open for, applied here to the one concrete, already-named gap in
+  the round-save feature rather than the still-undecomposed general panel
+  audit. Adds a destructive trash-icon button to each round's action row in
+  `FlowHistoryDialog.tsx`'s "Rounds" tab, alongside the existing cloud-save
+  and "Edit round details" icons — `handleDeleteLocalRound` confirms via
+  the same `confirm()` pattern `handleClearHistory` already uses elsewhere
+  in the dialog, then calls the newly-destructured `deleteRound` from
+  `useFlowStore` (which filters the round out and persists the updated list
+  to `localStorage`) and mirrors the removal into the dialog's own local
+  `rounds` state so the list updates immediately without needing to reopen
+  the dialog. Deleting a local round never touches its cloud copy (if any —
+  removed separately from the "Saved to account" tab, unchanged) or its
+  flows, which remain individually accessible either way — scoped
+  deliberately to just this one named gap, not a combined
+  "delete everywhere" action. Vitest-covered in a new
+  `packages/debate-round/test/flowStoreRounds.test.ts` (5 cases exercising
+  `useFlowStore`'s `createRound`/`updateRound`/`deleteRound` directly:
+  `createRound` assigns an id/timestamp and persists; `updateRound` patches
+  only the matching round; `deleteRound` removes only the matching round
+  and persists the change; deleting an unknown id or from an empty list is
+  a no-op) — the dialog's button wiring itself is not unit-tested, matching
+  every other dialog-level interaction in this file (save/load/remove for
+  both flows and rounds). Documented in `docs/features/
+  round-cloud-save.md` (Nav summary, data-flow diagram, Vitest-covered
+  paragraph, and Known gaps updated — the "no UI for deleting a local
+  round" gap is closed and reworded to describe the new button's actual
+  scope). Verified: `bun install` (2258 packages), `bunx vitest run
+  packages/debate-round/test/flowStoreRounds.test.ts` (5/5 pass), full
+  `bun run test` (189 files / 2973 tests, all pass, up from 188/2968),
+  `bunx turbo run typecheck` (13/13 in-scope package tasks pass), a direct
+  `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json` (same 34
+  pre-existing, unrelated errors as the prior slice's own baseline — none
+  in any file this slice touched), and `bun run build:web` (`debate-ai-web`
+  succeeds). This repo has no lint script or config at any level (verified:
+  no `"lint"` script in any `package.json`, no `.eslintrc*` file), so no
+  lint step was run or skipped. Follow-up (4) (the standing tool-panel/nav
+  UI-polish audit) remains open, undecomposed — no specific panel has been
+  flagged as weak since the last slice's audit found none outside dead
+  code. **Completed:** 2026-08-30.
 - **Fix broken production build — two independently-merged idea #17
   branches redeclared `user_settings` and collided on `/api/rounds`
   (data-integrity/build fix, not a new idea slice).** `bun run build:web`
