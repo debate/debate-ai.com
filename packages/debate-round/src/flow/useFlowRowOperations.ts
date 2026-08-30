@@ -4,7 +4,7 @@
 
 import { useCallback } from "react"
 import { rowDataToBoxes } from "./dataTransform"
-import type { Flow } from "debate-core/src/types/flow"
+import type { Flow } from "../types/flow"
 
 /**
  * Hook providing row manipulation operations for the Flow spreadsheet

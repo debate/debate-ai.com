@@ -6,7 +6,7 @@
 
 
 import type React from "react"
-import type { Flow, Round } from "debate-core/src/types/flow"
+import type { Flow, Round } from "../types/flow"
 
 import { useState, useEffect } from "react"
 import { cn } from "debate-ui/src/lib/utils"

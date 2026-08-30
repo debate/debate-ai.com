@@ -429,16 +429,12 @@ class SettingsModal {
       panelTitle.className = 'pmd-settings-panel-title';
       panelTitle.textContent = label;
       panel.appendChild(panelTitle);
-      const hostKind = getHost().kind;
-      const entries = SETTING_METADATA.filter(
-        (m) =>
-          m.category === id &&
-          (!m.electronOnly || hostKind === 'electron') &&
-          (!m.windowsOnly || isWindowsHost()) &&
-          (!m.webOnly || hostKind === 'browser') &&
-          !hiddenInLite(m) &&
-          (!m.revealWhen || !!settings.get(m.revealWhen)),
-      );
+      // General's actual setting rows moved to the app's /settings page (see
+      // `buildEmbeddedSettingsPanel`) — this tab keeps only its non-setting
+      // diagnostic sections (Benchmark / About this install / backup /
+      // doc links) appended below, regardless of what SETTING_METADATA
+      // still tags `general` for the embedded panel's own lookup.
+      const entries = id === 'general' ? [] : visibleEntriesFor(id);
       let lastSection: string | undefined;
       for (const meta of entries) {
         // Section headers: emitted when consecutive entries' `section`
@@ -451,7 +447,7 @@ class SettingsModal {
           panel.appendChild(heading);
         }
         lastSection = meta.section;
-        const row = this.renderEntry(meta);
+        const row = renderEntry(meta);
         if (meta.dependsOn) {
           this.dependentRows.push({ row, dependsOn: meta.dependsOn });
         }
@@ -636,7 +632,12 @@ class SettingsModal {
     }
   }
 
-  private renderEntry(meta: SettingMeta): HTMLElement {
+}
+
+/** Builds one settings row for `meta`. Doesn't reference the modal instance
+ *  (`this`) — standalone so it can also back `buildEmbeddedSettingsPanel`'s
+ *  non-modal panels (see below). */
+function renderEntry(meta: SettingMeta): HTMLElement {
     const row = document.createElement('div');
     row.className = 'pmd-settings-row';
     // Tag the row so the palette's settings shortcuts can scroll to it.
@@ -1307,7 +1308,93 @@ class SettingsModal {
 
     row.appendChild(label);
     return row;
+}
+
+/** Filters `SETTING_METADATA` down to the entries visible for `category` on
+ *  this host — the same predicate `SettingsModal.render()` uses per tab. */
+function visibleEntriesFor(category: SettingsCategory): SettingMeta[] {
+  const hostKind = getHost().kind;
+  return SETTING_METADATA.filter(
+    (m) =>
+      m.category === category &&
+      (!m.electronOnly || hostKind === 'electron') &&
+      (!m.windowsOnly || isWindowsHost()) &&
+      (!m.webOnly || hostKind === 'browser') &&
+      !hiddenInLite(m) &&
+      (!m.revealWhen || !!settings.get(m.revealWhen)),
+  );
+}
+
+export interface EmbeddedSettingsPanel {
+  /** The panel's root element — append it wherever it should be shown. */
+  element: HTMLElement;
+  /** Release this panel's settings subscription and every row/widget
+   *  subscription created while building it. Call on unmount. */
+  destroy: () => void;
+}
+
+/** Builds a standalone panel of every visible `category` setting row —
+ *  the same rows the full Settings dialog renders under that tab, minus the
+ *  dialog chrome (header/sidebar/other tabs) and General's install-specific
+ *  bonus sections (Benchmark / About this install / backup — tied to one
+ *  editor install, not an account). Used to embed CardMirror's
+ *  account-linked categories (general/appearance/accessibility) directly
+ *  into the app's own /settings page instead of the editor's gear-icon
+ *  modal. Caller owns mounting `element` and must call `destroy()` on
+ *  unmount to release its subscriptions — this shares the same module-level
+ *  row-cleanup bookkeeping the modal uses (see `flushRowCleanups`), which is
+ *  safe because only one settings surface (this panel, or the modal) is ever
+ *  live in a given page at a time. */
+export function buildEmbeddedSettingsPanel(category: SettingsCategory): EmbeddedSettingsPanel {
+  flushRowCleanups();
+  const panel = document.createElement('div');
+  panel.className = 'pmd-settings-list pmd-settings-panel pmd-settings-embedded';
+
+  const entries = visibleEntriesFor(category);
+  const dependentRows: Array<{
+    row: HTMLElement;
+    dependsOn: SettingCondition | readonly SettingCondition[];
+  }> = [];
+  let lastSection: string | undefined;
+  for (const meta of entries) {
+    if (meta.section && meta.section !== lastSection) {
+      const heading = document.createElement('h3');
+      heading.className = 'pmd-settings-section-title';
+      heading.textContent = meta.section;
+      panel.appendChild(heading);
+    }
+    lastSection = meta.section;
+    const row = renderEntry(meta);
+    if (meta.dependsOn) dependentRows.push({ row, dependsOn: meta.dependsOn });
+    panel.appendChild(row);
   }
+  if (entries.length === 0) {
+    const empty = document.createElement('p');
+    empty.className = 'pmd-settings-empty';
+    empty.textContent = 'No settings in this section yet.';
+    panel.appendChild(empty);
+  }
+
+  const refreshDependents = (): void => {
+    for (const { row, dependsOn } of dependentRows) {
+      const enabled = evalDependsOn(dependsOn);
+      row.classList.toggle('pmd-settings-row-disabled', !enabled);
+      const controls = row.querySelectorAll<
+        HTMLInputElement | HTMLButtonElement | HTMLTextAreaElement | HTMLSelectElement
+      >('input, button, textarea, select');
+      for (const c of controls) c.disabled = !enabled;
+    }
+  };
+  refreshDependents();
+  const unsubscribe = settings.subscribe(refreshDependents);
+
+  return {
+    element: panel,
+    destroy: () => {
+      unsubscribe();
+      flushRowCleanups();
+    },
+  };
 }
 
 function buildTypographyEditor(): HTMLElement {

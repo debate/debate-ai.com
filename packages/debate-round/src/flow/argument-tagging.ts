@@ -19,7 +19,7 @@
  * recorded in `docs/features/argument-tree-outline.md`.
  */
 
-import type { ArgumentType, Box, EvidenceStatus, Flow } from "debate-core/src/types/flow";
+import type { ArgumentType, Box, EvidenceStatus, Flow } from "../types/flow";
 
 /** The three filterable tags a flowed row can carry, all optional. */
 export type ArgumentTags = {

@@ -75,7 +75,6 @@ export default defineConfig({
       "reason-editor",
       "debate-card-parser",
       "debate-card-search",
-      "debate-core",
       "debate-data-sync",
       "debate-editor",
       "debate-editor-cardmirror",

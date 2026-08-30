@@ -13,7 +13,7 @@
  * and generated sessions aren't persisted anywhere.
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import { getUnansweredFlowRows } from "./flow-transcript-summary";
 import { summarizeOutcomeBySide } from "./response-outcome";
 import { buildCollapseDrills } from "./drill-generator";

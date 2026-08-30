@@ -7,7 +7,7 @@ import { useEffect } from "react"
 import { settings } from "../state/settings"
 import { cleanupOldSpeechDocs, getStorageInfo } from "../utils/storage-utils"
 import { buildAndSaveArgumentTreeIfChanged } from "../state/argumentTrees"
-import type { Flow, Round } from "debate-core/src/types/flow"
+import type { Flow, Round } from "../types/flow"
 
 /** How long a flow must sit unedited before its argument tree auto-syncs. */
 const ARGUMENT_TREE_AUTO_SYNC_DEBOUNCE_MS = 1500

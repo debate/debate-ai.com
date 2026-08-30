@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "debate-card-parser": "workspace:*",
-    "debate-core": "workspace:*",
     "debate-ui": "workspace:*",
+    "fuse.js": "^7.1.0",
     "grab-url": "^1.6.7",
     "lucide-react": "^0.577.0",
     "react-native-app-buttons": "^0.1.4"

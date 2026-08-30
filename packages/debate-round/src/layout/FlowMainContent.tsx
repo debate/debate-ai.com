@@ -8,7 +8,7 @@ import { useState } from "react"
 import { FlowSpreadsheet } from "../flow/FlowSpreadsheet"
 import { LexicalEditorWrapper } from "debate-editor"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
-import type { Flow } from "debate-core/src/types/flow"
+import type { Flow } from "../types/flow"
 import type { ViewMode } from "../types/debate-flow"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
 

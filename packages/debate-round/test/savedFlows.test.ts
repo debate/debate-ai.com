@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { deriveFlowLabel, isValidFlow } from "../src/state/savedFlows";
-import type { Box, Flow } from "debate-core/src/types/flow";
+import type { Box, Flow } from "../src/types/flow";
 
 function makeBox(overrides: Partial<Box> = {}): Box {
   return { content: "", children: [], index: 0, level: 0, focus: false, ...overrides };

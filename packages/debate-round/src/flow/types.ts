@@ -3,7 +3,7 @@
  */
 
 import type { IHeaderParams, ICellRendererParams } from "ag-grid-community"
-import type { Flow } from "debate-core/src/types/flow"
+import type { Flow } from "../types/flow"
 import type { FlowAnnotation } from "./flow-annotations"
 
 /**

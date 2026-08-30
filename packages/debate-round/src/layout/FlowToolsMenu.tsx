@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "debate-ui/src/primitives/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
-import type { Flow } from "debate-core/src/types/flow"
+import type { Flow } from "../types/flow"
 import { buildFlowToolsMenuItems } from "../round/flow-tool-links"
 
 /** Props for the FlowToolsMenu component. */

@@ -12,7 +12,7 @@
  * generated drills aren't persisted anywhere.
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import { getUnansweredFlowRows, suggestCrossExamQuestions } from "./flow-transcript-summary";
 import { getArgumentVulnerabilityReport, summarizeOutcomeBySide } from "./response-outcome";
 import { getSpeechSideKey } from "./argument-tree";

@@ -15,7 +15,7 @@ import type { SearchResult } from "../types"
 import { MultiSelect } from "debate-ui/src/primitives/multi-select"
 import { Autocomplete } from "debate-ui/src/primitives/autocomplete"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
-import { searchSchools, searchTournaments, searchNames } from "debate-core/src/cache/client-cache"
+import { searchSchools, searchTournaments, searchNames } from "../cache/client-cache"
 
 const SUGGESTION_LIMIT = 20
 const SEARCH_DROPDOWN_CLASS = "right-auto w-[14rem]"

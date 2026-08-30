@@ -24,9 +24,17 @@ export const CATEGORY_TABS: {
    *  `visibleCategoryTabs`). */
   electronOnly?: boolean;
 }[] = [
+  // General's actual settings rows (Workspace / Word counts / Find / Timer)
+  // moved to the app's own /settings page (see `buildEmbeddedSettingsPanel`
+  // in settings-ui.ts) — the tab stays only for its non-setting diagnostic
+  // sections (Benchmark, About this install, Settings backup, doc links);
+  // `SettingsModal.render()` forces this tab's settings list to empty.
   { id: 'general', label: 'General', icon: 'home' },
   { id: 'files', label: 'Files', icon: 'archive' },
-  { id: 'appearance', label: 'Appearance', icon: 'palette' },
+  // Appearance and Accessibility (colors/fonts/sizing, and the
+  // override-anything accessibility panel) moved to the app's /settings page
+  // in full, so they're dropped from this modal entirely rather than shown
+  // empty.
   { id: 'editing', label: 'Editing', icon: 'edit' },
   { id: 'shortcuts', label: 'Keyboard', icon: 'shortcuts' },
   { id: 'comments-ai', label: 'Comments & AI', icon: 'ai' },
@@ -38,10 +46,6 @@ export const CATEGORY_TABS: {
   // Plugins are installed/loaded by the Electron main process, so the whole
   // tab is desktop-only (hidden on web rather than shown empty).
   { id: 'plugins', label: 'Plugins', icon: 'puzzle', electronOnly: true },
-  // Accessibility intentionally lives at the far right — its
-  // override-anything panel is a "last-resort" customization
-  // surface, separated from the everyday tabs.
-  { id: 'accessibility', label: 'Accessibility', icon: 'shield' },
 ];
 
 /** The category tabs visible on the current host — `electronOnly` categories are

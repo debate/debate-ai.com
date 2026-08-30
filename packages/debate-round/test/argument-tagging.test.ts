@@ -11,7 +11,7 @@ import {
 } from "../src/flow/argument-tagging";
 import { buildRowData, rowDataToBoxes } from "../src/flow/dataTransform";
 import { buildArgumentTree, filterArgumentTree } from "../src/flow/argument-tree";
-import type { Box } from "debate-core/src/types/flow";
+import type { Box } from "../src/types/flow";
 
 const COLUMNS = ["1AC", "1NC", "2AC"];
 

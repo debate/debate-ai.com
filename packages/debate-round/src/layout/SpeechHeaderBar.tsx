@@ -6,7 +6,7 @@
 
 
 import React, { useState, useEffect, useRef, useCallback } from "react"
-import type { Round } from "debate-core/src/types/flow"
+import type { Round } from "../types/flow"
 import { FileText, Quote, ChevronLeft, ChevronRight, Menu, Radio, Type } from "lucide-react"
 import type { ViewMode } from "../types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"

@@ -30,7 +30,7 @@
  * @module state/coachingSessions
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import type { NewsItem } from "debate-card-search/src/lib/news-stream";
 import { buildCoachingSession, buildCoachingSummaryText, type CoachingPrompt } from "../flow/coach-mode";
 

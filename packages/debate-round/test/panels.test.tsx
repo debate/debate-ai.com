@@ -11,7 +11,7 @@
 
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import type { Box, Flow } from "debate-core/src/types/flow";
+import type { Box, Flow } from "../src/types/flow";
 
 import { SharedFlowSyncPanel } from "../src/panels/SharedFlowSyncPanel";
 import type { FlowEdit } from "../src/flow/shared-flow-sync";

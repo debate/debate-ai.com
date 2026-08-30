@@ -4,7 +4,7 @@
  */
 
 import { useCallback } from "react";
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import { newFlow } from "../utils/flow-utils";
 import { settings } from "../state/settings";
 

@@ -28,7 +28,7 @@
  * @module round/coaching-program
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import {
   buildGroupChallengeBoard,
   buildGroupChallengeSummaryText,

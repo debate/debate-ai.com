@@ -67,7 +67,6 @@
     "cmdk": "1.1.1",
     "debate-card-parser": "workspace:*",
     "debate-card-search": "workspace:*",
-    "debate-core": "workspace:*",
     "debate-data-sync": "workspace:*",
     "debate-editor": "workspace:*",
     "debate-editor-cardmirror": "workspace:*",

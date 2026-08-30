@@ -83,6 +83,38 @@ export const documents = sqliteTable(
 
 export type ReasonDocument = typeof documents.$inferSelect;
 
+// Durable FIAT round + flow snapshots — closes the README's promised "save,
+// browse, and restore any past round with full flow history" (previously
+// localStorage-only, see packages/debate-round/src/state/store.ts). `id` is
+// caller-assigned (matches the client's `Round.id`, a Date.now() value) and
+// rows are upserted by it, same convention as `flowSyncEdits` above. `data`
+// holds the full JSON snapshot `{ round: Round, flows: Flow[] }` — the round
+// plus every Flow it references via `flowIds` — so a restore needs no other
+// table. `title`/`format` are denormalized copies for list rendering without
+// parsing `data`.
+export const rounds = sqliteTable(
+  "rounds",
+  {
+    id: integer("id").primaryKey(),
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+    title: text("title").notNull().default("Untitled Round"),
+    format: text("format"),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_rounds_user_id").on(table.userId),
+    updatedAtIdx: index("idx_rounds_updated_at").on(table.updatedAt),
+  }),
+);
+
+export type RoundRow = typeof rounds.$inferSelect;
+
 // Shared, AI-Generated Debate Flow — server-backed live sync transport for
 // `debate-round`'s `FlowEdit` records (see packages/debate-round/src/flow/shared-flow-sync.ts
 // and TODO.md idea #16, follow-up (a)). `boxPath` is a JSON-encoded number
@@ -109,9 +141,11 @@ export const flowSyncEdits = sqliteTable(
 
 export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
 
-// Account-linked app preferences — TODO.md idea #17 ("User Settings —
-// account-linked debate preferences"), first slice. One row per user,
-// mirroring `debate-round`'s local-only `Settings` singleton
+// Per-user settings — one row per user, created on first save (see
+// /api/settings and /settings). Account-linked app preferences — TODO.md
+// idea #17 ("User Settings — account-linked debate preferences"), first
+// slice. One row per user, mirroring `debate-round`'s local-only `Settings`
+// singleton
 // (`packages/debate-round/src/state/settings.ts`) so a signed-in user's
 // `debateStyle`/`fontSize` choices follow them across devices instead of
 // staying stuck in one browser's localStorage. `debateStyle`/`fontSize`
@@ -142,6 +176,15 @@ export const userSettings = sqliteTable("user_settings", {
   colorTheme: text("color_theme"),
   themeMode: text("theme_mode"),
   favoriteTools: text("favorite_tools"),
+  // JSON-serialized map of CardMirror editor-preference keys (General /
+  // Appearance / Accessibility settings, e.g. `displayColors`, `bodyFont`,
+  // `reduceMotion`) to their current values — moved here from the editor's
+  // own gear-icon settings modal (see /settings and
+  // packages/debate-editor-cardmirror/src/editor/settings.ts) so a
+  // signed-in user's choices follow them across devices instead of staying
+  // in that browser's localStorage. Null/absent means "use the client
+  // default", same semantics as every other nullable column here.
+  editorPreferences: text("editor_preferences"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -192,44 +235,6 @@ export const savedFlows = sqliteTable(
 );
 
 export type SavedFlowRow = typeof savedFlows.$inferSelect;
-
-// Account-linked round cloud save — TODO.md idea #17, follow-up (3)/(b):
-// "migrate rounds themselves (the tournament/debaters/judges wrapper)... needs
-// its own schema design for how a saved round should reference its saved
-// flows." A `Round` (packages/debate-core/src/types/flow.ts) only ever
-// references its flows indirectly via `flowIds: number[]` — the local
-// `Flow.id`s in `useFlowStore`'s `flows` array — so a saved round's `data`
-// blob keeps that same indirection rather than embedding the flows
-// themselves: loading a saved round resolves each `flowIds` entry against
-// the user's already-saved flows (`saved_flows`), the same way the local
-// `Round`/`Flow` stores are cross-referenced today. This mirrors
-// `savedFlows` above one row per (user, round), unique on
-// `(user_id, client_id)` so re-saving an edited round upserts rather than
-// duplicates, cascade-deleted with the account.
-export const savedRounds = sqliteTable(
-  "saved_rounds",
-  {
-    id: integer("id").primaryKey({ autoIncrement: true }),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    clientId: integer("client_id").notNull(),
-    label: text("label").notNull().default(""),
-    data: text("data").notNull(),
-    createdAt: integer("created_at", { mode: "timestamp" })
-      .notNull()
-      .default(sql`(unixepoch())`),
-    updatedAt: integer("updated_at", { mode: "timestamp" })
-      .notNull()
-      .default(sql`(unixepoch())`),
-  },
-  (table) => ({
-    userIdIdx: index("idx_saved_rounds_user_id").on(table.userId),
-    userClientIdx: uniqueIndex("idx_saved_rounds_user_client").on(table.userId, table.clientId),
-  }),
-);
-
-export type SavedRoundRow = typeof savedRounds.$inferSelect;
 
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the

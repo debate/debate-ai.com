@@ -4,6 +4,7 @@ import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
 import { UserSettingsPanel } from "debate-round"
 import { FavoriteToolsSettings } from "@/components/settings/FavoriteToolsSettings"
+import { EditorPreferencesPanel } from "@/components/settings/EditorPreferencesPanel"
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -28,6 +29,9 @@ export default function SettingsPage() {
       </Suspense>
       <Suspense>
         <FavoriteToolsSettings />
+      </Suspense>
+      <Suspense>
+        <EditorPreferencesPanel />
       </Suspense>
     </div>
   )

@@ -19,7 +19,7 @@
  * @module state/savedRounds
  */
 
-import type { Round } from "debate-core/src/types/flow";
+import type { Round } from "../types/flow";
 
 /** Hard cap on a single round's JSON size — generous for even a round with many judges/spectators, well short of D1's row-size limits. */
 export const MAX_SAVED_ROUND_BYTES = 200_000;

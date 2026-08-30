@@ -6,7 +6,7 @@ import {
   getFlowSideKeys,
   getSpeechSideKey,
 } from "../src/flow/argument-tree";
-import type { Box } from "debate-core/src/types/flow";
+import type { Box } from "../src/types/flow";
 
 const COLUMNS = ["1AC", "1NC", "2AC", "2NC"];
 

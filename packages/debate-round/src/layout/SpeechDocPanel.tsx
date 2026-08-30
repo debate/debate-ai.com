@@ -5,7 +5,7 @@
 import { X, UserPlus } from "lucide-react"
 import { Button } from "debate-ui/src/primitives/button"
 import { LexicalEditorWrapper } from "debate-editor"
-import type { Flow } from "debate-core/src/types/flow"
+import type { Flow } from "../types/flow"
 import type { ViewMode } from "../types/debate-flow"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
 
