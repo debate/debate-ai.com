@@ -6,6 +6,77 @@
 _No task currently in progress._
 
 ### Completed
+- **Fix broken production build — two independently-merged idea #17
+  branches redeclared `user_settings` and collided on `/api/rounds`
+  (data-integrity/build fix, not a new idea slice).** `bun run build:web`
+  and `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json` were both
+  broken on `master`: `lib/database/schema.ts` declared `export const
+  userSettings`/`export type UserSettingsRow` *twice* (TS2451/TS2300), and
+  the vinext build failed outright — "You cannot use different slug names
+  for the same dynamic path ('id' !== 'clientId')" — because
+  `app/api/rounds/[id]/` and `app/api/rounds/[clientId]/` both existed as
+  siblings. Root cause: PR #362 ("Add cloud persistence for FIAT rounds and
+  user settings") and the PR #360/361/363/364/365 chain (this same idea
+  #17's documented, tested, UI-wired slices above) each independently built
+  a full round/user-settings persistence system without visibility into the
+  other, and the merge that landed both kept every file from both sides
+  instead of reconciling them. Investigated which system was actually live:
+  PR #362's `user_settings` columns (`colorMode`/`defaultRoundPrivate`) and
+  its `/api/user/settings` route were referenced nowhere outside their own
+  files (dead on arrival); its `rounds` table + `/api/rounds/[id]` +
+  `useRoundsCloudSync`/`RoundSyncStatus` (an auto-debounced round-sync badge
+  mounted on `/debate`) turned out to already be broken *post-merge* too —
+  the merge had silently overwritten PR #362's own `/api/rounds/route.ts`
+  (GET+POST, `{id,title,format}` shape) with PR #365's `savedRounds`-backed
+  version (GET-only, `{clientId,label,updatedAt}` shape), so
+  `useRoundsCloudSync`'s POST calls already 405'd and its GET response
+  shape no longer matched what it read. Its migration
+  (`drizzle/0007_rapid_dragon_man.sql`, which also contained the
+  conflicting duplicate `CREATE TABLE user_settings`) was never in
+  `drizzle/meta/_journal.json` either — generated on a divergent branch
+  state and never reconciled. Also found `app/tools/page.tsx` rendering
+  `<MySavedItems />` with no import at all (TS2304) — a "recently saved
+  docs/rounds" discoverability card for `/tools`, evidently dropped during
+  the same merge. Fix: removed PR #362's entire dead/broken half —
+  `app/api/user/settings/route.ts`, `app/api/rounds/[id]/route.ts`,
+  `lib/hooks/useRoundsCloudSync.ts`, `components/layout/RoundSyncStatus.tsx`
+  (+ its two `/debate` page mounts), the `rounds`/`RoundRow` schema export,
+  and the duplicate `userSettings`/`UserSettingsRow` declaration — keeping
+  only the tested, documented, UI-wired `saved_rounds`/`/api/settings`
+  chain this idea's own history (below) already covers. Fixed
+  `MySavedItems`'s missing import and updated its round-summary mapping
+  from `r.title` to `r.label` to match the surviving `/api/rounds` route's
+  actual (`saved_rounds`-backed) response shape. Deleted the untracked,
+  conflicting `0007_rapid_dragon_man.sql` and the also-untracked
+  `0010_worthless_raza.sql` (an ad-hoc `saved_rounds` migration that never
+  made it into the journal either), then ran `drizzle-kit generate` against
+  the now-deduplicated schema to produce a properly journaled
+  `0011_plain_fantastic_four.sql` — confirmed via its own dry-run output
+  that it emits *only* `CREATE TABLE saved_rounds` (plus its two indexes),
+  no unrelated diff — restoring `drizzle/meta/_journal.json`/snapshot chain
+  coherence for future `db:generate` runs. No `DROP TABLE`/destructive SQL
+  was written anywhere — the retired `rounds` table's own `CREATE TABLE`
+  statement is simply no longer regenerated for a fresh database; an
+  already-provisioned remote D1 database (if `0007_rapid_dragon_man.sql`
+  ever partially ran there before this fix) is left untouched, just
+  unreferenced. No new Vitest tests were added — every changed file is
+  either dead-code deletion, a route/schema dedup, or app-level UI wiring in
+  `apps/debate-ai.com`, which (per every prior slice's own verification
+  notes above) still has no vitest project wired up
+  (`vitest.config.ts`'s `projects` list is `["packages/*"]` only);
+  correctness here is what `tsc`/the production build/the full existing
+  suite actually catch, and all three now pass. Verified: `bun install`
+  (2258 packages), `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json`
+  (34 errors — the same pre-existing, unrelated baseline every prior slice
+  has recorded, down from 39 before this fix: the 4 duplicate-`userSettings`
+  lines and the `MySavedItems` TS2304 are gone, nothing new introduced),
+  `bunx turbo run typecheck` (13/13 in-scope package tasks pass), full `bun
+  run test` (188 files / 2968 tests, all pass — unchanged from before this
+  fix, confirming no behavior regression in the packages that were already
+  tested), and `bun run build:web` (`debate-ai-web` succeeds — previously
+  failed outright with the vinext slug-collision error — with `/api/rounds`,
+  `/api/flows`, `/api/settings`, `/debate`, `/tools`, and `/settings` all
+  present in the route list). **Completed:** 2026-08-30.
 - **Round Workspace — "Tools for this round" menu (idea #17, follow-up
   (4), discoverability-audit half).** Prompted by the same standing "add
   tools into where needed in the ui... develop better tool ui" ask idea
