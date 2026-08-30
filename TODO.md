@@ -6,6 +6,73 @@
 _No task currently in progress._
 
 ### Completed
+- **Insert Short Cite — the one CardMirror shortcut gap idea #14 named
+  (`Mod-Shift-k`).** `docs/features/legacy-verbatim-shortcuts.md`'s Known
+  gaps flagged this as "the one genuine (not just doc-staleness) gap"
+  its audit found: CardMirror never grew a pure "format `Smith 24` and
+  insert it at the cursor" command, unlike `F8` (styles already-typed
+  text), `Alt-F8` (`copyPreviousCite`, reuses the nearest earlier cite),
+  and `Mod-Shift-x` (`aiCreateCite`, formats a full citation from a
+  selection via AI) — none of which cover "there's no cite text yet, I
+  just want to drop in an author/year tag." Adds
+  `packages/debate-editor-cardmirror/src/editor/insert-short-cite.ts`:
+  the pure `buildInsertShortCiteTransaction(state, author, year)`
+  (inserts the formatted tag at the selection/cursor and marks it
+  `cite_mark`, reusing `debate-card-parser`'s existing
+  `formatShortCiteTag` rather than reimplementing it — the same pure
+  formatter the now-dead `reason-editor` package's equivalent command
+  used) and the async `runInsertShortCite(view)`, which prompts for an
+  author then a year via two sequential `text-prompt.ts` `promptForText`
+  dialogs (the shared modal vocabulary every other prompt-driven
+  CardMirror command already uses — never the native `window.prompt`,
+  which Electron disables outright) before dispatching the transaction.
+  Wired as a full `RibbonCommandId` (`insertShortCite`) through every
+  touch point a first-class command needs: `ribbon-commands.ts`'s id
+  union/list/label/`Mod-Shift-k` default keybinding/`RibbonContext`
+  field/no-op default/dispatch case (no-selection-required, like
+  `reformatAllCites`, since this inserts new text rather than acting on
+  existing text), `ribbon-groups.ts`'s "Editing utilities" group
+  (alongside `copyPreviousCite`, which also auto-registers it in the
+  menu bar's Edit dropdown via `menu-bar-categories.ts`'s existing
+  title-based mapping), and the real implementation in `editor/index.ts`
+  alongside `aiCreateCite`'s. The command-palette
+  (`quick-card-search-ui.ts`) and availability gating
+  (`ribbon-availability.ts`) needed no changes — both already derive
+  from the id/label lists automatically. Added `debate-card-parser` as an
+  explicit `debate-editor-cardmirror` dependency (`workspace:*`) to reuse
+  `formatShortCiteTag` rather than duplicating it — matches how
+  `debate-speech-writer` already depends on the same package. Also
+  corrected two other stale bullets under this same idea #14 entry in
+  the Product Feature Ideas list above (an in-editor shortcuts reference
+  and a keybinding-rebinding settings page both already exist —
+  `openShortcutsReference`/`keybindings-editor.ts` — just never pruned
+  from the backlog once built) while already touching that section; see
+  the updated item 14 entry for what's actually still open there.
+  Vitest-covered in
+  `packages/debate-editor-cardmirror/test/insert-short-cite.test.ts` (10
+  cases: `parseCiteYearInput`'s numeric/blank/non-numeric/whitespace
+  branches, and `buildInsertShortCiteTransaction`'s collapsed-cursor
+  insert, `cite_mark` application over exactly the inserted range,
+  replacing a non-collapsed selection, the `"ND"`/`null` year sentinels,
+  and the no-author `null` return). `runInsertShortCite`'s prompt/dispatch
+  wiring itself is not unit-tested — this package has no jsdom
+  environment wired into Vitest (confirmed: no `vitest.config.ts` exists
+  under `packages/debate-editor-cardmirror`, and the root config's
+  `projects: ["packages/*"]` picks it up with Vitest's node default) —
+  matching this file's own precedent, `link-context-menu-plugin.ts`'s
+  `editLink`, which is equally untested for the same reason. Verified:
+  `bun install` (2258 packages, adding the new workspace dependency),
+  `bunx turbo run typecheck --filter=debate-editor-cardmirror
+  --filter=debate-card-parser` then a full `bunx turbo run typecheck`
+  (14/14 in-scope package tasks pass), `bunx vitest run --project
+  debate-editor-cardmirror` (45/45 pass, up from 35), full `bun run test`
+  (189 files / 2978 tests, all pass, up from 2968), a direct `npx tsc
+  --noEmit -p apps/debate-ai.com/tsconfig.json` (same 34 pre-existing,
+  unrelated errors as every prior slice has recorded — `D1Database`/
+  `Fetcher` globals, `debate-ui`'s `.svg`/`.png` module declarations,
+  none in any file this slice touched), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/reason-editor` present in the route
+  list). **Completed:** 2026-08-30.
 - **Fix broken production build — two independently-merged idea #17
   branches redeclared `user_settings` and collided on `/api/rounds`
   (data-integrity/build fix, not a new idea slice).** `bun run build:web`
@@ -9483,10 +9550,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
     - A coach-facing roster analytics dashboard (completion rates, streaks, standings in one place).
     - A digest notification summarizing challenge results instead of requiring a panel visit.
 
-14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) —
-    - Add the one missing command: insert a short cite tag at the cursor without a preceding selection.
-    - An in-editor shortcuts cheat-sheet overlay (`?` to open).
-    - A settings page for rebinding CardMirror's shortcuts.
+14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all three prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); and Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command. See `docs/features/legacy-verbatim-shortcuts.md`. Next: a printable/exportable version of the shortcuts reference, since today it's view-only inside the editor.
 
 15. **Flow-in-Speech Flow Annotations** (`/annotations`, `FlowSpreadsheet` badges) —
     - Search/filter annotations by speech, speaker, or tag.
