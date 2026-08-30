@@ -14,7 +14,7 @@
  * in TODO.md.
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import { getFlowRowSummaries, type FlowRowSummary } from "./flow-transcript-summary";
 import { getFlowSideKeys, getSpeechSideKey } from "./argument-tree";
 

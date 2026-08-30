@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { deriveRoundLabel, isValidRound } from "../src/state/savedRounds";
-import type { Round } from "debate-core/src/types/flow";
+import type { Round } from "../src/types/flow";
 
 function makeRound(overrides: Partial<Round> = {}): Round {
   return {

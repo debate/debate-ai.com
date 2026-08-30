@@ -11,7 +11,7 @@ import { Autocomplete } from "debate-ui/src/primitives/autocomplete"
 import { debateStyles, debateStyleMap } from "debate-timer/src/formats/debate-format-times"
 import { IconAffBubble, IconNegBubble } from "debate-ui/src/icons"
 import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "../../state/myTeamProfile"
-import { searchSchools } from "debate-core/src/cache/client-cache"
+import { searchSchools } from "../../cache/client-cache"
 
 const SCHOOL_SUGGESTION_LIMIT = 10
 const SCHOOL_DROPDOWN_CLASS = "right-auto w-[14rem]"

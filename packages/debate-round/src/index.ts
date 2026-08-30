@@ -1,3 +1,4 @@
+export * from "./types/flow";
 export * from "./panels";
 export { FlowSpreadsheet } from "./flow/FlowSpreadsheet";
 export { RoundEditorDialog } from "./dialogs/CreateRoundDialog";

@@ -4,7 +4,7 @@
 
 import { useMemo, useCallback } from "react"
 import type { ColDef } from "ag-grid-community"
-import type { Flow } from "debate-core/src/types/flow"
+import type { Flow } from "../types/flow"
 import { AnnotationCellRenderer } from "./AnnotationCellRenderer"
 import { FlowColumnHeader } from "./FlowColumnHeader"
 import { FirstColumnCellRenderer } from "./FirstColumnCellRenderer"

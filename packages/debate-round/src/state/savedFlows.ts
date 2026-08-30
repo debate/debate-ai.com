@@ -10,7 +10,7 @@
  * @module state/savedFlows
  */
 
-import type { Box, Flow } from "debate-core/src/types/flow";
+import type { Box, Flow } from "../types/flow";
 
 /** Hard cap on a single flow's JSON size, generous for even a very long flow but well short of D1's row-size limits. */
 export const MAX_SAVED_FLOW_BYTES = 2_000_000;

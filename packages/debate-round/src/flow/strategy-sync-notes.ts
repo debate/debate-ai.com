@@ -12,7 +12,7 @@
  * yet. See the follow-ups noted in TODO.md.
  */
 
-import type { Box } from "debate-core/src/types/flow";
+import type { Box } from "../types/flow";
 import { boxFromPath } from "../utils/flow-utils";
 
 /** Where a note's underlying argument currently stands. */

@@ -2,7 +2,7 @@ import {
   debateStyles,
   debateStyleMap,
 } from "debate-timer/src/formats/debate-format-times";
-import type { Flow, Box } from "debate-core/src/types/flow";
+import type { Flow, Box } from "../types/flow";
 
 export function newBox(index: number, level: number, focus = false): Box {
   return {

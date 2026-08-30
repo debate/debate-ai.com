@@ -4,7 +4,7 @@ import {
   debateStyleMap,
   debateStyles,
 } from "debate-timer/src/formats/debate-format-times";
-import type { Box } from "debate-core/src/types/flow";
+import type { Box } from "../src/types/flow";
 
 const POLICY_INDEX = debateStyleMap.indexOf("policy");
 

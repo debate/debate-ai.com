@@ -10,7 +10,7 @@ import {
   saveArgumentTree,
 } from "../src/state/argumentTrees";
 import type { ArgumentTreeRecord } from "../src/state/argumentTrees";
-import type { Box } from "debate-core/src/types/flow";
+import type { Box } from "../src/types/flow";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

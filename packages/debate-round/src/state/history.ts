@@ -1,5 +1,5 @@
 import { boxFromPath } from "../utils/flow-utils";
-import type { Flow, Box } from "debate-core/src/types/flow";
+import type { Flow, Box } from "../types/flow";
 
 export function deepClone<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));

@@ -76,7 +76,9 @@ the player — see
 [`docs/features/flow-annotations.md`](../../docs/features/flow-annotations.md).
 
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
-docs; the flow types themselves live in `debate-core` so both sides can share them.
+docs; the flow types themselves live in `src/types/flow.ts` (this package owns them —
+`debate-timer` and `debate-card-search` keep their own copies to avoid a circular
+dependency back on this package).
 
 ## Package layout
 

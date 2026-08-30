@@ -16,7 +16,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Tags } from "lucide-react"
-import type { ArgumentType, EvidenceStatus } from "debate-core/src/types/flow"
+import type { ArgumentType, EvidenceStatus } from "../types/flow"
 import { ARGUMENT_TYPES, EVIDENCE_STATUSES, formatArgumentTags, inferArgumentType } from "./argument-tagging"
 import type { ArgumentTags, SectionRowPreview } from "./argument-tagging"
 

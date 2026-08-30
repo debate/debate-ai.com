@@ -14,7 +14,7 @@
  * persist a practice round anywhere; see the follow-ups noted in TODO.md.
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import type {
   BuiltinJudgeParadigmId,
   JudgeParadigm,

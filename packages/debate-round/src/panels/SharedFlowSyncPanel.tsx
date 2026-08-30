@@ -24,7 +24,7 @@ import {
 } from "debate-ui/src/panels/panel-shell";
 import { Button } from "debate-ui/src/primitives/button";
 import { Input } from "debate-ui/src/primitives/input";
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 
 import {
   applyMergedEditsToFlow,

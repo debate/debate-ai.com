@@ -9,7 +9,7 @@
  * `FlowSpreadsheet` UI; see the follow-ups noted in TODO.md.
  */
 
-import type { Box } from "debate-core/src/types/flow";
+import type { Box } from "../types/flow";
 import { boxFromPath } from "../utils/flow-utils";
 
 export type FlowAnnotation = {

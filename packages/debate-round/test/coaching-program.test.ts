@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Box } from "debate-core/src/types/flow";
+import type { Box } from "../src/types/flow";
 import type { QuestContribution, QuestTemplate } from "debate-card-search/src/lib/daily-quests";
 import type { ContributorAvailability } from "debate-card-search/src/lib/research-task-routing";
 import type { TrackedTopicAssignment } from "debate-card-search/src/lib/research-progress";

@@ -16,7 +16,7 @@
  * @module state/drillSets
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import { buildDrillSet, type Drill } from "../flow/drill-generator";
 
 export type DrillSetRecord = {

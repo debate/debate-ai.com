@@ -7,8 +7,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import type { Flow, Box, Round } from "debate-core/src/types/flow";
-import { generateRoundTitle, generateRoundSlug } from "debate-core/src/types/flow";
+import type { Flow, Box, Round } from "../../types/flow";
+import { generateRoundTitle, generateRoundSlug } from "../../types/flow";
 import { useFlowStore } from "../../state/store";
 import { settings } from "../../state/settings";
 import {

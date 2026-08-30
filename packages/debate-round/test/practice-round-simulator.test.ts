@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Box } from "debate-core/src/types/flow";
+import type { Box } from "../src/types/flow";
 import { buildCustomJudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
 import {
   buildPracticeRoundFeedback,

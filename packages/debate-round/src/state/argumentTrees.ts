@@ -13,7 +13,7 @@
  * @module state/argumentTrees
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import { buildArgumentTree, type ArgumentTreeNode } from "../flow/argument-tree";
 
 export type ArgumentTreeRecord = {

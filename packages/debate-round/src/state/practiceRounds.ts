@@ -19,7 +19,7 @@
  * @module state/practiceRounds
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import { getAiVersusRound } from "./aiVersusRounds";
 import type { PriorSpeechRecord } from "../round/ai-versus-speech-order";
 import type { JudgeDecisionAiResult } from "../round/judge-decision-ai";

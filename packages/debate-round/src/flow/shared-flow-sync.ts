@@ -16,7 +16,7 @@
  * notes yet. See the follow-ups noted in TODO.md.
  */
 
-import type { Box, Flow } from "debate-core/src/types/flow";
+import type { Box, Flow } from "../types/flow";
 
 /** One contributor's proposed edit to a single box's content. */
 export type FlowEdit = {

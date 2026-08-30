@@ -9,7 +9,9 @@ library, prep rooms, and more) described in `TODO.md`.
 import { SearchInterface, ContributionLeaderboardPanel, TaskInboxPanel, ProgressUnlocksPanel, EvidenceLibraryPanel, RevisionIncentivesPanel, ReviewQueuePanel, BrainstormBoardPanel, SprintNotesPanel, ContributorAwardsPanel } from "debate-card-search"
 ```
 
-Cards are parsed by `debate-card-parser`; shared lookups come from `debate-core`, and all
+Cards are parsed by `debate-card-parser`; the tournament/school/name lookup cache lives in
+`src/cache/client-cache.ts` (its own copy — `debate-round` keeps a separate one, since
+sharing a lower-level package would reintroduce the dependency this split removed), and all
 primitives come from `debate-ui`.
 
 ## Package layout

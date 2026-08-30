@@ -3,7 +3,7 @@
  * Converts between nested Box structures and flat AG Grid row data
  */
 
-import type { Box } from "debate-core/src/types/flow"
+import type { Box } from "../types/flow"
 
 /**
  * Convert flow children (nested Box structure) to flat row data for AG Grid

@@ -17,7 +17,7 @@
 
 import type React from "react"
 import type { TimerSpeech, SpeechTimerState } from "../types"
-import type { Round } from "debate-core/src/types/flow"
+import type { Round } from "../types/flow"
 
 import { useEffect, useRef, useState } from "react"
 import { Play, Pause } from "lucide-react"

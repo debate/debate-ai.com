@@ -25,7 +25,7 @@
  * @module state/roundContributorFlows
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import type { CoachingProgramMemberFlow, CoachingProgramMemberPracticeRound } from "../round/coaching-program";
 import { getPracticeRound } from "./practiceRounds";
 

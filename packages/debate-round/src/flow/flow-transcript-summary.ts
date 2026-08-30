@@ -1,7 +1,7 @@
 /**
  * @fileoverview Flow-derived transcript summaries — pure data-derivation
  * helpers for idea #6 in TODO.md ("Speech Transcript Summaries and
- * Answers"). Given an already-flowed `Flow` (see debate-core's `Box`/`Flow`
+ * Answers"). Given an already-flowed `Flow` (see this package's `types/flow.ts` `Box`/`Flow`
  * types), this module walks each argument thread (row) across the flow's
  * speech columns and derives a concise summary, which arguments currently
  * stand unanswered, and template-based cross-examination/extension prompts
@@ -10,7 +10,7 @@
  * speech text; see the follow-ups noted in TODO.md.
  */
 
-import type { ArgumentType, Box, EvidenceStatus, Flow } from "debate-core/src/types/flow";
+import type { ArgumentType, Box, EvidenceStatus, Flow } from "../types/flow";
 
 export type FlowRowEntry = {
   /** Column/speech name, e.g. "1AC". */

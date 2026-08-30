@@ -2,7 +2,7 @@
 
 import { create } from "zustand"
 import { History } from "./history"
-import type { Flow, Round } from "debate-core/src/types/flow"
+import type { Flow, Round } from "../types/flow"
 
 const historyMap = new Map<number, History>()
 

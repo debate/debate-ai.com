@@ -10,7 +10,7 @@ import { Autocomplete } from "debate-ui/src/primitives/autocomplete"
 import { ROUND_LEVELS } from "./constants"
 import { settings } from "../../state/settings"
 import type { RadioSetting } from "../../types/settings"
-import { searchTournaments } from "debate-core/src/cache/client-cache"
+import { searchTournaments } from "../../cache/client-cache"
 
 const TOURNAMENT_SUGGESTION_LIMIT = 10
 const TOURNAMENT_DROPDOWN_CLASS = "right-auto w-[12rem]"

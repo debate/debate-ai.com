@@ -12,7 +12,7 @@
  * status (`Box.evidenceStatus`). No follow-ups remain open on this idea.
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 import { getFlowRowSummaries, type FlowRowSummary } from "./flow-transcript-summary";
 
 export type ArgumentTreeNode = {

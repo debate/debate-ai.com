@@ -11,7 +11,7 @@ import { cn } from "debate-ui/src/lib/utils"
 import { FlowTab } from "../navigation/FlowTab"
 import { FlowToolsMenu } from "./FlowToolsMenu"
 import { PrepTimer } from "debate-timer/src/timers/PrepTimer"
-import type { Flow, Round } from "debate-core/src/types/flow"
+import type { Flow, Round } from "../types/flow"
 import type { TimerState, SpeechTimerState, DebateStyle } from "debate-timer/src/types"
 
 /** Props for the FlowPageSidebar component. */

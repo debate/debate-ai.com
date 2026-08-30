@@ -28,7 +28,7 @@
  * @module round/flow-tool-links
  */
 
-import type { Flow } from "debate-core/src/types/flow";
+import type { Flow } from "../types/flow";
 
 /** One entry in the round workspace's "Tools for this round" menu. */
 export interface FlowToolLink {

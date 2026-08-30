@@ -16,7 +16,7 @@
  * @module round/saved-rounds-client
  */
 
-import type { Round } from "debate-core/src/types/flow";
+import type { Round } from "../types/flow";
 import type { SavedRoundSummary } from "../state/savedRounds";
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
