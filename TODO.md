@@ -6,6 +6,99 @@
 _No task currently in progress._
 
 ### Completed
+- **Sticky heading breadcrumb + idea #9 doc/tracker correction (idea #9,
+  "Expandable Heading Structure").** Scoping idea #9's first listed
+  follow-up ("a settings toggle to make the outline panel on-by-default
+  instead of opt-in") found the bullet's whole framing was stale: it and
+  `docs/features/reason-editor-outline-nav.md` both described the
+  TipTap-era `reason-editor` package's `OutlineNavPanel`/`ReasonEditor`
+  `showOutline` prop — dead code, unreachable since PR #338 replaced
+  `/reason-editor`'s editor with `debate-editor-cardmirror`'s
+  `CardMirrorEditor` (whose own `showOutline`/`documentId` props are
+  declared on its prop type but never read anywhere in the
+  implementation — a second, independent vestigial no-op from the same
+  migration). The real, live outline feature is CardMirror's own native
+  `editor/nav-panel.ts` (`NavigationPanel`) — considerably more capable
+  than the dead version (drag-and-drop reorder, per-level filtering,
+  multi-select, caret-follow highlighting) — and auditing it against
+  idea #9's three follow-ups found two already done: `navPaneVisible`
+  (its show/hide setting, `toggleNavPane` ribbon command) already
+  defaults to visible, and `nav-panel.ts`'s drag/drop already supports
+  drag-to-reorder. Only the third — "a sticky breadcrumb showing the
+  current heading while scrolling" — was a genuine gap, so that's what
+  this slice builds. Adds `editor/heading-breadcrumb.ts`: pure
+  `computeBreadcrumbPath(headings, pos)`, a single forward pass over
+  `headings.ts`'s existing `collectHeadings()` flat list maintaining a
+  level-ordered ancestor stack (pop while the top's level >= the next
+  entry's level, then push) — the same sibling-span trick
+  `sectionEndFromHeading` already uses, needing no parent pointers. Adds
+  `editor/heading-breadcrumb-bar.ts`'s `HeadingBreadcrumbBar`: on scroll
+  (rAF-throttled) and on doc update, resolves the doc position at the top
+  of the visible scroll area via `view.posAtCoords` and renders the
+  resulting ancestor chain as clickable segments (reusing
+  `precise-scroll.ts`'s `scrollToHeadingId`, the same jump path
+  `nav-panel.ts`'s own row clicks use). Wired into `editor/index.ts` at
+  the same touch points `navPanel` itself uses (`attach`/`update` in
+  `mountView`, plus the idle-scheduled `scheduleHeavyUpdate` path) and
+  into `react/ribbon-template.ts`'s static markup (a new
+  `#heading-breadcrumb-bar` div, sibling of `.pmd-editor-row` inside
+  `#app` so `position: sticky` pins it to `#app`'s own scroll box, not
+  the viewport) plus `editor/style.css`. Single-doc only — multi-pane/
+  multi-window aren't wired up (a follow-up, not a regression, since
+  neither had a breadcrumb before this file existed). A live Playwright
+  pass against a real editor (see Verified below) caught a real bug this
+  slice's own unit tests couldn't reach: at `scrollTop: 0`,
+  `view.posAtCoords` at the single 4px-below-the-bar probe point
+  resolved to `null` (the document's own top padding/margin gap, most
+  visible right at the very top before any heading's box begins) — and
+  the original code's "keep the last render on a miss" fallback (meant
+  for a transient mid-scroll gap) meant the breadcrumb stuck on whatever
+  heading was current before the scroll and silently never updated back
+  to the first heading. Fixed by probing three increasing offsets (4px/
+  20px/48px below the bar) and using the first hit — confirmed via the
+  same Playwright flow: a two-Pocket document showed "Pocket One" at
+  `scrollTop: 0` and "Pocket Two" at max scroll after the fix, both
+  "Pocket Two" before it. Vitest-covered in
+  `packages/debate-editor-cardmirror/test/heading-breadcrumb.test.ts` (8
+  cases: empty input, pos before every heading, a single root heading, a
+  full pocket→hat→block→tag chain at various positions, a shallower
+  sibling popping a deeper chain, two top-level headings resetting the
+  chain, and an analytic treated the same as a tag). `HeadingBreadcrumbBar`
+  itself is not unit-tested — it's DOM/`posAtCoords`-wiring, matching this
+  package's existing convention of Vitest-covering pure logic only (no
+  `.tsx`/DOM-wiring test exists for `nav-panel.ts` either) — instead
+  verified via a manual Playwright pass, which is also how the
+  `posAtCoords`-null bug above was actually found. Documented in
+  `docs/features/reason-editor-outline-nav.md`, rewritten end to end to
+  describe the real CardMirror implementation instead of the dead
+  `reason-editor` one, and idea #9's own Product Feature Ideas entry
+  above corrected to match. Verified: `bun install` (2258 packages),
+  `bunx vitest run --project debate-editor-cardmirror
+  test/heading-breadcrumb.test.ts` (8/8 pass), full `bun run test` (191
+  files / 3003 tests, all pass, up from 2995), `bunx turbo run typecheck
+  --filter=debate-editor-cardmirror` (3/3 in-scope package tasks pass),
+  `bun run build:web` (`debate-ai-web` succeeds, `/reason-editor` present
+  in the route list), and a headless-Chromium (Playwright) pass against
+  `wrangler dev --port 8787` (not `bun run dev:web`'s plain `vinext dev`,
+  which has no D1 binding at all — `/api/doc/documents` 500s with "no
+  such table: documents" until the repo-root `drizzle/*.sql` migrations
+  are applied with `wrangler d1 execute debate-ai-db --local --file=...`
+  for each file) covering: creating a document, typing and F4/F5/F6-
+  styling a multi-level heading structure, confirming the nav panel and
+  breadcrumb both reflect it, scrolling from the very top to the true
+  max-scroll bottom of a two-Pocket document and confirming the
+  breadcrumb tracks the transition correctly (this is what caught and
+  then confirmed the fix for the `posAtCoords`-null bug above), clicking
+  a breadcrumb segment and confirming it jumps (`app.scrollTop` reset to
+  0 after clicking the first segment), and zero new `pageerror`/
+  `console.error` output beyond three pre-existing, unrelated ones (a
+  blocked-by-sandbox `fonts.googleapis.com` request and two expected
+  401s from `/api/settings` while signed out). Follow-ups: (a) a
+  dedicated visibility toggle for the breadcrumb, mirroring
+  `toggleNavPane`'s `navPaneVisible` pattern, so a user can hide it
+  without also losing the nav panel; (b) a multi-pane/multi-window
+  breadcrumb (today single-doc only, since each of those modes has its
+  own `.pmd-pane-body` scroller and view). **Completed:** 2026-08-30.
 - **My Saved Items — include saved flows (idea #17, `/tools`
   discoverability gap).** Prompted by another repeat of idea #17's standing
   request ("create user settings and link user db SQL... with ability to
@@ -9583,10 +9676,17 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    - Material tagging and a search/filter bar once a library grows past a handful of uploads.
    - Version history for a material that gets re-uploaded/edited.
 
-9. **Expandable Heading Structure** (`/reason-editor`'s opt-in `OutlineNavPanel`) —
-   - A settings toggle to make the outline panel on-by-default instead of opt-in.
-   - Drag-to-reorder headings directly from the outline panel.
-   - A sticky breadcrumb showing the current heading while scrolling the document.
+9. **Expandable Heading Structure** (`/reason-editor`, CardMirror's native
+   `NavigationPanel` + `HeadingBreadcrumbBar` — not the dead `reason-editor`
+   package `OutlineNavPanel` this bullet used to point at; see the Completed
+   entry below and `docs/features/reason-editor-outline-nav.md`). All three
+   prior bullets are done: the nav panel's `navPaneVisible` setting already
+   defaults to visible; `nav-panel.ts`'s drag/drop already supports
+   drag-to-reorder; and this run added the sticky current-heading breadcrumb.
+   Next: a dedicated visibility toggle for the breadcrumb (today it always
+   shows when scrolled below the first heading, tied to the nav panel's own
+   `toggleNavPane`/`navPaneVisible` only implicitly), and a multi-pane/
+   multi-window breadcrumb (today single-doc only).
 
 10. **Outline Filters and Argument Tree View** (`/outline`) —
     - Multi-select rows to bulk-apply an argument-type/contributor/evidence-status tag at once.

@@ -191,6 +191,8 @@ export const RIBBON_HTML = `
   <span class="pmd-speech-doc-banner-label">Speech document</span>
 </div>
 <main id="app">
+  <div id="heading-breadcrumb-bar" class="pmd-heading-breadcrumb" role="navigation"
+       aria-label="Current heading" hidden></div>
   <div class="pmd-editor-row">
     <section id="editor"></section>
     <aside id="comments-column" class="pmd-comments-column" aria-label="Comments" hidden></aside>

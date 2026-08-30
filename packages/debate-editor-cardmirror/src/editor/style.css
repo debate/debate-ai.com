@@ -2092,6 +2092,50 @@ html.pmd-numbering-hidden #numbering-panel {
   flex-direction: column;
 }
 
+/* Sticky "current heading" breadcrumb (`heading-breadcrumb-bar.ts`) — an
+   in-flow child of `#app` so `position: sticky` pins it to the top of
+   `#app`'s own scroll box (not the viewport) as the doc scrolls under it.
+   Hidden (via the `hidden` attribute, toggled in JS) when the scroll
+   position is above every heading. */
+.pmd-heading-breadcrumb {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  color: var(--pmd-c-text-muted);
+  background: var(--pmd-c-surface-soft);
+  border-bottom: 1px solid var(--pmd-c-divider);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.pmd-breadcrumb-segment {
+  border: none;
+  background: none;
+  padding: 0.1rem 0.25rem;
+  border-radius: 3px;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.pmd-breadcrumb-segment:hover,
+.pmd-breadcrumb-segment:focus-visible {
+  background: var(--pmd-c-surface);
+  color: var(--pmd-c-text);
+}
+.pmd-breadcrumb-segment:last-child {
+  font-weight: 600;
+  color: var(--pmd-c-text);
+}
+
+.pmd-breadcrumb-sep {
+  opacity: 0.6;
+}
+
 /* Single-doc layout: `#app` is a bounded scroller pinned to the
    chrome-clipped viewport rectangle, with the editor scrolling
    *inside* it. Scrolling `#app` rather than `body` keeps the
