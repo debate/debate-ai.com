@@ -34,6 +34,7 @@ yarn-error.log*
 
 # test coverage
 /coverage/
+packages/*/coverage/
 *.lcov
 
 # typescript
