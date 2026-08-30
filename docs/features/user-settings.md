@@ -8,36 +8,52 @@ Settings — account-linked debate preferences") in `TODO.md`'s Product
 Feature Ideas list. A second slice (follow-up (2)) extended the same
 `user_settings` row and `/api/settings` route with the color-theme/
 light-dark preference `components/theme-dropdown.tsx` previously kept in
-`localStorage`/a cookie only, so it now also follows a signed-in user
-across devices.
+`localStorage`/a cookie only. A third slice ("integrate tools into user
+settings") added a `favoriteTools` field to the same row, a star toggle on
+every `/tools` card, a favorites strip, and gave the settings page itself
+pickers for `colorTheme`/`themeMode` (previously synced only through the
+dock's separate picker) plus a "Favorite tools" management list — so a
+signed-in user's preferences and starred tools both follow them across
+devices, and are all reachable from one page.
 
-- **Route:** `/settings` (app preferences); the color-theme/light-dark
-  picker itself stays in the dock's `ThemeDropdown`/`useThemeState`
-  (`components/theme-dropdown.tsx`) — this slice only makes that existing
-  picker account-aware, rather than duplicating a second theme picker on
-  `/settings`.
+- **Route:** `/settings` (app preferences, theme, and favorite tools). The
+  dock's `ThemeDropdown`/`useThemeState` (`components/theme-dropdown.tsx`)
+  is still the primary day-to-day color-theme/light-dark picker — `/settings`
+  now has its own Color theme/Light-dark-mode pickers too (not just a
+  passive sync target), so either surface can change them.
 - **Nav:** the dock's gear-icon menu → "Preferences" (previously that menu
   only linked to Features/Tools/Theme/Account — it never exposed app
-  preferences); the color-theme/light-dark picker is the dock's existing
-  palette icon.
+  preferences); the color-theme/light-dark picker is also the dock's
+  existing palette icon; favorite tools can additionally be starred
+  directly from `/tools`.
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
   (panel + validation + the shared `/api/settings` fetch client),
   `apps/debate-ai.com` (`/api/settings`, `user_settings` D1 table,
-  `components/theme-dropdown.tsx`)
+  `components/theme-dropdown.tsx`, `lib/hooks/useFavoriteTools.ts`,
+  `components/tools/FavoriteToolButton.tsx`/`FavoritesController.tsx`,
+  `components/settings/FavoriteToolsSettings.tsx`, `app/tools/tool-groups.ts`)
 
 ## What it shows
 
-A form with two pickers — Debate style and Font size, using the same
-option lists as the local `settings` singleton — and a Save button. A note
-above the form says whether changes are syncing to the signed-in account or
-applying to this browser only.
+A form with four pickers — Debate style, Font size, Color theme, and
+Light/dark mode (the same option lists their other pickers use) — a
+Save button, and a "Reset to defaults" button. A note above the form says
+whether changes are syncing to the signed-in account or applying to this
+browser only. Below the form, a "Favorite tools" section lists every tool
+you've starred on `/tools` (icon, label, a link, and a remove button), or a
+prompt to go star one if you haven't yet.
 
 Saving always applies immediately to the local `settings` singleton
-(`applyUserSettingsToLocalStore`), exactly like the pre-existing
-localStorage-only behavior, so a signed-out user's experience is unchanged.
-When signed in, the panel additionally loads the account's saved values on
-mount and pushes a save to `/api/settings` — a failed account sync is
-reported inline but never blocks the local apply.
+(`applyUserSettingsToLocalStore`) and, for the theme fields, the same
+`localStorage`/cookie/DOM-class/`next-themes` writes
+`theme-dropdown.tsx`'s `useThemeState` performs — exactly like the
+pre-existing localStorage-only behavior, so a signed-out user's experience
+is unchanged. When signed in, the panel additionally loads the account's
+saved values on mount and pushes a save to `/api/settings` — a failed
+account sync is reported inline but never blocks the local apply. Favorite
+tools are separate from the Save button: starring/unstarring (from either
+`/tools` or the Settings list) applies and syncs immediately, the same way
+`theme-dropdown.tsx`'s dock picker does.
 
 ## Data flow
 
@@ -59,12 +75,23 @@ state/themeSettings.ts (pure — no fetch, no localStorage/DOM writes)
   → normalizeThemeSettingsPatch(input)     — validates an untrusted patch
                                               against THEME_NAMES/THEME_MODES
 
-round/user-settings-client.ts (fetch — shared by both settings surfaces)
+state/favoriteTools.ts (pure — no fetch, no localStorage writes)
+  → isValidToolHref/isValidFavoriteToolsList  — shape-only validation (an
+                                                 in-app path, deduped, capped
+                                                 at MAX_FAVORITE_TOOLS) —
+                                                 this package doesn't know
+                                                 the app's tool catalog
+  → normalizeFavoriteToolsPatch(input)        — validates an untrusted patch
+  → serializeFavoriteTools/parseFavoriteTools — JSON column round-trip,
+                                                 tolerating malformed input
+
+round/user-settings-client.ts (fetch — shared by every settings surface)
   → fetchUserSettings()   — GET /api/settings; null on 401 (signed out)
   → saveUserSettings()    — PUT /api/settings; throws on failure
 
 panels/UserSettingsPanel.tsx
-  → apps/debate-ai.com/app/settings/page.tsx  — mounts the panel as a route
+  → apps/debate-ai.com/app/settings/page.tsx  — mounts the panel, plus
+    FavoriteToolsSettings below it, as the /settings route
 
 components/theme-dropdown.tsx's useThemeState()
   → on mount: fetchUserSettings(); when signed in and a saved colorTheme/
@@ -78,15 +105,35 @@ components/theme-dropdown.tsx's useThemeState()
     convention, just without the inline status badge since this is a
     background dropdown action rather than an explicit form Save
 
+lib/hooks/useFavoriteTools.ts (app-layer — mirrors useThemeState's
+                                local-first + best-effort-sync shape)
+  → on mount: reads localStorage, then fetchUserSettings(); a signed-in
+    user's saved favoriteTools overrides the local-only value read first
+  → toggleFavorite/removeFavorite: applies to localStorage immediately,
+    dispatches a same-tab `favorite-tools-changed` window event (every
+    other mounted instance re-reads and stays in sync), then best-effort
+    saveUserSettings({ favoriteTools }) when signed in
+  → components/tools/FavoriteToolButton.tsx   — the star toggle rendered on
+    every /tools card and every favorites-strip chip
+  → components/tools/FavoritesController.tsx  — shows/hides the /tools
+    favorites strip and its chips (no data passed as props — see its own
+    header comment for why, mirrors ToolsSearch's DOM-attribute filtering)
+  → components/settings/FavoriteToolsSettings.tsx — lists/unpins favorites
+    on /settings, resolving each href via app/tools/tool-groups.ts's
+    ALL_TOOLS (the one place that knows the tool catalog)
+
 apps/debate-ai.com/app/api/settings/route.ts
   → lib/database/schema.ts `userSettings` table (one row per `user.id`,
     cascade-deleted with the account; `colorTheme`/`themeMode` columns
-    added by drizzle/0009_add_theme_settings.sql)
+    added by drizzle/0009_add_theme_settings.sql; `favoriteTools` added by
+    drizzle/0010_add_favorite_tools.sql, stored as a JSON-array text column)
   → GET  — current user's row, or the matching DEFAULT_USER_SETTINGS/
-    DEFAULT_THEME_SETTINGS value for any unset field
+    DEFAULT_THEME_SETTINGS/DEFAULT_FAVORITE_TOOLS value for any unset field
   → PUT  — validates via normalizeUserSettingsPatch AND
-    normalizeThemeSettingsPatch (a caller can patch either or both concerns
-    in one request), then upserts (insert ... onConflictDoUpdate on userId)
+    normalizeThemeSettingsPatch AND normalizeFavoriteToolsPatch (a caller
+    can patch any subset of the three concerns in one request), serializes
+    a valid favoriteTools list before merging it in, then upserts
+    (insert ... onConflictDoUpdate on userId)
 ```
 
 Both API handlers require a session (401 without one) — unlike
@@ -94,16 +141,18 @@ Both API handlers require a session (401 without one) — unlike
 settings, since the client already has a local-only fallback that needs no
 server round-trip.
 
-Vitest-covered in `packages/debate-round/test/userSettings.test.ts` and
-`packages/debate-round/test/themeSettings.test.ts` (validation for every
-valid/invalid `debateStyle`/`fontSize`/`colorTheme`/`themeMode` value,
-partial patches, malformed bodies, and `applyUserSettingsToLocalStore`'s
-local-store round-trip). The fetch client, `useThemeState`'s sync wiring,
-and the D1-backed route are not unit-tested, matching every other
-fetch-client/D1-route pair in this repo (e.g. `round/judge-decision-
-client.ts`, `app/api/evidence-reuse-check/route.ts`) —
-`apps/debate-ai.com` has no vitest project wired up at all (see
-`vitest.config.ts`'s `projects` list).
+Vitest-covered in `packages/debate-round/test/userSettings.test.ts`,
+`packages/debate-round/test/themeSettings.test.ts`, and
+`packages/debate-round/test/favoriteTools.test.ts` (validation for every
+valid/invalid `debateStyle`/`fontSize`/`colorTheme`/`themeMode`/
+`favoriteTools` value, partial patches, malformed bodies,
+`applyUserSettingsToLocalStore`'s local-store round-trip, and
+`serializeFavoriteTools`/`parseFavoriteTools`'s JSON round-trip). The fetch
+client, `useThemeState`'s and `useFavoriteTools`' sync wiring, and the
+D1-backed route are not unit-tested, matching every other fetch-client/
+D1-route pair in this repo (e.g. `round/judge-decision-client.ts`,
+`app/api/evidence-reuse-check/route.ts`) — `apps/debate-ai.com` has no
+vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
 
 ## Known gaps
 
@@ -111,13 +160,29 @@ client.ts`, `app/api/evidence-reuse-check/route.ts`) —
   from two tabs/devices at once, the last PUT to land wins (no version
   check), matching every other single-row-per-owner upsert in this repo
   (e.g. `app/api/doc/documents/[id]/route.ts`). This is more reachable now
-  than before this slice — a theme change from `useThemeState` and a
-  `debateStyle`/`fontSize` change from `UserSettingsPanel` both PUT the
-  same row, so two tabs open to each could race — but neither client reads
-  back the other's fields before its own PUT, so a race only ever loses
-  the losing tab's own edited field(s), never corrupts the row.
+  than before this slice — a theme change from `useThemeState`, a
+  favorite-star toggle from `useFavoriteTools`, and a `debateStyle`/
+  `fontSize`/`colorTheme`/`themeMode` change from `UserSettingsPanel` can
+  all PUT the same row from different tabs — but no client reads back
+  another's fields before its own PUT, so a race only ever loses the
+  losing tab's own edited field(s), never corrupts the row. `favoriteTools`
+  is the field most exposed to this: it's a whole-list replace (see
+  `state/favoriteTools.ts`), so two tabs each starring a *different* tool
+  in quick succession can have the second PUT's list silently drop the
+  first tab's addition, rather than merging them.
 - `ThemeDropdown` (the standalone exported component in
   `theme-dropdown.tsx`, distinct from `useThemeState` the hook) is dead
   code — unused anywhere in the app, which actually renders `CategoryDock`'s
   own theme picker built on `useThemeState` — and was not updated with the
   account-sync wiring above; it still only reads/writes localStorage.
+- `favoriteTools` validation is shape-only (`isValidToolHref`): the shared
+  `debate-round` package has no way to check a starred `href` against the
+  real `/tools` catalog, since that catalog (`app/tools/tool-groups.ts`) is
+  app-specific. A favorite pointing at a renamed/removed tool is never
+  rejected by `/api/settings` — it just silently doesn't resolve to a card
+  in `FavoriteToolsSettings`/the favorites strip (both filter against
+  `ALL_TOOLS`), so it sits inertly in the saved list until removed.
+- The "standing tool-panel/nav UI-polish audit" idea #17 follow-up (4) named
+  by prior slices is still open — this slice's star toggle/favorites strip
+  overlaps with it but doesn't close it (no changes to `CategoryDock`'s nav
+  structure, tool-panel chrome elsewhere, or a broader discoverability pass).

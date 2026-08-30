@@ -6,70 +6,83 @@
 _No task currently in progress._
 
 ### Completed
-- **Round Cloud Save (idea #17, follow-up (3)/(b), "rounds" half).** Lets a
-  signed-in user save a whole round (the tournament/debaters/judges wrapper
-  around a set of flows) to their account and load it back on any device
-  they sign in on, closing idea #17's follow-up (3)/(b) — "migrate rounds
-  themselves (the tournament/debaters/judges wrapper), which needs its own
-  schema design for how a saved round should reference its saved flows" —
-  the last still-open half of the recurring "create user settings and link
-  user db SQL... with ability to save flows docs and debates in SQL and
-  link to users" request that started idea #17 (`documents`, i.e. "docs",
-  already existed as a D1-backed, user-linked table before idea #17; the
-  "flows" half was closed by the Flow Cloud Save entry below; this closes
-  the "debates"/rounds half). Adds a new D1 `saved_rounds` table
-  (`apps/debate-ai.com/lib/database/schema.ts`, one row per (user, round),
-  unique on `(user_id, client_id)` so re-saving an edited round upserts
-  rather than duplicates, cascade-deleted with the account) plus migration
-  `drizzle/0010_worthless_raza.sql`; new account-only `/api/rounds` (list
-  summaries) and `/api/rounds/[clientId]` (get/upsert/delete one saved
-  round) routes — both 401 without a session, mirroring `/api/flows`;
-  `debate-round`'s new `state/savedRounds.ts` (pure `isValidRound`
-  structural validator — required fields plus shape checks on every
-  optional field when present — and `deriveRoundLabel`, preferring the
-  round's formatted `title` and falling back to `"${tournamentName} -
-  ${roundLevel}"`) and `round/saved-rounds-client.ts` (fetch client, `null`
-  return rather than a throw on `401`/`404` for the read calls, mirroring
-  `saved-flows-client.ts`); and a per-round cloud-upload icon (next to the
-  existing "Edit round details" button) plus a "Rounds" section added
-  under `dialogs/FlowHistoryDialog.tsx`'s existing "Saved to account" tab
-  (alongside its "Flows" section, unchanged). Since a `Round` only
-  references its flows indirectly via `flowIds: number[]`, saving a round
-  to the account also cascade-saves each of its flows that exist locally
-  (reusing the existing per-flow `saveFlowToAccount` call, which never
-  throws, so one flow failing to save never blocks the round save or the
-  other flows) — otherwise a round loaded on another device would have no
-  flows to resolve `flowIds` against; loading a saved round resolves
-  `flowIds` against the account's saved flows, merging in whichever aren't
-  already present locally and silently skipping any that were never saved.
-  Vitest-covered in `packages/debate-round/test/savedRounds.test.ts` (32
-  cases: every required field individually missing, every optional field's
-  shape both present-and-valid and present-and-malformed, every
-  `status`/`winner` value including an unknown one, and every
-  `deriveRoundLabel` branch including the 120-character truncation). The
-  fetch client, the D1 routes, and the dialog's save/load/remove wiring are
-  not unit-tested, matching every other fetch-client/D1-route/UI trio in
-  this repo — `apps/debate-ai.com` still has no vitest project wired up
-  (`vitest.config.ts`'s `projects` list is still `["packages/*"]` only).
-  Documented in `docs/features/round-cloud-save.md` (new) and
-  `docs/features/flow-cloud-save.md` (Known gaps updated — the "rounds not
-  migrated" gap it flagged is now closed). Verified: `bun install` (2258
-  packages), `bunx vitest run packages/debate-round/test/savedRounds.
-  test.ts` (32/32 pass), full `bun run test` (183 files / 2890 tests, all
-  pass, up from 2858), `bunx turbo run typecheck --filter=debate-round
-  --filter=debate-ai-web` (12/12 in-scope package tasks pass — the same
-  three pre-existing, unrelated `debate-editor-cardmirror` errors surface
-  only via a flat `tsc --noEmit` on that package directly, none of them in
-  any file this slice touched), and `bun run build:web` (`debate-ai-web`
-  succeeds, `/api/rounds` and `/api/rounds/:clientId` present in the route
-  list). Follow-ups: (a) a bulk "save all my rounds" action; (b) no UI
-  exists yet for deleting a *local* round (`deleteRound` exists in
-  `useFlowStore` but has no caller anywhere in the app — only the cloud
-  copy can be removed from this dialog); (c) idea #17's follow-up (4) (a
-  standing UI-polish audit of existing tool panels/nav discoverability)
-  remains open, undecomposed — this is the last of idea #17's follow-ups
-  named in its original decomposition ((2) and (3) are now both fully
-  closed). **Completed:** 2026-08-30.
+- **Integrate Tools into User Settings (idea #17, "integrate tools into
+  user settings" follow-up, plus a `/tools` UI-polish pass).** Prompted by
+  a request to "integrate tools into the user settings and improve tools
+  ui and have more options in user settings." Three parts:
+  (1) **Favorite tools**, a new account-linked `favoriteTools` field on the
+  same `user_settings` row (`apps/debate-ai.com/lib/database/schema.ts`,
+  JSON-array-of-route-paths column, migration
+  `drizzle/0010_add_favorite_tools.sql`) — `debate-round`'s new
+  `state/favoriteTools.ts` (pure `normalizeFavoriteToolsPatch`/
+  `isValidToolHref`/`isValidFavoriteToolsList`/`serializeFavoriteTools`/
+  `parseFavoriteTools`, mirroring `state/userSettings.ts` and
+  `state/themeSettings.ts`'s split, but validating only an in-app path's
+  *shape* — the package doesn't know the app's tool catalog); `/api/settings`
+  now reads/writes `favoriteTools` alongside the other fields on the same
+  GET/PUT; and a new `lib/hooks/useFavoriteTools.ts` (local-first,
+  best-effort account sync, same pattern as `theme-dropdown.tsx`'s
+  `useThemeState`, with a same-tab `favorite-tools-changed` window event so
+  every mounted instance — star buttons, the favorites strip, the Settings
+  list — stays in sync without a shared store). Found via a Playwright
+  smoke check (below) that a naive per-instance `fetchUserSettings()` call
+  fired ~50 GET `/api/settings` requests on one `/tools` load (one per
+  mounted star button); fixed by deduping the account fetch behind a
+  module-level `remoteLoadPromise` so every instance awaits the same
+  in-flight request — exactly one GET fires per page load regardless of
+  how many components mount the hook. (2) **`/tools` UI**: every
+  tool card now has a star toggle (`components/tools/FavoriteToolButton.tsx`,
+  positioned as a sibling of the card's `<Link>`, not nested inside it, to
+  keep the markup valid), and a new "Favorites" strip
+  (`components/tools/FavoritesController.tsx`) shows starred tools as
+  compact pills above the grid, hidden until a favorite exists. The
+  `TOOL_GROUPS` catalog moved out of `app/tools/page.tsx` into a new
+  `app/tools/tool-groups.ts` (plus a flattened `ALL_TOOLS`) so both the
+  favorites strip and the Settings page below can resolve a starred `href`
+  back to its label/icon/description — `page.tsx` itself is otherwise
+  unchanged (still the same grid, still `ToolsSearch`'s DOM-attribute
+  filtering). (3) **More `/settings` options**: `UserSettingsPanel` gained
+  Color theme and Light/dark mode pickers (previously `colorTheme`/
+  `themeMode` synced silently through the dock's separate `ThemeDropdown`
+  only — follow-up (2) closed the API/sync gap but never gave this form its
+  own UI for them) plus a "Reset to defaults" button, and a new
+  "Favorite tools" section (`components/settings/FavoriteToolsSettings.tsx`)
+  lists and lets you unpin your starred tools right from Settings, closing
+  the loop the "integrate tools into user settings" framing asked for
+  (favoriting isn't only reachable from `/tools`). `next-themes` — needed
+  by `UserSettingsPanel` for `useTheme()` — is now a `debate-round`
+  peerDependency/devDependency rather than app-only; bun's
+  content-addressable store resolves both the app's and the package's copy
+  to the same physical module (confirmed via `readlink -f` on both
+  `node_modules/next-themes` symlinks), so it shares one `next-themes`
+  React context rather than risking a duplicate-instance split. Vitest-
+  covered in `packages/debate-round/test/favoriteTools.test.ts` (47 cases:
+  every valid/invalid tool-href shape, list validation including the
+  `MAX_FAVORITE_TOOLS` boundary and duplicate rejection, patch
+  normalization, and `serializeFavoriteTools`/`parseFavoriteTools`
+  round-tripping and malformed-input tolerance). The fetch client, the
+  hook's sync wiring, and the D1 route itself are not unit-tested, matching
+  every other fetch-client/D1-route pair in this repo. Verified: `bun
+  install` (2258 packages, `next-themes` symlinked into
+  `packages/debate-round/node_modules`), `bunx vitest run packages/debate-round/test/favoriteTools.test.ts`
+  (47/47 pass), full `bun run test` (183 files / 2905 tests, all pass, up
+  from 2858), `bunx turbo run typecheck --filter=debate-round` (12/12
+  in-scope package tasks pass), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (same 34 pre-existing, unrelated errors
+  as before this slice), `bun run build:web` (`debate-ai-web` succeeds,
+  `/api/settings`, `/settings`, and `/tools` present in the route list),
+  and a headless-Chromium (Playwright) smoke check against the dev server
+  covering: starring a tool on `/tools` reveals it in the favorites strip;
+  the same favorite appears in `/settings`' Favorite tools list and its
+  remove button un-favorites it (list empties back to the "haven't pinned
+  any" prompt); the Color theme/Light-dark-mode pickers apply
+  (`<html>` gains `theme-cyberpunk dark`, `localStorage['color-theme']`
+  updates) and Save shows the local-save confirmation; and zero
+  `pageerror`s across all of the above (this check is what caught the
+  ~50x duplicate-fetch bug above). Follow-up
+  (4) (the standing tool-panel/nav UI-polish audit named by prior slices)
+  remains open, undecomposed; this slice's `/tools` UI work overlaps but
+  doesn't close it. **Completed:** 2026-08-30.
 - **Theme Settings — sync the color-theme/light-dark preference into
   `user_settings` (idea #17, follow-up (2)).** Closes the "Only
   `debateStyle`/`fontSize` are covered" Known gap `docs/features/

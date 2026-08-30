@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0660faea-4083-44fb-bce5-b99c89eddd07",
+  "id": "cd37a283-9a19-4e28-b0fa-63b142dd6b6c",
   "prevId": "20aa1989-16e8-4e9f-b22f-4e2de74dacac",
   "tables": {
     "account": {
@@ -444,98 +444,6 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "saved_rounds": {
-      "name": "saved_rounds",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "client_id": {
-          "name": "client_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "label": {
-          "name": "label",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "''"
-        },
-        "data": {
-          "name": "data",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(unixepoch())"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(unixepoch())"
-        }
-      },
-      "indexes": {
-        "idx_saved_rounds_user_id": {
-          "name": "idx_saved_rounds_user_id",
-          "columns": [
-            "user_id"
-          ],
-          "isUnique": false
-        },
-        "idx_saved_rounds_user_client": {
-          "name": "idx_saved_rounds_user_client",
-          "columns": [
-            "user_id",
-            "client_id"
-          ],
-          "isUnique": true
-        }
-      },
-      "foreignKeys": {
-        "saved_rounds_user_id_user_id_fk": {
-          "name": "saved_rounds_user_id_user_id_fk",
-          "tableFrom": "saved_rounds",
-          "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
     "session": {
       "name": "session",
       "columns": {
@@ -733,6 +641,13 @@
         },
         "theme_mode": {
           "name": "theme_mode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "favorite_tools": {
+          "name": "favorite_tools",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

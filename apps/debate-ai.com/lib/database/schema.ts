@@ -124,6 +124,15 @@ export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
 // same "no saved row/value yet" semantics, validated by `debate-round`'s
 // `normalizeThemeSettingsPatch` against its `THEME_NAMES`/`THEME_MODES`
 // lists (the same lists `ThemeDropdown`'s picker UI uses).
+//
+// `favoriteTools` (idea #17, follow-up "integrate tools into user
+// settings") stores a signed-in user's starred `/tools` entries as a JSON
+// array of route paths (e.g. `["/reason-editor","/drills"]`), or null when
+// empty — same "no saved value yet" semantics as every other column here.
+// Validated by `debate-round`'s `normalizeFavoriteToolsPatch`, which (unlike
+// `debateStyle`/`colorTheme`) can only check shape, not membership in the
+// real tool catalog — that catalog is app-specific (`app/tools/
+// tool-groups.tsx`), not something the shared package knows about.
 export const userSettings = sqliteTable("user_settings", {
   userId: text("user_id")
     .primaryKey()
@@ -132,6 +141,7 @@ export const userSettings = sqliteTable("user_settings", {
   fontSize: integer("font_size"),
   colorTheme: text("color_theme"),
   themeMode: text("theme_mode"),
+  favoriteTools: text("favorite_tools"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
