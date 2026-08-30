@@ -6,6 +6,78 @@
 _No task currently in progress._
 
 ### Completed
+- **Fix broken production build — duplicate round/user-settings
+  persistence paths (idea #17 cleanup).** Prompted by the standing "create
+  user settings and link user db SQL... save flows docs and debates in
+  SQL" ask: before touching anything new, `bun run build:web` was run to
+  confirm a clean baseline and instead failed outright —
+  `[plugin vinext:config] Error: You cannot use different slug names for
+  the same dynamic path ('id' !== 'clientId')`. Root cause: an
+  unrelated, pre-idea-#17 commit (`9c6373c`, "Add user settings, SQL-backed
+  round/flow persistence, and tool discovery") had added its own `rounds`
+  D1 table, a `useRoundsCloudSync` auto-sync hook, a `RoundSyncStatus`
+  badge on `/debate`, `/api/user/settings`, and `/api/rounds/[id]` — a
+  second, independent implementation of exactly what idea #17's later
+  slices (`5a9b258`/#360 `userSettings`, `5fa15ce`/#365 `savedRounds`)
+  built properly, tested, and documented. Nobody reconciled the two: the
+  same `apps/debate-ai.com/lib/database/schema.ts` ended up with `userSettings`
+  declared twice (a duplicate `const`/type identifier — invalid even as
+  plain JS, not just a TS type error) and a stray `rounds` table alongside
+  `savedRounds`; `app/api/rounds/[id]/route.ts` (old) and
+  `app/api/rounds/[clientId]/route.ts` (idea #17's) coexisting as sibling
+  dynamic segments under `/api/rounds` is exactly what Next.js/vinext's
+  route validator rejects, breaking every build. Independent of the build
+  break, the old path could never have worked at runtime either: no
+  `POST /api/rounds` handler existed for `useRoundsCloudSync` to call, and
+  its `GET /api/rounds` hydration expected `{id,title,format}` while the
+  real route returns `{clientId,label,updatedAt}` — and its migration
+  (`0007_rapid_dragon_man.sql`, plus idea #17's own
+  `0010_worthless_raza.sql` for `saved_rounds`) was never registered in
+  `drizzle/meta/_journal.json` or any snapshot, so `drizzle-kit generate`
+  had no record either table existed. A third, smaller bug found in the
+  same pass: `app/tools/page.tsx` referenced `<MySavedItems />` with no
+  import statement at all (a `ReferenceError` at runtime, live on every
+  `/tools` page load), and `MySavedItems.tsx` itself read the dead path's
+  `{id,title}` shape from `/api/rounds`, so it always rendered "Untitled
+  Round" for every saved round even after the import is fixed. Fix: deleted
+  the entire dead path (`lib/hooks/useRoundsCloudSync.ts`,
+  `components/layout/RoundSyncStatus.tsx` and its two `/debate` page
+  mounts, `app/api/user/settings/`, `app/api/rounds/[id]/`, the old
+  `rounds`/first `userSettings` table definitions in `schema.ts`, and the
+  orphaned `0007_rapid_dragon_man.sql`) rather than reconciling it, since
+  idea #17's own opt-in per-round cloud-save UI (`FlowHistoryDialog`'s
+  cloud icon) already covers the same need and deliberately rejected
+  auto-sync (see `flow-cloud-save.md`'s "no auto-sync-on-every-edit"
+  rationale); added the missing `MySavedItems` import and fixed its field
+  names to the real `{clientId,label,updatedAt}` shape; ran
+  `bunx drizzle-kit generate` to replace the untracked
+  `0010_worthless_raza.sql` with a properly journaled/snapshotted
+  `0011_careful_cardiac.sql` for `saved_rounds` (identical SQL, now
+  tracked). Documented in `docs/features/round-cloud-save.md`'s new
+  "Removed: a second, broken round-persistence path" section. No new
+  Vitest cases were needed — this is a deletion of unreferenced/broken
+  code plus two one-line fixes, nothing in the surviving, already-tested
+  `savedRounds`/`savedFlows`/`userSettings` modules changed behavior; no
+  test anywhere referenced any of the deleted files (confirmed by grep
+  before deleting). Verified: `bun install` (2258 packages), a direct
+  `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json` (the duplicate-
+  identifier and missing-import errors are gone; the same pre-existing,
+  unrelated errors remain — `D1Database`/`Fetcher` globals, `debate-ui`'s
+  `.svg`/`.png`/`.css` module declarations, `better-auth` client-plugin
+  typing gaps — none in any file this slice touched), `bunx turbo run
+  typecheck --filter=debate-round --filter=debate-ai-web` (12/12 in-scope
+  package tasks pass, unchanged), full `bun run test` (188 files / 2968
+  tests, all pass), and **`bun run build:web`, which now succeeds** (was
+  the actual repro before this slice) — `/settings`, `/tools`, `/debate`,
+  `/api/rounds`, and `/api/rounds/:clientId` all present in the route
+  list, no more `/api/rounds/:id`. No repo-wide `lint` script exists, so
+  that acceptance step is N/A. One pre-existing, out-of-scope oddity noted
+  but not touched: `drizzle/0001_certain_molecule_man.sql` and
+  `drizzle/0001_initial_schema.sql` share a migration number too (an older,
+  `CREATE TABLE IF NOT EXISTS`-guarded hand-written migration predating
+  idea #17 entirely) — idempotent and not causing a build break, unlike the
+  `0007`/`0010` collisions this slice fixed, so left as a follow-up rather
+  than folded into this one. **Completed:** 2026-08-30.
 - **Round Workspace — "Tools for this round" menu (idea #17, follow-up
   (4), discoverability-audit half).** Prompted by the same standing "add
   tools into where needed in the ui... develop better tool ui" ask idea
@@ -9427,12 +9499,26 @@ _No task currently in progress._
     no undiscoverable tool routes) and added a quick-access menu to the
     round workspace linking to the four flow-driven analysis tools that act
     on the currently selected flow, closing the discoverability-audit half
-    of follow-up (4). Follow-up (3, remaining — the `rounds` half) remains
-    open — not started; a `saved_rounds`/`/api/rounds` slice for it appears
-    to already be in flight in an open PR as of this run. The "bring weaker
-    panel UIs up to the shared `debate-ui` primitive conventions" half of
-    follow-up (4) also remains open — this run's panel audit found none,
-    but it was one search pass, not an exhaustive one._
+    of follow-up (4). A fifth slice, "Round Cloud Save" (`saved_rounds`
+    table, `/api/rounds`/`/api/rounds/[clientId]`, a cloud-save icon in
+    `FlowHistoryDialog`), closed follow-up (3)'s remaining `rounds` half —
+    merged as PR #365, mirroring the "flows" half's design (a `Round`
+    references its flows only via `flowIds`, so a saved round's row keeps
+    that indirection rather than embedding them). A sixth slice, "Fix
+    broken production build — duplicate round/user-settings persistence
+    paths" (see Tracker Status above), found and removed an unrelated,
+    pre-idea-#17 commit's own competing `rounds`/`user_settings`/
+    `useRoundsCloudSync` implementation that had been silently colliding
+    with this idea's slices (duplicate `userSettings` export, a stray
+    `rounds` table, and two dynamic route segments under `/api/rounds`
+    that broke `bun run build:web` outright) — `apps/debate-ai.com` now
+    builds again. The "docs" half of follow-up (3) (the REASON-editor-
+    adjacent `Flow.speechDocs`/`sharedSpeeches` fields, still
+    localStorage-only) remains open, undecomposed. The "bring weaker panel
+    UIs up to the shared `debate-ui` primitive conventions" half of
+    follow-up (4) also remains open — the "Tools for this round" slice's
+    panel audit found none, but it was one search pass, not an exhaustive
+    one._
 
 
 ## Research Crowdsourcing Organizer Features

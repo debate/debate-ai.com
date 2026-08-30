@@ -112,3 +112,39 @@ no vitest project wired up (`vitest.config.ts`'s `projects` list is still
 - There is still no UI for deleting a *local* round (`useFlowStore`'s
   `deleteRound` exists but has no caller anywhere in the app) — only the
   cloud copy can be removed from this dialog.
+
+## Removed: a second, broken round-persistence path
+
+A pre-existing, unrelated commit (`9c6373c`, merged before this feature's own
+idea #17 slices) had already added a *different* round-persistence path: a
+`rounds` D1 table (`id`/`title`/`format`/`data`, no `saved_rounds`-style
+`(user, client_id)` upsert key), a `useRoundsCloudSync` hook that
+auto-pushed every round/flow change to `/api/rounds` with a 500ms debounce,
+a `RoundSyncStatus` badge mounted on `/debate`, and a `/api/rounds/[id]`
+route. Nobody reconciled the two when this feature's own `/api/rounds` (list)
+and `/api/rounds/[clientId]` routes landed alongside it — the result was a
+broken build (`vinext`/Next.js rejects two dynamic segments with different
+slug names, `[id]` vs `[clientId]`, under the same `/api/rounds` path) and,
+independent of that, a hook that could never have worked: there was no
+`POST /api/rounds` handler for it to call, and its `GET /api/rounds`
+hydration read `{ id, title, format }` while the real route (this feature's)
+returns `{ clientId, label, updatedAt }`. Its `rounds`/duplicate
+`user_settings` migration (`0007_rapid_dragon_man.sql`) was also never
+registered in `drizzle/meta/_journal.json` or any snapshot, so
+`drizzle-kit generate` had no record of it existing.
+
+Since this feature's opt-in, per-round cloud-save UI already covers the same
+need — deliberately, per the "no auto-sync" rationale in
+`flow-cloud-save.md` — the dead path was deleted outright rather than
+reconciled: `lib/hooks/useRoundsCloudSync.ts`,
+`components/layout/RoundSyncStatus.tsx`, `app/api/user/settings/`,
+`app/api/rounds/[id]/`, the old `rounds`/first `user_settings` table
+definitions in `lib/database/schema.ts`, and the orphaned
+`0007_rapid_dragon_man.sql`/`0010_worthless_raza.sql` migration files (the
+latter was this feature's own `saved_rounds` migration — also never
+registered in the journal; replaced with a freshly `drizzle-kit generate`d
+`0011_careful_cardiac.sql` that is). `app/tools/MySavedItems.tsx` (which
+lists a signed-in user's saved rounds via `GET /api/rounds`) was fixed to
+read the real `{ clientId, label, updatedAt }` shape instead of the dead
+path's `{ id, title, updatedAt }` — it had been silently rendering
+"Untitled Round" for every saved round.
