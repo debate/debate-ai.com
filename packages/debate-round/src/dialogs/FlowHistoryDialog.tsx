@@ -27,7 +27,12 @@ import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } fr
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { deleteSavedRound, fetchSavedRound, listSavedRounds, saveRoundToAccount } from "../round/saved-rounds-client"
 import type { SavedRoundSummary } from "../state/savedRounds"
-import { collectFlowsForRounds, summarizeBulkRoundSave, type BulkRoundSaveOutcome } from "../state/bulkRoundSave"
+import {
+  collectFlowsForRounds,
+  collectUnreferencedFlows,
+  summarizeBulkSaveOutcomes,
+  type BulkSaveOutcome,
+} from "../state/bulkRoundSave"
 
 /** Load/error state for the "Saved to account" tab's flow list. */
 type CloudListState =
@@ -156,6 +161,10 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const [cloudRoundActions, setCloudRoundActions] = useState<Record<number, CloudActionStatus>>({})
   const [bulkSaveStatus, setBulkSaveStatus] = useState<"idle" | "saving" | "done">("idle")
   const [bulkSaveSummary, setBulkSaveSummary] = useState<{ savedCount: number; errorCount: number } | null>(null)
+  const [bulkFlowSaveStatus, setBulkFlowSaveStatus] = useState<"idle" | "saving" | "done">("idle")
+  const [bulkFlowSaveSummary, setBulkFlowSaveSummary] = useState<{ savedCount: number; errorCount: number } | null>(
+    null,
+  )
 
   /**
    * Load history and rounds when dialog opens.
@@ -170,6 +179,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       setCloudRoundActions({})
       setBulkSaveStatus("idle")
       setBulkSaveSummary(null)
+      setBulkFlowSaveStatus("idle")
+      setBulkFlowSaveSummary(null)
     }
   }, [open, getFlowHistory, getRounds])
 
@@ -320,7 +331,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     const flowsToSave = collectFlowsForRounds(rounds, flows)
     await Promise.all(flowsToSave.map((flow) => handleSaveFlowToAccount(flow)))
 
-    const outcomes: Record<number, BulkRoundSaveOutcome> = {}
+    const outcomes: Record<number, BulkSaveOutcome> = {}
     await Promise.all(
       rounds.map(async (round) => {
         setCloudRoundActions((prev) => ({ ...prev, [round.id]: "saving" }))
@@ -335,8 +346,41 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       }),
     )
 
-    setBulkSaveSummary(summarizeBulkRoundSave(outcomes))
+    setBulkSaveSummary(summarizeBulkSaveOutcomes(outcomes))
     setBulkSaveStatus("done")
+  }
+
+  /**
+   * Saves every locally-available flow that no round references to the
+   * account in one action — closing the "a flow with no round referencing
+   * it still has no bulk path" gap `docs/features/flow-cloud-save.md`
+   * recorded once "Save all rounds" (above) closed the common case. Mirrors
+   * that action's shape exactly, just over `collectUnreferencedFlows`'s
+   * result instead of `collectFlowsForRounds`'s.
+   */
+  const handleSaveUnreferencedFlowsToAccount = async () => {
+    const unreferencedFlows = collectUnreferencedFlows(rounds, flows)
+    if (unreferencedFlows.length === 0 || bulkFlowSaveStatus === "saving") return
+    setBulkFlowSaveStatus("saving")
+    setBulkFlowSaveSummary(null)
+
+    const outcomes: Record<number, BulkSaveOutcome> = {}
+    await Promise.all(
+      unreferencedFlows.map(async (flow) => {
+        setCloudActions((prev) => ({ ...prev, [flow.id]: "saving" }))
+        try {
+          await saveFlowToAccount(flow)
+          setCloudActions((prev) => ({ ...prev, [flow.id]: "saved" }))
+          outcomes[flow.id] = "saved"
+        } catch {
+          setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))
+          outcomes[flow.id] = "error"
+        }
+      }),
+    )
+
+    setBulkFlowSaveSummary(summarizeBulkSaveOutcomes(outcomes))
+    setBulkFlowSaveStatus("done")
   }
 
   /**
@@ -389,6 +433,9 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       setCloudRoundActions((prev) => ({ ...prev, [clientId]: "error" }))
     }
   }
+
+  /** Count of locally-available flows no round references, for the "Save flows not in a round" button's visibility/label. */
+  const unreferencedFlowCount = useMemo(() => collectUnreferencedFlows(rounds, flows).length, [rounds, flows])
 
   /**
    * Filter rounds based on search query.
@@ -610,29 +657,59 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
             </Button>
           </div>
 
-          {activeTab === "rounds" && rounds.length > 0 && (
-            <div className="flex items-center justify-between gap-3">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleSaveAllRoundsToAccount}
-                disabled={bulkSaveStatus === "saving"}
-                className="gap-1.5"
-                title="Save every round (and its flows) to your account"
-              >
-                {bulkSaveStatus === "saving" ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <CloudUpload className="h-3.5 w-3.5" />
-                )}
-                Save all rounds
-              </Button>
-              {bulkSaveStatus === "done" && bulkSaveSummary && (
-                <span className="text-xs text-muted-foreground">
-                  {bulkSaveSummary.errorCount === 0
-                    ? `Saved ${bulkSaveSummary.savedCount} round${bulkSaveSummary.savedCount === 1 ? "" : "s"}.`
-                    : `Saved ${bulkSaveSummary.savedCount}, ${bulkSaveSummary.errorCount} failed.`}
-                </span>
+          {activeTab === "rounds" && (rounds.length > 0 || unreferencedFlowCount > 0) && (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              {rounds.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleSaveAllRoundsToAccount}
+                    disabled={bulkSaveStatus === "saving"}
+                    className="gap-1.5"
+                    title="Save every round (and its flows) to your account"
+                  >
+                    {bulkSaveStatus === "saving" ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <CloudUpload className="h-3.5 w-3.5" />
+                    )}
+                    Save all rounds
+                  </Button>
+                  {bulkSaveStatus === "done" && bulkSaveSummary && (
+                    <span className="text-xs text-muted-foreground">
+                      {bulkSaveSummary.errorCount === 0
+                        ? `Saved ${bulkSaveSummary.savedCount} round${bulkSaveSummary.savedCount === 1 ? "" : "s"}.`
+                        : `Saved ${bulkSaveSummary.savedCount}, ${bulkSaveSummary.errorCount} failed.`}
+                    </span>
+                  )}
+                </div>
+              )}
+              {unreferencedFlowCount > 0 && (
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleSaveUnreferencedFlowsToAccount}
+                    disabled={bulkFlowSaveStatus === "saving"}
+                    className="gap-1.5"
+                    title="Save every local flow not part of any round to your account"
+                  >
+                    {bulkFlowSaveStatus === "saving" ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <CloudUpload className="h-3.5 w-3.5" />
+                    )}
+                    Save flows not in a round ({unreferencedFlowCount})
+                  </Button>
+                  {bulkFlowSaveStatus === "done" && bulkFlowSaveSummary && (
+                    <span className="text-xs text-muted-foreground">
+                      {bulkFlowSaveSummary.errorCount === 0
+                        ? `Saved ${bulkFlowSaveSummary.savedCount} flow${bulkFlowSaveSummary.savedCount === 1 ? "" : "s"}.`
+                        : `Saved ${bulkFlowSaveSummary.savedCount}, ${bulkFlowSaveSummary.errorCount} failed.`}
+                    </span>
+                  )}
+                </div>
               )}
             </div>
           )}

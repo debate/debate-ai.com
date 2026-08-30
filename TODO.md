@@ -6,6 +6,65 @@
 _No task currently in progress._
 
 ### Completed
+- **Bulk-save flows not referenced by any round (idea #17,
+  `flow-cloud-save.md` Known gap).** Closes the last remaining piece of
+  "Save all rounds"'s own Known gap: "a flow with no round referencing it
+  still has no bulk path — only its own per-flow cloud icon." Prompted by
+  another repeat of idea #17's standing request ("create user settings and
+  link user db SQL... with ability to save flows docs and debates in
+  SQL... add tools into where needed in the ui... develop better tool
+  ui"). Adds `state/bulkRoundSave.ts`'s `collectUnreferencedFlows(rounds,
+  flows)`: every locally-available flow whose id no round's `flowIds`
+  lists, preserving `flows`' own order — the exact complement of the
+  existing `collectFlowsForRounds`. Generalized that module's outcome
+  summarizer for reuse across both item kinds:
+  `BulkRoundSaveOutcome`/`summarizeBulkRoundSave` renamed to
+  `BulkSaveOutcome`/`summarizeBulkSaveOutcomes` (only referenced from
+  `FlowHistoryDialog.tsx` and its own test file, so the rename was a clean,
+  fully-updated in-place change, not a compat shim). `FlowHistoryDialog`'s
+  "Rounds" tab gained a second bulk-save button, "Save flows not in a round
+  (N)" (rendered whenever at least one locally-available flow exists that
+  no round references, independent of whether any round itself exists),
+  next to the existing "Save all rounds" button — its own
+  `handleSaveUnreferencedFlowsToAccount` mirrors
+  `handleSaveAllRoundsToAccount`'s per-item save/outcome/summary loop
+  exactly, just over `collectUnreferencedFlows`'s result instead of
+  `collectFlowsForRounds`'s, with its own `bulkFlowSaveStatus`/
+  `bulkFlowSaveSummary` state (reset alongside the existing bulk-round-save
+  state whenever the dialog opens) so the two actions' in-flight/summary
+  states never collide. Deliberately a separate action rather than folding
+  into "Save all rounds": the two buttons cover disjoint sets of flows (a
+  flow is saved by at most one of them), so no flow is ever redundantly
+  `PUT` twice by clicking both. Vitest-covered in
+  `packages/debate-round/test/bulkRoundSave.test.ts` (18 cases, up from
+  11: `collectUnreferencedFlows`'s no-rounds, no-local-flows,
+  single-round/multi-round referenced-vs-unreferenced split, all-referenced,
+  flows-list-order-preservation, and missing-local-flow-for-a-referenced-id
+  cases, plus the existing `collectFlowsForRounds`/renamed
+  `summarizeBulkSaveOutcomes` cases carried over unchanged). The dialog's
+  own button wiring is not unit-tested, matching every other fetch-client/
+  dialog pair in this repo. Documented in `docs/features/round-cloud-save.md`
+  (Nav/What it does/Data flow/Vitest-covered/Known gaps sections updated)
+  and `docs/features/flow-cloud-save.md` (its mirrored Known gap marked
+  fully closed). Verified: `bun install` (2258 packages), `bunx vitest run
+  packages/debate-round/test/bulkRoundSave.test.ts` (18/18 pass), full `bun
+  run test` (193 files / 3031 tests, all pass, up from 3016), `bunx turbo
+  run typecheck --filter=debate-round` (11/11 in-scope package tasks
+  pass), a direct `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json`
+  (35 errors — the same pre-existing, unrelated baseline every prior slice
+  has recorded, e.g. `D1Database`/`Fetcher` globals and `debate-ui`'s
+  `.svg`/`.png` module declarations — confirmed none in
+  `FlowHistoryDialog.tsx` or `bulkRoundSave.ts`), and `bun run build:web`
+  (`debate-ai-web` succeeds, `/debate`, `/tools`, and `/settings` present in
+  the route list). No UI screenshot/Playwright smoke check was run this
+  slice — the new button reuses the exact same `saveFlowToAccount` call and
+  `cloudActions` status rendering "Save all rounds" and the per-flow cloud
+  icon already exercise (per that entry's own precedent), with only
+  `collectUnreferencedFlows` being new logic, and that logic is what
+  `bulkRoundSave.test.ts` covers directly. Known gaps still open (both
+  pre-existing, both apply equally to the new button): no per-item dirty
+  tracking (a full re-`PUT` of every unreferenced flow on every click), and
+  no optimistic-concurrency handling. **Completed:** 2026-08-30.
 - **Round Cloud Save — "Save all rounds" bulk action (idea #17,
   `round-cloud-save.md` Known gap).** Closed the "No bulk 'save all my
   rounds' action — each round is still saved one at a time via its own

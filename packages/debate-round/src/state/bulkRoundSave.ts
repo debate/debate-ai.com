@@ -1,9 +1,12 @@
 /**
- * @fileoverview Bulk round cloud save — TODO.md idea #17, closing the
- * "No bulk 'save all my rounds' action" Known gap `docs/features/
- * round-cloud-save.md` recorded: each round could only be pushed to the
- * account one at a time via its own cloud icon. Pure flow-collection logic
- * shared by `FlowHistoryDialog`'s "Save all rounds" action, kept
+ * @fileoverview Bulk cloud-save helpers — TODO.md idea #17. Started by
+ * closing the "No bulk 'save all my rounds' action" Known gap
+ * `docs/features/round-cloud-save.md` recorded (each round could only be
+ * pushed to the account one at a time via its own cloud icon), then
+ * extended to close that same doc's remaining gap: "a flow with no round
+ * referencing it still has no bulk path — only its own per-flow cloud
+ * icon." Pure flow-collection logic shared by `FlowHistoryDialog`'s "Save
+ * all rounds" and "Save flows not in a round" actions, kept
  * framework/fetch-free so it's unit-testable without mocking `fetch`,
  * mirroring `state/savedFlows.ts`/`state/savedRounds.ts`'s split.
  *
@@ -42,11 +45,29 @@ export function collectFlowsForRounds(rounds: Round[], flows: Flow[]): Flow[] {
   return result;
 }
 
-/** Outcome of one round's save within a bulk-save pass, keyed by the round's local `id`. */
-export type BulkRoundSaveOutcome = "saved" | "error";
+/**
+ * Collects every locally-available flow that no round references — the
+ * flows "Save all rounds" (via `collectFlowsForRounds`, above) never
+ * reaches, since a round only cascade-saves the flows its own `flowIds`
+ * lists. Preserves `flows`' own order. A flow id referenced by some round
+ * but with no matching local `Flow` doesn't affect the result either way.
+ */
+export function collectUnreferencedFlows(rounds: Round[], flows: Flow[]): Flow[] {
+  const referencedFlowIds = new Set<number>();
+  for (const round of rounds) {
+    for (const flowId of round.flowIds) {
+      referencedFlowIds.add(flowId);
+    }
+  }
 
-/** Summarizes a bulk-save pass's per-round outcomes into counts for a status message. */
-export function summarizeBulkRoundSave(outcomes: Record<number, BulkRoundSaveOutcome>): {
+  return flows.filter((flow) => !referencedFlowIds.has(flow.id));
+}
+
+/** Outcome of one item's save within a bulk-save pass (a round or a flow), keyed by its local `id`. */
+export type BulkSaveOutcome = "saved" | "error";
+
+/** Summarizes a bulk-save pass's per-item outcomes into counts for a status message. */
+export function summarizeBulkSaveOutcomes(outcomes: Record<number, BulkSaveOutcome>): {
   savedCount: number;
   errorCount: number;
 } {

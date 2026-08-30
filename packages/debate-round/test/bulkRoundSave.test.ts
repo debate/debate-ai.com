@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { collectFlowsForRounds, summarizeBulkRoundSave } from "../src/state/bulkRoundSave";
+import { collectFlowsForRounds, collectUnreferencedFlows, summarizeBulkSaveOutcomes } from "../src/state/bulkRoundSave";
 import type { Box, Flow, Round } from "../src/types/flow";
 
 function makeBox(overrides: Partial<Box> = {}): Box {
@@ -78,23 +78,72 @@ describe("collectFlowsForRounds", () => {
   });
 });
 
-describe("summarizeBulkRoundSave", () => {
+describe("collectUnreferencedFlows", () => {
+  it("returns every flow when there are no rounds", () => {
+    const flow1 = makeFlow({ id: 1 });
+    const flow2 = makeFlow({ id: 2 });
+    expect(collectUnreferencedFlows([], [flow1, flow2])).toEqual([flow1, flow2]);
+  });
+
+  it("returns an empty list when there are no local flows", () => {
+    expect(collectUnreferencedFlows([makeRound({ flowIds: [1] })], [])).toEqual([]);
+  });
+
+  it("excludes a flow referenced by a round", () => {
+    const flow1 = makeFlow({ id: 1 });
+    const flow2 = makeFlow({ id: 2 });
+    const round = makeRound({ flowIds: [1] });
+    expect(collectUnreferencedFlows([round], [flow1, flow2])).toEqual([flow2]);
+  });
+
+  it("excludes a flow referenced by any of several rounds", () => {
+    const flow1 = makeFlow({ id: 1 });
+    const flow2 = makeFlow({ id: 2 });
+    const flow3 = makeFlow({ id: 3 });
+    const roundA = makeRound({ id: 100, flowIds: [1] });
+    const roundB = makeRound({ id: 101, flowIds: [3] });
+    expect(collectUnreferencedFlows([roundA, roundB], [flow1, flow2, flow3])).toEqual([flow2]);
+  });
+
+  it("returns an empty list when every local flow is referenced by some round", () => {
+    const flow1 = makeFlow({ id: 1 });
+    const flow2 = makeFlow({ id: 2 });
+    const round = makeRound({ flowIds: [1, 2] });
+    expect(collectUnreferencedFlows([round], [flow1, flow2])).toEqual([]);
+  });
+
+  it("preserves the flows list's own order", () => {
+    const flow1 = makeFlow({ id: 1 });
+    const flow2 = makeFlow({ id: 2 });
+    const flow3 = makeFlow({ id: 3 });
+    const round = makeRound({ flowIds: [2] });
+    expect(collectUnreferencedFlows([round], [flow3, flow1, flow2])).toEqual([flow3, flow1]);
+  });
+
+  it("is unaffected by a round referencing a flowId with no matching local flow", () => {
+    const flow1 = makeFlow({ id: 1 });
+    const round = makeRound({ flowIds: [999] });
+    expect(collectUnreferencedFlows([round], [flow1])).toEqual([flow1]);
+  });
+});
+
+describe("summarizeBulkSaveOutcomes", () => {
   it("returns zero counts for an empty outcomes map", () => {
-    expect(summarizeBulkRoundSave({})).toEqual({ savedCount: 0, errorCount: 0 });
+    expect(summarizeBulkSaveOutcomes({})).toEqual({ savedCount: 0, errorCount: 0 });
   });
 
   it("counts saved and error outcomes separately", () => {
-    expect(summarizeBulkRoundSave({ 1: "saved", 2: "saved", 3: "error" })).toEqual({
+    expect(summarizeBulkSaveOutcomes({ 1: "saved", 2: "saved", 3: "error" })).toEqual({
       savedCount: 2,
       errorCount: 1,
     });
   });
 
   it("counts an all-saved outcome map", () => {
-    expect(summarizeBulkRoundSave({ 1: "saved", 2: "saved" })).toEqual({ savedCount: 2, errorCount: 0 });
+    expect(summarizeBulkSaveOutcomes({ 1: "saved", 2: "saved" })).toEqual({ savedCount: 2, errorCount: 0 });
   });
 
   it("counts an all-error outcome map", () => {
-    expect(summarizeBulkRoundSave({ 1: "error", 2: "error" })).toEqual({ savedCount: 0, errorCount: 2 });
+    expect(summarizeBulkSaveOutcomes({ 1: "error", 2: "error" })).toEqual({ savedCount: 0, errorCount: 2 });
   });
 });

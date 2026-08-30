@@ -9,9 +9,10 @@ reference its saved flows") in `TODO.md`'s Product Feature Ideas list, the
 [`flow-cloud-save.md`](flow-cloud-save.md) closed the "flows" half of.
 
 - **Nav:** `FlowHistoryDialog`'s "Rounds" tab gained a cloud-upload icon
-  next to each round's existing "Edit round details" button, plus a "Save
-  all rounds" button above the list; its "Saved to account" tab gained a
-  "Rounds" section below the existing "Flows" section
+  next to each round's existing "Edit round details" button, plus "Save all
+  rounds" and "Save flows not in a round" buttons above the list; its
+  "Saved to account" tab gained a "Rounds" section below the existing
+  "Flows" section
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
   (dialog + validation + fetch client), `apps/debate-ai.com` (`/api/rounds`,
   `saved_rounds` D1 table)
@@ -48,6 +49,17 @@ flow or round failing to save doesn't stop the others — and a short
 summary ("Saved 6 rounds." / "Saved 4, 2 failed.") appears next to the
 button once the pass finishes.
 
+The "Rounds" tab's "Save flows not in a round" button (only rendered once
+at least one locally-available flow exists that no round references)
+closes the remaining half of the same gap: a flow never attached to any
+round had no bulk path at all before this, only its own per-flow cloud
+icon. It collects that set via `state/bulkRoundSave.ts`'s
+`collectUnreferencedFlows` (every local flow whose id no round's `flowIds`
+lists) and saves each one, showing the count in its own label (e.g. "Save
+flows not in a round (3)") and its own best-effort summary once the pass
+finishes — a separate action from "Save all rounds" since it covers a
+disjoint set of flows and touches no round.
+
 The "Saved to account" tab's new "Rounds" section lists every round saved
 this way (label + last-saved time) with a Load button and a Remove button
 (deletes the cloud copy only — the local round and its flows are
@@ -67,11 +79,15 @@ handled inline error state, matching `flow-cloud-save.md`'s precedent.
 
 ```
 state/bulkRoundSave.ts (pure — no fetch)
-  → collectFlowsForRounds(rounds, flows) — dedups the flows referenced by
-                                            any round in `rounds`, in
-                                            first-referencing-round order
-  → summarizeBulkRoundSave(outcomes)     — { savedCount, errorCount } from
-                                            a per-round outcome map
+  → collectFlowsForRounds(rounds, flows)     — dedups the flows referenced by
+                                                any round in `rounds`, in
+                                                first-referencing-round order
+  → collectUnreferencedFlows(rounds, flows)  — every local flow no round
+                                                references, in `flows`' own
+                                                order
+  → summarizeBulkSaveOutcomes(outcomes)      — { savedCount, errorCount } from
+                                                a per-item (round or flow)
+                                                outcome map
 
 state/savedRounds.ts (pure — no fetch)
   → isValidRound(value)          — structural validator for an untrusted
@@ -87,8 +103,10 @@ round/saved-rounds-client.ts (fetch)
   → deleteSavedRound(id)       — DELETE /api/rounds/:clientId; throws on failure
 
 dialogs/FlowHistoryDialog.tsx
-  → "Rounds" tab's per-round cloud icon  → saveFlowToAccount (per referenced
-                                            flow) then saveRoundToAccount
+  → "Rounds" tab's per-round cloud icon      → saveFlowToAccount (per referenced
+                                                flow) then saveRoundToAccount
+  → "Rounds" tab's "Save flows not in a round" → saveFlowToAccount (per
+                                                  collectUnreferencedFlows result)
   → "Saved to account" tab's Rounds section → listSavedRounds / fetchSavedRound /
                                                deleteSavedRound
 
@@ -117,10 +135,13 @@ cases: every required field individually missing, every optional field's
 shape when present and malformed, every `status`/`winner` value including
 an unknown one, and every `deriveRoundLabel` branch including the
 120-character truncation) and `packages/debate-round/test/
-bulkRoundSave.test.ts` (11 cases: `collectFlowsForRounds`'s empty-input,
+bulkRoundSave.test.ts` (18 cases: `collectFlowsForRounds`'s empty-input,
 single-round, cross-round dedup, within-round duplicate-id dedup, and
-missing-local-flow-skip cases; `summarizeBulkRoundSave`'s empty/mixed/
-all-saved/all-error counts). The fetch client, the D1 route, and the dialog's
+missing-local-flow-skip cases; `collectUnreferencedFlows`'s no-rounds,
+no-flows, referenced/unreferenced split across one and several rounds,
+all-referenced, order-preservation, and missing-local-flow cases;
+`summarizeBulkSaveOutcomes`'s empty/mixed/all-saved/all-error counts). The
+fetch client, the D1 route, and the dialog's
 save/load/remove wiring are not unit-tested, matching every other
 fetch-client/D1-route/UI trio in this repo — `apps/debate-ai.com` still has
 no vitest project wired up (`vitest.config.ts`'s `projects` list is still
@@ -132,10 +153,11 @@ no vitest project wired up (`vitest.config.ts`'s `projects` list is still
   in the "Flows" section of the cloud tab showing which flows got saved as
   a side effect of a round save (they just appear there like any
   individually-saved flow).
-- "Save all rounds" saves every local round unconditionally, even one
-  already saved and unchanged since — there's no per-round dirty tracking
-  to skip a round that doesn't need re-saving, so a large round list means
-  a full re-`PUT` of every round (and its flows) on every click.
+- "Save all rounds" and "Save flows not in a round" both save every item
+  unconditionally, even one already saved and unchanged since — there's no
+  per-round/per-flow dirty tracking to skip an item that doesn't need
+  re-saving, so a large round or flow list means a full re-`PUT` of
+  everything on every click.
 - No optimistic-concurrency handling, matching `flow-cloud-save.md`'s and
   `user-settings.md`'s documented gap.
 - There is still no UI for deleting a *local* round (`useFlowStore`'s
