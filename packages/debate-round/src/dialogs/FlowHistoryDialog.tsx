@@ -21,8 +21,20 @@ import { Button } from "debate-ui/src/primitives/button"
 import { ScrollArea } from "debate-ui/src/primitives/scroll-area"
 import { Input } from "debate-ui/src/primitives/input"
 import { useFlowStore, type FlowHistory } from "../state/store"
-import type { Round } from "debate-core/src/types/flow"
-import { Clock, FileText, Users, Edit, Gavel, Search } from "lucide-react"
+import type { Flow, Round } from "debate-core/src/types/flow"
+import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2 } from "lucide-react"
+import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } from "../round/saved-flows-client"
+import type { SavedFlowSummary } from "../state/savedFlows"
+
+/** Load/error state for the "Saved to account" tab's flow list. */
+type CloudListState =
+  | { kind: "loading" }
+  | { kind: "signed-out" }
+  | { kind: "loaded"; flows: SavedFlowSummary[] }
+  | { kind: "error"; message: string }
+
+/** Per-flow save/load/remove status, keyed by the flow's local `id`. */
+type CloudActionStatus = "saving" | "saved" | "loading" | "removing" | "error"
 
 /**
  * Round level ordering for sorting.
@@ -126,8 +138,10 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [expandedDates, setExpandedDates] = useState<Set<string>>(new Set())
   const [expandedRounds, setExpandedRounds] = useState<Set<number>>(new Set())
-  const [activeTab, setActiveTab] = useState<"rounds" | "history">("rounds")
+  const [activeTab, setActiveTab] = useState<"rounds" | "cloud">("rounds")
   const [searchQuery, setSearchQuery] = useState("")
+  const [cloudList, setCloudList] = useState<CloudListState>({ kind: "loading" })
+  const [cloudActions, setCloudActions] = useState<Record<number, CloudActionStatus>>({})
 
   /**
    * Load history and rounds when dialog opens.
@@ -137,8 +151,90 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       setHistory(getFlowHistory())
       setRounds(getRounds())
       setSearchQuery("") // Reset search when dialog opens
+      setActiveTab("rounds")
+      setCloudActions({})
     }
   }, [open, getFlowHistory, getRounds])
+
+  /**
+   * Load the account's saved-flow summaries when the "Saved to account" tab
+   * is opened. `listSavedFlows` resolves to `null` for a signed-out user
+   * rather than throwing, which maps to the "signed-out" state below.
+   */
+  useEffect(() => {
+    if (!open || activeTab !== "cloud") return
+    let cancelled = false
+    setCloudList({ kind: "loading" })
+
+    listSavedFlows()
+      .then((flows) => {
+        if (cancelled) return
+        setCloudList(flows === null ? { kind: "signed-out" } : { kind: "loaded", flows })
+      })
+      .catch((err) => {
+        if (cancelled) return
+        setCloudList({
+          kind: "error",
+          message: err instanceof Error ? err.message : "Failed to load your saved flows.",
+        })
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [open, activeTab])
+
+  /**
+   * Saves a single flow to the signed-in user's account (upsert, keyed by
+   * the flow's local `id`). A failed save is reported inline next to the
+   * flow rather than blocking anything, since the flow already exists
+   * locally either way.
+   */
+  const handleSaveFlowToAccount = async (flow: Flow) => {
+    setCloudActions((prev) => ({ ...prev, [flow.id]: "saving" }))
+    try {
+      await saveFlowToAccount(flow)
+      setCloudActions((prev) => ({ ...prev, [flow.id]: "saved" }))
+    } catch {
+      setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))
+    }
+  }
+
+  /**
+   * Loads a saved flow from the account into the local flow list —
+   * replacing the local flow of the same id if one exists, or appending it
+   * — then switches to it and closes the dialog.
+   */
+  const handleLoadCloudFlow = async (clientId: number) => {
+    setCloudActions((prev) => ({ ...prev, [clientId]: "loading" }))
+    try {
+      const flow = await fetchSavedFlow(clientId)
+      if (!flow) {
+        setCloudActions((prev) => ({ ...prev, [clientId]: "error" }))
+        return
+      }
+      const existingIndex = flows.findIndex((f) => f.id === flow.id)
+      const newFlows = existingIndex === -1 ? [...flows, flow] : flows.map((f, i) => (i === existingIndex ? flow : f))
+      setFlows(newFlows)
+      setSelected(existingIndex === -1 ? newFlows.length - 1 : existingIndex)
+      onOpenChange(false)
+    } catch {
+      setCloudActions((prev) => ({ ...prev, [clientId]: "error" }))
+    }
+  }
+
+  /** Removes a saved flow from the account. Leaves the local flow untouched — this only deletes the cloud copy. */
+  const handleRemoveCloudFlow = async (clientId: number) => {
+    setCloudActions((prev) => ({ ...prev, [clientId]: "removing" }))
+    try {
+      await deleteSavedFlow(clientId)
+      setCloudList((prev) =>
+        prev.kind === "loaded" ? { kind: "loaded", flows: prev.flows.filter((f) => f.clientId !== clientId) } : prev,
+      )
+    } catch {
+      setCloudActions((prev) => ({ ...prev, [clientId]: "error" }))
+    }
+  }
 
   /**
    * Filter rounds based on search query.
@@ -335,19 +431,126 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
-          {/* Search input */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search rounds by tournament, debaters, schools, judges, or flows..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
+          {/* Tab switcher */}
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant={activeTab === "rounds" ? "default" : "outline"}
+              onClick={() => setActiveTab("rounds")}
+              className="gap-1.5"
+            >
+              <Clock className="h-3.5 w-3.5" />
+              Rounds
+            </Button>
+            <Button
+              size="sm"
+              variant={activeTab === "cloud" ? "default" : "outline"}
+              onClick={() => setActiveTab("cloud")}
+              className="gap-1.5"
+            >
+              <Cloud className="h-3.5 w-3.5" />
+              Saved to account
+            </Button>
           </div>
 
-          {/* Rounds list */}
-          <ScrollArea className="h-[440px] border rounded-md">
+          {activeTab === "cloud" ? (
+            <ScrollArea className="h-[440px] border rounded-md">
+              {cloudList.kind === "loading" && (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                </div>
+              )}
+              {cloudList.kind === "signed-out" && (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <div className="text-center p-8">
+                    <Cloud className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                    <p>Sign in to save flows to your account</p>
+                    <p className="text-xs mt-2">Saved flows follow you to any device you sign in on.</p>
+                  </div>
+                </div>
+              )}
+              {cloudList.kind === "error" && (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <div className="text-center p-8">
+                    <p className="text-destructive">{cloudList.message}</p>
+                  </div>
+                </div>
+              )}
+              {cloudList.kind === "loaded" &&
+                (cloudList.flows.length > 0 ? (
+                  <div className="p-2 space-y-1">
+                    {cloudList.flows.map((flow) => (
+                      <div
+                        key={flow.clientId}
+                        className="flex items-center justify-between gap-2 border rounded-md p-2.5 bg-card"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <FileText className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium truncate">{flow.label}</div>
+                            <div className="text-xs text-muted-foreground">
+                              Saved {new Date(flow.updatedAt).toLocaleString()}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                            title="Load into this browser"
+                            onClick={() => handleLoadCloudFlow(flow.clientId)}
+                          >
+                            {cloudActions[flow.clientId] === "loading" ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Download className="h-4 w-4" />
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                            title="Remove from your account"
+                            onClick={() => handleRemoveCloudFlow(flow.clientId)}
+                          >
+                            {cloudActions[flow.clientId] === "removing" ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full text-muted-foreground">
+                    <div className="text-center p-8">
+                      <Cloud className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                      <p>No flows saved to your account yet</p>
+                      <p className="text-xs mt-2">
+                        Use the cloud icon on a flow in the Rounds tab to save it here.
+                      </p>
+                    </div>
+                  </div>
+                ))}
+            </ScrollArea>
+          ) : (
+            <>
+              {/* Search input */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search rounds by tournament, debaters, schools, judges, or flows..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              {/* Rounds list */}
+              <ScrollArea className="h-[440px] border rounded-md">
             {filteredRounds.length > 0 ? (
               <div className="p-2 space-y-2">
                 {filteredRounds
@@ -434,22 +637,48 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                           {roundFlows.length > 0 && (
                             <div className="mt-3 pl-8 flex flex-wrap gap-2">
                               {roundFlows.map((flow) => (
-                                <button
+                                <span
                                   key={flow.id}
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    const flowIndex = flows.findIndex((f) => f.id === flow.id)
-                                    if (flowIndex !== -1) {
-                                      setSelected(flowIndex)
-                                      onOpenChange(false)
-                                    }
-                                  }}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1 bg-secondary hover:bg-secondary/80 rounded-full text-xs transition-colors font-medium border"
-                                  title={`Open ${flow.content}`}
+                                  className="inline-flex items-center gap-1 pl-2.5 pr-1 py-1 bg-secondary hover:bg-secondary/80 rounded-full text-xs transition-colors font-medium border"
                                 >
-                                  <FileText className="h-3 w-3" />
-                                  <span>{flow.content || `Speech ${flow.speechNumber}`}</span>
-                                </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      const flowIndex = flows.findIndex((f) => f.id === flow.id)
+                                      if (flowIndex !== -1) {
+                                        setSelected(flowIndex)
+                                        onOpenChange(false)
+                                      }
+                                    }}
+                                    className="inline-flex items-center gap-1"
+                                    title={`Open ${flow.content}`}
+                                  >
+                                    <FileText className="h-3 w-3" />
+                                    <span>{flow.content || `Speech ${flow.speechNumber}`}</span>
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleSaveFlowToAccount(flow)
+                                    }}
+                                    className="p-0.5 rounded-full hover:bg-background/60"
+                                    title={
+                                      cloudActions[flow.id] === "saved"
+                                        ? "Saved to your account"
+                                        : "Save this flow to your account"
+                                    }
+                                  >
+                                    {cloudActions[flow.id] === "saving" ? (
+                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                    ) : cloudActions[flow.id] === "error" ? (
+                                      <UploadCloud className="h-3 w-3 text-destructive" />
+                                    ) : cloudActions[flow.id] === "saved" ? (
+                                      <Cloud className="h-3 w-3 text-primary" />
+                                    ) : (
+                                      <UploadCloud className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </span>
                               ))}
                             </div>
                           )}
@@ -468,7 +697,9 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                 </div>
               </div>
             )}
-          </ScrollArea>
+              </ScrollArea>
+            </>
+          )}
 
           {/* Debate timer illustration */}
           <div className="flex justify-center">

@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, index, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const user = sqliteTable("user", {
@@ -132,6 +132,47 @@ export const userSettings = sqliteTable("user_settings", {
 });
 
 export type UserSettingsRow = typeof userSettings.$inferSelect;
+
+// Account-linked flow cloud save — TODO.md idea #17 ("User Settings —
+// account-linked debate preferences"), follow-up (3): `debate-round`'s
+// `useFlowStore` keeps its `flows`/`rounds` in `localStorage` only (see
+// `packages/debate-round/src/state/store.ts`), so a signed-in user's flows
+// don't follow them to another device. This is the "flows" half of that
+// follow-up (rounds are not migrated by this slice — see TODO.md). One row
+// per saved flow per user, keyed by the local `Flow.id` (a
+// `Date.now()`-based number assigned client-side) via the
+// `(user_id, client_id)` unique index below, so re-saving the same flow
+// upserts instead of duplicating. `data` holds the whole `Flow` object
+// (recursive `Box` tree plus `speechDocs`/`sharedSpeeches`) JSON-stringified
+// — mirrors `documents.content`'s blob-column approach rather than
+// normalizing the tree into rows, since a `Flow` is read/written as one
+// unit everywhere it's used. `label` is a short display string derived
+// server-side from `Flow.content` at save time, so listing saved flows
+// (`GET /api/flows`) doesn't need to parse every row's full `data` blob.
+export const savedFlows = sqliteTable(
+  "saved_flows",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: integer("client_id").notNull(),
+    label: text("label").notNull().default(""),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_flows_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_flows_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedFlowRow = typeof savedFlows.$inferSelect;
 
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the

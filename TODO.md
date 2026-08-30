@@ -6,6 +6,67 @@
 _No task currently in progress._
 
 ### Completed
+- **Flow Cloud Save (idea #17, follow-up (3), "flows" half).** Lets a
+  signed-in user save an individual debate flow to their account and load
+  it back on any device they sign in on, continuing idea #17's follow-up
+  (3) — "design and migrate specific already-localStorage-only stores that
+  make sense as account-linked data onto D1, most notably `useFlowStore`'s
+  `rounds`/`flows`." Prompted by a repeat of the same request that started
+  idea #17 ("create user settings and link user db SQL... with ability to
+  save flows docs and debates in SQL and link to users"). Adds a new D1
+  `saved_flows` table (`apps/debate-ai.com/lib/database/schema.ts`, one row
+  per (user, flow), unique on `(user_id, client_id)` so re-saving the same
+  flow after an edit upserts rather than duplicates, cascade-deleted with
+  the account) plus migration `drizzle/0008_tough_wolfsbane.sql`; new
+  account-only `/api/flows` (list summaries) and `/api/flows/[clientId]`
+  (get/upsert/delete one saved flow) routes — both 401 without a session,
+  same as `/api/settings`, since (unlike `documents`) a saved flow only
+  exists once explicitly synced to an account; `debate-round`'s new
+  `state/savedFlows.ts` (pure `isValidFlow` structural validator — required
+  fields plus a recursively-validated, depth-capped `Box` tree — and
+  `deriveFlowLabel`, shared by the route and the UI) and
+  `round/saved-flows-client.ts` (fetch client, `null` return rather than a
+  throw on `401`/`404` for the read calls so a signed-out user degrades
+  gracefully); and a "Saved to account" tab plus a per-flow cloud-upload
+  icon added to `dialogs/FlowHistoryDialog.tsx`'s existing "Rounds" tab (its
+  `activeTab` state existed already but was previously unwired to any
+  tab-switcher UI — the never-rendered "history" tab option was dropped in
+  the same change since it had no UI either). Saving a flow to the account
+  is opt-in per flow (no auto-sync-on-every-edit, which would risk
+  clobbering an in-progress local edit with a stale saved copy or
+  hammering the API on every keystroke) — a follow-up. `rounds` are not
+  migrated by this slice; only individual flows. Vitest-covered in
+  `packages/debate-round/test/savedFlows.test.ts` (28 cases: a well-formed
+  flow with an empty/nested `Box` tree, every optional field present,
+  every required field individually missing, non-object top-level values,
+  a non-string entry in `columns`, a non-number entry in `lastFocus`, a
+  malformed `Box` at the top level and nested three levels deep, a tree
+  past the 200-level recursion cap, and every `deriveFlowLabel` branch
+  including the 120-character truncation). The fetch client and the D1
+  routes themselves are not unit-tested, matching every other fetch-client/
+  D1-route pair in this repo (`round/user-settings-client.ts`,
+  `app/api/settings/route.ts`) — `apps/debate-ai.com` still has no vitest
+  project wired up (`vitest.config.ts`'s `projects` list is still
+  `["packages/*"]` only). Documented in `docs/features/flow-cloud-save.md`.
+  Verified: `bun install` (2258 packages), `bunx vitest run
+  packages/debate-round/test/savedFlows.test.ts` (28/28 pass), full `bun
+  run test` (181 files / 2831 tests, all pass, up from 2803), `bunx turbo
+  run typecheck --filter=debate-round --filter=debate-ai-web` (12/12
+  in-scope package tasks pass — same pre-existing, unrelated errors as
+  before this slice when run via a flat `tsc --noEmit` instead, e.g.
+  `D1Database`/`Fetcher` globals and `debate-ui`'s `.svg`/`.png` module
+  declarations, none of them in any file this slice touched), and `bun run
+  build:web` (`debate-ai-web` succeeds, `/api/flows` and
+  `/api/flows/:clientId` present in the route list). Follow-ups: (a) a
+  bulk "save this round's flows" action, so a user doesn't have to click
+  the cloud icon on every flow of a round individually; (b) migrate
+  `rounds` themselves (the tournament/debaters/judges wrapper), which
+  idea #17's follow-up (3) also named and this slice explicitly left out —
+  needs its own schema design for how a saved round should reference its
+  saved flows; (c) idea #17's follow-up (2) (sync the color-theme/
+  light-dark preference into `user_settings`) and follow-up (4) (a standing
+  UI-polish audit of existing tool panels/nav discoverability) both remain
+  open, undecomposed. **Completed:** 2026-08-30.
 - **User Settings — account-linked debate preferences (idea #17), first
   slice.** Gives a signed-in user a real settings page for the
   `debateStyle`/`fontSize` preferences `packages/debate-round/src/state/
