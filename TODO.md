@@ -6,6 +6,78 @@
 _No task currently in progress._
 
 ### Completed
+- **Fix Round Cloud Save regression — restore `savedRounds` schema/routes
+  deleted by an unrelated merge, repair the corrupted drizzle migration
+  chain (idea #17, `round-cloud-save.md` Known gap).** Investigating "create
+  user settings and link user db SQL... with ability to save flows docs and
+  debates in SQL" (idea #17's standing request) for the next slice to build
+  found the feature it names was already built and shipped, then silently
+  broken by a later, unrelated commit. `7ace3bf` ("Move CardMirror's
+  General/Appearance/Accessibility settings to /settings") hit a stale
+  merge conflict in `lib/database/schema.ts` — its own branch still carried
+  the dead, pre-`saved_rounds` `userSettings`/`rounds` shape from PR #362
+  that `e2dbe99` (`#374`) had already correctly identified as dead code and
+  removed. `7ace3bf`'s conflict resolution kept its own stale `rounds`
+  table/route pair and deleted the real, tested, documented `savedRounds`
+  table and `app/api/rounds/[clientId]/route.ts` — its commit message
+  claimed this was "restoring the original working rounds-cloud-save
+  implementation," inverting `e2dbe99`'s actual finding. From that point,
+  `saveRoundToAccount`/`fetchSavedRound`/`deleteSavedRound`
+  (`round/saved-rounds-client.ts`, called throughout
+  `dialogs/FlowHistoryDialog.tsx`) all 404'd against the now-missing
+  `[clientId]` route, and `GET /api/rounds` silently read from the wrong,
+  always-empty `rounds` table instead of `saved_rounds` — yet three further
+  feature slices ("Save all rounds," "Save flows not in a round," the round
+  delete button — the three entries directly below this one) shipped on
+  top of the already-broken client across the following days, each one
+  verified only via the pure-function unit tests its own new logic added,
+  never a live save/load/delete call against the actual route (matching
+  this repo's own documented "the route itself is not unit-tested"
+  convention for every fetch-client/D1-route pair) — so the regression
+  went unnoticed for four commits. The same `7ace3bf` commit also
+  generated an orphaned migration, `0011_curious_human_cannonball.sql`,
+  that was never added to `drizzle/meta/_journal.json` (so `drizzle-kit
+  generate` never tracked it as applied) but *did* overwrite
+  `meta/0011_snapshot.json` — the metadata for the correctly-journaled
+  `0011_plain_fantastic_four` migration — with a snapshot reflecting the
+  regressed (wrong) schema shape, corrupting the diff baseline for any
+  future `drizzle-kit generate` call. Fix: restored `savedRounds`/
+  `SavedRoundRow` in `schema.ts` and removed the resurrected `rounds`
+  table/`RoundRow` type (confirmed unused anywhere outside the one route
+  file being replaced); restored `app/api/rounds/route.ts` (GET, listing
+  from `saved_rounds`) and recreated `app/api/rounds/[clientId]/route.ts`
+  (GET/PUT/DELETE) verbatim from the pre-regression commit; restored the
+  correct `meta/0011_snapshot.json` (from `e2dbe99`, the last known-good
+  state); deleted the orphaned, unjournaled `0011_curious_human_cannonball.
+  sql`; and ran `bunx drizzle-kit generate` against the corrected schema
+  (which still legitimately needs the `editor_preferences` column
+  `7ace3bf`'s own CardMirror-settings-in-`/settings` feature added to
+  `userSettings`), producing a single properly-journaled migration,
+  `drizzle/0012_add_editor_preferences.sql` (`ALTER TABLE user_settings ADD
+  editor_preferences text` — exactly the one legitimate net schema change,
+  confirming the rest of the orphaned file's effects are gone). No data
+  loss: `saved_rounds` itself was never dropped by the regression, only the
+  app's ability to read/write it via the ORM — any rounds a user
+  successfully saved before the regression (or via `wrangler d1 execute`
+  applying the orphaned file directly, since `db:migrate:d1` globs every
+  `drizzle/*.sql` file rather than following the journal) remain intact and
+  are reachable again now that the route/schema are restored. No new
+  Vitest coverage added — the restored code is a verbatim revert of
+  already-covered logic (`packages/debate-round/src/state/savedRounds.ts`
+  and `round/saved-rounds-client.ts` were untouched by the regression and
+  still pass their existing suites); the app-level routes themselves remain
+  intentionally untested, matching every other fetch-client/D1-route pair
+  in this repo. Documented in `docs/features/round-cloud-save.md` (Known
+  gaps). Verified: `bun install` (2258 packages), full `bun run test` (194
+  files / 3038 tests, all pass, unchanged from before this fix — confirming
+  no behavior regression), `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-ai-web` (11/11 in-scope package tasks pass), a direct
+  `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json` (35 pre-existing,
+  unrelated errors, down from 36 before this fix — the removed error is
+  exactly the `savedRounds` missing-export error this fix resolves), and
+  `bun run build:web` (`debate-ai-web` succeeds, `/api/rounds` and the
+  previously-missing `/api/rounds/:clientId` both present in the route
+  list). **Completed:** 2026-08-30.
 - **Delete a local round from the Rounds tab, plus a round-id-collision fix
   (idea #17, `round-cloud-save.md` Known gap: "no UI for deleting a local
   round").** Prompted by another repeat of idea #17's standing request

@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "c712b38a-b228-432a-b3a6-73a6492401f3",
-  "prevId": "cd37a283-9a19-4e28-b0fa-63b142dd6b6c",
+  "id": "cef6456f-10c7-4e28-8afe-e109352e7a1c",
+  "prevId": "c712b38a-b228-432a-b3a6-73a6492401f3",
   "tables": {
     "account": {
       "name": "account",
@@ -740,6 +740,13 @@
         },
         "favorite_tools": {
           "name": "favorite_tools",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "editor_preferences": {
+          "name": "editor_preferences",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
