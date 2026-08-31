@@ -345,9 +345,11 @@ Vitest-covered by an added case in `packages/debate-round/test/panels.test.tsx`
   `PrepNoteNotificationsPanel` (see [`prep-notes.md`](prep-notes.md)'s
   "Cross-tab live update"), `PrepNotesPanel` (see
   [`prep-notes.md`](prep-notes.md)'s own "Cross-tab live update" section),
-  and `ContributionsFeedPanel` (see
+  `ContributionsFeedPanel` (see
   [`contributions-feed.md`](contributions-feed.md)'s "Cross-tab live
-  update") have since gained the equivalent mechanism for their own stores, but
+  update"), and `StrategyPanel` (see
+  [`scout-to-strategy.md`](scout-to-strategy.md)'s "Cross-tab live update")
+  have since gained the equivalent mechanism for their own stores, but
   every other localStorage-backed panel in this repo still has none (Live
   Sync
   above is cross-*contributor*, via the server, not cross-tab within one

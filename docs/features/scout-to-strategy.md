@@ -91,4 +91,27 @@ per-case `caseAssessments` note).
 `StrategyPanel.tsx`'s "Get AI case-choice evaluation" action calls this and
 saves the result on `StrategyRecommendationRecord.aiCaseChoice` via
 `saveStrategyRecommendationAiCaseChoice`, rendering it alongside the
-deterministic recommendation. No follow-ups remain open on this idea.
+deterministic recommendation.
+
+## Cross-tab live update
+
+`StrategyPanel` previously read `buildStrategyRecommendationsPanelView` on
+mount only, so a strategy recommendation built, re-evaluated, or cleared in
+another browser tab left the panel showing a stale list until something
+else forced a re-render. It now also subscribes to the browser's `storage`
+event, which the spec fires only in *other* same-origin tabs/windows, never
+the one that made the write. A new pure helper,
+`flow/live-update.ts`'s `isStrategyLiveUpdateStorageEvent`, checks whether
+the event's `key` is `state/strategyRecommendations.ts`'s
+`"strategyRecommendations"` or `null` (a `localStorage.clear()`); when it
+is, the listener re-reads `buildStrategyRecommendationsPanelView()`. This
+closes the matching entry in [`shared-flow-sync.md`](shared-flow-sync.md)'s
+Known gap: "every other localStorage-backed panel in this repo still has no
+cross-tab live-update mechanism." Vitest-covered in
+`packages/debate-round/test/live-update.test.ts` (the one backing key, the
+`null`-key clear-all case, and unrelated/substring-matching keys).
+`StrategyPanel.tsx`'s own `storage`-listener wiring remains intentionally
+untested, matching every other panel in this repo whose wiring is exercised
+only through the shared pure predicate's own tests.
+
+No other follow-ups remain open on this idea.
