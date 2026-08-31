@@ -337,8 +337,9 @@ Vitest-covered by an added case in `packages/debate-round/test/panels.test.tsx`
   `RevisionIncentivesPanel` (see [`revision-incentives.md`](revision-incentives.md)'s
   "Cross-tab live update"), `CardScoringPanel` (see
   [`llm-card-scoring.md`](llm-card-scoring.md)'s "Cross-tab live update"),
-  and `BrainstormBoardPanel` (see [`brainstorm-board.md`](brainstorm-board.md)'s
-  "Cross-tab live update")
+  `BrainstormBoardPanel` (see [`brainstorm-board.md`](brainstorm-board.md)'s
+  "Cross-tab live update"), and `GroupChallengesPanel` (see
+  [`group-challenges.md`](group-challenges.md)'s "Cross-tab live update")
   have since gained the equivalent mechanism for their own stores, but every
   other localStorage-backed panel in this repo still has none (Live Sync
   above is cross-*contributor*, via the server, not cross-tab within one

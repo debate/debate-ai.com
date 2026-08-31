@@ -6,6 +6,52 @@
 _No task currently in progress._
 
 ### Completed
+- **Group Challenges — cross-tab live-update (`shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the ui... develop better tool ui"), and finding
+  — like every recent repeat of this prompt — that the "user settings /
+  SQL-linked flows, docs, rounds" half is already fully built and documented
+  (including a real `/settings` page and D1-backed `flowSyncEdits`/document
+  tables linked to users), this slice picked up `shared-flow-sync.md`'s next
+  unclaimed panel from its running cross-tab-live-update list (the
+  immediately preceding run had just closed `BrainstormBoardPanel`):
+  `GroupChallengesPanel` (`/cards/group-challenges`), which reads three
+  `localStorage` stores — `state/groupChallenges.ts`'s `groupChallenges`
+  (the persisted challenge roster) and `state/challengeWinEvents.ts`'s
+  `challengeWinEvents`/`contributions` (recorded wins and the real
+  contribution feed `buildPersistedGroupChallengeBoard` composes into live
+  standings) — but, like every other still-unclaimed panel, only ever
+  refreshed on mount or after its own create/remove/record-win actions.
+  Added `GROUP_CHALLENGES_LIVE_UPDATE_STORAGE_KEYS`/
+  `isGroupChallengesLiveUpdateStorageEvent` to
+  `packages/debate-card-search/src/state/live-update.ts`, mirroring the
+  thirteen existing key-list/predicate pairs there exactly (true for any of
+  the three backing keys or a `null` key from `localStorage.clear()`, false
+  otherwise — including a same-prefix substring key). Wired a `storage`
+  event listener into `GroupChallengesPanel.tsx` that calls the existing
+  `refresh()` closure when the predicate matches. Documented in
+  `docs/features/group-challenges.md` (new "Cross-tab live update" section)
+  and `docs/features/shared-flow-sync.md` (added `GroupChallengesPanel` to
+  the running list of panels that already have the mechanism). Vitest-
+  covered: 4 new cases for `isGroupChallengesLiveUpdateStorageEvent` in
+  `packages/debate-card-search/test/live-update.test.ts` (every backing-key
+  match, the `null`-key clear-all case, two unrelated keys, and two
+  same-prefix substring keys), bringing that file to 52 cases.
+  `GroupChallengesPanel.tsx`'s own `storage`-listener wiring remains
+  intentionally untested, matching every other panel in this repo whose
+  wiring is exercised only through the shared pure predicate's own tests.
+  Verified: `bun install` (2258 packages), the touched test file (52/52
+  pass), the full `bun run test` (201 files / 3228 tests, all pass), the
+  whole-repo `bun run typecheck` (13 packages via turbo, all passing), and a
+  full production `bun run build:web` (vinext build + service-worker build,
+  `/cards/group-challenges` present in the route list) — all passed with no
+  new failures. Generated service-worker build artifacts
+  (`app-file-list.ts`, `version.ts`, `public/service-worker.js`) produced
+  by that build were reverted before committing, since they're build-time
+  output unrelated to this change.
 - **Team Brainstorm Assist — cross-tab live-update (`shared-flow-sync.md`
   Known gap: "every other localStorage-backed panel in this repo still has
   no cross-tab live-update mechanism").** Prompted by another repeat of the
