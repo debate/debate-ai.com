@@ -23,6 +23,7 @@ import {
   buildNotificationsPanelView,
   markPersistedNotificationRead,
 } from "../state/prepNoteNotifications"
+import { isPrepNoteNotificationsLiveUpdateStorageEvent } from "../flow/live-update"
 import type { PrepNoteNotification } from "../flow/prep-note-notifications"
 
 const RECIPIENT_STORAGE_KEY = "prepNoteNotifications:lastRecipientId"
@@ -51,6 +52,22 @@ export function PrepNoteNotificationsPanel() {
   }, [])
 
   const refresh = (id: string) => setNotifications(buildNotificationsPanelView(id))
+
+  /**
+   * Live-update this recipient's notifications when another browser tab
+   * assigns a prep note to them (or marks one of their notifications read)
+   * while this tab is open — the `storage` event never fires in the tab
+   * that made the write, only in other same-origin tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isPrepNoteNotificationsLiveUpdateStorageEvent(event)) return
+      refresh(recipientId.trim())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recipientId])
 
   const handleLookup = () => {
     const trimmed = recipientId.trim()

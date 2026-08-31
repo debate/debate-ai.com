@@ -340,10 +340,12 @@ Vitest-covered by an added case in `packages/debate-round/test/panels.test.tsx`
   `BrainstormBoardPanel` (see [`brainstorm-board.md`](brainstorm-board.md)'s
   "Cross-tab live update"), `GroupChallengesPanel` (see
   [`group-challenges.md`](group-challenges.md)'s "Cross-tab live update"),
-  and the standalone `FlowAnnotationsPanel` list view (see
-  [`flow-annotations.md`](flow-annotations.md)'s Known gaps entry) have
-  since gained the equivalent mechanism for their own stores, but every
-  other localStorage-backed panel in this repo still has none (Live Sync
+  the standalone `FlowAnnotationsPanel` list view (see
+  [`flow-annotations.md`](flow-annotations.md)'s Known gaps entry), and
+  `PrepNoteNotificationsPanel` (see [`prep-notes.md`](prep-notes.md)'s
+  "Cross-tab live update") have since gained the equivalent mechanism for
+  their own stores, but every other localStorage-backed panel in this repo
+  still has none (Live Sync
   above is cross-*contributor*, via the server, not cross-tab within one
   browser, and remains the only path for a *different device/browser* to
   see the edit at all).
