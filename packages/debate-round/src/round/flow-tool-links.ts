@@ -88,3 +88,18 @@ export function buildFlowToolsMenuItems(currentFlow: Flow | null | undefined): F
   const disabled = !currentFlow;
   return FLOW_TOOL_LINKS.map((link) => ({ ...link, disabled }));
 }
+
+/**
+ * Builds the "other round tools" cross-link list for one of
+ * {@link FLOW_TOOL_LINKS}'s own standalone pages (`/outline`, `/outcomes`,
+ * `/drills`, `/coaching`) — every entry except the one the caller is
+ * currently on, so a debater who followed the round workspace's "Tools for
+ * this round" menu to one tool can jump straight to a sibling tool instead
+ * of first going back to the round workspace. Preserves `FLOW_TOOL_LINKS`'s
+ * display order.
+ *
+ * @param currentHref - The href of the page rendering the cross-link list (e.g. `"/outline"`).
+ */
+export function buildCrossLinks(currentHref: string): FlowToolLink[] {
+  return FLOW_TOOL_LINKS.filter((link) => link.href !== currentHref);
+}

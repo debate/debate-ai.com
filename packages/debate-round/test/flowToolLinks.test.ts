@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildFlowToolsMenuItems, FLOW_TOOL_LINKS } from "../src/round/flow-tool-links";
+import { buildCrossLinks, buildFlowToolsMenuItems, FLOW_TOOL_LINKS } from "../src/round/flow-tool-links";
 import type { Box, Flow } from "../src/types/flow";
 
 function makeBox(overrides: Partial<Box> = {}): Box {
@@ -63,6 +63,32 @@ describe("buildFlowToolsMenuItems", () => {
       expect(item).toBeDefined();
       expect(item?.label).toBe(link.label);
       expect(item?.description).toBe(link.description);
+    }
+  });
+});
+
+describe("buildCrossLinks", () => {
+  it("excludes the current page's own href", () => {
+    const links = buildCrossLinks("/outline");
+    expect(links.some((link) => link.href === "/outline")).toBe(false);
+  });
+
+  it("returns every other FLOW_TOOL_LINKS entry, preserving order", () => {
+    const links = buildCrossLinks("/outline");
+    const expected = FLOW_TOOL_LINKS.filter((link) => link.href !== "/outline");
+    expect(links).toEqual(expected);
+  });
+
+  it("returns the full list unchanged when currentHref matches nothing", () => {
+    const links = buildCrossLinks("/not-a-flow-tool");
+    expect(links).toEqual(FLOW_TOOL_LINKS);
+  });
+
+  it("returns a distinct result for each of the four target pages", () => {
+    for (const link of FLOW_TOOL_LINKS) {
+      const links = buildCrossLinks(link.href);
+      expect(links).toHaveLength(FLOW_TOOL_LINKS.length - 1);
+      expect(links.every((l) => l.href !== link.href)).toBe(true);
     }
   });
 });

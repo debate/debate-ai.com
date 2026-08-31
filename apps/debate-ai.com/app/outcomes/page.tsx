@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { VulnerabilityChartsPanel } from "debate-round"
+import { VulnerabilityChartsPanel, RoundToolsCrossLinks } from "debate-round"
 
 export const metadata: Metadata = {
   title: "AI Response-Outcome Charts",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function OutcomesPage() {
   return (
     <div className="min-h-screen bg-background p-3 sm:p-6">
-      <div className="mb-4">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/debate"
           className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background hover:bg-accent text-sm font-medium text-foreground transition-colors"
@@ -21,6 +21,7 @@ export default function OutcomesPage() {
           <ArrowLeft className="h-4 w-4" />
           Back
         </Link>
+        <RoundToolsCrossLinks currentHref="/outcomes" />
       </div>
       <Suspense>
         <VulnerabilityChartsPanel />
