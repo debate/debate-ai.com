@@ -155,6 +155,27 @@ components/research/ReviewQueueWithIdentity.tsx  — "use client" wrapper
         itself), after which that card's typed value always wins
 ```
 
+## Review aging
+
+Each card's `CardReview` now carries a `statusChangedAt` epoch-ms timestamp
+(`lib/peer-review.ts`), set by `createCardReview` and refreshed by every
+status-changing transition — `submitForReview`, `requestChanges`,
+`approveReview`, `rejectReview`, `reviseRejectedReview`, `publishReview`, and
+`addReviewComment`'s auto-transition to `changes_requested` on a blocking
+comment. Reviews persisted before this field existed simply have no age.
+
+`getReviewAgeDays(review, now?)` returns whole days since the last status
+change (or `undefined` with no `statusChangedAt`), and `isReviewStale(review,
+now?, thresholdDays?)` is `true` once a card sitting in `in_review` or
+`changes_requested` (the two "someone else's queue" statuses — `draft`,
+`approved`, `published`, and `rejected` aren't anyone's backlog) has aged past
+`STALE_REVIEW_THRESHOLD_DAYS` (3, by default). `ReviewQueuePanel` shows a
+"pending N days" badge next to the status badge for any `in_review`/
+`changes_requested` card, switching to a destructive variant once it's
+stale — closing the "a review-aging indicator for stale pending reviews"
+follow-up named under the "🗣️ Peer Review System" bullet in TODO.md.
+Vitest-covered in `packages/debate-card-search/test/peer-review.test.ts`.
+
 ## Known gaps
 
 - Reviewer identity is still a free-form id, not an authenticated user — a

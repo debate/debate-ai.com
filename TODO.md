@@ -6,6 +6,40 @@
 _No task currently in progress._
 
 ### Completed
+- **Review Queue — review-aging indicator for stale pending reviews (idea
+  "🗣️ Peer Review System").** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows docs and debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built (a real `/settings` page,
+  D1-backed tables linked to signed-in users for flow edits, documents,
+  rounds, judge decisions, word-count history, etc.), and the repo's own
+  cross-tab-live-update sweep (previous Completed entry) is also now fully
+  closed — every panel named in `shared-flow-sync.md`'s Known gap list has
+  the mechanism, apart from `TopicSprintPanel`, which had an open PR
+  (#400) from a separate concurrent run already in flight. So this slice
+  picked a fresh next-step item instead: the "🗣️ Peer Review System" bullet
+  in the Research Crowdsourcing Organizer Features list named three
+  follow-ups, and its first ("gate reviewer identity behind the real
+  signed-in session") was already done (`docs/features/review-queue.md`'s
+  "Signed-in prefill" section). Implemented the second: `CardReview` now
+  carries a `statusChangedAt` epoch-ms timestamp (`lib/peer-review.ts`),
+  stamped by `createCardReview` and refreshed by every status-changing
+  transition (including `addReviewComment`'s auto-transition to
+  `changes_requested`). New pure helpers `getReviewAgeDays`/`isReviewStale`
+  (with an exported `STALE_REVIEW_THRESHOLD_DAYS = 3` default, overridable)
+  flag a card stale once it's sat in `in_review`/`changes_requested` — the
+  two "someone else's queue" statuses — past the threshold.
+  `ReviewQueuePanel` now shows a "pending N days" badge next to each such
+  card's status badge, switching to a destructive variant once stale.
+  Vitest-covered with 16 new cases in
+  `packages/debate-card-search/test/peer-review.test.ts` (age computation,
+  threshold boundaries, custom thresholds, missing-timestamp back-compat,
+  and the `addReviewComment` auto-transition stamping). See
+  `docs/features/review-queue.md`'s new "Review aging" section. The bullet's
+  third follow-up ("a reviewer-workload balancing view") remains open for a
+  future run.
 - **Flow Edit Log panel — cross-tab live-update (`shared-flow-sync.md`
   Known gap: "every other localStorage-backed panel in this repo still has
   no cross-tab live-update mechanism").** Prompted by another repeat of the
@@ -11265,7 +11299,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — bulk folder actions (merge/archive); saved custom collections per user; a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool.
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — a winner-history calendar view; a comment thread on each day's winner; a "best of the week" rollup.
-* 🗣️ **Peer Review System** (`/cards/reviews`) — gate reviewer identity behind the real signed-in session (the same pattern already wired into most other panels this month) instead of a free-typed reviewer ID; a review-aging indicator for stale pending reviews; a reviewer-workload balancing view.
+* 🗣️ **Peer Review System** (`/cards/reviews`) — gating reviewer identity behind the real signed-in session and the review-aging indicator are both done (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill" and "Review aging" sections). Next: a reviewer-workload balancing view.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — an awards history / hall-of-fame page; auto-post each announcement to the News Stream feed; a "nominate a peer" action.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — a coach-facing override/reassign control; a task-priority indicator; a capacity-aware view of routing load across the team.
 * 🔁 **Revision Incentives** (`/cards/revisions`) — a stale-evidence digest surfaced from the existing staleness signal; a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.

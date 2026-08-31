@@ -27,6 +27,13 @@
  * respected afterward, and a signed-out visitor sees the same blank fields
  * as before.
  *
+ * Each `in_review`/`changes_requested` card also shows a review-aging
+ * badge ("pending N days"), the "a review-aging indicator for stale pending
+ * reviews" follow-up named under the "🗣️ Peer Review System" bullet in
+ * TODO.md — the badge switches to a destructive variant once
+ * `lib/peer-review.ts`'s `isReviewStale` reports the card has sat past
+ * `STALE_REVIEW_THRESHOLD_DAYS` without a status change.
+ *
  * @module panels/ReviewQueuePanel
  */
 
@@ -43,9 +50,12 @@ import {
   addReviewComment,
   buildReviewSummary,
   createCardReview,
+  getReviewAgeDays,
+  isReviewStale,
   requestChanges,
   resolveReviewComment,
   reviseRejectedReview,
+  STALE_REVIEW_THRESHOLD_DAYS,
   submitForReview,
   type CardReview,
   type CommentSeverity,
@@ -80,6 +90,12 @@ const STATUS_VARIANT: Record<ReviewStatus, "default" | "secondary" | "outline" |
 }
 
 type CommentDraft = { reviewerId: string; severity: CommentSeverity; body: string }
+
+function formatReviewAgeLabel(days: number): string {
+  if (days === 0) return "pending today"
+  if (days === 1) return "pending 1 day"
+  return `pending ${days} days`
+}
 
 const EMPTY_COMMENT_DRAFT: CommentDraft = { reviewerId: "", severity: "suggestion", body: "" }
 
@@ -275,6 +291,8 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
             const unresolvedBlocking = review.comments.filter(
               (comment) => comment.severity === "blocking" && !comment.resolved,
             )
+            const ageDays = getReviewAgeDays(review)
+            const stale = isReviewStale(review)
 
             return (
               <div key={review.cardId} className="rounded-lg border border-border p-4 space-y-3">
@@ -282,6 +300,18 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-foreground">{review.cardId}</span>
                     <Badge variant={STATUS_VARIANT[review.status]}>{STATUS_LABEL[review.status]}</Badge>
+                    {ageDays !== undefined && (review.status === "in_review" || review.status === "changes_requested") && (
+                      <Badge
+                        variant={stale ? "destructive" : "outline"}
+                        title={
+                          stale
+                            ? `Pending ${ageDays} day(s) — over the ${STALE_REVIEW_THRESHOLD_DAYS}-day staleness threshold`
+                            : `Pending ${ageDays} day(s)`
+                        }
+                      >
+                        {formatReviewAgeLabel(ageDays)}
+                      </Badge>
+                    )}
                     {review.authorId && (
                       <span className="text-xs text-muted-foreground">by {review.authorId}</span>
                     )}
