@@ -76,6 +76,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
   checkPersistedPageForExistingCards,
   deleteEvidenceLibraryEntry,
@@ -632,9 +633,7 @@ export function EvidenceLibraryPanel() {
       )}
       <p className="text-sm text-muted-foreground">{buildEvidenceSearchSummaryText(results, summaryQuery)}</p>
       {results.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-          No entries match this search.
-        </div>
+        <EmptyState title="No entries match this search." />
       ) : (
         <div className="space-y-2">
           {results.map(({ entry, relevanceScore }) => (

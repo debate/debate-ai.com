@@ -36,6 +36,7 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import { buildPersistedPrepRoom, listPrepRoomTopics } from "../state/prepRooms"
 import { buildPrepRoomSummaryText, searchPrepRoomEvidence } from "../lib/prep-room"
 import type { PrepRoom } from "../lib/prep-room"
@@ -207,11 +208,13 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
           </div>
 
           {results.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-              {room.entries.length === 0
-                ? "No evidence or draft blocks filed under this topic yet."
-                : "No entries match this search."}
-            </div>
+            <EmptyState
+              title={
+                room.entries.length === 0
+                  ? "No evidence or draft blocks filed under this topic yet."
+                  : "No entries match this search."
+              }
+            />
           ) : (
             <div className="space-y-1.5">
               {results.map(({ entry }) => (

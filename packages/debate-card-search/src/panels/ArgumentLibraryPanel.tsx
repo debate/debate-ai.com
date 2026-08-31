@@ -44,6 +44,7 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
   buildCombinedPersistedArgumentLibrary,
   renameTagAcrossCombinedPersistedStores,
@@ -270,9 +271,7 @@ function TagFilterResults({ cards, tags }: { cards: LibraryCard[]; tags: string[
         {cards.length} card{cards.length === 1 ? "" : "s"} tagged {tags.join(", ")}
       </p>
       {cards.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-          No cards match this tag filter.
-        </div>
+        <EmptyState title="No cards match this tag filter." />
       ) : (
         <div className="space-y-1.5">
           {cards.map((card) => (

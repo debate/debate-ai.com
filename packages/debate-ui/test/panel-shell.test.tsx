@@ -81,6 +81,21 @@ describe("EmptyState / SummaryText / Pill / PanelRow / PanelSection", () => {
     expect(html).toContain("Add one");
   });
 
+  it("renders a leading icon and left-aligns the text when one is given", () => {
+    const html = renderToStaticMarkup(
+      <EmptyState title="Nothing sent yet" icon={<svg data-testid="empty-icon" />} />,
+    );
+    expect(html).toContain("Nothing sent yet");
+    expect(html).toContain('data-testid="empty-icon"');
+    expect(html).toContain("text-left");
+  });
+
+  it("omits the icon wrapper and centers the text when no icon is given", () => {
+    const html = renderToStaticMarkup(<EmptyState title="Nothing yet" />);
+    expect(html).toContain("text-center");
+    expect(html).not.toContain("text-left");
+  });
+
   it("preserves the summary text verbatim", () => {
     const html = renderToStaticMarkup(<SummaryText label="Summary" text={"line 1\nline 2"} />);
     expect(html).toContain("Summary");
