@@ -47,3 +47,26 @@ export function isFlowAnnotationsPanelLiveUpdateStorageEvent(event: { key: strin
     (FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
+
+/**
+ * The `localStorage` key `panels/PrepNoteNotificationsPanel.tsx` reads from
+ * — see `state/prepNoteNotifications.ts`. Deliberately excludes that
+ * module's separate `prepNoteNotifications:lastRecipientId` key: a change
+ * to which recipient id another tab last looked up isn't this tab's
+ * business, only new/updated notifications for the recipient this tab is
+ * already showing are.
+ */
+export const PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS = ["prepNoteNotifications"] as const;
+
+/**
+ * Whether a `storage` event should trigger `PrepNoteNotificationsPanel` to
+ * re-read its persisted notification list. A `null` key (e.g. from
+ * `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isPrepNoteNotificationsLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}

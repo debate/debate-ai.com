@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   FLOW_LIVE_UPDATE_STORAGE_KEYS,
+  PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS,
   isFlowAnnotationsPanelLiveUpdateStorageEvent,
   isFlowLiveUpdateStorageEvent,
+  isPrepNoteNotificationsLiveUpdateStorageEvent,
 } from "../src/flow/live-update";
 
 describe("isFlowLiveUpdateStorageEvent", () => {
@@ -47,5 +49,29 @@ describe("isFlowAnnotationsPanelLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains the store name as a substring", () => {
     expect(isFlowAnnotationsPanelLiveUpdateStorageEvent({ key: "flowAnnotationsBackup" })).toBe(false);
     expect(isFlowAnnotationsPanelLiveUpdateStorageEvent({ key: "old_flowAnnotations" })).toBe(false);
+  });
+});
+
+describe("isPrepNoteNotificationsLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isPrepNoteNotificationsLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isPrepNoteNotificationsLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key, including the recipient-id key", () => {
+    expect(isPrepNoteNotificationsLiveUpdateStorageEvent({ key: "prepNotes" })).toBe(false);
+    expect(isPrepNoteNotificationsLiveUpdateStorageEvent({ key: "prepNoteNotifications:lastRecipientId" })).toBe(
+      false,
+    );
+  });
+
+  it("is false for a key that merely contains the store name as a substring", () => {
+    expect(isPrepNoteNotificationsLiveUpdateStorageEvent({ key: "prepNoteNotificationsBackup" })).toBe(false);
+    expect(isPrepNoteNotificationsLiveUpdateStorageEvent({ key: "old_prepNoteNotifications" })).toBe(false);
   });
 });
