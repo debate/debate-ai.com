@@ -6,7 +6,11 @@
  * and the on/off toggle for the mode, so the speech header bar can swap its
  * countdown for a live word-count meter. All limit and status computation
  * lives in the pure module; this hook only owns React state and persistence
- * timing.
+ * timing. Also mounts `useWordLimitPresets` so a signed-in user's custom
+ * presets (TODO.md idea #2's "per-style word-limit preset manager"
+ * follow-up, managed from `WordLimitPresetsPanel`) override the built-in
+ * registry here too, the same way they do on the standalone `/word-count`
+ * form.
  *
  * @module hooks/useWordCountSpeechMode
  */
@@ -24,6 +28,7 @@ import {
   type SpeechWordCountStatus,
   type WordCountSpeechModeState,
 } from "../round/word-count-speech-mode";
+import { useWordLimitPresets } from "./useWordLimitPresets";
 
 const TOGGLE_STORAGE_KEY = "wordLimitModeEnabled";
 
@@ -59,6 +64,7 @@ export function useWordCountSpeechMode(
   timedSpeechMinutes?: number,
 ): WordCountSpeechModeBinding {
   const resolvedRoundId = roundId === undefined ? "" : String(roundId);
+  const { presets } = useWordLimitPresets();
   const [enabled, setEnabledState] = useState(false);
   const [mode, setMode] = useState<WordCountSpeechModeState>(() =>
     createWordCountSpeechMode(resolvedRoundId),
@@ -99,6 +105,6 @@ export function useWordCountSpeechMode(
     setEnabled,
     text: getWordCountSpeechText(mode, speechName),
     setText,
-    status: getSpeechWordCountStatus(mode, { speechName, timedSpeechMinutes }),
+    status: getSpeechWordCountStatus(mode, { speechName, timedSpeechMinutes, presets }),
   };
 }

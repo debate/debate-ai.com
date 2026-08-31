@@ -6,6 +6,86 @@
 _No task currently in progress._
 
 ### Completed
+- **Word-Count-Only Speech Format — per-style word-limit preset manager
+  (idea #2, "A per-style word-limit preset manager (add/edit/remove custom
+  limits instead of only the built-in registry)").** Prompted by another
+  repeat of the standing prompt ("integrate all the tools and create user
+  settings and link user db SQL with ability to save flows docs and debates
+  in SQL and link to users... develop better tool ui"), and finding — like
+  every recent repeat — that the SQL-linked user settings/flows/docs/rounds
+  system is already fully built, this slice picked up idea #2's own
+  still-open preset-manager follow-up: before this, a word-limited speech's
+  limit came only from `debate-timer`'s single hardcoded "Public Forum (Word
+  Count)" style (`wordCountStyleMap`/`wordCountStyles` in
+  `word-count-format.ts`) or a timed-speech estimate — there was no way for a
+  user to define their own limit for a speech name. Added a new
+  account-linked `wordLimitPresets` field to the `user_settings` D1 row
+  (`word_limit_presets` column, migration `0014_add_word_limit_presets.sql`,
+  generated via `drizzle-kit generate`), following the exact same
+  "JSON-serialized list, replace-not-merge on PUT" shape `favoriteTools`
+  already established: a new pure module,
+  `packages/debate-round/src/state/wordLimitPresets.ts`
+  (`WordLimitPreset = { name, wordLimit }`, `MAX_WORD_LIMIT_PRESETS = 50`,
+  name/limit validators, `normalizeWordLimitPresetsPatch`,
+  `serializeWordLimitPresets`/`parseWordLimitPresets`, and
+  `findPresetWordLimit` — a case-insensitive, trimmed lookup matching the
+  same normalization `resolveSpeechWordLimit` already used for the built-in
+  registry), wired into `/api/settings`'s `GET`/`PUT` (`route.ts`) alongside
+  every other field. `resolveSpeechWordLimit`
+  (`round/word-count-speech-mode.ts`) now takes an optional `presets` array
+  and checks it *first*, ahead of the authored registry and the timed-speech
+  estimate; `getWordCountRoundStatuses` (`state/wordCountRounds.ts`) grew the
+  same optional parameter for the persisted-round list. A new
+  `hooks/useWordLimitPresets.ts` holds the local-first, best-effort
+  account-synced state (mirroring `lib/hooks/useFavoriteTools.ts`'s
+  module-level dedup so multiple mounted consumers share one account fetch
+  and one same-tab change event), consumed by three places: the new
+  **Word limit presets** manager UI on `/settings`
+  (`panels/WordLimitPresetsPanel.tsx` — add/edit/remove rows, rendered
+  alongside `UserSettingsPanel`/`FavoriteToolsSettings`/
+  `EditorPreferencesPanel`), the standalone `/word-count` form
+  (`WordCountRoundsPanel`, both the live typing form and the persisted-round
+  list below it, plus a small "N custom word limits applied — manage them in
+  Settings" hint), and the live in-round meter
+  (`useWordCountSpeechMode` — no changes needed in `SpeechHeaderBar` itself,
+  since the hook already centralizes limit resolution). `UserSettingsPanel`'s
+  own form excludes `wordLimitPresets` from its `FormState` the same way it
+  already excludes `favoriteTools`/`newsRead`/`newsLiked` — each has its own
+  dedicated settings-page UI instead. Documented in
+  `docs/features/word-count-rounds.md` (new "Custom word-limit presets"
+  section, an updated "Where the limit comes from" list with the preset
+  check as step 0, and a data-flow diagram). Vitest-covered: 21 new cases in
+  `packages/debate-round/test/wordLimitPresets.test.ts` (name/limit/list
+  validation including the max-size bound and case-insensitive duplicate
+  rejection, patch normalization, serialize/parse round-trips and
+  degradation, and `findPresetWordLimit` matching), plus preset-priority
+  cases added to `word-count-speech-mode.test.ts` (`resolveSpeechWordLimit`/
+  `getSpeechWordCountStatus` preferring a preset over both the authored
+  registry and the timed estimate) and `wordCountRounds.test.ts`
+  (`getWordCountRoundStatuses` preferring a preset). `useWordLimitPresets`
+  and `WordLimitPresetsPanel` themselves remain intentionally untested,
+  matching this package's existing convention for account-synced,
+  `localStorage`-backed hooks and their settings-page UI (see
+  `useFavoriteTools`/`FavoriteToolsSettings`, which follow the same
+  pattern). Verified: `bun install` (2258 packages), `bun x vitest run`
+  against the three touched/new test files (59/59 pass), full `bun run
+  test` (197 files / 3137 tests, all pass, up from 196/3111), `bun run
+  typecheck` (12/12 in-scope package tasks pass after fixing
+  `UserSettingsPanel`'s `FormState` Omit list to also exclude
+  `wordLimitPresets`), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (35 pre-existing, unrelated errors —
+  identical count to before this change, confirming no regression), and
+  `bun run build:web` (production build succeeds, `/settings` and
+  `/word-count` both build). No manual browser check was performed in this
+  run (no local dev-server session was started); a future run should smoke-
+  test the new Settings section and confirm a saved preset actually shifts
+  the badge in both `/word-count` and the live round header bar before
+  relying on this note alone. **Next:** the two other follow-ups named
+  under idea #2 remain open — a 🎤 dictation button on the standalone
+  `/word-count` form already exists, but the live in-round
+  `SpeechWordCounter` popover's dictation button was closed in an earlier
+  run, so the truly open one is "a trend view showing a debater's
+  word-count-vs-limit history across past submissions."
 - **Legacy Verbatim / Cardmirror Compatibility — printable/exportable
   shortcuts reference (idea #14, "Next: a printable/exportable version of
   the shortcuts reference, since today it's view-only inside the
@@ -10263,9 +10343,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    - A manual CSV/paste import for tournament results, since live Tabroom scraping is blocked (see "Confirmed blocker" below) and the old panel's only path in was hand-entry.
    - Bring back a qualification-points-table editor as a collapsible section rather than its own panel.
 
-2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) —
-   - Add a 🎤 dictation button to the live in-round `SpeechWordCounter` popover (the standalone `/word-count` form already has one).
-   - A per-style word-limit preset manager (add/edit/remove custom limits instead of only the built-in registry).
+2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) — two of three prior bullets are done: the live in-round `SpeechWordCounter` popover already has a 🎤 dictation button (mirroring the standalone form's), and a per-style word-limit preset manager now exists — `/settings`'s **Word limit presets** section (`WordLimitPresetsPanel`/`useWordLimitPresets`/`state/wordLimitPresets.ts`), account-synced via `/api/settings`'s `wordLimitPresets` field, checked ahead of the built-in `wordCountStyles` registry by `resolveSpeechWordLimit` in both this panel and the live meter. See `docs/features/word-count-rounds.md`'s "Custom word-limit presets" section. Next:
    - A trend view showing a debater's word-count-vs-limit history across past submissions.
 
 3. **Online Debate Versus AI** (`/versus-ai`) —

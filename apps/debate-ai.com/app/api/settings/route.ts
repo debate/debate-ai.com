@@ -7,11 +7,15 @@ import {
   DEFAULT_FAVORITE_TOOLS,
   DEFAULT_THEME_SETTINGS,
   DEFAULT_USER_SETTINGS,
+  DEFAULT_WORD_LIMIT_PRESETS,
   normalizeFavoriteToolsPatch,
   normalizeThemeSettingsPatch,
   normalizeUserSettingsPatch,
+  normalizeWordLimitPresetsPatch,
   parseFavoriteTools,
+  parseWordLimitPresets,
   serializeFavoriteTools,
+  serializeWordLimitPresets,
   type ThemeMode,
   type UserSettingsPayload,
 } from "debate-round"
@@ -47,12 +51,13 @@ import {
  * GET  — the current user's saved settings, or the matching `DEFAULT_*`
  *   value for any field with no saved row/value yet.
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
- *   newsRead?, newsLiked? } — validates and upserts the given fields
- *   (validated by `debate-round`'s `normalizeUserSettingsPatch`/
- *   `normalizeThemeSettingsPatch`/`normalizeFavoriteToolsPatch` and
- *   `debate-card-search`'s `normalizeNewsSyncPatch`, the same option
- *   lists/shape the picker, favorite-star, and News Stream UIs themselves
- *   use), returning the resulting full settings row.
+ *   wordLimitPresets?, newsRead?, newsLiked? } — validates and upserts the
+ *   given fields (validated by `debate-round`'s `normalizeUserSettingsPatch`/
+ *   `normalizeThemeSettingsPatch`/`normalizeFavoriteToolsPatch`/
+ *   `normalizeWordLimitPresetsPatch` and `debate-card-search`'s
+ *   `normalizeNewsSyncPatch`, the same option lists/shape the picker,
+ *   favorite-star, word-limit-preset-manager, and News Stream UIs
+ *   themselves use), returning the resulting full settings row.
  */
 
 type SettingsRow = {
@@ -64,6 +69,7 @@ type SettingsRow = {
   editorPreferences: string | null
   newsRead: string | null
   newsLiked: string | null
+  wordLimitPresets: string | null
 }
 
 type SettingsPayload = UserSettingsPayload & {
@@ -73,6 +79,7 @@ type SettingsPayload = UserSettingsPayload & {
   editorPreferences: EditorPreferencesPayload
   newsRead: string[]
   newsLiked: string[]
+  wordLimitPresets: { name: string; wordLimit: number }[]
 }
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
@@ -85,6 +92,9 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
     newsRead: row?.newsRead ? parseNewsIdList(row.newsRead) : DEFAULT_NEWS_SYNC.newsRead,
     newsLiked: row?.newsLiked ? parseNewsIdList(row.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked,
+    wordLimitPresets: row?.wordLimitPresets
+      ? parseWordLimitPresets(row.wordLimitPresets)
+      : DEFAULT_WORD_LIMIT_PRESETS.wordLimitPresets,
   }
 }
 
@@ -116,6 +126,7 @@ export async function PUT(req: NextRequest) {
   const userSettingsResult = normalizeUserSettingsPatch(body)
   const themeSettingsResult = normalizeThemeSettingsPatch(body)
   const favoriteToolsResult = normalizeFavoriteToolsPatch(body)
+  const wordLimitPresetsResult = normalizeWordLimitPresetsPatch(body)
   const newsSyncResult = normalizeNewsSyncPatch(body)
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
     (body as { editorPreferences?: unknown } | null)?.editorPreferences,
@@ -125,6 +136,7 @@ export async function PUT(req: NextRequest) {
     ...userSettingsResult.errors,
     ...themeSettingsResult.errors,
     ...favoriteToolsResult.errors,
+    ...wordLimitPresetsResult.errors,
     ...newsSyncResult.errors,
     ...editorPreferencesResult.errors,
   ]
@@ -135,13 +147,14 @@ export async function PUT(req: NextRequest) {
   if (
     Object.keys(valid).length === 0 &&
     favoriteToolsResult.valid.favoriteTools === undefined &&
+    wordLimitPresetsResult.valid.wordLimitPresets === undefined &&
     Object.keys(newsSyncResult.valid).length === 0 &&
     Object.keys(editorPreferencesResult.valid).length === 0
   ) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, wordLimitPresets, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -158,9 +171,13 @@ export async function PUT(req: NextRequest) {
     editorPreferences?: string | null
     newsRead?: string | null
     newsLiked?: string | null
+    wordLimitPresets?: string | null
   } = { ...valid }
   if (favoriteToolsResult.valid.favoriteTools !== undefined) {
     dbPatch.favoriteTools = serializeFavoriteTools(favoriteToolsResult.valid.favoriteTools)
+  }
+  if (wordLimitPresetsResult.valid.wordLimitPresets !== undefined) {
+    dbPatch.wordLimitPresets = serializeWordLimitPresets(wordLimitPresetsResult.valid.wordLimitPresets)
   }
   if (newsSyncResult.valid.newsRead !== undefined) {
     dbPatch.newsRead = serializeNewsIdList(newsSyncResult.valid.newsRead)

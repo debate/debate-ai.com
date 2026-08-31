@@ -82,6 +82,8 @@ off restores the countdown; the choice persists in localStorage
 
 Where the limit comes from:
 
+0. a user's own custom preset whose name matches the live column
+   (case-insensitively) — see "Custom word-limit presets" below; otherwise
 1. the `wordCountStyles` entry whose speech name matches the live column
    (case-insensitively), e.g. `AC` → 600 words; otherwise
 2. `estimateWordLimit(minutes)` applied to the live timed style's speech
@@ -119,6 +121,53 @@ hooks/useWordCountSpeechMode.ts        — React state + persistence timing
 Vitest-covered in
 `packages/debate-round/test/word-count-speech-mode.test.ts` (limit
 resolution, mode state, live status, and the store round-trip).
+
+## Custom word-limit presets
+
+TODO.md idea #2's "a per-style word-limit preset manager (add/edit/remove
+custom limits instead of only the built-in registry)" follow-up. Before this,
+every word-limited speech's limit came only from `debate-timer`'s single
+hardcoded "Public Forum (Word Count)" style or an estimate — there was no way
+for a user to set their own limit for a speech.
+
+**Manage presets:** the **Word limit presets** section on `/settings`
+(`WordLimitPresetsPanel`) — add a speech name (e.g. `AC`, `1AR`, or any label
+used elsewhere) and a word limit, edit an existing preset's limit inline, or
+remove one. Local-first (works fully signed out, synced to `localStorage`
+under `word-limit-presets`) and best-effort synced to the account through the
+same `/api/settings` route (`wordLimitPresets` field) every other setting
+uses, so presets follow a signed-in user across devices — mirrors
+`FavoriteToolsSettings`/`useFavoriteTools`'s split for the same reason
+(`hooks/useWordLimitPresets.ts`).
+
+**Where it applies:** both the standalone `/word-count` form
+(`WordCountRoundsPanel`, including its persisted-round list) and the live
+in-round meter (`useWordCountSpeechMode`) resolve a speech's limit through
+`resolveSpeechWordLimit`, which now checks a matching preset (by name,
+case-insensitively) *before* the built-in registry or the timed-speech
+estimate — see "Where the limit comes from" above, now with the preset check
+as step 0.
+
+A preset's name is matched exactly (case-insensitively) against the live or
+authored speech name; it does not scope to one word-count style, so a preset
+named `AC` applies to every style whose speech list includes an `AC` entry.
+
+```
+state/wordLimitPresets.ts        — validation, (de)serialization, findPresetWordLimit
+hooks/useWordLimitPresets.ts     — localStorage-first state + account sync
+panels/WordLimitPresetsPanel.tsx — add/edit/remove UI, rendered on /settings
+round/word-count-speech-mode.ts  — resolveSpeechWordLimit checks presets first
+state/wordCountRounds.ts         — getWordCountRoundStatuses accepts presets
+panels/WordCountRoundsPanel.tsx  — passes presets through to both
+```
+
+Vitest-covered in `packages/debate-round/test/wordLimitPresets.test.ts`
+(validation, serialization, and lookup) plus preset-priority cases added to
+`word-count-speech-mode.test.ts` and `wordCountRounds.test.ts`.
+`WordLimitPresetsPanel`/`useWordLimitPresets` themselves are untested,
+matching this package's existing convention for account-synced,
+`localStorage`-backed hooks and their settings-page UI (e.g.
+`useFavoriteTools`/`FavoriteToolsSettings`).
 
 ## Known gaps
 

@@ -19,6 +19,7 @@
  */
 
 import { getWordCountStatus, wordCountStyles, type WordCountStyleKey } from "debate-timer/src/formats/word-count-format";
+import { findPresetWordLimit, type WordLimitPreset } from "./wordLimitPresets";
 
 export type WordCountSpeechSubmission = {
   /** Matches a `WordCountSpeech.name` in the round's style, e.g. `"AC"`. */
@@ -89,10 +90,13 @@ export function buildWordCountRoundsPanelView(): WordCountRoundRecord[] {
  * style, by matching each submission's `name` to the style's `WordCountSpeech`.
  * A submission whose `name` no longer matches any speech in the style is
  * skipped rather than throwing, since a format's speech list could change
- * after a round was recorded.
+ * after a round was recorded. `presets` (TODO.md idea #2's "per-style
+ * word-limit preset manager" follow-up) overrides a matching speech's
+ * authored limit, same priority order as `resolveSpeechWordLimit`.
  */
 export function getWordCountRoundStatuses(
   roundId: string,
+  presets: WordLimitPreset[] = [],
 ): { name: string; speaker: string; status: ReturnType<typeof getWordCountStatus> }[] {
   const record = getWordCountRound(roundId);
   if (!record) return [];
@@ -101,10 +105,11 @@ export function getWordCountRoundStatuses(
     .map((submission) => {
       const speech = style.speeches.find((candidate) => candidate.name === submission.name);
       if (!speech) return undefined;
+      const wordLimit = findPresetWordLimit(presets, submission.name) ?? speech.wordLimit;
       return {
         name: submission.name,
         speaker: submission.speaker,
-        status: getWordCountStatus(submission.text, speech.wordLimit),
+        status: getWordCountStatus(submission.text, wordLimit),
       };
     })
     .filter((entry): entry is { name: string; speaker: string; status: ReturnType<typeof getWordCountStatus> } => entry !== undefined);

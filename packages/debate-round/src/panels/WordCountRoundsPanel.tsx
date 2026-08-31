@@ -15,12 +15,19 @@
  * `buildWordCountRoundsPanelView`, with each speech's status recomputed via
  * `getWordCountRoundStatuses`. No new word-count logic is introduced here.
  *
+ * Each speech's limit is resolved through `useWordLimitPresets` (TODO.md
+ * idea #2's "per-style word-limit preset manager" follow-up, managed from
+ * `WordLimitPresetsPanel` on `/settings`) before falling back to the
+ * authored `wordCountStyles` entry, so a signed-in user's custom overrides
+ * apply here the same way they do in the live in-round meter.
+ *
  * @module panels/WordCountRoundsPanel
  */
 
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import Link from "next/link"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -47,8 +54,10 @@ import {
   saveWordCountRound,
   type WordCountRoundRecord,
 } from "../state/wordCountRounds"
+import { findPresetWordLimit } from "../state/wordLimitPresets"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
+import { useWordLimitPresets } from "../hooks/useWordLimitPresets"
 
 const STYLE_LABELS: Record<WordCountStyleKey, string> = wordCountStyleMap.reduce(
   (labels, key, index) => ({ ...labels, [key]: wordCountStyleNames[index] }),
@@ -74,6 +83,7 @@ function emptyDrafts(styleKey: WordCountStyleKey): Record<string, SpeechDraft> {
  * state during SSR/hydration rather than throwing.
  */
 export function WordCountRoundsPanel() {
+  const { presets } = useWordLimitPresets()
   const [rounds, setRounds] = useState<WordCountRoundRecord[] | null>(null)
   const [roundId, setRoundId] = useState("")
   const [styleKey, setStyleKey] = useState<WordCountStyleKey>(wordCountStyleMap[0])
@@ -161,6 +171,15 @@ export function WordCountRoundsPanel() {
         <p className="text-sm text-muted-foreground">
           Practice speeches bounded by a maximum word count instead of a time limit.
         </p>
+        {presets.length > 0 && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            {presets.length} custom word limit{presets.length === 1 ? "" : "s"} applied — manage them in{" "}
+            <Link href="/settings" className="underline underline-offset-2 hover:text-foreground">
+              Settings
+            </Link>
+            .
+          </p>
+        )}
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-4">
@@ -195,7 +214,8 @@ export function WordCountRoundsPanel() {
         <div className="space-y-3">
           {style.speeches.map((speech) => {
             const draft = drafts[speech.name] ?? { speaker: "", text: "" }
-            const status = getWordCountStatus(draft.text, speech.wordLimit)
+            const wordLimit = findPresetWordLimit(presets, speech.name) ?? speech.wordLimit
+            const status = getWordCountStatus(draft.text, wordLimit)
             const isDictatingThis = dictation.isListening && dictatingSpeech === speech.name
             return (
               <div key={speech.name} className="rounded-md border border-border p-3 space-y-2">
@@ -210,7 +230,7 @@ export function WordCountRoundsPanel() {
                     />
                   </div>
                   <Badge variant={status.overLimit ? "destructive" : "secondary"}>
-                    {status.count} / {speech.wordLimit} words
+                    {status.count} / {wordLimit} words
                     {status.overLimit
                       ? ` (${Math.abs(status.remaining)} over)`
                       : ` (${status.remaining} left)`}
@@ -260,7 +280,7 @@ export function WordCountRoundsPanel() {
       ) : (
         <div className="space-y-4">
           {rounds.map((round) => {
-            const statuses = getWordCountRoundStatuses(round.roundId)
+            const statuses = getWordCountRoundStatuses(round.roundId, presets)
             return (
               <div key={round.roundId} className="rounded-lg border border-border p-4">
                 <div className="mb-3 flex items-center justify-between gap-2">

@@ -163,6 +163,14 @@ export const userSettings = sqliteTable("user_settings", {
   // (union, not replaced) with these on sign-in rather than overwritten.
   newsRead: text("news_read"),
   newsLiked: text("news_liked"),
+  // JSON-serialized array of `{ name, wordLimit }` custom word-limit
+  // presets (see packages/debate-round/src/state/wordLimitPresets.ts and
+  // TODO.md idea #2's "a per-style word-limit preset manager (add/edit/
+  // remove custom limits instead of only the built-in registry)"
+  // follow-up), checked ahead of debate-timer's hardcoded `wordCountStyles`
+  // registry by `resolveSpeechWordLimit`. Null/absent means "no custom
+  // presets saved yet", same semantics as every other nullable column here.
+  wordLimitPresets: text("word_limit_presets"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
