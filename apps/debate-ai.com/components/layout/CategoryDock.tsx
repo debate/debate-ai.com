@@ -124,6 +124,10 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
         <Image src={IconTools} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
         All Tools
       </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/settings") }}>
+        <Image src={IconSettings} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
+        Preferences
+      </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
         {themeState.isDark ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}

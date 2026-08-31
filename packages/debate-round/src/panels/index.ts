@@ -20,6 +20,7 @@ export { PracticeRoundSimulatorPanel } from "./PracticeRoundSimulatorPanel";
 export { PreRoundBriefingsPanel } from "./PreRoundBriefingsPanel";
 export { PrepNoteNotificationsPanel } from "./PrepNoteNotificationsPanel";
 export { PrepNotesPanel } from "./PrepNotesPanel";
+export { SettingsPanel } from "./SettingsPanel";
 export { SharedFlowSyncPanel, type SharedFlowSyncPanelProps } from "./SharedFlowSyncPanel";
 export { StandingsPanel } from "./StandingsPanel";
 export { StrategyPanel } from "./StrategyPanel";

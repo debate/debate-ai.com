@@ -6,6 +6,7 @@ import {
   ListTree, Bot, Lightbulb, PlayCircle, TrendingUp, BarChart3, Users2, School,
   FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass,
+  Settings as SettingsIcon,
   type LucideIcon,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "debate-ui/src/primitives/card"
@@ -31,6 +32,7 @@ const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
       { href: "/research", label: "Research Workspace", icon: Library, description: "Work the squad research workspace end to end, covering topic coverage, the evidence library, task routing, quests, leaderboards, and peer review." },
       { href: "/community-hub", label: "Community Research Hub", icon: Compass, description: "Search a directory of every shared research, collaboration, and pre-round or practice space across the community." },
       { href: "/coach", label: "Coach Workspace", icon: GraduationCap, description: "Coach a round from the argument tree and flow summary through coaching prompts, drills, scouting, briefings, and practice rounds." },
+      { href: "/settings", label: "Settings", icon: SettingsIcon, description: "Set your default debate style and editor font size, synced to your account when signed in." },
     ],
   },
   {

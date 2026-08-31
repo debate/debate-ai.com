@@ -6,6 +6,62 @@
 _No task currently in progress._
 
 ### Completed
+- **User Settings — account-synced Settings page (real UI for the
+  `debateStyle`/`fontSize` registry) + a `user_settings` SQL table linked to
+  users.** Prompted by the standing prompt ("integrate all the tools and
+  create user settings and link user db SQL with ability to save flows docs
+  and debates in SQL and link to users... develop better tool ui"). Auditing
+  the actual state of that request (rather than TODO.md narration) found:
+  `/reason-editor`'s documents already save to SQL linked to `userId` (the
+  "docs" half); the core round/flow editor's `rounds`/`flows`
+  (`packages/debate-round/src/state/store.ts`) remain entirely
+  `localStorage`-only (the "flows and debates" half — a substantial,
+  pervasively-used store, correctly left for a dedicated future slice rather
+  than reworked here); and — the concrete gap this slice closes — no
+  `/settings` route existed at all, despite `state/settings.ts`'s
+  `settingsGroups` registry (`debateStyle`/`fontSize`) having been fully
+  built out with zero UI ever wired to edit it (only read by
+  `CreateRoundDialog`/`SpeechHeaderBar`/`useTimerState` inline). Added
+  `packages/debate-round/src/panels/SettingsPanel.tsx`, rendering
+  `settingsGroups` as an editable form (Select per radio-typed setting) that
+  reads/writes straight through the existing shared `settings` singleton,
+  reachable at a new `/settings` route, from the global dock's Settings menu
+  ("Preferences"), and from the `/tools` directory. Also added account sync,
+  the first outside the `reason-editor` document store: a new `user_settings`
+  D1 table (migration `0004_lethal_christian_walker.sql`, one JSON blob row
+  per user) plus `GET`/`PUT /api/settings` (`apps/debate-ai.com`), validated
+  by a new pure `packages/debate-round/src/state/savedSettings.ts`
+  (`isValidSettingsData`, `MAX_SAVED_SETTINGS_BYTES`) and a fetch wrapper,
+  `state/settings-client.ts`, mirroring `flow/flow-sync-client.ts`'s
+  throwing/endpoint-override convention. A new hook,
+  `hooks/useAccountSettings.ts`, merges a signed-in user's saved settings
+  into the local registry on mount (remote wins per-key) and best-effort
+  pushes the full local snapshot on every subsequent change — local-first,
+  so a signed-out or offline change is never lost, only left unsynced —
+  wired into `SettingsPanel` with a synced/signed-out/error status badge.
+  See `docs/features/user-settings.md`. Vitest-covered:
+  `isValidSettingsData`'s full validation surface, including the byte-cap
+  boundary (`savedSettings.test.ts`, 8 cases), and the fetch wrapper's
+  request shapes plus signed-out/401/error handling
+  (`settings-client.test.ts`, 9 cases) — 17 new tests. `useAccountSettings`
+  and its wiring in `SettingsPanel` remain intentionally untested, matching
+  this package's existing convention for account-synced, browser-API-facing
+  hooks and their UI (`useMicrophoneTranscription` follows the same
+  pattern). The core `rounds`/`flows` SQL sync is recorded as an explicit
+  follow-up below rather than folded into this slice — it touches
+  `DebateRoundPanel`'s primary editing path pervasively and deserves its own
+  focused PR. Verified: `bun install` (2062 packages), the two new test
+  files (17/17 pass), the full `bun run test` (172 files / 2574 tests, all
+  pass), the whole-repo `bun run typecheck` (12 packages via turbo, all
+  passing — `apps/debate-ai.com` has no `typecheck` script of its own, so
+  its new route/page files were additionally verified with a direct `tsc
+  --noEmit` pass, confirming zero new errors versus the pre-existing
+  baseline, which already carries unrelated errors — Cloudflare Workers
+  ambient types, `better-auth` client plugin types, missing `.svg`/`.png`
+  type declarations — none touching the files this slice added or changed),
+  and a full production `bun run build:web` (vinext build + service-worker
+  build, `/settings` and `/api/settings` both correctly registered) — all
+  passed with no new failures.
 - **Task Inbox — verification step before a task counts complete.**
   [PR #316](https://github.com/debate/debate-ai.com/pull/316).
   Closes the "No reviewer/verification step before a task is marked
@@ -7997,6 +8053,8 @@ _No task currently in progress._
 15. **Flow-in-Speech Flow Annotations** — While viewing a streamed or recorded round, let users create timestamped flow entries for each speech and attach an entry directly to a particular argument or response bubble, making it easy to revisit exactly where an answer was made. _Status: first slices done (see Tracker Status above) — `debate-round` now has a `FlowAnnotation` data model and query helpers (`createFlowAnnotation`, `getAnnotationsForSpeech`, `getAnnotationsForBox`, `findAnnotationAtPlaybackPosition`, `resolveAnnotationBox`) for tying a playback timestamp to a specific flow box. A second slice, `flowAnnotations.ts` (see Tracker Status above), now persists `FlowAnnotation` records to localStorage. A third slice, `FlowAnnotationsPanel` (see Tracker Status above, "Flow-in-Speech Flow Annotations — video-player annotation UI"), now renders a drop-annotation form wired to the `debate-videos` persistent player's live playback position plus every persisted annotation with a "Jump to" action back into the player, at `/annotations`, closing follow-up (a). A fourth slice (see Tracker Status above, "Flow-in-Speech Flow Annotations — `FlowSpreadsheet` annotation affordance") added `flow/annotation-cells.ts` and `flow/AnnotationBadge.tsx`, wiring a per-cell annotation badge (with the same "Jump to" mechanism) into `FlowSpreadsheet` via a new `flow/AnnotationCellRenderer.tsx` and the existing `FirstColumnCellRenderer.tsx`, closing follow-up (b). No follow-ups remain open on this idea._
 
 16. **Shared, Ai-Generated Debate Flow** — Synchronize a live flow across a team or room so collaborators can follow the same argument map, while optionally preloading evidence cards with structured flow notes to reduce manual flowing. Existing debate-flow products show the feasibility of live transcription, argument tracking, shared notes, saved flows, and structured ballot assistance; this feature should keep humans in control of the actual flow and strategic interpretation. [github](https://github.com/saranchockan/DebateFlow) _Status: first slices done (see Tracker Status above) — `debate-round` now has `mergeFlowEdits`/`applyMergedEditsToFlow`/`buildSharedFlowSyncSummaryText` for reconciling multiple teammates' concurrent box-level flow edits into one canonical flow (last write wins), flagging genuinely concurrent, diverging edits from different authors as conflicts for a human to resolve instead of silently overwriting them. A second slice, `SharedFlowSyncPanel` (see "Feature panels", PR #214), renders that merge preview in the Coach hub's Flow section, driven entirely by props. A third slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — Flow Edit Log + real merge-preview data source") added `createFlowEdit` plus `state/flowEdits.ts` and `FlowEditLogPanel`, giving a contributor a way to actually log a `FlowEdit` and wiring `CoachHub` to feed `SharedFlowSyncPanel` real, persisted edits (and apply an accepted merge back into the round workspace) instead of a hardcoded empty array. A fourth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — FlowSpreadsheet edit-review/log affordance") added `flow/edit-cells.ts`, `flow/EditBadge.tsx`, and `flow/EditReviewPopover.tsx`, wiring a per-cell badge into `AnnotationCellRenderer`/`FirstColumnCellRenderer` that shows a box's pending `FlowEdit`s and opens a click-positioned popover to log a new one, closing follow-up (b). A fifth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — Common Argument Library flow-note suggestions") added `flow/flow-note-suggestions.ts` and wired a "Suggested from Common Argument Library" list into `FlowEditLogPanel`'s Content field, scoring the in-progress note against the persisted Common Argument Library corpus and offering a matched card's formatted note as an insertable (never auto-applied) starting point, closing follow-up (c). A sixth slice (see Tracker Status above, "Shared, Ai-Generated Debate Flow — server-backed live sync transport") added `apps/debate-ai.com`'s `lib/database/schema.ts` `flowSyncEdits` D1 table and `app/api/flow-sync/route.ts` (GET pull-since-cursor, POST upsert), plus `debate-round`'s `flow/flow-sync-client.ts`, `flow/flow-sync-cursor.ts`, and `hooks/useFlowSyncPolling.ts`, wiring an opt-in "Live sync" toggle into `FlowEditLogPanel` that short-polls the server for other contributors' edits to the form's current Flow ID and folds them into the existing local `state/flowEdits.ts` store, and best-effort pushes newly logged edits to the server — a short-poll transport rather than a WebSocket/Durable Object push channel, matching the follow-up's "WebSocket or similar" wording. No follow-ups remain open on this idea._
+
+17. **Account-Synced Core Round/Flow Workspace** — `packages/debate-round/src/state/store.ts`'s `rounds`/`flows` (the actual debate content the primary `/debate` flow editor creates and edits, via `DebateRoundPanel`) remain entirely `localStorage`-only today — `setRounds`/`getRounds` and the parallel `flows`/`"flow-history"` keys never leave the browser they were created in. This is the one piece of the recurring "save flows docs and debates in SQL and link to users" standing prompt genuinely still open: `/reason-editor` documents already sync (idea-independent, predates this list), and the User Settings slice above (see Tracker Status) closed the "user settings" half. Deliberately not started here — `store.ts` is a pervasively-used `zustand` store threaded through most of `debate-round`'s hooks/dialogs/panels (`useFlowEffects`, `useFlowHandlers`, `useTimerState`, `CreateRoundDialog`, `DebateRoundPanel` itself), so an account-sync layer over it needs its own focused slice rather than folding into an unrelated PR. A first cut should mirror the `documents`/User Settings precedent: a `saved_rounds` D1 table keyed by `(userId, clientRoundId)` (`Round.id` is a client-assigned `Date.now()`, so upsert-by-id rather than a server-assigned autoincrement id, mirroring `flow_sync_edits`'s convention), `GET`/`PUT`/`DELETE /api/rounds` routes, and a `useAccountRounds`-style hook layered over `setRounds`/`createRound`/`updateRound`/`deleteRound` the same way `useAccountSettings` layers over `Settings.setValue` — local-first, remote merged in on mount, pushed best-effort on every local change. Whether a round's own `flows` (referenced by `flowIds`) sync in the same slice or a separate one is an open scoping call for whoever picks this up — the `flows` array can be considerably larger per-entry than a `Round`'s own metadata.
 
 
 

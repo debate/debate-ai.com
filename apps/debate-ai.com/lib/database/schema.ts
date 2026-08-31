@@ -101,6 +101,23 @@ export const flowSyncEdits = sqliteTable(
 
 export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
 
+// Account-synced user settings (see packages/debate-round/src/state/settings.ts
+// for the client-side registry this mirrors — debateStyle/fontSize today).
+// One row per user; `data` is a JSON-stringified `SettingsSyncData` map of
+// setting key -> primitive value, upserted wholesale on every change rather
+// than tracked per-key, since the whole map is small.
+export const userSettings = sqliteTable("user_settings", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  data: text("data").notNull().default("{}"),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type UserSettingsRow = typeof userSettings.$inferSelect;
+
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can
