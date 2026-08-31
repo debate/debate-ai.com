@@ -194,6 +194,20 @@ among several; `pruneExpiredQuestTemplates` never removing an expired
 recurring template; `buildPersistedDailyQuestBoard` rolling a recurring
 template's next cycle back onto the board at 0 progress).
 
+## Cross-tab live update
+
+`DailyQuestsPanel` subscribes to the browser's `storage` event (fires only
+in *other* same-origin tabs/windows, never the one that made the write) via
+`state/live-update.ts`'s `isDailyQuestsLiveUpdateStorageEvent` and refreshes
+the board (and, if a contributor id is entered, their streak) when it fires
+for its backing `dailyQuestTemplates`, `contributions`, or
+`dailyMissionResults` keys — so a quest added, a contribution submitted, or
+a mission result recorded in a second tab now refreshes this tab's view
+without a manual reload — closing the "Every other localStorage-backed
+panel in this repo still has no cross-tab live-update mechanism" Known gap
+noted in [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
+Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
+
 ## Known gaps
 
 - No contributor identity/permission *checks* — the "Your streak" field
