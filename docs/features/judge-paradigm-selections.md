@@ -115,6 +115,23 @@ apply locally first and best-effort sync the same change outward, mirroring
 history is synced to your account" / "Sign in to sync your decision
 history" hint, the same convention as `WordCountRoundsPanel`.
 
+**Bulk clear a round's history:** closing idea #5's third "Next" bullet
+("a bulk 'clear all history for this round' action, and/or a per-round
+decision count cap"), each round's section in `JudgeDecisionPanel.tsx` also
+has a "Clear all history for this round" button next to its heading,
+alongside the existing per-decision "Clear" action.
+`state/judgeDecisions.ts`'s `deleteJudgeDecisionsForRound(roundId)` removes
+every record for that round in one write and returns the removed ids
+(newest-first); `hooks/useJudgeDecisions.ts`'s `deleteRoundHistory(roundId)`
+applies that locally first, then — when signed in — best-effort deletes
+each of those ids from the account too, one `DELETE
+/api/judge-decisions/[decisionId]` call per id (no new bulk-delete route;
+the existing single-decision endpoint is reused), mirroring
+`deleteDecision`'s local-first-then-sync order. A round with no history is a
+no-op (no state write, no network calls). A per-round decision count cap was
+not added in this slice — round history can still grow unbounded until a
+user clears it.
+
 ```
 state/judgeDecisions.ts        — id-keyed append-only log, grouped panel view
 state/savedJudgeDecisions.ts   — isValidJudgeDecisionRecord, size cap

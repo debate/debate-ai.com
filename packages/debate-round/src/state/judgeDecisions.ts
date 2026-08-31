@@ -99,6 +99,26 @@ export function deleteJudgeDecision(id: string): void {
   writeAll(readAll().filter((record) => record.id !== id));
 }
 
+/**
+ * Clears every persisted decision for one round at once (the "Clear all
+ * history for this round" bulk action) — idea #5's third still-open "Next"
+ * bullet in TODO.md. Returns the ids that were actually removed, newest-first
+ * (matching `listJudgeDecisionsForRound`'s order), so the caller
+ * (`hooks/useJudgeDecisions.ts`) knows exactly which ids to also remove from
+ * the account sync; an empty array for a round with no history.
+ */
+export function deleteJudgeDecisionsForRound(roundId: string): string[] {
+  const all = readAll();
+  const removedIds = all
+    .filter((record) => record.roundId === roundId)
+    .sort((a, b) => b.generatedAt - a.generatedAt)
+    .map((record) => record.id);
+  if (removedIds.length > 0) {
+    writeAll(all.filter((record) => record.roundId !== roundId));
+  }
+  return removedIds;
+}
+
 export type JudgeDecisionRoundGroup = {
   roundId: string;
   /** Newest-first. */
