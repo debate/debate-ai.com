@@ -29,6 +29,10 @@ below) — TODO.md's Product Feature Ideas item 14's own bullet for it.
   per the table), and by typing its name or an alias into
   Ctrl/Cmd-Shift-Space's command palette (`quick-card-search-ui.ts` also
   indexes every ribbon command, not just the `t`-prefixed Workspace links)
+- The shortcuts reference itself (`openShortcutsReference`, Help menu /
+  `reference-btn` / `?`-free command palette entry) now has **Print** and
+  **Export…** actions in its header alongside search — see "Printable and
+  exportable reference" below.
 
 ## Shortcuts
 
@@ -80,6 +84,38 @@ so the table above is the *default*, not a fixed contract.
   retyping one, and `Mod-Shift-x` (`aiCreateCite`) formats a full
   citation from a selection via the existing Anthropic proxy.
 
+## Printable and exportable reference
+
+Idea #14's tracked follow-up ("a printable/exportable version of the
+shortcuts reference, since today it's view-only inside the editor") is
+now closed. The reference modal's header (`reference-ui.ts`) carries two
+new actions next to the search box, both built from the same
+`collectGroups()` snapshot the on-screen list renders from — so the
+printed/exported copy always matches exactly what's on screen (current
+key overrides, available commands only, plugin section included when any
+plugin has registered commands):
+
+- **Print** builds a full, un-filtered copy of the reference (ignores
+  any active search) into a `.pmd-reference-print-root` node appended to
+  `<body>`, then calls `window.print()`. The node is kept in the render
+  tree but pushed off-screen (`position: absolute; left: -9999px`) so it
+  never appears during normal use; a `@media print` block in `style.css`
+  hides everything else in the document via the standard
+  `body * { visibility: hidden }` / re-reveal-the-target-subtree trick
+  rather than naming CardMirror's own containers, since CardMirror can
+  either own the whole page or be embedded inside a host panel. The node
+  is removed again on `afterprint` (with a 5s timeout backstop for hosts
+  that never fire it).
+- **Export…** saves the same data as a `cardmirror-shortcuts.txt` file
+  through `getHost().saveAs()` — the identical native-picker-or-download
+  path Settings → "Export settings…" already uses, so it works the same
+  way across the browser-tab, PWA, and Electron hosts.
+
+The plain-text formatting itself (`reference-export.ts`'s
+`formatShortcutsReferenceText`) is a pure function decoupled from the DOM
+so it's covered directly by `test/reference-export.test.ts`, independent
+of the modal's DOM-building/overlay-lifecycle code.
+
 ## Data flow
 
 ```
@@ -101,6 +137,12 @@ debate-editor-cardmirror/src/editor/ribbon-groups.ts     — RIBBON_GROUPS, them
 debate-editor-cardmirror/src/react/menu-bar-categories.ts — re-buckets RIBBON_GROUPS into File/Edit/Card/Format/Insert/AI/View/Tools/Workspace/Plugins
 debate-editor-cardmirror/src/react/MenuBar.tsx            — renders the top menu bar, dispatches via runRibbon(id)
 debate-editor-cardmirror/src/editor/quick-card-search-ui.ts → Ctrl/Cmd-Shift-Space palette, indexes every ribbon command by label/alias
+
+debate-editor-cardmirror/src/editor/reference-ui.ts        — openShortcutsReference's modal; collectGroups()
+                                                               is the shared data source for the on-screen list,
+                                                               print(), and exportAsText()
+debate-editor-cardmirror/src/editor/reference-export.ts    — formatShortcutsReferenceText(), the pure
+                                                               plain-text renderer used by exportAsText()
 ```
 
 ## Known gaps
@@ -112,6 +154,12 @@ two-field dialog component for this one command. A user who cancels the
 year prompt after already typing an author gets nothing inserted (by
 design — either both fields commit or neither does), so they re-run the
 command rather than only being asked for the year again.
+
+Print and Export always render the full reference — neither respects the
+modal's own search filter. Given the point of printing/exporting a
+reference is usually to have the whole thing on hand, this is treated as
+the right default rather than a gap, but a future run could add a "only
+matching rows" toggle if that turns out to be wanted.
 
 The old `reason-editor` (TipTap) package's `verbatim-shortcuts.ts`,
 `verbatim-shortcuts-extension.ts`, and `heading-move.ts` are no longer

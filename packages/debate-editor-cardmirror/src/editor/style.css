@@ -10514,7 +10514,25 @@ body.pmd-recovery-active.pmd-multi-doc #app {
   font-weight: 600;
 }
 
+.pmd-reference-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 
+.pmd-reference-action-btn {
+  padding: 0.3rem 0.65rem;
+  font: inherit;
+  font-size: 0.8rem;
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 4px;
+  background: var(--pmd-c-bg);
+  color: var(--pmd-c-text);
+  cursor: pointer;
+}
+.pmd-reference-action-btn:hover {
+  background: var(--pmd-c-info-bg);
+}
 
 .pmd-reference-close:hover {
   color: var(--pmd-c-text);
@@ -10587,6 +10605,63 @@ body.pmd-recovery-active.pmd-multi-doc #app {
 .pmd-reference-label {
   font-size: 0.88rem;
   color: var(--pmd-c-text);
+}
+
+/* Printable copy of the reference, built fresh by reference-ui.ts's
+   print() and appended to <body>. Kept in the render tree but pushed
+   off-screen so `@media print` can reveal it without depending on any
+   assumption about what else lives in the document (CardMirror may
+   own the whole page, or be embedded inside a host panel) — the
+   visibility trick below hides everything else instead of naming it. */
+.pmd-reference-print-root {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 800px;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .pmd-reference-print-root,
+  .pmd-reference-print-root * {
+    visibility: visible;
+  }
+  .pmd-reference-print-root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: auto;
+    color: #000;
+    background: #fff;
+  }
+  .pmd-reference-print-root h1 {
+    font-size: 18px;
+    margin: 0 0 12px;
+  }
+  .pmd-reference-print-root h2 {
+    font-size: 12px;
+    margin: 16px 0 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .pmd-reference-print-root section {
+    break-inside: avoid;
+  }
+  .pmd-reference-print-root table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .pmd-reference-print-root td {
+    padding: 2px 12px 2px 0;
+    font-size: 11px;
+    vertical-align: top;
+  }
+  .pmd-reference-print-root td:first-child {
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    white-space: nowrap;
+  }
 }
 
 /* ---------------------------------------------- Tables */

@@ -6,6 +6,61 @@
 _No task currently in progress._
 
 ### Completed
+- **Legacy Verbatim / Cardmirror Compatibility — printable/exportable
+  shortcuts reference (idea #14, "Next: a printable/exportable version of
+  the shortcuts reference, since today it's view-only inside the
+  editor").** Prompted by another repeat of the standing prompt ("go
+  through the tools and the todo.md ideas and incorporate them into the
+  ui... integrate card mirror better into the editor and also have its
+  commands in the central menu of Ctrl shift space... menu items on top of
+  the top bar like Google docs... create user settings and link user db
+  SQL with ability to save flows docs and debates in SQL and link to
+  users"), and finding — like every recent repeat — that CardMirror's
+  MenuBar/command-palette integration and the SQL-linked user
+  settings/flows/docs/rounds system are already fully built, this slice
+  picked up idea #14's own still-open "Next" bullet: the
+  `openShortcutsReference` modal (`reference-ui.ts`) was view-only, with
+  no way to get the shortcut list out of the app. Added a
+  `collectGroups()` method that gathers the same static-`RIBBON_GROUPS` +
+  Plugins data the on-screen list already rendered inline, now as a single
+  plain-data source shared by three consumers: the on-screen list itself
+  (refactored to build its DOM from `collectGroups()`'s output instead of
+  re-deriving it inline), a new **Print** header button that builds an
+  off-screen `.pmd-reference-print-root` copy and calls `window.print()`
+  (revealed via a `body * { visibility: hidden }` / re-reveal `@media
+  print` block in `style.css`, chosen over naming CardMirror's own
+  containers since CardMirror can either own the page or be embedded in a
+  host panel), and a new **Export…** header button that saves a
+  `cardmirror-shortcuts.txt` file through the existing
+  `getHost().saveAs()` host abstraction — the same native-picker-or-download
+  path Settings → "Export settings…" already uses, so it works identically
+  across the browser-tab, PWA, and Electron hosts. The plain-text
+  rendering itself lives in a new pure module,
+  `reference-export.ts`'s `formatShortcutsReferenceText()`, kept separate
+  from the DOM/overlay-lifecycle code specifically so it's fast and easy
+  to test directly. Documented in `docs/features/legacy-verbatim-shortcuts.md`
+  (new "Printable and exportable reference" section, Data flow entries,
+  and a Known gaps note that Print/Export always render the full
+  reference regardless of the modal's own search filter, by design).
+  Vitest-covered: 5 new cases in
+  `packages/debate-editor-cardmirror/test/reference-export.test.ts`
+  (title+group rendering, the em-dash fallback for an unbound command, a
+  fully-empty group being skipped, an all-empty document collapsing to
+  just the title line, and key-column alignment across the widest key in
+  the document). `reference-ui.ts`'s `ReferenceModal` class itself remains
+  intentionally untested, matching this package's existing convention for
+  DOM-heavy modal classes (their pure helpers get direct tests; the modal
+  wiring doesn't — see `insert-short-cite.test.ts` for the same pattern
+  applied to a sibling command). Verified: `bun install` (2258 packages),
+  `bun x vitest run packages/debate-editor-cardmirror/test/reference-export.test.ts`
+  (5/5 pass) and full `bun run test` (196 files / 3111 tests, all pass, up
+  from 195/3106), `bunx turbo run typecheck --filter=debate-editor-cardmirror`
+  (3/3 in-scope package tasks pass), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (35 pre-existing, unrelated errors —
+  identical count to before this change, confirming no regression), and
+  `bun run build:web` (`debate-ai-web` and its offline-service-worker
+  build both complete clean, `/reason-editor` present in the route list).
+  **Completed:** 2026-08-31.
 - **Top Contributor Awards — cross-tab live-update (idea #17,
   `shared-flow-sync.md` Known gap: "every other localStorage-backed panel
   in this repo still has no cross-tab live-update mechanism").** Prompted
@@ -10275,7 +10330,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
     - A coach-facing roster analytics dashboard (completion rates, streaks, standings in one place).
     - A digest notification summarizing challenge results instead of requiring a panel visit.
 
-14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all three prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); and Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command. See `docs/features/legacy-verbatim-shortcuts.md`. Next: a printable/exportable version of the shortcuts reference, since today it's view-only inside the editor.
+14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all four prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command; and the reference itself now has Print and Export… actions (`reference-ui.ts`, `reference-export.ts`). See `docs/features/legacy-verbatim-shortcuts.md`. Next: a "download the shortcuts as a printable PDF" option instead of relying on the browser/OS print-to-PDF flow from the Print action; or an in-app onboarding nudge (e.g. from `ui-tour.ts`) pointing a Verbatim-trained user at the reference the first time they open a CardMirror document.
 
 15. **Flow-in-Speech Flow Annotations** (`/annotations`, `FlowSpreadsheet` badges) —
     - Search/filter annotations by speech, speaker, or tag.
