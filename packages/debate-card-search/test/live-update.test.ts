@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS,
+  CONTRIBUTOR_AWARDS_LIVE_UPDATE_STORAGE_KEYS,
   DAILY_BEST_CARD_LIVE_UPDATE_STORAGE_KEYS,
   NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS,
   PROGRESS_UNLOCKS_LIVE_UPDATE_STORAGE_KEYS,
@@ -8,6 +9,7 @@ import {
   RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS,
   TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS,
   isContributionLeaderboardLiveUpdateStorageEvent,
+  isContributorAwardsLiveUpdateStorageEvent,
   isDailyBestCardLiveUpdateStorageEvent,
   isNewsStreamLiveUpdateStorageEvent,
   isProgressUnlocksLiveUpdateStorageEvent,
@@ -167,5 +169,27 @@ describe("isNewsStreamLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isNewsStreamLiveUpdateStorageEvent({ key: "newsStreamViewerStateBackup" })).toBe(false);
     expect(isNewsStreamLiveUpdateStorageEvent({ key: "old_dailyBestCardAnnouncements" })).toBe(false);
+  });
+});
+
+describe("isContributorAwardsLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of CONTRIBUTOR_AWARDS_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isContributorAwardsLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isContributorAwardsLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isContributorAwardsLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isContributorAwardsLiveUpdateStorageEvent({ key: "dailyBestCardAnnouncements" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isContributorAwardsLiveUpdateStorageEvent({ key: "contributionsBackup" })).toBe(false);
+    expect(isContributorAwardsLiveUpdateStorageEvent({ key: "old_contributorAwardAnnouncements" })).toBe(false);
   });
 });

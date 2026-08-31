@@ -36,6 +36,7 @@ import {
   listAnnouncedContributorAwards,
   type AnnouncedContributorAwards,
 } from "../state/contributorAwardAnnouncements"
+import { isContributorAwardsLiveUpdateStorageEvent } from "../state/live-update"
 import type { ContributorAward } from "../lib/contributor-awards"
 
 /** Renders one category winner card. */
@@ -83,8 +84,11 @@ function AnnouncementGroup({ announcement }: { announcement: AnnouncedContributo
  * shows that frozen result instead of the live standings for the rest of the
  * day, plus the history of every previously announced day.
  *
- * Reads localStorage on mount only (client-side), so it renders a loading
- * state during SSR/hydration rather than throwing.
+ * Reads localStorage on mount, then live-updates when another same-origin
+ * tab submits a contribution or announces awards (a `storage` event never
+ * fires in the tab that made the write itself, only in others — see
+ * `state/live-update.ts#isContributorAwardsLiveUpdateStorageEvent`). Renders
+ * a loading state during SSR/hydration rather than throwing.
  */
 export function ContributorAwardsPanel() {
   const [live, setLive] = useState<ContributorAward[] | null>(null)
@@ -100,6 +104,20 @@ export function ContributorAwardsPanel() {
 
   useEffect(() => {
     refresh()
+  }, [])
+
+  /**
+   * Live-update the displayed winners/history when another browser tab
+   * submits a contribution or announces awards. Same-tab changes already
+   * refresh via `handleAnnounce` below.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isContributorAwardsLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   const handleAnnounce = () => {

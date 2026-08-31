@@ -6,6 +6,55 @@
 _No task currently in progress._
 
 ### Completed
+- **Top Contributor Awards — cross-tab live-update (idea #17,
+  `shared-flow-sync.md` Known gap: "every other localStorage-backed panel
+  in this repo still has no cross-tab live-update mechanism").** Prompted
+  by another repeat of idea #17's standing request ("create user settings
+  and link user db SQL... with ability to save flows docs and debates in
+  SQL and link to users... add tools into where needed in the ui... develop
+  better tool ui"), and finding — like every recent repeat of this
+  prompt — that the "user settings / SQL-linked flows, docs, rounds" half
+  is already fully built and documented, this slice audited
+  `shared-flow-sync.md`'s running list of panels that already have the
+  cross-tab `storage`-event live-update mechanism (`DailyBestCardPanel`,
+  `ContributionLeaderboardPanel`, `TaskInboxPanel`, `ProgressUnlocksPanel`,
+  `ResearchProgressPanel`, `QuestStreaksPanel`, `NewsStreamPanel`) against
+  the panels that don't, and picked `ContributorAwardsPanel` — it shares
+  its two backing `localStorage` stores (`contributions`,
+  `contributorAwardAnnouncements`) with `DailyBestCardPanel`, which already
+  has the mechanism, but itself only ever refreshed on mount. Added
+  `CONTRIBUTOR_AWARDS_LIVE_UPDATE_STORAGE_KEYS`/
+  `isContributorAwardsLiveUpdateStorageEvent` to
+  `packages/debate-card-search/src/state/live-update.ts`, mirroring the
+  seven existing key-list/predicate pairs there exactly (true for either
+  backing key or a `null` key from `localStorage.clear()`, false otherwise
+  — including a same-prefix substring key). Wired a `storage` event
+  listener into `ContributorAwardsPanel.tsx` that calls the existing
+  `refresh()` closure when the predicate matches, mirroring
+  `DailyBestCardPanel`'s identical listener wiring exactly (added/removed
+  in its own `useEffect`, separate from the mount-only refresh effect).
+  Documented in `docs/features/contributor-awards.md` (new data-flow line
+  and "live-updates across browser tabs" paragraph, closed the matching
+  Known gaps item) and `docs/features/shared-flow-sync.md` (added
+  `ContributorAwardsPanel` to the running list of panels that already have
+  the mechanism). Vitest-covered: 4 new cases for
+  `isContributorAwardsLiveUpdateStorageEvent` in
+  `packages/debate-card-search/test/live-update.test.ts` (every backing-key
+  match, the `null`-key clear-all case, an unrelated key, and a
+  same-prefix substring key), bringing that file to 32 cases.
+  `ContributorAwardsPanel.tsx` itself remains intentionally untested,
+  matching every other panel in this repo whose `storage`-listener wiring
+  is exercised only through the shared pure predicate's own tests (e.g.
+  `DailyBestCardPanel.tsx`). Verified: `bun install` (2258 packages), `bun
+  x vitest run packages/debate-card-search/test/live-update.test.ts`
+  (32/32 pass) and full `bun run test` (195 files / 3106 tests, all pass,
+  up from 195/3102), `bunx turbo run typecheck --filter=debate-card-search
+  --filter=debate-ai-web` (11/11 in-scope package tasks pass), a direct
+  `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json` (35 pre-existing,
+  unrelated errors — identical count to before this change, confirming no
+  regression), and `bun run build:web` (`debate-ai-web` and its
+  offline-service-worker build both complete clean, `/cards/awards`
+  present in the route list). **Completed:** 2026-08-31.
 - **Expandable Heading Structure — dedicated breadcrumb visibility toggle
   (idea #9, `reason-editor-outline-nav.md` Known gap: "No dedicated
   visibility toggle for the breadcrumb").** Prompted by another repeat of

@@ -55,6 +55,9 @@ state/contributions.ts (localStorage)
       → listAnnouncedContributorAwards() / getAnnouncedContributorAwards()
   → panels/ContributorAwardsPanel.tsx (live standings, announce action, history)
   → apps/debate-ai.com/app/cards/awards/page.tsx (mounts the panel as a route)
+
+state/live-update.ts#isContributorAwardsLiveUpdateStorageEvent
+  → panels/ContributorAwardsPanel.tsx (cross-tab `storage` listener → refresh())
 ```
 
 This feature is a read-only composition and rendering layer: it introduces
@@ -66,6 +69,23 @@ freeze-on-announce layer on top of it (mirroring
 pattern) — no new scoring or grouping logic (see
 `packages/debate-card-search/test/contributions.test.ts` and
 `packages/debate-card-search/test/contributorAwardAnnouncements.test.ts`).
+
+`ContributorAwardsPanel` now also live-updates across browser tabs: a
+`storage` event listener (which the browser fires only in *other*
+same-origin tabs, never the tab that made the write) calls `state/
+live-update.ts`'s `isContributorAwardsLiveUpdateStorageEvent` — true for its
+two backing keys (`contributions`, `contributorAwardAnnouncements`) or a
+`null` key (`localStorage.clear()`) — and re-runs `refresh()` when it
+matches, mirroring `DailyBestCardPanel`'s identical `storage`-listener
+pattern. This closes, for this panel, the "Every other localStorage-backed
+panel in this repo still has no cross-tab live-update mechanism" Known gap
+noted in [`shared-flow-sync.md`](shared-flow-sync.md). Vitest-covered in
+`packages/debate-card-search/test/live-update.test.ts` (every backing-store
+key, the `null`-key clear-all case, and unrelated/substring-matching keys
+staying ignored); `ContributorAwardsPanel.tsx` itself remains
+intentionally untested, matching every other panel in this repo whose
+`storage`-listener wiring is exercised only through the shared pure
+predicate's own tests.
 
 ## Known gaps
 
