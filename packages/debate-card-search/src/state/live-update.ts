@@ -2,8 +2,8 @@
  * @fileoverview Cross-tab live-update helpers for `DailyBestCardPanel`,
  * `ContributionLeaderboardPanel`, `TaskInboxPanel`, `ProgressUnlocksPanel`,
  * `ResearchProgressPanel`, `QuestStreaksPanel`, `NewsStreamPanel`,
- * `ContributorAwardsPanel`, `DailyQuestsPanel`, and `RevisionIncentivesPanel`,
- * mirroring `debate-round`'s `flow/live-update.ts`.
+ * `ContributorAwardsPanel`, `DailyQuestsPanel`, `RevisionIncentivesPanel`,
+ * and `CardScoringPanel`, mirroring `debate-round`'s `flow/live-update.ts`.
  * The browser's `storage` event never fires in the *same* tab that wrote the
  * change — only in other same-origin tabs — so a panel that reads
  * `localStorage` on mount only never reflects another tab's write without a
@@ -13,14 +13,14 @@
  * `isTaskInboxLiveUpdateStorageEvent`, `isProgressUnlocksLiveUpdateStorageEvent`,
  * `isResearchProgressLiveUpdateStorageEvent`, `isQuestStreaksLiveUpdateStorageEvent`,
  * `isNewsStreamLiveUpdateStorageEvent`, `isContributorAwardsLiveUpdateStorageEvent`,
- * `isDailyQuestsLiveUpdateStorageEvent`, and
- * `isRevisionIncentivesLiveUpdateStorageEvent` close the equivalent gap for
+ * `isDailyQuestsLiveUpdateStorageEvent`, `isRevisionIncentivesLiveUpdateStorageEvent`,
+ * and `isCardScoringLiveUpdateStorageEvent` close the equivalent gap for
  * their own panels — the news-stream one noted directly in
  * `news-stream.md`'s "No real-time updates across browser tabs" Known gap,
  * the rest in `shared-flow-sync.md`'s "Every other localStorage-backed panel
  * in this repo still has no cross-tab live-update mechanism." (a gap that
  * still applies to the rest of this repo's localStorage-backed panels
- * beyond these ten).
+ * beyond these eleven).
  *
  * @module state/live-update
  */
@@ -293,5 +293,34 @@ export function isRevisionIncentivesLiveUpdateStorageEvent(event: { key: string 
   return (
     event.key === null ||
     (REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `CardScoringPanel` reads from:
+ * `state/cardScores.ts`'s own `"cardScores"` store (every submitted card the
+ * ranking is built from), `state/aiCardAssessments.ts`'s `"aiCardAssessments"`
+ * (each card's persisted AI verdict, keyed by card id), and
+ * `state/trackedArguments.ts`'s `"trackedArguments"` (the topic switcher's
+ * "Use tracked keywords" quick-pick list).
+ */
+export const CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS = [
+  "cardScores",
+  "aiCardAssessments",
+  "trackedArguments",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `CardScoringPanel` to refresh its
+ * rendered ranking, AI assessments, and tracked-topic list — closes the
+ * "Every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
+ * for this panel. Mirrors `isDailyBestCardLiveUpdateStorageEvent`'s
+ * null-key/exact-key-match rules.
+ */
+export function isCardScoringLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

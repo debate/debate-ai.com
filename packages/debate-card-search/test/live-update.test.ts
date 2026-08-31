@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS,
   CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS,
   CONTRIBUTOR_AWARDS_LIVE_UPDATE_STORAGE_KEYS,
   DAILY_BEST_CARD_LIVE_UPDATE_STORAGE_KEYS,
@@ -10,6 +11,7 @@ import {
   RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS,
   REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS,
   TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS,
+  isCardScoringLiveUpdateStorageEvent,
   isContributionLeaderboardLiveUpdateStorageEvent,
   isContributorAwardsLiveUpdateStorageEvent,
   isDailyBestCardLiveUpdateStorageEvent,
@@ -239,5 +241,27 @@ describe("isRevisionIncentivesLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isRevisionIncentivesLiveUpdateStorageEvent({ key: "revisionHistoryBackup" })).toBe(false);
     expect(isRevisionIncentivesLiveUpdateStorageEvent({ key: "old_revisionHistory" })).toBe(false);
+  });
+});
+
+describe("isCardScoringLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isCardScoringLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isCardScoringLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isCardScoringLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isCardScoringLiveUpdateStorageEvent({ key: "contributions" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isCardScoringLiveUpdateStorageEvent({ key: "cardScoresBackup" })).toBe(false);
+    expect(isCardScoringLiveUpdateStorageEvent({ key: "old_aiCardAssessments" })).toBe(false);
   });
 });

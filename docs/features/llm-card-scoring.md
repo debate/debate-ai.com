@@ -67,6 +67,24 @@ prompt-building and response-parsing coverage, and
 `packages/debate-card-search/test/aiCardAssessments.test.ts` for the
 persisted-store coverage.
 
+## Cross-tab live update
+
+`CardScoringPanel` subscribes to the browser's `storage` event, which fires
+only in *other* same-origin tabs/windows, never the one that made the write.
+A new pure helper, `state/live-update.ts`'s `isCardScoringLiveUpdateStorageEvent`,
+checks whether the event's `key` is one of the panel's three backing stores
+(`cardScores`, `aiCardAssessments`, `trackedArguments`) or `null` (a
+`localStorage.clear()`); when it is, the panel re-runs its mount-time
+refresh — recomputing the ranking, re-reading each ranked card's persisted
+AI assessment, and refreshing the tracked-topic list — so a card scored, an
+AI assessment requested, or a topic tracked in another tab shows up here
+without a manual reload. This closes the "Every other localStorage-backed
+panel in this repo still has no cross-tab live-update mechanism" Known gap
+noted in [`shared-flow-sync.md`](shared-flow-sync.md), for this panel.
+Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`
+(every backing-key match, the `null`-key clear-all case, an unrelated key,
+and a same-prefix substring key).
+
 ## Known gaps
 
 - The keywords field is still free-text — "Use tracked keywords" fills it
