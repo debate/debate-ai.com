@@ -61,6 +61,19 @@ existing `EvidenceLibraryEntry` derives a before/after `CardSnapshot` pair via
 it as a `CardRevisionRecord`, so this leaderboard now reflects real edits rather than only
 caller-supplied snapshots.
 
+## Cross-tab live update
+
+`RevisionIncentivesPanel` now subscribes to the browser's `storage` event —
+fired only in *other* same-origin tabs, never the one that made the write —
+via `state/live-update.ts`'s `isRevisionIncentivesLiveUpdateStorageEvent`
+(true for the panel's own `"revisionHistory"` key, or a `null` key from
+`localStorage.clear()`). When it fires, the panel rebuilds its leaderboard
+with `buildPersistedRevisionIncentiveLeaderboard()`, so a revision recorded
+in another tab shows up here without a manual reload. This closes
+`shared-flow-sync.md`'s "Every other localStorage-backed panel in this repo
+still has no cross-tab live-update mechanism" Known gap for this panel.
+Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
+
 ## Known gaps
 
 None open on this bullet.

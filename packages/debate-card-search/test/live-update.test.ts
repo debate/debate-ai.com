@@ -8,6 +8,7 @@ import {
   PROGRESS_UNLOCKS_LIVE_UPDATE_STORAGE_KEYS,
   QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS,
   RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS,
+  REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS,
   TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS,
   isContributionLeaderboardLiveUpdateStorageEvent,
   isContributorAwardsLiveUpdateStorageEvent,
@@ -17,6 +18,7 @@ import {
   isProgressUnlocksLiveUpdateStorageEvent,
   isQuestStreaksLiveUpdateStorageEvent,
   isResearchProgressLiveUpdateStorageEvent,
+  isRevisionIncentivesLiveUpdateStorageEvent,
   isTaskInboxLiveUpdateStorageEvent,
 } from "../src/state/live-update";
 
@@ -215,5 +217,27 @@ describe("isDailyQuestsLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isDailyQuestsLiveUpdateStorageEvent({ key: "dailyQuestTemplatesBackup" })).toBe(false);
     expect(isDailyQuestsLiveUpdateStorageEvent({ key: "old_dailyMissionResults" })).toBe(false);
+  });
+});
+
+describe("isRevisionIncentivesLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isRevisionIncentivesLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isRevisionIncentivesLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isRevisionIncentivesLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isRevisionIncentivesLiveUpdateStorageEvent({ key: "contributions" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isRevisionIncentivesLiveUpdateStorageEvent({ key: "revisionHistoryBackup" })).toBe(false);
+    expect(isRevisionIncentivesLiveUpdateStorageEvent({ key: "old_revisionHistory" })).toBe(false);
   });
 });

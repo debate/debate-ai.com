@@ -2,8 +2,8 @@
  * @fileoverview Cross-tab live-update helpers for `DailyBestCardPanel`,
  * `ContributionLeaderboardPanel`, `TaskInboxPanel`, `ProgressUnlocksPanel`,
  * `ResearchProgressPanel`, `QuestStreaksPanel`, `NewsStreamPanel`,
- * `ContributorAwardsPanel`, and `DailyQuestsPanel`, mirroring `debate-round`'s
- * `flow/live-update.ts`.
+ * `ContributorAwardsPanel`, `DailyQuestsPanel`, and `RevisionIncentivesPanel`,
+ * mirroring `debate-round`'s `flow/live-update.ts`.
  * The browser's `storage` event never fires in the *same* tab that wrote the
  * change — only in other same-origin tabs — so a panel that reads
  * `localStorage` on mount only never reflects another tab's write without a
@@ -13,13 +13,14 @@
  * `isTaskInboxLiveUpdateStorageEvent`, `isProgressUnlocksLiveUpdateStorageEvent`,
  * `isResearchProgressLiveUpdateStorageEvent`, `isQuestStreaksLiveUpdateStorageEvent`,
  * `isNewsStreamLiveUpdateStorageEvent`, `isContributorAwardsLiveUpdateStorageEvent`,
- * and `isDailyQuestsLiveUpdateStorageEvent` close the equivalent gap for
+ * `isDailyQuestsLiveUpdateStorageEvent`, and
+ * `isRevisionIncentivesLiveUpdateStorageEvent` close the equivalent gap for
  * their own panels — the news-stream one noted directly in
  * `news-stream.md`'s "No real-time updates across browser tabs" Known gap,
  * the rest in `shared-flow-sync.md`'s "Every other localStorage-backed panel
  * in this repo still has no cross-tab live-update mechanism." (a gap that
  * still applies to the rest of this repo's localStorage-backed panels
- * beyond these nine).
+ * beyond these ten).
  *
  * @module state/live-update
  */
@@ -269,5 +270,28 @@ export function isDailyQuestsLiveUpdateStorageEvent(event: { key: string | null 
   return (
     event.key === null ||
     (DAILY_QUESTS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `RevisionIncentivesPanel` reads from:
+ * `state/revisionHistory.ts`'s own `"revisionHistory"` store, the sole
+ * source `buildPersistedRevisionIncentiveLeaderboard` ranks contributors
+ * from.
+ */
+export const REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS = ["revisionHistory"] as const;
+
+/**
+ * Whether a `storage` event should trigger `RevisionIncentivesPanel` to
+ * refresh its rendered leaderboard — closes the "Every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap noted in `shared-flow-sync.md`, for this panel.
+ * Mirrors `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match
+ * rules.
+ */
+export function isRevisionIncentivesLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

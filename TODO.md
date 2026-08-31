@@ -6,6 +6,48 @@
 _No task currently in progress._
 
 ### Completed
+- **Revision Incentives — cross-tab live-update (idea #17, `shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of
+  idea #17's standing request ("create user settings and link user db
+  SQL... with ability to save flows docs and debates in SQL and link to
+  users... add tools into where needed in the ui... develop better tool
+  ui"), and finding — like every recent repeat of this prompt — that the
+  "user settings / SQL-linked flows, docs, rounds" half is already fully
+  built and documented, this slice picked up `shared-flow-sync.md`'s next
+  unclaimed panel from its running cross-tab-live-update list (the
+  immediately preceding run had just closed `DailyQuestsPanel`):
+  `RevisionIncentivesPanel` (`/cards/revisions`), which reads
+  `state/revisionHistory.ts`'s single `revisionHistory` localStorage store
+  via `buildPersistedRevisionIncentiveLeaderboard` but, like every other
+  still-unclaimed panel, only ever refreshed on mount. Added
+  `REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS`/
+  `isRevisionIncentivesLiveUpdateStorageEvent` to
+  `packages/debate-card-search/src/state/live-update.ts`, mirroring the ten
+  existing key-list/predicate pairs there exactly (true for the
+  `revisionHistory` key or a `null` key from `localStorage.clear()`, false
+  otherwise — including a same-prefix substring key). Wired a `storage`
+  event listener into `RevisionIncentivesPanel.tsx` that calls
+  `buildPersistedRevisionIncentiveLeaderboard()` when the predicate
+  matches. Documented in `docs/features/revision-incentives.md` (new
+  "Cross-tab live update" section) and `docs/features/shared-flow-sync.md`
+  (added `RevisionIncentivesPanel` to the running list of panels that
+  already have the mechanism). Vitest-covered: 4 new cases for
+  `isRevisionIncentivesLiveUpdateStorageEvent` in
+  `packages/debate-card-search/test/live-update.test.ts` (the backing-key
+  match, the `null`-key clear-all case, two unrelated/substring keys),
+  bringing that file to 40 cases. `RevisionIncentivesPanel.tsx`'s own
+  `storage`-listener wiring remains intentionally untested, matching every
+  other panel in this repo whose wiring is exercised only through the
+  shared pure predicate's own tests. Verified: `bun install` (2258
+  packages), the touched test file (40/40 pass), the full `bun run test`
+  (201 files / 3216 tests, all pass), the whole-repo `bun run typecheck`
+  (13 packages via turbo, all passing), and a full production `bun run
+  build:web` (vinext build + service-worker build, `/cards/revisions`
+  present in the route list) — all passed with no new failures. Generated
+  service-worker build artifacts (`app-file-list.ts`, `version.ts`,
+  `public/service-worker.js`) produced by that build were reverted before
+  committing, since they're build-time output unrelated to this change.
 - **Daily Quests — cross-tab live-update (idea #17, `shared-flow-sync.md`
   Known gap: "every other localStorage-backed panel in this repo still has
   no cross-tab live-update mechanism").** Prompted by another repeat of
