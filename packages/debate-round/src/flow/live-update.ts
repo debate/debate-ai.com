@@ -27,3 +27,23 @@ export const FLOW_LIVE_UPDATE_STORAGE_KEYS = ["flowAnnotations", "flowEdits", "p
 export function isFlowLiveUpdateStorageEvent(event: { key: string | null }): boolean {
   return event.key === null || (FLOW_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key);
 }
+
+/**
+ * The `localStorage` key the standalone Flow Annotations panel
+ * (`panels/FlowAnnotationsPanel.tsx`, distinct from the `FlowSpreadsheet`
+ * grid badge above) reads from — see `state/flowAnnotations.ts`.
+ */
+export const FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["flowAnnotations"] as const;
+
+/**
+ * Whether a `storage` event should trigger `FlowAnnotationsPanel` to
+ * re-read its persisted annotation list. A `null` key (e.g. from
+ * `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isFlowAnnotationsPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}

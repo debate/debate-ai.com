@@ -6,6 +6,49 @@
 _No task currently in progress._
 
 ### Completed
+- **Flow Annotations panel — cross-tab live-update (`shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the ui... develop better tool ui"), and finding
+  — like every recent repeat of this prompt — that the "user settings /
+  SQL-linked flows, docs, rounds" half is already fully built and documented
+  (including a real `/settings` page and D1-backed `flowSyncEdits`/document
+  tables linked to users), this slice picked up `shared-flow-sync.md`'s next
+  unclaimed panel from its running cross-tab-live-update list (the
+  immediately preceding run had just closed `GroupChallengesPanel`): the
+  standalone `FlowAnnotationsPanel` (`/annotations`) list view — distinct
+  from the `FlowSpreadsheet` grid's `AnnotationBadge`, which already had its
+  own cross-tab fix via `flow/live-update.ts#isFlowLiveUpdateStorageEvent`.
+  The panel itself reads `state/flowAnnotations.ts`'s single `flowAnnotations`
+  `localStorage` key but, like every other still-unclaimed panel, only ever
+  refreshed on mount or after its own drop/clear actions. Added
+  `FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isFlowAnnotationsPanelLiveUpdateStorageEvent` to the existing
+  `packages/debate-round/src/flow/live-update.ts` (scoped to just the one
+  key this panel reads, rather than reusing the grid's three-key predicate,
+  since the extra `flowEdits`/`prepNotes` keys are irrelevant to this
+  panel). Wired a `storage` event listener into `FlowAnnotationsPanel.tsx`
+  that calls the existing `refresh()` closure when the predicate matches.
+  Documented in `docs/features/flow-annotations.md` (closed the matching
+  "Known gaps" bullet) and `docs/features/shared-flow-sync.md` (added the
+  panel to the running list of panels that already have the mechanism).
+  Vitest-covered: 4 new cases for `isFlowAnnotationsPanelLiveUpdateStorageEvent`
+  in `packages/debate-round/test/live-update.test.ts` (the one backing key,
+  the `null`-key clear-all case, two unrelated keys, and two same-prefix
+  substring keys). `FlowAnnotationsPanel.tsx`'s own `storage`-listener wiring
+  remains intentionally untested, matching every other panel in this repo
+  whose wiring is exercised only through the shared pure predicate's own
+  tests. Verified: `bun install` (2258 packages), the touched test files
+  (24/24 pass), the full `bun run test` (201 files / 3232 tests, all pass),
+  the whole-repo `bun run typecheck` (12 packages via turbo, all passing),
+  and a full production `bun run build:web` (vinext build + service-worker
+  build, `/annotations` present in the route list) — all passed with no new
+  failures. Generated service-worker build artifacts (`app-file-list.ts`,
+  `version.ts`, `public/service-worker.js`) produced by that build were
+  reverted before committing, since they're build-time output unrelated to
+  this change.
 - **Group Challenges — cross-tab live-update (`shared-flow-sync.md`
   Known gap: "every other localStorage-backed panel in this repo still has
   no cross-tab live-update mechanism").** Prompted by another repeat of the
