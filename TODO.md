@@ -6,6 +6,58 @@
 _No task currently in progress._
 
 ### Completed
+- **Topic Sprint — cross-tab live-update (idea #16, `shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of
+  this run's standing request ("create user settings and link user db
+  SQL... with ability to save flows docs and debates in SQL and link to
+  users... add tools into where needed in the ui... develop better tool
+  ui"), and finding — like every recent repeat of this prompt — that the
+  "user settings / SQL-linked flows, docs, rounds" half is already fully
+  built and documented, this slice picked up `shared-flow-sync.md`'s next
+  unclaimed panel from its running cross-tab-live-update list (the
+  immediately preceding run had just closed `CardScoringPanel`):
+  `TopicSprintPanel` (`/cards/collaboration`'s Sprint tab, via
+  `ResearchHub.tsx`), which reads eight `localStorage` stores through
+  `state/topicSprints.ts`'s `readPersistedTopicSprintInputs`
+  (`dailyQuestTemplates`, `contributions`, `trackedArguments`,
+  `evidenceLibraryEntries`, `contributorAvailability`,
+  `completedResearchTasks`, `routedTaskQueues`) plus its own
+  `useStoreSnapshot`-backed `sprintNotes` read, but — like every other
+  still-unclaimed panel — only ever refreshed on mount, or when its `topic`
+  prop changed. Added `TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS`/
+  `isTopicSprintLiveUpdateStorageEvent` to
+  `packages/debate-card-search/src/state/live-update.ts`, mirroring the
+  twelve existing key-list/predicate pairs there exactly (true for any of
+  the eight backing keys or a `null` key from `localStorage.clear()`, false
+  otherwise — including same-prefix substring keys). Wired a `storage`
+  event listener into `TopicSprintPanel.tsx` that re-reads
+  `readPersistedTopicSprintInputs(topic)` and the panel's own notes
+  snapshot when the predicate matches, mirroring `DailyQuestsPanel`'s
+  `[topic]`-dependent listener (re-registered with a fresh closure whenever
+  `topic` changes, matching the existing mount effect's own `[topic]`
+  dependency) rather than `DailyBestCardPanel`'s simpler no-dependency
+  case. Documented in `docs/features/team-collaboration-mode.md` (new
+  "Cross-tab live update" section) and `docs/features/shared-flow-sync.md`
+  (added `TopicSprintPanel` to the running list of panels that already
+  have the mechanism). Vitest-covered: 4 new cases for
+  `isTopicSprintLiveUpdateStorageEvent` in
+  `packages/debate-card-search/test/live-update.test.ts` (every backing-key
+  match, the `null`-key clear-all case, two unrelated keys, and two
+  same-prefix substring keys), bringing that file to 48 cases.
+  `TopicSprintPanel.tsx`'s own `storage`-listener wiring remains
+  intentionally untested, matching every other panel in this repo whose
+  wiring is exercised only through the shared pure predicate's own tests.
+  Verified: `bun install` (2258 packages), the touched test file (57/57
+  pass across `live-update.test.ts` + `topicSprints.test.ts`), the full
+  `bun run test` (201 files / 3224 tests, all pass), the whole-repo `bun
+  run typecheck` (12 packages via turbo — `debate-ai-web` has no
+  `typecheck` script — all passing), and a full production `bun run
+  build:web` (vinext build + service-worker build, `/cards/collaboration`
+  present in the route list) — all passed with no new failures. Generated
+  service-worker build artifacts (`app-file-list.ts`, `version.ts`,
+  `public/service-worker.js`) produced by that build were reverted before
+  committing, since they're build-time output unrelated to this change.
 - **LLM Card Scoring — cross-tab live-update (idea #16, `shared-flow-sync.md`
   Known gap: "every other localStorage-backed panel in this repo still has
   no cross-tab live-update mechanism").** Prompted by another repeat of
