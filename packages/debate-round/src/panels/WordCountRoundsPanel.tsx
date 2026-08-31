@@ -21,6 +21,13 @@
  * authored `wordCountStyles` entry, so a signed-in user's custom overrides
  * apply here the same way they do in the live in-round meter.
  *
+ * A "Word-count trend" section below the persisted-round list renders every
+ * dated submission (across every round) as a chronological bar list via
+ * `buildWordCountTrendData` — TODO.md idea #2's "a trend view showing a
+ * debater's word-count-vs-limit history across past submissions" follow-up
+ * — with an optional per-speech-name filter once more than one speech name
+ * has history.
+ *
  * @module panels/WordCountRoundsPanel
  */
 
@@ -49,6 +56,7 @@ import {
 } from "debate-timer/src/formats/word-count-format"
 import {
   buildWordCountRoundsPanelView,
+  buildWordCountTrendData,
   deleteWordCountRound,
   getWordCountRoundStatuses,
   saveWordCountRound,
@@ -89,6 +97,7 @@ export function WordCountRoundsPanel() {
   const [styleKey, setStyleKey] = useState<WordCountStyleKey>(wordCountStyleMap[0])
   const [drafts, setDrafts] = useState<Record<string, SpeechDraft>>(emptyDrafts(wordCountStyleMap[0]))
   const [error, setError] = useState<string | null>(null)
+  const [trendSpeechFilter, setTrendSpeechFilter] = useState("all")
 
   // Which speech's textarea the microphone is currently dictating into, if any.
   const [dictatingSpeech, setDictatingSpeech] = useState<string | null>(null)
@@ -163,6 +172,10 @@ export function WordCountRoundsPanel() {
   }
 
   const style = wordCountStyles[styleKey]
+  const trendPoints = buildWordCountTrendData(presets)
+  const trendSpeechNames = Array.from(new Set(trendPoints.map((point) => point.name))).sort()
+  const filteredTrendPoints =
+    trendSpeechFilter === "all" ? trendPoints : trendPoints.filter((point) => point.name === trendSpeechFilter)
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -319,6 +332,56 @@ export function WordCountRoundsPanel() {
           })}
         </div>
       )}
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold text-foreground">Word-count trend</h2>
+          {trendSpeechNames.length > 1 && (
+            <Select value={trendSpeechFilter} onValueChange={setTrendSpeechFilter}>
+              <SelectTrigger className="h-8 w-40 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All speeches</SelectItem>
+                {trendSpeechNames.map((name) => (
+                  <SelectItem key={name} value={name}>
+                    {name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+        {filteredTrendPoints.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No dated submissions yet — save a round above to start tracking your history.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {filteredTrendPoints.map((point, index) => {
+              const percent = point.wordLimit > 0 ? Math.min(1, point.count / point.wordLimit) * 100 : 0
+              return (
+                <div key={`${point.roundId}-${point.name}-${index}`} className="space-y-1">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-foreground">
+                    <span className="truncate">
+                      {new Date(point.createdAt).toLocaleDateString()} — Round {point.roundId} ({point.name})
+                    </span>
+                    <span className="whitespace-nowrap font-semibold">
+                      {point.count} / {point.wordLimit}
+                    </span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className={`h-full rounded-full ${point.overLimit ? "bg-destructive" : "bg-primary"}`}
+                      style={{ width: `${percent}%` }}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

@@ -169,6 +169,45 @@ matching this package's existing convention for account-synced,
 `localStorage`-backed hooks and their settings-page UI (e.g.
 `useFavoriteTools`/`FavoriteToolsSettings`).
 
+## Word-count trend view
+
+TODO.md idea #2's "a trend view showing a debater's word-count-vs-limit
+history across past submissions" follow-up. Before this, a round's word
+counts were only visible per-round, in the persisted-round list on
+`/word-count` — there was no view across rounds over time.
+
+`WordCountRoundRecord` now carries an optional `createdAt` timestamp,
+stamped automatically by `saveWordCountRound` the first time a `roundId` is
+saved and preserved across later updates to that same `roundId` (both save
+sites — the standalone form and the live in-round meter, since both call
+`saveWordCountRound` — get this for free). A record persisted before this
+field existed has no `createdAt` and is excluded from the trend view rather
+than sorted arbitrarily.
+
+`buildWordCountTrendData(presets)` (`state/wordCountRounds.ts`) flattens
+every persisted round's submitted speeches into a single list sorted by
+`createdAt`, recomputing each entry's word count/limit/over-limit status the
+same way `getWordCountRoundStatuses` does (so it never goes stale if a
+format's limits or a user's presets change later, and honors a matching
+custom preset the same way).
+
+**Where it shows:** a "Word-count trend" section on `/word-count`, below the
+persisted-round list (`WordCountRoundsPanel`) — a chronological bar-per-
+submission list (mirroring `VulnerabilityChartsPanel`'s hand-rolled div/CSS
+bar chart, `packages/debate-round/src/panels/VulnerabilityChartsPanel.tsx`,
+rather than a charting library), with a per-speech-name filter dropdown once
+more than one speech name has history.
+
+```
+state/wordCountRounds.ts        — createdAt stamping, buildWordCountTrendData
+panels/WordCountRoundsPanel.tsx — "Word-count trend" section + speech filter
+```
+
+Vitest-covered in `packages/debate-round/test/wordCountRounds.test.ts`
+(`createdAt` stamping/preservation, and `buildWordCountTrendData`'s
+chronological ordering, legacy-record exclusion, style-mismatch skip, and
+preset-priority cases).
+
 ## Known gaps
 
 - ~~The compact ticking timer in `FlowPageHeader` (mobile header) still shows
