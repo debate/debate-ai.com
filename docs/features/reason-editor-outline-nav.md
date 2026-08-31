@@ -53,6 +53,12 @@ Single-doc only — multi-pane/multi-window each have their own
 `.pmd-pane-body` scroller and view and aren't wired up (a follow-up, not a
 regression: neither had a breadcrumb before this file existed).
 
+**Breadcrumb visibility toggle** — Settings → Appearance → "Show heading
+breadcrumb bar" (`showHeadingBreadcrumb`, default on, persisted). Off hides
+the bar unconditionally, even where a heading is in scope, independent of
+`navPaneVisible` — a user can keep the nav pane and drop just the sticky
+strip, or vice versa.
+
 ## Data flow
 
 ```
@@ -74,6 +80,10 @@ editor/heading-breadcrumb.ts
     stack (pop while the top of stack's level >= the next entry's level,
     then push) — no parent pointers needed, the same trick
     `sectionEndFromHeading` in headings.ts uses for sibling spans
+  → shouldShowBreadcrumb(enabled, path) — pure: `showHeadingBreadcrumb` AND
+    a non-empty path; `HeadingBreadcrumbBar.render` defers to this so the
+    setting and the "nothing above the scroll position yet" case share one
+    hide decision
 
 editor/heading-breadcrumb-bar.ts (HeadingBreadcrumbBar)
   → on scroll (rAF-throttled) and on doc update, probes a few Y offsets
@@ -82,6 +92,10 @@ editor/heading-breadcrumb-bar.ts (HeadingBreadcrumbBar)
     gap `posAtCoords` resolves as no hit, which left the bar showing a
     stale heading until this widened — then renders
     `computeBreadcrumbPath`'s result, clickable per segment to jump
+  → setEnabled(enabled) — called from settings.ts's `showHeadingBreadcrumb`
+    change handler (mirrors `applyFormatNavPaneByType`'s pattern): off
+    hides the bar immediately via render([]); on re-runs refresh() so
+    whatever the current scroll position would show reappears
 
 react/ribbon-template.ts
   → static `#heading-breadcrumb-bar` div, sibling of `.pmd-editor-row`
@@ -94,19 +108,15 @@ react/ribbon-template.ts
 - No component-level test exists for `NavigationPanel`/
   `HeadingBreadcrumbBar` themselves, consistent with this repo's existing
   convention of Vitest-covering pure state/engine logic
-  (`heading-breadcrumb.test.ts`'s 8 cases cover `computeBreadcrumbPath`'s
-  ancestor-stack logic directly) rather than DOM-wiring classes — verified
+  (`heading-breadcrumb.test.ts`'s 12 cases cover `computeBreadcrumbPath`'s
+  ancestor-stack logic and `shouldShowBreadcrumb`'s visibility predicate
+  directly) rather than DOM-wiring classes — verified
   instead via `bun run build:web` plus a manual Playwright pass against
   `wrangler dev` (a real local D1 is required for `/reason-editor`'s
   document create/list calls to succeed; `bun run dev:web`'s plain
   `vinext dev` has no D1 binding at all).
 - The breadcrumb is single-doc only; multi-pane and multi-window don't
   have one yet (see "What it shows" above).
-- No dedicated visibility toggle for the breadcrumb — it always renders
-  when a heading exists above the current scroll position. A follow-up
-  could gate it behind its own setting/ribbon command (mirroring
-  `toggleNavPane`'s `navPaneVisible` pattern) if a user wants it off
-  without also losing the nav panel.
 - Idea #9's other two follow-ups are already done, just not through the
   `reason-editor` package this doc used to point at: drag-to-reorder
   headings is `nav-panel.ts`'s existing drag/drop (`drag-controller.ts`),
