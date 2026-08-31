@@ -204,6 +204,38 @@ components/research/BrainstormBoardWithIdentity.tsx  — "use client" wrapper
 Sprint tab now mount this wrapper instead of the bare panel; a signed-out
 visitor sees the exact same blank field as before.
 
+## Cross-tab live update
+
+The panel used to read `state/brainstormIdeas.ts` and
+`state/trackedArguments.ts` on mount only, so a second open tab (or a
+teammate's separate browser window) never reflected an idea submitted,
+upvoted, merged, or AI-generated elsewhere until it re-rendered for some
+unrelated reason. It now also subscribes to the browser's `storage` event,
+which the spec fires only in *other* same-origin tabs/windows, never the one
+that made the write, so it's exactly the missing cross-tab signal.
+
+A new pure helper, `state/live-update.ts`'s
+`isBrainstormBoardLiveUpdateStorageEvent`, checks whether the event's `key`
+is one of this panel's two backing stores (`brainstormIdeas`,
+`trackedArguments`) or `null` (a `localStorage.clear()`); when it is, the
+listener re-runs the existing `refresh()` closure (boards for the
+currently-selected topic, plus the topic list), mirroring
+`CardScoringPanel`'s identical mechanism. The listener effect depends on
+`topic` so a topic change re-registers it with a fresh closure instead of
+refreshing against a stale one, the same convention `DailyQuestsPanel` uses
+for its `contributorId`-dependent listener.
+
+This closes this panel's share of the "every other localStorage-backed panel
+in this repo still has no cross-tab live-update mechanism" Known gap noted
+in [`shared-flow-sync.md`](shared-flow-sync.md). Vitest-covered: 4 new cases
+for `isBrainstormBoardLiveUpdateStorageEvent` in
+`packages/debate-card-search/test/live-update.test.ts` (every backing-key
+match, the `null`-key clear-all case, two unrelated keys, and two
+same-prefix substring keys). The panel's own `storage`-listener wiring
+remains intentionally untested, matching every other panel in this repo
+whose wiring is exercised only through the shared pure predicate's own
+tests.
+
 ## Known gaps
 
 - No reviewer/moderator identity check gates the merge action — any visitor

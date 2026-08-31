@@ -56,6 +56,13 @@
  * clearing it back to blank) so a signed-in visitor can submit several
  * ideas in a row without retyping their id each time.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isBrainstormBoardLiveUpdateStorageEvent`, so an idea submitted, upvoted,
+ * merged, or AI-generated in another browser tab (or a tracked topic added
+ * elsewhere) refreshes this panel's rendered boards and topic list here too
+ * — the `storage` event never fires in the tab that made the write, only in
+ * other tabs.
+ *
  * @module panels/BrainstormBoardPanel
  */
 
@@ -79,6 +86,7 @@ import {
 import { listTrackedTopics } from "../state/trackedArguments"
 import { requestTeamBrainstormAiIdeas } from "../lib/team-brainstorm-client"
 import { buildBrainstormPrompt } from "../lib/team-brainstorm-assist"
+import { isBrainstormBoardLiveUpdateStorageEvent } from "../state/live-update"
 import type { BrainstormBoard, BrainstormCategory } from "../lib/team-brainstorm-assist"
 
 const CATEGORY_OPTIONS: { value: BrainstormCategory; label: string }[] = [
@@ -147,6 +155,22 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
     const trimmed = activeTopic.trim()
     setBoards(trimmed ? buildBrainstormBoardsPanelViewForTopic(trimmed) : buildBrainstormBoardsPanelView())
   }
+
+  /**
+   * Live-update the boards and topic list when another browser tab submits,
+   * upvotes, merges, or AI-generates an idea, or adds a tracked topic.
+   * Depends on `topic` so a change to it re-registers the listener with a
+   * fresh closure rather than refreshing against a stale topic.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isBrainstormBoardLiveUpdateStorageEvent(event)) return
+      refresh(topic)
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topic])
 
   const handleTopicChange = (nextTopic: string) => {
     setTopic(nextTopic)
