@@ -341,11 +341,13 @@ Vitest-covered by an added case in `packages/debate-round/test/panels.test.tsx`
   "Cross-tab live update"), `GroupChallengesPanel` (see
   [`group-challenges.md`](group-challenges.md)'s "Cross-tab live update"),
   the standalone `FlowAnnotationsPanel` list view (see
-  [`flow-annotations.md`](flow-annotations.md)'s Known gaps entry), and
+  [`flow-annotations.md`](flow-annotations.md)'s Known gaps entry),
   `PrepNoteNotificationsPanel` (see [`prep-notes.md`](prep-notes.md)'s
-  "Cross-tab live update"), and `PrepNotesPanel` (see
-  [`prep-notes.md`](prep-notes.md)'s own "Cross-tab live update" section)
-  have since gained the equivalent mechanism for their own stores, but
+  "Cross-tab live update"), `PrepNotesPanel` (see
+  [`prep-notes.md`](prep-notes.md)'s own "Cross-tab live update" section),
+  and `ContributionsFeedPanel` (see
+  [`contributions-feed.md`](contributions-feed.md)'s "Cross-tab live
+  update") have since gained the equivalent mechanism for their own stores, but
   every other localStorage-backed panel in this repo still has none (Live
   Sync
   above is cross-*contributor*, via the server, not cross-tab within one

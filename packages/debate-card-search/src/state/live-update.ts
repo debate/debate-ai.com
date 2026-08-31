@@ -3,26 +3,27 @@
  * `ContributionLeaderboardPanel`, `TaskInboxPanel`, `ProgressUnlocksPanel`,
  * `ResearchProgressPanel`, `QuestStreaksPanel`, `NewsStreamPanel`,
  * `ContributorAwardsPanel`, `DailyQuestsPanel`, `RevisionIncentivesPanel`,
- * `CardScoringPanel`, `BrainstormBoardPanel`, and `GroupChallengesPanel`,
- * mirroring `debate-round`'s `flow/live-update.ts`. The browser's `storage`
- * event never fires in the *same* tab that wrote the change — only in other
- * same-origin tabs — so a panel that reads `localStorage` on mount only
- * never reflects another tab's write without a manual reload.
- * `isDailyBestCardLiveUpdateStorageEvent` closes the "No real-time updates
- * across browser tabs/sessions" Known gap noted in `daily-best-card.md`;
- * `isContributionLeaderboardLiveUpdateStorageEvent`,
+ * `CardScoringPanel`, `BrainstormBoardPanel`, `GroupChallengesPanel`, and
+ * `ContributionsFeedPanel`, mirroring `debate-round`'s `flow/live-update.ts`.
+ * The browser's `storage` event never fires in the *same* tab that wrote the
+ * change — only in other same-origin tabs — so a panel that reads
+ * `localStorage` on mount only never reflects another tab's write without a
+ * manual reload. `isDailyBestCardLiveUpdateStorageEvent` closes the "No
+ * real-time updates across browser tabs/sessions" Known gap noted in
+ * `daily-best-card.md`; `isContributionLeaderboardLiveUpdateStorageEvent`,
  * `isTaskInboxLiveUpdateStorageEvent`, `isProgressUnlocksLiveUpdateStorageEvent`,
  * `isResearchProgressLiveUpdateStorageEvent`, `isQuestStreaksLiveUpdateStorageEvent`,
  * `isNewsStreamLiveUpdateStorageEvent`, `isContributorAwardsLiveUpdateStorageEvent`,
  * `isDailyQuestsLiveUpdateStorageEvent`, `isRevisionIncentivesLiveUpdateStorageEvent`,
  * `isCardScoringLiveUpdateStorageEvent`, `isBrainstormBoardLiveUpdateStorageEvent`,
- * and `isGroupChallengesLiveUpdateStorageEvent` close the equivalent gap for
+ * `isGroupChallengesLiveUpdateStorageEvent`, and
+ * `isContributionsFeedLiveUpdateStorageEvent` close the equivalent gap for
  * their own panels — the news-stream one noted directly in `news-stream.md`'s
  * "No real-time updates across browser tabs" Known gap, the rest in
  * `shared-flow-sync.md`'s "Every other localStorage-backed panel in this
  * repo still has no cross-tab live-update mechanism." (a gap that still
  * applies to the rest of this repo's localStorage-backed panels beyond
- * these thirteen).
+ * these fourteen).
  *
  * @module state/live-update
  */
@@ -380,5 +381,34 @@ export function isGroupChallengesLiveUpdateStorageEvent(event: { key: string | n
   return (
     event.key === null ||
     (GROUP_CHALLENGES_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `ContributionsFeedPanel` reads from:
+ * `state/contributions.ts`'s own `"contributions"` store (every submitted
+ * contribution the ranked feed is built from, via
+ * `buildPersistedContributionFeed`) and `state/evidenceLibraryEntries.ts`'s
+ * `"evidenceLibraryEntries"` (the Evidence Library's own tag store, combined
+ * with contribution tags via `listCombinedPersistedTags` to drive the
+ * submission form's tag-autocomplete suggestions).
+ */
+export const CONTRIBUTIONS_FEED_LIVE_UPDATE_STORAGE_KEYS = [
+  "contributions",
+  "evidenceLibraryEntries",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `ContributionsFeedPanel` to
+ * refresh its rendered feed and tag suggestions — closes the "Every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap noted in `shared-flow-sync.md`, for this panel.
+ * Mirrors `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match
+ * rules.
+ */
+export function isContributionsFeedLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (CONTRIBUTIONS_FEED_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
