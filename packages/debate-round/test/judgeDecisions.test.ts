@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  adoptJudgeDecision,
+  appendJudgeDecision,
   buildJudgeDecisionsPanelView,
   deleteJudgeDecision,
   getJudgeDecision,
   listJudgeDecisions,
-  saveJudgeDecision,
+  listJudgeDecisionsForRound,
   type JudgeDecisionRecord,
 } from "../src/state/judgeDecisions";
 
@@ -25,7 +27,7 @@ class MemoryStorage {
   }
 }
 
-const DECISION_A: JudgeDecisionRecord = {
+const INPUT_A: Omit<JudgeDecisionRecord, "id"> = {
   roundId: "round-1",
   paradigmName: "Flow / Tech Judge",
   sideNames: { primary: "Affirmative", secondary: "Negative" },
@@ -37,7 +39,7 @@ const DECISION_A: JudgeDecisionRecord = {
   generatedAt: 1000,
 };
 
-const DECISION_B: JudgeDecisionRecord = {
+const INPUT_B: Omit<JudgeDecisionRecord, "id"> = {
   roundId: "round-2",
   paradigmName: "Policymaker",
   sideNames: { primary: "Aff", secondary: "Neg" },
@@ -51,6 +53,26 @@ const DECISION_B: JudgeDecisionRecord = {
 
 beforeEach(() => {
   (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
+});
+
+describe("appendJudgeDecision", () => {
+  it("assigns a fresh id and returns the stamped record", () => {
+    const record = appendJudgeDecision(INPUT_A);
+    expect(record.id).toBeTruthy();
+    expect(record).toMatchObject(INPUT_A);
+  });
+
+  it("never overwrites an existing entry, even for the same roundId", () => {
+    appendJudgeDecision(INPUT_A);
+    appendJudgeDecision({ ...INPUT_A, generatedAt: 1500 });
+    expect(listJudgeDecisions()).toHaveLength(2);
+  });
+
+  it("assigns distinct ids to two decisions requested back to back", () => {
+    const first = appendJudgeDecision(INPUT_A);
+    const second = appendJudgeDecision({ ...INPUT_A, generatedAt: 1500 });
+    expect(first.id).not.toBe(second.id);
+  });
 });
 
 describe("listJudgeDecisions", () => {
@@ -68,53 +90,86 @@ describe("listJudgeDecisions", () => {
     expect(listJudgeDecisions()).toEqual([]);
   });
 
-  it("lists every saved judge decision", () => {
-    saveJudgeDecision(DECISION_A);
-    saveJudgeDecision(DECISION_B);
-    expect(listJudgeDecisions()).toEqual([DECISION_A, DECISION_B]);
+  it("lists every appended judge decision", () => {
+    appendJudgeDecision(INPUT_A);
+    appendJudgeDecision(INPUT_B);
+    expect(listJudgeDecisions()).toHaveLength(2);
   });
 });
 
 describe("getJudgeDecision", () => {
-  it("returns undefined when no decision is stored for the round", () => {
-    expect(getJudgeDecision("round-1")).toBeUndefined();
+  it("returns undefined when no decision is stored with that id", () => {
+    expect(getJudgeDecision("does-not-exist")).toBeUndefined();
   });
 
-  it("returns the stored decision for a round", () => {
-    saveJudgeDecision(DECISION_A);
-    expect(getJudgeDecision("round-1")).toEqual(DECISION_A);
+  it("returns the stored decision by its own id", () => {
+    const record = appendJudgeDecision(INPUT_A);
+    expect(getJudgeDecision(record.id)).toEqual(record);
   });
 });
 
-describe("saveJudgeDecision", () => {
-  it("overwrites an existing decision for the same roundId", () => {
-    saveJudgeDecision(DECISION_A);
-    const updated: JudgeDecisionRecord = { ...DECISION_A, result: { ...DECISION_A.result, winner: "secondary" } };
-    saveJudgeDecision(updated);
+describe("listJudgeDecisionsForRound", () => {
+  it("returns only the given round's decisions, newest-first", () => {
+    appendJudgeDecision(INPUT_A);
+    const older = appendJudgeDecision({ ...INPUT_A, generatedAt: 500 });
+    const newer = appendJudgeDecision({ ...INPUT_A, generatedAt: 5000 });
+    appendJudgeDecision(INPUT_B);
 
+    const forRound1 = listJudgeDecisionsForRound("round-1");
+    expect(forRound1).toHaveLength(3);
+    expect(forRound1[0].id).toBe(newer.id);
+    expect(forRound1.at(-1)!.id).toBe(older.id);
+  });
+
+  it("returns an empty list for a round with no history", () => {
+    appendJudgeDecision(INPUT_A);
+    expect(listJudgeDecisionsForRound("round-does-not-exist")).toEqual([]);
+  });
+});
+
+describe("adoptJudgeDecision", () => {
+  it("inserts a record with a new id", () => {
+    const remote: JudgeDecisionRecord = { ...INPUT_A, id: "decision-remote-1" };
+    adoptJudgeDecision(remote);
+    expect(listJudgeDecisions()).toEqual([remote]);
+  });
+
+  it("overwrites an existing record with the same id, rather than duplicating", () => {
+    const remote: JudgeDecisionRecord = { ...INPUT_A, id: "decision-remote-1" };
+    adoptJudgeDecision(remote);
+    const updated: JudgeDecisionRecord = { ...remote, result: { ...remote.result, winner: "secondary" } };
+    adoptJudgeDecision(updated);
     expect(listJudgeDecisions()).toEqual([updated]);
   });
 });
 
 describe("deleteJudgeDecision", () => {
-  it("removes a stored decision", () => {
-    saveJudgeDecision(DECISION_A);
-    saveJudgeDecision(DECISION_B);
-    deleteJudgeDecision("round-1");
-    expect(listJudgeDecisions()).toEqual([DECISION_B]);
+  it("removes a single decision by its own id, leaving other decisions for the same round", () => {
+    const first = appendJudgeDecision(INPUT_A);
+    const second = appendJudgeDecision({ ...INPUT_A, generatedAt: 1500 });
+    deleteJudgeDecision(first.id);
+    expect(listJudgeDecisions()).toEqual([second]);
   });
 
-  it("is a no-op when the round has no stored decision", () => {
-    saveJudgeDecision(DECISION_A);
-    deleteJudgeDecision("round-does-not-exist");
-    expect(listJudgeDecisions()).toEqual([DECISION_A]);
+  it("is a no-op when no decision has that id", () => {
+    const record = appendJudgeDecision(INPUT_A);
+    deleteJudgeDecision("does-not-exist");
+    expect(listJudgeDecisions()).toEqual([record]);
   });
 });
 
 describe("buildJudgeDecisionsPanelView", () => {
-  it("sorts decisions by roundId", () => {
-    saveJudgeDecision(DECISION_B);
-    saveJudgeDecision(DECISION_A);
-    expect(buildJudgeDecisionsPanelView().map((r) => r.roundId)).toEqual(["round-1", "round-2"]);
+  it("groups decisions by roundId, sorted by roundId", () => {
+    appendJudgeDecision(INPUT_B);
+    appendJudgeDecision(INPUT_A);
+    const groups = buildJudgeDecisionsPanelView();
+    expect(groups.map((g) => g.roundId)).toEqual(["round-1", "round-2"]);
+  });
+
+  it("sorts each round's decisions newest-first", () => {
+    const older = appendJudgeDecision({ ...INPUT_A, generatedAt: 100 });
+    const newer = appendJudgeDecision({ ...INPUT_A, generatedAt: 9000 });
+    const [group] = buildJudgeDecisionsPanelView();
+    expect(group.decisions.map((d) => d.id)).toEqual([newer.id, older.id]);
   });
 });

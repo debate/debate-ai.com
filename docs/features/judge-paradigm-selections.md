@@ -79,6 +79,62 @@ pre-fill its form, mirroring `debate-card-search`'s
 Vitest-covered in
 `packages/debate-speech-writer/test/judgeParadigmSelections.test.ts`.
 
+## Decision history
+
+TODO.md idea #5's "(b) a decision history log per round instead of only the
+latest result" follow-up. Before this, `JudgeDecisionPanel.tsx`'s
+`state/judgeDecisions.ts` kept only one `JudgeDecisionRecord` per `roundId`
+— requesting a second AI decision for the same round silently overwrote the
+first. Every requested decision is now appended to that round's history log
+instead, each with its own generated `id`
+(`decision-<timestamp>-<random>`, mirroring this package's existing
+`FlowAnnotationsPanel`/`FlowEditLogPanel` id-generation convention) so
+several decisions can coexist for one round. `buildJudgeDecisionsPanelView`
+groups the full list by `roundId` (sorted by `roundId`), sorting each
+round's decisions newest-first; `JudgeDecisionPanel.tsx` renders one section
+per round with its own "Clear" action per decision, rather than one row per
+round.
+
+**Account sync:** like `wordCountRounds`, decision history is now synced to
+the account rather than staying per-browser — a new `saved_judge_decisions`
+D1 table (migration `0016_furry_skrulls.sql`) holds one row per generated
+decision, keyed by the decision's own `id` (`clientId`) rather than its
+`roundId`, since many decisions can share a round; a plain `roundId` column
+is indexed (not unique) for per-round history lookups. `GET
+/api/judge-decisions` returns every synced decision in full (small
+payload, same as `/api/word-count-rounds`), and `PUT`/`DELETE
+/api/judge-decisions/[decisionId]` upsert/remove one, validated by
+`state/savedJudgeDecisions.ts`'s `isValidJudgeDecisionRecord`. The new
+local-first hook `hooks/useJudgeDecisions.ts` — `JudgeDecisionPanel`'s sole
+entry point into `state/judgeDecisions.ts` now — merges local and remote
+history by each decision's own `id` on mount (a remote-only decision is
+adopted locally via `adoptJudgeDecision`; a local-only decision is
+best-effort pushed to the account), then `appendDecision`/`deleteDecision`
+apply locally first and best-effort sync the same change outward, mirroring
+`useWordCountRounds`'s merge model exactly. The panel shows a "Decision
+history is synced to your account" / "Sign in to sync your decision
+history" hint, the same convention as `WordCountRoundsPanel`.
+
+```
+state/judgeDecisions.ts        — id-keyed append-only log, grouped panel view
+state/savedJudgeDecisions.ts   — isValidJudgeDecisionRecord, size cap
+round/judge-decisions-client.ts — fetch wrapper (list/save/delete)
+hooks/useJudgeDecisions.ts     — local-first merge + sync, by id
+panels/JudgeDecisionPanel.tsx  — renders history grouped by round
+lib/database/schema.ts (apps/debate-ai.com) — saved_judge_decisions table
+app/api/judge-decisions/route.ts                  — GET: list the user's synced decisions
+app/api/judge-decisions/[decisionId]/route.ts     — PUT/DELETE: upsert/remove one decision
+```
+
+Vitest-covered: `judgeDecisions.test.ts` (append-only behavior, per-round
+listing newest-first, adopt/delete-by-id, grouped panel view);
+`savedJudgeDecisions.test.ts` (`isValidJudgeDecisionRecord`'s full
+validation surface); `judge-decisions-client.test.ts` (the fetch wrapper's
+request shapes and 401/error handling). `useJudgeDecisions` and its wiring
+in `JudgeDecisionPanel` remain intentionally untested, matching this
+package's existing convention for account-synced, `localStorage`-backed
+hooks and their UI (`useWordCountRounds` follows the same pattern).
+
 ## Known gaps
 
 - This panel (`JudgeParadigmPickerPanel.tsx`, at `/paradigms`) still doesn't
