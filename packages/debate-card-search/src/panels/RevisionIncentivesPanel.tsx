@@ -11,6 +11,11 @@
  * existing scoring/aggregation logic directly rather than introducing new
  * logic here.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isRevisionIncentivesLiveUpdateStorageEvent`, so a revision recorded in
+ * another browser tab refreshes this leaderboard here too — the `storage`
+ * event never fires in the tab that made the write, only in other tabs.
+ *
  * @module panels/RevisionIncentivesPanel
  */
 
@@ -27,6 +32,7 @@ import {
   TableRow,
 } from "debate-ui/src/primitives/table"
 import { buildPersistedRevisionIncentiveLeaderboard } from "../state/revisionHistory"
+import { isRevisionIncentivesLiveUpdateStorageEvent } from "../state/live-update"
 import type { ContributorRevisionStats } from "../lib/revision-incentives"
 
 /**
@@ -43,6 +49,19 @@ export function RevisionIncentivesPanel() {
 
   useEffect(() => {
     setRows(buildPersistedRevisionIncentiveLeaderboard())
+  }, [])
+
+  /**
+   * Live-update the leaderboard when another browser tab records a
+   * revision.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isRevisionIncentivesLiveUpdateStorageEvent(event)) return
+      setRows(buildPersistedRevisionIncentiveLeaderboard())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   if (rows === null) {
