@@ -19,6 +19,14 @@
  * already-existing `flow/flow-annotations.ts` + `state/flowAnnotations.ts`
  * with the already-existing video player.
  *
+ * Also subscribes to the browser's `storage` event via `flow/live-update.ts`'s
+ * `isFlowAnnotationsPanelLiveUpdateStorageEvent`, so an annotation dropped or
+ * cleared in another browser tab refreshes this panel's rendered list here
+ * too — the `storage` event never fires in the tab that made the write, only
+ * in other tabs. This is distinct from `FlowSpreadsheet`'s own
+ * `isFlowLiveUpdateStorageEvent`-driven grid badge refresh, which only
+ * force-refreshes AG Grid cells, not this standalone list view.
+ *
  * @module panels/FlowAnnotationsPanel
  */
 
@@ -38,6 +46,7 @@ import {
   parseAnnotationTimestamp,
   parseBoxPathInput,
 } from "../flow/flow-annotations"
+import { isFlowAnnotationsPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import {
   buildFlowAnnotationsPanelView,
   deleteFlowAnnotation,
@@ -93,6 +102,19 @@ export function FlowAnnotationsPanel() {
   }, [activeVideoId, isPlaying, getCurrentTimeRef])
 
   const refresh = () => setAnnotations(buildFlowAnnotationsPanelView())
+
+  /**
+   * Live-update the rendered annotation list when another browser tab drops
+   * or clears an annotation.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isFlowAnnotationsPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleAdd = () => {
     const trimmedFlowId = flowId.trim()

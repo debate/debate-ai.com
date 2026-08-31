@@ -200,5 +200,16 @@ switching recordings).
   badge (and the `EditBadge`/`PrepNoteBadge`, see
   [`shared-flow-sync.md`](shared-flow-sync.md)) in every other open tab on
   the next `storage` event, not just after a manual reload.
+- ~~The standalone Flow Annotations panel (`panels/FlowAnnotationsPanel.tsx`
+  — the video-player annotation list itself, distinct from the
+  `FlowSpreadsheet` grid badge above) reads `localStorage` on mount and
+  after its own add/clear actions only; it did not live-update if another
+  tab dropped or cleared an annotation while the panel was open.~~ Closed:
+  the panel now listens for the browser's `storage` event too, via a new
+  `flow/live-update.ts#isFlowAnnotationsPanelLiveUpdateStorageEvent`
+  (scoped to the `flowAnnotations` key alone, since this panel doesn't
+  render the `flowEdits`/`prepNotes` badges the grid's predicate also
+  covers), and re-reads the annotation list when it fires. Vitest-covered
+  in `packages/debate-round/test/live-update.test.ts`.
 - No collaborative/live sync — annotations are local `localStorage` only,
   same as every other persisted record in this repo today.
