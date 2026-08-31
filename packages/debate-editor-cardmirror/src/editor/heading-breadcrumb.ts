@@ -36,3 +36,15 @@ export function computeBreadcrumbPath(headings: HeadingEntry[], pos: number): He
   }
   return stack;
 }
+
+/**
+ * Whether the breadcrumb bar should render, given the `showHeadingBreadcrumb`
+ * setting and the current ancestor path from `computeBreadcrumbPath`. Off
+ * unconditionally hides the bar, even where a heading is in scope; on shows
+ * it whenever the path is non-empty (the usual "no heading above the scroll
+ * position yet" case still hides it). Pure so `HeadingBreadcrumbBar`'s DOM
+ * wiring can stay a thin caller, mirroring `computeBreadcrumbPath` itself.
+ */
+export function shouldShowBreadcrumb(enabled: boolean, path: HeadingEntry[]): boolean {
+  return enabled && path.length > 0;
+}

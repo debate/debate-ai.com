@@ -3798,6 +3798,7 @@ settings.subscribe((s) => {
   }
   applyNavPaneVisible(s.navPaneVisible);
   applyFormatNavPaneByType(s.formatNavPaneByType);
+  breadcrumbBar?.setEnabled(s.showHeadingBreadcrumb);
   // Body zoom is NOT re-applied on settings change — it's per-editor and
   // transient, and `defaultZoomPct` only governs what NEW editors open at,
   // never re-zooms an already-open one. Chrome scale stays a synced global.
@@ -5010,6 +5011,7 @@ export function getNavPanel(): NavigationPanel {
  *  multi-window aren't wired up yet. */
 const breadcrumbBarEl = document.getElementById('heading-breadcrumb-bar');
 const breadcrumbBar = breadcrumbBarEl ? new HeadingBreadcrumbBar(breadcrumbBarEl, appEl) : null;
+breadcrumbBar?.setEnabled(settings.get('showHeadingBreadcrumb'));
 
 function makeStarterDoc(): PMNode {
   const n = schema.nodes;

@@ -6,6 +6,62 @@
 _No task currently in progress._
 
 ### Completed
+- **Expandable Heading Structure — dedicated breadcrumb visibility toggle
+  (idea #9, `reason-editor-outline-nav.md` Known gap: "No dedicated
+  visibility toggle for the breadcrumb").** Prompted by another repeat of
+  idea #17's standing request ("create user settings and link user db
+  SQL... with ability to save flows docs and debates in SQL and link to
+  users... add tools into where needed in the ui... develop better tool
+  ui"), and finding — like every recent repeat of this prompt — that the
+  "user settings / SQL-linked flows, docs, rounds" half is already fully
+  built and documented, this slice instead picked up the one open Known gap
+  left by the immediately preceding run's sticky heading breadcrumb
+  (idea #9): the breadcrumb always rendered once a heading was in scope,
+  with no way to turn it off short of losing the nav pane too. Added a new
+  persisted `Settings.showHeadingBreadcrumb` boolean (default true) to
+  `packages/debate-editor-cardmirror/src/editor/settings.ts` — unlike
+  `navPaneVisible` (per-window/transient), this is a real display
+  preference so it's a normal persisted key, following `formatNavPaneByType`'s
+  pattern rather than the nav pane's: schema field, default, load-time
+  sanitizer (`s.showHeadingBreadcrumb === false ? false : true`), and a
+  `SETTING_METADATA` toggle row ("Show heading breadcrumb bar", Appearance
+  → "Nav pane & indicators" section — the same section `formatNavPaneByType`
+  and `showCitePreview` live in, so it renders in Settings → Appearance for
+  free via the existing declarative `renderEntry`/`buildEmbeddedSettingsPanel`
+  machinery, no settings-UI code changed). Added a pure
+  `shouldShowBreadcrumb(enabled, path)` predicate to `heading-breadcrumb.ts`
+  (alongside its existing `computeBreadcrumbPath`) so the "off" case and the
+  existing "nothing above the scroll position yet" case share one hide
+  decision; `HeadingBreadcrumbBar` in `heading-breadcrumb-bar.ts` gained an
+  `enabled` field and a `setEnabled(enabled)` method (off hides immediately
+  via `render([])`, reusing the predicate; on re-runs `refresh()` so
+  whatever the scroll position currently implies reappears), with `render()`
+  itself now deferring to `shouldShowBreadcrumb` instead of a bare
+  `path.length === 0` check. Wired in `index.ts`: initial state right after
+  `breadcrumbBar` is constructed, and `breadcrumbBar?.setEnabled(s.showHeadingBreadcrumb)`
+  alongside the existing `applyNavPaneVisible`/`applyFormatNavPaneByType`
+  calls in the settings-change subscriber. Documented in
+  `docs/features/reason-editor-outline-nav.md` (new "Breadcrumb visibility
+  toggle" paragraph, data-flow entries for both the new predicate and
+  `setEnabled`, closed the matching Known gaps bullet). Vitest-covered: 4
+  new cases for `shouldShowBreadcrumb` in
+  `packages/debate-editor-cardmirror/test/heading-breadcrumb.test.ts`
+  (setting off with a non-empty path, setting on with an empty path, both
+  off, both satisfied), bringing that file to 12 cases — `HeadingBreadcrumbBar`
+  itself remains intentionally untested, matching this repo's documented
+  convention for DOM-wiring classes (no jsdom environment is configured for
+  this package's Vitest project; the predicate extraction keeps the
+  behavior itself testable without one). Verified: `bun install` (2258
+  packages), `bun x vitest run packages/debate-editor-cardmirror/test/
+  heading-breadcrumb.test.ts` (12/12 pass) and full `bun x vitest run`
+  (195 files / 3102 tests, all pass, up from 195/3098), `bunx turbo run
+  typecheck --filter=debate-editor-cardmirror --filter=debate-ai-web`
+  (11/11 in-scope package tasks pass), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (35 pre-existing, unrelated errors —
+  identical count to before this change, confirming no regression), and
+  `bun run build:web` (`debate-ai-web` and its offline-service-worker build
+  both complete clean, `/settings` and `/settings/editor-panel` both present
+  in the route list). **Completed:** 2026-08-31.
 - **Round Workspace Tools — cross-links between the four flow-tool pages
   (idea #17, `flow-tools-menu.md` Known gap: "No corresponding menu exists
   on any of the four target pages linking back to the round workspace or
@@ -10141,14 +10197,14 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 9. **Expandable Heading Structure** (`/reason-editor`, CardMirror's native
    `NavigationPanel` + `HeadingBreadcrumbBar` — not the dead `reason-editor`
    package `OutlineNavPanel` this bullet used to point at; see the Completed
-   entry below and `docs/features/reason-editor-outline-nav.md`). All three
+   entry below and `docs/features/reason-editor-outline-nav.md`). All four
    prior bullets are done: the nav panel's `navPaneVisible` setting already
    defaults to visible; `nav-panel.ts`'s drag/drop already supports
-   drag-to-reorder; and this run added the sticky current-heading breadcrumb.
-   Next: a dedicated visibility toggle for the breadcrumb (today it always
-   shows when scrolled below the first heading, tied to the nav panel's own
-   `toggleNavPane`/`navPaneVisible` only implicitly), and a multi-pane/
-   multi-window breadcrumb (today single-doc only).
+   drag-to-reorder; an earlier run added the sticky current-heading
+   breadcrumb; and this run added its dedicated visibility toggle
+   (`showHeadingBreadcrumb`, Settings → Appearance, independent of
+   `navPaneVisible`). Next: a multi-pane/multi-window breadcrumb (today
+   single-doc only).
 
 10. **Outline Filters and Argument Tree View** (`/outline`) —
     - Multi-select rows to bulk-apply an argument-type/contributor/evidence-status tag at once.

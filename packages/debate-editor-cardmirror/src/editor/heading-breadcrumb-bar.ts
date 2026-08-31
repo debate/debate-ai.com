@@ -19,18 +19,34 @@ import type { EditorView } from 'prosemirror-view';
 import type { Node as PMNode } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { collectHeadings, TYPE_LABEL, type HeadingEntry } from './headings.js';
-import { computeBreadcrumbPath } from './heading-breadcrumb.js';
+import { computeBreadcrumbPath, shouldShowBreadcrumb } from './heading-breadcrumb.js';
 import { scrollToHeadingId } from './precise-scroll.js';
 
 export class HeadingBreadcrumbBar {
   private view: EditorView | null = null;
   private raf: number | null = null;
+  private enabled = true;
 
   constructor(
     private readonly el: HTMLElement,
     private readonly scroller: HTMLElement,
   ) {
     this.scroller.addEventListener('scroll', this.onScroll, { passive: true });
+  }
+
+  /** Gate the bar behind the `showHeadingBreadcrumb` setting. Off hides
+   *  it unconditionally, even where a heading is currently in scope; on
+   *  restores whatever the current scroll position would otherwise show. */
+  setEnabled(enabled: boolean): void {
+    if (this.enabled === enabled) return;
+    this.enabled = enabled;
+    if (!enabled) {
+      // Reuse render()'s own hide path (an empty ancestor chain always
+      // hides, via `shouldShowBreadcrumb`) rather than duplicating it here.
+      this.render([]);
+    } else {
+      this.refresh();
+    }
   }
 
   /** Call once the single-doc view exists (mirrors `navPanel.attach`). */
@@ -60,6 +76,7 @@ export class HeadingBreadcrumbBar {
   };
 
   private refresh(): void {
+    if (!this.enabled) return;
     const view = this.view;
     if (!view) return;
     const scrollerRect = this.scroller.getBoundingClientRect();
@@ -80,7 +97,7 @@ export class HeadingBreadcrumbBar {
   }
 
   private render(path: HeadingEntry[]): void {
-    if (path.length === 0) {
+    if (!shouldShowBreadcrumb(this.enabled, path)) {
       this.el.hidden = true;
       this.el.replaceChildren();
       return;

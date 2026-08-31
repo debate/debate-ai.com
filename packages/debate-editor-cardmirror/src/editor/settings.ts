@@ -657,6 +657,15 @@ export interface Settings {
    *  hierarchy. Display-only; doesn't touch the underlying doc.
    *  Symmetric in single-doc and multi-pane layouts. */
   formatNavPaneByType: boolean;
+  /** Whether the sticky heading breadcrumb bar (shown above the doc
+   *  once you scroll below the first heading) is shown at all. Default
+   *  on. Off hides the bar unconditionally, even where a heading is in
+   *  scope — for a user who wants the nav pane's outline without also
+   *  giving up that vertical strip. Display-only; doesn't touch nav-pane
+   *  visibility (`navPaneVisible`) or the underlying doc. Persisted
+   *  (unlike `navPaneVisible`) since it's a display preference, not a
+   *  per-window workflow toggle. */
+  showHeadingBreadcrumb: boolean;
   /** Built-in countdown timer settings. (Panel visibility lives
    *  in `timer-state.ts`, not here — shared via BroadcastChannel
    *  so toggling the timer on in one window opens it in every
@@ -1629,6 +1638,7 @@ const DEFAULTS: Settings = {
   customColorOverrides: {},
   navPaneVisible: true,
   formatNavPaneByType: true,
+  showHeadingBreadcrumb: true,
   timerProfile: 'college',
   timerProfiles: {
     highSchool: { speechPresets: [3, 5, 8, 10], prepMinutes: 8 },
@@ -2826,6 +2836,16 @@ export const SETTING_METADATA: SettingMeta[] = [
     kind: 'toggle',
     category: 'appearance',
     section: 'Nav pane & indicators',
+  },
+  {
+    key: 'showHeadingBreadcrumb',
+    label: 'Show heading breadcrumb bar',
+    description:
+      "On by default. Shows a sticky breadcrumb trail above the document once you scroll below the first heading, naming the section you're in. Turn off to hide it even where a heading is in scope.",
+    kind: 'toggle',
+    category: 'appearance',
+    section: 'Nav pane & indicators',
+    aliases: ['breadcrumb', 'heading trail', 'sticky heading'],
   },
   {
     key: 'showCitePreview',
@@ -4216,6 +4236,8 @@ function sanitize(s: Settings): Settings {
     navPaneVisible: s.navPaneVisible === false ? false : true,
     // Default-on: only an explicit `false` disables it.
     formatNavPaneByType: s.formatNavPaneByType === false ? false : true,
+    // Default-on: only an explicit `false` disables it.
+    showHeadingBreadcrumb: s.showHeadingBreadcrumb === false ? false : true,
     timerProfile:
       s.timerProfile === 'highSchool' || s.timerProfile === 'pomodoro'
         ? s.timerProfile

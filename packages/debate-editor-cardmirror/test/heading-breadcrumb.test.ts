@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeBreadcrumbPath } from "../src/editor/heading-breadcrumb";
+import { computeBreadcrumbPath, shouldShowBreadcrumb } from "../src/editor/heading-breadcrumb";
 import type { HeadingEntry } from "../src/editor/headings";
 
 function entry(partial: Pick<HeadingEntry, "type" | "text" | "pos" | "level"> & Partial<HeadingEntry>): HeadingEntry {
@@ -67,5 +67,25 @@ describe("computeBreadcrumbPath", () => {
     const pocket = entry({ type: "pocket", text: "Case", pos: 0, level: 1 });
     const hatLater = entry({ type: "hat", text: "Later", pos: 1000, level: 2 });
     expect(computeBreadcrumbPath([pocket, hatLater], 10)).toEqual([pocket]);
+  });
+});
+
+describe("shouldShowBreadcrumb", () => {
+  const path = [entry({ type: "pocket", text: "Case", pos: 0, level: 1 })];
+
+  it("hides when the setting is off, even with a non-empty path", () => {
+    expect(shouldShowBreadcrumb(false, path)).toBe(false);
+  });
+
+  it("hides when the setting is on but the path is empty", () => {
+    expect(shouldShowBreadcrumb(true, [])).toBe(false);
+  });
+
+  it("hides when the setting is off and the path is also empty", () => {
+    expect(shouldShowBreadcrumb(false, [])).toBe(false);
+  });
+
+  it("shows only when the setting is on and the path is non-empty", () => {
+    expect(shouldShowBreadcrumb(true, path)).toBe(true);
   });
 });
