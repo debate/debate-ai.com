@@ -331,10 +331,11 @@ Vitest-covered by an added case in `packages/debate-round/test/panels.test.tsx`
   "Cross-tab live update"), `QuestStreaksPanel` (see
   [`quest-streaks.md`](quest-streaks.md)'s "Cross-tab live update"),
   `NewsStreamPanel` (see [`news-stream.md`](news-stream.md)'s "Cross-tab live
-  update"), and `ContributorAwardsPanel` (see
-  [`contributor-awards.md`](contributor-awards.md)) have since gained the
-  equivalent mechanism for their own stores, but every other
-  localStorage-backed panel in this repo still has none (Live Sync
+  update"), `ContributorAwardsPanel` (see
+  [`contributor-awards.md`](contributor-awards.md)), and `DailyQuestsPanel`
+  (see [`daily-quests.md`](daily-quests.md)'s "Cross-tab live update") have
+  since gained the equivalent mechanism for their own stores, but every
+  other localStorage-backed panel in this repo still has none (Live Sync
   above is cross-*contributor*, via the server, not cross-tab within one
   browser, and remains the only path for a *different device/browser* to
   see the edit at all).

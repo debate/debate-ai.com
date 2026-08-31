@@ -6,6 +6,77 @@
 _No task currently in progress._
 
 ### Completed
+- **Daily Quests — cross-tab live-update (idea #17, `shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of
+  idea #17's standing request ("create user settings and link user db
+  SQL... with ability to save flows docs and debates in SQL and link to
+  users... add tools into where needed in the ui... develop better tool
+  ui"), and finding — like every recent repeat of this prompt — that the
+  "user settings / SQL-linked flows, docs, rounds" half is already fully
+  built and documented (including a real `/settings` page covering
+  `debateStyle`/`fontSize`/theme/favorite tools/word-limit presets/editor
+  preferences), this slice picked up `shared-flow-sync.md`'s next unclaimed
+  panel from its running cross-tab-live-update list — `DailyQuestsPanel`
+  (`/cards/quests`), which reads three `localStorage` stores
+  (`dailyQuestTemplates`, `contributions` via
+  `buildPersistedDailyQuestBoard`, `dailyMissionResults` for its "Your
+  streak" section) but, like every other still-unclaimed panel, only ever
+  refreshed on mount. Added `DAILY_QUESTS_LIVE_UPDATE_STORAGE_KEYS`/
+  `isDailyQuestsLiveUpdateStorageEvent` to
+  `packages/debate-card-search/src/state/live-update.ts`, mirroring the
+  nine existing key-list/predicate pairs there exactly (true for any of the
+  three backing keys or a `null` key from `localStorage.clear()`, false
+  otherwise — including a same-prefix substring key). Wired a `storage`
+  event listener into `DailyQuestsPanel.tsx` that calls the existing
+  `refresh()` closure (board + quest templates) and, if a contributor id is
+  currently entered, `refreshStreak()` too, when the predicate matches —
+  unlike the mount-only-refresh panels this mirrors, the listener depends
+  on `contributorId` (`useEffect(..., [contributorId])`) so a change to
+  that field re-registers the listener with a fresh closure instead of
+  refreshing a stale streak for whichever id was entered when the tab
+  first mounted. Documented in `docs/features/daily-quests.md` (new
+  "Cross-tab live update" section) and `docs/features/shared-flow-sync.md`
+  (added `DailyQuestsPanel` to the running list of panels that already have
+  the mechanism). Vitest-covered: 4 new cases for
+  `isDailyQuestsLiveUpdateStorageEvent` in
+  `packages/debate-card-search/test/live-update.test.ts` (every backing-key
+  match, the `null`-key clear-all case, an unrelated key, and a
+  same-prefix substring key). `DailyQuestsPanel.tsx` itself remains
+  intentionally untested, matching every other panel in this repo whose
+  `storage`-listener wiring is exercised only through the shared pure
+  predicate's own tests. Verified: `bun install` (198 packages, after
+  correcting an earlier `bun install` run against a stale local `master`
+  snapshot — see below), the touched test file (36/36 pass), the full
+  `bun run test` (201 files / 3209 tests, all pass), the whole-repo `bun
+  run typecheck` (13 packages via turbo, all passing), and a full
+  production `bun run build:web` (vinext build + service-worker build,
+  `/cards/quests` present in the route list) — all passed with no new
+  failures.
+- **Process note: a failed combined `git fetch` silently left this run's
+  local `origin/master` ref pinned to a stale snapshot.** This run's first
+  action was `git fetch origin master <old-branch>` in one command; the
+  `<old-branch>` ref no longer existed (its PR had already merged and the
+  branch was deleted), which made the *entire* fetch fail — including the
+  `master` half — without updating any local remote-tracking refs. The
+  local `origin/master` ref that command left behind was whatever a much
+  earlier, stale clone had cached (a snapshot roughly 90 commits behind
+  real `master`), not a "fresh but slightly old" state. Believing the
+  discrepancy between a checked-out branch (correctly at the true, current
+  `master` tip) and that stale `origin/master` meant the checked-out branch
+  was an unrelated/orphaned history, this run reset the working branch onto
+  the stale snapshot and built a full Settings-page/`user_settings`-table
+  slice duplicating work that already existed, more completely, on the real
+  `master` (opened as PR #395, then closed with an explanation once the
+  mistake was caught via the opened PR's `mergeable_state: "dirty"` and a
+  fresh `git fetch origin master` — no `--force` or combined-ref
+  shorthand — revealing the true tip). No code from that closed PR was
+  merged. Recorded here so a future run recognizes the symptom: **always
+  fetch `master` in its own dedicated `git fetch origin master` call, never
+  combined with another ref whose existence isn't already confirmed**, and
+  treat a PR's `mergeable_state: "dirty"` against `master` as a signal to
+  re-verify the local base before assuming a conflict needs resolving by
+  hand.
 - **AI Judge Decision Modes — decision history log per round (idea #5,
   "A decision history log per round instead of only the latest
   result").** Prompted by another repeat of the standing prompt

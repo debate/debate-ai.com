@@ -31,6 +31,14 @@
  * prefill exactly — a visitor who edits the field keeps whatever they
  * typed, so this is a prefill, not a login.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isDailyQuestsLiveUpdateStorageEvent`, so a quest added/removed, a
+ * contribution submitted, or a mission result recorded in another tab
+ * refreshes this panel's board/streak without a manual reload — closing the
+ * "Every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
+ * for this panel.
+ *
  * @module panels/DailyQuestsPanel
  */
 
@@ -53,6 +61,7 @@ import {
   buildPersistedContributorQuestStreak,
   computeAndSavePersistedDailyMissionResult,
 } from "../state/dailyMissionResults"
+import { isDailyQuestsLiveUpdateStorageEvent } from "../state/live-update"
 import { buildQuestBoardSummaryText } from "../lib/daily-quests"
 import type { QuestProgress, QuestRecurrence, QuestTemplate } from "../lib/daily-quests"
 import { buildStreakRewardText } from "../lib/gamified-quests"
@@ -153,6 +162,23 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signedInContributorId, hasEditedContributorId])
+
+  /**
+   * Live-update the board and streak when another browser tab adds/removes
+   * a quest, submits a contribution, or records a mission result. A
+   * `storage` event never fires in the tab that made the write, only in
+   * other tabs. Depends on `contributorId` so a change to it re-registers
+   * the listener with a fresh closure rather than refreshing a stale streak.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isDailyQuestsLiveUpdateStorageEvent(event)) return
+      refresh()
+      if (contributorId.trim()) refreshStreak(contributorId.trim())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [contributorId])
 
   const handleAdd = () => {
     const description = draft.description.trim()
