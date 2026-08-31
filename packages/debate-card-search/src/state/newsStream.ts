@@ -294,3 +294,47 @@ export function countUnreadNewsItems(items: NewsItem[]): number {
   const state = readViewerState();
   return items.filter((item) => !state.read[item.id]).length;
 }
+
+/** The full list of item ids the viewer has read, for pushing to the account sync route (`lib/news-stream-sync.ts`'s `newsRead`). */
+export function listReadIds(): string[] {
+  return Object.keys(readViewerState().read);
+}
+
+/** The full list of item ids the viewer has liked, for pushing to the account sync route (`lib/news-stream-sync.ts`'s `newsLiked`). */
+export function listLikedIds(): string[] {
+  return Object.keys(readViewerState().liked);
+}
+
+/**
+ * Merges a signed-in user's account-synced read/liked ids into this
+ * browser's local viewer state — a one-time hydration step run on sign-in
+ * (see `NewsStreamPanel`'s optional `syncRemote.hydrate`), not a
+ * replacement: a union of local and remote ids, so an item already read or
+ * liked in this browser stays that way even if the account row hasn't
+ * caught up yet, and vice versa. Unliking on one device therefore doesn't
+ * clear a like already merged onto another until that other device's own
+ * next toggle pushes the new state — an accepted, documented limitation
+ * (see `docs/features/news-stream.md`'s Known gaps), matching every other
+ * best-effort sync in this repo.
+ *
+ * @returns Whether anything actually changed (so a caller can skip a
+ *   redundant re-render/write when the merge was a no-op).
+ */
+export function mergeRemoteViewerState(remote: { read?: string[]; liked?: string[] }): boolean {
+  const state = readViewerState();
+  let changed = false;
+  for (const id of remote.read ?? []) {
+    if (!state.read[id]) {
+      state.read[id] = true;
+      changed = true;
+    }
+  }
+  for (const id of remote.liked ?? []) {
+    if (!state.liked[id]) {
+      state.liked[id] = true;
+      changed = true;
+    }
+  }
+  if (changed) writeViewerState(state);
+  return changed;
+}

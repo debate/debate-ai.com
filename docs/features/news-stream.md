@@ -74,7 +74,10 @@ Each item can be liked and is marked read on hover; unread items get a
 highlighted left border and a "New" badge. Read/like state is a viewer-local
 `newsStreamViewerState` localStorage key — it does not feed back into either
 source announcement's own data, or into a card's community like count in the
-Contributions Feed.
+Contributions Feed. For a signed-in user, that local state is additionally
+synced to the account's `user_settings` row (`newsRead`/`newsLiked` columns)
+via `/api/settings`, so it follows them to another device instead of
+resetting to "everything unread" there — see "Account sync" below.
 
 ## Data flow
 
@@ -100,7 +103,9 @@ state/evidenceLibraryEntries.ts — existing store, read via listEvidenceLibrary
                                     toggleNewsItemLiked (localStorage, "newsStreamViewerState")
   → panels/NewsStreamPanel.tsx  — category filter tabs, per-item read/like UI,
                                     cross-tab live update; threads an optional extraItems
-                                    prop straight into buildNewsFeed()
+                                    prop straight into buildNewsFeed(), and an optional
+                                    syncRemote adapter (hydrate/pushRead/pushLiked) around
+                                    mergeRemoteViewerState()/listReadIds()/listLikedIds()
 
 (a package boundary this diagram can't show in one straight line:)
 debate-round's state/coachingSessions.ts — its own store, read via coachingSessionNews()
@@ -109,9 +114,23 @@ debate-round's state/coachingSessions.ts — its own store, read via coachingSes
                                             without a cycle — it produces NewsItems itself instead)
   → apps/debate-ai.com/app/news/NewsPageContent.tsx — the one place that depends on both
                                     packages; calls coachingSessionNews() and passes the
-                                    result as NewsStreamPanel's extraItems prop
-  → apps/debate-ai.com/app/news/page.tsx — server component (exports metadata), mounts
-                                    NewsPageContent as the /news route
+                                    result as NewsStreamPanel's extraItems prop, plus
+                                    useNewsStreamSync() as its syncRemote prop
+
+lib/news-stream-sync.ts         — NewsSyncPayload type, normalizeNewsSyncPatch/
+                                    serializeNewsIdList/parseNewsIdList (same
+                                    package-boundary split as state/favoriteTools.ts:
+                                    validation here, localStorage read/write in
+                                    state/newsStream.ts)
+  → apps/debate-ai.com/app/api/settings/route.ts — GET/PUT the user_settings row's
+                                    news_read/news_liked columns alongside every other
+                                    account-linked preference field
+  → apps/debate-ai.com/lib/hooks/useNewsStreamSync.ts — fetchUserSettings()/
+                                    saveUserSettings() (debate-round's client, shared
+                                    with UserSettingsPanel/useFavoriteTools) wrapped as
+                                    a NewsStreamSyncAdapter
+  → apps/debate-ai.com/app/news/NewsPageContent.tsx — wires the hook into
+                                    NewsStreamPanel's syncRemote prop
 ```
 
 ## Cross-tab live update
@@ -162,6 +181,37 @@ carry a `createdAt`, stamped on first submission/generation by
 `CoachingSessionsPanel.tsx`'s `buildAndSaveCoachingSession` call
 respectively).
 
+## Account sync
+
+Closes the "Read/like state is per-browser" Known gap this doc used to
+record: local-first, matching every other account-linked preference in this
+repo (`UserSettingsPanel`, `useFavoriteTools`, `useThemeState`) —
+`NewsStreamPanel`'s own `localStorage` viewer state stays the source of
+truth for the current browser, whether signed in or not, and account sync
+is a best-effort layer on top rather than a replacement for it.
+
+- **On mount**, `NewsPageContent.tsx` passes `useNewsStreamSync()`'s
+  `hydrate` function as `syncRemote.hydrate`. The panel calls it once; a
+  signed-in user's saved `newsRead`/`newsLiked` id lists (from
+  `GET /api/settings`) are merged into local state via
+  `mergeRemoteViewerState` — a **union**, not a replacement: an id already
+  read/liked in this browser stays that way even if the account row hasn't
+  caught up yet, and vice versa. A signed-out user, or a failed fetch, gets
+  `null` back and the panel behaves exactly as it did before this prop
+  existed.
+- **On each new read/like**, the panel calls `syncRemote.pushRead`/
+  `pushLiked` with the *full* current local id list (`listReadIds()`/
+  `listLikedIds()`), which `useNewsStreamSync` PUTs to `/api/settings` —
+  the same "resend the whole list" shape `favoriteTools` already uses, not
+  a diff. Fire-and-forget: a failed push is swallowed, matching
+  `useFavoriteTools`'s "local apply is never blocked by a sync failure"
+  convention, so a flaky connection never blocks marking something read.
+- Validated server-side by `normalizeNewsSyncPatch`
+  (`lib/news-stream-sync.ts`): each field is a JSON array of up to
+  `MAX_NEWS_SYNC_ITEMS` (500) unique, non-empty, printable-ASCII ids —
+  generous but bounded, the same posture `MAX_FAVORITE_TOOLS` uses,
+  against a buggy or malicious client growing the row without limit.
+
 ## Known gaps
 
 - The auto-generated "Tool spotlight" post is a generic, one-line
@@ -170,8 +220,20 @@ respectively).
   so it doesn't distinguish "just shipped" from "always been here." Writing
   a real `PRODUCT_NEWS` entry for a tool remains the way to say something
   more specific than that.
-- Read/like state is per-browser (localStorage), not per-account — signing
-  in on a different device shows every item as unread again.
+- Because the read/like account sync above is a union merge rather than a
+  full two-way sync, **unliking** an item on one device doesn't clear that
+  like on another device until that other device's own next toggle
+  overwrites the account row with its own (now-different) current list —
+  an accepted tradeoff for keeping the merge simple and never
+  destructively clobbering a browser's local state on hydration. Marking
+  something read has no equivalent "unread" action, so this asymmetry
+  doesn't apply there.
+- Every `pushRead`/`pushLiked` call resends the *entire* current id list,
+  not a diff — fine at today's feed size (bounded by `PRODUCT_NEWS` plus
+  each community source's own `MAX_COMMUNITY_ITEMS_PER_SOURCE` cap) but a
+  PUT payload that grows linearly with how much of the feed a heavy user
+  has read over time, same tradeoff `favoriteTools` already accepts at a
+  smaller scale.
 - Sprint notes and Argument Library entries are capped to the 20 most
   recent (by `createdAt`) each — `state/newsStream.ts`'s
   `MAX_COMMUNITY_ITEMS_PER_SOURCE` — so a very active topic sprint or a

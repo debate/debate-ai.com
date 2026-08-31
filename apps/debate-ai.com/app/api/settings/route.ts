@@ -16,6 +16,12 @@ import {
   type UserSettingsPayload,
 } from "debate-round"
 import {
+  DEFAULT_NEWS_SYNC,
+  normalizeNewsSyncPatch,
+  parseNewsIdList,
+  serializeNewsIdList,
+} from "debate-card-search"
+import {
   mergeEditorPreferences,
   normalizeEditorPreferencesPatch,
   parseEditorPreferences,
@@ -40,12 +46,13 @@ import {
  *
  * GET  — the current user's saved settings, or the matching `DEFAULT_*`
  *   value for any field with no saved row/value yet.
- * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools? }
- *   — validates and upserts the given fields (validated by `debate-round`'s
- *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
- *   `normalizeFavoriteToolsPatch`, the same option lists/shape the picker
- *   and favorite-star UIs themselves use), returning the resulting full
- *   settings row.
+ * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
+ *   newsRead?, newsLiked? } — validates and upserts the given fields
+ *   (validated by `debate-round`'s `normalizeUserSettingsPatch`/
+ *   `normalizeThemeSettingsPatch`/`normalizeFavoriteToolsPatch` and
+ *   `debate-card-search`'s `normalizeNewsSyncPatch`, the same option
+ *   lists/shape the picker, favorite-star, and News Stream UIs themselves
+ *   use), returning the resulting full settings row.
  */
 
 type SettingsRow = {
@@ -55,6 +62,8 @@ type SettingsRow = {
   themeMode: string | null
   favoriteTools: string | null
   editorPreferences: string | null
+  newsRead: string | null
+  newsLiked: string | null
 }
 
 type SettingsPayload = UserSettingsPayload & {
@@ -62,6 +71,8 @@ type SettingsPayload = UserSettingsPayload & {
   themeMode: ThemeMode
   favoriteTools: string[]
   editorPreferences: EditorPreferencesPayload
+  newsRead: string[]
+  newsLiked: string[]
 }
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
@@ -72,6 +83,8 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     themeMode: (row?.themeMode as ThemeMode | null) ?? DEFAULT_THEME_SETTINGS.themeMode,
     favoriteTools: row?.favoriteTools ? parseFavoriteTools(row.favoriteTools) : DEFAULT_FAVORITE_TOOLS.favoriteTools,
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
+    newsRead: row?.newsRead ? parseNewsIdList(row.newsRead) : DEFAULT_NEWS_SYNC.newsRead,
+    newsLiked: row?.newsLiked ? parseNewsIdList(row.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked,
   }
 }
 
@@ -103,6 +116,7 @@ export async function PUT(req: NextRequest) {
   const userSettingsResult = normalizeUserSettingsPatch(body)
   const themeSettingsResult = normalizeThemeSettingsPatch(body)
   const favoriteToolsResult = normalizeFavoriteToolsPatch(body)
+  const newsSyncResult = normalizeNewsSyncPatch(body)
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
     (body as { editorPreferences?: unknown } | null)?.editorPreferences,
   )
@@ -111,6 +125,7 @@ export async function PUT(req: NextRequest) {
     ...userSettingsResult.errors,
     ...themeSettingsResult.errors,
     ...favoriteToolsResult.errors,
+    ...newsSyncResult.errors,
     ...editorPreferencesResult.errors,
   ]
 
@@ -120,12 +135,13 @@ export async function PUT(req: NextRequest) {
   if (
     Object.keys(valid).length === 0 &&
     favoriteToolsResult.valid.favoriteTools === undefined &&
+    Object.keys(newsSyncResult.valid).length === 0 &&
     Object.keys(editorPreferencesResult.valid).length === 0
   ) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -134,11 +150,23 @@ export async function PUT(req: NextRequest) {
   const db = await getDBFromContext()
   const now = new Date()
 
-  // `favoriteTools` is stored as a JSON-serialized column, so it's kept out
-  // of `valid` (the picker-style fields written as-is) and merged in here.
-  const dbPatch: typeof valid & { favoriteTools?: string | null; editorPreferences?: string | null } = { ...valid }
+  // `favoriteTools`/`newsRead`/`newsLiked` are stored as JSON-serialized
+  // columns, so they're kept out of `valid` (the picker-style fields written
+  // as-is) and merged in here.
+  const dbPatch: typeof valid & {
+    favoriteTools?: string | null
+    editorPreferences?: string | null
+    newsRead?: string | null
+    newsLiked?: string | null
+  } = { ...valid }
   if (favoriteToolsResult.valid.favoriteTools !== undefined) {
     dbPatch.favoriteTools = serializeFavoriteTools(favoriteToolsResult.valid.favoriteTools)
+  }
+  if (newsSyncResult.valid.newsRead !== undefined) {
+    dbPatch.newsRead = serializeNewsIdList(newsSyncResult.valid.newsRead)
+  }
+  if (newsSyncResult.valid.newsLiked !== undefined) {
+    dbPatch.newsLiked = serializeNewsIdList(newsSyncResult.valid.newsLiked)
   }
   // `editorPreferences` is a key→value map updated one control at a time, so
   // a PUT merges onto the existing stored map rather than replacing it.

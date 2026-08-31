@@ -153,6 +153,16 @@ export const userSettings = sqliteTable("user_settings", {
   // in that browser's localStorage. Null/absent means "use the client
   // default", same semantics as every other nullable column here.
   editorPreferences: text("editor_preferences"),
+  // JSON-serialized arrays of News Stream item ids the signed-in user has
+  // read/liked (see packages/debate-card-search/src/lib/news-stream-sync.ts
+  // and TODO.md's Product Feature Idea "Community-Rated Summaries" /
+  // docs/features/news-stream.md's "Read/like state is per-browser" Known
+  // gap). Null/absent means "nothing synced yet" — same semantics as every
+  // other nullable column here; the client's own localStorage state is
+  // still the source of truth for a signed-out browser and is merged
+  // (union, not replaced) with these on sign-in rather than overwritten.
+  newsRead: text("news_read"),
+  newsLiked: text("news_liked"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),

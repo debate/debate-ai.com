@@ -19,6 +19,21 @@
  * Held in a ref rather than a `buildNewsFeed` dependency so a caller passing
  * a fresh array literal each render doesn't re-trigger the mount effect.
  *
+ * An optional `syncRemote` prop closes `docs/features/news-stream.md`'s
+ * "Read/like state is per-browser" Known gap the same way `extraItems`
+ * closes the coaching-sessions gap: this package has no way to call the
+ * app's `/api/settings` route without a dependency this shared package
+ * can't take, so the app layer (`useNewsStreamSync`, wired in from
+ * `apps/debate-ai.com/app/news/NewsPageContent.tsx`) passes in
+ * `hydrate`/`pushRead`/`pushLiked` functions instead. `hydrate` runs once
+ * on mount, merging any account-synced ids into this browser's local
+ * viewer state (`mergeRemoteViewerState`) before the feed's first read/like
+ * render; `pushRead`/`pushLiked` fire best-effort (fire-and-forget, no
+ * await, no error surfaced to the UI) after each local mutation, mirroring
+ * `useFavoriteTools`'s "local apply is never blocked by a sync failure"
+ * convention. A caller with no signed-in session (or that omits the prop
+ * entirely) gets the exact prior local-only behavior.
+ *
  * @module panels/NewsStreamPanel
  */
 
@@ -34,7 +49,10 @@ import {
   buildNewsFeed,
   isNewsItemLiked,
   isNewsItemRead,
+  listLikedIds,
+  listReadIds,
   markNewsItemRead,
+  mergeRemoteViewerState,
   toggleNewsItemLiked,
 } from "../state/newsStream"
 import { NEWS_CATEGORY_LABELS, type NewsCategory, type NewsItem } from "../lib/news-stream"
@@ -121,14 +139,30 @@ function NewsItemRow({
   )
 }
 
+/** App-injected account sync — see this file's fileoverview. */
+export interface NewsStreamSyncAdapter {
+  /** Resolves to the signed-in user's account-synced read/liked ids, or `null` when signed out/unavailable. Called once on mount. */
+  hydrate: () => Promise<{ read: string[]; liked: string[] } | null>
+  /** Best-effort push of the full current read-id list after a new item is marked read. */
+  pushRead: (allReadIds: string[]) => void
+  /** Best-effort push of the full current liked-id list after a like is toggled. */
+  pushLiked: (allLikedIds: string[]) => void
+}
+
 /**
  * Renders the News Stream: every product update and community announcement,
  * newest first, filterable by category, with per-viewer read/like state.
  *
  * @param extraItems Caller-supplied `NewsItem`s to fold into the feed
  *   alongside this package's own sources — see this file's fileoverview.
+ * @param syncRemote Caller-supplied account sync adapter — see this file's
+ *   fileoverview. Omit for local-only (signed-out or no sync wired up)
+ *   behavior, unchanged from before this prop existed.
  */
-export function NewsStreamPanel({ extraItems = [] }: { extraItems?: NewsItem[] } = {}) {
+export function NewsStreamPanel({
+  extraItems = [],
+  syncRemote,
+}: { extraItems?: NewsItem[]; syncRemote?: NewsStreamSyncAdapter } = {}) {
   const [items, setItems] = useState<NewsItem[] | null>(null)
   const [filter, setFilter] = useState<NewsCategory | "all">("all")
   // Bumped on every read/like toggle to re-derive the read/liked maps below
@@ -137,9 +171,16 @@ export function NewsStreamPanel({ extraItems = [] }: { extraItems?: NewsItem[] }
 
   const extraItemsRef = useRef(extraItems)
   extraItemsRef.current = extraItems
+  const syncRemoteRef = useRef(syncRemote)
+  syncRemoteRef.current = syncRemote
 
   useEffect(() => {
     setItems(buildNewsFeed(extraItemsRef.current))
+    syncRemoteRef.current?.hydrate().then((remote) => {
+      if (remote && mergeRemoteViewerState(remote)) {
+        setViewerTick((t) => t + 1)
+      }
+    })
   }, [])
 
   /**
@@ -167,11 +208,13 @@ export function NewsStreamPanel({ extraItems = [] }: { extraItems?: NewsItem[] }
     if (isNewsItemRead(id)) return
     markNewsItemRead(id)
     setViewerTick((t) => t + 1)
+    syncRemoteRef.current?.pushRead(listReadIds())
   }
 
   const handleToggleLike = (id: string) => {
     toggleNewsItemLiked(id)
     setViewerTick((t) => t + 1)
+    syncRemoteRef.current?.pushLiked(listLikedIds())
   }
 
   if (items === null) {

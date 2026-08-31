@@ -13,6 +13,11 @@
  * see `NewsStreamPanel.tsx`'s fileoverview for how it threads the value
  * through a ref rather than an effect dependency.
  *
+ * Also wires `useNewsStreamSync` into the panel's `syncRemote` prop, so a
+ * signed-in user's read/liked state follows them across devices instead of
+ * staying stuck in one browser (`docs/features/news-stream.md`'s "Read/like
+ * state is per-browser" Known gap).
+ *
  * @module app/news/NewsPageContent
  */
 
@@ -20,7 +25,9 @@
 
 import { NewsStreamPanel } from "debate-card-search"
 import { coachingSessionNews } from "debate-round/src/state/coachingSessions"
+import { useNewsStreamSync } from "@/lib/hooks/useNewsStreamSync"
 
 export function NewsPageContent() {
-  return <NewsStreamPanel extraItems={coachingSessionNews()} />
+  const syncRemote = useNewsStreamSync()
+  return <NewsStreamPanel extraItems={coachingSessionNews()} syncRemote={syncRemote} />
 }
