@@ -4,7 +4,10 @@ import {
   countUnreadNewsItems,
   isNewsItemLiked,
   isNewsItemRead,
+  listLikedIds,
+  listReadIds,
   markNewsItemRead,
+  mergeRemoteViewerState,
   toggleNewsItemLiked,
 } from "../src/state/newsStream";
 import { PRODUCT_NEWS, buildAutoFeatureNews, sortNewsFeed } from "../src/lib/news-stream";
@@ -296,5 +299,49 @@ describe("read/like viewer state", () => {
     expect(countUnreadNewsItems(items)).toBe(items.length);
     markNewsItemRead(items[0].id);
     expect(countUnreadNewsItems(items)).toBe(items.length - 1);
+  });
+});
+
+describe("account sync (listReadIds / listLikedIds / mergeRemoteViewerState)", () => {
+  it("lists no read/liked ids before anything is marked", () => {
+    expect(listReadIds()).toEqual([]);
+    expect(listLikedIds()).toEqual([]);
+  });
+
+  it("lists every id marked read/liked, for pushing to the account", () => {
+    markNewsItemRead("a");
+    markNewsItemRead("b");
+    toggleNewsItemLiked("a");
+    expect(listReadIds().sort()).toEqual(["a", "b"]);
+    expect(listLikedIds()).toEqual(["a"]);
+  });
+
+  it("merges remote ids into local state that had nothing yet", () => {
+    const changed = mergeRemoteViewerState({ read: ["x", "y"], liked: ["x"] });
+    expect(changed).toBe(true);
+    expect(isNewsItemRead("x")).toBe(true);
+    expect(isNewsItemRead("y")).toBe(true);
+    expect(isNewsItemLiked("x")).toBe(true);
+    expect(isNewsItemLiked("y")).toBe(false);
+  });
+
+  it("is a union, not a replacement — local-only ids survive a remote merge", () => {
+    markNewsItemRead("local-only");
+    mergeRemoteViewerState({ read: ["remote-only"] });
+    expect(isNewsItemRead("local-only")).toBe(true);
+    expect(isNewsItemRead("remote-only")).toBe(true);
+  });
+
+  it("reports no change and is a no-op when every remote id is already local", () => {
+    markNewsItemRead("a");
+    toggleNewsItemLiked("a");
+    const changed = mergeRemoteViewerState({ read: ["a"], liked: ["a"] });
+    expect(changed).toBe(false);
+  });
+
+  it("treats missing read/liked fields as empty", () => {
+    expect(mergeRemoteViewerState({})).toBe(false);
+    expect(listReadIds()).toEqual([]);
+    expect(listLikedIds()).toEqual([]);
   });
 });

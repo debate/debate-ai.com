@@ -16,7 +16,7 @@ export { DailyBestCardPanel } from "./DailyBestCardPanel";
 export { DailyQuestsPanel } from "./DailyQuestsPanel";
 export { EvidenceLibraryPanel } from "./EvidenceLibraryPanel";
 export { GroupChallengesPanel } from "./GroupChallengesPanel";
-export { NewsStreamPanel } from "./NewsStreamPanel";
+export { NewsStreamPanel, type NewsStreamSyncAdapter } from "./NewsStreamPanel";
 export { PrepRoomPanel } from "./PrepRoomPanel";
 export { ProgressUnlocksPanel } from "./ProgressUnlocksPanel";
 export { QuestStreaksPanel } from "./QuestStreaksPanel";

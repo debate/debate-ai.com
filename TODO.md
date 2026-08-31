@@ -6,6 +6,73 @@
 _No task currently in progress._
 
 ### Completed
+- **News Stream — account-linked read/like sync (idea #17, `news-stream.md`
+  Known gap: "Read/like state is per-browser, not per-account").** Prompted
+  by another repeat of idea #17's standing request ("create user settings
+  and link user db SQL... with ability to save flows docs and debates in
+  SQL, linked to users... add tools into where needed in the ui"), this run
+  first re-confirmed (via a full survey of the command palette,
+  `MenuBar.tsx`, CardMirror/Reason-Editor integration, the `/tools`
+  registry, `/settings`, and the SQL schema) that every specific thing the
+  standing request names — a Google-Docs-style top menu bar, the
+  Ctrl/Cmd-Shift-Space command palette, CardMirror as the Reason Editor's
+  native engine, and per-user SQL-linked settings/flows/rounds/documents —
+  is already built and shipped, several times over, exactly as prior
+  repeats of this same prompt already found (see the `news-stream.md`,
+  `flow-tools-menu.md`, and `legacy-verbatim-shortcuts.md` entries below).
+  Rather than re-verify the same "already done" finding a fourth time, this
+  slice picked up a genuinely open, previously documented gap instead: News
+  Stream's `isNewsItemRead`/`markNewsItemRead`/`toggleNewsItemLiked` viewer
+  state (`packages/debate-card-search/src/state/newsStream.ts`) was
+  localStorage-only, so a signed-in user's read/liked items reset to
+  "everything unread" on a different device — the one piece of News Stream
+  not yet linked to the account's SQL row despite `user_settings` already
+  carrying `debateStyle`/`colorTheme`/`favoriteTools`/`editorPreferences`
+  for every other cross-device preference. Added `newsRead`/`newsLiked`
+  JSON-array columns to `user_settings` (migration
+  `drizzle/0013_late_jazinda.sql`); new pure validation/serialization
+  helpers `packages/debate-card-search/src/lib/news-stream-sync.ts`
+  (`normalizeNewsSyncPatch`/`serializeNewsIdList`/`parseNewsIdList`,
+  mirroring `state/favoriteTools.ts`'s split, bounded to
+  `MAX_NEWS_SYNC_ITEMS` = 500 ids); `state/newsStream.ts` gained
+  `listReadIds`/`listLikedIds`/`mergeRemoteViewerState` (a union merge, not
+  a replacement, so a browser's own local read/like state is never
+  clobbered by a stale or empty account row); `/api/settings` (`GET`/`PUT`)
+  now reads/writes the two new columns alongside every existing field; and
+  `NewsStreamPanel.tsx` gained an optional `syncRemote` prop
+  (`{hydrate, pushRead, pushLiked}`) — the same "app-injected composition
+  point" pattern `extraItems` already established on this exact component
+  for the coaching-sessions cross-package gap — so this shared package still
+  never calls `fetch` itself. `apps/debate-ai.com/lib/hooks/
+  useNewsStreamSync.ts` (new) wraps `debate-round`'s existing
+  `fetchUserSettings`/`saveUserSettings` client into that adapter shape,
+  wired in from `app/news/NewsPageContent.tsx`. `debate-round`'s
+  `FullUserSettingsPayload` type gained the two new fields (imported from
+  `debate-card-search`, which it already depends on); `UserSettingsPanel`'s
+  `FormState` now excludes both, the same way it already excludes
+  `favoriteTools` — this is an automatic sync, not a user-editable form
+  field. Documented in `docs/features/news-stream.md` (new "Account sync"
+  section plus updated Known gaps: the merge is a union so an unlike on one
+  device doesn't clear a like on another until that device's own next
+  toggle, and every push resends the full id list rather than a diff).
+  Vitest-covered: `packages/debate-card-search/test/news-stream-sync.test.ts`
+  (new, 20 cases mirroring `favoriteTools.test.ts`'s shape) and five new
+  cases in `newsStream.test.ts` for `listReadIds`/`listLikedIds`/
+  `mergeRemoteViewerState` (union merge, no-op when nothing changed, missing
+  fields treated as empty). The app-level route/hook themselves remain
+  intentionally untested, matching this repo's documented convention for
+  every other fetch-client/D1-route pair. Verified: `bun install` (2258
+  packages), `bunx drizzle-kit generate` (produced exactly the one expected
+  migration, correctly journaled), `bunx vitest run packages/debate-card-search
+  packages/debate-round` (139 files / 2349 tests pass) and full `bun run
+  test` (195 files / 3089 tests, all pass, up from 194/3040), `bunx turbo run
+  typecheck --filter=debate-card-search --filter=debate-round
+  --filter=debate-ai-web` (11/11 in-scope package tasks pass), a direct
+  `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json` (35 pre-existing,
+  unrelated errors — identical count to before this change, confirming no
+  regression), and `bun run build:web` (`debate-ai-web` builds clean,
+  `/news` and `/api/settings` both present in the route list). **Completed:**
+  2026-08-31.
 - **Tool-panel UI-polish audit — migrate hand-rolled empty-state
   placeholders to the shared `EmptyState` primitive (idea #17, follow-up
   (4), "bring weaker panel UIs up to the shared `debate-ui` primitive

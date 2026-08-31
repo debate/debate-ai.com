@@ -54,7 +54,11 @@ import {
   type ThemeMode,
 } from "../state/themeSettings"
 
-type FormState = Omit<FullUserSettingsPayload, "favoriteTools">
+// `favoriteTools` has its own `FavoriteToolsSettings` UI; `newsRead`/
+// `newsLiked` are synced automatically by `NewsStreamPanel`'s `syncRemote`
+// adapter, not user-editable form fields — both excluded from this form the
+// same way.
+type FormState = Omit<FullUserSettingsPayload, "favoriteTools" | "newsRead" | "newsLiked">
 
 type SaveStatus =
   | { kind: "idle" }

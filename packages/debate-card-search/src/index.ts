@@ -11,3 +11,19 @@ export {
   isOwnContributorRow,
   type SessionIdentity,
 } from "./lib/session-identity";
+export {
+  DEFAULT_NEWS_SYNC,
+  MAX_NEWS_SYNC_ITEMS,
+  isValidNewsIdList,
+  isValidNewsItemId,
+  normalizeNewsSyncPatch,
+  parseNewsIdList,
+  serializeNewsIdList,
+  type NewsSyncPatchResult,
+  type NewsSyncPayload,
+} from "./lib/news-stream-sync";
+export {
+  listLikedIds as listLikedNewsItemIds,
+  listReadIds as listReadNewsItemIds,
+  mergeRemoteViewerState as mergeRemoteNewsViewerState,
+} from "./state/newsStream";
