@@ -28,6 +28,7 @@ import {
   appendJudgeDecision,
   buildJudgeDecisionsPanelView,
   deleteJudgeDecision,
+  deleteJudgeDecisionsForRound,
   listJudgeDecisions,
   type JudgeDecisionRecord,
   type JudgeDecisionRoundGroup,
@@ -85,6 +86,8 @@ export type UseJudgeDecisionsResult = {
   synced: boolean;
   appendDecision: (input: Omit<JudgeDecisionRecord, "id">) => void;
   deleteDecision: (id: string) => void;
+  /** Clears every decision for one round at once ("Clear all history for this round"). */
+  deleteRoundHistory: (roundId: string) => void;
 };
 
 /**
@@ -126,5 +129,19 @@ export function useJudgeDecisions(): UseJudgeDecisionsResult {
     }
   }, []);
 
-  return { groups, synced, appendDecision, deleteDecision };
+  const deleteRoundHistory = useCallback((roundId: string) => {
+    const removedIds = deleteJudgeDecisionsForRound(roundId);
+    if (removedIds.length === 0) return;
+    setGroups(buildJudgeDecisionsPanelView());
+    if (remoteAvailable) {
+      for (const id of removedIds) {
+        deleteSavedJudgeDecisionFromAccount(id).catch(() => {
+          // Best-effort, same as deleteDecision above — the id is already
+          // gone locally either way.
+        });
+      }
+    }
+  }, []);
+
+  return { groups, synced, appendDecision, deleteDecision, deleteRoundHistory };
 }
