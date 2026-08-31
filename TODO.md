@@ -6,6 +6,70 @@
 _No task currently in progress._
 
 ### Completed
+- **Scout-to-Strategy panel — cross-tab live-update (`shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI"), and finding — like every recent repeat of
+  this prompt — that the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and documented (including a real `/settings`
+  page and D1-backed `flowSyncEdits`/document tables linked to users), this
+  slice picked up `shared-flow-sync.md`'s next unclaimed panel from the
+  remaining list named in the immediately preceding run's Completed entry
+  (`ContributionsFeedPanel`). An open PR from a separate concurrent run
+  (`claude/gifted-babbage-rkajod`, #400) was already in flight on
+  `TopicSprintPanel`, whose predicate lives in a different package's
+  `state/live-update.ts` — to avoid touching the same file and risking a
+  merge conflict, this slice instead picked `StrategyPanel` (`/strategy`,
+  also mounted in the Coach hub's Scouting section), which reads
+  `state/strategyRecommendations.ts`'s single `strategyRecommendations`
+  localStorage key via `buildStrategyRecommendationsPanelView`, but — like
+  every other still-unclaimed panel — only ever refreshed on mount or after
+  its own build/clear/AI-case-choice actions. Added
+  `STRATEGY_LIVE_UPDATE_STORAGE_KEYS`/`isStrategyLiveUpdateStorageEvent` to
+  the existing `packages/debate-round/src/flow/live-update.ts` (the module
+  already backing `PrepNotesPanel`, `PrepNoteNotificationsPanel`, and the
+  standalone `FlowAnnotationsPanel` list view, even though none of these —
+  `StrategyPanel` included — are part of the `FlowSpreadsheet` grid itself).
+  Wired a `storage` event listener into `StrategyPanel.tsx` that calls the
+  existing `refresh()` closure when the predicate matches. Documented in a
+  new "Cross-tab live update" section in `docs/features/scout-to-strategy.md`
+  and `docs/features/shared-flow-sync.md` (added the panel to the running
+  list of panels that already have the mechanism). Vitest-covered: 4 new
+  cases for `isStrategyLiveUpdateStorageEvent` in
+  `packages/debate-round/test/live-update.test.ts` (the one backing key,
+  the `null`-key clear-all case, and unrelated/substring-matching keys),
+  bringing that file to 20 cases. `StrategyPanel.tsx`'s own
+  `storage`-listener wiring remains intentionally untested, matching every
+  other panel in this repo whose wiring is exercised only through the
+  shared pure predicate's own tests. Verified: `bun install` (2258
+  packages), the touched test file (22/22 pass across
+  `live-update.test.ts` + `panels.test.tsx`), the full `bun run test` (201
+  files / 3248 tests, all pass), the whole-repo `bun run typecheck` (12
+  packages via turbo, all passing), and a full production `bun run
+  build:web` (vinext build + service-worker build, `/strategy` present in
+  the route list) — all passed with no new failures. No `lint`/
+  `format:check` script exists anywhere in this repo (root or per-package
+  `package.json`, and no `lint` task in `turbo.json`), so that step was
+  skipped as not applicable. Generated service-worker build artifacts
+  (`app-file-list.ts`, `version.ts`, `public/service-worker.js`) produced
+  by that build were reverted before committing, since they're build-time
+  output unrelated to this change. Every other localStorage-backed panel
+  still without the mechanism (`ArgumentLibraryPanel`, `EvidenceLibraryPanel`,
+  `PrepRoomPanel`, `ReviewQueuePanel`, `SprintNotesPanel`,
+  `TopicCoverageDashboardPanel` in `debate-card-search`; `AiVersusRoundPanel`,
+  `ArgumentTreePanel`, `CoachingProgramsPanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, `FlowEditLogPanel`, `FlowSummariesPanel`,
+  `JudgeDecisionPanel`, `OpponentTeamProfilesPanel`,
+  `PracticeRoundSimulatorPanel`, `PreRoundBriefingsPanel`,
+  `UserSettingsPanel`, `VulnerabilityChartsPanel`, `WordCountRoundsPanel` in
+  `debate-round`; `CoachMaterialsPanel`, `JudgeParadigmPickerPanel`,
+  `JudgeProfilesPanel`, `OpponentPersonaPickerPanel` in
+  `debate-speech-writer`; and `DebateVideosPanel` in `debate-videos`)
+  remains open for a future run to pick up next (plus `TopicSprintPanel`,
+  pending merge of the separate in-flight PR #400).
 - **Contributions Feed panel — cross-tab live-update (`shared-flow-sync.md`
   Known gap: "every other localStorage-backed panel in this repo still has
   no cross-tab live-update mechanism").** Prompted by another repeat of the
