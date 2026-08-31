@@ -25,3 +25,4 @@ export { StrategyPanel } from "./StrategyPanel";
 export { UserSettingsPanel } from "./UserSettingsPanel";
 export { VulnerabilityChartsPanel } from "./VulnerabilityChartsPanel";
 export { WordCountRoundsPanel } from "./WordCountRoundsPanel";
+export { WordLimitPresetsPanel } from "./WordLimitPresetsPanel";

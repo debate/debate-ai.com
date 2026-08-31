@@ -7,10 +7,13 @@
  * Resolves the word limit for a speech that is being given right now in the
  * flow page and holds the in-progress text for it, so the speech header bar
  * can swap its countdown for a live word-count meter. A speech whose name
- * matches a `wordCountStyles` entry uses that entry's authored limit;
- * otherwise the limit is estimated from the live timed style's speech length
- * via `estimateWordLimit`, so word-limit mode works for every debate style,
- * not just the authored word-count ones.
+ * matches a user's own custom preset (`state/wordLimitPresets.ts`, TODO.md
+ * idea #2's "per-style word-limit preset manager" follow-up) uses that
+ * override first; otherwise a speech whose name matches a `wordCountStyles`
+ * entry uses that entry's authored limit; otherwise the limit is estimated
+ * from the live timed style's speech length via `estimateWordLimit`, so
+ * word-limit mode works for every debate style, not just the authored
+ * word-count ones.
  *
  * Persistence reuses the existing `state/wordCountRounds.ts` store rather than
  * introducing a second source of truth, so a round typed under the live meter
@@ -32,6 +35,7 @@ import {
   saveWordCountRound,
   type WordCountRoundRecord,
 } from "../state/wordCountRounds";
+import { findPresetWordLimit, type WordLimitPreset } from "../state/wordLimitPresets";
 
 /** Default word-count style used when a caller does not name one. */
 export const DEFAULT_WORD_COUNT_STYLE_KEY: WordCountStyleKey = wordCountStyleMap[0];
@@ -45,21 +49,27 @@ export type SpeechWordLimitOptions = {
   timedSpeechMinutes?: number;
   /** Speaking pace used for the timed-speech estimate. */
   wordsPerMinute?: number;
+  /** User-defined overrides, checked before the authored registry. */
+  presets?: WordLimitPreset[];
 };
 
 /**
- * Resolves the word limit for a live speech: an authored `wordCountStyles`
- * limit when the speech name matches (case-insensitively), otherwise an
- * estimate from the timed speech's length. Returns `undefined` when neither
- * source is available, so callers can leave the countdown in place instead of
- * showing a meaningless meter.
+ * Resolves the word limit for a live speech: a user's own custom preset when
+ * the speech name matches (case-insensitively), otherwise an authored
+ * `wordCountStyles` limit when the speech name matches, otherwise an
+ * estimate from the timed speech's length. Returns `undefined` when none of
+ * those sources is available, so callers can leave the countdown in place
+ * instead of showing a meaningless meter.
  */
 export function resolveSpeechWordLimit({
   speechName,
   styleKey = DEFAULT_WORD_COUNT_STYLE_KEY,
   timedSpeechMinutes,
   wordsPerMinute,
+  presets,
 }: SpeechWordLimitOptions): number | undefined {
+  const preset = presets ? findPresetWordLimit(presets, speechName) : undefined;
+  if (preset !== undefined) return preset;
   const normalized = speechName.trim().toUpperCase();
   const authored = wordCountStyles[styleKey]?.speeches.find(
     (speech) => speech.name.toUpperCase() === normalized,

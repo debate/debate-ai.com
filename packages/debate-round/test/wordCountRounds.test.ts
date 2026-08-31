@@ -132,6 +132,14 @@ describe("getWordCountRoundStatuses", () => {
 
     expect(getWordCountRoundStatuses("round-3")).toEqual([]);
   });
+
+  it("prefers a matching custom preset over the style's authored limit", () => {
+    saveWordCountRound(ROUND_A);
+
+    const statuses = getWordCountRoundStatuses("round-1", [{ name: "AC", wordLimit: 4 }]);
+    expect(statuses[0].status.overLimit).toBe(false);
+    expect(statuses[0].status.remaining).toBe(1);
+  });
 });
 
 describe("buildWordCountRoundsPanelView", () => {

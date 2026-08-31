@@ -54,6 +54,34 @@ describe("resolveSpeechWordLimit", () => {
     expect(resolveSpeechWordLimit({ speechName: "1AR" })).toBeUndefined();
     expect(resolveSpeechWordLimit({ speechName: "1AR", timedSpeechMinutes: 0 })).toBeUndefined();
   });
+
+  it("prefers a matching custom preset over the authored registry", () => {
+    expect(
+      resolveSpeechWordLimit({ speechName: "AC", presets: [{ name: "AC", wordLimit: 900 }] }),
+    ).toBe(900);
+  });
+
+  it("prefers a matching custom preset over the timed-speech estimate", () => {
+    expect(
+      resolveSpeechWordLimit({
+        speechName: "1AR",
+        timedSpeechMinutes: 5,
+        presets: [{ name: "1AR", wordLimit: 400 }],
+      }),
+    ).toBe(400);
+  });
+
+  it("matches a custom preset name case-insensitively and ignores surrounding space", () => {
+    expect(
+      resolveSpeechWordLimit({ speechName: " ac ", presets: [{ name: "AC", wordLimit: 900 }] }),
+    ).toBe(900);
+  });
+
+  it("falls through to the authored registry when no preset matches the speech", () => {
+    expect(
+      resolveSpeechWordLimit({ speechName: "AC", presets: [{ name: "NC", wordLimit: 900 }] }),
+    ).toBe(600);
+  });
 });
 
 describe("word-limit mode state", () => {
@@ -102,6 +130,15 @@ describe("getSpeechWordCountStatus", () => {
   it("returns undefined when the speech has no resolvable limit", () => {
     const state = createWordCountSpeechMode("round-1");
     expect(getSpeechWordCountStatus(state, { speechName: "1AR" })).toBeUndefined();
+  });
+
+  it("reports the live count against a custom preset instead of the authored limit", () => {
+    const state = setWordCountSpeechText(createWordCountSpeechMode("round-1"), "AC", "one two three");
+    const status = getSpeechWordCountStatus(state, {
+      speechName: "AC",
+      presets: [{ name: "AC", wordLimit: 10 }],
+    });
+    expect(status).toMatchObject({ wordLimit: 10, count: 3, remaining: 7, overLimit: false });
   });
 });
 

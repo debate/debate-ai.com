@@ -20,10 +20,15 @@
 import type { UserSettingsPayload } from "../state/userSettings";
 import type { ThemeSettingsPayload } from "../state/themeSettings";
 import type { FavoriteToolsPayload } from "../state/favoriteTools";
+import type { WordLimitPresetsPayload } from "../state/wordLimitPresets";
 import type { NewsSyncPayload } from "debate-card-search";
 
-/** The full shape `/api/settings` reads/writes — app preferences, the theme fields (idea #17, follow-up (2)), the favorite-tools list (idea #17, "integrate tools into user settings" follow-up), and the News Stream read/liked id lists (`docs/features/news-stream.md`'s "Read/like state is per-browser" Known gap). */
-export type FullUserSettingsPayload = UserSettingsPayload & ThemeSettingsPayload & FavoriteToolsPayload & NewsSyncPayload;
+/** The full shape `/api/settings` reads/writes — app preferences, the theme fields (idea #17, follow-up (2)), the favorite-tools list (idea #17, "integrate tools into user settings" follow-up), the custom word-limit presets list (idea #2's "per-style word-limit preset manager" follow-up), and the News Stream read/liked id lists (`docs/features/news-stream.md`'s "Read/like state is per-browser" Known gap). */
+export type FullUserSettingsPayload = UserSettingsPayload &
+  ThemeSettingsPayload &
+  FavoriteToolsPayload &
+  WordLimitPresetsPayload &
+  NewsSyncPayload;
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {
