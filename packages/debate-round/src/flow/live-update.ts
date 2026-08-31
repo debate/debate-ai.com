@@ -70,3 +70,25 @@ export function isPrepNoteNotificationsLiveUpdateStorageEvent(event: { key: stri
     (PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
+
+/**
+ * The `localStorage` key `panels/PrepNotesPanel.tsx` reads from — see
+ * `state/prepNotes.ts`. Distinct from `FLOW_LIVE_UPDATE_STORAGE_KEYS` above:
+ * that one drives the `FlowSpreadsheet` grid's per-box `PrepNoteBadge`,
+ * while this drives the standalone cross-flow `PrepNotesPanel` list view,
+ * mirroring the `FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+ * `FLOW_LIVE_UPDATE_STORAGE_KEYS` split for annotations.
+ */
+export const PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["prepNotes"] as const;
+
+/**
+ * Whether a `storage` event should trigger `PrepNotesPanel` to re-read its
+ * persisted note list. A `null` key (e.g. from `localStorage.clear()`)
+ * counts too, for the same reason as `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isPrepNotesPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}

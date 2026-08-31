@@ -6,6 +6,55 @@
 _No task currently in progress._
 
 ### Completed
+- **Prep Notes panel — cross-tab live-update (`shared-flow-sync.md` Known
+  gap: "every other localStorage-backed panel in this repo still has no
+  cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI"), and finding — like every recent repeat of
+  this prompt — that the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and documented (including a real `/settings`
+  page and D1-backed `flowSyncEdits`/document tables linked to users), this
+  slice picked up `shared-flow-sync.md`'s next unclaimed panel from its
+  running cross-tab-live-update list (the immediately preceding run had
+  just closed `PrepNoteNotificationsPanel`, this list's sibling panel):
+  `PrepNotesPanel` (`/prep-notes`), which reads `state/prepNotes.ts`'s
+  single `prepNotes` localStorage key via `buildPrepNotesPanelView`, but —
+  like every other still-unclaimed panel — only ever refreshed on mount or
+  after its own status-cycle/assign/unassign actions. Added
+  `PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isPrepNotesPanelLiveUpdateStorageEvent` to the existing
+  `packages/debate-round/src/flow/live-update.ts` (scoped to just the one
+  `prepNotes` key this panel reads — distinct from that same module's
+  `FLOW_LIVE_UPDATE_STORAGE_KEYS`, which drives the `FlowSpreadsheet` grid's
+  per-box `PrepNoteBadge` rather than this standalone cross-flow list view).
+  Wired a `storage` event listener into `PrepNotesPanel.tsx` that calls the
+  existing `refresh()` closure when the predicate matches (no `topic`/
+  `recipientId` scoping needed here, unlike `BrainstormBoardPanel`/
+  `PrepNoteNotificationsPanel`, since this panel already shows every note
+  across every flow rather than a filtered subset). Documented in
+  `docs/features/prep-notes.md` (new "Cross-tab live update" subsection
+  under "Data flow", mirroring the existing one under "Notifications") and
+  `docs/features/shared-flow-sync.md` (added the panel to the running list
+  of panels that already have the mechanism). Vitest-covered: 4 new cases
+  for `isPrepNotesPanelLiveUpdateStorageEvent` in
+  `packages/debate-round/test/live-update.test.ts` (the one backing key,
+  the `null`-key clear-all case, and two unrelated/substring-matching
+  keys). `PrepNotesPanel.tsx`'s own `storage`-listener wiring remains
+  intentionally untested, matching every other panel in this repo whose
+  wiring is exercised only through the shared pure predicate's own tests.
+  Verified: `bun install` (2258 packages), the touched test files (39/39
+  pass), the full `bun run test` (201 files / 3240 tests, all pass), the
+  whole-repo `bun run typecheck` (12 packages via turbo, all passing), and a
+  full production `bun run build:web` (vinext build + service-worker build,
+  `/prep-notes` present in the route list) — all passed with no new
+  failures. No `lint`/`format:check` script exists anywhere in this repo
+  (root or per-package `package.json`, and no `lint` task in `turbo.json`),
+  so that step was skipped as not applicable. Generated service-worker
+  build artifacts (`app-file-list.ts`, `version.ts`,
+  `public/service-worker.js`) produced by that build were reverted before
+  committing, since they're build-time output unrelated to this change.
 - **Prep Note Notifications panel — cross-tab live-update (`shared-flow-sync.md`
   Known gap: "every other localStorage-backed panel in this repo still has
   no cross-tab live-update mechanism").** Prompted by another repeat of the
