@@ -66,6 +66,25 @@ the persisted notes by status for the panel) and `nextPrepNoteStatus` (the
 panel's status-cycle order) — rather than introducing new mutation logic.
 Vitest-covered in `packages/debate-round/test/prepNotes.test.ts`.
 
+### Cross-tab live update
+
+`PrepNotesPanel` now also live-updates across browser tabs: a note
+created, cycled to a new status, or (re)assigned in another tab refreshes
+this panel's grouped list here too, closing this panel's share of the
+"every other localStorage-backed panel in this repo still has no cross-tab
+live-update mechanism" Known gap tracked in
+[`shared-flow-sync.md`](shared-flow-sync.md). It subscribes to the
+browser's `storage` event — fired only in *other* same-origin tabs, never
+the one that made the write — and, via `flow/live-update.ts`'s
+`isPrepNotesPanelLiveUpdateStorageEvent`, re-reads `buildPrepNotesPanelView()`
+whenever the backing `prepNotes` key changes (or `localStorage.clear()`
+fires a `null`-key event). Distinct from `FLOW_LIVE_UPDATE_STORAGE_KEYS` in
+the same module, which drives the `FlowSpreadsheet` grid's per-box
+`PrepNoteBadge` instead of this standalone cross-flow list view. Vitest-covered
+in `packages/debate-round/test/live-update.test.ts` (the backing-store key,
+the `null`-key clear-all case, and unrelated/substring-matching keys
+staying ignored).
+
 ## Notifications
 
 Closes follow-up (b), "an assignee notification once a notification system

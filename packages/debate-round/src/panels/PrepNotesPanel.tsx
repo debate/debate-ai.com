@@ -35,6 +35,7 @@ import {
   type PrepNotesPanelGroup,
 } from "../state/prepNotes"
 import { buildPrepNoteJumpHref, type PrepNoteStatus } from "../flow/strategy-sync-notes"
+import { isPrepNotesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 
 const STATUS_LABEL: Record<PrepNoteStatus, string> = {
   "needs-follow-up": "Needs follow-up",
@@ -65,6 +66,21 @@ export function PrepNotesPanel() {
   }, [])
 
   const refresh = () => setGroups(buildPrepNotesPanelView())
+
+  /**
+   * Live-update this panel when another browser tab creates, cycles, or
+   * (re)assigns a prep note while this tab is open — the `storage` event
+   * never fires in the tab that made the write, only in other same-origin
+   * tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isPrepNotesPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleCycleStatus = (id: string, status: PrepNoteStatus) => {
     updatePersistedPrepNoteStatus(id, nextPrepNoteStatus(status), Date.now())
