@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS,
   CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS,
   CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS,
   CONTRIBUTOR_AWARDS_LIVE_UPDATE_STORAGE_KEYS,
@@ -11,6 +12,7 @@ import {
   RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS,
   REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS,
   TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS,
+  isBrainstormBoardLiveUpdateStorageEvent,
   isCardScoringLiveUpdateStorageEvent,
   isContributionLeaderboardLiveUpdateStorageEvent,
   isContributorAwardsLiveUpdateStorageEvent,
@@ -263,5 +265,27 @@ describe("isCardScoringLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isCardScoringLiveUpdateStorageEvent({ key: "cardScoresBackup" })).toBe(false);
     expect(isCardScoringLiveUpdateStorageEvent({ key: "old_aiCardAssessments" })).toBe(false);
+  });
+});
+
+describe("isBrainstormBoardLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isBrainstormBoardLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isBrainstormBoardLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isBrainstormBoardLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isBrainstormBoardLiveUpdateStorageEvent({ key: "contributions" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isBrainstormBoardLiveUpdateStorageEvent({ key: "brainstormIdeasBackup" })).toBe(false);
+    expect(isBrainstormBoardLiveUpdateStorageEvent({ key: "old_trackedArguments" })).toBe(false);
   });
 });

@@ -6,6 +6,55 @@
 _No task currently in progress._
 
 ### Completed
+- **Team Brainstorm Assist — cross-tab live-update (`shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the ui... develop better tool ui"), and finding
+  — like every recent repeat of this prompt — that the "user settings /
+  SQL-linked flows, docs, rounds" half is already fully built and documented
+  (including a real `/settings` page and D1-backed `flowSyncEdits`/document
+  tables linked to users), this slice picked up `shared-flow-sync.md`'s next
+  unclaimed panel from its running cross-tab-live-update list (the
+  immediately preceding run had just closed `CardScoringPanel`, and
+  `DailyBestCardPanel` turned out to already have the mechanism from an
+  earlier slice): `BrainstormBoardPanel` (`/cards/brainstorm`), which reads
+  two `localStorage` stores — `state/brainstormIdeas.ts`'s `brainstormIdeas`
+  (every submitted/AI-generated/merged idea) and
+  `state/trackedArguments.ts`'s `trackedArguments` (the topic switcher's
+  coverage-gap board seeding) — but, like every other still-unclaimed panel,
+  only ever refreshed on mount or on an explicit user action. Added
+  `BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS`/
+  `isBrainstormBoardLiveUpdateStorageEvent` to
+  `packages/debate-card-search/src/state/live-update.ts`, mirroring the
+  twelve existing key-list/predicate pairs there exactly (true for either
+  backing key or a `null` key from `localStorage.clear()`, false otherwise
+  — including a same-prefix substring key). Wired a `storage` event listener
+  into `BrainstormBoardPanel.tsx` that calls the existing `refresh(topic)`
+  closure when the predicate matches; the listener effect depends on
+  `topic` (mirroring `DailyQuestsPanel`'s `contributorId`-dependent
+  listener) so a topic change re-registers it with a fresh closure instead
+  of refreshing against a stale one. Documented in
+  `docs/features/brainstorm-board.md` (new "Cross-tab live update" section)
+  and `docs/features/shared-flow-sync.md` (added `BrainstormBoardPanel` to
+  the running list of panels that already have the mechanism). Vitest-
+  covered: 4 new cases for `isBrainstormBoardLiveUpdateStorageEvent` in
+  `packages/debate-card-search/test/live-update.test.ts` (both backing-key
+  matches, the `null`-key clear-all case, two unrelated keys, and two
+  same-prefix substring keys), bringing that file to 48 cases.
+  `BrainstormBoardPanel.tsx`'s own `storage`-listener wiring remains
+  intentionally untested, matching every other panel in this repo whose
+  wiring is exercised only through the shared pure predicate's own tests.
+  Verified: `bun install` (2258 packages), the touched test file (48/48
+  pass), the full `bun run test` (201 files / 3224 tests, all pass), the
+  whole-repo `bun run typecheck` (13 packages via turbo, all passing), and a
+  full production `bun run build:web` (vinext build + service-worker build,
+  `/cards/brainstorm` present in the route list) — all passed with no new
+  failures. Generated service-worker build artifacts (`app-file-list.ts`,
+  `version.ts`, `public/service-worker.js`) produced by that build were
+  reverted before committing, since they're build-time output unrelated to
+  this change.
 - **LLM Card Scoring — cross-tab live-update (idea #16, `shared-flow-sync.md`
   Known gap: "every other localStorage-backed panel in this repo still has
   no cross-tab live-update mechanism").** Prompted by another repeat of
