@@ -3,24 +3,26 @@
  * `ContributionLeaderboardPanel`, `TaskInboxPanel`, `ProgressUnlocksPanel`,
  * `ResearchProgressPanel`, `QuestStreaksPanel`, `NewsStreamPanel`,
  * `ContributorAwardsPanel`, `DailyQuestsPanel`, `RevisionIncentivesPanel`,
- * `CardScoringPanel`, and `BrainstormBoardPanel`, mirroring `debate-round`'s
- * `flow/live-update.ts`. The browser's `storage` event never fires in the
- * *same* tab that wrote the change — only in other same-origin tabs — so a
- * panel that reads `localStorage` on mount only never reflects another tab's
- * write without a manual reload. `isDailyBestCardLiveUpdateStorageEvent`
- * closes the "No real-time updates across browser tabs/sessions" Known gap
- * noted in `daily-best-card.md`; `isContributionLeaderboardLiveUpdateStorageEvent`,
+ * `CardScoringPanel`, `BrainstormBoardPanel`, and `GroupChallengesPanel`,
+ * mirroring `debate-round`'s `flow/live-update.ts`. The browser's `storage`
+ * event never fires in the *same* tab that wrote the change — only in other
+ * same-origin tabs — so a panel that reads `localStorage` on mount only
+ * never reflects another tab's write without a manual reload.
+ * `isDailyBestCardLiveUpdateStorageEvent` closes the "No real-time updates
+ * across browser tabs/sessions" Known gap noted in `daily-best-card.md`;
+ * `isContributionLeaderboardLiveUpdateStorageEvent`,
  * `isTaskInboxLiveUpdateStorageEvent`, `isProgressUnlocksLiveUpdateStorageEvent`,
  * `isResearchProgressLiveUpdateStorageEvent`, `isQuestStreaksLiveUpdateStorageEvent`,
  * `isNewsStreamLiveUpdateStorageEvent`, `isContributorAwardsLiveUpdateStorageEvent`,
  * `isDailyQuestsLiveUpdateStorageEvent`, `isRevisionIncentivesLiveUpdateStorageEvent`,
- * `isCardScoringLiveUpdateStorageEvent`, and `isBrainstormBoardLiveUpdateStorageEvent`
- * close the equivalent gap for their own panels — the news-stream one noted
- * directly in `news-stream.md`'s "No real-time updates across browser tabs"
- * Known gap, the rest in `shared-flow-sync.md`'s "Every other
- * localStorage-backed panel in this repo still has no cross-tab live-update
- * mechanism." (a gap that still applies to the rest of this repo's
- * localStorage-backed panels beyond these twelve).
+ * `isCardScoringLiveUpdateStorageEvent`, `isBrainstormBoardLiveUpdateStorageEvent`,
+ * and `isGroupChallengesLiveUpdateStorageEvent` close the equivalent gap for
+ * their own panels — the news-stream one noted directly in `news-stream.md`'s
+ * "No real-time updates across browser tabs" Known gap, the rest in
+ * `shared-flow-sync.md`'s "Every other localStorage-backed panel in this
+ * repo still has no cross-tab live-update mechanism." (a gap that still
+ * applies to the rest of this repo's localStorage-backed panels beyond
+ * these thirteen).
  *
  * @module state/live-update
  */
@@ -349,5 +351,34 @@ export function isBrainstormBoardLiveUpdateStorageEvent(event: { key: string | n
   return (
     event.key === null ||
     (BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `GroupChallengesPanel` reads from:
+ * `state/groupChallenges.ts`'s own `"groupChallenges"` store (the persisted
+ * challenge roster) and `state/challengeWinEvents.ts`'s `"challengeWinEvents"`
+ * (recorded wins) and `"contributions"` (the real, persisted contribution
+ * feed `buildPersistedGroupChallengeBoard` matches contribution-target
+ * challenges against).
+ */
+export const GROUP_CHALLENGES_LIVE_UPDATE_STORAGE_KEYS = [
+  "groupChallenges",
+  "challengeWinEvents",
+  "contributions",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `GroupChallengesPanel` to refresh
+ * its rendered challenge roster and live standings — closes the "Every
+ * other localStorage-backed panel in this repo still has no cross-tab
+ * live-update mechanism" Known gap noted in `shared-flow-sync.md`, for this
+ * panel. Mirrors `isDailyBestCardLiveUpdateStorageEvent`'s
+ * null-key/exact-key-match rules.
+ */
+export function isGroupChallengesLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (GROUP_CHALLENGES_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
