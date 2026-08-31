@@ -8,7 +8,8 @@ _No task currently in progress._
 ### Completed
 - **User Settings — account-synced Settings page (real UI for the
   `debateStyle`/`fontSize` registry) + a `user_settings` SQL table linked to
-  users.** Prompted by the standing prompt ("integrate all the tools and
+  users.** [PR #395](https://github.com/debate/debate-ai.com/pull/395).
+  Prompted by the standing prompt ("integrate all the tools and
   create user settings and link user db SQL with ability to save flows docs
   and debates in SQL and link to users... develop better tool ui"). Auditing
   the actual state of that request (rather than TODO.md narration) found:
