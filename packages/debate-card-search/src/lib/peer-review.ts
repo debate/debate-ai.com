@@ -39,6 +39,16 @@ export interface CardReview {
   authorId?: string;
   /** Free-text id of whoever last took a gatekeeping action (request changes/approve/reject/publish), for accountability. */
   reviewedBy?: string;
+  /**
+   * Epoch-ms timestamp of when `status` last changed (set on creation, and
+   * updated by every transition below, including `addReviewComment`'s
+   * auto-transition to `changes_requested`). Optional so reviews persisted
+   * before this field existed keep working — `getReviewAgeDays`/
+   * `isReviewStale` simply report no age for those. Powers the review-aging
+   * indicator named as a "Peer Review System" follow-up in TODO.md ("a
+   * review-aging indicator for stale pending reviews").
+   */
+  statusChangedAt?: number;
 }
 
 /** Legal next statuses for each current status — anything else is rejected. */
@@ -86,7 +96,13 @@ export class SelfReviewNotAllowedError extends Error {
 /** Starts a new, empty review for a card in the "draft" status. `authorId` is optional free-text, matching this package's existing author-id convention. */
 export function createCardReview(cardId: string, authorId?: string): CardReview {
   const trimmedAuthorId = authorId?.trim();
-  return { cardId, status: "draft", comments: [], ...(trimmedAuthorId ? { authorId: trimmedAuthorId } : {}) };
+  return {
+    cardId,
+    status: "draft",
+    comments: [],
+    statusChangedAt: Date.now(),
+    ...(trimmedAuthorId ? { authorId: trimmedAuthorId } : {}),
+  };
 }
 
 /**
@@ -119,7 +135,7 @@ function transitionReview(review: CardReview, to: ReviewStatus, reviewedBy?: str
   if (!canTransitionReviewStatus(review.status, to)) {
     throw new InvalidReviewTransitionError(review.status, to);
   }
-  return { ...review, status: to, ...(reviewedBy ? { reviewedBy } : {}) };
+  return { ...review, status: to, statusChangedAt: Date.now(), ...(reviewedBy ? { reviewedBy } : {}) };
 }
 
 /** Submits a draft (or a review with requested changes) for teammate review. */
@@ -140,7 +156,7 @@ export function getUnresolvedBlockingComments(review: CardReview): ReviewComment
 export function addReviewComment(review: CardReview, comment: Omit<ReviewComment, "resolved">): CardReview {
   const comments = [...review.comments, { ...comment, resolved: false }];
   if (comment.severity === "blocking" && review.status === "in_review") {
-    return { ...review, comments, status: "changes_requested" };
+    return { ...review, comments, status: "changes_requested", statusChangedAt: Date.now() };
   }
   return { ...review, comments };
 }
@@ -220,6 +236,41 @@ export function isReadyToPublish(review: CardReview): boolean {
  */
 export function isCardLive(review: CardReview | undefined): boolean {
   return review === undefined || review.status === "published";
+}
+
+/** Statuses that represent a review sitting in someone else's queue, awaiting action. */
+const PENDING_ACTION_STATUSES: ReviewStatus[] = ["in_review", "changes_requested"];
+
+/** Number of days a review can sit in a pending-action status before `isReviewStale` flags it. */
+export const STALE_REVIEW_THRESHOLD_DAYS = 3;
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/**
+ * How many whole days it's been since `review.status` last changed, or
+ * `undefined` if `statusChangedAt` isn't set (a review persisted before that
+ * field existed). Powers the review-aging indicator named as a "Peer Review
+ * System" follow-up in TODO.md.
+ */
+export function getReviewAgeDays(review: CardReview, now: number = Date.now()): number | undefined {
+  if (review.statusChangedAt === undefined) return undefined;
+  return Math.max(0, Math.floor((now - review.statusChangedAt) / MS_PER_DAY));
+}
+
+/**
+ * Whether a review has been sitting in a pending-action status (`in_review`
+ * or `changes_requested` — draft/approved/published/rejected aren't anyone's
+ * backlog) for at least `thresholdDays`. A review with no `statusChangedAt`
+ * is never flagged stale — there's no age to compare.
+ */
+export function isReviewStale(
+  review: CardReview,
+  now: number = Date.now(),
+  thresholdDays: number = STALE_REVIEW_THRESHOLD_DAYS,
+): boolean {
+  if (!PENDING_ACTION_STATUSES.includes(review.status)) return false;
+  const age = getReviewAgeDays(review, now);
+  return age !== undefined && age >= thresholdDays;
 }
 
 /**

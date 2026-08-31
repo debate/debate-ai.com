@@ -1,17 +1,20 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   InvalidReviewTransitionError,
   ReviewerIdRequiredError,
   SelfReviewNotAllowedError,
+  STALE_REVIEW_THRESHOLD_DAYS,
   UnresolvedBlockingCommentsError,
   addReviewComment,
   approveReview,
   buildReviewSummary,
   canTransitionReviewStatus,
   createCardReview,
+  getReviewAgeDays,
   getUnresolvedBlockingComments,
   isCardLive,
   isReadyToPublish,
+  isReviewStale,
   publishReview,
   rejectReview,
   requestChanges,
@@ -23,7 +26,9 @@ import {
 
 describe("createCardReview", () => {
   it("starts a new review in draft with no comments", () => {
-    expect(createCardReview("card-1")).toEqual({ cardId: "card-1", status: "draft", comments: [] });
+    const review = createCardReview("card-1");
+    expect(review).toMatchObject({ cardId: "card-1", status: "draft", comments: [] });
+    expect(typeof review.statusChangedAt).toBe("number");
   });
 });
 
@@ -281,6 +286,94 @@ describe("isCardLive", () => {
   it("is true once the review is published", () => {
     const review = publishReview(approveReview(submitForReview(createCardReview("card-1")), "r1"), "r1");
     expect(isCardLive(review)).toBe(true);
+  });
+});
+
+describe("getReviewAgeDays", () => {
+  it("returns undefined when statusChangedAt isn't set", () => {
+    const review: CardReview = { cardId: "card-1", status: "in_review", comments: [] };
+    expect(getReviewAgeDays(review)).toBeUndefined();
+  });
+
+  it("returns whole days elapsed since the last status change", () => {
+    const review = createCardReview("card-1");
+    const threeAndAHalfDaysLater = review.statusChangedAt! + 3.5 * 24 * 60 * 60 * 1000;
+    expect(getReviewAgeDays(review, threeAndAHalfDaysLater)).toBe(3);
+  });
+
+  it("is zero right when the status changed", () => {
+    const review = createCardReview("card-1");
+    expect(getReviewAgeDays(review, review.statusChangedAt)).toBe(0);
+  });
+
+  it("is refreshed by a transition", () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(0);
+      const review = submitForReview(createCardReview("card-1"));
+      vi.setSystemTime(10 * 24 * 60 * 60 * 1000);
+      const approved = approveReview(review, "r1");
+      // approveReview stamps a fresh statusChangedAt at the current (10-days-later) time, so its age is 0, not 10.
+      expect(getReviewAgeDays(approved, Date.now())).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe("isReviewStale", () => {
+  it("is false before the threshold", () => {
+    const review = submitForReview(createCardReview("card-1"));
+    const justUnderThreshold = review.statusChangedAt! + (STALE_REVIEW_THRESHOLD_DAYS * 24 * 60 * 60 * 1000 - 1);
+    expect(isReviewStale(review, justUnderThreshold)).toBe(false);
+  });
+
+  it("is true once the threshold is reached", () => {
+    const review = submitForReview(createCardReview("card-1"));
+    const atThreshold = review.statusChangedAt! + STALE_REVIEW_THRESHOLD_DAYS * 24 * 60 * 60 * 1000;
+    expect(isReviewStale(review, atThreshold)).toBe(true);
+  });
+
+  it("is false for statuses that aren't anyone's pending queue", () => {
+    const farFuture = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    expect(isReviewStale(createCardReview("card-1"), farFuture)).toBe(false); // draft
+    const published = publishReview(approveReview(submitForReview(createCardReview("card-1")), "r1"), "r1");
+    expect(isReviewStale(published, farFuture)).toBe(false);
+    const rejected = rejectReview(submitForReview(createCardReview("card-1")), "r1");
+    expect(isReviewStale(rejected, farFuture)).toBe(false);
+  });
+
+  it("respects a custom threshold", () => {
+    const review = submitForReview(createCardReview("card-1"));
+    const oneDayLater = review.statusChangedAt! + 24 * 60 * 60 * 1000;
+    expect(isReviewStale(review, oneDayLater, 1)).toBe(true);
+    expect(isReviewStale(review, oneDayLater, 2)).toBe(false);
+  });
+
+  it("is false with no statusChangedAt", () => {
+    const review: CardReview = { cardId: "card-1", status: "changes_requested", comments: [] };
+    expect(isReviewStale(review, Date.now() + 30 * 24 * 60 * 60 * 1000)).toBe(false);
+  });
+});
+
+describe("addReviewComment stamps statusChangedAt on its auto-transition", () => {
+  it("refreshes statusChangedAt when a blocking comment flips in_review to changes_requested", () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(1_000_000);
+      const review = submitForReview(createCardReview("card-1"));
+      vi.setSystemTime(1_000_000 + 5000);
+      const updated = addReviewComment(review, { id: "c1", reviewerId: "r1", body: "a", severity: "blocking" });
+      expect(updated.statusChangedAt).toBe(1_000_000 + 5000);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("leaves statusChangedAt untouched when the comment doesn't change status", () => {
+    const review = submitForReview(createCardReview("card-1"));
+    const updated = addReviewComment(review, { id: "c1", reviewerId: "r1", body: "a", severity: "suggestion" });
+    expect(updated.statusChangedAt).toBe(review.statusChangedAt);
   });
 });
 
