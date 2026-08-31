@@ -77,6 +77,59 @@ _No task currently in progress._
   treat a PR's `mergeable_state: "dirty"` against `master` as a signal to
   re-verify the local base before assuming a conflict needs resolving by
   hand.
+- **AI Judge Decision Modes — bulk "clear all history for this round"
+  action (idea #5, "a bulk 'clear all history for this round' action,
+  and/or a per-round decision count cap").** Prompted by another repeat of
+  the standing prompt ("go through the tools and the todo.md ideas and
+  incorporate them into the ui... integrate card mirror better into the
+  editor and also have its commands in the central menu of Ctrl shift
+  space... menu items on top of the top bar like Google docs... create user
+  settings and link user db SQL with ability to save flows docs and debates
+  in SQL and link to users... add tools into where needed in the ui...
+  develop better tool ui"), and finding — like every recent repeat — that
+  CardMirror's MenuBar/command-palette integration and the SQL-linked user
+  settings/flows/docs/rounds system are already fully built, this slice
+  picked up idea #5's own still-open third "Next" bullet (the immediately
+  preceding run had already closed the first, the per-round decision
+  history log): `JudgeDecisionPanel.tsx` had a per-decision "Clear" action
+  but no way to clear an entire round's history at once, so a heavily
+  re-judged round could only be emptied one click per decision. Added
+  `deleteJudgeDecisionsForRound(roundId)` to
+  `packages/debate-round/src/state/judgeDecisions.ts` — removes every record
+  for that round in a single `writeAll`, returning the removed ids
+  newest-first (a no-op, no write, empty return for a round with no
+  history), mirroring `listJudgeDecisionsForRound`'s existing filter/sort.
+  `hooks/useJudgeDecisions.ts` gained `deleteRoundHistory(roundId)`: applies
+  the bulk removal locally first (matching `deleteDecision`'s local-first
+  order), then — only when `remoteAvailable` — best-effort fires one `DELETE
+  /api/judge-decisions/[decisionId]` per removed id via the existing
+  `deleteSavedJudgeDecisionFromAccount` (no new bulk-delete route needed,
+  since the per-decision endpoint already exists and this is a low-frequency
+  action). `JudgeDecisionPanel.tsx`'s per-round heading now has a "Clear all
+  history for this round" button next to the existing per-decision "Clear"
+  buttons. Documented in `docs/features/judge-paradigm-selections.md` (new
+  "Bulk clear a round's history" paragraph under "Decision history", noting
+  the per-round decision count cap half of this "Next" bullet was
+  intentionally left open). Vitest-covered: 3 new cases for
+  `deleteJudgeDecisionsForRound` in
+  `packages/debate-round/test/judgeDecisions.test.ts` (removes only the
+  given round's decisions leaving other rounds untouched, returns removed
+  ids newest-first, no-op with an empty return for a round with no history),
+  bringing that file to 20 cases. `useJudgeDecisions.ts`'s
+  `deleteRoundHistory` and its wiring in `JudgeDecisionPanel.tsx` remain
+  intentionally untested, matching this package's existing convention for
+  account-synced, `localStorage`-backed hooks and their UI (`deleteDecision`
+  and `appendDecision` follow the same pattern already). Verified: `bun
+  install` (2258 packages), `bun x vitest run
+  packages/debate-round/test/judgeDecisions.test.ts` (20/20 pass) and the
+  full `bun run test` (201 files / 3208 tests, all pass, up from 201/3205),
+  the whole-repo `bun run typecheck` (12 packages via turbo, all passing),
+  a direct `npx tsc --noEmit -p apps/debate-ai.com/tsconfig.json` (35
+  pre-existing errors — identical baseline to the immediately preceding
+  run's own count, confirming no regression, none touching the files this
+  slice changed), and a full production `bun run build:web` (vinext build +
+  offline-service-worker build, both complete clean, `/judge-decision`
+  present in the route list). **Completed:** 2026-08-31.
 - **AI Judge Decision Modes — decision history log per round (idea #5,
   "A decision history log per round instead of only the latest
   result").** Prompted by another repeat of the standing prompt
@@ -10611,10 +10664,10 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    - A timeline of past AI counsel-panel assessments for a round, not just the latest.
    - Chart export/share (image or link) action.
 
-5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. See `docs/features/judge-paradigm-selections.md`'s new "Decision history" section. Next:
+5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action now sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too — the other half of the "bulk clear/cap" bullet (a per-round decision count cap) remains open. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. Next:
    - A multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision.
    - A side-by-side paradigm comparison view for picking which judge to prep for.
-   - A bulk "clear all history for this round" action, and/or a per-round decision count cap, now that a heavily-re-judged round can accumulate many entries.
+   - A per-round decision count cap, now that a heavily-re-judged round can accumulate many entries even with the new bulk-clear action available.
 
 6. **Speech Transcript Summaries and Answers** (`/summaries`) —
    - Bulk transcript upload (multiple speeches at once) instead of one at a time.

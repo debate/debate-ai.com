@@ -64,7 +64,7 @@ const MISSING_SOURCE_LABEL: Record<string, string> = {
  */
 export function JudgeDecisionPanel() {
   const searchParams = useSearchParams()
-  const { groups, synced, appendDecision, deleteDecision } = useJudgeDecisions()
+  const { groups, synced, appendDecision, deleteDecision, deleteRoundHistory } = useJudgeDecisions()
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -177,9 +177,14 @@ export function JudgeDecisionPanel() {
         <div className="space-y-6">
           {groups.map((group) => (
             <div key={group.roundId} className="space-y-3">
-              <h2 className="text-sm font-medium text-foreground">
-                Round {group.roundId} <span className="text-muted-foreground">({group.decisions.length})</span>
-              </h2>
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-sm font-medium text-foreground">
+                  Round {group.roundId} <span className="text-muted-foreground">({group.decisions.length})</span>
+                </h2>
+                <Button size="sm" variant="ghost" onClick={() => deleteRoundHistory(group.roundId)}>
+                  Clear all history for this round
+                </Button>
+              </div>
               {group.decisions.map((record) => {
                 const winnerName =
                   record.result.winner === "primary" ? record.sideNames.primary : record.sideNames.secondary

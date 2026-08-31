@@ -4,6 +4,7 @@ import {
   appendJudgeDecision,
   buildJudgeDecisionsPanelView,
   deleteJudgeDecision,
+  deleteJudgeDecisionsForRound,
   getJudgeDecision,
   listJudgeDecisions,
   listJudgeDecisionsForRound,
@@ -154,6 +155,35 @@ describe("deleteJudgeDecision", () => {
   it("is a no-op when no decision has that id", () => {
     const record = appendJudgeDecision(INPUT_A);
     deleteJudgeDecision("does-not-exist");
+    expect(listJudgeDecisions()).toEqual([record]);
+  });
+});
+
+describe("deleteJudgeDecisionsForRound", () => {
+  it("removes every decision for the given round, leaving other rounds untouched", () => {
+    appendJudgeDecision(INPUT_A);
+    appendJudgeDecision({ ...INPUT_A, generatedAt: 1500 });
+    const other = appendJudgeDecision(INPUT_B);
+
+    deleteJudgeDecisionsForRound("round-1");
+
+    expect(listJudgeDecisions()).toEqual([other]);
+    expect(listJudgeDecisionsForRound("round-1")).toEqual([]);
+  });
+
+  it("returns the removed ids newest-first", () => {
+    const older = appendJudgeDecision(INPUT_A);
+    const newer = appendJudgeDecision({ ...INPUT_A, generatedAt: 9000 });
+
+    const removedIds = deleteJudgeDecisionsForRound("round-1");
+
+    expect(removedIds).toEqual([newer.id, older.id]);
+  });
+
+  it("returns an empty array and is a no-op for a round with no history", () => {
+    const record = appendJudgeDecision(INPUT_A);
+    const removedIds = deleteJudgeDecisionsForRound("round-does-not-exist");
+    expect(removedIds).toEqual([]);
     expect(listJudgeDecisions()).toEqual([record]);
   });
 });
