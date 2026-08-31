@@ -117,3 +117,26 @@ export function isStrategyLiveUpdateStorageEvent(event: { key: string | null }):
     (STRATEGY_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
+
+/**
+ * The `localStorage` key `panels/FlowEditLogPanel.tsx` reads from — see
+ * `state/flowEdits.ts`. Distinct from `FLOW_LIVE_UPDATE_STORAGE_KEYS` above:
+ * that one drives the `FlowSpreadsheet` grid's per-box `EditBadge`, while
+ * this drives the standalone cross-flow `FlowEditLogPanel` list view (its
+ * "Logged edits" section, grouped by flow), mirroring the
+ * `PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS`/`FLOW_LIVE_UPDATE_STORAGE_KEYS`
+ * split for prep notes.
+ */
+export const FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["flowEdits"] as const;
+
+/**
+ * Whether a `storage` event should trigger `FlowEditLogPanel` to re-read its
+ * persisted edit list. A `null` key (e.g. from `localStorage.clear()`)
+ * counts too, for the same reason as `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isFlowEditLogPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}

@@ -310,6 +310,26 @@ being on is enough for a teammate's edits to show up everywhere.
 Vitest-covered by an added case in `packages/debate-round/test/panels.test.tsx`
 (the toggle renders "Live sync off" and the panel's own flow id by default).
 
+## Cross-tab live update in `FlowEditLogPanel`
+
+The "Cross-tab live update" section above only covers the `FlowSpreadsheet`
+grid's per-box `EditBadge` — the standalone `FlowEditLogPanel` list view
+(its "Logged edits" section, grouped by flow) still only refreshed on mount
+or after its own log/clear actions, like every other still-unclaimed panel
+named in the Known gap below. Added
+`FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+`isFlowEditLogPanelLiveUpdateStorageEvent` to the existing
+`flow/live-update.ts` (mirroring the `PREP_NOTES_PANEL`/
+`FLOW_LIVE_UPDATE_STORAGE_KEYS` split for prep notes: one predicate for the
+grid badge, a narrower one for the standalone panel's own `flowEdits`-only
+store read) and wired a `storage`-event listener into `FlowEditLogPanel.tsx`
+that calls the panel's existing `refresh()` closure when the predicate
+matches, so an edit logged or cleared in another tab shows up here without
+a manual reload.
+
+Vitest-covered by four new cases for `isFlowEditLogPanelLiveUpdateStorageEvent`
+in `packages/debate-round/test/live-update.test.ts`.
+
 ## Known gaps
 
 - ~~The `EditBadge` still reads a box's edits from `localStorage` at cell
@@ -347,11 +367,12 @@ Vitest-covered by an added case in `packages/debate-round/test/panels.test.tsx`
   [`prep-notes.md`](prep-notes.md)'s own "Cross-tab live update" section),
   `ContributionsFeedPanel` (see
   [`contributions-feed.md`](contributions-feed.md)'s "Cross-tab live
-  update"), and `StrategyPanel` (see
-  [`scout-to-strategy.md`](scout-to-strategy.md)'s "Cross-tab live update")
-  have since gained the equivalent mechanism for their own stores, but
-  every other localStorage-backed panel in this repo still has none (Live
-  Sync
+  update"), `StrategyPanel` (see
+  [`scout-to-strategy.md`](scout-to-strategy.md)'s "Cross-tab live update"),
+  and `FlowEditLogPanel` itself (see "Cross-tab live update in
+  `FlowEditLogPanel`" above) have since gained the equivalent mechanism for
+  their own stores, but every other localStorage-backed panel in this repo
+  still has none (Live Sync
   above is cross-*contributor*, via the server, not cross-tab within one
   browser, and remains the only path for a *different device/browser* to
   see the edit at all).

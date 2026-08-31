@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
   FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
+  FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   FLOW_LIVE_UPDATE_STORAGE_KEYS,
   PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS,
   PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   STRATEGY_LIVE_UPDATE_STORAGE_KEYS,
   isFlowAnnotationsPanelLiveUpdateStorageEvent,
+  isFlowEditLogPanelLiveUpdateStorageEvent,
   isFlowLiveUpdateStorageEvent,
   isPrepNoteNotificationsLiveUpdateStorageEvent,
   isPrepNotesPanelLiveUpdateStorageEvent,
@@ -121,5 +123,27 @@ describe("isStrategyLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains the store name as a substring", () => {
     expect(isStrategyLiveUpdateStorageEvent({ key: "strategyRecommendationsBackup" })).toBe(false);
     expect(isStrategyLiveUpdateStorageEvent({ key: "old_strategyRecommendations" })).toBe(false);
+  });
+});
+
+describe("isFlowEditLogPanelLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isFlowEditLogPanelLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isFlowEditLogPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isFlowEditLogPanelLiveUpdateStorageEvent({ key: "prepNotes" })).toBe(false);
+    expect(isFlowEditLogPanelLiveUpdateStorageEvent({ key: "flowAnnotations" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains the store name as a substring", () => {
+    expect(isFlowEditLogPanelLiveUpdateStorageEvent({ key: "flowEditsBackup" })).toBe(false);
+    expect(isFlowEditLogPanelLiveUpdateStorageEvent({ key: "old_flowEdits" })).toBe(false);
   });
 });
