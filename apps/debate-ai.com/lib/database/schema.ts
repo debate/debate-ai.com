@@ -259,6 +259,46 @@ export const savedRounds = sqliteTable(
 
 export type SavedRoundRow = typeof savedRounds.$inferSelect;
 
+// Account-linked word-count-round history sync — TODO.md idea #2
+// ("Word-Count-Only Speech Format"), "account-sync round history itself
+// (today `wordCountRounds` is local-storage-only, unlike
+// `wordLimitPresets`), so the trend view follows a signed-in user across
+// devices instead of staying per-browser" follow-up. One row per (user,
+// round) pair, same shape as `savedFlows`/`savedRounds` above, except
+// `clientId` is `text` here rather than `integer` — a word-count round is
+// keyed by the caller-assigned string `roundId` (e.g. `"round-1"`,
+// freely typed into `WordCountRoundsPanel`'s "Round ID" field), not a
+// `Date.now()`-based number. `data` holds the whole `WordCountRoundRecord`
+// (style key + submitted speeches + its own `createdAt`) JSON-stringified,
+// so `GET /api/word-count-rounds` can return every record in one call
+// without a second round-trip per row — unlike a `Flow`/`Round`, a
+// word-count round's payload is small (a handful of speech texts), so
+// there's no need for `savedFlows`/`savedRounds`'s summary-list-then-fetch
+// split.
+export const savedWordCountRounds = sqliteTable(
+  "saved_word_count_rounds",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_word_count_rounds_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_word_count_rounds_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedWordCountRoundRow = typeof savedWordCountRounds.$inferSelect;
+
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can

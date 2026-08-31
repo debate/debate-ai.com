@@ -48,14 +48,17 @@ state/wordCountRounds.ts (localStorage: wordCountRounds)
 
 Saving a round:
 panels/WordCountRoundsPanel.tsx
-  → saveWordCountRound({ roundId, styleKey, submittedSpeeches })
-  → panel re-reads buildWordCountRoundsPanelView() to refresh
+  → useWordCountRounds().saveRound({ roundId, styleKey, submittedSpeeches })
+  → saveWordCountRound(...) (local) + best-effort saveWordCountRoundToAccount(...)
 
 Clearing a round:
 panels/WordCountRoundsPanel.tsx
-  → deleteWordCountRound(roundId)
-  → panel re-reads buildWordCountRoundsPanelView() to refresh
+  → useWordCountRounds().deleteRound(roundId)
+  → deleteWordCountRound(roundId) (local) + best-effort deleteSavedWordCountRoundFromAccount(roundId)
 ```
+
+See "Account-synced round history" below for `useWordCountRounds`'s local-first
+merge/sync behavior.
 
 Every word-count and persistence rule already existed and was
 Vitest-covered; this feature closes follow-up (a) on the "Word-Count-Only
@@ -207,6 +210,66 @@ Vitest-covered in `packages/debate-round/test/wordCountRounds.test.ts`
 (`createdAt` stamping/preservation, and `buildWordCountTrendData`'s
 chronological ordering, legacy-record exclusion, style-mismatch skip, and
 preset-priority cases).
+
+## Account-synced round history
+
+TODO.md idea #2's "account-sync round history itself (today `wordCountRounds`
+is local-storage-only, unlike `wordLimitPresets`), so the trend view follows a
+signed-in user across devices instead of staying per-browser" follow-up.
+Before this, `wordCountRounds` (and therefore the trend view above) never left
+the browser it was saved in.
+
+**Storage:** a new `saved_word_count_rounds` D1 table — one row per
+`(user, roundId)` pair, `data` holding the whole `WordCountRoundRecord`
+JSON-stringified (migration `0015_magenta_microbe.sql`). Unlike `saved_flows`/
+`saved_rounds` (whose list route returns only a derived label, with a
+per-item route for the full blob), a word-count round's payload is small
+enough that `GET /api/word-count-rounds` returns every record in full, so
+there's no separate summary/detail split.
+
+**Sync model:** local-first, like `wordLimitPresets`, but merged by `roundId`
+rather than replaced as a whole list — round history is an unboundedly
+growing, independently-addressable set of records (closer to `saved_flows`/
+`saved_rounds`), not a small bounded settings list. `useWordCountRounds`
+(`hooks/useWordCountRounds.ts`) is `WordCountRoundsPanel`'s sole entry point
+into `state/wordCountRounds.ts` now:
+
+- On mount, a one-time account merge (deduped across instances via a
+  module-level promise, mirroring `useWordLimitPresets`) reconciles local and
+  remote history: a remote record with no local counterpart is adopted
+  locally via `adoptWordCountRound` — preserving its original `createdAt` so
+  the trend view still sorts it correctly, unlike `saveWordCountRound`'s
+  fresh-stamp-on-first-save behavior — and a local-only record (saved before
+  this feature existed, or offline) is best-effort pushed to the account.
+  Neither direction overwrites a `roundId` both sides already have; a
+  word-count round is saved once, not iteratively revised like a flow.
+- `saveRound`/`deleteRound` apply locally first (so saving/clearing a round
+  is never blocked by the network), then best-effort sync the same change to
+  the account when signed in.
+
+**Where it shows:** the same hint text pattern as `WordLimitPresetsPanel`'s
+"N custom word limits applied" line — `WordCountRoundsPanel` now shows
+"Round history ... is synced to your account" once signed in, or a prompt to
+sign in otherwise.
+
+```
+lib/database/schema.ts (apps/debate-ai.com)     — saved_word_count_rounds table
+app/api/word-count-rounds/route.ts              — GET: list the user's synced records
+app/api/word-count-rounds/[roundId]/route.ts    — PUT/DELETE: upsert/remove one record
+state/savedWordCountRounds.ts                   — isValidWordCountRoundRecord, size cap
+round/word-count-rounds-client.ts               — fetch wrapper (list/save/delete)
+state/wordCountRounds.ts                        — adoptWordCountRound (preserves createdAt)
+hooks/useWordCountRounds.ts                     — local-first merge + sync
+panels/WordCountRoundsPanel.tsx                 — uses saveRound/deleteRound
+```
+
+Vitest-covered: `adoptWordCountRound`'s createdAt-preserving/overwrite
+behavior in `wordCountRounds.test.ts`; `isValidWordCountRoundRecord` in
+`savedWordCountRounds.test.ts`; the fetch wrapper's request shapes and
+401/error handling in `word-count-rounds-client.test.ts`. `useWordCountRounds`
+and its wiring in `WordCountRoundsPanel` are untested, matching this
+package's existing convention for account-synced, `localStorage`-backed
+hooks and their UI (e.g. `useWordLimitPresets`).
 
 ## Known gaps
 
