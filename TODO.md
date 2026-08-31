@@ -6,6 +6,50 @@
 _No task currently in progress._
 
 ### Completed
+- **Round Cloud Save — "via round" cascade-save indicator (idea #17,
+  `round-cloud-save.md` Known gap: "no reverse indicator... showing which
+  flows got saved as a side effect of a round save").** Prompted by another
+  repeat of idea #17's standing request ("create user settings and link
+  user db SQL... with ability to save flows docs and debates in SQL and
+  link to users... add tools into where needed in the ui... develop better
+  tool ui"), and having already found (via today's two prior repeats, see
+  the News Stream and `EmptyState` entries below) that the "user settings /
+  SQL-linked flows, docs, rounds" half of the request and the "undiscoverable
+  tools" and "hand-rolled empty state" audits are all already built, this
+  slice picked up `round-cloud-save.md`'s one remaining documented Known
+  gap instead: saving a round to the account cascade-saves every flow it
+  references, but `FlowHistoryDialog`'s "Saved to account" tab listed a
+  cascade-saved flow identically to one saved on its own via its individual
+  cloud icon, with no way to tell which was which. Added a new pure helper,
+  `mapFlowsToReferencingRound(rounds)`, to
+  `packages/debate-round/src/state/bulkRoundSave.ts` (alongside its existing
+  `collectFlowsForRounds`/`collectUnreferencedFlows`, following the same
+  "rounds ↔ flows" cross-referencing pattern: maps a flow id to the first
+  local round whose `flowIds` references it). `FlowHistoryDialog.tsx`'s
+  "Saved to account" tab now looks up each listed flow's `clientId` against
+  that map and, when found, renders a small `Badge` ("via round", title
+  tooltip naming the round via the existing `deriveRoundLabel`) next to the
+  flow's label. Purely a client-side local cross-reference — no server
+  call, no new D1 column, no change to `SavedFlowSummary`'s shape; a flow
+  referenced by more than one round attributes to whichever comes first in
+  the local `rounds` list. Documented in `docs/features/round-cloud-save.md`
+  (new paragraph plus updated data-flow diagram; closed the matching Known
+  gaps bullet). Vitest-covered: 5 new cases for `mapFlowsToReferencingRound`
+  in `packages/debate-round/test/bulkRoundSave.test.ts` (no-rounds,
+  no-references, single-round, cross-round first-referencing-round-wins,
+  and unreferenced-id cases), bringing that file to 23 cases. `FlowHistoryDialog.tsx`
+  itself remains intentionally untested, matching this repo's documented
+  convention for every other dialog/UI-wiring component. Verified: `bun
+  install` (2258 packages), `bunx vitest run packages/debate-round/test/
+  bulkRoundSave.test.ts` (23/23 pass) and full `bun run test` (195 files /
+  3094 tests, all pass, up from 195/3089), `bunx turbo run typecheck
+  --filter=debate-round --filter=debate-ai-web` (11/11 in-scope package
+  tasks pass — `debate-ai-web` itself has no `typecheck` script, matching
+  prior verification runs), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (35 pre-existing, unrelated errors —
+  identical count to before this change, confirming no regression), and
+  `bun run build:web` (`debate-ai-web` and its offline-service-worker build
+  both complete clean). **Completed:** 2026-08-31.
 - **News Stream — account-linked read/like sync (idea #17, `news-stream.md`
   Known gap: "Read/like state is per-browser, not per-account").** Prompted
   by another repeat of idea #17's standing request ("create user settings

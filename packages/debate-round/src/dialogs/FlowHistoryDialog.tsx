@@ -26,13 +26,15 @@ import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Downlo
 import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { deleteSavedRound, fetchSavedRound, listSavedRounds, saveRoundToAccount } from "../round/saved-rounds-client"
-import type { SavedRoundSummary } from "../state/savedRounds"
+import { deriveRoundLabel, type SavedRoundSummary } from "../state/savedRounds"
 import {
   collectFlowsForRounds,
   collectUnreferencedFlows,
+  mapFlowsToReferencingRound,
   summarizeBulkSaveOutcomes,
   type BulkSaveOutcome,
 } from "../state/bulkRoundSave"
+import { Badge } from "debate-ui/src/primitives/badge"
 
 /** Load/error state for the "Saved to account" tab's flow list. */
 type CloudListState =
@@ -455,6 +457,9 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   /** Count of locally-available flows no round references, for the "Save flows not in a round" button's visibility/label. */
   const unreferencedFlowCount = useMemo(() => collectUnreferencedFlows(rounds, flows).length, [rounds, flows])
 
+  /** Maps a flow id to the local round that references it, so a cascade-saved flow can be badged with its round in the "Saved to account" tab. */
+  const flowIdToReferencingRound = useMemo(() => mapFlowsToReferencingRound(rounds), [rounds])
+
   /**
    * Filter rounds based on search query.
    * Searches in: tournament name, round level, debaters, schools, judges, flow names.
@@ -762,7 +767,9 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                   </div>
                 {cloudList.flows.length > 0 ? (
                   <div className="space-y-1">
-                    {cloudList.flows.map((flow) => (
+                    {cloudList.flows.map((flow) => {
+                      const referencingRound = flowIdToReferencingRound.get(flow.clientId)
+                      return (
                       <div
                         key={flow.clientId}
                         className="flex items-center justify-between gap-2 border rounded-md p-2.5 bg-card"
@@ -770,7 +777,18 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                         <div className="flex items-center gap-2 min-w-0">
                           <FileText className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
                           <div className="min-w-0">
-                            <div className="text-sm font-medium truncate">{flow.label}</div>
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <div className="text-sm font-medium truncate">{flow.label}</div>
+                              {referencingRound && (
+                                <Badge
+                                  variant="outline"
+                                  className="flex-shrink-0 text-[10px]"
+                                  title={`Saved as part of "${deriveRoundLabel(referencingRound)}"`}
+                                >
+                                  via round
+                                </Badge>
+                              )}
+                            </div>
                             <div className="text-xs text-muted-foreground">
                               Saved {new Date(flow.updatedAt).toLocaleString()}
                             </div>
@@ -805,7 +823,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                           </Button>
                         </div>
                       </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-6 text-muted-foreground">

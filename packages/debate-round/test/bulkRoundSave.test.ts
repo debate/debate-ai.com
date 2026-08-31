@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { collectFlowsForRounds, collectUnreferencedFlows, summarizeBulkSaveOutcomes } from "../src/state/bulkRoundSave";
+import {
+  collectFlowsForRounds,
+  collectUnreferencedFlows,
+  mapFlowsToReferencingRound,
+  summarizeBulkSaveOutcomes,
+} from "../src/state/bulkRoundSave";
 import type { Box, Flow, Round } from "../src/types/flow";
 
 function makeBox(overrides: Partial<Box> = {}): Box {
@@ -124,6 +129,38 @@ describe("collectUnreferencedFlows", () => {
     const flow1 = makeFlow({ id: 1 });
     const round = makeRound({ flowIds: [999] });
     expect(collectUnreferencedFlows([round], [flow1])).toEqual([flow1]);
+  });
+});
+
+describe("mapFlowsToReferencingRound", () => {
+  it("returns an empty map when there are no rounds", () => {
+    expect(mapFlowsToReferencingRound([]).size).toBe(0);
+  });
+
+  it("returns an empty map when no round references any flow", () => {
+    expect(mapFlowsToReferencingRound([makeRound({ flowIds: [] })]).size).toBe(0);
+  });
+
+  it("maps a single round's flow ids to that round", () => {
+    const round = makeRound({ id: 100, flowIds: [1, 2] });
+    const result = mapFlowsToReferencingRound([round]);
+    expect(result.get(1)).toBe(round);
+    expect(result.get(2)).toBe(round);
+  });
+
+  it("attributes a flow shared by multiple rounds to the first-referencing round", () => {
+    const roundA = makeRound({ id: 100, flowIds: [1, 2] });
+    const roundB = makeRound({ id: 101, flowIds: [2, 3] });
+    const result = mapFlowsToReferencingRound([roundA, roundB]);
+    expect(result.get(1)).toBe(roundA);
+    expect(result.get(2)).toBe(roundA);
+    expect(result.get(3)).toBe(roundB);
+  });
+
+  it("does not include a flow id no round references", () => {
+    const round = makeRound({ flowIds: [1] });
+    const result = mapFlowsToReferencingRound([round]);
+    expect(result.has(2)).toBe(false);
   });
 });
 

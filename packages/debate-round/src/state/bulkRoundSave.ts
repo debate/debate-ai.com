@@ -63,6 +63,27 @@ export function collectUnreferencedFlows(rounds: Round[], flows: Flow[]): Flow[]
   return flows.filter((flow) => !referencedFlowIds.has(flow.id));
 }
 
+/**
+ * Maps each flow id referenced by any round's `flowIds` to the first such
+ * round (by `rounds` order). Saving a round cascade-saves each flow it
+ * references (see `docs/features/round-cloud-save.md`); this lets the
+ * "Saved to account" tab's flow list badge a cascade-saved flow with the
+ * round that saved it, distinguishing it from a flow saved on its own via
+ * its individual cloud icon. A flow id referenced by more than one round
+ * attributes to whichever round comes first.
+ */
+export function mapFlowsToReferencingRound(rounds: Round[]): Map<number, Round> {
+  const result = new Map<number, Round>();
+  for (const round of rounds) {
+    for (const flowId of round.flowIds) {
+      if (!result.has(flowId)) {
+        result.set(flowId, round);
+      }
+    }
+  }
+  return result;
+}
+
 /** Outcome of one item's save within a bulk-save pass (a round or a flow), keyed by its local `id`. */
 export type BulkSaveOutcome = "saved" | "error";
 
