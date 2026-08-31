@@ -6,6 +6,53 @@
 _No task currently in progress._
 
 ### Completed
+- **LLM Card Scoring — cross-tab live-update (idea #16, `shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of
+  idea #16's standing request ("create user settings and link user db
+  SQL... with ability to save flows docs and debates in SQL and link to
+  users... add tools into where needed in the ui... develop better tool
+  ui"), and finding — like every recent repeat of this prompt — that the
+  "user settings / SQL-linked flows, docs, rounds" half is already fully
+  built and documented, this slice picked up `shared-flow-sync.md`'s next
+  unclaimed panel from its running cross-tab-live-update list (the
+  immediately preceding run had just closed `RevisionIncentivesPanel`):
+  `CardScoringPanel` (`/cards/scoring`), which reads three `localStorage`
+  stores — `state/cardScores.ts`'s `cardScores` (via
+  `buildPersistedCardScoreRanking`), `state/aiCardAssessments.ts`'s
+  `aiCardAssessments` (each ranked card's persisted AI verdict), and
+  `state/trackedArguments.ts`'s `trackedArguments` (the topic switcher's
+  "Use tracked keywords" quick-pick list) — but, like every other
+  still-unclaimed panel, only ever refreshed on mount. Added
+  `CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS`/`isCardScoringLiveUpdateStorageEvent`
+  to `packages/debate-card-search/src/state/live-update.ts`, mirroring the
+  eleven existing key-list/predicate pairs there exactly (true for any of
+  the three backing keys or a `null` key from `localStorage.clear()`, false
+  otherwise — including a same-prefix substring key). Refactored
+  `CardScoringPanel.tsx`'s mount-only effect into a shared `refreshAll()`
+  (ranking + per-card AI assessments + tracked-topic list, unchanged
+  behavior) and wired a `storage` event listener that calls it when the
+  predicate matches, alongside the existing `refresh()` used after
+  submitting a new card (left untouched). Documented in
+  `docs/features/llm-card-scoring.md` (new "Cross-tab live update" section)
+  and `docs/features/shared-flow-sync.md` (added `CardScoringPanel` to the
+  running list of panels that already have the mechanism). Vitest-covered:
+  4 new cases for `isCardScoringLiveUpdateStorageEvent` in
+  `packages/debate-card-search/test/live-update.test.ts` (every backing-key
+  match, the `null`-key clear-all case, an unrelated key, and two
+  same-prefix substring keys), bringing that file to 44 cases.
+  `CardScoringPanel.tsx`'s own `storage`-listener wiring remains
+  intentionally untested, matching every other panel in this repo whose
+  wiring is exercised only through the shared pure predicate's own tests.
+  Verified: `bun install` (2258 packages), the touched test file (44/44
+  pass), the full `bun run test` (201 files / 3220 tests, all pass), the
+  whole-repo `bun run typecheck` (13 packages via turbo, all passing), and
+  a full production `bun run build:web` (vinext build + service-worker
+  build, `/cards/scoring` present in the route list) — all passed with no
+  new failures. Generated service-worker build artifacts
+  (`app-file-list.ts`, `version.ts`, `public/service-worker.js`) produced
+  by that build were reverted before committing, since they're build-time
+  output unrelated to this change.
 - **Revision Incentives — cross-tab live-update (idea #17, `shared-flow-sync.md`
   Known gap: "every other localStorage-backed panel in this repo still has
   no cross-tab live-update mechanism").** Prompted by another repeat of

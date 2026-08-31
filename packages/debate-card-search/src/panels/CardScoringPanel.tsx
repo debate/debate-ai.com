@@ -30,6 +30,12 @@
  * Shared Evidence Library corpus — no panel change needed there, see
  * `buildPersistedCardScoreRanking`.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isCardScoringLiveUpdateStorageEvent`, so a card scored, an AI assessment
+ * requested, or a tracked topic added in another browser tab refreshes this
+ * panel's ranking, AI assessments, and topic list here too — the `storage`
+ * event never fires in the tab that made the write, only in other tabs.
+ *
  * @module panels/CardScoringPanel
  */
 
@@ -50,6 +56,7 @@ import {
 import { listTrackedTopics } from "../state/trackedArguments"
 import { getAiAssessment, saveAiAssessment } from "../state/aiCardAssessments"
 import { requestCardScoringAiAssessment } from "../lib/llm-card-scoring-client"
+import { isCardScoringLiveUpdateStorageEvent } from "../state/live-update"
 import type { CardScoreBreakdown } from "../lib/llm-card-scoring"
 import type { CardScoringAiAssessment } from "../lib/llm-card-scoring-ai"
 
@@ -96,7 +103,7 @@ export function CardScoringPanel() {
   const [topics, setTopics] = useState<string[]>([])
   const [topic, setTopic] = useState("")
 
-  useEffect(() => {
+  const refreshAll = () => {
     const persisted = buildPersistedCardScoreRanking()
     setRanking(persisted)
     setTopics(listTrackedTopics())
@@ -106,6 +113,24 @@ export function CardScoringPanel() {
       if (assessment) assessments[breakdown.cardId] = assessment
     }
     setAiAssessments(assessments)
+  }
+
+  useEffect(() => {
+    refreshAll()
+  }, [])
+
+  /**
+   * Live-update the ranking, AI assessments, and topic list when another
+   * browser tab scores a card, requests an AI assessment, or adds a tracked
+   * topic.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isCardScoringLiveUpdateStorageEvent(event)) return
+      refreshAll()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   const handleUseTrackedKeywords = () => {
