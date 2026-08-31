@@ -6,6 +6,57 @@
 _No task currently in progress._
 
 ### Completed
+- **Round Workspace Tools — cross-links between the four flow-tool pages
+  (idea #17, `flow-tools-menu.md` Known gap: "No corresponding menu exists
+  on any of the four target pages linking back to the round workspace or
+  to each other").** Prompted by another repeat of idea #17's standing
+  request ("create user settings and link user db SQL... with ability to
+  save flows docs and debates in SQL and link to users... add tools into
+  where needed in the ui for users and develop better tool ui"), and
+  finding — like every recent repeat of this prompt — that the "user
+  settings / SQL-linked flows, docs, rounds" half is already fully built
+  and documented, this slice picked up `flow-tools-menu.md`'s one
+  remaining open item instead: the round workspace's "Tools for this
+  round" menu (added by an earlier idea #17 follow-up (4) slice) links
+  from `/debate` to `/outline`, `/outcomes`, `/drills`, and `/coaching`,
+  and each of those four pages already links back to `/debate` via its own
+  "Back" button, but none of the four linked to each other — a debater who
+  followed the menu to one tool had to return to the round workspace first
+  to reach a different one. Added a new pure helper, `buildCrossLinks
+  (currentHref)`, to `packages/debate-round/src/round/flow-tool-links.ts`
+  (alongside its existing `FLOW_TOOL_LINKS`/`buildFlowToolsMenuItems`):
+  returns every `FLOW_TOOL_LINKS` entry except the one matching
+  `currentHref`, preserving display order. New presentational component
+  `packages/debate-round/src/layout/RoundToolsCrossLinks.tsx` renders that
+  list as an "Other round tools" row of `next/link` entries (unlike the
+  round workspace's own `FlowToolsMenu`, these links are never disabled —
+  each target page's own "Generate ... for current round" action already
+  handles the no-flow-selected case once there). Both are now exported
+  from `debate-round`'s package root (`src/index.ts`), and each of
+  `apps/debate-ai.com/app/{outline,outcomes,drills,coaching}/page.tsx` now
+  renders `<RoundToolsCrossLinks currentHref="/..." />` next to its
+  existing "Back to debate flow" link. Documented in
+  `docs/features/flow-tools-menu.md` (new "What it does"/"Data flow"
+  paragraphs, closed the matching Known gaps bullet). Vitest-covered: 4 new
+  cases for `buildCrossLinks` in
+  `packages/debate-round/test/flowToolLinks.test.ts` (excludes the current
+  page's own href, preserves `FLOW_TOOL_LINKS` order, returns the full list
+  unchanged for an unmatched href, and a table-driven case confirming a
+  distinct 3-entry result for each of the four target pages), bringing
+  that file to 10 cases. The four `page.tsx` files and
+  `RoundToolsCrossLinks.tsx` itself remain intentionally untested, matching
+  this repo's documented convention for other thin render/wiring
+  components (e.g. `FlowToolsMenu.tsx`). Verified: `bun install` (2258
+  packages), `bunx vitest run packages/debate-round/test/
+  flowToolLinks.test.ts` (10/10 pass) and full `bun run test` (195 files /
+  3098 tests, all pass, up from 195/3094), `bunx turbo run typecheck
+  --filter=debate-round --filter=debate-ai-web` (11/11 in-scope package
+  tasks pass), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (35 pre-existing, unrelated errors —
+  identical count to before this change, confirming no regression), and
+  `bun run build:web` (`debate-ai-web` and its offline-service-worker build
+  both complete clean, `/outline`/`/outcomes`/`/drills`/`/coaching` all
+  present in the route list). **Completed:** 2026-08-31.
 - **Round Cloud Save — "via round" cascade-save indicator (idea #17,
   `round-cloud-save.md` Known gap: "no reverse indicator... showing which
   flows got saved as a side effect of a round save").** Prompted by another

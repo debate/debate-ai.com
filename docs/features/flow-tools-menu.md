@@ -40,6 +40,12 @@ Deliberately scoped to only the tools that read the *current* flow back —
 linking to every tool in the `/tools` catalog from here would just
 duplicate that grid rather than add anything specific to the workspace.
 
+Each of the four target pages (`/outline`, `/outcomes`, `/drills`,
+`/coaching`) also renders an "Other round tools" row next to its existing
+"Back" button, listing the other three pages by label — so a debater who
+followed this menu to one tool, or landed on it directly, can jump straight
+to a sibling tool instead of first going back to the round workspace.
+
 ## Data flow
 
 ```
@@ -57,6 +63,15 @@ layout/FlowToolsMenu.tsx
 layout/FlowPageSidebar.tsx
   → renders <FlowToolsMenu currentFlow={currentFlow} /> as a fourth button
     in the existing quick-action row
+
+round/flow-tool-links.ts
+  → buildCrossLinks(currentHref) — FLOW_TOOL_LINKS minus the entry whose
+                                    href matches currentHref
+
+layout/RoundToolsCrossLinks.tsx
+  → renders buildCrossLinks(currentHref) as a row of next/link entries
+  → rendered directly by each of app/outline, app/outcomes, app/drills,
+    and app/coaching's page.tsx, passing its own route as currentHref
 ```
 
 Vitest-covered in `packages/debate-round/test/flowToolLinks.test.ts` (10
@@ -103,5 +118,12 @@ package (e.g. `controls/ViewModeSelector.tsx`).
   not exhaustive — this pass only searched for the `EmptyState` pattern
   specifically, not every shared-primitive opportunity across the ~50
   panels in the repo.
-- No corresponding menu exists on any of the four target pages linking back
-  to the round workspace or to each other.
+- Closed: each of the four target pages now renders an "Other round tools"
+  cross-link row (`layout/RoundToolsCrossLinks.tsx`, built on a new pure
+  `buildCrossLinks(currentHref)` helper in `round/flow-tool-links.ts`), so a
+  debater on one tool page can jump straight to a sibling tool. Each page
+  already had its own "Back to debate flow" link to the round workspace
+  from before this slice. Unlike the round workspace's own `FlowToolsMenu`,
+  these standalone-page links are never disabled — a target page's own
+  "Generate ... for current round" action already handles the no-flow-
+  selected case once there, so there's no reason to block navigation here.
