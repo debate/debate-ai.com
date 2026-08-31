@@ -93,6 +93,27 @@ export function saveWordCountRound(record: WordCountRoundRecord): void {
   writeAll(records);
 }
 
+/**
+ * Adopts a round record as-is — e.g. one fetched from the account during
+ * cross-device sync (`hooks/useWordCountRounds.ts`) — preserving its own
+ * `createdAt` rather than stamping a fresh one the way `saveWordCountRound`
+ * does for an interactive save. Overwrites any existing local record for
+ * the same `roundId`. Preserving the original `createdAt` matters here: a
+ * record synced from another device should keep its true save time so the
+ * word-count trend view (`buildWordCountTrendData`) sorts it correctly
+ * alongside records saved on this device.
+ */
+export function adoptWordCountRound(record: WordCountRoundRecord): void {
+  const records = readAll();
+  const index = records.findIndex((existing) => existing.roundId === record.roundId);
+  if (index === -1) {
+    records.push(record);
+  } else {
+    records[index] = record;
+  }
+  writeAll(records);
+}
+
 /** Deletes a round's persisted state; a no-op if it isn't stored. */
 export function deleteWordCountRound(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  adoptWordCountRound,
   buildWordCountRoundsPanelView,
   buildWordCountTrendData,
   deleteWordCountRound,
@@ -138,6 +139,30 @@ describe("deleteWordCountRound", () => {
     const stored = listWordCountRounds();
     expect(stored).toHaveLength(1);
     expect(stored[0]).toMatchObject(ROUND_B);
+  });
+});
+
+describe("adoptWordCountRound", () => {
+  it("stores a record with its own createdAt preserved as-is, unlike saveWordCountRound", () => {
+    const synced: WordCountRoundRecord = { ...ROUND_A, createdAt: 12345 };
+    adoptWordCountRound(synced);
+
+    expect(getWordCountRound("round-1")).toEqual(synced);
+  });
+
+  it("overwrites any existing local record for the same roundId", () => {
+    saveWordCountRound(ROUND_A);
+    const remote: WordCountRoundRecord = {
+      ...ROUND_A,
+      submittedSpeeches: [{ name: "AC", speaker: "A1", text: "A synced draft" }],
+      createdAt: 999,
+    };
+
+    adoptWordCountRound(remote);
+
+    const stored = listWordCountRounds();
+    expect(stored).toHaveLength(1);
+    expect(stored[0]).toEqual(remote);
   });
 });
 

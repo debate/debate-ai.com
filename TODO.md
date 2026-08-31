@@ -6,6 +6,70 @@
 _No task currently in progress._
 
 ### Completed
+- **Word-Count-Only Speech Format — account-sync round history (idea #2,
+  "Account-sync round history itself (today `wordCountRounds` is
+  local-storage-only, unlike `wordLimitPresets`), so the trend view follows a
+  signed-in user across devices instead of staying per-browser").** Prompted
+  by another repeat of the standing prompt ("integrate all the tools and
+  create user settings and link user db SQL with ability to save flows docs
+  and debates in SQL and link to users... develop better tool ui"), and
+  finding — like every recent repeat — that the SQL-linked user
+  settings/flows/docs/rounds system is already fully built, this slice
+  closed idea #2's last remaining follow-up: `state/wordCountRounds.ts`'s
+  persisted rounds (and therefore the word-count trend view from the
+  previous slice) never left the browser they were saved in. Added a new
+  `saved_word_count_rounds` D1 table (migration
+  `0015_magenta_microbe.sql`, generated via `drizzle-kit generate`) — one
+  row per `(user, roundId)` pair, `data` holding the whole
+  `WordCountRoundRecord` JSON-stringified — following the same shape
+  `saved_flows`/`saved_rounds` already established, except keyed by a
+  `text` `client_id` (the caller-typed string `roundId`) rather than an
+  `integer` one. Unlike those two tables' summary-list-then-per-item-fetch
+  split, a word-count round's payload is small enough that the new
+  `GET /api/word-count-rounds` route returns every record in full, and
+  `PUT`/`DELETE /api/word-count-rounds/[roundId]` upsert/remove one
+  (`apps/debate-ai.com`), validated by a new pure
+  `packages/debate-round/src/state/savedWordCountRounds.ts`
+  (`isValidWordCountRoundRecord`, `MAX_SAVED_WORD_COUNT_ROUND_BYTES`) and a
+  fetch wrapper, `round/word-count-rounds-client.ts`, mirroring
+  `saved-flows-client.ts`'s split and 401-tolerant read/throwing-write
+  convention. A new local-first hook, `hooks/useWordCountRounds.ts`,
+  replaces `WordCountRoundsPanel`'s direct calls into
+  `state/wordCountRounds.ts`: on mount it merges local and remote history
+  by `roundId` (deduped across instances via a module-level promise,
+  mirroring `useWordLimitPresets`) — a remote-only record is adopted
+  locally via a new `adoptWordCountRound` (which preserves the record's own
+  `createdAt` rather than stamping a fresh one, unlike
+  `saveWordCountRound`, so a round synced from another device still sorts
+  correctly in the trend view), and a local-only record is best-effort
+  pushed to the account — then `saveRound`/`deleteRound` apply locally
+  first and best-effort sync the same change outward. `WordCountRoundsPanel`
+  now shows a small "synced to your account" / "sign in to sync" hint,
+  mirroring `WordLimitPresetsPanel`'s existing hint-text convention. See
+  `docs/features/word-count-rounds.md`'s new "Account-synced round history"
+  section. Vitest-covered: `adoptWordCountRound`'s createdAt-preserving and
+  overwrite behavior (`wordCountRounds.test.ts`, 25 cases, up from 23);
+  `isValidWordCountRoundRecord`'s full validation surface (new
+  `savedWordCountRounds.test.ts`, 18 cases); and the fetch wrapper's
+  request shapes plus 401/error handling (new
+  `word-count-rounds-client.test.ts`, 7 cases) — 50 across these three
+  files. `useWordCountRounds` and its wiring in
+  `WordCountRoundsPanel` remain intentionally untested, matching this
+  package's existing convention for account-synced, `localStorage`-backed
+  hooks and their UI (`useWordLimitPresets` follows the same pattern).
+  Verified: `bun install` (2258 packages), `bun x vitest run` against the
+  three touched/new test files (50/50 pass), full `bun run test` (199
+  files / 3171 tests, all pass, up from 197/3144), the whole-repo `bun run
+  typecheck` (12 packages via turbo, all cached/passing — `apps/debate-ai.com`
+  has no `typecheck` script of its own, so its new route files were
+  additionally verified with a direct `tsc --noEmit` pass, confirming zero
+  new errors versus the same command run against the pre-existing baseline,
+  which already carries 29 unrelated errors — Cloudflare Workers ambient
+  types, `better-auth` client plugin types, missing `.svg`/`.png` type
+  declarations — none touching the files this slice added or changed), and
+  a full production `bun run build:web` (vinext build + service-worker
+  build, both new API routes correctly registered as `λ` endpoints) — all
+  passed with no new failures.
 - **Word-Count-Only Speech Format — word-count trend view (idea #2,
   "A trend view showing a debater's word-count-vs-limit history across past
   submissions").** Prompted by another repeat of the standing prompt
@@ -10391,8 +10455,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    - A manual CSV/paste import for tournament results, since live Tabroom scraping is blocked (see "Confirmed blocker" below) and the old panel's only path in was hand-entry.
    - Bring back a qualification-points-table editor as a collapsible section rather than its own panel.
 
-2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) — all three prior bullets are done: the live in-round `SpeechWordCounter` popover already has a 🎤 dictation button (mirroring the standalone form's); a per-style word-limit preset manager exists — `/settings`'s **Word limit presets** section (`WordLimitPresetsPanel`/`useWordLimitPresets`/`state/wordLimitPresets.ts`), account-synced via `/api/settings`'s `wordLimitPresets` field, checked ahead of the built-in `wordCountStyles` registry by `resolveSpeechWordLimit` in both this panel and the live meter; and a trend view now exists too — `/word-count`'s **Word-count trend** section (`buildWordCountTrendData` in `state/wordCountRounds.ts`, rendered by `WordCountRoundsPanel`), a chronological bar-per-submission list across every persisted round, filterable by speech name. See `docs/features/word-count-rounds.md`'s "Custom word-limit presets" and "Word-count trend view" sections. Next:
-   - Account-sync round history itself (today `wordCountRounds` is local-storage-only, unlike `wordLimitPresets`), so the trend view follows a signed-in user across devices instead of staying per-browser.
+2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) — every previously-tracked follow-up is now done: the live in-round `SpeechWordCounter` popover already has a 🎤 dictation button (mirroring the standalone form's); a per-style word-limit preset manager exists — `/settings`'s **Word limit presets** section (`WordLimitPresetsPanel`/`useWordLimitPresets`/`state/wordLimitPresets.ts`), account-synced via `/api/settings`'s `wordLimitPresets` field, checked ahead of the built-in `wordCountStyles` registry by `resolveSpeechWordLimit` in both this panel and the live meter; a trend view exists — `/word-count`'s **Word-count trend** section (`buildWordCountTrendData` in `state/wordCountRounds.ts`, rendered by `WordCountRoundsPanel`), a chronological bar-per-submission list across every persisted round, filterable by speech name; and that history is now account-synced too — a new `saved_word_count_rounds` D1 table plus `/api/word-count-rounds` routes, merged in by `hooks/useWordCountRounds.ts`, so the trend view (and the persisted-round list it's built from) follows a signed-in user across devices instead of staying per-browser. See `docs/features/word-count-rounds.md`'s "Custom word-limit presets", "Word-count trend view", and "Account-synced round history" sections. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a bulk "delete all my synced history" action, or resolving a same-`roundId` conflict between two devices instead of only filling gaps) if one becomes worth doing.
 
 3. **Online Debate Versus AI** (`/versus-ai`) —
    - Audio speech submission, reusing the existing microphone-dictation hook instead of text-only entry.

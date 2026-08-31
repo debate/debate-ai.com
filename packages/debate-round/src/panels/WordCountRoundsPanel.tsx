@@ -33,7 +33,7 @@
 
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import Link from "next/link"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
@@ -54,18 +54,12 @@ import {
   getWordCountStatus,
   type WordCountStyleKey,
 } from "debate-timer/src/formats/word-count-format"
-import {
-  buildWordCountRoundsPanelView,
-  buildWordCountTrendData,
-  deleteWordCountRound,
-  getWordCountRoundStatuses,
-  saveWordCountRound,
-  type WordCountRoundRecord,
-} from "../state/wordCountRounds"
+import { buildWordCountTrendData, getWordCountRoundStatuses } from "../state/wordCountRounds"
 import { findPresetWordLimit } from "../state/wordLimitPresets"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import { useWordLimitPresets } from "../hooks/useWordLimitPresets"
+import { useWordCountRounds } from "../hooks/useWordCountRounds"
 
 const STYLE_LABELS: Record<WordCountStyleKey, string> = wordCountStyleMap.reduce(
   (labels, key, index) => ({ ...labels, [key]: wordCountStyleNames[index] }),
@@ -92,7 +86,7 @@ function emptyDrafts(styleKey: WordCountStyleKey): Record<string, SpeechDraft> {
  */
 export function WordCountRoundsPanel() {
   const { presets } = useWordLimitPresets()
-  const [rounds, setRounds] = useState<WordCountRoundRecord[] | null>(null)
+  const { rounds, synced, saveRound, deleteRound } = useWordCountRounds()
   const [roundId, setRoundId] = useState("")
   const [styleKey, setStyleKey] = useState<WordCountStyleKey>(wordCountStyleMap[0])
   const [drafts, setDrafts] = useState<Record<string, SpeechDraft>>(emptyDrafts(wordCountStyleMap[0]))
@@ -114,12 +108,6 @@ export function WordCountRoundsPanel() {
       }))
     },
   })
-
-  useEffect(() => {
-    setRounds(buildWordCountRoundsPanelView())
-  }, [])
-
-  const refresh = () => setRounds(buildWordCountRoundsPanelView())
 
   const handleStyleChange = (value: string) => {
     const key = value as WordCountStyleKey
@@ -153,18 +141,16 @@ export function WordCountRoundsPanel() {
       .map((speech) => ({ name: speech.name, ...drafts[speech.name] }))
       .filter((submission) => submission.text.trim().length > 0)
 
-    saveWordCountRound({ roundId: trimmedRoundId, styleKey, submittedSpeeches })
+    saveRound({ roundId: trimmedRoundId, styleKey, submittedSpeeches })
     setError(null)
     setRoundId("")
     setDrafts(emptyDrafts(styleKey))
     if (dictation.isListening) dictation.stop()
     setDictatingSpeech(null)
-    refresh()
   }
 
   const handleClear = (id: string) => {
-    deleteWordCountRound(id)
-    refresh()
+    deleteRound(id)
   }
 
   if (rounds === null) {
@@ -193,6 +179,11 @@ export function WordCountRoundsPanel() {
             .
           </p>
         )}
+        <p className="mt-1 text-xs text-muted-foreground">
+          {synced
+            ? "Round history — including the trend below — is synced to your account."
+            : "Sign in to sync your round history — including the trend below — across devices."}
+        </p>
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-4">
