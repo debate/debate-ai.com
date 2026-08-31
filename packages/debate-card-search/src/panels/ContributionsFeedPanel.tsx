@@ -66,6 +66,16 @@
  * submission tagged for the Argument Library gets no tag-autocomplete
  * affordance of its own" gap in `docs/features/evidence-library.md`.
  *
+ * Also subscribes to the browser's `storage` event via
+ * `state/live-update.ts`'s `isContributionsFeedLiveUpdateStorageEvent`, so a
+ * contribution submitted, liked, saved, or endorsed in another tab (or a tag
+ * added to the Evidence Library) refreshes this tab's feed and tag
+ * suggestions without a manual reload — closing, for this panel, the "Every
+ * other localStorage-backed panel in this repo still has no cross-tab
+ * live-update mechanism" Known gap noted in
+ * `docs/features/shared-flow-sync.md`. See
+ * `docs/features/contributions-feed.md`.
+ *
  * @module panels/ContributionsFeedPanel
  */
 
@@ -88,6 +98,7 @@ import {
 import type { ContributionKind } from "../lib/community-rating"
 import { computeWordCount } from "../lib/shared-evidence-library"
 import { listCombinedPersistedTags } from "../state/evidenceLibraryEntries"
+import { isContributionsFeedLiveUpdateStorageEvent } from "../state/live-update"
 import {
   applyTagSuggestion,
   normalizeTagsToKnownCasing,
@@ -158,6 +169,20 @@ export function ContributionsFeedPanel() {
     setFeed(buildPersistedContributionFeed())
     setKnownTags(listCombinedPersistedTags())
   }
+
+  /**
+   * Live-update the feed and tag suggestions when another browser tab
+   * submits, likes, saves, or endorses a contribution, or adds an Evidence
+   * Library tag.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isContributionsFeedLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const { completedTags, draftTag } = parseTagsInput(draft.tags)
   const tagSuggestions = suggestTags(knownTags, draftTag, completedTags)

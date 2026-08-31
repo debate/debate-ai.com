@@ -3,6 +3,7 @@ import {
   BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS,
   CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS,
   CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS,
+  CONTRIBUTIONS_FEED_LIVE_UPDATE_STORAGE_KEYS,
   CONTRIBUTOR_AWARDS_LIVE_UPDATE_STORAGE_KEYS,
   DAILY_BEST_CARD_LIVE_UPDATE_STORAGE_KEYS,
   DAILY_QUESTS_LIVE_UPDATE_STORAGE_KEYS,
@@ -16,6 +17,7 @@ import {
   isBrainstormBoardLiveUpdateStorageEvent,
   isCardScoringLiveUpdateStorageEvent,
   isContributionLeaderboardLiveUpdateStorageEvent,
+  isContributionsFeedLiveUpdateStorageEvent,
   isContributorAwardsLiveUpdateStorageEvent,
   isDailyBestCardLiveUpdateStorageEvent,
   isDailyQuestsLiveUpdateStorageEvent,
@@ -311,5 +313,27 @@ describe("isGroupChallengesLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isGroupChallengesLiveUpdateStorageEvent({ key: "groupChallengesBackup" })).toBe(false);
     expect(isGroupChallengesLiveUpdateStorageEvent({ key: "old_challengeWinEvents" })).toBe(false);
+  });
+});
+
+describe("isContributionsFeedLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of CONTRIBUTIONS_FEED_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isContributionsFeedLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isContributionsFeedLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isContributionsFeedLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isContributionsFeedLiveUpdateStorageEvent({ key: "groupChallenges" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isContributionsFeedLiveUpdateStorageEvent({ key: "contributionsBackup" })).toBe(false);
+    expect(isContributionsFeedLiveUpdateStorageEvent({ key: "old_evidenceLibraryEntries" })).toBe(false);
   });
 });
