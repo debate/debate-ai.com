@@ -75,6 +75,20 @@ message in the "Saved to account" tab as before (it now covers both
 sections); the per-round cloud icon still exists but its save fails with a
 handled inline error state, matching `flow-cloud-save.md`'s precedent.
 
+Closes this doc's "no reverse indicator" Known gap: each row in the "Saved
+to account" tab's "Flows" section now checks whether its `clientId` is one
+of the local rounds' `flowIds` and, if so, renders a small "via round"
+outline badge next to the flow's label (hovering it shows which round, via
+`deriveRoundLabel`) — so a flow that only appears there because saving its
+round cascade-saved it reads differently from a flow saved on its own via
+its individual cloud icon. Purely a local cross-reference: no server call,
+no new column, and no change to `SavedFlowSummary`'s shape — the same
+`rounds`/`flowIds` data `collectFlowsForRounds`/`collectUnreferencedFlows`
+already read is reused via a new `state/bulkRoundSave.ts` helper,
+`mapFlowsToReferencingRound`. When a flow id is referenced by more than one
+round, the badge attributes it to whichever round comes first in the local
+`rounds` list.
+
 ## Data flow
 
 ```
@@ -85,6 +99,10 @@ state/bulkRoundSave.ts (pure — no fetch)
   → collectUnreferencedFlows(rounds, flows)  — every local flow no round
                                                 references, in `flows`' own
                                                 order
+  → mapFlowsToReferencingRound(rounds)       — flow id → first-referencing
+                                                local round, for the "Saved
+                                                to account" tab's "via round"
+                                                badge
   → summarizeBulkSaveOutcomes(outcomes)      — { savedCount, errorCount } from
                                                 a per-item (round or flow)
                                                 outcome map
@@ -109,6 +127,8 @@ dialogs/FlowHistoryDialog.tsx
                                                   collectUnreferencedFlows result)
   → "Saved to account" tab's Rounds section → listSavedRounds / fetchSavedRound /
                                                deleteSavedRound
+  → "Saved to account" tab's Flows section  → mapFlowsToReferencingRound(rounds)
+                                               for each row's "via round" badge
 
 apps/debate-ai.com/app/api/rounds/route.ts
   → GET  — list current user's saved-round summaries (clientId/label/
@@ -135,11 +155,13 @@ cases: every required field individually missing, every optional field's
 shape when present and malformed, every `status`/`winner` value including
 an unknown one, and every `deriveRoundLabel` branch including the
 120-character truncation) and `packages/debate-round/test/
-bulkRoundSave.test.ts` (18 cases: `collectFlowsForRounds`'s empty-input,
+bulkRoundSave.test.ts` (23 cases: `collectFlowsForRounds`'s empty-input,
 single-round, cross-round dedup, within-round duplicate-id dedup, and
 missing-local-flow-skip cases; `collectUnreferencedFlows`'s no-rounds,
 no-flows, referenced/unreferenced split across one and several rounds,
 all-referenced, order-preservation, and missing-local-flow cases;
+`mapFlowsToReferencingRound`'s no-rounds, no-references, single-round,
+cross-round first-referencing-round-wins, and unreferenced-id cases;
 `summarizeBulkSaveOutcomes`'s empty/mixed/all-saved/all-error counts). The
 fetch client, the D1 route, and the dialog's
 save/load/remove wiring are not unit-tested, matching every other
@@ -173,10 +195,10 @@ no vitest project wired up (`vitest.config.ts`'s `projects` list is still
   reports exactly that single-column diff against the corrected baseline.
   No data loss: `saved_rounds` itself was never dropped by the regression,
   only the app's ability to read/write it.
-- Saving a round cascade-saves its flows, but there's no reverse indicator
-  in the "Flows" section of the cloud tab showing which flows got saved as
-  a side effect of a round save (they just appear there like any
-  individually-saved flow).
+- Closed: saving a round cascade-saves its flows; the "Flows" section of
+  the "Saved to account" tab now badges a cascade-saved flow with "via
+  round" (see above), so it no longer appears identical to an
+  individually-saved flow.
 - "Save all rounds" and "Save flows not in a round" both save every item
   unconditionally, even one already saved and unchanged since — there's no
   per-round/per-flow dirty tracking to skip an item that doesn't need
