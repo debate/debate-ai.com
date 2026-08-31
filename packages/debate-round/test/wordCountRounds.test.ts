@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildWordCountRoundsPanelView,
+  buildWordCountTrendData,
   deleteWordCountRound,
   getWordCountRound,
   getWordCountRoundStatuses,
@@ -59,14 +60,17 @@ describe("listWordCountRounds", () => {
   it("lists every saved round", () => {
     saveWordCountRound(ROUND_A);
     saveWordCountRound(ROUND_B);
-    expect(listWordCountRounds()).toEqual([ROUND_A, ROUND_B]);
+    const rounds = listWordCountRounds();
+    expect(rounds).toHaveLength(2);
+    expect(rounds[0]).toMatchObject(ROUND_A);
+    expect(rounds[1]).toMatchObject(ROUND_B);
   });
 });
 
 describe("getWordCountRound", () => {
   it("finds a saved round by roundId", () => {
     saveWordCountRound(ROUND_A);
-    expect(getWordCountRound("round-1")).toEqual(ROUND_A);
+    expect(getWordCountRound("round-1")).toMatchObject(ROUND_A);
   });
 
   it("returns undefined for a roundId that isn't stored", () => {
@@ -86,8 +90,33 @@ describe("saveWordCountRound", () => {
     };
     saveWordCountRound(updated);
 
-    expect(listWordCountRounds()).toEqual([updated]);
-    expect(getWordCountRound("round-1")).toEqual(updated);
+    const stored = listWordCountRounds();
+    expect(stored).toHaveLength(1);
+    expect(stored[0]).toMatchObject(updated);
+    expect(getWordCountRound("round-1")).toMatchObject(updated);
+  });
+
+  it("stamps createdAt with the current time on a round's first save", () => {
+    const before = Date.now();
+    saveWordCountRound(ROUND_A);
+    const after = Date.now();
+
+    const createdAt = getWordCountRound("round-1")?.createdAt;
+    expect(createdAt).toEqual(expect.any(Number));
+    expect(createdAt).toBeGreaterThanOrEqual(before);
+    expect(createdAt).toBeLessThanOrEqual(after);
+  });
+
+  it("preserves the original createdAt across a later update to the same roundId", () => {
+    saveWordCountRound(ROUND_A);
+    const firstCreatedAt = getWordCountRound("round-1")?.createdAt;
+
+    saveWordCountRound({
+      ...ROUND_A,
+      submittedSpeeches: [{ name: "AC", speaker: "A1", text: "A different draft" }],
+    });
+
+    expect(getWordCountRound("round-1")?.createdAt).toBe(firstCreatedAt);
   });
 });
 
@@ -97,14 +126,18 @@ describe("deleteWordCountRound", () => {
     saveWordCountRound(ROUND_B);
     deleteWordCountRound("round-1");
 
-    expect(listWordCountRounds()).toEqual([ROUND_B]);
+    const stored = listWordCountRounds();
+    expect(stored).toHaveLength(1);
+    expect(stored[0]).toMatchObject(ROUND_B);
     expect(getWordCountRound("round-1")).toBeUndefined();
   });
 
   it("is a no-op when the roundId isn't stored", () => {
     saveWordCountRound(ROUND_B);
     deleteWordCountRound("missing");
-    expect(listWordCountRounds()).toEqual([ROUND_B]);
+    const stored = listWordCountRounds();
+    expect(stored).toHaveLength(1);
+    expect(stored[0]).toMatchObject(ROUND_B);
   });
 });
 
@@ -151,7 +184,7 @@ describe("buildWordCountRoundsPanelView", () => {
     saveWordCountRound(ROUND_B);
     saveWordCountRound(ROUND_A);
 
-    expect(buildWordCountRoundsPanelView()).toEqual([ROUND_A, ROUND_B]);
+    expect(buildWordCountRoundsPanelView().map((round) => round.roundId)).toEqual(["round-1", "round-2"]);
   });
 
   it("leaves the underlying stored order untouched", () => {
@@ -160,6 +193,77 @@ describe("buildWordCountRoundsPanelView", () => {
 
     buildWordCountRoundsPanelView();
 
-    expect(listWordCountRounds()).toEqual([ROUND_B, ROUND_A]);
+    expect(listWordCountRounds().map((round) => round.roundId)).toEqual(["round-2", "round-1"]);
+  });
+});
+
+describe("buildWordCountTrendData", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(buildWordCountTrendData()).toEqual([]);
+  });
+
+  it("excludes a record with no createdAt (persisted before the field existed)", () => {
+    // ROUND_A is a raw literal with no createdAt — write it directly rather
+    // than through saveWordCountRound, which would stamp one.
+    localStorage.setItem("wordCountRounds", JSON.stringify([ROUND_A]));
+    expect(buildWordCountTrendData()).toEqual([]);
+  });
+
+  it("flattens every round's submitted speeches into a single chronological list", () => {
+    localStorage.setItem(
+      "wordCountRounds",
+      JSON.stringify([
+        {
+          roundId: "round-2",
+          styleKey: "practicePublicForum",
+          createdAt: 200,
+          submittedSpeeches: [{ name: "AC", speaker: "A2", text: "one two three four five" }],
+        },
+        {
+          roundId: "round-1",
+          styleKey: "practicePublicForum",
+          createdAt: 100,
+          submittedSpeeches: [{ name: "AC", speaker: "A1", text: "one two three" }],
+        },
+      ]),
+    );
+
+    const trend = buildWordCountTrendData();
+    expect(trend.map((point) => point.roundId)).toEqual(["round-1", "round-2"]);
+    expect(trend[0]).toMatchObject({ name: "AC", speaker: "A1", createdAt: 100, count: 3, overLimit: false });
+    expect(trend[1]).toMatchObject({ name: "AC", speaker: "A2", createdAt: 200, count: 5, overLimit: false });
+  });
+
+  it("skips a submission whose name no longer matches any speech in its round's style", () => {
+    localStorage.setItem(
+      "wordCountRounds",
+      JSON.stringify([
+        {
+          roundId: "round-3",
+          styleKey: "practicePublicForum",
+          createdAt: 100,
+          submittedSpeeches: [{ name: "not-a-real-speech", speaker: "A1", text: "hi" }],
+        },
+      ]),
+    );
+
+    expect(buildWordCountTrendData()).toEqual([]);
+  });
+
+  it("prefers a matching custom preset over the style's authored limit", () => {
+    localStorage.setItem(
+      "wordCountRounds",
+      JSON.stringify([
+        {
+          roundId: "round-1",
+          styleKey: "practicePublicForum",
+          createdAt: 100,
+          submittedSpeeches: [{ name: "AC", speaker: "A1", text: "one two three four five" }],
+        },
+      ]),
+    );
+
+    const trend = buildWordCountTrendData([{ name: "AC", wordLimit: 4 }]);
+    expect(trend[0]).toMatchObject({ wordLimit: 4, count: 5, overLimit: true });
   });
 });

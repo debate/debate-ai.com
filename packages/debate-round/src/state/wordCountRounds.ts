@@ -32,6 +32,15 @@ export type WordCountRoundRecord = {
   roundId: string;
   styleKey: WordCountStyleKey;
   submittedSpeeches: WordCountSpeechSubmission[];
+  /**
+   * Stamped automatically by `saveWordCountRound` the first time a
+   * `roundId` is saved, and preserved across later updates to that same
+   * `roundId` — a debater's word-count trend view (`buildWordCountTrendData`
+   * below) sorts on this. Optional so a record persisted before this field
+   * existed still parses; such a record is excluded from the trend view
+   * rather than sorted arbitrarily.
+   */
+  createdAt?: number;
 };
 
 const STORAGE_KEY = "wordCountRounds";
@@ -63,14 +72,23 @@ export function getWordCountRound(roundId: string): WordCountRoundRecord | undef
   return readAll().find((record) => record.roundId === roundId);
 }
 
-/** Saves a round's state, overwriting any existing record for that `roundId`. */
+/**
+ * Saves a round's state, overwriting any existing record for that
+ * `roundId`. Stamps `createdAt` with the current time on a round's first
+ * save, and preserves that original timestamp across later updates (rather
+ * than taking a caller-supplied `createdAt`, so every save site — the
+ * standalone form and the live in-round meter alike — gets consistent
+ * trend-view dates for free).
+ */
 export function saveWordCountRound(record: WordCountRoundRecord): void {
   const records = readAll();
   const index = records.findIndex((existing) => existing.roundId === record.roundId);
+  const createdAt = index === -1 ? Date.now() : (records[index].createdAt ?? Date.now());
+  const stamped: WordCountRoundRecord = { ...record, createdAt };
   if (index === -1) {
-    records.push(record);
+    records.push(stamped);
   } else {
-    records[index] = record;
+    records[index] = stamped;
   }
   writeAll(records);
 }
@@ -113,4 +131,54 @@ export function getWordCountRoundStatuses(
       };
     })
     .filter((entry): entry is { name: string; speaker: string; status: ReturnType<typeof getWordCountStatus> } => entry !== undefined);
+}
+
+export type WordCountTrendPoint = {
+  roundId: string;
+  name: string;
+  speaker: string;
+  createdAt: number;
+  count: number;
+  wordLimit: number;
+  overLimit: boolean;
+};
+
+/**
+ * Flattens every persisted round's submitted speeches into a single
+ * chronological list — the "(a) a trend view showing a debater's
+ * word-count-vs-limit history across past submissions" follow-up named
+ * under idea #2 ("Word-Count-Only Speech Format") in TODO.md's Product
+ * Feature Ideas list. Each point recomputes its status the same way
+ * `getWordCountRoundStatuses` does (so a stored round never goes stale if a
+ * format's limits or a user's presets change later), plus the `wordLimit`
+ * actually used and the round's `createdAt`.
+ *
+ * A record saved before `createdAt` existed is excluded rather than sorted
+ * arbitrarily; a submission whose `name` no longer matches any speech in
+ * its round's style is skipped, same as `getWordCountRoundStatuses`.
+ */
+export function buildWordCountTrendData(presets: WordLimitPreset[] = []): WordCountTrendPoint[] {
+  return readAll()
+    .filter((record): record is WordCountRoundRecord & { createdAt: number } => record.createdAt !== undefined)
+    .flatMap((record) => {
+      const style = wordCountStyles[record.styleKey];
+      return record.submittedSpeeches
+        .map((submission): WordCountTrendPoint | undefined => {
+          const speech = style.speeches.find((candidate) => candidate.name === submission.name);
+          if (!speech) return undefined;
+          const wordLimit = findPresetWordLimit(presets, submission.name) ?? speech.wordLimit;
+          const status = getWordCountStatus(submission.text, wordLimit);
+          return {
+            roundId: record.roundId,
+            name: submission.name,
+            speaker: submission.speaker,
+            createdAt: record.createdAt,
+            count: status.count,
+            wordLimit,
+            overLimit: status.overLimit,
+          };
+        })
+        .filter((point): point is WordCountTrendPoint => point !== undefined);
+    })
+    .sort((a, b) => a.createdAt - b.createdAt);
 }

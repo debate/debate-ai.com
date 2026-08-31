@@ -6,6 +6,54 @@
 _No task currently in progress._
 
 ### Completed
+- **Word-Count-Only Speech Format — word-count trend view (idea #2,
+  "A trend view showing a debater's word-count-vs-limit history across past
+  submissions").** Prompted by another repeat of the standing prompt
+  ("integrate all the tools and create user settings and link user db SQL
+  with ability to save flows docs and debates in SQL and link to users...
+  develop better tool ui"), and finding — like every recent repeat — that
+  the SQL-linked user settings/flows/docs/rounds system is already fully
+  built, this slice picked up idea #2's last remaining "next" bullet: past
+  word-count submissions were only visible per-round in `/word-count`'s
+  persisted-round list, with no way to see a debater's counts trend across
+  rounds over time. `WordCountRoundRecord` (`state/wordCountRounds.ts`)
+  gained an optional `createdAt?: number`, stamped by `saveWordCountRound`
+  the first time a `roundId` is saved and preserved (not overwritten) across
+  later updates to that same `roundId` — both existing save sites (the
+  standalone form and the live in-round meter's
+  `persistWordCountSpeechMode`) already funnel through `saveWordCountRound`,
+  so both get dated for free. A record saved before this field existed has
+  no `createdAt` and is excluded rather than sorted arbitrarily. A new pure
+  `buildWordCountTrendData(presets)` flattens every persisted round's
+  submitted speeches into one list sorted by `createdAt`, recomputing each
+  entry's count/limit/over-limit status the same way
+  `getWordCountRoundStatuses` already does (never stale if a format's limits
+  or a user's presets change later), honoring a matching custom preset
+  (idea #2's own prior preset-manager slice) the same priority order.
+  `WordCountRoundsPanel` renders the result as a new "Word-count trend"
+  section below the persisted-round list — a chronological bar-per-
+  submission list, hand-rolled with div/CSS bars mirroring
+  `VulnerabilityChartsPanel`'s existing chart convention (idea #4) rather
+  than pulling in a charting library, since that is this package's
+  established pattern (`debate-ui`'s Recharts wrapper is used exactly once,
+  outside `debate-round`) — with a speech-name filter dropdown once a
+  debater's history spans more than one speech name. No backend/D1 work was
+  needed: round history was, and remains, local-storage-only (unlike the
+  account-synced `wordLimitPresets`), which is now called out as this idea's
+  next follow-up rather than left implicit. See
+  `docs/features/word-count-rounds.md`'s new "Word-count trend view"
+  section. Vitest-covered in
+  `packages/debate-round/test/wordCountRounds.test.ts` — `createdAt`
+  stamping on first save and preservation across updates, plus
+  `buildWordCountTrendData`'s chronological ordering, legacy-record
+  (no-`createdAt`) exclusion, style-mismatch skip, and preset-priority
+  cases (23 tests total in the file, up from 16). Verified: the file's own
+  Vitest suite, the full `debate-round` package suite (81 files / 1188
+  tests), the whole-repo suite (`bun run test`, 197 files / 3144 tests),
+  `debate-round`'s and its dependents' `tsc --noEmit` via
+  `turbo typecheck --filter=debate-round`, the whole-repo `bun run
+  typecheck` (13 packages), and a full production `bun run build:web`
+  (vinext build + service-worker build) — all passed with no new failures.
 - **Word-Count-Only Speech Format — per-style word-limit preset manager
   (idea #2, "A per-style word-limit preset manager (add/edit/remove custom
   limits instead of only the built-in registry)").** Prompted by another
@@ -10343,8 +10391,8 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    - A manual CSV/paste import for tournament results, since live Tabroom scraping is blocked (see "Confirmed blocker" below) and the old panel's only path in was hand-entry.
    - Bring back a qualification-points-table editor as a collapsible section rather than its own panel.
 
-2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) — two of three prior bullets are done: the live in-round `SpeechWordCounter` popover already has a 🎤 dictation button (mirroring the standalone form's), and a per-style word-limit preset manager now exists — `/settings`'s **Word limit presets** section (`WordLimitPresetsPanel`/`useWordLimitPresets`/`state/wordLimitPresets.ts`), account-synced via `/api/settings`'s `wordLimitPresets` field, checked ahead of the built-in `wordCountStyles` registry by `resolveSpeechWordLimit` in both this panel and the live meter. See `docs/features/word-count-rounds.md`'s "Custom word-limit presets" section. Next:
-   - A trend view showing a debater's word-count-vs-limit history across past submissions.
+2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) — all three prior bullets are done: the live in-round `SpeechWordCounter` popover already has a 🎤 dictation button (mirroring the standalone form's); a per-style word-limit preset manager exists — `/settings`'s **Word limit presets** section (`WordLimitPresetsPanel`/`useWordLimitPresets`/`state/wordLimitPresets.ts`), account-synced via `/api/settings`'s `wordLimitPresets` field, checked ahead of the built-in `wordCountStyles` registry by `resolveSpeechWordLimit` in both this panel and the live meter; and a trend view now exists too — `/word-count`'s **Word-count trend** section (`buildWordCountTrendData` in `state/wordCountRounds.ts`, rendered by `WordCountRoundsPanel`), a chronological bar-per-submission list across every persisted round, filterable by speech name. See `docs/features/word-count-rounds.md`'s "Custom word-limit presets" and "Word-count trend view" sections. Next:
+   - Account-sync round history itself (today `wordCountRounds` is local-storage-only, unlike `wordLimitPresets`), so the trend view follows a signed-in user across devices instead of staying per-browser.
 
 3. **Online Debate Versus AI** (`/versus-ai`) —
    - Audio speech submission, reusing the existing microphone-dictation hook instead of text-only entry.
