@@ -6,6 +6,63 @@
 _No task currently in progress._
 
 ### Completed
+- **Tool-panel UI-polish audit — migrate hand-rolled empty-state
+  placeholders to the shared `EmptyState` primitive (idea #17, follow-up
+  (4), "bring weaker panel UIs up to the shared `debate-ui` primitive
+  conventions" half).** Prompted by another repeat of idea #17's standing
+  request ("create user settings and link user db SQL... add tools into
+  where needed in the ui... develop better tool ui"); investigating found
+  the "user settings / link user db SQL / save flows, docs, and debates to
+  SQL, linked to users" half of that request already fully built and
+  documented (`user-settings.md`, `flow-cloud-save.md`,
+  `round-cloud-save.md`; the native REASON editor's `documents` table was
+  already user-linked too), so this slice picked up follow-up (4)'s
+  still-open "weaker panel UI" half instead. Two prior slices
+  (`flow-tools-menu.md`) had each done one non-exhaustive search pass over
+  this and found nothing; this pass searched specifically for panels that
+  hand-roll a `rounded-lg border border-dashed ... text-muted-foreground`
+  "nothing to show" placeholder instead of using `debate-ui`'s existing
+  `EmptyState` primitive (`packages/debate-ui/src/panels/panel-shell.tsx`).
+  Found four: `EvidenceLibraryPanel.tsx` ("No entries match this search."),
+  `ArgumentLibraryPanel.tsx` ("No cards match this tag filter."),
+  `PrepRoomPanel.tsx` (its "no evidence yet" / "no search matches" pair),
+  and `apps/debate-ai.com/app/speech-documents/SpeechSendLogPanel.tsx`
+  ("Nothing sent yet..." — this one additionally paired its text with a
+  leading `Send` icon, a shape `EmptyState` had no prop for). Migrated all
+  four to `<EmptyState>`, and gave `EmptyState` an optional `icon` prop
+  (mirroring `PanelShell`'s own `icon` prop) rather than leave the one
+  icon-carrying panel on bespoke markup — an additive, backward-compatible
+  change (every existing call site omits it and renders exactly as before).
+  Distinguished true empty-state placeholders from a different existing use
+  of the same dashed-border styling — a highlighted form/subsection box, as
+  seen in `TopicCoverageDashboardPanel.tsx`, `DailyQuestsPanel.tsx`,
+  `TaskInboxPanel.tsx`, and `QuestStreaksPanel.tsx` — and left those alone
+  rather than misapply the primitive. Documented in
+  `docs/features/flow-tools-menu.md` and `docs/features/user-settings.md`
+  (Known gaps, both cross-referenced). No new schema/route changes — this
+  slice is UI-only. Vitest-covered: `packages/debate-ui/test/panel-shell.
+  test.tsx` gained two cases for `EmptyState`'s new `icon` prop (renders the
+  icon and left-aligns; omits the wrapper and centers when no icon is
+  given); the four migrated panels are themselves store-driven and were
+  already outside this repo's component-test convention (each is covered at
+  the pure-logic-module level only, matching every other store-backed panel
+  here — see `packages/debate-card-search/test/panels.test.tsx`'s own note
+  that store-driven panels are covered by their store's suite, not a render
+  test), so no new panel-level test was needed for a pure-JSX swap. Follow-
+  up (4)'s broader "bring weaker panel UIs up to the shared primitive
+  conventions" half remains open — this was one more targeted search pass
+  (the `EmptyState` pattern specifically) across roughly 50 panels, not an
+  exhaustive comparison against every shared primitive. Verified: `bun
+  install` (2258 packages, no changes), `bunx vitest run packages/debate-ui
+  packages/debate-card-search` (63 files / 1202 tests pass), full `bun run
+  test` (194 files / 3040 tests, all pass), `bun run typecheck` (12/12
+  in-scope package tasks pass — `apps/debate-ai.com` has no `typecheck`
+  script, matching every prior slice's note that this app isn't part of the
+  typecheck pipeline; a direct `tsc --noEmit -p apps/debate-ai.com/
+  tsconfig.json` was run anyway and produced the identical 40 pre-existing,
+  unrelated errors before and after this change, confirming no regression),
+  and `bun run build` (`debate-ai-web` builds clean, `/speech-documents` and
+  every other route present in the route list). **Completed:** 2026-08-31.
 - **Fix Round Cloud Save regression — restore `savedRounds` schema/routes
   deleted by an unrelated merge, repair the corrupted drizzle migration
   chain (idea #17, `round-cloud-save.md` Known gap).** Investigating "create

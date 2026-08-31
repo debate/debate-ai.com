@@ -187,5 +187,11 @@ vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
   overlaps with it but doesn't close it. A later slice (see
   `docs/features/flow-tools-menu.md`) added a "Tools for this round" menu
   to the round workspace and audited the `/tools` catalog for undiscoverable
-  routes (finding none), but the "bring weaker panel UIs up to the shared
-  `debate-ui` primitive conventions" half of follow-up (4) remains open.
+  routes (finding none); a further slice (also documented in
+  `flow-tools-menu.md`'s Known gaps) migrated four panels' hand-rolled
+  "no data yet" placeholders to the shared `EmptyState` primitive. The
+  "bring weaker panel UIs up to the shared `debate-ui` primitive
+  conventions" half of follow-up (4) remains open more broadly — each pass
+  so far has searched for one specific pattern (undiscoverable routes,
+  duplicated empty states), not exhaustively compared every panel against
+  every shared primitive.

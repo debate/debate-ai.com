@@ -309,6 +309,8 @@ export interface EmptyStateProps {
   title: string;
   /** Optional guidance on how to populate the panel. */
   message?: string;
+  /** Optional leading icon node (usually a lucide icon element). */
+  icon?: React.ReactNode;
 }
 
 /**
@@ -317,14 +319,20 @@ export interface EmptyStateProps {
  * @param props - See {@link EmptyStateProps}.
  * @returns The empty-state element.
  */
-export function EmptyState({ title, message }: EmptyStateProps) {
+export function EmptyState({ title, message, icon }: EmptyStateProps) {
   return (
     <div
       data-slot="empty-state"
-      className="text-muted-foreground border-border rounded-lg border border-dashed px-3 py-6 text-center text-sm"
+      className={cn(
+        "text-muted-foreground border-border rounded-lg border border-dashed px-3 py-6 text-sm",
+        icon ? "flex items-start gap-2 text-left" : "text-center",
+      )}
     >
-      <p className="font-medium">{title}</p>
-      {message ? <p className="mt-1 text-xs">{message}</p> : null}
+      {icon ? <span className="mt-0.5 shrink-0 opacity-60">{icon}</span> : null}
+      <div>
+        <p className="font-medium">{title}</p>
+        {message ? <p className="mt-1 text-xs">{message}</p> : null}
+      </div>
     </div>
   );
 }

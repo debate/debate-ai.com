@@ -81,6 +81,27 @@ package (e.g. `controls/ViewModeSelector.tsx`).
   `debate-ui` primitive conventions" half remains open — auditing this
   slice found every panel already using shared `debate-ui` primitives (no
   outstanding weak panel identified), but that was one search pass, not an
-  exhaustive one.
+  exhaustive one. A later pass (see `docs/features/user-settings.md`'s
+  Known gaps) went further, specifically auditing every panel's "no data
+  yet" placeholder against `debate-ui`'s `EmptyState` primitive
+  (`packages/debate-ui/src/panels/panel-shell.tsx`): four panels — `Evidence
+  Library` (`EvidenceLibraryPanel.tsx`), `Common Argument Library`
+  (`ArgumentLibraryPanel.tsx`), `Collaboration Prep Room`
+  (`PrepRoomPanel.tsx`), and `/speech-documents`
+  (`SpeechSendLogPanel.tsx`) — had hand-rolled a `rounded-lg border
+  border-dashed ... text-muted-foreground` placeholder identical in shape
+  to `EmptyState` instead of using it, so they were migrated to the shared
+  component. `SpeechSendLogPanel.tsx`'s placeholder paired its text with a
+  leading icon, which `EmptyState` had no slot for; it gained an optional
+  `icon` prop (mirroring `PanelShell`'s own `icon` prop) rather than leaving
+  that one panel on its own hand-rolled markup, tested in
+  `packages/debate-ui/test/panel-shell.test.tsx`. Other `border-dashed`
+  blocks found in the same pass (`TopicCoverageDashboardPanel`,
+  `DailyQuestsPanel`, `TaskInboxPanel`, `QuestStreaksPanel`) use the dashed
+  border for a highlighted form/subsection box, a different purpose than
+  `EmptyState`'s "nothing to show" placeholder, and were left alone. Still
+  not exhaustive — this pass only searched for the `EmptyState` pattern
+  specifically, not every shared-primitive opportunity across the ~50
+  panels in the repo.
 - No corresponding menu exists on any of the four target pages linking back
   to the round workspace or to each other.

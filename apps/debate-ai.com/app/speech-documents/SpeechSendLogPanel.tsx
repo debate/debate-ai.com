@@ -26,6 +26,7 @@ import {
   type SpeechSendLogEntry,
 } from "debate-editor-cardmirror/engine"
 import { Button } from "debate-ui/src/primitives/button"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 
 function formatSentAt(sentAt: number): string {
   try {
@@ -86,14 +87,11 @@ export function SpeechSendLogPanel() {
       {!loaded ? (
         <p className="text-sm text-muted-foreground">Loading…</p>
       ) : newestFirst.length === 0 ? (
-        <div className="rounded-md border border-dashed border-border p-6 text-sm text-muted-foreground flex items-start gap-2">
-          <Send className="h-4 w-4 mt-0.5 shrink-0 opacity-60" />
-          <span>
-            Nothing sent yet. Mark a document as the speech doc, then press
-            the backtick key with a selection (or your cursor in a card) in
-            another open document.
-          </span>
-        </div>
+        <EmptyState
+          title="Nothing sent yet."
+          message="Mark a document as the speech doc, then press the backtick key with a selection (or your cursor in a card) in another open document."
+          icon={<Send className="h-4 w-4" />}
+        />
       ) : (
         <ul className="space-y-3">
           {newestFirst.map((entry) => (
