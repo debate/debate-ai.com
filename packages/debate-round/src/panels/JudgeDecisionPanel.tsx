@@ -9,7 +9,11 @@
  * (`debate-speech-writer`'s `state/judgeParadigmSelections.ts`) via
  * `round/judge-decision-store-wiring.ts`'s `buildJudgeDecisionInputFromStores`,
  * calls `round/judge-decision-client.ts`'s `requestJudgeDecision` for a
- * real AI verdict, and saves the result through `state/judgeDecisions.ts`.
+ * real AI verdict, and appends the result to that round's history log via
+ * `hooks/useJudgeDecisions.ts` (`state/judgeDecisions.ts`) — closing idea
+ * #5's "(b) a decision history log per round instead of only the latest
+ * result" follow-up: every requested decision for a round is now kept and
+ * shown, newest-first, instead of overwriting the round's prior verdict.
  * No new decision logic is introduced here — this panel only wires the
  * already-composed pieces together and renders the result.
  *
@@ -35,12 +39,7 @@ import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { requestJudgeDecision } from "../round/judge-decision-client"
 import { buildJudgeDecisionInputFromStores } from "../round/judge-decision-store-wiring"
-import {
-  buildJudgeDecisionsPanelView,
-  deleteJudgeDecision,
-  saveJudgeDecision,
-  type JudgeDecisionRecord,
-} from "../state/judgeDecisions"
+import { useJudgeDecisions } from "../hooks/useJudgeDecisions"
 
 type FormState = {
   roundId: string
@@ -65,21 +64,15 @@ const MISSING_SOURCE_LABEL: Record<string, string> = {
  */
 export function JudgeDecisionPanel() {
   const searchParams = useSearchParams()
-  const [records, setRecords] = useState<JudgeDecisionRecord[] | null>(null)
+  const { groups, synced, appendDecision, deleteDecision } = useJudgeDecisions()
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    setRecords(buildJudgeDecisionsPanelView())
-  }, [])
-
-  useEffect(() => {
     const roundId = searchParams?.get("roundId")
     if (roundId) setForm((prev) => ({ ...prev, roundId }))
   }, [searchParams])
-
-  const refresh = () => setRecords(buildJudgeDecisionsPanelView())
 
   const handleGetDecision = async () => {
     const roundId = form.roundId.trim()
@@ -105,7 +98,7 @@ export function JudgeDecisionPanel() {
     setError(null)
     try {
       const result = await requestJudgeDecision(sources.input)
-      saveJudgeDecision({
+      appendDecision({
         roundId,
         paradigmName: sources.input.paradigm.name,
         sideNames: sources.input.sideNames,
@@ -113,7 +106,6 @@ export function JudgeDecisionPanel() {
         generatedAt: Date.now(),
       })
       setForm(EMPTY_FORM)
-      refresh()
     } catch (e) {
       setError(e instanceof Error ? e.message : "AI judge decision failed.")
     } finally {
@@ -121,12 +113,7 @@ export function JudgeDecisionPanel() {
     }
   }
 
-  const handleClear = (roundId: string) => {
-    deleteJudgeDecision(roundId)
-    refresh()
-  }
-
-  if (records === null) {
+  if (groups === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading judge decisions…</div>
   }
 
@@ -136,7 +123,11 @@ export function JudgeDecisionPanel() {
         <h1 className="mb-1 text-xl font-semibold text-foreground">AI Judge Decision</h1>
         <p className="text-sm text-muted-foreground">
           Get an AI-generated decision for a round, judged under its saved paradigm from the Judge
-          Paradigm Picker and its saved flow from Speech Transcript Summaries.
+          Paradigm Picker and its saved flow from Speech Transcript Summaries. Every decision
+          requested for a round is kept as history, newest first.
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {synced ? "Decision history is synced to your account." : "Sign in to sync your decision history."}
         </p>
       </div>
 
@@ -178,44 +169,53 @@ export function JudgeDecisionPanel() {
         </Button>
       </div>
 
-      {records.length === 0 ? (
+      {groups.length === 0 ? (
         <div className="p-6 text-center text-sm text-muted-foreground">
           No AI judge decisions yet. Request one above to see it here.
         </div>
       ) : (
-        <div className="space-y-3">
-          {records.map((record) => {
-            const winnerName =
-              record.result.winner === "primary" ? record.sideNames.primary : record.sideNames.secondary
-            return (
-              <div key={record.roundId} className="rounded-lg border border-border p-4 space-y-2">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-foreground">Round {record.roundId}</span>
-                    <Badge variant="outline">{record.paradigmName}</Badge>
-                    <Badge>{winnerName} wins</Badge>
+        <div className="space-y-6">
+          {groups.map((group) => (
+            <div key={group.roundId} className="space-y-3">
+              <h2 className="text-sm font-medium text-foreground">
+                Round {group.roundId} <span className="text-muted-foreground">({group.decisions.length})</span>
+              </h2>
+              {group.decisions.map((record) => {
+                const winnerName =
+                  record.result.winner === "primary" ? record.sideNames.primary : record.sideNames.secondary
+                return (
+                  <div key={record.id} className="rounded-lg border border-border p-4 space-y-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(record.generatedAt).toLocaleString()}
+                        </span>
+                        <Badge variant="outline">{record.paradigmName}</Badge>
+                        <Badge>{winnerName} wins</Badge>
+                      </div>
+                      <Button size="sm" variant="ghost" onClick={() => deleteDecision(record.id)}>
+                        Clear
+                      </Button>
+                    </div>
+                    <div>
+                      <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
+                        Key Voting Issues
+                      </h3>
+                      <ul className="list-disc space-y-0.5 pl-5 text-sm text-foreground">
+                        {record.result.keyVotingIssues.map((issue, index) => (
+                          <li key={index}>{issue}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">Rationale</h3>
+                      <p className="text-sm text-foreground">{record.result.rationale}</p>
+                    </div>
                   </div>
-                  <Button size="sm" variant="ghost" onClick={() => handleClear(record.roundId)}>
-                    Clear
-                  </Button>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
-                    Key Voting Issues
-                  </h3>
-                  <ul className="list-disc space-y-0.5 pl-5 text-sm text-foreground">
-                    {record.result.keyVotingIssues.map((issue, index) => (
-                      <li key={index}>{issue}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">Rationale</h3>
-                  <p className="text-sm text-foreground">{record.result.rationale}</p>
-                </div>
-              </div>
-            )
-          })}
+                )
+              })}
+            </div>
+          ))}
         </div>
       )}
     </div>

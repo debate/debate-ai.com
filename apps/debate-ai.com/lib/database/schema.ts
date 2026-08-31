@@ -299,6 +299,44 @@ export const savedWordCountRounds = sqliteTable(
 
 export type SavedWordCountRoundRow = typeof savedWordCountRounds.$inferSelect;
 
+// Account-linked judge-decision-history sync — TODO.md idea #5 ("AI Judge
+// Decision Modes"), "(b) a decision history log per round instead of only
+// the latest result" follow-up. Unlike `savedFlows`/`savedRounds`/
+// `savedWordCountRounds` above (one row per (user, round), upserted), a
+// round's judge decisions form a growing append-only log — many rows can
+// share the same `roundId`, so `clientId` here holds the decision's own
+// generated `JudgeDecisionRecord.id` (unique per user, for idempotent
+// upsert-by-id) rather than the round id itself. `roundId` is a plain
+// (non-unique) indexed column so `GET /api/judge-decisions` and the merge
+// hook can still resolve/group a round's full history. `data` holds the
+// whole `JudgeDecisionRecord` JSON-stringified, same small-payload
+// full-record-in-list-response shape as `savedWordCountRounds`.
+export const savedJudgeDecisions = sqliteTable(
+  "saved_judge_decisions",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    roundId: text("round_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_judge_decisions_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_judge_decisions_user_client").on(table.userId, table.clientId),
+    roundIdIdx: index("idx_saved_judge_decisions_round_id").on(table.roundId),
+  }),
+);
+
+export type SavedJudgeDecisionRow = typeof savedJudgeDecisions.$inferSelect;
+
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can

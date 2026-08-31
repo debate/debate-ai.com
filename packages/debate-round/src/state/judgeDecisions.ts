@@ -1,9 +1,12 @@
 /**
  * @fileoverview Persistent storage for a round's generated
- * `JudgeDecisionAiResult` (`round/judge-decision-ai.ts`), keyed by
- * `roundId` — closing the persistence half of idea #5's ("AI Judge
- * Decision Modes") follow-up (a) in TODO.md's Product Feature Ideas list.
- * Stores decisions in localStorage, mirroring the existing
+ * `JudgeDecisionAiResult` (`round/judge-decision-ai.ts`) — closing idea #5's
+ * ("AI Judge Decision Modes") "(b) a decision history log per round instead
+ * of only the latest result" follow-up in TODO.md's Product Feature Ideas
+ * list. Every requested decision is appended, keyed by its own generated
+ * `id`, rather than upserted by `roundId` — a round can now show its full
+ * history of past AI verdicts instead of only the most recent one. Stores
+ * decisions in localStorage, mirroring the existing
  * `flowSummaries.ts`/`preRoundBriefings.ts` persistence convention.
  *
  * @module state/judgeDecisions
@@ -12,6 +15,8 @@
 import type { JudgeDecisionAiResult, JudgeDecisionSideNames } from "../round/judge-decision-ai";
 
 export type JudgeDecisionRecord = {
+  /** Generated once when the decision is first requested; the record's stable cross-device identity. */
+  id: string;
   roundId: string;
   paradigmName: string;
   sideNames: JudgeDecisionSideNames;
@@ -38,20 +43,49 @@ function writeAll(records: JudgeDecisionRecord[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
 }
 
-/** Lists every persisted judge decision, across all rounds. */
+function generateJudgeDecisionId(): string {
+  return `decision-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+/** Lists every persisted judge decision, across every round. */
 export function listJudgeDecisions(): JudgeDecisionRecord[] {
   return readAll();
 }
 
-/** Looks up the persisted judge decision for a round, if any. */
-export function getJudgeDecision(roundId: string): JudgeDecisionRecord | undefined {
-  return readAll().find((record) => record.roundId === roundId);
+/** Looks up a single persisted judge decision by its own `id`, if any. */
+export function getJudgeDecision(id: string): JudgeDecisionRecord | undefined {
+  return readAll().find((record) => record.id === id);
 }
 
-/** Saves a round's judge decision, overwriting any existing record for that `roundId`. */
-export function saveJudgeDecision(record: JudgeDecisionRecord): void {
+/** Every persisted judge decision for a round, newest-first. */
+export function listJudgeDecisionsForRound(roundId: string): JudgeDecisionRecord[] {
+  return readAll()
+    .filter((record) => record.roundId === roundId)
+    .sort((a, b) => b.generatedAt - a.generatedAt);
+}
+
+/**
+ * Appends a newly requested judge decision to that round's history log,
+ * assigning it a fresh `id` — unlike the old "latest result only" shape,
+ * this never overwrites an existing entry. Returns the stamped record so
+ * the caller (`hooks/useJudgeDecisions.ts`) can sync it to the account with
+ * its real `id`.
+ */
+export function appendJudgeDecision(input: Omit<JudgeDecisionRecord, "id">): JudgeDecisionRecord {
+  const record: JudgeDecisionRecord = { ...input, id: generateJudgeDecisionId() };
+  writeAll([...readAll(), record]);
+  return record;
+}
+
+/**
+ * Adopts a judge decision as-is — e.g. one fetched from the account during
+ * cross-device sync (`hooks/useJudgeDecisions.ts`) — upserting by `id`
+ * rather than assigning a fresh one, so a decision generated on one device
+ * doesn't duplicate when merged onto another.
+ */
+export function adoptJudgeDecision(record: JudgeDecisionRecord): void {
   const records = readAll();
-  const index = records.findIndex((existing) => existing.roundId === record.roundId);
+  const index = records.findIndex((existing) => existing.id === record.id);
   if (index === -1) {
     records.push(record);
   } else {
@@ -60,15 +94,36 @@ export function saveJudgeDecision(record: JudgeDecisionRecord): void {
   writeAll(records);
 }
 
-/** Deletes a round's persisted judge decision; a no-op if it isn't stored. */
-export function deleteJudgeDecision(roundId: string): void {
-  writeAll(readAll().filter((record) => record.roundId !== roundId));
+/** Deletes a single persisted judge decision by its own `id`; a no-op if it isn't stored. */
+export function deleteJudgeDecision(id: string): void {
+  writeAll(readAll().filter((record) => record.id !== id));
 }
 
+export type JudgeDecisionRoundGroup = {
+  roundId: string;
+  /** Newest-first. */
+  decisions: JudgeDecisionRecord[];
+};
+
 /**
- * Every persisted judge decision, sorted by `roundId` for a stable display
- * order. Used by `panels/JudgeDecisionPanel.tsx`.
+ * Every persisted judge decision grouped by round for `panels/JudgeDecisionPanel.tsx`'s
+ * history log — each round's decisions sorted newest-first, rounds sorted
+ * by `roundId` for a stable display order.
  */
-export function buildJudgeDecisionsPanelView(): JudgeDecisionRecord[] {
-  return [...listJudgeDecisions()].sort((a, b) => a.roundId.localeCompare(b.roundId));
+export function buildJudgeDecisionsPanelView(): JudgeDecisionRoundGroup[] {
+  const byRound = new Map<string, JudgeDecisionRecord[]>();
+  for (const record of readAll()) {
+    const existing = byRound.get(record.roundId);
+    if (existing) {
+      existing.push(record);
+    } else {
+      byRound.set(record.roundId, [record]);
+    }
+  }
+  return [...byRound.entries()]
+    .map(([roundId, decisions]) => ({
+      roundId,
+      decisions: [...decisions].sort((a, b) => b.generatedAt - a.generatedAt),
+    }))
+    .sort((a, b) => a.roundId.localeCompare(b.roundId));
 }

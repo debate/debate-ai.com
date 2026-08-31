@@ -6,6 +6,79 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Judge Decision Modes — decision history log per round (idea #5,
+  "A decision history log per round instead of only the latest
+  result").** Prompted by another repeat of the standing prompt
+  ("integrate all the tools and create user settings and link user db SQL
+  with ability to save flows docs and debates in SQL and link to users...
+  develop better tool ui"), and finding — like every recent repeat — that
+  the SQL-linked user settings/flows/docs/rounds system is already fully
+  built, this slice picked up idea #5's own still-open "decision history"
+  follow-up: before this, `state/judgeDecisions.ts` kept only one
+  `JudgeDecisionRecord` per `roundId` (`saveJudgeDecision` overwrote any
+  existing entry in place), so requesting a second AI decision for the same
+  round silently discarded the first. `JudgeDecisionRecord` gained an `id`
+  field (generated as `decision-<timestamp>-<random>`, matching this
+  package's existing `FlowAnnotationsPanel`/`FlowEditLogPanel` id-generation
+  convention) and the store switched to append-only: `appendJudgeDecision`
+  always adds a new entry, `getJudgeDecision`/`deleteJudgeDecision` are now
+  keyed by that `id` rather than `roundId`, a new
+  `listJudgeDecisionsForRound` returns a round's history newest-first, and
+  `buildJudgeDecisionsPanelView` groups every decision by `roundId` (sorted
+  by `roundId`, each round's decisions newest-first) for
+  `JudgeDecisionPanel.tsx`, which now renders one section per round with a
+  "Clear" action per decision instead of one row per round. Also
+  account-synced in the same slice, following the exact `saved_flows`
+  precedent one more time: a new `saved_judge_decisions` D1 table
+  (migration `0016_furry_skrulls.sql`, generated via `drizzle-kit
+  generate`) — one row per *decision* (not per round, since a round can
+  have many), `clientId` holding the decision's own generated `id` (unique
+  per user) and a separate non-unique `roundId` column indexed for
+  per-round history lookups, `data` holding the whole `JudgeDecisionRecord`
+  JSON-stringified. `GET /api/judge-decisions` returns every synced decision
+  in full (small payload, same shape as `/api/word-count-rounds`), and
+  `PUT`/`DELETE /api/judge-decisions/[decisionId]` upsert/remove one,
+  validated by a new pure `packages/debate-round/src/state/savedJudgeDecisions.ts`
+  (`isValidJudgeDecisionRecord`, `MAX_SAVED_JUDGE_DECISION_BYTES`) and a
+  fetch wrapper, `round/judge-decisions-client.ts`, mirroring
+  `word-count-rounds-client.ts`'s split and 401-tolerant read/throwing-write
+  convention. A new local-first hook, `hooks/useJudgeDecisions.ts`, replaces
+  `JudgeDecisionPanel`'s direct calls into `state/judgeDecisions.ts`: on
+  mount it merges local and remote history by each decision's own `id`
+  (deduped across instances via a module-level promise, mirroring
+  `useWordCountRounds`) — a remote-only decision is adopted locally via a
+  new `adoptJudgeDecision`, and a local-only decision is best-effort pushed
+  to the account — then `appendDecision`/`deleteDecision` apply locally
+  first and best-effort sync the same change outward. `JudgeDecisionPanel`
+  now shows a "Decision history is synced to your account" / "Sign in to
+  sync your decision history" hint, mirroring `WordCountRoundsPanel`'s
+  existing hint-text convention. See
+  `docs/features/judge-paradigm-selections.md`'s new "Decision history"
+  section. Vitest-covered: `judgeDecisions.test.ts`'s full rewrite for the
+  append-only shape — `appendJudgeDecision`'s id assignment and
+  never-overwrites behavior, `listJudgeDecisionsForRound`'s newest-first
+  per-round filtering, `adoptJudgeDecision`'s insert/overwrite-by-id
+  behavior, `deleteJudgeDecision`'s delete-by-id behavior, and
+  `buildJudgeDecisionsPanelView`'s grouping/sorting (17 tests, up from 5);
+  `isValidJudgeDecisionRecord`'s full validation surface (new
+  `savedJudgeDecisions.test.ts`, 17 cases); and the fetch wrapper's request
+  shapes plus 401/error handling (new `judge-decisions-client.test.ts`, 7
+  cases) — 41 across these three files. `useJudgeDecisions` and its wiring
+  in `JudgeDecisionPanel` remain intentionally untested, matching this
+  package's existing convention for account-synced, `localStorage`-backed
+  hooks and their UI (`useWordCountRounds` follows the same pattern).
+  Verified: `bun install`, the three touched/new test files (44/44 pass),
+  the full `bun run test` (201 files / 3205 tests, all pass, up from 199/3171),
+  the whole-repo `bun run typecheck` (12 packages via turbo, all
+  passing — `apps/debate-ai.com` has no `typecheck` script of its own, so
+  its new route files were additionally verified with a direct `tsc
+  --noEmit` pass, confirming zero new errors versus the pre-existing
+  baseline, which already carries unrelated errors — Cloudflare Workers
+  ambient types, `better-auth` client plugin types, missing `.svg`/`.png`
+  type declarations — none touching the files this slice added or
+  changed), and a full production `bun run build:web` (vinext build +
+  service-worker build, both new API routes correctly registered as `λ`
+  endpoints) — all passed with no new failures.
 - **Word-Count-Only Speech Format — account-sync round history (idea #2,
   "Account-sync round history itself (today `wordCountRounds` is
   local-storage-only, unlike `wordLimitPresets`), so the trend view follows a
@@ -10467,10 +10540,10 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    - A timeline of past AI counsel-panel assessments for a round, not just the latest.
    - Chart export/share (image or link) action.
 
-5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) —
+5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. See `docs/features/judge-paradigm-selections.md`'s new "Decision history" section. Next:
    - A multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision.
-   - A decision history log per round instead of only the latest result.
    - A side-by-side paradigm comparison view for picking which judge to prep for.
+   - A bulk "clear all history for this round" action, and/or a per-round decision count cap, now that a heavily-re-judged round can accumulate many entries.
 
 6. **Speech Transcript Summaries and Answers** (`/summaries`) —
    - Bulk transcript upload (multiple speeches at once) instead of one at a time.
