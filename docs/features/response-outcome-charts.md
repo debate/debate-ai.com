@@ -33,7 +33,11 @@ its own card, sorted by `roundId` for a stable order. Inside a card:
   requested, it renders an overall clash-summary paragraph plus each
   assessed argument's counsel role (Policy Counsel, Kritik Counsel, or
   Weighing Counsel), likely response path, and clash estimate — a real
-  Anthropic call, not a heuristic.
+  Anthropic call, not a heuristic. Every requested assessment is appended to
+  that round's history log instead of overwriting the prior one — the
+  newest assessment renders expanded, with older ones collapsed into a
+  "Show past assessments (N)" toggle and a "Clear history" action next to
+  the "Get AI counsel panel" button.
 
 ## Data flow
 
@@ -85,12 +89,19 @@ flow/response-outcome-ai.ts
 flow/response-outcome-client.ts
   → requestCounselPanelAssessment(input)     — POSTs to the existing
                                                 /api/reason-ai proxy
-state/counselPanelAssessments.ts
-  → saveCounselPanelAssessment(roundId, result)  — persists the result,
-                                                     keyed by roundId
+hooks/useCounselPanelAssessments.ts
+  → appendAssessment(roundId, result)        — state/counselPanelAssessments.ts's
+                                                appendCounselPanelAssessment,
+                                                stamping a fresh id/generatedAt
+                                                and appending to that round's
+                                                history log (never overwrites),
+                                                then best-effort syncs to the
+                                                account when signed in
 panels/VulnerabilityChartsPanel.tsx
-  → renders the overall clash summary and each assessed argument's
-    counsel role, likely response path, and clash estimate
+  → renders the newest assessment's overall clash summary and each assessed
+    argument's counsel role, likely response path, and clash estimate,
+    expanded by default; older assessments for the round collapse behind a
+    "Show past assessments (N)" toggle
 ```
 
 Every vulnerability-scoring and chart-data rule already existed
@@ -124,7 +135,9 @@ follow-up (a) — a real AI-panel call — by adding:
   `/api/reason-ai` proxy.
 - `state/counselPanelAssessments.ts`, a localStorage-backed store for a
   round's `CounselPanelAiResult`, keyed by `roundId`, mirroring
-  `debate-card-search`'s `state/aiCardAssessments.ts` convention.
+  `debate-card-search`'s `state/aiCardAssessments.ts` convention. (Since
+  reworked into an append-only history log — see "Counsel-panel assessment
+  history" below.)
 
 No new vulnerability-scoring logic is introduced — the deterministic
 heuristic in `response-outcome.ts` is unchanged; the AI counsel panel is a
@@ -168,6 +181,61 @@ chart/side-summary above it did reflect it. Vitest-covered in
 counsel-request fields, the default limit, and reflecting a
 hypothetical-adjusted report's recomputed score/unanswered status instead
 of the original).
+
+## Counsel-panel assessment history
+
+Closes idea #4's "a timeline of past AI counsel-panel assessments for a
+round, not just the latest" follow-up in `TODO.md`'s Product Feature Ideas
+list. Every requested "Get AI counsel panel" assessment is now appended to
+that round's history log — its own generated `id` — instead of overwriting
+the round's prior assessment, mirroring idea #5's exact
+`judgeDecisions.ts`/`useJudgeDecisions.ts` history-log/account-sync pattern:
+
+- `state/counselPanelAssessments.ts`: reworked from a `roundId`-keyed
+  overwrite store into an append-only log (`CounselPanelAssessmentRecord =
+  { id, roundId, result, generatedAt }`) — `appendCounselPanelAssessment`,
+  `listCounselPanelAssessmentsForRound` (newest-first),
+  `getLatestCounselPanelAssessmentForRound`, `deleteCounselPanelAssessment`,
+  `deleteCounselPanelAssessmentsForRound` ("Clear history" bulk action),
+  `buildCounselPanelAssessmentsPanelView` (grouped by round for the panel),
+  and `adoptCounselPanelAssessment` (upsert-by-id, for merging in a synced
+  remote record). A `MAX_COUNSEL_PANEL_ASSESSMENTS_PER_ROUND` cap (20,
+  matching `judgeDecisions.ts`'s cap) trims the oldest entry once a
+  heavily-re-consulted round's log exceeds it.
+- `state/savedCounselPanelAssessments.ts` /
+  `flow/counsel-panel-assessments-client.ts`: structural validation
+  (`isValidCounselPanelAssessmentRecord`) and a `fetch` client
+  (`listSavedCounselPanelAssessments`/`saveCounselPanelAssessmentToAccount`/
+  `deleteSavedCounselPanelAssessmentFromAccount`) for the new
+  `/api/counsel-panel-assessments` D1-backed routes — account-only (401
+  signed out), one `saved_counsel_panel_assessments` row per assessment
+  (many rows can share a `roundId`), upserted by the assessment's own
+  `clientId`. Same shape as `saved_judge_decisions`
+  (`drizzle/0019_greedy_true_believers.sql`).
+- `hooks/useCounselPanelAssessments.ts`: local-first state, merged with and
+  best-effort synced to the account when signed in — mirrors
+  `useJudgeDecisions.ts`'s merge-by-id logic (a remote record with no local
+  counterpart is adopted; a local-only record is best-effort pushed up;
+  neither direction overwrites an id both sides already have, since an
+  assessment is generated once and never edited).
+- `panels/VulnerabilityChartsPanel.tsx`: renders the newest assessment for a
+  round expanded (with its generation timestamp), older ones behind a "Show
+  past assessments (N)" toggle each with their own timestamp, and a "Clear
+  history" button next to "Get AI counsel panel" that clears the round's
+  full assessment history (both local and, when signed in, account-synced).
+  "Clear" (the round's vulnerability report) also clears its assessment
+  history via the same `deleteRoundHistory` the "Clear history" button
+  uses.
+
+Vitest-covered in `packages/debate-round/test/counselPanelAssessments.test.ts`
+(append/list/get/delete/adopt, the per-round cap and its trimming, and
+grouping/sorting for the panel view),
+`packages/debate-round/test/savedCounselPanelAssessments.test.ts`
+(structural validation, including every counsel role and each rejected
+malformed field), and
+`packages/debate-round/test/counsel-panel-assessments-client.test.ts` (the
+`fetch` client's success path, a signed-out 401, and server error messages,
+mirroring `judge-decisions-client.test.ts`'s coverage).
 
 ## Known gaps
 

@@ -376,6 +376,45 @@ export const savedSpeechSendLog = sqliteTable(
 
 export type SavedSpeechSendLogRow = typeof savedSpeechSendLog.$inferSelect;
 
+// Account-linked counsel-panel-assessment-history sync — TODO.md idea #4
+// ("AI Response-Outcome Charts"), "a timeline of past AI counsel-panel
+// assessments for a round, not just the latest" follow-up. Same
+// append-only-log shape as `savedJudgeDecisions` above (many rows can share
+// a `roundId`), so `clientId` here holds the assessment's own generated
+// `CounselPanelAssessmentRecord.id` (unique per user, for idempotent
+// upsert-by-id) rather than the round id itself. `roundId` is a plain
+// (non-unique) indexed column so `GET /api/counsel-panel-assessments` and
+// the merge hook can still resolve/group a round's full history. `data`
+// holds the whole `CounselPanelAssessmentRecord` JSON-stringified.
+export const savedCounselPanelAssessments = sqliteTable(
+  "saved_counsel_panel_assessments",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    roundId: text("round_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_counsel_panel_assessments_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_counsel_panel_assessments_user_client").on(
+      table.userId,
+      table.clientId,
+    ),
+    roundIdIdx: index("idx_saved_counsel_panel_assessments_round_id").on(table.roundId),
+  }),
+);
+
+export type SavedCounselPanelAssessmentRow = typeof savedCounselPanelAssessments.$inferSelect;
+
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can
