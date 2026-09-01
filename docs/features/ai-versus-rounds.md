@@ -76,6 +76,14 @@ panels/AiVersusRoundPanel.tsx
   → deleteAiVersusRound(roundId)
   → panel re-reads buildAiVersusRoundsPanelView() to refresh
 
+Downloading a completed round's transcript:
+panels/AiVersusRoundPanel.tsx
+  → round/ai-versus-transcript.ts's buildAiVersusTranscriptText(record)
+                                                    — pure plain-text render
+  → aiVersusTranscriptFilename(record.roundId)      — a safe download filename
+  → new Blob([text]) + anchor download              — same pattern as
+                                                        dialogs/FileExportDialog.tsx
+
 Generating the AI's next speech (follow-up (a)):
 panels/AiVersusRoundPanel.tsx
   → buildAiResponseRequest(order, submittedCount, submittedSpeeches)
@@ -163,6 +171,32 @@ for the swap itself, an earlier-speech swap leaving later speeches
 untouched, non-mutation of the input record, and the three throwing
 cases).
 
+A "Download transcript" button (`round/ai-versus-transcript.ts`'s
+`buildAiVersusTranscriptText`/`aiVersusTranscriptFilename`) appears once a
+round's `nextSlot` is `null` — every speech delivered — both on the active
+round view and on any already-complete round in the persisted-round list,
+closing the "transcript export/download action for a completed round"
+follow-up named under idea #3. It renders a plain-text
+transcript (round id, format, the user's side, then every delivered speech
+labeled "You"/"AI" with its slot name) and saves it via the same
+anchor+Blob download pattern `dialogs/FileExportDialog.tsx` already uses
+for flow exports — no new download mechanism was introduced. The builder is
+pure and works for a round in any state of completion (an empty round
+renders a placeholder line) even though the panel only offers the button
+once a round is complete. Vitest-covered in
+`packages/debate-round/test/ai-versus-transcript.test.ts`.
+
+While building this, `debate-timer`'s `debateStyleNames` array (consumed by
+this transcript builder and, pre-existing, by `AiVersusRoundPanel.tsx`'s and
+`PracticeRoundSimulatorPanel.tsx`'s own `STYLE_LABELS` lookups) was found to
+have "Policy" and "Lincoln Douglas" transposed relative to `debateStyleMap`'s
+order — every format-name label built from it (including the round-setup
+dropdown and every persisted-round card's heading) showed the wrong name
+for those two formats. Fixed by reordering the array to match
+`debateStyleMap`, with a new index-alignment regression test in
+`packages/debate-timer/test/debate-format-times.test.ts` pairing every style
+key to its expected display name.
+
 The speech-submission text field also has a "🎤 Record"/"Stop recording"
 button (found via this run's `docs/features/*.md` Known gaps audit — the
 former "Speech submission is text-only... no transcription pipeline
@@ -182,7 +216,8 @@ neither `SpeechRecognition` constructor exists, and a recognition error
 
 None open. Every delivered AI speech can now be regenerated independently
 in place (see "Regenerating a delivered AI speech at any position" above)
-without discarding any other speech; speech submission stays text-only
-beyond microphone dictation, and there is no transcription path for an
-already-recorded audio/video file, matching every other panel in this repo
-that shares that same gap.
+without discarding any other speech; a completed round's transcript can now
+be downloaded as plain text (see "Download transcript" above); speech
+submission stays text-only beyond microphone dictation, and there is no
+transcription path for an already-recorded audio/video file, matching every
+other panel in this repo that shares that same gap.

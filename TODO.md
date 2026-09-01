@@ -6,6 +6,44 @@
 _No task currently in progress._
 
 ### Completed
+- **Online Debate Versus AI — transcript export/download (idea #3), plus a
+  pre-existing format-name mix-up fix in `debate-timer`.**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, judge decisions, etc.), the CardMirror editor already
+  surfaces every tool via its top `MenuBar`, and no PR was open, so this
+  slice picked idea #3's last remaining named follow-up: "A transcript
+  export/download action for a completed round." A new pure helper,
+  `round/ai-versus-transcript.ts`'s `buildAiVersusTranscriptText`, renders a
+  round's id/format/side header followed by every delivered speech
+  (speaker-labeled "You"/"AI" plus its slot name) as plain text, paired with
+  `aiVersusTranscriptFilename` for a safe download filename. A "Download
+  transcript" button in `AiVersusRoundPanel.tsx` — shown once a round's
+  `nextSlot` is `null` (every speech delivered), both on the active round
+  view and on any already-complete round in the persisted-round list — saves
+  it via the same anchor+Blob download pattern `dialogs/FileExportDialog.tsx`
+  already uses, introducing no new download mechanism. While wiring the
+  transcript header's format name, `debate-timer`'s `debateStyleNames`
+  array was found to have "Policy" and "Lincoln Douglas" transposed relative
+  to `debateStyleMap`'s order — a pre-existing correctness bug affecting
+  every format-name label built from it, including `AiVersusRoundPanel.tsx`'s
+  and `PracticeRoundSimulatorPanel.tsx`'s own `STYLE_LABELS` lookups (the
+  round-setup dropdown and every persisted-round card's heading showed the
+  wrong name for those two formats). Fixed by reordering the array to match
+  `debateStyleMap`, with a new index-alignment regression test added so this
+  can't silently regress again. See `docs/features/ai-versus-rounds.md`'s
+  updated "Download transcript" data-flow entry and "Known gaps" section.
+  Vitest-covered with 9 new cases in
+  `packages/debate-round/test/ai-versus-transcript.test.ts` and a new
+  alignment test in `packages/debate-timer/test/debate-format-times.test.ts`.
+  `bun run typecheck` (root, all 13 typechecked packages), `bun run test`
+  (3312 tests), and `bun run build` (the full monorepo build, including
+  `debate-ai-web`'s production build) all pass clean.
 - **Contribution Leaderboard — "My endorsement activity" view (idea #11).**
   Another repeat of the standing prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL... with ability to save
@@ -11507,10 +11545,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) — every previously-tracked follow-up is now done: the live in-round `SpeechWordCounter` popover already has a 🎤 dictation button (mirroring the standalone form's); a per-style word-limit preset manager exists — `/settings`'s **Word limit presets** section (`WordLimitPresetsPanel`/`useWordLimitPresets`/`state/wordLimitPresets.ts`), account-synced via `/api/settings`'s `wordLimitPresets` field, checked ahead of the built-in `wordCountStyles` registry by `resolveSpeechWordLimit` in both this panel and the live meter; a trend view exists — `/word-count`'s **Word-count trend** section (`buildWordCountTrendData` in `state/wordCountRounds.ts`, rendered by `WordCountRoundsPanel`), a chronological bar-per-submission list across every persisted round, filterable by speech name; and that history is now account-synced too — a new `saved_word_count_rounds` D1 table plus `/api/word-count-rounds` routes, merged in by `hooks/useWordCountRounds.ts`, so the trend view (and the persisted-round list it's built from) follows a signed-in user across devices instead of staying per-browser. See `docs/features/word-count-rounds.md`'s "Custom word-limit presets", "Word-count trend view", and "Account-synced round history" sections. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a bulk "delete all my synced history" action, or resolving a same-`roundId` conflict between two devices instead of only filling gaps) if one becomes worth doing.
 
-3. **Online Debate Versus AI** (`/versus-ai`) —
-   - Audio speech submission, reusing the existing microphone-dictation hook instead of text-only entry.
-   - Let any earlier speech in the round be regenerated, not only the most recent one.
-   - A transcript export/download action for a completed round.
+3. **Online Debate Versus AI** (`/versus-ai`) — every previously-tracked follow-up is now done: speech submission has a "🎤 Record" microphone-dictation button (mirroring every other panel's dictation UI); every delivered AI speech, not just the most recent one, has its own independent "Regenerate" button (`canRegenerateAiSpeechAt`/`replaceAiSpeechAt` in `state/aiVersusRounds.ts`); and a completed round can now be downloaded as a plain-text transcript — a "Download transcript" button on the active round view and on any complete round in the persisted-round list, backed by the pure `round/ai-versus-transcript.ts#buildAiVersusTranscriptText`. See `docs/features/ai-versus-rounds.md`'s "Download transcript" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. an export format other than plain text, such as a `.docx` Speech Document, or a side-by-side transcript diff between two rounds) if one becomes worth doing.
 
 4. **AI Response-Outcome Charts** (`/outcomes`) —
    - A side-by-side view comparing two or more "what if" hypotheticals at once instead of one at a time.
