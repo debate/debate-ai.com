@@ -6,6 +6,42 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Response-Outcome Charts — chart export/share action (idea #4).**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, speech send-log history, outline filter presets,
+  counsel-panel assessment history, etc.), the CardMirror editor already
+  surfaces every tool via its top `MenuBar` and command palette, and no PR
+  was open, so this slice picked idea #4's own remaining "chart
+  export/share (image or link) action" follow-up. Nothing in this repo
+  renders a chart to a bitmap, so a share-image export wasn't attempted
+  (pulling in a canvas-rendering dependency for one panel isn't warranted);
+  instead this closes the plain-text/"link"-shaped half — a "Download
+  report" button next to each round's "Clear" action in
+  `VulnerabilityChartsPanel.tsx`, exporting exactly what that round's card
+  is currently showing (side summary, most-exposed-arguments chart, and
+  the latest AI counsel-panel assessment if one has been requested) as a
+  downloadable plain-text file. New pure builder module
+  `flow/response-outcome-report.ts`
+  (`buildResponseOutcomeReportText`/`responseOutcomeReportFilename`)
+  mirrors `round/ai-versus-transcript.ts`'s exact pure-builder/thin-caller
+  split; the panel wraps the built text in a `Blob` and triggers the
+  download via the same anchor+Blob pattern `AiVersusRoundPanel.tsx`'s
+  "Download transcript" action already uses. Reads the same
+  `sideSummaries`/`chartPoints` the chart itself renders, so a report
+  downloaded while a "what if" hypothetical is active captures that
+  hypothetical's recomputed numbers, not the round's persisted report. See
+  `docs/features/response-outcome-charts.md`'s new "Report download"
+  section. Vitest-covered with 12 new cases in
+  `packages/debate-round/test/response-outcome-report.test.ts`. `bun run
+  typecheck` (root, all 13 typechecked packages), `bun run test` (3391
+  tests), and `bun run build` (the full monorepo build, including
+  `debate-ai-web`'s production build) all pass clean.
 - **AI Response-Outcome Charts — counsel-panel assessment history (idea
   #4).** Another repeat of the standing prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL... with ability
@@ -11648,9 +11684,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 3. **Online Debate Versus AI** (`/versus-ai`) — every previously-tracked follow-up is now done: speech submission has a "🎤 Record" microphone-dictation button (mirroring every other panel's dictation UI); every delivered AI speech, not just the most recent one, has its own independent "Regenerate" button (`canRegenerateAiSpeechAt`/`replaceAiSpeechAt` in `state/aiVersusRounds.ts`); and a completed round can now be downloaded as a plain-text transcript — a "Download transcript" button on the active round view and on any complete round in the persisted-round list, backed by the pure `round/ai-versus-transcript.ts#buildAiVersusTranscriptText`. See `docs/features/ai-versus-rounds.md`'s "Download transcript" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. an export format other than plain text, such as a `.docx` Speech Document, or a side-by-side transcript diff between two rounds) if one becomes worth doing.
 
-4. **AI Response-Outcome Charts** (`/outcomes`) — the counsel-panel-assessment-timeline follow-up is done: every "Get AI counsel panel" request appends to that round's history log instead of overwriting the prior assessment (`state/counselPanelAssessments.ts`'s `CounselPanelAssessmentRecord`, account-synced via a new `saved_counsel_panel_assessments` D1 table plus `/api/counsel-panel-assessments` routes, merged in by `hooks/useCounselPanelAssessments.ts`), with the newest assessment shown expanded and older ones behind a "Show past assessments (N)" toggle — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Counsel-panel assessment history" section. Next:
-   - A side-by-side view comparing two or more "what if" hypotheticals at once instead of one at a time.
-   - Chart export/share (image or link) action.
+4. **AI Response-Outcome Charts** (`/outcomes`) — the counsel-panel-assessment-timeline follow-up is done: every "Get AI counsel panel" request appends to that round's history log instead of overwriting the prior assessment (`state/counselPanelAssessments.ts`'s `CounselPanelAssessmentRecord`, account-synced via a new `saved_counsel_panel_assessments` D1 table plus `/api/counsel-panel-assessments` routes, merged in by `hooks/useCounselPanelAssessments.ts`), with the newest assessment shown expanded and older ones behind a "Show past assessments (N)" toggle — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Counsel-panel assessment history" section. The chart export/share follow-up is also now done: a "Download report" button next to each round's "Clear" action exports that round's side summary, most-exposed-arguments chart, and latest AI counsel-panel assessment as a plain-text file (`flow/response-outcome-report.ts`) — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Report download" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a side-by-side view comparing two or more "what if" hypotheticals at once instead of one at a time, or a `.docx`/Speech Document export format alongside the plain-text one) if one becomes worth doing.
 
 5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too. A per-round decision count cap (`MAX_JUDGE_DECISIONS_PER_ROUND`, 20) is also now enforced — `appendJudgeDecision` trims the oldest entry once a round's log exceeds it, with the trimmed id best-effort deleted from the account too. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision, or a side-by-side paradigm comparison view for picking which judge to prep for) if one becomes worth doing.
 

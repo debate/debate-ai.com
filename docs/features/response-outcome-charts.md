@@ -38,6 +38,10 @@ its own card, sorted by `roundId` for a stable order. Inside a card:
   newest assessment renders expanded, with older ones collapsed into a
   "Show past assessments (N)" toggle and a "Clear history" action next to
   the "Get AI counsel panel" button.
+- A "Download report" button next to "Clear" that exports the round's
+  currently-shown side summary, exposure chart, and latest AI counsel-panel
+  assessment as a downloadable plain-text file — see "Report download"
+  below.
 
 ## Data flow
 
@@ -236,6 +240,48 @@ malformed field), and
 `packages/debate-round/test/counsel-panel-assessments-client.test.ts` (the
 `fetch` client's success path, a signed-out 401, and server error messages,
 mirroring `judge-decisions-client.test.ts`'s coverage).
+
+## Report download
+
+Closes idea #4's "chart export/share (image or link) action" follow-up in
+`TODO.md`'s Product Feature Ideas list — the plain-text/"link"-shaped half
+of it. Nothing in this repo renders a chart to a bitmap today, so a
+share-image export isn't attempted; instead a "Download report" button
+next to each round's "Clear" action exports exactly what that round's
+card is currently showing:
+
+- `flow/response-outcome-report.ts#buildResponseOutcomeReportText` — a
+  pure string builder taking the round id, its `SideOutcomeSummary[]`,
+  its `VulnerabilityChartPoint[]`, and (optionally) its latest
+  `CounselPanelAssessmentRecord`. Renders the per-side exposure summary,
+  the "most exposed arguments" list in the same score-descending order the
+  bar chart renders, and — when a counsel-panel assessment has been
+  requested — that assessment's overall clash summary plus each assessed
+  argument's counsel role, likely response path, and clash estimate. Older
+  history entries are not included, only the newest.
+- `responseOutcomeReportFilename(roundId)` — a filesystem-safe filename
+  (e.g. `response-outcome-round-1-report.txt`), mirroring
+  `round/ai-versus-transcript.ts#aiVersusTranscriptFilename`'s exact
+  slugification rule.
+- `panels/VulnerabilityChartsPanel.tsx`'s `handleDownloadReport` wraps the
+  built text in a `Blob` and triggers the download via the same
+  anchor+Blob pattern `AiVersusRoundPanel.tsx`'s "Download transcript"
+  action already uses.
+
+Because the button reads the same `sideSummaries`/`chartPoints` the card
+renders, a report downloaded while a "what if" hypothetical is active
+captures that hypothetical's recomputed numbers, not the round's persisted
+report.
+
+Vitest-covered in
+`packages/debate-round/test/response-outcome-report.test.ts`: the header,
+per-side summary lines (including singular/plural argument count),
+chart-point ordering, placeholder text for an empty round, an omitted AI
+counsel panel section when no assessment exists yet, a rendered assessment
+section with its per-argument detail, a fallback row-index label when an
+assessed row has no matching chart point, and the filename slugification
+rules (simple id, mixed-case/punctuation, leading/trailing punctuation,
+and an id with no alphanumeric characters at all).
 
 ## Known gaps
 
