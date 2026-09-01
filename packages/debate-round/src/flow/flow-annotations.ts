@@ -27,6 +27,10 @@ export type FlowAnnotation = {
   videoId?: string;
   /** The recording's display title, if known at the time the annotation was created. */
   videoTitle?: string;
+  /** Who made this annotation (e.g. a debater/coach name or id), if known. */
+  speaker?: string;
+  /** A short free-text label for grouping/filtering (e.g. "solvency", "turn"), if set. */
+  tag?: string;
 };
 
 const MAX_NOTE_LENGTH = 500;
@@ -41,6 +45,8 @@ export type CreateFlowAnnotationInput = {
   note?: string;
   videoId?: string;
   videoTitle?: string;
+  speaker?: string;
+  tag?: string;
 };
 
 /**
@@ -63,6 +69,8 @@ export function createFlowAnnotation(input: CreateFlowAnnotationInput): FlowAnno
   const note = input.note?.trim();
   const videoId = input.videoId?.trim();
   const videoTitle = input.videoTitle?.trim();
+  const speaker = input.speaker?.trim();
+  const tag = input.tag?.trim();
 
   return {
     id: input.id,
@@ -74,7 +82,35 @@ export function createFlowAnnotation(input: CreateFlowAnnotationInput): FlowAnno
     ...(note ? { note: note.slice(0, MAX_NOTE_LENGTH) } : {}),
     ...(videoId ? { videoId } : {}),
     ...(videoTitle ? { videoTitle } : {}),
+    ...(speaker ? { speaker } : {}),
+    ...(tag ? { tag } : {}),
   };
+}
+
+/** Filter for narrowing a list of annotations to one speech, speaker, and/or tag. Every field is optional and combined with AND — an unset field matches anything. */
+export type AnnotationFilter = {
+  speechId?: string;
+  speaker?: string;
+  tag?: string;
+};
+
+function annotationMatchesFilter(annotation: FlowAnnotation, filter: AnnotationFilter): boolean {
+  if (filter.speechId && annotation.speechId !== filter.speechId) return false;
+  if (filter.speaker && annotation.speaker !== filter.speaker) return false;
+  if (filter.tag && annotation.tag !== filter.tag) return false;
+  return true;
+}
+
+/**
+ * Narrows a list of annotations to those matching every set field of
+ * `filter`, preserving the input order (the caller is expected to have
+ * already sorted/ordered the list, e.g. via `buildFlowAnnotationsPanelView`).
+ */
+export function filterFlowAnnotations(
+  annotations: FlowAnnotation[],
+  filter: AnnotationFilter,
+): FlowAnnotation[] {
+  return annotations.filter((annotation) => annotationMatchesFilter(annotation, filter));
 }
 
 /** Ascending by `timestampMs`, without mutating the input array. */

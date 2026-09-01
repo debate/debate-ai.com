@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   createFlowAnnotation,
+  filterFlowAnnotations,
   findAnnotationAtPlaybackPosition,
   formatAnnotationTimestamp,
   getAnnotationsForBox,
@@ -180,6 +181,58 @@ describe("createFlowAnnotation", () => {
       }).videoTitle,
     ).toBeUndefined();
   });
+
+  it("trims a speaker and omits it entirely when blank", () => {
+    expect(
+      createFlowAnnotation({
+        id: "a1",
+        flowId: 1,
+        boxPath: [0],
+        speechId: "1AC",
+        timestampMs: 0,
+        createdAt: 0,
+        speaker: "  Jordan  ",
+      }).speaker,
+    ).toBe("Jordan");
+
+    expect(
+      createFlowAnnotation({
+        id: "a1",
+        flowId: 1,
+        boxPath: [0],
+        speechId: "1AC",
+        timestampMs: 0,
+        createdAt: 0,
+        speaker: "   ",
+      }).speaker,
+    ).toBeUndefined();
+  });
+
+  it("trims a tag and omits it entirely when blank", () => {
+    expect(
+      createFlowAnnotation({
+        id: "a1",
+        flowId: 1,
+        boxPath: [0],
+        speechId: "1AC",
+        timestampMs: 0,
+        createdAt: 0,
+        tag: "  solvency  ",
+      }).tag,
+    ).toBe("solvency");
+
+    expect(
+      createFlowAnnotation({
+        id: "a1",
+        flowId: 1,
+        boxPath: [0],
+        speechId: "1AC",
+        timestampMs: 0,
+        createdAt: 0,
+        tag: "   ",
+      }).tag,
+    ).toBeUndefined();
+  });
 });
 
 describe("sortAnnotationsByTimestamp", () => {
@@ -276,6 +329,71 @@ describe("getAnnotationsForVideo", () => {
 
   it("returns an empty list for a video with no annotations", () => {
     expect(getAnnotationsForVideo([annotation({ videoId: "vidA" })], "vidB")).toEqual([]);
+  });
+});
+
+describe("filterFlowAnnotations", () => {
+  const annotations = [
+    annotation({ id: "1ac-jordan-solvency", speechId: "1AC", speaker: "Jordan", tag: "solvency" }),
+    annotation({ id: "1nc-jordan-turn", speechId: "1NC", speaker: "Jordan", tag: "turn" }),
+    annotation({ id: "1ac-sam-solvency", speechId: "1AC", speaker: "Sam", tag: "solvency" }),
+    annotation({ id: "1ac-untagged" }),
+  ];
+
+  it("returns every annotation unchanged when the filter is empty", () => {
+    expect(filterFlowAnnotations(annotations, {}).map((a) => a.id)).toEqual(
+      annotations.map((a) => a.id),
+    );
+  });
+
+  it("filters by speechId alone", () => {
+    expect(filterFlowAnnotations(annotations, { speechId: "1AC" }).map((a) => a.id)).toEqual([
+      "1ac-jordan-solvency",
+      "1ac-sam-solvency",
+      "1ac-untagged",
+    ]);
+  });
+
+  it("filters by speaker alone", () => {
+    expect(filterFlowAnnotations(annotations, { speaker: "Jordan" }).map((a) => a.id)).toEqual([
+      "1ac-jordan-solvency",
+      "1nc-jordan-turn",
+    ]);
+  });
+
+  it("filters by tag alone", () => {
+    expect(filterFlowAnnotations(annotations, { tag: "solvency" }).map((a) => a.id)).toEqual([
+      "1ac-jordan-solvency",
+      "1ac-sam-solvency",
+    ]);
+  });
+
+  it("combines multiple fields with AND", () => {
+    expect(
+      filterFlowAnnotations(annotations, { speechId: "1AC", speaker: "Sam" }).map((a) => a.id),
+    ).toEqual(["1ac-sam-solvency"]);
+  });
+
+  it("excludes annotations missing a field the filter requires", () => {
+    expect(filterFlowAnnotations(annotations, { tag: "turn" }).map((a) => a.id)).toEqual([
+      "1nc-jordan-turn",
+    ]);
+    expect(filterFlowAnnotations([annotation()], { tag: "turn" })).toEqual([]);
+  });
+
+  it("preserves input order rather than re-sorting", () => {
+    const unsorted = [
+      annotation({ id: "later", speechId: "1AC", timestampMs: 5000 }),
+      annotation({ id: "earlier", speechId: "1AC", timestampMs: 1000 }),
+    ];
+    expect(filterFlowAnnotations(unsorted, { speechId: "1AC" }).map((a) => a.id)).toEqual([
+      "later",
+      "earlier",
+    ]);
+  });
+
+  it("returns an empty list when nothing matches", () => {
+    expect(filterFlowAnnotations(annotations, { speaker: "Nobody" })).toEqual([]);
   });
 });
 
