@@ -69,6 +69,52 @@ function round1(value: number): number {
 }
 
 /**
+ * Which trailing window a Contribution Leaderboard reads from — the
+ * "weekly/monthly/all-time range filters" follow-up named under the
+ * "Contribution Leaderboard" bullet in TODO.md's Research Crowdsourcing
+ * Organizer Features section.
+ */
+export type LeaderboardRange = "all-time" | "weekly" | "monthly";
+
+const RANGE_WINDOW_MS: Record<Exclude<LeaderboardRange, "all-time">, number> = {
+  weekly: 7 * 24 * 60 * 60 * 1000,
+  monthly: 30 * 24 * 60 * 60 * 1000,
+};
+
+/**
+ * Whether `timestampMs` (epoch ms) falls within `range`'s trailing window
+ * ending at `now` (default `Date.now()`). `"all-time"` always returns `true`.
+ * Exported so `state/researchProgress.ts` can scope its own completed-task
+ * counts (keyed off a different timestamp field) to the same window a
+ * contribution list is filtered to, without duplicating the window
+ * boundaries.
+ */
+export function isWithinLeaderboardRange(timestampMs: number, range: LeaderboardRange, now: number = Date.now()): boolean {
+  if (range === "all-time") return true;
+  if (Number.isNaN(timestampMs)) return false;
+  const cutoff = now - RANGE_WINDOW_MS[range];
+  return timestampMs >= cutoff && timestampMs <= now;
+}
+
+/**
+ * Filters attributed contributions down to `range`'s trailing window ending
+ * at `now` (default `Date.now()`). `"all-time"` returns `contributions`
+ * unchanged. A contribution missing `submittedAt` can't be placed in a dated
+ * window, so `"weekly"`/`"monthly"` exclude it — it still counts toward
+ * `"all-time"`.
+ */
+export function filterContributionsByRange(
+  contributions: AttributedContribution[],
+  range: LeaderboardRange,
+  now: number = Date.now(),
+): AttributedContribution[] {
+  if (range === "all-time") return contributions;
+  return contributions.filter(
+    (contribution) => contribution.submittedAt !== undefined && isWithinLeaderboardRange(contribution.submittedAt, range, now),
+  );
+}
+
+/**
  * Groups attributed contributions by `contributorId`, preserving each
  * group's original relative order.
  */

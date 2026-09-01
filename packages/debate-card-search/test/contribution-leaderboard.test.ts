@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   buildContributorStats,
   buildLeaderboard,
+  filterContributionsByRange,
   groupContributionsByContributor,
+  isWithinLeaderboardRange,
   type AttributedContribution,
 } from "../src/lib/contribution-leaderboard";
 
@@ -140,5 +142,62 @@ describe("buildLeaderboard", () => {
   it("omits a contributor from completedTaskCounts with a zero count and no contributions", () => {
     const leaderboard = buildLeaderboard([strongCard], undefined, new Map([["ghost", 0]]));
     expect(leaderboard.some((s) => s.contributorId === "ghost")).toBe(false);
+  });
+});
+
+const NOW = new Date("2026-02-01T00:00:00Z").getTime();
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+describe("isWithinLeaderboardRange", () => {
+  it("always returns true for all-time, regardless of timestamp", () => {
+    expect(isWithinLeaderboardRange(0, "all-time", NOW)).toBe(true);
+    expect(isWithinLeaderboardRange(NOW - 1000 * DAY_MS, "all-time", NOW)).toBe(true);
+  });
+
+  it("returns false for NaN timestamps under a dated range", () => {
+    expect(isWithinLeaderboardRange(Number.NaN, "weekly", NOW)).toBe(false);
+  });
+
+  it("includes a timestamp exactly at the weekly boundary and excludes one just past it", () => {
+    expect(isWithinLeaderboardRange(NOW - 7 * DAY_MS, "weekly", NOW)).toBe(true);
+    expect(isWithinLeaderboardRange(NOW - 7 * DAY_MS - 1, "weekly", NOW)).toBe(false);
+  });
+
+  it("excludes a future timestamp under a dated range", () => {
+    expect(isWithinLeaderboardRange(NOW + DAY_MS, "weekly", NOW)).toBe(false);
+  });
+
+  it("includes a timestamp within 30 days under monthly but excludes it under weekly", () => {
+    const twentyDaysAgo = NOW - 20 * DAY_MS;
+    expect(isWithinLeaderboardRange(twentyDaysAgo, "weekly", NOW)).toBe(false);
+    expect(isWithinLeaderboardRange(twentyDaysAgo, "monthly", NOW)).toBe(true);
+  });
+});
+
+describe("filterContributionsByRange", () => {
+  const recent: AttributedContribution = { ...strongCard, submittedAt: NOW - 2 * DAY_MS };
+  const stale: AttributedContribution = { ...weakSummary, submittedAt: NOW - 60 * DAY_MS };
+  const undated: AttributedContribution = { ...viralHighlight };
+
+  it("returns every contribution unchanged for all-time, including undated ones", () => {
+    expect(filterContributionsByRange([recent, stale, undated], "all-time", NOW)).toEqual([recent, stale, undated]);
+  });
+
+  it("keeps only contributions within the weekly window", () => {
+    expect(filterContributionsByRange([recent, stale, undated], "weekly", NOW)).toEqual([recent]);
+  });
+
+  it("keeps a contribution within the monthly window but excludes an older one", () => {
+    const midAge: AttributedContribution = { ...strongCard, id: "mid-age", submittedAt: NOW - 20 * DAY_MS };
+    expect(filterContributionsByRange([midAge, stale], "monthly", NOW)).toEqual([midAge]);
+  });
+
+  it("excludes a contribution with no submittedAt from weekly and monthly ranges", () => {
+    expect(filterContributionsByRange([undated], "weekly", NOW)).toEqual([]);
+    expect(filterContributionsByRange([undated], "monthly", NOW)).toEqual([]);
+  });
+
+  it("returns an empty list for an empty input regardless of range", () => {
+    expect(filterContributionsByRange([], "weekly", NOW)).toEqual([]);
   });
 });

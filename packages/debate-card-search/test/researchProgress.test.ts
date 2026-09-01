@@ -344,4 +344,53 @@ describe("buildPersistedLeaderboardWithCompletedTasks", () => {
       completedTaskCount: 1,
     });
   });
+
+  describe("range", () => {
+    const NOW = new Date("2026-02-01T00:00:00Z").getTime();
+    const RECENT_CARD: AttributedContribution = { ...ALICE_CARD, submittedAt: NOW - 2 * 24 * 60 * 60 * 1000 };
+    const STALE_CARD: AttributedContribution = {
+      ...ALICE_CARD,
+      id: "card-2",
+      submittedAt: NOW - 60 * 24 * 60 * 60 * 1000,
+    };
+
+    it("defaults to all-time, including contributions and completed tasks regardless of age", () => {
+      saveContribution(STALE_CARD);
+      saveRoutedTaskQueue(AI_QUEUE);
+      completeAndRecordResearchTask("topic-ai", "Solvency", "2025-01-01T00:00:00Z");
+
+      const leaderboard = buildPersistedLeaderboardWithCompletedTasks(undefined, "all-time", NOW);
+
+      expect(leaderboard[0]).toMatchObject({ contributorId: "alice", contributionCount: 1, completedTaskCount: 1 });
+    });
+
+    it("excludes a stale contribution and a stale completed task from a weekly range", () => {
+      saveContribution(STALE_CARD);
+      saveRoutedTaskQueue(AI_QUEUE);
+      completeAndRecordResearchTask("topic-ai", "Solvency", "2025-01-01T00:00:00Z");
+
+      expect(buildPersistedLeaderboardWithCompletedTasks(undefined, "weekly", NOW)).toEqual([]);
+    });
+
+    it("includes a recent contribution and a recent completed task within a weekly range", () => {
+      saveContribution(RECENT_CARD);
+      saveRoutedTaskQueue(AI_QUEUE);
+      completeAndRecordResearchTask("topic-ai", "Solvency", new Date(NOW - 24 * 60 * 60 * 1000).toISOString());
+
+      const leaderboard = buildPersistedLeaderboardWithCompletedTasks(undefined, "weekly", NOW);
+
+      expect(leaderboard[0]).toMatchObject({ contributorId: "alice", contributionCount: 1, completedTaskCount: 1 });
+    });
+
+    it("includes a contribution within 30 days under a monthly range but excludes it under weekly", () => {
+      const midAgeCard: AttributedContribution = { ...ALICE_CARD, submittedAt: NOW - 20 * 24 * 60 * 60 * 1000 };
+      saveContribution(midAgeCard);
+
+      expect(buildPersistedLeaderboardWithCompletedTasks(undefined, "weekly", NOW)).toEqual([]);
+      expect(buildPersistedLeaderboardWithCompletedTasks(undefined, "monthly", NOW)[0]).toMatchObject({
+        contributorId: "alice",
+        contributionCount: 1,
+      });
+    });
+  });
 });

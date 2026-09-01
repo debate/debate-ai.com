@@ -46,7 +46,13 @@ import {
   type ContributorProgress,
   type TrackedTopicAssignment,
 } from "../lib/research-progress";
-import { buildLeaderboard, type ContributorStats } from "../lib/contribution-leaderboard";
+import {
+  buildLeaderboard,
+  filterContributionsByRange,
+  isWithinLeaderboardRange,
+  type ContributorStats,
+  type LeaderboardRange,
+} from "../lib/contribution-leaderboard";
 import { DEFAULT_HELPFULNESS_WEIGHTS, type HelpfulnessWeights } from "../lib/community-rating";
 import type { RoutedAssignment } from "../lib/research-task-routing";
 import { assertVerifierAllowed } from "../lib/task-verification";
@@ -220,14 +226,26 @@ export function listTrackedAssignmentsForTopic(topic: string): TrackedTopicAssig
  * depend on it, and importing it there would create a circular import
  * between the two state modules (this module already imports
  * `listContributions`).
+ *
+ * `range` closes the "weekly/monthly/all-time range filters" follow-up named
+ * under the "Contribution Leaderboard" bullet in TODO.md: both the
+ * contribution list (via `contribution-leaderboard.ts`'s
+ * `filterContributionsByRange`, keyed off each contribution's `submittedAt`)
+ * and this store's own completed-task counts (keyed off each record's
+ * `completedAt`) are narrowed to the same trailing window before scoring, so
+ * switching range changes every column consistently. Defaults to
+ * `"all-time"`, matching the leaderboard's original unscoped behavior.
  */
 export function buildPersistedLeaderboardWithCompletedTasks(
   weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+  range: LeaderboardRange = "all-time",
+  now: number = Date.now(),
 ): ContributorStats[] {
   const completedTaskCounts = new Map<string, number>();
   for (const record of readAll()) {
+    if (!isWithinLeaderboardRange(new Date(record.completedAt).getTime(), range, now)) continue;
     const contributorId = record.assignment.contributorId;
     completedTaskCounts.set(contributorId, (completedTaskCounts.get(contributorId) ?? 0) + 1);
   }
-  return buildLeaderboard(listContributions(), weights, completedTaskCounts);
+  return buildLeaderboard(filterContributionsByRange(listContributions(), range, now), weights, completedTaskCounts);
 }

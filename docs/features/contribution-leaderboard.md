@@ -23,8 +23,33 @@ unlock tier, earned badges, and current daily-quest streak.
 | Badges | Tier badges + streak-milestone badges, merged by `lib/unlock-streak-status.ts` |
 
 A signed-in visitor's own row is highlighted with a "You" badge — see
-"Signed-in row highlight" below. The leaderboard always shows every
-contributor; nothing is filtered.
+"Signed-in row highlight" below. Within a chosen range (see "Range filter"
+below) the leaderboard shows every contributor with activity in that
+window; nothing else is filtered.
+
+## Range filter
+
+A "Range" dropdown above the table — **All time** (default), **This
+week**, or **This month** — closes the "weekly/monthly/all-time range
+filters" follow-up named under the "Contribution Leaderboard" bullet in
+`TODO.md`. Switching it re-derives the whole roster (rank, scores, and
+completed-task counts) from only the activity in that trailing window:
+
+- `lib/contribution-leaderboard.ts`'s `filterContributionsByRange` narrows
+  the contribution list to those whose `submittedAt` falls in the last 7
+  (weekly) or 30 (monthly) days, ending at the moment the panel renders. A
+  contribution saved before `submittedAt` existed (or by a caller that
+  doesn't set it) has no dated home, so it's excluded from `weekly`/
+  `monthly` but still counted under `all-time`.
+- `state/researchProgress.ts`'s `buildPersistedLeaderboardWithCompletedTasks`
+  now takes an optional `range` (and `now`) argument and applies the same
+  window, via the shared `isWithinLeaderboardRange` helper, to each
+  contributor's completed-task count (keyed off `CompletedTaskRecord.completedAt`)
+  — so switching range changes every column consistently instead of only
+  the contribution-based ones.
+- A contributor with no activity in the chosen window drops off the
+  roster entirely for that range (they still appear under `all-time`).
+  Switching back to **All time** always restores the full roster.
 
 Each row has a "History" toggle that expands an inline endorsement history
 list for that contributor — every endorsement made on their own
