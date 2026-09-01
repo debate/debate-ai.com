@@ -33,14 +33,22 @@
  * TODO.md — mirrors the existing `ELO_TOOLTIP`/`LeaderboardTableHeader`
  * pattern in `debate-videos`.
  *
+ * Each row also has a "History" toggle that expands an inline endorsement
+ * history list for that contributor — closing idea #11's "An endorsement
+ * history list per contributor" follow-up in TODO.md — reading
+ * `state/contributions.ts`'s new `listEndorsementsByContributor` (direction
+ * `"received"`: every endorsement made on that contributor's own
+ * contributions, newest first).
+ *
  * @module panels/ContributionLeaderboardPanel
  */
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { Info } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
+import { Button } from "debate-ui/src/primitives/button"
 import {
   Table,
   TableBody,
@@ -55,6 +63,7 @@ import { buildContributorUnlockStatusWithStreakFromStore } from "../lib/unlock-s
 import { isOwnContributorRow } from "../lib/session-identity"
 import { isContributionLeaderboardLiveUpdateStorageEvent } from "../state/live-update"
 import { buildHelpfulnessScoreExplanation } from "../lib/community-rating"
+import { listEndorsementsByContributor } from "../state/contributions"
 import type { ContributorStats } from "../lib/contribution-leaderboard"
 
 const HELPFULNESS_SCORE_EXPLANATION = buildHelpfulnessScoreExplanation()
@@ -112,6 +121,7 @@ export interface ContributionLeaderboardPanelProps {
 
 export function ContributionLeaderboardPanel({ signedInContributorId }: ContributionLeaderboardPanelProps = {}) {
   const [rows, setRows] = useState<LeaderboardRow[] | null>(null)
+  const [expandedContributorId, setExpandedContributorId] = useState<string | null>(null)
 
   useEffect(() => {
     setRows(buildLeaderboardRows())
@@ -174,13 +184,16 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
             <TableHead className="text-right">Completed tasks</TableHead>
             <TableHead className="text-right">Streak</TableHead>
             <TableHead>Badges</TableHead>
+            <TableHead>Endorsements</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {rows.map((row, index) => {
             const isMe = isOwnContributorRow(row.contributorId, signedInContributorId)
+            const isExpanded = expandedContributorId === row.contributorId
             return (
-            <TableRow key={row.contributorId} className={isMe ? "bg-primary/5" : undefined}>
+            <Fragment key={row.contributorId}>
+            <TableRow className={isMe ? "bg-primary/5" : undefined}>
               <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
               <TableCell className="font-medium">
                 <div className="flex items-center gap-1.5">
@@ -215,11 +228,63 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
                   <span className="text-muted-foreground">—</span>
                 )}
               </TableCell>
+              <TableCell>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setExpandedContributorId(isExpanded ? null : row.contributorId)}
+                >
+                  {isExpanded ? "Hide" : "History"}
+                </Button>
+              </TableCell>
             </TableRow>
+            {isExpanded && (
+              <TableRow>
+                <TableCell colSpan={10} className="bg-muted/30">
+                  <EndorsementHistoryList contributorId={row.contributorId} />
+                </TableCell>
+              </TableRow>
+            )}
+            </Fragment>
             )
           })}
         </TableBody>
       </Table>
     </div>
+  )
+}
+
+/**
+ * Renders `contributorId`'s received-endorsement history — one line per
+ * endorsement, newest first, naming the endorsing reviewer, the endorsed
+ * contribution, and when. Reads `state/contributions.ts` directly rather
+ * than the parent panel holding this data for every row up front, since
+ * only one row is ever expanded at a time.
+ */
+function EndorsementHistoryList({ contributorId }: { contributorId: string }) {
+  const entries = listEndorsementsByContributor(contributorId, "received")
+
+  if (entries.length === 0) {
+    return (
+      <p className="py-2 text-sm text-muted-foreground">
+        No endorsements received yet.
+      </p>
+    )
+  }
+
+  return (
+    <ul className="space-y-1 py-2 text-sm">
+      {entries.map((entry, index) => (
+        <li key={`${entry.contributionId}-${entry.reviewerId}-${entry.endorsedAt}-${index}`} className="flex flex-wrap items-center gap-1.5 text-muted-foreground">
+          <span className="font-medium text-foreground">{entry.reviewerId}</span>
+          endorsed a
+          <Badge variant="outline" className="capitalize">
+            {entry.contributionKind}
+          </Badge>
+          <span>(weight {entry.reviewerWeight.toFixed(2)})</span>
+          <span>· {new Date(entry.endorsedAt).toLocaleDateString()}</span>
+        </li>
+      ))}
+    </ul>
   )
 }

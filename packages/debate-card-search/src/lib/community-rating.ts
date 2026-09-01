@@ -28,6 +28,16 @@ export type ContributionKind = "summary" | "highlight" | "annotation" | "card" |
 export interface ReviewerEndorsement {
   /** Reviewer credibility, 0-1 (e.g. derived from past endorsement accuracy or role). */
   reviewerWeight: number;
+  /**
+   * Id of the endorsing reviewer, when known. Optional: endorsements
+   * recorded before this field existed (and any raw `CommunityContribution`
+   * fixture that only needs a weight for scoring) omit it — an endorsement
+   * without a `reviewerId` still counts toward the score but can't appear
+   * in a per-contributor endorsement history list.
+   */
+  reviewerId?: string;
+  /** Endorsement time, as epoch milliseconds (UTC). Optional, same convention as `reviewerId`. */
+  endorsedAt?: number;
 }
 
 /** Raw community signals collected for one contribution. */

@@ -10,6 +10,7 @@ import {
   getTodaysBestCardFromStore,
   listContributions,
   listContributionsByContributor,
+  listEndorsementsByContributor,
   recordPersistedEndorsement,
   recordPersistedEndorsementFromReviewer,
   recordPersistedLike,
@@ -178,27 +179,39 @@ describe("recordPersistedSave", () => {
 });
 
 describe("recordPersistedEndorsement", () => {
-  it("appends and persists a reviewer endorsement on the stored contribution", () => {
+  it("appends and persists a reviewer endorsement carrying reviewerId and endorsedAt", () => {
     saveContribution(BOB_SUMMARY);
-    const updated = recordPersistedEndorsement("contrib-2", 0.9);
+    const updated = recordPersistedEndorsement("contrib-2", 0.9, "carol", 1_000);
 
-    expect(updated?.reviewerEndorsements).toEqual([{ reviewerWeight: 0.9 }]);
-    expect(getContribution("contrib-2")?.reviewerEndorsements).toEqual([{ reviewerWeight: 0.9 }]);
+    expect(updated?.reviewerEndorsements).toEqual([{ reviewerWeight: 0.9, reviewerId: "carol", endorsedAt: 1_000 }]);
+    expect(getContribution("contrib-2")?.reviewerEndorsements).toEqual([
+      { reviewerWeight: 0.9, reviewerId: "carol", endorsedAt: 1_000 },
+    ]);
+  });
+
+  it("defaults endorsedAt to the current time when omitted", () => {
+    saveContribution(BOB_SUMMARY);
+    const before = Date.now();
+    const updated = recordPersistedEndorsement("contrib-2", 0.9, "carol");
+    const after = Date.now();
+
+    expect(updated?.reviewerEndorsements[0]?.endorsedAt).toBeGreaterThanOrEqual(before);
+    expect(updated?.reviewerEndorsements[0]?.endorsedAt).toBeLessThanOrEqual(after);
   });
 
   it("preserves existing endorsements when appending another", () => {
     saveContribution(ALICE_CARD);
-    recordPersistedEndorsement("contrib-1", 0.5);
+    recordPersistedEndorsement("contrib-1", 0.5, "carol", 2_000);
 
     expect(getContribution("contrib-1")?.reviewerEndorsements).toEqual([
       { reviewerWeight: 0.7 },
-      { reviewerWeight: 0.5 },
+      { reviewerWeight: 0.5, reviewerId: "carol", endorsedAt: 2_000 },
     ]);
   });
 
   it("returns undefined and leaves storage untouched for an id that isn't stored", () => {
     saveContribution(ALICE_CARD);
-    expect(recordPersistedEndorsement("missing", 0.5)).toBeUndefined();
+    expect(recordPersistedEndorsement("missing", 0.5, "carol")).toBeUndefined();
     expect(getContribution("contrib-1")).toEqual(ALICE_CARD);
   });
 });
@@ -211,21 +224,83 @@ describe("recordPersistedEndorsementFromReviewer", () => {
     const updated = recordPersistedEndorsementFromReviewer("contrib-2", "alice");
     const expectedWeight = computeReviewerCredibility(listContributionsByContributor("alice"));
 
-    expect(updated?.reviewerEndorsements).toEqual([{ reviewerWeight: expectedWeight }]);
-    expect(getContribution("contrib-2")?.reviewerEndorsements).toEqual([{ reviewerWeight: expectedWeight }]);
+    expect(updated?.reviewerEndorsements[0]?.reviewerWeight).toBe(expectedWeight);
+    expect(updated?.reviewerEndorsements[0]?.reviewerId).toBe("alice");
+    expect(getContribution("contrib-2")?.reviewerEndorsements[0]?.reviewerWeight).toBe(expectedWeight);
   });
 
   it("floors the weight at MIN_REVIEWER_CREDIBILITY for a reviewer with no contribution history", () => {
     saveContribution(BOB_SUMMARY);
     const updated = recordPersistedEndorsementFromReviewer("contrib-2", "brand-new-reviewer");
 
-    expect(updated?.reviewerEndorsements).toEqual([{ reviewerWeight: MIN_REVIEWER_CREDIBILITY }]);
+    expect(updated?.reviewerEndorsements[0]?.reviewerWeight).toBe(MIN_REVIEWER_CREDIBILITY);
+    expect(updated?.reviewerEndorsements[0]?.reviewerId).toBe("brand-new-reviewer");
   });
 
   it("returns undefined and leaves storage untouched for an id that isn't stored", () => {
     saveContribution(ALICE_CARD);
     expect(recordPersistedEndorsementFromReviewer("missing", "alice")).toBeUndefined();
     expect(getContribution("contrib-1")).toEqual(ALICE_CARD);
+  });
+});
+
+describe("listEndorsementsByContributor", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(listEndorsementsByContributor("alice", "received")).toEqual([]);
+  });
+
+  it("lists endorsements received on a contributor's own contributions, newest first", () => {
+    saveContribution(ALICE_CARD);
+    recordPersistedEndorsement("contrib-1", 0.5, "carol", 2_000);
+    recordPersistedEndorsement("contrib-1", 0.6, "bob", 3_000);
+
+    expect(listEndorsementsByContributor("alice", "received")).toEqual([
+      {
+        contributionId: "contrib-1",
+        contributionKind: "card",
+        contributionContributorId: "alice",
+        reviewerId: "bob",
+        reviewerWeight: 0.6,
+        endorsedAt: 3_000,
+      },
+      {
+        contributionId: "contrib-1",
+        contributionKind: "card",
+        contributionContributorId: "alice",
+        reviewerId: "carol",
+        reviewerWeight: 0.5,
+        endorsedAt: 2_000,
+      },
+    ]);
+  });
+
+  it("lists endorsements a contributor gave as a reviewer, across other contributors' contributions", () => {
+    saveContribution(ALICE_CARD);
+    saveContribution(BOB_SUMMARY);
+    recordPersistedEndorsement("contrib-2", 0.4, "carol", 1_000);
+
+    expect(listEndorsementsByContributor("carol", "given")).toEqual([
+      {
+        contributionId: "contrib-2",
+        contributionKind: "summary",
+        contributionContributorId: "bob",
+        reviewerId: "carol",
+        reviewerWeight: 0.4,
+        endorsedAt: 1_000,
+      },
+    ]);
+  });
+
+  it("excludes legacy weight-only endorsements missing reviewerId/endorsedAt", () => {
+    saveContribution(ALICE_CARD);
+    expect(listEndorsementsByContributor("alice", "received")).toEqual([]);
+  });
+
+  it("returns an empty list for a contributor with no matching endorsements", () => {
+    saveContribution(ALICE_CARD);
+    recordPersistedEndorsement("contrib-1", 0.5, "carol", 2_000);
+    expect(listEndorsementsByContributor("bob", "received")).toEqual([]);
+    expect(listEndorsementsByContributor("bob", "given")).toEqual([]);
   });
 });
 

@@ -26,6 +26,24 @@ A signed-in visitor's own row is highlighted with a "You" badge — see
 "Signed-in row highlight" below. The leaderboard always shows every
 contributor; nothing is filtered.
 
+Each row has a "History" toggle that expands an inline endorsement history
+list for that contributor — every endorsement made on their own
+contributions, newest first, naming the endorsing reviewer, the endorsed
+contribution's kind, the endorsement's credibility weight, and when it
+happened. This closes idea #11's "An endorsement history list per
+contributor" follow-up in TODO.md. `state/contributions.ts`'s
+`recordPersistedEndorsement`/`recordPersistedEndorsementFromReviewer` now
+stamp each `ReviewerEndorsement` with the endorsing `reviewerId` and an
+`endorsedAt` timestamp (both optional on the type, so pre-existing
+weight-only endorsements — recorded before this field existed, or a raw
+scoring fixture — still typecheck and score normally, they just can't
+appear in a history list); the new `listEndorsementsByContributor` lookup
+reads those back out, filtering to entries that carry both fields. The
+store also supports a `direction: "given"` query (endorsements a
+contributor made as a reviewer, across every contributor's contributions),
+not currently wired into this panel — a natural next follow-up if a
+"my endorsement activity" view becomes useful.
+
 Helpfulness score itself blends three signals (`lib/community-rating.ts`):
 logarithmically-dampened popularity (likes/saves), a quality signal, and a
 reviewer-credibility signal — so a contribution can't rank highly on raw
@@ -113,3 +131,5 @@ staying ignored).
   a "Reviewer ID" is just a typed string, so nothing stops one person from
   endorsing under many different reviewer ids to inflate an endorsement's
   weight.
+- The endorsement history list only renders `direction: "received"`; the
+  store's `direction: "given"` query has no UI yet (see above).
