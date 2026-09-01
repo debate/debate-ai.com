@@ -5,6 +5,7 @@ import {
   buildPersistedLeaderboard,
   buildTopContributorAwardsFromStore,
   deleteContribution,
+  filterFlaggedFeedEntries,
   getContribution,
   getTodaysBestCardFromStore,
   listContributions,
@@ -309,6 +310,60 @@ describe("buildPersistedContributionFeed", () => {
     const [entry] = buildPersistedContributionFeed();
 
     expect(entry.isPopularityOnlyOutlier).toBe(false);
+  });
+});
+
+const POPULARITY_ONLY_OUTLIER: AttributedContribution = {
+  id: "contrib-3",
+  contributorId: "carol",
+  kind: "highlight",
+  likes: 50,
+  saves: 0,
+  qualitySignals: [0],
+  reviewerEndorsements: [],
+};
+
+describe("filterFlaggedFeedEntries", () => {
+  it("returns an empty list when given an empty feed", () => {
+    expect(filterFlaggedFeedEntries([])).toEqual([]);
+  });
+
+  it("returns an empty list when no entry is flagged", () => {
+    saveContribution(ALICE_CARD);
+    saveContribution(BOB_SUMMARY);
+
+    expect(filterFlaggedFeedEntries(buildPersistedContributionFeed())).toEqual([]);
+  });
+
+  it("returns only the entries flagged as popularity-only outliers", () => {
+    saveContribution(ALICE_CARD);
+    saveContribution(POPULARITY_ONLY_OUTLIER);
+
+    const flagged = filterFlaggedFeedEntries(buildPersistedContributionFeed());
+
+    expect(flagged).toHaveLength(1);
+    expect(flagged[0].id).toBe("contrib-3");
+    expect(flagged[0].isPopularityOnlyOutlier).toBe(true);
+  });
+
+  it("preserves the ranked feed's relative order among flagged entries", () => {
+    const secondOutlier: AttributedContribution = {
+      ...POPULARITY_ONLY_OUTLIER,
+      id: "contrib-4",
+      contributorId: "dave",
+      likes: 60,
+    };
+    saveContribution(ALICE_CARD);
+    saveContribution(POPULARITY_ONLY_OUTLIER);
+    saveContribution(secondOutlier);
+
+    const fullFeed = buildPersistedContributionFeed();
+    const flagged = filterFlaggedFeedEntries(fullFeed);
+
+    expect(flagged.map((entry) => entry.id)).toEqual(
+      fullFeed.filter((entry) => entry.isPopularityOnlyOutlier).map((entry) => entry.id),
+    );
+    expect(flagged).toHaveLength(2);
   });
 });
 

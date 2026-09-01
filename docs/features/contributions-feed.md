@@ -25,6 +25,19 @@ spells out the popularity/quality/reviewer-weight blend (percentages derived
 from `HelpfulnessWeights`, not hardcoded) and the `isPopularityOnlyOutlier`
 threshold, so a contributor doesn't have to guess how the score is produced.
 
+### Moderator view: flagged for review
+
+A "Flagged for review (N)" toggle sits above the feed list. Clicking it
+switches the rendered feed from every contribution to only those
+`state/contributions.ts`'s `filterFlaggedFeedEntries` selects — entries
+`community-rating.ts` marked `isPopularityOnlyOutlier` (high popularity,
+low quality, low reviewer-credibility) — so a moderator can review just the
+popularity-driven contributions instead of scanning the full feed for the
+inline flag. The toggle label and heading both carry a live count of
+currently-flagged entries; toggling back to "Show all" restores the full
+ranked feed. `filterFlaggedFeedEntries` preserves the feed's existing
+helpfulness-score ranking order among the entries it keeps.
+
 Filling in both **Topic** and **Case area** also files the contribution into
 the Common Argument Library (`ArgumentLibraryPanel`, via
 `state/evidenceLibraryEntries.ts#buildCombinedPersistedArgumentLibrary`).
@@ -40,6 +53,7 @@ state/contributions.ts (localStorage: "contributions")
   → saveContribution() / recordPersistedLike() / recordPersistedSave() /
     recordPersistedEndorsementFromReviewer()
   → buildPersistedContributionFeed()
+  → filterFlaggedFeedEntries()  — moderator "Flagged for review" toggle
   → panels/ContributionsFeedPanel.tsx (renders the form + ranked feed)
   → apps/debate-ai.com/app/cards/contributions/page.tsx (mounts the panel as a route)
 

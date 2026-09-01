@@ -6,6 +6,39 @@
 _No task currently in progress._
 
 ### Completed
+- **Contributions Feed — moderator view for popularity-only-outlier
+  contributions (idea #11, "Community-Rated Summaries and Highlights").**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, etc.), the CardMirror editor already surfaces every
+  tool via its top `MenuBar`, and the only open PR (#400) covers an
+  unrelated panel (Topic Sprint cross-tab live-update), so this slice
+  picked idea #11's last remaining named follow-up: "a moderator view that
+  surfaces `isPopularityOnlyOutlier`-flagged contributions for review" —
+  the flag itself was already computed and shown inline per-entry in
+  `ContributionsFeedPanel`, but there was no dedicated filtered view for a
+  moderator to review just the flagged ones. Added a new pure helper,
+  `filterFlaggedFeedEntries(entries)` in `state/contributions.ts`, that
+  narrows a ranked `ContributionFeedEntry` list down to only the
+  `isPopularityOnlyOutlier` entries, preserving the feed's existing
+  helpfulness-score ranking order. `ContributionsFeedPanel` now renders a
+  "Flagged for review (N)" toggle button above the feed list, next to a
+  heading that reflects the current view; toggling switches the rendered
+  list between the full feed and `filterFlaggedFeedEntries`' output, with
+  a dedicated empty state ("No contributions currently flagged as
+  popularity-only.") when no entry is flagged. Vitest-covered with 4 new
+  cases in `packages/debate-card-search/test/contributions.test.ts` (empty
+  feed, no entries flagged, only the flagged entries returned, and ranking
+  order preserved among multiple flagged entries). See
+  `docs/features/contributions-feed.md`'s new "Moderator view: flagged for
+  review" section. Idea #11's last remaining follow-up — an endorsement
+  history list per contributor — stays open for a future run.
+
 - **Review Queue — reviewer-workload balancing view (🗣️ Peer Review
   System).** Another repeat of the standing prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL... with
@@ -11343,8 +11376,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
     - Save and reuse named filter presets instead of re-picking filters each visit.
     - Export the filtered tree to a Speech Document or outline file.
 
-11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. Next:
-    - A moderator view that surfaces `isPopularityOnlyOutlier`-flagged contributions for review (the flag is shown inline per-entry in `ContributionsFeedPanel` today, but there's no dedicated filtered view for a moderator to review just the flagged ones).
+11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. Next:
     - An endorsement history list per contributor.
 
 12. **Pre-Round Intelligence Panel** (`/briefings`) — real tournament pairings/room-assignment data stays blocked (Tabroom login wall, see below), so:
