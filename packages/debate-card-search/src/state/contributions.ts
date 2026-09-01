@@ -50,6 +50,13 @@
  * contributor's received endorsements (on their own contributions) or their
  * given ones (as a reviewer), newest first.
  *
+ * `endorsementHistoryCounterpartId` closes idea #11's next-named follow-up in
+ * TODO.md — "wiring the store's already-built `direction: 'given'` query
+ * into a 'my endorsement activity' view" — by giving the panel a single
+ * tested place to resolve which id is the "other side" of a history entry
+ * for a given direction, instead of duplicating that received/given branch
+ * in JSX.
+ *
  * @module state/contributions
  */
 
@@ -245,6 +252,23 @@ export function listEndorsementsByContributor(
     }
   }
   return entries.sort((a, b) => b.endorsedAt - a.endorsedAt);
+}
+
+/**
+ * The id to display as the "other side" of a `ContributorEndorsementHistoryEntry`
+ * for `direction` — the endorsing reviewer for `"received"` entries (who
+ * endorsed the queried contributor's contribution), or the endorsed
+ * contribution's own contributor for `"given"` entries (who the queried
+ * contributor, acting as reviewer, endorsed). Used by
+ * `ContributionLeaderboardPanel`'s endorsement history list so its
+ * received/given phrasing branch lives in one tested place rather than
+ * being duplicated in JSX.
+ */
+export function endorsementHistoryCounterpartId(
+  entry: ContributorEndorsementHistoryEntry,
+  direction: EndorsementHistoryDirection,
+): string {
+  return direction === "received" ? entry.reviewerId : entry.contributionContributorId;
 }
 
 /**

@@ -6,6 +6,37 @@
 _No task currently in progress._
 
 ### Completed
+- **Contribution Leaderboard — "My endorsement activity" view (idea #11).**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, judge decisions, etc.), the CardMirror editor already
+  surfaces every tool via its top `MenuBar`, and no PR was open, so this
+  slice picked idea #11's own next-named follow-up in `contribution-
+  leaderboard.md`'s "Known gaps": wiring the already-built `direction:
+  "given"` query into a "my endorsement activity" view. Added a "My
+  endorsement activity" toggle to `ContributionLeaderboardPanel`, shown only
+  for a signed-in visitor (above the leaderboard table), which expands
+  `state/contributions.ts`'s `listEndorsementsByContributor(signedInContributorId,
+  "given")` — every endorsement that visitor made as a reviewer, across
+  every contributor's contributions, newest first. The per-row "History"
+  toggle (received endorsements) and this new signed-in "given" view now
+  share one `EndorsementHistoryList` renderer, parameterized by direction;
+  a new pure helper, `endorsementHistoryCounterpartId(entry, direction)`,
+  resolves which id is the "other side" of a history entry (the endorsing
+  reviewer for `"received"`, the endorsed contribution's own contributor for
+  `"given"`) so that branch lives in one tested place instead of duplicated
+  JSX. Vitest-covered with 2 new cases in
+  `packages/debate-card-search/test/contributions.test.ts`. See
+  `docs/features/contribution-leaderboard.md`'s updated "What it shows" and
+  "Known gaps" sections. `bun run typecheck` (root, all 13 typechecked
+  packages), `bun run test` (3303 tests), and `bun run build` (the full
+  monorepo build, including `debate-ai-web`'s production build) all pass
+  clean.
 - **Contribution Leaderboard — endorsement history list per contributor
   (idea #11), plus a broken-build fix for `/settings` and `debate-flow-ebb`.**
   Another repeat of the standing prompt ("integrate all the tools into the
@@ -11519,7 +11550,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
     - Save and reuse named filter presets instead of re-picking filters each visit.
     - Export the filtered tree to a Speech Document or outline file.
 
-11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. wiring the store's already-built `direction: "given"` query into a "my endorsement activity" view, or real reviewer-identity/permission checks) if one becomes worth doing.
+11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. The "my endorsement activity" follow-up is also now done: a signed-in visitor gets a "My endorsement activity" toggle above the table, listing every endorsement they gave as a reviewer via the same store's `direction: "given"` query (`state/contributions.ts#endorsementHistoryCounterpartId`) — see the Completed entry above. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. real reviewer-identity/permission checks so a "given" entry can't be spoofed under an arbitrary reviewer id, or a per-contributor "given" history visible to others, not just the signed-in visitor's own) if one becomes worth doing.
 
 12. **Pre-Round Intelligence Panel** (`/briefings`) — real tournament pairings/room-assignment data stays blocked (Tabroom login wall, see below), so:
     - A manual pairing/room-assignment entry form as the practical stand-in.

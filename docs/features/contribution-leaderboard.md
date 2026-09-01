@@ -40,9 +40,14 @@ scoring fixture — still typecheck and score normally, they just can't
 appear in a history list); the new `listEndorsementsByContributor` lookup
 reads those back out, filtering to entries that carry both fields. The
 store also supports a `direction: "given"` query (endorsements a
-contributor made as a reviewer, across every contributor's contributions),
-not currently wired into this panel — a natural next follow-up if a
-"my endorsement activity" view becomes useful.
+contributor made as a reviewer, across every contributor's contributions) —
+now wired into a "My endorsement activity" toggle, shown above the table
+only for a signed-in visitor (`signedInContributorId`), rendering that same
+list with the reviewer/recipient roles swapped ("You endorsed
+{contributor}'s {kind}" instead of "{reviewer} endorsed a {kind}"). Both
+directions share the same `EndorsementHistoryList` renderer, and
+`state/contributions.ts`'s new `endorsementHistoryCounterpartId` resolves
+which id is the "other side" of an entry for a given direction.
 
 Helpfulness score itself blends three signals (`lib/community-rating.ts`):
 logarithmically-dampened popularity (likes/saves), a quality signal, and a
@@ -131,5 +136,9 @@ staying ignored).
   a "Reviewer ID" is just a typed string, so nothing stops one person from
   endorsing under many different reviewer ids to inflate an endorsement's
   weight.
-- The endorsement history list only renders `direction: "received"`; the
-  store's `direction: "given"` query has no UI yet (see above).
+- The "My endorsement activity" toggle only appears for a signed-in
+  visitor (it has nothing to show an anonymous one, since `direction:
+  "given"` is keyed off `signedInContributorId`) and only lists the
+  visitor's own activity, not any other contributor's given-endorsement
+  history — there's no per-row "given" toggle, only the per-row "received"
+  one plus this one signed-in-only "given" view.
