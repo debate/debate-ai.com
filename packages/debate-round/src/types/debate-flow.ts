@@ -35,6 +35,8 @@ export interface DebateFlowState {
 
     // Split mode states
     splitMode: boolean;
+    /** When true, split mode shows one speech at a time instead of both side-by-side. */
+    singlePaneMode: boolean;
     splitSpeech1: string;
     splitSpeech2: string;
     splitViewMode1: ViewMode;
@@ -62,6 +64,7 @@ export interface DebateFlowActions {
     setIsMobile: (mobile: boolean) => void;
 
     setSplitMode: (mode: boolean) => void;
+    setSinglePaneMode: (single: boolean) => void;
     setSplitSpeech1: (speech: string) => void;
     setSplitSpeech2: (speech: string) => void;
     setSplitViewMode1: (mode: ViewMode) => void;

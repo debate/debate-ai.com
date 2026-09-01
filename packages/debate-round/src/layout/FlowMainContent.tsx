@@ -58,6 +58,10 @@ interface FlowMainContentProps {
   onUpdate?: (updates: Partial<Flow>) => void
   /** Whether the viewport is mobile-sized; shows only one speech panel in split mode. */
   isMobile?: boolean
+  /** When true (desktop only), shows a single active speech panel instead of both side-by-side. */
+  singlePaneMode?: boolean
+  /** Handler called when the user toggles between single-pane and split (side-by-side) layout. */
+  onToggleLayoutMode?: () => void
   /** Per-speech timer state map for persisting timers across navigation. */
   speechTimerStates?: Record<string, SpeechTimerEntry>
   /** Callback to update a per-speech timer state entry. */
@@ -124,6 +128,8 @@ export function FlowMainContent({
   onMouseDown,
   onUpdate,
   isMobile = false,
+  singlePaneMode = false,
+  onToggleLayoutMode,
   speechTimerStates,
   onSpeechTimerStateChange,
   onResetPrepTimers,
@@ -150,8 +156,9 @@ export function FlowMainContent({
   }
 
   if (splitMode && leftSpeech && rightSpeech) {
-    // Mobile: show only the left (active) speech at full width
-    if (isMobile) {
+    // Mobile always collapses to one active speech; desktop can also opt into
+    // single-pane via the layout toggle button in the header.
+    if (isMobile || singlePaneMode) {
       return (
         <div className="flex flex-col h-full bg-[var(--background)] rounded-[var(--border-radius)]">
           <div className="border-b border-border bg-muted/50">
@@ -172,15 +179,17 @@ export function FlowMainContent({
               canNavigateNext={canNavigateNext}
               onNavigatePrev={onNavigatePrev}
               onNavigateNext={onNavigateNext}
-              onMobileMenuClick={onMobileMenuClick}
+              onMobileMenuClick={isMobile ? onMobileMenuClick : undefined}
               onOpenSpeechPanel={onOpenSpeechPanel}
+              layoutMode={isMobile ? undefined : "single"}
+              onToggleLayoutMode={isMobile ? undefined : onToggleLayoutMode}
             />
           </div>
           <div className="flex-1 min-h-0 overflow-hidden">
             <LexicalEditorWrapper
-              key={`mobile-${leftSpeech}`}
+              key={`single-${leftSpeech}`}
               content={leftContent}
-              contentKey={`mobile-${leftSpeech}`}
+              contentKey={`single-${leftSpeech}`}
               onChange={onUpdateLeftSpeech || (() => {})}
               title={leftSpeech}
               onTitleChange={() => {}}
@@ -216,6 +225,8 @@ export function FlowMainContent({
               canNavigateNext={canNavigateNext}
               onNavigatePrev={onNavigatePrev}
               onNavigateNext={onNavigateNext}
+              layoutMode="split"
+              onToggleLayoutMode={onToggleLayoutMode}
             />
           </div>
           <div className="flex-1 min-h-0 overflow-hidden">

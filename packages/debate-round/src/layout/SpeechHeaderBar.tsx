@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { Round } from "../types/flow"
-import { FileText, Quote, ChevronLeft, ChevronRight, Menu, Radio, Type } from "lucide-react"
+import { FileText, Quote, ChevronLeft, ChevronRight, Menu, Radio, Type, Columns2 } from "lucide-react"
 import type { ViewMode } from "../types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "debate-ui/src/primitives/button"
@@ -134,6 +134,10 @@ export interface SpeechHeaderBarProps {
   onNavigateNext?: () => void
   /** When provided, renders a hamburger menu button for mobile sidebar access. */
   onMobileMenuClick?: () => void
+  /** Current layout mode: a single active speech pane, or both shown side-by-side. */
+  layoutMode?: "single" | "split"
+  /** When provided, renders a button toggling between single-pane and split layout. */
+  onToggleLayoutMode?: () => void
 }
 
 export function SpeechHeaderBar({
@@ -155,6 +159,8 @@ export function SpeechHeaderBar({
   onNavigatePrev,
   onNavigateNext,
   onMobileMenuClick,
+  layoutMode,
+  onToggleLayoutMode,
 }: SpeechHeaderBarProps) {
   const { rounds, flows, selected } = useFlowStore()
   const currentFlow = flows[selected]
@@ -529,6 +535,27 @@ export function SpeechHeaderBar({
                 <ViewModeSelector value={viewMode} onChange={onViewModeChange} size="sm" />
               </div>
             </div>
+          )}
+
+          {/* Layout toggle: single active speech vs. both side-by-side */}
+          {onToggleLayoutMode && (
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={layoutMode === "split" ? "default" : "ghost"}
+                    size="icon"
+                    onClick={onToggleLayoutMode}
+                    className="h-6 w-6 shrink-0"
+                  >
+                    <Columns2 className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {layoutMode === "split" ? "Show one speech at a time" : "Show both speeches side by side"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
 
           {/* Speech menu — always show ellipsis dropdown */}

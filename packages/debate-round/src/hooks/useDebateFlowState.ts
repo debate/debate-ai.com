@@ -35,6 +35,8 @@ export function useDebateFlowState(): DebateFlowState & DebateFlowActions {
 
   // Split mode states
   const [splitMode, setSplitMode] = useState(true);
+  // Default to showing a single speech at a time; the layout toggle switches to side-by-side.
+  const [singlePaneMode, setSinglePaneMode] = useState(true);
   const [splitSpeech1, setSplitSpeech1] = useState<string>("");
   const [splitSpeech2, setSplitSpeech2] = useState<string>("");
   const [splitViewMode1, setSplitViewMode1] = useState<ViewMode>("read");
@@ -56,6 +58,7 @@ export function useDebateFlowState(): DebateFlowState & DebateFlowActions {
     mobileMenuOpen,
     isMobile,
     splitMode,
+    singlePaneMode,
     splitSpeech1,
     splitSpeech2,
     splitViewMode1,
@@ -76,6 +79,7 @@ export function useDebateFlowState(): DebateFlowState & DebateFlowActions {
     setMobileMenuOpen,
     setIsMobile,
     setSplitMode,
+    setSinglePaneMode,
     setSplitSpeech1,
     setSplitSpeech2,
     setSplitViewMode1,

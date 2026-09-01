@@ -243,6 +243,13 @@ export function DebateFlowPage() {
     state.setSplitMode(!state.splitMode)
   }
 
+  /**
+   * Toggle between showing one active speech and both speeches side-by-side.
+   */
+  const handleToggleLayoutMode = () => {
+    state.setSinglePaneMode(!state.singlePaneMode)
+  }
+
   // ============================================================================
   // Computed Values
   // ============================================================================
@@ -365,6 +372,8 @@ export function DebateFlowPage() {
             gridApiRef={gridApiRef}
             onFlowGridReady={onPrepNoteJumpGridReady}
             isMobile={state.isMobile}
+            singlePaneMode={state.singlePaneMode}
+            onToggleLayoutMode={handleToggleLayoutMode}
             leftSpeech={leftSpeech}
             rightSpeech={rightSpeech}
             leftViewMode={state.splitViewMode1}
@@ -400,9 +409,9 @@ export function DebateFlowPage() {
               }
             }}
             canNavigatePrev={splitHandlers.canNavigatePrev}
-            canNavigateNext={state.isMobile ? splitHandlers.canNavigateNextSingle : splitHandlers.canNavigateNext}
-            onNavigatePrev={state.isMobile ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches}
-            onNavigateNext={state.isMobile ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches}
+            canNavigateNext={state.isMobile || state.singlePaneMode ? splitHandlers.canNavigateNextSingle : splitHandlers.canNavigateNext}
+            onNavigatePrev={state.isMobile || state.singlePaneMode ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches}
+            onNavigateNext={state.isMobile || state.singlePaneMode ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches}
             onMobileMenuClick={state.isMobile ? () => state.setMobileMenuOpen(true) : undefined}
             onMouseDown={() => {
               const handleMouseMove = (e: MouseEvent) => {
