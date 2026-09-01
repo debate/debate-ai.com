@@ -58,6 +58,8 @@ export {
   appendSpeechSendLogEntry,
   removeSpeechSendLogEntry,
   sanitizeSpeechSendLog,
+  isValidSpeechSendLogEntry,
   MAX_SPEECH_SEND_LOG_ENTRIES,
+  MAX_SAVED_SPEECH_SEND_LOG_BYTES,
 } from './editor/speech-send-log.js';
 export type { SpeechSendLogEntry } from './editor/speech-send-log.js';

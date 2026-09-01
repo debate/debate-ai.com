@@ -41,6 +41,37 @@ _No task currently in progress._
   typecheck` (root, all 13 typechecked packages), `bun run test` (3324
   tests), and `bun run build` (the full monorepo build, including
   `debate-ai-web`'s production build) all pass clean.
+- **Speech Documents Cloud Save — account-sync the send-log history (idea
+  #17).** Another repeat of the standing prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL... with ability
+  to save flows docs and debates in SQL and link to users... add tools
+  into where needed in the UI... develop better tool UI") — this time the
+  repeat found one genuinely open piece: flows, rounds, word-count-round
+  history, judge-decision history, and the Reason Editor's own document
+  content were all already D1-backed and linked to signed-in users, but
+  `/speech-documents`' send-log history (`speechSendLogStore`, what
+  actually landed in a designated speech doc via CardMirror's send-to-speech
+  commands) was still IndexedDB-only, per-browser. Closed with the same
+  pattern as `useJudgeDecisions`/`useWordCountRounds`: a new
+  `saved_speech_send_log` D1 table plus `/api/speech-send-log` routes
+  (account-only, 401 signed out), a new `isValidSpeechSendLogEntry`
+  validator co-located with the existing `speech-send-log.ts` helpers and
+  exported from `debate-editor-cardmirror`'s headless `/engine` entry
+  point, and a new `useSpeechSendLogSync` hook
+  (`apps/debate-ai.com/lib/hooks/`) that merges local/remote history on
+  mount and keeps syncing new sends via `speechSendLogStore.subscribe`
+  (needed since the store's `add` is also called directly by
+  `speech-doc-send.ts`, not only through this hook). `/speech-documents`
+  gained a one-line sync-status caption; its remove/clear actions now also
+  best-effort delete from the account. See
+  `docs/features/speech-documents-cloud-save.md`. Vitest-covered with 4 new
+  cases for the validator in
+  `packages/debate-editor-cardmirror/test/speech-send-log.test.ts` (no
+  vitest project exists for `apps/debate-ai.com` itself yet, matching every
+  other app-level route/hook in this repo). `bun run typecheck` (root, all
+  13 typechecked packages), `bun run test` (3316 tests), and `bun run
+  build` (the full monorepo build, including `debate-ai-web`'s production
+  build) all pass clean.
 - **Online Debate Versus AI — transcript export/download (idea #3), plus a
   pre-existing format-name mix-up fix in `debate-timer`.**
   Another repeat of the standing prompt ("integrate all the tools into the

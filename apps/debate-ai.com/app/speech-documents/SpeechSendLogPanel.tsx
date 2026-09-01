@@ -27,6 +27,7 @@ import {
 } from "debate-editor-cardmirror/engine"
 import { Button } from "debate-ui/src/primitives/button"
 import { EmptyState } from "debate-ui/src/panels/panel-shell"
+import { useSpeechSendLogSync } from "@/lib/hooks/useSpeechSendLogSync"
 
 function formatSentAt(sentAt: number): string {
   try {
@@ -39,6 +40,7 @@ function formatSentAt(sentAt: number): string {
 export function SpeechSendLogPanel() {
   const [entries, setEntries] = useState<SpeechSendLogEntry[]>([])
   const [loaded, setLoaded] = useState(false)
+  const { synced, removeEntry, clearAll } = useSpeechSendLogSync()
 
   useEffect(() => {
     let cancelled = false
@@ -66,13 +68,13 @@ export function SpeechSendLogPanel() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => void speechSendLogStore.clear()}
+            onClick={clearAll}
           >
             Clear history
           </Button>
         )}
       </div>
-      <p className="text-sm text-muted-foreground mb-6">
+      <p className="text-sm text-muted-foreground mb-1">
         A history of everything sent into your designated speech document
         from the Reason Editor. Open{" "}
         <a href="/reason-editor" className="underline underline-offset-2">
@@ -82,6 +84,9 @@ export function SpeechSendLogPanel() {
         Unmark Active Doc as the Speech Doc"), then send a selection or
         card with the backtick (`) key — or Alt-backtick to send at the
         end — from any other open document.
+      </p>
+      <p className="text-xs text-muted-foreground mb-6">
+        {synced ? "This history is synced to your account." : "Sign in to sync this history to your account."}
       </p>
 
       {!loaded ? (
@@ -108,7 +113,7 @@ export function SpeechSendLogPanel() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => void speechSendLogStore.remove(entry.id)}
+                  onClick={() => removeEntry(entry.id)}
                   aria-label="Remove entry"
                   className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground transition-opacity"
                 >

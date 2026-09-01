@@ -343,6 +343,39 @@ export const savedJudgeDecisions = sqliteTable(
 
 export type SavedJudgeDecisionRow = typeof savedJudgeDecisions.$inferSelect;
 
+// Account-linked Speech Documents send-log sync — closes docs/features/
+// flow-tools-menu.md's/user-settings.md's standing "docs" gap: CardMirror's
+// speech-send history (`packages/debate-editor-cardmirror/src/editor/
+// speech-send-log.ts`, rendered by `/speech-documents`) was IndexedDB-only,
+// unlike flows/rounds/word-count-rounds/judge-decisions above, which all
+// already follow a signed-in user across devices. Same one-row-per-entry,
+// upsert-by-caller-id shape as `savedJudgeDecisions` — a `SpeechSendLogEntry`
+// is generated once and never edited afterward, so `clientId` (the entry's
+// own generated `id`) is enough to dedupe a re-push.
+export const savedSpeechSendLog = sqliteTable(
+  "saved_speech_send_log",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_speech_send_log_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_speech_send_log_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedSpeechSendLogRow = typeof savedSpeechSendLog.$inferSelect;
+
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can

@@ -92,20 +92,34 @@ export function removeSpeechSendLogEntry(
   return log.filter((e) => e.id !== id);
 }
 
+/**
+ * Structural validator for an untrusted (e.g. parsed request-body JSON)
+ * value claiming to be a `SpeechSendLogEntry` — shared by
+ * `sanitizeSpeechSendLog` below and `apps/debate-ai.com`'s
+ * `/api/speech-send-log` account-sync routes, mirroring `debate-round`'s
+ * `state/savedJudgeDecisions.ts#isValidJudgeDecisionRecord` convention.
+ */
+export function isValidSpeechSendLogEntry(value: unknown): value is SpeechSendLogEntry {
+  if (!value || typeof value !== 'object') return false;
+  const e = value as Record<string, unknown>;
+  return (
+    typeof e.id === 'string' &&
+    e.id.trim().length > 0 &&
+    typeof e.text === 'string' &&
+    typeof e.preview === 'string' &&
+    typeof e.atEnd === 'boolean' &&
+    typeof e.sentAt === 'number'
+  );
+}
+
+/** Hard cap on a single entry's JSON size when synced to an account — generous for even a long card, well short of D1's row-size limits. */
+export const MAX_SAVED_SPEECH_SEND_LOG_BYTES = 200_000;
+
 /** Tolerate malformed / partial persisted entries — keep the well-shaped
  *  ones, same convention as `dropzone-store.ts`'s `sanitizeItems`. */
 export function sanitizeSpeechSendLog(raw: unknown): SpeechSendLogEntry[] {
   if (!Array.isArray(raw)) return [];
-  return raw.filter(
-    (e): e is SpeechSendLogEntry =>
-      !!e &&
-      typeof e === 'object' &&
-      typeof (e as SpeechSendLogEntry).id === 'string' &&
-      typeof (e as SpeechSendLogEntry).text === 'string' &&
-      typeof (e as SpeechSendLogEntry).preview === 'string' &&
-      typeof (e as SpeechSendLogEntry).atEnd === 'boolean' &&
-      typeof (e as SpeechSendLogEntry).sentAt === 'number',
-  );
+  return raw.filter(isValidSpeechSendLogEntry);
 }
 
 type Listener = (entries: SpeechSendLogEntry[]) => void;
