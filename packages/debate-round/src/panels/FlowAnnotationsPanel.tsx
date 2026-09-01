@@ -54,6 +54,7 @@ import {
   parseAnnotationTimestamp,
   parseBoxPathInput,
 } from "../flow/flow-annotations"
+import { buildFlowAnnotationsExportText, flowAnnotationsExportFilename } from "../flow/flow-annotations-export"
 import { isFlowAnnotationsPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import {
   buildFlowAnnotationsPanelView,
@@ -77,6 +78,15 @@ function collectDistinctValues(
   for (const annotation of annotations) {
     const value = annotation[field]
     if (value && !values.includes(value)) values.push(value)
+  }
+  return values
+}
+
+/** Every distinct `flowId` present across `annotations`, in first-seen order. */
+function collectDistinctFlowIds(annotations: FlowAnnotation[]): number[] {
+  const values: number[] = []
+  for (const annotation of annotations) {
+    if (!values.includes(annotation.flowId)) values.push(annotation.flowId)
   }
   return values
 }
@@ -206,6 +216,22 @@ export function FlowAnnotationsPanel() {
   const handleClear = (id: string) => {
     deleteFlowAnnotation(id)
     refresh()
+  }
+
+  /** Mirrors `PreRoundBriefingsPanel.tsx`'s anchor+Blob download pattern. */
+  const handleDownload = (targetFlowId: number) => {
+    if (annotations === null) return
+    const text = buildFlowAnnotationsExportText(annotations, targetFlowId)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = flowAnnotationsExportFilename(targetFlowId)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
 
   if (annotations === null) {
@@ -350,6 +376,30 @@ export function FlowAnnotationsPanel() {
         <div className="space-y-4">
           <div className="flex flex-wrap items-end gap-4">
             <div className="space-y-1.5">
+              <Label htmlFor="annotation-filter-flow">Flow</Label>
+              <Select
+                value={filter.flowId !== undefined ? String(filter.flowId) : ANY_VALUE}
+                onValueChange={(value) =>
+                  setFilter((prev) => ({
+                    ...prev,
+                    flowId: value === ANY_VALUE ? undefined : Number(value),
+                  }))
+                }
+              >
+                <SelectTrigger id="annotation-filter-flow" className="w-28">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ANY_VALUE}>Any flow</SelectItem>
+                  {collectDistinctFlowIds(annotations).map((id) => (
+                    <SelectItem key={id} value={String(id)}>
+                      Flow {id}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
               <Label htmlFor="annotation-filter-speech">Speech</Label>
               <Select
                 value={filter.speechId ?? ANY_VALUE}
@@ -412,7 +462,12 @@ export function FlowAnnotationsPanel() {
                 </SelectContent>
               </Select>
             </div>
-            {(filter.speechId || filter.speaker || filter.tag) && (
+            {filter.flowId !== undefined && (
+              <Button size="sm" variant="outline" onClick={() => handleDownload(filter.flowId!)}>
+                Download annotations
+              </Button>
+            )}
+            {(filter.flowId !== undefined || filter.speechId || filter.speaker || filter.tag) && (
               <Button size="sm" variant="ghost" onClick={() => setFilter({})}>
                 Clear filters
               </Button>

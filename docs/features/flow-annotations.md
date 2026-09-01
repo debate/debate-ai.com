@@ -216,6 +216,44 @@ for each of `speechId`/`speaker`/`tag`, AND-combining multiple fields,
 excluding annotations missing a required field, order preservation, and the
 no-matches case).
 
+## Bulk export
+
+Closes the "Bulk-export a round's annotations into a Speech Document" follow-up
+named under idea #15 in `TODO.md`. A `.docx` Speech Document export isn't
+attempted, for the same reason idea #6's own "send to Speech Document"
+follow-up and idea #10's outline export stayed plain-text: the only Speech
+Document type in this repo lives in the `reason-editor` package, which
+`debate-round` doesn't depend on. This closes the "bulk-export" half with a
+downloadable plain-text snapshot of every annotation on one flow instead — a
+debate round, in this data model, is scoped by `FlowAnnotation.flowId`, the
+only round-identifying field an annotation carries.
+
+- `flow/flow-annotations.ts`: `AnnotationFilter` gains an optional `flowId`
+  field (an unset `flowId` still matches everything, so every existing
+  filter call is unaffected), applied the same AND-combined way as
+  `speechId`/`speaker`/`tag`.
+- `flow/flow-annotations-export.ts`: `buildFlowAnnotationsExportText(annotations,
+  flowId)` — a pure builder that narrows to one `flowId`, sorts by timestamp,
+  and renders one line per annotation (`- [m:ss] <speech> box [<path>]`, with
+  speaker/tag appended in parentheses and a note on its own indented line
+  when set); `flowAnnotationsExportFilename(flowId)`, mirroring
+  `round/pre-round-briefing.ts#preRoundBriefingFilename`'s exact
+  sanitization rule.
+- `panels/FlowAnnotationsPanel.tsx`: a new **Flow** filter dropdown (alongside
+  the existing Speech/Speaker/Tag ones, populated from the distinct
+  `flowId`s actually present) drives a "Download annotations" button that
+  appears once a specific flow is selected, using the same anchor+Blob
+  download pattern as `PreRoundBriefingsPanel.tsx#handleDownload`.
+
+Vitest-covered: 2 new cases in `packages/debate-round/test/flow-annotations.test.ts`'s
+`filterFlowAnnotations` suite (`flowId` filtering alone, and `flowId: 0`
+treated as a real filter value rather than an unset one — a plain
+truthiness check would have skipped it), and a new
+`packages/debate-round/test/flow-annotations-export.test.ts` covering
+`buildFlowAnnotationsExportText` (header, empty-flow message, cross-flow
+exclusion, timestamp/speech/box-path rendering, speaker+tag suffix, note
+line, timestamp ordering) and `flowAnnotationsExportFilename`.
+
 ## Known gaps
 
 - ~~Switching videos for a cross-recording jump falls back to the bare

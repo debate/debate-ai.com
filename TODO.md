@@ -6,6 +6,55 @@
 _No task currently in progress._
 
 ### Completed
+- **Flow-in-Speech Flow Annotations — bulk-export a round's annotations
+  (idea #15).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and every tool is already reachable from the
+  Tools page and CardMirror's command palette, and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area, so this slice picked idea #15's "Bulk-export a round's
+  annotations into a Speech Document" follow-up. A `.docx` Speech Document
+  export wasn't attempted, for the same reason idea #6's own "send to
+  Speech Document" follow-up and idea #10's outline export stayed
+  plain-text: the only Speech Document type in this repo lives in the
+  `reason-editor` package, which `debate-round` doesn't depend on — this
+  closes the "bulk-export" half with a downloadable plain-text snapshot of
+  every annotation on one flow instead (a debate round, in this data
+  model, is scoped by `FlowAnnotation.flowId`, the only round-identifying
+  field an annotation carries). `flow/flow-annotations.ts`'s
+  `AnnotationFilter` gains an optional `flowId` field (an unset `flowId`
+  still matches everything, so every existing filter call is unaffected).
+  A new `flow/flow-annotations-export.ts` adds
+  `buildFlowAnnotationsExportText(annotations, flowId)` — narrows to one
+  flow, sorts by timestamp, and renders one line per annotation with its
+  formatted timestamp, speech, box path, and any set speaker/tag/note — and
+  `flowAnnotationsExportFilename(flowId)`, mirroring
+  `round/pre-round-briefing.ts#preRoundBriefingFilename`'s exact
+  sanitization rule. `FlowAnnotationsPanel.tsx` gets a new **Flow** filter
+  dropdown (populated from the distinct `flowId`s actually present)
+  alongside the existing Speech/Speaker/Tag ones, driving a "Download
+  annotations" button that appears once a specific flow is selected, using
+  the same anchor+Blob download pattern as
+  `PreRoundBriefingsPanel.tsx#handleDownload`. See
+  `docs/features/flow-annotations.md`'s new "Bulk export" section.
+  Vitest-covered with 10 new cases: 2 in
+  `packages/debate-round/test/flow-annotations.test.ts`'s
+  `filterFlowAnnotations` suite (`flowId` filtering alone, and `flowId: 0`
+  treated as a real filter value rather than an unset one) and 8 in a new
+  `packages/debate-round/test/flow-annotations-export.test.ts`
+  (`buildFlowAnnotationsExportText` — header, empty-flow message,
+  cross-flow exclusion, timestamp/speech/box-path rendering, speaker+tag
+  suffix, note-only-set-tags, note line, timestamp ordering; and
+  `flowAnnotationsExportFilename`). Verified: `bun install` (2258
+  packages), the two focused test files (53/53 pass), the full `bun run
+  test` (210 test files, 3506 tests, all passing, up from 209/3494), the
+  whole-repo `bun run typecheck` (root, all 13 typechecked packages,
+  clean), and a full `bun run build` (the whole monorepo build, including
+  `debate-ai-web`'s production build, which lists `/annotations` among its
+  built routes) all pass clean. **Completed:** 2026-09-01.
 - **Contribution Leaderboard — per-category (kind) leaderboards alongside
   the overall one.** Another repeat of the standing prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL...
@@ -12340,8 +12389,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all four prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command; and the reference itself now has Print and Export… actions (`reference-ui.ts`, `reference-export.ts`). See `docs/features/legacy-verbatim-shortcuts.md`. Next: a "download the shortcuts as a printable PDF" option instead of relying on the browser/OS print-to-PDF flow from the Print action; or an in-app onboarding nudge (e.g. from `ui-tour.ts`) pointing a Verbatim-trained user at the reference the first time they open a CardMirror document.
 
-15. **Flow-in-Speech Flow Annotations** (`/annotations`, `FlowSpreadsheet` badges) — the search/filter follow-up is done: the standalone annotations panel has Speech/Speaker/Tag filter dropdowns (populated from the values actually present) plus optional `speaker`/`tag` fields on `FlowAnnotation` itself (`flow/flow-annotations.ts#filterFlowAnnotations`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Search/filter by speech, speaker, or tag" section. Next:
-    - Bulk-export a round's annotations into a Speech Document.
+15. **Flow-in-Speech Flow Annotations** (`/annotations`, `FlowSpreadsheet` badges) — the search/filter follow-up is done: the standalone annotations panel has Speech/Speaker/Tag filter dropdowns (populated from the values actually present) plus optional `speaker`/`tag` fields on `FlowAnnotation` itself (`flow/flow-annotations.ts#filterFlowAnnotations`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Search/filter by speech, speaker, or tag" section. The bulk-export follow-up is also now done: a new **Flow** filter dropdown drives a "Download annotations" button that saves every annotation on that flow as a plain-text file, sorted by timestamp (`flow/flow-annotations-export.ts#buildFlowAnnotationsExportText`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Bulk export" section. Next:
     - A density scrubber on the video timeline showing where annotations cluster.
 
 16. **Shared, AI-Generated Debate Flow** (Coach Hub's `SharedFlowSyncPanel`/`FlowEditLogPanel`) —
