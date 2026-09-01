@@ -45,19 +45,29 @@ panels/FlowSummariesPanel.tsx
   → deleteFlowSummary(roundId)  — state/flowSummaries.ts
   → panel re-reads buildFlowSummariesPanelView() to refresh
 
-Generating a summary from raw speech text (no manually flowed grid needed):
+Generating a summary from raw speech text (no manually flowed grid needed;
+one or more speech/transcript entries at once):
 panels/FlowSummariesPanel.tsx — "Generate from raw speech text" form
-  → requestTranscriptExtraction()        — round/transcript-extraction-client.ts
-      → POST /api/reason-ai              — server-side Anthropic proxy
-      → parseTranscriptExtractionAiResponse()  — round/transcript-extraction-ai.ts
+  → extractTranscriptsBulk(entries, startIndex, requestTranscriptExtraction)
+                                          — round/bulk-transcript-extraction.ts
+      → requestTranscriptExtraction()    — round/transcript-extraction-client.ts
+                                            (once per entry, sequentially)
+          → POST /api/reason-ai          — server-side Anthropic proxy
+          → parseTranscriptExtractionAiResponse()  — round/transcript-extraction-ai.ts
                                             parses claim/warrant/impact/
                                             evidence per argument
-  → buildFlowRowSummariesFromExtraction()  — round/transcript-extraction-ai.ts
-                                              turns extracted arguments into
-                                              synthetic FlowRowSummary rows,
-                                              each isUnanswered: true
-  → saveFlowSummary()                    — state/flowSummaries.ts appends the
-                                            new rows to that round's record
+      → buildFlowRowSummariesFromExtraction()  — round/transcript-extraction-ai.ts
+                                              turns each entry's extracted
+                                              arguments into synthetic
+                                              FlowRowSummary rows (each
+                                              isUnanswered: true), rowIndex
+                                              continuing across entries
+      → tracks each entry's outcome ("extracted"/"error") independently, so
+        one failed speech doesn't drop the rest
+  → saveFlowSummary()                    — state/flowSummaries.ts appends
+                                            every successfully extracted row
+                                            across the whole batch to that
+                                            round's record in one call
   → panel re-reads buildFlowSummariesPanelView() to refresh
 
 Dictating the transcript text instead of pasting/typing it:
@@ -160,6 +170,56 @@ Vitest-covered in `packages/debate-round/test/flow-transcript-summary.test.ts`
 outranking thread depth, excluding answered rows, stable-order ties, and
 the ranked-input integration with `suggestCrossExamQuestions`/
 `suggestExtensionIdeas`).
+
+## Bulk transcript upload
+
+Closes idea #6's ("Speech Transcript Summaries and Answers") "Bulk
+transcript upload (multiple speeches at once) instead of one at a time"
+follow-up. Previously the "Generate from raw speech text" form only accepted
+one speech label plus one transcript per "Extract with AI" click; now the
+form manages a list of speech/transcript entries (starting with one,
+extendable via "+ Add another speech", each independently removable once
+there's more than one) all submitted together under one shared Round ID:
+
+```
+round/bulk-transcript-extraction.ts
+  extractTranscriptsBulk(entries, startIndex, extract)
+    — runs `extract` (requestTranscriptExtraction, in production; an
+      injected stub in tests) over each entry in turn, sequentially — not
+      Promise.all, since each entry's successful row count must be known
+      before computing the next entry's rowIndex offset
+    — tracks a per-entry "extracted" | "error" outcome, keyed by the
+      entry's index in the submitted list, so one entry's failure doesn't
+      stop the rest from running or being included in the result
+    — returns { rows, outcomes, errors }: every successfully extracted row
+      across the whole batch (rowIndex continuing past startIndex across
+      entries), the per-entry outcome map, and a per-entry error message
+      for any "error" entries
+  summarizeBulkTranscriptOutcomes(outcomes)
+    — reduces the outcome map into { extractedCount, errorCount } for the
+      panel's single combined status/error message, mirroring
+      state/bulkRoundSave.ts's BulkSaveOutcome/summarizeBulkSaveOutcomes
+```
+
+The panel calls `extractTranscriptsBulk` once per "Extract with AI" click
+with every non-blank entry (blank speech/transcript pairs are silently
+dropped rather than erroring), then makes exactly one `saveFlowSummary` call
+appending all newly extracted rows from the whole batch — not one save per
+entry — so a round's flow summary is written once regardless of how many
+speeches were submitted together. Microphone dictation (the "🎤 Record"
+button) now targets whichever entry's Record button was last clicked, tracked
+via `dictationTargetIndex`, since each entry has its own independent
+transcript textarea.
+
+Vitest-covered in
+`packages/debate-round/test/bulk-transcript-extraction.test.ts`: an empty
+entry list short-circuits without calling `extract`; a single entry builds
+rows starting at `startIndex`; `rowIndex` continues correctly across
+multiple successful entries in submission order; a failed entry's error is
+recorded without stopping the remaining entries from running or contributing
+rows; a non-`Error` rejection is stringified for the error message; an
+all-failing batch contributes no rows; and `summarizeBulkTranscriptOutcomes`
+counts an empty map, a mixed map, and an all-error map correctly.
 
 ## Known gaps
 
