@@ -465,6 +465,8 @@ class SettingsModal {
       // because it isn't a user-editable setting. The Benchmark
       // action (run the in-app perf suite) sits alongside it.
       if (id === 'general') {
+        const accountLink = buildAccountSettingsLinkSection();
+        if (accountLink) panel.appendChild(accountLink);
         panel.appendChild(buildBenchmarkSection(() => this.close()));
         panel.appendChild(buildInstallInfoSection());
         const crashDumps = buildCrashDumpsSection();
@@ -1894,6 +1896,39 @@ function buildDocLink(label: string, url: string): HTMLAnchorElement {
     }
   });
   return link;
+}
+
+/** Points to the app's own `/settings` page, where this editor's
+ *  general/appearance/accessibility preferences already live (see
+ *  `buildEmbeddedSettingsPanel`) alongside the Flow editor's own
+ *  preferences — the two are shown together there under one "Debate
+ *  Settings" tab rather than duplicated as separate CardMirror/Flow tabs.
+ *  Web-only: the desktop app has no such route, and its own settings
+ *  aren't account-linked the way the web build's are. */
+function buildAccountSettingsLinkSection(): HTMLElement | null {
+  if (getHost().kind !== 'browser') return null;
+
+  const section = document.createElement('section');
+  section.className = 'pmd-settings-account-link';
+
+  const title = document.createElement('h3');
+  title.className = 'pmd-settings-section-title';
+  title.textContent = 'Debate Settings';
+  section.appendChild(title);
+
+  const desc = document.createElement('div');
+  desc.className = 'pmd-settings-row-desc';
+  desc.textContent =
+    "General, appearance, and accessibility preferences for this editor live on the app's Debate Settings page, alongside the Flow editor's preferences.";
+  section.appendChild(desc);
+
+  const link = document.createElement('a');
+  link.className = 'pmd-settings-btn pmd-settings-account-link-btn';
+  link.href = '/settings';
+  link.textContent = 'Open Debate Settings ↗';
+  section.appendChild(link);
+
+  return section;
 }
 
 /** "User Manual", "Privacy Policy", and "Terms of Use" links pinned at the

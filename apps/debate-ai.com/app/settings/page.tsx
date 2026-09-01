@@ -31,8 +31,7 @@ export default function SettingsPage() {
       <Tabs defaultValue="account" className="max-w-lg mx-auto">
         <TabsList className="mx-4 sm:mx-6 mb-2">
           <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="cardmirror">CardMirror</TabsTrigger>
-          <TabsTrigger value="ebb-flow">Ebb Flow</TabsTrigger>
+          <TabsTrigger value="debate-settings">Debate Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="account">
@@ -47,13 +46,10 @@ export default function SettingsPage() {
           </Suspense>
         </TabsContent>
 
-        <TabsContent value="cardmirror">
+        <TabsContent value="debate-settings">
           <Suspense>
             <EditorPreferencesPanel />
           </Suspense>
-        </TabsContent>
-
-        <TabsContent value="ebb-flow">
           <EbbFlowPreferencesPanel />
         </TabsContent>
       </Tabs>

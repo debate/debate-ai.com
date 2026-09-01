@@ -14904,6 +14904,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
   user-select: none;
 }
 
+.pmd-settings-account-link {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--pmd-c-divider-faint);
+}
+.pmd-settings-account-link-btn {
+  display: inline-block;
+  margin-top: 0.5rem;
+  text-decoration: none;
+}
+
 /* Small corner chip shown while the benchmark drives the (visible) editor. */
 .pmd-bench-chip {
   position: fixed;
