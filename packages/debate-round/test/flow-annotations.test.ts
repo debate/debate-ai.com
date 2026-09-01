@@ -346,6 +346,14 @@ describe("filterFlowAnnotations", () => {
     );
   });
 
+  it("filters by flowId alone", () => {
+    const mixedFlow = [
+      annotation({ id: "flow-1", flowId: 1 }),
+      annotation({ id: "flow-2", flowId: 2 }),
+    ];
+    expect(filterFlowAnnotations(mixedFlow, { flowId: 2 }).map((a) => a.id)).toEqual(["flow-2"]);
+  });
+
   it("filters by speechId alone", () => {
     expect(filterFlowAnnotations(annotations, { speechId: "1AC" }).map((a) => a.id)).toEqual([
       "1ac-jordan-solvency",
@@ -366,6 +374,14 @@ describe("filterFlowAnnotations", () => {
       "1ac-jordan-solvency",
       "1ac-sam-solvency",
     ]);
+  });
+
+  it("treats flowId 0 as a real filter value, not an unset one", () => {
+    const mixedFlow = [
+      annotation({ id: "flow-0", flowId: 0 }),
+      annotation({ id: "flow-1", flowId: 1 }),
+    ];
+    expect(filterFlowAnnotations(mixedFlow, { flowId: 0 }).map((a) => a.id)).toEqual(["flow-0"]);
   });
 
   it("combines multiple fields with AND", () => {

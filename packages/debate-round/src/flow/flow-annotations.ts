@@ -87,14 +87,16 @@ export function createFlowAnnotation(input: CreateFlowAnnotationInput): FlowAnno
   };
 }
 
-/** Filter for narrowing a list of annotations to one speech, speaker, and/or tag. Every field is optional and combined with AND — an unset field matches anything. */
+/** Filter for narrowing a list of annotations to one flow, speech, speaker, and/or tag. Every field is optional and combined with AND — an unset field matches anything. */
 export type AnnotationFilter = {
+  flowId?: number;
   speechId?: string;
   speaker?: string;
   tag?: string;
 };
 
 function annotationMatchesFilter(annotation: FlowAnnotation, filter: AnnotationFilter): boolean {
+  if (filter.flowId !== undefined && annotation.flowId !== filter.flowId) return false;
   if (filter.speechId && annotation.speechId !== filter.speechId) return false;
   if (filter.speaker && annotation.speaker !== filter.speaker) return false;
   if (filter.tag && annotation.tag !== filter.tag) return false;
