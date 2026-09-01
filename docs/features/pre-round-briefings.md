@@ -142,6 +142,49 @@ has settled on. Vitest-covered in
 `buildPreRoundBriefingText`/`preRoundBriefingFilename` suites (round-header
 presence, filename sanitization/collapsing/trimming/fallback).
 
+## Freshness indicator
+
+Closes idea #12's "a 'last updated' freshness indicator so a stale briefing
+is obvious" follow-up: every round card now shows how long it's been since
+its briefing was last saved, and flags it once that gets too old to trust —
+pre-round facts like room assignments, lineups, or scouting notes can shift
+within a single tournament day.
+
+```
+state/preRoundBriefings.ts#savePreRoundBriefing(record, now = Date.now())
+  → stamps record.updatedAt = now on every save (ignoring any updatedAt
+    already on the passed-in record), whether creating or overwriting
+
+round/pre-round-briefing.ts
+  → getBriefingAgeHours(updatedAt, now)  — whole hours since last save,
+                                            undefined when updatedAt isn't set
+  → isBriefingStale(updatedAt, now, thresholdHours = STALE_BRIEFING_THRESHOLD_HOURS)
+                                          — true once age ≥ thresholdHours (24h)
+
+panels/PreRoundBriefingsPanel.tsx
+  → renders a badge next to each round's prior-meetings badge:
+    outline while fresh, destructive once isBriefingStale reports true,
+    hidden entirely when ageHours is undefined (a record persisted before
+    updatedAt existed)
+```
+
+`updatedAt` is optional on `PreRoundBriefingRecord` so a briefing saved
+before this field existed still deserializes — `getBriefingAgeHours`/
+`isBriefingStale` simply report no age for it, and the panel hides the
+badge rather than showing a wrong or made-up age. This mirrors
+`debate-card-search`'s Peer Review System review-aging indicator
+(`peer-review.ts#getReviewAgeDays`/`isReviewStale`,
+`ReviewQueuePanel.tsx`'s age badge) almost exactly, down to the
+`now`-injectable pure functions and the `undefined`-age-hides-the-badge
+guard. Vitest-covered in `packages/debate-round/test/pre-round-briefing.test.ts`'s
+`getBriefingAgeHours`/`isBriefingStale` suites (undefined-`updatedAt`,
+hour flooring, a future `updatedAt` clamping to zero, the exact-threshold
+boundary, and a custom threshold) and
+`packages/debate-round/test/preRoundBriefings.test.ts`'s updated
+`savePreRoundBriefing` suite (the default-`Date.now()` stamp, an injected
+`now`, and a caller-supplied `updatedAt` being overwritten rather than
+respected).
+
 ## Known gaps
 
 - No real data sources for tournament results, pairings, event details, or
@@ -151,5 +194,3 @@ presence, filename sanitization/collapsing/trimming/fallback).
   `buildPreRoundBriefingFromStores` directly. Own round history is also
   entered by hand via the "Log a round" form — it isn't reconstructed from
   any real tournament-results/pairings source either.
-- No "last updated" freshness indicator on a briefing card yet — a
-  still-open follow-up on this same idea.

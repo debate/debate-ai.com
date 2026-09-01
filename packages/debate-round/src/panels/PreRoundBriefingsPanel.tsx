@@ -35,6 +35,15 @@
  * report"), backed by `round/pre-round-briefing.ts`'s
  * `buildPreRoundBriefingText`/`preRoundBriefingFilename`.
  *
+ * Each round card also carries a "last updated" freshness badge — idea #12's
+ * "a 'last updated' freshness indicator so a stale briefing is obvious"
+ * follow-up — showing how long it's been since the record's `updatedAt` was
+ * last stamped by `savePreRoundBriefing`, and switching to a destructive
+ * variant once `round/pre-round-briefing.ts#isBriefingStale` reports it's
+ * past the staleness threshold. Mirrors `ReviewQueuePanel.tsx`'s
+ * age/staleness badge exactly (same `undefined`-age-hides-the-badge guard,
+ * for a record persisted before `updatedAt` existed).
+ *
  * @module panels/PreRoundBriefingsPanel
  */
 
@@ -63,7 +72,13 @@ import {
   savePreRoundBriefing,
 } from "../state/preRoundBriefings"
 import type { PreRoundBriefingRecord } from "../state/preRoundBriefings"
-import { buildPreRoundBriefingText, preRoundBriefingFilename } from "../round/pre-round-briefing"
+import {
+  buildPreRoundBriefingText,
+  getBriefingAgeHours,
+  isBriefingStale,
+  preRoundBriefingFilename,
+  STALE_BRIEFING_THRESHOLD_HOURS,
+} from "../round/pre-round-briefing"
 import type { PreRoundBriefing } from "../round/pre-round-briefing"
 import {
   deleteOwnRoundHistoryRecord,
@@ -73,6 +88,14 @@ import {
 import type { OwnRoundHistoryRecord } from "../state/ownRoundHistory"
 
 const NONE_VALUE = "__none__"
+
+/** Mirrors `ReviewQueuePanel.tsx`'s `formatReviewAgeLabel` — a short, singular/plural-aware age label. */
+function formatBriefingAgeLabel(hours: number): string {
+  if (hours < 1) return "updated <1h ago"
+  if (hours < 24) return `updated ${hours}h ago`
+  const days = Math.floor(hours / 24)
+  return `updated ${days}d ago`
+}
 
 type BriefingDraft = {
   roundId: string
@@ -491,43 +514,61 @@ export function PreRoundBriefingsPanel() {
           elsewhere for a round.
         </div>
       )}
-      {briefings.map(({ roundId, briefing }) => (
-        <div key={roundId} className="rounded-lg border border-border p-4">
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold text-foreground">
-              Round {roundId}{" "}
-              <span className="font-normal text-muted-foreground">
-                — {briefing.event.tournamentName}, {briefing.event.division},{" "}
-                {briefing.event.roundLabel}
-              </span>
-            </h2>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="whitespace-nowrap">
-                {briefing.priorMeetings.meetings === 0
-                  ? "No prior meetings"
-                  : `${briefing.priorMeetings.wins}-${briefing.priorMeetings.losses} vs. opponent`}
-              </Badge>
-              <Button size="sm" variant="outline" onClick={() => handleDownload(roundId, briefing)}>
-                Download
-              </Button>
-              <Button size="sm" variant="ghost" onClick={() => handleClear(roundId)}>
-                Clear
-              </Button>
+      {briefings.map(({ roundId, briefing, updatedAt }) => {
+        const ageHours = getBriefingAgeHours(updatedAt)
+        const stale = isBriefingStale(updatedAt)
+
+        return (
+          <div key={roundId} className="rounded-lg border border-border p-4">
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <h2 className="text-sm font-semibold text-foreground">
+                Round {roundId}{" "}
+                <span className="font-normal text-muted-foreground">
+                  — {briefing.event.tournamentName}, {briefing.event.division},{" "}
+                  {briefing.event.roundLabel}
+                </span>
+              </h2>
+              <div className="flex items-center gap-2">
+                {ageHours !== undefined && (
+                  <Badge
+                    variant={stale ? "destructive" : "outline"}
+                    className="whitespace-nowrap"
+                    title={
+                      stale
+                        ? `Last updated ${ageHours} hour(s) ago — over the ${STALE_BRIEFING_THRESHOLD_HOURS}-hour staleness threshold`
+                        : `Last updated ${ageHours} hour(s) ago`
+                    }
+                  >
+                    {formatBriefingAgeLabel(ageHours)}
+                  </Badge>
+                )}
+                <Badge variant="outline" className="whitespace-nowrap">
+                  {briefing.priorMeetings.meetings === 0
+                    ? "No prior meetings"
+                    : `${briefing.priorMeetings.wins}-${briefing.priorMeetings.losses} vs. opponent`}
+                </Badge>
+                <Button size="sm" variant="outline" onClick={() => handleDownload(roundId, briefing)}>
+                  Download
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => handleClear(roundId)}>
+                  Clear
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {briefing.sections.map((section) => (
+                <div
+                  key={section.title}
+                  className="rounded-md border border-border px-3 py-2 text-sm"
+                >
+                  <p className="mb-1 font-medium text-foreground">{section.title}</p>
+                  <p className="whitespace-pre-line text-muted-foreground">{section.body}</p>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="space-y-2">
-            {briefing.sections.map((section) => (
-              <div
-                key={section.title}
-                className="rounded-md border border-border px-3 py-2 text-sm"
-              >
-                <p className="mb-1 font-medium text-foreground">{section.title}</p>
-                <p className="whitespace-pre-line text-muted-foreground">{section.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

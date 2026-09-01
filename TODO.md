@@ -6,6 +6,58 @@
 _No task currently in progress._
 
 ### Completed
+- **Pre-Round Intelligence Panel — "last updated" freshness indicator
+  (idea #12).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built (a real `/settings` page, D1-backed tables
+  linked to signed-in users for flow edits, documents, rounds, judge
+  decisions, word-count history, speech send-log history, outline filter
+  presets, counsel-panel assessment history, flow annotations,
+  contribution-leaderboard range filters, etc.), every tool is already
+  reachable from the Tools page and CardMirror's command palette, and no PR
+  was open for this idea, so this slice picked idea #12's own last-remaining
+  follow-up bullet: "A 'last updated' freshness indicator so a stale
+  briefing is obvious" — the gap `docs/features/pre-round-briefings.md`'s
+  "Known gaps" section had explicitly named. `state/preRoundBriefings.ts`'s
+  `PreRoundBriefingRecord` gains an optional `updatedAt` epoch-ms timestamp,
+  stamped by `savePreRoundBriefing(record, now = Date.now())` on every save
+  (a caller-supplied `updatedAt` on the passed-in record is overwritten, not
+  respected, so a save always reflects when it actually happened) — optional
+  so a briefing persisted before this field existed still deserializes.
+  `round/pre-round-briefing.ts` gains `getBriefingAgeHours(updatedAt, now)`
+  (whole hours since the last save, `undefined` when `updatedAt` isn't set)
+  and `isBriefingStale(updatedAt, now, thresholdHours =
+  STALE_BRIEFING_THRESHOLD_HOURS)` (stale at 24+ hours by default), mirroring
+  `debate-card-search/src/lib/peer-review.ts`'s existing review-aging
+  `getReviewAgeDays`/`isReviewStale` pattern almost exactly — the same
+  `now`-injectable pure functions, the same "no age, never stale" guard for
+  a pre-existing record missing the timestamp. `PreRoundBriefingsPanel.tsx`
+  renders a badge next to each round's prior-meetings badge — outline while
+  fresh, destructive once stale, hidden entirely when the age is
+  `undefined` — mirroring `ReviewQueuePanel.tsx`'s age/staleness badge
+  down to the same `ageHours !== undefined && (...)` guard. See
+  `docs/features/pre-round-briefings.md`'s new "Freshness indicator"
+  section. Vitest-covered with 15 new/updated cases:
+  `getBriefingAgeHours`/`isBriefingStale`'s 9 new cases in
+  `packages/debate-round/test/pre-round-briefing.test.ts` (undefined
+  `updatedAt`, zero-age-just-now, hour flooring, a future `updatedAt`
+  clamping to zero rather than going negative, never-stale-with-no-
+  timestamp, just-under/exactly-at/well-past the threshold, and a custom
+  threshold), plus `packages/debate-round/test/preRoundBriefings.test.ts`'s
+  `savePreRoundBriefing` suite updated to assert the stamped `updatedAt` on
+  every existing case (list/get/upsert/delete/panel-view) and 2 new cases
+  (the default-`Date.now()` stamp bounded between a before/after read, and a
+  caller-supplied `updatedAt` on the input record being overwritten rather
+  than respected). Verified: `bun install` (2258 packages), the two focused
+  test files (51/51 pass), the full `bun run test` (209 test files, 3468
+  tests, all passing, up from 209/3457), the whole-repo `bun run typecheck`
+  (root, all 13 typechecked packages, clean), and a full `bun run build`
+  (the whole monorepo build, including `debate-ai-web`'s production build,
+  which lists `/briefings` among its built routes) all pass clean.
+  **Completed:** 2026-09-01.
 - **Speech Transcript Summaries and Answers — bulk transcript upload (idea
   #6).** Another repeat of the standing prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL... with ability
@@ -12184,9 +12236,8 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. The "my endorsement activity" follow-up is also now done: a signed-in visitor gets a "My endorsement activity" toggle above the table, listing every endorsement they gave as a reviewer via the same store's `direction: "given"` query (`state/contributions.ts#endorsementHistoryCounterpartId`) — see the Completed entry above. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. real reviewer-identity/permission checks so a "given" entry can't be spoofed under an arbitrary reviewer id, or a per-contributor "given" history visible to others, not just the signed-in visitor's own) if one becomes worth doing.
 
-12. **Pre-Round Intelligence Panel** (`/briefings`) — the print/export follow-up is done: each round card has a "Download" action that saves the briefing as a plain-text file, headed with the round id (`round/pre-round-briefing.ts#buildPreRoundBriefingText`/`preRoundBriefingFilename`) — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Download a briefing" section. Real tournament pairings/room-assignment data stays blocked (Tabroom login wall, see below), so:
+12. **Pre-Round Intelligence Panel** (`/briefings`) — the print/export follow-up is done: each round card has a "Download" action that saves the briefing as a plain-text file, headed with the round id (`round/pre-round-briefing.ts#buildPreRoundBriefingText`/`preRoundBriefingFilename`) — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Download a briefing" section. The freshness-indicator follow-up is also now done: each round card shows a "last updated" badge (turning destructive/stale past 24 hours), backed by `round/pre-round-briefing.ts#getBriefingAgeHours`/`isBriefingStale` and a new `updatedAt` timestamp `savePreRoundBriefing` stamps on every save — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Freshness indicator" section. Real tournament pairings/room-assignment data stays blocked (Tabroom login wall, see below), so:
     - A manual pairing/room-assignment entry form as the practical stand-in.
-    - A "last updated" freshness indicator so a stale briefing is obvious.
 
 13. **Coaching Programs and Group Challenges** (`/coaching-programs`, `/cards/group-challenges`) —
     - A calendar/schedule view across a program's drills, sprints, and challenges.
