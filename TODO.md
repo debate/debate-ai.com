@@ -6,6 +6,53 @@
 _No task currently in progress._
 
 ### Completed
+- **Flow-in-Speech Flow Annotations — search/filter annotations by speech,
+  speaker, or tag (idea #15).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows docs and debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built (a real `/settings`
+  page, D1-backed tables linked to signed-in users for flow edits,
+  documents, rounds, judge decisions, word-count history, speech send-log
+  history, outline filter presets, counsel-panel assessment history, etc.),
+  the CardMirror editor already surfaces every tool via its top `MenuBar`
+  and command palette, and no PR was open for this idea, so this slice
+  picked idea #15's ("Flow-in-Speech Flow Annotations", `/annotations`)
+  own first-named follow-up: "Search/filter annotations by speech,
+  speaker, or tag."
+  `FlowAnnotation` didn't have a `speaker` or `tag` field before this
+  slice, only `speechId` — `flow/flow-annotations.ts` gains two new
+  optional fields, `speaker` and `tag` (additive; trimmed and omitted when
+  blank in `createFlowAnnotation`, mirroring the existing `videoId`/
+  `videoTitle` handling), plus a new `AnnotationFilter` type and
+  `filterFlowAnnotations(annotations, filter)` — every field optional and
+  AND-combined, following the exact "sequential guard clause per field"
+  shape idea #10's own `ArgumentTreeFilter`/`filterArgumentTree` already
+  established, and preserving input order rather than re-sorting.
+  `panels/FlowAnnotationsPanel.tsx`'s drop-annotation form gains optional
+  Speaker/Tag inputs, and the annotation list gains three `Select`
+  dropdowns (Speech/Speaker/Tag, each populated from the distinct values
+  actually present, plus "Any …") above the list, mirroring
+  `ArgumentTreePanel.tsx`'s own dropdown-filter pattern — unlike that
+  panel's filters, this one lives in local component state only (not
+  persisted per-round), since annotations aren't grouped by round the way
+  argument-tree records are. Each rendered annotation now also shows its
+  `speaker`/`tag` as small badges when set. See
+  `docs/features/flow-annotations.md`'s new "Search/filter by speech,
+  speaker, or tag" section. Vitest-covered with 9 new cases in
+  `packages/debate-round/test/flow-annotations.test.ts` (`createFlowAnnotation`
+  trimming/omitting `speaker` and `tag`; `filterFlowAnnotations`'s
+  empty-filter passthrough, single-field filtering for each field,
+  AND-combining multiple fields, excluding annotations missing a required
+  field, order preservation, and the no-matches case). Verified: `bun
+  install` (2258 packages), `bun x vitest run
+  packages/debate-round/test/flow-annotations.test.ts` (41/41 pass), the
+  full `bun run test` (208 test files, 3428 tests, all passing, up from
+  208/3418), the whole-repo `bun run typecheck` (root, all 13 typechecked
+  packages, clean), and a full `bun run build` (the whole monorepo build,
+  including `debate-ai-web`'s production build, which lists `/annotations`
+  among its built routes) all pass clean. **Completed:** 2026-09-01.
 - **Outline Filters and Argument Tree View — export the filtered tree to an
   outline file (idea #10).** Another repeat of the standing prompt
   ("integrate all the tools into the UI... create user settings and link
@@ -11974,8 +12021,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all four prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command; and the reference itself now has Print and Export… actions (`reference-ui.ts`, `reference-export.ts`). See `docs/features/legacy-verbatim-shortcuts.md`. Next: a "download the shortcuts as a printable PDF" option instead of relying on the browser/OS print-to-PDF flow from the Print action; or an in-app onboarding nudge (e.g. from `ui-tour.ts`) pointing a Verbatim-trained user at the reference the first time they open a CardMirror document.
 
-15. **Flow-in-Speech Flow Annotations** (`/annotations`, `FlowSpreadsheet` badges) —
-    - Search/filter annotations by speech, speaker, or tag.
+15. **Flow-in-Speech Flow Annotations** (`/annotations`, `FlowSpreadsheet` badges) — the search/filter follow-up is done: the standalone annotations panel has Speech/Speaker/Tag filter dropdowns (populated from the values actually present) plus optional `speaker`/`tag` fields on `FlowAnnotation` itself (`flow/flow-annotations.ts#filterFlowAnnotations`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Search/filter by speech, speaker, or tag" section. Next:
     - Bulk-export a round's annotations into a Speech Document.
     - A density scrubber on the video timeline showing where annotations cluster.
 

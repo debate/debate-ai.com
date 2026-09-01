@@ -37,10 +37,18 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "debate-ui/src/primitives/select"
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
 import {
   createFlowAnnotation,
+  filterFlowAnnotations,
   formatAnnotationTimestamp,
   jumpToAnnotation,
   parseAnnotationTimestamp,
@@ -52,10 +60,25 @@ import {
   deleteFlowAnnotation,
   saveFlowAnnotation,
 } from "../state/flowAnnotations"
-import type { FlowAnnotation } from "../flow/flow-annotations"
+import type { AnnotationFilter, FlowAnnotation } from "../flow/flow-annotations"
+
+const ANY_VALUE = "__any__"
 
 function newAnnotationId(): string {
   return `anno-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+/** Every distinct value of `field` present across `annotations`, in first-seen order, skipping unset values. */
+function collectDistinctValues(
+  annotations: FlowAnnotation[],
+  field: "speechId" | "speaker" | "tag",
+): string[] {
+  const values: string[] = []
+  for (const annotation of annotations) {
+    const value = annotation[field]
+    if (value && !values.includes(value)) values.push(value)
+  }
+  return values
 }
 
 /**
@@ -85,9 +108,12 @@ export function FlowAnnotationsPanel() {
   const [speechId, setSpeechId] = useState("")
   const [boxPathInput, setBoxPathInput] = useState("")
   const [note, setNote] = useState("")
+  const [speaker, setSpeaker] = useState("")
+  const [tag, setTag] = useState("")
   const [useLivePosition, setUseLivePosition] = useState(true)
   const [manualTimestamp, setManualTimestamp] = useState("0:00")
   const [error, setError] = useState<string | null>(null)
+  const [filter, setFilter] = useState<AnnotationFilter>({})
 
   useEffect(() => {
     setAnnotations(buildFlowAnnotationsPanelView())
@@ -153,9 +179,13 @@ export function FlowAnnotationsPanel() {
         note,
         videoId: useLive ? (activeVideoId ?? undefined) : undefined,
         videoTitle: useLive ? (activeVideoTitle ?? undefined) : undefined,
+        speaker,
+        tag,
       })
       saveFlowAnnotation(annotation)
       setNote("")
+      setSpeaker("")
+      setTag("")
       setError(null)
       refresh()
     } catch (e) {
@@ -181,6 +211,8 @@ export function FlowAnnotationsPanel() {
   if (annotations === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading flow annotations…</div>
   }
+
+  const filteredAnnotations = filterFlowAnnotations(annotations, filter)
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -232,6 +264,26 @@ export function FlowAnnotationsPanel() {
               value={boxPathInput}
               onChange={(e) => setBoxPathInput(e.target.value)}
               placeholder="0, 1"
+              className="w-32"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="annotation-speaker">Speaker (optional)</Label>
+            <Input
+              id="annotation-speaker"
+              value={speaker}
+              onChange={(e) => setSpeaker(e.target.value)}
+              placeholder="Jordan"
+              className="w-32"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="annotation-tag">Tag (optional)</Label>
+            <Input
+              id="annotation-tag"
+              value={tag}
+              onChange={(e) => setTag(e.target.value)}
+              placeholder="solvency"
               className="w-32"
             />
           </div>
@@ -295,46 +347,127 @@ export function FlowAnnotationsPanel() {
           No flow annotations yet. Drop one above while watching a round to see it here.
         </div>
       ) : (
-        <div className="space-y-2">
-          {annotations.map((annotation) => {
-            const canJump = Boolean(annotation.videoId)
-            return (
-              <div
-                key={annotation.id}
-                className="flex flex-wrap items-start justify-between gap-2 rounded-md border border-border px-3 py-2"
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="annotation-filter-speech">Speech</Label>
+              <Select
+                value={filter.speechId ?? ANY_VALUE}
+                onValueChange={(value) =>
+                  setFilter((prev) => ({ ...prev, speechId: value === ANY_VALUE ? undefined : value }))
+                }
               >
-                <div className="space-y-1">
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                    <Badge variant="outline">{formatAnnotationTimestamp(annotation.timestampMs)}</Badge>
-                    <span>Flow {annotation.flowId}</span>
-                    <span>{annotation.speechId}</span>
-                    <span>box [{annotation.boxPath.join(", ")}]</span>
-                  </div>
-                  {annotation.note && <p className="text-sm text-foreground">{annotation.note}</p>}
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleJump(annotation)}
-                    disabled={!canJump}
-                    title={
-                      canJump
-                        ? annotation.videoId === activeVideoId
-                          ? undefined
-                          : "Switch to this annotation's recording and jump to it"
-                        : "This annotation has no recording attached"
-                    }
+                <SelectTrigger id="annotation-filter-speech" className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ANY_VALUE}>Any speech</SelectItem>
+                  {collectDistinctValues(annotations, "speechId").map((speechId) => (
+                    <SelectItem key={speechId} value={speechId}>
+                      {speechId}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="annotation-filter-speaker">Speaker</Label>
+              <Select
+                value={filter.speaker ?? ANY_VALUE}
+                onValueChange={(value) =>
+                  setFilter((prev) => ({ ...prev, speaker: value === ANY_VALUE ? undefined : value }))
+                }
+              >
+                <SelectTrigger id="annotation-filter-speaker" className="w-36">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ANY_VALUE}>Any speaker</SelectItem>
+                  {collectDistinctValues(annotations, "speaker").map((speaker) => (
+                    <SelectItem key={speaker} value={speaker}>
+                      {speaker}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="annotation-filter-tag">Tag</Label>
+              <Select
+                value={filter.tag ?? ANY_VALUE}
+                onValueChange={(value) =>
+                  setFilter((prev) => ({ ...prev, tag: value === ANY_VALUE ? undefined : value }))
+                }
+              >
+                <SelectTrigger id="annotation-filter-tag" className="w-36">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ANY_VALUE}>Any tag</SelectItem>
+                  {collectDistinctValues(annotations, "tag").map((tag) => (
+                    <SelectItem key={tag} value={tag}>
+                      {tag}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {(filter.speechId || filter.speaker || filter.tag) && (
+              <Button size="sm" variant="ghost" onClick={() => setFilter({})}>
+                Clear filters
+              </Button>
+            )}
+          </div>
+
+          {filteredAnnotations.length === 0 ? (
+            <div className="p-6 text-center text-sm text-muted-foreground">
+              No annotations match the current filter.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {filteredAnnotations.map((annotation) => {
+                const canJump = Boolean(annotation.videoId)
+                return (
+                  <div
+                    key={annotation.id}
+                    className="flex flex-wrap items-start justify-between gap-2 rounded-md border border-border px-3 py-2"
                   >
-                    Jump to
-                  </Button>
-                  <Button size="sm" variant="ghost" onClick={() => handleClear(annotation.id)}>
-                    Clear
-                  </Button>
-                </div>
-              </div>
-            )
-          })}
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                        <Badge variant="outline">{formatAnnotationTimestamp(annotation.timestampMs)}</Badge>
+                        <span>Flow {annotation.flowId}</span>
+                        <span>{annotation.speechId}</span>
+                        <span>box [{annotation.boxPath.join(", ")}]</span>
+                        {annotation.speaker && <Badge variant="secondary">{annotation.speaker}</Badge>}
+                        {annotation.tag && <Badge variant="secondary">{annotation.tag}</Badge>}
+                      </div>
+                      {annotation.note && <p className="text-sm text-foreground">{annotation.note}</p>}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleJump(annotation)}
+                        disabled={!canJump}
+                        title={
+                          canJump
+                            ? annotation.videoId === activeVideoId
+                              ? undefined
+                              : "Switch to this annotation's recording and jump to it"
+                            : "This annotation has no recording attached"
+                        }
+                      >
+                        Jump to
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => handleClear(annotation.id)}>
+                        Clear
+                      </Button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>

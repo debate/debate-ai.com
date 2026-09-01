@@ -180,6 +180,42 @@ trims/omits `videoTitle` the same way it does `videoId`, and
 `jumpToAnnotation` uses a recorded `videoTitle` over the bare `videoId` when
 switching recordings).
 
+## Search/filter by speech, speaker, or tag
+
+Closes the "Search/filter annotations by speech, speaker, or tag" follow-up
+named under idea #15 in `TODO.md`.
+
+- `flow/flow-annotations.ts`: two new optional `FlowAnnotation` fields,
+  `speaker` and `tag` (additive — existing annotations without either are
+  still valid), trimmed and omitted when blank in `createFlowAnnotation`,
+  mirroring the existing `videoId`/`videoTitle` handling. A new
+  `AnnotationFilter` type (`speechId`/`speaker`/`tag`, every field optional
+  and AND-combined — an unset field matches anything) plus
+  `filterFlowAnnotations(annotations, filter)`, following the same
+  "sequential guard clause per field" shape as `flow/argument-tree.ts`'s
+  `ArgumentTreeFilter`/`filterArgumentTree` (idea #10's own filter). It
+  preserves the input array's order rather than re-sorting, since the panel
+  always hands it an already-ordered (newest-first) list.
+- `panels/FlowAnnotationsPanel.tsx`: the drop-annotation form gains optional
+  **Speaker** and **Tag** text inputs. Above the annotation list, three
+  `Select` dropdowns — **Speech**, **Speaker**, **Tag** — each populated
+  with the distinct values actually present across the current annotations
+  (plus an "Any …" option), matching `ArgumentTreePanel.tsx`'s own
+  dropdown-filter pattern. The filter lives in local component state (not
+  persisted across visits, unlike idea #10's per-round saved filter
+  selections) and is applied to the rendered list only — it never affects
+  what's stored. A "Clear filters" button appears once any filter is set.
+  Each rendered annotation now also shows its `speaker`/`tag` as small
+  badges when set.
+
+Vitest-covered with 9 new cases in
+`packages/debate-round/test/flow-annotations.test.ts` (`createFlowAnnotation`
+trims/omits `speaker` and `tag` the same way as `videoId`/`videoTitle`; and
+`filterFlowAnnotations`'s empty-filter passthrough, single-field filtering
+for each of `speechId`/`speaker`/`tag`, AND-combining multiple fields,
+excluding annotations missing a required field, order preservation, and the
+no-matches case).
+
 ## Known gaps
 
 - ~~Switching videos for a cross-recording jump falls back to the bare
