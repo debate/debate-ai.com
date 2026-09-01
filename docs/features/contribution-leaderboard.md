@@ -29,7 +29,12 @@ contributor; nothing is filtered.
 Helpfulness score itself blends three signals (`lib/community-rating.ts`):
 logarithmically-dampened popularity (likes/saves), a quality signal, and a
 reviewer-credibility signal — so a contribution can't rank highly on raw
-popularity alone.
+popularity alone. The "helpfulness score" mention in the panel's intro line
+carries an Info-icon tooltip explaining that blend in plain language
+(`buildHelpfulnessScoreExplanation`, shared with the Contributions Feed
+panel's own tooltip) — the percentages shown are derived from
+`HelpfulnessWeights`, not hardcoded, so the legend can't drift out of sync
+with the actual scoring weights.
 
 ## Data flow
 

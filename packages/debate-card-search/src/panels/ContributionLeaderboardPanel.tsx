@@ -27,12 +27,19 @@
  * localStorage-backed panel in this repo still has no cross-tab live-update
  * mechanism" Known gap noted in `shared-flow-sync.md`, for this panel.
  *
+ * The intro line now carries an Info-icon tooltip (via `community-rating.ts`'s
+ * `buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/
+ * reviewer-weight blend, closing idea #11's third named follow-up in
+ * TODO.md — mirrors the existing `ELO_TOOLTIP`/`LeaderboardTableHeader`
+ * pattern in `debate-videos`.
+ *
  * @module panels/ContributionLeaderboardPanel
  */
 
 "use client"
 
 import { useEffect, useState } from "react"
+import { Info } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import {
   Table,
@@ -42,11 +49,15 @@ import {
   TableHeader,
   TableRow,
 } from "debate-ui/src/primitives/table"
+import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
 import { buildPersistedLeaderboardWithCompletedTasks } from "../state/researchProgress"
 import { buildContributorUnlockStatusWithStreakFromStore } from "../lib/unlock-streak-status"
 import { isOwnContributorRow } from "../lib/session-identity"
 import { isContributionLeaderboardLiveUpdateStorageEvent } from "../state/live-update"
+import { buildHelpfulnessScoreExplanation } from "../lib/community-rating"
 import type { ContributorStats } from "../lib/contribution-leaderboard"
+
+const HELPFULNESS_SCORE_EXPLANATION = buildHelpfulnessScoreExplanation()
 
 /** One leaderboard row: a contributor's raw stats plus their derived tier/streak status. */
 interface LeaderboardRow extends ContributorStats {
@@ -136,8 +147,20 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
   return (
     <div className="p-4 sm:p-6">
       <h1 className="mb-1 text-xl font-semibold text-foreground">Contribution Leaderboard</h1>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Ranked by total helpfulness score — a blend of popularity, quality, and reviewer signals.
+      <p className="mb-4 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+        Ranked by total
+        <Tooltip delayDuration={200}>
+          <TooltipTrigger asChild>
+            <span className="cursor-help inline-flex items-center gap-1 underline decoration-dotted">
+              helpfulness score
+              <Info className="h-3.5 w-3.5" />
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-xs">
+            <p className="text-xs leading-relaxed">{HELPFULNESS_SCORE_EXPLANATION}</p>
+          </TooltipContent>
+        </Tooltip>
+        — a blend of popularity, quality, and reviewer signals.
       </p>
       <Table>
         <TableHeader>

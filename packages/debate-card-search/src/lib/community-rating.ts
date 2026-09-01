@@ -148,6 +148,31 @@ export function computeHelpfulnessBreakdown(
 }
 
 /**
+ * Human-readable legend explaining how `computeHelpfulnessBreakdown` blends
+ * its three signals into one score, for a tooltip next to a displayed
+ * helpfulness score (`ContributionsFeedPanel`, `ContributionLeaderboardPanel`).
+ * Percentages are derived from `weights` rather than hardcoded, so the
+ * legend stays accurate if the defaults ever change.
+ */
+export function buildHelpfulnessScoreExplanation(
+  weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
+): string {
+  const pct = (share: number) => Math.round(share * 100);
+  return (
+    `Helpfulness blends three signals: ${pct(weights.popularity)}% popularity ` +
+    `(likes and saves, logarithmically dampened so raw vote counts alone ` +
+    `can't dominate), ${pct(weights.quality)}% quality (citation ` +
+    `completeness, clarity, and other popularity-independent signals), and ` +
+    `${pct(weights.reviewer)}% reviewer credibility (weighted endorsements ` +
+    `from reviewers, based on their own contribution track record). A ` +
+    `"Popularity-only" flag appears when the popularity score reaches ` +
+    `${POPULARITY_ONLY_THRESHOLD}+ while both quality and reviewer scores ` +
+    `stay below ${LOW_SIGNAL_THRESHOLD} — a sign the score is being driven ` +
+    `by raw votes rather than substance.`
+  );
+}
+
+/**
  * Ranks contributions by blended helpfulness score, descending, with ties
  * broken by `id` for a stable, deterministic order.
  */

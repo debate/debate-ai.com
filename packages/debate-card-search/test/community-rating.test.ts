@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_HELPFULNESS_WEIGHTS,
   MIN_REVIEWER_CREDIBILITY,
+  buildHelpfulnessScoreExplanation,
   computeHelpfulnessBreakdown,
   computeReviewerCredibility,
   rankContributions,
@@ -197,5 +198,32 @@ describe("computeReviewerCredibility", () => {
     };
     const history = Array.from({ length: 20 }, (_, i) => ({ ...maxed, id: `maxed-${i}` }));
     expect(computeReviewerCredibility(history)).toBeLessThanOrEqual(1);
+  });
+});
+
+describe("buildHelpfulnessScoreExplanation", () => {
+  it("spells out the default weights as percentages", () => {
+    const explanation = buildHelpfulnessScoreExplanation();
+    expect(explanation).toContain("30% popularity");
+    expect(explanation).toContain("40% quality");
+    expect(explanation).toContain("30% reviewer credibility");
+  });
+
+  it("reflects custom weights instead of the defaults", () => {
+    const explanation = buildHelpfulnessScoreExplanation({ popularity: 0.5, quality: 0.25, reviewer: 0.25 });
+    expect(explanation).toContain("50% popularity");
+    expect(explanation).toContain("25% quality");
+    expect(explanation).toContain("25% reviewer credibility");
+  });
+
+  it("names the Popularity-only outlier thresholds", () => {
+    const explanation = buildHelpfulnessScoreExplanation();
+    expect(explanation).toContain("Popularity-only");
+    expect(explanation).toContain("70+");
+    expect(explanation).toContain("below 30");
+  });
+
+  it("matches DEFAULT_HELPFULNESS_WEIGHTS when called with no arguments", () => {
+    expect(buildHelpfulnessScoreExplanation()).toBe(buildHelpfulnessScoreExplanation(DEFAULT_HELPFULNESS_WEIGHTS));
   });
 });
