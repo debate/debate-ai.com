@@ -4,17 +4,19 @@
  * @fileoverview "Editor preferences" section on `/settings` — General /
  * Appearance / Accessibility, moved out of the CardMirror editor's own
  * gear-icon settings modal so they live alongside the rest of a signed-in
- * user's account preferences (see lib/editor-preferences.ts and
- * app/api/settings/route.ts's `editorPreferences` field).
+ * user's account preferences (see apps/debate-ai.com's
+ * lib/editor-preferences.ts and app/api/settings/route.ts's
+ * `editorPreferences` field).
  *
  * Embeds `/settings/editor-panel` in a same-origin iframe rather than
  * rendering CardMirror's settings UI directly in this component tree — see
- * that page's own docstring for why (its ~15k-line stylesheet is meant for
- * a page CardMirror fully owns, and would fight the app's own styles
- * document-wide if imported here). The iframe self-sizes to its content via
- * a postMessage it sends on load and on resize.
+ * `CardMirrorSettingsRoute`'s own docstring for why (its ~15k-line
+ * stylesheet is meant for a page CardMirror fully owns, and would fight the
+ * host app's own styles document-wide if imported here). The iframe
+ * self-sizes to its content via a postMessage it sends on load and on
+ * resize.
  *
- * @module components/settings/EditorPreferencesPanel
+ * @module EditorPreferencesPanel
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
