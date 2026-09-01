@@ -6,6 +6,46 @@
 _No task currently in progress._
 
 ### Completed
+- **Review Queue — reviewer-workload balancing view (🗣️ Peer Review
+  System).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built (a real `/settings` page, D1-backed tables
+  linked to signed-in users for flow edits, documents, rounds, judge
+  decisions, word-count history, etc.), the CardMirror editor already
+  surfaces every tool via its top `MenuBar` (File/Edit/Card/Format/Insert/
+  AI/View/Tools/Workspace/Plugins dropdowns, mirroring the ribbon and the
+  Ctrl/Cmd-Shift-Space command palette three ways), and the open PR (#400)
+  covers an unrelated panel (Topic Sprint cross-tab live-update), so this
+  slice closed out the "🗣️ Peer Review System" bullet's third and final
+  follow-up instead: "a reviewer-workload balancing view," after the first
+  two (signed-in reviewer identity, review-aging indicator) were already
+  done in earlier slices. This data model has no explicit review-assignment
+  field — any reviewer who clears `MIN_REVIEWER_TIER` can act on any queued
+  card — so added a new pure helper, `buildReviewerWorkload(reviews)` in
+  `lib/peer-review.ts`, that derives workload from actual engagement
+  instead: distinct pending (`in_review`/`changes_requested`) cards a
+  reviewer has commented on ("active reviews," deduped per card), total
+  comments ever posted, and total gatekeeping actions taken (tallied from
+  `reviewedBy`) — sorted busiest-first so an organizer can steer new review
+  requests toward reviewers with room to take them. `ReviewQueuePanel` now
+  renders this as a "Reviewer workload" table above the queue itself
+  (hidden entirely when no reviewer has any recorded activity), with a
+  destructive badge at 3+ active reviews as a lightweight overload flag.
+  Vitest-covered with 8 new cases in
+  `packages/debate-card-search/test/peer-review.test.ts` (empty input,
+  non-pending vs. pending comments, same-card dedup, cross-card counting,
+  `reviewedBy` tallying independent of comments, sort order, and combined
+  comment+action activity for one reviewer). See `docs/features/review-
+  queue.md`'s new "Reviewer workload" section. All three follow-ups named
+  under the "🗣️ Peer Review System" bullet are now closed; a future run
+  should pick a fresh next-step for this idea (e.g. surfacing the workload
+  table's data as a Coach Workspace roster view, or a "reassign" action
+  that lets an overloaded reviewer wave a pending card off to someone else)
+  if one becomes worth doing.
+
 - **Helpfulness-score tooltip/legend (idea #11, "Community-Rated Summaries
   and Highlights").** Another repeat of the standing prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL... with
@@ -11341,7 +11381,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — bulk folder actions (merge/archive); saved custom collections per user; a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool.
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — a winner-history calendar view; a comment thread on each day's winner; a "best of the week" rollup.
-* 🗣️ **Peer Review System** (`/cards/reviews`) — gating reviewer identity behind the real signed-in session and the review-aging indicator are both done (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill" and "Review aging" sections). Next: a reviewer-workload balancing view.
+* 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — an awards history / hall-of-fame page; auto-post each announcement to the News Stream feed; a "nominate a peer" action.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — a coach-facing override/reassign control; a task-priority indicator; a capacity-aware view of routing load across the team.
 * 🔁 **Revision Incentives** (`/cards/revisions`) — a stale-evidence digest surfaced from the existing staleness signal; a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.

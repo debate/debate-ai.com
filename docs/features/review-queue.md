@@ -176,6 +176,39 @@ stale — closing the "a review-aging indicator for stale pending reviews"
 follow-up named under the "🗣️ Peer Review System" bullet in TODO.md.
 Vitest-covered in `packages/debate-card-search/test/peer-review.test.ts`.
 
+## Reviewer workload
+
+A "Reviewer workload" table sits above the queue itself — the third and
+final follow-up named under the "🗣️ Peer Review System" bullet in TODO.md
+("a reviewer-workload balancing view"), after the first two (signed-in
+reviewer identity, review aging) were already done.
+
+This data model has no explicit review-assignment concept — any reviewer
+who clears `MIN_REVIEWER_TIER` can act on any queued card — so "workload" is
+derived from actual engagement rather than an assignment field:
+`lib/peer-review.ts`'s `buildReviewerWorkload(reviews)` tallies, per
+reviewer id seen in the queue:
+
+| Column | Meaning |
+| --- | --- |
+| Active reviews | Distinct cards currently `in_review`/`changes_requested` that this reviewer has commented on — their present backlog. Commenting twice on the same pending card still counts as one. |
+| Comments posted | Total comments this reviewer has ever left, across every review regardless of its current status. |
+| Actions taken | Times this reviewer's id appears as a review's `reviewedBy` — approve/reject/publish actions, all-time. |
+
+The table sorts busiest-first (active reviews desc, then comments posted
+desc, then reviewer id) so a coach or organizer scanning it sees at a
+glance who to steer a new review request away from — and, toward the
+bottom, who has room to take one on. The "Active reviews" count gets a
+destructive badge at 3+ as a lightweight overload flag. The section is
+omitted entirely once no reviewer has any recorded activity (a fresh
+queue).
+
+Vitest-covered with 8 new cases in
+`packages/debate-card-search/test/peer-review.test.ts` (empty input,
+non-pending vs. pending comments, same-card dedup, cross-card counting,
+`reviewedBy` tallying independent of comments, sort order, and a
+reviewer's comment + action activity combining into one entry).
+
 ## Known gaps
 
 - Reviewer identity is still a free-form id, not an authenticated user — a

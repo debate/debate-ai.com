@@ -273,6 +273,73 @@ export function isReviewStale(
   return age !== undefined && age >= thresholdDays;
 }
 
+/** One reviewer's tally of current and historical peer-review activity, as produced by `buildReviewerWorkload`. */
+export interface ReviewerWorkloadEntry {
+  reviewerId: string;
+  /** Distinct reviews currently `in_review`/`changes_requested` this reviewer has commented on — their present backlog. */
+  activeReviewCount: number;
+  /** Total comments this reviewer has ever posted, across every review regardless of its current status. */
+  totalCommentsPosted: number;
+  /** Times this reviewer's id appears as `reviewedBy` — approve/reject/publish actions taken, all-time. */
+  actionsTaken: number;
+}
+
+/**
+ * Tallies each reviewer's current backlog and historical activity across a
+ * set of reviews, for a "who's carrying the load" view — closes the third
+ * follow-up named under the "🗣️ Peer Review System" bullet in TODO.md ("a
+ * reviewer-workload balancing view"), after the first two (signed-in
+ * reviewer identity, review-aging indicator) were already done.
+ *
+ * There's no explicit review-assignment concept in this data model — any
+ * qualifying reviewer can act on any queued card — so "workload" is derived
+ * from actual engagement instead: `activeReviewCount` counts a review once
+ * per reviewer who has commented on it while it's still sitting in someone's
+ * queue (`in_review`/`changes_requested`), so a reviewer who left several
+ * comments on the same pending card only counts as carrying that one card,
+ * not several. `actionsTaken` counts gatekeeping actions (approve/reject/
+ * publish) by `reviewedBy`, which `lib/peer-review.ts`'s own transitions
+ * always stamp with the acting reviewer's id.
+ *
+ * Sorted busiest-first (`activeReviewCount` desc, then `totalCommentsPosted`
+ * desc, then `reviewerId` for a stable order) so a coach/organizer scanning
+ * the list sees who to route new review requests away from — and, at the
+ * bottom, who has room to take on more.
+ */
+export function buildReviewerWorkload(reviews: CardReview[]): ReviewerWorkloadEntry[] {
+  const byReviewer = new Map<string, ReviewerWorkloadEntry>();
+  const entryFor = (reviewerId: string): ReviewerWorkloadEntry => {
+    let entry = byReviewer.get(reviewerId);
+    if (!entry) {
+      entry = { reviewerId, activeReviewCount: 0, totalCommentsPosted: 0, actionsTaken: 0 };
+      byReviewer.set(reviewerId, entry);
+    }
+    return entry;
+  };
+
+  for (const review of reviews) {
+    const isPending = PENDING_ACTION_STATUSES.includes(review.status);
+    const activeReviewersOnThisCard = new Set<string>();
+    for (const comment of review.comments) {
+      entryFor(comment.reviewerId).totalCommentsPosted++;
+      if (isPending) activeReviewersOnThisCard.add(comment.reviewerId);
+    }
+    for (const reviewerId of activeReviewersOnThisCard) {
+      entryFor(reviewerId).activeReviewCount++;
+    }
+    if (review.reviewedBy) {
+      entryFor(review.reviewedBy).actionsTaken++;
+    }
+  }
+
+  return [...byReviewer.values()].sort(
+    (a, b) =>
+      b.activeReviewCount - a.activeReviewCount ||
+      b.totalCommentsPosted - a.totalCommentsPosted ||
+      a.reviewerId.localeCompare(b.reviewerId),
+  );
+}
+
 /**
  * Renders a short, human-readable summary of a review's current state —
  * status plus outstanding/resolved comment counts — for a review-queue or

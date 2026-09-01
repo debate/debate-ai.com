@@ -7,6 +7,7 @@ import {
   UnresolvedBlockingCommentsError,
   addReviewComment,
   approveReview,
+  buildReviewerWorkload,
   buildReviewSummary,
   canTransitionReviewStatus,
   createCardReview,
@@ -389,5 +390,84 @@ describe("buildReviewSummary", () => {
     review = resolveReviewComment(review, "c2");
 
     expect(buildReviewSummary(review)).toBe("Status: changes_requested\nComments: 1/2 resolved (1 blocking)");
+  });
+});
+
+describe("buildReviewerWorkload", () => {
+  it("returns an empty list for no reviews", () => {
+    expect(buildReviewerWorkload([])).toEqual([]);
+  });
+
+  it("counts a comment on a non-pending review toward totalCommentsPosted but not activeReviewCount", () => {
+    let review = createCardReview("card-1"); // draft — not a pending-action status
+    review = addReviewComment(review, { id: "c1", reviewerId: "alice", body: "note", severity: "suggestion" });
+
+    expect(buildReviewerWorkload([review])).toEqual([
+      { reviewerId: "alice", activeReviewCount: 0, totalCommentsPosted: 1, actionsTaken: 0 },
+    ]);
+  });
+
+  it("counts a comment on an in_review card toward both totals", () => {
+    let review = submitForReview(createCardReview("card-1"));
+    review = addReviewComment(review, { id: "c1", reviewerId: "alice", body: "note", severity: "suggestion" });
+
+    expect(buildReviewerWorkload([review])).toEqual([
+      { reviewerId: "alice", activeReviewCount: 1, totalCommentsPosted: 1, actionsTaken: 0 },
+    ]);
+  });
+
+  it("dedupes activeReviewCount when the same reviewer comments on the same card twice", () => {
+    let review = submitForReview(createCardReview("card-1"));
+    review = addReviewComment(review, { id: "c1", reviewerId: "alice", body: "one", severity: "suggestion" });
+    review = addReviewComment(review, { id: "c2", reviewerId: "alice", body: "two", severity: "suggestion" });
+
+    const [entry] = buildReviewerWorkload([review]);
+    expect(entry).toMatchObject({ activeReviewCount: 1, totalCommentsPosted: 2 });
+  });
+
+  it("counts activeReviewCount across distinct pending cards separately", () => {
+    let cardA = submitForReview(createCardReview("card-a"));
+    cardA = addReviewComment(cardA, { id: "c1", reviewerId: "alice", body: "a", severity: "suggestion" });
+    let cardB = submitForReview(createCardReview("card-b"));
+    cardB = addReviewComment(cardB, { id: "c2", reviewerId: "alice", body: "b", severity: "suggestion" });
+
+    const [entry] = buildReviewerWorkload([cardA, cardB]);
+    expect(entry).toMatchObject({ activeReviewCount: 2, totalCommentsPosted: 2 });
+  });
+
+  it("tallies actionsTaken from reviewedBy independently of comments", () => {
+    const review = approveReview(submitForReview(createCardReview("card-1", "author1")), "alice");
+    expect(buildReviewerWorkload([review])).toEqual([
+      { reviewerId: "alice", activeReviewCount: 0, totalCommentsPosted: 0, actionsTaken: 1 },
+    ]);
+  });
+
+  it("sorts busiest-first by activeReviewCount, then totalCommentsPosted, then reviewerId", () => {
+    let busy = submitForReview(createCardReview("card-busy"));
+    busy = addReviewComment(busy, { id: "c1", reviewerId: "bob", body: "1", severity: "suggestion" });
+    busy = addReviewComment(busy, { id: "c2", reviewerId: "carol", body: "1", severity: "suggestion" });
+
+    let quiet = submitForReview(createCardReview("card-quiet"));
+    quiet = addReviewComment(quiet, { id: "c3", reviewerId: "bob", body: "2", severity: "suggestion" });
+
+    // bob: 2 active reviews; carol: 1 active review, but tie-broken against
+    // an "alice" with zero activity beyond a single stale (non-pending) comment.
+    let idle = createCardReview("card-idle");
+    idle = addReviewComment(idle, { id: "c4", reviewerId: "alice", body: "3", severity: "suggestion" });
+
+    const workload = buildReviewerWorkload([busy, quiet, idle]);
+    expect(workload.map((e) => e.reviewerId)).toEqual(["bob", "carol", "alice"]);
+    expect(workload[0]).toMatchObject({ activeReviewCount: 2, totalCommentsPosted: 2 });
+  });
+
+  it("combines comment- and action-based activity for the same reviewer into one entry", () => {
+    let review = submitForReview(createCardReview("card-1", "author1"));
+    review = addReviewComment(review, { id: "c1", reviewerId: "alice", body: "note", severity: "suggestion" });
+    // alice's comment left it "in_review" (a suggestion doesn't auto-transition), so she can still approve it herself here — the test only checks tallying, not the self-review guard (author1 !== alice).
+    const approved = approveReview(review, "alice");
+
+    expect(buildReviewerWorkload([approved])).toEqual([
+      { reviewerId: "alice", activeReviewCount: 0, totalCommentsPosted: 1, actionsTaken: 1 },
+    ]);
   });
 });
