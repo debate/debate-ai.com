@@ -6,6 +6,55 @@
 _No task currently in progress._
 
 ### Completed
+- **Speech Transcript Summaries and Answers — rank cross-exam
+  questions/extension ideas by strength (idea #6).** Another repeat of the
+  standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI") — as with every recent repeat, the "user
+  settings / SQL-linked flows, docs, rounds" half is already fully built (a
+  real `/settings` page, D1-backed tables linked to signed-in users for flow
+  edits, documents, rounds, judge decisions, word-count history, speech
+  send-log history, outline filter presets, counsel-panel assessment
+  history, etc.), the CardMirror editor already surfaces every tool via its
+  top `MenuBar` and command palette, and no PR was open for this idea (a
+  separate open PR merges CardMirror/Ebb Flow settings tabs, unrelated), so
+  this slice picked idea #6's ("Speech Transcript Summaries and Answers",
+  `/summaries`) own next-named follow-up: "Rank suggested cross-exam
+  questions/extension ideas by strength rather than a flat list." A "send to
+  Prep Notes / Speech Document" action (that same idea's other named
+  follow-up) was considered first but doesn't map cleanly onto this data —
+  `PrepNote` is anchored to a specific flow `Box` (`flowId`/`boxPath`) and a
+  `FlowSummaryRecord` has neither, and the only other "speech document" send
+  target (`reason-editor`'s `SpeechDocument`) lives in an unrelated package
+  `debate-round` doesn't depend on — so it's left as a follow-up rather than
+  forcing a mismatched integration.
+  `flow/flow-transcript-summary.ts` gains `computeRowStrength(row)` (scores
+  an unanswered row primarily by its recorded `evidenceStatus` — `cited` &gt;
+  `contested` &gt; `unverified`/unset — with the argument thread's depth,
+  `entries.length`, as a same-tier tiebreaker) and
+  `rankUnansweredRowsByStrength(rows)` (filters to unanswered rows, sorts by
+  that score descending, stable-sorted on ties).
+  `suggestCrossExamQuestions`/`suggestExtensionIdeas` themselves are
+  unchanged — they already just map 1:1 over whatever rows they're given —
+  so `panels/FlowSummariesPanel.tsx` now ranks its unanswered rows before
+  handing them to those two functions instead of the functions needing new
+  sorting logic, and `flow/drill-generator.ts`'s `buildCrossExamDrills`
+  (which zips its own unfiltered-order rows against `suggestCrossExamQuestions`'s
+  output by index) is untouched and unaffected. The panel also now tags each
+  suggestion with its rank (`Q1`/`Ext1`, …) and, when recorded, the row's
+  `evidenceStatus` badge, and labels both lists "(strongest first)". See
+  `docs/features/flow-summaries.md`'s new "Ranking by strength" section.
+  Vitest-covered with 6 new cases in
+  `packages/debate-round/test/flow-transcript-summary.test.ts` (evidence-tier
+  ordering, the thread-depth tiebreaker, evidence tier always outranking
+  thread depth, excluding answered rows, stable-order ties, and the
+  ranked-input integration with `suggestCrossExamQuestions`/
+  `suggestExtensionIdeas`). Verified: `bun install` (2258 packages),
+  `bun run typecheck` (root, all 13 typechecked packages), `bun run test`
+  (207 test files, 3403 tests, all passing), and `bun run build` (the full
+  monorepo build, including `debate-ai-web`'s production build covering
+  `/summaries`) all pass clean.
 - **Pre-Round Intelligence Panel — briefing download action (idea #12).**
   Another repeat of the standing prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL... with ability to save
@@ -11770,10 +11819,22 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too. A per-round decision count cap (`MAX_JUDGE_DECISIONS_PER_ROUND`, 20) is also now enforced — `appendJudgeDecision` trims the oldest entry once a round's log exceeds it, with the trimmed id best-effort deleted from the account too. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision, or a side-by-side paradigm comparison view for picking which judge to prep for) if one becomes worth doing.
 
-6. **Speech Transcript Summaries and Answers** (`/summaries`) —
+6. **Speech Transcript Summaries and Answers** (`/summaries`) — the
+   ranking follow-up is done: cross-exam questions and extension ideas now
+   render strongest opportunity first (`rankUnansweredRowsByStrength` in
+   `flow/flow-transcript-summary.ts`, scoring primarily by `evidenceStatus`
+   with thread depth as a tiebreaker), each item tagged with its rank and
+   evidence status — see the Completed entry above and
+   `docs/features/flow-summaries.md`'s "Ranking by strength" section. Next:
    - Bulk transcript upload (multiple speeches at once) instead of one at a time.
-   - Rank suggested cross-exam questions/extension ideas by strength rather than a flat list.
-   - A one-click "send to Prep Notes / Speech Document" action for a summary.
+   - A one-click "send to Prep Notes / Speech Document" action for a
+     summary — doesn't map cleanly onto today's data model yet: `PrepNote`
+     requires a `flowId`/`boxPath` a `FlowSummaryRecord` doesn't have, and
+     the only existing "speech document" send target
+     (`reason-editor`'s `SpeechDocument`) lives in a package `debate-round`
+     doesn't depend on. Either extending `PrepNote` to accept a
+     round-anchored note without a box, or adding a `debate-round`-local
+     send target, would need to land first.
 
 7. **On Page Card Reuse Search** (`EvidenceLibraryPanel`'s "Check this page" box, plus the `debate-web-ext` browser extension) — the history-list follow-up is done: a "Recent checks" list under the box shows the last 20 local lookups (`state/reuseCheckHistory.ts`), clickable to re-run and clearable — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Check history" section. Next:
    - A team dashboard of pages flagged as already-cut, so a coach can see reuse patterns at a glance.

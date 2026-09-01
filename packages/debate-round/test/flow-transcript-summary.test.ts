@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   buildFlowSummaryText,
   buildFlowSummaryTextFromRows,
+  computeRowStrength,
   getFlowRowSummaries,
   getUnansweredFlowRows,
+  rankUnansweredRowsByStrength,
   suggestCrossExamQuestions,
   suggestExtensionIdeas,
   summarizeFlowRow,
@@ -235,5 +237,93 @@ describe("suggestCrossExamQuestions / suggestExtensionIdeas", () => {
     const [idea] = suggestExtensionIdeas(rows);
     expect(idea).toContain("Case advantage");
     expect(idea).toContain("dropped/conceded");
+  });
+});
+
+describe("computeRowStrength / rankUnansweredRowsByStrength", () => {
+  function makeRow(overrides: Partial<FlowRowSummary> = {}): FlowRowSummary {
+    return {
+      rowIndex: 0,
+      isHeading: false,
+      argument: "Argument",
+      originSpeech: "1AC",
+      entries: [{ speech: "1AC", content: "Argument" }],
+      lastSpeech: "1AC",
+      isUnanswered: true,
+      ...overrides,
+    };
+  }
+
+  it("ranks cited evidence above contested, above unverified/unset", () => {
+    const cited = computeRowStrength(makeRow({ evidenceStatus: "cited" }));
+    const contested = computeRowStrength(makeRow({ evidenceStatus: "contested" }));
+    const unverified = computeRowStrength(makeRow({ evidenceStatus: "unverified" }));
+    const unset = computeRowStrength(makeRow());
+
+    expect(cited).toBeGreaterThan(contested);
+    expect(contested).toBeGreaterThan(unverified);
+    expect(unverified).toBe(unset);
+  });
+
+  it("breaks ties within the same evidence tier by thread depth", () => {
+    const shallow = computeRowStrength(
+      makeRow({ evidenceStatus: "contested", entries: [{ speech: "1AC", content: "x" }] }),
+    );
+    const deep = computeRowStrength(
+      makeRow({
+        evidenceStatus: "contested",
+        entries: [
+          { speech: "1AC", content: "x" },
+          { speech: "1NC", content: "y" },
+        ],
+      }),
+    );
+
+    expect(deep).toBeGreaterThan(shallow);
+  });
+
+  it("never lets thread depth outrank a stronger evidence tier", () => {
+    const deepUnverified = computeRowStrength(
+      makeRow({
+        evidenceStatus: "unverified",
+        entries: Array.from({ length: 50 }, (_, i) => ({ speech: `s${i}`, content: "x" })),
+      }),
+    );
+    const shallowCited = computeRowStrength(makeRow({ evidenceStatus: "cited" }));
+
+    expect(shallowCited).toBeGreaterThan(deepUnverified);
+  });
+
+  it("excludes answered rows and orders unanswered ones strongest first", () => {
+    const weak = makeRow({ rowIndex: 0, argument: "Weak", evidenceStatus: "unverified" });
+    const answered = makeRow({ rowIndex: 1, argument: "Answered", isUnanswered: false });
+    const strong = makeRow({ rowIndex: 2, argument: "Strong", evidenceStatus: "cited" });
+    const medium = makeRow({ rowIndex: 3, argument: "Medium", evidenceStatus: "contested" });
+
+    const ranked = rankUnansweredRowsByStrength([weak, answered, strong, medium]);
+
+    expect(ranked.map((row) => row.argument)).toEqual(["Strong", "Medium", "Weak"]);
+  });
+
+  it("preserves original relative order for tied strengths (stable sort)", () => {
+    const first = makeRow({ rowIndex: 0, argument: "First" });
+    const second = makeRow({ rowIndex: 1, argument: "Second" });
+    const third = makeRow({ rowIndex: 2, argument: "Third" });
+
+    const ranked = rankUnansweredRowsByStrength([first, second, third]);
+
+    expect(ranked.map((row) => row.argument)).toEqual(["First", "Second", "Third"]);
+  });
+
+  it("feeds suggestCrossExamQuestions/suggestExtensionIdeas in ranked order, matching the panel's usage", () => {
+    const weak = makeRow({ rowIndex: 0, argument: "Weak point", evidenceStatus: "unverified" });
+    const strong = makeRow({ rowIndex: 1, argument: "Strong point", evidenceStatus: "cited" });
+
+    const ranked = rankUnansweredRowsByStrength([weak, strong]);
+    const [firstQuestion] = suggestCrossExamQuestions(ranked);
+    const [firstIdea] = suggestExtensionIdeas(ranked);
+
+    expect(firstQuestion).toContain("Strong point");
+    expect(firstIdea).toContain("Strong point");
   });
 });

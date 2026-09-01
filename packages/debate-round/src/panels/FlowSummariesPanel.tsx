@@ -25,6 +25,13 @@
  * directly into the same field via the browser's own Web Speech API, with
  * no server-side transcription service involved.
  *
+ * Closes idea #6's "rank suggested cross-exam questions/extension ideas by
+ * strength rather than a flat list" follow-up: unanswered rows are ordered
+ * via `flow-transcript-summary.ts`'s `rankUnansweredRowsByStrength` before
+ * being handed to `suggestCrossExamQuestions`/`suggestExtensionIdeas`, so
+ * both lists render strongest-opportunity first, each item tagged with its
+ * rank and (when recorded) the underlying row's `evidenceStatus`.
+ *
  * @module panels/FlowSummariesPanel
  */
 
@@ -45,6 +52,7 @@ import {
 } from "../state/flowSummaries"
 import {
   buildFlowSummaryTextFromRows,
+  rankUnansweredRowsByStrength,
   suggestCrossExamQuestions,
   suggestExtensionIdeas,
 } from "../flow/flow-transcript-summary"
@@ -204,9 +212,9 @@ export function FlowSummariesPanel() {
       ) : (
         records.map((record) => {
           const rows = record.summaries.filter((row) => !row.isHeading)
-          const unanswered = rows.filter((row) => row.isUnanswered)
-          const crossExamQuestions = suggestCrossExamQuestions(rows)
-          const extensionIdeas = suggestExtensionIdeas(rows)
+          const unanswered = rankUnansweredRowsByStrength(rows)
+          const crossExamQuestions = suggestCrossExamQuestions(unanswered)
+          const extensionIdeas = suggestExtensionIdeas(unanswered)
 
           return (
             <div key={record.roundId} className="rounded-lg border border-border p-4">
@@ -224,6 +232,7 @@ export function FlowSummariesPanel() {
                   <div>
                     <h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
                       Cross-Examination Questions
+                      <span className="ml-1.5 normal-case font-normal">(strongest first)</span>
                     </h3>
                     <ul className="space-y-1.5">
                       {crossExamQuestions.map((question, index) => (
@@ -231,7 +240,12 @@ export function FlowSummariesPanel() {
                           key={index}
                           className="flex items-start gap-2 rounded-md border border-border px-3 py-2 text-sm text-foreground"
                         >
-                          <Badge variant="outline" className="whitespace-nowrap">Q</Badge>
+                          <Badge variant="outline" className="whitespace-nowrap">Q{index + 1}</Badge>
+                          {unanswered[index]?.evidenceStatus && (
+                            <Badge variant="secondary" className="whitespace-nowrap text-[10px]">
+                              {unanswered[index].evidenceStatus}
+                            </Badge>
+                          )}
                           {question}
                         </li>
                       ))}
@@ -240,6 +254,7 @@ export function FlowSummariesPanel() {
                   <div>
                     <h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
                       Extension Ideas
+                      <span className="ml-1.5 normal-case font-normal">(strongest first)</span>
                     </h3>
                     <ul className="space-y-1.5">
                       {extensionIdeas.map((idea, index) => (
@@ -247,7 +262,12 @@ export function FlowSummariesPanel() {
                           key={index}
                           className="flex items-start gap-2 rounded-md border border-border px-3 py-2 text-sm text-foreground"
                         >
-                          <Badge variant="outline" className="whitespace-nowrap">Ext</Badge>
+                          <Badge variant="outline" className="whitespace-nowrap">Ext{index + 1}</Badge>
+                          {unanswered[index]?.evidenceStatus && (
+                            <Badge variant="secondary" className="whitespace-nowrap text-[10px]">
+                              {unanswered[index].evidenceStatus}
+                            </Badge>
+                          )}
                           {idea}
                         </li>
                       ))}
