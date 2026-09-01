@@ -10,6 +10,15 @@
  * tagged, and offers a "tag every other row in this section too" bulk
  * option — closing the two remaining Known gaps recorded in
  * `docs/features/argument-tree-outline.md`.
+ *
+ * `bulkMode` repurposes the same layout for a second entry point: the flow
+ * grid's "Tag Selected Rows…" context-menu action, opened when more than one
+ * row is checkbox-selected. In that mode `sectionRows` lists every selected
+ * row (not a row's section neighbours), there is no per-row "seed from" row
+ * so the form always starts blank, and the section checkbox is replaced with
+ * a fixed notice — tags are always applied to the whole selection, closing
+ * idea #10's "Multi-select rows to bulk-apply a tag at once" follow-up in
+ * `TODO.md`.
  */
 
 "use client"
@@ -29,9 +38,20 @@ export interface ArgumentTagPopoverProps {
   content?: string
   /** Contributor ids already used elsewhere in this flow, offered as suggestions. */
   authorIdSuggestions: string[]
-  /** Every *other* row in this row's section, with its own content and current tags. */
+  /**
+   * Every *other* row in this row's section (default `bulkMode`), or every
+   * row in the active grid selection (`bulkMode="selection"`), with its own
+   * content and current tags.
+   */
   sectionRows?: SectionRowPreview[]
-  /** `applyToSection` is true when the "also tag these rows" checkbox was checked. */
+  /**
+   * `"section"` (default): `sectionRows` are this row's same-section
+   * neighbours, and applying to them is an opt-in checkbox.
+   * `"selection"`: `sectionRows` are every row in a multi-row grid
+   * selection, and tags are always applied to the whole selection.
+   */
+  bulkMode?: "section" | "selection"
+  /** `applyToSection` is true when the "also tag these rows" checkbox was checked (always true in `bulkMode="selection"`). */
   onSave: (tags: ArgumentTags, applyToSection: boolean) => void
   onClose: () => void
 }
@@ -48,9 +68,11 @@ export function ArgumentTagPopover({
   content = "",
   authorIdSuggestions,
   sectionRows = [],
+  bulkMode = "section",
   onSave,
   onClose,
 }: ArgumentTagPopoverProps) {
+  const isBulkSelection = bulkMode === "selection"
   const popoverRef = useRef<HTMLDivElement>(null)
   const [argumentType, setArgumentType] = useState<ArgumentType | undefined>(tags.argumentType)
   const suggestedArgumentType = inferArgumentType(content)
@@ -93,7 +115,7 @@ export function ArgumentTagPopover({
     >
       <div className="flex items-center gap-1 text-xs font-medium">
         <Tags className="h-3 w-3" />
-        Tag this argument
+        {isBulkSelection ? `Tag ${sectionRows.length} selected rows` : "Tag this argument"}
       </div>
 
       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
@@ -163,7 +185,9 @@ export function ArgumentTagPopover({
 
       {sectionRows.length > 0 && (
         <div className="flex flex-col gap-1 rounded border border-input bg-muted/30 p-1.5 text-[11px]">
-          <span className="font-medium text-muted-foreground">Other rows in this section</span>
+          <span className="font-medium text-muted-foreground">
+            {isBulkSelection ? "Selected rows" : "Other rows in this section"}
+          </span>
           <ul className="flex max-h-24 flex-col gap-0.5 overflow-y-auto">
             {sectionRows.map((row) => (
               <li key={row.rowIndex} className="flex justify-between gap-2 text-muted-foreground">
@@ -172,14 +196,20 @@ export function ArgumentTagPopover({
               </li>
             ))}
           </ul>
-          <label className="flex items-center gap-1.5 pt-1 text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={applyToSection}
-              onChange={(e) => setApplyToSection(e.target.checked)}
-            />
-            Also tag {sectionRows.length === 1 ? "this row" : `these ${sectionRows.length} rows`}
-          </label>
+          {isBulkSelection ? (
+            <p className="pt-1 text-muted-foreground">
+              Tags will be applied to all {sectionRows.length} rows above.
+            </p>
+          ) : (
+            <label className="flex items-center gap-1.5 pt-1 text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={applyToSection}
+                onChange={(e) => setApplyToSection(e.target.checked)}
+              />
+              Also tag {sectionRows.length === 1 ? "this row" : `these ${sectionRows.length} rows`}
+            </label>
+          )}
         </div>
       )}
 
@@ -187,11 +217,11 @@ export function ArgumentTagPopover({
         type="button"
         className="self-end rounded bg-primary px-2 py-1 text-xs text-primary-foreground hover:bg-primary/90"
         onClick={() => {
-          onSave({ argumentType, evidenceStatus, authorId }, applyToSection)
+          onSave({ argumentType, evidenceStatus, authorId }, isBulkSelection ? true : applyToSection)
           onClose()
         }}
       >
-        Save tags
+        {isBulkSelection ? `Apply to ${sectionRows.length} rows` : "Save tags"}
       </button>
     </div>
   )

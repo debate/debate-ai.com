@@ -271,6 +271,53 @@ section-preview label truncation) and
 list and checkbox render when `sectionRows` is non-empty, and neither
 renders when it's empty).
 
+### Multi-row selection bulk tagging
+
+Idea #10's other still-open follow-up, "Multi-select rows to bulk-apply a
+tag at once" — unlike "Neighbour preview and bulk section tagging" above
+(which only reaches a row's same-section neighbours), this reaches an
+arbitrary set of rows the flowing user explicitly picks, anywhere in the
+flow. The grid's rows carry a checkbox selection column
+(`rowSelection={{ mode: "multiRow", checkboxes: true, headerCheckbox: true,
+enableClickSelection: false }}` — `enableClickSelection: false` keeps a
+plain row click doing what it always did, entering cell-edit mode, so
+checking rows and editing them don't fight over the same click). Right-click
+with two or more rows checked and the existing context menu gains a "Tag
+Selected Rows… (N)" entry (disabled below two selected rows) alongside the
+single-row "Tag Argument…" one; picking it opens the same
+`ArgumentTagPopover`, in `bulkMode="selection"` this time, seeded blank
+(there's no single row's tags to seed from) and listing every selected
+row's own content/current tags instead of section neighbours. There's no
+opt-in checkbox in this mode — picking "Tag Selected Rows…" is itself the
+opt-in — so Save always applies to the full selection.
+
+```
+flow/argument-tagging.ts
+  → getRowPreviewsForIndexes(flow, rowIndexes)  — previews for an arbitrary index set, in the order given
+      (getSectionRowPreviews now delegates to this for the same-section case)
+
+flow/ArgumentTagPopover.tsx
+  → bulkMode: "section" | "selection" prop
+      "section" (default): unchanged from "Neighbour preview and bulk section tagging" above
+      "selection": header/list read "N selected rows", checkbox replaced by a fixed
+                   "applied to all N rows" notice, onSave always fires with applyToSection=true
+
+flow/FlowSpreadsheet.tsx
+  → selectedRowIndexes state, updated from onSelectionChanged (event.api.getSelectedRows())
+  → "Tag Selected Rows… (N)" context-menu entry, disabled when < 2 rows selected
+  → handleSaveArgumentTags(rowIndexes, tags, applyToSection)
+      rowIndexes.length > 1 ? rowIndexes : (applyToSection ? getSectionRowIndexes(...) : rowIndexes)
+      → setRowsArgumentTags(flow, targetRowIndexes, tags)
+```
+
+Vitest-covered in `packages/debate-round/test/argument-tagging.test.ts`
+(`getRowPreviewsForIndexes`'s selection-order preservation, de-duplication,
+out-of-range dropping, content truncation, and the empty-list case) and
+`packages/debate-round/test/ArgumentTagPopover.test.tsx` (the bulk header,
+row list, and fixed apply notice rendered in `bulkMode="selection"`, no
+checkbox present, and the default `bulkMode` staying exactly the prior
+single-row behavior).
+
 ## Outline export
 
 Idea #10's "Export the filtered tree to a Speech Document or outline file"
@@ -327,5 +374,5 @@ suites).
   effect.
 - No follow-ups remain open on the "exporting the filtered tree" gap — see
   "Outline export" above.
-- Multi-select rows to bulk-apply a tag at once remains open (idea #10's
-  other follow-up bullet in `TODO.md`).
+- No follow-ups remain open on idea #10's "Multi-select rows to bulk-apply a
+  tag at once" gap — see "Multi-row selection bulk tagging" above.

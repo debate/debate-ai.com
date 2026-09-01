@@ -13,6 +13,7 @@ import type {
   CellKeyDownEvent,
   RowDragEndEvent,
   CellContextMenuEvent,
+  SelectionChangedEvent,
 } from "ag-grid-community"
 import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
 import type { FlowSpreadsheetProps, ContextMenuEntry, EditReviewOpenParams, PrepNoteOpenParams } from "./types"
@@ -29,6 +30,7 @@ import { ArgumentTagPopover } from "./ArgumentTagPopover"
 import {
   formatArgumentTags,
   getRowArgumentTags,
+  getRowPreviewsForIndexes,
   getSectionRowIndexes,
   getSectionRowPreviews,
   listAuthorIdsInFlow,
@@ -80,9 +82,12 @@ export function FlowSpreadsheet({
   const [editReviewRefreshToken, setEditReviewRefreshToken] = useState(0)
   const [prepNote, setPrepNote] = useState<PrepNoteOpenParams | null>(null)
   const [prepNoteRefreshToken, setPrepNoteRefreshToken] = useState(0)
-  const [argumentTag, setArgumentTag] = useState<{ x: number; y: number; rowIndex: number } | null>(
+  const [argumentTag, setArgumentTag] = useState<{ x: number; y: number; rowIndexes: number[] } | null>(
     null,
   )
+  // Checkbox-selected rows (the grid's dedicated selection column), tracked
+  // for the "Tag Selected Rows…" bulk context-menu action below.
+  const [selectedRowIndexes, setSelectedRowIndexes] = useState<number[]>([])
 
   // Initialize row data from flow
   const [rowData, setRowData] = useState<any[]>(() => buildRowData(flow.children, flow.columns))
@@ -190,6 +195,15 @@ export function FlowSpreadsheet({
   )
 
   /**
+   * Track checkbox-selected rows (the grid's dedicated selection column, via
+   * `rowSelection={{ mode: "multiRow" }}` below) by their `originalIndex` —
+   * what "Tag Selected Rows…" applies a bulk tag to.
+   */
+  const onSelectionChanged = useCallback((event: SelectionChangedEvent) => {
+    setSelectedRowIndexes(event.api.getSelectedRows().map((row: any) => row.originalIndex))
+  }, [])
+
+  /**
    * Build context menu items for a given row
    */
   const getContextMenuItems = useCallback(
@@ -225,9 +239,19 @@ export function FlowSpreadsheet({
           onClick: () =>
             setArgumentTag(
               contextMenu
-                ? { x: contextMenu.x, y: contextMenu.y, rowIndex: row.originalIndex }
+                ? { x: contextMenu.x, y: contextMenu.y, rowIndexes: [row.originalIndex] }
                 : null,
             ),
+        },
+        {
+          label: `Tag Selected Rows… (${selectedRowIndexes.length})`,
+          onClick: () =>
+            setArgumentTag(
+              contextMenu
+                ? { x: contextMenu.x, y: contextMenu.y, rowIndexes: selectedRowIndexes }
+                : null,
+            ),
+          disabled: selectedRowIndexes.length < 2,
         },
         {
           label: "Indent (Make Child)",
@@ -275,21 +299,29 @@ export function FlowSpreadsheet({
         },
       ]
     },
-    [rowData, collapsedHeadings, contextMenu, flow, toggleHeading, indentRow, outdentRow, toggleCollapse, collapseAll, expandAll, insertRow, deleteRow],
+    [rowData, collapsedHeadings, contextMenu, flow, selectedRowIndexes, toggleHeading, indentRow, outdentRow, toggleCollapse, collapseAll, expandAll, insertRow, deleteRow],
   )
 
   /**
-   * Save the tags chosen in `ArgumentTagPopover` onto the row's root box —
-   * or, when `applyToSection` is checked in the popover, onto every other
-   * row in the same section as well (via `getSectionRowIndexes`). Pushes
-   * the tagged children up through `onUpdate` and rebuilds this grid's own
-   * `rowData` from them, so a later cell edit (which round-trips through
-   * `rowDataToBoxes`) carries the tags forward instead of dropping them if
-   * the parent hasn't re-rendered with the new flow yet.
+   * Save the tags chosen in `ArgumentTagPopover` onto the given row(s)' root
+   * box(es). `rowIndexes` is a single-element array for the plain "Tag
+   * Argument…" entry (optionally widened to `applyToSection`'s
+   * `getSectionRowIndexes` result), or the full checkbox-selected set for
+   * the "Tag Selected Rows…" bulk action (`rowIndexes.length > 1`), which
+   * always applies to every given row regardless of `applyToSection`.
+   * Pushes the tagged children up through `onUpdate` and rebuilds this
+   * grid's own `rowData` from them, so a later cell edit (which round-trips
+   * through `rowDataToBoxes`) carries the tags forward instead of dropping
+   * them if the parent hasn't re-rendered with the new flow yet.
    */
   const handleSaveArgumentTags = useCallback(
-    (rowIndex: number, tags: ArgumentTags, applyToSection: boolean) => {
-      const targetRowIndexes = applyToSection ? getSectionRowIndexes(flow, rowIndex) : [rowIndex]
+    (rowIndexes: number[], tags: ArgumentTags, applyToSection: boolean) => {
+      const targetRowIndexes =
+        rowIndexes.length > 1
+          ? rowIndexes
+          : applyToSection
+            ? getSectionRowIndexes(flow, rowIndexes[0])
+            : rowIndexes
       const tagged = setRowsArgumentTags(flow, targetRowIndexes, tags)
       if (tagged === flow) return
       onUpdate({ children: tagged.children })
@@ -656,6 +688,7 @@ export function FlowSpreadsheet({
           onGridReady={onGridReady}
           onCellKeyDown={onCellKeyDown}
           onCellContextMenu={onCellContextMenu}
+          onSelectionChanged={onSelectionChanged}
           isExternalFilterPresent={isExternalFilterPresent}
           doesExternalFilterPass={doesExternalFilterPass}
           rowHeight={40}
@@ -670,7 +703,12 @@ export function FlowSpreadsheet({
           stopEditingWhenCellsLoseFocus={true}
           suppressHorizontalScroll={false}
           domLayout="normal"
-          rowSelection="single"
+          rowSelection={{
+            mode: "multiRow",
+            checkboxes: true,
+            headerCheckbox: true,
+            enableClickSelection: false,
+          }}
           undoRedoCellEditing={true}
           undoRedoCellEditingLimit={50}
           preventDefaultOnContextMenu={true}
@@ -714,20 +752,34 @@ export function FlowSpreadsheet({
         />
       )}
 
-      {/* Argument type/contributor/evidence-status tagging popover.
-          Keyed by row so reopening it for a different row remounts the form,
+      {/* Argument type/contributor/evidence-status tagging popover, in
+          either single-row mode (from "Tag Argument…", `rowIndexes` has one
+          entry) or bulk mode (from "Tag Selected Rows…", `rowIndexes` has
+          every checkbox-selected row). Keyed by the row-index set so
+          reopening it for a different row/selection remounts the form,
           which seeds its fields from `tags` once on mount. */}
       {argumentTag && (
         <ArgumentTagPopover
-          key={argumentTag.rowIndex}
+          key={argumentTag.rowIndexes.join(",")}
           x={argumentTag.x}
           y={argumentTag.y}
-          tags={getRowArgumentTags(flow, argumentTag.rowIndex)}
-          content={flow.children[argumentTag.rowIndex]?.content ?? ""}
+          tags={
+            argumentTag.rowIndexes.length > 1 ? {} : getRowArgumentTags(flow, argumentTag.rowIndexes[0])
+          }
+          content={
+            argumentTag.rowIndexes.length > 1
+              ? ""
+              : flow.children[argumentTag.rowIndexes[0]]?.content ?? ""
+          }
           authorIdSuggestions={listAuthorIdsInFlow(flow)}
-          sectionRows={getSectionRowPreviews(flow, argumentTag.rowIndex)}
+          bulkMode={argumentTag.rowIndexes.length > 1 ? "selection" : "section"}
+          sectionRows={
+            argumentTag.rowIndexes.length > 1
+              ? getRowPreviewsForIndexes(flow, argumentTag.rowIndexes)
+              : getSectionRowPreviews(flow, argumentTag.rowIndexes[0])
+          }
           onSave={(tags, applyToSection) =>
-            handleSaveArgumentTags(argumentTag.rowIndex, tags, applyToSection)
+            handleSaveArgumentTags(argumentTag.rowIndexes, tags, applyToSection)
           }
           onClose={() => setArgumentTag(null)}
         />

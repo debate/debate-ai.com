@@ -6,6 +6,64 @@
 _No task currently in progress._
 
 ### Completed
+- **Outline Filters and Argument Tree View — multi-select rows to
+  bulk-apply a tag at once (idea #10).** Another repeat of the standing
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL... with ability to save flows docs and debates in SQL
+  and link to users... add tools into where needed in the UI... develop
+  better tool UI") — as with every recent repeat, the "user settings /
+  SQL-linked flows, docs, rounds" half is already fully built (a real
+  `/settings` page, D1-backed tables linked to signed-in users for flow
+  edits, documents, rounds, judge decisions, word-count history, speech
+  send-log history, outline filter presets, counsel-panel assessment
+  history, flow annotations, contribution-leaderboard range filters, etc.),
+  every tool is already reachable from the Tools page and CardMirror's
+  command palette, and no PR was open for this idea, so this slice picked
+  idea #10's own last-remaining follow-up bullet: "Multi-select rows to
+  bulk-apply an argument-type/contributor/evidence-status tag at once" —
+  the one gap the earlier same-section bulk-tagging slice (see below)
+  explicitly left open, since a "section" only reaches a row's same-section
+  neighbours, not an arbitrary hand-picked set of rows anywhere in the flow.
+  `flow/argument-tagging.ts` gains `getRowPreviewsForIndexes(flow,
+  rowIndexes)`, a pure helper that previews an arbitrary index set in the
+  order given (de-duplicated, out-of-range indexes dropped) —
+  `getSectionRowPreviews` now delegates to it for the same-section case, so
+  both previews format/truncate a row's content identically.
+  `ArgumentTagPopover.tsx` gains a `bulkMode?: "section" | "selection"`
+  prop: the default `"section"` mode is byte-for-byte the prior
+  same-section-neighbour behavior (verified with a new test), while
+  `"selection"` mode relabels the header/list as "N selected rows", drops
+  the opt-in checkbox for a fixed "applied to all N rows" notice (since
+  picking the bulk action from the context menu is itself the opt-in), and
+  always saves with `applyToSection=true`. `FlowSpreadsheet.tsx`'s AG Grid
+  now carries a checkbox selection column
+  (`rowSelection={{ mode: "multiRow", checkboxes: true, headerCheckbox:
+  true, enableClickSelection: false }}` — `enableClickSelection: false`
+  keeps a plain row click doing what it always did, entering cell-edit
+  mode, so checking a row and editing it don't fight over the same click),
+  tracked into a new `selectedRowIndexes` state via `onSelectionChanged`.
+  The right-click context menu gains a "Tag Selected Rows… (N)" entry
+  (disabled below two selected rows) alongside the existing single-row "Tag
+  Argument…" one; `handleSaveArgumentTags` was generalized from a single
+  `rowIndex` to a `rowIndexes: number[]` parameter, applying to the whole
+  given set when it has more than one entry (bulk mode) or falling back to
+  the prior single-row/section-widened behavior otherwise. See
+  `docs/features/argument-tree-outline.md`'s new "Multi-row selection bulk
+  tagging" section. Vitest-covered with 6 new cases: 4 in
+  `packages/debate-round/test/argument-tagging.test.ts`
+  (`getRowPreviewsForIndexes`'s selection-order preservation,
+  de-duplication/out-of-range dropping, content truncation, and the
+  empty-list case) and 2 in
+  `packages/debate-round/test/ArgumentTagPopover.test.tsx` (the bulk
+  header/row-list/fixed-notice/button-label rendering in
+  `bulkMode="selection"` with no checkbox present, and the default
+  `bulkMode` staying exactly the prior single-row behavior). Verified: `bun
+  install` (2258 packages), the two focused test files (42/42 pass), the
+  full `bun run test` (208 test files, 3448 tests, all passing, up from
+  208/3442), the whole-repo `bun run typecheck` (root, all 13 typechecked
+  packages, clean), and a full `bun run build` (the whole monorepo build,
+  including `debate-ai-web`'s production build, which lists `/outline`
+  among its built routes) all pass clean. **Completed:** 2026-09-01.
 - **Contribution Leaderboard — weekly/monthly/all-time range filters.**
   Another repeat of the standing prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL... with ability to save
@@ -12058,8 +12116,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    `navPaneVisible`). Next: a multi-pane/multi-window breadcrumb (today
    single-doc only).
 
-10. **Outline Filters and Argument Tree View** (`/outline`) — the named-filter-presets follow-up is done: each round card has a "Filter presets" row to apply a saved preset or save its current filter combination under a name, account-synced via `/api/settings`'s `outlineFilterPresets` field (`state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets.ts`, mirroring `wordLimitPresets.ts`'s split) — see `docs/features/argument-tree-outline.md`'s "Filter presets" section. The export follow-up is also now done: each round card has a "Download outline" button that saves the flattened, filtered rows as a plain-text outline file (`flow/argument-tree-export.ts#buildArgumentTreeOutlineText`/`argumentTreeOutlineFilename`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Outline export" section. Next:
-    - Multi-select rows to bulk-apply an argument-type/contributor/evidence-status tag at once.
+10. **Outline Filters and Argument Tree View** (`/outline`) — the named-filter-presets follow-up is done: each round card has a "Filter presets" row to apply a saved preset or save its current filter combination under a name, account-synced via `/api/settings`'s `outlineFilterPresets` field (`state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets.ts`, mirroring `wordLimitPresets.ts`'s split) — see `docs/features/argument-tree-outline.md`'s "Filter presets" section. The export follow-up is also now done: each round card has a "Download outline" button that saves the flattened, filtered rows as a plain-text outline file (`flow/argument-tree-export.ts#buildArgumentTreeOutlineText`/`argumentTreeOutlineFilename`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Outline export" section. The multi-select bulk-tagging follow-up is also now done: the flow grid's rows carry a checkbox selection column, and right-clicking with two or more checked opens a "Tag Selected Rows… (N)" action that bulk-applies an argument-type/contributor/evidence-status tag to the whole selection in one save (`flow/argument-tagging.ts#getRowPreviewsForIndexes`, `ArgumentTagPopover`'s new `bulkMode="selection"`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Multi-row selection bulk tagging" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 
 11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. The "my endorsement activity" follow-up is also now done: a signed-in visitor gets a "My endorsement activity" toggle above the table, listing every endorsement they gave as a reviewer via the same store's `direction: "given"` query (`state/contributions.ts#endorsementHistoryCounterpartId`) — see the Completed entry above. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. real reviewer-identity/permission checks so a "given" entry can't be spoofed under an arbitrary reviewer id, or a per-contributor "given" history visible to others, not just the signed-in visitor's own) if one becomes worth doing.
 
