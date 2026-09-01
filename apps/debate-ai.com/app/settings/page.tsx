@@ -3,13 +3,13 @@ import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
 import { UserSettingsPanel, WordLimitPresetsPanel } from "debate-round"
+import { EditorPreferencesPanel, FlowPreferencesPanel } from "debate-settings"
 import { FavoriteToolsSettings } from "@/components/settings/FavoriteToolsSettings"
-import { EditorPreferencesPanel } from "@/components/settings/EditorPreferencesPanel"
 
 export const metadata: Metadata = {
   title: "Settings",
   description:
-    "Manage your debate style, font size, theme, favorite-tools, and word-limit-preset preferences",
+    "Manage your debate style, font size, theme, favorite-tools, word-limit-preset, card-editor, and flow-editor preferences",
 }
 
 export default function SettingsPage() {
@@ -36,6 +36,9 @@ export default function SettingsPage() {
       </Suspense>
       <Suspense>
         <EditorPreferencesPanel />
+      </Suspense>
+      <Suspense>
+        <FlowPreferencesPanel />
       </Suspense>
     </div>
   )

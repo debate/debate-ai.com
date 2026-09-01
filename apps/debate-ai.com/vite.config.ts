@@ -80,6 +80,7 @@ export default defineConfig({
       "debate-editor-cardmirror",
       "debate-flow-ebb",
       "debate-round",
+      "debate-settings",
       "debate-timer",
       "debate-ui",
       "debate-videos",

@@ -9,7 +9,10 @@
   "types": "./src/EbbFlowEmbed.tsx",
   "exports": {
     ".": "./src/EbbFlowEmbed.tsx",
-    "./styles/ebb-scope.css": "./src/styles/ebb-scope.css"
+    "./styles/ebb-scope.css": "./src/styles/ebb-scope.css",
+    "./settings-panel": "./src/components/settings/SettingsPanel.tsx",
+    "./store": "./src/lib/store/useFlowStore.ts",
+    "./tooltip": "./src/components/ui/tooltip.tsx"
   },
   "files": [
     "src"
