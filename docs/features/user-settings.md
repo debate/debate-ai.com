@@ -178,10 +178,17 @@ vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
 - `favoriteTools` validation is shape-only (`isValidToolHref`): the shared
   `debate-round` package has no way to check a starred `href` against the
   real `/tools` catalog, since that catalog (`app/tools/tool-groups.ts`) is
-  app-specific. A favorite pointing at a renamed/removed tool is never
-  rejected by `/api/settings` — it just silently doesn't resolve to a card
-  in `FavoriteToolsSettings`/the favorites strip (both filter against
-  `ALL_TOOLS`), so it sits inertly in the saved list until removed.
+  app-specific, so `/api/settings` itself never rejects a stale href. This is
+  no longer a dead end, though: `FavoriteToolsSettings` (the one component
+  that already resolves each favorite against `ALL_TOOLS` to render it) now
+  also prunes any favorite that doesn't resolve — via
+  `useFavoriteTools().pruneUnknown(validHrefs)`, backed by the pure
+  `filterKnownFavoriteTools` in `state/favoriteTools.ts` — persisting the
+  cleaned-up list locally and, when signed in, best-effort syncing the
+  removal to the account, the same way any other favorites change does. The
+  prune only runs when `/settings` is visited (the favorites strip on
+  `/tools` doesn't know the catalog either, so a stale chip there just never
+  matches and stays invisible until the next `/settings` visit prunes it).
 - The "standing tool-panel/nav UI-polish audit" idea #17 follow-up (4) named
   by prior slices is still open — this slice's star toggle/favorites strip
   overlaps with it but doesn't close it. A later slice (see

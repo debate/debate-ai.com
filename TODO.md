@@ -6,6 +6,64 @@
 _No task currently in progress._
 
 ### Completed
+- **User Settings — prune stale favorite tools (idea #17, `user-settings.md`
+  Known gap).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and every tool is already reachable from the
+  Tools page and CardMirror's command palette, and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area, so this slice closed a concrete gap `docs/features/
+  user-settings.md`'s "Known gaps" section already named: `favoriteTools`
+  validation is shape-only (`isValidToolHref` in `packages/debate-round`'s
+  `state/favoriteTools.ts`) since that shared package doesn't know the
+  app's real `/tools` catalog (`app/tools/tool-groups.ts`), so a favorite
+  pointing at a tool since renamed or removed from the catalog was never
+  rejected by `/api/settings` — it just silently failed to resolve to a
+  card in `FavoriteToolsSettings`/the favorites strip (both already filter
+  against `ALL_TOOLS`), sitting inertly in the saved list forever with no
+  way to clear it short of manually unstarring by guesswork. Adds a pure
+  `filterKnownFavoriteTools(favorites, validHrefs)` to
+  `state/favoriteTools.ts` (drops any href not in `validHrefs`, preserving
+  order, returning the same array reference when nothing was pruned so a
+  caller can skip a write) and a `pruneUnknown(validHrefs)` action on
+  `lib/hooks/useFavoriteTools.ts` (the app-layer hook every favorite-star
+  surface already shares) that calls it and, when something changed,
+  persists the pruned list through the exact same `persist` path every
+  other favorites change already uses — local `localStorage` write first,
+  then a best-effort `saveUserSettings` sync when signed in, matching the
+  "local apply is never blocked by a sync failure" convention every other
+  settings surface in this file follows. `components/settings/
+  FavoriteToolsSettings.tsx` — the one component that already resolves
+  each favorite against `ALL_TOOLS` to render it — now also calls
+  `pruneUnknown(ALL_TOOL_HREFS)` once loaded, so visiting `/settings`
+  cleans up any stale favorite for that account instead of leaving it
+  stuck. Vitest-covered in `packages/debate-round/test/
+  favoriteTools.test.ts` (6 new cases: keeps still-valid favorites, drops a
+  stale one from the middle of the list, drops every favorite when none are
+  valid, handles an empty list, preserves order, and returns the same array
+  reference when nothing was pruned); `useFavoriteTools`/
+  `FavoriteToolsSettings` themselves stay untested, matching this repo's
+  existing convention for account-synced, `localStorage`-backed hooks (e.g.
+  `useWordCountRounds`). See `docs/features/user-settings.md`'s "Known
+  gaps" section for the updated writeup. Full verification: `bun vitest
+  run` (3583 tests passed, including these 6 new ones), `bunx turbo
+  typecheck` across every workspace package with a `typecheck` script (all
+  pass — `debate-ai-web` has none; a manual `bunx tsc --noEmit` there
+  surfaces only the same pre-existing, unrelated errors prior slices have
+  already documented — Cloudflare Workers ambient types
+  (`D1Database`/`Fetcher`), better-auth client-plugin generics not
+  resolving outside the Next.js/Vinext build pipeline, and missing
+  `debate-ui` icon asset type declarations — none of them in a file this
+  slice touched), and `bunx turbo build --filter=debate-ai-web` (production
+  build succeeds). No repo-wide lint script exists to run. Remaining gap
+  for a future slice: the prune only runs when `/settings` is visited — the
+  `/tools` favorites strip doesn't know the catalog either, so a stale chip
+  there just never matches and stays invisible (not broken, just inert)
+  until the next `/settings` visit prunes the underlying list.
+
 - **Pre-Round Intelligence Panel — manual pairing/room-assignment entry
   form.** Another repeat of the standing prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL... with ability

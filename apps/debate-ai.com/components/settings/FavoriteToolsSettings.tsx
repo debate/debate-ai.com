@@ -12,19 +12,28 @@
  * `app/tools/tool-groups.ts`'s `ALL_TOOLS` — the one place in the app that
  * knows the tool catalog; `useFavoriteTools`/`/api/settings` only ever
  * handle bare route paths, so a stale favorite (a tool since renamed or
- * removed) is silently skipped here rather than rendered broken.
+ * removed) is skipped here for rendering, and this is also the one place
+ * that prunes it from the saved list (`pruneUnknown`) rather than leaving
+ * it inertly stored forever.
  *
  * @module components/settings/FavoriteToolsSettings
  */
 
+import { useEffect } from "react"
 import Link from "next/link"
 import { Star, X } from "lucide-react"
 import { Button } from "debate-ui/src/primitives/button"
 import { useFavoriteTools } from "@/lib/hooks/useFavoriteTools"
 import { ALL_TOOLS } from "@/app/tools/tool-groups"
 
+const ALL_TOOL_HREFS = ALL_TOOLS.map((tool) => tool.href)
+
 export function FavoriteToolsSettings() {
-  const { favorites, loaded, removeFavorite } = useFavoriteTools()
+  const { favorites, loaded, removeFavorite, pruneUnknown } = useFavoriteTools()
+
+  useEffect(() => {
+    if (loaded) pruneUnknown(ALL_TOOL_HREFS)
+  }, [loaded, pruneUnknown])
 
   const favoriteTools = favorites
     .map((href) => ALL_TOOLS.find((tool) => tool.href === href))

@@ -15,7 +15,8 @@
  * necessarily generic: a same-origin absolute path shape, not membership
  * in a specific known list. The app-side UI is expected to skip rendering
  * any favorited href that no longer matches a real tool (e.g. after a tool
- * is renamed or removed from the catalog).
+ * is renamed or removed from the catalog), and to prune it from the saved
+ * list once loaded via `filterKnownFavoriteTools` below.
  *
  * @module state/favoriteTools
  */
@@ -98,4 +99,21 @@ export function parseFavoriteTools(raw: string | null | undefined): string[] {
   } catch {
     return [];
   }
+}
+
+/**
+ * Drops any favorited href that isn't in `validHrefs` (the app's current
+ * tool catalog), preserving order — the fix for the "stale favorite" gap
+ * this module's header comment describes: a tool renamed or removed from
+ * the catalog after being starred used to sit inertly in the saved list
+ * forever, since nothing ever removed it. The app layer (the only place
+ * that knows the real catalog) calls this once loaded, syncing the pruned
+ * list back like any other favorites change. Returns the same array
+ * reference when nothing was pruned, so a caller can skip a write by
+ * comparing length instead of doing a deep-equal.
+ */
+export function filterKnownFavoriteTools(favorites: string[], validHrefs: readonly string[]): string[] {
+  const valid = new Set(validHrefs);
+  const next = favorites.filter((href) => valid.has(href));
+  return next.length === favorites.length ? favorites : next;
 }

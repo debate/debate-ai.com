@@ -29,7 +29,13 @@
  */
 
 import { useCallback, useEffect, useState } from "react"
-import { fetchUserSettings, saveUserSettings, isValidToolHref, MAX_FAVORITE_TOOLS } from "debate-round"
+import {
+  fetchUserSettings,
+  saveUserSettings,
+  filterKnownFavoriteTools,
+  isValidToolHref,
+  MAX_FAVORITE_TOOLS,
+} from "debate-round"
 
 const STORAGE_KEY = "favorite-tools"
 const CHANGE_EVENT = "favorite-tools-changed"
@@ -129,5 +135,22 @@ export function useFavoriteTools() {
     [favorites, persist],
   )
 
-  return { favorites, loaded, isFavorite, toggleFavorite, removeFavorite }
+  // A favorite whose tool was since renamed/removed from the catalog would
+  // otherwise sit inertly in the saved list forever, since nothing ever
+  // removes it (`FavoriteToolsSettings`/the favorites strip both just skip
+  // rendering it — see `state/favoriteTools.ts`'s header comment). The one
+  // consumer that knows the real catalog (`FavoriteToolsSettings`) calls
+  // this once loaded to prune and best-effort sync the cleanup, the same
+  // way any other favorites change persists.
+  const pruneUnknown = useCallback(
+    (validHrefs: readonly string[]) => {
+      const next = filterKnownFavoriteTools(favorites, validHrefs)
+      if (next !== favorites) {
+        persist(next)
+      }
+    },
+    [favorites, persist],
+  )
+
+  return { favorites, loaded, isFavorite, toggleFavorite, removeFavorite, pruneUnknown }
 }
