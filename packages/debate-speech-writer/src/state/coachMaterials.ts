@@ -12,11 +12,17 @@
 
 import type {
   CoachMaterial,
+  CoachMaterialFilterOptions,
   CoachMaterialLibrary,
   CoachMaterialMatch,
   FindRelevantMaterialsOptions,
 } from "../coach/team-coach-materials";
-import { buildCoachMaterialLibrary, findRelevantMaterials } from "../coach/team-coach-materials";
+import {
+  buildCoachMaterialLibrary,
+  filterCoachMaterials,
+  findRelevantMaterials,
+  listCoachMaterialTags,
+} from "../coach/team-coach-materials";
 
 const STORAGE_KEY = "coachMaterials";
 
@@ -72,8 +78,19 @@ export function deleteCoachMaterial(id: string): void {
  * `debate-card-search`'s `buildTopContributorAwardsFromStore` "compose the
  * pure function directly against the persisted store" convention.
  */
-export function buildCoachMaterialLibraryFromStore(): CoachMaterialLibrary {
-  return buildCoachMaterialLibrary(readAll());
+export function buildCoachMaterialLibraryFromStore(
+  filter: CoachMaterialFilterOptions = {},
+): CoachMaterialLibrary {
+  return buildCoachMaterialLibrary(filterCoachMaterials(readAll(), filter));
+}
+
+/**
+ * Every distinct tag across every persisted material, alphabetically
+ * sorted — populates a search/filter bar's tag dropdown independently of
+ * whatever filter is currently applied to the library view.
+ */
+export function listCoachMaterialTagsFromStore(): string[] {
+  return listCoachMaterialTags(readAll());
 }
 
 /**

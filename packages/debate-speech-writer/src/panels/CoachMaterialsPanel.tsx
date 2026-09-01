@@ -32,6 +32,13 @@
  * answer, closing the "No conversation history" Known gap recorded in
  * `docs/features/coach-materials.md`.
  *
+ * A search/filter bar (keyword search plus a tag dropdown, both backed by
+ * the new `filterCoachMaterials`/`listCoachMaterialTags` in
+ * `team-coach-materials.ts`) sits above the material list once at least one
+ * material exists, closing the "material tagging and a search/filter bar
+ * once a library grows past a handful of uploads" follow-up named under
+ * idea #8 in TODO.md.
+ *
  * @module panels/CoachMaterialsPanel
  */
 
@@ -66,6 +73,7 @@ import {
   buildCoachMaterialLibraryFromStore,
   deleteCoachMaterial,
   findRelevantMaterialsFromStore,
+  listCoachMaterialTagsFromStore,
   saveCoachMaterial,
 } from "../state/coachMaterials"
 import {
@@ -114,6 +122,10 @@ function parseTags(raw: string): string[] {
  */
 export function CoachMaterialsPanel() {
   const [library, setLibrary] = useState<CoachMaterialLibrary | null>(null)
+  const [totalUnfiltered, setTotalUnfiltered] = useState(0)
+  const [allTags, setAllTags] = useState<string[]>([])
+  const [filterQuery, setFilterQuery] = useState("")
+  const [filterTag, setFilterTag] = useState("")
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [error, setError] = useState<string | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
@@ -131,11 +143,30 @@ export function CoachMaterialsPanel() {
   })
 
   useEffect(() => {
-    setLibrary(buildCoachMaterialLibraryFromStore())
+    setAllTags(listCoachMaterialTagsFromStore())
+    setTotalUnfiltered(buildCoachMaterialLibraryFromStore().totalMaterials)
     setHistory(listCoachConversationTurns())
   }, [])
 
-  const refresh = () => setLibrary(buildCoachMaterialLibraryFromStore())
+  useEffect(() => {
+    setLibrary(
+      buildCoachMaterialLibraryFromStore({
+        query: filterQuery.trim() || undefined,
+        tag: filterTag || undefined,
+      }),
+    )
+  }, [filterQuery, filterTag])
+
+  const refresh = () => {
+    setLibrary(
+      buildCoachMaterialLibraryFromStore({
+        query: filterQuery.trim() || undefined,
+        tag: filterTag || undefined,
+      }),
+    )
+    setAllTags(listCoachMaterialTagsFromStore())
+    setTotalUnfiltered(buildCoachMaterialLibraryFromStore().totalMaterials)
+  }
 
   const handleSave = () => {
     const title = form.title.trim()
@@ -333,9 +364,54 @@ export function CoachMaterialsPanel() {
         <Button onClick={handleSave}>Add material</Button>
       </div>
 
+      {totalUnfiltered > 0 && (
+        <div className="flex flex-wrap items-end gap-2">
+          <div className="space-y-1.5 flex-1 min-w-[16rem]">
+            <Label htmlFor="coach-material-search">Search materials</Label>
+            <Input
+              id="coach-material-search"
+              value={filterQuery}
+              onChange={(e) => setFilterQuery(e.target.value)}
+              placeholder="Search by title, topic, tag, or text…"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="coach-material-tag-filter">Tag</Label>
+            <Select value={filterTag || "__all__"} onValueChange={(value) => setFilterTag(value === "__all__" ? "" : value)}>
+              <SelectTrigger id="coach-material-tag-filter" className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">All tags</SelectItem>
+                {allTags.map((tag) => (
+                  <SelectItem key={tag} value={tag}>
+                    {tag}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {(filterQuery || filterTag) && (
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setFilterQuery("")
+                setFilterTag("")
+              }}
+            >
+              Clear filters
+            </Button>
+          )}
+        </div>
+      )}
+
       {library.totalMaterials === 0 ? (
         <div className="p-6 text-center text-sm text-muted-foreground">
-          No coach materials uploaded yet. Add one above to see it here.
+          {totalUnfiltered === 0
+            ? "No coach materials uploaded yet. Add one above to see it here."
+            : "No materials match this search/tag filter."}
         </div>
       ) : (
         <div className="space-y-4">

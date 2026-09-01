@@ -22,9 +22,15 @@ and ask the coach AI a real question grounded strictly in those materials.
   directly into it via the browser's own Web Speech API, with a disabled
   "Microphone dictation isn't supported in this browser" fallback and an
   inline error message on recognition failure (e.g. mic permission denied).
-- Every persisted material, grouped by kind (Lecture Transcript, Camp
-  Material, Instructional Document, Practice-Round Recording), each with a
-  "Delete" action.
+- A search/filter bar above the material list, once at least one material is
+  saved: a keyword search box (matching a material's title, topic, tags, or
+  body text) plus a "Tag" dropdown scoped to every distinct tag across the
+  whole library, and a "Clear filters" action once either is set. The list
+  below reflects both narrowed together.
+- Every persisted material matching the current search/filter, grouped by
+  kind (Lecture Transcript, Camp Material, Instructional Document,
+  Practice-Round Recording), each with a "Delete" action. Distinguishes "no
+  materials uploaded yet" from "no materials match this search/tag filter".
 - An "Ask the coach" section: typing a question and clicking "Preview
   grounded prompt" shows the top relevant materials and the composed
   grounded prompt text, while "Ask the coach" sends that same prompt to a
@@ -142,6 +148,45 @@ client, with `fetch` mocked via `vi.stubGlobal`, covering the success path,
 an endpoint override, a server error message, a non-JSON error body, and
 an empty/unusable AI reply).
 
+## Search/filter bar
+
+Closes the "material tagging and a search/filter bar once a library grows
+past a handful of uploads" follow-up named under idea #8 in `TODO.md`.
+Materials already carried a `tags: string[]` field (comma-separated on the
+upload form, rendered as badges); this only adds the search/filter layer on
+top:
+
+- `coach/team-coach-materials.ts#listCoachMaterialTags(materials)` — every
+  distinct tag across a material list, alphabetically sorted and
+  de-duplicated, for the tag dropdown's options.
+- `coach/team-coach-materials.ts#filterCoachMaterials(materials, { query?, tag? })`
+  — a pure filter: `tag` restricts to an exact tag match, `query` is a
+  case-insensitive substring match against a material's title, topic, tags,
+  and body text (blank/whitespace-only treated as no filter), and the two
+  compose (both must match). Returns the input unchanged when neither option
+  is given.
+- `state/coachMaterials.ts#buildCoachMaterialLibraryFromStore(filter?)` now
+  accepts the same `{ query?, tag? }` options, composing
+  `filterCoachMaterials` ahead of the existing `buildCoachMaterialLibrary`
+  grouping — existing no-argument callers are unaffected (an empty filter
+  matches everything). A new `listCoachMaterialTagsFromStore()` composes
+  `listCoachMaterialTags` against every persisted material, independent of
+  whatever filter the panel currently has applied, so a tag doesn't
+  disappear from the dropdown just because it's the active filter.
+- `CoachMaterialsPanel.tsx` renders the search box and tag `Select` above
+  the material list once any material exists, re-running
+  `buildCoachMaterialLibraryFromStore` with the current filter whenever
+  either changes (and after every save/delete), and separately tracks the
+  library's true unfiltered material count so the empty state can
+  distinguish "no materials uploaded yet" from "no materials match this
+  search/tag filter".
+
+Vitest-covered in `packages/debate-speech-writer/test/team-coach-materials.test.ts`
+(`listCoachMaterialTags`, `filterCoachMaterials` — title/topic/tag/body
+matches, case-insensitivity, blank-query passthrough, tag+query
+combination) and `packages/debate-speech-writer/test/coachMaterials.test.ts`
+(`buildCoachMaterialLibraryFromStore` with a filter, `listCoachMaterialTagsFromStore`).
+
 ## Known gaps
 
 - No transcription of an *uploaded* audio/video recording file — follow-up
@@ -151,6 +196,10 @@ an empty/unusable AI reply).
   no path in this repo; no server-side/paid transcription service exists
   here, only the browser's live `SpeechRecognition` API used for dictation
   above.
+- No version history for a material that gets re-uploaded/edited — saving
+  over an existing id (there's no edit form today; a re-upload is a brand
+  new record) or editing one directly overwrites it in place, with no way to
+  see or restore a prior version.
 - `convertDocxToHTML`'s default renderer needs a browser `DOMParser` (via
   `docx-preview`), so `.docx` upload only works from this `"use client"`
   panel in the browser — not from a server-rendered or Node context.
