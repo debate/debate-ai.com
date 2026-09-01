@@ -51,6 +51,12 @@
  * `endorsementHistoryCounterpartId` resolves which id ("who endorsed me" vs.
  * "who I endorsed") to display per entry.
  *
+ * A "Category" dropdown next to the range select scopes the whole roster to
+ * one contribution `kind` at a time (card/summary/highlight/annotation/
+ * original-argument/refutation), or "All categories" — closing the
+ * "per-category (kind) leaderboards alongside the overall one" follow-up
+ * named under the "Contribution Leaderboard" bullet in TODO.md.
+ *
  * @module panels/ContributionLeaderboardPanel
  */
 
@@ -87,12 +93,22 @@ import {
   listEndorsementsByContributor,
   type EndorsementHistoryDirection,
 } from "../state/contributions"
-import type { ContributorStats, LeaderboardRange } from "../lib/contribution-leaderboard"
+import type { ContributionCategoryFilter, ContributorStats, LeaderboardRange } from "../lib/contribution-leaderboard"
 
 const RANGE_LABELS: Record<LeaderboardRange, string> = {
   "all-time": "All time",
   weekly: "This week",
   monthly: "This month",
+}
+
+const CATEGORY_LABELS: Record<ContributionCategoryFilter, string> = {
+  all: "All categories",
+  card: "Cards",
+  summary: "Summaries",
+  highlight: "Highlights",
+  annotation: "Annotations",
+  "original-argument": "Original arguments",
+  refutation: "Refutations",
 }
 
 const HELPFULNESS_SCORE_EXPLANATION = buildHelpfulnessScoreExplanation()
@@ -109,9 +125,9 @@ function todayUtcDayKey(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-function buildLeaderboardRows(range: LeaderboardRange): LeaderboardRow[] {
+function buildLeaderboardRows(range: LeaderboardRange, category: ContributionCategoryFilter): LeaderboardRow[] {
   const asOfDayKey = todayUtcDayKey()
-  return buildPersistedLeaderboardWithCompletedTasks(undefined, range).map((stats) => {
+  return buildPersistedLeaderboardWithCompletedTasks(undefined, range, undefined, category).map((stats) => {
     const status = buildContributorUnlockStatusWithStreakFromStore(stats.contributorId, asOfDayKey)
     return {
       ...stats,
@@ -153,10 +169,11 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
   const [expandedContributorId, setExpandedContributorId] = useState<string | null>(null)
   const [showMyActivity, setShowMyActivity] = useState(false)
   const [range, setRange] = useState<LeaderboardRange>("all-time")
+  const [category, setCategory] = useState<ContributionCategoryFilter>("all")
 
   useEffect(() => {
-    setRows(buildLeaderboardRows(range))
-  }, [range])
+    setRows(buildLeaderboardRows(range, category))
+  }, [range, category])
 
   /**
    * Live-update the roster when another browser tab submits a contribution,
@@ -166,11 +183,11 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
       if (!isContributionLeaderboardLiveUpdateStorageEvent(event)) return
-      setRows(buildLeaderboardRows(range))
+      setRows(buildLeaderboardRows(range, category))
     }
     window.addEventListener("storage", handleStorage)
     return () => window.removeEventListener("storage", handleStorage)
-  }, [range])
+  }, [range, category])
 
   if (rows === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading leaderboard…</div>
@@ -194,15 +211,37 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
     </div>
   )
 
+  const categorySelect = (
+    <div className="space-y-1.5">
+      <Label htmlFor="leaderboard-category">Category</Label>
+      <Select value={category} onValueChange={(value) => setCategory(value as ContributionCategoryFilter)}>
+        <SelectTrigger id="leaderboard-category" className="w-44">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {(Object.keys(CATEGORY_LABELS) as ContributionCategoryFilter[]).map((value) => (
+            <SelectItem key={value} value={value}>
+              {CATEGORY_LABELS[value]}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
+
   if (rows.length === 0) {
+    const isFiltered = range !== "all-time" || category !== "all"
     return (
       <div className="p-4 sm:p-6">
         <h1 className="mb-1 text-xl font-semibold text-foreground">Contribution Leaderboard</h1>
-        <div className="mb-4">{rangeSelect}</div>
+        <div className="mb-4 flex flex-wrap gap-3">
+          {rangeSelect}
+          {categorySelect}
+        </div>
         <div className="p-6 text-center text-sm text-muted-foreground">
-          {range === "all-time"
-            ? "No contributions yet. The leaderboard fills in as contributors submit cards, summaries, and analytics."
-            : `No contributions in ${RANGE_LABELS[range].toLowerCase()}. Try "All time" to see the full roster.`}
+          {isFiltered
+            ? `No ${category === "all" ? "contributions" : CATEGORY_LABELS[category].toLowerCase()} ${range === "all-time" ? "yet" : `in ${RANGE_LABELS[range].toLowerCase()}`}. Try widening the range or category filter to see the full roster.`
+            : "No contributions yet. The leaderboard fills in as contributors submit cards, summaries, and analytics."}
         </div>
       </div>
     )
@@ -226,7 +265,10 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
         </Tooltip>
         — a blend of popularity, quality, and reviewer signals.
       </p>
-      <div className="mb-4">{rangeSelect}</div>
+      <div className="mb-4 flex flex-wrap gap-3">
+        {rangeSelect}
+        {categorySelect}
+      </div>
       {signedInContributorId && (
         <div className="mb-4">
           <Button size="sm" variant="outline" onClick={() => setShowMyActivity((expanded) => !expanded)}>

@@ -25,6 +25,7 @@ import {
   DEFAULT_HELPFULNESS_WEIGHTS,
   computeHelpfulnessBreakdown,
   type CommunityContribution,
+  type ContributionKind,
   type HelpfulnessWeights,
 } from "./community-rating";
 
@@ -112,6 +113,30 @@ export function filterContributionsByRange(
   return contributions.filter(
     (contribution) => contribution.submittedAt !== undefined && isWithinLeaderboardRange(contribution.submittedAt, range, now),
   );
+}
+
+/**
+ * Which contribution `kind` a Contribution Leaderboard reads from —
+ * `"all"` keeps every kind, matching the leaderboard's original unscoped
+ * behavior. Named `ContributionCategoryFilter` rather than reusing
+ * `ContributionKind` directly since `"all"` isn't a real contribution kind,
+ * only a filter value. Closes the "per-category (kind) leaderboards
+ * alongside the overall one" follow-up named under the "Contribution
+ * Leaderboard" bullet in TODO.md's Research Crowdsourcing Organizer
+ * Features section.
+ */
+export type ContributionCategoryFilter = ContributionKind | "all";
+
+/**
+ * Filters attributed contributions down to those whose `kind` matches
+ * `category`. `"all"` returns `contributions` unchanged.
+ */
+export function filterContributionsByKind(
+  contributions: AttributedContribution[],
+  category: ContributionCategoryFilter,
+): AttributedContribution[] {
+  if (category === "all") return contributions;
+  return contributions.filter((contribution) => contribution.kind === category);
 }
 
 /**

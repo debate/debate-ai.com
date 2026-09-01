@@ -48,8 +48,10 @@ import {
 } from "../lib/research-progress";
 import {
   buildLeaderboard,
+  filterContributionsByKind,
   filterContributionsByRange,
   isWithinLeaderboardRange,
+  type ContributionCategoryFilter,
   type ContributorStats,
   type LeaderboardRange,
 } from "../lib/contribution-leaderboard";
@@ -235,17 +237,30 @@ export function listTrackedAssignmentsForTopic(topic: string): TrackedTopicAssig
  * `completedAt`) are narrowed to the same trailing window before scoring, so
  * switching range changes every column consistently. Defaults to
  * `"all-time"`, matching the leaderboard's original unscoped behavior.
+ *
+ * `category` closes the "per-category (kind) leaderboards alongside the
+ * overall one" follow-up named under the same bullet: the contribution list
+ * is further narrowed to `category`'s `kind` (via `filterContributionsByKind`)
+ * before scoring. A routed research task has no contribution `kind` of its
+ * own, so completed-task counts are only folded in for the unscoped `"all"`
+ * category — a kind-scoped board ranks purely on that category's scored
+ * contributions. Defaults to `"all"`, matching the leaderboard's original
+ * unscoped behavior.
  */
 export function buildPersistedLeaderboardWithCompletedTasks(
   weights: HelpfulnessWeights = DEFAULT_HELPFULNESS_WEIGHTS,
   range: LeaderboardRange = "all-time",
   now: number = Date.now(),
+  category: ContributionCategoryFilter = "all",
 ): ContributorStats[] {
   const completedTaskCounts = new Map<string, number>();
-  for (const record of readAll()) {
-    if (!isWithinLeaderboardRange(new Date(record.completedAt).getTime(), range, now)) continue;
-    const contributorId = record.assignment.contributorId;
-    completedTaskCounts.set(contributorId, (completedTaskCounts.get(contributorId) ?? 0) + 1);
+  if (category === "all") {
+    for (const record of readAll()) {
+      if (!isWithinLeaderboardRange(new Date(record.completedAt).getTime(), range, now)) continue;
+      const contributorId = record.assignment.contributorId;
+      completedTaskCounts.set(contributorId, (completedTaskCounts.get(contributorId) ?? 0) + 1);
+    }
   }
-  return buildLeaderboard(filterContributionsByRange(listContributions(), range, now), weights, completedTaskCounts);
+  const contributions = filterContributionsByKind(filterContributionsByRange(listContributions(), range, now), category);
+  return buildLeaderboard(contributions, weights, completedTaskCounts);
 }
