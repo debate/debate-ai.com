@@ -6,6 +6,48 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Judge Decision Modes — inline prompt preview on the Judge Paradigm
+  Picker (idea #5, `judge-paradigm-selections.md` Known gap).** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save flows
+  docs and debates in SQL and link to users... add tools into where needed
+  in the UI... develop better tool UI") — as with every recent repeat, the
+  "user settings / SQL-linked flows, docs, rounds" half is already fully
+  built (a real `/settings` page, D1-backed tables linked to signed-in users
+  for flow edits, documents, rounds, judge decisions, word-count history,
+  speech send-log history, outline filter presets, counsel-panel assessment
+  history, etc.), the CardMirror editor already surfaces every tool via its
+  top `MenuBar` and command palette, and no PR was open, so this slice
+  closed the one remaining Known gap on the Judge Paradigm Picker
+  (`/paradigms`, idea #5's "AI Judge Decision Modes"): the panel let a
+  debater pick and save a round's AI judge paradigm but never showed what
+  that paradigm actually tells the AI judge to do — the "Get AI judge
+  decision →" link only got a user one click closer to a separate panel,
+  not to the prompt itself. Each saved selection in
+  `panels/JudgeParadigmPickerPanel.tsx` now has a "Preview prompt" toggle
+  that expands the exact text `judge/judge-paradigms.ts`'s
+  `buildJudgeParadigmPrompt(selection.paradigm)` returns for that
+  selection — the same text `round/judge-decision-ai.ts` composes into a
+  real AI judge-decision request — plus a "Copy" button
+  (`navigator.clipboard.writeText`, same direct pattern
+  `AiAnalysisSidebar.tsx` in `debate-card-search` already uses) that shows
+  "Copied!" for two seconds and fails silently if clipboard access is
+  denied, since the text is already visible to copy by hand. No new
+  prompt-building logic was introduced — `buildJudgeParadigmPrompt` was
+  already fully Vitest-covered in
+  `packages/debate-speech-writer/test/judge-paradigms.test.ts`, so this is
+  UI wiring only around an already-tested pure function, matching this
+  package's existing convention of leaving purely-local React state/wiring
+  untested (e.g. `useJudgeDecisions`'s panel wiring) while keeping every
+  pure state/logic module covered. See
+  `docs/features/judge-paradigm-selections.md`'s new "Inline prompt
+  preview" section and closed Known gaps entry. Verified: `bun install`
+  (2258 packages), `bun run test` (207 test files, 3391 tests, all
+  passing — including the 235 pre-existing tests in
+  `packages/debate-speech-writer`), `bun run typecheck` (root, all 13
+  typechecked packages), and `bun run build` (the full monorepo build,
+  including `debate-ai-web`'s production build covering `/paradigms`) all
+  pass clean.
 - **AI Response-Outcome Charts — chart export/share action (idea #4).**
   Another repeat of the standing prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL... with ability to save

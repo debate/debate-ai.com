@@ -17,9 +17,26 @@ A form to save a round's paradigm: a round ID, a radio choice among the six
 built-in paradigms (each showing its name and description) or "Custom judge
 paradigm," which reveals a judge-name and preferences-notes field. Below the
 form, every round with a saved `JudgeParadigmSelection` is listed — round ID,
-the paradigm's name, a "Get AI judge decision →" link to `/judge-decision`
-pre-filled with that round's ID (see "AI Judge Decision" under Data flow
-below), and a "Clear" action — sorted by `roundId`.
+the paradigm's name, a "Preview prompt" toggle (see "Inline prompt preview"
+below), a "Get AI judge decision →" link to `/judge-decision` pre-filled with
+that round's ID (see "AI Judge Decision" under Data flow below), and a
+"Clear" action — sorted by `roundId`.
+
+### Inline prompt preview
+
+Closes this doc's own Known gap: the panel used to only get a user one click
+closer to an actual decision, never showing what the paradigm actually tells
+the AI judge to do. Each saved selection's "Preview prompt" button expands an
+inline block (toggled per round, collapsed by default) showing exactly what
+`judge/judge-paradigms.ts`'s `buildJudgeParadigmPrompt(selection.paradigm)`
+returns for that selection — the same text `round/judge-decision-ai.ts`
+composes into a real AI judge-decision request. A "Copy" button next to it
+calls `navigator.clipboard.writeText` directly (the same pattern
+`AiAnalysisSidebar.tsx` in `debate-card-search` already uses), showing
+"Copied!" for two seconds; a denied clipboard permission fails silently since
+the prompt text is already visible to copy by hand. No new prompt-building
+logic was added — this only renders the existing, already Vitest-covered
+`buildJudgeParadigmPrompt` output.
 
 ## Data flow
 
@@ -167,9 +184,8 @@ hooks and their UI (`useWordCountRounds` follows the same pattern).
 
 ## Known gaps
 
-- This panel (`JudgeParadigmPickerPanel.tsx`, at `/paradigms`) still doesn't
-  show the resulting `buildJudgeParadigmPrompt` text inline — the "Get AI
-  judge decision →" link above only gets a user to the separate
-  `JudgeDecisionPanel.tsx`/`PracticeRoundSimulatorPanel.tsx` flows one click
-  closer than typing the round ID a second time, not into an inline preview
-  or the decision itself.
+- No known gaps remain for this idea. The panel now shows the resulting
+  `buildJudgeParadigmPrompt` text inline per saved selection (see "Inline
+  prompt preview" above); the "Get AI judge decision →" link remains the
+  path to an actual decision, since generating one calls the AI proxy and
+  belongs on `JudgeDecisionPanel.tsx`, not this picker.
