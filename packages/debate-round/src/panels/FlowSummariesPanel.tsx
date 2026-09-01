@@ -13,12 +13,13 @@
  * `deleteFlowSummary` — no new summary-derivation logic is introduced here.
  *
  * Also renders a "Generate from raw speech text" form for the same idea's
- * follow-up (a): a round ID, speech label, and pasted transcript are sent
- * to `round/transcript-extraction-client.ts`'s `requestTranscriptExtraction`,
- * and the AI-extracted claim/warrant/impact/evidence arguments are appended
- * to that round's saved flow summary via `round/transcript-extraction-ai.ts`'s
- * `buildFlowRowSummariesFromExtraction`, so an extracted argument renders
- * exactly like one derived from a manually flowed grid.
+ * follow-up (a): a round ID plus one or more speech-label/pasted-transcript
+ * entries are sent to `round/transcript-extraction-client.ts`'s
+ * `requestTranscriptExtraction`, and the AI-extracted claim/warrant/impact/
+ * evidence arguments are appended to that round's saved flow summary via
+ * `round/transcript-extraction-ai.ts`'s `buildFlowRowSummariesFromExtraction`,
+ * so an extracted argument renders exactly like one derived from a manually
+ * flowed grid.
  *
  * A "🎤 Record" button next to the transcript field closes the "recording"
  * half of follow-up (a) — `hooks/useMicrophoneTranscription.ts` dictates
@@ -31,6 +32,16 @@
  * being handed to `suggestCrossExamQuestions`/`suggestExtensionIdeas`, so
  * both lists render strongest-opportunity first, each item tagged with its
  * rank and (when recorded) the underlying row's `evidenceStatus`.
+ *
+ * Closes idea #6's "Bulk transcript upload (multiple speeches at once)
+ * instead of one at a time" follow-up: the extraction form manages a list of
+ * speech/transcript entries (starting with one, extendable via "+ Add
+ * another speech") all submitted together under one Round ID.
+ * `round/bulk-transcript-extraction.ts`'s `extractTranscriptsBulk` runs one
+ * AI extraction per entry, tracking each entry's outcome independently so a
+ * single failed speech doesn't drop the rest, and every successfully
+ * extracted row across the whole batch is saved to the round's flow summary
+ * in one `saveFlowSummary` call.
  *
  * @module panels/FlowSummariesPanel
  */
@@ -56,10 +67,18 @@ import {
   suggestCrossExamQuestions,
   suggestExtensionIdeas,
 } from "../flow/flow-transcript-summary"
-import { buildFlowRowSummariesFromExtraction } from "../round/transcript-extraction-ai"
+import { extractTranscriptsBulk, summarizeBulkTranscriptOutcomes } from "../round/bulk-transcript-extraction"
 import { requestTranscriptExtraction } from "../round/transcript-extraction-client"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
+
+/** One speech/transcript entry in the bulk-extraction form, before trimming/validation. */
+interface ExtractEntryDraft {
+  speech: string
+  transcriptText: string
+}
+
+const EMPTY_EXTRACT_ENTRY: ExtractEntryDraft = { speech: "", transcriptText: "" }
 
 /**
  * Renders the Speech Transcript Summaries panel: every persisted
@@ -71,14 +90,21 @@ import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 export function FlowSummariesPanel() {
   const [records, setRecords] = useState<FlowSummaryRecord[] | null>(null)
   const [extractRoundId, setExtractRoundId] = useState("")
-  const [extractSpeech, setExtractSpeech] = useState("")
-  const [extractTranscriptText, setExtractTranscriptText] = useState("")
+  const [extractEntries, setExtractEntries] = useState<ExtractEntryDraft[]>([{ ...EMPTY_EXTRACT_ENTRY }])
+  const [dictationTargetIndex, setDictationTargetIndex] = useState(0)
   const [extractLoading, setExtractLoading] = useState(false)
   const [extractError, setExtractError] = useState<string | null>(null)
+  const [extractStatus, setExtractStatus] = useState<string | null>(null)
 
   const dictation = useMicrophoneTranscription({
     onSegment: (segment) =>
-      setExtractTranscriptText((prev) => appendDictatedSegment(prev, segment)),
+      setExtractEntries((prev) =>
+        prev.map((entry, index) =>
+          index === dictationTargetIndex
+            ? { ...entry, transcriptText: appendDictatedSegment(entry.transcriptText, segment) }
+            : entry,
+        ),
+      ),
   })
 
   useEffect(() => {
@@ -92,30 +118,66 @@ export function FlowSummariesPanel() {
     refresh()
   }
 
+  const updateEntrySpeech = (index: number, speech: string) =>
+    setExtractEntries((prev) => prev.map((entry, i) => (i === index ? { ...entry, speech } : entry)))
+
+  const updateEntryTranscript = (index: number, transcriptText: string) =>
+    setExtractEntries((prev) => prev.map((entry, i) => (i === index ? { ...entry, transcriptText } : entry)))
+
+  const addExtractEntry = () => setExtractEntries((prev) => [...prev, { ...EMPTY_EXTRACT_ENTRY }])
+
+  const removeExtractEntry = (index: number) =>
+    setExtractEntries((prev) => (prev.length === 1 ? prev : prev.filter((_, i) => i !== index)))
+
+  const toggleDictation = (index: number) => {
+    setDictationTargetIndex(index)
+    if (dictation.isListening && dictationTargetIndex === index) {
+      dictation.stop()
+    } else {
+      dictation.start()
+    }
+  }
+
   const handleExtract = async () => {
     const roundId = extractRoundId.trim()
-    const speech = extractSpeech.trim()
-    const transcriptText = extractTranscriptText.trim()
-    if (!roundId || !speech || !transcriptText) {
-      setExtractError("Round ID, speech, and transcript text are all required.")
+    const trimmedEntries = extractEntries
+      .map((entry) => ({ speech: entry.speech.trim(), transcriptText: entry.transcriptText.trim() }))
+      .filter((entry) => entry.speech && entry.transcriptText)
+
+    if (!roundId || trimmedEntries.length === 0) {
+      setExtractError("Round ID and at least one speech with transcript text are required.")
       return
     }
 
     setExtractLoading(true)
     setExtractError(null)
+    setExtractStatus(null)
     try {
-      const extractedArguments = await requestTranscriptExtraction({ speech, transcriptText })
       const existing = getFlowSummary(roundId)
       const startIndex = existing
         ? existing.summaries.reduce((max, row) => Math.max(max, row.rowIndex + 1), 0)
         : 0
-      const newRows = buildFlowRowSummariesFromExtraction(speech, extractedArguments, startIndex)
-      saveFlowSummary({
-        roundId,
-        summaries: [...(existing?.summaries ?? []), ...newRows],
-      })
-      setExtractSpeech("")
-      setExtractTranscriptText("")
+      const { rows: newRows, outcomes } = await extractTranscriptsBulk(trimmedEntries, startIndex, (entry) =>
+        requestTranscriptExtraction(entry),
+      )
+      if (newRows.length > 0) {
+        saveFlowSummary({
+          roundId,
+          summaries: [...(existing?.summaries ?? []), ...newRows],
+        })
+      }
+      const { extractedCount, errorCount } = summarizeBulkTranscriptOutcomes(outcomes)
+      if (errorCount > 0) {
+        setExtractError(
+          `${errorCount} of ${trimmedEntries.length} speech${trimmedEntries.length === 1 ? "" : "es"} failed to extract` +
+            (extractedCount > 0 ? `; ${extractedCount} succeeded.` : "."),
+        )
+      } else {
+        setExtractStatus(
+          `Extracted ${extractedCount} speech${extractedCount === 1 ? "" : "es"} successfully.`,
+        )
+      }
+      setExtractEntries([{ ...EMPTY_EXTRACT_ENTRY }])
       refresh()
     } catch (e) {
       setExtractError(e instanceof Error ? e.message : "Transcript extraction failed.")
@@ -142,65 +204,95 @@ export function FlowSummariesPanel() {
         <div>
           <h2 className="text-sm font-semibold text-foreground">Generate from raw speech text</h2>
           <p className="text-sm text-muted-foreground">
-            Paste a speech transcript and let AI extract its claims, warrants, impacts, and evidence
-            into this round's flow summary — no manually flowed grid required.
+            Paste one or more speech transcripts and let AI extract each one's claims, warrants,
+            impacts, and evidence into this round's flow summary — no manually flowed grid required.
           </p>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="flow-summaries-extract-round-id">Round ID</Label>
-            <Input
-              id="flow-summaries-extract-round-id"
-              value={extractRoundId}
-              onChange={(e) => setExtractRoundId(e.target.value)}
-              placeholder="round-1"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="flow-summaries-extract-speech">Speech</Label>
-            <Input
-              id="flow-summaries-extract-speech"
-              value={extractSpeech}
-              onChange={(e) => setExtractSpeech(e.target.value)}
-              placeholder="1AC"
-            />
-          </div>
-        </div>
         <div className="space-y-1.5">
-          <div className="flex items-center justify-between gap-2">
-            <Label htmlFor="flow-summaries-extract-transcript">Transcript text</Label>
-            {dictation.isSupported ? (
-              <Button
-                type="button"
-                size="sm"
-                variant={dictation.isListening ? "destructive" : "outline"}
-                onClick={dictation.isListening ? dictation.stop : dictation.start}
-              >
-                {dictation.isListening ? "Stop recording" : "🎤 Record"}
-              </Button>
-            ) : (
-              <span className="text-xs text-muted-foreground">
-                Microphone dictation isn't supported in this browser.
-              </span>
-            )}
-          </div>
-          <Textarea
-            id="flow-summaries-extract-transcript"
-            value={extractTranscriptText}
-            onChange={(e) => setExtractTranscriptText(e.target.value)}
-            placeholder="Paste the speech's text here, or click Record to dictate it…"
-            rows={5}
+          <Label htmlFor="flow-summaries-extract-round-id">Round ID</Label>
+          <Input
+            id="flow-summaries-extract-round-id"
+            value={extractRoundId}
+            onChange={(e) => setExtractRoundId(e.target.value)}
+            placeholder="round-1"
+            className="sm:max-w-xs"
           />
-          {dictation.isListening && (
-            <p className="text-xs text-muted-foreground">Listening… speak now.</p>
-          )}
-          {dictation.error && <p className="text-sm text-destructive">{dictation.error}</p>}
         </div>
+
+        <div className="space-y-3">
+          {extractEntries.map((entry, index) => (
+            <div key={index} className="rounded-md border border-border/60 p-3 space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor={`flow-summaries-extract-speech-${index}`}>
+                  Speech {extractEntries.length > 1 ? index + 1 : ""}
+                </Label>
+                {extractEntries.length > 1 && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => removeExtractEntry(index)}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+              <Input
+                id={`flow-summaries-extract-speech-${index}`}
+                value={entry.speech}
+                onChange={(e) => updateEntrySpeech(index, e.target.value)}
+                placeholder="1AC"
+                className="sm:max-w-xs"
+              />
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <Label htmlFor={`flow-summaries-extract-transcript-${index}`}>Transcript text</Label>
+                  {dictation.isSupported ? (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={dictation.isListening && dictationTargetIndex === index ? "destructive" : "outline"}
+                      onClick={() => toggleDictation(index)}
+                    >
+                      {dictation.isListening && dictationTargetIndex === index ? "Stop recording" : "🎤 Record"}
+                    </Button>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">
+                      Microphone dictation isn't supported in this browser.
+                    </span>
+                  )}
+                </div>
+                <Textarea
+                  id={`flow-summaries-extract-transcript-${index}`}
+                  value={entry.transcriptText}
+                  onChange={(e) => updateEntryTranscript(index, e.target.value)}
+                  placeholder="Paste the speech's text here, or click Record to dictate it…"
+                  rows={5}
+                />
+                {dictation.isListening && dictationTargetIndex === index && (
+                  <p className="text-xs text-muted-foreground">Listening… speak now.</p>
+                )}
+                {dictation.error && dictationTargetIndex === index && (
+                  <p className="text-sm text-destructive">{dictation.error}</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <Button type="button" size="sm" variant="outline" onClick={addExtractEntry}>
+          + Add another speech
+        </Button>
 
         {extractError && <p className="text-sm text-destructive">{extractError}</p>}
+        {extractStatus && !extractError && <p className="text-sm text-muted-foreground">{extractStatus}</p>}
 
         <Button onClick={handleExtract} disabled={extractLoading}>
-          {extractLoading ? "Extracting…" : "Extract with AI"}
+          {extractLoading
+            ? "Extracting…"
+            : extractEntries.length > 1
+              ? `Extract ${extractEntries.length} speeches with AI`
+              : "Extract with AI"}
         </Button>
       </div>
 

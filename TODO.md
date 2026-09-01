@@ -6,6 +6,61 @@
 _No task currently in progress._
 
 ### Completed
+- **Speech Transcript Summaries and Answers — bulk transcript upload (idea
+  #6).** Another repeat of the standing prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL... with ability
+  to save flows docs and debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, speech send-log history, outline filter presets,
+  counsel-panel assessment history, flow annotations, contribution-
+  leaderboard range filters, etc.), every tool is already reachable from the
+  Tools page and CardMirror's command palette, and no PR was open for this
+  idea, so this slice picked idea #6's own first-named follow-up: "Bulk
+  transcript upload (multiple speeches at once) instead of one at a time."
+  `FlowSummariesPanel`'s "Generate from raw speech text" form previously
+  accepted exactly one speech label plus one pasted transcript per "Extract
+  with AI" click; it now manages a list of speech/transcript entries
+  (starting with one, extendable via "+ Add another speech", each
+  independently removable once there's more than one) submitted together
+  under one shared Round ID. A new pure orchestrator,
+  `round/bulk-transcript-extraction.ts#extractTranscriptsBulk`, runs the
+  existing `requestTranscriptExtraction`/`buildFlowRowSummariesFromExtraction`
+  pipeline once per entry sequentially (not `Promise.all`, since each
+  entry's row count must be known before computing the next entry's
+  `rowIndex` offset), tracking each entry's `"extracted" | "error"` outcome
+  independently — keyed by the entry's index — so one failed speech doesn't
+  drop the rest of the batch; `summarizeBulkTranscriptOutcomes` reduces that
+  outcome map into `{ extractedCount, errorCount }` for the panel's single
+  combined status/error message, mirroring `state/bulkRoundSave.ts`'s
+  `BulkSaveOutcome`/`summarizeBulkSaveOutcomes` split (idea #17's own bulk
+  pattern). The panel makes exactly one `saveFlowSummary` call appending
+  every successfully extracted row from the whole batch, not one save per
+  entry, so a round's flow summary is written once regardless of how many
+  speeches were submitted together; blank speech/transcript entries are
+  silently dropped rather than erroring. Microphone dictation (the "🎤
+  Record" button) now targets whichever entry's Record button was last
+  clicked via a new `dictationTargetIndex` state, since each entry carries
+  its own independent transcript textarea — the underlying
+  `useMicrophoneTranscription`/`appendDictatedSegment` wiring is unchanged.
+  See `docs/features/flow-summaries.md`'s new "Bulk transcript upload"
+  section and its updated data-flow diagram. Vitest-covered with 9 new cases
+  in `packages/debate-round/test/bulk-transcript-extraction.test.ts`
+  (`extractTranscriptsBulk`'s empty-entry-list short-circuit, single-entry
+  extraction starting at `startIndex`, `rowIndex` continuing correctly
+  across multiple successful entries in submission order, a failed entry's
+  error recorded without stopping the remaining entries, stringifying a
+  non-`Error` rejection, an all-failing batch contributing no rows; and
+  `summarizeBulkTranscriptOutcomes`'s empty/mixed/all-error outcome-map
+  counts). Verified: `bun install` (2258 packages), the focused test file
+  (9/9 pass), the full `bun run test` (209 test files, 3457 tests, all
+  passing, up from 208/3448), the whole-repo `bun run typecheck` (root, all
+  13 typechecked packages, clean), and a full `bun run build` (the whole
+  monorepo build, including `debate-ai-web`'s production build, which lists
+  `/summaries` among its built routes) all pass clean. **Completed:**
+  2026-09-01.
 - **Outline Filters and Argument Tree View — multi-select rows to
   bulk-apply a tag at once (idea #10).** Another repeat of the standing
   prompt ("integrate all the tools into the UI... create user settings and
@@ -12084,8 +12139,17 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    `flow/flow-transcript-summary.ts`, scoring primarily by `evidenceStatus`
    with thread depth as a tiebreaker), each item tagged with its rank and
    evidence status — see the Completed entry above and
-   `docs/features/flow-summaries.md`'s "Ranking by strength" section. Next:
-   - Bulk transcript upload (multiple speeches at once) instead of one at a time.
+   `docs/features/flow-summaries.md`'s "Ranking by strength" section. The
+   bulk transcript upload follow-up is also now done: the "Generate from raw
+   speech text" form accepts a list of speech/transcript entries (starting
+   with one, extendable via "+ Add another speech") submitted together under
+   one Round ID, extracted sequentially via
+   `round/bulk-transcript-extraction.ts#extractTranscriptsBulk` with each
+   entry's outcome tracked independently so one failed speech doesn't drop
+   the rest, and saved to the round's flow summary in one combined
+   `saveFlowSummary` call — see the Completed entry above and
+   `docs/features/flow-summaries.md`'s "Bulk transcript upload" section.
+   Next:
    - A one-click "send to Prep Notes / Speech Document" action for a
      summary — doesn't map cleanly onto today's data model yet: `PrepNote`
      requires a `flowId`/`boxPath` a `FlowSummaryRecord` doesn't have, and
