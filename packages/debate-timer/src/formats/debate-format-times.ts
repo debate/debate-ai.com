@@ -22,16 +22,20 @@ export const debateStyleMap = [
   "parlimentary",
 ] as const;
 
+/**
+ * Display names, aligned by index with `debateStyleMap` — `debateStyleNames[i]`
+ * is the human-readable label for `debateStyleMap[i]`.
+ */
 export const debateStyleNames = [
   "Public Forum",
+  "Lincoln Douglas",
   "Policy",
-  "Lincoln Douglas", //1
   "College Policy",
   "College LD",
   "Congress",
-  "World Schools", //3
+  "World Schools",
   "Big Questions",
-  "NOF SPAR", //1
+  "NOF SPAR",
   "Parlimentary",
 ];
 

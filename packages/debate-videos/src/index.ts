@@ -6,8 +6,6 @@ export {
   CategoryDockProvider,
   useCategoryDock,
   useCategoryDockState,
-  useCategoryDockSidebarExtra,
-  useCategoryDockSidebarExtraValue,
 } from "./context/category-dock-context";
 export { useVideoPlayerStore, sendYouTubeCommand, videoPlayerIframeRef } from "./state/videoPlayerStore";
 export * from "./types/videos";

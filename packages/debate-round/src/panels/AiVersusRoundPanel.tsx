@@ -44,6 +44,15 @@
  * no transcription pipeline exists" Known gap recorded in
  * `docs/features/ai-versus-rounds.md`.
  *
+ * A "Download transcript" action (shown once a round's `nextSlot` is
+ * `null` — every speech delivered — both on the active round and on any
+ * completed round in the persisted-round list) builds a plain-text
+ * transcript via the pure, Vitest-covered
+ * `round/ai-versus-transcript.ts#buildAiVersusTranscriptText` and saves it
+ * via the same anchor+Blob download pattern `dialogs/FileExportDialog.tsx`
+ * already uses, closing the "a transcript export/download action for a
+ * completed round" follow-up named under idea #3 in TODO.md.
+ *
  * @module panels/AiVersusRoundPanel
  */
 
@@ -55,6 +64,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { Download } from "lucide-react"
 import {
   Select,
   SelectContent,
@@ -78,6 +88,7 @@ import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-spee
 import { getOpponentPersonaForRound } from "../round/opponent-persona-speech-wiring"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
+import { aiVersusTranscriptFilename, buildAiVersusTranscriptText } from "../round/ai-versus-transcript"
 import {
   buildAiVersusRoundsPanelView,
   canRegenerateAiSpeechAt,
@@ -254,6 +265,21 @@ export function AiVersusRoundPanel() {
     }
   }
 
+  /** Mirrors `FileExportDialog.tsx`'s anchor+Blob download pattern. */
+  const handleDownloadTranscript = (record: AiVersusRoundRecord) => {
+    const text = buildAiVersusTranscriptText(record)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = aiVersusTranscriptFilename(record.roundId)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   if (rounds === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading AI-versus rounds…</div>
   }
@@ -364,9 +390,19 @@ export function AiVersusRoundPanel() {
           </div>
 
           {activeStatus.nextSlot === null ? (
-            <p className="text-sm text-muted-foreground">
-              Round complete — every speech has been delivered.
-            </p>
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Round complete — every speech has been delivered.
+              </p>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleDownloadTranscript(activeRecord)}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Download transcript
+              </Button>
+            </div>
           ) : activeStatus.nextSlot.speaker === "ai" ? (
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
@@ -443,6 +479,16 @@ export function AiVersusRoundPanel() {
                     </span>
                   </h2>
                   <div className="flex gap-2">
+                    {status?.nextSlot === null && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDownloadTranscript(round)}
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download transcript
+                      </Button>
+                    )}
                     <Button
                       size="sm"
                       variant="outline"

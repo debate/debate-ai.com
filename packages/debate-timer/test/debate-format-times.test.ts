@@ -17,6 +17,24 @@ describe("debate style registry", () => {
     expect(debateStyleNames.every((name) => name.trim().length > 0)).toBe(true);
   });
 
+  it("aligns each display name with its style key by index", () => {
+    const nameByKey: Record<(typeof debateStyleMap)[number], string> = {
+      publicForum: "Public Forum",
+      lincolnDouglas: "Lincoln Douglas",
+      policy: "Policy",
+      collegePolicy: "College Policy",
+      collegeLD: "College LD",
+      congress: "Congress",
+      worldSchools: "World Schools",
+      bigQuestions: "Big Questions",
+      nofSpar: "NOF SPAR",
+      parlimentary: "Parlimentary",
+    };
+    debateStyleMap.forEach((key, index) => {
+      expect(debateStyleNames[index], key).toBe(nameByKey[key]);
+    });
+  });
+
   it("keeps style keys unique", () => {
     expect(new Set(debateStyleMap).size).toBe(debateStyleMap.length);
   });
