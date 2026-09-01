@@ -160,6 +160,54 @@ describe("ArgumentTagPopover", () => {
     expect(alreadyTagged).not.toContain("Suggested:");
   });
 
+  it("renders a bulk-selection header, row list, and fixed apply notice in bulkMode=selection", () => {
+    const markup = renderToStaticMarkup(
+      <ArgumentTagPopover
+        x={100}
+        y={100}
+        tags={{}}
+        authorIdSuggestions={[]}
+        bulkMode="selection"
+        sectionRows={[
+          { rowIndex: 0, label: "Link", tags: { argumentType: "link" } },
+          { rowIndex: 3, label: "Impact", tags: {} },
+          { rowIndex: 5, label: "Uniqueness", tags: {} },
+        ]}
+        onSave={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(markup).toContain("Tag 3 selected rows");
+    expect(markup).toContain("Selected rows");
+    expect(markup).not.toContain("Other rows in this section");
+    expect(markup).toContain("Link");
+    expect(markup).toContain("Impact");
+    expect(markup).toContain("Uniqueness");
+    expect(markup).toContain("Tags will be applied to all 3 rows above.");
+    expect(markup).not.toContain('type="checkbox"');
+    expect(markup).toContain("Apply to 3 rows");
+    expect(markup).not.toContain("Save tags");
+  });
+
+  it("defaults to section bulkMode when the prop is omitted, unchanged from before", () => {
+    const markup = renderToStaticMarkup(
+      <ArgumentTagPopover
+        x={100}
+        y={100}
+        tags={{}}
+        authorIdSuggestions={[]}
+        sectionRows={[{ rowIndex: 1, label: "Impact", tags: {} }]}
+        onSave={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(markup).toContain("Tag this argument");
+    expect(markup).toContain("Other rows in this section");
+    expect(markup).toContain("Save tags");
+  });
+
   it("clamps its position so it stays inside the viewport", () => {
     const markup = renderToStaticMarkup(
       <ArgumentTagPopover

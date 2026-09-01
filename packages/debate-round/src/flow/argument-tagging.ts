@@ -17,6 +17,13 @@
  * bulk "tag every row in this section" action plus a same-section neighbour
  * preview to `ArgumentTagPopover`, closing the two remaining Known gaps
  * recorded in `docs/features/argument-tree-outline.md`.
+ *
+ * `getRowPreviewsForIndexes` (the row-summarizing core `getSectionRowPreviews`
+ * now delegates to) is also called directly by `FlowSpreadsheet.tsx` to
+ * preview an arbitrary multi-row grid selection — not just a row's
+ * same-section neighbours — for the "tag every selected row at once" bulk
+ * action, closing idea #10's other still-open follow-up ("Multi-select rows
+ * to bulk-apply a tag at once") in `TODO.md`.
  */
 
 import type { ArgumentType, Box, EvidenceStatus, Flow } from "../types/flow";
@@ -166,6 +173,30 @@ export type SectionRowPreview = {
 const PREVIEW_LABEL_MAX_LENGTH = 40;
 
 /**
+ * Builds a {@link SectionRowPreview} for each of `rowIndexes` (in the order
+ * given, after de-duplicating and dropping any index outside `flow.children`)
+ * — the shared row-summarizing step behind both {@link getSectionRowPreviews}
+ * (a row's same-section neighbours) and the flow grid's multi-row-selection
+ * bulk tagging preview (an arbitrary, grid-order set of selected rows), so
+ * both previews truncate and format a row's content identically.
+ */
+export function getRowPreviewsForIndexes(
+  flow: Pick<Flow, "children">,
+  rowIndexes: number[],
+): SectionRowPreview[] {
+  return [...new Set(rowIndexes)]
+    .filter((i) => flow.children[i])
+    .map((i) => {
+      const content = flow.children[i]?.content?.trim() ?? "";
+      const label =
+        content.length > PREVIEW_LABEL_MAX_LENGTH
+          ? `${content.slice(0, PREVIEW_LABEL_MAX_LENGTH)}…`
+          : content;
+      return { rowIndex: i, label, tags: getRowArgumentTags(flow, i) };
+    });
+}
+
+/**
  * Every *other* content row in `rowIndex`'s section (see
  * {@link getSectionRowIndexes}), each with its own content and current tags
  * — what the tagging popover shows so a contributor can see how
@@ -178,16 +209,10 @@ export function getSectionRowPreviews(
   flow: Pick<Flow, "children">,
   rowIndex: number,
 ): SectionRowPreview[] {
-  return getSectionRowIndexes(flow, rowIndex)
-    .filter((i) => i !== rowIndex)
-    .map((i) => {
-      const content = flow.children[i]?.content?.trim() ?? "";
-      const label =
-        content.length > PREVIEW_LABEL_MAX_LENGTH
-          ? `${content.slice(0, PREVIEW_LABEL_MAX_LENGTH)}…`
-          : content;
-      return { rowIndex: i, label, tags: getRowArgumentTags(flow, i) };
-    });
+  return getRowPreviewsForIndexes(
+    flow,
+    getSectionRowIndexes(flow, rowIndex).filter((i) => i !== rowIndex),
+  );
 }
 
 /**

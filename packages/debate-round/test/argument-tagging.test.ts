@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   formatArgumentTags,
   getRowArgumentTags,
+  getRowPreviewsForIndexes,
   getSectionRowIndexes,
   getSectionRowPreviews,
   inferArgumentType,
@@ -227,6 +228,39 @@ describe("getSectionRowPreviews", () => {
     const previews = getSectionRowPreviews(withNeighbour, 1);
     expect(previews).toHaveLength(1);
     expect(previews[0].label).toBe(`${longContent.slice(0, 40)}…`);
+  });
+});
+
+describe("getRowPreviewsForIndexes", () => {
+  it("previews the given rows in the order provided, not row order", () => {
+    const flow = flowWith([
+      rowFromContents(["Link", "", ""], { argumentType: "link" }),
+      rowFromContents(["Impact", "", ""], { argumentType: "impact", authorId: "sam" }),
+      rowFromContents(["Uniqueness", "", ""]),
+    ]);
+
+    expect(getRowPreviewsForIndexes(flow, [2, 0])).toEqual([
+      { rowIndex: 2, label: "Uniqueness", tags: { argumentType: undefined, authorId: undefined, evidenceStatus: undefined } },
+      { rowIndex: 0, label: "Link", tags: { argumentType: "link", authorId: undefined, evidenceStatus: undefined } },
+    ]);
+  });
+
+  it("de-duplicates and drops out-of-range indexes", () => {
+    const flow = flowWith([rowFromContents(["Link", "", ""])]);
+    expect(getRowPreviewsForIndexes(flow, [0, 0, 5])).toEqual([
+      { rowIndex: 0, label: "Link", tags: { argumentType: undefined, authorId: undefined, evidenceStatus: undefined } },
+    ]);
+  });
+
+  it("truncates a long row's content", () => {
+    const longContent = "B".repeat(60);
+    const flow = flowWith([rowFromContents([longContent, "", ""])]);
+    expect(getRowPreviewsForIndexes(flow, [0])[0].label).toBe(`${longContent.slice(0, 40)}…`);
+  });
+
+  it("returns [] for an empty index list", () => {
+    const flow = flowWith([rowFromContents(["Link", "", ""])]);
+    expect(getRowPreviewsForIndexes(flow, [])).toEqual([]);
   });
 });
 
