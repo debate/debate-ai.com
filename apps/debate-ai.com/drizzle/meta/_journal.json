@@ -120,6 +120,13 @@
       "when": 1788176680856,
       "tag": "0016_furry_skrulls",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1788246607527,
+      "tag": "0017_talented_bruce_banner",
+      "breakpoints": true
     }
   ]
 }

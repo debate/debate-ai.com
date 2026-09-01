@@ -3,6 +3,7 @@ import {
   appendSpeechSendLogEntry,
   buildSpeechSendLogEntry,
   buildSpeechSendPreview,
+  isValidSpeechSendLogEntry,
   MAX_SPEECH_SEND_LOG_ENTRIES,
   removeSpeechSendLogEntry,
   sanitizeSpeechSendLog,
@@ -119,5 +120,27 @@ describe("sanitizeSpeechSendLog", () => {
       42,
     ];
     expect(sanitizeSpeechSendLog(raw)).toEqual([good]);
+  });
+});
+
+describe("isValidSpeechSendLogEntry", () => {
+  it("accepts a well-shaped entry", () => {
+    expect(isValidSpeechSendLogEntry(entry("a"))).toBe(true);
+  });
+
+  it("rejects a blank id", () => {
+    expect(isValidSpeechSendLogEntry({ ...entry("a"), id: "  " })).toBe(false);
+  });
+
+  it("rejects missing/wrong-typed fields", () => {
+    expect(isValidSpeechSendLogEntry({ id: "a" })).toBe(false);
+    expect(isValidSpeechSendLogEntry({ ...entry("a"), atEnd: "yes" })).toBe(false);
+    expect(isValidSpeechSendLogEntry({ ...entry("a"), sentAt: "1" })).toBe(false);
+  });
+
+  it("rejects non-objects", () => {
+    expect(isValidSpeechSendLogEntry(null)).toBe(false);
+    expect(isValidSpeechSendLogEntry(undefined)).toBe(false);
+    expect(isValidSpeechSendLogEntry("entry")).toBe(false);
   });
 });
