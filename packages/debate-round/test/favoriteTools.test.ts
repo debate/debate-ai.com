@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_FAVORITE_TOOLS,
+  filterKnownFavoriteTools,
   isValidFavoriteToolsList,
   isValidToolHref,
   MAX_FAVORITE_TOOLS,
@@ -125,6 +126,37 @@ describe("serializeFavoriteTools / parseFavoriteTools", () => {
   it("parses a well-formed JSON value that isn't a valid favorites list as an empty list", () => {
     expect(parseFavoriteTools(JSON.stringify(["not-a-path"]))).toEqual([]);
     expect(parseFavoriteTools(JSON.stringify({ not: "an array" }))).toEqual([]);
+  });
+});
+
+describe("filterKnownFavoriteTools", () => {
+  it("keeps every favorite that's still in validHrefs", () => {
+    const favorites = ["/tools", "/drills"];
+    expect(filterKnownFavoriteTools(favorites, ["/tools", "/drills", "/rank"])).toEqual(favorites);
+  });
+
+  it("drops a favorite no longer present in validHrefs", () => {
+    expect(filterKnownFavoriteTools(["/tools", "/renamed-tool", "/drills"], ["/tools", "/drills"])).toEqual([
+      "/tools",
+      "/drills",
+    ]);
+  });
+
+  it("drops every favorite when none are in validHrefs", () => {
+    expect(filterKnownFavoriteTools(["/gone", "/also-gone"], ["/tools"])).toEqual([]);
+  });
+
+  it("returns an empty list unchanged", () => {
+    expect(filterKnownFavoriteTools([], ["/tools"])).toEqual([]);
+  });
+
+  it("preserves original order", () => {
+    expect(filterKnownFavoriteTools(["/c", "/a", "/b"], ["/a", "/b", "/c"])).toEqual(["/c", "/a", "/b"]);
+  });
+
+  it("returns the same array reference when nothing is pruned", () => {
+    const favorites = ["/tools", "/drills"];
+    expect(filterKnownFavoriteTools(favorites, ["/tools", "/drills"])).toBe(favorites);
   });
 });
 
