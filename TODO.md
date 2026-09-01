@@ -54,6 +54,7 @@ _No task currently in progress._
   `/cards/argument-library` routes). No follow-up is tracked beyond the two
   "Known gaps" noted in the doc (no rename, no direct tag-list edit on a
   saved collection — both need a remove-then-re-save today).
+  PR: [#444](https://github.com/debate/debate-ai.com/pull/444).
 - **Flow-in-Speech Flow Annotations — bulk-export a round's annotations
   (idea #15).** Another repeat of the standing prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL... with
