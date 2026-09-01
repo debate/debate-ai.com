@@ -173,12 +173,17 @@ function WorkspaceLinksContent({
     <>
       {sections.map((section, i) => (
         <div key={section.category ?? `untitled-${i}`}>
-          {i > 0 && <DropdownMenuSeparator />}
-          <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">
+          {i > 0 && <DropdownMenuSeparator className="my-0.5" />}
+          <DropdownMenuLabel className="px-2 py-1 text-[11px] uppercase tracking-wide text-muted-foreground">
             {section.category ?? 'Go to'}
           </DropdownMenuLabel>
           {section.links.map((link) => (
-            <DropdownMenuItem key={link.href} onSelect={() => onNavigate(link.href)} title={link.description}>
+            <DropdownMenuItem
+              key={link.href}
+              onSelect={() => onNavigate(link.href)}
+              title={link.description}
+              className="px-2 py-1"
+            >
               {link.label}
             </DropdownMenuItem>
           ))}
@@ -261,15 +266,17 @@ function CategoryContent({
     <>
       {entries.map((section, i) => (
         <div key={section.sectionTitle}>
-          {i > 0 && <DropdownMenuSeparator />}
-          <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">
+          {i > 0 && <DropdownMenuSeparator className="my-0.5" />}
+          <DropdownMenuLabel className="px-2 py-1 text-[11px] uppercase tracking-wide text-muted-foreground">
             {section.sectionTitle}
           </DropdownMenuLabel>
           {section.items.length === 0 ? (
-            <DropdownMenuItem disabled>No commands available</DropdownMenuItem>
+            <DropdownMenuItem disabled className="px-2 py-1">
+              No commands available
+            </DropdownMenuItem>
           ) : (
             section.items.map((item) => (
-              <DropdownMenuItem key={item.id} onSelect={() => onRun(item.id)}>
+              <DropdownMenuItem key={item.id} onSelect={() => onRun(item.id)} className="px-2 py-1">
                 {item.label}
                 {item.shortcut && <DropdownMenuShortcut>{item.shortcut}</DropdownMenuShortcut>}
               </DropdownMenuItem>
