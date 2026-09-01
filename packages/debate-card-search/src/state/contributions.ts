@@ -41,6 +41,15 @@
  * `ContributionsFeedPanel`'s moderator toggle has a dedicated, testable
  * filter to call rather than re-deriving the predicate inline.
  *
+ * `listEndorsementsByContributor` closes idea #11's "An endorsement history
+ * list per contributor" follow-up in TODO.md. `recordPersistedEndorsement`/
+ * `recordPersistedEndorsementFromReviewer` now stamp each `ReviewerEndorsement`
+ * with the endorsing `reviewerId` and an `endorsedAt` timestamp (both
+ * optional on the type, so pre-existing weight-only endorsements and test
+ * fixtures still typecheck), which this new lookup reads back out — either a
+ * contributor's received endorsements (on their own contributions) or their
+ * given ones (as a reviewer), newest first.
+ *
  * @module state/contributions
  */
 
@@ -148,12 +157,19 @@ export function recordPersistedSave(id: string): AttributedContribution | undefi
 
 /**
  * Records a reviewer endorsement on a stored contribution — appends a
- * `ReviewerEndorsement` carrying `reviewerWeight` to its
- * `reviewerEndorsements` and saves the result. Returns the updated
- * contribution, or `undefined` if no contribution is stored for `id`.
+ * `ReviewerEndorsement` carrying `reviewerWeight`, `reviewerId`, and
+ * `endorsedAt` to its `reviewerEndorsements` and saves the result. Returns
+ * the updated contribution, or `undefined` if no contribution is stored for
+ * `id`. `endorsedAt` defaults to the current time; a caller only needs to
+ * pass it explicitly in a test.
  */
-export function recordPersistedEndorsement(id: string, reviewerWeight: number): AttributedContribution | undefined {
-  const endorsement: ReviewerEndorsement = { reviewerWeight };
+export function recordPersistedEndorsement(
+  id: string,
+  reviewerWeight: number,
+  reviewerId: string,
+  endorsedAt: number = Date.now(),
+): AttributedContribution | undefined {
+  const endorsement: ReviewerEndorsement = { reviewerWeight, reviewerId, endorsedAt };
   return applyPersistedContributionUpdate(id, (contribution) => ({
     ...contribution,
     reviewerEndorsements: [...contribution.reviewerEndorsements, endorsement],
@@ -176,7 +192,59 @@ export function recordPersistedEndorsementFromReviewer(
   reviewerId: string,
 ): AttributedContribution | undefined {
   const reviewerWeight = computeReviewerCredibility(listContributionsByContributor(reviewerId));
-  return recordPersistedEndorsement(id, reviewerWeight);
+  return recordPersistedEndorsement(id, reviewerWeight, reviewerId);
+}
+
+/** Which side of an endorsement a `listEndorsementsByContributor` query looks at. */
+export type EndorsementHistoryDirection = "received" | "given";
+
+/** One entry in a contributor's endorsement history — either one they received or one they gave. */
+export interface ContributorEndorsementHistoryEntry {
+  contributionId: string;
+  contributionKind: ContributionKind;
+  /** The endorsed contribution's own contributor — the endorsement's recipient. */
+  contributionContributorId: string;
+  reviewerId: string;
+  reviewerWeight: number;
+  endorsedAt: number;
+}
+
+/**
+ * Lists `contributorId`'s endorsement history — the idea #11 follow-up in
+ * TODO.md ("An endorsement history list per contributor") under "Community-
+ * Rated Summaries and Highlights". `direction: "received"` lists
+ * endorsements on `contributorId`'s own contributions (from any reviewer);
+ * `direction: "given"` lists endorsements `contributorId` made as a
+ * reviewer, across every contributor's contributions. Newest first. Only
+ * endorsements carrying both `reviewerId` and `endorsedAt` are included —
+ * an endorsement recorded before those fields existed (or a raw
+ * weight-only fixture) has no identity to attribute a history entry to.
+ */
+export function listEndorsementsByContributor(
+  contributorId: string,
+  direction: EndorsementHistoryDirection,
+): ContributorEndorsementHistoryEntry[] {
+  const entries: ContributorEndorsementHistoryEntry[] = [];
+  for (const contribution of readAll()) {
+    for (const endorsement of contribution.reviewerEndorsements) {
+      if (!endorsement.reviewerId || endorsement.endorsedAt === undefined) continue;
+      const matches =
+        direction === "received"
+          ? contribution.contributorId === contributorId
+          : endorsement.reviewerId === contributorId;
+      if (!matches) continue;
+
+      entries.push({
+        contributionId: contribution.id,
+        contributionKind: contribution.kind,
+        contributionContributorId: contribution.contributorId,
+        reviewerId: endorsement.reviewerId,
+        reviewerWeight: endorsement.reviewerWeight,
+        endorsedAt: endorsement.endorsedAt,
+      });
+    }
+  }
+  return entries.sort((a, b) => b.endorsedAt - a.endorsedAt);
 }
 
 /**

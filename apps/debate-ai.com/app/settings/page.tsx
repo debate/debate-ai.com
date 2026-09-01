@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react"
 import { UserSettingsPanel, WordLimitPresetsPanel } from "debate-round"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "debate-ui/src/primitives/tabs"
 import { FavoriteToolsSettings } from "@/components/settings/FavoriteToolsSettings"
-import { EditorPreferencesPanel } from "@/components/settings/EditorPreferencesPanel"
+import { EditorPreferencesPanel } from "debate-settings"
 import { EbbFlowPreferencesPanel } from "@/components/settings/EbbFlowPreferencesPanel"
 
 export const metadata: Metadata = {
