@@ -5,17 +5,22 @@ import { userSettings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import {
   DEFAULT_FAVORITE_TOOLS,
+  DEFAULT_OUTLINE_FILTER_PRESETS,
   DEFAULT_THEME_SETTINGS,
   DEFAULT_USER_SETTINGS,
   DEFAULT_WORD_LIMIT_PRESETS,
   normalizeFavoriteToolsPatch,
+  normalizeOutlineFilterPresetsPatch,
   normalizeThemeSettingsPatch,
   normalizeUserSettingsPatch,
   normalizeWordLimitPresetsPatch,
   parseFavoriteTools,
+  parseOutlineFilterPresets,
   parseWordLimitPresets,
   serializeFavoriteTools,
+  serializeOutlineFilterPresets,
   serializeWordLimitPresets,
+  type OutlineFilterPreset,
   type ThemeMode,
   type UserSettingsPayload,
 } from "debate-round"
@@ -51,10 +56,11 @@ import {
  * GET  — the current user's saved settings, or the matching `DEFAULT_*`
  *   value for any field with no saved row/value yet.
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
- *   wordLimitPresets?, newsRead?, newsLiked? } — validates and upserts the
- *   given fields (validated by `debate-round`'s `normalizeUserSettingsPatch`/
- *   `normalizeThemeSettingsPatch`/`normalizeFavoriteToolsPatch`/
- *   `normalizeWordLimitPresetsPatch` and `debate-card-search`'s
+ *   wordLimitPresets?, outlineFilterPresets?, newsRead?, newsLiked? } —
+ *   validates and upserts the given fields (validated by `debate-round`'s
+ *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
+ *   `normalizeFavoriteToolsPatch`/`normalizeWordLimitPresetsPatch`/
+ *   `normalizeOutlineFilterPresetsPatch` and `debate-card-search`'s
  *   `normalizeNewsSyncPatch`, the same option lists/shape the picker,
  *   favorite-star, word-limit-preset-manager, and News Stream UIs
  *   themselves use), returning the resulting full settings row.
@@ -70,6 +76,7 @@ type SettingsRow = {
   newsRead: string | null
   newsLiked: string | null
   wordLimitPresets: string | null
+  outlineFilterPresets: string | null
 }
 
 type SettingsPayload = UserSettingsPayload & {
@@ -80,6 +87,7 @@ type SettingsPayload = UserSettingsPayload & {
   newsRead: string[]
   newsLiked: string[]
   wordLimitPresets: { name: string; wordLimit: number }[]
+  outlineFilterPresets: OutlineFilterPreset[]
 }
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
@@ -95,6 +103,9 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     wordLimitPresets: row?.wordLimitPresets
       ? parseWordLimitPresets(row.wordLimitPresets)
       : DEFAULT_WORD_LIMIT_PRESETS.wordLimitPresets,
+    outlineFilterPresets: row?.outlineFilterPresets
+      ? parseOutlineFilterPresets(row.outlineFilterPresets)
+      : DEFAULT_OUTLINE_FILTER_PRESETS.outlineFilterPresets,
   }
 }
 
@@ -127,6 +138,7 @@ export async function PUT(req: NextRequest) {
   const themeSettingsResult = normalizeThemeSettingsPatch(body)
   const favoriteToolsResult = normalizeFavoriteToolsPatch(body)
   const wordLimitPresetsResult = normalizeWordLimitPresetsPatch(body)
+  const outlineFilterPresetsResult = normalizeOutlineFilterPresetsPatch(body)
   const newsSyncResult = normalizeNewsSyncPatch(body)
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
     (body as { editorPreferences?: unknown } | null)?.editorPreferences,
@@ -137,6 +149,7 @@ export async function PUT(req: NextRequest) {
     ...themeSettingsResult.errors,
     ...favoriteToolsResult.errors,
     ...wordLimitPresetsResult.errors,
+    ...outlineFilterPresetsResult.errors,
     ...newsSyncResult.errors,
     ...editorPreferencesResult.errors,
   ]
@@ -148,13 +161,14 @@ export async function PUT(req: NextRequest) {
     Object.keys(valid).length === 0 &&
     favoriteToolsResult.valid.favoriteTools === undefined &&
     wordLimitPresetsResult.valid.wordLimitPresets === undefined &&
+    outlineFilterPresetsResult.valid.outlineFilterPresets === undefined &&
     Object.keys(newsSyncResult.valid).length === 0 &&
     Object.keys(editorPreferencesResult.valid).length === 0
   ) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, wordLimitPresets, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, wordLimitPresets, outlineFilterPresets, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -172,9 +186,13 @@ export async function PUT(req: NextRequest) {
     newsRead?: string | null
     newsLiked?: string | null
     wordLimitPresets?: string | null
+    outlineFilterPresets?: string | null
   } = { ...valid }
   if (favoriteToolsResult.valid.favoriteTools !== undefined) {
     dbPatch.favoriteTools = serializeFavoriteTools(favoriteToolsResult.valid.favoriteTools)
+  }
+  if (outlineFilterPresetsResult.valid.outlineFilterPresets !== undefined) {
+    dbPatch.outlineFilterPresets = serializeOutlineFilterPresets(outlineFilterPresetsResult.valid.outlineFilterPresets)
   }
   if (wordLimitPresetsResult.valid.wordLimitPresets !== undefined) {
     dbPatch.wordLimitPresets = serializeWordLimitPresets(wordLimitPresetsResult.valid.wordLimitPresets)

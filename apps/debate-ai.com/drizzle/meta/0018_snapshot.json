@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "1714e90d-5142-4560-8af6-abd69e20f953",
-  "prevId": "e01b18e4-c26f-4efe-997e-e1c0fa646374",
+  "id": "bbfb90c8-f476-41cc-adff-fd1619ce6dfa",
+  "prevId": "1714e90d-5142-4560-8af6-abd69e20f953",
   "tables": {
     "account": {
       "name": "account",
@@ -619,6 +619,90 @@
         "saved_rounds_user_id_user_id_fk": {
           "name": "saved_rounds_user_id_user_id_fk",
           "tableFrom": "saved_rounds",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "saved_speech_send_log": {
+      "name": "saved_speech_send_log",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "client_id": {
+          "name": "client_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "data": {
+          "name": "data",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        }
+      },
+      "indexes": {
+        "idx_saved_speech_send_log_user_id": {
+          "name": "idx_saved_speech_send_log_user_id",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        },
+        "idx_saved_speech_send_log_user_client": {
+          "name": "idx_saved_speech_send_log_user_client",
+          "columns": [
+            "user_id",
+            "client_id"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "saved_speech_send_log_user_id_user_id_fk": {
+          "name": "saved_speech_send_log_user_id_user_id_fk",
+          "tableFrom": "saved_speech_send_log",
           "tableTo": "user",
           "columnsFrom": [
             "user_id"

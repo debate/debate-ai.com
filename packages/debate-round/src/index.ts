@@ -9,6 +9,8 @@ export * from "./state/themeSettings";
 export * from "./state/favoriteTools";
 export * from "./state/wordLimitPresets";
 export * from "./hooks/useWordLimitPresets";
+export * from "./state/outlineFilterPresets";
+export * from "./hooks/useOutlineFilterPresets";
 export * from "./round/user-settings-client";
 export * from "./state/savedFlows";
 export * from "./state/savedRounds";
