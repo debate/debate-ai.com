@@ -33,6 +33,8 @@ class MemoryStorage {
   }
 }
 
+const NOW = Date.UTC(2026, 0, 1);
+
 const BRIEFING_A: PreRoundBriefingRecord = {
   roundId: "round-1",
   briefing: {
@@ -80,16 +82,19 @@ describe("listPreRoundBriefings", () => {
   });
 
   it("lists every saved briefing", () => {
-    savePreRoundBriefing(BRIEFING_A);
-    savePreRoundBriefing(BRIEFING_B);
-    expect(listPreRoundBriefings()).toEqual([BRIEFING_A, BRIEFING_B]);
+    savePreRoundBriefing(BRIEFING_A, NOW);
+    savePreRoundBriefing(BRIEFING_B, NOW);
+    expect(listPreRoundBriefings()).toEqual([
+      { ...BRIEFING_A, updatedAt: NOW },
+      { ...BRIEFING_B, updatedAt: NOW },
+    ]);
   });
 });
 
 describe("getPreRoundBriefing", () => {
   it("finds a saved briefing by roundId", () => {
-    savePreRoundBriefing(BRIEFING_A);
-    expect(getPreRoundBriefing("round-1")).toEqual(BRIEFING_A);
+    savePreRoundBriefing(BRIEFING_A, NOW);
+    expect(getPreRoundBriefing("round-1")).toEqual({ ...BRIEFING_A, updatedAt: NOW });
   });
 
   it("returns undefined for a roundId that isn't stored", () => {
@@ -99,32 +104,48 @@ describe("getPreRoundBriefing", () => {
 
 describe("savePreRoundBriefing", () => {
   it("upserts — saving an existing roundId overwrites rather than duplicating it", () => {
-    savePreRoundBriefing(BRIEFING_A);
+    savePreRoundBriefing(BRIEFING_A, NOW);
     const updated: PreRoundBriefingRecord = {
       ...BRIEFING_A,
       briefing: { ...BRIEFING_A.briefing, priorMeetings: { meetings: 2, wins: 1, losses: 1 } },
     };
-    savePreRoundBriefing(updated);
+    const laterNow = NOW + 60_000;
+    savePreRoundBriefing(updated, laterNow);
 
-    expect(listPreRoundBriefings()).toEqual([updated]);
-    expect(getPreRoundBriefing("round-1")).toEqual(updated);
+    expect(listPreRoundBriefings()).toEqual([{ ...updated, updatedAt: laterNow }]);
+    expect(getPreRoundBriefing("round-1")).toEqual({ ...updated, updatedAt: laterNow });
+  });
+
+  it("stamps updatedAt with the current time by default", () => {
+    const before = Date.now();
+    savePreRoundBriefing(BRIEFING_A);
+    const after = Date.now();
+
+    const stored = getPreRoundBriefing("round-1");
+    expect(stored?.updatedAt).toBeGreaterThanOrEqual(before);
+    expect(stored?.updatedAt).toBeLessThanOrEqual(after);
+  });
+
+  it("ignores any updatedAt already present on the passed-in record", () => {
+    savePreRoundBriefing({ ...BRIEFING_A, updatedAt: 1 }, NOW);
+    expect(getPreRoundBriefing("round-1")?.updatedAt).toBe(NOW);
   });
 });
 
 describe("deletePreRoundBriefing", () => {
   it("removes a stored briefing by roundId", () => {
-    savePreRoundBriefing(BRIEFING_A);
-    savePreRoundBriefing(BRIEFING_B);
+    savePreRoundBriefing(BRIEFING_A, NOW);
+    savePreRoundBriefing(BRIEFING_B, NOW);
     deletePreRoundBriefing("round-1");
 
-    expect(listPreRoundBriefings()).toEqual([BRIEFING_B]);
+    expect(listPreRoundBriefings()).toEqual([{ ...BRIEFING_B, updatedAt: NOW }]);
     expect(getPreRoundBriefing("round-1")).toBeUndefined();
   });
 
   it("is a no-op when the roundId isn't stored", () => {
-    savePreRoundBriefing(BRIEFING_B);
+    savePreRoundBriefing(BRIEFING_B, NOW);
     deletePreRoundBriefing("missing");
-    expect(listPreRoundBriefings()).toEqual([BRIEFING_B]);
+    expect(listPreRoundBriefings()).toEqual([{ ...BRIEFING_B, updatedAt: NOW }]);
   });
 });
 
@@ -134,16 +155,22 @@ describe("buildPreRoundBriefingsPanelView", () => {
   });
 
   it("sorts every persisted briefing by roundId", () => {
-    savePreRoundBriefing(BRIEFING_B);
-    savePreRoundBriefing(BRIEFING_A);
-    expect(buildPreRoundBriefingsPanelView()).toEqual([BRIEFING_A, BRIEFING_B]);
+    savePreRoundBriefing(BRIEFING_B, NOW);
+    savePreRoundBriefing(BRIEFING_A, NOW);
+    expect(buildPreRoundBriefingsPanelView()).toEqual([
+      { ...BRIEFING_A, updatedAt: NOW },
+      { ...BRIEFING_B, updatedAt: NOW },
+    ]);
   });
 
   it("does not mutate the underlying stored order", () => {
-    savePreRoundBriefing(BRIEFING_B);
-    savePreRoundBriefing(BRIEFING_A);
+    savePreRoundBriefing(BRIEFING_B, NOW);
+    savePreRoundBriefing(BRIEFING_A, NOW);
     buildPreRoundBriefingsPanelView();
-    expect(listPreRoundBriefings()).toEqual([BRIEFING_B, BRIEFING_A]);
+    expect(listPreRoundBriefings()).toEqual([
+      { ...BRIEFING_B, updatedAt: NOW },
+      { ...BRIEFING_A, updatedAt: NOW },
+    ]);
   });
 });
 

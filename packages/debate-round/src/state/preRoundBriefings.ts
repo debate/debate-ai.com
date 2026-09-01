@@ -16,6 +16,17 @@ import type { PreRoundBriefing } from "../round/pre-round-briefing";
 export type PreRoundBriefingRecord = {
   roundId: string;
   briefing: PreRoundBriefing;
+  /**
+   * Epoch-ms timestamp of when this record was last saved, stamped by
+   * `savePreRoundBriefing` itself (a caller-supplied value is ignored, so
+   * every save reflects when it actually happened). Optional so a record
+   * persisted before this field existed still deserializes —
+   * `round/pre-round-briefing.ts#getBriefingAgeHours`/`isBriefingStale`
+   * simply report no age for those. Powers the "last updated" freshness
+   * indicator named as a follow-up under idea #12 ("Pre-Round Intelligence
+   * Panel") in TODO.md.
+   */
+  updatedAt?: number;
 };
 
 const STORAGE_KEY = "preRoundBriefings";
@@ -47,14 +58,20 @@ export function getPreRoundBriefing(roundId: string): PreRoundBriefingRecord | u
   return readAll().find((record) => record.roundId === roundId);
 }
 
-/** Saves a round's briefing, overwriting any existing record for that `roundId`. */
-export function savePreRoundBriefing(record: PreRoundBriefingRecord): void {
+/**
+ * Saves a round's briefing, overwriting any existing record for that
+ * `roundId`. Stamps `updatedAt` with `now` (defaulting to `Date.now()`),
+ * overwriting whatever `record.updatedAt` was passed in — a save always
+ * reflects when it actually happened.
+ */
+export function savePreRoundBriefing(record: PreRoundBriefingRecord, now: number = Date.now()): void {
+  const stamped: PreRoundBriefingRecord = { ...record, updatedAt: now };
   const records = readAll();
-  const index = records.findIndex((existing) => existing.roundId === record.roundId);
+  const index = records.findIndex((existing) => existing.roundId === stamped.roundId);
   if (index === -1) {
-    records.push(record);
+    records.push(stamped);
   } else {
-    records[index] = record;
+    records[index] = stamped;
   }
   writeAll(records);
 }

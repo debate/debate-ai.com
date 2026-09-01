@@ -9,7 +9,10 @@ import {
   buildPreRoundBriefing,
   buildPreRoundBriefingFromStores,
   buildPreRoundBriefingText,
+  getBriefingAgeHours,
+  isBriefingStale,
   preRoundBriefingFilename,
+  STALE_BRIEFING_THRESHOLD_HOURS,
   summarizePriorMeetings,
   type RoundEventInfo,
 } from "../src/round/pre-round-briefing";
@@ -357,5 +360,58 @@ describe("preRoundBriefingFilename", () => {
 
   it("falls back to a generic name when the round id has no alphanumeric characters", () => {
     expect(preRoundBriefingFilename("###")).toBe("pre-round-briefing-round.txt");
+  });
+});
+
+const HOUR_MS = 60 * 60 * 1000;
+
+describe("getBriefingAgeHours", () => {
+  it("returns undefined when updatedAt isn't set", () => {
+    expect(getBriefingAgeHours(undefined)).toBeUndefined();
+  });
+
+  it("returns 0 for a briefing saved just now", () => {
+    const now = 1_700_000_000_000;
+    expect(getBriefingAgeHours(now, now)).toBe(0);
+  });
+
+  it("floors to whole hours", () => {
+    const now = 1_700_000_000_000;
+    const updatedAt = now - HOUR_MS * 3.9;
+    expect(getBriefingAgeHours(updatedAt, now)).toBe(3);
+  });
+
+  it("never returns a negative age when updatedAt is in the future", () => {
+    const now = 1_700_000_000_000;
+    expect(getBriefingAgeHours(now + HOUR_MS, now)).toBe(0);
+  });
+});
+
+describe("isBriefingStale", () => {
+  const now = 1_700_000_000_000;
+
+  it("is never stale when updatedAt isn't set", () => {
+    expect(isBriefingStale(undefined, now)).toBe(false);
+  });
+
+  it("is not stale just under the threshold", () => {
+    const updatedAt = now - (STALE_BRIEFING_THRESHOLD_HOURS * HOUR_MS - 1);
+    expect(isBriefingStale(updatedAt, now)).toBe(false);
+  });
+
+  it("is stale at exactly the threshold", () => {
+    const updatedAt = now - STALE_BRIEFING_THRESHOLD_HOURS * HOUR_MS;
+    expect(isBriefingStale(updatedAt, now)).toBe(true);
+  });
+
+  it("is stale well past the threshold", () => {
+    const updatedAt = now - STALE_BRIEFING_THRESHOLD_HOURS * HOUR_MS * 3;
+    expect(isBriefingStale(updatedAt, now)).toBe(true);
+  });
+
+  it("honors a custom threshold", () => {
+    const updatedAt = now - HOUR_MS * 2;
+    expect(isBriefingStale(updatedAt, now, 1)).toBe(true);
+    expect(isBriefingStale(updatedAt, now, 3)).toBe(false);
   });
 });

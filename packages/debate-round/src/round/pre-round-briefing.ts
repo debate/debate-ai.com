@@ -36,6 +36,13 @@
  * plain-text download, the same anchor+Blob pattern every other completed
  * "export/download" follow-up in this repo already uses (e.g.
  * `ai-versus-transcript.ts`, `response-outcome-report.ts`).
+ *
+ * `getBriefingAgeHours`/`isBriefingStale` close idea #12's "a 'last updated'
+ * freshness indicator so a stale briefing is obvious" follow-up, mirroring
+ * `debate-card-search`'s `peer-review.ts#getReviewAgeDays`/`isReviewStale`
+ * review-aging pattern: a pure, `now`-injectable age computation over
+ * `state/preRoundBriefings.ts`'s `PreRoundBriefingRecord.updatedAt`, which
+ * `savePreRoundBriefing` stamps on every save.
  */
 
 import type {
@@ -216,4 +223,37 @@ export function preRoundBriefingFilename(roundId: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
   return `pre-round-briefing-${safeId || "round"}.txt`;
+}
+
+/** Hours a briefing can go unsaved before the panel's freshness badge flags it stale — pre-round facts like room assignments, lineups, or scouting notes can shift within a single tournament day. */
+export const STALE_BRIEFING_THRESHOLD_HOURS = 24;
+
+const MS_PER_HOUR = 60 * 60 * 1000;
+
+/**
+ * How many whole hours it's been since a briefing was last saved, or
+ * `undefined` if `updatedAt` isn't set (a briefing persisted before that
+ * field existed). Powers the "last updated" freshness indicator named as a
+ * follow-up under idea #12 ("Pre-Round Intelligence Panel") in TODO.md.
+ */
+export function getBriefingAgeHours(
+  updatedAt: number | undefined,
+  now: number = Date.now(),
+): number | undefined {
+  if (updatedAt === undefined) return undefined;
+  return Math.max(0, Math.floor((now - updatedAt) / MS_PER_HOUR));
+}
+
+/**
+ * Whether a briefing hasn't been saved in at least `thresholdHours`. A
+ * briefing with no `updatedAt` is never flagged stale — there's no age to
+ * compare.
+ */
+export function isBriefingStale(
+  updatedAt: number | undefined,
+  now: number = Date.now(),
+  thresholdHours: number = STALE_BRIEFING_THRESHOLD_HOURS,
+): boolean {
+  const age = getBriefingAgeHours(updatedAt, now);
+  return age !== undefined && age >= thresholdHours;
 }
