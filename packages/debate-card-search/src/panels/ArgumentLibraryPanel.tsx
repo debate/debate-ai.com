@@ -34,6 +34,13 @@
  * carried by the most cards, reusing the same
  * `renameTagAcrossCombinedPersistedStores` call the manual form uses.
  *
+ * A "Saved collections" bar closes the "saved custom collections per user"
+ * follow-up named under this bullet in TODO.md: `hooks/useSavedArgumentCollections.ts`
+ * lets a user save the current tag-filter selection (`activeTags`) under a
+ * name and reapply it later, account-synced the same way
+ * `outlineFilterPresets` is (a `savedArgumentCollections` `/api/settings`
+ * field).
+ *
  * @module panels/ArgumentLibraryPanel
  */
 
@@ -51,6 +58,7 @@ import {
 } from "../state/evidenceLibraryEntries"
 import { buildLibrarySummaryText, filterCardsByTags, findTagCaseVariantGroups } from "../lib/argument-library"
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
+import { useSavedArgumentCollections } from "../hooks/useSavedArgumentCollections"
 
 /**
  * Renders the Common Argument Library: every persisted evidence entry
@@ -66,6 +74,9 @@ export function ArgumentLibraryPanel() {
   const [renameOldTag, setRenameOldTag] = useState("")
   const [renameNewTag, setRenameNewTag] = useState("")
   const [renameMessage, setRenameMessage] = useState<string | null>(null)
+  const [newCollectionName, setNewCollectionName] = useState("")
+  const [collectionMessage, setCollectionMessage] = useState<string | null>(null)
+  const { collections, addCollection, removeCollection } = useSavedArgumentCollections()
 
   useEffect(() => {
     setLibrary(buildCombinedPersistedArgumentLibrary())
@@ -117,6 +128,16 @@ export function ArgumentLibraryPanel() {
     )
   }
 
+  function handleSaveCollection() {
+    const name = newCollectionName.trim()
+    if (!name || activeTags.length === 0) return
+    const saved = addCollection(name, activeTags)
+    setCollectionMessage(
+      saved ? `Saved "${name}" (${activeTags.length} tag${activeTags.length === 1 ? "" : "s"}).` : `A collection named "${name}" already exists.`,
+    )
+    if (saved) setNewCollectionName("")
+  }
+
   const allCards = library.topicFolders.flatMap((folder) =>
     folder.caseAreas.flatMap((group) => group.cards),
   )
@@ -147,6 +168,65 @@ export function ArgumentLibraryPanel() {
               Clear filter
             </Button>
           )}
+        </div>
+      )}
+
+      {library.tagCollections.length > 0 && (
+        <div className="rounded-lg border border-border p-3 space-y-2">
+          <div className="text-sm font-medium text-foreground">Saved collections</div>
+          <p className="text-xs text-muted-foreground">
+            Save the current tag selection under a name to reapply it later, synced to your account
+            when signed in.
+          </p>
+          {collections.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              {collections.map((collection) => (
+                <div key={collection.name} className="flex items-center gap-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setActiveTags(collection.tags)}
+                    title={collection.tags.join(", ")}
+                  >
+                    {collection.name} ({collection.tags.length})
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    aria-label={`Remove saved collection "${collection.name}"`}
+                    onClick={() => removeCollection(collection.name)}
+                  >
+                    ✕
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex flex-wrap items-end gap-2">
+            <div>
+              <Label htmlFor="save-collection-name" className="text-xs">
+                Save current selection as
+              </Label>
+              <Input
+                id="save-collection-name"
+                value={newCollectionName}
+                onChange={(e) => setNewCollectionName(e.target.value)}
+                placeholder="Collection name"
+                className="h-9"
+              />
+            </div>
+            <Button
+              size="sm"
+              disabled={!newCollectionName.trim() || activeTags.length === 0}
+              onClick={handleSaveCollection}
+            >
+              Save collection
+            </Button>
+          </div>
+          {activeTags.length === 0 && (
+            <p className="text-xs text-muted-foreground">Select at least one tag above to save a collection.</p>
+          )}
+          {collectionMessage && <p className="text-xs text-muted-foreground">{collectionMessage}</p>}
         </div>
       )}
 

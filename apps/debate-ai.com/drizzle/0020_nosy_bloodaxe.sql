@@ -1,0 +1,1 @@
+ALTER TABLE `user_settings` ADD `saved_argument_collections` text;

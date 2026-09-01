@@ -177,6 +177,13 @@ export const userSettings = sqliteTable("user_settings", {
   // re-picking filters each visit" follow-up). Null/absent means "no
   // presets saved yet", same semantics as every other nullable column here.
   outlineFilterPresets: text("outline_filter_presets"),
+  // JSON-serialized array of `{ name, tags }` named Argument Library
+  // collections (see
+  // packages/debate-card-search/src/lib/argument-library-collections.ts and
+  // TODO.md's "📚 Common Argument Library" bullet's "saved custom
+  // collections per user" follow-up). Null/absent means "no collections
+  // saved yet", same semantics as every other nullable column here.
+  savedArgumentCollections: text("saved_argument_collections"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),

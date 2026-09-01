@@ -6,6 +6,54 @@
 _No task currently in progress._
 
 ### Completed
+- **Common Argument Library — saved custom collections per user.** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save flows
+  docs and debates in SQL and link to users... add tools into where needed
+  in the UI... develop better tool UI") — as with every recent repeat, the
+  "user settings / SQL-linked flows, docs, rounds" half is already fully
+  built and every tool is already reachable from the Tools page and
+  CardMirror's command palette, and the one open PR (#437, "Consolidate UI
+  primitives and add web extension scaffold") doesn't touch this area, so
+  this slice picked the "saved custom collections per user" follow-up under
+  the Research Crowdsourcing Organizer Features section's "📚 Common
+  Argument Library" bullet — a genuine gap in exactly the "link user db SQL
+  ... and link to users" half, since `ArgumentLibraryPanel`'s tag-chip
+  filter had no way to save a selection for reuse, unlike every other
+  filter-preset UI in this repo. Adds `packages/debate-card-search/src/lib/argument-library-collections.ts`
+  (pure validation/(de)serialization, mirroring `debate-round`'s
+  `state/outlineFilterPresets.ts`), `lib/argument-library-collections-client.ts`
+  (a standalone `fetch` client — `debate-card-search` can't import
+  `debate-round`'s `round/user-settings-client.ts` without a dependency
+  cycle, since that module already imports from this package), and
+  `hooks/useSavedArgumentCollections.ts` (local-first `localStorage` state,
+  best-effort account-synced), plus a new "Saved collections" section on
+  `ArgumentLibraryPanel`: save the current tag-chip selection under a name,
+  reapply it later, remove it. Account sync goes through a new
+  `savedArgumentCollections` `/api/settings` field (validated by
+  `normalizeSavedArgumentCollectionsPatch`) backed by a new
+  `user_settings.saved_argument_collections` D1 column/migration
+  (`drizzle/0020_nosy_bloodaxe.sql`, generated via `db:generate`). Up to 50
+  collections, each name unique case-insensitively, each holding 1-30 tags.
+  Vitest-covered in `packages/debate-card-search/test/argument-library-collections.test.ts`
+  (20 cases: name normalization, list/patch validation including the
+  duplicate-name and empty-tags/name rejections, and the
+  serialize/parse round-trip); `useSavedArgumentCollections` itself is
+  untested, matching this repo's existing convention for account-synced,
+  `localStorage`-backed hooks (e.g. `useWordLimitPresets`,
+  `useOutlineFilterPresets`). See `docs/features/argument-library-collections.md`.
+  Full verification: `bun vitest run` (3526 tests passed, including the new
+  file), `bunx turbo typecheck` across every workspace package with a
+  `typecheck` script (all pass — the app itself, `debate-ai-web`, has no
+  `typecheck` script; a manual `bunx tsc --noEmit` there surfaces 24
+  pre-existing errors, none in any file this change touches — better-auth
+  client typings, missing Cloudflare `D1Database`/`Fetcher` ambient types,
+  and missing icon assets referenced by `debate-ui/src/icons/index.ts` from
+  the still-open, unrelated PR #437), and `bun run build:web` (production
+  build succeeds, including the new `/api/settings` and
+  `/cards/argument-library` routes). No follow-up is tracked beyond the two
+  "Known gaps" noted in the doc (no rename, no direct tag-list edit on a
+  saved collection — both need a remove-then-re-save today).
 - **Flow-in-Speech Flow Annotations — bulk-export a round's annotations
   (idea #15).** Another repeat of the standing prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL... with
@@ -12407,7 +12455,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🔓 **Progress Unlocks** (`/cards/progress`) — a visual next-tier progress bar instead of text-only status; a small unlock celebration toast when a tier/badge is earned; a badge showcase on a contributor's profile.
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — batch-score an uploaded set of cards at once; a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.
-* 📚 **Common Argument Library** (`/cards/argument-library`) — bulk folder actions (merge/archive); saved custom collections per user; a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool.
+* 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — a winner-history calendar view; a comment thread on each day's winner; a "best of the week" rollup.
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — an awards history / hall-of-fame page; auto-post each announcement to the News Stream feed; a "nominate a peer" action.
