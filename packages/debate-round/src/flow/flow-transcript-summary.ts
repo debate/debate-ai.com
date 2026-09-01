@@ -146,6 +146,45 @@ export function buildFlowSummaryText(flow: Pick<Flow, "children" | "columns">): 
   return buildFlowSummaryTextFromRows(rows);
 }
 
+/**
+ * How much weight an unanswered row's recorded `evidenceStatus` (if any)
+ * contributes to `computeRowStrength` — well-cited support is the strongest
+ * signal that dropping the argument costs the other side, contested support
+ * is a weaker one, and unverified/unset support contributes nothing.
+ */
+const EVIDENCE_STRENGTH_WEIGHT: Record<EvidenceStatus, number> = {
+  cited: 2,
+  contested: 1,
+  unverified: 0,
+};
+
+/**
+ * A rough "how strong an opportunity is this to press/extend" score for an
+ * unanswered row: `evidenceStatus` dominates (a row with no recorded status
+ * scores the same as `unverified`), with the thread's depth (`entries.length`
+ * — how many speeches have already engaged this argument) as a tiebreaker
+ * within the same evidence tier, on the theory that a longer-running thread
+ * dropped now is a clearer concession than a one-off point.
+ */
+export function computeRowStrength(row: FlowRowSummary): number {
+  const evidenceScore = row.evidenceStatus ? EVIDENCE_STRENGTH_WEIGHT[row.evidenceStatus] : 0;
+  return evidenceScore * 100 + row.entries.length;
+}
+
+/**
+ * Unanswered rows ordered strongest-opportunity first (see
+ * `computeRowStrength`), ties broken by original order (stable sort) —
+ * feeds `suggestCrossExamQuestions`/`suggestExtensionIdeas` so a panel can
+ * render a ranked list instead of flow order.
+ */
+export function rankUnansweredRowsByStrength(rows: FlowRowSummary[]): FlowRowSummary[] {
+  return rows
+    .filter((row) => row.isUnanswered)
+    .map((row, index) => ({ row, index }))
+    .sort((a, b) => computeRowStrength(b.row) - computeRowStrength(a.row) || a.index - b.index)
+    .map(({ row }) => row);
+}
+
 /** One cross-examination question per unanswered row, referencing where it dropped. */
 export function suggestCrossExamQuestions(rows: FlowRowSummary[]): string[] {
   return rows

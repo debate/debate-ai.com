@@ -22,7 +22,10 @@ card, sorted by `roundId` for a stable order. Inside a card:
   since a later speech.
 - If any argument is currently unanswered, two suggestion lists built from
   that round's unanswered rows: cross-examination questions to press the
-  point live, and extension ideas to frame it as dropped/conceded.
+  point live, and extension ideas to frame it as dropped/conceded — ranked
+  strongest opportunity first (see "Ranking by strength" below), each item
+  tagged with its rank and, when recorded, the underlying row's
+  `evidenceStatus`.
 
 ## Data flow
 
@@ -121,6 +124,42 @@ known/unknown recognition error code). The React hook itself
 every other browser-API hook in this repo (e.g.
 `debate-timer/src/hooks/useSpeechRecorder.ts`) — there is no jsdom
 environment in this repo's Vitest setup.
+
+## Ranking by strength
+
+Closes idea #6's ("Speech Transcript Summaries and Answers") "rank
+suggested cross-exam questions/extension ideas by strength rather than a
+flat list" follow-up. Previously both lists rendered in flow order (the
+order arguments happen to appear in the flow); now they render strongest
+opportunity first:
+
+```
+panels/FlowSummariesPanel.tsx
+  → rankUnansweredRowsByStrength(rows)   — flow/flow-transcript-summary.ts
+      filters to unanswered rows and orders them by computeRowStrength(row)
+      descending, ties broken by original order (stable sort)
+  → suggestCrossExamQuestions(ranked)    — unchanged; maps 1:1 over its
+  → suggestExtensionIdeas(ranked)          input, so passing already-ranked
+                                            rows makes its output ranked too
+```
+
+`computeRowStrength` scores a row primarily by its recorded
+`evidenceStatus` (`cited` &gt; `contested` &gt; `unverified`/unset), with the
+argument thread's depth (`entries.length` — how many speeches have already
+engaged it) as a tiebreaker within the same evidence tier: a well-cited
+argument dropped now costs the other side more than a shakier one, and a
+longer-running thread dropped now reads as a clearer concession than a
+one-off point. `suggestCrossExamQuestions`/`suggestExtensionIdeas`
+themselves are unchanged — they still just map over whatever rows they're
+given — so `flow/drill-generator.ts`'s `buildCrossExamDrills`, which relies
+on its input rows staying in the same order as its output prompts, is
+unaffected.
+
+Vitest-covered in `packages/debate-round/test/flow-transcript-summary.test.ts`
+(evidence-tier ordering, the thread-depth tiebreaker, evidence tier always
+outranking thread depth, excluding answered rows, stable-order ties, and
+the ranked-input integration with `suggestCrossExamQuestions`/
+`suggestExtensionIdeas`).
 
 ## Known gaps
 
