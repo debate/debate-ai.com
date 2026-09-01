@@ -70,6 +70,7 @@
     "debate-data-sync": "workspace:*",
     "debate-editor": "workspace:*",
     "debate-editor-cardmirror": "workspace:*",
+    "debate-flow-ebb": "workspace:*",
     "debate-round": "workspace:*",
     "debate-speech-writer": "workspace:*",
     "debate-timer": "workspace:*",
