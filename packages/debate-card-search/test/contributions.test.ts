@@ -5,6 +5,7 @@ import {
   buildPersistedLeaderboard,
   buildTopContributorAwardsFromStore,
   deleteContribution,
+  endorsementHistoryCounterpartId,
   filterFlaggedFeedEntries,
   getContribution,
   getTodaysBestCardFromStore,
@@ -301,6 +302,25 @@ describe("listEndorsementsByContributor", () => {
     recordPersistedEndorsement("contrib-1", 0.5, "carol", 2_000);
     expect(listEndorsementsByContributor("bob", "received")).toEqual([]);
     expect(listEndorsementsByContributor("bob", "given")).toEqual([]);
+  });
+});
+
+describe("endorsementHistoryCounterpartId", () => {
+  const entry = {
+    contributionId: "contrib-2",
+    contributionKind: "summary" as const,
+    contributionContributorId: "bob",
+    reviewerId: "carol",
+    reviewerWeight: 0.4,
+    endorsedAt: 1_000,
+  };
+
+  it("returns the endorsing reviewer for a received entry", () => {
+    expect(endorsementHistoryCounterpartId(entry, "received")).toBe("carol");
+  });
+
+  it("returns the endorsed contribution's own contributor for a given entry", () => {
+    expect(endorsementHistoryCounterpartId(entry, "given")).toBe("bob");
   });
 });
 

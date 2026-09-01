@@ -40,6 +40,17 @@
  * `"received"`: every endorsement made on that contributor's own
  * contributions, newest first).
  *
+ * When `signedInContributorId` is supplied, a "My endorsement activity"
+ * toggle above the table renders that same history list with `direction:
+ * "given"` — every endorsement the signed-in visitor made as a reviewer,
+ * across every contributor's contributions. This closes idea #11's
+ * next-named follow-up in TODO.md: wiring the store's already-built
+ * `direction: "given"` query into a "my endorsement activity" view. Both
+ * directions share one `EndorsementHistoryList` renderer, parameterized by
+ * `direction`, and `state/contributions.ts`'s new
+ * `endorsementHistoryCounterpartId` resolves which id ("who endorsed me" vs.
+ * "who I endorsed") to display per entry.
+ *
  * @module panels/ContributionLeaderboardPanel
  */
 
@@ -63,7 +74,11 @@ import { buildContributorUnlockStatusWithStreakFromStore } from "../lib/unlock-s
 import { isOwnContributorRow } from "../lib/session-identity"
 import { isContributionLeaderboardLiveUpdateStorageEvent } from "../state/live-update"
 import { buildHelpfulnessScoreExplanation } from "../lib/community-rating"
-import { listEndorsementsByContributor } from "../state/contributions"
+import {
+  endorsementHistoryCounterpartId,
+  listEndorsementsByContributor,
+  type EndorsementHistoryDirection,
+} from "../state/contributions"
 import type { ContributorStats } from "../lib/contribution-leaderboard"
 
 const HELPFULNESS_SCORE_EXPLANATION = buildHelpfulnessScoreExplanation()
@@ -122,6 +137,7 @@ export interface ContributionLeaderboardPanelProps {
 export function ContributionLeaderboardPanel({ signedInContributorId }: ContributionLeaderboardPanelProps = {}) {
   const [rows, setRows] = useState<LeaderboardRow[] | null>(null)
   const [expandedContributorId, setExpandedContributorId] = useState<string | null>(null)
+  const [showMyActivity, setShowMyActivity] = useState(false)
 
   useEffect(() => {
     setRows(buildLeaderboardRows())
@@ -172,6 +188,18 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
         </Tooltip>
         — a blend of popularity, quality, and reviewer signals.
       </p>
+      {signedInContributorId && (
+        <div className="mb-4">
+          <Button size="sm" variant="outline" onClick={() => setShowMyActivity((expanded) => !expanded)}>
+            {showMyActivity ? "Hide my endorsement activity" : "My endorsement activity"}
+          </Button>
+          {showMyActivity && (
+            <div className="mt-2 rounded-md border border-border bg-muted/30 px-3">
+              <EndorsementHistoryList contributorId={signedInContributorId} direction="given" />
+            </div>
+          )}
+        </div>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
@@ -241,7 +269,7 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
             {isExpanded && (
               <TableRow>
                 <TableCell colSpan={10} className="bg-muted/30">
-                  <EndorsementHistoryList contributorId={row.contributorId} />
+                  <EndorsementHistoryList contributorId={row.contributorId} direction="received" />
                 </TableCell>
               </TableRow>
             )}
@@ -255,19 +283,28 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
 }
 
 /**
- * Renders `contributorId`'s received-endorsement history — one line per
- * endorsement, newest first, naming the endorsing reviewer, the endorsed
- * contribution, and when. Reads `state/contributions.ts` directly rather
- * than the parent panel holding this data for every row up front, since
- * only one row is ever expanded at a time.
+ * Renders `contributorId`'s endorsement history for `direction` — one line
+ * per endorsement, newest first. `direction: "received"` names the
+ * endorsing reviewer ("{reviewer} endorsed a {kind}"); `direction: "given"`
+ * names who `contributorId` endorsed as a reviewer ("You endorsed
+ * {contributor}'s {kind}"). Reads `state/contributions.ts` directly rather
+ * than the parent panel holding this data up front, since at most one
+ * received-history row and the given-history section are ever expanded at
+ * once.
  */
-function EndorsementHistoryList({ contributorId }: { contributorId: string }) {
-  const entries = listEndorsementsByContributor(contributorId, "received")
+function EndorsementHistoryList({
+  contributorId,
+  direction,
+}: {
+  contributorId: string
+  direction: EndorsementHistoryDirection
+}) {
+  const entries = listEndorsementsByContributor(contributorId, direction)
 
   if (entries.length === 0) {
     return (
       <p className="py-2 text-sm text-muted-foreground">
-        No endorsements received yet.
+        {direction === "received" ? "No endorsements received yet." : "No endorsements given yet."}
       </p>
     )
   }
@@ -276,8 +313,17 @@ function EndorsementHistoryList({ contributorId }: { contributorId: string }) {
     <ul className="space-y-1 py-2 text-sm">
       {entries.map((entry, index) => (
         <li key={`${entry.contributionId}-${entry.reviewerId}-${entry.endorsedAt}-${index}`} className="flex flex-wrap items-center gap-1.5 text-muted-foreground">
-          <span className="font-medium text-foreground">{entry.reviewerId}</span>
-          endorsed a
+          {direction === "received" ? (
+            <>
+              <span className="font-medium text-foreground">{endorsementHistoryCounterpartId(entry, direction)}</span>
+              endorsed a
+            </>
+          ) : (
+            <>
+              You endorsed
+              <span className="font-medium text-foreground">{endorsementHistoryCounterpartId(entry, direction)}'s</span>
+            </>
+          )}
           <Badge variant="outline" className="capitalize">
             {entry.contributionKind}
           </Badge>
