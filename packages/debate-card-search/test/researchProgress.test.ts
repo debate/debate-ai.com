@@ -393,4 +393,59 @@ describe("buildPersistedLeaderboardWithCompletedTasks", () => {
       });
     });
   });
+
+  describe("category", () => {
+    const ALICE_SUMMARY: AttributedContribution = { ...ALICE_CARD, id: "summary-1", kind: "summary" };
+
+    it("defaults to 'all', including every kind and completed tasks", () => {
+      saveContribution(ALICE_CARD);
+      saveContribution(ALICE_SUMMARY);
+      saveRoutedTaskQueue(AI_QUEUE);
+      completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+      const leaderboard = buildPersistedLeaderboardWithCompletedTasks();
+
+      expect(leaderboard[0]).toMatchObject({ contributorId: "alice", contributionCount: 2, completedTaskCount: 1 });
+    });
+
+    it("scopes the roster to a single contribution kind", () => {
+      saveContribution(ALICE_CARD);
+      saveContribution(ALICE_SUMMARY);
+
+      const leaderboard = buildPersistedLeaderboardWithCompletedTasks(undefined, "all-time", undefined, "card");
+
+      expect(leaderboard).toHaveLength(1);
+      expect(leaderboard[0]).toMatchObject({ contributorId: "alice", contributionCount: 1 });
+    });
+
+    it("returns an empty leaderboard when nobody has a contribution of the requested kind", () => {
+      saveContribution(ALICE_CARD);
+
+      expect(buildPersistedLeaderboardWithCompletedTasks(undefined, "all-time", undefined, "annotation")).toEqual([]);
+    });
+
+    it("excludes completed-task-only contributors from a kind-scoped board, since a task has no kind", () => {
+      saveRoutedTaskQueue(AI_QUEUE);
+      completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+      expect(buildPersistedLeaderboardWithCompletedTasks(undefined, "all-time", undefined, "card")).toEqual([]);
+    });
+
+    it("composes with the range filter", () => {
+      const NOW = new Date("2026-02-01T00:00:00Z").getTime();
+      const staleSummary: AttributedContribution = {
+        ...ALICE_SUMMARY,
+        submittedAt: NOW - 60 * 24 * 60 * 60 * 1000,
+      };
+      const recentCard: AttributedContribution = { ...ALICE_CARD, submittedAt: NOW - 24 * 60 * 60 * 1000 };
+      saveContribution(staleSummary);
+      saveContribution(recentCard);
+
+      expect(buildPersistedLeaderboardWithCompletedTasks(undefined, "weekly", NOW, "summary")).toEqual([]);
+      expect(buildPersistedLeaderboardWithCompletedTasks(undefined, "weekly", NOW, "card")[0]).toMatchObject({
+        contributorId: "alice",
+        contributionCount: 1,
+      });
+    });
+  });
 });

@@ -6,6 +6,48 @@
 _No task currently in progress._
 
 ### Completed
+- **Contribution Leaderboard — per-category (kind) leaderboards alongside
+  the overall one.** Another repeat of the standing prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL...
+  with ability to save flows docs and debates in SQL and link to users...
+  add tools into where needed in the UI... develop better tool UI") — as
+  with every recent repeat, the "user settings / SQL-linked flows, docs,
+  rounds" half is already fully built and every tool is already reachable
+  from the Tools page and CardMirror's command palette, and the one open
+  PR (#437, "Consolidate UI primitives and add web extension scaffold")
+  doesn't touch this area, so this slice picked the "🏅 Contribution
+  Leaderboard" bullet's "per-category (kind) leaderboards alongside the
+  overall one" follow-up. `lib/contribution-leaderboard.ts` gains a
+  `ContributionCategoryFilter` type (`ContributionKind | "all"`) and a pure
+  `filterContributionsByKind(contributions, category)` helper, mirroring
+  the existing `LeaderboardRange`/`filterContributionsByRange` pattern.
+  `state/researchProgress.ts`'s `buildPersistedLeaderboardWithCompletedTasks`
+  takes a new optional trailing `category` argument (defaulting to `"all"`,
+  so every existing caller is unaffected), applying the kind filter on top
+  of the existing range filter; since a routed research task has no
+  contribution `kind` of its own, completed-task counts are folded into the
+  roster only for the unscoped `"all"` category, so a kind-scoped board
+  ranks purely on that category's scored contributions.
+  `ContributionLeaderboardPanel.tsx` gets a second "Category" `Select`
+  next to the existing "Range" one (All categories / Cards / Summaries /
+  Highlights / Annotations / Original arguments / Refutations), re-querying
+  the roster on every range/category change and after every cross-tab
+  `storage` live-update, with the empty-state message naming whichever
+  filters narrowed the roster to nothing. See
+  `docs/features/contribution-leaderboard.md`'s new "Category filter"
+  section. Vitest-covered with 9 new cases: 4 in
+  `packages/debate-card-search/test/contribution-leaderboard.test.ts`
+  (`filterContributionsByKind` — `"all"` passthrough, single-kind match,
+  no-match, empty-input) and 5 in
+  `packages/debate-card-search/test/researchProgress.test.ts`'s new
+  `category` describe block (default-to-all including completed tasks,
+  single-kind scoping, no-match-for-kind, completed-task-only contributors
+  excluded from a kind-scoped board, and composition with the range
+  filter). Verified: `bun install` (2258 packages), the two focused test
+  files (64/64 pass), the full `bun run test` (209 test files, 3494 tests,
+  all passing, up from 209/3485), the whole-repo `bun run typecheck` (root,
+  all 13 typechecked packages, clean), and a full `bun run build` all pass
+  clean. **Completed:** 2026-09-01.
 - **Video-Lecture-Training Coach AI — material tagging and a search/filter
   bar (idea #8).** Another repeat of the standing prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL... with
@@ -12312,7 +12354,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 > The note above about UI follow-ups applies to this section too. As with Product Feature Ideas, each bullet below is an outline of UI features to add next, not a build log.
 
 * 🧩 **Community Research Hub** (`/community-hub`) — a personalized "for you" section; fold its directory into the News Stream feed instead of a separate destination; a quick-jump search bar across every listed space.
-* 🏅 **Contribution Leaderboard** (`/cards/leaderboard`) — the range-filter follow-up is done: a "Range" dropdown (All time / This week / This month) re-scopes the whole roster — scores and completed-task counts alike — to that trailing window (`lib/contribution-leaderboard.ts#filterContributionsByRange`/`isWithinLeaderboardRange`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Range filter" section. Next: per-category (kind) leaderboards alongside the overall one; a per-contributor profile drill-down page.
+* 🏅 **Contribution Leaderboard** (`/cards/leaderboard`) — the range-filter follow-up is done: a "Range" dropdown (All time / This week / This month) re-scopes the whole roster — scores and completed-task counts alike — to that trailing window (`lib/contribution-leaderboard.ts#filterContributionsByRange`/`isWithinLeaderboardRange`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Range filter" section. The per-category follow-up is also now done: a "Category" dropdown (All categories / Cards / Summaries / Highlights / Annotations / Original arguments / Refutations) re-scopes the roster to one contribution kind at a time, composing with the Range filter (`lib/contribution-leaderboard.ts#filterContributionsByKind`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Category filter" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor profile drill-down page) if one becomes worth doing.
 * 🎮 **Gamified Quests** (`/cards/streaks`) — a streak-freeze/grace-day mechanic for a missed day; a shareable streak-badge image; an opt-in reminder notification before a streak lapses.
 * 🔓 **Progress Unlocks** (`/cards/progress`) — a visual next-tier progress bar instead of text-only status; a small unlock celebration toast when a tier/badge is earned; a badge showcase on a contributor's profile.
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — batch-score an uploaded set of cards at once; a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.

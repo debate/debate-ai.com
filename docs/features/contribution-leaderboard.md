@@ -23,9 +23,10 @@ unlock tier, earned badges, and current daily-quest streak.
 | Badges | Tier badges + streak-milestone badges, merged by `lib/unlock-streak-status.ts` |
 
 A signed-in visitor's own row is highlighted with a "You" badge — see
-"Signed-in row highlight" below. Within a chosen range (see "Range filter"
-below) the leaderboard shows every contributor with activity in that
-window; nothing else is filtered.
+"Signed-in row highlight" below. Within a chosen range and category (see
+"Range filter" and "Category filter" below) the leaderboard shows every
+contributor with activity in that window/category; nothing else is
+filtered.
 
 ## Range filter
 
@@ -73,6 +74,33 @@ list with the reviewer/recipient roles swapped ("You endorsed
 directions share the same `EndorsementHistoryList` renderer, and
 `state/contributions.ts`'s new `endorsementHistoryCounterpartId` resolves
 which id is the "other side" of an entry for a given direction.
+
+## Category filter
+
+A "Category" dropdown next to the Range select — **All categories**
+(default), **Cards**, **Summaries**, **Highlights**, **Annotations**,
+**Original arguments**, or **Refutations** — closes the "per-category
+(kind) leaderboards alongside the overall one" follow-up named under the
+"Contribution Leaderboard" bullet in `TODO.md`. Switching it re-scopes the
+roster to only contributions of that `ContributionKind`:
+
+- `lib/contribution-leaderboard.ts`'s `filterContributionsByKind` narrows
+  the (already range-filtered) contribution list to those whose `kind`
+  matches the chosen category. `"all"` (the default) returns the list
+  unchanged, matching the leaderboard's original unscoped behavior.
+- `state/researchProgress.ts`'s `buildPersistedLeaderboardWithCompletedTasks`
+  takes a new optional `category` argument (after `range`/`now`), applied
+  on top of the range filter. A routed research task has no contribution
+  `kind` of its own, so completed-task counts are only folded into the
+  roster for the unscoped **All categories** view — picking a specific
+  category ranks purely on that category's scored contributions, and a
+  contributor with completed tasks but no contribution in that category
+  drops off the roster (they still appear under **All categories**).
+- The category and range filters compose: e.g. "Cards" + "This week" shows
+  only cards submitted in the last 7 days.
+- A contributor with no contribution in the chosen category (and, if
+  narrower than all-time, window) drops off the roster entirely; switching
+  back to **All categories** always restores the full roster.
 
 Helpfulness score itself blends three signals (`lib/community-rating.ts`):
 logarithmically-dampened popularity (likes/saves), a quality signal, and a

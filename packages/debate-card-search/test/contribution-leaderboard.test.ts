@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildContributorStats,
   buildLeaderboard,
+  filterContributionsByKind,
   filterContributionsByRange,
   groupContributionsByContributor,
   isWithinLeaderboardRange,
@@ -199,5 +200,27 @@ describe("filterContributionsByRange", () => {
 
   it("returns an empty list for an empty input regardless of range", () => {
     expect(filterContributionsByRange([], "weekly", NOW)).toEqual([]);
+  });
+});
+
+describe("filterContributionsByKind", () => {
+  it("returns every contribution unchanged for the 'all' category", () => {
+    expect(filterContributionsByKind([strongCard, weakSummary, viralHighlight], "all")).toEqual([
+      strongCard,
+      weakSummary,
+      viralHighlight,
+    ]);
+  });
+
+  it("keeps only contributions matching the requested kind", () => {
+    expect(filterContributionsByKind([strongCard, weakSummary, viralHighlight], "card")).toEqual([strongCard]);
+  });
+
+  it("returns an empty list when no contribution matches the requested kind", () => {
+    expect(filterContributionsByKind([strongCard, weakSummary], "annotation")).toEqual([]);
+  });
+
+  it("returns an empty list for an empty input regardless of category", () => {
+    expect(filterContributionsByKind([], "card")).toEqual([]);
   });
 });
