@@ -9,6 +9,7 @@
   "types": "./src/EbbFlowEmbed.tsx",
   "exports": {
     ".": "./src/EbbFlowEmbed.tsx",
+    "./settings-panel": "./src/components/settings/EmbeddedSettingsPanel.tsx",
     "./styles/ebb-scope.css": "./src/styles/ebb-scope.css"
   },
   "files": [
