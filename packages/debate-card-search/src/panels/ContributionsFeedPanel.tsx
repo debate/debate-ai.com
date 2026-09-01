@@ -82,6 +82,15 @@
  * TODO.md — mirrors the existing `ELO_TOOLTIP`/`LeaderboardTableHeader`
  * pattern in `debate-videos`.
  *
+ * A "Flagged for review" toggle now sits next to the feed heading, closing
+ * idea #11's remaining follow-up (c) in TODO.md: "a moderator view that
+ * surfaces `isPopularityOnlyOutlier`-flagged contributions for review." The
+ * flag was already computed and shown inline per-entry, but there was no
+ * dedicated filtered view for a moderator to review just the flagged ones —
+ * the toggle switches the rendered feed between every contribution and only
+ * those `state/contributions.ts`'s `filterFlaggedFeedEntries` selects,
+ * labeled with a live flagged count.
+ *
  * @module panels/ContributionsFeedPanel
  */
 
@@ -97,6 +106,7 @@ import { Textarea } from "debate-ui/src/primitives/textarea"
 import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
 import {
   buildPersistedContributionFeed,
+  filterFlaggedFeedEntries,
   recordPersistedEndorsementFromReviewer,
   recordPersistedLike,
   recordPersistedSave,
@@ -169,6 +179,7 @@ export function ContributionsFeedPanel() {
   const [reviewerId, setReviewerId] = useState("")
   const [endorseError, setEndorseError] = useState<string | null>(null)
   const [knownTags, setKnownTags] = useState<string[]>([])
+  const [showFlaggedOnly, setShowFlaggedOnly] = useState(false)
 
   useEffect(() => {
     setFeed(buildPersistedContributionFeed())
@@ -261,6 +272,9 @@ export function ContributionsFeedPanel() {
   if (feed === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading contributions feed…</div>
   }
+
+  const flaggedCount = filterFlaggedFeedEntries(feed).length
+  const visibleFeed = showFlaggedOnly ? filterFlaggedFeedEntries(feed) : feed
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -401,13 +415,29 @@ export function ContributionsFeedPanel() {
         {endorseError && <p className="text-sm text-destructive">{endorseError}</p>}
       </div>
 
-      {feed.length === 0 ? (
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-sm font-medium text-foreground">
+          {showFlaggedOnly ? `Flagged for review (${flaggedCount})` : `All contributions (${feed.length})`}
+        </h2>
+        <Button
+          type="button"
+          size="sm"
+          variant={showFlaggedOnly ? "default" : "outline"}
+          onClick={() => setShowFlaggedOnly((prev) => !prev)}
+        >
+          {showFlaggedOnly ? "Show all" : `Flagged for review (${flaggedCount})`}
+        </Button>
+      </div>
+
+      {visibleFeed.length === 0 ? (
         <div className="p-6 text-center text-sm text-muted-foreground">
-          No contributions yet. Submit one above to start the feed.
+          {showFlaggedOnly
+            ? "No contributions currently flagged as popularity-only."
+            : "No contributions yet. Submit one above to start the feed."}
         </div>
       ) : (
         <div className="space-y-2">
-          {feed.map((entry) => (
+          {visibleFeed.map((entry) => (
             <div key={entry.id} className="rounded-lg border border-border p-3 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant={KIND_VARIANT[entry.kind]} className="capitalize">

@@ -34,6 +34,13 @@
  * requiring the caller (the feed panel's "Endorse" button) to supply an
  * arbitrary fixed weight.
  *
+ * `filterFlaggedFeedEntries` closes idea #11's follow-up (c) in TODO.md —
+ * "a moderator view that surfaces `isPopularityOnlyOutlier`-flagged
+ * contributions for review" — narrowing a ranked feed down to just the
+ * entries `community-rating.ts` flagged as popularity-driven, so
+ * `ContributionsFeedPanel`'s moderator toggle has a dedicated, testable
+ * filter to call rather than re-deriving the predicate inline.
+ *
  * @module state/contributions
  */
 
@@ -264,6 +271,20 @@ export function buildPersistedContributionFeed(
     helpfulnessScore: breakdown.helpfulnessScore,
     isPopularityOnlyOutlier: breakdown.isPopularityOnlyOutlier,
   }));
+}
+
+/**
+ * Narrows a ranked `ContributionFeedEntry` list down to only the entries
+ * flagged `isPopularityOnlyOutlier` — the "Community-Rated Summaries and
+ * Highlights" (idea #11) follow-up (c) in TODO.md: "a moderator view that
+ * surfaces `isPopularityOnlyOutlier`-flagged contributions for review." The
+ * flag is already computed by `community-rating.ts`'s scoring and carried on
+ * every `buildPersistedContributionFeed` entry; this only filters down to
+ * it, preserving the existing helpfulness-score ranking order. An empty or
+ * all-clean feed returns an empty list.
+ */
+export function filterFlaggedFeedEntries(entries: ContributionFeedEntry[]): ContributionFeedEntry[] {
+  return entries.filter((entry) => entry.isPopularityOnlyOutlier);
 }
 
 /**
