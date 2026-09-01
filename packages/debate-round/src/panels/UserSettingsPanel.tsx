@@ -55,12 +55,14 @@ import {
 } from "../state/themeSettings"
 
 // `favoriteTools` has its own `FavoriteToolsSettings` UI; `wordLimitPresets`
-// has its own `WordLimitPresetsPanel` UI; `newsRead`/`newsLiked` are synced
-// automatically by `NewsStreamPanel`'s `syncRemote` adapter, not
-// user-editable form fields — all excluded from this form the same way.
+// has its own `WordLimitPresetsPanel` UI; `outlineFilterPresets` is managed
+// from the Outline tool's own "Filter presets" row, not this form;
+// `newsRead`/`newsLiked` are synced automatically by `NewsStreamPanel`'s
+// `syncRemote` adapter, not user-editable form fields — all excluded from
+// this form the same way.
 type FormState = Omit<
   FullUserSettingsPayload,
-  "favoriteTools" | "wordLimitPresets" | "newsRead" | "newsLiked"
+  "favoriteTools" | "wordLimitPresets" | "outlineFilterPresets" | "newsRead" | "newsLiked"
 >
 
 type SaveStatus =

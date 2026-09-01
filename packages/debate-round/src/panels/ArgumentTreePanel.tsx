@@ -13,6 +13,16 @@
  * save the chosen filter back through `saveArgumentTreeFilterSelection`. No
  * new tree-derivation or filtering logic is introduced here.
  *
+ * Each round card also has a "Filter presets" row (idea #10's "Save and
+ * reuse named filter presets instead of re-picking filters each visit"
+ * follow-up, `state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets`)
+ * — a dropdown of every named preset the signed-in-or-local user has saved,
+ * plus a "Save current as preset…" action. Presets are global (not scoped
+ * to one round), so the same saved combination can be applied to any
+ * round's outline; applying one just writes that round's existing
+ * `ArgumentTreeFilter` selection, identically to picking each control by
+ * hand.
+ *
  * A "Generate outline for current round" action reads the round workspace's
  * currently selected flow (`state/store.ts`'s `useFlowStore`, the same
  * mechanism `VulnerabilityChartsPanel`'s "Generate report for current
@@ -29,8 +39,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { X } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
+import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Switch } from "debate-ui/src/primitives/switch"
 import {
@@ -51,6 +63,7 @@ import {
   getArgumentTreeFilterSelection,
   saveArgumentTreeFilterSelection,
 } from "../state/argumentTreeFilters"
+import { useOutlineFilterPresets } from "../hooks/useOutlineFilterPresets"
 import { useFlowStore } from "../state/store"
 
 const ANY_VALUE = "__any__"
@@ -107,6 +120,9 @@ export function ArgumentTreePanel() {
   const [records, setRecords] = useState<ArgumentTreeRecord[] | null>(null)
   const [filters, setFilters] = useState<Record<string, ArgumentTreeFilter>>({})
   const [mounted, setMounted] = useState(false)
+  const { presets, addPreset, removePreset } = useOutlineFilterPresets()
+  const [presetNameDrafts, setPresetNameDrafts] = useState<Record<string, string>>({})
+  const [presetErrors, setPresetErrors] = useState<Record<string, string>>({})
 
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
@@ -129,6 +145,29 @@ export function ArgumentTreePanel() {
     const filter: ArgumentTreeFilter = { ...filters[roundId], ...update }
     setFilters((prev) => ({ ...prev, [roundId]: filter }))
     saveArgumentTreeFilterSelection({ roundId, filter })
+  }
+
+  /** Applies a saved preset's filter combination wholesale, replacing (not merging into) the round's current filter — so a field the preset leaves unset is cleared, matching what re-picking every control by hand would produce. */
+  const applyPreset = (roundId: string, filter: ArgumentTreeFilter) => {
+    setFilters((prev) => ({ ...prev, [roundId]: filter }))
+    saveArgumentTreeFilterSelection({ roundId, filter })
+  }
+
+  const handleSavePreset = (roundId: string) => {
+    const name = (presetNameDrafts[roundId] ?? "").trim()
+    if (!name) {
+      setPresetErrors((prev) => ({ ...prev, [roundId]: "Enter a name for this preset." }))
+      return
+    }
+    if (!addPreset(name, filters[roundId] ?? {})) {
+      setPresetErrors((prev) => ({
+        ...prev,
+        [roundId]: `A preset named "${name}" already exists, or the preset limit has been reached.`,
+      }))
+      return
+    }
+    setPresetErrors((prev) => ({ ...prev, [roundId]: "" }))
+    setPresetNameDrafts((prev) => ({ ...prev, [roundId]: "" }))
   }
 
   const handleGenerate = () => {
@@ -173,6 +212,30 @@ export function ArgumentTreePanel() {
         )}
       </div>
 
+      {presets.length > 0 && (
+        <div className="rounded-lg border border-border p-4 space-y-2">
+          <Label className="text-sm font-medium text-foreground">Saved filter presets</Label>
+          <p className="text-xs text-muted-foreground">
+            Apply one from any round's "Filter presets" row below, or remove it here.
+          </p>
+          <div className="flex flex-wrap gap-2 pt-1">
+            {presets.map((preset) => (
+              <Badge key={preset.name} variant="outline" className="gap-1 pr-1">
+                {preset.name}
+                <button
+                  type="button"
+                  aria-label={`Remove the ${preset.name} filter preset`}
+                  className="ml-1 rounded-sm hover:bg-muted"
+                  onClick={() => removePreset(preset.name)}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
       {records.length === 0 && (
         <div className="p-6 text-center text-sm text-muted-foreground">
           No argument outlines yet. An outline fills in once a round's flow is derived into a tree
@@ -194,6 +257,56 @@ export function ArgumentTreePanel() {
               <Button size="sm" variant="ghost" onClick={() => handleClear(record.roundId)}>
                 Clear
               </Button>
+            </div>
+
+            <div className="flex flex-wrap items-end gap-2 rounded-md border border-dashed border-border bg-muted/30 p-2">
+              <div className="space-y-1.5">
+                <Label htmlFor={`preset-apply-${record.roundId}`} className="text-xs">
+                  Filter presets
+                </Label>
+                <Select
+                  value={ANY_VALUE}
+                  onValueChange={(value) => {
+                    if (value === ANY_VALUE) return
+                    const preset = presets.find((entry) => entry.name === value)
+                    if (preset) applyPreset(record.roundId, preset.filter)
+                  }}
+                >
+                  <SelectTrigger id={`preset-apply-${record.roundId}`} className="h-8 w-52 text-xs">
+                    <SelectValue placeholder="Apply a saved preset…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ANY_VALUE}>Apply a saved preset…</SelectItem>
+                    {presets.map((preset) => (
+                      <SelectItem key={preset.name} value={preset.name}>
+                        {preset.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={`preset-name-${record.roundId}`} className="text-xs">
+                  Save current filter as…
+                </Label>
+                <div className="flex gap-1.5">
+                  <Input
+                    id={`preset-name-${record.roundId}`}
+                    value={presetNameDrafts[record.roundId] ?? ""}
+                    onChange={(e) =>
+                      setPresetNameDrafts((prev) => ({ ...prev, [record.roundId]: e.target.value }))
+                    }
+                    placeholder="Preset name"
+                    className="h-8 w-40 text-xs"
+                  />
+                  <Button size="sm" variant="outline" onClick={() => handleSavePreset(record.roundId)}>
+                    Save preset
+                  </Button>
+                </div>
+              </div>
+              {presetErrors[record.roundId] && (
+                <p className="w-full text-xs text-destructive">{presetErrors[record.roundId]}</p>
+              )}
             </div>
 
             <div className="flex flex-wrap items-end gap-3">

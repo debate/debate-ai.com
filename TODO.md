@@ -6,6 +6,41 @@
 _No task currently in progress._
 
 ### Completed
+- **Outline Filters and Argument Tree View — named filter presets (idea
+  #10).** Another repeat of the standing prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL... with ability
+  to save flows docs and debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, endorsement history, etc.), the CardMirror editor
+  already surfaces every tool via its top `MenuBar` and Ctrl/Cmd-Shift-Space
+  command palette, and the only open PR (#421) covers an unrelated tool
+  (AI-versus-round transcript export), so this slice picked idea #10's
+  "Save and reuse named filter presets instead of re-picking filters each
+  visit" follow-up on the Outline Filters and Argument Tree View tool
+  (`/outline`). Added `state/outlineFilterPresets.ts` (pure validation/
+  (de)serialization for a `{ name, filter: ArgumentTreeFilter }` preset
+  list, including a nested-object `isValidArgumentTreeFilter` checker) and
+  `hooks/useOutlineFilterPresets.ts` (local-first state, best-effort
+  account-synced), mirroring `wordLimitPresets.ts`/`useWordLimitPresets`'s
+  split exactly — new `outline_filter_presets` D1 column
+  (`drizzle/0017_flowery_silk_fever.sql`) plus wiring in `/api/settings`'s
+  route and `FullUserSettingsPayload`. `ArgumentTreePanel` gained a "Filter
+  presets" row per round card (apply a saved preset, or save the round's
+  current filter under a new name) and a "Saved filter presets" card
+  listing every preset as a removable badge. Renamed the new module's
+  name-normalization helpers (`normalizeOutlineFilterPresetName`/
+  `isValidOutlineFilterPresetName`) to avoid an ambiguous re-export
+  collision with `wordLimitPresets.ts`'s same-named exports through the
+  package's shared `index.ts` barrel. See
+  `docs/features/argument-tree-outline.md`'s new "Filter presets" section
+  and updated "Known gaps". Vitest-covered with 21 new cases in
+  `packages/debate-round/test/outlineFilterPresets.test.ts`. `bun run
+  typecheck` (root, all 13 typechecked packages), `bun run test` (3324
+  tests), and `bun run build` (the full monorepo build, including
+  `debate-ai-web`'s production build) all pass clean.
 - **Online Debate Versus AI — transcript export/download (idea #3), plus a
   pre-existing format-name mix-up fix in `debate-timer`.**
   Another repeat of the standing prompt ("integrate all the tools into the
@@ -11580,9 +11615,8 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    `navPaneVisible`). Next: a multi-pane/multi-window breadcrumb (today
    single-doc only).
 
-10. **Outline Filters and Argument Tree View** (`/outline`) —
+10. **Outline Filters and Argument Tree View** (`/outline`) — the named-filter-presets follow-up is done: each round card has a "Filter presets" row to apply a saved preset or save its current filter combination under a name, account-synced via `/api/settings`'s `outlineFilterPresets` field (`state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets.ts`, mirroring `wordLimitPresets.ts`'s split) — see `docs/features/argument-tree-outline.md`'s "Filter presets" section. Next:
     - Multi-select rows to bulk-apply an argument-type/contributor/evidence-status tag at once.
-    - Save and reuse named filter presets instead of re-picking filters each visit.
     - Export the filtered tree to a Speech Document or outline file.
 
 11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. The "my endorsement activity" follow-up is also now done: a signed-in visitor gets a "My endorsement activity" toggle above the table, listing every endorsement they gave as a reviewer via the same store's `direction: "given"` query (`state/contributions.ts#endorsementHistoryCounterpartId`) — see the Completed entry above. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. real reviewer-identity/permission checks so a "given" entry can't be spoofed under an arbitrary reviewer id, or a per-contributor "given" history visible to others, not just the signed-in visitor's own) if one becomes worth doing.

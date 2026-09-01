@@ -29,6 +29,28 @@ rendered as a destructive badge) alongside its content when those fields are
 set on the underlying `Box`. A "Clear" action deletes the round's persisted
 tree.
 
+## Filter presets
+
+Idea #10's "Save and reuse named filter presets instead of re-picking
+filters each visit" follow-up. Each round card has a "Filter presets" row
+above its controls: a dropdown to apply a saved preset, and a name field +
+"Save preset" button to save the round's *current* filter combination under
+a new name. A preset is a named `ArgumentTreeFilter` — global, not scoped to
+any one round, so a combination saved on one round's outline can be applied
+to any other round's; a field the preset doesn't set (or whose value
+doesn't exist on that round's own distinct options) simply has no match,
+same as picking every control by hand. Applying a preset replaces the
+round's filter wholesale (not merged), so a field the preset leaves unset is
+cleared rather than left at its prior value. A "Saved filter presets" card
+above the round list shows every saved preset as a removable badge.
+
+Local-first (works fully signed out, `localStorage` key
+`outline-filter-presets`) and best-effort account-synced through the same
+`/api/settings` row every other picker-style setting uses (the
+`outlineFilterPresets` field), mirroring `wordLimitPresets.ts`/
+`useWordLimitPresets`'s split and sync mechanism exactly. Up to 50 presets,
+each name unique case-insensitively.
+
 ## Data flow
 
 ```
@@ -46,6 +68,14 @@ state/argumentTrees.ts (localStorage: argumentTrees)
 state/argumentTreeFilters.ts (localStorage: argumentTreeFilters)
   → saveArgumentTreeFilterSelection({ roundId, filter })  — persists the chosen filter
   → getArgumentTreeFilterSelection(roundId)               — restores it on load
+
+state/outlineFilterPresets.ts (pure validation/(de)serialization)
+  → hooks/useOutlineFilterPresets.ts (localStorage: outline-filter-presets)
+      — local-first state, best-effort synced via /api/settings's outlineFilterPresets field
+  → panels/ArgumentTreePanel.tsx
+      — "Filter presets" row per round: apply a preset (replaces that round's
+        argumentTreeFilters selection) or save the round's current filter as
+        a new named preset
 
 Clearing a round:
 panels/ArgumentTreePanel.tsx
@@ -255,3 +285,12 @@ renders when it's empty).
 - No follow-ups remain open on the "row's tags aren't shown... / no bulk
   'tag every row in this section' action" gap — see "Neighbour preview and
   bulk section tagging" above.
+- No follow-ups remain open on the "no saved/reusable filter combinations"
+  gap — see "Filter presets" above.
+- Applying a preset only sets the round's filter; it doesn't select or
+  scroll to a particular round, so a preset saved while looking at one round
+  still needs that round's card to already be visible/generated to see the
+  effect.
+- Multi-select rows to bulk-apply a tag at once, and exporting the filtered
+  tree to a Speech Document or outline file, remain open (idea #10's other
+  two follow-up bullets in `TODO.md`).
