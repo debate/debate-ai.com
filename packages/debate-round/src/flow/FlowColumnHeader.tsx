@@ -5,7 +5,7 @@
 "use client"
 
 import { FileText } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../ui/primitives/button"
 import type { FlowColumnHeaderProps } from "./types"
 
 /**

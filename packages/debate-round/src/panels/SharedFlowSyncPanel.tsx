@@ -21,9 +21,9 @@ import {
   StatGrid,
   StatTile,
   SummaryText,
-} from "debate-ui/src/panels/panel-shell";
-import { Button } from "debate-ui/src/primitives/button";
-import { Input } from "debate-ui/src/primitives/input";
+} from "../ui/panels/panel-shell";
+import { Button } from "../ui/primitives/button";
+import { Input } from "../ui/primitives/input";
 import type { Flow } from "../types/flow";
 
 import {

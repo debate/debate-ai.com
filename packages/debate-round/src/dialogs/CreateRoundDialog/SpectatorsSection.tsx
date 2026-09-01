@@ -10,9 +10,9 @@
  */
 
 import { Plus, Minus, Users } from "lucide-react"
-import { Input } from "debate-ui/src/primitives/input"
-import { Label } from "debate-ui/src/primitives/label"
-import { Button } from "debate-ui/src/primitives/button"
+import { Input } from "../../ui/primitives/input"
+import { Label } from "../../ui/primitives/label"
+import { Button } from "../../ui/primitives/button"
 
 /** Props for {@link SpectatorsSection}. */
 interface SpectatorsSectionProps {

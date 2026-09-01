@@ -12,8 +12,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-ui/src/primitives/select"
-import { Tabs, TabsList, TabsTrigger } from "debate-ui/src/primitives/tabs"
+} from "../../ui/primitives/select"
+import { Tabs, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
 import { DIVISION_CONFIG } from "./leaderboardUtils"
 import type { Division } from "./leaderboardTypes"
 

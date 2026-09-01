@@ -16,7 +16,7 @@ import {
     AudioPlayerDuration,
     useAudioPlayer,
 } from "./audio-player"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../ui/primitives/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -27,8 +27,8 @@ import {
     DropdownMenuSub,
     DropdownMenuSubTrigger,
     DropdownMenuSubContent,
-} from "debate-ui/src/primitives/dropdown-menu"
-import { cn } from "debate-ui/src/lib/utils"
+} from "../ui/primitives/dropdown-menu"
+import { cn } from "../ui/lib/utils"
 import { useAudioDevices } from "./mic-selector"
 import { LiveWaveform } from "./live-waveform"
 

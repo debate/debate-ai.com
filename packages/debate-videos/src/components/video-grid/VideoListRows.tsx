@@ -8,8 +8,8 @@
 
 import React, { useState } from "react"
 import { Star, ExternalLink, EyeOff, Eye, ListVideo, Scale } from "lucide-react"
-import { cn } from "debate-ui/src/lib/utils"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+import { cn } from "../../ui/lib/utils"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS } from "../video-card/videoCardUtils"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"

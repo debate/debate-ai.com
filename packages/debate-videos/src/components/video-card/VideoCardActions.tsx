@@ -20,7 +20,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "debate-ui/src/primitives/tooltip"
+} from "../../ui/primitives/tooltip"
 import { HideConfirmDialog } from "./VideoCardDialogs"
 
 /** Shape of the video metadata forwarded to the player store on queue add. */

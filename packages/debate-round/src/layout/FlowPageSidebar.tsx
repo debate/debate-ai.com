@@ -5,9 +5,9 @@
 
 import type React from "react"
 import { Plus, Clock, Users, Columns2, Grid3x3, Workflow } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
-import { cn } from "debate-ui/src/lib/utils"
+import { Button } from "../ui/primitives/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
+import { cn } from "../ui/lib/utils"
 import { FlowTab } from "../navigation/FlowTab"
 import { FlowToolsMenu } from "./FlowToolsMenu"
 import { PrepTimer } from "debate-timer/src/timers/PrepTimer"

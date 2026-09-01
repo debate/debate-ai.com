@@ -19,7 +19,7 @@ import type {
   ICellRendererParams,
 } from "ag-grid-community"
 import { ChevronDown, ChevronRight, FileText } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../ui/primitives/button"
 import type { Flow, Box } from "../types/flow"
 
 // Register AG Grid community modules

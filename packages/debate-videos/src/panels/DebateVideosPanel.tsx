@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import type { CategoryType, VideoType } from "../types/videos"
 import type { DebateStyle } from "../types/videos"
-import { setStateInURL } from "debate-ui/src/lib/utils"
+import { setStateInURL } from "../ui/lib/utils"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"

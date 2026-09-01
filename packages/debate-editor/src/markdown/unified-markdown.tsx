@@ -10,7 +10,7 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Streamdown } from "streamdown";
 import { Check, Copy } from "lucide-react";
-import { cn } from "debate-ui/src/lib/utils";
+import { cn } from "../ui/lib/utils";
 import { getHashTargetId, isInternalUrl } from "./markdown-links";
 
 /**

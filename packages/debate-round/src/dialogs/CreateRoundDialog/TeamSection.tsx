@@ -6,10 +6,10 @@
 import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { Settings2, ChevronDown, Check, X } from "lucide-react"
-import { Input } from "debate-ui/src/primitives/input"
-import { Autocomplete } from "debate-ui/src/primitives/autocomplete"
+import { Input } from "../../ui/primitives/input"
+import { Autocomplete } from "../../ui/primitives/autocomplete"
 import { debateStyles, debateStyleMap } from "debate-timer/src/formats/debate-format-times"
-import { IconAffBubble, IconNegBubble } from "debate-ui/src/icons"
+import { IconAffBubble, IconNegBubble } from "../../ui/icons"
 import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "../../state/myTeamProfile"
 import { searchSchools } from "../../cache/client-cache"
 

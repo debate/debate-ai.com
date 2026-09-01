@@ -7,9 +7,9 @@
 
 "use client"
 
-import { Button } from "debate-ui/src/primitives/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
-import { Tabs, TabsList, TabsTrigger } from "debate-ui/src/primitives/tabs"
+import { Button } from "../../ui/primitives/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/primitives/select"
+import { Tabs, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
 import { Video } from "lucide-react"
 import { StickyHeader } from "../../components/layout/StickyHeader"
 import { LeaderboardPanel } from "./RankingsLeaderboardPanel"

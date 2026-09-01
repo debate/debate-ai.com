@@ -1,0 +1,43 @@
+body {
+  font-family: system-ui, sans-serif;
+  max-width: 480px;
+  margin: 24px auto;
+  color: #1a1a1a;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  background: #1a73e8;
+  color: white;
+  cursor: pointer;
+}
+
+p.hint {
+  font-size: 12px;
+  color: #666;
+}
+
+p.saved {
+  font-size: 12px;
+  color: #1e7a34;
+}

@@ -4,7 +4,7 @@
  */
 
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../ui/primitives/button"
 
 /** Props for the ColumnNavigator component. */
 interface ColumnNavigatorProps {

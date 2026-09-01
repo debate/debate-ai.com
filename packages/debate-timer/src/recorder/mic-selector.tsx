@@ -13,21 +13,21 @@ import {
 } from "react"
 import { Mic, MicOff, ChevronDown } from "lucide-react"
 
-import { cn } from "debate-ui/src/lib/utils"
-import { Button } from "debate-ui/src/primitives/button"
+import { cn } from "../ui/lib/utils"
+import { Button } from "../ui/primitives/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "debate-ui/src/primitives/dropdown-menu"
+} from "../ui/primitives/dropdown-menu"
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "debate-ui/src/primitives/tooltip"
+} from "../ui/primitives/tooltip"
 import { LiveWaveform } from "./live-waveform"
 
 // ---------------------------------------------------------------------------
