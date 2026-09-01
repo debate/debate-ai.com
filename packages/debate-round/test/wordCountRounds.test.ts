@@ -3,6 +3,7 @@ import {
   adoptWordCountRound,
   buildWordCountRoundsPanelView,
   buildWordCountTrendData,
+  clearWordCountRounds,
   deleteWordCountRound,
   getWordCountRound,
   getWordCountRoundStatuses,
@@ -139,6 +140,23 @@ describe("deleteWordCountRound", () => {
     const stored = listWordCountRounds();
     expect(stored).toHaveLength(1);
     expect(stored[0]).toMatchObject(ROUND_B);
+  });
+});
+
+describe("clearWordCountRounds", () => {
+  it("returns an empty array and is a no-op when nothing is stored", () => {
+    expect(clearWordCountRounds()).toEqual([]);
+    expect(listWordCountRounds()).toEqual([]);
+  });
+
+  it("removes every stored round and returns their roundIds", () => {
+    saveWordCountRound(ROUND_A);
+    saveWordCountRound(ROUND_B);
+
+    const removedIds = clearWordCountRounds();
+
+    expect(removedIds.sort()).toEqual(["round-1", "round-2"]);
+    expect(listWordCountRounds()).toEqual([]);
   });
 });
 

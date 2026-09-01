@@ -31,6 +31,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   adoptWordCountRound,
   buildWordCountRoundsPanelView,
+  clearWordCountRounds,
   deleteWordCountRound,
   getWordCountRound,
   listWordCountRounds,
@@ -38,6 +39,7 @@ import {
   type WordCountRoundRecord,
 } from "../state/wordCountRounds";
 import {
+  deleteAllSavedWordCountRoundsFromAccount,
   deleteSavedWordCountRoundFromAccount,
   listSavedWordCountRounds,
   saveWordCountRoundToAccount,
@@ -90,6 +92,8 @@ export type UseWordCountRoundsResult = {
   synced: boolean;
   saveRound: (record: WordCountRoundRecord) => void;
   deleteRound: (roundId: string) => void;
+  /** Clears every persisted round at once ("delete all my synced history"). */
+  clearAllRounds: () => void;
 };
 
 /**
@@ -138,5 +142,17 @@ export function useWordCountRounds(): UseWordCountRoundsResult {
     }
   }, []);
 
-  return { rounds, synced, saveRound, deleteRound };
+  const clearAllRounds = useCallback(() => {
+    const removedIds = clearWordCountRounds();
+    if (removedIds.length === 0) return;
+    setRounds(buildWordCountRoundsPanelView());
+    if (remoteAvailable) {
+      deleteAllSavedWordCountRoundsFromAccount().catch(() => {
+        // Best-effort, same as deleteRound above — history is already gone
+        // locally either way.
+      });
+    }
+  }, []);
+
+  return { rounds, synced, saveRound, deleteRound, clearAllRounds };
 }
