@@ -16,10 +16,13 @@ import { Footer } from "debate-ui/src/layout/footer"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
+import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
+import { useCategoryDockSidebarExtra } from "../context/category-dock-context"
 import type { DebateStyle } from "../types/videos"
+import type { VideoViewMode } from "../hooks/useVideoState"
 
 /** Props for the {@link LecturesVideoGridView} component. */
 interface LecturesVideoGridViewProps {
@@ -34,6 +37,8 @@ interface LecturesVideoGridViewProps {
   isSearchFocused: boolean
   /** Whether video thumbnails are shown. */
   showThumbnails: boolean
+  /** Current results layout: card grid or dense row list. */
+  viewMode: VideoViewMode
   /** Whether only favorited videos are shown. */
   showFavoritesOnly: boolean
   /** Active category (`"lectures"` or `"topPicks"`). */
@@ -102,6 +107,8 @@ interface LecturesVideoGridViewProps {
   onYearChange: (year: string) => void
   /** Toggles thumbnail visibility. */
   onToggleThumbnails: () => void
+  /** Called when the user switches between grid and row layout. */
+  onViewModeChange: (mode: VideoViewMode) => void
   /** Toggles the favorites-only filter. */
   onToggleFavoritesOnly: () => void
   /** Toggles the lecture category gallery visibility. */
@@ -135,6 +142,7 @@ export function LecturesVideoGridView({
   selectedYear,
   isSearchFocused,
   showThumbnails,
+  viewMode,
   showFavoritesOnly,
   currentCategory,
   totalVideos,
@@ -163,6 +171,7 @@ export function LecturesVideoGridView({
   onSortChange,
   onYearChange,
   onToggleThumbnails,
+  onViewModeChange,
   onToggleFavoritesOnly,
   onToggleLectureCategories,
   onToggleFavorite,
@@ -199,6 +208,50 @@ export function LecturesVideoGridView({
     return undefined
   }, [showFavoritesOnly, currentCategory, selectedStyle, slug])
 
+  const showCategoryGallery =
+    showLectureCategories && currentCategory === "lectures" && !selectedStyle && lectureCategories.length > 0
+
+  // The dock/sidebar (rendered site-wide in the root layout) shows these
+  // sections in the persistent left sidebar on desktop; mobile keeps them
+  // inline below since there's no sidebar there. Memoized so the registered
+  // element's identity is stable across renders that don't change its inputs
+  // — the registration effect re-fires whenever this reference changes.
+  const sidebarContent = useMemo(
+    () => (
+      <div className="flex flex-col gap-4">
+        <QuickLinksGrid
+          layout="list"
+          counts={quickLinkCounts}
+          showLectures={showLectureCategories}
+          onToggleLectures={onToggleLectureCategories}
+          activeId={activeQuickLinkId}
+        />
+
+        {showCategoryGallery && (
+          <>
+            <div className="border-t border-border" />
+            <LectureCategoryGridGallery
+              layout="list"
+              categories={lectureCategories}
+              selectedCategory={selectedCategory}
+            />
+          </>
+        )}
+      </div>
+    ),
+    [
+      quickLinkCounts,
+      showLectureCategories,
+      onToggleLectureCategories,
+      activeQuickLinkId,
+      showCategoryGallery,
+      lectureCategories,
+      selectedCategory,
+    ],
+  )
+
+  useCategoryDockSidebarExtra(sidebarContent)
+
   return (
     <div className="min-h-screen bg-background p-3 sm:p-6">
       <StickyHeader
@@ -208,6 +261,8 @@ export function LecturesVideoGridView({
             sortOrder={sortOrder}
             isSearchFocused={isSearchFocused}
             showThumbnails={showThumbnails}
+            viewMode={viewMode}
+            onViewModeChange={onViewModeChange}
             showFavoritesOnly={showFavoritesOnly}
             selectedYear={selectedYear}
             onYearChange={onYearChange}
@@ -233,21 +288,26 @@ export function LecturesVideoGridView({
         }
       />
 
-      <QuickLinksGrid
-        counts={quickLinkCounts}
-        showLectures={showLectureCategories}
-        onToggleLectures={onToggleLectureCategories}
-        activeId={activeQuickLinkId}
-      />
+      {/* Desktop shows quick links + category filters in the persistent left
+          sidebar (registered above); mobile has no sidebar, so they render
+          inline here instead. */}
+      <div className="md:hidden">
+        <QuickLinksGrid
+          counts={quickLinkCounts}
+          showLectures={showLectureCategories}
+          onToggleLectures={onToggleLectureCategories}
+          activeId={activeQuickLinkId}
+        />
 
-      {showLectureCategories && currentCategory === "lectures" && !selectedStyle && lectureCategories.length > 0 && (
-        <div className="mb-8">
-          <LectureCategoryGridGallery
-            categories={lectureCategories}
-            selectedCategory={selectedCategory}
-          />
-        </div>
-      )}
+        {showCategoryGallery && (
+          <div className="mb-8">
+            <LectureCategoryGridGallery
+              categories={lectureCategories}
+              selectedCategory={selectedCategory}
+            />
+          </div>
+        )}
+      </div>
 
       <Footer />
 
@@ -267,21 +327,34 @@ export function LecturesVideoGridView({
         </div>
       ) : (
         <>
-          <VideoGrid
-            videos={currentVideos}
-            showThumbnails={showThumbnails}
-            topics={topics}
-            videoContainerRef={videoContainerRef}
-            favorites={favorites}
-            onToggleFavorite={onToggleFavorite}
-            onBadgeClick={onSearchChange}
-            onHideVideo={onHideVideo}
-            onUnhideVideo={onUnhideVideo}
-            hiddenVideos={hiddenVideos}
-            topPicks={topPicks}
-            showFullDate={true}
-            showDescription={true}
-          />
+          {viewMode === "list" ? (
+            <VideoListRows
+              videos={currentVideos}
+              videoContainerRef={videoContainerRef}
+              favorites={favorites}
+              onToggleFavorite={onToggleFavorite}
+              onHideVideo={onHideVideo}
+              onUnhideVideo={onUnhideVideo}
+              hiddenVideos={hiddenVideos}
+              topPicks={topPicks}
+            />
+          ) : (
+            <VideoGrid
+              videos={currentVideos}
+              showThumbnails={showThumbnails}
+              topics={topics}
+              videoContainerRef={videoContainerRef}
+              favorites={favorites}
+              onToggleFavorite={onToggleFavorite}
+              onBadgeClick={onSearchChange}
+              onHideVideo={onHideVideo}
+              onUnhideVideo={onUnhideVideo}
+              hiddenVideos={hiddenVideos}
+              topPicks={topPicks}
+              showFullDate={true}
+              showDescription={true}
+            />
+          )}
 
           <div ref={loadMoreTriggerRef} className="h-10" />
 

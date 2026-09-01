@@ -102,6 +102,12 @@ interface QuickLinksGridProps {
   showLectures?: boolean;
   onToggleLectures?: () => void;
   activeId?: string;
+  /**
+   * `"grid"` (default) renders the square tile gallery used at the top of the
+   * lectures page. `"list"` renders a compact single-column row layout meant
+   * for the persistent left sidebar.
+   */
+  layout?: "grid" | "list";
 }
 
 function formatCount(n: number): string {
@@ -142,7 +148,48 @@ function CardBody({ link, showLectures, count, isActive }: { link: QuickLink; sh
   );
 }
 
-export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures, activeId }: QuickLinksGridProps) {
+function ListRow({ link, count, isActive }: { link: QuickLink; count?: number; isActive?: boolean }) {
+  return (
+    <div
+      className={cn(
+        "relative flex items-center gap-2 overflow-hidden rounded-md border-[0.75px] border-border bg-background px-2 py-1.5 shadow-sm transition-all",
+        isActive && "border-primary/60 bg-primary/5 ring-1 ring-primary/40",
+      )}
+    >
+      <GlowingEffect spread={30} glow proximity={40} inactiveZone={0.01} borderWidth={1.5} />
+      <div className={cn("shrink-0 rounded-md p-1 flex items-center justify-center", link.iconBg)}>
+        {link.logo ? (
+          <Image src={link.logo as string} alt={link.title} width={20} height={20} className="h-5 w-5 object-contain" unoptimized />
+        ) : (
+          link.icon
+        )}
+      </div>
+      <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">{link.title}</span>
+      {count != null && count > 0 && (
+        <span className="shrink-0 text-[11px] font-semibold text-muted-foreground">{formatCount(count)}</span>
+      )}
+    </div>
+  );
+}
+
+export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures, activeId, layout = "grid" }: QuickLinksGridProps) {
+  if (layout === "list") {
+    return (
+      <ul className="flex flex-col gap-1">
+        {QUICK_LINKS.map((link) => {
+          const isActive = activeId === link.id;
+          return (
+            <li key={link.id} className="list-none">
+              <Link href={link.href} className="block hover:opacity-90 transition-opacity">
+                <ListRow link={link} count={counts?.[link.id]} isActive={isActive} />
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
+
   return (
     <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-2 mb-4">
       {QUICK_LINKS.map((link) => {

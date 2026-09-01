@@ -5,7 +5,7 @@
  */
 
 import Image from "next/image"
-import { Calendar, Eye, Trophy } from "lucide-react"
+import { Calendar, Eye, Trophy, LayoutGrid, Rows3 } from "lucide-react"
 import { IconTopRounds } from "debate-ui/src/icons"
 import { Button } from "debate-ui/src/primitives/button"
 import {
@@ -13,6 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "debate-ui/src/primitives/tooltip"
+import type { VideoViewMode } from "../../hooks/useVideoState"
 
 /** Props for the {@link SearchBarIconButtons} component. */
 interface SearchBarIconButtonsProps {
@@ -20,6 +21,10 @@ interface SearchBarIconButtonsProps {
   sortOrder: string
   /** Callback invoked with the next sort order when the sort button is clicked. */
   onSortChange: (value: string) => void
+  /** Current results layout. When omitted, the grid/list toggle button is hidden. */
+  viewMode?: VideoViewMode
+  /** Callback invoked with the new layout when the grid/list toggle is clicked. */
+  onViewModeChange?: (mode: VideoViewMode) => void
   /** Whether the favorites-only filter is currently active. */
   showFavoritesOnly: boolean
   /** Callback invoked to toggle the favorites filter. */
@@ -52,6 +57,8 @@ interface SearchBarIconButtonsProps {
 export function SearchBarIconButtons({
   sortOrder,
   onSortChange,
+  viewMode,
+  onViewModeChange,
   showFavoritesOnly,
   onToggleFavoritesOnly,
   showTopPicksActive,
@@ -86,6 +93,33 @@ export function SearchBarIconButtons({
             : "Sorted by views (click for date)"}
         </TooltipContent>
       </Tooltip>
+
+      {/* Grid/list layout toggle (rendered only when onViewModeChange is provided) */}
+      {onViewModeChange && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              className="shrink-0"
+              variant="outline"
+              size="icon"
+              onClick={() =>
+                onViewModeChange(viewMode === "list" ? "grid" : "list")
+              }
+            >
+              {viewMode === "list" ? (
+                <LayoutGrid className="h-4 w-4" />
+              ) : (
+                <Rows3 className="h-4 w-4" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {viewMode === "list"
+              ? "Switch to grid view"
+              : "Switch to row view"}
+          </TooltipContent>
+        </Tooltip>
+      )}
 
       {/* Top Picks toggle (rendered only when onToggleTopPicks is provided) */}
       {onToggleTopPicks && (
