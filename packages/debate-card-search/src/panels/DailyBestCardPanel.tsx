@@ -21,8 +21,8 @@
 
 import { useEffect, useState } from "react"
 import { Sparkles, Trophy } from "lucide-react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
 import {
   announceDailyBestCard,
   getAnnouncedDailyBestCard,

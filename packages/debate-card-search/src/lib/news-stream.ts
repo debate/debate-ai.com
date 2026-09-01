@@ -17,7 +17,7 @@
  * manually curated — nothing detects a newly added route or
  * `feature-catalog.ts` entry and drafts a post for it" Known gap: rather than
  * requiring a hand-written `PRODUCT_NEWS` entry before a tool can appear in
- * the feed at all, it walks `debate-ui`'s `APP_FEATURES` catalog (the same
+ * the feed at all, it walks the `APP_FEATURES` catalog (the same
  * ~50-surface list the `/features` and `/tools` pages render from) and
  * synthesizes a generic "Tool spotlight" post for every entry whose `href`
  * no hand-curated `PRODUCT_NEWS` item already covers — so a debater browsing
@@ -27,7 +27,7 @@
  * @module lib/news-stream
  */
 
-import { APP_FEATURES, type FeatureEntry } from "debate-ui/src/features/feature-catalog";
+import { APP_FEATURES, type FeatureEntry } from "../ui/features/feature-catalog";
 
 /** Which of the feed's sources a `NewsItem` came from. */
 export type NewsCategory = "product" | "daily-best-card" | "awards" | "community";

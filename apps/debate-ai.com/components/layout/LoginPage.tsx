@@ -10,7 +10,7 @@
 import Image from "next/image"
 import Link from "next/link"
 
-import { Card, CardContent, CardHeader } from "debate-ui/src/primitives/card"
+import { Card, CardContent, CardHeader } from "@/components/debate-ui/primitives/card"
 import { LoginForm } from "./LoginForm"
 import { APP_NAME } from "@/lib/config/site"
 

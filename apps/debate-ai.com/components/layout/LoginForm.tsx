@@ -14,9 +14,9 @@ import { SiGoogle, SiDiscord } from "@icons-pack/react-simple-icons"
 import { FaLinkedin } from "react-icons/fa"
 import { toast } from "sonner"
 
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { Label } from "debate-ui/src/primitives/label"
+import { Button } from "@/components/debate-ui/primitives/button"
+import { Input } from "@/components/debate-ui/primitives/input"
+import { Label } from "@/components/debate-ui/primitives/label"
 import { authClient } from "@/lib/auth/client"
 import { useAuthProviders } from "@/lib/hooks/useAuthProviders"
 

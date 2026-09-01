@@ -32,7 +32,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-ui/src/primitives/badge"
+import { Badge } from "../ui/primitives/badge"
 import {
   Table,
   TableBody,
@@ -40,7 +40,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "debate-ui/src/primitives/table"
+} from "../ui/primitives/table"
 import { buildUnlockStatusRoster } from "../lib/unlock-streak-status"
 import { isOwnContributorRow } from "../lib/session-identity"
 import { isProgressUnlocksLiveUpdateStorageEvent } from "../state/live-update"

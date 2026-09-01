@@ -5,8 +5,8 @@ import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Book, BookMarked, BookOpen, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
-import { cn } from "debate-ui/src/lib/utils"
-import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
+import { cn } from "@/components/debate-ui/lib/utils"
+import { Dock, DockIcon, DockItem, DockLabel } from "@/components/debate-ui/layout/dock"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,
@@ -22,8 +22,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "debate-ui/src/primitives/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "debate-ui/src/primitives/avatar"
+} from "@/components/debate-ui/primitives/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/debate-ui/primitives/avatar"
 import { themeNames, themeColors, formatThemeName, useThemeState } from "@/components/theme-dropdown"
 import { LoginDialog } from "@/components/layout/LoginDialog"
 import { authClient } from "@/lib/auth/client"
@@ -35,7 +35,7 @@ import {
   IconSettings,
   IconRoundsYoutube,
   IconTools
-} from "debate-ui/src/icons"
+} from "@/components/debate-ui/icons"
 
 // Same destinations as packages/debate-ui/src/layout/footer.tsx, split into
 // the two Settings-menu submenus below so they're reachable without

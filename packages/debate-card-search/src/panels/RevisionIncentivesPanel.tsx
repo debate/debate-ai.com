@@ -22,7 +22,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-ui/src/primitives/badge"
+import { Badge } from "../ui/primitives/badge"
 import {
   Table,
   TableBody,
@@ -30,7 +30,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "debate-ui/src/primitives/table"
+} from "../ui/primitives/table"
 import { buildPersistedRevisionIncentiveLeaderboard } from "../state/revisionHistory"
 import { isRevisionIncentivesLiveUpdateStorageEvent } from "../state/live-update"
 import type { ContributorRevisionStats } from "../lib/revision-incentives"

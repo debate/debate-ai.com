@@ -27,8 +27,8 @@
 
 import { useEffect, useState } from "react"
 import { Award } from "lucide-react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
 import {
   announceContributorAwards,
   buildPersistedTopContributorAwards,

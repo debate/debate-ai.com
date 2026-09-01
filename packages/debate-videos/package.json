@@ -15,13 +15,21 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "1.1.15",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-slot": "1.2.4",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "debate-data-sync": "workspace:*",
-    "debate-ui": "workspace:*",
     "framer-motion": "^12.36.0",
     "fuse.js": "^7.1.0",
     "grab-url": "^1.6.7",
     "lucide-react": "^0.577.0",
+    "motion": "^12.36.0",
     "recharts": "2.15.4",
+    "tailwind-merge": "^3.5.0",
     "zustand": "^5.0.14"
   },
   "peerDependencies": {
@@ -33,6 +41,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitest/coverage-v8": "^4.1.0",
+    "jsdom": "^28.0.1",
     "next": "16.1.6",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0"

@@ -19,7 +19,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { FileText, Flag, ListTree } from "lucide-react"
-import { Card, CardHeader, CardTitle, CardDescription } from "debate-ui/src/primitives/card"
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/debate-ui/primitives/card"
 import { useSession } from "@/lib/hooks/useSession"
 import {
   buildRecentCloudItems,

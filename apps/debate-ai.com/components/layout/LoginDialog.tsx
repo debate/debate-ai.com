@@ -16,7 +16,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "debate-ui/src/primitives/dialog"
+} from "@/components/debate-ui/primitives/dialog"
 import { LoginForm } from "./LoginForm"
 import { useSession } from "@/lib/hooks/useSession"
 import { APP_NAME } from "@/lib/config/site"

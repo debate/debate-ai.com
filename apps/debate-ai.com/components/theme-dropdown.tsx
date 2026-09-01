@@ -12,7 +12,7 @@
 import { useState, useEffect, useRef } from "react"
 import { Moon, Sun } from "lucide-react"
 import Image from "next/image"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "@/components/debate-ui/primitives/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,9 +20,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "debate-ui/src/primitives/dropdown-menu"
+} from "@/components/debate-ui/primitives/dropdown-menu"
 import { useTheme } from "next-themes"
-import { IconThemePantone } from "debate-ui/src/icons"
+import { IconThemePantone } from "@/components/debate-ui/icons"
 import {
   THEME_NAMES,
   isValidColorTheme,

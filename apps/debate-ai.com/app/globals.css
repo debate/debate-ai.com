@@ -6,7 +6,7 @@
 /* The debate component packages are symlinked in through node_modules, which
    Tailwind's automatic source detection skips — register them explicitly so
    their class names end up in the generated stylesheet. */
-@source "../../../packages/debate-ui/src";
+@source "../components/debate-ui";
 @source "../../../packages/debate-card-search/src";
 @source "../../../packages/debate-timer/src";
 @source "../../../packages/debate-videos/src";

@@ -8,7 +8,7 @@
  */
 
 import { useEffect } from "react"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "@/components/debate-ui/primitives/button"
 
 export default function RouteError({
   error,

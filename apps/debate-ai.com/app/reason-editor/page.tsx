@@ -9,10 +9,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { FilePlus2, FileText, Loader2, Trash2 } from "lucide-react"
 import { EditorWithToolbar } from "debate-editor"
-import { cn } from "debate-ui/src/lib/utils"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { ScrollArea } from "debate-ui/src/primitives/scroll-area"
+import { cn } from "@/components/debate-ui/lib/utils"
+import { Button } from "@/components/debate-ui/primitives/button"
+import { Input } from "@/components/debate-ui/primitives/input"
+import { ScrollArea } from "@/components/debate-ui/primitives/scroll-area"
 
 interface ReasonDocument {
   id: number

@@ -98,12 +98,12 @@
 
 import { useEffect, useState } from "react"
 import { Info } from "lucide-react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { Label } from "debate-ui/src/primitives/label"
-import { Textarea } from "debate-ui/src/primitives/textarea"
-import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Input } from "../ui/primitives/input"
+import { Label } from "../ui/primitives/label"
+import { Textarea } from "../ui/primitives/textarea"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
 import {
   buildPersistedContributionFeed,
   filterFlaggedFeedEntries,
