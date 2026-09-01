@@ -44,6 +44,18 @@
  * age/staleness badge exactly (same `undefined`-age-hides-the-badge guard,
  * for a record persisted before `updatedAt` existed).
  *
+ * Also renders a "Pairing schedule" section — idea #12's "A manual
+ * pairing/room-assignment entry form as the practical stand-in" follow-up,
+ * since real Tabroom pairings stay blocked behind a login wall (see
+ * `docs/features/pre-round-briefings.md`'s "Known gaps"). Pairings are
+ * persisted (and account-synced) independently of a briefing via
+ * `hooks/useRoundPairings.ts`, so a team can log a tournament's whole round
+ * schedule as soon as pairings are posted, before writing up any briefing.
+ * Each saved pairing has a "Use for briefing" action that prefills the
+ * create-briefing form's round id/tournament/division/round label/side/
+ * room/opponent-label fields from it, so a pairing only has to be typed
+ * once.
+ *
  * @module panels/PreRoundBriefingsPanel
  */
 
@@ -86,6 +98,9 @@ import {
   saveOwnRoundHistoryRecord,
 } from "../state/ownRoundHistory"
 import type { OwnRoundHistoryRecord } from "../state/ownRoundHistory"
+import { buildRoundPairingRecordFromDraft } from "../state/roundPairings"
+import type { RoundPairingRecord } from "../state/roundPairings"
+import { useRoundPairings } from "../hooks/useRoundPairings"
 
 const NONE_VALUE = "__none__"
 
@@ -123,6 +138,28 @@ const EMPTY_DRAFT: BriefingDraft = {
   teamPrepNotes: "",
 }
 
+type PairingDraft = {
+  roundId: string
+  tournamentName: string
+  division: string
+  roundLabel: string
+  side: DebateSide
+  room: string
+  opponentLabel: string
+  judgeLabel: string
+}
+
+const EMPTY_PAIRING_DRAFT: PairingDraft = {
+  roundId: "",
+  tournamentName: "",
+  division: "",
+  roundLabel: "",
+  side: "aff",
+  room: "",
+  opponentLabel: "",
+  judgeLabel: "",
+}
+
 type RoundLogDraft = {
   tournamentName: string
   date: string
@@ -158,6 +195,9 @@ export function PreRoundBriefingsPanel() {
   const [ownRoundHistory, setOwnRoundHistory] = useState<OwnRoundHistoryRecord[]>([])
   const [roundLogDraft, setRoundLogDraft] = useState<RoundLogDraft>(EMPTY_ROUND_LOG_DRAFT)
   const [roundLogError, setRoundLogError] = useState<string | null>(null)
+  const { pairings, synced: pairingsSynced, savePairing, deletePairing } = useRoundPairings()
+  const [pairingDraft, setPairingDraft] = useState<PairingDraft>(EMPTY_PAIRING_DRAFT)
+  const [pairingError, setPairingError] = useState<string | null>(null)
 
   useEffect(() => {
     setBriefings(buildPreRoundBriefingsPanelView())
@@ -214,6 +254,32 @@ export function PreRoundBriefingsPanel() {
     setError(null)
     setDraft({ ...EMPTY_DRAFT, tournamentName: draft.tournamentName, division: draft.division })
     refresh()
+  }
+
+  const handleSavePairing = () => {
+    const result = buildRoundPairingRecordFromDraft(pairingDraft)
+    if (!result.ok) {
+      setPairingError(result.error)
+      return
+    }
+    savePairing(result.record)
+    setPairingError(null)
+    setPairingDraft({ ...EMPTY_PAIRING_DRAFT, tournamentName: pairingDraft.tournamentName, division: pairingDraft.division })
+  }
+
+  /** Prefills the "create briefing" form above from a saved pairing, so its fields only have to be typed once. */
+  const handleUsePairingForBriefing = (pairing: RoundPairingRecord) => {
+    setDraft((prev) => ({
+      ...prev,
+      roundId: pairing.roundId,
+      tournamentName: pairing.tournamentName,
+      division: pairing.division,
+      roundLabel: pairing.roundLabel,
+      side: pairing.side,
+      room: pairing.room ?? "",
+      opponentLabel: pairing.opponentLabel ?? "",
+    }))
+    setError(null)
   }
 
   const refreshOwnRoundHistory = () => setOwnRoundHistory(listOwnRoundHistory())
@@ -387,6 +453,135 @@ export function PreRoundBriefingsPanel() {
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button onClick={handleSubmit}>Save briefing</Button>
+      </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Pairing schedule</h2>
+          <p className="text-xs text-muted-foreground">
+            Log a round&apos;s pairing/room assignment by hand once it&apos;s posted — live tournament
+            pairings aren&apos;t available from Tabroom yet. Each saved pairing has a &quot;Use for
+            briefing&quot; action that prefills the form above.
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {pairingsSynced
+              ? "Pairings are synced to your account."
+              : "Sign in to sync pairings across devices."}
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="pairing-round-id">Round ID</Label>
+            <Input
+              id="pairing-round-id"
+              value={pairingDraft.roundId}
+              onChange={(e) => setPairingDraft((prev) => ({ ...prev, roundId: e.target.value }))}
+              placeholder="round-4"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pairing-tournament-name">Tournament</Label>
+            <Input
+              id="pairing-tournament-name"
+              value={pairingDraft.tournamentName}
+              onChange={(e) => setPairingDraft((prev) => ({ ...prev, tournamentName: e.target.value }))}
+              placeholder="Blake"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pairing-division">Division</Label>
+            <Input
+              id="pairing-division"
+              value={pairingDraft.division}
+              onChange={(e) => setPairingDraft((prev) => ({ ...prev, division: e.target.value }))}
+              placeholder="LD"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pairing-round-label">Round label</Label>
+            <Input
+              id="pairing-round-label"
+              value={pairingDraft.roundLabel}
+              onChange={(e) => setPairingDraft((prev) => ({ ...prev, roundLabel: e.target.value }))}
+              placeholder="Round 4"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pairing-side">Side</Label>
+            <Select
+              value={pairingDraft.side}
+              onValueChange={(value) => setPairingDraft((prev) => ({ ...prev, side: value as DebateSide }))}
+            >
+              <SelectTrigger id="pairing-side" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="aff">Aff</SelectItem>
+                <SelectItem value="neg">Neg</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pairing-room">Room</Label>
+            <Input
+              id="pairing-room"
+              value={pairingDraft.room}
+              onChange={(e) => setPairingDraft((prev) => ({ ...prev, room: e.target.value }))}
+              placeholder="Optional"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pairing-opponent-label">Opponent label</Label>
+            <Input
+              id="pairing-opponent-label"
+              value={pairingDraft.opponentLabel}
+              onChange={(e) => setPairingDraft((prev) => ({ ...prev, opponentLabel: e.target.value }))}
+              placeholder="Optional (e.g. a team code)"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pairing-judge-label">Judge</Label>
+            <Input
+              id="pairing-judge-label"
+              value={pairingDraft.judgeLabel}
+              onChange={(e) => setPairingDraft((prev) => ({ ...prev, judgeLabel: e.target.value }))}
+              placeholder="Optional (judge name as posted)"
+            />
+          </div>
+        </div>
+        {pairingError && <p className="text-sm text-destructive">{pairingError}</p>}
+        <Button onClick={handleSavePairing} variant="outline">
+          Save pairing
+        </Button>
+
+        {pairings === null ? null : pairings.length === 0 ? (
+          <p className="pt-1 text-sm text-muted-foreground">No pairings logged yet.</p>
+        ) : (
+          <ul className="space-y-1.5 pt-1">
+            {pairings.map((pairing) => (
+              <li
+                key={pairing.roundId}
+                className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground"
+              >
+                <span>
+                  Round {pairing.roundId} — {pairing.tournamentName}, {pairing.division},{" "}
+                  {pairing.roundLabel} ({pairing.side})
+                  {pairing.room && `, Room ${pairing.room}`}
+                  {pairing.opponentLabel && `, vs. ${pairing.opponentLabel}`}
+                  {pairing.judgeLabel && `, Judge: ${pairing.judgeLabel}`}
+                </span>
+                <div className="flex items-center gap-2">
+                  <Button size="sm" variant="outline" onClick={() => handleUsePairingForBriefing(pairing)}>
+                    Use for briefing
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => deletePairing(pairing.roundId)}>
+                    Remove
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-3">

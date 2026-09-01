@@ -148,6 +148,13 @@
       "when": 1788298876707,
       "tag": "0020_nosy_bloodaxe",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "6",
+      "when": 1788302628528,
+      "tag": "0021_nostalgic_northstar",
+      "breakpoints": true
     }
   ]
 }
