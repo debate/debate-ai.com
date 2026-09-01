@@ -64,6 +64,15 @@
  * `buildReuseCheckDeepLink` in `lib/shared-evidence-library.ts` and the
  * extension's own README.
  *
+ * Every local check is now also recorded to a small history log
+ * (`state/reuseCheckHistory.ts`) instead of only showing the latest
+ * lookup's result — closes idea #7's next named follow-up, "Surface each
+ * check's result inline in a small history list on `/cards/library` instead
+ * of a one-shot lookup." A "Recent checks" list under the box shows the last
+ * `MAX_REUSE_CHECK_HISTORY` lookups (URL, already-cut/new badge, match
+ * count, relative time); clicking an entry re-runs that same check. A
+ * "Clear history" action removes the whole log.
+ *
  * @module panels/EvidenceLibraryPanel
  */
 
@@ -89,6 +98,12 @@ import {
   searchPersistedEvidenceLibraryWithIndex,
 } from "../state/evidenceLibraryEntries"
 import { getPeerReview } from "../state/peerReviews"
+import {
+  appendReuseCheckHistory,
+  clearReuseCheckHistory,
+  listReuseCheckHistory,
+  type ReuseCheckHistoryRecord,
+} from "../state/reuseCheckHistory"
 import {
   buildEvidenceSearchFormQuery,
   buildEvidenceSearchSummaryText,
@@ -184,12 +199,14 @@ export function EvidenceLibraryPanel() {
   const [reuseCheckResult, setReuseCheckResult] = useState<PageReuseCheckResult | null>(null)
   const [remoteReuseCheckResult, setRemoteReuseCheckResult] = useState<RemotePageReuseCheckResult | null>(null)
   const [remoteReuseCheckError, setRemoteReuseCheckError] = useState<string | null>(null)
+  const [checkHistory, setCheckHistory] = useState<ReuseCheckHistoryRecord[]>([])
   const searchParams = useSearchParams()
 
   useEffect(() => {
     setHasEntries(listEvidenceLibraryEntries().length > 0)
     setKnownTags(listPersistedTags())
     setPendingEntries(listPendingReviewEntries())
+    setCheckHistory(listReuseCheckHistory())
   }, [])
 
   // Deep-linked from the `extension/card-reuse-checker` browser extension
@@ -201,7 +218,10 @@ export function EvidenceLibraryPanel() {
     const checkUrl = searchParams?.get("checkUrl")
     if (!checkUrl) return
     setReuseCheckUrl(checkUrl)
-    setReuseCheckResult(checkPersistedPageForExistingCards(checkUrl))
+    const result = checkPersistedPageForExistingCards(checkUrl)
+    setReuseCheckResult(result)
+    appendReuseCheckHistory(result)
+    setCheckHistory(listReuseCheckHistory())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
@@ -318,20 +338,29 @@ export function EvidenceLibraryPanel() {
     refreshResults()
   }
 
-  const handleReuseCheck = () => {
-    const url = reuseCheckUrl.trim()
+  const handleReuseCheck = (urlOverride?: string) => {
+    const url = (urlOverride ?? reuseCheckUrl).trim()
     if (!url) {
       setReuseCheckResult(null)
       setRemoteReuseCheckResult(null)
       setRemoteReuseCheckError(null)
       return
     }
-    setReuseCheckResult(checkPersistedPageForExistingCards(url))
+    setReuseCheckUrl(url)
+    const result = checkPersistedPageForExistingCards(url)
+    setReuseCheckResult(result)
     setRemoteReuseCheckResult(null)
     setRemoteReuseCheckError(null)
+    appendReuseCheckHistory(result)
+    setCheckHistory(listReuseCheckHistory())
     checkRemotePageForExistingCards(url)
       .then(setRemoteReuseCheckResult)
       .catch((err: unknown) => setRemoteReuseCheckError(err instanceof Error ? err.message : "Shared reuse check failed."))
+  }
+
+  const handleClearCheckHistory = () => {
+    clearReuseCheckHistory()
+    setCheckHistory([])
   }
 
   if (hasEntries === null) {
@@ -504,7 +533,7 @@ export function EvidenceLibraryPanel() {
             aria-label="Page URL to check for existing cards"
             className="sm:max-w-sm"
           />
-          <Button type="button" variant="outline" onClick={handleReuseCheck}>
+          <Button type="button" variant="outline" onClick={() => handleReuseCheck()}>
             Check for existing cards
           </Button>
         </div>
@@ -550,6 +579,39 @@ export function EvidenceLibraryPanel() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        {checkHistory.length > 0 && (
+          <div className="space-y-2 border-t border-dashed border-border pt-2">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-foreground">Recent checks</p>
+              <button
+                type="button"
+                onClick={handleClearCheckHistory}
+                className="text-xs text-muted-foreground underline-offset-2 hover:underline"
+              >
+                Clear history
+              </button>
+            </div>
+            <ul className="space-y-1">
+              {checkHistory.map((entry) => (
+                <li key={entry.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleReuseCheck(entry.url)}
+                    className="flex w-full flex-wrap items-center gap-2 rounded-md border border-transparent px-2 py-1 text-left text-xs hover:border-border hover:bg-muted"
+                  >
+                    <Badge variant={entry.alreadyCut ? "default" : "secondary"}>
+                      {entry.alreadyCut ? `Already cut (${entry.matchCount})` : "New"}
+                    </Badge>
+                    <span className="truncate text-foreground">{entry.url}</span>
+                    <span className="ml-auto shrink-0 text-muted-foreground">
+                      {new Date(entry.checkedAt).toLocaleString()}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
