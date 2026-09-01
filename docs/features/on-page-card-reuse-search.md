@@ -27,6 +27,21 @@ optional `checkUrl` query param (via `next/navigation`'s `useSearchParams`)
 on mount and, when present, pre-fills and auto-runs the check — this is what
 the browser extension deep-links into.
 
+## Check history
+
+Every local check (manual or `?checkUrl=` deep-linked) is now also recorded
+to a small history log instead of only showing the latest lookup's result —
+`state/reuseCheckHistory.ts`'s `appendReuseCheckHistory`/`listReuseCheckHistory`
+store the last `MAX_REUSE_CHECK_HISTORY` (20) checks in localStorage
+(URL, already-cut/new, match count, timestamp), oldest entries trimmed once
+the cap is exceeded — mirrors `state/judgeDecisions.ts`'s
+append-only-with-cap shape. `EvidenceLibraryPanel` renders this as a "Recent
+checks" list under the box; clicking an entry re-runs that same check, and a
+"Clear history" action removes the whole log
+(`clearReuseCheckHistory`). Only the local (this browser's own repository)
+outcome is recorded, not the async team-wide shared-index result below —
+a future run could add a second record once that resolves, if useful.
+
 ## The browser extension
 
 `extension/card-reuse-checker` is an unpacked (not store-published)

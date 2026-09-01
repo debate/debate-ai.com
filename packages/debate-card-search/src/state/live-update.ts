@@ -3,8 +3,9 @@
  * `ContributionLeaderboardPanel`, `TaskInboxPanel`, `ProgressUnlocksPanel`,
  * `ResearchProgressPanel`, `QuestStreaksPanel`, `NewsStreamPanel`,
  * `ContributorAwardsPanel`, `DailyQuestsPanel`, `RevisionIncentivesPanel`,
- * `CardScoringPanel`, `BrainstormBoardPanel`, `GroupChallengesPanel`, and
- * `ContributionsFeedPanel`, mirroring `debate-round`'s `flow/live-update.ts`.
+ * `CardScoringPanel`, `BrainstormBoardPanel`, `GroupChallengesPanel`,
+ * `ContributionsFeedPanel`, and `TopicSprintPanel`, mirroring `debate-round`'s
+ * `flow/live-update.ts`.
  * The browser's `storage` event never fires in the *same* tab that wrote the
  * change — only in other same-origin tabs — so a panel that reads
  * `localStorage` on mount only never reflects another tab's write without a
@@ -16,14 +17,14 @@
  * `isNewsStreamLiveUpdateStorageEvent`, `isContributorAwardsLiveUpdateStorageEvent`,
  * `isDailyQuestsLiveUpdateStorageEvent`, `isRevisionIncentivesLiveUpdateStorageEvent`,
  * `isCardScoringLiveUpdateStorageEvent`, `isBrainstormBoardLiveUpdateStorageEvent`,
- * `isGroupChallengesLiveUpdateStorageEvent`, and
- * `isContributionsFeedLiveUpdateStorageEvent` close the equivalent gap for
+ * `isGroupChallengesLiveUpdateStorageEvent`, `isContributionsFeedLiveUpdateStorageEvent`,
+ * and `isTopicSprintLiveUpdateStorageEvent` close the equivalent gap for
  * their own panels — the news-stream one noted directly in `news-stream.md`'s
  * "No real-time updates across browser tabs" Known gap, the rest in
  * `shared-flow-sync.md`'s "Every other localStorage-backed panel in this
  * repo still has no cross-tab live-update mechanism." (a gap that still
  * applies to the rest of this repo's localStorage-backed panels beyond
- * these fourteen).
+ * these fifteen).
  *
  * @module state/live-update
  */
@@ -410,5 +411,44 @@ export function isContributionsFeedLiveUpdateStorageEvent(event: { key: string |
   return (
     event.key === null ||
     (CONTRIBUTIONS_FEED_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `TopicSprintPanel` reads from, via
+ * `state/topicSprints.ts`'s `readPersistedTopicSprintInputs`:
+ * `state/dailyQuests.ts`'s `"dailyQuestTemplates"` (the quest board),
+ * `state/contributions.ts`'s `"contributions"` (contribution-derived quest
+ * progress), `state/trackedArguments.ts`'s `"trackedArguments"` and
+ * `state/evidenceLibraryEntries.ts`'s `"evidenceLibraryEntries"` (the topic
+ * coverage report), `state/contributorAvailability.ts`'s
+ * `"contributorAvailability"` (the roster), `state/researchProgress.ts`'s
+ * `"completedResearchTasks"` and `state/routedTaskQueues.ts`'s
+ * `"routedTaskQueues"` (tracked assignments), and `state/sprintNotes.ts`'s
+ * `"sprintNotes"` (the note wall).
+ */
+export const TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS = [
+  "dailyQuestTemplates",
+  "contributions",
+  "trackedArguments",
+  "evidenceLibraryEntries",
+  "contributorAvailability",
+  "completedResearchTasks",
+  "routedTaskQueues",
+  "sprintNotes",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `TopicSprintPanel` to refresh its
+ * quest board, task routing, progress board, and note wall — closes the
+ * "Every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
+ * for this panel. Mirrors `isDailyBestCardLiveUpdateStorageEvent`'s
+ * null-key/exact-key-match rules.
+ */
+export function isTopicSprintLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
