@@ -19,6 +19,13 @@
  * "Insert" action fills the field with that card's formatted note — still
  * editable before logging, never applied automatically.
  *
+ * Also subscribes to the browser's `storage` event via `flow/live-update.ts`'s
+ * `isFlowEditLogPanelLiveUpdateStorageEvent`, so an edit logged or cleared in
+ * another tab refreshes this panel's "Logged edits" list without a manual
+ * reload — closing the "every other localStorage-backed panel in this repo
+ * still has no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel.
+ *
  * @module panels/FlowEditLogPanel
  */
 
@@ -46,6 +53,7 @@ import { createFlowEdit, type FlowEdit } from "../flow/shared-flow-sync"
 import { clearFlowEditsForFlow, listFlowEdits, saveFlowEdit } from "../state/flowEdits"
 import { parseBoxPathInput } from "../flow/flow-annotations"
 import { buildFlowNoteFromCard, suggestFlowNotesFromLibrary } from "../flow/flow-note-suggestions"
+import { isFlowEditLogPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import { useFlowSyncPolling } from "../hooks/useFlowSyncPolling"
 
 function newFlowEditId(): string {
@@ -67,8 +75,9 @@ export interface FlowEditLogPanelProps {
  * on a flow, and every persisted edit grouped by flow, newest first, with a
  * "Clear this flow's edits" action per group.
  *
- * Reads localStorage on mount only (client-side), so it renders a loading
- * state during SSR/hydration rather than throwing.
+ * Reads localStorage on mount (client-side), so it renders a loading state
+ * during SSR/hydration rather than throwing, and again on a `storage` event
+ * from another tab.
  */
 export function FlowEditLogPanel({ onChange }: FlowEditLogPanelProps = {}) {
   const [edits, setEdits] = useState<FlowEdit[] | null>(null)
@@ -94,6 +103,20 @@ export function FlowEditLogPanel({ onChange }: FlowEditLogPanelProps = {}) {
     setEdits(listFlowEdits())
     onChange?.()
   }
+
+  /**
+   * Live-update the logged-edits list when another browser tab logs or
+   * clears an edit. A `storage` event never fires in the tab that made the
+   * write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isFlowEditLogPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const trimmedFlowId = flowId.trim()
   const parsedFlowId = Number(trimmedFlowId)

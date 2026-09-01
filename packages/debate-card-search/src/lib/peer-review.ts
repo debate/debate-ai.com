@@ -39,6 +39,16 @@ export interface CardReview {
   authorId?: string;
   /** Free-text id of whoever last took a gatekeeping action (request changes/approve/reject/publish), for accountability. */
   reviewedBy?: string;
+  /**
+   * Epoch-ms timestamp of when `status` last changed (set on creation, and
+   * updated by every transition below, including `addReviewComment`'s
+   * auto-transition to `changes_requested`). Optional so reviews persisted
+   * before this field existed keep working — `getReviewAgeDays`/
+   * `isReviewStale` simply report no age for those. Powers the review-aging
+   * indicator named as a "Peer Review System" follow-up in TODO.md ("a
+   * review-aging indicator for stale pending reviews").
+   */
+  statusChangedAt?: number;
 }
 
 /** Legal next statuses for each current status — anything else is rejected. */
@@ -86,7 +96,13 @@ export class SelfReviewNotAllowedError extends Error {
 /** Starts a new, empty review for a card in the "draft" status. `authorId` is optional free-text, matching this package's existing author-id convention. */
 export function createCardReview(cardId: string, authorId?: string): CardReview {
   const trimmedAuthorId = authorId?.trim();
-  return { cardId, status: "draft", comments: [], ...(trimmedAuthorId ? { authorId: trimmedAuthorId } : {}) };
+  return {
+    cardId,
+    status: "draft",
+    comments: [],
+    statusChangedAt: Date.now(),
+    ...(trimmedAuthorId ? { authorId: trimmedAuthorId } : {}),
+  };
 }
 
 /**
@@ -119,7 +135,7 @@ function transitionReview(review: CardReview, to: ReviewStatus, reviewedBy?: str
   if (!canTransitionReviewStatus(review.status, to)) {
     throw new InvalidReviewTransitionError(review.status, to);
   }
-  return { ...review, status: to, ...(reviewedBy ? { reviewedBy } : {}) };
+  return { ...review, status: to, statusChangedAt: Date.now(), ...(reviewedBy ? { reviewedBy } : {}) };
 }
 
 /** Submits a draft (or a review with requested changes) for teammate review. */
@@ -140,7 +156,7 @@ export function getUnresolvedBlockingComments(review: CardReview): ReviewComment
 export function addReviewComment(review: CardReview, comment: Omit<ReviewComment, "resolved">): CardReview {
   const comments = [...review.comments, { ...comment, resolved: false }];
   if (comment.severity === "blocking" && review.status === "in_review") {
-    return { ...review, comments, status: "changes_requested" };
+    return { ...review, comments, status: "changes_requested", statusChangedAt: Date.now() };
   }
   return { ...review, comments };
 }
@@ -220,6 +236,108 @@ export function isReadyToPublish(review: CardReview): boolean {
  */
 export function isCardLive(review: CardReview | undefined): boolean {
   return review === undefined || review.status === "published";
+}
+
+/** Statuses that represent a review sitting in someone else's queue, awaiting action. */
+const PENDING_ACTION_STATUSES: ReviewStatus[] = ["in_review", "changes_requested"];
+
+/** Number of days a review can sit in a pending-action status before `isReviewStale` flags it. */
+export const STALE_REVIEW_THRESHOLD_DAYS = 3;
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/**
+ * How many whole days it's been since `review.status` last changed, or
+ * `undefined` if `statusChangedAt` isn't set (a review persisted before that
+ * field existed). Powers the review-aging indicator named as a "Peer Review
+ * System" follow-up in TODO.md.
+ */
+export function getReviewAgeDays(review: CardReview, now: number = Date.now()): number | undefined {
+  if (review.statusChangedAt === undefined) return undefined;
+  return Math.max(0, Math.floor((now - review.statusChangedAt) / MS_PER_DAY));
+}
+
+/**
+ * Whether a review has been sitting in a pending-action status (`in_review`
+ * or `changes_requested` — draft/approved/published/rejected aren't anyone's
+ * backlog) for at least `thresholdDays`. A review with no `statusChangedAt`
+ * is never flagged stale — there's no age to compare.
+ */
+export function isReviewStale(
+  review: CardReview,
+  now: number = Date.now(),
+  thresholdDays: number = STALE_REVIEW_THRESHOLD_DAYS,
+): boolean {
+  if (!PENDING_ACTION_STATUSES.includes(review.status)) return false;
+  const age = getReviewAgeDays(review, now);
+  return age !== undefined && age >= thresholdDays;
+}
+
+/** One reviewer's tally of current and historical peer-review activity, as produced by `buildReviewerWorkload`. */
+export interface ReviewerWorkloadEntry {
+  reviewerId: string;
+  /** Distinct reviews currently `in_review`/`changes_requested` this reviewer has commented on — their present backlog. */
+  activeReviewCount: number;
+  /** Total comments this reviewer has ever posted, across every review regardless of its current status. */
+  totalCommentsPosted: number;
+  /** Times this reviewer's id appears as `reviewedBy` — approve/reject/publish actions taken, all-time. */
+  actionsTaken: number;
+}
+
+/**
+ * Tallies each reviewer's current backlog and historical activity across a
+ * set of reviews, for a "who's carrying the load" view — closes the third
+ * follow-up named under the "🗣️ Peer Review System" bullet in TODO.md ("a
+ * reviewer-workload balancing view"), after the first two (signed-in
+ * reviewer identity, review-aging indicator) were already done.
+ *
+ * There's no explicit review-assignment concept in this data model — any
+ * qualifying reviewer can act on any queued card — so "workload" is derived
+ * from actual engagement instead: `activeReviewCount` counts a review once
+ * per reviewer who has commented on it while it's still sitting in someone's
+ * queue (`in_review`/`changes_requested`), so a reviewer who left several
+ * comments on the same pending card only counts as carrying that one card,
+ * not several. `actionsTaken` counts gatekeeping actions (approve/reject/
+ * publish) by `reviewedBy`, which `lib/peer-review.ts`'s own transitions
+ * always stamp with the acting reviewer's id.
+ *
+ * Sorted busiest-first (`activeReviewCount` desc, then `totalCommentsPosted`
+ * desc, then `reviewerId` for a stable order) so a coach/organizer scanning
+ * the list sees who to route new review requests away from — and, at the
+ * bottom, who has room to take on more.
+ */
+export function buildReviewerWorkload(reviews: CardReview[]): ReviewerWorkloadEntry[] {
+  const byReviewer = new Map<string, ReviewerWorkloadEntry>();
+  const entryFor = (reviewerId: string): ReviewerWorkloadEntry => {
+    let entry = byReviewer.get(reviewerId);
+    if (!entry) {
+      entry = { reviewerId, activeReviewCount: 0, totalCommentsPosted: 0, actionsTaken: 0 };
+      byReviewer.set(reviewerId, entry);
+    }
+    return entry;
+  };
+
+  for (const review of reviews) {
+    const isPending = PENDING_ACTION_STATUSES.includes(review.status);
+    const activeReviewersOnThisCard = new Set<string>();
+    for (const comment of review.comments) {
+      entryFor(comment.reviewerId).totalCommentsPosted++;
+      if (isPending) activeReviewersOnThisCard.add(comment.reviewerId);
+    }
+    for (const reviewerId of activeReviewersOnThisCard) {
+      entryFor(reviewerId).activeReviewCount++;
+    }
+    if (review.reviewedBy) {
+      entryFor(review.reviewedBy).actionsTaken++;
+    }
+  }
+
+  return [...byReviewer.values()].sort(
+    (a, b) =>
+      b.activeReviewCount - a.activeReviewCount ||
+      b.totalCommentsPosted - a.totalCommentsPosted ||
+      a.reviewerId.localeCompare(b.reviewerId),
+  );
 }
 
 /**

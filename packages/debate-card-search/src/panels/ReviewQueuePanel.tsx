@@ -27,6 +27,18 @@
  * respected afterward, and a signed-out visitor sees the same blank fields
  * as before.
  *
+ * Each `in_review`/`changes_requested` card also shows a review-aging
+ * badge ("pending N days"), the "a review-aging indicator for stale pending
+ * reviews" follow-up named under the "🗣️ Peer Review System" bullet in
+ * TODO.md — the badge switches to a destructive variant once
+ * `lib/peer-review.ts`'s `isReviewStale` reports the card has sat past
+ * `STALE_REVIEW_THRESHOLD_DAYS` without a status change.
+ *
+ * A "Reviewer workload" table sits above the queue itself, built from
+ * `lib/peer-review.ts`'s `buildReviewerWorkload` — the third and final
+ * follow-up named under that same bullet ("a reviewer-workload balancing
+ * view"). It's hidden entirely once no reviewer has any recorded activity.
+ *
  * @module panels/ReviewQueuePanel
  */
 
@@ -41,11 +53,15 @@ import { RadioGroup, RadioGroupItem } from "debate-ui/src/primitives/radio-group
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   addReviewComment,
+  buildReviewerWorkload,
   buildReviewSummary,
   createCardReview,
+  getReviewAgeDays,
+  isReviewStale,
   requestChanges,
   resolveReviewComment,
   reviseRejectedReview,
+  STALE_REVIEW_THRESHOLD_DAYS,
   submitForReview,
   type CardReview,
   type CommentSeverity,
@@ -80,6 +96,12 @@ const STATUS_VARIANT: Record<ReviewStatus, "default" | "secondary" | "outline" |
 }
 
 type CommentDraft = { reviewerId: string; severity: CommentSeverity; body: string }
+
+function formatReviewAgeLabel(days: number): string {
+  if (days === 0) return "pending today"
+  if (days === 1) return "pending 1 day"
+  return `pending ${days} days`
+}
 
 const EMPTY_COMMENT_DRAFT: CommentDraft = { reviewerId: "", severity: "suggestion", body: "" }
 
@@ -206,6 +228,8 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
     return <div className="p-6 text-sm text-muted-foreground">Loading review queue…</div>
   }
 
+  const workload = buildReviewerWorkload(reviews)
+
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div>
@@ -215,6 +239,48 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
           publish — before it goes live in the shared library.
         </p>
       </div>
+
+      {workload.length > 0 && (
+        <div className="rounded-lg border border-border p-4 space-y-2">
+          <div>
+            <h2 className="text-sm font-medium text-foreground">Reviewer workload</h2>
+            <p className="text-xs text-muted-foreground">
+              Who's carrying the queue right now — busiest first — so new review requests can be
+              steered toward reviewers with room to take them.
+            </p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-left text-muted-foreground">
+                  <th className="py-1 pr-4 font-medium">Reviewer</th>
+                  <th className="py-1 pr-4 font-medium">Active reviews</th>
+                  <th className="py-1 pr-4 font-medium">Comments posted</th>
+                  <th className="py-1 font-medium">Actions taken</th>
+                </tr>
+              </thead>
+              <tbody>
+                {workload.map((entry) => (
+                  <tr key={entry.reviewerId} className="border-t border-border">
+                    <td className="py-1 pr-4 font-medium text-foreground">{entry.reviewerId}</td>
+                    <td className="py-1 pr-4">
+                      {entry.activeReviewCount > 0 ? (
+                        <Badge variant={entry.activeReviewCount >= 3 ? "destructive" : "secondary"}>
+                          {entry.activeReviewCount}
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground">0</span>
+                      )}
+                    </td>
+                    <td className="py-1 pr-4 text-muted-foreground">{entry.totalCommentsPosted}</td>
+                    <td className="py-1 text-muted-foreground">{entry.actionsTaken}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       <div className="rounded-lg border border-border p-4 space-y-4">
         <div className="space-y-1.5">
@@ -275,6 +341,8 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
             const unresolvedBlocking = review.comments.filter(
               (comment) => comment.severity === "blocking" && !comment.resolved,
             )
+            const ageDays = getReviewAgeDays(review)
+            const stale = isReviewStale(review)
 
             return (
               <div key={review.cardId} className="rounded-lg border border-border p-4 space-y-3">
@@ -282,6 +350,18 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-foreground">{review.cardId}</span>
                     <Badge variant={STATUS_VARIANT[review.status]}>{STATUS_LABEL[review.status]}</Badge>
+                    {ageDays !== undefined && (review.status === "in_review" || review.status === "changes_requested") && (
+                      <Badge
+                        variant={stale ? "destructive" : "outline"}
+                        title={
+                          stale
+                            ? `Pending ${ageDays} day(s) — over the ${STALE_REVIEW_THRESHOLD_DAYS}-day staleness threshold`
+                            : `Pending ${ageDays} day(s)`
+                        }
+                      >
+                        {formatReviewAgeLabel(ageDays)}
+                      </Badge>
+                    )}
                     {review.authorId && (
                       <span className="text-xs text-muted-foreground">by {review.authorId}</span>
                     )}

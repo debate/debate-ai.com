@@ -22,6 +22,13 @@
  * follow-up (c), "an actual AI-panel evaluation of case choice instead of
  * the tag-overlap heuristic."
  *
+ * Also subscribes to the browser's `storage` event via `flow/live-update.ts`'s
+ * `isStrategyLiveUpdateStorageEvent`, so a strategy recommendation built or
+ * cleared in another tab refreshes this panel's list without a manual
+ * reload — closing the "every other localStorage-backed panel in this repo
+ * still has no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel.
+ *
  * @module panels/StrategyPanel
  */
 
@@ -44,6 +51,7 @@ import {
   saveStrategyRecommendationAiCaseChoice,
 } from "../state/strategyRecommendations"
 import type { StrategyRecommendationRecord } from "../state/strategyRecommendations"
+import { isStrategyLiveUpdateStorageEvent } from "../flow/live-update"
 
 type StrategyDraft = {
   matchupId: string
@@ -92,8 +100,9 @@ function parseCaseOptions(raw: string): CaseOption[] {
  * lookup, and every persisted `StrategyRecommendationRecord`, each with a
  * "Clear" action.
  *
- * Reads localStorage on mount only (client-side), so it renders a loading
- * state during SSR/hydration rather than throwing.
+ * Reads localStorage on mount (client-side), so it renders a loading state
+ * during SSR/hydration rather than throwing, and again on a `storage` event
+ * from another tab.
  */
 export function StrategyPanel() {
   const [records, setRecords] = useState<StrategyRecommendationRecord[] | null>(null)
@@ -107,6 +116,20 @@ export function StrategyPanel() {
   }, [])
 
   const refresh = () => setRecords(buildStrategyRecommendationsPanelView())
+
+  /**
+   * Live-update the strategy-recommendation list when another browser tab
+   * builds or clears a recommendation. A `storage` event never fires in the
+   * tab that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isStrategyLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleSubmit = () => {
     const matchupId = draft.matchupId.trim()

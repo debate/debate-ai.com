@@ -66,6 +66,25 @@ the persisted notes by status for the panel) and `nextPrepNoteStatus` (the
 panel's status-cycle order) — rather than introducing new mutation logic.
 Vitest-covered in `packages/debate-round/test/prepNotes.test.ts`.
 
+### Cross-tab live update
+
+`PrepNotesPanel` now also live-updates across browser tabs: a note
+created, cycled to a new status, or (re)assigned in another tab refreshes
+this panel's grouped list here too, closing this panel's share of the
+"every other localStorage-backed panel in this repo still has no cross-tab
+live-update mechanism" Known gap tracked in
+[`shared-flow-sync.md`](shared-flow-sync.md). It subscribes to the
+browser's `storage` event — fired only in *other* same-origin tabs, never
+the one that made the write — and, via `flow/live-update.ts`'s
+`isPrepNotesPanelLiveUpdateStorageEvent`, re-reads `buildPrepNotesPanelView()`
+whenever the backing `prepNotes` key changes (or `localStorage.clear()`
+fires a `null`-key event). Distinct from `FLOW_LIVE_UPDATE_STORAGE_KEYS` in
+the same module, which drives the `FlowSpreadsheet` grid's per-box
+`PrepNoteBadge` instead of this standalone cross-flow list view. Vitest-covered
+in `packages/debate-round/test/live-update.test.ts` (the backing-store key,
+the `null`-key clear-all case, and unrelated/substring-matching keys
+staying ignored).
+
 ## Notifications
 
 Closes follow-up (b), "an assignee notification once a notification system
@@ -88,6 +107,28 @@ that don't exist yet.
   (remembered in localStorage across visits) and renders that recipient's
   notifications newest first, with a "Mark read" action per unread
   notification.
+
+### Cross-tab live update
+
+`PrepNoteNotificationsPanel` now also live-updates across browser tabs: a
+new assignment or a "Mark read" made in another tab refreshes the currently
+looked-up recipient's notification list here too, closing this panel's
+share of the "every other localStorage-backed panel in this repo still has
+no cross-tab live-update mechanism" Known gap tracked in
+[`shared-flow-sync.md`](shared-flow-sync.md). It subscribes to the
+browser's `storage` event — fired only in *other* same-origin tabs, never
+the one that made the write — and, via `flow/live-update.ts`'s
+`isPrepNoteNotificationsLiveUpdateStorageEvent`, re-reads the panel's
+notification list whenever the backing `prepNoteNotifications` key changes
+(or `localStorage.clear()` fires a `null`-key event). The listener
+deliberately ignores `state/prepNoteNotifications.ts`'s separate
+`prepNoteNotifications:lastRecipientId` key — which recipient id another
+tab last looked up isn't this tab's business. The effect depends on
+`recipientId` so a lookup for a different recipient re-registers the
+listener with a fresh closure instead of refreshing against a stale one.
+Vitest-covered in `packages/debate-round/test/live-update.test.ts` (every
+backing-store key, the `null`-key clear-all case, the excluded
+recipient-id key, and unrelated/substring-matching keys staying ignored).
 
 ## Jump to argument
 

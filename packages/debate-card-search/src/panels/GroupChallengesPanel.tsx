@@ -25,6 +25,13 @@
  * challenge's field is edited — a starting value only, and a signed-out
  * visitor sees the same blank fields as before.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isGroupChallengesLiveUpdateStorageEvent`, so a challenge created, removed,
+ * a win recorded, or a matching contribution submitted in another browser
+ * tab refreshes this panel's rendered roster and standings here too — the
+ * `storage` event never fires in the tab that made the write, only in other
+ * tabs.
+ *
  * @module panels/GroupChallengesPanel
  */
 
@@ -41,6 +48,7 @@ import {
   saveGroupChallenge,
 } from "../state/groupChallenges"
 import { buildPersistedGroupChallengeBoard, recordChallengeWinEvent } from "../state/challengeWinEvents"
+import { isGroupChallengesLiveUpdateStorageEvent } from "../state/live-update"
 import { buildGroupChallengeSummaryText, type ChallengeGoal, type GroupChallenge, type GroupChallengeProgress } from "../lib/group-challenges"
 import type { ContributionKind } from "../lib/community-rating"
 
@@ -134,6 +142,20 @@ export function GroupChallengesPanel({ signedInContributorId }: GroupChallengesP
     setChallenges(buildGroupChallengesPanelView())
     setBoard(buildPersistedGroupChallengeBoard(Date.now()))
   }
+
+  /**
+   * Live-update the challenge roster and standings when another browser tab
+   * creates or removes a challenge, records a win, or submits a matching
+   * contribution.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isGroupChallengesLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const winContributorIdFor = (challengeId: string): string =>
     winContributorId[challengeId] ?? signedInContributorId ?? ""

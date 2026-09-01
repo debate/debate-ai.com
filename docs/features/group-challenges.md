@@ -77,6 +77,25 @@ components/research/GroupChallengesWithIdentity.tsx  — "use client" wrapper
 `ResearchHub.tsx`'s Quests tab now mount this wrapper instead of the bare
 panel; a signed-out visitor sees the exact same blank fields as before.
 
+## Cross-tab live update
+
+`GroupChallengesPanel` now also subscribes to the browser's `storage`
+event, which fires only in *other* same-origin tabs/windows, never the one
+that made the write — closing the "Every other localStorage-backed panel
+in this repo still has no cross-tab live-update mechanism" Known gap noted
+in [`shared-flow-sync.md`](shared-flow-sync.md), for this panel. A new
+pure helper, `state/live-update.ts`'s `isGroupChallengesLiveUpdateStorageEvent`,
+checks whether the event's `key` is one of this panel's three backing
+stores (`groupChallenges`, `challengeWinEvents`, or `contributions`), or
+`null` for a `localStorage.clear()`; when it is, the listener calls the
+panel's existing `refresh()` (both `buildGroupChallengesPanelView()` and
+`buildPersistedGroupChallengeBoard()`), so a challenge created or removed,
+a win recorded, or a matching contribution submitted in another tab shows
+up here without a manual reload. Vitest-covered in
+`packages/debate-card-search/test/live-update.test.ts` (every backing-key
+match, the `null`-key clear-all case, and unrelated/substring-matching keys
+staying ignored).
+
 ## Known gaps
 
 - "Record a win (contributor ID)" is still free-form text, not a login — a

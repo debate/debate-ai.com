@@ -11,6 +11,12 @@
  * the cross-tab case: this closes the "badge doesn't live-update if another
  * tab drops a new annotation/edit while the grid is open" Known gap noted in
  * `flow-annotations.md` and `shared-flow-sync.md`.
+ *
+ * Also hosts the equivalent per-panel predicates for `PrepNotesPanel`,
+ * `PrepNoteNotificationsPanel`, the standalone `FlowAnnotationsPanel` list
+ * view, and `StrategyPanel` — each closes the same "every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap noted in `shared-flow-sync.md`, for its own store.
  */
 
 /** The `localStorage` keys a `FlowSpreadsheet` grid's badges read from (see `state/flowAnnotations.ts`, `state/flowEdits.ts`, `state/prepNotes.ts`). */
@@ -26,4 +32,111 @@ export const FLOW_LIVE_UPDATE_STORAGE_KEYS = ["flowAnnotations", "flowEdits", "p
  */
 export function isFlowLiveUpdateStorageEvent(event: { key: string | null }): boolean {
   return event.key === null || (FLOW_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key);
+}
+
+/**
+ * The `localStorage` key the standalone Flow Annotations panel
+ * (`panels/FlowAnnotationsPanel.tsx`, distinct from the `FlowSpreadsheet`
+ * grid badge above) reads from — see `state/flowAnnotations.ts`.
+ */
+export const FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["flowAnnotations"] as const;
+
+/**
+ * Whether a `storage` event should trigger `FlowAnnotationsPanel` to
+ * re-read its persisted annotation list. A `null` key (e.g. from
+ * `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isFlowAnnotationsPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `panels/PrepNoteNotificationsPanel.tsx` reads from
+ * — see `state/prepNoteNotifications.ts`. Deliberately excludes that
+ * module's separate `prepNoteNotifications:lastRecipientId` key: a change
+ * to which recipient id another tab last looked up isn't this tab's
+ * business, only new/updated notifications for the recipient this tab is
+ * already showing are.
+ */
+export const PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS = ["prepNoteNotifications"] as const;
+
+/**
+ * Whether a `storage` event should trigger `PrepNoteNotificationsPanel` to
+ * re-read its persisted notification list. A `null` key (e.g. from
+ * `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isPrepNoteNotificationsLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `panels/PrepNotesPanel.tsx` reads from — see
+ * `state/prepNotes.ts`. Distinct from `FLOW_LIVE_UPDATE_STORAGE_KEYS` above:
+ * that one drives the `FlowSpreadsheet` grid's per-box `PrepNoteBadge`,
+ * while this drives the standalone cross-flow `PrepNotesPanel` list view,
+ * mirroring the `FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+ * `FLOW_LIVE_UPDATE_STORAGE_KEYS` split for annotations.
+ */
+export const PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["prepNotes"] as const;
+
+/**
+ * Whether a `storage` event should trigger `PrepNotesPanel` to re-read its
+ * persisted note list. A `null` key (e.g. from `localStorage.clear()`)
+ * counts too, for the same reason as `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isPrepNotesPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `panels/StrategyPanel.tsx` reads from — see
+ * `state/strategyRecommendations.ts`.
+ */
+export const STRATEGY_LIVE_UPDATE_STORAGE_KEYS = ["strategyRecommendations"] as const;
+
+/**
+ * Whether a `storage` event should trigger `StrategyPanel` to re-read its
+ * persisted strategy-recommendation list. A `null` key (e.g. from
+ * `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isStrategyLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (STRATEGY_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `panels/FlowEditLogPanel.tsx` reads from — see
+ * `state/flowEdits.ts`. Distinct from `FLOW_LIVE_UPDATE_STORAGE_KEYS` above:
+ * that one drives the `FlowSpreadsheet` grid's per-box `EditBadge`, while
+ * this drives the standalone cross-flow `FlowEditLogPanel` list view (its
+ * "Logged edits" section, grouped by flow), mirroring the
+ * `PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS`/`FLOW_LIVE_UPDATE_STORAGE_KEYS`
+ * split for prep notes.
+ */
+export const FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["flowEdits"] as const;
+
+/**
+ * Whether a `storage` event should trigger `FlowEditLogPanel` to re-read its
+ * persisted edit list. A `null` key (e.g. from `localStorage.clear()`)
+ * counts too, for the same reason as `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isFlowEditLogPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
 }

@@ -66,28 +66,57 @@
  * submission tagged for the Argument Library gets no tag-autocomplete
  * affordance of its own" gap in `docs/features/evidence-library.md`.
  *
+ * Also subscribes to the browser's `storage` event via
+ * `state/live-update.ts`'s `isContributionsFeedLiveUpdateStorageEvent`, so a
+ * contribution submitted, liked, saved, or endorsed in another tab (or a tag
+ * added to the Evidence Library) refreshes this tab's feed and tag
+ * suggestions without a manual reload — closing, for this panel, the "Every
+ * other localStorage-backed panel in this repo still has no cross-tab
+ * live-update mechanism" Known gap noted in
+ * `docs/features/shared-flow-sync.md`. See
+ * `docs/features/contributions-feed.md`.
+ *
+ * The heading now carries an Info-icon tooltip (via `community-rating.ts`'s
+ * `buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/
+ * reviewer-weight blend, closing idea #11's third named follow-up in
+ * TODO.md — mirrors the existing `ELO_TOOLTIP`/`LeaderboardTableHeader`
+ * pattern in `debate-videos`.
+ *
+ * A "Flagged for review" toggle now sits next to the feed heading, closing
+ * idea #11's remaining follow-up (c) in TODO.md: "a moderator view that
+ * surfaces `isPopularityOnlyOutlier`-flagged contributions for review." The
+ * flag was already computed and shown inline per-entry, but there was no
+ * dedicated filtered view for a moderator to review just the flagged ones —
+ * the toggle switches the rendered feed between every contribution and only
+ * those `state/contributions.ts`'s `filterFlaggedFeedEntries` selects,
+ * labeled with a live flagged count.
+ *
  * @module panels/ContributionsFeedPanel
  */
 
 "use client"
 
 import { useEffect, useState } from "react"
+import { Info } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
 import {
   buildPersistedContributionFeed,
+  filterFlaggedFeedEntries,
   recordPersistedEndorsementFromReviewer,
   recordPersistedLike,
   recordPersistedSave,
   saveContribution,
   type ContributionFeedEntry,
 } from "../state/contributions"
-import type { ContributionKind } from "../lib/community-rating"
+import { buildHelpfulnessScoreExplanation, type ContributionKind } from "../lib/community-rating"
 import { computeWordCount } from "../lib/shared-evidence-library"
 import { listCombinedPersistedTags } from "../state/evidenceLibraryEntries"
+import { isContributionsFeedLiveUpdateStorageEvent } from "../state/live-update"
 import {
   applyTagSuggestion,
   normalizeTagsToKnownCasing,
@@ -112,6 +141,8 @@ const KIND_VARIANT: Record<ContributionKind, "default" | "secondary" | "outline"
   "original-argument": "default",
   refutation: "secondary",
 }
+
+const HELPFULNESS_SCORE_EXPLANATION = buildHelpfulnessScoreExplanation()
 
 type ContributionDraft = {
   contributorId: string
@@ -148,6 +179,7 @@ export function ContributionsFeedPanel() {
   const [reviewerId, setReviewerId] = useState("")
   const [endorseError, setEndorseError] = useState<string | null>(null)
   const [knownTags, setKnownTags] = useState<string[]>([])
+  const [showFlaggedOnly, setShowFlaggedOnly] = useState(false)
 
   useEffect(() => {
     setFeed(buildPersistedContributionFeed())
@@ -158,6 +190,20 @@ export function ContributionsFeedPanel() {
     setFeed(buildPersistedContributionFeed())
     setKnownTags(listCombinedPersistedTags())
   }
+
+  /**
+   * Live-update the feed and tag suggestions when another browser tab
+   * submits, likes, saves, or endorses a contribution, or adds an Evidence
+   * Library tag.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isContributionsFeedLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const { completedTags, draftTag } = parseTagsInput(draft.tags)
   const tagSuggestions = suggestTags(knownTags, draftTag, completedTags)
@@ -227,13 +273,28 @@ export function ContributionsFeedPanel() {
     return <div className="p-6 text-sm text-muted-foreground">Loading contributions feed…</div>
   }
 
+  const flaggedCount = filterFlaggedFeedEntries(feed).length
+  const visibleFeed = showFlaggedOnly ? filterFlaggedFeedEntries(feed) : feed
+
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div>
         <h1 className="mb-1 text-xl font-semibold text-foreground">Contributions Feed</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
           Submit a contribution, then like, save, or endorse the community's cards, summaries,
-          highlights, and annotations — ranked by blended helpfulness score.
+          highlights, and annotations — ranked by blended
+          <Tooltip delayDuration={200}>
+            <TooltipTrigger asChild>
+              <span className="cursor-help inline-flex items-center gap-1 underline decoration-dotted">
+                helpfulness score
+                <Info className="h-3.5 w-3.5" />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-xs">
+              <p className="text-xs leading-relaxed">{HELPFULNESS_SCORE_EXPLANATION}</p>
+            </TooltipContent>
+          </Tooltip>
+          .
         </p>
       </div>
 
@@ -354,13 +415,29 @@ export function ContributionsFeedPanel() {
         {endorseError && <p className="text-sm text-destructive">{endorseError}</p>}
       </div>
 
-      {feed.length === 0 ? (
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-sm font-medium text-foreground">
+          {showFlaggedOnly ? `Flagged for review (${flaggedCount})` : `All contributions (${feed.length})`}
+        </h2>
+        <Button
+          type="button"
+          size="sm"
+          variant={showFlaggedOnly ? "default" : "outline"}
+          onClick={() => setShowFlaggedOnly((prev) => !prev)}
+        >
+          {showFlaggedOnly ? "Show all" : `Flagged for review (${flaggedCount})`}
+        </Button>
+      </div>
+
+      {visibleFeed.length === 0 ? (
         <div className="p-6 text-center text-sm text-muted-foreground">
-          No contributions yet. Submit one above to start the feed.
+          {showFlaggedOnly
+            ? "No contributions currently flagged as popularity-only."
+            : "No contributions yet. Submit one above to start the feed."}
         </div>
       ) : (
         <div className="space-y-2">
-          {feed.map((entry) => (
+          {visibleFeed.map((entry) => (
             <div key={entry.id} className="rounded-lg border border-border p-3 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant={KIND_VARIANT[entry.kind]} className="capitalize">

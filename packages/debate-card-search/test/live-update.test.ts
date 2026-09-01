@@ -1,22 +1,27 @@
 import { describe, expect, it } from "vitest";
 import {
+  BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS,
   CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS,
   CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS,
+  CONTRIBUTIONS_FEED_LIVE_UPDATE_STORAGE_KEYS,
   CONTRIBUTOR_AWARDS_LIVE_UPDATE_STORAGE_KEYS,
   DAILY_BEST_CARD_LIVE_UPDATE_STORAGE_KEYS,
   DAILY_QUESTS_LIVE_UPDATE_STORAGE_KEYS,
+  GROUP_CHALLENGES_LIVE_UPDATE_STORAGE_KEYS,
   NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS,
   PROGRESS_UNLOCKS_LIVE_UPDATE_STORAGE_KEYS,
   QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS,
   RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS,
   REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS,
   TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS,
-  TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS,
+  isBrainstormBoardLiveUpdateStorageEvent,
   isCardScoringLiveUpdateStorageEvent,
   isContributionLeaderboardLiveUpdateStorageEvent,
+  isContributionsFeedLiveUpdateStorageEvent,
   isContributorAwardsLiveUpdateStorageEvent,
   isDailyBestCardLiveUpdateStorageEvent,
   isDailyQuestsLiveUpdateStorageEvent,
+  isGroupChallengesLiveUpdateStorageEvent,
   isNewsStreamLiveUpdateStorageEvent,
   isProgressUnlocksLiveUpdateStorageEvent,
   isQuestStreaksLiveUpdateStorageEvent,
@@ -268,24 +273,68 @@ describe("isCardScoringLiveUpdateStorageEvent", () => {
   });
 });
 
-describe("isTopicSprintLiveUpdateStorageEvent", () => {
+describe("isBrainstormBoardLiveUpdateStorageEvent", () => {
   it("is true for every store key the panel reads", () => {
-    for (const key of TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS) {
-      expect(isTopicSprintLiveUpdateStorageEvent({ key })).toBe(true);
+    for (const key of BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isBrainstormBoardLiveUpdateStorageEvent({ key })).toBe(true);
     }
   });
 
   it("is true for a null key (localStorage.clear())", () => {
-    expect(isTopicSprintLiveUpdateStorageEvent({ key: null })).toBe(true);
+    expect(isBrainstormBoardLiveUpdateStorageEvent({ key: null })).toBe(true);
   });
 
   it("is false for an unrelated store's key", () => {
-    expect(isTopicSprintLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
-    expect(isTopicSprintLiveUpdateStorageEvent({ key: "dailyBestCardAnnouncements" })).toBe(false);
+    expect(isBrainstormBoardLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isBrainstormBoardLiveUpdateStorageEvent({ key: "contributions" })).toBe(false);
   });
 
   it("is false for a key that merely contains a tracked store name as a substring", () => {
-    expect(isTopicSprintLiveUpdateStorageEvent({ key: "sprintNotesBackup" })).toBe(false);
-    expect(isTopicSprintLiveUpdateStorageEvent({ key: "old_contributorAvailability" })).toBe(false);
+    expect(isBrainstormBoardLiveUpdateStorageEvent({ key: "brainstormIdeasBackup" })).toBe(false);
+    expect(isBrainstormBoardLiveUpdateStorageEvent({ key: "old_trackedArguments" })).toBe(false);
+  });
+});
+
+describe("isGroupChallengesLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of GROUP_CHALLENGES_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isGroupChallengesLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isGroupChallengesLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isGroupChallengesLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isGroupChallengesLiveUpdateStorageEvent({ key: "dailyMissionResults" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isGroupChallengesLiveUpdateStorageEvent({ key: "groupChallengesBackup" })).toBe(false);
+    expect(isGroupChallengesLiveUpdateStorageEvent({ key: "old_challengeWinEvents" })).toBe(false);
+  });
+});
+
+describe("isContributionsFeedLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of CONTRIBUTIONS_FEED_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isContributionsFeedLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isContributionsFeedLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isContributionsFeedLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isContributionsFeedLiveUpdateStorageEvent({ key: "groupChallenges" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isContributionsFeedLiveUpdateStorageEvent({ key: "contributionsBackup" })).toBe(false);
+    expect(isContributionsFeedLiveUpdateStorageEvent({ key: "old_evidenceLibraryEntries" })).toBe(false);
   });
 });

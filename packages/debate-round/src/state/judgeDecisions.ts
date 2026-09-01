@@ -26,6 +26,15 @@ export type JudgeDecisionRecord = {
 
 const STORAGE_KEY = "judgeDecisions";
 
+/**
+ * Idea #5's third "Next" bullet ("a per-round decision count cap, now that a
+ * heavily-re-judged round can accumulate many entries even with the new
+ * bulk-clear action available"). Once a round's history log exceeds this
+ * many entries, `appendJudgeDecision` trims the oldest ones, mirroring
+ * `wordLimitPresets.ts`'s `MAX_WORD_LIMIT_PRESETS` cap-constant convention.
+ */
+export const MAX_JUDGE_DECISIONS_PER_ROUND = 20;
+
 function readAll(): JudgeDecisionRecord[] {
   if (typeof localStorage === "undefined") return [];
   try {
@@ -64,17 +73,43 @@ export function listJudgeDecisionsForRound(roundId: string): JudgeDecisionRecord
     .sort((a, b) => b.generatedAt - a.generatedAt);
 }
 
+export type AppendJudgeDecisionResult = {
+  /** The newly stamped record, as before this cap existed. */
+  record: JudgeDecisionRecord;
+  /**
+   * Ids trimmed from this round's history to enforce
+   * `MAX_JUDGE_DECISIONS_PER_ROUND`, oldest-first; empty while the round
+   * stays under the cap. The caller (`hooks/useJudgeDecisions.ts`)
+   * best-effort deletes these from the account too, mirroring
+   * `deleteRoundHistory`'s per-id cleanup.
+   */
+  trimmedIds: string[];
+};
+
 /**
  * Appends a newly requested judge decision to that round's history log,
  * assigning it a fresh `id` — unlike the old "latest result only" shape,
- * this never overwrites an existing entry. Returns the stamped record so
- * the caller (`hooks/useJudgeDecisions.ts`) can sync it to the account with
- * its real `id`.
+ * this never overwrites an existing entry. Once the round's log exceeds
+ * `MAX_JUDGE_DECISIONS_PER_ROUND` entries, the oldest ones beyond the cap
+ * are trimmed away.
  */
-export function appendJudgeDecision(input: Omit<JudgeDecisionRecord, "id">): JudgeDecisionRecord {
+export function appendJudgeDecision(input: Omit<JudgeDecisionRecord, "id">): AppendJudgeDecisionResult {
   const record: JudgeDecisionRecord = { ...input, id: generateJudgeDecisionId() };
-  writeAll([...readAll(), record]);
-  return record;
+  const all = [...readAll(), record];
+
+  const roundRecordsNewestFirst = all
+    .filter((existing) => existing.roundId === record.roundId)
+    .sort((a, b) => b.generatedAt - a.generatedAt);
+  const trimmedIds = roundRecordsNewestFirst.slice(MAX_JUDGE_DECISIONS_PER_ROUND).map((existing) => existing.id);
+
+  if (trimmedIds.length > 0) {
+    const trimmed = new Set(trimmedIds);
+    writeAll(all.filter((existing) => !trimmed.has(existing.id)));
+  } else {
+    writeAll(all);
+  }
+
+  return { record, trimmedIds };
 }
 
 /**

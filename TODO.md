@@ -6,58 +6,628 @@
 _No task currently in progress._
 
 ### Completed
-- **Topic Sprint — cross-tab live-update (idea #16, `shared-flow-sync.md`
+- **AI Judge Decision Modes — per-round decision count cap (idea #5).**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, etc.), the CardMirror editor already surfaces every
+  tool via its top `MenuBar`, and the only open PR (#400) covers an
+  unrelated panel (Topic Sprint cross-tab live-update), so this slice
+  picked idea #5's last remaining named follow-up: "a per-round decision
+  count cap, now that a heavily-re-judged round can accumulate many
+  entries even with the new bulk-clear action available." Added
+  `MAX_JUDGE_DECISIONS_PER_ROUND` (20) to
+  `packages/debate-round/src/state/judgeDecisions.ts`, mirroring
+  `wordLimitPresets.ts`'s `MAX_WORD_LIMIT_PRESETS` cap-constant convention
+  rather than adding a new Settings-driven numeric preference.
+  `appendJudgeDecision` now trims the oldest entries for that round (by
+  `generatedAt`) once the cap is exceeded, returning `{ record, trimmedIds
+  }` instead of the bare record; `hooks/useJudgeDecisions.ts`'s
+  `appendDecision` best-effort deletes each trimmed id from the account
+  too, the same per-id cleanup `deleteRoundHistory` already does. One
+  known edge case, documented rather than defended against: the cap isn't
+  re-checked during the mount-time remote merge, so a remote copy of an
+  already-trimmed decision (only possible if its account delete failed)
+  could still be adopted back on a later mount. Vitest-covered with 4 new
+  cases in `packages/debate-round/test/judgeDecisions.test.ts` (stays
+  under the cap, trims the single oldest entry once exceeded, other rounds
+  untouched, `trimmedIds` empty while under the cap). See
+  `docs/features/judge-paradigm-selections.md`'s "Decision history"
+  section's new "Per-round decision count cap" paragraph. Idea #5 now has
+  no further named follow-up — a future run should pick a fresh next-step
+  (a multi-judge "panel" mode or a side-by-side paradigm comparison view,
+  both already suggested in the Product Feature Ideas list below) if one
+  becomes worth doing.
+- **Contributions Feed — moderator view for popularity-only-outlier
+  contributions (idea #11, "Community-Rated Summaries and Highlights").**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, etc.), the CardMirror editor already surfaces every
+  tool via its top `MenuBar`, and the only open PR (#400) covers an
+  unrelated panel (Topic Sprint cross-tab live-update), so this slice
+  picked idea #11's last remaining named follow-up: "a moderator view that
+  surfaces `isPopularityOnlyOutlier`-flagged contributions for review" —
+  the flag itself was already computed and shown inline per-entry in
+  `ContributionsFeedPanel`, but there was no dedicated filtered view for a
+  moderator to review just the flagged ones. Added a new pure helper,
+  `filterFlaggedFeedEntries(entries)` in `state/contributions.ts`, that
+  narrows a ranked `ContributionFeedEntry` list down to only the
+  `isPopularityOnlyOutlier` entries, preserving the feed's existing
+  helpfulness-score ranking order. `ContributionsFeedPanel` now renders a
+  "Flagged for review (N)" toggle button above the feed list, next to a
+  heading that reflects the current view; toggling switches the rendered
+  list between the full feed and `filterFlaggedFeedEntries`' output, with
+  a dedicated empty state ("No contributions currently flagged as
+  popularity-only.") when no entry is flagged. Vitest-covered with 4 new
+  cases in `packages/debate-card-search/test/contributions.test.ts` (empty
+  feed, no entries flagged, only the flagged entries returned, and ranking
+  order preserved among multiple flagged entries). See
+  `docs/features/contributions-feed.md`'s new "Moderator view: flagged for
+  review" section. Idea #11's last remaining follow-up — an endorsement
+  history list per contributor — stays open for a future run.
+
+- **Review Queue — reviewer-workload balancing view (🗣️ Peer Review
+  System).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built (a real `/settings` page, D1-backed tables
+  linked to signed-in users for flow edits, documents, rounds, judge
+  decisions, word-count history, etc.), the CardMirror editor already
+  surfaces every tool via its top `MenuBar` (File/Edit/Card/Format/Insert/
+  AI/View/Tools/Workspace/Plugins dropdowns, mirroring the ribbon and the
+  Ctrl/Cmd-Shift-Space command palette three ways), and the open PR (#400)
+  covers an unrelated panel (Topic Sprint cross-tab live-update), so this
+  slice closed out the "🗣️ Peer Review System" bullet's third and final
+  follow-up instead: "a reviewer-workload balancing view," after the first
+  two (signed-in reviewer identity, review-aging indicator) were already
+  done in earlier slices. This data model has no explicit review-assignment
+  field — any reviewer who clears `MIN_REVIEWER_TIER` can act on any queued
+  card — so added a new pure helper, `buildReviewerWorkload(reviews)` in
+  `lib/peer-review.ts`, that derives workload from actual engagement
+  instead: distinct pending (`in_review`/`changes_requested`) cards a
+  reviewer has commented on ("active reviews," deduped per card), total
+  comments ever posted, and total gatekeeping actions taken (tallied from
+  `reviewedBy`) — sorted busiest-first so an organizer can steer new review
+  requests toward reviewers with room to take them. `ReviewQueuePanel` now
+  renders this as a "Reviewer workload" table above the queue itself
+  (hidden entirely when no reviewer has any recorded activity), with a
+  destructive badge at 3+ active reviews as a lightweight overload flag.
+  Vitest-covered with 8 new cases in
+  `packages/debate-card-search/test/peer-review.test.ts` (empty input,
+  non-pending vs. pending comments, same-card dedup, cross-card counting,
+  `reviewedBy` tallying independent of comments, sort order, and combined
+  comment+action activity for one reviewer). See `docs/features/review-
+  queue.md`'s new "Reviewer workload" section. All three follow-ups named
+  under the "🗣️ Peer Review System" bullet are now closed; a future run
+  should pick a fresh next-step for this idea (e.g. surfacing the workload
+  table's data as a Coach Workspace roster view, or a "reassign" action
+  that lets an overloaded reviewer wave a pending card off to someone else)
+  if one becomes worth doing.
+
+- **Helpfulness-score tooltip/legend (idea #11, "Community-Rated Summaries
+  and Highlights").** Another repeat of the standing prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built (a real `/settings` page, D1-backed tables
+  linked to signed-in users for flow edits, documents, rounds, judge
+  decisions, word-count history, etc.), and no open PR/tracker item
+  duplicated this slice's target (the only open PR, #400, covers an
+  unrelated panel). So this slice picked idea #11's third named follow-up:
+  "A tooltip/legend explaining how the popularity/quality/reviewer-weight
+  blend produces a score" — the score itself (`lib/community-rating.ts`)
+  was already computed and shown as a bare number in both
+  `ContributionsFeedPanel` (`/cards/contributions`) and
+  `ContributionLeaderboardPanel` (`/cards/leaderboard`), but neither
+  explained *how* it was produced. Added a new pure helper,
+  `buildHelpfulnessScoreExplanation(weights = DEFAULT_HELPFULNESS_WEIGHTS)`,
+  that spells out the blend in plain language — the popularity/quality/
+  reviewer percentages are computed from the passed-in `HelpfulnessWeights`
+  rather than hardcoded, so the legend can't drift out of sync with the
+  actual scoring weights — plus the `isPopularityOnlyOutlier` flag's
+  threshold values. Wired an Info-icon tooltip into both panels' intro text
+  next to the words "helpfulness score", mirroring the existing
+  `ELO_TOOLTIP`/`LeaderboardTableHeader` tooltip pattern already used in
+  `debate-videos` (same `Tooltip`/`TooltipTrigger`/`TooltipContent`
+  primitives from `debate-ui`, same `cursor-help` + `Info` icon affordance).
+  Vitest-covered with 4 new cases in
+  `packages/debate-card-search/test/community-rating.test.ts` (default-weight
+  percentages, custom-weight percentages, the outlier-threshold wording, and
+  that the no-argument call matches an explicit `DEFAULT_HELPFULNESS_WEIGHTS`
+  call). The two panels' own tooltip JSX isn't render-tested — both gate
+  their real content behind a client-only `useEffect`-populated
+  localStorage read, so (per this package's own `panels.test.tsx` note) a
+  `renderToStaticMarkup` SSR test would only ever exercise their loading
+  state; `typecheck`/`build:web` cover that the JSX compiles and the routes
+  build. See `docs/features/contributions-feed.md` and
+  `docs/features/contribution-leaderboard.md`'s updated "What it shows"
+  sections. The bullet's other two follow-ups (a moderator view surfacing
+  `isPopularityOnlyOutlier`-flagged contributions, and a per-contributor
+  endorsement history list) remain open — a future run should pick one of
+  those next.
+
+- **Review Queue — review-aging indicator for stale pending reviews (idea
+  "🗣️ Peer Review System").** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows docs and debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built (a real `/settings` page,
+  D1-backed tables linked to signed-in users for flow edits, documents,
+  rounds, judge decisions, word-count history, etc.), and the repo's own
+  cross-tab-live-update sweep (previous Completed entry) is also now fully
+  closed — every panel named in `shared-flow-sync.md`'s Known gap list has
+  the mechanism, apart from `TopicSprintPanel`, which had an open PR
+  (#400) from a separate concurrent run already in flight. So this slice
+  picked a fresh next-step item instead: the "🗣️ Peer Review System" bullet
+  in the Research Crowdsourcing Organizer Features list named three
+  follow-ups, and its first ("gate reviewer identity behind the real
+  signed-in session") was already done (`docs/features/review-queue.md`'s
+  "Signed-in prefill" section). Implemented the second: `CardReview` now
+  carries a `statusChangedAt` epoch-ms timestamp (`lib/peer-review.ts`),
+  stamped by `createCardReview` and refreshed by every status-changing
+  transition (including `addReviewComment`'s auto-transition to
+  `changes_requested`). New pure helpers `getReviewAgeDays`/`isReviewStale`
+  (with an exported `STALE_REVIEW_THRESHOLD_DAYS = 3` default, overridable)
+  flag a card stale once it's sat in `in_review`/`changes_requested` — the
+  two "someone else's queue" statuses — past the threshold.
+  `ReviewQueuePanel` now shows a "pending N days" badge next to each such
+  card's status badge, switching to a destructive variant once stale.
+  Vitest-covered with 16 new cases in
+  `packages/debate-card-search/test/peer-review.test.ts` (age computation,
+  threshold boundaries, custom thresholds, missing-timestamp back-compat,
+  and the `addReviewComment` auto-transition stamping). See
+  `docs/features/review-queue.md`'s new "Review aging" section. The bullet's
+  third follow-up ("a reviewer-workload balancing view") remains open for a
+  future run.
+- **Flow Edit Log panel — cross-tab live-update (`shared-flow-sync.md`
   Known gap: "every other localStorage-backed panel in this repo still has
-  no cross-tab live-update mechanism").** Prompted by another repeat of
-  this run's standing request ("create user settings and link user db
-  SQL... with ability to save flows docs and debates in SQL and link to
-  users... add tools into where needed in the ui... develop better tool
-  ui"), and finding — like every recent repeat of this prompt — that the
-  "user settings / SQL-linked flows, docs, rounds" half is already fully
-  built and documented, this slice picked up `shared-flow-sync.md`'s next
-  unclaimed panel from its running cross-tab-live-update list (the
-  immediately preceding run had just closed `CardScoringPanel`):
-  `TopicSprintPanel` (`/cards/collaboration`'s Sprint tab, via
-  `ResearchHub.tsx`), which reads eight `localStorage` stores through
-  `state/topicSprints.ts`'s `readPersistedTopicSprintInputs`
-  (`dailyQuestTemplates`, `contributions`, `trackedArguments`,
-  `evidenceLibraryEntries`, `contributorAvailability`,
-  `completedResearchTasks`, `routedTaskQueues`) plus its own
-  `useStoreSnapshot`-backed `sprintNotes` read, but — like every other
-  still-unclaimed panel — only ever refreshed on mount, or when its `topic`
-  prop changed. Added `TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS`/
-  `isTopicSprintLiveUpdateStorageEvent` to
-  `packages/debate-card-search/src/state/live-update.ts`, mirroring the
-  twelve existing key-list/predicate pairs there exactly (true for any of
-  the eight backing keys or a `null` key from `localStorage.clear()`, false
-  otherwise — including same-prefix substring keys). Wired a `storage`
-  event listener into `TopicSprintPanel.tsx` that re-reads
-  `readPersistedTopicSprintInputs(topic)` and the panel's own notes
-  snapshot when the predicate matches, mirroring `DailyQuestsPanel`'s
-  `[topic]`-dependent listener (re-registered with a fresh closure whenever
-  `topic` changes, matching the existing mount effect's own `[topic]`
-  dependency) rather than `DailyBestCardPanel`'s simpler no-dependency
-  case. Documented in `docs/features/team-collaboration-mode.md` (new
-  "Cross-tab live update" section) and `docs/features/shared-flow-sync.md`
-  (added `TopicSprintPanel` to the running list of panels that already
-  have the mechanism). Vitest-covered: 4 new cases for
-  `isTopicSprintLiveUpdateStorageEvent` in
-  `packages/debate-card-search/test/live-update.test.ts` (every backing-key
-  match, the `null`-key clear-all case, two unrelated keys, and two
-  same-prefix substring keys), bringing that file to 48 cases.
-  `TopicSprintPanel.tsx`'s own `storage`-listener wiring remains
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI"), and finding — like every recent repeat of
+  this prompt — that the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and documented (including a real `/settings`
+  page and D1-backed `flowSyncEdits`/document tables linked to users), this
+  slice picked up `shared-flow-sync.md`'s next unclaimed panel from the
+  remaining list named in the immediately preceding run's Completed entry.
+  An open PR from a separate concurrent run (`claude/gifted-babbage-rkajod`,
+  #400) was already in flight on `TopicSprintPanel`, whose predicate lives
+  in `debate-card-search/src/state/live-update.ts` — to avoid touching the
+  same file and risking a merge conflict, this slice instead picked
+  `FlowEditLogPanel` (`packages/debate-round/src/panels/FlowEditLogPanel.tsx`,
+  mounted in the Coach hub's Flow section), which reads
+  `state/flowEdits.ts`'s single `flowEdits` localStorage key via
+  `listFlowEdits()`, but — like every other still-unclaimed panel — only
+  ever refreshed on mount or after its own log/clear-flow actions. Added
+  `FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isFlowEditLogPanelLiveUpdateStorageEvent` to the existing
+  `packages/debate-round/src/flow/live-update.ts` (the module already
+  backing `PrepNotesPanel`, `PrepNoteNotificationsPanel`, the standalone
+  `FlowAnnotationsPanel` list view, `StrategyPanel`, and the
+  `FlowSpreadsheet` grid's own `EditBadge`/`AnnotationBadge`/
+  `PrepNoteBadge`), mirroring the `PREP_NOTES_PANEL`/
+  `FLOW_LIVE_UPDATE_STORAGE_KEYS` split so the grid badge's broader
+  three-key predicate and this panel's narrower single-key predicate stay
+  independent. Wired a `storage` event listener into `FlowEditLogPanel.tsx`
+  that calls the existing `refresh()` closure when the predicate matches.
+  Documented in a new "Cross-tab live update in `FlowEditLogPanel`" section
+  in `docs/features/shared-flow-sync.md` (and updated that file's Known
+  gaps list to add `FlowEditLogPanel` to the running list of panels that
+  already have the mechanism). Vitest-covered: 4 new cases for
+  `isFlowEditLogPanelLiveUpdateStorageEvent` in
+  `packages/debate-round/test/live-update.test.ts`, bringing that file to
+  26 cases. `FlowEditLogPanel.tsx`'s own `storage`-listener wiring remains
   intentionally untested, matching every other panel in this repo whose
   wiring is exercised only through the shared pure predicate's own tests.
-  Verified: `bun install` (2258 packages), the touched test file (57/57
-  pass across `live-update.test.ts` + `topicSprints.test.ts`), the full
-  `bun run test` (201 files / 3224 tests, all pass), the whole-repo `bun
-  run typecheck` (12 packages via turbo — `debate-ai-web` has no
-  `typecheck` script — all passing), and a full production `bun run
-  build:web` (vinext build + service-worker build, `/cards/collaboration`
-  present in the route list) — all passed with no new failures. Generated
+  Verified: `bun install` (2258 packages), the touched test files (26/26
+  pass across `live-update.test.ts` + `panels.test.tsx`), the full `bun run
+  test` (201 files / 3252 tests, all pass), the whole-repo `bun run
+  typecheck` (12 packages via turbo, all passing), and a full production
+  `bun run build:web` (vinext build + service-worker build, `/coach`
+  present in the route list) — all passed with no new failures. No `lint`/
+  `format:check` script exists anywhere in this repo (root or per-package
+  `package.json`, and no `lint` task in `turbo.json`), so that step was
+  skipped as not applicable. Generated service-worker build artifacts
+  (`app-file-list.ts`, `version.ts`, `public/service-worker.js`) produced
+  by that build were reverted before committing, since they're build-time
+  output unrelated to this change. Every other localStorage-backed panel
+  still without the mechanism (`ArgumentLibraryPanel`, `EvidenceLibraryPanel`,
+  `PrepRoomPanel`, `ReviewQueuePanel`, `SprintNotesPanel`,
+  `TopicCoverageDashboardPanel` in `debate-card-search`; `AiVersusRoundPanel`,
+  `ArgumentTreePanel`, `CoachingProgramsPanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, `FlowSummariesPanel`, `JudgeDecisionPanel`,
+  `OpponentTeamProfilesPanel`, `PracticeRoundSimulatorPanel`,
+  `PreRoundBriefingsPanel`, `UserSettingsPanel`, `VulnerabilityChartsPanel`,
+  `WordCountRoundsPanel` in `debate-round`; `CoachMaterialsPanel`,
+  `JudgeParadigmPickerPanel`, `JudgeProfilesPanel`,
+  `OpponentPersonaPickerPanel` in `debate-speech-writer`; and
+  `DebateVideosPanel` in `debate-videos`) remains open for a future run to
+  pick up next (plus `TopicSprintPanel`, pending merge of the separate
+  in-flight PR #400).
+- **Scout-to-Strategy panel — cross-tab live-update (`shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI"), and finding — like every recent repeat of
+  this prompt — that the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and documented (including a real `/settings`
+  page and D1-backed `flowSyncEdits`/document tables linked to users), this
+  slice picked up `shared-flow-sync.md`'s next unclaimed panel from the
+  remaining list named in the immediately preceding run's Completed entry
+  (`ContributionsFeedPanel`). An open PR from a separate concurrent run
+  (`claude/gifted-babbage-rkajod`, #400) was already in flight on
+  `TopicSprintPanel`, whose predicate lives in a different package's
+  `state/live-update.ts` — to avoid touching the same file and risking a
+  merge conflict, this slice instead picked `StrategyPanel` (`/strategy`,
+  also mounted in the Coach hub's Scouting section), which reads
+  `state/strategyRecommendations.ts`'s single `strategyRecommendations`
+  localStorage key via `buildStrategyRecommendationsPanelView`, but — like
+  every other still-unclaimed panel — only ever refreshed on mount or after
+  its own build/clear/AI-case-choice actions. Added
+  `STRATEGY_LIVE_UPDATE_STORAGE_KEYS`/`isStrategyLiveUpdateStorageEvent` to
+  the existing `packages/debate-round/src/flow/live-update.ts` (the module
+  already backing `PrepNotesPanel`, `PrepNoteNotificationsPanel`, and the
+  standalone `FlowAnnotationsPanel` list view, even though none of these —
+  `StrategyPanel` included — are part of the `FlowSpreadsheet` grid itself).
+  Wired a `storage` event listener into `StrategyPanel.tsx` that calls the
+  existing `refresh()` closure when the predicate matches. Documented in a
+  new "Cross-tab live update" section in `docs/features/scout-to-strategy.md`
+  and `docs/features/shared-flow-sync.md` (added the panel to the running
+  list of panels that already have the mechanism). Vitest-covered: 4 new
+  cases for `isStrategyLiveUpdateStorageEvent` in
+  `packages/debate-round/test/live-update.test.ts` (the one backing key,
+  the `null`-key clear-all case, and unrelated/substring-matching keys),
+  bringing that file to 20 cases. `StrategyPanel.tsx`'s own
+  `storage`-listener wiring remains intentionally untested, matching every
+  other panel in this repo whose wiring is exercised only through the
+  shared pure predicate's own tests. Verified: `bun install` (2258
+  packages), the touched test file (22/22 pass across
+  `live-update.test.ts` + `panels.test.tsx`), the full `bun run test` (201
+  files / 3248 tests, all pass), the whole-repo `bun run typecheck` (12
+  packages via turbo, all passing), and a full production `bun run
+  build:web` (vinext build + service-worker build, `/strategy` present in
+  the route list) — all passed with no new failures. No `lint`/
+  `format:check` script exists anywhere in this repo (root or per-package
+  `package.json`, and no `lint` task in `turbo.json`), so that step was
+  skipped as not applicable. Generated service-worker build artifacts
+  (`app-file-list.ts`, `version.ts`, `public/service-worker.js`) produced
+  by that build were reverted before committing, since they're build-time
+  output unrelated to this change. Every other localStorage-backed panel
+  still without the mechanism (`ArgumentLibraryPanel`, `EvidenceLibraryPanel`,
+  `PrepRoomPanel`, `ReviewQueuePanel`, `SprintNotesPanel`,
+  `TopicCoverageDashboardPanel` in `debate-card-search`; `AiVersusRoundPanel`,
+  `ArgumentTreePanel`, `CoachingProgramsPanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, `FlowEditLogPanel`, `FlowSummariesPanel`,
+  `JudgeDecisionPanel`, `OpponentTeamProfilesPanel`,
+  `PracticeRoundSimulatorPanel`, `PreRoundBriefingsPanel`,
+  `UserSettingsPanel`, `VulnerabilityChartsPanel`, `WordCountRoundsPanel` in
+  `debate-round`; `CoachMaterialsPanel`, `JudgeParadigmPickerPanel`,
+  `JudgeProfilesPanel`, `OpponentPersonaPickerPanel` in
+  `debate-speech-writer`; and `DebateVideosPanel` in `debate-videos`)
+  remains open for a future run to pick up next (plus `TopicSprintPanel`,
+  pending merge of the separate in-flight PR #400).
+- **Contributions Feed panel — cross-tab live-update (`shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI"), and finding — like every recent repeat of
+  this prompt — that the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and documented (including a real `/settings`
+  page and D1-backed `flowSyncEdits`/document tables linked to users), this
+  slice picked up `shared-flow-sync.md`'s next unclaimed panel. Unlike the
+  last several runs (which worked through `debate-round`'s named list),
+  this run first re-surveyed every `*Panel.tsx` across the whole repo that
+  reads `localStorage` for one still missing a `storage`-event listener,
+  confirming the named lists in `shared-flow-sync.md` and
+  `debate-card-search/src/state/live-update.ts` were both still accurate
+  (every panel each already names as "done" does have the listener; the
+  rest, including this one, did not). Picked `ContributionsFeedPanel`
+  (`/cards/contributions`), which reads `state/contributions.ts`'s
+  `"contributions"` store (via `buildPersistedContributionFeed`) and
+  `state/evidenceLibraryEntries.ts`'s `"evidenceLibraryEntries"` store (via
+  `listCombinedPersistedTags`, for tag-autocomplete) but, like every other
+  still-unclaimed panel, only ever refreshed on mount or after its own
+  submit/like/save/endorse actions. Added
+  `CONTRIBUTIONS_FEED_LIVE_UPDATE_STORAGE_KEYS`/
+  `isContributionsFeedLiveUpdateStorageEvent` to the existing
+  `packages/debate-card-search/src/state/live-update.ts` (the module
+  already backing `DailyBestCardPanel`, `ContributionLeaderboardPanel`,
+  `TaskInboxPanel`, and ten other panels in the same package). Wired a
+  `storage` event listener into `ContributionsFeedPanel.tsx` that calls the
+  existing `refresh()` closure when the predicate matches. Documented in a
+  new `docs/features/contributions-feed.md` (this panel never had its own
+  feature doc — it was previously only described piecemeal from
+  `contribution-leaderboard.md`, `daily-best-card.md`, `evidence-library.md`,
+  `daily-quests.md`, `quest-streaks.md`, and `topic-coverage-dashboard.md` —
+  so this adds the "What it shows"/"Data flow"/"Cross-tab live
+  update"/"Known gaps" home those other docs already point readers at) and
+  `docs/features/shared-flow-sync.md` (added the panel to the running list
+  of panels that already have the mechanism). Vitest-covered: 4 new cases
+  for `isContributionsFeedLiveUpdateStorageEvent` in
+  `packages/debate-card-search/test/live-update.test.ts` (the two backing
+  keys, the `null`-key clear-all case, and unrelated/substring-matching
+  keys), bringing that file to 56 cases.
+  `ContributionsFeedPanel.tsx`'s own `storage`-listener wiring remains
+  intentionally untested, matching every other panel in this repo whose
+  wiring is exercised only through the shared pure predicate's own tests.
+  Verified: `bun install` (2258 packages), the touched test file (56/56
+  pass), the full `bun run test` (201 files / 3244 tests, all pass), the
+  whole-repo `bun run typecheck` (12 packages via turbo, all passing), and a
+  full production `bun run build:web` (vinext build + service-worker build,
+  `/cards/contributions` present in the route list) — all passed with no
+  new failures. No `lint`/`format:check` script exists anywhere in this
+  repo (root or per-package `package.json`, and no `lint` task in
+  `turbo.json`), so that step was skipped as not applicable. Generated
   service-worker build artifacts (`app-file-list.ts`, `version.ts`,
   `public/service-worker.js`) produced by that build were reverted before
   committing, since they're build-time output unrelated to this change.
+  Every other localStorage-backed panel still without the mechanism
+  (`ArgumentLibraryPanel`, `EvidenceLibraryPanel`, `PrepRoomPanel`,
+  `ReviewQueuePanel`, `SprintNotesPanel`, `TopicCoverageDashboardPanel` in
+  `debate-card-search`; `AiVersusRoundPanel`, `ArgumentTreePanel`,
+  `CoachingProgramsPanel`, `CoachingSessionsPanel`, `DrillSetsPanel`,
+  `FlowEditLogPanel`, `FlowSummariesPanel`, `JudgeDecisionPanel`,
+  `OpponentTeamProfilesPanel`, `PracticeRoundSimulatorPanel`,
+  `PreRoundBriefingsPanel`, `StrategyPanel`, `UserSettingsPanel`,
+  `VulnerabilityChartsPanel`, `WordCountRoundsPanel` in `debate-round`;
+  `CoachMaterialsPanel`, `JudgeParadigmPickerPanel`, `JudgeProfilesPanel`,
+  `OpponentPersonaPickerPanel` in `debate-speech-writer`; and
+  `DebateVideosPanel` in `debate-videos`) remains open for a future run to
+  pick up next.
+- **Prep Notes panel — cross-tab live-update (`shared-flow-sync.md` Known
+  gap: "every other localStorage-backed panel in this repo still has no
+  cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI"), and finding — like every recent repeat of
+  this prompt — that the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and documented (including a real `/settings`
+  page and D1-backed `flowSyncEdits`/document tables linked to users), this
+  slice picked up `shared-flow-sync.md`'s next unclaimed panel from its
+  running cross-tab-live-update list (the immediately preceding run had
+  just closed `PrepNoteNotificationsPanel`, this list's sibling panel):
+  `PrepNotesPanel` (`/prep-notes`), which reads `state/prepNotes.ts`'s
+  single `prepNotes` localStorage key via `buildPrepNotesPanelView`, but —
+  like every other still-unclaimed panel — only ever refreshed on mount or
+  after its own status-cycle/assign/unassign actions. Added
+  `PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isPrepNotesPanelLiveUpdateStorageEvent` to the existing
+  `packages/debate-round/src/flow/live-update.ts` (scoped to just the one
+  `prepNotes` key this panel reads — distinct from that same module's
+  `FLOW_LIVE_UPDATE_STORAGE_KEYS`, which drives the `FlowSpreadsheet` grid's
+  per-box `PrepNoteBadge` rather than this standalone cross-flow list view).
+  Wired a `storage` event listener into `PrepNotesPanel.tsx` that calls the
+  existing `refresh()` closure when the predicate matches (no `topic`/
+  `recipientId` scoping needed here, unlike `BrainstormBoardPanel`/
+  `PrepNoteNotificationsPanel`, since this panel already shows every note
+  across every flow rather than a filtered subset). Documented in
+  `docs/features/prep-notes.md` (new "Cross-tab live update" subsection
+  under "Data flow", mirroring the existing one under "Notifications") and
+  `docs/features/shared-flow-sync.md` (added the panel to the running list
+  of panels that already have the mechanism). Vitest-covered: 4 new cases
+  for `isPrepNotesPanelLiveUpdateStorageEvent` in
+  `packages/debate-round/test/live-update.test.ts` (the one backing key,
+  the `null`-key clear-all case, and two unrelated/substring-matching
+  keys). `PrepNotesPanel.tsx`'s own `storage`-listener wiring remains
+  intentionally untested, matching every other panel in this repo whose
+  wiring is exercised only through the shared pure predicate's own tests.
+  Verified: `bun install` (2258 packages), the touched test files (39/39
+  pass), the full `bun run test` (201 files / 3240 tests, all pass), the
+  whole-repo `bun run typecheck` (12 packages via turbo, all passing), and a
+  full production `bun run build:web` (vinext build + service-worker build,
+  `/prep-notes` present in the route list) — all passed with no new
+  failures. No `lint`/`format:check` script exists anywhere in this repo
+  (root or per-package `package.json`, and no `lint` task in `turbo.json`),
+  so that step was skipped as not applicable. Generated service-worker
+  build artifacts (`app-file-list.ts`, `version.ts`,
+  `public/service-worker.js`) produced by that build were reverted before
+  committing, since they're build-time output unrelated to this change.
+- **Prep Note Notifications panel — cross-tab live-update (`shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI"), and finding — like every recent repeat of
+  this prompt — that the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and documented (including a real `/settings`
+  page and D1-backed `flowSyncEdits`/document tables linked to users), this
+  slice picked up `shared-flow-sync.md`'s next unclaimed panel from its
+  running cross-tab-live-update list (the immediately preceding run had
+  just closed the standalone `FlowAnnotationsPanel` list view):
+  `PrepNoteNotificationsPanel` (`/notifications`), which reads
+  `state/prepNoteNotifications.ts`'s single `prepNoteNotifications`
+  localStorage key via `buildNotificationsPanelView`, but — like every
+  other still-unclaimed panel — only ever refreshed on mount, on a
+  recipient lookup, or after its own "Mark read" action. Added
+  `PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS`/
+  `isPrepNoteNotificationsLiveUpdateStorageEvent` to the existing
+  `packages/debate-round/src/flow/live-update.ts` (scoped to just the one
+  `prepNoteNotifications` key this panel reads — deliberately excluding the
+  module's separate `prepNoteNotifications:lastRecipientId` key, since
+  which recipient id another tab last looked up isn't this tab's concern).
+  Wired a `storage` event listener into `PrepNoteNotificationsPanel.tsx`
+  that calls the existing `refresh(recipientId.trim())` closure when the
+  predicate matches, with the effect depending on `recipientId` (mirroring
+  `BrainstormBoardPanel`'s `topic`-dependent listener) so a lookup for a
+  different recipient re-registers it with a fresh closure instead of
+  refreshing against a stale one. Documented in `docs/features/prep-notes.md`
+  (new "Cross-tab live update" subsection under "Notifications") and
+  `docs/features/shared-flow-sync.md` (added the panel to the running list
+  of panels that already have the mechanism). Vitest-covered: 4 new cases
+  for `isPrepNoteNotificationsLiveUpdateStorageEvent` in
+  `packages/debate-round/test/live-update.test.ts` (the one backing key,
+  the `null`-key clear-all case, the excluded recipient-id key, and two
+  unrelated/substring-matching keys), bringing that file to 12 cases.
+  `PrepNoteNotificationsPanel.tsx`'s own `storage`-listener wiring remains
+  intentionally untested, matching every other panel in this repo whose
+  wiring is exercised only through the shared pure predicate's own tests.
+  Verified: `bun install` (2258 packages), the touched test file (12/12
+  pass), the full `bun run test` (201 files / 3236 tests, all pass), the
+  whole-repo `bun run typecheck` (12 packages via turbo, all passing), and a
+  full production `bun run build:web` (vinext build + service-worker build,
+  `/notifications` present in the route list) — all passed with no new
+  failures. Generated service-worker build artifacts (`app-file-list.ts`,
+  `version.ts`, `public/service-worker.js`) produced by that build were
+  reverted before committing, since they're build-time output unrelated to
+  this change.
+- **Flow Annotations panel — cross-tab live-update (`shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the ui... develop better tool ui"), and finding
+  — like every recent repeat of this prompt — that the "user settings /
+  SQL-linked flows, docs, rounds" half is already fully built and documented
+  (including a real `/settings` page and D1-backed `flowSyncEdits`/document
+  tables linked to users), this slice picked up `shared-flow-sync.md`'s next
+  unclaimed panel from its running cross-tab-live-update list (the
+  immediately preceding run had just closed `GroupChallengesPanel`): the
+  standalone `FlowAnnotationsPanel` (`/annotations`) list view — distinct
+  from the `FlowSpreadsheet` grid's `AnnotationBadge`, which already had its
+  own cross-tab fix via `flow/live-update.ts#isFlowLiveUpdateStorageEvent`.
+  The panel itself reads `state/flowAnnotations.ts`'s single `flowAnnotations`
+  `localStorage` key but, like every other still-unclaimed panel, only ever
+  refreshed on mount or after its own drop/clear actions. Added
+  `FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isFlowAnnotationsPanelLiveUpdateStorageEvent` to the existing
+  `packages/debate-round/src/flow/live-update.ts` (scoped to just the one
+  key this panel reads, rather than reusing the grid's three-key predicate,
+  since the extra `flowEdits`/`prepNotes` keys are irrelevant to this
+  panel). Wired a `storage` event listener into `FlowAnnotationsPanel.tsx`
+  that calls the existing `refresh()` closure when the predicate matches.
+  Documented in `docs/features/flow-annotations.md` (closed the matching
+  "Known gaps" bullet) and `docs/features/shared-flow-sync.md` (added the
+  panel to the running list of panels that already have the mechanism).
+  Vitest-covered: 4 new cases for `isFlowAnnotationsPanelLiveUpdateStorageEvent`
+  in `packages/debate-round/test/live-update.test.ts` (the one backing key,
+  the `null`-key clear-all case, two unrelated keys, and two same-prefix
+  substring keys). `FlowAnnotationsPanel.tsx`'s own `storage`-listener wiring
+  remains intentionally untested, matching every other panel in this repo
+  whose wiring is exercised only through the shared pure predicate's own
+  tests. Verified: `bun install` (2258 packages), the touched test files
+  (24/24 pass), the full `bun run test` (201 files / 3232 tests, all pass),
+  the whole-repo `bun run typecheck` (12 packages via turbo, all passing),
+  and a full production `bun run build:web` (vinext build + service-worker
+  build, `/annotations` present in the route list) — all passed with no new
+  failures. Generated service-worker build artifacts (`app-file-list.ts`,
+  `version.ts`, `public/service-worker.js`) produced by that build were
+  reverted before committing, since they're build-time output unrelated to
+  this change.
+- **Group Challenges — cross-tab live-update (`shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the ui... develop better tool ui"), and finding
+  — like every recent repeat of this prompt — that the "user settings /
+  SQL-linked flows, docs, rounds" half is already fully built and documented
+  (including a real `/settings` page and D1-backed `flowSyncEdits`/document
+  tables linked to users), this slice picked up `shared-flow-sync.md`'s next
+  unclaimed panel from its running cross-tab-live-update list (the
+  immediately preceding run had just closed `BrainstormBoardPanel`):
+  `GroupChallengesPanel` (`/cards/group-challenges`), which reads three
+  `localStorage` stores — `state/groupChallenges.ts`'s `groupChallenges`
+  (the persisted challenge roster) and `state/challengeWinEvents.ts`'s
+  `challengeWinEvents`/`contributions` (recorded wins and the real
+  contribution feed `buildPersistedGroupChallengeBoard` composes into live
+  standings) — but, like every other still-unclaimed panel, only ever
+  refreshed on mount or after its own create/remove/record-win actions.
+  Added `GROUP_CHALLENGES_LIVE_UPDATE_STORAGE_KEYS`/
+  `isGroupChallengesLiveUpdateStorageEvent` to
+  `packages/debate-card-search/src/state/live-update.ts`, mirroring the
+  thirteen existing key-list/predicate pairs there exactly (true for any of
+  the three backing keys or a `null` key from `localStorage.clear()`, false
+  otherwise — including a same-prefix substring key). Wired a `storage`
+  event listener into `GroupChallengesPanel.tsx` that calls the existing
+  `refresh()` closure when the predicate matches. Documented in
+  `docs/features/group-challenges.md` (new "Cross-tab live update" section)
+  and `docs/features/shared-flow-sync.md` (added `GroupChallengesPanel` to
+  the running list of panels that already have the mechanism). Vitest-
+  covered: 4 new cases for `isGroupChallengesLiveUpdateStorageEvent` in
+  `packages/debate-card-search/test/live-update.test.ts` (every backing-key
+  match, the `null`-key clear-all case, two unrelated keys, and two
+  same-prefix substring keys), bringing that file to 52 cases.
+  `GroupChallengesPanel.tsx`'s own `storage`-listener wiring remains
+  intentionally untested, matching every other panel in this repo whose
+  wiring is exercised only through the shared pure predicate's own tests.
+  Verified: `bun install` (2258 packages), the touched test file (52/52
+  pass), the full `bun run test` (201 files / 3228 tests, all pass), the
+  whole-repo `bun run typecheck` (13 packages via turbo, all passing), and a
+  full production `bun run build:web` (vinext build + service-worker build,
+  `/cards/group-challenges` present in the route list) — all passed with no
+  new failures. Generated service-worker build artifacts
+  (`app-file-list.ts`, `version.ts`, `public/service-worker.js`) produced
+  by that build were reverted before committing, since they're build-time
+  output unrelated to this change.
+- **Team Brainstorm Assist — cross-tab live-update (`shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing request ("create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the ui... develop better tool ui"), and finding
+  — like every recent repeat of this prompt — that the "user settings /
+  SQL-linked flows, docs, rounds" half is already fully built and documented
+  (including a real `/settings` page and D1-backed `flowSyncEdits`/document
+  tables linked to users), this slice picked up `shared-flow-sync.md`'s next
+  unclaimed panel from its running cross-tab-live-update list (the
+  immediately preceding run had just closed `CardScoringPanel`, and
+  `DailyBestCardPanel` turned out to already have the mechanism from an
+  earlier slice): `BrainstormBoardPanel` (`/cards/brainstorm`), which reads
+  two `localStorage` stores — `state/brainstormIdeas.ts`'s `brainstormIdeas`
+  (every submitted/AI-generated/merged idea) and
+  `state/trackedArguments.ts`'s `trackedArguments` (the topic switcher's
+  coverage-gap board seeding) — but, like every other still-unclaimed panel,
+  only ever refreshed on mount or on an explicit user action. Added
+  `BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS`/
+  `isBrainstormBoardLiveUpdateStorageEvent` to
+  `packages/debate-card-search/src/state/live-update.ts`, mirroring the
+  twelve existing key-list/predicate pairs there exactly (true for either
+  backing key or a `null` key from `localStorage.clear()`, false otherwise
+  — including a same-prefix substring key). Wired a `storage` event listener
+  into `BrainstormBoardPanel.tsx` that calls the existing `refresh(topic)`
+  closure when the predicate matches; the listener effect depends on
+  `topic` (mirroring `DailyQuestsPanel`'s `contributorId`-dependent
+  listener) so a topic change re-registers it with a fresh closure instead
+  of refreshing against a stale one. Documented in
+  `docs/features/brainstorm-board.md` (new "Cross-tab live update" section)
+  and `docs/features/shared-flow-sync.md` (added `BrainstormBoardPanel` to
+  the running list of panels that already have the mechanism). Vitest-
+  covered: 4 new cases for `isBrainstormBoardLiveUpdateStorageEvent` in
+  `packages/debate-card-search/test/live-update.test.ts` (both backing-key
+  matches, the `null`-key clear-all case, two unrelated keys, and two
+  same-prefix substring keys), bringing that file to 48 cases.
+  `BrainstormBoardPanel.tsx`'s own `storage`-listener wiring remains
+  intentionally untested, matching every other panel in this repo whose
+  wiring is exercised only through the shared pure predicate's own tests.
+  Verified: `bun install` (2258 packages), the touched test file (48/48
+  pass), the full `bun run test` (201 files / 3224 tests, all pass), the
+  whole-repo `bun run typecheck` (13 packages via turbo, all passing), and a
+  full production `bun run build:web` (vinext build + service-worker build,
+  `/cards/brainstorm` present in the route list) — all passed with no new
+  failures. Generated service-worker build artifacts (`app-file-list.ts`,
+  `version.ts`, `public/service-worker.js`) produced by that build were
+  reverted before committing, since they're build-time output unrelated to
+  this change.
 - **LLM Card Scoring — cross-tab live-update (idea #16, `shared-flow-sync.md`
   Known gap: "every other localStorage-backed panel in this repo still has
   no cross-tab live-update mechanism").** Prompted by another repeat of
@@ -10805,10 +11375,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    - A timeline of past AI counsel-panel assessments for a round, not just the latest.
    - Chart export/share (image or link) action.
 
-5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action now sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too — the other half of the "bulk clear/cap" bullet (a per-round decision count cap) remains open. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. Next:
-   - A multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision.
-   - A side-by-side paradigm comparison view for picking which judge to prep for.
-   - A per-round decision count cap, now that a heavily-re-judged round can accumulate many entries even with the new bulk-clear action available.
+5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too. A per-round decision count cap (`MAX_JUDGE_DECISIONS_PER_ROUND`, 20) is also now enforced — `appendJudgeDecision` trims the oldest entry once a round's log exceeds it, with the trimmed id best-effort deleted from the account too. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision, or a side-by-side paradigm comparison view for picking which judge to prep for) if one becomes worth doing.
 
 6. **Speech Transcript Summaries and Answers** (`/summaries`) —
    - Bulk transcript upload (multiple speeches at once) instead of one at a time.
@@ -10842,10 +11409,8 @@ Each idea below has a working first-cut implementation already shipped (see Trac
     - Save and reuse named filter presets instead of re-picking filters each visit.
     - Export the filtered tree to a Speech Document or outline file.
 
-11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) —
-    - A moderator view that surfaces `isPopularityOnlyOutlier`-flagged contributions for review (computed today, not yet shown anywhere).
+11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. Next:
     - An endorsement history list per contributor.
-    - A tooltip/legend explaining how the popularity/quality/reviewer-weight blend produces a score.
 
 12. **Pre-Round Intelligence Panel** (`/briefings`) — real tournament pairings/room-assignment data stays blocked (Tabroom login wall, see below), so:
     - A manual pairing/room-assignment entry form as the practical stand-in.
@@ -10881,7 +11446,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — bulk folder actions (merge/archive); saved custom collections per user; a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool.
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — a winner-history calendar view; a comment thread on each day's winner; a "best of the week" rollup.
-* 🗣️ **Peer Review System** (`/cards/reviews`) — gate reviewer identity behind the real signed-in session (the same pattern already wired into most other panels this month) instead of a free-typed reviewer ID; a review-aging indicator for stale pending reviews; a reviewer-workload balancing view.
+* 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — an awards history / hall-of-fame page; auto-post each announcement to the News Stream feed; a "nominate a peer" action.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — a coach-facing override/reassign control; a task-priority indicator; a capacity-aware view of routing load across the team.
 * 🔁 **Revision Incentives** (`/cards/revisions`) — a stale-evidence digest surfaced from the existing staleness signal; a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.
