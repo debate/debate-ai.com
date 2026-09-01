@@ -27,3 +27,16 @@ export {
   listReadIds as listReadNewsItemIds,
   mergeRemoteViewerState as mergeRemoteNewsViewerState,
 } from "./state/newsStream";
+export {
+  DEFAULT_SAVED_ARGUMENT_COLLECTIONS,
+  MAX_SAVED_ARGUMENT_COLLECTIONS,
+  MAX_TAGS_PER_COLLECTION,
+  isValidSavedArgumentCollectionsList,
+  normalizeSavedArgumentCollectionName,
+  normalizeSavedArgumentCollectionsPatch,
+  parseSavedArgumentCollections,
+  serializeSavedArgumentCollections,
+  type SavedArgumentCollection,
+  type SavedArgumentCollectionsPatchResult,
+  type SavedArgumentCollectionsPayload,
+} from "./lib/argument-library-collections";
