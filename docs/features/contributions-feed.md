@@ -19,6 +19,12 @@ flag when the score is driven by raw popularity rather than quality/
 reviewer-credibility signals, its likes/saves/endorsement counts, any topic/
 case-area/tags, and Like/Save/Endorse buttons.
 
+The "helpfulness score" mention in the panel's intro line carries an
+Info-icon tooltip — `lib/community-rating.ts`'s `buildHelpfulnessScoreExplanation`
+spells out the popularity/quality/reviewer-weight blend (percentages derived
+from `HelpfulnessWeights`, not hardcoded) and the `isPopularityOnlyOutlier`
+threshold, so a contributor doesn't have to guess how the score is produced.
+
 Filling in both **Topic** and **Case area** also files the contribution into
 the Common Argument Library (`ArgumentLibraryPanel`, via
 `state/evidenceLibraryEntries.ts#buildCombinedPersistedArgumentLibrary`).

@@ -6,6 +6,49 @@
 _No task currently in progress._
 
 ### Completed
+- **Helpfulness-score tooltip/legend (idea #11, "Community-Rated Summaries
+  and Highlights").** Another repeat of the standing prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built (a real `/settings` page, D1-backed tables
+  linked to signed-in users for flow edits, documents, rounds, judge
+  decisions, word-count history, etc.), and no open PR/tracker item
+  duplicated this slice's target (the only open PR, #400, covers an
+  unrelated panel). So this slice picked idea #11's third named follow-up:
+  "A tooltip/legend explaining how the popularity/quality/reviewer-weight
+  blend produces a score" — the score itself (`lib/community-rating.ts`)
+  was already computed and shown as a bare number in both
+  `ContributionsFeedPanel` (`/cards/contributions`) and
+  `ContributionLeaderboardPanel` (`/cards/leaderboard`), but neither
+  explained *how* it was produced. Added a new pure helper,
+  `buildHelpfulnessScoreExplanation(weights = DEFAULT_HELPFULNESS_WEIGHTS)`,
+  that spells out the blend in plain language — the popularity/quality/
+  reviewer percentages are computed from the passed-in `HelpfulnessWeights`
+  rather than hardcoded, so the legend can't drift out of sync with the
+  actual scoring weights — plus the `isPopularityOnlyOutlier` flag's
+  threshold values. Wired an Info-icon tooltip into both panels' intro text
+  next to the words "helpfulness score", mirroring the existing
+  `ELO_TOOLTIP`/`LeaderboardTableHeader` tooltip pattern already used in
+  `debate-videos` (same `Tooltip`/`TooltipTrigger`/`TooltipContent`
+  primitives from `debate-ui`, same `cursor-help` + `Info` icon affordance).
+  Vitest-covered with 4 new cases in
+  `packages/debate-card-search/test/community-rating.test.ts` (default-weight
+  percentages, custom-weight percentages, the outlier-threshold wording, and
+  that the no-argument call matches an explicit `DEFAULT_HELPFULNESS_WEIGHTS`
+  call). The two panels' own tooltip JSX isn't render-tested — both gate
+  their real content behind a client-only `useEffect`-populated
+  localStorage read, so (per this package's own `panels.test.tsx` note) a
+  `renderToStaticMarkup` SSR test would only ever exercise their loading
+  state; `typecheck`/`build:web` cover that the JSX compiles and the routes
+  build. See `docs/features/contributions-feed.md` and
+  `docs/features/contribution-leaderboard.md`'s updated "What it shows"
+  sections. The bullet's other two follow-ups (a moderator view surfacing
+  `isPopularityOnlyOutlier`-flagged contributions, and a per-contributor
+  endorsement history list) remain open — a future run should pick one of
+  those next.
+
 - **Review Queue — review-aging indicator for stale pending reviews (idea
   "🗣️ Peer Review System").** Another repeat of the standing prompt
   ("integrate all the tools into the UI... create user settings and link
@@ -11260,10 +11303,9 @@ Each idea below has a working first-cut implementation already shipped (see Trac
     - Save and reuse named filter presets instead of re-picking filters each visit.
     - Export the filtered tree to a Speech Document or outline file.
 
-11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) —
-    - A moderator view that surfaces `isPopularityOnlyOutlier`-flagged contributions for review (computed today, not yet shown anywhere).
+11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. Next:
+    - A moderator view that surfaces `isPopularityOnlyOutlier`-flagged contributions for review (the flag is shown inline per-entry in `ContributionsFeedPanel` today, but there's no dedicated filtered view for a moderator to review just the flagged ones).
     - An endorsement history list per contributor.
-    - A tooltip/legend explaining how the popularity/quality/reviewer-weight blend produces a score.
 
 12. **Pre-Round Intelligence Panel** (`/briefings`) — real tournament pairings/room-assignment data stays blocked (Tabroom login wall, see below), so:
     - A manual pairing/room-assignment entry form as the practical stand-in.

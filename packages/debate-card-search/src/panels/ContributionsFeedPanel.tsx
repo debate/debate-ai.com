@@ -76,17 +76,25 @@
  * `docs/features/shared-flow-sync.md`. See
  * `docs/features/contributions-feed.md`.
  *
+ * The heading now carries an Info-icon tooltip (via `community-rating.ts`'s
+ * `buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/
+ * reviewer-weight blend, closing idea #11's third named follow-up in
+ * TODO.md — mirrors the existing `ELO_TOOLTIP`/`LeaderboardTableHeader`
+ * pattern in `debate-videos`.
+ *
  * @module panels/ContributionsFeedPanel
  */
 
 "use client"
 
 import { useEffect, useState } from "react"
+import { Info } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
 import {
   buildPersistedContributionFeed,
   recordPersistedEndorsementFromReviewer,
@@ -95,7 +103,7 @@ import {
   saveContribution,
   type ContributionFeedEntry,
 } from "../state/contributions"
-import type { ContributionKind } from "../lib/community-rating"
+import { buildHelpfulnessScoreExplanation, type ContributionKind } from "../lib/community-rating"
 import { computeWordCount } from "../lib/shared-evidence-library"
 import { listCombinedPersistedTags } from "../state/evidenceLibraryEntries"
 import { isContributionsFeedLiveUpdateStorageEvent } from "../state/live-update"
@@ -123,6 +131,8 @@ const KIND_VARIANT: Record<ContributionKind, "default" | "secondary" | "outline"
   "original-argument": "default",
   refutation: "secondary",
 }
+
+const HELPFULNESS_SCORE_EXPLANATION = buildHelpfulnessScoreExplanation()
 
 type ContributionDraft = {
   contributorId: string
@@ -256,9 +266,21 @@ export function ContributionsFeedPanel() {
     <div className="p-4 sm:p-6 space-y-6">
       <div>
         <h1 className="mb-1 text-xl font-semibold text-foreground">Contributions Feed</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
           Submit a contribution, then like, save, or endorse the community's cards, summaries,
-          highlights, and annotations — ranked by blended helpfulness score.
+          highlights, and annotations — ranked by blended
+          <Tooltip delayDuration={200}>
+            <TooltipTrigger asChild>
+              <span className="cursor-help inline-flex items-center gap-1 underline decoration-dotted">
+                helpfulness score
+                <Info className="h-3.5 w-3.5" />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-xs">
+              <p className="text-xs leading-relaxed">{HELPFULNESS_SCORE_EXPLANATION}</p>
+            </TooltipContent>
+          </Tooltip>
+          .
         </p>
       </div>
 
