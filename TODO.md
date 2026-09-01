@@ -6,6 +6,59 @@
 _No task currently in progress._
 
 ### Completed
+- **On Page Card Reuse Search — "Check this page" history list (idea #7),
+  plus a broken-build fix for `TopicSprintPanel`'s live-update.** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save flows
+  docs and debates in SQL and link to users... add tools into where needed
+  in the UI... develop better tool UI") — as with every recent repeat, the
+  "user settings / SQL-linked flows, docs, rounds" half is already fully
+  built (a real `/settings` page, D1-backed tables linked to signed-in
+  users for flow edits, documents, rounds, judge decisions, word-count
+  history, etc.), the CardMirror editor already surfaces every tool via its
+  top `MenuBar`, and the only open PR (#414) covers an unrelated component
+  extraction, so this slice picked idea #7's first named follow-up:
+  "Surface each check's result inline in a small history list on
+  `/cards/library` instead of a one-shot lookup." Added a new pure
+  append-only store, `state/reuseCheckHistory.ts`
+  (`appendReuseCheckHistory`/`listReuseCheckHistory`/`clearReuseCheckHistory`,
+  `MAX_REUSE_CHECK_HISTORY` = 20), mirroring `state/judgeDecisions.ts`'s
+  append-with-cap convention — every local "Check this page" lookup (manual
+  or `?checkUrl=` deep-linked) is now recorded (URL, already-cut/new, match
+  count, timestamp) instead of only the latest result overwriting the
+  previous one. `EvidenceLibraryPanel` renders this as a "Recent checks"
+  list under the box; clicking an entry re-runs that same check, and a
+  "Clear history" action clears the log. Only the local (this browser's own
+  repository) outcome is recorded, not the async team-wide shared-index
+  result — a documented follow-up if that turns out to be useful.
+  Vitest-covered with 9 new cases in
+  `packages/debate-card-search/test/reuseCheckHistory.test.ts` (id
+  assignment, alreadyCut/matchCount capture, repeat-checks-of-the-same-page
+  kept distinct, newest-first ordering, cap-trimming, and clearing). See
+  `docs/features/on-page-card-reuse-search.md`'s new "Check history"
+  section. Idea #7's remaining two follow-ups (a team dashboard of
+  reuse-flagged pages, and an extension options page) stay open.
+
+  While verifying this slice's `bun run typecheck` gate, found the whole
+  monorepo's typecheck already broken on `master` (confirmed before this
+  slice's own changes, via `git stash`): `panels/TopicSprintPanel.tsx` and
+  `test/live-update.test.ts` both imported
+  `isTopicSprintLiveUpdateStorageEvent` from `state/live-update.ts`, which
+  never actually exported it — an incomplete leftover from the "add
+  cross-tab live-update to Topic Sprint panel (idea #16)" commit
+  (`8ea6c3e`). Since this blocked a clean typecheck for the exact package
+  this slice was already touching, fixed it in the same PR rather than only
+  reporting it: added `TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS`
+  (`dailyQuestTemplates`, `contributions`, `trackedArguments`,
+  `evidenceLibraryEntries`, `contributorAvailability`,
+  `completedResearchTasks`, `routedTaskQueues`, `sprintNotes` — every key
+  `state/topicSprints.ts`'s `readPersistedTopicSprintInputs` transitively
+  reads) and `isTopicSprintLiveUpdateStorageEvent`, mirroring every other
+  `is*LiveUpdateStorageEvent` function in the same file, plus the missing
+  `describe("isTopicSprintLiveUpdateStorageEvent", ...)` block in
+  `live-update.test.ts` (the import existed with no test exercising it).
+  `bun run typecheck` (root, all 12 typechecked packages) and `bun run
+  test` (3295 tests) both pass clean now, and `bun run build` succeeds.
 - **AI Judge Decision Modes — per-round decision count cap (idea #5).**
   Another repeat of the standing prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL... with ability to save
@@ -11382,8 +11435,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    - Rank suggested cross-exam questions/extension ideas by strength rather than a flat list.
    - A one-click "send to Prep Notes / Speech Document" action for a summary.
 
-7. **On Page Card Reuse Search** (`EvidenceLibraryPanel`'s "Check this page" box, plus the `debate-web-ext` browser extension) —
-   - Surface each check's result inline in a small history list on `/cards/library` instead of a one-shot lookup.
+7. **On Page Card Reuse Search** (`EvidenceLibraryPanel`'s "Check this page" box, plus the `debate-web-ext` browser extension) — the history-list follow-up is done: a "Recent checks" list under the box shows the last 20 local lookups (`state/reuseCheckHistory.ts`), clickable to re-run and clearable — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Check history" section. Next:
    - A team dashboard of pages flagged as already-cut, so a coach can see reuse patterns at a glance.
    - An extension options page for whitelisting sites / configuring which repository to check against.
 

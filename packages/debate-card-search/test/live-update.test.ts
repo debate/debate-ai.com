@@ -29,6 +29,7 @@ import {
   isRevisionIncentivesLiveUpdateStorageEvent,
   isTaskInboxLiveUpdateStorageEvent,
   isTopicSprintLiveUpdateStorageEvent,
+  TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS,
 } from "../src/state/live-update";
 
 describe("isDailyBestCardLiveUpdateStorageEvent", () => {
@@ -336,5 +337,27 @@ describe("isContributionsFeedLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isContributionsFeedLiveUpdateStorageEvent({ key: "contributionsBackup" })).toBe(false);
     expect(isContributionsFeedLiveUpdateStorageEvent({ key: "old_evidenceLibraryEntries" })).toBe(false);
+  });
+});
+
+describe("isTopicSprintLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isTopicSprintLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isTopicSprintLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isTopicSprintLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isTopicSprintLiveUpdateStorageEvent({ key: "groupChallenges" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isTopicSprintLiveUpdateStorageEvent({ key: "dailyQuestTemplatesBackup" })).toBe(false);
+    expect(isTopicSprintLiveUpdateStorageEvent({ key: "old_sprintNotes" })).toBe(false);
   });
 });
