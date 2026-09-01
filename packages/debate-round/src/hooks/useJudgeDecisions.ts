@@ -19,6 +19,13 @@
  * decision is generated once and never edited afterward, so there's
  * nothing to reconcile beyond filling gaps.
  *
+ * `appendDecision` also enforces `state/judgeDecisions.ts`'s
+ * `MAX_JUDGE_DECISIONS_PER_ROUND` cap, best-effort deleting any ids trimmed
+ * locally from the account too. That cap isn't re-checked during the merge
+ * above, so a remote copy of an already-trimmed decision (only possible if
+ * its account delete failed) can still be adopted back on a later mount —
+ * an accepted edge case for this slice, not actively defended against.
+ *
  * @module hooks/useJudgeDecisions
  */
 
@@ -108,7 +115,7 @@ export function useJudgeDecisions(): UseJudgeDecisionsResult {
   }, []);
 
   const appendDecision = useCallback((input: Omit<JudgeDecisionRecord, "id">) => {
-    const record = appendJudgeDecision(input);
+    const { record, trimmedIds } = appendJudgeDecision(input);
     setGroups(buildJudgeDecisionsPanelView());
     if (remoteAvailable) {
       saveJudgeDecisionToAccount(record).catch(() => {
@@ -116,6 +123,12 @@ export function useJudgeDecisions(): UseJudgeDecisionsResult {
         // useWordCountRounds's "local apply is never blocked by a sync
         // failure" convention.
       });
+      for (const id of trimmedIds) {
+        deleteSavedJudgeDecisionFromAccount(id).catch(() => {
+          // Best-effort, same as deleteRoundHistory below — the id is
+          // already trimmed locally either way.
+        });
+      }
     }
   }, []);
 

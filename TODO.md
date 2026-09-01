@@ -6,6 +6,42 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Judge Decision Modes — per-round decision count cap (idea #5).**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, etc.), the CardMirror editor already surfaces every
+  tool via its top `MenuBar`, and the only open PR (#400) covers an
+  unrelated panel (Topic Sprint cross-tab live-update), so this slice
+  picked idea #5's last remaining named follow-up: "a per-round decision
+  count cap, now that a heavily-re-judged round can accumulate many
+  entries even with the new bulk-clear action available." Added
+  `MAX_JUDGE_DECISIONS_PER_ROUND` (20) to
+  `packages/debate-round/src/state/judgeDecisions.ts`, mirroring
+  `wordLimitPresets.ts`'s `MAX_WORD_LIMIT_PRESETS` cap-constant convention
+  rather than adding a new Settings-driven numeric preference.
+  `appendJudgeDecision` now trims the oldest entries for that round (by
+  `generatedAt`) once the cap is exceeded, returning `{ record, trimmedIds
+  }` instead of the bare record; `hooks/useJudgeDecisions.ts`'s
+  `appendDecision` best-effort deletes each trimmed id from the account
+  too, the same per-id cleanup `deleteRoundHistory` already does. One
+  known edge case, documented rather than defended against: the cap isn't
+  re-checked during the mount-time remote merge, so a remote copy of an
+  already-trimmed decision (only possible if its account delete failed)
+  could still be adopted back on a later mount. Vitest-covered with 4 new
+  cases in `packages/debate-round/test/judgeDecisions.test.ts` (stays
+  under the cap, trims the single oldest entry once exceeded, other rounds
+  untouched, `trimmedIds` empty while under the cap). See
+  `docs/features/judge-paradigm-selections.md`'s "Decision history"
+  section's new "Per-round decision count cap" paragraph. Idea #5 now has
+  no further named follow-up — a future run should pick a fresh next-step
+  (a multi-judge "panel" mode or a side-by-side paradigm comparison view,
+  both already suggested in the Product Feature Ideas list below) if one
+  becomes worth doing.
 - **Contributions Feed — moderator view for popularity-only-outlier
   contributions (idea #11, "Community-Rated Summaries and Highlights").**
   Another repeat of the standing prompt ("integrate all the tools into the
@@ -11339,10 +11375,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    - A timeline of past AI counsel-panel assessments for a round, not just the latest.
    - Chart export/share (image or link) action.
 
-5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action now sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too — the other half of the "bulk clear/cap" bullet (a per-round decision count cap) remains open. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. Next:
-   - A multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision.
-   - A side-by-side paradigm comparison view for picking which judge to prep for.
-   - A per-round decision count cap, now that a heavily-re-judged round can accumulate many entries even with the new bulk-clear action available.
+5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too. A per-round decision count cap (`MAX_JUDGE_DECISIONS_PER_ROUND`, 20) is also now enforced — `appendJudgeDecision` trims the oldest entry once a round's log exceeds it, with the trimmed id best-effort deleted from the account too. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision, or a side-by-side paradigm comparison view for picking which judge to prep for) if one becomes worth doing.
 
 6. **Speech Transcript Summaries and Answers** (`/summaries`) —
    - Bulk transcript upload (multiple speeches at once) instead of one at a time.
