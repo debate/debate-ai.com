@@ -38,11 +38,9 @@ export default function RootLayout({
       <body className="theme-root">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <CategoryDockProvider>
-            <div className="flex w-screen h-screen overflow-hidden">
+            <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
               <CategoryDock />
-              <main className="flex-1 min-w-0 h-screen overflow-y-auto pb-[70px] md:pb-0">
-                {children}
-              </main>
+              {children}
             </div>
             <PersistentVideoPlayer />
             <OneTap />
