@@ -33,6 +33,13 @@
  * `buildAndSaveArgumentTree` yet" Known gap. No new tree-derivation logic is
  * introduced here.
  *
+ * Each round card also has a "Download outline" action — idea #10's
+ * "Export the filtered tree to a Speech Document or outline file"
+ * follow-up (`flow/argument-tree-export.ts#buildArgumentTreeOutlineText`),
+ * exporting exactly the flattened, filtered rows currently rendered for
+ * that round as a plain-text outline file, mirroring
+ * `PreRoundBriefingsPanel.tsx`'s anchor+Blob download pattern.
+ *
  * @module panels/ArgumentTreePanel
  */
 
@@ -52,7 +59,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "debate-ui/src/primitives/select"
-import { filterArgumentTree, flattenArgumentTree, type ArgumentTreeFilter } from "../flow/argument-tree"
+import { filterArgumentTree, flattenArgumentTree, type ArgumentTreeFilter, type ArgumentTreeNode } from "../flow/argument-tree"
+import { argumentTreeOutlineFilename, buildArgumentTreeOutlineText } from "../flow/argument-tree-export"
 import {
   buildAndSaveArgumentTreeFromCurrentFlow,
   buildArgumentTreesPanelView,
@@ -181,6 +189,21 @@ export function ArgumentTreePanel() {
     refresh()
   }
 
+  /** Mirrors `PreRoundBriefingsPanel.tsx`'s anchor+Blob download pattern. */
+  const handleDownload = (roundId: string, filtered: ArgumentTreeNode[]) => {
+    const text = buildArgumentTreeOutlineText(filtered, roundId)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = argumentTreeOutlineFilename(roundId)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   if (records === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading argument outlines…</div>
   }
@@ -254,9 +277,19 @@ export function ArgumentTreePanel() {
           <div key={record.roundId} className="rounded-lg border border-border p-4 space-y-3">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-sm font-semibold text-foreground">Round {record.roundId}</h2>
-              <Button size="sm" variant="ghost" onClick={() => handleClear(record.roundId)}>
-                Clear
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={filtered.length === 0}
+                  onClick={() => handleDownload(record.roundId, filtered)}
+                >
+                  Download outline
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => handleClear(record.roundId)}>
+                  Clear
+                </Button>
+              </div>
             </div>
 
             <div className="flex flex-wrap items-end gap-2 rounded-md border border-dashed border-border bg-muted/30 p-2">
