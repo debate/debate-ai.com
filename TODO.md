@@ -6,6 +6,41 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Response-Outcome Charts — counsel-panel assessment history (idea
+  #4).** Another repeat of the standing prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL... with ability
+  to save flows docs and debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, speech send-log history, outline filter presets,
+  etc.), the CardMirror editor already surfaces every tool via its top
+  `MenuBar` and command palette, and no PR was open, so this slice picked
+  idea #4's ("AI Response-Outcome Charts") own next-named follow-up: "A
+  timeline of past AI counsel-panel assessments for a round, not just the
+  latest." `state/counselPanelAssessments.ts` was reworked from a
+  `roundId`-keyed overwrite store into an append-only history log
+  (`CounselPanelAssessmentRecord`, its own generated `id`), mirroring idea
+  #5's `judgeDecisions.ts` pattern exactly — including a
+  `MAX_COUNSEL_PANEL_ASSESSMENTS_PER_ROUND` cap and a "Clear history" bulk
+  action. The history is account-synced across devices too, same shape as
+  `saved_judge_decisions`: a new `saved_counsel_panel_assessments` D1 table
+  (`drizzle/0019_greedy_true_believers.sql`), `/api/counsel-panel-assessments`
+  routes, `state/savedCounselPanelAssessments.ts`'s validator, a
+  `flow/counsel-panel-assessments-client.ts` fetch client, and a
+  `hooks/useCounselPanelAssessments.ts` local-first/merge-on-mount hook.
+  `panels/VulnerabilityChartsPanel.tsx` now shows the newest assessment for
+  a round expanded (with its timestamp) and older ones behind a "Show past
+  assessments (N)" toggle. See
+  `docs/features/response-outcome-charts.md`'s new "Counsel-panel
+  assessment history" section. Vitest-covered with 55 new/rewritten cases
+  across `packages/debate-round/test/counselPanelAssessments.test.ts`,
+  `packages/debate-round/test/savedCounselPanelAssessments.test.ts`, and
+  `packages/debate-round/test/counsel-panel-assessments-client.test.ts`.
+  `bun run typecheck` (root, all 13 typechecked packages), `bun run test`
+  (3379 tests), and `bun run build` (the full monorepo build, including
+  `debate-ai-web`'s production build) all pass clean.
 - **Outline Filters and Argument Tree View — named filter presets (idea
   #10).** Another repeat of the standing prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL... with ability
@@ -11613,9 +11648,8 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 3. **Online Debate Versus AI** (`/versus-ai`) — every previously-tracked follow-up is now done: speech submission has a "🎤 Record" microphone-dictation button (mirroring every other panel's dictation UI); every delivered AI speech, not just the most recent one, has its own independent "Regenerate" button (`canRegenerateAiSpeechAt`/`replaceAiSpeechAt` in `state/aiVersusRounds.ts`); and a completed round can now be downloaded as a plain-text transcript — a "Download transcript" button on the active round view and on any complete round in the persisted-round list, backed by the pure `round/ai-versus-transcript.ts#buildAiVersusTranscriptText`. See `docs/features/ai-versus-rounds.md`'s "Download transcript" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. an export format other than plain text, such as a `.docx` Speech Document, or a side-by-side transcript diff between two rounds) if one becomes worth doing.
 
-4. **AI Response-Outcome Charts** (`/outcomes`) —
+4. **AI Response-Outcome Charts** (`/outcomes`) — the counsel-panel-assessment-timeline follow-up is done: every "Get AI counsel panel" request appends to that round's history log instead of overwriting the prior assessment (`state/counselPanelAssessments.ts`'s `CounselPanelAssessmentRecord`, account-synced via a new `saved_counsel_panel_assessments` D1 table plus `/api/counsel-panel-assessments` routes, merged in by `hooks/useCounselPanelAssessments.ts`), with the newest assessment shown expanded and older ones behind a "Show past assessments (N)" toggle — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Counsel-panel assessment history" section. Next:
    - A side-by-side view comparing two or more "what if" hypotheticals at once instead of one at a time.
-   - A timeline of past AI counsel-panel assessments for a round, not just the latest.
    - Chart export/share (image or link) action.
 
 5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too. A per-round decision count cap (`MAX_JUDGE_DECISIONS_PER_ROUND`, 20) is also now enforced — `appendJudgeDecision` trims the oldest entry once a round's log exceeds it, with the trimmed id best-effort deleted from the account too. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision, or a side-by-side paradigm comparison view for picking which judge to prep for) if one becomes worth doing.
