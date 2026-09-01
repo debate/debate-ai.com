@@ -20,7 +20,6 @@ import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
-import { useCategoryDockSidebarExtra } from "../context/category-dock-context"
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 
@@ -208,50 +207,6 @@ export function LecturesVideoGridView({
     return undefined
   }, [showFavoritesOnly, currentCategory, selectedStyle, slug])
 
-  const showCategoryGallery =
-    showLectureCategories && currentCategory === "lectures" && !selectedStyle && lectureCategories.length > 0
-
-  // The dock/sidebar (rendered site-wide in the root layout) shows these
-  // sections in the persistent left sidebar on desktop; mobile keeps them
-  // inline below since there's no sidebar there. Memoized so the registered
-  // element's identity is stable across renders that don't change its inputs
-  // — the registration effect re-fires whenever this reference changes.
-  const sidebarContent = useMemo(
-    () => (
-      <div className="flex flex-col gap-4">
-        <QuickLinksGrid
-          layout="list"
-          counts={quickLinkCounts}
-          showLectures={showLectureCategories}
-          onToggleLectures={onToggleLectureCategories}
-          activeId={activeQuickLinkId}
-        />
-
-        {showCategoryGallery && (
-          <>
-            <div className="border-t border-border" />
-            <LectureCategoryGridGallery
-              layout="list"
-              categories={lectureCategories}
-              selectedCategory={selectedCategory}
-            />
-          </>
-        )}
-      </div>
-    ),
-    [
-      quickLinkCounts,
-      showLectureCategories,
-      onToggleLectureCategories,
-      activeQuickLinkId,
-      showCategoryGallery,
-      lectureCategories,
-      selectedCategory,
-    ],
-  )
-
-  useCategoryDockSidebarExtra(sidebarContent)
-
   return (
     <div className="min-h-screen bg-background p-3 sm:p-6">
       <StickyHeader
@@ -288,26 +243,21 @@ export function LecturesVideoGridView({
         }
       />
 
-      {/* Desktop shows quick links + category filters in the persistent left
-          sidebar (registered above); mobile has no sidebar, so they render
-          inline here instead. */}
-      <div className="md:hidden">
-        <QuickLinksGrid
-          counts={quickLinkCounts}
-          showLectures={showLectureCategories}
-          onToggleLectures={onToggleLectureCategories}
-          activeId={activeQuickLinkId}
-        />
+      <QuickLinksGrid
+        counts={quickLinkCounts}
+        showLectures={showLectureCategories}
+        onToggleLectures={onToggleLectureCategories}
+        activeId={activeQuickLinkId}
+      />
 
-        {showCategoryGallery && (
-          <div className="mb-8">
-            <LectureCategoryGridGallery
-              categories={lectureCategories}
-              selectedCategory={selectedCategory}
-            />
-          </div>
-        )}
-      </div>
+      {showLectureCategories && currentCategory === "lectures" && !selectedStyle && lectureCategories.length > 0 && (
+        <div className="mb-8">
+          <LectureCategoryGridGallery
+            categories={lectureCategories}
+            selectedCategory={selectedCategory}
+          />
+        </div>
+      )}
 
       <Footer />
 
