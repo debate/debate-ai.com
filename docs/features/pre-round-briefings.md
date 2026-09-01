@@ -185,12 +185,76 @@ boundary, and a custom threshold) and
 `now`, and a caller-supplied `updatedAt` being overwritten rather than
 respected).
 
+## Manual pairing/room assignments
+
+Closes idea #12's "A manual pairing/room-assignment entry form as the
+practical stand-in" follow-up, since real Tabroom pairings stay blocked
+behind a login wall (`tourn/results`/`postings` pages 302-redirect to
+`/user/login/login.mhtml` for automated requests — see `TODO.md`'s
+"Confirmed blocker: Tabroom results/pairings/ballot data" note). A
+"Pairing schedule" section sits between the "create briefing" form and the
+"Log a round" form: round ID, tournament, division, round label, side
+(Aff/Neg), and optional room/opponent-label/judge-name text fields —
+mirroring `RoundEventInfo`'s shape, plus a free-text judge name (a pairing
+sheet lists a judge by name, not by an already-persisted `JudgeProfile`
+id). Saving validates the same required fields as the briefing form and
+upserts a `RoundPairingRecord` keyed by `roundId`, so re-logging a round
+whose room changed overwrites rather than duplicates it.
+
+Unlike the rest of this feature, pairings are account-synced: signed in,
+`hooks/useRoundPairings.ts` merges local and remote pairings by `roundId`
+(filling gaps only, same as `useWordCountRounds`) and best-effort pushes
+local saves/deletes to the account, backed by a new `saved_round_pairings`
+D1 table (`drizzle/0021_nostalgic_northstar.sql`) and `/api/round-pairings`
+routes — so a team's pairing schedule for a tournament follows a signed-in
+user across devices.
+
+Each saved pairing in the list has a "Use for briefing" action that
+prefills the "create briefing" form's round ID/tournament/division/round
+label/side/room/opponent-label fields from it, so the same information
+doesn't have to be typed twice when writing up a full briefing for that
+round.
+
+```
+Logging a pairing:
+panels/PreRoundBriefingsPanel.tsx (pairing form state)
+  → buildRoundPairingRecordFromDraft(draft)   — state/roundPairings.ts
+  → savePairing(record)                       — hooks/useRoundPairings.ts
+      → saveRoundPairing(record)              — state/roundPairings.ts
+                                                 (localStorage: roundPairings)
+      → when signed in: saveRoundPairingToAccount(record) (best-effort)
+                                                 — round/round-pairings-client.ts
+                                                 → PUT /api/round-pairings/:pairingId
+                                                 → saved_round_pairings (D1)
+  → panel re-renders from the hook's pairings state
+
+Using a pairing to prefill a briefing:
+panels/PreRoundBriefingsPanel.tsx
+  → handleUsePairingForBriefing(pairing) copies the pairing's fields into
+    the "create briefing" form's draft state (no store changes)
+
+Removing a pairing:
+panels/PreRoundBriefingsPanel.tsx
+  → deletePairing(roundId)                    — hooks/useRoundPairings.ts
+      → deleteRoundPairing(roundId)           — state/roundPairings.ts
+      → when signed in: deleteSavedRoundPairingFromAccount(roundId) (best-effort)
+```
+
+Vitest-covered in `packages/debate-round/test/roundPairings.test.ts` (the
+pure store and draft validation), `test/savedRoundPairings.test.ts` (the
+structural validator shared by the API routes and the hook), and
+`test/round-pairings-client.test.ts` (the fetch wrapper, mocking `fetch`).
+`hooks/useRoundPairings.ts` itself is untested, matching this repo's
+existing convention for account-synced, `localStorage`-backed hooks (e.g.
+`useWordCountRounds`, `useCounselPanelAssessments`).
+
 ## Known gaps
 
-- No real data sources for tournament results, pairings, event details, or
-  room assignments yet — follow-up (a) on the same idea, not started; a
-  briefing's event/opponent/judge fields still have to be entered by hand
+- No real data source for tournament results, event details, or ballots —
+  a briefing's opponent-scouting/judge-tendency data still has to be
+  entered by hand (via the Opponent Team Profiles / Judge Profiles stores)
   or supplied by a caller of `buildPreRoundBriefing`/
-  `buildPreRoundBriefingFromStores` directly. Own round history is also
-  entered by hand via the "Log a round" form — it isn't reconstructed from
-  any real tournament-results/pairings source either.
+  `buildPreRoundBriefingFromStores` directly, and own round history is
+  entered by hand via the "Log a round" form. Pairings/room assignments now
+  have a dedicated manual-entry form (see above) as the practical stand-in
+  for the still-blocked live Tabroom data.

@@ -6,6 +6,64 @@
 _No task currently in progress._
 
 ### Completed
+- **Pre-Round Intelligence Panel — manual pairing/room-assignment entry
+  form.** Another repeat of the standing prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL... with ability
+  to save flows docs and debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built and every tool is already reachable from the Tools
+  page and CardMirror's command palette, and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area, so this slice picked idea #12's ("Pre-Round Intelligence
+  Panel") last open follow-up — "A manual pairing/room-assignment entry
+  form as the practical stand-in," blocked on live Tabroom data per the
+  "Confirmed blocker" note below — a genuine gap in exactly the "link user
+  db SQL ... and link to users" half, since `preRoundBriefings.ts` (and
+  everything else in this feature) was 100%-local, with no D1/account-sync
+  wiring at all. Adds `packages/debate-round/src/state/roundPairings.ts`
+  (pure store + draft validation, upsert-by-`roundId`, mirroring
+  `state/preRoundBriefings.ts`'s exact persistence convention — a pairing's
+  fields mirror `round/pre-round-briefing.ts`'s `RoundEventInfo` shape plus
+  a free-text `judgeLabel`, since a pairing sheet lists a judge by name, not
+  by an already-persisted `JudgeProfile` id), `state/savedRoundPairings.ts`
+  (structural validator + byte cap, mirroring `savedWordCountRounds.ts`),
+  `round/round-pairings-client.ts` (a `fetch` wrapper, mirroring
+  `round/word-count-rounds-client.ts`), and `hooks/useRoundPairings.ts`
+  (local-first `localStorage` state, best-effort account-synced, merging by
+  `roundId` — fills gaps only, same as `useWordCountRounds`), plus a new
+  "Pairing schedule" section on `PreRoundBriefingsPanel` between the
+  "create briefing" and "Log a round" forms: log a pairing by hand, and use
+  a "Use for briefing" action on any saved pairing to prefill the "create
+  briefing" form's round ID/tournament/division/round label/side/room/
+  opponent-label fields from it. Account sync goes through a new
+  `saved_round_pairings` D1 table (one row per (user, round), keyed by the
+  pairing's own `roundId` — same shape as `saved_word_count_rounds`) and new
+  `/api/round-pairings` (GET) / `/api/round-pairings/[pairingId]` (PUT/
+  DELETE) routes, migration `drizzle/0021_nostalgic_northstar.sql`
+  (generated via `db:generate`). Vitest-covered in
+  `packages/debate-round/test/roundPairings.test.ts` (21 cases: store
+  CRUD/upsert/adopt semantics and draft validation including the
+  required-field and optional-field-trimming rules),
+  `test/savedRoundPairings.test.ts` (21 cases covering the structural
+  validator), and `test/round-pairings-client.test.ts` (9 cases mocking
+  `fetch`); `useRoundPairings` itself is untested, matching this repo's
+  existing convention for account-synced, `localStorage`-backed hooks (e.g.
+  `useWordCountRounds`, `useCounselPanelAssessments`). See
+  `docs/features/pre-round-briefings.md`'s new "Manual pairing/room
+  assignments" section. Full verification: `bun vitest run` (3577 tests
+  passed, including these 51 new ones), `bunx turbo typecheck` across every workspace package with a
+  `typecheck` script (all pass — `debate-ai-web` has none; a manual `bunx
+  tsc --noEmit` there surfaces only pre-existing, unrelated errors —
+  Cloudflare Workers ambient types (`D1Database`/`Fetcher`) and better-auth
+  client-plugin generics not resolving outside the Next.js/Vinext build
+  pipeline, plus missing `debate-ui` icon asset type declarations — none of
+  which reference any file this change touched), and `bun run build:web`
+  (production build succeeds end-to-end, with `/api/round-pairings` and
+  `/api/round-pairings/:pairingId` both listed among the built API routes).
+  No lint script exists anywhere in this repo (checked package.json at the
+  root and every workspace package), so none was run.
+
 - **Common Argument Library — saved custom collections per user.** Another
   repeat of the standing prompt ("integrate all the tools into the UI...
   create user settings and link user db SQL... with ability to save flows
@@ -12428,8 +12486,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. The "my endorsement activity" follow-up is also now done: a signed-in visitor gets a "My endorsement activity" toggle above the table, listing every endorsement they gave as a reviewer via the same store's `direction: "given"` query (`state/contributions.ts#endorsementHistoryCounterpartId`) — see the Completed entry above. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. real reviewer-identity/permission checks so a "given" entry can't be spoofed under an arbitrary reviewer id, or a per-contributor "given" history visible to others, not just the signed-in visitor's own) if one becomes worth doing.
 
-12. **Pre-Round Intelligence Panel** (`/briefings`) — the print/export follow-up is done: each round card has a "Download" action that saves the briefing as a plain-text file, headed with the round id (`round/pre-round-briefing.ts#buildPreRoundBriefingText`/`preRoundBriefingFilename`) — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Download a briefing" section. The freshness-indicator follow-up is also now done: each round card shows a "last updated" badge (turning destructive/stale past 24 hours), backed by `round/pre-round-briefing.ts#getBriefingAgeHours`/`isBriefingStale` and a new `updatedAt` timestamp `savePreRoundBriefing` stamps on every save — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Freshness indicator" section. Real tournament pairings/room-assignment data stays blocked (Tabroom login wall, see below), so:
-    - A manual pairing/room-assignment entry form as the practical stand-in.
+12. **Pre-Round Intelligence Panel** (`/briefings`) — the print/export follow-up is done: each round card has a "Download" action that saves the briefing as a plain-text file, headed with the round id (`round/pre-round-briefing.ts#buildPreRoundBriefingText`/`preRoundBriefingFilename`) — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Download a briefing" section. The freshness-indicator follow-up is also now done: each round card shows a "last updated" badge (turning destructive/stale past 24 hours), backed by `round/pre-round-briefing.ts#getBriefingAgeHours`/`isBriefingStale` and a new `updatedAt` timestamp `savePreRoundBriefing` stamps on every save — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Freshness indicator" section. The manual pairing/room-assignment entry form follow-up is also now done: a "Pairing schedule" section logs a round's pairing (tournament/division/round label/side/room/opponent label/judge name) as the practical stand-in for still-blocked live Tabroom pairings, account-synced via a new `saved_round_pairings` D1 table plus `/api/round-pairings` routes, with a "Use for briefing" action on each saved pairing that prefills the "create briefing" form from it — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Manual pairing/room assignments" section. No further follow-up is currently tracked for this idea beyond the still-blocked real tournament-results/pairings/ballot data source itself (see "Confirmed blocker" below); a future run should pick a fresh next-step if one becomes worth doing.
 
 13. **Coaching Programs and Group Challenges** (`/coaching-programs`, `/cards/group-challenges`) —
     - A calendar/schedule view across a program's drills, sprints, and challenges.

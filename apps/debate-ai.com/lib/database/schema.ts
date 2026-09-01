@@ -422,6 +422,37 @@ export const savedCounselPanelAssessments = sqliteTable(
 
 export type SavedCounselPanelAssessmentRow = typeof savedCounselPanelAssessments.$inferSelect;
 
+// Account-linked round-pairing sync — TODO.md idea #12 ("Pre-Round
+// Intelligence Panel"), "A manual pairing/room-assignment entry form as the
+// practical stand-in" follow-up (real Tabroom pairings data stays blocked
+// behind a login wall — see the "Confirmed blocker" note). One row per
+// (user, round) pair, keyed by the caller-typed `RoundPairingRecord.roundId`
+// — a pairing is looked up/edited by round, not appended to a growing log —
+// same shape as `savedWordCountRounds` above.
+export const savedRoundPairings = sqliteTable(
+  "saved_round_pairings",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_round_pairings_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_round_pairings_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedRoundPairingRow = typeof savedRoundPairings.$inferSelect;
+
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can
