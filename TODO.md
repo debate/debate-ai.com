@@ -6,6 +6,59 @@
 _No task currently in progress._
 
 ### Completed
+- **Contribution Leaderboard — weekly/monthly/all-time range filters.**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, speech send-log history, outline filter presets,
+  counsel-panel assessment history, flow annotations, etc.), every tool is
+  already reachable from the Tools page and CardMirror's command palette,
+  and no PR was open for this idea, so this slice picked the Research
+  Crowdsourcing Organizer Features section's "🏅 Contribution Leaderboard"
+  bullet's first-named follow-up: "weekly/monthly/all-time range filters."
+  `lib/contribution-leaderboard.ts` gains a `LeaderboardRange` type
+  (`"all-time" | "weekly" | "monthly"`), a pure `isWithinLeaderboardRange`
+  helper (a timestamp-vs-trailing-window check, exported so other stores
+  can scope their own timestamped data to the same window), and
+  `filterContributionsByRange` (narrows an `AttributedContribution[]` to
+  those with a `submittedAt` inside that window; a contribution missing
+  `submittedAt` is excluded from `weekly`/`monthly` but still counted under
+  `all-time`). `state/researchProgress.ts`'s
+  `buildPersistedLeaderboardWithCompletedTasks` takes new optional `range`/
+  `now` parameters (defaulting to `"all-time"`/`Date.now()`, so every
+  existing caller is unaffected) and applies the same window to both the
+  contribution list and its own completed-task counts (keyed off each
+  `CompletedTaskRecord.completedAt`), so switching range changes every
+  column consistently rather than leaving completed-task counts stuck at
+  all-time. `ContributionLeaderboardPanel` gains a "Range" `Select` above
+  the table (All time / This week / This month, mirroring the
+  `FlowAnnotationsPanel` dropdown-filter pattern), re-deriving the roster on
+  change and on a cross-tab live-update event; an empty-for-this-range
+  result gets a range-aware empty message pointing back at "All time"
+  instead of the generic "no contributions yet" one. See
+  `docs/features/contribution-leaderboard.md`'s new "Range filter" section.
+  Vitest-covered with 20 new cases: 11 in
+  `packages/debate-card-search/test/contribution-leaderboard.test.ts`
+  (`isWithinLeaderboardRange`'s all-time passthrough, NaN handling, the
+  weekly boundary, a future timestamp, and the weekly-vs-monthly window
+  difference; `filterContributionsByRange`'s all-time passthrough including
+  undated contributions, weekly/monthly narrowing, excluding undated
+  contributions from dated ranges, and the empty-input case) and 9 in
+  `packages/debate-card-search/test/researchProgress.test.ts`
+  (`buildPersistedLeaderboardWithCompletedTasks`'s all-time default
+  including stale activity, excluding a stale contribution/completed task
+  under `weekly`, including recent activity under `weekly`, and the
+  weekly-vs-monthly window difference). Verified: `bun install` (2258
+  packages), the two focused test files (55/55 pass), the full `bun run
+  test` (208 test files, 3442 tests, all passing, up from 208/3428), the
+  whole-repo `bun run typecheck` (root, all 13 typechecked packages,
+  clean), and a full `bun run build` (the whole monorepo build, including
+  `debate-ai-web`'s production build, which lists `/cards/leaderboard`
+  among its built routes) all pass clean. **Completed:** 2026-09-01.
 - **Flow-in-Speech Flow Annotations — search/filter annotations by speech,
   speaker, or tag (idea #15).** Another repeat of the standing prompt
   ("integrate all the tools into the UI... create user settings and link
@@ -12035,7 +12088,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 > The note above about UI follow-ups applies to this section too. As with Product Feature Ideas, each bullet below is an outline of UI features to add next, not a build log.
 
 * 🧩 **Community Research Hub** (`/community-hub`) — a personalized "for you" section; fold its directory into the News Stream feed instead of a separate destination; a quick-jump search bar across every listed space.
-* 🏅 **Contribution Leaderboard** (`/cards/leaderboard`) — weekly/monthly/all-time range filters; per-category (kind) leaderboards alongside the overall one; a per-contributor profile drill-down page.
+* 🏅 **Contribution Leaderboard** (`/cards/leaderboard`) — the range-filter follow-up is done: a "Range" dropdown (All time / This week / This month) re-scopes the whole roster — scores and completed-task counts alike — to that trailing window (`lib/contribution-leaderboard.ts#filterContributionsByRange`/`isWithinLeaderboardRange`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Range filter" section. Next: per-category (kind) leaderboards alongside the overall one; a per-contributor profile drill-down page.
 * 🎮 **Gamified Quests** (`/cards/streaks`) — a streak-freeze/grace-day mechanic for a missed day; a shareable streak-badge image; an opt-in reminder notification before a streak lapses.
 * 🔓 **Progress Unlocks** (`/cards/progress`) — a visual next-tier progress bar instead of text-only status; a small unlock celebration toast when a tier/badge is earned; a badge showcase on a contributor's profile.
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — batch-score an uploaded set of cards at once; a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.

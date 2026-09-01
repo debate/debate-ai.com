@@ -60,6 +60,14 @@ import { Fragment, useEffect, useState } from "react"
 import { Info } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
+import { Label } from "debate-ui/src/primitives/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "debate-ui/src/primitives/select"
 import {
   Table,
   TableBody,
@@ -79,7 +87,13 @@ import {
   listEndorsementsByContributor,
   type EndorsementHistoryDirection,
 } from "../state/contributions"
-import type { ContributorStats } from "../lib/contribution-leaderboard"
+import type { ContributorStats, LeaderboardRange } from "../lib/contribution-leaderboard"
+
+const RANGE_LABELS: Record<LeaderboardRange, string> = {
+  "all-time": "All time",
+  weekly: "This week",
+  monthly: "This month",
+}
 
 const HELPFULNESS_SCORE_EXPLANATION = buildHelpfulnessScoreExplanation()
 
@@ -95,9 +109,9 @@ function todayUtcDayKey(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-function buildLeaderboardRows(): LeaderboardRow[] {
+function buildLeaderboardRows(range: LeaderboardRange): LeaderboardRow[] {
   const asOfDayKey = todayUtcDayKey()
-  return buildPersistedLeaderboardWithCompletedTasks().map((stats) => {
+  return buildPersistedLeaderboardWithCompletedTasks(undefined, range).map((stats) => {
     const status = buildContributorUnlockStatusWithStreakFromStore(stats.contributorId, asOfDayKey)
     return {
       ...stats,
@@ -138,10 +152,11 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
   const [rows, setRows] = useState<LeaderboardRow[] | null>(null)
   const [expandedContributorId, setExpandedContributorId] = useState<string | null>(null)
   const [showMyActivity, setShowMyActivity] = useState(false)
+  const [range, setRange] = useState<LeaderboardRange>("all-time")
 
   useEffect(() => {
-    setRows(buildLeaderboardRows())
-  }, [])
+    setRows(buildLeaderboardRows(range))
+  }, [range])
 
   /**
    * Live-update the roster when another browser tab submits a contribution,
@@ -151,21 +166,44 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
       if (!isContributionLeaderboardLiveUpdateStorageEvent(event)) return
-      setRows(buildLeaderboardRows())
+      setRows(buildLeaderboardRows(range))
     }
     window.addEventListener("storage", handleStorage)
     return () => window.removeEventListener("storage", handleStorage)
-  }, [])
+  }, [range])
 
   if (rows === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading leaderboard…</div>
   }
 
+  const rangeSelect = (
+    <div className="space-y-1.5">
+      <Label htmlFor="leaderboard-range">Range</Label>
+      <Select value={range} onValueChange={(value) => setRange(value as LeaderboardRange)}>
+        <SelectTrigger id="leaderboard-range" className="w-36">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {(Object.keys(RANGE_LABELS) as LeaderboardRange[]).map((value) => (
+            <SelectItem key={value} value={value}>
+              {RANGE_LABELS[value]}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
+
   if (rows.length === 0) {
     return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No contributions yet. The leaderboard fills in as contributors submit cards, summaries, and
-        analytics.
+      <div className="p-4 sm:p-6">
+        <h1 className="mb-1 text-xl font-semibold text-foreground">Contribution Leaderboard</h1>
+        <div className="mb-4">{rangeSelect}</div>
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          {range === "all-time"
+            ? "No contributions yet. The leaderboard fills in as contributors submit cards, summaries, and analytics."
+            : `No contributions in ${RANGE_LABELS[range].toLowerCase()}. Try "All time" to see the full roster.`}
+        </div>
       </div>
     )
   }
@@ -188,6 +226,7 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
         </Tooltip>
         — a blend of popularity, quality, and reviewer signals.
       </p>
+      <div className="mb-4">{rangeSelect}</div>
       {signedInContributorId && (
         <div className="mb-4">
           <Button size="sm" variant="outline" onClick={() => setShowMyActivity((expanded) => !expanded)}>
