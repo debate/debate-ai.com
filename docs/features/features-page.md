@@ -6,7 +6,7 @@ grouped into eight categories and filtered by a single search box.
 
 - **Route:** `/features`
 - **Nav:** the global dock's Settings menu → **All Features** (the first item)
-- **Package:** [`debate-ui`](../../packages/debate-ui/README.md)
+- **Package:** `apps/debate-ai.com/components/debate-ui`
 
 ## Why this exists
 
@@ -55,13 +55,13 @@ it stays a stable "how big is this app" answer while someone types.
 
 ## How it works
 
-- [`packages/debate-ui/src/features/feature-catalog.ts`](../../packages/debate-ui/src/features/feature-catalog.ts)
+- [`apps/debate-ai.com/components/debate-ui/features/feature-catalog.ts`](../../apps/debate-ai.com/components/debate-ui/features/feature-catalog.ts)
   holds the pure data and helpers: `APP_FEATURES`, `buildFeatureSections`,
   `searchFeatures`, `featureDocUrl`, and `buildFeatureCatalogSummaryText`.
   Like `debate-card-search`'s narrower community-hub directory it has no
   store — every entry links to a surface that already persists (or doesn't
   need to persist) its own state.
-- [`packages/debate-ui/src/features/FeaturesPanel.tsx`](../../packages/debate-ui/src/features/FeaturesPanel.tsx)
+- [`apps/debate-ai.com/components/debate-ui/features/FeaturesPanel.tsx`](../../apps/debate-ai.com/components/debate-ui/features/FeaturesPanel.tsx)
   renders it, holding only the search string in local state.
 - [`apps/debate-ai.com/app/features/page.tsx`](../../apps/debate-ai.com/app/features/page.tsx)
   mounts the panel at `/features`.
@@ -76,32 +76,33 @@ actually type. "elo" finds Team Rankings, "rfd" finds AI Judge Decision, and
 "verbatim" finds both the Reason Editor and Speech Documents, none of which
 mention those words on screen.
 
-`debate-ui` is the home for both files because the catalog spans every
-package: it names surfaces from `debate-round`, `debate-card-search`,
-`debate-videos`, `debate-speech-writer`, and `reason-editor`, so it can't
-live inside any one of them without inverting the dependency graph, and
-`debate-core` is deliberately React-free (the panel needs React). Putting it
-in the app itself would have put it outside the root Vitest projects, which
-only cover `packages/*`.
+Both files live directly in the app (under `components/debate-ui/`, along
+with the rest of what used to be the shared `debate-ui` package — see
+[`TODO.md`](../../TODO.md) for that migration) rather than in a package,
+even though the catalog names surfaces from `debate-round`,
+`debate-card-search`, `debate-videos`, `debate-speech-writer`, and
+`reason-editor`: nothing outside the app imports the catalog, so there's no
+dependency-graph reason to keep it in a shared workspace package.
 
 ## Tests
 
-`packages/debate-ui/test/feature-catalog.test.ts` covers the catalog's own
-invariants (unique ids and routes, every entry categorized, every category
-used, docs pointing at `.md` files), section grouping and ordering, search
-across all four matched fields, doc-URL building, and summary-line
-pluralization. `packages/debate-ui/test/features-panel.test.tsx` renders the
-panel and asserts every catalogued route, the category headings, the summary
-line, a docs link, the jump nav, and that a one-entry catalog renders without
-the jump nav.
+There is no automated coverage for `feature-catalog.ts` or `FeaturesPanel.tsx`
+today — `apps/debate-ai.com` has no Vitest setup of its own (the root Vitest
+config's `packages/*` projects glob doesn't reach app code), and the tests
+that used to cover them (`feature-catalog.test.ts`, `features-panel.test.tsx`)
+lived in the now-removed `debate-ui` package's own `test/` directory. They
+asserted: unique ids and routes, every entry categorized, every category
+used, docs pointing at `.md` files, section grouping and ordering, search
+across all four matched fields, doc-URL building, summary-line pluralization,
+and (for the panel) every catalogued route, the category headings, the
+summary line, a docs link, the jump nav, and that a one-entry catalog renders
+without the jump nav — worth restoring if this app grows a test setup.
 
 ## Known gaps
 
 - The catalog is a hand-maintained registry, so a new route has to be added
-  to it as well. Nothing fails if it isn't — the tests assert the catalog's
-  internal consistency, not that it covers every file under
-  `apps/debate-ai.com/app/`, because the app is outside the packages Vitest
-  runs over.
+  to it as well. Nothing enforces that it covers every file under
+  `apps/debate-ai.com/app/`.
 - `/login` is intentionally absent: it's a step on the way to a feature
   rather than a feature, and it's already reachable from the Settings menu.
 - The **Docs** links point at the feature docs on GitHub's `master` branch;
