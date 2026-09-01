@@ -6,6 +6,58 @@
 _No task currently in progress._
 
 ### Completed
+- **Outline Filters and Argument Tree View — export the filtered tree to an
+  outline file (idea #10).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows docs and debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built (a real `/settings`
+  page, D1-backed tables linked to signed-in users for flow edits,
+  documents, rounds, judge decisions, word-count history, speech send-log
+  history, outline filter presets, counsel-panel assessment history, etc.),
+  the CardMirror editor already surfaces every tool via its top `MenuBar`
+  and command palette (Ctrl/Cmd-Shift-Space), and no PR was open for this
+  idea, so this slice picked idea #10's ("Outline Filters and Argument Tree
+  View", `/outline`) own next-named follow-up: "Export the filtered tree to
+  a Speech Document or outline file." A `.docx` Speech Document export
+  wasn't attempted, for the same reason idea #6's "send to Speech Document"
+  follow-up stayed open: the only Speech Document type in this repo lives
+  in the `reason-editor` package, which `debate-round` (the package
+  `ArgumentTreePanel` lives in) doesn't depend on — so this closes the
+  follow-up's "outline file" half: a plain-text export.
+  New `flow/argument-tree-export.ts` adds `buildArgumentTreeOutlineText(nodes,
+  roundId)` (renders a flattened, already-filtered `ArgumentTreeNode[]` — a
+  heading as `## <content>`, an argument row as `- [<speech>] <content>`
+  with any set `argumentType`/`authorId`/`evidenceStatus`/`isUnanswered`
+  tags appended in a fixed order) and `argumentTreeOutlineFilename(roundId)`
+  (mirroring `round/pre-round-briefing.ts#preRoundBriefingFilename`'s exact
+  sanitization rule). `panels/ArgumentTreePanel.tsx` gains a "Download
+  outline" button next to each round card's "Clear" action (disabled when
+  the round's current filter matches nothing), using the same anchor+Blob
+  download pattern every other completed export follow-up in this repo
+  already uses (`PreRoundBriefingsPanel.tsx`'s "Download",
+  `VulnerabilityChartsPanel.tsx`'s "Download report") — it downloads
+  exactly the flattened, filtered rows currently rendered for that round,
+  not a fresh re-derivation. See `docs/features/argument-tree-outline.md`'s
+  new "Outline export" section. Vitest-covered with 11 new cases in
+  `packages/debate-round/test/argument-tree-export.test.ts` (the header
+  line, the no-rows-match message, heading vs. argument-row rendering, the
+  tag suffix in its fixed order and only-set-tags rendering, multi-row
+  ordering, and the filename's sanitization/collapsing/trimming/
+  no-alphanumeric-fallback behavior mirroring
+  `pre-round-briefing.test.ts`/`ai-versus-transcript.test.ts`'s own
+  filename suites). Verified: `bun install` (2258 packages), `bun x vitest
+  run packages/debate-round/test/argument-tree-export.test.ts` (11/11
+  pass), the full `bun run test` (208 test files, 3418 tests, all passing,
+  up from 207/3407), the whole-repo `bun run typecheck` (root, all 13
+  typechecked packages), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (35 pre-existing errors — identical
+  baseline to the immediately preceding run's own count, confirming no
+  regression, none touching the files this slice changed), and a full
+  `bun run build` (the whole monorepo build, including `debate-ai-web`'s
+  production build, which lists `/outline` among its built routes) all pass
+  clean. **Completed:** 2026-09-01.
 - **Word-Count-Only Speech Format — bulk "delete all my synced history"
   action (idea #2).** Another repeat of the standing prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL...
@@ -11906,9 +11958,8 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    `navPaneVisible`). Next: a multi-pane/multi-window breadcrumb (today
    single-doc only).
 
-10. **Outline Filters and Argument Tree View** (`/outline`) — the named-filter-presets follow-up is done: each round card has a "Filter presets" row to apply a saved preset or save its current filter combination under a name, account-synced via `/api/settings`'s `outlineFilterPresets` field (`state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets.ts`, mirroring `wordLimitPresets.ts`'s split) — see `docs/features/argument-tree-outline.md`'s "Filter presets" section. Next:
+10. **Outline Filters and Argument Tree View** (`/outline`) — the named-filter-presets follow-up is done: each round card has a "Filter presets" row to apply a saved preset or save its current filter combination under a name, account-synced via `/api/settings`'s `outlineFilterPresets` field (`state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets.ts`, mirroring `wordLimitPresets.ts`'s split) — see `docs/features/argument-tree-outline.md`'s "Filter presets" section. The export follow-up is also now done: each round card has a "Download outline" button that saves the flattened, filtered rows as a plain-text outline file (`flow/argument-tree-export.ts#buildArgumentTreeOutlineText`/`argumentTreeOutlineFilename`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Outline export" section. Next:
     - Multi-select rows to bulk-apply an argument-type/contributor/evidence-status tag at once.
-    - Export the filtered tree to a Speech Document or outline file.
 
 11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. The "my endorsement activity" follow-up is also now done: a signed-in visitor gets a "My endorsement activity" toggle above the table, listing every endorsement they gave as a reviewer via the same store's `direction: "given"` query (`state/contributions.ts#endorsementHistoryCounterpartId`) — see the Completed entry above. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. real reviewer-identity/permission checks so a "given" entry can't be spoofed under an arbitrary reviewer id, or a per-contributor "given" history visible to others, not just the signed-in visitor's own) if one becomes worth doing.
 

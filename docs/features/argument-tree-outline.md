@@ -271,6 +271,40 @@ section-preview label truncation) and
 list and checkbox render when `sectionRows` is non-empty, and neither
 renders when it's empty).
 
+## Outline export
+
+Idea #10's "Export the filtered tree to a Speech Document or outline file"
+follow-up. Each round card has a "Download outline" button next to
+"Clear" (disabled when the round's current filter matches nothing) that
+downloads exactly the flattened, filtered rows currently rendered for that
+round as a plain-text `.txt` outline — a heading renders as `## <content>`,
+an argument row renders as `- [<speech>] <content>`, with any set tags
+(`argumentType`, `authorId`, `evidenceStatus`, `isUnanswered`) appended as
+`(type: turn; by: alex; evidence: cited; unanswered)`.
+
+A `.docx` Speech Document export isn't attempted, for the same reason idea
+#6's "send to Speech Document" follow-up stayed open: the only Speech
+Document type in this repo lives in the `reason-editor` package, which
+`debate-round` doesn't depend on.
+
+```
+flow/argument-tree-export.ts
+  → buildArgumentTreeOutlineText(nodes, roundId)   — flattened+filtered nodes -> plain text
+  → argumentTreeOutlineFilename(roundId)           — outline-round-4.txt, etc.
+
+panels/ArgumentTreePanel.tsx
+  → handleDownload(roundId, filtered)              — anchor+Blob download, mirroring
+                                                       PreRoundBriefingsPanel.tsx's pattern
+```
+
+Vitest-covered in `packages/debate-round/test/argument-tree-export.test.ts`
+(the header line, the no-rows-match message, heading vs. argument-row
+rendering, the tag suffix in its fixed order and only-set-tags rendering,
+multi-row ordering, and the filename's sanitization/collapsing/trimming/
+no-alphanumeric-fallback behavior mirroring
+`ai-versus-transcript.test.ts`/`pre-round-briefing.test.ts`'s own filename
+suites).
+
 ## Known gaps
 
 - Tagging is row-level, not per-speech: one row carries one
@@ -291,6 +325,7 @@ renders when it's empty).
   scroll to a particular round, so a preset saved while looking at one round
   still needs that round's card to already be visible/generated to see the
   effect.
-- Multi-select rows to bulk-apply a tag at once, and exporting the filtered
-  tree to a Speech Document or outline file, remain open (idea #10's other
-  two follow-up bullets in `TODO.md`).
+- No follow-ups remain open on the "exporting the filtered tree" gap — see
+  "Outline export" above.
+- Multi-select rows to bulk-apply a tag at once remains open (idea #10's
+  other follow-up bullet in `TODO.md`).
