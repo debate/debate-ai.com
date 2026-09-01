@@ -29,6 +29,13 @@
  * meetings" section always rendered "No recorded prior meetings" because no
  * persisted store of a team's own round history existed for it to read
  * from.
+ *
+ * `preRoundBriefingFilename` closes idea #12's "a print/export view of a
+ * briefing for offline use before a round" follow-up — `PreRoundBriefingsPanel`
+ * wraps `buildPreRoundBriefingText`'s output in a `Blob` and triggers a
+ * plain-text download, the same anchor+Blob pattern every other completed
+ * "export/download" follow-up in this repo already uses (e.g.
+ * `ai-versus-transcript.ts`, `response-outcome-report.ts`).
  */
 
 import type {
@@ -182,9 +189,31 @@ export function buildPreRoundBriefingFromStores(
 /**
  * Renders a `PreRoundBriefing` as a single markdown-ish text document,
  * suitable for a pre-round briefing panel or a printable/shareable note.
+ * When `roundId` is supplied (the panel always has one — it's the
+ * `PreRoundBriefingRecord`'s key, not part of the pure `PreRoundBriefing`
+ * itself), a header line identifying the round is prepended, mirroring
+ * `ai-versus-transcript.ts#buildAiVersusTranscriptText`'s header.
  */
-export function buildPreRoundBriefingText(briefing: PreRoundBriefing): string {
-  return briefing.sections
+export function buildPreRoundBriefingText(briefing: PreRoundBriefing, roundId?: string): string {
+  const body = briefing.sections
     .map((section) => `### ${section.title}\n${section.body}`)
     .join("\n\n");
+  return roundId ? `Pre-Round Briefing — Round ${roundId}\n\n${body}` : body;
+}
+
+/**
+ * A filesystem-safe filename for a briefing download, e.g.
+ * `pre-round-briefing-round-4.txt` — the "print/export view of a briefing
+ * for offline use before a round" follow-up named under idea #12
+ * ("Pre-Round Intelligence Panel") in TODO.md. Non-alphanumeric characters
+ * in the round id collapse to single hyphens, mirroring
+ * `ai-versus-transcript.ts#aiVersusTranscriptFilename`'s exact rule.
+ */
+export function preRoundBriefingFilename(roundId: string): string {
+  const safeId = roundId
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `pre-round-briefing-${safeId || "round"}.txt`;
 }

@@ -106,6 +106,42 @@ still delegates to the existing `getHeadToHeadRecords`/
 `buildPreRoundBriefingFromStores` cases in
 `packages/debate-round/test/pre-round-briefing.test.ts`.
 
+## Download a briefing
+
+Closes idea #12's "a print/export view of a briefing for offline use before
+a round" follow-up: each round card now has a "Download" action next to
+"Clear" that saves the briefing as a plain-text file, for reading offline
+(no network/app needed) before or during a round.
+
+```
+panels/PreRoundBriefingsPanel.tsx — "Download" button
+  → buildPreRoundBriefingText(briefing, roundId)   — round/pre-round-briefing.ts
+      (prepends a "Pre-Round Briefing — Round <id>" header line when a
+       roundId is passed, then every section as already rendered on-page)
+  → Blob + anchor download, named via preRoundBriefingFilename(roundId)
+                                                    — round/pre-round-briefing.ts
+                                                      (same anchor+Blob
+                                                       pattern
+                                                       VulnerabilityChartsPanel.tsx's
+                                                       "Download report" and
+                                                       AiVersusRoundPanel.tsx's
+                                                       "Download transcript"
+                                                       already use)
+```
+
+`buildPreRoundBriefingText` already existed (fully Vitest-covered) but was
+never called from any panel — this is the first thing to actually invoke
+it. Its `roundId` parameter is optional and additive, so the one existing
+call site (the Vitest suite) is unaffected. No new download-mechanics code
+was introduced; this reuses the exact anchor+Blob pattern already
+established by every prior "export/download" follow-up in this repo rather
+than adding a `window.print()`-based print view, since a plain-text
+download is what every other completed export follow-up in this codebase
+has settled on. Vitest-covered in
+`packages/debate-round/test/pre-round-briefing.test.ts`'s
+`buildPreRoundBriefingText`/`preRoundBriefingFilename` suites (round-header
+presence, filename sanitization/collapsing/trimming/fallback).
+
 ## Known gaps
 
 - No real data sources for tournament results, pairings, event details, or
@@ -115,3 +151,5 @@ still delegates to the existing `getHeadToHeadRecords`/
   `buildPreRoundBriefingFromStores` directly. Own round history is also
   entered by hand via the "Log a round" form — it isn't reconstructed from
   any real tournament-results/pairings source either.
+- No "last updated" freshness indicator on a briefing card yet — a
+  still-open follow-up on this same idea.

@@ -9,6 +9,7 @@ import {
   buildPreRoundBriefing,
   buildPreRoundBriefingFromStores,
   buildPreRoundBriefingText,
+  preRoundBriefingFilename,
   summarizePriorMeetings,
   type RoundEventInfo,
 } from "../src/round/pre-round-briefing";
@@ -325,5 +326,36 @@ describe("buildPreRoundBriefingText", () => {
     for (const section of briefing.sections) {
       expect(text).toContain(`### ${section.title}\n${section.body}`);
     }
+  });
+
+  it("omits a round header when no roundId is passed", () => {
+    const briefing = buildPreRoundBriefing({ event: EVENT });
+    const text = buildPreRoundBriefingText(briefing);
+    expect(text).not.toContain("Pre-Round Briefing — Round");
+    expect(text.startsWith("### Event")).toBe(true);
+  });
+
+  it("prepends a round header when a roundId is passed", () => {
+    const briefing = buildPreRoundBriefing({ event: EVENT });
+    const text = buildPreRoundBriefingText(briefing, "round-4");
+    expect(text.startsWith("Pre-Round Briefing — Round round-4\n\n### Event")).toBe(true);
+  });
+});
+
+describe("preRoundBriefingFilename", () => {
+  it("builds a lowercase, hyphenated filename from a simple round id", () => {
+    expect(preRoundBriefingFilename("round-4")).toBe("pre-round-briefing-round-4.txt");
+  });
+
+  it("collapses non-alphanumeric characters and mixed case into single hyphens", () => {
+    expect(preRoundBriefingFilename("My Round #3!")).toBe("pre-round-briefing-my-round-3.txt");
+  });
+
+  it("trims leading/trailing hyphens produced by leading/trailing punctuation", () => {
+    expect(preRoundBriefingFilename("  --round--  ")).toBe("pre-round-briefing-round.txt");
+  });
+
+  it("falls back to a generic name when the round id has no alphanumeric characters", () => {
+    expect(preRoundBriefingFilename("###")).toBe("pre-round-briefing-round.txt");
   });
 });

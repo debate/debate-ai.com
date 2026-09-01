@@ -6,6 +6,46 @@
 _No task currently in progress._
 
 ### Completed
+- **Pre-Round Intelligence Panel — briefing download action (idea #12).**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (a real `/settings` page, D1-backed tables linked to
+  signed-in users for flow edits, documents, rounds, judge decisions,
+  word-count history, speech send-log history, outline filter presets,
+  counsel-panel assessment history, etc.), the CardMirror editor already
+  surfaces every tool via its top `MenuBar` and command palette, and no PR
+  was open, so this slice picked idea #12's ("Pre-Round Intelligence
+  Panel") own next-named follow-up: "A print/export view of a briefing for
+  offline use before a round." `round/pre-round-briefing.ts`'s
+  `buildPreRoundBriefingText` already existed and was already fully
+  Vitest-covered, but nothing ever called it from a panel — it gains an
+  optional `roundId` parameter (prepends a "Pre-Round Briefing — Round
+  &lt;id&gt;" header line when passed; the one existing call site, this
+  package's own test suite, is unaffected) plus a new
+  `preRoundBriefingFilename(roundId)` helper, mirroring
+  `ai-versus-transcript.ts#aiVersusTranscriptFilename`'s exact sanitization
+  rule. `panels/PreRoundBriefingsPanel.tsx` now has a "Download" button
+  next to each round card's "Clear" action, using the same anchor+Blob
+  download pattern every other completed export follow-up in this repo
+  already uses (`VulnerabilityChartsPanel.tsx`'s "Download report",
+  `AiVersusRoundPanel.tsx`'s "Download transcript") rather than a
+  `window.print()`-based print view — a plain-text download is what every
+  other completed "export/share" follow-up in this codebase has settled
+  on, so this one plain-text download closes both the "print" and "export"
+  halves of the follow-up rather than adding separate print-specific CSS
+  mechanics for one panel. See `docs/features/pre-round-briefings.md`'s new
+  "Download a briefing" section. Vitest-covered with 6 new cases in
+  `packages/debate-round/test/pre-round-briefing.test.ts` (the optional
+  round-header line, and `preRoundBriefingFilename`'s
+  sanitization/collapsing/trimming/no-alphanumeric-fallback behavior,
+  mirroring `ai-versus-transcript.test.ts`'s own filename test suite).
+  Verified: `bun install` (2258 packages), `bun run typecheck` (root, all
+  13 typechecked packages), `bun run test` (207 test files, 3397 tests, all
+  passing), and `bun run build` (the full monorepo build, including
+  `debate-ai-web`'s production build covering `/briefings`) all pass clean.
 - **AI Judge Decision Modes — inline prompt preview on the Judge Paradigm
   Picker (idea #5, `judge-paradigm-selections.md` Known gap).** Another
   repeat of the standing prompt ("integrate all the tools into the UI...
@@ -11762,9 +11802,8 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. The "my endorsement activity" follow-up is also now done: a signed-in visitor gets a "My endorsement activity" toggle above the table, listing every endorsement they gave as a reviewer via the same store's `direction: "given"` query (`state/contributions.ts#endorsementHistoryCounterpartId`) — see the Completed entry above. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. real reviewer-identity/permission checks so a "given" entry can't be spoofed under an arbitrary reviewer id, or a per-contributor "given" history visible to others, not just the signed-in visitor's own) if one becomes worth doing.
 
-12. **Pre-Round Intelligence Panel** (`/briefings`) — real tournament pairings/room-assignment data stays blocked (Tabroom login wall, see below), so:
+12. **Pre-Round Intelligence Panel** (`/briefings`) — the print/export follow-up is done: each round card has a "Download" action that saves the briefing as a plain-text file, headed with the round id (`round/pre-round-briefing.ts#buildPreRoundBriefingText`/`preRoundBriefingFilename`) — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Download a briefing" section. Real tournament pairings/room-assignment data stays blocked (Tabroom login wall, see below), so:
     - A manual pairing/room-assignment entry form as the practical stand-in.
-    - A print/export view of a briefing for offline use before a round.
     - A "last updated" freshness indicator so a stale briefing is obvious.
 
 13. **Coaching Programs and Group Challenges** (`/coaching-programs`, `/cards/group-challenges`) —

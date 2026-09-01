@@ -28,6 +28,13 @@
  * always rendered "No recorded prior meetings" even when an opponent
  * profile was picked.
  *
+ * Each round card also has a "Download" action — idea #12's "a print/export
+ * view of a briefing for offline use before a round" follow-up — using the
+ * same anchor+Blob download pattern every other completed export follow-up
+ * in this repo already uses (e.g. `VulnerabilityChartsPanel.tsx`'s "Download
+ * report"), backed by `round/pre-round-briefing.ts`'s
+ * `buildPreRoundBriefingText`/`preRoundBriefingFilename`.
+ *
  * @module panels/PreRoundBriefingsPanel
  */
 
@@ -56,6 +63,8 @@ import {
   savePreRoundBriefing,
 } from "../state/preRoundBriefings"
 import type { PreRoundBriefingRecord } from "../state/preRoundBriefings"
+import { buildPreRoundBriefingText, preRoundBriefingFilename } from "../round/pre-round-briefing"
+import type { PreRoundBriefing } from "../round/pre-round-briefing"
 import {
   deleteOwnRoundHistoryRecord,
   listOwnRoundHistory,
@@ -139,6 +148,21 @@ export function PreRoundBriefingsPanel() {
   const handleClear = (roundId: string) => {
     deletePreRoundBriefing(roundId)
     refresh()
+  }
+
+  /** Mirrors `VulnerabilityChartsPanel.tsx`'s anchor+Blob download pattern. */
+  const handleDownload = (roundId: string, briefing: PreRoundBriefing) => {
+    const text = buildPreRoundBriefingText(briefing, roundId)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = preRoundBriefingFilename(roundId)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
 
   const handleSubmit = () => {
@@ -483,6 +507,9 @@ export function PreRoundBriefingsPanel() {
                   ? "No prior meetings"
                   : `${briefing.priorMeetings.wins}-${briefing.priorMeetings.losses} vs. opponent`}
               </Badge>
+              <Button size="sm" variant="outline" onClick={() => handleDownload(roundId, briefing)}>
+                Download
+              </Button>
               <Button size="sm" variant="ghost" onClick={() => handleClear(roundId)}>
                 Clear
               </Button>
