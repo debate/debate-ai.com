@@ -128,9 +128,22 @@ each of those ids from the account too, one `DELETE
 /api/judge-decisions/[decisionId]` call per id (no new bulk-delete route;
 the existing single-decision endpoint is reused), mirroring
 `deleteDecision`'s local-first-then-sync order. A round with no history is a
-no-op (no state write, no network calls). A per-round decision count cap was
-not added in this slice — round history can still grow unbounded until a
-user clears it.
+no-op (no state write, no network calls).
+
+**Per-round decision count cap:** closing idea #5's remaining "Next" bullet.
+`state/judgeDecisions.ts`'s `MAX_JUDGE_DECISIONS_PER_ROUND` (20) caps how
+many decisions one round's history log can hold — `appendJudgeDecision` now
+trims the oldest entries for that round (by `generatedAt`) once the cap is
+exceeded, returning `{ record, trimmedIds }` instead of the bare record.
+`hooks/useJudgeDecisions.ts`'s `appendDecision` best-effort deletes each
+trimmed id from the account too, the same per-id cleanup
+`deleteRoundHistory` already does. This mirrors `wordLimitPresets.ts`'s
+`MAX_WORD_LIMIT_PRESETS` cap-constant convention rather than adding a new
+Settings-driven numeric preference. One known edge case: the cap isn't
+re-checked during the mount-time remote merge, so a remote copy of an
+already-trimmed decision (only possible if its account delete failed) could
+still be adopted back on a later mount — accepted for this slice rather than
+defended against.
 
 ```
 state/judgeDecisions.ts        — id-keyed append-only log, grouped panel view

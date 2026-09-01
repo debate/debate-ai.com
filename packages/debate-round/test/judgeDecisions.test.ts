@@ -8,8 +8,14 @@ import {
   getJudgeDecision,
   listJudgeDecisions,
   listJudgeDecisionsForRound,
+  MAX_JUDGE_DECISIONS_PER_ROUND,
   type JudgeDecisionRecord,
 } from "../src/state/judgeDecisions";
+
+/** Convenience wrapper — most tests only care about the stamped record. */
+function append(input: Omit<JudgeDecisionRecord, "id">): JudgeDecisionRecord {
+  return appendJudgeDecision(input).record;
+}
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {
@@ -58,21 +64,55 @@ beforeEach(() => {
 
 describe("appendJudgeDecision", () => {
   it("assigns a fresh id and returns the stamped record", () => {
-    const record = appendJudgeDecision(INPUT_A);
+    const { record } = appendJudgeDecision(INPUT_A);
     expect(record.id).toBeTruthy();
     expect(record).toMatchObject(INPUT_A);
   });
 
   it("never overwrites an existing entry, even for the same roundId", () => {
-    appendJudgeDecision(INPUT_A);
-    appendJudgeDecision({ ...INPUT_A, generatedAt: 1500 });
+    append(INPUT_A);
+    append({ ...INPUT_A, generatedAt: 1500 });
     expect(listJudgeDecisions()).toHaveLength(2);
   });
 
   it("assigns distinct ids to two decisions requested back to back", () => {
-    const first = appendJudgeDecision(INPUT_A);
-    const second = appendJudgeDecision({ ...INPUT_A, generatedAt: 1500 });
+    const first = append(INPUT_A);
+    const second = append({ ...INPUT_A, generatedAt: 1500 });
     expect(first.id).not.toBe(second.id);
+  });
+
+  it("returns an empty trimmedIds while a round stays under the cap", () => {
+    for (let i = 0; i < MAX_JUDGE_DECISIONS_PER_ROUND; i++) {
+      const { trimmedIds } = appendJudgeDecision({ ...INPUT_A, generatedAt: i });
+      expect(trimmedIds).toEqual([]);
+    }
+    expect(listJudgeDecisionsForRound("round-1")).toHaveLength(MAX_JUDGE_DECISIONS_PER_ROUND);
+  });
+
+  it("trims the oldest decision for a round once it exceeds MAX_JUDGE_DECISIONS_PER_ROUND", () => {
+    const oldest = append({ ...INPUT_A, generatedAt: 0 });
+    for (let i = 1; i < MAX_JUDGE_DECISIONS_PER_ROUND; i++) {
+      append({ ...INPUT_A, generatedAt: i });
+    }
+    const { record: newest, trimmedIds } = appendJudgeDecision({
+      ...INPUT_A,
+      generatedAt: MAX_JUDGE_DECISIONS_PER_ROUND,
+    });
+
+    expect(trimmedIds).toEqual([oldest.id]);
+    const forRound1 = listJudgeDecisionsForRound("round-1");
+    expect(forRound1).toHaveLength(MAX_JUDGE_DECISIONS_PER_ROUND);
+    expect(forRound1.map((d) => d.id)).not.toContain(oldest.id);
+    expect(forRound1[0].id).toBe(newest.id);
+  });
+
+  it("leaves other rounds untouched when one round's cap is enforced", () => {
+    for (let i = 0; i <= MAX_JUDGE_DECISIONS_PER_ROUND; i++) {
+      append({ ...INPUT_A, generatedAt: i });
+    }
+    append(INPUT_B);
+
+    expect(listJudgeDecisionsForRound("round-2")).toHaveLength(1);
   });
 });
 
@@ -92,8 +132,8 @@ describe("listJudgeDecisions", () => {
   });
 
   it("lists every appended judge decision", () => {
-    appendJudgeDecision(INPUT_A);
-    appendJudgeDecision(INPUT_B);
+    append(INPUT_A);
+    append(INPUT_B);
     expect(listJudgeDecisions()).toHaveLength(2);
   });
 });
@@ -104,17 +144,17 @@ describe("getJudgeDecision", () => {
   });
 
   it("returns the stored decision by its own id", () => {
-    const record = appendJudgeDecision(INPUT_A);
+    const record = append(INPUT_A);
     expect(getJudgeDecision(record.id)).toEqual(record);
   });
 });
 
 describe("listJudgeDecisionsForRound", () => {
   it("returns only the given round's decisions, newest-first", () => {
-    appendJudgeDecision(INPUT_A);
-    const older = appendJudgeDecision({ ...INPUT_A, generatedAt: 500 });
-    const newer = appendJudgeDecision({ ...INPUT_A, generatedAt: 5000 });
-    appendJudgeDecision(INPUT_B);
+    append(INPUT_A);
+    const older = append({ ...INPUT_A, generatedAt: 500 });
+    const newer = append({ ...INPUT_A, generatedAt: 5000 });
+    append(INPUT_B);
 
     const forRound1 = listJudgeDecisionsForRound("round-1");
     expect(forRound1).toHaveLength(3);
@@ -123,7 +163,7 @@ describe("listJudgeDecisionsForRound", () => {
   });
 
   it("returns an empty list for a round with no history", () => {
-    appendJudgeDecision(INPUT_A);
+    append(INPUT_A);
     expect(listJudgeDecisionsForRound("round-does-not-exist")).toEqual([]);
   });
 });
@@ -146,14 +186,14 @@ describe("adoptJudgeDecision", () => {
 
 describe("deleteJudgeDecision", () => {
   it("removes a single decision by its own id, leaving other decisions for the same round", () => {
-    const first = appendJudgeDecision(INPUT_A);
-    const second = appendJudgeDecision({ ...INPUT_A, generatedAt: 1500 });
+    const first = append(INPUT_A);
+    const second = append({ ...INPUT_A, generatedAt: 1500 });
     deleteJudgeDecision(first.id);
     expect(listJudgeDecisions()).toEqual([second]);
   });
 
   it("is a no-op when no decision has that id", () => {
-    const record = appendJudgeDecision(INPUT_A);
+    const record = append(INPUT_A);
     deleteJudgeDecision("does-not-exist");
     expect(listJudgeDecisions()).toEqual([record]);
   });
@@ -161,9 +201,9 @@ describe("deleteJudgeDecision", () => {
 
 describe("deleteJudgeDecisionsForRound", () => {
   it("removes every decision for the given round, leaving other rounds untouched", () => {
-    appendJudgeDecision(INPUT_A);
-    appendJudgeDecision({ ...INPUT_A, generatedAt: 1500 });
-    const other = appendJudgeDecision(INPUT_B);
+    append(INPUT_A);
+    append({ ...INPUT_A, generatedAt: 1500 });
+    const other = append(INPUT_B);
 
     deleteJudgeDecisionsForRound("round-1");
 
@@ -172,8 +212,8 @@ describe("deleteJudgeDecisionsForRound", () => {
   });
 
   it("returns the removed ids newest-first", () => {
-    const older = appendJudgeDecision(INPUT_A);
-    const newer = appendJudgeDecision({ ...INPUT_A, generatedAt: 9000 });
+    const older = append(INPUT_A);
+    const newer = append({ ...INPUT_A, generatedAt: 9000 });
 
     const removedIds = deleteJudgeDecisionsForRound("round-1");
 
@@ -181,7 +221,7 @@ describe("deleteJudgeDecisionsForRound", () => {
   });
 
   it("returns an empty array and is a no-op for a round with no history", () => {
-    const record = appendJudgeDecision(INPUT_A);
+    const record = append(INPUT_A);
     const removedIds = deleteJudgeDecisionsForRound("round-does-not-exist");
     expect(removedIds).toEqual([]);
     expect(listJudgeDecisions()).toEqual([record]);
@@ -190,15 +230,15 @@ describe("deleteJudgeDecisionsForRound", () => {
 
 describe("buildJudgeDecisionsPanelView", () => {
   it("groups decisions by roundId, sorted by roundId", () => {
-    appendJudgeDecision(INPUT_B);
-    appendJudgeDecision(INPUT_A);
+    append(INPUT_B);
+    append(INPUT_A);
     const groups = buildJudgeDecisionsPanelView();
     expect(groups.map((g) => g.roundId)).toEqual(["round-1", "round-2"]);
   });
 
   it("sorts each round's decisions newest-first", () => {
-    const older = appendJudgeDecision({ ...INPUT_A, generatedAt: 100 });
-    const newer = appendJudgeDecision({ ...INPUT_A, generatedAt: 9000 });
+    const older = append({ ...INPUT_A, generatedAt: 100 });
+    const newer = append({ ...INPUT_A, generatedAt: 9000 });
     const [group] = buildJudgeDecisionsPanelView();
     expect(group.decisions.map((d) => d.id)).toEqual([newer.id, older.id]);
   });
