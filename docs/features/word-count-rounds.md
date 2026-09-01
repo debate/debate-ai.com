@@ -55,6 +55,11 @@ Clearing a round:
 panels/WordCountRoundsPanel.tsx
   → useWordCountRounds().deleteRound(roundId)
   → deleteWordCountRound(roundId) (local) + best-effort deleteSavedWordCountRoundFromAccount(roundId)
+
+Clearing all synced history:
+panels/WordCountRoundsPanel.tsx
+  → useWordCountRounds().clearAllRounds()
+  → clearWordCountRounds() (local) + best-effort deleteAllSavedWordCountRoundsFromAccount()
 ```
 
 See "Account-synced round history" below for `useWordCountRounds`'s local-first
@@ -246,6 +251,18 @@ into `state/wordCountRounds.ts` now:
 - `saveRound`/`deleteRound` apply locally first (so saving/clearing a round
   is never blocked by the network), then best-effort sync the same change to
   the account when signed in.
+- `clearAllRounds` — the "delete all my synced history" bulk action (a
+  fresh next-step named in TODO.md's idea #2 entry once its other
+  follow-ups closed) — clears every locally persisted round in one write
+  (`clearWordCountRounds`, returning the removed `roundId`s) and, when
+  signed in, best-effort issues a single `DELETE /api/word-count-rounds`
+  against the whole collection rather than one request per round. This is a
+  deliberate deviation from `useJudgeDecisions`'s `deleteRoundHistory`
+  (which loops individual per-id `DELETE`s against the account, since a
+  round's decisions aren't a single row) — a word-count round's account
+  rows are already one-per-`roundId`, so a whole-collection `DELETE` on
+  `/api/word-count-rounds` — scoped to `eq(userId)`, no `clientId` filter —
+  clears them all in one round trip instead of N.
 
 **Where it shows:** the same hint text pattern as `WordLimitPresetsPanel`'s
 "N custom word limits applied" line — `WordCountRoundsPanel` now shows
@@ -254,22 +271,24 @@ sign in otherwise.
 
 ```
 lib/database/schema.ts (apps/debate-ai.com)     — saved_word_count_rounds table
-app/api/word-count-rounds/route.ts              — GET: list the user's synced records
+app/api/word-count-rounds/route.ts              — GET: list; DELETE: clear every synced record
 app/api/word-count-rounds/[roundId]/route.ts    — PUT/DELETE: upsert/remove one record
 state/savedWordCountRounds.ts                   — isValidWordCountRoundRecord, size cap
-round/word-count-rounds-client.ts               — fetch wrapper (list/save/delete)
-state/wordCountRounds.ts                        — adoptWordCountRound (preserves createdAt)
-hooks/useWordCountRounds.ts                     — local-first merge + sync
-panels/WordCountRoundsPanel.tsx                 — uses saveRound/deleteRound
+round/word-count-rounds-client.ts               — fetch wrapper (list/save/delete/delete-all)
+state/wordCountRounds.ts                        — adoptWordCountRound (preserves createdAt), clearWordCountRounds
+hooks/useWordCountRounds.ts                     — local-first merge + sync, clearAllRounds
+panels/WordCountRoundsPanel.tsx                 — uses saveRound/deleteRound/clearAllRounds
 ```
 
 Vitest-covered: `adoptWordCountRound`'s createdAt-preserving/overwrite
-behavior in `wordCountRounds.test.ts`; `isValidWordCountRoundRecord` in
+behavior and `clearWordCountRounds`'s remove-everything/no-op behavior in
+`wordCountRounds.test.ts`; `isValidWordCountRoundRecord` in
 `savedWordCountRounds.test.ts`; the fetch wrapper's request shapes and
-401/error handling in `word-count-rounds-client.test.ts`. `useWordCountRounds`
-and its wiring in `WordCountRoundsPanel` are untested, matching this
-package's existing convention for account-synced, `localStorage`-backed
-hooks and their UI (e.g. `useWordLimitPresets`).
+401/error handling, including `deleteAllSavedWordCountRoundsFromAccount`, in
+`word-count-rounds-client.test.ts`. `useWordCountRounds` and its wiring in
+`WordCountRoundsPanel` are untested, matching this package's existing
+convention for account-synced, `localStorage`-backed hooks and their UI
+(e.g. `useWordLimitPresets`).
 
 ## Known gaps
 

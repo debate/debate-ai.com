@@ -86,7 +86,7 @@ function emptyDrafts(styleKey: WordCountStyleKey): Record<string, SpeechDraft> {
  */
 export function WordCountRoundsPanel() {
   const { presets } = useWordLimitPresets()
-  const { rounds, synced, saveRound, deleteRound } = useWordCountRounds()
+  const { rounds, synced, saveRound, deleteRound, clearAllRounds } = useWordCountRounds()
   const [roundId, setRoundId] = useState("")
   const [styleKey, setStyleKey] = useState<WordCountStyleKey>(wordCountStyleMap[0])
   const [drafts, setDrafts] = useState<Record<string, SpeechDraft>>(emptyDrafts(wordCountStyleMap[0]))
@@ -283,6 +283,12 @@ export function WordCountRoundsPanel() {
         </div>
       ) : (
         <div className="space-y-4">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-sm font-semibold text-foreground">Round history</h2>
+            <Button size="sm" variant="ghost" onClick={clearAllRounds}>
+              Delete all synced history
+            </Button>
+          </div>
           {rounds.map((round) => {
             const statuses = getWordCountRoundStatuses(round.roundId, presets)
             return (

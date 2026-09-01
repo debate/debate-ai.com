@@ -119,6 +119,20 @@ export function deleteWordCountRound(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
 }
 
+/**
+ * Clears every persisted word-count round at once (a "delete all my synced
+ * history" bulk action) — TODO.md idea #2's "a bulk 'delete all my synced
+ * history' action" follow-up. Returns the `roundId`s that were actually
+ * removed, so the caller (`hooks/useWordCountRounds.ts`) knows whether
+ * there's anything to also clear from the account sync; an empty array when
+ * nothing was stored.
+ */
+export function clearWordCountRounds(): string[] {
+  const removedIds = readAll().map((record) => record.roundId);
+  if (removedIds.length > 0) writeAll([]);
+  return removedIds;
+}
+
 /** Every persisted word-count round, sorted by `roundId` for a stable panel display order. */
 export function buildWordCountRoundsPanelView(): WordCountRoundRecord[] {
   return [...readAll()].sort((a, b) => a.roundId.localeCompare(b.roundId));

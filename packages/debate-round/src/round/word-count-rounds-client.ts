@@ -67,3 +67,17 @@ export async function deleteSavedWordCountRoundFromAccount(
     throw new Error(await readErrorMessage(res, "Failed to remove this synced round."));
   }
 }
+
+/**
+ * Deletes every word-count round synced to the current user's account at
+ * once — the "delete all my synced history" bulk action. Throws on failure,
+ * `401` included.
+ */
+export async function deleteAllSavedWordCountRoundsFromAccount(
+  endpoint = "/api/word-count-rounds",
+): Promise<void> {
+  const res = await fetch(endpoint, { method: "DELETE" });
+  if (!res.ok) {
+    throw new Error(await readErrorMessage(res, "Failed to clear your synced round history."));
+  }
+}

@@ -19,6 +19,12 @@ import { getUserId } from "@/lib/auth/session"
  *   round's payload is small enough that `useWordCountRounds`'s merge and
  *   `WordCountRoundsPanel`'s trend view can both use this one call directly
  *   without a per-round follow-up fetch.
+ *
+ * DELETE — removes every one of the current user's synced word-count rounds
+ *   at once — the "delete all my synced history" bulk action (TODO.md idea
+ *   #2's follow-up list). Single-round deletion still goes through
+ *   `/api/word-count-rounds/[roundId]`; this is the whole-collection
+ *   counterpart to that route.
  */
 
 export async function GET(req: NextRequest) {
@@ -35,4 +41,16 @@ export async function GET(req: NextRequest) {
     .orderBy(asc(savedWordCountRounds.createdAt))
 
   return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+}
+
+export async function DELETE(req: NextRequest) {
+  const userId = await getUserId()
+  if (!userId) {
+    return NextResponse.json({ error: "Sign in to manage your synced word-count rounds." }, { status: 401 })
+  }
+
+  const db = await getDBFromContext()
+  await db.delete(savedWordCountRounds).where(eq(savedWordCountRounds.userId, userId))
+
+  return NextResponse.json({ success: true })
 }

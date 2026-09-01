@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  deleteAllSavedWordCountRoundsFromAccount,
   deleteSavedWordCountRoundFromAccount,
   listSavedWordCountRounds,
   saveWordCountRoundToAccount,
@@ -97,5 +98,29 @@ describe("deleteSavedWordCountRoundFromAccount", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     await expect(deleteSavedWordCountRoundFromAccount("round-1")).rejects.toThrow("Delete failed.");
+  });
+});
+
+describe("deleteAllSavedWordCountRoundsFromAccount", () => {
+  it("DELETEs the base endpoint", async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({}) })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    await deleteAllSavedWordCountRoundsFromAccount();
+
+    const [endpoint, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(endpoint).toBe("/api/word-count-rounds");
+    expect((init as RequestInit).method).toBe("DELETE");
+  });
+
+  it("throws the server's error message on failure", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: "Clear failed." }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(deleteAllSavedWordCountRoundsFromAccount()).rejects.toThrow("Clear failed.");
   });
 });
