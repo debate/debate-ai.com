@@ -171,6 +171,12 @@ export const userSettings = sqliteTable("user_settings", {
   // registry by `resolveSpeechWordLimit`. Null/absent means "no custom
   // presets saved yet", same semantics as every other nullable column here.
   wordLimitPresets: text("word_limit_presets"),
+  // JSON-serialized array of `{ name, filter }` named Outline filter
+  // presets (see packages/debate-round/src/state/outlineFilterPresets.ts
+  // and TODO.md idea #10's "Save and reuse named filter presets instead of
+  // re-picking filters each visit" follow-up). Null/absent means "no
+  // presets saved yet", same semantics as every other nullable column here.
+  outlineFilterPresets: text("outline_filter_presets"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
