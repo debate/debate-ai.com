@@ -24,7 +24,6 @@ const nextConfig = {
     "debate-round",
     "debate-settings",
     "debate-timer",
-    "debate-ui",
     "debate-videos",
   ],
   serverExternalPackages: [

@@ -82,7 +82,6 @@ export default defineConfig({
       "debate-round",
       "debate-settings",
       "debate-timer",
-      "debate-ui",
       "debate-videos",
     ],
   },

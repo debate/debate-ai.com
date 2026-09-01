@@ -11,8 +11,9 @@ import { SearchInterface, ContributionLeaderboardPanel, TaskInboxPanel, Progress
 
 Cards are parsed by `debate-card-parser`; the tournament/school/name lookup cache lives in
 `src/cache/client-cache.ts` (its own copy — `debate-round` keeps a separate one, since
-sharing a lower-level package would reintroduce the dependency this split removed), and all
-primitives come from `debate-ui`.
+sharing a lower-level package would reintroduce the dependency this split removed), and the
+Radix/shadcn primitives this package uses live under `src/ui/` — a local, self-contained
+copy of just the pieces it needs, so it no longer depends on a shared UI package.
 
 ## Package layout
 
@@ -32,6 +33,8 @@ debate-card-search/
 │   │                 # routing, evidence library, prep rooms, and more (see TODO.md)
 │   ├── state/        # localStorage-backed persistence stores over the lib/ models
 │   ├── types/        # SearchResult and filter types
+│   ├── ui/           # local copy of the Radix/shadcn primitives this package uses
+│   │                 # (mirrors the subset of debate-ui's src/ layout it depends on)
 │   └── index.ts      # public entry point
 └── test/             # Vitest suites mirroring lib/ and state/
 ```
