@@ -4,6 +4,15 @@
  *
  * One topic sprint in a single view: the quest board, the routing for the
  * topic's gaps, per-contributor progress and the shared note wall.
+ *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isTopicSprintLiveUpdateStorageEvent`, so a quest, contribution, tracked
+ * argument, coverage-report entry, contributor-availability change, routed/
+ * completed task, or sprint note recorded in another tab refreshes this
+ * panel's board/routing/progress/notes without a manual reload — closing the
+ * "Every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
+ * for this panel.
  */
 
 "use client";
@@ -48,6 +57,7 @@ import {
   readPersistedTopicSprintInputs,
   type PersistedTopicSprintInputs,
 } from "../state/topicSprints";
+import { isTopicSprintLiveUpdateStorageEvent } from "../state/live-update";
 
 /** Everything a topic sprint needs before any persisted store has been read (first render/SSR). */
 const EMPTY_SPRINT_INPUTS: PersistedTopicSprintInputs = {
@@ -122,6 +132,25 @@ export function TopicSprintPanel({
   useEffect(() => {
     setPersistedInputs(readPersistedTopicSprintInputs(topic));
   }, [topic]);
+
+  /**
+   * Live-update every persisted input when another browser tab adds a quest,
+   * submits a contribution, tracks an argument or coverage-report entry,
+   * changes contributor availability, routes/completes a task, or logs a
+   * sprint note. A `storage` event never fires in the tab that made the
+   * write, only in other tabs. Depends on `topic` so a change to it
+   * re-registers the listener with a fresh closure rather than re-reading a
+   * stale topic's inputs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isTopicSprintLiveUpdateStorageEvent(event)) return;
+      setPersistedInputs(readPersistedTopicSprintInputs(topic));
+      refresh();
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, [topic, refresh]);
 
   const sprint = useMemo(
     () =>

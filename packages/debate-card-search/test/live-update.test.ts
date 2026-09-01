@@ -28,6 +28,7 @@ import {
   isResearchProgressLiveUpdateStorageEvent,
   isRevisionIncentivesLiveUpdateStorageEvent,
   isTaskInboxLiveUpdateStorageEvent,
+  isTopicSprintLiveUpdateStorageEvent,
 } from "../src/state/live-update";
 
 describe("isDailyBestCardLiveUpdateStorageEvent", () => {

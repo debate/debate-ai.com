@@ -167,6 +167,37 @@ field has no previously-saved `localStorage` value and hasn't been
 hand-edited yet this session, mirroring every other slice's prefill-only
 behavior. A signed-out visitor still sees the field default to `"me"`.
 
+## Cross-tab live update
+
+`TopicSprintPanel` previously read `readPersistedTopicSprintInputs`/
+`listSprintNotes` on mount only (and again whenever its `topic` prop
+changed), so a teammate's quest, contribution, tracked argument, coverage
+entry, availability change, routed/completed task, or sprint note in another
+browser tab left the panel showing a stale snapshot until something else
+forced a re-render. It now also subscribes to the browser's `storage`
+event, which the spec fires only in *other* same-origin tabs/windows, never
+the one that made the write. A new pure helper,
+`state/live-update.ts`'s `isTopicSprintLiveUpdateStorageEvent`, checks
+whether the event's `key` is one of the eight stores
+`readPersistedTopicSprintInputs` composes (`dailyQuestTemplates`,
+`contributions`, `trackedArguments`, `evidenceLibraryEntries`,
+`contributorAvailability`, `completedResearchTasks`, `routedTaskQueues`,
+`sprintNotes`) or `null` (a `localStorage.clear()`); when it is, the
+listener re-reads `readPersistedTopicSprintInputs(topic)` and the panel's
+own `useStoreSnapshot`-backed notes read, mirroring `DailyQuestsPanel`'s
+identical `[topic]`-dependent listener (re-registered with a fresh closure
+whenever `topic` changes, rather than refreshing a stale topic's inputs).
+This closes the matching entry in
+[`shared-flow-sync.md`](shared-flow-sync.md)'s Known gap: "every other
+localStorage-backed panel in this repo still has no cross-tab live-update
+mechanism." Vitest-covered in
+`packages/debate-card-search/test/live-update.test.ts` (every backing-key
+match, the `null`-key clear-all case, two unrelated keys, and two
+same-prefix substring keys). `TopicSprintPanel.tsx`'s own `storage`-listener
+wiring remains intentionally untested, matching every other panel in this
+repo whose wiring is exercised only through the shared pure predicate's own
+tests.
+
 ## Known gaps
 
 - All three id fields on this tab ("Author ID" and "Your ID" on
