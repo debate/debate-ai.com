@@ -27,6 +27,7 @@ import { RadioGroup, RadioGroupItem } from "debate-ui/src/primitives/radio-group
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   buildCustomJudgeParadigm,
+  buildJudgeParadigmPrompt,
   listJudgeParadigms,
   type BuiltinJudgeParadigmId,
 } from "../judge/judge-paradigms"
@@ -66,6 +67,8 @@ export function JudgeParadigmPickerPanel() {
   const [selections, setSelections] = useState<JudgeParadigmSelection[] | null>(null)
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [error, setError] = useState<string | null>(null)
+  const [previewRoundId, setPreviewRoundId] = useState<string | null>(null)
+  const [copiedRoundId, setCopiedRoundId] = useState<string | null>(null)
 
   useEffect(() => {
     setSelections(buildJudgeParadigmSelectionsPanelView())
@@ -104,7 +107,23 @@ export function JudgeParadigmPickerPanel() {
 
   const handleClear = (roundId: string) => {
     deleteJudgeParadigmSelection(roundId)
+    if (previewRoundId === roundId) setPreviewRoundId(null)
     refresh()
+  }
+
+  const togglePreview = (roundId: string) => {
+    setPreviewRoundId((prev) => (prev === roundId ? null : roundId))
+  }
+
+  const handleCopyPrompt = async (roundId: string, prompt: string) => {
+    try {
+      await navigator.clipboard.writeText(prompt)
+      setCopiedRoundId(roundId)
+      setTimeout(() => setCopiedRoundId((prev) => (prev === roundId ? null : prev)), 2000)
+    } catch {
+      // Clipboard access can be denied by the browser; the prompt text is
+      // still visible in the preview below for a manual copy.
+    }
   }
 
   if (selections === null) {
@@ -194,25 +213,48 @@ export function JudgeParadigmPickerPanel() {
         </div>
       ) : (
         <div className="space-y-2">
-          {selections.map((selection) => (
-            <div
-              key={selection.roundId}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-2"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-foreground">Round {selection.roundId}</span>
-                <Badge variant="outline">{selection.paradigm.name}</Badge>
+          {selections.map((selection) => {
+            const isPreviewing = previewRoundId === selection.roundId
+            const prompt = buildJudgeParadigmPrompt(selection.paradigm)
+            return (
+              <div key={selection.roundId} className="rounded-md border border-border px-3 py-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-foreground">Round {selection.roundId}</span>
+                    <Badge variant="outline">{selection.paradigm.name}</Badge>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Button size="sm" variant="outline" onClick={() => togglePreview(selection.roundId)}>
+                      {isPreviewing ? "Hide prompt" : "Preview prompt"}
+                    </Button>
+                    <Button size="sm" variant="outline" asChild>
+                      <a href={buildJudgeDecisionDeepLink(selection.roundId)}>Get AI judge decision →</a>
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => handleClear(selection.roundId)}>
+                      Clear
+                    </Button>
+                  </div>
+                </div>
+                {isPreviewing && (
+                  <div className="mt-3 space-y-2 rounded-md border border-border bg-muted/40 p-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        Prompt text sent to the AI judge for this paradigm
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleCopyPrompt(selection.roundId, prompt)}
+                      >
+                        {copiedRoundId === selection.roundId ? "Copied!" : "Copy"}
+                      </Button>
+                    </div>
+                    <pre className="whitespace-pre-wrap break-words text-xs text-foreground">{prompt}</pre>
+                  </div>
+                )}
               </div>
-              <div className="flex items-center gap-1">
-                <Button size="sm" variant="outline" asChild>
-                  <a href={buildJudgeDecisionDeepLink(selection.roundId)}>Get AI judge decision →</a>
-                </Button>
-                <Button size="sm" variant="ghost" onClick={() => handleClear(selection.roundId)}>
-                  Clear
-                </Button>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
