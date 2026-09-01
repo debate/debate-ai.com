@@ -392,6 +392,7 @@ export function LecturesPage() {
       selectedYear={state.selectedYear}
       isSearchFocused={state.isSearchFocused}
       showThumbnails={state.showThumbnails}
+      viewMode={state.viewMode}
       showFavoritesOnly={state.showFavoritesOnly}
       currentCategory={state.currentCategory}
       totalVideos={feed.total}
@@ -420,6 +421,7 @@ export function LecturesPage() {
       onSortChange={handleSortChange}
       onYearChange={handleYearChange}
       onToggleThumbnails={handleToggleThumbnails}
+      onViewModeChange={actions.setViewMode}
       onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
       onToggleLectureCategories={() => setShowLectureCategories((v) => !v)}
       onToggleFavorite={actions.toggleFavorite}

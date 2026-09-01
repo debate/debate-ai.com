@@ -15,6 +15,7 @@ import {
   TooltipProvider,
 } from "debate-ui/src/primitives/tooltip"
 import type { DebateStyle, VideoFacets } from "../../types/videos"
+import type { VideoViewMode } from "../../hooks/useVideoState"
 import { useVideoSearchCounts } from "./useVideoSearchCounts"
 import { SeasonDropdown } from "./SeasonDropdown"
 import { StyleDropdown } from "./StyleDropdown"
@@ -42,6 +43,10 @@ interface VideoSearchBarProps {
   onClearSearch: () => void
   /** Callback invoked with the newly selected sort option value. */
   onSortChange: (value: string) => void
+  /** Current results layout. When omitted, the grid/list toggle button is hidden. */
+  viewMode?: VideoViewMode
+  /** Callback invoked with the new layout when the grid/list toggle is clicked. */
+  onViewModeChange?: (mode: VideoViewMode) => void
   /** Callback invoked with the new season year, or empty string to clear. */
   onYearChange?: (value: string) => void
   /** Callback invoked to toggle thumbnail visibility. */
@@ -94,6 +99,8 @@ export function VideoSearchBar({
   onSearchBlur,
   onClearSearch,
   onSortChange,
+  viewMode,
+  onViewModeChange,
   onYearChange,
   onToggleThumbnails,
   showFavoritesOnly,
@@ -182,6 +189,8 @@ export function VideoSearchBar({
           <SearchBarIconButtons
             sortOrder={sortOrder}
             onSortChange={onSortChange}
+            viewMode={viewMode}
+            onViewModeChange={onViewModeChange}
             showFavoritesOnly={showFavoritesOnly}
             onToggleFavoritesOnly={onToggleFavoritesOnly}
             showTopPicksActive={showTopPicksActive}

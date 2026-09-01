@@ -11,6 +11,7 @@ import {
   useVideoPlayerStore,
   sendYouTubeCommand,
   useCategoryDockState,
+  useCategoryDockSidebarExtraValue,
   type CategoryType,
 } from "debate-videos"
 import {
@@ -286,14 +287,70 @@ function DockInstance({
 }
 
 /**
+ * Persistent left sidebar shown on desktop (md+). Holds the main nav items,
+ * a settings menu trigger, and — when a page has registered one via
+ * {@link useCategoryDockSidebarExtra} — extra page-specific content (e.g. the
+ * videos page's quick links and category filters) in its own scroll region.
+ */
+function DesktopSidebar({
+  allItems,
+  onSignIn,
+  sidebarExtra,
+}: {
+  allItems: { key: string; label: string; icon: any; active: boolean; onClick: () => void }[]
+  onSignIn: () => void
+  sidebarExtra: React.ReactNode
+}) {
+  return (
+    <DropdownMenu>
+      <aside className="hidden md:flex md:flex-col h-screen w-64 shrink-0 border-r border-border bg-background overflow-hidden">
+        <nav className="flex flex-col gap-1 p-3 shrink-0">
+          {allItems.map(({ key, label, icon, active, onClick }) => (
+            <button
+              key={key}
+              onClick={onClick}
+              className={cn(
+                "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium text-left transition-colors",
+                active
+                  ? "bg-primary/15 text-primary ring-1 ring-primary/30"
+                  : "text-foreground hover:bg-accent",
+              )}
+            >
+              <Image src={icon} alt="" width={20} height={20} className="h-5 w-5 shrink-0" unoptimized />
+              <span className="truncate">{label}</span>
+            </button>
+          ))}
+
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium text-left text-foreground hover:bg-accent transition-colors">
+              <Image src={IconSettings} alt="" width={20} height={20} className="h-5 w-5 shrink-0" unoptimized />
+              <span className="truncate">Settings</span>
+            </button>
+          </DropdownMenuTrigger>
+        </nav>
+
+        {sidebarExtra && (
+          <>
+            <div className="border-t border-border shrink-0" />
+            <div className="flex-1 min-h-0 overflow-y-auto p-3">{sidebarExtra}</div>
+          </>
+        )}
+      </aside>
+      <SettingsMenu side="bottom" onSignIn={onSignIn} />
+    </DropdownMenu>
+  )
+}
+
+/**
  * Unified navigation dock.
- * Desktop (md+): fixed top-left corner, compact width.
+ * Desktop (md+): persistent left sidebar, full viewport height.
  * Mobile: fixed bottom, full-width centered, does not overlap content.
  */
 export function CategoryDock() {
   const pathname = usePathname()
   const router = useRouter()
   const categoryState = useCategoryDockState()
+  const sidebarExtra = useCategoryDockSidebarExtraValue()
   const { activeVideoId, activeVideoTitle, isMinimized, isPlaying, setMinimized, setIsPlaying } = useVideoPlayerStore()
   // Owned here rather than inside the menu: the dropdown unmounts its content
   // when it closes, which would tear the dialog down with it.
@@ -363,15 +420,12 @@ export function CategoryDock() {
 
   return (
     <>
-      {/* Desktop: top-left corner */}
-      <div className="hidden md:block fixed top-0 left-2 z-50">
-        <DockInstance
-          dockClassName="h-[52px] shrink-0 !mt-0 !mx-0"
-          side="bottom"
-          allItems={allItems}
-          onSignIn={() => setLoginOpen(true)}
-        />
-      </div>
+      {/* Desktop: persistent left sidebar */}
+      <DesktopSidebar
+        allItems={allItems}
+        onSignIn={() => setLoginOpen(true)}
+        sidebarExtra={sidebarExtra}
+      />
 
       {/* Mobile: fixed bottom bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">

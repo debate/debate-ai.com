@@ -39,6 +39,11 @@ interface LectureCategoryGridGalleryProps {
    * the grid itself only holds the pages loaded so far.
    */
   categories?: LectureCategoryFacet[];
+  /**
+   * `"grid"` (default) renders the multi-column tile gallery. `"list"` stacks
+   * a single column, meant for the persistent left sidebar.
+   */
+  layout?: "grid" | "list";
 }
 
 const typedCategoryDescriptions = categoryDescriptions as Record<string, string>;
@@ -70,6 +75,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 export function LectureCategoryGridGallery({
   selectedCategory,
   categories,
+  layout = "grid",
 }: LectureCategoryGridGalleryProps) {
   // Build category cards from the server-computed facets, most popular first.
   const cards = useMemo(() => {
@@ -108,7 +114,12 @@ export function LectureCategoryGridGallery({
     <div className="w-full">
 
 
-      <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+      <ul
+        className={cn(
+          "grid gap-2",
+          layout === "list" ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
+        )}
+      >
         {cards.map((card) => (
           <GridItem
             key={card.id}

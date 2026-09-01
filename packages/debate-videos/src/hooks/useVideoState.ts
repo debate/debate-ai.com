@@ -6,6 +6,9 @@
 import { useState, useRef, useEffect } from "react";
 import type { CategoryType, DebateStyle } from "../types/videos";
 
+/** Layout of the video results: card grid with thumbnails, or a dense row/table list. */
+export type VideoViewMode = "grid" | "list";
+
 /**
  * Initialises and returns the view state and refs the videos pages own.
  *
@@ -24,6 +27,7 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
   const [sortOrder, setSortOrder] = useState("Recency");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showThumbnails, setShowThumbnails] = useState(true);
+  const [viewMode, setViewMode] = useState<VideoViewMode>("grid");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [selectedStyle, setSelectedStyle] = useState<DebateStyle | "">("");
@@ -113,6 +117,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       isSearchFocused,
       /** Whether video thumbnail images are visible in the grid. */
       showThumbnails,
+      /** Current results layout: card grid or row list. */
+      viewMode,
       /** Whether to only show favorited videos. */
       showFavoritesOnly,
       /** Set of favorite video IDs. */
@@ -142,6 +148,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       setIsSearchFocused,
       /** Sets whether thumbnails are shown. */
       setShowThumbnails,
+      /** Sets the results layout (grid or list). */
+      setViewMode,
       /** Sets whether to only show favorited videos. */
       setShowFavoritesOnly,
       /** Toggles a video in the favorites set. */
