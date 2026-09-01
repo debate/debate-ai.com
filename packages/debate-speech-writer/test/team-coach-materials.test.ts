@@ -7,7 +7,9 @@ import {
   COACH_MATERIAL_KIND_LABELS,
   COACH_MATERIAL_KIND_ORDER,
   excerptMaterialText,
+  filterCoachMaterials,
   findRelevantMaterials,
+  listCoachMaterialTags,
   scoreMaterialRelevance,
   type CoachConversationTurn,
   type CoachMaterial,
@@ -277,6 +279,72 @@ describe("buildCoachMaterialLibrarySummaryText", () => {
   it("uses singular material wording for exactly one material", () => {
     const library = buildCoachMaterialLibrary([lecture]);
     expect(buildCoachMaterialLibrarySummaryText(library)).toContain("Team coach library: 1 material.");
+  });
+});
+
+describe("listCoachMaterialTags", () => {
+  it("returns an empty list for no materials", () => {
+    expect(listCoachMaterialTags([])).toEqual([]);
+  });
+
+  it("collects every distinct tag across materials, alphabetically sorted", () => {
+    expect(listCoachMaterialTags([lecture, camp, instructional, recording])).toEqual([
+      "cx",
+      "disad",
+      "links",
+      "scrimmage",
+      "theory",
+    ]);
+  });
+
+  it("de-duplicates a tag shared by multiple materials", () => {
+    const secondLecture: CoachMaterial = { ...lecture, id: "m5", tags: ["theory", "t"] };
+    expect(listCoachMaterialTags([lecture, secondLecture])).toEqual(["t", "theory"]);
+  });
+});
+
+describe("filterCoachMaterials", () => {
+  const materials = [lecture, camp, instructional, recording];
+
+  it("returns every material unchanged when no filter is given", () => {
+    expect(filterCoachMaterials(materials)).toEqual(materials);
+  });
+
+  it("matches a keyword against the title", () => {
+    expect(filterCoachMaterials(materials, { query: "Etiquette" })).toEqual([instructional]);
+  });
+
+  it("matches a keyword against the topic", () => {
+    expect(filterCoachMaterials(materials, { query: "DA" }).map((m) => m.id)).toEqual(["m2"]);
+  });
+
+  it("matches a keyword against a tag", () => {
+    expect(filterCoachMaterials(materials, { query: "scrimmage" }).map((m) => m.id)).toEqual(["m4"]);
+  });
+
+  it("matches a keyword against the body text", () => {
+    expect(filterCoachMaterials(materials, { query: "cross-examination" }).map((m) => m.id)).toEqual(["m3"]);
+  });
+
+  it("is case-insensitive", () => {
+    expect(filterCoachMaterials(materials, { query: "TOPICALITY BASICS" }).map((m) => m.id)).toEqual(["m1"]);
+  });
+
+  it("trims whitespace and treats a blank query as no filter", () => {
+    expect(filterCoachMaterials(materials, { query: "   " })).toEqual(materials);
+  });
+
+  it("restricts to an exact tag match", () => {
+    expect(filterCoachMaterials(materials, { tag: "disad" }).map((m) => m.id)).toEqual(["m2"]);
+  });
+
+  it("combines a tag filter and a keyword search", () => {
+    expect(filterCoachMaterials(materials, { tag: "theory", query: "voting" }).map((m) => m.id)).toEqual(["m1"]);
+    expect(filterCoachMaterials(materials, { tag: "theory", query: "disad" })).toEqual([]);
+  });
+
+  it("returns no materials for a tag nothing carries", () => {
+    expect(filterCoachMaterials(materials, { tag: "nonexistent" })).toEqual([]);
   });
 });
 

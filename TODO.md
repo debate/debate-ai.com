@@ -6,6 +6,53 @@
 _No task currently in progress._
 
 ### Completed
+- **Video-Lecture-Training Coach AI — material tagging and a search/filter
+  bar (idea #8).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and every tool is already reachable from the
+  Tools page and CardMirror's command palette, and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area, so this slice picked idea #8's "material tagging and a
+  search/filter bar once a library grows past a handful of uploads"
+  follow-up — materials already carried a `tags: string[]` field (comma-
+  separated on the upload form, rendered as badges), but there was no way to
+  search or filter the list by keyword or tag. `coach/team-coach-materials.ts`
+  gains two pure functions: `listCoachMaterialTags(materials)` (every
+  distinct tag across a material list, alphabetically sorted and de-
+  duplicated) and `filterCoachMaterials(materials, { query?, tag? })` (a
+  case-insensitive substring match against title/topic/tags/body text,
+  optionally combined with an exact-tag restriction; returns the input
+  unchanged when neither option is given). `state/coachMaterials.ts`'s
+  `buildCoachMaterialLibraryFromStore` now accepts the same `{ query?, tag? }`
+  filter (composing `filterCoachMaterials` ahead of the existing
+  `buildCoachMaterialLibrary` grouping — a no-argument call still matches
+  everything, so every existing caller is unaffected), plus a new
+  `listCoachMaterialTagsFromStore()` for a filter bar's tag dropdown.
+  `CoachMaterialsPanel.tsx` renders a search box and tag `Select` above the
+  material list once at least one material exists, re-querying the store on
+  every keystroke/tag change and after every save/delete, and separately
+  tracks the library's true unfiltered count so the empty state reads "no
+  materials uploaded yet" only when that's actually true, versus "no
+  materials match this search/tag filter" once a filter narrows the list to
+  nothing. See `docs/features/coach-materials.md`'s new "Search/filter bar"
+  section. Vitest-covered with 17 new cases: 15 in
+  `packages/debate-speech-writer/test/team-coach-materials.test.ts`
+  (`listCoachMaterialTags` — empty list, alphabetical de-duplication;
+  `filterCoachMaterials` — no-filter passthrough, title/topic/tag/body-text
+  matches, case-insensitivity, blank-query-as-no-filter, exact-tag
+  restriction, tag+query combination, no-match-for-unknown-tag) and 2 in
+  `packages/debate-speech-writer/test/coachMaterials.test.ts`
+  (`buildCoachMaterialLibraryFromStore` with a query filter and with a tag
+  filter, `listCoachMaterialTagsFromStore`). Verified: `bun install` (2258
+  packages), the two focused test files (63/63 pass), the full `bun run
+  test` (209 test files, 3485 tests, all passing, up from 209/3468), the
+  whole-repo `bun run typecheck` (root, all 13 typechecked packages, clean),
+  and a full `bun run build` (the whole monorepo build, including
+  `debate-ai-web`'s production build, which lists `/coach-materials` among
+  its built routes) all pass clean. **Completed:** 2026-09-01.
 - **Pre-Round Intelligence Panel — "last updated" freshness indicator
   (idea #12).** Another repeat of the standing prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL... with
@@ -12215,9 +12262,14 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    - A team dashboard of pages flagged as already-cut, so a coach can see reuse patterns at a glance.
    - An extension options page for whitelisting sites / configuring which repository to check against.
 
-8. **Video-Lecture-Training Coach AI** (`/coach-materials`) —
+8. **Video-Lecture-Training Coach AI** (`/coach-materials`) — the
+   tagging/search-filter follow-up is done: `CoachMaterialsPanel` has a
+   keyword-search box plus a tag dropdown above the material list once at
+   least one material exists (`coach/team-coach-materials.ts`'s
+   `filterCoachMaterials`/`listCoachMaterialTags`) — see the Completed entry
+   above and `docs/features/coach-materials.md`'s "Search/filter bar"
+   section. Next:
    - Server-side transcription for uploaded audio/video recordings (currently only `.docx`/`.txt`/`.md` extract text).
-   - Material tagging and a search/filter bar once a library grows past a handful of uploads.
    - Version history for a material that gets re-uploaded/edited.
 
 9. **Expandable Heading Structure** (`/reason-editor`, CardMirror's native

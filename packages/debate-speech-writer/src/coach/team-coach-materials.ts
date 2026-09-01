@@ -270,6 +270,52 @@ export function buildCoachConversationMessages(
   return messages;
 }
 
+export interface CoachMaterialFilterOptions {
+  /** Case-insensitive substring match against title, topic, tags, and body text. */
+  query?: string;
+  /** Restrict to materials carrying this exact tag. */
+  tag?: string;
+}
+
+/** Every distinct tag across `materials`, alphabetically sorted, for a filter bar's tag dropdown. */
+export function listCoachMaterialTags(materials: CoachMaterial[]): string[] {
+  const tags = new Set<string>();
+  for (const material of materials) {
+    for (const tag of material.tags) {
+      tags.add(tag);
+    }
+  }
+  return Array.from(tags).sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Filters materials by a case-insensitive keyword search across title,
+ * topic, tags, and body text, and/or an exact tag match — the search/filter
+ * bar follow-up named under idea #8 in TODO.md, for once a library grows
+ * past a handful of uploads. Returns every material unchanged when neither
+ * option is given.
+ */
+export function filterCoachMaterials(
+  materials: CoachMaterial[],
+  options: CoachMaterialFilterOptions = {},
+): CoachMaterial[] {
+  const { query, tag } = options;
+  const needle = query?.trim().toLowerCase();
+
+  return materials.filter((material) => {
+    if (tag !== undefined && !material.tags.includes(tag)) {
+      return false;
+    }
+    if (!needle) {
+      return true;
+    }
+    const haystack = [material.title, material.topic ?? "", ...material.tags, material.text]
+      .join(" ")
+      .toLowerCase();
+    return haystack.includes(needle);
+  });
+}
+
 /** Renders a short, human-readable summary of a team's coach-material library. */
 export function buildCoachMaterialLibrarySummaryText(library: CoachMaterialLibrary): string {
   if (library.totalMaterials === 0) {

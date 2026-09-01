@@ -5,6 +5,7 @@ import {
   findRelevantMaterialsFromStore,
   getCoachMaterial,
   listCoachMaterials,
+  listCoachMaterialTagsFromStore,
   saveCoachMaterial,
 } from "../src/state/coachMaterials";
 import type { CoachMaterial } from "../src/coach/team-coach-materials";
@@ -124,6 +125,38 @@ describe("buildCoachMaterialLibraryFromStore", () => {
       { kind: "lecture_transcript", materials: [LECTURE] },
       { kind: "camp_material", materials: [CAMP] },
     ]);
+  });
+
+  it("filters persisted materials by a keyword search when given a filter", () => {
+    saveCoachMaterial(LECTURE);
+    saveCoachMaterial(CAMP);
+
+    const library = buildCoachMaterialLibraryFromStore({ query: "topicality" });
+
+    expect(library.totalMaterials).toBe(1);
+    expect(library.groups).toEqual([{ kind: "lecture_transcript", materials: [LECTURE] }]);
+  });
+
+  it("filters persisted materials by tag when given a filter", () => {
+    saveCoachMaterial(LECTURE);
+    saveCoachMaterial(CAMP);
+
+    const library = buildCoachMaterialLibraryFromStore({ tag: "case" });
+
+    expect(library.groups).toEqual([{ kind: "camp_material", materials: [CAMP] }]);
+  });
+});
+
+describe("listCoachMaterialTagsFromStore", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(listCoachMaterialTagsFromStore()).toEqual([]);
+  });
+
+  it("collects every distinct tag across persisted materials, alphabetically sorted", () => {
+    saveCoachMaterial(LECTURE);
+    saveCoachMaterial(CAMP);
+
+    expect(listCoachMaterialTagsFromStore()).toEqual(["case", "theory"]);
   });
 });
 
