@@ -69,7 +69,7 @@ _No task currently in progress._
   ("per-nomination seconding/upvoting instead of only a raw count", "folding
   nominations into the Hall of Fame ranking as a tie-breaker") stay open; a
   future run should pick one or a fresh next-step if one becomes worth
-  doing.
+  doing. PR: [#460](https://github.com/debate/debate-ai.com/pull/460).
 - **Daily Best Card Challenge — "best of the week" rollup.** Another repeat
   of the standing prompt ("integrate all the tools into the UI... create
   user settings and link user db SQL... with ability to save flows docs and
