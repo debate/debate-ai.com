@@ -336,13 +336,16 @@ export function isCardScoringLiveUpdateStorageEvent(event: { key: string | null 
 /**
  * The `localStorage` keys `BrainstormBoardPanel` reads from:
  * `state/brainstormIdeas.ts`'s own `"brainstormIdeas"` store (every
- * submitted/AI-generated/merged idea the boards are built from) and
+ * submitted/AI-generated/merged idea the boards are built from),
  * `state/trackedArguments.ts`'s `"trackedArguments"` (the topic switcher's
- * coverage-gap board seeding).
+ * coverage-gap board seeding), and `state/brainstormSessionTimer.ts`'s
+ * `"brainstormSessionTimer"` (the optional squad-wide session countdown) so
+ * a timer another tab starts, pauses, or resets is reflected here too.
  */
 export const BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS = [
   "brainstormIdeas",
   "trackedArguments",
+  "brainstormSessionTimer",
 ] as const;
 
 /**

@@ -6,6 +6,67 @@
 _No task currently in progress._
 
 ### Completed
+- **Team Brainstorm Assist — optional brainstorm-session timer.** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save flows
+  docs and debates in SQL and link to users... add tools into where needed in
+  the UI... develop better tool UI") — as with every recent repeat, that half
+  is already fully built (account-synced settings already exist at
+  `/settings`, D1 tables + `/api/*` routes already link flows/docs/rounds/
+  materials/etc. to signed-in users, and the tools are already reachable from
+  the nav/UI), and the one open PR (#437, "Consolidate UI primitives and add
+  web extension scaffold") doesn't touch this area, so this slice picked the
+  "🧠 Team Brainstorm Assist" bullet's own next-named follow-up: "an optional
+  brainstorm-session timer." A new pure `lib/brainstorm-session-timer.ts`
+  models a single squad-wide countdown as an idle/running/paused state
+  machine — `createBrainstormSessionTimer`, `startBrainstormSessionTimer`
+  (starts fresh from idle, resumes from the frozen remaining time from
+  paused), `pauseBrainstormSessionTimer`, `resetBrainstormSessionTimer`,
+  `setBrainstormSessionTimerDuration` (a no-op unless idle, so changing the
+  preset can't rewrite a countdown already in progress),
+  `getBrainstormSessionTimerRemainingSeconds`/`isBrainstormSessionTimerExpired`,
+  and `formatBrainstormSessionTimerRemaining` (`"M:SS"`) — every
+  time-dependent function takes "now" as a parameter rather than reading the
+  clock itself, so it's directly testable without faking global timers. A new
+  `state/brainstormSessionTimer.ts` persists the single timer record to
+  `localStorage` (one countdown per browser, not per-board), wrapping each
+  pure transition in a read-transition-persist action
+  (`startSessionTimer`/`pauseSessionTimer`/`resetSessionTimer`/
+  `setSessionTimerDuration`), defaulting to a fresh idle timer on missing or
+  corrupt storage. `BrainstormBoardPanel` now renders a "Session timer"
+  widget above the topic switcher: duration presets (3/5/10/15 min, shown
+  only while idle), Start/Pause/Reset actions, and a live `M:SS` display that
+  ticks once a second via `setInterval` while running, turning red with a
+  "Time's up!" note once it reaches zero. `state/live-update.ts`'s
+  `BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS` gained the new
+  `"brainstormSessionTimer"` key alongside the panel's existing two, so a
+  countdown started, paused, or reset in one browser tab is reflected live in
+  every other open tab through the panel's already-existing `storage`-event
+  listener — no separate listener was introduced. See
+  `docs/features/brainstorm-board.md`'s new "Session timer" section (data
+  flow, and a new Known gap noting the timer is `localStorage`-only, not
+  account-synced across devices like `wordLimitPresets`/coach materials/etc.
+  are). Vitest-covered:
+  `packages/debate-card-search/test/brainstorm-session-timer.test.ts` (the
+  pure state machine — starting fresh vs. resuming from paused,
+  pausing/resetting, the idle-only duration-change guard, remaining-time
+  clamping to zero once elapsed, expiry, and `M:SS` formatting including
+  zero-padding and negative-clamping) and
+  `packages/debate-card-search/test/brainstormSessionTimer.test.ts` (the
+  persistence wrapper — defaulting on missing/corrupt/malformed storage,
+  round-tripping each action through a mocked `localStorage`, and that a
+  duration change while running doesn't persist). `live-update.test.ts`
+  gained one more negative case for the new key's substring form. The
+  panel's own tick/render wiring remains intentionally untested, matching
+  this panel's existing convention (only pure logic and persistence wrappers
+  are directly tested). Verified with `bun run test` (223 test files, 3781
+  tests, all passing), `bun run typecheck` (root, all 13 typechecked
+  packages, clean), and a full `bun run build` (the whole monorepo build,
+  including `debate-ai-web`'s production build) — all pass. No lint
+  script/config exists in this repo to run. The remaining next-step for this
+  idea ("polish the idea-ranking UI (upvote affordance/animation)") stays
+  open; a future run should pick that or a fresh next-step if one becomes
+  worth doing. PR: [#457](https://github.com/debate/debate-ai.com/pull/457).
 - **Daily Best Card Challenge — comment thread on each day's winner.**
   Another repeat of the standing prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL... with ability to save
@@ -13079,7 +13140,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🤖 **AI Practice Opponent** (`/practice-opponent`) — share a custom-authored persona across a team instead of per-user only; a difficulty slider layered on top of persona choice; post-round feedback tips specific to the persona faced.
 * 🎙️ **AI Coach Mode** (`/coaching`) — a coaching-session history timeline per round; a side-by-side comparison across two rounds; an exportable coaching-notes document.
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.
-* 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. Next: polish the idea-ranking UI (upvote affordance/animation); an optional brainstorm-session timer.
+* 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. The optional brainstorm-session-timer follow-up is also now done: a "Session timer" widget (duration presets, Start/Pause/Reset, a live `M:SS` countdown) backed by the new `lib/brainstorm-session-timer.ts` pure state machine and `state/brainstormSessionTimer.ts` persistence wrapper, synced live across browser tabs via the panel's existing `storage`-event listener — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Session timer" section. Next: polish the idea-ranking UI (upvote affordance/animation).
 * 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
 * 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — threaded replies on a note instead of flat status; a priority flag; a digest notification instead of one per assignment.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
