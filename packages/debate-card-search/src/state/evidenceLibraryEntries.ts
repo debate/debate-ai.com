@@ -58,11 +58,29 @@
  * dependency this module's news source would need is unavailable without a
  * cycle).
  *
+ * `buildPersistedStaleEvidenceDigest` closes the "a stale-evidence digest
+ * surfaced from the existing staleness signal" follow-up named under the
+ * "🔁 Revision Incentives" bullet in TODO.md — it composes
+ * `shared-evidence-library.ts`'s pure `buildStaleEvidenceDigest` directly
+ * against this store, so `panels/RevisionIncentivesPanel.tsx` can render a
+ * ranked list of every persisted card whose cited evidence needs a refresh.
+ *
  * @module state/evidenceLibraryEntries
  */
 
-import type { EvidenceLibraryEntry, EvidenceSearchQuery, EvidenceSearchResult, PageReuseCheckResult } from "../lib/shared-evidence-library";
-import { buildEvidenceEntryRevision, checkPageForExistingCards, searchEvidenceLibrary } from "../lib/shared-evidence-library";
+import type {
+  EvidenceLibraryEntry,
+  EvidenceSearchQuery,
+  EvidenceSearchResult,
+  PageReuseCheckResult,
+  StaleEvidenceDigestEntry,
+} from "../lib/shared-evidence-library";
+import {
+  buildEvidenceEntryRevision,
+  buildStaleEvidenceDigest,
+  checkPageForExistingCards,
+  searchEvidenceLibrary,
+} from "../lib/shared-evidence-library";
 import {
   addEntryToIndex,
   buildEvidenceSearchIndex,
@@ -115,6 +133,16 @@ function writeAll(entries: EvidenceLibraryEntry[]): void {
 /** Lists every persisted evidence library entry. */
 export function listEvidenceLibraryEntries(): EvidenceLibraryEntry[] {
   return readAll();
+}
+
+/**
+ * Builds the stale-evidence digest (see `shared-evidence-library.ts`'s
+ * `buildStaleEvidenceDigest`) directly from every persisted evidence library
+ * entry — the "🔁 Revision Incentives" bullet's stale-evidence-digest
+ * follow-up in TODO.md, read by `panels/RevisionIncentivesPanel.tsx`.
+ */
+export function buildPersistedStaleEvidenceDigest(currentYear: number): StaleEvidenceDigestEntry[] {
+  return buildStaleEvidenceDigest(readAll(), currentYear);
 }
 
 /** Looks up a single persisted evidence library entry by id, if any. */

@@ -259,6 +259,11 @@ describe("isRevisionIncentivesLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isRevisionIncentivesLiveUpdateStorageEvent({ key: "revisionHistoryBackup" })).toBe(false);
     expect(isRevisionIncentivesLiveUpdateStorageEvent({ key: "old_revisionHistory" })).toBe(false);
+    expect(isRevisionIncentivesLiveUpdateStorageEvent({ key: "evidenceLibraryEntriesBackup" })).toBe(false);
+  });
+
+  it("is true for the evidenceLibraryEntries key the stale-evidence digest reads", () => {
+    expect(isRevisionIncentivesLiveUpdateStorageEvent({ key: "evidenceLibraryEntries" })).toBe(true);
   });
 });
 

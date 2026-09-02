@@ -6,6 +6,37 @@
 _No task currently in progress._
 
 ### Completed
+- **Revision Incentives — stale-evidence digest surfaced from the existing
+  staleness signal** (follow-up (a) named under the "🔁 Revision Incentives"
+  bullet in Research Crowdsourcing Organizer Features below). As with every
+  recent run, the standing prompt ("integrate all the tools into the UI...
+  create user settings... link user db SQL... save flows docs and debates in
+  SQL and link to users... add tools where needed in the UI... develop
+  better tool UI") is already fully built (account-synced `/settings`, D1
+  tables + `/api/*` routes linking flows/docs/rounds/materials to signed-in
+  users, every tool reachable from the nav), and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area — so this run picked a genuine next-step instead. A new pure
+  `buildStaleEvidenceDigest` in `lib/shared-evidence-library.ts` ranks
+  `getStaleEvidenceEntries`' output most-urgent first — an undated citation
+  before every dated one, then oldest-cited first, ties broken by argument
+  block name — reusing `getEvidenceStaleness` directly rather than
+  reimplementing staleness scoring. `state/evidenceLibraryEntries.ts`'s new
+  `buildPersistedStaleEvidenceDigest(currentYear)` composes that against the
+  persisted evidence library store, and `RevisionIncentivesPanel`
+  (`/cards/revisions`) renders it as a new "Stale evidence digest" section
+  above the existing leaderboard — each row showing the card's argument
+  block, topic/case area, cite, and age, with a link into the Evidence
+  Library to revise it, and an empty state when nothing is stale. The
+  panel's cross-tab live-update key list (`state/live-update.ts`'s
+  `REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS`) now also watches
+  `evidenceLibraryEntries`, so a card edited in another tab refreshes the
+  digest here too. See `docs/features/revision-incentives.md`'s new "Stale
+  evidence digest" section. No further follow-up is currently tracked for
+  this bullet beyond the two still-open next-steps named there (a
+  before/after revision diff viewer; a reward-points redemption or tie-in to
+  the leaderboard).
+
 - **Community-Rated Summaries and Highlights — real reviewer-identity
   checks on endorsing (idea #11's own next-named follow-up).** Another
   repeat of the standing prompt ("integrate all the tools into the UI...
@@ -13508,7 +13539,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. The "nominate a peer" follow-up is also now done: a "Peer Nominations" section has a **Nominate a peer** form (category, nominee, your name, optional note), and each live award card shows that category's top nominee(s) by nomination count — see the Completed entry above and `docs/features/contributor-awards.md`'s "Peer Nominations" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. per-nomination "seconding"/upvoting instead of only a raw count, or folding nominations into the Hall of Fame ranking as a tie-breaker) if one becomes worth doing.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — a coach-facing override/reassign control; a task-priority indicator; a capacity-aware view of routing load across the team.
-* 🔁 **Revision Incentives** (`/cards/revisions`) — a stale-evidence digest surfaced from the existing staleness signal; a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.
+* 🔁 **Revision Incentives** (`/cards/revisions`) — the stale-evidence-digest follow-up is done: a "Stale evidence digest" section above the leaderboard lists every persisted stale card, most-urgent (undated, then oldest-cited) first, with a link into the Evidence Library to revise one (`lib/shared-evidence-library.ts#buildStaleEvidenceDigest`, `state/evidenceLibraryEntries.ts#buildPersistedStaleEvidenceDigest`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Stale evidence digest" section. Next: a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — quest difficulty tiers; team-vs-team quest competitions; a completion celebration posted to the News Stream feed.
 * 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.

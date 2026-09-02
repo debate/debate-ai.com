@@ -7,6 +7,7 @@ import {
   buildEvidenceSearchSummaryText,
   buildPageReuseCheckSummaryText,
   buildReuseCheckDeepLink,
+  buildStaleEvidenceDigest,
   checkPageForExistingCards,
   computeWordCount,
   deriveCardSnapshotFromEntry,
@@ -507,5 +508,41 @@ describe("getStaleEvidenceEntries", () => {
 
   it("returns an empty array when nothing is stale", () => {
     expect(getStaleEvidenceEntries([entry({ cite: "Smith 2026" })], 2026)).toEqual([]);
+  });
+});
+
+describe("buildStaleEvidenceDigest", () => {
+  it("ranks undated entries before dated ones, and older years before newer ones", () => {
+    const undated = entry({ id: "undated", argBlock: "Z Block", cite: "" });
+    const veryOld = entry({ id: "very-old", argBlock: "A Block", cite: "Lee 2015" });
+    const barelyStale = entry({ id: "barely-stale", argBlock: "B Block", cite: `Smith ${2026 - STALE_EVIDENCE_THRESHOLD_YEARS}` });
+
+    const digest = buildStaleEvidenceDigest([barelyStale, veryOld, undated], 2026);
+
+    expect(digest.map((d) => d.entry.id)).toEqual(["undated", "very-old", "barely-stale"]);
+    expect(digest[0].staleness.ageYears).toBeNull();
+    expect(digest[1].staleness.ageYears).toBe(11);
+    expect(digest[2].staleness.ageYears).toBe(STALE_EVIDENCE_THRESHOLD_YEARS);
+  });
+
+  it("breaks ties by argBlock", () => {
+    const b = entry({ id: "b", argBlock: "B Block", cite: "Lee 2015" });
+    const a = entry({ id: "a", argBlock: "A Block", cite: "Smith 2015" });
+
+    const digest = buildStaleEvidenceDigest([b, a], 2026);
+    expect(digest.map((d) => d.entry.id)).toEqual(["a", "b"]);
+  });
+
+  it("excludes blocks and fresh cards, mirroring getStaleEvidenceEntries", () => {
+    const staleCard = entry({ id: "stale-card", cite: "Lee 2018" });
+    const freshCard = entry({ id: "fresh-card", cite: "Smith 2026" });
+    const staleBlock = entry({ id: "stale-block", kind: "block", cite: "" });
+
+    const digest = buildStaleEvidenceDigest([staleCard, freshCard, staleBlock], 2026);
+    expect(digest.map((d) => d.entry.id)).toEqual(["stale-card"]);
+  });
+
+  it("returns an empty array when nothing is stale", () => {
+    expect(buildStaleEvidenceDigest([entry({ cite: "Smith 2026" })], 2026)).toEqual([]);
   });
 });
