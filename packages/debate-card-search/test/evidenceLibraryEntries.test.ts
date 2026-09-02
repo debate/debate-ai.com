@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  bulkEditTagsForPersistedEntries,
   buildCombinedPersistedArgumentLibrary,
   buildPersistedArgumentLibrary,
   checkPersistedPageForExistingCards,
@@ -491,6 +492,46 @@ describe("renameTagAcrossPersistedEntries", () => {
   it("throws when newTag is blank", () => {
     saveEvidenceLibraryEntry(WARMING_CARD);
     expect(() => renameTagAcrossPersistedEntries("warming", "  ")).toThrow();
+  });
+});
+
+describe("bulkEditTagsForPersistedEntries", () => {
+  it("adds a tag to only the selected entries and persists the result", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const changedCount = bulkEditTagsForPersistedEntries(["entry-1"], "add", "priority");
+
+    expect(changedCount).toBe(1);
+    expect(getEvidenceLibraryEntry("entry-1")!.tags).toEqual(["warming", "impact", "priority"]);
+    // The unselected entry is untouched.
+    expect(getEvidenceLibraryEntry("entry-2")!.tags).toEqual(["solvency"]);
+  });
+
+  it("removes a tag from only the selected entries that carry it", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    saveEvidenceLibraryEntry({ ...SOLVENCY_BLOCK, tags: ["solvency", "impact"] });
+
+    const changedCount = bulkEditTagsForPersistedEntries(["entry-1", "entry-2"], "remove", "impact");
+
+    expect(changedCount).toBe(2);
+    expect(getEvidenceLibraryEntry("entry-1")!.tags).toEqual(["warming"]);
+    expect(getEvidenceLibraryEntry("entry-2")!.tags).toEqual(["solvency"]);
+  });
+
+  it("is a safe no-op, and does not write to storage, when nothing selected changes", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    const before = localStorage.getItem("evidenceLibraryEntries");
+
+    const changedCount = bulkEditTagsForPersistedEntries(["entry-1"], "add", "warming");
+
+    expect(changedCount).toBe(0);
+    expect(localStorage.getItem("evidenceLibraryEntries")).toBe(before);
+  });
+
+  it("throws when the tag is blank", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+    expect(() => bulkEditTagsForPersistedEntries(["entry-1"], "add", "  ")).toThrow();
   });
 });
 

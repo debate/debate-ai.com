@@ -287,6 +287,50 @@ export function renameTagAcrossCards<T extends LibraryCard>(
   return { cards: updated, changedCount };
 }
 
+/** Which direction a `applyBulkTagEditToCards` call moves a tag. */
+export type BulkTagEditOp = "add" | "remove";
+
+/**
+ * Adds or removes a single tag across a specific subset of cards, identified
+ * by `id` — the "bulk tag editing across a filtered result set" follow-up
+ * named under the "📋 Shared Evidence Library" bullet in TODO.md. Only cards
+ * whose `id` appears in `ids` are considered; every other card is returned as
+ * the exact same object (no new reference), matching
+ * `renameTagAcrossCards`'s identity-preserving convention so an unaffected
+ * card never appears "changed" to a caller doing identity comparison. Adding
+ * a tag a card already carries, or removing one it doesn't, is a no-op for
+ * that card (and doesn't count toward `changedCount`). Throws if `tag`, once
+ * trimmed, is blank.
+ */
+export function applyBulkTagEditToCards<T extends LibraryCard>(
+  cards: T[],
+  ids: string[],
+  op: BulkTagEditOp,
+  tag: string,
+): { cards: T[]; changedCount: number } {
+  const trimmedTag = tag.trim();
+  if (!trimmedTag) {
+    throw new Error("applyBulkTagEditToCards requires a non-blank tag");
+  }
+
+  const idSet = new Set(ids);
+  let changedCount = 0;
+  const updated = cards.map((card) => {
+    if (!idSet.has(card.id)) return card;
+    const alreadyHasTag = card.tags.includes(trimmedTag);
+    if (op === "add") {
+      if (alreadyHasTag) return card;
+      changedCount++;
+      return { ...card, tags: [...card.tags, trimmedTag] };
+    }
+    if (!alreadyHasTag) return card;
+    changedCount++;
+    return { ...card, tags: card.tags.filter((existing) => existing !== trimmedTag) };
+  });
+
+  return { cards: updated, changedCount };
+}
+
 /**
  * Normalizes each tag in `tags` to whichever casing already appears in
  * `knownTags`, when a case-insensitive match exists — so a tag typed

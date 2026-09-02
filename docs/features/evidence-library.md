@@ -379,6 +379,54 @@ both-stores no-op, and a throw leaving both stores untouched) and
 (`renameTagAcrossPersistedContributions`: rewrite-and-persist, merge-dedup,
 a true no-write no-op, and throwing on a blank or identical tag pair).
 
+## Bulk tag editing across a filtered result set
+
+Closes the "bulk tag editing across a filtered result set" follow-up named
+under the "📋 Shared Evidence Library" bullet in TODO.md's Product Feature
+Ideas list. The "Rename/merge tag" tool above rewrites one tag name into
+another across the *whole* repository; this instead adds or removes one tag
+across whichever specific entries a contributor has narrowed down with the
+panel's own search/filter boxes and then hand-picked, without touching
+anything else.
+
+`EvidenceLibraryPanel`'s results list now has a per-entry checkbox plus a
+"Select all N filtered results" checkbox above the list. Checking at least
+one entry reveals a small toolbar: a tag input and "Add tag to selected"/
+"Remove tag from selected" buttons. Selection is scoped to the entries
+currently on screen — it's cleared whenever the search text, kind, topic,
+case area, or tags filter changes, so a stale selection can never silently
+reach an entry that's since scrolled out of the filtered view — and it's
+cleared again after a bulk edit applies.
+
+`lib/argument-library.ts`'s `applyBulkTagEditToCards(cards, ids, op, tag)` is
+the pure rewrite, generic over any `LibraryCard[]` like
+`renameTagAcrossCards`: only cards whose `id` is in `ids` are touched, and
+each of those is returned as a new object only if the edit actually changes
+its tag list (adding a tag already present, or removing one that's absent,
+is a no-op for that card and doesn't count toward `changedCount`); every
+card outside the selection comes back as the exact same object reference.
+It throws if the tag, trimmed, is blank.
+
+`state/evidenceLibraryEntries.ts`'s `bulkEditTagsForPersistedEntries(ids, op,
+tag)` applies this against the real persisted repository, writing back only
+when at least one entry actually changed — mirroring
+`renameTagAcrossPersistedEntries`'s write-only-on-change convention, so an
+all-no-op bulk edit (e.g. adding a tag every selected entry already carries)
+never touches `localStorage` and never invalidates
+`getCachedEvidenceSearchIndex`'s raw-JSON fingerprint for nothing. Returns
+the number of entries changed.
+
+Vitest-covered in
+`packages/debate-card-search/test/argument-library.test.ts`
+(`applyBulkTagEditToCards`: adding a tag to only the selected cards while
+leaving others untouched by reference, skipping a card that already carries
+the tag being added, removing a tag from only the selected cards that carry
+it, throwing on a blank tag, and a no-op when no ids are selected) and
+`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+(`bulkEditTagsForPersistedEntries`: add-and-persist scoped to the selected
+ids, remove across a selection, a true no-write no-op when nothing selected
+changes, and throwing on a blank tag).
+
 ## Duplicate-tag merge suggestions
 
 Closes the "nothing merges two casings already in use" half of this

@@ -64,6 +64,20 @@
  * `buildReuseCheckDeepLink` in `lib/shared-evidence-library.ts` and the
  * extension's own README.
  *
+ * The results list now also supports bulk tag editing across whichever
+ * entries are currently checked (a per-row checkbox, plus a "Select all N
+ * filtered results" checkbox above the list) — the "bulk tag editing across
+ * a filtered result set" follow-up named under the "📋 Shared Evidence
+ * Library" bullet in TODO.md. Checking at least one entry reveals a small
+ * toolbar with a tag input and "Add tag to selected"/"Remove tag from
+ * selected" buttons, backed by
+ * `state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` (itself a
+ * thin composition of the pure `lib/argument-library.ts#applyBulkTagEditToCards`
+ * against this store's entries). Selection is scoped to the current
+ * filter/search results rather than the whole repository, and is cleared
+ * whenever the search/filter inputs change (so a stale selection can't
+ * silently touch entries no longer on screen) or after a bulk edit applies.
+ *
  * Every local check is now also recorded to a small history log
  * (`state/reuseCheckHistory.ts`) instead of only showing the latest
  * lookup's result — closes idea #7's next named follow-up, "Surface each
@@ -87,6 +101,7 @@ import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
+  bulkEditTagsForPersistedEntries,
   checkPersistedPageForExistingCards,
   deleteEvidenceLibraryEntry,
   getEvidenceLibraryEntry,
@@ -200,6 +215,9 @@ export function EvidenceLibraryPanel() {
   const [remoteReuseCheckResult, setRemoteReuseCheckResult] = useState<RemotePageReuseCheckResult | null>(null)
   const [remoteReuseCheckError, setRemoteReuseCheckError] = useState<string | null>(null)
   const [checkHistory, setCheckHistory] = useState<ReuseCheckHistoryRecord[]>([])
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [bulkTagInput, setBulkTagInput] = useState("")
+  const [bulkTagError, setBulkTagError] = useState<string | null>(null)
   const searchParams = useSearchParams()
 
   useEffect(() => {
@@ -237,6 +255,10 @@ export function EvidenceLibraryPanel() {
   useEffect(() => {
     if (hasEntries === null) return
     setResults(searchPersistedEvidenceLibraryWithIndex(buildQuery()))
+    // A changed search/filter narrows or widens which entries are on screen,
+    // so a prior selection may no longer make sense — clear it rather than
+    // risk a bulk edit silently touching an entry the visitor can no longer see.
+    setSelectedIds([])
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasEntries, queryText, kind, filterTopic, filterCaseArea, filterTags])
 
@@ -361,6 +383,33 @@ export function EvidenceLibraryPanel() {
   const handleClearCheckHistory = () => {
     clearReuseCheckHistory()
     setCheckHistory([])
+  }
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((existing) => existing !== id) : [...prev, id]))
+  }
+
+  const allFilteredSelected = results.length > 0 && results.every(({ entry }) => selectedIds.includes(entry.id))
+
+  const toggleSelectAllFiltered = () => {
+    setSelectedIds(allFilteredSelected ? [] : results.map(({ entry }) => entry.id))
+  }
+
+  const handleBulkTagEdit = (op: "add" | "remove") => {
+    const tag = bulkTagInput.trim()
+    if (!tag) {
+      setBulkTagError("Enter a tag to add or remove.")
+      return
+    }
+    if (selectedIds.length === 0) {
+      setBulkTagError("Select at least one entry first.")
+      return
+    }
+    bulkEditTagsForPersistedEntries(selectedIds, op, tag)
+    setBulkTagError(null)
+    setBulkTagInput("")
+    setSelectedIds([])
+    refreshResults()
   }
 
   if (hasEntries === null) {
@@ -698,9 +747,49 @@ export function EvidenceLibraryPanel() {
         <EmptyState title="No entries match this search." />
       ) : (
         <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={allFilteredSelected}
+                onChange={toggleSelectAllFiltered}
+                aria-label="Select all filtered results"
+              />
+              Select all {results.length} filtered {results.length === 1 ? "result" : "results"}
+            </label>
+          </div>
+          {selectedIds.length > 0 && (
+            <div className="flex flex-col gap-2 rounded-lg border border-dashed border-border p-3 sm:flex-row sm:items-center">
+              <span className="text-xs font-medium text-foreground">
+                {selectedIds.length} selected
+              </span>
+              <Input
+                value={bulkTagInput}
+                onChange={(e) => setBulkTagInput(e.target.value)}
+                placeholder="Tag to add or remove…"
+                aria-label="Bulk tag to add or remove"
+                className="sm:max-w-xs"
+              />
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => handleBulkTagEdit("add")}>
+                  Add tag to selected
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => handleBulkTagEdit("remove")}>
+                  Remove tag from selected
+                </Button>
+              </div>
+              {bulkTagError && <span className="text-xs text-destructive">{bulkTagError}</span>}
+            </div>
+          )}
           {results.map(({ entry, relevanceScore }) => (
             <div key={entry.id} className="rounded-lg border border-border p-3">
               <div className="mb-1 flex flex-wrap items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.includes(entry.id)}
+                  onChange={() => toggleSelected(entry.id)}
+                  aria-label={`Select ${entry.argBlock}`}
+                />
                 <span className="font-medium text-foreground">{entry.argBlock}</span>
                 <Badge variant={KIND_VARIANT[entry.kind]} className="capitalize">
                   {entry.kind}

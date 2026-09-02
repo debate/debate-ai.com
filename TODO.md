@@ -6,6 +6,49 @@
 _No task currently in progress._
 
 ### Completed
+- **Shared Evidence Library — bulk tag editing across a filtered result
+  set.** Another repeat of the standing prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL... with ability
+  to save flows docs and debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, that half is already fully built (see the many prior Completed
+  entries below: account-synced settings already exist at `/settings`, D1
+  tables + `/api/*` routes already link flows/docs/rounds/materials/etc. to
+  signed-in users, and the tools are already reachable from the nav/UI), and
+  the one open PR (#437, "Consolidate UI primitives and add web extension
+  scaffold") doesn't touch this area, so this slice picked the "📋 Shared
+  Evidence Library" bullet's own next-named follow-up: "bulk tag editing
+  across a filtered result set." `EvidenceLibraryPanel`'s results list now
+  has a per-entry checkbox plus a "Select all N filtered results" checkbox;
+  checking at least one entry reveals a small toolbar (tag input, "Add tag
+  to selected"/"Remove tag from selected") that edits every selected entry's
+  tags in one call. The rewrite itself is the new pure
+  `applyBulkTagEditToCards(cards, ids, op, tag)` in
+  `lib/argument-library.ts` (generic over any `LibraryCard[]`, mirroring
+  `renameTagAcrossCards`'s identity-preserving/no-op conventions), applied
+  against the real persisted repository by the new
+  `bulkEditTagsForPersistedEntries(ids, op, tag)` in
+  `state/evidenceLibraryEntries.ts` (write-back only when at least one entry
+  actually changed, mirroring `renameTagAcrossPersistedEntries`). Selection
+  is scoped to whatever's currently on screen and is cleared whenever the
+  search/filter inputs change or after a bulk edit applies, so a stale
+  selection can never reach an entry no longer visible. See
+  `docs/features/evidence-library.md`'s new "Bulk tag editing across a
+  filtered result set" section. Vitest-covered:
+  `packages/debate-card-search/test/argument-library.test.ts` gained an
+  `applyBulkTagEditToCards` suite (add scoped to selection leaving others
+  untouched by reference, skip-if-already-present, remove scoped to
+  selection, throw on blank tag, no-op on empty id list) and
+  `packages/debate-card-search/test/evidenceLibraryEntries.test.ts` gained a
+  `bulkEditTagsForPersistedEntries` suite (add-and-persist, remove, a true
+  no-write no-op, throw on blank tag). Verified with `bun run test` (219
+  test files, 3705 tests, all passing), `bun run typecheck` (root, all 13
+  typechecked packages, clean), and a full `bun run build` (the whole
+  monorepo build, including `debate-ai-web`'s production build) — all pass.
+  No lint script/config exists in this repo to run. No further follow-up is
+  currently tracked for this idea; a future run should pick a fresh
+  next-step (e.g. saved searches with alerts on new matches, or a one-click
+  citation-format export) if one becomes worth doing.
 - **Team Brainstorm Assist — "send top idea to Argument Library" action.**
   Another repeat of the standing prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL... with ability to save
@@ -12940,7 +12983,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🎙️ **AI Coach Mode** (`/coaching`) — a coaching-session history timeline per round; a side-by-side comparison across two rounds; an exportable coaching-notes document.
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.
 * 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. Next: polish the idea-ranking UI (upvote affordance/animation); an optional brainstorm-session timer.
-* 📋 **Shared Evidence Library** (`/cards/library`) — saved searches with alerts on new matches; bulk tag editing across a filtered result set; a one-click citation-format export.
+* 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
 * 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — threaded replies on a note instead of flat status; a priority flag; a digest notification instead of one per assignment.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
