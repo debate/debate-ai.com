@@ -48,7 +48,9 @@ function isValidStyleKey(value: unknown): value is WordCountStyleKey {
  * record's style. `createdAt`, when present, must be a number — a synced
  * record always carries its originating device's `createdAt` so the trend
  * view stays chronologically correct across devices (see
- * `adoptWordCountRound`).
+ * `adoptWordCountRound`). `updatedAt`, when present, must likewise be a
+ * number — it drives `resolveWordCountRoundConflict`'s cross-device
+ * same-`roundId` conflict resolution.
  */
 export function isValidWordCountRoundRecord(value: unknown): value is WordCountRoundRecord {
   if (typeof value !== "object" || value === null) return false;
@@ -58,6 +60,7 @@ export function isValidWordCountRoundRecord(value: unknown): value is WordCountR
   if (!isValidStyleKey(record.styleKey)) return false;
   if (!Array.isArray(record.submittedSpeeches) || !record.submittedSpeeches.every(isValidSubmission)) return false;
   if (record.createdAt !== undefined && typeof record.createdAt !== "number") return false;
+  if (record.updatedAt !== undefined && typeof record.updatedAt !== "number") return false;
 
   return true;
 }

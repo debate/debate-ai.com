@@ -246,8 +246,20 @@ into `state/wordCountRounds.ts` now:
   the trend view still sorts it correctly, unlike `saveWordCountRound`'s
   fresh-stamp-on-first-save behavior — and a local-only record (saved before
   this feature existed, or offline) is best-effort pushed to the account.
-  Neither direction overwrites a `roundId` both sides already have; a
-  word-count round is saved once, not iteratively revised like a flow.
+- A `roundId` present on **both** sides is resolved rather than skipped —
+  TODO.md idea #2's "resolving a same-`roundId` conflict between two
+  devices instead of only filling gaps" follow-up. Every `saveWordCountRound`
+  call now also stamps `updatedAt` (refreshed on every save, unlike the
+  once-only `createdAt`), and the pure
+  `resolveWordCountRoundConflict(local, remote)` in `state/wordCountRounds.ts`
+  compares the two sides' `updatedAt`: the newer copy wins — adopted locally
+  via `adoptWordCountRound` if remote is newer, or best-effort re-pushed to
+  the account via `saveWordCountRoundToAccount` if local is newer. A record
+  with no `updatedAt` (saved before this field existed) always loses to one
+  that has it. If neither side has a usable timestamp — both missing, or
+  exactly equal — the merge leaves both sides untouched, the same
+  conservative default this hook used before conflict resolution existed,
+  rather than guessing which is "right."
 - `saveRound`/`deleteRound` apply locally first (so saving/clearing a round
   is never blocked by the network), then best-effort sync the same change to
   the account when signed in.
@@ -281,14 +293,17 @@ panels/WordCountRoundsPanel.tsx                 — uses saveRound/deleteRound/c
 ```
 
 Vitest-covered: `adoptWordCountRound`'s createdAt-preserving/overwrite
-behavior and `clearWordCountRounds`'s remove-everything/no-op behavior in
-`wordCountRounds.test.ts`; `isValidWordCountRoundRecord` in
-`savedWordCountRounds.test.ts`; the fetch wrapper's request shapes and
-401/error handling, including `deleteAllSavedWordCountRoundsFromAccount`, in
+behavior, `clearWordCountRounds`'s remove-everything/no-op behavior, and
+`resolveWordCountRoundConflict`'s newer-wins/missing-timestamp/tie cases in
+`wordCountRounds.test.ts`; `isValidWordCountRoundRecord` (including
+`updatedAt`) in `savedWordCountRounds.test.ts`; the fetch wrapper's request
+shapes and 401/error handling, including
+`deleteAllSavedWordCountRoundsFromAccount`, in
 `word-count-rounds-client.test.ts`. `useWordCountRounds` and its wiring in
 `WordCountRoundsPanel` are untested, matching this package's existing
 convention for account-synced, `localStorage`-backed hooks and their UI
-(e.g. `useWordLimitPresets`).
+(e.g. `useWordLimitPresets`) — the merge loop's decision-making itself is
+covered indirectly via `resolveWordCountRoundConflict`'s direct unit tests.
 
 ## Known gaps
 

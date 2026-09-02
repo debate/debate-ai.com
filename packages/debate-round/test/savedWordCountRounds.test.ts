@@ -20,6 +20,10 @@ describe("isValidWordCountRoundRecord", () => {
     expect(isValidWordCountRoundRecord(makeRecord({ createdAt: 1700000000000 }))).toBe(true);
   });
 
+  it("accepts a record with updatedAt present", () => {
+    expect(isValidWordCountRoundRecord(makeRecord({ updatedAt: 1700000000000 }))).toBe(true);
+  });
+
   it("accepts a record with no submitted speeches", () => {
     expect(isValidWordCountRoundRecord(makeRecord({ submittedSpeeches: [] }))).toBe(true);
   });
@@ -65,6 +69,12 @@ describe("isValidWordCountRoundRecord", () => {
   it("rejects a record whose createdAt is present but not a number", () => {
     expect(
       isValidWordCountRoundRecord(makeRecord({ createdAt: "yesterday" as unknown as number })),
+    ).toBe(false);
+  });
+
+  it("rejects a record whose updatedAt is present but not a number", () => {
+    expect(
+      isValidWordCountRoundRecord(makeRecord({ updatedAt: "yesterday" as unknown as number })),
     ).toBe(false);
   });
 });

@@ -8,6 +8,7 @@ import {
   getWordCountRound,
   getWordCountRoundStatuses,
   listWordCountRounds,
+  resolveWordCountRoundConflict,
   saveWordCountRound,
   type WordCountRoundRecord,
 } from "../src/state/wordCountRounds";
@@ -120,6 +121,32 @@ describe("saveWordCountRound", () => {
 
     expect(getWordCountRound("round-1")?.createdAt).toBe(firstCreatedAt);
   });
+
+  it("stamps updatedAt with the current time on every save", () => {
+    const before = Date.now();
+    saveWordCountRound(ROUND_A);
+    const after = Date.now();
+
+    const updatedAt = getWordCountRound("round-1")?.updatedAt;
+    expect(updatedAt).toEqual(expect.any(Number));
+    expect(updatedAt).toBeGreaterThanOrEqual(before);
+    expect(updatedAt).toBeLessThanOrEqual(after);
+  });
+
+  it("refreshes updatedAt on a later update to the same roundId, unlike createdAt", async () => {
+    saveWordCountRound(ROUND_A);
+    const firstUpdatedAt = getWordCountRound("round-1")?.updatedAt;
+
+    await new Promise((resolve) => setTimeout(resolve, 2));
+    saveWordCountRound({
+      ...ROUND_A,
+      submittedSpeeches: [{ name: "AC", speaker: "A1", text: "A different draft" }],
+    });
+
+    const secondUpdatedAt = getWordCountRound("round-1")?.updatedAt;
+    expect(secondUpdatedAt).toEqual(expect.any(Number));
+    expect(secondUpdatedAt).toBeGreaterThan(firstUpdatedAt!);
+  });
 });
 
 describe("deleteWordCountRound", () => {
@@ -181,6 +208,44 @@ describe("adoptWordCountRound", () => {
     const stored = listWordCountRounds();
     expect(stored).toHaveLength(1);
     expect(stored[0]).toEqual(remote);
+  });
+});
+
+describe("resolveWordCountRoundConflict", () => {
+  it("picks remote when remote's updatedAt is newer", () => {
+    const local: WordCountRoundRecord = { ...ROUND_A, updatedAt: 100 };
+    const remote: WordCountRoundRecord = { ...ROUND_A, updatedAt: 200 };
+    expect(resolveWordCountRoundConflict(local, remote)).toBe("remote");
+  });
+
+  it("picks local when local's updatedAt is newer", () => {
+    const local: WordCountRoundRecord = { ...ROUND_A, updatedAt: 200 };
+    const remote: WordCountRoundRecord = { ...ROUND_A, updatedAt: 100 };
+    expect(resolveWordCountRoundConflict(local, remote)).toBe("local");
+  });
+
+  it("returns none when both sides have the exact same updatedAt", () => {
+    const local: WordCountRoundRecord = { ...ROUND_A, updatedAt: 150 };
+    const remote: WordCountRoundRecord = { ...ROUND_A, updatedAt: 150 };
+    expect(resolveWordCountRoundConflict(local, remote)).toBe("none");
+  });
+
+  it("returns none when neither side has an updatedAt", () => {
+    const local: WordCountRoundRecord = { ...ROUND_A };
+    const remote: WordCountRoundRecord = { ...ROUND_A };
+    expect(resolveWordCountRoundConflict(local, remote)).toBe("none");
+  });
+
+  it("picks remote when only remote has an updatedAt", () => {
+    const local: WordCountRoundRecord = { ...ROUND_A };
+    const remote: WordCountRoundRecord = { ...ROUND_A, updatedAt: 100 };
+    expect(resolveWordCountRoundConflict(local, remote)).toBe("remote");
+  });
+
+  it("picks local when only local has an updatedAt", () => {
+    const local: WordCountRoundRecord = { ...ROUND_A, updatedAt: 100 };
+    const remote: WordCountRoundRecord = { ...ROUND_A };
+    expect(resolveWordCountRoundConflict(local, remote)).toBe("local");
   });
 });
 

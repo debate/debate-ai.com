@@ -6,6 +6,41 @@
 _No task currently in progress._
 
 ### Completed
+- **Word-Count-Only Speech Format — same-`roundId` conflict resolution
+  (idea #2's next-named follow-up).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows docs and debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that half is already fully
+  built (see the many prior Completed entries below), so this slice picked
+  idea #2's own remaining next-step: `useWordCountRounds`'s account merge
+  previously only filled gaps — when a `roundId` existed in both local
+  storage and the synced account on mount, neither side was ever touched,
+  so two devices that both saved the same round could silently disagree
+  forever. `saveWordCountRound` now also stamps a new `updatedAt` field on
+  every save (refreshed each time, unlike the once-only `createdAt`), and a
+  new pure `resolveWordCountRoundConflict(local, remote)` in
+  `state/wordCountRounds.ts` decides which side is newer: the record with
+  the later `updatedAt` wins; a record with no `updatedAt` (saved before
+  this field existed) always loses to one that has it; and when neither
+  side has a usable timestamp (both missing, or exactly equal), the merge
+  falls back to the original safe no-op rather than guessing.
+  `useWordCountRounds.ts`'s `ensureRemoteMerged` now calls this for every
+  `roundId` present on both sides, adopting the remote copy locally
+  (`adoptWordCountRound`) or best-effort re-pushing the local copy to the
+  account, instead of skipping both-sides ids outright. No D1/API route
+  changes were needed — a word-count round's synced payload is one opaque
+  JSON blob, so `updatedAt` just rides along inside it like `createdAt`
+  already does. See `docs/features/word-count-rounds.md`'s "Account-synced
+  round history" section. Vitest-covered:
+  `packages/debate-round/test/wordCountRounds.test.ts` (`updatedAt`
+  stamping/refresh on save, and `resolveWordCountRoundConflict`'s
+  newer-wins, missing-timestamp, and tie/both-missing cases) and
+  `packages/debate-round/test/savedWordCountRounds.test.ts`
+  (`isValidWordCountRoundRecord` accepting/rejecting `updatedAt`). No
+  further follow-up is currently tracked for idea #2; a future run should
+  pick a fresh next-step if one becomes worth doing.
+
 - **Progress Unlocks — unlock celebration toast (idea "🔓 Progress
   Unlocks").** Another repeat of the standing prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL... with
@@ -12693,7 +12728,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    - A manual CSV/paste import for tournament results, since live Tabroom scraping is blocked (see "Confirmed blocker" below) and the old panel's only path in was hand-entry.
    - Bring back a qualification-points-table editor as a collapsible section rather than its own panel.
 
-2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) — every previously-tracked follow-up is now done: the live in-round `SpeechWordCounter` popover already has a 🎤 dictation button (mirroring the standalone form's); a per-style word-limit preset manager exists — `/settings`'s **Word limit presets** section (`WordLimitPresetsPanel`/`useWordLimitPresets`/`state/wordLimitPresets.ts`), account-synced via `/api/settings`'s `wordLimitPresets` field, checked ahead of the built-in `wordCountStyles` registry by `resolveSpeechWordLimit` in both this panel and the live meter; a trend view exists — `/word-count`'s **Word-count trend** section (`buildWordCountTrendData` in `state/wordCountRounds.ts`, rendered by `WordCountRoundsPanel`), a chronological bar-per-submission list across every persisted round, filterable by speech name; and that history is now account-synced too — a new `saved_word_count_rounds` D1 table plus `/api/word-count-rounds` routes, merged in by `hooks/useWordCountRounds.ts`, so the trend view (and the persisted-round list it's built from) follows a signed-in user across devices instead of staying per-browser. See `docs/features/word-count-rounds.md`'s "Custom word-limit presets", "Word-count trend view", and "Account-synced round history" sections. The bulk "delete all my synced history" follow-up is also now done: `WordCountRoundsPanel`'s round-history list has a "Delete all synced history" action (`useWordCountRounds().clearAllRounds`) that clears every locally persisted round in one write (`state/wordCountRounds.ts#clearWordCountRounds`) and, when signed in, best-effort issues a single `DELETE /api/word-count-rounds` against the whole collection. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. resolving a same-`roundId` conflict between two devices instead of only filling gaps) if one becomes worth doing.
+2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) — every previously-tracked follow-up is now done: the live in-round `SpeechWordCounter` popover already has a 🎤 dictation button (mirroring the standalone form's); a per-style word-limit preset manager exists — `/settings`'s **Word limit presets** section (`WordLimitPresetsPanel`/`useWordLimitPresets`/`state/wordLimitPresets.ts`), account-synced via `/api/settings`'s `wordLimitPresets` field, checked ahead of the built-in `wordCountStyles` registry by `resolveSpeechWordLimit` in both this panel and the live meter; a trend view exists — `/word-count`'s **Word-count trend** section (`buildWordCountTrendData` in `state/wordCountRounds.ts`, rendered by `WordCountRoundsPanel`), a chronological bar-per-submission list across every persisted round, filterable by speech name; and that history is now account-synced too — a new `saved_word_count_rounds` D1 table plus `/api/word-count-rounds` routes, merged in by `hooks/useWordCountRounds.ts`, so the trend view (and the persisted-round list it's built from) follows a signed-in user across devices instead of staying per-browser. See `docs/features/word-count-rounds.md`'s "Custom word-limit presets", "Word-count trend view", and "Account-synced round history" sections. The bulk "delete all my synced history" follow-up is also now done: `WordCountRoundsPanel`'s round-history list has a "Delete all synced history" action (`useWordCountRounds().clearAllRounds`) that clears every locally persisted round in one write (`state/wordCountRounds.ts#clearWordCountRounds`) and, when signed in, best-effort issues a single `DELETE /api/word-count-rounds` against the whole collection. The same-`roundId` conflict-resolution follow-up is also now done: `saveWordCountRound` stamps a refreshed `updatedAt` on every save, and a new pure `resolveWordCountRoundConflict` in `state/wordCountRounds.ts` lets `useWordCountRounds.ts`'s account merge pick the newer of two devices' copies of the same round instead of silently skipping both — see the Completed entry above and `docs/features/word-count-rounds.md`'s "Account-synced round history" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. surfacing a "synced just now from another device" toast when the merge actually adopts a remote copy) if one becomes worth doing.
 
 3. **Online Debate Versus AI** (`/versus-ai`) — every previously-tracked follow-up is now done: speech submission has a "🎤 Record" microphone-dictation button (mirroring every other panel's dictation UI); every delivered AI speech, not just the most recent one, has its own independent "Regenerate" button (`canRegenerateAiSpeechAt`/`replaceAiSpeechAt` in `state/aiVersusRounds.ts`); and a completed round can now be downloaded as a plain-text transcript — a "Download transcript" button on the active round view and on any complete round in the persisted-round list, backed by the pure `round/ai-versus-transcript.ts#buildAiVersusTranscriptText`. See `docs/features/ai-versus-rounds.md`'s "Download transcript" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. an export format other than plain text, such as a `.docx` Speech Document, or a side-by-side transcript diff between two rounds) if one becomes worth doing.
 

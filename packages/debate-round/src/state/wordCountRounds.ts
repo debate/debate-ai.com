@@ -41,6 +41,18 @@ export type WordCountRoundRecord = {
    * rather than sorted arbitrarily.
    */
   createdAt?: number;
+  /**
+   * Stamped automatically by `saveWordCountRound` on every save — unlike
+   * `createdAt`, this is refreshed each time, not just on first save.
+   * Drives `resolveWordCountRoundConflict` below, so
+   * `hooks/useWordCountRounds.ts`'s account merge can tell which of two
+   * devices' copies of the same `roundId` is actually newer instead of just
+   * filling gaps. Optional for the same reason as `createdAt`: a record
+   * persisted before this field existed still parses, and such a record
+   * always loses a conflict to one that does carry a timestamp (see
+   * `resolveWordCountRoundConflict`).
+   */
+  updatedAt?: number;
 };
 
 const STORAGE_KEY = "wordCountRounds";
@@ -78,13 +90,16 @@ export function getWordCountRound(roundId: string): WordCountRoundRecord | undef
  * save, and preserves that original timestamp across later updates (rather
  * than taking a caller-supplied `createdAt`, so every save site — the
  * standalone form and the live in-round meter alike — gets consistent
- * trend-view dates for free).
+ * trend-view dates for free). Also stamps `updatedAt` with the current time
+ * on every save, first or otherwise, so cross-device conflict resolution
+ * (`resolveWordCountRoundConflict`) can tell which device saved most
+ * recently.
  */
 export function saveWordCountRound(record: WordCountRoundRecord): void {
   const records = readAll();
   const index = records.findIndex((existing) => existing.roundId === record.roundId);
   const createdAt = index === -1 ? Date.now() : (records[index].createdAt ?? Date.now());
-  const stamped: WordCountRoundRecord = { ...record, createdAt };
+  const stamped: WordCountRoundRecord = { ...record, createdAt, updatedAt: Date.now() };
   if (index === -1) {
     records.push(stamped);
   } else {
@@ -112,6 +127,36 @@ export function adoptWordCountRound(record: WordCountRoundRecord): void {
     records[index] = record;
   }
   writeAll(records);
+}
+
+export type WordCountRoundConflictResolution = "local" | "remote" | "none";
+
+/**
+ * Decides which of two devices' copies of the same `roundId` is newer, for
+ * `hooks/useWordCountRounds.ts`'s account merge — TODO.md idea #2's
+ * "resolving a same-`roundId` conflict between two devices instead of only
+ * filling gaps" follow-up. Pure and side-effect-free: the caller applies
+ * the result (`adoptWordCountRound` for `"remote"`, pushing to the account
+ * for `"local"`).
+ *
+ * A newer `updatedAt` wins. A record with no `updatedAt` (saved before this
+ * field existed) always loses to one that has it, since a known save time
+ * is more trustworthy than an unknown one. When both are missing, or both
+ * are exactly equal, this returns `"none"` — the same conservative
+ * gap-filling-only behavior this repo used before conflict resolution
+ * existed, rather than guessing.
+ */
+export function resolveWordCountRoundConflict(
+  local: WordCountRoundRecord,
+  remote: WordCountRoundRecord,
+): WordCountRoundConflictResolution {
+  if (remote.updatedAt !== undefined && (local.updatedAt === undefined || remote.updatedAt > local.updatedAt)) {
+    return "remote";
+  }
+  if (local.updatedAt !== undefined && (remote.updatedAt === undefined || local.updatedAt > remote.updatedAt)) {
+    return "local";
+  }
+  return "none";
 }
 
 /** Deletes a round's persisted state; a no-op if it isn't stored. */
