@@ -13,6 +13,11 @@
  * persist scores, or render a scoring UI. See the follow-ups noted in
  * TODO.md.
  *
+ * `parseBulkCardSubmissions` closes that same bullet's "batch-score an
+ * uploaded set of cards at once" follow-up — a pure, framework-free parser
+ * for a pasted multi-card text batch, so a contributor can score a whole set
+ * of cards in one submission instead of one at a time.
+ *
  * @module lib/llm-card-scoring
  */
 
@@ -252,6 +257,92 @@ export function rankCardScores(
       return computeCardScoreBreakdown(card, otherTexts, weights);
     })
     .sort((a, b) => b.overallScore - a.overallScore || a.cardId.localeCompare(b.cardId));
+}
+
+/** One parsed entry from a bulk card-import submission. */
+export interface CardBulkSubmission {
+  id: string;
+  text: string;
+  argBlockKeywords: string[];
+  quality: number;
+}
+
+/** Result of parsing a bulk card-import submission. */
+export interface CardBulkParseResult {
+  entries: CardBulkSubmission[];
+  /** Count of `---`-delimited blocks that had non-blank content but were missing an `id:` or card text. */
+  skippedCount: number;
+}
+
+const BULK_ENTRY_SEPARATOR = /^-{3,}\s*$/;
+const BULK_ID_LINE = /^id:\s*(.*)$/i;
+const BULK_KEYWORDS_LINE = /^keywords:\s*(.*)$/i;
+const BULK_QUALITY_LINE = /^quality:\s*(.*)$/i;
+
+/**
+ * Parses a batch of cards from one pasted block of text — the "batch-score
+ * an uploaded set of cards at once" follow-up named under the "🧠 LLM Card
+ * Scoring" bullet in TODO.md. Entries are separated by a line of three
+ * or more dashes (`---`); each entry leads with optional `id:`/`keywords:`
+ * (comma-separated)/`quality:` (0-1) metadata lines, in any order, followed
+ * by the card's text on the remaining lines. An entry missing `id:` or with
+ * no text after its metadata lines is dropped and counted in `skippedCount`
+ * rather than crashing the whole batch — one malformed entry shouldn't lose
+ * every well-formed one alongside it. `quality` falls back to
+ * `defaultQuality` when omitted or unparseable, mirroring the single-card
+ * form's own 0-1 quality-signal input.
+ */
+export function parseBulkCardSubmissions(rawText: string, defaultQuality = 0.5): CardBulkParseResult {
+  const blocks: string[][] = [[]];
+  for (const line of rawText.split(/\r?\n/)) {
+    if (BULK_ENTRY_SEPARATOR.test(line)) {
+      blocks.push([]);
+    } else {
+      blocks[blocks.length - 1].push(line);
+    }
+  }
+
+  const entries: CardBulkSubmission[] = [];
+  let skippedCount = 0;
+
+  for (const block of blocks) {
+    let id = "";
+    let argBlockKeywords: string[] = [];
+    let quality = defaultQuality;
+    let bodyStart = 0;
+
+    for (; bodyStart < block.length; bodyStart++) {
+      const line = block[bodyStart];
+      const idMatch = line.match(BULK_ID_LINE);
+      const keywordsMatch = line.match(BULK_KEYWORDS_LINE);
+      const qualityMatch = line.match(BULK_QUALITY_LINE);
+      if (idMatch) {
+        id = idMatch[1].trim();
+      } else if (keywordsMatch) {
+        argBlockKeywords = keywordsMatch[1]
+          .split(",")
+          .map((keyword) => keyword.trim())
+          .filter(Boolean);
+      } else if (qualityMatch) {
+        const parsed = Number.parseFloat(qualityMatch[1]);
+        if (!Number.isNaN(parsed)) quality = Math.max(0, Math.min(1, parsed));
+      } else if (line.trim() === "") {
+        continue;
+      } else {
+        break;
+      }
+    }
+
+    const text = block.slice(bodyStart).join("\n").trim();
+    if (!id || !text) {
+      if (block.some((line) => line.trim() !== "")) skippedCount++;
+      continue;
+    }
+
+    entries.push({ id, text, argBlockKeywords, quality });
+  }
+
+  return { entries, skippedCount };
 }
 
 /** Renders a one-line summary of a card's score breakdown, flagging likely duplicates. */

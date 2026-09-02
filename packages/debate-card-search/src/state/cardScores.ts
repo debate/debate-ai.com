@@ -22,11 +22,21 @@
  * argument checklist (`trackedArguments.ts`), so a contributor scoring a
  * card for a topic no longer has to hand-type keywords from scratch.
  *
+ * `bulkImportScoredCards` closes the "batch-score an uploaded set of cards
+ * at once" follow-up — it composes the pure `parseBulkCardSubmissions`
+ * against `saveScoredCardsBulk`, so a contributor can paste a whole batch of
+ * cards and persist every well-formed one in a single call.
+ *
  * @module state/cardScores
  */
 
 import type { CardScoreBreakdown, CardScoreWeights, ScoredCard } from "../lib/llm-card-scoring";
-import { DEFAULT_CARD_SCORE_WEIGHTS, deriveArgBlockKeywords, rankCardScores } from "../lib/llm-card-scoring";
+import {
+  DEFAULT_CARD_SCORE_WEIGHTS,
+  deriveArgBlockKeywords,
+  parseBulkCardSubmissions,
+  rankCardScores,
+} from "../lib/llm-card-scoring";
 import { listEvidenceLibraryEntries } from "./evidenceLibraryEntries";
 import { listTrackedArguments } from "./trackedArguments";
 
@@ -74,6 +84,49 @@ export function saveScoredCard(card: ScoredCard): void {
 /** Deletes a persisted scored card by id; a no-op if it isn't stored. */
 export function deleteScoredCard(id: string): void {
   writeAll(readAll().filter((card) => card.id !== id));
+}
+
+/**
+ * Saves a batch of scored cards in a single read/write pass, upserting each
+ * by id (later entries win over earlier ones within the same batch, matching
+ * `saveScoredCard`'s per-id overwrite semantics for sequential calls). Used
+ * by `bulkImportScoredCards` below to persist a whole parsed batch at once
+ * rather than one `saveScoredCard` round-trip per card.
+ */
+export function saveScoredCardsBulk(cards: ScoredCard[]): void {
+  const existing = readAll();
+  for (const card of cards) {
+    const index = existing.findIndex((entry) => entry.id === card.id);
+    if (index === -1) {
+      existing.push(card);
+    } else {
+      existing[index] = card;
+    }
+  }
+  writeAll(existing);
+}
+
+/**
+ * Parses a pasted multi-card text batch via `parseBulkCardSubmissions` and
+ * persists every well-formed entry in one `saveScoredCardsBulk` pass —
+ * closes the "batch-score an uploaded set of cards at once" follow-up named
+ * under the "🧠 LLM Card Scoring" bullet in TODO.md. Returns the
+ * imported and skipped counts so a caller can render an import summary.
+ */
+export function bulkImportScoredCards(
+  rawText: string,
+  defaultQuality = 0.5,
+): { importedCount: number; skippedCount: number } {
+  const { entries, skippedCount } = parseBulkCardSubmissions(rawText, defaultQuality);
+  saveScoredCardsBulk(
+    entries.map((entry) => ({
+      id: entry.id,
+      text: entry.text,
+      argBlockKeywords: entry.argBlockKeywords,
+      qualitySignals: [entry.quality],
+    })),
+  );
+  return { importedCount: entries.length, skippedCount };
 }
 
 /**

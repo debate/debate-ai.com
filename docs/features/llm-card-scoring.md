@@ -17,6 +17,7 @@ assessment (verdict + per-dimension notes) for any ranked card.
 | --- | --- |
 | Topic switcher + "Use tracked keywords" | Fills the keywords field from a topic's persisted tracked-argument checklist (`deriveArgBlockKeywordsForTopic`) |
 | "Score card" form | Saves a `ScoredCard` (id, text, argument-block keywords, quality signal) |
+| "Bulk import" textarea | Parses and persists a `---`-delimited batch of cards in one pass, reporting an imported/skipped-entry count |
 | Ranked list | Every persisted card's heuristic `overallScore` and five per-dimension scores, descending |
 | "Likely duplicate" badge | `isLikelyDuplicate` — uniqueness score below the near-duplicate threshold, checked against every other persisted card plus the real Shared Evidence Library corpus |
 | "Get AI assessment" button | Requests a real Anthropic verdict + per-dimension notes for that card |
@@ -67,6 +68,50 @@ prompt-building and response-parsing coverage, and
 `packages/debate-card-search/test/aiCardAssessments.test.ts` for the
 persisted-store coverage.
 
+## Bulk import
+
+The "Bulk import" textarea closes the "batch-score an uploaded set of
+cards at once" follow-up: a contributor can paste a whole set of cards at
+once instead of submitting the "Score card" form one card at a time.
+
+Entries are separated by a line of three or more dashes (`---`). Each
+entry may lead with optional `id:`, `keywords:` (comma-separated), and
+`quality:` (0-1) metadata lines, in any order, followed by the card's text
+on the remaining lines:
+
+```
+id: warming-da-1
+keywords: warming, emissions
+quality: 0.6
+Rising emissions accelerate catastrophic warming impacts...
+---
+id: warming-da-2
+Solvency evidence text...
+```
+
+`lib/llm-card-scoring.ts#parseBulkCardSubmissions` is the pure,
+framework-free parser: an entry missing `id:` or with no text after its
+metadata lines is dropped and counted rather than failing the whole batch,
+and `quality` falls back to a default (0.5) when omitted or unparseable.
+`state/cardScores.ts#bulkImportScoredCards` composes that parser against
+the new `saveScoredCardsBulk` (a single read/write pass over every parsed
+card, upserting by id) and returns the imported/skipped counts, which
+`CardScoringPanel` renders as a status line (e.g. "Imported 3 cards.
+Skipped 1 malformed entry."). The import writes to the same `cardScores`
+localStorage key as the single-card form, so the existing cross-tab
+live-update mechanism (below) and ranking/duplicate-flagging both pick up
+a bulk import the same as any other save.
+
+Vitest-covered: `packages/debate-card-search/test/llm-card-scoring.test.ts`'s
+`parseBulkCardSubmissions` describe block (blank input, single/multiple
+entries, metadata in any order, a missing id or text, a fully-blank
+trailing block, one malformed entry alongside well-formed ones, multi-line
+text, keyword trimming, and quality clamping/defaulting), and
+`packages/debate-card-search/test/cardScores.test.ts`'s
+`saveScoredCardsBulk`/`bulkImportScoredCards` describe blocks (batch
+upsert, same-batch id collisions, empty batches, and end-to-end
+parse-then-persist behavior).
+
 ## Cross-tab live update
 
 `CardScoringPanel` subscribes to the browser's `storage` event, which fires
@@ -87,6 +132,12 @@ and a same-prefix substring key).
 
 ## Known gaps
 
+- Bulk import is a pasted plain-text batch (a simple `---`-delimited
+  format), not a real file upload — no CSV/`.docx` import yet.
+- Every entry in a bulk import shares no auto-derived keywords — a
+  contributor still has to type each entry's `keywords:` line by hand (or
+  omit it and score with an empty keyword list), unlike the single-card
+  form's "Use tracked keywords" action.
 - The keywords field is still free-text — "Use tracked keywords" fills it
   from a topic's tracked-argument checklist, but a contributor can still
   type anything, and scoring a card for a topic with no tracked arguments

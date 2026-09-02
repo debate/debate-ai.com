@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  bulkImportScoredCards,
   buildPersistedCardScoreRanking,
   buildRealCorpusTexts,
   deleteScoredCard,
@@ -7,6 +8,7 @@ import {
   getScoredCard,
   listScoredCards,
   saveScoredCard,
+  saveScoredCardsBulk,
 } from "../src/state/cardScores";
 import { saveEvidenceLibraryEntry } from "../src/state/evidenceLibraryEntries";
 import { saveTrackedArgument } from "../src/state/trackedArguments";
@@ -105,6 +107,75 @@ describe("deleteScoredCard", () => {
     saveScoredCard(SOLVENCY_CARD);
     deleteScoredCard("missing");
     expect(listScoredCards()).toEqual([SOLVENCY_CARD]);
+  });
+});
+
+describe("saveScoredCardsBulk", () => {
+  it("saves a batch of new cards in one pass", () => {
+    saveScoredCardsBulk([WARMING_CARD, SOLVENCY_CARD]);
+    expect(listScoredCards()).toEqual([WARMING_CARD, SOLVENCY_CARD]);
+  });
+
+  it("upserts existing cards by id, leaving unrelated cards untouched", () => {
+    saveScoredCard(WARMING_CARD);
+    saveScoredCard(SOLVENCY_CARD);
+    const revisedWarming = { ...WARMING_CARD, qualitySignals: [1] };
+
+    saveScoredCardsBulk([revisedWarming]);
+
+    expect(listScoredCards()).toEqual([revisedWarming, SOLVENCY_CARD]);
+  });
+
+  it("when the batch itself repeats an id, the later entry wins", () => {
+    saveScoredCardsBulk([WARMING_CARD, { ...WARMING_CARD, qualitySignals: [1] }]);
+    expect(listScoredCards()).toEqual([{ ...WARMING_CARD, qualitySignals: [1] }]);
+  });
+
+  it("is a no-op for an empty batch", () => {
+    saveScoredCard(WARMING_CARD);
+    saveScoredCardsBulk([]);
+    expect(listScoredCards()).toEqual([WARMING_CARD]);
+  });
+});
+
+describe("bulkImportScoredCards", () => {
+  it("parses and persists every well-formed entry", () => {
+    const raw = ["id: card-1", "keywords: warming, emissions", "First card text.", "---", "id: card-2", "Second card text."].join(
+      "\n",
+    );
+
+    const result = bulkImportScoredCards(raw);
+
+    expect(result).toEqual({ importedCount: 2, skippedCount: 0 });
+    expect(listScoredCards()).toEqual([
+      { id: "card-1", text: "First card text.", argBlockKeywords: ["warming", "emissions"], qualitySignals: [0.5] },
+      { id: "card-2", text: "Second card text.", argBlockKeywords: [], qualitySignals: [0.5] },
+    ]);
+  });
+
+  it("reports skipped entries without dropping the well-formed ones", () => {
+    const raw = ["id: card-1", "Good card.", "---", "keywords: no-id-here"].join("\n");
+
+    const result = bulkImportScoredCards(raw);
+
+    expect(result).toEqual({ importedCount: 1, skippedCount: 1 });
+    expect(listScoredCards().map((card) => card.id)).toEqual(["card-1"]);
+  });
+
+  it("imports nothing and skips nothing for blank input", () => {
+    expect(bulkImportScoredCards("   ")).toEqual({ importedCount: 0, skippedCount: 0 });
+    expect(listScoredCards()).toEqual([]);
+  });
+
+  it("carries a card's quality line into its qualitySignals", () => {
+    const result = bulkImportScoredCards("id: card-1\nquality: 0.9\nCard text.");
+    expect(result.importedCount).toBe(1);
+    expect(getScoredCard("card-1")?.qualitySignals).toEqual([0.9]);
+  });
+
+  it("immediately reflects in buildPersistedCardScoreRanking", () => {
+    bulkImportScoredCards("id: card-1\nCard text about warming.");
+    expect(buildPersistedCardScoreRanking().map((entry) => entry.cardId)).toEqual(["card-1"]);
   });
 });
 
