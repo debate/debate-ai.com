@@ -69,6 +69,16 @@ Every item, newest first, filterable by category:
     flow" below), composed into the feed via `buildNewsFeed`'s `extraItems`
     parameter at the app layer. Only sessions generated after this shipped
     carry the `createdAt` timestamp it's sourced from.
+  - A contributor's fully completed [Daily Quests](daily-quests.md) board,
+    the day they complete it at `/cards/quests`
+    (`dailyMissionResults.ts`'s `buildDailyQuestCompletionEvents`, rendered
+    via `gamified-quests.ts`'s `buildDailyQuestCompletionAnnouncementText`)
+    — no separate announce step, since "Record today's mission" already
+    persists the day's result. Unlike the Quest Streaks milestone source
+    above (bounded to rare milestone crossings), a board can be completed
+    every day, so this shares the sprint-note/Argument-Library sources'
+    `MAX_COMMUNITY_ITEMS_PER_SOURCE` volume cap instead of posting every
+    completion unbounded.
 
 Each item can be liked and is marked read on hover; unread items get a
 highlighted left border and a "New" badge. Read/like state is a viewer-local
@@ -87,17 +97,20 @@ lib/news-stream.ts              — NewsItem type, NEWS_CATEGORY_LABELS, PRODUCT
 state/dailyBestCardAnnouncements.ts    — existing store, read via listAnnouncedDailyBestCards()
 state/contributorAwardAnnouncements.ts — existing store, read via listAnnouncedContributorAwards()
 state/dailyMissionResults.ts    — existing store, read via buildQuestStreakMilestoneEvents()
+                                    and buildDailyQuestCompletionEvents()
 state/challengeWinEvents.ts     — existing store, read via buildCompletedGroupChallengeEvents()
 state/revisionHistory.ts        — existing store, read via buildDailyTopReviserAnnouncements()
 state/sprintNotes.ts            — existing store, read via listSprintNotes()
 state/evidenceLibraryEntries.ts — existing store, read via listEvidenceLibraryEntries()
   → state/newsStream.ts         — buildNewsFeed(extraItems?) merges PRODUCT_NEWS,
                                     buildAutoFeatureNews()'s synthesized spotlights, and all
-                                    seven in-package stores (mapped to NewsItem via each
+                                    eight in-package stores (mapped to NewsItem via each
                                     store's own highlight/announcement-text helper —
                                     sprintNotes.ts's via team-collaboration-mode.ts's
                                     buildSprintNoteAnnouncementText, evidenceLibraryEntries.ts's
-                                    via shared-evidence-library.ts's buildEvidenceEntryAnnouncementText)
+                                    via shared-evidence-library.ts's buildEvidenceEntryAnnouncementText,
+                                    dailyMissionResults.ts's completion events via
+                                    gamified-quests.ts's buildDailyQuestCompletionAnnouncementText)
                                     plus any caller-supplied extraItems, sorted newest first
                                   — isNewsItemRead/markNewsItemRead/isNewsItemLiked/
                                     toggleNewsItemLiked (localStorage, "newsStreamViewerState")

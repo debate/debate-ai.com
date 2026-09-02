@@ -63,6 +63,14 @@ export interface NewsItem {
  */
 export const PRODUCT_NEWS: NewsItem[] = [
   {
+    id: "product-news-stream-daily-quest-completions",
+    category: "product",
+    title: "News Stream now posts completed Daily Quests boards",
+    body: "The Community side of the feed now posts the day a contributor completes every quest on the Daily Quests board at /cards/quests — same as prep notes, streak milestones, challenge completions, Argument Library submissions, and Revision Incentives standings.",
+    timestamp: Date.parse("2026-09-02T00:00:00Z"),
+    href: "/cards/quests",
+  },
+  {
     id: "product-news-stream-volume-cap",
     category: "product",
     title: "News Stream caps busy sources to the 20 most recent items",

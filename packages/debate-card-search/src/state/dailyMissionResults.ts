@@ -210,3 +210,26 @@ export function buildQuestStreakMilestoneEvents(
 
   return events.sort((a, b) => b.dayKey.localeCompare(a.dayKey) || a.contributorId.localeCompare(b.contributorId));
 }
+
+/** A contributor's fully completed Daily Quests board for one day, as derived from their persisted mission-result history. */
+export interface DailyQuestCompletionEvent {
+  contributorId: string;
+  dayKey: string;
+}
+
+/**
+ * Finds every persisted day where a contributor completed their whole Daily
+ * Quests board — the "a completion celebration posted to the News Stream
+ * feed" follow-up named under the "🎯 Daily Quests and Targets" bullet in
+ * TODO.md. Unlike `buildQuestStreakMilestoneEvents` (which only fires on a
+ * milestone-length streak crossing), this fires on every completed day, so
+ * `state/newsStream.ts` caps how many of these it renders — same convention
+ * as `sprintNoteNews()`/`argumentLibraryNews()`. Sorted newest day first,
+ * tie-broken by `contributorId` for a stable, deterministic order.
+ */
+export function buildDailyQuestCompletionEvents(): DailyQuestCompletionEvent[] {
+  return readAll()
+    .filter((record) => record.isComplete)
+    .map((record): DailyQuestCompletionEvent => ({ contributorId: record.contributorId, dayKey: record.dayKey }))
+    .sort((a, b) => b.dayKey.localeCompare(a.dayKey) || a.contributorId.localeCompare(b.contributorId));
+}

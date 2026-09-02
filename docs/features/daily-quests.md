@@ -108,6 +108,24 @@ components/research/DailyQuestsWithIdentity.tsx  — "use client" wrapper
 panel itself stays app-agnostic — it only knows about a plain
 `signedInContributorId` string prop, not `better-auth`.
 
+## News Stream celebration
+
+Recording today's mission on a day that completes every quest on the board
+now posts to the [News Stream](news-stream.md) automatically — no separate
+"announce" step, mirroring the Quest Streaks milestone, Group Challenge
+completion, and Argument Library submission sources that already feed that
+same page. `state/dailyMissionResults.ts`'s new
+`buildDailyQuestCompletionEvents()` reads every persisted
+`DailyMissionResultRecord` where `isComplete` is true (no new store — the
+"Record today's mission" action already saves one of these on every visit)
+and `state/newsStream.ts`'s new `dailyQuestCompletionNews()` renders each
+as a `NewsItem` via `lib/gamified-quests.ts`'s new
+`buildDailyQuestCompletionAnnouncementText`. Unlike a streak milestone
+(which only fires on a rare milestone-length crossing), a board can be
+completed every single day, so this source shares `sprintNoteNews()`'s/
+`argumentLibraryNews()`'s `MAX_COMMUNITY_ITEMS_PER_SOURCE` volume cap
+(the 20 most recent completions) rather than posting every one unbounded.
+
 `lib/daily-quests.ts`'s pure aggregation (`computeQuestProgress`,
 `buildDailyQuestBoard`, `buildQuestBoardSummaryText`,
 `buildUnderCoveredArgumentQuests`) already existed and was Vitest-covered;

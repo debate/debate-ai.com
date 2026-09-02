@@ -6,6 +6,7 @@ import {
   applyStreakFreezes,
   buildContributorQuestStreak,
   buildStreakFreezeAvailabilityText,
+  buildDailyQuestCompletionAnnouncementText,
   buildStreakMilestoneAnnouncementText,
   buildStreakRewardText,
   buildStreakSummaryText,
@@ -279,6 +280,14 @@ describe("buildStreakMilestoneAnnouncementText", () => {
     expect(
       buildStreakMilestoneAnnouncementText("alex", { dayKey: "2026-08-10", streakLength: 3, badge: "3-Day Streak" }),
     ).toBe('alex reached a 3-day streak and earned "3-Day Streak"!');
+  });
+});
+
+describe("buildDailyQuestCompletionAnnouncementText", () => {
+  it("renders a third-person announcement for a completed Daily Quests board", () => {
+    expect(buildDailyQuestCompletionAnnouncementText("alex", "2026-08-10")).toBe(
+      "alex completed every quest on the Daily Quests board for 2026-08-10!",
+    );
   });
 });
 
