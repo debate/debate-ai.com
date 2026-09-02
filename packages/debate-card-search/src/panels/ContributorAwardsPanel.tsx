@@ -39,6 +39,16 @@
  * thread's unrestricted delete convention (this repo has no reviewer-
  * identity system to gate deletion by).
  *
+ * Also closes that bullet's next-named follow-up after that, "per-nomination
+ * 'seconding'/upvoting instead of only a raw count": each row in "Recent
+ * nominations" has a **👍 Second** action next to Delete, backed by
+ * `state/contributorAwardNominations.ts#secondPeerNomination` — support is
+ * typed once into a shared "Seconding as" box above the list rather than
+ * re-prompting per row. A category's top-nominee chips on the live award
+ * cards above now rank and display by total support (nominations plus
+ * seconds) via `contributor-awards.ts#tallyNominationsByKind`'s updated
+ * `totalSupport`, not raw nomination count alone.
+ *
  * @module panels/ContributorAwardsPanel
  */
 
@@ -71,6 +81,7 @@ import {
   DEFAULT_AWARD_CATEGORY_LABELS,
   buildContributorAwardsHallOfFame,
   canNominatePeer,
+  canSecondNomination,
   tallyNominationsByKind,
   type ContributorAward,
   type HallOfFameEntry,
@@ -80,6 +91,7 @@ import {
   MAX_NOMINATION_NOTE_LENGTH,
   deletePeerNomination,
   listAllPeerNominations,
+  secondPeerNomination,
   submitPeerNomination,
 } from "../state/contributorAwardNominations"
 import type { ContributionKind } from "../lib/community-rating"
@@ -90,7 +102,7 @@ function AwardCard({
   topNominees,
 }: {
   award: ContributorAward
-  topNominees?: { nomineeId: string; count: number }[]
+  topNominees?: { nomineeId: string; count: number; secondCount: number; totalSupport: number }[]
 }) {
   return (
     <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
@@ -111,7 +123,8 @@ function AwardCard({
             <span>🗳️ Nominated:</span>
             {topNominees.slice(0, 3).map((tally) => (
               <span key={tally.nomineeId} className="rounded bg-muted px-1.5 py-0.5">
-                {tally.nomineeId} ×{tally.count}
+                {tally.nomineeId} ×{tally.totalSupport}
+                {tally.secondCount > 0 && ` (${tally.secondCount} second${tally.secondCount === 1 ? "" : "s"})`}
               </span>
             ))}
           </div>
@@ -259,12 +272,21 @@ function NominationForm({
   )
 }
 
-/** Renders every submitted nomination, newest first, each with a delete action. */
+/**
+ * Renders every submitted nomination, newest first, each with a Second
+ * (upvote) and a Delete action. `seconderId` is the shared "Seconding as"
+ * name typed above the list; the Second button is disabled per-row via
+ * `canSecondNomination` (self-nominee/nominator, or already seconded).
+ */
 function NominationList({
   nominations,
+  seconderId,
+  onSecond,
   onDelete,
 }: {
   nominations: PeerNomination[]
+  seconderId: string
+  onSecond: (id: string) => void
   onDelete: (id: string) => void
 }) {
   if (nominations.length === 0) {
@@ -273,25 +295,40 @@ function NominationList({
 
   return (
     <div className="flex flex-col gap-2">
-      {nominations.map((nomination) => (
-        <div key={nomination.id} className="rounded-md bg-muted/50 p-2 text-xs">
-          <div className="mb-0.5 flex items-center justify-between gap-2">
-            <span className="font-medium text-foreground">
-              {DEFAULT_AWARD_CATEGORY_LABELS[nomination.kind]}: {nomination.nomineeId}
-            </span>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-auto px-1.5 py-0.5 text-[11px]"
-              onClick={() => onDelete(nomination.id)}
-            >
-              Delete
-            </Button>
+      {nominations.map((nomination) => {
+        const secondCount = nomination.seconderIds?.length ?? 0
+        const canSecond = canSecondNomination(nomination, seconderId)
+        return (
+          <div key={nomination.id} className="rounded-md bg-muted/50 p-2 text-xs">
+            <div className="mb-0.5 flex items-center justify-between gap-2">
+              <span className="font-medium text-foreground">
+                {DEFAULT_AWARD_CATEGORY_LABELS[nomination.kind]}: {nomination.nomineeId}
+              </span>
+              <div className="flex shrink-0 items-center gap-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-auto px-1.5 py-0.5 text-[11px]"
+                  onClick={() => onSecond(nomination.id)}
+                  disabled={!canSecond}
+                >
+                  👍 Second{secondCount > 0 ? ` (${secondCount})` : ""}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-auto px-1.5 py-0.5 text-[11px]"
+                  onClick={() => onDelete(nomination.id)}
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>
+            <p className="text-muted-foreground">Nominated by {nomination.nominatorId}</p>
+            {nomination.note && <p className="mt-0.5 text-muted-foreground">"{nomination.note}"</p>}
           </div>
-          <p className="text-muted-foreground">Nominated by {nomination.nominatorId}</p>
-          {nomination.note && <p className="mt-0.5 text-muted-foreground">"{nomination.note}"</p>}
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
@@ -317,6 +354,8 @@ export function ContributorAwardsPanel() {
   const [nominations, setNominations] = useState<PeerNomination[]>([])
   const [nominationDraft, setNominationDraft] = useState<NominationDraft>(EMPTY_NOMINATION_DRAFT)
   const [nominationError, setNominationError] = useState<string | null>(null)
+  const [seconderId, setSeconderId] = useState("")
+  const [secondError, setSecondError] = useState<string | null>(null)
 
   const refresh = () => {
     const now = Date.now()
@@ -368,6 +407,16 @@ export function ContributorAwardsPanel() {
   const handleNominationDelete = (id: string) => {
     deletePeerNomination(id)
     refresh()
+  }
+
+  const handleNominationSecond = (id: string) => {
+    try {
+      secondPeerNomination(id, seconderId)
+      setSecondError(null)
+      refresh()
+    } catch (error) {
+      setSecondError(error instanceof Error ? error.message : "Couldn't second that nomination.")
+    }
   }
 
   if (live === null) {
@@ -439,8 +488,31 @@ export function ContributorAwardsPanel() {
           onSubmit={handleNominationSubmit}
         />
         {nominationError && <p className="mt-2 text-xs text-destructive">{nominationError}</p>}
+        <div className="mt-4 flex items-end gap-2">
+          <div>
+            <Label htmlFor="nomination-seconder" className="text-xs">
+              Seconding as
+            </Label>
+            <Input
+              id="nomination-seconder"
+              value={seconderId}
+              onChange={(e) => {
+                setSeconderId(e.target.value)
+                setSecondError(null)
+              }}
+              placeholder="Your name"
+              className="h-8 w-40 text-xs"
+            />
+          </div>
+        </div>
+        {secondError && <p className="mt-2 text-xs text-destructive">{secondError}</p>}
         <div className="mt-3">
-          <NominationList nominations={nominations} onDelete={handleNominationDelete} />
+          <NominationList
+            nominations={nominations}
+            seconderId={seconderId}
+            onSecond={handleNominationSecond}
+            onDelete={handleNominationDelete}
+          />
         </div>
       </div>
 

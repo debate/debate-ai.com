@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  InvalidNominationSecondError,
   InvalidPeerNominationError,
   MAX_NOMINATION_NOTE_LENGTH,
   adoptPeerNomination,
   deletePeerNomination,
   listAllPeerNominations,
   listPeerNominationsForKind,
+  secondPeerNomination,
   submitPeerNomination,
 } from "../src/state/contributorAwardNominations";
 import type { PeerNomination } from "../src/lib/contributor-awards";
@@ -142,6 +144,62 @@ describe("adoptPeerNomination", () => {
     const all = listAllPeerNominations();
     expect(all).toHaveLength(1);
     expect(all[0].note).toBe("updated");
+  });
+});
+
+describe("secondPeerNomination", () => {
+  it("appends the seconder to the nomination's seconderIds", () => {
+    adoptPeerNomination(makeNomination({ id: "n1", nomineeId: "alice", nominatorId: "bob" }));
+    const updated = secondPeerNomination("n1", "carol");
+    expect(updated.seconderIds).toEqual(["carol"]);
+    expect(listAllPeerNominations()[0].seconderIds).toEqual(["carol"]);
+  });
+
+  it("trims the seconder id before storing it", () => {
+    adoptPeerNomination(makeNomination({ id: "n1", nomineeId: "alice", nominatorId: "bob" }));
+    const updated = secondPeerNomination("n1", "  carol  ");
+    expect(updated.seconderIds).toEqual(["carol"]);
+  });
+
+  it("accumulates multiple distinct seconders", () => {
+    adoptPeerNomination(makeNomination({ id: "n1", nomineeId: "alice", nominatorId: "bob" }));
+    secondPeerNomination("n1", "carol");
+    secondPeerNomination("n1", "dave");
+    expect(listAllPeerNominations()[0].seconderIds).toEqual(["carol", "dave"]);
+  });
+
+  it("throws InvalidNominationSecondError for an unknown nomination id", () => {
+    expect(() => secondPeerNomination("missing", "carol")).toThrow(InvalidNominationSecondError);
+  });
+
+  it("throws InvalidNominationSecondError when the nominee tries to second their own nomination", () => {
+    adoptPeerNomination(makeNomination({ id: "n1", nomineeId: "alice", nominatorId: "bob" }));
+    expect(() => secondPeerNomination("n1", "alice")).toThrow(InvalidNominationSecondError);
+  });
+
+  it("throws InvalidNominationSecondError when the nominator tries to second their own nomination again", () => {
+    adoptPeerNomination(makeNomination({ id: "n1", nomineeId: "alice", nominatorId: "bob" }));
+    expect(() => secondPeerNomination("n1", "bob")).toThrow(InvalidNominationSecondError);
+  });
+
+  it("throws InvalidNominationSecondError for a blank seconder", () => {
+    adoptPeerNomination(makeNomination({ id: "n1", nomineeId: "alice", nominatorId: "bob" }));
+    expect(() => secondPeerNomination("n1", "   ")).toThrow(InvalidNominationSecondError);
+  });
+
+  it("throws InvalidNominationSecondError for a duplicate second", () => {
+    adoptPeerNomination(makeNomination({ id: "n1", nomineeId: "alice", nominatorId: "bob" }));
+    secondPeerNomination("n1", "carol");
+    expect(() => secondPeerNomination("n1", "carol")).toThrow(InvalidNominationSecondError);
+    expect(() => secondPeerNomination("n1", " Carol ")).toThrow(InvalidNominationSecondError);
+  });
+
+  it("does not mutate other nominations", () => {
+    adoptPeerNomination(makeNomination({ id: "n1", nomineeId: "alice", nominatorId: "bob" }));
+    adoptPeerNomination(makeNomination({ id: "n2", nomineeId: "carol", nominatorId: "dave" }));
+    secondPeerNomination("n1", "erin");
+    const all = listAllPeerNominations();
+    expect(all.find((n) => n.id === "n2")?.seconderIds).toBeUndefined();
   });
 });
 

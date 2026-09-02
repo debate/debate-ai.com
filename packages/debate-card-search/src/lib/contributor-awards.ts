@@ -29,6 +29,14 @@
  * `state/dailyBestCardComments.ts`'s local-first convention) and the form/
  * list UI lives in `panels/ContributorAwardsPanel.tsx` — see those modules.
  *
+ * Also closes that bullet's own next-named follow-up after that, "per-
+ * nomination 'seconding'/upvoting instead of only a raw count":
+ * `PeerNomination.seconderIds`/`canSecondNomination` below let anyone else
+ * add their support to an existing nomination instead of only being able to
+ * submit a brand-new duplicate one, and `tallyNominationsByKind` now ranks
+ * nominees by total support (nominations plus seconds) rather than raw
+ * nomination count alone.
+ *
  * @module lib/contributor-awards
  */
 
@@ -212,32 +220,55 @@ export interface PeerNomination {
   note?: string;
   /** Nomination time, as epoch milliseconds. */
   nominatedAt: number;
+  /**
+   * Ids of contributors who "seconded" (upvoted) this nomination — a
+   * lightweight way to add support to an existing nomination instead of
+   * only being able to submit a brand-new duplicate one. Absent/empty for a
+   * nomination nobody has seconded yet; see `canSecondNomination`.
+   */
+  seconderIds?: string[];
 }
 
-/** One nominee's aggregate nomination count within a single award category. */
+/** One nominee's aggregate support within a single award category. */
 export interface NominationTally {
   nomineeId: string;
+  /** Number of distinct nominations submitted for this nominee within the category. */
   count: number;
+  /** Total seconds (upvotes) across every one of this nominee's nominations in the category. */
+  secondCount: number;
+  /** `count + secondCount` — the value nominees are ranked by. */
+  totalSupport: number;
 }
 
 /**
- * Ranks nominees within a single award category by nomination count
+ * Ranks nominees within a single award category by total support
+ * (nomination count plus every second/upvote across those nominations)
  * descending, tie-broken by `nomineeId` ascending for a stable order.
- * Nominations for other kinds are ignored.
+ * Nominations for other kinds are ignored. A nominee with no seconds ranks
+ * the same as it did before seconding existed — `totalSupport` reduces to
+ * `count` when `secondCount` is zero.
  */
 export function tallyNominationsByKind(
   nominations: PeerNomination[],
   kind: ContributionKind,
 ): NominationTally[] {
-  const counts = new Map<string, number>();
+  const byNominee = new Map<string, { count: number; secondCount: number }>();
   for (const nomination of nominations) {
     if (nomination.kind !== kind) continue;
-    counts.set(nomination.nomineeId, (counts.get(nomination.nomineeId) ?? 0) + 1);
+    const entry = byNominee.get(nomination.nomineeId) ?? { count: 0, secondCount: 0 };
+    entry.count += 1;
+    entry.secondCount += nomination.seconderIds?.length ?? 0;
+    byNominee.set(nomination.nomineeId, entry);
   }
 
-  return Array.from(counts.entries())
-    .map(([nomineeId, count]) => ({ nomineeId, count }))
-    .sort((a, b) => b.count - a.count || a.nomineeId.localeCompare(b.nomineeId));
+  return Array.from(byNominee.entries())
+    .map(([nomineeId, { count, secondCount }]) => ({
+      nomineeId,
+      count,
+      secondCount,
+      totalSupport: count + secondCount,
+    }))
+    .sort((a, b) => b.totalSupport - a.totalSupport || a.nomineeId.localeCompare(b.nomineeId));
 }
 
 /**
@@ -251,4 +282,25 @@ export function canNominatePeer(nominatorId: string, nomineeId: string): boolean
   const nominee = nomineeId.trim();
   if (!nominator || !nominee) return false;
   return nominator.toLowerCase() !== nominee.toLowerCase();
+}
+
+/**
+ * Whether `seconderId` may second (upvote) `nomination`: must be non-blank
+ * after trimming, can't be the nomination's own nominee or nominator
+ * (compared case-insensitively — the nominee shouldn't upvote themself, and
+ * the nominator already registered their support by nominating), and can't
+ * already appear in `nomination.seconderIds` (no double-seconding).
+ */
+export function canSecondNomination(nomination: PeerNomination, seconderId: string): boolean {
+  const seconder = seconderId.trim();
+  if (!seconder) return false;
+
+  const lowerSeconder = seconder.toLowerCase();
+  if (lowerSeconder === nomination.nomineeId.trim().toLowerCase()) return false;
+  if (lowerSeconder === nomination.nominatorId.trim().toLowerCase()) return false;
+
+  const alreadySeconded = (nomination.seconderIds ?? []).some(
+    (id) => id.trim().toLowerCase() === lowerSeconder,
+  );
+  return !alreadySeconded;
 }

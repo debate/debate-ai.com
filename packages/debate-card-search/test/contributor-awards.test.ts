@@ -7,6 +7,7 @@ import {
   buildContributorAwardsHallOfFame,
   buildTopContributorAwards,
   canNominatePeer,
+  canSecondNomination,
   groupContributionsByKind,
   tallyNominationsByKind,
   type ContributorAward,
@@ -248,8 +249,8 @@ describe("tallyNominationsByKind", () => {
       "card",
     );
     expect(tally).toEqual([
-      { nomineeId: "alice", count: 2 },
-      { nomineeId: "bob", count: 1 },
+      { nomineeId: "alice", count: 2, secondCount: 0, totalSupport: 2 },
+      { nomineeId: "bob", count: 1, secondCount: 0, totalSupport: 1 },
     ]);
   });
 
@@ -275,6 +276,35 @@ describe("tallyNominationsByKind", () => {
   it("returns an empty list for no nominations", () => {
     expect(tallyNominationsByKind([], "card")).toEqual([]);
   });
+
+  it("adds every nomination's seconds into that nominee's secondCount/totalSupport", () => {
+    const tally = tallyNominationsByKind(
+      [
+        makeNomination({ id: "n1", nomineeId: "alice", seconderIds: ["carol", "dave"] }),
+        makeNomination({ id: "n2", nomineeId: "alice", seconderIds: ["erin"] }),
+        makeNomination({ id: "n3", nomineeId: "bob" }),
+      ],
+      "card",
+    );
+    expect(tally).toEqual([
+      { nomineeId: "alice", count: 2, secondCount: 3, totalSupport: 5 },
+      { nomineeId: "bob", count: 1, secondCount: 0, totalSupport: 1 },
+    ]);
+  });
+
+  it("ranks a heavily-seconded single nomination above an unseconded nominee with more raw nominations", () => {
+    const tally = tallyNominationsByKind(
+      [
+        makeNomination({ id: "n1", nomineeId: "alice", seconderIds: ["carol", "dave", "erin"] }),
+        makeNomination({ id: "n2", nomineeId: "bob" }),
+        makeNomination({ id: "n3", nomineeId: "bob" }),
+      ],
+      "card",
+    );
+    expect(tally.map((t) => t.nomineeId)).toEqual(["alice", "bob"]);
+    expect(tally[0].totalSupport).toBe(4);
+    expect(tally[1].totalSupport).toBe(2);
+  });
 });
 
 describe("canNominatePeer", () => {
@@ -293,5 +323,40 @@ describe("canNominatePeer", () => {
   it("rejects a blank nominator or nominee", () => {
     expect(canNominatePeer("", "alice")).toBe(false);
     expect(canNominatePeer("bob", "   ")).toBe(false);
+  });
+});
+
+describe("canSecondNomination", () => {
+  it("allows a third party to second a nomination", () => {
+    expect(canSecondNomination(makeNomination(), "carol")).toBe(true);
+  });
+
+  it("rejects a blank seconder", () => {
+    expect(canSecondNomination(makeNomination(), "   ")).toBe(false);
+  });
+
+  it("rejects the nomination's own nominee seconding themself", () => {
+    expect(canSecondNomination(makeNomination({ nomineeId: "alice" }), "alice")).toBe(false);
+    expect(canSecondNomination(makeNomination({ nomineeId: "alice" }), " Alice ")).toBe(false);
+  });
+
+  it("rejects the nomination's own nominator seconding it again", () => {
+    expect(canSecondNomination(makeNomination({ nominatorId: "bob" }), "bob")).toBe(false);
+    expect(canSecondNomination(makeNomination({ nominatorId: "bob" }), " Bob ")).toBe(false);
+  });
+
+  it("rejects someone who has already seconded it, case-insensitively", () => {
+    const nomination = makeNomination({ seconderIds: ["carol"] });
+    expect(canSecondNomination(nomination, "carol")).toBe(false);
+    expect(canSecondNomination(nomination, " Carol ")).toBe(false);
+  });
+
+  it("allows a fresh seconder even when others have already seconded it", () => {
+    const nomination = makeNomination({ seconderIds: ["carol"] });
+    expect(canSecondNomination(nomination, "dave")).toBe(true);
+  });
+
+  it("treats a nomination with no seconderIds as never-seconded", () => {
+    expect(canSecondNomination(makeNomination({ seconderIds: undefined }), "carol")).toBe(true);
   });
 });

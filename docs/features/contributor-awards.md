@@ -45,9 +45,23 @@ is omitted rather than shown with no winner.
   name, an optional short note) submits an informal nomination, separate
   from the score-based winners above. A nomination can't name the nominator
   themself as the nominee. Each live award card shows that category's top
-  nominee(s) by nomination count (e.g. "🗳️ Nominated: alice ×2"), and a
+  nominee(s) by total support (e.g. "🗳️ Nominated: alice ×2"), and a
   "Recent nominations" list below the form shows every nomination, newest
-  first, each with a **Delete** action.
+  first, each with **👍 Second** and **Delete** actions.
+- **Seconding a nomination** — instead of only being able to submit a
+  brand-new duplicate nomination for someone already nominated, anyone can
+  add their support to an *existing* one. A "Seconding as" name box above
+  the "Recent nominations" list drives every row's **👍 Second** button,
+  which shows the running second count once at least one exists (e.g.
+  "👍 Second (2)"). A nomination's own nominee can't second it (no
+  self-upvoting), its own nominator can't second it again (they already
+  registered support by nominating), and the same person can't second one
+  nomination twice — the button disables itself once any of those apply. A
+  category's top-nominee chips on the live award cards rank and display by
+  **total support** (nomination count plus every second across that
+  nominee's nominations), not raw nomination count alone, and note the
+  second count in parentheses when it's non-zero (e.g. "alice ×5 (3
+  seconds)").
 
 A day with no contributions in any category disables the announce action
 instead of freezing an empty result.
@@ -73,8 +87,10 @@ state/contributions.ts (localStorage)
 
 state/contributorAwardNominations.ts (localStorage, separate "contributorAwardNominations" key)
   → submitPeerNomination() / listAllPeerNominations() / deletePeerNomination()
-  → lib/contributor-awards.ts#tallyNominationsByKind()  — per-category nominee ranking
-  → panels/ContributorAwardsPanel.tsx (Nominate a peer form, top-nominee chips, nomination list)
+  → secondPeerNomination()                        — appends a seconder to an existing nomination,
+                                                       guarded by lib/contributor-awards.ts#canSecondNomination
+  → lib/contributor-awards.ts#tallyNominationsByKind()  — per-category nominee ranking by total support
+  → panels/ContributorAwardsPanel.tsx (Nominate a peer form, top-nominee chips, nomination list, Second action)
 
 state/live-update.ts#isContributorAwardsLiveUpdateStorageEvent
   → panels/ContributorAwardsPanel.tsx (cross-tab `storage` listener → refresh())
@@ -112,7 +128,12 @@ persists them local-first (mirroring `state/dailyBestCardComments.ts`'s
 convention) and `lib/contributor-awards.ts`'s pure
 `canNominatePeer`/`tallyNominationsByKind` never feed into the score-based
 `buildTopContributorAwards` winner selection above — a nomination is a
-signal shown alongside the real award, not a vote that changes it.
+signal shown alongside the real award, not a vote that changes it. Seconding
+follows the same convention: `secondPeerNomination` only ever appends to an
+existing nomination's `seconderIds` array (never creates a new record), and
+`canSecondNomination` is the single source of truth for whether a given
+seconder is allowed, shared between the state layer's throw-on-invalid guard
+and the panel's disabled-button check so the two can't drift apart.
 
 ## Known gaps
 
@@ -123,6 +144,8 @@ signal shown alongside the real award, not a vote that changes it.
   no reviewer-identity/permission checks (a real submission flow already
   exists — `ContributionsFeedPanel.tsx` calls `saveContribution`/
   `recordPersistedLike`/`recordPersistedSave`/
-  `recordPersistedEndorsementFromReviewer`). Peer nominations share this gap
-  too: any visitor can submit or delete any nomination under any name, and
-  nominations aren't account-synced across devices — only localStorage.
+  `recordPersistedEndorsementFromReviewer`). Peer nominations and their
+  seconds share this gap too: any visitor can submit or delete any
+  nomination, or second one, under any typed name — nothing ties "Seconding
+  as" to a real signed-in identity — and neither nominations nor seconds are
+  account-synced across devices, only localStorage.

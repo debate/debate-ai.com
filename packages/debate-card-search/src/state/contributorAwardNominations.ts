@@ -14,11 +14,18 @@
  * account-sync exists yet — see `docs/features/contributor-awards.md`'s
  * Known gaps.
  *
+ * `secondPeerNomination` closes the "🏆 Top Contributor Awards" bullet's
+ * next-named follow-up after peer nominations, "per-nomination 'seconding'/
+ * upvoting instead of only a raw count": rather than only being able to
+ * submit a brand-new duplicate nomination for someone already nominated, a
+ * visitor can add their support to an existing one, enforced by
+ * `lib/contributor-awards.ts`'s pure `canSecondNomination`.
+ *
  * @module state/contributorAwardNominations
  */
 
 import type { ContributionKind } from "../lib/community-rating";
-import { canNominatePeer, type PeerNomination } from "../lib/contributor-awards";
+import { canNominatePeer, canSecondNomination, type PeerNomination } from "../lib/contributor-awards";
 
 const STORAGE_KEY = "contributorAwardNominations";
 
@@ -115,4 +122,43 @@ export function adoptPeerNomination(nomination: PeerNomination): void {
 /** Deletes a persisted nomination by id; a no-op if it isn't stored. */
 export function deletePeerNomination(id: string): void {
   writeAll(readAll().filter((nomination) => nomination.id !== id));
+}
+
+/**
+ * Thrown by `secondPeerNomination` when `id` doesn't resolve to a stored
+ * nomination, or when `seconderId` isn't allowed to second it (see
+ * `canSecondNomination` — blank, the nomination's own nominee/nominator, or
+ * already seconded).
+ */
+export class InvalidNominationSecondError extends Error {
+  constructor() {
+    super(
+      "Enter your name to second this nomination — you can't second your own nomination or the one you submitted, and each person can only second it once.",
+    );
+    this.name = "InvalidNominationSecondError";
+  }
+}
+
+/**
+ * Adds `seconderId` to a persisted nomination's `seconderIds`, trimmed
+ * first. Throws `InvalidNominationSecondError` if `id` isn't stored or
+ * `seconderId` isn't allowed to second it — callers
+ * (`panels/ContributorAwardsPanel.tsx`) are expected to surface that as a
+ * form error rather than letting it throw uncaught. Returns the updated
+ * nomination.
+ */
+export function secondPeerNomination(id: string, seconderId: string): PeerNomination {
+  const nominations = readAll();
+  const index = nominations.findIndex((nomination) => nomination.id === id);
+  if (index === -1 || !canSecondNomination(nominations[index], seconderId)) {
+    throw new InvalidNominationSecondError();
+  }
+
+  const updated: PeerNomination = {
+    ...nominations[index],
+    seconderIds: [...(nominations[index].seconderIds ?? []), seconderId.trim()],
+  };
+  nominations[index] = updated;
+  writeAll(nominations);
+  return updated;
 }
