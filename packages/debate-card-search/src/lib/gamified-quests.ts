@@ -319,6 +319,37 @@ export function buildStreakFreezeAvailabilityText(
 }
 
 /**
+ * How many consecutive days a contributor's *in-progress* streak (as of
+ * yesterday) sits at when today's mission hasn't been completed yet — the
+ * "🎮 Gamified Quests" bullet's "an opt-in reminder notification before a
+ * streak lapses" follow-up in TODO.md. Returns `null` when there's nothing
+ * to warn about: today's mission is already complete (nothing at risk), or
+ * there was no streak in progress coming into today (yesterday's streak was
+ * `0`, so today not being done yet isn't a lapse — it's just a fresh start).
+ * Deliberately proactive rather than reactive: unlike
+ * `findFreezableStreakGapDayKey` (which fires *after* a gap day has already
+ * passed, to offer a freeze), this fires *before* today ends, while the
+ * streak can still be saved by completing today's mission — no freeze
+ * needed.
+ */
+export function getStreakLapseRiskLength(results: DailyMissionResult[], asOfDayKey: string): number | null {
+  const todayComplete = results.some((result) => result.dayKey === asOfDayKey && result.isComplete);
+  if (todayComplete) return null;
+
+  const { currentStreak } = computeStreakStatus(results, previousUtcDayKey(asOfDayKey));
+  return currentStreak > 0 ? currentStreak : null;
+}
+
+/**
+ * Renders a short human-readable warning for a contributor whose streak is
+ * at risk of lapsing today, meant to sit next to an opt-in "remind me"
+ * toggle.
+ */
+export function buildStreakLapseReminderText(streakLengthAtRisk: number): string {
+  return `⏰ Your ${streakLengthAtRisk}-day streak will end today unless you complete today's quests!`;
+}
+
+/**
  * Renders a short "reward" line for a contributor's streak status, meant to
  * sit next to today's quest board itself (the "(c) a streak/reward layer"
  * follow-up under the "🎯 Daily Quests and Targets" bullet in TODO.md)

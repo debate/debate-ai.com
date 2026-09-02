@@ -17,6 +17,8 @@ import {
   findFreezableStreakGapDayKey,
   getAvailableStreakFreezes,
   getEarnedStreakBadges,
+  buildStreakLapseReminderText,
+  getStreakLapseRiskLength,
   type DailyMissionResult,
   type StreakMilestone,
 } from "../src/lib/gamified-quests";
@@ -435,6 +437,45 @@ describe("buildStreakFreezeAvailabilityText", () => {
   it("reports none left when the allowance is exhausted", () => {
     expect(buildStreakFreezeAvailabilityText(0)).toBe(
       `No streak freezes left in the last ${STREAK_FREEZE_WINDOW_DAYS} days.`,
+    );
+  });
+});
+
+describe("getStreakLapseRiskLength", () => {
+  it("returns the in-progress streak length when yesterday extended it and today isn't done yet", () => {
+    const results = [day("2026-08-08", true), day("2026-08-09", true)];
+    expect(getStreakLapseRiskLength(results, "2026-08-10")).toBe(2);
+  });
+
+  it("returns null when today's mission is already complete — nothing at risk", () => {
+    const results = [day("2026-08-09", true), day("2026-08-10", true)];
+    expect(getStreakLapseRiskLength(results, "2026-08-10")).toBeNull();
+  });
+
+  it("returns null when there was no streak in progress coming into today", () => {
+    const results = [day("2026-08-09", false)];
+    expect(getStreakLapseRiskLength(results, "2026-08-10")).toBeNull();
+  });
+
+  it("returns null for a completely empty history", () => {
+    expect(getStreakLapseRiskLength([], "2026-08-10")).toBeNull();
+  });
+
+  it("returns null once a streak has already fully lapsed (yesterday itself was missed)", () => {
+    const results = [day("2026-08-07", true), day("2026-08-08", true), day("2026-08-09", false)];
+    expect(getStreakLapseRiskLength(results, "2026-08-10")).toBeNull();
+  });
+
+  it("reflects an explicit today record marked incomplete the same as no record at all", () => {
+    const results = [day("2026-08-09", true), day("2026-08-10", false)];
+    expect(getStreakLapseRiskLength(results, "2026-08-10")).toBe(1);
+  });
+});
+
+describe("buildStreakLapseReminderText", () => {
+  it("renders the streak length in the warning", () => {
+    expect(buildStreakLapseReminderText(5)).toBe(
+      "⏰ Your 5-day streak will end today unless you complete today's quests!",
     );
   });
 });

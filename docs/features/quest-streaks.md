@@ -22,6 +22,7 @@ freeze:
 | Last completed | `streak.lastCompletedDayKey` |
 | Badges | `earnedBadges`, milestones from `DEFAULT_STREAK_MILESTONES` (3/7/14/30-day) |
 | Streak freeze | Remaining freeze allowance, plus a "Use a grace day" action when yesterday broke an in-progress streak |
+| Reminder | An opt-in 🔔 toggle, plus a warning banner when opted in and the streak is at risk of lapsing today |
 
 A "Run today's mission check" action lets a contributor (identified by
 free-text id — there is no contributor identity/auth in this repo, the same
@@ -62,6 +63,34 @@ purposes of computing their streak length and milestone badges.
   computation, so no changes were needed to `computeStreakStatus`,
   `getEarnedStreakBadges`, or `deriveEarnedStreakMilestoneEvents` themselves
   — a frozen day just looks like a completed one to those functions.
+
+## Streak-lapse reminder
+
+A contributor can opt in to a reminder that warns them, right on the panel,
+when their streak is about to lapse — the "🎮 Gamified Quests" bullet's "an
+opt-in reminder notification before a streak lapses" follow-up.
+
+- **What "at risk" means:** an in-progress streak coming into today (i.e.
+  yesterday's streak was greater than zero) where today's mission hasn't been
+  completed yet — `lib/gamified-quests.ts#getStreakLapseRiskLength`. This is
+  deliberately proactive: unlike the streak-freeze mechanic above (which
+  offers a freeze *after* a gap day has already passed), this fires *while*
+  today can still be saved by completing today's mission, so no freeze is
+  needed. It returns `null` (nothing to warn about) once today's mission is
+  already complete, or when there was no streak in progress to begin with.
+- **Opting in:** each roster row has a "🔕 Remind me" / "🔔 Reminder on"
+  toggle button. Opting in is per contributor id (there is no contributor
+  identity/auth in this repo, the same known gap as the rest of this panel),
+  persisted in a new `streakLapseReminders` localStorage key
+  (`state/streakLapseReminders.ts`), mirroring `streakFreezes.ts`'s
+  persistence convention.
+- **The reminder itself:** once opted in, a row shows a warning line
+  (`lib/gamified-quests.ts#buildStreakLapseReminderText`, e.g. "⏰ Your 5-day
+  streak will end today unless you complete today's quests!") whenever that
+  contributor is at risk. There is no push-notification/scheduled-job
+  infrastructure in this repo — the "notification" is this in-app banner,
+  seen whenever a contributor visits the panel while at risk, not a real push
+  notification delivered outside the app.
 
 ## Data flow
 
@@ -116,9 +145,10 @@ so a truly automatic daily cadence remains a documented gap below.
 `QuestStreaksPanel` subscribes to the browser's `storage` event (fires only
 in *other* same-origin tabs/windows, never the one that made the write) via
 `state/live-update.ts`'s `isQuestStreaksLiveUpdateStorageEvent` and
-re-derives the roster when it fires for its backing `dailyMissionResults` or
-`streakFreezes` key, so a mission check or a grace-day freeze applied in a
-second tab now refreshes this tab's roster without a manual reload — closing
+re-derives the roster when it fires for its backing `dailyMissionResults`,
+`streakFreezes`, or `streakLapseReminders` key, so a mission check, a
+grace-day freeze, or a reminder opt-in applied in a second tab now refreshes
+this tab's roster without a manual reload — closing
 the "Every other localStorage-backed panel in this repo still has no
 cross-tab live-update mechanism" Known gap noted in
 [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
@@ -146,3 +176,10 @@ Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
 - The freeze allowance (2 per rolling 30 days) is a fixed constant, not
   earned through activity (e.g. a freeze awarded per streak milestone
   reached) — a simple flat grant for this first slice.
+- The streak-lapse reminder is an in-app banner only, seen when a contributor
+  happens to visit the panel while at risk — there's no real push
+  notification (email, browser push, etc.) that would reach them without
+  opening the app, since no such delivery infrastructure exists in this
+  repo.
+- Reminder opt-ins are localStorage-only, not account-synced across devices —
+  the same known gap as streak freezes above.

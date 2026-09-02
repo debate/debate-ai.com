@@ -6,6 +6,64 @@
 _No task currently in progress._
 
 ### Completed
+- **Gamified Quests — opt-in streak-lapse reminder.** Another repeat of the
+  standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI") — as with every recent repeat, that half is
+  already fully built (account-synced settings already exist at
+  `/settings`, D1 tables + `/api/*` routes already link flows/docs/rounds/
+  materials/etc. to signed-in users, and the tools are already reachable
+  from the nav/UI), and the one open PR (#437, "Consolidate UI primitives
+  and add web extension scaffold") doesn't touch this area, so this slice
+  picked the "🎮 Gamified Quests" bullet's last still-open follow-up: "an
+  opt-in reminder notification before a streak lapses." `lib/gamified-quests.ts`
+  gained `getStreakLapseRiskLength` (pure: `null` when today's mission is
+  already complete or when there was no streak in progress coming into
+  today, otherwise the in-progress streak length that's at risk — walks
+  yesterday's streak via the existing `computeStreakStatus` rather than
+  duplicating streak-walking logic, deliberately proactive/fires *before*
+  today ends, unlike `findFreezableStreakGapDayKey`'s reactive after-the-gap
+  freeze offer) and `buildStreakLapseReminderText` (renders the warning
+  line). A new `state/streakLapseReminders.ts` persists a contributor's
+  opt-in as a plain list of contributor ids in a new `streakLapseReminders`
+  localStorage key, mirroring `streakFreezes.ts`'s persistence convention
+  (`listStreakLapseReminderContributorIds`/`isStreakLapseReminderEnabled`/
+  `setStreakLapseReminderEnabled`, plus `getPersistedStreakLapseReminderInfo`
+  composing the opt-in with the real persisted mission-result history).
+  `QuestStreaksPanel` gained a "Reminder" column: a per-row "🔕 Remind me" /
+  "🔔 Reminder on" toggle, and — once opted in — a warning line whenever that
+  contributor is at risk today. There is no push-notification/scheduled-job
+  infrastructure in this repo, so the "notification" is this in-app banner
+  (seen on a panel visit while at risk), not a real push notification — the
+  same documented gap as the panel's existing manual "Run today's mission
+  check" trigger. `state/live-update.ts`'s `QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS`
+  gained the new `"streakLapseReminders"` key so an opt-in toggled in one
+  browser tab refreshes the panel in every other open tab. See
+  `docs/features/quest-streaks.md`'s new "Streak-lapse reminder" section,
+  its updated roster-table row, updated Cross-tab live update note, and two
+  new Known gaps entries (in-app-banner-only, not a real push notification;
+  reminder opt-ins are localStorage-only, not account-synced). Vitest-covered:
+  `packages/debate-card-search/test/gamified-quests.test.ts` (8 new cases —
+  `getStreakLapseRiskLength` and `buildStreakLapseReminderText`, both pure),
+  the new `packages/debate-card-search/test/streakLapseReminders.test.ts`
+  (14 cases — the localStorage persistence layer against a mocked
+  `localStorage`, including corrupt-JSON/non-array degradation, no-op
+  double-toggle, per-contributor independence, and the composed
+  `getPersistedStreakLapseReminderInfo`), and
+  `packages/debate-card-search/test/live-update.test.ts` gained cases
+  confirming the new storage key is tracked and a lookalike key isn't. The
+  panel's own rendering/toggle-wiring remains intentionally untested,
+  matching this panel's existing convention (only pure logic and
+  persistence wrappers are directly tested). Verified with `bun run test`
+  (root, all packages: 226 test files, 3886 tests, all passing),
+  `bun run typecheck` (root, all 13 typechecked packages, clean), and a full
+  `bun run build` (the whole monorepo build, including `debate-ai-web`'s
+  production build) — all pass. No lint script/config exists in this repo
+  to run. No further follow-up is currently tracked for this idea beyond
+  the still-open account-sync gap noted above; a future run should pick a
+  fresh next-step if one becomes worth doing. PR:
+  [#461](https://github.com/debate/debate-ai.com/pull/461).
 - **Top Contributor Awards — "nominate a peer" action.** Another repeat of
   the standing prompt ("integrate all the tools into the UI... create user
   settings and link user db SQL... with ability to save flows docs and
@@ -13311,7 +13369,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 * 🧩 **Community Research Hub** (`/community-hub`) — a personalized "for you" section; fold its directory into the News Stream feed instead of a separate destination; a quick-jump search bar across every listed space.
 * 🏅 **Contribution Leaderboard** (`/cards/leaderboard`) — the range-filter follow-up is done: a "Range" dropdown (All time / This week / This month) re-scopes the whole roster — scores and completed-task counts alike — to that trailing window (`lib/contribution-leaderboard.ts#filterContributionsByRange`/`isWithinLeaderboardRange`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Range filter" section. The per-category follow-up is also now done: a "Category" dropdown (All categories / Cards / Summaries / Highlights / Annotations / Original arguments / Refutations) re-scopes the roster to one contribution kind at a time, composing with the Range filter (`lib/contribution-leaderboard.ts#filterContributionsByKind`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Category filter" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor profile drill-down page) if one becomes worth doing.
-* 🎮 **Gamified Quests** (`/cards/streaks`) — the streak-freeze/grace-day-mechanic follow-up is done: a contributor can spend a rolling-allowance "streak freeze" to bridge a single missed day instead of resetting to zero (`lib/gamified-quests.ts#applyStreakFreezes`/`canApplyStreakFreeze`/`findFreezableStreakGapDayKey`, `state/streakFreezes.ts`), surfaced as a "Streak freeze" column with a "Use a grace day for …" action on `QuestStreaksPanel` — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak freeze / grace day" section. Next: a shareable streak-badge image; an opt-in reminder notification before a streak lapses.
+* 🎮 **Gamified Quests** (`/cards/streaks`) — the streak-freeze/grace-day-mechanic follow-up is done: a contributor can spend a rolling-allowance "streak freeze" to bridge a single missed day instead of resetting to zero (`lib/gamified-quests.ts#applyStreakFreezes`/`canApplyStreakFreeze`/`findFreezableStreakGapDayKey`, `state/streakFreezes.ts`), surfaced as a "Streak freeze" column with a "Use a grace day for …" action on `QuestStreaksPanel` — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak freeze / grace day" section. The opt-in-streak-lapse-reminder follow-up is also now done: a per-contributor "🔔 Remind me" toggle on the "Reminder" column shows an in-app warning banner whenever that contributor's in-progress streak is at risk of lapsing today (`lib/gamified-quests.ts#getStreakLapseRiskLength`, `state/streakLapseReminders.ts`) — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak-lapse reminder" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a shareable streak-badge image, or account-syncing reminder opt-ins/streak freezes across devices) if one becomes worth doing.
 * 🔓 **Progress Unlocks** (`/cards/progress`) — the visual next-tier progress bar follow-up is done: the "Next tier" column now leads with a filled `MeterBar` meter instead of a text-only sentence, with the needed-counts text kept underneath as detail (`lib/progress-unlocks.ts#getNextTierProgress`'s new `progressRatio` field) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Next-tier progress bar" section. The unlock-celebration-toast follow-up is also now done: a dismissible "🎉 New badge earned: …" banner shows on the signed-in visitor's own row the moment they newly earn a tier or streak badge, diffed against a persisted per-contributor "last-seen badges" baseline (`state/unlockCelebrations.ts`) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Unlock celebration toast" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a badge showcase on a contributor's profile) if one becomes worth doing.
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — batch-score an uploaded set of cards at once; a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.

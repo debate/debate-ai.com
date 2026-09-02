@@ -162,10 +162,15 @@ describe("isQuestStreaksLiveUpdateStorageEvent", () => {
     expect(isQuestStreaksLiveUpdateStorageEvent({ key: "dailyMissionResultsBackup" })).toBe(false);
     expect(isQuestStreaksLiveUpdateStorageEvent({ key: "old_dailyMissionResults" })).toBe(false);
     expect(isQuestStreaksLiveUpdateStorageEvent({ key: "streakFreezesBackup" })).toBe(false);
+    expect(isQuestStreaksLiveUpdateStorageEvent({ key: "streakLapseRemindersBackup" })).toBe(false);
   });
 
   it("is true for the streakFreezes key (the streak-freeze/grace-day mechanic)", () => {
     expect(isQuestStreaksLiveUpdateStorageEvent({ key: "streakFreezes" })).toBe(true);
+  });
+
+  it("is true for the streakLapseReminders key (the opt-in streak-lapse reminder)", () => {
+    expect(isQuestStreaksLiveUpdateStorageEvent({ key: "streakLapseReminders" })).toBe(true);
   });
 });
 
