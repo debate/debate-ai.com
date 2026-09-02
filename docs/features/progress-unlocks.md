@@ -120,6 +120,37 @@ fraction. Vitest-covered in `packages/debate-card-search/test/progress-unlocks.t
 the AND path, picking the stronger of the two paths, clamping at 1, and
 `null` at the top tier).
 
+## Unlock celebration toast
+
+Reaching a new tier or streak badge used to be invisible unless a visitor
+noticed their own row changing in the roster table. Now, when
+`signedInContributorId` is set, `ProgressUnlocksPanel` shows a small
+dismissible banner the moment that visitor's own row newly earns a badge —
+"🎉 New badge earned: Rising Researcher!" (or "New badges earned: …" for
+more than one at once).
+
+"Newly earned" is a diff against a persisted per-contributor baseline, not a
+live event stream: `state/unlockCelebrations.ts`'s
+`recordAndGetNewlyEarnedBadges(contributorId, currentBadges)` reads the
+contributor's last-seen badge list from localStorage
+(`unlockCelebrationSeenBadges`), diffs it against the roster's current
+badges via the pure `lib/unlock-celebration.ts#getNewlyEarnedBadges`, then
+immediately overwrites the baseline with `currentBadges` — so the same
+badge is only ever reported once, whether the panel re-renders or a
+cross-tab live-update refresh fires again with the same data. A contributor
+with no baseline yet (the very first time this ran for them) never
+celebrates on that first sight, even if they already have badges — an
+`undefined` baseline means "nothing to compare", not "everything is new" —
+so an existing contributor's badges don't suddenly "celebrate" the moment
+this feature ships.
+
+No new tier/badge/streak rule was introduced; this only surfaces a
+transition in the existing, already-merged `badges` list. Vitest-covered in
+`packages/debate-card-search/test/unlock-celebration.test.ts` (the pure
+diff/message logic) and `test/unlockCelebrations.test.ts` (the persisted
+baseline: first-sight suppression, no repeat reporting, independent
+per-contributor baselines).
+
 ## Known gaps
 
 - No contributor identity/permission *checks* — a real signed-in session now
