@@ -19,6 +19,7 @@ import {
   listContributionTags,
   renameTagAcrossPersistedContributions,
   saveContribution,
+  SelfEndorsementNotAllowedError,
 } from "../src/state/contributions";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
 import { DEFAULT_AWARD_CATEGORY_LABELS } from "../src/lib/contributor-awards";
@@ -242,6 +243,29 @@ describe("recordPersistedEndorsementFromReviewer", () => {
     saveContribution(ALICE_CARD);
     expect(recordPersistedEndorsementFromReviewer("missing", "alice")).toBeUndefined();
     expect(getContribution("contrib-1")).toEqual(ALICE_CARD);
+  });
+
+  it("throws SelfEndorsementNotAllowedError when the reviewer id matches the contribution's own contributorId", () => {
+    saveContribution(ALICE_CARD);
+    expect(() => recordPersistedEndorsementFromReviewer("contrib-1", "alice")).toThrow(
+      SelfEndorsementNotAllowedError,
+    );
+    expect(getContribution("contrib-1")).toEqual(ALICE_CARD);
+  });
+
+  it("blocks self-endorsement case-insensitively and across surrounding whitespace", () => {
+    saveContribution(ALICE_CARD);
+    expect(() => recordPersistedEndorsementFromReviewer("contrib-1", "  Alice  ")).toThrow(
+      SelfEndorsementNotAllowedError,
+    );
+    expect(getContribution("contrib-1")).toEqual(ALICE_CARD);
+  });
+
+  it("still allows endorsing someone else's contribution", () => {
+    saveContribution(ALICE_CARD);
+    saveContribution(BOB_SUMMARY);
+    const updated = recordPersistedEndorsementFromReviewer("contrib-2", "alice");
+    expect(updated?.reviewerEndorsements[0]?.reviewerId).toBe("alice");
   });
 });
 

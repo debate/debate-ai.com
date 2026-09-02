@@ -22,7 +22,6 @@ import { useEffect, useMemo, useState } from "react"
 import {
   ArgumentLibraryPanel,
   CardScoringPanel,
-  ContributionsFeedPanel,
   ContributorAwardsPanel,
   EvidenceLibraryPanel,
   QuestStreaksPanel,
@@ -34,6 +33,7 @@ import {
 import { useSession } from "@/lib/hooks/useSession"
 import { TaskInboxWithIdentity } from "./TaskInboxWithIdentity"
 import { ContributionLeaderboardWithIdentity } from "./ContributionLeaderboardWithIdentity"
+import { ContributionsFeedWithIdentity } from "./ContributionsFeedWithIdentity"
 import { ProgressUnlocksWithIdentity } from "./ProgressUnlocksWithIdentity"
 import { ResearchProgressWithIdentity } from "./ResearchProgressWithIdentity"
 import { DailyQuestsWithIdentity } from "./DailyQuestsWithIdentity"
@@ -197,7 +197,7 @@ export function ResearchHub() {
         <div className="flex flex-col gap-4">
           <ContributionLeaderboardWithIdentity />
           <ContributorAwardsPanel />
-          <ContributionsFeedPanel />
+          <ContributionsFeedWithIdentity />
           <DailyBestCardWithIdentity />
           <RevisionIncentivesPanel />
         </div>

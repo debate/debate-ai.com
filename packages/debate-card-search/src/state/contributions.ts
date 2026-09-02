@@ -57,6 +57,18 @@
  * for a given direction, instead of duplicating that received/given branch
  * in JSX.
  *
+ * `SelfEndorsementNotAllowedError`/`assertEndorserAllowed`, enforced inside
+ * `recordPersistedEndorsementFromReviewer`, close half of idea #11's "real
+ * reviewer-identity/permission checks so a 'given' entry can't be spoofed
+ * under an arbitrary reviewer id" follow-up in TODO.md — a reviewer id can no
+ * longer match the endorsed contribution's own `contributorId`
+ * (case-insensitive, trimmed), mirroring `peer-review.ts`'s
+ * `assertReviewerAllowed`/`SelfReviewNotAllowedError` self-action guard. The
+ * other half — locking "who is endorsing" to a real signed-in session instead
+ * of a free-typed id — is enforced in `panels/ContributionsFeedPanel.tsx` via
+ * `session-identity.ts`'s `deriveLockedVerifierId`, the same mechanism
+ * `TaskInboxPanel` uses for task verification.
+ *
  * @module state/contributions
  */
 
@@ -183,6 +195,31 @@ export function recordPersistedEndorsement(
   }));
 }
 
+/** Thrown when a reviewer id matches the endorsed contribution's own `contributorId` — no self-endorsement. */
+export class SelfEndorsementNotAllowedError extends Error {
+  constructor(reviewerId: string) {
+    super(`Reviewer "${reviewerId}" cannot endorse their own contribution`);
+    this.name = "SelfEndorsementNotAllowedError";
+  }
+}
+
+/**
+ * Guards `recordPersistedEndorsementFromReviewer`: `reviewerId` can't match
+ * `contribution`'s own `contributorId` (case-insensitive, trimmed) — mirrors
+ * `peer-review.ts`'s `assertReviewerAllowed` self-action guard. Returns the
+ * trimmed `reviewerId` when the endorsement is allowed.
+ */
+function assertEndorserAllowed(
+  contribution: AttributedContribution,
+  reviewerId: string,
+): string {
+  const trimmed = reviewerId.trim();
+  if (contribution.contributorId.trim().toLowerCase() === trimmed.toLowerCase()) {
+    throw new SelfEndorsementNotAllowedError(trimmed);
+  }
+  return trimmed;
+}
+
 /**
  * Records a reviewer endorsement on a stored contribution, deriving the
  * endorsement's weight from `reviewerId`'s own persisted contribution
@@ -192,14 +229,20 @@ export function recordPersistedEndorsement(
  * caller-supplied weight per endorsement"). A reviewer with no persisted
  * contributions of their own still gets `MIN_REVIEWER_CREDIBILITY`, not the
  * old fixed full-credibility placeholder. Returns the updated contribution,
- * or `undefined` if no contribution is stored for `id`.
+ * or `undefined` if no contribution is stored for `id`. Throws
+ * `SelfEndorsementNotAllowedError` when `reviewerId` matches the
+ * contribution's own `contributorId` — see `assertEndorserAllowed`.
  */
 export function recordPersistedEndorsementFromReviewer(
   id: string,
   reviewerId: string,
 ): AttributedContribution | undefined {
-  const reviewerWeight = computeReviewerCredibility(listContributionsByContributor(reviewerId));
-  return recordPersistedEndorsement(id, reviewerWeight, reviewerId);
+  const contribution = getContribution(id);
+  if (!contribution) return undefined;
+
+  const trimmedReviewerId = assertEndorserAllowed(contribution, reviewerId);
+  const reviewerWeight = computeReviewerCredibility(listContributionsByContributor(trimmedReviewerId));
+  return recordPersistedEndorsement(id, reviewerWeight, trimmedReviewerId);
 }
 
 /** Which side of an endorsement a `listEndorsementsByContributor` query looks at. */

@@ -51,11 +51,18 @@ past contributions (`listCombinedPersistedTags`).
 ```
 state/contributions.ts (localStorage: "contributions")
   → saveContribution() / recordPersistedLike() / recordPersistedSave() /
-    recordPersistedEndorsementFromReviewer()
+    recordPersistedEndorsementFromReviewer()  — throws
+    SelfEndorsementNotAllowedError for a reviewer id matching the
+    contribution's own contributorId
   → buildPersistedContributionFeed()
   → filterFlaggedFeedEntries()  — moderator "Flagged for review" toggle
-  → panels/ContributionsFeedPanel.tsx (renders the form + ranked feed)
-  → apps/debate-ai.com/app/cards/contributions/page.tsx (mounts the panel as a route)
+  → panels/ContributionsFeedPanel.tsx (renders the form + ranked feed; takes
+    an optional signedInContributorId prop that locks the endorsing reviewer
+    id via session-identity.ts's deriveLockedVerifierId)
+  → apps/debate-ai.com/components/research/ContributionsFeedWithIdentity.tsx
+    (derives signedInContributorId from the real signed-in session)
+  → apps/debate-ai.com/app/cards/contributions/page.tsx and
+    ResearchHub.tsx's Rewards tab (both mount ContributionsFeedWithIdentity)
 
 state/evidenceLibraryEntries.ts (localStorage: "evidenceLibraryEntries")
   → listCombinedPersistedTags()   — tag-autocomplete suggestions
@@ -85,15 +92,50 @@ Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`
 (every backing-store key, the `null`-key clear-all case, and unrelated/
 substring-matching keys staying ignored).
 
+## Reviewer-identity checks on endorsing
+
+Closes idea #11's "real reviewer-identity/permission checks so a 'given'
+entry can't be spoofed under an arbitrary reviewer id" follow-up in TODO.md.
+
+`ContributionsFeedPanel` takes an optional `signedInContributorId` prop
+(`ContributionsFeedWithIdentity.tsx`, mirroring `ReviewQueueWithIdentity.tsx`'s
+`better-auth`-derived pattern) mounted at both `/cards/contributions` and
+`ResearchHub.tsx`'s Rewards tab. Once signed in:
+
+- The free-typed "Reviewer ID (for endorsing)" box is replaced with a static
+  "Endorsing as …" line — a visitor can no longer type someone else's id to
+  endorse under it.
+- Every entry's Endorse action is locked to the signed-in id via
+  `session-identity.ts`'s `deriveLockedVerifierId`, the same mechanism
+  `TaskInboxPanel` uses for task verification.
+- An entry that's the visitor's own contribution has its Endorse button
+  disabled outright (`isOwnContributorRow`), with a note explaining why.
+
+`state/contributions.ts#recordPersistedEndorsementFromReviewer` separately
+guards the same self-endorsement case in the store itself — a reviewer id
+can never match the endorsed contribution's own `contributorId`
+(case-insensitive, trimmed), throwing `SelfEndorsementNotAllowedError`
+(caught by the panel and shown as an inline error) — mirroring
+`peer-review.ts`'s `assertReviewerAllowed`/`SelfReviewNotAllowedError`
+self-action guard. This still blocks a signed-out visitor who happens to type
+their own contribution's id, just via an inline error rather than a disabled
+button, since a signed-out visitor has no real identity to lock the field to.
+
+Vitest-covered in `packages/debate-card-search/test/contributions.test.ts`
+(self-endorsement throws, case-insensitively and across whitespace; endorsing
+someone else's contribution still succeeds).
+
 ## Known gaps
 
 - A submitted contribution starts with a neutral `qualitySignals: [0.5]`
   placeholder — no automated quality scorer is wired into this submission
   form yet.
-- No reviewer-identity/permission checks (no auth/roles in this repo yet) —
-  a "Reviewer ID" is just a typed string, so nothing stops one person from
-  endorsing under many different reviewer ids to inflate an endorsement's
-  weight.
+- The reviewer-identity lock only stops a *signed-in* visitor from spoofing
+  a different reviewer id or endorsing their own contribution. It doesn't
+  stop the same real person from endorsing under many different *accounts*
+  (this repo's auth has no such cross-account fraud detection), and a
+  signed-out visitor can still type any reviewer id other than the
+  contribution's own contributor id.
 - Every other localStorage-backed panel in this repo beyond the ones listed
   in [`shared-flow-sync.md`](shared-flow-sync.md)'s Known gaps still has no
   cross-tab live-update mechanism.
