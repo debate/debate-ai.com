@@ -22,7 +22,17 @@ For every judge with a saved `JudgeProfile`:
 | Avg speaker pts | Overall average speaker points awarded |
 | Speed tolerance | `low` / `medium` / `high`, or "unknown" if no round tracked pace |
 | Theory receptiveness | `low` / `medium` / `high`, or "unknown" if no round raised a theory argument |
-| Paradigm | The judge's most-tagged paradigm, if any round was tagged with one |
+| Paradigm | The judge's most-tagged paradigm, if any round was tagged with one, with a "N% confidence" badge showing its share of paradigm-tagged rounds |
+
+The confidence badge is `mostCommonParadigmConfidence` (`judge-profile.ts`):
+the most-tagged paradigm's tag count divided by the judge's total number of
+paradigm-tagged rounds (untagged rounds don't count toward the denominator).
+A judge tagged `flow` in 2 of 3 tagged rounds shows "67% confidence"; a judge
+tagged the same paradigm every time shows "100% confidence." The same figure
+is folded into `buildJudgeTendencySummary`'s "Most-tagged paradigm" line (used
+by the [Pre-Round Intelligence Panel](pre-round-briefings.md)) and into
+`scout-to-strategy.ts`'s `buildJudgeAdaptationNotes`, so a low-confidence tag
+reads as a tentative signal everywhere it's surfaced, not just here.
 
 ## Logging a judged round
 

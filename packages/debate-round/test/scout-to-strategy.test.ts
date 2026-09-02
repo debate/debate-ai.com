@@ -286,7 +286,7 @@ describe("buildJudgeAdaptationNotes", () => {
     const notes = buildJudgeAdaptationNotes(judgeProfile);
     expect(notes).toContain("Full speed is fine — this judge tracks high-pace delivery well.");
     expect(notes).toContain("This judge has historically favored the aff side.");
-    expect(notes).toContain("Most-tagged paradigm: flow — frame weighing accordingly.");
+    expect(notes).toContain("Most-tagged paradigm: flow (100% confidence) — frame weighing accordingly.");
   });
 
   it("notes a neg-favoring side bias", () => {

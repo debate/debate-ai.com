@@ -79,6 +79,7 @@ describe("buildJudgeProfile", () => {
     expect(profile.theoryReceptiveness).toBeNull();
     expect(profile.theoryWinRate).toBeNull();
     expect(profile.mostCommonParadigm).toBeNull();
+    expect(profile.mostCommonParadigmConfidence).toBeNull();
   });
 
   it("counts side wins and unique tournaments across the history", () => {
@@ -178,6 +179,41 @@ describe("buildJudgeProfile", () => {
     ]);
     expect(profile.mostCommonParadigm).toBe("critic");
   });
+
+  it("reports the most-common paradigm's confidence as its share of tagged rounds", () => {
+    const profile = buildJudgeProfile("smith", [
+      record({ paradigmId: "flow" }),
+      record({ paradigmId: "flow" }),
+      record({ paradigmId: "lay" }),
+    ]);
+    expect(profile.mostCommonParadigmConfidence).toBeCloseTo(2 / 3);
+  });
+
+  it("reports full confidence when every tagged round agrees", () => {
+    const profile = buildJudgeProfile("smith", [
+      record({ paradigmId: "flow" }),
+      record({ paradigmId: "flow" }),
+    ]);
+    expect(profile.mostCommonParadigmConfidence).toBe(1);
+  });
+
+  it("ignores untagged rounds when computing confidence", () => {
+    const profile = buildJudgeProfile("smith", [
+      record({ paradigmId: "flow" }),
+      record({ paradigmId: "flow" }),
+      record(),
+      record(),
+      record(),
+    ]);
+    expect(profile.mostCommonParadigm).toBe("flow");
+    expect(profile.mostCommonParadigmConfidence).toBe(1);
+  });
+
+  it("is null when no round tagged a paradigm", () => {
+    const profile = buildJudgeProfile("smith", [record(), record()]);
+    expect(profile.mostCommonParadigm).toBeNull();
+    expect(profile.mostCommonParadigmConfidence).toBeNull();
+  });
 });
 
 describe("groupRecordsByJudge / buildJudgeProfiles", () => {
@@ -227,7 +263,7 @@ describe("buildJudgeTendencySummary", () => {
     const withParadigm = buildJudgeTendencySummary(
       buildJudgeProfile("smith", [record({ paradigmId: "flow" })]),
     );
-    expect(withParadigm).toContain("Most-tagged paradigm: flow");
+    expect(withParadigm).toContain("Most-tagged paradigm: flow (100% confidence)");
 
     const withoutParadigm = buildJudgeTendencySummary(buildJudgeProfile("smith", [record()]));
     expect(withoutParadigm).not.toContain("Most-tagged paradigm");

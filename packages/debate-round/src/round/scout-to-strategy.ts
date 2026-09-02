@@ -123,7 +123,10 @@ export function buildJudgeAdaptationNotes(judgeProfile?: JudgeProfile): string[]
   }
 
   if (judgeProfile.mostCommonParadigm) {
-    notes.push(`Most-tagged paradigm: ${judgeProfile.mostCommonParadigm} — frame weighing accordingly.`);
+    const confidencePct = Math.round((judgeProfile.mostCommonParadigmConfidence ?? 0) * 100);
+    notes.push(
+      `Most-tagged paradigm: ${judgeProfile.mostCommonParadigm} (${confidencePct}% confidence) — frame weighing accordingly.`,
+    );
   }
 
   if (notes.length === 0) {
