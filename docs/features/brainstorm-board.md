@@ -236,14 +236,58 @@ remains intentionally untested, matching every other panel in this repo
 whose wiring is exercised only through the shared pure predicate's own
 tests.
 
+## Sending a board's top idea to the Argument Library
+
+Each board's top-ranked idea gets a "Send to Argument Library" action next to
+its Upvote button — the "a one-click 'send top idea to Argument Library'
+action" follow-up named under the "🧠 Team Brainstorm Assist" bullet in
+`TODO.md`. Clicking it opens an inline form for Topic and Case area — the
+Common Argument Library's own required fields, which a `BrainstormIdea`
+doesn't carry (Topic defaults to whichever topic is currently selected in the
+switcher above, if any). Confirming saves the idea as a `block`-kind
+`EvidenceLibraryEntry` (a team-drafted reusable analytic, not cut from an
+outside source, so `cite` is blank) through the existing
+`evidenceLibraryEntries.ts` store — the same store `EvidenceLibraryPanel`/
+`ArgumentLibraryPanel` already read, so the idea appears in the Argument
+Library immediately, filed under the chosen topic/case area and tagged with
+its brainstorm category (e.g. "Impact Framing").
+
+```
+panels/BrainstormBoardPanel.tsx ("Send to Argument Library" → confirm)
+  → sendBrainstormIdeaToArgumentLibrary(idea, topic, caseArea) — state/brainstormIdeas.ts
+      → buildEvidenceEntryFromBrainstormIdea(idea, topic, caseArea) — lib/team-brainstorm-assist.ts (pure)
+          (kind: "block", cite: "", tags: [that category's label],
+           wordCount via shared-evidence-library.ts's computeWordCount)
+      → stamps createdAt, then saveEvidenceLibraryEntry(entry) — state/evidenceLibraryEntries.ts
+  → panel re-reads isBrainstormIdeaInArgumentLibrary(idea.id) via refresh()
+```
+
+The saved entry's `id` (`` `brainstorm-${idea.id}` ``) is deterministic from
+the brainstorm idea's own id, so sending the same idea again overwrites the
+same Argument Library entry (an upsert) instead of creating a duplicate.
+Once sent, that idea's action is replaced with a "✓ In Argument Library"
+badge (`isBrainstormIdeaInArgumentLibrary`) so a squad doesn't re-send it by
+accident. Only a board's top-ranked idea gets this action — sending any
+other idea on the board isn't offered in this first slice. Vitest-covered:
+`packages/debate-card-search/test/team-brainstorm-assist.test.ts`
+(`buildEvidenceEntryFromBrainstormIdea`: the converted entry's shape, its
+deterministic id, its category tag, and that it leaves `createdAt` unstamped)
+and `packages/debate-card-search/test/brainstormIdeas.test.ts`
+(`sendBrainstormIdeaToArgumentLibrary`: saving under the given topic/case
+area and overwriting on a repeat send; `isBrainstormIdeaInArgumentLibrary`:
+false before sending, true after).
+
 ## Known gaps
 
 - No reviewer/moderator identity check gates the merge action — any visitor
   can merge any two ideas on a board, same as every other unauthenticated
   moderator-style action in this repo (upvoting, approving a peer review,
-  etc. — no auth system exists here yet).
+  etc. — no auth system exists here yet). The same applies to "Send to
+  Argument Library" — any visitor can send any board's top idea.
 - "Contributor ID" is still free-form text, not a login — a real signed-in
   session only *prefills* it (see "Signed-in prefill" above), so a visitor
   can still overwrite it to submit under any id. There is no server-side
   session check on `saveBrainstormIdea`, the same trust boundary every
   other localStorage-backed action in this repo has.
+- "Send to Argument Library" only ever offers a board's top-ranked idea, not
+  any other idea on the board.

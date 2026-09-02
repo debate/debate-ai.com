@@ -6,6 +6,53 @@
 _No task currently in progress._
 
 ### Completed
+- **Team Brainstorm Assist — "send top idea to Argument Library" action.**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that half is already fully built (see the many prior Completed
+  entries below), and the one open PR (#437, "Consolidate UI primitives and
+  add web extension scaffold") doesn't touch this area, so this slice picked
+  the "🧠 Team Brainstorm Assist" bullet's own next-named follow-up: "a
+  one-click 'send top idea to Argument Library' action." Each board's
+  top-ranked idea (`BrainstormBoardPanel`) now gets a "Send to Argument
+  Library" action next to its Upvote button. Clicking it opens an inline
+  Topic/Case area form (the Common Argument Library's own required fields, a
+  `BrainstormIdea` doesn't carry either, Topic defaulting to whichever topic
+  is currently selected in the panel's topic switcher); confirming calls a
+  new pure `buildEvidenceEntryFromBrainstormIdea(idea, topic, caseArea)` in
+  `lib/team-brainstorm-assist.ts`, which converts the idea into a
+  `block`-kind `EvidenceLibraryEntry` (a team-drafted analytic, not cut from
+  an outside source, so `cite` is blank, tagged with the idea's own category
+  label, word-counted via `shared-evidence-library.ts`'s existing
+  `computeWordCount`, and given a deterministic id derived from the idea's
+  own id so re-sending the same idea overwrites the same entry instead of
+  duplicating it). A new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary`
+  stamps `createdAt` and saves it through the already-existing
+  `evidenceLibraryEntries.ts` store's `saveEvidenceLibraryEntry` — the same
+  store `EvidenceLibraryPanel`/`ArgumentLibraryPanel` already read, so a sent
+  idea shows up in the Argument Library immediately with no new storage or
+  browsing path. A new `isBrainstormIdeaInArgumentLibrary` lets the panel
+  swap the action for a "✓ In Argument Library" badge once sent. See
+  `docs/features/brainstorm-board.md`'s new "Sending a board's top idea to
+  the Argument Library" section. Vitest-covered:
+  `packages/debate-card-search/test/team-brainstorm-assist.test.ts` gained a
+  `buildEvidenceEntryFromBrainstormIdea` suite (converted entry shape,
+  deterministic id across two sends, category tag, and that `createdAt` is
+  deliberately left unstamped) and
+  `packages/debate-card-search/test/brainstormIdeas.test.ts` gained
+  `sendBrainstormIdeaToArgumentLibrary` (saves under the given topic/case
+  area; a repeat send overwrites the same entry) and
+  `isBrainstormIdeaInArgumentLibrary` (false before sending, true after)
+  suites. Verified with `bun run test` (219 test files, 3696 tests, all
+  passing), `bun run typecheck` (root, all 13 typechecked packages, clean),
+  and a full `bun run build` (the whole monorepo build, including
+  `debate-ai-web`'s production build) — all pass. No lint script/config
+  exists in this repo to run. Remaining follow-ups for this idea (idea-
+  ranking UI polish — upvote affordance/animation — and an optional
+  brainstorm-session timer) stay open; a future run should pick one of those
+  or a fresh next-step if one becomes worth doing.
 - **Word-Count-Only Speech Format — "synced from another device" toast
   (idea #2's own next-named follow-up).** Another repeat of the standing
   prompt ("integrate all the tools into the UI... create user settings and
@@ -12892,7 +12939,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🤖 **AI Practice Opponent** (`/practice-opponent`) — share a custom-authored persona across a team instead of per-user only; a difficulty slider layered on top of persona choice; post-round feedback tips specific to the persona faced.
 * 🎙️ **AI Coach Mode** (`/coaching`) — a coaching-session history timeline per round; a side-by-side comparison across two rounds; an exportable coaching-notes document.
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.
-* 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — polish the idea-ranking UI (upvote affordance/animation); a one-click "send top idea to Argument Library" action; an optional brainstorm-session timer.
+* 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. Next: polish the idea-ranking UI (upvote affordance/animation); an optional brainstorm-session timer.
 * 📋 **Shared Evidence Library** (`/cards/library`) — saved searches with alerts on new matches; bulk tag editing across a filtered result set; a one-click citation-format export.
 * 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — threaded replies on a note instead of flat status; a priority flag; a digest notification instead of one per assignment.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.

@@ -6,6 +6,7 @@ import {
   buildBrainstormPrompt,
   buildBrainstormPromptsForCoverageGaps,
   buildBrainstormSummaryText,
+  buildEvidenceEntryFromBrainstormIdea,
   groupIdeasByBoard,
   mergeBrainstormIdeas,
   rankBrainstormIdeas,
@@ -238,5 +239,44 @@ describe("buildBrainstormSummaryText", () => {
     const text = buildBrainstormSummaryText(board);
     expect(text).toContain("1 idea,");
     expect(text).not.toContain("duplicate");
+  });
+});
+
+describe("buildEvidenceEntryFromBrainstormIdea", () => {
+  const idea: BrainstormIdea = {
+    id: "idea-9",
+    argBlock: "Warming DA",
+    category: "impact_framing",
+    contributorId: "alex",
+    text: "Weigh probability over magnitude on warming impacts",
+    upvotes: 5,
+  };
+
+  it("converts the idea into a block-kind evidence entry filed under the given topic/case area", () => {
+    const entry = buildEvidenceEntryFromBrainstormIdea(idea, "Energy Policy", "Aff");
+
+    expect(entry.kind).toBe("block");
+    expect(entry.topic).toBe("Energy Policy");
+    expect(entry.caseArea).toBe("Aff");
+    expect(entry.argBlock).toBe("Warming DA");
+    expect(entry.text).toBe(idea.text);
+    expect(entry.cite).toBe("");
+    expect(entry.wordCount).toBeGreaterThan(0);
+  });
+
+  it("derives a deterministic id from the idea's own id, so sending twice targets the same entry", () => {
+    const first = buildEvidenceEntryFromBrainstormIdea(idea, "Energy Policy", "Aff");
+    const second = buildEvidenceEntryFromBrainstormIdea(idea, "Energy Policy", "Neg");
+    expect(first.id).toBe(second.id);
+  });
+
+  it("tags the entry with the idea's category label", () => {
+    const entry = buildEvidenceEntryFromBrainstormIdea(idea, "Energy Policy", "Aff");
+    expect(entry.tags).toEqual(["Impact Framing"]);
+  });
+
+  it("does not stamp a createdAt — that's left to the caller", () => {
+    const entry = buildEvidenceEntryFromBrainstormIdea(idea, "Energy Policy", "Aff");
+    expect(entry.createdAt).toBeUndefined();
   });
 });

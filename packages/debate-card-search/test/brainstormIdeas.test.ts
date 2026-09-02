@@ -4,12 +4,15 @@ import {
   buildBrainstormBoardsPanelViewForTopic,
   deleteBrainstormIdea,
   getBrainstormIdea,
+  isBrainstormIdeaInArgumentLibrary,
   listBrainstormIdeas,
   mergePersistedBrainstormIdeas,
   saveBrainstormIdea,
+  sendBrainstormIdeaToArgumentLibrary,
   upvotePersistedBrainstormIdea,
 } from "../src/state/brainstormIdeas";
 import { saveTrackedArgument } from "../src/state/trackedArguments";
+import { getEvidenceLibraryEntry } from "../src/state/evidenceLibraryEntries";
 import type { BrainstormIdea } from "../src/lib/team-brainstorm-assist";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -241,5 +244,39 @@ describe("mergePersistedBrainstormIdeas", () => {
     saveBrainstormIdea(SOLVENCY_IDEA);
     mergePersistedBrainstormIdeas("idea-1", "missing");
     expect(listBrainstormIdeas()).toEqual([SOLVENCY_IDEA]);
+  });
+});
+
+describe("sendBrainstormIdeaToArgumentLibrary", () => {
+  it("saves the idea as a block-kind evidence-library entry under the given topic/case area", () => {
+    sendBrainstormIdeaToArgumentLibrary(SOLVENCY_IDEA, "Energy Policy", "Aff");
+
+    const entry = getEvidenceLibraryEntry(`brainstorm-${SOLVENCY_IDEA.id}`);
+    expect(entry).toBeDefined();
+    expect(entry?.kind).toBe("block");
+    expect(entry?.topic).toBe("Energy Policy");
+    expect(entry?.caseArea).toBe("Aff");
+    expect(entry?.argBlock).toBe(SOLVENCY_IDEA.argBlock);
+    expect(entry?.text).toBe(SOLVENCY_IDEA.text);
+    expect(entry?.createdAt).toBeTypeOf("number");
+  });
+
+  it("overwrites the same entry when the same idea is sent again", () => {
+    sendBrainstormIdeaToArgumentLibrary(SOLVENCY_IDEA, "Energy Policy", "Aff");
+    sendBrainstormIdeaToArgumentLibrary(SOLVENCY_IDEA, "Energy Policy", "Neg");
+
+    const entry = getEvidenceLibraryEntry(`brainstorm-${SOLVENCY_IDEA.id}`);
+    expect(entry?.caseArea).toBe("Neg");
+  });
+});
+
+describe("isBrainstormIdeaInArgumentLibrary", () => {
+  it("is false before the idea has been sent", () => {
+    expect(isBrainstormIdeaInArgumentLibrary(SOLVENCY_IDEA.id)).toBe(false);
+  });
+
+  it("is true once the idea has been sent", () => {
+    sendBrainstormIdeaToArgumentLibrary(SOLVENCY_IDEA, "Energy Policy", "Aff");
+    expect(isBrainstormIdeaInArgumentLibrary(SOLVENCY_IDEA.id)).toBe(true);
   });
 });
