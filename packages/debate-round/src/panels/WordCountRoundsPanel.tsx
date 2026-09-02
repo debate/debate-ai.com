@@ -28,6 +28,12 @@
  * — with an optional per-speech-name filter once more than one speech name
  * has history.
  *
+ * Also shows a dismissible "🔄 Synced N round(s) from another device"
+ * notice — TODO.md idea #2's own next-named follow-up — the moment
+ * `useWordCountRounds`'s account merge actually adopts a remote copy on
+ * mount (`justSyncedRoundIds`/`dismissSyncNotice`, message built by
+ * `state/wordCountRounds.ts#buildWordCountSyncNoticeMessage`).
+ *
  * @module panels/WordCountRoundsPanel
  */
 
@@ -54,7 +60,7 @@ import {
   getWordCountStatus,
   type WordCountStyleKey,
 } from "debate-timer/src/formats/word-count-format"
-import { buildWordCountTrendData, getWordCountRoundStatuses } from "../state/wordCountRounds"
+import { buildWordCountSyncNoticeMessage, buildWordCountTrendData, getWordCountRoundStatuses } from "../state/wordCountRounds"
 import { findPresetWordLimit } from "../state/wordLimitPresets"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
@@ -86,7 +92,8 @@ function emptyDrafts(styleKey: WordCountStyleKey): Record<string, SpeechDraft> {
  */
 export function WordCountRoundsPanel() {
   const { presets } = useWordLimitPresets()
-  const { rounds, synced, saveRound, deleteRound, clearAllRounds } = useWordCountRounds()
+  const { rounds, synced, saveRound, deleteRound, clearAllRounds, justSyncedRoundIds, dismissSyncNotice } =
+    useWordCountRounds()
   const [roundId, setRoundId] = useState("")
   const [styleKey, setStyleKey] = useState<WordCountStyleKey>(wordCountStyleMap[0])
   const [drafts, setDrafts] = useState<Record<string, SpeechDraft>>(emptyDrafts(wordCountStyleMap[0]))
@@ -185,6 +192,15 @@ export function WordCountRoundsPanel() {
             : "Sign in to sync your round history — including the trend below — across devices."}
         </p>
       </div>
+
+      {justSyncedRoundIds.length > 0 && (
+        <div className="flex items-center justify-between gap-3 rounded-md border border-primary/30 bg-primary/10 p-3 text-sm">
+          <span>{buildWordCountSyncNoticeMessage(justSyncedRoundIds)}</span>
+          <Button variant="ghost" size="sm" onClick={dismissSyncNotice}>
+            Dismiss
+          </Button>
+        </div>
+      )}
 
       <div className="rounded-lg border border-border p-4 space-y-4">
         <div className="flex flex-wrap gap-4">

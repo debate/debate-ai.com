@@ -159,6 +159,62 @@ export function resolveWordCountRoundConflict(
   return "none";
 }
 
+export type WordCountRoundMergePlan = {
+  /** Records to adopt locally — new to this device, or the remote copy is newer per `resolveWordCountRoundConflict`. */
+  adopt: WordCountRoundRecord[];
+  /** Local records to best-effort push to the account — new to the account, or the local copy is newer. */
+  pushLocal: WordCountRoundRecord[];
+};
+
+/**
+ * Pure merge-planning step for `hooks/useWordCountRounds.ts`'s account
+ * merge, extracted so it's directly testable without a hook/DOM harness.
+ * For each `roundId`, decides whether the remote copy should be adopted
+ * locally or the local copy should be (best-effort) pushed to the account,
+ * via `resolveWordCountRoundConflict` when a `roundId` exists on both
+ * sides. The caller applies both effects; this only decides.
+ */
+export function planWordCountRoundMerge(
+  localRecords: WordCountRoundRecord[],
+  remoteRecords: WordCountRoundRecord[],
+): WordCountRoundMergePlan {
+  const localById = new Map(localRecords.map((record) => [record.roundId, record]));
+  const remoteIds = new Set(remoteRecords.map((record) => record.roundId));
+
+  const adopt: WordCountRoundRecord[] = [];
+  const pushLocal: WordCountRoundRecord[] = [];
+
+  for (const remote of remoteRecords) {
+    const local = localById.get(remote.roundId);
+    if (!local) {
+      adopt.push(remote);
+      continue;
+    }
+    const resolution = resolveWordCountRoundConflict(local, remote);
+    if (resolution === "remote") adopt.push(remote);
+    else if (resolution === "local") pushLocal.push(local);
+  }
+  for (const local of localRecords) {
+    if (!remoteIds.has(local.roundId)) pushLocal.push(local);
+  }
+
+  return { adopt, pushLocal };
+}
+
+/**
+ * Renders a short "synced from another device" notice for a dismissible
+ * toast, for the `roundId`s a merge just adopted from the account (i.e.
+ * `planWordCountRoundMerge`'s `adopt` list) — TODO.md idea #2's "surfacing a
+ * 'synced just now from another device' toast when the merge actually
+ * adopts a remote copy" follow-up. Returns an empty string for an empty
+ * list — callers should only render a banner when this is non-empty.
+ */
+export function buildWordCountSyncNoticeMessage(adoptedRoundIds: string[]): string {
+  if (adoptedRoundIds.length === 0) return "";
+  if (adoptedRoundIds.length === 1) return `🔄 Synced round ${adoptedRoundIds[0]} from another device.`;
+  return `🔄 Synced ${adoptedRoundIds.length} rounds from another device: ${adoptedRoundIds.join(", ")}.`;
+}
+
 /** Deletes a round's persisted state; a no-op if it isn't stored. */
 export function deleteWordCountRound(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
