@@ -559,6 +559,44 @@ export const savedDailyBestCardComments = sqliteTable(
 
 export type SavedDailyBestCardCommentRow = typeof savedDailyBestCardComments.$inferSelect;
 
+// Account-linked strategy-recommendation-history sync — the "🧭
+// Scout-to-Strategy Workflow" bullet's "a history log of past strategy
+// recommendations per matchup" follow-up under Research Crowdsourcing
+// Organizer Features in TODO.md. Same append-only-log shape as
+// `savedJudgeDecisions`/`savedCounselPanelAssessments` above (many rows can
+// share a `matchupId`), so `clientId` here holds the recommendation's own
+// generated `StrategyRecommendationRecord.id`. `matchupId` is a plain
+// (non-unique) indexed column so `GET /api/strategy-recommendations` and the
+// merge hook can still resolve/group a matchup's full history.
+export const savedStrategyRecommendations = sqliteTable(
+  "saved_strategy_recommendations",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    matchupId: text("matchup_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_strategy_recommendations_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_strategy_recommendations_user_client").on(
+      table.userId,
+      table.clientId,
+    ),
+    matchupIdIdx: index("idx_saved_strategy_recommendations_matchup_id").on(table.matchupId),
+  }),
+);
+
+export type SavedStrategyRecommendationRow = typeof savedStrategyRecommendations.$inferSelect;
+
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can
