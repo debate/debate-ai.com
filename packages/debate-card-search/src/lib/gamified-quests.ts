@@ -185,6 +185,140 @@ export function buildStreakSummaryText(status: ContributorQuestStreak): string {
 }
 
 /**
+ * Applies a set of "streak freeze" (grace-day) dayKeys to a contributor's
+ * mission-result history, marking each frozen day complete — upserting a
+ * fresh `{ dayKey, isComplete: true }` record when the day has no result at
+ * all (e.g. a day a contributor never even opened the app). Every other
+ * streak/badge function in this module (`computeStreakStatus`,
+ * `getEarnedStreakBadges`, `buildContributorQuestStreak`,
+ * `deriveEarnedStreakMilestoneEvents`) already treats "complete" days as
+ * streak-continuing, so a frozen day bridges a gap in the streak the exact
+ * same way a real completed mission would, without needing any changes to
+ * those functions — callers just run the raw history through this first.
+ * Does not mutate the input array.
+ */
+export function applyStreakFreezes(
+  results: DailyMissionResult[],
+  frozenDayKeys: string[] | Set<string>,
+): DailyMissionResult[] {
+  const frozenSet = frozenDayKeys instanceof Set ? frozenDayKeys : new Set(frozenDayKeys);
+  if (frozenSet.size === 0) return results;
+
+  const byDayKey = new Map(results.map((result) => [result.dayKey, result]));
+  for (const dayKey of frozenSet) {
+    byDayKey.set(dayKey, { dayKey, isComplete: true });
+  }
+  return Array.from(byDayKey.values());
+}
+
+/** How many trailing days a contributor's streak-freeze allowance replenishes over. */
+export const STREAK_FREEZE_WINDOW_DAYS = 30;
+
+/** How many streak freezes a contributor may use within any `STREAK_FREEZE_WINDOW_DAYS`-day trailing window. */
+export const MAX_STREAK_FREEZES_PER_WINDOW = 2;
+
+/**
+ * Counts how many of a contributor's already-used freeze days fall within
+ * the trailing `windowDays`-day window ending at (and including) `asOfDayKey`
+ * — the usage that counts against their rolling allowance. A freeze used
+ * further in the past ages out and no longer counts, so the allowance
+ * replenishes over time rather than being a lifetime cap.
+ */
+export function countStreakFreezesUsedInWindow(
+  usedFreezeDayKeys: string[],
+  asOfDayKey: string,
+  windowDays: number = STREAK_FREEZE_WINDOW_DAYS,
+): number {
+  const windowStart = new Date(`${asOfDayKey}T00:00:00.000Z`);
+  windowStart.setUTCDate(windowStart.getUTCDate() - (windowDays - 1));
+  const windowStartDayKey = windowStart.toISOString().slice(0, 10);
+
+  return usedFreezeDayKeys.filter((dayKey) => dayKey >= windowStartDayKey && dayKey <= asOfDayKey).length;
+}
+
+/**
+ * How many streak freezes a contributor has left to spend, as of
+ * `asOfDayKey` — the allowance minus whatever they've already used within
+ * the trailing window. Never negative.
+ */
+export function getAvailableStreakFreezes(
+  usedFreezeDayKeys: string[],
+  asOfDayKey: string,
+  maxFreezes: number = MAX_STREAK_FREEZES_PER_WINDOW,
+  windowDays: number = STREAK_FREEZE_WINDOW_DAYS,
+): number {
+  return Math.max(0, maxFreezes - countStreakFreezesUsedInWindow(usedFreezeDayKeys, asOfDayKey, windowDays));
+}
+
+/** Why a streak freeze can't be applied to a given day, or `null` if it's allowed. */
+export type StreakFreezeDenialReason = "future-day" | "already-complete" | "already-frozen" | "no-freezes-available";
+
+/**
+ * Validates whether a contributor may spend a streak freeze on `dayKey`:
+ * the day can't be in the future, can't already be a completed mission day
+ * (freezing it would be pointless), can't already be frozen, and the
+ * contributor must have at least one freeze left in their rolling
+ * allowance. Returns the specific denial reason rather than a bare boolean
+ * so a caller can render an actionable message.
+ */
+export function canApplyStreakFreeze(
+  results: DailyMissionResult[],
+  usedFreezeDayKeys: string[],
+  dayKey: string,
+  asOfDayKey: string,
+  maxFreezes: number = MAX_STREAK_FREEZES_PER_WINDOW,
+  windowDays: number = STREAK_FREEZE_WINDOW_DAYS,
+): StreakFreezeDenialReason | null {
+  if (dayKey > asOfDayKey) return "future-day";
+  if (usedFreezeDayKeys.includes(dayKey)) return "already-frozen";
+  if (results.some((result) => result.dayKey === dayKey && result.isComplete)) return "already-complete";
+  if (getAvailableStreakFreezes(usedFreezeDayKeys, asOfDayKey, maxFreezes, windowDays) <= 0) {
+    return "no-freezes-available";
+  }
+  return null;
+}
+
+/**
+ * Finds the single most recent missed day that broke a contributor's
+ * in-progress streak — the day right before `asOfDayKey` that wasn't
+ * completed (and isn't already frozen), where the day before *that* was a
+ * completed (or frozen) streak day. Returns `null` when there's no such gap
+ * to bridge: either `asOfDayKey` is itself unbroken, the prior day was
+ * already completed/frozen, or there was no streak in progress before the
+ * gap (freezing an isolated miss with nothing to reconnect isn't useful).
+ * Only ever looks at the single day immediately before `asOfDayKey` — a
+ * multi-day gap needs a freeze per missed day, applied one at a time as
+ * each becomes the most recent gap.
+ */
+export function findFreezableStreakGapDayKey(
+  results: DailyMissionResult[],
+  frozenDayKeys: string[] | Set<string>,
+  asOfDayKey: string,
+): string | null {
+  const effectiveResults = applyStreakFreezes(results, frozenDayKeys);
+  const completedDayKeys = new Set(effectiveResults.filter((result) => result.isComplete).map((result) => result.dayKey));
+
+  const gapDayKey = previousUtcDayKey(asOfDayKey);
+  if (completedDayKeys.has(gapDayKey)) return null;
+
+  const dayBeforeGap = previousUtcDayKey(gapDayKey);
+  return completedDayKeys.has(dayBeforeGap) ? gapDayKey : null;
+}
+
+/**
+ * Renders a short human-readable line for a contributor's freeze
+ * allowance, meant to sit next to the "Use a grace day" action.
+ */
+export function buildStreakFreezeAvailabilityText(
+  availableFreezes: number,
+  windowDays: number = STREAK_FREEZE_WINDOW_DAYS,
+): string {
+  if (availableFreezes <= 0) return `No streak freezes left in the last ${windowDays} days.`;
+  const noun = availableFreezes === 1 ? "streak freeze" : "streak freezes";
+  return `${availableFreezes} ${noun} available (resets over a rolling ${windowDays}-day window).`;
+}
+
+/**
  * Renders a short "reward" line for a contributor's streak status, meant to
  * sit next to today's quest board itself (the "(c) a streak/reward layer"
  * follow-up under the "🎯 Daily Quests and Targets" bullet in TODO.md)
