@@ -29,7 +29,7 @@ import {
   getTodaysBestCardFromStore,
   type AttributedDailyBestCard,
 } from "./contributions";
-import { getUtcDayKey } from "../lib/daily-best-card";
+import { buildWeeklyBestCardRollups, getUtcDayKey, type WeeklyBestCardRollup } from "../lib/daily-best-card";
 import type { HelpfulnessWeights } from "../lib/community-rating";
 import { DEFAULT_HELPFULNESS_WEIGHTS } from "../lib/community-rating";
 
@@ -85,6 +85,28 @@ export function listAnnouncedDailyBestCards(): AttributedDailyBestCard[] {
 /** Looks up an already-announced day's winner by `dayKey`, if any. */
 export function getAnnouncedDailyBestCard(dayKey: string): AttributedDailyBestCard | undefined {
   return readAnnouncements().find((announcement) => announcement.dayKey === dayKey);
+}
+
+/**
+ * A week's rollup still carrying each daily winner's persisted
+ * `contributorId` — mirrors `AttributedDailyBestCard`'s widening of the plain
+ * `DailyBestCard` shape, since `buildAnnouncedWeeklyBestCardRollups` only ever
+ * rolls up `AttributedDailyBestCard`s.
+ */
+export interface AttributedWeeklyBestCardRollup extends WeeklyBestCardRollup {
+  days: AttributedDailyBestCard[];
+  champion: AttributedDailyBestCard;
+}
+
+/**
+ * Rolls up every announced daily winner into one entry per represented ISO
+ * week — that week's daily winners plus the single best-of-the-week
+ * champion among them. Built only from *announced* (frozen) days, matching
+ * `listAnnouncedDailyBestCards`, so a live, not-yet-announced leader never
+ * affects a week's rollup.
+ */
+export function buildAnnouncedWeeklyBestCardRollups(): AttributedWeeklyBestCardRollup[] {
+  return buildWeeklyBestCardRollups(listAnnouncedDailyBestCards()) as AttributedWeeklyBestCardRollup[];
 }
 
 /**

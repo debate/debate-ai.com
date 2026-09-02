@@ -131,3 +131,102 @@ export function getBestCardForDay(
 export function buildDailyBestCardHighlight(best: DailyBestCard): string {
   return `Card of the day (${best.dayKey}): "${best.contribution.id}" — helpfulness ${best.breakdown.helpfulnessScore}/100`;
 }
+
+/** One ISO week's daily winners plus that week's single best-of-the-week champion. */
+export interface WeeklyBestCardRollup {
+  /** ISO 8601 week key, formatted "YYYY-Www" (e.g. "2026-W36"). */
+  weekKey: string;
+  /** That week's daily winners, sorted by `dayKey` ascending. */
+  days: DailyBestCard[];
+  /** The single highest-helpfulness daily winner among `days`. */
+  champion: DailyBestCard;
+}
+
+/**
+ * Formats a "YYYY-MM-DD" day key as its ISO 8601 week key, "YYYY-Www" — the
+ * Monday-starting week containing that day, numbered so week 1 is the week
+ * containing the year's first Thursday (the standard ISO week-numbering
+ * rule). Weeks are UTC throughout, matching `getUtcDayKey`.
+ */
+export function getUtcWeekKey(dayKey: string): string {
+  const date = new Date(`${dayKey}T00:00:00.000Z`);
+  // Shift to the Thursday of this ISO week: Monday=0 .. Sunday=6, then +3 days lands on Thursday.
+  const dayNr = (date.getUTCDay() + 6) % 7;
+  const thursday = new Date(date.getTime());
+  thursday.setUTCDate(thursday.getUTCDate() - dayNr + 3);
+
+  const isoYear = thursday.getUTCFullYear();
+  const firstThursday = new Date(Date.UTC(isoYear, 0, 4));
+  const firstThursdayDayNr = (firstThursday.getUTCDay() + 6) % 7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstThursdayDayNr + 3);
+
+  const weekNumber = 1 + Math.round((thursday.getTime() - firstThursday.getTime()) / (7 * 24 * 60 * 60 * 1000));
+  return `${isoYear}-W${String(weekNumber).padStart(2, "0")}`;
+}
+
+/**
+ * Groups already-picked daily winners by ISO week, preserving each week's
+ * original relative order (callers typically pass a `dayKey`-ascending list,
+ * so groups come out day-ascending too).
+ */
+export function groupDailyBestCardsByWeek(dailyBests: DailyBestCard[]): Map<string, DailyBestCard[]> {
+  const byWeek = new Map<string, DailyBestCard[]>();
+  for (const daily of dailyBests) {
+    const weekKey = getUtcWeekKey(daily.dayKey);
+    const group = byWeek.get(weekKey);
+    if (group) {
+      group.push(daily);
+    } else {
+      byWeek.set(weekKey, [daily]);
+    }
+  }
+  return byWeek;
+}
+
+/**
+ * Picks the single highest-helpfulness daily winner from one week's daily
+ * winners, tie-broken by `dayKey` ascending (the earlier day wins) for a
+ * stable, deterministic champion. Throws if `days` is empty — callers should
+ * skip weeks with no represented days rather than producing a champion-less
+ * entry.
+ */
+export function pickBestCardOfWeek(weekKey: string, days: DailyBestCard[]): DailyBestCard {
+  if (days.length === 0) {
+    throw new Error(`pickBestCardOfWeek: week "${weekKey}" has no daily winners`);
+  }
+
+  let champion = days[0];
+  for (const daily of days.slice(1)) {
+    const isBetter =
+      daily.breakdown.helpfulnessScore > champion.breakdown.helpfulnessScore ||
+      (daily.breakdown.helpfulnessScore === champion.breakdown.helpfulnessScore &&
+        daily.dayKey.localeCompare(champion.dayKey) < 0);
+    if (isBetter) {
+      champion = daily;
+    }
+  }
+
+  return champion;
+}
+
+/**
+ * Rolls up daily winners into one entry per represented ISO week — every
+ * week's daily winners plus that week's single best-of-the-week champion.
+ * Returned sorted by `weekKey` ascending; within each rollup, `days` is
+ * sorted by `dayKey` ascending regardless of input order.
+ */
+export function buildWeeklyBestCardRollups(dailyBests: DailyBestCard[]): WeeklyBestCardRollup[] {
+  const byWeek = groupDailyBestCardsByWeek(dailyBests);
+  return Array.from(byWeek.entries())
+    .map(([weekKey, days]) => {
+      const sortedDays = [...days].sort((a, b) => a.dayKey.localeCompare(b.dayKey));
+      return { weekKey, days: sortedDays, champion: pickBestCardOfWeek(weekKey, sortedDays) };
+    })
+    .sort((a, b) => a.weekKey.localeCompare(b.weekKey));
+}
+
+/** Renders a short highlight line for a best-of-the-week rollup. */
+export function buildWeeklyBestCardRollupHighlight(rollup: WeeklyBestCardRollup): string {
+  const dayLabel = rollup.days.length === 1 ? "1 day" : `${rollup.days.length} days`;
+  return `Best of the week (${rollup.weekKey}): "${rollup.champion.contribution.id}" — helpfulness ${rollup.champion.breakdown.helpfulnessScore}/100 (${dayLabel})`;
+}

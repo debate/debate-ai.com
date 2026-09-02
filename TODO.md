@@ -6,6 +6,61 @@
 _No task currently in progress._
 
 ### Completed
+- **Daily Best Card Challenge — "best of the week" rollup.** Another repeat
+  of the standing prompt ("integrate all the tools into the UI... create
+  user settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI") — as with every recent repeat, that half is
+  already fully built (account-synced settings already exist at `/settings`,
+  D1 tables + `/api/*` routes already link flows/docs/rounds/materials/etc.
+  to signed-in users, and the tools are already reachable from the nav/UI),
+  and the one open PR (#437, "Consolidate UI primitives and add web
+  extension scaffold") doesn't touch this area, so this slice picked the
+  "🕵️ Daily Best Card Challenge" bullet's last still-open follow-up: "a
+  'best of the week' rollup." `lib/daily-best-card.ts` gained
+  `getUtcWeekKey` — a pure ISO-8601 week-key formatter ("YYYY-Www", Monday-
+  starting weeks numbered so week 1 contains the year's first Thursday,
+  matching the standard rule) — plus `groupDailyBestCardsByWeek` (groups
+  already-picked daily winners by that key), `pickBestCardOfWeek` (the
+  single highest-helpfulness daily winner among one week's days, tie-broken
+  by `dayKey` ascending), `buildWeeklyBestCardRollups` (one
+  `WeeklyBestCardRollup` — `weekKey`, `days`, `champion` — per represented
+  week, sorted week-ascending), and `buildWeeklyBestCardRollupHighlight` (a
+  one-line summary string). `state/dailyBestCardAnnouncements.ts` composes
+  these into `buildAnnouncedWeeklyBestCardRollups()`, rolling up only
+  *announced* (frozen) daily winners from `listAnnouncedDailyBestCards()` —
+  a live, not-yet-announced leader never affects a week's rollup — and
+  widens the result to `AttributedWeeklyBestCardRollup` (mirroring
+  `AttributedDailyBestCard`'s existing narrow/widen convention) so a panel
+  can still render each day's `contributorId`. `DailyBestCardPanel` now
+  renders a "Best of the week" section (newest week first) between today's
+  leader and the announced history: each week gets a card naming its
+  champion via `buildWeeklyBestCardRollupHighlight`, the champion's
+  contributor badge, and that week's other announced days listed
+  underneath — composed into the panel's existing `refresh()`/live-update
+  cycle, so no new `storage`-event wiring was needed. See
+  `docs/features/daily-best-card.md`'s new "Best of the week" section, its
+  updated data-flow diagram, and a new Known gap noting a week's champion is
+  recomputed live from whichever days are currently announced rather than
+  itself frozen (there's no "un-announce" action today, so this is latent).
+  Vitest-covered: `packages/debate-card-search/test/daily-best-card.test.ts`
+  (12 new cases — `getUtcWeekKey` including two ISO year-boundary edge cases
+  where a date's ISO week year differs from its calendar year,
+  `groupDailyBestCardsByWeek`, `pickBestCardOfWeek`,
+  `buildWeeklyBestCardRollups`, `buildWeeklyBestCardRollupHighlight`, all
+  pure) and four new cases in
+  `packages/debate-card-search/test/dailyBestCardAnnouncements.test.ts`
+  (empty state, a live-but-unannounced leader correctly excluded, same-week
+  grouping picking the right champion, and cross-week splitting sorted week
+  ascending). The panel's own rendering remains intentionally untested,
+  matching this panel's existing convention (only pure logic and the
+  announcement-layer composition are directly tested). Verified with `bun
+  run test` (root, all packages, all passing), `bun run typecheck` (root,
+  all typechecked packages, clean), and a full `bun run build` (the whole
+  monorepo build, including `debate-ai-web`'s production build) — all pass.
+  No lint script/config exists in this repo to run. The remaining next-step
+  for this idea ("a winner-history calendar view") stays open; a future run
+  should pick it or a fresh next-step if one becomes worth doing.
 - **Gamified Quests — streak-freeze/grace-day mechanic.** Another repeat of
   the standing prompt ("integrate all the tools into the UI... create user
   settings and link user db SQL... with ability to save flows docs and
@@ -13197,7 +13252,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — batch-score an uploaded set of cards at once; a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.
-* 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. Next: a winner-history calendar view; a "best of the week" rollup.
+* 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. The "best of the week" rollup follow-up is also now done: a new "Best of the week" section groups every announced daily winner by ISO week and highlights that week's single highest-helpfulness champion alongside its other announced days (`lib/daily-best-card.ts#buildWeeklyBestCardRollups`, `state/dailyBestCardAnnouncements.ts#buildAnnouncedWeeklyBestCardRollups`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Best of the week" section. Next: a winner-history calendar view.
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. Next: a "nominate a peer" action.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — a coach-facing override/reassign control; a task-priority indicator; a capacity-aware view of routing load across the team.
