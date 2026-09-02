@@ -116,6 +116,50 @@ The plain-text formatting itself (`reference-export.ts`'s
 so it's covered directly by `test/reference-export.test.ts`, independent
 of the modal's DOM-building/overlay-lifecycle code.
 
+## Verbatim onboarding nudge
+
+Idea #14's other tracked follow-up — "an in-app onboarding nudge (e.g.
+from `ui-tour.ts`) pointing a Verbatim-trained user at the reference the
+first time they open a CardMirror document" — is now closed too. The
+existing UI tour (`ui-tour.ts`) already has its own "reference" step, but
+it only reaches a fresh profile that lets the whole tour run, and it
+never reaches an established profile at all: `maybeAutoStartUiTour`
+marks any profile with customized settings as already-seen without
+touring it. `verbatim-nudge.ts` fills exactly that gap with a one-time,
+lightweight dialog (`promptForRouteChoice`, not another coach-mark
+overlay) pointing at the shortcuts reference — for whoever the tour
+doesn't walk through it: an established profile it auto-skips, or a
+fresh one that started the tour and left (Esc, closed the tab) before
+reaching the reference step.
+
+- `shouldShowVerbatimNudge` (pure, directly tested) says yes once
+  `hasSeenUiTour` is set — stamped the instant a tour *starts*, whether
+  it's a real run or an established-profile auto-skip — and the
+  reference hasn't already been opened by any route. It says no before
+  that: a genuinely fresh profile still hasn't been offered the tour, so
+  its own reference step gets first crack rather than being raced.
+- `maybeShowVerbatimNudge` polls every 2s (up to ~5 minutes) rather than
+  firing once on a timer, because `hasSeenUiTour` flips true the moment
+  a tour *starts*, not when it *finishes* — a fixed delay could still
+  land while a real tour is mid-run. Each tick also checks the new
+  `ui-tour.ts#isUiTourRunning`, so the nudge waits out an in-progress
+  tour instead of popping its dialog on top of it.
+- `reference-ui.ts#openReference` stamps the new
+  `hasOpenedShortcutsReference` setting the moment it's actually called
+  — button, tour step, palette, or menu — so the nudge never re-asks
+  once the reference has been found by any path.
+- Wired in from `index.ts` next to `maybeAutoStartUiTour`, same
+  desktop-only gate (the mobile UI has no ribbon reference button to
+  point at).
+- `hasSeenUiTour`'s existing `hasCustomizedSettings` ignore list grew the
+  two new settings keys (`hasOpenedShortcutsReference`,
+  `hasSeenVerbatimNudge`) so neither auto-set flag itself counts as
+  "customization" — that would otherwise mark a genuinely fresh profile
+  as established and skip its tour.
+- Accepting the nudge ("Open the shortcuts reference") opens the same
+  modal as every other entry point; "Not now" (or Esc) dismisses for
+  good — there is no snooze/re-ask.
+
 ## Data flow
 
 ```
@@ -140,9 +184,15 @@ debate-editor-cardmirror/src/editor/quick-card-search-ui.ts → Ctrl/Cmd-Shift-S
 
 debate-editor-cardmirror/src/editor/reference-ui.ts        — openShortcutsReference's modal; collectGroups()
                                                                is the shared data source for the on-screen list,
-                                                               print(), and exportAsText()
+                                                               print(), and exportAsText(); stamps
+                                                               hasOpenedShortcutsReference on open
 debate-editor-cardmirror/src/editor/reference-export.ts    — formatShortcutsReferenceText(), the pure
                                                                plain-text renderer used by exportAsText()
+
+debate-editor-cardmirror/src/editor/verbatim-nudge.ts       — maybeShowVerbatimNudge(), wired from index.ts;
+                                                               shouldShowVerbatimNudge() is the pure trigger check
+debate-editor-cardmirror/src/editor/ui-tour.ts              — isUiTourRunning(), polled so the nudge never
+                                                               stacks on top of an in-progress tour
 ```
 
 ## Known gaps
@@ -160,6 +210,14 @@ modal's own search filter. Given the point of printing/exporting a
 reference is usually to have the whole thing on hand, this is treated as
 the right default rather than a gap, but a future run could add a "only
 matching rows" toggle if that turns out to be wanted.
+
+The Verbatim onboarding nudge has no "remind me later" — Not now/Esc marks
+it seen for good, matching `hasSeenUiTour`'s own one-shot convention rather
+than adding a new re-ask/snooze mechanic for a single low-stakes dialog.
+It also can't actually detect that a visitor is Verbatim-trained (there's
+no such signal anywhere in the app); it's addressed at the population most
+likely to be, phrased for them, but shown to every profile that meets the
+trigger condition.
 
 The old `reason-editor` (TipTap) package's `verbatim-shortcuts.ts`,
 `verbatim-shortcuts-extension.ts`, and `heading-move.ts` are no longer

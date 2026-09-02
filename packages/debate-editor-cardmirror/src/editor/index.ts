@@ -441,6 +441,10 @@ if (!getElectronHost() && !isLiteBuild() && window.location.hash.includes('join=
 // the first opened document instead.
 if (!isMobileLayout()) {
   void import('./ui-tour.js').then((m) => m.maybeAutoStartUiTour());
+  // Verbatim onboarding nudge: a one-time pointer at the shortcuts
+  // reference for whoever the tour above doesn't walk through it
+  // (see verbatim-nudge.ts for exactly who that is).
+  void import('./verbatim-nudge.js').then((m) => m.maybeShowVerbatimNudge());
 }
 
 // Tag the body with the host kind so CSS can gate platform-specific chrome

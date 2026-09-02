@@ -342,4 +342,10 @@ let modal: ReferenceModal | null = null;
 export function openReference(): void {
   if (!modal) modal = new ReferenceModal();
   modal.open();
+  // Signal to the Verbatim nudge (verbatim-nudge.ts) that the reference
+  // has already been found — button, tour step, palette, or menu, it
+  // doesn't matter which.
+  if (!settings.get('hasOpenedShortcutsReference')) {
+    settings.set('hasOpenedShortcutsReference', true);
+  }
 }
