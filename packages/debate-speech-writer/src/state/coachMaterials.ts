@@ -23,7 +23,11 @@ import {
   findRelevantMaterials,
   listCoachMaterialTags,
 } from "../coach/team-coach-materials";
-import { appendMaterialVersion, deleteVersionsForMaterial } from "./coachMaterialVersions";
+import {
+  appendMaterialVersion,
+  deleteVersionsForMaterial,
+  type CoachMaterialVersion,
+} from "./coachMaterialVersions";
 
 const STORAGE_KEY = "coachMaterials";
 
@@ -54,19 +58,50 @@ export function getCoachMaterial(id: string): CoachMaterial | undefined {
   return readAll().find((material) => material.id === id);
 }
 
+/** Result of a `saveCoachMaterial` call — the saved material, plus the version snapshot it created, if any. */
+export type SaveCoachMaterialResult = {
+  material: CoachMaterial;
+  /** The prior record's snapshot, present only when this save overwrote an existing id. */
+  version?: CoachMaterialVersion;
+};
+
 /**
  * Saves a coach material, overwriting any existing record with the same id.
  * Overwriting snapshots the record it replaces into
  * `state/coachMaterialVersions.ts` first, so a re-upload/edit never loses
  * the prior version outright — see that module's `listVersionsForMaterial`.
+ * Returns the snapshot it created (if any) so a caller
+ * (`hooks/useCoachMaterialsSync.ts`) knows to also sync it to the account.
  */
-export function saveCoachMaterial(material: CoachMaterial): void {
+export function saveCoachMaterial(material: CoachMaterial): SaveCoachMaterialResult {
+  const materials = readAll();
+  const index = materials.findIndex((existing) => existing.id === material.id);
+  if (index === -1) {
+    materials.push(material);
+    writeAll(materials);
+    return { material };
+  }
+
+  const version = appendMaterialVersion(materials[index] as CoachMaterial);
+  materials[index] = material;
+  writeAll(materials);
+  return { material, version };
+}
+
+/**
+ * Adopts a coach material as-is — e.g. one fetched from the account during
+ * cross-device sync (`hooks/useCoachMaterialsSync.ts`) — upserting by `id`
+ * rather than snapshotting a version, so merging in a material a device
+ * doesn't yet have never fabricates version history for it. Only ever
+ * called for an id the local store doesn't already have (see the hook's own
+ * "fill gaps, don't resolve conflicts" merge rule).
+ */
+export function adoptCoachMaterial(material: CoachMaterial): void {
   const materials = readAll();
   const index = materials.findIndex((existing) => existing.id === material.id);
   if (index === -1) {
     materials.push(material);
   } else {
-    appendMaterialVersion(materials[index] as CoachMaterial);
     materials[index] = material;
   }
   writeAll(materials);
@@ -75,11 +110,13 @@ export function saveCoachMaterial(material: CoachMaterial): void {
 /**
  * Deletes a persisted coach material by id; a no-op if it isn't stored.
  * Also drops its version history, since a restore action wouldn't have a
- * live material left to restore into.
+ * live material left to restore into. Returns the version ids that were
+ * removed so a caller (`hooks/useCoachMaterialsSync.ts`) knows exactly which
+ * ids to also remove from the account sync.
  */
-export function deleteCoachMaterial(id: string): void {
+export function deleteCoachMaterial(id: string): string[] {
   writeAll(readAll().filter((material) => material.id !== id));
-  deleteVersionsForMaterial(id);
+  return deleteVersionsForMaterial(id);
 }
 
 /**

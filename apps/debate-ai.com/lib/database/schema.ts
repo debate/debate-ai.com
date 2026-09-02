@@ -453,6 +453,74 @@ export const savedRoundPairings = sqliteTable(
 
 export type SavedRoundPairingRow = typeof savedRoundPairings.$inferSelect;
 
+// Account-linked coach-material sync — TODO.md idea #8
+// ("Video-Lecture-Training Coach AI")'s "Account sync for coach materials
+// (and their version history)" follow-up. One row per (user, material) pair,
+// keyed by the caller-typed `CoachMaterial.id` — a material is looked
+// up/edited by its own id, not appended to a growing log — same shape as
+// `savedRoundPairings` above.
+export const savedCoachMaterials = sqliteTable(
+  "saved_coach_materials",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_coach_materials_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_coach_materials_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedCoachMaterialRow = typeof savedCoachMaterials.$inferSelect;
+
+// Account-linked coach-material version-history sync — the same TODO.md
+// idea #8 follow-up as `savedCoachMaterials` above, applied to
+// `state/coachMaterialVersions.ts`'s snapshots. Same append-only-log shape
+// as `savedJudgeDecisions`/`savedCounselPanelAssessments` above (many rows
+// can share a `materialId`), so `clientId` here holds the version's own
+// generated `CoachMaterialVersion.id` rather than the material id itself.
+// `materialId` is a plain (non-unique) indexed column so the merge hook and
+// a material-delete cascade can still resolve/remove that material's full
+// version history.
+export const savedCoachMaterialVersions = sqliteTable(
+  "saved_coach_material_versions",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    materialId: text("material_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_coach_material_versions_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_coach_material_versions_user_client").on(
+      table.userId,
+      table.clientId,
+    ),
+    materialIdIdx: index("idx_saved_coach_material_versions_material_id").on(table.materialId),
+  }),
+);
+
+export type SavedCoachMaterialVersionRow = typeof savedCoachMaterialVersions.$inferSelect;
+
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can

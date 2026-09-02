@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  adoptCoachMaterial,
   buildCoachMaterialLibraryFromStore,
   deleteCoachMaterial,
   findRelevantMaterialsFromStore,
@@ -97,6 +98,10 @@ describe("saveCoachMaterial", () => {
     expect(listVersionsForMaterial("lecture-1")).toEqual([]);
   });
 
+  it("returns the saved material with no version when creating", () => {
+    expect(saveCoachMaterial(LECTURE)).toEqual({ material: LECTURE });
+  });
+
   it("overwriting an existing id snapshots the record it replaces as a version", () => {
     saveCoachMaterial(LECTURE);
     const revised: CoachMaterial = { ...LECTURE, title: "Topicality Basics (Revised)" };
@@ -107,6 +112,15 @@ describe("saveCoachMaterial", () => {
     expect(versions[0]).toMatchObject({ materialId: "lecture-1", title: "Topicality Basics" });
   });
 
+  it("returns the version snapshot it created when overwriting", () => {
+    saveCoachMaterial(LECTURE);
+    const revised: CoachMaterial = { ...LECTURE, title: "Topicality Basics (Revised)" };
+    const result = saveCoachMaterial(revised);
+
+    expect(result.material).toEqual(revised);
+    expect(result.version).toMatchObject({ materialId: "lecture-1", title: "Topicality Basics" });
+  });
+
   it("overwriting repeatedly accumulates versions, newest first", () => {
     saveCoachMaterial(LECTURE);
     saveCoachMaterial({ ...LECTURE, title: "Revision 1" });
@@ -114,6 +128,28 @@ describe("saveCoachMaterial", () => {
 
     const versions = listVersionsForMaterial("lecture-1");
     expect(versions.map((v) => v.title)).toEqual(["Revision 1", "Topicality Basics"]);
+  });
+});
+
+describe("adoptCoachMaterial", () => {
+  it("inserts a material that isn't already stored", () => {
+    adoptCoachMaterial(LECTURE);
+    expect(listCoachMaterials()).toEqual([LECTURE]);
+  });
+
+  it("upserts by id rather than duplicating an already-stored material", () => {
+    saveCoachMaterial(LECTURE);
+    adoptCoachMaterial({ ...LECTURE, title: "Adopted title" });
+
+    expect(listCoachMaterials()).toHaveLength(1);
+    expect(getCoachMaterial("lecture-1")?.title).toBe("Adopted title");
+  });
+
+  it("does not snapshot a version when overwriting", () => {
+    saveCoachMaterial(LECTURE);
+    adoptCoachMaterial({ ...LECTURE, title: "Adopted title" });
+
+    expect(listVersionsForMaterial("lecture-1")).toEqual([]);
   });
 });
 
@@ -141,6 +177,14 @@ describe("deleteCoachMaterial", () => {
     deleteCoachMaterial("lecture-1");
 
     expect(listVersionsForMaterial("lecture-1")).toEqual([]);
+  });
+
+  it("returns the removed version ids, and an empty array when there were none", () => {
+    saveCoachMaterial(LECTURE);
+    const { version } = saveCoachMaterial({ ...LECTURE, title: "Revised" });
+
+    expect(deleteCoachMaterial("lecture-1")).toEqual([version!.id]);
+    expect(deleteCoachMaterial("missing")).toEqual([]);
   });
 });
 

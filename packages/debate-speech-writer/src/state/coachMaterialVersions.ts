@@ -102,9 +102,49 @@ export function listVersionsForMaterial(materialId: string): CoachMaterialVersio
     .reverse();
 }
 
-/** Deletes every persisted version of `materialId` — called when that material itself is deleted. */
-export function deleteVersionsForMaterial(materialId: string): void {
-  writeAll(readAll().filter((version) => version.materialId !== materialId));
+/**
+ * Every persisted version across every material, insertion order — feeds
+ * `hooks/useCoachMaterialsSync.ts`'s account merge, which reconciles the
+ * whole version history rather than one material at a time.
+ */
+export function listAllCoachMaterialVersions(): CoachMaterialVersion[] {
+  return readAll();
+}
+
+/**
+ * Deletes every persisted version of `materialId` — called when that
+ * material itself is deleted. Returns the ids that were actually removed
+ * so a caller (`hooks/useCoachMaterialsSync.ts`) knows exactly which ids to
+ * also remove from the account sync; an empty array if none were stored.
+ */
+export function deleteVersionsForMaterial(materialId: string): string[] {
+  const all = readAll();
+  const removedIds = all.filter((version) => version.materialId === materialId).map((version) => version.id);
+  if (removedIds.length > 0) {
+    writeAll(all.filter((version) => version.materialId !== materialId));
+  }
+  return removedIds;
+}
+
+/**
+ * Adopts a version snapshot as-is — e.g. one fetched from the account
+ * during cross-device sync (`hooks/useCoachMaterialsSync.ts`) — upserting by
+ * `id` rather than assigning a fresh one, so a version created on one
+ * device doesn't duplicate when merged onto another. Unlike
+ * `appendMaterialVersion`, this never trims against
+ * `MAX_VERSIONS_PER_MATERIAL` — the device that originally snapshotted the
+ * version already enforced that cap, and a remote version only reaches here
+ * once per merge (see the hook's own accepted-edge-case note).
+ */
+export function adoptMaterialVersion(version: CoachMaterialVersion): void {
+  const versions = readAll();
+  const index = versions.findIndex((existing) => existing.id === version.id);
+  if (index === -1) {
+    versions.push(version);
+  } else {
+    versions[index] = version;
+  }
+  writeAll(versions);
 }
 
 /** Rebuilds a `CoachMaterial` from a snapshot, ready to pass back to `saveCoachMaterial` to restore it. */

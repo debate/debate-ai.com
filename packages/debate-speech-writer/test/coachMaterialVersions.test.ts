@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  adoptMaterialVersion,
   appendMaterialVersion,
   deleteVersionsForMaterial,
+  listAllCoachMaterialVersions,
   listVersionsForMaterial,
   materialFromVersion,
   MAX_VERSIONS_PER_MATERIAL,
@@ -102,6 +104,19 @@ describe("listVersionsForMaterial", () => {
   });
 });
 
+describe("listAllCoachMaterialVersions", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(listAllCoachMaterialVersions()).toEqual([]);
+  });
+
+  it("returns every version across every material, insertion order", () => {
+    const first = appendMaterialVersion(LECTURE, 1000);
+    const second = appendMaterialVersion({ ...LECTURE, id: "camp-1" }, 2000);
+
+    expect(listAllCoachMaterialVersions()).toEqual([first, second]);
+  });
+});
+
 describe("deleteVersionsForMaterial", () => {
   it("removes every version of the given material only", () => {
     appendMaterialVersion(LECTURE, 1000);
@@ -115,6 +130,50 @@ describe("deleteVersionsForMaterial", () => {
 
   it("is a no-op when no versions exist for the id", () => {
     expect(() => deleteVersionsForMaterial("missing")).not.toThrow();
+  });
+
+  it("returns the ids that were removed, and an empty array when none were", () => {
+    const version = appendMaterialVersion(LECTURE, 1000);
+    expect(deleteVersionsForMaterial("lecture-1")).toEqual([version.id]);
+    expect(deleteVersionsForMaterial("missing")).toEqual([]);
+  });
+});
+
+describe("adoptMaterialVersion", () => {
+  it("inserts a version that isn't already stored", () => {
+    const version = appendMaterialVersion(LECTURE, 1000);
+    deleteVersionsForMaterial("lecture-1");
+    expect(listVersionsForMaterial("lecture-1")).toEqual([]);
+
+    adoptMaterialVersion(version);
+
+    expect(listVersionsForMaterial("lecture-1")).toEqual([version]);
+  });
+
+  it("upserts by id rather than duplicating an already-stored version", () => {
+    const version = appendMaterialVersion(LECTURE, 1000);
+    adoptMaterialVersion({ ...version, title: "Adopted title" });
+
+    const versions = listVersionsForMaterial("lecture-1");
+    expect(versions).toHaveLength(1);
+    expect(versions[0]?.title).toBe("Adopted title");
+  });
+
+  it("does not trim against MAX_VERSIONS_PER_MATERIAL", () => {
+    for (let i = 0; i < MAX_VERSIONS_PER_MATERIAL; i++) {
+      appendMaterialVersion({ ...LECTURE, title: `Revision ${i}` }, 1000 + i);
+    }
+    adoptMaterialVersion({
+      id: "adopted-extra",
+      materialId: "lecture-1",
+      kind: "lecture_transcript",
+      title: "Adopted extra",
+      tags: [],
+      text: "extra",
+      replacedAt: 99999,
+    });
+
+    expect(listVersionsForMaterial("lecture-1")).toHaveLength(MAX_VERSIONS_PER_MATERIAL + 1);
   });
 });
 
