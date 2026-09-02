@@ -75,7 +75,7 @@ _No task currently in progress._
   to run. The remaining next-steps for this idea ("a shareable
   streak-badge image", "an opt-in reminder notification before a streak
   lapses") stay open; a future run should pick one or a fresh next-step if
-  one becomes worth doing.
+  one becomes worth doing. PR: [#458](https://github.com/debate/debate-ai.com/pull/458).
 - **Team Brainstorm Assist — optional brainstorm-session timer.** Another
   repeat of the standing prompt ("integrate all the tools into the UI...
   create user settings and link user db SQL... with ability to save flows
