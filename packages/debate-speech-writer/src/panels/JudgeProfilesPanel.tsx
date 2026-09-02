@@ -446,7 +446,20 @@ export function JudgeProfilesPanel() {
                   {profile.theoryReceptiveness ?? "unknown"}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {profile.mostCommonParadigm ?? "—"}
+                  {profile.mostCommonParadigm ? (
+                    <>
+                      {profile.mostCommonParadigm}
+                      <Badge
+                        variant="outline"
+                        className="ml-2"
+                        title="Share of paradigm-tagged rounds that carried this paradigm"
+                      >
+                        {Math.round((profile.mostCommonParadigmConfidence ?? 0) * 100)}% confidence
+                      </Badge>
+                    </>
+                  ) : (
+                    "—"
+                  )}
                 </TableCell>
               </TableRow>
             ))}

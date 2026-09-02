@@ -6,6 +6,44 @@
 _No task currently in progress._
 
 ### Completed
+- **Judge Profiles — confidence indicator on the auto-tagged paradigm** (the
+  "⚖️ Judge Profiles" bullet's own next-named follow-up under Research
+  Crowdsourcing Organizer Features below). As with every recent run, the
+  standing prompt ("integrate all the tools into the UI... create user
+  settings... link user db SQL... save flows docs and debates in SQL and
+  link to users... add tools where needed in the UI... develop better tool
+  UI") is already fully built (account-synced `/settings`, D1 tables +
+  `/api/*` routes linking flows/docs/rounds/materials to signed-in users,
+  every tool reachable from the nav), and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area — so this run again picked a genuine next-step instead, one
+  directly named in TODO.md's own text. `judge-profile.ts#buildJudgeProfile`
+  previously reported a judge's `mostCommonParadigm` with no sense of how
+  reliable that tag actually was — a judge tagged `flow` in 2 of 3 rounds and
+  a judge tagged `flow` in 10 of 10 rounds looked identical. A new
+  `mostCommonParadigmConfidence` field (the tagged paradigm's count divided
+  by the judge's total paradigm-tagged rounds, null when no round is
+  tagged) closes that gap, surfaced as a "N% confidence" badge next to the
+  Paradigm column on `JudgeProfilesPanel`'s roster, folded into
+  `buildJudgeTendencySummary`'s "Most-tagged paradigm" line (so it also
+  shows up in `/briefings`' Pre-Round Intelligence Panel, which composes
+  that summary), and into `scout-to-strategy.ts#buildJudgeAdaptationNotes`'s
+  matching note. See `docs/features/judge-profiles.md`'s new confidence
+  paragraph under "What it shows". Vitest-covered:
+  `packages/debate-speech-writer/test/judge-profile.test.ts` gained cases
+  for a fractional confidence, full confidence, untagged rounds not
+  affecting the denominator, and the null case; the existing
+  `buildJudgeTendencySummary` and `scout-to-strategy.test.ts` paradigm-line
+  assertions were updated for the new "(N% confidence)" suffix. Verified
+  with `bun install` (2258 packages), the full `bun run typecheck` (13
+  typechecked packages, clean), and the full `bun run test`/`bun run
+  coverage` (root, all packages: 227 test files, 3974 tests, all passing —
+  up from 3970). No CI `lint`/`build` script exists in this repo
+  (`.github/workflows/test.yml` runs only `typecheck` and `coverage`), so
+  neither was run, matching every prior run's verification scope. No
+  further follow-up is currently tracked for this bullet; a future run
+  should pick a fresh next-step if one becomes worth doing.
+
 - **AI Coach Mode — exportable coaching-notes document** (the "🎙️ AI Coach
   Mode" bullet's own next-named follow-up under Research Crowdsourcing
   Organizer Features below). As with every recent run, the standing prompt
@@ -13845,7 +13883,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.
 * 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.
 * 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below), so: a bulk CSV import for scouted rounds; a side-by-side us-vs-opponent comparison view; a printable/exportable scouting report.
-* ⚖️ **Judge Profiles** (`/judges`) — same Tabroom blocker, so: a bulk CSV import for ballot history; a multi-judge comparison view for panel rounds; a confidence indicator on the auto-tagged paradigm.
+* ⚖️ **Judge Profiles** (`/judges`) — the auto-tagged-paradigm confidence-indicator follow-up is done: `mostCommonParadigmConfidence` (the tagged paradigm's share of a judge's paradigm-tagged rounds) shows as a "N% confidence" badge on the roster, and folds into the `buildJudgeTendencySummary`/`buildJudgeAdaptationNotes` lines it's already quoted in — see the Completed entry above and `docs/features/judge-profiles.md`'s "What it shows" section. The remaining two follow-ups stay behind the same Tabroom blocker as Opponent Team Profiles (see below): a bulk CSV import for ballot history; a multi-judge comparison view for panel rounds.
 * 🤖 **AI Practice Opponent** (`/practice-opponent`) — share a custom-authored persona across a team instead of per-user only; a difficulty slider layered on top of persona choice; post-round feedback tips specific to the persona faced.
 * 🎙️ **AI Coach Mode** (`/coaching`) — the exportable-coaching-notes-document follow-up is done: each session card has a "Download" action that saves its template prompts plus its AI feedback (if generated) as a plain-text file, headed with the round id and side (`state/coachingSessions.ts#buildCoachingNotesText`/`coachingNotesFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Download" mention. Next: a coaching-session history timeline per round; a side-by-side comparison across two rounds.
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.

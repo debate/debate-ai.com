@@ -99,6 +99,12 @@ export interface JudgeProfile {
   roundsWithTheoryRaised: number;
   /** Most frequently tagged paradigm across the history, tie-broken alphabetically. Null if none tagged. */
   mostCommonParadigm: BuiltinJudgeParadigmId | null;
+  /**
+   * Share (0-1) of paradigm-tagged rounds that carried `mostCommonParadigm`,
+   * e.g. 0.67 if it was tagged in 2 of 3 tagged rounds. Null when
+   * `mostCommonParadigm` is null (no round tagged a paradigm at all).
+   */
+  mostCommonParadigmConfidence: number | null;
 }
 
 /**
@@ -171,6 +177,12 @@ export function buildJudgeProfile(
       mostCommonParadigm = paradigmId;
     }
   }
+  const totalParadigmTaggedRounds = [...paradigmCounts.values()].reduce(
+    (sum, count) => sum + count,
+    0,
+  );
+  const mostCommonParadigmConfidence =
+    mostCommonParadigm !== null ? round2(bestCount / totalParadigmTaggedRounds) : null;
 
   return {
     judgeId,
@@ -184,6 +196,7 @@ export function buildJudgeProfile(
     theoryWinRate,
     roundsWithTheoryRaised,
     mostCommonParadigm,
+    mostCommonParadigmConfidence,
   };
 }
 
@@ -238,7 +251,8 @@ export function buildJudgeTendencySummary(profile: JudgeProfile): string {
   );
 
   if (profile.mostCommonParadigm) {
-    lines.push(`Most-tagged paradigm: ${profile.mostCommonParadigm}`);
+    const confidencePct = Math.round((profile.mostCommonParadigmConfidence ?? 0) * 100);
+    lines.push(`Most-tagged paradigm: ${profile.mostCommonParadigm} (${confidencePct}% confidence)`);
   }
 
   return lines.join("\n");
