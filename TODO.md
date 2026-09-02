@@ -6,6 +6,65 @@
 _No task currently in progress._
 
 ### Completed
+- **Scout-to-Strategy Workflow — recommendation history log per matchup**
+  (the "🧭 Scout-to-Strategy Workflow" bullet's own next-named follow-up
+  under Research Crowdsourcing Organizer Features below). As with every
+  recent run, the standing prompt ("integrate all the tools into the UI...
+  create user settings... link user db SQL... save flows docs and debates
+  in SQL and link to users... add tools where needed in the UI... develop
+  better tool UI") is already fully built (account-synced `/settings`, D1
+  tables + `/api/*` routes linking flows/docs/rounds/materials to
+  signed-in users, every tool reachable from the nav), and the one open PR
+  (#437, "Consolidate UI primitives and add web extension scaffold")
+  doesn't touch this area — so this run again picked a genuine next-step
+  instead, one directly named in TODO.md's own text. `StrategyPanel`
+  previously upserted one `StrategyRecommendationRecord` per `matchupId`,
+  so rebuilding a recommendation for a matchup silently discarded the
+  prior one. `state/strategyRecommendations.ts` is now an append-only
+  history log keyed by each recommendation's own generated `id` (mirroring
+  `state/judgeDecisions.ts`'s exact pattern, including its
+  `MAX_STRATEGY_RECOMMENDATIONS_PER_MATCHUP` (20) per-matchup cap):
+  `appendStrategyRecommendation` never overwrites an existing entry,
+  `buildStrategyRecommendationsPanelView` groups every recommendation by
+  matchup (newest-first), and `updateStrategyRecommendationAiCaseChoice`
+  sets one specific recommendation's AI case-choice evaluation by `id`
+  rather than by matchup, since a matchup can now have several history
+  entries each with their own independent evaluation. `StrategyPanel`
+  renders every matchup's recommendations newest-first with a "Clear"
+  action per entry and a "Clear all history for this matchup" bulk action,
+  mirroring `JudgeDecisionPanel`'s history-log UI convention exactly. The
+  history is also now account-synced — new `state/savedStrategyRecommendations.ts`
+  validation, a `saved_strategy_recommendations` D1 table (migration
+  `0024_blushing_mordo.sql`), `/api/strategy-recommendations` +
+  `/api/strategy-recommendations/[recommendationId]` routes, and the new
+  `hooks/useStrategyRecommendations.ts` (local-first, merged with and
+  best-effort synced to the account when signed in, same shape as
+  `useJudgeDecisions`) — so a team's strategy-recommendation history now
+  follows a signed-in user across devices too, closing the standing "link
+  user db SQL... save flows docs and debates in SQL and link to users" gap
+  for this tool. The hook also re-absorbs the prior cross-tab
+  `storage`-event live update (`flow/live-update.ts#isStrategyLiveUpdateStorageEvent`)
+  that moved out of the panel and into the hook. See
+  `docs/features/scout-to-strategy.md`'s new "Recommendation history log"
+  and "Account sync" sections (and the updated "Cross-tab live update"
+  one). Vitest-covered: `packages/debate-round/test/strategyRecommendations.test.ts`
+  was rewritten for the new id-keyed append/adopt/update/delete/group API
+  (cap enforcement, per-matchup grouping and ordering, the
+  `updateStrategyRecommendationAiCaseChoice` no-op-when-missing case), and
+  a new `packages/debate-round/test/savedStrategyRecommendations.test.ts`
+  covers `isValidStrategyRecommendationRecord` (a well-formed record, the
+  null-`recommendedCase`/empty-list case, a valid `aiCaseChoice`, and every
+  rejected malformed shape). Verified with `bun install` (2258 packages),
+  the full `bun run typecheck` (13 typechecked packages, clean), and the
+  full `bun run test` (root, all packages: 228 test files, 4008 tests, all
+  passing — up from 227 files / 3974 tests). No CI `lint`/`build` script
+  exists in this repo (`.github/workflows/test.yml` runs only `typecheck`
+  and `coverage`), so neither was run, matching every prior run's
+  verification scope. Two follow-ups remain open on this idea (a
+  side-by-side case-option comparison table; a one-click export into the
+  Pre-Round Briefing) — a future run should pick one of those, or a fresh
+  next-step elsewhere, if one becomes worth doing.
+
 - **Judge Profiles — confidence indicator on the auto-tagged paradigm** (the
   "⚖️ Judge Profiles" bullet's own next-named follow-up under Research
   Crowdsourcing Organizer Features below). As with every recent run, the
@@ -13893,7 +13952,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
 * 📚 **AI Drill Generator** (`/drills`) — drill scheduling/reminders; a difficulty rating with filtering; completion tracking tied into Progress Unlocks.
-* 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — a history log of past strategy recommendations per matchup; a side-by-side case-option comparison table; a one-click export into the Pre-Round Briefing.
+* 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. Next: a side-by-side case-option comparison table; a one-click export into the Pre-Round Briefing.
 
 ## Confirmed blocker: Tabroom results/pairings/ballot data
 

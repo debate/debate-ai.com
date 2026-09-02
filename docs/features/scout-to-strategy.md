@@ -17,8 +17,10 @@ Organizer Features list.
 A form to enter a matchup id, an optional opponent-team id and judge id
 (looked up from the existing `opponentTeamProfiles.ts`/`judgeProfiles.ts`
 stores), an optional "Our side" (Aff/Neg/Unspecified), and a list of case
-options (one per line, `Name: tag, tag`). Building a recommendation persists
-and renders:
+options (one per line, `Name: tag, tag`). Building a recommendation appends
+it to that matchup's history log — every recommendation ever built for a
+matchup is kept, newest first, rather than the latest overwriting the prior
+one. Each rendered entry shows:
 
 - **Recommended case / case rankings** — every case option ranked safest
   (lowest opponent-tag overlap) first.
@@ -64,8 +66,20 @@ round/scout-to-strategy.ts
                                                   by id from the persisted stores
 
 state/strategyRecommendations.ts (localStorage: strategyRecommendations)
-  → saveStrategyRecommendation / deleteStrategyRecommendation / buildStrategyRecommendationsPanelView
-  → saveStrategyRecommendationAiCaseChoice — sets aiCaseChoice on a matchup's stored record
+  → appendStrategyRecommendation / deleteStrategyRecommendation / deleteStrategyRecommendationsForMatchup
+  → buildStrategyRecommendationsPanelView       — every recommendation grouped by matchup, newest-first
+  → updateStrategyRecommendationAiCaseChoice    — sets aiCaseChoice on one persisted recommendation
+
+state/savedStrategyRecommendations.ts / round/strategy-recommendations-client.ts
+  → isValidStrategyRecommendationRecord         — shared request-body validator (also used by the API route)
+  → listSavedStrategyRecommendations / saveStrategyRecommendationToAccount / deleteSavedStrategyRecommendationFromAccount
+
+hooks/useStrategyRecommendations.ts
+  → local-first history, merged with and best-effort synced to
+    apps/debate-ai.com's /api/strategy-recommendations routes (D1's
+    saved_strategy_recommendations table) when signed in — the standing
+    "link user db SQL" account-sync convention every other history-log tool
+    in this repo already follows
 
 round/case-choice-ai.ts / round/case-choice-client.ts
   → buildCaseChoiceAiUserPrompt(...)           — composes case rankings + judge notes + risk into a prompt
@@ -89,18 +103,43 @@ reply into a `CaseChoiceAiResult` (`recommendedCase`, `reasoning`, and a
 per-case `caseAssessments` note).
 
 `StrategyPanel.tsx`'s "Get AI case-choice evaluation" action calls this and
-saves the result on `StrategyRecommendationRecord.aiCaseChoice` via
-`saveStrategyRecommendationAiCaseChoice`, rendering it alongside the
-deterministic recommendation.
+saves the result on that specific recommendation's `aiCaseChoice` via
+`useStrategyRecommendations`'s `setAiCaseChoice` (keyed by the
+recommendation's own `id`, not its matchup — a matchup can have several
+history entries, each with its own independent AI evaluation), rendering it
+alongside the deterministic recommendation.
+
+## Recommendation history log
+
+Idea's "a history log of past strategy recommendations per matchup"
+follow-up: building a recommendation for a matchup that already has one no
+longer overwrites it — `state/strategyRecommendations.ts#appendStrategyRecommendation`
+appends a fresh entry (its own generated `id`) to that matchup's history
+instead, mirroring `state/judgeDecisions.ts`'s exact append-only-log
+pattern, including its `MAX_STRATEGY_RECOMMENDATIONS_PER_MATCHUP` (20)
+per-matchup cap. `StrategyPanel` renders every matchup's recommendations
+newest-first, with a "Clear" action per entry and a "Clear all history for
+this matchup" bulk action per matchup.
+
+## Account sync
+
+`hooks/useStrategyRecommendations.ts` follows the same local-first,
+account-merge-on-mount pattern as `useJudgeDecisions`/
+`useCounselPanelAssessments`: recommendations stay in `localStorage` first
+(fully usable signed out), and merge with `apps/debate-ai.com`'s
+`/api/strategy-recommendations` routes (backed by D1's
+`saved_strategy_recommendations` table) when signed in, so a team's
+recommendation history follows them across devices. The panel's "Sign in to
+sync…" / "…synced to your account." line reflects the hook's `synced` flag.
 
 ## Cross-tab live update
 
 `StrategyPanel` previously read `buildStrategyRecommendationsPanelView` on
 mount only, so a strategy recommendation built, re-evaluated, or cleared in
 another browser tab left the panel showing a stale list until something
-else forced a re-render. It now also subscribes to the browser's `storage`
-event, which the spec fires only in *other* same-origin tabs/windows, never
-the one that made the write. A new pure helper,
+else forced a re-render. `useStrategyRecommendations` now subscribes to the
+browser's `storage` event, which the spec fires only in *other* same-origin
+tabs/windows, never the one that made the write. A pure helper,
 `flow/live-update.ts`'s `isStrategyLiveUpdateStorageEvent`, checks whether
 the event's `key` is `state/strategyRecommendations.ts`'s
 `"strategyRecommendations"` or `null` (a `localStorage.clear()`); when it
@@ -110,8 +149,8 @@ Known gap: "every other localStorage-backed panel in this repo still has no
 cross-tab live-update mechanism." Vitest-covered in
 `packages/debate-round/test/live-update.test.ts` (the one backing key, the
 `null`-key clear-all case, and unrelated/substring-matching keys).
-`StrategyPanel.tsx`'s own `storage`-listener wiring remains intentionally
-untested, matching every other panel in this repo whose wiring is exercised
-only through the shared pure predicate's own tests.
+`useStrategyRecommendations.ts`'s own `storage`-listener wiring remains
+intentionally untested, matching every other panel/hook in this repo whose
+wiring is exercised only through the shared pure predicate's own tests.
 
 No other follow-ups remain open on this idea.
