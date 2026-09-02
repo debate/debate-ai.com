@@ -6,6 +6,66 @@
 _No task currently in progress._
 
 ### Completed
+- **LLM Card Scoring — batch-score an uploaded set of cards at once** (the
+  "🧠 LLM Card Scoring" bullet's own next-named follow-up under Research
+  Crowdsourcing Organizer Features below, alongside the still-open
+  per-contributor score-trend chart and Evidence-Library score badge). As
+  with every recent run, the standing prompt ("integrate all the tools into
+  the UI... create user settings... link user db SQL... save flows docs and
+  debates in SQL and link to users... add tools where needed in the UI...
+  develop better tool UI") is already fully built (account-synced
+  `/settings`, D1 tables + `/api/*` routes linking flows/docs/rounds/
+  materials to signed-in users, every tool reachable from the nav), and the
+  one open PR (#437, "Consolidate UI primitives and add web extension
+  scaffold") doesn't touch this area — so this run again picked a genuine
+  next-step instead. `CardScoringPanel`'s "Score card" form previously only
+  let a contributor submit one card at a time, so scoring a whole set
+  meant repeating the form once per card. A new "Bulk import" textarea
+  accepts a `---`-delimited batch of cards, each entry leading with
+  optional `id:`/`keywords:`/`quality:` metadata lines (in any order,
+  blank lines tolerated) followed by the card's text on the remaining
+  lines. `lib/llm-card-scoring.ts`'s new pure `parseBulkCardSubmissions`
+  parses that format, dropping (and counting) any entry missing an id or
+  with no text after its metadata rather than failing the whole batch over
+  one malformed entry, and falling back to a caller-supplied default
+  quality (0.5) when a `quality:` line is omitted or unparseable.
+  `state/cardScores.ts` gained a new `saveScoredCardsBulk` (a single
+  read/write pass over a batch of cards, upserting each by id — later
+  entries win on an id collision within the same batch, matching
+  `saveScoredCard`'s per-id overwrite semantics) and `bulkImportScoredCards`,
+  which composes the parser against it and returns the imported/skipped
+  counts for the panel to render as a status line (e.g. "Imported 3 cards.
+  Skipped 1 malformed entry."). The import writes to the same `cardScores`
+  localStorage key the single-card form already uses, so the existing
+  cross-tab live-update mechanism and the ranking/duplicate-flagging both
+  pick up a bulk import exactly like any other save — no changes needed
+  there. See `docs/features/llm-card-scoring.md`'s new "Bulk import"
+  section and two new Known-gaps bullets (plain-text format rather than a
+  real file upload; no auto-derived keywords per bulk entry). Vitest-
+  covered: `packages/debate-card-search/test/llm-card-scoring.test.ts`
+  gained a `parseBulkCardSubmissions` describe block (blank input, a
+  single entry with no separator, multiple entries, a longer dashed
+  separator, metadata lines in any order, a missing id, missing text, a
+  fully-blank trailing block not counted as skipped, one malformed entry
+  alongside well-formed ones, multi-line text preserved, keyword
+  trimming/blank-dropping, and quality clamping/defaulting/fallback);
+  `packages/debate-card-search/test/cardScores.test.ts` gained
+  `saveScoredCardsBulk` (new batch, upsert by id, same-batch id collision
+  resolution, empty-batch no-op) and `bulkImportScoredCards` (parses and
+  persists every well-formed entry, reports skipped entries without
+  dropping the well-formed ones, blank input, quality carried into
+  `qualitySignals`, and immediate visibility to
+  `buildPersistedCardScoreRanking`) describe blocks. Verified with
+  `bun install` (2258 packages), the full `bun run typecheck` (13
+  typechecked packages, clean), and the full `bun run coverage` (matching
+  CI's `test.yml`; 227 test files, 3942 tests, all passing — up from
+  3918). No CI `lint`/`build` script exists in this repo
+  (`.github/workflows/test.yml` runs only `typecheck` and `coverage`), so
+  neither was run, matching every prior run's verification scope. Next
+  named follow-ups for this idea: a per-contributor score-trend chart over
+  time; an inline score badge shown directly in Evidence Library search
+  results.
+
 - **Top Contributor Awards — per-nomination "seconding"/upvoting** (the "🏆
   Top Contributor Awards" bullet's own next-named follow-up under Research
   Crowdsourcing Organizer Features below, after peer nominations). As with
@@ -13590,7 +13650,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🏅 **Contribution Leaderboard** (`/cards/leaderboard`) — the range-filter follow-up is done: a "Range" dropdown (All time / This week / This month) re-scopes the whole roster — scores and completed-task counts alike — to that trailing window (`lib/contribution-leaderboard.ts#filterContributionsByRange`/`isWithinLeaderboardRange`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Range filter" section. The per-category follow-up is also now done: a "Category" dropdown (All categories / Cards / Summaries / Highlights / Annotations / Original arguments / Refutations) re-scopes the roster to one contribution kind at a time, composing with the Range filter (`lib/contribution-leaderboard.ts#filterContributionsByKind`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Category filter" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor profile drill-down page) if one becomes worth doing.
 * 🎮 **Gamified Quests** (`/cards/streaks`) — the streak-freeze/grace-day-mechanic follow-up is done: a contributor can spend a rolling-allowance "streak freeze" to bridge a single missed day instead of resetting to zero (`lib/gamified-quests.ts#applyStreakFreezes`/`canApplyStreakFreeze`/`findFreezableStreakGapDayKey`, `state/streakFreezes.ts`), surfaced as a "Streak freeze" column with a "Use a grace day for …" action on `QuestStreaksPanel` — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak freeze / grace day" section. The opt-in-streak-lapse-reminder follow-up is also now done: a per-contributor "🔔 Remind me" toggle on the "Reminder" column shows an in-app warning banner whenever that contributor's in-progress streak is at risk of lapsing today (`lib/gamified-quests.ts#getStreakLapseRiskLength`, `state/streakLapseReminders.ts`) — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak-lapse reminder" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a shareable streak-badge image, or account-syncing reminder opt-ins/streak freezes across devices) if one becomes worth doing.
 * 🔓 **Progress Unlocks** (`/cards/progress`) — the visual next-tier progress bar follow-up is done: the "Next tier" column now leads with a filled `MeterBar` meter instead of a text-only sentence, with the needed-counts text kept underneath as detail (`lib/progress-unlocks.ts#getNextTierProgress`'s new `progressRatio` field) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Next-tier progress bar" section. The unlock-celebration-toast follow-up is also now done: a dismissible "🎉 New badge earned: …" banner shows on the signed-in visitor's own row the moment they newly earn a tier or streak badge, diffed against a persisted per-contributor "last-seen badges" baseline (`state/unlockCelebrations.ts`) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Unlock celebration toast" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a badge showcase on a contributor's profile) if one becomes worth doing.
-* 🧠 **LLM Card Scoring** (`/cards/scoring`) — batch-score an uploaded set of cards at once; a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.
+* 🧠 **LLM Card Scoring** (`/cards/scoring`) — the batch-scoring follow-up is done: a "Bulk import" textarea parses a `---`-delimited batch of `id:`/`keywords:`/`quality:` + text entries and persists every well-formed one in a single pass (`lib/llm-card-scoring.ts#parseBulkCardSubmissions`, `state/cardScores.ts#saveScoredCardsBulk`/`bulkImportScoredCards`), reporting an imported/skipped-entry count rather than failing the whole batch on one malformed entry — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Bulk import" section. Next: a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. The "best of the week" rollup follow-up is also now done: a new "Best of the week" section groups every announced daily winner by ISO week and highlights that week's single highest-helpfulness champion alongside its other announced days (`lib/daily-best-card.ts#buildWeeklyBestCardRollups`, `state/dailyBestCardAnnouncements.ts#buildAnnouncedWeeklyBestCardRollups`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Best of the week" section. Next: a winner-history calendar view.

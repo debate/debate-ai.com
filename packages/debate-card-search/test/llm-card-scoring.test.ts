@@ -4,6 +4,7 @@ import {
   buildCardScoreSummaryText,
   computeCardScoreBreakdown,
   deriveArgBlockKeywords,
+  parseBulkCardSubmissions,
   rankCardScores,
   scoreClarity,
   scoreEvidenceQuality,
@@ -224,6 +225,100 @@ describe("rankCardScores", () => {
 
   it("returns an empty list for an empty input", () => {
     expect(rankCardScores([])).toEqual([]);
+  });
+});
+
+describe("parseBulkCardSubmissions", () => {
+  it("returns no entries for blank input", () => {
+    expect(parseBulkCardSubmissions("")).toEqual({ entries: [], skippedCount: 0 });
+    expect(parseBulkCardSubmissions("   \n  ")).toEqual({ entries: [], skippedCount: 0 });
+  });
+
+  it("parses a single entry with no separator", () => {
+    const { entries, skippedCount } = parseBulkCardSubmissions("id: card-1\nkeywords: warming, emissions\nCard text here.");
+    expect(skippedCount).toBe(0);
+    expect(entries).toEqual([
+      { id: "card-1", text: "Card text here.", argBlockKeywords: ["warming", "emissions"], quality: 0.5 },
+    ]);
+  });
+
+  it("parses multiple entries separated by a dashed line", () => {
+    const raw = ["id: card-1", "First card text.", "---", "id: card-2", "Second card text."].join("\n");
+    const { entries } = parseBulkCardSubmissions(raw);
+    expect(entries.map((entry) => entry.id)).toEqual(["card-1", "card-2"]);
+    expect(entries.map((entry) => entry.text)).toEqual(["First card text.", "Second card text."]);
+  });
+
+  it("accepts a longer dashed separator", () => {
+    const raw = "id: card-1\nFirst.\n-----\nid: card-2\nSecond.";
+    const { entries } = parseBulkCardSubmissions(raw);
+    expect(entries).toHaveLength(2);
+  });
+
+  it("parses metadata lines in any order", () => {
+    const raw = "keywords: warming\nquality: 0.9\nid: card-1\nCard text.";
+    const { entries } = parseBulkCardSubmissions(raw);
+    expect(entries[0]).toEqual({ id: "card-1", text: "Card text.", argBlockKeywords: ["warming"], quality: 0.9 });
+  });
+
+  it("skips an entry missing an id and counts it", () => {
+    const { entries, skippedCount } = parseBulkCardSubmissions("keywords: warming\nCard text.");
+    expect(entries).toEqual([]);
+    expect(skippedCount).toBe(1);
+  });
+
+  it("skips an entry with no text after its metadata and counts it", () => {
+    const { entries, skippedCount } = parseBulkCardSubmissions("id: card-1\nkeywords: warming");
+    expect(entries).toEqual([]);
+    expect(skippedCount).toBe(1);
+  });
+
+  it("does not count a fully blank block (e.g. a trailing separator) as skipped", () => {
+    const raw = "id: card-1\nCard text.\n---\n   \n";
+    const { entries, skippedCount } = parseBulkCardSubmissions(raw);
+    expect(entries).toHaveLength(1);
+    expect(skippedCount).toBe(0);
+  });
+
+  it("keeps well-formed entries even when a sibling entry is malformed", () => {
+    const raw = ["id: card-1", "Good card.", "---", "keywords: no-id-here", "---", "id: card-3", "Also good."].join(
+      "\n",
+    );
+    const { entries, skippedCount } = parseBulkCardSubmissions(raw);
+    expect(entries.map((entry) => entry.id)).toEqual(["card-1", "card-3"]);
+    expect(skippedCount).toBe(1);
+  });
+
+  it("preserves multi-line card text", () => {
+    const raw = "id: card-1\nFirst line.\nSecond line.";
+    const { entries } = parseBulkCardSubmissions(raw);
+    expect(entries[0].text).toBe("First line.\nSecond line.");
+  });
+
+  it("trims and drops blank keyword entries", () => {
+    const raw = "id: card-1\nkeywords: warming ,  , emissions ,\nCard text.";
+    const { entries } = parseBulkCardSubmissions(raw);
+    expect(entries[0].argBlockKeywords).toEqual(["warming", "emissions"]);
+  });
+
+  it("defaults keywords to an empty list when the line is omitted", () => {
+    const { entries } = parseBulkCardSubmissions("id: card-1\nCard text.");
+    expect(entries[0].argBlockKeywords).toEqual([]);
+  });
+
+  it("clamps an out-of-range quality value", () => {
+    const { entries } = parseBulkCardSubmissions("id: card-1\nquality: 4\nCard text.");
+    expect(entries[0].quality).toBe(1);
+  });
+
+  it("falls back to the given default quality when the value is unparseable", () => {
+    const { entries } = parseBulkCardSubmissions("id: card-1\nquality: not-a-number\nCard text.", 0.7);
+    expect(entries[0].quality).toBe(0.7);
+  });
+
+  it("falls back to 0.5 quality by default when omitted", () => {
+    const { entries } = parseBulkCardSubmissions("id: card-1\nCard text.");
+    expect(entries[0].quality).toBe(0.5);
   });
 });
 

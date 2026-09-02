@@ -30,6 +30,16 @@
  * Shared Evidence Library corpus — no panel change needed there, see
  * `buildPersistedCardScoreRanking`.
  *
+ * A "Bulk import" section closes the "batch-score an uploaded set of cards
+ * at once" follow-up (listed alongside a per-contributor score-trend chart
+ * and an inline Evidence Library score badge, both still open): a textarea
+ * accepts a `---`-delimited batch of `id:`/`keywords:`/`quality:` + text
+ * entries, parsed and persisted in one pass via
+ * `state/cardScores.ts`'s `bulkImportScoredCards` (itself a thin composition
+ * of `lib/llm-card-scoring.ts`'s pure `parseBulkCardSubmissions`), reporting
+ * an imported/skipped-entry count rather than failing the whole batch on one
+ * malformed entry.
+ *
  * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
  * `isCardScoringLiveUpdateStorageEvent`, so a card scored, an AI assessment
  * requested, or a tracked topic added in another browser tab refreshes this
@@ -48,6 +58,7 @@ import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
+  bulkImportScoredCards,
   buildPersistedCardScoreRanking,
   deriveArgBlockKeywordsForTopic,
   getScoredCard,
@@ -102,6 +113,8 @@ export function CardScoringPanel() {
   const [aiErrors, setAiErrors] = useState<Record<string, string>>({})
   const [topics, setTopics] = useState<string[]>([])
   const [topic, setTopic] = useState("")
+  const [bulkText, setBulkText] = useState("")
+  const [bulkStatus, setBulkStatus] = useState<string | null>(null)
 
   const refreshAll = () => {
     const persisted = buildPersistedCardScoreRanking()
@@ -194,6 +207,22 @@ export function CardScoringPanel() {
     refresh()
   }
 
+  const handleBulkImport = () => {
+    if (!bulkText.trim()) {
+      setBulkStatus("Paste at least one card first.")
+      return
+    }
+    const { importedCount, skippedCount } = bulkImportScoredCards(bulkText)
+    setBulkStatus(
+      importedCount === 0
+        ? `No cards imported — ${skippedCount} entr${skippedCount === 1 ? "y was" : "ies were"} missing an id or text.`
+        : `Imported ${importedCount} card${importedCount === 1 ? "" : "s"}.` +
+            (skippedCount > 0 ? ` Skipped ${skippedCount} malformed entr${skippedCount === 1 ? "y" : "ies"}.` : ""),
+    )
+    if (importedCount > 0) setBulkText("")
+    refresh()
+  }
+
   if (ranking === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading card scores…</div>
   }
@@ -283,6 +312,27 @@ export function CardScoringPanel() {
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button onClick={handleSubmit}>Score card</Button>
+      </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div>
+          <h2 className="text-sm font-medium text-foreground">Bulk import</h2>
+          <p className="text-xs text-muted-foreground">
+            Paste multiple cards separated by a line of dashes (<code>---</code>). Each entry may
+            start with optional <code>id:</code>, <code>keywords:</code>, and <code>quality:</code>{" "}
+            lines, followed by the card text.
+          </p>
+        </div>
+        <Textarea
+          value={bulkText}
+          onChange={(e) => setBulkText(e.target.value)}
+          placeholder={"id: warming-da-1\nkeywords: warming, emissions\nquality: 0.6\nRising emissions accelerate...\n---\nid: warming-da-2\nSolvency evidence text..."}
+          rows={6}
+        />
+        {bulkStatus && <p className="text-sm text-muted-foreground">{bulkStatus}</p>}
+        <Button variant="outline" onClick={handleBulkImport}>
+          Import cards
+        </Button>
       </div>
 
       {ranking.length === 0 ? (
