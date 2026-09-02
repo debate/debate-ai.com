@@ -46,6 +46,14 @@
  * for a material that gets re-uploaded/edited" Known gap recorded in
  * `docs/features/coach-materials.md`.
  *
+ * Saves/deletes route through the new `hooks/useCoachMaterialsSync.ts`
+ * (`saveMaterial`/`deleteMaterial` in place of calling
+ * `state/coachMaterials.ts`'s `saveCoachMaterial`/`deleteCoachMaterial`
+ * directly) so materials and their version history follow a signed-in user
+ * across devices instead of staying per-browser — closing the "Account sync
+ * for coach materials (and their version history)" follow-up named under
+ * idea #8 in TODO.md.
+ *
  * @module panels/CoachMaterialsPanel
  */
 
@@ -76,12 +84,11 @@ import { requestTeamCoachAnswer } from "../coach/team-coach-client"
 import { extractMaterialTextFromDocument } from "../coach/document-material-extraction"
 import { appendDictatedSegment } from "../coach/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
+import { useCoachMaterialsSync } from "../hooks/useCoachMaterialsSync"
 import {
   buildCoachMaterialLibraryFromStore,
-  deleteCoachMaterial,
   findRelevantMaterialsFromStore,
   listCoachMaterialTagsFromStore,
-  saveCoachMaterial,
 } from "../state/coachMaterials"
 import {
   listVersionsForMaterial,
@@ -156,6 +163,7 @@ export function CoachMaterialsPanel() {
   const dictation = useMicrophoneTranscription({
     onSegment: (segment) => setForm((prev) => ({ ...prev, text: appendDictatedSegment(prev.text, segment) })),
   })
+  const { synced, ready: syncReady, saveMaterial, deleteMaterial } = useCoachMaterialsSync()
 
   useEffect(() => {
     setAllTags(listCoachMaterialTagsFromStore())
@@ -183,6 +191,16 @@ export function CoachMaterialsPanel() {
     setTotalUnfiltered(buildCoachMaterialLibraryFromStore().totalMaterials)
   }
 
+  // Refreshes the rendered view once the mount-time cross-device merge
+  // settles, in case it adopted materials or versions this browser didn't
+  // have yet.
+  useEffect(() => {
+    if (!syncReady) return
+    refresh()
+    if (historyOpenId) setVersions(listVersionsForMaterial(historyOpenId))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [syncReady])
+
   const handleSave = () => {
     const title = form.title.trim()
     const text = form.text.trim()
@@ -191,7 +209,7 @@ export function CoachMaterialsPanel() {
       return
     }
 
-    saveCoachMaterial({
+    saveMaterial({
       id: editingId ?? `${form.kind}-${Date.now()}`,
       kind: form.kind,
       title,
@@ -234,7 +252,7 @@ export function CoachMaterialsPanel() {
   }
 
   const handleRestore = (version: CoachMaterialVersion) => {
-    saveCoachMaterial(materialFromVersion(version))
+    saveMaterial(materialFromVersion(version))
     setVersions(listVersionsForMaterial(version.materialId))
     if (editingId === version.materialId) handleCancelEdit()
     refresh()
@@ -259,7 +277,7 @@ export function CoachMaterialsPanel() {
   }
 
   const handleDelete = (id: string) => {
-    deleteCoachMaterial(id)
+    deleteMaterial(id)
     if (editingId === id) handleCancelEdit()
     if (historyOpenId === id) {
       setHistoryOpenId(null)
@@ -310,6 +328,11 @@ export function CoachMaterialsPanel() {
         <p className="text-sm text-muted-foreground">
           Upload lecture transcripts, camp materials, instructional documents, and practice-round
           recordings to ground the team coach AI in your own teaching materials.
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {synced
+            ? "Materials and their edit history are synced to your account."
+            : "Sign in to sync materials and their edit history across devices."}
         </p>
       </div>
 

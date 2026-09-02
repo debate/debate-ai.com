@@ -6,6 +6,70 @@
 _No task currently in progress._
 
 ### Completed
+- **Video-Lecture-Training Coach AI — account sync for coach materials and
+  their version history (idea #8, `coach-materials.md` Known gap).** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save flows
+  docs and debates in SQL and link to users... add tools into where needed
+  in the UI... develop better tool UI") — as with every recent repeat, the
+  "user settings / SQL-linked flows, docs, rounds" half is already fully
+  built and every tool is already reachable from the Tools page and
+  CardMirror's command palette, and there's no open PR to review instead, so
+  this slice closed the next concrete gap `docs/features/coach-materials.md`'s
+  "Known gaps" section named: coach materials and their edit-in-place version
+  history (added last run) were both purely per-browser localStorage, unlike
+  most other panels in this repo (word-count rounds, judge decisions, round
+  pairings, etc.), so neither followed a signed-in user across devices. Adds
+  two new D1 tables (`apps/debate-ai.com/lib/database/schema.ts`):
+  `saved_coach_materials` (one row per `(user, material)` pair, keyed by the
+  material's own id, mirroring `saved_round_pairings`) and
+  `saved_coach_material_versions` (an append-only log — many rows can share a
+  `materialId` — mirroring `saved_judge_decisions`/
+  `saved_counsel_panel_assessments`'s shape), plus the matching
+  `/api/coach-materials`(`/[materialId]`) and
+  `/api/coach-material-versions`(`/[versionId]`) routes (GET list, PUT
+  upsert, DELETE — deleting a material also cascades to its synced version
+  rows server-side). `packages/debate-speech-writer/src/state/
+  savedCoachMaterials.ts`/`savedCoachMaterialVersions.ts` hold the pure
+  request-body validators (`isValidCoachMaterialRecord`/
+  `isValidCoachMaterialVersionRecord`) and byte caps (1 MB each) shared by
+  the routes; `coach/coach-materials-client.ts`/
+  `coach-material-versions-client.ts` hold the `fetch` calls. `state/
+  coachMaterials.ts` gains `adoptCoachMaterial` (upsert-by-id without
+  snapshotting a version) and `saveCoachMaterial`/`deleteCoachMaterial` now
+  return the version created/removed-version-ids, so a caller can sync those
+  too; `state/coachMaterialVersions.ts` gains the matching
+  `adoptMaterialVersion`/`listAllCoachMaterialVersions`, and
+  `deleteVersionsForMaterial` now returns the removed ids. The new
+  `hooks/useCoachMaterialsSync.ts` mirrors `debate-round`'s
+  `useRoundPairings` exactly: a one-time mount-time merge (deduped
+  module-level across instances) reconciles local and remote materials *and*
+  version history by id, filling gaps without resolving edit conflicts;
+  `saveMaterial`/`deleteMaterial` wrap the local calls with a best-effort
+  account push that never blocks the local save/delete on failure.
+  `CoachMaterialsPanel.tsx` now routes save/restore/delete through the hook
+  and shows a synced-status line, mirroring `PreRoundBriefingsPanel`'s
+  pairings-synced indicator. See `docs/features/coach-materials.md`'s new
+  "Account-synced materials and version history" section for the full
+  writeup. Vitest-covered: new `test/savedCoachMaterials.test.ts` and
+  `test/savedCoachMaterialVersions.test.ts` (validator acceptance/rejection),
+  plus new cases in `test/coachMaterials.test.ts`/
+  `test/coachMaterialVersions.test.ts` covering the new adopt functions and
+  return values. Full verification: `bun run test` (3647 tests passed,
+  including 50 new ones), `bunx turbo typecheck` across every workspace
+  package with a `typecheck` script (all 13 pass), a manual `bunx tsc
+  --noEmit` in `apps/debate-ai.com` (only the same pre-existing, unrelated
+  errors prior slices have already documented — Cloudflare Workers ambient
+  types, better-auth client-plugin generics, missing `debate-ui` icon type
+  declarations — none in a file this slice touched), and `bun run build:web`
+  (production build succeeds, with all four new API routes and
+  `/coach-materials` listed among the built routes). `bun run db:generate`
+  produced `apps/debate-ai.com/drizzle/0022_wise_paladin.sql` for the two new
+  tables. No repo-wide lint script exists to run. Remaining gap for a future
+  slice: coach materials still have no server-side transcription for
+  uploaded audio/video recordings, and no reviewer/approval workflow before a
+  material is available to the team coach.
+
 - **Video-Lecture-Training Coach AI — edit-in-place and version history for
   a re-uploaded/edited material (idea #8, `coach-materials.md` Known gap).**
   Another repeat of the standing prompt ("integrate all the tools into the
@@ -12590,11 +12654,16 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    "Restore this version" action, backed by the new
    `state/coachMaterialVersions.ts` local store — see the Completed entry
    above and `docs/features/coach-materials.md`'s "Edit-in-place and version
-   history" section. Next:
+   history" section. The account-sync follow-up is also now done: new
+   `saved_coach_materials`/`saved_coach_material_versions` D1 tables plus
+   `/api/coach-materials`/`/api/coach-material-versions` routes, merged in by
+   the new `hooks/useCoachMaterialsSync.ts`, so both the material library and
+   its version history now follow a signed-in user across devices — see the
+   Completed entry above and `docs/features/coach-materials.md`'s
+   "Account-synced materials and version history" section. Next:
    - Server-side transcription for uploaded audio/video recordings (currently only `.docx`/`.txt`/`.md` extract text).
-   - Account sync for coach materials (and their version history) — both are
-     still purely per-browser localStorage today, unlike most other panels
-     in this repo.
+   - A reviewer/approval workflow before a saved material is available to the
+     team coach — any saved material is included immediately today.
 
 9. **Expandable Heading Structure** (`/reason-editor`, CardMirror's native
    `NavigationPanel` + `HeadingBreadcrumbBar` — not the dead `reason-editor`

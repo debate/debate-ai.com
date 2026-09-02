@@ -124,6 +124,7 @@ export { requestTeamCoachAnswer } from "./coach/team-coach-client";
 export type { RequestTeamCoachAnswerOptions } from "./coach/team-coach-client";
 
 export {
+  adoptCoachMaterial,
   buildCoachMaterialLibraryFromStore,
   deleteCoachMaterial,
   findRelevantMaterialsFromStore,
@@ -131,6 +132,38 @@ export {
   listCoachMaterials,
   saveCoachMaterial,
 } from "./state/coachMaterials";
+export type { SaveCoachMaterialResult } from "./state/coachMaterials";
+
+export {
+  appendMaterialVersion,
+  adoptMaterialVersion,
+  deleteVersionsForMaterial,
+  listAllCoachMaterialVersions,
+  listVersionsForMaterial,
+  materialFromVersion,
+  MAX_VERSIONS_PER_MATERIAL,
+} from "./state/coachMaterialVersions";
+export type { CoachMaterialVersion } from "./state/coachMaterialVersions";
+
+export { isValidCoachMaterialRecord, MAX_SAVED_COACH_MATERIAL_BYTES } from "./state/savedCoachMaterials";
+export {
+  isValidCoachMaterialVersionRecord,
+  MAX_SAVED_COACH_MATERIAL_VERSION_BYTES,
+} from "./state/savedCoachMaterialVersions";
+
+export {
+  listSavedCoachMaterials,
+  saveCoachMaterialToAccount,
+  deleteSavedCoachMaterialFromAccount,
+} from "./coach/coach-materials-client";
+export {
+  listSavedCoachMaterialVersions,
+  saveCoachMaterialVersionToAccount,
+  deleteSavedCoachMaterialVersionFromAccount,
+} from "./coach/coach-material-versions-client";
+
+export { useCoachMaterialsSync } from "./hooks/useCoachMaterialsSync";
+export type { UseCoachMaterialsSyncResult } from "./hooks/useCoachMaterialsSync";
 
 export {
   appendCoachConversationTurn,

@@ -228,6 +228,72 @@ new cases in `packages/debate-speech-writer/test/coachMaterials.test.ts`
 accumulates versions across repeated overwrites; `deleteCoachMaterial` also
 clears that material's version history).
 
+## Account-synced materials and version history
+
+Closes the "No account sync for coach materials at all" Known gap below —
+the material library and its version history were both purely per-browser
+localStorage, unlike most other panels in this repo. Mirrors
+`debate-round`'s `saved_round_pairings`
+D1-table-plus-`/api/round-pairings`-routes pattern exactly, applied to both
+`CoachMaterial`s and their `CoachMaterialVersion` snapshots:
+
+- Two new D1 tables (`apps/debate-ai.com/lib/database/schema.ts`):
+  `saved_coach_materials` (one row per `(user, material)` pair, keyed by the
+  material's own id — mirrors `saved_round_pairings`) and
+  `saved_coach_material_versions` (one row per version snapshot, many rows
+  can share a `materialId` — mirrors `saved_judge_decisions`/
+  `saved_counsel_panel_assessments`'s append-only-log shape, with
+  `materialId` as a plain indexed column).
+- `/api/coach-materials` (`GET` — every synced material in full) and
+  `/api/coach-materials/[materialId]` (`PUT` upsert, `DELETE` — which also
+  cascades to that material's synced version rows, mirroring
+  `state/coachMaterials.ts#deleteCoachMaterial`'s local cascade) plus the
+  same GET/PUT/DELETE shape at `/api/coach-material-versions` and
+  `/api/coach-material-versions/[versionId]` for the version history. Both
+  pairs require a signed-in session (401 otherwise) — a synced record only
+  exists once explicitly saved, same as `/api/round-pairings`.
+- `state/savedCoachMaterials.ts`/`state/savedCoachMaterialVersions.ts` — pure
+  request-body validators (`isValidCoachMaterialRecord`,
+  `isValidCoachMaterialVersionRecord`) and per-record byte caps
+  (`MAX_SAVED_COACH_MATERIAL_BYTES`, `MAX_SAVED_COACH_MATERIAL_VERSION_BYTES`,
+  1 MB each — generous for a full lecture transcript, well short of D1's
+  row-size limits), shared by the API routes and the sync hook.
+- `coach/coach-materials-client.ts`/`coach/coach-material-versions-client.ts`
+  — the `fetch` calls against those routes (`listSaved…`, `save…ToAccount`,
+  `deleteSaved…FromAccount`), kept separate from the validators so those stay
+  unit-testable without mocking `fetch`.
+- `state/coachMaterials.ts` gains `adoptCoachMaterial` (upsert-by-id without
+  snapshotting a version, for adopting a remote record the local store
+  doesn't have yet) and `saveCoachMaterial`/`deleteCoachMaterial` now return
+  the version it created/the version ids it removed, so a caller can sync
+  those too. `state/coachMaterialVersions.ts` gains the matching
+  `adoptMaterialVersion` and `listAllCoachMaterialVersions`, and
+  `deleteVersionsForMaterial` now returns the removed ids.
+- `hooks/useCoachMaterialsSync.ts` — a new local-first sync hook, mirroring
+  `debate-round`'s `useRoundPairings`: on mount, a one-time cross-device
+  merge (deduped across instances via module-level state) reconciles local
+  and remote materials *and* their version history by id, only ever filling
+  gaps (never overwriting an id both sides already have — no edit-conflict
+  resolution). `saveMaterial`/`deleteMaterial` wrap the local
+  `saveCoachMaterial`/`deleteCoachMaterial` calls with a best-effort account
+  push; a failed sync never blocks the local save/delete.
+- `CoachMaterialsPanel.tsx` now calls the hook's `saveMaterial`/
+  `deleteMaterial` instead of the state module's functions directly (save,
+  restore, and delete all route through it), and shows a "Materials and
+  their edit history are synced to your account." / "Sign in to sync
+  materials and their edit history across devices." status line, mirroring
+  `PreRoundBriefingsPanel`'s pairings-synced indicator.
+
+Vitest-covered in `packages/debate-speech-writer/test/savedCoachMaterials.test.ts`
+and `test/savedCoachMaterialVersions.test.ts` (validator acceptance/rejection
+cases) and new cases in `test/coachMaterials.test.ts`/
+`test/coachMaterialVersions.test.ts` (`adoptCoachMaterial`/
+`adoptMaterialVersion` upsert-by-id semantics, `listAllCoachMaterialVersions`,
+and the new return values of `saveCoachMaterial`/`deleteCoachMaterial`/
+`deleteVersionsForMaterial`). No route-level tests — mirrors this repo's
+existing convention of testing only the pure validators, not the D1-backed
+routes themselves (see e.g. `/api/round-pairings`).
+
 ## Known gaps
 
 - No transcription of an *uploaded* audio/video recording file — follow-up
@@ -244,18 +310,17 @@ clears that material's version history).
   now snapshots a material every time `saveCoachMaterial` overwrites it, and
   `CoachMaterialsPanel` has an "Edit" action (revise in place) plus a
   "History" toggle with a "Restore this version" action per snapshot (see
-  "Edit-in-place and version history" above). Version history is local-only
-  (localStorage), the same gap every other localStorage-backed piece of
-  this panel already has — it doesn't follow a signed-in user across
-  devices, since coach materials themselves aren't account-synced yet
-  either (see the next gap).
-- No account sync for coach materials at all — unlike most other panels in
+  "Edit-in-place and version history" above). Version history now follows a
+  signed-in user across devices too (see the next gap's closure).
+- ~~No account sync for coach materials at all — unlike most other panels in
   this repo (word-count rounds, judge decisions, prep notes, etc.), the
   material library and its version history are both purely per-browser
-  localStorage, with no D1 table or `/api/coach-materials` route. A future
-  run should add that sync layer, mirroring the `saved_judge_decisions`
-  D1-table-plus-`/api/judge-decisions`-routes pattern, if this becomes a
-  priority.
+  localStorage, with no D1 table or `/api/coach-materials` route.~~ Closed:
+  new `saved_coach_materials`/`saved_coach_material_versions` D1 tables plus
+  `/api/coach-materials`/`/api/coach-material-versions` routes, merged in by
+  `hooks/useCoachMaterialsSync.ts`, so both the material library and its
+  version history now follow a signed-in user across devices — see
+  "Account-synced materials and version history" above.
 - `convertDocxToHTML`'s default renderer needs a browser `DOMParser` (via
   `docx-preview`), so `.docx` upload only works from this `"use client"`
   panel in the browser — not from a server-rendered or Node context.
