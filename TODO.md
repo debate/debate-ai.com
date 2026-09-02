@@ -6,6 +6,47 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Coach Mode — exportable coaching-notes document** (the "🎙️ AI Coach
+  Mode" bullet's own next-named follow-up under Research Crowdsourcing
+  Organizer Features below). As with every recent run, the standing prompt
+  ("integrate all the tools into the UI... create user settings... link
+  user db SQL... save flows docs and debates in SQL and link to users...
+  add tools where needed in the UI... develop better tool UI") is already
+  fully built (account-synced `/settings`, D1 tables + `/api/*` routes
+  linking flows/docs/rounds/materials to signed-in users, every tool
+  reachable from the nav), and the one open PR (#437, "Consolidate UI
+  primitives and add web extension scaffold") doesn't touch this area — so
+  this run again picked a genuine next-step instead, one directly named in
+  TODO.md's own text. `CoachingSessionsPanel`'s persisted sessions
+  previously had no way to get a session's coaching prompts (or its
+  open-ended AI feedback, once generated) out of the browser for offline
+  use before a round. A new "Download" action per session card exports the
+  session as a plain-text coaching-notes file, headed with the round id and
+  side, via the new `state/coachingSessions.ts#buildCoachingNotesText`
+  (composing the already-existing `buildCoachingSummaryText` for the
+  templated prompts, plus the session's `aiFeedback` as its own "### AI
+  Feedback" section when one has been generated) and
+  `coachingNotesFilename` (mirroring
+  `pre-round-briefing.ts#preRoundBriefingFilename`'s exact
+  non-alphanumeric-to-hyphen sanitization rule). The download itself reuses
+  the same anchor+Blob pattern every other completed export follow-up in
+  this repo already uses (`PreRoundBriefingsPanel.tsx`'s "Download"). See
+  `docs/features/coaching-sessions.md`'s new "Download" mention in "What it
+  shows" and its "Data flow" section. Vitest-covered:
+  `packages/debate-round/test/coachingSessions.test.ts` gained a
+  `buildCoachingNotesText` describe block (the notes header, rendered
+  template prompts, the AI-feedback section present/absent, and the
+  no-prompts placeholder for an empty session) and a `coachingNotesFilename`
+  describe block (the sanitization rule and its empty-input fallback).
+  Verified with `bun install` (2258 packages), the full `bun run typecheck`
+  (13 typechecked packages, clean), and the full `bun run test`/`bun run
+  coverage` (root, all packages: 227 test files, 3970 tests, all passing —
+  up from 3962). No CI `lint`/`build` script exists in this repo
+  (`.github/workflows/test.yml` runs only `typecheck` and `coverage`), so
+  neither was run, matching every prior run's verification scope. No
+  further follow-up is currently tracked for this bullet; a future run
+  should pick a fresh next-step if one becomes worth doing.
+
 - **Daily Quests and Targets — completion celebration posted to the News
   Stream feed** (the "🎯 Daily Quests and Targets" bullet's third-named
   follow-up under Research Crowdsourcing Organizer Features below, alongside
@@ -13806,7 +13847,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below), so: a bulk CSV import for scouted rounds; a side-by-side us-vs-opponent comparison view; a printable/exportable scouting report.
 * ⚖️ **Judge Profiles** (`/judges`) — same Tabroom blocker, so: a bulk CSV import for ballot history; a multi-judge comparison view for panel rounds; a confidence indicator on the auto-tagged paradigm.
 * 🤖 **AI Practice Opponent** (`/practice-opponent`) — share a custom-authored persona across a team instead of per-user only; a difficulty slider layered on top of persona choice; post-round feedback tips specific to the persona faced.
-* 🎙️ **AI Coach Mode** (`/coaching`) — a coaching-session history timeline per round; a side-by-side comparison across two rounds; an exportable coaching-notes document.
+* 🎙️ **AI Coach Mode** (`/coaching`) — the exportable-coaching-notes-document follow-up is done: each session card has a "Download" action that saves its template prompts plus its AI feedback (if generated) as a plain-text file, headed with the round id and side (`state/coachingSessions.ts#buildCoachingNotesText`/`coachingNotesFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Download" mention. Next: a coaching-session history timeline per round; a side-by-side comparison across two rounds.
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.
 * 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. The optional brainstorm-session-timer follow-up is also now done: a "Session timer" widget (duration presets, Start/Pause/Reset, a live `M:SS` countdown) backed by the new `lib/brainstorm-session-timer.ts` pure state machine and `state/brainstormSessionTimer.ts` persistence wrapper, synced live across browser tabs via the panel's existing `storage`-event listener — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Session timer" section. Next: polish the idea-ranking UI (upvote affordance/animation).
 * 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
