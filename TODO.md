@@ -6,6 +6,59 @@
 _No task currently in progress._
 
 ### Completed
+- **Daily Best Card Challenge — comment thread on each day's winner.**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that half is already fully built (account-synced settings already
+  exist at `/settings`, D1 tables + `/api/*` routes already link
+  flows/docs/rounds/materials/etc. to signed-in users, and the tools are
+  already reachable from the nav/UI), so this slice picked the "🕵️ Daily
+  Best Card Challenge" bullet's first still-open next-step: "a comment
+  thread on each day's winner." A new `state/dailyBestCardComments.ts`
+  (mirroring `state/flowEdits.ts`'s/`debate-round`'s
+  `state/judgeDecisions.ts`'s localStorage convention) persists a comment
+  keyed by its own generated id, filterable/listable per announced day
+  (`postDailyBestCardComment`/`listDailyBestCardComments`). `DailyBestCardPanel`
+  now renders a thread under both "Today's leader" (once announced) and
+  every row in "Announced history" — a "Your name"/comment form posts a new
+  entry, rendered oldest-first with a per-comment "Delete" action. Comments
+  are account-synced, matching the existing per-record-append pattern used
+  by `debate-round`'s judge-decision history: a new
+  `saved_daily_best_card_comments` D1 table (`drizzle/0023_young_trish_tilby.sql`)
+  plus `/api/daily-best-card-comments` routes (list/upsert/delete, 401
+  signed-out), merged in by the new `hooks/useDailyBestCardComments.ts`
+  (local-first, one-time account merge per page load, best-effort push of
+  local-only comments) — so a signed-in contributor's comments follow them
+  across devices. A new `apps/debate-ai.com/components/research/
+  DailyBestCardWithIdentity.tsx` wrapper (mirroring
+  `ProgressUnlocksWithIdentity.tsx`) prefills each thread's "Your name"
+  field from the real signed-in session, wired into both `ResearchHub.tsx`
+  and the standalone `/cards/best-card` route. `live-update.ts`'s
+  `DAILY_BEST_CARD_LIVE_UPDATE_STORAGE_KEYS` gained the new
+  `"dailyBestCardComments"` key so a comment posted in another tab also
+  triggers a cross-tab refresh. See
+  `docs/features/daily-best-card.md`'s new "Comment thread" bullet and
+  updated data-flow diagram. Vitest-covered:
+  `packages/debate-card-search/test/dailyBestCardComments.test.ts` (posting,
+  trimming/capping, per-day filtering, adopt-upsert, delete, and the
+  `isValidDailyBestCardComment` structural validator) and
+  `packages/debate-card-search/test/daily-best-card-comments-client.test.ts`
+  (GET/PUT/DELETE against a mocked `fetch`, including the 401-returns-null
+  and error-message-propagation cases, mirroring `debate-round`'s
+  `judge-decisions-client.test.ts`). `DailyBestCardPanel.tsx`'s new
+  rendering and `useDailyBestCardComments.ts`'s React-bound merge/sync logic
+  remain intentionally untested, matching this panel's existing convention
+  (only pure logic and network-call wrappers are directly tested). Verified
+  with `bun run test` (root, all packages), `bun run typecheck` (root, all
+  typechecked packages), and a full `bun run build` (the whole monorepo
+  build, including `debate-ai-web`'s production build) — see the
+  Verification section of this run's report for exact pass/fail results. No
+  lint script/config exists in this repo to run. The remaining next-steps
+  for this idea (a winner-history calendar view, a "best of the week"
+  rollup) stay open; a future run should pick one or a fresh next-step if
+  one becomes worth doing.
 - **Top Contributor Awards — awards history / hall-of-fame page.** Another
   repeat of the standing prompt ("integrate all the tools into the UI...
   create user settings and link user db SQL... with ability to save flows
@@ -13013,7 +13066,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — batch-score an uploaded set of cards at once; a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.
-* 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — a winner-history calendar view; a comment thread on each day's winner; a "best of the week" rollup.
+* 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. Next: a winner-history calendar view; a "best of the week" rollup.
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. Next: a "nominate a peer" action.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — a coach-facing override/reassign control; a task-priority indicator; a capacity-aware view of routing load across the team.

@@ -25,6 +25,20 @@ whatever is currently winning.
   first, rendered as a one-line highlight
   (`lib/daily-best-card.ts`'s `buildDailyBestCardHighlight`) plus the
   contributor who submitted it.
+- **Comment thread** — every announced day's winner (today's, once frozen,
+  and every past day in the history list) carries its own comment thread. A
+  "Your name" field (prefilled from a signed-in visitor's derived identity
+  via `DailyBestCardWithIdentity`, same convention as
+  `ProgressUnlocksWithIdentity`) plus a text box post a comment
+  (`state/dailyBestCardComments.ts#postDailyBestCardComment`), rendered
+  oldest-first with a per-comment "Delete" action. A comment only exists once
+  a day is announced — the live, not-yet-frozen leader has no thread, since
+  it can still change. Comment history is account-synced: signed in, a
+  comment follows the visitor across devices via
+  `hooks/useDailyBestCardComments.ts` (local-first, merged with the account
+  once per page load — mirrors `debate-round`'s `useJudgeDecisions`), backed
+  by a new `saved_daily_best_card_comments` D1 table and
+  `/api/daily-best-card-comments` routes.
 
 A day with no card contributions shows a prompt to submit one in the
 Contributions Feed instead of an announce action.
@@ -48,8 +62,14 @@ panels/ContributionsFeedPanel.tsx          — stamps submittedAt on every submi
                                               under a separate
                                               "dailyBestCardAnnouncements" key
       → listAnnouncedDailyBestCards() / getAnnouncedDailyBestCard()
-  → panels/DailyBestCardPanel.tsx          — today's leader, announce action, history
-  → apps/debate-ai.com/app/cards/best-card/page.tsx — mounts the panel as a route
+  → state/dailyBestCardComments.ts (localStorage, "dailyBestCardComments")
+      → postDailyBestCardComment() / listDailyBestCardComments() / deleteDailyBestCardComment()
+  → hooks/useDailyBestCardComments.ts        — local-first, best-effort account-synced
+      → lib/daily-best-card-comments-client.ts → apps/debate-ai.com's /api/daily-best-card-comments routes
+                                                  → saved_daily_best_card_comments (D1)
+  → panels/DailyBestCardPanel.tsx          — today's leader, announce action, history, comment threads
+  → apps/debate-ai.com/components/research/DailyBestCardWithIdentity.tsx — prefills "Your name" from the signed-in session
+  → apps/debate-ai.com/app/cards/best-card/page.tsx — mounts the panel (via the identity wrapper) as a route
 ```
 
 `state/contributions.ts` filters persisted contributions down to `kind: "card"`
@@ -84,3 +104,6 @@ timestamp wiring was needed (see
   and [Top Contributor Awards](contributor-awards.md): no real
   submitted-contribution flow beyond the Contributions Feed form, no
   reviewer-identity/permission checks.
+- A comment's "Your name" field is a free-form prefill, not a real identity
+  gate (same convention as most other panels' "my id" fields) — anyone can
+  post or delete a comment under any name, including someone else's.

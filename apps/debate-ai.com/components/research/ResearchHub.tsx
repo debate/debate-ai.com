@@ -24,7 +24,6 @@ import {
   CardScoringPanel,
   ContributionsFeedPanel,
   ContributorAwardsPanel,
-  DailyBestCardPanel,
   EvidenceLibraryPanel,
   QuestStreaksPanel,
   RevisionIncentivesPanel,
@@ -43,6 +42,7 @@ import { SprintNotesWithIdentity } from "./SprintNotesWithIdentity"
 import { BrainstormBoardWithIdentity } from "./BrainstormBoardWithIdentity"
 import { GroupChallengesWithIdentity } from "./GroupChallengesWithIdentity"
 import { PrepRoomWithIdentity } from "./PrepRoomWithIdentity"
+import { DailyBestCardWithIdentity } from "./DailyBestCardWithIdentity"
 import type { TrackedArgument } from "debate-card-search/src/lib/topic-coverage"
 import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import { listEvidenceLibraryEntries } from "debate-card-search/src/state/evidenceLibraryEntries"
@@ -198,7 +198,7 @@ export function ResearchHub() {
           <ContributionLeaderboardWithIdentity />
           <ContributorAwardsPanel />
           <ContributionsFeedPanel />
-          <DailyBestCardPanel />
+          <DailyBestCardWithIdentity />
           <RevisionIncentivesPanel />
         </div>
       ) : null}
