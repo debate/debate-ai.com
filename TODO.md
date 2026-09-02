@@ -6,6 +6,73 @@
 _No task currently in progress._
 
 ### Completed
+- **Community-Rated Summaries and Highlights — real reviewer-identity
+  checks on endorsing (idea #11's own next-named follow-up).** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save flows
+  docs and debates in SQL and link to users... add tools into where needed
+  in the UI... develop better tool UI") — as with every recent repeat, that
+  whole standing ask is already fully built (account-synced settings
+  already exist at `/settings`, D1 tables + `/api/*` routes already link
+  flows/docs/rounds/materials/etc. to signed-in users, and every tool is
+  already reachable from the nav/UI), and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area, so this slice picked idea #11's own next-named follow-up:
+  "real reviewer-identity/permission checks so a 'given' entry can't be
+  spoofed under an arbitrary reviewer id" (named in the "Community-Rated
+  Summaries and Highlights" bullet under Research Crowdsourcing Organizer
+  Features, and matching `docs/features/contributions-feed.md`'s Known-gaps
+  entry of the same name). `ContributionsFeedPanel` previously took no
+  signed-in-identity prop at all — its "Reviewer ID (for endorsing)" box was
+  a bare free-typed string with no tie to a real account, so any visitor
+  could endorse under any reviewer id, including someone else's, or their
+  own contribution's id, to inflate its `reviewerEndorsements`.
+  `ContributionsFeedPanel` now takes an optional `signedInContributorId`
+  prop, mirroring `ReviewQueuePanel`'s and `TaskInboxPanel`'s identical
+  convention: once signed in, the free-typed box is replaced with a static
+  "Endorsing as …" line, and every entry's Endorse action is locked to that
+  real id via the existing `session-identity.ts#deriveLockedVerifierId` (the
+  same mechanism `TaskInboxPanel` already uses for task verification) — a
+  visitor can no longer type someone else's id to endorse under it. An entry
+  that's the signed-in visitor's own contribution has its Endorse button
+  disabled outright (`isOwnContributorRow`), with a note explaining why.
+  `apps/debate-ai.com/components/research/ContributionsFeedWithIdentity.tsx`
+  (new, mirroring `ReviewQueueWithIdentity.tsx`) derives that id from the
+  real signed-in session via `better-auth` and is now mounted at both
+  `/cards/contributions` and `ResearchHub.tsx`'s Rewards tab, replacing the
+  bare `ContributionsFeedPanel` at both call sites. A second, independent
+  guard now also lives in the store itself:
+  `state/contributions.ts#recordPersistedEndorsementFromReviewer` throws a
+  new `SelfEndorsementNotAllowedError` (caught by the panel and shown as an
+  inline error) whenever the reviewer id matches the endorsed contribution's
+  own `contributorId` (case-insensitive, trimmed) — mirroring
+  `peer-review.ts`'s `assertReviewerAllowed`/`SelfReviewNotAllowedError`
+  self-action guard — so a signed-out visitor who happens to type their own
+  contribution's id is still blocked, just via an inline error rather than a
+  disabled button. See `docs/features/contributions-feed.md`'s new
+  "Reviewer-identity checks on endorsing" section and its revised Known
+  gaps (the remaining gap: this only stops a signed-in visitor from
+  spoofing a different reviewer id or endorsing their own contribution — it
+  can't stop the same real person endorsing under multiple *accounts*, and a
+  signed-out visitor can still endorse under any typed id other than the
+  contribution's own). Vitest-covered:
+  `packages/debate-card-search/test/contributions.test.ts` gained 3 new
+  cases on `recordPersistedEndorsementFromReviewer` — self-endorsement
+  throws `SelfEndorsementNotAllowedError`, case-insensitively and across
+  surrounding whitespace, while endorsing someone else's contribution still
+  succeeds unchanged. The panel's own rendering/locking wiring remains
+  intentionally untested, matching this repo's existing convention (only
+  pure/state logic is directly tested; `ReviewQueuePanel`'s identical
+  `signedInContributorId` wiring is untested the same way). Verified with
+  `bun install` (2258 packages), the full `bun run typecheck` (13
+  typechecked packages, clean), the full `bun run test` (root, all
+  packages: 227 test files, 3893 tests, all passing — up from 3890), and
+  `bunx turbo run build --filter=debate-card-search --filter=debate-ai-web`
+  (both succeed, including `debate-ai-web`'s production build). No lint
+  script/config exists in this repo to run. No further follow-up is
+  currently tracked for idea #11 beyond the remaining Known-gaps entry
+  above; a future run should pick a fresh next-step if one becomes worth
+  doing.
 - **Legacy Verbatim / Cardmirror Compatibility — Verbatim onboarding
   nudge.** Another repeat of the standing prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL... with
@@ -13407,7 +13474,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 10. **Outline Filters and Argument Tree View** (`/outline`) — the named-filter-presets follow-up is done: each round card has a "Filter presets" row to apply a saved preset or save its current filter combination under a name, account-synced via `/api/settings`'s `outlineFilterPresets` field (`state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets.ts`, mirroring `wordLimitPresets.ts`'s split) — see `docs/features/argument-tree-outline.md`'s "Filter presets" section. The export follow-up is also now done: each round card has a "Download outline" button that saves the flattened, filtered rows as a plain-text outline file (`flow/argument-tree-export.ts#buildArgumentTreeOutlineText`/`argumentTreeOutlineFilename`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Outline export" section. The multi-select bulk-tagging follow-up is also now done: the flow grid's rows carry a checkbox selection column, and right-clicking with two or more checked opens a "Tag Selected Rows… (N)" action that bulk-applies an argument-type/contributor/evidence-status tag to the whole selection in one save (`flow/argument-tagging.ts#getRowPreviewsForIndexes`, `ArgumentTagPopover`'s new `bulkMode="selection"`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Multi-row selection bulk tagging" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 
-11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. The "my endorsement activity" follow-up is also now done: a signed-in visitor gets a "My endorsement activity" toggle above the table, listing every endorsement they gave as a reviewer via the same store's `direction: "given"` query (`state/contributions.ts#endorsementHistoryCounterpartId`) — see the Completed entry above. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. real reviewer-identity/permission checks so a "given" entry can't be spoofed under an arbitrary reviewer id, or a per-contributor "given" history visible to others, not just the signed-in visitor's own) if one becomes worth doing.
+11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. The "my endorsement activity" follow-up is also now done: a signed-in visitor gets a "My endorsement activity" toggle above the table, listing every endorsement they gave as a reviewer via the same store's `direction: "given"` query (`state/contributions.ts#endorsementHistoryCounterpartId`) — see the Completed entry above. The "real reviewer-identity/permission checks so a 'given' entry can't be spoofed under an arbitrary reviewer id" follow-up is also now done: `ContributionsFeedPanel` locks the endorsing reviewer id to a real signed-in session (`ContributionsFeedWithIdentity.tsx`, `session-identity.ts#deriveLockedVerifierId`), disables endorsing your own contribution, and `state/contributions.ts#recordPersistedEndorsementFromReviewer` throws `SelfEndorsementNotAllowedError` as a second, store-side guard against self-endorsement — see the Completed entry above and `docs/features/contributions-feed.md`'s "Reviewer-identity checks on endorsing" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a per-contributor "given" history visible to others, not just the signed-in visitor's own, or surfacing an account-level endorsement-fraud signal if this repo ever gets real cross-account abuse detection) if one becomes worth doing.
 
 12. **Pre-Round Intelligence Panel** (`/briefings`) — the print/export follow-up is done: each round card has a "Download" action that saves the briefing as a plain-text file, headed with the round id (`round/pre-round-briefing.ts#buildPreRoundBriefingText`/`preRoundBriefingFilename`) — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Download a briefing" section. The freshness-indicator follow-up is also now done: each round card shows a "last updated" badge (turning destructive/stale past 24 hours), backed by `round/pre-round-briefing.ts#getBriefingAgeHours`/`isBriefingStale` and a new `updatedAt` timestamp `savePreRoundBriefing` stamps on every save — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Freshness indicator" section. The manual pairing/room-assignment entry form follow-up is also now done: a "Pairing schedule" section logs a round's pairing (tournament/division/round label/side/room/opponent label/judge name) as the practical stand-in for still-blocked live Tabroom pairings, account-synced via a new `saved_round_pairings` D1 table plus `/api/round-pairings` routes, with a "Use for briefing" action on each saved pairing that prefills the "create briefing" form from it — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Manual pairing/room assignments" section. No further follow-up is currently tracked for this idea beyond the still-blocked real tournament-results/pairings/ballot data source itself (see "Confirmed blocker" below); a future run should pick a fresh next-step if one becomes worth doing.
 

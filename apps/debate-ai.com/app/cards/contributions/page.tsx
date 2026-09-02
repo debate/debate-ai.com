@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { ContributionsFeedPanel } from "debate-card-search"
+import { ContributionsFeedWithIdentity } from "@/components/research/ContributionsFeedWithIdentity"
 
 export const metadata: Metadata = {
   title: "Contributions Feed",
@@ -23,7 +23,7 @@ export default function CardsContributionsPage() {
         </Link>
       </div>
       <Suspense>
-        <ContributionsFeedPanel />
+        <ContributionsFeedWithIdentity />
       </Suspense>
     </div>
   )

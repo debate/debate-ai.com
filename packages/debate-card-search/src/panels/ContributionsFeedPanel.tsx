@@ -91,6 +91,24 @@
  * those `state/contributions.ts`'s `filterFlaggedFeedEntries` selects,
  * labeled with a live flagged count.
  *
+ * An optional `signedInContributorId` prop (mirroring `TaskInboxPanel`'s and
+ * `ReviewQueuePanel`'s identical convention) closes idea #11's remaining
+ * "real reviewer-identity/permission checks so a 'given' entry can't be
+ * spoofed under an arbitrary reviewer id" follow-up in TODO.md. Once signed
+ * in, the free-typed "Reviewer ID" box is replaced with a static "Endorsing
+ * as …" line and every entry's Endorse action is locked to that real id via
+ * `session-identity.ts`'s `deriveLockedVerifierId` — a visitor can no longer
+ * type someone else's id to endorse under it. An entry that's the signed-in
+ * visitor's own contribution has its Endorse button disabled outright (no id
+ * to lock it to), with a note explaining why, mirroring
+ * `TaskInboxPanel`'s self-assignment disable. Endorsing under an arbitrary
+ * typed id is unchanged for a signed-out visitor — there's no real identity
+ * to lock to yet. `state/contributions.ts#recordPersistedEndorsementFromReviewer`
+ * separately guards the same self-endorsement case in the store
+ * (`SelfEndorsementNotAllowedError`), so a signed-out visitor who types their
+ * own contribution's id is still blocked, just with an inline error instead
+ * of a disabled button.
+ *
  * @module panels/ContributionsFeedPanel
  */
 
@@ -115,6 +133,7 @@ import {
 } from "../state/contributions"
 import { buildHelpfulnessScoreExplanation, type ContributionKind } from "../lib/community-rating"
 import { computeWordCount } from "../lib/shared-evidence-library"
+import { deriveLockedVerifierId, isOwnContributorRow } from "../lib/session-identity"
 import { listCombinedPersistedTags } from "../state/evidenceLibraryEntries"
 import { isContributionsFeedLiveUpdateStorageEvent } from "../state/live-update"
 import {
@@ -164,6 +183,18 @@ const EMPTY_DRAFT: ContributionDraft = {
   content: "",
 }
 
+export interface ContributionsFeedPanelProps {
+  /**
+   * A real signed-in visitor's derived contributor id (see
+   * `lib/session-identity.ts#deriveContributorIdFromSessionIdentity`). Once
+   * set, locks every entry's endorsing reviewer id to this value (an entry
+   * can't be spoofed under an arbitrary typed id) and disables the Endorse
+   * button on the visitor's own contributions. Leaving it unset keeps the
+   * pre-existing free-typed "Reviewer ID" box for a signed-out visitor.
+   */
+  signedInContributorId?: string
+}
+
 /**
  * Renders the Contributions Feed: a form to submit a new contribution, plus
  * every persisted `AttributedContribution` ranked by helpfulness score, with
@@ -172,7 +203,7 @@ const EMPTY_DRAFT: ContributionDraft = {
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function ContributionsFeedPanel() {
+export function ContributionsFeedPanel({ signedInContributorId }: ContributionsFeedPanelProps = {}) {
   const [feed, setFeed] = useState<ContributionFeedEntry[] | null>(null)
   const [draft, setDraft] = useState<ContributionDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
@@ -258,14 +289,19 @@ export function ContributionsFeedPanel() {
     refresh()
   }
 
-  const handleEndorse = (id: string) => {
-    const trimmedReviewerId = reviewerId.trim()
+  const handleEndorse = (id: string, lockedReviewerId: string) => {
+    const trimmedReviewerId = (lockedReviewerId || reviewerId).trim()
     if (!trimmedReviewerId) {
       setEndorseError("Reviewer ID is required to endorse.")
       return
     }
-    setEndorseError(null)
-    recordPersistedEndorsementFromReviewer(id, trimmedReviewerId)
+    try {
+      recordPersistedEndorsementFromReviewer(id, trimmedReviewerId)
+      setEndorseError(null)
+    } catch (err) {
+      setEndorseError(err instanceof Error ? err.message : "Could not record the endorsement.")
+      return
+    }
     refresh()
   }
 
@@ -399,15 +435,22 @@ export function ContributionsFeedPanel() {
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-2">
-        <div className="space-y-1.5 max-w-xs">
-          <Label htmlFor="contribution-reviewer">Reviewer ID (for endorsing)</Label>
-          <Input
-            id="contribution-reviewer"
-            value={reviewerId}
-            onChange={(e) => setReviewerId(e.target.value)}
-            placeholder="bob"
-          />
-        </div>
+        {signedInContributorId ? (
+          <p className="text-sm text-foreground">
+            Endorsing as <span className="font-medium">{signedInContributorId}</span> — you can't
+            endorse your own contributions.
+          </p>
+        ) : (
+          <div className="space-y-1.5 max-w-xs">
+            <Label htmlFor="contribution-reviewer">Reviewer ID (for endorsing)</Label>
+            <Input
+              id="contribution-reviewer"
+              value={reviewerId}
+              onChange={(e) => setReviewerId(e.target.value)}
+              placeholder="bob"
+            />
+          </div>
+        )}
         <p className="text-xs text-muted-foreground">
           An endorsement's weight is drawn from the reviewer's own contribution track record, not a
           fixed amount.
@@ -437,49 +480,63 @@ export function ContributionsFeedPanel() {
         </div>
       ) : (
         <div className="space-y-2">
-          {visibleFeed.map((entry) => (
-            <div key={entry.id} className="rounded-lg border border-border p-3 space-y-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant={KIND_VARIANT[entry.kind]} className="capitalize">
-                  {entry.kind}
-                </Badge>
-                <span className="font-medium text-foreground">{entry.contributorId}</span>
-                <span className="text-xs text-muted-foreground">
-                  helpfulness {entry.helpfulnessScore}
-                </span>
-                {entry.isPopularityOnlyOutlier && (
-                  <Badge variant="destructive">Popularity-only</Badge>
+          {visibleFeed.map((entry) => {
+            const isOwnEntry = isOwnContributorRow(entry.contributorId, signedInContributorId)
+            const lockedReviewerId = deriveLockedVerifierId(entry.contributorId, signedInContributorId)
+            return (
+              <div key={entry.id} className="rounded-lg border border-border p-3 space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant={KIND_VARIANT[entry.kind]} className="capitalize">
+                    {entry.kind}
+                  </Badge>
+                  <span className="font-medium text-foreground">{entry.contributorId}</span>
+                  <span className="text-xs text-muted-foreground">
+                    helpfulness {entry.helpfulnessScore}
+                  </span>
+                  {entry.isPopularityOnlyOutlier && (
+                    <Badge variant="destructive">Popularity-only</Badge>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <span>{entry.likes} likes</span>
+                  <span>{entry.saves} saves</span>
+                  <span>{entry.reviewerEndorsements.length} endorsements</span>
+                </div>
+                {(entry.topic || entry.caseArea || (entry.tags && entry.tags.length > 0)) && (
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {entry.topic && <Badge variant="outline">{entry.topic}</Badge>}
+                    {entry.caseArea && <Badge variant="outline">{entry.caseArea}</Badge>}
+                    {entry.tags?.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" onClick={() => handleLike(entry.id)}>
+                    Like
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => handleSave(entry.id)}>
+                    Save
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={isOwnEntry}
+                    onClick={() => handleEndorse(entry.id, lockedReviewerId)}
+                  >
+                    Endorse
+                  </Button>
+                </div>
+                {isOwnEntry && (
+                  <p className="text-xs text-muted-foreground">
+                    You can't endorse your own contribution.
+                  </p>
                 )}
               </div>
-              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                <span>{entry.likes} likes</span>
-                <span>{entry.saves} saves</span>
-                <span>{entry.reviewerEndorsements.length} endorsements</span>
-              </div>
-              {(entry.topic || entry.caseArea || (entry.tags && entry.tags.length > 0)) && (
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {entry.topic && <Badge variant="outline">{entry.topic}</Badge>}
-                  {entry.caseArea && <Badge variant="outline">{entry.caseArea}</Badge>}
-                  {entry.tags?.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-              <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" onClick={() => handleLike(entry.id)}>
-                  Like
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => handleSave(entry.id)}>
-                  Save
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => handleEndorse(entry.id)}>
-                  Endorse
-                </Button>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
