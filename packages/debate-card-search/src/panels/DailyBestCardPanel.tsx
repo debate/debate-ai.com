@@ -33,7 +33,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { MessageSquare, Sparkles, Trophy } from "lucide-react"
+import { CalendarRange, MessageSquare, Sparkles, Trophy } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -41,12 +41,14 @@ import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   announceDailyBestCard,
+  buildAnnouncedWeeklyBestCardRollups,
   getAnnouncedDailyBestCard,
   getPersistedBestCardForDay,
   listAnnouncedDailyBestCards,
+  type AttributedWeeklyBestCardRollup,
 } from "../state/dailyBestCardAnnouncements"
 import type { AttributedDailyBestCard } from "../state/contributions"
-import { buildDailyBestCardHighlight } from "../lib/daily-best-card"
+import { buildDailyBestCardHighlight, buildWeeklyBestCardRollupHighlight } from "../lib/daily-best-card"
 import { isDailyBestCardLiveUpdateStorageEvent } from "../state/live-update"
 import {
   useDailyBestCardComments,
@@ -173,6 +175,31 @@ function AnnouncementRow({
   )
 }
 
+/** Renders one ISO week's best-of-the-week champion, plus that week's other announced daily winners. */
+function WeeklyRollupCard({ rollup }: { rollup: AttributedWeeklyBestCardRollup }) {
+  const otherDays = rollup.days.filter((day) => day.dayKey !== rollup.champion.dayKey)
+
+  return (
+    <div className="rounded-lg border border-border bg-card p-4">
+      <div className="mb-1 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        <CalendarRange className="h-3.5 w-3.5" aria-hidden="true" />
+        Week {rollup.weekKey}
+      </div>
+      <div className="text-sm font-medium text-foreground">{buildWeeklyBestCardRollupHighlight(rollup)}</div>
+      <div className="mt-1">
+        <Badge variant="outline">{rollup.champion.contribution.contributorId}</Badge>
+      </div>
+      {otherDays.length > 0 && (
+        <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
+          {otherDays.map((day) => (
+            <li key={day.dayKey}>{buildDailyBestCardHighlight(day)}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 export interface DailyBestCardPanelProps {
   /**
    * A real signed-in visitor's derived contributor id (see
@@ -195,6 +222,7 @@ export function DailyBestCardPanel({ signedInContributorId }: DailyBestCardPanel
   const [today, setToday] = useState<AttributedDailyBestCard | null | undefined>(undefined)
   const [announcedToday, setAnnouncedToday] = useState<AttributedDailyBestCard | undefined>(undefined)
   const [history, setHistory] = useState<AttributedDailyBestCard[]>([])
+  const [weeklyRollups, setWeeklyRollups] = useState<AttributedWeeklyBestCardRollup[]>([])
   const [commentDrafts, setCommentDrafts] = useState<Record<string, CommentDraft>>({})
   const { comments, postComment, deleteComment } = useDailyBestCardComments()
 
@@ -203,6 +231,7 @@ export function DailyBestCardPanel({ signedInContributorId }: DailyBestCardPanel
     setToday(getPersistedBestCardForDay(now))
     setAnnouncedToday(getAnnouncedDailyBestCard(new Date(now).toISOString().slice(0, 10)))
     setHistory(listAnnouncedDailyBestCards())
+    setWeeklyRollups(buildAnnouncedWeeklyBestCardRollups())
   }
 
   useEffect(() => {
@@ -297,6 +326,17 @@ export function DailyBestCardPanel({ signedInContributorId }: DailyBestCardPanel
           </p>
         )}
       </div>
+
+      <div className="mb-2 text-sm font-medium text-foreground">Best of the week</div>
+      {weeklyRollups.length === 0 ? (
+        <p className="mb-6 text-sm text-muted-foreground">No week has an announced winner yet.</p>
+      ) : (
+        <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {[...weeklyRollups].reverse().map((rollup) => (
+            <WeeklyRollupCard key={rollup.weekKey} rollup={rollup} />
+          ))}
+        </div>
+      )}
 
       <div className="mb-2 text-sm font-medium text-foreground">Announced history</div>
       {pastAnnouncements.length === 0 ? (

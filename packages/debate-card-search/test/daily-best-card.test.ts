@@ -2,10 +2,16 @@ import { describe, expect, it } from "vitest";
 import {
   buildDailyBestCardHighlight,
   buildDailyBestCards,
+  buildWeeklyBestCardRollupHighlight,
+  buildWeeklyBestCardRollups,
   getBestCardForDay,
   getUtcDayKey,
+  getUtcWeekKey,
   groupCardsByDay,
+  groupDailyBestCardsByWeek,
   pickBestCardOfDay,
+  pickBestCardOfWeek,
+  type DailyBestCard,
   type TimestampedCardContribution,
 } from "../src/lib/daily-best-card";
 
@@ -114,5 +120,93 @@ describe("buildDailyBestCardHighlight", () => {
     expect(buildDailyBestCardHighlight(best)).toBe(
       `Card of the day (2026-08-10): "strong-card" — helpfulness ${best.breakdown.helpfulnessScore}/100`,
     );
+  });
+});
+
+describe("getUtcWeekKey", () => {
+  it("formats a day within a week as that week's ISO key", () => {
+    expect(getUtcWeekKey("2026-08-10")).toBe("2026-W33");
+    expect(getUtcWeekKey("2026-08-11")).toBe("2026-W33");
+    expect(getUtcWeekKey("2026-08-16")).toBe("2026-W33");
+    expect(getUtcWeekKey("2026-08-17")).toBe("2026-W34");
+  });
+
+  it("assigns a year-end Monday to the following ISO year's week 1", () => {
+    // 2025-12-29 is a Monday, but belongs to the week containing 2026-01-01.
+    expect(getUtcWeekKey("2025-12-29")).toBe("2026-W01");
+    expect(getUtcWeekKey("2026-01-01")).toBe("2026-W01");
+    expect(getUtcWeekKey("2026-01-04")).toBe("2026-W01");
+    expect(getUtcWeekKey("2026-01-05")).toBe("2026-W02");
+  });
+
+  it("assigns a new-year's-day Friday back to the prior ISO year's week 53", () => {
+    // 2026 has 53 ISO weeks (Jan 1, 2026 is a Thursday in a non-leap year).
+    expect(getUtcWeekKey("2026-12-31")).toBe("2026-W53");
+    expect(getUtcWeekKey("2027-01-01")).toBe("2026-W53");
+  });
+});
+
+const dailyOne: DailyBestCard = pickBestCardOfDay("2026-08-10", [strongCard, viralCard]);
+const dailyTwo: DailyBestCard = pickBestCardOfDay("2026-08-11", [untouchedCard]);
+const dailyThreeStrongerLaterWeek: DailyBestCard = pickBestCardOfDay("2026-08-17", [
+  { ...viralCard, submittedAt: Date.parse("2026-08-17T12:00:00.000Z") },
+]);
+
+describe("groupDailyBestCardsByWeek", () => {
+  it("groups daily winners by ISO week, preserving order within a group", () => {
+    const byWeek = groupDailyBestCardsByWeek([dailyOne, dailyTwo, dailyThreeStrongerLaterWeek]);
+    expect(Array.from(byWeek.keys())).toEqual(["2026-W33", "2026-W34"]);
+    expect(byWeek.get("2026-W33")).toEqual([dailyOne, dailyTwo]);
+    expect(byWeek.get("2026-W34")).toEqual([dailyThreeStrongerLaterWeek]);
+  });
+
+  it("returns an empty map for no daily winners", () => {
+    expect(groupDailyBestCardsByWeek([]).size).toBe(0);
+  });
+});
+
+describe("pickBestCardOfWeek", () => {
+  it("picks the highest-helpfulness daily winner among a week's days", () => {
+    const champion = pickBestCardOfWeek("2026-W33", [dailyTwo, dailyOne]);
+    expect(champion.dayKey).toBe("2026-08-10");
+  });
+
+  it("breaks ties by dayKey ascending for a stable, deterministic champion", () => {
+    const tiedLater: DailyBestCard = { ...dailyTwo, dayKey: "2026-08-12" };
+    const champion = pickBestCardOfWeek("2026-W33", [tiedLater, dailyTwo]);
+    expect(champion.dayKey).toBe("2026-08-11");
+  });
+
+  it("throws for a week with no daily winners", () => {
+    expect(() => pickBestCardOfWeek("2026-W33", [])).toThrow(/no daily winners/);
+  });
+});
+
+describe("buildWeeklyBestCardRollups", () => {
+  it("rolls up one entry per represented week, sorted by week ascending", () => {
+    const rollups = buildWeeklyBestCardRollups([dailyThreeStrongerLaterWeek, dailyOne, dailyTwo]);
+
+    expect(rollups.map((r) => r.weekKey)).toEqual(["2026-W33", "2026-W34"]);
+    expect(rollups[0].days.map((d) => d.dayKey)).toEqual(["2026-08-10", "2026-08-11"]);
+    expect(rollups[0].champion.dayKey).toBe("2026-08-10");
+    expect(rollups[1].champion.dayKey).toBe("2026-08-17");
+  });
+
+  it("returns an empty list for no daily winners", () => {
+    expect(buildWeeklyBestCardRollups([])).toEqual([]);
+  });
+});
+
+describe("buildWeeklyBestCardRollupHighlight", () => {
+  it("renders a short highlight line naming the week's champion and day count", () => {
+    const [rollup] = buildWeeklyBestCardRollups([dailyOne, dailyTwo]);
+    expect(buildWeeklyBestCardRollupHighlight(rollup)).toBe(
+      `Best of the week (2026-W33): "strong-card" — helpfulness ${rollup.champion.breakdown.helpfulnessScore}/100 (2 days)`,
+    );
+  });
+
+  it("uses singular phrasing for a single-day week", () => {
+    const [rollup] = buildWeeklyBestCardRollups([dailyOne]);
+    expect(buildWeeklyBestCardRollupHighlight(rollup)).toContain("(1 day)");
   });
 });

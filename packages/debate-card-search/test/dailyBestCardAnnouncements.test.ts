@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   announceDailyBestCard,
+  buildAnnouncedWeeklyBestCardRollups,
   buildPersistedDailyBestCards,
   getAnnouncedDailyBestCard,
   getPersistedBestCardForDay,
@@ -183,5 +184,57 @@ describe("listAnnouncedDailyBestCards", () => {
 describe("getAnnouncedDailyBestCard", () => {
   it("returns undefined for a day that hasn't been announced", () => {
     expect(getAnnouncedDailyBestCard("2026-08-10")).toBeUndefined();
+  });
+});
+
+describe("buildAnnouncedWeeklyBestCardRollups", () => {
+  const DAY_THREE_NEXT_WEEK = Date.parse("2026-08-18T09:00:00.000Z"); // 2026-W34
+
+  const nextWeekCard: AttributedContribution = {
+    id: "next-week-card",
+    contributorId: "frank",
+    kind: "card",
+    submittedAt: DAY_THREE_NEXT_WEEK,
+    likes: 1,
+    saves: 1,
+    qualitySignals: [0.6],
+    reviewerEndorsements: [],
+  };
+
+  it("returns an empty list when nothing has been announced", () => {
+    expect(buildAnnouncedWeeklyBestCardRollups()).toEqual([]);
+  });
+
+  it("only rolls up announced days, not a live not-yet-announced leader", () => {
+    saveContribution(strongCard);
+    expect(buildAnnouncedWeeklyBestCardRollups()).toEqual([]);
+  });
+
+  it("groups same-week announced days into one rollup and picks the week's champion", () => {
+    saveContribution(strongCard);
+    saveContribution(dayTwoCard);
+    announceDailyBestCard(DAY_ONE);
+    announceDailyBestCard(DAY_TWO);
+
+    const rollups = buildAnnouncedWeeklyBestCardRollups();
+
+    expect(rollups).toHaveLength(1);
+    expect(rollups[0].weekKey).toBe("2026-W33");
+    expect(rollups[0].days.map((d) => d.dayKey)).toEqual(["2026-08-10", "2026-08-11"]);
+    expect(rollups[0].champion.contribution.id).toBe("strong-card");
+    expect(rollups[0].champion.contribution.contributorId).toBe("alice");
+  });
+
+  it("splits announced days across weeks into separate rollups, sorted week ascending", () => {
+    saveContribution(strongCard);
+    saveContribution(nextWeekCard);
+    announceDailyBestCard(DAY_ONE);
+    announceDailyBestCard(DAY_THREE_NEXT_WEEK);
+
+    const rollups = buildAnnouncedWeeklyBestCardRollups();
+
+    expect(rollups.map((r) => r.weekKey)).toEqual(["2026-W33", "2026-W34"]);
+    expect(rollups[0].champion.contribution.id).toBe("strong-card");
+    expect(rollups[1].champion.contribution.id).toBe("next-week-card");
   });
 });
