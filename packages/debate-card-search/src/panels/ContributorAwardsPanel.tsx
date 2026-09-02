@@ -20,6 +20,14 @@
  * Once a day is announced, the panel shows that frozen snapshot instead of
  * the live standings for the rest of the day.
  *
+ * Also closes the bullet's own next-named follow-up, an "awards history /
+ * hall-of-fame page": the existing "Announced history" list already shows
+ * every past day chronologically, but not who has actually won the most
+ * overall, so a new **Hall of Fame** section aggregates every announced
+ * day's awards into one all-time ranking via
+ * `contributor-awards.ts#buildContributorAwardsHallOfFame`, rendered above
+ * the chronological history once at least one day has been announced.
+ *
  * @module panels/ContributorAwardsPanel
  */
 
@@ -37,7 +45,12 @@ import {
   type AnnouncedContributorAwards,
 } from "../state/contributorAwardAnnouncements"
 import { isContributorAwardsLiveUpdateStorageEvent } from "../state/live-update"
-import type { ContributorAward } from "../lib/contributor-awards"
+import {
+  DEFAULT_AWARD_CATEGORY_LABELS,
+  buildContributorAwardsHallOfFame,
+  type ContributorAward,
+  type HallOfFameEntry,
+} from "../lib/contributor-awards"
 
 /** Renders one category winner card. */
 function AwardCard({ award }: { award: ContributorAward }) {
@@ -54,6 +67,36 @@ function AwardCard({ award }: { award: ContributorAward }) {
         <div className="mt-2 text-xs text-muted-foreground">
           {award.contributionCount} contribution{award.contributionCount === 1 ? "" : "s"} ·{" "}
           {award.totalHelpfulnessScore} pts
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** Renders one Hall of Fame row: a contributor's all-time win total plus a per-category breakdown. */
+function HallOfFameRow({ entry, rank }: { entry: HallOfFameEntry; rank: number }) {
+  const kindEntries = Object.entries(entry.winsByKind) as [ContributorAward["kind"], number][]
+  return (
+    <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
+      <div className="w-6 shrink-0 text-center text-sm font-semibold text-muted-foreground">#{rank}</div>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="truncate">
+            {entry.contributorId}
+          </Badge>
+          <span className="text-xs text-muted-foreground">
+            {entry.totalWins} win{entry.totalWins === 1 ? "" : "s"}
+          </span>
+        </div>
+        <div className="mt-1 flex flex-wrap gap-1">
+          {kindEntries.map(([kind, count]) => (
+            <span
+              key={kind}
+              className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground"
+            >
+              {DEFAULT_AWARD_CATEGORY_LABELS[kind]} ×{count}
+            </span>
+          ))}
         </div>
       </div>
     </div>
@@ -131,6 +174,7 @@ export function ContributorAwardsPanel() {
 
   const awardsToShow = announcedToday?.awards ?? live
   const pastAnnouncements = history.filter((announcement) => announcement.dayKey !== announcedToday?.dayKey)
+  const hallOfFame = buildContributorAwardsHallOfFame(history.flatMap((announcement) => announcement.awards))
 
   return (
     <div className="p-4 sm:p-6">
@@ -164,6 +208,20 @@ export function ContributorAwardsPanel() {
           </>
         )}
       </div>
+
+      {hallOfFame.length > 0 && (
+        <div className="mb-6">
+          <div className="mb-2 text-sm font-medium text-foreground">🏅 Hall of Fame</div>
+          <p className="mb-2 text-xs text-muted-foreground">
+            All-time win totals across every announced day, ranked highest first.
+          </p>
+          <div className="flex flex-col gap-2">
+            {hallOfFame.map((entry, index) => (
+              <HallOfFameRow key={entry.contributorId} entry={entry} rank={index + 1} />
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mb-2 text-sm font-medium text-foreground">Announced history</div>
       {pastAnnouncements.length === 0 ? (

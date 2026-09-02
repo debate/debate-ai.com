@@ -6,6 +6,50 @@
 _No task currently in progress._
 
 ### Completed
+- **Top Contributor Awards — awards history / hall-of-fame page.** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save flows
+  docs and debates in SQL and link to users... add tools into where needed
+  in the UI... develop better tool UI") — as with every recent repeat, that
+  half is already fully built (account-synced settings already exist at
+  `/settings`, D1 tables + `/api/*` routes already link flows/docs/rounds/
+  materials/etc. to signed-in users, and the tools are already reachable
+  from the nav/UI), and the one open PR (#437, "Consolidate UI primitives
+  and add web extension scaffold") doesn't touch this area, so this slice
+  picked the "🏆 Top Contributor Awards" bullet's own next-named follow-up:
+  "an awards history / hall-of-fame page." Checking the existing panel
+  first found two of its three named next-steps already shipped —
+  `contributorAwardsNews()` in `state/newsStream.ts` already auto-posts
+  every announced day's awards to the News Stream feed, and
+  `ContributorAwardsPanel` already renders a chronological "Announced
+  history" list — so the genuinely open gap was a hall-of-fame *ranking*:
+  nothing aggregated who has actually won the most awards overall. A new
+  pure `buildContributorAwardsHallOfFame(allAwards)` in
+  `lib/contributor-awards.ts` aggregates every announced day's awards
+  (flattened across `listAnnouncedContributorAwards()`) into one all-time
+  per-contributor record (`totalWins` plus a `winsByKind` breakdown),
+  ranked by total wins descending and tie-broken by `contributorId`
+  ascending — a contributor who has never won is simply absent rather than
+  listed with a zero count. `ContributorAwardsPanel` now renders a "🏅 Hall
+  of Fame" section (rank, contributor badge, total win count, and
+  per-category badges like "Best Evidence Finder ×3") above the existing
+  chronological history, shown once at least one day has been announced.
+  See `docs/features/contributor-awards.md`'s new "🏅 Hall of Fame" bullet
+  and updated data-flow diagram. Vitest-covered:
+  `packages/debate-card-search/test/contributor-awards.test.ts` gained a
+  `buildContributorAwardsHallOfFame` suite (empty input, multi-day
+  aggregation, ranking with a tie-break, per-category breakdown for a
+  contributor who has won more than one kind, and omitting a
+  never-won contributor). `ContributorAwardsPanel.tsx`'s new rendering
+  remains intentionally untested, matching this panel's existing
+  convention (only its pure logic and the shared live-update predicate are
+  directly tested). Verified with `bun run test` (219 test files, 3710
+  tests, all passing), `bun run typecheck` (root, all 13 typechecked
+  packages, clean), and a full `bun run build` (the whole monorepo build,
+  including `debate-ai-web`'s production build) — all pass. No lint
+  script/config exists in this repo to run. The remaining next-step for
+  this idea ("nominate a peer" action) stays open; a future run should pick
+  that or a fresh next-step if one becomes worth doing.
 - **Shared Evidence Library — bulk tag editing across a filtered result
   set.** Another repeat of the standing prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL... with ability
@@ -12971,7 +13015,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — a winner-history calendar view; a comment thread on each day's winner; a "best of the week" rollup.
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
-* 🏆 **Top Contributor Awards** (`/cards/awards`) — an awards history / hall-of-fame page; auto-post each announcement to the News Stream feed; a "nominate a peer" action.
+* 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. Next: a "nominate a peer" action.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — a coach-facing override/reassign control; a task-priority indicator; a capacity-aware view of routing load across the team.
 * 🔁 **Revision Incentives** (`/cards/revisions`) — a stale-evidence digest surfaced from the existing staleness signal; a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.

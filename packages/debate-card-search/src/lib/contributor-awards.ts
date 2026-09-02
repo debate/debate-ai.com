@@ -122,6 +122,46 @@ export function buildTopContributorAwards(
   return awards;
 }
 
+/** One contributor's aggregate Top Contributor Awards win record across every announced day. */
+export interface HallOfFameEntry {
+  contributorId: string;
+  totalWins: number;
+  winsByKind: Partial<Record<ContributionKind, number>>;
+}
+
+/**
+ * Aggregates every announced day's awards (the "🏆 Top Contributor Awards"
+ * bullet's own next-named follow-up under Research Crowdsourcing Organizer
+ * Features in TODO.md: "an awards history / hall-of-fame page") into one
+ * all-time win record per contributor — the `announced history` list
+ * already surfaces each day's standings chronologically, but not who has
+ * actually won the most overall.
+ *
+ * Purely a reshape of whatever award list the caller supplies (typically
+ * every announced day's `awards` flattened together, via
+ * `state/contributorAwardAnnouncements.ts#listAnnouncedContributorAwards`)
+ * — this module takes no dependency on that state layer, matching every
+ * other pure helper here. Ranked by total win count descending, tie-broken
+ * by `contributorId` ascending for a stable order. A contributor who has
+ * never won is absent rather than listed with a zero count.
+ */
+export function buildContributorAwardsHallOfFame(allAwards: ContributorAward[]): HallOfFameEntry[] {
+  const byContributor = new Map<string, HallOfFameEntry>();
+  for (const award of allAwards) {
+    let entry = byContributor.get(award.contributorId);
+    if (!entry) {
+      entry = { contributorId: award.contributorId, totalWins: 0, winsByKind: {} };
+      byContributor.set(award.contributorId, entry);
+    }
+    entry.totalWins += 1;
+    entry.winsByKind[award.kind] = (entry.winsByKind[award.kind] ?? 0) + 1;
+  }
+
+  return Array.from(byContributor.values()).sort(
+    (a, b) => b.totalWins - a.totalWins || a.contributorId.localeCompare(b.contributorId),
+  );
+}
+
 /**
  * Renders a short, human-readable announcement line per award (e.g. for an
  * awards banner or notification), one line per category in
