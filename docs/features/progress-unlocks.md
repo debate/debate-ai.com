@@ -95,6 +95,31 @@ live-update mechanism" Known gap noted in
 [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
 Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
 
+## Next-tier progress bar
+
+The "Next tier" column used to be a text-only line (contributions/points/
+completed-tasks still needed). It now leads with a visual meter — `debate-ui`'s
+shared `MeterBar` (`packages/debate-ui/src/panels/panel-shell.tsx`, already
+used by Team Collaboration Mode's Topic Sprint panel) — showing a 0-100%
+fill toward the next tier, with the same needed-counts text kept underneath
+as detail.
+
+The percentage comes from a new `NextTierProgress.progressRatio` field
+(`packages/debate-card-search/src/lib/progress-unlocks.ts`'s
+`getNextTierProgress`): since `computeContributorTier` already lets a
+contributor reach a tier via *either* the contribution-count-and-score path
+*or* the completed-task-count path alone, the ratio takes whichever path is
+furthest along — `min(contributionRatio, scoreRatio)` for the AND path (each
+a `value / min` fraction, clamped to `[0, 1]`, with an already-cleared
+dimension counting as `1`), versus the completed-task ratio for the OR path
+— so a contributor grinding routed research tasks sees their bar move even
+with zero scored contributions, and vice versa. No new tier/badge/streak
+logic was introduced; this only exposes the existing requirement table as a
+fraction. Vitest-covered in `packages/debate-card-search/test/progress-unlocks.test.ts`'s
+`nextTier.progressRatio` suite (zero progress, the weaker-dimension cap on
+the AND path, picking the stronger of the two paths, clamping at 1, and
+`null` at the top tier).
+
 ## Known gaps
 
 - No contributor identity/permission *checks* — a real signed-in session now

@@ -6,6 +6,53 @@
 _No task currently in progress._
 
 ### Completed
+- **Progress Unlocks — visual next-tier progress bar (`progress-unlocks.md`
+  follow-up).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and every tool is already reachable from the
+  Tools page and CardMirror's command palette, and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area, so this slice closed the first of the three follow-ups the
+  "🔓 Progress Unlocks" bullet in TODO.md named: "a visual next-tier
+  progress bar instead of text-only status." `ProgressUnlocksPanel`'s
+  "Next tier" column used to render only a plain sentence
+  (`nextTierText`); it now leads with `debate-ui`'s existing shared
+  `MeterBar` (`packages/debate-ui/src/panels/panel-shell.tsx`, already used
+  by the Topic Sprint panel — no new UI primitive needed), filled to a new
+  `NextTierProgress.progressRatio` percentage, with the same
+  needed-counts text kept underneath as detail. `progressRatio`
+  (`packages/debate-card-search/src/lib/progress-unlocks.ts`'s
+  `getNextTierProgress`) takes whichever of the tier's two qualifying paths
+  — the contribution-count-and-score path (`computeContributorTier`'s AND
+  branch, so its ratio is the *lesser* of the two dimensions,
+  clamped `[0, 1]`, with an already-cleared dimension counting as fully
+  satisfied) or the completed-task-count path alone (the OR branch) — is
+  furthest along, so a contributor grinding routed research tasks sees
+  their bar move even with zero scored contributions, and vice versa. No
+  new tier/badge/streak rule was introduced; this only exposes the
+  existing requirement table as a fraction. See
+  `docs/features/progress-unlocks.md`'s new "Next-tier progress bar"
+  section. Vitest-covered: `packages/debate-card-search/test/
+  progress-unlocks.test.ts` gained a `nextTier.progressRatio` suite (zero
+  progress, the weaker-dimension cap on the AND path, picking the stronger
+  of the two paths, clamping at 1, `null` at the top tier) plus updated
+  `toEqual` assertions on the three existing `nextTier` cases to include
+  the new field. Full verification: `bun run test` (3652 tests passed,
+  including 5 new ones), `bunx turbo typecheck` across every workspace
+  package with a `typecheck` script (all 13 pass), a manual `bunx tsc
+  --noEmit` in `apps/debate-ai.com` (only the same pre-existing, unrelated
+  errors prior slices have already documented — Cloudflare Workers ambient
+  types, better-auth client-plugin generics, missing `debate-ui` icon type
+  declarations — none in a file this slice touched), and `bun run
+  build:web` (production build succeeds, `/cards/progress` listed among
+  the built routes). No repo-wide lint script exists to run; no schema
+  change, so no `db:generate` needed. Remaining follow-ups for this idea,
+  still open: "a small unlock celebration toast when a tier/badge is
+  earned" and "a badge showcase on a contributor's profile."
+
 - **Video-Lecture-Training Coach AI — account sync for coach materials and
   their version history (idea #8, `coach-materials.md` Known gap).** Another
   repeat of the standing prompt ("integrate all the tools into the UI...
@@ -12705,7 +12752,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🧩 **Community Research Hub** (`/community-hub`) — a personalized "for you" section; fold its directory into the News Stream feed instead of a separate destination; a quick-jump search bar across every listed space.
 * 🏅 **Contribution Leaderboard** (`/cards/leaderboard`) — the range-filter follow-up is done: a "Range" dropdown (All time / This week / This month) re-scopes the whole roster — scores and completed-task counts alike — to that trailing window (`lib/contribution-leaderboard.ts#filterContributionsByRange`/`isWithinLeaderboardRange`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Range filter" section. The per-category follow-up is also now done: a "Category" dropdown (All categories / Cards / Summaries / Highlights / Annotations / Original arguments / Refutations) re-scopes the roster to one contribution kind at a time, composing with the Range filter (`lib/contribution-leaderboard.ts#filterContributionsByKind`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Category filter" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor profile drill-down page) if one becomes worth doing.
 * 🎮 **Gamified Quests** (`/cards/streaks`) — a streak-freeze/grace-day mechanic for a missed day; a shareable streak-badge image; an opt-in reminder notification before a streak lapses.
-* 🔓 **Progress Unlocks** (`/cards/progress`) — a visual next-tier progress bar instead of text-only status; a small unlock celebration toast when a tier/badge is earned; a badge showcase on a contributor's profile.
+* 🔓 **Progress Unlocks** (`/cards/progress`) — the visual next-tier progress bar follow-up is done: the "Next tier" column now leads with a filled `MeterBar` meter instead of a text-only sentence, with the needed-counts text kept underneath as detail (`lib/progress-unlocks.ts#getNextTierProgress`'s new `progressRatio` field) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Next-tier progress bar" section. Next: a small unlock celebration toast when a tier/badge is earned; a badge showcase on a contributor's profile.
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — batch-score an uploaded set of cards at once; a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.

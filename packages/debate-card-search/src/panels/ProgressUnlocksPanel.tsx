@@ -33,6 +33,7 @@
 
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
+import { MeterBar } from "debate-ui/src/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -58,9 +59,8 @@ const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
   expert: "default",
 }
 
-function nextTierText(status: ContributorUnlockStatusWithStreak): string {
-  if (!status.nextTier) return "Top tier reached"
-  return `${status.nextTier.contributionsNeeded} contributions, ${status.nextTier.helpfulnessScoreNeeded} pts, or ${status.nextTier.completedTasksNeeded} tasks, to ${status.nextTier.tier}`
+function nextTierDetailText(nextTier: NonNullable<ContributorUnlockStatusWithStreak["nextTier"]>): string {
+  return `${nextTier.contributionsNeeded} contributions, ${nextTier.helpfulnessScoreNeeded} pts, or ${nextTier.completedTasksNeeded} tasks, to ${nextTier.tier}`
 }
 
 /**
@@ -173,7 +173,22 @@ export function ProgressUnlocksPanel({ signedInContributorId }: ProgressUnlocksP
                   <span className="text-muted-foreground">—</span>
                 )}
               </TableCell>
-              <TableCell className="text-sm text-muted-foreground">{nextTierText(status)}</TableCell>
+              <TableCell className="min-w-40">
+                {status.nextTier ? (
+                  <MeterBar
+                    value={Math.round(status.nextTier.progressRatio * 100)}
+                    max={100}
+                    caption={`${Math.round(status.nextTier.progressRatio * 100)}% to ${status.nextTier.tier}`}
+                  />
+                ) : (
+                  <span className="text-sm text-muted-foreground">Top tier reached</span>
+                )}
+                {status.nextTier && (
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {nextTierDetailText(status.nextTier)}
+                  </div>
+                )}
+              </TableCell>
             </TableRow>
             )
           })}

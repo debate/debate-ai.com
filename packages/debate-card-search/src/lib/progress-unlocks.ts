@@ -120,6 +120,20 @@ export interface NextTierProgress {
   helpfulnessScoreNeeded: number;
   /** Completed research tasks still needed to reach the next tier via that path alone. */
   completedTasksNeeded: number;
+  /**
+   * Fraction in `[0, 1]` of progress toward `tier`, taken from whichever
+   * qualifying path (contribution-count-and-score, or completed-task-count
+   * alone) is furthest along — mirrors `computeContributorTier`'s own
+   * either-path-qualifies rule so a contributor grinding tasks sees their
+   * bar move even with no scored contributions yet, and vice versa.
+   */
+  progressRatio: number;
+}
+
+/** `value / min`, clamped to `[0, 1]`; a `min` of `0` means the dimension is already satisfied. */
+function dimensionRatio(value: number, min: number): number {
+  if (min <= 0) return 1;
+  return Math.min(1, Math.max(0, value / min));
 }
 
 function getNextTierProgress(
@@ -134,11 +148,18 @@ function getNextTierProgress(
   const requirement = requirements.find((candidate) => candidate.tier === nextTier);
   if (!requirement) return null;
 
+  const contributionScoreRatio = Math.min(
+    dimensionRatio(stats.contributionCount, requirement.minContributionCount),
+    dimensionRatio(stats.totalHelpfulnessScore, requirement.minTotalHelpfulnessScore),
+  );
+  const completedTaskRatio = dimensionRatio(stats.completedTaskCount, requirement.minCompletedTaskCount);
+
   return {
     tier: nextTier,
     contributionsNeeded: Math.max(0, requirement.minContributionCount - stats.contributionCount),
     helpfulnessScoreNeeded: Math.max(0, requirement.minTotalHelpfulnessScore - stats.totalHelpfulnessScore),
     completedTasksNeeded: Math.max(0, requirement.minCompletedTaskCount - stats.completedTaskCount),
+    progressRatio: Math.max(contributionScoreRatio, completedTaskRatio),
   };
 }
 
