@@ -19,6 +19,16 @@
  * each with their own "Best Original Argument"/"Best Refutation" award
  * category below.
  *
+ * Also closes this bullet's own next-named follow-up, "a 'nominate a peer'
+ * action": `PeerNomination`/`tallyNominationsByKind`/`canNominatePeer` below
+ * are the pure model for a lightweight, informal nomination — anyone can
+ * nominate anyone (but not themself) for one of the same six award
+ * categories, tallied per category rather than fed back into the
+ * helpfulness-score-based winner selection above. Persistence lives in
+ * `state/contributorAwardNominations.ts` (mirroring
+ * `state/dailyBestCardComments.ts`'s local-first convention) and the form/
+ * list UI lives in `panels/ContributorAwardsPanel.tsx` — see those modules.
+ *
  * @module lib/contributor-awards
  */
 
@@ -28,6 +38,20 @@ import {
   type AttributedContribution,
   type ContributorStats,
 } from "./contribution-leaderboard";
+
+/**
+ * Stable display order for the six award categories — shared by
+ * `buildTopContributorAwards` (below) and, for the nomination form/tally
+ * grouping, `panels/ContributorAwardsPanel.tsx`.
+ */
+export const AWARD_KIND_ORDER: ContributionKind[] = [
+  "card",
+  "summary",
+  "highlight",
+  "annotation",
+  "original-argument",
+  "refutation",
+];
 
 /** Human-readable label for the award given to the top contributor of each `ContributionKind`. */
 export const DEFAULT_AWARD_CATEGORY_LABELS: Record<ContributionKind, string> = {
@@ -93,17 +117,9 @@ export function buildTopContributorAwards(
   categoryLabels: Record<ContributionKind, string> = DEFAULT_AWARD_CATEGORY_LABELS,
 ): ContributorAward[] {
   const byKind = groupContributionsByKind(contributions);
-  const kindOrder: ContributionKind[] = [
-    "card",
-    "summary",
-    "highlight",
-    "annotation",
-    "original-argument",
-    "refutation",
-  ];
 
   const awards: ContributorAward[] = [];
-  for (const kind of kindOrder) {
+  for (const kind of AWARD_KIND_ORDER) {
     const group = byKind.get(kind);
     if (!group || group.length === 0) continue;
 
@@ -178,4 +194,61 @@ export function buildAwardsAnnouncementText(awards: ContributorAward[]): string 
         }, ${award.totalHelpfulnessScore} pts)`,
     )
     .join("\n");
+}
+
+/**
+ * One informal nomination of a peer for a specific award category — the
+ * "🏆 Top Contributor Awards" bullet's own next-named follow-up in TODO.md,
+ * "a 'nominate a peer' action". Distinct from `ContributorAward`: a
+ * nomination is a human's opinion, not a computed helpfulness-score winner,
+ * and doesn't feed back into `buildTopContributorAwards`.
+ */
+export interface PeerNomination {
+  id: string;
+  kind: ContributionKind;
+  nomineeId: string;
+  nominatorId: string;
+  /** Optional short reason for the nomination. */
+  note?: string;
+  /** Nomination time, as epoch milliseconds. */
+  nominatedAt: number;
+}
+
+/** One nominee's aggregate nomination count within a single award category. */
+export interface NominationTally {
+  nomineeId: string;
+  count: number;
+}
+
+/**
+ * Ranks nominees within a single award category by nomination count
+ * descending, tie-broken by `nomineeId` ascending for a stable order.
+ * Nominations for other kinds are ignored.
+ */
+export function tallyNominationsByKind(
+  nominations: PeerNomination[],
+  kind: ContributionKind,
+): NominationTally[] {
+  const counts = new Map<string, number>();
+  for (const nomination of nominations) {
+    if (nomination.kind !== kind) continue;
+    counts.set(nomination.nomineeId, (counts.get(nomination.nomineeId) ?? 0) + 1);
+  }
+
+  return Array.from(counts.entries())
+    .map(([nomineeId, count]) => ({ nomineeId, count }))
+    .sort((a, b) => b.count - a.count || a.nomineeId.localeCompare(b.nomineeId));
+}
+
+/**
+ * Whether `nominatorId` may nominate `nomineeId`: both must be non-blank
+ * after trimming, and a contributor can't nominate themself (compared
+ * case-insensitively, since contributor ids elsewhere in this repo are
+ * free-text display names rather than stable account ids).
+ */
+export function canNominatePeer(nominatorId: string, nomineeId: string): boolean {
+  const nominator = nominatorId.trim();
+  const nominee = nomineeId.trim();
+  if (!nominator || !nominee) return false;
+  return nominator.toLowerCase() !== nominee.toLowerCase();
 }

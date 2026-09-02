@@ -41,6 +41,13 @@ is omitted rather than shown with no winner.
   announced; a contributor who has never won an award doesn't appear.
 - **Announced history** — every previously announced day's frozen standings,
   oldest first.
+- **Peer Nominations** — a **Nominate a peer** form (category, nominee, your
+  name, an optional short note) submits an informal nomination, separate
+  from the score-based winners above. A nomination can't name the nominator
+  themself as the nominee. Each live award card shows that category's top
+  nominee(s) by nomination count (e.g. "🗳️ Nominated: alice ×2"), and a
+  "Recent nominations" list below the form shows every nomination, newest
+  first, each with a **Delete** action.
 
 A day with no contributions in any category disables the announce action
 instead of freezing an empty result.
@@ -63,6 +70,11 @@ state/contributions.ts (localStorage)
                                                        per-contributor win ranking
   → panels/ContributorAwardsPanel.tsx (live standings, announce action, Hall of Fame, history)
   → apps/debate-ai.com/app/cards/awards/page.tsx (mounts the panel as a route)
+
+state/contributorAwardNominations.ts (localStorage, separate "contributorAwardNominations" key)
+  → submitPeerNomination() / listAllPeerNominations() / deletePeerNomination()
+  → lib/contributor-awards.ts#tallyNominationsByKind()  — per-category nominee ranking
+  → panels/ContributorAwardsPanel.tsx (Nominate a peer form, top-nominee chips, nomination list)
 
 state/live-update.ts#isContributorAwardsLiveUpdateStorageEvent
   → panels/ContributorAwardsPanel.tsx (cross-tab `storage` listener → refresh())
@@ -95,6 +107,13 @@ intentionally untested, matching every other panel in this repo whose
 `storage`-listener wiring is exercised only through the shared pure
 predicate's own tests.
 
+Peer nominations are intentionally informal: `state/contributorAwardNominations.ts`
+persists them local-first (mirroring `state/dailyBestCardComments.ts`'s
+convention) and `lib/contributor-awards.ts`'s pure
+`canNominatePeer`/`tallyNominationsByKind` never feed into the score-based
+`buildTopContributorAwards` winner selection above — a nomination is a
+signal shown alongside the real award, not a vote that changes it.
+
 ## Known gaps
 
 - No scheduled job announces automatically — a person has to open the panel
@@ -104,4 +123,6 @@ predicate's own tests.
   no reviewer-identity/permission checks (a real submission flow already
   exists — `ContributionsFeedPanel.tsx` calls `saveContribution`/
   `recordPersistedLike`/`recordPersistedSave`/
-  `recordPersistedEndorsementFromReviewer`).
+  `recordPersistedEndorsementFromReviewer`). Peer nominations share this gap
+  too: any visitor can submit or delete any nomination under any name, and
+  nominations aren't account-synced across devices — only localStorage.

@@ -28,6 +28,17 @@
  * `contributor-awards.ts#buildContributorAwardsHallOfFame`, rendered above
  * the chronological history once at least one day has been announced.
  *
+ * Also closes that bullet's next-named follow-up after that, "a 'nominate a
+ * peer' action": a **Nominate a peer** form lets any visitor nominate
+ * another contributor for one of the six award categories with an optional
+ * short note, persisted via `state/contributorAwardNominations.ts`. Each
+ * live award card shows that category's top nominee(s)
+ * (`contributor-awards.ts#tallyNominationsByKind`), and a "Recent
+ * nominations" list below the form shows every submitted nomination,
+ * newest first, each deletable — mirroring `DailyBestCardPanel`'s comment
+ * thread's unrestricted delete convention (this repo has no reviewer-
+ * identity system to gate deletion by).
+ *
  * @module panels/ContributorAwardsPanel
  */
 
@@ -37,6 +48,16 @@ import { useEffect, useState } from "react"
 import { Award } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
+import { Input } from "debate-ui/src/primitives/input"
+import { Label } from "debate-ui/src/primitives/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "debate-ui/src/primitives/select"
+import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   announceContributorAwards,
   buildPersistedTopContributorAwards,
@@ -46,14 +67,31 @@ import {
 } from "../state/contributorAwardAnnouncements"
 import { isContributorAwardsLiveUpdateStorageEvent } from "../state/live-update"
 import {
+  AWARD_KIND_ORDER,
   DEFAULT_AWARD_CATEGORY_LABELS,
   buildContributorAwardsHallOfFame,
+  canNominatePeer,
+  tallyNominationsByKind,
   type ContributorAward,
   type HallOfFameEntry,
+  type PeerNomination,
 } from "../lib/contributor-awards"
+import {
+  MAX_NOMINATION_NOTE_LENGTH,
+  deletePeerNomination,
+  listAllPeerNominations,
+  submitPeerNomination,
+} from "../state/contributorAwardNominations"
+import type { ContributionKind } from "../lib/community-rating"
 
-/** Renders one category winner card. */
-function AwardCard({ award }: { award: ContributorAward }) {
+/** Renders one category winner card, plus that category's top peer nominee(s) if any exist. */
+function AwardCard({
+  award,
+  topNominees,
+}: {
+  award: ContributorAward
+  topNominees?: { nomineeId: string; count: number }[]
+}) {
   return (
     <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
       <Award className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
@@ -68,6 +106,16 @@ function AwardCard({ award }: { award: ContributorAward }) {
           {award.contributionCount} contribution{award.contributionCount === 1 ? "" : "s"} ·{" "}
           {award.totalHelpfulnessScore} pts
         </div>
+        {topNominees && topNominees.length > 0 && (
+          <div className="mt-2 flex flex-wrap items-center gap-1 text-[11px] text-muted-foreground">
+            <span>🗳️ Nominated:</span>
+            {topNominees.slice(0, 3).map((tally) => (
+              <span key={tally.nomineeId} className="rounded bg-muted px-1.5 py-0.5">
+                {tally.nomineeId} ×{tally.count}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
@@ -119,6 +167,135 @@ function AnnouncementGroup({ announcement }: { announcement: AnnouncedContributo
   )
 }
 
+/** A "Nominate a peer" form's draft state. */
+type NominationDraft = { kind: ContributionKind; nomineeId: string; nominatorId: string; note: string }
+
+const EMPTY_NOMINATION_DRAFT: NominationDraft = {
+  kind: "card",
+  nomineeId: "",
+  nominatorId: "",
+  note: "",
+}
+
+/** Renders the "Nominate a peer" form: category select, nominee, your name, optional note. */
+function NominationForm({
+  draft,
+  onDraftChange,
+  onSubmit,
+}: {
+  draft: NominationDraft
+  onDraftChange: (patch: Partial<NominationDraft>) => void
+  onSubmit: () => void
+}) {
+  const valid = canNominatePeer(draft.nominatorId, draft.nomineeId)
+  const showError = draft.nominatorId.trim().length > 0 && draft.nomineeId.trim().length > 0 && !valid
+
+  return (
+    <div className="rounded-lg border border-border bg-card p-4">
+      <div className="mb-3 text-sm font-medium text-foreground">Nominate a peer</div>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,180px)_minmax(0,160px)_minmax(0,160px)_1fr_auto] sm:items-end">
+        <div>
+          <Label htmlFor="nomination-kind" className="text-xs">
+            Category
+          </Label>
+          <Select value={draft.kind} onValueChange={(value) => onDraftChange({ kind: value as ContributionKind })}>
+            <SelectTrigger id="nomination-kind" className="h-8 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {AWARD_KIND_ORDER.map((kind) => (
+                <SelectItem key={kind} value={kind}>
+                  {DEFAULT_AWARD_CATEGORY_LABELS[kind]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="nomination-nominee" className="text-xs">
+            Nominee
+          </Label>
+          <Input
+            id="nomination-nominee"
+            value={draft.nomineeId}
+            onChange={(e) => onDraftChange({ nomineeId: e.target.value })}
+            className="h-8 text-xs"
+          />
+        </div>
+        <div>
+          <Label htmlFor="nomination-nominator" className="text-xs">
+            Your name
+          </Label>
+          <Input
+            id="nomination-nominator"
+            value={draft.nominatorId}
+            onChange={(e) => onDraftChange({ nominatorId: e.target.value })}
+            className="h-8 text-xs"
+          />
+        </div>
+        <div>
+          <Label htmlFor="nomination-note" className="text-xs">
+            Note (optional)
+          </Label>
+          <Textarea
+            id="nomination-note"
+            value={draft.note}
+            onChange={(e) => onDraftChange({ note: e.target.value })}
+            maxLength={MAX_NOMINATION_NOTE_LENGTH}
+            rows={1}
+            className="min-h-8 text-xs"
+          />
+        </div>
+        <Button size="sm" onClick={onSubmit} disabled={!valid}>
+          Nominate
+        </Button>
+      </div>
+      {showError && (
+        <p className="mt-2 text-xs text-destructive">
+          A nominee can't be the same as the nominator — enter a peer's name instead.
+        </p>
+      )}
+    </div>
+  )
+}
+
+/** Renders every submitted nomination, newest first, each with a delete action. */
+function NominationList({
+  nominations,
+  onDelete,
+}: {
+  nominations: PeerNomination[]
+  onDelete: (id: string) => void
+}) {
+  if (nominations.length === 0) {
+    return <p className="text-sm text-muted-foreground">No nominations yet.</p>
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      {nominations.map((nomination) => (
+        <div key={nomination.id} className="rounded-md bg-muted/50 p-2 text-xs">
+          <div className="mb-0.5 flex items-center justify-between gap-2">
+            <span className="font-medium text-foreground">
+              {DEFAULT_AWARD_CATEGORY_LABELS[nomination.kind]}: {nomination.nomineeId}
+            </span>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-auto px-1.5 py-0.5 text-[11px]"
+              onClick={() => onDelete(nomination.id)}
+            >
+              Delete
+            </Button>
+          </div>
+          <p className="text-muted-foreground">Nominated by {nomination.nominatorId}</p>
+          {nomination.note && <p className="mt-0.5 text-muted-foreground">"{nomination.note}"</p>}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 /**
  * Renders the Top Contributor Awards: one category winner per
  * `ContributionKind` present among persisted contributions, ranked by total
@@ -137,12 +314,16 @@ export function ContributorAwardsPanel() {
   const [live, setLive] = useState<ContributorAward[] | null>(null)
   const [announcedToday, setAnnouncedToday] = useState<AnnouncedContributorAwards | undefined>(undefined)
   const [history, setHistory] = useState<AnnouncedContributorAwards[]>([])
+  const [nominations, setNominations] = useState<PeerNomination[]>([])
+  const [nominationDraft, setNominationDraft] = useState<NominationDraft>(EMPTY_NOMINATION_DRAFT)
+  const [nominationError, setNominationError] = useState<string | null>(null)
 
   const refresh = () => {
     const now = Date.now()
     setLive(buildPersistedTopContributorAwards())
     setAnnouncedToday(getAnnouncedContributorAwards(new Date(now).toISOString().slice(0, 10)))
     setHistory(listAnnouncedContributorAwards())
+    setNominations(listAllPeerNominations())
   }
 
   useEffect(() => {
@@ -165,6 +346,27 @@ export function ContributorAwardsPanel() {
 
   const handleAnnounce = () => {
     announceContributorAwards(Date.now())
+    refresh()
+  }
+
+  const handleNominationSubmit = () => {
+    try {
+      submitPeerNomination({
+        kind: nominationDraft.kind,
+        nomineeId: nominationDraft.nomineeId,
+        nominatorId: nominationDraft.nominatorId,
+        note: nominationDraft.note,
+      })
+      setNominationError(null)
+      setNominationDraft({ ...EMPTY_NOMINATION_DRAFT, nominatorId: nominationDraft.nominatorId })
+      refresh()
+    } catch (error) {
+      setNominationError(error instanceof Error ? error.message : "Couldn't submit that nomination.")
+    }
+  }
+
+  const handleNominationDelete = (id: string) => {
+    deletePeerNomination(id)
     refresh()
   }
 
@@ -191,7 +393,7 @@ export function ContributorAwardsPanel() {
       ) : (
         <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {awardsToShow.map((award) => (
-            <AwardCard key={award.kind} award={award} />
+            <AwardCard key={award.kind} award={award} topNominees={tallyNominationsByKind(nominations, award.kind)} />
           ))}
         </div>
       )}
@@ -222,6 +424,25 @@ export function ContributorAwardsPanel() {
           </div>
         </div>
       )}
+
+      <div className="mb-6">
+        <div className="mb-2 text-sm font-medium text-foreground">Peer Nominations</div>
+        <p className="mb-2 text-xs text-muted-foreground">
+          Nominate a peer for a category — an informal signal alongside the score-based winners above.
+        </p>
+        <NominationForm
+          draft={nominationDraft}
+          onDraftChange={(patch) => {
+            setNominationDraft((prev) => ({ ...prev, ...patch }))
+            setNominationError(null)
+          }}
+          onSubmit={handleNominationSubmit}
+        />
+        {nominationError && <p className="mt-2 text-xs text-destructive">{nominationError}</p>}
+        <div className="mt-3">
+          <NominationList nominations={nominations} onDelete={handleNominationDelete} />
+        </div>
+      </div>
 
       <div className="mb-2 text-sm font-medium text-foreground">Announced history</div>
       {pastAnnouncements.length === 0 ? (
