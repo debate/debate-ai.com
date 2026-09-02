@@ -150,6 +150,37 @@ export function buildAndSaveCoachingSession(
   return record;
 }
 
+/**
+ * Renders a round+side's persisted coaching session as a downloadable
+ * plain-text coaching-notes document — the "an exportable coaching-notes
+ * document" follow-up named under the "🎙️ AI Coach Mode" bullet in
+ * TODO.md. Mirrors `pre-round-briefing.ts#buildPreRoundBriefingText`'s
+ * heading shape (a titled header over the rendered body), reusing
+ * `buildCoachingSummaryText` for the template-prompts section and appending
+ * the session's open-ended AI feedback, if one has been generated, as its
+ * own labeled section.
+ */
+export function buildCoachingNotesText(session: CoachingSessionRecord): string {
+  const promptsText = buildCoachingSummaryText(session.prompts);
+  const feedbackSection = session.aiFeedback ? `\n\n### AI Feedback\n${session.aiFeedback}` : "";
+  return `Coaching Notes — Round ${session.roundId} (${session.sideKey})\n\n${promptsText}${feedbackSection}`;
+}
+
+/**
+ * A filesystem-safe filename for a coaching-notes download, e.g.
+ * `coaching-notes-round-4-aff.txt`, mirroring
+ * `pre-round-briefing.ts#preRoundBriefingFilename`'s exact sanitization
+ * rule (non-alphanumeric characters collapse to single hyphens).
+ */
+export function coachingNotesFilename(roundId: string, sideKey: string): string {
+  const safeId = `${roundId}-${sideKey}`
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `coaching-notes-${safeId || "session"}.txt`;
+}
+
 /** Longest summary preview `coachingSessionNews` renders before truncating with an ellipsis. */
 const NEWS_PREVIEW_LENGTH = 140;
 

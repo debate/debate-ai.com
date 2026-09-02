@@ -27,6 +27,15 @@
  * generate a new coaching session for a round" Known gap. No new
  * coaching-prompt derivation logic is introduced here.
  *
+ * A "Download" action per session — the "an exportable coaching-notes
+ * document" follow-up named under the "🎙️ AI Coach Mode" bullet in
+ * TODO.md — saves the session's template prompts plus its AI feedback (if
+ * generated) as a plain-text file via `state/coachingSessions.ts`'s
+ * `buildCoachingNotesText`/`coachingNotesFilename`, using the same
+ * anchor+Blob download pattern every other completed export follow-up in
+ * this repo already uses (e.g. `PreRoundBriefingsPanel.tsx`'s
+ * "Download").
+ *
  * @module panels/CoachingSessionsPanel
  */
 
@@ -39,7 +48,9 @@ import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import {
   buildAndSaveCoachingSession,
+  buildCoachingNotesText,
   buildCoachingSessionsPanelView,
+  coachingNotesFilename,
   deleteCoachingSession,
   saveCoachingSessionAiFeedback,
   type CoachingSessionRecord,
@@ -84,6 +95,21 @@ export function CoachingSessionsPanel() {
   const handleClear = (roundId: string, sideKey: string) => {
     deleteCoachingSession(roundId, sideKey)
     refresh()
+  }
+
+  /** Mirrors `PreRoundBriefingsPanel.tsx`'s anchor+Blob download pattern. */
+  const handleDownload = (session: CoachingSessionRecord) => {
+    const text = buildCoachingNotesText(session)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = coachingNotesFilename(session.roundId, session.sideKey)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
 
   const handleGenerate = () => {
@@ -174,9 +200,14 @@ export function CoachingSessionsPanel() {
               Round {session.roundId}{" "}
               <span className="font-normal text-muted-foreground">({session.sideKey})</span>
             </h2>
-            <Button size="sm" variant="ghost" onClick={() => handleClear(session.roundId, session.sideKey)}>
-              Clear
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline" onClick={() => handleDownload(session)}>
+                Download
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => handleClear(session.roundId, session.sideKey)}>
+                Clear
+              </Button>
+            </div>
           </div>
           <div className="space-y-2">
             {session.prompts.map((prompt, index) => (

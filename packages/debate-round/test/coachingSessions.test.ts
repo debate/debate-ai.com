@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildAndSaveCoachingSession,
+  buildCoachingNotesText,
   buildCoachingSessionsPanelView,
+  coachingNotesFilename,
   coachingSessionNews,
   deleteCoachingSession,
   getCoachingSession,
@@ -294,5 +296,49 @@ describe("coachingSessionNews", () => {
     buildAndSaveCoachingSession(MIXED_FLOW, "round-2", "AFF");
 
     expect(coachingSessionNews()).toHaveLength(3);
+  });
+});
+
+describe("buildCoachingNotesText", () => {
+  it("headers the notes with the round and side", () => {
+    const text = buildCoachingNotesText(SESSION_AFF);
+    expect(text).toMatch(/^Coaching Notes — Round round-1 \(AFF\)\n\n/);
+  });
+
+  it("includes the rendered template prompts", () => {
+    const text = buildCoachingNotesText(SESSION_AFF);
+    expect(text).toContain('Answer "Solvency deficit" before it\'s extended against you.');
+    expect(text).toContain("Weighing guidance: shore up your case before weighing.");
+  });
+
+  it("omits the AI Feedback section when no feedback has been generated", () => {
+    const text = buildCoachingNotesText(SESSION_AFF);
+    expect(text).not.toContain("AI Feedback");
+  });
+
+  it("appends the AI feedback as its own section when present", () => {
+    const session: CoachingSessionRecord = { ...SESSION_AFF, aiFeedback: "Focus on the solvency deficit." };
+    const text = buildCoachingNotesText(session);
+    expect(text).toContain("### AI Feedback\nFocus on the solvency deficit.");
+  });
+
+  it("renders the no-prompts placeholder for a session with no prompts", () => {
+    const session: CoachingSessionRecord = { roundId: "round-9", sideKey: "NEG", prompts: [] };
+    const text = buildCoachingNotesText(session);
+    expect(text).toContain("No coaching prompts available yet — nothing has been flowed.");
+  });
+});
+
+describe("coachingNotesFilename", () => {
+  it("builds a filesystem-safe filename from the round id and side", () => {
+    expect(coachingNotesFilename("round-1", "AFF")).toBe("coaching-notes-round-1-aff.txt");
+  });
+
+  it("collapses non-alphanumeric characters to single hyphens", () => {
+    expect(coachingNotesFilename("Round #4!", "neg side")).toBe("coaching-notes-round-4-neg-side.txt");
+  });
+
+  it("falls back to a generic name when both inputs sanitize to nothing", () => {
+    expect(coachingNotesFilename("###", "!!!")).toBe("coaching-notes-session.txt");
   });
 });

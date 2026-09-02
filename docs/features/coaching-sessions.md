@@ -35,6 +35,10 @@ panel lets a user derive and persist a new session for a side directly from
 the round workspace's currently selected flow — the button is disabled with
 an inline hint when no flow is currently selected.
 
+Each session card also has a **Download** action that saves the session —
+its template prompts plus its AI feedback, if generated — as a plain-text
+coaching-notes document, for offline use or sharing outside the app.
+
 ## Data flow
 
 ```
@@ -57,6 +61,14 @@ Clearing a round+side's coaching session:
 panels/CoachingSessionsPanel.tsx
   → deleteCoachingSession(roundId, sideKey)  — state/coachingSessions.ts
   → panel re-reads buildCoachingSessionsPanelView() to refresh
+
+Downloading a session's coaching notes:
+panels/CoachingSessionsPanel.tsx
+  → buildCoachingNotesText(session)    — state/coachingSessions.ts, composing
+                                          buildCoachingSummaryText plus an
+                                          "AI Feedback" section when present
+  → coachingNotesFilename(roundId, sideKey)  — state/coachingSessions.ts
+  → anchor+Blob download, mirroring PreRoundBriefingsPanel.tsx's pattern
 
 Posting a freshly generated session to the News Stream:
 state/coachingSessions.ts
@@ -138,6 +150,21 @@ helper is composed into the feed at the app layer instead — see
 `news-stream.md`'s "Data flow" for the full path. No follow-ups remain open
 on this bullet. Vitest-covered in
 `packages/debate-round/test/coachingSessions.test.ts`.
+
+A later slice added the **Download** action described above: a new
+`buildCoachingNotesText`/`coachingNotesFilename` pair in
+`state/coachingSessions.ts` — closing the "an exportable coaching-notes
+document" follow-up named under the "🎙️ AI Coach Mode" bullet in
+`TODO.md`. `buildCoachingNotesText` headers the already-existing
+`buildCoachingSummaryText` rendering with the round id and side, and
+appends the session's `aiFeedback` as its own section when one has been
+generated; `coachingNotesFilename` mirrors
+`pre-round-briefing.ts#preRoundBriefingFilename`'s exact sanitization rule.
+No new coaching-prompt derivation or persistence logic was introduced. No
+follow-ups remain open on this bullet. Vitest-covered in
+`packages/debate-round/test/coachingSessions.test.ts` (the notes header,
+prompts rendering, the AI-feedback section present/absent, the
+no-prompts placeholder, and the filename sanitization rule).
 
 ## Known gaps
 
