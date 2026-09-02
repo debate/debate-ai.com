@@ -136,6 +136,26 @@ live-update mechanism" Known gap noted in
 [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
 Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
 
+## Report download
+
+The panel header has a "Download report" button that exports the whole
+roster as a single plain-text file — the "printable/exportable progress
+report" follow-up named under the "📈 Research Progress Tracking" bullet in
+TODO.md. `lib/research-progress.ts`'s `buildResearchProgressReportText`
+renders one section per contributor: `buildProgressSummaryText`'s existing
+summary line, followed by an indented per-topic completion breakdown
+(`- <topic>: <completed>/<assigned> (<rate>%)`), or a "No topic assignments"
+line for a contributor with contributions but no routed tasks. The button
+mirrors `PreRoundBriefingsPanel.tsx`'s anchor+Blob download pattern, saving
+to the fixed filename `research-progress-report.txt` from
+`researchProgressReportFilename()` — the report covers the whole roster
+rather than a single round or topic, so there's no natural id to key the
+filename on. Vitest-covered in
+`packages/debate-card-search/test/research-progress.test.ts`
+(`buildResearchProgressReportText`: the empty-roster placeholder, a full
+per-contributor/per-topic render, the "no topic assignments" fallback, and
+multi-contributor section separation).
+
 ## Known gaps
 
 - No contributor identity/permission *checks* — a real signed-in session now

@@ -6,6 +6,43 @@
 _No task currently in progress._
 
 ### Completed
+- **Research Progress Tracking — printable/exportable progress report** (the
+  "📈 Research Progress Tracking" bullet's own next-named follow-up under
+  Research Crowdsourcing Organizer Features below, alongside the still-open
+  topic-comparison-view and goal-setting-UI ones). As with every recent run,
+  the standing prompt ("integrate all the tools into the UI... create user
+  settings... link user db SQL... save flows docs and debates in SQL and
+  link to users... add tools where needed in the UI... develop better tool
+  UI") is already fully built (account-synced `/settings`, D1 tables +
+  `/api/*` routes linking flows/docs/rounds/materials to signed-in users,
+  every tool reachable from the nav), and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area — so this run again picked a genuine next-step instead, this
+  time closing a follow-up already named directly in TODO.md's own text.
+  `ResearchProgressPanel`'s roster previously had no way to get its data out
+  of the browser — a coach wanting a printable or shareable copy had no
+  option but to screenshot the table. A new "Download report" button in the
+  panel header exports the whole roster as a single plain-text file, one
+  section per contributor: the existing `buildProgressSummaryText` summary
+  line (contribution count/helpfulness, task completion) followed by an
+  indented per-topic completion breakdown, or a "No topic assignments" line
+  for a contributor with contributions but no routed tasks. The new pure
+  `lib/research-progress.ts#buildResearchProgressReportText` composes
+  entirely off the already-built `ContributorProgress[]` board — no new
+  aggregation logic, no persistence — and `researchProgressReportFilename()`
+  returns a fixed `research-progress-report.txt` name, since the report
+  covers the whole roster rather than a single round or topic with a natural
+  id to key a filename on. The download itself reuses the same anchor+Blob
+  pattern every other completed export follow-up in this repo already uses
+  (`PreRoundBriefingsPanel.tsx`'s `handleDownload`). See
+  `docs/features/research-progress-tracking.md`'s new "Report download"
+  section. Vitest-covered:
+  `packages/debate-card-search/test/research-progress.test.ts` gained a
+  `buildResearchProgressReportText` describe block (the empty-roster
+  placeholder text, a full per-contributor/per-topic render, the "no topic
+  assignments" fallback, and multi-contributor section separation) and a
+  `researchProgressReportFilename` describe block (the fixed filename).
+
 - **LLM Card Scoring — inline Evidence Library score badge** (the "🧠 LLM
   Card Scoring" bullet's other next-named follow-up under Research
   Crowdsourcing Organizer Features below, alongside the now-done batch-
@@ -13690,7 +13727,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🎮 **Gamified Quests** (`/cards/streaks`) — the streak-freeze/grace-day-mechanic follow-up is done: a contributor can spend a rolling-allowance "streak freeze" to bridge a single missed day instead of resetting to zero (`lib/gamified-quests.ts#applyStreakFreezes`/`canApplyStreakFreeze`/`findFreezableStreakGapDayKey`, `state/streakFreezes.ts`), surfaced as a "Streak freeze" column with a "Use a grace day for …" action on `QuestStreaksPanel` — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak freeze / grace day" section. The opt-in-streak-lapse-reminder follow-up is also now done: a per-contributor "🔔 Remind me" toggle on the "Reminder" column shows an in-app warning banner whenever that contributor's in-progress streak is at risk of lapsing today (`lib/gamified-quests.ts#getStreakLapseRiskLength`, `state/streakLapseReminders.ts`) — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak-lapse reminder" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a shareable streak-badge image, or account-syncing reminder opt-ins/streak freezes across devices) if one becomes worth doing.
 * 🔓 **Progress Unlocks** (`/cards/progress`) — the visual next-tier progress bar follow-up is done: the "Next tier" column now leads with a filled `MeterBar` meter instead of a text-only sentence, with the needed-counts text kept underneath as detail (`lib/progress-unlocks.ts#getNextTierProgress`'s new `progressRatio` field) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Next-tier progress bar" section. The unlock-celebration-toast follow-up is also now done: a dismissible "🎉 New badge earned: …" banner shows on the signed-in visitor's own row the moment they newly earn a tier or streak badge, diffed against a persisted per-contributor "last-seen badges" baseline (`state/unlockCelebrations.ts`) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Unlock celebration toast" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a badge showcase on a contributor's profile) if one becomes worth doing.
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — the batch-scoring follow-up is done: a "Bulk import" textarea parses a `---`-delimited batch of `id:`/`keywords:`/`quality:` + text entries and persists every well-formed one in a single pass (`lib/llm-card-scoring.ts#parseBulkCardSubmissions`, `state/cardScores.ts#saveScoredCardsBulk`/`bulkImportScoredCards`), reporting an imported/skipped-entry count rather than failing the whole batch on one malformed entry — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Bulk import" section. The inline-Evidence-Library-score-badge follow-up is also now done: each `card`-kind result in `EvidenceLibraryPanel` has a "Score card" action that scores the entry from its own text/argument-block/tags (`state/cardScores.ts#scoreEvidenceLibraryEntry`, composing the existing `deriveArgBlockKeywords`) and shows a "Score N/100" badge once scored, flagging a likely duplicate the same way `CardScoringPanel` does (`state/cardScores.ts#getScoredCardBreakdown`) — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Evidence Library score badge" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor score-trend chart over time) if one becomes worth doing.
-* 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.
+* 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — the printable/exportable-progress-report follow-up is done: a "Download report" button in the panel header exports the whole roster as a plain-text file, one section per contributor (contribution/task summary line plus a per-topic completion breakdown), via `lib/research-progress.ts#buildResearchProgressReportText` — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Report download" section. Next: a topic-comparison view across the whole team; personal goal-setting UI.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. The "best of the week" rollup follow-up is also now done: a new "Best of the week" section groups every announced daily winner by ISO week and highlights that week's single highest-helpfulness champion alongside its other announced days (`lib/daily-best-card.ts#buildWeeklyBestCardRollups`, `state/dailyBestCardAnnouncements.ts#buildAnnouncedWeeklyBestCardRollups`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Best of the week" section. Next: a winner-history calendar view.
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.

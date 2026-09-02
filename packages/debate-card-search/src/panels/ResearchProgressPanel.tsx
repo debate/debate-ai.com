@@ -33,6 +33,12 @@
  * live-update mechanism" Known gap noted in `shared-flow-sync.md`, for this
  * panel.
  *
+ * A "Download report" button exports the whole roster as a plain-text file
+ * via `lib/research-progress.ts`'s `buildResearchProgressReportText` (mirrors
+ * `PreRoundBriefingsPanel.tsx`'s anchor+Blob download pattern) — the
+ * "printable/exportable progress report" follow-up named under the "📈
+ * Research Progress Tracking" bullet in TODO.md.
+ *
  * @module panels/ResearchProgressPanel
  */
 
@@ -55,7 +61,11 @@ import {
 } from "../state/researchProgress"
 import { isOwnContributorRow } from "../lib/session-identity"
 import { isResearchProgressLiveUpdateStorageEvent } from "../state/live-update"
-import type { ContributorProgress } from "../lib/research-progress"
+import {
+  buildResearchProgressReportText,
+  researchProgressReportFilename,
+  type ContributorProgress,
+} from "../lib/research-progress"
 
 export interface ResearchProgressPanelProps {
   /**
@@ -101,6 +111,22 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
     setRoster(buildPersistedResearchProgressBoard())
   }
 
+  /** Mirrors `PreRoundBriefingsPanel.tsx`'s anchor+Blob download pattern. */
+  const handleDownloadReport = () => {
+    if (roster === null) return
+    const text = buildResearchProgressReportText(roster)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = researchProgressReportFilename()
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   if (roster === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading research progress…</div>
   }
@@ -116,10 +142,17 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
 
   return (
     <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-xl font-semibold text-foreground">Research Progress</h1>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Each contributor's contribution history and per-topic task completion.
-      </p>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="mb-1 text-xl font-semibold text-foreground">Research Progress</h1>
+          <p className="text-sm text-muted-foreground">
+            Each contributor's contribution history and per-topic task completion.
+          </p>
+        </div>
+        <Button size="sm" variant="outline" onClick={handleDownloadReport}>
+          Download report
+        </Button>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
