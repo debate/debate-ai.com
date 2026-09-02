@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { DailyBestCardPanel } from "debate-card-search"
+import { DailyBestCardWithIdentity } from "@/components/research/DailyBestCardWithIdentity"
 
 export const metadata: Metadata = {
   title: "Daily Best Card Challenge",
@@ -23,7 +23,7 @@ export default function CardsBestCardPage() {
         </Link>
       </div>
       <Suspense>
-        <DailyBestCardPanel />
+        <DailyBestCardWithIdentity />
       </Suspense>
     </div>
   )

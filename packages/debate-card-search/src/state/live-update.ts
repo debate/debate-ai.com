@@ -29,8 +29,12 @@
  * @module state/live-update
  */
 
-/** The `localStorage` keys `DailyBestCardPanel` reads from (see `state/contributions.ts`, `state/dailyBestCardAnnouncements.ts`). */
-export const DAILY_BEST_CARD_LIVE_UPDATE_STORAGE_KEYS = ["contributions", "dailyBestCardAnnouncements"] as const;
+/** The `localStorage` keys `DailyBestCardPanel` reads from (see `state/contributions.ts`, `state/dailyBestCardAnnouncements.ts`, `state/dailyBestCardComments.ts`). */
+export const DAILY_BEST_CARD_LIVE_UPDATE_STORAGE_KEYS = [
+  "contributions",
+  "dailyBestCardAnnouncements",
+  "dailyBestCardComments",
+] as const;
 
 /**
  * Whether a `storage` event should trigger `DailyBestCardPanel` to refresh

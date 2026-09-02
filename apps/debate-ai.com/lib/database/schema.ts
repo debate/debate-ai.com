@@ -521,6 +521,44 @@ export const savedCoachMaterialVersions = sqliteTable(
 
 export type SavedCoachMaterialVersionRow = typeof savedCoachMaterialVersions.$inferSelect;
 
+// Account-linked Daily Best Card comment-thread sync — the "🕵️ Daily Best
+// Card Challenge" bullet's "a comment thread on each day's winner"
+// follow-up under Research Crowdsourcing Organizer Features in TODO.md.
+// Same append-only-log shape as `savedJudgeDecisions`/
+// `savedCoachMaterialVersions` above (many rows can share a `dayKey`), so
+// `clientId` here holds the comment's own generated
+// `DailyBestCardComment.id`. `dayKey` is a plain (non-unique) indexed
+// column so `GET /api/daily-best-card-comments` and the merge hook can
+// still resolve/group a day's full thread.
+export const savedDailyBestCardComments = sqliteTable(
+  "saved_daily_best_card_comments",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    dayKey: text("day_key").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_daily_best_card_comments_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_daily_best_card_comments_user_client").on(
+      table.userId,
+      table.clientId,
+    ),
+    dayKeyIdx: index("idx_saved_daily_best_card_comments_day_key").on(table.dayKey),
+  }),
+);
+
+export type SavedDailyBestCardCommentRow = typeof savedDailyBestCardComments.$inferSelect;
+
 // Debate round videos ingested from the subscribed YouTube channels (see
 // packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can

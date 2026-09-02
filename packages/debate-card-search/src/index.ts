@@ -40,3 +40,9 @@ export {
   type SavedArgumentCollectionsPatchResult,
   type SavedArgumentCollectionsPayload,
 } from "./lib/argument-library-collections";
+export {
+  MAX_DAILY_BEST_CARD_COMMENT_TEXT_LENGTH,
+  MAX_SAVED_DAILY_BEST_CARD_COMMENT_BYTES,
+  isValidDailyBestCardComment,
+  type DailyBestCardComment,
+} from "./state/dailyBestCardComments";
