@@ -67,7 +67,8 @@ _No task currently in progress._
   production build). No lint script/config exists in this repo to run.
   No further follow-up is currently tracked for idea #14 beyond the two
   Known gaps above; a future run should pick a fresh next-step if one
-  becomes worth doing.
+  becomes worth doing. PR:
+  [#462](https://github.com/debate/debate-ai.com/pull/462).
 - **Gamified Quests — opt-in streak-lapse reminder.** Another repeat of the
   standing prompt ("integrate all the tools into the UI... create user
   settings and link user db SQL... with ability to save flows docs and
