@@ -11,21 +11,57 @@ result.
 
 ## What it shows
 
-Every contributor with at least one persisted daily mission result:
+Every contributor with at least one persisted daily mission result or streak
+freeze:
 
 | Field | Source |
 | --- | --- |
 | Contributor | `ContributorQuestStreak.contributorId` |
-| Current streak | `streak.currentStreak`, from `lib/gamified-quests.ts`'s `computeStreakStatus` |
+| Current streak | `streak.currentStreak`, from `lib/gamified-quests.ts`'s `computeStreakStatus` (with any persisted streak freezes bridged in) |
 | Longest streak | `streak.longestStreak` |
 | Last completed | `streak.lastCompletedDayKey` |
 | Badges | `earnedBadges`, milestones from `DEFAULT_STREAK_MILESTONES` (3/7/14/30-day) |
+| Streak freeze | Remaining freeze allowance, plus a "Use a grace day" action when yesterday broke an in-progress streak |
 
 A "Run today's mission check" action lets a contributor (identified by
 free-text id — there is no contributor identity/auth in this repo, the same
 known gap as `DailyQuestsPanel`/`ContributionsFeedPanel`) compute and save
 their own mission result for the current UTC calendar day on demand, against
 today's saved quest templates and their real, persisted contributions.
+
+## Streak freeze / grace day
+
+A contributor who misses a day doesn't have to watch their streak reset to
+zero — they can spend a **streak freeze** ("grace day") on the missed day
+instead, which counts as if that day's mission had been completed for the
+purposes of computing their streak length and milestone badges.
+
+- **Allowance:** up to `MAX_STREAK_FREEZES_PER_WINDOW` (2) freezes per
+  rolling `STREAK_FREEZE_WINDOW_DAYS` (30) day window
+  (`lib/gamified-quests.ts#getAvailableStreakFreezes`) — a freeze used more
+  than 30 days ago no longer counts against the allowance, so it replenishes
+  over time rather than being a one-time lifetime cap.
+- **Eligibility:** only the single most recent missed day — the day right
+  before today — can be frozen, and only when it actually broke a streak
+  that was active the day before it
+  (`lib/gamified-quests.ts#findFreezableStreakGapDayKey`). A day that was
+  already completed, already frozen, or in the future can't be frozen
+  (`lib/gamified-quests.ts#canApplyStreakFreeze`). A gap wider than one day
+  needs a freeze applied one day at a time as each becomes the most recent
+  gap.
+- **Applying a freeze:** the panel's "Streak freeze" column shows a "Use a
+  grace day for `YYYY-MM-DD`" button whenever a contributor has an eligible
+  gap day and at least one freeze remaining; clicking it calls
+  `state/streakFreezes.ts#applyPersistedStreakFreeze`, which re-validates and
+  saves the freeze, then refreshes the roster.
+- **Persistence:** freezes are stored per contributor per day in a new
+  `streakFreezes` localStorage key (`state/streakFreezes.ts`), mirroring
+  `dailyMissionResults.ts`'s persistence convention. Frozen days are merged
+  into a contributor's mission-result history
+  (`lib/gamified-quests.ts#applyStreakFreezes`) before every streak/badge
+  computation, so no changes were needed to `computeStreakStatus`,
+  `getEarnedStreakBadges`, or `deriveEarnedStreakMilestoneEvents` themselves
+  — a frozen day just looks like a completed one to those functions.
 
 ## Data flow
 
@@ -43,11 +79,25 @@ panels/QuestStreaksPanel.tsx
 
 Rendering the roster:
 state/dailyMissionResults.ts (localStorage: dailyMissionResults)
-  → buildPersistedQuestStreakRoster(todayUtcDayKey())
-      buildPersistedContributorQuestStreak(contributorId, asOfDayKey)  per contributor
-        → buildContributorQuestStreak(...)                      — lib/gamified-quests.ts
+state/streakFreezes.ts (localStorage: streakFreezes)
+  → buildQuestStreakRosterWithFreezes(todayUtcDayKey())          — state/streakFreezes.ts
+      buildContributorQuestStreakWithFreezes(contributorId, asOfDayKey)  per contributor
+        listDailyMissionResultsForContributor(contributorId)     — state/dailyMissionResults.ts
+        listStreakFreezeDayKeysForContributor(contributorId)     — state/streakFreezes.ts
+        → applyStreakFreezes(results, frozenDayKeys)             — lib/gamified-quests.ts
+        → buildContributorQuestStreak(...)                       — lib/gamified-quests.ts
   → panels/QuestStreaksPanel.tsx                                 (renders the roster)
   → apps/debate-ai.com/app/cards/streaks/page.tsx                 (mounts the panel)
+
+Using a grace day (Quest Streaks panel, "Streak freeze" column):
+panels/QuestStreaksPanel.tsx
+  → findFreezableStreakGapDayKey(results, frozenDayKeys, asOfDayKey)
+                                                                   — lib/gamified-quests.ts
+      (shows the "Use a grace day for …" button when non-null)
+  → applyPersistedStreakFreeze(contributorId, gapDayKey, asOfDayKey)
+                                                                   — state/streakFreezes.ts
+      canApplyStreakFreeze(...)                                   — lib/gamified-quests.ts (validates)
+      writeAll([...existing, record])                             — state/streakFreezes.ts (saves)
 ```
 
 `lib/gamified-quests.ts`'s pure streak/badge computation
@@ -66,11 +116,12 @@ so a truly automatic daily cadence remains a documented gap below.
 `QuestStreaksPanel` subscribes to the browser's `storage` event (fires only
 in *other* same-origin tabs/windows, never the one that made the write) via
 `state/live-update.ts`'s `isQuestStreaksLiveUpdateStorageEvent` and
-re-derives the roster when it fires for its backing `dailyMissionResults`
-key, so a mission check run in a second tab now refreshes this tab's roster
-without a manual reload — closing the "Every other localStorage-backed
-panel in this repo still has no cross-tab live-update mechanism" Known gap
-noted in [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
+re-derives the roster when it fires for its backing `dailyMissionResults` or
+`streakFreezes` key, so a mission check or a grace-day freeze applied in a
+second tab now refreshes this tab's roster without a manual reload — closing
+the "Every other localStorage-backed panel in this repo still has no
+cross-tab live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
 Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
 
 ## Known gaps
@@ -85,3 +136,13 @@ Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
   in `state/dailyQuests.ts` at that moment; a template added after a
   contributor's check runs isn't retroactively counted until they run the
   check again.
+- Streak freezes are localStorage-only, not account-synced across devices —
+  the same known gap as most of this panel's own history, unlike
+  `wordLimitPresets`/coach materials/etc.
+- The "Use a grace day" action only ever surfaces the single most recent
+  missed day; a contributor who missed several days in a row needs to spend
+  a freeze, refresh, and repeat once each newly-exposed gap becomes the most
+  recent one.
+- The freeze allowance (2 per rolling 30 days) is a fixed constant, not
+  earned through activity (e.g. a freeze awarded per streak milestone
+  reached) — a simple flat grant for this first slice.

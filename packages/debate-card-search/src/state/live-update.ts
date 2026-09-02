@@ -161,11 +161,12 @@ export function isResearchProgressLiveUpdateStorageEvent(event: { key: string | 
 }
 
 /**
- * The `localStorage` key `QuestStreaksPanel` reads from, via
- * `state/dailyMissionResults.ts#buildPersistedQuestStreakRoster`
- * (`dailyMissionResults`).
+ * The `localStorage` keys `QuestStreaksPanel` reads from, via
+ * `state/streakFreezes.ts#buildQuestStreakRosterWithFreezes`
+ * (`dailyMissionResults`, plus `streakFreezes` for the streak-freeze/
+ * grace-day mechanic).
  */
-export const QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS = ["dailyMissionResults"] as const;
+export const QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS = ["dailyMissionResults", "streakFreezes"] as const;
 
 /**
  * Whether a `storage` event should trigger `QuestStreaksPanel` to refresh

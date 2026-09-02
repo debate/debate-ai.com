@@ -2,17 +2,19 @@
  * @fileoverview Quest Streaks panel — the "streak/badge widget UI that
  * renders `buildContributorQuestStreak`/`getEarnedStreakBadges`" follow-up
  * named under the "🎮 Gamified Quests" bullet in TODO.md, plus that same
- * bullet's remaining follow-up (a): "a real trigger, i.e. a UI action or
- * scheduled job, to call `computeAndSavePersistedDailyMissionResult` on an
- * actual cadence."
+ * bullet's follow-up (a): "a real trigger, i.e. a UI action or scheduled
+ * job, to call `computeAndSavePersistedDailyMissionResult` on an actual
+ * cadence", and its "a streak-freeze/grace-day mechanic for a missed day"
+ * follow-up.
  *
  * Reads every contributor's streak+badge status via
- * `state/dailyMissionResults.ts`'s `buildPersistedQuestStreakRoster` (itself
- * a thin composition against the already-persisted `dailyMissionResults`
- * store) and renders it as a roster: current streak, longest streak, last
- * completed day, and every milestone badge earned so far — reusing the
- * existing streak/badge logic directly rather than introducing new logic
- * here. A "Run today's mission check" action lets a contributor trigger
+ * `state/streakFreezes.ts`'s `buildQuestStreakRosterWithFreezes` (a thin
+ * composition of the already-persisted `dailyMissionResults` store with
+ * any persisted streak freezes applied on top) and renders it as a roster:
+ * current streak, longest streak, last completed day, every milestone badge
+ * earned so far, and a "Streak freeze" column — reusing the existing
+ * streak/badge logic directly rather than introducing new logic here. A
+ * "Run today's mission check" action lets a contributor trigger
  * `computeAndSavePersistedDailyMissionResult` for themselves on demand
  * (there is no scheduled-job infra in this repo, and no contributor
  * identity/auth to scope this automatically — the same known gap as
@@ -21,11 +23,19 @@
  * persisted quest-template roster (`state/dailyQuests.ts`'s
  * `listQuestTemplates`).
  *
+ * The "Streak freeze" column shows each contributor's remaining freeze
+ * allowance (`lib/gamified-quests.ts#buildStreakFreezeAvailabilityText`) and,
+ * when yesterday broke an in-progress streak
+ * (`lib/gamified-quests.ts#findFreezableStreakGapDayKey`), a "Use a grace
+ * day for …" action that spends one via
+ * `state/streakFreezes.ts#applyPersistedStreakFreeze` — bridging the gap so
+ * the streak continues instead of resetting to zero.
+ *
  * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
- * `isQuestStreaksLiveUpdateStorageEvent`, so a daily mission result recorded
- * in another tab refreshes this panel's roster without a manual reload —
- * closing the "Every other localStorage-backed panel in this repo still has
- * no cross-tab live-update mechanism" Known gap noted in
+ * `isQuestStreaksLiveUpdateStorageEvent`, so a daily mission result or streak
+ * freeze recorded in another tab refreshes this panel's roster without a
+ * manual reload — closing the "Every other localStorage-backed panel in this
+ * repo still has no cross-tab live-update mechanism" Known gap noted in
  * `shared-flow-sync.md`, for this panel.
  *
  * @module panels/QuestStreaksPanel
@@ -47,24 +57,58 @@ import {
   TableRow,
 } from "debate-ui/src/primitives/table"
 import {
-  buildPersistedQuestStreakRoster,
   computeAndSavePersistedDailyMissionResult,
+  listDailyMissionResultsForContributor,
 } from "../state/dailyMissionResults"
 import { listQuestTemplates } from "../state/dailyQuests"
 import { isQuestStreaksLiveUpdateStorageEvent } from "../state/live-update"
-import type { ContributorQuestStreak } from "../lib/gamified-quests"
+import {
+  applyPersistedStreakFreeze,
+  buildQuestStreakRosterWithFreezes,
+  getPersistedAvailableStreakFreezes,
+  listStreakFreezeDayKeysForContributor,
+} from "../state/streakFreezes"
+import { buildStreakFreezeAvailabilityText, findFreezableStreakGapDayKey } from "../lib/gamified-quests"
+import type { ContributorQuestStreak, StreakFreezeDenialReason } from "../lib/gamified-quests"
 
 /** Today's UTC calendar day as `YYYY-MM-DD`, the `dayKey` format used throughout `gamified-quests.ts`. */
 function todayUtcDayKey(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
+/** Denial reasons mapped to a short, actionable message for the "Use a grace day" action. */
+const FREEZE_DENIAL_MESSAGES: Record<StreakFreezeDenialReason, string> = {
+  "future-day": "That day hasn't happened yet.",
+  "already-complete": "That day's mission was already completed.",
+  "already-frozen": "That day is already frozen.",
+  "no-freezes-available": "No streak freezes left in the rolling window.",
+}
+
+/** A contributor's grace-day standing: the missed day (if any) eligible for a freeze, and freezes remaining. */
+interface StreakFreezeInfo {
+  gapDayKey: string | null
+  availableFreezes: number
+}
+
+function buildStreakFreezeInfo(contributorId: string, asOfDayKey: string): StreakFreezeInfo {
+  const frozenDayKeys = listStreakFreezeDayKeysForContributor(contributorId)
+  return {
+    gapDayKey: findFreezableStreakGapDayKey(
+      listDailyMissionResultsForContributor(contributorId),
+      frozenDayKeys,
+      asOfDayKey,
+    ),
+    availableFreezes: getPersistedAvailableStreakFreezes(contributorId, asOfDayKey),
+  }
+}
+
 /**
  * Renders the Quest Streaks roster: every contributor with at least one
- * persisted daily mission result, their current and longest streak, the
- * last day they completed their mission, and every streak badge earned —
- * plus a "Run today's mission check" action to compute and save a
- * contributor's mission result on demand.
+ * persisted daily mission result or streak freeze, their current and
+ * longest streak, the last day they completed their mission, every streak
+ * badge earned, and their streak-freeze standing — plus a "Run today's
+ * mission check" action to compute and save a contributor's mission result
+ * on demand.
  *
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
@@ -73,9 +117,10 @@ export function QuestStreaksPanel() {
   const [roster, setRoster] = useState<ContributorQuestStreak[] | null>(null)
   const [contributorId, setContributorId] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [freezeError, setFreezeError] = useState<string | null>(null)
 
   const refresh = () => {
-    setRoster(buildPersistedQuestStreakRoster(todayUtcDayKey()))
+    setRoster(buildQuestStreakRosterWithFreezes(todayUtcDayKey()))
   }
 
   useEffect(() => {
@@ -104,6 +149,16 @@ export function QuestStreaksPanel() {
     }
     computeAndSavePersistedDailyMissionResult(id, listQuestTemplates(), Date.now())
     setError(null)
+    refresh()
+  }
+
+  const handleUseFreeze = (id: string, gapDayKey: string) => {
+    const result = applyPersistedStreakFreeze(id, gapDayKey, todayUtcDayKey())
+    if (!result.applied) {
+      setFreezeError(`${id}: ${FREEZE_DENIAL_MESSAGES[result.reason]}`)
+      return
+    }
+    setFreezeError(null)
     refresh()
   }
 
@@ -159,6 +214,7 @@ export function QuestStreaksPanel() {
         Every contributor's daily-quest streak and the milestone badges it has earned.
       </p>
       {trigger}
+      {freezeError && <p className="mb-3 text-sm text-destructive">{freezeError}</p>}
       <Table>
         <TableHeader>
           <TableRow>
@@ -167,34 +223,57 @@ export function QuestStreaksPanel() {
             <TableHead className="text-right">Longest streak</TableHead>
             <TableHead>Last completed</TableHead>
             <TableHead>Badges</TableHead>
+            <TableHead>Streak freeze</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {roster.map((status) => (
-            <TableRow key={status.contributorId}>
-              <TableCell className="font-medium">{status.contributorId}</TableCell>
-              <TableCell className="text-right">
-                {status.streak.currentStreak > 0 ? `🔥 ${status.streak.currentStreak}` : "—"}
-              </TableCell>
-              <TableCell className="text-right text-muted-foreground">{status.streak.longestStreak}</TableCell>
-              <TableCell className="text-muted-foreground">
-                {status.streak.lastCompletedDayKey ?? "—"}
-              </TableCell>
-              <TableCell>
-                {status.earnedBadges.length > 0 ? (
-                  <div className="flex flex-wrap gap-1">
-                    {status.earnedBadges.map((badge) => (
-                      <Badge key={badge} variant="outline" className="whitespace-nowrap">
-                        {badge}
-                      </Badge>
-                    ))}
+          {roster.map((status) => {
+            const today = todayUtcDayKey()
+            const freezeInfo = buildStreakFreezeInfo(status.contributorId, today)
+            return (
+              <TableRow key={status.contributorId}>
+                <TableCell className="font-medium">{status.contributorId}</TableCell>
+                <TableCell className="text-right">
+                  {status.streak.currentStreak > 0 ? `🔥 ${status.streak.currentStreak}` : "—"}
+                </TableCell>
+                <TableCell className="text-right text-muted-foreground">{status.streak.longestStreak}</TableCell>
+                <TableCell className="text-muted-foreground">
+                  {status.streak.lastCompletedDayKey ?? "—"}
+                </TableCell>
+                <TableCell>
+                  {status.earnedBadges.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {status.earnedBadges.map((badge) => (
+                        <Badge key={badge} variant="outline" className="whitespace-nowrap">
+                          {badge}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">
+                      {buildStreakFreezeAvailabilityText(freezeInfo.availableFreezes)}
+                    </p>
+                    {freezeInfo.gapDayKey && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={freezeInfo.availableFreezes <= 0}
+                        onClick={() => handleUseFreeze(status.contributorId, freezeInfo.gapDayKey!)}
+                      >
+                        Use a grace day for {freezeInfo.gapDayKey}
+                      </Button>
+                    )}
                   </div>
-                ) : (
-                  <span className="text-muted-foreground">—</span>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
+                </TableCell>
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
     </div>

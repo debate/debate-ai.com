@@ -6,6 +6,76 @@
 _No task currently in progress._
 
 ### Completed
+- **Gamified Quests — streak-freeze/grace-day mechanic.** Another repeat of
+  the standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI") — as with every recent repeat, that half is
+  already fully built (account-synced settings already exist at `/settings`,
+  D1 tables + `/api/*` routes already link flows/docs/rounds/materials/etc.
+  to signed-in users, and the tools are already reachable from the nav/UI),
+  and the one open PR (#437, "Consolidate UI primitives and add web
+  extension scaffold") doesn't touch this area, so this slice picked the
+  "🎮 Gamified Quests" bullet's first still-open follow-up: "a
+  streak-freeze/grace-day mechanic for a missed day." A contributor who
+  misses a day can now spend a **streak freeze** to bridge the gap instead
+  of watching their streak reset to zero. `lib/gamified-quests.ts` gained
+  `applyStreakFreezes` — a pure function that marks a set of frozen dayKeys
+  complete in a mission-result history — which every existing streak/badge
+  function (`computeStreakStatus`, `getEarnedStreakBadges`,
+  `deriveEarnedStreakMilestoneEvents`) already treats as streak-continuing,
+  so no changes were needed to those functions themselves; a caller just
+  runs the raw history through `applyStreakFreezes` first. A rolling
+  allowance (`MAX_STREAK_FREEZES_PER_WINDOW` = 2 per
+  `STREAK_FREEZE_WINDOW_DAYS` = 30 trailing days, via
+  `countStreakFreezesUsedInWindow`/`getAvailableStreakFreezes`) caps usage
+  without being a lifetime cap — a freeze used more than 30 days ago no
+  longer counts against it. `canApplyStreakFreeze` validates a specific
+  freeze attempt (not a future day, not already complete, not already
+  frozen, an allowance still available) and `findFreezableStreakGapDayKey`
+  finds the single most recent missed day eligible for a freeze — the day
+  right before "today" that broke a streak which was active the day before
+  it. A new `state/streakFreezes.ts` persists a contributor's spent freezes
+  to localStorage (mirroring `dailyMissionResults.ts`'s convention) and
+  composes `applyPersistedStreakFreeze` (validates via `canApplyStreakFreeze`
+  against real persisted history before saving) plus
+  `buildContributorQuestStreakWithFreezes`/`buildQuestStreakRosterWithFreezes`
+  (freeze-aware replacements for `dailyMissionResults.ts`'s roster builders,
+  living in the new file rather than that one to avoid a circular import).
+  `QuestStreaksPanel` now renders a "Streak freeze" column showing each
+  contributor's remaining allowance
+  (`buildStreakFreezeAvailabilityText`) and, when eligible, a "Use a grace
+  day for …" button. `live-update.ts`'s `QUEST_STREAKS_LIVE_UPDATE_STORAGE_KEYS`
+  gained the new `"streakFreezes"` key so a freeze applied in one browser tab
+  refreshes the roster in every other open tab. See
+  `docs/features/quest-streaks.md`'s new "Streak freeze / grace day" section
+  (allowance, eligibility, applying a freeze, persistence), its updated data
+  flow diagram, and three new Known gaps (localStorage-only/not
+  account-synced; only the single most recent missed day is ever
+  surfaced — a multi-day gap needs freezes spent one at a time as each
+  becomes the most recent; the allowance is a fixed constant rather than
+  earned through activity). Vitest-covered:
+  `packages/debate-card-search/test/gamified-quests.test.ts` (28 new cases —
+  `applyStreakFreezes`, `countStreakFreezesUsedInWindow`,
+  `getAvailableStreakFreezes`, `canApplyStreakFreeze`,
+  `findFreezableStreakGapDayKey`, `buildStreakFreezeAvailabilityText`, all
+  pure), the new
+  `packages/debate-card-search/test/streakFreezes.test.ts` (15 cases — the
+  localStorage persistence layer against a mocked `localStorage`, including
+  corrupt/missing-JSON degradation, allowance exhaustion, per-contributor
+  isolation, and the freeze-aware roster/streak composition), and two new
+  cases in `live-update.test.ts` for the new `streakFreezes` key. The
+  panel's own rendering/click-handler wiring remains intentionally untested,
+  matching this panel's existing convention (only pure logic and
+  persistence wrappers are directly tested). Verified with `bun run test`
+  (root, all packages: 224 test files, 3826 tests, all passing), `bun run
+  typecheck` (root, all 13 typechecked packages, clean), and a full `bun
+  run build` (the whole monorepo build, including `debate-ai-web`'s
+  production build) — all pass. No lint script/config exists in this repo
+  to run. The remaining next-steps for this idea ("a shareable
+  streak-badge image", "an opt-in reminder notification before a streak
+  lapses") stay open; a future run should pick one or a fresh next-step if
+  one becomes worth doing. PR: [#458](https://github.com/debate/debate-ai.com/pull/458).
 - **Team Brainstorm Assist — optional brainstorm-session timer.** Another
   repeat of the standing prompt ("integrate all the tools into the UI...
   create user settings and link user db SQL... with ability to save flows
@@ -13122,7 +13192,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 * 🧩 **Community Research Hub** (`/community-hub`) — a personalized "for you" section; fold its directory into the News Stream feed instead of a separate destination; a quick-jump search bar across every listed space.
 * 🏅 **Contribution Leaderboard** (`/cards/leaderboard`) — the range-filter follow-up is done: a "Range" dropdown (All time / This week / This month) re-scopes the whole roster — scores and completed-task counts alike — to that trailing window (`lib/contribution-leaderboard.ts#filterContributionsByRange`/`isWithinLeaderboardRange`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Range filter" section. The per-category follow-up is also now done: a "Category" dropdown (All categories / Cards / Summaries / Highlights / Annotations / Original arguments / Refutations) re-scopes the roster to one contribution kind at a time, composing with the Range filter (`lib/contribution-leaderboard.ts#filterContributionsByKind`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Category filter" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor profile drill-down page) if one becomes worth doing.
-* 🎮 **Gamified Quests** (`/cards/streaks`) — a streak-freeze/grace-day mechanic for a missed day; a shareable streak-badge image; an opt-in reminder notification before a streak lapses.
+* 🎮 **Gamified Quests** (`/cards/streaks`) — the streak-freeze/grace-day-mechanic follow-up is done: a contributor can spend a rolling-allowance "streak freeze" to bridge a single missed day instead of resetting to zero (`lib/gamified-quests.ts#applyStreakFreezes`/`canApplyStreakFreeze`/`findFreezableStreakGapDayKey`, `state/streakFreezes.ts`), surfaced as a "Streak freeze" column with a "Use a grace day for …" action on `QuestStreaksPanel` — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak freeze / grace day" section. Next: a shareable streak-badge image; an opt-in reminder notification before a streak lapses.
 * 🔓 **Progress Unlocks** (`/cards/progress`) — the visual next-tier progress bar follow-up is done: the "Next tier" column now leads with a filled `MeterBar` meter instead of a text-only sentence, with the needed-counts text kept underneath as detail (`lib/progress-unlocks.ts#getNextTierProgress`'s new `progressRatio` field) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Next-tier progress bar" section. The unlock-celebration-toast follow-up is also now done: a dismissible "🎉 New badge earned: …" banner shows on the signed-in visitor's own row the moment they newly earn a tier or streak badge, diffed against a persisted per-contributor "last-seen badges" baseline (`state/unlockCelebrations.ts`) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Unlock celebration toast" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a badge showcase on a contributor's profile) if one becomes worth doing.
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — batch-score an uploaded set of cards at once; a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.

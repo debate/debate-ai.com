@@ -161,6 +161,11 @@ describe("isQuestStreaksLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isQuestStreaksLiveUpdateStorageEvent({ key: "dailyMissionResultsBackup" })).toBe(false);
     expect(isQuestStreaksLiveUpdateStorageEvent({ key: "old_dailyMissionResults" })).toBe(false);
+    expect(isQuestStreaksLiveUpdateStorageEvent({ key: "streakFreezesBackup" })).toBe(false);
+  });
+
+  it("is true for the streakFreezes key (the streak-freeze/grace-day mechanic)", () => {
+    expect(isQuestStreaksLiveUpdateStorageEvent({ key: "streakFreezes" })).toBe(true);
   });
 });
 
