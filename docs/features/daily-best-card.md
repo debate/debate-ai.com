@@ -21,6 +21,15 @@ whatever is currently winning.
 - Once a day is announced, the panel shows the frozen winner instead of the
   live leader for that day — a stronger card submitted later the same day no
   longer changes the announced result.
+- **Winner history calendar** — a Monday-first month grid (previous/next
+  navigation, defaulting to the current UTC month) with every announced day
+  highlighted; clicking a highlighted day shows that day's highlight line and
+  contributor badge below the grid
+  (`lib/daily-best-card.ts`'s `buildDailyBestCardCalendarMonth`, rendered by
+  `panels/DailyBestCardPanel.tsx`'s `WinnerHistoryCalendar`). A day outside
+  the requested month (padding cells filling out the first/last week row) is
+  always shown dimmed and never carries a winner, even if that literal date
+  happens to have an announcement in an adjacent month's view.
 - **Announced history** — every previously announced day's winner, oldest
   first, rendered as a one-line highlight
   (`lib/daily-best-card.ts`'s `buildDailyBestCardHighlight`) plus the
@@ -73,12 +82,14 @@ panels/ContributionsFeedPanel.tsx          — stamps submittedAt on every submi
       → buildAnnouncedWeeklyBestCardRollups()
           → lib/daily-best-card.ts's buildWeeklyBestCardRollups()
               — groups announced days by ISO week, picks each week's champion
+      → lib/daily-best-card.ts's buildDailyBestCardCalendarMonth()
+          — builds a Monday-first month grid over listAnnouncedDailyBestCards()
   → state/dailyBestCardComments.ts (localStorage, "dailyBestCardComments")
       → postDailyBestCardComment() / listDailyBestCardComments() / deleteDailyBestCardComment()
   → hooks/useDailyBestCardComments.ts        — local-first, best-effort account-synced
       → lib/daily-best-card-comments-client.ts → apps/debate-ai.com's /api/daily-best-card-comments routes
                                                   → saved_daily_best_card_comments (D1)
-  → panels/DailyBestCardPanel.tsx          — today's leader, announce action, weekly rollups, history, comment threads
+  → panels/DailyBestCardPanel.tsx          — today's leader, announce action, weekly rollups, winner history calendar, history list, comment threads
   → apps/debate-ai.com/components/research/DailyBestCardWithIdentity.tsx — prefills "Your name" from the signed-in session
   → apps/debate-ai.com/app/cards/best-card/page.tsx — mounts the panel (via the identity wrapper) as a route
 ```

@@ -1,16 +1,19 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildDailyBestCardCalendarMonth,
   buildDailyBestCardHighlight,
   buildDailyBestCards,
   buildWeeklyBestCardRollupHighlight,
   buildWeeklyBestCardRollups,
   getBestCardForDay,
   getUtcDayKey,
+  getUtcMonthKey,
   getUtcWeekKey,
   groupCardsByDay,
   groupDailyBestCardsByWeek,
   pickBestCardOfDay,
   pickBestCardOfWeek,
+  shiftUtcMonthKey,
   type DailyBestCard,
   type TimestampedCardContribution,
 } from "../src/lib/daily-best-card";
@@ -208,5 +211,82 @@ describe("buildWeeklyBestCardRollupHighlight", () => {
   it("uses singular phrasing for a single-day week", () => {
     const [rollup] = buildWeeklyBestCardRollups([dailyOne]);
     expect(buildWeeklyBestCardRollupHighlight(rollup)).toContain("(1 day)");
+  });
+});
+
+describe("getUtcMonthKey", () => {
+  it("formats a timestamp as its UTC calendar month", () => {
+    expect(getUtcMonthKey(DAY_ONE)).toBe("2026-08");
+    expect(getUtcMonthKey(DAY_TWO)).toBe("2026-08");
+  });
+});
+
+describe("shiftUtcMonthKey", () => {
+  it("shifts forward and backward within a year", () => {
+    expect(shiftUtcMonthKey("2026-08", 1)).toBe("2026-09");
+    expect(shiftUtcMonthKey("2026-08", -1)).toBe("2026-07");
+  });
+
+  it("wraps across a year boundary in both directions", () => {
+    expect(shiftUtcMonthKey("2026-12", 1)).toBe("2027-01");
+    expect(shiftUtcMonthKey("2026-01", -1)).toBe("2025-12");
+  });
+
+  it("is a no-op for a zero delta", () => {
+    expect(shiftUtcMonthKey("2026-08", 0)).toBe("2026-08");
+  });
+});
+
+describe("buildDailyBestCardCalendarMonth", () => {
+  it("builds a Monday-first grid spanning the whole month in full week rows", () => {
+    const calendar = buildDailyBestCardCalendarMonth("2026-08", [dailyOne, dailyTwo]);
+
+    expect(calendar.monthKey).toBe("2026-08");
+    // August 2026 starts on a Saturday and has 31 days, so the Monday-first
+    // grid needs 6 full weeks (42 cells) to cover it.
+    expect(calendar.weeks).toHaveLength(6);
+    for (const week of calendar.weeks) {
+      expect(week).toHaveLength(7);
+    }
+    expect(calendar.weeks[0][0].dayKey).toBe("2026-07-27");
+    expect(calendar.weeks[5][6].dayKey).toBe("2026-09-06");
+  });
+
+  it("marks days outside the requested month as padding, never carrying a winner", () => {
+    const calendar = buildDailyBestCardCalendarMonth("2026-08", [dailyOne]);
+    const firstCell = calendar.weeks[0][0];
+
+    expect(firstCell.dayKey).toBe("2026-07-27");
+    expect(firstCell.inMonth).toBe(false);
+    expect(firstCell.winner).toBeNull();
+  });
+
+  it("attaches each in-month day's winner by dayKey", () => {
+    const calendar = buildDailyBestCardCalendarMonth("2026-08", [dailyOne, dailyTwo]);
+    const flat = calendar.weeks.flat();
+
+    const cellOne = flat.find((cell) => cell.dayKey === "2026-08-10");
+    const cellTwo = flat.find((cell) => cell.dayKey === "2026-08-11");
+    const cellEmpty = flat.find((cell) => cell.dayKey === "2026-08-12");
+
+    expect(cellOne?.inMonth).toBe(true);
+    expect(cellOne?.winner).toEqual(dailyOne);
+    expect(cellTwo?.winner).toEqual(dailyTwo);
+    expect(cellEmpty?.winner).toBeNull();
+  });
+
+  it("returns every in-month day as winner-less for an empty winner list", () => {
+    const calendar = buildDailyBestCardCalendarMonth("2026-08", []);
+    const inMonthCells = calendar.weeks.flat().filter((cell) => cell.inMonth);
+
+    expect(inMonthCells).toHaveLength(31);
+    expect(inMonthCells.every((cell) => cell.winner === null)).toBe(true);
+  });
+
+  it("handles a month that already starts on a Monday with no leading padding", () => {
+    // 2026-06-01 falls on a Monday.
+    const calendar = buildDailyBestCardCalendarMonth("2026-06", []);
+    expect(calendar.weeks[0][0].dayKey).toBe("2026-06-01");
+    expect(calendar.weeks[0][0].inMonth).toBe(true);
   });
 });

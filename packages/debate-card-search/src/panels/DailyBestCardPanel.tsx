@@ -32,13 +32,14 @@
 
 "use client"
 
-import { useEffect, useState } from "react"
-import { CalendarRange, MessageSquare, Sparkles, Trophy } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { CalendarRange, ChevronLeft, ChevronRight, MessageSquare, Sparkles, Trophy } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { cn } from "debate-ui/src/lib/utils"
 import {
   announceDailyBestCard,
   buildAnnouncedWeeklyBestCardRollups,
@@ -48,7 +49,13 @@ import {
   type AttributedWeeklyBestCardRollup,
 } from "../state/dailyBestCardAnnouncements"
 import type { AttributedDailyBestCard } from "../state/contributions"
-import { buildDailyBestCardHighlight, buildWeeklyBestCardRollupHighlight } from "../lib/daily-best-card"
+import {
+  buildDailyBestCardCalendarMonth,
+  buildDailyBestCardHighlight,
+  buildWeeklyBestCardRollupHighlight,
+  getUtcMonthKey,
+  shiftUtcMonthKey,
+} from "../lib/daily-best-card"
 import { isDailyBestCardLiveUpdateStorageEvent } from "../state/live-update"
 import {
   useDailyBestCardComments,
@@ -200,6 +207,104 @@ function WeeklyRollupCard({ rollup }: { rollup: AttributedWeeklyBestCardRollup }
   )
 }
 
+const CALENDAR_WEEKDAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+
+/**
+ * Renders one month's announced-winner-history calendar grid: a Monday-first
+ * week table with month navigation, each in-month day highlighted when it has
+ * an announced winner and clickable to select it for the detail line below
+ * the grid.
+ */
+function WinnerHistoryCalendar({
+  history,
+  monthKey,
+  onMonthKeyChange,
+  selectedDayKey,
+  onSelectDayKey,
+}: {
+  history: AttributedDailyBestCard[]
+  monthKey: string
+  onMonthKeyChange: (monthKey: string) => void
+  selectedDayKey: string | undefined
+  onSelectDayKey: (dayKey: string) => void
+}) {
+  const calendar = useMemo(() => buildDailyBestCardCalendarMonth(monthKey, history), [monthKey, history])
+  const selected = selectedDayKey ? history.find((day) => day.dayKey === selectedDayKey) : undefined
+
+  return (
+    <div className="mb-6 rounded-lg border border-border bg-card p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+          <CalendarRange className="h-4 w-4" aria-hidden="true" />
+          Winner history calendar
+        </div>
+        <div className="flex items-center gap-1">
+          <Button
+            size="icon-sm"
+            variant="outline"
+            aria-label="Previous month"
+            onClick={() => onMonthKeyChange(shiftUtcMonthKey(monthKey, -1))}
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+          </Button>
+          <span className="min-w-16 text-center text-xs font-medium text-muted-foreground">{monthKey}</span>
+          <Button
+            size="icon-sm"
+            variant="outline"
+            aria-label="Next month"
+            onClick={() => onMonthKeyChange(shiftUtcMonthKey(monthKey, 1))}
+          >
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </div>
+
+      <div className="mb-1 grid grid-cols-7 gap-1 text-center text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+        {CALENDAR_WEEKDAY_LABELS.map((label) => (
+          <div key={label}>{label}</div>
+        ))}
+      </div>
+      <div className="space-y-1">
+        {calendar.weeks.map((week) => (
+          <div key={week[0].dayKey} className="grid grid-cols-7 gap-1">
+            {week.map((cell) => (
+              <button
+                key={cell.dayKey}
+                type="button"
+                disabled={!cell.winner}
+                onClick={() => onSelectDayKey(cell.dayKey)}
+                title={cell.winner ? buildDailyBestCardHighlight(cell.winner) : undefined}
+                className={cn(
+                  "aspect-square rounded-md text-xs transition-colors",
+                  !cell.inMonth && "text-muted-foreground/30",
+                  cell.inMonth && !cell.winner && "text-muted-foreground/70",
+                  cell.winner && "cursor-pointer font-medium text-amber-700 hover:bg-amber-500/20 dark:text-amber-400",
+                  cell.winner && cell.dayKey === selectedDayKey && "bg-amber-500/30 ring-1 ring-amber-500",
+                  !cell.winner && "cursor-default",
+                )}
+              >
+                {Number(cell.dayKey.slice(-2))}
+              </button>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {selected && (
+        <div className="mt-3 flex items-start gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
+          <Trophy className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" aria-hidden="true" />
+          <div>
+            <div className="text-foreground">{buildDailyBestCardHighlight(selected)}</div>
+            <Badge variant="outline" className="mt-1">
+              {selected.contribution.contributorId}
+            </Badge>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export interface DailyBestCardPanelProps {
   /**
    * A real signed-in visitor's derived contributor id (see
@@ -223,6 +328,8 @@ export function DailyBestCardPanel({ signedInContributorId }: DailyBestCardPanel
   const [announcedToday, setAnnouncedToday] = useState<AttributedDailyBestCard | undefined>(undefined)
   const [history, setHistory] = useState<AttributedDailyBestCard[]>([])
   const [weeklyRollups, setWeeklyRollups] = useState<AttributedWeeklyBestCardRollup[]>([])
+  const [calendarMonthKey, setCalendarMonthKey] = useState(() => getUtcMonthKey(Date.now()))
+  const [selectedCalendarDayKey, setSelectedCalendarDayKey] = useState<string | undefined>(undefined)
   const [commentDrafts, setCommentDrafts] = useState<Record<string, CommentDraft>>({})
   const { comments, postComment, deleteComment } = useDailyBestCardComments()
 
@@ -337,6 +444,14 @@ export function DailyBestCardPanel({ signedInContributorId }: DailyBestCardPanel
           ))}
         </div>
       )}
+
+      <WinnerHistoryCalendar
+        history={history}
+        monthKey={calendarMonthKey}
+        onMonthKeyChange={setCalendarMonthKey}
+        selectedDayKey={selectedCalendarDayKey}
+        onSelectDayKey={setSelectedCalendarDayKey}
+      />
 
       <div className="mb-2 text-sm font-medium text-foreground">Announced history</div>
       {pastAnnouncements.length === 0 ? (
