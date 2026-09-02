@@ -6,6 +6,70 @@
 _No task currently in progress._
 
 ### Completed
+- **Top Contributor Awards — "nominate a peer" action.** Another repeat of
+  the standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI") — as with every recent repeat, that half is
+  already fully built (account-synced settings already exist at
+  `/settings`, D1 tables + `/api/*` routes already link flows/docs/rounds/
+  materials/etc. to signed-in users, and the tools are already reachable
+  from the nav/UI), and the one open PR (#437, "Consolidate UI primitives
+  and add web extension scaffold") doesn't touch this area, so this slice
+  picked the "🏆 Top Contributor Awards" bullet's own next-named follow-up:
+  "a 'nominate a peer' action." A visitor can now nominate another
+  contributor (never themself) for one of the same six award categories,
+  with an optional short note — a lightweight, informal signal alongside
+  the existing helpfulness-score-based winners, not a vote that changes
+  them. `lib/contributor-awards.ts` gained `AWARD_KIND_ORDER` (the shared
+  six-category display order, factored out of `buildTopContributorAwards`'s
+  previously-inlined local constant so both it and the new nomination UI
+  agree on category order), the `PeerNomination` type, `tallyNominationsByKind`
+  (ranks nominees within one category by nomination count descending,
+  tie-broken by nominee id ascending), and `canNominatePeer` (both ids must
+  be non-blank after trimming, and a contributor can't nominate themself,
+  compared case-insensitively). A new `state/contributorAwardNominations.ts`
+  persists nominations to localStorage (mirroring
+  `state/dailyBestCardComments.ts`'s local-first convention exactly —
+  `submitPeerNomination`/`listAllPeerNominations`/`listPeerNominationsForKind`/
+  `adoptPeerNomination`/`deletePeerNomination`), throwing a new
+  `InvalidPeerNominationError` when `submitPeerNomination` is called with a
+  self-nomination or a blank id rather than silently persisting a bad
+  record. `ContributorAwardsPanel` gained a "Peer Nominations" section: a
+  **Nominate a peer** form (category select, nominee, your name, an
+  optional note capped at `MAX_NOMINATION_NOTE_LENGTH` = 300 chars, with the
+  submit button disabled and an inline error shown for a same-nominee/
+  nominator attempt), a "Recent nominations" list (newest first, each with
+  a **Delete** action — unrestricted, mirroring `DailyBestCardPanel`'s
+  comment-thread convention, since this repo has no reviewer-identity
+  system to gate deletion by), and each live award card now shows that
+  category's top nominee(s) inline (e.g. "🗳️ Nominated: alice ×2").
+  `state/live-update.ts`'s `CONTRIBUTOR_AWARDS_LIVE_UPDATE_STORAGE_KEYS`
+  gained the new `"contributorAwardNominations"` key so a nomination
+  submitted in one browser tab refreshes the panel in every other open tab.
+  See `docs/features/contributor-awards.md`'s new "Peer Nominations"
+  section, its updated data-flow diagram, and an updated Known gaps entry
+  noting nominations share the feature's existing no-reviewer-identity gap
+  (any visitor can submit or delete any nomination under any name) and
+  aren't account-synced across devices yet. Vitest-covered:
+  `packages/debate-card-search/test/contributor-awards.test.ts` (10 new
+  cases — `tallyNominationsByKind` and `canNominatePeer`, both pure) and the
+  new `packages/debate-card-search/test/contributorAwardNominations.test.ts`
+  (17 cases — the localStorage persistence layer against a mocked
+  `localStorage`, including trimming, note-length capping, self-nomination
+  rejection leaving nothing persisted, id-keyed upsert/overwrite via
+  `adoptPeerNomination`, and delete). The panel's own rendering/form-wiring
+  remains intentionally untested, matching this panel's existing convention
+  (only pure logic and persistence wrappers are directly tested). Verified
+  with `bun run test` (root, all packages: 225 test files, 3866 tests, all
+  passing), `bun run typecheck` (root, all 13 typechecked packages, clean),
+  and a full `bun run build` (the whole monorepo build, including
+  `debate-ai-web`'s production build) — all pass. No lint script/config
+  exists in this repo to run. The remaining next-steps for this idea
+  ("per-nomination seconding/upvoting instead of only a raw count", "folding
+  nominations into the Hall of Fame ranking as a tie-breaker") stay open; a
+  future run should pick one or a fresh next-step if one becomes worth
+  doing.
 - **Daily Best Card Challenge — "best of the week" rollup.** Another repeat
   of the standing prompt ("integrate all the tools into the UI... create
   user settings and link user db SQL... with ability to save flows docs and
@@ -13254,7 +13318,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. The "best of the week" rollup follow-up is also now done: a new "Best of the week" section groups every announced daily winner by ISO week and highlights that week's single highest-helpfulness champion alongside its other announced days (`lib/daily-best-card.ts#buildWeeklyBestCardRollups`, `state/dailyBestCardAnnouncements.ts#buildAnnouncedWeeklyBestCardRollups`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Best of the week" section. Next: a winner-history calendar view.
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
-* 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. Next: a "nominate a peer" action.
+* 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. The "nominate a peer" follow-up is also now done: a "Peer Nominations" section has a **Nominate a peer** form (category, nominee, your name, optional note), and each live award card shows that category's top nominee(s) by nomination count — see the Completed entry above and `docs/features/contributor-awards.md`'s "Peer Nominations" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. per-nomination "seconding"/upvoting instead of only a raw count, or folding nominations into the Hall of Fame ranking as a tie-breaker) if one becomes worth doing.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — a coach-facing override/reassign control; a task-priority indicator; a capacity-aware view of routing load across the team.
 * 🔁 **Revision Incentives** (`/cards/revisions`) — a stale-evidence digest surfaced from the existing staleness signal; a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.

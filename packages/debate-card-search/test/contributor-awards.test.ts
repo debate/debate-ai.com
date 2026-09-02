@@ -6,8 +6,11 @@ import {
   buildCategoryLeaderboard,
   buildContributorAwardsHallOfFame,
   buildTopContributorAwards,
+  canNominatePeer,
   groupContributionsByKind,
+  tallyNominationsByKind,
   type ContributorAward,
+  type PeerNomination,
 } from "../src/lib/contributor-awards";
 
 const aliceCard: AttributedContribution = {
@@ -220,5 +223,75 @@ describe("buildAwardsAnnouncementText", () => {
 
   it("returns a fallback message for an empty award list", () => {
     expect(buildAwardsAnnouncementText([])).toBe("No awards to announce yet.");
+  });
+});
+
+function makeNomination(overrides: Partial<PeerNomination> = {}): PeerNomination {
+  return {
+    id: "nom-1",
+    kind: "card",
+    nomineeId: "alice",
+    nominatorId: "bob",
+    nominatedAt: 1000,
+    ...overrides,
+  };
+}
+
+describe("tallyNominationsByKind", () => {
+  it("counts nominations per nominee within one kind", () => {
+    const tally = tallyNominationsByKind(
+      [
+        makeNomination({ id: "n1", nomineeId: "alice" }),
+        makeNomination({ id: "n2", nomineeId: "alice" }),
+        makeNomination({ id: "n3", nomineeId: "bob" }),
+      ],
+      "card",
+    );
+    expect(tally).toEqual([
+      { nomineeId: "alice", count: 2 },
+      { nomineeId: "bob", count: 1 },
+    ]);
+  });
+
+  it("ignores nominations for other kinds", () => {
+    const tally = tallyNominationsByKind(
+      [makeNomination({ id: "n1", kind: "summary", nomineeId: "carol" })],
+      "card",
+    );
+    expect(tally).toEqual([]);
+  });
+
+  it("sorts by count descending, tie-broken by nomineeId ascending", () => {
+    const tally = tallyNominationsByKind(
+      [
+        makeNomination({ id: "n1", nomineeId: "zed" }),
+        makeNomination({ id: "n2", nomineeId: "amy" }),
+      ],
+      "card",
+    );
+    expect(tally.map((t) => t.nomineeId)).toEqual(["amy", "zed"]);
+  });
+
+  it("returns an empty list for no nominations", () => {
+    expect(tallyNominationsByKind([], "card")).toEqual([]);
+  });
+});
+
+describe("canNominatePeer", () => {
+  it("allows a distinct nominator/nominee pair", () => {
+    expect(canNominatePeer("bob", "alice")).toBe(true);
+  });
+
+  it("rejects nominating yourself", () => {
+    expect(canNominatePeer("alice", "alice")).toBe(false);
+  });
+
+  it("rejects self-nomination case-insensitively after trimming", () => {
+    expect(canNominatePeer(" Alice ", "alice")).toBe(false);
+  });
+
+  it("rejects a blank nominator or nominee", () => {
+    expect(canNominatePeer("", "alice")).toBe(false);
+    expect(canNominatePeer("bob", "   ")).toBe(false);
   });
 });

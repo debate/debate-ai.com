@@ -231,11 +231,13 @@ export function isNewsStreamLiveUpdateStorageEvent(event: { key: string | null }
  * `ContributionLeaderboardPanel` read) and that same module's
  * `getAnnouncedContributorAwards`/`listAnnouncedContributorAwards`
  * (`contributorAwardAnnouncements`, this panel's own frozen-day-announcement
- * store).
+ * store), plus `state/contributorAwardNominations.ts`'s
+ * `contributorAwardNominations` key for the "nominate a peer" action.
  */
 export const CONTRIBUTOR_AWARDS_LIVE_UPDATE_STORAGE_KEYS = [
   "contributions",
   "contributorAwardAnnouncements",
+  "contributorAwardNominations",
 ] as const;
 
 /**
