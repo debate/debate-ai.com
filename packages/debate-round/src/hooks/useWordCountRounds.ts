@@ -19,10 +19,13 @@
  * no local counterpart is adopted locally (`adoptWordCountRound`,
  * preserving its original `createdAt`), and a local-only record (saved
  * before this feature existed, or saved offline) is best-effort pushed up.
- * Neither direction ever overwrites a `roundId` both sides already have —
- * this hook doesn't resolve edit conflicts, just fills gaps — since a
- * word-count round is edited once and saved, not iteratively revised like a
- * flow or a settings row.
+ * A `roundId` present on both sides is no longer skipped outright — TODO.md
+ * idea #2's "resolving a same-`roundId` conflict between two devices
+ * instead of only filling gaps" follow-up: `resolveWordCountRoundConflict`
+ * compares each side's `updatedAt` and the newer copy wins (adopted locally
+ * if remote is newer, pushed to the account if local is newer); if neither
+ * side has a usable timestamp to compare, this still falls back to the
+ * original safe no-op rather than guessing.
  *
  * @module hooks/useWordCountRounds
  */
@@ -35,6 +38,7 @@ import {
   deleteWordCountRound,
   getWordCountRound,
   listWordCountRounds,
+  resolveWordCountRoundConflict,
   saveWordCountRound,
   type WordCountRoundRecord,
 } from "../state/wordCountRounds";
@@ -60,14 +64,26 @@ function ensureRemoteMerged(): Promise<boolean> {
         remoteAvailable = true;
 
         const localRecords = listWordCountRounds();
-        const localIds = new Set(localRecords.map((record) => record.roundId));
+        const localById = new Map(localRecords.map((record) => [record.roundId, record]));
         const remoteIds = new Set(remoteRecords.map((record) => record.roundId));
 
         let changed = false;
         for (const remote of remoteRecords) {
-          if (!localIds.has(remote.roundId)) {
+          const local = localById.get(remote.roundId);
+          if (!local) {
             adoptWordCountRound(remote);
             changed = true;
+            continue;
+          }
+          const resolution = resolveWordCountRoundConflict(local, remote);
+          if (resolution === "remote") {
+            adoptWordCountRound(remote);
+            changed = true;
+          } else if (resolution === "local") {
+            saveWordCountRoundToAccount(local).catch(() => {
+              // Best-effort — this device's newer copy stays queued to sync
+              // again on a later successful attempt.
+            });
           }
         }
         for (const local of localRecords) {
