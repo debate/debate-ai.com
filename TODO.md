@@ -6,6 +6,66 @@
 _No task currently in progress._
 
 ### Completed
+- **Video-Lecture-Training Coach AI — edit-in-place and version history for
+  a re-uploaded/edited material (idea #8, `coach-materials.md` Known gap).**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built and every tool is already reachable from the Tools
+  page and CardMirror's command palette, and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area, so this slice closed a concrete gap `docs/features/
+  coach-materials.md`'s "Known gaps" section already named: `CoachMaterial`s
+  had no edit form at all — `CoachMaterialsPanel`'s upload form always
+  called `saveCoachMaterial` with a brand-new `id`, so revising a material
+  meant either overwriting it by hand (silently losing the old text with no
+  way to see or restore it) or deleting and re-adding it as a new record.
+  Adds `packages/debate-speech-writer/src/state/coachMaterialVersions.ts` (a
+  new local-only store — coach materials aren't account-synced at all yet,
+  so this stays local-only too — mirroring `state/coachMaterials.ts`'s own
+  persistence convention): `appendMaterialVersion(previous)` snapshots a
+  material's full fields right before an overwrite, capped at
+  `MAX_VERSIONS_PER_MATERIAL` (10) per material by dropping the oldest;
+  `listVersionsForMaterial(materialId)` returns them newest-first (reversing
+  storage order rather than sorting by timestamp, since two overwrites in
+  the same millisecond would otherwise tie); `deleteVersionsForMaterial`/
+  `materialFromVersion` round out delete-cascade and restore. Wires this
+  into `state/coachMaterials.ts#saveCoachMaterial`, which now snapshots the
+  record it's about to replace whenever a save overwrites an existing id
+  (a brand-new id records no version). `CoachMaterialsPanel.tsx` gets an
+  "Edit" action per material (loads it back into the form; Save becomes
+  "Save changes" alongside a "Cancel edit" action) and a "History" toggle
+  listing that material's past versions with a "Restore this version"
+  action on each — restoring is itself just another overwrite through the
+  same `saveCoachMaterial` path, so it snapshots what it replaces too,
+  preserving full lineage rather than a single undo slot. Vitest-covered in
+  `packages/debate-speech-writer/test/coachMaterialVersions.test.ts` (10
+  new cases: snapshot shape, distinct ids for same-millisecond overwrites,
+  per-material cap/eviction dropping the oldest, newest-first ordering,
+  per-material isolation, deletion, restore-snapshot round-trip) and 4 new
+  cases added to `packages/debate-speech-writer/test/coachMaterials.test.ts`
+  (`saveCoachMaterial` records no version on create, snapshots on overwrite,
+  accumulates across repeated overwrites; `deleteCoachMaterial` also clears
+  that material's version history). See `docs/features/coach-materials.md`'s
+  new "Edit-in-place and version history" section for the updated writeup.
+  Full verification: `bun run test` (3597 tests passed, including the 14 new
+  ones), `bunx turbo typecheck` across every workspace package with a
+  `typecheck` script (all 13 pass — `debate-ai-web` has none; a manual
+  `bunx tsc --noEmit` there surfaces only the same pre-existing, unrelated
+  errors prior slices have already documented — Cloudflare Workers ambient
+  types (`D1Database`/`Fetcher`), better-auth client-plugin generics not
+  resolving outside the Next.js/Vinext build pipeline, and missing
+  `debate-ui` icon asset type declarations — none of them in a file this
+  slice touched), and `bun run build:web` (production build succeeds,
+  `/coach-materials` listed among the built routes). No repo-wide lint
+  script exists to run. Remaining gap for a future slice: coach materials
+  (and now their version history) are still purely per-browser localStorage
+  — no D1 table or `/api/coach-materials` route exists, unlike most other
+  panels in this repo, so neither the library nor its version history
+  follows a signed-in user across devices.
+
 - **User Settings — prune stale favorite tools (idea #17, `user-settings.md`
   Known gap).** Another repeat of the standing prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL... with
@@ -12524,9 +12584,17 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    least one material exists (`coach/team-coach-materials.ts`'s
    `filterCoachMaterials`/`listCoachMaterialTags`) — see the Completed entry
    above and `docs/features/coach-materials.md`'s "Search/filter bar"
-   section. Next:
+   section. The version-history follow-up is also now done: each material
+   has an "Edit" action (revise in place instead of only ever creating a new
+   record) and a "History" toggle listing every prior version with a
+   "Restore this version" action, backed by the new
+   `state/coachMaterialVersions.ts` local store — see the Completed entry
+   above and `docs/features/coach-materials.md`'s "Edit-in-place and version
+   history" section. Next:
    - Server-side transcription for uploaded audio/video recordings (currently only `.docx`/`.txt`/`.md` extract text).
-   - Version history for a material that gets re-uploaded/edited.
+   - Account sync for coach materials (and their version history) — both are
+     still purely per-browser localStorage today, unlike most other panels
+     in this repo.
 
 9. **Expandable Heading Structure** (`/reason-editor`, CardMirror's native
    `NavigationPanel` + `HeadingBreadcrumbBar` — not the dead `reason-editor`
