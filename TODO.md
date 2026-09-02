@@ -66,7 +66,7 @@ _No task currently in progress._
   script/config exists in this repo to run. The remaining next-step for this
   idea ("polish the idea-ranking UI (upvote affordance/animation)") stays
   open; a future run should pick that or a fresh next-step if one becomes
-  worth doing.
+  worth doing. PR: [#457](https://github.com/debate/debate-ai.com/pull/457).
 - **Daily Best Card Challenge — comment thread on each day's winner.**
   Another repeat of the standing prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL... with ability to save
