@@ -38,6 +38,16 @@
  * repo still has no cross-tab live-update mechanism" Known gap noted in
  * `shared-flow-sync.md`, for this panel.
  *
+ * The "Reminder" column closes that same bullet's "an opt-in reminder
+ * notification before a streak lapses" follow-up: a per-contributor 🔔
+ * toggle (`state/streakLapseReminders.ts`) that, once on, shows a warning
+ * banner on that row whenever their streak is at risk of lapsing today
+ * (`lib/gamified-quests.ts#getStreakLapseRiskLength`) — i.e. an in-progress
+ * streak coming into today that today's mission hasn't yet saved. There is
+ * no push-notification/scheduled-job infrastructure in this repo, so the
+ * "notification" is this in-app banner, seen whenever a contributor visits
+ * the panel while at risk, not a real push notification.
+ *
  * @module panels/QuestStreaksPanel
  */
 
@@ -68,7 +78,15 @@ import {
   getPersistedAvailableStreakFreezes,
   listStreakFreezeDayKeysForContributor,
 } from "../state/streakFreezes"
-import { buildStreakFreezeAvailabilityText, findFreezableStreakGapDayKey } from "../lib/gamified-quests"
+import {
+  getPersistedStreakLapseReminderInfo,
+  setStreakLapseReminderEnabled,
+} from "../state/streakLapseReminders"
+import {
+  buildStreakFreezeAvailabilityText,
+  buildStreakLapseReminderText,
+  findFreezableStreakGapDayKey,
+} from "../lib/gamified-quests"
 import type { ContributorQuestStreak, StreakFreezeDenialReason } from "../lib/gamified-quests"
 
 /** Today's UTC calendar day as `YYYY-MM-DD`, the `dayKey` format used throughout `gamified-quests.ts`. */
@@ -162,6 +180,11 @@ export function QuestStreaksPanel() {
     refresh()
   }
 
+  const handleToggleReminder = (id: string, enabled: boolean) => {
+    setStreakLapseReminderEnabled(id, enabled)
+    refresh()
+  }
+
   const trigger = (
     <div className="mb-6 rounded-lg border border-dashed border-border p-4 space-y-3">
       <div className="space-y-1.5">
@@ -224,12 +247,14 @@ export function QuestStreaksPanel() {
             <TableHead>Last completed</TableHead>
             <TableHead>Badges</TableHead>
             <TableHead>Streak freeze</TableHead>
+            <TableHead>Reminder</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {roster.map((status) => {
             const today = todayUtcDayKey()
             const freezeInfo = buildStreakFreezeInfo(status.contributorId, today)
+            const reminderInfo = getPersistedStreakLapseReminderInfo(status.contributorId, today)
             return (
               <TableRow key={status.contributorId}>
                 <TableCell className="font-medium">{status.contributorId}</TableCell>
@@ -268,6 +293,23 @@ export function QuestStreaksPanel() {
                       >
                         Use a grace day for {freezeInfo.gapDayKey}
                       </Button>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="space-y-1">
+                    <Button
+                      type="button"
+                      variant={reminderInfo.enabled ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleToggleReminder(status.contributorId, !reminderInfo.enabled)}
+                    >
+                      {reminderInfo.enabled ? "🔔 Reminder on" : "🔕 Remind me"}
+                    </Button>
+                    {reminderInfo.enabled && reminderInfo.riskLength !== null && (
+                      <p className="text-xs text-destructive">
+                        {buildStreakLapseReminderText(reminderInfo.riskLength)}
+                      </p>
                     )}
                   </div>
                 </TableCell>
