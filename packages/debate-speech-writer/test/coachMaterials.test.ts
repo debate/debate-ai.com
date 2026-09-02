@@ -8,6 +8,7 @@ import {
   listCoachMaterialTagsFromStore,
   saveCoachMaterial,
 } from "../src/state/coachMaterials";
+import { listVersionsForMaterial } from "../src/state/coachMaterialVersions";
 import type { CoachMaterial } from "../src/coach/team-coach-materials";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -90,6 +91,30 @@ describe("saveCoachMaterial", () => {
     expect(listCoachMaterials()).toEqual([revised]);
     expect(getCoachMaterial("lecture-1")).toEqual(revised);
   });
+
+  it("creating a new material records no version history", () => {
+    saveCoachMaterial(LECTURE);
+    expect(listVersionsForMaterial("lecture-1")).toEqual([]);
+  });
+
+  it("overwriting an existing id snapshots the record it replaces as a version", () => {
+    saveCoachMaterial(LECTURE);
+    const revised: CoachMaterial = { ...LECTURE, title: "Topicality Basics (Revised)" };
+    saveCoachMaterial(revised);
+
+    const versions = listVersionsForMaterial("lecture-1");
+    expect(versions).toHaveLength(1);
+    expect(versions[0]).toMatchObject({ materialId: "lecture-1", title: "Topicality Basics" });
+  });
+
+  it("overwriting repeatedly accumulates versions, newest first", () => {
+    saveCoachMaterial(LECTURE);
+    saveCoachMaterial({ ...LECTURE, title: "Revision 1" });
+    saveCoachMaterial({ ...LECTURE, title: "Revision 2" });
+
+    const versions = listVersionsForMaterial("lecture-1");
+    expect(versions.map((v) => v.title)).toEqual(["Revision 1", "Topicality Basics"]);
+  });
 });
 
 describe("deleteCoachMaterial", () => {
@@ -106,6 +131,16 @@ describe("deleteCoachMaterial", () => {
     saveCoachMaterial(CAMP);
     deleteCoachMaterial("missing");
     expect(listCoachMaterials()).toEqual([CAMP]);
+  });
+
+  it("also removes that material's version history", () => {
+    saveCoachMaterial(LECTURE);
+    saveCoachMaterial({ ...LECTURE, title: "Revised" });
+    expect(listVersionsForMaterial("lecture-1")).toHaveLength(1);
+
+    deleteCoachMaterial("lecture-1");
+
+    expect(listVersionsForMaterial("lecture-1")).toEqual([]);
   });
 });
 

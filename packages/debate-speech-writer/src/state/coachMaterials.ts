@@ -23,6 +23,7 @@ import {
   findRelevantMaterials,
   listCoachMaterialTags,
 } from "../coach/team-coach-materials";
+import { appendMaterialVersion, deleteVersionsForMaterial } from "./coachMaterialVersions";
 
 const STORAGE_KEY = "coachMaterials";
 
@@ -53,21 +54,32 @@ export function getCoachMaterial(id: string): CoachMaterial | undefined {
   return readAll().find((material) => material.id === id);
 }
 
-/** Saves a coach material, overwriting any existing record with the same id. */
+/**
+ * Saves a coach material, overwriting any existing record with the same id.
+ * Overwriting snapshots the record it replaces into
+ * `state/coachMaterialVersions.ts` first, so a re-upload/edit never loses
+ * the prior version outright — see that module's `listVersionsForMaterial`.
+ */
 export function saveCoachMaterial(material: CoachMaterial): void {
   const materials = readAll();
   const index = materials.findIndex((existing) => existing.id === material.id);
   if (index === -1) {
     materials.push(material);
   } else {
+    appendMaterialVersion(materials[index] as CoachMaterial);
     materials[index] = material;
   }
   writeAll(materials);
 }
 
-/** Deletes a persisted coach material by id; a no-op if it isn't stored. */
+/**
+ * Deletes a persisted coach material by id; a no-op if it isn't stored.
+ * Also drops its version history, since a restore action wouldn't have a
+ * live material left to restore into.
+ */
 export function deleteCoachMaterial(id: string): void {
   writeAll(readAll().filter((material) => material.id !== id));
+  deleteVersionsForMaterial(id);
 }
 
 /**

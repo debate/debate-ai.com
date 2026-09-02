@@ -187,6 +187,47 @@ matches, case-insensitivity, blank-query passthrough, tag+query
 combination) and `packages/debate-speech-writer/test/coachMaterials.test.ts`
 (`buildCoachMaterialLibraryFromStore` with a filter, `listCoachMaterialTagsFromStore`).
 
+## Edit-in-place and version history
+
+Closes the "No version history for a material that gets re-uploaded/edited"
+Known gap below. Previously the upload form only ever created a brand-new
+record (`saveCoachMaterial({ id: \`${kind}-${Date.now()}\`, ... })`), and
+there was no way to revise a material without deleting and re-adding it,
+which lost the old text outright.
+
+- `state/coachMaterialVersions.ts` — a new local-only store (mirroring
+  `state/coachMaterials.ts`'s own persistence convention; coach materials
+  aren't account-synced yet, so this stays local-only too). Each entry is a
+  full snapshot of a material's fields (`materialId`, `kind`, `title`,
+  `topic`, `tags`, `text`, `replacedAt`). `appendMaterialVersion(previous)`
+  snapshots a material right before it gets overwritten, capping at
+  `MAX_VERSIONS_PER_MATERIAL` (10) per material by dropping the oldest.
+  `listVersionsForMaterial(materialId)` returns a material's versions
+  newest first; `deleteVersionsForMaterial(materialId)` clears them (called
+  when the material itself is deleted); `materialFromVersion(version)`
+  rebuilds a `CoachMaterial` from a snapshot so it can be handed straight
+  back to `saveCoachMaterial` to restore it.
+- `state/coachMaterials.ts#saveCoachMaterial` now calls
+  `appendMaterialVersion` on the record it's about to replace whenever the
+  save overwrites an existing id (a brand-new id records no version, since
+  there's nothing prior to snapshot).
+- `CoachMaterialsPanel.tsx` — each material now has an "Edit" action that
+  loads it back into the upload form (Save becomes "Save changes", with a
+  "Cancel edit" action next to it) instead of the form only ever creating a
+  new record, and a "History" toggle listing that material's past versions
+  with a "Restore this version" action on each, which just calls
+  `saveCoachMaterial` with the version's fields under the same material id
+  — restoring is itself a normal overwrite, so the version it replaces gets
+  snapshotted too, preserving full lineage.
+
+Vitest-covered in `packages/debate-speech-writer/test/coachMaterialVersions.test.ts`
+(snapshot shape, id uniqueness within the same millisecond, per-material
+cap/eviction, newest-first ordering, per-material isolation, deletion) and
+new cases in `packages/debate-speech-writer/test/coachMaterials.test.ts`
+(`saveCoachMaterial` records no version on create, snapshots on overwrite,
+accumulates versions across repeated overwrites; `deleteCoachMaterial` also
+clears that material's version history).
+
 ## Known gaps
 
 - No transcription of an *uploaded* audio/video recording file — follow-up
@@ -196,10 +237,25 @@ combination) and `packages/debate-speech-writer/test/coachMaterials.test.ts`
   no path in this repo; no server-side/paid transcription service exists
   here, only the browser's live `SpeechRecognition` API used for dictation
   above.
-- No version history for a material that gets re-uploaded/edited — saving
+- ~~No version history for a material that gets re-uploaded/edited — saving
   over an existing id (there's no edit form today; a re-upload is a brand
   new record) or editing one directly overwrites it in place, with no way to
-  see or restore a prior version.
+  see or restore a prior version.~~ Closed: `state/coachMaterialVersions.ts`
+  now snapshots a material every time `saveCoachMaterial` overwrites it, and
+  `CoachMaterialsPanel` has an "Edit" action (revise in place) plus a
+  "History" toggle with a "Restore this version" action per snapshot (see
+  "Edit-in-place and version history" above). Version history is local-only
+  (localStorage), the same gap every other localStorage-backed piece of
+  this panel already has — it doesn't follow a signed-in user across
+  devices, since coach materials themselves aren't account-synced yet
+  either (see the next gap).
+- No account sync for coach materials at all — unlike most other panels in
+  this repo (word-count rounds, judge decisions, prep notes, etc.), the
+  material library and its version history are both purely per-browser
+  localStorage, with no D1 table or `/api/coach-materials` route. A future
+  run should add that sync layer, mirroring the `saved_judge_decisions`
+  D1-table-plus-`/api/judge-decisions`-routes pattern, if this becomes a
+  priority.
 - `convertDocxToHTML`'s default renderer needs a browser `DOMParser` (via
   `docx-preview`), so `.docx` upload only works from this `"use client"`
   panel in the browser — not from a server-rendered or Node context.

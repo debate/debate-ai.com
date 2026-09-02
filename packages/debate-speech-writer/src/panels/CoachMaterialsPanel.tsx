@@ -39,6 +39,13 @@
  * once a library grows past a handful of uploads" follow-up named under
  * idea #8 in TODO.md.
  *
+ * Each material also has an "Edit" action (loads it back into the form,
+ * saving in place instead of always creating a new record) and a "History"
+ * toggle listing every version `state/coachMaterialVersions.ts` snapshotted
+ * before an overwrite, each restorable — closing the "No version history
+ * for a material that gets re-uploaded/edited" Known gap recorded in
+ * `docs/features/coach-materials.md`.
+ *
  * @module panels/CoachMaterialsPanel
  */
 
@@ -77,11 +84,16 @@ import {
   saveCoachMaterial,
 } from "../state/coachMaterials"
 import {
+  listVersionsForMaterial,
+  materialFromVersion,
+  type CoachMaterialVersion,
+} from "../state/coachMaterialVersions"
+import {
   appendCoachConversationTurn,
   clearCoachConversationHistory,
   listCoachConversationTurns,
 } from "../state/coachConversation"
-import type { CoachConversationTurn, CoachMaterialLibrary } from "../coach/team-coach-materials"
+import type { CoachConversationTurn, CoachMaterial, CoachMaterialLibrary } from "../coach/team-coach-materials"
 
 // The labels and display order live with the material model itself, so the
 // form, the badges and `buildCoachMaterialLibrary`'s grouping stay in step.
@@ -127,6 +139,9 @@ export function CoachMaterialsPanel() {
   const [filterQuery, setFilterQuery] = useState("")
   const [filterTag, setFilterTag] = useState("")
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [historyOpenId, setHistoryOpenId] = useState<string | null>(null)
+  const [versions, setVersions] = useState<CoachMaterialVersion[]>([])
   const [error, setError] = useState<string | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -177,7 +192,7 @@ export function CoachMaterialsPanel() {
     }
 
     saveCoachMaterial({
-      id: `${form.kind}-${Date.now()}`,
+      id: editingId ?? `${form.kind}-${Date.now()}`,
       kind: form.kind,
       title,
       topic: form.topic.trim() || undefined,
@@ -186,6 +201,42 @@ export function CoachMaterialsPanel() {
     })
     setError(null)
     setForm(EMPTY_FORM)
+    setEditingId(null)
+    if (historyOpenId === editingId) setVersions(listVersionsForMaterial(editingId as string))
+    refresh()
+  }
+
+  const handleEdit = (material: CoachMaterial) => {
+    setForm({
+      kind: material.kind,
+      title: material.title,
+      topic: material.topic ?? "",
+      tags: material.tags.join(", "),
+      text: material.text,
+    })
+    setEditingId(material.id)
+    setError(null)
+  }
+
+  const handleCancelEdit = () => {
+    setForm(EMPTY_FORM)
+    setEditingId(null)
+    setError(null)
+  }
+
+  const handleToggleHistory = (materialId: string) => {
+    if (historyOpenId === materialId) {
+      setHistoryOpenId(null)
+      return
+    }
+    setVersions(listVersionsForMaterial(materialId))
+    setHistoryOpenId(materialId)
+  }
+
+  const handleRestore = (version: CoachMaterialVersion) => {
+    saveCoachMaterial(materialFromVersion(version))
+    setVersions(listVersionsForMaterial(version.materialId))
+    if (editingId === version.materialId) handleCancelEdit()
     refresh()
   }
 
@@ -209,6 +260,11 @@ export function CoachMaterialsPanel() {
 
   const handleDelete = (id: string) => {
     deleteCoachMaterial(id)
+    if (editingId === id) handleCancelEdit()
+    if (historyOpenId === id) {
+      setHistoryOpenId(null)
+      setVersions([])
+    }
     refresh()
   }
 
@@ -361,7 +417,14 @@ export function CoachMaterialsPanel() {
 
         {error && <p className="text-sm text-destructive">{error}</p>}
 
-        <Button onClick={handleSave}>Add material</Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={handleSave}>{editingId ? "Save changes" : "Add material"}</Button>
+          {editingId && (
+            <Button type="button" variant="ghost" onClick={handleCancelEdit}>
+              Cancel edit
+            </Button>
+          )}
+        </div>
       </div>
 
       {totalUnfiltered > 0 && (
@@ -420,25 +483,62 @@ export function CoachMaterialsPanel() {
               <h2 className="text-sm font-medium text-foreground">{KIND_LABELS[group.kind]}</h2>
               <div className="space-y-2">
                 {group.materials.map((material) => (
-                  <div
-                    key={material.id}
-                    className="flex flex-wrap items-start justify-between gap-2 rounded-md border border-border px-3 py-2"
-                  >
-                    <div className="space-y-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-sm font-medium text-foreground">{material.title}</span>
-                        {material.topic && <Badge variant="outline">{material.topic}</Badge>}
-                        {material.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary">
-                            {tag}
-                          </Badge>
-                        ))}
+                  <div key={material.id} className="rounded-md border border-border px-3 py-2">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-sm font-medium text-foreground">{material.title}</span>
+                          {material.topic && <Badge variant="outline">{material.topic}</Badge>}
+                          {material.tags.map((tag) => (
+                            <Badge key={tag} variant="secondary">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                        <p className="text-xs text-muted-foreground">{material.text.slice(0, 160)}</p>
                       </div>
-                      <p className="text-xs text-muted-foreground">{material.text.slice(0, 160)}</p>
+                      <div className="flex items-center gap-1">
+                        <Button size="sm" variant="ghost" onClick={() => handleToggleHistory(material.id)}>
+                          {historyOpenId === material.id ? "Hide history" : "History"}
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => handleEdit(material)}>
+                          Edit
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => handleDelete(material.id)}>
+                          Delete
+                        </Button>
+                      </div>
                     </div>
-                    <Button size="sm" variant="ghost" onClick={() => handleDelete(material.id)}>
-                      Delete
-                    </Button>
+
+                    {historyOpenId === material.id && (
+                      <div className="mt-2 space-y-2 border-t border-border pt-2">
+                        {versions.length === 0 ? (
+                          <p className="text-xs text-muted-foreground">
+                            No prior versions — this material hasn't been edited yet.
+                          </p>
+                        ) : (
+                          versions.map((version) => (
+                            <div
+                              key={version.id}
+                              className="flex flex-wrap items-start justify-between gap-2 rounded-md bg-muted/30 px-2 py-1.5"
+                            >
+                              <div className="space-y-0.5">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="text-xs font-medium text-foreground">{version.title}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    Replaced {new Date(version.replacedAt).toLocaleString()}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-muted-foreground">{version.text.slice(0, 120)}</p>
+                              </div>
+                              <Button size="sm" variant="outline" onClick={() => handleRestore(version)}>
+                                Restore this version
+                              </Button>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
