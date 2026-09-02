@@ -27,18 +27,37 @@
  * against `saveScoredCardsBulk`, so a contributor can paste a whole batch of
  * cards and persist every well-formed one in a single call.
  *
+ * `getScoredCardBreakdown` and `scoreEvidenceLibraryEntry` close the "an
+ * inline score badge shown directly in Evidence Library search results"
+ * follow-up named alongside the batch-scoring one: the former looks up a
+ * single persisted card's breakdown by id (the same per-card `otherTexts`
+ * comparison `buildPersistedCardScoreRanking` uses for every card, just
+ * scoped to one), and the latter scores a Shared Evidence Library entry
+ * directly from its own fields — deriving `argBlockKeywords` from the
+ * entry's argument block and tags via `deriveArgBlockKeywords`, with a
+ * neutral 0.5 quality signal since an evidence-library entry doesn't carry
+ * one of its own (mirroring `bulkImportScoredCards`'s default) — and
+ * persists the result under the entry's own id, so `EvidenceLibraryPanel`
+ * can score a result in place and show its badge on every later visit
+ * without re-scoring.
+ *
  * @module state/cardScores
  */
 
 import type { CardScoreBreakdown, CardScoreWeights, ScoredCard } from "../lib/llm-card-scoring";
 import {
   DEFAULT_CARD_SCORE_WEIGHTS,
+  computeCardScoreBreakdown,
   deriveArgBlockKeywords,
   parseBulkCardSubmissions,
   rankCardScores,
 } from "../lib/llm-card-scoring";
+import type { EvidenceLibraryEntry } from "../lib/shared-evidence-library";
 import { listEvidenceLibraryEntries } from "./evidenceLibraryEntries";
 import { listTrackedArguments } from "./trackedArguments";
+
+/** Neutral quality signal used when scoring a card with no quality input of its own. */
+const NEUTRAL_QUALITY_SIGNAL = 0.5;
 
 const STORAGE_KEY = "cardScores";
 
@@ -158,4 +177,52 @@ export function deriveArgBlockKeywordsForTopic(topic: string): string[] {
  */
 export function buildPersistedCardScoreRanking(weights: CardScoreWeights = DEFAULT_CARD_SCORE_WEIGHTS): CardScoreBreakdown[] {
   return rankCardScores(readAll(), buildRealCorpusTexts(), weights);
+}
+
+/**
+ * Looks up one persisted scored card's breakdown by id, scored against every
+ * other persisted card plus the real `buildRealCorpusTexts` comparison
+ * corpus — the same comparison set `buildPersistedCardScoreRanking` builds
+ * for every card, just scoped to one. Returns undefined if no card with that
+ * id has been scored yet, e.g. for `EvidenceLibraryPanel`'s per-entry score
+ * badge to decide between rendering a badge or a "Score card" action.
+ */
+export function getScoredCardBreakdown(
+  id: string,
+  weights: CardScoreWeights = DEFAULT_CARD_SCORE_WEIGHTS,
+): CardScoreBreakdown | undefined {
+  const cards = readAll();
+  const card = cards.find((existing) => existing.id === id);
+  if (!card) return undefined;
+
+  const otherTexts = [
+    ...buildRealCorpusTexts(),
+    ...cards.filter((existing) => existing.id !== id).map((existing) => existing.text),
+  ];
+  return computeCardScoreBreakdown(card, otherTexts, weights);
+}
+
+/**
+ * Scores a Shared Evidence Library entry directly from its own fields —
+ * closes the "an inline score badge shown directly in Evidence Library
+ * search results" follow-up named under the "🧠 LLM Card Scoring" bullet in
+ * TODO.md. Derives `argBlockKeywords` from the entry's argument block and
+ * tags via `deriveArgBlockKeywords` (no separate keyword input required),
+ * and scores evidence quality from a neutral `NEUTRAL_QUALITY_SIGNAL` since
+ * an `EvidenceLibraryEntry` doesn't carry a quality signal of its own —
+ * mirrors `bulkImportScoredCards`'s same default. Persists the resulting
+ * `ScoredCard` under the entry's own id (so scoring is idempotent — scoring
+ * the same entry again just refreshes it) and returns the fresh breakdown.
+ */
+export function scoreEvidenceLibraryEntry(
+  entry: EvidenceLibraryEntry,
+  weights: CardScoreWeights = DEFAULT_CARD_SCORE_WEIGHTS,
+): CardScoreBreakdown {
+  saveScoredCard({
+    id: entry.id,
+    text: entry.text,
+    argBlockKeywords: deriveArgBlockKeywords([entry.argBlock, ...entry.tags]),
+    qualitySignals: [NEUTRAL_QUALITY_SIGNAL],
+  });
+  return getScoredCardBreakdown(entry.id, weights)!;
 }

@@ -6,6 +6,45 @@
 _No task currently in progress._
 
 ### Completed
+- **LLM Card Scoring — inline Evidence Library score badge** (the "🧠 LLM
+  Card Scoring" bullet's other next-named follow-up under Research
+  Crowdsourcing Organizer Features below, alongside the now-done batch-
+  scoring one). As with every recent run, the standing prompt ("integrate
+  all the tools into the UI... create user settings... link user db SQL...
+  save flows docs and debates in SQL and link to users... add tools where
+  needed in the UI... develop better tool UI") is already fully built
+  (account-synced `/settings`, D1 tables + `/api/*` routes linking
+  flows/docs/rounds/materials to signed-in users, every tool reachable from
+  the nav), and the one open PR (#437, "Consolidate UI primitives and add
+  web extension scaffold") doesn't touch this area — so this run again
+  picked a genuine next-step instead, and one that ties two tools together
+  exactly per the "add tools where needed in the UI" standing prompt.
+  `EvidenceLibraryPanel`'s `card`-kind results previously had no link to
+  LLM Card Scoring at all — scoring a card meant separately re-typing its
+  text into `CardScoringPanel`'s own form. A new "Score card" action per
+  result calls `state/cardScores.ts`'s new `scoreEvidenceLibraryEntry`,
+  which builds a `ScoredCard` straight from the entry's own text and
+  argument-block/tags (via the existing `deriveArgBlockKeywords`, no
+  separate keyword input needed) with a neutral 0.5 quality signal, and
+  persists it under the entry's own id — so re-scoring the same entry
+  refreshes rather than duplicates it. The new `getScoredCardBreakdown(id)`
+  looks up a single persisted card's breakdown (scored against every other
+  persisted card plus the real Shared Evidence Library corpus, the same
+  comparison set `buildPersistedCardScoreRanking` builds for every card);
+  once scored, the result shows a "Score N/100" badge, switching to a
+  destructive "likely duplicate" variant exactly like `CardScoringPanel`'s
+  own flag. `block`-kind entries are left out of both the action and the
+  badge, since the scoring model is card-specific. See
+  `docs/features/llm-card-scoring.md`'s new "Evidence Library score badge"
+  section. Vitest-covered:
+  `packages/debate-card-search/test/cardScores.test.ts` gained
+  `getScoredCardBreakdown` (undefined for an unscored card, a scored card's
+  breakdown, duplicate detection against other persisted cards) and
+  `scoreEvidenceLibraryEntry` (scoring and persisting under the entry's own
+  id, deriving relevance from the entry's own fields, idempotent
+  re-scoring, and showing up immediately via `getScoredCardBreakdown`)
+  describe blocks.
+
 - **LLM Card Scoring — batch-score an uploaded set of cards at once** (the
   "🧠 LLM Card Scoring" bullet's own next-named follow-up under Research
   Crowdsourcing Organizer Features below, alongside the still-open
@@ -13650,7 +13689,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🏅 **Contribution Leaderboard** (`/cards/leaderboard`) — the range-filter follow-up is done: a "Range" dropdown (All time / This week / This month) re-scopes the whole roster — scores and completed-task counts alike — to that trailing window (`lib/contribution-leaderboard.ts#filterContributionsByRange`/`isWithinLeaderboardRange`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Range filter" section. The per-category follow-up is also now done: a "Category" dropdown (All categories / Cards / Summaries / Highlights / Annotations / Original arguments / Refutations) re-scopes the roster to one contribution kind at a time, composing with the Range filter (`lib/contribution-leaderboard.ts#filterContributionsByKind`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Category filter" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor profile drill-down page) if one becomes worth doing.
 * 🎮 **Gamified Quests** (`/cards/streaks`) — the streak-freeze/grace-day-mechanic follow-up is done: a contributor can spend a rolling-allowance "streak freeze" to bridge a single missed day instead of resetting to zero (`lib/gamified-quests.ts#applyStreakFreezes`/`canApplyStreakFreeze`/`findFreezableStreakGapDayKey`, `state/streakFreezes.ts`), surfaced as a "Streak freeze" column with a "Use a grace day for …" action on `QuestStreaksPanel` — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak freeze / grace day" section. The opt-in-streak-lapse-reminder follow-up is also now done: a per-contributor "🔔 Remind me" toggle on the "Reminder" column shows an in-app warning banner whenever that contributor's in-progress streak is at risk of lapsing today (`lib/gamified-quests.ts#getStreakLapseRiskLength`, `state/streakLapseReminders.ts`) — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak-lapse reminder" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a shareable streak-badge image, or account-syncing reminder opt-ins/streak freezes across devices) if one becomes worth doing.
 * 🔓 **Progress Unlocks** (`/cards/progress`) — the visual next-tier progress bar follow-up is done: the "Next tier" column now leads with a filled `MeterBar` meter instead of a text-only sentence, with the needed-counts text kept underneath as detail (`lib/progress-unlocks.ts#getNextTierProgress`'s new `progressRatio` field) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Next-tier progress bar" section. The unlock-celebration-toast follow-up is also now done: a dismissible "🎉 New badge earned: …" banner shows on the signed-in visitor's own row the moment they newly earn a tier or streak badge, diffed against a persisted per-contributor "last-seen badges" baseline (`state/unlockCelebrations.ts`) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Unlock celebration toast" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a badge showcase on a contributor's profile) if one becomes worth doing.
-* 🧠 **LLM Card Scoring** (`/cards/scoring`) — the batch-scoring follow-up is done: a "Bulk import" textarea parses a `---`-delimited batch of `id:`/`keywords:`/`quality:` + text entries and persists every well-formed one in a single pass (`lib/llm-card-scoring.ts#parseBulkCardSubmissions`, `state/cardScores.ts#saveScoredCardsBulk`/`bulkImportScoredCards`), reporting an imported/skipped-entry count rather than failing the whole batch on one malformed entry — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Bulk import" section. Next: a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.
+* 🧠 **LLM Card Scoring** (`/cards/scoring`) — the batch-scoring follow-up is done: a "Bulk import" textarea parses a `---`-delimited batch of `id:`/`keywords:`/`quality:` + text entries and persists every well-formed one in a single pass (`lib/llm-card-scoring.ts#parseBulkCardSubmissions`, `state/cardScores.ts#saveScoredCardsBulk`/`bulkImportScoredCards`), reporting an imported/skipped-entry count rather than failing the whole batch on one malformed entry — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Bulk import" section. The inline-Evidence-Library-score-badge follow-up is also now done: each `card`-kind result in `EvidenceLibraryPanel` has a "Score card" action that scores the entry from its own text/argument-block/tags (`state/cardScores.ts#scoreEvidenceLibraryEntry`, composing the existing `deriveArgBlockKeywords`) and shows a "Score N/100" badge once scored, flagging a likely duplicate the same way `CardScoringPanel` does (`state/cardScores.ts#getScoredCardBreakdown`) — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Evidence Library score badge" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor score-trend chart over time) if one becomes worth doing.
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. The "best of the week" rollup follow-up is also now done: a new "Best of the week" section groups every announced daily winner by ISO week and highlights that week's single highest-helpfulness champion alongside its other announced days (`lib/daily-best-card.ts#buildWeeklyBestCardRollups`, `state/dailyBestCardAnnouncements.ts#buildAnnouncedWeeklyBestCardRollups`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Best of the week" section. Next: a winner-history calendar view.

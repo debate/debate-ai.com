@@ -6,9 +6,11 @@ import {
   deleteScoredCard,
   deriveArgBlockKeywordsForTopic,
   getScoredCard,
+  getScoredCardBreakdown,
   listScoredCards,
   saveScoredCard,
   saveScoredCardsBulk,
+  scoreEvidenceLibraryEntry,
 } from "../src/state/cardScores";
 import { saveEvidenceLibraryEntry } from "../src/state/evidenceLibraryEntries";
 import { saveTrackedArgument } from "../src/state/trackedArguments";
@@ -247,6 +249,69 @@ describe("buildRealCorpusTexts", () => {
     };
     saveEvidenceLibraryEntry(entry);
     expect(buildRealCorpusTexts()).toEqual([entry.text]);
+  });
+});
+
+describe("getScoredCardBreakdown", () => {
+  it("returns undefined for a card that hasn't been scored", () => {
+    expect(getScoredCardBreakdown("card-1")).toBeUndefined();
+  });
+
+  it("returns the breakdown for a scored card", () => {
+    saveScoredCard(WARMING_CARD);
+    const breakdown = getScoredCardBreakdown("card-1");
+    expect(breakdown?.cardId).toBe("card-1");
+    expect(breakdown?.overallScore).toBeGreaterThan(0);
+  });
+
+  it("scores uniqueness against other persisted cards, not just the corpus", () => {
+    saveScoredCard(WARMING_CARD);
+    saveScoredCard({ ...WARMING_CARD, id: "card-1-dup" });
+
+    expect(getScoredCardBreakdown("card-1")?.isLikelyDuplicate).toBe(true);
+  });
+});
+
+describe("scoreEvidenceLibraryEntry", () => {
+  const CARD_ENTRY: EvidenceLibraryEntry = {
+    id: "lib-1",
+    kind: "card",
+    text: "Rising emissions accelerate catastrophic warming impacts across every major ecosystem on Earth today.",
+    cite: "Smith 24",
+    topic: "Energy Policy",
+    caseArea: "Neg",
+    tags: ["climate"],
+    argBlock: "Warming DA",
+    wordCount: 14,
+  };
+
+  it("scores and persists the entry under its own id", () => {
+    const breakdown = scoreEvidenceLibraryEntry(CARD_ENTRY);
+
+    expect(breakdown.cardId).toBe("lib-1");
+    expect(getScoredCard("lib-1")).toEqual({
+      id: "lib-1",
+      text: CARD_ENTRY.text,
+      argBlockKeywords: expect.arrayContaining(["Warming DA", "warming", "climate"]),
+      qualitySignals: [0.5],
+    });
+  });
+
+  it("derives relevance from the entry's own argument block and tags, not a hand-typed keyword list", () => {
+    const breakdown = scoreEvidenceLibraryEntry(CARD_ENTRY);
+    expect(breakdown.relevanceScore).toBeGreaterThan(0);
+  });
+
+  it("re-scoring the same entry refreshes rather than duplicates the persisted card", () => {
+    scoreEvidenceLibraryEntry(CARD_ENTRY);
+    scoreEvidenceLibraryEntry(CARD_ENTRY);
+
+    expect(listScoredCards().filter((card) => card.id === "lib-1")).toHaveLength(1);
+  });
+
+  it("immediately shows up via getScoredCardBreakdown", () => {
+    scoreEvidenceLibraryEntry(CARD_ENTRY);
+    expect(getScoredCardBreakdown("lib-1")?.cardId).toBe("lib-1");
   });
 });
 
