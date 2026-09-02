@@ -33,6 +33,21 @@ no parseable year at all — as of the current year. `lib/shared-evidence-librar
 `card` result — so a contributor sees which cards need a refresh before submitting a revision,
 not only after.
 
+## Stale evidence digest
+
+`RevisionIncentivesPanel` also renders a **Stale evidence digest** section above the leaderboard:
+every persisted stale `card` entry, ranked most-urgent first (an undated citation before every
+dated one — its evidence could be any age — then oldest-cited first, ties broken by argument
+block name), each row showing its argument block, topic/case area, cite, and age, plus a link into
+the Evidence Library to revise it. This is the proactive counterpart to the leaderboard below: it
+surfaces which cards need a refresh *before* a revision happens, rather than only rewarding one
+after the fact.
+
+`lib/shared-evidence-library.ts`'s pure `buildStaleEvidenceDigest(entries, currentYear)` builds the
+ranked list from `getStaleEvidenceEntries` directly; `state/evidenceLibraryEntries.ts`'s
+`buildPersistedStaleEvidenceDigest(currentYear)` composes it against the persisted evidence library
+store. When nothing is stale, the panel shows an empty-state message instead of the table.
+
 ## Data flow
 
 ```
@@ -51,7 +66,9 @@ Every scoring/aggregation rule already existed and was Vitest-covered; this feat
 read-only composition and rendering layer over that store — it introduces one new function,
 `buildPersistedRevisionIncentiveLeaderboard`, which composes the existing pure
 `buildRevisionIncentiveLeaderboard` directly against the persisted revision-history store (see
-`packages/debate-card-search/test/revisionHistory.test.ts`).
+`packages/debate-card-search/test/revisionHistory.test.ts`). The stale evidence digest is the
+same pattern applied to `getStaleEvidenceEntries`: `buildStaleEvidenceDigest` (pure) composed
+against the persisted evidence library store by `buildPersistedStaleEvidenceDigest`.
 
 The Shared Evidence Library's Edit action (see
 [`evidence-library.md`](./evidence-library.md)) is the real card-edit/save flow: editing an
@@ -66,13 +83,15 @@ caller-supplied snapshots.
 `RevisionIncentivesPanel` now subscribes to the browser's `storage` event —
 fired only in *other* same-origin tabs, never the one that made the write —
 via `state/live-update.ts`'s `isRevisionIncentivesLiveUpdateStorageEvent`
-(true for the panel's own `"revisionHistory"` key, or a `null` key from
-`localStorage.clear()`). When it fires, the panel rebuilds its leaderboard
-with `buildPersistedRevisionIncentiveLeaderboard()`, so a revision recorded
-in another tab shows up here without a manual reload. This closes
-`shared-flow-sync.md`'s "Every other localStorage-backed panel in this repo
-still has no cross-tab live-update mechanism" Known gap for this panel.
-Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
+(true for the panel's `"revisionHistory"` and `"evidenceLibraryEntries"` keys,
+or a `null` key from `localStorage.clear()`). When it fires, the panel
+rebuilds both its leaderboard (`buildPersistedRevisionIncentiveLeaderboard()`)
+and its stale-evidence digest (`buildPersistedStaleEvidenceDigest()`), so a
+revision recorded — or a card edited — in another tab shows up here without a
+manual reload. This closes `shared-flow-sync.md`'s "Every other
+localStorage-backed panel in this repo still has no cross-tab live-update
+mechanism" Known gap for this panel. Vitest-covered in
+`packages/debate-card-search/test/live-update.test.ts`.
 
 ## Known gaps
 

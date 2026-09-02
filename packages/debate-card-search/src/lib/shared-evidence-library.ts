@@ -325,6 +325,35 @@ export function getStaleEvidenceEntries(entries: EvidenceLibraryEntry[], current
   return entries.filter((entry) => entry.kind === "card" && getEvidenceStaleness(entry, currentYear).isStale);
 }
 
+/** One entry in the stale-evidence digest: a stale card plus its computed staleness signal. */
+export interface StaleEvidenceDigestEntry {
+  entry: EvidenceLibraryEntry;
+  staleness: EvidenceStalenessSignal;
+}
+
+/**
+ * Ranks `getStaleEvidenceEntries`' output most-urgent first, for the "🔁
+ * Revision Incentives" bullet's stale-evidence-digest follow-up in TODO.md
+ * ("a stale-evidence digest surfaced from the existing staleness signal") —
+ * the proactive counterpart to the Revision Incentives leaderboard, which
+ * only reflects a refresh after it happens. An entry with no parseable
+ * citation year (`ageYears === null`, unknown recency) sorts before every
+ * dated entry, since its evidence could be any age; dated entries then sort
+ * oldest first. Ties break by `argBlock` for a stable, readable order.
+ */
+export function buildStaleEvidenceDigest(
+  entries: EvidenceLibraryEntry[],
+  currentYear: number,
+): StaleEvidenceDigestEntry[] {
+  return getStaleEvidenceEntries(entries, currentYear)
+    .map((entry) => ({ entry, staleness: getEvidenceStaleness(entry, currentYear) }))
+    .sort((a, b) => {
+      const ageA = a.staleness.ageYears ?? Number.POSITIVE_INFINITY;
+      const ageB = b.staleness.ageYears ?? Number.POSITIVE_INFINITY;
+      return ageB - ageA || a.entry.argBlock.localeCompare(b.entry.argBlock);
+    });
+}
+
 /** A search panel's raw filter-field values, before being narrowed into an `EvidenceSearchQuery`. */
 export interface EvidenceSearchFormFilters {
   text: string;

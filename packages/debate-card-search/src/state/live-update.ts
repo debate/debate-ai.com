@@ -290,12 +290,17 @@ export function isDailyQuestsLiveUpdateStorageEvent(event: { key: string | null 
 }
 
 /**
- * The `localStorage` key `RevisionIncentivesPanel` reads from:
- * `state/revisionHistory.ts`'s own `"revisionHistory"` store, the sole
- * source `buildPersistedRevisionIncentiveLeaderboard` ranks contributors
- * from.
+ * The `localStorage` keys `RevisionIncentivesPanel` reads from:
+ * `state/revisionHistory.ts`'s own `"revisionHistory"` store (the source
+ * `buildPersistedRevisionIncentiveLeaderboard` ranks contributors from) and
+ * `state/evidenceLibraryEntries.ts`'s `"evidenceLibraryEntries"` (the source
+ * `buildPersistedStaleEvidenceDigest` derives the stale-evidence digest
+ * from).
  */
-export const REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS = ["revisionHistory"] as const;
+export const REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS = [
+  "revisionHistory",
+  "evidenceLibraryEntries",
+] as const;
 
 /**
  * Whether a `storage` event should trigger `RevisionIncentivesPanel` to

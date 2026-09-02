@@ -3,6 +3,7 @@ import {
   bulkEditTagsForPersistedEntries,
   buildCombinedPersistedArgumentLibrary,
   buildPersistedArgumentLibrary,
+  buildPersistedStaleEvidenceDigest,
   checkPersistedPageForExistingCards,
   deleteEvidenceLibraryEntry,
   getEvidenceLibraryEntry,
@@ -130,6 +131,24 @@ describe("deleteEvidenceLibraryEntry", () => {
     saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
     deleteEvidenceLibraryEntry("missing");
     expect(listEvidenceLibraryEntries()).toEqual([SOLVENCY_BLOCK]);
+  });
+});
+
+describe("buildPersistedStaleEvidenceDigest", () => {
+  it("returns an empty digest when nothing is stored", () => {
+    expect(buildPersistedStaleEvidenceDigest(2026)).toEqual([]);
+  });
+
+  it("digests only stale, persisted card entries", () => {
+    const staleCard: EvidenceLibraryEntry = { ...WARMING_CARD, id: "stale", cite: "Lee 2015" };
+    const freshCard: EvidenceLibraryEntry = { ...WARMING_CARD, id: "fresh", cite: "Smith 2026" };
+    saveEvidenceLibraryEntry(staleCard);
+    saveEvidenceLibraryEntry(freshCard);
+    saveEvidenceLibraryEntry(SOLVENCY_BLOCK);
+
+    const digest = buildPersistedStaleEvidenceDigest(2026);
+    expect(digest.map((d) => d.entry.id)).toEqual(["stale"]);
+    expect(digest[0].staleness.ageYears).toBe(11);
   });
 });
 
