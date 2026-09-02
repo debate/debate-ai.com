@@ -6,6 +6,49 @@
 _No task currently in progress._
 
 ### Completed
+- **Daily Best Card Challenge — winner-history calendar view** (the
+  "🕵️ Daily Best Card Challenge" bullet's own next-named follow-up under
+  Research Crowdsourcing Organizer Features below). As with every recent
+  run, the standing prompt ("integrate all the tools into the UI... create
+  user settings... link user db SQL... save flows docs and debates in SQL
+  and link to users... add tools where needed in the UI... develop better
+  tool UI") is already fully built (account-synced `/settings`, D1 tables +
+  `/api/*` routes linking flows/docs/rounds/materials to signed-in users,
+  every tool reachable from the nav), and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area — so this run again picked a genuine next-step instead, one
+  directly named in TODO.md's own text. `DailyBestCardPanel`'s "Announced
+  history" section previously only rendered every past winner as a flat
+  list, with no way to see winner density across a month at a glance. A new
+  `lib/daily-best-card.ts#buildDailyBestCardCalendarMonth` (plus its
+  `getUtcMonthKey`/`shiftUtcMonthKey` helpers) builds a Monday-first
+  calendar-month grid — full week rows, padded with dimmed adjacent-month
+  days — generic over any `DailyBestCard`-shaped winner so it works directly
+  against the already-`AttributedDailyBestCard`-typed announced-history
+  list with no new data-shape needed. `DailyBestCardPanel`'s new
+  `WinnerHistoryCalendar` renders that grid with previous/next month
+  navigation (defaulting to the current UTC month), highlights every
+  announced day, and shows the selected day's highlight line plus
+  contributor badge on click — placed between the existing "Best of the
+  week" and "Announced history" sections, which are unchanged. See
+  `docs/features/daily-best-card.md`'s new "Winner history calendar"
+  section (What it shows and Data flow). Vitest-covered: a new
+  `getUtcMonthKey`/`shiftUtcMonthKey`/`buildDailyBestCardCalendarMonth`
+  block in `packages/debate-card-search/test/daily-best-card.test.ts` covers
+  month-key formatting, forward/backward/year-wrapping/zero-delta shifts, a
+  full 6-week grid for a month starting mid-week (August 2026, Saturday
+  start), adjacent-month padding cells being dimmed and always winner-less,
+  correct per-day winner attachment by `dayKey`, an all-empty month, and a
+  month that starts exactly on a Monday with no leading padding. Verified
+  with `bun install` (2258 packages), the full `bun run typecheck` (13
+  typechecked packages, clean), and the full `bun run test` (root, all
+  packages: 228 test files, 4017 tests, all passing — up from 4008). No CI
+  `lint`/`build` script exists in this repo (`.github/workflows/test.yml`
+  runs only `typecheck` and `coverage`), so neither was run, matching every
+  prior run's verification scope. No further follow-up is currently tracked
+  for this idea; a future run should pick a fresh next-step elsewhere if one
+  becomes worth doing.
+
 - **Scout-to-Strategy Workflow — recommendation history log per matchup**
   (the "🧭 Scout-to-Strategy Workflow" bullet's own next-named follow-up
   under Research Crowdsourcing Organizer Features below). As with every
@@ -13933,7 +13976,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — the batch-scoring follow-up is done: a "Bulk import" textarea parses a `---`-delimited batch of `id:`/`keywords:`/`quality:` + text entries and persists every well-formed one in a single pass (`lib/llm-card-scoring.ts#parseBulkCardSubmissions`, `state/cardScores.ts#saveScoredCardsBulk`/`bulkImportScoredCards`), reporting an imported/skipped-entry count rather than failing the whole batch on one malformed entry — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Bulk import" section. The inline-Evidence-Library-score-badge follow-up is also now done: each `card`-kind result in `EvidenceLibraryPanel` has a "Score card" action that scores the entry from its own text/argument-block/tags (`state/cardScores.ts#scoreEvidenceLibraryEntry`, composing the existing `deriveArgBlockKeywords`) and shows a "Score N/100" badge once scored, flagging a likely duplicate the same way `CardScoringPanel` does (`state/cardScores.ts#getScoredCardBreakdown`) — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Evidence Library score badge" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor score-trend chart over time) if one becomes worth doing.
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — the printable/exportable-progress-report follow-up is done: a "Download report" button in the panel header exports the whole roster as a plain-text file, one section per contributor (contribution/task summary line plus a per-topic completion breakdown), via `lib/research-progress.ts#buildResearchProgressReportText` — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Report download" section. Next: a topic-comparison view across the whole team; personal goal-setting UI.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.
-* 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. The "best of the week" rollup follow-up is also now done: a new "Best of the week" section groups every announced daily winner by ISO week and highlights that week's single highest-helpfulness champion alongside its other announced days (`lib/daily-best-card.ts#buildWeeklyBestCardRollups`, `state/dailyBestCardAnnouncements.ts#buildAnnouncedWeeklyBestCardRollups`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Best of the week" section. Next: a winner-history calendar view.
+* 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. The "best of the week" rollup follow-up is also now done: a new "Best of the week" section groups every announced daily winner by ISO week and highlights that week's single highest-helpfulness champion alongside its other announced days (`lib/daily-best-card.ts#buildWeeklyBestCardRollups`, `state/dailyBestCardAnnouncements.ts#buildAnnouncedWeeklyBestCardRollups`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Best of the week" section. The winner-history-calendar-view follow-up is also now done: a "Winner history calendar" section renders a Monday-first month grid with previous/next navigation, highlighting every announced day and showing that day's highlight line plus contributor on click (`lib/daily-best-card.ts#buildDailyBestCardCalendarMonth`, `panels/DailyBestCardPanel.tsx`'s `WinnerHistoryCalendar`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Winner history calendar" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. The "nominate a peer" follow-up is also now done: a "Peer Nominations" section has a **Nominate a peer** form (category, nominee, your name, optional note), and each live award card shows that category's top nominee(s) by total support — see the Completed entry above and `docs/features/contributor-awards.md`'s "Peer Nominations" section. The per-nomination "seconding"/upvoting follow-up is also now done: a "👍 Second" action on each row in "Recent nominations" lets anyone else add their support to an existing nomination instead of only being able to submit a duplicate one, and the live cards' top-nominee ranking now uses total support (nominations plus seconds) rather than raw nomination count alone (`lib/contributor-awards.ts#canSecondNomination`/`tallyNominationsByKind`, `state/contributorAwardNominations.ts#secondPeerNomination`) — see the Completed entry above and `docs/features/contributor-awards.md`'s "Seconding a nomination" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. folding nominations into the Hall of Fame ranking as a tie-breaker) if one becomes worth doing.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — a coach-facing override/reassign control; a task-priority indicator; a capacity-aware view of routing load across the team.
