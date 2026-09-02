@@ -6,6 +6,72 @@
 _No task currently in progress._
 
 ### Completed
+- **Daily Quests and Targets — completion celebration posted to the News
+  Stream feed** (the "🎯 Daily Quests and Targets" bullet's third-named
+  follow-up under Research Crowdsourcing Organizer Features below, alongside
+  the still-open quest-difficulty-tiers and team-vs-team-competition ones).
+  As with every recent run, the standing prompt ("integrate all the tools
+  into the UI... create user settings... link user db SQL... save flows
+  docs and debates in SQL and link to users... add tools where needed in the
+  UI... develop better tool UI") is already fully built (account-synced
+  `/settings`, D1 tables + `/api/*` routes linking flows/docs/rounds/
+  materials to signed-in users, every tool reachable from the nav — this run
+  specifically re-verified the two other standing-prompt callouts this run's
+  prompt named directly: the CardMirror command palette
+  (`Mod-Shift-Space`/`quick-card-search-ui.ts`) and its Google-Docs-style top
+  menu bar are already both shipped, `MenuBar.tsx`/`menu-bar-categories.ts`
+  bucketing all ~500 ribbon commands into File/Edit/Card/Format/Insert/AI/
+  View/Tools/Workspace/Plugins dropdowns above the ribbon, documented in
+  `docs/features/legacy-verbatim-shortcuts.md`), and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area — so this run again picked a genuine next-step instead, this
+  time one directly named in this run's own prompt text ("news stream").
+  Recording today's mission (Daily Quests panel) previously updated that
+  day's `DailyMissionResultRecord` and nothing else — a fully completed
+  board had no presence anywhere outside `/cards/quests` itself, unlike
+  every other "reach a goal" event in this repo (a quest-streak milestone, a
+  completed Group Challenge, a day's top Revision Incentives earner) which
+  all already post to the News Stream automatically. `state/
+  dailyMissionResults.ts`'s new `buildDailyQuestCompletionEvents()` reads
+  every persisted record where `isComplete` is true — no new store, since
+  "Record today's mission" already saves one of these on every visit — and
+  returns each as a `{ contributorId, dayKey }` event, sorted newest day
+  first then by contributor id (mirroring the existing
+  `buildQuestStreakMilestoneEvents`' sort, but reporting every completed day
+  rather than only milestone-length streak crossings).
+  `lib/gamified-quests.ts`'s new `buildDailyQuestCompletionAnnouncementText`
+  renders the third-person announcement line, and `state/newsStream.ts`'s
+  new `dailyQuestCompletionNews()` maps the events to `NewsItem`s and folds
+  them into `buildNewsFeed()`'s Community category. Because a board can be
+  completed every single day — unlike a streak milestone, which only fires
+  on a rare crossing — this source shares `sprintNoteNews()`'s/
+  `argumentLibraryNews()`'s existing `MAX_COMMUNITY_ITEMS_PER_SOURCE`
+  volume cap (the 20 most recent completions) rather than posting every one
+  unbounded. No cross-tab live-update wiring was needed:
+  `NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS` already watches the
+  `dailyMissionResults` key from the quest-streak-milestone source, so a
+  completion recorded in another tab already refreshes this tab's feed. See
+  `docs/features/daily-quests.md`'s new "News Stream celebration" section
+  and `docs/features/news-stream.md`'s revised "What it shows"/"Data flow"
+  sections (now six, not five, derived Community sources). Vitest-covered:
+  `packages/debate-card-search/test/dailyMissionResults.test.ts` gained a
+  `buildDailyQuestCompletionEvents` describe block (empty store, every
+  completed day reported — not just milestone days, an incomplete day
+  omitted, and sort order newest-day-first tied-broken by contributor id);
+  `packages/debate-card-search/test/gamified-quests.test.ts` gained a
+  `buildDailyQuestCompletionAnnouncementText` describe block; and
+  `packages/debate-card-search/test/newsStream.test.ts` gained three new
+  `buildNewsFeed` cases (a completed day rendered as a community item with
+  the right title/body/timestamp/href, an incomplete day omitted, and the
+  20-item volume cap dropping older completions). Verified with `bun
+  install` (2258 packages), the full `bun run typecheck` (13 typechecked
+  packages, clean), and the full `bun run test` (root, all packages: 227
+  test files, 3962 tests, all passing — up from 3942). No CI `lint`/`build`
+  script exists in this repo (`.github/workflows/test.yml` runs only
+  `typecheck` and `coverage`), so neither was run, matching every prior
+  run's verification scope. Next named follow-ups for this idea: quest
+  difficulty tiers; team-vs-team quest competitions.
+
 - **Research Progress Tracking — printable/exportable progress report** (the
   "📈 Research Progress Tracking" bullet's own next-named follow-up under
   Research Crowdsourcing Organizer Features below, alongside the still-open
@@ -13735,7 +13801,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🧭 **Research Task Routing** (`/cards/inbox`) — a coach-facing override/reassign control; a task-priority indicator; a capacity-aware view of routing load across the team.
 * 🔁 **Revision Incentives** (`/cards/revisions`) — the stale-evidence-digest follow-up is done: a "Stale evidence digest" section above the leaderboard lists every persisted stale card, most-urgent (undated, then oldest-cited) first, with a link into the Evidence Library to revise one (`lib/shared-evidence-library.ts#buildStaleEvidenceDigest`, `state/evidenceLibraryEntries.ts#buildPersistedStaleEvidenceDigest`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Stale evidence digest" section. Next: a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.
-* 🎯 **Daily Quests and Targets** (`/cards/quests`) — quest difficulty tiers; team-vs-team quest competitions; a completion celebration posted to the News Stream feed.
+* 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.
 * 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.
 * 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below), so: a bulk CSV import for scouted rounds; a side-by-side us-vs-opponent comparison view; a printable/exportable scouting report.
 * ⚖️ **Judge Profiles** (`/judges`) — same Tabroom blocker, so: a bulk CSV import for ballot history; a multi-judge comparison view for panel rounds; a confidence indicator on the auto-tagged paradigm.

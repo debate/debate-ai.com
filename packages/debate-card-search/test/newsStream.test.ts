@@ -110,6 +110,37 @@ describe("buildNewsFeed", () => {
     });
   });
 
+  it("includes a contributor's completed Daily Quests day as a community item", () => {
+    saveDailyMissionResult({ contributorId: "frank", dayKey: "2026-08-11", isComplete: true });
+
+    const item = buildNewsFeed().find((entry) => entry.id === "daily-quest-complete-frank-2026-08-11");
+    expect(item).toMatchObject({
+      category: "community",
+      title: "frank completed the Daily Quests board for 2026-08-11",
+      timestamp: Date.parse("2026-08-11T00:00:00Z"),
+      href: "/cards/quests",
+    });
+    expect(item?.body).toBe("frank completed every quest on the Daily Quests board for 2026-08-11!");
+  });
+
+  it("omits an incomplete Daily Quests day", () => {
+    saveDailyMissionResult({ contributorId: "frank", dayKey: "2026-08-11", isComplete: false });
+    expect(buildNewsFeed().find((entry) => entry.id === "daily-quest-complete-frank-2026-08-11")).toBeUndefined();
+  });
+
+  it("caps completed Daily Quests days to the most recent MAX_COMMUNITY_ITEMS_PER_SOURCE, dropping older ones", () => {
+    for (let i = 0; i < 25; i++) {
+      const day = `2026-08-${String(i + 1).padStart(2, "0")}`;
+      saveDailyMissionResult({ contributorId: "frank", dayKey: day, isComplete: true });
+    }
+
+    const feed = buildNewsFeed();
+    const completionItems = feed.filter((item) => item.id.startsWith("daily-quest-complete-"));
+    expect(completionItems).toHaveLength(20);
+    expect(feed.find((item) => item.id === "daily-quest-complete-frank-2026-08-25")).toBeDefined();
+    expect(feed.find((item) => item.id === "daily-quest-complete-frank-2026-08-05")).toBeUndefined();
+  });
+
   it("includes a completed group challenge as a community item", () => {
     const challenge: GroupChallenge = {
       id: "challenge-1",

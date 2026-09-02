@@ -153,6 +153,11 @@ export function buildStreakMilestoneAnnouncementText(contributorId: string, even
   return `${contributorId} reached a ${event.streakLength}-day streak and earned "${event.badge}"!`;
 }
 
+/** Renders a short third-person announcement for a fully completed Daily Quests board, for a feed item. */
+export function buildDailyQuestCompletionAnnouncementText(contributorId: string, dayKey: string): string {
+  return `${contributorId} completed every quest on the Daily Quests board for ${dayKey}!`;
+}
+
 /** A contributor's full gamified-quest standing: their streak and the badges it has earned. */
 export interface ContributorQuestStreak {
   contributorId: string;

@@ -60,6 +60,17 @@
  * `sprintNotes.ts`/`evidenceLibraryEntries.ts`, older records just stop
  * appearing in this feed once newer ones push past the limit.
  *
+ * A sixth Community source, `dailyMissionResults.ts`'s
+ * `buildDailyQuestCompletionEvents`, closes the "a completion celebration
+ * posted to the News Stream feed" follow-up named under the "🎯 Daily
+ * Quests and Targets" bullet in TODO.md — `dailyQuestCompletionNews()`
+ * posts the day a contributor's Daily Quests board is fully completed,
+ * rendered via `gamified-quests.ts`'s new
+ * `buildDailyQuestCompletionAnnouncementText`. Like a sprint note or
+ * Argument Library entry, a completed day is posted every time it happens
+ * rather than only on rare milestones, so it shares the same
+ * `MAX_COMMUNITY_ITEMS_PER_SOURCE` volume cap.
+ *
  * @module state/newsStream
  */
 
@@ -68,8 +79,8 @@ import { listAnnouncedDailyBestCards } from "./dailyBestCardAnnouncements";
 import { listAnnouncedContributorAwards } from "./contributorAwardAnnouncements";
 import { buildDailyBestCardHighlight } from "../lib/daily-best-card";
 import { buildAwardsAnnouncementText } from "../lib/contributor-awards";
-import { buildQuestStreakMilestoneEvents } from "./dailyMissionResults";
-import { buildStreakMilestoneAnnouncementText } from "../lib/gamified-quests";
+import { buildDailyQuestCompletionEvents, buildQuestStreakMilestoneEvents } from "./dailyMissionResults";
+import { buildDailyQuestCompletionAnnouncementText, buildStreakMilestoneAnnouncementText } from "../lib/gamified-quests";
 import { buildCompletedGroupChallengeEvents } from "./challengeWinEvents";
 import { buildChallengeCompletionAnnouncementText } from "../lib/group-challenges";
 import { buildDailyTopReviserAnnouncements } from "./revisionHistory";
@@ -191,6 +202,31 @@ function argumentLibraryNews(): NewsItem[] {
 }
 
 /**
+ * Turns every contributor's fully completed Daily Quests day into a
+ * `NewsItem` — the "a completion celebration posted to the News Stream
+ * feed" follow-up named under the "🎯 Daily Quests and Targets" bullet in
+ * TODO.md. Unlike `questStreakMilestoneNews` (bounded to rare milestone
+ * crossings), a board can be completed every day, so — like a sprint note
+ * or Argument Library entry — this is capped to the most recent
+ * `MAX_COMMUNITY_ITEMS_PER_SOURCE` completions rather than posting every
+ * single one unbounded.
+ */
+function dailyQuestCompletionNews(): NewsItem[] {
+  return mostRecentBy(
+    buildDailyQuestCompletionEvents(),
+    (event) => Date.parse(`${event.dayKey}T00:00:00Z`),
+    MAX_COMMUNITY_ITEMS_PER_SOURCE,
+  ).map((event) => ({
+    id: `daily-quest-complete-${event.contributorId}-${event.dayKey}`,
+    category: "community" as const,
+    title: `${event.contributorId} completed the Daily Quests board for ${event.dayKey}`,
+    body: buildDailyQuestCompletionAnnouncementText(event.contributorId, event.dayKey),
+    timestamp: Date.parse(`${event.dayKey}T00:00:00Z`),
+    href: "/cards/quests",
+  }));
+}
+
+/**
  * Builds the full News Stream feed: hand-maintained product updates plus
  * every announced Daily Best Card winner, Contributor Awards standings,
  * quest-streak milestone crossing, completed group challenge, top daily
@@ -225,6 +261,7 @@ export function buildNewsFeed(extraItems: NewsItem[] = []): NewsItem[] {
     ...dailyBestCardNews(),
     ...contributorAwardsNews(),
     ...questStreakMilestoneNews(),
+    ...dailyQuestCompletionNews(),
     ...groupChallengeNews(),
     ...revisionIncentiveNews(),
     ...sprintNoteNews(),
