@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyBulkTagEditToCards,
   applyTagSuggestion,
   buildArgumentLibrary,
   buildLibraryCardsFromContributions,
@@ -397,6 +398,59 @@ describe("renameTagAcrossCards", () => {
 
   it("throws when oldTag and newTag are the same", () => {
     expect(() => renameTagAcrossCards(cards, "climate", "climate")).toThrow();
+  });
+});
+
+describe("applyBulkTagEditToCards", () => {
+  it("adds a tag to only the selected cards, leaving others untouched", () => {
+    const { cards: updated, changedCount } = applyBulkTagEditToCards(
+      cards,
+      ["warming-1", "states-1"],
+      "add",
+      "priority",
+    );
+
+    expect(changedCount).toBe(2);
+    expect(updated.find((card) => card.id === "warming-1")!.tags).toEqual(["climate", "impact", "priority"]);
+    expect(updated.find((card) => card.id === "states-1")!.tags).toEqual(["federalism", "priority"]);
+    // A selected card is returned as a new object; an unselected card is the exact same reference.
+    const untouched = updated.find((card) => card.id === "warming-2")!;
+    expect(untouched).toBe(cards.find((card) => card.id === "warming-2"));
+  });
+
+  it("skips a selected card that already carries the tag being added", () => {
+    const { cards: updated, changedCount } = applyBulkTagEditToCards(cards, ["warming-1"], "add", "climate");
+
+    expect(changedCount).toBe(0);
+    const unchanged = updated.find((card) => card.id === "warming-1")!;
+    expect(unchanged).toBe(cards.find((card) => card.id === "warming-1"));
+  });
+
+  it("removes a tag from only the selected cards that carry it", () => {
+    const { cards: updated, changedCount } = applyBulkTagEditToCards(
+      cards,
+      ["warming-1", "warming-2", "states-1"],
+      "remove",
+      "climate",
+    );
+
+    expect(changedCount).toBe(2);
+    expect(updated.find((card) => card.id === "warming-1")!.tags).toEqual(["impact"]);
+    expect(updated.find((card) => card.id === "warming-2")!.tags).toEqual([]);
+    // Selected but never carrying the tag: no-op, same reference.
+    const untouched = updated.find((card) => card.id === "states-1")!;
+    expect(untouched).toBe(cards.find((card) => card.id === "states-1"));
+  });
+
+  it("throws when the tag is blank", () => {
+    expect(() => applyBulkTagEditToCards(cards, ["warming-1"], "add", "  ")).toThrow();
+  });
+
+  it("is a no-op when no ids are selected", () => {
+    const { cards: updated, changedCount } = applyBulkTagEditToCards(cards, [], "add", "priority");
+
+    expect(changedCount).toBe(0);
+    expect(updated).toEqual(cards);
   });
 });
 

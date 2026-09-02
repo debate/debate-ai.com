@@ -73,10 +73,12 @@ import {
 } from "../lib/evidence-search-index";
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library";
 import {
+  applyBulkTagEditToCards,
   buildArgumentLibrary,
   buildLibraryCardsFromContributions,
   buildTagCollections,
   renameTagAcrossCards,
+  type BulkTagEditOp,
 } from "../lib/argument-library";
 import { saveRevisionRecord, type CardRevisionRecord } from "./revisionHistory";
 import {
@@ -338,6 +340,25 @@ export function buildCombinedPersistedArgumentLibrary(): ArgumentLibrary {
  */
 export function renameTagAcrossPersistedEntries(oldTag: string, newTag: string): number {
   const { cards: updated, changedCount } = renameTagAcrossCards(readAll(), oldTag, newTag);
+  if (changedCount > 0) {
+    writeAll(updated);
+  }
+  return changedCount;
+}
+
+/**
+ * Adds or removes a tag across the given subset of persisted entries (by
+ * `id`) in one write — the "bulk tag editing across a filtered result set"
+ * follow-up named under the "📋 Shared Evidence Library" bullet in TODO.md.
+ * Reuses `argument-library.ts`'s pure `applyBulkTagEditToCards` directly
+ * against this store's entries, writing back only when at least one entry
+ * actually changed (so selecting a whole filtered result set that already
+ * carries the tag being added is a no-op write, matching
+ * `renameTagAcrossPersistedEntries`'s convention). Returns the number of
+ * entries changed.
+ */
+export function bulkEditTagsForPersistedEntries(ids: string[], op: BulkTagEditOp, tag: string): number {
+  const { cards: updated, changedCount } = applyBulkTagEditToCards(readAll(), ids, op, tag);
   if (changedCount > 0) {
     writeAll(updated);
   }
