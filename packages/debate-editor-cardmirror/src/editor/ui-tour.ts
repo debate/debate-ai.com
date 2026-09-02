@@ -649,6 +649,14 @@ function settingsDialogEl(): HTMLElement | null {
 
 let controller: UiTourController | null = null;
 
+/** Whether a tour is actively on screen right now — the Verbatim nudge
+ *  (`verbatim-nudge.ts`) polls this so it never pops its own dialog on
+ *  top of an in-progress tour (`hasSeenUiTour` alone isn't enough: it's
+ *  stamped the instant the tour STARTS, not when it finishes). */
+export function isUiTourRunning(): boolean {
+  return controller?.running ?? false;
+}
+
 /** Start (or restart) the tour. */
 export function startUiTour(): void {
   controller?.end();

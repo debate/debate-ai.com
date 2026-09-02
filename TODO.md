@@ -6,6 +6,68 @@
 _No task currently in progress._
 
 ### Completed
+- **Legacy Verbatim / Cardmirror Compatibility — Verbatim onboarding
+  nudge.** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI"; this
+  firing also specifically called out "integrate card mirror better into
+  the editor" and the Ctrl/Cmd-Shift-Space command menu) — as with every
+  recent repeat, that whole standing ask is already fully built
+  (account-synced settings already exist at `/settings`, D1 tables +
+  `/api/*` routes already link flows/docs/rounds/materials/etc. to
+  signed-in users, every tool is already reachable from the nav/UI, and
+  CardMirror already surfaces its full command set through the top
+  `MenuBar` and the Ctrl/Cmd-Shift-Space command palette), and the one
+  open PR (#437, "Consolidate UI primitives and add web extension
+  scaffold") doesn't touch this area, so this slice picked idea #14's own
+  named next-step instead: "an in-app onboarding nudge (e.g. from
+  `ui-tour.ts`) pointing a Verbatim-trained user at the reference the
+  first time they open a CardMirror document." The existing UI tour
+  (`ui-tour.ts`) already has a "reference" step, but it only reaches a
+  fresh profile that lets the whole tour play out, and an established
+  profile never sees it at all — `maybeAutoStartUiTour` marks any profile
+  with customized settings as already-seen without touring. The new
+  `packages/debate-editor-cardmirror/src/editor/verbatim-nudge.ts` closes
+  that gap: a one-time `promptForRouteChoice` dialog (not another
+  coach-mark overlay) pointing at the shortcuts reference, shown once
+  `hasSeenUiTour` is set (stamped the instant a tour *starts*, whether a
+  real run or an established-profile auto-skip) and the reference hasn't
+  already been opened by any route (`reference-ui.ts#openReference` now
+  stamps a new `hasOpenedShortcutsReference` setting on every call).
+  Because `hasSeenUiTour` flips true when a tour *starts*, not when it
+  *finishes*, `maybeShowVerbatimNudge` polls every 2s (up to ~5 minutes)
+  rather than firing on a fixed delay, checking a new
+  `ui-tour.ts#isUiTourRunning` on every tick so it waits out an
+  in-progress tour instead of stacking its dialog on top of one. Wired
+  in from `index.ts` right next to `maybeAutoStartUiTour`, same
+  desktop-only gate. `hasCustomizedSettings`'s ignore list grew the two
+  new auto-set settings keys (`hasOpenedShortcutsReference`,
+  `hasSeenVerbatimNudge`) so neither one itself counts as "customization"
+  — that would otherwise misclassify a genuinely fresh profile as
+  established and skip its tour. See
+  `docs/features/legacy-verbatim-shortcuts.md`'s new "Verbatim onboarding
+  nudge" section (including two new Known gaps: no snooze/re-ask, just a
+  one-shot dismiss; and the app has no real signal that a visitor is
+  actually Verbatim-trained, so the nudge is phrased for that population
+  but shown to everyone who meets the trigger condition). Vitest-covered:
+  the new `packages/debate-editor-cardmirror/test/verbatim-nudge.test.ts`
+  (4 cases against the pure `shouldShowVerbatimNudge` predicate — shows
+  once the tour is resolved, withholds before that, and stays withheld
+  once already shown or once the reference has been opened by any
+  route). The DOM-facing `maybeShowVerbatimNudge`/`isUiTourRunning` poll
+  loop and the dialog itself remain intentionally untested, matching
+  `ui-tour.ts`'s own convention (only the pure step-visibility/predicate
+  logic is directly tested there too). Verified with `bun install` (2258
+  packages), `bunx turbo run typecheck --filter=debate-editor-cardmirror`
+  and the full `bun run typecheck` (13 packages, clean), full `bun run
+  test` (root, all packages: 227 test files, 3890 tests, all passing),
+  and `bunx turbo run build --filter=debate-editor-cardmirror
+  --filter=debate-ai-web` (both succeed, including `debate-ai-web`'s
+  production build). No lint script/config exists in this repo to run.
+  No further follow-up is currently tracked for idea #14 beyond the two
+  Known gaps above; a future run should pick a fresh next-step if one
+  becomes worth doing.
 - **Gamified Quests — opt-in streak-lapse reminder.** Another repeat of the
   standing prompt ("integrate all the tools into the UI... create user
   settings and link user db SQL... with ability to save flows docs and
@@ -13353,7 +13415,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
     - A coach-facing roster analytics dashboard (completion rates, streaks, standings in one place).
     - A digest notification summarizing challenge results instead of requiring a panel visit.
 
-14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all four prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command; and the reference itself now has Print and Export… actions (`reference-ui.ts`, `reference-export.ts`). See `docs/features/legacy-verbatim-shortcuts.md`. Next: a "download the shortcuts as a printable PDF" option instead of relying on the browser/OS print-to-PDF flow from the Print action; or an in-app onboarding nudge (e.g. from `ui-tour.ts`) pointing a Verbatim-trained user at the reference the first time they open a CardMirror document.
+14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all four prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command; and the reference itself now has Print and Export… actions (`reference-ui.ts`, `reference-export.ts`). The onboarding-nudge follow-up is also now done: a one-time `promptForRouteChoice` dialog (`verbatim-nudge.ts`) points whoever the UI tour's own "reference" step doesn't reach — an established profile the tour auto-skips, or a fresh one that left the tour before that step — at the shortcuts reference the first time a document is open, without racing or stacking on top of an in-progress tour. See `docs/features/legacy-verbatim-shortcuts.md`'s "Verbatim onboarding nudge" section. Next: a "download the shortcuts as a printable PDF" option instead of relying on the browser/OS print-to-PDF flow from the Print action.
 
 15. **Flow-in-Speech Flow Annotations** (`/annotations`, `FlowSpreadsheet` badges) — the search/filter follow-up is done: the standalone annotations panel has Speech/Speaker/Tag filter dropdowns (populated from the values actually present) plus optional `speaker`/`tag` fields on `FlowAnnotation` itself (`flow/flow-annotations.ts#filterFlowAnnotations`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Search/filter by speech, speaker, or tag" section. The bulk-export follow-up is also now done: a new **Flow** filter dropdown drives a "Download annotations" button that saves every annotation on that flow as a plain-text file, sorted by timestamp (`flow/flow-annotations-export.ts#buildFlowAnnotationsExportText`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Bulk export" section. Next:
     - A density scrubber on the video timeline showing where annotations cluster.

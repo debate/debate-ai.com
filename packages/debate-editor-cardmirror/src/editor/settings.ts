@@ -416,6 +416,13 @@ export interface Settings {
   /** UI tour (coach marks) shown/acknowledged. Auto-set on any run;
    *  no settings row — reruns go through the `startUiTour` command. */
   hasSeenUiTour: boolean;
+  /** Set the moment `openReference()` is actually called, from any
+   *  entry point (button, tour, palette, menu) — the Verbatim nudge's
+   *  signal that the reference has already been found, tour or not. */
+  hasOpenedShortcutsReference: boolean;
+  /** Verbatim onboarding nudge (`verbatim-nudge.ts`) shown/acknowledged.
+   *  Auto-set the moment it's shown; no settings row of its own. */
+  hasSeenVerbatimNudge: boolean;
   /** Desktop-only. When set, "New Speech Document" saves into this
    *  directory by default (instead of leaving the doc unsaved until
    *  the user picks a location). Empty string means no default — the
@@ -1599,6 +1606,8 @@ const DEFAULTS: Settings = {
   copyPreviousCiteNearestOnly: true,
   showOnboardingStarter: true,
   hasSeenUiTour: false,
+  hasOpenedShortcutsReference: false,
+  hasSeenVerbatimNudge: false,
   defaultSpeechDocFolder: '',
   defaultSpeechDocFormat: 'docx',
   speechDocFilenameTemplate: DEFAULT_SPEECH_FILENAME_TEMPLATE,
@@ -1842,7 +1851,11 @@ export const SETTINGS_DEFAULTS: Readonly<Settings> = DEFAULTS;
  *  presence-based — boot code persisting an all-defaults store must
  *  not disqualify a genuinely fresh profile. */
 export function hasCustomizedSettings(
-  ignore: readonly (keyof Settings)[] = ['hasSeenUiTour'],
+  ignore: readonly (keyof Settings)[] = [
+    'hasSeenUiTour',
+    'hasOpenedShortcutsReference',
+    'hasSeenVerbatimNudge',
+  ],
 ): boolean {
   try {
     const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null') as Record<
@@ -4154,6 +4167,8 @@ function sanitize(s: Settings): Settings {
     // from before this setting existed.
     showOnboardingStarter: s.showOnboardingStarter === false ? false : true,
     hasSeenUiTour: s.hasSeenUiTour === true,
+    hasOpenedShortcutsReference: s.hasOpenedShortcutsReference === true,
+    hasSeenVerbatimNudge: s.hasSeenVerbatimNudge === true,
     defaultSpeechDocFolder:
       typeof s.defaultSpeechDocFolder === 'string'
         ? s.defaultSpeechDocFolder
