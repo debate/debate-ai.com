@@ -27,6 +27,16 @@
  * side has a usable timestamp to compare, this still falls back to the
  * original safe no-op rather than guessing.
  *
+ * Also surfaces a one-time "synced just now from another device" notice —
+ * TODO.md idea #2's own next-named follow-up — the moment the merge
+ * actually adopts a remote copy (a `roundId` new to this device, or an
+ * existing one where the remote copy won `resolveWordCountRoundConflict`).
+ * The merge decision itself is the pure, directly-tested
+ * `planWordCountRoundMerge` in `state/wordCountRounds.ts`; this hook only
+ * applies its plan and, via a module-level `consumeSyncNotice`, ensures the
+ * notice is handed to exactly one hook instance's state rather than
+ * re-appearing on every later mount of the same already-resolved merge.
+ *
  * @module hooks/useWordCountRounds
  */
 
@@ -38,7 +48,7 @@ import {
   deleteWordCountRound,
   getWordCountRound,
   listWordCountRounds,
-  resolveWordCountRoundConflict,
+  planWordCountRoundMerge,
   saveWordCountRound,
   type WordCountRoundRecord,
 } from "../state/wordCountRounds";
@@ -54,6 +64,19 @@ import {
 // in" flag, rather than each firing its own GET on mount.
 let remoteAvailable = false;
 let remoteMergePromise: Promise<boolean> | null = null;
+// The roundIds a completed merge adopted from the account, waiting to be
+// shown as a "synced from another device" notice — consumed (and cleared)
+// by the first hook instance to observe the merge's completion, so a later
+// mount that awaits the same cached `remoteMergePromise` doesn't re-show a
+// notice for a sync that already happened.
+let pendingSyncNoticeRoundIds: string[] = [];
+
+/** Hands the pending sync notice, if any, to exactly one caller and clears it. */
+function consumeSyncNotice(): string[] {
+  const ids = pendingSyncNoticeRoundIds;
+  pendingSyncNoticeRoundIds = [];
+  return ids;
+}
 
 /** Merges the account's synced rounds into local storage once per page load. Resolves to whether local storage changed. */
 function ensureRemoteMerged(): Promise<boolean> {
@@ -64,37 +87,19 @@ function ensureRemoteMerged(): Promise<boolean> {
         remoteAvailable = true;
 
         const localRecords = listWordCountRounds();
-        const localById = new Map(localRecords.map((record) => [record.roundId, record]));
-        const remoteIds = new Set(remoteRecords.map((record) => record.roundId));
+        const { adopt, pushLocal } = planWordCountRoundMerge(localRecords, remoteRecords);
 
-        let changed = false;
-        for (const remote of remoteRecords) {
-          const local = localById.get(remote.roundId);
-          if (!local) {
-            adoptWordCountRound(remote);
-            changed = true;
-            continue;
-          }
-          const resolution = resolveWordCountRoundConflict(local, remote);
-          if (resolution === "remote") {
-            adoptWordCountRound(remote);
-            changed = true;
-          } else if (resolution === "local") {
-            saveWordCountRoundToAccount(local).catch(() => {
-              // Best-effort — this device's newer copy stays queued to sync
-              // again on a later successful attempt.
-            });
-          }
+        for (const remote of adopt) adoptWordCountRound(remote);
+        for (const local of pushLocal) {
+          saveWordCountRoundToAccount(local).catch(() => {
+            // Best-effort — this round stays queued to sync again on a
+            // later successful attempt (e.g. the next save/mount).
+          });
         }
-        for (const local of localRecords) {
-          if (!remoteIds.has(local.roundId)) {
-            saveWordCountRoundToAccount(local).catch(() => {
-              // Best-effort — this round stays local-only until a later
-              // successful sync (e.g. the next save/mount).
-            });
-          }
+        if (adopt.length > 0) {
+          pendingSyncNoticeRoundIds = adopt.map((record) => record.roundId);
         }
-        return changed;
+        return adopt.length > 0;
       })
       .catch(() => false);
   }
@@ -110,6 +115,15 @@ export type UseWordCountRoundsResult = {
   deleteRound: (roundId: string) => void;
   /** Clears every persisted round at once ("delete all my synced history"). */
   clearAllRounds: () => void;
+  /**
+   * `roundId`s the account merge just adopted from another device, if any —
+   * pass to `buildWordCountSyncNoticeMessage` for a dismissible "synced from
+   * another device" notice. Empty once dismissed (`dismissSyncNotice`) or
+   * when nothing was adopted.
+   */
+  justSyncedRoundIds: string[];
+  /** Dismisses the "synced from another device" notice. */
+  dismissSyncNotice: () => void;
 };
 
 /**
@@ -120,14 +134,19 @@ export type UseWordCountRoundsResult = {
 export function useWordCountRounds(): UseWordCountRoundsResult {
   const [rounds, setRounds] = useState<WordCountRoundRecord[] | null>(null);
   const [synced, setSynced] = useState(false);
+  const [justSyncedRoundIds, setJustSyncedRoundIds] = useState<string[]>([]);
 
   useEffect(() => {
     setRounds(buildWordCountRoundsPanelView());
     ensureRemoteMerged().then((changed) => {
       setSynced(remoteAvailable);
       if (changed) setRounds(buildWordCountRoundsPanelView());
+      const notice = consumeSyncNotice();
+      if (notice.length > 0) setJustSyncedRoundIds(notice);
     });
   }, []);
+
+  const dismissSyncNotice = useCallback(() => setJustSyncedRoundIds([]), []);
 
   const saveRound = useCallback((record: WordCountRoundRecord) => {
     saveWordCountRound(record);
@@ -170,5 +189,5 @@ export function useWordCountRounds(): UseWordCountRoundsResult {
     }
   }, []);
 
-  return { rounds, synced, saveRound, deleteRound, clearAllRounds };
+  return { rounds, synced, saveRound, deleteRound, clearAllRounds, justSyncedRoundIds, dismissSyncNotice };
 }

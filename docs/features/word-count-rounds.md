@@ -281,29 +281,50 @@ into `state/wordCountRounds.ts` now:
 "Round history ... is synced to your account" once signed in, or a prompt to
 sign in otherwise.
 
+**"Synced from another device" notice:** TODO.md idea #2's own next-named
+follow-up ("surfacing a 'synced just now from another device' toast when the
+merge actually adopts a remote copy"). The merge decision itself is now the
+pure, directly-tested `planWordCountRoundMerge(localRecords, remoteRecords)`
+in `state/wordCountRounds.ts` (`useWordCountRounds`'s `ensureRemoteMerged`
+applies its `adopt`/`pushLocal` lists rather than deciding inline). Whenever
+`adopt` is non-empty — a `roundId` new to this device, or an existing one
+where the remote copy won `resolveWordCountRoundConflict` — those `roundId`s
+are surfaced as `justSyncedRoundIds` from the hook, and
+`WordCountRoundsPanel` renders a dismissible banner
+(`buildWordCountSyncNoticeMessage`, e.g. "🔄 Synced round round-1 from
+another device.") above the submission form. A module-level
+`consumeSyncNotice` hands the pending notice to exactly one hook instance so
+a later mount that awaits the same already-resolved merge doesn't re-show
+it; dismissing it (or navigating away and back) doesn't re-trigger another
+account fetch — the notice only ever appears once per merge, not once per
+panel visit.
+
 ```
 lib/database/schema.ts (apps/debate-ai.com)     — saved_word_count_rounds table
 app/api/word-count-rounds/route.ts              — GET: list; DELETE: clear every synced record
 app/api/word-count-rounds/[roundId]/route.ts    — PUT/DELETE: upsert/remove one record
 state/savedWordCountRounds.ts                   — isValidWordCountRoundRecord, size cap
 round/word-count-rounds-client.ts               — fetch wrapper (list/save/delete/delete-all)
-state/wordCountRounds.ts                        — adoptWordCountRound (preserves createdAt), clearWordCountRounds
-hooks/useWordCountRounds.ts                     — local-first merge + sync, clearAllRounds
-panels/WordCountRoundsPanel.tsx                 — uses saveRound/deleteRound/clearAllRounds
+state/wordCountRounds.ts                        — adoptWordCountRound (preserves createdAt), clearWordCountRounds, planWordCountRoundMerge, buildWordCountSyncNoticeMessage
+hooks/useWordCountRounds.ts                     — local-first merge + sync, clearAllRounds, justSyncedRoundIds/dismissSyncNotice
+panels/WordCountRoundsPanel.tsx                 — uses saveRound/deleteRound/clearAllRounds, renders the sync notice banner
 ```
 
 Vitest-covered: `adoptWordCountRound`'s createdAt-preserving/overwrite
-behavior, `clearWordCountRounds`'s remove-everything/no-op behavior, and
-`resolveWordCountRoundConflict`'s newer-wins/missing-timestamp/tie cases in
-`wordCountRounds.test.ts`; `isValidWordCountRoundRecord` (including
-`updatedAt`) in `savedWordCountRounds.test.ts`; the fetch wrapper's request
-shapes and 401/error handling, including
-`deleteAllSavedWordCountRoundsFromAccount`, in
+behavior, `clearWordCountRounds`'s remove-everything/no-op behavior,
+`resolveWordCountRoundConflict`'s newer-wins/missing-timestamp/tie cases,
+`planWordCountRoundMerge`'s adopt/push decisions (new-to-either-side and
+same-`roundId` conflicts alike), and `buildWordCountSyncNoticeMessage`'s
+empty/singular/plural phrasing, all in `wordCountRounds.test.ts`;
+`isValidWordCountRoundRecord` (including `updatedAt`) in
+`savedWordCountRounds.test.ts`; the fetch wrapper's request shapes and
+401/error handling, including `deleteAllSavedWordCountRoundsFromAccount`, in
 `word-count-rounds-client.test.ts`. `useWordCountRounds` and its wiring in
 `WordCountRoundsPanel` are untested, matching this package's existing
 convention for account-synced, `localStorage`-backed hooks and their UI
 (e.g. `useWordLimitPresets`) — the merge loop's decision-making itself is
-covered indirectly via `resolveWordCountRoundConflict`'s direct unit tests.
+covered indirectly via `planWordCountRoundMerge`/`resolveWordCountRoundConflict`'s
+direct unit tests.
 
 ## Known gaps
 

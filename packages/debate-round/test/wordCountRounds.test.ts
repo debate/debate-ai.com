@@ -2,12 +2,14 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   adoptWordCountRound,
   buildWordCountRoundsPanelView,
+  buildWordCountSyncNoticeMessage,
   buildWordCountTrendData,
   clearWordCountRounds,
   deleteWordCountRound,
   getWordCountRound,
   getWordCountRoundStatuses,
   listWordCountRounds,
+  planWordCountRoundMerge,
   resolveWordCountRoundConflict,
   saveWordCountRound,
   type WordCountRoundRecord,
@@ -246,6 +248,72 @@ describe("resolveWordCountRoundConflict", () => {
     const local: WordCountRoundRecord = { ...ROUND_A, updatedAt: 100 };
     const remote: WordCountRoundRecord = { ...ROUND_A };
     expect(resolveWordCountRoundConflict(local, remote)).toBe("local");
+  });
+});
+
+describe("planWordCountRoundMerge", () => {
+  it("adopts a remote record with no local counterpart", () => {
+    const plan = planWordCountRoundMerge([], [ROUND_A]);
+    expect(plan.adopt).toEqual([ROUND_A]);
+    expect(plan.pushLocal).toEqual([]);
+  });
+
+  it("pushes a local-only record to the account", () => {
+    const plan = planWordCountRoundMerge([ROUND_A], []);
+    expect(plan.adopt).toEqual([]);
+    expect(plan.pushLocal).toEqual([ROUND_A]);
+  });
+
+  it("adopts the remote copy when it's newer for a shared roundId", () => {
+    const local: WordCountRoundRecord = { ...ROUND_A, updatedAt: 100 };
+    const remote: WordCountRoundRecord = { ...ROUND_A, submittedSpeeches: [], updatedAt: 200 };
+    const plan = planWordCountRoundMerge([local], [remote]);
+    expect(plan.adopt).toEqual([remote]);
+    expect(plan.pushLocal).toEqual([]);
+  });
+
+  it("pushes the local copy when it's newer for a shared roundId", () => {
+    const local: WordCountRoundRecord = { ...ROUND_A, updatedAt: 200 };
+    const remote: WordCountRoundRecord = { ...ROUND_A, submittedSpeeches: [], updatedAt: 100 };
+    const plan = planWordCountRoundMerge([local], [remote]);
+    expect(plan.adopt).toEqual([]);
+    expect(plan.pushLocal).toEqual([local]);
+  });
+
+  it("does nothing for a shared roundId with no resolvable conflict", () => {
+    const local: WordCountRoundRecord = { ...ROUND_A };
+    const remote: WordCountRoundRecord = { ...ROUND_A };
+    const plan = planWordCountRoundMerge([local], [remote]);
+    expect(plan.adopt).toEqual([]);
+    expect(plan.pushLocal).toEqual([]);
+  });
+
+  it("handles a mix of new-to-each-side and shared roundIds in one pass", () => {
+    const sharedLocal: WordCountRoundRecord = { roundId: "shared", styleKey: "practicePublicForum", submittedSpeeches: [], updatedAt: 100 };
+    const sharedRemote: WordCountRoundRecord = { roundId: "shared", styleKey: "practicePublicForum", submittedSpeeches: [], updatedAt: 200 };
+    const localOnly: WordCountRoundRecord = { roundId: "local-only", styleKey: "practicePublicForum", submittedSpeeches: [] };
+    const remoteOnly: WordCountRoundRecord = { roundId: "remote-only", styleKey: "practicePublicForum", submittedSpeeches: [] };
+
+    const plan = planWordCountRoundMerge([sharedLocal, localOnly], [sharedRemote, remoteOnly]);
+
+    expect(plan.adopt.map((r) => r.roundId).sort()).toEqual(["remote-only", "shared"]);
+    expect(plan.pushLocal.map((r) => r.roundId)).toEqual(["local-only"]);
+  });
+});
+
+describe("buildWordCountSyncNoticeMessage", () => {
+  it("returns an empty string for an empty list", () => {
+    expect(buildWordCountSyncNoticeMessage([])).toBe("");
+  });
+
+  it("renders a singular message for one adopted round", () => {
+    expect(buildWordCountSyncNoticeMessage(["round-1"])).toBe("🔄 Synced round round-1 from another device.");
+  });
+
+  it("renders a plural message listing every adopted round for more than one", () => {
+    expect(buildWordCountSyncNoticeMessage(["round-1", "round-2"])).toBe(
+      "🔄 Synced 2 rounds from another device: round-1, round-2.",
+    );
   });
 });
 
