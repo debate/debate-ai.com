@@ -15,6 +15,14 @@
  * forward-looking staleness signal via `getEvidenceStaleness`, rather than
  * only rewarding a refresh after the fact.
  *
+ * Each card result also carries an LLM Card Scoring badge, closing the "an
+ * inline score badge shown directly in Evidence Library search results"
+ * follow-up named under the "🧠 LLM Card Scoring" bullet in TODO.md: a
+ * "Score card" action (`state/cardScores.ts#scoreEvidenceLibraryEntry`)
+ * scores the entry from its own text/argument block/tags, and once scored
+ * every later visit shows its overall score (`getScoredCardBreakdown`),
+ * flagging a likely duplicate the same way `CardScoringPanel` does.
+ *
  * The "Check this page" box and the submission form's Source URL field also
  * call the server-backed shared reuse index (`lib/evidence-reuse-check-client.ts`,
  * `/api/evidence-reuse-check`) alongside the existing local check — the
@@ -112,6 +120,7 @@ import {
   saveEvidenceLibraryEntryRevision,
   searchPersistedEvidenceLibraryWithIndex,
 } from "../state/evidenceLibraryEntries"
+import { getScoredCardBreakdown, scoreEvidenceLibraryEntry } from "../state/cardScores"
 import { getPeerReview } from "../state/peerReviews"
 import {
   appendReuseCheckHistory,
@@ -140,6 +149,7 @@ import type {
   PageReuseCheckResult,
 } from "../lib/shared-evidence-library"
 import type { RemotePageReuseCheckResult } from "../lib/evidence-reuse-check-client"
+import type { CardScoreBreakdown } from "../lib/llm-card-scoring"
 
 const KIND_FILTERS: { value: EvidenceEntryKind | "all"; label: string }[] = [
   { value: "all", label: "All" },
@@ -218,6 +228,7 @@ export function EvidenceLibraryPanel() {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [bulkTagInput, setBulkTagInput] = useState("")
   const [bulkTagError, setBulkTagError] = useState<string | null>(null)
+  const [cardScoreBreakdowns, setCardScoreBreakdowns] = useState<Record<string, CardScoreBreakdown>>({})
   const searchParams = useSearchParams()
 
   useEffect(() => {
@@ -252,9 +263,24 @@ export function EvidenceLibraryPanel() {
       tags: filterTags,
     })
 
+  // Looks up each currently-shown card entry's persisted score breakdown, if
+  // it's been scored — only `card` entries go through LLM Card Scoring, so
+  // `block` entries are left out of the lookup entirely.
+  const refreshCardScoreBreakdowns = (entries: EvidenceSearchResult[]) => {
+    const breakdowns: Record<string, CardScoreBreakdown> = {}
+    for (const { entry } of entries) {
+      if (entry.kind !== "card") continue
+      const breakdown = getScoredCardBreakdown(entry.id)
+      if (breakdown) breakdowns[entry.id] = breakdown
+    }
+    setCardScoreBreakdowns(breakdowns)
+  }
+
   useEffect(() => {
     if (hasEntries === null) return
-    setResults(searchPersistedEvidenceLibraryWithIndex(buildQuery()))
+    const nextResults = searchPersistedEvidenceLibraryWithIndex(buildQuery())
+    setResults(nextResults)
+    refreshCardScoreBreakdowns(nextResults)
     // A changed search/filter narrows or widens which entries are on screen,
     // so a prior selection may no longer make sense — clear it rather than
     // risk a bulk edit silently touching an entry the visitor can no longer see.
@@ -263,10 +289,17 @@ export function EvidenceLibraryPanel() {
   }, [hasEntries, queryText, kind, filterTopic, filterCaseArea, filterTags])
 
   const refreshResults = () => {
-    setResults(searchPersistedEvidenceLibraryWithIndex(buildQuery()))
+    const nextResults = searchPersistedEvidenceLibraryWithIndex(buildQuery())
+    setResults(nextResults)
+    refreshCardScoreBreakdowns(nextResults)
     setHasEntries(true)
     setKnownTags(listPersistedTags())
     setPendingEntries(listPendingReviewEntries())
+  }
+
+  const handleScoreEntry = (entry: EvidenceLibraryEntry) => {
+    const breakdown = scoreEvidenceLibraryEntry(entry)
+    setCardScoreBreakdowns((prev) => ({ ...prev, [entry.id]: breakdown }))
   }
 
   const handleSubmit = () => {
@@ -803,10 +836,21 @@ export function EvidenceLibraryPanel() {
                 {entry.kind === "card" && getEvidenceStaleness(entry, currentYear).isStale && (
                   <Badge variant="destructive">Stale evidence</Badge>
                 )}
+                {entry.kind === "card" && cardScoreBreakdowns[entry.id] && (
+                  <Badge variant={cardScoreBreakdowns[entry.id].isLikelyDuplicate ? "destructive" : "secondary"}>
+                    Score {cardScoreBreakdowns[entry.id].overallScore}/100
+                    {cardScoreBreakdowns[entry.id].isLikelyDuplicate ? " — likely duplicate" : ""}
+                  </Badge>
+                )}
                 {queryText.trim() && (
                   <span className="text-xs text-muted-foreground">relevance {relevanceScore}</span>
                 )}
                 <div className="ml-auto flex gap-1">
+                  {entry.kind === "card" && (
+                    <Button size="sm" variant="ghost" onClick={() => handleScoreEntry(entry)}>
+                      {cardScoreBreakdowns[entry.id] ? "Re-score card" : "Score card"}
+                    </Button>
+                  )}
                   <Button size="sm" variant="ghost" onClick={() => handleEdit(entry)}>
                     Edit
                   </Button>

@@ -130,6 +130,41 @@ Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`
 (every backing-key match, the `null`-key clear-all case, an unrelated key,
 and a same-prefix substring key).
 
+## Evidence Library score badge
+
+Closes the "an inline score badge shown directly in Evidence Library search
+results" follow-up named alongside batch scoring under the "🧠 LLM Card
+Scoring" bullet in TODO.md. Every `card`-kind result in
+`EvidenceLibraryPanel` (`/cards/library`) carries a "Score card" action; it
+calls `state/cardScores.ts#scoreEvidenceLibraryEntry`, which builds a
+`ScoredCard` straight from the entry's own fields — its text, and
+`argBlockKeywords` derived from its argument block and tags via
+`lib/llm-card-scoring.ts#deriveArgBlockKeywords` (no separate keyword input
+required, unlike `CardScoringPanel`'s form) — with a neutral 0.5 quality
+signal, since an `EvidenceLibraryEntry` doesn't carry a quality signal of
+its own. The card is persisted under the entry's own id, so scoring is
+idempotent: scoring the same entry again ("Re-score card") just refreshes
+it in place rather than creating a duplicate.
+
+Once scored, the result shows a "Score N/100" badge — reading the
+breakdown via the new `getScoredCardBreakdown(id)`, scored against every
+other persisted card plus the real Shared Evidence Library corpus, the same
+comparison set `buildPersistedCardScoreRanking` builds for every card — with
+the badge switching to a destructive variant and a "likely duplicate" suffix
+when `isLikelyDuplicate` is true, mirroring `CardScoringPanel`'s own
+duplicate flag. A scored entry keeps its badge on every later visit to the
+panel; `block`-kind entries are left out of both the action and the lookup,
+since LLM Card Scoring's dimensions (and this feature's name) are specific
+to cards. `EvidenceLibraryPanel`'s score-lookup runs alongside its existing
+search/filter effect and its `refreshResults` call after any edit/delete, so
+the badge stays in sync with whichever entries are currently on screen.
+Vitest-covered: `packages/debate-card-search/test/cardScores.test.ts`'s
+`getScoredCardBreakdown` and `scoreEvidenceLibraryEntry` describe blocks
+(undefined for an unscored card, a scored card's breakdown, duplicate
+detection against other persisted cards, deriving keywords from the entry's
+own fields, idempotent re-scoring, and the fresh breakdown showing up
+immediately via `getScoredCardBreakdown`).
+
 ## Known gaps
 
 - Bulk import is a pasted plain-text batch (a simple `---`-delimited
