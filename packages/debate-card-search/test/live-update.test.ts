@@ -293,6 +293,7 @@ describe("isBrainstormBoardLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isBrainstormBoardLiveUpdateStorageEvent({ key: "brainstormIdeasBackup" })).toBe(false);
     expect(isBrainstormBoardLiveUpdateStorageEvent({ key: "old_trackedArguments" })).toBe(false);
+    expect(isBrainstormBoardLiveUpdateStorageEvent({ key: "brainstormSessionTimerBackup" })).toBe(false);
   });
 });
 

@@ -277,6 +277,72 @@ and `packages/debate-card-search/test/brainstormIdeas.test.ts`
 area and overwriting on a repeat send; `isBrainstormIdeaInArgumentLibrary`:
 false before sending, true after).
 
+## Session timer
+
+An optional "Session timer" widget sits above the topic switcher — the "an
+optional brainstorm-session timer" follow-up named under the "🧠 Team
+Brainstorm Assist" bullet in `TODO.md`. It's a single squad-wide countdown a
+moderator can run to time-box a sprint before reviewing boards: pick a
+duration (3/5/10/15 minutes) while idle, Start it, Pause/resume it, or Reset
+it back to idle. The remaining time is shown as `M:SS`, ticking down once a
+second while running, and turns red with a "Time's up!" note once it reaches
+zero (the countdown isn't auto-paused or auto-reset at zero — a moderator
+decides when to stop the sprint).
+
+```
+lib/brainstorm-session-timer.ts (pure)
+  createBrainstormSessionTimer(durationSeconds?)       — a fresh idle timer
+  startBrainstormSessionTimer(state, now)              — idle/paused → running
+                                                           (resumes from the
+                                                           frozen remaining
+                                                           time when paused,
+                                                           the full duration
+                                                           otherwise)
+  pauseBrainstormSessionTimer(state, now)               — running → paused,
+                                                           freezing the
+                                                           remaining time
+  resetBrainstormSessionTimer(state)                    — → idle at the
+                                                           configured duration
+  setBrainstormSessionTimerDuration(state, seconds)     — changes the
+                                                           configured duration;
+                                                           a no-op unless idle
+  getBrainstormSessionTimerRemainingSeconds(state, now)
+  isBrainstormSessionTimerExpired(state, now)
+  formatBrainstormSessionTimerRemaining(seconds)        — "M:SS"
+
+state/brainstormSessionTimer.ts (localStorage: brainstormSessionTimer)
+  loadBrainstormSessionTimer() / startSessionTimer(now?) / pauseSessionTimer(now?) /
+  resetSessionTimer() / setSessionTimerDuration(seconds)
+      — each read-transition-persist wrapper around the pure functions above,
+        stamping Date.now() as "now" unless a caller supplies one
+
+panels/BrainstormBoardPanel.tsx
+  → loads the timer on mount, ticks a re-render once a second via
+    setInterval while running (just enough to re-derive the displayed
+    remaining time from the persisted endsAt — no timer-transition logic
+    lives in the panel), and re-reads it inside the panel's existing
+    storage-event listener so a countdown started in one tab shows up live
+    in every other open tab too
+```
+
+Deliberately a single persisted record, not per-board — a brainstorm session
+is one live sprint at a time for the whole panel, not a separate timer per
+argument block/category. `state/live-update.ts`'s
+`BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS` gained the new
+`"brainstormSessionTimer"` key alongside the existing `"brainstormIdeas"`/
+`"trackedArguments"` ones, so `isBrainstormBoardLiveUpdateStorageEvent`
+already covers it — no separate listener was introduced. Vitest-covered:
+`packages/debate-card-search/test/brainstorm-session-timer.test.ts` (the pure
+state machine — starting fresh vs. resuming from paused, pausing/resetting,
+the idle-only duration-change guard, remaining-time clamping to zero,
+expiry, and `M:SS` formatting including padding and negative-clamping) and
+`packages/debate-card-search/test/brainstormSessionTimer.test.ts` (the
+persistence wrapper — defaulting on missing/corrupt/malformed storage,
+round-tripping each action through `localStorage`, and that a duration
+change while running doesn't persist). The panel's own tick/render wiring
+remains intentionally untested, matching this panel's existing convention
+(only pure logic and persistence wrappers are directly tested).
+
 ## Known gaps
 
 - No reviewer/moderator identity check gates the merge action — any visitor
@@ -291,3 +357,8 @@ false before sending, true after).
   other localStorage-backed action in this repo has.
 - "Send to Argument Library" only ever offers a board's top-ranked idea, not
   any other idea on the board.
+- The session timer is `localStorage`-only, synced live across tabs on the
+  same browser via the `storage` event, but not account-synced — unlike
+  `wordLimitPresets`/coach materials/etc., it doesn't follow a signed-in user
+  across devices, so a countdown started on one device isn't visible on
+  another.

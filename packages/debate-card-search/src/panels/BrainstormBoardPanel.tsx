@@ -78,12 +78,36 @@
  * — the `storage` event never fires in the tab that made the write, only in
  * other tabs.
  *
+ * A "Session timer" widget closes the "an optional brainstorm-session timer"
+ * follow-up named under the "🧠 Team Brainstorm Assist" bullet in TODO.md —
+ * a squad-wide countdown (duration preset, Start/Pause/Reset) a moderator can
+ * run to time-box a sprint before reviewing boards, backed by
+ * `lib/brainstorm-session-timer.ts`'s pure state machine through
+ * `state/brainstormSessionTimer.ts`'s persistence wrapper. It's a single
+ * `localStorage`-backed record (not per-board), refreshed once a second while
+ * running and by the same `storage`-event listener as the boards above, so a
+ * countdown started in one tab is visible — live — in every other open tab.
+ *
  * @module panels/BrainstormBoardPanel
  */
 
 "use client"
 
 import { useEffect, useState } from "react"
+import {
+  BRAINSTORM_SESSION_TIMER_PRESETS_SECONDS,
+  formatBrainstormSessionTimerRemaining,
+  getBrainstormSessionTimerRemainingSeconds,
+  isBrainstormSessionTimerExpired,
+  type BrainstormSessionTimerState,
+} from "../lib/brainstorm-session-timer"
+import {
+  loadBrainstormSessionTimer,
+  pauseSessionTimer,
+  resetSessionTimer,
+  setSessionTimerDuration,
+  startSessionTimer,
+} from "../state/brainstormSessionTimer"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
@@ -176,13 +200,23 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   const [sendDraft, setSendDraft] = useState<{ topic: string; caseArea: string }>({ topic: "", caseArea: "" })
   const [sendError, setSendError] = useState<string | null>(null)
   const [sentIdeaIds, setSentIdeaIds] = useState<Set<string>>(new Set())
+  const [timer, setTimer] = useState<BrainstormSessionTimerState | null>(null)
+  const [timerNow, setTimerNow] = useState(() => Date.now())
 
   useEffect(() => {
     setTopics(listTrackedTopics())
     const initialBoards = buildBrainstormBoardsPanelView()
     setBoards(initialBoards)
     setSentIdeaIds(computeSentTopIdeaIds(initialBoards))
+    setTimer(loadBrainstormSessionTimer())
   }, [])
+
+  /** Ticks the displayed remaining time once a second while the session timer is running. */
+  useEffect(() => {
+    if (timer?.status !== "running") return
+    const interval = setInterval(() => setTimerNow(Date.now()), 1000)
+    return () => clearInterval(interval)
+  }, [timer?.status])
 
   useEffect(() => {
     if (!hasEditedContributorId && signedInContributorId) {
@@ -208,6 +242,7 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
     const handleStorage = (event: StorageEvent) => {
       if (!isBrainstormBoardLiveUpdateStorageEvent(event)) return
       refresh(topic)
+      setTimer(loadBrainstormSessionTimer())
     }
     window.addEventListener("storage", handleStorage)
     return () => window.removeEventListener("storage", handleStorage)
@@ -342,6 +377,14 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
     refresh()
   }
 
+  const handleStartTimer = () => {
+    setTimer(startSessionTimer())
+    setTimerNow(Date.now())
+  }
+  const handlePauseTimer = () => setTimer(pauseSessionTimer())
+  const handleResetTimer = () => setTimer(resetSessionTimer())
+  const handleSetTimerDuration = (durationSeconds: number) => setTimer(setSessionTimerDuration(durationSeconds))
+
   if (boards === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading brainstorm boards…</div>
   }
@@ -354,6 +397,54 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
           Submit and upvote squad ideas for an argument block, grouped into boards by category.
         </p>
       </div>
+
+      {timer && (
+        <div className="rounded-lg border border-border p-4 space-y-2">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-semibold text-foreground">Session timer</h2>
+              <p className="text-xs text-muted-foreground">Optional — time-box the sprint before reviewing boards.</p>
+            </div>
+            <span
+              className={`text-2xl font-semibold tabular-nums ${
+                isBrainstormSessionTimerExpired(timer, timerNow) ? "text-destructive" : "text-foreground"
+              }`}
+            >
+              {formatBrainstormSessionTimerRemaining(getBrainstormSessionTimerRemainingSeconds(timer, timerNow))}
+            </span>
+          </div>
+          {isBrainstormSessionTimerExpired(timer, timerNow) && (
+            <p className="text-xs font-medium text-destructive">Time's up!</p>
+          )}
+          {timer.status === "idle" && (
+            <div className="flex flex-wrap gap-2">
+              {BRAINSTORM_SESSION_TIMER_PRESETS_SECONDS.map((seconds) => (
+                <Button
+                  key={seconds}
+                  size="sm"
+                  variant={timer.durationSeconds === seconds ? "default" : "outline"}
+                  onClick={() => handleSetTimerDuration(seconds)}
+                >
+                  {Math.round(seconds / 60)} min
+                </Button>
+              ))}
+            </div>
+          )}
+          <div className="flex flex-wrap gap-2">
+            {timer.status !== "running" && <Button onClick={handleStartTimer}>Start</Button>}
+            {timer.status === "running" && (
+              <Button variant="outline" onClick={handlePauseTimer}>
+                Pause
+              </Button>
+            )}
+            {timer.status !== "idle" && (
+              <Button variant="outline" onClick={handleResetTimer}>
+                Reset
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="brainstorm-topic">Seed boards from a topic's coverage gaps (optional)</Label>
