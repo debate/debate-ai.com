@@ -4,8 +4,10 @@ import {
   DEFAULT_AWARD_CATEGORY_LABELS,
   buildAwardsAnnouncementText,
   buildCategoryLeaderboard,
+  buildContributorAwardsHallOfFame,
   buildTopContributorAwards,
   groupContributionsByKind,
+  type ContributorAward,
 } from "../src/lib/contributor-awards";
 
 const aliceCard: AttributedContribution = {
@@ -152,6 +154,49 @@ describe("buildTopContributorAwards", () => {
     const tiedB: AttributedContribution = { ...bobCard, id: "a-card", contributorId: "amy" };
     const awards = buildTopContributorAwards([tiedA, tiedB]);
     expect(awards[0].contributorId).toBe("amy");
+  });
+});
+
+describe("buildContributorAwardsHallOfFame", () => {
+  const day1: ContributorAward[] = [
+    { kind: "card", label: "Best Evidence Finder", contributorId: "alice", contributionCount: 1, totalHelpfulnessScore: 5 },
+    { kind: "summary", label: "Best Explainer", contributorId: "carol", contributionCount: 1, totalHelpfulnessScore: 3 },
+  ];
+  const day2: ContributorAward[] = [
+    { kind: "card", label: "Best Evidence Finder", contributorId: "alice", contributionCount: 1, totalHelpfulnessScore: 4 },
+    { kind: "refutation", label: "Best Refutation", contributorId: "eve", contributionCount: 1, totalHelpfulnessScore: 2 },
+  ];
+
+  it("returns an empty list for no announced awards", () => {
+    expect(buildContributorAwardsHallOfFame([])).toEqual([]);
+  });
+
+  it("aggregates total wins per contributor across multiple days", () => {
+    const hallOfFame = buildContributorAwardsHallOfFame([...day1, ...day2]);
+    expect(hallOfFame).toEqual([
+      { contributorId: "alice", totalWins: 2, winsByKind: { card: 2 } },
+      { contributorId: "carol", totalWins: 1, winsByKind: { summary: 1 } },
+      { contributorId: "eve", totalWins: 1, winsByKind: { refutation: 1 } },
+    ]);
+  });
+
+  it("ranks by total wins descending, tie-broken by contributorId ascending", () => {
+    const hallOfFame = buildContributorAwardsHallOfFame([...day1, ...day2]);
+    expect(hallOfFame.map((e) => e.contributorId)).toEqual(["alice", "carol", "eve"]);
+  });
+
+  it("breaks down wins by category for a contributor who has won more than one kind", () => {
+    const mixed: ContributorAward[] = [
+      { kind: "card", label: "Best Evidence Finder", contributorId: "alice", contributionCount: 1, totalHelpfulnessScore: 5 },
+      { kind: "summary", label: "Best Explainer", contributorId: "alice", contributionCount: 1, totalHelpfulnessScore: 5 },
+    ];
+    const hallOfFame = buildContributorAwardsHallOfFame(mixed);
+    expect(hallOfFame).toEqual([{ contributorId: "alice", totalWins: 2, winsByKind: { card: 1, summary: 1 } }]);
+  });
+
+  it("omits a contributor who has never won rather than listing a zero-count entry", () => {
+    const hallOfFame = buildContributorAwardsHallOfFame(day1);
+    expect(hallOfFame.find((e) => e.contributorId === "bob")).toBeUndefined();
   });
 });
 

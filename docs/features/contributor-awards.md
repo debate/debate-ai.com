@@ -34,6 +34,11 @@ is omitted rather than shown with no winner.
   instead of the live standings for the rest of the day — a later
   contribution that would change the live standings doesn't retroactively
   change an already-announced result.
+- **🏅 Hall of Fame** — every announced day's awards aggregated into one
+  all-time ranking: each contributor's total win count plus a per-category
+  breakdown (e.g. "Best Evidence Finder ×3"), ranked highest total first and
+  tie-broken by contributor id. Shown once at least one day has been
+  announced; a contributor who has never won an award doesn't appear.
 - **Announced history** — every previously announced day's frozen standings,
   oldest first.
 
@@ -53,7 +58,10 @@ state/contributions.ts (localStorage)
                                                        under a separate
                                                        "contributorAwardAnnouncements" key
       → listAnnouncedContributorAwards() / getAnnouncedContributorAwards()
-  → panels/ContributorAwardsPanel.tsx (live standings, announce action, history)
+      → buildContributorAwardsHallOfFame()        — lib/contributor-awards.ts; aggregates every
+                                                       announced day's awards into one all-time
+                                                       per-contributor win ranking
+  → panels/ContributorAwardsPanel.tsx (live standings, announce action, Hall of Fame, history)
   → apps/debate-ai.com/app/cards/awards/page.tsx (mounts the panel as a route)
 
 state/live-update.ts#isContributorAwardsLiveUpdateStorageEvent
