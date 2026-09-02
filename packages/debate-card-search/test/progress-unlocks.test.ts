@@ -118,7 +118,13 @@ describe("buildContributorUnlockStatus", () => {
       tier: "novice",
       unlockedSkillLevel: "novice",
       badges: [],
-      nextTier: { tier: "apprentice", contributionsNeeded: 3, helpfulnessScoreNeeded: 15, completedTasksNeeded: 3 },
+      nextTier: {
+        tier: "apprentice",
+        contributionsNeeded: 3,
+        helpfulnessScoreNeeded: 15,
+        completedTasksNeeded: 3,
+        progressRatio: 0.4,
+      },
       completedTaskCount: 0,
     });
   });
@@ -132,6 +138,7 @@ describe("buildContributorUnlockStatus", () => {
       contributionsNeeded: 0,
       helpfulnessScoreNeeded: 20,
       completedTasksNeeded: 3,
+      progressRatio: 0.2,
     });
   });
 
@@ -144,6 +151,7 @@ describe("buildContributorUnlockStatus", () => {
       contributionsNeeded: 15,
       helpfulnessScoreNeeded: 200,
       completedTasksNeeded: 12,
+      progressRatio: 0.4,
     });
   });
 
@@ -158,6 +166,35 @@ describe("buildContributorUnlockStatus", () => {
   it("uses the default requirement table when none is supplied", () => {
     const status = buildContributorUnlockStatus(makeStats({ contributionCount: 15, totalHelpfulnessScore: 100 }));
     expect(status.tier).toBe(computeContributorTier(makeStats({ contributionCount: 15, totalHelpfulnessScore: 100 }), DEFAULT_UNLOCK_TIER_REQUIREMENTS));
+  });
+
+  describe("nextTier.progressRatio", () => {
+    it("is 0 for a contributor with no progress toward either path", () => {
+      const status = buildContributorUnlockStatus(makeStats());
+      expect(status.nextTier?.progressRatio).toBe(0);
+    });
+
+    it("takes the lesser of the contribution and score dimensions on the AND path", () => {
+      const status = buildContributorUnlockStatus(makeStats({ contributionCount: 5, totalHelpfulnessScore: 5 }));
+      // contributions: 5/5 = 1, score: 5/25 = 0.2 — the AND path is capped by the weaker dimension.
+      expect(status.nextTier?.progressRatio).toBe(0.2);
+    });
+
+    it("takes whichever of the two qualifying paths is furthest along", () => {
+      const status = buildContributorUnlockStatus(makeStats({ completedTaskCount: 8, contributionCount: 15, totalHelpfulnessScore: 100 }));
+      // completed-task path: 8/20 = 0.4 vs. contribution/score path: min(15/30, 100/300) = 0.333...
+      expect(status.nextTier?.progressRatio).toBeCloseTo(0.4);
+    });
+
+    it("is clamped to 1 rather than overshooting when a dimension is already cleared", () => {
+      const status = buildContributorUnlockStatus(makeStats({ contributionCount: 200, totalHelpfulnessScore: 1 }));
+      expect(status.nextTier?.progressRatio).toBeLessThanOrEqual(1);
+    });
+
+    it("is null once a contributor reaches the top tier", () => {
+      const status = buildContributorUnlockStatus(makeStats({ contributionCount: 40, totalHelpfulnessScore: 400 }));
+      expect(status.nextTier).toBeNull();
+    });
   });
 });
 
