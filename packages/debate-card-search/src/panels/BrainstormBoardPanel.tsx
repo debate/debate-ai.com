@@ -48,6 +48,21 @@
  * the same board (not just the top-ranked one), so two lower-ranked
  * duplicates can be merged directly into each other.
  *
+ * A "Send to Argument Library" action on each board's top-ranked idea closes
+ * the "a one-click 'send top idea to Argument Library' action" follow-up
+ * named under the "🧠 Team Brainstorm Assist" bullet in TODO.md. Clicking it
+ * opens an inline Topic/Case area form (the Argument Library's own required
+ * fields, which a `BrainstormIdea` doesn't carry) defaulting Topic to
+ * whichever topic is currently selected above; confirming calls the new
+ * `state/brainstormIdeas.ts` `sendBrainstormIdeaToArgumentLibrary`, which
+ * saves the idea as a `block`-kind `EvidenceLibraryEntry` through the
+ * already-persisted `evidenceLibraryEntries.ts` store — the same store
+ * `EvidenceLibraryPanel`/`ArgumentLibraryPanel` already read. Once sent, that
+ * idea's action is replaced with a "✓ In Argument Library" badge (via
+ * `isBrainstormIdeaInArgumentLibrary`) rather than offering to send it again,
+ * though re-confirming would just overwrite the same entry (the entry's id
+ * is deterministic from the idea's own id).
+ *
  * An optional `signedInContributorId` prop (mirroring `TaskInboxPanel`'s
  * identical convention) prefills the idea form's "Contributor ID" field's
  * *initial* value only — never overwrites a visitor's own edit, and a
@@ -79,8 +94,10 @@ import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   buildBrainstormBoardsPanelView,
   buildBrainstormBoardsPanelViewForTopic,
+  isBrainstormIdeaInArgumentLibrary,
   mergePersistedBrainstormIdeas,
   saveBrainstormIdea,
+  sendBrainstormIdeaToArgumentLibrary,
   upvotePersistedBrainstormIdea,
 } from "../state/brainstormIdeas"
 import { listTrackedTopics } from "../state/trackedArguments"
@@ -106,6 +123,23 @@ const EMPTY_DRAFT: IdeaDraft = { argBlock: "", category: "argument", contributor
 
 function boardKey(board: BrainstormBoard): string {
   return `${board.argBlock}::${board.category}`
+}
+
+/**
+ * Every board's top-ranked idea id that's already been sent to the Argument
+ * Library (`isBrainstormIdeaInArgumentLibrary`), so the panel can swap that
+ * idea's "Send to Argument Library" action for a confirmation badge instead
+ * of offering to send it again. Only the top idea is checked — sending is
+ * only ever offered for a board's top idea in the first place.
+ */
+function computeSentTopIdeaIds(boards: BrainstormBoard[]): Set<string> {
+  return new Set(
+    boards
+      .map((board) => board.ideas[0])
+      .filter((idea): idea is BrainstormBoard["ideas"][number] => idea !== undefined)
+      .filter((idea) => isBrainstormIdeaInArgumentLibrary(idea.id))
+      .map((idea) => idea.id),
+  )
 }
 
 export interface BrainstormBoardPanelProps {
@@ -138,10 +172,16 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   const [aiErrorByBoard, setAiErrorByBoard] = useState<Record<string, string>>({})
   const [topics, setTopics] = useState<string[]>([])
   const [topic, setTopic] = useState("")
+  const [sendOpenBoardKey, setSendOpenBoardKey] = useState<string | null>(null)
+  const [sendDraft, setSendDraft] = useState<{ topic: string; caseArea: string }>({ topic: "", caseArea: "" })
+  const [sendError, setSendError] = useState<string | null>(null)
+  const [sentIdeaIds, setSentIdeaIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     setTopics(listTrackedTopics())
-    setBoards(buildBrainstormBoardsPanelView())
+    const initialBoards = buildBrainstormBoardsPanelView()
+    setBoards(initialBoards)
+    setSentIdeaIds(computeSentTopIdeaIds(initialBoards))
   }, [])
 
   useEffect(() => {
@@ -153,7 +193,9 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   const refresh = (activeTopic = topic) => {
     setTopics(listTrackedTopics())
     const trimmed = activeTopic.trim()
-    setBoards(trimmed ? buildBrainstormBoardsPanelViewForTopic(trimmed) : buildBrainstormBoardsPanelView())
+    const nextBoards = trimmed ? buildBrainstormBoardsPanelViewForTopic(trimmed) : buildBrainstormBoardsPanelView()
+    setBoards(nextBoards)
+    setSentIdeaIds(computeSentTopIdeaIds(nextBoards))
   }
 
   /**
@@ -271,6 +313,32 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   const handleMergeInto = (duplicateId: string, targetId: string) => {
     if (!targetId || targetId === duplicateId) return
     mergePersistedBrainstormIdeas(targetId, duplicateId)
+    refresh()
+  }
+
+  const handleOpenSend = (board: BrainstormBoard) => {
+    setSendOpenBoardKey(boardKey(board))
+    setSendDraft({ topic, caseArea: "" })
+    setSendError(null)
+  }
+
+  const handleCancelSend = () => {
+    setSendOpenBoardKey(null)
+    setSendError(null)
+  }
+
+  const handleConfirmSend = (board: BrainstormBoard) => {
+    const topIdea = board.ideas[0]
+    if (!topIdea) return
+    const sendTopic = sendDraft.topic.trim()
+    const caseArea = sendDraft.caseArea.trim()
+    if (!sendTopic || !caseArea) {
+      setSendError("Topic and case area are both required.")
+      return
+    }
+    sendBrainstormIdeaToArgumentLibrary(topIdea, sendTopic, caseArea)
+    setSendOpenBoardKey(null)
+    setSendError(null)
     refresh()
   }
 
@@ -409,7 +477,7 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
                 <p className="mb-2 text-xs text-muted-foreground">No ideas submitted yet.</p>
               )}
               <div className="space-y-2">
-                {board.ideas.map((idea) => (
+                {board.ideas.map((idea, index) => (
                   <div
                     key={idea.id}
                     className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2"
@@ -443,6 +511,14 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
                           </SelectContent>
                         </Select>
                       )}
+                      {index === 0 &&
+                        (sentIdeaIds.has(idea.id) ? (
+                          <Badge variant="outline">✓ In Argument Library</Badge>
+                        ) : (
+                          <Button size="sm" variant="outline" onClick={() => handleOpenSend(board)}>
+                            Send to Argument Library
+                          </Button>
+                        ))}
                       <Button size="sm" variant="outline" onClick={() => handleUpvote(idea.id)}>
                         Upvote ({idea.upvotes})
                       </Button>
@@ -450,6 +526,42 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
                   </div>
                 ))}
               </div>
+              {sendOpenBoardKey === boardKey(board) && (
+                <div className="mt-3 space-y-2 rounded-md border border-border p-3">
+                  <p className="text-xs text-muted-foreground">
+                    Send this board's top idea to the Argument Library as a reusable analytic block.
+                  </p>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <div className="space-y-1">
+                      <Label htmlFor={`send-topic-${boardKey(board)}`}>Topic</Label>
+                      <Input
+                        id={`send-topic-${boardKey(board)}`}
+                        value={sendDraft.topic}
+                        onChange={(e) => setSendDraft((prev) => ({ ...prev, topic: e.target.value }))}
+                        placeholder="Energy Policy"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor={`send-case-area-${boardKey(board)}`}>Case area</Label>
+                      <Input
+                        id={`send-case-area-${boardKey(board)}`}
+                        value={sendDraft.caseArea}
+                        onChange={(e) => setSendDraft((prev) => ({ ...prev, caseArea: e.target.value }))}
+                        placeholder="Aff"
+                      />
+                    </div>
+                  </div>
+                  {sendError && <p className="text-xs text-destructive">{sendError}</p>}
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={() => handleConfirmSend(board)}>
+                      Confirm send
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={handleCancelSend}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>

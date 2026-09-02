@@ -19,6 +19,7 @@
 import { getUnderCoveredArguments, type TopicCoverageReport } from "./topic-coverage";
 import { scorePopularitySignal } from "./community-rating";
 import { scoreUniqueness } from "./llm-card-scoring";
+import { computeWordCount, type EvidenceLibraryEntry } from "./shared-evidence-library";
 
 /** The kind of prep-session brainstorming being requested. */
 export type BrainstormCategory = "argument" | "impact_framing" | "frontline" | "response";
@@ -194,6 +195,43 @@ export function mergeBrainstormIdeas(target: BrainstormIdea, duplicate: Brainsto
     throw new Error("Cannot merge brainstorm ideas from different boards.");
   }
   return { ...target, upvotes: target.upvotes + duplicate.upvotes };
+}
+
+/**
+ * Converts a brainstorm idea into a `block`-kind evidence-library entry —
+ * the "a one-click 'send top idea to Argument Library' action" follow-up
+ * named under the "🧠 Team Brainstorm Assist" bullet in TODO.md. A
+ * brainstormed idea isn't cut from an outside source, so it maps onto the
+ * same "team-drafted reusable analytic block" `EvidenceEntryKind` a coach
+ * material or drafted analytic uses, with a blank `cite` (mirroring
+ * `EvidenceLibraryEntry.cite`'s documented convention for a `block`) and the
+ * idea's own category label folded in as a tag so the sent block can still
+ * be found via the category it was brainstormed under. `topic`/`caseArea`
+ * aren't tracked on a `BrainstormIdea`, so the caller supplies them (the
+ * Argument Library's own required fields on every entry). The entry's `id`
+ * is deterministic from the idea's own id, so sending the same idea twice
+ * overwrites the same library entry (an upsert, via
+ * `saveEvidenceLibraryEntry`) instead of creating a duplicate. Deliberately
+ * pure/deterministic — no timestamp is stamped here; the caller stamps
+ * `createdAt`, mirroring `EvidenceLibraryEntry.createdAt`'s documented
+ * "stamped by the submitting call site" convention.
+ */
+export function buildEvidenceEntryFromBrainstormIdea(
+  idea: BrainstormIdea,
+  topic: string,
+  caseArea: string,
+): EvidenceLibraryEntry {
+  return {
+    id: `brainstorm-${idea.id}`,
+    kind: "block",
+    topic,
+    caseArea,
+    argBlock: idea.argBlock,
+    tags: [CATEGORY_LABELS[idea.category]],
+    text: idea.text,
+    cite: "",
+    wordCount: computeWordCount(idea.text),
+  };
 }
 
 /** Renders a short summary line for a brainstorm board, for a prep-session panel. */

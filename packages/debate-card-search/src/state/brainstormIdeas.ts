@@ -41,8 +41,10 @@
  * @module state/brainstormIdeas
  */
 
-import { buildBrainstormBoard, buildBrainstormBoardsForCoverageGaps, groupIdeasByBoard, mergeBrainstormIdeas, type BrainstormBoard, type BrainstormIdea } from "../lib/team-brainstorm-assist";
+import { buildBrainstormBoard, buildBrainstormBoardsForCoverageGaps, buildEvidenceEntryFromBrainstormIdea, groupIdeasByBoard, mergeBrainstormIdeas, type BrainstormBoard, type BrainstormIdea } from "../lib/team-brainstorm-assist";
+import type { EvidenceLibraryEntry } from "../lib/shared-evidence-library";
 import { buildPersistedTopicCoverageReport } from "./trackedArguments";
+import { getEvidenceLibraryEntry, saveEvidenceLibraryEntry } from "./evidenceLibraryEntries";
 
 const STORAGE_KEY = "brainstormIdeas";
 
@@ -149,4 +151,49 @@ export function mergePersistedBrainstormIdeas(targetId: string, duplicateId: str
   if (!target || !duplicate) return;
   saveBrainstormIdea(mergeBrainstormIdeas(target, duplicate));
   deleteBrainstormIdea(duplicateId);
+}
+
+/**
+ * Deterministic id a sent brainstorm idea's Argument Library entry is stored
+ * under — see `buildEvidenceEntryFromBrainstormIdea`.
+ */
+function argumentLibraryEntryIdForIdea(ideaId: string): string {
+  return `brainstorm-${ideaId}`;
+}
+
+/**
+ * Whether a brainstorm idea has already been sent to the Argument Library —
+ * the "already sent" check the panel uses to swap the "Send to Argument
+ * Library" action for a confirmation badge instead of offering to send the
+ * same idea again.
+ */
+export function isBrainstormIdeaInArgumentLibrary(ideaId: string): boolean {
+  return getEvidenceLibraryEntry(argumentLibraryEntryIdForIdea(ideaId)) !== undefined;
+}
+
+/**
+ * Sends a brainstorm idea to the Argument Library — the "a one-click 'send
+ * top idea to Argument Library' action" follow-up named under the "🧠 Team
+ * Brainstorm Assist" bullet in TODO.md. Composes the pure
+ * `buildEvidenceEntryFromBrainstormIdea` with this idea's own id-derived
+ * entry id, stamps `createdAt` here (see that function's docs on why it
+ * doesn't stamp one itself), and saves it through the existing
+ * `evidenceLibraryEntries.ts` store via `saveEvidenceLibraryEntry` — the
+ * exact same store `EvidenceLibraryPanel`/`ArgumentLibraryPanel` already
+ * read, so a sent idea shows up in the Argument Library immediately, filed
+ * under `topic`/`caseArea` like any other entry. Sending the same idea again
+ * (same `idea.id`) overwrites its existing entry rather than creating a
+ * duplicate, since `saveEvidenceLibraryEntry` upserts by id.
+ */
+export function sendBrainstormIdeaToArgumentLibrary(
+  idea: BrainstormIdea,
+  topic: string,
+  caseArea: string,
+): EvidenceLibraryEntry {
+  const entry: EvidenceLibraryEntry = {
+    ...buildEvidenceEntryFromBrainstormIdea(idea, topic, caseArea),
+    createdAt: Date.now(),
+  };
+  saveEvidenceLibraryEntry(entry);
+  return entry;
 }
