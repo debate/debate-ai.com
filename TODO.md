@@ -6,6 +6,48 @@
 _No task currently in progress._
 
 ### Completed
+- **Progress Unlocks — unlock celebration toast (idea "🔓 Progress
+  Unlocks").** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and every tool is already reachable from the
+  Tools page and CardMirror's command palette, and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area, so this slice picked the "🔓 Progress Unlocks" bullet's own
+  next-named follow-up: "a small unlock celebration toast when a tier/badge
+  is earned." `ProgressUnlocksPanel` now shows a dismissible banner
+  ("🎉 New badge earned: …") the moment the signed-in visitor's own row
+  newly earns a tier or streak badge. "Newly earned" is a diff against a
+  persisted per-contributor baseline rather than a live event stream: a new
+  `state/unlockCelebrations.ts` stores each contributor's last-seen badge
+  list in localStorage (`unlockCelebrationSeenBadges`), and its
+  `recordAndGetNewlyEarnedBadges(contributorId, currentBadges)` diffs the
+  roster's current badges against that baseline via the new pure
+  `lib/unlock-celebration.ts#getNewlyEarnedBadges`, then immediately
+  overwrites the baseline with the current badges so the same badge is only
+  ever reported once (a re-render or a cross-tab live-update refresh with
+  the same data reports nothing new). A contributor with no baseline
+  recorded yet — the first time this ran for them — never celebrates on
+  that first sight even if they already have badges: an `undefined`
+  baseline means "nothing to compare", not "everything is new", so an
+  existing contributor's badges don't suddenly "celebrate" the moment this
+  feature ships. No new tier/badge/streak rule was introduced; this only
+  surfaces a transition in the existing, already-merged `badges` list from
+  `lib/unlock-streak-status.ts`. See `docs/features/progress-unlocks.md`'s
+  new "Unlock celebration toast" section. Vitest-covered:
+  `packages/debate-card-search/test/unlock-celebration.test.ts` (the pure
+  diff/message logic — no baseline, unchanged badges, a newly added badge,
+  an empty-but-defined baseline, and the message singular/plural phrasing)
+  and `test/unlockCelebrations.test.ts` (the persisted baseline —
+  first-sight suppression, no repeat reporting of an already-surfaced
+  badge, and independent per-contributor baselines). Verified with
+  `bun run test` (219 test files, 3669 tests, all passing), `bun run
+  typecheck` (root, all 13 typechecked packages, clean), and a full
+  `bun run build` (the whole monorepo build, including `debate-ai-web`'s
+  production build) — all pass. No lint script/config exists in this repo
+  to run.
 - **Progress Unlocks — visual next-tier progress bar (`progress-unlocks.md`
   follow-up).** Another repeat of the standing prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL... with
@@ -12752,7 +12794,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🧩 **Community Research Hub** (`/community-hub`) — a personalized "for you" section; fold its directory into the News Stream feed instead of a separate destination; a quick-jump search bar across every listed space.
 * 🏅 **Contribution Leaderboard** (`/cards/leaderboard`) — the range-filter follow-up is done: a "Range" dropdown (All time / This week / This month) re-scopes the whole roster — scores and completed-task counts alike — to that trailing window (`lib/contribution-leaderboard.ts#filterContributionsByRange`/`isWithinLeaderboardRange`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Range filter" section. The per-category follow-up is also now done: a "Category" dropdown (All categories / Cards / Summaries / Highlights / Annotations / Original arguments / Refutations) re-scopes the roster to one contribution kind at a time, composing with the Range filter (`lib/contribution-leaderboard.ts#filterContributionsByKind`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Category filter" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor profile drill-down page) if one becomes worth doing.
 * 🎮 **Gamified Quests** (`/cards/streaks`) — a streak-freeze/grace-day mechanic for a missed day; a shareable streak-badge image; an opt-in reminder notification before a streak lapses.
-* 🔓 **Progress Unlocks** (`/cards/progress`) — the visual next-tier progress bar follow-up is done: the "Next tier" column now leads with a filled `MeterBar` meter instead of a text-only sentence, with the needed-counts text kept underneath as detail (`lib/progress-unlocks.ts#getNextTierProgress`'s new `progressRatio` field) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Next-tier progress bar" section. Next: a small unlock celebration toast when a tier/badge is earned; a badge showcase on a contributor's profile.
+* 🔓 **Progress Unlocks** (`/cards/progress`) — the visual next-tier progress bar follow-up is done: the "Next tier" column now leads with a filled `MeterBar` meter instead of a text-only sentence, with the needed-counts text kept underneath as detail (`lib/progress-unlocks.ts#getNextTierProgress`'s new `progressRatio` field) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Next-tier progress bar" section. The unlock-celebration-toast follow-up is also now done: a dismissible "🎉 New badge earned: …" banner shows on the signed-in visitor's own row the moment they newly earn a tier or streak badge, diffed against a persisted per-contributor "last-seen badges" baseline (`state/unlockCelebrations.ts`) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Unlock celebration toast" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a badge showcase on a contributor's profile) if one becomes worth doing.
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — batch-score an uploaded set of cards at once; a per-contributor score-trend chart over time; an inline score badge shown directly in Evidence Library search results.
 * 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — a topic-comparison view across the whole team; personal goal-setting UI; a printable/exportable progress report.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.

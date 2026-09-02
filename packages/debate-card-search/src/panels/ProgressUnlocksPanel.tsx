@@ -26,6 +26,13 @@
  * live-update mechanism" Known gap noted in `shared-flow-sync.md`, for this
  * panel.
  *
+ * When `signedInContributorId` is given, the panel also shows a small
+ * dismissible celebration banner the moment that visitor's own row newly
+ * earns a tier or streak badge (`state/unlockCelebrations.ts`'s
+ * `recordAndGetNewlyEarnedBadges`, diffed against a persisted "last-seen
+ * badges" baseline via `lib/unlock-celebration.ts`) — the "🔓 Progress
+ * Unlocks" bullet's own next-named follow-up in TODO.md.
+ *
  * @module panels/ProgressUnlocksPanel
  */
 
@@ -33,6 +40,7 @@
 
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
+import { Button } from "debate-ui/src/primitives/button"
 import { MeterBar } from "debate-ui/src/panels/panel-shell"
 import {
   Table,
@@ -44,7 +52,9 @@ import {
 } from "debate-ui/src/primitives/table"
 import { buildUnlockStatusRoster } from "../lib/unlock-streak-status"
 import { isOwnContributorRow } from "../lib/session-identity"
+import { buildUnlockCelebrationMessage } from "../lib/unlock-celebration"
 import { isProgressUnlocksLiveUpdateStorageEvent } from "../state/live-update"
+import { recordAndGetNewlyEarnedBadges } from "../state/unlockCelebrations"
 import type { ContributorUnlockStatusWithStreak } from "../lib/unlock-streak-status"
 
 /** Today's UTC calendar day as `YYYY-MM-DD`, the `dayKey` format used throughout `gamified-quests.ts`. */
@@ -84,10 +94,26 @@ export interface ProgressUnlocksPanelProps {
 
 export function ProgressUnlocksPanel({ signedInContributorId }: ProgressUnlocksPanelProps = {}) {
   const [roster, setRoster] = useState<ContributorUnlockStatusWithStreak[] | null>(null)
+  const [newlyEarnedBadges, setNewlyEarnedBadges] = useState<string[]>([])
 
   useEffect(() => {
     setRoster(buildUnlockStatusRoster(todayUtcDayKey()))
   }, [])
+
+  /**
+   * Checks the signed-in visitor's own row for newly earned badges once the
+   * roster loads (or refreshes). `recordAndGetNewlyEarnedBadges` also
+   * updates the persisted "last-seen" baseline as a side effect, so a
+   * badge is only ever reported once — a later re-render or live-update
+   * refresh with the same badges reports nothing new.
+   */
+  useEffect(() => {
+    if (!signedInContributorId || roster === null) return
+    const ownRow = roster.find((status) => isOwnContributorRow(status.contributorId, signedInContributorId))
+    if (!ownRow) return
+    const newlyEarned = recordAndGetNewlyEarnedBadges(ownRow.contributorId, ownRow.badges)
+    if (newlyEarned.length > 0) setNewlyEarnedBadges(newlyEarned)
+  }, [roster, signedInContributorId])
 
   /**
    * Live-update the roster when another browser tab records a contribution,
@@ -123,6 +149,14 @@ export function ProgressUnlocksPanel({ signedInContributorId }: ProgressUnlocksP
         Every contributor's unlock tier, badges, and streak — and how far they are from the next
         tier.
       </p>
+      {newlyEarnedBadges.length > 0 && (
+        <div className="mb-4 flex items-center justify-between gap-3 rounded-md border border-primary/30 bg-primary/10 p-3 text-sm">
+          <span>{buildUnlockCelebrationMessage(newlyEarnedBadges)}</span>
+          <Button variant="ghost" size="sm" onClick={() => setNewlyEarnedBadges([])}>
+            Dismiss
+          </Button>
+        </div>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
