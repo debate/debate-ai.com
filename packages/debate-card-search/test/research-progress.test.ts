@@ -3,8 +3,10 @@ import {
   buildContributorProgress,
   buildProgressSummaryText,
   buildResearchProgressBoard,
+  buildResearchProgressReportText,
   buildTopicProgress,
   groupAssignmentsByContributor,
+  researchProgressReportFilename,
   type TrackedTopicAssignment,
 } from "../src/lib/research-progress";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
@@ -162,5 +164,42 @@ describe("buildProgressSummaryText", () => {
     const progress = buildContributorProgress("alice", [aliceCard, aliceSummary], []);
     const text = buildProgressSummaryText(progress);
     expect(text).toContain("2 contributions");
+  });
+});
+
+describe("buildResearchProgressReportText", () => {
+  it("returns a placeholder message for an empty roster", () => {
+    const text = buildResearchProgressReportText([]);
+    expect(text).toBe("Research Progress Report\n\nNo contributors have any recorded progress yet.");
+  });
+
+  it("renders a summary line and per-topic breakdown for each contributor", () => {
+    const board = buildResearchProgressBoard([aliceCard], [aliceWarming, aliceStates, aliceCourts]);
+    const text = buildResearchProgressReportText(board);
+
+    expect(text).toContain("Research Progress Report");
+    expect(text).toContain("alice: 1 contribution");
+    expect(text).toContain("Immigration: 1/2 (50%)");
+    expect(text).toContain("Healthcare: 1/1 (100%)");
+  });
+
+  it("renders a 'no topic assignments' line for a contributor with contributions but no assignments", () => {
+    const board = buildResearchProgressBoard([aliceCard], []);
+    const text = buildResearchProgressReportText(board);
+    expect(text).toContain("No topic assignments");
+  });
+
+  it("separates multiple contributors' sections with a blank line", () => {
+    const board = buildResearchProgressBoard([aliceCard], [aliceWarming, bobStates]);
+    const text = buildResearchProgressReportText(board);
+    const [, body] = text.split("\n\n");
+    expect(body).toContain("alice:");
+    expect(text.split("\n\n").some((section) => section.startsWith("bob:"))).toBe(true);
+  });
+});
+
+describe("researchProgressReportFilename", () => {
+  it("returns a fixed filename", () => {
+    expect(researchProgressReportFilename()).toBe("research-progress-report.txt");
   });
 });

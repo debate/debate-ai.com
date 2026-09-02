@@ -190,3 +190,40 @@ export function buildProgressSummaryText(progress: ContributorProgress): string 
 
   return `${progress.contributorId}: ${contributionPart}; ${taskPart}`;
 }
+
+/**
+ * Renders the full progress board as a single plain-text report, one section
+ * per contributor: `buildProgressSummaryText`'s summary line followed by an
+ * indented per-topic completion breakdown — the "printable/exportable
+ * progress report" follow-up named under the "📈 Research Progress Tracking"
+ * bullet in TODO.md. Mirrors every other completed report/export follow-up
+ * in this repo (e.g. `pre-round-briefing.ts#buildPreRoundBriefingText`): a
+ * pure function handed the already-built board, with no I/O of its own.
+ */
+export function buildResearchProgressReportText(roster: ContributorProgress[]): string {
+  if (roster.length === 0) {
+    return "Research Progress Report\n\nNo contributors have any recorded progress yet.";
+  }
+
+  const body = roster
+    .map((progress) => {
+      const topicLines =
+        progress.topics.length > 0
+          ? progress.topics
+              .map(
+                (topic) =>
+                  `  - ${topic.topic}: ${topic.completedTaskCount}/${topic.assignedTaskCount} (${Math.round(topic.completionRate * 100)}%)`,
+              )
+              .join("\n")
+          : "  - No topic assignments";
+      return `${buildProgressSummaryText(progress)}\n${topicLines}`;
+    })
+    .join("\n\n");
+
+  return `Research Progress Report\n\n${body}`;
+}
+
+/** A fixed filename for a research-progress report download — the report covers the whole roster, not a single round or topic, so there's no id to key it on. */
+export function researchProgressReportFilename(): string {
+  return "research-progress-report.txt";
+}
