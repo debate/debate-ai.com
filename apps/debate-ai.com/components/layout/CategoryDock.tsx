@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Activity, Bell, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
+import { Activity, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
@@ -18,6 +18,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
@@ -29,6 +30,7 @@ import { themeNames, themeColors, formatThemeName, useThemeState } from "@/compo
 import { LoginDialog } from "@/components/layout/LoginDialog"
 import { authClient } from "@/lib/auth/client"
 import { useSession } from "@/lib/hooks/useSession"
+import { TOOL_GROUPS } from "@/app/tools/tool-groups"
 import {
   IconCollectiveMind,
   IconFlowFlower,
@@ -157,6 +159,27 @@ function SettingsMenu({
         <Image src={IconTools} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
         All Tools
       </DropdownMenuItem>
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <Image src={IconTools} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
+          Tools
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent className="w-56 max-h-[min(500px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
+          {TOOL_GROUPS.map((group) => (
+            <DropdownMenuSub key={group.heading}>
+              <DropdownMenuSubTrigger>{group.heading}</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="w-64 max-h-[min(500px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
+                {group.tools.map((tool) => (
+                  <DropdownMenuItem key={tool.href} onSelect={(e) => { e.preventDefault(); router.push(tool.href) }}>
+                    <tool.icon className="mr-2 h-4 w-4 shrink-0" />
+                    {tool.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          ))}
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/notifications") }}>
         <Bell className="mr-2 h-4 w-4" />
@@ -181,10 +204,25 @@ function SettingsMenu({
           Theme
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent className="w-56 max-h-[min(400px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
-          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
-            {themeState.isDark ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}
-            {themeState.isDark ? "Switch to Light" : "Switch to Dark"}
+          <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.setMode("light") }} className={cn("cursor-pointer", themeState.mode === "light" && "bg-accent")}>
+            <Sun className="mr-2 h-4 w-4" />
+            Light
+            {themeState.mode === "light" && <span className="ml-auto text-xs">✓</span>}
           </DropdownMenuItem>
+          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.setMode("dark") }} className={cn("cursor-pointer", themeState.mode === "dark" && "bg-accent")}>
+            <Moon className="mr-2 h-4 w-4" />
+            Dark
+            {themeState.mode === "dark" && <span className="ml-auto text-xs">✓</span>}
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.setMode("system") }} className={cn("cursor-pointer", themeState.mode === "system" && "bg-accent")}>
+            <Monitor className="mr-2 h-4 w-4" />
+            System
+            {themeState.mode === "system" && <span className="ml-auto text-xs">✓</span>}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel>Color Theme</DropdownMenuLabel>
+          <div className="text-xs text-muted-foreground px-2 py-1.5">Current: {formatThemeName(themeState.colorTheme)}</div>
           <DropdownMenuSeparator />
           {themeNames.map((name) => {
             const colors = themeColors[name]

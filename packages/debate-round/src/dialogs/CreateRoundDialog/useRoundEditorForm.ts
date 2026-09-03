@@ -54,6 +54,11 @@ export interface RoundEditorFormState {
   winner: "aff" | "neg" | "none";
   setWinner: (v: "aff" | "neg" | "none") => void;
 
+  /** Flows belonging to the round being edited (empty when creating a new round). */
+  roundFlows: Flow[];
+  /** Selects a flow tab and closes the dialog. */
+  selectRoundFlow: (flow: Flow) => void;
+
   /** Submit handler – validates and creates/updates the round. */
   handleSubmit: () => void;
 }
@@ -116,8 +121,22 @@ export function useRoundEditorForm(
   const [isPrivate, setIsPrivate] = useState(false);
   const [winner, setWinner] = useState<"aff" | "neg" | "none">("none");
 
-  const { createRound, updateRound, flows, setFlows, rounds } = useFlowStore();
+  const { createRound, updateRound, flows, setFlows, rounds, setSelected } = useFlowStore();
   const router = useRouter();
+
+  /** Flows belonging to the round being edited. */
+  const roundFlows = roundId
+    ? flows.filter((f) => rounds.find((r) => r.id === roundId)?.flowIds.includes(f.id))
+    : [];
+
+  /** Selects a flow tab and closes the dialog. */
+  function selectRoundFlow(flow: Flow) {
+    const flowIndex = flows.findIndex((f) => f.id === flow.id);
+    if (flowIndex !== -1) {
+      setSelected(flowIndex);
+      onOpenChange(false);
+    }
+  }
 
   const handleSetRoundLevel = (level: string) => {
     setRoundLevel(level);
@@ -422,6 +441,8 @@ export function useRoundEditorForm(
     setIsPrivate,
     winner,
     setWinner,
+    roundFlows,
+    selectRoundFlow,
     handleSubmit,
   };
 }

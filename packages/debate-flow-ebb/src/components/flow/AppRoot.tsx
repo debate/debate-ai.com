@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { Skeleton } from "../ui/skeleton";
 import { collabLive } from "../../lib/collab/enabled";
 import { recoverReplica } from "../../lib/collab/persist";
 import { resumeSession } from "../../lib/collab/runtime";
@@ -18,6 +17,7 @@ import { useFlowStore } from "../../lib/store/useFlowStore";
 import { useSaveStatus } from "../../lib/store/useSaveStatus";
 import { applySideColors } from "../../lib/theme/applySideColors";
 
+import { EditorLoadingSkeleton } from "./EditorLoadingSkeleton";
 import Workspace from "./Workspace";
 
 export interface AppRootProps {
@@ -35,9 +35,10 @@ export interface AppRootProps {
  *
  * The path is the flow's identity, the way the database id used to be:
  * reopening it (a host-driven remount, or the relaunch after an update
- * installs) reopens the same file. Anything that cannot be read sends the
- * user back to the start screen with a reason, because a flow silently not
- * opening is indistinguishable from a flow that is gone.
+ * installs) reopens the same file. Anything that cannot be read reports why
+ * and clears the path, which `ResumeFlow` picks up and resolves to another
+ * flow, because a flow silently not opening is indistinguishable from a
+ * flow that is gone.
  */
 export default function AppRoot({ path, isNew = false }: AppRootProps) {
     const round = useFlowStore((s) => s.round);
@@ -132,25 +133,7 @@ export default function AppRoot({ path, isNew = false }: AppRootProps) {
     }, [path]);
 
     if (!loaded || !round) {
-        // Held frame mirroring the editor shell, so loading a round never
-        // flashes a blank screen that reads as data loss.
-        return (
-            <div className="flex h-full flex-col" data-testid="editor-loading">
-                <div className="border-border bg-card flex h-12 flex-none items-center border-b px-4">
-                    <Skeleton className="h-4 w-48" />
-                </div>
-                <div className="flex min-h-0 flex-1">
-                    <div className="border-border bg-card w-[220px] shrink-0 space-y-2 border-r p-2">
-                        <Skeleton className="h-7 w-full" />
-                        <Skeleton className="h-7 w-full" />
-                        <Skeleton className="h-7 w-2/3" />
-                    </div>
-                    <div className="flex-1 p-4">
-                        <Skeleton className="h-40 w-full" />
-                    </div>
-                </div>
-            </div>
-        );
+        return <EditorLoadingSkeleton />;
     }
     return <Workspace />;
 }

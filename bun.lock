@@ -71,10 +71,8 @@
         "debate-card-search": "workspace:*",
         "debate-data-sync": "workspace:*",
         "debate-editor": "workspace:*",
-        "debate-editor-cardmirror": "workspace:*",
         "debate-flow-ebb": "workspace:*",
         "debate-round": "workspace:*",
-        "debate-settings": "workspace:*",
         "debate-speech-writer": "workspace:*",
         "debate-timer": "workspace:*",
         "debate-ui": "workspace:*",
@@ -225,29 +223,6 @@
       "name": "debate-editor",
       "version": "0.1.0",
       "dependencies": {
-        "debate-editor-cardmirror": "workspace:*",
-        "debate-ui": "workspace:*",
-        "lucide-react": "^0.577.0",
-        "streamdown": "^2.4.0",
-      },
-      "devDependencies": {
-        "@types/react": "^19.2.14",
-        "@types/react-dom": "^19.2.3",
-        "@vitest/coverage-v8": "^4.1.0",
-        "next": "16.1.6",
-        "typescript": "^5.9.3",
-        "vitest": "^4.1.0",
-      },
-      "peerDependencies": {
-        "next": ">=15",
-        "react": "^18.0.0 || ^19.0.0",
-        "react-dom": "^18.0.0 || ^19.0.0",
-      },
-    },
-    "packages/debate-editor-cardmirror": {
-      "name": "debate-editor-cardmirror",
-      "version": "0.1.0",
-      "dependencies": {
         "debate-card-parser": "workspace:*",
         "debate-ui": "workspace:*",
         "fast-xml-parser": "^4.5.0",
@@ -328,8 +303,6 @@
       "name": "debate-round",
       "version": "0.1.0",
       "dependencies": {
-        "ag-grid-community": "^35.1.0",
-        "ag-grid-react": "^35.1.0",
         "debate-card-search": "workspace:*",
         "debate-data-sync": "workspace:*",
         "debate-editor": "workspace:*",
@@ -356,27 +329,6 @@
       "peerDependencies": {
         "next": ">=15",
         "next-themes": "^0.4.6",
-        "react": "^18.0.0 || ^19.0.0",
-        "react-dom": "^18.0.0 || ^19.0.0",
-      },
-    },
-    "packages/debate-settings": {
-      "name": "debate-settings",
-      "version": "0.1.0",
-      "dependencies": {
-        "debate-editor-cardmirror": "workspace:*",
-        "debate-flow-ebb": "workspace:*",
-        "lucide-react": "^0.577.0",
-      },
-      "devDependencies": {
-        "@types/node": "^22.10.0",
-        "@types/react": "^19.0.0",
-        "@types/react-dom": "^19.0.0",
-        "next": "16.1.6",
-        "typescript": "^5.9.3",
-      },
-      "peerDependencies": {
-        "next": "^16.0.0",
         "react": "^18.0.0 || ^19.0.0",
         "react-dom": "^18.0.0 || ^19.0.0",
       },
@@ -1671,13 +1623,9 @@
 
     "debate-editor": ["debate-editor@workspace:packages/debate-editor"],
 
-    "debate-editor-cardmirror": ["debate-editor-cardmirror@workspace:packages/debate-editor-cardmirror"],
-
     "debate-flow-ebb": ["debate-flow-ebb@workspace:packages/debate-flow-ebb"],
 
     "debate-round": ["debate-round@workspace:packages/debate-round"],
-
-    "debate-settings": ["debate-settings@workspace:packages/debate-settings"],
 
     "debate-speech-writer": ["debate-speech-writer@workspace:packages/debate-speech-writer"],
 
@@ -3125,15 +3073,13 @@
 
     "debate-ai-web/linkedom": ["linkedom@0.18.12", "", { "dependencies": { "css-select": "^5.1.0", "cssom": "^0.5.0", "html-escaper": "^3.0.3", "htmlparser2": "^10.0.0", "uhyphen": "^0.2.0" }, "peerDependencies": { "canvas": ">= 2" }, "optionalPeers": ["canvas"] }, "sha512-jalJsOwIKuQJSeTvsgzPe9iJzyfVaEJiEXl+25EkKevsULHvMJzpNqwvj1jOESWdmgKDiXObyjOYwlUqG7wo1Q=="],
 
-    "debate-editor-cardmirror/@types/node": ["@types/node@22.20.1", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q=="],
+    "debate-editor/@types/node": ["@types/node@22.20.1", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q=="],
 
     "debate-flow-ebb/@types/node": ["@types/node@22.20.1", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q=="],
 
     "debate-flow-ebb/marked": ["marked@18.0.11", "", { "bin": { "marked": "bin/marked.js" } }, "sha512-HnslJfsZkRPBDJRHvVtAaWlZHEpSu7u8LgQuJCELjRKuWR+hpq4A7sLq3p8HaI9ypVoXDXxV34CsQJEe1+J5Aw=="],
 
     "debate-flow-ebb/motion": ["motion@13.1.1", "", { "dependencies": { "framer-motion": "^13.1.1", "tslib": "^2.4.0" }, "peerDependencies": { "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" }, "optionalPeers": ["react", "react-dom"] }, "sha512-WNZoK6xiF+kkTqkZ5K7FDDh6A8BG4i5Hc7KXtW8gtTxkpJFds+hIOrDaQGKjQj/AE/i4hJqAaUHEqp/Qo02y6Q=="],
-
-    "debate-settings/@types/node": ["@types/node@22.20.1", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q=="],
 
     "esrecurse/estraverse": ["estraverse@5.3.0", "", {}, "sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA=="],
 
@@ -3487,13 +3433,11 @@
 
     "debate-ai-web/linkedom/css-select": ["css-select@5.2.2", "", { "dependencies": { "boolbase": "^1.0.0", "css-what": "^6.1.0", "domhandler": "^5.0.2", "domutils": "^3.0.1", "nth-check": "^2.0.1" } }, "sha512-TizTzUddG/xYLA3NXodFM0fSbNizXjOKhqiQQwvhlspadZokn1KDy0NZFS0wuEubIYAV5/c1/lAr0TaaFXEXzw=="],
 
-    "debate-editor-cardmirror/@types/node/undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
+    "debate-editor/@types/node/undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
 
     "debate-flow-ebb/@types/node/undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
 
     "debate-flow-ebb/motion/framer-motion": ["framer-motion@13.1.1", "", { "dependencies": { "motion-dom": "^13.1.1", "motion-utils": "^13.0.0", "tslib": "^2.4.0" }, "peerDependencies": { "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" }, "optionalPeers": ["react", "react-dom"] }, "sha512-B/xn2TPS4f61cEBLFjiYlQFnBZUW1YVj/LM+C+N4OP8Rs95VLEI2ot/RlfBg111la/EiyECFaJJi/A3FWA8MUA=="],
-
-    "debate-settings/@types/node/undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
 
     "file-loader/schema-utils/ajv": ["ajv@6.15.0", "", { "dependencies": { "fast-deep-equal": "^3.1.1", "fast-json-stable-stringify": "^2.0.0", "json-schema-traverse": "^0.4.1", "uri-js": "^4.2.2" } }, "sha512-fgFx7Hfoq60ytK2c7DhnF8jIvzYgOMxfugjLOSMHjLIPgenqa7S7oaagATUq99mV6IYvN2tRmC0wnTYX6iPbMw=="],
 

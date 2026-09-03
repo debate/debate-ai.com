@@ -5,7 +5,8 @@ import { useEffect } from "react";
 import { setFlowNavigator, type FlowNavigator } from "../lib/commands/flowNav";
 
 export interface NavigatorHostProps {
-    /** Live navigator backing the embed's own open-flow / start-screen state. */
+    /** Live navigator backing the embed's own open-flow state (`toStart` clears
+     *  it, which `ResumeFlow` picks up and resolves back to a flow). */
     navigator: FlowNavigator;
 }
 

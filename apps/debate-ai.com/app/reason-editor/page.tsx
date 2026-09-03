@@ -4,35 +4,37 @@
  * Native REASON editor route — the debate-editor (TipTap/CardMirror) shell
  * wired to per-user document persistence (/api/doc/documents). Reachable
  * from the Settings menu alongside the existing /doc iframe.
+ *
+ * The sidebar (file tree + "Open Tabs") is ported from quick search's
+ * REASON editor sidebar (`packages/reason-editor-sidebar`), adapted to this
+ * app's document model and primitives — see FileTree.tsx/OpenTabsPanel.tsx.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { FilePlus2, FileText, Loader2, Trash2 } from "lucide-react"
+import { FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft } from "lucide-react"
 import { EditorWithToolbar } from "debate-editor"
 import { cn } from "debate-ui/src/lib/utils"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
-import { ScrollArea } from "debate-ui/src/primitives/scroll-area"
-
-interface ReasonDocument {
-  id: number
-  title: string
-  content: string
-  updatedAt: string | number
-}
+import { FileTree } from "./FileTree"
+import { OpenTabsPanel } from "./OpenTabsPanel"
+import type { ReasonDocument } from "./types"
 
 const AUTOSAVE_DELAY_MS = 800
+type SidebarPanel = "files" | "openTabs"
 
 export default function ReasonEditorPage() {
   const [documents, setDocuments] = useState<ReasonDocument[]>([])
-  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [openTabs, setOpenTabs] = useState<number[]>([])
+  const [activeId, setActiveId] = useState<number | null>(null)
+  const [sidebarPanel, setSidebarPanel] = useState<SidebarPanel>("files")
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const selected = useMemo(
-    () => documents.find((d) => d.id === selectedId) ?? null,
-    [documents, selectedId],
+    () => documents.find((d) => d.id === activeId) ?? null,
+    [documents, activeId],
   )
 
   const loadDocuments = useCallback(async (selectFirst = false) => {
@@ -41,7 +43,13 @@ export default function ReasonEditorPage() {
       const res = await fetch("/api/doc/documents")
       const rows: ReasonDocument[] = await res.json()
       setDocuments(rows)
-      if (selectFirst && rows.length > 0) setSelectedId(rows[0].id)
+      if (selectFirst) {
+        const firstFile = rows.find((d) => !d.isFolder)
+        if (firstFile) {
+          setOpenTabs([firstFile.id])
+          setActiveId(firstFile.id)
+        }
+      }
     } finally {
       setLoading(false)
     }
@@ -51,25 +59,75 @@ export default function ReasonEditorPage() {
     loadDocuments(true)
   }, [loadDocuments])
 
-  const createDocument = useCallback(async () => {
-    const res = await fetch("/api/doc/documents", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ title: "Untitled", content: "" }),
-    })
-    const created: ReasonDocument = await res.json()
-    setDocuments((prev) => [created, ...prev])
-    setSelectedId(created.id)
+  const openDocument = useCallback((id: number) => {
+    setOpenTabs((prev) => (prev.includes(id) ? prev : [...prev, id]))
+    setActiveId(id)
   }, [])
+
+  const closeTab = useCallback(
+    (id: number) => {
+      setOpenTabs((prev) => {
+        const idx = prev.indexOf(id)
+        const next = prev.filter((tabId) => tabId !== id)
+        if (activeId === id) {
+          const fallback = next[idx] ?? next[idx - 1] ?? next[0] ?? null
+          setActiveId(fallback ?? null)
+        }
+        return next
+      })
+    },
+    [activeId],
+  )
+
+  const createDocument = useCallback(
+    async (parentId: number | null = null, isFolder = false) => {
+      const res = await fetch("/api/doc/documents", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          title: isFolder ? "New Folder" : "Untitled",
+          content: "",
+          parentId,
+          isFolder,
+        }),
+      })
+      const created: ReasonDocument = await res.json()
+      setDocuments((prev) => [created, ...prev])
+      if (!isFolder) openDocument(created.id)
+    },
+    [openDocument],
+  )
 
   const deleteDocument = useCallback(
     async (id: number) => {
-      await fetch(`/api/doc/documents/${id}`, { method: "DELETE" })
-      setDocuments((prev) => prev.filter((d) => d.id !== id))
-      if (selectedId === id) setSelectedId(null)
+      // Folders cascade: this app has no FK-enforced cascade delete, so
+      // gather every descendant client-side before deleting.
+      const idsToDelete: number[] = []
+      const collect = (targetId: number) => {
+        idsToDelete.push(targetId)
+        for (const doc of documents) {
+          if (doc.parentId === targetId) collect(doc.id)
+        }
+      }
+      collect(id)
+
+      await Promise.all(idsToDelete.map((docId) => fetch(`/api/doc/documents/${docId}`, { method: "DELETE" })))
+
+      setDocuments((prev) => prev.filter((d) => !idsToDelete.includes(d.id)))
+      setOpenTabs((prev) => prev.filter((tabId) => !idsToDelete.includes(tabId)))
+      if (activeId != null && idsToDelete.includes(activeId)) setActiveId(null)
     },
-    [selectedId],
+    [documents, activeId],
   )
+
+  const moveDocument = useCallback(async (id: number, parentId: number | null) => {
+    setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, parentId } : d)))
+    await fetch(`/api/doc/documents/${id}`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ parentId }),
+    })
+  }, [])
 
   const saveDocument = useCallback((id: number, patch: { title?: string; content?: string }) => {
     if (saveTimeout.current) clearTimeout(saveTimeout.current)
@@ -108,48 +166,100 @@ export default function ReasonEditorPage() {
       <aside className="w-64 shrink-0 border-r flex flex-col">
         <div className="flex items-center justify-between px-3 py-2 border-b">
           <h2 className="text-sm font-semibold">Reason Editor</h2>
-          <Button size="icon" variant="ghost" onClick={createDocument} title="New document">
-            <FilePlus2 className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-0.5">
+            <Button size="icon" variant="ghost" onClick={() => createDocument(null, false)} title="New document">
+              <FilePlus2 className="h-4 w-4" />
+            </Button>
+            <Button size="icon" variant="ghost" onClick={() => createDocument(null, true)} title="New folder">
+              <FolderPlus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-        <ScrollArea className="flex-1">
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-            </div>
-          ) : documents.length === 0 ? (
-            <p className="px-3 py-4 text-sm text-muted-foreground">
-              No documents yet. Create one to get started.
-            </p>
-          ) : (
-            <ul className="p-1">
-              {documents.map((doc) => (
-                <li key={doc.id}>
-                  <button
-                    onClick={() => setSelectedId(doc.id)}
-                    className={cn(
-                      "group flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm truncate",
-                      doc.id === selectedId ? "bg-primary/10 text-primary" : "hover:bg-muted",
-                    )}
-                  >
-                    <FileText className="h-4 w-4 shrink-0 opacity-60" />
-                    <span className="flex-1 truncate">{doc.title || "Untitled"}</span>
-                    <Trash2
-                      className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-60 hover:!opacity-100"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        deleteDocument(doc.id)
-                      }}
-                    />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </ScrollArea>
+
+        <div className="flex items-center gap-1 px-2 py-1.5 border-b">
+          <button
+            type="button"
+            onClick={() => setSidebarPanel("files")}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition-colors",
+              sidebarPanel === "files" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <PanelLeft className="h-3.5 w-3.5" />
+            Files
+          </button>
+          <button
+            type="button"
+            onClick={() => setSidebarPanel("openTabs")}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition-colors",
+              sidebarPanel === "openTabs" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <PanelsTopLeft className="h-3.5 w-3.5" />
+            Open Tabs
+            {openTabs.length > 0 && <span className="text-muted-foreground">({openTabs.length})</span>}
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          </div>
+        ) : sidebarPanel === "files" ? (
+          <FileTree
+            documents={documents}
+            activeId={activeId}
+            onSelect={openDocument}
+            onAdd={createDocument}
+            onRename={updateTitle}
+            onDelete={deleteDocument}
+            onMove={moveDocument}
+          />
+        ) : (
+          <OpenTabsPanel
+            documents={documents}
+            openTabs={openTabs}
+            activeId={activeId}
+            onSelect={setActiveId}
+            onClose={closeTab}
+          />
+        )}
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
+        {openTabs.length > 0 && (
+          <div className="flex items-center border-b overflow-x-auto shrink-0">
+            {openTabs.map((id) => {
+              const doc = documents.find((d) => d.id === id)
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setActiveId(id)}
+                  className={cn(
+                    "group flex items-center gap-2 px-3 py-2 text-sm border-r shrink-0 max-w-[180px]",
+                    id === activeId ? "bg-background font-medium" : "bg-muted/40 text-muted-foreground hover:bg-muted/70",
+                  )}
+                >
+                  <span className="truncate">{doc?.title || "Untitled"}</span>
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      closeTab(id)
+                    }}
+                    className="shrink-0 h-4 w-4 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    ×
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        )}
+
         {selected ? (
           <>
             <div className="flex items-center gap-2 px-4 py-2 border-b">
@@ -175,7 +285,7 @@ export default function ReasonEditorPage() {
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
-            {documents.length === 0 ? "Create a document to start writing." : "Select a document."}
+            {documents.length === 0 ? "Create a document to start writing." : "Select a file to open it."}
           </div>
         )}
       </div>

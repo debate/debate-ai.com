@@ -1,15 +1,18 @@
 "use client";
 
-import { Gear, House, Question } from "@phosphor-icons/react";
+import { FilePlus, FolderOpen, Gear, Question, SignIn } from "@phosphor-icons/react";
 
 import { Button } from "../ui/button";
 import { Tip } from "../ui/tooltip";
-import { navigateToStart } from "../../lib/commands/flowNav";
+import { executeCommand } from "../../lib/commands/commands";
+import { openFlowFromPicker } from "../../lib/commands/fileCommands";
 import { sideLabels } from "../../lib/format/events";
 import { teamCode } from "../../lib/model/teamCode";
 import { useFlowStore } from "../../lib/store/useFlowStore";
+import { isDesktop } from "../../lib/update/adapter";
 
 import ExportMenu from "./ExportMenu";
+import RecentFlowsMenu from "./RecentFlowsMenu";
 import SaveStatus from "./SaveStatus";
 import SpeechSwitcher from "./SpeechSwitcher";
 import ZoomControl from "./ZoomControl";
@@ -34,16 +37,6 @@ export default function RoundHeader() {
             data-testid="round-header"
         >
             <div className="ribbon:gap-3 flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
-                <button
-                    type="button"
-                    onClick={navigateToStart}
-                    className="text-muted-foreground hover:text-foreground flex flex-none items-center gap-1.5 text-[13px]"
-                    data-testid="back-to-flows"
-                >
-                    <House className="size-4" aria-hidden="true" />
-                    Flows
-                </button>
-                <span aria-hidden="true" className="bg-border h-4 w-px flex-none" />
                 <span className="text-foreground truncate text-sm font-semibold">
                     {participants}
                 </span>
@@ -51,6 +44,43 @@ export default function RoundHeader() {
             </div>
 
             <div className="no-print ribbon:gap-2 flex flex-none items-center gap-1">
+                <Tip label="New flow">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => useFlowStore.getState().setNewFlowOpen(true)}
+                        aria-label="New flow"
+                        data-testid="new-flow-btn"
+                    >
+                        <FilePlus className="size-4.5" />
+                    </Button>
+                </Tip>
+                <Tip label="Open a flow">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => void openFlowFromPicker()}
+                        aria-label="Open a flow"
+                        data-testid="open-flow-btn"
+                    >
+                        <FolderOpen className="size-4.5" />
+                    </Button>
+                </Tip>
+                <RecentFlowsMenu />
+                {isDesktop() && (
+                    <Tip label="Join with a code">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => executeCommand("collab.join")}
+                            aria-label="Join with a code"
+                            data-testid="join-code-btn"
+                        >
+                            <SignIn className="size-4.5" />
+                        </Button>
+                    </Tip>
+                )}
+                <span aria-hidden="true" className="bg-border h-4 w-px flex-none" />
                 <SpeechSwitcher />
                 <ZoomControl />
                 <Tip label="Round info" command="info.open">

@@ -4,14 +4,14 @@
  */
 
 import type React from "react"
-import { Plus, Clock, Users, Columns2, Grid3x3, Workflow } from "lucide-react"
+import { Plus, Clock, Users, Workflow } from "lucide-react"
 import { Button } from "debate-ui/src/primitives/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
-import { cn } from "debate-ui/src/lib/utils"
-import { FlowTab } from "../navigation/FlowTab"
 import { FlowToolsMenu } from "./FlowToolsMenu"
-import { PrepTimer } from "debate-timer/src/timers/PrepTimer"
+import { LiveRoundGroup } from "./LiveRoundGroup"
+import { OpenTabsGroup } from "./OpenTabsGroup"
 import type { Flow, Round } from "../types/flow"
+import type { SpeechTimerEntry } from "../hooks/useTimerState"
 import type { TimerState, SpeechTimerState, DebateStyle } from "debate-timer/src/types"
 
 /** Props for the FlowPageSidebar component. */
@@ -24,8 +24,6 @@ interface FlowPageSidebarProps {
   rounds: Round[]
   /** The currently active flow, or null if none is selected. */
   currentFlow: Flow | null
-  /** Whether split mode is currently active. */
-  splitMode: boolean
   /** Whether the sidebar is being rendered on a mobile device. */
   isMobile: boolean
   /** Handler called when the user selects a flow tab. */
@@ -38,8 +36,6 @@ interface FlowPageSidebarProps {
   onArchiveFlow: (index: number) => void
   /** Handler called when the user deletes a flow. */
   onDeleteFlow: (index: number) => void
-  /** Handler called when the user toggles split mode. */
-  onToggleSplitMode: () => void
   /** Handler called when the user opens the flow history dialog. */
   onOpenHistory: () => void
   /** Handler called when the user opens the round editor for a given round. */
@@ -50,7 +46,7 @@ interface FlowPageSidebarProps {
   onSelectEbb: () => void
   /** Optional handler called when the mobile menu overlay should be dismissed. */
   onCloseMobileMenu?: () => void
-  /** Timer state props passed through to TimersPanel. */
+  /** Timer state props, passed through to the live round group and its per-speech timers. */
   timerState: {
     debateStyle: DebateStyle
     speechState: SpeechTimerState
@@ -59,41 +55,42 @@ interface FlowPageSidebarProps {
     setPrepState: React.Dispatch<React.SetStateAction<TimerState | null>>
     prepSecondaryState: TimerState | null
     setPrepSecondaryState: React.Dispatch<React.SetStateAction<TimerState | null>>
+    getSpeechTimerState: (speechName: string) => SpeechTimerEntry
+    setSpeechTimerState: (speechName: string, updates: Partial<SpeechTimerEntry>) => void
   }
 }
 
 /**
- * Sidebar panel containing quick action buttons, a scrollable list of flow tabs, and a timers section.
+ * Sidebar panel containing quick action buttons, a live round group (when a
+ * debate is in progress), and a collapsible list of open tabs.
  *
  * @param props - Component props.
  * @param props.flows - Array of all flows; sorted internally (active first, then archived).
  * @param props.selected - Index of the currently active flow, used to highlight the matching tab.
+ * @param props.rounds - Every round in the session; searched for the one currently live.
  * @param props.currentFlow - Active flow; used to determine whether Edit Round is available.
- * @param props.splitMode - Controls the icon shown on the split-mode toggle button.
  * @param props.isMobile - When true, selecting a flow also closes the mobile menu overlay.
  * @param props.onSelectFlow - Callback invoked with the flow index when a tab is clicked.
  * @param props.onAddFlow - Callback invoked when the Add Flow button is clicked.
  * @param props.onRenameFlow - Callback invoked with the flow index and new name when a tab is renamed.
  * @param props.onArchiveFlow - Callback invoked with the flow index when a tab is archived.
  * @param props.onDeleteFlow - Callback invoked with the flow index when a tab is deleted.
- * @param props.onToggleSplitMode - Callback invoked when the split-mode toggle button is clicked.
  * @param props.onOpenHistory - Callback invoked when the Flow History button is clicked.
  * @param props.onEditRound - Callback invoked with the round ID when the Edit Round button is clicked.
  * @param props.onCloseMobileMenu - Optional callback to close the mobile menu after a flow is selected.
- * @returns A sidebar with quick actions, flow tabs, and the timers panel.
+ * @returns A sidebar with quick actions, a live round group, and open tabs.
  */
 export function FlowPageSidebar({
   flows,
   selected,
+  rounds,
   currentFlow,
-  splitMode,
   isMobile,
   onSelectFlow,
   onAddFlow,
   onRenameFlow,
   onArchiveFlow,
   onDeleteFlow,
-  onToggleSplitMode,
   onOpenHistory,
   onEditRound,
   ebbActive,
@@ -101,19 +98,6 @@ export function FlowPageSidebar({
   onCloseMobileMenu,
   timerState,
 }: FlowPageSidebarProps) {
-  /**
-   * Sort flows for rendering:
-   * - active flows first
-   * - archived flows last, newest archive first
-   * - active flows in their configured index order
-   */
-  const sortedFlows = [...flows].sort((a, b) => {
-    if (a.archived && !b.archived) return 1
-    if (!a.archived && b.archived) return -1
-    if (a.archived && b.archived) return b.id - a.id
-    return a.index - b.index
-  })
-
   /**
    * Select a flow tab and close the mobile menu when applicable.
    *
@@ -136,23 +120,16 @@ export function FlowPageSidebar({
     }
   }
 
+  // A debate is "started" the moment its round goes active — that's the
+  // round the live round group tracks, independent of which tab happens to
+  // be selected right now.
+  const liveRound = rounds.find((r) => r.status === "active")
+
   return (
     <div className="mt-[50px]  bg-[var(--background)] w-full h-full md:h-[var(--main-height)] rounded-[var(--border-radius)] p-[var(--padding)] flex flex-col box-border">
       {/* Quick action buttons */}
-      <div className="h-auto pb-[var(--padding)] grid grid-cols-4 gap-0.5">
+      <div className="h-auto pb-[var(--padding)] grid grid-cols-3 gap-0.5">
         <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button onClick={onToggleSplitMode} size="icon" variant="ghost" className="h-7 w-7">
-                {splitMode ? <Grid3x3 className="h-4 w-4" /> : <Columns2 className="h-4 w-4" />}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{splitMode ? "Go to Spreadsheet Flow" : "Speech Side-by-Side View"}</p>
-            </TooltipContent>
-          </Tooltip>
-
-
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onOpenHistory}>
@@ -184,110 +161,32 @@ export function FlowPageSidebar({
         </TooltipProvider>
       </div>
 
-      {/* Prep timers row */}
-      {(timerState.prepState || timerState.prepSecondaryState) && (
-        <TooltipProvider>
-          <div className="flex flex-row gap-0 pb-[var(--padding)]">
-            {timerState.prepState && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex-1">
-                    <PrepTimer
-                      resetTime={timerState.prepState.resetTime}
-                      time={timerState.prepState.time}
-                      state={timerState.prepState.state}
-                      palette="accent-secondary"
-                      color="blue"
-                      compact
-                      hideControlsByDefault={isMobile}
-                      onTimeChange={(time) => timerState.setPrepState((prev) => prev && { ...prev, time })}
-                      onStateChange={(state) => {
-                        timerState.setPrepState((prev) => prev && { ...prev, state })
-                        if (state.name === "running") {
-                          timerState.setSpeechState((prev) => prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
-                          timerState.setPrepSecondaryState((prev) => prev && prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
-                        }
-                      }}
-                    />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent><p>Aff Prep</p></TooltipContent>
-              </Tooltip>
-            )}
-            {timerState.prepSecondaryState && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex-1">
-                    <PrepTimer
-                      resetTime={timerState.prepSecondaryState.resetTime}
-                      time={timerState.prepSecondaryState.time}
-                      state={timerState.prepSecondaryState.state}
-                      palette="accent-secondary"
-                      color="red"
-                      compact
-                      hideControlsByDefault={isMobile}
-                      onTimeChange={(time) => timerState.setPrepSecondaryState((prev) => prev && { ...prev, time })}
-                      onStateChange={(state) => {
-                        timerState.setPrepSecondaryState((prev) => prev && { ...prev, state })
-                        if (state.name === "running") {
-                          timerState.setSpeechState((prev) => prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
-                          timerState.setPrepState((prev) => prev && prev.state.name === "running" ? { ...prev, state: { name: "paused" } } : prev)
-                        }
-                      }}
-                    />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent><p>Neg Prep</p></TooltipContent>
-              </Tooltip>
-            )}
-          </div>
-        </TooltipProvider>
+      {liveRound && (
+        <LiveRoundGroup
+          round={liveRound}
+          isMobile={isMobile}
+          debateStyle={timerState.debateStyle}
+          getSpeechTimerState={timerState.getSpeechTimerState}
+          setSpeechTimerState={timerState.setSpeechTimerState}
+          setSpeechState={timerState.setSpeechState}
+          prepState={timerState.prepState}
+          setPrepState={timerState.setPrepState}
+          prepSecondaryState={timerState.prepSecondaryState}
+          setPrepSecondaryState={timerState.setPrepSecondaryState}
+        />
       )}
 
-      {/* Flow tabs list */}
-      <div className="overflow-y-auto flex-grow box-border">
-        <div className="p-0 m-0">
-          {/* ebb Flow is a separate local-first editor, not a database-backed
-              Flow record, so it gets a pinned entry above the real flow tabs
-              rather than a fake Flow object slotted into the list — it has
-              no rename/archive/delete, only select. */}
-          <div
-            onClick={handleSelectEbb}
-            className={cn(
-              "w-full text-left p-[var(--padding)] rounded-[var(--border-radius)]",
-              "transition-colors duration-[var(--transition-speed)]",
-              "hover:bg-[var(--background-indent)]",
-              "flex items-center gap-1.5 cursor-pointer",
-              ebbActive && "bg-[var(--background-active)] font-bold",
-            )}
-          >
-            <Workflow className="h-3.5 w-3.5 shrink-0 opacity-80" />
-            <span className="flex-1 truncate">ebb Flow</span>
-          </div>
-          {sortedFlows.map((flow) => (
-            <FlowTab
-              key={flow.id}
-              flow={flow}
-              selected={!ebbActive && flow.index === selected}
-              onClick={() => handleSelectFlow(flow.index)}
-              onRename={(newName) => onRenameFlow(flow.index, newName)}
-              onArchive={() => onArchiveFlow(flow.index)}
-              onDelete={() => onDeleteFlow(flow.index)}
-            />
-          ))}
-        </div>
-        <div className="flex justify-center ">
-          <Button
-            onClick={onAddFlow}
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-foreground flex items-center "
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add Flow</span>
-          </Button>
-        </div>
-      </div>
+      <OpenTabsGroup
+        flows={flows}
+        selected={selected}
+        onSelectFlow={handleSelectFlow}
+        onAddFlow={onAddFlow}
+        onRenameFlow={onRenameFlow}
+        onArchiveFlow={onArchiveFlow}
+        onDeleteFlow={onDeleteFlow}
+        ebbActive={ebbActive}
+        onSelectEbb={handleSelectEbb}
+      />
     </div>
   )
 }
