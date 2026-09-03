@@ -303,8 +303,6 @@
       "name": "debate-round",
       "version": "0.1.0",
       "dependencies": {
-        "ag-grid-community": "^35.1.0",
-        "ag-grid-react": "^35.1.0",
         "debate-card-search": "workspace:*",
         "debate-data-sync": "workspace:*",
         "debate-editor": "workspace:*",

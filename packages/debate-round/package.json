@@ -1,7 +1,7 @@
 {
   "name": "debate-round",
   "version": "0.1.0",
-  "description": "Live debate round workspace \u2014 flow spreadsheet, round setup dialogs, speech docs and round state",
+  "description": "Live debate round workspace \u2014 round setup dialogs, speech docs and round state",
   "private": true,
   "type": "module",
   "author": "vtempest",
@@ -15,8 +15,6 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "ag-grid-community": "^35.1.0",
-    "ag-grid-react": "^35.1.0",
     "debate-card-search": "workspace:*",
     "debate-data-sync": "workspace:*",
     "debate-editor": "workspace:*",

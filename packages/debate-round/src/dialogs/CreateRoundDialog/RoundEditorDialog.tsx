@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "debate-ui/src/
 import { Component as ShatterButton } from "debate-ui/src/effects/shatter-button"
 import { useRoundEditorForm } from "./useRoundEditorForm"
 import { TournamentSection } from "./TournamentSection"
+import { RoundFlowsSection } from "./RoundFlowsSection"
 import { DebateStyleSection } from "./DebateStyleSection"
 import { TeamSection } from "./TeamSection"
 import { JudgesSection } from "./JudgesSection"
@@ -126,10 +127,13 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
           </div>
 
           {roundId && (
-            <WinnerSection
-              winner={form.winner}
-              setWinner={form.setWinner}
-            />
+            <>
+              <RoundFlowsSection flows={form.roundFlows} onSelectFlow={form.selectRoundFlow} />
+              <WinnerSection
+                winner={form.winner}
+                setWinner={form.setWinner}
+              />
+            </>
           )}
 
           <div className="pt-4 pb-2">

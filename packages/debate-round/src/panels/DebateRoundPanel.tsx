@@ -7,8 +7,7 @@
  * into a clean, modular architecture using custom hooks and layout components.
  */
 
-import { useRef, useEffect, useState } from "react"
-import { X } from "lucide-react"
+import { useEffect, useState } from "react"
 import { EbbFlowEmbed } from "debate-flow-ebb"
 import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
@@ -16,7 +15,6 @@ import { settings } from "../state/settings"
 import type { Flow } from "../types/flow"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "debate-ui/src/primitives/resizable"
 import { Sheet, SheetContent } from "debate-ui/src/primitives/sheet"
-import { buildBoxJumpFailedMessage } from "../flow/edit-cells"
 
 // Modular components
 import { FlowPageSidebar } from "../layout/FlowPageSidebar"
@@ -75,12 +73,6 @@ export function DebateFlowPage() {
   const timerState = useTimerState()
 
   // ============================================================================
-  // Refs
-  // ============================================================================
-  /** Reference to the AG Grid API for programmatic column navigation. */
-  const gridApiRef = useRef<any>(null)
-
-  // ============================================================================
   // Side Effects
   // ============================================================================
   useInitialLoad(setFlows, setRounds)
@@ -90,11 +82,7 @@ export function DebateFlowPage() {
   useMobileDetection(state.setIsMobile)
   useRoundFromSlug()
   useSyncUrlWithRound()
-  const {
-    onGridReady: onPrepNoteJumpGridReady,
-    jumpFailed: prepNoteJumpFailed,
-    dismissJumpFailed: dismissPrepNoteJumpFailed,
-  } = useJumpToPrepNoteBox(gridApiRef)
+  useJumpToPrepNoteBox()
 
   // Update document title when active round changes
   useEffect(() => {
@@ -234,16 +222,6 @@ export function DebateFlowPage() {
   // ============================================================================
 
   /**
-   * Toggle split mode on or off, initializing column state when enabling.
-   */
-  const handleToggleSplit = () => {
-    if (!state.splitMode && flows[selected]?.columns) {
-      splitHandlers.initializeSplitMode()
-    }
-    state.setSplitMode(!state.splitMode)
-  }
-
-  /**
    * Toggle between showing one active speech and both speeches side-by-side.
    */
   const handleToggleLayoutMode = () => {
@@ -346,19 +324,6 @@ export function DebateFlowPage() {
     </div>
   ) : (
     <div className="h-full flex flex-col overflow-hidden p-2">
-      {prepNoteJumpFailed && (
-        <div className="mb-2 flex items-center justify-between gap-2 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          <span>{buildBoxJumpFailedMessage()}</span>
-          <button
-            type="button"
-            onClick={dismissPrepNoteJumpFailed}
-            aria-label="Dismiss"
-            className="shrink-0 rounded p-0.5 hover:bg-destructive/20"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      )}
       {/* Resizable Panels */}
       <ResizablePanelGroup
         orientation="horizontal"
@@ -369,8 +334,6 @@ export function DebateFlowPage() {
           <FlowMainContent
             currentFlow={currentFlow}
             splitMode={state.splitMode}
-            gridApiRef={gridApiRef}
-            onFlowGridReady={onPrepNoteJumpGridReady}
             isMobile={state.isMobile}
             singlePaneMode={state.singlePaneMode}
             onToggleLayoutMode={handleToggleLayoutMode}
@@ -390,7 +353,6 @@ export function DebateFlowPage() {
             onOpenSpeechPanel={handleOpenSpeechPanel}
             onUpdateLeftSpeech={splitHandlers.handleUpdateLeftSpeech}
             onUpdateRightSpeech={splitHandlers.handleUpdateRightSpeech}
-            onUpdate={updateFlow.bind(null, selected)}
             speechTimerStates={timerState.perSpeechTimerStates}
             onSpeechTimerStateChange={timerState.setSpeechTimerState}
             onResetPrepTimers={() => {
@@ -472,14 +434,12 @@ export function DebateFlowPage() {
                 selected={selected}
                 rounds={rounds}
                 currentFlow={currentFlow}
-                splitMode={state.splitMode}
                 isMobile={false}
                 onSelectFlow={handleSelectFlow}
                 onAddFlow={handleAddFlow}
                 onRenameFlow={handleRenameFlow}
                 onArchiveFlow={handleArchiveFlow}
                 onDeleteFlow={handleDeleteFlow}
-                onToggleSplitMode={handleToggleSplit}
                 onOpenHistory={handleOpenHistory}
                 onEditRound={handleEditRound}
                 ebbActive={ebbActive}
@@ -502,14 +462,12 @@ export function DebateFlowPage() {
                   selected={selected}
                   rounds={rounds}
                   currentFlow={currentFlow}
-                  splitMode={state.splitMode}
                   isMobile={true}
                   onSelectFlow={handleSelectFlow}
                   onAddFlow={handleAddFlow}
                   onRenameFlow={handleRenameFlow}
                   onArchiveFlow={handleArchiveFlow}
                   onDeleteFlow={handleDeleteFlow}
-                  onToggleSplitMode={handleToggleSplit}
                   onOpenHistory={handleOpenHistory}
                   onEditRound={handleEditRound}
                   ebbActive={ebbActive}
