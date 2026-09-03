@@ -62,6 +62,20 @@ disabled with an inline hint when no flow is currently selected in the
 workspace, and overwrites any existing drill set for that round, same as
 `saveDrillSet`.
 
+## Completion tracking
+
+Each drill has a "Mark practiced"/"✓ Practiced" toggle button
+(`state/drillSets.ts`'s `toggleDrillCompletion`, storing indexes into
+`drills` on the record's `completedDrillIndexes` field), and each round
+card shows a `MeterBar` progress meter — "N of M" drills marked practiced,
+turning `positive` once every drill in the round is marked — driven by
+`getDrillSetCompletionStats`. This closes the "completion tracking" half of
+the two follow-ups named under the "📚 AI Drill Generator" bullet, but only
+locally: it does not yet feed the separate `debate-card-search` Progress
+Unlocks tier system (the "tied into Progress Unlocks" half of that same
+follow-up), and "drill scheduling/reminders" remains untouched. Both stay
+open follow-ups — see Known gaps.
+
 ## Data flow
 
 ```
@@ -88,6 +102,13 @@ panels/DrillSetsPanel.tsx
     → POST /api/reason-ai (system + user prompt from round/drill-script-ai.ts)
   → saveDrillAiScript(roundId, drillIndex, script)  — state/drillSets.ts
   → panel re-reads buildDrillSetsPanelView() to refresh
+
+Toggling a drill's completion:
+panels/DrillSetsPanel.tsx
+  → toggleDrillCompletion(roundId, drillIndex)  — state/drillSets.ts
+  → panel re-reads buildDrillSetsPanelView() to refresh
+  → getDrillSetCompletionStats(record)  — derives the round's "N of M"
+    MeterBar caption/ratio, recomputed on every render (not persisted)
 ```
 
 Every drill-generation and persistence rule already existed and was
@@ -119,7 +140,22 @@ TODO.md's Research Crowdsourcing Organizer Features. Vitest-covered in
 (`vulnerabilityScoreToDifficulty`'s thresholds, `filterDrillsByDifficulty`,
 and each drill builder's difficulty rating).
 
+A later slice adds the completion tracking described in "Completion
+tracking" above, closing the local-tracking half of the "completion
+tracking tied into Progress Unlocks" follow-up named under the "📚 AI Drill
+Generator" bullet. Vitest-covered in
+`packages/debate-round/test/drillSets.test.ts` (`toggleDrillCompletion`
+toggling a drill on/off, tracking multiple completed drills sorted by
+index, leaving `drills`/`aiScripts`/other rounds' records untouched,
+no-ops for an unknown roundId or an out-of-range drillIndex; and
+`getDrillSetCompletionStats`'s zero/partial/full completion counts, its
+handling of stale out-of-range indexes, and a zero — not `NaN` — ratio for
+a record with no drills).
+
 ## Known gaps
 
 Two follow-ups remain open on the "📚 AI Drill Generator" bullet: drill
-scheduling/reminders, and completion tracking tied into Progress Unlocks.
+scheduling/reminders, and tying the now-tracked local completion state into
+the separate `debate-card-search` Progress Unlocks tier system (awarding
+tiers/badges for practiced drills isn't wired up yet — this slice only
+tracks and displays completion within `DrillSetsPanel` itself).

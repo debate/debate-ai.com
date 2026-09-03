@@ -31,6 +31,14 @@
  * bullet in TODO.md. Each drill also shows a difficulty badge next to its
  * kind badge.
  *
+ * Each drill also has a "Mark practiced"/"✓ Practiced" toggle
+ * (`state/drillSets.ts`'s `toggleDrillCompletion`), and each round card
+ * shows a `MeterBar` summarizing how many of its drills are marked
+ * practiced (`getDrillSetCompletionStats`) — the "completion tracking"
+ * follow-up named under the "📚 AI Drill Generator" bullet. This tracks
+ * completion locally only; tying it into the separate Progress Unlocks
+ * tier system stays a named open follow-up.
+ *
  * @module panels/DrillSetsPanel
  */
 
@@ -48,12 +56,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "debate-ui/src/primitives/select"
-import { EmptyState, PanelRow } from "debate-ui/src/panels/panel-shell"
+import { EmptyState, MeterBar, PanelRow } from "debate-ui/src/panels/panel-shell"
 import {
   buildAndSaveDrillSet,
   buildDrillSetsPanelView,
   deleteDrillSet,
+  getDrillSetCompletionStats,
   saveDrillAiScript,
+  toggleDrillCompletion,
   type DrillSetRecord,
 } from "../state/drillSets"
 import { filterDrillsByDifficulty, type DrillDifficulty, type DrillKind } from "../flow/drill-generator"
@@ -126,6 +136,11 @@ export function DrillSetsPanel() {
     buildAndSaveDrillSet(currentFlow, String(currentFlow.id), sideKey)
     setGenerateError(null)
     setGenerateSideKey("")
+    refresh()
+  }
+
+  const handleToggleCompletion = (roundId: string, drillIndex: number) => {
+    toggleDrillCompletion(roundId, drillIndex)
     refresh()
   }
 
@@ -219,6 +234,7 @@ export function DrillSetsPanel() {
       )}
       {drillSets.map((set) => {
         const visibleDrills = filterDrillsByDifficulty(set.drills, difficultyFilter)
+        const completionStats = getDrillSetCompletionStats(set)
         return (
           <div key={set.roundId} className="rounded-lg border border-border p-4">
             <div className="mb-3 flex items-center justify-between gap-2">
@@ -230,6 +246,17 @@ export function DrillSetsPanel() {
                 Clear
               </Button>
             </div>
+            {completionStats.total > 0 && (
+              <div className="mb-3">
+                <MeterBar
+                  value={completionStats.completed}
+                  max={completionStats.total}
+                  label="Practiced"
+                  caption={`${completionStats.completed} of ${completionStats.total}`}
+                  tone={completionStats.completed === completionStats.total ? "positive" : "info"}
+                />
+              </div>
+            )}
             {visibleDrills.length === 0 && (
               <p className="text-sm text-muted-foreground">No drills match this difficulty filter.</p>
             )}
@@ -238,6 +265,7 @@ export function DrillSetsPanel() {
                 const index = set.drills.indexOf(drill)
                 const key = `${set.roundId}:${index}`
                 const aiScript = set.aiScripts?.[index]
+                const isCompleted = (set.completedDrillIndexes ?? []).includes(index)
                 return (
                   <PanelRow
                     key={index}
@@ -256,18 +284,27 @@ export function DrillSetsPanel() {
                     }
                     title={drill.prompt}
                     trailing={
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={scriptLoadingKey === key}
-                        onClick={() => handleGetAiScript(set, index)}
-                      >
-                        {scriptLoadingKey === key
-                          ? "Getting script…"
-                          : aiScript
-                            ? "Regenerate AI script"
-                            : "Get AI script"}
-                      </Button>
+                      <>
+                        <Button
+                          size="sm"
+                          variant={isCompleted ? "secondary" : "outline"}
+                          onClick={() => handleToggleCompletion(set.roundId, index)}
+                        >
+                          {isCompleted ? "✓ Practiced" : "Mark practiced"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={scriptLoadingKey === key}
+                          onClick={() => handleGetAiScript(set, index)}
+                        >
+                          {scriptLoadingKey === key
+                            ? "Getting script…"
+                            : aiScript
+                              ? "Regenerate AI script"
+                              : "Get AI script"}
+                        </Button>
+                      </>
                     }
                   >
                     {scriptErrorsByKey[key] && (
