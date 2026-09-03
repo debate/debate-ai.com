@@ -6,6 +6,47 @@
 _No task currently in progress._
 
 ### Completed
+- **debate-round panel UI-polish — migrate 2 more hand-rolled progress bars
+  to the shared `MeterBar` primitive (idea #17 follow-up (4),
+  `user-settings.md` Known gap).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows docs and debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built and every tool is
+  already reachable from the Tools page and CardMirror's command palette,
+  so this slice picked the next specific pattern the prior slice's own
+  named remaining gap suggested (`PanelShell`/`PanelSection`/`StatTile`/
+  `MeterBar`/`Pill`/`PanelRow` adoption is still unaudited) instead: a
+  search for hand-rolled progress-bar markup shaped like `MeterBar` (a
+  `h-2 w-full overflow-hidden rounded-full bg-muted` track with an inner
+  width-percentage fill div) across every package. Found two:
+  `VulnerabilityChartsPanel`'s "Most Exposed Arguments" bars (a
+  `point.label`/`point.value` bar out of 100) and `WordCountRoundsPanel`'s
+  "Word-count trend" bars (a `point.count`/`point.wordLimit` bar, tinted
+  destructive when over limit) — both now render the shared `MeterBar`
+  (`value`/`max`/`label`/`caption`/`tone`) instead of duplicating its
+  track/fill markup by hand, matching the `tone="critical"` convention
+  already used by other `MeterBar` consumers for an over-limit/failing
+  state. Two other hits from the same search were deliberately left alone:
+  `SpeechWordCounter`'s in-round word-limit meter (`debate-timer`) and
+  `SpeechHeaderBar`'s speech-progress scrubber (`debate-round`) are core
+  round-chrome widgets, not feature-panel content, with layout needs
+  (a fixed compact `h-1.5` popover meter; a click-to-seek scrubber at a
+  precise `h-[5px]`) `MeterBar` isn't built for. No pure logic changed —
+  only presentational markup swapped for an equivalent already-tested
+  primitive (`MeterBar` itself is covered in
+  `packages/debate-ui/test/panel-shell.test.tsx`) — so no new Vitest cases
+  were needed. Verified: `bun install` (2342 packages), `bunx turbo run
+  typecheck --filter=debate-round --filter=debate-ui` (10/10 in-scope
+  package tasks pass), full `bun run test` (226 files / 4056 tests, all
+  pass, unchanged), and `bun run build:web` (`debate-ai-web` production
+  build succeeds, full route list intact). Updated
+  `docs/features/user-settings.md`'s Known gaps section. Remaining gap for
+  a future slice: the same idea #17 follow-up (4) is still open more
+  broadly — `PanelShell`/`PanelSection`/`StatTile`/`Pill`/`PanelRow`
+  adoption is still unaudited; a future run should pick one of those next.
+  **Completed:** 2026-09-03.
 - **debate-round panel UI-polish — migrate 16 more hand-rolled "no data yet"
   placeholders to the shared `EmptyState` primitive (idea #17 follow-up (4),
   `user-settings.md` Known gap).** Another repeat of the standing prompt
