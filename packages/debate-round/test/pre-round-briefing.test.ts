@@ -6,6 +6,7 @@ import type { JudgeRoundRecord } from "debate-speech-writer/src/judge/judge-prof
 import { buildJudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
 import { saveJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
 import {
+  appendNoteToPreRoundBriefing,
   buildPreRoundBriefing,
   buildPreRoundBriefingFromStores,
   buildPreRoundBriefingText,
@@ -14,6 +15,7 @@ import {
   preRoundBriefingFilename,
   STALE_BRIEFING_THRESHOLD_HOURS,
   summarizePriorMeetings,
+  TEAM_PREP_NOTES_SECTION_TITLE,
   type RoundEventInfo,
 } from "../src/round/pre-round-briefing";
 import { saveOwnRoundHistoryRecord, type OwnRoundHistoryRecord } from "../src/state/ownRoundHistory";
@@ -413,5 +415,48 @@ describe("isBriefingStale", () => {
     const updatedAt = now - HOUR_MS * 2;
     expect(isBriefingStale(updatedAt, now, 1)).toBe(true);
     expect(isBriefingStale(updatedAt, now, 3)).toBe(false);
+  });
+});
+
+describe("appendNoteToPreRoundBriefing", () => {
+  function prepNotesBody(briefing: ReturnType<typeof buildPreRoundBriefing>): string | undefined {
+    return briefing.sections.find((s) => s.title === TEAM_PREP_NOTES_SECTION_TITLE)?.body;
+  }
+
+  it("replaces the empty-state text with the first note", () => {
+    const briefing = buildPreRoundBriefing({ event: EVENT });
+    expect(prepNotesBody(briefing)).toBe("No team prep notes on file for this matchup.");
+
+    const updated = appendNoteToPreRoundBriefing(briefing, "Read the K first");
+    expect(prepNotesBody(updated)).toBe("- Read the K first");
+  });
+
+  it("appends a new bullet after existing notes, preserving order", () => {
+    const briefing = buildPreRoundBriefing({ event: EVENT, teamPrepNotes: ["Read the K first"] });
+    const updated = appendNoteToPreRoundBriefing(briefing, "Watch for theory");
+    expect(prepNotesBody(updated)).toBe("- Read the K first\n- Watch for theory");
+  });
+
+  it("trims whitespace around the note", () => {
+    const briefing = buildPreRoundBriefing({ event: EVENT });
+    const updated = appendNoteToPreRoundBriefing(briefing, "  Read the K first  ");
+    expect(prepNotesBody(updated)).toBe("- Read the K first");
+  });
+
+  it("is a no-op for a blank/whitespace-only note", () => {
+    const briefing = buildPreRoundBriefing({ event: EVENT, teamPrepNotes: ["Read the K first"] });
+    expect(appendNoteToPreRoundBriefing(briefing, "   ")).toEqual(briefing);
+  });
+
+  it("leaves every other section untouched", () => {
+    const briefing = buildPreRoundBriefing({ event: EVENT, teamPrepNotes: ["Read the K first"] });
+    const updated = appendNoteToPreRoundBriefing(briefing, "Watch for theory");
+    for (const title of ["Event", "Opponent scouting", "Prior meetings", "Judge tendencies"]) {
+      expect(updated.sections.find((s) => s.title === title)?.body).toBe(
+        briefing.sections.find((s) => s.title === title)?.body,
+      );
+    }
+    expect(updated.event).toBe(briefing.event);
+    expect(updated.priorMeetings).toBe(briefing.priorMeetings);
   });
 });
