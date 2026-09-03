@@ -276,3 +276,58 @@ export function buildTeamTopicComparison(roster: ContributorProgress[]): TeamTop
     }))
     .sort((a, b) => a.completionRate - b.completionRate || a.topic.localeCompare(b.topic));
 }
+
+/**
+ * A contributor's own personal completed-task target — the "personal
+ * goal-setting UI" follow-up named under the "📈 Research Progress Tracking"
+ * bullet in TODO.md. `topic` is optional: unset scopes the goal to the
+ * contributor's overall `totalCompletedTasks` across every topic; set,
+ * it scopes the goal to just that one topic's `completedTaskCount`. At most
+ * one goal is tracked per contributor at a time (see `state/researchProgressGoals.ts`).
+ */
+export interface ResearchProgressGoal {
+  contributorId: string;
+  targetCompletedTaskCount: number;
+  topic?: string;
+  /** Optional ISO date string the contributor is aiming to hit the target by. Purely informational — nothing enforces it. */
+  targetDate?: string;
+}
+
+/** A contributor's progress toward their own `ResearchProgressGoal`, resolved against a real `ContributorProgress`. */
+export interface GoalProgress {
+  goal: ResearchProgressGoal;
+  currentCompletedTaskCount: number;
+  /** `currentCompletedTaskCount / targetCompletedTaskCount`, clamped to [0, 1] and rounded to 2 decimals. */
+  progressRatio: number;
+  isComplete: boolean;
+  /** `max(0, targetCompletedTaskCount - currentCompletedTaskCount)`. */
+  remainingTaskCount: number;
+}
+
+/**
+ * Resolves a contributor's current completed-task count against their goal:
+ * the goal's own topic-scoped `TopicProgress.completedTaskCount` when
+ * `goal.topic` is set (0 if that contributor has no assignments in that
+ * topic at all), or `progress.totalCompletedTasks` when unset. Pure — takes
+ * the already-built `ContributorProgress` rather than reading any store
+ * itself, mirroring every other `build*`/`compute*` helper in this module.
+ */
+export function computeGoalProgress(progress: ContributorProgress, goal: ResearchProgressGoal): GoalProgress {
+  const currentCompletedTaskCount =
+    goal.topic === undefined
+      ? progress.totalCompletedTasks
+      : (progress.topics.find((topic) => topic.topic === goal.topic)?.completedTaskCount ?? 0);
+
+  const progressRatio =
+    goal.targetCompletedTaskCount <= 0
+      ? 1
+      : round2(Math.min(1, currentCompletedTaskCount / goal.targetCompletedTaskCount));
+
+  return {
+    goal,
+    currentCompletedTaskCount,
+    progressRatio,
+    isComplete: currentCompletedTaskCount >= goal.targetCompletedTaskCount,
+    remainingTaskCount: Math.max(0, goal.targetCompletedTaskCount - currentCompletedTaskCount),
+  };
+}

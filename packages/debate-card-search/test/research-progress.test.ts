@@ -6,8 +6,10 @@ import {
   buildResearchProgressReportText,
   buildTeamTopicComparison,
   buildTopicProgress,
+  computeGoalProgress,
   groupAssignmentsByContributor,
   researchProgressReportFilename,
+  type ResearchProgressGoal,
   type TrackedTopicAssignment,
 } from "../src/lib/research-progress";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
@@ -238,5 +240,51 @@ describe("buildTeamTopicComparison", () => {
     const comparison = buildTeamTopicComparison(board);
     const healthcare = comparison.find((c) => c.topic === "Healthcare");
     expect(healthcare?.contributorCount).toBe(1);
+  });
+});
+
+describe("computeGoalProgress", () => {
+  const aliceProgress = buildContributorProgress("alice", [aliceCard], [aliceWarming, aliceStates, aliceCourts]);
+
+  it("tracks an overall goal (no topic) against totalCompletedTasks", () => {
+    const goal: ResearchProgressGoal = { contributorId: "alice", targetCompletedTaskCount: 5 };
+    const progress = computeGoalProgress(aliceProgress, goal);
+
+    expect(progress).toEqual({
+      goal,
+      currentCompletedTaskCount: 2,
+      progressRatio: 0.4,
+      isComplete: false,
+      remainingTaskCount: 3,
+    });
+  });
+
+  it("scopes to one topic's completedTaskCount when the goal names a topic", () => {
+    const goal: ResearchProgressGoal = { contributorId: "alice", targetCompletedTaskCount: 1, topic: "Healthcare" };
+    const progress = computeGoalProgress(aliceProgress, goal);
+
+    expect(progress.currentCompletedTaskCount).toBe(1);
+    expect(progress.isComplete).toBe(true);
+    expect(progress.remainingTaskCount).toBe(0);
+    expect(progress.progressRatio).toBe(1);
+  });
+
+  it("treats a topic the contributor has no assignments in as 0 completed", () => {
+    const goal: ResearchProgressGoal = { contributorId: "alice", targetCompletedTaskCount: 3, topic: "Trade" };
+    const progress = computeGoalProgress(aliceProgress, goal);
+
+    expect(progress.currentCompletedTaskCount).toBe(0);
+    expect(progress.isComplete).toBe(false);
+    expect(progress.remainingTaskCount).toBe(3);
+  });
+
+  it("clamps progressRatio to 1 once the current count exceeds the target", () => {
+    const goal: ResearchProgressGoal = { contributorId: "alice", targetCompletedTaskCount: 1 };
+    const progress = computeGoalProgress(aliceProgress, goal);
+
+    expect(progress.currentCompletedTaskCount).toBe(2);
+    expect(progress.progressRatio).toBe(1);
+    expect(progress.isComplete).toBe(true);
+    expect(progress.remainingTaskCount).toBe(0);
   });
 });
