@@ -9,9 +9,9 @@ import type React from "react"
 import type { Flow, Round } from "../types/flow"
 
 import { useState, useEffect } from "react"
-import { cn } from "debate-ui/src/lib/utils"
+import { cn } from "../ui/lib/utils"
 import { Edit2, Archive, Trash2 } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../ui/primitives/button"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +21,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "debate-ui/src/primitives/alert-dialog"
+} from "../ui/primitives/alert-dialog"
 
 /**
  * Props for the FlowTab component

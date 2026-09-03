@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { FeaturesPanel } from "debate-ui/src/features/FeaturesPanel"
+import { FeaturesPanel } from "../../lib/ui/features/FeaturesPanel"
 
 export const metadata: Metadata = {
   title: "Features",

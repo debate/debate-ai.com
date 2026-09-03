@@ -24,7 +24,6 @@ const nextConfig = {
     "debate-flow-ebb",
     "debate-round",
     "debate-timer",
-    "debate-ui",
     "debate-videos",
   ],
   serverExternalPackages: [

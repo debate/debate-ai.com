@@ -5,8 +5,8 @@
 "use client"
 
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
-import { Autocomplete } from "debate-ui/src/primitives/autocomplete"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/primitives/select"
+import { Autocomplete } from "../../ui/primitives/autocomplete"
 import { ROUND_LEVELS } from "./constants"
 import { settings } from "../../state/settings"
 import type { RadioSetting } from "../../types/settings"

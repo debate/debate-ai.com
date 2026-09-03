@@ -5,7 +5,7 @@
  * search's REASON editor sidebar (`packages/reason-editor-sidebar`,
  * `packages/reason-editor/src/file-tree`), simplified to this app's flat
  * `parentId`/`isFolder` document model (no drag library, no tags/file
- * sources) and rebuilt on debate-ui's own primitives.
+ * sources) and rebuilt on this app's own local UI primitives.
  */
 
 import { type DragEvent, type ReactNode, useMemo, useState } from "react"
@@ -21,15 +21,15 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react"
-import { cn } from "debate-ui/src/lib/utils"
+import { cn } from "../../lib/ui/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "debate-ui/src/primitives/dropdown-menu"
-import { Input } from "debate-ui/src/primitives/input"
+} from "../../lib/ui/primitives/dropdown-menu"
+import { Input } from "../../lib/ui/primitives/input"
 import type { ReasonDocument } from "./types"
 
 interface TreeNode {

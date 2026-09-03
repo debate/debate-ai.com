@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from "react"
 import { Menu, ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../ui/primitives/button"
 import type { ActiveTimerInfo } from "../hooks/useTimerState"
 import type { Flow } from "../types/flow"
 

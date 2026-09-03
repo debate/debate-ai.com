@@ -16,10 +16,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "debate-ui/src/primitives/dialog"
-import { ScrollArea } from "debate-ui/src/primitives/scroll-area"
-import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
-import { cn } from "debate-ui/src/lib/utils"
+} from "../../ui/primitives/dialog"
+import { ScrollArea } from "../../ui/primitives/scroll-area"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
+import { cn } from "../../ui/lib/utils"
 
 interface TranscriptSnippet {
   text: string

@@ -1,22 +1,22 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Button } from "debate-ui/src/primitives/button";
-import { Badge } from "debate-ui/src/primitives/badge";
+import { Button } from "../../lib/ui/primitives/button";
+import { Badge } from "../../lib/ui/primitives/badge";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "debate-ui/src/primitives/card";
+} from "../../lib/ui/primitives/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-ui/src/primitives/select";
+} from "../../lib/ui/primitives/select";
 
 interface YoutubeRoundVideo {
   id: string;

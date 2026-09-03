@@ -12,9 +12,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "debate-ui/src/primitives/dialog"
-import { Button } from "debate-ui/src/primitives/button"
-import { Textarea } from "debate-ui/src/primitives/textarea"
+} from "../../ui/primitives/dialog"
+import { Button } from "../../ui/primitives/button"
+import { Textarea } from "../../ui/primitives/textarea"
 
 interface ReportDialogProps {
   open: boolean

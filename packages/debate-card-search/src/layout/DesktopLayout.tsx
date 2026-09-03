@@ -14,7 +14,7 @@
 
 "use client"
 
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "debate-ui/src/primitives/resizable"
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "../ui/primitives/resizable"
 import { ResearchSearchSidebar, type SearchFilters } from "../components/ResearchSearchSidebar"
 import { CardContentViewer } from "../components/CardContentViewer"
 import { AiAnalysisSidebar } from "../components/AiAnalysisSidebar"

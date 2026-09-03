@@ -9,9 +9,9 @@
 
 import Link from "next/link"
 import { ArrowLeft, Search, X } from "lucide-react"
-import { Input } from "debate-ui/src/primitives/input"
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "debate-ui/src/primitives/tooltip"
-import { Footer } from "debate-ui/src/layout/footer"
+import { Input } from "../../ui/primitives/input"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../../ui/primitives/tooltip"
+import { Footer } from "../../ui/layout/footer"
 import { StickyHeader } from "../../components/layout/StickyHeader"
 import { DictionaryPanel } from "./DictionaryPanel"
 

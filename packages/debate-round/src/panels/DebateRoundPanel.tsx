@@ -13,8 +13,8 @@ import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
 import { settings } from "../state/settings"
 import type { Flow } from "../types/flow"
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "debate-ui/src/primitives/resizable"
-import { Sheet, SheetContent } from "debate-ui/src/primitives/sheet"
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/primitives/resizable"
+import { Sheet, SheetContent } from "../ui/primitives/sheet"
 
 // Modular components
 import { FlowPageSidebar } from "../layout/FlowPageSidebar"

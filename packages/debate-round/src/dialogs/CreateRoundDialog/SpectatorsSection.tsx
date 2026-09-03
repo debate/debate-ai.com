@@ -10,8 +10,8 @@
  */
 
 import { Plus, Minus, Users } from "lucide-react"
-import { Label } from "debate-ui/src/primitives/label"
-import { Button } from "debate-ui/src/primitives/button"
+import { Label } from "../../ui/primitives/label"
+import { Button } from "../../ui/primitives/button"
 import { UserAutocomplete } from "./UserAutocomplete"
 
 /** Props for {@link SpectatorsSection}. */

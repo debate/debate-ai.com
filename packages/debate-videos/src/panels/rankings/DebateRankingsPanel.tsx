@@ -11,7 +11,7 @@
 
 import { useState, useMemo } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { TooltipProvider } from "debate-ui/src/primitives/tooltip"
+import { TooltipProvider } from "../../ui/primitives/tooltip"
 import {
   DIVISION_CONFIG,
   VALID_DIVISIONS,

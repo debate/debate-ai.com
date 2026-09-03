@@ -11,7 +11,7 @@
 import { useMemo, useState } from "react";
 import { GitMerge } from "lucide-react";
 
-import { cn } from "debate-ui/src/lib/utils";
+import { cn } from "../ui/lib/utils";
 import {
   EmptyState,
   LabeledField,
@@ -23,9 +23,9 @@ import {
   StatTile,
   SummaryText,
   toneSurfaceClass,
-} from "debate-ui/src/panels/panel-shell";
-import { Button } from "debate-ui/src/primitives/button";
-import { Input } from "debate-ui/src/primitives/input";
+} from "../ui/panels/panel-shell";
+import { Button } from "../ui/primitives/button";
+import { Input } from "../ui/primitives/input";
 import type { Flow } from "../types/flow";
 
 import {

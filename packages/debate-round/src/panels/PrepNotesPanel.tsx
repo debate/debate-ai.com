@@ -30,10 +30,10 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { EmptyState, PanelRow } from "debate-ui/src/panels/panel-shell"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Input } from "../ui/primitives/input"
+import { EmptyState, PanelRow } from "../ui/panels/panel-shell"
 import {
   assignPersistedPrepNote,
   buildPrepNotesPanelView,

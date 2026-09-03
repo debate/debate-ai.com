@@ -6,13 +6,13 @@
 
 import Image from "next/image"
 import { Calendar, Eye, Trophy, LayoutGrid, Rows3 } from "lucide-react"
-import { IconTopRounds } from "debate-ui/src/icons"
-import { Button } from "debate-ui/src/primitives/button"
+import { IconTopRounds } from "../../ui/icons"
+import { Button } from "../../ui/primitives/button"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "debate-ui/src/primitives/tooltip"
+} from "../../ui/primitives/tooltip"
 import type { VideoViewMode } from "../../hooks/useVideoState"
 
 /** Props for the {@link SearchBarIconButtons} component. */

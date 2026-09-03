@@ -3,7 +3,7 @@
  * @module components/debate/flow/layout/SpeechDocPanel
  */
 import { X, UserPlus } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../ui/primitives/button"
 import { LexicalEditorWrapper } from "debate-editor"
 import type { Flow } from "../types/flow"
 import type { ViewMode } from "../types/debate-flow"

@@ -5,8 +5,8 @@
 "use client"
 
 
-import { Card, CardContent } from "debate-ui/src/primitives/card"
-import { Badge } from "debate-ui/src/primitives/badge"
+import { Card, CardContent } from "../ui/primitives/card"
+import { Badge } from "../ui/primitives/badge"
 import { Users, Clock } from "lucide-react"
 import { getBlueShade, getGreenShade } from "debate-card-parser/src/utils/card-utils"
 import type { SearchResult } from "../types"

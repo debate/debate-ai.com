@@ -9,8 +9,8 @@
  * @module components/debate/dialogs/round-editor/DebateStyleSection
  */
 
-import { Label } from "debate-ui/src/primitives/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
+import { Label } from "../../ui/primitives/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/primitives/select"
 import { settings } from "../../state/settings"
 import type { RadioSetting } from "../../types/settings"
 

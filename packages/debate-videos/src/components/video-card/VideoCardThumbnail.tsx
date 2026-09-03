@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from "react"
 import { Play, Volume2 } from "lucide-react"
-import { cn } from "debate-ui/src/lib/utils"
+import { cn } from "../../ui/lib/utils"
 import { TOURNAMENT_COLORS, getRoundBadgeColor } from "./videoCardUtils"
 
 /** Shape of the video metadata forwarded to the player store on play. */

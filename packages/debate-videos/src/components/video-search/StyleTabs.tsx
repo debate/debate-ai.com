@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "debate-ui/src/lib/utils"
+import { cn } from "../../ui/lib/utils"
 import type { DebateStyle } from "../../types/videos"
 
 const TABS: { value: DebateStyle; label: string }[] = [

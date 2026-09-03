@@ -6,15 +6,15 @@
 
 
 import { useState } from "react"
-import { Input } from "debate-ui/src/primitives/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
+import { Input } from "../ui/primitives/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/primitives/select"
 import { Search, X, ChevronDown, ChevronUp, Scale, ListTree, Quote } from "lucide-react"
 import { SearchResultCard } from "./SearchResultCard"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../ui/primitives/button"
 import type { SearchResult } from "../types"
-import { MultiSelect } from "debate-ui/src/primitives/multi-select"
-import { Autocomplete } from "debate-ui/src/primitives/autocomplete"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+import { MultiSelect } from "../ui/primitives/multi-select"
+import { Autocomplete } from "../ui/primitives/autocomplete"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { searchSchools, searchTournaments, searchNames } from "../cache/client-cache"
 
 const SUGGESTION_LIMIT = 20

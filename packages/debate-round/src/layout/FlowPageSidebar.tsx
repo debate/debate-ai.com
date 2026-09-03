@@ -5,8 +5,8 @@
 
 import type React from "react"
 import { Plus, Clock, Users, Workflow } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+import { Button } from "../ui/primitives/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { FlowToolsMenu } from "./FlowToolsMenu"
 import { LiveRoundGroup } from "./LiveRoundGroup"
 import { OpenTabsGroup } from "./OpenTabsGroup"

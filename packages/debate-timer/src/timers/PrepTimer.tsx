@@ -20,8 +20,8 @@ import type { TimerState } from "../types"
 import { useEffect, useRef, useState } from "react"
 import { Play, Pause } from "lucide-react"
 import { playSoundEffect } from "../audio/sound-effects"
-import { Button } from "debate-ui/src/primitives/button"
-import { cn } from "debate-ui/src/lib/utils"
+import { Button } from "../ui/primitives/button"
+import { cn } from "../ui/lib/utils"
 
 /**
  * Props for the PrepTimer component
