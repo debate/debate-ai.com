@@ -350,8 +350,13 @@ function DockInstance({
  * Unified navigation dock.
  * Desktop (md+): fixed top-left corner, compact width.
  * Mobile: fixed bottom, full-width centered, does not overlap content.
+ *
+ * Pass `embedded` to render just the dock itself, unpositioned, for use at
+ * the top of a page-owned sidebar (e.g. the videos page). In that case the
+ * page is responsible for suppressing the fixed top-left dock so it isn't
+ * shown twice — see the `/videos` check below.
  */
-export function CategoryDock() {
+export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) {
   const pathname = usePathname()
   const router = useRouter()
   const categoryState = useCategoryDockState()
@@ -424,10 +429,29 @@ export function CategoryDock() {
     : allItems
   )
 
+  if (embedded) {
+    return (
+      <>
+        <DockInstance
+          dockClassName="h-[52px] shrink-0 !mt-0 !mx-0"
+          side="bottom"
+          allItems={allItems}
+          onSignIn={() => setLoginOpen(true)}
+          unreadNotifications={unreadCount}
+        />
+        <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+      </>
+    )
+  }
+
+  // The videos page renders its own embedded dock at the top of its sidebar
+  // (md+), so the fixed top-left dock would otherwise show twice there.
+  const suppressDesktopDock = pathname?.startsWith("/videos")
+
   return (
     <>
       {/* Desktop: top-left corner */}
-      <div className="hidden md:block fixed top-0 left-2 z-50">
+      <div className={cn("fixed top-0 left-2 z-50", suppressDesktopDock ? "hidden" : "hidden md:block")}>
         <DockInstance
           dockClassName="h-[52px] shrink-0 !mt-0 !mx-0"
           side="bottom"

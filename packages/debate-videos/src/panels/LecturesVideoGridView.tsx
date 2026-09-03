@@ -124,6 +124,13 @@ interface LecturesVideoGridViewProps {
   selectedStyle?: DebateStyle | ""
   /** Called when the style filter changes. */
   onStyleChange: (style: DebateStyle | "") => void
+  /**
+   * App-owned navigation dock, rendered at the top of the persistent left
+   * sidebar (md+ only). The page supplies this rather than the package
+   * rendering it directly, since the dock depends on app-level concerns
+   * (auth session, routing, settings menu).
+   */
+  dockSlot?: React.ReactNode
 }
 
 /**
@@ -179,6 +186,7 @@ export function LecturesVideoGridView({
   onStatsModalOpenChange,
   selectedStyle,
   onStyleChange,
+  dockSlot,
 }: LecturesVideoGridViewProps) {
   const params = useParams()
   const slug = useMemo(() => {
@@ -207,114 +215,150 @@ export function LecturesVideoGridView({
     return undefined
   }, [showFavoritesOnly, currentCategory, selectedStyle, slug])
 
-  return (
-    <div className="min-h-screen bg-background p-3 sm:p-6">
-      <StickyHeader
-        controls={
-          <VideoSearchBar
-            searchTerm={searchTerm}
-            sortOrder={sortOrder}
-            isSearchFocused={isSearchFocused}
-            showThumbnails={showThumbnails}
-            viewMode={viewMode}
-            onViewModeChange={onViewModeChange}
-            showFavoritesOnly={showFavoritesOnly}
-            selectedYear={selectedYear}
-            onYearChange={onYearChange}
-            facets={facets}
-            onSearchChange={onSearchChange}
-            onSearchFocus={onSearchFocus}
-            onSearchBlur={onSearchBlur}
-            onClearSearch={onClearSearch}
-            onSortChange={onSortChange}
-            onToggleThumbnails={onToggleThumbnails}
-            onToggleFavoritesOnly={onToggleFavoritesOnly}
-            totalVideos={totalVideos}
-            extraButtons={
-              youtubeStats ? (
-                <YouTubeStatsModal
-                  stats={youtubeStats}
-                  open={statsModalOpen}
-                  onOpenChange={onStatsModalOpenChange}
-                />
-              ) : null
-            }
+  const searchBarNode = (stacked: boolean) => (
+    <VideoSearchBar
+      searchTerm={searchTerm}
+      sortOrder={sortOrder}
+      isSearchFocused={isSearchFocused}
+      showThumbnails={showThumbnails}
+      viewMode={viewMode}
+      onViewModeChange={onViewModeChange}
+      showFavoritesOnly={showFavoritesOnly}
+      selectedYear={selectedYear}
+      onYearChange={onYearChange}
+      facets={facets}
+      onSearchChange={onSearchChange}
+      onSearchFocus={onSearchFocus}
+      onSearchBlur={onSearchBlur}
+      onClearSearch={onClearSearch}
+      onSortChange={onSortChange}
+      onToggleThumbnails={onToggleThumbnails}
+      onToggleFavoritesOnly={onToggleFavoritesOnly}
+      totalVideos={totalVideos}
+      stacked={stacked}
+      extraButtons={
+        youtubeStats ? (
+          <YouTubeStatsModal
+            stats={youtubeStats}
+            open={statsModalOpen}
+            onOpenChange={onStatsModalOpenChange}
           />
-        }
-      />
+        ) : null
+      }
+    />
+  )
 
-      <QuickLinksGrid
-        counts={quickLinkCounts}
-        showLectures={showLectureCategories}
-        onToggleLectures={onToggleLectureCategories}
-        activeId={activeQuickLinkId}
-      />
+  const showLectureGallery =
+    showLectureCategories && currentCategory === "lectures" && !selectedStyle && lectureCategories.length > 0
 
-      {showLectureCategories && currentCategory === "lectures" && !selectedStyle && lectureCategories.length > 0 && (
-        <div className="mb-8">
+  return (
+    <div className="min-h-screen bg-background flex">
+      {/* Persistent left sidebar (md+): app dock, search controls, video
+          categories, lecture categories, footer. Below md the same controls
+          render inline above the grid instead — see the mobile block below. */}
+      <aside className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
+        {dockSlot}
+
+        {searchBarNode(true)}
+
+        <QuickLinksGrid
+          counts={quickLinkCounts}
+          showLectures={showLectureCategories}
+          onToggleLectures={onToggleLectureCategories}
+          activeId={activeQuickLinkId}
+          layout="list"
+        />
+
+        {showLectureGallery && (
           <LectureCategoryGridGallery
             categories={lectureCategories}
             selectedCategory={selectedCategory}
+            layout="list"
           />
-        </div>
-      )}
+        )}
 
-      <Footer />
+        <Footer />
+      </aside>
 
-      <div ref={videosSectionRef} className="scroll-mt-20" />
+      <div className="min-w-0 flex-1 p-3 sm:p-6">
+        {/* Mobile-only controls (sidebar above is md+ only) */}
+        <div className="md:hidden">
+          <StickyHeader controls={searchBarNode(false)} />
 
-      {isLoading ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Loading videos...</p>
-        </div>
-      ) : errorMessage ? (
-        <div className="text-center py-12">
-          <p className="text-destructive">{errorMessage}</p>
-        </div>
-      ) : currentVideos.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">No videos found matching your filters.</p>
-        </div>
-      ) : (
-        <>
-          {viewMode === "list" ? (
-            <VideoListRows
-              videos={currentVideos}
-              videoContainerRef={videoContainerRef}
-              favorites={favorites}
-              onToggleFavorite={onToggleFavorite}
-              onHideVideo={onHideVideo}
-              onUnhideVideo={onUnhideVideo}
-              hiddenVideos={hiddenVideos}
-              topPicks={topPicks}
-            />
-          ) : (
-            <VideoGrid
-              videos={currentVideos}
-              showThumbnails={showThumbnails}
-              topics={topics}
-              videoContainerRef={videoContainerRef}
-              favorites={favorites}
-              onToggleFavorite={onToggleFavorite}
-              onBadgeClick={onSearchChange}
-              onHideVideo={onHideVideo}
-              onUnhideVideo={onUnhideVideo}
-              hiddenVideos={hiddenVideos}
-              topPicks={topPicks}
-              showFullDate={true}
-              showDescription={true}
-            />
-          )}
+          <QuickLinksGrid
+            counts={quickLinkCounts}
+            showLectures={showLectureCategories}
+            onToggleLectures={onToggleLectureCategories}
+            activeId={activeQuickLinkId}
+          />
 
-          <div ref={loadMoreTriggerRef} className="h-10" />
-
-          {isLoadingMore && (
-            <div className="text-center py-4">
-              <p className="text-sm text-muted-foreground">Loading more...</p>
+          {showLectureGallery && (
+            <div className="mb-8">
+              <LectureCategoryGridGallery
+                categories={lectureCategories}
+                selectedCategory={selectedCategory}
+              />
             </div>
           )}
-        </>
-      )}
+
+          <Footer />
+        </div>
+
+        <div ref={videosSectionRef} className="scroll-mt-20" />
+
+        {isLoading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading videos...</p>
+          </div>
+        ) : errorMessage ? (
+          <div className="text-center py-12">
+            <p className="text-destructive">{errorMessage}</p>
+          </div>
+        ) : currentVideos.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No videos found matching your filters.</p>
+          </div>
+        ) : (
+          <>
+            {viewMode === "list" ? (
+              <VideoListRows
+                videos={currentVideos}
+                videoContainerRef={videoContainerRef}
+                favorites={favorites}
+                onToggleFavorite={onToggleFavorite}
+                onHideVideo={onHideVideo}
+                onUnhideVideo={onUnhideVideo}
+                hiddenVideos={hiddenVideos}
+                topPicks={topPicks}
+              />
+            ) : (
+              <VideoGrid
+                videos={currentVideos}
+                showThumbnails={showThumbnails}
+                topics={topics}
+                videoContainerRef={videoContainerRef}
+                favorites={favorites}
+                onToggleFavorite={onToggleFavorite}
+                onBadgeClick={onSearchChange}
+                onHideVideo={onHideVideo}
+                onUnhideVideo={onUnhideVideo}
+                hiddenVideos={hiddenVideos}
+                topPicks={topPicks}
+                showFullDate={true}
+                showDescription={true}
+              />
+            )}
+
+            <div ref={loadMoreTriggerRef} className="h-10" />
+
+            {isLoadingMore && (
+              <div className="text-center py-4">
+                <p className="text-sm text-muted-foreground">Loading more...</p>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   )
 }
