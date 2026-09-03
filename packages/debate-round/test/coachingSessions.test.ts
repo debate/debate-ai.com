@@ -2,8 +2,11 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildAndSaveCoachingSession,
   buildCoachingNotesText,
+  buildCoachingSessionComparison,
+  buildCoachingSessionComparisonText,
   buildCoachingSessionsPanelView,
   coachingNotesFilename,
+  coachingSessionComparisonFilename,
   coachingSessionNews,
   deleteCoachingSession,
   getCoachingSession,
@@ -392,5 +395,79 @@ describe("coachingNotesFilename", () => {
 
   it("falls back to a generic name when both inputs sanitize to nothing", () => {
     expect(coachingNotesFilename("###", "!!!")).toBe("coaching-notes-session.txt");
+  });
+});
+
+describe("buildCoachingSessionComparison", () => {
+  it("groups each session's prompts by kind into rows, in a fixed kind order", () => {
+    const comparison = buildCoachingSessionComparison(SESSION_AFF, SESSION_NEG);
+
+    expect(comparison.a).toEqual(SESSION_AFF);
+    expect(comparison.b).toEqual(SESSION_NEG);
+    expect(comparison.rowsByKind.map((row) => row.kind)).toEqual([
+      "extension",
+      "refutation",
+      "collapse",
+      "weighing",
+    ]);
+  });
+
+  it("puts each session's prompts under its matching kind's row", () => {
+    const comparison = buildCoachingSessionComparison(SESSION_AFF, SESSION_NEG);
+    const refutationRow = comparison.rowsByKind.find((row) => row.kind === "refutation");
+    const extensionRow = comparison.rowsByKind.find((row) => row.kind === "extension");
+    const weighingRow = comparison.rowsByKind.find((row) => row.kind === "weighing");
+
+    expect(refutationRow?.a).toEqual([SESSION_AFF.prompts[0]]);
+    expect(refutationRow?.b).toEqual([]);
+    expect(extensionRow?.a).toEqual([]);
+    expect(extensionRow?.b).toEqual([SESSION_NEG.prompts[0]]);
+    expect(weighingRow?.a).toEqual([SESSION_AFF.prompts[1]]);
+    expect(weighingRow?.b).toEqual([]);
+  });
+
+  it("returns an empty array for a kind neither session has any prompts for", () => {
+    const comparison = buildCoachingSessionComparison(SESSION_AFF, SESSION_NEG);
+    const collapseRow = comparison.rowsByKind.find((row) => row.kind === "collapse");
+    expect(collapseRow).toEqual({ kind: "collapse", a: [], b: [] });
+  });
+
+  it("works for two sessions of the same round and side compared against themselves", () => {
+    const comparison = buildCoachingSessionComparison(SESSION_AFF, SESSION_AFF);
+    expect(comparison.rowsByKind.every((row) => row.a.length === row.b.length)).toBe(true);
+  });
+});
+
+describe("buildCoachingSessionComparisonText", () => {
+  it("headers the comparison with both sessions' round and side", () => {
+    const comparison = buildCoachingSessionComparison(SESSION_AFF, SESSION_NEG);
+    const text = buildCoachingSessionComparisonText(comparison);
+    expect(text).toMatch(/^Coaching Comparison — Round round-1 \(AFF\) vs\. Round round-1 \(NEG\)\n\n/);
+  });
+
+  it("includes each session's prompt text under its own kind section", () => {
+    const comparison = buildCoachingSessionComparison(SESSION_AFF, SESSION_NEG);
+    const text = buildCoachingSessionComparisonText(comparison);
+    expect(text).toContain('Answer "Solvency deficit" before it\'s extended against you.');
+    expect(text).toContain('Extend "Solvency deficit" as dropped/conceded.');
+  });
+
+  it("marks a session's empty side of a row as (none)", () => {
+    const comparison = buildCoachingSessionComparison(SESSION_AFF, SESSION_NEG);
+    const text = buildCoachingSessionComparisonText(comparison);
+    expect(text).toContain("(none)");
+  });
+});
+
+describe("coachingSessionComparisonFilename", () => {
+  it("builds a filesystem-safe filename from both sessions' round id and side", () => {
+    expect(coachingSessionComparisonFilename(SESSION_AFF, SESSION_NEG)).toBe(
+      "coaching-comparison-round-1-aff-vs-round-1-neg.txt",
+    );
+  });
+
+  it("keeps the literal 'vs' separator even when both sessions otherwise sanitize to nothing", () => {
+    const blank: CoachingSessionRecord = { roundId: "###", sideKey: "!!!", prompts: [] };
+    expect(coachingSessionComparisonFilename(blank, blank)).toBe("coaching-comparison-vs.txt");
   });
 });

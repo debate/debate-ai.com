@@ -210,6 +210,38 @@ panels/CoachingSessionsPanel.tsx ("Clear")
     also calls deleteVersionsForCoachingSession(roundId, sideKey)
 ```
 
+A later slice added a **Compare two sessions** section — the "a side-by-side
+comparison across two rounds" follow-up named under the "🎙️ AI Coach Mode"
+bullet in TODO.md, the last one open once the History timeline shipped. A
+new `state/coachingSessions.ts#buildCoachingSessionComparison` groups two
+already-persisted sessions' prompts by kind (extension/refutation/collapse/
+weighing) into rows so a comparison view can render matching kinds next to
+each other, regardless of the order either session's own prompts are stored
+in; it works for two sides of the same round or two different rounds
+equally, since no relationship between the two sessions is assumed. The
+panel gained two "Session" dropdowns (only shown once at least two sessions
+are persisted) and a "Compare" button rendering the result as a two-column
+grid, one row per prompt kind, plus a "Download comparison" action — a new
+`buildCoachingSessionComparisonText`/`coachingSessionComparisonFilename`
+pair mirroring `buildCoachingNotesText`/`coachingNotesFilename`'s heading
+and sanitization rules. No new coaching-prompt derivation logic was
+introduced.
+
+## Data flow (comparison)
+
+```
+panels/CoachingSessionsPanel.tsx ("Compare" button)
+  → buildCoachingSessionComparison(sessionA, sessionB)  — state/coachingSessions.ts,
+    groups each session's prompts by kind into { kind, a, b } rows
+  → renders a two-column grid, one row per kind (extension/refutation/collapse/weighing)
+
+Downloading a comparison:
+panels/CoachingSessionsPanel.tsx ("Download comparison")
+  → buildCoachingSessionComparisonText(comparison)  — state/coachingSessions.ts
+  → coachingSessionComparisonFilename(a, b)          — state/coachingSessions.ts
+  → anchor+Blob download, mirroring the per-session Download action's pattern
+```
+
 ## Known gaps
 
 None open.

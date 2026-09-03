@@ -6,6 +6,64 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Coach Mode — side-by-side comparison across two rounds**
+  (the "🎙️ AI Coach Mode" bullet's own next-named follow-up under Research
+  Crowdsourcing Organizer Features below — the last one open once the
+  coaching-session history timeline shipped). As with every recent run, the
+  standing prompt ("integrate all the tools into the UI... create user
+  settings... link user db SQL... save flows docs and debates in SQL and
+  link to users... add tools where needed in the UI... develop better tool
+  UI... integrate CardMirror into the editor and the Ctrl/Cmd-Shift-Space
+  command palette as a Google-Docs-style top menu bar... build a news
+  stream") is already fully built (account-synced `/settings`, D1 tables +
+  `/api/*` routes linking flows/docs/rounds/materials to signed-in users,
+  every tool reachable from the nav, `TOOL_GROUPS`/`WORKSPACE_LINKS` in 1:1
+  sync across all 47 non-editor tools, the editor's `MenuBar` already a
+  Google-Docs-style top bar with CardMirror's own commands as first-class
+  ribbon/palette entries, News Stream already composing product updates
+  with community events), and there were no open PRs to resume — so this
+  run again picked a genuine next-step instead, one directly named in
+  TODO.md's own text. Until now, `CoachingSessionsPanel` only ever rendered
+  one round+side's coaching session at a time, with no way to see two
+  rounds' (or two sides') extension/refutation/collapse/weighing prompts
+  next to each other — this was explicitly named as the bullet's own open
+  follow-up. `state/coachingSessions.ts` gained a pure
+  `buildCoachingSessionComparison(a, b)` that groups each of the two
+  already-persisted sessions' prompts by kind into `{ kind, a, b }` rows, in
+  a fixed kind order (extension/refutation/collapse/weighing) shared with
+  every other coaching-session display in this repo; it makes no assumption
+  about a relationship between the two sessions, so it works equally for
+  two sides of one round or the same side across two different rounds.
+  `buildCoachingSessionComparisonText`/`coachingSessionComparisonFilename`
+  mirror `buildCoachingNotesText`/`coachingNotesFilename`'s exact heading
+  and filename-sanitization rules for a plain-text comparison export.
+  `CoachingSessionsPanel.tsx` gained a "Compare two sessions" section (shown
+  once at least two sessions are persisted) — two "Session" dropdowns
+  (`debate-ui`'s `Select`, mirroring `StrategyPanel.tsx`'s
+  `value={... ?? ""}` controlled-empty-selection pattern) and a "Compare"
+  button rendering the result as a two-column grid, one row per prompt kind,
+  plus a "Download comparison" action using the same anchor+Blob pattern as
+  the existing per-session "Download" button. See
+  `docs/features/coaching-sessions.md`'s new "Compare two sessions" section
+  and "Data flow (comparison)". Vitest-covered: a new
+  `describe("buildCoachingSessionComparison")` block in
+  `packages/debate-round/test/coachingSessions.test.ts` (the fixed kind
+  order, correct per-kind grouping across both sessions, an empty row for a
+  kind neither session has prompts for, and comparing a session against
+  itself), plus `describe("buildCoachingSessionComparisonText")` (the
+  header, both sessions' prompt text present, and the "(none)" placeholder
+  for an empty column) and `describe("coachingSessionComparisonFilename")`
+  (the sanitized filename, and the literal "vs" separator surviving even
+  when both sessions otherwise sanitize to nothing). Verified with `bun
+  install` (fresh container, 2258 packages), the full `bun run typecheck`
+  (13 typechecked packages, clean), the full `bun run test` (root, all
+  packages: 230 test files, 4098 tests, all passing — up from 4089), and
+  `apps/debate-ai.com`'s production build (`bun run build:web`) completing
+  cleanly including the `/coaching` route. No CI `lint` script exists in
+  this repo (`.github/workflows/test.yml` runs only `typecheck` and
+  `coverage`), so it wasn't run, matching every prior run's verification
+  scope. No further follow-up is currently tracked for this idea; a future
+  run should pick a fresh next-step elsewhere if one becomes worth doing.
 - **Strategy Sync Notes — priority flag for prep notes**
   (the "🔄 Strategy Sync Notes" bullet's own next-named follow-up under
   Product Feature Ideas below). As with every recent run, the standing
@@ -14306,7 +14364,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. Next: a side-by-side us-vs-opponent comparison view; a printable/exportable scouting report.
 * ⚖️ **Judge Profiles** (`/judges`) — the auto-tagged-paradigm confidence-indicator follow-up is done: `mostCommonParadigmConfidence` (the tagged paradigm's share of a judge's paradigm-tagged rounds) shows as a "N% confidence" badge on the roster, and folds into the `buildJudgeTendencySummary`/`buildJudgeAdaptationNotes` lines it's already quoted in — see the Completed entry above and `docs/features/judge-profiles.md`'s "What it shows" section. The remaining two follow-ups stay behind the same Tabroom blocker as Opponent Team Profiles (see below): a bulk CSV import for ballot history; a multi-judge comparison view for panel rounds.
 * 🤖 **AI Practice Opponent** (`/practice-opponent`) — share a custom-authored persona across a team instead of per-user only; a difficulty slider layered on top of persona choice; post-round feedback tips specific to the persona faced.
-* 🎙️ **AI Coach Mode** (`/coaching`) — the exportable-coaching-notes-document follow-up is done: each session card has a "Download" action that saves its template prompts plus its AI feedback (if generated) as a plain-text file, headed with the round id and side (`state/coachingSessions.ts#buildCoachingNotesText`/`coachingNotesFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Download" mention. The coaching-session-history-timeline-per-round follow-up is also now done: a "History" toggle on each session card lists every prior version of that round+side's session, newest first, each restorable (`state/coachingSessionHistory.ts#appendCoachingSessionVersion`/`listVersionsForCoachingSession`, wired into `state/coachingSessions.ts#saveCoachingSession`, which now snapshots the record it overwrites before replacing it) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "History" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a side-by-side comparison across two rounds) if one becomes worth doing.
+* 🎙️ **AI Coach Mode** (`/coaching`) — the exportable-coaching-notes-document follow-up is done: each session card has a "Download" action that saves its template prompts plus its AI feedback (if generated) as a plain-text file, headed with the round id and side (`state/coachingSessions.ts#buildCoachingNotesText`/`coachingNotesFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Download" mention. The coaching-session-history-timeline-per-round follow-up is also now done: a "History" toggle on each session card lists every prior version of that round+side's session, newest first, each restorable (`state/coachingSessionHistory.ts#appendCoachingSessionVersion`/`listVersionsForCoachingSession`, wired into `state/coachingSessions.ts#saveCoachingSession`, which now snapshots the record it overwrites before replacing it) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "History" section. The side-by-side-comparison-across-two-rounds follow-up is also now done: a "Compare two sessions" section lets a user pick any two persisted sessions and renders their prompts kind-by-kind in a two-column grid, plus a "Download comparison" action (`state/coachingSessions.ts#buildCoachingSessionComparison`/`buildCoachingSessionComparisonText`/`coachingSessionComparisonFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Compare two sessions" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step elsewhere if one becomes worth doing.
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.
 * 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. The optional brainstorm-session-timer follow-up is also now done: a "Session timer" widget (duration presets, Start/Pause/Reset, a live `M:SS` countdown) backed by the new `lib/brainstorm-session-timer.ts` pure state machine and `state/brainstormSessionTimer.ts` persistence wrapper, synced live across browser tabs via the panel's existing `storage`-event listener — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Session timer" section. Next: polish the idea-ranking UI (upvote affordance/animation).
 * 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
