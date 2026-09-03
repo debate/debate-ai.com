@@ -28,6 +28,7 @@ import { themeNames, themeColors, formatThemeName, useThemeState } from "@/compo
 import { LoginDialog } from "@/components/layout/LoginDialog"
 import { authClient } from "@/lib/auth/client"
 import { useSession } from "@/lib/hooks/useSession"
+import { TOOL_GROUPS } from "@/app/tools/tool-groups"
 import {
   IconCollectiveMind,
   IconFlowFlower,
@@ -148,6 +149,27 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
         <Image src={IconTools} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
         All Tools
       </DropdownMenuItem>
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <Image src={IconTools} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
+          Tools
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent className="w-56 max-h-[min(500px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
+          {TOOL_GROUPS.map((group) => (
+            <DropdownMenuSub key={group.heading}>
+              <DropdownMenuSubTrigger>{group.heading}</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="w-64 max-h-[min(500px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
+                {group.tools.map((tool) => (
+                  <DropdownMenuItem key={tool.href} onSelect={(e) => { e.preventDefault(); router.push(tool.href) }}>
+                    <tool.icon className="mr-2 h-4 w-4 shrink-0" />
+                    {tool.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          ))}
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/settings") }}>
         <SettingsIcon className="mr-2 h-4 w-4" />
