@@ -179,7 +179,7 @@ debate-editor/src/editor/move-container.ts
   → moveContainerUp() / moveContainerDown()             — Mod-Alt-ArrowUp/Down
 
 debate-editor/src/editor/ribbon-groups.ts     — RIBBON_GROUPS, thematic command grouping
-debate-editor/src/react/menu-bar-categories.ts — re-buckets RIBBON_GROUPS into File/Edit/Card/Format/Insert/AI/View/Tools/Workspace/Plugins
+debate-editor/src/react/menu-bar-categories.ts — re-buckets RIBBON_GROUPS into File/Speech/Card/Edit/Format/Color/Insert/AI/View/Panes/Tools/Flow/Workspace/Plugins
 debate-editor/src/react/MenuBar.tsx            — renders the top menu bar, dispatches via runRibbon(id)
 debate-editor/src/editor/quick-card-search-ui.ts → Ctrl/Cmd-Shift-Space palette, indexes every ribbon command by label/alias
 
