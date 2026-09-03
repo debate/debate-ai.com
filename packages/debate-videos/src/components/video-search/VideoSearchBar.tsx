@@ -5,16 +5,16 @@
 
 import { useState, useEffect } from "react"
 import { Search, X } from "lucide-react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Input } from "debate-ui/src/primitives/input"
-import { cn } from "debate-ui/src/lib/utils"
-import { GlowingEffect } from "debate-ui/src/effects/glowing-effect"
+import { Badge } from "../../ui/primitives/badge"
+import { Input } from "../../ui/primitives/input"
+import { cn } from "../../ui/lib/utils"
+import { GlowingEffect } from "../../ui/effects/glowing-effect"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   TooltipProvider,
-} from "debate-ui/src/primitives/tooltip"
+} from "../../ui/primitives/tooltip"
 import type { DebateStyle, VideoFacets } from "../../types/videos"
 import type { VideoViewMode } from "../../hooks/useVideoState"
 import { useVideoSearchCounts } from "./useVideoSearchCounts"

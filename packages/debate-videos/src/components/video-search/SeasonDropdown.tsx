@@ -9,7 +9,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-ui/src/primitives/select"
+} from "../../ui/primitives/select"
 
 /** Props for the {@link SeasonDropdown} component. */
 interface SeasonDropdownProps {

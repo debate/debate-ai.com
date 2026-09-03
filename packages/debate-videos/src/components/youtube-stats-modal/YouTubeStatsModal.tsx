@@ -5,7 +5,7 @@
 "use client"
 
 import { Info } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../../ui/primitives/button"
 import {
   Dialog,
   DialogContent,
@@ -13,9 +13,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "debate-ui/src/primitives/dialog"
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "debate-ui/src/primitives/tooltip"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "debate-ui/src/primitives/tabs"
+} from "../../ui/primitives/dialog"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../../ui/primitives/tooltip"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
 import {
   Table,
   TableBody,
@@ -23,10 +23,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "debate-ui/src/primitives/table"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "debate-ui/src/charts/chart"
+} from "../../ui/primitives/table"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../ui/charts/chart"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from "recharts"
-import type { ChartConfig } from "debate-ui/src/charts/chart"
+import type { ChartConfig } from "../../ui/charts/chart"
 
 interface YouTubeStats {
   summary: {

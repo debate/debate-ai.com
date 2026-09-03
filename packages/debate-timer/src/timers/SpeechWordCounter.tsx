@@ -24,14 +24,14 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Type } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
-import { Textarea } from "debate-ui/src/primitives/textarea"
+import { Button } from "../ui/primitives/button"
+import { Textarea } from "../ui/primitives/textarea"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "debate-ui/src/primitives/popover"
-import { cn } from "debate-ui/src/lib/utils"
+} from "../ui/primitives/popover"
+import { cn } from "../ui/lib/utils"
 import { getWordCountStatus } from "../formats/word-count-format"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import { appendDictatedSegment } from "./microphone-transcription"

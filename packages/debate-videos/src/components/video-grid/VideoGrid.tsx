@@ -7,7 +7,7 @@
 import React from "react"
 import type { VideoType, TopicType } from "../../types/videos"
 import { VideoCard } from "../video-card/VideoCard"
-import { HoverCardWrapper } from "debate-ui/src/primitives/hover-card-wrapper"
+import { HoverCardWrapper } from "../../ui/primitives/hover-card-wrapper"
 
 interface VideoGridProps {
   videos: VideoType[]

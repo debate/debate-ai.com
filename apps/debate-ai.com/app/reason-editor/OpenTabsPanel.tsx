@@ -7,7 +7,7 @@
  */
 
 import { FileText, X } from "lucide-react"
-import { cn } from "debate-ui/src/lib/utils"
+import { cn } from "../../lib/ui/lib/utils"
 import type { ReasonDocument } from "./types"
 
 interface OpenTabsPanelProps {

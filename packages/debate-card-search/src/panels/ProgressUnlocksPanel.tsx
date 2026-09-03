@@ -39,9 +39,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { MeterBar } from "debate-ui/src/panels/panel-shell"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { MeterBar } from "../ui/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -49,7 +49,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "debate-ui/src/primitives/table"
+} from "../ui/primitives/table"
 import { buildUnlockStatusRoster } from "../lib/unlock-streak-status"
 import { isOwnContributorRow } from "../lib/session-identity"
 import { buildUnlockCelebrationMessage } from "../lib/unlock-celebration"

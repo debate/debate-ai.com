@@ -46,9 +46,9 @@ import { DailyBestCardWithIdentity } from "./DailyBestCardWithIdentity"
 import type { TrackedArgument } from "debate-card-search/src/lib/topic-coverage"
 import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
 import { listEvidenceLibraryEntries } from "debate-card-search/src/state/evidenceLibraryEntries"
-import { useStoreSnapshot } from "debate-ui/src/panels/use-store-snapshot"
-import { Input } from "debate-ui/src/primitives/input"
-import { LabeledField } from "debate-ui/src/panels/panel-shell"
+import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
+import { Input } from "../../lib/ui/primitives/input"
+import { LabeledField } from "../../lib/ui/panels/panel-shell"
 
 /** localStorage key holding whoever is using this browser. */
 const CONTRIBUTOR_KEY = "researchHubContributorId"

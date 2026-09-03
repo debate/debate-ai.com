@@ -6,9 +6,9 @@
 "use client"
 
 
-import { Card, CardContent } from "debate-ui/src/primitives/card"
-import { Button } from "debate-ui/src/primitives/button"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "debate-ui/src/primitives/dropdown-menu"
+import { Card, CardContent } from "../ui/primitives/card"
+import { Button } from "../ui/primitives/button"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../ui/primitives/dropdown-menu"
 import { Eye, Check } from "lucide-react"
 import { IntroTextOverview } from "./IntroTextOverview"
 

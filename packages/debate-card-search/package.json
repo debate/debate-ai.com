@@ -15,12 +15,21 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@radix-ui/react-dropdown-menu": "2.1.16",
+    "@radix-ui/react-label": "2.1.8",
+    "@radix-ui/react-radio-group": "1.3.8",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-slot": "1.2.4",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "debate-card-parser": "workspace:*",
-    "debate-ui": "workspace:*",
     "fuse.js": "^7.1.0",
     "grab-url": "^1.6.7",
     "lucide-react": "^0.577.0",
-    "react-native-app-buttons": "^0.1.4"
+    "react-native-app-buttons": "^0.1.4",
+    "react-resizable-panels": "^4.7.2",
+    "tailwind-merge": "^3.5.0"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

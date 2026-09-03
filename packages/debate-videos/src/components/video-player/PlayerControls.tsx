@@ -3,7 +3,7 @@
  */
 
 import { X, Minus, Maximize2, SkipForward, Play, Pause, Gauge, PictureInPicture2 } from "lucide-react"
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "debate-ui/src/primitives/tooltip"
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../../ui/primitives/tooltip"
 import type { QueueItem } from "../../state/videoPlayerStore"
 
 interface PlayerControlsProps {

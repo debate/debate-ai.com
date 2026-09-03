@@ -6,7 +6,7 @@
 
 "use client"
 
-import { Card, CardContent } from "debate-ui/src/primitives/card"
+import { Card, CardContent } from "../ui/primitives/card"
 import { DownloadAppButton } from "react-native-app-buttons"
 
 type DebateHistoryEntry = Record<string, string | undefined>

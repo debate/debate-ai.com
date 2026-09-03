@@ -4,9 +4,9 @@
  */
 
 import type React from "react"
-import { Clock, Users } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+import { Plus, Clock, Users, Workflow } from "lucide-react"
+import { Button } from "../ui/primitives/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import type { EbbFlowToolAction } from "debate-flow-ebb"
 import { EbbFlowToolsMenu } from "./EbbFlowToolsMenu"
 import { FlowToolsMenu } from "./FlowToolsMenu"

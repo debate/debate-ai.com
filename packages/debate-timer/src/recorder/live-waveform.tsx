@@ -12,7 +12,7 @@ import {
     useEffect,
     useRef,
 } from "react"
-import { cn } from "debate-ui/src/lib/utils"
+import { cn } from "../ui/lib/utils"
 
 export interface LiveWaveformProps extends Omit<HTMLAttributes<HTMLDivElement>, "onError"> {
     /** Whether to actively listen to microphone input */

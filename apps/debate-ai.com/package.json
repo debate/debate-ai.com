@@ -74,7 +74,6 @@
     "debate-round": "workspace:*",
     "debate-speech-writer": "workspace:*",
     "debate-timer": "workspace:*",
-    "debate-ui": "workspace:*",
     "debate-videos": "workspace:*",
     "docx-preview": "^0.3.7",
     "dompurify": "^3.3.3",

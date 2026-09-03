@@ -3,7 +3,7 @@
  * "ebb Flow tools" dropdown (`EbbFlowToolsMenu` in debate-round) to build its
  * menu from without pulling in ebb's UI kit — that kit is styled for
  * `.ebb-scope` (see `EbbFlowEmbed.tsx`'s docstring) and would render unstyled
- * outside it, unlike the host's own `debate-ui` components the dropdown uses
+ * outside it, unlike the host's own local UI primitives the dropdown uses
  * instead.
  */
 

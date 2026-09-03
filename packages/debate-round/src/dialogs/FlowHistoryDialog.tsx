@@ -16,10 +16,10 @@
 
 import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "debate-ui/src/primitives/dialog"
-import { Button } from "debate-ui/src/primitives/button"
-import { ScrollArea } from "debate-ui/src/primitives/scroll-area"
-import { Input } from "debate-ui/src/primitives/input"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/primitives/dialog"
+import { Button } from "../ui/primitives/button"
+import { ScrollArea } from "../ui/primitives/scroll-area"
+import { Input } from "../ui/primitives/input"
 import { useFlowStore, type FlowHistory } from "../state/store"
 import type { Flow, Round } from "../types/flow"
 import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2, CloudUpload } from "lucide-react"
@@ -34,7 +34,7 @@ import {
   summarizeBulkSaveOutcomes,
   type BulkSaveOutcome,
 } from "../state/bulkRoundSave"
-import { Badge } from "debate-ui/src/primitives/badge"
+import { Badge } from "../ui/primitives/badge"
 
 /** Load/error state for the "Saved to account" tab's flow list. */
 type CloudListState =

@@ -5,8 +5,8 @@
 import type { ViewMode } from "../types/debate-flow"
 
 import { Eye } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "debate-ui/src/primitives/dropdown-menu"
+import { Button } from "../ui/primitives/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/primitives/dropdown-menu"
 
 /** Props for the ViewModeSelector component. */
 interface ViewModeSelectorProps {

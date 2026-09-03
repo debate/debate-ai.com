@@ -8,7 +8,7 @@
  * choosing one switches to the ebb tab (mounting `EbbFlowEmbed` if it isn't
  * already) and queues the action for it to run once mounted.
  *
- * Uses the host's own `debate-ui` components rather than ebb's UI kit: ebb's
+ * Uses the host's own local UI primitives rather than ebb's UI kit: ebb's
  * kit is styled for `.ebb-scope` (see `EbbFlowEmbed.tsx`'s docstring) and
  * would render unstyled out here in the sidebar.
  *
@@ -16,7 +16,7 @@
  */
 
 import { FilePlus, FolderOpen, LogIn, Settings, Workflow } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../ui/primitives/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,8 +24,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "debate-ui/src/primitives/dropdown-menu"
-import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+} from "../ui/primitives/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
 import { isDesktop, useRecentFlows } from "debate-flow-ebb/tools"
 import type { EbbFlowToolAction } from "debate-flow-ebb"
 

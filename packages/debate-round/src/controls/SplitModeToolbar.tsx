@@ -5,7 +5,7 @@
 import type { ViewMode } from "../types/debate-flow"
 
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../ui/primitives/button"
 
 /** Props for the SplitModeToolbar component. */
 interface SplitModeToolbarProps {
