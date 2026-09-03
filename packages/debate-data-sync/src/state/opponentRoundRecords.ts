@@ -45,6 +45,7 @@ import type {
   OpponentTeamProfile,
 } from "../rankings/opponent-team-profile";
 import { buildOpponentTeamProfile } from "../rankings/opponent-team-profile";
+import { parseOpponentRoundRecordsCsv } from "../rankings/opponent-round-csv-import";
 import { deleteOpponentTeamProfile, saveOpponentTeamProfile } from "./opponentTeamProfiles";
 
 /** An `OpponentRoundRecord` as persisted: a unique id, since a team plays many rounds. */
@@ -232,6 +233,48 @@ export function recordOpponentRound(record: OpponentRoundRecordEntry): OpponentT
   );
   saveOpponentTeamProfile(profile);
   return profile;
+}
+
+/** Result of a bulk CSV opponent-round import. */
+export interface OpponentRoundCsvImportResult {
+  importedCount: number;
+  skippedCount: number;
+  /** One human-readable message per skipped CSV row, in row order. */
+  errors: string[];
+  /** Distinct team ids whose profile was created or updated by this import. */
+  affectedTeamIds: string[];
+}
+
+/**
+ * Parses `rawCsv` via `rankings/opponent-round-csv-import.ts`'s
+ * `parseOpponentRoundRecordsCsv` and persists every well-formed row in one
+ * batch: appends each parsed round to the full history, then re-aggregates
+ * every affected team's profile once each (not once per row) — mirrors
+ * `debate-card-search`'s `bulkImportScoredCards` convention of composing a
+ * pure parser with the store's own persistence, reporting a skipped-row
+ * count/reasons instead of failing the whole batch on one malformed row.
+ */
+export function bulkImportOpponentRoundRecords(rawCsv: string): OpponentRoundCsvImportResult {
+  const { entries, skippedCount, errors } = parseOpponentRoundRecordsCsv(rawCsv);
+  if (entries.length === 0) {
+    return { importedCount: 0, skippedCount, errors, affectedTeamIds: [] };
+  }
+
+  const records = readAll();
+  const importedAt = Date.now();
+  const newEntries: OpponentRoundRecordEntry[] = entries.map((entry, index) => ({
+    ...entry,
+    id: `${entry.teamId}-${entry.tournamentName}-${entry.date}-${importedAt}-${index}`,
+  }));
+  records.push(...newEntries);
+  writeAll(records);
+
+  const affectedTeamIds = Array.from(new Set(newEntries.map((entry) => entry.teamId)));
+  for (const teamId of affectedTeamIds) {
+    rebuildOpponentTeamProfileFromRecords(teamId);
+  }
+
+  return { importedCount: newEntries.length, skippedCount, errors, affectedTeamIds };
 }
 
 /**

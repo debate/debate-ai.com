@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  bulkImportOpponentRoundRecords,
   deleteOpponentRoundRecord,
   findNearestOpponentTeamId,
   hasOpponentRoundRecordEditHistory,
@@ -459,6 +460,74 @@ describe("findNearestOpponentTeamId", () => {
 
   it("returns null when no team is logged yet", () => {
     expect(findNearestOpponentTeamId("wxyz")).toBeNull();
+  });
+});
+
+describe("bulkImportOpponentRoundRecords", () => {
+  it("persists every well-formed CSV row and aggregates each affected team once", () => {
+    const csv = [
+      "teamId,tournamentName,date,division,side,won,argumentTags,caseName,opponentTeamId",
+      "wxyz,Berkeley,2026-01-10,PF,aff,true,kritik,Housing Case,",
+      "wxyz,Glenbrooks,2026-02-01,PF,neg,false,,,",
+      "abcd,Berkeley,2026-01-10,PF,aff,true,,,",
+    ].join("\n");
+
+    const result = bulkImportOpponentRoundRecords(csv);
+
+    expect(result).toMatchObject({ importedCount: 3, skippedCount: 0, errors: [] });
+    expect(result.affectedTeamIds.sort()).toEqual(["abcd", "wxyz"]);
+    expect(listOpponentRoundRecords()).toHaveLength(3);
+
+    const wxyzProfile = getOpponentTeamProfile("wxyz");
+    expect(wxyzProfile?.roundsRecorded).toBe(2);
+    expect(wxyzProfile?.record).toMatchObject({ wins: 1, losses: 1 });
+    expect(getOpponentTeamProfile("abcd")?.roundsRecorded).toBe(1);
+  });
+
+  it("assigns every imported row its own id even when team/tournament/date match", () => {
+    const csv = [
+      "teamId,tournamentName,date,division,side,won",
+      "wxyz,Berkeley,2026-01-10,PF,aff,true",
+      "wxyz,Berkeley,2026-01-10,PF,neg,false",
+    ].join("\n");
+
+    bulkImportOpponentRoundRecords(csv);
+
+    const ids = listOpponentRoundRecords().map((record) => record.id);
+    expect(new Set(ids).size).toBe(2);
+  });
+
+  it("imports the well-formed rows and reports the skipped ones", () => {
+    const csv = [
+      "teamId,tournamentName,date,division,side,won",
+      "wxyz,Berkeley,2026-01-10,PF,aff,true",
+      ",Glenbrooks,2026-02-01,PF,neg,false",
+    ].join("\n");
+
+    const result = bulkImportOpponentRoundRecords(csv);
+
+    expect(result.importedCount).toBe(1);
+    expect(result.skippedCount).toBe(1);
+    expect(result.errors).toHaveLength(1);
+    expect(listOpponentRoundRecords()).toHaveLength(1);
+  });
+
+  it("does not touch storage or any profile when every row is invalid", () => {
+    const result = bulkImportOpponentRoundRecords("teamId,tournamentName,date,division,side,won");
+
+    expect(result).toMatchObject({ importedCount: 0, skippedCount: 0, affectedTeamIds: [] });
+    expect(listOpponentRoundRecords()).toEqual([]);
+  });
+
+  it("merges into a team's existing rounds rather than replacing them", () => {
+    recordOpponentRound(entry({ id: "r1", teamId: "wxyz", tournamentName: "Berkeley" }));
+
+    const result = bulkImportOpponentRoundRecords(
+      ["teamId,tournamentName,date,division,side,won", "wxyz,Glenbrooks,2026-02-01,PF,neg,false"].join("\n"),
+    );
+
+    expect(result.importedCount).toBe(1);
+    expect(getOpponentTeamProfile("wxyz")?.roundsRecorded).toBe(2);
   });
 });
 
