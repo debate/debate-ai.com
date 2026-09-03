@@ -1,18 +1,14 @@
 "use client";
 
-import { FilePlus, FolderOpen, Gear, Question, SignIn } from "@phosphor-icons/react";
+import { Question } from "@phosphor-icons/react";
 
 import { Button } from "../ui/button";
 import { Tip } from "../ui/tooltip";
-import { executeCommand } from "../../lib/commands/commands";
-import { openFlowFromPicker } from "../../lib/commands/fileCommands";
 import { sideLabels } from "../../lib/format/events";
 import { teamCode } from "../../lib/model/teamCode";
 import { useFlowStore } from "../../lib/store/useFlowStore";
-import { isDesktop } from "../../lib/update/adapter";
 
 import ExportMenu from "./ExportMenu";
-import RecentFlowsMenu from "./RecentFlowsMenu";
 import SaveStatus from "./SaveStatus";
 import SpeechSwitcher from "./SpeechSwitcher";
 import ZoomControl from "./ZoomControl";
@@ -44,43 +40,6 @@ export default function RoundHeader() {
             </div>
 
             <div className="no-print ribbon:gap-2 flex flex-none items-center gap-1">
-                <Tip label="New flow">
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => useFlowStore.getState().setNewFlowOpen(true)}
-                        aria-label="New flow"
-                        data-testid="new-flow-btn"
-                    >
-                        <FilePlus className="size-4.5" />
-                    </Button>
-                </Tip>
-                <Tip label="Open a flow">
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => void openFlowFromPicker()}
-                        aria-label="Open a flow"
-                        data-testid="open-flow-btn"
-                    >
-                        <FolderOpen className="size-4.5" />
-                    </Button>
-                </Tip>
-                <RecentFlowsMenu />
-                {isDesktop() && (
-                    <Tip label="Join with a code">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => executeCommand("collab.join")}
-                            aria-label="Join with a code"
-                            data-testid="join-code-btn"
-                        >
-                            <SignIn className="size-4.5" />
-                        </Button>
-                    </Tip>
-                )}
-                <span aria-hidden="true" className="bg-border h-4 w-px flex-none" />
                 <SpeechSwitcher />
                 <ZoomControl />
                 <Tip label="Round info" command="info.open">
@@ -117,17 +76,6 @@ export default function RoundHeader() {
                         data-testid="guide-btn"
                     >
                         <Question className="size-4.5" />
-                    </Button>
-                </Tip>
-                <Tip label="Settings" command="settings.open">
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => useFlowStore.getState().setSettingsOpen(true)}
-                        aria-label="Settings"
-                        data-testid="settings-btn"
-                    >
-                        <Gear className="size-4.5 rotate-[22.5deg]" />
                     </Button>
                 </Tip>
                 <ExportMenu />

@@ -48,8 +48,11 @@ import ThemeSync from "./components/ThemeSync";
 import { TooltipProvider } from "./components/ui/tooltip";
 import UpdateChip from "./components/update/UpdateChip";
 import { UpdateProvider } from "./components/update/UpdateProvider";
-import type { FlowNavigator } from "./lib/commands/flowNav";
+import { executeCommand } from "./lib/commands/commands";
+import { openFlowFromPicker } from "./lib/commands/fileCommands";
+import { navigateToFlow, type FlowNavigator } from "./lib/commands/flowNav";
 import { setEbbKeyScope } from "./lib/keymap/scope";
+import { useFlowStore } from "./lib/store/useFlowStore";
 import { setEbbThemeScope } from "./lib/theme/themeScope";
 
 // Tokens and Handsontable theming for `.ebb-scope` live in
@@ -58,11 +61,38 @@ import { setEbbThemeScope } from "./lib/theme/themeScope";
 // effect for CSS Tailwind's build actually walks from that entry, the same
 // reason `themes.css` is `@import`-ed there instead of from a component.
 
+/**
+ * An entry point from ebb's old start screen (New flow / Open / Join /
+ * Settings, plus a chosen recent flow), invoked from the round workspace's
+ * "ebb Flow tools" dropdown (`EbbFlowToolsMenu`, in debate-round) so those
+ * stay one click away regardless of which tab is active. Handled here, once
+ * this embed is mounted, rather than in the dropdown itself: opening a path
+ * or joining a session both need `NavigatorHost`/collab machinery that only
+ * exists while this embed is mounted, and selecting the pinned ebb tab is
+ * what mounts it.
+ */
+export type EbbFlowToolAction =
+    | { type: "new" }
+    | { type: "open" }
+    | { type: "open-path"; path: string }
+    | { type: "join" }
+    | { type: "settings" };
+
 export interface EbbFlowEmbedProps {
     className?: string;
+    /** A tool action queued by the host before or while mounting this embed.
+     *  Consumed once (see `onPendingActionHandled`). */
+    pendingAction?: EbbFlowToolAction | null;
+    /** Called synchronously once `pendingAction` has been handled, so the
+     *  host can clear it and not re-run it on the next render. */
+    onPendingActionHandled?: () => void;
 }
 
-export function EbbFlowEmbed({ className }: EbbFlowEmbedProps): React.JSX.Element {
+export function EbbFlowEmbed({
+    className,
+    pendingAction,
+    onPendingActionHandled,
+}: EbbFlowEmbedProps): React.JSX.Element {
     const rootRef = useRef<HTMLDivElement>(null);
     const [path, setPath] = useState<string | null>(null);
     const [isNew, setIsNew] = useState(false);
@@ -75,6 +105,32 @@ export function EbbFlowEmbed({ className }: EbbFlowEmbedProps): React.JSX.Elemen
             setEbbThemeScope(null);
         };
     }, []);
+
+    // React flushes effects bottom-up, so on the mount that first brings this
+    // embed on screen, `NavigatorHost`'s own effect (registering the live
+    // `FlowNavigator`) has already run by the time this one fires — safe for
+    // the "open"/"open-path"/"join" cases below, which need it.
+    useEffect(() => {
+        if (!pendingAction) return;
+        onPendingActionHandled?.();
+        switch (pendingAction.type) {
+            case "new":
+                useFlowStore.getState().setNewFlowOpen(true);
+                break;
+            case "open":
+                void openFlowFromPicker();
+                break;
+            case "open-path":
+                navigateToFlow(pendingAction.path);
+                break;
+            case "join":
+                executeCommand("collab.join");
+                break;
+            case "settings":
+                useFlowStore.getState().setSettingsOpen(true);
+                break;
+        }
+    }, [pendingAction, onPendingActionHandled]);
 
     const navigator = useMemo<FlowNavigator>(
         () => ({
