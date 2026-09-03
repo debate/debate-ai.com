@@ -45,6 +45,12 @@
  * topic first — the "topic-comparison view across the whole team"
  * follow-up named under the same TODO.md bullet.
  *
+ * A "My research goal" section, shown only for a signed-in visitor
+ * (`signedInContributorId`), lets them set a personal completed-task target
+ * — optionally scoped to one topic — and tracks progress toward it with a
+ * `MeterBar` via `state/researchProgressGoals.ts` — the "personal
+ * goal-setting UI" follow-up named under the same TODO.md bullet.
+ *
  * @module panels/ResearchProgressPanel
  */
 
@@ -53,7 +59,16 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
+import { Input } from "debate-ui/src/primitives/input"
+import { Label } from "debate-ui/src/primitives/label"
 import { MeterBar } from "debate-ui/src/panels/panel-shell"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "debate-ui/src/primitives/select"
 import {
   Table,
   TableBody,
@@ -66,6 +81,12 @@ import {
   buildPersistedResearchProgressBoard,
   deleteCompletedTaskHistoryForTopic,
 } from "../state/researchProgress"
+import {
+  clearGoalForContributor,
+  getGoalForContributor,
+  getPersistedGoalProgressForContributor,
+  setGoalForContributor,
+} from "../state/researchProgressGoals"
 import { isOwnContributorRow } from "../lib/session-identity"
 import { isResearchProgressLiveUpdateStorageEvent } from "../state/live-update"
 import {
@@ -73,7 +94,10 @@ import {
   buildTeamTopicComparison,
   researchProgressReportFilename,
   type ContributorProgress,
+  type GoalProgress,
 } from "../lib/research-progress"
+
+const ALL_TOPICS_VALUE = "__all_topics__"
 
 export interface ResearchProgressPanelProps {
   /**
@@ -117,6 +141,60 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
   const handleClearTopicHistory = (topic: string) => {
     deleteCompletedTaskHistoryForTopic(topic)
     setRoster(buildPersistedResearchProgressBoard())
+  }
+
+  const [goalProgress, setGoalProgress] = useState<GoalProgress | undefined>(undefined)
+  const [isEditingGoal, setIsEditingGoal] = useState(false)
+  const [draftTarget, setDraftTarget] = useState("")
+  const [draftTopic, setDraftTopic] = useState(ALL_TOPICS_VALUE)
+  const [goalError, setGoalError] = useState<string | null>(null)
+
+  const refreshGoalProgress = () => {
+    if (!signedInContributorId) return
+    setGoalProgress(getPersistedGoalProgressForContributor(signedInContributorId))
+  }
+
+  // Re-reads the goal once the signed-in id is known, and again whenever the
+  // underlying board changes (a completed task can push a goal over its
+  // target), mirroring the roster's own storage-event refresh above.
+  useEffect(() => {
+    refreshGoalProgress()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signedInContributorId, roster])
+
+  const openGoalForm = () => {
+    setDraftTarget(goalProgress ? String(goalProgress.goal.targetCompletedTaskCount) : "")
+    setDraftTopic(goalProgress?.goal.topic ?? ALL_TOPICS_VALUE)
+    setGoalError(null)
+    setIsEditingGoal(true)
+  }
+
+  const handleSaveGoal = () => {
+    if (!signedInContributorId) return
+    const target = Number(draftTarget)
+    if (!Number.isFinite(target) || target <= 0) {
+      setGoalError("Enter a target number of tasks greater than 0.")
+      return
+    }
+    try {
+      setGoalForContributor({
+        contributorId: signedInContributorId,
+        targetCompletedTaskCount: Math.round(target),
+        topic: draftTopic === ALL_TOPICS_VALUE ? undefined : draftTopic,
+      })
+    } catch (err) {
+      setGoalError(err instanceof Error ? err.message : "Could not save goal.")
+      return
+    }
+    setIsEditingGoal(false)
+    setGoalProgress(getPersistedGoalProgressForContributor(signedInContributorId))
+  }
+
+  const handleClearGoal = () => {
+    if (!signedInContributorId) return
+    clearGoalForContributor(signedInContributorId)
+    setIsEditingGoal(false)
+    setGoalProgress(undefined)
   }
 
   /** Mirrors `PreRoundBriefingsPanel.tsx`'s anchor+Blob download pattern. */
@@ -163,6 +241,95 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
           Download report
         </Button>
       </div>
+
+      {signedInContributorId && (
+        <div className="mb-6 rounded-lg border border-border bg-muted/30 p-4">
+          <h2 className="mb-1 text-sm font-semibold text-foreground">My research goal</h2>
+          {isEditingGoal ? (
+            <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:flex-wrap">
+              <div className="space-y-1.5">
+                <Label htmlFor="research-goal-target">Target completed tasks</Label>
+                <Input
+                  id="research-goal-target"
+                  type="number"
+                  min={1}
+                  step={1}
+                  className="w-32"
+                  value={draftTarget}
+                  onChange={(e) => setDraftTarget(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="research-goal-topic">Topic</Label>
+                <Select value={draftTopic} onValueChange={setDraftTopic}>
+                  <SelectTrigger id="research-goal-topic" className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ALL_TOPICS_VALUE}>All topics</SelectItem>
+                    {topicComparison.map((topic) => (
+                      <SelectItem key={topic.topic} value={topic.topic}>
+                        {topic.topic}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" onClick={handleSaveGoal}>
+                  Save goal
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setIsEditingGoal(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : goalProgress ? (
+            <div className="mt-2 space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm text-muted-foreground">
+                  {goalProgress.goal.topic
+                    ? `${goalProgress.currentCompletedTaskCount}/${goalProgress.goal.targetCompletedTaskCount} tasks completed in ${goalProgress.goal.topic}`
+                    : `${goalProgress.currentCompletedTaskCount}/${goalProgress.goal.targetCompletedTaskCount} tasks completed`}
+                  {goalProgress.isComplete && (
+                    <Badge variant="outline" className="ml-2 whitespace-nowrap">
+                      🎉 Goal reached
+                    </Badge>
+                  )}
+                </p>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={openGoalForm}>
+                    Update goal
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={handleClearGoal}>
+                    Clear goal
+                  </Button>
+                </div>
+              </div>
+              <MeterBar
+                value={Math.round(goalProgress.progressRatio * 100)}
+                max={100}
+                caption={
+                  goalProgress.isComplete
+                    ? "Complete"
+                    : `${goalProgress.remainingTaskCount} more task${goalProgress.remainingTaskCount === 1 ? "" : "s"} to go`
+                }
+              />
+            </div>
+          ) : (
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm text-muted-foreground">
+                Set a personal target to track your own progress toward, overall or for one topic.
+              </p>
+              <Button size="sm" variant="outline" onClick={openGoalForm}>
+                Set a goal
+              </Button>
+            </div>
+          )}
+          {goalError && <p className="mt-2 text-sm text-destructive">{goalError}</p>}
+        </div>
+      )}
+
       <Table>
         <TableHeader>
           <TableRow>

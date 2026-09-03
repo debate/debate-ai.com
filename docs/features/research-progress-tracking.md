@@ -180,6 +180,41 @@ least-covered-first, the alphabetical tie-break, an empty roster, and that a
 topic's contributor count only includes contributors with an assignment in
 that specific topic).
 
+## Personal goal-setting
+
+A signed-in visitor gets a "My research goal" section above the roster (only
+rendered when `signedInContributorId` is set) — the "personal goal-setting
+UI" follow-up named under the "📈 Research Progress Tracking" bullet in
+TODO.md. They can set a personal target number of completed tasks, either
+overall or scoped to one topic, and track progress toward it with a
+`MeterBar` meter — the same meter component the "Topic comparison" section
+above uses. `lib/research-progress.ts`'s `ResearchProgressGoal`/
+`computeGoalProgress` are pure: `computeGoalProgress` resolves a goal's
+current count from an already-built `ContributorProgress` — either
+`totalCompletedTasks` (no topic set) or that one topic's
+`TopicProgress.completedTaskCount` (0 if the contributor has no assignments
+in it at all) — and clamps `progressRatio` to `[0, 1]`.
+`state/researchProgressGoals.ts` persists at most one goal per contributor in
+localStorage (array of records filtered by `contributorId`, mirroring
+`streakFreezes.ts`'s persistence convention), and
+`getPersistedGoalProgressForContributor` composes `computeGoalProgress`
+directly against the real, persisted `buildPersistedResearchProgressBoard` so
+the panel doesn't need to look up the contributor's own row itself. A goal
+reached shows a "🎉 Goal reached" badge in place of the meter's remaining-task
+caption. This is deliberately local-only, not account-synced — like
+`streakLapseReminders.ts`, a lightweight per-visitor preference rather than a
+record other contributors need to see (see "Known gaps" below). Vitest-covered
+in `packages/debate-card-search/test/research-progress.test.ts`
+(`computeGoalProgress`: an overall goal, a topic-scoped goal, a topic the
+contributor has no assignments in, and clamping once the count exceeds the
+target) and `packages/debate-card-search/test/researchProgressGoals.test.ts`
+(goal CRUD — set/replace/clear, per-contributor isolation, the
+`InvalidGoalTargetError` guard on a non-positive target, corrupt-storage
+recovery — and `getPersistedGoalProgressForContributor` composed against the
+real persisted board, including a contributor with a goal but no board row
+yet, and a goal that becomes complete once a task is recorded without
+re-setting it).
+
 ## Known gaps
 
 - No contributor identity/permission *checks* — a real signed-in session now
@@ -187,3 +222,8 @@ that specific topic).
   but the roster still shows every contributor, the same "prefill/highlight
   only, not a gate" known gap the Leaderboard, Task Inbox, and Progress
   Unlocks panels carry.
+- The personal goal is local-only (per browser), not account-synced, and
+  only reachable once the roster is non-empty (a signed-in visitor with
+  literally no tracked contribution or task yet sees the panel's "No
+  progress yet" empty state instead of the goal section) — both stay open
+  follow-ups if this turns out to matter.
