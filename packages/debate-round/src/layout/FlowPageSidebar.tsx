@@ -4,7 +4,7 @@
  */
 
 import type React from "react"
-import { Clock, Users, Columns2, Grid3x3 } from "lucide-react"
+import { Plus, Clock, Users, Workflow } from "lucide-react"
 import { Button } from "debate-ui/src/primitives/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
 import { FlowToolsMenu } from "./FlowToolsMenu"
@@ -24,8 +24,6 @@ interface FlowPageSidebarProps {
   rounds: Round[]
   /** The currently active flow, or null if none is selected. */
   currentFlow: Flow | null
-  /** Whether split mode is currently active. */
-  splitMode: boolean
   /** Whether the sidebar is being rendered on a mobile device. */
   isMobile: boolean
   /** Handler called when the user selects a flow tab. */
@@ -38,8 +36,6 @@ interface FlowPageSidebarProps {
   onArchiveFlow: (index: number) => void
   /** Handler called when the user deletes a flow. */
   onDeleteFlow: (index: number) => void
-  /** Handler called when the user toggles split mode. */
-  onToggleSplitMode: () => void
   /** Handler called when the user opens the flow history dialog. */
   onOpenHistory: () => void
   /** Handler called when the user opens the round editor for a given round. */
@@ -73,14 +69,12 @@ interface FlowPageSidebarProps {
  * @param props.selected - Index of the currently active flow, used to highlight the matching tab.
  * @param props.rounds - Every round in the session; searched for the one currently live.
  * @param props.currentFlow - Active flow; used to determine whether Edit Round is available.
- * @param props.splitMode - Controls the icon shown on the split-mode toggle button.
  * @param props.isMobile - When true, selecting a flow also closes the mobile menu overlay.
  * @param props.onSelectFlow - Callback invoked with the flow index when a tab is clicked.
  * @param props.onAddFlow - Callback invoked when the Add Flow button is clicked.
  * @param props.onRenameFlow - Callback invoked with the flow index and new name when a tab is renamed.
  * @param props.onArchiveFlow - Callback invoked with the flow index when a tab is archived.
  * @param props.onDeleteFlow - Callback invoked with the flow index when a tab is deleted.
- * @param props.onToggleSplitMode - Callback invoked when the split-mode toggle button is clicked.
  * @param props.onOpenHistory - Callback invoked when the Flow History button is clicked.
  * @param props.onEditRound - Callback invoked with the round ID when the Edit Round button is clicked.
  * @param props.onCloseMobileMenu - Optional callback to close the mobile menu after a flow is selected.
@@ -91,14 +85,12 @@ export function FlowPageSidebar({
   selected,
   rounds,
   currentFlow,
-  splitMode,
   isMobile,
   onSelectFlow,
   onAddFlow,
   onRenameFlow,
   onArchiveFlow,
   onDeleteFlow,
-  onToggleSplitMode,
   onOpenHistory,
   onEditRound,
   ebbActive,
@@ -136,20 +128,8 @@ export function FlowPageSidebar({
   return (
     <div className="mt-[50px]  bg-[var(--background)] w-full h-full md:h-[var(--main-height)] rounded-[var(--border-radius)] p-[var(--padding)] flex flex-col box-border">
       {/* Quick action buttons */}
-      <div className="h-auto pb-[var(--padding)] grid grid-cols-4 gap-0.5">
+      <div className="h-auto pb-[var(--padding)] grid grid-cols-3 gap-0.5">
         <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button onClick={onToggleSplitMode} size="icon" variant="ghost" className="h-7 w-7">
-                {splitMode ? <Grid3x3 className="h-4 w-4" /> : <Columns2 className="h-4 w-4" />}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{splitMode ? "Go to Spreadsheet Flow" : "Speech Side-by-Side View"}</p>
-            </TooltipContent>
-          </Tooltip>
-
-
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onOpenHistory}>

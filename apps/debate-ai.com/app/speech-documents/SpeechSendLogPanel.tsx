@@ -11,7 +11,7 @@
  * (TipTap) package's `Mod-Shift-S` / "→Speech"-button flow — a command
  * that no longer exists in the live CardMirror-based `/reason-editor`
  * route, so that panel could never show anything a user actually did.
- * `speechSendLogStore` (from `debate-editor-cardmirror`'s headless
+ * `speechSendLogStore` (from `debate-editor`'s headless
  * `/engine` entry point — no ProseMirror or React pulled in here) is
  * populated by the real `insertSpeechSlice` call point instead, so this
  * page now reflects what actually happened in the live editor.
@@ -24,7 +24,7 @@ import { Send, Trash2 } from "lucide-react"
 import {
   speechSendLogStore,
   type SpeechSendLogEntry,
-} from "debate-editor-cardmirror/engine"
+} from "debate-editor/engine"
 import { Button } from "debate-ui/src/primitives/button"
 import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import { useSpeechSendLogSync } from "@/lib/hooks/useSpeechSendLogSync"

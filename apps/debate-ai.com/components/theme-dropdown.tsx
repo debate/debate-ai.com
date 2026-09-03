@@ -163,9 +163,15 @@ export function useThemeState() {
     syncToAccount({ themeMode: newTheme })
   }
 
+  /** Sets light/dark/system mode explicitly (vs. `toggleLightDark`'s light/dark flip) — mirrors the Appearance section pattern. */
+  const setMode = (newMode: ThemeMode) => {
+    setTheme(newMode)
+    syncToAccount({ themeMode: newMode })
+  }
+
   const isDark = (resolvedTheme || theme) === "dark"
 
-  return { colorTheme, mounted, isDark, handleThemeChange, handleThemePreview, handlePreviewEnd, toggleLightDark }
+  return { colorTheme, mounted, isDark, mode: theme, handleThemeChange, handleThemePreview, handlePreviewEnd, toggleLightDark, setMode }
 }
 
 /**

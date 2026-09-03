@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react"
 import { UserSettingsPanel, WordLimitPresetsPanel } from "debate-round"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "debate-ui/src/primitives/tabs"
 import { FavoriteToolsSettings } from "@/components/settings/FavoriteToolsSettings"
-import { EditorPreferencesPanel } from "debate-settings"
+import { CardMirrorPreferencesPanel } from "@/components/settings/CardMirrorPreferencesPanel"
 import { EbbFlowPreferencesPanel } from "@/components/settings/EbbFlowPreferencesPanel"
 
 export const metadata: Metadata = {
@@ -48,7 +48,7 @@ export default function SettingsPage() {
 
         <TabsContent value="debate-settings">
           <Suspense>
-            <EditorPreferencesPanel />
+            <CardMirrorPreferencesPanel />
           </Suspense>
           <EbbFlowPreferencesPanel />
         </TabsContent>

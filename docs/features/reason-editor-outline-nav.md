@@ -7,8 +7,10 @@ this slice) a sticky "current heading" breadcrumb — TODO.md's idea #9
 **Correction (2026-08-30):** this doc previously described a TipTap-based
 `OutlineNavPanel`/`ReasonEditor` component in the `reason-editor` package.
 That component is dead code: `/reason-editor` has rendered
-`debate-editor-cardmirror`'s `CardMirrorEditor` (via the `debate-editor`
-re-export shim) since PR #338, and `CardMirrorEditor`'s own `showOutline`/
+`debate-editor`'s `CardMirrorEditor` since PR #338 (originally via a
+`debate-editor` re-export shim to a separate `debate-editor-cardmirror`
+workspace package, since merged into `debate-editor` itself), and
+`CardMirrorEditor`'s own `showOutline`/
 `documentId` props (declared on its prop type, passed unconditionally from
 `app/reason-editor/page.tsx`) are never read anywhere in its
 implementation — a vestigial no-op left over from the migration. The
@@ -22,7 +24,7 @@ slice; the package is unimported anywhere in `apps/debate-ai.com`, per the
 
 - **Route:** `/reason-editor` (and every other CardMirror-hosted surface —
   the nav panel and breadcrumb are core editor chrome, not opt-in)
-- **Package:** [`debate-editor-cardmirror`](../../packages/debate-editor-cardmirror)
+- **Package:** [`debate-editor`](../../packages/debate-editor)
 
 ## What it shows
 

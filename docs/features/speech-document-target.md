@@ -6,9 +6,9 @@ disconnect found by a "make sure every tool is well-integrated in the live
 UI" audit: this page (and its own `/tools` card) described `Mod-Shift-S` /
 a "→Speech" toolbar button sending text into a persisted, find-or-create-by-
 title `SpeechDocument` record. That was true of the *prior*, TipTap-based
-`reason-editor` package. `/reason-editor` now renders `debate-editor`'s
-shim to `debate-editor-cardmirror` — the ported-in CardMirror ProseMirror
-engine that replaced it (see that package's `src/index.tsx`) — whose
+`reason-editor` package. `/reason-editor` now renders `debate-editor` —
+the ported-in CardMirror ProseMirror engine that replaced it (see that
+package's `src/react/index.tsx`) — whose
 send-to-speech feature works completely differently (below), and never
 wrote to the old package's store. Following the old UI copy in the live
 app did nothing: the page was permanently empty no matter what a user did
@@ -16,7 +16,7 @@ in `/reason-editor`.
 
 - **Route:** `/speech-documents` (view/manage history) — send from any
   CardMirror document (e.g. `/reason-editor`)
-- **Package:** [`debate-editor-cardmirror`](../../packages/debate-editor-cardmirror)
+- **Package:** [`debate-editor`](../../packages/debate-editor)
   (the send mechanism and its history log); `apps/debate-ai.com/app/speech-documents`
   (the page)
 - **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
@@ -69,22 +69,22 @@ a second copy of the document.
 ## Data flow
 
 ```
-debate-editor-cardmirror/src/editor/speech-doc-registry.ts
+debate-editor/src/editor/speech-doc-registry.ts
   → getSpeechDocResolver() — designates one open pane's uid as the speech doc
 
-debate-editor-cardmirror/src/editor/speech-doc-send.ts
+debate-editor/src/editor/speech-doc-send.ts
   → sendToSpeech(view, atEnd)     — ` / Alt-` keys, ribbon buttons
   → insertSpeechSlice(...)        — shared landing path (in-window / cross-tab / Electron)
       → buildSpeechSendLogEntry(text, atEnd, id, sentAt)  — pure, null for blank text
       → speechSendLogStore.add(entry)                     — records the send
 
-debate-editor-cardmirror/src/editor/speech-send-log.ts   (IndexedDB, "speech-send-log")
+debate-editor/src/editor/speech-send-log.ts   (IndexedDB, "speech-send-log")
   → buildSpeechSendPreview / buildSpeechSendLogEntry      — pure
   → appendSpeechSendLogEntry / removeSpeechSendLogEntry   — pure, cap MAX_SPEECH_SEND_LOG_ENTRIES
   → sanitizeSpeechSendLog                                 — pure, tolerates malformed persisted data
   → speechSendLogStore                                    — WebSharedStore-backed, cross-tab synced
 
-debate-editor-cardmirror's `/engine` entry point re-exports the above —
+debate-editor's `/engine` entry point re-exports the above —
 no ProseMirror or React in this module, so a plain page component can
 import it without pulling in the editor bundle.
 

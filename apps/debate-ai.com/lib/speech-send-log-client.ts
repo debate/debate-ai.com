@@ -5,7 +5,7 @@
  * so the fetch calls stay easy to mock, mirroring `debate-round`'s
  * `round/judge-decisions-client.ts` split. Lives in the app rather than a
  * shared package because `SpeechSendLogEntry` itself is defined in
- * `debate-editor-cardmirror`, not `debate-round`.
+ * `debate-editor`, not `debate-round`.
  *
  * `listSavedSpeechSendLog` resolves to `null` (rather than throwing) on a
  * `401`, letting the caller fall back to local-only history instead of
@@ -16,7 +16,7 @@
  * @module lib/speech-send-log-client
  */
 
-import type { SpeechSendLogEntry } from "debate-editor-cardmirror/engine"
+import type { SpeechSendLogEntry } from "debate-editor/engine"
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {

@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     name: "debate-editor",
     root: import.meta.dirname,
-    environment: "node",
+    environment: "jsdom",
     include: ["test/**/*.test.ts", "test/**/*.test.tsx"],
   },
 });

@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedSpeechSendLog } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidSpeechSendLogEntry, MAX_SAVED_SPEECH_SEND_LOG_BYTES } from "debate-editor-cardmirror/engine"
+import { isValidSpeechSendLogEntry, MAX_SAVED_SPEECH_SEND_LOG_BYTES } from "debate-editor/engine"
 
 /**
  * Account-linked Speech Documents send-log sync — single-entry CRUD, keyed

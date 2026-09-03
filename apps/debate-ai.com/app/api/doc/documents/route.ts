@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   const db = await getDBFromContext()
   const userId = await getUserId()
 
-  let body: { title?: string; content?: string }
+  let body: { title?: string; content?: string; parentId?: number | null; isFolder?: boolean }
   try {
     body = await req.json()
   } catch {
@@ -38,9 +38,11 @@ export async function POST(req: NextRequest) {
   const [created] = await db
     .insert(documents)
     .values({
-      title: body.title?.trim() || "Untitled",
+      title: body.title?.trim() || (body.isFolder ? "New Folder" : "Untitled"),
       content: body.content ?? "",
       userId,
+      parentId: body.parentId ?? null,
+      isFolder: body.isFolder ?? false,
     })
     .returning()
 
