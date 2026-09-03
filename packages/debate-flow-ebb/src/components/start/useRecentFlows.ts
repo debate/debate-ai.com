@@ -8,7 +8,7 @@ import { displayPath } from "../../lib/persistence/flowPaths";
 import { loadRecents, RECENTS_SHOWN, saveRecents } from "../../lib/persistence/recents";
 import { buildSummary, recentDetail, recentLabel } from "../../lib/start/summary";
 
-/** One row on the start screen, already resolved for display. */
+/** One row in the toolbar's recent-flows menu, already resolved for display. */
 export interface RecentEntry {
     path: string;
     /** Matchup when the round is scouted, filename when it is not. */

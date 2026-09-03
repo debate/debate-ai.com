@@ -28,6 +28,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Toaster } from "sonner";
 
 import AppRoot from "./components/flow/AppRoot";
+import ResumeFlow from "./components/flow/ResumeFlow";
 import { BridgeHost } from "./components/BridgeHost";
 import ConfigFileSync from "./components/ConfigFileSync";
 import ConsentDialog from "./components/collab/ConsentDialog";
@@ -40,9 +41,9 @@ import { DesktopMenu } from "./components/DesktopMenu";
 import MotionRoot from "./components/MotionRoot";
 import NavigatorHost from "./components/NavigatorHost";
 import QuitGuard from "./components/QuitGuard";
+import MigrationDialog from "./components/start/MigrationDialog";
 import NewFlowDialog from "./components/start/NewFlowDialog";
 import SettingsPanel from "./components/settings/SettingsPanel";
-import StartScreen from "./components/start/StartScreen";
 import ThemeSync from "./components/ThemeSync";
 import { TooltipProvider } from "./components/ui/tooltip";
 import UpdateChip from "./components/update/UpdateChip";
@@ -108,12 +109,13 @@ export function EbbFlowEmbed({ className }: EbbFlowEmbedProps): React.JSX.Elemen
                 <UpdateProvider>
                     <MotionRoot>
                         <div className="min-h-0 flex-1">
-                            {path ? <AppRoot path={path} isNew={isNew} /> : <StartScreen />}
+                            {path ? <AppRoot path={path} isNew={isNew} /> : <ResumeFlow />}
                         </div>
                         <UpdateChip />
                     </MotionRoot>
                     <SettingsPanel />
                     <NewFlowDialog />
+                    <MigrationDialog onMigrated={() => {}} />
                     <ContactPickerDialog />
                     <RejoinDialog />
                     <JoinDialog />
