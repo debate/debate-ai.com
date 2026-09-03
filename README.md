@@ -9,6 +9,7 @@
     <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
     <a href="https://github.com/debate/debate-ai.com/tree/master/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
     <a href="https://debate-ai.com/api/api-docs"><img src="https://img.shields.io/badge/API-blue?logo=fastapi&logoColor=white" alt="API badge"></a>
+    <a href="https://www.npmjs.com/package/debate-api-client"><img src="https://img.shields.io/npm/v/debate-api-client.svg?logo=npm&label=debate-api-client" alt="debate-api-client on npm"></a>
     <a href="https://youtu.be/XB0tzpBUEKQ" target="_blank" rel="noopener noreferrer"><img height="20px" src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" /></a>
     <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com" target="_blank" rel="noopener noreferrer"><img height="24px" src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>
     <a href="https://github.com/debate/debate-ai.com/discussions"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/debate/debate-ai.com" /></a>
@@ -165,6 +166,11 @@
 - [Coaching Programs](https://beta.debate-ai.com/coaching-programs) — Run roster-scoped group coaching spaces with topic sprints, challenges, and drills.
 - [Coach Materials](https://beta.debate-ai.com/coach-materials) — Upload or dictate grounding material for the team coach AI and preview relevant sources.
 - 
+## API & SDK
+
+- [API Reference](https://debate-ai.com/api/api-docs) — Interactive Scalar docs generated from [`debate-openapi.yml`](./apps/debate-ai.com/public/debate-openapi.yml).
+- [`debate-api-client`](./packages/debate-api-client) ([npm](https://www.npmjs.com/package/debate-api-client)) — Typed SDK generated from the OpenAPI spec with [Hey API](https://heyapi.dev/), sending requests through [`grab-url`](https://grab.js.org) for caching, retries, rate limiting, and dedupe on every call.
+
 ## Contributing
 
 Start developing locally, develop features, open ideas in discussions, and submit a PR!

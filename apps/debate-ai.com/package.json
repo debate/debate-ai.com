@@ -2,6 +2,7 @@
   "name": "debate-ai-web",
   "description": "Debate AI enables competitive debaters in PF, LD & Policy to streamline AI research management, live speech sharing, and evidence analysis",
   "version": "0.9.0",
+  "private": true,
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",

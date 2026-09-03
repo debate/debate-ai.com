@@ -53,3 +53,7 @@ pnpm-lock.yaml
 open-when-ready.log
 # Generated video seed SQL (regenerate with `bun run db:seed:videos`)
 apps/debate-ai.com/drizzle/seed/
+
+# debate-api-client: types generated from debate-openapi.yml (regenerate with `bun run generate`)
+packages/debate-api-client/src/generated/
+packages/debate-api-client/dist/
