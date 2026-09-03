@@ -6,6 +6,38 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Drill Generator — difficulty rating with filtering (Research
+  Crowdsourcing Organizer Features bullet).** Another repeat of the standing
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL... with ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built and every tool is already
+  reachable from the Tools page and CardMirror's command palette, so this
+  slice picked the next named, unblocked follow-up instead: the "📚 AI Drill
+  Generator" bullet's "a difficulty rating with filtering" item. Added a
+  `difficulty: "easy" | "medium" | "hard"` field to `flow/drill-generator.ts`'s
+  `Drill` type, derived per-drill from the associated argument's existing
+  `vulnerabilityScore` (`response-outcome.ts`) via a new
+  `vulnerabilityScoreToDifficulty` helper — a highly exposed argument
+  (unanswered, drawing opposing pressure, little same-side defense) rates as
+  "easy" practice material, a well-defended one as "hard"; the whole-round
+  overview drill, which has no single associated argument, always rates
+  "medium". `DrillSetsPanel` shows each drill's difficulty as a badge next
+  to its kind badge and adds a "Difficulty" `Select` dropdown (mirroring
+  `ContributionLeaderboardPanel`'s category filter) that narrows every
+  round's drill list to one difficulty via a new pure
+  `filterDrillsByDifficulty` helper. See
+  `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section
+  and the "AI Drill Generator" bullet in the Research Crowdsourcing
+  Organizer Features list below. Vitest-covered in
+  `packages/debate-round/test/drill-generator.test.ts` (the difficulty
+  computed by each drill builder, `vulnerabilityScoreToDifficulty`'s
+  thresholds, and `filterDrillsByDifficulty`), with the pre-existing
+  `drillSets.test.ts`/`drill-script-ai.test.ts`/`drill-script-client.test.ts`
+  fixtures updated for the now-required field. Two follow-ups remain open on
+  this bullet: drill scheduling/reminders, and completion tracking tied into
+  Progress Unlocks.
 - **debate-round panel UI-polish — migrate 6 hand-rolled list rows to the
   shared `PanelRow` primitive (idea #17 follow-up (4), `user-settings.md`
   Known gap).** Another repeat of the standing prompt ("integrate all the
@@ -14705,7 +14737,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. Next: threaded replies on a note instead of flat status; a digest notification instead of one per assignment.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
-* 📚 **AI Drill Generator** (`/drills`) — drill scheduling/reminders; a difficulty rating with filtering; completion tracking tied into Progress Unlocks.
+* 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. Next: drill scheduling/reminders; completion tracking tied into Progress Unlocks.
 * 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. Next: a side-by-side case-option comparison table.
 
 ## Confirmed blocker: Tabroom results/pairings/ballot data

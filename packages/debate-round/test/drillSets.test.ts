@@ -32,14 +32,31 @@ const DRILL_SET_A: DrillSetRecord = {
   roundId: "round-1",
   sideKey: "aff",
   drills: [
-    { kind: "overview", rowIndex: null, prompt: "Write a 2-minute overview weighing the round." },
-    { kind: "frontline", rowIndex: 2, prompt: 'Write a frontline response to "solvency deficit".' },
+    {
+      kind: "overview",
+      rowIndex: null,
+      prompt: "Write a 2-minute overview weighing the round.",
+      difficulty: "medium",
+    },
+    {
+      kind: "frontline",
+      rowIndex: 2,
+      prompt: 'Write a frontline response to "solvency deficit".',
+      difficulty: "hard",
+    },
   ],
 };
 const DRILL_SET_B: DrillSetRecord = {
   roundId: "round-2",
   sideKey: "neg",
-  drills: [{ kind: "cross_ex", rowIndex: 0, prompt: "What evidence supports that claim?" }],
+  drills: [
+    {
+      kind: "cross_ex",
+      rowIndex: 0,
+      prompt: "What evidence supports that claim?",
+      difficulty: "easy",
+    },
+  ],
 };
 
 const COLUMNS = ["1AC", "1NC", "2AC", "2NC"];
@@ -111,7 +128,10 @@ describe("saveDrillSet", () => {
     saveDrillSet(DRILL_SET_A);
     const updated: DrillSetRecord = {
       ...DRILL_SET_A,
-      drills: [...DRILL_SET_A.drills, { kind: "collapse", rowIndex: 4, prompt: "Consider collapsing here." }],
+      drills: [
+        ...DRILL_SET_A.drills,
+        { kind: "collapse", rowIndex: 4, prompt: "Consider collapsing here.", difficulty: "easy" },
+      ],
     };
     saveDrillSet(updated);
 
