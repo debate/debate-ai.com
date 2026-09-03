@@ -13,6 +13,7 @@
 import Link from "next/link";
 import { Badge } from "debate-ui/src/primitives/badge";
 import { Button } from "debate-ui/src/primitives/button";
+import { EmptyState } from "debate-ui/src/panels/panel-shell";
 import { useAccountNotifications } from "../hooks/useAccountNotifications";
 
 /** Renders the current user's account notifications (round invites, etc.), newest first, with per-item and mark-all-read actions. */
@@ -38,9 +39,10 @@ export function AccountNotificationsPanel() {
       {loading && notifications.length === 0 ? (
         <div className="p-6 text-sm text-muted-foreground">Loading notifications…</div>
       ) : notifications.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No notifications yet. You'll see one here whenever someone invites you to a round.
-        </div>
+        <EmptyState
+          title="No notifications yet."
+          message="You'll see one here whenever someone invites you to a round."
+        />
       ) : (
         <div className="space-y-2">
           {notifications.map((notification) => {

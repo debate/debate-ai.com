@@ -45,6 +45,7 @@ import {
   SelectValue,
 } from "debate-ui/src/primitives/select"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
 import {
   createFlowAnnotation,
@@ -369,9 +370,10 @@ export function FlowAnnotationsPanel() {
       </div>
 
       {annotations.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No flow annotations yet. Drop one above while watching a round to see it here.
-        </div>
+        <EmptyState
+          title="No flow annotations yet."
+          message="Drop one above while watching a round to see it here."
+        />
       ) : (
         <div className="space-y-4">
           <div className="flex flex-wrap items-end gap-4">
@@ -475,9 +477,7 @@ export function FlowAnnotationsPanel() {
           </div>
 
           {filteredAnnotations.length === 0 ? (
-            <div className="p-6 text-center text-sm text-muted-foreground">
-              No annotations match the current filter.
-            </div>
+            <EmptyState title="No annotations match the current filter." />
           ) : (
             <div className="space-y-2">
               {filteredAnnotations.map((annotation) => {

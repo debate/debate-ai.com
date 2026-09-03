@@ -74,6 +74,7 @@ import {
   SelectValue,
 } from "debate-ui/src/primitives/select"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import { listOpponentTeamProfiles } from "debate-data-sync/src/state/opponentTeamProfiles"
 import { listJudgeProfiles } from "debate-speech-writer/src/state/judgeProfiles"
 import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-profile"
@@ -704,10 +705,10 @@ export function PreRoundBriefingsPanel() {
       </div>
 
       {briefings.length === 0 && (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No pre-round briefings yet. Create one above, or one fills in once generated
-          elsewhere for a round.
-        </div>
+        <EmptyState
+          title="No pre-round briefings yet."
+          message="Create one above, or one fills in once generated elsewhere for a round."
+        />
       )}
       {briefings.map(({ roundId, briefing, updatedAt }) => {
         const ageHours = getBriefingAgeHours(updatedAt)

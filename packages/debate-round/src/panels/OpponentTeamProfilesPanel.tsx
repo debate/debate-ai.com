@@ -53,6 +53,7 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -418,9 +419,10 @@ export function OpponentTeamProfilesPanel() {
       </div>
 
       {roster.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No opponent team profiles yet. Log a scouted round above to build one.
-        </div>
+        <EmptyState
+          title="No opponent team profiles yet."
+          message="Log a scouted round above to build one."
+        />
       ) : (
         <Table>
           <TableHeader>

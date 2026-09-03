@@ -6,6 +6,51 @@
 _No task currently in progress._
 
 ### Completed
+- **debate-round panel UI-polish — migrate 16 more hand-rolled "no data yet"
+  placeholders to the shared `EmptyState` primitive (idea #17 follow-up (4),
+  `user-settings.md` Known gap).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows docs and debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built and every tool is
+  already reachable from the Tools page, so this slice continued the
+  broader, still-open "bring weaker panel UIs up to the shared `debate-ui`
+  primitive conventions" half of follow-up (4) instead — the specific
+  pattern the prior slice (migrating `EvidenceLibraryPanel`,
+  `ArgumentLibraryPanel`, `PrepRoomPanel`, and `SpeechSendLogPanel`) named
+  as not yet exhaustive. Searched every `debate-round` panel for the same
+  hand-rolled shape `EmptyState` was built to replace
+  (`<div className="p-6 text-center text-sm text-muted-foreground">…</div>`)
+  and found 16 more panels still on the bespoke markup:
+  `AiVersusRoundPanel`, `JudgeDecisionPanel`, `PrepNoteNotificationsPanel`,
+  `PracticeRoundSimulatorPanel`, `AccountNotificationsPanel`,
+  `StrategyPanel`, `WordCountRoundsPanel`, `PrepNotesPanel`,
+  `FlowAnnotationsPanel` (two instances — the panel-level placeholder and a
+  nested "no annotations match the current filter" one), `CoachingProgramsPanel`,
+  `DrillSetsPanel`, `VulnerabilityChartsPanel`, `ArgumentTreePanel`,
+  `OpponentTeamProfilesPanel`, `CoachingSessionsPanel`, `FlowSummariesPanel`,
+  and `PreRoundBriefingsPanel`. Each now imports `EmptyState` from
+  `debate-ui/src/panels/panel-shell` and renders it with the same
+  title/message text the hand-rolled markup carried (first sentence as
+  `title`, the rest as `message`, matching the prior slice's split), so no
+  visible copy changed — only the markup now matches the shared primitive
+  (and its dashed-border/centered styling) instead of duplicating it ad hoc.
+  No pure logic changed, so no new Vitest cases were needed — `EmptyState`
+  itself is already covered in `packages/debate-ui/test/panel-shell.test.tsx`.
+  Verified: `bun install` (2342 packages), `bunx turbo run typecheck
+  --filter=debate-round` (10/10 in-scope package tasks pass), full `bun run
+  test` (226 files / 4056 tests, all pass, unchanged), and `bun run
+  build:web` (`debate-ai-web` production build succeeds, full route list
+  intact). Updated `docs/features/user-settings.md`'s Known gaps section.
+  Remaining gap for a future slice: the same "standing tool-panel/nav
+  UI-polish audit" idea #17 follow-up (4) is still open more broadly — a
+  search for this one specific hand-rolled-`EmptyState` pattern is not the
+  same as an exhaustive comparison of every panel against every shared
+  `debate-ui` primitive (e.g. `PanelShell`/`PanelSection`/`StatTile`/
+  `MeterBar`/`Pill`/`PanelRow` adoption is still unaudited); a future run
+  should pick the next specific pattern to search for. **Completed:**
+  2026-09-03.
 - **User Settings — prune stale favorite tools from the `/tools` favorites
   strip too (idea #17, `user-settings.md` Known gap).** Another repeat of
   the standing prompt ("integrate all the tools into the UI... create user

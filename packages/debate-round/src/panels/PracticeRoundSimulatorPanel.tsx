@@ -55,6 +55,7 @@ import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { RadioGroup, RadioGroupItem } from "debate-ui/src/primitives/radio-group"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -442,9 +443,7 @@ export function PracticeRoundSimulatorPanel() {
       </div>
 
       {rounds.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No practice rounds yet. Configure one above to see it here.
-        </div>
+        <EmptyState title="No practice rounds yet." message="Configure one above to see it here." />
       ) : (
         <div className="space-y-4">
           {rounds.map((record) => {

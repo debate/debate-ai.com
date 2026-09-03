@@ -54,6 +54,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
   buildFlowSummariesPanelView,
   deleteFlowSummary,
@@ -297,10 +298,10 @@ export function FlowSummariesPanel() {
       </div>
 
       {records.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No flow summaries yet. Summaries fill in once a round's flow is derived into per-argument
-          summaries and saved, or generated above from raw speech text.
-        </div>
+        <EmptyState
+          title="No flow summaries yet."
+          message="Summaries fill in once a round's flow is derived into per-argument summaries and saved, or generated above from raw speech text."
+        />
       ) : (
         records.map((record) => {
           const rows = record.summaries.filter((row) => !row.isHeading)
