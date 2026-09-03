@@ -6,6 +6,52 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Drill Generator — scheduling/reminders (Research Crowdsourcing
+  Organizer Features bullet, "📚 AI Drill Generator" Next item).** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built and every tool is already reachable from the Tools
+  page and CardMirror's command palette, so this slice picked the last
+  remaining named, unblocked follow-up on the "📚 AI Drill Generator"
+  bullet instead: "drill scheduling/reminders" (the other named follow-up,
+  tying completion tracking into the separate `debate-card-search` Progress
+  Unlocks tier system, stays open as a cross-package integration — see
+  below). Added an optional `scheduledReviewAt: Record<number, string>`
+  field to `DrillSetRecord` (`state/drillSets.ts`, additive, keyed by drill
+  index, mirroring the existing `aiScripts` field's shape, storing a
+  `YYYY-MM-DD` day), a `scheduleDrillReview(roundId, drillIndex, dayKey |
+  null)` mutator (sets or clears a schedule; same unknown-roundId/
+  out-of-range-drillIndex no-op guard as `saveDrillAiScript`/
+  `toggleDrillCompletion`), and two pure helpers: `isDrillReviewDue`
+  (string comparison of two `YYYY-MM-DD` days) and `getDueDrillIndexes`
+  (a record's due, in-range drill indexes, sorted ascending). There's no
+  scheduled-job/push-notification infrastructure in this repo (the same
+  known gap `streakLapseReminders.ts` documents), so the "reminder" is an
+  in-app one: `DrillSetsPanel` gets a "Review reminder" date field per
+  drill (auto-saving on change, with a "Clear" button once set), a "Due"
+  badge next to a due drill's kind/difficulty badges, and an aggregate "N
+  due for review" badge on its round card's heading, all computed against
+  the browser's local calendar day. See `docs/features/drill-sets.md`'s new
+  "Scheduling and reminders" section. Vitest-covered in
+  `packages/debate-round/test/drillSets.test.ts` — 16 new tests:
+  `scheduleDrillReview` setting/overwriting/clearing a schedule, leaving
+  other drills'/rounds' records and every other field untouched, and
+  no-ops for an unknown `roundId` or an out-of-range `drillIndex`;
+  `isDrillReviewDue`'s past/today/future comparisons; and
+  `getDueDrillIndexes`'s due-list filtering/sorting and its handling of a
+  stale out-of-range scheduled index. Verified: `bun install` (2342
+  packages), `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-ui --filter=debate-ai-web` (10/10 in-scope package tasks
+  pass), full `bun run test` (226 files / 4092 tests, all pass — up from
+  4076 before this slice), and `bun run build:web` (`debate-ai-web`
+  production build succeeds, full route list intact including `/drills`).
+  Updated `docs/features/drill-sets.md`'s Known gaps section — one
+  follow-up remains open on the "📚 AI Drill Generator" bullet: tying local
+  completion tracking into the Progress Unlocks tier system. **Completed:**
+  2026-09-03.
 - **AI Drill Generator — completion tracking (Research Crowdsourcing
   Organizer Features bullet, "📚 AI Drill Generator" Next item).** Another
   repeat of the standing prompt ("integrate all the tools into the UI...
@@ -14782,7 +14828,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. Next: threaded replies on a note instead of flat status; a digest notification instead of one per assignment.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
-* 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. Next: drill scheduling/reminders; tying completion into the Progress Unlocks tier system (awarding tiers/badges for practiced drills — the tracking itself is done, but nothing yet feeds it into Progress Unlocks).
+* 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. Next: tying completion into the Progress Unlocks tier system (awarding tiers/badges for practiced drills — the tracking itself is done, but nothing yet feeds it into Progress Unlocks).
 * 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. Next: a side-by-side case-option comparison table.
 
 ## Confirmed blocker: Tabroom results/pairings/ballot data

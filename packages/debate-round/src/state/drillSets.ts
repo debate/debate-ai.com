@@ -21,6 +21,17 @@
  * separate `debate-card-search` Progress Unlocks tier system stays a named
  * open follow-up.
  *
+ * `scheduledReviewAt` is likewise additive and optional — it holds a
+ * per-drill "come back and practice this again on/after this day" reminder
+ * date (`YYYY-MM-DD`, keyed by the drill's index in `drills`), the "drill
+ * scheduling/reminders" follow-up named under the "📚 AI Drill Generator"
+ * bullet. There's no scheduled-job/push-notification infrastructure in this
+ * repo (the same known gap `streakLapseReminders.ts` documents), so a
+ * "reminder" here means an in-app "due for review" badge shown by
+ * `panels/DrillSetsPanel.tsx` once the scheduled day arrives, not a push
+ * notification. See `scheduleDrillReview`/`isDrillReviewDue`/
+ * `getDueDrillIndexes` below.
+ *
  * @module state/drillSets
  */
 
@@ -36,6 +47,8 @@ export type DrillSetRecord = {
   aiScripts?: Record<number, string>;
   /** Indexes (into `drills`) of drills the user has marked practiced/completed. */
   completedDrillIndexes?: number[];
+  /** Scheduled next-review day (`YYYY-MM-DD`), keyed by the drill's index in `drills`. */
+  scheduledReviewAt?: Record<number, string>;
 };
 
 /** A round's drill-completion progress — see `getDrillSetCompletionStats`. */
@@ -135,6 +148,58 @@ export function toggleDrillCompletion(roundId: string, drillIndex: number): void
     completedDrillIndexes: [...completed].sort((a, b) => a - b),
   };
   writeAll(records);
+}
+
+/**
+ * Schedules (or, passing `null`, clears) a drill's next-review reminder day
+ * (`YYYY-MM-DD`), leaving `drills`/`aiScripts`/`completedDrillIndexes`
+ * untouched. A no-op when the roundId isn't stored or `drillIndex` is out of
+ * range for that record's `drills` — mirrors `saveDrillAiScript`/
+ * `toggleDrillCompletion`'s guard.
+ */
+export function scheduleDrillReview(roundId: string, drillIndex: number, dayKey: string | null): void {
+  const records = readAll();
+  const index = records.findIndex((existing) => existing.roundId === roundId);
+  if (index === -1) return;
+  const existing = records[index];
+  if (drillIndex < 0 || drillIndex >= existing.drills.length) return;
+  const scheduledReviewAt = { ...(existing.scheduledReviewAt ?? {}) };
+  if (dayKey) {
+    scheduledReviewAt[drillIndex] = dayKey;
+  } else {
+    delete scheduledReviewAt[drillIndex];
+  }
+  records[index] = { ...existing, scheduledReviewAt };
+  writeAll(records);
+}
+
+/**
+ * Whether a drill's scheduled review day has arrived — `scheduledReviewAt`
+ * is set and is on or before `todayKey` (both `YYYY-MM-DD`, so a plain
+ * string comparison suffices). An unscheduled drill (`undefined`) is never
+ * due.
+ */
+export function isDrillReviewDue(scheduledReviewAt: string | undefined, todayKey: string): boolean {
+  return scheduledReviewAt !== undefined && scheduledReviewAt <= todayKey;
+}
+
+/**
+ * Indexes (into `drills`) of a round's drills whose scheduled review day has
+ * arrived, sorted ascending — what `panels/DrillSetsPanel.tsx` flags as
+ * "due for review" today. Ignores a scheduled index that's out of range for
+ * the record's current `drills` (defensive, mirrors
+ * `getDrillSetCompletionStats`'s handling of stale indexes).
+ */
+export function getDueDrillIndexes(
+  record: Pick<DrillSetRecord, "drills" | "scheduledReviewAt">,
+  todayKey: string,
+): number[] {
+  const scheduled = record.scheduledReviewAt ?? {};
+  return Object.keys(scheduled)
+    .map(Number)
+    .filter((drillIndex) => drillIndex >= 0 && drillIndex < record.drills.length)
+    .filter((drillIndex) => isDrillReviewDue(scheduled[drillIndex], todayKey))
+    .sort((a, b) => a - b);
 }
 
 /**

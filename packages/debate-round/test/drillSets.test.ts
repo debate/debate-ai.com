@@ -5,9 +5,12 @@ import {
   deleteDrillSet,
   getDrillSet,
   getDrillSetCompletionStats,
+  getDueDrillIndexes,
+  isDrillReviewDue,
   listDrillSets,
   saveDrillAiScript,
   saveDrillSet,
+  scheduleDrillReview,
   toggleDrillCompletion,
   type DrillSetRecord,
 } from "../src/state/drillSets";
@@ -284,6 +287,125 @@ describe("toggleDrillCompletion", () => {
     toggleDrillCompletion("round-1", -1);
 
     expect(getDrillSet("round-1")).toEqual(DRILL_SET_A);
+  });
+});
+
+describe("scheduleDrillReview", () => {
+  it("sets scheduledReviewAt[drillIndex] on the stored record", () => {
+    saveDrillSet(DRILL_SET_A);
+    scheduleDrillReview("round-1", 0, "2026-09-10");
+
+    expect(getDrillSet("round-1")).toEqual({
+      ...DRILL_SET_A,
+      scheduledReviewAt: { 0: "2026-09-10" },
+    });
+  });
+
+  it("overwrites an existing schedule for the same drill index", () => {
+    saveDrillSet(DRILL_SET_A);
+    scheduleDrillReview("round-1", 0, "2026-09-10");
+    scheduleDrillReview("round-1", 0, "2026-09-17");
+
+    expect(getDrillSet("round-1")?.scheduledReviewAt).toEqual({ 0: "2026-09-17" });
+  });
+
+  it("clears a drill's schedule when dayKey is null", () => {
+    saveDrillSet(DRILL_SET_A);
+    scheduleDrillReview("round-1", 0, "2026-09-10");
+    scheduleDrillReview("round-1", 0, null);
+
+    expect(getDrillSet("round-1")?.scheduledReviewAt).toEqual({});
+  });
+
+  it("keeps schedules for other drill indexes untouched", () => {
+    saveDrillSet(DRILL_SET_A);
+    scheduleDrillReview("round-1", 0, "2026-09-10");
+    scheduleDrillReview("round-1", 1, "2026-09-12");
+
+    expect(getDrillSet("round-1")?.scheduledReviewAt).toEqual({
+      0: "2026-09-10",
+      1: "2026-09-12",
+    });
+  });
+
+  it("leaves drills, aiScripts, and completedDrillIndexes untouched", () => {
+    saveDrillSet(DRILL_SET_A);
+    saveDrillAiScript("round-1", 0, "Overview script.");
+    toggleDrillCompletion("round-1", 1);
+    scheduleDrillReview("round-1", 0, "2026-09-10");
+
+    const record = getDrillSet("round-1");
+    expect(record?.drills).toEqual(DRILL_SET_A.drills);
+    expect(record?.aiScripts).toEqual({ 0: "Overview script." });
+    expect(record?.completedDrillIndexes).toEqual([1]);
+  });
+
+  it("leaves other rounds' records untouched", () => {
+    saveDrillSet(DRILL_SET_A);
+    saveDrillSet(DRILL_SET_B);
+    scheduleDrillReview("round-1", 0, "2026-09-10");
+
+    expect(getDrillSet("round-2")).toEqual(DRILL_SET_B);
+  });
+
+  it("is a no-op when the roundId isn't stored", () => {
+    saveDrillSet(DRILL_SET_B);
+    scheduleDrillReview("missing", 0, "2026-09-10");
+
+    expect(listDrillSets()).toEqual([DRILL_SET_B]);
+  });
+
+  it("is a no-op when drillIndex is out of range for that record", () => {
+    saveDrillSet(DRILL_SET_A);
+    scheduleDrillReview("round-1", 99, "2026-09-10");
+    scheduleDrillReview("round-1", -1, "2026-09-10");
+
+    expect(getDrillSet("round-1")).toEqual(DRILL_SET_A);
+  });
+});
+
+describe("isDrillReviewDue", () => {
+  it("is false when no schedule is set", () => {
+    expect(isDrillReviewDue(undefined, "2026-09-10")).toBe(false);
+  });
+
+  it("is true when the scheduled day is today", () => {
+    expect(isDrillReviewDue("2026-09-10", "2026-09-10")).toBe(true);
+  });
+
+  it("is true when the scheduled day is in the past", () => {
+    expect(isDrillReviewDue("2026-09-01", "2026-09-10")).toBe(true);
+  });
+
+  it("is false when the scheduled day is in the future", () => {
+    expect(isDrillReviewDue("2026-09-20", "2026-09-10")).toBe(false);
+  });
+});
+
+describe("getDueDrillIndexes", () => {
+  it("returns an empty list when nothing is scheduled", () => {
+    expect(getDueDrillIndexes(DRILL_SET_A, "2026-09-10")).toEqual([]);
+  });
+
+  it("returns only drills whose scheduled day has arrived, sorted ascending", () => {
+    const record = {
+      ...DRILL_SET_A,
+      scheduledReviewAt: { 1: "2026-09-01", 0: "2026-09-20" },
+    };
+    expect(getDueDrillIndexes(record, "2026-09-10")).toEqual([1]);
+  });
+
+  it("returns every due index once every scheduled drill has arrived", () => {
+    const record = {
+      ...DRILL_SET_A,
+      scheduledReviewAt: { 0: "2026-09-01", 1: "2026-09-05" },
+    };
+    expect(getDueDrillIndexes(record, "2026-09-10")).toEqual([0, 1]);
+  });
+
+  it("ignores an out-of-range scheduled index", () => {
+    const record = { ...DRILL_SET_A, scheduledReviewAt: { 0: "2026-09-01", 99: "2026-09-01" } };
+    expect(getDueDrillIndexes(record, "2026-09-10")).toEqual([0]);
   });
 });
 

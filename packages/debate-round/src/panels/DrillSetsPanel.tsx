@@ -39,6 +39,15 @@
  * completion locally only; tying it into the separate Progress Unlocks
  * tier system stays a named open follow-up.
  *
+ * Each drill also has a "Review reminder" date field
+ * (`state/drillSets.ts`'s `scheduleDrillReview`) — the "drill
+ * scheduling/reminders" follow-up named under the "📚 AI Drill Generator"
+ * bullet. Once the scheduled day arrives, that drill gets a "Due" badge and
+ * the round card's heading gets a "N due for review" badge
+ * (`getDueDrillIndexes`); there's no push-notification infrastructure in
+ * this repo, so the "reminder" is this in-app badge, seen next time the
+ * panel is visited.
+ *
  * @module panels/DrillSetsPanel
  */
 
@@ -62,7 +71,9 @@ import {
   buildDrillSetsPanelView,
   deleteDrillSet,
   getDrillSetCompletionStats,
+  getDueDrillIndexes,
   saveDrillAiScript,
+  scheduleDrillReview,
   toggleDrillCompletion,
   type DrillSetRecord,
 } from "../state/drillSets"
@@ -94,6 +105,15 @@ const DIFFICULTY_BADGE_VARIANTS: Record<DrillDifficulty, "default" | "secondary"
   hard: "destructive",
 }
 
+/** Today's local calendar day (`YYYY-MM-DD`), for comparing against a drill's `scheduledReviewAt`. */
+function todayLocalDayKey(): string {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, "0")
+  const day = String(now.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
+}
+
 /**
  * Renders the Practice Drills panel: every persisted `DrillSetRecord`,
  * grouped by round, with a "Clear" action per round.
@@ -113,6 +133,7 @@ export function DrillSetsPanel() {
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
   const currentFlow = mounted ? flows[selected] : undefined
+  const todayKey = todayLocalDayKey()
 
   useEffect(() => {
     setMounted(true)
@@ -141,6 +162,11 @@ export function DrillSetsPanel() {
 
   const handleToggleCompletion = (roundId: string, drillIndex: number) => {
     toggleDrillCompletion(roundId, drillIndex)
+    refresh()
+  }
+
+  const handleScheduleReview = (roundId: string, drillIndex: number, dayKey: string | null) => {
+    scheduleDrillReview(roundId, drillIndex, dayKey)
     refresh()
   }
 
@@ -235,6 +261,7 @@ export function DrillSetsPanel() {
       {drillSets.map((set) => {
         const visibleDrills = filterDrillsByDifficulty(set.drills, difficultyFilter)
         const completionStats = getDrillSetCompletionStats(set)
+        const dueDrillIndexes = getDueDrillIndexes(set, todayKey)
         return (
           <div key={set.roundId} className="rounded-lg border border-border p-4">
             <div className="mb-3 flex items-center justify-between gap-2">
@@ -242,9 +269,16 @@ export function DrillSetsPanel() {
                 Round {set.roundId}{" "}
                 <span className="font-normal text-muted-foreground">({set.sideKey})</span>
               </h2>
-              <Button size="sm" variant="ghost" onClick={() => handleClear(set.roundId)}>
-                Clear
-              </Button>
+              <div className="flex items-center gap-2">
+                {dueDrillIndexes.length > 0 && (
+                  <Badge variant="destructive" className="whitespace-nowrap">
+                    {dueDrillIndexes.length} due for review
+                  </Badge>
+                )}
+                <Button size="sm" variant="ghost" onClick={() => handleClear(set.roundId)}>
+                  Clear
+                </Button>
+              </div>
             </div>
             {completionStats.total > 0 && (
               <div className="mb-3">
@@ -266,6 +300,8 @@ export function DrillSetsPanel() {
                 const key = `${set.roundId}:${index}`
                 const aiScript = set.aiScripts?.[index]
                 const isCompleted = (set.completedDrillIndexes ?? []).includes(index)
+                const scheduledReviewAt = set.scheduledReviewAt?.[index]
+                const isDue = dueDrillIndexes.includes(index)
                 return (
                   <PanelRow
                     key={index}
@@ -280,6 +316,11 @@ export function DrillSetsPanel() {
                         >
                           {DIFFICULTY_FILTER_LABELS[drill.difficulty]}
                         </Badge>
+                        {isDue && (
+                          <Badge variant="destructive" className="whitespace-nowrap">
+                            Due
+                          </Badge>
+                        )}
                       </div>
                     }
                     title={drill.prompt}
@@ -315,6 +356,27 @@ export function DrillSetsPanel() {
                         {aiScript}
                       </p>
                     )}
+                    <div className="flex flex-wrap items-center gap-2 border-t border-border pt-2">
+                      <Label htmlFor={`drill-review-${key}`} className="text-xs text-muted-foreground">
+                        Review reminder
+                      </Label>
+                      <Input
+                        id={`drill-review-${key}`}
+                        type="date"
+                        value={scheduledReviewAt ?? ""}
+                        onChange={(e) => handleScheduleReview(set.roundId, index, e.target.value || null)}
+                        className="w-40"
+                      />
+                      {scheduledReviewAt && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleScheduleReview(set.roundId, index, null)}
+                        >
+                          Clear
+                        </Button>
+                      )}
+                    </div>
                   </PanelRow>
                 )
               })}
