@@ -6,6 +6,7 @@ import type { JudgeRoundRecord } from "debate-speech-writer/src/judge/judge-prof
 import { buildJudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
 import { saveJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
 import {
+  appendPrepNoteToPreRoundBriefing,
   buildPreRoundBriefingRecordFromDraft,
   buildPreRoundBriefingsPanelView,
   deletePreRoundBriefing,
@@ -300,5 +301,77 @@ describe("buildPreRoundBriefingRecordFromDraft", () => {
     );
     expect(byTitle["Opponent scouting"]).toBe("No opponent scouting data on file.");
     expect(byTitle["Judge tendencies"]).toBe("No judge tendency data on file.");
+  });
+});
+
+describe("appendPrepNoteToPreRoundBriefing", () => {
+  function prepNotesBody(record: PreRoundBriefingRecord | undefined): string | undefined {
+    return record?.briefing.sections.find((s) => s.title === "Team prep notes")?.body;
+  }
+
+  it("returns an error when no briefing is saved for the round", () => {
+    const result = appendPrepNoteToPreRoundBriefing("missing", "Read the K first", NOW);
+    expect(result).toEqual({ ok: false, error: 'No saved briefing for round "missing" — create one first.' });
+  });
+
+  it("appends the note to the saved briefing's Team prep notes section and re-saves it", () => {
+    const draftResult = buildPreRoundBriefingRecordFromDraft(VALID_DRAFT);
+    if (!draftResult.ok) throw new Error("expected ok result");
+    savePreRoundBriefing(draftResult.record, NOW);
+
+    const laterNow = NOW + 60_000;
+    const result = appendPrepNoteToPreRoundBriefing(VALID_DRAFT.roundId, "Watch for theory", laterNow);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error("expected ok result");
+    expect(prepNotesBody(result.record)).toBe("- Watch for theory");
+    expect(result.record.updatedAt).toBe(laterNow);
+
+    const stored = getPreRoundBriefing(VALID_DRAFT.roundId);
+    expect(prepNotesBody(stored)).toBe("- Watch for theory");
+    expect(stored?.updatedAt).toBe(laterNow);
+  });
+
+  it("appends after existing prep notes rather than overwriting them", () => {
+    const draftResult = buildPreRoundBriefingRecordFromDraft({
+      ...VALID_DRAFT,
+      teamPrepNotes: ["Read the K first"],
+    });
+    if (!draftResult.ok) throw new Error("expected ok result");
+    savePreRoundBriefing(draftResult.record, NOW);
+
+    appendPrepNoteToPreRoundBriefing(VALID_DRAFT.roundId, "Watch for theory", NOW + 1_000);
+
+    expect(prepNotesBody(getPreRoundBriefing(VALID_DRAFT.roundId))).toBe(
+      "- Read the K first\n- Watch for theory",
+    );
+  });
+
+  it("leaves the rest of the briefing untouched", () => {
+    const draftResult = buildPreRoundBriefingRecordFromDraft(VALID_DRAFT);
+    if (!draftResult.ok) throw new Error("expected ok result");
+    savePreRoundBriefing(draftResult.record, NOW);
+
+    const result = appendPrepNoteToPreRoundBriefing(VALID_DRAFT.roundId, "Watch for theory", NOW + 1_000);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error("expected ok result");
+    expect(result.record.briefing.event).toEqual(draftResult.record.briefing.event);
+    expect(result.record.roundId).toBe(VALID_DRAFT.roundId);
+  });
+
+  it("defaults updatedAt to the current time when now isn't supplied", () => {
+    const draftResult = buildPreRoundBriefingRecordFromDraft(VALID_DRAFT);
+    if (!draftResult.ok) throw new Error("expected ok result");
+    savePreRoundBriefing(draftResult.record, NOW);
+
+    const before = Date.now();
+    const result = appendPrepNoteToPreRoundBriefing(VALID_DRAFT.roundId, "Watch for theory");
+    const after = Date.now();
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error("expected ok result");
+    expect(result.record.updatedAt).toBeGreaterThanOrEqual(before);
+    expect(result.record.updatedAt).toBeLessThanOrEqual(after);
   });
 });

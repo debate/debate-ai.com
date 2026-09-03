@@ -6,6 +6,63 @@
 _No task currently in progress._
 
 ### Completed
+- **Scout-to-Strategy Workflow — one-click export into the Pre-Round
+  Briefing** (the "🧭 Scout-to-Strategy Workflow" bullet's own next-named
+  follow-up under Research Crowdsourcing Organizer Features below). As with
+  every recent run, the standing prompt ("integrate all the tools into the
+  UI... create user settings... link user db SQL... save flows docs and
+  debates in SQL and link to users... add tools where needed in the UI...
+  develop better tool UI") is already fully built (account-synced
+  `/settings`, D1 tables + `/api/*` routes linking flows/docs/rounds/
+  materials to signed-in users, every tool reachable from the nav) — so this
+  run again picked a genuine next-step instead, one directly named in
+  TODO.md's own text: `StrategyPanel`'s recommendation cards had no way to
+  get a recommendation's takeaway in front of a team already prepping a
+  round in Pre-Round Briefings, short of manually retyping it. Each
+  recommendation entry now has a **Send to Pre-Round Briefing** action — a
+  dropdown of every round id with an already-saved
+  `state/preRoundBriefings.ts` record plus a Send button. A new
+  `round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote` formats
+  the recommendation as a single-line summary (the recommended case, or
+  that none were ranked, plus the overall risk level, prefixed with the
+  matchup id so it's self-identifying once living inside a briefing keyed by
+  a different id); a new `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`
+  pure helper appends it as one more bullet to that briefing's "Team prep
+  notes" section (recovering the section's existing note list from its
+  already-rendered body via a small parse/re-render round-trip, leaving
+  every other section untouched); and
+  `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing` wraps the
+  persisted-record lookup, delegates to the pure helper, and re-saves with a
+  fresh `updatedAt`. It only ever targets an already-saved briefing — there's
+  no round event info (tournament/division/round label/side) to compose a
+  fresh one from a matchup id alone — so the action reports an inline error
+  ("No saved briefing for round … — create one first.") rather than silently
+  failing when the chosen round id (or no round id at all) has no saved
+  briefing. See `docs/features/scout-to-strategy.md`'s new "Exporting a
+  recommendation into a Pre-Round Briefing" section and
+  `docs/features/pre-round-briefings.md`'s new "Receiving a Scout-to-Strategy
+  export" section. Vitest-covered: a new `describe("appendNoteToPreRoundBriefing")`
+  block in `packages/debate-round/test/pre-round-briefing.test.ts` (replacing
+  the empty-state text, appending after existing notes, trimming whitespace,
+  a no-op for a blank note, and leaving every other section untouched); a new
+  `describe("buildStrategyRecommendationPrepNote")` block in
+  `packages/debate-round/test/scout-to-strategy.test.ts` (the recommended
+  case plus risk level, the "no case options were ranked" fallback, and a
+  high-risk recommendation); and a new
+  `describe("appendPrepNoteToPreRoundBriefing")` block in
+  `packages/debate-round/test/preRoundBriefings.test.ts` (the "no saved
+  briefing" error, appending and re-saving, appending after existing notes,
+  leaving the rest of the briefing untouched, and the default-`now`
+  timestamp). Verified with `bun install` (fresh container, 2258 packages),
+  the full `bun run typecheck` (13 typechecked packages, clean), and the
+  full `bun run test` (root, all packages: 228 test files, 4035 tests, all
+  passing — up from 4022). No CI `lint`/`build` script exists in this repo
+  (`.github/workflows/test.yml` runs only `typecheck` and `coverage`), so
+  neither was run, matching every prior run's verification scope. The one
+  remaining follow-up for this idea — a side-by-side case-option comparison
+  table — is not started; a future run can pick it up, or a fresh next-step
+  elsewhere if one becomes worth doing.
+
 - **Community Research Hub — personalized "For You" section** (the "🧩
   Community Research Hub" bullet's own next-named follow-up under Research
   Crowdsourcing Organizer Features below). As with every recent run, the
@@ -14055,7 +14112,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
 * 📚 **AI Drill Generator** (`/drills`) — drill scheduling/reminders; a difficulty rating with filtering; completion tracking tied into Progress Unlocks.
-* 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. Next: a side-by-side case-option comparison table; a one-click export into the Pre-Round Briefing.
+* 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. Next: a side-by-side case-option comparison table.
 
 ## Confirmed blocker: Tabroom results/pairings/ballot data
 

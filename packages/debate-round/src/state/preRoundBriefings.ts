@@ -10,7 +10,7 @@
  */
 
 import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-profile";
-import { buildPreRoundBriefingFromStores } from "../round/pre-round-briefing";
+import { appendNoteToPreRoundBriefing, buildPreRoundBriefingFromStores } from "../round/pre-round-briefing";
 import type { PreRoundBriefing } from "../round/pre-round-briefing";
 
 export type PreRoundBriefingRecord = {
@@ -154,4 +154,36 @@ export function buildPreRoundBriefingRecordFromDraft(
   });
 
   return { ok: true, record: { roundId, briefing } };
+}
+
+export type AppendPrepNoteToPreRoundBriefingResult =
+  | { ok: true; record: PreRoundBriefingRecord }
+  | { ok: false; error: string };
+
+/**
+ * Appends `note` as one more bullet to a saved round's briefing's "Team prep
+ * notes" section and re-saves it — the "🧭 Scout-to-Strategy Workflow"
+ * bullet's "a one-click export into the Pre-Round Briefing" follow-up named
+ * in TODO.md's Research Crowdsourcing Organizer Features list. Only ever
+ * targets an already-saved briefing (there's no round event info to compose
+ * a fresh one from here); returns an error result when `roundId` isn't
+ * stored rather than silently no-oping, so `StrategyPanel`'s "Send to
+ * Pre-Round Briefing" action can surface it.
+ */
+export function appendPrepNoteToPreRoundBriefing(
+  roundId: string,
+  note: string,
+  now: number = Date.now(),
+): AppendPrepNoteToPreRoundBriefingResult {
+  const existing = getPreRoundBriefing(roundId);
+  if (!existing) {
+    return { ok: false, error: `No saved briefing for round "${roundId}" — create one first.` };
+  }
+
+  const record: PreRoundBriefingRecord = {
+    ...existing,
+    briefing: appendNoteToPreRoundBriefing(existing.briefing, note),
+  };
+  savePreRoundBriefing(record, now);
+  return { ok: true, record: { ...record, updatedAt: now } };
 }

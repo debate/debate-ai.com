@@ -153,4 +153,25 @@ cross-tab live-update mechanism." Vitest-covered in
 intentionally untested, matching every other panel/hook in this repo whose
 wiring is exercised only through the shared pure predicate's own tests.
 
+## Exporting a recommendation into a Pre-Round Briefing
+
+The "a one-click export into the Pre-Round Briefing" follow-up: each
+recommendation entry has a **Send to Pre-Round Briefing** action — a
+dropdown of every round id with an already-saved
+[Pre-Round Briefing](pre-round-briefings.md) (`state/preRoundBriefings.ts#listPreRoundBriefings`)
+plus a **Send** button. Sending appends
+`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`'s one-line
+summary (the recommended case, or that none were ranked, plus the overall
+risk level, prefixed with the matchup id) as a new bullet in that briefing's
+"Team prep notes" section via
+`state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`, which wraps
+the pure `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing` (every
+other briefing section is left untouched) and re-saves the record,
+re-stamping `updatedAt`. It only ever targets an already-saved briefing —
+there's no round event info (tournament/division/round label/side) to
+compose a fresh one from a matchup id alone — so the action reports an
+inline error ("No saved briefing for round … — create one first.") rather
+than silently failing when nothing is saved yet for the chosen round id, or
+when no briefing exists at all.
+
 No other follow-ups remain open on this idea.

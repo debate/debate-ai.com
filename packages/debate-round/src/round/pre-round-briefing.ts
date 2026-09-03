@@ -43,6 +43,18 @@
  * review-aging pattern: a pure, `now`-injectable age computation over
  * `state/preRoundBriefings.ts`'s `PreRoundBriefingRecord.updatedAt`, which
  * `savePreRoundBriefing` stamps on every save.
+ *
+ * `appendNoteToPreRoundBriefing` closes the "🧭 Scout-to-Strategy Workflow"
+ * bullet's "a one-click export into the Pre-Round Briefing" follow-up named
+ * in TODO.md's Research Crowdsourcing Organizer Features list: a pure
+ * function that appends one more bullet line to an already-built briefing's
+ * "Team prep notes" section, reusing `formatPrepNotesSection`'s exact
+ * rendering so the result is indistinguishable from a note that had been
+ * supplied at build time. `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`
+ * wraps this with the persisted-record lookup/save, and
+ * `scout-to-strategy.ts#buildStrategyRecommendationPrepNote` formats a
+ * `StrategyRecommendation` as the note text `StrategyPanel`'s "Send to
+ * Pre-Round Briefing" action passes in.
  */
 
 import type {
@@ -127,9 +139,20 @@ function formatPriorMeetingsSection(summary: PriorMeetingsSummary): string {
   return `${summary.meetings} prior meeting(s): ${summary.wins}-${summary.losses} record against this opponent.`;
 }
 
+/** The `PreRoundBriefingSection.title` of the "Team prep notes" section — shared with `appendNoteToPreRoundBriefing` below so it targets the right section. */
+export const TEAM_PREP_NOTES_SECTION_TITLE = "Team prep notes";
+
+const NO_TEAM_PREP_NOTES_TEXT = "No team prep notes on file for this matchup.";
+
 function formatPrepNotesSection(notes: string[]): string {
-  if (notes.length === 0) return "No team prep notes on file for this matchup.";
+  if (notes.length === 0) return NO_TEAM_PREP_NOTES_TEXT;
   return notes.map((note) => `- ${note}`).join("\n");
+}
+
+/** Recovers the individual note lines from a "Team prep notes" section body previously rendered by `formatPrepNotesSection`. */
+function parsePrepNotesSectionBody(body: string): string[] {
+  if (body === NO_TEAM_PREP_NOTES_TEXT) return [];
+  return body.split("\n").map((line) => line.replace(/^- /, ""));
 }
 
 /**
@@ -256,4 +279,26 @@ export function isBriefingStale(
 ): boolean {
   const age = getBriefingAgeHours(updatedAt, now);
   return age !== undefined && age >= thresholdHours;
+}
+
+/**
+ * Appends one more bullet line to an already-built briefing's
+ * "Team prep notes" section, leaving every other section untouched — the
+ * "🧭 Scout-to-Strategy Workflow" bullet's "a one-click export into the
+ * Pre-Round Briefing" follow-up in TODO.md. A blank/whitespace-only `note`
+ * is a no-op, returning `briefing` unchanged. Every other section (Event,
+ * Opponent scouting, Prior meetings, Judge tendencies) is copied through
+ * as-is; only the "Team prep notes" section's body is recomputed.
+ */
+export function appendNoteToPreRoundBriefing(briefing: PreRoundBriefing, note: string): PreRoundBriefing {
+  const trimmed = note.trim();
+  if (!trimmed) return briefing;
+
+  const sections = briefing.sections.map((section) => {
+    if (section.title !== TEAM_PREP_NOTES_SECTION_TITLE) return section;
+    const existingNotes = parsePrepNotesSectionBody(section.body);
+    return { ...section, body: formatPrepNotesSection([...existingNotes, trimmed]) };
+  });
+
+  return { ...briefing, sections };
 }

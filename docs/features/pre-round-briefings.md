@@ -248,6 +248,17 @@ structural validator shared by the API routes and the hook), and
 existing convention for account-synced, `localStorage`-backed hooks (e.g.
 `useWordCountRounds`, `useCounselPanelAssessments`).
 
+## Receiving a Scout-to-Strategy export
+
+[Scout-to-Strategy](scout-to-strategy.md)'s **Send to Pre-Round Briefing**
+action lets a team append a strategy recommendation's one-line summary
+(recommended case plus overall risk level) as a new "Team prep notes"
+bullet on an already-saved briefing here — see that doc's "Exporting a
+recommendation into a Pre-Round Briefing" section. It only targets a
+briefing already created via the form above (there's no round event info to
+compose a fresh one from a matchup id alone), so create the briefing here
+first if it doesn't exist yet.
+
 ## Known gaps
 
 - No real data source for tournament results, event details, or ballots —

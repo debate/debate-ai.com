@@ -32,23 +32,36 @@
  * SQL and link to users" gap for this tool the same way judge decisions and
  * counsel-panel assessments already do.
  *
+ * A "Send to Pre-Round Briefing" action per recommendation closes this
+ * bullet's "a one-click export into the Pre-Round Briefing" follow-up: it
+ * appends `scout-to-strategy.ts#buildStrategyRecommendationPrepNote`'s
+ * one-line summary as a new "Team prep notes" bullet on an already-saved
+ * `state/preRoundBriefings.ts` record (`appendPrepNoteToPreRoundBriefing`),
+ * picked from a dropdown of every round id with a saved briefing.
+ *
  * @module panels/StrategyPanel
  */
 
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
 import { Textarea } from "debate-ui/src/primitives/textarea"
-import { buildStrategyRecommendationFromStores, type CaseOption, type RiskLevel } from "../round/scout-to-strategy"
+import {
+  buildStrategyRecommendationFromStores,
+  buildStrategyRecommendationPrepNote,
+  type CaseOption,
+  type RiskLevel,
+} from "../round/scout-to-strategy"
 import { requestCaseChoiceEvaluation } from "../round/case-choice-client"
 import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-profile"
 import { useStrategyRecommendations } from "../hooks/useStrategyRecommendations"
 import type { StrategyRecommendationRecord } from "../state/strategyRecommendations"
+import { appendPrepNoteToPreRoundBriefing, listPreRoundBriefings } from "../state/preRoundBriefings"
 
 type StrategyDraft = {
   matchupId: string
@@ -109,6 +122,13 @@ export function StrategyPanel() {
   const [error, setError] = useState<string | null>(null)
   const [caseChoiceLoadingId, setCaseChoiceLoadingId] = useState<string | null>(null)
   const [caseChoiceErrorsById, setCaseChoiceErrorsById] = useState<Record<string, string>>({})
+  const [briefingRoundIds, setBriefingRoundIds] = useState<string[]>([])
+  const [briefingSelectionById, setBriefingSelectionById] = useState<Record<string, string>>({})
+  const [briefingStatusById, setBriefingStatusById] = useState<Record<string, { ok: boolean; message: string }>>({})
+
+  useEffect(() => {
+    setBriefingRoundIds(listPreRoundBriefings().map((record) => record.roundId).sort())
+  }, [])
 
   const handleSubmit = () => {
     const matchupId = draft.matchupId.trim()
@@ -156,6 +176,26 @@ export function StrategyPanel() {
     } finally {
       setCaseChoiceLoadingId(null)
     }
+  }
+
+  const handleSendToBriefing = (record: StrategyRecommendationRecord) => {
+    const roundId = briefingSelectionById[record.id]
+    if (!roundId) {
+      setBriefingStatusById((prev) => ({
+        ...prev,
+        [record.id]: { ok: false, message: "Choose a saved briefing's round first." },
+      }))
+      return
+    }
+
+    const note = buildStrategyRecommendationPrepNote(record.recommendation, record.matchupId)
+    const result = appendPrepNoteToPreRoundBriefing(roundId, note)
+    setBriefingStatusById((prev) => ({
+      ...prev,
+      [record.id]: result.ok
+        ? { ok: true, message: `Sent to the round ${roundId} briefing's prep notes.` }
+        : { ok: false, message: result.error },
+    }))
   }
 
   return (
@@ -346,6 +386,47 @@ export function StrategyPanel() {
                               ))}
                             </ul>
                           </div>
+                        )}
+                      </div>
+
+                      <div className="rounded-md border border-border px-3 py-2 text-sm">
+                        <p className="mb-1 font-medium text-foreground">Send to Pre-Round Briefing</p>
+                        {briefingRoundIds.length === 0 ? (
+                          <p className="text-muted-foreground">
+                            No saved briefings yet — create one in Pre-Round Briefings first.
+                          </p>
+                        ) : (
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Select
+                              value={briefingSelectionById[record.id] ?? ""}
+                              onValueChange={(value) =>
+                                setBriefingSelectionById((prev) => ({ ...prev, [record.id]: value }))
+                              }
+                            >
+                              <SelectTrigger className="w-48">
+                                <SelectValue placeholder="Choose a round" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {briefingRoundIds.map((roundId) => (
+                                  <SelectItem key={roundId} value={roundId}>
+                                    {roundId}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Button size="sm" variant="outline" onClick={() => handleSendToBriefing(record)}>
+                              Send
+                            </Button>
+                          </div>
+                        )}
+                        {briefingStatusById[record.id] && (
+                          <p
+                            className={`mt-1 text-xs ${
+                              briefingStatusById[record.id].ok ? "text-muted-foreground" : "text-destructive"
+                            }`}
+                          >
+                            {briefingStatusById[record.id].message}
+                          </p>
                         )}
                       </div>
                     </div>

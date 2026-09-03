@@ -10,6 +10,7 @@ import {
   buildJudgeAdaptationNotes,
   buildStrategyRecommendation,
   buildStrategyRecommendationFromStores,
+  buildStrategyRecommendationPrepNote,
   buildStrategyRecommendationText,
   computeCaseOverlapScore,
   getLikelyOpponentSide,
@@ -624,5 +625,39 @@ describe("buildStrategyRecommendationFromStores", () => {
       "Opponent has a strong overall record (80% win rate across 5 round(s)).",
       "Opponent has a strong record on neg (100% win rate across 2 round(s)) — the side they'll likely run against us.",
     ]);
+  });
+});
+
+describe("buildStrategyRecommendationPrepNote", () => {
+  beforeEach(() => {
+    (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
+  });
+
+  it("names the recommended case and risk level, prefixed with the matchup id", () => {
+    const recommendation = buildStrategyRecommendation({ caseOptions: CASE_OPTIONS });
+    const note = buildStrategyRecommendationPrepNote(recommendation, "round-42");
+
+    expect(note).toBe('Scout-to-Strategy (matchup round-42): recommend "Case A" — low risk.');
+  });
+
+  it("reports no case options ranked when none were supplied", () => {
+    const recommendation = buildStrategyRecommendation({ caseOptions: [] });
+    const note = buildStrategyRecommendationPrepNote(recommendation, "round-42");
+
+    expect(note).toBe("Scout-to-Strategy (matchup round-42): no case options were ranked — low risk.");
+  });
+
+  it("reflects a high risk level in the note", () => {
+    saveOpponentTeamProfile(buildOpponentTeamProfile("OpponentA", opponentRecords()));
+    saveJudgeProfile(buildJudgeProfile("J. Smith", judgeRecords()));
+    const recommendation = buildStrategyRecommendationFromStores({
+      caseOptions: CASE_OPTIONS,
+      opponentTeamId: "OpponentA",
+      judgeId: "J. Smith",
+      ourSide: "aff",
+    });
+
+    const note = buildStrategyRecommendationPrepNote(recommendation, "round-42");
+    expect(note).toContain("high risk");
   });
 });

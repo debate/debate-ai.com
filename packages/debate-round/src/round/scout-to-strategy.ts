@@ -13,6 +13,14 @@
  * round rather than generically. This is still not an actual AI-panel
  * evaluation of case choice (the case ranking is a tag-overlap heuristic,
  * not a strategic evaluation) — see follow-up (c) in TODO.md.
+ *
+ * `buildStrategyRecommendationPrepNote` closes this bullet's "a one-click
+ * export into the Pre-Round Briefing" follow-up: a compact one-line summary
+ * of a `StrategyRecommendation`, suitable as a single "Team prep notes"
+ * bullet in `pre-round-briefing.ts`'s `appendNoteToPreRoundBriefing` (unlike
+ * `buildStrategyRecommendationText`'s full multi-section rendering, which
+ * doesn't fit that section's one-bullet-per-note shape). `StrategyPanel`'s
+ * "Send to Pre-Round Briefing" action wires the two together.
  */
 
 import type { DebateSide, OpponentTeamProfile } from "debate-data-sync/src/rankings/opponent-team-profile";
@@ -282,4 +290,22 @@ export function buildStrategyRecommendationText(recommendation: StrategyRecommen
   ];
 
   return lines.join("\n");
+}
+
+/**
+ * Formats a `StrategyRecommendation` as a single-line prep-note summary —
+ * the recommended case (or that none were ranked) plus the overall risk
+ * level — for `pre-round-briefing.ts#appendNoteToPreRoundBriefing`'s "Team
+ * prep notes" bullet list. `matchupId` is prefixed so the note is
+ * self-identifying once it's living inside a briefing keyed by a different
+ * id (`roundId`, not `matchupId`).
+ */
+export function buildStrategyRecommendationPrepNote(
+  recommendation: StrategyRecommendation,
+  matchupId: string,
+): string {
+  const casePart = recommendation.recommendedCase
+    ? `recommend "${recommendation.recommendedCase.name}"`
+    : "no case options were ranked";
+  return `Scout-to-Strategy (matchup ${matchupId}): ${casePart} — ${recommendation.riskLevel} risk.`;
 }
