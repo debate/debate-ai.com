@@ -42,11 +42,6 @@ FIAT, the live debate round workspace. Includes the ag-Grid flow spreadsheet, ro
 dialogs (tournament, teams, judges, spectators), speech doc panels, and export/history
 tooling.
 
-## debate-settings
-
-The central account-settings package for the `/settings` page. Composes the CardMirror
-editor's and ebb flow editor's own settings UIs into panels and isolated iframe routes.
-
 ## debate-speech-writer
 
 The AI prompt library behind FIAT's speech and flow features. Includes flow extraction,

@@ -79,7 +79,6 @@ export default defineConfig({
       "debate-editor",
       "debate-flow-ebb",
       "debate-round",
-      "debate-settings",
       "debate-timer",
       "debate-ui",
       "debate-videos",
