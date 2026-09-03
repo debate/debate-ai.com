@@ -6,6 +6,66 @@
 _No task currently in progress._
 
 ### Completed
+- **Community Research Hub — personalized "For You" section** (the "🧩
+  Community Research Hub" bullet's own next-named follow-up under Research
+  Crowdsourcing Organizer Features below). As with every recent run, the
+  standing prompt ("integrate all the tools into the UI... create user
+  settings... link user db SQL... save flows docs and debates in SQL and
+  link to users... add tools where needed in the UI... develop better tool
+  UI... integrate CardMirror into the editor and its command palette as a
+  Google-Docs-style top menu bar... build a news stream") is already fully
+  built: `TOOL_GROUPS` (`/tools`) and CardMirror's `WORKSPACE_LINKS` (the
+  editor's Workspace menu-bar category and the `t ` prefix of
+  Ctrl/Cmd-Shift-Space's "Search Everything" command palette) are in exact
+  1:1 sync across all 47 non-editor tools; the editor's `MenuBar` is already
+  a Google-Docs-style top bar (File/Edit/Card/Format/Insert/AI/View/Tools/
+  Workspace/Plugins) with CardMirror's own commands as first-class ribbon/
+  palette entries, not a bolted-on extra; News Stream already exists and
+  actively composes product updates with Daily Best Card, Contributor
+  Awards, streak, challenge, revision, sprint-note, Argument Library, and
+  Daily Quest events; and `/settings` plus a real D1/Drizzle schema already
+  link documents, flows, rounds, and every other per-user record to a
+  signed-in account (`userId` columns, cascade-deleted with the user). So
+  this run again picked a genuine next-step instead, one directly named in
+  TODO.md's own text. `/community-hub`'s directory panel already had a live
+  search box (its own TODO.md bullet's "quick-jump search bar" ask, done
+  before this run but never marked as such); the one piece of that bullet
+  still open was "a personalized 'for you' section". A new
+  `lib/community-research-hub.ts#buildForYouEntries` filters the hub's 17
+  entries down to the ones matching the viewer's already-favorited
+  (`/tools`-starred) hrefs, preserving the directory's own order; wired into
+  `CommunityResearchHubPanel` via a new optional `favoriteHrefs` prop,
+  rendering a "For You" strip above the full directory, hidden while the
+  search box has an active query or when nothing favorited is in the hub.
+  The panel can't read the account-synced favorites list itself (that hook
+  lives in the Next.js app, which this package doesn't depend on), so a new
+  `apps/debate-ai.com/app/community-hub/CommunityHubPageContent.tsx` client
+  wrapper calls `useFavoriteTools()` and passes the list in — the same
+  "compose at the app layer" split `app/news/NewsPageContent.tsx` already
+  uses for `NewsStreamPanel`. Deliberately left undone: the bullet's other
+  ask, folding the hub's directory into the News Stream feed instead of a
+  separate destination — every hub entry's route already gets a generic
+  "Tool spotlight" post via `news-stream.ts`'s `buildAutoFeatureNews`, so a
+  naive per-entry News Stream source would mostly duplicate that rather than
+  add new signal; noted in `docs/features/community-research-hub.md`'s "Not
+  in scope" section as worth revisiting once there's something
+  entry-specific worth posting. See that doc's new "For You section" for
+  the full design. Vitest-covered: a new `describe("buildForYouEntries")`
+  block in `packages/debate-card-search/test/community-research-hub.test.ts`
+  covers no favorites, favorites that match nothing in the hub, favorites
+  that match and preserve the directory's own order, a mix of a matching and
+  a non-matching favorite, and the real `COMMUNITY_RESEARCH_HUB_ENTRIES`
+  registry. Verified with `bun install` (fresh container, dependencies
+  weren't installed yet), the full `bun run typecheck` (13 typechecked
+  packages, clean), and the full `bun run test` (root, all packages: 228
+  test files, 4022 tests, all passing — up from 4017). No CI `lint`/`build`
+  script exists in this repo (`.github/workflows/test.yml` runs only
+  `typecheck` and `coverage`), so neither was run, matching every prior
+  run's verification scope. No further follow-up is currently tracked for
+  this idea beyond the deliberately-deferred News Stream fold-in noted
+  above; a future run should pick a fresh next-step elsewhere if one becomes
+  worth doing.
+
 - **Daily Best Card Challenge — winner-history calendar view** (the
   "🕵️ Daily Best Card Challenge" bullet's own next-named follow-up under
   Research Crowdsourcing Organizer Features below). As with every recent
@@ -13969,7 +14029,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 > The note above about UI follow-ups applies to this section too. As with Product Feature Ideas, each bullet below is an outline of UI features to add next, not a build log.
 
-* 🧩 **Community Research Hub** (`/community-hub`) — a personalized "for you" section; fold its directory into the News Stream feed instead of a separate destination; a quick-jump search bar across every listed space.
+* 🧩 **Community Research Hub** (`/community-hub`) — the quick-jump search bar already existed (the panel's own search `Input`, filtering by title/description). The personalized "for you" section follow-up is now done: a "For You" strip surfaces the viewer's already-favorited (`/tools`-starred) spaces above the full directory, hidden while actively searching or when nothing favorited is in the hub (`lib/community-research-hub.ts#buildForYouEntries`, wired in via a new `favoriteHrefs` prop and `apps/debate-ai.com/app/community-hub/CommunityHubPageContent.tsx`) — see `docs/features/community-research-hub.md`'s "For You section". Next: folding the directory into the News Stream feed instead of a separate destination — deliberately not done this round, since every hub entry's route already gets a generic "Tool spotlight" post via `news-stream.ts`'s `buildAutoFeatureNews`, so a naive per-entry source would mostly duplicate that; worth revisiting once there's something entry-specific worth posting (e.g. a "space added to the hub" moment distinct from the tool itself shipping).
 * 🏅 **Contribution Leaderboard** (`/cards/leaderboard`) — the range-filter follow-up is done: a "Range" dropdown (All time / This week / This month) re-scopes the whole roster — scores and completed-task counts alike — to that trailing window (`lib/contribution-leaderboard.ts#filterContributionsByRange`/`isWithinLeaderboardRange`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Range filter" section. The per-category follow-up is also now done: a "Category" dropdown (All categories / Cards / Summaries / Highlights / Annotations / Original arguments / Refutations) re-scopes the roster to one contribution kind at a time, composing with the Range filter (`lib/contribution-leaderboard.ts#filterContributionsByKind`) — see the Completed entry above and `docs/features/contribution-leaderboard.md`'s "Category filter" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor profile drill-down page) if one becomes worth doing.
 * 🎮 **Gamified Quests** (`/cards/streaks`) — the streak-freeze/grace-day-mechanic follow-up is done: a contributor can spend a rolling-allowance "streak freeze" to bridge a single missed day instead of resetting to zero (`lib/gamified-quests.ts#applyStreakFreezes`/`canApplyStreakFreeze`/`findFreezableStreakGapDayKey`, `state/streakFreezes.ts`), surfaced as a "Streak freeze" column with a "Use a grace day for …" action on `QuestStreaksPanel` — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak freeze / grace day" section. The opt-in-streak-lapse-reminder follow-up is also now done: a per-contributor "🔔 Remind me" toggle on the "Reminder" column shows an in-app warning banner whenever that contributor's in-progress streak is at risk of lapsing today (`lib/gamified-quests.ts#getStreakLapseRiskLength`, `state/streakLapseReminders.ts`) — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak-lapse reminder" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a shareable streak-badge image, or account-syncing reminder opt-ins/streak freezes across devices) if one becomes worth doing.
 * 🔓 **Progress Unlocks** (`/cards/progress`) — the visual next-tier progress bar follow-up is done: the "Next tier" column now leads with a filled `MeterBar` meter instead of a text-only sentence, with the needed-counts text kept underneath as detail (`lib/progress-unlocks.ts#getNextTierProgress`'s new `progressRatio` field) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Next-tier progress bar" section. The unlock-celebration-toast follow-up is also now done: a dismissible "🎉 New badge earned: …" banner shows on the signed-in visitor's own row the moment they newly earn a tier or streak badge, diffed against a persisted per-contributor "last-seen badges" baseline (`state/unlockCelebrations.ts`) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Unlock celebration toast" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a badge showcase on a contributor's profile) if one becomes worth doing.

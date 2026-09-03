@@ -16,6 +16,12 @@
  * entry just links out to a space that already persists (or doesn't need
  * to persist) its own state.
  *
+ * The `favoriteHrefs` prop closes TODO.md's "a personalized 'for you'
+ * section" follow-up for this idea: when the viewer has already favorited
+ * one of these spaces from `/tools`, `buildForYouEntries` surfaces it in a
+ * "For You" strip above the full directory, hidden while a search is active
+ * or when nothing's favorited (see that function's doc comment).
+ *
  * @module panels/CommunityResearchHubPanel
  */
 
@@ -26,15 +32,32 @@ import { Input } from "debate-ui/src/primitives/input"
 import {
   buildCommunityResearchHubSections,
   buildCommunityResearchHubSummaryText,
+  buildForYouEntries,
   searchCommunityResearchHubEntries,
   COMMUNITY_RESEARCH_HUB_ENTRIES,
 } from "../lib/community-research-hub"
 
+export interface CommunityResearchHubPanelProps {
+  /**
+   * The viewer's favorited tool hrefs (from `/tools`' star toggle), for the
+   * "For You" section — the hub entries they've already starred, surfaced
+   * above the full directory. This package can't read that state itself
+   * (it's account-synced app-layer state owned by
+   * `apps/debate-ai.com/lib/hooks/useFavoriteTools.ts`), so the app composes
+   * it in here the same way `NewsPageContent` composes `extraItems` into
+   * `NewsStreamPanel`. Defaults to `[]` (no "For You" section) so this panel
+   * still renders standalone, e.g. in tests or a future embed that hasn't
+   * wired favorites through yet.
+   */
+  favoriteHrefs?: string[]
+}
+
 /**
- * Renders the Community Research Hub: a search box over every crowdsourcing
+ * Renders the Community Research Hub: an optional "For You" section over the
+ * viewer's own favorited spaces, then a search box over every crowdsourcing
  * and pre-round/practice space in the app, grouped by category.
  */
-export function CommunityResearchHubPanel() {
+export function CommunityResearchHubPanel({ favoriteHrefs = [] }: CommunityResearchHubPanelProps = {}) {
   const [query, setQuery] = useState("")
 
   const sections = useMemo(() => {
@@ -45,6 +68,15 @@ export function CommunityResearchHubPanel() {
   const summaryText = useMemo(
     () => buildCommunityResearchHubSummaryText(buildCommunityResearchHubSections()),
     [],
+  )
+
+  // Only shown against the unfiltered directory, and only while the search
+  // box is empty — once someone's actively searching, the matched sections
+  // below are already the relevant view; a "For You" strip above them would
+  // just be noise unrelated to the query.
+  const forYouEntries = useMemo(
+    () => (query.trim() ? [] : buildForYouEntries(COMMUNITY_RESEARCH_HUB_ENTRIES, favoriteHrefs)),
+    [query, favoriteHrefs],
   )
 
   return (
@@ -62,6 +94,26 @@ export function CommunityResearchHubPanel() {
         aria-label="Search the Community Research Hub"
         className="mb-6 max-w-md"
       />
+
+      {forYouEntries.length > 0 && (
+        <div className="mb-6">
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            For You
+          </h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {forYouEntries.map((entry) => (
+              <a
+                key={`for-you-${entry.id}`}
+                href={entry.href}
+                className="rounded-lg border border-primary/40 bg-card p-3 text-left transition-colors hover:bg-accent"
+              >
+                <div className="text-sm font-medium text-foreground">{entry.title}</div>
+                <div className="mt-1 text-xs text-muted-foreground">{entry.description}</div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {sections.length === 0 ? (
         <div className="p-6 text-center text-sm text-muted-foreground">

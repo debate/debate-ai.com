@@ -43,9 +43,35 @@ This is pure navigation: the hub itself persists nothing. Every entry links
 out to a space that already persists (or, like the AI-calling panels, doesn't
 need to persist) its own state.
 
+## For You section
+
+When the viewer has already favorited one of these 17 spaces from `/tools`'
+star toggle, a **For You** strip renders above the full directory, listing
+just those already-starred spaces (`lib/community-research-hub.ts`'s
+`buildForYouEntries`, exact `href` match against the favorites list — no
+category-affinity guessing). It's hidden while the search box has an active
+query (the matched sections below are already the relevant view at that
+point) and when nothing favorited is in the hub (e.g. signed out, or every
+favorite is a tool outside this directory).
+
+`CommunityResearchHubPanel` can't read the favorites list itself — that's
+account-synced app-layer state owned by
+`apps/debate-ai.com/lib/hooks/useFavoriteTools.ts` — so it takes the list as
+an optional `favoriteHrefs` prop instead. `apps/debate-ai.com`'s
+`app/community-hub/CommunityHubPageContent.tsx` is the client wrapper that
+calls the hook and passes it in, mirroring `app/news/NewsPageContent.tsx`'s
+split for the same "package can't reach the app-layer hook" reason.
+
 ## Not in scope
 
 Idea #7 ("On Page Card Reuse Search")'s remaining follow-up — an actual
 browser extension — and the round/practice spaces' own remaining follow-ups
 (real Tabroom/ballot-sourced data, audio/video transcription) are unrelated
 to this bullet and untouched here; see their own entries in TODO.md.
+Folding the directory into the News Stream feed (the other half of this
+idea's TODO.md bullet) is also still open — every hub entry's route already
+gets a generic "Tool spotlight" post via `news-stream.ts`'s
+`buildAutoFeatureNews`, so a dedicated per-entry News Stream source would
+mostly duplicate that rather than add new signal; a future run should
+reconsider this once there's something entry-specific worth posting (e.g. a
+"space added to the hub" moment distinct from the tool itself shipping).
