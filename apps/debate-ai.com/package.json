@@ -73,7 +73,6 @@
     "debate-editor-cardmirror": "workspace:*",
     "debate-flow-ebb": "workspace:*",
     "debate-round": "workspace:*",
-    "debate-settings": "workspace:*",
     "debate-speech-writer": "workspace:*",
     "debate-timer": "workspace:*",
     "debate-ui": "workspace:*",
