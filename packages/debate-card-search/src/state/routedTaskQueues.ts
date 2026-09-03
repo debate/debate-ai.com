@@ -41,6 +41,14 @@
  * a `topicId`, instead of needing to separately build a coverage report
  * first.
  *
+ * `reassignPersistedRoutedTask` closes the "a coach-facing override/
+ * reassign control" follow-up named under the same bullet in TODO.md's
+ * Product Feature Ideas list — a coach can move an already-routed (or
+ * still-unassigned) task to a different contributor by id, bypassing
+ * `routeTasks`'s own skill/capacity-based pick, with each affected
+ * contributor's persisted `activeTaskCount` kept in sync the same way a
+ * normal assignment/completion is.
+ *
  * @module state/routedTaskQueues
  */
 
@@ -160,6 +168,68 @@ export function completePersistedRoutedTask(topicId: string, argBlock: string): 
   recordPersistedTaskCompleted(assignment.contributorId);
   saveRoutedTaskQueue({ topicId, result: updatedResult });
   return assignment;
+}
+
+/**
+ * Reassigns one already-routed task to a different contributor — a coach
+ * override for `routeTasks`'s own least-loaded-eligible-contributor pick,
+ * closing the "a coach-facing override/reassign control" follow-up named
+ * under the "Research Task Routing" bullet in TODO.md. Works on a task
+ * whether it's currently assigned (moves it from its current assignee to
+ * `newContributorId`) or sitting in `unassignedTasks` (assigns it for the
+ * first time), matched by `argBlock` either way. Updates each affected
+ * contributor's persisted `activeTaskCount` the same way a normal
+ * assignment/completion would
+ * (`recordPersistedTaskAssigned`/`recordPersistedTaskCompleted`) — a no-op
+ * on a profile that isn't persisted, matching every other free-form
+ * contributor-id action in this repo (`myContributorId`, "Verifier id"):
+ * there's no roster/login requirement to type an id here. No skill or
+ * capacity check is applied — an explicit coach override intentionally
+ * bypasses `routeTasks`'s own eligibility rules.
+ *
+ * Returns the reassigned `RoutedAssignment`, or `undefined` — leaving both
+ * stores untouched — when `newContributorId` is blank, the topic has no
+ * persisted queue, or no assigned or unassigned task matches `argBlock`.
+ * Reassigning to the task's current assignee is a no-op that returns the
+ * existing assignment unchanged, rather than decrementing and
+ * re-incrementing the same contributor's `activeTaskCount`.
+ */
+export function reassignPersistedRoutedTask(
+  topicId: string,
+  argBlock: string,
+  newContributorId: string,
+): RoutedAssignment | undefined {
+  const trimmedContributorId = newContributorId.trim();
+  if (!trimmedContributorId) return undefined;
+
+  const queue = getRoutedTaskQueue(topicId);
+  if (!queue) return undefined;
+
+  const assignedIndex = queue.result.assignments.findIndex((a) => a.task.argBlock === argBlock);
+  const unassignedIndex =
+    assignedIndex === -1 ? queue.result.unassignedTasks.findIndex((t) => t.argBlock === argBlock) : -1;
+  if (assignedIndex === -1 && unassignedIndex === -1) return undefined;
+
+  const previousAssignment = assignedIndex !== -1 ? queue.result.assignments[assignedIndex] : undefined;
+  if (previousAssignment?.contributorId === trimmedContributorId) return previousAssignment;
+
+  const task = previousAssignment ? previousAssignment.task : queue.result.unassignedTasks[unassignedIndex];
+  const reassignment: RoutedAssignment = { task, contributorId: trimmedContributorId };
+  const updatedResult: RoutingResult = {
+    assignments: previousAssignment
+      ? queue.result.assignments.map((a, i) => (i === assignedIndex ? reassignment : a))
+      : [...queue.result.assignments, reassignment],
+    unassignedTasks:
+      unassignedIndex !== -1
+        ? queue.result.unassignedTasks.filter((_, i) => i !== unassignedIndex)
+        : queue.result.unassignedTasks,
+  };
+
+  if (previousAssignment) recordPersistedTaskCompleted(previousAssignment.contributorId);
+  recordPersistedTaskAssigned(trimmedContributorId);
+
+  saveRoutedTaskQueue({ topicId, result: updatedResult });
+  return reassignment;
 }
 
 /** One assignment in the task-inbox view, tagged with the topic it was routed under and the assignee's current skill level (if their profile is still persisted). */

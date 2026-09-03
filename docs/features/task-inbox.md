@@ -21,9 +21,12 @@ Per topic (a persisted `RoutedTaskQueueRecord`, keyed by `topicId`):
 | Assignee | `assignment.contributorId` |
 | Assignee skill | The contributor's current persisted `skillLevel`, if their profile still exists |
 | Mark done | Calls `markRoutedTaskAwaitingVerification(topicId, argBlock, markedDoneAt)` |
+| Reassign | A free-form contributor-id field plus button; calls `reassignPersistedRoutedTask(topicId, argBlock, newContributorId)` |
 
 Tasks nobody was eligible or available for (`unassignedTasks`) are listed
-separately per topic, with no complete action.
+separately per topic, with an **Assign to…** field instead of a complete
+action — the same reassign control, since assigning an unassigned task and
+reassigning an already-assigned one are the same underlying operation.
 
 A task marked done doesn't credit the completion right away — it moves into
 an "Awaiting verification" section, listing every persisted
@@ -97,6 +100,21 @@ panels/TaskInboxPanel.tsx
   → panel re-reads buildTaskInboxView() (and the tracked-topic suggestion
     list) to refresh
 
+Reassigning a task (coach override — the "Reassign"/"Assign to…" control on
+every assignment and unassigned task):
+panels/TaskInboxPanel.tsx
+  → reassignPersistedRoutedTask(topicId, argBlock, newContributorId)
+      — state/routedTaskQueues.ts
+      ├─ matches the task by argBlock, whether currently assigned or
+      │    sitting in unassignedTasks
+      ├─ recordPersistedTaskCompleted(previousContributorId) — if it was
+      │    already assigned, decrements the outgoing assignee's stored
+      │    activeTaskCount (state/contributorAvailability.ts)
+      ├─ recordPersistedTaskAssigned(newContributorId) — increments the new
+      │    assignee's stored activeTaskCount
+      └─ saves the updated queue
+  → panel re-reads buildTaskInboxView() to refresh
+
 Signed-in prefill for "My tasks" (apps/debate-ai.com only):
 components/research/TaskInboxWithIdentity.tsx  — "use client" wrapper
   → useSession()                          — lib/hooks/useSession.ts, the
@@ -167,6 +185,33 @@ Vitest-covered in `test/session-identity.test.ts` — no changes to
 the single source of truth the panel's client-side gate is layered in front
 of.
 
+## Coach override / reassign control
+
+Every assignment and unassigned task has its own "Reassign to…"/"Assign
+to…" field and button, closing the "a coach-facing override/reassign
+control" follow-up named under the "Research Task Routing" bullet in
+TODO.md's Product Feature Ideas list. It's a free-form contributor-id
+field — same convention as "My tasks" and "Verifier id" — not a
+picker restricted to already-persisted contributor profiles.
+
+`state/routedTaskQueues.ts`'s new `reassignPersistedRoutedTask(topicId,
+argBlock, newContributorId)` moves the matching task (found by `argBlock`,
+whether it was assigned or still in `unassignedTasks`) to
+`newContributorId`, applying no skill or capacity check — an explicit
+coach override is meant to bypass `routeTasks`'s own eligibility rules, not
+run another routing pass. Each affected contributor's persisted
+`activeTaskCount` is kept accurate the same way a normal
+assignment/completion is: the outgoing assignee (if any) is decremented via
+`recordPersistedTaskCompleted`, and the incoming one is incremented via
+`recordPersistedTaskAssigned` — both no-ops on a contributor id with no
+persisted profile, so reassigning to an arbitrary typed id never throws.
+Reassigning a task to its current assignee is a no-op that returns the
+existing assignment unchanged, avoiding a spurious decrement/increment of
+the same contributor's count. Returns `undefined` — leaving both stores
+untouched — for a blank contributor id, a topic with no persisted queue, or
+an `argBlock` matching neither an assignment nor an unassigned task.
+Vitest-covered in `packages/debate-card-search/test/routedTaskQueues.test.ts`.
+
 ## Cross-tab live update
 
 `TaskInboxPanel` subscribes to the browser's `storage` event (which the spec
@@ -209,3 +254,12 @@ staying ignored).
   visitor) is unaffected — the same trust boundary every other
   localStorage-backed action in this repo has, since there is no
   server-side session check on these calls.
+- The "Reassign"/"Assign to…" control is open to anyone viewing the panel —
+  there's no real "coach" role or permission check gating it, since this
+  repo has no roles/permissions system at all. Reassigning also isn't
+  captured by the cross-tab live-update mechanism's contributor-load side:
+  a second tab picks up the moved task itself (`routedTaskQueues` is a
+  watched key), but its `contributorAvailability` side (each contributor's
+  `activeTaskCount`) only refreshes on that tab's own next mount/reload —
+  the same limitation `completePersistedRoutedTask`'s "Mark done" already
+  had before this control existed.
