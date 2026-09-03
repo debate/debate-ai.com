@@ -2,18 +2,18 @@
 
 import Link from "next/link"
 import React, { useEffect, useState } from "react"
-import { Code2, Scale, MessageSquare, Calendar, Trophy, Book, BookOpen, BookMarked, MessageCircle, Shield, FileText } from "lucide-react"
+import { Code2, Scale, MessageSquare, Calendar, Trophy, Book, BookMarked, MessageCircle, Shield, FileText, Activity } from "lucide-react"
 
 const FOOTER_LINKS = [
   { url: "https://github.com/debate", text: "Github", icon: Code2 },
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Debate Reddit", icon: MessageSquare },
   { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar },
   { url: "https://www.debate.land", text: "Rankings", icon: Trophy },
-  { url: "https://debate-decoded.ghost.io", text: "Community Blog", icon: BookOpen },
   { url: "https://opencaselist.com", text: "Research", icon: BookMarked },
   { url: "https://debaterhub.com", text: "DebaterHub", icon: Scale },
   { url: "https://debate101.org/#hub", text: "Resource Links", icon: Book },
-  { url: "https://discord.gg/SJdBqBz3tV", text: "Support", icon: MessageCircle },
+  { url: "https://discord.gg/5PFjqgtkK", text: "Support", icon: MessageCircle },
+  { url: "https://stats.uptimerobot.com/V3HfCBM9de", text: "Status", icon: Activity },
   { url: "/legal/privacy", text: "Privacy", icon: Shield },
   { url: "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit", text: "Rules", icon: FileText },
 ]
