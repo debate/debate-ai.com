@@ -1,11 +1,17 @@
 "use client";
 
 /**
- * Top menu bar sitting above the CardMirror ribbon — File / Edit / Card /
- * Format / Insert / AI / View / Tools / Workspace / Plugins dropdowns
- * exposing every ribbon command via `runRibbon(id)`, grouped into labeled
- * sections that mirror CardMirror's own `RIBBON_GROUPS` taxonomy (see
- * menu-bar-categories.ts). Every entry here is one more way to reach a
+ * Top menu bar sitting above the CardMirror ribbon — a row of small
+ * per-theme dropdowns (File, Collab, Edit, Find, Card, Card tools, Format,
+ * Highlight, Insert, AI, View, Panes, Tools, Practice, Workspace, Plugins;
+ * see `MENU_BAR_CATEGORIES` in menu-bar-categories.ts for the exact
+ * bucketing) exposing every ribbon command via `runRibbon(id)`, grouped
+ * into labeled sections that mirror CardMirror's own `RIBBON_GROUPS`
+ * taxonomy. Categories are kept small on purpose — most hold one or two
+ * source groups — so any one dropdown stays short; `DropdownMenuContent`
+ * below still caps height and scrolls for the few (like Edit's 24-command
+ * "Editing utilities") that don't fit a single screen regardless. Every
+ * entry here is one more way to reach a
  * command already bound to a ribbon button and/or the Ctrl/Cmd-Shift-Space
  * command palette — this doesn't replace either, it's the third, browsable
  * path. Two categories aren't sourced from `RIBBON_GROUPS`: Plugins lists
@@ -131,12 +137,15 @@ function MenuBarCategoryMenu({
         <button
           type="button"
           role="menuitem"
-          className="shrink-0 px-2 py-1 text-xs font-medium rounded hover:bg-accent hover:text-accent-foreground focus:outline-none focus:bg-accent"
+          className="shrink-0 px-1.5 py-0.5 text-xs font-medium rounded hover:bg-accent hover:text-accent-foreground focus:outline-none focus:bg-accent"
         >
           {title}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="max-h-[70vh] overflow-y-auto">
+      <DropdownMenuContent
+        align="start"
+        className="p-0.5 max-h-[min(70vh,var(--radix-dropdown-menu-content-available-height))] overflow-y-auto"
+      >
         {isWorkspaceLinks ? (
           <WorkspaceLinksContent onNavigate={onNavigate} />
         ) : (
@@ -174,7 +183,7 @@ function WorkspaceLinksContent({
       {sections.map((section, i) => (
         <div key={section.category ?? `untitled-${i}`}>
           {i > 0 && <DropdownMenuSeparator className="my-0.5" />}
-          <DropdownMenuLabel className="px-2 py-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+          <DropdownMenuLabel className="px-2 py-0.5 text-[11px] leading-tight uppercase tracking-wide text-muted-foreground">
             {section.category ?? 'Go to'}
           </DropdownMenuLabel>
           {section.links.map((link) => (
@@ -182,7 +191,7 @@ function WorkspaceLinksContent({
               key={link.href}
               onSelect={() => onNavigate(link.href)}
               title={link.description}
-              className="px-2 py-1"
+              className="px-2 py-0.5 text-xs leading-tight"
             >
               {link.label}
             </DropdownMenuItem>
@@ -255,11 +264,15 @@ function CategoryContent({
   }, []);
 
   if (entries === null) {
-    return <DropdownMenuLabel className="text-xs text-muted-foreground">Loading…</DropdownMenuLabel>;
+    return <DropdownMenuLabel className="px-2 py-0.5 text-xs text-muted-foreground">Loading…</DropdownMenuLabel>;
   }
 
   if (entries.length === 0) {
-    return <DropdownMenuItem disabled>No commands available</DropdownMenuItem>;
+    return (
+      <DropdownMenuItem disabled className="px-2 py-0.5 text-xs">
+        No commands available
+      </DropdownMenuItem>
+    );
   }
 
   return (
@@ -267,16 +280,20 @@ function CategoryContent({
       {entries.map((section, i) => (
         <div key={section.sectionTitle}>
           {i > 0 && <DropdownMenuSeparator className="my-0.5" />}
-          <DropdownMenuLabel className="px-2 py-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+          <DropdownMenuLabel className="px-2 py-0.5 text-[11px] leading-tight uppercase tracking-wide text-muted-foreground">
             {section.sectionTitle}
           </DropdownMenuLabel>
           {section.items.length === 0 ? (
-            <DropdownMenuItem disabled className="px-2 py-1">
+            <DropdownMenuItem disabled className="px-2 py-0.5 text-xs leading-tight">
               No commands available
             </DropdownMenuItem>
           ) : (
             section.items.map((item) => (
-              <DropdownMenuItem key={item.id} onSelect={() => onRun(item.id)} className="px-2 py-1">
+              <DropdownMenuItem
+                key={item.id}
+                onSelect={() => onRun(item.id)}
+                className="px-2 py-0.5 text-xs leading-tight"
+              >
                 {item.label}
                 {item.shortcut && <DropdownMenuShortcut>{item.shortcut}</DropdownMenuShortcut>}
               </DropdownMenuItem>

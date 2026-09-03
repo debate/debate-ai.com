@@ -25,7 +25,8 @@ below) — TODO.md's Product Feature Ideas item 14's own bullet for it.
   — `src/editor/ribbon-commands.ts` (command implementations and default
   keybindings), `src/editor/move-container.ts`, `src/editor/condense.ts`
 - **Nav:** every command below is reachable three ways — its default
-  keybinding, the `MenuBar.tsx` top bar (Format/Card/Edit/AI dropdowns,
+  keybinding, the `MenuBar.tsx` top bar (Format/Card/Edit/AI dropdowns
+  among its now more finely split set — see `menu-bar-categories.ts`,
   per the table), and by typing its name or an alias into
   Ctrl/Cmd-Shift-Space's command palette (`quick-card-search-ui.ts` also
   indexes every ribbon command, not just the `t`-prefixed Workspace links)

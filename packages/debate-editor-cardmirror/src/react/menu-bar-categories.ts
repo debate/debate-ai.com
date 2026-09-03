@@ -4,12 +4,17 @@
  * CardMirror groups its ~500 ribbon commands into ~30 thematic groups
  * (`RIBBON_GROUPS`, `../editor/ribbon-groups.js`) for the keyboard-shortcuts
  * reference and the keybindings editor. This file re-buckets those same
- * groups into a handful of app-menu-bar categories (File, Edit, Card,
- * Format, Insert, AI, View, Tools) — one dropdown per category, with each
- * source group rendered as a labeled section inside it — so the full
- * command set stays reachable from a compact top bar sized for a small
- * embedded panel, without either flattening 500 commands into one list or
- * reproducing all 30 groups as 30 separate dropdowns.
+ * groups into app-menu-bar categories — one dropdown per category, with
+ * each source group rendered as a labeled section inside it — so the full
+ * command set stays reachable from a compact top bar, without either
+ * flattening 500 commands into one list or reproducing all 30 groups as 30
+ * separate dropdowns. Categories are kept deliberately small (most hold
+ * one or two source groups, ~10-17 commands) rather than a handful of
+ * do-everything dropdowns, so any single menu stays short enough to
+ * browse without heavy scrolling — see `MenuBar.tsx`'s
+ * `DropdownMenuContent` for the scroll fallback on the few that still
+ * don't fit (notably Edit's 24-command "Editing utilities" group, kept as
+ * one bucket since it's a single `RIBBON_GROUPS` entry).
  *
  * A drift guard (module-load assertion below, mirroring `ribbon-groups.ts`'s
  * own) keeps this mapping exhaustive: every `RIBBON_GROUPS` title must
@@ -50,31 +55,35 @@ export interface MenuBarCategory {
 export const MENU_BAR_CATEGORIES: MenuBarCategory[] = [
   {
     title: 'File',
-    groupTitles: ['File', 'Speech', 'Collaboration'],
+    groupTitles: ['File', 'Speech'],
+  },
+  {
+    title: 'Collab',
+    groupTitles: ['Collaboration', 'Comments'],
   },
   {
     title: 'Edit',
-    groupTitles: ['Editing utilities', 'Find', 'Search', 'Select', 'Comments'],
+    groupTitles: ['Editing utilities'],
+  },
+  {
+    title: 'Find',
+    groupTitles: ['Find', 'Search', 'Select'],
   },
   {
     title: 'Card',
-    groupTitles: [
-      'Dropzone / Send and Receive Cards',
-      'Quick Cards',
-      'Structural styles',
-      'Numbering',
-      'Condense',
-      'Card cutter',
-    ],
+    groupTitles: ['Structural styles', 'Numbering', 'Condense'],
+  },
+  {
+    title: 'Card tools',
+    groupTitles: ['Dropzone / Send and Receive Cards', 'Quick Cards', 'Card cutter'],
   },
   {
     title: 'Format',
-    groupTitles: [
-      'Character styles',
-      'Inline formatting',
-      'Highlight tools',
-      'Color pickers & menus',
-    ],
+    groupTitles: ['Character styles', 'Inline formatting'],
+  },
+  {
+    title: 'Highlight',
+    groupTitles: ['Highlight tools', 'Color pickers & menus'],
   },
   {
     title: 'Insert',
@@ -86,11 +95,19 @@ export const MENU_BAR_CATEGORIES: MenuBarCategory[] = [
   },
   {
     title: 'View',
-    groupTitles: ['View', 'Zoom & scale', 'Multi-pane workspace', 'Reading'],
+    groupTitles: ['View', 'Zoom & scale', 'Reading'],
+  },
+  {
+    title: 'Panes',
+    groupTitles: ['Multi-pane workspace'],
   },
   {
     title: 'Tools',
-    groupTitles: ['Timer', 'Diagnostics', 'Learn', 'Cleanup', 'Flow', 'Voice'],
+    groupTitles: ['Timer', 'Diagnostics', 'Voice'],
+  },
+  {
+    title: 'Practice',
+    groupTitles: ['Flow', 'Learn', 'Cleanup'],
   },
   {
     title: 'Workspace',
