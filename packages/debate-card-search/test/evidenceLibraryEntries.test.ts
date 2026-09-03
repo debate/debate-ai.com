@@ -666,6 +666,29 @@ describe("saveEvidenceLibraryEntryRevision", () => {
     expect(history).toHaveLength(2);
     expect(history.map((record) => record.contributorId)).toEqual(["alice", "bob"]);
   });
+
+  it("captures the before/after text snapshot so the revision's diff is recoverable", () => {
+    saveEvidenceLibraryEntry(WARMING_CARD);
+
+    const edited: EvidenceLibraryEntry = {
+      ...WARMING_CARD,
+      cite: "Smith 2024",
+      text: `${WARMING_CARD.text} Newer data confirms the same trend continues to accelerate.`,
+    };
+    saveEvidenceLibraryEntryRevision(edited, "alice");
+
+    const [record] = listRevisionHistory();
+    expect(record.beforeText).toEqual({
+      argBlock: WARMING_CARD.argBlock,
+      text: WARMING_CARD.text,
+      cite: WARMING_CARD.cite,
+    });
+    expect(record.afterText).toEqual({
+      argBlock: edited.argBlock,
+      text: edited.text,
+      cite: edited.cite,
+    });
+  });
 });
 
 const SOLVENCY_CONTRIBUTION: AttributedContribution = {

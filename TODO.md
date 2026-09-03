@@ -6,6 +6,68 @@
 _No task currently in progress._
 
 ### Completed
+- **Revision Incentives — before/after revision diff viewer (Research
+  Crowdsourcing Organizer Features bullet, "🔁 Revision Incentives" Next
+  item).** Another repeat of the standing prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL... with ability
+  to save flows/docs/debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history) and every tool is already reachable from the Tools page
+  and CardMirror's command palette, so this slice picked the next named,
+  unblocked follow-up instead: the "🔁 Revision Incentives" bullet's
+  "before/after revision diff viewer" item. Checking
+  `state/revisionHistory.ts` showed the persisted `CardRevisionRecord`
+  already tracked *scored* before/after snapshots (`CardSnapshot`'s
+  `qualitySignals`/`citationCompleteness`/`evidenceYear`/`wordCount`) but no
+  actual *text* — there was no way to show a reader what a revision changed,
+  only how much it scored. Added `lib/revision-text-diff.ts`: an
+  `EvidenceEntryTextSnapshot` (`argBlock`/`text`/`cite`) plus a pure
+  word-level LCS diff (`diffText`, `buildCardRevisionTextDiff`) — the same
+  algorithm `debate-round`'s `flow/flow-edit-diff.ts` uses for its own
+  side-by-side conflict diff (idea #16), reimplemented here since the two
+  packages share no dependency — bounded by a `MAX_DIFF_TOKENS` (6000)
+  fallback so an unusually long cut card can't blow up an O(n·m) comparison.
+  `state/revisionHistory.ts`'s `CardRevisionRecord` gains optional
+  `beforeText`/`afterText` fields (a record saved before this change, or
+  built from a caller-supplied `CardRevision` with no source entry, simply
+  has none — `getRevisionTextDiff` returns `null` for those rather than
+  throwing) plus a new `listRecentRevisionHistory(limit)` for a
+  newest-first, capped listing.
+  `state/evidenceLibraryEntries.ts#saveEvidenceLibraryEntryRevision` — the
+  one real call site that records a revision from an actual card edit — now
+  captures both sides' text snapshots onto the record alongside the
+  existing scored ones. `RevisionIncentivesPanel` gets a new "Recent
+  revisions" section below the leaderboard: the 20 most recent revisions,
+  newest first, each with a "View diff" toggle that expands into a
+  two-column before/after comparison per changed field (unchanged fields
+  are omitted), styled the same way `SharedFlowSyncPanel`'s existing
+  conflict-diff view is (`toneSurfaceClass`/`line-through` on removed
+  words, a positive tone on added ones). See
+  `docs/features/revision-incentives.md`'s new "Before/after revision diff
+  viewer" section. Vitest-covered: a new
+  `packages/debate-card-search/test/revision-text-diff.test.ts` (19 tests —
+  `diffText`'s equal/empty/appended/removed/fully-replaced/long-input-fallback/
+  one-sided-empty-string cases, `buildEvidenceEntryTextSnapshot`, and
+  `buildCardRevisionTextDiff`'s unchanged/partially-changed/word-level/
+  fully-changed cases), plus new tests added to
+  `packages/debate-card-search/test/revisionHistory.test.ts`
+  (`listRecentRevisionHistory`'s cap/order/zero-limit cases,
+  `getRevisionTextDiff`'s null-when-absent/null-when-partial/field-diff
+  cases) and `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+  (`saveEvidenceLibraryEntryRevision` now capturing the exact before/after
+  text snapshot). Verified: `bun install` (2342 packages), `bunx turbo run
+  typecheck --filter=debate-card-search --filter=debate-ui
+  --filter=debate-ai-web` (10/10 in-scope package tasks pass), full `bun
+  run test` (228 files / 4126 tests, all pass — up from 4107/228 before
+  this slice), and `bun run build:web` (`debate-ai-web` production build
+  succeeds, full route list intact including `/cards/revisions`). Updated
+  the "🔁 Revision Incentives" bullet below to reflect that only the
+  reward-points-redemption/leaderboard-tie-in follow-up remains. **PR:**
+  https://github.com/debate/debate-ai.com/pull/509. **Completed:**
+  2026-09-03.
 - **Judge Profiles — multi-judge comparison view for panel rounds
   (Research Crowdsourcing Organizer Features bullet, "⚖️ Judge Profiles"
   Next item).** Another repeat of the standing prompt ("integrate all the
@@ -14870,7 +14932,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. The "nominate a peer" follow-up is also now done: a "Peer Nominations" section has a **Nominate a peer** form (category, nominee, your name, optional note), and each live award card shows that category's top nominee(s) by total support — see the Completed entry above and `docs/features/contributor-awards.md`'s "Peer Nominations" section. The per-nomination "seconding"/upvoting follow-up is also now done: a "👍 Second" action on each row in "Recent nominations" lets anyone else add their support to an existing nomination instead of only being able to submit a duplicate one, and the live cards' top-nominee ranking now uses total support (nominations plus seconds) rather than raw nomination count alone (`lib/contributor-awards.ts#canSecondNomination`/`tallyNominationsByKind`, `state/contributorAwardNominations.ts#secondPeerNomination`) — see the Completed entry above and `docs/features/contributor-awards.md`'s "Seconding a nomination" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. folding nominations into the Hall of Fame ranking as a tie-breaker) if one becomes worth doing.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — the coach-facing override/reassign follow-up is done: every assignment and unassigned task has a "Reassign to…"/"Assign to…" field plus button that moves it to a typed contributor id, bypassing `routeTasks`'s own skill/capacity rules and keeping both the outgoing and incoming contributor's `activeTaskCount` accurate (`state/routedTaskQueues.ts#reassignPersistedRoutedTask`) — see the Completed entry above and `docs/features/task-inbox.md`'s "Coach override / reassign control" section. The task-priority-indicator follow-up is also now done: every assignment has a "Flag high priority"/"Unflag" toggle, showing a "High priority" badge and sorting ahead of its topic-mates (`lib/research-task-routing.ts#setAssignmentPriority`/`sortAssignmentsByPriority`, `state/routedTaskQueues.ts#setPersistedRoutedTaskPriority`) — see the Completed entry above and `docs/features/task-inbox.md`'s "Task priority" section. Next: a capacity-aware view of routing load across the team (note: this repo still has no UI to create/manage a `ContributorAvailability` profile at all — only tests and the reassign control's free-form id touch that store — so a capacity view would need either that management UI too, or to work off arbitrary typed ids the same way reassign does).
-* 🔁 **Revision Incentives** (`/cards/revisions`) — the stale-evidence-digest follow-up is done: a "Stale evidence digest" section above the leaderboard lists every persisted stale card, most-urgent (undated, then oldest-cited) first, with a link into the Evidence Library to revise one (`lib/shared-evidence-library.ts#buildStaleEvidenceDigest`, `state/evidenceLibraryEntries.ts#buildPersistedStaleEvidenceDigest`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Stale evidence digest" section. Next: a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.
+* 🔁 **Revision Incentives** (`/cards/revisions`) — the stale-evidence-digest follow-up is done: a "Stale evidence digest" section above the leaderboard lists every persisted stale card, most-urgent (undated, then oldest-cited) first, with a link into the Evidence Library to revise one (`lib/shared-evidence-library.ts#buildStaleEvidenceDigest`, `state/evidenceLibraryEntries.ts#buildPersistedStaleEvidenceDigest`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Stale evidence digest" section. The before/after-revision-diff-viewer follow-up is also now done: a "Recent revisions" section below the leaderboard lists the 20 most recently recorded revisions with a "View diff" toggle per row, rendering a word-level before/after comparison of the card's argument block, cut text, and citation (`lib/revision-text-diff.ts#buildCardRevisionTextDiff`, `state/revisionHistory.ts#getRevisionTextDiff`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Before/after revision diff viewer" section. Next: a reward-points redemption or tie-in to the leaderboard.
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.
 * 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.
