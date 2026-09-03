@@ -6,6 +6,53 @@
 _No task currently in progress._
 
 ### Completed
+- **User Settings — prune stale favorite tools from the `/tools` favorites
+  strip too (idea #17, `user-settings.md` Known gap).** Another repeat of
+  the standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows docs and
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI") — as with every recent repeat, the "user
+  settings / SQL-linked flows, docs, rounds" half is already fully built
+  (`saved_flows`/`saved_rounds`/`documents` D1 tables, all three
+  account-synced and surfaced together via `/tools`' "My Saved Items"
+  widget) and every tool is already reachable from the Tools page and
+  CardMirror's command palette, so this slice continued the prior "prune
+  stale favorite tools" slice's own named remaining gap instead:
+  `FavoriteToolsSettings.tsx` (`/settings`) already pruned a favorite
+  pointing at a tool since renamed/removed from the `/tools` catalog, but
+  `FavoritesController.tsx` — the component that shows/hides the `/tools`
+  page's own favorites strip — never called
+  `useFavoriteTools().pruneUnknown`, so a stale favorite there just never
+  matched any pre-rendered chip and stayed silently invisible until a
+  `/settings` visit happened to prune the underlying list. Added the same
+  `pruneUnknown(ALL_TOOL_HREFS)` call (importing `ALL_TOOLS` from
+  `app/tools/tool-groups.ts`, mirroring `FavoriteToolsSettings.tsx`) to
+  `FavoritesController.tsx`'s load effect, so a stale favorite is now
+  pruned on the first visit to *either* page rather than only `/settings`.
+  No new pure logic was added — this wires an already-tested consumer
+  (`filterKnownFavoriteTools`/`pruneUnknown`, covered by 53 existing cases
+  in `packages/debate-round/test/favoriteTools.test.ts`, unchanged and
+  still passing) into a second component, matching this repo's convention
+  that `apps/debate-ai.com` component-layer wiring itself stays untested
+  (no vitest project configured for the app — see `vitest.config.ts`'s
+  `projects` list). Updated `docs/features/user-settings.md`'s Known gaps
+  and data-flow sections to describe both consumers pruning on load.
+  Verified: `bun install` (2342 packages), `bunx vitest run
+  packages/debate-round/test/favoriteTools.test.ts` (53/53 pass), full
+  `bun run test` (226 files / 4056 tests, all pass), `bunx turbo run
+  typecheck --filter=debate-round --filter=debate-ai-web` (10/10 in-scope
+  package tasks pass), a direct `npx tsc --noEmit -p
+  apps/debate-ai.com/tsconfig.json` (38 pre-existing, unrelated errors —
+  Cloudflare Workers ambient types, better-auth client-plugin generics,
+  missing CSS/icon-asset module declarations — confirmed none in
+  `FavoritesController.tsx` or any other file this slice touched), and
+  `bun run build:web` (`debate-ai-web` production build succeeds, `/tools`
+  and `/settings` present in the route list). No repo-wide lint script
+  exists to run. Remaining gap for a future slice: the "standing
+  tool-panel/nav UI-polish audit" idea #17 follow-up (4) is still open more
+  broadly (bringing every panel's UI up to shared `debate-ui` primitive
+  conventions) — this slice closes one specific, previously-named
+  discoverability gap, not that audit as a whole. **Completed:** 2026-09-03.
 - **Shared Flow Sync — side-by-side conflict diff (idea #16).** `SharedFlowSyncPanel`'s
   "Conflicts" section rendered each conflicting box as a flat, unaligned list
   of every competing edit's full content — a reviewer had to read each

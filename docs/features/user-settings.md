@@ -117,7 +117,9 @@ lib/hooks/useFavoriteTools.ts (app-layer — mirrors useThemeState's
     every /tools card and every favorites-strip chip
   → components/tools/FavoritesController.tsx  — shows/hides the /tools
     favorites strip and its chips (no data passed as props — see its own
-    header comment for why, mirrors ToolsSearch's DOM-attribute filtering)
+    header comment for why, mirrors ToolsSearch's DOM-attribute filtering),
+    and prunes any stale favorite against ALL_TOOLS on load, same as
+    FavoriteToolsSettings.tsx below
   → components/settings/FavoriteToolsSettings.tsx — lists/unpins favorites
     on /settings, resolving each href via app/tools/tool-groups.ts's
     ALL_TOOLS (the one place that knows the tool catalog)
@@ -179,16 +181,15 @@ vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
   `debate-round` package has no way to check a starred `href` against the
   real `/tools` catalog, since that catalog (`app/tools/tool-groups.ts`) is
   app-specific, so `/api/settings` itself never rejects a stale href. This is
-  no longer a dead end, though: `FavoriteToolsSettings` (the one component
-  that already resolves each favorite against `ALL_TOOLS` to render it) now
-  also prunes any favorite that doesn't resolve — via
-  `useFavoriteTools().pruneUnknown(validHrefs)`, backed by the pure
+  no longer a dead end, though: both `FavoriteToolsSettings` (`/settings`)
+  and `FavoritesController` (the `/tools` favorites strip) resolve each
+  favorite against `ALL_TOOLS` and now both call
+  `useFavoriteTools().pruneUnknown(validHrefs)` on load — backed by the pure
   `filterKnownFavoriteTools` in `state/favoriteTools.ts` — persisting the
   cleaned-up list locally and, when signed in, best-effort syncing the
-  removal to the account, the same way any other favorites change does. The
-  prune only runs when `/settings` is visited (the favorites strip on
-  `/tools` doesn't know the catalog either, so a stale chip there just never
-  matches and stays invisible until the next `/settings` visit prunes it).
+  removal to the account, the same way any other favorites change does. A
+  stale favorite is now pruned on the first visit to *either* page, rather
+  than only `/settings`.
 - The "standing tool-panel/nav UI-polish audit" idea #17 follow-up (4) named
   by prior slices is still open — this slice's star toggle/favorites strip
   overlaps with it but doesn't close it. A later slice (see
