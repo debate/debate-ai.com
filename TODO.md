@@ -6,6 +6,63 @@
 _No task currently in progress._
 
 ### Completed
+- **Research Task Routing — task-priority indicator**
+  (the "🧭 Research Task Routing" bullet's own next-named follow-up under
+  Research Crowdsourcing Organizer Features below — the one left open once
+  the coach-facing reassign/override control shipped). As with every recent
+  run, the standing prompt ("integrate all the tools into the UI... create
+  user settings... link user db SQL... save flows docs and debates in SQL
+  and link to users... add tools where needed in the UI... develop better
+  tool UI") is already fully built (account-synced `/settings`, D1 tables +
+  `/api/*` routes linking flows/docs/rounds/materials to signed-in users,
+  every tool reachable from the nav), and there were no open PRs to
+  resume — so this run again picked a genuine next-step instead, one
+  directly named in TODO.md's own text. Until now a `RoutedAssignment` had
+  no way to mark one task more urgent than another beyond its
+  `missing`/`thin` coverage `level` (a property of the underlying gap, not
+  something a coach could set) — this was explicitly named as the bullet's
+  own open follow-up. `lib/research-task-routing.ts` gained an optional
+  `TaskPriority = "normal" | "high"` field on `RoutedAssignment` (omitted
+  entirely when `"normal"`, mirroring `PrepNote.priority`'s
+  omit-when-unset convention), a pure `setAssignmentPriority` transform,
+  and `sortAssignmentsByPriority` — a stable sort putting `"high"`-priority
+  assignments first while preserving `routeTasks`'s own most-urgent-first
+  order within each tier. `state/routedTaskQueues.ts`'s new
+  `setPersistedRoutedTaskPriority(topicId, argBlock, priority)` applies
+  that transform to a stored assignment and saves — a no-op for a topic
+  with no persisted queue or an `argBlock` that isn't currently assigned to
+  anyone (an unassigned task has no assignee to attach a flag to) — and
+  `buildTaskInboxView` now runs each topic's assignments through
+  `sortAssignmentsByPriority` before tagging them, so a flagged task
+  surfaces above its topic-mates. `TaskInboxPanel.tsx` gained a "Flag high
+  priority"/"Unflag" toggle button per assignment plus a "High priority"
+  badge, mirroring `PrepNotesPanel.tsx`'s identical control for Strategy
+  Sync Notes pixel-for-pixel (same badge variant, same button label
+  convention). This is client-side/localStorage-only, matching the base
+  routed-task-queue store's own local-only persistence (no account-sync
+  exists for the task inbox at all yet). See
+  `docs/features/task-inbox.md`'s new "Task priority" section. Vitest-covered:
+  new `describe("setAssignmentPriority")`/`describe("sortAssignmentsByPriority")`
+  blocks in `packages/debate-card-search/test/research-task-routing.test.ts`
+  (flagging/unflagging/non-mutation, priority-first stable sorting, an
+  all-normal list staying in its original order, an empty list), plus new
+  cases in `packages/debate-card-search/test/routedTaskQueues.test.ts`
+  covering `setPersistedRoutedTaskPriority` (flag, unflag, missing topic,
+  unmatched `argBlock`, refusing to flag an unassigned task) and
+  `buildTaskInboxView`'s new priority-ordering behavior. Verified with
+  `bun install` (fresh container), the focused new test files (58 passing),
+  the full `bun run test` (root, all packages: 230 test files, 4111 tests,
+  all passing — up from 4098), the full `bun run typecheck` (13 typechecked
+  packages, clean), and `apps/debate-ai.com`'s production build (`bun run
+  build:web`) completing cleanly including the `/cards/inbox` route. No CI
+  `lint` script exists in this repo (`.github/workflows/test.yml` runs only
+  `typecheck` and `coverage`), so it wasn't run, matching every prior run's
+  verification scope. No further follow-up is currently tracked for this
+  idea beyond the already-noted "capacity-aware view of routing load"
+  next-step, which still needs a `ContributorAvailability`
+  management UI (or an arbitrary-typed-id workaround) that doesn't exist
+  yet; a future run should pick a fresh next-step elsewhere if one becomes
+  worth doing.
 - **AI Coach Mode — side-by-side comparison across two rounds**
   (the "🎙️ AI Coach Mode" bullet's own next-named follow-up under Research
   Crowdsourcing Organizer Features below — the last one open once the
@@ -14356,7 +14413,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. The "best of the week" rollup follow-up is also now done: a new "Best of the week" section groups every announced daily winner by ISO week and highlights that week's single highest-helpfulness champion alongside its other announced days (`lib/daily-best-card.ts#buildWeeklyBestCardRollups`, `state/dailyBestCardAnnouncements.ts#buildAnnouncedWeeklyBestCardRollups`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Best of the week" section. The winner-history-calendar-view follow-up is also now done: a "Winner history calendar" section renders a Monday-first month grid with previous/next navigation, highlighting every announced day and showing that day's highlight line plus contributor on click (`lib/daily-best-card.ts#buildDailyBestCardCalendarMonth`, `panels/DailyBestCardPanel.tsx`'s `WinnerHistoryCalendar`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Winner history calendar" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. The "nominate a peer" follow-up is also now done: a "Peer Nominations" section has a **Nominate a peer** form (category, nominee, your name, optional note), and each live award card shows that category's top nominee(s) by total support — see the Completed entry above and `docs/features/contributor-awards.md`'s "Peer Nominations" section. The per-nomination "seconding"/upvoting follow-up is also now done: a "👍 Second" action on each row in "Recent nominations" lets anyone else add their support to an existing nomination instead of only being able to submit a duplicate one, and the live cards' top-nominee ranking now uses total support (nominations plus seconds) rather than raw nomination count alone (`lib/contributor-awards.ts#canSecondNomination`/`tallyNominationsByKind`, `state/contributorAwardNominations.ts#secondPeerNomination`) — see the Completed entry above and `docs/features/contributor-awards.md`'s "Seconding a nomination" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. folding nominations into the Hall of Fame ranking as a tie-breaker) if one becomes worth doing.
-* 🧭 **Research Task Routing** (`/cards/inbox`) — the coach-facing override/reassign follow-up is done: every assignment and unassigned task has a "Reassign to…"/"Assign to…" field plus button that moves it to a typed contributor id, bypassing `routeTasks`'s own skill/capacity rules and keeping both the outgoing and incoming contributor's `activeTaskCount` accurate (`state/routedTaskQueues.ts#reassignPersistedRoutedTask`) — see the Completed entry above and `docs/features/task-inbox.md`'s "Coach override / reassign control" section. Next: a task-priority indicator; a capacity-aware view of routing load across the team (note: this repo still has no UI to create/manage a `ContributorAvailability` profile at all — only tests and the reassign control's free-form id touch that store — so a capacity view would need either that management UI too, or to work off arbitrary typed ids the same way reassign does).
+* 🧭 **Research Task Routing** (`/cards/inbox`) — the coach-facing override/reassign follow-up is done: every assignment and unassigned task has a "Reassign to…"/"Assign to…" field plus button that moves it to a typed contributor id, bypassing `routeTasks`'s own skill/capacity rules and keeping both the outgoing and incoming contributor's `activeTaskCount` accurate (`state/routedTaskQueues.ts#reassignPersistedRoutedTask`) — see the Completed entry above and `docs/features/task-inbox.md`'s "Coach override / reassign control" section. The task-priority-indicator follow-up is also now done: every assignment has a "Flag high priority"/"Unflag" toggle, showing a "High priority" badge and sorting ahead of its topic-mates (`lib/research-task-routing.ts#setAssignmentPriority`/`sortAssignmentsByPriority`, `state/routedTaskQueues.ts#setPersistedRoutedTaskPriority`) — see the Completed entry above and `docs/features/task-inbox.md`'s "Task priority" section. Next: a capacity-aware view of routing load across the team (note: this repo still has no UI to create/manage a `ContributorAvailability` profile at all — only tests and the reassign control's free-form id touch that store — so a capacity view would need either that management UI too, or to work off arbitrary typed ids the same way reassign does).
 * 🔁 **Revision Incentives** (`/cards/revisions`) — the stale-evidence-digest follow-up is done: a "Stale evidence digest" section above the leaderboard lists every persisted stale card, most-urgent (undated, then oldest-cited) first, with a link into the Evidence Library to revise one (`lib/shared-evidence-library.ts#buildStaleEvidenceDigest`, `state/evidenceLibraryEntries.ts#buildPersistedStaleEvidenceDigest`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Stale evidence digest" section. Next: a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.

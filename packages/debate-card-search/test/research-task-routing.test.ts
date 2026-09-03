@@ -4,8 +4,11 @@ import {
   buildRoutingSummaryText,
   buildTaskQueue,
   routeTasks,
+  setAssignmentPriority,
+  sortAssignmentsByPriority,
   type ContributorAvailability,
   type ResearchTask,
+  type RoutedAssignment,
 } from "../src/lib/research-task-routing";
 import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "../src/lib/topic-coverage";
 
@@ -153,6 +156,48 @@ describe("buildRoutingResult", () => {
 
     const result = buildRoutingResult(report, [advanced]);
     expect(result.assignments.map((assignment) => assignment.task.argBlock)).toEqual(["Case NEG", "States CP"]);
+  });
+});
+
+describe("setAssignmentPriority", () => {
+  const baseAssignment: RoutedAssignment = { task: missingTask, contributorId: "advanced-amy" };
+
+  it("flags an assignment high priority", () => {
+    expect(setAssignmentPriority(baseAssignment, "high")).toEqual({ ...baseAssignment, priority: "high" });
+  });
+
+  it("omits the priority key entirely when set back to normal", () => {
+    const flagged: RoutedAssignment = { ...baseAssignment, priority: "high" };
+    expect(setAssignmentPriority(flagged, "normal")).toEqual(baseAssignment);
+    expect(setAssignmentPriority(flagged, "normal")).not.toHaveProperty("priority");
+  });
+
+  it("does not mutate the original assignment", () => {
+    setAssignmentPriority(baseAssignment, "high");
+    expect(baseAssignment).toEqual({ task: missingTask, contributorId: "advanced-amy" });
+  });
+});
+
+describe("sortAssignmentsByPriority", () => {
+  const alice: RoutedAssignment = { task: missingTask, contributorId: "alice" };
+  const bob: RoutedAssignment = { task: thinTask, contributorId: "bob" };
+  const carol: RoutedAssignment = { task: missingTask, contributorId: "carol", priority: "high" };
+
+  it("sorts high-priority assignments ahead of normal ones", () => {
+    expect(sortAssignmentsByPriority([alice, bob, carol])).toEqual([carol, alice, bob]);
+  });
+
+  it("preserves relative order within a priority tier (stable sort)", () => {
+    const secondHigh: RoutedAssignment = { task: thinTask, contributorId: "dana", priority: "high" };
+    expect(sortAssignmentsByPriority([alice, carol, bob, secondHigh])).toEqual([carol, secondHigh, alice, bob]);
+  });
+
+  it("returns an empty list unchanged", () => {
+    expect(sortAssignmentsByPriority([])).toEqual([]);
+  });
+
+  it("leaves an all-normal-priority list in its original order", () => {
+    expect(sortAssignmentsByPriority([alice, bob])).toEqual([alice, bob]);
   });
 });
 
