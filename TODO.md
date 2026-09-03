@@ -6,6 +6,61 @@
 _No task currently in progress._
 
 ### Completed
+- **Judge Profiles — multi-judge comparison view for panel rounds
+  (Research Crowdsourcing Organizer Features bullet, "⚖️ Judge Profiles"
+  Next item).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows/docs/debates in SQL and link to users... add tools
+  into where needed in the UI... develop better tool UI") — as with every
+  recent repeat, the "user settings / SQL-linked flows, docs, rounds" half
+  is already fully built and every tool is already reachable from the Tools
+  page and CardMirror's command palette, so this slice picked the next
+  named, unblocked follow-up instead. The "⚖️ Judge Profiles" bullet listed
+  two remaining follow-ups, both described as blocked behind the same
+  Tabroom login wall as Opponent Team Profiles; checking `judge-profile.ts`
+  showed that description only actually held for one of them (a bulk CSV
+  import for real ballot history, still blocked — see "Confirmed blocker"
+  below) — the other, a multi-judge comparison view, only needs profiles
+  that already exist in this repo today (hand-logged through the panel's
+  own form), so this slice implemented it. Added
+  `judge/judge-panel-comparison.ts` — a new pure `buildJudgePanelComparison`
+  that takes two or more `JudgeProfile`s and derives a panel-level read:
+  which judges carry a notable side lean (reusing `hasNotableSideBias`) and
+  which side; a recommended pace to prep at (the *slowest* tracked average
+  pace among the panel, so the round doesn't lose whichever judge is least
+  speed-tolerant, plus which judge that pace came from); a `theoryRisk`
+  verdict (`safe`/`risky`/`mixed`/`unknown`, from the panel's tracked
+  `theoryReceptiveness` values) plus which judges are theory-averse; and
+  each judge's most-tagged paradigm with a `hasConflictingParadigms` flag
+  once two or more disagree. A matching `buildJudgePanelComparisonSummary`
+  renders it as short bullet lines, mirroring `judge-profile.ts`'s own
+  `buildJudgeTendencySummary`. `JudgeProfilesPanel` gets a checkbox column
+  on the roster table and a new "Compare judges" section below it: checking
+  two or more judges renders the comparison (side leans as badges, the
+  recommended pace, a theory-risk badge with its averse judges listed, and
+  a paradigms line flagged "conflicting" when they disagree), with a "Clear
+  selection" action; checking zero or one shows a prompt instead. See
+  `docs/features/judge-profiles.md`'s new "Comparing judges on a panel"
+  section. Vitest-covered in
+  `packages/debate-speech-writer/test/judge-panel-comparison.test.ts` — 15
+  new tests: `buildJudgePanelComparison` throwing for fewer than two
+  profiles, side-lean detection (and its empty case), the slowest-pace
+  recommendation (and its null case when no judge tracked pace), all four
+  `theoryRisk` branches (`unknown`/`safe`/`risky`/`mixed`) with their
+  averse-judge lists, paradigm-conflict detection (agreeing/single-tagged
+  judges don't false-positive), and input-order preservation; plus
+  `buildJudgePanelComparisonSummary` rendering every section on a
+  fully-known panel, its unknown/no-conflict placeholders, and its
+  mixed/risky theory branches. Verified: `bun install` (2342 packages),
+  `bunx turbo run typecheck --filter=debate-speech-writer
+  --filter=debate-ui --filter=debate-ai-web` (10/10 in-scope package tasks
+  pass), full `bun run test` (227 files / 4107 tests, all pass — up from
+  4092 before this slice), and `bun run build:web` (`debate-ai-web`
+  production build succeeds, full route list intact including `/judges`).
+  Updated the "⚖️ Judge Profiles" bullet in the Research Crowdsourcing
+  Organizer Features list below to reflect that only the bulk-CSV-import
+  follow-up remains, and that it (not the comparison view) is the one still
+  behind the Tabroom blocker. **Completed:** 2026-09-03.
 - **AI Drill Generator — scheduling/reminders (Research Crowdsourcing
   Organizer Features bullet, "📚 AI Drill Generator" Next item).** Another
   repeat of the standing prompt ("integrate all the tools into the UI...
@@ -14819,7 +14874,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.
 * 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.
 * 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. Next: a side-by-side us-vs-opponent comparison view; a printable/exportable scouting report.
-* ⚖️ **Judge Profiles** (`/judges`) — the auto-tagged-paradigm confidence-indicator follow-up is done: `mostCommonParadigmConfidence` (the tagged paradigm's share of a judge's paradigm-tagged rounds) shows as a "N% confidence" badge on the roster, and folds into the `buildJudgeTendencySummary`/`buildJudgeAdaptationNotes` lines it's already quoted in — see the Completed entry above and `docs/features/judge-profiles.md`'s "What it shows" section. The remaining two follow-ups stay behind the same Tabroom blocker as Opponent Team Profiles (see below): a bulk CSV import for ballot history; a multi-judge comparison view for panel rounds.
+* ⚖️ **Judge Profiles** (`/judges`) — the auto-tagged-paradigm confidence-indicator follow-up is done: `mostCommonParadigmConfidence` (the tagged paradigm's share of a judge's paradigm-tagged rounds) shows as a "N% confidence" badge on the roster, and folds into the `buildJudgeTendencySummary`/`buildJudgeAdaptationNotes` lines it's already quoted in — see the Completed entry above and `docs/features/judge-profiles.md`'s "What it shows" section. The multi-judge-comparison-view-for-panel-rounds follow-up is also now done — it turned out not to actually need the blocked Tabroom data source: a "Compare judges" section checks two or more already-persisted (hand-logged or, once available, bulk-imported) profiles and reads them as a panel via a new `judge/judge-panel-comparison.ts#buildJudgePanelComparison` — see the Completed entry above and `docs/features/judge-profiles.md`'s "Comparing judges on a panel" section. One follow-up remains, and it does stay behind the same Tabroom blocker as Opponent Team Profiles (see below): a bulk CSV import for ballot history.
 * 🤖 **AI Practice Opponent** (`/practice-opponent`) — share a custom-authored persona across a team instead of per-user only; a difficulty slider layered on top of persona choice; post-round feedback tips specific to the persona faced.
 * 🎙️ **AI Coach Mode** (`/coaching`) — the exportable-coaching-notes-document follow-up is done: each session card has a "Download" action that saves its template prompts plus its AI feedback (if generated) as a plain-text file, headed with the round id and side (`state/coachingSessions.ts#buildCoachingNotesText`/`coachingNotesFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Download" mention. The coaching-session-history-timeline-per-round follow-up is also now done: a "History" toggle on each session card lists every prior version of that round+side's session, newest first, each restorable (`state/coachingSessionHistory.ts#appendCoachingSessionVersion`/`listVersionsForCoachingSession`, wired into `state/coachingSessions.ts#saveCoachingSession`, which now snapshots the record it overwrites before replacing it) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "History" section. The side-by-side-comparison-across-two-rounds follow-up is also now done: a "Compare two sessions" section lets a user pick any two persisted sessions and renders their prompts kind-by-kind in a two-column grid, plus a "Download comparison" action (`state/coachingSessions.ts#buildCoachingSessionComparison`/`buildCoachingSessionComparisonText`/`coachingSessionComparisonFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Compare two sessions" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step elsewhere if one becomes worth doing.
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.

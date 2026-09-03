@@ -165,6 +165,31 @@ edit-distance search over the same id list, local to
 "Did you mean `<id>`?" prompt that refills the filter. Both are Vitest-covered
 in `judgeRoundRecords.test.ts`.
 
+## Comparing judges on a panel
+
+The **Compare judges** section below the roster lets a debater prep for a
+panel round (two or more judges deciding together) instead of only ever
+reading one judge's profile at a time. Checking two or more judges in the
+roster's leftmost checkbox column reveals a panel-level read, built by
+`judge/judge-panel-comparison.ts#buildJudgePanelComparison` from the
+checked judges' already-persisted profiles:
+
+| Section | Meaning |
+| --- | --- |
+| Side leans | Every checked judge with a notable side bias (the same `hasNotableSideBias` threshold as the roster), and which side they lean |
+| Recommended pace | The **slowest** tracked average pace among the checked judges, so prep targets the panel's least speed-tolerant vote rather than its fastest — with the judge that pace came from named alongside it |
+| Theory | `safe` (every tracked judge is `medium`/`high` receptiveness), `risky` (every tracked judge is `low`), `mixed` (the panel is split), or `unknown` (no checked judge tracked theory receptiveness) — a `risky`/`mixed` verdict also lists which judges are averse |
+| Paradigms | Each checked judge's most-tagged paradigm, flagged "conflicting" once two or more disagree (an untagged judge, or judges who all agree, don't count as a conflict) |
+
+"Clear selection" empties the checked set. The section itself only appears
+once at least two judge profiles exist to compare; with zero or one judge
+checked it shows a prompt instead of a comparison.
+
+This is read-only — it doesn't persist anything of its own, doesn't feed
+back into `research-task-routing.ts`/`progress-unlocks.ts`, and (like the
+roster it draws from) only ever compares judges that already have a saved
+profile logged through this same panel.
+
 ## Known gaps
 
 - No real ballot data source yet (follow-up (a) — no `Round`/ballot schema
