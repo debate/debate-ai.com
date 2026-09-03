@@ -24,7 +24,9 @@ assignment (active or completed), sorted alphabetically by contributor id:
 
 A signed-in visitor's own row is highlighted with a "You" badge — see
 "Signed-in row highlight" below. The roster always shows every contributor;
-nothing is filtered.
+nothing is filtered. Below the roster, a "Topic comparison" section shows
+the same data rolled up per topic across the whole team instead of per
+contributor — see "Topic comparison" below.
 
 ## Data flow
 
@@ -155,6 +157,28 @@ filename on. Vitest-covered in
 (`buildResearchProgressReportText`: the empty-roster placeholder, a full
 per-contributor/per-topic render, the "no topic assignments" fallback, and
 multi-contributor section separation).
+
+## Topic comparison
+
+Below the roster, a "Topic comparison" section rolls each contributor's own
+per-topic counts up into one row per topic across the whole team — the
+"topic-comparison view across the whole team" follow-up named under the "📈
+Research Progress Tracking" bullet in TODO.md. `lib/research-progress.ts`'s
+`buildTeamTopicComparison(roster)` groups every `ContributorProgress.topics`
+entry by topic name, summing assigned/completed task counts and counting the
+distinct contributors with at least one assignment in that topic, then sorts
+by completion rate ascending (the least-covered topic first, tie-broken
+alphabetically) so a coach or team lead can see which topics the team as a
+whole is behind on at a glance rather than reading one contributor's row at a
+time. Each row shows the topic, contributor count, completed/assigned task
+count, and a `MeterBar` completion meter (the same meter component
+`ProgressUnlocksPanel` uses for its "Next tier" column). The section is
+hidden entirely when no contributor has any topic assignment. Vitest-covered
+in `packages/debate-card-search/test/research-progress.test.ts`
+(`buildTeamTopicComparison`: rolling counts up across contributors, sorting
+least-covered-first, the alphabetical tie-break, an empty roster, and that a
+topic's contributor count only includes contributors with an assignment in
+that specific topic).
 
 ## Known gaps
 

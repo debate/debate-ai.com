@@ -4,6 +4,7 @@ import {
   buildProgressSummaryText,
   buildResearchProgressBoard,
   buildResearchProgressReportText,
+  buildTeamTopicComparison,
   buildTopicProgress,
   groupAssignmentsByContributor,
   researchProgressReportFilename,
@@ -201,5 +202,41 @@ describe("buildResearchProgressReportText", () => {
 describe("researchProgressReportFilename", () => {
   it("returns a fixed filename", () => {
     expect(researchProgressReportFilename()).toBe("research-progress-report.txt");
+  });
+});
+
+describe("buildTeamTopicComparison", () => {
+  it("rolls each topic's task counts up across every contributor with an assignment in it", () => {
+    const board = buildResearchProgressBoard([aliceCard], [aliceWarming, aliceStates, aliceCourts, bobStates]);
+    const comparison = buildTeamTopicComparison(board);
+
+    expect(comparison).toEqual([
+      { topic: "Immigration", contributorCount: 2, assignedTaskCount: 3, completedTaskCount: 1, completionRate: 0.33 },
+      { topic: "Healthcare", contributorCount: 1, assignedTaskCount: 1, completedTaskCount: 1, completionRate: 1 },
+    ]);
+  });
+
+  it("sorts the least-covered topic (lowest completion rate) first", () => {
+    const board = buildResearchProgressBoard([], [aliceStates, aliceCourts]);
+    const comparison = buildTeamTopicComparison(board);
+    expect(comparison.map((c) => c.topic)).toEqual(["Immigration", "Healthcare"]);
+  });
+
+  it("tie-breaks equal completion rates alphabetically by topic", () => {
+    const board = buildResearchProgressBoard([], [aliceWarming, aliceCourts]);
+    const comparison = buildTeamTopicComparison(board);
+    expect(comparison.map((c) => c.topic)).toEqual(["Healthcare", "Immigration"]);
+  });
+
+  it("returns an empty list for a roster with no topic assignments", () => {
+    const board = buildResearchProgressBoard([aliceCard], []);
+    expect(buildTeamTopicComparison(board)).toEqual([]);
+  });
+
+  it("excludes a topic's own contributor from another topic's contributorCount", () => {
+    const board = buildResearchProgressBoard([], [aliceWarming, aliceCourts, bobStates]);
+    const comparison = buildTeamTopicComparison(board);
+    const healthcare = comparison.find((c) => c.topic === "Healthcare");
+    expect(healthcare?.contributorCount).toBe(1);
   });
 });
