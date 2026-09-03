@@ -12,7 +12,7 @@ const FOOTER_LINKS = [
   { url: "https://opencaselist.com", text: "Research", icon: BookMarked },
   { url: "https://debaterhub.com", text: "DebaterHub", icon: Scale },
   { url: "https://debate101.org/#hub", text: "Resource Links", icon: Book },
-  { url: "https://discord.gg/SJdBqBz3tV", text: "Support", icon: MessageCircle },
+  { url: "https://discord.gg/5PFjqgtkK", text: "Support", icon: MessageCircle },
   { url: "/legal/privacy", text: "Privacy", icon: Shield },
   { url: "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit", text: "Rules", icon: FileText },
 ]

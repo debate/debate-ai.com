@@ -42,7 +42,7 @@ import {
 // scrolling to the page footer.
 const SITE_LINKS = [
   { url: "https://github.com/debate", text: "Github", icon: Code2 },
-  { url: "https://discord.gg/SJdBqBz3tV", text: "Support", icon: MessageCircle },
+  { url: "https://discord.gg/5PFjqgtkK", text: "Support", icon: MessageCircle },
   { url: "/legal/privacy", text: "Privacy", icon: Shield },
   { url: "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit", text: "Rules", icon: FileText },
 ]
