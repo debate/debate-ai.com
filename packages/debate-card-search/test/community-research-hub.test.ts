@@ -3,6 +3,7 @@ import {
   COMMUNITY_RESEARCH_HUB_ENTRIES,
   buildCommunityResearchHubSections,
   buildCommunityResearchHubSummaryText,
+  buildForYouEntries,
   searchCommunityResearchHubEntries,
   type CommunityHubEntry,
 } from "../src/lib/community-research-hub";
@@ -88,6 +89,37 @@ describe("searchCommunityResearchHubEntries", () => {
 
   it("returns an empty array when nothing matches", () => {
     expect(searchCommunityResearchHubEntries(entries, "typesense")).toEqual([]);
+  });
+});
+
+describe("buildForYouEntries", () => {
+  const entries: CommunityHubEntry[] = [
+    { id: "a", title: "A", description: "first", href: "/a", category: "evidence" },
+    { id: "b", title: "B", description: "second", href: "/b", category: "collaboration" },
+    { id: "c", title: "C", description: "third", href: "/c", category: "practice" },
+  ];
+
+  it("returns an empty array when no favorites are given", () => {
+    expect(buildForYouEntries(entries, [])).toEqual([]);
+  });
+
+  it("returns an empty array when none of the favorites match a hub entry", () => {
+    expect(buildForYouEntries(entries, ["/reason-editor", "/coach"])).toEqual([]);
+  });
+
+  it("returns only the favorited entries, preserving the entries' own order", () => {
+    expect(buildForYouEntries(entries, ["/c", "/a"]).map((entry) => entry.id)).toEqual(["a", "c"]);
+  });
+
+  it("ignores a favorite href with no matching hub entry alongside ones that do match", () => {
+    expect(buildForYouEntries(entries, ["/b", "/not-a-hub-space"]).map((entry) => entry.id)).toEqual([
+      "b",
+    ]);
+  });
+
+  it("works against the real registry", () => {
+    const result = buildForYouEntries(COMMUNITY_RESEARCH_HUB_ENTRIES, ["/cards/library", "/judges"]);
+    expect(result.map((entry) => entry.id)).toEqual(["shared-evidence-library", "judge-profiles"]);
   });
 });
 

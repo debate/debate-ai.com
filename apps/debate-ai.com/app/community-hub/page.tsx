@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { CommunityResearchHubPanel } from "debate-card-search"
+import { CommunityHubPageContent } from "./CommunityHubPageContent"
 
 export const metadata: Metadata = {
   title: "Community Research Hub",
@@ -23,7 +23,7 @@ export default function CommunityHubPage() {
         </Link>
       </div>
       <Suspense>
-        <CommunityResearchHubPanel />
+        <CommunityHubPageContent />
       </Suspense>
     </div>
   )

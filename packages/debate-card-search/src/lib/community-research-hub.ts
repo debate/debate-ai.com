@@ -226,6 +226,26 @@ export function searchCommunityResearchHubEntries(
   );
 }
 
+/**
+ * Filters `entries` to the ones a debater has already favorited elsewhere in
+ * the app (the same `/tools`-page star, account-synced via
+ * `favoriteTools.ts`), preserving `entries`' own order — the hub's
+ * "For You" section. A hub entry counts as favorited purely by exact `href`
+ * match against `favoriteHrefs`; no category-affinity guessing, so the
+ * section only ever shows spaces the debater explicitly starred themselves.
+ * Returns `[]` when nothing favorited is in the hub (e.g. signed out, or
+ * every favorite is a tool the hub doesn't list), so a caller can treat an
+ * empty result as "don't render this section" without a separate check.
+ */
+export function buildForYouEntries(
+  entries: CommunityHubEntry[],
+  favoriteHrefs: readonly string[],
+): CommunityHubEntry[] {
+  if (favoriteHrefs.length === 0) return [];
+  const favorited = new Set(favoriteHrefs);
+  return entries.filter((entry) => favorited.has(entry.href));
+}
+
 /** Renders a short summary line for a hub header, e.g. "17 spaces across 5 categories". */
 export function buildCommunityResearchHubSummaryText(sections: CommunityHubSection[]): string {
   const entryCount = sections.reduce((sum, section) => sum + section.entries.length, 0);
