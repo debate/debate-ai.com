@@ -80,8 +80,7 @@ _No task currently in progress._
   build:web` (production build succeeded; the touched-by-build
   `app-file-list.ts`/`version.ts`/`service-worker.js` churn was reverted
   before committing, unrelated to this change). PR:
-  https://github.com/debate/debate-ai.com/pull/PLACEHOLDER (to be filled in
-  after opening).
+  https://github.com/debate/debate-ai.com/pull/510
 
 - **Revision Incentives — before/after revision diff viewer (Research
   Crowdsourcing Organizer Features bullet, "🔁 Revision Incentives" Next
