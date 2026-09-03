@@ -1,7 +1,7 @@
 /**
  * Host singleton.
  *
- * This build (debate-editor-cardmirror, embedded in debate-ai.com) is
+ * This build (debate-editor, embedded in debate-ai.com) is
  * web-only: `getHost()` always resolves to `BrowserHost`, so
  * `getElectronHost()` always returns `null` and `isWindowsHost()` always
  * returns `false` at runtime — the Electron branch of `getHost()` that

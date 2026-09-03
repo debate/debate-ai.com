@@ -1,7 +1,7 @@
 /**
  * Account-linked CardMirror editor preferences (General / Appearance /
  * Accessibility) — moved out of the editor's own gear-icon settings modal
- * (see packages/debate-editor-cardmirror/src/editor/settings.ts) onto
+ * (see packages/debate-editor/src/editor/settings.ts) onto
  * /settings, so a signed-in user's choices (color theme, fonts, sizing,
  * accessibility overrides, ...) follow them across devices instead of
  * staying in one browser's localStorage.
@@ -17,7 +17,7 @@
  * `settings.replaceAll()` already takes for its Import Settings action.
  */
 
-import { SETTING_METADATA, type SettingsCategory } from "debate-editor-cardmirror/settings"
+import { SETTING_METADATA, type SettingsCategory } from "debate-editor/settings"
 
 const MIGRATED_CATEGORIES: readonly SettingsCategory[] = ["general", "appearance", "accessibility"]
 

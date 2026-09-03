@@ -9,8 +9,9 @@ view." The commands originally built for that ask live in
 `reason-editor/src/react/verbatim-shortcuts-extension.ts`, bound to
 `Mod-Shift-E` / `Mod-Shift-K` / `Mod-Shift-D` / `Alt-ArrowUp` /
 `Alt-ArrowDown` — but `reason-editor` (the TipTap package) is no longer
-depended on by the app. `/reason-editor` renders `debate-editor`'s shim to
-`debate-editor-cardmirror` (the ported-in CardMirror ProseMirror engine),
+depended on by the app. `/reason-editor` renders `debate-editor` (the
+ported-in CardMirror ProseMirror engine, formerly published as the
+`debate-editor-cardmirror` workspace package),
 which was built with — and ships — its own, considerably larger native
 Verbatim-parity command set that predates this doc and makes three of the
 four shortcuts above redundant rather than missing. This doc previously
@@ -21,7 +22,7 @@ CardMirror equivalent at all until `insertShortCite` closed that gap (see
 below) — TODO.md's Product Feature Ideas item 14's own bullet for it.
 
 - **Route:** any CardMirror document (e.g. `/reason-editor`)
-- **Package:** [`debate-editor-cardmirror`](../../packages/debate-editor-cardmirror)
+- **Package:** [`debate-editor`](../../packages/debate-editor)
   — `src/editor/ribbon-commands.ts` (command implementations and default
   keybindings), `src/editor/move-container.ts`, `src/editor/condense.ts`
 - **Nav:** every command below is reachable three ways — its default
@@ -163,35 +164,35 @@ reaching the reference step.
 ## Data flow
 
 ```
-debate-editor-cardmirror/src/editor/ribbon-commands.ts
+debate-editor/src/editor/ribbon-commands.ts
   → applyEmphasis() / applyUnderline() / applyCite()   — F10 / F9 / F8 body-mark toggles
   → condenseDefault / condenseNoIntegrity / uncondense  — F3 family, wraps condense.ts
   → copyPreviousCite()                                  — Alt-F8, findPreviousCites + computeCitePasteLocation
   → insertShortCite (RibbonContext.insertShortCite)      — Mod-Shift-k, calls insert-short-cite.ts
   → aiCreateCite (RibbonContext.aiCreateCite)            — Mod-Shift-x, calls ai/cite-creator.ts
 
-debate-editor-cardmirror/src/editor/insert-short-cite.ts
+debate-editor/src/editor/insert-short-cite.ts
   → runInsertShortCite() / buildInsertShortCiteTransaction() — prompts via text-prompt.ts,
     formats via debate-card-parser's formatShortCiteTag
 
-debate-editor-cardmirror/src/editor/move-container.ts
+debate-editor/src/editor/move-container.ts
   → moveContainerUp() / moveContainerDown()             — Mod-Alt-ArrowUp/Down
 
-debate-editor-cardmirror/src/editor/ribbon-groups.ts     — RIBBON_GROUPS, thematic command grouping
-debate-editor-cardmirror/src/react/menu-bar-categories.ts — re-buckets RIBBON_GROUPS into File/Edit/Card/Format/Insert/AI/View/Tools/Workspace/Plugins
-debate-editor-cardmirror/src/react/MenuBar.tsx            — renders the top menu bar, dispatches via runRibbon(id)
-debate-editor-cardmirror/src/editor/quick-card-search-ui.ts → Ctrl/Cmd-Shift-Space palette, indexes every ribbon command by label/alias
+debate-editor/src/editor/ribbon-groups.ts     — RIBBON_GROUPS, thematic command grouping
+debate-editor/src/react/menu-bar-categories.ts — re-buckets RIBBON_GROUPS into File/Edit/Card/Format/Insert/AI/View/Tools/Workspace/Plugins
+debate-editor/src/react/MenuBar.tsx            — renders the top menu bar, dispatches via runRibbon(id)
+debate-editor/src/editor/quick-card-search-ui.ts → Ctrl/Cmd-Shift-Space palette, indexes every ribbon command by label/alias
 
-debate-editor-cardmirror/src/editor/reference-ui.ts        — openShortcutsReference's modal; collectGroups()
+debate-editor/src/editor/reference-ui.ts        — openShortcutsReference's modal; collectGroups()
                                                                is the shared data source for the on-screen list,
                                                                print(), and exportAsText(); stamps
                                                                hasOpenedShortcutsReference on open
-debate-editor-cardmirror/src/editor/reference-export.ts    — formatShortcutsReferenceText(), the pure
+debate-editor/src/editor/reference-export.ts    — formatShortcutsReferenceText(), the pure
                                                                plain-text renderer used by exportAsText()
 
-debate-editor-cardmirror/src/editor/verbatim-nudge.ts       — maybeShowVerbatimNudge(), wired from index.ts;
+debate-editor/src/editor/verbatim-nudge.ts       — maybeShowVerbatimNudge(), wired from index.ts;
                                                                shouldShowVerbatimNudge() is the pure trigger check
-debate-editor-cardmirror/src/editor/ui-tour.ts              — isUiTourRunning(), polled so the nudge never
+debate-editor/src/editor/ui-tour.ts              — isUiTourRunning(), polled so the nudge never
                                                                stacks on top of an in-progress tour
 ```
 
