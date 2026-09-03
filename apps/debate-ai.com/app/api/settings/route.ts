@@ -26,13 +26,18 @@ import {
 } from "debate-round"
 import {
   DEFAULT_NEWS_SYNC,
+  DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC,
   DEFAULT_SAVED_ARGUMENT_COLLECTIONS,
   normalizeNewsSyncPatch,
+  normalizeResearchProgressGoalPatch,
   normalizeSavedArgumentCollectionsPatch,
   parseNewsIdList,
+  parseResearchProgressGoal,
   parseSavedArgumentCollections,
   serializeNewsIdList,
+  serializeResearchProgressGoal,
   serializeSavedArgumentCollections,
+  type ResearchProgressGoalSyncPayload,
   type SavedArgumentCollection,
 } from "debate-card-search"
 import {
@@ -62,15 +67,17 @@ import {
  *   value for any field with no saved row/value yet.
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
  *   wordLimitPresets?, outlineFilterPresets?, newsRead?, newsLiked?,
- *   savedArgumentCollections? } —
+ *   savedArgumentCollections?, researchProgressGoal? } —
  *   validates and upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeWordLimitPresetsPatch`/
  *   `normalizeOutlineFilterPresetsPatch` and `debate-card-search`'s
- *   `normalizeNewsSyncPatch`/`normalizeSavedArgumentCollectionsPatch`, the
- *   same option lists/shape the picker, favorite-star, word-limit-preset-
- *   manager, News Stream, and Common Argument Library "saved collections"
- *   UIs themselves use), returning the resulting full settings row.
+ *   `normalizeNewsSyncPatch`/`normalizeSavedArgumentCollectionsPatch`/
+ *   `normalizeResearchProgressGoalPatch`, the same option lists/shape the
+ *   picker, favorite-star, word-limit-preset-manager, News Stream, Common
+ *   Argument Library "saved collections", and Research Progress "My
+ *   research goal" UIs themselves use), returning the resulting full
+ *   settings row.
  */
 
 type SettingsRow = {
@@ -85,6 +92,7 @@ type SettingsRow = {
   wordLimitPresets: string | null
   outlineFilterPresets: string | null
   savedArgumentCollections: string | null
+  researchProgressGoal: string | null
 }
 
 type SettingsPayload = UserSettingsPayload & {
@@ -97,6 +105,7 @@ type SettingsPayload = UserSettingsPayload & {
   wordLimitPresets: { name: string; wordLimit: number }[]
   outlineFilterPresets: OutlineFilterPreset[]
   savedArgumentCollections: SavedArgumentCollection[]
+  researchProgressGoal: ResearchProgressGoalSyncPayload | null
 }
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
@@ -118,6 +127,9 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     savedArgumentCollections: row?.savedArgumentCollections
       ? parseSavedArgumentCollections(row.savedArgumentCollections)
       : DEFAULT_SAVED_ARGUMENT_COLLECTIONS.savedArgumentCollections,
+    researchProgressGoal: row?.researchProgressGoal
+      ? parseResearchProgressGoal(row.researchProgressGoal)
+      : DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC.researchProgressGoal,
   }
 }
 
@@ -152,6 +164,7 @@ export async function PUT(req: NextRequest) {
   const wordLimitPresetsResult = normalizeWordLimitPresetsPatch(body)
   const outlineFilterPresetsResult = normalizeOutlineFilterPresetsPatch(body)
   const savedArgumentCollectionsResult = normalizeSavedArgumentCollectionsPatch(body)
+  const researchProgressGoalResult = normalizeResearchProgressGoalPatch(body)
   const newsSyncResult = normalizeNewsSyncPatch(body)
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
     (body as { editorPreferences?: unknown } | null)?.editorPreferences,
@@ -164,6 +177,7 @@ export async function PUT(req: NextRequest) {
     ...wordLimitPresetsResult.errors,
     ...outlineFilterPresetsResult.errors,
     ...savedArgumentCollectionsResult.errors,
+    ...researchProgressGoalResult.errors,
     ...newsSyncResult.errors,
     ...editorPreferencesResult.errors,
   ]
@@ -177,13 +191,14 @@ export async function PUT(req: NextRequest) {
     wordLimitPresetsResult.valid.wordLimitPresets === undefined &&
     outlineFilterPresetsResult.valid.outlineFilterPresets === undefined &&
     savedArgumentCollectionsResult.valid.savedArgumentCollections === undefined &&
+    researchProgressGoalResult.valid.researchProgressGoal === undefined &&
     Object.keys(newsSyncResult.valid).length === 0 &&
     Object.keys(editorPreferencesResult.valid).length === 0
   ) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -203,6 +218,7 @@ export async function PUT(req: NextRequest) {
     wordLimitPresets?: string | null
     outlineFilterPresets?: string | null
     savedArgumentCollections?: string | null
+    researchProgressGoal?: string | null
   } = { ...valid }
   if (favoriteToolsResult.valid.favoriteTools !== undefined) {
     dbPatch.favoriteTools = serializeFavoriteTools(favoriteToolsResult.valid.favoriteTools)
@@ -217,6 +233,9 @@ export async function PUT(req: NextRequest) {
   }
   if (wordLimitPresetsResult.valid.wordLimitPresets !== undefined) {
     dbPatch.wordLimitPresets = serializeWordLimitPresets(wordLimitPresetsResult.valid.wordLimitPresets)
+  }
+  if (researchProgressGoalResult.valid.researchProgressGoal !== undefined) {
+    dbPatch.researchProgressGoal = serializeResearchProgressGoal(researchProgressGoalResult.valid.researchProgressGoal)
   }
   if (newsSyncResult.valid.newsRead !== undefined) {
     dbPatch.newsRead = serializeNewsIdList(newsSyncResult.valid.newsRead)

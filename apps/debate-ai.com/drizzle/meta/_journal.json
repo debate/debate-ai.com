@@ -183,6 +183,13 @@
       "when": 1788425138757,
       "tag": "0025_flat_wrecker",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "6",
+      "when": 1788475304789,
+      "tag": "0026_damp_dragon_man",
+      "breakpoints": true
     }
   ]
 }

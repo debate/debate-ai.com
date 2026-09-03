@@ -48,8 +48,10 @@
  * A "My research goal" section, shown only for a signed-in visitor
  * (`signedInContributorId`), lets them set a personal completed-task target
  * — optionally scoped to one topic — and tracks progress toward it with a
- * `MeterBar` via `state/researchProgressGoals.ts` — the "personal
- * goal-setting UI" follow-up named under the same TODO.md bullet.
+ * `MeterBar` via `hooks/useResearchProgressGoalSync.ts` (wrapping
+ * `state/researchProgressGoals.ts`) — the "personal goal-setting UI" and
+ * "account-syncing the goal across devices" follow-ups named under the same
+ * TODO.md bullet.
  *
  * @module panels/ResearchProgressPanel
  */
@@ -81,12 +83,7 @@ import {
   buildPersistedResearchProgressBoard,
   deleteCompletedTaskHistoryForTopic,
 } from "../state/researchProgress"
-import {
-  clearGoalForContributor,
-  getGoalForContributor,
-  getPersistedGoalProgressForContributor,
-  setGoalForContributor,
-} from "../state/researchProgressGoals"
+import { useResearchProgressGoalSync } from "../hooks/useResearchProgressGoalSync"
 import { isOwnContributorRow } from "../lib/session-identity"
 import { isResearchProgressLiveUpdateStorageEvent } from "../state/live-update"
 import {
@@ -94,7 +91,6 @@ import {
   buildTeamTopicComparison,
   researchProgressReportFilename,
   type ContributorProgress,
-  type GoalProgress,
 } from "../lib/research-progress"
 
 const ALL_TOPICS_VALUE = "__all_topics__"
@@ -143,24 +139,26 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
     setRoster(buildPersistedResearchProgressBoard())
   }
 
-  const [goalProgress, setGoalProgress] = useState<GoalProgress | undefined>(undefined)
+  const {
+    goalProgress,
+    saveGoal,
+    clearGoal,
+    refresh: refreshGoalProgress,
+    error: goalSyncError,
+  } = useResearchProgressGoalSync(signedInContributorId)
   const [isEditingGoal, setIsEditingGoal] = useState(false)
   const [draftTarget, setDraftTarget] = useState("")
   const [draftTopic, setDraftTopic] = useState(ALL_TOPICS_VALUE)
   const [goalError, setGoalError] = useState<string | null>(null)
 
-  const refreshGoalProgress = () => {
-    if (!signedInContributorId) return
-    setGoalProgress(getPersistedGoalProgressForContributor(signedInContributorId))
-  }
-
-  // Re-reads the goal once the signed-in id is known, and again whenever the
-  // underlying board changes (a completed task can push a goal over its
-  // target), mirroring the roster's own storage-event refresh above.
+  // Re-reads the goal whenever the underlying board changes (a completed
+  // task can push a goal over its target), mirroring the roster's own
+  // storage-event refresh above. `useResearchProgressGoalSync` already
+  // refreshes on mount and once its account sync resolves.
   useEffect(() => {
     refreshGoalProgress()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signedInContributorId, roster])
+  }, [roster])
 
   const openGoalForm = () => {
     setDraftTarget(goalProgress ? String(goalProgress.goal.targetCompletedTaskCount) : "")
@@ -176,25 +174,19 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
       setGoalError("Enter a target number of tasks greater than 0.")
       return
     }
-    try {
-      setGoalForContributor({
-        contributorId: signedInContributorId,
-        targetCompletedTaskCount: Math.round(target),
-        topic: draftTopic === ALL_TOPICS_VALUE ? undefined : draftTopic,
-      })
-    } catch (err) {
-      setGoalError(err instanceof Error ? err.message : "Could not save goal.")
+    const saved = saveGoal(Math.round(target), draftTopic === ALL_TOPICS_VALUE ? undefined : draftTopic)
+    if (!saved) {
+      setGoalError(goalSyncError ?? "Could not save goal.")
       return
     }
+    setGoalError(null)
     setIsEditingGoal(false)
-    setGoalProgress(getPersistedGoalProgressForContributor(signedInContributorId))
   }
 
   const handleClearGoal = () => {
     if (!signedInContributorId) return
-    clearGoalForContributor(signedInContributorId)
+    clearGoal()
     setIsEditingGoal(false)
-    setGoalProgress(undefined)
   }
 
   /** Mirrors `PreRoundBriefingsPanel.tsx`'s anchor+Blob download pattern. */

@@ -6,6 +6,68 @@
 _No task currently in progress._
 
 ### Completed
+- **Research Progress Tracking — account-sync the personal goal across
+  devices (Research Crowdsourcing Organizer Features bullet, "📈 Research
+  Progress Tracking" Next item).** Yet another repeat of the standing
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL... with ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice picked the next named, unblocked follow-up
+  instead: the exact one the prior "personal goal-setting UI" slice (below)
+  left open — "account-syncing the goal across devices" — closing the
+  "Personal goal is local-only, not account-synced" line from this
+  section's own "Known gaps". New `lib/research-progress-goal-sync.ts`
+  (pure): `ResearchProgressGoalSyncPayload` mirrors `ResearchProgressGoal`
+  minus `contributorId` (the `user_settings` row this syncs onto is already
+  scoped to one signed-in user), `normalizeResearchProgressGoalPatch`
+  accepts `null` (clear) or a well-formed goal object — rejecting an
+  unrecognized field like a smuggled `contributorId`, a non-positive/
+  non-integer/over-`MAX_GOAL_TARGET_COMPLETED_TASK_COUNT` target, or a
+  blank `topic`/`targetDate` — and `serializeResearchProgressGoal`/
+  `parseResearchProgressGoal` handle the new `research_progress_goal` D1
+  column (migration `apps/debate-ai.com/drizzle/0026_damp_dragon_man.sql`),
+  `null` meaning "no goal set" like every other nullable column on that
+  row. New `lib/research-progress-goal-sync-client.ts` talks to
+  `/api/settings` directly (mirrors `argument-library-collections-client.ts`
+  — resolves to `null` rather than throwing on a `401`, so a signed-out
+  browser stays local-only). New `hooks/useResearchProgressGoalSync.ts`
+  wraps the existing local store (`state/researchProgressGoals.ts`)
+  unchanged: local-first, best-effort merges the account's synced goal into
+  localStorage on mount (remote wins, mirroring
+  `useWordLimitPresets`/`useSavedArgumentCollections`), and every
+  `saveGoal`/`clearGoal` applies locally first, then best-effort pushes to
+  the account when signed in. `ResearchProgressPanel.tsx`'s "My research
+  goal" section now sources from this hook instead of calling
+  `state/researchProgressGoals.ts` directly, keeping its own
+  roster-triggered re-derive (a completed task can push the goal over its
+  target) via the hook's `refresh()`. `apps/debate-ai.com/app/api/settings/
+  route.ts` and `lib/database/schema.ts` gain the `researchProgressGoal`
+  field/column alongside every other synced setting on that route. See
+  `docs/features/research-progress-tracking.md`'s new "Personal goal
+  account sync" section (and its updated "Known gaps", "Personal
+  goal-setting"). Vitest-covered: new
+  `packages/debate-card-search/test/research-progress-goal-sync.test.ts`
+  (20 tests — payload validation: a target-only goal, topic/targetDate, the
+  max-target boundary, a non-positive/non-integer/missing target, a blank
+  topic, an unrecognized field, non-object input; patch normalization:
+  accepting `null` and a well-formed goal, rejecting a malformed one, an
+  absent field being a no-op, a non-object body; serialize/parse
+  round-tripping, including corrupt JSON and a stored value that fails
+  validation both reading back as `null`). The hook and API route stay
+  untested at the unit level, matching every other synced field's
+  client/hook layer in this repo (`useWordLimitPresets`,
+  `useSavedArgumentCollections`, `/api/settings` itself) — none have
+  hook-level or route-level Vitest coverage. Verification:
+  `bunx vitest run packages/debate-card-search` (73 files, 1713 tests,
+  including the 20 new ones), `bun run test` (231 files, 4188 tests, full
+  repo), `bun run typecheck` (12/12 packages with a typecheck script), and
+  `bun run build` (4/4 tasks) all green.
+
 - **Research Progress Tracking — personal goal-setting UI (Research
   Crowdsourcing Organizer Features bullet, "📈 Research Progress Tracking"
   Next item).** Another repeat of the standing prompt ("integrate all the
@@ -15164,7 +15226,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🎮 **Gamified Quests** (`/cards/streaks`) — the streak-freeze/grace-day-mechanic follow-up is done: a contributor can spend a rolling-allowance "streak freeze" to bridge a single missed day instead of resetting to zero (`lib/gamified-quests.ts#applyStreakFreezes`/`canApplyStreakFreeze`/`findFreezableStreakGapDayKey`, `state/streakFreezes.ts`), surfaced as a "Streak freeze" column with a "Use a grace day for …" action on `QuestStreaksPanel` — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak freeze / grace day" section. The opt-in-streak-lapse-reminder follow-up is also now done: a per-contributor "🔔 Remind me" toggle on the "Reminder" column shows an in-app warning banner whenever that contributor's in-progress streak is at risk of lapsing today (`lib/gamified-quests.ts#getStreakLapseRiskLength`, `state/streakLapseReminders.ts`) — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak-lapse reminder" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a shareable streak-badge image, or account-syncing reminder opt-ins/streak freezes across devices) if one becomes worth doing.
 * 🔓 **Progress Unlocks** (`/cards/progress`) — the visual next-tier progress bar follow-up is done: the "Next tier" column now leads with a filled `MeterBar` meter instead of a text-only sentence, with the needed-counts text kept underneath as detail (`lib/progress-unlocks.ts#getNextTierProgress`'s new `progressRatio` field) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Next-tier progress bar" section. The unlock-celebration-toast follow-up is also now done: a dismissible "🎉 New badge earned: …" banner shows on the signed-in visitor's own row the moment they newly earn a tier or streak badge, diffed against a persisted per-contributor "last-seen badges" baseline (`state/unlockCelebrations.ts`) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Unlock celebration toast" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a badge showcase on a contributor's profile) if one becomes worth doing.
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — the batch-scoring follow-up is done: a "Bulk import" textarea parses a `---`-delimited batch of `id:`/`keywords:`/`quality:` + text entries and persists every well-formed one in a single pass (`lib/llm-card-scoring.ts#parseBulkCardSubmissions`, `state/cardScores.ts#saveScoredCardsBulk`/`bulkImportScoredCards`), reporting an imported/skipped-entry count rather than failing the whole batch on one malformed entry — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Bulk import" section. The inline-Evidence-Library-score-badge follow-up is also now done: each `card`-kind result in `EvidenceLibraryPanel` has a "Score card" action that scores the entry from its own text/argument-block/tags (`state/cardScores.ts#scoreEvidenceLibraryEntry`, composing the existing `deriveArgBlockKeywords`) and shows a "Score N/100" badge once scored, flagging a likely duplicate the same way `CardScoringPanel` does (`state/cardScores.ts#getScoredCardBreakdown`) — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Evidence Library score badge" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor score-trend chart over time) if one becomes worth doing.
-* 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — the printable/exportable-progress-report follow-up is done: a "Download report" button in the panel header exports the whole roster as a plain-text file, one section per contributor (contribution/task summary line plus a per-topic completion breakdown), via `lib/research-progress.ts#buildResearchProgressReportText` — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Report download" section. The topic-comparison-view-across-the-whole-team follow-up is also now done: a "Topic comparison" section below the roster rolls per-contributor topic counts up into one row per topic team-wide, least-covered topic first, via `lib/research-progress.ts#buildTeamTopicComparison` — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Topic comparison" section. The personal-goal-setting-UI follow-up is also now done: a "My research goal" section lets a signed-in visitor set a personal completed-task target, overall or scoped to one topic, and tracks progress toward it with a meter (`lib/research-progress.ts#computeGoalProgress`, `state/researchProgressGoals.ts`) — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Personal goal-setting" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. account-syncing the goal across devices, or reaching the goal section before the roster has any tracked work at all) if one becomes worth doing.
+* 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — the printable/exportable-progress-report follow-up is done: a "Download report" button in the panel header exports the whole roster as a plain-text file, one section per contributor (contribution/task summary line plus a per-topic completion breakdown), via `lib/research-progress.ts#buildResearchProgressReportText` — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Report download" section. The topic-comparison-view-across-the-whole-team follow-up is also now done: a "Topic comparison" section below the roster rolls per-contributor topic counts up into one row per topic team-wide, least-covered topic first, via `lib/research-progress.ts#buildTeamTopicComparison` — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Topic comparison" section. The personal-goal-setting-UI follow-up is also now done: a "My research goal" section lets a signed-in visitor set a personal completed-task target, overall or scoped to one topic, and tracks progress toward it with a meter (`lib/research-progress.ts#computeGoalProgress`, `state/researchProgressGoals.ts`) — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Personal goal-setting" section. The account-syncing-the-goal-across-devices follow-up is also now done: the signed-in visitor's goal now follows them across devices, best-effort synced onto their `user_settings` row (`lib/research-progress-goal-sync.ts`, `hooks/useResearchProgressGoalSync.ts`, a new `/api/settings` `researchProgressGoal` field) — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Personal goal account sync" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. reaching the goal section before the roster has any tracked work at all) if one becomes worth doing.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. The "best of the week" rollup follow-up is also now done: a new "Best of the week" section groups every announced daily winner by ISO week and highlights that week's single highest-helpfulness champion alongside its other announced days (`lib/daily-best-card.ts#buildWeeklyBestCardRollups`, `state/dailyBestCardAnnouncements.ts#buildAnnouncedWeeklyBestCardRollups`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Best of the week" section. The winner-history-calendar-view follow-up is also now done: a "Winner history calendar" section renders a Monday-first month grid with previous/next navigation, highlighting every announced day and showing that day's highlight line plus contributor on click (`lib/daily-best-card.ts#buildDailyBestCardCalendarMonth`, `panels/DailyBestCardPanel.tsx`'s `WinnerHistoryCalendar`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Winner history calendar" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
