@@ -6,6 +6,59 @@
 _No task currently in progress._
 
 ### Completed
+- **debate-round panel UI-polish — migrate 6 hand-rolled list rows to the
+  shared `PanelRow` primitive (idea #17 follow-up (4), `user-settings.md`
+  Known gap).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and every tool is already reachable from the
+  Tools page and CardMirror's command palette, so this slice picked the
+  next specific pattern the prior two slices' own named remaining gap
+  suggested (`PanelShell`/`PanelSection`/`StatTile`/`Pill`/`PanelRow`
+  adoption was still unaudited, after the `EmptyState` and `MeterBar`
+  passes) instead: an audit of `packages/debate-round/src/panels/*.tsx` for
+  hand-rolled markup shaped like `PanelRow` (a `rounded-md border
+  border-border px-3 py-{1.5,2}` list row with a title/subtitle block on
+  the left and a trailing badge/button group on the right — only 2 panels,
+  `SharedFlowSyncPanel`/`FlowEditLogPanel`, used the shared primitives
+  before this slice). Migrated six clean matches to `PanelRow`:
+  `PrepNoteNotificationsPanel` (assignment row, title+subtitle+trailing
+  Read badge/button), `AiVersusRoundPanel` (speech-slot row, title +
+  trailing Regenerate button/status badge), `WordCountRoundsPanel` (speech
+  row, title + trailing word-count badge), `VulnerabilityChartsPanel`
+  (side-summary tile, title badge + subtitle argument count + trailing avg
+  metric), `PrepNotesPanel` (note row, title + subtitle byline/assignee
+  badge + trailing priority badge/jump link/action buttons, with the
+  assign-to form kept as `PanelRow` children), and `DrillSetsPanel` (drill
+  row, leading kind badge + title prompt + trailing AI-script button, with
+  the script error/output text kept as children). Several other candidates
+  the search surfaced were deliberately left alone: `AccountNotificationsPanel`
+  wraps its whole title+subtitle block in an optional `<Link>`, which
+  doesn't map onto `PanelRow`'s separate `title`/`subtitle` props without
+  either dropping the subtitle from the link or fighting the primitive's
+  shape; `FlowAnnotationsPanel`'s annotation cards lead with a wrapping row
+  of chips (timestamp/flow/speech/speaker/tag badges) that `PanelRow`'s
+  `truncate` title styling would clip onto one line; `ArgumentTreePanel`'s
+  outline rows use inline `marginLeft` tree indentation with no clear
+  title/trailing split; and `WordLimitPresetsPanel`'s preset rows are a
+  single inline edit control (badge + number input + unit text + remove
+  button), not a title/trailing block. No pure logic changed — only
+  presentational markup swapped for an equivalent already-tested primitive
+  (`PanelRow` itself is covered by `packages/debate-ui/test/panel-shell.test.tsx`)
+  — so no new Vitest cases were needed. Verified: `bun install` (2342
+  packages), `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-ui --filter=debate-ai-web` (10/10 in-scope package tasks
+  pass), full `bun run test` (226 files / 4056 tests, all pass, unchanged),
+  and `bun run build:web` (`debate-ai-web` production build succeeds, full
+  route list intact). Updated `docs/features/user-settings.md`'s Known
+  gaps section. Remaining gap for a future slice: the same idea #17
+  follow-up (4) is still open more broadly — `PanelShell`/`PanelSection`/
+  `StatTile`/`Pill` adoption is still unaudited (this slice covered
+  `PanelRow` only, and even for `PanelRow` the four patterns named above
+  were left as deliberately-not-a-fit, not exhaustively resolved); a future
+  run should pick one of those next. **Completed:** 2026-09-03.
 - **debate-round panel UI-polish — migrate 2 more hand-rolled progress bars
   to the shared `MeterBar` primitive (idea #17 follow-up (4),
   `user-settings.md` Known gap).** Another repeat of the standing prompt
