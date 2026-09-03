@@ -82,6 +82,7 @@
         "docx-preview": "^0.3.7",
         "dompurify": "^3.3.3",
         "drizzle-orm": "^0.45.2",
+        "extract-youtube": "^1.0.256",
         "file-loader": "^6.2.0",
         "framer-motion": "^12.36.0",
         "fuse.js": "^7.1.0",
@@ -1713,7 +1714,7 @@
 
     "extend": ["extend@3.0.2", "", {}, "sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g=="],
 
-    "extract-youtube": ["extract-youtube@1.0.134", "", { "dependencies": { "fast-xml-parser": "^4.2.5", "grab-url": "^1.6.19", "html-entities": "^2.3.3", "https-proxy-agent": "^7.0.6", "youtube-transcript-api": "^3.0.6" }, "bin": { "extract-youtube": "dist/cli.js" } }, "sha512-5g9Z1PeCgz2SrsvSXAZGbnGrNFbHJ7dHPUIOdkwe4gGORmwP/x0FM2XzDxU4LWCyVTtdYobRBOvs6dYJcA1Ogw=="],
+    "extract-youtube": ["extract-youtube@1.0.256", "", { "dependencies": { "fast-xml-parser": "^4.2.5", "grab-url": "^1.6.19", "html-entities": "^2.3.3", "https-proxy-agent": "^7.0.6", "youtube-transcript-api": "^3.0.6" }, "bin": { "extract-youtube": "dist/cli.js" } }, "sha512-C0+hrFi5HyuzbX3UYpsNhicOZHTAayTCMVkh4M4FEU2AFJrsmHzuZYADapxsY2kAFkSPSGoG6/su4uJq0pFUHA=="],
 
     "fake-indexeddb": ["fake-indexeddb@6.2.5", "", {}, "sha512-CGnyrvbhPlWYMngksqrSSUT1BAVP49dZocrHuK0SvtR0D5TMs5wP0o3j7jexDJW01KSadjBp1M/71o/KR3nD1w=="],
 
