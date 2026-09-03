@@ -21,7 +21,6 @@ const nextConfig = {
     "debate-core",
     "debate-data-sync",
     "debate-editor",
-    "debate-editor-cardmirror",
     "debate-flow-ebb",
     "debate-round",
     "debate-timer",

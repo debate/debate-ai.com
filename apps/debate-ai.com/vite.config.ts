@@ -31,7 +31,7 @@ export default defineConfig({
       "@": appDir,
       "@emotion/is-prop-valid": require.resolve("@emotion/is-prop-valid"),
       "@better-auth/kysely-adapter": path.resolve(appDir, "lib/stubs/kysely-adapter.ts"),
-      // debate-editor-cardmirror's card-cutter-port.ts dynamically imports
+      // debate-editor's card-cutter-port.ts dynamically imports
       // `@cardcutter/browser` — the separately-versioned, NOT-shipped
       // card-cutter engine, present only when checked out as a sibling of
       // the CardMirror repo it was ported from. It never is here, so this
@@ -41,7 +41,7 @@ export default defineConfig({
       // resolution error.
       "@cardcutter/browser": path.resolve(
         appDir,
-        "../../packages/debate-editor-cardmirror/src/editor/card-cutter-stub.ts",
+        "../../packages/debate-editor/src/editor/card-cutter-stub.ts",
       ),
     },
     dedupe: [
@@ -49,7 +49,7 @@ export default defineConfig({
       "react-dom",
       "react/jsx-runtime",
       "react-server-dom-webpack",
-      // Keep a single ProseMirror instance across the app: debate-editor-cardmirror
+      // Keep a single ProseMirror instance across the app: debate-editor
       // (the CardMirror engine) is the only consumer today, but a duplicate
       // ProseMirror module breaks its schema/plugin identity checks the
       // moment anything else in the tree also depends on prosemirror-*.
@@ -77,7 +77,6 @@ export default defineConfig({
       "debate-card-search",
       "debate-data-sync",
       "debate-editor",
-      "debate-editor-cardmirror",
       "debate-flow-ebb",
       "debate-round",
       "debate-timer",

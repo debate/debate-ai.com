@@ -38,7 +38,7 @@ let container: HTMLDivElement | null = null;
 let bootPromise: Promise<void> | null = null;
 let currentBinding: Binding | null = null;
 let onChangePluginInstalled = false;
-const onChangePluginKey = new PluginKey('debate-editor-cardmirror-onchange');
+const onChangePluginKey = new PluginKey('debate-editor-onchange');
 
 type EngineModule = typeof import('../editor/index.js');
 type BridgeModule = typeof import('./html-bridge.js');

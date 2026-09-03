@@ -5,7 +5,7 @@
  * general/appearance/accessibility settings rows on /settings.
  *
  * This lives at its own route rather than as a component on the /settings
- * page directly because CardMirror's settings UI (`debate-editor-cardmirror`)
+ * page directly because CardMirror's settings UI (`debate-editor`)
  * ships with its own ~15k-line stylesheet (`style.css`) full of unscoped
  * global rules (`*`, `body`, `html`, `:root`) meant for a page CardMirror
  * fully owns — importing it into the host app's normal component tree
@@ -24,7 +24,7 @@
  * of a fixed height.
  *
  * Talks to `/api/settings` directly rather than through a host-app
- * session hook, so `debate-editor-cardmirror` stays independent of this
+ * session hook, so `debate-editor` stays independent of this
  * app's own auth wiring — a `401` there just means "signed out," handled
  * the same way `debate-round`'s `user-settings-client.ts` treats it: skip
  * hydration and skip the debounced account push, local defaults/localStorage
@@ -35,7 +35,7 @@ import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // this route's own chunk — never loaded by the host app's main bundle.
-import "debate-editor-cardmirror/styles.css"
+import "debate-editor/styles.css"
 
 type SettingsCategory = "general" | "appearance" | "accessibility"
 
@@ -59,8 +59,8 @@ function EditorSettingsPanelPage() {
   const [signedIn, setSignedIn] = useState(false)
   const containerRefs = useRef<Partial<Record<SettingsCategory, HTMLDivElement | null>>>({})
   const panelsRef = useRef<Partial<Record<SettingsCategory, { element: HTMLElement; destroy: () => void }>>>({})
-  const moduleRef = useRef<typeof import("debate-editor-cardmirror/settings-ui") | null>(null)
-  const settingsRef = useRef<typeof import("debate-editor-cardmirror/settings") | null>(null)
+  const moduleRef = useRef<typeof import("debate-editor/settings-ui") | null>(null)
+  const settingsRef = useRef<typeof import("debate-editor/settings") | null>(null)
 
   // One-time setup: load CardMirror's settings store + UI module and its
   // stylesheet, hydrate from the signed-in user's saved values (a `401`
@@ -72,8 +72,8 @@ function EditorSettingsPanelPage() {
 
     void (async () => {
       const [settingsModule, uiModule] = await Promise.all([
-        import("debate-editor-cardmirror/settings"),
-        import("debate-editor-cardmirror/settings-ui"),
+        import("debate-editor/settings"),
+        import("debate-editor/settings-ui"),
       ])
       if (cancelled) return
       settingsRef.current = settingsModule

@@ -19,9 +19,9 @@
  * "CardMirror on GitHub") are dropped: they're optional and don't belong in
  * an embedded product surface.
  *
- * This is CardMirror's OWN ribbon/toolbar — the debate-editor-cardmirror
- * React shell adds a NEW menu bar (`MenuBar.tsx`) ABOVE this markup rather
- * than replacing it, so every ribbon command stays reachable both ways.
+ * This is CardMirror's OWN ribbon/toolbar — the debate-editor React shell
+ * adds a NEW menu bar (`MenuBar.tsx`) ABOVE this markup rather than
+ * replacing it, so every ribbon command stays reachable both ways.
  */
 export const RIBBON_HTML = `
 <header id="ribbon">

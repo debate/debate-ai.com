@@ -148,7 +148,7 @@ export const userSettings = sqliteTable("user_settings", {
   // Appearance / Accessibility settings, e.g. `displayColors`, `bodyFont`,
   // `reduceMotion`) to their current values — moved here from the editor's
   // own gear-icon settings modal (see /settings and
-  // packages/debate-editor-cardmirror/src/editor/settings.ts) so a
+  // packages/debate-editor/src/editor/settings.ts) so a
   // signed-in user's choices follow them across devices instead of staying
   // in that browser's localStorage. Null/absent means "use the client
   // default", same semantics as every other nullable column here.
@@ -352,7 +352,7 @@ export type SavedJudgeDecisionRow = typeof savedJudgeDecisions.$inferSelect;
 
 // Account-linked Speech Documents send-log sync — closes docs/features/
 // flow-tools-menu.md's/user-settings.md's standing "docs" gap: CardMirror's
-// speech-send history (`packages/debate-editor-cardmirror/src/editor/
+// speech-send history (`packages/debate-editor/src/editor/
 // speech-send-log.ts`, rendered by `/speech-documents`) was IndexedDB-only,
 // unlike flows/rounds/word-count-rounds/judge-decisions above, which all
 // already follow a signed-in user across devices. Same one-row-per-entry,

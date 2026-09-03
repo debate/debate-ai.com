@@ -8,7 +8,7 @@
  * app/api/settings/route.ts's `editorPreferences` field).
  *
  * Embeds `/settings/editor-panel` in a same-origin iframe rather than
- * rendering `debate-editor-cardmirror`'s settings UI directly in this
+ * rendering `debate-editor`'s settings UI directly in this
  * component tree — see that route's own docstring for why (its ~15k-line
  * stylesheet is meant for a page CardMirror fully owns, and would fight this
  * app's own styles document-wide if imported here). Unlike

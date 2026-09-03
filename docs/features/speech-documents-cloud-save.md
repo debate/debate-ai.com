@@ -15,7 +15,7 @@ IndexedDB.
   sync-status caption under its existing description, matching
   `JudgeDecisionPanel`'s "Decision history is synced to your account."
   convention
-- **Package:** `debate-editor-cardmirror` (`isValidSpeechSendLogEntry`
+- **Package:** `debate-editor` (`isValidSpeechSendLogEntry`
   validator, exported from its headless `/engine` entry point next to the
   existing `speechSendLogStore`), `apps/debate-ai.com`
   (`/api/speech-send-log`, `saved_speech_send_log` D1 table, `lib/
@@ -23,7 +23,7 @@ IndexedDB.
 
 ## What it does
 
-`speechSendLogStore` (`packages/debate-editor-cardmirror/src/editor/
+`speechSendLogStore` (`packages/debate-editor/src/editor/
 speech-send-log.ts`) already recorded every card/selection sent into the
 designated speech doc, in IndexedDB, cross-tab-synced via
 `BroadcastChannel` — but never past one browser. `useSpeechSendLogSync`
