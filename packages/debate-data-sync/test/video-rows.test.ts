@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   buildVideoRows,
+  formatSeasonLabel,
   normalizeCategoryKey,
   publishedMsForDate,
   seasonYearForDate,
+  stripTournamentYear,
   tupleToVideoRow,
   videoRowToTuple,
   LEGACY_SEASON,
@@ -61,6 +63,32 @@ describe("seasonYearForDate", () => {
   });
 });
 
+describe("stripTournamentYear", () => {
+  it("drops a leading calendar year", () => {
+    expect(stripTournamentYear("2026 TOC")).toBe("TOC");
+    expect(stripTournamentYear("2019 Apple Valley")).toBe("Apple Valley");
+  });
+
+  it("leaves a title with no leading year untouched", () => {
+    expect(stripTournamentYear("TOC")).toBe("TOC");
+  });
+
+  it("passes through null", () => {
+    expect(stripTournamentYear(null)).toBeNull();
+  });
+});
+
+describe("formatSeasonLabel", () => {
+  it("formats a season year as a two-digit range", () => {
+    expect(formatSeasonLabel(2025)).toBe("24-25");
+    expect(formatSeasonLabel(2020)).toBe("19-20");
+  });
+
+  it("labels the legacy sentinel", () => {
+    expect(formatSeasonLabel(LEGACY_SEASON)).toBe("Legacy");
+  });
+});
+
 describe("publishedMsForDate", () => {
   it("parses long-form dates so they sort with the ISO ones", () => {
     expect(publishedMsForDate("May 14, 2013")).toBe(Date.parse("May 14, 2013"));
@@ -92,7 +120,7 @@ describe("tupleToVideoRow", () => {
       style: 1,
       category: null,
       categoryKey: null,
-      tournament: "2026 TOC",
+      tournament: "TOC",
       roundLevel: "Finals",
       affTeam: "GBN CR",
       negTeam: "MBA HL",
@@ -125,16 +153,22 @@ describe("tupleToVideoRow", () => {
 });
 
 describe("videoRowToTuple", () => {
-  it("round-trips a round back into its tuple form", () => {
+  it("round-trips a round back into its tuple form, minus the tournament year plus the trailing season", () => {
     const row = tupleToVideoRow(ROUND_TUPLE, "round")!;
-    expect(videoRowToTuple(row)).toEqual(ROUND_TUPLE);
+    expect(videoRowToTuple(row)).toEqual([
+      ...ROUND_TUPLE.slice(0, 7),
+      "TOC",
+      ...ROUND_TUPLE.slice(8),
+      2026,
+    ]);
   });
 
-  it("drops trailing empty slots so pages stay small", () => {
+  it("keeps the trailing season slot so trimming stops there", () => {
     const row = tupleToVideoRow(LECTURE_TUPLE, "lecture")!;
     const tuple = videoRowToTuple(row);
-    expect(tuple).toHaveLength(7);
+    expect(tuple).toHaveLength(18);
     expect(tuple[6]).toBe("Kritik / Critical Theory");
+    expect(tuple[17]).toBe(2020);
   });
 });
 

@@ -187,6 +187,13 @@
     {
       "idx": 26,
       "version": "6",
+      "when": 1788426545000,
+      "tag": "0025_lonely_wraith",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "6",
       "when": 1788475304789,
       "tag": "0026_damp_dragon_man",
       "breakpoints": true

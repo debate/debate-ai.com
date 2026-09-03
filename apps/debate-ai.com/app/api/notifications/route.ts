@@ -30,22 +30,30 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Sign in to view your notifications." }, { status: 401 })
   }
 
-  const db = await getDBFromContext()
-  const rows = await db
-    .select()
-    .from(notifications)
-    .where(eq(notifications.userId, userId))
-    .orderBy(desc(notifications.createdAt))
-    .limit(LIST_LIMIT)
+  try {
+    const db = await getDBFromContext()
+    const rows = await db
+      .select()
+      .from(notifications)
+      .where(eq(notifications.userId, userId))
+      .orderBy(desc(notifications.createdAt))
+      .limit(LIST_LIMIT)
 
-  // Counted off the fetched page rather than a separate `count(*)` query —
-  // unread notifications are always among the most recent ones (nothing
-  // un-reads a notification), so this only undercounts in the edge case of
-  // more than `LIST_LIMIT` unread notifications at once, an acceptable
-  // tradeoff for a badge count.
-  const unreadCount = rows.filter((row: { readAt: Date | null }) => !row.readAt).length
+    // Counted off the fetched page rather than a separate `count(*)` query —
+    // unread notifications are always among the most recent ones (nothing
+    // un-reads a notification), so this only undercounts in the edge case of
+    // more than `LIST_LIMIT` unread notifications at once, an acceptable
+    // tradeoff for a badge count.
+    const unreadCount = rows.filter((row: { readAt: Date | null }) => !row.readAt).length
 
-  return NextResponse.json({ notifications: rows, unreadCount })
+    return NextResponse.json({ notifications: rows, unreadCount })
+  } catch (error) {
+    // Degrade to an empty feed instead of a raw 500 — e.g. right after a
+    // deploy that hasn't run its D1 migration yet, so the `notifications`
+    // table doesn't exist there. Same fallback shape /api/videos uses.
+    console.error("Failed to load notifications", error)
+    return NextResponse.json({ notifications: [], unreadCount: 0 })
+  }
 }
 
 export async function PATCH(req: NextRequest) {
@@ -62,29 +70,35 @@ export async function PATCH(req: NextRequest) {
   }
 
   const { id, all } = (body ?? {}) as { id?: unknown; all?: unknown }
-  const db = await getDBFromContext()
-  const now = new Date()
 
-  if (all === true) {
-    await db
-      .update(notifications)
-      .set({ readAt: now })
-      .where(and(eq(notifications.userId, userId), isNull(notifications.readAt)))
-    return NextResponse.json({ ok: true })
-  }
-
-  if (typeof id !== "number" && typeof id !== "string") {
+  if (all !== true && typeof id !== "number" && typeof id !== "string") {
     return NextResponse.json({ error: "Provide a notification id or { all: true }." }, { status: 400 })
   }
-  const notificationId = Number(id)
-  if (!Number.isInteger(notificationId)) {
+  const notificationId = all === true ? null : Number(id)
+  if (notificationId !== null && !Number.isInteger(notificationId)) {
     return NextResponse.json({ error: "Invalid notification id." }, { status: 400 })
   }
 
-  await db
-    .update(notifications)
-    .set({ readAt: now })
-    .where(and(eq(notifications.id, notificationId), eq(notifications.userId, userId)))
+  try {
+    const db = await getDBFromContext()
+    const now = new Date()
 
-  return NextResponse.json({ ok: true })
+    if (all === true) {
+      await db
+        .update(notifications)
+        .set({ readAt: now })
+        .where(and(eq(notifications.userId, userId), isNull(notifications.readAt)))
+      return NextResponse.json({ ok: true })
+    }
+
+    await db
+      .update(notifications)
+      .set({ readAt: now })
+      .where(and(eq(notifications.id, notificationId as number), eq(notifications.userId, userId)))
+
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    console.error("Failed to update notifications", error)
+    return NextResponse.json({ error: "Failed to update notifications." }, { status: 500 })
+  }
 }
