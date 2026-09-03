@@ -27,12 +27,23 @@
  * (`apps/debate-ai.com/app/news/page.tsx`), which already depends on both
  * packages.
  *
+ * `saveCoachingSession` now snapshots the record it overwrites into
+ * `state/coachingSessionHistory.ts` before replacing it, and
+ * `deleteCoachingSession` clears that pair's whole snapshot history too —
+ * the "a coaching-session history timeline per round" follow-up named under
+ * the same bullet.
+ *
  * @module state/coachingSessions
  */
 
 import type { Flow } from "../types/flow";
 import type { NewsItem } from "debate-card-search/src/lib/news-stream";
 import { buildCoachingSession, buildCoachingSummaryText, type CoachingPrompt } from "../flow/coach-mode";
+import {
+  appendCoachingSessionVersion,
+  deleteVersionsForCoachingSession,
+  type CoachingSessionHistoryEntry,
+} from "./coachingSessionHistory";
 
 export type CoachingSessionRecord = {
   roundId: string;
@@ -82,21 +93,44 @@ export function getCoachingSessionsForRound(roundId: string): CoachingSessionRec
   return readAll().filter((record) => record.roundId === roundId);
 }
 
-/** Saves a round+side's coaching session, overwriting any existing record for that pair. */
-export function saveCoachingSession(record: CoachingSessionRecord): void {
+/** Result of a `saveCoachingSession` call — the saved record, plus the version snapshot it created, if any. */
+export type SaveCoachingSessionResult = {
+  record: CoachingSessionRecord;
+  /** The prior record's snapshot, present only when this save overwrote an existing roundId+sideKey pair. */
+  version?: CoachingSessionHistoryEntry;
+};
+
+/**
+ * Saves a round+side's coaching session, overwriting any existing record
+ * for that pair. Overwriting snapshots the record it replaces into
+ * `state/coachingSessionHistory.ts` first, so a regenerated session never
+ * loses the prior one outright — see that module's
+ * `listVersionsForCoachingSession`.
+ */
+export function saveCoachingSession(record: CoachingSessionRecord): SaveCoachingSessionResult {
   const records = readAll();
   const index = records.findIndex((existing) => matches(existing, record.roundId, record.sideKey));
   if (index === -1) {
     records.push(record);
-  } else {
-    records[index] = record;
+    writeAll(records);
+    return { record };
   }
+
+  const version = appendCoachingSessionVersion(records[index] as CoachingSessionRecord);
+  records[index] = record;
   writeAll(records);
+  return { record, version };
 }
 
-/** Deletes a round+side's persisted coaching session; a no-op if it isn't stored. */
+/**
+ * Deletes a round+side's persisted coaching session, along with every
+ * history snapshot `saveCoachingSession` archived for that pair — a "Clear"
+ * fully resets the round+side rather than leaving orphaned history behind.
+ * A no-op if it isn't stored.
+ */
 export function deleteCoachingSession(roundId: string, sideKey: string): void {
   writeAll(readAll().filter((record) => !matches(record, roundId, sideKey)));
+  deleteVersionsForCoachingSession(roundId, sideKey);
 }
 
 /**

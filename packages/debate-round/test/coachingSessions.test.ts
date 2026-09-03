@@ -13,6 +13,7 @@ import {
   saveCoachingSessionAiFeedback,
   type CoachingSessionRecord,
 } from "../src/state/coachingSessions";
+import { listVersionsForCoachingSession } from "../src/state/coachingSessionHistory";
 import type { Box } from "../src/types/flow";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
@@ -152,6 +153,27 @@ describe("saveCoachingSession", () => {
     saveCoachingSession(SESSION_NEG);
     expect(listCoachingSessions()).toHaveLength(2);
   });
+
+  it("returns the saved record with no version on the first save for a roundId+sideKey pair", () => {
+    const result = saveCoachingSession(SESSION_AFF);
+    expect(result).toEqual({ record: SESSION_AFF });
+  });
+
+  it("snapshots the overwritten record into coaching-session history and returns it", () => {
+    saveCoachingSession(SESSION_AFF);
+    const updated: CoachingSessionRecord = { ...SESSION_AFF, aiFeedback: "Revised feedback." };
+    const result = saveCoachingSession(updated);
+
+    expect(result.record).toEqual(updated);
+    expect(result.version).toMatchObject({ roundId: "round-1", sideKey: "AFF", prompts: SESSION_AFF.prompts });
+    expect(listVersionsForCoachingSession("round-1", "AFF")).toEqual([result.version]);
+  });
+
+  it("does not snapshot anything for a different roundId+sideKey pair's first save", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSession(SESSION_NEG);
+    expect(listVersionsForCoachingSession("round-1", "NEG")).toEqual([]);
+  });
 });
 
 describe("deleteCoachingSession", () => {
@@ -168,6 +190,27 @@ describe("deleteCoachingSession", () => {
     saveCoachingSession(SESSION_NEG);
     deleteCoachingSession("round-1", "AFF");
     expect(listCoachingSessions()).toEqual([SESSION_NEG]);
+  });
+
+  it("also clears every history snapshot for that roundId+sideKey pair", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSession({ ...SESSION_AFF, aiFeedback: "Revised." });
+    expect(listVersionsForCoachingSession("round-1", "AFF")).toHaveLength(1);
+
+    deleteCoachingSession("round-1", "AFF");
+
+    expect(listVersionsForCoachingSession("round-1", "AFF")).toEqual([]);
+  });
+
+  it("leaves another roundId+sideKey pair's history untouched", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSession({ ...SESSION_AFF, aiFeedback: "Revised." });
+    saveCoachingSession(SESSION_NEG);
+    saveCoachingSession({ ...SESSION_NEG, aiFeedback: "Revised NEG." });
+
+    deleteCoachingSession("round-1", "AFF");
+
+    expect(listVersionsForCoachingSession("round-1", "NEG")).toHaveLength(1);
   });
 });
 
@@ -226,6 +269,15 @@ describe("buildAndSaveCoachingSession", () => {
     const record = buildAndSaveCoachingSession(MIXED_FLOW, "round-1", "AFF");
 
     expect(listCoachingSessions()).toEqual([record]);
+  });
+
+  it("snapshots the prior session into history when regenerating an existing roundId+sideKey pair", () => {
+    saveCoachingSession(SESSION_AFF);
+    buildAndSaveCoachingSession(MIXED_FLOW, "round-1", "AFF");
+
+    const versions = listVersionsForCoachingSession("round-1", "AFF");
+    expect(versions).toHaveLength(1);
+    expect(versions[0]?.prompts).toEqual(SESSION_AFF.prompts);
   });
 
   it("keeps sessions for a different side of the same round distinct", () => {
