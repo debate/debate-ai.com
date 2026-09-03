@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
+import { Activity, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
@@ -43,6 +43,7 @@ import {
 const SITE_LINKS = [
   { url: "https://github.com/debate", text: "Github", icon: Code2 },
   { url: "https://discord.gg/5PFjqgtkK", text: "Support", icon: MessageCircle },
+  { url: "https://stats.uptimerobot.com/V3HfCBM9de", text: "Status", icon: Activity },
   { url: "/legal/privacy", text: "Privacy", icon: Shield },
   { url: "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit", text: "Rules", icon: FileText },
 ]
