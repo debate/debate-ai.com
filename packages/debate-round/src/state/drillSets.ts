@@ -17,9 +17,12 @@
  * which drills (by index in `drills`) the user has marked practiced, the
  * "completion tracking" follow-up named under the "📚 AI Drill Generator"
  * bullet. See `toggleDrillCompletion`/`getDrillSetCompletionStats` below.
- * This slice tracks completion locally only; tying completion into the
- * separate `debate-card-search` Progress Unlocks tier system stays a named
- * open follow-up.
+ * This slice tracks completion locally; the "tying completion into the
+ * separate `debate-card-search` Progress Unlocks tier system" half of that
+ * same follow-up is now also done — see `state/drillProgressUnlocks.ts`,
+ * which sums `getDrillSetCompletionStats` across every persisted record and
+ * feeds the total into `debate-card-search`'s tier logic, rendered by
+ * `panels/DrillSetsPanel.tsx`'s "Practice tier" card.
  *
  * `scheduledReviewAt` is likewise additive and optional — it holds a
  * per-drill "come back and practice this again on/after this day" reminder
