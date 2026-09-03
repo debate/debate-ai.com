@@ -26,17 +26,6 @@ export function useSplitModeHandlers(
   const [rightSpeechIndex, setRightSpeechIndex] = useState(1)
 
   /**
-   * Reset panel indices to the first two columns of the selected flow.
-   * Should be called when the user first enters split mode.
-   */
-  const initializeSplitMode = useCallback(() => {
-    if (flows[selected]?.columns) {
-      setLeftSpeechIndex(0)
-      setRightSpeechIndex(Math.min(1, flows[selected].columns.length - 1))
-    }
-  }, [flows, selected])
-
-  /**
    * Shift both panels one column to the left, if the left panel is not already at index 0.
    */
   const handlePreviousSpeeches = useCallback(() => {
@@ -134,7 +123,6 @@ export function useSplitModeHandlers(
   return {
     leftSpeechIndex,
     rightSpeechIndex,
-    initializeSplitMode,
     handlePreviousSpeeches,
     handleNextSpeeches,
     handlePreviousSingle,
