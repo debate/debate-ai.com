@@ -69,7 +69,8 @@ _No task currently in progress._
   `app-file-list.ts`/`version.ts`/`service-worker.js` churn was reverted
   before committing, unrelated to this change). Updated the "📈 Research
   Progress Tracking" bullet below to reflect that no further follow-up is
-  currently tracked. **PR:** _pending — see below._ **Completed:**
+  currently tracked. **PR:**
+  https://github.com/debate/debate-ai.com/pull/513. **Completed:**
   2026-09-03.
 - **Research Progress Tracking — topic-comparison view across the whole
   team (Research Crowdsourcing Organizer Features bullet, "📈 Research
