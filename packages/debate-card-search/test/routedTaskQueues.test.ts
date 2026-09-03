@@ -10,6 +10,7 @@ import {
   reassignPersistedRoutedTask,
   routePersistedTopicTasks,
   saveRoutedTaskQueue,
+  setPersistedRoutedTaskPriority,
   type RoutedTaskQueueRecord,
 } from "../src/state/routedTaskQueues";
 import { getContributorAvailability, saveContributorAvailability } from "../src/state/contributorAvailability";
@@ -263,6 +264,22 @@ describe("buildTaskInboxView", () => {
     const [topic] = buildTaskInboxView();
     expect(topic.assignments[0].contributorSkillLevel).toBeUndefined();
   });
+
+  it("sorts a topic's assignments high-priority first, preserving routing order within each tier", () => {
+    saveRoutedTaskQueue({
+      topicId: "topic-mixed",
+      result: {
+        assignments: [
+          { task: SOLVENCY_TASK, contributorId: "alice" },
+          { task: IMPACTS_TASK, contributorId: "bob", priority: "high" },
+        ],
+        unassignedTasks: [],
+      },
+    });
+
+    const [topic] = buildTaskInboxView();
+    expect(topic.assignments.map((assignment) => assignment.contributorId)).toEqual(["bob", "alice"]);
+  });
 });
 
 describe("filterTaskInboxViewByContributor", () => {
@@ -402,5 +419,56 @@ describe("reassignPersistedRoutedTask", () => {
     const reassigned = reassignPersistedRoutedTask("topic-ai", "Impacts", "  dana  ");
 
     expect(reassigned).toEqual({ task: IMPACTS_TASK, contributorId: "dana" });
+  });
+});
+
+describe("setPersistedRoutedTaskPriority", () => {
+  it("flags an assigned task high priority and saves it", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const updated = setPersistedRoutedTaskPriority("topic-ai", "Solvency", "high");
+
+    expect(updated).toEqual({ task: SOLVENCY_TASK, contributorId: "alice", priority: "high" });
+    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+      topicId: "topic-ai",
+      result: {
+        assignments: [{ task: SOLVENCY_TASK, contributorId: "alice", priority: "high" }],
+        unassignedTasks: [IMPACTS_TASK],
+      },
+    });
+  });
+
+  it("unflags a high-priority task back to normal, omitting the priority key", () => {
+    saveRoutedTaskQueue({
+      topicId: "topic-ai",
+      result: {
+        assignments: [{ task: SOLVENCY_TASK, contributorId: "alice", priority: "high" }],
+        unassignedTasks: [],
+      },
+    });
+
+    const updated = setPersistedRoutedTaskPriority("topic-ai", "Solvency", "normal");
+
+    expect(updated).toEqual({ task: SOLVENCY_TASK, contributorId: "alice" });
+    expect(updated).not.toHaveProperty("priority");
+  });
+
+  it("returns undefined and leaves storage untouched when the topic has no persisted queue", () => {
+    expect(setPersistedRoutedTaskPriority("missing-topic", "Solvency", "high")).toBeUndefined();
+    expect(listRoutedTaskQueues()).toEqual([]);
+  });
+
+  it("returns undefined and leaves the queue untouched when no assignment matches that argBlock", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    expect(setPersistedRoutedTaskPriority("topic-ai", "Nonexistent", "high")).toBeUndefined();
+    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+  });
+
+  it("does not flag an unassigned task — only matches assignments, not unassignedTasks", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    expect(setPersistedRoutedTaskPriority("topic-ai", "Impacts", "high")).toBeUndefined();
+    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
   });
 });

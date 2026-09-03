@@ -49,10 +49,28 @@
  * contributor's persisted `activeTaskCount` kept in sync the same way a
  * normal assignment/completion is.
  *
+ * `setPersistedRoutedTaskPriority` closes the "a task-priority indicator"
+ * follow-up named under the same bullet in TODO.md's Product Feature Ideas
+ * list — an already-routed assignment can be flagged high priority
+ * (`lib/research-task-routing.ts`'s `setAssignmentPriority`), and
+ * `buildTaskInboxView` now sorts each topic's assignments high-priority
+ * first (`sortAssignmentsByPriority`) so a flagged task surfaces above its
+ * topic-mates, mirroring `strategy-sync-notes.ts`'s `setNotePriority`/
+ * `sortNotesByPriorityThenCreatedAt` convention for Strategy Sync Notes.
+ *
  * @module state/routedTaskQueues
  */
 
-import { buildRoutingResult, type RoutedAssignment, type ResearchTask, type RoutingResult, type SkillLevel } from "../lib/research-task-routing";
+import {
+  buildRoutingResult,
+  setAssignmentPriority,
+  sortAssignmentsByPriority,
+  type RoutedAssignment,
+  type ResearchTask,
+  type RoutingResult,
+  type SkillLevel,
+  type TaskPriority,
+} from "../lib/research-task-routing";
 import type { CoverageThresholds, TopicCoverageReport } from "../lib/topic-coverage";
 import { listContributorAvailability, recordPersistedTaskAssigned, recordPersistedTaskCompleted } from "./contributorAvailability";
 import { buildPersistedTopicCoverageReport } from "./trackedArguments";
@@ -232,6 +250,40 @@ export function reassignPersistedRoutedTask(
   return reassignment;
 }
 
+/**
+ * Flags (or unflags) one already-routed assignment as high priority,
+ * closing the "a task-priority indicator" follow-up named under the
+ * "Research Task Routing" bullet in TODO.md's Product Feature Ideas list —
+ * mirroring `state/prepNotes.ts`'s `updatePersistedPrepNotePriority`. Only
+ * applies to an assignment that's actually routed to someone; an
+ * `unassignedTasks` entry has no assignment to flag (there's no `contributorId`
+ * to attach the flag to yet — assign or reassign it first).
+ *
+ * Returns the updated `RoutedAssignment`, or `undefined` — leaving storage
+ * untouched — when the topic has no persisted queue or no assignment
+ * matches that `argBlock`.
+ */
+export function setPersistedRoutedTaskPriority(
+  topicId: string,
+  argBlock: string,
+  priority: TaskPriority,
+): RoutedAssignment | undefined {
+  const queue = getRoutedTaskQueue(topicId);
+  if (!queue) return undefined;
+
+  const index = queue.result.assignments.findIndex((a) => a.task.argBlock === argBlock);
+  if (index === -1) return undefined;
+
+  const updated = setAssignmentPriority(queue.result.assignments[index], priority);
+  const updatedResult: RoutingResult = {
+    ...queue.result,
+    assignments: queue.result.assignments.map((a, i) => (i === index ? updated : a)),
+  };
+
+  saveRoutedTaskQueue({ topicId, result: updatedResult });
+  return updated;
+}
+
 /** One assignment in the task-inbox view, tagged with the topic it was routed under and the assignee's current skill level (if their profile is still persisted). */
 export interface TaskInboxAssignment extends RoutedAssignment {
   topicId: string;
@@ -256,6 +308,11 @@ export interface TaskInboxTopic {
  * the persisted store" convention. Topics are returned in the same order
  * `listRoutedTaskQueues` stores them; a contributor whose profile was since
  * deleted is still listed, just without a `contributorSkillLevel`.
+ *
+ * Each topic's assignments are ordered high-priority first via
+ * `sortAssignmentsByPriority` (stable, so the underlying most-urgent-first
+ * routing order survives within a priority tier) — closing the "a
+ * task-priority indicator" follow-up named under the same bullet.
  */
 export function buildTaskInboxView(): TaskInboxTopic[] {
   const skillByContributor = new Map(
@@ -264,7 +321,7 @@ export function buildTaskInboxView(): TaskInboxTopic[] {
 
   return listRoutedTaskQueues().map(({ topicId, result }) => ({
     topicId,
-    assignments: result.assignments.map((assignment) => ({
+    assignments: sortAssignmentsByPriority(result.assignments).map((assignment) => ({
       ...assignment,
       topicId,
       contributorSkillLevel: skillByContributor.get(assignment.contributorId),

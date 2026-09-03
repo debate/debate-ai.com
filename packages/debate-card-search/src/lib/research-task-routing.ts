@@ -66,10 +66,45 @@ export function buildTaskQueue(report: TopicCoverageReport): ResearchTask[] {
   }));
 }
 
+/** Priority levels a coach can flag an already-routed assignment with, independent of its task's `level`. */
+export type TaskPriority = "normal" | "high";
+
 /** One task assigned to a contributor. */
 export interface RoutedAssignment {
   task: ResearchTask;
   contributorId: string;
+  /** Coach-set urgency flag; omitted entirely when `"normal"`, mirroring `PrepNote`'s `priority` convention. */
+  priority?: TaskPriority;
+}
+
+/**
+ * Returns a copy of `assignment` with its priority changed. Setting
+ * `"normal"` omits the `priority` key entirely rather than storing it
+ * explicitly, so a never-flagged assignment and an unflagged one serialize
+ * identically.
+ */
+export function setAssignmentPriority(assignment: RoutedAssignment, priority: TaskPriority): RoutedAssignment {
+  if (priority === "normal") {
+    const { priority: _omit, ...rest } = assignment;
+    return rest;
+  }
+  return { ...assignment, priority };
+}
+
+/**
+ * Stable-sorts assignments so high-priority ones come first, preserving
+ * relative order within each priority tier (in particular, the most-urgent
+ * `routeTasks` ordering survives among assignments that share a priority).
+ */
+export function sortAssignmentsByPriority(assignments: RoutedAssignment[]): RoutedAssignment[] {
+  return assignments
+    .map((assignment, index) => ({ assignment, index }))
+    .sort((a, b) => {
+      const aRank = a.assignment.priority === "high" ? 0 : 1;
+      const bRank = b.assignment.priority === "high" ? 0 : 1;
+      return aRank !== bRank ? aRank - bRank : a.index - b.index;
+    })
+    .map(({ assignment }) => assignment);
 }
 
 /** Full routing result: assignments made, and any tasks nobody was eligible/available for. */

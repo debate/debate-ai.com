@@ -67,6 +67,16 @@
  * `routeTasks`'s own skill/capacity rules — an intentional override, not
  * another routing pass.
  *
+ * Every assignment also has a "Flag high priority"/"Unflag" toggle, closing
+ * the "a task-priority indicator" follow-up named under the same bullet — a
+ * flagged assignment carries a "High priority" badge and sorts ahead of its
+ * topic-mates (`state/routedTaskQueues.ts`'s
+ * `setPersistedRoutedTaskPriority`, backed by
+ * `research-task-routing.ts`'s `setAssignmentPriority`/
+ * `sortAssignmentsByPriority`), mirroring `PrepNotesPanel.tsx`'s identical
+ * priority-flag control for Strategy Sync Notes. An unassigned task has no
+ * flag control — there's no assignee yet to attach a priority to.
+ *
  * @module panels/TaskInboxPanel
  */
 
@@ -82,6 +92,7 @@ import {
   filterTaskInboxViewByContributor,
   reassignPersistedRoutedTask,
   routePersistedTopicTasks,
+  setPersistedRoutedTaskPriority,
   type TaskInboxTopic,
 } from "../state/routedTaskQueues"
 import { verifyAndRecordResearchTask } from "../state/researchProgress"
@@ -188,6 +199,11 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
         [key]: error instanceof Error ? error.message : "Could not verify this task.",
       }))
     }
+  }
+
+  const handleTogglePriority = (topicId: string, argBlock: string, currentPriority?: "normal" | "high") => {
+    setPersistedRoutedTaskPriority(topicId, argBlock, currentPriority === "high" ? "normal" : "high")
+    setTopics(buildTaskInboxView())
   }
 
   const handleReassign = (topicId: string, argBlock: string) => {
@@ -389,6 +405,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
                     <div className="flex flex-wrap items-center gap-2 text-sm">
                       <span className="font-medium text-foreground">{assignment.task.argBlock}</span>
                       <Badge variant={LEVEL_VARIANT[assignment.task.level]}>{assignment.task.level}</Badge>
+                      {assignment.priority === "high" && <Badge variant="destructive">High priority</Badge>}
                       <span className="text-muted-foreground">assigned to</span>
                       <span className="font-medium text-foreground">{assignment.contributorId}</span>
                       {assignment.contributorSkillLevel && (
@@ -412,6 +429,15 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
                         onClick={() => handleReassign(topic.topicId, assignment.task.argBlock)}
                       >
                         Reassign
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          handleTogglePriority(topic.topicId, assignment.task.argBlock, assignment.priority)
+                        }
+                      >
+                        {assignment.priority === "high" ? "Unflag" : "Flag high priority"}
                       </Button>
                       <Button
                         size="sm"

@@ -22,6 +22,7 @@ Per topic (a persisted `RoutedTaskQueueRecord`, keyed by `topicId`):
 | Assignee skill | The contributor's current persisted `skillLevel`, if their profile still exists |
 | Mark done | Calls `markRoutedTaskAwaitingVerification(topicId, argBlock, markedDoneAt)` |
 | Reassign | A free-form contributor-id field plus button; calls `reassignPersistedRoutedTask(topicId, argBlock, newContributorId)` |
+| Priority | An optional coach-set `"high"` flag on an assignment, shown as a "High priority" badge; toggled via `setPersistedRoutedTaskPriority(topicId, argBlock, priority)` |
 
 Tasks nobody was eligible or available for (`unassignedTasks`) are listed
 separately per topic, with an **Assign to…** field instead of a complete
@@ -235,6 +236,47 @@ live update"). Vitest-covered in
 key, the `null`-key clear-all case, and unrelated/substring-matching keys
 staying ignored).
 
+## Task priority
+
+Every assignment has a "Flag high priority"/"Unflag" toggle, closing the "a
+task-priority indicator" follow-up named under the "Research Task Routing"
+bullet in TODO.md's Product Feature Ideas list — mirroring
+[`prep-notes.md`](prep-notes.md)'s identical priority-flag control for
+Strategy Sync Notes.
+
+`lib/research-task-routing.ts`'s new `RoutedAssignment.priority` field
+(`"normal" | "high"`, omitted entirely when `"normal"` so a never-flagged
+assignment serializes identically to an explicitly-unflagged one) is set via
+the new pure `setAssignmentPriority(assignment, priority)`.
+`state/routedTaskQueues.ts`'s new `setPersistedRoutedTaskPriority(topicId,
+argBlock, priority)` finds the matching assignment in that topic's persisted
+queue, applies `setAssignmentPriority`, and saves — a no-op that returns
+`undefined` for a topic with no persisted queue, or an `argBlock` that
+doesn't match an *assigned* task (an unassigned task has no assignee to
+attach a priority flag to; assign or reassign it first).
+
+`buildTaskInboxView` now runs each topic's assignments through the new pure
+`sortAssignmentsByPriority` before tagging them — a stable sort that puts
+`"high"`-priority assignments first while preserving the underlying
+most-urgent-first `routeTasks` order within each priority tier — so a
+flagged task surfaces above its topic-mates in `TaskInboxPanel` without
+disturbing routing order otherwise.
+
+```
+panels/TaskInboxPanel.tsx
+  → setPersistedRoutedTaskPriority(topicId, argBlock, "high" | "normal")
+      — state/routedTaskQueues.ts
+      └─ setAssignmentPriority(assignment, priority) — lib/research-task-routing.ts
+  → panel re-reads buildTaskInboxView() to refresh, which now sorts each
+    topic's assignments via sortAssignmentsByPriority before rendering
+```
+
+Vitest-covered: `setAssignmentPriority`/`sortAssignmentsByPriority` in
+`packages/debate-card-search/test/research-task-routing.test.ts`, and
+`setPersistedRoutedTaskPriority` plus `buildTaskInboxView`'s new
+priority-ordering behavior in
+`packages/debate-card-search/test/routedTaskQueues.test.ts`.
+
 ## Known gaps
 
 - The "My tasks" filter is still free-form text, not a login — a real
@@ -263,3 +305,11 @@ staying ignored).
   `activeTaskCount`) only refreshes on that tab's own next mount/reload —
   the same limitation `completePersistedRoutedTask`'s "Mark done" already
   had before this control existed.
+- Same as the Reassign control: the "Flag high priority"/"Unflag" toggle is
+  open to anyone viewing the panel, with no real "coach" role gating it —
+  this repo has no roles/permissions system at all. Unlike Reassign, the
+  priority flag lives entirely inside the routed queue's own record, so a
+  second tab's `routedTaskQueues.storage` event already carries the change
+  through with no separate refresh limitation.
+- An unassigned task can't be pre-flagged before it has an assignee —
+  assign or reassign it first, then flag it.
