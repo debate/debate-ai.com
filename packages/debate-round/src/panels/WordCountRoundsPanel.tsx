@@ -46,7 +46,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
-import { EmptyState } from "debate-ui/src/panels/panel-shell"
+import { EmptyState, MeterBar } from "debate-ui/src/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -370,27 +370,16 @@ export function WordCountRoundsPanel() {
           </p>
         ) : (
           <div className="space-y-2">
-            {filteredTrendPoints.map((point, index) => {
-              const percent = point.wordLimit > 0 ? Math.min(1, point.count / point.wordLimit) * 100 : 0
-              return (
-                <div key={`${point.roundId}-${point.name}-${index}`} className="space-y-1">
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-foreground">
-                    <span className="truncate">
-                      {new Date(point.createdAt).toLocaleDateString()} — Round {point.roundId} ({point.name})
-                    </span>
-                    <span className="whitespace-nowrap font-semibold">
-                      {point.count} / {point.wordLimit}
-                    </span>
-                  </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                    <div
-                      className={`h-full rounded-full ${point.overLimit ? "bg-destructive" : "bg-primary"}`}
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-                </div>
-              )
-            })}
+            {filteredTrendPoints.map((point, index) => (
+              <MeterBar
+                key={`${point.roundId}-${point.name}-${index}`}
+                value={point.count}
+                max={point.wordLimit}
+                tone={point.overLimit ? "critical" : "info"}
+                label={`${new Date(point.createdAt).toLocaleDateString()} — Round ${point.roundId} (${point.name})`}
+                caption={`${point.count} / ${point.wordLimit}`}
+              />
+            ))}
           </div>
         )}
       </div>
