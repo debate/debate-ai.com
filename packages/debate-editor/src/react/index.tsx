@@ -1,22 +1,21 @@
 "use client";
 
 /**
- * debate-editor-cardmirror — public React API.
+ * debate-editor — public React API.
  *
  * Exposes the same names the prior (TipTap/reason-editor) editor exposed,
- * so `debate-editor`'s re-export shim — and every call site that imports
- * through it (Flow's speech-doc panels, the /reason-editor route) — works
- * unchanged:
+ * so every call site (Flow's speech-doc panels, the /reason-editor route)
+ * works unchanged:
  *
  *   import Editor, {
  *     EditorWithToolbar, EditorContent, LexicalEditorWrapper,
- *   } from "debate-editor-cardmirror";
- *   import type { LexicalEditorHandle } from "debate-editor-cardmirror";
+ *   } from "debate-editor";
+ *   import type { LexicalEditorHandle } from "debate-editor";
  *
  * Under the hood every one of these is the same `CardMirrorEditor`,
  * varying only in whether the menu bar + ribbon chrome is shown. The
  * headless engine (schema + .docx/.cmir codecs) is available at
- * `debate-editor-cardmirror/engine`.
+ * `debate-editor/engine`.
  */
 
 import { forwardRef } from "react";

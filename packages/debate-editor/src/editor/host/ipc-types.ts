@@ -4,7 +4,7 @@
  * they survive without a build-time dependency on desktop code.
  *
  * These were originally declared in `electron-host.ts`, which this
- * web-only build (debate-editor-cardmirror, embedded in debate-ai.com)
+ * web-only build (debate-editor, embedded in debate-ai.com)
  * dropped — pulled out here because `bulk-compress-ui.ts` and
  * `pairing/web-mailbox.ts` need the shapes for their own (web) backends.
  */

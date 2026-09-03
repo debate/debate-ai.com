@@ -140,7 +140,7 @@ export function FlowMainContent({
   onMobileMenuClick,
   onFlowGridReady,
 }: FlowMainContentProps) {
-  // CardMirror (the debate-editor-cardmirror engine behind LexicalEditorWrapper)
+  // CardMirror (the debate-editor engine behind LexicalEditorWrapper)
   // is a page-level singleton — only one instance can be the live, editable
   // ProseMirror view at a time. Split mode still shows both panes, but only
   // the active side gets the real editor; the other renders a read-only

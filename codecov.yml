@@ -46,9 +46,15 @@ flags:
   debate-editor:
     paths:
       - packages/debate-editor/src
+  debate-flow-ebb:
+    paths:
+      - packages/debate-flow-ebb/src
   debate-round:
     paths:
       - packages/debate-round/src
+  debate-settings:
+    paths:
+      - packages/debate-settings/src
   debate-speech-writer:
     paths:
       - packages/debate-speech-writer/src

@@ -70,7 +70,6 @@
     "debate-card-search": "workspace:*",
     "debate-data-sync": "workspace:*",
     "debate-editor": "workspace:*",
-    "debate-editor-cardmirror": "workspace:*",
     "debate-flow-ebb": "workspace:*",
     "debate-round": "workspace:*",
     "debate-settings": "workspace:*",

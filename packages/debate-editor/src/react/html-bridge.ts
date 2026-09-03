@@ -38,7 +38,7 @@ export function htmlToDoc(html: string): PMNode {
     doc.check();
     return doc;
   } catch (err) {
-    console.warn('[debate-editor-cardmirror] htmlToDoc: falling back to blank doc', err);
+    console.warn('[debate-editor] htmlToDoc: falling back to blank doc', err);
     return makeBlankDoc();
   }
 }

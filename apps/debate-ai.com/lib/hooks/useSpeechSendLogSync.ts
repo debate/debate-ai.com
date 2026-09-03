@@ -6,7 +6,7 @@
  * `useJudgeDecisions`/`useWordCountRounds`: flows, rounds, word-count
  * rounds, and judge decisions were all already account-synced, but the
  * Speech Documents send log (`speechSendLogStore`, IndexedDB via
- * `debate-editor-cardmirror`) stayed per-browser. Local-first, mirroring
+ * `debate-editor`) stayed per-browser. Local-first, mirroring
  * `useJudgeDecisions`'s convention: the panel keeps reading/writing the
  * local store (which already works fully signed out), and this hook layers
  * a one-time account merge plus ongoing best-effort push/delete sync on
@@ -30,7 +30,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react"
-import { speechSendLogStore, type SpeechSendLogEntry } from "debate-editor-cardmirror/engine"
+import { speechSendLogStore, type SpeechSendLogEntry } from "debate-editor/engine"
 import {
   deleteSavedSpeechSendLogEntryFromAccount,
   listSavedSpeechSendLog,
