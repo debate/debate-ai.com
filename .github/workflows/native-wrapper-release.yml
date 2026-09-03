@@ -1,0 +1,230 @@
+name: Native Wrapper Release
+
+# Builds packages/native-wrapper for every desktop platform (Windows, macOS
+# universal, Linux) plus a best-effort Android .aab, and attaches the
+# installers to a GitHub Release. Triggered by a `native-wrapper-v*.*.*` tag
+# (a distinct prefix from any web-app release tags this repo uses elsewhere)
+# or manually via workflow_dispatch for a test build.
+#
+# Two-stage shape, same reasoning as debate/cardmirror's own
+# .github/workflows/release.yml: `prepare-release` creates one draft for the
+# tag up front so the desktop matrix's parallel jobs all upload into it
+# instead of racing to create their own drafts.
+
+on:
+  push:
+    tags:
+      - "native-wrapper-v*.*.*"
+  workflow_dispatch:
+    inputs:
+      draft:
+        description: "Create a draft GitHub Release (uncheck for a local-only test build with no upload)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: native-wrapper-release-${{ github.ref }}
+
+jobs:
+  prepare-release:
+    name: Create draft release
+    if: startsWith(github.ref, 'refs/tags/native-wrapper-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      release_id: ${{ steps.release.outputs.id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure draft release exists
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#native-wrapper-v}"
+          PRERELEASE_FLAG=""
+          if [[ "$VERSION" == *-* ]]; then
+            PRERELEASE_FLAG="--prerelease"
+          fi
+          if ! gh release view "$TAG" --json id -q .id > /tmp/release_id 2>/dev/null; then
+            gh release create "$TAG" --draft --title "Native Wrapper $VERSION" \
+              --notes "Desktop + mobile installers for Debate AI's native wrapper, version $VERSION." \
+              $PRERELEASE_FLAG
+            gh release view "$TAG" --json id -q .id > /tmp/release_id
+          fi
+          echo "id=$(cat /tmp/release_id)" >> "$GITHUB_OUTPUT"
+
+  build-desktop:
+    name: Build desktop (${{ matrix.os }})
+    needs: [prepare-release]
+    if: always() && (needs.prepare-release.result == 'success' || needs.prepare-release.result == 'skipped')
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            args: "--target universal-apple-darwin"
+          - os: windows-latest
+            args: ""
+          - os: ubuntu-latest
+            args: ""
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Linux webview/build dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.os == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/native-wrapper/src-tauri
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
+
+      - name: Install dependencies
+        run: bun install --ignore-scripts
+
+      # tauri.conf.json and the icon set are already checked in for the
+      # active profile (native-wrapper-ci.yml's verify-configuration job
+      # guarantees they're in sync) — no configure/icons step needed here.
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # macOS signing + notarization — no-ops (ad-hoc-signed build) when
+          # these secrets aren't set, which is fine for a test build but
+          # means the .dmg will show Gatekeeper's "unidentified developer"
+          # warning on first launch. See docs/APP_STORES.md.
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Windows Authenticode signing — same no-op-when-unset behavior;
+          # an unsigned .exe/.msi triggers a SmartScreen warning instead.
+          # Verify these env var names against the Tauri CLI version this
+          # workflow resolves before relying on this for a real release; the
+          # Windows signing story has changed across Tauri versions.
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        with:
+          projectPath: packages/native-wrapper
+          tagName: ${{ github.event_name == 'push' && github.ref_name || '' }}
+          releaseName: ${{ github.event_name == 'push' && format('Native Wrapper {0}', github.ref_name) || '' }}
+          releaseId: ${{ needs.prepare-release.outputs.release_id }}
+          releaseDraft: true
+          args: ${{ matrix.args }}
+          # workflow_dispatch test builds skip release upload entirely.
+          includeUpdaterJson: false
+
+  build-android:
+    name: Build Android (.aab, best-effort)
+    needs: [prepare-release]
+    if: always() && (needs.prepare-release.result == 'success' || needs.prepare-release.result == 'skipped')
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
+        run: sdkmanager --install "ndk;28.0.13004108"
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/native-wrapper/src-tauri
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
+
+      - name: Install dependencies
+        run: bun install --ignore-scripts
+
+      - name: Generate the gen/android project
+        working-directory: packages/native-wrapper
+        env:
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/28.0.13004108
+        run: npx @tauri-apps/cli@2 android init
+
+      - name: Decode release keystore (skips signing if not configured)
+        id: keystore
+        working-directory: packages/native-wrapper
+        run: |
+          if [ -z "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > src-tauri/gen/android/release.keystore
+          cat > src-tauri/gen/android/keystore.properties <<EOF
+          storeFile=release.keystore
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+          EOF
+          echo "configured=true" >> "$GITHUB_OUTPUT"
+
+      - name: Build .aab
+        working-directory: packages/native-wrapper
+        env:
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/28.0.13004108
+        run: npx @tauri-apps/cli@2 android build --aab
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-wrapper-android
+          path: packages/native-wrapper/src-tauri/gen/android/app/build/outputs/bundle/**/*.aab
+          if-no-files-found: warn
+
+      - name: Attach to release
+        if: needs.prepare-release.outputs.release_id != '' && steps.keystore.outputs.configured == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          shopt -s globstar nullglob
+          files=(packages/native-wrapper/src-tauri/gen/android/app/build/outputs/bundle/**/*.aab)
+          if [ ${#files[@]} -gt 0 ]; then
+            gh release upload "${GITHUB_REF_NAME}" "${files[@]}" --clobber
+          fi
+        # Unsigned/debug-signed .aab files aren't installable from Play, so
+        # they're uploaded as a workflow artifact (above) for inspection but
+        # only attached to the GitHub Release once real signing secrets are
+        # configured. See docs/APP_STORES.md for Play Console's Play App
+        # Signing enrollment, which is where ANDROID_KEYSTORE_BASE64 and
+        # friends come from.
+
+  # There is deliberately no iOS job here. Building one needs a macOS runner,
+  # a paid Apple Developer account, a distribution certificate + provisioning
+  # profile imported into the runner's keychain, and (for App Store
+  # submission) resolving the Guideline 4.2 "minimum functionality" review
+  # risk documented in docs/APP_STORES.md. Wire it up by copying the
+  # build-android job's shape onto `runs-on: macos-latest` and
+  # `npx @tauri-apps/cli@2 ios build --export-method app-store-connect` once
+  # those decisions (and secrets) exist — see docs/MOBILE.md.

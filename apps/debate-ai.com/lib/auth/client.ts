@@ -5,6 +5,7 @@ import {
   oneTapClient,
   magicLinkClient,
   anonymousClient,
+  oneTimeTokenClient,
 } from "better-auth/client/plugins";
 import {
   APP_ORIGIN,
@@ -48,6 +49,7 @@ export function createAppAuthClient(
       }),
       magicLinkClient(),
       anonymousClient(),
+      oneTimeTokenClient(),
     ],
   });
 }

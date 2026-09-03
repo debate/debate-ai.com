@@ -1,0 +1,37 @@
+{
+  "name": "native-wrapper",
+  "version": "0.1.0",
+  "description": "Generic Tauri wrapper that packages any website as a native desktop + mobile app, pre-configured to ship Debate AI",
+  "private": true,
+  "type": "module",
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "scripts": {
+    "configure": "node scripts/configure.mjs",
+    "icons": "node scripts/generate-icons.mjs",
+    "predev": "node scripts/configure.mjs",
+    "dev": "tauri dev",
+    "prebuild:desktop": "node scripts/configure.mjs",
+    "build:desktop": "tauri build",
+    "android:init": "tauri android init",
+    "preandroid:dev": "node scripts/configure.mjs",
+    "android:dev": "tauri android dev",
+    "preandroid:build": "node scripts/configure.mjs",
+    "android:build": "tauri android build",
+    "ios:init": "tauri ios init",
+    "preios:dev": "node scripts/configure.mjs",
+    "ios:dev": "tauri ios dev",
+    "preios:build": "node scripts/configure.mjs",
+    "ios:build": "tauri ios build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-deep-link": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-updater": "^2",
+    "@tauri-apps/plugin-process": "^2"
+  }
+}

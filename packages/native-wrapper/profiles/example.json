@@ -1,0 +1,32 @@
+{
+  "_comment": "Copy this file to profiles/<your-app>.json and fill in every field. Run `WRAPPER_PROFILE=<your-app> npm run configure` to regenerate src-tauri/tauri.conf.json from it. JSON has no comments, so field docs live in profiles/README.md.",
+
+  "appName": "Example App",
+  "productName": "Example App",
+  "identifier": "com.example.app",
+  "version": "0.1.0",
+  "url": "https://example.com",
+  "deepLinkScheme": "exampleapp",
+  "iconSource": "./icon-source.png",
+  "copyright": "Example, Inc.",
+  "category": "Productivity",
+  "shortDescription": "One-line description shown in store listings.",
+  "trustedOrigins": ["https://example.com", "https://*.example.com"],
+  "window": {
+    "title": "Example App",
+    "width": 1280,
+    "height": 800,
+    "minWidth": 480,
+    "minHeight": 480,
+    "fullscreen": false,
+    "resizable": true
+  },
+  "android": {
+    "packageName": "com.example.app",
+    "minSdkVersion": 24
+  },
+  "ios": {
+    "bundleId": "com.example.app",
+    "minimumSystemVersion": "14.0"
+  }
+}
