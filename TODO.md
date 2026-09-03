@@ -47,8 +47,9 @@ _No task currently in progress._
   touched-by-build `app-file-list.ts`/`version.ts`/`service-worker.js`
   churn was reverted before committing, unrelated to this change). Updated
   the "📈 Research Progress Tracking" bullet below to reflect that only the
-  personal-goal-setting-UI follow-up remains. **PR:** (to be filled in).
-  **Completed:** 2026-09-03.
+  personal-goal-setting-UI follow-up remains. **PR:**
+  https://github.com/debate/debate-ai.com/pull/512. **Completed:**
+  2026-09-03.
 - **Opponent Team Profiles — printable/exportable scouting report
   (Research Crowdsourcing Organizer Features bullet, "🕵️ Opponent Team
   Profiles" Next item).** Another repeat of the standing prompt ("integrate
