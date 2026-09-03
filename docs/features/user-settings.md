@@ -220,10 +220,27 @@ vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
   round-chrome widgets (a compact popover meter and a click-to-seek
   scrubber) rather than feature-panel content, with layout constraints
   (fixed `h-1.5`/`h-[5px]` heights, `SpeechHeaderBar`'s click handler) that
-  `MeterBar` isn't shaped for. The "bring weaker panel UIs up to the shared
-  `debate-ui` primitive conventions" half of follow-up (4) remains open more
-  broadly — each pass so far has searched for one specific pattern
-  (undiscoverable routes, duplicated empty states, duplicated progress
-  bars), not exhaustively compared every panel against every shared
-  primitive (e.g. `PanelShell`/`PanelSection`/`StatTile`/`Pill`/`PanelRow`
-  adoption is still unaudited).
+  `MeterBar` isn't shaped for. A further slice picked `PanelRow` next: it
+  searched for hand-rolled list rows shaped like `PanelRow` (a bordered row
+  with a title/subtitle block on the left and a trailing badge/button group
+  on the right — before this slice only `SharedFlowSyncPanel` and
+  `FlowEditLogPanel` used any of `PanelShell`/`PanelSection`/`StatTile`/
+  `Pill`/`PanelRow`) and migrated six: `PrepNoteNotificationsPanel`,
+  `AiVersusRoundPanel`, `WordCountRoundsPanel`, `VulnerabilityChartsPanel`,
+  `PrepNotesPanel`, and `DrillSetsPanel` — see the Tracker Status entry
+  above. Four other candidates the same search surfaced were deliberately
+  left alone as not a clean fit for `PanelRow`'s shape:
+  `AccountNotificationsPanel` (title+subtitle wrapped in one optional
+  `<Link>`, which doesn't split across `PanelRow`'s separate `title`/
+  `subtitle` props), `FlowAnnotationsPanel` (a leading row of wrapping
+  chips that `PanelRow`'s `truncate` title styling would clip),
+  `ArgumentTreePanel` (inline `marginLeft` tree indentation with no
+  title/trailing split), and `WordLimitPresetsPanel` (a single inline edit
+  control, not a title/trailing block). The "bring weaker panel UIs up to
+  the shared `debate-ui` primitive conventions" half of follow-up (4)
+  remains open more broadly — each pass so far has searched for one
+  specific pattern (undiscoverable routes, duplicated empty states,
+  duplicated progress bars, duplicated list rows), not exhaustively
+  compared every panel against every shared primitive (e.g.
+  `PanelShell`/`PanelSection`/`StatTile`/`Pill` adoption is still
+  unaudited).

@@ -64,7 +64,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
-import { EmptyState } from "debate-ui/src/panels/panel-shell"
+import { EmptyState, PanelRow } from "debate-ui/src/panels/panel-shell"
 import { Download } from "lucide-react"
 import {
   Select,
@@ -360,32 +360,34 @@ export function AiVersusRoundPanel() {
               const isNext = index === activeStatus.submittedCount
               const canRegenerate = delivered && canRegenerateAiSpeechAt(activeRecord, index)
               return (
-                <div
+                <PanelRow
                   key={slot.name}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-1.5 text-sm"
-                >
-                  <span className="text-foreground">
-                    {slot.name}{" "}
-                    <span className="text-muted-foreground">
-                      ({slot.speaker === "user" ? "You" : "AI"})
-                    </span>
-                  </span>
-                  <div className="flex items-center gap-2">
-                    {canRegenerate && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleRegenerateAiSpeech(index)}
-                        disabled={regeneratingIndex !== null || aiGenerating}
-                      >
-                        {regeneratingIndex === index ? "Regenerating…" : "Regenerate"}
-                      </Button>
-                    )}
-                    <Badge variant={delivered ? "secondary" : "outline"}>
-                      {delivered ? "Delivered" : isNext ? "Next" : "Pending"}
-                    </Badge>
-                  </div>
-                </div>
+                  title={
+                    <>
+                      {slot.name}{" "}
+                      <span className="text-muted-foreground font-normal">
+                        ({slot.speaker === "user" ? "You" : "AI"})
+                      </span>
+                    </>
+                  }
+                  trailing={
+                    <>
+                      {canRegenerate && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRegenerateAiSpeech(index)}
+                          disabled={regeneratingIndex !== null || aiGenerating}
+                        >
+                          {regeneratingIndex === index ? "Regenerating…" : "Regenerate"}
+                        </Button>
+                      )}
+                      <Badge variant={delivered ? "secondary" : "outline"}>
+                        {delivered ? "Delivered" : isNext ? "Next" : "Pending"}
+                      </Badge>
+                    </>
+                  }
+                />
               )
             })}
           </div>

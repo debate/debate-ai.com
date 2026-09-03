@@ -33,7 +33,7 @@ import { ArrowUpRight } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
-import { EmptyState } from "debate-ui/src/panels/panel-shell"
+import { EmptyState, PanelRow } from "debate-ui/src/panels/panel-shell"
 import {
   assignPersistedPrepNote,
   buildPrepNotesPanelView,
@@ -141,10 +141,21 @@ export function PrepNotesPanel() {
             </h2>
             <div className="space-y-2">
               {group.notes.map((note) => (
-                <div key={note.id} className="rounded-md border border-border px-3 py-2 space-y-2">
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-                    <p className="text-foreground">{note.text}</p>
-                    <div className="flex items-center gap-2">
+                <PanelRow
+                  key={note.id}
+                  title={note.text}
+                  subtitle={
+                    <span className="flex flex-wrap items-center gap-2">
+                      <span>by {note.authorId}</span>
+                      {note.assignedToId && (
+                        <Badge variant="outline" className="whitespace-nowrap">
+                          assigned to {note.assignedToId}
+                        </Badge>
+                      )}
+                    </span>
+                  }
+                  trailing={
+                    <>
                       {note.priority === "high" && <Badge variant="destructive">High priority</Badge>}
                       <Link
                         href={buildPrepNoteJumpHref(note)}
@@ -163,16 +174,9 @@ export function PrepNotesPanel() {
                       <Button size="sm" variant="outline" onClick={() => handleCycleStatus(note.id, note.status)}>
                         Mark {STATUS_LABEL[nextPrepNoteStatus(note.status)].toLowerCase()}
                       </Button>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                    <span>by {note.authorId}</span>
-                    {note.assignedToId && (
-                      <Badge variant="outline" className="whitespace-nowrap">
-                        assigned to {note.assignedToId}
-                      </Badge>
-                    )}
-                  </div>
+                    </>
+                  }
+                >
                   <div className="flex items-center gap-2">
                     <Input
                       value={assigneeDrafts[note.id] ?? ""}
@@ -198,7 +202,7 @@ export function PrepNotesPanel() {
                       </Button>
                     )}
                   </div>
-                </div>
+                </PanelRow>
               ))}
             </div>
           </div>

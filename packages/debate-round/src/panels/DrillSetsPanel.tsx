@@ -34,7 +34,7 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
-import { EmptyState } from "debate-ui/src/panels/panel-shell"
+import { EmptyState, PanelRow } from "debate-ui/src/panels/panel-shell"
 import {
   buildAndSaveDrillSet,
   buildDrillSetsPanelView,
@@ -181,14 +181,15 @@ export function DrillSetsPanel() {
               const key = `${set.roundId}:${index}`
               const aiScript = set.aiScripts?.[index]
               return (
-                <div key={index} className="rounded-md border border-border px-3 py-2 text-sm">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-start gap-2">
-                      <Badge variant="outline" className="whitespace-nowrap">
-                        {DRILL_KIND_LABELS[drill.kind]}
-                      </Badge>
-                      <p className="text-foreground">{drill.prompt}</p>
-                    </div>
+                <PanelRow
+                  key={index}
+                  leading={
+                    <Badge variant="outline" className="whitespace-nowrap">
+                      {DRILL_KIND_LABELS[drill.kind]}
+                    </Badge>
+                  }
+                  title={drill.prompt}
+                  trailing={
                     <Button
                       size="sm"
                       variant="outline"
@@ -201,16 +202,17 @@ export function DrillSetsPanel() {
                           ? "Regenerate AI script"
                           : "Get AI script"}
                     </Button>
-                  </div>
+                  }
+                >
                   {scriptErrorsByKey[key] && (
-                    <p className="mt-2 text-sm text-destructive">{scriptErrorsByKey[key]}</p>
+                    <p className="text-sm text-destructive">{scriptErrorsByKey[key]}</p>
                   )}
                   {aiScript && (
-                    <p className="mt-2 whitespace-pre-wrap border-t border-border pt-2 text-sm text-foreground">
+                    <p className="whitespace-pre-wrap border-t border-border pt-2 text-sm text-foreground">
                       {aiScript}
                     </p>
                   )}
-                </div>
+                </PanelRow>
               )
             })}
           </div>

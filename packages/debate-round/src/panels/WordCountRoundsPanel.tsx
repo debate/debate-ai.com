@@ -46,7 +46,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
-import { EmptyState, MeterBar } from "debate-ui/src/panels/panel-shell"
+import { EmptyState, MeterBar, PanelRow } from "debate-ui/src/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -324,18 +324,21 @@ export function WordCountRoundsPanel() {
                 ) : (
                   <div className="space-y-1.5">
                     {statuses.map((entry) => (
-                      <div
+                      <PanelRow
                         key={entry.name}
-                        className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-1.5 text-sm"
-                      >
-                        <span className="text-foreground">
-                          {entry.name} <span className="text-muted-foreground">({entry.speaker})</span>
-                        </span>
-                        <Badge variant={entry.status.overLimit ? "destructive" : "secondary"}>
-                          {entry.status.count} words
-                          {entry.status.overLimit ? ` (${Math.abs(entry.status.remaining)} over)` : ""}
-                        </Badge>
-                      </div>
+                        title={
+                          <>
+                            {entry.name}{" "}
+                            <span className="text-muted-foreground font-normal">({entry.speaker})</span>
+                          </>
+                        }
+                        trailing={
+                          <Badge variant={entry.status.overLimit ? "destructive" : "secondary"}>
+                            {entry.status.count} words
+                            {entry.status.overLimit ? ` (${Math.abs(entry.status.remaining)} over)` : ""}
+                          </Badge>
+                        }
+                      />
                     ))}
                   </div>
                 )}
