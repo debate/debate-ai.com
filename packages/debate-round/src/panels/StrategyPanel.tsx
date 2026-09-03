@@ -51,6 +51,7 @@ import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
   buildStrategyRecommendationFromStores,
   buildStrategyRecommendationPrepNote,
@@ -275,9 +276,7 @@ export function StrategyPanel() {
       {groups === null ? (
         <div className="p-6 text-sm text-muted-foreground">Loading strategy recommendations…</div>
       ) : groups.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No strategy recommendations yet. Build one above.
-        </div>
+        <EmptyState title="No strategy recommendations yet." message="Build one above." />
       ) : (
         <div className="space-y-6">
           {groups.map((group) => (

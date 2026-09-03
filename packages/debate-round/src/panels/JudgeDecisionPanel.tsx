@@ -37,6 +37,7 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import { requestJudgeDecision } from "../round/judge-decision-client"
 import { buildJudgeDecisionInputFromStores } from "../round/judge-decision-store-wiring"
 import { useJudgeDecisions } from "../hooks/useJudgeDecisions"
@@ -170,9 +171,7 @@ export function JudgeDecisionPanel() {
       </div>
 
       {groups.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No AI judge decisions yet. Request one above to see it here.
-        </div>
+        <EmptyState title="No AI judge decisions yet." message="Request one above to see it here." />
       ) : (
         <div className="space-y-6">
           {groups.map((group) => (

@@ -51,6 +51,7 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import { Switch } from "debate-ui/src/primitives/switch"
 import {
   Select,
@@ -260,10 +261,10 @@ export function ArgumentTreePanel() {
       )}
 
       {records.length === 0 && (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No argument outlines yet. An outline fills in once a round's flow is derived into a tree
-          and saved.
-        </div>
+        <EmptyState
+          title="No argument outlines yet."
+          message="An outline fills in once a round's flow is derived into a tree and saved."
+        />
       )}
       {records.map((record) => {
         const filter = filters[record.roundId] ?? {}

@@ -46,6 +46,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -294,9 +295,7 @@ export function WordCountRoundsPanel() {
       </div>
 
       {rounds.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No word-count rounds yet. Save one above to see it here.
-        </div>
+        <EmptyState title="No word-count rounds yet." message="Save one above to see it here." />
       ) : (
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-2">

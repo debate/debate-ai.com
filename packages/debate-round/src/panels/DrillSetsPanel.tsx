@@ -34,6 +34,7 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
   buildAndSaveDrillSet,
   buildDrillSetsPanelView,
@@ -159,9 +160,10 @@ export function DrillSetsPanel() {
       </div>
 
       {drillSets.length === 0 && (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No practice drills yet. Drills fill in once a round's flow generates a drill set.
-        </div>
+        <EmptyState
+          title="No practice drills yet."
+          message="Drills fill in once a round's flow generates a drill set."
+        />
       )}
       {drillSets.map((set) => (
         <div key={set.roundId} className="rounded-lg border border-border p-4">

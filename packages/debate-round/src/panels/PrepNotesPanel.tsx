@@ -33,6 +33,7 @@ import { ArrowUpRight } from "lucide-react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
   assignPersistedPrepNote,
   buildPrepNotesPanelView,
@@ -114,9 +115,10 @@ export function PrepNotesPanel() {
 
   if (totalNotes === 0) {
     return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No prep notes yet. Notes fill in once teammates leave prep notes on flow arguments.
-      </div>
+      <EmptyState
+        title="No prep notes yet."
+        message="Notes fill in once teammates leave prep notes on flow arguments."
+      />
     )
   }
 

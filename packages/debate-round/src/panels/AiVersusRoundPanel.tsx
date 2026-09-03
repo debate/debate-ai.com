@@ -64,6 +64,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Textarea } from "debate-ui/src/primitives/textarea"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import { Download } from "lucide-react"
 import {
   Select,
@@ -461,9 +462,7 @@ export function AiVersusRoundPanel() {
       )}
 
       {rounds.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No AI-versus rounds yet. Start one above to see it here.
-        </div>
+        <EmptyState title="No AI-versus rounds yet." message="Start one above to see it here." />
       ) : (
         <div className="space-y-4">
           {rounds.map((round) => {

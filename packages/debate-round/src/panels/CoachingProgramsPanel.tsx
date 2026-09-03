@@ -45,6 +45,7 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
   buildCoachingProgramsPanelView,
   deleteCoachingProgram,
@@ -197,9 +198,10 @@ export function CoachingProgramsPanel() {
       </div>
 
       {programs.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No coaching programs yet. Create one above to start a coaching space.
-        </div>
+        <EmptyState
+          title="No coaching programs yet."
+          message="Create one above to start a coaching space."
+        />
       ) : (
         <div className="space-y-3">
           {programs.map((program) => (

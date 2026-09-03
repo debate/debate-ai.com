@@ -197,9 +197,19 @@ vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
   to the round workspace and audited the `/tools` catalog for undiscoverable
   routes (finding none); a further slice (also documented in
   `flow-tools-menu.md`'s Known gaps) migrated four panels' hand-rolled
-  "no data yet" placeholders to the shared `EmptyState` primitive. The
-  "bring weaker panel UIs up to the shared `debate-ui` primitive
+  "no data yet" placeholders to the shared `EmptyState` primitive. A later
+  slice migrated 16 more `debate-round` panels (`AiVersusRoundPanel`,
+  `JudgeDecisionPanel`, `PrepNoteNotificationsPanel`,
+  `PracticeRoundSimulatorPanel`, `AccountNotificationsPanel`,
+  `StrategyPanel`, `WordCountRoundsPanel`, `PrepNotesPanel`,
+  `FlowAnnotationsPanel`, `CoachingProgramsPanel`, `DrillSetsPanel`,
+  `VulnerabilityChartsPanel`, `ArgumentTreePanel`,
+  `OpponentTeamProfilesPanel`, `CoachingSessionsPanel`,
+  `FlowSummariesPanel`, and `PreRoundBriefingsPanel`) off the same
+  hand-rolled `EmptyState`-shaped markup — see the Tracker Status entry
+  above. The "bring weaker panel UIs up to the shared `debate-ui` primitive
   conventions" half of follow-up (4) remains open more broadly — each pass
   so far has searched for one specific pattern (undiscoverable routes,
   duplicated empty states), not exhaustively compared every panel against
-  every shared primitive.
+  every shared primitive (e.g. `PanelShell`/`PanelSection`/`StatTile`/
+  `MeterBar`/`Pill`/`PanelRow` adoption is still unaudited).

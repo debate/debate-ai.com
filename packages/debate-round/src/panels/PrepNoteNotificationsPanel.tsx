@@ -19,6 +19,7 @@ import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
+import { EmptyState } from "debate-ui/src/panels/panel-shell"
 import {
   buildNotificationsPanelView,
   markPersistedNotificationRead,
@@ -112,10 +113,10 @@ export function PrepNoteNotificationsPanel() {
       {notifications === null ? (
         <div className="p-6 text-sm text-muted-foreground">Loading notifications…</div>
       ) : notifications.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No notifications for this id yet. You'll see one here whenever a prep note is assigned to
-          you.
-        </div>
+        <EmptyState
+          title="No notifications for this id yet."
+          message="You'll see one here whenever a prep note is assigned to you."
+        />
       ) : (
         <div className="space-y-2">
           {notifications.map((notification) => (
