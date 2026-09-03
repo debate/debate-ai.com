@@ -171,10 +171,13 @@ function VideoRow({
       : undefined
   const year = new Date(date).getFullYear()
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
-  // Without a Title column, Tournament/Aff/Neg are the only cues to what a
-  // round is — when none of those are populated, fall back to an info icon
-  // that surfaces the title on hover.
-  const hasIdentifyingColumns = Boolean(tournament || affTeam || negTeam)
+
+  // Without a Title column, Tournament and the Aff/Neg matchup are what
+  // actually identify a round — Level and Arguments alone don't. When
+  // neither is available (no tournament, or no team on either side), the
+  // row has nothing to scan, so show the video title across the full width
+  // instead of a row of dashes.
+  const roundRowIdentifiable = Boolean(tournament) && Boolean(affTeam || negTeam)
 
   return (
     <>
@@ -191,41 +194,47 @@ function VideoRow({
         )}
       >
         {isRoundMode ? (
-          <>
-            <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground truncate">
-              {tournament || "—"}
+          roundRowIdentifiable ? (
+            <>
+              <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground truncate">
+                {tournament || "—"}
+              </td>
+              <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
+                {roundLevel ? (
+                  <span
+                    className={cn(
+                      "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium border",
+                      getRoundBadgeColor(roundLevel),
+                    )}
+                  >
+                    {roundLevel}
+                  </span>
+                ) : (
+                  <span className="text-xs text-muted-foreground">—</span>
+                )}
+              </td>
+              <td className="px-3 py-2 align-top text-sm truncate">
+                {affTeam || <span className="text-muted-foreground">—</span>}
+              </td>
+              <td className="px-3 py-2 align-top text-sm truncate">
+                {negTeam || <span className="text-muted-foreground">—</span>}
+              </td>
+              <td className="px-3 py-2 align-top hidden lg:table-cell text-xs text-muted-foreground">
+                {arg1AC || arg2NR ? (
+                  <div className="flex flex-col gap-0.5">
+                    {arg1AC && <span className="truncate">1AC: {arg1AC}</span>}
+                    {arg2NR && <span className="truncate">2NR: {arg2NR}</span>}
+                  </div>
+                ) : (
+                  "—"
+                )}
+              </td>
+            </>
+          ) : (
+            <td colSpan={5} className="px-3 py-2 align-top text-sm text-foreground truncate">
+              {title}
             </td>
-            <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
-              {roundLevel ? (
-                <span
-                  className={cn(
-                    "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium border",
-                    getRoundBadgeColor(roundLevel),
-                  )}
-                >
-                  {roundLevel}
-                </span>
-              ) : (
-                <span className="text-xs text-muted-foreground">—</span>
-              )}
-            </td>
-            <td className="px-3 py-2 align-top text-sm truncate">
-              {affTeam || <span className="text-muted-foreground">—</span>}
-            </td>
-            <td className="px-3 py-2 align-top text-sm truncate">
-              {negTeam || <span className="text-muted-foreground">—</span>}
-            </td>
-            <td className="px-3 py-2 align-top hidden lg:table-cell text-xs text-muted-foreground">
-              {arg1AC || arg2NR ? (
-                <div className="flex flex-col gap-0.5">
-                  {arg1AC && <span className="truncate">1AC: {arg1AC}</span>}
-                  {arg2NR && <span className="truncate">2NR: {arg2NR}</span>}
-                </div>
-              ) : (
-                "—"
-              )}
-            </td>
-          </>
+          )
         ) : (
           <>
             <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
@@ -266,7 +275,7 @@ function VideoRow({
               </Tooltip>
             )}
 
-            {!hasIdentifyingColumns && (
+            {!isRoundMode && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button

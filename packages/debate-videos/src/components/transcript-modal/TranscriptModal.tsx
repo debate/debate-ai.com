@@ -8,8 +8,7 @@
 
 "use client"
 
-import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import grab from "grab-url"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Captions, Loader2, AlertCircle } from "lucide-react"
 import {
   Dialog,
@@ -19,123 +18,26 @@ import {
 } from "../../ui/primitives/dialog"
 import { ScrollArea } from "../../ui/primitives/scroll-area"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
-import { cn } from "../../ui/lib/utils"
-
-interface TranscriptSnippet {
-  text: string
-  start: number
-  duration: number
-}
+import { useTranscript } from "./useTranscript"
+import { TranscriptLine } from "./TranscriptLine"
 
 interface TranscriptModalProps {
   videoId: string
   title: string
 }
 
-function formatTime(seconds: number): string {
-  const total = Math.max(0, Math.floor(seconds))
-  const h = Math.floor(total / 3600)
-  const m = Math.floor((total % 3600) / 60)
-  const s = total % 60
-  const mm = h > 0 ? m.toString().padStart(2, "0") : m.toString()
-  const ss = s.toString().padStart(2, "0")
-  return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`
-}
-
-const TranscriptLine = forwardRef<
-  HTMLButtonElement,
-  {
-    snippet: TranscriptSnippet
-    isActive: boolean
-    currentTime: number
-    onSeek: () => void
-  }
->(function TranscriptLine({ snippet, isActive, currentTime, onSeek }, ref) {
-  const words = useMemo(() => snippet.text.split(/\s+/).filter(Boolean), [snippet.text])
-
-  // Words don't carry their own timestamps — approximate a karaoke-style
-  // sweep by spreading the snippet's duration evenly across its words.
-  const activeWordIndex =
-    isActive && snippet.duration > 0
-      ? Math.min(
-          words.length - 1,
-          Math.max(0, Math.floor(((currentTime - snippet.start) / snippet.duration) * words.length)),
-        )
-      : -1
-
-  return (
-    <button
-      ref={ref}
-      onClick={(e) => {
-        e.stopPropagation()
-        onSeek()
-      }}
-      className={cn(
-        "w-full text-left rounded px-2 py-1.5 text-sm transition-colors flex gap-2",
-        isActive ? "bg-primary/10" : "hover:bg-accent/60",
-      )}
-    >
-      <span className="shrink-0 text-xs tabular-nums text-muted-foreground pt-0.5">
-        {formatTime(snippet.start)}
-      </span>
-      <span className="text-foreground">
-        {words.map((word, i) => (
-          <span
-            key={i}
-            className={cn(i === activeWordIndex && "bg-primary/30 rounded px-0.5 font-medium text-primary")}
-          >
-            {word}{" "}
-          </span>
-        ))}
-      </span>
-    </button>
-  )
-})
-
 export function TranscriptModal({ videoId, title }: TranscriptModalProps) {
   const [open, setOpen] = useState(false)
-  const [snippets, setSnippets] = useState<TranscriptSnippet[] | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState(0)
+  const { snippets, loading, error } = useTranscript(videoId, open)
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const lineRefs = useRef<Array<HTMLButtonElement | null>>([])
 
-  // Fetch the transcript whenever the modal is opened.
+  // Reset playback tracking whenever the modal is (re)opened.
   useEffect(() => {
-    if (!open) return
-    let cancelled = false
-    setLoading(true)
-    setError(null)
-    setSnippets(null)
-    setCurrentTime(0)
-
-    grab<{ videoId: string; snippets: TranscriptSnippet[]; error?: string }, { videoId: string }>(
-      "transcript",
-      { videoId },
-    )
-      .then((data) => {
-        if (cancelled) return
-        // grab resolves with an `error` field rather than throwing on a
-        // non-2xx response, so a failure has to be checked for here.
-        if (!data || data.error) {
-          setError(data?.error || "Failed to load transcript")
-          return
-        }
-        setSnippets(data.snippets ?? [])
-      })
-      .catch((err: unknown) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : "Failed to load transcript")
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [open, videoId])
+    if (open) setCurrentTime(0)
+  }, [open])
 
   // Listen for the YouTube embed's periodic playback-time broadcasts.
   useEffect(() => {
