@@ -6,6 +6,51 @@
 _No task currently in progress._
 
 ### Completed
+- **Opponent Team Profiles — bulk CSV import for scouted rounds**
+  (the "🕵️ Opponent Team Profiles" bullet's own next-named follow-up under
+  Research Crowdsourcing Organizer Features below). As with every recent
+  run, the standing prompt ("integrate all the tools into the UI... create
+  user settings... link user db SQL... save flows docs and debates in SQL
+  and link to users... add tools where needed in the UI... develop better
+  tool UI") is already fully built (account-synced `/settings`, D1 tables +
+  `/api/*` routes linking flows/docs/rounds/materials to signed-in users,
+  every tool reachable from the nav), and there were no open PRs to
+  resume — so this run again picked a genuine next-step instead, one
+  directly named in TODO.md's own text. Until now, `/opponents`'s "Log a
+  scouted round" form only ever recorded one `OpponentRoundRecord` at a
+  time, so a coach with a spreadsheet of scouted rounds already on hand had
+  no faster path in — this was explicitly named as the bullet's own open
+  follow-up (independent of that bullet's other, still-blocked-on-Tabroom
+  follow-up, confirmed genuinely separate). A new
+  `debate-data-sync/src/rankings/opponent-round-csv-import.ts` adds a pure,
+  framework-free `parseOpponentRoundRecordsCsv` — a small RFC4180-ish CSV
+  reader (quoted fields, embedded commas, escaped `""` quotes) reading a
+  header row in any column order (`teamId`/`tournamentName`/`date`/
+  `division`/`side`/`won` required, `argumentTags` semicolon-separated/
+  `caseName`/`opponentTeamId` optional), mirroring
+  `debate-card-search`'s `parseBulkCardSubmissions` convention of skipping
+  and reporting a malformed row rather than failing the whole batch.
+  `state/opponentRoundRecords.ts`'s new `bulkImportOpponentRoundRecords`
+  composes that parser with the existing per-round persistence, appending
+  every well-formed row in one batch and re-aggregating each affected
+  team's profile once for the whole import (not once per row).
+  `OpponentTeamProfilesPanel.tsx` gained a "Bulk import (CSV)" section
+  (a textarea + "Import rounds" button, mirroring `CardScoringPanel`'s
+  "Bulk import" section) below the manual form, reporting an
+  imported/skipped-row count and the first skipped row's reason. See
+  `docs/features/opponent-team-profiles.md`'s new "Bulk CSV import"
+  section. Vitest-covered in the new
+  `packages/debate-data-sync/test/opponent-round-csv-import.test.ts`
+  (parser edge cases: quoted/escaped fields, any column order, truthy/falsy
+  spellings, missing required fields, unrecognized side/won values, a
+  missing-column header, blank input) and new tests appended to
+  `opponentRoundRecords.test.ts` covering `bulkImportOpponentRoundRecords`'s
+  persistence/aggregation. Full monorepo `bun run typecheck` and the full
+  Vitest suite (`bun x vitest run`, 4077 tests) both pass, and
+  `apps/debate-ai.com`'s production build (`vinext build`) completes
+  cleanly including the `/opponents` route. Remaining follow-ups for this
+  bullet (a side-by-side us-vs-opponent comparison view; a
+  printable/exportable scouting report) are left for a future run.
 - **AI Coach Mode — coaching-session history timeline per round**
   (the "🎙️ AI Coach Mode" bullet's own next-named follow-up under Research
   Crowdsourcing Organizer Features below). As with every recent run, the
@@ -14212,7 +14257,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.
 * 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.
-* 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below), so: a bulk CSV import for scouted rounds; a side-by-side us-vs-opponent comparison view; a printable/exportable scouting report.
+* 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. Next: a side-by-side us-vs-opponent comparison view; a printable/exportable scouting report.
 * ⚖️ **Judge Profiles** (`/judges`) — the auto-tagged-paradigm confidence-indicator follow-up is done: `mostCommonParadigmConfidence` (the tagged paradigm's share of a judge's paradigm-tagged rounds) shows as a "N% confidence" badge on the roster, and folds into the `buildJudgeTendencySummary`/`buildJudgeAdaptationNotes` lines it's already quoted in — see the Completed entry above and `docs/features/judge-profiles.md`'s "What it shows" section. The remaining two follow-ups stay behind the same Tabroom blocker as Opponent Team Profiles (see below): a bulk CSV import for ballot history; a multi-judge comparison view for panel rounds.
 * 🤖 **AI Practice Opponent** (`/practice-opponent`) — share a custom-authored persona across a team instead of per-user only; a difficulty slider layered on top of persona choice; post-round feedback tips specific to the persona faced.
 * 🎙️ **AI Coach Mode** (`/coaching`) — the exportable-coaching-notes-document follow-up is done: each session card has a "Download" action that saves its template prompts plus its AI feedback (if generated) as a plain-text file, headed with the round id and side (`state/coachingSessions.ts#buildCoachingNotesText`/`coachingNotesFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Download" mention. The coaching-session-history-timeline-per-round follow-up is also now done: a "History" toggle on each session card lists every prior version of that round+side's session, newest first, each restorable (`state/coachingSessionHistory.ts#appendCoachingSessionVersion`/`listVersionsForCoachingSession`, wired into `state/coachingSessions.ts#saveCoachingSession`, which now snapshots the record it overwrites before replacing it) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "History" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a side-by-side comparison across two rounds) if one becomes worth doing.

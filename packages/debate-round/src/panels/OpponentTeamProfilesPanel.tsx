@@ -32,6 +32,17 @@
  * forward again via `redoLastOpponentRoundRecordEdit` — mirroring
  * `debate-speech-writer`'s `JudgeProfilesPanel` undo/redo actions exactly.
  *
+ * A "Bulk import (CSV)" section closes the "a bulk CSV import for scouted
+ * rounds" follow-up named under this same bullet: a textarea accepts a CSV
+ * of rounds (header row plus `teamId`/`tournamentName`/`date`/`division`/
+ * `side`/`won` required columns, `argumentTags`/`caseName`/`opponentTeamId`
+ * optional), parsed and persisted in one pass via
+ * `debate-data-sync`'s `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`
+ * (itself a thin composition of `rankings/opponent-round-csv-import.ts`'s
+ * pure `parseOpponentRoundRecordsCsv`), reporting an imported/skipped-row
+ * count rather than failing the whole batch on one malformed row —
+ * mirrors `debate-card-search`'s `CardScoringPanel` "Bulk import" section.
+ *
  * @module panels/OpponentTeamProfilesPanel
  */
 
@@ -50,6 +61,7 @@ import {
   SelectValue,
 } from "debate-ui/src/primitives/select"
 import { Switch } from "debate-ui/src/primitives/switch"
+import { Textarea } from "debate-ui/src/primitives/textarea"
 import {
   Table,
   TableBody,
@@ -60,6 +72,7 @@ import {
 } from "debate-ui/src/primitives/table"
 import { buildOpponentTeamProfilesRoster } from "debate-data-sync/src/state/opponentTeamProfiles"
 import {
+  bulkImportOpponentRoundRecords,
   deleteOpponentRoundRecord,
   findNearestOpponentTeamId,
   hasOpponentRoundRecordEditHistory,
@@ -72,6 +85,7 @@ import {
   updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
 } from "debate-data-sync/src/state/opponentRoundRecords"
+import { OPPONENT_ROUND_CSV_TEMPLATE } from "debate-data-sync/src/rankings/opponent-round-csv-import"
 import type {
   DebateSide,
   OpponentTeamProfile,
@@ -150,6 +164,8 @@ export function OpponentTeamProfilesPanel() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [teamFilter, setTeamFilter] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [bulkCsv, setBulkCsv] = useState("")
+  const [bulkStatus, setBulkStatus] = useState<string | null>(null)
 
   useEffect(() => {
     setRoster(buildOpponentTeamProfilesRoster())
@@ -232,6 +248,22 @@ export function OpponentTeamProfilesPanel() {
       setEditingId(null)
       setDraft(EMPTY_DRAFT)
     }
+    refresh()
+  }
+
+  const handleBulkImport = () => {
+    if (!bulkCsv.trim()) {
+      setBulkStatus("Paste a CSV of scouted rounds first.")
+      return
+    }
+    const { importedCount, skippedCount, errors } = bulkImportOpponentRoundRecords(bulkCsv)
+    const summary =
+      importedCount === 0
+        ? `No rounds imported.${errors.length > 0 ? ` ${errors[0]}` : ""}`
+        : `Imported ${importedCount} round${importedCount === 1 ? "" : "s"}.` +
+          (skippedCount > 0 ? ` Skipped ${skippedCount} row${skippedCount === 1 ? "" : "s"}: ${errors[0]}` : "")
+    setBulkStatus(summary)
+    if (importedCount > 0) setBulkCsv("")
     refresh()
   }
 
@@ -359,6 +391,30 @@ export function OpponentTeamProfilesPanel() {
             </Button>
           )}
         </div>
+      </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div>
+          <h2 className="text-sm font-medium text-foreground">Bulk import (CSV)</h2>
+          <p className="text-xs text-muted-foreground">
+            Paste a CSV of scouted rounds — a header row naming the columns (any order), then one
+            row per round. Required columns: <code>teamId</code>, <code>tournamentName</code>,{" "}
+            <code>date</code>, <code>division</code>, <code>side</code> (aff/neg), and{" "}
+            <code>won</code> (true/false). Optional: <code>argumentTags</code>{" "}
+            (semicolon-separated), <code>caseName</code>, <code>opponentTeamId</code>. A row that
+            fails to parse is skipped and reported rather than blocking the rest of the import.
+          </p>
+        </div>
+        <Textarea
+          value={bulkCsv}
+          onChange={(e) => setBulkCsv(e.target.value)}
+          placeholder={OPPONENT_ROUND_CSV_TEMPLATE}
+          rows={6}
+        />
+        {bulkStatus && <p className="text-sm text-muted-foreground">{bulkStatus}</p>}
+        <Button variant="outline" onClick={handleBulkImport}>
+          Import rounds
+        </Button>
       </div>
 
       {roster.length === 0 ? (

@@ -82,6 +82,35 @@ Each row has up to four actions:
   once a new edit branches off from it), and deleting the round discards it
   too.
 
+## Bulk CSV import
+
+The **Bulk import (CSV)** section below the "Log a scouted round" form
+imports many rounds at once instead of typing them in one at a time. Paste a
+CSV with a header row naming the columns — any order, matched
+case-insensitively — then one row per round:
+
+| Column | Required | Notes |
+| --- | --- | --- |
+| `teamId` | Yes | |
+| `tournamentName` | Yes | |
+| `date` | Yes | |
+| `division` | Yes | |
+| `side` | Yes | `aff` or `neg` (case-insensitive) |
+| `won` | Yes | `true`/`false`, `yes`/`no`, `1`/`0`, or `win`/`loss` (case-insensitive) |
+| `argumentTags` | No | Semicolon-separated (e.g. `kritik;topicality`) — CSV's own comma is the column delimiter, so a comma can't also separate tags within one cell |
+| `caseName` | No | |
+| `opponentTeamId` | No | |
+
+Quoted fields (`"Westlake, AB"`) may contain commas and escaped quotes
+(`""`), but not a literal newline. A row missing a required field, or with an
+unrecognized `side`/`won` value, is skipped and reported rather than
+aborting the whole import; the import summary names the imported and skipped
+counts and the first skipped row's reason. Every well-formed row is appended
+to the same round history the manual form writes to, and each affected
+team's profile is re-aggregated once the whole batch is in (not once per
+row) — a bulk import behaves exactly like logging each round by hand, just
+faster.
+
 ## Data flow
 
 ```
@@ -117,14 +146,25 @@ state/opponentRoundRecords.ts (localStorage: opponentRoundRecords, in debate-dat
   → deleteOpponentRoundRecord(id)                   — removes one round and its undo/redo
                                                        history, then re-aggregates (deleting the
                                                        profile if none remain)
+  → bulkImportOpponentRoundRecords(rawCsv)          — parses a pasted CSV via
+                                                       rankings/opponent-round-csv-import.ts's
+                                                       parseOpponentRoundRecordsCsv, appends every
+                                                       well-formed row, then re-aggregates each
+                                                       affected team once for the whole batch
   → rebuildOpponentTeamProfileFromRecords(teamId)   — re-aggregation alone
+
+rankings/opponent-round-csv-import.ts (pure, no storage, in debate-data-sync)
+  → parseOpponentRoundRecordsCsv(rawCsv)            — header-driven CSV parser producing
+                                                       OpponentRoundRecords, skipping and
+                                                       reporting malformed rows
 
 state/opponentTeamProfiles.ts (localStorage: opponentTeamProfiles, in debate-data-sync)
   → buildOpponentTeamProfilesRoster()              — lists every persisted OpponentTeamProfile,
                                                        ordered by rounds recorded descending
                                                        (ties broken alphabetically)
   → panels/OpponentTeamProfilesPanel.tsx            — renders the "Log a scouted round" form,
-                                                       the scouting roster table, and the
+                                                       the "Bulk import (CSV)" section, the
+                                                       scouting roster table, and the
                                                        logged-rounds list (in debate-round)
   → apps/debate-ai.com/app/opponents/page.tsx       — mounts the panel as a route
 ```
@@ -156,7 +196,12 @@ helper (`buildOpponentTeamProfilesRoster`) to `state/opponentTeamProfiles.ts`
 rather than introducing new scouting logic. Vitest-covered in
 `packages/debate-data-sync/test/opponentTeamProfiles.test.ts` and
 `packages/debate-data-sync/test/opponentRoundRecords.test.ts`, which also
-Vitest-covers the undo/redo edit history described above.
+Vitest-covers the undo/redo edit history described above. The bulk CSV
+import closes follow-up (c), "a bulk CSV import for scouted rounds," from
+the same bullet — its pure parser is Vitest-covered in
+`packages/debate-data-sync/test/opponent-round-csv-import.test.ts`, and the
+persistence composition (`bulkImportOpponentRoundRecords`) in
+`opponentRoundRecords.test.ts` alongside the rest of that store.
 
 The "Filter by team ID" input on the logged-rounds list now backs onto a
 `<datalist>` of `listOpponentTeamIds()` — every distinct team id with at
@@ -173,9 +218,11 @@ mean `<id>`?" prompt that refills the filter. Both are Vitest-covered in
 
 - No real round-history data source yet (follow-up (a) — no Tabroom/tab-service
   pairing or ballot sync produces `OpponentRoundRecord`s in this repo today);
-  every round is entered by hand through this panel's form, or supplied by a
-  caller of `recordOpponentRound`/`saveOpponentTeamProfile` directly. This is
-  the same gap the [Judge Profiles](judge-profiles.md) panel has.
+  every round is entered by hand through this panel's form (one at a time or
+  via the **Bulk import (CSV)** section), or supplied by a caller of
+  `recordOpponentRound`/`bulkImportOpponentRoundRecords`/`saveOpponentTeamProfile`
+  directly. This is the same gap the [Judge Profiles](judge-profiles.md)
+  panel has.
 - ~~Editing a round is all-or-nothing per round: there is no history of what
   a round looked like before an edit, so a correction can't be undone.~~
   Closed: **Undo last edit** / **Redo** actions now step a round back to
