@@ -6,6 +6,83 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Drill Generator — tying completion tracking into the Progress
+  Unlocks tier system (Research Crowdsourcing Organizer Features bullet,
+  "📚 AI Drill Generator" Next item).** Another repeat of the standing
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL... with ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice picked the next named, unblocked follow-up
+  instead: the "📚 AI Drill Generator" bullet's own explicitly-named gap,
+  "tying completion into the Progress Unlocks tier system (awarding
+  tiers/badges for practiced drills — the tracking itself is done, but
+  nothing yet feeds it into Progress Unlocks)." Grepped both sides first:
+  `state/drillSets.ts`'s own fileoverview already flagged this exact gap
+  ("This slice tracks completion locally only; tying completion into the
+  separate `debate-card-search` Progress Unlocks tier system stays a named
+  open follow-up"), and `docs/features/drill-sets.md`'s "Known gaps"
+  section said the same, confirming it was genuinely open and unblocked.
+  `packages/debate-card-search`'s `lib/progress-unlocks.ts` (a different
+  package than `debate-round`, where drill sets live — but `debate-round`
+  already depends on `debate-card-search` as a workspace dependency, the
+  same cross-package pattern several existing `debate-round` files already
+  use, e.g. `state/persistedCoachingProgramBoard.ts`) already resolves a
+  contributor's tier via *either* their scored contribution volume/quality
+  *or* a completed-task count alone
+  (`UnlockTierRequirement.minCompletedTaskCount`) — the same
+  either-signal-qualifies OR-path `lib/unlock-streak-status.ts` already
+  uses to fold Research Progress Tracking's topic-checklist completions in.
+  Rather than adding a fourth parallel drill-specific threshold field to
+  `UnlockTierRequirement` (which every existing `debate-card-search` caller
+  of that type would then need to thread through), the new
+  `packages/debate-round/src/state/drillProgressUnlocks.ts` reuses that
+  same `completedTaskCount` path directly: `getTotalCompletedDrillCount`
+  sums `getDrillSetCompletionStats` across every persisted `DrillSetRecord`
+  into one total practiced-drill count, `buildDrillPracticeContributorStats`
+  wraps it in a synthetic, otherwise-all-zero `ContributorStats`, and
+  `buildDrillPracticeUnlockStatus`/`buildDrillPracticeUnlockStatusFromStore`
+  feed that into `debate-card-search`'s own `buildContributorUnlockStatus`
+  unmodified — so a practicing debater earns the exact same tier badges
+  ("Rising Researcher"/"Seasoned Contributor"/"Master Researcher") at the
+  exact same thresholds as the real Contribution Leaderboard-backed
+  roster, without duplicating or drifting from that logic. This status is
+  deliberately local/drill-set-scoped rather than posted into the real,
+  cross-tool `state/contributions.ts`-backed roster — the module's own
+  fileoverview documents why (this panel doesn't know a real signed-in
+  contributor id the way `lib/session-identity.ts` supplies one elsewhere).
+  `panels/DrillSetsPanel.tsx` gets a new "Practice tier" card above the
+  round list — computed straight from the panel's own already-loaded
+  `drillSets` state (no extra store read) — showing the current tier badge
+  (reusing `ProgressUnlocksPanel`'s own tier→badge-variant color mapping so
+  a tier reads the same way in both panels), every badge earned so far, and
+  a `MeterBar` toward the next tier with a "N more practiced drills to
+  reach \<tier\>" caption. See `docs/features/drill-sets.md`'s new
+  "Progress Unlocks tier" section (and its now-closed "Known gaps"
+  section). Vitest-covered: a new
+  `packages/debate-round/test/drillProgressUnlocks.test.ts` (15 tests —
+  `getTotalCompletedDrillCount`'s empty/zero/summed-across-records/
+  stale-index cases, `buildDrillPracticeContributorStats`'s shape and
+  custom-contributorId support, `buildDrillPracticeUnlockStatus`'s
+  novice/apprentice/veteran/expert tier and badge boundaries at the default
+  thresholds, next-tier progress ratios, a caller-supplied requirement
+  table, and `buildDrillPracticeUnlockStatusFromStore`'s aggregation across
+  multiple persisted rounds via the real `state/drillSets.ts` store).
+  Verification: `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-card-search` (10 packages typecheck clean, including both
+  touched ones plus every workspace dependency in between); `bun run test`
+  (229 files, 4141 tests passed — up from 4126 before this slice, i.e. the
+  new 15 tests all landed and the rest of the suite stayed green); `bun run
+  build:web` (production build succeeded; the touched-by-build
+  `app-file-list.ts`/`version.ts`/`service-worker.js` churn was reverted
+  before committing, unrelated to this change). PR:
+  https://github.com/debate/debate-ai.com/pull/PLACEHOLDER (to be filled in
+  after opening).
+
 - **Revision Incentives — before/after revision diff viewer (Research
   Crowdsourcing Organizer Features bullet, "🔁 Revision Incentives" Next
   item).** Another repeat of the standing prompt ("integrate all the tools
@@ -14946,7 +15023,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. Next: threaded replies on a note instead of flat status; a digest notification instead of one per assignment.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
-* 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. Next: tying completion into the Progress Unlocks tier system (awarding tiers/badges for practiced drills — the tracking itself is done, but nothing yet feeds it into Progress Unlocks).
+* 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. sharing this status across devices for a signed-in user, or feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.
 * 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. Next: a side-by-side case-option comparison table.
 
 ## Confirmed blocker: Tabroom results/pairings/ballot data

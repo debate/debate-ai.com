@@ -35,9 +35,18 @@
  * (`state/drillSets.ts`'s `toggleDrillCompletion`), and each round card
  * shows a `MeterBar` summarizing how many of its drills are marked
  * practiced (`getDrillSetCompletionStats`) — the "completion tracking"
- * follow-up named under the "📚 AI Drill Generator" bullet. This tracks
- * completion locally only; tying it into the separate Progress Unlocks
- * tier system stays a named open follow-up.
+ * follow-up named under the "📚 AI Drill Generator" bullet.
+ *
+ * A "Practice tier" card above the round list now closes the other half of
+ * that same follow-up, "tying completion into the Progress Unlocks tier
+ * system (awarding tiers/badges for practiced drills)": it shows the tier
+ * and badges `state/drillProgressUnlocks.ts`'s
+ * `buildDrillPracticeUnlockStatus` derives from the total practiced-drill
+ * count across every persisted round (reusing `debate-card-search`'s
+ * `lib/progress-unlocks.ts` tier thresholds and badge names directly), plus
+ * a `MeterBar` toward the next tier. This is a local, drill-set-scoped
+ * status — see `state/drillProgressUnlocks.ts`'s fileoverview for why it
+ * doesn't post into the real, cross-tool Contribution Leaderboard roster.
  *
  * Each drill also has a "Review reminder" date field
  * (`state/drillSets.ts`'s `scheduleDrillReview`) — the "drill
@@ -77,6 +86,7 @@ import {
   toggleDrillCompletion,
   type DrillSetRecord,
 } from "../state/drillSets"
+import { buildDrillPracticeUnlockStatus, getTotalCompletedDrillCount } from "../state/drillProgressUnlocks"
 import { filterDrillsByDifficulty, type DrillDifficulty, type DrillKind } from "../flow/drill-generator"
 import { requestDrillScript } from "../round/drill-script-client"
 import { useFlowStore } from "../state/store"
@@ -103,6 +113,14 @@ const DIFFICULTY_BADGE_VARIANTS: Record<DrillDifficulty, "default" | "secondary"
   easy: "secondary",
   medium: "default",
   hard: "destructive",
+}
+
+/** Mirrors `ProgressUnlocksPanel`'s own tier→badge-variant mapping, so a tier reads the same way in both panels. */
+const TIER_BADGE_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
+  novice: "outline",
+  apprentice: "secondary",
+  veteran: "secondary",
+  expert: "default",
 }
 
 /** Today's local calendar day (`YYYY-MM-DD`), for comparing against a drill's `scheduledReviewAt`. */
@@ -195,6 +213,9 @@ export function DrillSetsPanel() {
     return <div className="p-6 text-sm text-muted-foreground">Loading drills…</div>
   }
 
+  const totalCompletedDrills = getTotalCompletedDrillCount(drillSets)
+  const unlockStatus = buildDrillPracticeUnlockStatus(totalCompletedDrills)
+
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div>
@@ -237,6 +258,44 @@ export function DrillSetsPanel() {
           title="No practice drills yet."
           message="Drills fill in once a round's flow generates a drill set."
         />
+      )}
+      {drillSets.length > 0 && (
+        <div className="rounded-lg border border-border p-4">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <h2 className="text-sm font-semibold text-foreground">Practice tier</h2>
+            <Badge variant={TIER_BADGE_VARIANT[unlockStatus.tier] ?? "outline"} className="capitalize">
+              {unlockStatus.tier}
+            </Badge>
+          </div>
+          <p className="mb-2 text-xs text-muted-foreground">
+            {totalCompletedDrills} drill{totalCompletedDrills === 1 ? "" : "s"} practiced across every round —
+            shares the same Progress Unlocks tiers and badges as the rest of the site.
+          </p>
+          {unlockStatus.badges.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-1">
+              {unlockStatus.badges.map((badge) => (
+                <Badge key={badge} variant="outline" className="whitespace-nowrap">
+                  {badge}
+                </Badge>
+              ))}
+            </div>
+          )}
+          {unlockStatus.nextTier ? (
+            <>
+              <MeterBar
+                value={Math.round(unlockStatus.nextTier.progressRatio * 100)}
+                max={100}
+                caption={`${Math.round(unlockStatus.nextTier.progressRatio * 100)}% to ${unlockStatus.nextTier.tier}`}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                {unlockStatus.nextTier.completedTasksNeeded} more practiced drill
+                {unlockStatus.nextTier.completedTasksNeeded === 1 ? "" : "s"} to reach {unlockStatus.nextTier.tier}.
+              </p>
+            </>
+          ) : (
+            <p className="text-xs text-muted-foreground">Top tier reached.</p>
+          )}
+        </div>
       )}
       {drillSets.length > 0 && (
         <div className="flex items-center gap-2">

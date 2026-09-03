@@ -70,12 +70,34 @@ Each drill has a "Mark practiced"/"✓ Practiced" toggle button
 card shows a `MeterBar` progress meter — "N of M" drills marked practiced,
 turning `positive` once every drill in the round is marked — driven by
 `getDrillSetCompletionStats`. This closes the "completion tracking" half of
-the two follow-ups named under the "📚 AI Drill Generator" bullet, but only
-locally: it does not yet feed the separate `debate-card-search` Progress
-Unlocks tier system (the "tied into Progress Unlocks" half of that same
-follow-up) — that stays an open follow-up, see Known gaps. "Drill
+the two follow-ups named under the "📚 AI Drill Generator" bullet. "Drill
 scheduling/reminders" is closed separately — see "Scheduling and reminders"
 above.
+
+## Progress Unlocks tier
+
+A "Practice tier" card above the round list closes the other half of that
+same follow-up: "tying completion into the Progress Unlocks tier system
+(awarding tiers/badges for practiced drills)". `state/drillProgressUnlocks.ts`
+sums `getDrillSetCompletionStats` across every persisted `DrillSetRecord`
+into one total practiced-drill count, then feeds it straight into
+`debate-card-search`'s `lib/progress-unlocks.ts#buildContributorUnlockStatus`
+as a synthetic, otherwise-all-zero `ContributorStats` whose only non-zero
+field is `completedTaskCount` — reusing that module's existing
+"either-signal-qualifies" OR-path (a contributor reaches a tier via scored
+contribution volume/quality **or** a completed-task count alone) rather than
+adding a parallel drill-specific threshold table. The card shows the tier
+badge, every tier badge earned so far (same names as the real Contribution
+Leaderboard-backed roster: "Rising Researcher"/"Seasoned Contributor"/"Master
+Researcher"), and a `MeterBar` toward the next tier with a "N more practiced
+drills to reach \<tier\>" caption.
+
+This status is deliberately local and drill-set-scoped, not a real
+Contribution Leaderboard/Progress Unlocks roster row: it doesn't require (or
+know) a real signed-in contributor id, and it isn't posted into
+`state/contributions.ts`. A contributor's *real*, cross-tool unlock status
+(`/cards/progress`) is unaffected by drill practice — see
+`state/drillProgressUnlocks.ts`'s fileoverview for the full reasoning.
 
 ## Scheduling and reminders
 
@@ -134,6 +156,15 @@ panels/DrillSetsPanel.tsx
   → getDueDrillIndexes(record, todayKey)  — derives the drill/round "Due"
     badges, recomputed on every render (not persisted) against the
     browser's local calendar day
+
+Rendering the "Practice tier" card (recomputed on every render, same as the
+"N of M"/"Due" derivations above — nothing new is persisted):
+panels/DrillSetsPanel.tsx
+  → getTotalCompletedDrillCount(drillSets)  — state/drillProgressUnlocks.ts
+    → getDrillSetCompletionStats(record) for every round  — state/drillSets.ts
+  → buildDrillPracticeUnlockStatus(totalCompletedDrillCount)  — state/drillProgressUnlocks.ts
+    → buildDrillPracticeContributorStats(...)  — synthetic ContributorStats
+    → buildContributorUnlockStatus(stats)  — debate-card-search's lib/progress-unlocks.ts
 ```
 
 Every drill-generation and persistence rule already existed and was
@@ -187,10 +218,22 @@ an out-of-range drillIndex; `isDrillReviewDue`'s past/today/future
 comparisons; and `getDueDrillIndexes`'s due-list sorting and its handling of
 a stale out-of-range scheduled index).
 
+A later slice adds the Progress Unlocks tier card described in "Progress
+Unlocks tier" above, closing the "tying completion into the Progress Unlocks
+tier system" follow-up named under the "📚 AI Drill Generator" bullet.
+Vitest-covered in `packages/debate-round/test/drillProgressUnlocks.test.ts`
+(`getTotalCompletedDrillCount`'s empty/zero/summed/stale-index cases;
+`buildDrillPracticeContributorStats`'s shape; `buildDrillPracticeUnlockStatus`'s
+novice/apprentice/veteran/expert tier and badge boundaries at the default
+thresholds, next-tier progress, and caller-supplied requirement tables; and
+`buildDrillPracticeUnlockStatusFromStore`'s aggregation across multiple
+persisted rounds).
+
 ## Known gaps
 
-One follow-up remains open on the "📚 AI Drill Generator" bullet: tying the
-now-tracked local completion state into the separate `debate-card-search`
-Progress Unlocks tier system (awarding tiers/badges for practiced drills
-isn't wired up yet — this slice only tracks and displays completion within
-`DrillSetsPanel` itself).
+No further follow-up is currently tracked for the "📚 AI Drill Generator"
+bullet; a future run should pick a fresh next-step (e.g. sharing the
+"Practice tier" status across devices for a signed-in user, or feeding
+practiced-drill counts into the real Contribution Leaderboard-backed
+Progress Unlocks roster once this panel knows a real signed-in contributor
+id) if one becomes worth doing.
