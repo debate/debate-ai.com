@@ -330,6 +330,35 @@ a manual reload.
 Vitest-covered by four new cases for `isFlowEditLogPanelLiveUpdateStorageEvent`
 in `packages/debate-round/test/live-update.test.ts`.
 
+## Side-by-side conflict diff
+
+`SharedFlowSyncPanel`'s "Conflicts" section used to render each conflicting
+box as a flat, unaligned list — every competing edit's full content on its
+own line (`authorId: content`), leaving a reviewer to read each version end
+to end to spot what actually changed. New `flow/flow-edit-diff.ts` adds a
+pure word-level diff (`diffFlowEditContent`, an LCS-backed tokenizer that
+keeps whitespace runs as their own tokens so segments reconstruct spacing
+exactly) plus `buildFlowEditConflictDiff`, which picks the same edit
+`mergeFlowEdits` would apply as the winner (the conflict's last edit —
+latest timestamp, ties broken by id) and diffs every other competing edit
+against it.
+
+`SharedFlowSyncPanel`'s new `ConflictDiff` renders one row per challenger
+edit: a left column showing the winning edit's content with words the
+challenger dropped struck through, and a right column showing the
+challenger's content with the words it added highlighted — both columns
+share whatever text is unchanged, so a reviewer sees only what's actually in
+dispute instead of two full paragraphs to compare by eye. Highlighting
+reuses `panel-shell.tsx`'s existing tone surface classes (`critical` for
+removed words, `positive` for added ones) rather than introducing new
+colors.
+
+Vitest-covered by `packages/debate-round/test/flow-edit-diff.test.ts`
+(word-level diff correctness, including a cleared side and fully disjoint
+content, plus `buildFlowEditConflictDiff`'s winner selection across a
+three-way conflict) and a new case in `packages/debate-round/test/panels.test.tsx`
+asserting the panel renders the diffed columns instead of the old flat list.
+
 ## Known gaps
 
 - ~~The `EditBadge` still reads a box's edits from `localStorage` at cell
