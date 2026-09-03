@@ -11,6 +11,7 @@
 import { useMemo, useState } from "react";
 import { GitMerge } from "lucide-react";
 
+import { cn } from "debate-ui/src/lib/utils";
 import {
   EmptyState,
   LabeledField,
@@ -21,6 +22,7 @@ import {
   StatGrid,
   StatTile,
   SummaryText,
+  toneSurfaceClass,
 } from "debate-ui/src/panels/panel-shell";
 import { Button } from "debate-ui/src/primitives/button";
 import { Input } from "debate-ui/src/primitives/input";
@@ -31,8 +33,62 @@ import {
   buildSharedFlowSyncSummaryText,
   mergeFlowEdits,
   type FlowEdit,
+  type FlowEditConflict,
 } from "../flow/shared-flow-sync";
+import { buildFlowEditConflictDiff, type DiffSegment } from "../flow/flow-edit-diff";
 import { useFlowSyncPolling } from "../hooks/useFlowSyncPolling";
+
+/** Renders one side's diffed words, highlighting this side's own changes. */
+function DiffText({ segments }: { segments: DiffSegment[] }) {
+  if (segments.length === 0) {
+    return <span className="italic text-muted-foreground">(cleared)</span>;
+  }
+  return (
+    <>
+      {segments.map((segment, i) =>
+        segment.type === "equal" ? (
+          <span key={i}>{segment.text}</span>
+        ) : (
+          <span
+            key={i}
+            className={cn(
+              "rounded-sm px-0.5",
+              toneSurfaceClass(segment.type === "removed" ? "critical" : "positive"),
+              segment.type === "removed" && "line-through",
+            )}
+          >
+            {segment.text}
+          </span>
+        ),
+      )}
+    </>
+  );
+}
+
+/** Side-by-side diff for one conflicting box: the edit that would win vs. every other edit competing for it. */
+function ConflictDiff({ conflict }: { conflict: FlowEditConflict }) {
+  const diff = useMemo(() => buildFlowEditConflictDiff(conflict), [conflict]);
+  return (
+    <div className="flex flex-col gap-2">
+      {diff.challengers.map(({ edit, winnerDiff, challengerDiff }) => (
+        <div key={edit.id} className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
+          <div className="rounded-md border border-border bg-muted/30 p-2">
+            <div className="mb-1 font-medium text-muted-foreground">{diff.winner.authorId} (would apply)</div>
+            <p className="whitespace-pre-wrap break-words">
+              <DiffText segments={winnerDiff} />
+            </p>
+          </div>
+          <div className="rounded-md border border-border bg-muted/30 p-2">
+            <div className="mb-1 font-medium text-muted-foreground">{edit.authorId}</div>
+            <p className="whitespace-pre-wrap break-words">
+              <DiffText segments={challengerDiff} />
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 /** Props for {@link SharedFlowSyncPanel}. */
 export interface SharedFlowSyncPanelProps {
@@ -174,7 +230,7 @@ export function SharedFlowSyncPanel({
       {result.conflicts.length > 0 ? (
         <PanelSection
           title="Conflicts"
-          description="Same box, edits close together — check before applying."
+          description="Same box, edits close together — check the side-by-side diff before applying."
         >
           <div className="flex flex-col gap-2">
             {result.conflicts.map((conflict) => (
@@ -184,13 +240,7 @@ export function SharedFlowSyncPanel({
                 title={`${conflict.edits.length} competing edits`}
                 trailing={<Pill tone="warning">conflict</Pill>}
               >
-                <ul className="flex flex-col gap-1">
-                  {conflict.edits.map((edit) => (
-                    <li key={edit.id} className="text-muted-foreground text-xs">
-                      <span className="font-medium">{edit.authorId}</span>: {edit.content}
-                    </li>
-                  ))}
-                </ul>
+                <ConflictDiff conflict={conflict} />
               </PanelRow>
             ))}
           </div>

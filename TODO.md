@@ -6,6 +6,32 @@
 _No task currently in progress._
 
 ### Completed
+- **Shared Flow Sync — side-by-side conflict diff (idea #16).** `SharedFlowSyncPanel`'s
+  "Conflicts" section rendered each conflicting box as a flat, unaligned list
+  of every competing edit's full content — a reviewer had to read each
+  teammate's whole version end to end to spot what actually changed. Added a
+  pure word-level diff, `flow/flow-edit-diff.ts` (`diffFlowEditContent`, an
+  LCS-backed tokenizer keeping whitespace runs as their own tokens so
+  segments reconstruct spacing exactly; `buildFlowEditConflictDiff`, which
+  picks the same edit `mergeFlowEdits` would apply as the winner — the
+  conflict's last edit, latest timestamp with ties broken by id — and diffs
+  every other competing edit against it). `SharedFlowSyncPanel`'s new
+  `ConflictDiff` renders one row per challenger edit: the winning edit's
+  content on the left with the challenger's dropped words struck through,
+  and the challenger's content on the right with its added words
+  highlighted, reusing `panel-shell.tsx`'s existing `critical`/`positive`
+  tone surface classes rather than new colors — both columns share whatever
+  text is unchanged, so only the actual dispute is visible. New Vitest
+  coverage in `packages/debate-round/test/flow-edit-diff.test.ts` (word-level
+  diff correctness including a cleared side, fully disjoint content, and
+  winner selection across a three-way conflict) plus a new case in
+  `packages/debate-round/test/panels.test.tsx` asserting the panel renders
+  the diffed columns instead of the old flat list. See
+  `docs/features/shared-flow-sync.md`'s "Side-by-side conflict diff"
+  section. Idea #16's remaining two follow-ups (live "who's editing now"
+  presence indicators, and upgrading the short-poll sync transport to a
+  WebSocket/Durable Object push channel) stay open — see the idea's entry
+  under "Product Feature Ideas" below.
 - **Create New Round — registered-user autocomplete + invite notifications.**
   User-requested (not a backlog idea from this file): the Create New Round
   dialog's debater/judge/spectator email fields were plain free-text inputs
@@ -14460,9 +14486,8 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 15. **Flow-in-Speech Flow Annotations** (`/annotations`, `FlowSpreadsheet` badges) — the search/filter follow-up is done: the standalone annotations panel has Speech/Speaker/Tag filter dropdowns (populated from the values actually present) plus optional `speaker`/`tag` fields on `FlowAnnotation` itself (`flow/flow-annotations.ts#filterFlowAnnotations`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Search/filter by speech, speaker, or tag" section. The bulk-export follow-up is also now done: a new **Flow** filter dropdown drives a "Download annotations" button that saves every annotation on that flow as a plain-text file, sorted by timestamp (`flow/flow-annotations-export.ts#buildFlowAnnotationsExportText`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Bulk export" section. Next:
     - A density scrubber on the video timeline showing where annotations cluster.
 
-16. **Shared, AI-Generated Debate Flow** (Coach Hub's `SharedFlowSyncPanel`/`FlowEditLogPanel`) —
+16. **Shared, AI-Generated Debate Flow** (Coach Hub's `SharedFlowSyncPanel`/`FlowEditLogPanel`) — the side-by-side-diff-view follow-up is done: each conflicting box's "Conflicts" section now diffs every competing edit against the one `mergeFlowEdits` would apply, word-level, in two aligned columns instead of a flat list of full-text lines (`flow/flow-edit-diff.ts#buildFlowEditConflictDiff`) — see the Completed entry above and `docs/features/shared-flow-sync.md`'s "Side-by-side conflict diff" section. Next:
     - Live "who's editing now" presence indicators alongside the existing merge preview.
-    - A side-by-side diff view for conflicting edits instead of a flat conflict list.
     - Upgrade the short-poll sync transport to a WebSocket/Durable Object push channel for near-real-time updates.
 
 ## Research Crowdsourcing Organizer Features

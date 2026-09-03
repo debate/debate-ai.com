@@ -70,4 +70,16 @@ describe("SharedFlowSyncPanel", () => {
     expect(html).toContain("Live sync off");
     expect(html).toContain("Flow 7");
   });
+
+  it("renders a side-by-side diff for a conflict instead of a flat list", () => {
+    const html = renderToStaticMarkup(<SharedFlowSyncPanel flow={flow} edits={edits} />);
+    // bob's edit landed last, so it's the one that would apply.
+    expect(html).toContain("bob (would apply)");
+    // The shared word survives on both sides, and each side's own word is
+    // marked distinctly ("New" only on the winner's side, "Other" only on
+    // the challenger's) rather than dumping both full sentences flat.
+    expect(html).toContain("tag");
+    expect(html).toContain("New");
+    expect(html).toContain("Other");
+  });
 });
