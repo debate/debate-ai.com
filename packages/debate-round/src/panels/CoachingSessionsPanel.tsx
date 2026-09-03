@@ -36,6 +36,13 @@
  * this repo already uses (e.g. `PreRoundBriefingsPanel.tsx`'s
  * "Download").
  *
+ * A "History" toggle per session lists every prior version
+ * `state/coachingSessionHistory.ts` snapshotted before a regeneration
+ * overwrote it, each with a "Restore this version" action — the "a
+ * coaching-session history timeline per round" follow-up named under the
+ * "🎙️ AI Coach Mode" bullet in TODO.md, mirroring
+ * `CoachMaterialsPanel.tsx`'s identical History/Restore pattern.
+ *
  * @module panels/CoachingSessionsPanel
  */
 
@@ -52,9 +59,15 @@ import {
   buildCoachingSessionsPanelView,
   coachingNotesFilename,
   deleteCoachingSession,
+  saveCoachingSession,
   saveCoachingSessionAiFeedback,
   type CoachingSessionRecord,
 } from "../state/coachingSessions"
+import {
+  coachingSessionFromVersion,
+  listVersionsForCoachingSession,
+  type CoachingSessionHistoryEntry,
+} from "../state/coachingSessionHistory"
 import type { CoachingPromptKind } from "../flow/coach-mode"
 import { requestCoachFeedback } from "../round/coach-feedback-client"
 import { useFlowStore } from "../state/store"
@@ -80,6 +93,8 @@ export function CoachingSessionsPanel() {
   const [generateSideKey, setGenerateSideKey] = useState("")
   const [generateError, setGenerateError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [historyOpenKey, setHistoryOpenKey] = useState<string | null>(null)
+  const [versions, setVersions] = useState<CoachingSessionHistoryEntry[]>([])
 
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
@@ -94,6 +109,26 @@ export function CoachingSessionsPanel() {
 
   const handleClear = (roundId: string, sideKey: string) => {
     deleteCoachingSession(roundId, sideKey)
+    if (historyOpenKey === `${roundId}:${sideKey}`) {
+      setHistoryOpenKey(null)
+      setVersions([])
+    }
+    refresh()
+  }
+
+  const handleToggleHistory = (roundId: string, sideKey: string) => {
+    const key = `${roundId}:${sideKey}`
+    if (historyOpenKey === key) {
+      setHistoryOpenKey(null)
+      return
+    }
+    setVersions(listVersionsForCoachingSession(roundId, sideKey))
+    setHistoryOpenKey(key)
+  }
+
+  const handleRestore = (entry: CoachingSessionHistoryEntry) => {
+    saveCoachingSession(coachingSessionFromVersion(entry))
+    setVersions(listVersionsForCoachingSession(entry.roundId, entry.sideKey))
     refresh()
   }
 
@@ -204,6 +239,13 @@ export function CoachingSessionsPanel() {
               <Button size="sm" variant="outline" onClick={() => handleDownload(session)}>
                 Download
               </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => handleToggleHistory(session.roundId, session.sideKey)}
+              >
+                {historyOpenKey === `${session.roundId}:${session.sideKey}` ? "Hide history" : "History"}
+              </Button>
               <Button size="sm" variant="ghost" onClick={() => handleClear(session.roundId, session.sideKey)}>
                 Clear
               </Button>
@@ -253,6 +295,34 @@ export function CoachingSessionsPanel() {
               </p>
             )}
           </div>
+          {historyOpenKey === `${session.roundId}:${session.sideKey}` && (
+            <div className="mt-3 space-y-2 border-t border-border pt-3">
+              <h3 className="text-xs font-semibold uppercase text-muted-foreground">History</h3>
+              {versions.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  No prior versions — this coaching session hasn't been regenerated yet.
+                </p>
+              ) : (
+                versions.map((version) => (
+                  <div
+                    key={version.id}
+                    className="flex flex-wrap items-start justify-between gap-2 rounded-md bg-muted/30 px-2 py-1.5"
+                  >
+                    <div className="space-y-0.5">
+                      <span className="text-xs text-muted-foreground">
+                        Replaced {new Date(version.replacedAt).toLocaleString()} — {version.prompts.length} prompt
+                        {version.prompts.length === 1 ? "" : "s"}
+                        {version.aiFeedback ? ", with AI feedback" : ""}
+                      </span>
+                    </div>
+                    <Button size="sm" variant="outline" onClick={() => handleRestore(version)}>
+                      Restore this version
+                    </Button>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
         </div>
       ))}
     </div>

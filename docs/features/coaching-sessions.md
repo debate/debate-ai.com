@@ -166,6 +166,50 @@ follow-ups remain open on this bullet. Vitest-covered in
 prompts rendering, the AI-feedback section present/absent, the
 no-prompts placeholder, and the filename sanitization rule).
 
+A later slice added a **History** timeline per session — the "a
+coaching-session history timeline per round" follow-up named under the
+"🎙️ AI Coach Mode" bullet in TODO.md. `state/coachingSessions.ts`'s
+`saveCoachingSession` now snapshots the record it's about to overwrite into
+a new `state/coachingSessionHistory.ts` before replacing it (mirroring
+`debate-speech-writer`'s `state/coachMaterialVersions.ts` pattern exactly:
+same snapshot-on-overwrite shape, same per-pair cap of 10 versions), so
+regenerating a round+side's session (via the panel's "Generate coaching
+session for current round" form, or a manual `saveCoachingSession` call)
+never silently loses the version it replaces. `CoachingSessionsPanel.tsx`
+gained a "History" toggle per session listing every snapshot for that
+round+side, newest first, each with a "Restore this version" action that
+saves it back as the current session (itself snapshotting whatever was
+current at the time, so restoring is reversible too). `deleteCoachingSession`
+("Clear") now also clears that pair's whole snapshot history, so a cleared
+session doesn't leave orphaned history behind. No account sync exists for
+this history yet, matching the base session store's own local-only state.
+See "History" in `panels/CoachingSessionsPanel.tsx`'s doc comment.
+
+## Data flow (history)
+
+```
+Regenerating/saving a round+side's session:
+state/coachingSessions.ts's saveCoachingSession(record)
+  → if an existing record for that roundId+sideKey pair is found:
+      appendCoachingSessionVersion(existing)  — state/coachingSessionHistory.ts,
+        snapshots it, trimming the oldest snapshot past the 10-per-pair cap
+  → overwrites the current record, returns { record, version? }
+
+Viewing/restoring history:
+panels/CoachingSessionsPanel.tsx ("History" toggle)
+  → listVersionsForCoachingSession(roundId, sideKey)  — newest first
+  → "Restore this version"
+      → coachingSessionFromVersion(entry)  — rebuilds a session shape
+      → saveCoachingSession(...)           — snapshots the version being
+                                              replaced, same as any other save
+  → panel re-reads buildCoachingSessionsPanelView() and the version list to refresh
+
+Clearing a round+side's session:
+panels/CoachingSessionsPanel.tsx ("Clear")
+  → deleteCoachingSession(roundId, sideKey)  — state/coachingSessions.ts,
+    also calls deleteVersionsForCoachingSession(roundId, sideKey)
+```
+
 ## Known gaps
 
 None open.
