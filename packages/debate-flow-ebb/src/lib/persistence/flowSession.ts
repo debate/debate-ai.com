@@ -95,6 +95,20 @@ export async function readFlowAt(path: string, fs?: FlowFs): Promise<FlowRound |
     return parseFlowFile(snapshot.text);
 }
 
+/**
+ * The most recently opened flow that still exists on disk, so the editor can
+ * resume straight into a document instead of asking. Walks the recents list
+ * in order and skips anything moved or deleted outside ebb, rather than
+ * pruning it here — the list is pruned lazily wherever it's read for display.
+ */
+export async function resolveResumePath(fs?: FlowFs): Promise<string | null> {
+    const io = fs ?? (await getFlowFs());
+    for (const recent of await loadRecents(io)) {
+        if ((await io.readFlow(recent.path)) !== null) return recent.path;
+    }
+    return null;
+}
+
 // --- Creating and saving -------------------------------------------------------
 
 /** Write a brand-new flow into the flows folder; resolves to the path used. */
