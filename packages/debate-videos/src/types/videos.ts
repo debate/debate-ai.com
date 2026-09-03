@@ -15,8 +15,11 @@ export const DEBATE_STYLE_LABELS: Record<DebateStyle, string> = {
 };
 
 /** Video data tuple:
- * [videoId, title, date, channel, viewCount, description, style?, tournament?, roundLevel?, affTeam?, negTeam?, affWin?, judgeDecision?, arg1AC?, arg2NR?, isTopPick?, speechDocsUrl?]
- * Note: For lectures, index 6 can be either a DebateStyle number OR a category string
+ * [videoId, title, date, channel, viewCount, description, style?, tournament?, roundLevel?, affTeam?, negTeam?, affWin?, judgeDecision?, arg1AC?, arg2NR?, isTopPick?, speechDocsUrl?, seasonYear?]
+ * Note: For lectures, index 6 can be either a DebateStyle number OR a category string.
+ * `seasonYear` (index 17) is the competition season the video's publish date
+ * falls in (e.g. `2025` for the 2024-25 season), 0 for legacy/unparseable
+ * dates — format it for display with `formatSeasonLabel`.
  */
 export type VideoType = [
   string,
@@ -36,6 +39,7 @@ export type VideoType = [
   (string | null)?,
   boolean?,
   (string | null)?,
+  number?,
 ];
 
 export type TopicType = {

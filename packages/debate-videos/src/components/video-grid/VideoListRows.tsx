@@ -17,6 +17,7 @@ import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
 import { TranscriptModal } from "../transcript-modal/TranscriptModal"
 import { useResizableColumns } from "./useResizableColumns"
 import type { VideoType } from "../../types/videos"
+import { formatSeasonLabel } from "debate-data-sync/src/videos/video-rows"
 
 interface VideoListRowsProps {
   videos: VideoType[]
@@ -49,6 +50,7 @@ type ColumnKey =
   | "arguments"
   | "format"
   | "channel"
+  | "season"
   | "date"
   | "views"
 
@@ -68,6 +70,7 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   arguments: 200,
   format: 90,
   channel: 160,
+  season: 90,
   date: 110,
   views: 90,
 }
@@ -79,6 +82,12 @@ const VIEWS_COLUMN: ColumnDef = {
   headerClassName: "text-right",
   sortValue: (v) => v[4] ?? 0,
 }
+const SEASON_COLUMN: ColumnDef = {
+  key: "season",
+  label: "Season",
+  headerClassName: "hidden sm:table-cell",
+  sortValue: (v) => v[17] ?? 0,
+}
 
 const ROUND_COLUMNS: ColumnDef[] = [
   { key: "tournament", label: "Tournament", headerClassName: "hidden sm:table-cell", sortValue: (v) => v[7]?.toLowerCase() ?? "" },
@@ -86,6 +95,7 @@ const ROUND_COLUMNS: ColumnDef[] = [
   { key: "aff", label: "Aff", sortValue: (v) => v[9]?.toLowerCase() ?? "" },
   { key: "neg", label: "Neg", sortValue: (v) => v[10]?.toLowerCase() ?? "" },
   { key: "arguments", label: "Arguments", headerClassName: "hidden lg:table-cell" },
+  SEASON_COLUMN,
   DATE_COLUMN,
   VIEWS_COLUMN,
 ]
@@ -93,6 +103,7 @@ const ROUND_COLUMNS: ColumnDef[] = [
 const LECTURE_COLUMNS: ColumnDef[] = [
   { key: "format", label: "Format", headerClassName: "hidden sm:table-cell", sortValue: (v) => getStyleLabel(v).toLowerCase() },
   { key: "channel", label: "Channel", headerClassName: "hidden md:table-cell", sortValue: (v) => v[3]?.toLowerCase() ?? "" },
+  SEASON_COLUMN,
   DATE_COLUMN,
   VIEWS_COLUMN,
 ]
@@ -156,6 +167,9 @@ function VideoRow({
     _judgeDecision,
     arg1AC,
     arg2NR,
+    _isTopPickFlag,
+    _speechDocsUrl,
+    seasonYear,
   ] = video
   const [showHideConfirm, setShowHideConfirm] = useState(false)
 
@@ -247,6 +261,9 @@ function VideoRow({
             </td>
           </>
         )}
+        <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground whitespace-nowrap">
+          {typeof seasonYear === "number" && seasonYear > 0 ? formatSeasonLabel(seasonYear) : "—"}
+        </td>
         <td className="px-3 py-2 align-top text-sm text-muted-foreground whitespace-nowrap">
           {formatDate(date)}
         </td>
