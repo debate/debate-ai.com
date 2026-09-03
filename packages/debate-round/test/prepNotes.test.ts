@@ -9,6 +9,7 @@ import {
   listPrepNotesForFlow,
   nextPrepNoteStatus,
   savePrepNote,
+  updatePersistedPrepNotePriority,
   updatePersistedPrepNoteStatus,
 } from "../src/state/prepNotes";
 import { listNotificationsForRecipient } from "../src/state/prepNoteNotifications";
@@ -167,6 +168,34 @@ describe("updatePersistedPrepNoteStatus", () => {
   });
 });
 
+describe("updatePersistedPrepNotePriority", () => {
+  it("flags the note high priority and persists it", () => {
+    savePrepNote(OPEN_NOTE);
+    const updated = updatePersistedPrepNotePriority("note-1", "high", 150);
+
+    expect(updated).toEqual({ ...OPEN_NOTE, priority: "high", updatedAt: 150 });
+    expect(getPrepNote("note-1")).toEqual({ ...OPEN_NOTE, priority: "high", updatedAt: 150 });
+  });
+
+  it("clears the priority flag and persists it", () => {
+    const flagged: PrepNote = { ...OPEN_NOTE, priority: "high" };
+    savePrepNote(flagged);
+    const updated = updatePersistedPrepNotePriority("note-1", "normal", 200);
+
+    expect(updated).toEqual({ ...OPEN_NOTE, updatedAt: 200 });
+    expect(updated?.priority).toBeUndefined();
+    expect(getPrepNote("note-1")).toEqual({ ...OPEN_NOTE, updatedAt: 200 });
+  });
+
+  it("returns undefined and leaves storage untouched when the id isn't stored", () => {
+    savePrepNote(OTHER_FLOW_NOTE);
+    const updated = updatePersistedPrepNotePriority("missing", "high", 150);
+
+    expect(updated).toBeUndefined();
+    expect(listPrepNotes()).toEqual([OTHER_FLOW_NOTE]);
+  });
+});
+
 describe("assignPersistedPrepNote", () => {
   it("assigns the note to a teammate and persists it", () => {
     savePrepNote(OPEN_NOTE);
@@ -253,5 +282,16 @@ describe("buildPrepNotesPanelView", () => {
       { status: "open", notes: [] },
       { status: "covered", notes: [{ ...OPEN_NOTE, status: "covered", updatedAt: 150 }] },
     ]);
+  });
+
+  it("sorts high-priority notes ahead of normal-priority notes within a status group", () => {
+    const olderOpenNote: PrepNote = { ...OPEN_NOTE, id: "note-3", createdAt: 50 };
+    const flaggedNewerOpenNote: PrepNote = { ...OPEN_NOTE, id: "note-4", createdAt: 300, priority: "high" };
+    savePrepNote(olderOpenNote);
+    savePrepNote(OPEN_NOTE);
+    savePrepNote(flaggedNewerOpenNote);
+
+    const [, openGroup] = buildPrepNotesPanelView();
+    expect(openGroup.notes.map((n) => n.id)).toEqual(["note-4", "note-3", "note-1"]);
   });
 });

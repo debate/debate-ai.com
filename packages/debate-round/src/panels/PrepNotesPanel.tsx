@@ -16,6 +16,12 @@
  * See `hooks/useJumpToPrepNoteBox.ts` for the flow-select + grid-scroll
  * side of that link.
  *
+ * Each note also has a "Flag high priority"/"Unflag" toggle, closing the
+ * "🔄 Strategy Sync Notes" bullet's "a priority flag" follow-up — a flagged
+ * note carries a "High priority" badge and sorts ahead of its status-mates
+ * (`state/prepNotes.ts`'s `updatePersistedPrepNotePriority`, backed by
+ * `strategy-sync-notes.ts`'s `setNotePriority`/`sortNotesByPriorityThenCreatedAt`).
+ *
  * @module panels/PrepNotesPanel
  */
 
@@ -32,6 +38,7 @@ import {
   buildPrepNotesPanelView,
   nextPrepNoteStatus,
   updatePersistedPrepNoteStatus,
+  updatePersistedPrepNotePriority,
   type PrepNotesPanelGroup,
 } from "../state/prepNotes"
 import { buildPrepNoteJumpHref, type PrepNoteStatus } from "../flow/strategy-sync-notes"
@@ -87,6 +94,11 @@ export function PrepNotesPanel() {
     refresh()
   }
 
+  const handleTogglePriority = (id: string, currentPriority: "normal" | "high" | undefined) => {
+    updatePersistedPrepNotePriority(id, currentPriority === "high" ? "normal" : "high", Date.now())
+    refresh()
+  }
+
   const handleAssign = (id: string) => {
     const assignedToId = (assigneeDrafts[id] ?? "").trim()
     assignPersistedPrepNote(id, assignedToId.length > 0 ? assignedToId : null, Date.now())
@@ -113,8 +125,8 @@ export function PrepNotesPanel() {
       <div>
         <h1 className="mb-1 text-xl font-semibold text-foreground">Prep Notes</h1>
         <p className="text-sm text-muted-foreground">
-          Live prep notes across every flow, grouped by status. Cycle a note's status or assign it
-          to a teammate as a task.
+          Live prep notes across every flow, grouped by status. Cycle a note's status, flag it high
+          priority, or assign it to a teammate as a task.
         </p>
       </div>
       {groups
@@ -131,6 +143,7 @@ export function PrepNotesPanel() {
                   <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
                     <p className="text-foreground">{note.text}</p>
                     <div className="flex items-center gap-2">
+                      {note.priority === "high" && <Badge variant="destructive">High priority</Badge>}
                       <Link
                         href={buildPrepNoteJumpHref(note)}
                         className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
@@ -138,6 +151,13 @@ export function PrepNotesPanel() {
                         Jump to argument
                         <ArrowUpRight className="h-3 w-3" />
                       </Link>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleTogglePriority(note.id, note.priority)}
+                      >
+                        {note.priority === "high" ? "Unflag" : "Flag high priority"}
+                      </Button>
                       <Button size="sm" variant="outline" onClick={() => handleCycleStatus(note.id, note.status)}>
                         Mark {STATUS_LABEL[nextPrepNoteStatus(note.status)].toLowerCase()}
                       </Button>

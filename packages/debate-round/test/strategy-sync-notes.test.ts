@@ -4,13 +4,16 @@ import {
   buildPrepNoteJumpHref,
   buildPrepNoteSummaryText,
   createPrepNote,
+  getHighPriorityNotes,
   getNotesAssignedTo,
   getNotesForBox,
   getNotesForFlow,
   getOpenFollowUps,
   parsePrepNoteJumpParams,
   resolvePrepNoteBox,
+  setNotePriority,
   sortNotesByCreatedAt,
+  sortNotesByPriorityThenCreatedAt,
   updateNoteStatus,
   type PrepNote,
 } from "../src/flow/strategy-sync-notes";
@@ -122,6 +125,69 @@ describe("assignNote", () => {
     expect(updated.assignedToId).toBeUndefined();
     expect(updated.updatedAt).toBe(200);
     expect(assigned.assignedToId).toBe("sam");
+  });
+});
+
+describe("setNotePriority", () => {
+  it("flags a note high priority", () => {
+    const updated = setNotePriority(note(), "high", 100);
+    expect(updated.priority).toBe("high");
+    expect(updated.updatedAt).toBe(100);
+  });
+
+  it("clears the priority field when set back to normal", () => {
+    const flagged = note({ priority: "high" });
+    const updated = setNotePriority(flagged, "normal", 200);
+
+    expect(updated.priority).toBeUndefined();
+    expect(updated.updatedAt).toBe(200);
+    expect(flagged.priority).toBe("high");
+  });
+
+  it("does not mutate the input note", () => {
+    const original = note();
+    setNotePriority(original, "high", 100);
+    expect(original.priority).toBeUndefined();
+  });
+});
+
+describe("getHighPriorityNotes", () => {
+  it("filters to notes flagged high priority, oldest first", () => {
+    const notes = [
+      note({ id: "b", priority: "high", createdAt: 2000 }),
+      note({ id: "normal", createdAt: 500 }),
+      note({ id: "a", priority: "high", createdAt: 1000 }),
+    ];
+
+    expect(getHighPriorityNotes(notes).map((n) => n.id)).toEqual(["a", "b"]);
+  });
+
+  it("returns an empty list when nothing is flagged", () => {
+    expect(getHighPriorityNotes([note()])).toEqual([]);
+  });
+});
+
+describe("sortNotesByPriorityThenCreatedAt", () => {
+  it("puts high-priority notes first, each tier oldest first", () => {
+    const notes = [
+      note({ id: "normal-older", createdAt: 500 }),
+      note({ id: "high-newer", priority: "high", createdAt: 2000 }),
+      note({ id: "normal-newer", createdAt: 1500 }),
+      note({ id: "high-older", priority: "high", createdAt: 1000 }),
+    ];
+
+    expect(sortNotesByPriorityThenCreatedAt(notes).map((n) => n.id)).toEqual([
+      "high-older",
+      "high-newer",
+      "normal-older",
+      "normal-newer",
+    ]);
+  });
+
+  it("does not mutate the input array", () => {
+    const input = [note({ id: "b", createdAt: 2000 }), note({ id: "a", createdAt: 1000 })];
+    sortNotesByPriorityThenCreatedAt(input);
+    expect(input.map((n) => n.id)).toEqual(["b", "a"]);
   });
 });
 
@@ -269,12 +335,21 @@ describe("buildPrepNoteSummaryText", () => {
     ];
 
     const summary = buildPrepNoteSummaryText(notes);
-    expect(summary).toContain("4 notes: 1 open, 1 covered, 2 need follow-up");
+    expect(summary).toContain("4 notes: 1 open, 1 covered, 2 need follow-up, 0 high priority");
     expect(summary).toContain("- confirm the card (assigned to sam)");
     expect(summary).toContain("- find a turn");
   });
 
   it("uses singular note wording for a single note", () => {
-    expect(buildPrepNoteSummaryText([note()])).toContain("1 note: 1 open, 0 covered, 0 need follow-up");
+    expect(buildPrepNoteSummaryText([note()])).toContain(
+      "1 note: 1 open, 0 covered, 0 need follow-up, 0 high priority",
+    );
+  });
+
+  it("counts notes flagged high priority", () => {
+    const notes = [note({ id: "1", priority: "high" }), note({ id: "2" })];
+    expect(buildPrepNoteSummaryText(notes)).toContain(
+      "2 notes: 2 open, 0 covered, 0 need follow-up, 1 high priority",
+    );
   });
 });

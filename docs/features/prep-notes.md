@@ -21,8 +21,45 @@ Notes are grouped into three sections, in this order:
 | Covered | The argument this note is about has been addressed |
 
 Each note shows its text, author, current assignee (if any), a "Mark
-&lt;next status&gt;" button, and an "Assign to" input + button (plus an
-"Unassign" button once a note is assigned).
+&lt;next status&gt;" button, a "Flag high priority"/"Unflag" toggle, and an
+"Assign to" input + button (plus an "Unassign" button once a note is
+assigned).
+
+## Priority flag
+
+Closes the "🔄 Strategy Sync Notes" bullet's "a priority flag" follow-up: a
+note can be flagged high priority from `PrepNotesPanel`, independent of its
+status. A flagged note shows a "High priority" badge and sorts ahead of its
+status-mates within its group; the "Flag high priority"/"Unflag" button
+toggles it back and forth.
+
+```
+flow/strategy-sync-notes.ts
+  PrepNotePriority = "normal" | "high"     — omitted from a PrepNote entirely
+                                              when "normal" (mirrors assignedToId's
+                                              omit-when-unset convention)
+  setNotePriority(note, priority, now)     — pure transform, clears the field
+                                              on "normal" rather than storing it
+  getHighPriorityNotes(notes)              — flagged notes, oldest first
+  sortNotesByPriorityThenCreatedAt(notes)  — high-priority tier first, each
+                                              tier oldest first
+
+state/prepNotes.ts
+  updatePersistedPrepNotePriority(id, priority, now)
+    → applies setNotePriority to the persisted note and saves it
+  buildPrepNotesPanelView()
+    → now sorts each status group with sortNotesByPriorityThenCreatedAt
+      instead of plain createdAt order
+
+panels/PrepNotesPanel.tsx
+  "Flag high priority" / "Unflag" button per note
+    → updatePersistedPrepNotePriority(id, next, Date.now())
+    → panel re-reads buildPrepNotesPanelView() to refresh
+```
+
+`buildPrepNoteSummaryText`'s counts line also reports how many notes are
+currently flagged (e.g. `"4 notes: 1 open, 1 covered, 2 need follow-up, 1
+high priority"`).
 
 ## Data flow
 
