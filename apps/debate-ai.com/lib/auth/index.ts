@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { oneTap, openAPI, magicLink, anonymous } from "better-auth/plugins";
+import { oneTimeToken } from "better-auth/plugins/one-time-token";
 import { getDBFromContext } from "../database/context";
 import * as schema from "../database/schema";
 import { Resend } from "resend";
@@ -104,6 +105,17 @@ async function buildAuth() {
       oneTap(),
       openAPI(),
       anonymous(),
+      // Lets the native-wrapper desktop/mobile shell (packages/native-wrapper)
+      // hand off a session established in the system browser (required for
+      // Google OAuth, which blocks embedded webviews) to the wrapper's own
+      // webview: /auth/native-complete mints a short-lived, single-use token
+      // from the browser session, the wrapper's deep link carries it back
+      // in-app, and /auth/native-callback spends it to set the session
+      // cookie there. See packages/native-wrapper/docs/OAUTH.md.
+      oneTimeToken({
+        expiresIn: 5,
+        storeToken: "hashed",
+      }),
       magicLink({
         sendMagicLink: async ({ email, url }) => {
           const resendKey = getEnv("RESEND_API_KEY") || getEnv("AUTH_RESEND_KEY");

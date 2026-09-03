@@ -1,0 +1,30 @@
+{
+  "appName": "Debate AI",
+  "productName": "Debate AI",
+  "identifier": "com.debateai.app",
+  "version": "1.0.0",
+  "url": "https://debate-ai.com",
+  "deepLinkScheme": "debateai",
+  "iconSource": "../../../apps/debate-ai.com/public/favicon-512.png",
+  "copyright": "Debate AI",
+  "category": "Education",
+  "shortDescription": "CARDS evidence search, FIAT round flowing, REASON writing, and LEARN video library, in one native app.",
+  "trustedOrigins": ["https://debate-ai.com", "https://*.debate-ai.com"],
+  "window": {
+    "title": "Debate AI",
+    "width": 1360,
+    "height": 860,
+    "minWidth": 480,
+    "minHeight": 480,
+    "fullscreen": true,
+    "resizable": true
+  },
+  "android": {
+    "packageName": "com.debateai.app",
+    "minSdkVersion": 24
+  },
+  "ios": {
+    "bundleId": "com.debateai.app",
+    "minimumSystemVersion": "14.0"
+  }
+}

@@ -8,7 +8,7 @@
  * `/login` and inside the settings-menu dialog without the two drifting apart.
  */
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Mail } from "lucide-react"
 import { SiGoogle, SiDiscord } from "@icons-pack/react-simple-icons"
 import { FaLinkedin } from "react-icons/fa"
@@ -19,6 +19,7 @@ import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { authClient } from "@/lib/auth/client"
 import { useAuthProviders } from "@/lib/hooks/useAuthProviders"
+import { isNativeWrapper, openInSystemBrowser } from "@/lib/native/tauri"
 
 /** Social providers this form knows how to render, in display order. */
 const SOCIAL_PROVIDERS = ["google", "discord", "linkedin"] as const
@@ -167,11 +168,44 @@ export interface LoginFormProps {
  */
 export function LoginForm({ callbackURL = "/" }: LoginFormProps) {
   const { providers, isLoading, hasSocialProviders } = useAuthProviders()
+  const [isNative, setIsNative] = useState(false)
+
+  useEffect(() => {
+    setIsNative(isNativeWrapper())
+  }, [])
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
         <span className="animate-pulse text-sm text-muted-foreground">Loading…</span>
+      </div>
+    )
+  }
+
+  // Google (and most OAuth providers) refuse to run their login flow inside
+  // an embedded webview, so inside the native-wrapper shell every sign-in
+  // method routes through the system browser instead of the buttons below.
+  // The browser tab lands on this same page (without the native handoff) and
+  // completes normally there; /auth/native-complete then hands the resulting
+  // session back to this window. See packages/native-wrapper/docs/OAUTH.md.
+  if (isNative) {
+    return (
+      <div className="flex flex-col gap-4">
+        <p className="text-center text-sm text-muted-foreground">
+          For your security, sign-in opens in your default browser.
+        </p>
+        <Button
+          className="w-full"
+          onClick={async () => {
+            const target = `${window.location.origin}/login?callbackURL=${encodeURIComponent(
+              "/auth/native-complete",
+            )}`
+            const opened = await openInSystemBrowser(target)
+            if (!opened) window.location.href = target
+          }}
+        >
+          Continue in your browser
+        </Button>
       </div>
     )
   }

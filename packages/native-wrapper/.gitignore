@@ -1,0 +1,14 @@
+# Rust / Tauri build output
+src-tauri/target/
+src-tauri/gen/
+gen/
+
+# Mobile signing material — never commit keystores/certs/provisioning profiles
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+*.p8
+
+# OS junk
+.DS_Store

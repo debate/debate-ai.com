@@ -21,3 +21,9 @@ export const NEXT_PUBLIC_BASE_URL =
 // client falls back to the id served at runtime by `/api/auth/providers`.
 export const NEXT_PUBLIC_GOOGLE_CLIENT_ID =
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+
+// Custom URL scheme the native-wrapper desktop/mobile shell registers with the
+// OS (packages/native-wrapper/profiles/debate-ai.json's `deepLinkScheme`) so
+// /auth/native-complete can hand a browser-established session back to the
+// wrapper's webview. Keep these two values in sync.
+export const NATIVE_DEEP_LINK_SCHEME = "debateai";
