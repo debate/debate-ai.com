@@ -24,6 +24,13 @@
  * new drill set for a round" Known gap. No new drill-generation logic is
  * introduced here.
  *
+ * A "Difficulty" filter dropdown above the drill list narrows every round's
+ * drills to one `DrillDifficulty` at a time via
+ * `flow/drill-generator.ts`'s `filterDrillsByDifficulty` — the "difficulty
+ * rating with filtering" follow-up named under the "📚 AI Drill Generator"
+ * bullet in TODO.md. Each drill also shows a difficulty badge next to its
+ * kind badge.
+ *
  * @module panels/DrillSetsPanel
  */
 
@@ -34,6 +41,13 @@ import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "debate-ui/src/primitives/select"
 import { EmptyState, PanelRow } from "debate-ui/src/panels/panel-shell"
 import {
   buildAndSaveDrillSet,
@@ -42,7 +56,7 @@ import {
   saveDrillAiScript,
   type DrillSetRecord,
 } from "../state/drillSets"
-import type { DrillKind } from "../flow/drill-generator"
+import { filterDrillsByDifficulty, type DrillDifficulty, type DrillKind } from "../flow/drill-generator"
 import { requestDrillScript } from "../round/drill-script-client"
 import { useFlowStore } from "../state/store"
 
@@ -51,6 +65,23 @@ const DRILL_KIND_LABELS: Record<DrillKind, string> = {
   frontline: "Frontline",
   cross_ex: "Cross-Ex",
   collapse: "Collapse",
+}
+
+type DifficultyFilter = DrillDifficulty | "all"
+
+const DIFFICULTY_FILTER_OPTIONS: DifficultyFilter[] = ["all", "easy", "medium", "hard"]
+
+const DIFFICULTY_FILTER_LABELS: Record<DifficultyFilter, string> = {
+  all: "All difficulties",
+  easy: "Easy",
+  medium: "Medium",
+  hard: "Hard",
+}
+
+const DIFFICULTY_BADGE_VARIANTS: Record<DrillDifficulty, "default" | "secondary" | "destructive"> = {
+  easy: "secondary",
+  medium: "default",
+  hard: "destructive",
 }
 
 /**
@@ -67,6 +98,7 @@ export function DrillSetsPanel() {
   const [generateSideKey, setGenerateSideKey] = useState("")
   const [generateError, setGenerateError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>("all")
 
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
@@ -165,59 +197,94 @@ export function DrillSetsPanel() {
           message="Drills fill in once a round's flow generates a drill set."
         />
       )}
-      {drillSets.map((set) => (
-        <div key={set.roundId} className="rounded-lg border border-border p-4">
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold text-foreground">
-              Round {set.roundId}{" "}
-              <span className="font-normal text-muted-foreground">({set.sideKey})</span>
-            </h2>
-            <Button size="sm" variant="ghost" onClick={() => handleClear(set.roundId)}>
-              Clear
-            </Button>
-          </div>
-          <div className="space-y-2">
-            {set.drills.map((drill, index) => {
-              const key = `${set.roundId}:${index}`
-              const aiScript = set.aiScripts?.[index]
-              return (
-                <PanelRow
-                  key={index}
-                  leading={
-                    <Badge variant="outline" className="whitespace-nowrap">
-                      {DRILL_KIND_LABELS[drill.kind]}
-                    </Badge>
-                  }
-                  title={drill.prompt}
-                  trailing={
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={scriptLoadingKey === key}
-                      onClick={() => handleGetAiScript(set, index)}
-                    >
-                      {scriptLoadingKey === key
-                        ? "Getting script…"
-                        : aiScript
-                          ? "Regenerate AI script"
-                          : "Get AI script"}
-                    </Button>
-                  }
-                >
-                  {scriptErrorsByKey[key] && (
-                    <p className="text-sm text-destructive">{scriptErrorsByKey[key]}</p>
-                  )}
-                  {aiScript && (
-                    <p className="whitespace-pre-wrap border-t border-border pt-2 text-sm text-foreground">
-                      {aiScript}
-                    </p>
-                  )}
-                </PanelRow>
-              )
-            })}
-          </div>
+      {drillSets.length > 0 && (
+        <div className="flex items-center gap-2">
+          <Label htmlFor="drill-set-difficulty-filter">Difficulty</Label>
+          <Select
+            value={difficultyFilter}
+            onValueChange={(value) => setDifficultyFilter(value as DifficultyFilter)}
+          >
+            <SelectTrigger id="drill-set-difficulty-filter" className="w-44">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {DIFFICULTY_FILTER_OPTIONS.map((value) => (
+                <SelectItem key={value} value={value}>
+                  {DIFFICULTY_FILTER_LABELS[value]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-      ))}
+      )}
+      {drillSets.map((set) => {
+        const visibleDrills = filterDrillsByDifficulty(set.drills, difficultyFilter)
+        return (
+          <div key={set.roundId} className="rounded-lg border border-border p-4">
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <h2 className="text-sm font-semibold text-foreground">
+                Round {set.roundId}{" "}
+                <span className="font-normal text-muted-foreground">({set.sideKey})</span>
+              </h2>
+              <Button size="sm" variant="ghost" onClick={() => handleClear(set.roundId)}>
+                Clear
+              </Button>
+            </div>
+            {visibleDrills.length === 0 && (
+              <p className="text-sm text-muted-foreground">No drills match this difficulty filter.</p>
+            )}
+            <div className="space-y-2">
+              {visibleDrills.map((drill) => {
+                const index = set.drills.indexOf(drill)
+                const key = `${set.roundId}:${index}`
+                const aiScript = set.aiScripts?.[index]
+                return (
+                  <PanelRow
+                    key={index}
+                    leading={
+                      <div className="flex items-center gap-1">
+                        <Badge variant="outline" className="whitespace-nowrap">
+                          {DRILL_KIND_LABELS[drill.kind]}
+                        </Badge>
+                        <Badge
+                          variant={DIFFICULTY_BADGE_VARIANTS[drill.difficulty]}
+                          className="whitespace-nowrap"
+                        >
+                          {DIFFICULTY_FILTER_LABELS[drill.difficulty]}
+                        </Badge>
+                      </div>
+                    }
+                    title={drill.prompt}
+                    trailing={
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={scriptLoadingKey === key}
+                        onClick={() => handleGetAiScript(set, index)}
+                      >
+                        {scriptLoadingKey === key
+                          ? "Getting script…"
+                          : aiScript
+                            ? "Regenerate AI script"
+                            : "Get AI script"}
+                      </Button>
+                    }
+                  >
+                    {scriptErrorsByKey[key] && (
+                      <p className="text-sm text-destructive">{scriptErrorsByKey[key]}</p>
+                    )}
+                    {aiScript && (
+                      <p className="whitespace-pre-wrap border-t border-border pt-2 text-sm text-foreground">
+                        {aiScript}
+                      </p>
+                    )}
+                  </PanelRow>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }

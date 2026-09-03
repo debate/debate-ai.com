@@ -14,7 +14,11 @@
 
 import type { Flow } from "../types/flow";
 import { getUnansweredFlowRows, suggestCrossExamQuestions } from "./flow-transcript-summary";
-import { getArgumentVulnerabilityReport, summarizeOutcomeBySide } from "./response-outcome";
+import {
+  getArgumentVulnerabilityReport,
+  scoreArgumentVulnerability,
+  summarizeOutcomeBySide,
+} from "./response-outcome";
 import { getSpeechSideKey } from "./argument-tree";
 
 const MAX_LABEL_LENGTH = 80;
@@ -28,12 +32,34 @@ function truncateForDisplay(text: string): string {
 
 export type DrillKind = "overview" | "frontline" | "cross_ex" | "collapse";
 
+/**
+ * A rough practice-difficulty rating for a single drill, derived from the
+ * associated argument's `vulnerabilityScore` (see `response-outcome.ts`)
+ * where one is available. A highly exposed argument (unanswered, drawing
+ * opposing pressure, little same-side defense) makes for an "easy" drill —
+ * there's obvious material to work with — while a well-defended argument
+ * makes for a "hard" one. Drills with no single associated row (the
+ * whole-round overview) default to "medium".
+ */
+export type DrillDifficulty = "easy" | "medium" | "hard";
+
 export type Drill = {
   kind: DrillKind;
   /** The flow row this drill is about, or `null` for a whole-round drill (e.g. overview). */
   rowIndex: number | null;
   prompt: string;
+  difficulty: DrillDifficulty;
 };
+
+const EASY_VULNERABILITY_THRESHOLD = 70;
+const HARD_VULNERABILITY_THRESHOLD = 40;
+
+/** Maps a 0-100 `vulnerabilityScore` to a `DrillDifficulty` (see `DrillDifficulty`'s doc comment). */
+export function vulnerabilityScoreToDifficulty(vulnerabilityScore: number): DrillDifficulty {
+  if (vulnerabilityScore >= EASY_VULNERABILITY_THRESHOLD) return "easy";
+  if (vulnerabilityScore < HARD_VULNERABILITY_THRESHOLD) return "hard";
+  return "medium";
+}
 
 /**
  * A single whole-round overview drill weighing every side currently
@@ -55,6 +81,7 @@ export function buildOverviewDrill(flow: Pick<Flow, "children" | "columns">): Dr
     kind: "overview",
     rowIndex: null,
     prompt: `Write a 2-minute overview weighing the round so far: ${sideLines}.`,
+    difficulty: "medium",
   };
 }
 
@@ -75,6 +102,7 @@ export function buildFrontlineDrills(
       prompt:
         `Write a frontline response to "${truncateForDisplay(row.argument)}" (${row.originSpeech})` +
         ` before it's extended again.`,
+      difficulty: vulnerabilityScoreToDifficulty(scoreArgumentVulnerability(row)),
     }));
 }
 
@@ -85,6 +113,7 @@ export function buildCrossExamDrills(flow: Pick<Flow, "children" | "columns">): 
     kind: "cross_ex",
     rowIndex: rows[index].rowIndex,
     prompt,
+    difficulty: vulnerabilityScoreToDifficulty(scoreArgumentVulnerability(rows[index])),
   }));
 }
 
@@ -113,6 +142,7 @@ export function buildCollapseDrills(
         prompt:
           `Consider collapsing to "${truncateForDisplay(row.argument)}" (${row.originSpeech})` +
           ` — vulnerability ${row.vulnerabilityScore}/100, ${status} ${row.lastSpeech}.`,
+        difficulty: vulnerabilityScoreToDifficulty(row.vulnerabilityScore),
       };
     });
 }
@@ -135,6 +165,21 @@ export function buildDrillSet(
     ...buildCrossExamDrills(flow),
     ...buildCollapseDrills(flow, sideKey, { limit: options.collapseLimit }),
   ];
+}
+
+/**
+ * Narrows a drill set to one `difficulty`, or returns it unchanged for
+ * `"all"` — the "difficulty rating with filtering" follow-up named under the
+ * "📚 AI Drill Generator" bullet in TODO.md's Research Crowdsourcing
+ * Organizer Features. Kept as a pure helper so `DrillSetsPanel` doesn't
+ * duplicate the filter predicate.
+ */
+export function filterDrillsByDifficulty(
+  drills: Drill[],
+  difficulty: DrillDifficulty | "all",
+): Drill[] {
+  if (difficulty === "all") return drills;
+  return drills.filter((drill) => drill.difficulty === difficulty);
 }
 
 const DRILL_KIND_LABELS: Record<DrillKind, string> = {

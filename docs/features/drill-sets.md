@@ -23,6 +23,20 @@ and its prompt:
 | Cross-Ex | A cross-examination question for an unanswered argument |
 | Collapse | A collapse-scenario recommendation for one of the opposing side's most vulnerable arguments |
 
+## Difficulty rating and filtering
+
+Every generated drill carries a `difficulty` rating (`easy`/`medium`/`hard`),
+derived from the associated argument's `vulnerabilityScore` (see
+`flow/response-outcome.ts`) via `flow/drill-generator.ts`'s
+`vulnerabilityScoreToDifficulty`: a highly exposed argument — unanswered,
+drawing opposing pressure, little same-side defense — makes for an "easy"
+drill (there's obvious material to work with), while a well-defended
+argument makes for a "hard" one. The whole-round overview drill, which has
+no single associated argument, is always rated "medium". Each drill's badge
+shows its difficulty next to its kind badge, and a "Difficulty" dropdown
+above the drill list narrows every round's drills to one difficulty at a
+time via `filterDrillsByDifficulty`.
+
 ## AI-generated practice script
 
 Each drill has a "Get AI script" action (label becomes "Regenerate AI
@@ -97,6 +111,15 @@ set" above. Vitest-covered in `packages/debate-round/test/drillSets.test.ts`
 record for the same round, and `collapseLimit` passing through to
 `buildDrillSet`).
 
+A later slice adds the difficulty rating and filter dropdown described in
+"Difficulty rating and filtering" above, closing the "difficulty rating with
+filtering" follow-up named under the "📚 AI Drill Generator" bullet in
+TODO.md's Research Crowdsourcing Organizer Features. Vitest-covered in
+`packages/debate-round/test/drill-generator.test.ts`
+(`vulnerabilityScoreToDifficulty`'s thresholds, `filterDrillsByDifficulty`,
+and each drill builder's difficulty rating).
+
 ## Known gaps
 
-No follow-ups remain open on the "📚 AI Drill Generator" bullet.
+Two follow-ups remain open on the "📚 AI Drill Generator" bullet: drill
+scheduling/reminders, and completion tracking tied into Progress Unlocks.
