@@ -55,7 +55,9 @@ _No task currently in progress._
   touched-by-build `app-file-list.ts`/`version.ts`/`service-worker.js`
   churn was reverted before committing, unrelated to this change). Updated
   the "🕵️ Opponent Team Profiles" bullet below to reflect that only the
-  side-by-side comparison-view follow-up remains.
+  side-by-side comparison-view follow-up remains. **PR:**
+  https://github.com/debate/debate-ai.com/pull/511. **Completed:**
+  2026-09-03.
 - **AI Drill Generator — tying completion tracking into the Progress
   Unlocks tier system (Research Crowdsourcing Organizer Features bullet,
   "📚 AI Drill Generator" Next item).** Another repeat of the standing
