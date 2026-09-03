@@ -43,6 +43,14 @@
  * "🎙️ AI Coach Mode" bullet in TODO.md, mirroring
  * `CoachMaterialsPanel.tsx`'s identical History/Restore pattern.
  *
+ * A "Compare two sessions" section — the "a side-by-side comparison across
+ * two rounds" follow-up named under the same bullet, the last one open once
+ * History shipped — lets a user pick any two persisted sessions (two sides
+ * of one round, or the same side across two different rounds) and renders
+ * their prompts kind-by-kind in two columns via
+ * `state/coachingSessions.ts#buildCoachingSessionComparison`, plus a
+ * "Download comparison" action mirroring the per-session Download button.
+ *
  * @module panels/CoachingSessionsPanel
  */
 
@@ -54,13 +62,24 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "debate-ui/src/primitives/select"
+import {
   buildAndSaveCoachingSession,
   buildCoachingNotesText,
+  buildCoachingSessionComparison,
+  buildCoachingSessionComparisonText,
   buildCoachingSessionsPanelView,
   coachingNotesFilename,
+  coachingSessionComparisonFilename,
   deleteCoachingSession,
   saveCoachingSession,
   saveCoachingSessionAiFeedback,
+  type CoachingSessionComparison,
   type CoachingSessionRecord,
 } from "../state/coachingSessions"
 import {
@@ -95,6 +114,10 @@ export function CoachingSessionsPanel() {
   const [mounted, setMounted] = useState(false)
   const [historyOpenKey, setHistoryOpenKey] = useState<string | null>(null)
   const [versions, setVersions] = useState<CoachingSessionHistoryEntry[]>([])
+  const [compareAKey, setCompareAKey] = useState("")
+  const [compareBKey, setCompareBKey] = useState("")
+  const [compareError, setCompareError] = useState<string | null>(null)
+  const [comparison, setComparison] = useState<CoachingSessionComparison | null>(null)
 
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
@@ -141,6 +164,44 @@ export function CoachingSessionsPanel() {
     const link = document.createElement("a")
     link.href = url
     link.download = coachingNotesFilename(session.roundId, session.sideKey)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
+  const handleCompare = () => {
+    if (!compareAKey || !compareBKey) {
+      setCompareError("Choose two sessions to compare.")
+      setComparison(null)
+      return
+    }
+    if (compareAKey === compareBKey) {
+      setCompareError("Choose two different sessions to compare.")
+      setComparison(null)
+      return
+    }
+    const sessionA = sessions?.find((session) => `${session.roundId}:${session.sideKey}` === compareAKey)
+    const sessionB = sessions?.find((session) => `${session.roundId}:${session.sideKey}` === compareBKey)
+    if (!sessionA || !sessionB) {
+      setCompareError("One of the selected sessions is no longer available.")
+      setComparison(null)
+      return
+    }
+    setCompareError(null)
+    setComparison(buildCoachingSessionComparison(sessionA, sessionB))
+  }
+
+  /** Mirrors `handleDownload`'s anchor+Blob download pattern. */
+  const handleDownloadComparison = () => {
+    if (!comparison) return
+    const text = buildCoachingSessionComparisonText(comparison)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = coachingSessionComparisonFilename(comparison.a, comparison.b)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -221,6 +282,100 @@ export function CoachingSessionsPanel() {
         )}
         {generateError && <p className="text-sm text-destructive">{generateError}</p>}
       </div>
+
+      {sessions.length >= 2 && (
+        <div className="rounded-lg border border-border p-4 space-y-3">
+          <div>
+            <Label>Compare two sessions</Label>
+            <p className="text-xs text-muted-foreground">
+              See two rounds' (or two sides') coaching prompts side by side, grouped by kind.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="space-y-1">
+              <Label htmlFor="coaching-session-compare-a" className="text-xs">
+                Session A
+              </Label>
+              <Select value={compareAKey} onValueChange={setCompareAKey}>
+                <SelectTrigger id="coaching-session-compare-a" className="w-56">
+                  <SelectValue placeholder="Choose a session" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sessions.map((session) => (
+                    <SelectItem
+                      key={`${session.roundId}:${session.sideKey}`}
+                      value={`${session.roundId}:${session.sideKey}`}
+                    >
+                      Round {session.roundId} ({session.sideKey})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="coaching-session-compare-b" className="text-xs">
+                Session B
+              </Label>
+              <Select value={compareBKey} onValueChange={setCompareBKey}>
+                <SelectTrigger id="coaching-session-compare-b" className="w-56">
+                  <SelectValue placeholder="Choose a session" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sessions.map((session) => (
+                    <SelectItem
+                      key={`${session.roundId}:${session.sideKey}`}
+                      value={`${session.roundId}:${session.sideKey}`}
+                    >
+                      Round {session.roundId} ({session.sideKey})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button size="sm" onClick={handleCompare}>
+              Compare
+            </Button>
+            {comparison && (
+              <Button size="sm" variant="outline" onClick={handleDownloadComparison}>
+                Download comparison
+              </Button>
+            )}
+          </div>
+          {compareError && <p className="text-sm text-destructive">{compareError}</p>}
+          {comparison && (
+            <div className="space-y-3 border-t border-border pt-3">
+              <div className="grid grid-cols-2 gap-3 text-xs font-semibold text-muted-foreground">
+                <span>
+                  Round {comparison.a.roundId} <span className="font-normal">({comparison.a.sideKey})</span>
+                </span>
+                <span>
+                  Round {comparison.b.roundId} <span className="font-normal">({comparison.b.sideKey})</span>
+                </span>
+              </div>
+              {comparison.rowsByKind.map((row) => (
+                <div key={row.kind} className="space-y-1">
+                  <Badge variant="outline">{COACHING_PROMPT_KIND_LABELS[row.kind]}</Badge>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[row.a, row.b].map((prompts, columnIndex) => (
+                      <div key={columnIndex} className="space-y-1 rounded-md border border-border p-2">
+                        {prompts.length === 0 ? (
+                          <p className="text-xs text-muted-foreground">None</p>
+                        ) : (
+                          prompts.map((prompt, index) => (
+                            <p key={index} className="text-sm text-foreground">
+                              {prompt.prompt}
+                            </p>
+                          ))
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {sessions.length === 0 && (
         <div className="p-6 text-center text-sm text-muted-foreground">

@@ -33,12 +33,24 @@
  * the "a coaching-session history timeline per round" follow-up named under
  * the same bullet.
  *
+ * `buildCoachingSessionComparison`/`buildCoachingSessionComparisonText`
+ * below close the "a side-by-side comparison across two rounds" follow-up
+ * named under the same bullet — the one remaining open item once the
+ * history timeline shipped. Both operate on two already-persisted
+ * `CoachingSessionRecord`s; no new coaching-prompt derivation logic is
+ * introduced.
+ *
  * @module state/coachingSessions
  */
 
 import type { Flow } from "../types/flow";
 import type { NewsItem } from "debate-card-search/src/lib/news-stream";
-import { buildCoachingSession, buildCoachingSummaryText, type CoachingPrompt } from "../flow/coach-mode";
+import {
+  buildCoachingSession,
+  buildCoachingSummaryText,
+  type CoachingPrompt,
+  type CoachingPromptKind,
+} from "../flow/coach-mode";
 import {
   appendCoachingSessionVersion,
   deleteVersionsForCoachingSession,
@@ -253,4 +265,96 @@ export function coachingSessionNews(): NewsItem[] {
       timestamp: session.createdAt,
       href: "/coaching",
     }));
+}
+
+/** Display order for a comparison's per-kind rows, matching every panel's existing label order. */
+const COMPARISON_KIND_ORDER: CoachingPromptKind[] = ["extension", "refutation", "collapse", "weighing"];
+
+const COMPARISON_KIND_LABELS: Record<CoachingPromptKind, string> = {
+  extension: "Extension",
+  refutation: "Refutation",
+  collapse: "Collapse",
+  weighing: "Weighing",
+};
+
+function groupPromptsByKind(prompts: CoachingPrompt[]): Record<CoachingPromptKind, CoachingPrompt[]> {
+  const grouped: Record<CoachingPromptKind, CoachingPrompt[]> = {
+    extension: [],
+    refutation: [],
+    collapse: [],
+    weighing: [],
+  };
+  for (const prompt of prompts) grouped[prompt.kind].push(prompt);
+  return grouped;
+}
+
+/** One kind's prompts from each of the two compared sessions, for a side-by-side row. */
+export type CoachingSessionComparisonRow = {
+  kind: CoachingPromptKind;
+  a: CoachingPrompt[];
+  b: CoachingPrompt[];
+};
+
+export type CoachingSessionComparison = {
+  a: CoachingSessionRecord;
+  b: CoachingSessionRecord;
+  rowsByKind: CoachingSessionComparisonRow[];
+};
+
+/**
+ * Builds a side-by-side comparison of two already-persisted coaching
+ * sessions — the "a side-by-side comparison across two rounds" follow-up
+ * named under the "🎙️ AI Coach Mode" bullet in TODO.md. Groups each
+ * session's prompts by kind (extension/refutation/collapse/weighing) so a
+ * comparison view can render matching kinds next to each other regardless
+ * of the order either session's prompts happen to be stored in. Works for
+ * two sides of the same round (e.g. AFF vs. NEG) or two different rounds
+ * equally well — no round/side relationship is assumed between `a` and `b`.
+ */
+export function buildCoachingSessionComparison(
+  a: CoachingSessionRecord,
+  b: CoachingSessionRecord,
+): CoachingSessionComparison {
+  const groupedA = groupPromptsByKind(a.prompts);
+  const groupedB = groupPromptsByKind(b.prompts);
+  return {
+    a,
+    b,
+    rowsByKind: COMPARISON_KIND_ORDER.map((kind) => ({ kind, a: groupedA[kind], b: groupedB[kind] })),
+  };
+}
+
+function renderComparisonColumn(prompts: CoachingPrompt[]): string {
+  return prompts.length === 0 ? "  (none)" : prompts.map((prompt) => `  - ${prompt.prompt}`).join("\n");
+}
+
+/**
+ * Renders a `CoachingSessionComparison` as a downloadable plain-text
+ * document — one section per prompt kind, each showing both sessions'
+ * prompts of that kind stacked underneath their own round+side label.
+ * Mirrors `buildCoachingNotesText`'s heading shape.
+ */
+export function buildCoachingSessionComparisonText(comparison: CoachingSessionComparison): string {
+  const { a, b, rowsByKind } = comparison;
+  const labelA = `Round ${a.roundId} (${a.sideKey})`;
+  const labelB = `Round ${b.roundId} (${b.sideKey})`;
+  const sections = rowsByKind.map(
+    (row) =>
+      `### ${COMPARISON_KIND_LABELS[row.kind]}\n${labelA}:\n${renderComparisonColumn(row.a)}\n\n${labelB}:\n${renderComparisonColumn(row.b)}`,
+  );
+  return `Coaching Comparison — ${labelA} vs. ${labelB}\n\n${sections.join("\n\n")}`;
+}
+
+/**
+ * A filesystem-safe filename for a comparison download, e.g.
+ * `coaching-comparison-round-1-aff-vs-round-1-neg.txt`, mirroring
+ * `coachingNotesFilename`'s exact sanitization rule.
+ */
+export function coachingSessionComparisonFilename(a: CoachingSessionRecord, b: CoachingSessionRecord): string {
+  const safeId = `${a.roundId}-${a.sideKey}-vs-${b.roundId}-${b.sideKey}`
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `coaching-comparison-${safeId || "sessions"}.txt`;
 }
