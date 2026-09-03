@@ -5,6 +5,7 @@
  * `src/round` (and, where one exists, its localStorage store in `src/state`).
  */
 
+export { AccountNotificationsPanel } from "./AccountNotificationsPanel";
 export { AiVersusRoundPanel } from "./AiVersusRoundPanel";
 export { ArgumentTreePanel } from "./ArgumentTreePanel";
 export { CoachingProgramsPanel } from "./CoachingProgramsPanel";

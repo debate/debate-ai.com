@@ -12,6 +12,7 @@ import { debateStyles, debateStyleMap } from "debate-timer/src/formats/debate-fo
 import { IconAffBubble, IconNegBubble } from "debate-ui/src/icons"
 import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "../../state/myTeamProfile"
 import { searchSchools } from "../../cache/client-cache"
+import { UserAutocomplete } from "./UserAutocomplete"
 
 const SCHOOL_SUGGESTION_LIMIT = 10
 const SCHOOL_DROPDOWN_CLASS = "right-auto w-[14rem]"
@@ -323,20 +324,18 @@ export function TeamSection({
             dropdownClassName={SCHOOL_DROPDOWN_CLASS}
             optionClassName={SCHOOL_OPTION_CLASS}
           />
-          <Input
+          <UserAutocomplete
             id="aff-debater-1"
-            type="email"
             placeholder="1A name or email"
             value={affDebater1}
-            onChange={(e) => setAffDebater1(e.target.value)}
+            onChange={setAffDebater1}
           />
           {!isOnePerson && (
-            <Input
+            <UserAutocomplete
               id="aff-debater-2"
-              type="email"
               placeholder="2A name or email"
               value={affDebater2}
-              onChange={(e) => setAffDebater2(e.target.value)}
+              onChange={setAffDebater2}
             />
           )}
           <ArgPrefsDropdown selected={affArgPrefs} onChange={setAffArgPrefs} />
@@ -372,20 +371,18 @@ export function TeamSection({
             dropdownClassName={SCHOOL_DROPDOWN_CLASS}
             optionClassName={SCHOOL_OPTION_CLASS}
           />
-          <Input
+          <UserAutocomplete
             id="neg-debater-1"
-            type="email"
             placeholder="1N name or email"
             value={negDebater1}
-            onChange={(e) => setNegDebater1(e.target.value)}
+            onChange={setNegDebater1}
           />
           {!isOnePerson && (
-            <Input
+            <UserAutocomplete
               id="neg-debater-2"
-              type="email"
               placeholder="2N name or email"
               value={negDebater2}
-              onChange={(e) => setNegDebater2(e.target.value)}
+              onChange={setNegDebater2}
             />
           )}
           <ArgPrefsDropdown selected={negArgPrefs} onChange={setNegArgPrefs} />

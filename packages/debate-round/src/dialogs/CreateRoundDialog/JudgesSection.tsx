@@ -10,9 +10,9 @@
  */
 
 import { Plus, Minus, Scale } from "lucide-react"
-import { Input } from "debate-ui/src/primitives/input"
 import { Label } from "debate-ui/src/primitives/label"
 import { Button } from "debate-ui/src/primitives/button"
+import { UserAutocomplete } from "./UserAutocomplete"
 
 /** Props for {@link JudgesSection}. */
 interface JudgesSectionProps {
@@ -69,14 +69,13 @@ export function JudgesSection({ judgeEmails, setJudgeEmails }: JudgesSectionProp
         {judgeEmails.map((email, index) => (
           <div key={index}>
             <Label htmlFor={`judge-${index}`}>Judge {index + 1} Email</Label>
-            <Input
+            <UserAutocomplete
               id={`judge-${index}`}
-              type="email"
               placeholder={`judge${index + 1}@example.com`}
               value={email}
-              onChange={(e) => {
+              onChange={(v) => {
                 const newEmails = [...judgeEmails]
-                newEmails[index] = e.target.value
+                newEmails[index] = v
                 setJudgeEmails(newEmails)
               }}
             />

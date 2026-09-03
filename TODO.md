@@ -6,6 +6,72 @@
 _No task currently in progress._
 
 ### Completed
+- **Create New Round — registered-user autocomplete + invite notifications.**
+  User-requested (not a backlog idea from this file): the Create New Round
+  dialog's debater/judge/spectator email fields were plain free-text inputs
+  with no link to this repo's real accounts (`user`/`session`/`account`
+  tables, better-auth) — "this should be linked and have autocomplete of
+  registered user, otherwise send an email to that person invited with an
+  invite to join a round." Added a `notifications` D1 table (account-linked,
+  cross-account — unlike `state/prepNoteNotifications.ts`'s pre-existing
+  localStorage/free-form-recipient-id notifications for Strategy Sync Notes
+  assignments) plus three new routes: `GET /api/users/search?q=` (name/email
+  substring lookup, session-gated), `GET`/`PATCH /api/notifications` (list +
+  unread count / mark one or all read, both 401 without a session, mirroring
+  `/api/settings`'s account-only shape), and `POST /api/rounds/invite`
+  (session-gated; for each distinct, validly-formatted, non-self email in
+  the round, a matching registered user gets a `notifications` row, everyone
+  else gets a Resend email invite via the same `RESEND_API_KEY`/
+  `AUTH_RESEND_KEY` path `lib/auth/index.ts`'s magic-link email already
+  uses). `packages/debate-round`'s `TeamSection`/`JudgesSection`/
+  `SpectatorsSection` now use a new `UserAutocomplete` component (a
+  purpose-built dropdown, not a reuse of `debate-ui`'s generic
+  `Autocomplete` primitive, since a useful suggestion needs to *display*
+  "Name — email" while *storing* only the email) backed by a new
+  `searchUsers` in `cache/client-cache.ts`; typing a non-matching value is
+  kept as free text, so an unregistered invitee still works exactly as
+  before. `useRoundEditorForm.ts`'s `handleSubmit` fires the new
+  `sendRoundInvites` (round/round-invite-client.ts) right after a new round
+  is created, toasting a one-line "Notified N registered users, emailed M
+  invites" summary — never blocking round creation or navigation, since
+  `sendRoundInvites` never throws. On the receiving end, a new
+  `useAccountNotifications` hook polls `/api/notifications` every 30s while
+  the tab is visible and a session exists, toasting (via `sonner`, now a
+  direct `debate-round` dependency, matching `debate-flow-ebb`'s existing
+  precedent for the same package) any notification newer than a
+  `localStorage`-persisted watermark id — so a signed-in user with an old
+  unread backlog doesn't get toast-spammed on load, only genuinely new
+  arrivals. The dock Settings menu (`apps/debate-ai.com/components/layout/
+  CategoryDock.tsx`) gained a "Notifications" entry with a "New" pill when
+  `unreadCount > 0`, plus a small red-dot badge on the dock's own Settings
+  icon (desktop and mobile), and `/notifications` now renders a new
+  `AccountNotificationsPanel` (mark-read / mark-all-read, click-through to
+  the round) above the pre-existing `PrepNoteNotificationsPanel` rather than
+  replacing it — the two notification systems address genuinely different
+  things (real cross-account invites vs. free-form-teammate-id task
+  assignments) and neither subsumes the other yet. Migration:
+  `drizzle/0025_lonely_wraith.sql` (generated via `bun run db:generate`,
+  applied locally via `bun run db:push` and hand-verified against
+  `data/db.sqlite` with a throwaway smoke script exercising every query
+  shape used by the three new routes — user search, email-list lookup,
+  insert/list/mark-read/mark-all-read — before being reverted so the
+  tracked seed file stays unchanged). New Vitest coverage in
+  `packages/debate-round/test/`: `round-invite-client.test.ts`,
+  `accountNotifications.test.ts`, and a new `describe("searchUsers")` block
+  in `client-cache.test.ts` (all following `round-pairings-client.test.ts`'s
+  existing `401` → `null` / throw-on-other-failure convention for these
+  account-gated fetch wrappers). Verified with `bun install`, the full
+  `packages/debate-round` typecheck and `bun run test` (100 test files, 1615
+  passing), and `apps/debate-ai.com`'s `tsc --noEmit` showing zero new
+  errors against the pre-existing baseline (44 errors, all in unrelated
+  auth-client/Cloudflare-types/image-module files, confirmed unchanged by
+  diffing against the same command run before these changes). No CI `lint`
+  script exists in this repo, so it wasn't run, matching prior runs'
+  verification scope. Known gaps: invited rounds aren't themselves synced
+  server-side (an invitee's link only resolves if the round was separately
+  cloud-saved via the pre-existing, opt-in `/api/rounds` flow — this slice
+  only dispatches the invite, not the round data); round *edits* (adding a
+  judge later) don't re-invite, only initial creation does.
 - **Research Task Routing — task-priority indicator**
   (the "🧭 Research Task Routing" bullet's own next-named follow-up under
   Research Crowdsourcing Organizer Features below — the one left open once

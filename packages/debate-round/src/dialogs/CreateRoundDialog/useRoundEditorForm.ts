@@ -7,10 +7,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import type { Flow, Box, Round } from "../../types/flow";
 import { generateRoundTitle, generateRoundSlug } from "../../types/flow";
 import { useFlowStore } from "../../state/store";
 import { settings } from "../../state/settings";
+import { sendRoundInvites } from "../../round/round-invite-client";
 import {
   debateStyles,
   debateStyleMap,
@@ -59,6 +61,32 @@ export interface RoundEditorFormState {
 
   /** Submit handler – validates and creates/updates the round. */
   handleSubmit: () => void;
+}
+
+/**
+ * Fires the "Create Round & Invite" half of round creation (see TODO.md's
+ * "Create New Round — registered-user autocomplete + invite notifications"
+ * Completed entry). Fire-and-forget: `sendRoundInvites` never
+ * throws, and a failed dispatch shouldn't block navigation to the
+ * already-created round, so this only toasts a one-line summary of what
+ * happened (silently doing nothing when there's nobody left to invite,
+ * e.g. every field was blank or referenced the creator's own email).
+ */
+function dispatchRoundInvites(request: {
+  emails: string[];
+  tournamentName: string;
+  roundLevel: string;
+  slug: string;
+}) {
+  void sendRoundInvites(request).then((result) => {
+    if (!result) return;
+    const { notified, emailed } = result;
+    if (notified.length === 0 && emailed.length === 0) return;
+    const parts: string[] = [];
+    if (notified.length > 0) parts.push(`Notified ${notified.length} registered ${notified.length === 1 ? "user" : "users"}`);
+    if (emailed.length > 0) parts.push(`emailed ${emailed.length} ${emailed.length === 1 ? "invite" : "invites"}`);
+    toast.success(parts.join(", "));
+  });
 }
 
 /**
@@ -369,6 +397,13 @@ export function useRoundEditorForm(
     const finalFlows = [...archivedFlows, ...updatedFlows];
     setFlows(finalFlows);
     localStorage.setItem("flows", JSON.stringify(finalFlows));
+
+    dispatchRoundInvites({
+      emails: [affDebater1, affDebater2, negDebater1, negDebater2, ...judges, ...roundData.spectators],
+      tournamentName,
+      roundLevel,
+      slug,
+    });
 
     // Navigate to the round's URL
     if (slug) {
