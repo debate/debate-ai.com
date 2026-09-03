@@ -1,0 +1,62 @@
+# debate-api-client
+
+Typed SDK for the [Debate AI API](https://debate-ai.com/api/api-docs), generated
+from [`debate-openapi.yml`](../../apps/debate-ai.com/public/debate-openapi.yml)
+with [Hey API](https://heyapi.dev/) and powered by
+[`grab-url`](https://grab.js.org) instead of fetch/axios — every call gets
+grab's caching, retries, rate limiting, and request dedupe.
+
+📖 Interactive API reference (Scalar): **https://debate-ai.com/api/api-docs**
+
+```bash
+npm i debate-api-client
+```
+
+```ts
+import { getVideoTranscript, searchCards, client } from "debate-api-client"
+
+const { data, error } = await getVideoTranscript({ query: { videoId: "dQw4w9WgXcQ" } })
+if (error) throw new Error(error)
+console.log(data.snippets)
+
+// Point at a different origin (e.g. a local dev server) or add default headers:
+client.setConfig({ baseUrl: "http://localhost:3000/api" })
+```
+
+Every operation in `debate-openapi.yml` has a matching function named after its
+`operationId` (e.g. `getVideoTranscript`, `searchCards`, `syncFlow`,
+`reasonAiComplete`). Each returns `Promise<{ data?: T; error?: string }>` — it
+never throws for an HTTP error, only for a network failure.
+
+```ts
+import { createClient, type Client } from "debate-api-client"
+
+// Or use a dedicated client instance instead of the shared default:
+const client: Client = createClient({
+  baseUrl: "https://debate-ai.com/api",
+  headers: { Authorization: `Bearer ${token}` },
+  grab: { cache: true, retryAttempts: 2, rateLimit: 1 },
+})
+
+await searchCards({ query: { q: "climate change" } }, { client })
+```
+
+## Regenerating types
+
+Request/response types live in `src/generated/` and are regenerated from
+`debate-openapi.yml` — they are not committed. `src/client.ts` (the grab-url
+transport) and `src/sdk.ts` (the operation functions) are hand-written on top
+of those types and are not touched by codegen.
+
+```bash
+npm run generate   # re-run @hey-api/openapi-ts against debate-openapi.yml
+npm run build       # generate + compile to dist/
+```
+
+## Release
+
+Publishing to npm is automated by
+[`.github/workflows/npm-release.yml`](../../.github/workflows/npm-release.yml):
+push a `debate-api-client@x.y.z` tag (matching this package's `version`) and
+CI builds, tests, and publishes it. This is the only package in the monorepo
+published to npm — every other workspace package stays `"private": true`.

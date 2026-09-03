@@ -8,6 +8,42 @@ servers:
   - url: /api
     description: Next.js API routes
 
+tags:
+  - name: Cards
+    description: Debate card search and evidence.
+  - name: Videos
+    description: Round video library, transcripts, and stats.
+  - name: Reference Data
+    description: Static/bundled reference lookups (dictionary, history, names, schools, tournaments).
+  - name: AI
+    description: Server-proxied AI/LLM features.
+  - name: Documents
+    description: REASON editor documents.
+  - name: Flow Sync
+    description: Live shared-flow edit transport.
+  - name: Evidence Reuse
+    description: Cross-device "has this already been cut" index.
+  - name: Settings
+    description: Account-linked app preferences.
+  - name: Auth
+    description: Sign-in configuration.
+  - name: Admin
+    description: Admin-gated operations.
+  - name: Rounds
+    description: Account-synced practice rounds and flows.
+  - name: Coaching
+    description: Coach materials and their version history.
+  - name: Round Prep
+    description: Round pairings, strategy recommendations, and counsel-panel assessments.
+  - name: Judging
+    description: AI judge decision history.
+  - name: Speech Documents
+    description: Speech-document send-log history.
+  - name: Community
+    description: Daily Best Card comment threads.
+  - name: Leaderboard
+    description: Contributor rankings.
+
 paths:
   /analyze:
     post:
@@ -519,6 +555,1621 @@ paths:
         "403":
           description: Caller is not an admin.
 
+  /transcript:
+    get:
+      operationId: getVideoTranscript
+      summary: Get a YouTube video's transcript
+      description: |
+        Fetches captions for a YouTube video (via `extract-youtube`) for the
+        video grid/transcript modal's synced captions panel.
+      tags: [Videos]
+      parameters:
+        - name: videoId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Transcript snippets.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  videoId:
+                    type: string
+                  snippets:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        text:
+                          type: string
+                        start:
+                          type: number
+                        duration:
+                          type: number
+        "400":
+          description: Missing videoId.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: No transcript available for this video.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /names:
+    get:
+      operationId: listNames
+      summary: Get the full list of human names
+      description: Sorted, capitalized list of ~92k human first/last names, used for name-entry autocomplete.
+      tags: [Reference Data]
+      responses:
+        "200":
+          description: Name list.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  names:
+                    type: array
+                    items:
+                      type: string
+
+  /youtube-stats:
+    get:
+      operationId: getYoutubeStats
+      summary: Get bundled YouTube channel/video statistics
+      description: Static metadata snapshot bundled at build time (view counts, subscriber counts, etc. per tracked channel).
+      tags: [Videos]
+      responses:
+        "200":
+          description: YouTube stats snapshot.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /auth/providers:
+    get:
+      operationId: getAuthProviders
+      summary: List configured OAuth sign-in providers
+      description: |
+        The OAuth providers this deployment has credentials for (a subset of
+        google, discord, linkedin), plus the public Google client id used to
+        decide which sign-in buttons to show and whether to prompt Google One Tap.
+      tags: [Auth]
+      responses:
+        "200":
+          description: Configured providers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  providers:
+                    type: array
+                    items:
+                      type: string
+                      enum: [google, discord, linkedin]
+                  googleClientId:
+                    type: string
+
+  /video-issues:
+    get:
+      operationId: listVideoIssues
+      summary: List reported video issues
+      tags: [Videos]
+      responses:
+        "200":
+          description: Reported issues.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  issues:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/VideoIssue"
+    post:
+      operationId: reportVideoIssue
+      summary: Report an issue with a video
+      tags: [Videos]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoIssue"
+      responses:
+        "200":
+          description: Issue recorded.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "400":
+          description: Missing videoId, issue, or timestamp.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Failed to persist the issue.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /admin/youtube/resync:
+    get:
+      operationId: getYoutubeResyncRuns
+      summary: List recent YouTube resync runs (admin)
+      tags: [Admin]
+      responses:
+        "200":
+          description: Recent resync runs, newest first.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  runs:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+        "403":
+          description: Caller is not an admin.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: resyncYoutubeVideos
+      summary: Trigger a full resync of round videos (admin)
+      description: Re-pulls round videos from every subscribed YouTube channel.
+      tags: [Admin]
+      responses:
+        "200":
+          description: Resync completed.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "403":
+          description: Caller is not an admin.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Resync failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /admin/youtube/videos:
+    get:
+      operationId: listAdminYoutubeVideos
+      summary: Keyset-paginated list of stored round videos (admin)
+      tags: [Admin]
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 24, maximum: 100 }
+        - name: cursor
+          in: query
+          description: Opaque keyset cursor from a previous response's nextCursor.
+          schema: { type: string }
+        - name: style
+          in: query
+          schema: { type: integer }
+        - name: channel
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Page of videos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  videos:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+                  nextCursor:
+                    type: string
+                    nullable: true
+        "403":
+          description: Caller is not an admin.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /evidence-reuse-check:
+    get:
+      operationId: checkEvidenceReuse
+      summary: Check whether a source URL has already been cut as a card
+      tags: [Evidence Reuse]
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Reuse check result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url: { type: string }
+                  alreadyCut: { type: boolean }
+                  matches:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/EvidenceReuseMatch"
+        "400":
+          description: Missing or invalid url.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: registerEvidenceReuse
+      summary: Register a cut card's source URL in the shared reuse index
+      tags: [Evidence Reuse]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/EvidenceReuseMatch"
+                - type: object
+                  properties:
+                    contributorId: { type: string }
+      responses:
+        "201":
+          description: Registered.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvidenceReuseMatch"
+        "400":
+          description: Missing id or sourceUrl.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /flow-sync:
+    get:
+      operationId: pullFlowEdits
+      summary: Pull live flow edits newer than a timestamp
+      description: Short-poll transport for shared/live-edited flows ("rooms").
+      tags: [Flow Sync]
+      parameters:
+        - name: flowId
+          in: query
+          required: true
+          schema: { type: integer }
+        - name: sinceMs
+          in: query
+          description: Only edits newer than this epoch-ms timestamp.
+          schema: { type: integer, default: 0 }
+      responses:
+        "200":
+          description: Edits since sinceMs, oldest first.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  edits:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FlowEdit"
+        "400":
+          description: Invalid flowId or sinceMs.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: pushFlowEdit
+      summary: Push one live flow edit
+      description: Upserts by the caller-assigned edit id, so retried pushes are idempotent.
+      tags: [Flow Sync]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlowEdit"
+      responses:
+        "201":
+          description: Edit stored.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlowEdit"
+        "400":
+          description: Invalid edit payload.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /reason-ai:
+    post:
+      operationId: reasonAiComplete
+      summary: Server-proxied Anthropic Messages completion
+      description: |
+        Signed-in-gated passthrough to the Anthropic Messages API used by this
+        app's AI features (cite formatting, OCR/PDF text repair, image alt
+        text, research-coach explanations, LLM card scoring). The server holds
+        the Anthropic API key; callers never see it.
+      tags: [AI]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [messages]
+              properties:
+                system:
+                  type: string
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    required: [role, content]
+                    properties:
+                      role:
+                        type: string
+                        enum: [user, assistant]
+                      content:
+                        description: A string, or an array of text/image content blocks.
+                maxTokens:
+                  type: integer
+                  description: Capped at 16384.
+                temperature:
+                  type: number
+      responses:
+        "200":
+          description: Completion text.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text: { type: string }
+                  stopReason: { type: string }
+        "400":
+          description: Invalid JSON body or empty messages.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to use AI features.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: Request is too large.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "502":
+          description: Upstream Anthropic API error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: AI features are not configured on this server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /settings:
+    get:
+      operationId: getUserSettings
+      summary: Get the current user's account-linked settings
+      tags: [Settings]
+      responses:
+        "200":
+          description: Current (or default) settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSettings"
+        "401":
+          description: Sign in to load your account settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      operationId: updateUserSettings
+      summary: Update one or more account-linked settings fields
+      description: Partial patch — every field is optional, but at least one must be given.
+      tags: [Settings]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Partial `UserSettings` patch.
+              additionalProperties: true
+      responses:
+        "200":
+          description: The resulting full settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSettings"
+        "400":
+          description: Invalid JSON body, invalid field value, or no fields given.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to save your account settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /doc/documents:
+    get:
+      operationId: listDocuments
+      summary: List the current user's REASON editor documents
+      description: Anonymous/signed-out callers get documents with no owning userId.
+      tags: [Documents]
+      responses:
+        "200":
+          description: Documents, newest-updated first.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+    post:
+      operationId: createDocument
+      summary: Create a REASON editor document
+      tags: [Documents]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                content: { type: string }
+      responses:
+        "201":
+          description: Created document.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /doc/documents/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      operationId: getDocument
+      summary: Get a single document
+      tags: [Documents]
+      responses:
+        "200":
+          description: The document.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "403":
+          description: Not the owner of this document.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Document not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      operationId: updateDocument
+      summary: Update a document's title and/or content
+      tags: [Documents]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                content: { type: string }
+      responses:
+        "200":
+          description: Updated document.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "400":
+          description: Invalid JSON body.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Not the owner of this document.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Document not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteDocument
+      summary: Delete a document
+      tags: [Documents]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "403":
+          description: Not the owner of this document.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Document not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /word-count-rounds:
+    get:
+      operationId: listWordCountRounds
+      summary: List the current user's synced word-count rounds
+      tags: [Rounds]
+      responses:
+        "200":
+          description: Full records.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WordCountRoundRecord"
+        "401":
+          description: Sign in to view your synced word-count rounds.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteAllWordCountRounds
+      summary: Delete every synced word-count round for the current user
+      tags: [Rounds]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your synced word-count rounds.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /word-count-rounds/{roundId}:
+    parameters:
+      - name: roundId
+        in: path
+        required: true
+        schema: { type: string }
+    put:
+      operationId: syncWordCountRound
+      summary: Upsert one synced word-count round
+      tags: [Rounds]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [record]
+              properties:
+                record:
+                  $ref: "#/components/schemas/WordCountRoundRecord"
+      responses:
+        "200":
+          description: Upserted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAck"
+        "400":
+          description: Invalid JSON body, invalid record, or roundId mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to sync word-count rounds to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: This round is too large to sync to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteWordCountRound
+      summary: Delete one synced word-count round
+      tags: [Rounds]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your synced word-count rounds.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /flows:
+    get:
+      operationId: listFlows
+      summary: List the current user's saved flows (summaries)
+      tags: [Rounds]
+      responses:
+        "200":
+          description: Flow summaries, newest-updated first.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SavedRecordSummary"
+        "401":
+          description: Sign in to view your saved flows.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /flows/{clientId}:
+    parameters:
+      - name: clientId
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      operationId: getFlow
+      summary: Get one saved flow in full
+      tags: [Rounds]
+      responses:
+        "200":
+          description: The saved flow.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flow"
+        "400":
+          description: Invalid flow id.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to load your saved flows.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Saved flow not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      operationId: syncFlow
+      summary: Upsert one saved flow
+      tags: [Rounds]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [flow]
+              properties:
+                flow:
+                  $ref: "#/components/schemas/Flow"
+      responses:
+        "200":
+          description: Upserted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAck"
+        "400":
+          description: Invalid JSON body, invalid flow, or clientId mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to save flows to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: This flow is too large to save to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteFlow
+      summary: Delete one saved flow
+      tags: [Rounds]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your saved flows.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /rounds:
+    get:
+      operationId: listRounds
+      summary: List the current user's saved rounds (summaries)
+      tags: [Rounds]
+      responses:
+        "200":
+          description: Round summaries, newest-updated first.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SavedRecordSummary"
+        "401":
+          description: Sign in to view your saved rounds.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /rounds/{clientId}:
+    parameters:
+      - name: clientId
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      operationId: getRound
+      summary: Get one saved round in full
+      tags: [Rounds]
+      responses:
+        "200":
+          description: The saved round.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Round"
+        "400":
+          description: Invalid round id.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to load your saved rounds.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Saved round not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      operationId: syncRound
+      summary: Upsert one saved round
+      tags: [Rounds]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [round]
+              properties:
+                round:
+                  $ref: "#/components/schemas/Round"
+      responses:
+        "200":
+          description: Upserted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAck"
+        "400":
+          description: Invalid JSON body, invalid round, or clientId mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to save rounds to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: This round is too large to save to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteRound
+      summary: Delete one saved round
+      tags: [Rounds]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your saved rounds.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /judge-decisions:
+    get:
+      operationId: listJudgeDecisions
+      summary: List the current user's synced judge decisions
+      tags: [Judging]
+      responses:
+        "200":
+          description: Full records, across every round.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/JudgeDecisionRecord"
+        "401":
+          description: Sign in to view your synced judge decisions.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /judge-decisions/{decisionId}:
+    parameters:
+      - name: decisionId
+        in: path
+        required: true
+        schema: { type: string }
+    put:
+      operationId: syncJudgeDecision
+      summary: Upsert one synced judge decision
+      tags: [Judging]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [record]
+              properties:
+                record:
+                  $ref: "#/components/schemas/JudgeDecisionRecord"
+      responses:
+        "200":
+          description: Upserted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAck"
+        "400":
+          description: Invalid JSON body, invalid record, or decisionId mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to sync judge decisions to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: This judge decision is too large to sync to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteJudgeDecision
+      summary: Delete one synced judge decision
+      tags: [Judging]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your synced judge decisions.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /round-pairings:
+    get:
+      operationId: listRoundPairings
+      summary: List the current user's synced round pairings
+      tags: [Round Prep]
+      responses:
+        "200":
+          description: Full records.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoundPairingRecord"
+        "401":
+          description: Sign in to view your synced round pairings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /round-pairings/{pairingId}:
+    parameters:
+      - name: pairingId
+        in: path
+        required: true
+        schema: { type: string }
+    put:
+      operationId: syncRoundPairing
+      summary: Upsert one synced round pairing
+      tags: [Round Prep]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [record]
+              properties:
+                record:
+                  $ref: "#/components/schemas/RoundPairingRecord"
+      responses:
+        "200":
+          description: Upserted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAck"
+        "400":
+          description: Invalid JSON body, invalid record, or pairingId mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to sync round pairings to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: This pairing is too large to sync to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteRoundPairing
+      summary: Delete one synced round pairing
+      tags: [Round Prep]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your synced round pairings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /strategy-recommendations:
+    get:
+      operationId: listStrategyRecommendations
+      summary: List the current user's synced strategy recommendations
+      tags: [Round Prep]
+      responses:
+        "200":
+          description: Full records, across every matchup.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StrategyRecommendationRecord"
+        "401":
+          description: Sign in to view your synced strategy recommendations.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /strategy-recommendations/{recommendationId}:
+    parameters:
+      - name: recommendationId
+        in: path
+        required: true
+        schema: { type: string }
+    put:
+      operationId: syncStrategyRecommendation
+      summary: Upsert one synced strategy recommendation
+      tags: [Round Prep]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [record]
+              properties:
+                record:
+                  $ref: "#/components/schemas/StrategyRecommendationRecord"
+      responses:
+        "200":
+          description: Upserted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAck"
+        "400":
+          description: Invalid JSON body, invalid record, or recommendationId mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to sync strategy recommendations to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: This strategy recommendation is too large to sync to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteStrategyRecommendation
+      summary: Delete one synced strategy recommendation
+      tags: [Round Prep]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your synced strategy recommendations.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /counsel-panel-assessments:
+    get:
+      operationId: listCounselPanelAssessments
+      summary: List the current user's synced counsel-panel assessments
+      tags: [Round Prep]
+      responses:
+        "200":
+          description: Full records, across every round.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CounselPanelAssessmentRecord"
+        "401":
+          description: Sign in to view your synced counsel-panel assessments.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /counsel-panel-assessments/{assessmentId}:
+    parameters:
+      - name: assessmentId
+        in: path
+        required: true
+        schema: { type: string }
+    put:
+      operationId: syncCounselPanelAssessment
+      summary: Upsert one synced counsel-panel assessment
+      tags: [Round Prep]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [record]
+              properties:
+                record:
+                  $ref: "#/components/schemas/CounselPanelAssessmentRecord"
+      responses:
+        "200":
+          description: Upserted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAck"
+        "400":
+          description: Invalid JSON body, invalid record, or assessmentId mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to sync counsel-panel assessments to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: This counsel-panel assessment is too large to sync to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteCounselPanelAssessment
+      summary: Delete one synced counsel-panel assessment
+      tags: [Round Prep]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your synced counsel-panel assessments.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /speech-send-log:
+    get:
+      operationId: listSpeechSendLog
+      summary: List the current user's synced speech-document send-log entries
+      tags: [Speech Documents]
+      responses:
+        "200":
+          description: Full records, oldest first.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SpeechSendLogEntry"
+        "401":
+          description: Sign in to view your synced speech-document history.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /speech-send-log/{entryId}:
+    parameters:
+      - name: entryId
+        in: path
+        required: true
+        schema: { type: string }
+    put:
+      operationId: syncSpeechSendLogEntry
+      summary: Upsert one synced speech-document send-log entry
+      tags: [Speech Documents]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [entry]
+              properties:
+                entry:
+                  $ref: "#/components/schemas/SpeechSendLogEntry"
+      responses:
+        "200":
+          description: Upserted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAck"
+        "400":
+          description: Invalid JSON body, invalid entry, or entryId mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to sync speech-document history to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: This entry is too large to sync to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteSpeechSendLogEntry
+      summary: Delete one synced speech-document send-log entry
+      tags: [Speech Documents]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your synced speech-document history.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /coach-materials:
+    get:
+      operationId: listCoachMaterials
+      summary: List the current user's synced coach materials
+      tags: [Coaching]
+      responses:
+        "200":
+          description: Full records.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CoachMaterial"
+        "401":
+          description: Sign in to view your synced coach materials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /coach-materials/{materialId}:
+    parameters:
+      - name: materialId
+        in: path
+        required: true
+        schema: { type: string }
+    put:
+      operationId: syncCoachMaterial
+      summary: Upsert one synced coach material
+      tags: [Coaching]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [record]
+              properties:
+                record:
+                  $ref: "#/components/schemas/CoachMaterial"
+      responses:
+        "200":
+          description: Upserted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAck"
+        "400":
+          description: Invalid JSON body, invalid record, or materialId mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to sync coach materials to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: This material is too large to sync to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteCoachMaterial
+      summary: Delete one synced coach material
+      description: Cascades to every synced version snapshot of this material too.
+      tags: [Coaching]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your synced coach materials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /coach-material-versions:
+    get:
+      operationId: listCoachMaterialVersions
+      summary: List the current user's synced coach-material version snapshots
+      tags: [Coaching]
+      responses:
+        "200":
+          description: Full records, across every material.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CoachMaterialVersion"
+        "401":
+          description: Sign in to view your synced coach-material version history.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /coach-material-versions/{versionId}:
+    parameters:
+      - name: versionId
+        in: path
+        required: true
+        schema: { type: string }
+    put:
+      operationId: syncCoachMaterialVersion
+      summary: Upsert one synced coach-material version snapshot
+      tags: [Coaching]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [record]
+              properties:
+                record:
+                  $ref: "#/components/schemas/CoachMaterialVersion"
+      responses:
+        "200":
+          description: Upserted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAck"
+        "400":
+          description: Invalid JSON body, invalid record, or versionId mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to sync coach-material version history to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: This version is too large to sync to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteCoachMaterialVersion
+      summary: Delete one synced coach-material version snapshot
+      tags: [Coaching]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your synced coach-material version history.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /daily-best-card-comments:
+    get:
+      operationId: listDailyBestCardComments
+      summary: List the current user's synced Daily Best Card comments
+      tags: [Community]
+      responses:
+        "200":
+          description: Full records, across every day.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DailyBestCardComment"
+        "401":
+          description: Sign in to view your synced comments.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /daily-best-card-comments/{commentId}:
+    parameters:
+      - name: commentId
+        in: path
+        required: true
+        schema: { type: string }
+    put:
+      operationId: syncDailyBestCardComment
+      summary: Upsert one synced Daily Best Card comment
+      tags: [Community]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [comment]
+              properties:
+                comment:
+                  $ref: "#/components/schemas/DailyBestCardComment"
+      responses:
+        "200":
+          description: Upserted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAck"
+        "400":
+          description: Invalid JSON body, invalid comment, or commentId mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Sign in to sync comments to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: This comment is too large to sync to your account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deleteDailyBestCardComment
+      summary: Delete one synced Daily Best Card comment
+      tags: [Community]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResult"
+        "401":
+          description: Sign in to manage your synced comments.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
 components:
   schemas:
     Error:
@@ -637,3 +2288,263 @@ components:
           type: string
           description: Debate event type.
           enum: [CX, LD, PF]
+
+    SuccessResult:
+      type: object
+      description: Generic delete/mutation acknowledgement.
+      properties:
+        success:
+          type: boolean
+          enum: [true]
+      required: [success]
+
+    SyncAck:
+      type: object
+      description: |
+        Upsert acknowledgement returned by the account-synced record PUT
+        endpoints. Always carries the resource's id field (name varies by
+        resource — see each operation's response) plus `updatedAt`.
+      properties:
+        updatedAt:
+          type: string
+          format: date-time
+      additionalProperties: true
+
+    SavedRecordSummary:
+      type: object
+      description: Label-only summary used by the saved-flow/saved-round list endpoints (full data omitted; fetch by id for the full record).
+      properties:
+        clientId:
+          type: integer
+        label:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+      required: [clientId, label, updatedAt]
+
+    VideoIssue:
+      type: object
+      properties:
+        videoId:
+          type: string
+        title:
+          type: string
+        issue:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required: [videoId, issue, timestamp]
+
+    EvidenceReuseMatch:
+      type: object
+      properties:
+        id:
+          type: string
+        sourceUrl:
+          type: string
+        cite:
+          type: string
+        argBlock:
+          type: string
+        topic:
+          type: string
+      required: [id, sourceUrl]
+
+    FlowEdit:
+      type: object
+      description: One live-shared-flow edit ("room") record, keyed by its caller-assigned id.
+      properties:
+        id:
+          type: string
+        flowId:
+          type: integer
+        boxPath:
+          type: array
+          items:
+            type: integer
+          description: Position of the edited box within the flow tree.
+        authorId:
+          type: string
+        content:
+          type: string
+        timestampMs:
+          type: integer
+      required: [id, flowId, boxPath, authorId, timestampMs]
+
+    UserSettings:
+      type: object
+      description: Account-linked app preferences. Unset fields fall back to this app's `DEFAULT_*` values.
+      properties:
+        debateStyle:
+          type: integer
+          nullable: true
+        fontSize:
+          type: integer
+          nullable: true
+        colorTheme:
+          type: string
+        themeMode:
+          type: string
+        favoriteTools:
+          type: array
+          items:
+            type: string
+        editorPreferences:
+          type: object
+          additionalProperties: true
+        newsRead:
+          type: array
+          items:
+            type: string
+        newsLiked:
+          type: array
+          items:
+            type: string
+        wordLimitPresets:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              wordLimit:
+                type: integer
+        outlineFilterPresets:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        savedArgumentCollections:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+    Document:
+      type: object
+      description: A REASON editor document row.
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        userId:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, title, content]
+
+    WordCountRoundRecord:
+      type: object
+      description: A synced word-count-only practice round. Full shape defined/validated by `debate-round`'s `isValidWordCountRoundRecord`.
+      properties:
+        roundId:
+          type: string
+      required: [roundId]
+      additionalProperties: true
+
+    Flow:
+      type: object
+      description: A debate flow. Full shape defined/validated by `debate-round`'s `isValidFlow`.
+      properties:
+        id:
+          type: integer
+      required: [id]
+      additionalProperties: true
+
+    Round:
+      type: object
+      description: A practice round. Full shape defined/validated by `debate-round`'s `isValidRound`.
+      properties:
+        id:
+          type: integer
+      required: [id]
+      additionalProperties: true
+
+    JudgeDecisionRecord:
+      type: object
+      description: A synced AI judge decision. Full shape defined/validated by `debate-round`'s `isValidJudgeDecisionRecord`.
+      properties:
+        id:
+          type: string
+        roundId:
+          type: string
+      required: [id]
+      additionalProperties: true
+
+    RoundPairingRecord:
+      type: object
+      description: A synced round pairing/room assignment. Full shape defined/validated by `debate-round`'s `isValidRoundPairingRecord`.
+      properties:
+        roundId:
+          type: string
+      required: [roundId]
+      additionalProperties: true
+
+    StrategyRecommendationRecord:
+      type: object
+      description: A synced Scout-to-Strategy recommendation. Full shape defined/validated by `debate-round`'s `isValidStrategyRecommendationRecord`.
+      properties:
+        id:
+          type: string
+        matchupId:
+          type: string
+      required: [id]
+      additionalProperties: true
+
+    CounselPanelAssessmentRecord:
+      type: object
+      description: A synced AI counsel-panel vulnerability assessment. Full shape defined/validated by `debate-round`'s `isValidCounselPanelAssessmentRecord`.
+      properties:
+        id:
+          type: string
+        roundId:
+          type: string
+      required: [id]
+      additionalProperties: true
+
+    SpeechSendLogEntry:
+      type: object
+      description: A synced Speech Documents send-log entry. Full shape defined/validated by `debate-editor-cardmirror`'s `isValidSpeechSendLogEntry`.
+      properties:
+        id:
+          type: string
+      required: [id]
+      additionalProperties: true
+
+    CoachMaterial:
+      type: object
+      description: A synced coach material. Full shape defined/validated by `debate-speech-writer`'s `isValidCoachMaterialRecord`.
+      properties:
+        id:
+          type: string
+      required: [id]
+      additionalProperties: true
+
+    CoachMaterialVersion:
+      type: object
+      description: A synced coach-material version snapshot. Full shape defined/validated by `debate-speech-writer`'s `isValidCoachMaterialVersionRecord`.
+      properties:
+        id:
+          type: string
+        materialId:
+          type: string
+      required: [id]
+      additionalProperties: true
+
+    DailyBestCardComment:
+      type: object
+      description: A synced Daily Best Card comment. Full shape defined/validated by `debate-card-search`'s `isValidDailyBestCardComment`.
+      properties:
+        id:
+          type: string
+        dayKey:
+          type: string
+      required: [id]
+      additionalProperties: true
