@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Book, BookMarked, BookOpen, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
+import { Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
@@ -51,7 +51,6 @@ const DEBATE_LINKS = [
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Debate Reddit", icon: MessageSquare },
   { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar },
   { url: "https://www.debate.land", text: "Rankings", icon: Trophy },
-  { url: "https://debate-decoded.ghost.io", text: "Community Blog", icon: BookOpen },
   { url: "https://opencaselist.com", text: "Research", icon: BookMarked },
   { url: "https://debaterhub.com", text: "DebaterHub", icon: Scale },
   { url: "https://debate101.org/#hub", text: "Resource Links", icon: Book },

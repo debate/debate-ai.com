@@ -6,12 +6,12 @@
 
 "use client"
 
-import React, { useState } from "react"
+import React, { useMemo, useState } from "react"
 import { Star, ExternalLink, EyeOff, Eye, ListVideo, Scale } from "lucide-react"
 import { cn } from "debate-ui/src/lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
-import { STYLE_COLORS, DEBATE_STYLE_LABELS } from "../video-card/videoCardUtils"
+import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor } from "../video-card/videoCardUtils"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
 import type { VideoType } from "../../types/videos"
 
@@ -38,6 +38,7 @@ function VideoRow({
   isFavorite,
   isHidden,
   isTopPick,
+  isRoundMode,
   onToggleFavorite,
   onHideVideo,
   onUnhideVideo,
@@ -47,6 +48,7 @@ function VideoRow({
   isFavorite: boolean
   isHidden: boolean
   isTopPick: boolean
+  isRoundMode: boolean
   onToggleFavorite: (videoId: string) => void
   onHideVideo: (videoId: string) => void
   onUnhideVideo: (videoId: string) => void
@@ -60,11 +62,13 @@ function VideoRow({
     _description,
     style,
     tournament,
-    _roundLevel,
+    roundLevel,
     affTeam,
     negTeam,
     _affWin,
     judgeDecision,
+    arg1AC,
+    arg2NR,
   ] = video
   const [showHideConfirm, setShowHideConfirm] = useState(false)
 
@@ -96,32 +100,72 @@ function VideoRow({
           isHidden && "opacity-50",
         )}
       >
-        <td className="px-3 py-2 align-top max-w-[320px]">
+        <td className="px-3 py-2 align-top max-w-[420px] lg:max-w-[560px]">
           <div className="flex items-start gap-1.5">
             {isTopPick && <span title="Top pick">🎖️</span>}
             <div className="min-w-0">
               <p className="truncate font-medium text-foreground text-sm">{title}</p>
-              {teams && <p className="truncate text-xs text-muted-foreground">{teams}</p>}
+              {!isRoundMode && teams && <p className="truncate text-xs text-muted-foreground">{teams}</p>}
             </div>
           </div>
         </td>
-        <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
-          {styleLabel ? (
-            <span
-              className={cn(
-                "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium",
-                styleNumber && STYLE_COLORS[styleNumber] ? STYLE_COLORS[styleNumber] : "bg-muted text-muted-foreground",
+        {isRoundMode ? (
+          <>
+            <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground truncate max-w-[180px]">
+              {tournament || "—"}
+            </td>
+            <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
+              {roundLevel ? (
+                <span
+                  className={cn(
+                    "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium border",
+                    getRoundBadgeColor(roundLevel),
+                  )}
+                >
+                  {roundLevel}
+                </span>
+              ) : (
+                <span className="text-xs text-muted-foreground">—</span>
               )}
-            >
-              {styleLabel}
-            </span>
-          ) : (
-            <span className="text-xs text-muted-foreground">—</span>
-          )}
-        </td>
-        <td className="px-3 py-2 align-top hidden md:table-cell text-sm text-muted-foreground truncate max-w-[160px]">
-          {channel}
-        </td>
+            </td>
+            <td className="px-3 py-2 align-top text-sm truncate max-w-[140px]">
+              {affTeam || <span className="text-muted-foreground">—</span>}
+            </td>
+            <td className="px-3 py-2 align-top text-sm truncate max-w-[140px]">
+              {negTeam || <span className="text-muted-foreground">—</span>}
+            </td>
+            <td className="px-3 py-2 align-top hidden lg:table-cell text-xs text-muted-foreground max-w-[200px]">
+              {arg1AC || arg2NR ? (
+                <div className="flex flex-col gap-0.5">
+                  {arg1AC && <span className="truncate">1AC: {arg1AC}</span>}
+                  {arg2NR && <span className="truncate">2NR: {arg2NR}</span>}
+                </div>
+              ) : (
+                "—"
+              )}
+            </td>
+          </>
+        ) : (
+          <>
+            <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
+              {styleLabel ? (
+                <span
+                  className={cn(
+                    "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium",
+                    styleNumber && STYLE_COLORS[styleNumber] ? STYLE_COLORS[styleNumber] : "bg-muted text-muted-foreground",
+                  )}
+                >
+                  {styleLabel}
+                </span>
+              ) : (
+                <span className="text-xs text-muted-foreground">—</span>
+              )}
+            </td>
+            <td className="px-3 py-2 align-top hidden md:table-cell text-sm text-muted-foreground truncate max-w-[160px]">
+              {channel}
+            </td>
+          </>
+        )}
         <td className="px-3 py-2 align-top text-sm text-muted-foreground whitespace-nowrap">
           {formatDate(date)}
         </td>
@@ -238,6 +282,14 @@ export function VideoListRows({
   hiddenVideos,
   topPicks,
 }: VideoListRowsProps) {
+  // Round (debate) videos carry tournament/aff/neg data that lectures never
+  // populate, so that presence alone tells the two layouts apart — no need
+  // for the caller to say which page it's rendering.
+  const isRoundMode = useMemo(
+    () => videos.some((video) => video[7] || video[9] || video[10]),
+    [videos],
+  )
+
   return (
     <TooltipProvider>
       <div ref={videoContainerRef} className="w-full overflow-x-auto rounded-md border border-border">
@@ -245,8 +297,20 @@ export function VideoListRows({
           <thead>
             <tr className="border-b border-border bg-muted/50 text-left text-xs font-medium text-muted-foreground">
               <th className="px-3 py-2">Title</th>
-              <th className="px-3 py-2 hidden sm:table-cell">Format</th>
-              <th className="px-3 py-2 hidden md:table-cell">Channel</th>
+              {isRoundMode ? (
+                <>
+                  <th className="px-3 py-2 hidden sm:table-cell">Tournament</th>
+                  <th className="px-3 py-2 hidden sm:table-cell">Level</th>
+                  <th className="px-3 py-2">Aff</th>
+                  <th className="px-3 py-2">Neg</th>
+                  <th className="px-3 py-2 hidden lg:table-cell">Arguments</th>
+                </>
+              ) : (
+                <>
+                  <th className="px-3 py-2 hidden sm:table-cell">Format</th>
+                  <th className="px-3 py-2 hidden md:table-cell">Channel</th>
+                </>
+              )}
               <th className="px-3 py-2">Date</th>
               <th className="px-3 py-2 text-right">Views</th>
               <th className="px-3 py-2 hidden lg:table-cell">Decision</th>
@@ -262,6 +326,7 @@ export function VideoListRows({
                 isFavorite={favorites.has(video[0])}
                 isHidden={hiddenVideos.has(video[0])}
                 isTopPick={topPicks?.has(video[0]) || false}
+                isRoundMode={isRoundMode}
                 onToggleFavorite={onToggleFavorite}
                 onHideVideo={onHideVideo}
                 onUnhideVideo={onUnhideVideo}
