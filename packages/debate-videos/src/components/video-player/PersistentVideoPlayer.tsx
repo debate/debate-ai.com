@@ -14,6 +14,7 @@ import { PlayerTitleBar } from "./PlayerTitleBar"
 import { PlayerControls } from "./PlayerControls"
 import { PlayerQueue } from "./PlayerQueue"
 import { PlayerResizeHandles } from "./PlayerResizeHandles"
+import { PlayerSubtitles } from "./PlayerSubtitles"
 
 function VideoPlayerUI() {
   const {
@@ -41,6 +42,9 @@ function VideoPlayerUI() {
   const pendingSlowMode = useRef(false)
 
   const { isSupported: isPipSupported, isActive: isPipActive, toggle: togglePip, exit: exitPip } = useDocumentPictureInPicture(videoWrapperRef)
+
+  const [showSubtitles, setShowSubtitles] = useState(false)
+  const [subtitleTime, setSubtitleTime] = useState(0)
 
   // Time tracking refs for persisting playback position
   const playStartedAtRef = useRef<number | null>(null) // Date.now() when video last started playing
@@ -165,6 +169,7 @@ function VideoPlayerUI() {
           if (playStartedAtRef.current !== null) {
             playStartedAtRef.current = Date.now()
           }
+          if (showSubtitles) setSubtitleTime(yt)
         }
       } catch {
         // ignore non-JSON messages
@@ -172,7 +177,7 @@ function VideoPlayerUI() {
     }
     window.addEventListener("message", handleMessage)
     return () => window.removeEventListener("message", handleMessage)
-  }, [setIsPlaying, persistState])
+  }, [setIsPlaying, persistState, showSubtitles])
 
   // Periodically save state while playing (every 10 seconds)
   useEffect(() => {
@@ -212,6 +217,19 @@ function VideoPlayerUI() {
     clearSavedPlayerState()
     clearActiveVideo()
   }, [clearActiveVideo, exitPip])
+
+  const handleToggleSubtitles = useCallback(() => {
+    setShowSubtitles((prev) => {
+      const next = !prev
+      if (next && isMinimized) setMinimized(false)
+      return next
+    })
+  }, [isMinimized, setMinimized])
+
+  const handleSubtitleSeek = useCallback((seconds: number) => {
+    sendYouTubeCommand("seekTo", [seconds, true])
+    sendYouTubeCommand("playVideo")
+  }, [])
 
   if (!activeVideoId) return null
 
@@ -253,14 +271,21 @@ function VideoPlayerUI() {
           queue={queue}
           isPipSupported={isPipSupported}
           isPipActive={isPipActive}
+          isSubtitlesOpen={showSubtitles}
           onPlayPause={handlePlayPause}
           onToggleSlowMode={handleToggleSlowMode}
           onPlayNext={playNextInQueue}
           onToggleMinimize={() => setMinimized(!isMinimized)}
           onTogglePip={togglePip}
+          onToggleSubtitles={handleToggleSubtitles}
           onClose={handleClose}
         />
       </div>
+
+      {/* Subtitles panel — shown above the video, enlarging the widget, synced to playback. */}
+      {showSubtitles && !isMinimized && (
+        <PlayerSubtitles videoId={activeVideoId} currentTime={subtitleTime} onSeek={handleSubtitleSeek} />
+      )}
 
       {/* iframe — hidden via CSS when minimized so playback is never interrupted. */}
       {/* While popped out, this node lives inside the PiP window, so it's always shown there regardless of isMinimized. */}
