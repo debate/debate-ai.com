@@ -60,7 +60,8 @@ _No task currently in progress._
   Updated the "⚖️ Judge Profiles" bullet in the Research Crowdsourcing
   Organizer Features list below to reflect that only the bulk-CSV-import
   follow-up remains, and that it (not the comparison view) is the one still
-  behind the Tabroom blocker. **Completed:** 2026-09-03.
+  behind the Tabroom blocker. **PR:** https://github.com/debate/debate-ai.com/pull/508.
+  **Completed:** 2026-09-03.
 - **AI Drill Generator — scheduling/reminders (Research Crowdsourcing
   Organizer Features bullet, "📚 AI Drill Generator" Next item).** Another
   repeat of the standing prompt ("integrate all the tools into the UI...
