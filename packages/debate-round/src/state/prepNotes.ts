@@ -21,15 +21,20 @@
  * records a `state/prepNoteNotifications.ts` notification for the new
  * assignee.
  *
+ * `updatePersistedPrepNotePriority` closes that bullet's "a priority flag"
+ * follow-up — a note can be flagged high priority, sorted ahead of its
+ * status-mates by `buildPrepNotesPanelView`.
+ *
  * @module state/prepNotes
  */
 
-import type { PrepNote, PrepNoteStatus } from "../flow/strategy-sync-notes";
+import type { PrepNote, PrepNotePriority, PrepNoteStatus } from "../flow/strategy-sync-notes";
 import {
   assignNote,
   getNotesForBox,
   getNotesForFlow,
-  sortNotesByCreatedAt,
+  setNotePriority,
+  sortNotesByPriorityThenCreatedAt,
   updateNoteStatus,
 } from "../flow/strategy-sync-notes";
 import { recordPrepNoteAssignedNotification } from "./prepNoteNotifications";
@@ -116,6 +121,25 @@ export function updatePersistedPrepNoteStatus(
 }
 
 /**
+ * Applies `setNotePriority` to the persisted note with `id` and saves the
+ * result, so flagging (or unflagging, via `"normal"`) a note as high
+ * priority actually persists. Returns the updated note, or `undefined`
+ * (leaving storage untouched) if no note with that id is stored.
+ */
+export function updatePersistedPrepNotePriority(
+  id: string,
+  priority: PrepNotePriority,
+  updatedAt: number,
+): PrepNote | undefined {
+  const note = getPrepNote(id);
+  if (!note) return undefined;
+
+  const updated = setNotePriority(note, priority, updatedAt);
+  savePrepNote(updated);
+  return updated;
+}
+
+/**
  * Applies `assignNote` to the persisted note with `id` and saves the
  * result, so assigning (or unassigning, via `assignedToId: null`) the note
  * as a task actually persists. On a real assignment (not an unassignment)
@@ -156,14 +180,15 @@ export const PREP_NOTE_STATUS_ORDER: PrepNoteStatus[] = ["needs-follow-up", "ope
 
 /**
  * Reads every persisted prep note (across all flows) and groups it by
- * status, in `PREP_NOTE_STATUS_ORDER`, each group's notes oldest first.
- * Used by `PrepNotesPanel` to render a status-grouped list.
+ * status, in `PREP_NOTE_STATUS_ORDER`, each group's notes high-priority
+ * first and oldest first within each priority tier. Used by
+ * `PrepNotesPanel` to render a status-grouped list.
  */
 export function buildPrepNotesPanelView(): PrepNotesPanelGroup[] {
   const notes = readAll();
   return PREP_NOTE_STATUS_ORDER.map((status) => ({
     status,
-    notes: sortNotesByCreatedAt(notes.filter((note) => note.status === status)),
+    notes: sortNotesByPriorityThenCreatedAt(notes.filter((note) => note.status === status)),
   }));
 }
 

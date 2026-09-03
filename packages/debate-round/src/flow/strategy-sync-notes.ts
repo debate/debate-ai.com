@@ -18,6 +18,9 @@ import { boxFromPath } from "../utils/flow-utils";
 /** Where a note's underlying argument currently stands. */
 export type PrepNoteStatus = "open" | "covered" | "needs-follow-up";
 
+/** Whether a note has been flagged as needing urgent attention. */
+export type PrepNotePriority = "normal" | "high";
+
 export type PrepNote = {
   id: string;
   flowId: number;
@@ -28,6 +31,8 @@ export type PrepNote = {
   status: PrepNoteStatus;
   /** Teammate currently responsible for acting on this note, if assigned as a task. */
   assignedToId?: string;
+  /** Set only when flagged `"high"`; omitted (not stored as `"normal"`) otherwise. */
+  priority?: PrepNotePriority;
   createdAt: number;
   updatedAt: number;
 };
@@ -91,6 +96,20 @@ export function assignNote(note: PrepNote, assignedToId: string | null, updatedA
   return { ...note, assignedToId, updatedAt };
 }
 
+/**
+ * Returns a copy of `note` with its priority changed and `updatedAt`
+ * bumped. Setting `"normal"` clears the field entirely rather than storing
+ * it explicitly, mirroring `assignNote`'s unassign-by-omission convention
+ * so a normal-priority note never carries a stray `priority` key.
+ */
+export function setNotePriority(note: PrepNote, priority: PrepNotePriority, updatedAt: number): PrepNote {
+  if (priority === "normal") {
+    const { priority: _omit, ...rest } = note;
+    return { ...rest, updatedAt };
+  }
+  return { ...note, priority, updatedAt };
+}
+
 function pathsEqual(a: number[], b: number[]): boolean {
   return a.length === b.length && a.every((value, index) => value === b[index]);
 }
@@ -98,6 +117,19 @@ function pathsEqual(a: number[], b: number[]): boolean {
 /** Ascending by `createdAt`, without mutating the input array. */
 export function sortNotesByCreatedAt(notes: PrepNote[]): PrepNote[] {
   return [...notes].sort((a, b) => a.createdAt - b.createdAt);
+}
+
+/**
+ * Notes ordered high-priority first, each priority tier oldest first. Built
+ * on the stable `sortNotesByCreatedAt` so priority is applied as a
+ * secondary sort without disturbing createdAt order within a tier.
+ */
+export function sortNotesByPriorityThenCreatedAt(notes: PrepNote[]): PrepNote[] {
+  return sortNotesByCreatedAt(notes).sort((a, b) => {
+    const aRank = a.priority === "high" ? 0 : 1;
+    const bRank = b.priority === "high" ? 0 : 1;
+    return aRank - bRank;
+  });
 }
 
 /** All notes attached to one specific box on one specific flow, oldest first. */
@@ -123,6 +155,11 @@ export function getNotesAssignedTo(notes: PrepNote[], assignedToId: string): Pre
  */
 export function getOpenFollowUps(notes: PrepNote[]): PrepNote[] {
   return sortNotesByCreatedAt(notes.filter((note) => note.status === "needs-follow-up"));
+}
+
+/** Notes flagged high priority, oldest first. */
+export function getHighPriorityNotes(notes: PrepNote[]): PrepNote[] {
+  return sortNotesByCreatedAt(notes.filter((note) => note.priority === "high"));
 }
 
 /**
@@ -184,9 +221,10 @@ export function buildPrepNoteSummaryText(notes: PrepNote[]): string {
   const openCount = notes.filter((note) => note.status === "open").length;
   const coveredCount = notes.filter((note) => note.status === "covered").length;
   const followUps = getOpenFollowUps(notes);
+  const highPriorityCount = getHighPriorityNotes(notes).length;
 
   const lines = [
-    `${notes.length} note${notes.length === 1 ? "" : "s"}: ${openCount} open, ${coveredCount} covered, ${followUps.length} need follow-up`,
+    `${notes.length} note${notes.length === 1 ? "" : "s"}: ${openCount} open, ${coveredCount} covered, ${followUps.length} need follow-up, ${highPriorityCount} high priority`,
     ...followUps.map((note) => {
       const assignee = note.assignedToId ? ` (assigned to ${note.assignedToId})` : "";
       return `- ${note.text}${assignee}`;

@@ -6,6 +6,52 @@
 _No task currently in progress._
 
 ### Completed
+- **Strategy Sync Notes — priority flag for prep notes**
+  (the "🔄 Strategy Sync Notes" bullet's own next-named follow-up under
+  Product Feature Ideas below). As with every recent run, the standing
+  prompt ("integrate all the tools into the UI... create user settings...
+  link user db SQL... save flows docs and debates in SQL and link to
+  users... add tools where needed in the UI... develop better tool UI") is
+  already fully built (account-synced `/settings`, D1 tables + `/api/*`
+  routes linking flows/docs/rounds/materials to signed-in users, every tool
+  reachable from the nav), and there were no open PRs to resume — so this
+  run again picked a genuine next-step instead, one directly named in
+  TODO.md's own text. Until now a `PrepNote` only ever carried a single
+  status dimension (`open`/`covered`/`needs-follow-up`) with no way to mark
+  one more urgent than another regardless of status — this was explicitly
+  named as the bullet's own open follow-up. `flow/strategy-sync-notes.ts`
+  gained an optional `PrepNotePriority = "normal" | "high"` field on
+  `PrepNote` (omitted entirely when `"normal"`, mirroring `assignedToId`'s
+  omit-when-unset convention), a pure `setNotePriority` transform, and
+  `getHighPriorityNotes`/`sortNotesByPriorityThenCreatedAt` query helpers
+  (the latter used to sort each status group high-priority-first while
+  preserving createdAt order within a tier). `state/prepNotes.ts`'s new
+  `updatePersistedPrepNotePriority` applies that transform to a stored note
+  and saves it — mirroring `updatePersistedPrepNoteStatus` exactly — and
+  `buildPrepNotesPanelView` now sorts each status group with the new
+  priority-aware sort instead of plain createdAt order.
+  `PrepNotesPanel.tsx` gained a "Flag high priority"/"Unflag" toggle button
+  per note plus a "High priority" badge on flagged notes, and
+  `buildPrepNoteSummaryText`'s counts line now reports how many notes are
+  flagged. This is client-side/localStorage-only, matching the base
+  `PrepNote` store's own local-only persistence (no account-sync exists for
+  prep notes at all yet). See `docs/features/prep-notes.md`'s new
+  "Priority flag" section. Vitest-covered: new cases in
+  `packages/debate-round/test/strategy-sync-notes.test.ts`
+  (`setNotePriority` flagging/clearing/non-mutation, `getHighPriorityNotes`
+  filtering, `sortNotesByPriorityThenCreatedAt`'s ordering and
+  non-mutation, and `buildPrepNoteSummaryText`'s new high-priority count)
+  and `packages/debate-round/test/prepNotes.test.ts`
+  (`updatePersistedPrepNotePriority`'s flag/clear/missing-id paths and
+  `buildPrepNotesPanelView`'s priority-first sort within a status group).
+  Verified with the full `bun run test` (root, all packages: 230 test
+  files, 4089 tests, all passing — up from 230 files/4077 tests before this
+  change), the full `bun run typecheck` (13 typechecked packages, clean),
+  and `apps/debate-ai.com`'s production build (`bun run build:web`)
+  completing cleanly including the `/prep-notes` route. Remaining
+  follow-ups for this bullet (threaded replies on a note instead of flat
+  status; a digest notification instead of one per assignment) are left for
+  a future run.
 - **Opponent Team Profiles — bulk CSV import for scouted rounds**
   (the "🕵️ Opponent Team Profiles" bullet's own next-named follow-up under
   Research Crowdsourcing Organizer Features below). As with every recent
@@ -14264,7 +14310,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.
 * 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. The optional brainstorm-session-timer follow-up is also now done: a "Session timer" widget (duration presets, Start/Pause/Reset, a live `M:SS` countdown) backed by the new `lib/brainstorm-session-timer.ts` pure state machine and `state/brainstormSessionTimer.ts` persistence wrapper, synced live across browser tabs via the panel's existing `storage`-event listener — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Session timer" section. Next: polish the idea-ranking UI (upvote affordance/animation).
 * 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
-* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — threaded replies on a note instead of flat status; a priority flag; a digest notification instead of one per assignment.
+* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. Next: threaded replies on a note instead of flat status; a digest notification instead of one per assignment.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
 * 📚 **AI Drill Generator** (`/drills`) — drill scheduling/reminders; a difficulty rating with filtering; completion tracking tied into Progress Unlocks.
