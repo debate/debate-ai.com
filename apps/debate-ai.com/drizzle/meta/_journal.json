@@ -176,6 +176,13 @@
       "when": 1788388825430,
       "tag": "0024_blushing_mordo",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "6",
+      "when": 1788425138757,
+      "tag": "0025_flat_wrecker",
+      "breakpoints": true
     }
   ]
 }
