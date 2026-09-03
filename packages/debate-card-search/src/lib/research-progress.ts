@@ -227,3 +227,52 @@ export function buildResearchProgressReportText(roster: ContributorProgress[]): 
 export function researchProgressReportFilename(): string {
   return "research-progress-report.txt";
 }
+
+/** One topic's task-completion progress aggregated across every contributor who has a tracked assignment in it. */
+export interface TeamTopicComparison {
+  topic: string;
+  /** How many distinct contributors have at least one assignment in this topic. */
+  contributorCount: number;
+  assignedTaskCount: number;
+  completedTaskCount: number;
+  /** `completedTaskCount / assignedTaskCount`, rounded to 2 decimals; 0 when nothing is assigned. */
+  completionRate: number;
+}
+
+/**
+ * Builds the "topic comparison across the whole team" follow-up named under
+ * the "📈 Research Progress Tracking" bullet in TODO.md: rolls each
+ * contributor's own per-topic `TopicProgress` (already on `ContributorProgress.topics`)
+ * up into one row per topic across the entire roster, so a coach or team lead
+ * can see which topics the team as a whole is behind on rather than reading
+ * one contributor's row at a time. Sorted by completion rate ascending (the
+ * least-covered topic first), tie-broken alphabetically — the same
+ * least-covered/most-urgent-first convention `buildStaleEvidenceDigest` uses.
+ */
+export function buildTeamTopicComparison(roster: ContributorProgress[]): TeamTopicComparison[] {
+  const byTopic = new Map<string, { contributorIds: Set<string>; assignedTaskCount: number; completedTaskCount: number }>();
+
+  for (const progress of roster) {
+    for (const topic of progress.topics) {
+      const entry = byTopic.get(topic.topic) ?? {
+        contributorIds: new Set<string>(),
+        assignedTaskCount: 0,
+        completedTaskCount: 0,
+      };
+      entry.contributorIds.add(progress.contributorId);
+      entry.assignedTaskCount += topic.assignedTaskCount;
+      entry.completedTaskCount += topic.completedTaskCount;
+      byTopic.set(topic.topic, entry);
+    }
+  }
+
+  return Array.from(byTopic.entries())
+    .map(([topic, entry]) => ({
+      topic,
+      contributorCount: entry.contributorIds.size,
+      assignedTaskCount: entry.assignedTaskCount,
+      completedTaskCount: entry.completedTaskCount,
+      completionRate: completionRate(entry.completedTaskCount, entry.assignedTaskCount),
+    }))
+    .sort((a, b) => a.completionRate - b.completionRate || a.topic.localeCompare(b.topic));
+}

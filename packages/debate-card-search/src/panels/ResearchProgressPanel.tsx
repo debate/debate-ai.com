@@ -39,6 +39,12 @@
  * "printable/exportable progress report" follow-up named under the "📈
  * Research Progress Tracking" bullet in TODO.md.
  *
+ * A "Topic comparison" section below the roster rolls each contributor's
+ * own per-topic counts up into one row per topic across the whole team via
+ * `lib/research-progress.ts`'s `buildTeamTopicComparison`, least-covered
+ * topic first — the "topic-comparison view across the whole team"
+ * follow-up named under the same TODO.md bullet.
+ *
  * @module panels/ResearchProgressPanel
  */
 
@@ -47,6 +53,7 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-ui/src/primitives/badge"
 import { Button } from "debate-ui/src/primitives/button"
+import { MeterBar } from "debate-ui/src/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -63,6 +70,7 @@ import { isOwnContributorRow } from "../lib/session-identity"
 import { isResearchProgressLiveUpdateStorageEvent } from "../state/live-update"
 import {
   buildResearchProgressReportText,
+  buildTeamTopicComparison,
   researchProgressReportFilename,
   type ContributorProgress,
 } from "../lib/research-progress"
@@ -139,6 +147,8 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
       </div>
     )
   }
+
+  const topicComparison = buildTeamTopicComparison(roster)
 
   return (
     <div className="p-4 sm:p-6">
@@ -217,6 +227,43 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
           })}
         </TableBody>
       </Table>
+
+      {topicComparison.length > 0 && (
+        <div className="mt-6">
+          <h2 className="mb-1 text-lg font-semibold text-foreground">Topic comparison</h2>
+          <p className="mb-3 text-sm text-muted-foreground">
+            Task completion rolled up across the whole team, least-covered topic first.
+          </p>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Topic</TableHead>
+                <TableHead className="text-right">Contributors</TableHead>
+                <TableHead className="text-right">Tasks</TableHead>
+                <TableHead className="min-w-40">Completion</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {topicComparison.map((topic) => (
+                <TableRow key={topic.topic}>
+                  <TableCell className="font-medium">{topic.topic}</TableCell>
+                  <TableCell className="text-right text-muted-foreground">{topic.contributorCount}</TableCell>
+                  <TableCell className="text-right text-muted-foreground">
+                    {topic.completedTaskCount}/{topic.assignedTaskCount}
+                  </TableCell>
+                  <TableCell>
+                    <MeterBar
+                      value={Math.round(topic.completionRate * 100)}
+                      max={100}
+                      caption={`${Math.round(topic.completionRate * 100)}%`}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   )
 }
