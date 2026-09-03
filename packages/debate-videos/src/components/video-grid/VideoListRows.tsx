@@ -13,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS } from "../video-card/videoCardUtils"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
+import { TranscriptModal } from "../transcript-modal/TranscriptModal"
 import type { VideoType } from "../../types/videos"
 
 interface VideoListRowsProps {
@@ -190,6 +191,8 @@ function VideoRow({
               </TooltipTrigger>
               <TooltipContent>{isInQueue ? "In queue" : "Add to queue"}</TooltipContent>
             </Tooltip>
+
+            <TranscriptModal videoId={videoId} title={title} />
 
             <Tooltip>
               <TooltipTrigger asChild>

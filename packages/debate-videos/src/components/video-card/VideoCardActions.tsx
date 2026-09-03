@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from "debate-ui/src/primitives/tooltip"
 import { HideConfirmDialog } from "./VideoCardDialogs"
+import { TranscriptModal } from "../transcript-modal/TranscriptModal"
 
 /** Shape of the video metadata forwarded to the player store on queue add. */
 interface VideoMeta {
@@ -183,6 +184,9 @@ export function VideoCardActions({
               <p>{isInQueue ? "In queue" : "Add to queue"}</p>
             </TooltipContent>
           </Tooltip>
+
+          {/* Transcript modal */}
+          <TranscriptModal videoId={videoId} title={title} />
 
           {/* Topic tooltip button */}
           {yearTopic && (
