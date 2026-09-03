@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildOpponentScoutingReportText,
   buildOpponentScoutingSummary,
   buildOpponentTeamProfile,
   buildOpponentTeamProfiles,
   getHeadToHeadRecords,
   groupRecordsByTeam,
+  opponentScoutingReportFilename,
   type OpponentRoundRecord,
 } from "../src/rankings/opponent-team-profile";
 
@@ -187,6 +189,34 @@ describe("buildOpponentScoutingSummary", () => {
     ];
     const summary = buildOpponentScoutingSummary(buildOpponentTeamProfile("skewed", records));
     expect(summary).toContain("(notably stronger on aff)");
+  });
+});
+
+describe("buildOpponentScoutingReportText", () => {
+  it("reports an empty roster without crashing", () => {
+    const text = buildOpponentScoutingReportText([]);
+    expect(text).toContain("Opponent Scouting Report");
+    expect(text).toContain("No opponent team profiles are on file yet.");
+  });
+
+  it("includes one summary block per roster entry, in the given order", () => {
+    const alpha = buildOpponentTeamProfile("alpha", [
+      record({ teamId: "alpha", side: "aff", won: true }),
+    ]);
+    const beta = buildOpponentTeamProfile("beta", [
+      record({ teamId: "beta", side: "neg", won: false }),
+    ]);
+    const text = buildOpponentScoutingReportText([alpha, beta]);
+    expect(text.startsWith("Opponent Scouting Report\n\n")).toBe(true);
+    expect(text.indexOf("alpha:")).toBeLessThan(text.indexOf("beta:"));
+    expect(text).toContain(buildOpponentScoutingSummary(alpha));
+    expect(text).toContain(buildOpponentScoutingSummary(beta));
+  });
+});
+
+describe("opponentScoutingReportFilename", () => {
+  it("returns a fixed filename", () => {
+    expect(opponentScoutingReportFilename()).toBe("opponent-scouting-report.txt");
   });
 });
 

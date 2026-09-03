@@ -6,6 +6,58 @@
 _No task currently in progress._
 
 ### Completed
+- **Opponent Team Profiles — printable/exportable scouting report
+  (Research Crowdsourcing Organizer Features bullet, "🕵️ Opponent Team
+  Profiles" Next item).** Another repeat of the standing prompt ("integrate
+  all the tools into the UI... create user settings and link user db SQL...
+  with ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history) and every tool is already reachable from the Tools page
+  and CardMirror's command palette, so this slice picked the next named,
+  unblocked follow-up instead: the "🕵️ Opponent Team Profiles" bullet's
+  "a printable/exportable scouting report" item (the sibling "side-by-side
+  us-vs-opponent comparison view" follow-up stays open). Checked the
+  established precedent first — `debate-card-search`'s
+  `lib/research-progress.ts#buildResearchProgressReportText`/
+  `researchProgressReportFilename` (Research Progress Tracking's own
+  "Download report" button) and `debate-round`'s
+  `state/coachingSessions.ts#buildCoachingNotesText` — both build a plain
+  string from already-existing per-record summary logic rather than
+  introducing new report-formatting rules, and both wire into their panel
+  via the same inline anchor+Blob download snippet (`URL.createObjectURL`,
+  a synthetic `<a download>` click, then `URL.revokeObjectURL`) since no
+  shared helper for it exists yet in this repo. `rankings/opponent-team-profile.ts`
+  already had `buildOpponentScoutingSummary(profile)`, rendering one
+  team's profile as human-readable bullet lines for a scouting card — the
+  new `buildOpponentScoutingReportText(roster)` composes that per-team
+  summary across the whole roster (blank-line-separated, in whatever order
+  the caller's roster is already sorted in — rounds-recorded-descending,
+  matching the on-screen table), and `opponentScoutingReportFilename()`
+  returns a fixed `opponent-scouting-report.txt` name, mirroring
+  `research-progress.ts`'s fixed-filename convention exactly since this is
+  also a whole-roster report with no natural single-record id to key a
+  filename on. `panels/OpponentTeamProfilesPanel.tsx` gets a "Download
+  report" button in the header (same placement/styling as
+  `ResearchProgressPanel`'s), wired through the same anchor+Blob pattern.
+  See `docs/features/opponent-team-profiles.md`'s new "Downloading a
+  scouting report" section. Vitest-covered: two new `describe` blocks in
+  `packages/debate-data-sync/test/opponent-team-profile.test.ts`
+  (`buildOpponentScoutingReportText`'s empty-roster and
+  multi-team-ordering/content cases, `opponentScoutingReportFilename`'s
+  fixed value) — 3 new tests. Verification: `bunx turbo run typecheck
+  --filter=debate-data-sync --filter=debate-round --filter=debate-ai-web`
+  (10/10 in-scope package tasks pass); full `bun run test` (229 files,
+  4144 tests passed — up from 4141/229 before this slice); `bun run
+  build:web` (production build succeeded, `/opponents` route intact; the
+  touched-by-build `app-file-list.ts`/`version.ts`/`service-worker.js`
+  churn was reverted before committing, unrelated to this change). Updated
+  the "🕵️ Opponent Team Profiles" bullet below to reflect that only the
+  side-by-side comparison-view follow-up remains. **PR:**
+  https://github.com/debate/debate-ai.com/pull/511. **Completed:**
+  2026-09-03.
 - **AI Drill Generator — tying completion tracking into the Progress
   Unlocks tier system (Research Crowdsourcing Organizer Features bullet,
   "📚 AI Drill Generator" Next item).** Another repeat of the standing
@@ -15012,7 +15064,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.
 * 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.
-* 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. Next: a side-by-side us-vs-opponent comparison view; a printable/exportable scouting report.
+* 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. The printable/exportable-scouting-report follow-up is also now done: a "Download report" button exports the whole roster as a plain-text file, one summary block per team (`rankings/opponent-team-profile.ts#buildOpponentScoutingReportText`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Downloading a scouting report" section. Next: a side-by-side us-vs-opponent comparison view.
 * ⚖️ **Judge Profiles** (`/judges`) — the auto-tagged-paradigm confidence-indicator follow-up is done: `mostCommonParadigmConfidence` (the tagged paradigm's share of a judge's paradigm-tagged rounds) shows as a "N% confidence" badge on the roster, and folds into the `buildJudgeTendencySummary`/`buildJudgeAdaptationNotes` lines it's already quoted in — see the Completed entry above and `docs/features/judge-profiles.md`'s "What it shows" section. The multi-judge-comparison-view-for-panel-rounds follow-up is also now done — it turned out not to actually need the blocked Tabroom data source: a "Compare judges" section checks two or more already-persisted (hand-logged or, once available, bulk-imported) profiles and reads them as a panel via a new `judge/judge-panel-comparison.ts#buildJudgePanelComparison` — see the Completed entry above and `docs/features/judge-profiles.md`'s "Comparing judges on a panel" section. One follow-up remains, and it does stay behind the same Tabroom blocker as Opponent Team Profiles (see below): a bulk CSV import for ballot history.
 * 🤖 **AI Practice Opponent** (`/practice-opponent`) — share a custom-authored persona across a team instead of per-user only; a difficulty slider layered on top of persona choice; post-round feedback tips specific to the persona faced.
 * 🎙️ **AI Coach Mode** (`/coaching`) — the exportable-coaching-notes-document follow-up is done: each session card has a "Download" action that saves its template prompts plus its AI feedback (if generated) as a plain-text file, headed with the round id and side (`state/coachingSessions.ts#buildCoachingNotesText`/`coachingNotesFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Download" mention. The coaching-session-history-timeline-per-round follow-up is also now done: a "History" toggle on each session card lists every prior version of that round+side's session, newest first, each restorable (`state/coachingSessionHistory.ts#appendCoachingSessionVersion`/`listVersionsForCoachingSession`, wired into `state/coachingSessions.ts#saveCoachingSession`, which now snapshots the record it overwrites before replacing it) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "History" section. The side-by-side-comparison-across-two-rounds follow-up is also now done: a "Compare two sessions" section lets a user pick any two persisted sessions and renders their prompts kind-by-kind in a two-column grid, plus a "Download comparison" action (`state/coachingSessions.ts#buildCoachingSessionComparison`/`buildCoachingSessionComparisonText`/`coachingSessionComparisonFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Compare two sessions" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step elsewhere if one becomes worth doing.

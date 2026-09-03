@@ -43,6 +43,13 @@
  * count rather than failing the whole batch on one malformed row —
  * mirrors `debate-card-search`'s `CardScoringPanel` "Bulk import" section.
  *
+ * A "Download report" button closes the "a printable/exportable scouting
+ * report" follow-up named under this same bullet: it exports the whole
+ * roster as a plain-text file via
+ * `rankings/opponent-team-profile.ts`'s `buildOpponentScoutingReportText`
+ * (mirrors `debate-card-search`'s `ResearchProgressPanel` "Download report"
+ * button and its anchor+Blob download pattern).
+ *
  * @module panels/OpponentTeamProfilesPanel
  */
 
@@ -87,9 +94,11 @@ import {
   type OpponentRoundRecordEntry,
 } from "debate-data-sync/src/state/opponentRoundRecords"
 import { OPPONENT_ROUND_CSV_TEMPLATE } from "debate-data-sync/src/rankings/opponent-round-csv-import"
-import type {
-  DebateSide,
-  OpponentTeamProfile,
+import {
+  buildOpponentScoutingReportText,
+  opponentScoutingReportFilename,
+  type DebateSide,
+  type OpponentTeamProfile,
 } from "debate-data-sync/src/rankings/opponent-team-profile"
 
 function formatFrequencyList(entries: { value: string; count: number }[]): string {
@@ -268,6 +277,22 @@ export function OpponentTeamProfilesPanel() {
     refresh()
   }
 
+  /** Mirrors `ResearchProgressPanel.tsx`'s anchor+Blob download pattern. */
+  const handleDownloadReport = () => {
+    if (roster === null) return
+    const text = buildOpponentScoutingReportText(roster)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = opponentScoutingReportFilename()
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   const normalizedFilter = teamFilter.trim().toLowerCase()
   const visibleRecords =
     normalizedFilter === ""
@@ -282,13 +307,18 @@ export function OpponentTeamProfilesPanel() {
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Opponent Team Profiles</h1>
-        <p className="text-sm text-muted-foreground">
-          Overall record, side-record tendencies, and common arguments/cases for every opposing
-          team with a saved scouting profile. Log a scouted round below to create or update one —
-          every column is derived from the rounds logged for that team.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="mb-1 text-xl font-semibold text-foreground">Opponent Team Profiles</h1>
+          <p className="text-sm text-muted-foreground">
+            Overall record, side-record tendencies, and common arguments/cases for every opposing
+            team with a saved scouting profile. Log a scouted round below to create or update one —
+            every column is derived from the rounds logged for that team.
+          </p>
+        </div>
+        <Button size="sm" variant="outline" onClick={handleDownloadReport}>
+          Download report
+        </Button>
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-3">

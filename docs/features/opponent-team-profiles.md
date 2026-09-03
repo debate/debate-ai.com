@@ -111,6 +111,18 @@ team's profile is re-aggregated once the whole batch is in (not once per
 row) — a bulk import behaves exactly like logging each round by hand, just
 faster.
 
+## Downloading a scouting report
+
+A **Download report** button in the panel header exports the whole roster —
+every persisted profile, in the same rounds-recorded-descending order shown
+on screen — as a plain-text file via
+`rankings/opponent-team-profile.ts#buildOpponentScoutingReportText`, one
+`buildOpponentScoutingSummary` block per team separated by a blank line, so
+it reads the same whether it's viewed on screen or shared as a
+`opponent-scouting-report.txt` download ahead of a tournament. Mirrors
+[Research Progress Tracking](research-progress-tracking.md)'s "Download
+report" button and its anchor+Blob download pattern exactly.
+
 ## Data flow
 
 ```
