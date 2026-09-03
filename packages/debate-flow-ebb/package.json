@@ -11,6 +11,7 @@
     ".": "./src/EbbFlowEmbed.tsx",
     "./settings-panel": "./src/components/settings/EmbeddedSettingsPanel.tsx",
     "./store": "./src/lib/store/useFlowStore.ts",
+    "./tools": "./src/tools.ts",
     "./tooltip": "./src/components/ui/tooltip.tsx",
     "./styles/ebb-scope.css": "./src/styles/ebb-scope.css"
   },

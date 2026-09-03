@@ -431,9 +431,10 @@ class SettingsModal {
       panel.appendChild(panelTitle);
       // General's actual setting rows moved to the app's /settings page (see
       // `buildEmbeddedSettingsPanel`) — this tab keeps only its non-setting
-      // diagnostic sections (Benchmark / About this install / backup /
-      // doc links) appended below, regardless of what SETTING_METADATA
-      // still tags `general` for the embedded panel's own lookup.
+      // diagnostic sections (crash dumps / backup / doc links, plus
+      // Benchmark and About this install on hosts with no /settings route)
+      // appended below, regardless of what SETTING_METADATA still tags
+      // `general` for the embedded panel's own lookup.
       const entries = id === 'general' ? [] : visibleEntriesFor(id);
       let lastSection: string | undefined;
       for (const meta of entries) {
@@ -459,16 +460,21 @@ class SettingsModal {
         empty.textContent = 'No settings in this section yet.';
         panel.appendChild(empty);
       }
-      // "About this install" diagnostic block at the bottom of
-      // General — read-only labels users can copy-paste into bug
-      // reports. Lives here rather than in SETTING_METADATA
-      // because it isn't a user-editable setting. The Benchmark
-      // action (run the in-app perf suite) sits alongside it.
+      // Benchmark and "About this install" moved to the app's /settings
+      // page (see `buildEmbeddedSettingsPanel`) alongside this tab's
+      // account-linked rows — on the web build this modal keeps only what's
+      // genuinely tied to this browser/install (crash dumps, local backup,
+      // doc links) plus the link over to /settings. Electron has no
+      // /settings route, so its modal keeps Benchmark and About this
+      // install here — its only settings surface.
       if (id === 'general') {
         const accountLink = buildAccountSettingsLinkSection();
-        if (accountLink) panel.appendChild(accountLink);
-        panel.appendChild(buildBenchmarkSection(() => this.close()));
-        panel.appendChild(buildInstallInfoSection());
+        if (accountLink) {
+          panel.appendChild(accountLink);
+        } else {
+          panel.appendChild(buildBenchmarkSection(() => this.close()));
+          panel.appendChild(buildInstallInfoSection());
+        }
         const crashDumps = buildCrashDumpsSection();
         if (crashDumps) panel.appendChild(crashDumps);
         panel.appendChild(this.buildSettingsBackupSection());
@@ -1337,9 +1343,11 @@ export interface EmbeddedSettingsPanel {
 
 /** Builds a standalone panel of every visible `category` setting row —
  *  the same rows the full Settings dialog renders under that tab, minus the
- *  dialog chrome (header/sidebar/other tabs) and General's install-specific
- *  bonus sections (Benchmark / About this install / backup — tied to one
- *  editor install, not an account). Used to embed CardMirror's
+ *  dialog chrome (header/sidebar/other tabs). For `general` this also
+ *  appends the Benchmark and About-this-install sections, which live here
+ *  rather than in the gear-icon modal on the web build (the modal keeps
+ *  only its install-specific bonus sections — crash dumps / backup — that
+ *  have no home on this account-linked page). Used to embed CardMirror's
  *  account-linked categories (general/appearance/accessibility) directly
  *  into the app's own /settings page instead of the editor's gear-icon
  *  modal. Caller owns mounting `element` and must call `destroy()` on
@@ -1375,6 +1383,14 @@ export function buildEmbeddedSettingsPanel(category: SettingsCategory): Embedded
     empty.className = 'pmd-settings-empty';
     empty.textContent = 'No settings in this section yet.';
     panel.appendChild(empty);
+  }
+  // Benchmark and About-this-install: not user-editable settings, so they
+  // aren't in SETTING_METADATA, but this is now their home on the web build
+  // (the gear-icon modal keeps them only on hosts with no /settings route —
+  // see `SettingsModal.render()`). No dialog to close here, hence the no-op.
+  if (category === 'general') {
+    panel.appendChild(buildBenchmarkSection(() => {}));
+    panel.appendChild(buildInstallInfoSection());
   }
 
   const refreshDependents = (): void => {

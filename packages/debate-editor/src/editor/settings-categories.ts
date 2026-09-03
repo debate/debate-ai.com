@@ -24,11 +24,14 @@ export const CATEGORY_TABS: {
    *  `visibleCategoryTabs`). */
   electronOnly?: boolean;
 }[] = [
-  // General's actual settings rows (Workspace / Word counts / Find / Timer)
-  // moved to the app's own /settings page (see `buildEmbeddedSettingsPanel`
-  // in settings-ui.ts) — the tab stays only for its non-setting diagnostic
-  // sections (Benchmark, About this install, Settings backup, doc links);
-  // `SettingsModal.render()` forces this tab's settings list to empty.
+  // General's actual settings rows (Workspace / Word counts / Find / Timer),
+  // and its Benchmark / About this install sections, moved to the app's own
+  // /settings page (see `buildEmbeddedSettingsPanel` in settings-ui.ts) — on
+  // the web build the tab stays only for what's genuinely tied to this
+  // browser/install (crash dumps, Settings backup, doc links) plus a link
+  // over to /settings; Electron, which has no /settings route, keeps
+  // Benchmark and About this install here too. `SettingsModal.render()`
+  // forces this tab's settings list to empty.
   { id: 'general', label: 'General', icon: 'home' },
   { id: 'files', label: 'Files', icon: 'archive' },
   // Appearance and Accessibility (colors/fonts/sizing, and the
