@@ -176,6 +176,13 @@
       "when": 1788388825430,
       "tag": "0024_blushing_mordo",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "6",
+      "when": 1788425494242,
+      "tag": "0025_lonely_wraith",
+      "breakpoints": true
     }
   ]
 }

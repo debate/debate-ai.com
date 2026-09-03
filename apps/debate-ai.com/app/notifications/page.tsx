@@ -2,11 +2,11 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { PrepNoteNotificationsPanel } from "debate-round"
+import { AccountNotificationsPanel, PrepNoteNotificationsPanel } from "debate-round"
 
 export const metadata: Metadata = {
   title: "Notifications",
-  description: "Assignee notifications for prep notes handed off to you as a task",
+  description: "Round invites and other account notifications, plus assignee notifications for prep notes handed off to you as a task",
 }
 
 export default function NotificationsPage() {
@@ -23,8 +23,13 @@ export default function NotificationsPage() {
         </Link>
       </div>
       <Suspense>
-        <PrepNoteNotificationsPanel />
+        <AccountNotificationsPanel />
       </Suspense>
+      <div className="mt-6 border-t border-border pt-2">
+        <Suspense>
+          <PrepNoteNotificationsPanel />
+        </Suspense>
+      </div>
     </div>
   )
 }

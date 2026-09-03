@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Activity, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
+import { Activity, Bell, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "debate-ui/src/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
+import { useAccountNotifications } from "debate-round"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,
@@ -134,7 +135,15 @@ function AccountSection({ onSignIn }: { onSignIn: () => void }) {
   )
 }
 
-function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: () => void }) {
+function SettingsMenu({
+  side,
+  onSignIn,
+  unreadNotifications,
+}: {
+  side: "bottom" | "top"
+  onSignIn: () => void
+  unreadNotifications: number
+}) {
   const themeState = useThemeState()
   const router = useRouter()
 
@@ -149,6 +158,15 @@ function SettingsMenu({ side, onSignIn }: { side: "bottom" | "top"; onSignIn: ()
         All Tools
       </DropdownMenuItem>
       <DropdownMenuSeparator />
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/notifications") }}>
+        <Bell className="mr-2 h-4 w-4" />
+        <span className="flex-1">Notifications</span>
+        {unreadNotifications > 0 && (
+          <span className="ml-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">
+            New
+          </span>
+        )}
+      </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/settings") }}>
         <SettingsIcon className="mr-2 h-4 w-4" />
         Settings
@@ -245,11 +263,13 @@ function DockInstance({
   side,
   allItems,
   onSignIn,
+  unreadNotifications,
 }: {
   dockClassName: string
   side: "bottom" | "top"
   allItems: { key: string; label: string; icon: any; active: boolean; onClick: () => void }[]
   onSignIn: () => void
+  unreadNotifications: number
 }) {
   return (
     <DropdownMenu>
@@ -272,15 +292,18 @@ function DockInstance({
           </DockItem>
         ))}
         <DropdownMenuTrigger asChild>
-          <DockItem className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
+          <DockItem className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
             <DockLabel>Settings</DockLabel>
             <DockIcon>
               <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
             </DockIcon>
+            {unreadNotifications > 0 && (
+              <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-background" />
+            )}
           </DockItem>
         </DropdownMenuTrigger>
       </Dock>
-      <SettingsMenu side={side} onSignIn={onSignIn} />
+      <SettingsMenu side={side} onSignIn={onSignIn} unreadNotifications={unreadNotifications} />
     </DropdownMenu>
   )
 }
@@ -298,6 +321,8 @@ export function CategoryDock() {
   // Owned here rather than inside the menu: the dropdown unmounts its content
   // when it closes, which would tear the dialog down with it.
   const [loginOpen, setLoginOpen] = useState(false)
+  const { isAuthenticated } = useSession()
+  const { unreadCount } = useAccountNotifications(isAuthenticated)
 
   const allItems = [
     ...NAV_ITEMS.map(({ href, label, icon }) => ({
@@ -370,6 +395,7 @@ export function CategoryDock() {
           side="bottom"
           allItems={allItems}
           onSignIn={() => setLoginOpen(true)}
+          unreadNotifications={unreadCount}
         />
       </div>
 
@@ -408,15 +434,18 @@ export function CategoryDock() {
               )
             })}
             <DropdownMenuTrigger asChild>
-              <DockItem className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
+              <DockItem className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
                 <DockLabel>Settings</DockLabel>
                 <DockIcon>
                   <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
                 </DockIcon>
+                {unreadCount > 0 && (
+                  <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-background" />
+                )}
               </DockItem>
             </DropdownMenuTrigger>
           </Dock>
-          <SettingsMenu side="top" onSignIn={() => setLoginOpen(true)} />
+          <SettingsMenu side="top" onSignIn={() => setLoginOpen(true)} unreadNotifications={unreadCount} />
         </DropdownMenu>
       </div>
 

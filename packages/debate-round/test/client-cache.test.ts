@@ -102,3 +102,36 @@ describe("searchNames", () => {
     expect(await mod.searchNames("alvarez")).toContain("Bob Alvarez");
   });
 });
+
+describe("searchUsers", () => {
+  const USERS = [{ id: "u1", name: "Alice Chen", email: "alice@example.com", image: null }];
+
+  it("returns [] without calling fetch for an empty/whitespace query", async () => {
+    const { mod, fetchMock } = await loadModule(() => ({ ok: true, body: { users: USERS } }));
+    expect(await mod.searchUsers("")).toEqual([]);
+    expect(await mod.searchUsers("   ")).toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("queries the endpoint and returns matching users, honouring the limit", async () => {
+    const { mod, fetchMock } = await loadModule(() => ({ ok: true, body: { users: USERS } }));
+    expect(await mod.searchUsers("alice", 1)).toEqual(USERS);
+    expect(fetchMock).toHaveBeenCalledWith("/api/users/search?q=alice");
+  });
+
+  it("degrades to an empty list on a failed request", async () => {
+    const { mod } = await loadModule(() => ({ ok: false, body: null }));
+    expect(await mod.searchUsers("alice")).toEqual([]);
+  });
+
+  it("degrades to an empty list when fetch itself throws", async () => {
+    const fetchMock = vi.fn(async () => {
+      throw new Error("network down");
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    vi.resetModules();
+    const mod = (await import("../src/cache/client-cache")) as CacheModule;
+
+    expect(await mod.searchUsers("alice")).toEqual([]);
+  });
+});

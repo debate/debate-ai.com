@@ -750,3 +750,38 @@ export const videos = sqliteTable(
 
 export type VideoTableRow = typeof videos.$inferSelect;
 export type VideoTableInsert = typeof videos.$inferInsert;
+
+// Account-linked in-app notifications — backs the Create New Round dialog's
+// "invite a registered user" flow (an invitee with a matching `user` row
+// gets one of these instead of an email, since they can already see it
+// in-app) and the dock Settings menu's "Notifications" entry/toast. Unlike
+// `packages/debate-round/src/state/prepNoteNotifications.ts`'s
+// localStorage-only, free-form-recipient-id notifications, these are real
+// cross-account notifications — the recipient is a `user.id`, not a
+// same-browser teammate label — so they live server-side. `link` is an
+// app-relative path (e.g. `/debate/{slug}`) the client navigates to on
+// click; `readAt` null means unread, same "absent = default" nullable
+// convention as every other column in this file.
+export const notifications = sqliteTable(
+  "notifications",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    type: text("type").notNull(),
+    title: text("title").notNull(),
+    body: text("body"),
+    link: text("link"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    readAt: integer("read_at", { mode: "timestamp" }),
+  },
+  (table) => ({
+    userIdIdx: index("idx_notifications_user_id").on(table.userId),
+    userCreatedIdx: index("idx_notifications_user_created").on(table.userId, table.createdAt),
+  }),
+);
+
+export type NotificationRow = typeof notifications.$inferSelect;

@@ -111,3 +111,36 @@ export async function getSchoolsByFormat(): Promise<Record<string, string[]>> {
   const { byFormat } = await loadSchools();
   return byFormat;
 }
+
+const USERS_ENDPOINT = "/api/users/search";
+
+export interface UserSearchResult {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+}
+
+/**
+ * Looks up registered users by name/email substring, for the Create New
+ * Round dialog's debater/judge/spectator autocomplete (unlike
+ * `searchSchools`/`searchTournaments`/`searchNames` above, this hits a
+ * per-query endpoint rather than one cached client-side list, since the
+ * user directory is neither small nor public). Requires a session — an
+ * empty result (rather than a thrown error) is returned when signed out or
+ * on any request failure, so the field just falls back to plain free-text
+ * email entry.
+ */
+export async function searchUsers(query = "", limit = 8): Promise<UserSearchResult[]> {
+  const trimmed = query.trim();
+  if (!trimmed) return [];
+  try {
+    const res = await fetch(`${USERS_ENDPOINT}?q=${encodeURIComponent(trimmed)}`);
+    if (!res.ok) return [];
+    const data = (await res.json()) as { users?: UserSearchResult[] };
+    return (data.users ?? []).slice(0, limit);
+  } catch (error) {
+    console.error("Unable to search users:", error);
+    return [];
+  }
+}
