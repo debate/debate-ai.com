@@ -4,9 +4,11 @@ import {
   buildDrillSetsPanelView,
   deleteDrillSet,
   getDrillSet,
+  getDrillSetCompletionStats,
   listDrillSets,
   saveDrillAiScript,
   saveDrillSet,
+  toggleDrillCompletion,
   type DrillSetRecord,
 } from "../src/state/drillSets";
 import type { Box } from "../src/types/flow";
@@ -224,6 +226,92 @@ describe("saveDrillAiScript", () => {
     saveDrillAiScript("missing", 0, "Script.");
 
     expect(listDrillSets()).toEqual([DRILL_SET_B]);
+  });
+});
+
+describe("toggleDrillCompletion", () => {
+  it("marks a drill completed on first toggle", () => {
+    saveDrillSet(DRILL_SET_A);
+    toggleDrillCompletion("round-1", 0);
+
+    expect(getDrillSet("round-1")).toEqual({ ...DRILL_SET_A, completedDrillIndexes: [0] });
+  });
+
+  it("un-marks an already-completed drill on second toggle", () => {
+    saveDrillSet(DRILL_SET_A);
+    toggleDrillCompletion("round-1", 0);
+    toggleDrillCompletion("round-1", 0);
+
+    expect(getDrillSet("round-1")?.completedDrillIndexes).toEqual([]);
+  });
+
+  it("tracks multiple completed drills, sorted by index", () => {
+    saveDrillSet(DRILL_SET_A);
+    toggleDrillCompletion("round-1", 1);
+    toggleDrillCompletion("round-1", 0);
+
+    expect(getDrillSet("round-1")?.completedDrillIndexes).toEqual([0, 1]);
+  });
+
+  it("leaves drills and aiScripts untouched", () => {
+    saveDrillSet(DRILL_SET_A);
+    saveDrillAiScript("round-1", 0, "Overview script.");
+    toggleDrillCompletion("round-1", 0);
+
+    const record = getDrillSet("round-1");
+    expect(record?.drills).toEqual(DRILL_SET_A.drills);
+    expect(record?.aiScripts).toEqual({ 0: "Overview script." });
+  });
+
+  it("leaves other rounds' records untouched", () => {
+    saveDrillSet(DRILL_SET_A);
+    saveDrillSet(DRILL_SET_B);
+    toggleDrillCompletion("round-1", 0);
+
+    expect(getDrillSet("round-2")).toEqual(DRILL_SET_B);
+  });
+
+  it("is a no-op when the roundId isn't stored", () => {
+    saveDrillSet(DRILL_SET_B);
+    toggleDrillCompletion("missing", 0);
+
+    expect(listDrillSets()).toEqual([DRILL_SET_B]);
+  });
+
+  it("is a no-op when drillIndex is out of range for that record", () => {
+    saveDrillSet(DRILL_SET_A);
+    toggleDrillCompletion("round-1", 99);
+    toggleDrillCompletion("round-1", -1);
+
+    expect(getDrillSet("round-1")).toEqual(DRILL_SET_A);
+  });
+});
+
+describe("getDrillSetCompletionStats", () => {
+  it("returns zero completed and a zero ratio for a record with no completedDrillIndexes", () => {
+    expect(getDrillSetCompletionStats(DRILL_SET_A)).toEqual({ completed: 0, total: 2, ratio: 0 });
+  });
+
+  it("counts a partial completion", () => {
+    expect(
+      getDrillSetCompletionStats({ ...DRILL_SET_A, completedDrillIndexes: [0] }),
+    ).toEqual({ completed: 1, total: 2, ratio: 0.5 });
+  });
+
+  it("counts full completion", () => {
+    expect(
+      getDrillSetCompletionStats({ ...DRILL_SET_A, completedDrillIndexes: [0, 1] }),
+    ).toEqual({ completed: 2, total: 2, ratio: 1 });
+  });
+
+  it("ignores out-of-range indexes rather than over-counting", () => {
+    expect(
+      getDrillSetCompletionStats({ ...DRILL_SET_A, completedDrillIndexes: [0, 99] }),
+    ).toEqual({ completed: 1, total: 2, ratio: 0.5 });
+  });
+
+  it("returns a zero ratio (not NaN) for a record with no drills", () => {
+    expect(getDrillSetCompletionStats({ drills: [] })).toEqual({ completed: 0, total: 0, ratio: 0 });
   });
 });
 

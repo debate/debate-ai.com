@@ -13,6 +13,14 @@
  * generated one for that drill; see `saveDrillAiScript` below, closing
  * follow-up (b) named under the "📚 AI Drill Generator" bullet.
  *
+ * `completedDrillIndexes` is likewise additive and optional — it tracks
+ * which drills (by index in `drills`) the user has marked practiced, the
+ * "completion tracking" follow-up named under the "📚 AI Drill Generator"
+ * bullet. See `toggleDrillCompletion`/`getDrillSetCompletionStats` below.
+ * This slice tracks completion locally only; tying completion into the
+ * separate `debate-card-search` Progress Unlocks tier system stays a named
+ * open follow-up.
+ *
  * @module state/drillSets
  */
 
@@ -26,6 +34,16 @@ export type DrillSetRecord = {
   drills: Drill[];
   /** AI-generated practice scripts, keyed by the drill's index in `drills`. */
   aiScripts?: Record<number, string>;
+  /** Indexes (into `drills`) of drills the user has marked practiced/completed. */
+  completedDrillIndexes?: number[];
+};
+
+/** A round's drill-completion progress — see `getDrillSetCompletionStats`. */
+export type DrillSetCompletionStats = {
+  completed: number;
+  total: number;
+  /** `completed / total`, or `0` when `total` is `0`. */
+  ratio: number;
 };
 
 const STORAGE_KEY = "drillSets";
@@ -91,6 +109,46 @@ export function saveDrillAiScript(roundId: string, drillIndex: number, aiScript:
     aiScripts: { ...(existing.aiScripts ?? {}), [drillIndex]: aiScript },
   };
   writeAll(records);
+}
+
+/**
+ * Toggles whether a drill (by index in `drills`) is marked completed/
+ * practiced, leaving `drills` and `aiScripts` untouched. A no-op when the
+ * roundId isn't stored or `drillIndex` is out of range for that record's
+ * `drills` — mirrors `saveDrillAiScript`'s guard, since a completion toggle
+ * is only ever made against an already-generated, already-persisted drill.
+ */
+export function toggleDrillCompletion(roundId: string, drillIndex: number): void {
+  const records = readAll();
+  const index = records.findIndex((existing) => existing.roundId === roundId);
+  if (index === -1) return;
+  const existing = records[index];
+  if (drillIndex < 0 || drillIndex >= existing.drills.length) return;
+  const completed = new Set(existing.completedDrillIndexes ?? []);
+  if (completed.has(drillIndex)) {
+    completed.delete(drillIndex);
+  } else {
+    completed.add(drillIndex);
+  }
+  records[index] = {
+    ...existing,
+    completedDrillIndexes: [...completed].sort((a, b) => a - b),
+  };
+  writeAll(records);
+}
+
+/**
+ * A round's drill-completion progress — how many of its drills are marked
+ * completed, out of the total, and the ratio (`0` when there are no
+ * drills, matching `MeterBar`'s own `max <= 0` handling). Used by
+ * `panels/DrillSetsPanel.tsx` to render a per-round progress meter.
+ */
+export function getDrillSetCompletionStats(record: Pick<DrillSetRecord, "drills" | "completedDrillIndexes">): DrillSetCompletionStats {
+  const total = record.drills.length;
+  const completed = (record.completedDrillIndexes ?? []).filter(
+    (drillIndex) => drillIndex >= 0 && drillIndex < total,
+  ).length;
+  return { completed, total, ratio: total > 0 ? completed / total : 0 };
 }
 
 /**
