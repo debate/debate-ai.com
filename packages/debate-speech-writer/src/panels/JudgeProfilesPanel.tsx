@@ -29,6 +29,14 @@
  * only when `hasJudgeRoundRecordRedoHistory` says one exists, which steps
  * forward again via `redoLastJudgeRoundRecordEdit`.
  *
+ * Also hosts a **Compare judges** section — the "a multi-judge comparison
+ * view for panel rounds" follow-up named under this bullet in TODO.md.
+ * Checking two or more judges in the roster reveals a panel-level read
+ * (`judge/judge-panel-comparison.ts#buildJudgePanelComparison`): which
+ * judges lean which side, the pace to prep at for the whole panel, whether
+ * running theory is safe across it, and whether the panel's tagged
+ * paradigms conflict.
+ *
  * @module panels/JudgeProfilesPanel
  */
 
@@ -72,6 +80,7 @@ import {
 import type { DebateSide, JudgeProfile } from "../judge/judge-profile"
 import { judgeParadigms, judgeParadigmIds } from "../judge/judge-paradigms"
 import type { BuiltinJudgeParadigmId } from "../judge/judge-paradigms"
+import { buildJudgePanelComparison } from "../judge/judge-panel-comparison"
 
 /** Sentinel for "no paradigm tagged" — a Radix `SelectItem` can't carry an empty value. */
 const NO_PARADIGM = "none"
@@ -137,6 +146,7 @@ export function JudgeProfilesPanel() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [judgeFilter, setJudgeFilter] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [compareIds, setCompareIds] = useState<string[]>([])
 
   useEffect(() => {
     setRoster(buildJudgeProfilesRoster())
@@ -235,6 +245,12 @@ export function JudgeProfilesPanel() {
     refresh()
   }
 
+  const toggleCompare = (judgeId: string) => {
+    setCompareIds((prev) =>
+      prev.includes(judgeId) ? prev.filter((id) => id !== judgeId) : [...prev, judgeId],
+    )
+  }
+
   const normalizedFilter = judgeFilter.trim().toLowerCase()
   const visibleRecords =
     normalizedFilter === ""
@@ -246,6 +262,9 @@ export function JudgeProfilesPanel() {
   if (roster === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading judge profiles…</div>
   }
+
+  const compareProfiles = roster.filter((profile) => compareIds.includes(profile.judgeId))
+  const panelComparison = compareProfiles.length >= 2 ? buildJudgePanelComparison(compareProfiles) : null
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -414,6 +433,9 @@ export function JudgeProfilesPanel() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-8">
+                <span className="sr-only">Compare</span>
+              </TableHead>
               <TableHead>Judge</TableHead>
               <TableHead className="text-right">Rounds</TableHead>
               <TableHead>Side record</TableHead>
@@ -426,6 +448,14 @@ export function JudgeProfilesPanel() {
           <TableBody>
             {roster.map((profile) => (
               <TableRow key={profile.judgeId}>
+                <TableCell>
+                  <input
+                    type="checkbox"
+                    checked={compareIds.includes(profile.judgeId)}
+                    onChange={() => toggleCompare(profile.judgeId)}
+                    aria-label={`Add ${profile.judgeId} to panel comparison`}
+                  />
+                </TableCell>
                 <TableCell className="font-medium">{profile.judgeId}</TableCell>
                 <TableCell className="text-right">{profile.roundsJudged}</TableCell>
                 <TableCell>
@@ -465,6 +495,94 @@ export function JudgeProfilesPanel() {
             ))}
           </TableBody>
         </Table>
+      )}
+
+      {roster.length >= 2 && (
+        <div className="space-y-3 rounded-lg border border-border p-4">
+          <div>
+            <h2 className="text-sm font-medium text-foreground">
+              Compare judges {compareIds.length > 0 && `(${compareIds.length} selected)`}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Check two or more judges above to see a panel-level read: side leans, the pace to
+              prep at for the whole panel, whether theory is safe to run in front of it, and
+              whether the panel's tagged paradigms conflict.
+            </p>
+          </div>
+          {compareIds.length > 0 && (
+            <Button variant="ghost" size="sm" onClick={() => setCompareIds([])}>
+              Clear selection
+            </Button>
+          )}
+          {panelComparison === null ? (
+            <p className="text-sm text-muted-foreground">
+              {compareIds.length === 1
+                ? "Select at least one more judge to compare."
+                : "No judges selected yet."}
+            </p>
+          ) : (
+            <div className="space-y-2 text-sm">
+              <p>
+                <span className="font-medium text-foreground">Panel: </span>
+                {panelComparison.judgeIds.join(", ")}
+              </p>
+              <p>
+                <span className="font-medium text-foreground">Side leans: </span>
+                {panelComparison.sideLeans.length > 0 ? (
+                  panelComparison.sideLeans.map((lean) => (
+                    <Badge key={lean.judgeId} variant="outline" className="mr-1 uppercase">
+                      {lean.judgeId} → {lean.leansSide}
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="text-muted-foreground">no notable bias on this panel</span>
+                )}
+              </p>
+              <p>
+                <span className="font-medium text-foreground">Recommended pace: </span>
+                {panelComparison.recommendedPaceWpm != null ? (
+                  <span className="text-muted-foreground">
+                    {panelComparison.recommendedPaceWpm} wpm (set by {panelComparison.slowestPacedJudgeId},
+                    the panel's least speed-tolerant tracked judge)
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground">unknown — no judge on this panel tracked pace</span>
+                )}
+              </p>
+              <p>
+                <span className="font-medium text-foreground">Theory: </span>
+                <Badge
+                  variant={
+                    panelComparison.theoryRisk === "risky" || panelComparison.theoryRisk === "mixed"
+                      ? "destructive"
+                      : "outline"
+                  }
+                  className="capitalize"
+                >
+                  {panelComparison.theoryRisk}
+                </Badge>
+                {panelComparison.judgesAverseToTheory.length > 0 && (
+                  <span className="ml-2 text-muted-foreground">
+                    averse: {panelComparison.judgesAverseToTheory.join(", ")}
+                  </span>
+                )}
+              </p>
+              <p>
+                <span className="font-medium text-foreground">Paradigms: </span>
+                {panelComparison.hasConflictingParadigms && (
+                  <Badge variant="destructive" className="mr-2">
+                    conflicting
+                  </Badge>
+                )}
+                <span className="text-muted-foreground">
+                  {panelComparison.paradigms
+                    .map((entry) => `${entry.judgeId}: ${entry.paradigmId ?? "untagged"}`)
+                    .join(", ")}
+                </span>
+              </p>
+            </div>
+          )}
+        </div>
       )}
 
       {records.length > 0 && (
