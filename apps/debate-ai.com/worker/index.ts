@@ -9,6 +9,7 @@ import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } fr
 import type { ImageConfig } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import { runWithContext } from "../lib/database/context";
+import { resyncYouTubeRounds } from "../lib/youtube/resync-rounds";
 
 interface Env {
   ASSETS: Fetcher;
@@ -34,6 +35,11 @@ interface Env {
 interface ExecutionContext {
   waitUntil(promise: Promise<unknown>): void;
   passThroughOnException(): void;
+}
+
+interface ScheduledEvent {
+  cron: string;
+  scheduledTime: number;
 }
 
 // Image security config. SVG sources with .svg extension auto-skip the
@@ -62,5 +68,16 @@ export default {
 
       return handler.fetch(request, env, ctx);
     });
+  },
+
+  // Weekly YouTube round resync (see the `triggers.crons` entry in
+  // wrangler.jsonc) — keeps the admin queue current without an admin having
+  // to remember to click "Resync videos".
+  async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    ctx.waitUntil(
+      runWithContext(env, () => resyncYouTubeRounds(null)).catch((error) => {
+        console.error("Scheduled YouTube resync failed:", error);
+      }),
+    );
   },
 };

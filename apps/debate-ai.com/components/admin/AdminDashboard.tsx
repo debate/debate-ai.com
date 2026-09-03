@@ -69,6 +69,10 @@ export function AdminDashboard() {
   const [isResyncing, setIsResyncing] = useState(false);
   const [lastRun, setLastRun] = useState<SyncRun | null>(null);
   const [resyncError, setResyncError] = useState<string | null>(null);
+  const [isPublishingAll, setIsPublishingAll] = useState(false);
+  const [publishAllError, setPublishAllError] = useState<string | null>(null);
+  const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
+  const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -161,6 +165,71 @@ export function AdminDashboard() {
     }
   };
 
+  const handlePublish = useCallback(async (id: string) => {
+    setPendingIds((prev) => new Set(prev).add(id));
+    setRowErrors((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+    try {
+      const res = await fetch(`/api/admin/youtube/videos/${id}`, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Publish failed");
+      setVideos((prev) => prev.filter((video) => video.id !== id));
+    } catch (error) {
+      setRowErrors((prev) => ({ ...prev, [id]: (error as Error).message }));
+    } finally {
+      setPendingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
+  }, []);
+
+  const handleDelete = useCallback(async (id: string) => {
+    setPendingIds((prev) => new Set(prev).add(id));
+    setRowErrors((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+    try {
+      const res = await fetch(`/api/admin/youtube/videos/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Delete failed");
+      setVideos((prev) => prev.filter((video) => video.id !== id));
+    } catch (error) {
+      setRowErrors((prev) => ({ ...prev, [id]: (error as Error).message }));
+    } finally {
+      setPendingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
+  }, []);
+
+  const handlePublishAll = async () => {
+    setIsPublishingAll(true);
+    setPublishAllError(null);
+    try {
+      const params = new URLSearchParams();
+      if (style !== "all") params.set("style", style);
+      const res = await fetch(`/api/admin/youtube/videos/publish-all?${params.toString()}`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Publish all failed");
+      await loadFirstPage(style);
+    } catch (error) {
+      setPublishAllError((error as Error).message);
+    } finally {
+      setIsPublishingAll(false);
+    }
+  };
+
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-10">
       <div>
@@ -198,19 +267,29 @@ export function AdminDashboard() {
 
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-medium">Round videos</h2>
-        <Select value={style} onValueChange={setStyle}>
-          <SelectTrigger className="w-40">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {STYLE_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            onClick={handlePublishAll}
+            disabled={isPublishingAll || videos.length === 0}
+          >
+            {isPublishingAll ? "Publishing…" : "Publish all"}
+          </Button>
+          <Select value={style} onValueChange={setStyle}>
+            <SelectTrigger className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {STYLE_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
+      {publishAllError && <p className="text-destructive text-sm">{publishAllError}</p>}
 
       <div className="flex flex-col gap-3">
         {isLoading && videos.length === 0 && (
@@ -218,35 +297,58 @@ export function AdminDashboard() {
         )}
         {!isLoading && videos.length === 0 && (
           <p className="text-muted-foreground text-sm">
-            No videos yet — run a resync to populate this list.
+            No videos to review — run a resync to populate this list. Already-published videos
+            are cleared from this queue automatically.
           </p>
         )}
-        {videos.map((video) => (
-          <a
-            key={video.id}
-            href={`https://www.youtube.com/watch?v=${video.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:bg-accent flex gap-3 rounded-lg border p-3 transition-colors"
-          >
-            <img
-              src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`}
-              alt=""
-              className="h-20 w-32 shrink-0 rounded object-cover"
-              loading="lazy"
-            />
-            <div className="flex min-w-0 flex-col gap-1">
-              <p className="truncate font-medium">{video.title}</p>
-              <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
-                <Badge variant="secondary">{STYLE_NAMES[video.style] ?? "Unknown"}</Badge>
-                <span>{video.channel}</span>
-                <span>{video.publishedAt}</span>
-                <span>{video.views.toLocaleString()} views</span>
-                {video.tournament && <span>{video.tournament}</span>}
+        {videos.map((video) => {
+          const isPending = pendingIds.has(video.id);
+          const rowError = rowErrors[video.id];
+          return (
+            <div
+              key={video.id}
+              className="flex flex-col gap-2 rounded-lg border p-3 sm:flex-row sm:items-center"
+            >
+              <a
+                href={`https://www.youtube.com/watch?v=${video.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:bg-accent flex min-w-0 flex-1 gap-3 rounded transition-colors"
+              >
+                <img
+                  src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`}
+                  alt=""
+                  className="h-20 w-32 shrink-0 rounded object-cover"
+                  loading="lazy"
+                />
+                <div className="flex min-w-0 flex-col gap-1">
+                  <p className="truncate font-medium">{video.title}</p>
+                  <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
+                    <Badge variant="secondary">{STYLE_NAMES[video.style] ?? "Unknown"}</Badge>
+                    <span>{video.channel}</span>
+                    <span>{video.publishedAt}</span>
+                    <span>{video.views.toLocaleString()} views</span>
+                    {video.tournament && <span>{video.tournament}</span>}
+                  </div>
+                  {rowError && <p className="text-destructive text-xs">{rowError}</p>}
+                </div>
+              </a>
+              <div className="flex shrink-0 items-center gap-2 self-end sm:self-center">
+                <Button size="sm" onClick={() => handlePublish(video.id)} disabled={isPending}>
+                  Publish
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => handleDelete(video.id)}
+                  disabled={isPending}
+                >
+                  Delete
+                </Button>
               </div>
             </div>
-          </a>
-        ))}
+          );
+        })}
         <div ref={sentinelRef} className="h-1" />
         {isLoadingMore && (
           <p className="text-muted-foreground text-center text-sm">Loading more…</p>
