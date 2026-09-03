@@ -190,6 +190,14 @@ export const userSettings = sqliteTable("user_settings", {
   // collections per user" follow-up). Null/absent means "no collections
   // saved yet", same semantics as every other nullable column here.
   savedArgumentCollections: text("saved_argument_collections"),
+  // JSON-serialized `{ targetCompletedTaskCount, topic?, targetDate? }`
+  // personal research-progress goal (see
+  // packages/debate-card-search/src/lib/research-progress-goal-sync.ts and
+  // TODO.md's "📈 Research Progress Tracking" bullet's "account-syncing the
+  // goal across devices" follow-up). `contributorId` isn't stored here —
+  // this row already scopes it to one signed-in user. Null/absent means "no
+  // goal set", same semantics as every other nullable column here.
+  researchProgressGoal: text("research_progress_goal"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),

@@ -201,10 +201,8 @@ localStorage (array of records filtered by `contributorId`, mirroring
 directly against the real, persisted `buildPersistedResearchProgressBoard` so
 the panel doesn't need to look up the contributor's own row itself. A goal
 reached shows a "🎉 Goal reached" badge in place of the meter's remaining-task
-caption. This is deliberately local-only, not account-synced — like
-`streakLapseReminders.ts`, a lightweight per-visitor preference rather than a
-record other contributors need to see (see "Known gaps" below). Vitest-covered
-in `packages/debate-card-search/test/research-progress.test.ts`
+caption. Vitest-covered in
+`packages/debate-card-search/test/research-progress.test.ts`
 (`computeGoalProgress`: an overall goal, a topic-scoped goal, a topic the
 contributor has no assignments in, and clamping once the count exceeds the
 target) and `packages/debate-card-search/test/researchProgressGoals.test.ts`
@@ -215,6 +213,61 @@ real persisted board, including a contributor with a goal but no board row
 yet, and a goal that becomes complete once a task is recorded without
 re-setting it).
 
+The goal is now also account-synced across devices — the "account-syncing
+the goal across devices" follow-up named under the "📈 Research Progress
+Tracking" bullet in TODO.md, closing the "local-only, not account-synced"
+gap this section used to note (see "Personal goal account sync" below).
+
+## Personal goal account sync
+
+A signed-in visitor's "My research goal" now follows them across devices —
+mirroring `hooks/useSavedArgumentCollections.ts`'s local-first, best-effort
+account sync split exactly:
+
+- `lib/research-progress-goal-sync.ts` — pure validation/serialization for
+  the synced shape, `{ targetCompletedTaskCount, topic?, targetDate? }`
+  (everything a `ResearchProgressGoal` carries except `contributorId`, since
+  the account row this syncs onto is already scoped to one signed-in user by
+  `/api/settings`'s session check). `normalizeResearchProgressGoalPatch`
+  accepts `null` (clear) or a well-formed goal object;
+  `serializeResearchProgressGoal`/`parseResearchProgressGoal` handle the
+  `research_progress_goal` D1 column, `null` meaning "no goal set" like every
+  other nullable column on that row.
+- `lib/research-progress-goal-sync-client.ts` — `fetch`-based
+  `fetchResearchProgressGoal`/`saveResearchProgressGoal` against
+  `/api/settings`, resolving to `null` (not throwing) on a `401` so a
+  signed-out browser stays local-only.
+- `hooks/useResearchProgressGoalSync.ts` — wraps the existing local store
+  (`state/researchProgressGoals.ts`): on mount, best-effort fetches the
+  account's synced goal and merges it into localStorage under the given
+  `contributorId` (remote wins, same convention `useWordLimitPresets`/
+  `useSavedArgumentCollections` use); every `saveGoal`/`clearGoal` call
+  applies locally first, then best-effort pushes the same change to the
+  account when signed in. `ResearchProgressPanel` now sources its "My
+  research goal" section from this hook instead of calling
+  `state/researchProgressGoals.ts` directly, keeping its own
+  roster-triggered re-derive (a completed task can push the goal over its
+  target) via the hook's `refresh()`.
+- `apps/debate-ai.com`'s `/api/settings` route gained a `researchProgressGoal`
+  field (`user_settings.research_progress_goal`, migration
+  `drizzle/0026_damp_dragon_man.sql`), validated the same way every other
+  synced field on that route is.
+
+Vitest-covered in
+`packages/debate-card-search/test/research-progress-goal-sync.test.ts`
+(payload validation — a target-only goal, topic/targetDate, the max target
+boundary, a non-positive or non-integer target, a blank topic, an
+unrecognized field like a smuggled `contributorId`, non-object input; patch
+normalization — accepting `null` and a well-formed goal, rejecting a
+malformed one, an absent field being a no-op, a non-object body; and
+serialize/parse round-tripping, including corrupt JSON and a stored value
+that fails validation both reading back as `null`). The hook and API route
+themselves stay untested at the unit level, matching every other synced
+field's client/hook layer in this package and app (`useWordLimitPresets`,
+`useSavedArgumentCollections`, `/api/settings` itself) — none have
+hook-level or route-level Vitest coverage; only the pure validation/shape
+helpers do.
+
 ## Known gaps
 
 - No contributor identity/permission *checks* — a real signed-in session now
@@ -222,8 +275,7 @@ re-setting it).
   but the roster still shows every contributor, the same "prefill/highlight
   only, not a gate" known gap the Leaderboard, Task Inbox, and Progress
   Unlocks panels carry.
-- The personal goal is local-only (per browser), not account-synced, and
-  only reachable once the roster is non-empty (a signed-in visitor with
-  literally no tracked contribution or task yet sees the panel's "No
-  progress yet" empty state instead of the goal section) — both stay open
-  follow-ups if this turns out to matter.
+- The personal goal is only reachable once the roster is non-empty (a
+  signed-in visitor with literally no tracked contribution or task yet sees
+  the panel's "No progress yet" empty state instead of the goal section) —
+  still an open follow-up if this turns out to matter.
