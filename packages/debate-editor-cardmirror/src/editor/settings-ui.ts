@@ -459,16 +459,16 @@ class SettingsModal {
         empty.textContent = 'No settings in this section yet.';
         panel.appendChild(empty);
       }
-      // "About this install" diagnostic block at the bottom of
-      // General — read-only labels users can copy-paste into bug
-      // reports. Lives here rather than in SETTING_METADATA
-      // because it isn't a user-editable setting. The Benchmark
-      // action (run the in-app perf suite) sits alongside it.
+      // Benchmark and "About this install" moved to the app's /settings
+      // page (see `buildEmbeddedSettingsPanel`), alongside the rest of
+      // General's rows — this tab now points there via the account-link
+      // section rather than duplicating them. What's left here is
+      // genuinely tied to this browser/install rather than the account:
+      // the crash-dumps folder, the local settings backup, and the doc
+      // links.
       if (id === 'general') {
         const accountLink = buildAccountSettingsLinkSection();
         if (accountLink) panel.appendChild(accountLink);
-        panel.appendChild(buildBenchmarkSection(() => this.close()));
-        panel.appendChild(buildInstallInfoSection());
         const crashDumps = buildCrashDumpsSection();
         if (crashDumps) panel.appendChild(crashDumps);
         panel.appendChild(this.buildSettingsBackupSection());
@@ -1337,9 +1337,12 @@ export interface EmbeddedSettingsPanel {
 
 /** Builds a standalone panel of every visible `category` setting row —
  *  the same rows the full Settings dialog renders under that tab, minus the
- *  dialog chrome (header/sidebar/other tabs) and General's install-specific
- *  bonus sections (Benchmark / About this install / backup — tied to one
- *  editor install, not an account). Used to embed CardMirror's
+ *  dialog chrome (header/sidebar/other tabs). General also carries the
+ *  Benchmark and "About this install" sections the dialog used to show
+ *  under its own General tab — moved here so they live on the account's
+ *  /settings page instead of only being reachable from inside the editor
+ *  (the dialog's General tab now just points there; see
+ *  `buildAccountSettingsLinkSection`). Used to embed CardMirror's
  *  account-linked categories (general/appearance/accessibility) directly
  *  into the app's own /settings page instead of the editor's gear-icon
  *  modal. Caller owns mounting `element` and must call `destroy()` on
@@ -1370,11 +1373,19 @@ export function buildEmbeddedSettingsPanel(category: SettingsCategory): Embedded
     if (meta.dependsOn) dependentRows.push({ row, dependsOn: meta.dependsOn });
     panel.appendChild(row);
   }
-  if (entries.length === 0) {
+  // General always has the bonus sections below, so it's never truly
+  // empty even when it has no real setting rows of its own.
+  if (entries.length === 0 && category !== 'general') {
     const empty = document.createElement('p');
     empty.className = 'pmd-settings-empty';
     empty.textContent = 'No settings in this section yet.';
     panel.appendChild(empty);
+  }
+  if (category === 'general') {
+    // No dialog to close here — this panel is inline on the page, not in
+    // an overlay that would occlude the editor's paints.
+    panel.appendChild(buildBenchmarkSection(() => {}));
+    panel.appendChild(buildInstallInfoSection());
   }
 
   const refreshDependents = (): void => {

@@ -55,6 +55,15 @@ export interface FlowState {
      * flow into the wrong file.
      */
     docPath: string | null;
+    /**
+     * A path a host toolbar outside the embed (debate-round's quick actions,
+     * ebb's own recents) asked to open before `NavigatorHost`'s live
+     * navigator was necessarily mounted — e.g. picking a recent flow while
+     * the ebb panel isn't the active tab yet. `EbbFlowEmbed` drains this on
+     * mount and on every change, the same handoff `drain_boot_open` uses for
+     * a cold desktop launch, then clears it.
+     */
+    pendingOpenPath: string | null;
     activeSheetId: string | null;
     /** Grid cell the reveal asked to jump to; carries the sheet so the matching pane selects it. */
     revealTarget: { sheetId: string; row: number; col: number } | null;
@@ -246,6 +255,7 @@ export interface FlowActions {
     setQuickSwitcherOpen(open: boolean, seed?: string): void;
     /** Follow the open round to a new file after Save As. */
     setDocPath(path: string): void;
+    setPendingOpenPath(path: string | null): void;
     setNewFlowOpen(open: boolean): void;
     setSettingsOpen(open: boolean): void;
     setCheatsheetOpen(open: boolean): void;
@@ -496,6 +506,7 @@ function assignFocused(
 export const useFlowStore = create<FlowStore>()((set, get) => ({
     round: null,
     docPath: null,
+    pendingOpenPath: null,
     activeSheetId: null,
     revealTarget: null,
     splitSheetId: null,
@@ -904,6 +915,9 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
     },
     setDocPath(path) {
         set({ docPath: path });
+    },
+    setPendingOpenPath(path) {
+        set({ pendingOpenPath: path });
     },
     setNewFlowOpen(open) {
         set({ newFlowOpen: open });

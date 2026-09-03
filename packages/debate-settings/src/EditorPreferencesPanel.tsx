@@ -48,7 +48,8 @@ export function EditorPreferencesPanel() {
       </div>
       <p className="text-sm text-muted-foreground mb-4">
         General, appearance, and accessibility settings for the card editor — colors, fonts, sizing, and
-        override-anything accessibility options. Saved to your account when signed in.
+        override-anything accessibility options, plus a performance benchmark and this install's diagnostic
+        info. Saved to your account when signed in.
       </p>
       <div className="rounded-md border border-border bg-background overflow-hidden">
         <iframe

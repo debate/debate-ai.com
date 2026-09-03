@@ -9,6 +9,7 @@ import { Button } from "debate-ui/src/primitives/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
 import { cn } from "debate-ui/src/lib/utils"
 import { FlowTab } from "../navigation/FlowTab"
+import { EbbToolsMenu } from "./EbbToolsMenu"
 import { FlowToolsMenu } from "./FlowToolsMenu"
 import { PrepTimer } from "debate-timer/src/timers/PrepTimer"
 import type { Flow, Round } from "../types/flow"
@@ -139,7 +140,7 @@ export function FlowPageSidebar({
   return (
     <div className="mt-[50px]  bg-[var(--background)] w-full h-full md:h-[var(--main-height)] rounded-[var(--border-radius)] p-[var(--padding)] flex flex-col box-border">
       {/* Quick action buttons */}
-      <div className="h-auto pb-[var(--padding)] grid grid-cols-4 gap-0.5">
+      <div className="h-auto pb-[var(--padding)] grid grid-cols-5 gap-0.5">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -181,6 +182,7 @@ export function FlowPageSidebar({
           </Tooltip>
 
           <FlowToolsMenu currentFlow={currentFlow} />
+          <EbbToolsMenu onSelectEbb={handleSelectEbb} />
         </TooltipProvider>
       </div>
 

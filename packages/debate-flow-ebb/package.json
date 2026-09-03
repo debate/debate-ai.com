@@ -10,6 +10,7 @@
   "exports": {
     ".": "./src/EbbFlowEmbed.tsx",
     "./settings-panel": "./src/components/settings/EmbeddedSettingsPanel.tsx",
+    "./quick-actions": "./src/lib/start/quickActions.ts",
     "./store": "./src/lib/store/useFlowStore.ts",
     "./tooltip": "./src/components/ui/tooltip.tsx",
     "./styles/ebb-scope.css": "./src/styles/ebb-scope.css"

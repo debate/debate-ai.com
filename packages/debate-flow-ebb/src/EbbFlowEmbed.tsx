@@ -40,16 +40,19 @@ import { DesktopMenu } from "./components/DesktopMenu";
 import MotionRoot from "./components/MotionRoot";
 import NavigatorHost from "./components/NavigatorHost";
 import QuitGuard from "./components/QuitGuard";
+import MigrationDialog from "./components/start/MigrationDialog";
 import NewFlowDialog from "./components/start/NewFlowDialog";
 import SettingsPanel from "./components/settings/SettingsPanel";
-import StartScreen from "./components/start/StartScreen";
 import ThemeSync from "./components/ThemeSync";
 import { TooltipProvider } from "./components/ui/tooltip";
 import UpdateChip from "./components/update/UpdateChip";
 import { UpdateProvider } from "./components/update/UpdateProvider";
 import type { FlowNavigator } from "./lib/commands/flowNav";
 import { setEbbKeyScope } from "./lib/keymap/scope";
+import { noteOpened } from "./lib/persistence/flowSession";
+import { useFlowStore } from "./lib/store/useFlowStore";
 import { setEbbThemeScope } from "./lib/theme/themeScope";
+import { isDesktop } from "./lib/update/adapter";
 
 // Tokens and Handsontable theming for `.ebb-scope` live in
 // `styles/ebb-scope.css`, imported from the host app's Tailwind entry
@@ -89,6 +92,42 @@ export function EbbFlowEmbed({ className }: EbbFlowEmbedProps): React.JSX.Elemen
         [],
     );
 
+    // A path a host toolbar outside this embed asked to open (e.g. a recent
+    // flow picked from debate-round's quick actions before this embed, and
+    // therefore `navigator` above, was mounted) — see `pendingOpenPath`'s
+    // docstring. Runs on mount too, so a pick that arrived first is not lost.
+    const pendingOpenPath = useFlowStore((s) => s.pendingOpenPath);
+    useEffect(() => {
+        if (!pendingOpenPath) return;
+        setPath(pendingOpenPath);
+        setIsNew(false);
+        useFlowStore.getState().setPendingOpenPath(null);
+    }, [pendingOpenPath]);
+
+    // A cold launch with a .ebb argument reaches Rust before this component
+    // exists; on macOS it can only be observed after this window has already
+    // been created (see windows.rs's bootstrap comment), so it asks here,
+    // once, whether this exact window turned out to be that launch after
+    // all. Every other open (already running, a second launch, Mod+N)
+    // creates its own new window instead and never reaches this.
+    useEffect(() => {
+        if (!isDesktop()) return;
+        let cancelled = false;
+        void (async () => {
+            // Platform-only module: a static import would pull Tauri's IPC
+            // bridge into the web bundle, which has no window manager to ask.
+            const { invoke } = await import("@tauri-apps/api/core");
+            const bootPath = await invoke<string | null>("drain_boot_open").catch(() => null);
+            if (!bootPath || cancelled) return;
+            void noteOpened(bootPath);
+            setPath(bootPath);
+            setIsNew(false);
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
     return (
         <div
             ref={rootRef}
@@ -108,10 +147,23 @@ export function EbbFlowEmbed({ className }: EbbFlowEmbedProps): React.JSX.Elemen
                 <UpdateProvider>
                     <MotionRoot>
                         <div className="min-h-0 flex-1">
-                            {path ? <AppRoot path={path} isNew={isNew} /> : <StartScreen />}
+                            {path ? (
+                                <AppRoot path={path} isNew={isNew} />
+                            ) : (
+                                <div
+                                    className="text-muted-foreground flex h-full items-center justify-center px-6 text-center text-sm"
+                                    data-testid="ebb-empty-state"
+                                >
+                                    No flow open. Use the ebb Flow tools menu to start or open one.
+                                </div>
+                            )}
                         </div>
                         <UpdateChip />
                     </MotionRoot>
+                    {/* Only while nothing is open, matching the old start screen: a
+                        debater mid-flow should never see a migration prompt land
+                        over their round. */}
+                    {!path && <MigrationDialog onMigrated={() => {}} />}
                     <SettingsPanel />
                     <NewFlowDialog />
                     <ContactPickerDialog />
