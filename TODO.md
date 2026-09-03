@@ -6,6 +6,61 @@
 _No task currently in progress._
 
 ### Completed
+- **Research Task Routing — coach-facing override/reassign control**
+  (the "🧭 Research Task Routing" bullet's own next-named follow-up under
+  Research Crowdsourcing Organizer Features below). As with every recent
+  run, the standing prompt ("integrate all the tools into the UI... create
+  user settings... link user db SQL... save flows docs and debates in SQL
+  and link to users... add tools where needed in the UI... develop better
+  tool UI") is already fully built (account-synced `/settings`, D1 tables +
+  `/api/*` routes linking flows/docs/rounds/materials to signed-in users,
+  every tool reachable from the nav), and the one open PR (#437,
+  "Consolidate UI primitives and add web extension scaffold") doesn't touch
+  this area — so this run again picked a genuine next-step instead, one
+  directly named in TODO.md's own text. `TaskInboxPanel` previously had no
+  way for a coach to move an already-routed task off its automatically
+  picked assignee, or hand an unassigned task (nobody eligible/available
+  when it was routed) to someone anyway — `routeTasks`'s least-loaded/
+  eligible-contributor pick was final. A new
+  `state/routedTaskQueues.ts#reassignPersistedRoutedTask(topicId, argBlock,
+  newContributorId)` moves the matching task — found by `argBlock`, whether
+  currently assigned or still sitting in `unassignedTasks` — to
+  `newContributorId`, applying no skill or capacity check (an explicit
+  override is meant to bypass `routeTasks`'s own eligibility rules, not run
+  another routing pass), and keeps both the outgoing and incoming
+  contributor's persisted `activeTaskCount` accurate via the existing
+  `recordPersistedTaskCompleted`/`recordPersistedTaskAssigned` (both
+  no-ops on an id with no persisted profile, matching this repo's
+  free-form-contributor-id convention already used by "My tasks"/"Verifier
+  id"). Reassigning to a task's current assignee is a no-op returning the
+  existing assignment unchanged, avoiding a spurious decrement/increment of
+  the same contributor's count. `TaskInboxPanel` gives every assignment and
+  unassigned task its own "Reassign to…"/"Assign to…" field plus button.
+  See `docs/features/task-inbox.md`'s new "Coach override / reassign
+  control" section (plus its "What it shows"/"Data flow"/"Known gaps"
+  updates). Vitest-covered: a new `describe("reassignPersistedRoutedTask")`
+  block in `packages/debate-card-search/test/routedTaskQueues.test.ts`
+  covers moving an already-assigned task, the activeTaskCount deltas on
+  both the outgoing and incoming contributor, assigning a previously
+  unassigned task, applying no skill/capacity check, the same-assignee
+  no-op, a blank contributor id, a missing topic, a non-matching
+  `argBlock`, and trimming whitespace around the new id. Verified with
+  `bun install` (fresh container, 2258 packages), the full `bun run
+  typecheck` (13 typechecked packages, clean), and the full `bun run test`
+  (root, all packages: 228 test files, 4044 tests, all passing — up from
+  4035). No CI `lint`/`build` script exists in this repo
+  (`.github/workflows/test.yml` runs only `typecheck` and `coverage`), so
+  neither was run, matching every prior run's verification scope. The
+  other two next-steps named under this bullet — a task-priority indicator,
+  and a capacity-aware view of routing load across the team — are not
+  started; a future run can pick one up (note: there's currently no UI
+  anywhere in this repo to create/manage a `ContributorAvailability`
+  profile itself — only tests and this reassign control's free-form id
+  touch that store — so a capacity view showing "N of M tasks" per
+  contributor would have nothing to show until either that's added too or
+  the capacity view accepts arbitrary typed contributor ids the same way
+  this reassign control does).
+
 - **Scout-to-Strategy Workflow — one-click export into the Pre-Round
   Briefing** (the "🧭 Scout-to-Strategy Workflow" bullet's own next-named
   follow-up under Research Crowdsourcing Organizer Features below). As with
@@ -14096,7 +14151,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. The "best of the week" rollup follow-up is also now done: a new "Best of the week" section groups every announced daily winner by ISO week and highlights that week's single highest-helpfulness champion alongside its other announced days (`lib/daily-best-card.ts#buildWeeklyBestCardRollups`, `state/dailyBestCardAnnouncements.ts#buildAnnouncedWeeklyBestCardRollups`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Best of the week" section. The winner-history-calendar-view follow-up is also now done: a "Winner history calendar" section renders a Monday-first month grid with previous/next navigation, highlighting every announced day and showing that day's highlight line plus contributor on click (`lib/daily-best-card.ts#buildDailyBestCardCalendarMonth`, `panels/DailyBestCardPanel.tsx`'s `WinnerHistoryCalendar`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Winner history calendar" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. The "nominate a peer" follow-up is also now done: a "Peer Nominations" section has a **Nominate a peer** form (category, nominee, your name, optional note), and each live award card shows that category's top nominee(s) by total support — see the Completed entry above and `docs/features/contributor-awards.md`'s "Peer Nominations" section. The per-nomination "seconding"/upvoting follow-up is also now done: a "👍 Second" action on each row in "Recent nominations" lets anyone else add their support to an existing nomination instead of only being able to submit a duplicate one, and the live cards' top-nominee ranking now uses total support (nominations plus seconds) rather than raw nomination count alone (`lib/contributor-awards.ts#canSecondNomination`/`tallyNominationsByKind`, `state/contributorAwardNominations.ts#secondPeerNomination`) — see the Completed entry above and `docs/features/contributor-awards.md`'s "Seconding a nomination" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. folding nominations into the Hall of Fame ranking as a tie-breaker) if one becomes worth doing.
-* 🧭 **Research Task Routing** (`/cards/inbox`) — a coach-facing override/reassign control; a task-priority indicator; a capacity-aware view of routing load across the team.
+* 🧭 **Research Task Routing** (`/cards/inbox`) — the coach-facing override/reassign follow-up is done: every assignment and unassigned task has a "Reassign to…"/"Assign to…" field plus button that moves it to a typed contributor id, bypassing `routeTasks`'s own skill/capacity rules and keeping both the outgoing and incoming contributor's `activeTaskCount` accurate (`state/routedTaskQueues.ts#reassignPersistedRoutedTask`) — see the Completed entry above and `docs/features/task-inbox.md`'s "Coach override / reassign control" section. Next: a task-priority indicator; a capacity-aware view of routing load across the team (note: this repo still has no UI to create/manage a `ContributorAvailability` profile at all — only tests and the reassign control's free-form id touch that store — so a capacity view would need either that management UI too, or to work off arbitrary typed ids the same way reassign does).
 * 🔁 **Revision Incentives** (`/cards/revisions`) — the stale-evidence-digest follow-up is done: a "Stale evidence digest" section above the leaderboard lists every persisted stale card, most-urgent (undated, then oldest-cited) first, with a link into the Evidence Library to revise one (`lib/shared-evidence-library.ts#buildStaleEvidenceDigest`, `state/evidenceLibraryEntries.ts#buildPersistedStaleEvidenceDigest`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Stale evidence digest" section. Next: a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.

@@ -58,6 +58,15 @@
  * this repo still has no cross-tab live-update mechanism" Known gap noted
  * in `shared-flow-sync.md`, for this panel.
  *
+ * Every assignment and unassigned task also carries a "Reassign" control —
+ * a free-form contributor-id field plus button — closing the "a
+ * coach-facing override/reassign control" follow-up named under the
+ * "Research Task Routing" bullet in TODO.md's Product Feature Ideas list.
+ * It calls `state/routedTaskQueues.ts`'s `reassignPersistedRoutedTask`,
+ * which moves the task to the typed contributor regardless of
+ * `routeTasks`'s own skill/capacity rules — an intentional override, not
+ * another routing pass.
+ *
  * @module panels/TaskInboxPanel
  */
 
@@ -71,6 +80,7 @@ import { Label } from "debate-ui/src/primitives/label"
 import {
   buildTaskInboxView,
   filterTaskInboxViewByContributor,
+  reassignPersistedRoutedTask,
   routePersistedTopicTasks,
   type TaskInboxTopic,
 } from "../state/routedTaskQueues"
@@ -126,6 +136,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
   const [hasEditedMyId, setHasEditedMyId] = useState(false)
   const [verifierIds, setVerifierIds] = useState<Record<string, string>>({})
   const [verifyErrors, setVerifyErrors] = useState<Record<string, string>>({})
+  const [reassignInputs, setReassignInputs] = useState<Record<string, string>>({})
 
   useEffect(() => {
     setTopics(buildTaskInboxView())
@@ -177,6 +188,15 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
         [key]: error instanceof Error ? error.message : "Could not verify this task.",
       }))
     }
+  }
+
+  const handleReassign = (topicId: string, argBlock: string) => {
+    const key = pendingKey(topicId, argBlock)
+    const newContributorId = (reassignInputs[key] ?? "").trim()
+    if (!newContributorId) return
+    reassignPersistedRoutedTask(topicId, argBlock, newContributorId)
+    setReassignInputs((prev) => ({ ...prev, [key]: "" }))
+    setTopics(buildTaskInboxView())
   }
 
   const handleRoute = (topicId: string) => {
@@ -359,43 +379,81 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
             <p className="text-sm text-muted-foreground">No tasks routed for this topic.</p>
           ) : (
             <div className="space-y-2">
-              {topic.assignments.map((assignment) => (
-                <div
-                  key={assignment.task.argBlock}
-                  className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2"
-                >
-                  <div className="flex flex-wrap items-center gap-2 text-sm">
-                    <span className="font-medium text-foreground">{assignment.task.argBlock}</span>
-                    <Badge variant={LEVEL_VARIANT[assignment.task.level]}>{assignment.task.level}</Badge>
-                    <span className="text-muted-foreground">assigned to</span>
-                    <span className="font-medium text-foreground">{assignment.contributorId}</span>
-                    {assignment.contributorSkillLevel && (
-                      <Badge variant="outline" className="capitalize">
-                        {assignment.contributorSkillLevel}
-                      </Badge>
-                    )}
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleMarkDone(topic.topicId, assignment.task.argBlock)}
+              {topic.assignments.map((assignment) => {
+                const key = pendingKey(topic.topicId, assignment.task.argBlock)
+                return (
+                  <div
+                    key={assignment.task.argBlock}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border px-3 py-2"
                   >
-                    Mark done
-                  </Button>
-                </div>
-              ))}
-              {topic.unassignedTasks.map((task) => (
-                <div
-                  key={task.argBlock}
-                  className="flex flex-wrap items-center gap-2 rounded-md border border-dashed border-border px-3 py-2 text-sm"
-                >
-                  <span className="font-medium text-foreground">{task.argBlock}</span>
-                  <Badge variant={LEVEL_VARIANT[task.level]}>{task.level}</Badge>
-                  <span className="text-muted-foreground">
-                    unassigned — no eligible contributor available
-                  </span>
-                </div>
-              ))}
+                    <div className="flex flex-wrap items-center gap-2 text-sm">
+                      <span className="font-medium text-foreground">{assignment.task.argBlock}</span>
+                      <Badge variant={LEVEL_VARIANT[assignment.task.level]}>{assignment.task.level}</Badge>
+                      <span className="text-muted-foreground">assigned to</span>
+                      <span className="font-medium text-foreground">{assignment.contributorId}</span>
+                      {assignment.contributorSkillLevel && (
+                        <Badge variant="outline" className="capitalize">
+                          {assignment.contributorSkillLevel}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Input
+                        value={reassignInputs[key] ?? ""}
+                        onChange={(e) => setReassignInputs((prev) => ({ ...prev, [key]: e.target.value }))}
+                        placeholder="Reassign to…"
+                        className="h-8 max-w-[10rem]"
+                        aria-label={`Reassign ${assignment.task.argBlock} to`}
+                      />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={!(reassignInputs[key] ?? "").trim()}
+                        onClick={() => handleReassign(topic.topicId, assignment.task.argBlock)}
+                      >
+                        Reassign
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleMarkDone(topic.topicId, assignment.task.argBlock)}
+                      >
+                        Mark done
+                      </Button>
+                    </div>
+                  </div>
+                )
+              })}
+              {topic.unassignedTasks.map((task) => {
+                const key = pendingKey(topic.topicId, task.argBlock)
+                return (
+                  <div
+                    key={task.argBlock}
+                    className="flex flex-wrap items-center gap-2 rounded-md border border-dashed border-border px-3 py-2 text-sm"
+                  >
+                    <span className="font-medium text-foreground">{task.argBlock}</span>
+                    <Badge variant={LEVEL_VARIANT[task.level]}>{task.level}</Badge>
+                    <span className="text-muted-foreground">
+                      unassigned — no eligible contributor available
+                    </span>
+                    <Input
+                      value={reassignInputs[key] ?? ""}
+                      onChange={(e) => setReassignInputs((prev) => ({ ...prev, [key]: e.target.value }))}
+                      placeholder="Assign to…"
+                      className="h-8 max-w-[10rem]"
+                      aria-label={`Assign ${task.argBlock} to`}
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={!(reassignInputs[key] ?? "").trim()}
+                      onClick={() => handleReassign(topic.topicId, task.argBlock)}
+                    >
+                      Assign
+                    </Button>
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>

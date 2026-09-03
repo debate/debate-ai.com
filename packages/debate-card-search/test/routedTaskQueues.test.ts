@@ -7,6 +7,7 @@ import {
   filterTaskInboxViewByContributor,
   getRoutedTaskQueue,
   listRoutedTaskQueues,
+  reassignPersistedRoutedTask,
   routePersistedTopicTasks,
   saveRoutedTaskQueue,
   type RoutedTaskQueueRecord,
@@ -310,5 +311,96 @@ describe("filterTaskInboxViewByContributor", () => {
     const filtered = filterTaskInboxViewByContributor(view, "alice");
 
     expect(filtered[0].unassignedTasks).toEqual([]);
+  });
+});
+
+describe("reassignPersistedRoutedTask", () => {
+  it("moves an already-assigned task to a different contributor", () => {
+    saveContributorAvailability({ ...ADVANCED_AMY, contributorId: "alice", activeTaskCount: 1 });
+    saveContributorAvailability({ ...ADVANCED_AMY, contributorId: "carol", activeTaskCount: 0 });
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const reassigned = reassignPersistedRoutedTask("topic-ai", "Solvency", "carol");
+
+    expect(reassigned).toEqual({ task: SOLVENCY_TASK, contributorId: "carol" });
+    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+      topicId: "topic-ai",
+      result: { assignments: [{ task: SOLVENCY_TASK, contributorId: "carol" }], unassignedTasks: [IMPACTS_TASK] },
+    });
+  });
+
+  it("decrements the previous assignee's activeTaskCount and increments the new assignee's", () => {
+    saveContributorAvailability({ ...ADVANCED_AMY, contributorId: "alice", activeTaskCount: 1 });
+    saveContributorAvailability({ ...ADVANCED_AMY, contributorId: "carol", activeTaskCount: 2 });
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    reassignPersistedRoutedTask("topic-ai", "Solvency", "carol");
+
+    expect(getContributorAvailability("alice")).toEqual({ ...ADVANCED_AMY, contributorId: "alice", activeTaskCount: 0 });
+    expect(getContributorAvailability("carol")).toEqual({ ...ADVANCED_AMY, contributorId: "carol", activeTaskCount: 3 });
+  });
+
+  it("assigns a previously-unassigned task, removing it from unassignedTasks", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const reassigned = reassignPersistedRoutedTask("topic-ai", "Impacts", "dana");
+
+    expect(reassigned).toEqual({ task: IMPACTS_TASK, contributorId: "dana" });
+    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+      topicId: "topic-ai",
+      result: {
+        assignments: [
+          { task: SOLVENCY_TASK, contributorId: "alice" },
+          { task: IMPACTS_TASK, contributorId: "dana" },
+        ],
+        unassignedTasks: [],
+      },
+    });
+  });
+
+  it("applies no skill or capacity check — an override bypasses routeTasks's own eligibility rules", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const reassigned = reassignPersistedRoutedTask("topic-ai", "Impacts", "unqualified-contributor");
+
+    expect(reassigned).toEqual({ task: IMPACTS_TASK, contributorId: "unqualified-contributor" });
+  });
+
+  it("is a no-op that returns the existing assignment unchanged when reassigned to its current assignee", () => {
+    saveContributorAvailability({ ...ADVANCED_AMY, contributorId: "alice", activeTaskCount: 1 });
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const reassigned = reassignPersistedRoutedTask("topic-ai", "Solvency", "alice");
+
+    expect(reassigned).toEqual({ task: SOLVENCY_TASK, contributorId: "alice" });
+    expect(getContributorAvailability("alice")).toEqual({ ...ADVANCED_AMY, contributorId: "alice", activeTaskCount: 1 });
+    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+  });
+
+  it("returns undefined and leaves storage untouched for a blank contributor id", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    expect(reassignPersistedRoutedTask("topic-ai", "Solvency", "   ")).toBeUndefined();
+    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+  });
+
+  it("returns undefined when the topic has no persisted queue", () => {
+    expect(reassignPersistedRoutedTask("missing-topic", "Solvency", "carol")).toBeUndefined();
+    expect(listRoutedTaskQueues()).toEqual([]);
+  });
+
+  it("returns undefined and leaves the queue untouched when no assigned or unassigned task matches that argBlock", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    expect(reassignPersistedRoutedTask("topic-ai", "Nonexistent", "carol")).toBeUndefined();
+    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+  });
+
+  it("trims whitespace around the new contributor id", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const reassigned = reassignPersistedRoutedTask("topic-ai", "Impacts", "  dana  ");
+
+    expect(reassigned).toEqual({ task: IMPACTS_TASK, contributorId: "dana" });
   });
 });
