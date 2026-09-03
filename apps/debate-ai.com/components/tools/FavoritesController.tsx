@@ -13,14 +13,30 @@
  * DOM-attribute-driven filtering rather than rendering the strip from
  * React state.
  *
+ * Also prunes any favorite whose tool was since renamed/removed from the
+ * catalog, the same way `components/settings/FavoriteToolsSettings.tsx`
+ * already does — previously this was the one favorites surface that knew
+ * the real `/tools` catalog (`ALL_TOOLS`) but never called
+ * `useFavoriteTools().pruneUnknown`, so a stale chip here just silently
+ * never matched any pre-rendered chip and stayed invisible until a
+ * `/settings` visit happened to prune the underlying list (see
+ * `docs/features/user-settings.md`'s Known gaps).
+ *
  * @module components/tools/FavoritesController
  */
 
 import { useEffect } from "react"
 import { useFavoriteTools } from "@/lib/hooks/useFavoriteTools"
+import { ALL_TOOLS } from "@/app/tools/tool-groups"
+
+const ALL_TOOL_HREFS = ALL_TOOLS.map((tool) => tool.href)
 
 export function FavoritesController() {
-  const { favorites, loaded } = useFavoriteTools()
+  const { favorites, loaded, pruneUnknown } = useFavoriteTools()
+
+  useEffect(() => {
+    if (loaded) pruneUnknown(ALL_TOOL_HREFS)
+  }, [loaded, pruneUnknown])
 
   useEffect(() => {
     if (!loaded) return
