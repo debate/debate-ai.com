@@ -10,7 +10,9 @@ import { defineConfig } from "vitest/config";
  */
 export default defineConfig({
   test: {
-    projects: ["packages/*"],
+    // Exclude packages/README.md, which "packages/*" would otherwise match
+    // as a (non-directory, non-config) project entry.
+    projects: ["packages/*", "!packages/README.md"],
     coverage: {
       provider: "v8",
       reportsDirectory: "./coverage",

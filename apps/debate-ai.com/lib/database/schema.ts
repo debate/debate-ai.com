@@ -60,7 +60,10 @@ export const verification = sqliteTable("verification", {
 });
 
 // REASON editor documents — persistence for the native reason-editor route
-// (ported from quick search's document model; see /reason-editor).
+// (ported from quick search's document model; see /reason-editor). `parentId`
+// and `isFolder` back the file-tree sidebar (also ported from quick search's
+// REASON editor — see reason-editor-sidebar's FileTree) so documents can be
+// organized into folders instead of one flat list.
 export const documents = sqliteTable(
   "documents",
   {
@@ -68,6 +71,8 @@ export const documents = sqliteTable(
     title: text("title").notNull().default("Untitled"),
     content: text("content").notNull().default(""),
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+    parentId: integer("parent_id"),
+    isFolder: integer("is_folder", { mode: "boolean" }).notNull().default(false),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),
@@ -78,6 +83,7 @@ export const documents = sqliteTable(
   (table) => ({
     userIdIdx: index("idx_documents_user_id").on(table.userId),
     updatedAtIdx: index("idx_documents_updated_at").on(table.updatedAt),
+    parentIdIdx: index("idx_documents_parent_id").on(table.parentId),
   }),
 );
 

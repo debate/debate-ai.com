@@ -36,16 +36,19 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!doc) return NextResponse.json({ error: "Document not found" }, { status: 404 })
   if (forbidden) return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
 
-  let body: { title?: string; content?: string }
+  let body: { title?: string; content?: string; parentId?: number | null }
   try {
     body = await req.json()
   } catch {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
   }
 
-  const update: { title?: string; content?: string; updatedAt: Date } = { updatedAt: new Date() }
+  const update: { title?: string; content?: string; parentId?: number | null; updatedAt: Date } = {
+    updatedAt: new Date(),
+  }
   if (body.title !== undefined) update.title = body.title.trim() || "Untitled"
   if (body.content !== undefined) update.content = body.content
+  if (body.parentId !== undefined) update.parentId = body.parentId
 
   const [updated] = await db
     .update(documents)
