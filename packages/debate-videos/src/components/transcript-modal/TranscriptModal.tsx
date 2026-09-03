@@ -9,6 +9,7 @@
 "use client"
 
 import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import grab from "grab-url"
 import { Captions, Loader2, AlertCircle } from "lucide-react"
 import {
   Dialog,
@@ -110,18 +111,22 @@ export function TranscriptModal({ videoId, title }: TranscriptModalProps) {
     setSnippets(null)
     setCurrentTime(0)
 
-    fetch(`/api/transcript?videoId=${encodeURIComponent(videoId)}`)
-      .then(async (res) => {
-        const data = await res.json().catch(() => ({}))
+    grab<{ videoId: string; snippets: TranscriptSnippet[]; error?: string }, { videoId: string }>(
+      "transcript",
+      { videoId },
+    )
+      .then((data) => {
         if (cancelled) return
-        if (!res.ok) {
-          setError(data.error || "Failed to load transcript")
+        // grab resolves with an `error` field rather than throwing on a
+        // non-2xx response, so a failure has to be checked for here.
+        if (!data || data.error) {
+          setError(data?.error || "Failed to load transcript")
           return
         }
         setSnippets(data.snippets ?? [])
       })
-      .catch(() => {
-        if (!cancelled) setError("Failed to load transcript")
+      .catch((err: unknown) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : "Failed to load transcript")
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
