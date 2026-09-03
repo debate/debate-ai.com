@@ -220,3 +220,30 @@ export function buildOpponentScoutingSummary(profile: OpponentTeamProfile): stri
 
   return lines.join("\n");
 }
+
+/**
+ * Renders a whole scouting roster as a plain-text, printable/exportable
+ * report — one `buildOpponentScoutingSummary` block per team, in the order
+ * given (the caller supplies an already-ordered roster, e.g.
+ * `buildOpponentTeamProfilesRoster`'s rounds-recorded-descending order) —
+ * the "printable/exportable scouting report" follow-up named under the
+ * "🕵️ Opponent Team Profiles" bullet in TODO.md's Research Crowdsourcing
+ * Organizer Features list. Mirrors `debate-card-search`'s
+ * `research-progress.ts#buildResearchProgressReportText` shape: a fixed
+ * title, then one blank-line-separated block per roster entry, since a
+ * scouting report (like a research-progress report) covers the whole
+ * roster rather than a single team.
+ */
+export function buildOpponentScoutingReportText(roster: OpponentTeamProfile[]): string {
+  if (roster.length === 0) {
+    return "Opponent Scouting Report\n\nNo opponent team profiles are on file yet.";
+  }
+
+  const body = roster.map((profile) => buildOpponentScoutingSummary(profile)).join("\n\n");
+  return `Opponent Scouting Report\n\n${body}`;
+}
+
+/** A fixed filename for a scouting-report download — the report covers the whole roster, not a single team, so there's no id to key it on. */
+export function opponentScoutingReportFilename(): string {
+  return "opponent-scouting-report.txt";
+}
