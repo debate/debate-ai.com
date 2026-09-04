@@ -115,6 +115,41 @@ its round card's heading gets an aggregate "N due for review" badge
 (`getDueDrillIndexes`) — both surfaced the next time the panel is visited,
 not pushed proactively.
 
+## Account sync
+
+Every drill set — including its AI scripts, completion state, and review
+reminders — is now account-synced across devices for a signed-in user
+(`hooks/useDrillSets.ts`), closing the "sharing the 'Practice tier' status
+across devices for a signed-in user" follow-up named below. `DrillSetsPanel`
+reads/writes exclusively through this hook, mirroring `useWordCountRounds`'s
+local-first pattern:
+
+- Local-first: `state/drillSets.ts`'s localStorage-backed functions stay the
+  source of truth, so the panel is fully usable signed out.
+- On mount, a one-time account merge (`GET /api/drill-sets`) reconciles
+  local and remote drill sets by `roundId`: a remote-only record is adopted
+  locally, a local-only record is best-effort pushed up, and a `roundId`
+  present on both sides is resolved by comparing each side's `updatedAt` —
+  the newer copy wins (`resolveDrillSetConflict`/`planDrillSetMerge`,
+  mirroring `resolveWordCountRoundConflict`/`planWordCountRoundMerge`
+  exactly).
+- Every interactive mutation (generating a set, getting/regenerating an AI
+  script, toggling completion, scheduling/clearing a review reminder,
+  clearing a round) applies locally first, then best-effort pushes the
+  freshly-stamped record to the account when signed in — a failed sync never
+  blocks the local save.
+- A new `updatedAt` field on `DrillSetRecord`, stamped by every mutating
+  `state/drillSets.ts` function, drives the conflict resolution above.
+
+Backed by a new `saved_drill_sets` D1 table (one row per `(user, roundId)`
+pair, migration `apps/debate-ai.com/drizzle/0028_aspiring_human_fly.sql`)
+plus `/api/drill-sets` (`GET` — every synced drill set in full) and
+`/api/drill-sets/[roundId]` (`PUT` upsert, `DELETE`) routes, validated by
+`state/savedDrillSets.ts#isValidDrillSetRecord` — same account-only shape
+(401 without a session) as `/api/word-count-rounds`. The panel's header
+shows a one-line "synced to your account" / "sign in to sync" status,
+mirroring `WordCountRoundsPanel`'s own synced-status line.
+
 ## Data flow
 
 ```
@@ -229,11 +264,30 @@ thresholds, next-tier progress, and caller-supplied requirement tables; and
 `buildDrillPracticeUnlockStatusFromStore`'s aggregation across multiple
 persisted rounds).
 
+A later slice adds the account sync described in "Account sync" above,
+closing the "sharing the 'Practice tier' status across devices for a
+signed-in user" follow-up named under the "📚 AI Drill Generator" bullet.
+Vitest-covered: `packages/debate-round/test/drillSets.test.ts` gains
+`saveDrillSet`/`saveDrillAiScript`/`toggleDrillCompletion`/
+`scheduleDrillReview`'s `updatedAt` stamping, plus `adoptDrillSet`,
+`resolveDrillSetConflict`, and `planDrillSetMerge` (mirroring
+`wordCountRounds.test.ts`'s equivalent suites); new
+`packages/debate-round/test/savedDrillSets.test.ts` covers
+`isValidDrillSetRecord`'s structural validation (well-formed records, each
+optional field, and each malformed shape); new
+`packages/debate-round/test/drill-sets-client.test.ts` covers the
+`/api/drill-sets` fetch client (list/save/delete, the `401`-to-`null` case,
+and server error propagation). The hook (`hooks/useDrillSets.ts`) and API
+routes stay untested at the unit level, matching every other synced field's
+client/hook layer in this repo.
+
 ## Known gaps
 
 No further follow-up is currently tracked for the "📚 AI Drill Generator"
-bullet; a future run should pick a fresh next-step (e.g. sharing the
-"Practice tier" status across devices for a signed-in user, or feeding
+bullet; a future run should pick a fresh next-step (e.g. feeding
 practiced-drill counts into the real Contribution Leaderboard-backed
 Progress Unlocks roster once this panel knows a real signed-in contributor
-id) if one becomes worth doing.
+id — the "Practice tier" card itself is now account-synced, see "Account
+sync" above, but it still feeds a synthetic, drill-set-scoped
+`ContributorStats` rather than the real cross-tool roster) if one becomes
+worth doing.

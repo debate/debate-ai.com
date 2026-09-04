@@ -36,3 +36,6 @@ export * from "./round/round-invite-client";
 export * from "./state/accountNotifications";
 export * from "./hooks/useAccountNotifications";
 export { searchUsers, type UserSearchResult } from "./cache/client-cache";
+export * from "./state/savedDrillSets";
+export * from "./round/drill-sets-client";
+export * from "./hooks/useDrillSets";
