@@ -6,6 +6,65 @@
 _No task currently in progress._
 
 ### Completed
+- **Strategy Sync Notes — threaded replies on a note instead of flat
+  status ("🔄 Strategy Sync Notes" bullet's Next item).** Another repeat of
+  the standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows/docs/debates
+  in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, the "user
+  settings / SQL-linked flows, docs, rounds" half is already fully built
+  (see `apps/debate-ai.com/app/api/settings/route.ts` and the many
+  `saved_*` D1 tables/`/api/*` routes threaded through this file's history)
+  and every tool is already reachable from the Tools page and CardMirror's
+  command palette, so this slice picked the next named, unblocked
+  follow-up instead: the "🔄 Strategy Sync Notes" bullet's own Next item,
+  "threaded replies on a note instead of flat status." New
+  `state/prepNoteReplies.ts` (`packages/debate-round`) is a local-first
+  comment-thread store — `PrepNoteReply { id, noteId, authorId, text,
+  postedAt }` — mirroring `debate-card-search`'s
+  `state/dailyBestCardComments.ts` convention exactly (trim + `"Anonymous"`
+  fallback for `authorId`, trim + cap at `MAX_PREP_NOTE_REPLY_TEXT_LENGTH`
+  for `text`, oldest-first listing via `listRepliesForNote`/
+  `listAllPrepNoteReplies`, `countRepliesForNote`, `deletePrepNoteReply`,
+  and a `deleteRepliesForNote` cascade helper this idea's own
+  `PrepNote`-per-note keying needs but `dailyBestCardComments.ts` doesn't).
+  Unlike that comment-thread precedent, this store has no account-sync
+  counterpart yet, since `state/prepNotes.ts` itself still isn't
+  account-synced (a separate, larger follow-up of its own — see
+  `docs/features/prep-notes.md`'s Known gaps). `state/prepNotes.ts`'s
+  `deletePrepNote` now also calls `deleteRepliesForNote(id)`, so a deleted
+  note doesn't leave orphaned replies no UI can reach. `panels/
+  PrepNotesPanel.tsx` gains a `PrepNoteReplyThread` component (mirroring
+  `debate-card-search`'s `DailyBestCardPanel`'s `CommentThread`) and a
+  "Replies (N)" toggle per note, collapsed by default; the thread reads
+  `state/prepNoteReplies.ts` fresh at render time rather than caching a
+  copy in component state, so any state update (posting, deleting, a
+  cross-tab `storage` event) shows the current thread without extra
+  plumbing. `flow/live-update.ts`'s `PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS`
+  now includes `"prepNoteReplies"` alongside `"prepNotes"`, so a reply
+  posted or deleted in another browser tab refreshes this panel the same
+  way a status/priority/assignment change already did — the existing
+  `isPrepNotesPanelLiveUpdateStorageEvent` test already iterates that
+  array, so no test changes were needed there. See
+  `docs/features/prep-notes.md`'s new "Threaded replies" section.
+  Vitest-covered: new `packages/debate-round/test/prepNoteReplies.test.ts`
+  (24 tests: posting/trimming/the `"Anonymous"` fallback/the text-length
+  cap/distinct ids, oldest-first listing both across and within notes,
+  counting, single-reply deletion, and the `deleteRepliesForNote` cascade
+  helper); `packages/debate-round/test/prepNotes.test.ts`'s `deletePrepNote`
+  suite gains a case asserting a deleted note's replies are removed while
+  another note's replies are kept. Verification: `bunx vitest run
+  packages/debate-round/test/prepNoteReplies.test.ts
+  packages/debate-round/test/prepNotes.test.ts
+  packages/debate-round/test/live-update.test.ts` (3/3 files, 67 tests
+  pass); `bunx turbo run typecheck --filter=debate-round` (9/9 in-scope
+  package tasks pass); full `bun run test` (224 files, 4168 tests pass);
+  `bun run build:web` (production build succeeded, `/prep-notes` route
+  intact; the touched-by-build `app-file-list.ts`/`version.ts`/
+  `service-worker.js`/`bun.lock` churn was reverted before committing,
+  unrelated to this change). **PR:**
+  https://github.com/debate/debate-ai.com/pull/530. **Completed:**
+  2026-09-04.
 - **AI Drill Generator — account-sync drill sets across devices ("📚 AI
   Drill Generator" bullet's account-sync Next item).** Another repeat of
   the standing prompt ("integrate all the tools into the UI... create user
@@ -15364,7 +15423,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.
 * 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. The optional brainstorm-session-timer follow-up is also now done: a "Session timer" widget (duration presets, Start/Pause/Reset, a live `M:SS` countdown) backed by the new `lib/brainstorm-session-timer.ts` pure state machine and `state/brainstormSessionTimer.ts` persistence wrapper, synced live across browser tabs via the panel's existing `storage`-event listener — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Session timer" section. Next: polish the idea-ranking UI (upvote affordance/animation).
 * 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
-* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. Next: threaded replies on a note instead of flat status; a digest notification instead of one per assignment.
+* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. The threaded-replies follow-up is also now done: each note has a "Replies (N)" toggle opening a local-first comment thread (`state/prepNoteReplies.ts`, mirroring `debate-card-search`'s `state/dailyBestCardComments.ts`), with deleting a note cascading to delete its replies too — see the Completed entry above and `docs/features/prep-notes.md`'s "Threaded replies" section. Next: a digest notification instead of one per assignment.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
 * 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. The account-sync follow-up is also now done: every drill set — AI scripts, completion state, and review reminders included — now follows a signed-in user across devices, via a new `saved_drill_sets` D1 table plus `/api/drill-sets` routes merged in by the new `hooks/useDrillSets.ts` (`DrillSetsPanel` now reads/writes exclusively through that hook) — see the Completed entry above and `docs/features/drill-sets.md`'s "Account sync" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.
