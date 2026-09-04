@@ -12,8 +12,8 @@ async function docxToHtml(bytes: ArrayBuffer) {
   const zip = await JSZip.loadAsync(bytes)
   const xml = await zip.file("word/document.xml")?.async("string")
   if (!xml) throw new Error("The DOCX does not contain word/document.xml.")
-  const paragraphs = xml.match(/<w:p[ >][\\s\\S]*?<\\/w:p>/g) ?? []
-  const text = (paragraph: string) => [...paragraph.matchAll(/<w:t[^>]*>([\\s\\S]*?)<\\/w:t>/g)].map((m) => m[1].replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")).join("")
+  const paragraphs = xml.match(/<w:p[ >][\s\S]*?<\/w:p>/g) ?? []
+  const text = (paragraph: string) => [...paragraph.matchAll(/<w:t[^>]*>([\s\S]*?)<\/w:t>/g)].map((m) => m[1].replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")).join("")
   return paragraphs.map(text).filter(Boolean).map((line) => `<p>${escapeHtml(line)}</p>`).join("") || "<p></p>"
 }
 

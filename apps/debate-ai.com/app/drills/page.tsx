@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { DrillSetsPanel, RoundToolsCrossLinks } from "debate-round"
+import { DrillSetsPanel, RoundToolsCrossLinks } from "debate-practice-rounds"
 
 export const metadata: Metadata = {
   title: "Practice Drills",

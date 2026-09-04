@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { AiVersusRoundPanel } from "debate-round"
+import { AiVersusRoundPanel } from "debate-practice-rounds"
 import { AiVersusRoundPanel as ExportedPanel, DebatePracticeVsAi } from "../src"
 
 describe("debate-practice-vs-ai public API", () => {

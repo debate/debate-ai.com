@@ -26,20 +26,24 @@ import {
 } from "debate-round"
 import {
   DEFAULT_NEWS_SYNC,
-  DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC,
-  DEFAULT_SAVED_ARGUMENT_COLLECTIONS,
   normalizeNewsSyncPatch,
-  normalizeResearchProgressGoalPatch,
-  normalizeSavedArgumentCollectionsPatch,
   parseNewsIdList,
-  parseResearchProgressGoal,
-  parseSavedArgumentCollections,
   serializeNewsIdList,
+} from "debate-community"
+import {
+  DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC,
+  normalizeResearchProgressGoalPatch,
+  parseResearchProgressGoal,
   serializeResearchProgressGoal,
-  serializeSavedArgumentCollections,
   type ResearchProgressGoalSyncPayload,
+} from "debate-team-collaboration"
+import {
+  DEFAULT_SAVED_ARGUMENT_COLLECTIONS,
+  normalizeSavedArgumentCollectionsPatch,
+  parseSavedArgumentCollections,
+  serializeSavedArgumentCollections,
   type SavedArgumentCollection,
-} from "debate-card-search"
+} from "debate-research-evidence"
 import {
   mergeEditorPreferences,
   normalizeEditorPreferencesPatch,

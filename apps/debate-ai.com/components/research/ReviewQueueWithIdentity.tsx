@@ -9,7 +9,7 @@
  * place that knows about `better-auth`. Mirrors `TaskInboxWithIdentity.tsx`.
  */
 
-import { ReviewQueuePanel, deriveContributorIdFromSessionIdentity } from "debate-card-search"
+import { ReviewQueuePanel, deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
 import { useSession } from "@/lib/hooks/useSession"
 
 export function ReviewQueueWithIdentity() {

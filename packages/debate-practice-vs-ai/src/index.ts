@@ -4,4 +4,4 @@
  * Hosts provide their normal React, styling, and `/api/reason-ai` endpoint;
  * the panel manages the client-side practice-round workflow and persistence.
  */
-export { AiVersusRoundPanel as DebatePracticeVsAi, AiVersusRoundPanel } from "debate-round"
+export { AiVersusRoundPanel as DebatePracticeVsAi, AiVersusRoundPanel } from "debate-practice-rounds"

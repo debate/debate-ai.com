@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { FlowAnnotationsPanel } from "debate-round"
+import { FlowAnnotationsPanel } from "debate-practice-rounds"
 
 export const metadata: Metadata = {
   title: "Flow-in-Speech Annotations",

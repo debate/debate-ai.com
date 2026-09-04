@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedDailyBestCardComments } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidDailyBestCardComment, MAX_SAVED_DAILY_BEST_CARD_COMMENT_BYTES } from "debate-card-search"
+import { isValidDailyBestCardComment, MAX_SAVED_DAILY_BEST_CARD_COMMENT_BYTES } from "debate-community"
 
 /**
  * Account-linked Daily Best Card comment-thread sync — the "🕵️ Daily Best

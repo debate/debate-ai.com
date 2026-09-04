@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { CoachingProgramsPanel } from "debate-round"
+import { CoachingProgramsPanel } from "debate-team-collaboration"
 
 export const metadata: Metadata = {
   title: "Coaching Programs",

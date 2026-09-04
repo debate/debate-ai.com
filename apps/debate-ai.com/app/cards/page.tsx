@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { SearchInterface } from "debate-card-search"
+import { SearchInterface } from "debate-research-evidence"
 
 export default function SearchPage() {
   return (
