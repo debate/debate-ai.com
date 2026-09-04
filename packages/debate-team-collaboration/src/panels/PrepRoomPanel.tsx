@@ -25,6 +25,14 @@
  * `buildPrepRoomActivityTimeline`, a read-only, newest-first list of every
  * dated evidence/draft-block submission filed under the open topic.
  *
+ * Also renders a "Shared task checklist" section — this bullet's "a shared
+ * task checklist view" follow-up — backed by
+ * `state/prepRoomChecklist.ts`/`lib/prep-room-checklist.ts`. Distinct from
+ * the routed coverage-gap tasks above: a checklist item is a freeform,
+ * ad-hoc todo any teammate can add, check off, or remove, reusing the same
+ * "Your ID" field the presence roster already collects as the actor for
+ * add/toggle.
+ *
  * An optional `signedInContributorId` prop (mirroring `ReviewQueuePanel`'s
  * identical convention) prefills the "Your ID" presence field with a real
  * signed-in visitor's derived id — a starting value only; typing over the
@@ -49,6 +57,13 @@ import type { EvidenceSearchResult } from "debate-research-evidence/src/lib/shar
 import type { CoverageLevel } from "debate-research-evidence/src/lib/topic-coverage"
 import { listPersistedActiveContributors, recordPersistedPresenceHeartbeat } from "../state/topicPresence"
 import { buildPresenceSummaryText, type ActiveContributor } from "../lib/topic-presence"
+import {
+  addPersistedChecklistItem,
+  deletePersistedChecklistItem,
+  listPersistedChecklistItems,
+  togglePersistedChecklistItem,
+} from "../state/prepRoomChecklist"
+import { buildChecklistSummaryText, type PrepRoomChecklistItem } from "../lib/prep-room-checklist"
 
 /** How often the "active now" roster re-checks for staleness, client-side only. */
 const PRESENCE_REFRESH_INTERVAL_MS = 30_000
@@ -86,6 +101,8 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
   const [myId, setMyId] = useState("")
   const [hasEditedMyId, setHasEditedMyId] = useState(false)
   const [active, setActive] = useState<ActiveContributor[]>([])
+  const [checklistItems, setChecklistItems] = useState<PrepRoomChecklistItem[]>([])
+  const [newChecklistText, setNewChecklistText] = useState("")
 
   useEffect(() => {
     setTopics(listPrepRoomTopics())
@@ -100,6 +117,16 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
   useEffect(() => {
     const activeTopic = topic.trim()
     setRoom(activeTopic ? buildPersistedPrepRoom(activeTopic) : null)
+  }, [topic])
+
+  const refreshChecklist = (activeTopic: string) => {
+    setChecklistItems(activeTopic ? listPersistedChecklistItems(activeTopic) : [])
+  }
+
+  useEffect(() => {
+    refreshChecklist(topic.trim())
+    setNewChecklistText("")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topic])
 
   const refreshPresence = (activeTopic: string) => {
@@ -121,6 +148,29 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
     if (!activeTopic || !contributorId) return
     recordPersistedPresenceHeartbeat(activeTopic, contributorId, Date.now())
     refreshPresence(activeTopic)
+  }
+
+  const handleAddChecklistItem = () => {
+    const activeTopic = topic.trim()
+    const contributorId = myId.trim() || "anonymous"
+    if (!activeTopic || !newChecklistText.trim()) return
+    addPersistedChecklistItem(activeTopic, newChecklistText, contributorId, Date.now())
+    setNewChecklistText("")
+    refreshChecklist(activeTopic)
+  }
+
+  const handleToggleChecklistItem = (item: PrepRoomChecklistItem) => {
+    const activeTopic = topic.trim()
+    if (!activeTopic) return
+    togglePersistedChecklistItem(item.id, !item.done, myId.trim() || "anonymous", Date.now())
+    refreshChecklist(activeTopic)
+  }
+
+  const handleDeleteChecklistItem = (item: PrepRoomChecklistItem) => {
+    const activeTopic = topic.trim()
+    if (!activeTopic) return
+    deletePersistedChecklistItem(item.id)
+    refreshChecklist(activeTopic)
   }
 
   if (topics === null) {
@@ -277,6 +327,60 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+
+          <div className="rounded-lg border border-border p-4 space-y-2">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 className="text-sm font-semibold text-foreground">Shared task checklist</h2>
+              <span className="text-xs text-muted-foreground">{buildChecklistSummaryText(checklistItems, topic.trim())}</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Input
+                value={newChecklistText}
+                onChange={(e) => setNewChecklistText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddChecklistItem()
+                }}
+                placeholder="Add a task…"
+                className="max-w-sm"
+              />
+              <Button size="sm" disabled={!newChecklistText.trim()} onClick={handleAddChecklistItem}>
+                Add task
+              </Button>
+            </div>
+            {checklistItems.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No checklist tasks yet — add one above.</p>
+            ) : (
+              <ul className="space-y-1.5">
+                {checklistItems.map((item) => (
+                  <li
+                    key={item.id}
+                    className="flex flex-wrap items-center gap-2 rounded-md border border-border px-3 py-2 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={item.done}
+                      onChange={() => handleToggleChecklistItem(item)}
+                      aria-label={item.done ? `Mark "${item.text}" as not done` : `Mark "${item.text}" as done`}
+                    />
+                    <span className={item.done ? "flex-1 text-muted-foreground line-through" : "flex-1 text-foreground"}>
+                      {item.text}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {item.done ? `done by ${item.completedBy}` : `added by ${item.createdBy}`}
+                    </span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 px-2 text-xs"
+                      onClick={() => handleDeleteChecklistItem(item)}
+                    >
+                      Remove
+                    </Button>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
 
