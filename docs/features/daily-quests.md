@@ -212,6 +212,32 @@ among several; `pruneExpiredQuestTemplates` never removing an expired
 recurring template; `buildPersistedDailyQuestBoard` rolling a recurring
 template's next cycle back onto the board at 0 progress).
 
+## Previewing a coverage-seeded quest set before creating it
+
+Closes the "a preview of the quests a coverage gap would seed before
+creating them" follow-up named under the "📊 Topic Coverage Dashboard" bullet
+in TODO.md. Before this, "Seed quests" wrote straight to the stored roster
+with no way to see what it would do first. The "Seed from a topic's coverage
+gaps" section now has a "Preview" button alongside "Seed quests": it calls
+`state/dailyQuests.ts`'s new `previewQuestTemplatesFromTopicCoverage(topic)`,
+which derives the exact same `QuestTemplate[]`
+`seedQuestTemplatesFromTopicCoverage` would save (composing
+`buildPersistedTopicCoverageReport` and `buildUnderCoveredArgumentQuests`
+exactly as seeding does) but only *reads* the stored roster rather than
+writing to it. Each previewed entry is flagged `alreadySeeded` when a
+template with that exact id is already stored, since seeding an
+already-present id upserts it in place instead of adding a new quest — the
+panel renders that as an "Already on board" badge next to "New" for the
+rest, plus a summary line ("Seeding would add N new quests (M total for
+this topic's gaps)"). Editing the topic field clears any stale preview for
+the previous topic, and a successful "Seed quests" clears the preview too
+(the board itself now reflects it). Vitest-covered in
+`packages/debate-team-collaboration/test/dailyQuests.test.ts`
+(`previewQuestTemplatesFromTopicCoverage`: derives the same template seeding
+would save without writing anything, flags an already-seeded template,
+returns an empty list for a topic with nothing under-covered, and doesn't
+mistake an unrelated stored custom quest for an already-seeded one).
+
 ## Cross-tab live update
 
 `DailyQuestsPanel` subscribes to the browser's `storage` event (fires only

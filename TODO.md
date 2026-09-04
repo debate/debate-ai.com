@@ -6,6 +6,50 @@
 _No task currently in progress._
 
 ### Completed
+- **📊 Topic Coverage Dashboard — a preview of the quests a coverage gap
+  would seed before creating them (its Next item under Research
+  Crowdsourcing Organizer Features).** Another repeat of the standing
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL... with ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that half is already fully built
+  (see `apps/debate-ai.com/app/api/settings/route.ts` and the many
+  `saved_*` D1 tables/`/api/*` routes threaded through this file's history,
+  and every tool already reachable from the Tools page and CardMirror's
+  command palette), so this slice picked the next named, unblocked
+  follow-up instead: the Topic Coverage Dashboard's own "a preview of the
+  quests a coverage gap would seed before creating them" Next item. The
+  Daily Quests panel's existing "Seed from a topic's coverage gaps" action
+  (`seedQuestTemplatesFromTopicCoverage`) wrote straight to the stored quest
+  roster with no way to see what it would do first. `debate-team-
+  collaboration`'s `state/dailyQuests.ts` gains
+  `previewQuestTemplatesFromTopicCoverage(topic, thresholds?)`, deriving the
+  exact same `QuestTemplate[]` seeding would save (composing
+  `buildPersistedTopicCoverageReport` and `buildUnderCoveredArgumentQuests`
+  exactly as `seedQuestTemplatesFromTopicCoverage` does) but only reading
+  the stored roster — never writing to it — to flag each entry
+  `alreadySeeded` when a template with that exact id is already stored
+  (seeding an already-present id upserts it in place rather than adding a
+  new quest). `debate-community`'s `DailyQuestsPanel` gains a "Preview"
+  button next to "Seed quests": clicking it renders every quest seeding
+  would touch, each tagged "New" or "Already on board", plus a summary line
+  ("Seeding would add N new quests (M total for this topic's gaps)");
+  editing the topic field clears any stale preview for the previous topic,
+  and a successful "Seed quests" clears the preview too since the board
+  itself now reflects it. See `docs/features/daily-quests.md`'s "Previewing
+  a coverage-seeded quest set before creating it" section. Vitest coverage:
+  `packages/debate-team-collaboration/test/dailyQuests.test.ts` gained a
+  `previewQuestTemplatesFromTopicCoverage` describe block (derives the same
+  templates seeding would save without writing anything, flags an
+  already-seeded template, returns an empty list for a topic with nothing
+  under-covered, and doesn't mistake an unrelated stored custom quest for an
+  already-seeded one). Ran the full verification gate: `bun run test` (4339
+  passing, up from 4335 — the 4 new cases above), `bunx turbo run
+  typecheck` (all 15 typecheck-bearing packages green, `debate-team-
+  collaboration`/`debate-community` included), and `bun run build:web` (the
+  full production build, `/cards/quests` and `/cards/coverage` routes
+  intact) all pass.
+
 - **Coaching Programs and Group Challenges — a program-roster-scoped
   challenge-results digest (idea #13's Next item).** Another repeat of the
   standing prompt ("integrate all the tools into the UI... create user
@@ -15963,7 +16007,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. The "nominate a peer" follow-up is also now done: a "Peer Nominations" section has a **Nominate a peer** form (category, nominee, your name, optional note), and each live award card shows that category's top nominee(s) by total support — see the Completed entry above and `docs/features/contributor-awards.md`'s "Peer Nominations" section. The per-nomination "seconding"/upvoting follow-up is also now done: a "👍 Second" action on each row in "Recent nominations" lets anyone else add their support to an existing nomination instead of only being able to submit a duplicate one, and the live cards' top-nominee ranking now uses total support (nominations plus seconds) rather than raw nomination count alone (`lib/contributor-awards.ts#canSecondNomination`/`tallyNominationsByKind`, `state/contributorAwardNominations.ts#secondPeerNomination`) — see the Completed entry above and `docs/features/contributor-awards.md`'s "Seconding a nomination" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. folding nominations into the Hall of Fame ranking as a tie-breaker) if one becomes worth doing.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — the coach-facing override/reassign follow-up is done: every assignment and unassigned task has a "Reassign to…"/"Assign to…" field plus button that moves it to a typed contributor id, bypassing `routeTasks`'s own skill/capacity rules and keeping both the outgoing and incoming contributor's `activeTaskCount` accurate (`state/routedTaskQueues.ts#reassignPersistedRoutedTask`) — see the Completed entry above and `docs/features/task-inbox.md`'s "Coach override / reassign control" section. The task-priority-indicator follow-up is also now done: every assignment has a "Flag high priority"/"Unflag" toggle, showing a "High priority" badge and sorting ahead of its topic-mates (`lib/research-task-routing.ts#setAssignmentPriority`/`sortAssignmentsByPriority`, `state/routedTaskQueues.ts#setPersistedRoutedTaskPriority`) — see the Completed entry above and `docs/features/task-inbox.md`'s "Task priority" section. Next: a capacity-aware view of routing load across the team (note: this repo still has no UI to create/manage a `ContributorAvailability` profile at all — only tests and the reassign control's free-form id touch that store — so a capacity view would need either that management UI too, or to work off arbitrary typed ids the same way reassign does).
 * 🔁 **Revision Incentives** (`/cards/revisions`) — the stale-evidence-digest follow-up is done: a "Stale evidence digest" section above the leaderboard lists every persisted stale card, most-urgent (undated, then oldest-cited) first, with a link into the Evidence Library to revise one (`lib/shared-evidence-library.ts#buildStaleEvidenceDigest`, `state/evidenceLibraryEntries.ts#buildPersistedStaleEvidenceDigest`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Stale evidence digest" section. The before/after-revision-diff-viewer follow-up is also now done: a "Recent revisions" section below the leaderboard lists the 20 most recently recorded revisions with a "View diff" toggle per row, rendering a word-level before/after comparison of the card's argument block, cut text, and citation (`lib/revision-text-diff.ts#buildCardRevisionTextDiff`, `state/revisionHistory.ts#getRevisionTextDiff`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Before/after revision diff viewer" section. Next: a reward-points redemption or tie-in to the leaderboard.
-* 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.
+* 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — the quest-seed-preview follow-up is done: the Daily Quests panel's "Seed from a topic's coverage gaps" section has a "Preview" button showing exactly which quests seeding would add (tagged "New") versus leave alone (tagged "Already on board") before committing, via a new read-only `previewQuestTemplatesFromTopicCoverage` in `debate-team-collaboration`'s `state/dailyQuests.ts` — see the Completed entry above and `docs/features/daily-quests.md`'s "Previewing a coverage-seeded quest set before creating it" section. Next: a coverage-over-time trend chart; a cross-topic comparison heatmap.
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.
 * 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.
 * 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. The printable/exportable-scouting-report follow-up is also now done: a "Download report" button exports the whole roster as a plain-text file, one summary block per team (`rankings/opponent-team-profile.ts#buildOpponentScoutingReportText`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Downloading a scouting report" section. The side-by-side-us-vs-opponent-comparison-view follow-up is also now done: a "Compare vs. opponent" section builds "us" on the fly from `debate-round`'s own round-history log against a chosen opponent's profile, via `rankings/opponent-team-profile.ts#buildOpponentTeamComparison` (`OpponentTeamProfilesPanel.tsx`'s "Compare vs. opponent" section, with a "Download comparison" action) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Comparing us vs. an opponent" section. No further follow-up is currently tracked for this idea beyond the still-blocked bulk-CSV-ballot-history item (see "Confirmed blocker" below); a future run should pick a fresh next-step elsewhere if one becomes worth doing.
