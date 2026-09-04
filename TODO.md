@@ -56,14 +56,16 @@ _No task currently in progress._
   fields in `test/savedCoachMaterials.test.ts` — 4244 passing across the
   whole suite (up from 4212), and `packages/debate-speech-writer`'s own
   `bun run typecheck` (plus its `debate-ai-web` consumer's dependency-package
-  typechecks) passes clean. **Note:** `bun run build`/a fresh `bun install`
-  could not be verified end-to-end this run — see the new "Broken build:
-  incomplete `debate-flow-ebb`→`debate-flow` migration" entry directly below,
-  an unrelated pre-existing issue confirmed present on `origin/master` too.
+  typechecks) passes clean. A fresh `bun install`/`bun run build` initially
+  failed while verifying this change — see the "Broken build: incomplete
+  `debate-flow-ebb`→`debate-flow` migration" entry directly below, which this
+  same run also fixed (in a second, separate commit on the same PR) once the
+  root cause was traced back to an unrelated pre-existing issue confirmed
+  present on `origin/master` too.
 
 - **Broken build: incomplete `debate-flow-ebb`→`debate-flow` migration
-  (found, not fixed, while verifying the entry above).** A fresh `bun
-  install` at the repo root fails outright:
+  (found and fixed while verifying the entry above).** A fresh `bun
+  install` at the repo root failed outright:
   `error: Workspace dependency "debate-practice-vs-ai" not found` /
   `error: debate-practice-vs-ai@workspace:* failed to resolve`. Root cause:
   commit `fc48501` ("refactor: migrate debate-flow-ebb package to
@@ -72,30 +74,38 @@ _No task currently in progress._
   `"debate-practice-vs-ai": "workspace:*"` dependency or the still-live
   `import { DebatePracticeVsAi } from "debate-practice-vs-ai"` in
   `apps/debate-ai.com/app/versus-ai/page.tsx` (the `/versus-ai` route, idea
-  #3 "Online Debate Versus AI"). Confirmed this isn't specific to this
-  session's branch — `origin/master`'s `apps/debate-ai.com/package.json` has
-  the identical stale dependency line. Once that one line is worked around
-  (verified locally, not committed — this is a bigger fix than this slice's
-  scope), a full `turbo build --filter=debate-ai-web` uncovers a second,
-  related breakage from the same commit: `globals.css` still `@import`s
-  `../../../packages/debate-flow-ebb/src/styles/ebb-scope.css` (and
-  `@source`s the same old path), but the directory was renamed to
-  `packages/debate-flow` — the file now lives at
-  `packages/debate-flow/src/styles/ebb-scope.css`, just at the new path,
-  meaning the CSS build itself fails as well
-  (`[postcss] ENOENT: no such file or directory`). Every workspace package's
-  own `tsc --noEmit` (`bun run typecheck`, i.e. `turbo typecheck`) still
-  passes clean — `debate-ai-web` has no `typecheck` script of its own, so
-  this never surfaces there; only a real `bun install` or `bun run build`
-  catches it. **Follow-up (unblocked, small, high-value — the very next run
-  should pick this up first per this file's own task-priority ordering):**
-  (a) fix or remove the dangling `debate-practice-vs-ai` dependency/import —
-  either restore an equivalent export (`DebatePracticeVsAi`) from wherever
-  idea #3's practice-vs-AI logic actually lives now, or rewire
-  `/versus-ai/page.tsx` to it, and (b) repoint `globals.css`'s two
-  `debate-flow-ebb` paths at `packages/debate-flow`. Both are narrowly
-  scoped, mechanical, and would unblock a plain `bun install`/`bun run build`
-  for every future contributor and every future run of this exact routine.
+  #3 "Online Debate Versus AI"). Confirmed this wasn't specific to this
+  session's branch — `origin/master`'s `apps/debate-ai.com/package.json` had
+  the identical stale dependency line, and `origin/master`'s own CI ("Tests"
+  workflow, latest runs at the time) was red for the same reason. The deleted
+  package turned out to be a one-file re-export (`export {
+  AiVersusRoundPanel as DebatePracticeVsAi } from "debate-practice-rounds"`)
+  — `debate-practice-rounds` (`packages/debate-practice-drills`) was already
+  a workspace dependency of the app and already exports `AiVersusRoundPanel`,
+  so `/versus-ai/page.tsx` now imports it directly with the same aliased
+  name, and the dangling `"debate-practice-vs-ai": "workspace:*"` line is
+  removed. A full `turbo build --filter=debate-ai-web` then uncovered a
+  second, related breakage from the same commit: `globals.css` still
+  `@import`ed CSS from the old `packages/debate-flow-ebb` path (and
+  `@source`d the same old path for Tailwind's class scanning), but the
+  directory was renamed to `packages/debate-flow` — the file lives there now,
+  just at the new path — so both were repointed. Verified clean: a fresh
+  `bun install`, `bunx vitest run` (4244 passing), `bunx turbo typecheck`,
+  and `bunx turbo build --filter=debate-ai-web` (the full production build,
+  including `/versus-ai` and `/coach-materials`) all pass. Landed as a
+  second, separate commit on this same PR rather than folded into the coach-
+  materials commit, since it's an unrelated fix — small, mechanical, and
+  necessary to get this PR's own CI green (`origin/master`'s CI was red from
+  the same cause). One remaining, much lower-stakes loose end from the same
+  incomplete migration, deliberately left alone since it doesn't hard-fail
+  any build: `globals.css` also still `@source`s a `packages/debate-card-search`
+  path (renamed/split into `debate-research-evidence`/`debate-team-collaboration`/
+  `debate-community`/`debate-practice-rounds` per commit `9103b20`) —
+  Tailwind's `@source` just silently skips a nonexistent glob rather than
+  failing the build, so those packages' class names may be missing from the
+  generated stylesheet if they aren't otherwise reachable through an already-
+  listed `@source` path. A future run should audit `globals.css`'s `@source`
+  list against the current `packages/` layout.
 
 - **Strategy Sync Notes — a digest notification instead of one per
   assignment ("🔄 Strategy Sync Notes" bullet's Next item).** Yet another
