@@ -65,10 +65,11 @@
  * entry. The submission form's new optional Source URL field is how an
  * entry's `sourceUrl` gets recorded in the first place. A `?checkUrl=`
  * query param (read via `next/navigation`'s `useSearchParams`) pre-fills
- * and auto-runs the same check — the deep link the `extension/card-reuse-
- * checker` browser extension opens against the active tab's URL, since the
- * evidence repository lives in this app's own localStorage and an
- * extension (a different origin) can't read it directly. See
+ * and auto-runs the same check against this app's own localStorage
+ * repository. The current `apps/debate-web-ext` browser extension doesn't
+ * use this deep link — it calls the server-backed `/api/evidence-reuse-check`
+ * shared index directly instead, since that answers "has anyone on the
+ * team cut this," not just this one browser's own copy. See
  * `buildReuseCheckDeepLink` in `lib/shared-evidence-library.ts` and the
  * extension's own README.
  *
@@ -238,11 +239,12 @@ export function EvidenceLibraryPanel() {
     setCheckHistory(listReuseCheckHistory())
   }, [])
 
-  // Deep-linked from the `extension/card-reuse-checker` browser extension
-  // (or any other caller) via a `?checkUrl=` query param — pre-fills and
-  // runs the "Check this page" box automatically, standing in for a
-  // same-origin API the extension can't reach directly (see
-  // `buildReuseCheckDeepLink` in `lib/shared-evidence-library.ts`).
+  // Deep-linked from any caller via a `?checkUrl=` query param — pre-fills
+  // and runs the "Check this page" box automatically against this app's
+  // own localStorage repository (see `buildReuseCheckDeepLink` in
+  // `lib/shared-evidence-library.ts`). The current `apps/debate-web-ext`
+  // browser extension doesn't use this path — it calls the server-backed
+  // `/api/evidence-reuse-check` shared index directly instead.
   useEffect(() => {
     const checkUrl = searchParams?.get("checkUrl")
     if (!checkUrl) return
@@ -602,9 +604,8 @@ export function EvidenceLibraryPanel() {
           <h2 className="text-sm font-medium text-foreground">Check this page</h2>
           <p className="text-xs text-muted-foreground">
             Paste a page URL to see whether anyone has already cut a card from it before you start
-            cutting. The <code>card-reuse-checker</code> browser extension runs this same check
-            automatically for the page you're on — see{" "}
-            <code>extension/card-reuse-checker</code> in the repo to install it.
+            cutting. The Debate AI browser extension runs this same check automatically for the
+            page you're on — see <code>apps/debate-web-ext</code> in the repo to install it.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">

@@ -3,6 +3,12 @@
  * TODO.md idea #7, follow-up (a)). Reads the active tab's URL, checks it
  * against the shared reuse index (`api.js`), and renders whether the team
  * has already cut a card from this page.
+ *
+ * Before hitting the network, checks the page's hostname against the
+ * Options page's domain whitelist (idea #7's "An extension options page
+ * for whitelisting sites" follow-up) — a whitelisted site (or one of its
+ * subdomains) always renders a neutral "skip" status instead of a real
+ * reuse check, since it's configured as never itself a cut card's source.
  */
 
 document.getElementById("options-link").addEventListener("click", (event) => {
@@ -41,6 +47,12 @@ async function run() {
 
   if (!pageUrl || !/^https?:\/\//.test(pageUrl)) {
     setStatus("error", "Open a web page to check it for existing cards.");
+    return;
+  }
+
+  const skipDomains = await getSkipDomains();
+  if (isUrlDomainSkipped(pageUrl, skipDomains)) {
+    setStatus("skip", "This site is on your skip-check whitelist — no reuse check run.");
     return;
   }
 

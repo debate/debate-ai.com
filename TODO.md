@@ -6,6 +6,94 @@
 _No task currently in progress._
 
 ### Completed
+- **Broken build: `apps/debate-ai.com/package.json` missing the
+  `debate-practice-vs-ai` workspace dependency (found and fixed while
+  verifying the entry below).** A fresh `bun run build:web` failed outright:
+  `Error: [vite]: Rolldown failed to resolve import "debate-practice-vs-ai"
+  from "/home/user/debate-ai.com/apps/debate-ai.com/lib/practice-vs-ai/
+  backend.ts"`. Root cause: the "Port the Go practice-vs-AI backend to
+  Node/TS and dock it in debate-ai.com" commit added real
+  `import ... from "debate-practice-vs-ai"` usage in
+  `lib/practice-vs-ai/backend.ts`/`store.ts` (the package at
+  `packages/debate-round-practice-ai`, whose `package.json` `name` field is
+  `debate-practice-vs-ai` — a dir-name/package-name mismatch, same
+  convention as `debate-flow`/`debate-flow-ebb` and
+  `debate-search-evidence`/`debate-research-evidence` elsewhere in this
+  repo) but never added the corresponding `"debate-practice-vs-ai":
+  "workspace:*"` line to `apps/debate-ai.com/package.json`'s dependencies
+  (a much older, now-deleted one-file re-export package of the same name
+  did have that line, removed correctly when *that* package was deleted in
+  an earlier fix — this is a fresh, unrelated gap from the new real
+  package). Added the missing dependency line and ran `bun install` to
+  regenerate `bun.lock`. Verified clean: a full `bun run test` (4326
+  passing), `bunx turbo run typecheck --filter=debate-ai-web` (all green,
+  `debate-practice-vs-ai:typecheck` included), and `bunx turbo build
+  --filter=debate-ai-web` (the full production build, `/versus-ai` route
+  intact) all pass — confirmed broken beforehand by reverting just the
+  `package.json`/`bun.lock` change and reproducing the identical Rolldown
+  resolution error. Landed as its own, separate commit rather than folded
+  into the whitelisting-follow-up commit below, since it's an unrelated fix
+  — small, mechanical, and necessary to get a clean build (this repo has no
+  CI gate on this exact build step today, but a broken build blocks any
+  future verification run the same way it blocked this one).
+
+- **On Page Card Reuse Search — an extension options page for whitelisting
+  sites (idea #7's Next item).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows/docs/debates in SQL and link to
+  users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice picked the next named, unblocked follow-up
+  instead: idea #7's own Next item, "an extension options page for
+  whitelisting sites / configuring which repository to check against" (the
+  companion half, this slice found, was already done — the API-base-URL
+  config on `apps/debate-web-ext`'s Options page). The other half was
+  genuinely open: `apps/debate-web-ext/api.js` gains
+  `getSkipDomainsRaw`/`setSkipDomains`/`parseSkipDomains`/`getSkipDomains`/
+  `isUrlDomainSkipped` — a newline-separated domain whitelist (an internal
+  team wiki, a general reference site — never itself a cut card's source)
+  persisted via `chrome.storage.sync`, matched against a page's hostname
+  either exactly or as a subdomain. `options.html`/`options.js` gain a
+  "Skip-check whitelist" textarea alongside the existing API-base-URL
+  field, and `popup.js` now checks a page's hostname against the whitelist
+  *before* calling the reuse-check endpoint, rendering a neutral "on your
+  skip-check whitelist" status (a new `.status.skip` style in `popup.html`)
+  without a network request at all when it matches — the same short-circuit
+  shape as the existing `!pageUrl` guard, just one branch earlier. While
+  documenting this, found `docs/features/on-page-card-reuse-search.md` was
+  badly stale — it still described a deleted `extension/card-reuse-checker`
+  deep-link-only design (open `/cards/library?checkUrl=` in a new tab) that
+  predates the real current extension, `apps/debate-web-ext` (calls
+  `/api/evidence-reuse-check` directly, no deep-link), and pointed at the
+  long-renamed `debate-card-search` package instead of
+  `debate-research-evidence`/`packages/debate-search-evidence`. Rewrote its
+  "Route"/"Package"/"Extension" header fields, its "What it does" section's
+  stale deep-link framing, and its whole "The browser extension" section to
+  match reality, plus a new "Options: API base and skip-check whitelist"
+  subsection and a "Known gaps" line for the still-open team-dashboard
+  follow-up. See `docs/features/on-page-card-reuse-search.md` and
+  `apps/debate-web-ext/README.md`'s updated "Loading it locally"/"Files"
+  sections. No automated tests were added for this slice — this plain-JS,
+  no-bundler, no-workspace extension intentionally has no test runner wired
+  up (per its own README's "Known gaps," Chrome-extension-API code isn't
+  exercisable in this repo's Vitest/jsdom setup); verified by tracing every
+  call path by hand (an empty/blank whitelist always returns `false` from
+  `isUrlDomainSkipped` before any hostname parsing; an unparseable
+  `pageUrl` — already guarded against upstream by `popup.js`'s own
+  `/^https?:\/\//` check — degrades to `false` rather than throwing; a
+  whitelisted `"example.com"` matches `"example.com"` itself and
+  `"docs.example.com"`, but not `"example.com.evil.com"` or `"notexample.com"`,
+  via the `hostname === domain || hostname.endsWith(\`.${domain}\`)` check).
+  No repo-wide build/typecheck/test command touches this app (it's outside
+  the `bun`/`turbo` workspaces), so `bun run test`/`bunx turbo run
+  typecheck` were not re-run for this change; ran a scan for any other
+  reference to the deleted `extension/` path (none found) and confirmed
+  `apps/debate-web-ext` is otherwise untouched by the rest of the monorepo's
+  build.
+
 - **Coaching Programs and Group Challenges — a coach-facing roster analytics
   dashboard (idea #13's Next item).** Another repeat of the standing prompt
   ("integrate all the tools into the UI... create user settings and link
@@ -15739,9 +15827,8 @@ Each idea below has a working first-cut implementation already shipped (see Trac
      round-anchored note without a box, or adding a `debate-round`-local
      send target, would need to land first.
 
-7. **On Page Card Reuse Search** (`EvidenceLibraryPanel`'s "Check this page" box, plus the `debate-web-ext` browser extension) — the history-list follow-up is done: a "Recent checks" list under the box shows the last 20 local lookups (`state/reuseCheckHistory.ts`), clickable to re-run and clearable — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Check history" section. Next:
+7. **On Page Card Reuse Search** (`EvidenceLibraryPanel`'s "Check this page" box, plus the `debate-web-ext` browser extension) — the history-list follow-up is done: a "Recent checks" list under the box shows the last 20 local lookups (`state/reuseCheckHistory.ts`), clickable to re-run and clearable — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Check history" section. The extension-options-page follow-up is also now done: the API-base-URL config already existed, and this run added the other half — a "Skip-check whitelist" textarea (one domain per line) on the extension's Options page, so the popup skips the network reuse check entirely (a neutral "on your skip-check whitelist" status) for a whitelisted site or its subdomains — `apps/debate-web-ext`'s `api.js#isUrlDomainSkipped`/`getSkipDomains`/`setSkipDomains`, wired into `popup.js`/`options.js`/`options.html` — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Options: API base and skip-check whitelist" section (which also fixes that doc's stale references to a deleted `extension/card-reuse-checker` deep-link-only design and the renamed `debate-card-search` package — the real current extension is `apps/debate-web-ext`, calling `/api/evidence-reuse-check` directly). Next:
    - A team dashboard of pages flagged as already-cut, so a coach can see reuse patterns at a glance.
-   - An extension options page for whitelisting sites / configuring which repository to check against.
 
 8. **Video-Lecture-Training Coach AI** (`/coach-materials`) — the
    tagging/search-filter follow-up is done: `CoachMaterialsPanel` has a
