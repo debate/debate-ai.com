@@ -8,7 +8,7 @@
 "use client"
 
 import React, { useMemo, useState } from "react"
-import { Star, ExternalLink, EyeOff, Eye, ListVideo, ChevronUp, ChevronDown, Info } from "lucide-react"
+import { Star, ExternalLink, EyeOff, Eye, ListVideo, ChevronUp, ChevronDown } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
@@ -48,9 +48,10 @@ type ColumnKey =
   | "aff"
   | "neg"
   | "arguments"
-  | "format"
   | "channel"
   | "season"
+  | "title"
+  | "category"
   | "date"
   | "views"
 
@@ -68,9 +69,10 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   aff: 150,
   neg: 150,
   arguments: 200,
-  format: 90,
   channel: 160,
   season: 90,
+  title: 260,
+  category: 140,
   date: 110,
   views: 90,
 }
@@ -101,11 +103,10 @@ const ROUND_COLUMNS: ColumnDef[] = [
 ]
 
 const LECTURE_COLUMNS: ColumnDef[] = [
-  { key: "format", label: "Format", headerClassName: "hidden sm:table-cell", sortValue: (v) => getStyleLabel(v).toLowerCase() },
   { key: "channel", label: "Channel", headerClassName: "hidden md:table-cell", sortValue: (v) => v[3]?.toLowerCase() ?? "" },
   SEASON_COLUMN,
-  DATE_COLUMN,
-  VIEWS_COLUMN,
+  { key: "title", label: "Title", sortValue: (v) => v[1]?.toLowerCase() ?? "" },
+  { key: "category", label: "Category", headerClassName: "hidden sm:table-cell", sortValue: (v) => getStyleLabel(v).toLowerCase() },
 ]
 
 type SortDirection = "asc" | "desc"
@@ -250,7 +251,25 @@ function VideoRow({
             </td>
           )
         ) : (
+          <td className="px-3 py-2 align-top hidden md:table-cell text-sm text-muted-foreground truncate">
+            {channel}
+          </td>
+        )}
+        <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground whitespace-nowrap">
+          {typeof seasonYear === "number" && seasonYear > 0 ? formatSeasonLabel(seasonYear) : "—"}
+        </td>
+        {isRoundMode ? (
           <>
+            <td className="px-3 py-2 align-top text-sm text-muted-foreground whitespace-nowrap">
+              {formatDate(date)}
+            </td>
+            <td className="px-3 py-2 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
+              {viewCount.toLocaleString()}
+            </td>
+          </>
+        ) : (
+          <>
+            <td className="px-3 py-2 align-top text-sm text-foreground truncate">{title}</td>
             <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
               {styleLabel ? (
                 <span
@@ -265,20 +284,8 @@ function VideoRow({
                 <span className="text-xs text-muted-foreground">—</span>
               )}
             </td>
-            <td className="px-3 py-2 align-top hidden md:table-cell text-sm text-muted-foreground truncate">
-              {channel}
-            </td>
           </>
         )}
-        <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground whitespace-nowrap">
-          {typeof seasonYear === "number" && seasonYear > 0 ? formatSeasonLabel(seasonYear) : "—"}
-        </td>
-        <td className="px-3 py-2 align-top text-sm text-muted-foreground whitespace-nowrap">
-          {formatDate(date)}
-        </td>
-        <td className="px-3 py-2 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
-          {viewCount.toLocaleString()}
-        </td>
         <td className="px-3 py-2 align-top">
           <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
             {isTopPick && (
@@ -289,21 +296,6 @@ function VideoRow({
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>Top pick</TooltipContent>
-              </Tooltip>
-            )}
-
-            {!isRoundMode && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label={`Video title: ${title}`}
-                  >
-                    <Info className="h-3.5 w-3.5" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-[280px]">{title}</TooltipContent>
               </Tooltip>
             )}
 

@@ -35,6 +35,15 @@
  * notification. See `scheduleDrillReview`/`isDrillReviewDue`/
  * `getDueDrillIndexes` below.
  *
+ * `updatedAt` is likewise additive and optional — stamped on every mutating
+ * call (`saveDrillSet`, `saveDrillAiScript`, `toggleDrillCompletion`,
+ * `scheduleDrillReview`) with the current time. It exists to drive
+ * `resolveDrillSetConflict`/`planDrillSetMerge` below, the "sharing the
+ * 'Practice tier' status across devices for a signed-in user" follow-up
+ * named in `docs/features/drill-sets.md`'s Known gaps — see
+ * `hooks/useDrillSets.ts`, which uses it the same way
+ * `hooks/useWordCountRounds.ts` uses `WordCountRoundRecord.updatedAt`.
+ *
  * @module state/drillSets
  */
 
@@ -52,6 +61,15 @@ export type DrillSetRecord = {
   completedDrillIndexes?: number[];
   /** Scheduled next-review day (`YYYY-MM-DD`), keyed by the drill's index in `drills`. */
   scheduledReviewAt?: Record<number, string>;
+  /**
+   * Stamped automatically by every mutating call (`saveDrillSet`,
+   * `saveDrillAiScript`, `toggleDrillCompletion`, `scheduleDrillReview`) with
+   * the current time. Optional so a record persisted before this field
+   * existed still parses — such a record always loses a conflict to one that
+   * does carry a timestamp, mirroring `WordCountRoundRecord.updatedAt`. See
+   * `resolveDrillSetConflict` below.
+   */
+  updatedAt?: number;
 };
 
 /** A round's drill-completion progress — see `getDrillSetCompletionStats`. */
@@ -91,8 +109,32 @@ export function getDrillSet(roundId: string): DrillSetRecord | undefined {
   return readAll().find((record) => record.roundId === roundId);
 }
 
-/** Saves a round's drill set, overwriting any existing record for that `roundId`. */
+/**
+ * Saves a round's drill set, overwriting any existing record for that
+ * `roundId`. Stamps `updatedAt` with the current time on every save, so
+ * cross-device conflict resolution (`resolveDrillSetConflict`) can tell
+ * which device saved most recently.
+ */
 export function saveDrillSet(record: DrillSetRecord): void {
+  const records = readAll();
+  const index = records.findIndex((existing) => existing.roundId === record.roundId);
+  const stamped: DrillSetRecord = { ...record, updatedAt: Date.now() };
+  if (index === -1) {
+    records.push(stamped);
+  } else {
+    records[index] = stamped;
+  }
+  writeAll(records);
+}
+
+/**
+ * Adopts a drill set record as-is — e.g. one fetched from the account during
+ * cross-device sync (`hooks/useDrillSets.ts`) — preserving its own
+ * `updatedAt` rather than stamping a fresh one the way `saveDrillSet` does
+ * for an interactive save. Overwrites any existing local record for the same
+ * `roundId`, mirroring `adoptWordCountRound`.
+ */
+export function adoptDrillSet(record: DrillSetRecord): void {
   const records = readAll();
   const index = records.findIndex((existing) => existing.roundId === record.roundId);
   if (index === -1) {
@@ -101,6 +143,67 @@ export function saveDrillSet(record: DrillSetRecord): void {
     records[index] = record;
   }
   writeAll(records);
+}
+
+export type DrillSetConflictResolution = "local" | "remote" | "none";
+
+/**
+ * Decides which of two devices' copies of the same `roundId` is newer, for
+ * `hooks/useDrillSets.ts`'s account merge — mirrors
+ * `resolveWordCountRoundConflict` exactly. A newer `updatedAt` wins; a
+ * record with no `updatedAt` always loses to one that has it; when both are
+ * missing or exactly equal, this returns `"none"` rather than guessing.
+ */
+export function resolveDrillSetConflict(
+  local: DrillSetRecord,
+  remote: DrillSetRecord,
+): DrillSetConflictResolution {
+  if (remote.updatedAt !== undefined && (local.updatedAt === undefined || remote.updatedAt > local.updatedAt)) {
+    return "remote";
+  }
+  if (local.updatedAt !== undefined && (remote.updatedAt === undefined || local.updatedAt > remote.updatedAt)) {
+    return "local";
+  }
+  return "none";
+}
+
+export type DrillSetMergePlan = {
+  /** Records to adopt locally — new to this device, or the remote copy is newer per `resolveDrillSetConflict`. */
+  adopt: DrillSetRecord[];
+  /** Local records to best-effort push to the account — new to the account, or the local copy is newer. */
+  pushLocal: DrillSetRecord[];
+};
+
+/**
+ * Pure merge-planning step for `hooks/useDrillSets.ts`'s account merge,
+ * extracted so it's directly testable without a hook/DOM harness — mirrors
+ * `planWordCountRoundMerge` exactly, keyed by `roundId`.
+ */
+export function planDrillSetMerge(
+  localRecords: DrillSetRecord[],
+  remoteRecords: DrillSetRecord[],
+): DrillSetMergePlan {
+  const localById = new Map(localRecords.map((record) => [record.roundId, record]));
+  const remoteIds = new Set(remoteRecords.map((record) => record.roundId));
+
+  const adopt: DrillSetRecord[] = [];
+  const pushLocal: DrillSetRecord[] = [];
+
+  for (const remote of remoteRecords) {
+    const local = localById.get(remote.roundId);
+    if (!local) {
+      adopt.push(remote);
+      continue;
+    }
+    const resolution = resolveDrillSetConflict(local, remote);
+    if (resolution === "remote") adopt.push(remote);
+    else if (resolution === "local") pushLocal.push(local);
+  }
+  for (const local of localRecords) {
+    if (!remoteIds.has(local.roundId)) pushLocal.push(local);
+  }
+
+  return { adopt, pushLocal };
 }
 
 /** Deletes a round's persisted drill set; a no-op if it isn't stored. */
@@ -123,6 +226,7 @@ export function saveDrillAiScript(roundId: string, drillIndex: number, aiScript:
   records[index] = {
     ...existing,
     aiScripts: { ...(existing.aiScripts ?? {}), [drillIndex]: aiScript },
+    updatedAt: Date.now(),
   };
   writeAll(records);
 }
@@ -149,6 +253,7 @@ export function toggleDrillCompletion(roundId: string, drillIndex: number): void
   records[index] = {
     ...existing,
     completedDrillIndexes: [...completed].sort((a, b) => a - b),
+    updatedAt: Date.now(),
   };
   writeAll(records);
 }
@@ -172,7 +277,7 @@ export function scheduleDrillReview(roundId: string, drillIndex: number, dayKey:
   } else {
     delete scheduledReviewAt[drillIndex];
   }
-  records[index] = { ...existing, scheduledReviewAt };
+  records[index] = { ...existing, scheduledReviewAt, updatedAt: Date.now() };
   writeAll(records);
 }
 
@@ -226,7 +331,9 @@ export function getDrillSetCompletionStats(record: Pick<DrillSetRecord, "drills"
  * flow (e.g. the round workspace's currently selected flow) create a
  * `DrillSetRecord` without hand-building it, mirroring
  * `roundContributorFlows.ts`'s `buildAndSaveRoundContributorFlow`. Overwrites
- * any existing drill set for `roundId`, same as `saveDrillSet`.
+ * any existing drill set for `roundId`, same as `saveDrillSet`. Returns the
+ * persisted (`updatedAt`-stamped) record, not the pre-save draft, so a
+ * caller (e.g. `hooks/useDrillSets.ts`) can push exactly what's now stored.
  */
 export function buildAndSaveDrillSet(
   flow: Pick<Flow, "children" | "columns">,
@@ -236,7 +343,7 @@ export function buildAndSaveDrillSet(
 ): DrillSetRecord {
   const record: DrillSetRecord = { roundId, sideKey, drills: buildDrillSet(flow, sideKey, options) };
   saveDrillSet(record);
-  return record;
+  return getDrillSet(roundId)!;
 }
 
 /**

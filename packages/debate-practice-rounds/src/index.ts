@@ -26,3 +26,6 @@ export * from "./hooks/useJudgeDecisions";
 export * from "./state/savedCounselPanelAssessments";
 export * from "./flow/counsel-panel-assessments-client";
 export * from "./hooks/useCounselPanelAssessments";
+export * from "./state/savedDrillSets";
+export * from "./round/drill-sets-client";
+export * from "./hooks/useDrillSets";

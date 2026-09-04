@@ -57,6 +57,13 @@
  * this repo, so the "reminder" is this in-app badge, seen next time the
  * panel is visited.
  *
+ * Every drill set (including its completion/AI-script/review-reminder
+ * state) is now account-synced across devices for a signed-in user, via
+ * `hooks/useDrillSets.ts` — the "sharing the 'Practice tier' status across
+ * devices" follow-up named in `docs/features/drill-sets.md`'s Known gaps.
+ * This panel reads/writes exclusively through that hook now, in place of
+ * `state/drillSets.ts`'s mutating functions directly.
+ *
  * @module panels/DrillSetsPanel
  */
 
@@ -75,21 +82,12 @@ import {
   SelectValue,
 } from "debate-round/src/ui/primitives/select"
 import { EmptyState, MeterBar, PanelRow } from "debate-round/src/ui/panels/panel-shell"
-import {
-  buildAndSaveDrillSet,
-  buildDrillSetsPanelView,
-  deleteDrillSet,
-  getDrillSetCompletionStats,
-  getDueDrillIndexes,
-  saveDrillAiScript,
-  scheduleDrillReview,
-  toggleDrillCompletion,
-  type DrillSetRecord,
-} from "../state/drillSets"
+import { getDrillSetCompletionStats, getDueDrillIndexes, type DrillSetRecord } from "../state/drillSets"
 import { buildDrillPracticeUnlockStatus, getTotalCompletedDrillCount } from "../state/drillProgressUnlocks"
 import { filterDrillsByDifficulty, type DrillDifficulty, type DrillKind } from "debate-round/src/flow/drill-generator"
 import { requestDrillScript } from "../round/drill-script-client"
 import { useFlowStore } from "debate-round/src/state/store"
+import { useDrillSets } from "../hooks/useDrillSets"
 
 const DRILL_KIND_LABELS: Record<DrillKind, string> = {
   overview: "Overview",
@@ -140,7 +138,15 @@ function todayLocalDayKey(): string {
  * state during SSR/hydration rather than throwing.
  */
 export function DrillSetsPanel() {
-  const [drillSets, setDrillSets] = useState<DrillSetRecord[] | null>(null)
+  const {
+    drillSets,
+    synced,
+    buildAndSaveDrillSet,
+    deleteDrillSet,
+    saveDrillAiScript,
+    toggleDrillCompletion,
+    scheduleDrillReview,
+  } = useDrillSets()
   const [scriptLoadingKey, setScriptLoadingKey] = useState<string | null>(null)
   const [scriptErrorsByKey, setScriptErrorsByKey] = useState<Record<string, string>>({})
   const [generateSideKey, setGenerateSideKey] = useState("")
@@ -155,14 +161,10 @@ export function DrillSetsPanel() {
 
   useEffect(() => {
     setMounted(true)
-    setDrillSets(buildDrillSetsPanelView())
   }, [])
-
-  const refresh = () => setDrillSets(buildDrillSetsPanelView())
 
   const handleClear = (roundId: string) => {
     deleteDrillSet(roundId)
-    refresh()
   }
 
   const handleGenerate = () => {
@@ -175,17 +177,14 @@ export function DrillSetsPanel() {
     buildAndSaveDrillSet(currentFlow, String(currentFlow.id), sideKey)
     setGenerateError(null)
     setGenerateSideKey("")
-    refresh()
   }
 
   const handleToggleCompletion = (roundId: string, drillIndex: number) => {
     toggleDrillCompletion(roundId, drillIndex)
-    refresh()
   }
 
   const handleScheduleReview = (roundId: string, drillIndex: number, dayKey: string | null) => {
     scheduleDrillReview(roundId, drillIndex, dayKey)
-    refresh()
   }
 
   const handleGetAiScript = async (set: DrillSetRecord, drillIndex: number) => {
@@ -198,7 +197,6 @@ export function DrillSetsPanel() {
     try {
       const script = await requestDrillScript({ sideKey: set.sideKey, drill: set.drills[drillIndex] })
       saveDrillAiScript(set.roundId, drillIndex, script)
-      refresh()
     } catch (error) {
       setScriptErrorsByKey((prev) => ({
         ...prev,
@@ -223,6 +221,11 @@ export function DrillSetsPanel() {
         <p className="text-sm text-muted-foreground">
           Quick practice drills generated from each round's flow — overview, frontline, cross-ex,
           and collapse-scenario prompts.
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {synced
+            ? "Drill sets — including AI scripts, completion, and review reminders — are synced to your account."
+            : "Sign in to sync your drill sets across devices."}
         </p>
       </div>
 

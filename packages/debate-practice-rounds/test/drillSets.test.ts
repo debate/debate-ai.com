@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  adoptDrillSet,
   buildAndSaveDrillSet,
   buildDrillSetsPanelView,
   deleteDrillSet,
@@ -8,6 +9,8 @@ import {
   getDueDrillIndexes,
   isDrillReviewDue,
   listDrillSets,
+  planDrillSetMerge,
+  resolveDrillSetConflict,
   saveDrillAiScript,
   saveDrillSet,
   scheduleDrillReview,
@@ -113,14 +116,14 @@ describe("listDrillSets", () => {
   it("lists every saved drill set", () => {
     saveDrillSet(DRILL_SET_A);
     saveDrillSet(DRILL_SET_B);
-    expect(listDrillSets()).toEqual([DRILL_SET_A, DRILL_SET_B]);
+    expect(listDrillSets()).toMatchObject([DRILL_SET_A, DRILL_SET_B]);
   });
 });
 
 describe("getDrillSet", () => {
   it("finds a saved drill set by roundId", () => {
     saveDrillSet(DRILL_SET_A);
-    expect(getDrillSet("round-1")).toEqual(DRILL_SET_A);
+    expect(getDrillSet("round-1")).toMatchObject(DRILL_SET_A);
   });
 
   it("returns undefined for a roundId that isn't stored", () => {
@@ -140,8 +143,31 @@ describe("saveDrillSet", () => {
     };
     saveDrillSet(updated);
 
-    expect(listDrillSets()).toEqual([updated]);
-    expect(getDrillSet("round-1")).toEqual(updated);
+    expect(listDrillSets()).toMatchObject([updated]);
+    expect(getDrillSet("round-1")).toMatchObject(updated);
+  });
+
+  it("stamps updatedAt with the current time on every save", () => {
+    const before = Date.now();
+    saveDrillSet(DRILL_SET_A);
+    const after = Date.now();
+
+    const updatedAt = getDrillSet("round-1")?.updatedAt;
+    expect(updatedAt).toEqual(expect.any(Number));
+    expect(updatedAt).toBeGreaterThanOrEqual(before);
+    expect(updatedAt).toBeLessThanOrEqual(after);
+  });
+
+  it("refreshes updatedAt on a later update to the same roundId", async () => {
+    saveDrillSet(DRILL_SET_A);
+    const firstUpdatedAt = getDrillSet("round-1")?.updatedAt;
+
+    await new Promise((resolve) => setTimeout(resolve, 2));
+    saveDrillSet({ ...DRILL_SET_A, sideKey: "neg" });
+
+    const secondUpdatedAt = getDrillSet("round-1")?.updatedAt;
+    expect(secondUpdatedAt).toEqual(expect.any(Number));
+    expect(secondUpdatedAt).toBeGreaterThan(firstUpdatedAt!);
   });
 });
 
@@ -178,14 +204,14 @@ describe("deleteDrillSet", () => {
     saveDrillSet(DRILL_SET_B);
     deleteDrillSet("round-1");
 
-    expect(listDrillSets()).toEqual([DRILL_SET_B]);
+    expect(listDrillSets()).toMatchObject([DRILL_SET_B]);
     expect(getDrillSet("round-1")).toBeUndefined();
   });
 
   it("is a no-op when the roundId isn't stored", () => {
     saveDrillSet(DRILL_SET_B);
     deleteDrillSet("missing");
-    expect(listDrillSets()).toEqual([DRILL_SET_B]);
+    expect(listDrillSets()).toMatchObject([DRILL_SET_B]);
   });
 });
 
@@ -194,7 +220,7 @@ describe("saveDrillAiScript", () => {
     saveDrillSet(DRILL_SET_A);
     saveDrillAiScript("round-1", 0, "Here is the AI-generated overview script.");
 
-    expect(getDrillSet("round-1")).toEqual({
+    expect(getDrillSet("round-1")).toMatchObject({
       ...DRILL_SET_A,
       aiScripts: { 0: "Here is the AI-generated overview script." },
     });
@@ -221,14 +247,26 @@ describe("saveDrillAiScript", () => {
     saveDrillSet(DRILL_SET_B);
     saveDrillAiScript("round-1", 0, "Overview script.");
 
-    expect(getDrillSet("round-2")).toEqual(DRILL_SET_B);
+    expect(getDrillSet("round-2")).toMatchObject(DRILL_SET_B);
   });
 
   it("is a no-op when the roundId isn't stored", () => {
     saveDrillSet(DRILL_SET_B);
     saveDrillAiScript("missing", 0, "Script.");
 
-    expect(listDrillSets()).toEqual([DRILL_SET_B]);
+    expect(listDrillSets()).toMatchObject([DRILL_SET_B]);
+  });
+
+  it("stamps updatedAt with the current time", () => {
+    saveDrillSet(DRILL_SET_A);
+    const before = Date.now();
+    saveDrillAiScript("round-1", 0, "Overview script.");
+    const after = Date.now();
+
+    const updatedAt = getDrillSet("round-1")?.updatedAt;
+    expect(updatedAt).toEqual(expect.any(Number));
+    expect(updatedAt).toBeGreaterThanOrEqual(before);
+    expect(updatedAt).toBeLessThanOrEqual(after);
   });
 });
 
@@ -237,7 +275,7 @@ describe("toggleDrillCompletion", () => {
     saveDrillSet(DRILL_SET_A);
     toggleDrillCompletion("round-1", 0);
 
-    expect(getDrillSet("round-1")).toEqual({ ...DRILL_SET_A, completedDrillIndexes: [0] });
+    expect(getDrillSet("round-1")).toMatchObject({ ...DRILL_SET_A, completedDrillIndexes: [0] });
   });
 
   it("un-marks an already-completed drill on second toggle", () => {
@@ -271,14 +309,14 @@ describe("toggleDrillCompletion", () => {
     saveDrillSet(DRILL_SET_B);
     toggleDrillCompletion("round-1", 0);
 
-    expect(getDrillSet("round-2")).toEqual(DRILL_SET_B);
+    expect(getDrillSet("round-2")).toMatchObject(DRILL_SET_B);
   });
 
   it("is a no-op when the roundId isn't stored", () => {
     saveDrillSet(DRILL_SET_B);
     toggleDrillCompletion("missing", 0);
 
-    expect(listDrillSets()).toEqual([DRILL_SET_B]);
+    expect(listDrillSets()).toMatchObject([DRILL_SET_B]);
   });
 
   it("is a no-op when drillIndex is out of range for that record", () => {
@@ -286,7 +324,19 @@ describe("toggleDrillCompletion", () => {
     toggleDrillCompletion("round-1", 99);
     toggleDrillCompletion("round-1", -1);
 
-    expect(getDrillSet("round-1")).toEqual(DRILL_SET_A);
+    expect(getDrillSet("round-1")).toMatchObject(DRILL_SET_A);
+  });
+
+  it("stamps updatedAt with the current time", () => {
+    saveDrillSet(DRILL_SET_A);
+    const before = Date.now();
+    toggleDrillCompletion("round-1", 0);
+    const after = Date.now();
+
+    const updatedAt = getDrillSet("round-1")?.updatedAt;
+    expect(updatedAt).toEqual(expect.any(Number));
+    expect(updatedAt).toBeGreaterThanOrEqual(before);
+    expect(updatedAt).toBeLessThanOrEqual(after);
   });
 });
 
@@ -295,7 +345,7 @@ describe("scheduleDrillReview", () => {
     saveDrillSet(DRILL_SET_A);
     scheduleDrillReview("round-1", 0, "2026-09-10");
 
-    expect(getDrillSet("round-1")).toEqual({
+    expect(getDrillSet("round-1")).toMatchObject({
       ...DRILL_SET_A,
       scheduledReviewAt: { 0: "2026-09-10" },
     });
@@ -345,14 +395,14 @@ describe("scheduleDrillReview", () => {
     saveDrillSet(DRILL_SET_B);
     scheduleDrillReview("round-1", 0, "2026-09-10");
 
-    expect(getDrillSet("round-2")).toEqual(DRILL_SET_B);
+    expect(getDrillSet("round-2")).toMatchObject(DRILL_SET_B);
   });
 
   it("is a no-op when the roundId isn't stored", () => {
     saveDrillSet(DRILL_SET_B);
     scheduleDrillReview("missing", 0, "2026-09-10");
 
-    expect(listDrillSets()).toEqual([DRILL_SET_B]);
+    expect(listDrillSets()).toMatchObject([DRILL_SET_B]);
   });
 
   it("is a no-op when drillIndex is out of range for that record", () => {
@@ -360,7 +410,19 @@ describe("scheduleDrillReview", () => {
     scheduleDrillReview("round-1", 99, "2026-09-10");
     scheduleDrillReview("round-1", -1, "2026-09-10");
 
-    expect(getDrillSet("round-1")).toEqual(DRILL_SET_A);
+    expect(getDrillSet("round-1")).toMatchObject(DRILL_SET_A);
+  });
+
+  it("stamps updatedAt with the current time", () => {
+    saveDrillSet(DRILL_SET_A);
+    const before = Date.now();
+    scheduleDrillReview("round-1", 0, "2026-09-10");
+    const after = Date.now();
+
+    const updatedAt = getDrillSet("round-1")?.updatedAt;
+    expect(updatedAt).toEqual(expect.any(Number));
+    expect(updatedAt).toBeGreaterThanOrEqual(before);
+    expect(updatedAt).toBeLessThanOrEqual(after);
   });
 });
 
@@ -445,13 +507,125 @@ describe("buildDrillSetsPanelView", () => {
   it("sorts persisted drill sets by roundId", () => {
     saveDrillSet(DRILL_SET_B);
     saveDrillSet(DRILL_SET_A);
-    expect(buildDrillSetsPanelView()).toEqual([DRILL_SET_A, DRILL_SET_B]);
+    expect(buildDrillSetsPanelView()).toMatchObject([DRILL_SET_A, DRILL_SET_B]);
   });
 
   it("saving a drill set for an existing roundId under a new sideKey still upserts by roundId alone", () => {
     saveDrillSet(DRILL_SET_A);
     const negForRoundOne: DrillSetRecord = { ...DRILL_SET_A, sideKey: "neg" };
     saveDrillSet(negForRoundOne);
-    expect(buildDrillSetsPanelView()).toEqual([negForRoundOne]);
+    expect(buildDrillSetsPanelView()).toMatchObject([negForRoundOne]);
+  });
+});
+
+describe("adoptDrillSet", () => {
+  it("stores a record with its own updatedAt preserved as-is, unlike saveDrillSet", () => {
+    const synced: DrillSetRecord = { ...DRILL_SET_A, updatedAt: 12345 };
+    adoptDrillSet(synced);
+
+    expect(getDrillSet("round-1")).toEqual(synced);
+  });
+
+  it("overwrites any existing local record for the same roundId", () => {
+    saveDrillSet(DRILL_SET_A);
+    const remote: DrillSetRecord = {
+      ...DRILL_SET_A,
+      completedDrillIndexes: [0],
+      updatedAt: 999,
+    };
+
+    adoptDrillSet(remote);
+
+    const stored = listDrillSets();
+    expect(stored).toHaveLength(1);
+    expect(stored[0]).toEqual(remote);
+  });
+});
+
+describe("resolveDrillSetConflict", () => {
+  it("picks remote when remote's updatedAt is newer", () => {
+    const local: DrillSetRecord = { ...DRILL_SET_A, updatedAt: 100 };
+    const remote: DrillSetRecord = { ...DRILL_SET_A, updatedAt: 200 };
+    expect(resolveDrillSetConflict(local, remote)).toBe("remote");
+  });
+
+  it("picks local when local's updatedAt is newer", () => {
+    const local: DrillSetRecord = { ...DRILL_SET_A, updatedAt: 200 };
+    const remote: DrillSetRecord = { ...DRILL_SET_A, updatedAt: 100 };
+    expect(resolveDrillSetConflict(local, remote)).toBe("local");
+  });
+
+  it("returns none when both sides have the exact same updatedAt", () => {
+    const local: DrillSetRecord = { ...DRILL_SET_A, updatedAt: 150 };
+    const remote: DrillSetRecord = { ...DRILL_SET_A, updatedAt: 150 };
+    expect(resolveDrillSetConflict(local, remote)).toBe("none");
+  });
+
+  it("returns none when neither side has an updatedAt", () => {
+    const local: DrillSetRecord = { ...DRILL_SET_A };
+    const remote: DrillSetRecord = { ...DRILL_SET_A };
+    expect(resolveDrillSetConflict(local, remote)).toBe("none");
+  });
+
+  it("picks remote when only remote has an updatedAt", () => {
+    const local: DrillSetRecord = { ...DRILL_SET_A };
+    const remote: DrillSetRecord = { ...DRILL_SET_A, updatedAt: 100 };
+    expect(resolveDrillSetConflict(local, remote)).toBe("remote");
+  });
+
+  it("picks local when only local has an updatedAt", () => {
+    const local: DrillSetRecord = { ...DRILL_SET_A, updatedAt: 100 };
+    const remote: DrillSetRecord = { ...DRILL_SET_A };
+    expect(resolveDrillSetConflict(local, remote)).toBe("local");
+  });
+});
+
+describe("planDrillSetMerge", () => {
+  it("adopts a remote record with no local counterpart", () => {
+    const plan = planDrillSetMerge([], [DRILL_SET_A]);
+    expect(plan.adopt).toEqual([DRILL_SET_A]);
+    expect(plan.pushLocal).toEqual([]);
+  });
+
+  it("pushes a local-only record to the account", () => {
+    const plan = planDrillSetMerge([DRILL_SET_A], []);
+    expect(plan.adopt).toEqual([]);
+    expect(plan.pushLocal).toEqual([DRILL_SET_A]);
+  });
+
+  it("adopts the remote copy when it's newer for a shared roundId", () => {
+    const local: DrillSetRecord = { ...DRILL_SET_A, updatedAt: 100 };
+    const remote: DrillSetRecord = { ...DRILL_SET_A, completedDrillIndexes: [0], updatedAt: 200 };
+    const plan = planDrillSetMerge([local], [remote]);
+    expect(plan.adopt).toEqual([remote]);
+    expect(plan.pushLocal).toEqual([]);
+  });
+
+  it("pushes the local copy when it's newer for a shared roundId", () => {
+    const local: DrillSetRecord = { ...DRILL_SET_A, updatedAt: 200 };
+    const remote: DrillSetRecord = { ...DRILL_SET_A, completedDrillIndexes: [0], updatedAt: 100 };
+    const plan = planDrillSetMerge([local], [remote]);
+    expect(plan.adopt).toEqual([]);
+    expect(plan.pushLocal).toEqual([local]);
+  });
+
+  it("does nothing for a shared roundId with no resolvable conflict", () => {
+    const local: DrillSetRecord = { ...DRILL_SET_A };
+    const remote: DrillSetRecord = { ...DRILL_SET_A };
+    const plan = planDrillSetMerge([local], [remote]);
+    expect(plan.adopt).toEqual([]);
+    expect(plan.pushLocal).toEqual([]);
+  });
+
+  it("handles a mix of new-to-each-side and shared roundIds in one pass", () => {
+    const sharedLocal: DrillSetRecord = { roundId: "shared", sideKey: "aff", drills: [], updatedAt: 100 };
+    const sharedRemote: DrillSetRecord = { roundId: "shared", sideKey: "aff", drills: [], updatedAt: 200 };
+    const localOnly: DrillSetRecord = { roundId: "local-only", sideKey: "aff", drills: [] };
+    const remoteOnly: DrillSetRecord = { roundId: "remote-only", sideKey: "aff", drills: [] };
+
+    const plan = planDrillSetMerge([sharedLocal, localOnly], [sharedRemote, remoteOnly]);
+
+    expect(plan.adopt.map((r) => r.roundId).sort()).toEqual(["remote-only", "shared"]);
+    expect(plan.pushLocal.map((r) => r.roundId)).toEqual(["local-only"]);
   });
 });

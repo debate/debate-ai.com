@@ -1,10 +1,9 @@
 /**
  * @fileoverview Collapsible navigation tree shown in the persistent left
  * sidebar on the videos pages. Structure:
- *   Videos (h1 section label)
- *     College Debates (h2, expandable) -> Policy / PF / LD / Greatest of All-Time
- *   Favorites (h1, plain link)
- *   Lectures (h1, expandable) -> lecture categories (h2)
+ *   College Debates (h2, expandable) -> Policy / PF / LD / Greatest of All-Time
+ *   Favorites (h2, plain link)
+ *   Lectures (h2, expandable) -> lecture categories (h3)
  */
 
 "use client";
@@ -75,9 +74,6 @@ export function VideoSidebarTree({
   return (
     <nav className="flex flex-col gap-3 text-sm" aria-label="Videos">
       <div>
-        <h1 className="px-2 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Videos
-        </h1>
         <TreeItem
           level={2}
           href="/videos/college"
@@ -95,7 +91,7 @@ export function VideoSidebarTree({
       </div>
 
       <TreeItem
-        level={1}
+        level={2}
         href="/videos/favorites"
         title="Favorites"
         count={counts?.favorites}
@@ -104,7 +100,7 @@ export function VideoSidebarTree({
       />
 
       <TreeItem
-        level={1}
+        level={2}
         href="/videos/lectures"
         title="Lectures"
         count={counts?.lectures}
@@ -116,7 +112,7 @@ export function VideoSidebarTree({
         {lectureCategoryItems.map((item) => (
           <TreeItem
             key={item.id}
-            level={2}
+            level={3}
             href={buildLectureCategoryHref(item.id)}
             title={item.title}
             count={item.count}
@@ -134,8 +130,8 @@ export function VideoSidebarTree({
 }
 
 interface TreeItemProps {
-  /** Heading level: 1 = top-level section (Videos/Favorites/Lectures), 2 = expandable subgroup or lecture category, 3 = leaf child. */
-  level: 1 | 2 | 3;
+  /** Heading level: 2 = top-level section (College Debates/Favorites/Lectures), 3 = subgroup, lecture category, or leaf child. */
+  level: 2 | 3;
   href: string;
   title: string;
   count?: number;
@@ -151,7 +147,7 @@ interface TreeItemProps {
 
 function TreeItem({ level, href, title, count, isActive, icon, expanded, onToggleExpand, muted, children }: TreeItemProps) {
   const expandable = children != null && onToggleExpand != null;
-  const Heading = level === 1 ? "h1" : level === 2 ? "h2" : "span";
+  const Heading = level === 2 ? "h2" : "span";
 
   return (
     <div>
@@ -172,7 +168,6 @@ function TreeItem({ level, href, title, count, isActive, icon, expanded, onToggl
           <Heading
             className={cn(
               "min-w-0 flex-1 truncate",
-              level === 1 && "font-semibold text-foreground",
               level === 2 && "font-medium text-foreground",
               level === 3 && (muted ? "text-xs text-muted-foreground" : "text-sm text-foreground"),
               isActive && "text-primary",
