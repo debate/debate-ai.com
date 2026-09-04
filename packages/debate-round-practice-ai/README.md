@@ -1,217 +1,103 @@
-<p align="left">
-  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpPlI1P7SK3pemg67VMPbvNzxYyk0UtlmJiQ&s" alt="Aossie Logo" height="120"/>
-</p>
+# debate-practice-vs-ai
 
-<h1 align="right">
-  <b>AOSSIE | DebateAI</b>
-</h1>
+**Practice vs AI** — a full timed debate round against an AI opponent, mounted
+in debate-ai.com at [`/versus-ai`](../../apps/debate-ai.com/app/versus-ai/page.tsx)
+and reachable from the app dock.
 
----
+This package is the Node/TypeScript port of the Go `arguehub` vs-bot server and
+its Vite/React client, both of which still sit alongside it in `backend/` and
+`frontend/` as the reference sources. Nothing in the port calls Go, Mongo or
+Gin: it is plain TypeScript, `fetch`-based, and runs under Next.js or a
+Cloudflare Worker.
 
-## About DebateAI
+## What's in it
 
-**DebateAI** is an AI-enhanced, real-time debating platform designed to sharpen communication skills. Whether competing against human opponents or LLM-powered AI challengers, users can participate in structured debates that mimic formal competitions.
+| Export | Ported from | What it is |
+| --- | --- | --- |
+| `./backend` | `backend/controllers/debatevsbot_controller.go`, `backend/services/*.go`, `backend/models/debatevsbot.go`, `backend/routes/debatevsbot.go` | The vs-bot server: 13 bot personalities, prompt construction, AI judging, gamification rules, and the four `/vsbot/*` handlers |
+| `./client` | `frontend/src/services/vsbot.ts` | The browser client for those endpoints |
+| `./ui` | `frontend/src/Pages/BotSelection.tsx`, `frontend/src/Pages/DebateRoom.tsx`, `frontend/src/components/JudgementPopup.tsx` | The round screens |
 
-### Key Features
+### Backend
 
-- **User vs. User Debates**
-- Real-time debates via **WebSockets**, **WebRTC** (audio/video/text)
-- Structured formats: **opening**, **cross-exam**, and **closing**
+- **`personalities.ts`** — all 13 personas from the 1000-line
+  `GetBotPersonality` switch (Rookie Rick through Darth Vader), every field
+  carried over verbatim, plus the neutral default.
+- **`prompt.ts`** — `formatHistory`, `findLastUserMessage`,
+  `inferOpponentStyle`, `constructPrompt` and the judging rubric, with the
+  prompt text unchanged from the Go source.
+- **`persona-fallbacks.ts`** — the per-persona "my systems are offline" and
+  "say that again" lines, so the bot never breaks character on an error.
+- **`model-client.ts`** — replaces the Go process-global `genai.Client` with an
+  injectable `ModelClient`. Anthropic, Gemini (including the Go server's four
+  `BLOCK_NONE` safety settings) and OpenAI implementations are provided, all as
+  plain `fetch` calls.
+- **`store.ts`** — replaces the hardcoded Mongo collection with a `DebateStore`
+  interface plus an in-memory implementation. debate-ai.com supplies a
+  Drizzle/D1-backed one in
+  [`lib/practice-vs-ai/store.ts`](../../apps/debate-ai.com/lib/practice-vs-ai/store.ts).
+- **`gamification.ts`** — the Go controller's point values (win 50, draw 25,
+  loss 10) and badge thresholds (`FirstWin`, `Novice`, `Streak5`, `FactMaster`)
+  as pure functions over a profile snapshot.
+- **`handlers.ts`** — the four endpoints. Gin handlers took a `*gin.Context`
+  and wrote to the socket; these take a parsed body plus an already-resolved
+  actor and return `{ status, body }`, so the host owns auth and transport.
 
-- **User vs. AI Debates**
-- LLM-generated counterarguments that adapt to your input
+### What deliberately changed
 
-- **Custom Debate Rooms**
-- Create private, topic-specific debate spaces
+- **Auth** — the Go handlers each parsed a bearer token and called
+  `ValidateTokenAndFetchEmail`. The host resolves the caller instead and passes
+  a `DebateActor`; debate-ai.com uses its Better Auth session cookie.
+- **Routing** — upstream's three react-router routes (`/game`, `/debate/:id`,
+  and the scorecard) became one Next.js route, because round setup was passed
+  through `location.state` and would be lost on reload.
+- **Turn advancement** — upstream called `advanceTurn` from inside `setState`
+  updaters, a side effect during render that misfires under React 18+
+  StrictMode. The updaters are pure here and turn changes apply against a ref.
+- **Hardcoded dev URLs** — the scorecard's "skills to improve" cards pointed at
+  `http://localhost:5173/coach/...`; they are now a `coachSkills` prop.
 
----
+### Out of scope
 
-## Project Setup Guide
+Only the Practice vs AI (vs-bot) slice of the Go server is ported. The rest of
+`backend/` — WebSocket rooms, human-vs-human and team debates, matchmaking,
+tournaments, Glicko-2 ratings, auth, admin — is untouched and still Go.
 
-### Backend Configuration
-### Prerequisites
-- Go (version 1.20 or later)
-- MongoDB (local instance or MongoDB Atlas)
+## Using it
 
----
+```tsx
+// A page
+import { DebatePracticeVsAi } from "debate-practice-vs-ai"
 
-### 1. Create the Backend Config File
-
-The backend expects a `config.prod.yml` file at runtime.  
-Only a sample config file is provided in the repository.
-
-Create the required config file by copying the sample:
-
-```bash
-cd backend/config
-cp config.prod.sample.yml config.prod.yml
+<DebatePracticeVsAi userId={session.user.id} userDisplayName={session.user.name} />
 ```
 
----
+```ts
+// A route handler
+import { createAnthropicModelClient, createPracticeVsAiBackend } from "debate-practice-vs-ai"
 
-### 2. Configure MongoDB
-
-Update `backend/config/config.prod.yml` with a valid MongoDB connection string:
-
-```yaml
-database:
-  uri: "<YOUR_MONGODB_URI>"
+const backend = createPracticeVsAiBackend({
+  store,
+  model: createAnthropicModelClient({ apiKey: process.env.ANTHROPIC_API_KEY! }),
+})
+const { status, body } = await backend.createDebate(actor, await request.json())
 ```
 
-Without a valid MongoDB URI, the backend will fail to start.
+With no model key configured the round still runs: every persona answers with
+its own in-character "my systems are offline" line, exactly as the Go server
+behaved with an unset Gemini key.
 
----
-
-### 3. (Optional) Gemini API Configuration
-
-If the Gemini API key is not configured, the backend will still run, but AI-related features will be disabled.
-
-```yaml
-gemini:
-  apiKey: "<YOUR_GEMINI_API_KEY>"
-```
-
----
-
-### 4. Run the Backend Server
-
-From the `backend` directory, start the server:
-
-```bash
-go run cmd/server/main.go
-```
-
-The server will start on the port defined in the config file (default: `1313`).
-
----
-
-### Notes
-- Do **not** commit `config.prod.yml` to version control.
-- Only `config.prod.sample.yml` should remain committed.
-
-
-### Frontend Configuration
-
-1. In the `frontend/` directory, create a file named `.env`.
-
-2. Add the following environment variables to the `.env` file:
+## Layout
 
 ```
-VITE_BASE_URL="http://localhost:1313"
-VITE_GOOGLE_CLIENT_ID="<YOUR_GOOGLE_OAUTH_CLIENT_ID>"
+src/
+├── backend/     # the ported Go vs-bot server
+├── client/      # the ported browser client
+├── ui/          # the ported round screens
+└── index.ts
+backend/         # the original Go source, kept as the port's reference
+frontend/        # the original Vite/React source, kept as the port's reference
+UPSTREAM.md      # the upstream project's own README
 ```
 
-- Replace `<YOUR_GOOGLE_OAUTH_CLIENT_ID>` with your actual Google OAuth Client ID from Google Cloud Console.
-
-> **Note:** Do **not** commit this file to a public repository. Add `.env` to your `.gitignore` to keep it secure.
-
----
-
-### Running the Frontend (React + Vite)
-
-1. Open a new terminal and navigate to the frontend directory:
-
-   ```
-   cd frontend
-   ```
-
-2. Install dependencies:
-
-   ```
-   npm install
-   ```
-
-3. Create a `.env` file and add:
-
-   ```
-   VITE_BASE_URL="http://localhost:1313"
-   ```
-
-4. Start the development server:
-   ```
-   npm run dev
-   ```
-
----
-
-## Contribution Guidelines
-
-Thank you for your interest in contributing to **DebateAI**! We appreciate your efforts in making this project better. Please follow these best practices to ensure smooth collaboration.
-
-### How to Contribute
-
-#### 1. Fork the Repository
-
-- Navigate to the [DebateAI repository](https://github.com/AOSSIE-Org/DebateAI).
-- Click the **Fork** button in the top right corner.
-- Clone the forked repository to your local machine:
-
-```sh
-git clone https://github.com/your-username/DebateAI.git
-cd DebateAI
-```
-
-#### 2. Create a Feature Branch
-
-- Always create a new branch for your contributions:
-
-```sh
-git checkout -b feature-name
-```
-
-#### 3. Make Changes and Commit
-
-- Follow coding best practices and maintain code consistency.
-- Write clear commit messages:
-
-```sh
-git commit -m "Added [feature/fix]: Short description"
-```
-
-#### 4. Push Changes and Open a Pull Request
-
-- Push your changes to your forked repository:
-
-```sh
-git push origin feature-name
-```
-
-- Navigate to the original repository and open a **Pull Request (PR)**.
-- Provide a detailed description of the changes in the PR.
-
----
-
-### Best Practices
-
-- **Code Quality**: Ensure your code is clean, readable, and consistent with the existing codebase.
-- **Testing**: Test your changes locally before submitting a PR.
-- **Security**: Never commit sensitive information (e.g., API keys or passwords).
-- **Communication**: Be responsive to reviews and update your PRs as requested.
-
----
-
-### Submitting a Video Demonstration
-
-To help maintainers understand your changes, consider submitting a short video showcasing the feature or fix:
-
-- Record a short demo (you can use tools like Loom or OBS).
-- Upload and include the video link in your Pull Request description.
-
----
-
-### Reporting Issues
-
-If you find a bug or have a feature request:
-
-- Open an issue [here](https://github.com/AOSSIE-Org/DebateAI/issues).
-- Clearly describe the problem and, if possible, suggest solutions.
-
-We look forward to your contributions!
-
----
-
-## License
-
-MIT © [AOSSIE](https://aossie.org)
-
----
+Run `bun run test` for the port's 55 tests and `bun run typecheck` for types.
