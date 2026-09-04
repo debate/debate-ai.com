@@ -5,6 +5,7 @@ export * from "./state/store";
 export * from "./state/settings";
 export * from "./state/userSettings";
 export * from "./state/themeSettings";
+export * from "./state/fontSettings";
 export * from "./state/favoriteTools";
 export * from "./state/wordLimitPresets";
 export * from "./hooks/useWordLimitPresets";
