@@ -7,15 +7,18 @@ import { buildJudgeProfile } from "debate-speech-writer/src/judge/judge-profile"
 import { saveJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
 import {
   assessMatchupRisk,
+  buildCaseComparisonTable,
   buildJudgeAdaptationNotes,
   buildStrategyRecommendation,
   buildStrategyRecommendationFromStores,
   buildStrategyRecommendationPrepNote,
   buildStrategyRecommendationText,
   computeCaseOverlapScore,
+  computeCaseTagOverlaps,
   getLikelyOpponentSide,
   rankCaseOptions,
   type CaseOption,
+  type RankedCaseOption,
 } from "../src/round/scout-to-strategy";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
@@ -205,6 +208,113 @@ describe("rankCaseOptions", () => {
 
   it("returns an empty list for an empty input", () => {
     expect(rankCaseOptions([])).toEqual([]);
+  });
+
+  it("attaches a per-tag overlap breakdown to every ranked option", () => {
+    const opponentProfile = buildOpponentTeamProfile("OpponentA", opponentRecords());
+    const ranked = rankCaseOptions(CASE_OPTIONS, opponentProfile);
+    const caseB = ranked.find((r) => r.name === "Case B");
+    expect(caseB?.tagOverlaps).toEqual([{ tag: "kritik", opponentFrequency: 2 }]);
+    const caseA = ranked.find((r) => r.name === "Case A");
+    expect(caseA?.tagOverlaps).toEqual([{ tag: "policy-affirmative", opponentFrequency: 3 }]);
+    const caseC = ranked.find((r) => r.name === "Case C");
+    expect(caseC?.tagOverlaps).toEqual([{ tag: "disadvantage", opponentFrequency: 0 }]);
+  });
+
+  it("zeroes every tag's opponent frequency when no opponent profile is supplied", () => {
+    const ranked = rankCaseOptions(CASE_OPTIONS);
+    expect(ranked.every((r) => (r.tagOverlaps ?? []).every((t) => t.opponentFrequency === 0))).toBe(true);
+  });
+});
+
+describe("computeCaseTagOverlaps", () => {
+  it("returns 0-frequency entries for every tag when no opponent profile is supplied", () => {
+    expect(computeCaseTagOverlaps({ name: "Case A", argumentTags: ["kritik", "topicality"] })).toEqual([
+      { tag: "kritik", opponentFrequency: 0 },
+      { tag: "topicality", opponentFrequency: 0 },
+    ]);
+  });
+
+  it("pairs each tag with the opponent's recorded frequency for it, preserving argument-tag order", () => {
+    const opponentProfile = buildOpponentTeamProfile("OpponentA", opponentRecords());
+    expect(
+      computeCaseTagOverlaps({ name: "Case B", argumentTags: ["topicality", "kritik"] }, opponentProfile),
+    ).toEqual([
+      { tag: "topicality", opponentFrequency: 1 },
+      { tag: "kritik", opponentFrequency: 2 },
+    ]);
+  });
+
+  it("returns an empty array for a case option with no tags", () => {
+    expect(computeCaseTagOverlaps({ name: "Case Empty", argumentTags: [] })).toEqual([]);
+  });
+});
+
+describe("buildCaseComparisonTable", () => {
+  it("returns no rows for an empty case list", () => {
+    expect(buildCaseComparisonTable([])).toEqual({ caseNames: [], rows: [] });
+  });
+
+  it("returns no rows when every ranked option has no tags", () => {
+    const ranked: RankedCaseOption[] = [{ name: "Case A", argumentTags: [], overlapScore: 0, tagOverlaps: [] }];
+    expect(buildCaseComparisonTable(ranked)).toEqual({ caseNames: ["Case A"], rows: [] });
+  });
+
+  it("degrades gracefully for a legacy ranked option missing tagOverlaps entirely", () => {
+    const legacy = { name: "Case Legacy", argumentTags: ["kritik"], overlapScore: 2 } as RankedCaseOption;
+    expect(buildCaseComparisonTable([legacy])).toEqual({ caseNames: ["Case Legacy"], rows: [] });
+  });
+
+  it("pivots ranked options into one row per tag, most opponent-frequent first, with a 0 for cases that don't run it", () => {
+    const opponentProfile = buildOpponentTeamProfile("OpponentA", opponentRecords());
+    const ranked = rankCaseOptions(
+      [
+        { name: "Case B", argumentTags: ["kritik"] },
+        { name: "Case A", argumentTags: ["policy-affirmative", "kritik"] },
+        { name: "Case C", argumentTags: ["disadvantage"] },
+      ],
+      opponentProfile,
+    );
+
+    const table = buildCaseComparisonTable(ranked);
+    expect(table.caseNames).toEqual(ranked.map((r) => r.name));
+
+    const kritikRow = table.rows.find((r) => r.tag === "kritik");
+    expect(kritikRow).toEqual({
+      tag: "kritik",
+      opponentFrequency: 2,
+      perCase: { "Case B": 2, "Case A": 2, "Case C": 0 },
+    });
+
+    const policyRow = table.rows.find((r) => r.tag === "policy-affirmative");
+    expect(policyRow?.perCase).toEqual({ "Case B": 0, "Case A": 3, "Case C": 0 });
+
+    // "disadvantage" still gets a row (Case C runs it) even at 0 opponent frequency, so the
+    // table stays a full side-by-side comparison rather than only the overlapping tags.
+    const disadvantageRow = table.rows.find((r) => r.tag === "disadvantage");
+    expect(disadvantageRow).toEqual({
+      tag: "disadvantage",
+      opponentFrequency: 0,
+      perCase: { "Case B": 0, "Case A": 0, "Case C": 0 },
+    });
+
+    // Sorted most opponent-frequent first: policy-affirmative (3), kritik (2), disadvantage (0).
+    expect(table.rows.map((r) => r.tag)).toEqual(["policy-affirmative", "kritik", "disadvantage"]);
+  });
+
+  it("tie-breaks equal-frequency tags alphabetically", () => {
+    const ranked: RankedCaseOption[] = [
+      {
+        name: "Case A",
+        argumentTags: ["zeta", "alpha"],
+        overlapScore: 6,
+        tagOverlaps: [
+          { tag: "zeta", opponentFrequency: 3 },
+          { tag: "alpha", opponentFrequency: 3 },
+        ],
+      },
+    ];
+    expect(buildCaseComparisonTable(ranked).rows.map((r) => r.tag)).toEqual(["alpha", "zeta"]);
   });
 });
 
