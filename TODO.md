@@ -6,6 +6,73 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Drill Generator — account-sync drill sets across devices ("📚 AI
+  Drill Generator" bullet's account-sync Next item).** Another repeat of
+  the standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows/docs/debates
+  in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, the "user
+  settings / SQL-linked flows, docs, rounds" half is already fully built
+  (see `apps/debate-ai.com/app/api/settings/route.ts` and the many
+  `saved_*` D1 tables/`/api/*` routes threaded through this file's history)
+  and every tool is already reachable from the Tools page and CardMirror's
+  command palette, so this slice picked the next named, unblocked
+  follow-up instead: the "📚 AI Drill Generator" bullet's own
+  Known-gaps-suggested next step, "sharing the 'Practice tier' status
+  across devices for a signed-in user" — mirroring the exact
+  local-first/merge-by-key/`updatedAt`-conflict-resolution pattern
+  `state/wordCountRounds.ts`/`hooks/useWordCountRounds.ts` already
+  established. `state/drillSets.ts`'s `DrillSetRecord` gains an optional
+  `updatedAt`, stamped by every mutating function
+  (`saveDrillSet`/`saveDrillAiScript`/`toggleDrillCompletion`/
+  `scheduleDrillReview`); new `adoptDrillSet` (preserves a synced record's
+  own `updatedAt` rather than re-stamping it), `resolveDrillSetConflict`,
+  and `planDrillSetMerge` mirror `adoptWordCountRound`/
+  `resolveWordCountRoundConflict`/`planWordCountRoundMerge` exactly, keyed
+  by `roundId` (this record's existing natural key — `saveDrillSet` already
+  upserted by `roundId` alone). `buildAndSaveDrillSet` now returns the
+  persisted (stamped) record rather than the pre-save draft, so a caller
+  can push exactly what's stored. New `state/savedDrillSets.ts`
+  (`isValidDrillSetRecord`/`MAX_SAVED_DRILL_SET_BYTES`, mirroring
+  `state/savedWordCountRounds.ts`), `round/drill-sets-client.ts` (a
+  `/api/drill-sets` fetch client: list/save/delete, `401`→`null`), and
+  `hooks/useDrillSets.ts` (local-first state, a one-time mount merge, every
+  interactive mutation applying locally first then best-effort pushing to
+  the account) — all three exported from the package's `index.ts`.
+  `DrillSetsPanel` now reads/writes exclusively through `useDrillSets`
+  instead of `state/drillSets.ts`'s mutating functions directly, and shows
+  a one-line synced-status message mirroring `WordCountRoundsPanel`'s own.
+  New D1 `saved_drill_sets` table (one row per `(user, roundId)` pair, same
+  shape as `saved_word_count_rounds`) plus account-only (401 signed-out)
+  `/api/drill-sets` (`GET`) and `/api/drill-sets/[roundId]` (`PUT`/`DELETE`)
+  routes, migration `apps/debate-ai.com/drizzle/0028_aspiring_human_fly.sql`
+  (generated via `drizzle-kit generate`, not hand-written). See
+  `docs/features/drill-sets.md`'s new "Account sync" section (and its
+  updated "Known gaps"). Vitest-covered: `packages/debate-round/test/
+  drillSets.test.ts` gains `updatedAt`-stamping cases for all four mutating
+  functions plus full `adoptDrillSet`/`resolveDrillSetConflict`/
+  `planDrillSetMerge` suites (mirroring `wordCountRounds.test.ts`'s
+  equivalents), and its existing exact-shape `toEqual` assertions against
+  stored records were switched to `toMatchObject` where `updatedAt` is now
+  present but not asserted on; new `test/savedDrillSets.test.ts` (24 tests:
+  well-formed acceptance, each optional field, and each malformed shape);
+  new `test/drill-sets-client.test.ts` (8 tests: list/save/delete, the
+  `401`-to-`null` case, and server-error propagation) — 50 new/changed
+  tests overall. Verification: `bunx vitest run
+  packages/debate-round/test/drillSets.test.ts
+  packages/debate-round/test/savedDrillSets.test.ts
+  packages/debate-round/test/drill-sets-client.test.ts
+  packages/debate-round/test/drillProgressUnlocks.test.ts` (4/4 files, 113
+  tests pass); `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-ai-web` (9/9 in-scope package tasks pass — `debate-ai-web`
+  itself has no standalone typecheck script, matching prior runs); full
+  `bun run test` (233 files, 4249 tests passed — up from 231/4199 before
+  this slice); `bun run build:web` (production build succeeded, `/drills`
+  route and the new `/api/drill-sets`/`/api/drill-sets/:roundId` routes
+  intact; the touched-by-build `app-file-list.ts`/`version.ts`/
+  `service-worker.js` churn was reverted before committing, unrelated to
+  this change). **PR:** not yet opened (see below). **Completed:**
+  2026-09-04.
 - **Opponent Team Profiles — a side-by-side us-vs-opponent comparison view
   (Research Crowdsourcing Organizer Features bullet, "🕵️ Opponent Team
   Profiles" Next item).** Another repeat of the standing prompt ("integrate
@@ -15300,7 +15367,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. Next: threaded replies on a note instead of flat status; a digest notification instead of one per assignment.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
-* 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. sharing this status across devices for a signed-in user, or feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.
+* 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. The account-sync follow-up is also now done: every drill set — AI scripts, completion state, and review reminders included — now follows a signed-in user across devices, via a new `saved_drill_sets` D1 table plus `/api/drill-sets` routes merged in by the new `hooks/useDrillSets.ts` (`DrillSetsPanel` now reads/writes exclusively through that hook) — see the Completed entry above and `docs/features/drill-sets.md`'s "Account sync" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.
 * 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. Next: a side-by-side case-option comparison table.
 
 ## Confirmed blocker: Tabroom results/pairings/ballot data

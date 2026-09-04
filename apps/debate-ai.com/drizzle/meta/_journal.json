@@ -197,6 +197,13 @@
       "when": 1788475304789,
       "tag": "0026_damp_dragon_man",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "6",
+      "when": 1788486108390,
+      "tag": "0028_aspiring_human_fly",
+      "breakpoints": true
     }
   ]
 }
