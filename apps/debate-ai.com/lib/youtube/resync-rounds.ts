@@ -15,7 +15,7 @@ import {
 } from "debate-data-sync/src/youtube/parsers/round-parsers";
 import { isRound } from "debate-data-sync/src/youtube/parsers/video-classifier";
 import { getDBFromContext } from "../database/context";
-import { youtubeRoundVideos, youtubeSyncRuns } from "../database/schema";
+import { youtubeRoundVideos, youtubeSyncRuns, youtubeVideoExclusions } from "../database/schema";
 import { getEnv } from "../env";
 
 /**
@@ -63,8 +63,19 @@ export async function resyncYouTubeRounds(triggeredBy: string | null) {
     }
 
     let videosUpserted = 0;
+    const excludedIds = new Set(
+      (await db.select({ videoId: youtubeVideoExclusions.videoId }).from(youtubeVideoExclusions))
+        .map((row) => row.videoId),
+    );
 
+    // A channel can surface a video more than once. Deduplicate before the
+    // upsert, and honour admin removals across every future resync.
+    const uniqueVideos = new Map<string, any>();
     for (const video of allVideos) {
+      if (typeof video[0] === "string" && !excludedIds.has(video[0])) uniqueVideos.set(video[0], video);
+    }
+
+    for (const video of uniqueVideos.values()) {
       const [id, title, date, channel, views, desc] = video;
       if (!isRound(title, desc)) continue;
 

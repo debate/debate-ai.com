@@ -13,6 +13,7 @@ import {
   updatePersistedPrepNoteStatus,
 } from "../src/state/prepNotes";
 import { listNotificationsForRecipient } from "../src/state/prepNoteNotifications";
+import { listRepliesForNote, postPrepNoteReply } from "../src/state/prepNoteReplies";
 import type { PrepNote } from "debate-round/src/flow/strategy-sync-notes";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -147,6 +148,18 @@ describe("deletePrepNote", () => {
     savePrepNote(OTHER_FLOW_NOTE);
     deletePrepNote("missing");
     expect(listPrepNotes()).toEqual([OTHER_FLOW_NOTE]);
+  });
+
+  it("also deletes every reply posted to the note's thread", () => {
+    savePrepNote(OPEN_NOTE);
+    savePrepNote(OTHER_FLOW_NOTE);
+    postPrepNoteReply({ noteId: "note-1", authorId: "alex", text: "reply on deleted note" });
+    const keptReply = postPrepNoteReply({ noteId: "note-2", authorId: "alex", text: "reply on kept note" });
+
+    deletePrepNote("note-1");
+
+    expect(listRepliesForNote("note-1")).toEqual([]);
+    expect(listRepliesForNote("note-2")).toEqual([keptReply]);
   });
 });
 

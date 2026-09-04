@@ -73,6 +73,7 @@
         "debate-editor": "workspace:*",
         "debate-flow-ebb": "workspace:*",
         "debate-practice-rounds": "workspace:*",
+        "debate-practice-vs-ai": "workspace:*",
         "debate-research-evidence": "workspace:*",
         "debate-round": "workspace:*",
         "debate-speech-writer": "workspace:*",
@@ -345,6 +346,24 @@
       },
       "peerDependencies": {
         "next": ">=15",
+        "react": "^18.0.0 || ^19.0.0",
+        "react-dom": "^18.0.0 || ^19.0.0",
+      },
+    },
+    "packages/debate-practice-vs-ai": {
+      "name": "debate-practice-vs-ai",
+      "version": "0.1.0",
+      "dependencies": {
+        "debate-practice-rounds": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "@vitest/coverage-v8": "^4.1.0",
+        "typescript": "^5.9.3",
+        "vitest": "^4.1.0",
+      },
+      "peerDependencies": {
         "react": "^18.0.0 || ^19.0.0",
         "react-dom": "^18.0.0 || ^19.0.0",
       },
@@ -1735,6 +1754,8 @@
     "debate-flow-ebb": ["debate-flow-ebb@workspace:packages/debate-flow-ebb"],
 
     "debate-practice-rounds": ["debate-practice-rounds@workspace:packages/debate-practice-rounds"],
+
+    "debate-practice-vs-ai": ["debate-practice-vs-ai@workspace:packages/debate-practice-vs-ai"],
 
     "debate-research-evidence": ["debate-research-evidence@workspace:packages/debate-research-evidence"],
 

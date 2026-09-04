@@ -11,11 +11,12 @@ import {
 const STYLE_KEY = "lincolnDouglas";
 
 describe("buildPracticeRoundSetup", () => {
-  it("defaults to the primary side, the flow judge paradigm, and no opponent persona", () => {
+  it("defaults to the primary side, the flow judge paradigm, no opponent persona, and intermediate difficulty", () => {
     const setup = buildPracticeRoundSetup({ styleKey: STYLE_KEY });
     expect(setup.speechOrder[0].speaker).toBe("user");
     expect(setup.judgeParadigm.id).toBe("flow");
     expect(setup.opponentPersona).toBeNull();
+    expect(setup.opponentDifficulty).toBe("intermediate");
     expect(setup.sections.map((s) => s.title)).toEqual([
       "Speech order",
       "Judge paradigm",
@@ -48,10 +49,22 @@ describe("buildPracticeRoundSetup", () => {
     ).toThrow(/unknown judge paradigm id/);
   });
 
-  it("resolves a built-in opponent persona id", () => {
+  it("resolves a built-in opponent persona id, layering the default (intermediate) difficulty", () => {
     const setup = buildPracticeRoundSetup({ styleKey: STYLE_KEY, opponentPersona: "kritik" });
     expect(setup.opponentPersona?.id).toBe("kritik");
+    expect(setup.opponentDifficulty).toBe("intermediate");
     expect(setup.sections[2].body).toContain("Opponent Persona: Kritik");
+    expect(setup.sections[2].body).toContain("Difficulty: Intermediate.");
+  });
+
+  it("layers an explicit opponent difficulty onto the persona's own prompt section", () => {
+    const setup = buildPracticeRoundSetup({
+      styleKey: STYLE_KEY,
+      opponentPersona: "kritik",
+      opponentDifficulty: "elite",
+    });
+    expect(setup.opponentDifficulty).toBe("elite");
+    expect(setup.sections[2].body).toContain("Difficulty: Elite.");
   });
 
   it("accepts a pre-built opponent persona object directly", () => {

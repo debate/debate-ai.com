@@ -21,25 +21,40 @@
  * can be exercised directly in Vitest without mocking `fetch`, mirroring
  * `ai-versus-speech-ai.ts`'s own split.
  *
+ * `difficulty` (optional, defaulting to `DEFAULT_OPPONENT_DIFFICULTY`) closes
+ * the "a difficulty slider layered on top of persona choice" Next item named
+ * under the "🤖 AI Practice Opponent" idea in TODO.md — it's passed straight
+ * through to `buildOpponentPersonaPrompt`, which already composes the
+ * difficulty-specific instructions into the same prompt section.
+ *
  * @module round/opponent-persona-speech-ai
  */
 
-import { buildOpponentPersonaPrompt, type OpponentPersona } from "debate-speech-writer/src/opponent/opponent-personas";
+import {
+  buildOpponentPersonaPrompt,
+  DEFAULT_OPPONENT_DIFFICULTY,
+  type OpponentDifficulty,
+  type OpponentPersona,
+} from "debate-speech-writer/src/opponent/opponent-personas";
 import { AI_VERSUS_SPEECH_SYSTEM_PROMPT } from "./ai-versus-speech-ai";
 
 /**
  * Builds the system prompt for a persona-conditioned AI-versus speech
  * request: the existing `AI_VERSUS_SPEECH_SYSTEM_PROMPT` instructions,
  * followed by `buildOpponentPersonaPrompt`'s persona-specific
- * description/preferred-arguments/pace/instructions section, with an
- * explicit note that the persona's style takes priority over the generic
- * instructions above it.
+ * description/preferred-arguments/pace/instructions section (itself now
+ * layered with `difficulty`-specific instructions), with an explicit note
+ * that the persona's style takes priority over the generic instructions
+ * above it.
  */
-export function buildPersonaAiVersusSystemPrompt(persona: OpponentPersona): string {
+export function buildPersonaAiVersusSystemPrompt(
+  persona: OpponentPersona,
+  difficulty: OpponentDifficulty = DEFAULT_OPPONENT_DIFFICULTY,
+): string {
   return (
     `${AI_VERSUS_SPEECH_SYSTEM_PROMPT}\n\n` +
     "Argue in the following persona's style — let it override the general tone above wherever " +
     "they conflict, while still writing only the speech text itself:\n\n" +
-    buildOpponentPersonaPrompt(persona)
+    buildOpponentPersonaPrompt(persona, difficulty)
   );
 }

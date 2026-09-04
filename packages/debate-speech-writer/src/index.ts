@@ -77,6 +77,12 @@ export {
   listOpponentPersonas,
   buildOpponentPersonaPrompt,
   buildCustomOpponentPersona,
+  opponentDifficulties,
+  opponentDifficultyIds,
+  DEFAULT_OPPONENT_DIFFICULTY,
+  isOpponentDifficulty,
+  getOpponentDifficulty,
+  listOpponentDifficulties,
 } from "./opponent/opponent-personas";
 export type {
   BuiltinOpponentPersonaId,
@@ -84,6 +90,8 @@ export type {
   OpponentPersonaPace,
   OpponentPersona,
   CustomOpponentPersonaInput,
+  OpponentDifficulty,
+  OpponentDifficultyLevel,
 } from "./opponent/opponent-personas";
 
 export {

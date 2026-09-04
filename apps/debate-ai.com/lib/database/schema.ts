@@ -89,6 +89,32 @@ export const documents = sqliteTable(
 
 export type ReasonDocument = typeof documents.$inferSelect;
 
+// Public, admin-curated evidence packs. A row is either a folder or an
+// imported DOCX file; `parentId` preserves the directory structure in an
+// uploaded zip. Content is stored as CardMirror-compatible HTML so selecting
+// a public file can open it directly in the editor without exposing a storage
+// bucket or requiring a signed-in account.
+export const topicStarterItems = sqliteTable(
+  "topic_starter_items",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    title: text("title").notNull(),
+    content: text("content").notNull().default(""),
+    parentId: integer("parent_id"),
+    isFolder: integer("is_folder", { mode: "boolean" }).notNull().default(false),
+    tags: text("tags").notNull().default("[]"),
+    published: integer("published", { mode: "boolean" }).notNull().default(true),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    parentIdIdx: index("idx_topic_starter_items_parent_id").on(table.parentId),
+    publishedIdx: index("idx_topic_starter_items_published").on(table.published),
+  }),
+);
+
+export type TopicStarterItem = typeof topicStarterItems.$inferSelect;
+
 // Shared, AI-Generated Debate Flow — server-backed live sync transport for
 // `debate-round`'s `FlowEdit` records (see packages/debate-round/src/flow/shared-flow-sync.ts
 // and TODO.md idea #16, follow-up (a)). `boxPath` is a JSON-encoded number
@@ -646,6 +672,24 @@ export const youtubeRoundVideos = sqliteTable(
 );
 
 export type YoutubeRoundVideo = typeof youtubeRoundVideos.$inferSelect;
+
+// Explicit admin removals are retained so a later YouTube resync does not
+// silently make an unavailable video public again.
+export const youtubeVideoExclusions = sqliteTable(
+  "youtube_video_exclusions",
+  {
+    videoId: text("video_id").primaryKey(),
+    deletedBy: text("deleted_by"),
+    deletedAt: integer("deleted_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    deletedAtIdx: index("idx_youtube_video_exclusions_deleted_at").on(table.deletedAt),
+  }),
+);
+
+export type YoutubeVideoExclusion = typeof youtubeVideoExclusions.$inferSelect;
 
 // One row per admin-triggered resync, so the admin page can show progress
 // and history without re-running the sync to find out what happened.

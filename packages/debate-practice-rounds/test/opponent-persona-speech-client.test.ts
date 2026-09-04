@@ -44,9 +44,39 @@ describe("requestAiVersusSpeechWithPersona", () => {
     })) as unknown as typeof fetch;
     vi.stubGlobal("fetch", fetchMock);
 
-    await requestAiVersusSpeechWithPersona(REQUEST, PERSONA, "/custom-endpoint");
+    await requestAiVersusSpeechWithPersona(REQUEST, PERSONA, "intermediate", "/custom-endpoint");
 
     expect((fetchMock as ReturnType<typeof vi.fn>).mock.calls[0][0]).toBe("/custom-endpoint");
+  });
+
+  it("defaults to the intermediate difficulty when none is given", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ text: "A speech." }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    await requestAiVersusSpeechWithPersona(REQUEST, PERSONA);
+
+    const [, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
+    const body = JSON.parse((init as RequestInit).body as string);
+    expect(body.system).toContain("Difficulty: Intermediate.");
+  });
+
+  it("conditions the system prompt on a caller-supplied difficulty", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ text: "A speech." }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    await requestAiVersusSpeechWithPersona(REQUEST, PERSONA, "elite");
+
+    const [, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
+    const body = JSON.parse((init as RequestInit).body as string);
+    expect(body.system).toContain("Difficulty: Elite.");
   });
 
   it("throws the server's error message when the request fails", async () => {

@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { AiVersusRoundPanel } from "debate-practice-rounds"
+import { DebatePracticeVsAi } from "debate-practice-vs-ai"
 
 export const metadata: Metadata = {
   title: "Online Debate Versus AI",
@@ -23,7 +23,7 @@ export default function VersusAiPage() {
         </Link>
       </div>
       <Suspense>
-        <AiVersusRoundPanel />
+        <DebatePracticeVsAi />
       </Suspense>
     </div>
   )

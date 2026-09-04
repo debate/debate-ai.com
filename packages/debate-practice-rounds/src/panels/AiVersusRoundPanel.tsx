@@ -86,7 +86,8 @@ import {
 } from "debate-round/src/round/ai-versus-speech-order"
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
-import { getOpponentPersonaForRound } from "../round/opponent-persona-speech-wiring"
+import { getOpponentDifficultyForRound, getOpponentPersonaForRound } from "../round/opponent-persona-speech-wiring"
+import { opponentDifficulties } from "debate-speech-writer/src/opponent/opponent-personas"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import { aiVersusTranscriptFilename, buildAiVersusTranscriptText } from "../round/ai-versus-transcript"
@@ -225,7 +226,7 @@ export function AiVersusRoundPanel() {
     try {
       const persona = getOpponentPersonaForRound(activeRoundId)
       const text = persona
-        ? await requestAiVersusSpeechWithPersona(request, persona)
+        ? await requestAiVersusSpeechWithPersona(request, persona, getOpponentDifficultyForRound(activeRoundId))
         : await requestAiVersusSpeech(request)
       saveAiVersusRound({
         ...activeRecord,
@@ -255,7 +256,7 @@ export function AiVersusRoundPanel() {
     try {
       const persona = getOpponentPersonaForRound(activeRoundId)
       const text = persona
-        ? await requestAiVersusSpeechWithPersona(request, persona)
+        ? await requestAiVersusSpeechWithPersona(request, persona, getOpponentDifficultyForRound(activeRoundId))
         : await requestAiVersusSpeech(request)
       saveAiVersusRound(replaceAiSpeechAt(activeRecord, index, text))
       refresh()
@@ -413,11 +414,14 @@ export function AiVersusRoundPanel() {
               </p>
               {(() => {
                 const persona = getOpponentPersonaForRound(activeRoundId)
-                return persona ? (
+                if (!persona) return null
+                const difficulty = opponentDifficulties[getOpponentDifficultyForRound(activeRoundId)]
+                return (
                   <p className="text-xs text-muted-foreground">
-                    Arguing as <Badge variant="outline">{persona.name}</Badge>
+                    Arguing as <Badge variant="outline">{persona.name}</Badge>{" "}
+                    <Badge variant="outline">{difficulty.name}</Badge>
                   </p>
-                ) : null
+                )
               })()}
               <Button onClick={handleGenerateAiSpeech} disabled={aiGenerating || regeneratingIndex !== null}>
                 {aiGenerating ? "Generating…" : "Generate AI speech"}

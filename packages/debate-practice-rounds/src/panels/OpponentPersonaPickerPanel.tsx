@@ -15,6 +15,14 @@
  * `buildOpponentPersonaSelectionsPanelView`. No new persona-resolution logic
  * is introduced here.
  *
+ * A second radio group, "Difficulty," closes the "a difficulty slider
+ * layered on top of persona choice" Next item named under the "🤖 AI
+ * Practice Opponent" idea in TODO.md's Research Crowdsourcing Organizer
+ * Features list — the four `opponent-personas.ts` `opponentDifficulties`
+ * levels (Beginner/Intermediate/Advanced/Elite), independent of which
+ * persona is chosen, saved alongside it on the same
+ * `OpponentPersonaSelection` and shown as a second badge per session.
+ *
  * @module panels/OpponentPersonaPickerPanel
  */
 
@@ -29,7 +37,11 @@ import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
 import { Textarea } from "debate-speech-writer/src/ui/primitives/textarea"
 import {
   buildCustomOpponentPersona,
+  DEFAULT_OPPONENT_DIFFICULTY,
+  listOpponentDifficulties,
   listOpponentPersonas,
+  opponentDifficulties,
+  type OpponentDifficulty,
   type OpponentPersonaId,
 } from "debate-speech-writer/src/opponent/opponent-personas"
 import {
@@ -40,12 +52,14 @@ import {
 } from "../state/opponentPersonaSelections"
 
 const BUILTIN_PERSONAS = listOpponentPersonas()
+const DIFFICULTIES = listOpponentDifficulties()
 
 type FormState = {
   sessionId: string
   personaId: OpponentPersonaId
   customName: string
   customNotes: string
+  difficulty: OpponentDifficulty
 }
 
 const EMPTY_FORM: FormState = {
@@ -53,6 +67,7 @@ const EMPTY_FORM: FormState = {
   personaId: BUILTIN_PERSONAS[0].id,
   customName: "",
   customNotes: "",
+  difficulty: DEFAULT_OPPONENT_DIFFICULTY,
 }
 
 /**
@@ -84,7 +99,7 @@ export function OpponentPersonaPickerPanel() {
     if (form.personaId === "custom") {
       try {
         const persona = buildCustomOpponentPersona({ name: form.customName, notes: form.customNotes })
-        saveOpponentPersonaSelection({ sessionId, persona })
+        saveOpponentPersonaSelection({ sessionId, persona, difficulty: form.difficulty })
       } catch (err) {
         setError(err instanceof Error ? err.message : "Could not build custom persona.")
         return
@@ -95,7 +110,7 @@ export function OpponentPersonaPickerPanel() {
         setError("Select a persona.")
         return
       }
-      saveOpponentPersonaSelection({ sessionId, persona })
+      saveOpponentPersonaSelection({ sessionId, persona, difficulty: form.difficulty })
     }
 
     setError(null)
@@ -183,6 +198,26 @@ export function OpponentPersonaPickerPanel() {
           </div>
         )}
 
+        <div className="space-y-1.5">
+          <Label>Difficulty</Label>
+          <RadioGroup
+            value={form.difficulty}
+            onValueChange={(value) =>
+              setForm((prev) => ({ ...prev, difficulty: value as OpponentDifficulty }))
+            }
+          >
+            {DIFFICULTIES.map((level) => (
+              <div key={level.id} className="flex items-start gap-2">
+                <RadioGroupItem value={level.id} id={`difficulty-${level.id}`} className="mt-0.5" />
+                <Label htmlFor={`difficulty-${level.id}`} className="font-normal">
+                  <span className="text-foreground">{level.name}</span>{" "}
+                  <span className="text-muted-foreground">— {level.description}</span>
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+
         {error && <p className="text-sm text-destructive">{error}</p>}
 
         <Button onClick={handleSave}>Save persona for session</Button>
@@ -202,6 +237,9 @@ export function OpponentPersonaPickerPanel() {
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-foreground">Session {selection.sessionId}</span>
                 <Badge variant="outline">{selection.persona.name}</Badge>
+                <Badge variant="outline">
+                  {opponentDifficulties[selection.difficulty ?? DEFAULT_OPPONENT_DIFFICULTY].name}
+                </Badge>
               </div>
               <Button size="sm" variant="ghost" onClick={() => handleClear(selection.sessionId)}>
                 Clear

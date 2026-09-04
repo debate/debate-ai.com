@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { opponentPersonas } from "debate-speech-writer/src/opponent/opponent-personas";
 import { saveOpponentPersonaSelection } from "../src/state/opponentPersonaSelections";
-import { getOpponentPersonaForRound } from "../src/round/opponent-persona-speech-wiring";
+import {
+  getOpponentDifficultyForRound,
+  getOpponentPersonaForRound,
+} from "../src/round/opponent-persona-speech-wiring";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {
@@ -46,5 +49,31 @@ describe("getOpponentPersonaForRound", () => {
     saveOpponentPersonaSelection({ sessionId: "round-1", persona: opponentPersonas.kritik });
 
     expect(getOpponentPersonaForRound("round-1")).toEqual(opponentPersonas.kritik);
+  });
+});
+
+describe("getOpponentDifficultyForRound", () => {
+  it("defaults to intermediate when no persona is saved for the round", () => {
+    expect(getOpponentDifficultyForRound("round-1")).toBe("intermediate");
+  });
+
+  it("defaults to intermediate when a saved selection predates the difficulty field", () => {
+    saveOpponentPersonaSelection({ sessionId: "round-1", persona: opponentPersonas.lay });
+    expect(getOpponentDifficultyForRound("round-1")).toBe("intermediate");
+  });
+
+  it("returns the difficulty saved under the round's id as a sessionId", () => {
+    saveOpponentPersonaSelection({
+      sessionId: "round-1",
+      persona: opponentPersonas["fast-flow"],
+      difficulty: "elite",
+    });
+
+    expect(getOpponentDifficultyForRound("round-1")).toBe("elite");
+  });
+
+  it("scopes lookups to the given roundId", () => {
+    saveOpponentPersonaSelection({ sessionId: "round-2", persona: opponentPersonas.lay, difficulty: "elite" });
+    expect(getOpponentDifficultyForRound("round-1")).toBe("intermediate");
   });
 });
