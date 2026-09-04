@@ -66,8 +66,9 @@ _No task currently in progress._
   `app-file-list.ts`/`version.ts`/`service-worker.js`/`bun.lock` churn was
   reverted before committing, unrelated to this change). No lint script is
   configured anywhere in this repo (root or any package), so `lint` was not
-  run — consistent with every prior entry in this log. **PR:** opened from
-  branch `claude/gifted-babbage-i6tlh3`. **Completed:** 2026-09-04.
+  run — consistent with every prior entry in this log. **PR:**
+  https://github.com/debate/debate-ai.com/pull/533. **Completed:**
+  2026-09-04.
 - **AI Practice Opponent — a difficulty slider layered on top of persona
   choice ("🤖 AI Practice Opponent" bullet's Next item).** Another repeat
   of the standing prompt ("integrate all the tools into the UI... create
