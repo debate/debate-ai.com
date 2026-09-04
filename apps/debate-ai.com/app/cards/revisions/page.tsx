@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { RevisionIncentivesPanel } from "debate-card-search"
+import { RevisionIncentivesPanel } from "debate-research-evidence"
 
 export const metadata: Metadata = {
   title: "Revision Incentives",

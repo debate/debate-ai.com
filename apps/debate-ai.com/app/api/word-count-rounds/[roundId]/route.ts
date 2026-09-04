@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedWordCountRounds } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidWordCountRoundRecord, MAX_SAVED_WORD_COUNT_ROUND_BYTES } from "debate-round"
+import { isValidWordCountRoundRecord, MAX_SAVED_WORD_COUNT_ROUND_BYTES } from "debate-practice-rounds"
 
 /**
  * Account-linked word-count-round history sync — TODO.md idea #2's

@@ -34,8 +34,8 @@
 import { useEffect, useMemo, useState } from "react"
 import { GitCommitHorizontal } from "lucide-react"
 
-import { listCombinedPersistedLibraryCards } from "debate-card-search/src/state/evidenceLibraryEntries"
-import type { LibraryCard } from "debate-card-search/src/lib/argument-library"
+import { listCombinedPersistedLibraryCards } from "debate-research-evidence/src/state/evidenceLibraryEntries"
+import type { LibraryCard } from "debate-research-evidence/src/lib/argument-library"
 
 import {
   EmptyState,

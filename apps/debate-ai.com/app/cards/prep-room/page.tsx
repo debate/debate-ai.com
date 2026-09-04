@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { PrepRoomPanel } from "debate-card-search"
+import { PrepRoomPanel } from "debate-team-collaboration"
 
 export const metadata: Metadata = {
   title: "Collaboration Prep Room",

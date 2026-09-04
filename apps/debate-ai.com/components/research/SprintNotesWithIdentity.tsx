@@ -9,7 +9,8 @@
  * place that knows about `better-auth`. Mirrors `TaskInboxWithIdentity.tsx`.
  */
 
-import { SprintNotesPanel, deriveContributorIdFromSessionIdentity } from "debate-card-search"
+import { SprintNotesPanel } from "debate-team-collaboration"
+import { deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
 import { useSession } from "@/lib/hooks/useSession"
 
 export function SprintNotesWithIdentity() {

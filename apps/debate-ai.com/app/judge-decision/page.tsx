@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { JudgeDecisionPanel } from "debate-round"
+import { JudgeDecisionPanel } from "debate-practice-rounds"
 
 export const metadata: Metadata = {
   title: "AI Judge Decision",

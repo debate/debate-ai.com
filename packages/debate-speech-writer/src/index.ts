@@ -87,17 +87,6 @@ export type {
 } from "./opponent/opponent-personas";
 
 export {
-  buildOpponentPersonaSelectionsPanelView,
-  deleteOpponentPersonaSelection,
-  getOpponentPersonaSelection,
-  listOpponentPersonaSelections,
-  saveOpponentPersonaSelection,
-} from "./state/opponentPersonaSelections";
-export type { OpponentPersonaSelection } from "./state/opponentPersonaSelections";
-
-export { OpponentPersonaPickerPanel } from "./panels/OpponentPersonaPickerPanel";
-
-export {
   buildCoachConversationMessages,
   buildCoachMaterialLibrary,
   buildCoachMaterialLibrarySummaryText,
@@ -172,18 +161,6 @@ export {
 } from "./state/coachConversation";
 
 export { CoachMaterialsPanel } from "./panels/CoachMaterialsPanel";
-
-export {
-  buildJudgeDecisionDeepLink,
-  buildJudgeParadigmSelectionsPanelView,
-  deleteJudgeParadigmSelection,
-  getJudgeParadigmSelection,
-  listJudgeParadigmSelections,
-  saveJudgeParadigmSelection,
-} from "./state/judgeParadigmSelections";
-export type { JudgeParadigmSelection } from "./state/judgeParadigmSelections";
-
-export { JudgeParadigmPickerPanel } from "./panels/JudgeParadigmPickerPanel";
 
 export { findFlawsPrompt } from "./prompts/quote-to-find-flaws";
 export { judgeDecisionPrompt } from "./prompts/judge-decision-options";

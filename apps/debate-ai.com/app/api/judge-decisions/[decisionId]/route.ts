@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedJudgeDecisions } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidJudgeDecisionRecord, MAX_SAVED_JUDGE_DECISION_BYTES } from "debate-round"
+import { isValidJudgeDecisionRecord, MAX_SAVED_JUDGE_DECISION_BYTES } from "debate-practice-rounds"
 
 /**
  * Account-linked judge-decision-history sync — TODO.md idea #5's "(b) a
