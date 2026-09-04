@@ -21,7 +21,9 @@ import type { PrepNote } from "debate-round/src/flow/strategy-sync-notes";
 import {
   createPrepNoteAssignedNotification,
   getNotificationsForRecipient,
+  groupNotificationsIntoDigests,
   markNotificationRead,
+  type NotificationDigestGroup,
   type PrepNoteNotification,
 } from "../flow/prep-note-notifications";
 
@@ -112,4 +114,29 @@ export function markPersistedNotificationRead(id: string): PrepNoteNotification 
  */
 export function buildNotificationsPanelView(recipientId: string): PrepNoteNotification[] {
   return getNotificationsForRecipient(readAll(), recipientId);
+}
+
+/**
+ * Reads one recipient's persisted notifications grouped into a
+ * `NotificationDigestGroup` per UTC calendar day (most recent day first) —
+ * closes the "🔄 Strategy Sync Notes" bullet's "a digest notification
+ * instead of one per assignment" follow-up. `PrepNoteNotificationsPanel`
+ * renders this instead of a flat per-notification list.
+ */
+export function buildNotificationDigestView(recipientId: string): NotificationDigestGroup[] {
+  return groupNotificationsIntoDigests(readAll(), recipientId);
+}
+
+/**
+ * Marks every notification with an id in `ids` read, in one write — the
+ * "Mark all read" bulk action on a digest group, rather than one
+ * localStorage write per notification.
+ */
+export function markManyPersistedNotificationsRead(ids: string[]): void {
+  if (ids.length === 0) return;
+  const idSet = new Set(ids);
+  const notifications = readAll();
+  writeAll(
+    notifications.map((notification) => (idSet.has(notification.id) ? markNotificationRead(notification) : notification)),
+  );
 }
