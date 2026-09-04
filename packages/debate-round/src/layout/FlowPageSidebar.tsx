@@ -4,9 +4,10 @@
  */
 
 import type React from "react"
-import { Plus, Clock, Users, Workflow } from "lucide-react"
+import { Plus, Clock, Users } from "lucide-react"
 import { Button } from "debate-ui/src/primitives/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+import { EbbFlowToolsMenu } from "./EbbFlowToolsMenu"
 import { FlowToolsMenu } from "./FlowToolsMenu"
 import { LiveRoundGroup } from "./LiveRoundGroup"
 import { OpenTabsGroup } from "./OpenTabsGroup"
@@ -128,7 +129,7 @@ export function FlowPageSidebar({
   return (
     <div className="mt-[50px]  bg-[var(--background)] w-full h-full md:h-[var(--main-height)] rounded-[var(--border-radius)] p-[var(--padding)] flex flex-col box-border">
       {/* Quick action buttons */}
-      <div className="h-auto pb-[var(--padding)] grid grid-cols-3 gap-0.5">
+      <div className="h-auto pb-[var(--padding)] grid grid-cols-4 gap-0.5">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -158,6 +159,7 @@ export function FlowPageSidebar({
           </Tooltip>
 
           <FlowToolsMenu currentFlow={currentFlow} />
+          <EbbFlowToolsMenu onSelectEbb={handleSelectEbb} />
         </TooltipProvider>
       </div>
 

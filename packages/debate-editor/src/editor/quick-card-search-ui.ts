@@ -756,8 +756,12 @@ function searchSettingsSource(query: string): PaletteResult[] {
   );
 
   // "Version / About this install" — surfaces the running app version and,
-  // on Enter, deep-links to the About section (Settings → General). Matched
-  // the way a user looks for it: "version", "about", "about this install".
+  // on Enter, opens Settings → General, where the "Open Debate Settings ↗"
+  // link leads to the app's /settings page — "About this install" itself
+  // now lives there (see `buildEmbeddedSettingsPanel`'s 'general' case), not
+  // in this modal, so there's no in-modal anchor to deep-link to anymore.
+  // Matched the way a user looks for it: "version", "about", "about this
+  // install".
   const q = tokens.join(' ');
   const aboutKeys = ['version', 'about this install', 'about', 'release'];
   if (q.length > 0 && aboutKeys.some((k) => k.startsWith(q) || q.startsWith(k))) {
@@ -767,7 +771,7 @@ function searchSettingsSource(query: string): PaletteResult[] {
       meta: 'About this install',
       matchedName: true,
       snippet: null,
-      settingsTarget: { category: 'general', anchor: 'about-this-install' },
+      settingsTarget: { category: 'general' },
     });
   }
 

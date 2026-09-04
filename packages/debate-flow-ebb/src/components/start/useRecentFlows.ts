@@ -39,8 +39,14 @@ export interface RecentFlows {
  * deleted in Finder should not linger as a dead row. A file that exists but
  * will not parse keeps its row under its filename: that one the user needs to
  * know about, and opening it will say why.
+ *
+ * @param enabled - Defaults to true (read immediately on mount, as every
+ *  existing caller wants). Pass false to hold off the reads — e.g.
+ *  `EbbFlowToolsMenu` lives in the round workspace's always-mounted
+ *  quick-action row, not inside ebb itself, so it only wants these file
+ *  reads once its "Recent flows" submenu has actually been opened.
  */
-export function useRecentFlows(): RecentFlows {
+export function useRecentFlows(enabled = true): RecentFlows {
     const [entries, setEntries] = useState<RecentEntry[] | null>(null);
     // Bumped after a migration so the list re-reads and shows the new files.
     const [nonce, setNonce] = useState(0);
@@ -48,6 +54,7 @@ export function useRecentFlows(): RecentFlows {
     const refresh = useCallback(() => setNonce((n) => n + 1), []);
 
     useEffect(() => {
+        if (!enabled) return;
         let mounted = true;
 
         void (async () => {
@@ -93,7 +100,7 @@ export function useRecentFlows(): RecentFlows {
         return () => {
             mounted = false;
         };
-    }, [nonce]);
+    }, [nonce, enabled]);
 
     return { entries, refresh };
 }
