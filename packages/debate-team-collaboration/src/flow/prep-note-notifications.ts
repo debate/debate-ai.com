@@ -117,3 +117,60 @@ export function buildNotificationSummaryText(
   ];
   return lines.join("\n");
 }
+
+/** Formats an epoch-ms timestamp as its UTC calendar day key, "YYYY-MM-DD" — mirrors `debate-research-evidence`'s `getUtcDayKey`. */
+function getUtcDayKey(createdAt: number): string {
+  return new Date(createdAt).toISOString().slice(0, 10);
+}
+
+/**
+ * One recipient's notifications from a single UTC calendar day, grouped
+ * together as a single digest entry instead of being shown as separate
+ * rows — closes the "🔄 Strategy Sync Notes" bullet's "a digest
+ * notification instead of one per assignment" follow-up. `notifications`
+ * is newest first; `unreadCount` is precomputed since it drives the
+ * digest's badge/heading without every caller re-deriving it.
+ */
+export interface NotificationDigestGroup {
+  dayKey: string;
+  notifications: PrepNoteNotification[];
+  unreadCount: number;
+}
+
+/**
+ * Groups a recipient's notifications into one `NotificationDigestGroup` per
+ * UTC calendar day, most recent day first, each group's notifications
+ * newest first — so a teammate assigned several notes on the same day sees
+ * one digest card instead of one row per assignment.
+ */
+export function groupNotificationsIntoDigests(
+  notifications: PrepNoteNotification[],
+  recipientId: string,
+): NotificationDigestGroup[] {
+  const forRecipient = getNotificationsForRecipient(notifications, recipientId);
+
+  const byDay = new Map<string, PrepNoteNotification[]>();
+  for (const notification of forRecipient) {
+    const dayKey = getUtcDayKey(notification.createdAt);
+    const group = byDay.get(dayKey);
+    if (group) {
+      group.push(notification);
+    } else {
+      byDay.set(dayKey, [notification]);
+    }
+  }
+
+  return [...byDay.entries()]
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([dayKey, dayNotifications]) => ({
+      dayKey,
+      notifications: dayNotifications,
+      unreadCount: dayNotifications.filter((notification) => !notification.read).length,
+    }));
+}
+
+/** A short heading for one digest group, e.g. `"3 notifications on 2026-09-04 (2 unread)"`. */
+export function buildDigestGroupHeading(group: NotificationDigestGroup): string {
+  const count = group.notifications.length;
+  return `${count} notification${count === 1 ? "" : "s"} on ${group.dayKey} (${group.unreadCount} unread)`;
+}
