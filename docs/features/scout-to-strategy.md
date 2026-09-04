@@ -174,4 +174,21 @@ inline error ("No saved briefing for round … — create one first.") rather
 than silently failing when nothing is saved yet for the chosen round id, or
 when no briefing exists at all.
 
+## Side-by-side case comparison table
+
+The "a side-by-side case-option comparison table" follow-up: today's
+"Case rankings" list only shows each case's *total* overlap score, not which
+specific opponent-run tags drove it. Once a recommendation has two or more
+ranked case options, a **Case comparison** table renders below it — one row
+per argument tag run by at least one case (most opponent-frequent first),
+one column per case, and a cell showing the opponent's recorded frequency
+for that tag when the case runs it (`—` when it doesn't, or when the
+opponent has no recorded frequency for it). It's built by
+`round/scout-to-strategy.ts#buildCaseComparisonTable`, which pivots every
+case's own `tagOverlaps` breakdown (a new field on `RankedCaseOption`,
+populated by `rankCaseOptions`/`computeCaseTagOverlaps` alongside the
+existing `overlapScore` total) into that tag x case grid. Older persisted
+recommendations built before `tagOverlaps` existed degrade gracefully — the
+table renders with no rows rather than throwing.
+
 No other follow-ups remain open on this idea.
