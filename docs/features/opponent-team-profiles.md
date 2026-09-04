@@ -123,6 +123,40 @@ it reads the same whether it's viewed on screen or shared as a
 [Research Progress Tracking](research-progress-tracking.md)'s "Download
 report" button and its anchor+Blob download pattern exactly.
 
+## Comparing us vs. an opponent
+
+The **Compare vs. opponent** section (shown once at least one opponent
+profile is on the roster) closes the "a side-by-side us-vs-opponent
+comparison view" follow-up named under the "🕵️ Opponent Team Profiles"
+bullet in `TODO.md`. Pick an opponent from the dropdown and click **Compare**
+to build a two-column view:
+
+- **Us** is computed on the fly from `debate-round`'s
+  `state/ownRoundHistory.ts#listOwnRoundHistory()` — the same round-history
+  log the [Pre-Round Briefings](pre-round-briefings.md) panel's "Prior
+  meetings" section already reads — aggregated through the same
+  `buildOpponentTeamProfile("self", ...)` used for every opponent, so no new
+  scouting math exists for "our" side.
+- The chosen **opponent** is its already-persisted `OpponentTeamProfile`
+  from the roster.
+
+`rankings/opponent-team-profile.ts#buildOpponentTeamComparison(a, b)` builds
+the comparison: rounds recorded, overall record, and Aff/Neg side record are
+rendered side by side directly from each profile, and argument tags are
+split three ways — tags both teams have run (**Shared arguments**, ranked by
+combined frequency across both), tags only we've run (**Us-only
+arguments**), and tags only the opponent has run (**`<opponent>`-only
+arguments**) — the scouting-useful signal of what a team runs that the
+other doesn't. A **Download comparison** button exports the built comparison
+as a plain-text file via `buildOpponentTeamComparisonText`/
+`opponentTeamComparisonFilename`, mirroring
+[AI Coach Mode](coaching-sessions.md)'s "Compare two sessions" section and
+its own download button.
+
+If we have no logged round history yet, "Us" simply renders as a zero-round
+profile ("no recorded rounds") rather than erroring — log rounds through the
+Pre-Round Briefings panel's own round-logging form to populate it.
+
 ## Data flow
 
 ```
