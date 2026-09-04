@@ -1,0 +1,21 @@
+export type User = {
+  id?: string;
+  email: string;
+  displayName: string;
+  bio: string;
+  rating: number;
+  rd: number;
+  volatility: number;
+  lastRatingUpdate: string;
+  avatarUrl?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  password: string;
+  nickname: string;
+  isVerified: boolean;
+  verificationCode?: string;
+  resetPasswordCode?: string;
+  createdAt: string;
+  updatedAt: string;
+};
