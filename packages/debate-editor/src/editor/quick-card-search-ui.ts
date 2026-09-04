@@ -758,6 +758,10 @@ function searchSettingsSource(query: string): PaletteResult[] {
   // "Version / About this install" — surfaces the running app version and,
   // on Enter, deep-links to the About section (Settings → General). Matched
   // the way a user looks for it: "version", "about", "about this install".
+  // Still meaningful on hosts with no /settings route (Electron), where
+  // About this install stays in this modal — see `buildInstallInfoSection`'s
+  // `data-anchor` in settings-ui.ts. On the web build, where it's moved to
+  // /settings, the anchor is simply absent and `revealAnchor` no-ops.
   const q = tokens.join(' ');
   const aboutKeys = ['version', 'about this install', 'about', 'release'];
   if (q.length > 0 && aboutKeys.some((k) => k.startsWith(q) || q.startsWith(k))) {

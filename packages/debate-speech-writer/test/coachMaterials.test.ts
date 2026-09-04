@@ -7,7 +7,9 @@ import {
   getCoachMaterial,
   listCoachMaterials,
   listCoachMaterialTagsFromStore,
+  listPendingCoachMaterialsFromStore,
   saveCoachMaterial,
+  setCoachMaterialReviewStatus,
 } from "../src/state/coachMaterials";
 import { listVersionsForMaterial } from "../src/state/coachMaterialVersions";
 import type { CoachMaterial } from "../src/coach/team-coach-materials";
@@ -262,5 +264,73 @@ describe("findRelevantMaterialsFromStore", () => {
 
     expect(matches).toHaveLength(1);
     expect(matches[0]?.material).toEqual(CAMP);
+  });
+
+  it("excludes a pending material even when it's the only relevant match", () => {
+    saveCoachMaterial({ ...LECTURE, status: "pending" });
+    expect(findRelevantMaterialsFromStore("topicality")).toEqual([]);
+  });
+
+  it("excludes a rejected material even when it's the only relevant match", () => {
+    saveCoachMaterial({ ...LECTURE, status: "rejected" });
+    expect(findRelevantMaterialsFromStore("topicality")).toEqual([]);
+  });
+
+  it("includes an explicitly approved material", () => {
+    saveCoachMaterial({ ...LECTURE, status: "approved" });
+    const matches = findRelevantMaterialsFromStore("topicality");
+    expect(matches).toHaveLength(1);
+  });
+});
+
+describe("listPendingCoachMaterialsFromStore", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(listPendingCoachMaterialsFromStore()).toEqual([]);
+  });
+
+  it("returns only materials with a pending status", () => {
+    saveCoachMaterial({ ...LECTURE, status: "pending" });
+    saveCoachMaterial({ ...CAMP, status: "approved" });
+
+    const pending = listPendingCoachMaterialsFromStore();
+    expect(pending.map((m) => m.id)).toEqual(["lecture-1"]);
+  });
+
+  it("excludes a material with no status field (treated as approved)", () => {
+    saveCoachMaterial(LECTURE);
+    expect(listPendingCoachMaterialsFromStore()).toEqual([]);
+  });
+});
+
+describe("setCoachMaterialReviewStatus", () => {
+  it("approves a pending material, stamping the reviewer", () => {
+    saveCoachMaterial({ ...LECTURE, status: "pending" });
+
+    const updated = setCoachMaterialReviewStatus("lecture-1", "approved", "Coach K");
+
+    expect(updated?.status).toBe("approved");
+    expect(updated?.reviewedBy).toBe("Coach K");
+    expect(getCoachMaterial("lecture-1")?.status).toBe("approved");
+  });
+
+  it("rejects a pending material with an optional note", () => {
+    saveCoachMaterial({ ...LECTURE, status: "pending" });
+
+    const updated = setCoachMaterialReviewStatus("lecture-1", "rejected", "Coach K", "Needs a citation");
+
+    expect(updated?.status).toBe("rejected");
+    expect(updated?.reviewNote).toBe("Needs a citation");
+  });
+
+  it("returns undefined and changes nothing for an id that isn't stored", () => {
+    expect(setCoachMaterialReviewStatus("missing", "approved", "Coach K")).toBeUndefined();
+    expect(listCoachMaterials()).toEqual([]);
+  });
+
+  it("does not record a version snapshot — a review decision isn't a content edit", () => {
+    saveCoachMaterial({ ...LECTURE, status: "pending" });
+    setCoachMaterialReviewStatus("lecture-1", "approved", "Coach K");
+
+    expect(listVersionsForMaterial("lecture-1")).toEqual([]);
   });
 });

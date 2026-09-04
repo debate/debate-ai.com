@@ -32,8 +32,9 @@ import {
   deleteCoachMaterial,
   listCoachMaterials,
   saveCoachMaterial,
+  setCoachMaterialReviewStatus,
 } from "../state/coachMaterials";
-import type { CoachMaterial } from "../coach/team-coach-materials";
+import type { CoachMaterial, CoachMaterialStatus } from "../coach/team-coach-materials";
 import { adoptMaterialVersion, listAllCoachMaterialVersions } from "../state/coachMaterialVersions";
 import {
   deleteSavedCoachMaterialFromAccount,
@@ -114,6 +115,17 @@ export type UseCoachMaterialsSyncResult = {
   saveMaterial: (material: CoachMaterial) => void;
   /** Deletes a material locally and, when signed in, best-effort removes it — and its whole version history — from the account too. */
   deleteMaterial: (id: string) => void;
+  /**
+   * Records a review decision (approve/reject) on a material locally and,
+   * when signed in, best-effort syncs the updated record to the account.
+   * A no-op if `id` isn't a stored material.
+   */
+  reviewMaterial: (
+    id: string,
+    status: Extract<CoachMaterialStatus, "approved" | "rejected">,
+    reviewerId: string,
+    note?: string,
+  ) => void;
 };
 
 /**
@@ -162,5 +174,22 @@ export function useCoachMaterialsSync(): UseCoachMaterialsSyncResult {
     }
   }, []);
 
-  return { synced, ready, saveMaterial, deleteMaterial };
+  const reviewMaterial = useCallback(
+    (
+      id: string,
+      status: Extract<CoachMaterialStatus, "approved" | "rejected">,
+      reviewerId: string,
+      note?: string,
+    ) => {
+      const updated = setCoachMaterialReviewStatus(id, status, reviewerId, note);
+      if (updated && remoteAvailable) {
+        saveCoachMaterialToAccount(updated).catch(() => {
+          // Best-effort, same as saveMaterial above.
+        });
+      }
+    },
+    [],
+  );
+
+  return { synced, ready, saveMaterial, deleteMaterial, reviewMaterial };
 }

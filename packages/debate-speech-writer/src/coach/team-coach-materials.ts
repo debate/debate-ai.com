@@ -18,6 +18,15 @@
  * consumes `buildGroundedCoachPrompt`'s output, (c) a materials-upload/coach
  * chat panel UI, (d) persisting a team's `CoachMaterial`s.
  *
+ * A reviewer/approval workflow gates a material's `status` before it grounds
+ * an "Ask the coach" answer — the "reviewer/approval workflow before a saved
+ * material is available to the team coach" follow-up named under idea #8 in
+ * TODO.md. This repo has no roles/auth system (see
+ * `debate-search-evidence`'s `reviewer-permissions.ts` for the same honest
+ * limitation elsewhere), so "reviewer" here is a free-form id/name, not a
+ * permission check — see `isCoachMaterialApproved`/`approveCoachMaterial`/
+ * `rejectCoachMaterial` below.
+ *
  * @module coach/team-coach-materials
  */
 
@@ -28,7 +37,25 @@ export type CoachMaterialKind =
   | "instructional_document"
   | "practice_recording";
 
-/** A single piece of grounding material a coach has approved for the team coach AI. */
+/**
+ * A material's place in the reviewer/approval workflow. A material with no
+ * `status` at all (every material saved before this field existed) is
+ * treated the same as `"approved"` — see `isCoachMaterialApproved` — so this
+ * follow-up doesn't retroactively hide anything already trusted.
+ */
+export type CoachMaterialStatus = "pending" | "approved" | "rejected";
+
+/** Every `CoachMaterialStatus`, for a validator's/dropdown's fixed option set. */
+export const COACH_MATERIAL_STATUSES: CoachMaterialStatus[] = ["pending", "approved", "rejected"];
+
+/** Human-readable label for each `CoachMaterialStatus`, for badge/filter display. */
+export const COACH_MATERIAL_STATUS_LABELS: Record<CoachMaterialStatus, string> = {
+  pending: "Pending review",
+  approved: "Approved",
+  rejected: "Rejected",
+};
+
+/** A single piece of grounding material a coach has uploaded for the team coach AI. */
 export interface CoachMaterial {
   id: string;
   kind: CoachMaterialKind;
@@ -38,6 +65,14 @@ export interface CoachMaterial {
   tags: string[];
   /** Transcript or document text this material grounds an answer in. */
   text: string;
+  /** Reviewer/approval workflow gate. Missing is treated as `"approved"` — see `isCoachMaterialApproved`. */
+  status?: CoachMaterialStatus;
+  /** Free-form id/name of whoever last reviewed this material (no roles system exists to verify it). */
+  reviewedBy?: string;
+  /** Epoch milliseconds of the last review decision. */
+  reviewedAt?: number;
+  /** Optional reviewer note, most useful on a rejection to explain why. */
+  reviewNote?: string;
 }
 
 /** One kind's materials, in caller-supplied order. */
@@ -314,6 +349,51 @@ export function filterCoachMaterials(
       .toLowerCase();
     return haystack.includes(needle);
   });
+}
+
+/**
+ * Whether `material` is currently live for the team coach AI: `"approved"`,
+ * or no `status` at all (a material saved before this field existed).
+ * `"pending"` and `"rejected"` are excluded.
+ */
+export function isCoachMaterialApproved(material: CoachMaterial): boolean {
+  return material.status === undefined || material.status === "approved";
+}
+
+/** Narrows `materials` to only those `isCoachMaterialApproved` — what "Ask the coach" is allowed to draw on. */
+export function filterApprovedCoachMaterials(materials: CoachMaterial[]): CoachMaterial[] {
+  return materials.filter(isCoachMaterialApproved);
+}
+
+/** Narrows `materials` to those still awaiting a review decision. */
+export function filterPendingCoachMaterials(materials: CoachMaterial[]): CoachMaterial[] {
+  return materials.filter((material) => material.status === "pending");
+}
+
+/**
+ * Records a review decision on `material`, stamping who made it and when.
+ * Pure — returns a new record rather than mutating; a caller
+ * (`state/coachMaterials.ts#setCoachMaterialReviewStatus`) is responsible for
+ * persisting the result. `reviewerId` is a free-form id/name (see the module
+ * doc above for why this repo can't verify a real reviewer role).
+ */
+export function reviewCoachMaterial(
+  material: CoachMaterial,
+  status: "approved" | "rejected",
+  reviewerId: string,
+  note?: string,
+): CoachMaterial {
+  return { ...material, status, reviewedBy: reviewerId, reviewedAt: Date.now(), reviewNote: note };
+}
+
+/** Approves `material` — shorthand for `reviewCoachMaterial(material, "approved", reviewerId, note)`. */
+export function approveCoachMaterial(material: CoachMaterial, reviewerId: string, note?: string): CoachMaterial {
+  return reviewCoachMaterial(material, "approved", reviewerId, note);
+}
+
+/** Rejects `material` — shorthand for `reviewCoachMaterial(material, "rejected", reviewerId, note)`. */
+export function rejectCoachMaterial(material: CoachMaterial, reviewerId: string, note?: string): CoachMaterial {
+  return reviewCoachMaterial(material, "rejected", reviewerId, note);
 }
 
 /** Renders a short, human-readable summary of a team's coach-material library. */

@@ -95,12 +95,20 @@ export type {
 } from "./opponent/opponent-personas";
 
 export {
+  approveCoachMaterial,
   buildCoachConversationMessages,
   buildCoachMaterialLibrary,
   buildCoachMaterialLibrarySummaryText,
   buildGroundedCoachPrompt,
+  COACH_MATERIAL_STATUS_LABELS,
+  COACH_MATERIAL_STATUSES,
   excerptMaterialText,
+  filterApprovedCoachMaterials,
+  filterPendingCoachMaterials,
   findRelevantMaterials,
+  isCoachMaterialApproved,
+  rejectCoachMaterial,
+  reviewCoachMaterial,
   scoreMaterialRelevance,
 } from "./coach/team-coach-materials";
 export type {
@@ -112,6 +120,7 @@ export type {
   CoachMaterialKind,
   CoachMaterialLibrary,
   CoachMaterialMatch,
+  CoachMaterialStatus,
   FindRelevantMaterialsOptions,
   GroundedCoachPromptOptions,
 } from "./coach/team-coach-materials";
@@ -127,7 +136,9 @@ export {
   findRelevantMaterialsFromStore,
   getCoachMaterial,
   listCoachMaterials,
+  listPendingCoachMaterialsFromStore,
   saveCoachMaterial,
+  setCoachMaterialReviewStatus,
 } from "./state/coachMaterials";
 export type { SaveCoachMaterialResult } from "./state/coachMaterials";
 

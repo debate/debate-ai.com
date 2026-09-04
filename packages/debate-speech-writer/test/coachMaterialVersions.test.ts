@@ -180,6 +180,11 @@ describe("adoptMaterialVersion", () => {
 describe("materialFromVersion", () => {
   it("rebuilds a CoachMaterial from a version snapshot, keyed by materialId", () => {
     const version = appendMaterialVersion(LECTURE, 1000);
-    expect(materialFromVersion(version)).toEqual(LECTURE);
+    expect(materialFromVersion(version)).toEqual({ ...LECTURE, status: "pending" });
+  });
+
+  it("always comes back pending, even when the snapshotted material was approved", () => {
+    const version = appendMaterialVersion({ ...LECTURE, status: "approved", reviewedBy: "Coach K" }, 1000);
+    expect(materialFromVersion(version).status).toBe("pending");
   });
 });
