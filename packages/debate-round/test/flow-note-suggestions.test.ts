@@ -4,7 +4,7 @@ import {
   deriveLibraryCardKeywords,
   suggestFlowNotesFromLibrary,
 } from "../src/flow/flow-note-suggestions";
-import type { LibraryCard } from "debate-card-search/src/lib/argument-library";
+import type { LibraryCard } from "debate-research-evidence/src/lib/argument-library";
 
 const WARMING_CARD: LibraryCard = {
   id: "card-1",

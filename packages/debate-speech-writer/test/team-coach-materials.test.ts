@@ -1,15 +1,23 @@
 import { describe, expect, it } from "vitest";
 import {
+  approveCoachMaterial,
   buildCoachConversationMessages,
   buildCoachMaterialLibrary,
   buildCoachMaterialLibrarySummaryText,
   buildGroundedCoachPrompt,
   COACH_MATERIAL_KIND_LABELS,
   COACH_MATERIAL_KIND_ORDER,
+  COACH_MATERIAL_STATUS_LABELS,
+  COACH_MATERIAL_STATUSES,
   excerptMaterialText,
+  filterApprovedCoachMaterials,
   filterCoachMaterials,
+  filterPendingCoachMaterials,
   findRelevantMaterials,
+  isCoachMaterialApproved,
   listCoachMaterialTags,
+  rejectCoachMaterial,
+  reviewCoachMaterial,
   scoreMaterialRelevance,
   type CoachConversationTurn,
   type CoachMaterial,
@@ -353,5 +361,101 @@ describe("COACH_MATERIAL_KIND_LABELS", () => {
     for (const kind of COACH_MATERIAL_KIND_ORDER) {
       expect(COACH_MATERIAL_KIND_LABELS[kind]).toBeTruthy();
     }
+  });
+});
+
+describe("COACH_MATERIAL_STATUS_LABELS", () => {
+  it("has a label for every status in COACH_MATERIAL_STATUSES", () => {
+    for (const status of COACH_MATERIAL_STATUSES) {
+      expect(COACH_MATERIAL_STATUS_LABELS[status]).toBeTruthy();
+    }
+  });
+});
+
+describe("isCoachMaterialApproved", () => {
+  it("treats a material with no status field as approved (pre-review-workflow default)", () => {
+    expect(isCoachMaterialApproved(lecture)).toBe(true);
+  });
+
+  it("treats an explicitly approved material as approved", () => {
+    expect(isCoachMaterialApproved({ ...lecture, status: "approved" })).toBe(true);
+  });
+
+  it("treats a pending material as not approved", () => {
+    expect(isCoachMaterialApproved({ ...lecture, status: "pending" })).toBe(false);
+  });
+
+  it("treats a rejected material as not approved", () => {
+    expect(isCoachMaterialApproved({ ...lecture, status: "rejected" })).toBe(false);
+  });
+});
+
+describe("filterApprovedCoachMaterials", () => {
+  it("keeps materials with no status or an approved status, drops pending and rejected", () => {
+    const pool: CoachMaterial[] = [
+      lecture,
+      { ...camp, status: "approved" },
+      { ...instructional, status: "pending" },
+      { ...recording, status: "rejected" },
+    ];
+    expect(filterApprovedCoachMaterials(pool).map((m) => m.id)).toEqual(["m1", "m2"]);
+  });
+});
+
+describe("filterPendingCoachMaterials", () => {
+  it("keeps only materials with a pending status", () => {
+    const pool: CoachMaterial[] = [
+      lecture,
+      { ...camp, status: "approved" },
+      { ...instructional, status: "pending" },
+      { ...recording, status: "rejected" },
+    ];
+    expect(filterPendingCoachMaterials(pool).map((m) => m.id)).toEqual(["m3"]);
+  });
+
+  it("returns an empty list when nothing is pending", () => {
+    expect(filterPendingCoachMaterials([lecture, { ...camp, status: "approved" }])).toEqual([]);
+  });
+});
+
+describe("reviewCoachMaterial/approveCoachMaterial/rejectCoachMaterial", () => {
+  it("approveCoachMaterial stamps status, reviewer, and a timestamp", () => {
+    const before = Date.now();
+    const reviewed = approveCoachMaterial({ ...lecture, status: "pending" }, "Coach K");
+    expect(reviewed.status).toBe("approved");
+    expect(reviewed.reviewedBy).toBe("Coach K");
+    expect(reviewed.reviewedAt).toBeGreaterThanOrEqual(before);
+  });
+
+  it("rejectCoachMaterial stamps status, reviewer, and an optional note", () => {
+    const reviewed = rejectCoachMaterial({ ...lecture, status: "pending" }, "Coach K", "Needs a source citation");
+    expect(reviewed.status).toBe("rejected");
+    expect(reviewed.reviewedBy).toBe("Coach K");
+    expect(reviewed.reviewNote).toBe("Needs a source citation");
+  });
+
+  it("rejectCoachMaterial without a note leaves reviewNote undefined", () => {
+    const reviewed = rejectCoachMaterial({ ...lecture, status: "pending" }, "Coach K");
+    expect(reviewed.reviewNote).toBeUndefined();
+  });
+
+  it("is pure — it returns a new object rather than mutating the input", () => {
+    const original: CoachMaterial = { ...lecture, status: "pending" };
+    const reviewed = reviewCoachMaterial(original, "approved", "Coach K");
+    expect(original.status).toBe("pending");
+    expect(reviewed).not.toBe(original);
+  });
+
+  it("approveCoachMaterial and rejectCoachMaterial delegate to reviewCoachMaterial", () => {
+    const base: CoachMaterial = { ...lecture, status: "pending" };
+    const viaApprove = approveCoachMaterial(base, "Coach K");
+    const viaReview = reviewCoachMaterial(base, "approved", "Coach K");
+    expect(viaApprove.status).toBe(viaReview.status);
+    expect(viaApprove.reviewedBy).toBe(viaReview.reviewedBy);
+
+    const viaReject = rejectCoachMaterial(base, "Coach K", "note");
+    const viaReviewReject = reviewCoachMaterial(base, "rejected", "Coach K", "note");
+    expect(viaReject.status).toBe(viaReviewReject.status);
+    expect(viaReject.reviewNote).toBe(viaReviewReject.reviewNote);
   });
 });

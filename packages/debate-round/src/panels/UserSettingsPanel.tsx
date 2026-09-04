@@ -27,16 +27,16 @@
 
 import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Label } from "debate-ui/src/primitives/label"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Label } from "../ui/primitives/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-ui/src/primitives/select"
+} from "../ui/primitives/select"
 import { fetchUserSettings, saveUserSettings, type FullUserSettingsPayload } from "../round/user-settings-client"
 import {
   applyUserSettingsToLocalStore,
@@ -53,6 +53,12 @@ import {
   THEME_NAMES,
   type ThemeMode,
 } from "../state/themeSettings"
+import {
+  DEFAULT_FONT_FAMILY,
+  FONT_OPTIONS,
+  readLocalFontFamily,
+  setLocalFontFamily,
+} from "../state/fontSettings"
 
 // `favoriteTools` has its own `FavoriteToolsSettings` UI; `wordLimitPresets`
 // has its own `WordLimitPresetsPanel` UI; `outlineFilterPresets` is managed
@@ -103,6 +109,19 @@ export function UserSettingsPanel() {
   const [remoteAvailable, setRemoteAvailable] = useState(false)
   const [loading, setLoading] = useState(true)
   const [status, setStatus] = useState<SaveStatus>({ kind: "idle" })
+  // Local-only, like the source it was ported from — never synced to `/api/settings`,
+  // so it lives outside `form` and applies as soon as it's picked rather than
+  // waiting on the Save button below.
+  const [fontFamily, setFontFamily] = useState(DEFAULT_FONT_FAMILY)
+
+  useEffect(() => {
+    setFontFamily(readLocalFontFamily())
+  }, [])
+
+  const handleFontFamilyChange = (value: string) => {
+    setFontFamily(value)
+    setLocalFontFamily(value)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -177,6 +196,7 @@ export function UserSettingsPanel() {
 
   const handleResetToDefaults = () => {
     setForm({ ...DEFAULT_USER_SETTINGS, ...DEFAULT_THEME_SETTINGS })
+    handleFontFamilyChange(DEFAULT_FONT_FAMILY)
     setStatus({ kind: "idle" })
   }
 
@@ -231,6 +251,25 @@ export function UserSettingsPanel() {
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="settings-font-family">Font family</Label>
+          <Select value={fontFamily} onValueChange={handleFontFamilyChange}>
+            <SelectTrigger id="settings-font-family">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="max-h-[min(360px,60vh)]">
+              {FONT_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Applies immediately in this browser — unlike the settings above, this one isn't saved to your account.
+          </p>
         </div>
 
         <div className="space-y-1.5">

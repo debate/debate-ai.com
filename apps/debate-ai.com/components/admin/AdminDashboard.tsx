@@ -1,64 +1,29 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Button } from "debate-ui/src/primitives/button";
-import { Badge } from "debate-ui/src/primitives/badge";
+import { Button } from "../../lib/ui/primitives/button";
+import { Badge } from "../../lib/ui/primitives/badge";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "debate-ui/src/primitives/card";
+} from "../../lib/ui/primitives/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-ui/src/primitives/select";
+} from "../../lib/ui/primitives/select";
+import { TopicStarterUpload } from "./TopicStarterUpload";
 
-interface YoutubeRoundVideo {
-  id: string;
-  title: string;
-  publishedAt: string;
-  channel: string;
-  views: number;
-  style: number;
-  tournament: string | null;
-  roundLevel: string | null;
-  aff: string | null;
-  neg: string | null;
-  winner: boolean | null;
-  judgeDecision: string | null;
-}
-
-interface SyncRun {
-  id: number;
-  status: "running" | "success" | "error";
-  triggeredBy: string | null;
-  channelsSynced: number;
-  videosFetched: number;
-  videosUpserted: number;
-  error: string | null;
-  startedAt: string;
-  finishedAt: string | null;
-}
-
-const STYLE_NAMES: Record<number, string> = {
-  1: "Policy",
-  2: "PF",
-  3: "LD",
-  4: "College",
-};
-
-const STYLE_OPTIONS = [
-  { value: "all", label: "All styles" },
-  { value: "1", label: "Policy" },
-  { value: "2", label: "PF" },
-  { value: "3", label: "LD" },
-  { value: "4", label: "College" },
-];
+interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
+interface SyncRun { id: number; status: "running" | "success" | "error"; channelsSynced: number; videosUpserted: number; error: string | null; }
+interface Overview { stats: { users: number; sessions: number; files: number; publishedVideos: number; stagedVideos: number }; recentUsers: Array<{ id: string; name: string; email: string; image: string | null; createdAt: string; isAnonymous: boolean }>; }
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College" };
+const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }];
 
 export function AdminDashboard() {
   const [videos, setVideos] = useState<YoutubeRoundVideo[]>([]);
@@ -264,6 +229,8 @@ export function AdminDashboard() {
           )}
         </CardContent>
       </Card>
+
+      <TopicStarterUpload />
 
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-medium">Round videos</h2>

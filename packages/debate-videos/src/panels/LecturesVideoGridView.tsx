@@ -12,13 +12,14 @@ import React, { useMemo } from "react"
 import { useParams } from "next/navigation"
 import type { CategoryType, TopicType, VideoFacets } from "../types/videos"
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
-import { Footer } from "debate-ui/src/layout/footer"
+import { Footer } from "../ui/layout/footer"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
+import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
@@ -261,21 +262,14 @@ export function LecturesVideoGridView({
 
         {searchBarNode(true)}
 
-        <QuickLinksGrid
+        <VideoSidebarTree
           counts={quickLinkCounts}
-          showLectures={showLectureCategories}
-          onToggleLectures={onToggleLectureCategories}
+          lectureCategories={lectureCategories}
+          selectedCategory={selectedCategory}
           activeId={activeQuickLinkId}
-          layout="list"
+          lecturesExpanded={showLectureCategories}
+          onToggleLectures={onToggleLectureCategories}
         />
-
-        {showLectureGallery && (
-          <LectureCategoryGridGallery
-            categories={lectureCategories}
-            selectedCategory={selectedCategory}
-            layout="list"
-          />
-        )}
 
         <Footer />
       </aside>

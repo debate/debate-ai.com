@@ -147,7 +147,14 @@ export function adoptMaterialVersion(version: CoachMaterialVersion): void {
   writeAll(versions);
 }
 
-/** Rebuilds a `CoachMaterial` from a snapshot, ready to pass back to `saveCoachMaterial` to restore it. */
+/**
+ * Rebuilds a `CoachMaterial` from a snapshot, ready to pass back to
+ * `saveCoachMaterial` to restore it. Always comes back `status: "pending"`,
+ * even if the version predates the reviewer/approval workflow field or was
+ * snapshotted from an already-`"approved"` material — restoring reintroduces
+ * old content, so it goes back through review rather than silently reviving
+ * a stale approval.
+ */
 export function materialFromVersion(version: CoachMaterialVersion): CoachMaterial {
   return {
     id: version.materialId,
@@ -156,5 +163,6 @@ export function materialFromVersion(version: CoachMaterialVersion): CoachMateria
     topic: version.topic,
     tags: version.tags,
     text: version.text,
+    status: "pending",
   };
 }

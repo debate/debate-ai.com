@@ -77,6 +77,12 @@ export {
   listOpponentPersonas,
   buildOpponentPersonaPrompt,
   buildCustomOpponentPersona,
+  opponentDifficulties,
+  opponentDifficultyIds,
+  DEFAULT_OPPONENT_DIFFICULTY,
+  isOpponentDifficulty,
+  getOpponentDifficulty,
+  listOpponentDifficulties,
 } from "./opponent/opponent-personas";
 export type {
   BuiltinOpponentPersonaId,
@@ -84,26 +90,25 @@ export type {
   OpponentPersonaPace,
   OpponentPersona,
   CustomOpponentPersonaInput,
+  OpponentDifficulty,
+  OpponentDifficultyLevel,
 } from "./opponent/opponent-personas";
 
 export {
-  buildOpponentPersonaSelectionsPanelView,
-  deleteOpponentPersonaSelection,
-  getOpponentPersonaSelection,
-  listOpponentPersonaSelections,
-  saveOpponentPersonaSelection,
-} from "./state/opponentPersonaSelections";
-export type { OpponentPersonaSelection } from "./state/opponentPersonaSelections";
-
-export { OpponentPersonaPickerPanel } from "./panels/OpponentPersonaPickerPanel";
-
-export {
+  approveCoachMaterial,
   buildCoachConversationMessages,
   buildCoachMaterialLibrary,
   buildCoachMaterialLibrarySummaryText,
   buildGroundedCoachPrompt,
+  COACH_MATERIAL_STATUS_LABELS,
+  COACH_MATERIAL_STATUSES,
   excerptMaterialText,
+  filterApprovedCoachMaterials,
+  filterPendingCoachMaterials,
   findRelevantMaterials,
+  isCoachMaterialApproved,
+  rejectCoachMaterial,
+  reviewCoachMaterial,
   scoreMaterialRelevance,
 } from "./coach/team-coach-materials";
 export type {
@@ -115,6 +120,7 @@ export type {
   CoachMaterialKind,
   CoachMaterialLibrary,
   CoachMaterialMatch,
+  CoachMaterialStatus,
   FindRelevantMaterialsOptions,
   GroundedCoachPromptOptions,
 } from "./coach/team-coach-materials";
@@ -130,7 +136,9 @@ export {
   findRelevantMaterialsFromStore,
   getCoachMaterial,
   listCoachMaterials,
+  listPendingCoachMaterialsFromStore,
   saveCoachMaterial,
+  setCoachMaterialReviewStatus,
 } from "./state/coachMaterials";
 export type { SaveCoachMaterialResult } from "./state/coachMaterials";
 
@@ -172,18 +180,6 @@ export {
 } from "./state/coachConversation";
 
 export { CoachMaterialsPanel } from "./panels/CoachMaterialsPanel";
-
-export {
-  buildJudgeDecisionDeepLink,
-  buildJudgeParadigmSelectionsPanelView,
-  deleteJudgeParadigmSelection,
-  getJudgeParadigmSelection,
-  listJudgeParadigmSelections,
-  saveJudgeParadigmSelection,
-} from "./state/judgeParadigmSelections";
-export type { JudgeParadigmSelection } from "./state/judgeParadigmSelections";
-
-export { JudgeParadigmPickerPanel } from "./panels/JudgeParadigmPickerPanel";
 
 export { findFlawsPrompt } from "./prompts/quote-to-find-flaws";
 export { judgeDecisionPrompt } from "./prompts/judge-decision-options";

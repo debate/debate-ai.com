@@ -1,0 +1,385 @@
+/**
+ * @fileoverview Common Argument Library folder/collection browser — the UI
+ * follow-up named "(b) a folder/collection browser UI" under the "📚 Common
+ * Argument Library" bullet in TODO.md.
+ *
+ * Reads the persisted evidence repository together with every tagged
+ * Contributions Feed submission via
+ * `state/evidenceLibraryEntries.ts`'s `buildCombinedPersistedArgumentLibrary`
+ * (itself a thin composition of `argument-library.ts`'s pure
+ * `buildArgumentLibrary` against both persisted stores) and renders it as
+ * topic folders (each split into case-area subgroups) plus cross-cutting tag
+ * collections, reusing the existing organizing logic directly rather than
+ * introducing new logic here. Closes follow-up (a) named under the "📚
+ * Common Argument Library" bullet in TODO.md — a Contributions Feed
+ * submission tagged with topic/case-area now appears here too, not just a
+ * dedicated `/cards/library` evidence-library entry.
+ *
+ * A "Rename/merge tag" form closes `docs/features/evidence-library.md`'s
+ * "No tag rename/merge tool" Known gap: picking an existing tag and typing a
+ * new name calls `state/evidenceLibraryEntries.ts`'s
+ * `renameTagAcrossCombinedPersistedStores`, rewriting the tag on every
+ * persisted evidence-library entry *and* every Contributions Feed submission
+ * that carries it — merging into an existing tag name instead of duplicating
+ * it when the target is already in use. Rewriting both stores closes the
+ * follow-on "only rewrites this evidence-library repository's own entries"
+ * gap: this browser shows the combined library, so a tag listed here may come
+ * from either store.
+ *
+ * A "Possible duplicate tags" section closes the "nothing merges two
+ * casings already in use" half of that same Known gap's tag-identity note:
+ * `lib/argument-library.ts`'s `findTagCaseVariantGroups` scans the library's
+ * tag collections for tags that differ only by casing (e.g. `warming` vs.
+ * `Warming`) and offers a one-click merge into whichever casing is already
+ * carried by the most cards, reusing the same
+ * `renameTagAcrossCombinedPersistedStores` call the manual form uses.
+ *
+ * A "Saved collections" bar closes the "saved custom collections per user"
+ * follow-up named under this bullet in TODO.md: `hooks/useSavedArgumentCollections.ts`
+ * lets a user save the current tag-filter selection (`activeTags`) under a
+ * name and reapply it later, account-synced the same way
+ * `outlineFilterPresets` is (a `savedArgumentCollections` `/api/settings`
+ * field).
+ *
+ * @module panels/ArgumentLibraryPanel
+ */
+
+"use client"
+
+import { useEffect, useState } from "react"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Input } from "../ui/primitives/input"
+import { Label } from "../ui/primitives/label"
+import { EmptyState } from "../ui/panels/panel-shell"
+import {
+  buildCombinedPersistedArgumentLibrary,
+  renameTagAcrossCombinedPersistedStores,
+} from "../state/evidenceLibraryEntries"
+import { buildLibrarySummaryText, filterCardsByTags, findTagCaseVariantGroups } from "../lib/argument-library"
+import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
+import { useSavedArgumentCollections } from "../hooks/useSavedArgumentCollections"
+
+/**
+ * Renders the Common Argument Library: every persisted evidence entry
+ * organized into topic folders (split into case-area subgroups) and
+ * cross-cutting tag collections, with an optional tag filter.
+ *
+ * Reads localStorage on mount only (client-side), so it renders an empty
+ * state during SSR/hydration rather than throwing.
+ */
+export function ArgumentLibraryPanel() {
+  const [library, setLibrary] = useState<ArgumentLibrary | null>(null)
+  const [activeTags, setActiveTags] = useState<string[]>([])
+  const [renameOldTag, setRenameOldTag] = useState("")
+  const [renameNewTag, setRenameNewTag] = useState("")
+  const [renameMessage, setRenameMessage] = useState<string | null>(null)
+  const [newCollectionName, setNewCollectionName] = useState("")
+  const [collectionMessage, setCollectionMessage] = useState<string | null>(null)
+  const { collections, addCollection, removeCollection } = useSavedArgumentCollections()
+
+  useEffect(() => {
+    setLibrary(buildCombinedPersistedArgumentLibrary())
+  }, [])
+
+  function renameTag(oldTag: string, newTag: string) {
+    try {
+      const { entriesChanged, contributionsChanged, totalChanged } =
+        renameTagAcrossCombinedPersistedStores(oldTag, newTag)
+      setLibrary(buildCombinedPersistedArgumentLibrary())
+      setActiveTags((current) => current.map((tag) => (tag === oldTag.trim() ? newTag.trim() : tag)))
+      setRenameMessage(
+        totalChanged === 0
+          ? `Nothing carries "${oldTag.trim()}" — nothing changed.`
+          : `Renamed "${oldTag.trim()}" to "${newTag.trim()}" on ${entriesChanged} ${
+              entriesChanged === 1 ? "evidence entry" : "evidence entries"
+            } and ${contributionsChanged} ${
+              contributionsChanged === 1 ? "contribution" : "contributions"
+            }.`,
+      )
+    } catch (error) {
+      setRenameMessage(error instanceof Error ? error.message : String(error))
+    }
+  }
+
+  function handleRenameTag() {
+    renameTag(renameOldTag, renameNewTag)
+    setRenameOldTag("")
+    setRenameNewTag("")
+  }
+
+  if (library === null) {
+    return <div className="p-6 text-sm text-muted-foreground">Loading argument library…</div>
+  }
+
+  if (library.topicFolders.length === 0) {
+    return (
+      <div className="p-6 text-center text-sm text-muted-foreground">
+        No argument library entries yet. The library fills in as cards and reusable blocks are
+        submitted to the shared evidence repository, or as Contributions Feed submissions are
+        tagged with a topic and case area.
+      </div>
+    )
+  }
+
+  function toggleTag(tag: string) {
+    setActiveTags((current) =>
+      current.includes(tag) ? current.filter((existing) => existing !== tag) : [...current, tag],
+    )
+  }
+
+  function handleSaveCollection() {
+    const name = newCollectionName.trim()
+    if (!name || activeTags.length === 0) return
+    const saved = addCollection(name, activeTags)
+    setCollectionMessage(
+      saved ? `Saved "${name}" (${activeTags.length} tag${activeTags.length === 1 ? "" : "s"}).` : `A collection named "${name}" already exists.`,
+    )
+    if (saved) setNewCollectionName("")
+  }
+
+  const allCards = library.topicFolders.flatMap((folder) =>
+    folder.caseAreas.flatMap((group) => group.cards),
+  )
+  const filteredCards = activeTags.length > 0 ? filterCardsByTags(allCards, activeTags, "any") : null
+  const caseVariantGroups = findTagCaseVariantGroups(library.tagCollections)
+
+  return (
+    <div className="p-4 sm:p-6 space-y-4">
+      <div>
+        <h1 className="mb-1 text-xl font-semibold text-foreground">Common Argument Library</h1>
+        <p className="text-sm text-muted-foreground">{buildLibrarySummaryText(library)}</p>
+      </div>
+
+      {library.tagCollections.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          {library.tagCollections.map((collection) => (
+            <Button
+              key={collection.tag}
+              size="sm"
+              variant={activeTags.includes(collection.tag) ? "default" : "outline"}
+              onClick={() => toggleTag(collection.tag)}
+            >
+              {collection.tag} ({collection.cards.length})
+            </Button>
+          ))}
+          {activeTags.length > 0 && (
+            <Button size="sm" variant="ghost" onClick={() => setActiveTags([])}>
+              Clear filter
+            </Button>
+          )}
+        </div>
+      )}
+
+      {library.tagCollections.length > 0 && (
+        <div className="rounded-lg border border-border p-3 space-y-2">
+          <div className="text-sm font-medium text-foreground">Saved collections</div>
+          <p className="text-xs text-muted-foreground">
+            Save the current tag selection under a name to reapply it later, synced to your account
+            when signed in.
+          </p>
+          {collections.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              {collections.map((collection) => (
+                <div key={collection.name} className="flex items-center gap-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setActiveTags(collection.tags)}
+                    title={collection.tags.join(", ")}
+                  >
+                    {collection.name} ({collection.tags.length})
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    aria-label={`Remove saved collection "${collection.name}"`}
+                    onClick={() => removeCollection(collection.name)}
+                  >
+                    ✕
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex flex-wrap items-end gap-2">
+            <div>
+              <Label htmlFor="save-collection-name" className="text-xs">
+                Save current selection as
+              </Label>
+              <Input
+                id="save-collection-name"
+                value={newCollectionName}
+                onChange={(e) => setNewCollectionName(e.target.value)}
+                placeholder="Collection name"
+                className="h-9"
+              />
+            </div>
+            <Button
+              size="sm"
+              disabled={!newCollectionName.trim() || activeTags.length === 0}
+              onClick={handleSaveCollection}
+            >
+              Save collection
+            </Button>
+          </div>
+          {activeTags.length === 0 && (
+            <p className="text-xs text-muted-foreground">Select at least one tag above to save a collection.</p>
+          )}
+          {collectionMessage && <p className="text-xs text-muted-foreground">{collectionMessage}</p>}
+        </div>
+      )}
+
+      {library.tagCollections.length > 0 && (
+        <div className="rounded-lg border border-border p-3 space-y-2">
+          <div className="text-sm font-medium text-foreground">Rename/merge tag</div>
+          <p className="text-xs text-muted-foreground">
+            Rewrites the tag on every evidence-library entry and every Contributions Feed
+            submission that carries it. Renaming into an existing tag name merges the two.
+          </p>
+          <div className="flex flex-wrap items-end gap-2">
+            <div>
+              <Label htmlFor="rename-tag-old" className="text-xs">
+                Existing tag
+              </Label>
+              <select
+                id="rename-tag-old"
+                value={renameOldTag}
+                onChange={(e) => setRenameOldTag(e.target.value)}
+                className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="">Choose a tag…</option>
+                {library.tagCollections.map((collection) => (
+                  <option key={collection.tag} value={collection.tag}>
+                    {collection.tag} ({collection.cards.length})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label htmlFor="rename-tag-new" className="text-xs">
+                New name
+              </Label>
+              <Input
+                id="rename-tag-new"
+                value={renameNewTag}
+                onChange={(e) => setRenameNewTag(e.target.value)}
+                placeholder="new-tag-name"
+                className="h-9"
+              />
+            </div>
+            <Button
+              size="sm"
+              disabled={!renameOldTag.trim() || !renameNewTag.trim()}
+              onClick={handleRenameTag}
+            >
+              Rename/merge
+            </Button>
+          </div>
+          {renameMessage && <p className="text-xs text-muted-foreground">{renameMessage}</p>}
+        </div>
+      )}
+
+      {caseVariantGroups.length > 0 && (
+        <div className="rounded-lg border border-border p-3 space-y-2">
+          <div className="text-sm font-medium text-foreground">Possible duplicate tags</div>
+          <p className="text-xs text-muted-foreground">
+            These tags differ only by capitalization. Merge each variant into the casing already
+            carried by the most cards.
+          </p>
+          <div className="space-y-1.5">
+            {caseVariantGroups.map((group) => {
+              const [canonical, ...variants] = group.tags
+              return (
+                <div key={canonical} className="flex flex-wrap items-center gap-2 text-sm">
+                  <span className="text-muted-foreground">{group.tags.join(" / ")} →</span>
+                  {variants.map((variant) => (
+                    <Button
+                      key={variant}
+                      size="sm"
+                      variant="outline"
+                      onClick={() => renameTag(variant, canonical)}
+                    >
+                      Merge "{variant}" into "{canonical}"
+                    </Button>
+                  ))}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {filteredCards ? (
+        <TagFilterResults cards={filteredCards} tags={activeTags} />
+      ) : (
+        <div className="space-y-4">
+          {library.topicFolders.map((folder) => (
+            <div key={folder.topic} className="rounded-lg border border-border p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="font-medium text-foreground">{folder.topic}</span>
+                <Badge variant="outline">
+                  {folder.cardCount} card{folder.cardCount === 1 ? "" : "s"}
+                </Badge>
+              </div>
+              <div className="space-y-3">
+                {folder.caseAreas.map((group) => (
+                  <div key={group.caseArea}>
+                    <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">
+                      {group.caseArea}
+                    </div>
+                    <div className="space-y-1.5">
+                      {group.cards.map((card) => (
+                        <LibraryCardRow key={card.id} card={card} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TagFilterResults({ cards, tags }: { cards: LibraryCard[]; tags: string[] }) {
+  return (
+    <div className="space-y-2">
+      <p className="text-sm text-muted-foreground">
+        {cards.length} card{cards.length === 1 ? "" : "s"} tagged {tags.join(", ")}
+      </p>
+      {cards.length === 0 ? (
+        <EmptyState title="No cards match this tag filter." />
+      ) : (
+        <div className="space-y-1.5">
+          {cards.map((card) => (
+            <LibraryCardRow key={card.id} card={card} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function LibraryCardRow({ card }: { card: LibraryCard }) {
+  return (
+    <div className="rounded-md border border-border p-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-sm font-medium text-foreground">{card.argBlock}</span>
+        <Badge variant="outline">{card.topic}</Badge>
+        <Badge variant="outline">{card.caseArea}</Badge>
+      </div>
+      {card.tags.length > 0 && (
+        <div className="mt-1 flex flex-wrap gap-1">
+          {card.tags.map((tag) => (
+            <Badge key={tag} variant="secondary" className="text-xs">
+              {tag}
+            </Badge>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

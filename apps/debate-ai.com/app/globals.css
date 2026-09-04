@@ -1,7 +1,12 @@
+/* Backs the font-family picker in `UserSettingsPanel` (`state/fontSettings.ts`'s
+   `FONT_OPTIONS`) — every non-system-installed option needs its face loaded here
+   before `applyFontFamily`'s inline style can render it. Ported from
+   qwksearch-research-agent's `apps/qwksearch-web/app/globals.css`. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=PT+Sans:wght@400;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&family=Roboto+Slab:wght@400;500;700&family=Source+Code+Pro:wght@400;500;700&family=Source+Sans+3:wght@400;500;600;700&family=Ubuntu:wght@400;500;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./themes.css";
-@import "../../../packages/debate-flow-ebb/src/styles/ebb-scope.css";
+@import "../../../packages/debate-flow/src/styles/ebb-scope.css";
 
 /* The debate component packages are symlinked in through node_modules, which
    Tailwind's automatic source detection skips — register them explicitly so
@@ -12,7 +17,7 @@
 @source "../../../packages/debate-videos/src";
 @source "../../../packages/debate-round/src";
 @source "../../../packages/debate-editor/src";
-@source "../../../packages/debate-flow-ebb/src";
+@source "../../../packages/debate-flow/src";
 
 @custom-variant dark (:is(.dark) &);
 

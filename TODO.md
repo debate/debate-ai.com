@@ -6,6 +6,529 @@
 _No task currently in progress._
 
 ### Completed
+- **Video-Lecture-Training Coach AI — a reviewer/approval workflow before a
+  saved material is available to the team coach (idea #8's Next item).**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where needed
+  in the UI... develop better tool UI") — as with every recent repeat, that
+  half is already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history) and every tool is already reachable from the Tools page and
+  CardMirror's command palette, so this slice picked the next named,
+  unblocked follow-up instead: idea #8's own Next item, "a reviewer/approval
+  workflow before a saved material is available to the team coach — any saved
+  material is immediately included today." `CoachMaterial`
+  (`packages/debate-speech-writer/src/coach/team-coach-materials.ts`) gains an
+  optional `status?: "pending" | "approved" | "rejected"` field plus
+  `reviewedBy?`/`reviewedAt?`/`reviewNote?`, with a material carrying no
+  `status` at all (every record saved before this field existed) treated the
+  same as `"approved"` (`isCoachMaterialApproved`) so nothing already trusted
+  gets retroactively hidden. Every save through the panel's upload/edit form
+  now stamps `status: "pending"`, and restoring an older version
+  (`state/coachMaterialVersions.ts#materialFromVersion`) does too, so any
+  content change — new upload, edit, or restore — goes back through review.
+  `state/coachMaterials.ts#findRelevantMaterialsFromStore` — what "Ask the
+  coach" draws its grounding materials from — now filters through the new
+  `filterApprovedCoachMaterials` first, so a pending/rejected material never
+  grounds an answer, while the main library view stays unfiltered so a coach
+  can see and act on what's awaiting review. New
+  `setCoachMaterialReviewStatus`/`listPendingCoachMaterialsFromStore` in that
+  same file back a new `reviewMaterial` action on
+  `hooks/useCoachMaterialsSync.ts` (mirroring `saveMaterial`'s best-effort
+  account push — no new D1 table or route needed, the existing
+  `saved_coach_materials`/`/api/coach-materials` round-trips the new fields
+  as-is once `state/savedCoachMaterials.ts`'s validator accepts them).
+  `CoachMaterialsPanel.tsx` gets a "Pending review (N)" section with a
+  typed-in "Reviewer name" field (this repo has no roles/auth system to
+  verify a real "team coach" identity — see `debate-search-evidence`'s
+  `reviewer-permissions.ts` for the same honest limitation elsewhere) and
+  per-material Approve/Reject actions, plus a status badge on every material
+  in the main list. See `docs/features/coach-materials.md`'s new "Reviewer/
+  approval workflow" section. Vitest-covered:
+  `isCoachMaterialApproved`/`filterApprovedCoachMaterials`/
+  `filterPendingCoachMaterials`/`reviewCoachMaterial`/`approveCoachMaterial`/
+  `rejectCoachMaterial` in `test/team-coach-materials.test.ts`;
+  `findRelevantMaterialsFromStore` excluding pending/rejected materials,
+  `listPendingCoachMaterialsFromStore`, and `setCoachMaterialReviewStatus` in
+  `test/coachMaterials.test.ts`; `materialFromVersion` always coming back
+  pending in `test/coachMaterialVersions.test.ts`; and the new optional
+  fields in `test/savedCoachMaterials.test.ts` — 4244 passing across the
+  whole suite (up from 4212), and `packages/debate-speech-writer`'s own
+  `bun run typecheck` (plus its `debate-ai-web` consumer's dependency-package
+  typechecks) passes clean. A fresh `bun install`/`bun run build` initially
+  failed while verifying this change — see the "Broken build: incomplete
+  `debate-flow-ebb`→`debate-flow` migration" entry directly below, which this
+  same run also fixed (in a second, separate commit on the same PR) once the
+  root cause was traced back to an unrelated pre-existing issue confirmed
+  present on `origin/master` too.
+
+- **Broken build: incomplete `debate-flow-ebb`→`debate-flow` migration
+  (found and fixed while verifying the entry above).** A fresh `bun
+  install` at the repo root failed outright:
+  `error: Workspace dependency "debate-practice-vs-ai" not found` /
+  `error: debate-practice-vs-ai@workspace:* failed to resolve`. Root cause:
+  commit `fc48501` ("refactor: migrate debate-flow-ebb package to
+  debate-flow...") deleted `packages/debate-practice-vs-ai` outright without
+  removing `apps/debate-ai.com/package.json`'s
+  `"debate-practice-vs-ai": "workspace:*"` dependency or the still-live
+  `import { DebatePracticeVsAi } from "debate-practice-vs-ai"` in
+  `apps/debate-ai.com/app/versus-ai/page.tsx` (the `/versus-ai` route, idea
+  #3 "Online Debate Versus AI"). Confirmed this wasn't specific to this
+  session's branch — `origin/master`'s `apps/debate-ai.com/package.json` had
+  the identical stale dependency line, and `origin/master`'s own CI ("Tests"
+  workflow, latest runs at the time) was red for the same reason. The deleted
+  package turned out to be a one-file re-export (`export {
+  AiVersusRoundPanel as DebatePracticeVsAi } from "debate-practice-rounds"`)
+  — `debate-practice-rounds` (`packages/debate-practice-drills`) was already
+  a workspace dependency of the app and already exports `AiVersusRoundPanel`,
+  so `/versus-ai/page.tsx` now imports it directly with the same aliased
+  name, and the dangling `"debate-practice-vs-ai": "workspace:*"` line is
+  removed. A full `turbo build --filter=debate-ai-web` then uncovered a
+  second, related breakage from the same commit: `globals.css` still
+  `@import`ed CSS from the old `packages/debate-flow-ebb` path (and
+  `@source`d the same old path for Tailwind's class scanning), but the
+  directory was renamed to `packages/debate-flow` — the file lives there now,
+  just at the new path — so both were repointed. Verified clean: a fresh
+  `bun install`, `bunx vitest run` (4244 passing), `bunx turbo typecheck`,
+  and `bunx turbo build --filter=debate-ai-web` (the full production build,
+  including `/versus-ai` and `/coach-materials`) all pass. Landed as a
+  second, separate commit on this same PR rather than folded into the coach-
+  materials commit, since it's an unrelated fix — small, mechanical, and
+  necessary to get this PR's own CI green (`origin/master`'s CI was red from
+  the same cause). One remaining, much lower-stakes loose end from the same
+  incomplete migration, deliberately left alone since it doesn't hard-fail
+  any build: `globals.css` also still `@source`s a `packages/debate-card-search`
+  path (renamed/split into `debate-research-evidence`/`debate-team-collaboration`/
+  `debate-community`/`debate-practice-rounds` per commit `9103b20`) —
+  Tailwind's `@source` just silently skips a nonexistent glob rather than
+  failing the build, so those packages' class names may be missing from the
+  generated stylesheet if they aren't otherwise reachable through an already-
+  listed `@source` path. A future run should audit `globals.css`'s `@source`
+  list against the current `packages/` layout.
+
+- **Strategy Sync Notes — a digest notification instead of one per
+  assignment ("🔄 Strategy Sync Notes" bullet's Next item).** Yet another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice again picked the next named, unblocked follow-up:
+  the "🔄 Strategy Sync Notes" bullet's own Next item, "a digest
+  notification instead of one per assignment." `/notifications`
+  (`PrepNoteNotificationsPanel`) previously rendered every
+  `PrepNoteNotification` as its own permanent row, so a teammate assigned
+  several notes in a day accumulated one row per assignment forever. A new
+  pure `groupNotificationsIntoDigests` in
+  `packages/debate-team-collaboration/src/flow/prep-note-notifications.ts`
+  buckets a recipient's notifications by UTC calendar day into a
+  `NotificationDigestGroup` (day key, that day's notifications newest
+  first, a precomputed unread count), most recent day first, alongside a
+  `buildDigestGroupHeading` formatter (`"3 notifications on 2026-09-04 (2
+  unread)"`, singular-aware). `state/prepNoteNotifications.ts` gained the
+  read-side wrapper `buildNotificationDigestView` (composing the grouping
+  with the existing `getNotificationsForRecipient`) and a
+  `markManyPersistedNotificationsRead(ids)` bulk write for a digest's "Mark
+  all read" action — one localStorage write instead of one per
+  notification. `PrepNoteNotificationsPanel` now renders one digest card
+  per day with a "Mark all read" action (hidden once nothing in it is
+  unread) and an "Expand (N)"/"Collapse" toggle revealing the day's
+  individual notifications underneath, each still keeping its own existing
+  "Mark read" action so a teammate can still clear one assignment at a time
+  within a day; the header unread badge now sums every group's unread count
+  instead of counting a flat list. See `docs/features/prep-notes.md`'s new
+  "Digest grouping" section. Vitest-covered:
+  `groupNotificationsIntoDigests` (no notifications, grouping same-day
+  entries with the most recent day first, scoping to one recipient) and
+  `buildDigestGroupHeading` (plural/singular phrasing) in
+  `packages/debate-team-collaboration/test/prep-note-notifications.test.ts`;
+  `buildNotificationDigestView` and `markManyPersistedNotificationsRead` (a
+  bulk write, an empty id list as a no-op, unknown ids ignored without
+  throwing) in
+  `packages/debate-team-collaboration/test/prepNoteNotifications.test.ts` —
+  4212 passing across the whole suite (up from 4202), `bun run typecheck`
+  and `bun run build` both pass clean.
+
+- **Scout-to-Strategy Workflow — a side-by-side case-option comparison
+  table ("🧭 Scout-to-Strategy Workflow" bullet's Next item).** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history, `saved_strategy_recommendations` among them) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice picked the next named, unblocked follow-up
+  instead: the "🧭 Scout-to-Strategy Workflow" bullet's own Next item, "a
+  side-by-side case-option comparison table." Today's "Case rankings" list
+  only ever showed each case's *total* opponent-tag overlap score, not
+  which specific tags drove it, so two cases tied on total score looked
+  identical even when they shared completely different opponent-run tags.
+  `round/scout-to-strategy.ts`'s `RankedCaseOption` gains an optional
+  `tagOverlaps` field — one `TagOverlap` (`{ tag, opponentFrequency }`) per
+  entry of the case's own `argumentTags`, in order — populated by a new
+  `computeCaseTagOverlaps` and wired into `rankCaseOptions` alongside its
+  existing `overlapScore` total (still computed the same way, now derived
+  by summing the breakdown instead of a separate pass). The field is
+  optional rather than required so older persisted recommendations built
+  before it existed, and every pre-existing hand-constructed
+  `RankedCaseOption` test fixture across `case-choice-ai.test.ts`,
+  `case-choice-client.test.ts`, `savedStrategyRecommendations.test.ts`, and
+  `strategyRecommendations.test.ts`, keep typechecking unchanged. A new
+  pure `buildCaseComparisonTable(caseRankings)` pivots every case's
+  breakdown into one row per tag run by at least one case (most
+  opponent-frequent first, alphabetical tie-break) with a column per case,
+  each cell holding the opponent's frequency for that tag when the case
+  runs it (0 otherwise) — gracefully returning no rows for a
+  `RankedCaseOption` with no `tagOverlaps` at all, so an already-persisted
+  recommendation from before this change renders without throwing.
+  `panels/StrategyPanel.tsx` renders the result as a "Case comparison"
+  table beneath each recommendation's existing "Case rankings" list,
+  scrollable on narrow screens, shown only once a recommendation has two or
+  more ranked case options (nothing to compare with just one). See
+  `docs/features/scout-to-strategy.md`'s new "Side-by-side case comparison
+  table" section, which also replaces that doc's now-stale "No other
+  follow-ups remain open" closing line. Vitest-covered:
+  `computeCaseTagOverlaps` (no-profile zeroed breakdown, per-tag frequency
+  pairing preserving argument-tag order, an empty-tags case), the new
+  `tagOverlaps` field on `rankCaseOptions`'s output (with and without an
+  opponent profile), and `buildCaseComparisonTable` (empty input, an
+  all-empty-tags ranked list, a legacy `RankedCaseOption` missing
+  `tagOverlaps` entirely, the full multi-case pivot with per-cell values
+  and most-frequent-first sort order, and an equal-frequency alphabetical
+  tie-break) — `packages/debate-round/test/scout-to-strategy.test.ts`, 51
+  passing cases in that file (up from 41), 4202 passing across the whole
+  suite. `bun run typecheck` and `bun run build` both pass clean.
+- **AI Practice Opponent — extend the Practice Round Simulator's own
+  separate persona setup to carry a difficulty too ("🤖 AI Practice
+  Opponent" bullet's Next item).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows/docs/debates in SQL and link to
+  users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice picked the next named, unblocked follow-up
+  instead: the "🤖 AI Practice Opponent" bullet's own Next item, "extend the
+  Practice Round Simulator's own separate persona setup (`PracticeRoundSetup`)
+  to carry a difficulty too" — the one gap left over from the difficulty-
+  slider work in the prior Completed entry below, which only wired the
+  `OpponentPersonaPickerPanel`/`AiVersusRoundPanel` pair.
+  `round/practice-round-simulator.ts`'s `PracticeRoundSetupInput` and
+  `PracticeRoundSetup` both gain an `opponentDifficulty` field (an
+  `OpponentDifficulty`, defaulting to `DEFAULT_OPPONENT_DIFFICULTY` so every
+  existing caller — including already-persisted rounds with no saved
+  `opponentDifficulty` at all — resolves to the same "intermediate" baseline
+  unmodified), and `buildPracticeRoundSetup` now passes it through to
+  `buildOpponentPersonaPrompt`'s existing `difficulty` parameter when
+  composing the "AI opponent" setup section, exactly as
+  `opponent-persona-speech-ai.ts`'s `buildPersonaAiVersusSystemPrompt`
+  already does for the Online Debate Versus AI panel.
+  `panels/PracticeRoundSimulatorPanel.tsx` gains a second "Difficulty" radio
+  group next to its existing AI opponent persona radio group (mirroring
+  `OpponentPersonaPickerPanel`'s), saving the chosen level onto the round's
+  `PracticeRoundSetup` alongside the persona and showing it as a second
+  badge per persisted round (only when a persona is set, matching
+  `AiVersusRoundPanel`'s own "Arguing as … Difficulty" convention) and again
+  on the "Generate AI opponent speech" prompt; `handleGenerateAiSpeech` now
+  passes the round's own saved `setup.opponentDifficulty` (falling back to
+  `DEFAULT_OPPONENT_DIFFICULTY` for a pre-existing round with none saved)
+  through to `requestAiVersusSpeechWithPersona`'s difficulty parameter,
+  closing the gap where every practice-round AI speech previously argued at
+  the persona's unmodified baseline strength regardless of the (nonexistent)
+  difficulty choice. See `docs/features/practice-round-simulator.md`'s new
+  paragraph under "Data flow" and `docs/features/practice-opponent.md`'s
+  updated Known gaps. Vitest-covered: new cases in
+  `packages/debate-round/test/practice-round-simulator.test.ts`'s
+  `buildPracticeRoundSetup` suite (the default "intermediate" difficulty
+  with no persona selected, the default layered onto a selected persona's
+  prompt section, and an explicit "elite" difficulty overriding that
+  default). Verification: `bunx vitest run
+  packages/debate-round/test/practice-round-simulator.test.ts
+  packages/debate-round/test/practiceRounds.test.ts
+  packages/debate-round/test/practice-round-judge-decision-wiring.test.ts
+  packages/debate-speech-writer/test/opponent-personas.test.ts` (4/4 files,
+  66 tests pass); `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-speech-writer --filter=debate-ai-web` (9/9 in-scope
+  package tasks pass — `debate-ai-web` itself has no standalone typecheck
+  script, matching prior runs); full `bun run test` (224 files, 4191 tests
+  pass); `bun run build:web` (production build succeeded, `/practice-round`
+  and `/versus-ai` routes intact; the touched-by-build
+  `app-file-list.ts`/`version.ts`/`service-worker.js`/`bun.lock` churn was
+  reverted before committing, unrelated to this change). No lint script is
+  configured anywhere in this repo (root or any package), so `lint` was not
+  run — consistent with every prior entry in this log. **PR:**
+  https://github.com/debate/debate-ai.com/pull/533. **Completed:**
+  2026-09-04.
+- **AI Practice Opponent — a difficulty slider layered on top of persona
+  choice ("🤖 AI Practice Opponent" bullet's Next item).** Another repeat
+  of the standing prompt ("integrate all the tools into the UI... create
+  user settings and link user db SQL... with ability to save flows/docs/
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI") — as with every recent repeat, the "user
+  settings / SQL-linked flows, docs, rounds" half is already fully built
+  (see `apps/debate-ai.com/app/api/settings/route.ts` and the many
+  `saved_*` D1 tables/`/api/*` routes threaded through this file's
+  history) and every tool is already reachable from the Tools page and
+  CardMirror's command palette, so this slice picked the next named,
+  unblocked follow-up instead: the "🤖 AI Practice Opponent" bullet's own
+  Next item, "a difficulty slider layered on top of persona choice" — a
+  second, independent axis from the existing persona choice, controlling
+  how strong the AI opponent argues within whichever persona is selected.
+  `opponent/opponent-personas.ts` gains an `opponentDifficulties` registry
+  (`beginner`/`intermediate`/`advanced`/`elite`, mirroring the existing
+  `opponentPersonas` registry's shape/helper functions —
+  `isOpponentDifficulty`/`getOpponentDifficulty`/`listOpponentDifficulties`,
+  `DEFAULT_OPPONENT_DIFFICULTY` = `"intermediate"`), each level's
+  `instructions` composed into `buildOpponentPersonaPrompt`'s existing
+  output as a new "Difficulty: …" section after the persona's own, via a
+  new optional `difficulty` parameter defaulting to
+  `DEFAULT_OPPONENT_DIFFICULTY` so every prior caller keeps arguing at the
+  persona's own baseline strength unmodified. `state/
+  opponentPersonaSelections.ts`'s `OpponentPersonaSelection` gains an
+  optional `difficulty` field (left unset for selections saved before this
+  slice, resolved to the default wherever it's read rather than backfilled
+  on save). `OpponentPersonaPickerPanel` gains a second "Difficulty" radio
+  group next to persona choice, saving the chosen level alongside the
+  persona and showing it as a second badge per session in the
+  saved-selection list. `debate-round`'s `opponent-persona-speech-wiring.ts`
+  gains `getOpponentDifficultyForRound` (mirroring the existing
+  `getOpponentPersonaForRound`, defaulting to `DEFAULT_OPPONENT_DIFFICULTY`)
+  and `opponent-persona-speech-ai.ts`'s `buildPersonaAiVersusSystemPrompt`/
+  `opponent-persona-speech-client.ts`'s `requestAiVersusSpeechWithPersona`
+  both gain an optional `difficulty` parameter (same default) that's passed
+  straight through to `buildOpponentPersonaPrompt`; `AiVersusRoundPanel`'s
+  two AI-speech-generation call sites now pass
+  `getOpponentDifficultyForRound(activeRoundId)` through, and its "Arguing
+  as …" line on the AI's turn now shows a second "Difficulty" badge next
+  to the persona badge. The Practice Round Simulator's own separate,
+  `PracticeRoundSetup`-embedded persona selection (a builtin id only, no
+  custom persona and now no difficulty either) was deliberately left
+  untouched — it doesn't read through `opponentPersonaSelections.ts` at
+  all, so wiring a difficulty into it is a distinct follow-up (now named
+  in the "🤖 AI Practice Opponent" bullet's Next item and
+  `docs/features/practice-opponent.md`'s Known gaps) rather than part of
+  this slice's scope. See `docs/features/practice-opponent.md`'s new
+  "Difficulty levels" section. Vitest-covered: new cases in
+  `packages/debate-speech-writer/test/opponent-personas.test.ts` (the
+  `opponentDifficulties` registry, `isOpponentDifficulty`/
+  `getOpponentDifficulty`, and `buildOpponentPersonaPrompt`'s
+  default-vs-explicit difficulty layering) and
+  `opponentPersonaSelections.test.ts` (persisting and omitting
+  `difficulty`); `packages/debate-round/test/
+  opponent-persona-speech-ai.test.ts` (default/explicit difficulty in the
+  composed system prompt), `opponent-persona-speech-wiring.test.ts`
+  (`getOpponentDifficultyForRound`'s default/saved/scoped/pre-difficulty-
+  selection cases), and `opponent-persona-speech-client.test.ts` (the
+  difficulty flowing into the posted system prompt, plus updating the
+  existing endpoint-override test for the new parameter order). 22 new
+  test cases across 5 files. Verification: `bunx vitest run
+  packages/debate-speech-writer/test/opponent-personas.test.ts
+  packages/debate-speech-writer/test/opponentPersonaSelections.test.ts
+  packages/debate-round/test/opponent-persona-speech-ai.test.ts
+  packages/debate-round/test/opponent-persona-speech-wiring.test.ts
+  packages/debate-round/test/opponent-persona-speech-client.test.ts` (5/5
+  files, 64 tests pass); `bunx turbo run typecheck
+  --filter=debate-speech-writer --filter=debate-round
+  --filter=debate-ai-web` (9/9 in-scope package tasks pass — `debate-ai-web`
+  itself has no standalone typecheck script, matching prior runs); full
+  `bun run test` (224 files, 4190 tests pass); `bun run build:web`
+  (production build succeeded, `/practice-opponent` and `/versus-ai`
+  routes intact; the touched-by-build `app-file-list.ts`/`version.ts`/
+  `service-worker.js`/`bun.lock` churn was reverted before committing,
+  unrelated to this change). No lint script is configured anywhere in this
+  repo (root or any package), so `lint` was not run — consistent with
+  every prior entry in this log. **PR:**
+  https://github.com/debate/debate-ai.com/pull/531. **Completed:**
+  2026-09-04.
+- **Strategy Sync Notes — threaded replies on a note instead of flat
+  status ("🔄 Strategy Sync Notes" bullet's Next item).** Another repeat of
+  the standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows/docs/debates
+  in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, the "user
+  settings / SQL-linked flows, docs, rounds" half is already fully built
+  (see `apps/debate-ai.com/app/api/settings/route.ts` and the many
+  `saved_*` D1 tables/`/api/*` routes threaded through this file's history)
+  and every tool is already reachable from the Tools page and CardMirror's
+  command palette, so this slice picked the next named, unblocked
+  follow-up instead: the "🔄 Strategy Sync Notes" bullet's own Next item,
+  "threaded replies on a note instead of flat status." New
+  `state/prepNoteReplies.ts` (`packages/debate-round`) is a local-first
+  comment-thread store — `PrepNoteReply { id, noteId, authorId, text,
+  postedAt }` — mirroring `debate-card-search`'s
+  `state/dailyBestCardComments.ts` convention exactly (trim + `"Anonymous"`
+  fallback for `authorId`, trim + cap at `MAX_PREP_NOTE_REPLY_TEXT_LENGTH`
+  for `text`, oldest-first listing via `listRepliesForNote`/
+  `listAllPrepNoteReplies`, `countRepliesForNote`, `deletePrepNoteReply`,
+  and a `deleteRepliesForNote` cascade helper this idea's own
+  `PrepNote`-per-note keying needs but `dailyBestCardComments.ts` doesn't).
+  Unlike that comment-thread precedent, this store has no account-sync
+  counterpart yet, since `state/prepNotes.ts` itself still isn't
+  account-synced (a separate, larger follow-up of its own — see
+  `docs/features/prep-notes.md`'s Known gaps). `state/prepNotes.ts`'s
+  `deletePrepNote` now also calls `deleteRepliesForNote(id)`, so a deleted
+  note doesn't leave orphaned replies no UI can reach. `panels/
+  PrepNotesPanel.tsx` gains a `PrepNoteReplyThread` component (mirroring
+  `debate-card-search`'s `DailyBestCardPanel`'s `CommentThread`) and a
+  "Replies (N)" toggle per note, collapsed by default; the thread reads
+  `state/prepNoteReplies.ts` fresh at render time rather than caching a
+  copy in component state, so any state update (posting, deleting, a
+  cross-tab `storage` event) shows the current thread without extra
+  plumbing. `flow/live-update.ts`'s `PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS`
+  now includes `"prepNoteReplies"` alongside `"prepNotes"`, so a reply
+  posted or deleted in another browser tab refreshes this panel the same
+  way a status/priority/assignment change already did — the existing
+  `isPrepNotesPanelLiveUpdateStorageEvent` test already iterates that
+  array, so no test changes were needed there. See
+  `docs/features/prep-notes.md`'s new "Threaded replies" section.
+  Vitest-covered: new `packages/debate-round/test/prepNoteReplies.test.ts`
+  (24 tests: posting/trimming/the `"Anonymous"` fallback/the text-length
+  cap/distinct ids, oldest-first listing both across and within notes,
+  counting, single-reply deletion, and the `deleteRepliesForNote` cascade
+  helper); `packages/debate-round/test/prepNotes.test.ts`'s `deletePrepNote`
+  suite gains a case asserting a deleted note's replies are removed while
+  another note's replies are kept. Verification: `bunx vitest run
+  packages/debate-round/test/prepNoteReplies.test.ts
+  packages/debate-round/test/prepNotes.test.ts
+  packages/debate-round/test/live-update.test.ts` (3/3 files, 67 tests
+  pass); `bunx turbo run typecheck --filter=debate-round` (9/9 in-scope
+  package tasks pass); full `bun run test` (224 files, 4168 tests pass);
+  `bun run build:web` (production build succeeded, `/prep-notes` route
+  intact; the touched-by-build `app-file-list.ts`/`version.ts`/
+  `service-worker.js`/`bun.lock` churn was reverted before committing,
+  unrelated to this change). **PR:**
+  https://github.com/debate/debate-ai.com/pull/530. **Completed:**
+  2026-09-04.
+- **AI Drill Generator — account-sync drill sets across devices ("📚 AI
+  Drill Generator" bullet's account-sync Next item).** Another repeat of
+  the standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows/docs/debates
+  in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, the "user
+  settings / SQL-linked flows, docs, rounds" half is already fully built
+  (see `apps/debate-ai.com/app/api/settings/route.ts` and the many
+  `saved_*` D1 tables/`/api/*` routes threaded through this file's history)
+  and every tool is already reachable from the Tools page and CardMirror's
+  command palette, so this slice picked the next named, unblocked
+  follow-up instead: the "📚 AI Drill Generator" bullet's own
+  Known-gaps-suggested next step, "sharing the 'Practice tier' status
+  across devices for a signed-in user" — mirroring the exact
+  local-first/merge-by-key/`updatedAt`-conflict-resolution pattern
+  `state/wordCountRounds.ts`/`hooks/useWordCountRounds.ts` already
+  established. `state/drillSets.ts`'s `DrillSetRecord` gains an optional
+  `updatedAt`, stamped by every mutating function
+  (`saveDrillSet`/`saveDrillAiScript`/`toggleDrillCompletion`/
+  `scheduleDrillReview`); new `adoptDrillSet` (preserves a synced record's
+  own `updatedAt` rather than re-stamping it), `resolveDrillSetConflict`,
+  and `planDrillSetMerge` mirror `adoptWordCountRound`/
+  `resolveWordCountRoundConflict`/`planWordCountRoundMerge` exactly, keyed
+  by `roundId` (this record's existing natural key — `saveDrillSet` already
+  upserted by `roundId` alone). `buildAndSaveDrillSet` now returns the
+  persisted (stamped) record rather than the pre-save draft, so a caller
+  can push exactly what's stored. New `state/savedDrillSets.ts`
+  (`isValidDrillSetRecord`/`MAX_SAVED_DRILL_SET_BYTES`, mirroring
+  `state/savedWordCountRounds.ts`), `round/drill-sets-client.ts` (a
+  `/api/drill-sets` fetch client: list/save/delete, `401`→`null`), and
+  `hooks/useDrillSets.ts` (local-first state, a one-time mount merge, every
+  interactive mutation applying locally first then best-effort pushing to
+  the account) — all three exported from the package's `index.ts`.
+  `DrillSetsPanel` now reads/writes exclusively through `useDrillSets`
+  instead of `state/drillSets.ts`'s mutating functions directly, and shows
+  a one-line synced-status message mirroring `WordCountRoundsPanel`'s own.
+  New D1 `saved_drill_sets` table (one row per `(user, roundId)` pair, same
+  shape as `saved_word_count_rounds`) plus account-only (401 signed-out)
+  `/api/drill-sets` (`GET`) and `/api/drill-sets/[roundId]` (`PUT`/`DELETE`)
+  routes, migration `apps/debate-ai.com/drizzle/0028_aspiring_human_fly.sql`
+  (generated via `drizzle-kit generate`, not hand-written). See
+  `docs/features/drill-sets.md`'s new "Account sync" section (and its
+  updated "Known gaps"). Vitest-covered: `packages/debate-round/test/
+  drillSets.test.ts` gains `updatedAt`-stamping cases for all four mutating
+  functions plus full `adoptDrillSet`/`resolveDrillSetConflict`/
+  `planDrillSetMerge` suites (mirroring `wordCountRounds.test.ts`'s
+  equivalents), and its existing exact-shape `toEqual` assertions against
+  stored records were switched to `toMatchObject` where `updatedAt` is now
+  present but not asserted on; new `test/savedDrillSets.test.ts` (24 tests:
+  well-formed acceptance, each optional field, and each malformed shape);
+  new `test/drill-sets-client.test.ts` (8 tests: list/save/delete, the
+  `401`-to-`null` case, and server-error propagation) — 50 new/changed
+  tests overall. Verification: `bunx vitest run
+  packages/debate-round/test/drillSets.test.ts
+  packages/debate-round/test/savedDrillSets.test.ts
+  packages/debate-round/test/drill-sets-client.test.ts
+  packages/debate-round/test/drillProgressUnlocks.test.ts` (4/4 files, 113
+  tests pass); `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-ai-web` (9/9 in-scope package tasks pass — `debate-ai-web`
+  itself has no standalone typecheck script, matching prior runs); full
+  `bun run test` (233 files, 4249 tests passed — up from 231/4199 before
+  this slice); `bun run build:web` (production build succeeded, `/drills`
+  route and the new `/api/drill-sets`/`/api/drill-sets/:roundId` routes
+  intact; the touched-by-build `app-file-list.ts`/`version.ts`/
+  `service-worker.js` churn was reverted before committing, unrelated to
+  this change). **PR:** https://github.com/debate/debate-ai.com/pull/527.
+  **Completed:** 2026-09-04.
+- **Opponent Team Profiles — a side-by-side us-vs-opponent comparison view
+  (Research Crowdsourcing Organizer Features bullet, "🕵️ Opponent Team
+  Profiles" Next item).** Another repeat of the standing prompt ("integrate
+  all the tools into the UI... create user settings and link user db SQL...
+  with ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history) and every tool is already reachable from the Tools page
+  and CardMirror's command palette, so this slice picked the next named,
+  unblocked follow-up instead: the "🕵️ Opponent Team Profiles" bullet's own
+  sole remaining item, "a side-by-side us-vs-opponent comparison view" (not
+  blocked by the Tabroom login wall documented below, since it works off
+  already-persisted hand-entered/CSV-imported records, not live scraping).
+  `rankings/opponent-team-profile.ts` gains `buildOpponentTeamComparison(a,
+  b)`, which splits two teams' `topArgumentTags` into shared ground (ranked
+  by combined frequency across both) and each team's own distinct tags —
+  the scouting-useful signal of what a team runs that the other doesn't —
+  plus `buildOpponentTeamComparisonText`/`opponentTeamComparisonFilename`
+  for a plain-text download, mirroring `debate-round`'s existing
+  `state/coachingSessions.ts#buildCoachingSessionComparison` trio exactly.
+  `OpponentTeamProfilesPanel.tsx` gets a new "Compare vs. opponent" section
+  (shown once at least one opponent profile exists): an opponent picker plus
+  a "Compare" button builds "us" on the fly via
+  `buildOpponentTeamProfile("self", listOwnRoundHistory())` — reusing
+  `debate-round`'s already-existing `state/ownRoundHistory.ts` (the same
+  store the Pre-Round Briefings panel's "Log a round"/"Prior meetings"
+  head-to-head feature already populates) rather than introducing a new "our
+  team" data source — against the chosen opponent's already-persisted
+  profile, renders a two-column table of rounds recorded/record/side records
+  plus the shared/us-only/opponent-only argument breakdown, and a "Download
+  comparison" button once a comparison is built, mirroring
+  `CoachingSessionsPanel.tsx`'s "Compare two sessions" section almost
+  exactly. See `docs/features/opponent-team-profiles.md`'s new "Comparing us
+  vs. an opponent" section. Vitest-covered: new `describe` blocks in
+  `packages/debate-data-sync/test/opponent-team-profile.test.ts` for
+  `buildOpponentTeamComparison` (shared/only-tag splitting with frequency
+  ranking, an alphabetical tie-break, and a no-rounds-either-side case),
+  `buildOpponentTeamComparisonText` (record/side-record/tag-breakdown
+  rendering, and the "no recorded rounds" phrasing for an empty history),
+  and `opponentTeamComparisonFilename` (sanitized `a-vs-b.txt` naming) — 7
+  new tests. Verification: `bunx turbo run typecheck --filter=debate-data-sync
+  --filter=debate-round --filter=debate-ai-web` (9/9 in-scope package tasks
+  pass); full `bun run test` (231 files, 4199 tests passed — up from
+  4188/231 before this slice); `bun run build:web` (production build
+  succeeded, `/opponents` route intact; the touched-by-build
+  `app-file-list.ts`/`version.ts`/`service-worker.js` churn was reverted
+  before committing, unrelated to this change). Updated the "🕵️ Opponent
+  Team Profiles" bullet below to reflect that no further follow-up is
+  currently tracked for this idea beyond the still-open bulk-CSV-ballot-
+  history item, which stays behind the Tabroom blocker. **PR:**
+  https://github.com/debate/debate-ai.com/pull/524. **Completed:**
+  2026-09-04.
 - **Research Progress Tracking — account-sync the personal goal across
   devices (Research Crowdsourcing Organizer Features bullet, "📈 Research
   Progress Tracking" Next item).** Yet another repeat of the standing
@@ -15180,10 +15703,16 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    the new `hooks/useCoachMaterialsSync.ts`, so both the material library and
    its version history now follow a signed-in user across devices — see the
    Completed entry above and `docs/features/coach-materials.md`'s
-   "Account-synced materials and version history" section. Next:
+   "Account-synced materials and version history" section. The
+   reviewer/approval-workflow follow-up is also now done: materials carry a
+   `pending`/`approved`/`rejected` `status` (legacy records with no status at
+   all still count as approved), every save or version restore resets it to
+   `pending`, "Ask the coach" only draws on approved materials, and
+   `CoachMaterialsPanel` has a "Pending review" section with Approve/Reject
+   actions — see the Completed entry above and
+   `docs/features/coach-materials.md`'s "Reviewer/approval workflow" section.
+   Next:
    - Server-side transcription for uploaded audio/video recordings (currently only `.docx`/`.txt`/`.md` extract text).
-   - A reviewer/approval workflow before a saved material is available to the
-     team coach — any saved material is included immediately today.
 
 9. **Expandable Heading Structure** (`/reason-editor`, CardMirror's native
    `NavigationPanel` + `HeadingBreadcrumbBar` — not the dead `reason-editor`
@@ -15236,18 +15765,18 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.
 * 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.
-* 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. The printable/exportable-scouting-report follow-up is also now done: a "Download report" button exports the whole roster as a plain-text file, one summary block per team (`rankings/opponent-team-profile.ts#buildOpponentScoutingReportText`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Downloading a scouting report" section. Next: a side-by-side us-vs-opponent comparison view.
+* 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. The printable/exportable-scouting-report follow-up is also now done: a "Download report" button exports the whole roster as a plain-text file, one summary block per team (`rankings/opponent-team-profile.ts#buildOpponentScoutingReportText`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Downloading a scouting report" section. The side-by-side-us-vs-opponent-comparison-view follow-up is also now done: a "Compare vs. opponent" section builds "us" on the fly from `debate-round`'s own round-history log against a chosen opponent's profile, via `rankings/opponent-team-profile.ts#buildOpponentTeamComparison` (`OpponentTeamProfilesPanel.tsx`'s "Compare vs. opponent" section, with a "Download comparison" action) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Comparing us vs. an opponent" section. No further follow-up is currently tracked for this idea beyond the still-blocked bulk-CSV-ballot-history item (see "Confirmed blocker" below); a future run should pick a fresh next-step elsewhere if one becomes worth doing.
 * ⚖️ **Judge Profiles** (`/judges`) — the auto-tagged-paradigm confidence-indicator follow-up is done: `mostCommonParadigmConfidence` (the tagged paradigm's share of a judge's paradigm-tagged rounds) shows as a "N% confidence" badge on the roster, and folds into the `buildJudgeTendencySummary`/`buildJudgeAdaptationNotes` lines it's already quoted in — see the Completed entry above and `docs/features/judge-profiles.md`'s "What it shows" section. The multi-judge-comparison-view-for-panel-rounds follow-up is also now done — it turned out not to actually need the blocked Tabroom data source: a "Compare judges" section checks two or more already-persisted (hand-logged or, once available, bulk-imported) profiles and reads them as a panel via a new `judge/judge-panel-comparison.ts#buildJudgePanelComparison` — see the Completed entry above and `docs/features/judge-profiles.md`'s "Comparing judges on a panel" section. One follow-up remains, and it does stay behind the same Tabroom blocker as Opponent Team Profiles (see below): a bulk CSV import for ballot history.
-* 🤖 **AI Practice Opponent** (`/practice-opponent`) — share a custom-authored persona across a team instead of per-user only; a difficulty slider layered on top of persona choice; post-round feedback tips specific to the persona faced.
+* 🤖 **AI Practice Opponent** (`/practice-opponent`) — the difficulty-slider follow-up is done: a second "Difficulty" radio group (Beginner/Intermediate/Advanced/Elite, `opponent/opponent-personas.ts`'s `opponentDifficulties`) sits alongside persona choice, saved on the same `OpponentPersonaSelection` and shown as a second badge per session; `buildOpponentPersonaPrompt` layers the chosen level's instructions onto the persona's own, and `getOpponentDifficultyForRound`/`requestAiVersusSpeechWithPersona`'s new `difficulty` parameter (both defaulting to `DEFAULT_OPPONENT_DIFFICULTY`/"intermediate" for backward compatibility) carry it through to the AI-versus speech-generation call, with `AiVersusRoundPanel` showing the active difficulty badge next to the persona badge on the AI's turn — see the Completed entry above and `docs/features/practice-opponent.md`'s "Difficulty levels" section. The Practice Round Simulator's own separate persona setup now also carries a difficulty: `PracticeRoundSetup` gained an `opponentDifficulty` field (`round/practice-round-simulator.ts`), and `PracticeRoundSimulatorPanel` gained its own "Difficulty" radio group next to AI opponent persona, wired through to `requestAiVersusSpeechWithPersona` the same way `AiVersusRoundPanel` already does — see the Completed entry above and `docs/features/practice-round-simulator.md`'s "Opponent difficulty" mention. Next: share a custom-authored persona across a team instead of per-user only; post-round feedback tips specific to the persona faced.
 * 🎙️ **AI Coach Mode** (`/coaching`) — the exportable-coaching-notes-document follow-up is done: each session card has a "Download" action that saves its template prompts plus its AI feedback (if generated) as a plain-text file, headed with the round id and side (`state/coachingSessions.ts#buildCoachingNotesText`/`coachingNotesFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Download" mention. The coaching-session-history-timeline-per-round follow-up is also now done: a "History" toggle on each session card lists every prior version of that round+side's session, newest first, each restorable (`state/coachingSessionHistory.ts#appendCoachingSessionVersion`/`listVersionsForCoachingSession`, wired into `state/coachingSessions.ts#saveCoachingSession`, which now snapshots the record it overwrites before replacing it) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "History" section. The side-by-side-comparison-across-two-rounds follow-up is also now done: a "Compare two sessions" section lets a user pick any two persisted sessions and renders their prompts kind-by-kind in a two-column grid, plus a "Download comparison" action (`state/coachingSessions.ts#buildCoachingSessionComparison`/`buildCoachingSessionComparisonText`/`coachingSessionComparisonFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Compare two sessions" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step elsewhere if one becomes worth doing.
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.
 * 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. The optional brainstorm-session-timer follow-up is also now done: a "Session timer" widget (duration presets, Start/Pause/Reset, a live `M:SS` countdown) backed by the new `lib/brainstorm-session-timer.ts` pure state machine and `state/brainstormSessionTimer.ts` persistence wrapper, synced live across browser tabs via the panel's existing `storage`-event listener — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Session timer" section. Next: polish the idea-ranking UI (upvote affordance/animation).
 * 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
-* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. Next: threaded replies on a note instead of flat status; a digest notification instead of one per assignment.
+* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. The threaded-replies follow-up is also now done: each note has a "Replies (N)" toggle opening a local-first comment thread (`state/prepNoteReplies.ts`, mirroring `debate-card-search`'s `state/dailyBestCardComments.ts`), with deleting a note cascading to delete its replies too — see the Completed entry above and `docs/features/prep-notes.md`'s "Threaded replies" section. The digest-notification follow-up is also now done: `/notifications` now groups a recipient's notifications into one digest card per UTC calendar day instead of a flat per-assignment list, each with a "Mark all read" bulk action and an "Expand"/"Collapse" toggle down to the individual assignments (`flow/prep-note-notifications.ts#groupNotificationsIntoDigests`/`buildDigestGroupHeading`, `state/prepNoteNotifications.ts#buildNotificationDigestView`/`markManyPersistedNotificationsRead`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Digest grouping" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
-* 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. sharing this status across devices for a signed-in user, or feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.
-* 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. Next: a side-by-side case-option comparison table.
+* 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. The account-sync follow-up is also now done: every drill set — AI scripts, completion state, and review reminders included — now follows a signed-in user across devices, via a new `saved_drill_sets` D1 table plus `/api/drill-sets` routes merged in by the new `hooks/useDrillSets.ts` (`DrillSetsPanel` now reads/writes exclusively through that hook) — see the Completed entry above and `docs/features/drill-sets.md`'s "Account sync" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.
+* 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. The side-by-side-case-option-comparison-table follow-up is also now done: once a recommendation has two or more ranked case options, a "Case comparison" table renders below it — one row per opponent-run argument tag (most frequent first), one column per case, cells showing the opponent's recorded frequency for that tag when the case runs it (`round/scout-to-strategy.ts#buildCaseComparisonTable`, pivoting a new `tagOverlaps` breakdown field on `RankedCaseOption`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Side-by-side case comparison table" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 
 ## Confirmed blocker: Tabroom results/pairings/ballot data
 

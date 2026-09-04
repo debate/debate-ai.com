@@ -39,6 +39,7 @@ export async function GET(req: NextRequest) {
   const cursorParam = searchParams.get("cursor");
   const styleParam = searchParams.get("style");
   const channelParam = searchParams.get("channel");
+  const queryParam = searchParams.get("q")?.trim();
 
   const conditions = [];
 
@@ -49,6 +50,11 @@ export async function GET(req: NextRequest) {
 
   if (channelParam) {
     conditions.push(eq(youtubeRoundVideos.channel, channelParam));
+  }
+
+  if (queryParam) {
+    const pattern = `%${queryParam.replace(/[\\%_]/g, "\\$&")}%`;
+    conditions.push(or(like(youtubeRoundVideos.title, pattern), like(youtubeRoundVideos.channel, pattern)));
   }
 
   if (cursorParam) {

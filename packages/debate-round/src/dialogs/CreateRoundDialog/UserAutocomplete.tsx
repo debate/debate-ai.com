@@ -7,7 +7,7 @@
  * New Round — registered-user autocomplete + invite notifications"
  * Completed entry).
  *
- * A purpose-built dropdown rather than a `debate-ui/src/primitives/
+ * A purpose-built dropdown rather than a `../../ui/primitives/
  * autocomplete` reuse: that primitive's suggestions and stored value are
  * the same string (fine for schools/tournaments, which have nothing else to
  * show), but a useful user suggestion needs to *display* "Name — email"
@@ -21,7 +21,7 @@
  */
 
 import { useEffect, useRef, useState } from "react"
-import { Input } from "debate-ui/src/primitives/input"
+import { Input } from "../../ui/primitives/input"
 import { searchUsers, type UserSearchResult } from "../../cache/client-cache"
 
 interface UserAutocompleteProps {

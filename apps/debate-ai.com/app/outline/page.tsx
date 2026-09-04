@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { ArgumentTreePanel, RoundToolsCrossLinks } from "debate-round"
+import { ArgumentTreePanel, RoundToolsCrossLinks } from "debate-practice-rounds"
 
 export const metadata: Metadata = {
   title: "Argument Tree Outline",

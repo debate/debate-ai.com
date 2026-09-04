@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Card, CardHeader, CardTitle, CardDescription } from "debate-ui/src/primitives/card"
+import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { FavoriteToolButton } from "@/components/tools/FavoriteToolButton"
 import { FavoritesController } from "@/components/tools/FavoritesController"
 import { MySavedItems } from "./MySavedItems"

@@ -5,8 +5,8 @@
 "use client"
 
 
-import { Label } from "debate-ui/src/primitives/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
+import { Label } from "../../ui/primitives/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/primitives/select"
 
 /** Props for {@link WinnerSection}. */
 interface WinnerSectionProps {

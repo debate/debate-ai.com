@@ -22,14 +22,13 @@ import { useEffect, useMemo, useState } from "react"
 import {
   ArgumentLibraryPanel,
   CardScoringPanel,
-  ContributorAwardsPanel,
   EvidenceLibraryPanel,
-  QuestStreaksPanel,
   RevisionIncentivesPanel,
   TopicCoverageDashboardPanel,
-  TopicSprintPanel,
   deriveContributorIdFromSessionIdentity,
-} from "debate-card-search"
+} from "debate-research-evidence"
+import { ContributorAwardsPanel, QuestStreaksPanel } from "debate-community"
+import { TopicSprintPanel } from "debate-team-collaboration"
 import { useSession } from "@/lib/hooks/useSession"
 import { TaskInboxWithIdentity } from "./TaskInboxWithIdentity"
 import { ContributionLeaderboardWithIdentity } from "./ContributionLeaderboardWithIdentity"
@@ -43,12 +42,12 @@ import { BrainstormBoardWithIdentity } from "./BrainstormBoardWithIdentity"
 import { GroupChallengesWithIdentity } from "./GroupChallengesWithIdentity"
 import { PrepRoomWithIdentity } from "./PrepRoomWithIdentity"
 import { DailyBestCardWithIdentity } from "./DailyBestCardWithIdentity"
-import type { TrackedArgument } from "debate-card-search/src/lib/topic-coverage"
-import type { EvidenceLibraryEntry } from "debate-card-search/src/lib/shared-evidence-library"
-import { listEvidenceLibraryEntries } from "debate-card-search/src/state/evidenceLibraryEntries"
-import { useStoreSnapshot } from "debate-ui/src/panels/use-store-snapshot"
-import { Input } from "debate-ui/src/primitives/input"
-import { LabeledField } from "debate-ui/src/panels/panel-shell"
+import type { TrackedArgument } from "debate-research-evidence/src/lib/topic-coverage"
+import type { EvidenceLibraryEntry } from "debate-research-evidence/src/lib/shared-evidence-library"
+import { listEvidenceLibraryEntries } from "debate-research-evidence/src/state/evidenceLibraryEntries"
+import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
+import { Input } from "../../lib/ui/primitives/input"
+import { LabeledField } from "../../lib/ui/panels/panel-shell"
 
 /** localStorage key holding whoever is using this browser. */
 const CONTRIBUTOR_KEY = "researchHubContributorId"

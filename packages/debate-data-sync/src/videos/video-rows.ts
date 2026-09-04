@@ -120,6 +120,29 @@ function str(value: unknown): string | null {
 }
 
 /**
+ * Strips a leading tournament year (e.g. `"2019 Loyola"` -> `"Loyola"`). The
+ * source JSON prefixes most round tournament names with the calendar year of
+ * the event; that year is redundant now that {@link seasonYearForDate} backs
+ * a dedicated season column, so it is dropped here rather than shown twice.
+ */
+export function stripTournamentYear(value: string | null): string | null {
+  if (!value) return value;
+  const stripped = value.replace(/^\s*(19|20)\d{2}\s+/, "").trim();
+  return stripped.length > 0 ? stripped : null;
+}
+
+/**
+ * Formats a {@link VideoRow.seasonYear} as the `"24-25"` label the UI shows,
+ * or `"Legacy"` for {@link LEGACY_SEASON}.
+ */
+export function formatSeasonLabel(seasonYear: number): string {
+  if (!seasonYear) return "Legacy";
+  const end = seasonYear % 100;
+  const start = (seasonYear - 1) % 100;
+  return `${String(start).padStart(2, "0")}-${String(end).padStart(2, "0")}`;
+}
+
+/**
  * Converts one JSON tuple into a {@link VideoRow}.
  *
  * @param tuple - Positional record from a `data/videos/*.json` asset.
@@ -155,7 +178,7 @@ export function tupleToVideoRow(
     style,
     category,
     categoryKey: category ? normalizeCategoryKey(category) : null,
-    tournament: str(tuple[7]),
+    tournament: stripTournamentYear(str(tuple[7])),
     roundLevel: str(tuple[8]),
     affTeam: str(tuple[9]),
     negTeam: str(tuple[10]),
@@ -175,7 +198,9 @@ export function tupleToVideoRow(
  *
  * Trailing empty slots are dropped so paged responses stay small; the UI reads
  * missing indices as `undefined`, which is how short tuples already behave in
- * the JSON assets.
+ * the JSON assets. `seasonYear` (tuple index 17) is always kept, so it stops
+ * the trim at index 18 for every row — a single extra number is a cheap
+ * trade-off for a sortable, displayable season on every video.
  *
  * @param row - Flat row, typically a `videos` table record.
  * @returns The positional tuple, trimmed to its last meaningful slot.
@@ -189,7 +214,9 @@ export function videoRowToTuple(row: VideoRow): VideoTuple {
     row.viewCount,
     row.description,
     row.style ?? row.category ?? null,
-    row.tournament,
+    // Defensively re-stripped here (not just in `tupleToVideoRow`) so rows
+    // seeded before `stripTournamentYear` existed still render clean.
+    stripTournamentYear(row.tournament),
     row.roundLevel,
     row.affTeam,
     row.negTeam,
@@ -199,6 +226,7 @@ export function videoRowToTuple(row: VideoRow): VideoTuple {
     row.arg2nr,
     row.isTopPick || null,
     row.speechDocsUrl,
+    row.seasonYear,
   ];
 
   // Keep the first seven slots (the fields every consumer reads) and drop

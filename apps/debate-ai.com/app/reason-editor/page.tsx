@@ -11,23 +11,26 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft } from "lucide-react"
+import { BookOpen, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft } from "lucide-react"
 import { EditorWithToolbar } from "debate-editor"
-import { cn } from "debate-ui/src/lib/utils"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
+import { cn } from "../../lib/ui/lib/utils"
+import { Button } from "../../lib/ui/primitives/button"
+import { Input } from "../../lib/ui/primitives/input"
 import { FileTree } from "./FileTree"
 import { OpenTabsPanel } from "./OpenTabsPanel"
+import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"
 import type { ReasonDocument } from "./types"
 
 const AUTOSAVE_DELAY_MS = 800
-type SidebarPanel = "files" | "openTabs"
+type SidebarPanel = "files" | "topicStarters" | "openTabs"
 
 export default function ReasonEditorPage() {
   const [documents, setDocuments] = useState<ReasonDocument[]>([])
   const [openTabs, setOpenTabs] = useState<number[]>([])
   const [activeId, setActiveId] = useState<number | null>(null)
   const [sidebarPanel, setSidebarPanel] = useState<SidebarPanel>("files")
+  const [topicItems, setTopicItems] = useState<TopicStarterItem[]>([])
+  const [topicDocument, setTopicDocument] = useState<TopicStarterItem | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -59,7 +62,13 @@ export default function ReasonEditorPage() {
     loadDocuments(true)
   }, [loadDocuments])
 
+  useEffect(() => {
+    fetch("/api/topic-starters").then((response) => response.ok ? response.json() : { items: [] })
+      .then((data) => setTopicItems(data.items ?? [])).catch(() => setTopicItems([]))
+  }, [])
+
   const openDocument = useCallback((id: number) => {
+    setTopicDocument(null)
     setOpenTabs((prev) => (prev.includes(id) ? prev : [...prev, id]))
     setActiveId(id)
   }, [])
@@ -190,6 +199,17 @@ export default function ReasonEditorPage() {
           </button>
           <button
             type="button"
+            onClick={() => setSidebarPanel("topicStarters")}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition-colors",
+              sidebarPanel === "topicStarters" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <BookOpen className="h-3.5 w-3.5" />
+            Topic Starters
+          </button>
+          <button
+            type="button"
             onClick={() => setSidebarPanel("openTabs")}
             className={cn(
               "flex-1 flex items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition-colors",
@@ -215,6 +235,14 @@ export default function ReasonEditorPage() {
             onRename={updateTitle}
             onDelete={deleteDocument}
             onMove={moveDocument}
+          />
+        ) : sidebarPanel === "topicStarters" ? (
+          <TopicStarterTree
+            items={topicItems}
+            onSelect={(item) => {
+              setTopicDocument(item)
+              setActiveId(null)
+            }}
           />
         ) : (
           <OpenTabsPanel
@@ -260,26 +288,28 @@ export default function ReasonEditorPage() {
           </div>
         )}
 
-        {selected ? (
+        {selected || topicDocument ? (
           <>
             <div className="flex items-center gap-2 px-4 py-2 border-b">
               <Input
-                value={selected.title}
-                onChange={(e) => updateTitle(selected.id, e.target.value)}
+                value={topicDocument?.title ?? selected?.title ?? ""}
+                onChange={(e) => selected && updateTitle(selected.id, e.target.value)}
+                readOnly={Boolean(topicDocument)}
                 className="max-w-sm h-8 text-sm font-medium"
                 placeholder="Untitled"
               />
-              {saving && <span className="text-xs text-muted-foreground">Saving…</span>}
+              {topicDocument ? <span className="text-xs text-muted-foreground">Public topic starter</span> : saving && <span className="text-xs text-muted-foreground">Saving…</span>}
             </div>
             <div className="flex-1 min-h-0 overflow-hidden">
               <EditorWithToolbar
-                key={selected.id}
-                content={selected.content}
-                contentKey={String(selected.id)}
-                title={selected.title}
-                showAiTools
+                key={topicDocument ? `topic-${topicDocument.id}` : selected!.id}
+                content={topicDocument?.content ?? selected!.content}
+                contentKey={topicDocument ? `topic-${topicDocument.id}` : String(selected!.id)}
+                title={topicDocument?.title ?? selected!.title}
+                showAiTools={!topicDocument}
                 showOutline
-                onChange={(html) => updateContent(selected.id, html)}
+                showToolbar={!topicDocument}
+                onChange={topicDocument ? undefined : (html) => updateContent(selected!.id, html)}
               />
             </div>
           </>

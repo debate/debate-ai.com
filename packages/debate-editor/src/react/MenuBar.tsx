@@ -30,8 +30,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "debate-ui/src/primitives/dropdown-menu";
-import { Button } from "debate-ui/src/primitives/button";
+} from "../ui/primitives/dropdown-menu";
+import { Button } from "../ui/primitives/button";
 import type { MenuBarCategory } from "./menu-bar-categories.js";
 import { WORKSPACE_LINKS } from "../editor/workspace-links.js";
 

@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedCounselPanelAssessments } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidCounselPanelAssessmentRecord, MAX_SAVED_COUNSEL_PANEL_ASSESSMENT_BYTES } from "debate-round"
+import { isValidCounselPanelAssessmentRecord, MAX_SAVED_COUNSEL_PANEL_ASSESSMENT_BYTES } from "debate-practice-rounds"
 
 /**
  * Account-linked counsel-panel-assessment-history sync — TODO.md idea #4's

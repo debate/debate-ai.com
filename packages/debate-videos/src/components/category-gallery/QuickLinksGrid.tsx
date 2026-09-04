@@ -8,9 +8,9 @@
 import React from "react";
 import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
-import { GlowingEffect } from "debate-ui/src/effects/glowing-effect";
-import { cn } from "debate-ui/src/lib/utils";
-import { IconBook, IconTrophyGoat, IconLeaderboard, IconTrophy, IconRoundsYoutube, IconLectures } from "debate-ui/src/icons";
+import { GlowingEffect } from "../../ui/effects/glowing-effect";
+import { cn } from "../../ui/lib/utils";
+import { IconBook, IconTrophyGoat, IconLeaderboard, IconTrophy, IconRoundsYoutube, IconLectures } from "../../ui/icons";
 
 interface QuickLink {
   id: string;

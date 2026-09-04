@@ -34,8 +34,8 @@
 import { useEffect, useMemo, useState } from "react"
 import { GitCommitHorizontal } from "lucide-react"
 
-import { listCombinedPersistedLibraryCards } from "debate-card-search/src/state/evidenceLibraryEntries"
-import type { LibraryCard } from "debate-card-search/src/lib/argument-library"
+import { listCombinedPersistedLibraryCards } from "debate-research-evidence/src/state/evidenceLibraryEntries"
+import type { LibraryCard } from "debate-research-evidence/src/lib/argument-library"
 
 import {
   EmptyState,
@@ -44,10 +44,10 @@ import {
   PanelSection,
   PanelShell,
   Pill,
-} from "debate-ui/src/panels/panel-shell"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { Textarea } from "debate-ui/src/primitives/textarea"
+} from "../ui/panels/panel-shell"
+import { Button } from "../ui/primitives/button"
+import { Input } from "../ui/primitives/input"
+import { Textarea } from "../ui/primitives/textarea"
 
 import { createFlowEdit, type FlowEdit } from "../flow/shared-flow-sync"
 import { clearFlowEditsForFlow, listFlowEdits, saveFlowEdit } from "../state/flowEdits"

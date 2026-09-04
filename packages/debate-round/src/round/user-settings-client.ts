@@ -22,15 +22,13 @@ import type { ThemeSettingsPayload } from "../state/themeSettings";
 import type { FavoriteToolsPayload } from "../state/favoriteTools";
 import type { WordLimitPresetsPayload } from "../state/wordLimitPresets";
 import type { OutlineFilterPresetsPayload } from "../state/outlineFilterPresets";
-import type { NewsSyncPayload } from "debate-card-search";
 
-/** The full shape `/api/settings` reads/writes — app preferences, the theme fields (idea #17, follow-up (2)), the favorite-tools list (idea #17, "integrate tools into user settings" follow-up), the custom word-limit presets list (idea #2's "per-style word-limit preset manager" follow-up), the named Outline filter presets list (idea #10's "Save and reuse named filter presets" follow-up), and the News Stream read/liked id lists (`docs/features/news-stream.md`'s "Read/like state is per-browser" Known gap). */
+/** The full shape `/api/settings` reads/writes — app preferences, the theme fields (idea #17, follow-up (2)), the favorite-tools list (idea #17, "integrate tools into user settings" follow-up), the custom word-limit presets list (idea #2's "per-style word-limit preset manager" follow-up), and the named Outline filter presets list (idea #10's "Save and reuse named filter presets" follow-up). The News Stream read/liked id lists (`docs/features/news-stream.md`'s "Read/like state is per-browser" Known gap) are typed separately by `debate-community` to avoid a package cycle (`debate-team-collaboration` already depends on this package) — the `/api/settings` route still reads/writes them on the same row. */
 export type FullUserSettingsPayload = UserSettingsPayload &
   ThemeSettingsPayload &
   FavoriteToolsPayload &
   WordLimitPresetsPayload &
-  OutlineFilterPresetsPayload &
-  NewsSyncPayload;
+  OutlineFilterPresetsPayload;
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {

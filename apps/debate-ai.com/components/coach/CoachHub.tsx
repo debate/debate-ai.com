@@ -19,34 +19,32 @@
 
 import { useEffect, useMemo, useState } from "react"
 import {
-  AiVersusRoundPanel,
-  ArgumentTreePanel,
-  CoachingProgramsPanel,
-  CoachingSessionsPanel,
-  DrillSetsPanel,
-  FlowAnnotationsPanel,
   FlowEditLogPanel,
-  FlowSummariesPanel,
-  JudgeDecisionPanel,
   OpponentTeamProfilesPanel,
-  PracticeRoundSimulatorPanel,
   PreRoundBriefingsPanel,
-  PrepNotesPanel,
   SharedFlowSyncPanel,
   StrategyPanel,
-  VulnerabilityChartsPanel,
-  WordCountRoundsPanel,
   useFlowStore,
   type Flow,
 } from "debate-round"
 import { clearFlowEditsForFlow, listFlowEdits } from "debate-round/src/state/flowEdits"
 import {
-  CoachMaterialsPanel,
+  AiVersusRoundPanel,
+  ArgumentTreePanel,
+  CoachingSessionsPanel,
+  DrillSetsPanel,
+  FlowAnnotationsPanel,
+  FlowSummariesPanel,
+  JudgeDecisionPanel,
   JudgeParadigmPickerPanel,
-  JudgeProfilesPanel,
   OpponentPersonaPickerPanel,
-} from "debate-speech-writer"
-import { useStoreSnapshot } from "debate-ui/src/panels/use-store-snapshot"
+  PracticeRoundSimulatorPanel,
+  VulnerabilityChartsPanel,
+  WordCountRoundsPanel,
+} from "debate-practice-rounds"
+import { CoachingProgramsPanel, PrepNotesPanel } from "debate-team-collaboration"
+import { CoachMaterialsPanel, JudgeProfilesPanel } from "debate-speech-writer"
+import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
 import type { FlowEdit } from "debate-round/src/flow/shared-flow-sync"
 
 /** A flow to fall back on before the workspace has created one. */

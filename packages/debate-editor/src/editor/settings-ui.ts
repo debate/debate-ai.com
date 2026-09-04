@@ -212,7 +212,7 @@ function setPathCell(el: HTMLElement, text: string): void {
 
 /** The settings dialog. `open()` takes a deep-link target: a tab to
  *  activate and optionally a setting row — or a named non-setting
- *  section (e.g. the keyboard macros editor) via its `data-anchor` — to
+ *  section (e.g. "About this install") via its `data-anchor` — to
  *  scroll to and flash. */
 class SettingsModal {
   private overlay: HTMLDivElement;
@@ -430,10 +430,11 @@ class SettingsModal {
       panelTitle.textContent = label;
       panel.appendChild(panelTitle);
       // General's actual setting rows moved to the app's /settings page (see
-      // `buildEmbeddedSettingsPanel`) — this tab keeps only its
-      // browser/install-specific sections (crash dumps / backup / doc
-      // links) appended below, regardless of what SETTING_METADATA
-      // still tags `general` for the embedded panel's own lookup.
+      // `buildEmbeddedSettingsPanel`) — this tab keeps only its non-setting
+      // diagnostic sections (crash dumps / backup / doc links, plus
+      // Benchmark and About this install on hosts with no /settings route)
+      // appended below, regardless of what SETTING_METADATA still tags
+      // `general` for the embedded panel's own lookup.
       const entries = id === 'general' ? [] : visibleEntriesFor(id);
       let lastSection: string | undefined;
       for (const meta of entries) {
@@ -459,15 +460,21 @@ class SettingsModal {
         empty.textContent = 'No settings in this section yet.';
         panel.appendChild(empty);
       }
-      // General now keeps only what's genuinely tied to this browser/install
-      // — crash dumps, a local settings backup, and the doc links — plus the
-      // link over to the app's /settings page, where the account-linked
-      // setting rows, the Benchmark action, and "About this install" all
-      // live now (see `buildAccountSettingsLinkSection` and
-      // `buildEmbeddedSettingsPanel`'s 'general' case).
+      // Benchmark and "About this install" moved to the app's /settings
+      // page (see `buildEmbeddedSettingsPanel`) alongside this tab's
+      // account-linked rows — on the web build this modal keeps only what's
+      // genuinely tied to this browser/install (crash dumps, local backup,
+      // doc links) plus the link over to /settings. Electron has no
+      // /settings route, so its modal keeps Benchmark and About this
+      // install here — its only settings surface.
       if (id === 'general') {
         const accountLink = buildAccountSettingsLinkSection();
-        if (accountLink) panel.appendChild(accountLink);
+        if (accountLink) {
+          panel.appendChild(accountLink);
+        } else {
+          panel.appendChild(buildBenchmarkSection(() => this.close()));
+          panel.appendChild(buildInstallInfoSection());
+        }
         const crashDumps = buildCrashDumpsSection();
         if (crashDumps) panel.appendChild(crashDumps);
         panel.appendChild(this.buildSettingsBackupSection());
@@ -1336,16 +1343,14 @@ export interface EmbeddedSettingsPanel {
 
 /** Builds a standalone panel of every visible `category` setting row —
  *  the same rows the full Settings dialog renders under that tab, minus the
- *  dialog chrome (header/sidebar/other tabs) and General's browser/install-
- *  specific sections (crash dumps / backup / doc links — tied to one editor
- *  install, not an account, so they stay in the editor's own gear-icon
- *  modal). Used to embed CardMirror's account-linked categories
- *  (general/appearance/accessibility) directly into the app's own /settings
- *  page instead of the editor's gear-icon modal. For 'general' this also
- *  appends the Benchmark action and the "About this install" diagnostic
- *  block, which moved here along with the rest of General's real settings
- *  (see `SettingsModal.render()`'s 'general' case, which no longer builds
- *  either). Caller owns mounting `element` and must call `destroy()` on
+ *  dialog chrome (header/sidebar/other tabs). For `general` this also
+ *  appends the Benchmark and About-this-install sections, which live here
+ *  rather than in the gear-icon modal on the web build (the modal keeps
+ *  only its install-specific bonus sections — crash dumps / backup — that
+ *  have no home on this account-linked page). Used to embed CardMirror's
+ *  account-linked categories (general/appearance/accessibility) directly
+ *  into the app's own /settings page instead of the editor's gear-icon
+ *  modal. Caller owns mounting `element` and must call `destroy()` on
  *  unmount to release its subscriptions — this shares the same module-level
  *  row-cleanup bookkeeping the modal uses (see `flushRowCleanups`), which is
  *  safe because only one settings surface (this panel, or the modal) is ever
@@ -1379,8 +1384,12 @@ export function buildEmbeddedSettingsPanel(category: SettingsCategory): Embedded
     empty.textContent = 'No settings in this section yet.';
     panel.appendChild(empty);
   }
+  // Benchmark and About-this-install: not user-editable settings, so they
+  // aren't in SETTING_METADATA, but this is now their home on the web build
+  // (the gear-icon modal keeps them only on hosts with no /settings route —
+  // see `SettingsModal.render()`). No dialog to close here, hence the no-op.
   if (category === 'general') {
-    panel.appendChild(buildBenchmarkSection());
+    panel.appendChild(buildBenchmarkSection(() => {}));
     panel.appendChild(buildInstallInfoSection());
   }
 
@@ -1670,14 +1679,17 @@ function buildColorsEditor(): HTMLElement {
   return wrap;
 }
 
-/** Read-only "About this install" diagnostic block. Lives on the app's
- *  /settings page (General, via `buildEmbeddedSettingsPanel`) so a user
- *  filing a bug report can grab their version + platform + UA in one place,
- *  alongside the rest of General's real settings. The update-check actions
- *  are Electron-only; they're omitted on the web edition. */
+/** Read-only "About this install" diagnostic block. Lives at the
+ *  bottom of Settings → General so a user filing a bug report can
+ *  grab their version + platform + UA in one place. The actions
+ *  (Check for Updates, Open Crash Dumps Folder) are Electron-only;
+ *  they're omitted on the web edition. */
 function buildInstallInfoSection(): HTMLElement {
   const wrap = document.createElement('section');
   wrap.className = 'pmd-install-info-section';
+  // Deep-link target: the command palette's "version / about this install"
+  // result scrolls here (SettingsTarget.anchor).
+  wrap.dataset['anchor'] = 'about-this-install';
 
   const hr = document.createElement('hr');
   hr.className = 'pmd-install-info-divider';
@@ -1958,11 +1970,10 @@ function buildDocLinksSection(): HTMLElement {
   return section;
 }
 
-/** Settings → Benchmark: a game-style in-app perf suite. Lives on the app's
- *  /settings page now (General, via `buildEmbeddedSettingsPanel`), alongside
- *  the rest of General's real settings. The button requires a document
- *  already open in the editor (in another tab/window) to run against. */
-function buildBenchmarkSection(): HTMLElement {
+/** Settings → Benchmark: a game-style in-app perf suite. The button closes the
+ *  dialog first (the editor must be visible — occluded content gets its paints
+ *  culled, which would falsify the frame times) and launches the overlay. */
+function buildBenchmarkSection(closeDialog: () => void): HTMLElement {
   const section = document.createElement('section');
   section.className = 'pmd-settings-benchmark';
 
@@ -1988,6 +1999,7 @@ function buildBenchmarkSection(): HTMLElement {
   run.className = 'pmd-settings-backup-btn';
   run.textContent = 'Run benchmark';
   run.addEventListener('click', () => {
+    closeDialog();
     void launchBenchmarkOverlay();
   });
   actions.appendChild(run);

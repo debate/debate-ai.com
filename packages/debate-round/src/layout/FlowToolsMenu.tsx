@@ -12,7 +12,7 @@
 
 import Link from "next/link"
 import { Wrench } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
+import { Button } from "../ui/primitives/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,8 +20,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "debate-ui/src/primitives/dropdown-menu"
-import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+} from "../ui/primitives/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
 import type { Flow } from "../types/flow"
 import { buildFlowToolsMenuItems } from "../round/flow-tool-links"
 

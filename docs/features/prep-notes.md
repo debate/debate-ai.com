@@ -142,8 +142,44 @@ that don't exist yet.
   so a real assignment always records one — no caller has to remember to.
 - **UI:** `panels/PrepNoteNotificationsPanel.tsx` asks for a recipient id
   (remembered in localStorage across visits) and renders that recipient's
-  notifications newest first, with a "Mark read" action per unread
-  notification.
+  notifications grouped into a digest per day (see "Digest grouping"
+  below), each expandable to its individual "Mark read" actions.
+
+### Digest grouping
+
+Closes the "🔄 Strategy Sync Notes" bullet's "a digest notification instead
+of one per assignment" follow-up. Rather than showing every assignment as
+its own permanent row — unwieldy once a teammate has been assigned several
+notes — `PrepNoteNotificationsPanel` groups a recipient's notifications
+into one digest card per UTC calendar day, most recent day first.
+
+- **Grouping:** `flow/prep-note-notifications.ts#groupNotificationsIntoDigests`
+  is pure: it buckets a recipient's notifications by UTC day and returns a
+  `NotificationDigestGroup` per day (`dayKey`, that day's notifications
+  newest first, and a precomputed `unreadCount`).
+  `state/prepNoteNotifications.ts#buildNotificationDigestView` is the
+  read-side wrapper the panel calls, composing that grouping with the
+  existing `getNotificationsForRecipient`.
+- **Heading:** `buildDigestGroupHeading` renders each card's title, e.g.
+  `"3 notifications on 2026-09-04 (2 unread)"`.
+- **Bulk mark-read:** each digest card has a "Mark all read" action (hidden
+  once nothing in it is unread) backed by
+  `markManyPersistedNotificationsRead`, a single localStorage write instead
+  of one per notification.
+- **Expand:** an "Expand (N)"/"Collapse" toggle reveals the day's
+  individual notifications underneath the card, each still carrying its own
+  "Mark read" action — the per-notification `markPersistedNotificationRead`
+  path is unchanged, so a teammate can still clear one assignment at a time
+  within a day instead of only all-or-nothing.
+- The unread badge next to the recipient lookup now sums every digest
+  group's `unreadCount` instead of counting a flat list.
+
+Vitest-covered: `groupNotificationsIntoDigests` (no notifications, grouping
+same-day entries together with the most recent day first, and scoping to
+one recipient) and `buildDigestGroupHeading` (plural/singular phrasing) in
+`test/prep-note-notifications.test.ts`; `buildNotificationDigestView` and
+`markManyPersistedNotificationsRead` (a bulk write, an empty id list as a
+no-op, and unknown ids being ignored) in `test/prepNoteNotifications.test.ts`.
 
 ### Cross-tab live update
 
@@ -166,6 +202,44 @@ listener with a fresh closure instead of refreshing against a stale one.
 Vitest-covered in `packages/debate-round/test/live-update.test.ts` (every
 backing-store key, the `null`-key clear-all case, the excluded
 recipient-id key, and unrelated/substring-matching keys staying ignored).
+
+## Threaded replies
+
+Closes the "🔄 Strategy Sync Notes" bullet's "threaded replies on a note
+instead of flat status" follow-up: each note has a "Replies (N)" toggle
+that opens a comment thread underneath it — a teammate can discuss the note
+itself without changing its status, and without every discussion having to
+be crammed into the note's own text.
+
+- **Store:** `state/prepNoteReplies.ts` (localStorage: `prepNoteReplies`),
+  local-first, mirroring `debate-card-search`'s
+  `state/dailyBestCardComments.ts` convention — a `PrepNoteReply` is keyed
+  by its own generated id and carries the `noteId` it's attached to, an
+  `authorId` (trimmed, falling back to `"Anonymous"` when blank), `text`
+  (trimmed and capped at `MAX_PREP_NOTE_REPLY_TEXT_LENGTH`), and a
+  `postedAt` timestamp. `listRepliesForNote(noteId)` returns a note's
+  thread oldest first.
+- **Unlike `dailyBestCardComments.ts`,** this store has no account-sync
+  counterpart yet — `state/prepNotes.ts` itself isn't account-synced (see
+  Known gaps below), so there's nothing for a reply to sync alongside.
+- **UI:** `panels/PrepNotesPanel.tsx`'s `PrepNoteReplyThread` renders the
+  thread (author + text, each with a "Delete" action) and an inline
+  "Your name" / "Reply" form, mirroring `DailyBestCardPanel`'s
+  `CommentThread` component. The "Replies (N)" toggle sits alongside the
+  note's other actions; the thread itself is collapsed until toggled open.
+- **Cascade delete:** `state/prepNotes.ts`'s `deletePrepNote` now also
+  calls `deleteRepliesForNote(id)`, so a deleted note doesn't leave its
+  thread behind as orphaned replies no UI can reach.
+- **Cross-tab live update:** the `prepNoteReplies` key was added to
+  `flow/live-update.ts`'s `PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS`, so a
+  reply posted or deleted in another browser tab refreshes this panel here
+  too, the same way a status/priority/assignment change already did.
+
+Vitest-covered in `packages/debate-round/test/prepNoteReplies.test.ts`
+(posting, trimming, the `"Anonymous"` fallback, the text-length cap,
+per-note listing/counting, and deletion) and
+`packages/debate-round/test/prepNotes.test.ts`'s `deletePrepNote` suite
+(the cascade delete).
 
 ## Jump to argument
 

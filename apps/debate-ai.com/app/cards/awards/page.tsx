@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { ContributorAwardsPanel } from "debate-card-search"
+import { ContributorAwardsPanel } from "debate-community"
 
 export const metadata: Metadata = {
   title: "Top Contributor Awards",

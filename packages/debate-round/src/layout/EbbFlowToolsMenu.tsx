@@ -1,98 +1,52 @@
-"use client"
-
 /**
- * @fileoverview "ebb Flow tools" quick-access menu.
+ * @fileoverview "ebb Flow tools" quick-access menu — New flow / Open a flow /
+ * Join with a code / Settings, plus a list of recent flows, for ebb's pinned
+ * "ebb Flow" tab. These used to be ebb's own full-screen start screen, shown
+ * only once that tab was selected with no flow open. Rendered here instead,
+ * in `layout/FlowPageSidebar.tsx`'s quick-action row alongside `FlowToolsMenu`,
+ * so they're reachable in one click regardless of which tab is active —
+ * choosing one switches to the ebb tab (mounting `EbbFlowEmbed` if it isn't
+ * already) and queues the action for it to run once mounted.
  *
- * ebb (the pinned "ebb Flow" tab) used to hold New flow / Open / Join with a
- * code / Settings / a recent-flows list on its own full-screen start screen,
- * shown only once that tab was selected with no flow open — see
- * `debate-flow-ebb`'s `ResumeFlow.tsx`, which replaced that screen with a
- * lightweight auto-resume (it reopens the last flow, or starts a fresh one,
- * with only a minimal empty state on failure). That left those entry points
- * reachable only from ebb's own toolbar (`RoundHeader`), which meant only
- * once the ebb tab was already active. This menu surfaces the same entry
- * points from the round workspace's quick-action row instead
- * (`layout/FlowPageSidebar.tsx`, alongside `FlowToolsMenu`), so they're one
- * click away regardless of which tab is selected.
- *
- * Every action first switches to the pinned ebb tab (`onSelectEbb`), then
- * fires the matching ebb action from `debate-flow-ebb/quick-actions` — safe
- * to call immediately after, per that module's own header comment: the
- * dialogs it drives are gated by plain Zustand stores that exist
- * independent of whether `EbbFlowEmbed` has mounted yet.
+ * Uses the host's own local UI primitives rather than ebb's UI kit: ebb's
+ * kit is styled for `.ebb-scope` (see `EbbFlowEmbed.tsx`'s docstring) and
+ * would render unstyled out here in the sidebar.
  *
  * @module layout/EbbFlowToolsMenu
  */
 
-import { useState } from "react"
-import { FilePlus, FolderOpen, History, LogIn, Settings, Workflow } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
+import { FilePlus, FolderOpen, LogIn, Settings, Workflow } from "lucide-react"
+import { Button } from "../ui/primitives/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "debate-ui/src/primitives/dropdown-menu"
-import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
-import {
-  executeCommand,
-  isDesktop,
-  navigateToFlow,
-  openFlowFromPicker,
-  useFlowStore,
-  useRecentFlows,
-} from "debate-flow-ebb/quick-actions"
+} from "../ui/primitives/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
+import { isDesktop, useRecentFlows } from "debate-flow-ebb/tools"
+import type { EbbFlowToolAction } from "debate-flow-ebb"
 
 /** Props for the EbbFlowToolsMenu component. */
 interface EbbFlowToolsMenuProps {
-  /** Switches the round workspace to the pinned ebb Flow tab. */
-  onSelectEbb: () => void
+  /** Switches to the ebb tab and queues `action` for it to run once mounted. */
+  onAction: (action: EbbFlowToolAction) => void
 }
 
 /**
- * Icon-button dropdown offering ebb's New flow / Open / Join with a code /
- * Settings actions plus a recent-flows submenu, from outside the ebb tab.
+ * Icon-button dropdown covering everything ebb's retired start screen
+ * offered (New flow, Open a flow, Join with a code, Settings, recent flows),
+ * reachable whether or not the pinned ebb tab is currently selected.
  *
- * @param props.onSelectEbb - See {@link EbbFlowToolsMenuProps.onSelectEbb}.
+ * @param props.onAction - See {@link EbbFlowToolsMenuProps.onAction}.
  */
-export function EbbFlowToolsMenu({ onSelectEbb }: EbbFlowToolsMenuProps) {
-  // Recent flows are read from disk, so only fetch them once the menu is
-  // actually opened rather than on every render of the quick-action row.
-  const [wantsRecents, setWantsRecents] = useState(false)
-  const { entries } = useRecentFlows(wantsRecents)
-
-  const handleNewFlow = () => {
-    onSelectEbb()
-    useFlowStore.getState().setNewFlowOpen(true)
-  }
-
-  const handleOpenFlow = () => {
-    onSelectEbb()
-    void openFlowFromPicker()
-  }
-
-  const handleJoin = () => {
-    onSelectEbb()
-    executeCommand("collab.join")
-  }
-
-  const handleSettings = () => {
-    onSelectEbb()
-    useFlowStore.getState().setSettingsOpen(true)
-  }
-
-  const handleOpenRecent = (path: string) => {
-    onSelectEbb()
-    navigateToFlow(path)
-  }
+export function EbbFlowToolsMenu({ onAction }: EbbFlowToolsMenuProps) {
+  const { entries, refresh } = useRecentFlows()
 
   return (
-    <DropdownMenu onOpenChange={(open) => open && setWantsRecents(true)}>
+    <DropdownMenu onOpenChange={(open) => open && refresh()}>
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
@@ -105,50 +59,48 @@ export function EbbFlowToolsMenu({ onSelectEbb }: EbbFlowToolsMenuProps) {
           <p>ebb Flow tools</p>
         </TooltipContent>
       </Tooltip>
-      <DropdownMenuContent align="start" className="w-64">
+      <DropdownMenuContent align="start" className="w-72">
         <DropdownMenuLabel>ebb Flow tools</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={handleNewFlow}>
+        <DropdownMenuItem onSelect={() => onAction({ type: "new" })}>
           <FilePlus className="mr-2 h-4 w-4" />
           New flow
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={handleOpenFlow}>
+        <DropdownMenuItem onSelect={() => onAction({ type: "open" })}>
           <FolderOpen className="mr-2 h-4 w-4" />
           Open a flow
         </DropdownMenuItem>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <History className="mr-2 h-4 w-4" />
-            Recent flows
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent className="w-64">
-            {!entries || entries.length === 0 ? (
-              <div className="text-muted-foreground px-2 py-1.5 text-xs">
-                {entries === null ? "Loading…" : "No other flows yet."}
-              </div>
-            ) : (
-              entries.map((entry) => (
-                <DropdownMenuItem key={entry.path} onSelect={() => handleOpenRecent(entry.path)}>
-                  <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate">{entry.label}</span>
-                    <span className="text-muted-foreground truncate text-xs">{entry.display}</span>
-                  </span>
-                </DropdownMenuItem>
-              ))
-            )}
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
         {isDesktop() && (
-          <DropdownMenuItem onSelect={handleJoin}>
+          <DropdownMenuItem onSelect={() => onAction({ type: "join" })}>
             <LogIn className="mr-2 h-4 w-4" />
             Join with a code
           </DropdownMenuItem>
         )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={handleSettings}>
+        <DropdownMenuItem onSelect={() => onAction({ type: "settings" })}>
           <Settings className="mr-2 h-4 w-4" />
           Settings
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
+          Recent flows
+        </DropdownMenuLabel>
+        {!entries || entries.length === 0 ? (
+          <div className="text-muted-foreground px-2 py-1.5 text-xs">
+            {entries === null ? "Loading…" : "No other flows yet."}
+          </div>
+        ) : (
+          entries.map((entry) => (
+            <DropdownMenuItem
+              key={entry.path}
+              onSelect={() => onAction({ type: "open-path", path: entry.path })}
+            >
+              <span className="flex min-w-0 flex-1 flex-col items-start gap-0.5 py-0.5">
+                <span className="truncate text-sm">{entry.label}</span>
+                <span className="text-muted-foreground truncate text-xs">{entry.display}</span>
+              </span>
+            </DropdownMenuItem>
+          ))
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )

@@ -5,9 +5,9 @@ import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Activity, Bell, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
-import { cn } from "debate-ui/src/lib/utils"
-import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
-import { useAccountNotifications } from "debate-round"
+import { cn } from "../../lib/ui/lib/utils"
+import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
+import { useAccountNotifications } from "debate-team-collaboration"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,
@@ -24,8 +24,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "debate-ui/src/primitives/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "debate-ui/src/primitives/avatar"
+} from "../../lib/ui/primitives/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "../../lib/ui/primitives/avatar"
 import { themeNames, themeColors, formatThemeName, useThemeState } from "@/components/theme-dropdown"
 import { LoginDialog } from "@/components/layout/LoginDialog"
 import { authClient } from "@/lib/auth/client"
@@ -38,9 +38,9 @@ import {
   IconSettings,
   IconRoundsYoutube,
   IconTools
-} from "debate-ui/src/icons"
+} from "../../lib/ui/icons"
 
-// Same destinations as packages/debate-ui/src/layout/footer.tsx, split into
+// Same destinations as packages/debate-videos/src/ui/layout/footer.tsx, split into
 // the two Settings-menu submenus below so they're reachable without
 // scrolling to the page footer.
 const SITE_LINKS = [

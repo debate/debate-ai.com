@@ -4,9 +4,10 @@
  */
 
 import type React from "react"
-import { Plus, Clock, Users } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+import { Plus, Clock, Users, Workflow } from "lucide-react"
+import { Button } from "../ui/primitives/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
+import type { EbbFlowToolAction } from "debate-flow-ebb"
 import { EbbFlowToolsMenu } from "./EbbFlowToolsMenu"
 import { FlowToolsMenu } from "./FlowToolsMenu"
 import { LiveRoundGroup } from "./LiveRoundGroup"
@@ -45,6 +46,10 @@ interface FlowPageSidebarProps {
   ebbActive: boolean
   /** Handler called when the user selects the pinned ebb Flow tab. */
   onSelectEbb: () => void
+  /** Handler called when an "ebb Flow tools" menu item is chosen — switches
+   *  to the ebb tab (if it isn't active already) and queues the action for
+   *  it to run once mounted. */
+  onEbbToolAction: (action: EbbFlowToolAction) => void
   /** Optional handler called when the mobile menu overlay should be dismissed. */
   onCloseMobileMenu?: () => void
   /** Timer state props, passed through to the live round group and its per-speech timers. */
@@ -96,6 +101,7 @@ export function FlowPageSidebar({
   onEditRound,
   ebbActive,
   onSelectEbb,
+  onEbbToolAction,
   onCloseMobileMenu,
   timerState,
 }: FlowPageSidebarProps) {
@@ -159,7 +165,7 @@ export function FlowPageSidebar({
           </Tooltip>
 
           <FlowToolsMenu currentFlow={currentFlow} />
-          <EbbFlowToolsMenu onSelectEbb={handleSelectEbb} />
+          <EbbFlowToolsMenu onAction={onEbbToolAction} />
         </TooltipProvider>
       </div>
 

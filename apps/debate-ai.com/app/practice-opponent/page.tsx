@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { OpponentPersonaPickerPanel } from "debate-speech-writer"
+import { OpponentPersonaPickerPanel } from "debate-practice-rounds"
 
 export const metadata: Metadata = {
   title: "Opponent Persona Picker",

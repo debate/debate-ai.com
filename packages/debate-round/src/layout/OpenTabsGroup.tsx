@@ -7,8 +7,8 @@
 
 import { useState } from "react"
 import { ChevronDown, ChevronRight, Plus, Workflow } from "lucide-react"
-import { Button } from "debate-ui/src/primitives/button"
-import { cn } from "debate-ui/src/lib/utils"
+import { Button } from "../ui/primitives/button"
+import { cn } from "../ui/lib/utils"
 import { FlowTab } from "../navigation/FlowTab"
 import type { Flow } from "../types/flow"
 

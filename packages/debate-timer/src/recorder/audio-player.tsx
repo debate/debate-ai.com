@@ -22,14 +22,14 @@ import {
 import * as SliderPrimitive from "@radix-ui/react-slider"
 import { Check, Gauge, PauseIcon, PlayIcon, AlarmClockMinus } from "lucide-react"
 
-import { cn } from "debate-ui/src/lib/utils"
-import { Button } from "debate-ui/src/primitives/button"
+import { cn } from "../ui/lib/utils"
+import { Button } from "../ui/primitives/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "debate-ui/src/primitives/dropdown-menu"
+} from "../ui/primitives/dropdown-menu"
 
 enum ReadyState {
     HAVE_NOTHING = 0,

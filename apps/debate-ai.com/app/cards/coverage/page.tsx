@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { TopicCoverageDashboardPanel } from "debate-card-search"
+import { TopicCoverageDashboardPanel } from "debate-research-evidence"
 
 export const metadata: Metadata = {
   title: "Topic Coverage Dashboard",

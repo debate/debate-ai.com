@@ -21,6 +21,16 @@
  * `buildStrategyRecommendationText`'s full multi-section rendering, which
  * doesn't fit that section's one-bullet-per-note shape). `StrategyPanel`'s
  * "Send to Pre-Round Briefing" action wires the two together.
+ *
+ * `buildCaseComparisonTable` closes this bullet's "a side-by-side
+ * case-option comparison table" follow-up: today's "Case rankings" list only
+ * shows each case's *total* overlap score, not which specific opponent-run
+ * tags drove it. Each `RankedCaseOption` now also carries `tagOverlaps` — a
+ * per-tag breakdown of that same score — and `buildCaseComparisonTable`
+ * pivots every ranked case's breakdown into one row per tag (most
+ * opponent-frequent first) with a column per case, so a team can see at a
+ * glance which cases share which opponent-prepped tags instead of only the
+ * total. `StrategyPanel`'s "Case comparison" table renders it.
  */
 
 import type { DebateSide, OpponentTeamProfile } from "debate-data-sync/src/rankings/opponent-team-profile";
@@ -40,6 +50,13 @@ export interface CaseOption {
   argumentTags: string[];
 }
 
+/** One of a case option's argument tags, paired with the opponent's recorded frequency for it. */
+export interface TagOverlap {
+  tag: string;
+  /** The opponent's recorded frequency for this tag; 0 when there's no opponent profile or the profile has no data for it. */
+  opponentFrequency: number;
+}
+
 /** A case option scored against the opponent's most commonly run argument tags. */
 export interface RankedCaseOption extends CaseOption {
   /**
@@ -48,6 +65,14 @@ export interface RankedCaseOption extends CaseOption {
    * this." Higher is riskier. Zero when no opponent profile/tag data exists.
    */
   overlapScore: number;
+  /**
+   * Per-tag breakdown of `overlapScore` — one entry per tag in
+   * `argumentTags`, in that order. Optional so older persisted
+   * `RankedCaseOption`s (built before this field existed) and
+   * hand-constructed test fixtures keep typechecking; `rankCaseOptions`
+   * always populates it for anything built fresh.
+   */
+  tagOverlaps?: TagOverlap[];
 }
 
 export type RiskLevel = "low" | "medium" | "high";
@@ -87,6 +112,23 @@ export function computeCaseOverlapScore(
 }
 
 /**
+ * Breaks `computeCaseOverlapScore` down per tag — one `TagOverlap` per entry
+ * of `option.argumentTags`, in that order, each paired with the opponent's
+ * recorded frequency for it (0 when there's no opponent profile or the
+ * profile has no data for that specific tag). Backs `rankCaseOptions`'
+ * `tagOverlaps` field and `buildCaseComparisonTable`.
+ */
+export function computeCaseTagOverlaps(
+  option: CaseOption,
+  opponentProfile?: OpponentTeamProfile,
+): TagOverlap[] {
+  const frequencyByTag = new Map(
+    (opponentProfile?.topArgumentTags ?? []).map((t) => [t.value, t.count]),
+  );
+  return option.argumentTags.map((tag) => ({ tag, opponentFrequency: frequencyByTag.get(tag) ?? 0 }));
+}
+
+/**
  * Ranks `caseOptions` by `computeCaseOverlapScore` against `opponentProfile`,
  * safest (lowest overlap) first, tie-broken alphabetically by case name for
  * a stable, deterministic order.
@@ -96,8 +138,73 @@ export function rankCaseOptions(
   opponentProfile?: OpponentTeamProfile,
 ): RankedCaseOption[] {
   return caseOptions
-    .map((option) => ({ ...option, overlapScore: computeCaseOverlapScore(option, opponentProfile) }))
+    .map((option) => {
+      const tagOverlaps = computeCaseTagOverlaps(option, opponentProfile);
+      const overlapScore = tagOverlaps.reduce((sum, overlap) => sum + overlap.opponentFrequency, 0);
+      return { ...option, overlapScore, tagOverlaps };
+    })
     .sort((a, b) => (a.overlapScore !== b.overlapScore ? a.overlapScore - b.overlapScore : a.name.localeCompare(b.name)));
+}
+
+/** One row of `CaseComparisonTable` — a single argument tag, and how much each case option contributes for it. */
+export interface CaseComparisonRow {
+  tag: string;
+  /** The opponent's recorded frequency for this tag — the same value for every case that runs it. */
+  opponentFrequency: number;
+  /** Keyed by case name: `opponentFrequency` when that case runs this tag, 0 when it doesn't. */
+  perCase: Record<string, number>;
+}
+
+/** A side-by-side pivot of every ranked case option's tag breakdown, for comparing case options at a glance. */
+export interface CaseComparisonTable {
+  /** Case names, in the same safest-first order as the `RankedCaseOption[]` the table was built from. */
+  caseNames: string[];
+  /** One row per tag run by at least one case option, most opponent-frequent first (alphabetical tie-break). */
+  rows: CaseComparisonRow[];
+}
+
+/**
+ * Pivots `caseRankings`' per-case `tagOverlaps` breakdowns into a tag x case
+ * table — the "a side-by-side case-option comparison table" follow-up named
+ * under the "Scout-to-Strategy Workflow" bullet in TODO.md's Research
+ * Crowdsourcing Organizer Features list. Where the existing "Case rankings"
+ * list only shows each case's *total* overlap score, this table breaks that
+ * total down by the specific tags driving it, so a team can compare which
+ * cases share which opponent-prepped tags rather than only the aggregate.
+ *
+ * Older persisted `RankedCaseOption`s built before this field existed have
+ * no `tagOverlaps` — treated as an empty breakdown (contributing no rows),
+ * so the table degrades gracefully instead of throwing.
+ */
+export function buildCaseComparisonTable(caseRankings: RankedCaseOption[]): CaseComparisonTable {
+  const caseNames = caseRankings.map((option) => option.name);
+  const rowsByTag = new Map<string, { opponentFrequency: number; caseNamesWithTag: Set<string> }>();
+
+  for (const option of caseRankings) {
+    for (const overlap of option.tagOverlaps ?? []) {
+      const existing = rowsByTag.get(overlap.tag);
+      if (existing) {
+        existing.caseNamesWithTag.add(option.name);
+      } else {
+        rowsByTag.set(overlap.tag, {
+          opponentFrequency: overlap.opponentFrequency,
+          caseNamesWithTag: new Set([option.name]),
+        });
+      }
+    }
+  }
+
+  const rows: CaseComparisonRow[] = [...rowsByTag.entries()]
+    .map(([tag, { opponentFrequency, caseNamesWithTag }]) => ({
+      tag,
+      opponentFrequency,
+      perCase: Object.fromEntries(
+        caseNames.map((name) => [name, caseNamesWithTag.has(name) ? opponentFrequency : 0]),
+      ),
+    }))
+    .sort((a, b) => (b.opponentFrequency !== a.opponentFrequency ? b.opponentFrequency - a.opponentFrequency : a.tag.localeCompare(b.tag)));
+
+  return { caseNames, rows };
 }
 
 /**

@@ -16,7 +16,7 @@
  * @module state/savedCoachMaterials
  */
 
-import { COACH_MATERIAL_KIND_ORDER, type CoachMaterial } from "../coach/team-coach-materials";
+import { COACH_MATERIAL_STATUSES, COACH_MATERIAL_KIND_ORDER, type CoachMaterial } from "../coach/team-coach-materials";
 
 /**
  * Hard cap on a single material's JSON size — generous for a full lecture
@@ -25,6 +25,7 @@ import { COACH_MATERIAL_KIND_ORDER, type CoachMaterial } from "../coach/team-coa
 export const MAX_SAVED_COACH_MATERIAL_BYTES = 1_000_000;
 
 const VALID_KINDS: ReadonlySet<string> = new Set(COACH_MATERIAL_KIND_ORDER);
+const VALID_STATUSES: ReadonlySet<string> = new Set(COACH_MATERIAL_STATUSES);
 
 function isOptionalNonEmptyString(value: unknown): value is string | undefined {
   return value === undefined || (typeof value === "string" && value.trim().length > 0);
@@ -44,6 +45,12 @@ export function isValidCoachMaterialRecord(value: unknown): value is CoachMateri
   if (!isOptionalNonEmptyString(record.topic)) return false;
   if (!Array.isArray(record.tags) || !record.tags.every((tag) => typeof tag === "string")) return false;
   if (typeof record.text !== "string" || record.text.trim().length === 0) return false;
+  if (record.status !== undefined && (typeof record.status !== "string" || !VALID_STATUSES.has(record.status))) {
+    return false;
+  }
+  if (!isOptionalNonEmptyString(record.reviewedBy)) return false;
+  if (record.reviewedAt !== undefined && typeof record.reviewedAt !== "number") return false;
+  if (!isOptionalNonEmptyString(record.reviewNote)) return false;
 
   return true;
 }

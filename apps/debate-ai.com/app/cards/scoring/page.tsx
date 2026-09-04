@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { CardScoringPanel } from "debate-card-search"
+import { CardScoringPanel } from "debate-research-evidence"
 
 export const metadata: Metadata = {
   title: "LLM Card Scoring",

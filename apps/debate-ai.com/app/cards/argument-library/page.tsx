@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { ArgumentLibraryPanel } from "debate-card-search"
+import { ArgumentLibraryPanel } from "debate-research-evidence"
 
 export const metadata: Metadata = {
   title: "Common Argument Library",

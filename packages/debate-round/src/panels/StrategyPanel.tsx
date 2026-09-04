@@ -39,20 +39,29 @@
  * `state/preRoundBriefings.ts` record (`appendPrepNoteToPreRoundBriefing`),
  * picked from a dropdown of every round id with a saved briefing.
  *
+ * A "Case comparison" table per recommendation (shown once there are at
+ * least two ranked case options) closes this bullet's "a side-by-side
+ * case-option comparison table" follow-up: `scout-to-strategy.ts`'s
+ * `buildCaseComparisonTable` pivots every case's per-tag overlap breakdown
+ * into one row per opponent-run tag (most frequent first) with a column per
+ * case, so a team can see at a glance which specific tags each case shares
+ * with the opponent instead of only each case's total overlap score.
+ *
  * @module panels/StrategyPanel
  */
 
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { Label } from "debate-ui/src/primitives/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select"
-import { Textarea } from "debate-ui/src/primitives/textarea"
-import { EmptyState } from "debate-ui/src/panels/panel-shell"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Input } from "../ui/primitives/input"
+import { Label } from "../ui/primitives/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/primitives/select"
+import { Textarea } from "../ui/primitives/textarea"
+import { EmptyState } from "../ui/panels/panel-shell"
 import {
+  buildCaseComparisonTable,
   buildStrategyRecommendationFromStores,
   buildStrategyRecommendationPrepNote,
   type CaseOption,
@@ -329,6 +338,45 @@ export function StrategyPanel() {
                           ))}
                         </ul>
                       </div>
+
+                      {recommendation.caseRankings.length > 1 && (
+                        <div className="rounded-md border border-border px-3 py-2 text-sm">
+                          <p className="mb-1 font-medium text-foreground">Case comparison</p>
+                          {(() => {
+                            const table = buildCaseComparisonTable(recommendation.caseRankings)
+                            return table.rows.length === 0 ? (
+                              <p className="text-muted-foreground">No shared opponent-tag data to compare yet.</p>
+                            ) : (
+                              <div className="overflow-x-auto">
+                                <table className="w-full min-w-max border-collapse text-left">
+                                  <thead>
+                                    <tr>
+                                      <th className="border-b border-border py-1 pr-3 font-medium text-foreground">Tag</th>
+                                      {table.caseNames.map((name) => (
+                                        <th key={name} className="border-b border-border py-1 px-3 font-medium text-foreground">
+                                          {name}
+                                        </th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {table.rows.map((row) => (
+                                      <tr key={row.tag}>
+                                        <td className="py-1 pr-3 text-muted-foreground">{row.tag}</td>
+                                        {table.caseNames.map((name) => (
+                                          <td key={name} className="py-1 px-3 text-muted-foreground">
+                                            {row.perCase[name] > 0 ? row.perCase[name] : "—"}
+                                          </td>
+                                        ))}
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )
+                          })()}
+                        </div>
+                      )}
 
                       <div className="rounded-md border border-border px-3 py-2 text-sm">
                         <p className="mb-1 font-medium text-foreground">Judge adaptation</p>

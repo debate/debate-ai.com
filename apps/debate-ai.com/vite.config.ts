@@ -80,7 +80,6 @@ export default defineConfig({
       "debate-flow-ebb",
       "debate-round",
       "debate-timer",
-      "debate-ui",
       "debate-videos",
     ],
   },

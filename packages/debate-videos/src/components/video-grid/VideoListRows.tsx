@@ -8,15 +8,16 @@
 "use client"
 
 import React, { useMemo, useState } from "react"
-import { Star, ExternalLink, EyeOff, Eye, ListVideo, ChevronUp, ChevronDown, Info } from "lucide-react"
-import { cn } from "debate-ui/src/lib/utils"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+import { Star, ExternalLink, EyeOff, Eye, ListVideo, ChevronUp, ChevronDown } from "lucide-react"
+import { cn } from "../../ui/lib/utils"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor } from "../video-card/videoCardUtils"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
 import { TranscriptModal } from "../transcript-modal/TranscriptModal"
 import { useResizableColumns } from "./useResizableColumns"
 import type { VideoType } from "../../types/videos"
+import { formatSeasonLabel } from "debate-data-sync/src/videos/video-rows"
 
 interface VideoListRowsProps {
   videos: VideoType[]
@@ -47,8 +48,10 @@ type ColumnKey =
   | "aff"
   | "neg"
   | "arguments"
-  | "format"
   | "channel"
+  | "season"
+  | "title"
+  | "category"
   | "date"
   | "views"
 
@@ -66,8 +69,10 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   aff: 150,
   neg: 150,
   arguments: 200,
-  format: 90,
   channel: 160,
+  season: 90,
+  title: 260,
+  category: 140,
   date: 110,
   views: 90,
 }
@@ -79,6 +84,12 @@ const VIEWS_COLUMN: ColumnDef = {
   headerClassName: "text-right",
   sortValue: (v) => v[4] ?? 0,
 }
+const SEASON_COLUMN: ColumnDef = {
+  key: "season",
+  label: "Season",
+  headerClassName: "hidden sm:table-cell",
+  sortValue: (v) => v[17] ?? 0,
+}
 
 const ROUND_COLUMNS: ColumnDef[] = [
   { key: "tournament", label: "Tournament", headerClassName: "hidden sm:table-cell", sortValue: (v) => v[7]?.toLowerCase() ?? "" },
@@ -86,15 +97,16 @@ const ROUND_COLUMNS: ColumnDef[] = [
   { key: "aff", label: "Aff", sortValue: (v) => v[9]?.toLowerCase() ?? "" },
   { key: "neg", label: "Neg", sortValue: (v) => v[10]?.toLowerCase() ?? "" },
   { key: "arguments", label: "Arguments", headerClassName: "hidden lg:table-cell" },
+  SEASON_COLUMN,
   DATE_COLUMN,
   VIEWS_COLUMN,
 ]
 
 const LECTURE_COLUMNS: ColumnDef[] = [
-  { key: "format", label: "Format", headerClassName: "hidden sm:table-cell", sortValue: (v) => getStyleLabel(v).toLowerCase() },
   { key: "channel", label: "Channel", headerClassName: "hidden md:table-cell", sortValue: (v) => v[3]?.toLowerCase() ?? "" },
-  DATE_COLUMN,
-  VIEWS_COLUMN,
+  SEASON_COLUMN,
+  { key: "title", label: "Title", sortValue: (v) => v[1]?.toLowerCase() ?? "" },
+  { key: "category", label: "Category", headerClassName: "hidden sm:table-cell", sortValue: (v) => getStyleLabel(v).toLowerCase() },
 ]
 
 type SortDirection = "asc" | "desc"
@@ -156,6 +168,9 @@ function VideoRow({
     _judgeDecision,
     arg1AC,
     arg2NR,
+    _isTopPickFlag,
+    _speechDocsUrl,
+    seasonYear,
   ] = video
   const [showHideConfirm, setShowHideConfirm] = useState(false)
 
@@ -171,10 +186,13 @@ function VideoRow({
       : undefined
   const year = new Date(date).getFullYear()
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
-  // Without a Title column, Tournament/Aff/Neg are the only cues to what a
-  // round is — when none of those are populated, fall back to an info icon
-  // that surfaces the title on hover.
-  const hasIdentifyingColumns = Boolean(tournament || affTeam || negTeam)
+
+  // Without a Title column, Tournament and the Aff/Neg matchup are what
+  // actually identify a round — Level and Arguments alone don't. When
+  // neither is available (no tournament, or no team on either side), the
+  // row has nothing to scan, so show the video title across the full width
+  // instead of a row of dashes.
+  const roundRowIdentifiable = Boolean(tournament) && Boolean(affTeam || negTeam)
 
   return (
     <>
@@ -191,43 +209,67 @@ function VideoRow({
         )}
       >
         {isRoundMode ? (
+          roundRowIdentifiable ? (
+            <>
+              <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground truncate">
+                {tournament || "—"}
+              </td>
+              <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
+                {roundLevel ? (
+                  <span
+                    className={cn(
+                      "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium border",
+                      getRoundBadgeColor(roundLevel),
+                    )}
+                  >
+                    {roundLevel}
+                  </span>
+                ) : (
+                  <span className="text-xs text-muted-foreground">—</span>
+                )}
+              </td>
+              <td className="px-3 py-2 align-top text-sm truncate">
+                {affTeam || <span className="text-muted-foreground">—</span>}
+              </td>
+              <td className="px-3 py-2 align-top text-sm truncate">
+                {negTeam || <span className="text-muted-foreground">—</span>}
+              </td>
+              <td className="px-3 py-2 align-top hidden lg:table-cell text-xs text-muted-foreground">
+                {arg1AC || arg2NR ? (
+                  <div className="flex flex-col gap-0.5">
+                    {arg1AC && <span className="truncate">1AC: {arg1AC}</span>}
+                    {arg2NR && <span className="truncate">2NR: {arg2NR}</span>}
+                  </div>
+                ) : (
+                  "—"
+                )}
+              </td>
+            </>
+          ) : (
+            <td colSpan={5} className="px-3 py-2 align-top text-sm text-foreground truncate">
+              {title}
+            </td>
+          )
+        ) : (
+          <td className="px-3 py-2 align-top hidden md:table-cell text-sm text-muted-foreground truncate">
+            {channel}
+          </td>
+        )}
+        <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground whitespace-nowrap">
+          {typeof seasonYear === "number" && seasonYear > 0 ? formatSeasonLabel(seasonYear) : "—"}
+        </td>
+        {isRoundMode ? (
           <>
-            <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground truncate">
-              {tournament || "—"}
+            <td className="px-3 py-2 align-top text-sm text-muted-foreground whitespace-nowrap">
+              {formatDate(date)}
             </td>
-            <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
-              {roundLevel ? (
-                <span
-                  className={cn(
-                    "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium border",
-                    getRoundBadgeColor(roundLevel),
-                  )}
-                >
-                  {roundLevel}
-                </span>
-              ) : (
-                <span className="text-xs text-muted-foreground">—</span>
-              )}
-            </td>
-            <td className="px-3 py-2 align-top text-sm truncate">
-              {affTeam || <span className="text-muted-foreground">—</span>}
-            </td>
-            <td className="px-3 py-2 align-top text-sm truncate">
-              {negTeam || <span className="text-muted-foreground">—</span>}
-            </td>
-            <td className="px-3 py-2 align-top hidden lg:table-cell text-xs text-muted-foreground">
-              {arg1AC || arg2NR ? (
-                <div className="flex flex-col gap-0.5">
-                  {arg1AC && <span className="truncate">1AC: {arg1AC}</span>}
-                  {arg2NR && <span className="truncate">2NR: {arg2NR}</span>}
-                </div>
-              ) : (
-                "—"
-              )}
+            <td className="px-3 py-2 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
+              {viewCount.toLocaleString()}
             </td>
           </>
         ) : (
           <>
+            <td className="px-3 py-2 align-top text-sm text-foreground truncate">{title}</td>
             <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
               {styleLabel ? (
                 <span
@@ -242,17 +284,8 @@ function VideoRow({
                 <span className="text-xs text-muted-foreground">—</span>
               )}
             </td>
-            <td className="px-3 py-2 align-top hidden md:table-cell text-sm text-muted-foreground truncate">
-              {channel}
-            </td>
           </>
         )}
-        <td className="px-3 py-2 align-top text-sm text-muted-foreground whitespace-nowrap">
-          {formatDate(date)}
-        </td>
-        <td className="px-3 py-2 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
-          {viewCount.toLocaleString()}
-        </td>
         <td className="px-3 py-2 align-top">
           <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
             {isTopPick && (
@@ -263,21 +296,6 @@ function VideoRow({
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>Top pick</TooltipContent>
-              </Tooltip>
-            )}
-
-            {!hasIdentifyingColumns && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label={`Video title: ${title}`}
-                  >
-                    <Info className="h-3.5 w-3.5" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-[280px]">{title}</TooltipContent>
               </Tooltip>
             )}
 

@@ -5,9 +5,9 @@
 
 "use client"
 
-import { Card } from "debate-ui/src/primitives/card"
-import { GlowingEffect } from "debate-ui/src/effects/glowing-effect"
-import { TooltipProvider } from "debate-ui/src/primitives/tooltip"
+import { Card } from "../../ui/primitives/card"
+import { GlowingEffect } from "../../ui/effects/glowing-effect"
+import { TooltipProvider } from "../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
 import { getYearTopic } from "./videoCardUtils"
 import { VideoCardThumbnail } from "./VideoCardThumbnail"

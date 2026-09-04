@@ -15,8 +15,8 @@
  * @module flow/flow-note-suggestions
  */
 
-import type { LibraryCard } from "debate-card-search/src/lib/argument-library";
-import { scoreRelevance } from "debate-card-search/src/lib/llm-card-scoring";
+import type { LibraryCard } from "debate-research-evidence/src/lib/argument-library";
+import { scoreRelevance } from "debate-research-evidence/src/lib/llm-card-scoring";
 
 /** One `LibraryCard` matched against a query, with its relevance score. */
 export type FlowNoteSuggestion = {

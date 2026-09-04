@@ -6,7 +6,7 @@
 
 "use client"
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { Info, ChevronUp, ChevronDown } from "lucide-react"
 import { ELO_TOOLTIP } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"

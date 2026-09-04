@@ -11,7 +11,7 @@
 
 "use client"
 
-import { CommunityResearchHubPanel } from "debate-card-search"
+import { CommunityResearchHubPanel } from "debate-community"
 import { useFavoriteTools } from "@/lib/hooks/useFavoriteTools"
 
 export function CommunityHubPageContent() {
